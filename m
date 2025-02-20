@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6578-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6579-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1310A3D7E8
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 12:11:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A878FA3DB94
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 14:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4FE7AA71D
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 11:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C9E3B8DFC
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 13:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32E31EBFE0;
-	Thu, 20 Feb 2025 11:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1831F8F09;
+	Thu, 20 Feb 2025 13:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgkwDCDl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnGc+g6C"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD4422EE4;
-	Thu, 20 Feb 2025 11:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4454E1F76C0;
+	Thu, 20 Feb 2025 13:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740049861; cv=none; b=HDFOAwUAh8Fqsww1lBubTI5tDgCzDU0pf99BK/RHE7RvSi/t4rGtlrRUOxoX8FZK0nosFv9wyavBory4uFXQhxZDMadTnw3CUg9XMxzfVOgpk4sDLFy7VqxAJoz9D5oCeejNhB53ufffwp5YqenT2vcwsgEOznaJfWJZOr0Ow4U=
+	t=1740059079; cv=none; b=g6zXOFyHRjEabhjBvhjS6YNlTm3CLKTUIMzYkJpUF6egkhf5pEax/LMNi0SFt0rZ6W79Dt449XUXJm1hyL1dTFH/4oq9w9NIjk7RZ8oD0+coszizL/NAu6RqUVtA69KkyBYJl9QYUJ5bbF9UWeacGE2x9GIkDfm9p4oEEhHEUMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740049861; c=relaxed/simple;
-	bh=lfPh0PAhDawk8rSUhs1ts1IfimfjKKtt6x4CuoJdbyQ=;
+	s=arc-20240116; t=1740059079; c=relaxed/simple;
+	bh=CMwWUZ03W806TkHXwe3kr5Wl7XYfSq37ASDCGimHEIY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rXMl9tQpgXkCiO4c2oFv72jFzk9feFd4ullTT89DUsIDZnTH4Ba20EuZd0hpY+PLEJCjC8GgW4MiuYC2YFKP4LNWfN2F6ZZF4Vp9W67AKf09b3osDbTXT8tAENPBQCzOUf50/T4RbG9QFfMkKox8xCW8FuIVE20UNI7buygK/Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgkwDCDl; arc=none smtp.client-ip=209.85.218.48
+	 In-Reply-To:Content-Type; b=tj0/jpkEeQVto/kg+PFO0UaUoxZIkhylSsJTg78cVMT0mfbfd+BpCFE7JJJlx6zHY4lCqJOnUbcX4RBDX5pRutk+O3GcavWfQumCOx3Gr8se0zOXpDf9HiQ8HQSnw78K5I7i0IYvmCbnLWWVD4cU9CgDv7BLOftjJhOJ+/6xdcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnGc+g6C; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abbc38adeb1so143005766b.1;
-        Thu, 20 Feb 2025 03:10:59 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abb86beea8cso195995066b.1;
+        Thu, 20 Feb 2025 05:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740049858; x=1740654658; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740059075; x=1740663875; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CWjPIveShp9pXIzSAYbwDxAsIMaohb44TpJ4ozqWNeY=;
-        b=MgkwDCDlm+26T0V96YBQN7U1VLAxa8QYashlkJqKJZQ3o0Guvm08s1msbid2DYNJD8
-         hmBPkqr3hLtE3OaYD20GljvJpe50T0j+oB//oPvYfxyeir3BuTfXFRwpztBFavSYgZ+n
-         UvGJJ0ETLCfn89/c6coFaXg9NgRoMb9k51qo628t4Ey82RO/2jU++wkeHPfHs3c0wP0r
-         uJqIWv5zzvXW+YqEPqVApzlYd2KfvJqVj0Few2eEU3+n77ZcPjoxa3NhgrZUbruqfiio
-         lMpymZ5x7dXM7ALhL1rdlk1RJFNhBO0BeoZUpY7tTrJBapbQPTsMhWm2yYSQki0Aya7V
-         l6aw==
+        bh=wH3ItxDnpHtPrcEc6Ys9D8rM2UII7vdj5WIe0si5L3c=;
+        b=cnGc+g6C56En6WyT8qQ+EoVCc6CM72LtG8EF8JP6UOZBFbnep8BND+NgwwjAWhBx90
+         VnLsjE2fedjK1LppDR1H4EHYezQgaKiHn2VUIhrZpwTTOgbBYatISHf+wsdm+l9ORQaI
+         p+puye5p3ZAt84kPhqr98YoREKlqWARLinohfLGUJ6qJV/pnGxej8npH0TErakuzbIZT
+         zeOE/ELMU06AWRerAB33nkSBWokLMgS5tCIOaCZS7Qyi7X6Z0gQrRJtOl01PX7DA0S6R
+         F5kUb6QFpliXjI7vrSYVa4CDTdXTrwuH7DrsvhcMu+j+dhUr9DRCbD0kBUV7QbKBK3fp
+         lA6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740049858; x=1740654658;
+        d=1e100.net; s=20230601; t=1740059075; x=1740663875;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWjPIveShp9pXIzSAYbwDxAsIMaohb44TpJ4ozqWNeY=;
-        b=VCf7YF/rbOFrf8WW8HrtwiKu305w8JjK2iyOccEqDYMWi49z1RCyRA5wAWEY6nNOfW
-         uaf12LJEbc00px66hsI/2C4X5KQwftUPMooNF0gT7mSAmrd+Nq7SutV2ughljsbFrNSg
-         X4nM+nM/9z1pqJovi5ndP14Nb8ZabH5ODgikj/TsNxgMT3kNOGbZ5/GmP8euTf5byXNx
-         t/HW23KKkxrvM+yco9W1nrdfKNgtuv8en23T3psAM6avYv5NLGu2MLhmRYB8m3Rk+nnR
-         RycPBcw7B3V5k85E+VrD+ZEQdJc3JmDiPPi/13jcGzBnbARUOutU/Kj72lG+0tw5iBAx
-         lOJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXd8dZEZXrJ/H9IGjvgAHWOkDkqJf//vCyAJXPa+AFLTnXoe1k+H/4SyTncWvFwN+54o63HY678g==@vger.kernel.org, AJvYcCWd7kzUXeW2VZz5zd1hU64hRPRcDx5hD1LRtdDbQKiY8gqlBsRdKKZ7wbBtKlmALt+UESg5kweks9P58jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqFJWlt8PVb7+qChK6PE6rTLEu0+ADMiSAUL2d1hwtVFBVrSKQ
-	URApTc8QMxazVl/6bk3VeFGbg/A29iV6CNd7REzpPgpbAnLRO0aM
-X-Gm-Gg: ASbGncse0ZMnVGZ2LjlD2CG4AbfKENOvKFCUyNTXRleWIz5xDr/2qzTgli4v+xhLLBb
-	Di+Aa4feyOIHTcSST2zNxBXLhUAx/4RJRMrMgNNDmSjcFGk8KKHVM6b3JwXrEl7km7Ee+kA8+kW
-	FZyyp9Niv/9O3j65pSc34qm+yNum1oAssLrHwiKeZOFsexxKZydllQa3yu56XmZ4VLTaVHY4W6F
-	GhLpUI7Dkuzkl8P7RX9a2Sgx90pWJNK2tO6TubvgNgOolakWH84RIftsg67YgLwre8YwGGOz6gx
-	YgG1YDFgcDWdf3PtfR1hmn2k+M+T0ie5bAV8jlKMUP7kjk2A
-X-Google-Smtp-Source: AGHT+IGzhcT/tQ2Re3nqWBcU/+7uZpV3yGUKNiSdkSTtzjy+nGhy7P2ye1c2OJT61PbapG+qfKBsWw==
-X-Received: by 2002:a17:906:2718:b0:abb:ebfe:d5eb with SMTP id a640c23a62f3a-abbebfed7admr239117966b.18.1740049857771;
-        Thu, 20 Feb 2025 03:10:57 -0800 (PST)
+        bh=wH3ItxDnpHtPrcEc6Ys9D8rM2UII7vdj5WIe0si5L3c=;
+        b=Tu1wI/qnzJAhefClOBVP56izB/EaUeNyaQ5ALft1Gjj4vFd8M8sIMbGJOV72gF9vVv
+         NvMSBF1OeX1yAhDGLNlTrGJ2rSowknW7PN42ivk0a1l7LHJnmVGwbs7pfZaNG6phzBgd
+         SyTv4gy0vKAH4EVnzbqgzkZuRlONjwkqztitkeLor2ZaLL8OwSNh8f5gpfdCp+JTr5wg
+         1bpgJL1ngkcZ6oc7vR3a79/fkXqcQB/5hmzucCe5vdE/tSjK2VXse3OkAEbyJde89FB5
+         Dt2XBzcRqMgbxEZeBv8eI39siDXWcPJrBtOFBPvYSkm7ajAMNX/inWkw+cvNc3+oqeE7
+         Nm7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgJhB33JUha1mBdITFTAltXC86DWCYe32WLJPXkIw5FwTOEkkUmZIl4jbddxhZW4Z61mekGg7J@vger.kernel.org, AJvYcCWI8prGza4+zvIkQyo279Tx/qXNbpp9NRMuTTgIfVtRr2zcjEgwq9IPQtmGRocX7uaKK1OJ7dCoiA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQWj0SZX6csmq2j8rFg9aBl8Hxsv0SJvvcaf9MBGAbZlJBePZ3
+	w5lrqXFGc+9ctMCh8vKVRcsJQh9D7dgL6yvPHSf7MjhEUsK6A10f
+X-Gm-Gg: ASbGncuYz4VW2/nTECUagad46LxcanMMqTP7ogqTYljrQcePoVROgtPsyR9d+hQxBdS
+	CRpjBmJPIb0F25honOrcVl29Wh5WlKh8e7gFYFtMHgDS5V+UkY8z2H0Tp9ROlo7070zxbSzOxjO
+	rz/yHmqZ+A+r/F7Jhq7U6RD2ZvIEn0+OAMFq4qAQhw9oGKmtABxh1aucAnAnMsHGi8BdQ2j6npS
+	PrFbabk/P6ImWPw4F/hqGrT0lQmF0r5idMq9RbplvySj5693FJc4RputnsvJEh7Kq3nQKJG8whx
+	7uabDMqmhCXTCGiEe1HLydCJhub3de8MH+qhDt2BkAYz7zap
+X-Google-Smtp-Source: AGHT+IELkEkYK+QAvOvQS5be6WORIcG1J6+OzZZX1+JCVNyeFLOHcip9wfXoeIBG+zOwECkOOu3Qlw==
+X-Received: by 2002:a17:906:309a:b0:abb:b3e6:26c2 with SMTP id a640c23a62f3a-abbccf054b5mr680717166b.25.1740059075149;
+        Thu, 20 Feb 2025 05:44:35 -0800 (PST)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:f455])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322e6sm1434340866b.1.2025.02.20.03.10.56
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba4fc0c29sm688721966b.157.2025.02.20.05.44.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 03:10:57 -0800 (PST)
-Message-ID: <a636d5fa-1c60-410a-a876-52859df7277a@gmail.com>
-Date: Thu, 20 Feb 2025 11:11:59 +0000
+        Thu, 20 Feb 2025 05:44:34 -0800 (PST)
+Message-ID: <270ce534-d33e-4642-b0dc-87e377025825@gmail.com>
+Date: Thu, 20 Feb 2025 13:45:37 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,70 +81,178 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 3/5] ublk: zc register/unregister bvec
-To: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com, axboe@kernel.dk,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Cc: bernd@bsbernd.com, csander@purestorage.com,
- Keith Busch <kbusch@kernel.org>
-References: <20250218224229.837848-1-kbusch@meta.com>
- <20250218224229.837848-4-kbusch@meta.com>
+Subject: Re: [PATCH v1 1/2] io_uring/zcrx: add single shot recvzc
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>
+References: <20250218165714.56427-1-dw@davidwei.uk>
+ <20250218165714.56427-2-dw@davidwei.uk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250218224229.837848-4-kbusch@meta.com>
+In-Reply-To: <20250218165714.56427-2-dw@davidwei.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/18/25 22:42, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On 2/18/25 16:57, David Wei wrote:
+> Currently only multishot recvzc requests are supported, but sometimes
+> there is a need to do a single recv e.g. peeking at some data in the
+> socket. Add single shot recvzc requests where IORING_RECV_MULTISHOT is
+> _not_ set and the sqe->len field is set to the number of bytes to read
+> N.
 > 
-> Provide new operations for the user to request mapping an active request
-> to an io uring instance's buf_table. The user has to provide the index
-> it wants to install the buffer.
+> There could be multiple completions containing data, like the multishot
+> case, since N bytes could be split across multiple frags. This is
+> followed by a final completion with res and cflags both set to 0 that
+> indicate the completion of the request, or a -res that indicate an
+> error.
 > 
-> A reference count is taken on the request to ensure it can't be
-> completed while it is active in a ring's buf_table.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> Signed-off-by: David Wei <dw@davidwei.uk>
 > ---
->   drivers/block/ublk_drv.c      | 137 +++++++++++++++++++++++++---------
->   include/uapi/linux/ublk_cmd.h |   4 +
->   2 files changed, 105 insertions(+), 36 deletions(-)
+>   io_uring/net.c  | 26 ++++++++++++++++++--------
+>   io_uring/zcrx.c | 17 ++++++++++++++---
+>   io_uring/zcrx.h |  2 +-
+>   3 files changed, 33 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 529085181f355..0c753176b14e9 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -51,6 +51,9 @@
+> diff --git a/io_uring/net.c b/io_uring/net.c
+> index 000dc70d08d0..d3a9aaa52a13 100644
+> --- a/io_uring/net.c
+> +++ b/io_uring/net.c
+> @@ -94,6 +94,7 @@ struct io_recvzc {
+>   	struct file			*file;
+>   	unsigned			msg_flags;
+>   	u16				flags;
+> +	u32				len;
+
+Something is up with the types, it's u32, for which you use
+UINT_MAX, and later convert to ulong.
+
+>   	struct io_zcrx_ifq		*ifq;
+>   };
+>   
 ...
-> +static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
-> +				  struct ublk_queue *ubq, int tag,
-> +				  const struct ublksrv_io_cmd *ub_cmd,
-> +				  unsigned int issue_flags)
-> +{
-> +	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
-> +	struct ublk_device *ub = cmd->file->private_data;
-> +	int index = (int)ub_cmd->addr;
-> +	struct ublk_rq_data *data;
-> +	struct request *req;
-> +
-> +	if (!ub)
-> +		return -EPERM;
-> +
-> +	req = blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
-
-Shouldn't there some speculation sanitisation for the tag as well?
-Looks like a user passed value directly indexing an array.
-
-> +	if (!req)
+> @@ -1250,6 +1251,9 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>   	zc->ifq = req->ctx->ifq;
+>   	if (!zc->ifq)
+>   		return -EINVAL;
+> +	zc->len = READ_ONCE(sqe->len);
+> +	if (zc->len == UINT_MAX)
 > +		return -EINVAL;
-> +
-> +	data = blk_mq_rq_to_pdu(req);
-> +	io_buffer_unregister_bvec(ctx, index, issue_flags);
-> +	return 0;
-> +}
-> +
+>   
+>   	zc->flags = READ_ONCE(sqe->ioprio);
+>   	zc->msg_flags = READ_ONCE(sqe->msg_flags);
+> @@ -1257,12 +1261,14 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>   		return -EINVAL;
+>   	if (zc->flags & ~(IORING_RECVSEND_POLL_FIRST | IORING_RECV_MULTISHOT))
+>   		return -EINVAL;
+> -	/* multishot required */
+> -	if (!(zc->flags & IORING_RECV_MULTISHOT))
+> -		return -EINVAL;
+> -	/* All data completions are posted as aux CQEs. */
+> -	req->flags |= REQ_F_APOLL_MULTISHOT;
+> -
+> +	if (zc->flags & IORING_RECV_MULTISHOT) {
+> +		if (zc->len)
+> +			return -EINVAL;
+> +		/* All data completions are posted as aux CQEs. */
+> +		req->flags |= REQ_F_APOLL_MULTISHOT;
 
+If you're posting "aux" cqes you have to set the flag for
+synchronisation reasons. We probably can split out a "I want to post
+aux cqes" flag, but it seems like you don't actually care about
+multishot here but limiting the length, or limiting the length + nowait.
 
+> +	}
+> +	if (!zc->len)
+> +		zc->len = UINT_MAX;
+>   	return 0;
+>   }
+>   
+> @@ -1281,7 +1287,7 @@ int io_recvzc(struct io_kiocb *req, unsigned int issue_flags)
+>   		return -ENOTSOCK;
+>   
+>   	ret = io_zcrx_recv(req, zc->ifq, sock, zc->msg_flags | MSG_DONTWAIT,
+> -			   issue_flags);
+> +			   issue_flags, zc->len);
+>   	if (unlikely(ret <= 0) && ret != -EAGAIN) {
+>   		if (ret == -ERESTARTSYS)
+>   			ret = -EINTR;
+> @@ -1296,6 +1302,10 @@ int io_recvzc(struct io_kiocb *req, unsigned int issue_flags)
+>   		return IOU_OK;
+>   	}
+>   
+> +	if (zc->len != UINT_MAX) {
+> +		io_req_set_res(req, ret, 0);
+> +		return IOU_OK;
+> +	}
+>   	if (issue_flags & IO_URING_F_MULTISHOT)
+>   		return IOU_ISSUE_SKIP_COMPLETE;
+>   	return -EAGAIN;
+> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+> index ea099f746599..834c887743c8 100644
+> --- a/io_uring/zcrx.c
+> +++ b/io_uring/zcrx.c
+> @@ -106,6 +106,7 @@ struct io_zcrx_args {
+>   	struct io_zcrx_ifq	*ifq;
+>   	struct socket		*sock;
+>   	unsigned		nr_skbs;
+> +	unsigned long		len;
+>   };
+>   
+>   static const struct memory_provider_ops io_uring_pp_zc_ops;
+> @@ -826,6 +827,10 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
+>   	int i, copy, end, off;
+>   	int ret = 0;
+>   
+> +	if (args->len == 0)
+> +		return -EINTR;
+> +	len = (args->len != UINT_MAX) ? min_t(size_t, len, args->len) : len;
+
+Just min?
+
+> +
+>   	if (unlikely(args->nr_skbs++ > IO_SKBS_PER_CALL_LIMIT))
+>   		return -EAGAIN;
+>   
+> @@ -920,17 +925,21 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
+>   out:
+>   	if (offset == start_off)
+>   		return ret;
+> +	args->len -= (offset - start_off);
+
+Doesn't it unconditionally change the magic value UINT_MAX
+you're trying to preserve?
+
+> +	if (args->len == 0)
+> +		desc->count = 0;
+>   	return offset - start_off;
+>   }
+>   
+>   static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+>   				struct sock *sk, int flags,
+> -				unsigned issue_flags)
+> +				unsigned issue_flags, unsigned long len)
+>   {
+>   	struct io_zcrx_args args = {
+>   		.req = req,
+>   		.ifq = ifq,
+>   		.sock = sk->sk_socket,
+> +		.len = len,
+>   	};
+>   	read_descriptor_t rd_desc = {
+>   		.count = 1,
+> @@ -956,6 +965,8 @@ static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+>   		ret = IOU_REQUEUE;
+>   	} else if (sock_flag(sk, SOCK_DONE)) {
+>   		/* Make it to retry until it finally gets 0. */
+> +		if (len != UINT_MAX)
+> +			goto out;
+>   		if (issue_flags & IO_URING_F_MULTISHOT)
+>   			ret = IOU_REQUEUE;
+>   		else
+
+-- 
 Pavel Begunkov
 
 

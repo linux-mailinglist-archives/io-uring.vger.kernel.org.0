@@ -1,179 +1,181 @@
-Return-Path: <io-uring+bounces-6598-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6599-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03393A3F7BB
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 15:52:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC638A3F849
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 16:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F581895FCD
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 14:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 696D4420868
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 15:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DFA20F09A;
-	Fri, 21 Feb 2025 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34090210F6B;
+	Fri, 21 Feb 2025 15:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J86z8Gl9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQBlMv14"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EF720967C;
-	Fri, 21 Feb 2025 14:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCBF21148F;
+	Fri, 21 Feb 2025 15:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149533; cv=none; b=uzgzsfb0AOOy9NVrNK1cwqJuhEv31sCc6TrVwoiohT6177zq16Q5mN/e7KneqUOViFAGyzA+d192H2FpPGIcOZtX5g2i1v7yE+ueiDcU9CWsrGSRdXDHwGh1TKwSYsM0Hl1oT3yYL9/uRvA2DjviYC+m3TWBXnxSm5o/J8myyxw=
+	t=1740151191; cv=none; b=edMoyNdPIMlAak+cLUn8Y7N58VH+EoV8YDMpp0B4F6T0GXBMnXViOw572E6izIUjUReQJNL+WgvVstHsFZe41UclVbDn1yDVIFXasCWiwLYGgmW9raXQ6G6ZE7pD+xkGmB5ogSjMCfh5zqKSGMMdxYhgzW5CMnZ02hpkce46SNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149533; c=relaxed/simple;
-	bh=jOzG//OB7HazWjzxykobiDHLTtbvup7+jAPb7XO27XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukge5ldlCUT9p2BkvvLRaZHVN1luLj3y0wRdUvZmHhjGNLb7gyMQRxFmrwZ6Rh8YWnnCph6JE2l3o1lWx/thKMFPKPhIjxAADkM7UJtpqpXt3jmIqZHwfAzunrkncqBR7p65HRkYieKIgQ7J+yUMonvJXYeN6GX7YCOUNfDgRVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J86z8Gl9; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1740151191; c=relaxed/simple;
+	bh=0Sfi5OhsmXDc0XGmKqmk2NvefOoyLYkNnDfLKFL8czg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=oNd8Ny+K+P0h0g1CFh2nUQ6jqoy/DxXD8C5ZHsSq6hSfh90PkpjwbJAqKeroErBogDeoVqOeq5vQi/o9nOgn8Vv3fYoK/SvGfIJJP7Z4MBgiM2M1jd/FcQQoiE1ddPRMcACyBerxXSgGaopWe6WqvAwnNp2qerccrOb91m32vxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQBlMv14; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-219f8263ae0so46550835ad.0;
-        Fri, 21 Feb 2025 06:52:11 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-545316f80beso2043995e87.1;
+        Fri, 21 Feb 2025 07:19:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740149531; x=1740754331; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YAzrrkv63/2lrOgaumrXtlZ/zBs/xebGmvO88gw3evk=;
-        b=J86z8Gl9vwB+IZls7KoB5iCXezK/4RFKRUhY+URJtofQaG45Kfc+UZYBMIdCMYHIuZ
-         svOXGK080j8waNMwo1PUzZA9+S4jDQzikmilWKEE8kwSrlwtD3cSeX+j+xX6V+YGkXGX
-         c+b9kFl4rViR3v9K1Wa8NmMz+olKPATKsjpgH57NfNHMNZdT8bVyWrdlxa4eQUscWZpM
-         hZsmG5eL3wmOnDI54dvsD9mjErzqhxHmLRiFoFlC535zCKYT3O978tVGD9XmWQHs51Wq
-         vElJILIWIES0OwAfYnal2Q8IwGjVYbjpisJAstm95MZC/QHRpCPKoFZnTXtii/HjlwNc
-         Em7g==
+        d=gmail.com; s=20230601; t=1740151187; x=1740755987; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TsCVMsET+UHJUAvFwcMuiLqRvzL8dXcTNPDug2riv8k=;
+        b=GQBlMv14+9D9b62RRJsOZpALcR8Pnh4SgJTOiHwb+PmR7Uy+U4XgrGb8fTwEqiqxPv
+         5RUliIvLJQx5vNHyQiwQNtZUufg5ihSUBvGqR9gzBPp4YeMc1phv766hRJcpopOxo++h
+         ci/2hDGJNzxrK7hBZh7qvhzpLPFPfqwdiMYMf0Cmt8mf78fk13LvzaVkpH3dKCTmOJDx
+         X6JMsOzp2qD2WAhaOaaNfco32wvuSoBq2KSdEQt2vxSKPZ1dPrfgDBK/H2GYyUUwNhT6
+         jUDSZ6dUHBCRfPyvS0+SCJsVo/ZhMzsu5HwEzvkB9k33+3S4VrpRg6uURk3zCWrkoQP3
+         t+Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740149531; x=1740754331;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAzrrkv63/2lrOgaumrXtlZ/zBs/xebGmvO88gw3evk=;
-        b=QgdyhpwqJGJMB6IO+B82ddTDiqkRWnLhWgJ5Nc+oMgR1u/Ua0PdtgkUpr/S2N/SQng
-         PCMGF2VMiyyOJ60aLxUAQQdUECKNnTJ7R9NDWK0BzJd/YC/NLfMy7UDlM87fD1dxN9sE
-         jlecKLNE3af1pK3Zxi5lNVUi1C/b+y/aol6+4siiydP/WaIikXx2Vmj3Q2sN71NZRS8R
-         9yGjZF3v7ahfCmX/oCA8ZB3uDQwwPhNhRV6SUhTwo4IJbXbG2TrbdqmzXrh6rhwcteLG
-         I+3KP5zrjcaQCZeRq3BNorB13iM12Nl/sAzXHlX/O0shMI2IB2bifqXUrJpiqoyO3d40
-         LhLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpJDvDaQxvEIRMTLrQXX+9CXit7CaaO0+Wq+vKZC7I+2kDQ+f5yw+Bu5fa+/NWDcuhiN993hDIKgATItI/@vger.kernel.org, AJvYcCVl1VJ6nvXMg1WQVeJZh+bqGLWvzMOZx53ZvAvIIxAu7QLYKrpo7WWR6e5XM20QBPexAFnIzamnAQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtM51rRSYrLqrArS7x19QHvYE0AfJ/BiK7GSw4ie/jO720QfFr
-	VnUhMWqdtZHIzEz9mfFQw/7kgB3O5ADpo0FuSJ/Wc+GbR/ZjVXBi
-X-Gm-Gg: ASbGncu8VcmikxM03ttlN2JSSq4ukak38mOVYb4dT/H09RwwPQvfX8dvezUUtNNj1OG
-	M4jlXsMAV8CnCv8wLngN2f/x67WGb80Nlh96/7O8pC3YnW4NqpIyvCk+DtxErnNQFCNbSKcvPGL
-	bgcHQkK28MKP1VSA0g2ytgHX3NxC/sYVlnvdCKcUZNCMjIilO4cyZCGM0G4Zl5eMLPY/oznQwbg
-	+hhl5GnCWD93eEH9TN2ObZLwqEGhvRjy1V68CgO2DMiI+HC15txLkKedEAeHWTWjBmCQKu6qscz
-	BoDoIjuOoepISvlVMrPTZE/IewKi4tDcn9VFGkrsyv8Sm0izZcMbVchHrNINK8vEq8k1PVFm+NW
-	EIg==
-X-Google-Smtp-Source: AGHT+IEZvsIkWYOOtIvyy/40kQht9XU9C7/IBNPS0HQdnJ6W8A3A4E7eI65Q5gRAUjkZzxC4R34WDg==
-X-Received: by 2002:a05:6a00:3e0e:b0:730:7600:aeab with SMTP id d2e1a72fcca58-73426ce7678mr4771362b3a.13.1740149530544;
-        Fri, 21 Feb 2025 06:52:10 -0800 (PST)
-Received: from ?IPV6:2001:ee0:4f4d:ece0:3744:320e:7a6:5279? ([2001:ee0:4f4d:ece0:3744:320e:7a6:5279])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732511dfd9esm14512998b3a.67.2025.02.21.06.52.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 06:52:10 -0800 (PST)
-Message-ID: <e4be0a96-8e09-4591-96fe-a1d38208875a@gmail.com>
-Date: Fri, 21 Feb 2025 21:52:06 +0700
+        d=1e100.net; s=20230601; t=1740151187; x=1740755987;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TsCVMsET+UHJUAvFwcMuiLqRvzL8dXcTNPDug2riv8k=;
+        b=hH8fKmI9vK+vR7m3scdcJzy12qHFij7U6KNoC+f2bgTbc6V0CFpKiilzvLIq3nr1b3
+         doVUZaeHiEUkpuMJSGSEkY2VDAkkQAnJZlWZmcnrTeitztb5oTO5ExFJ5yFfz6hslTUA
+         8WlHCZCnWR0ae4BicnNqRU6Blop5hZfXuN9aIwOwgnKcaiZwkvbPVj0/JxMFDYwt/ePC
+         EEF2Qxu8e9LKvQDvJ2srFSSxB1My8ZKpEy35az/4vyg75Z3GX/sCN2xnpZgGP++ju3ez
+         L5LYEo5xs9VAqeNSr/KyyKuJdV7O6H+bnG8hI2hIOg0daUy3D75GO05g72Hekq6/OC1s
+         ra5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUgRzySfsNiSrtXHloG7qWXpmBGh4V9mVTjZWM1RY+ZMLx3tuHh0eemRppkIhUvv3oHmpbDjlVLqQ==@vger.kernel.org, AJvYcCWnKOB+zkZ4859vLBiQAedWT56XUM0g0JboUmQWlh4Cgp9kH4LIv7eSKbWKTMyNGKJbsIRArKZCV5i6SILvGw==@vger.kernel.org, AJvYcCXyISTw9HX2gYTsE30UIo4d9oKxnJ2bCpvBv8X/5HiKLnD7ztNPAsi/4RURjno1ADzWNmfUziJxbi2KyNtT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3qst5fbTvvYOCa/rsSE8w/7omsr8cDvk/uKxnqW+2et1bLT2l
+	kUSCuw+K0pXjOiihlPHaWKYq1kTSHfTdVRKP1QKpLBjwivvXOkM6e5Fn49LDWIfdVhzlNs+eQOR
+	SEMSsZv11nhDnG6H9Ovai/pxlCBO2jYlu
+X-Gm-Gg: ASbGncvcVLLwaAfqA8SPWnLeG5Q66AI1M1Xu+1S2XzexYaVsOHU1RV3jESbsa99kfVb
+	9C0vVkhkclEff/VYHUkfGjqgWxu80SkxPnDhJ6q1HKNgBoDeAhEJDL9RAHdqBnaqIeAeXDd1DjQ
+	Ysha7cULFZUJdVzgGa9FLFYhe8iAWIRuaWja7Z+A==
+X-Google-Smtp-Source: AGHT+IHq4qLBz9m2NFhBpeqJ4xzYrCtbHSLby1iC6TO1KwEL2ALcorCpci5X/OlhxzeL2mxeMbL7CXJXSKSSCVGVnxU=
+X-Received: by 2002:a05:6512:3b07:b0:544:13e0:d5b4 with SMTP id
+ 2adb3069b0e04-54838ede5b9mr1329754e87.10.1740151187041; Fri, 21 Feb 2025
+ 07:19:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] io_uring/io-wq: try to batch multiple free work
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-References: <20250221041927.8470-1-minhquangbui99@gmail.com>
- <20250221041927.8470-3-minhquangbui99@gmail.com>
- <f34a5715-fae0-406e-a27b-7e94e3113641@gmail.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <f34a5715-fae0-406e-a27b-7e94e3113641@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Moinak Bhattacharyya <moinakb001@gmail.com>
+Date: Fri, 21 Feb 2025 09:19:35 -0600
+X-Gm-Features: AWEUYZnvdT7tjZcJDsWqhEFZoe3RD5rXqne-b-tMkyFB4ytnTpybHbigd0_tFjA
+Message-ID: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+Subject: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/21/25 19:44, Pavel Begunkov wrote:
-> On 2/21/25 04:19, Bui Quang Minh wrote:
->> Currently, in case we don't use IORING_SETUP_DEFER_TASKRUN, when io
->> worker frees work, it needs to add a task work. This creates contention
->> on tctx->task_list. With this commit, io work queues free work on a
->> local list and batch multiple free work in one call when the number of
->> free work in local list exceeds IO_REQ_ALLOC_BATCH.
->
-> I see no relation to IO_REQ_ALLOC_BATCH, that should be
-> a separate macro.
->
->> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->> ---
->>   io_uring/io-wq.c    | 62 +++++++++++++++++++++++++++++++++++++++++++--
->>   io_uring/io-wq.h    |  4 ++-
->>   io_uring/io_uring.c | 23 ++++++++++++++---
->>   io_uring/io_uring.h |  6 ++++-
->>   4 files changed, 87 insertions(+), 8 deletions(-)
->>
->> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
->> index 5d0928f37471..096711707db9 100644
->> --- a/io_uring/io-wq.c
->> +++ b/io_uring/io-wq.c
-> ...
->> @@ -601,7 +622,41 @@ static void io_worker_handle_work(struct 
->> io_wq_acct *acct,
->>               wq->do_work(work);
->>               io_assign_current_work(worker, NULL);
->>   -            linked = wq->free_work(work);
->> +            /*
->> +             * All requests in free list must have the same
->> +             * io_ring_ctx.
->> +             */
->> +            if (last_added_ctx && last_added_ctx != req->ctx) {
->> +                flush_req_free_list(&free_list, tail);
->> +                tail = NULL;
->> +                last_added_ctx = NULL;
->> +                free_req = 0;
->> +            }
->> +
->> +            /*
->> +             * Try to batch free work when
->> +             * !IORING_SETUP_DEFER_TASKRUN to reduce contention
->> +             * on tctx->task_list.
->> +             */
->> +            if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN)
->> +                linked = wq->free_work(work, NULL, NULL);
->> +            else
->> +                linked = wq->free_work(work, &free_list, &did_free);
->
-> The problem here is that iowq is blocking and hence you lock up resources
-> of already completed request for who knows how long. In case of unbound
-> requests (see IO_WQ_ACCT_UNBOUND) it's indefinite, and it's absolutely
-> cannot be used without some kind of a timer. But even in case of bound
-> work, it can be pretty long.
-That's a good point, I've overlooked the fact that work handler might 
-block indefinitely.
-> Maybe, for bound requests it can target N like here, but read jiffies
-> in between each request and flush if it has been too long. So in worst
-> case the total delay is the last req execution time + DT. But even then
-> it feels wrong, especially with filesystems sometimes not even
-> honouring NOWAIT.
->
-> The question is, why do you force it into the worker pool with the
-> IOSQE_ASYNC flag? It's generally not recommended, and the name of the
-> flag is confusing as it should've been more like "WORKER_OFFLOAD".
+Add support for opening and closing backing files in the
+fuse_uring_cmd callback. Store backing_map (for open) and backing_id
+(for close) in the uring_cmd data.
+---
+ fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |  6 +++++
+ 2 files changed, 56 insertions(+)
 
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index ebd2931b4f2a..df73d9d7e686 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+  return ent;
+ }
 
-I launched more workers to parallel the work handler, but as you said, 
-it seems like an incorrect use case.
++/*
++ * Register new backing file for passthrough, getting backing map
+from URING_CMD data
++ */
++static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
++ unsigned int issue_flags, struct fuse_conn *fc)
++{
++ const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
++ int ret = fuse_backing_open(fc, map);
++
++ if (ret < 0) {
++ return ret;
++ }
++
++ io_uring_cmd_done(cmd, ret, 0, issue_flags);
++ return 0;
++}
++
++/*
++ * Remove file from passthrough tracking, getting backing_id from
+URING_CMD data
++ */
++static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
++ unsigned int issue_flags, struct fuse_conn *fc)
++{
++ const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
++ int ret = fuse_backing_close(fc, *backing_id);
++
++ if (ret < 0) {
++ return ret;
++ }
++
++ io_uring_cmd_done(cmd, ret, 0, issue_flags);
++ return 0;
++}
++
+ /*
+  * Register header and payload buffer with the kernel and puts the
+  * entry as "ready to get fuse requests" on the queue
+@@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
+unsigned int issue_flags)
+  return err;
+  }
+  break;
++ case FUSE_IO_URING_CMD_BACKING_OPEN:
++ err = fuse_uring_backing_open(cmd, issue_flags, fc);
++ if (err) {
++ pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=%d\n",
++     err);
++ return err;
++ }
++ break;
++ case FUSE_IO_URING_CMD_BACKING_CLOSE:
++ err = fuse_uring_backing_close(cmd, issue_flags, fc);
++ if (err) {
++ pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=%d\n",
++     err);
++ return err;
++ }
++ break;
+  default:
+  return -EINVAL;
+  }
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..634265da1328 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
 
-However, I think the request free seems heavy, we need to create a task 
-work so that we can hold the uring_lock to queue the request to 
-ctx->submit_state->compl_reqs. Let me play around more to see if I can 
-find an optimization for this.
+  /* commit fuse request result and fetch next request */
+  FUSE_IO_URING_CMD_COMMIT_AND_FETCH = 2,
++
++ /* add new backing file for passthrough */
++ FUSE_IO_URING_CMD_BACKING_OPEN = 3,
++
++ /* remove passthrough file by backing_id */
++ FUSE_IO_URING_CMD_BACKING_CLOSE = 4,
+ };
 
-
-Sorry for messing up in the previous reply, I've resent the reply for 
-better read.
-
-Quang Minh.
-
+ /**
+--
+2.39.5 (Apple Git-154)
 

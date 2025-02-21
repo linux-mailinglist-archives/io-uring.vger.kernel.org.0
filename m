@@ -1,194 +1,221 @@
-Return-Path: <io-uring+bounces-6605-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6606-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E99EA3FB1B
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 17:26:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A88BA3FB69
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 17:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D847A23E3
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 16:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8738880872
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 16:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2E91FF5EB;
-	Fri, 21 Feb 2025 16:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFA51CCEE0;
+	Fri, 21 Feb 2025 16:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="FnuSgRCg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N/YyxUFv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knyxOZ3I"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8E61DC07D;
-	Fri, 21 Feb 2025 16:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18DC286298;
+	Fri, 21 Feb 2025 16:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154659; cv=none; b=tMyIPrayeaQg5DZSvnVwX15ySKDsxEZtd9K/TUaUcio8c7Z4uSzUH86xK042qwmdV1SBBL+qDDC6lQHcy7xU2qTQX3f8WYdJDGYpIPz8MOiNOKdG7764TGfy/8r8uh5J01gOqhL1JQnZv0DWitot5zd4sMJYGIhiCmbycbDVMKs=
+	t=1740155086; cv=none; b=ULhRWceNWUs+kCQFT7CdnZ1uXL0qhxybSBwJz+QMNey0TFTibPD+ftwD7GiBAIxRG1ugfxorMO0WFW5v1LIfry7jauqaiU1u0l4COwEhG54xIzhZHaDZ+bh+1IF3LF8TZZXNNMrvETQqcWgV0eT9Ps4jZFFrUOcYrQdi9eYvlug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154659; c=relaxed/simple;
-	bh=UmsexPj0uS5upDkIMkslL7wlhLAmn8I+VAHDRTFfrPA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=rGOR7WxdMNlLee7b6wngPrrmDuI2RGTuKm2fZAil6ekPIQIzfBdT5AI5spOU/3KRI3GxWCOHgbQRdMBON+tBacf36RZsHNIjKo0w79Gsg43DLig+gLe3dKIGW4NtzjzW+Ce8fzwmAkgYwK9tfep8PCtoZ59AvoC4k+AL9IY+onY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=FnuSgRCg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N/YyxUFv; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7AA3B13809B6;
-	Fri, 21 Feb 2025 11:17:36 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 21 Feb 2025 11:17:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740154656;
-	 x=1740241056; bh=As4LYdoKt6G2SPn7LmN2IRqDn3P8jSGUvgLzO6fsoqA=; b=
-	FnuSgRCg3Nnh1Rjvoy5o8LakHnarhkeAborw18YS8Z5rZn90lGYxMg7Gx4y4QeUm
-	MCezLfOjYZQ4m+wNy1+ZnkhlOnHiO35W25EHCwgHKNBDafJqH8DvgmT205w07/fb
-	WlBQlicYUxX4JU1Zmk39y9S0qf3bfc2X1/cWmw+WYduXJDWiNxBVKBKak65yqWZL
-	B+H3/OiRpFeZis3W9cz8/KIQD78Ffyk8IieM4iO2HNQkqMH9HZDRsT9iXeEgxQ1D
-	IGmHM4mz4/TFAoovraPa60cdaGs4ITCjz1RXab9/OCaSXxhM10nQ/dWwa32AWOL4
-	qrxfatA0HZDtlxXKoAwG2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1740154656; x=1740241056; bh=A
-	s4LYdoKt6G2SPn7LmN2IRqDn3P8jSGUvgLzO6fsoqA=; b=N/YyxUFvtH0G8b7C3
-	dMAJ4RShZbqb7DW5ORpUymhfkLi17C0UUPgFZgRvDx8G//t+l5jGfDgpEwrQqnK4
-	6cvf845HAU2TeIMd3zhVdwMLGElPBgoCr82P8r/EcnCMzjaWsZMAf9NVrEeHI0TE
-	yZbgBAdeN8wZLNt0kG/ILZoHlTadcvA5vAlI4B8B//l31I5a757kuzOB9TxMuP6z
-	OqM/RT0RzyH/IXwHiKAa8wSBC9RoV7Twd/PXd87uhx+1sq8Io6M0W/g3NfF3iy61
-	acDoiAS0aVtmX6SUkvHYkp76KuTRjyipFjUdgFjs+HzlLKH4p+t0hvITX1TwdoWO
-	CuJ8Q==
-X-ME-Sender: <xms:IKe4Z42i3ts8lTp1KbBjOuBXh8CVvM7SeiKf_O2FXGai13k1WiCBtQ>
-    <xme:IKe4ZzEAyAspYxG33v46w-zX5eOAuv0nRmduZot1391Pjy-napJT2uCf2ZEG912op
-    EUDpx1vYVMGo7aT>
-X-ME-Received: <xmr:IKe4Zw5z4FbU8hEqla1HJYlKtGP2UtvSEU1b88XyPBE1nxz_2p0ae1nKpLAVM_RwNjf1M15gI3iS2-rh4AtNR7TFki34jo4n4-BsgxZC94JyU9XEvAhV>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdegjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuhffvfhgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
-    gurdgtohhmqeenucggtffrrghtthgvrhhnpefgtdegtdegfedtuddvffffgeeliefgkeef
-    teejgeehvdevleefgeeuvdduhfeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgt
-    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmohhinhgrkhgstd
-    dtudesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdr
-    hhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:IKe4Zx39uh5JLcJ9oIIoYItSTB0-4twDeCtFJFK4YToBzgyFxXBN1g>
-    <xmx:IKe4Z7GXBc60r55Kws1UNO566-1u4vaX5aG9gk_2TVLomgaV7BXSTg>
-    <xmx:IKe4Z684vZSfJkggHPC7trhwxpJTvI8C00mUBaCPvCfW4Nr42XWzTw>
-    <xmx:IKe4Zwnub8u1v5xQQo7HiaBF-OXN9jKyxGMMWzn__tKHrKYhcsi6bQ>
-    <xmx:IKe4Zw7FHcSpuFzI2_ngBPqQhzXJhBBcAnB1ed_SJoCIivLNeHSZQ3b6>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Feb 2025 11:17:35 -0500 (EST)
-Message-ID: <216baa7e-2a97-4f12-b30a-4e21b4696ddd@bsbernd.com>
-Date: Fri, 21 Feb 2025 17:17:34 +0100
+	s=arc-20240116; t=1740155086; c=relaxed/simple;
+	bh=Dp/fcJLtdSGhXa9dQRAR9mBpDX7HBvUKXgBwaJ+JQqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lSrD6bQb+lP097IZa7FF9GNVPCz1Ol/6UJetCTIPUFjYuRFkg+w+Rw567RR+0yIZSAz+yy6uY529SGq4IVg2cv2lSZvG8mdbBZlFjTteFdEx02TjSFv/gobaDx6t+3XwaFWILhQ9pz5hBPQkyoIIZaunQnvjeiao+qJZlD0AYnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knyxOZ3I; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso390489066b.1;
+        Fri, 21 Feb 2025 08:24:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740155083; x=1740759883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qPzDaZzpRQ7/HMYQGXfpHxcDpofOX3IFsTztgdcSTss=;
+        b=knyxOZ3IXgaFdAzN3S9hmBoQNvVPg0LPdHejrhOuK6H3J4/l/HReGfPEWr7IxdcgLq
+         OyVPrfaMugGJV0YbI6iGvbIi00mjqIWhMlDyejekOVICGQYTITLAWgVswdXso9xVHJOI
+         OU97V5yUWH8tdnSdEuKwo1s4AIH1yf1tNNz2YXvLRlvX+C7Y8C0Fkk7RpAMSVXoppDcS
+         5X5go+dfjmBY2uB9qjhYeTIlWZ1QiYUNRHJJZHdQ76iIT4rXu21QOljidF98zht4P3tA
+         nsQEiwrd6BAngQ9dT9+vhx8EAcXwi2L7weZ5bZSqXLHK0aNGU6Bkty22V2rXEhOTtWmK
+         7QZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740155083; x=1740759883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qPzDaZzpRQ7/HMYQGXfpHxcDpofOX3IFsTztgdcSTss=;
+        b=uNLAhTOCW8iskqu5Xy1IOM5uQwhRpSzXDVHXdXj0HDxdDxYkYDNSg9gtQIGhmq8wxu
+         il+Fl91zphdKni5/jxJoH4RHzPzqm8ke+UkxaTZQ2HXMyBZkBQOb3NkNTsPZPLpn329E
+         J/4uNCR0RakGDOBzqjd2grc5jBDKlRqRbkr9DD2V1Uab0sLJGgd+VeTkXRUZOoHju90j
+         z40mTuuTmFRg+KW/u+f7zVIvPRKkY5myXSwwB2MiycCoN3D9miR+TI7aHzYMRuoe+LLf
+         fBydEluHzCCr/dgHuV1NRreYs8rFIK9aP0bYsxVoZcuRJfLGXAcs+6YOE4CpgEoR3hhn
+         upxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyqPbWdNVBMzC1HciEKEIE4LMf7/0Dm/W55rZwvL8GvbSxs2WSeQhwvU930xhtstZw8DmQH6aB9R+nmhOQvg==@vger.kernel.org, AJvYcCV3N1HTdOy2HkcnQPfaEuOcKuwWvfGQgzb0WKt62CZntGNxcViFABAVdzK/eubSWOkcxLPtoOEBxw==@vger.kernel.org, AJvYcCV5GYZN3hk4849JYO+Gzus+3zcXd1suo/4kNzDOOTamlicIuM8+r1Hs6EbJr5lf4/SjCn0B6gTCaryAOm3b@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM1bkoc6lxgZKhsGl/nRQxMmeFnXCsvabDvCXClra9RZ/+xGOg
+	WUQirhGS9AlRfFZrx/QUfVPzsJr5AnIy29rb9r398NA8huL3b+zG26EyT78/bySGcdpXW0iZ1md
+	gCtpOdJC6l7IBB61rvIbG5+OSDNc=
+X-Gm-Gg: ASbGncuODO7yTAIRGn0WKKEeYa8M/Av2R/lzo/Og7RXVKdAsk6McxmuvywXLYqr5XJM
+	yp4Guxv/L/LBT5o40x40vvfVF0/KaXXWkrVtLaSUBJtOk0Xou8T9VvUHklGdJgogvGrk3mPY8QP
+	+cQ4ISA50=
+X-Google-Smtp-Source: AGHT+IHxAHmA0/IYbZFCwi6GGkFhZ5TUvIRv/rb38RgOtgzfDvS3PRkeWkd6r4LMJhqTOiZEf2/QI9fR0l+bjFUyEMw=
+X-Received: by 2002:a17:907:96a0:b0:aba:5f44:8822 with SMTP id
+ a640c23a62f3a-abc099b838amr436759166b.11.1740155082787; Fri, 21 Feb 2025
+ 08:24:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-From: Bernd Schubert <bernd@bsbernd.com>
-To: Moinak Bhattacharyya <moinakb001@gmail.com>,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>
 References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com> <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+In-Reply-To: <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 21 Feb 2025 17:24:31 +0100
+X-Gm-Features: AWEUYZk82-E1nugiwOLCFv6a1lThbUGEVFbwWR8Sh8-INRRVV2JSoQLZ-iiaOvI
+Message-ID: <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Moinak Bhattacharyya <moinakb001@gmail.com>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 21, 2025 at 4:36=E2=80=AFPM Moinak Bhattacharyya
+<moinakb001@gmail.com> wrote:
+>
+> Sorry about that. Correctly-formatted patch follows. Should I send out a
+> V2 instead?
+>
+> Add support for opening and closing backing files in the fuse_uring_cmd
+> callback. Store backing_map (for open) and backing_id (for close) in the
+> uring_cmd data.
+> ---
+>   fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/fuse.h |  6 +++++
+>   2 files changed, 56 insertions(+)
+>
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index ebd2931b4f2a..df73d9d7e686 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cm=
+d,
+>       return ent;
+>   }
+>
+> +/*
+> + * Register new backing file for passthrough, getting backing map from
+> URING_CMD data
+> + */
+> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
+> +    unsigned int issue_flags, struct fuse_conn *fc)
+> +{
+> +    const struct fuse_backing_map *map =3D io_uring_sqe_cmd(cmd->sqe);
+> +    int ret =3D fuse_backing_open(fc, map);
+> +
+
+I am not that familiar with io_uring, so I need to ask -
+fuse_backing_open() does
+fb->cred =3D prepare_creds();
+to record server credentials
+what are the credentials that will be recorded in the context of this
+io_uring command?
 
 
+> +    if (ret < 0) {
+> +        return ret;
+> +    }
+> +
+> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> +    return 0;
+> +}
+> +
+> +/*
+> + * Remove file from passthrough tracking, getting backing_id from
+> URING_CMD data
+> + */
+> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
+> +    unsigned int issue_flags, struct fuse_conn *fc)
+> +{
+> +    const int *backing_id =3D io_uring_sqe_cmd(cmd->sqe);
+> +    int ret =3D fuse_backing_close(fc, *backing_id);
+> +
+> +    if (ret < 0) {
+> +        return ret;
+> +    }
+> +
+> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> +    return 0;
+> +}
+> +
+>   /*
+>    * Register header and payload buffer with the kernel and puts the
+>    * entry as "ready to get fuse requests" on the queue
+> @@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
+> unsigned int issue_flags)
+>               return err;
+>           }
+>           break;
+> +    case FUSE_IO_URING_CMD_BACKING_OPEN:
+> +        err =3D fuse_uring_backing_open(cmd, issue_flags, fc);
+> +        if (err) {
+> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=3D%d=
+\n",
+> +                    err);
+> +            return err;
+> +        }
+> +        break;
+> +    case FUSE_IO_URING_CMD_BACKING_CLOSE:
+> +        err =3D fuse_uring_backing_close(cmd, issue_flags, fc);
+> +        if (err) {
+> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=3D%=
+d\n",
+> +                    err);
+> +            return err;
+> +        }
+> +        break;
+>       default:
+>           return -EINVAL;
+>       }
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 5e0eb41d967e..634265da1328 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
+>
+>       /* commit fuse request result and fetch next request */
+>       FUSE_IO_URING_CMD_COMMIT_AND_FETCH =3D 2,
+> +
+> +    /* add new backing file for passthrough */
+> +    FUSE_IO_URING_CMD_BACKING_OPEN =3D 3,
+> +
+> +    /* remove passthrough file by backing_id */
+> +    FUSE_IO_URING_CMD_BACKING_CLOSE =3D 4,
+>   };
+>
 
-On 2/21/25 17:14, Bernd Schubert wrote:
-> 
-> 
-> On 2/21/25 16:36, Moinak Bhattacharyya wrote:
->> Sorry about that. Correctly-formatted patch follows. Should I send out a
->> V2 instead?
->>
->> Add support for opening and closing backing files in the fuse_uring_cmd
->> callback. Store backing_map (for open) and backing_id (for close) in the
->> uring_cmd data.
->> ---
->>  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fuse.h |  6 +++++
->>  2 files changed, 56 insertions(+)
->>
->> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->> index ebd2931b4f2a..df73d9d7e686 100644
->> --- a/fs/fuse/dev_uring.c
->> +++ b/fs/fuse/dev_uring.c
->> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
->>      return ent;
->>  }
->>
->> +/*
->> + * Register new backing file for passthrough, getting backing map from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_open(fc, map);
-> 
-> Do you have the libfuse part somewhere? I need to hurry up to split and
-> clean up my uring branch. Not promised, but maybe this weekend. 
-> What we need to be careful here about is that in my current 'uring'
-> libfuse always expects to get a CQE - here you introduce a 2nd user
-> for CQEs - it needs credit management.
-> 
-> 
->> +
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
->> +
->> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Remove file from passthrough tracking, getting backing_id from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_close(fc, *backing_id);
->> +
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
-> 
-> 
-> Both functions don't have the check for 
-> 
-> 	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
-> 		return -EOPNOTSUPP;
-> 
-> but their ioctl counter parts have that.
-> 
+An anecdote:
+Why are we using FUSE_DEV_IOC_BACKING_OPEN
+and not passing the backing fd directly in OPEN response?
 
-In order to avoid code dup, maybe that check could be moved
-into fuse_backing_open() / fuse_backing_close() as preparation
-patch? Amir?
+The reason for that was security related - there was a concern that
+an adversary would be able to trick some process into writing some fd
+to /dev/fuse, whereas tricking some proces into doing an ioctl is not
+so realistic.
+
+AFAICT this concern does not exist when OPEN response is via
+io_uring(?), so the backing_id indirection is not strictly needed,
+but for the sake of uniformity with standard fuse protocol,
+I guess we should maintain those commands in io_uring as well.
 
 Thanks,
-Bernd
+Amir.
 

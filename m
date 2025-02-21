@@ -1,266 +1,145 @@
-Return-Path: <io-uring+bounces-6614-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6615-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F06EA3FD5E
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 18:25:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2212EA3FD71
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 18:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52B61891E13
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 17:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C074262A6
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2025 17:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FE82500CC;
-	Fri, 21 Feb 2025 17:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40192505BA;
+	Fri, 21 Feb 2025 17:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P06Dfi0p"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S97xNopL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2D2500B1;
-	Fri, 21 Feb 2025 17:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630252500B1
+	for <io-uring@vger.kernel.org>; Fri, 21 Feb 2025 17:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158739; cv=none; b=UCN6i3DIH3ivNp+azE5eg8YFq8JS7uQOg3O+wkat6v/f5eJ6n85QaSiZGQx/ll0i9wo9gKqDrkBrcDwOgRjZ/wZ9paBXsf/OVSSHtEyvthP9oZR28Yp1FYsPtrgMAJapRUyBOlZImSH7haniPMZwXZpnV51pKTTHJBgXd8nQA0Q=
+	t=1740158940; cv=none; b=jXq3/VbOH87Mcw0D+5O7rmwng1BSsBr2DanektJmebyH14DN6FKnhmiLX9PEVuse327+G9tOSi5suedr1ze7D6VZlKePgIswqi0HQJ0rMuG5iepsrZnPfos+0VxUz0g7tOD8435xvsaEAKL5siWZjcEDjzqTBSEgHNs1+dpEYQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158739; c=relaxed/simple;
-	bh=DTLCcsRH2tYUJKtQ6O0fhalRJ4POnY88Ayew7fIXRes=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nAd3W/lBub2NkMZuoZT1koUs5wGW79QZQVrZ9jz1As1UWM2ADeDQOsDyB1t5Kfu9Vx/qlLivPXEghYRBlbm0KtjHccXecAhLDBfGjZNuXmJcRYJuKN5YIqjzOMQiYbugZAoxv162C7Zl+9phk6QCoDOcJ4vXp1FLA9W7gjhDKPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P06Dfi0p; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so6309307a12.1;
-        Fri, 21 Feb 2025 09:25:37 -0800 (PST)
+	s=arc-20240116; t=1740158940; c=relaxed/simple;
+	bh=ssnP7xR5IX0s1ZnFseYvUfkt85pqBiRp2h4Q4S5mkyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VXBNWSBiC0MIfAXBVTvPtmza7Es9bXWWlIcHqLoRm8g5Cx9YAVm7aBdFOsnZhoImFIqB9jQ0I+4E661dF4i7Js1GJYND9oiMC+PRhZxK+b0608xELnrjLTLE9OfE6xAFs9f0RmrBF4qQZX5sIM2TdqOL/NAwO9S1VszTnD0XF+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S97xNopL; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3ce915a8a25so7001395ab.1
+        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2025 09:28:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740158736; x=1740763536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mt6xfWZKFzy6o/w7cptGQJi/Nd1+VlAbNwsQ3sQVT6o=;
-        b=P06Dfi0pd4r1xGm4HCSpPLRV7td1i+olmsdrQULFe051Bg2xdtdaJ6F1JljqzZB0Ju
-         0bhh12OntPrJreqDDXL9vn5witcddQX0mLP/DMILua4Jj6qdcMvAp5xhkQkPlvC7X+8q
-         96jUnMg0r9jZkjqRpeG8Nn2CTBF1Ajo/XENDx9eyI0fK2VKIU9+EKDxfKPeyrwSzHklL
-         /7SPhS0I3esOlX2RIm+zbM3ahQl0sq9tzpdkHV7BSkCYgisEU/wX1BqcwAj1+Zv2Mml/
-         wZqlWcAMjeqRgE1V3bAIbim6X9MnuDHj4ZiP2qAaO9YvMJbsrWfH1ap/4ngTLZ2ohsNg
-         7vaA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740158937; x=1740763737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NDZTfHmSgit6Hdb4LSC2+LwR3rhMNBxY6UI+uK+57J4=;
+        b=S97xNopLG5OylwEM7sDy5EQavgtOf+MayQx9bnWjpArBWh3mp4EzY3Ef8X3nBfY1we
+         3bwqKwCDMiErQeyihY6Bsm74VFfNAKPZienADefq/ObKYtEqymoWBZ2HMVdqLGyhzRIf
+         YZqTGLKUg8sKR/ynQUL+QLbbKvhBr6+YvRR3BGoc6kMaL3cgA1VCienKbW2raHo2IBXA
+         d3Ip7Uku46zFbuj3JtIruCf1N6eS/zvLdgkmcN9zc9+pUhV+ScICNER/NypUUha0gjlF
+         KCVk2W99bX+ce0rS+AL7zADTbkWX6EyDubqLWx7eSCLRBmoPx18v15kgJhLqb08detDO
+         V6NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740158736; x=1740763536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mt6xfWZKFzy6o/w7cptGQJi/Nd1+VlAbNwsQ3sQVT6o=;
-        b=I4xLpbllKM3WHA2h1m2OGuP34x4czRgLD+uUAEsS4uq+Y7jS5Bu8DZCUj3244gGcqn
-         HMcYAQG7Xj1+4Hoe+Q1/wbOnP0DlpRkmV4khLr3leYCBSMZ7LRTLzdt52VXuuWzPWg1Y
-         sTTzC0SlU+0TtntO5Fmc3JuI5whjtkDgHpiqFil02219zLzsZ/hKWHGEuP1Lb1IPAouf
-         KIGgb1xsdLKHP6E6XWH4+xy9W/nRONx7NNhp/xtxZeSf83ecjwfIqfg3z61KfcyO0nhL
-         H0D7XsV2AHCeqVFgMJDEEHjKN5U7LFO3OqY7Z6zPN+d3W4a0cGxJDXeJV9QqHQ3O2mfw
-         bKpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSWRUFtcgSN9GBQ3bZyXWstT30Swz7z+20U3x1FzlPgy7cw5dRisN52q29P9Gdsg+uyQEB3yGwhQ==@vger.kernel.org, AJvYcCVWZeom6qKq/2EeJicl6FU/5/oN1w0hp0f+PWuhVR+lCKK/yQQqjbWGWSXYqlpCK1J4uJnZ+DeTKpR4jcfxjw==@vger.kernel.org, AJvYcCWw6qfZis2hn50tiCiyFzmQcUg1km4rlcr3Iqb7m6/QVF6msOToWSmNXptCSU8AB5xb4KOZNhMcVWSWeuDq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/SyOBynVntsLIlQAGVqBRvPDW7aloj+hNX2u8q7BVox84ZOG8
-	SCofjyJnMQtM8mTmc7PWTXgBSrcFzQIKOqMBPGPNwyzemvJ5dbbSpjylG8huNHEsBnbfHo3QOx8
-	GUmgrIEuF4irTY8hXxU85YywbQDrGvZSiRB4=
-X-Gm-Gg: ASbGncvQ6nsj0WzCLSwa2yoRyCAkO/W+64OrH2YlkMrytf9cngTYC49T6Ye8YuY29iP
-	u+yvx+l0d9mCI3lkrOawoh6vn8kIw9zQPGWhuWAQrISru2e6V3yda1g2esCEhQnVZsCr3o+hMqZ
-	mdUJ1Y/pc=
-X-Google-Smtp-Source: AGHT+IFoCWue0lioXG2ZyM8FG1Dpra6vwKZlw29QaoND/rP/jXqNXcr5SZt1dhKumSX57ytDqEnMlW0+uuJLY5Q+d64=
-X-Received: by 2002:a17:906:380d:b0:abc:2aca:e5e1 with SMTP id
- a640c23a62f3a-abc2acae668mr27789166b.8.1740158735577; Fri, 21 Feb 2025
- 09:25:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740158937; x=1740763737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NDZTfHmSgit6Hdb4LSC2+LwR3rhMNBxY6UI+uK+57J4=;
+        b=W7zrrVjrTwsmXAtSzbU/cgcbfSAxEh/J8HiTZY43TijTG26r0beiExbJA3Fqxd/JOn
+         nPnpARPStFXOmtXfYnzxE0Qz3koWF5EFbQLyQYQR9Og7RBgLJPVcl3qjXOO9sudW1hAa
+         AHriXCvWTXFC1X6g0tt4x5hQR0zPWg8s+T84yuOFNjbj+1oruOUZHP96jjxxnjAAfJCw
+         eunJjOnxbGGQ0H+gRvX6icSs8vAL2i8+Uu5k2Sx182lF+iiyNoWoWpZr9tdc+UWpuU5q
+         B1eD+f+spPSAZkBRHpU0r+baF673otwpoCwc3htLE27C8WwK86QTU8D3dqmrnFtw35Fd
+         CSaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgU3vbceUIvoq1YOCQFVOn4fA8PPLSstFXLsrWMtROBts0NDuRch/pMaguCLnvI+mJgJd6nJNHBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlehqrWK6oKbDsE1qE/1cXbX4y00XLwyrFagqU9/B7z1SXFbmY
+	QaXQcaq4/FFHsCkV0yH8RpxRzkBRQ+YRqb39cqGOgo9Duodz6Jyyg42cfhDTgHg=
+X-Gm-Gg: ASbGncuK8M410cV0pdoq03GNd9hj2m16yJ4fS88NULZneBuO0yvtNtmeim0GMMd9AVr
+	iMRYrFs+82g7HX6j85ZxXbeMUMqvdwFLg9SSAGS1tigmK8eg02svASbq3CfEeVHL2Esxs87DzNC
+	qKODrGE1glzXnV00gwDmgmR3pbJ2g5CXQCIKTJ6XVdmYK2tfIKs9RhWNiA6JEsybPodkTcC5yh7
+	+QQ0rhiZCCkr6OesTVZB2toA/gBeFnTZEbCLFIIwPiKE5VJodKSDTzPvFNd05xPRTWGOnHBGycz
+	EQmtK6pBQNa0wMfTgpjqkeM=
+X-Google-Smtp-Source: AGHT+IESXRf1yl6h7PyEHQmBUGrv9XVl2XmLwA/QxwaTFWH5Y02ORzR6Hbof0RMkoUqPvVurTqR6Jg==
+X-Received: by 2002:a05:6e02:1a2a:b0:3d2:6768:c4fa with SMTP id e9e14a558f8ab-3d2caf0980emr47338065ab.21.1740158937487;
+        Fri, 21 Feb 2025 09:28:57 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee93efe46csm2701099173.132.2025.02.21.09.28.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 09:28:56 -0800 (PST)
+Message-ID: <7980bc81-8077-4c99-88e4-19188745d3a2@kernel.dk>
+Date: Fri, 21 Feb 2025 10:28:56 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com> <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com> <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
-In-Reply-To: <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 21 Feb 2025 18:25:24 +0100
-X-Gm-Features: AWEUYZmT2L1W8ibOnlZGVriYXu5FQq2RB5SjuEBMap_MwiVMS4ecV0w52p2KF4g
-Message-ID: <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Moinak Bhattacharyya <moinakb001@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+ io_uring_mmap
+To: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>,
+ Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: David Wei <dw@davidwei.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20250221085933.26034-1-minhquangbui99@gmail.com>
+ <590cff7ccda34b028706b9288f8928d3@huawei.com>
+ <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
+ <0c1faa58-b658-4a64-9d42-eaf603fdc69d@kernel.dk>
+ <d510f0c5-d25d-44cb-9974-46026964beca@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <d510f0c5-d25d-44cb-9974-46026964beca@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 6:13=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
->
->
-> On 2/21/25 17:24, Amir Goldstein wrote:
-> > On Fri, Feb 21, 2025 at 4:36=E2=80=AFPM Moinak Bhattacharyya
-> > <moinakb001@gmail.com> wrote:
-> >>
-> >> Sorry about that. Correctly-formatted patch follows. Should I send out=
- a
-> >> V2 instead?
-> >>
-> >> Add support for opening and closing backing files in the fuse_uring_cm=
-d
-> >> callback. Store backing_map (for open) and backing_id (for close) in t=
-he
-> >> uring_cmd data.
-> >> ---
-> >>   fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++=
-++
-> >>   include/uapi/linux/fuse.h |  6 +++++
-> >>   2 files changed, 56 insertions(+)
-> >>
-> >> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> >> index ebd2931b4f2a..df73d9d7e686 100644
-> >> --- a/fs/fuse/dev_uring.c
-> >> +++ b/fs/fuse/dev_uring.c
-> >> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd =
-*cmd,
-> >>       return ent;
-> >>   }
-> >>
-> >> +/*
-> >> + * Register new backing file for passthrough, getting backing map fro=
-m
-> >> URING_CMD data
-> >> + */
-> >> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
-> >> +    unsigned int issue_flags, struct fuse_conn *fc)
-> >> +{
-> >> +    const struct fuse_backing_map *map =3D io_uring_sqe_cmd(cmd->sqe)=
-;
-> >> +    int ret =3D fuse_backing_open(fc, map);
-> >> +
-> >
-> > I am not that familiar with io_uring, so I need to ask -
-> > fuse_backing_open() does
-> > fb->cred =3D prepare_creds();
-> > to record server credentials
-> > what are the credentials that will be recorded in the context of this
-> > io_uring command?
->
-> This is run from the io_uring_enter() syscall - it should not make
-> a difference to an ioctl, AFAIK. Someone from @io-uring please
-> correct me if I'm wrong.
->
-> >
-> >
-> >> +    if (ret < 0) {
-> >> +        return ret;
-> >> +    }
-> >> +
-> >> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-> >> +    return 0;
-> >> +}
-> >> +
-> >> +/*
-> >> + * Remove file from passthrough tracking, getting backing_id from
-> >> URING_CMD data
-> >> + */
-> >> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
-> >> +    unsigned int issue_flags, struct fuse_conn *fc)
-> >> +{
-> >> +    const int *backing_id =3D io_uring_sqe_cmd(cmd->sqe);
-> >> +    int ret =3D fuse_backing_close(fc, *backing_id);
-> >> +
-> >> +    if (ret < 0) {
-> >> +        return ret;
-> >> +    }
-> >> +
-> >> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-> >> +    return 0;
-> >> +}
-> >> +
-> >>   /*
-> >>    * Register header and payload buffer with the kernel and puts the
-> >>    * entry as "ready to get fuse requests" on the queue
-> >> @@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
-> >> unsigned int issue_flags)
-> >>               return err;
-> >>           }
-> >>           break;
-> >> +    case FUSE_IO_URING_CMD_BACKING_OPEN:
-> >> +        err =3D fuse_uring_backing_open(cmd, issue_flags, fc);
-> >> +        if (err) {
-> >> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=
-=3D%d\n",
-> >> +                    err);
-> >> +            return err;
-> >> +        }
-> >> +        break;
-> >> +    case FUSE_IO_URING_CMD_BACKING_CLOSE:
-> >> +        err =3D fuse_uring_backing_close(cmd, issue_flags, fc);
-> >> +        if (err) {
-> >> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=
-=3D%d\n",
-> >> +                    err);
-> >> +            return err;
-> >> +        }
-> >> +        break;
-> >>       default:
-> >>           return -EINVAL;
-> >>       }
-> >> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> >> index 5e0eb41d967e..634265da1328 100644
-> >> --- a/include/uapi/linux/fuse.h
-> >> +++ b/include/uapi/linux/fuse.h
-> >> @@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
-> >>
-> >>       /* commit fuse request result and fetch next request */
-> >>       FUSE_IO_URING_CMD_COMMIT_AND_FETCH =3D 2,
-> >> +
-> >> +    /* add new backing file for passthrough */
-> >> +    FUSE_IO_URING_CMD_BACKING_OPEN =3D 3,
-> >> +
-> >> +    /* remove passthrough file by backing_id */
-> >> +    FUSE_IO_URING_CMD_BACKING_CLOSE =3D 4,
-> >>   };
-> >>
-> >
-> > An anecdote:
-> > Why are we using FUSE_DEV_IOC_BACKING_OPEN
-> > and not passing the backing fd directly in OPEN response?
-> >
-> > The reason for that was security related - there was a concern that
-> > an adversary would be able to trick some process into writing some fd
-> > to /dev/fuse, whereas tricking some proces into doing an ioctl is not
-> > so realistic.
-> >
-> > AFAICT this concern does not exist when OPEN response is via
-> > io_uring(?), so the backing_id indirection is not strictly needed,
-> > but for the sake of uniformity with standard fuse protocol,
-> > I guess we should maintain those commands in io_uring as well.
->
-> Yeah, the way it is done is not ideal
->
-> fi->backing_id =3D do_passthrough_open(); /* blocking */
-> fuse_reply_create()
->     fill_open()
->       arg->backing_id =3D f->backing_id; /* f is fi */
->
->
-> I.e. there are still two operations that depend on each other.
-> Maybe we could find a way to link the SQEs.
+On 2/21/25 10:06 AM, Pavel Begunkov wrote:
+> On 2/21/25 16:39, Jens Axboe wrote:
+>> On 2/21/25 5:20 AM, Pavel Begunkov wrote:
+>>> On 2/21/25 09:10, lizetao wrote:
+>>>> Hi,
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Bui Quang Minh <minhquangbui99@gmail.com>
+>>>>> Sent: Friday, February 21, 2025 5:00 PM
+>>>>> To: io-uring@vger.kernel.org
+>>>>> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov
+>>>>> <asml.silence@gmail.com>; David Wei <dw@davidwei.uk>; linux-
+>>>>> kernel@vger.kernel.org; Bui Quang Minh <minhquangbui99@gmail.com>
+>>>>> Subject: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+>>>>> io_uring_mmap
+>>>>>
+>>>>> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
+>>>>>
+>>>>
+>>>> Maybe fixed-tag should be added here.
+>>>
+>>> No need, it's not strictly a fix, and whlist it's not yet sent to
+>>> linus, the tags only cause confusion when hashes change, e.g. on rebase.
+>>
+>> I do like using fixes still, if only to provide a link to the original
+>> commit without needing to dig for it. And yeah there's the occasional
+>> rebase where I forget to update the sha, but those get discovered pretty
+>> quick.
+> 
+> Maybe a "Link" tag would be better or some more inconsequential
+> "Refers-to", but otherwise you can call it a feature and avoid the
+> hassle of fixing it up, and people getting spammed by tooling,
+> and Stephen having to write about broken hashes.
 
-If we can utilize io_uring infrastructure to link the two
-commands it would be best IMO, to keep protocol uniform.
+Having the sha is nice though so people can just look it up. But yeah
+the tag doesn't really exist, and I think we have way too many tags
+already, which is why I just use Fixes for stuff like that too. Link
+is good for email discussion, though 99% of the time it ends up just
+being a patch posting and not really interesting...
 
-> Or maybe easier, if the security concern is gone with IO-URING,
-> just set FOPEN_PASSTHROUGH for requests over io-uring and then
-> let the client/kernel side do the passthrough open internally?
+-- 
+Jens Axboe
 
-It is possible, for example set FOPEN_PASSTHROUGH_FD to
-interpret backing_id as backing_fd, but note that in the current
-implementation of passthrough_hp, not every open does
-fuse_passthrough_open().
-The non-first open of an inode uses a backing_id stashed in inode,
-from the first open so we'd need different server logic depending on
-the commands channel, which is not nice.
-
-Thanks,
-Amir.
 

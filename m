@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6629-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6630-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DA8A40473
-	for <lists+io-uring@lfdr.de>; Sat, 22 Feb 2025 01:55:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931C4A4047A
+	for <lists+io-uring@lfdr.de>; Sat, 22 Feb 2025 02:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DB819C596F
-	for <lists+io-uring@lfdr.de>; Sat, 22 Feb 2025 00:56:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC9370272B
+	for <lists+io-uring@lfdr.de>; Sat, 22 Feb 2025 01:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F47761FFE;
-	Sat, 22 Feb 2025 00:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB6917578;
+	Sat, 22 Feb 2025 01:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzcjHB2W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeuzGSeJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC24EB50
-	for <io-uring@vger.kernel.org>; Sat, 22 Feb 2025 00:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E0B10E4
+	for <io-uring@vger.kernel.org>; Sat, 22 Feb 2025 01:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740185751; cv=none; b=sLVNd6cMT+Usv5f6ycNextbHctfCJenenCeyTQKtSZOALQYNGlOytyW1DOisMy/4Ljoai/PoXK4lF2E2dmSwXGO40xLiGEHCQ5vuVer6DaZLG+JXyjQZKeCAX/roEFUMoE0cAudIz8jl4NXqsv6zSa6kBEcaeQIs/5CV8RL/QNE=
+	t=1740186019; cv=none; b=MwSdJ7xXZy8kPQZvJhTULfoHWyjabVfs/dZNztS/zo4y8YVnrb4jrfAi1GJpjsw5NhtF/1vEBkJFqvdsVgPKjlsVLOXSNzvCmj7xe4laTk665hazrCq7QllpENy5RAQTHqdfOwl73ymrHAX7Ubu0WWD5MRjx1jEMw/H3/UZ7d1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740185751; c=relaxed/simple;
-	bh=LO2x/lysr/+Fds1t6pcE+AWWHLI23N+YFUJVgWO1MrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A4W7KaQiKPcM4SiegTpTnWrvPa5A6x917/9ZxcP06wjDB04swnVgO3jOJi/ltqg0yATokTZCvAYY2Iq/2Fi8cXtgHXI6tUTrK5CFbsM1V6Nxsh2OKQEaq6V87ib0pg9vVt+psb9Wi4Zr85LK+v3tS2+vFubQxup/k7kZYoOGhDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GzcjHB2W; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1740186019; c=relaxed/simple;
+	bh=fvZjyNq7uur6pK2DO6TAWYg9sCGNdv+vwh9Xi/shr6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=R+fLjtcBsK2By3fLi18osoXNMEXklOgXdKP9vTY8XJryowdtIvK3a7VnMSp/Y9HjuTF3qkP2xTlkTXRyZoiHswanUobWIWi/vpTC/ej70vML2DDLDo3iRMyE6slsvDPEburp5swYXFuQkklGWLYMpTlveR018MaooUPPvvDxt5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeuzGSeJ; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f403edb4eso1510045f8f.3
-        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2025 16:55:49 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4398c8c8b2cso26980265e9.2
+        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2025 17:00:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740185748; x=1740790548; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740186016; x=1740790816; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gWa/MoWZtJ4xS8/lpReEkMdDgYIr0CpjRTYGP783zl0=;
-        b=GzcjHB2WDazU+Z284qrd62/zlwwHmgVtWf2tuV0vc8nD2ojqy303IN+65s+TFJUW4x
-         xrkKXEITmAbuY3F3qlhOCf53JI51wAztTmH8Glm4cf7kZRGvFMt6KvZDqKKmQRIWVucs
-         UiqZXdPwMGpB3B6Zwo0W2UgGDg8ODe+pR3MjixxplrMGP+aQe7GUIMu7OiT79qJtPzWj
-         yQATd3g76wzVUtJleOb/zT1AxVAzQ4/ggF/ElxmIVmiu3Kk689EOsStuJ96x2zNKQDVd
-         lJ3RdmR1RUpn+OcxdfFLlEi+Y/NZHX+0CfNqKXwpqFjz5SpYn84aFvPFJnhMQ4Kb/62/
-         LVdg==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SHzEcslDV1V1fGYHCmENge5jvwOluqiG5GCHUFVoMDs=;
+        b=BeuzGSeJf5wyWRGFfqS+PvZJQCWSIFge4Bvl3t/Ckz8pRe7dVlY5ENZzNfeKdr8Qdg
+         XSn1YxNbvi+9thVgmXvJdko7SEB292VUD2XnwUsnG8q2D84s/qsicHZzR8Zc9pYQO6RM
+         3WSLGw+QzA9L4FpfYsCkBjV4uJAkLhOsziSSy17Of9Qbh8rM7SH7ZT4OIsEVXkKgmSi8
+         N4qr75tqU40KqeF/xtH12QB9kirD5t3O0vd7Rim35r89GbcBM0fj04yRme7xttj9oRc6
+         t0OnRHkkzWUCB9Q/Kt6eweTbkXMbR7yDlzKkyJqe8A5kl4zY6OHXZWsfzDj9K7fK04s1
+         SvIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740185748; x=1740790548;
+        d=1e100.net; s=20230601; t=1740186016; x=1740790816;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWa/MoWZtJ4xS8/lpReEkMdDgYIr0CpjRTYGP783zl0=;
-        b=BM+EBYs5mGRB2epVzap9w/NLDYcaLnNXKOANtBoI9XzMRxqbmvlCiC8kaYdQ3IPrYw
-         AilWV4vnc8ZbCnD0AWnD+LLBgb4X61WC3Yld8tqaBEZHgj4MBV10SjYbQTYKUDA+eah2
-         m0lG7Wkdo4ILOWWcS63onuEUnSxyrO+vyTQLuDvbaEJyhU7CZJV0XW6b2Az+wrvuTxLN
-         9sKc0RwYQUhDiP71jCVK6BKmh8Z3p1VfTqUV7t9ZWxDszZzmE114497tYzaOE3VzCbRO
-         t9sjiIjeNuJsI5nLAi58q0Lkl4FFEZcUGPby63JXZRGX7BkI7MiK6xHmTLkqmoYCWeSL
-         ebCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfQm6P+3jYM/hYIIVqT77H/HEpWtrwzRrN3Rc10jpboOGhhyEMIuYTFtLjkaFV5tuWsRFcaIUHmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZVJWDfn8BMa4V5lEQ3bLlIs4F9UIOBfW8jP1nHrDX6rR2k/Jr
-	rxz9CCtdI3q5fo5ulT5wc5YhiFRp88Y14KKCLQsNqMX4Hh5AnZVP
-X-Gm-Gg: ASbGncs8aw69RE+Eg3UidWfIC9Pvt9/sgFOSowbUgsTS/NiN9iM3FKtFrl/DOnh587G
-	CDJ1BPsfLHqB9FppiHev5iXE57q+4S5IggT4PJG0wi6YJ8+zRpoUQDqq4lzBl++u6hYcEiwVPfJ
-	cVLQuW0z8fhamg7D6AC3/3gEYlNELpriwYiqoi52jgmmmW4fIdug+EQcOWys66kZ8/2fORzVZaD
-	yM6R+gG1LTD3+Lr52Z9tGn7uoKxE34UApFEoN/deCimb4Ai0/dUwaFIhgOfZHhkF9Ys7HY8Gy0q
-	/y4lpwwL2uYkxNDfOGs92fcx+XlkvhcdUoo5
-X-Google-Smtp-Source: AGHT+IFPkA16Ytjx0mLgICM2pi7KiE3Q9Lcuezilfn9mbYmEHWhJ8Rp4ShuBGQJOsmgMdU8+j8nYxw==
-X-Received: by 2002:a5d:5f43:0:b0:38f:3224:65ff with SMTP id ffacd0b85a97d-38f6e7563e8mr4566471f8f.5.1740185747658;
-        Fri, 21 Feb 2025 16:55:47 -0800 (PST)
+        bh=SHzEcslDV1V1fGYHCmENge5jvwOluqiG5GCHUFVoMDs=;
+        b=dBY8R8qZJMaMoKSx39G/2dip6jNaHkZJx4ASgiz3FcebuyYpWtnyGYIk6NxigqDaHB
+         r3HGtHzAwXBKko3YJcRvdDrMo2FGTHilbYaLxcQS/3DcEpfqVnlrFKAGaNstt1nBxBCp
+         AJqWcwEJR4i4G0kg4vQI6qdseWwxVr+3F3QZ5BOqp00K/AyAMJteZH6x0ByMDod/NxDu
+         JCgmxe8tDhESUwpXNqgkxSu9Zm4JD2ytM4g6ukYIcv9G0XqlyG49G+LMqRRs/Tg4tirP
+         SsMNVRmSjJG40nBOkT00dLyO4EtcRuLsoZ+h3VrMLUdf2KOQLcNazBT0HRXhxfBiRQiT
+         avMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyZFO8SAZfPmUZeAsj03b1jzUtZ2lXlfSWiSKn1nTnuZuCN6GKcDdrp3cODejTKgDjFlEiRTdiSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3TBSOnL3J5DwFYb/+hBlSi7/iaIpzIEVPwD6fmjiN9X3wANwE
+	3DwwR6a2gfQE8NTJd88hHqkMKKiBptiaOr7mGAsNmCfOXOAviNWH
+X-Gm-Gg: ASbGncvyMPNwFkADYB+AA/vKhaPWv1ouBgFj85+bzbyelokI0o2wR5aG7QjVcUt5OVp
+	NJ7DbIsekc5s0eesBXYNEl2w+2nq+LKmZgOLw/h6KRm35uXusxc10SYYOqDrR7/Djcq6SZhN0l9
+	hKpASq3RiYaiqRVY/mUixUuvh12aoUX+nS9LR3SpHrhsvhNgoAESGqx49DhgyM41r8wBDcKfJI7
+	+XtpONK46gINteEzx8uvDRViUHIRrQ6j8s5GEToq2wChfsD4yo6GMuGPvMoOvzRvUxzk+Nj0QXq
+	A1Zax4RjzYDb/Js9XYypfo0HM612x74fHDAI
+X-Google-Smtp-Source: AGHT+IEhHRC5XW0oKI5o10y2qeAjxhtrlqbwsVB8/J+p/B9AkaR8xHE59gkAklKqwa1UAgZGNcNHuQ==
+X-Received: by 2002:a05:600c:5125:b0:439:8c9c:6d32 with SMTP id 5b1f17b1804b1-439ae1f0d96mr49463555e9.13.1740186016131;
+        Fri, 21 Feb 2025 17:00:16 -0800 (PST)
 Received: from [192.168.8.100] ([148.252.141.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc50sm25210832f8f.34.2025.02.21.16.55.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25915785sm25497340f8f.58.2025.02.21.17.00.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 16:55:46 -0800 (PST)
-Message-ID: <92bc1fca-ea5e-42eb-bdb3-c53854193ce7@gmail.com>
-Date: Sat, 22 Feb 2025 00:56:51 +0000
+        Fri, 21 Feb 2025 17:00:14 -0800 (PST)
+Message-ID: <f8409430-a83d-4bda-a654-3f9bedb36bbc@gmail.com>
+Date: Sat, 22 Feb 2025 01:01:19 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,48 +82,118 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 1/2] io_uring/zcrx: add single shot recvzc
-To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
 References: <20250221205146.1210952-1-dw@davidwei.uk>
  <20250221205146.1210952-2-dw@davidwei.uk>
+ <9d081ae3-6f9d-48d2-a14c-f53430a523d0@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250221205146.1210952-2-dw@davidwei.uk>
+In-Reply-To: <9d081ae3-6f9d-48d2-a14c-f53430a523d0@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/21/25 20:51, David Wei wrote:
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index f2d326e18e67..74bca4e471bc 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-...
->   static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
->   				struct sock *sk, int flags,
-> -				unsigned issue_flags)
-> +				unsigned issue_flags, unsigned int *outlen)
->   {
-> +	unsigned int len = *outlen;
-> +	bool limit = len != UINT_MAX;
->   	struct io_zcrx_args args = {
->   		.req = req,
->   		.ifq = ifq,
->   		.sock = sk->sk_socket,
->   	};
->   	read_descriptor_t rd_desc = {
-> -		.count = 1,
-> +		.count = len,
->   		.arg.data = &args,
->   	};
->   	int ret;
->   
->   	lock_sock(sk);
->   	ret = tcp_read_sock(sk, &rd_desc, io_zcrx_recv_skb);
-> +	if (limit && ret)
-> +		*outlen = len - ret;
+On 2/22/25 00:08, Jens Axboe wrote:
+> Just a few minor drive-by nits.
+> 
+>> @@ -1250,6 +1251,12 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>   	zc->ifq = req->ctx->ifq;
+>>   	if (!zc->ifq)
+>>   		return -EINVAL;
+>> +	zc->len = READ_ONCE(sqe->len);
+>> +	if (zc->len == UINT_MAX)
+>> +		return -EINVAL;
+>> +	/* UINT_MAX means no limit on readlen */
+>> +	if (!zc->len)
+>> +		zc->len = UINT_MAX;
+> 
+> Why not just make UINT_MAX allowed, meaning no limit? Would avoid two
+> branches here, and as far as I can tell not really change anything in
+> terms of API niceness.
 
-ret can be negative, the check will pass and the calculations
-will turn it into something weird.
+I think 0 goes better as a special uapi value. It doesn't alter the
+uapi, and commonly understood as "no limits", which is the opposite
+to the other option, especially since UINT_MAX is not a max value for
+an unlimited request, I'd easily expect it to drive more than 4GB.
+
+  
+>> @@ -1269,6 +1276,7 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>   int io_recvzc(struct io_kiocb *req, unsigned int issue_flags)
+>>   {
+>>   	struct io_recvzc *zc = io_kiocb_to_cmd(req, struct io_recvzc);
+>> +	bool limit = zc->len != UINT_MAX;
+>>   	struct socket *sock;
+>>   	int ret;
+> 
+> Doesn't seem to be used?
+> 
+>> @@ -1296,6 +1304,13 @@ int io_recvzc(struct io_kiocb *req, unsigned int issue_flags)
+>>   		return IOU_OK;
+>>   	}
+>>   
+>> +	if (zc->len == 0) {
+>> +		io_req_set_res(req, 0, 0);
+>> +
+>> +		if (issue_flags & IO_URING_F_MULTISHOT)
+>> +			return IOU_STOP_MULTISHOT;
+>> +		return IOU_OK;
+>> +	}
+>>   	if (issue_flags & IO_URING_F_MULTISHOT)
+>>   		return IOU_ISSUE_SKIP_COMPLETE;
+>>   	return -EAGAIN;
+> 
+> Might be cleaner as:
+> 
+> 	ret = -EAGAIN;
+> 	if (!zc->len) {
+> 		io_req_set_res(req, 0, 0);
+> 		ret = -IOU_OK;
+> 	}
+>    	if (issue_flags & IO_URING_F_MULTISHOT)
+>    		return IOU_ISSUE_SKIP_COMPLETE;
+>    	return ret;
+> 
+> rather than duplicate the flag checking.
+
+You missed IOU_STOP_MULTISHOT, but even without it separate error
+codes for polling is already an utter mess to try be smart about it.
+I'll try to clean it up, but that's orthogonal.
+
+...
+>> @@ -930,7 +937,7 @@ static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+>>   		ret = IOU_REQUEUE;
+>>   	} else if (sock_flag(sk, SOCK_DONE)) {
+>>   		/* Make it to retry until it finally gets 0. */
+>> -		if (issue_flags & IO_URING_F_MULTISHOT)
+>> +		if (!limit && (issue_flags & IO_URING_F_MULTISHOT))
+>>   			ret = IOU_REQUEUE;
+>>   		else
+>>   			ret = -EAGAIN;
+> 
+> In the two above hunks, the limit checking feels a bit hackish. For
+> example, why is it related to multishot or not? I think the patch would
+> benefit from being split into separate patches for singleshot and length
+
+I agree with the statement, but fwiw there are no single shots and
+can't be that, the message is misleading.
+
+> support. Eg one that adds singleshot support, and then one that adds
+> length capping on top. That would make it much easier to reason about
+> hunks like the above one.
+> 
+>> @@ -942,7 +949,7 @@ static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+>>   
+>>   int io_zcrx_recv(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+>>   		 struct socket *sock, unsigned int flags,
+>> -		 unsigned issue_flags)
+>> +		 unsigned issue_flags, unsigned int *len)
+>>   {
+>>   	struct sock *sk = sock->sk;
+>>   	const struct proto *prot = READ_ONCE(sk->sk_prot);
+> 
+> Shouldn't recv support it too?
+
+There is no "msg" variant of the request, if that's what you mean.
 
 -- 
 Pavel Begunkov

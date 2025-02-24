@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-6655-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6656-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60C6A41CC1
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:29:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B340AA41CEE
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16F918872EF
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 11:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9FEE1888CBF
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 11:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF56267708;
-	Mon, 24 Feb 2025 11:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3EA26A0D4;
+	Mon, 24 Feb 2025 11:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I03IhKNn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+uEt00N"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386F2676FA;
-	Mon, 24 Feb 2025 11:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0F25EF95;
+	Mon, 24 Feb 2025 11:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740395941; cv=none; b=hxReOzrqgQr8xaiCxjqmAicqYTmsIIwwPgil15Ex1HtD+ibmnJEycT9GLIIpmFUg0Fi57BWSmHPykYmFIYVri1q3tJNzvEtDTtKB2+KPfow8X4nCeSYG07mB2h/Xz9b9xRc7cVX9i+zUO4qC7a2nrdfEiPOi7dyclkXq5QlMTgY=
+	t=1740395988; cv=none; b=en1RuBohdmbyk9B4stHoCX0t5mPSVp0PPECgQ2JUJGnupkwNl4bGjz9hczFK2rkUmSgTgfJS4JerBbteXqBk0JT57Pd17pddgY34HNlCw6OF0+6ELZ/c1RghNbNlVf8WBUu7SoQ2+bhL0ruBGcRN2It91x/mMDDeqMq5yU093Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740395941; c=relaxed/simple;
-	bh=+feFKXjzyb6cPuFwFoOgFVXkqXP4xv+KmHIxH9YIDQM=;
+	s=arc-20240116; t=1740395988; c=relaxed/simple;
+	bh=3X9iubF31cg+jz+W+AaxKTldK24tBsyRrM037/7aqP0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZW3efSUP0nWFna9X3KYH9aKTm/D345T7j57gWNZJ98Qra0bi0D5/9TvEXzOhhbwF84xgSfCBQarp4v81Y5zsu6uR4sh+91CijW4bTBc6hdRSW1TAhp5std54bhwWFFwVxcr0QFUBowyVditItiBRdXNxxi+/RIQPOmG6cuKuS0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I03IhKNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88CABC4CED6;
-	Mon, 24 Feb 2025 11:19:00 +0000 (UTC)
+	 MIME-Version; b=aMIm+Q3Ung+jho0dN28fGy/EM/Noc9k3E8Cw+uUMTVx8T0EBPbRvZ9lstNtZwPcyqxU5Rdb/LYtWWhbrS2ATKHPrJmpfMARKZU8pf+B6BE/ETS7GdbvQljOloqki8JRUiyNDQCGWHq3yQGwB0r4+B2ono7IAFbl+lS3URHw2/Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+uEt00N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44950C4CED6;
+	Mon, 24 Feb 2025 11:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740395941;
-	bh=+feFKXjzyb6cPuFwFoOgFVXkqXP4xv+KmHIxH9YIDQM=;
+	s=k20201202; t=1740395988;
+	bh=3X9iubF31cg+jz+W+AaxKTldK24tBsyRrM037/7aqP0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I03IhKNntp9YiuXHWomg2spl2BYxjDWvh0BFnwj7uGjQug0NwPf4apko3k7kk5r0M
-	 TsdEYTA8IW7yKRbPDfuu9N6SIP3FHNqyd3Exn607NBRUI4e+KWVOv/71mI8WrldiYd
-	 mBC0QB6Xr0ROdfwzupHBag/MfTCUf6CFhwUHveQf7AYmwlyyNXWJh2uoLOC/h3yCv8
-	 ujwMbfQcsGzhFCHBRE7PgUr6So/1Yf/vvEt+n3WdzB5rtrU29fG125sF28w/LbF46l
-	 hQtk4Bs/Cgd9aVGAQdV7LrkXrIw2jlak3CmzvVFdmyK/UagfTyHiLFLWcPBkquIYgx
-	 IBDUvnEHHrFQQ==
+	b=h+uEt00N+DHJJKHBXkCeMY1oky4tod1CNnxo4FvG9I6wWuX7CG/FQru17gv/fYmUs
+	 Xo7M9cICE1r7aUwNXQ55bO/rC31z8jxMZkxq31Ub7ESguahXocwWhluGJ1aJPU4wqJ
+	 YBIyfD9gJ96nqZZol/DSXU4EODTNLWSTymwpffDveCt+T1BeCHAyJ3bbeBmsVJm53b
+	 b0IzB+khrTk0kJh14GvFHQr6s22ahkhz0LFVO8MzAPIpzfkaEuz88d0E8FnZ4m09qB
+	 guAMWL4Tl3IYDpENK609zPfAb77j8Yo29oU/rScNVr4AfT0XpQCFKPPCwN3H3jwv5t
+	 bSuvSrEeJ10CQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Uday Shankar <ushankar@purestorage.com>,
 	Sasha Levin <sashal@kernel.org>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 20/28] io-wq: backoff when retrying worker creation
-Date: Mon, 24 Feb 2025 06:17:51 -0500
-Message-Id: <20250224111759.2213772-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 12/20] io-wq: backoff when retrying worker creation
+Date: Mon, 24 Feb 2025 06:19:05 -0500
+Message-Id: <20250224111914.2214326-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250224111759.2213772-1-sashal@kernel.org>
-References: <20250224111759.2213772-1-sashal@kernel.org>
+In-Reply-To: <20250224111914.2214326-1-sashal@kernel.org>
+References: <20250224111914.2214326-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.16
+X-stable-base: Linux 6.6.79
 Content-Transfer-Encoding: 8bit
 
 From: Uday Shankar <ushankar@purestorage.com>
@@ -193,10 +193,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index a38f36b680604..a2d577b099308 100644
+index a1e31723c9ed6..93f3e4d1df853 100644
 --- a/io_uring/io-wq.c
 +++ b/io_uring/io-wq.c
-@@ -64,7 +64,7 @@ struct io_worker {
+@@ -65,7 +65,7 @@ struct io_worker {
  
  	union {
  		struct rcu_head rcu;
@@ -205,7 +205,7 @@ index a38f36b680604..a2d577b099308 100644
  	};
  };
  
-@@ -770,6 +770,18 @@ static inline bool io_should_retry_thread(struct io_worker *worker, long err)
+@@ -771,6 +771,18 @@ static inline bool io_should_retry_thread(struct io_worker *worker, long err)
  	}
  }
  
@@ -224,7 +224,7 @@ index a38f36b680604..a2d577b099308 100644
  static void create_worker_cont(struct callback_head *cb)
  {
  	struct io_worker *worker;
-@@ -809,12 +821,13 @@ static void create_worker_cont(struct callback_head *cb)
+@@ -810,12 +822,13 @@ static void create_worker_cont(struct callback_head *cb)
  
  	/* re-create attempts grab a new worker ref, drop the existing one */
  	io_worker_release(worker);
@@ -240,7 +240,7 @@ index a38f36b680604..a2d577b099308 100644
  	struct io_wq_acct *acct = io_wq_get_acct(worker);
  
  	if (!io_queue_worker_create(worker, acct, create_worker_cont))
-@@ -855,8 +868,8 @@ static bool create_io_worker(struct io_wq *wq, int index)
+@@ -856,8 +869,8 @@ static bool create_io_worker(struct io_wq *wq, int index)
  		kfree(worker);
  		goto fail;
  	} else {

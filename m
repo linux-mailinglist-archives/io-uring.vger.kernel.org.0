@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-6676-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6677-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C16A42341
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 15:38:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6E5A4253F
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 16:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE84E7A2E39
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 14:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AD119C5247
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 14:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D541614A627;
-	Mon, 24 Feb 2025 14:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8518727701;
+	Mon, 24 Feb 2025 14:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Nx65tdTp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PwX9g2LU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E4C1514EE
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 14:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4E31A239D
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 14:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407748; cv=none; b=DhuVpuae+1ipRFRYamYABDrOpk5f6+VXIMeroOIu/w30Cjfba0AzNEnTv41PwouwnXK0N9uz+zmMz1WcJ1s0mR5vjq30S7FpWGbmPxUSFQPV8yhejaLimQYrDZeQ162RGfwvgJiWDu9Nz7uHEgdLiIGAgSuJTjkI4BQxASF2E5E=
+	t=1740408829; cv=none; b=aQ02EB2Yh+Slfa5FxOfmb2i39APwBIKeC3EEIGIn3cZPFgOXy7sZvO61YwblorZOlm0V1BflJKodHWEPvUD/YpyEE4/PToYiIWRmf9eBO6PqXAZt9IyDyw4Emcl/NIR1gyD91ILLd0kphA0P98mMAAoGusQ+4UcVjhZN4wbcApc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407748; c=relaxed/simple;
-	bh=fVzHiucMs29WQjkGX3NDHyZzLwjLUE3lLr35emomtIg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eKQ0qK7PEE9Ktow2CzzWvtoo9WNRnKVtz7hY+yhyCYk73NWbFjgdqbouE4uDgUbO4XNwKa8B2jj4Ht1FkEZRP9/68O0P35PJQ3wG5cm1RUoZAoFkVS5VaqqTuvpZJgQym+V9glFG4yhIK2Qjvi8V7ZlbsDj0KTVvHvaJv0cyOkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Nx65tdTp; arc=none smtp.client-ip=209.85.166.50
+	s=arc-20240116; t=1740408829; c=relaxed/simple;
+	bh=Pw0qsbOnKSl80U69Wblfs//Jl/N/8AJIHqq1IVcZfrE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Qvme+txUzfGIO8+Hw8QIYzunjHUbDsmIIlZN/nYpApIyOco09w4fj+t0qS85mgcjH7+Kk1bwGZUH8Pdt6F12lx2ge43MWVUnuIfa5sFtYCgXVxj24wbqppUVox0mvN9Np9f5mvpf0CpV45CaCS2Rlh81SmxBlGIbQjI7gw6BGpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PwX9g2LU; arc=none smtp.client-ip=209.85.166.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8559020a76aso112860839f.2
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 06:35:45 -0800 (PST)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3d2b3811513so14895245ab.1
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 06:53:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740407745; x=1741012545; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740408824; x=1741013624; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QkPQZoJHjJ5n8zO6HMcqKkFDlPqlVedvu6kpSAaZLuo=;
-        b=Nx65tdTp4+6wSyrp7Fxs727DWYn9SJphkV/se6sxsdGQ0rX47Zmj+d0BUcAWV86UC5
-         r2RNJehzFAP8l3vX/me67iRYtC5Ykn6gK+S7xD+MepXAKLIWWsVRRm4wat5XT5wFaARP
-         Ue0DG89eMSW8Oz0+fCS8R1TW0uQN2HQjJw6RguBJdeG9EJ7nSmeCUkhCYi3cniH2hOuu
-         xEAtgGrWRhdCSVyiP/GnN6PHS4xv87U/v1EwDk55jcnL0VU3d0FDdFLKI+QHNzFbFlww
-         eaXVRER6DNiQSoaC3tAthDGiYn1Q9huMOWmW2n3xiJHXGlWcEJrMy0b7Bgj5htTFu0LV
-         /d+g==
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/lTpmeoWGDnV/vXbc5x4QUFHecpQJ/7DhOpcDHgnzB0=;
+        b=PwX9g2LUHSfrI7ZVFInBseGU55Dh9XHDkQEybg7QS6ZMRUh3ACU/KsXTti6LrUQdF6
+         eb58ab5mfFwB7c0bpyEjyDkQkfFLl3jYyElwcEhPGtXxaWEHp9X+QRBob6ynGbNtciPs
+         VL/ZPY1eHRqz+U4FB7ynoR+rdekNV3yG4Is4ZkswFLr4K3O2yimbgOYFgnh4tNUAZBps
+         5paMeYHx7OiSt6uwWvaxNMenkkP0Ajy/PzsmappHlboo/4oYgGzyBiDykPvUGRN/DpVa
+         yL2JQ+1SLecvqo04Sj6gShSqeC7A4bhve4SGyRL7GMQQkWg640uuGpY7TLYXs1Bkkscl
+         65CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740407745; x=1741012545;
+        d=1e100.net; s=20230601; t=1740408824; x=1741013624;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QkPQZoJHjJ5n8zO6HMcqKkFDlPqlVedvu6kpSAaZLuo=;
-        b=RpY9g03Ns8XUzjZjw4lFzFyVA9aFXOTgOZ2jzfYTK82Hvk1deXr66ir3yIfSzP6dsd
-         uz8AALOsZ+VEMf2NzyYvvOgAtpE3XMBHCvOCUkHKeLupPsLacHILiIrvrFQtAbnusNJU
-         W/TOl2WmPWX9M13t7PCAoyNBL/aqLavqkl8OmpMIX2UCFrx28kPycqkPu6YYZXI2tQ+e
-         Lqtg5PFOfj3V7kNaUdF18ZoTV7wNYKV/vthyjC7Ei5UY73niok3jjBbwwJpyxU2d5Slv
-         4lzm+D/kyCENE2SCoOGalSKRE7iXJFaCfR2gVp3IEIZDAFe3z4BNtC0JgF2z04jdfcVH
-         ImgQ==
-X-Gm-Message-State: AOJu0YzZUSpTsjfeGkNfyNy6/fySia4xdM88Z2busZ/MZuPKnqrCnp2I
-	kT5vGdpLSpgfhJyNuPSIqV1b+YDMrMkSU8eaFclHg6kv3Dv4G4lfsqx/uJ/0Uhs=
-X-Gm-Gg: ASbGncs3p81AD8OU+9xdMKj36ODe6ZYMObrG3SF58ldQ/kd+N5gbZAabS8OLekGSYhJ
-	Vr4iBhT7q/BRUIq34O/zQ6FK+k2x2OLWsK3WrvrXS8I7aITqAZS3wqjYP/hZRctZxP6S50Fe4Xs
-	145fevsFUF7ZGw1I3Nw+4n24S5O+lhPYmIBVYLM7hVF6CVJxK7ggvtPBcQjmil3PdKUZmfwnKVR
-	hY8lYADMJDUrtGzrQYRvQwYLDy/1Cp90lh0LuyeVdUotvb1UOKdarWf5TBRr8+qX4igztvH9I/q
-	VmDDv2MviCAck65bqA==
-X-Google-Smtp-Source: AGHT+IEtM7W1iVaP9XgrbAzzHG3lugcDZd9sMzbhJijno+XGNTw2+ToSSWElZG+1tEf4V8OtWqtpSQ==
-X-Received: by 2002:a05:6e02:1d1d:b0:3d2:b34d:a25b with SMTP id e9e14a558f8ab-3d2caf027eamr97564615ab.16.1740407743246;
-        Mon, 24 Feb 2025 06:35:43 -0800 (PST)
+        bh=/lTpmeoWGDnV/vXbc5x4QUFHecpQJ/7DhOpcDHgnzB0=;
+        b=nlFKxTBqF+pFq7gTFDfwHbhlt/0DGjp+f00xZ8wgjsN3Lf73mydLH3y9Dj7QRp3gYx
+         y8sMbuwWqH9BpefRjws+qfj4gkPv5dCibs3Qhk3cDbuV9HuuOm/evB5q7ndLhh5UZx6b
+         DX5Gs4VJdpXs2CNU4jGbZgP6o9K617SnWKLgTdFkZiXHQiqS5RN53fxhSDGdRUcUYfib
+         l7KehfW/hCOu+9rqkc77R6WbxAaUC541J5yHetTIZ1wW4d158Clj336bWrtqikldRD1c
+         uq11dVMA6Sb1LxOM6JY15cppwM53YvLcHaF1aZ0egvi05mFw3myFwrKeGSe7ayhr16R/
+         d9Eg==
+X-Gm-Message-State: AOJu0YyyMoBraqGhXnYBiCuaL5eT4YCwfS03cTcKyWJ7JtHw5MvEkAxO
+	IE44EDkxfC4grb8h0wDccRszqqVX54w+tYcSJhAxmwzfy77BosBZeH83r5WWaQkFBzRJVWpN+f5
+	H
+X-Gm-Gg: ASbGncsVWc4cBPrE7vJmXSdOenQoWKbkjq+Ql01/4z1YaMwb6HePg38scOzxQMrnMyB
+	ocl2QHb4VNEvE1cbHs8ImsLKEw915mi9mUI9U2Fjb82x6P5ys1YetGvm/YMWo+IOgbDfe2NjokW
+	+BJw6PXvjMF6qxcOMkD3bZjS6eH8w0AK37nr6UzPY1+2ZKGDVBFQ2NmoDFgJ1ifcmdjWIN6OpT5
+	4WBGeeJL3Bf4BW9QlgFhbVvY5IizkZ1r6iqhgvls1JxAp2noonn+Z2p2n2f2hL5aLtn9kaGCwWP
+	4ULLwEEv9k+MPYlPmQ==
+X-Google-Smtp-Source: AGHT+IHL1euburSZsQsPH+ngg6mRa3EWGG36bOz0lGTwZ/42sLhYzSQbkOrjfMT86LLxQLdXg0Q7WA==
+X-Received: by 2002:a05:6e02:791:b0:3d1:9bca:cf28 with SMTP id e9e14a558f8ab-3d2c0239750mr133044645ab.8.1740408824392;
+        Mon, 24 Feb 2025 06:53:44 -0800 (PST)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d2b2fb94d7sm27876985ab.36.2025.02.24.06.35.42
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4eebd9d6b6dsm2697733173.79.2025.02.24.06.53.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 06:35:42 -0800 (PST)
+        Mon, 24 Feb 2025 06:53:43 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Anuj gupta <anuj1072538@gmail.com>
-In-Reply-To: <cover.1740400452.git.asml.silence@gmail.com>
-References: <cover.1740400452.git.asml.silence@gmail.com>
-Subject: Re: [PATCH v2 0/6] compile out ctx->compat reads
-Message-Id: <174040774212.1976134.16272080365132651493.b4-ty@kernel.dk>
-Date: Mon, 24 Feb 2025 07:35:42 -0700
+In-Reply-To: <cover.1740331076.git.asml.silence@gmail.com>
+References: <cover.1740331076.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/3] multishot improvements
+Message-Id: <174040882381.1979134.2076646474553775513.b4-ty@kernel.dk>
+Date: Mon, 24 Feb 2025 07:53:43 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -90,30 +90,26 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3-dev-94c79
 
 
-On Mon, 24 Feb 2025 12:42:18 +0000, Pavel Begunkov wrote:
-> Some code paths read ctx->compat even for !CONFIG_COMPAT, add and use
-> a helper to optimise that out. Namely cmd and rw.c vector imports
-> benefit from that, and others are converted for consistency.
+On Sun, 23 Feb 2025 17:22:28 +0000, Pavel Begunkov wrote:
+> Fix accept with the first patch, and make multishot handling a bit
+> more saner. As mentioned, changes in Patch 3 will be used later to
+> further cleaning it up.
 > 
-> rsrc.c is left out to avoid conflicts, it's easier to update it later.
-> It'd also be a good idea to further clean up compat code on top.
+> Pavel Begunkov (3):
+>   io_uring/net: fix accept multishot handling
+>   io_uring/net: canonise accept mshot handling
+>   io_uring: make io_poll_issue() sturdier
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] io_uring: introduce io_is_compat()
-      commit: 3035deac0cd5bd9c8cacdcf5a1c488cbc87abc2d
-[2/6] io_uring/cmd: optimise !CONFIG_COMPAT flags setting
-      commit: 0bba6fccbdcb28d284debc31150f84ef14f7e252
-[3/6] io_uring/rw: compile out compat param passing
-      commit: 82d187d356dcc257ecaa659e57e6c0546ec1cd2d
-[4/6] io_uring/rw: shrink io_iov_compat_buffer_select_prep
-      commit: 52524b281d5746cf9dbd53a7dffce9576e8ddd30
-[5/6] io_uring/waitid: use io_is_compat()
-      commit: d8cc800bac886fac69cc672545eee89dbeb50bef
-[6/6] io_uring/net: use io_is_compat()
-      commit: 5e646339944c10d615b1b0b5a2fa8a4f6734f21d
+[1/3] io_uring/net: fix accept multishot handling
+      commit: 6a1ac63e91a70c9c35f2fb7ab4f0b74acb8a903c
+[2/3] io_uring/net: canonise accept mshot handling
+      commit: f474b328b527616d72419a23029fb8bd7e2bea52
+[3/3] io_uring: make io_poll_issue() sturdier
+      commit: 0243b56ffd3c69b030b90e046ebc38d5e54249e2
 
 Best regards,
 -- 

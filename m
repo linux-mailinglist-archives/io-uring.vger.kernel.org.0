@@ -1,154 +1,116 @@
-Return-Path: <io-uring+bounces-6679-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6680-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C91A426DD
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 16:51:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18E8A42772
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 17:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3569217DA9F
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 15:46:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE18188B1D6
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 16:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE6624A04F;
-	Mon, 24 Feb 2025 15:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D51261575;
+	Mon, 24 Feb 2025 16:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="HJn8QpMa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QluamRV4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F2C25A2B1
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 15:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D7C260A2F;
+	Mon, 24 Feb 2025 16:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740412005; cv=none; b=mylsYMkFb21rhr3gSRWrzT61iSz3wYNUegWoz7H4oSJREz3WNYkDHqV/OT9p+impCxXN15gF1AOkKbrMK3ZFARiTJYnBks4Y0AQWrPohl7tcmXcEBHForoXDjsmHdiT2GbW4B9Ju25Mnhvdsy56Pw08R+K25T8QQvffCkhJCvjI=
+	t=1740413187; cv=none; b=JHv7s2rV2sk4fkuBltCQBH6RXF/UMBK6j9P5RG9+IdQMKmSymHRC8GtmI7B4rQ3/yQF6o2Z/KiUGLLzZkFA4TUPDe3fOHAhDBShtEbpds3HAantqykCPNSrp8b7EB5V7SkAG9Hd49Swm9YJSKmxkzwjhqCnstz4LbCuB3DxOZtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740412005; c=relaxed/simple;
-	bh=sm7VvH9h9vV7qjXwj3nxJnB6WMM61UW30oZ2bNvUYJ4=;
+	s=arc-20240116; t=1740413187; c=relaxed/simple;
+	bh=hn2GItTCSbefNTcILUqmrK0WUi0Y5xp8BAXpMWN4sRo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kVsltvUz17y5ru4O3sR8LtHmJ6qaNPd0sAkS1d5q6E5dQi39j1sbdP357o919+yJavQ3rz07dElOCps0HN6JmYiWkV9GzY/4BfkbUHKS8QvRtJaFrk7UT60H3yzGLaTE2OdRDGZv+4r3K4kdf95BBtOdZIsR3xogKl/QlZLAUDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=HJn8QpMa; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22128b7d587so87911765ad.3
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 07:46:43 -0800 (PST)
+	 In-Reply-To:Content-Type; b=J5Hof0BVZqXgB+4Yhi+ILfq0xsVIYbiHYgU/1O+w8j8F91/XgmyRl/ocHu3I5dRoDyc5CZ8J1ZH8J5e7m8/d39ymW52bWvEbj4J9/cwGmelzeIw0iooxGoGPxbmgA+GbU74BdhsfFRUyroPTUU0MCx1lQp5Gs7OgVTCTgrtqjiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QluamRV4; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72722d2717aso1235050a34.2;
+        Mon, 24 Feb 2025 08:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1740412003; x=1741016803; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740413185; x=1741017985; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BA3O/j8wZT6WLWjmkMPFmr6fguBjQbcY9LPqDEZVpFU=;
-        b=HJn8QpMaPdTOcjDN0E1mBW6nXyrLzTdLGeuTFRAS80v1VGlz36VxgZ5K7Il+DNEOj7
-         Ytej8tS+ucluBkOj94BHP3Cf3cvMf4+FjqZClCPtTYhb8LOIZjTLpzSoSPsPELhO+vmF
-         gKdEJWhh7hki5JW/xjKd0ipNrkrPD+JlyXjDD5QbGfUeUJ2T0rqLeEXHq7RNxSxN/gI2
-         OnQCKAHSjoK8G68LZF1qvga0idAfH5TR63O11kxs6ewyAuqqGTuzWG1IfnRkXcy9Wyeq
-         Ie9uUsqsjLGHwEZvMm4AiOcQR/565vi/wln7uGLBICdKpc7646yLyYKIr6TuMC3Y9G9G
-         l0aA==
+        bh=A+v75veikEqjUToerkHNWQgY+17ObWVQx/28Sr6yLy8=;
+        b=QluamRV4hKZoPpc3EnuQFw6HzfnmsP3dQ/c8P2RT4n1A+rZo5CxVqaKlI7R8VWlmeg
+         Uo49h2e20/RBttzJlYsXHkt9ZKSSgrFYGfstm79MXBWlx/qRHPD5SWnlEGT08Hy6Jcev
+         9ry1LvOK82In6tlW46C8rud3TYqyiTUvG6BOPd4Aw0DVbK2nqRlfEWXUuJTJTg5uw4SE
+         IQi8vnEHe4bfaKiKwR8wKLFnL2B1/LvfghTQZY4GBFKnBwwb2woBhaE9fRW79la7nPcO
+         Yfj8QpJ+KkcBwxCzXU4C0aI9uBTz+vPScmKU9RJpYVKTStlJuZdY7oJwta9NJHKPQSIB
+         RysA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740412003; x=1741016803;
+        d=1e100.net; s=20230601; t=1740413185; x=1741017985;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BA3O/j8wZT6WLWjmkMPFmr6fguBjQbcY9LPqDEZVpFU=;
-        b=bhZl/ukFwEq6dv0QvT4/gkQIOtauZFtxSuu2+NGhytZfdJiy7xUV2jTkRizPSIplbu
-         B0UriijtuXOnRYX6w0zBnB0xbej93qroDfG7Wbn61ddL1crPfnh74B0QKe6EduEXZ61a
-         zIYgtlaSbS1IzPYmliVgg6qZ7LSXhyccWarDVbZM61mgBeOoEaABYRJMoK7/Iv8fwOf5
-         /zp+Ls6maIC2HYxBVPKqbY7FA1L6d14x0lZEGOQ142yCf7p0/gkl7fAND3VHyZHuSJgK
-         na7jXXZZqlF2ZMk+RADf2UeQXntzirEiiDz/9zkStlTZUNj4GHAeKwjUT+CP8/oWKMwY
-         0O+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVy5il40gjDSS1wpNwLcns2inJaD0eSnrqgeXqgL1evk/QABChvzEDIXZYExYg2WVX+AZthIVBQUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5pYPQx4WOo6H+qQdGfegQLZsZKe42afCMuTjrix4iwAUVoKWL
-	lRXsYHKlodY/2B4qDgSwuDYhzve28mh4k0Rskzsbx4LCnD3aPTOc9yNX5xooq5I=
-X-Gm-Gg: ASbGnct6dq8zaPvIvmLZgUFuVezOK/4tto4G49zZB6n278NHkwFm0+/oaPc0Mz6Qhju
-	4og8ryON+YLpyPcn7zBhiCPy7gkyFCR+hFuCrhyY9UZnfr2j8O6ENHQ+CwjmcjQ/3BVjxhMAoV5
-	DiE6UEl3VQ0eFrPLHdgRpW+KCv9La80hv/89io3HjStjeNlgjX/T8Vy5yjj1B+yTUqwBJbWqor6
-	MXEsY2KUl2+F5SuKQroLUvncm486MDCoNA4Mc48gD6PqitOYHl42EliZr7WcBPlCir9B57BW4u3
-	7dtpBWQOyQDauoYJGEORZJME0xb31bVWouUCvO3+haLNYFz5UrY5oZn00HZUjFsB
-X-Google-Smtp-Source: AGHT+IHg9ZHwNJEnJPivE1xnLDn/mbI60Jqe8KMkwz7IVOFyAJnv5FBleRnodiPg42tjVF0G3IdRSg==
-X-Received: by 2002:a17:903:2a8d:b0:211:e812:3948 with SMTP id d9443c01a7336-2219fdcac83mr229064755ad.0.1740412003515;
-        Mon, 24 Feb 2025 07:46:43 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::6:5f92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d537ca99sm180105905ad.106.2025.02.24.07.46.42
+        bh=A+v75veikEqjUToerkHNWQgY+17ObWVQx/28Sr6yLy8=;
+        b=v8+IxSSD6KMXS0II5zefnmRbt8lALC/hmvQ3I2vi1MOY7ESwkr7kPQDxOuh3kDCkLj
+         HltMXwsY0e4/cV3HhT9cITrqSOoeTN3BCD7GlSfg35JY9umkYURIC48CO116Tnj34wrT
+         2c18/zIA2E9Cxep56jc06XOSNd1xlRIMUm6DCRNXX6didUMiz1X6scAOPCWY8TeNWyVW
+         E2mwg7Kev/g0cxlUK/005dYBeFyCuGeq/uvybK//oFbgKX65u1eOCV+ARGg3yqm8xMmW
+         dpOe8AhBV6IrBKm0+TfIOvhxFKMhYU/d7LU28NZB5Q2EF472NL3R6SX6x09UhsrmNQPz
+         bhzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/W6Pgr5I/+wSrR/QQTj1O0gMw2vi6+wbTzV9GoygoG75WTQGpbwGVK3pvsjzDRW39p8OM+SI/QztkLlUmhQ==@vger.kernel.org, AJvYcCVjqtc+kho84b9Kr9fAhI4ZNBD2Dwn7aMOoXEnQ2DaIw1EeTRY2Y1qO/1qGvejX+QueuYUq7+LIAdOMcE2d@vger.kernel.org, AJvYcCXS4fTsUVI7bIUEaIN7ZksG5K6Bw1jbDkf1+ojF5d4ig5oeWnmEPfPHEIvu+dIliQXCoQiKkhNFyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwS02b8mTzvnDrmy0u8TGeUjmGkOx6K1dmJSeQezv1q8CJcNq2
+	GDVpgLkahKWZG88FMC5wGeTsOoFPtL4KLPjFi8a029W6PH1WZ0jydjQch/LDz7g=
+X-Gm-Gg: ASbGnctPRCssgAuzU5W4tlIGVqifh46RvQowkgyKYGY48jCigKFEW9ui0lET1SXOAxK
+	2IBGLQ5X5JdQWz1RYXfeAoTTQ5QShVS0zwQTrjYvgDsDbuRYNvfr20xreDhEhkj/OlCjhnZfq3J
+	wkX6HPs/8q9ygNsPiGTHLJkxHPzOrUGc/6jAkRHDlaBbMNXTExpfO0q70DxmZdWZoRjCYocjnxu
+	zA1pz7uPYHQS2VlBhb56ZfatVYdUieyTRUTtj0bO0ywUBwoL+teMrhzOXkoAl3XC1mG+uv48sWD
+	s/nQrr5OPi2dy691wZ8scQw5HoM/lJcGlhWPQIOZBGZlR+Xjxu0uyDSRCq33PyDJ5zpsswFxO+x
+	bq7ubUJ4oBb5/CQ==
+X-Google-Smtp-Source: AGHT+IHVRHpjiMtIlbK0jNEIyLVuWSPhJVxhMvPRiCadwpmq+CIakKL3TutajtIwg9wK6MhYPu93fA==
+X-Received: by 2002:a05:6830:2108:b0:727:4494:3d62 with SMTP id 46e09a7af769-7274c17ee7bmr10702521a34.2.1740413185356;
+        Mon, 24 Feb 2025 08:06:25 -0800 (PST)
+Received: from ?IPV6:2603:8080:1b00:3d:6189:2749:3932:810b? ([2603:8080:1b00:3d:6189:2749:3932:810b])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7273233206fsm3077434a34.57.2025.02.24.08.06.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 07:46:43 -0800 (PST)
-Message-ID: <1d8ad1ae-cda2-4eda-9045-3d973693541f@davidwei.uk>
-Date: Mon, 24 Feb 2025 07:46:41 -0800
+        Mon, 24 Feb 2025 08:06:23 -0800 (PST)
+Message-ID: <8e0597b9-d8a9-4d11-8209-ab0f41e94799@gmail.com>
+Date: Mon, 24 Feb 2025 10:06:20 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] io_uring/zcrx: add a read limit to recvzc requests
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, lizetao <lizetao1@huawei.com>
-References: <20250224041319.2389785-1-dw@davidwei.uk>
- <20250224041319.2389785-2-dw@davidwei.uk>
- <e8cc3c07-6aa5-4aa0-bd6f-5b054f10287b@gmail.com>
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <e8cc3c07-6aa5-4aa0-bd6f-5b054f10287b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd@bsbernd.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+ <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
+ <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+ <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
+ <2d9f56ae-7344-4f82-b5da-61522543ef4f@bsbernd.com>
+ <CAOQ4uxjhi_0f4y5DgrQr+H01j4N7d4VRv3vNidfNYy-cP8TS4g@mail.gmail.com>
+ <CAJfpegv=3=rfxPDTP3HhWDcVJZrb_+ti7zyMrABYvX1w668XqQ@mail.gmail.com>
+Content-Language: en-US
+From: Moinak Bhattacharyya <moinakb001@gmail.com>
+In-Reply-To: <CAJfpegv=3=rfxPDTP3HhWDcVJZrb_+ti7zyMrABYvX1w668XqQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-24 05:11, Pavel Begunkov wrote:
-> On 2/24/25 04:13, David Wei wrote:
->> Currently multishot recvzc requests have no read limit and will remain
->> active so as long as the socket remains open. But, there are sometimes a
->> need to do a fixed length read e.g. peeking at some data in the socket.
->>
->> Add a length limit to recvzc requests `len`. A value of 0 means no limit
->> which is the previous behaviour. A positive value N specifies how many
->> bytes to read from the socket.
->>
->> Data will still be posted in aux completions, as before. This could be
->> split across multiple frags. But the primary recvzc request will now
->> complete once N bytes have been read. The completion of the recvzc
->> request will have res and cflags both set to 0.
-> 
-> Looks fine, can be improved later.
-> 
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> 
->> Signed-off-by: David Wei <dw@davidwei.uk>
->> ---
->>   io_uring/net.c  | 16 +++++++++++++---
->>   io_uring/zcrx.c | 13 +++++++++----
->>   io_uring/zcrx.h |  2 +-
->>   3 files changed, 23 insertions(+), 8 deletions(-)
-> ...
->> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
->> index f2d326e18e67..9c95b5b6ec4e 100644
->> --- a/io_uring/zcrx.c
->> +++ b/io_uring/zcrx.c
->> @@ -817,6 +817,7 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
-> ...
->>   static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
->>                   struct sock *sk, int flags,
->> -                unsigned issue_flags)
->> +                unsigned issue_flags, unsigned int *outlen)
->>   {
->> +    unsigned int len = *outlen;
->>       struct io_zcrx_args args = {
->>           .req = req,
->>           .ifq = ifq,
->>           .sock = sk->sk_socket,
->>       };
->>       read_descriptor_t rd_desc = {
->> -        .count = 1,
->> +        .count = len ? len : UINT_MAX,
-> 
-> typedef struct {
->     ...
->     size_t count;
-> } read_descriptor_t;
-> 
-> Should be SIZE_MAX, but it's not worth of respinning.
 
-I'll send a follow up.
 
-> 
+On 2/24/25 6:08 AM, Miklos Szeredi wrote:
+
+> Right, this would be the least complex solution.   We could also add
+> an ioctl(FUSE_DEV_IOC_LOOKUP_REPLY), which would work with the
+> non-uring API.
+
+Thia would require a major version tick as we can't mantain back compat, 
+unless I'm mistaken? If this is the track we want to take, I'm happy to 
+send out another patchset with such a change. Would also need more 
+extensive hooking into core FUSE request code.
 

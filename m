@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-6654-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6655-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1123A41C89
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:23:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60C6A41CC1
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BA73BB696
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 11:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16F918872EF
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 11:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9F2627EF;
-	Mon, 24 Feb 2025 11:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF56267708;
+	Mon, 24 Feb 2025 11:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FY7KiyEc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I03IhKNn"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7B92627EA;
-	Mon, 24 Feb 2025 11:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386F2676FA;
+	Mon, 24 Feb 2025 11:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740395864; cv=none; b=sH2EZZR7dhJc0mfnvnckpShyD2qEkNlMp2S+Rr4bQ2kmZqOIDBgkdVdezvuDErHFa2R+dkjaUL+C+1RkCt7DhokL/1XIxdJ/cbQpAzNQMuiIEX8u9rMNonwPOBDQsrAmYbcrb2N9VhsCj0ox233RN0yC3UTeaRl5qeahFK8wuMQ=
+	t=1740395941; cv=none; b=hxReOzrqgQr8xaiCxjqmAicqYTmsIIwwPgil15Ex1HtD+ibmnJEycT9GLIIpmFUg0Fi57BWSmHPykYmFIYVri1q3tJNzvEtDTtKB2+KPfow8X4nCeSYG07mB2h/Xz9b9xRc7cVX9i+zUO4qC7a2nrdfEiPOi7dyclkXq5QlMTgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740395864; c=relaxed/simple;
+	s=arc-20240116; t=1740395941; c=relaxed/simple;
 	bh=+feFKXjzyb6cPuFwFoOgFVXkqXP4xv+KmHIxH9YIDQM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ib76O9FFRBXPl6IZvkHRrVQ4VxMhnp7lChPoaFAP4sqZ7iI4cB0eXXbTVTFkgyvLKX6K9S+DMQb+9exNqdxJ50RkKTrY3954cb2dyBdkYLUs1RG23wVkE90NsO3OELMT5gwPzbKeWf2p1G+Zch4bhKBOCaoZYyLVhEXDkwI4uec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FY7KiyEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7587BC4CED6;
-	Mon, 24 Feb 2025 11:17:42 +0000 (UTC)
+	 MIME-Version; b=ZW3efSUP0nWFna9X3KYH9aKTm/D345T7j57gWNZJ98Qra0bi0D5/9TvEXzOhhbwF84xgSfCBQarp4v81Y5zsu6uR4sh+91CijW4bTBc6hdRSW1TAhp5std54bhwWFFwVxcr0QFUBowyVditItiBRdXNxxi+/RIQPOmG6cuKuS0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I03IhKNn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88CABC4CED6;
+	Mon, 24 Feb 2025 11:19:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740395863;
+	s=k20201202; t=1740395941;
 	bh=+feFKXjzyb6cPuFwFoOgFVXkqXP4xv+KmHIxH9YIDQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FY7KiyEcFxDnrsQEgsIbzed1ECchMYx+90KsWmN6fKEBz3GbbxmWGww/5D6YK7WIO
-	 ECg6nvbs345wIFuGYq9jA9kSwagdN3sDEgW1/qd05wk+1JLSaFpp33yi16q5bezzOG
-	 7inEbfO3AkD/BI3C5lBcb41V1kZlWpLrcZnHRZLidMv0/tv1Lr4MdHdXkDrqhASU7M
-	 yo/Y7hIr7JXWth7RjxiHRR5f6J+CKQ5XD71D9u+NRS2QkDRJC9cnM7DR8njEPEO3Jp
-	 WOJBQc42yNBDK3GE8hLpE8aeOPLCRFMhhMGe2irD28d0ZsqzS+n/iRLLPO0sdQmOsV
-	 eynrrNEzDOurQ==
+	b=I03IhKNntp9YiuXHWomg2spl2BYxjDWvh0BFnwj7uGjQug0NwPf4apko3k7kk5r0M
+	 TsdEYTA8IW7yKRbPDfuu9N6SIP3FHNqyd3Exn607NBRUI4e+KWVOv/71mI8WrldiYd
+	 mBC0QB6Xr0ROdfwzupHBag/MfTCUf6CFhwUHveQf7AYmwlyyNXWJh2uoLOC/h3yCv8
+	 ujwMbfQcsGzhFCHBRE7PgUr6So/1Yf/vvEt+n3WdzB5rtrU29fG125sF28w/LbF46l
+	 hQtk4Bs/Cgd9aVGAQdV7LrkXrIw2jlak3CmzvVFdmyK/UagfTyHiLFLWcPBkquIYgx
+	 IBDUvnEHHrFQQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Uday Shankar <ushankar@purestorage.com>,
 	Sasha Levin <sashal@kernel.org>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 22/32] io-wq: backoff when retrying worker creation
-Date: Mon, 24 Feb 2025 06:16:28 -0500
-Message-Id: <20250224111638.2212832-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 20/28] io-wq: backoff when retrying worker creation
+Date: Mon, 24 Feb 2025 06:17:51 -0500
+Message-Id: <20250224111759.2213772-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250224111638.2212832-1-sashal@kernel.org>
-References: <20250224111638.2212832-1-sashal@kernel.org>
+In-Reply-To: <20250224111759.2213772-1-sashal@kernel.org>
+References: <20250224111759.2213772-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.4
+X-stable-base: Linux 6.12.16
 Content-Transfer-Encoding: 8bit
 
 From: Uday Shankar <ushankar@purestorage.com>

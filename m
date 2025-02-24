@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-6664-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6665-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D964A41F7A
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 13:47:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79046A41FA0
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 13:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5DA216B37F
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579343B6614
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 12:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CCB23BCFF;
-	Mon, 24 Feb 2025 12:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECB223BD15;
+	Mon, 24 Feb 2025 12:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NC7Sm9DN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPHQ7DQp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3150123BCED
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A536423BCE5
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 12:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400898; cv=none; b=m04UucfjgPJgvvFdywqgO/MSkT0W+Tn8/XghLyHDiw1LLlG7HcTs34Ty63pXDYqR5ZL1B9sjWxwXbIgUbUn3m/GNTyMhmVnaCbOZ1zT7G/px1yIsgtDpe3uWG4tHB/vNQfvUrISK95/Sc4+q1/thdo1HOWlPR5efQUHRvLHsUBA=
+	t=1740400900; cv=none; b=TOxXKVgljoza1CZsKAicn6AGhQi7qcCcfMzGpnCpSQjTEsWy05NoU3idTHo9RFHKnPTR38vy5e2cfVyF2GzuK5AT40XMN44Mc7C4HOGnSbgWU1mxbApaZIV6bnvnR/d0wl3pUEM+Qk/1z9MrO5ovDCoyWFtvQk5YcSBmlyFuqfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400898; c=relaxed/simple;
-	bh=3QU4q8iXcFGLbSXXEgtj284mS6q20pqcFQeIiGMPYGU=;
+	s=arc-20240116; t=1740400900; c=relaxed/simple;
+	bh=dfo7ORxeQnNkiO0yCRsn4mUmZSjPu3IlvKZs4DGD37M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ohYpRVnQ1HuTn6TJell5bPGIsCwGfyCAOs3kM+aQVYW0MAMgf4/CQMyCPahknZaJ5wQJ9dR0pwFA5qCPVGEK14B2fY2mxYYHuv9RyAeDMtBHozLojTodlhHriRSNS3IiXj7cQyJiD8gcir0C+NKs795LQ4dQyId61hDqJOdZtj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NC7Sm9DN; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=WbHdcj64fIlZGJlLPjUSyD2Uc1iwBTxrtbQEySveYl2xsWPxKPqqCxQEhMHHkEjZlCbyxMcSFZRg8lzIRlCEMJ/y1mjJO8ujo3aar/4LhPwRwbHteO2BFEoVwdldXbDJKXUoXY4HDv/o7OB/a1gLGPss3dVCm4wqZDz/ThJp7wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPHQ7DQp; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso7872033a12.3
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 04:41:36 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so7795665a12.1
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 04:41:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740400895; x=1741005695; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740400896; x=1741005696; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FpRDb9Jc6m/HtHMq4BA9JO0pJq4DDZoA3bizjMcy5DI=;
-        b=NC7Sm9DNfte3FpW/x03zLowy7GLi5u2rp+6iUWbqATQrDlJrYQ1dYZBMUC3IoiDXV0
-         F7Wu102Duy67xct8V9+RarqhAtkpFp5BMsg5yEHQZ3eoByWezBo/9yBWjyc8NNXTPtbS
-         dzzOqrgWtWYLLAvtlMM0e5ArAT/af+2EEhwoHuJe1HSlMLIK9InBzMChOLUFLM8x1LDB
-         Ih2aPje2G7a81VisICLc2pfCKsDrrw3BXg+hteRe/xaFu9DYX1ZmHlyGfES6GvI3C3Ib
-         ffE7yfWGRl4fHMhVN5B+Jq/QcIGSrzqzJnvpG8MYhVLmcMNo5L3MjuotQDjpSWUanbo3
-         Wpig==
+        bh=TeA492I5jGdk9YG+o5IQXdThhoW9fDkBeoIep9VFMIs=;
+        b=kPHQ7DQpYxaq/6nwZZ9chVtUXf6U2NG/fpHu3L3Q5kfIgFhJ5kaw+ajqsaxKQNNdZc
+         AjwiubhpyPYzg5cHtXoHk0446QWxbaIHz/ty9f8YHzarGxt8MSTIh9LhJlovLIX8zCZa
+         N3UtCrhbT5jJeg2aIkNC5KardJHm9SMoUg6oyxTv5Y3R5d9UqnpA2h9pHjcSWLRKmIqx
+         hZI22puk+9rrcDnagxfEgsevZTMyQqG87Zlu/1nF82J9MKw7peuR8EQSLIyYdEhbGav8
+         ZVhg+50Ns+o4k6uL9c5vEfaIjRGqqAMRt+2rRZs/dzwKRMuQOfHOZoN6H0WFf3xXEf2J
+         gNSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740400895; x=1741005695;
+        d=1e100.net; s=20230601; t=1740400896; x=1741005696;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FpRDb9Jc6m/HtHMq4BA9JO0pJq4DDZoA3bizjMcy5DI=;
-        b=Ugn30O/aZlCjfTYGropgF8jPcKyMsyxuS00Zv4rAFFAAZWhrWS3vxST0xDGZwQ0W5F
-         EYa1emAmzGSgYN++P3ayJ00KSBgcC6aWnpFku5lGeN9aXJujH2+gGnPd3dwHPxwjK0oi
-         3EYt03VBr+zbayiezYCyscHGx7QyQG42Uv9JUPKLs+uNIs6WCd9bhsDw1m402URV1Uxi
-         OeyDxa7QZOl2NGKCcIB91Rb2KWkOgrBSv1THfUCLmlAxTHXzcNQwF3UvjLwUOafJgDX4
-         uWPBwKwNp/vJ+euoaBasNjT++vs/37hmnSBP4eUJ7yfkIVM1KWYWE2gEj1H8/WcQ0KNT
-         nJhw==
-X-Gm-Message-State: AOJu0YzZ9kQwSMjpDN5Med6PnDgo79xvpt7m6YVKggRHrL+jek1LB5AN
-	tpL82vTSaI672xVxIT/P7UcZuWMfCYiRXK8oDQATd/+YWMeyjssVThdfQw==
-X-Gm-Gg: ASbGncvG7Q+aT8YsNQJuaHF6eZPQdjsG//y7C1myuGiRd50dJ+EMx89ck5U4zRq7wVS
-	N0muZCHchb0DDw8aqbEFRavutYoxZIakCiIab6oU10dqKMuuIUX/RJl7rKuagofFU0e6LopYxmZ
-	DuHax8YgJlEsiWDBKniRFOPP96lXX2PgVOwwkNTdCxHU5MU8+Pi4VtX7AHhbukQHlNjR4JcBkSU
-	PPM0Fjjlsj3WnYpQ5QWJ7FhwATAoEGbB88Y7Kk67L/O6c8p4lpT7jvk+efp/GbFWPwjwoNS1acW
-	W3IPdvHybw==
-X-Google-Smtp-Source: AGHT+IGZGM73LHX+t5UqOGADPN7LrjZ9BvfiklKpwSsTR8CorX392wqpjJGw/WBlEKHXmWB/7W/Xjg==
-X-Received: by 2002:a05:6402:1d4b:b0:5e0:36c0:7b00 with SMTP id 4fb4d7f45d1cf-5e0b7257b92mr13400911a12.31.1740400895118;
-        Mon, 24 Feb 2025 04:41:35 -0800 (PST)
+        bh=TeA492I5jGdk9YG+o5IQXdThhoW9fDkBeoIep9VFMIs=;
+        b=WSowfEew4jdZ4Fdna2Lpr2dv3YtN8Lmv5MLkE1nCyQwK/sDPsmGJZKnGhRltfeDBmh
+         0RSnM0hbslvWM23xa8GLpmBoWF3cLjQ9GlwPzwSEhW6pVOmagTSzsRoirU+FZj8/IXrr
+         5rpJKnKEEiuHC7J93xe3tMeWeMbolJAAm/4ONvvvSe1llVQjx83odt57B7ByTclS9nRq
+         aBG/28jDyc/MYer+PqB9bu6Z0EeOj2hOlFhJXAU2UwdcmZIS/Y5uvvARZTzHhnDooFwo
+         AIk+mC205Epyo/3pebrGBV+uFCzjYS0eiI9guZ/sm9jHzXCXKy0ZaPaq/2RlLVCZRhUi
+         +Q+g==
+X-Gm-Message-State: AOJu0Yy/g33TE+3UeVj2P+kENn5l0Uh/2UXxlgU2hTiPtojICcQvRVCx
+	+lpNZZ9lZry3J1QybKG2pC+4IeKOTBPjC4TDweF4owAJbXfpCwO92CFR5A==
+X-Gm-Gg: ASbGncsXMK1VgUzmT/8xfXTIRfBUlB3rOq8ifEXS/KWBIrAURdH0oShzO7Er8gVQy02
+	ns28UECG0w8oBz/fwZexZKaOFpUAlSYwcP9lQfSblIYTdWx6jcK6xCrb+tqeV0nmddUonxMRt2w
+	4L4FFFwo1kXWtOfSBExADBPV0zTDiZl83kAMLA4JXwaI/cN0AldFmvNTotSN4fTRYrccpG4Fa2O
+	1KZfVxexBC8v7V4eE5CsKucAbphPymn7VbQHLkHHpRrPAsxf31zVWuEckisGQ+3I4RdsrUMHp4k
+	nDLSMYU94A==
+X-Google-Smtp-Source: AGHT+IEDxQeib5P8YEUXq6vIx8BmZ0YmygiL2mr8rxalYItyPfrp1rWLY8ZC2gUSFNu7IIUGTS0TRg==
+X-Received: by 2002:a05:6402:43c8:b0:5e0:8b68:ffae with SMTP id 4fb4d7f45d1cf-5e0b70f9ac6mr12144417a12.17.1740400896162;
+        Mon, 24 Feb 2025 04:41:36 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:bd30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f65sm18165110a12.1.2025.02.24.04.41.34
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f65sm18165110a12.1.2025.02.24.04.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 04:41:34 -0800 (PST)
+        Mon, 24 Feb 2025 04:41:35 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Anuj gupta <anuj1072538@gmail.com>,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2 4/6] io_uring/rw: shrink io_iov_compat_buffer_select_prep
-Date: Mon, 24 Feb 2025 12:42:22 +0000
-Message-ID: <b334a3a5040efa424ded58e4d8a6ef2554324266.1740400452.git.asml.silence@gmail.com>
+Subject: [PATCH v2 5/6] io_uring/waitid: use io_is_compat()
+Date: Mon, 24 Feb 2025 12:42:23 +0000
+Message-ID: <28c5b5f1f1bf7f4d18869dafe6e4147ce1bbf0f5.1740400452.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740400452.git.asml.silence@gmail.com>
 References: <cover.1740400452.git.asml.silence@gmail.com>
@@ -90,41 +90,25 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Compat performance is not important and simplicity is more appreciated.
-Let's not be smart about it and use simpler copy_from_user() instead of
-access + __get_user pair.
+Use io_is_compat() for consistency.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rw.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ io_uring/waitid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 7133029b4396..22612a956e75 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -48,18 +48,12 @@ static bool io_file_supports_nowait(struct io_kiocb *req, __poll_t mask)
+diff --git a/io_uring/waitid.c b/io_uring/waitid.c
+index 347b8f53efa7..4034b7e3026f 100644
+--- a/io_uring/waitid.c
++++ b/io_uring/waitid.c
+@@ -78,7 +78,7 @@ static bool io_waitid_copy_si(struct io_kiocb *req, int signo)
+ 		return true;
  
- static int io_iov_compat_buffer_select_prep(struct io_rw *rw)
- {
--	struct compat_iovec __user *uiov;
--	compat_ssize_t clen;
-+	struct compat_iovec __user *uiov = u64_to_user_ptr(rw->addr);
-+	struct compat_iovec iov;
- 
--	uiov = u64_to_user_ptr(rw->addr);
--	if (!access_ok(uiov, sizeof(*uiov)))
--		return -EFAULT;
--	if (__get_user(clen, &uiov->iov_len))
-+	if (copy_from_user(&iov, uiov, sizeof(iov)))
- 		return -EFAULT;
--	if (clen < 0)
--		return -EINVAL;
--
--	rw->len = clen;
-+	rw->len = iov.iov_len;
- 	return 0;
- }
+ #ifdef CONFIG_COMPAT
+-	if (req->ctx->compat)
++	if (io_is_compat(req->ctx))
+ 		return io_waitid_compat_copy_si(iw, signo);
+ #endif
  
 -- 
 2.48.1

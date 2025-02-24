@@ -1,132 +1,130 @@
-Return-Path: <io-uring+bounces-6722-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6723-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49749A42F4C
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 22:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9339A43030
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 23:38:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B88E3AFFE0
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 21:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F3E3AE8AB
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 22:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F6A469D;
-	Mon, 24 Feb 2025 21:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582E419B586;
+	Mon, 24 Feb 2025 22:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Wt8iXrEu"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rvfM2/rO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4321F19F48D
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 21:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF81F5FA
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 22:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433191; cv=none; b=SUgknr3xtQBhmWFn4rA4IYW8rJUN6ne5Siws/igP4wrWWU0ALMkoJARNV1ieFk3ksH0BnoeNUfiiOWIR8iBR7X0Oc9rxT7orqmZ7LX83zpsxlQiGAhZ4lCgJCyoGLR7rgr7ILyTHNaMV5NLaCF2v77HYOGjDij+m477ew1Mf0lY=
+	t=1740436730; cv=none; b=N3lxY9SZXGdpvAVvJwE7yDwmjph3RKr7pBGHucrIdiCUlaQYCLJoEyiJnQK3cQPJxyG4beDUmioIc9uoEDkk18hYuQNqhqX4sLrzljsuVXOTg6oQeQr2yegnEP/fn5a9fMkzsRMfuz2CkOt3f/30kifWUpH0+6RZI7dhzLTFnKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433191; c=relaxed/simple;
-	bh=9FTBOSdhT8Fk49aybKjxWWzf6EmwXh52+BABmAiLiFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O35s/rBMh2t+knuD0bMFz5JEGXanHvqRg+h3iVwIBZGM7FoXDhKsZoObpTYq3Mix42leS96umDfnxJhbgWDnn4FiyurjUhEhSxBBD9ShDb8TPmfSPgecag8T7C5kpRaYTQMDqX4nL6J5ooeioArXagg/Mf551uDYnJNesAa4Rjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Wt8iXrEu; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c3e25658so11656885ad.1
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 13:39:47 -0800 (PST)
+	s=arc-20240116; t=1740436730; c=relaxed/simple;
+	bh=1532iGWN0IEg5xaTzIgNih2/rgjtLdWlY/rMH2+Nwzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IX959u9YPnMzm2oCadVrB9oelsKwUZiVbsaUqqqoy6RxsN3cQfRKhReStFF32WTqJf8SKbX4fbkHOO2yNSSkiG1+Z0sdygvkHma4bKxwuZlw+K5uZQ/6IRKWCDVFX0KjtzwoeOPB+jfBkmJD6SEWdfhbF/fDXls/U0i/MOOlCnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rvfM2/rO; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3ce868498d3so14350605ab.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 14:38:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740433187; x=1741037987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HbT5GxY7U8d29szFcIEb937yeprNIBlLXP0MxBpt1uw=;
-        b=Wt8iXrEuMVsAb+Im1xMoSggQl9BdKe5nHqgzSldeJ8HNPNGZVroA1CkFvWAo/uQ2DN
-         8jaBoJY1PTNRPr8GMBrGm63SqKDguqNggbRiX/IdwkBnnw/4a+ejxVb0AExxnNi/682P
-         WAo31zjd53E5rSc3U2WFrwwQiIveUPPBSuCWcPk8uv99b802wJELniwRsIS/xQF0x+F8
-         N1yUaiqfmK8eM0xca4uziVunqBxLONnxkRFV6JJ47Y2BEuCGskAy9pv9sK9Z1xLvv2IH
-         XXUIqmA08E1rG3mVcZatDhfBcwH/fFoG2A74vsNp6Fxxc3oGDqWLyRno66aqTGJjoW+T
-         5CZA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740436725; x=1741041525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HKpFLj4FG0iU02bCfQsJzDd1HU3OS1T4WFmnFbYL14A=;
+        b=rvfM2/rOqHE5IF/wdVqg62/NAqzN87p3nVSo9fyVfw3MO/fiYemtXIpsd9W9m8GwLZ
+         4qpIF/N9EHuUfiEk7sARw/xKQU8b6cgGhvKAzE1v2yETG7SS8kumiwe2rFhEKdPQ3myQ
+         iHvAUC6q8JrlHvbPDN2WRR8N8CAt8KAsKWp1IooUsYfsCQUsIKSavZtRzuyKWW5heZ49
+         aqoHFzUIDX9JB0JeBUcfRc9sJ7rTNPIp+CpHfSSMejGCKTuUuStwBSoFySmyHD7X+m5p
+         sqh77/hi6/H998Wwtu+va3Ry6BDUdpnvJHMydVYduZHAsTudikDwQzgGaD684uqk7K8m
+         uU8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433187; x=1741037987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HbT5GxY7U8d29szFcIEb937yeprNIBlLXP0MxBpt1uw=;
-        b=d13QwTerH46VWDdWnSxjPVTPJN5jWOMGWcCrxTvYi99z3PcwETIv1/WqNGsieq1TLD
-         DptL0Mw3Eqm4+ocfLH2s0Zx7Beoni1bHDZec5nHjPD/bGD96+ufy0AtOJ/3Pzr29Sue2
-         8ffEtoWqYh1vJFU8KeLZ6TVB2+INqkYsgw4czgzZBcBdC2HIF3tvMMVJ2jKpwG8aNYIN
-         yZK1bqtk1IZX1yQtFoRCggM6//kb9sfiRvJllZj21pruVV3ExBpgNFXYojlRKLs6vm4t
-         KRsF7UVKXH89Ps2dN8dfy4FxLOLdWJHgofUz/213iDEW21a9r3taEUKJL2K3zVlHlHF7
-         8qTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl7NXTN+3PcEtJw1wRurqJeuo8AylfRLinRa5haC6EFeCBnHC3gpuxy1p87ZkutFKJCFvzWFulTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf3v6WZb/qR2Y6HWOlDEC34BqXuhTl8sJgrTOaxp1CnfcABKcF
-	NLaH+DDMpyrr6o9YcjM0tKbnNDrCPVBgOGWXpcqeTETBJa0Fdi5HdwvO1fkyMrtlkInkpRMSCSE
-	kwubCAiku/7vty6ZIce2TLvtQMLZadb6CPxKMJA==
-X-Gm-Gg: ASbGncvtMYPnyzz+SOR5aYTDGpCNeU9c6WMJZhiQlKYfKCNUZkptWd2naDp676GWzmF
-	NcmFWjPPHSMMCm4L7//C4N/WQqeC8lSaJ1iVSuwIiIAuWK0y9kv4jOJBF/wCzy7rK72poA1pHnk
-	QpnQqZsZE=
-X-Google-Smtp-Source: AGHT+IH8rrLIdP/vBzrKzcBOAgB0iZOygLzf1jzMPI39fpDZZ3eZVixpVuQWLyQGQvndxOTo31U7KHyiT902oOEaGTM=
-X-Received: by 2002:a17:902:e884:b0:216:3dd1:5460 with SMTP id
- d9443c01a7336-2219ff4e2bdmr91667145ad.2.1740433187429; Mon, 24 Feb 2025
- 13:39:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740436725; x=1741041525;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKpFLj4FG0iU02bCfQsJzDd1HU3OS1T4WFmnFbYL14A=;
+        b=BRLTUjsaJE87XwsINUCgOU8xvfN8qgxncy28O6i4M9w7bryohma5rJz1S1LIUatUQ7
+         m8VgJgsK+P8AcA+1sni6PDXhfrEaKSfjsNhr1tjam39WNHYrlcNA1In4i3BTmWorDjAz
+         SgrcUU1r7a6UqiI9rBQTVCiw+RWWDQomD+YuUiJLg5GgvXPIaGOGvJzICsP42QkZ3i1r
+         vR/OuEwu2o7SaOr+VjFA90HxSMFMaYsN2+nHE9wMe65yhTt9Q3dzNsI2o8JhIM2bseua
+         e3HdIXLLN5VWqB9o9hPHNvJAD8Lnril3vVu/AAioSKtdoETKYmN7pbk5+7JBUD4TLF50
+         LYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtOeeUa3LRi17vb/xl90e3ZOtNoS8iPKYCuQO11F/Bft8rTPAWOBTtDCJwSyS1ScKL/C2r9pnCJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytm7nhSBQagXA1Be9avjp8aqfxArRHgVVZGPiwukBrLVNPIlSg
+	yBT93jQW5+Y+hxZsx7PDK3I8t1r47fIKmictXvm3lB71o5f1UvmhrQ/OSSPM1K4=
+X-Gm-Gg: ASbGncuJQ0lo+iNQGwcPhg7UZAmt6K92I2kbISy1XNGZAf1/53g0Sq4PaWgMsnl/YNV
+	Z/iq0MAGxMtbQs0rLjXRQeJrzLkVyR16a1jxan1mDN7uFDQjFVmOYTi+9aREArX2Tzm72Dk5J4F
+	VtspOeOA2ieKTptWjvk57psFELtsw5vlE1F6fuvL4Y8T+UDAEb3MMK853plTBVgauzfBLzaEZXV
+	zfT5MxAxWnUs25N5XJqT8aT06xuWrCQZS/TipjMMnpDEuAZCvtj/nE+aoAZy3YLDrIZvseffzGk
+	SzIi7w4X3QpsPk0JCeOmU9c=
+X-Google-Smtp-Source: AGHT+IFw5KPcc7ysYzMiIpyApNNJMBoEKvcPjCfgDeBP5tJmeyDbd/vB8SBQM7Er8BKaxz6zI/neaA==
+X-Received: by 2002:a05:6e02:1d95:b0:3d2:af07:c8f with SMTP id e9e14a558f8ab-3d2cb4502bamr136151005ab.7.1740436725437;
+        Mon, 24 Feb 2025 14:38:45 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d367feefa5sm653005ab.59.2025.02.24.14.38.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 14:38:44 -0800 (PST)
+Message-ID: <6df285ea-01e6-4b13-b9c7-1f5ed01b942f@kernel.dk>
+Date: Mon, 24 Feb 2025 15:38:44 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218224229.837848-1-kbusch@meta.com> <20250218224229.837848-6-kbusch@meta.com>
- <CADUfDZq5CDOZyyfjOgW_JE_A_GWLscZkbJDgQ-UKTbFC66FjKA@mail.gmail.com> <Z7zeNLEnZqsniK69@kbusch-mbp>
-In-Reply-To: <Z7zeNLEnZqsniK69@kbusch-mbp>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 24 Feb 2025 13:39:35 -0800
-X-Gm-Features: AWEUYZlp7pcVXtW5Q-RqbTsTSpF0m36Os2YU2YRa2vl7senSIcqny3nHoyNmlGk
-Message-ID: <CADUfDZqF-AV7MfdXHchxgQRLMFuLvbOoWkzZmki4_L5upKcs4A@mail.gmail.com>
-Subject: Re: [PATCHv4 5/5] io_uring: cache nodes and mapped buffers
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com, asml.silence@gmail.com, 
-	axboe@kernel.dk, linux-block@vger.kernel.org, io-uring@vger.kernel.org, 
-	bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] io_uring/zcrx: recvzc read limit
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>
+References: <20250224041319.2389785-1-dw@davidwei.uk>
+ <174040774071.1976134.14229369640864774353.b4-ty@kernel.dk>
+ <17c27735-a613-4bd5-89df-645ae7ed83a2@kernel.dk>
+ <531efbe5-aaf1-47a4-b5d1-a5c5ce9156cc@davidwei.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <531efbe5-aaf1-47a4-b5d1-a5c5ce9156cc@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 1:01=E2=80=AFPM Keith Busch <kbusch@kernel.org> wro=
-te:
->
-> On Tue, Feb 18, 2025 at 08:22:36PM -0800, Caleb Sander Mateos wrote:
-> > > +struct io_alloc_cache {
-> > > +       void                    **entries;
-> > > +       unsigned int            nr_cached;
-> > > +       unsigned int            max_cached;
-> > > +       size_t                  elem_size;
-> >
-> > Is growing this field from unsigned to size_t really necessary? It
-> > probably doesn't make sense to be caching allocations > 4 GB.
->
-> It used to be a size_t when I initially moved the struct to here, but
-> it's not anymore, so I'm out of sync. I'll fix it up.
->
-> > > @@ -859,10 +924,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *=
-ctx, void __user *arg,
-> > >                         }
-> > >                         node->tag =3D tag;
-> > >                 }
-> > > -               data.nodes[i] =3D node;
-> > > +               table.data.nodes[i] =3D node;
-> > >         }
-> > > -
-> > > -       ctx->buf_table.data =3D data;
-> >
-> > Still don't see the need to move this assignment. Is there a reason
-> > you prefer setting ctx->buf_table before initializing its nodes? I
-> > find the existing code easier to follow, where the table is moved to
-> > ctx->buf_table after filling it in. It's also consistent with
-> > io_clone_buffers().
->
-> Yes, it needs to move to earlier. The ctx buf_table needs to be set
-> before any allocations from io_rsrc_node_alloc() can happen.
+On 2/24/25 1:33 PM, David Wei wrote:
+> On 2025-02-24 11:56, Jens Axboe wrote:
+>> On 2/24/25 7:35 AM, Jens Axboe wrote:
+>>>
+>>> On Sun, 23 Feb 2025 20:13:17 -0800, David Wei wrote:
+>>>> Currently multishot recvzc requests have no read limit and will remain
+>>>> active so as long as the socket remains open. But, there are sometimes a
+>>>> need to do a fixed length read e.g. peeking at some data in the socket.
+>>>>
+>>>> Add a length limit to recvzc requests `len`. A value of 0 means no limit
+>>>> which is the previous behaviour. A positive value N specifies how many
+>>>> bytes to read from the socket.
+>>>>
+>>>> [...]
+>>>
+>>> Applied, thanks!
+>>>
+>>> [1/2] io_uring/zcrx: add a read limit to recvzc requests
+>>>       commit: 9a53ea6aa5c87fe4c49297158e7982dbe4f96227
+>>> [2/2] io_uring/zcrx: add selftest case for recvzc with read limit
+>>>       commit: f4b4948fb824a9fbaff906d96f6d575305842efc
+>>
+>> Fixed up 1/2 for !CONFIG_NET, fwiw.
+>>
+> 
+> Thanks, and sorry for the noise. I'll be sure to compile check
+> !CONFIG_NET next time.
 
-Got it, thank you for explaining.
+Easy to miss, and the kernel test bot always finds them. So not a huge
+deal.
 
-Best,
-Caleb
+-- 
+Jens Axboe
 

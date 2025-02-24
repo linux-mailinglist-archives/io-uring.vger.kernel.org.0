@@ -1,68 +1,68 @@
-Return-Path: <io-uring+bounces-6713-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6718-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC90A42F1C
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 22:31:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A01E1A42F29
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 22:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2D03AF8B6
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 21:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFAD03AF39D
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 21:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EAB1DF969;
-	Mon, 24 Feb 2025 21:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E6C1DE3AD;
+	Mon, 24 Feb 2025 21:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Gs5by91E"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="G+lwOdZJ"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0B43B784
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 21:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984281DDC18
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 21:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740432693; cv=none; b=b0mNVwNq9dW+gzbFyDGSsAy03tEsQxt9aalO8txTskOJz/cbE4qWSUAOlRIVH6avL9vAhLtV7ibqftjikoEkvxjqHvJ+Di/5ACen8J+/l/eV7DtL9AQ7sPZRkWyUG6SEHL1kAaF6eX7oFqH6LxLvhPcF1myuhx7JyIard0SuEJw=
+	t=1740432699; cv=none; b=JoKiqLNq/fwjw/1agonib1/5PDr8lOKhojSGgeZgXpd0ktOxk2AeRpDOsQ3mcxrSsblTBkUenR8wLr8n0yKSkjkyaNYjdLj14boWE5WKmobPC/bxu3fgPGw6XvkSnLYVytAPEvGAobiEy99AJQ0avSia7tulmissZdn+z4jlD64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740432693; c=relaxed/simple;
-	bh=LW1kgTOAVjw7bfyBhK06dkc9l4d8chusojr5bZpVtv0=;
+	s=arc-20240116; t=1740432699; c=relaxed/simple;
+	bh=aN9JMzH6z1RoQi0QWuvJ00ZmnO8a7FIO+8Ar0zkLmWk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T4+ya70YYBzc7A64oZDiccrWWbplE0nV5kCBoge4Wlx2IP67U+DXzEBqAf7VQn9jEfuJQ1SQK4OgW4e8e6F1M/JkSAdF556rV8MW5V7JOyoycNat3G+65oMT06QWPsGM97sHRbI8RQvYPURMApdeRgaD+2WtxzKX1NziIr/nFTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Gs5by91E; arc=none smtp.client-ip=67.231.153.30
+	 MIME-Version:Content-Type; b=HhPnfZIpGNa5t0Hk3YhIHpTjc2ELdUsWQAkeZdBkikStAR5BMty2ZndJ1FPPLwxSYAyT71wYyWCnghpKcOSXhgVX31pMZ8KRRNTwrLY4UctM3UWG8XJEZD56fArOzTMVBq0S+rtBuZ/92bSfZoHnTIP1oALj78Gkxo+FHLfmkKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=G+lwOdZJ; arc=none smtp.client-ip=67.231.153.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OFDHRg023683
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 13:31:30 -0800
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OFDF26023467
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 13:31:36 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=NMzl8MMdACNuLkhkecw/0spruZ4BE8hsOxbXOlcyQnI=; b=Gs5by91EjFyD
-	63Hk5sALlN6ESCEtm1RmOScK9sc9DJmWadBD9nYhGNCV3DReKqRoxaDpaD5pT+ck
-	5RnoEFu207Wqt6IKcheEUPybt0HLjn44xYcqjjUd0xCoVjPJDXQ4MEsS661+vTu2
-	gJW9m8qhU7HmgaEg+uoOSZCDWCN0ulUz4NmjOfm3DgZEw3G4IMxB/lWTpSqtQNVD
-	UXVmLrkOlgmWCN9v58e99Mmh/2xNrxZHs6PpX3hh6L1+epACNYHuib7DxOFewVoR
-	TnnD6nszCRaS8dewNZo/ctmnTtqCJR+PaRVCKbtNQ/V9ZxSV6y1UBeRND0z3P0gv
-	uPVl3jyRuQ==
+	 bh=3JMiX14eSnJL69aRaWySip1q69b2nPk9mQ9nxLakszk=; b=G+lwOdZJmwqv
+	iqRLI2ajAZy1aKzHrTT5yaEmMsfGFT/Z+JHo4plwSZ9nPGYnGLDoT+HWIbdQrnFO
+	sXSQUR+dytgMP8F5kV1ADxAUMpgsGpFT9owYsvIF/mDZaFdwS8cXUnMOEWMYlVDj
+	Ly/Gr1GxDZuVe4EYL18gqafuQFjAz1FvANJ2ZUzgBIC84g959rzHRV2V6kIJ5NeT
+	XEV5KwwOdOJl329LLVBFajM/GBgjzCu8MHcC+uo4haLBjpj/sIQ3UWYioiZfD1Pm
+	NBcj8eXYTDujwZu8hnueQYKgaLEELSS2RCcTql4FEmRnhYf8bv0ejJoIm6aZVpsI
+	d0QW4j6eEA==
 Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 450tdcufr4-13
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 450tdcufs5-7
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 13:31:30 -0800 (PST)
-Received: from twshared29376.33.frc3.facebook.com (2620:10d:c0a8:1b::8e35) by
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 13:31:36 -0800 (PST)
+Received: from twshared8234.09.ash9.facebook.com (2620:10d:c0a8:1c::11) by
  mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Mon, 24 Feb 2025 21:31:16 +0000
+ 15.2.1544.14; Mon, 24 Feb 2025 21:31:23 +0000
 Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 68D4F1868C4EE; Mon, 24 Feb 2025 13:31:17 -0800 (PST)
+	id 710671868C4F0; Mon, 24 Feb 2025 13:31:17 -0800 (PST)
 From: Keith Busch <kbusch@meta.com>
 To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
         <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
 CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
         Keith Busch
 	<kbusch@kernel.org>
-Subject: [PATCHv5 04/11] io_uring/nvme: pass issue_flags to io_uring_cmd_import_fixed()
-Date: Mon, 24 Feb 2025 13:31:09 -0800
-Message-ID: <20250224213116.3509093-5-kbusch@meta.com>
+Subject: [PATCHv5 05/11] io_uring: combine buffer lookup and import
+Date: Mon, 24 Feb 2025 13:31:10 -0800
+Message-ID: <20250224213116.3509093-6-kbusch@meta.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250224213116.3509093-1-kbusch@meta.com>
 References: <20250224213116.3509093-1-kbusch@meta.com>
@@ -75,115 +75,212 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 6iMiFRvuLgUKDt0Pa9XTOPGJrKKcvLUZ
-X-Proofpoint-ORIG-GUID: 6iMiFRvuLgUKDt0Pa9XTOPGJrKKcvLUZ
+X-Proofpoint-GUID: _jsdvSefCzlCi40viLaaDrbzok5HxASf
+X-Proofpoint-ORIG-GUID: _jsdvSefCzlCi40viLaaDrbzok5HxASf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_10,2025-02-24_02,2024-11-22_01
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-io_uring_cmd_import_fixed() will need to know the io_uring execution
-state in following commits, for now just pass issue_flags into it
-without actually using.
+Registered buffer are currently imported in two steps, first we lookup
+a rsrc node and then use it to set up the iterator. The first part is
+usually done at the prep stage, and import happens whenever it's needed.
+As we want to defer binding to a node so that it works with linked
+requests, combine both steps into a single helper.
 
 Reviewed-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- drivers/nvme/host/ioctl.c    | 10 ++++++----
- include/linux/io_uring/cmd.h |  6 ++++--
- io_uring/uring_cmd.c         |  3 ++-
- 3 files changed, 12 insertions(+), 7 deletions(-)
+ io_uring/net.c       | 22 ++++------------------
+ io_uring/rsrc.c      | 31 ++++++++++++++++++++++++++++++-
+ io_uring/rsrc.h      |  6 +++---
+ io_uring/rw.c        |  9 +--------
+ io_uring/uring_cmd.c | 25 ++++---------------------
+ 5 files changed, 42 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index e8930146847af..e0876bc9aacde 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -114,7 +114,8 @@ static struct request *nvme_alloc_user_request(struct=
- request_queue *q,
+diff --git a/io_uring/net.c b/io_uring/net.c
+index fa35a6b58d472..f223721418fac 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1441,24 +1441,10 @@ static int io_send_zc_import(struct io_kiocb *req=
+, unsigned int issue_flags)
+ 	int ret;
 =20
- static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
--		struct io_uring_cmd *ioucmd, unsigned int flags)
-+		struct io_uring_cmd *ioucmd, unsigned int flags,
-+		unsigned int iou_issue_flags)
- {
- 	struct request_queue *q =3D req->q;
- 	struct nvme_ns *ns =3D q->queuedata;
-@@ -142,7 +143,8 @@ static int nvme_map_user_request(struct request *req,=
- u64 ubuffer,
- 		if (WARN_ON_ONCE(flags & NVME_IOCTL_VEC))
- 			return -EINVAL;
- 		ret =3D io_uring_cmd_import_fixed(ubuffer, bufflen,
--				rq_data_dir(req), &iter, ioucmd);
-+				rq_data_dir(req), &iter, ioucmd,
-+				iou_issue_flags);
- 		if (ret < 0)
- 			goto out;
- 		ret =3D blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
-@@ -194,7 +196,7 @@ static int nvme_submit_user_cmd(struct request_queue =
-*q,
- 	req->timeout =3D timeout;
- 	if (ubuffer && bufflen) {
- 		ret =3D nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
--				meta_len, NULL, flags);
-+				meta_len, NULL, flags, 0);
- 		if (ret)
+ 	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
+-		struct io_ring_ctx *ctx =3D req->ctx;
+-		struct io_rsrc_node *node;
+-
+-		ret =3D -EFAULT;
+-		io_ring_submit_lock(ctx, issue_flags);
+-		node =3D io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
+-		if (node) {
+-			io_req_assign_buf_node(sr->notif, node);
+-			ret =3D 0;
+-		}
+-		io_ring_submit_unlock(ctx, issue_flags);
+-
+-		if (unlikely(ret))
+-			return ret;
+-
+-		ret =3D io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter,
+-					node->buf, (u64)(uintptr_t)sr->buf,
+-					sr->len);
++		sr->notif->buf_index =3D req->buf_index;
++		ret =3D io_import_reg_buf(sr->notif, &kmsg->msg.msg_iter,
++					(u64)(uintptr_t)sr->buf, sr->len,
++					ITER_SOURCE, issue_flags);
+ 		if (unlikely(ret))
  			return ret;
- 	}
-@@ -514,7 +516,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, =
-struct nvme_ns *ns,
- 	if (d.addr && d.data_len) {
- 		ret =3D nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
--			d.metadata_len, ioucmd, vec);
-+			d.metadata_len, ioucmd, vec, issue_flags);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index abd0c8bd950ba..87150dc0a07cf 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -39,7 +39,8 @@ static inline void io_uring_cmd_private_sz_check(size_t=
- cmd_sz)
+ 		kmsg->msg.sg_from_iter =3D io_sg_from_iter;
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index efef29352dcfb..f814526982c36 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -857,7 +857,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
+void __user *arg,
+ 	return ret;
+ }
 =20
- #if defined(CONFIG_IO_URING)
- int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
--			      struct iov_iter *iter, void *ioucmd);
-+			      struct iov_iter *iter, void *ioucmd,
-+			      unsigned int issue_flags);
-=20
- /*
-  * Completes the request, i.e. posts an io_uring CQE and deallocates @io=
-ucmd
-@@ -67,7 +68,8 @@ void io_uring_cmd_issue_blocking(struct io_uring_cmd *i=
-oucmd);
-=20
- #else
- static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len,=
- int rw,
--			      struct iov_iter *iter, void *ioucmd)
-+			      struct iov_iter *iter, void *ioucmd,
-+			      unsigned int issue_flags)
+-int io_import_fixed(int ddir, struct iov_iter *iter,
++static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 			   struct io_mapped_ubuf *imu,
+ 			   u64 buf_addr, size_t len)
  {
- 	return -EOPNOTSUPP;
+@@ -916,6 +916,35 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 	return 0;
+ }
+=20
++static inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req=
+,
++						    unsigned issue_flags)
++{
++	struct io_ring_ctx *ctx =3D req->ctx;
++	struct io_rsrc_node *node;
++
++	if (req->flags & REQ_F_BUF_NODE)
++		return req->buf_node;
++
++	io_ring_submit_lock(ctx, issue_flags);
++	node =3D io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
++	if (node)
++		io_req_assign_buf_node(req, node);
++	io_ring_submit_unlock(ctx, issue_flags);
++	return node;
++}
++
++int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
++			u64 buf_addr, size_t len, int ddir,
++			unsigned issue_flags)
++{
++	struct io_rsrc_node *node;
++
++	node =3D io_find_buf_node(req, issue_flags);
++	if (!node)
++		return -EFAULT;
++	return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
++}
++
+ /* Lock two rings at once. The rings must be different! */
+ static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx =
+*ctx2)
+ {
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 2b1e258954092..f0e9080599646 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -44,9 +44,9 @@ void io_free_rsrc_node(struct io_ring_ctx *ctx, struct =
+io_rsrc_node *node);
+ void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_data *dat=
+a);
+ int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
+=20
+-int io_import_fixed(int ddir, struct iov_iter *iter,
+-			   struct io_mapped_ubuf *imu,
+-			   u64 buf_addr, size_t len);
++int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
++			u64 buf_addr, size_t len, int ddir,
++			unsigned issue_flags);
+=20
+ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)=
+;
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 3443f418d9120..db24bcd4c6335 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -352,8 +352,6 @@ static int io_prep_rw_fixed(struct io_kiocb *req, con=
+st struct io_uring_sqe *sqe
+ 			    int ddir)
+ {
+ 	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
+-	struct io_ring_ctx *ctx =3D req->ctx;
+-	struct io_rsrc_node *node;
+ 	struct io_async_rw *io;
+ 	int ret;
+=20
+@@ -361,13 +359,8 @@ static int io_prep_rw_fixed(struct io_kiocb *req, co=
+nst struct io_uring_sqe *sqe
+ 	if (unlikely(ret))
+ 		return ret;
+=20
+-	node =3D io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
+-	if (!node)
+-		return -EFAULT;
+-	io_req_assign_buf_node(req, node);
+-
+ 	io =3D req->async_data;
+-	ret =3D io_import_fixed(ddir, &io->iter, node->buf, rw->addr, rw->len);
++	ret =3D io_import_reg_buf(req, &io->iter, rw->addr, rw->len, ddir, 0);
+ 	iov_iter_save_state(&io->iter, &io->iter_state);
+ 	return ret;
  }
 diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 14086a2664611..28ed69c40756e 100644
+index 28ed69c40756e..31d5e0948af14 100644
 --- a/io_uring/uring_cmd.c
 +++ b/io_uring/uring_cmd.c
-@@ -257,7 +257,8 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int i=
-ssue_flags)
- }
+@@ -199,21 +199,9 @@ int io_uring_cmd_prep(struct io_kiocb *req, const st=
+ruct io_uring_sqe *sqe)
+ 	if (ioucmd->flags & ~IORING_URING_CMD_MASK)
+ 		return -EINVAL;
 =20
- int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
--			      struct iov_iter *iter, void *ioucmd)
-+			      struct iov_iter *iter, void *ioucmd,
-+			      unsigned int issue_flags)
+-	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
+-		struct io_ring_ctx *ctx =3D req->ctx;
+-		struct io_rsrc_node *node;
+-		u16 index =3D READ_ONCE(sqe->buf_index);
+-
+-		node =3D io_rsrc_node_lookup(&ctx->buf_table, index);
+-		if (unlikely(!node))
+-			return -EFAULT;
+-		/*
+-		 * Pi node upfront, prior to io_uring_cmd_import_fixed()
+-		 * being called. This prevents destruction of the mapped buffer
+-		 * we'll need at actual import time.
+-		 */
+-		io_req_assign_buf_node(req, node);
+-	}
++	if (ioucmd->flags & IORING_URING_CMD_FIXED)
++		req->buf_index =3D READ_ONCE(sqe->buf_index);
++
+ 	ioucmd->cmd_op =3D READ_ONCE(sqe->cmd_op);
+=20
+ 	return io_uring_cmd_prep_setup(req, sqe);
+@@ -261,13 +249,8 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned lon=
+g len, int rw,
+ 			      unsigned int issue_flags)
  {
  	struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
- 	struct io_rsrc_node *node =3D req->buf_node;
+-	struct io_rsrc_node *node =3D req->buf_node;
+-
+-	/* Must have had rsrc_node assigned at prep time */
+-	if (node)
+-		return io_import_fixed(rw, iter, node->buf, ubuf, len);
+=20
+-	return -EFAULT;
++	return io_import_reg_buf(req, iter, ubuf, len, rw, issue_flags);
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+=20
 --=20
 2.43.5
 

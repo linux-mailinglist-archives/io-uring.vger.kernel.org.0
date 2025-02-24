@@ -1,112 +1,116 @@
-Return-Path: <io-uring+bounces-6697-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6698-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E92DA42C6B
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 20:11:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3E0A42C96
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 20:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671B33A61C1
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 19:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9F71882C84
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 19:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC38155CB3;
-	Mon, 24 Feb 2025 19:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7651ACEAD;
+	Mon, 24 Feb 2025 19:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m6yxRP+P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGlM1cTZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BE42571B6
-	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 19:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDCB16CD1D
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 19:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424315; cv=none; b=RpvxBwJ5CKuYQZL+NLrzWrATbNGTOoFEWPreteNj8VIU+jukBMMO1iat2bXBj00BMn6WVJfqwz2xc2sj7lWd1XCaFyn0pE7bxMvmOdL4D3kGF9n9uBuPjj3rXEBQWyUiGDPH0lvYFlxgPpbJXc9lGRL+X9qVYU6X78rU0X1T9UA=
+	t=1740424806; cv=none; b=N5a4GVWeJ3G4w9mGpNHlCwD+96diDcGEl3dGn9LujniekfBLqGkug8bzZv0NK+IhjO/gxNAoG0AkljXg82lf9giwxJohFCzZIbMd5QheqhTdGpMXPcYuYMJzwIBlPMgaUf5TnrTR8RlIRlvq0gt29K3S3lRZbSEBBOX4jg+uzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424315; c=relaxed/simple;
-	bh=lqITVuHjSdd5RRpvKDEPCjNX6WgnfoWxYiPz1JVma5U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WAhQZY9iDs0y1KL2YmN8wtTJxEnc6J+S43ghY/rtxhU+TWlYNassIYYdJ+aWvugAVBu2sxaT1j8HJdH7KxAbvLXredWVbVj3PT3ciRc/ue1ruyOvS9rr8Fk31jMethlyp+jQqgpDQp9sF9B85yLDZghRVXAefmodWtEak3OD9c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m6yxRP+P; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d2b3811513so15824465ab.1
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 11:11:53 -0800 (PST)
+	s=arc-20240116; t=1740424806; c=relaxed/simple;
+	bh=p+K+dAINBvJotiJ1GyxsKQoJA5lH6zll3zFg1OWleC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UGP3me4EmIKVT27TtdsDJCJ2t5Cf2FdkEqO9GlSFp9Lf6Qpv1+m3SxuWOKbmlnIdT2pp8Ps7IRzAB9mCMWpyRuqcSY8KUeq+G+lB/Aiu2xnVMBT1qPoU1THpufS/qwo19dTCgLXHCfQ0aqV0NlgJTdk4ioNVutOxalaB4Xzv+lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IGlM1cTZ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4397dff185fso42039095e9.2
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 11:20:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740424312; x=1741029112; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FmN3KVAfNfgQLfOINQ04HTMkcolnnhRuNSGcRqyX7Zk=;
-        b=m6yxRP+PvEiFr777V4ZwKdSjYp2deBUjqCmb61Eu8LOu5RScL8OxcDdUVk0c+98WiM
-         3JJyyFs9mf/zrV9+AAqMwsdNyowb+kFeeap0XA6RHSEnfQV44mNpCrE5MMCJv/n+y+Xc
-         IesAM+0yUPrRS9fAYyZBrBhEYtGlnn9VlBmiWEPpbyYBIOXIxh/+3i+vRldjxBBYM+F0
-         3HtxhSM/8Zpmi9uCYccAEwuDhEC6FCP/3W53+f3qP6aWHhsJBGVYydP6BEXVqZocpk17
-         6xveQZ7S3xmCcLenEop6KjDZnACpmWzb632Z++0dT7jZAwA8FqCBLbwINUtS6XDC++yI
-         2fvg==
+        d=gmail.com; s=20230601; t=1740424803; x=1741029603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=142htfNBYxpoZfPwN+amwwqqNf0f1hAIVck097mkGss=;
+        b=IGlM1cTZx7N2tvvztya2RbrB9qHECqwjIZxb3Bo1aP25sO/Yx/ik/fNa4gojuxcnpM
+         JoVrXYejr84gB/I/ZhVCUtWLj9y7k6+66w5+y1E8INHbGfI0Xs++xVttsJcEQRrYFaoc
+         RlCkMikw76cNtweBdyGZFVcSJW9O5VoRG8jlsEEXF9YjStvPTj+Mn+PxP3uXjXV5+DpG
+         qMv/8q8JuwiAss29y2cODq/dc//Tm9XFrvQyw8FsNQFrLGlu9taDplQyfaeWBfGttlME
+         sLluNtfzB4EI6hMlMPSkRX2hBC3ow8mavyFlCQEBx/cwCsX5FjiuCfpui7a2sHYcAkv0
+         JG4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740424312; x=1741029112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FmN3KVAfNfgQLfOINQ04HTMkcolnnhRuNSGcRqyX7Zk=;
-        b=Rt2dHk44inY1w/fbf/rPYgVmMz6Gwbf3sVuDRgQoEwZgIlh8bZrVfIXagsw3Cc1Qw3
-         JwZtp94mOHUCBpKugmacynUcyzb8uAP6ONTp4PFOIhb/pBrgzILZOGbZ76Zgsy0L32X4
-         QIYIhDhEjBSZz5i4nyjURmBt0LJ4uGBL+/zancT1+j4Xlx6ZJbQWuBTIXQ9hGFlcLbRY
-         rnNNGbGyIkI8/XPtqkVpjc7K1FNQ++7yH4lKkQt8z3CPe3T55KPh45Q9dtCn+0vLKQ5j
-         Qhy7mFlQ0VYoiESnSjtD7M0M+Yo/AuCOFzPe54YFhwOYmwnZNKBWx5NfAfF6CjaOOyDz
-         ITWw==
-X-Gm-Message-State: AOJu0Yys7y72LEfRIGDx8vTlGKV5FO+GnB5DxrWQFcr7H+B4GCn3Fb9L
-	Z4ssj9TEz9rmXJyOt0m4KWerpGmmr+HeJIgSSWash/e0Ce1gkdPnbsUTNRY3UQQ=
-X-Gm-Gg: ASbGncsFu4O4To3miZewC4nZrvpKceSZs8sZF4JoWWdDDnB4IwiQ2sYBtY/6fK1ZxjL
-	gGC31eYmEaquozh98IEjXJs/csGlC5XJK611FJYotpKAyLyDuwgpBsN097H5nYbqbGruXBLuOq4
-	JH2CVVzZS35cUvZWXmupnfAHdPEnBPS1y5q8F0YBzBXFx72PayYpusvCyQvkF5Z9T14G0ImftCO
-	XT5+VMzVaGd+CRcKXCr0jD/HxkEUj99LwWEsXwhYx7+N+ZhNNW7koVQz81vGvGc69UFSzSl1Bp+
-	hgCicQ8NjTiP7YSVKQ==
-X-Google-Smtp-Source: AGHT+IFv8GhjG79J3q5ecRXZdFhxhc3NK0bAEpM1VgiIaqs2Y5/ii9q53L2gwQISuhGHureqzJhrIw==
-X-Received: by 2002:a05:6e02:1fc9:b0:3d1:5840:1333 with SMTP id e9e14a558f8ab-3d2c00a5ff3mr187424625ab.1.1740424312651;
-        Mon, 24 Feb 2025 11:11:52 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18fb56f99sm52420845ab.50.2025.02.24.11.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 11:11:52 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250224172337.2009871-1-csander@purestorage.com>
-References: <20250224172337.2009871-1-csander@purestorage.com>
-Subject: Re: [PATCH] io_uring/waitid: remove #ifdef CONFIG_COMPAT
-Message-Id: <174042431179.2039316.10674905939776007454.b4-ty@kernel.dk>
-Date: Mon, 24 Feb 2025 12:11:51 -0700
+        d=1e100.net; s=20230601; t=1740424803; x=1741029603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=142htfNBYxpoZfPwN+amwwqqNf0f1hAIVck097mkGss=;
+        b=ei0Kc9tKa2dHhnHahCaRAPQznhDmy17wMdiZzBSMKypG0lWYKWS5ln/1uhF8zpNj8V
+         0/f1V9qBpVJ8GdyQMtaaz1viDUVheOw63+/QalG3Pq2c2mcFD84SBK4xX7eZqv0rgD+8
+         ulkeOnp9cSqOfgwSAn50o4JWfBpHLAEKpFGdF0bhkRYvpu2nrS6eh1AeidAwmAwKoKKJ
+         9vmoQVgdQTD/LM1bzXDNLrjvlnF8UVB3gq7zVxLkYTi2mrT1hqLoHiOXLeu/sM6rrekr
+         4F4h+0vwBzmA95D3Qk5SL5E8cyzU2iIn7JzVjV8IeSRvwYBbMErhHJls0Cfc/B3xnuBw
+         cBlA==
+X-Gm-Message-State: AOJu0YzgWqoVhZyzViW591DL78D3wfoD0LPAomk/wMk8fcYdK706e8KU
+	3fj70StbNAkFSvF5Aa7kG0ebUFmT7Lh9wqUeZ6FFlVvd27WOpiOL2t4WVw==
+X-Gm-Gg: ASbGncuvT0k495OBiGi9589NUSTzybYEtD1PKsR0zB++5Y2ewO5Q1sn50cahWfLK+wN
+	3NU2g3clvg+6vvKyt6ItVn2qgGTHJf4ojx83Y/Vx4D/AoXe/h6O1RKWMWRnq/6OHchyBdWNXx6e
+	oKxTdkZILU1OTtmQTpFol1AnNrT+CQ31GHGpmM7EpB6t2sVU97mDBlbHnltApcrqql5VK08HS4g
+	rCHfmVkLty2A3jRE1aMmxChAT2JdEGf2BJlOC1xEWZKAo9AhF3uDEqWgEsEXL3g2koP5obfk+mU
+	J2Z4ua7sLS4ZjDEINicDccxgfJFOZbkwTTo=
+X-Google-Smtp-Source: AGHT+IGXzSpIVR/rocq3hNpHMmN9g8ecFSWOvIvmNrxE2zRizOqoGFDy4EJ7k8UDB8QcUNaLFfmRKg==
+X-Received: by 2002:a05:600c:3c9f:b0:439:34dd:c3cc with SMTP id 5b1f17b1804b1-439ae2197d1mr101061175e9.22.1740424802596;
+        Mon, 24 Feb 2025 11:20:02 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.146.93])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b0367577sm115091475e9.25.2025.02.24.11.20.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 11:20:01 -0800 (PST)
+Message-ID: <c359d152-d541-4305-bc05-1259be924670@gmail.com>
+Date: Mon, 24 Feb 2025 19:21:03 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] io_uring/rw: allocate async data in io_prep_rw()
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org
+References: <cover.1740412523.git.asml.silence@gmail.com>
+ <2bedcfe941cd2b594c4ee1658276f5c1b008feb8.1740412523.git.asml.silence@gmail.com>
+ <CADUfDZp7SWy_pcL+GL9SbFY-qMaNV+gja+gRiY=XeefDoZjnDQ@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CADUfDZp7SWy_pcL+GL9SbFY-qMaNV+gja+gRiY=XeefDoZjnDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Mon, 24 Feb 2025 10:23:36 -0700, Caleb Sander Mateos wrote:
-> io_is_compat() is already defined to return false if CONFIG_COMPAT is
-> disabled. So remove the additional #ifdef CONFIG_COMPAT guards. Let the
-> compiler optimize out the dead code when CONFIG_COMPAT is disabled.
+On 2/24/25 16:52, Caleb Sander Mateos wrote:
+> On Mon, Feb 24, 2025 at 8:07 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> io_prep_rw() relies on async_data being allocated in io_prep_rw_setup().
+>> Be a bit more explicit and move the allocation earlier into io_prep_rw()
+>> and don't hide it in a call chain.
 > 
-> 
+> Hmm, where is async_data currently used in io_prep_rw()? I don't see
 
-Applied, thanks!
+It calls io_prep_rw_pi(), which uses it inside, that's the "relies"
+part.
 
-[1/1] io_uring/waitid: remove #ifdef CONFIG_COMPAT
-      commit: 0cd64345c4ba127d27fa07a133d108ea92d38361
+> any reference to async_data in io_prep_rw() until your patch 4,
+> "io_uring/rw: open code io_prep_rw_setup()". Would it make sense to
+> combine the 2 patches?
 
-Best regards,
+Sure, if it rebases cleanly.
+
 -- 
-Jens Axboe
-
-
+Pavel Begunkov
 
 

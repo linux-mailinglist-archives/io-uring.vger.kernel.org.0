@@ -1,134 +1,117 @@
-Return-Path: <io-uring+bounces-6674-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6675-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6390EA42300
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 15:28:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548E7A42354
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 15:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227C33A3E0A
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 14:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85472189B7C4
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2025 14:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CC4152E12;
-	Mon, 24 Feb 2025 14:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA0718892D;
+	Mon, 24 Feb 2025 14:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQtfn7CA"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CZkL9ICs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D2E13A244;
-	Mon, 24 Feb 2025 14:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D39414A627
+	for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 14:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406602; cv=none; b=Zbw5USJELlIb+PsiWodBI+E9SUsi6u2Thb0GLhl82N9Fm6LYqP3RZD+rUxZx4NOb0xq6fcpf88QIoKWu9/y8tow5X9+DwAixkOvmm9fVvoSrpkKA3/Xplul2RAbxtVrIT3JFab2PnYP0QwBmXhfV4mJ5Z//K14Ah1ZGWLZNuqjQ=
+	t=1740407747; cv=none; b=cl6+ASKcIvYlJsKP6r9b72GDCF2LDzzdHKugv9HsmH9wdFpEXbl1Feh5iQ7DY4j7RGOkm8/dOFJRLorY/STP6Dxmd7ZZ+moBoNSoeXrwLFgC8Bo8ZmbZbvYkckx7+4HmQy6DqxwmDgea6TS9hyr17yWP8ggop7WrqeEHfyqYiJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406602; c=relaxed/simple;
-	bh=Phh6pAdjL59IyOXhZlY/SAI7jKTCU2BQM4aOO9n6VRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IrVng71FQVHTzcyp7qUXYbRWNvrPLQ6DzT3yj6Oq9LPJMUg0ie/f+elqOMLXHWnhusKqzLIVXfpHw4JL6g7KpQVG4VySWibBFu98jp9DxKTKO4FLCtuzdU/U8H1gp97j3uffrq6pETLNFCpFxISzpd9QNtWHBwSi6tCcrAKpF6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQtfn7CA; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so7193744a12.3;
-        Mon, 24 Feb 2025 06:16:40 -0800 (PST)
+	s=arc-20240116; t=1740407747; c=relaxed/simple;
+	bh=cRpmTSzHUv8GWFOC6l7b7OZL/GW7j96VrCdFlOeR4yk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=URwrA7QnRmglhBSIVBLX07YKftm4Cj5OUBHdmctyFdJGIr8m/vn19VbD3nj8CSBVloGgByTnzpLeNYVYBSxVjUmnaL4XkA74uIzcmHsrqu0Ve/N30/BvbDgdU+QzkWDSZ+fXf4AIpWlZTd9NWnuwwqUHzqMMJtrfy3dvdDhc6mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CZkL9ICs; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-855a8275758so116491339f.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 06:35:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740406599; x=1741011399; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Tw0qNv0ynUeW6Gr/ncBwy6EWJSTtEK5Or7iESAPDNAs=;
-        b=dQtfn7CAaKd1ykzm8EwHw8Gjda0PKyY3xKz1KpVd0dZDHywMwqq3sKztvG0NCWPMmK
-         d97/Frh4wA3KSdVwcbHHv9D2XrIl5AoS24b1P14FKc1g6QPBR5YmDDQH/elvNxMJNahi
-         /LhC03Ga6/CEy0rZy3ECaqKMDA1v3tZktfTxT4fPt+q8P+dqYB0hWidMJYSMWIu/LSU6
-         HjRIuF7a7ijCVMucTuATPVoJZe67G6n80zXj5OuzwLmo4YrlyznqUUEFKvlbU5f3dwdZ
-         doaH7pcW6taLqdeYEn4LFZEpma48mXBVwtgOeMpTRHEsUJUpELhRITxqSuwGZykcUojp
-         nXZA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740407742; x=1741012542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+QF6IEiWwKBwtoFhDm1n/kU/NRjbqtNHB67mDn+284o=;
+        b=CZkL9ICssj1QuyJ3NSBj3ypJXrubJyjybDHX6xglYozewqfIkSsBEtlN9FLY1zI4Hx
+         qt/JdVQb8PA8vujADml51uJ9K8KTS28MF4le9tODUak0l55qKHKIvsiFSJltutdUY4C+
+         vQ1UfjGs+5lmygmd/D4RRef+VYADjNZ0/xCYRTZnv6mJMzDguC5fKlEllWihQAr37nL9
+         2zHgzICuIUVokNoh4ku03gAA6Nb898WZxkf2tH1yeJcPrw8XxWdlepaY/NTzIYiNwYv4
+         lIwGuyWHNhT71jiTEyWBLa6Oqhf659iMxjO1u6oewSS0xNKZbMhm8IDOaVSCaBoVzBWt
+         eixw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740406599; x=1741011399;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tw0qNv0ynUeW6Gr/ncBwy6EWJSTtEK5Or7iESAPDNAs=;
-        b=MlbCL0mV5eFUt/vUXGyoZkuyg/GCj9/zmPib2jxfnnGRIU6xDQicXyWInwHRMUs/OM
-         Cp/CG18vGYBADGh1JGSDJBbjNbjXztMSnSXpZlOfcvAKegSdN4Bm+ojG5ooNlt8tlTq0
-         Foo+ZuTeeyo+nkhlkvuw0UCKAW0f87u26zNOxmoJ4oLq725qkLqxYgYy0RJSLG3+lPvi
-         1Wb13jxYLbi4W4u2kPfq9tRP59t6+LPDTFhljeU+F1c27M4dEQGlh0VzfyRDWbpEhFEz
-         emvMeYhvH27yMfOestPJih8q0i1oljo+g4h1F3syj97FhDrGmLtZsMRyIh52D3M6Unq2
-         RIZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvKYpnK3XAnnjShKV7o+iI1y3FVbQfvUrHvGb6xX86SMpNP1fmHLJHZ9swu4BDiWo+ZLy52ZC29w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD5nV3qMUsfNPV5WoOs+GA2SZFLq8sj1yMRSCjwc1MasN7+9FR
-	jOh5sdCwSLxmZgRuRVT7ZVbJoJ+PRF6ZPKud8Mxf9OuyWSVUY5l6
-X-Gm-Gg: ASbGncs1KWqGc4Y3nX2ETqjeEOFT4/qegMcvy7MVho0s5h76wElmqPtXrSlWfT9P37R
-	0vwN1TM70x5SdaGKvwJwPLo07hLkbuyBTmen2Em5fazi+ROpU97/vhomAEu+zB3HuyZSI0nWUiA
-	DG2tts9jLPThLG/jPkf7VJEcxvZHYHs6BjynfwNrVvKPMe+wB6aOhUZuPcJsbbzSJCLdM1ce8Ia
-	jLp1FU07qg/r3khozqTHqBIUy6nZIeku6R6ikgURZ0cwFKbvqP+y3Bfp7wyFUswSt/cmXWxgFtq
-	8xNYwq7p8qDTBWzeoU4Un6XjcWmOCVOCDQf2+OHsipl5mN2PsabRDVI4K1s=
-X-Google-Smtp-Source: AGHT+IEHxDWR+hs50gaa/KPKJkYDs4U2vu7fqcRO3bkAq8+Q6GBpPa2WyS3e3G30+2WaCxtVNMcFgw==
-X-Received: by 2002:a05:6402:2386:b0:5e2:1f4c:8a3 with SMTP id 4fb4d7f45d1cf-5e21f4c08f4mr369280a12.22.1740406598467;
-        Mon, 24 Feb 2025 06:16:38 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:bd30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e075f59e3csm11558666a12.43.2025.02.24.06.16.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 06:16:37 -0800 (PST)
-Message-ID: <07b78572-7a50-49d4-8049-8756b3644a69@gmail.com>
-Date: Mon, 24 Feb 2025 14:17:39 +0000
+        d=1e100.net; s=20230601; t=1740407742; x=1741012542;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+QF6IEiWwKBwtoFhDm1n/kU/NRjbqtNHB67mDn+284o=;
+        b=shrVi2LiHLOnsJOH8bn9+hvoyPuqU6hUjf6yBfO95PImPSkzT2gSQXEaqqQMRJly8N
+         d/tqBiRsIgjAXSgNOXHF6wVYplIF0biF2xdaik1YbbdH/32E8p4uGBTz7cRzZMJczHLz
+         kBBc273BHZ8Qv8f2LK4x5r9w36Bagr8BzLuEQfbSr8YqfeWiSCqzNVb2S4IM+AscxC7c
+         V1iOXkV99mlqv6z0Pdj9/uamkt+a8jESYaaabzNmmjP3tfvzBsQW1xQlXhxGshWVpr1C
+         2GuCKiyYGQtt5EtT/1dukMjdbfyhMRp3zh2TO0rVANs4vEU0CHprm0ZMKZigsaK+hiNg
+         NCDw==
+X-Gm-Message-State: AOJu0Yy0JvVZblU8pIawXf/VEdwQ63FHBgwlBfaxYWlM+i3a1qXNwEh/
+	59qdtfUoiJRTz8aw901iKrct0AtnX7ez6hSH3XXT7pLEgu1oUPl0cR6qY0Rai/c=
+X-Gm-Gg: ASbGncvD4UXU/5ifHs/L/AU6J7mS6W45F/LuJmrU+mYJ6hdkcAJK/9FKKVPXBk0FPde
+	zvjllkI+qpb8xXX3R5SZvxyz1gMrxi3y1851BCME+LlvQ+OZHJffd6WWVzwepTgEyPp3+d+x+Pk
+	lXYDODaGw93N0AQL0rPmLAfTjLO30SX5Ys1B8J1AQmE9HBz4Bkm7WNPgUDX7OCjKRv2dsjCOknF
+	0vweoArOnAHnK9OgrtrEEQd5/NdvSmq0sa/uSnpUdieU4p/wZQAIeEX10TJO9y+IVlaLVXqCMYO
+	dpZHlgfUkUIfOIryBA==
+X-Google-Smtp-Source: AGHT+IEeudc0WIuFHw5ejAHuJk7R7cceyrHA3oUkuzH9WLpPLdOdUBIkhC0WBANTKa9EEicjpkxs7w==
+X-Received: by 2002:a92:c26c:0:b0:3d0:4700:db0f with SMTP id e9e14a558f8ab-3d2cae875cemr151171915ab.12.1740407741955;
+        Mon, 24 Feb 2025 06:35:41 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d2b2fb94d7sm27876985ab.36.2025.02.24.06.35.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 06:35:41 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, David Wei <dw@davidwei.uk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>
+In-Reply-To: <20250224041319.2389785-1-dw@davidwei.uk>
+References: <20250224041319.2389785-1-dw@davidwei.uk>
+Subject: Re: [PATCH v3 0/2] io_uring/zcrx: recvzc read limit
+Message-Id: <174040774071.1976134.14229369640864774353.b4-ty@kernel.dk>
+Date: Mon, 24 Feb 2025 07:35:40 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] io_uring/epoll: add support for IORING_OP_EPOLL_WAIT
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
-References: <20250219172552.1565603-1-axboe@kernel.dk>
- <20250219172552.1565603-6-axboe@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250219172552.1565603-6-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-94c79
 
-On 2/19/25 17:22, Jens Axboe wrote:
-> For existing epoll event loops that can't fully convert to io_uring,
-> the used approach is usually to add the io_uring fd to the epoll
-> instance and use epoll_wait() to wait on both "legacy" and io_uring
-> events. While this work, it isn't optimal as:
-> 
-> 1) epoll_wait() is pretty limited in what it can do. It does not support
->     partial reaping of events, or waiting on a batch of events.
-> 
-> 2) When an io_uring ring is added to an epoll instance, it activates the
->     io_uring "I'm being polled" logic which slows things down.
-> 
-> Rather than use this approach, with EPOLL_WAIT support added to io_uring,
-> event loops can use the normal io_uring wait logic for everything, as
-> long as an epoll wait request has been armed with io_uring.
-> 
-> Note that IORING_OP_EPOLL_WAIT does NOT take a timeout value, as this
-> is an async request. Waiting on io_uring events in general has various
-> timeout parameters, and those are the ones that should be used when
-> waiting on any kind of request. If events are immediately available for
-> reaping, then This opcode will return those immediately. If none are
-> available, then it will post an async completion when they become
-> available.
-> 
-> cqe->res will contain either an error code (< 0 value) for a malformed
-> request, invalid epoll instance, etc. It will return a positive result
-> indicating how many events were reaped.
-> 
-> IORING_OP_EPOLL_WAIT requests may be canceled using the normal io_uring
-> cancelation infrastructure.
 
-Looks quite trivial now! Should be pretty easy to add
-multishot on top.
+On Sun, 23 Feb 2025 20:13:17 -0800, David Wei wrote:
+> Currently multishot recvzc requests have no read limit and will remain
+> active so as long as the socket remains open. But, there are sometimes a
+> need to do a fixed length read e.g. peeking at some data in the socket.
+> 
+> Add a length limit to recvzc requests `len`. A value of 0 means no limit
+> which is the previous behaviour. A positive value N specifies how many
+> bytes to read from the socket.
+> 
+> [...]
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Applied, thanks!
 
+[1/2] io_uring/zcrx: add a read limit to recvzc requests
+      commit: 9a53ea6aa5c87fe4c49297158e7982dbe4f96227
+[2/2] io_uring/zcrx: add selftest case for recvzc with read limit
+      commit: f4b4948fb824a9fbaff906d96f6d575305842efc
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

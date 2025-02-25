@@ -1,167 +1,200 @@
-Return-Path: <io-uring+bounces-6726-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6727-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6772AA4364E
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 08:43:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E7BA4370A
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 09:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541383AE33E
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 07:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5CC188586D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 08:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE56433B3;
-	Tue, 25 Feb 2025 07:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="F+nkqvDR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A751DD0E7;
+	Tue, 25 Feb 2025 08:10:26 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CBA17C79
-	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 07:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ACD214A67
+	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 08:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740469383; cv=none; b=jEkHW6zA1BNF5UxPVpN8P9o0FoNoCkpLvb9kNRG3ZcbXIcHSpxNi8JvuHjOuforZx4776DBFco8oxMvvxe4A7kpXIwkp1gwM6pticJ7eSaX1lMbfIWfoj6r9uuHgCe3f8ANKl+F7HwEPCyrLzLKEXzQzKRzq09H6QTl6fRQAaGo=
+	t=1740471026; cv=none; b=TlG8Czi8Yx7XhTpWl4eEU9DdDpQ1+6EyOgmFpaxQhvCmYrmKFGxRefO/gw3YCzY7W4ZRRJLVdMY/w8pCi+N00l7f7KQhud3mBmdFLh5qJXAkDEMgqI00RkszOuxK4BrWP3pRbMbiLWc5qxsQnxlheK3n6zBxytT8JGNuU9SK3wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740469383; c=relaxed/simple;
-	bh=IbYlX3PEQuVexzHhbqBghr9OI2n08wKQS1XCpeyjorI=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=W6TZAmNmbQfyMictlRYyXgMLwpqCAGoLFV093Vjaa122eTU5t8edAWKBtyDpddgyrIrjmAFQlSl1/+812kD+723+o2kQV3QthfSThaFShdxui0Ykw/ozYHN7w11rpbNIcmndWoRAX71RT0wS0xKFVMkftsmN8SYMj1Nnoy8S7lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=F+nkqvDR; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2230c74c8b6so9001265ad.0
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2025 23:43:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1740469381; x=1741074181; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y2/Bi/+um9TiTy0GDGglUry/DmFoADFyro0SU2c0Y80=;
-        b=F+nkqvDRp7tgG9gyoO/pPfNhhDnuBQ3IvJe/TTG8cwPzcuRJGt1xrO0bRjgzXcKKEj
-         WX8UcEeC36T+i3jq0z/sPGRR3ZudB5v/0GTU2a2A/Bk76uJneEgxkSoAU+Lo/En31Ji5
-         Tcw/QR+oJUwDy2nUGPogqgWssTwxUH0mn2YdD8mFNrVGnhSp6HN35pGVbiQW7CadGjPV
-         pEmNYsYN924KvZMpB5Y1QCiHmJchV6vMNcQTOsuwbQnYHVvqDY/l5GAIeQmf7J4pTASz
-         1k3tBUMTyE8OR/MFSjiyzwfZt63sCneF+QzIt6V7Jkeit4FeO8S6M4w1W5Cq5TsYmMUl
-         SATw==
+	s=arc-20240116; t=1740471026; c=relaxed/simple;
+	bh=uXlJ/8uX3vH1mAgnAEZX6cLjaJ0/Wc/Prk2XJX5CDQ8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=b3Gc2vr7PIxDovQYBMBYwP9kN2nE1yMNanEpjXLK5NzwkNjFiA67XQZqmJCsZQ76zSU97o8A1NsvN9xxppPX6gb6Mhi92plPK0oD3DVvupx19F2bAtJyPbdm9BjTxrL5z6DUFOzs9AEoYY+fp3nvCuM0aZ9Yu6fRZy1ERxI380o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so44906435ab.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 00:10:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740469381; x=1741074181;
-        h=content-transfer-encoding:subject:from:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y2/Bi/+um9TiTy0GDGglUry/DmFoADFyro0SU2c0Y80=;
-        b=Yf/ZAhD+bpDtaLvnM7OYb7DUTo3SmOnWTjYZkTiWjFnR8VTDQ72ekSlVRgUQz5LrtE
-         K34WKbu67PAm5FIA8+moOAE2RVnig9KmU1di5JsYRhX/2xX8DC4U6rIpONcqONLJIRXC
-         SdpBaZdu9htuao5g5NNlmsytsglbAAdiRpyhEOCWBQIP8nLekYDQwcvpzr07URgcYnMb
-         /Tyc4HqLLr6+vU1pZMu9lgAa78oLSzpM9D8zUbqImPXZQD8IvHRIhfy/QE3aEyf3bZd8
-         JfvSAyQWic/1mv0Hz+ectZK3X9Qur/jIuxHfhunJQFZo6gUSIds7WOdC6hLrprAGVK9R
-         qoKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvREw5A5N5PIh8payCr+HDfVZSBciwCtqWdtXbxqZXOS/pfvVufDXsD8MtTAmlQL2SIdDyeObyxg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywry9e50eeoewmx66DCJljBVE1a4hcfeLvQR5KXEOedO0Ec7pRc
-	F3F7BLNUP3X+ij06/YMfrMQEXdMCU76dD9Cy0fYphd/HxmpLmuozAjUb3wo3kac=
-X-Gm-Gg: ASbGnctSnqA7cFgl2+Xjatc3G5qBWHMpGcWwJeKx53Gszs6f6nKqdatXtV3+mz3hKmA
-	V7FZSRs0wFosPG04GTY+qBMUA2HZ5ThUgxGuarRUd+X/EoA9eQP0OM5aBvtlaZ0xLa75sGKlh0v
-	va+wBFLpIQxgKiotDk/le1nKeHZyLbVVve0SXqvctSVILVEqAf0j3/mfoKs6A8rXPktiP2ix++Z
-	l+ztF+Mb7XZwN5/Bzr64JHXxavuM5669GlwG+Oej9rVcj4rm4s3+c4jk0+l1Xo8x+UYKJ+xJjTj
-	RIJcyqQ3TRnfkuUcb+nlE6TEOi+aaEe4bptpZ+E=
-X-Google-Smtp-Source: AGHT+IGPooWi5k55owu/1zq3Dx2BUeqGX+MWLBCsPeXe+/xkrCkl5y754dU0xILKnqlRW3HR3wZ6Jg==
-X-Received: by 2002:a17:902:d4ce:b0:220:bd61:a337 with SMTP id d9443c01a7336-22307b595demr36974005ad.23.1740469380973;
-        Mon, 24 Feb 2025 23:43:00 -0800 (PST)
-Received: from [10.54.24.77] ([143.92.118.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a02159csm8014965ad.72.2025.02.24.23.42.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 23:43:00 -0800 (PST)
-Message-ID: <3d67a75b-0819-4f0e-87b6-99dd836e88e9@shopee.com>
-Date: Tue, 25 Feb 2025 15:42:56 +0800
+        d=1e100.net; s=20230601; t=1740471024; x=1741075824;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oAPT8sSyB+EAkcL0UXOlyTDITtKzKp59XJne9PMGRng=;
+        b=Doy1iu/Aja3ZeFwkoPql9om2jjVoTYwEi5hfpAdR/lwMxgthd+vKmnbslkFF+nQV/8
+         yxlSH/Iq2k7p3o/WlMjcF1N+OZmpjzmSm+VvhDn12fsNxuLIj4qCDUZP3NXkI84ZOHNS
+         qL7735L6VM7U+SeQceoqgS7twz+eotKYzULa00Xwk8hIkBnPuK513Lz6JYJmeAGvXXF8
+         v+XxQ9AGZiNqsyN01BhWeuzc8JAjOOPCZuZBT4+aSK802BK2Uzy7UIN8SRGhMxY5V9N9
+         ldJle34+EoAKtupa4f6p9/b0c+R6T2QZgmF8NOiW0XB2PXXu9s3l71RNCqnF8rm434hM
+         KQLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW62mXohP+5U+vFLOoLZphjpYnvGkHYcC2wKtd9PK1HMpE9dfgyxldBpOr02qHtJ7HeTiDoudA09Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9BeIyDB0Les+F7NsqR6Lk1lN0uJNAnuJVf80IHHGFrVo2HerY
+	mC6D8AjWNfqZl26R6PRi9HKPzfs+np9OkjopcC/bcmP1j8vYYhwooFO6Eb7gNaGvsRIaxkpvQ7g
+	26KJ+hOd/yNdELL0WQLx/ZuukWz+eFX8ZOKG5wTPwAuPt+UOo+rwAjRs=
+X-Google-Smtp-Source: AGHT+IHrjQnUBRkr5I/m8OuD5OeNoV3cV8jABSa/CAmx8uyTY9FivBJR0pFUxPRbl/TNlHa11sO+FkBf8AMhUodQEekJcGQchgMF
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Olivier Langlois <olivier@trillion01.com>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Haifeng Xu <haifeng.xu@shopee.com>
-Subject: io_uring : deadlock between io_uring and coredump
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a0c:b0:3d2:b4ea:5f60 with SMTP id
+ e9e14a558f8ab-3d2fc0d38a4mr22388945ab.6.1740471024102; Tue, 25 Feb 2025
+ 00:10:24 -0800 (PST)
+Date: Tue, 25 Feb 2025 00:10:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
+Subject: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
+From: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	shivankg@amd.com, surenb@google.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi masters,
-	In our production environment, we found many hung tasks.
+Hello,
 
-	Thead A (exit_mm)
-	...
-		if (core_state) {
-		struct core_thread self;
+syzbot found the following issue on:
 
-		mmap_read_unlock(mm);
+HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1643b498580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=556fda2d78f9b0daa141
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138207a4580000
 
-		self.task = current;
-		if (self.task->flags & PF_SIGNALED)
-			self.next = xchg(&core_state->dumper.next, &self);
-		else
-			self.task = NULL;
-		/*
-		 * Implies mb(), the result of xchg() must be visible
-		 * to core_state->dumper.
-		 */
-		if (atomic_dec_and_test(&core_state->nr_threads))
-			complete(&core_state->startup);
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
 
-		for (;;) {
-			set_current_state(TASK_UNINTERRUPTIBLE);
-			if (!self.task) /* see coredump_finish() */
-				break;
-			freezable_schedule();
-		}
-		__set_current_state(TASK_RUNNING);
-		mmap_read_lock(mm);
-	}
-	...
+The issue was bisected to:
 
-	Thead B (coredump_wait)
-	...
-		if (core_waiters > 0) {
-		struct core_thread *ptr;
+commit 0670f2f4d6ff1cd6aa351389130ba7bbafb02320
+Author: Suren Baghdasaryan <surenb@google.com>
+Date:   Thu Feb 13 22:46:49 2025 +0000
 
-		freezer_do_not_count();
-		wait_for_completion(&core_state->startup);
-		freezer_count();
-		/*
-		 * Wait for all the threads to become inactive, so that
-		 * all the thread context (extended register state, like
-		 * fpu etc) gets copied to the memory.
-		 */
-		ptr = core_state->dumper.next;
-		while (ptr != NULL) {
-			wait_task_inactive(ptr->task, 0);
-			ptr = ptr->next;
-		}
-	...
+    mm: replace vm_lock and detached flag with a reference count
 
-	Thead C (io_worker_exit)
-	...
-		if (refcount_dec_and_test(&worker->ref))
-		complete(&worker->ref_done);
-		wait_for_completion(&worker->ref_done);
-	...
-		
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1355bfdf980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d5bfdf980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1755bfdf980000
 
-	Thread A is waiting Thead B to finish core dump, but Thead B found that there is still one thread which doesn't 
-	step into exit_mm() to dec core_state->nr_threads. The thead is Thread C, it has submitted a task_work (create_worker_cb)
-	to Thread B and then wait Thread B to execute or cancel the work. So this leads to a deadlock.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com
+Fixes: 0670f2f4d6ff ("mm: replace vm_lock and detached flag with a reference count")
 
-	Our kernel vesion is stable 5.15.125, and the commit 1d5f5ea7cb7d ("io-wq: remove worker to owner tw dependency") is included.
-	when the last io woker exits, it doesn't find any callback. Once scheduled out, it will invoke io_wq_worker_sleeping
-	to submit a task work to the master thread. If the above guess is right, the commit 1d5f5ea7cb7d won't help.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 27018 Comm: syz.1.4414 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:vma_refcount_put include/linux/mm.h:712 [inline]
+RIP: 0010:vma_end_read include/linux/mm.h:811 [inline]
+RIP: 0010:lock_vma_under_rcu+0x578/0xac0 mm/memory.c:6454
+Code: be 5d b1 ff 49 be 00 00 00 00 00 fc ff df 4d 85 ff 74 0d 49 81 ff 01 f0 ff ff 0f 82 a3 02 00 00 49 83 ff f5 0f 85 55 03 00 00 <41> 80 3e 00 74 0a bf 05 00 00 00 e8 28 df 18 00 4c 8b 34 25 05 00
+RSP: 0000:ffffc9000b837d80 EFLAGS: 00010246
+RAX: fffffffffffffff5 RBX: 0000000000000000 RCX: ffff888079eb8000
+RDX: ffff888079eb8000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000b837ed8 R08: ffffffff8210a26a R09: 1ffff110068be328
+R10: dffffc0000000000 R11: ffffed10068be329 R12: ffffc9000b837e10
+R13: ffff88802890aa20 R14: dffffc0000000000 R15: fffffffffffffff5
+FS:  00005555908b1500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000400000002fc0 CR3: 0000000011df6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_user_addr_fault arch/x86/mm/fault.c:1328 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x17b/0x920 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f617a954ed8
+Code: fc 89 37 c3 c5 fa 6f 06 c5 fa 6f 4c 16 f0 c5 fa 7f 07 c5 fa 7f 4c 17 f0 c3 66 0f 1f 84 00 00 00 00 00 48 8b 4c 16 f8 48 8b 36 <48> 89 37 48 89 4c 17 f8 c3 c5 fe 6f 54 16 e0 c5 fe 6f 5c 16 c0 c5
+RSP: 002b:00007ffc20f24718 EFLAGS: 00010246
+RAX: 0000400000002fc0 RBX: 0000000000000004 RCX: 0031313230386c6e
+RDX: 0000000000000008 RSI: 0031313230386c6e RDI: 0000400000002fc0
+RBP: 0000000000000000 R08: 00007f617a800000 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000009 R12: 00007f617aba5fac
+R13: 00007f617aba5fa0 R14: fffffffffffffffe R15: 0000000000000006
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vma_refcount_put include/linux/mm.h:712 [inline]
+RIP: 0010:vma_end_read include/linux/mm.h:811 [inline]
+RIP: 0010:lock_vma_under_rcu+0x578/0xac0 mm/memory.c:6454
+Code: be 5d b1 ff 49 be 00 00 00 00 00 fc ff df 4d 85 ff 74 0d 49 81 ff 01 f0 ff ff 0f 82 a3 02 00 00 49 83 ff f5 0f 85 55 03 00 00 <41> 80 3e 00 74 0a bf 05 00 00 00 e8 28 df 18 00 4c 8b 34 25 05 00
+RSP: 0000:ffffc9000b837d80 EFLAGS: 00010246
+RAX: fffffffffffffff5 RBX: 0000000000000000 RCX: ffff888079eb8000
+RDX: ffff888079eb8000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000b837ed8 R08: ffffffff8210a26a R09: 1ffff110068be328
+R10: dffffc0000000000 R11: ffffed10068be329 R12: ffffc9000b837e10
+R13: ffff88802890aa20 R14: dffffc0000000000 R15: fffffffffffffff5
+FS:  00005555908b1500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff182f3cf98 CR3: 0000000011df6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	5d                   	pop    %rbp
+   1:	b1 ff                	mov    $0xff,%cl
+   3:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
+   a:	fc ff df
+   d:	4d 85 ff             	test   %r15,%r15
+  10:	74 0d                	je     0x1f
+  12:	49 81 ff 01 f0 ff ff 	cmp    $0xfffffffffffff001,%r15
+  19:	0f 82 a3 02 00 00    	jb     0x2c2
+  1f:	49 83 ff f5          	cmp    $0xfffffffffffffff5,%r15
+  23:	0f 85 55 03 00 00    	jne    0x37e
+* 29:	41 80 3e 00          	cmpb   $0x0,(%r14) <-- trapping instruction
+  2d:	74 0a                	je     0x39
+  2f:	bf 05 00 00 00       	mov    $0x5,%edi
+  34:	e8 28 df 18 00       	call   0x18df61
+  39:	4c                   	rex.WR
+  3a:	8b                   	.byte 0x8b
+  3b:	34 25                	xor    $0x25,%al
+  3d:	05                   	.byte 0x5
 
-	Can we cancel the io_uring requests before dumping core?
 
-Thanks!
-	
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

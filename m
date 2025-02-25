@@ -1,128 +1,138 @@
-Return-Path: <io-uring+bounces-6737-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6738-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A325A43C95
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 12:02:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F79DA4401A
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 14:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219CB188746F
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 11:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB6B44417E9
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 13:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C1268C5C;
-	Tue, 25 Feb 2025 11:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24471268C40;
+	Tue, 25 Feb 2025 13:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LwzxCSpn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="na6YMRHF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DB9267F7E
-	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 11:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E64185B73;
+	Tue, 25 Feb 2025 13:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481229; cv=none; b=RdngvAs3dpWhCH/v7gywOv1PlYVXKI3SssvVF4Y3/Ze3UIi5GrsWL0NqmozPYrp/NRFni/VsKQPhqOWAxH9vBi4N1k37byzOOu3K4xbCickzfBzlDjiZeyHJILyt2Uquou8obuTWSNoVxBn/bbkQdZcETmA75XL+ajxjwcu0z54=
+	t=1740488708; cv=none; b=a/Jd2NyAx677V93v1hAsO0oA0bH+ShQqmJvMXn5CF9QWCZv+KXCKpVylepiRDxkdzRp4JB8T2RMoqLJuN/6O5xqnaD/ns+j5AuUOb8eHnR17P0BEj2ZkXKGBtdxVJgZ/ro11GFWkp4Fo8YQ2SAEJSocrBb+ZzkkWHrQlCUdBwqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481229; c=relaxed/simple;
-	bh=/9V1fxk2dEGCKZKFBlBO1UY7GGQ4gf7rz3pfp5JbqHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJEHAoOkRbiSuKCqv9YTslkITsSsohtOPGP2voAGUv8xlD7boTYybQnFVGTDx162zhFXJy9mi8HspaynnFdMEXsn9XIMSphZX/IwoVlAchMAK4IjJKkQ2zrYJtaqGlb9NsYWQcrxRjMqSodUFWfll71FNNh2tcHvlEWB93IwP6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LwzxCSpn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740481225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uWOJcVI2y4VAoTGOX/WAROLgGbME7ad1Bieg4/4sn9I=;
-	b=LwzxCSpnAlLczGJqr3kfjKG1fWYzDaksVsP/IoePfeNovYzzkzFBZi2RgMC6qn15sPdVHh
-	6tj11NE5yTDgE/A0X5N1Q4gIrVFYe+ViMo3XvKzYZajgdACQqY5muw3nJVp0Wi+R2PqpOk
-	fB5vHooD8mZ+yFI9aLNNGALWu7Mirtc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-2TxgdbmoMQOJ19HkzQlaZg-1; Tue,
- 25 Feb 2025 06:00:23 -0500
-X-MC-Unique: 2TxgdbmoMQOJ19HkzQlaZg-1
-X-Mimecast-MFC-AGG-ID: 2TxgdbmoMQOJ19HkzQlaZg_1740481219
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 429D51800998;
-	Tue, 25 Feb 2025 11:00:19 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.31])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 51F183000197;
-	Tue, 25 Feb 2025 11:00:12 +0000 (UTC)
-Date: Tue, 25 Feb 2025 19:00:05 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Keith Busch <kbusch@meta.com>
-Cc: asml.silence@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org, bernd@bsbernd.com,
-	csander@purestorage.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
-Message-ID: <Z72itckfQq5p6xC2@fedora>
-References: <20250224213116.3509093-1-kbusch@meta.com>
- <20250224213116.3509093-10-kbusch@meta.com>
+	s=arc-20240116; t=1740488708; c=relaxed/simple;
+	bh=AdZwqpqPC5vH6hmjyBgEuQvR8+35PB8OyLTns41JMKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kXzcqFvrw6hH2MqEapql+ofp5QZ3uLtuk1798zJV900ttzZ6W0J2QJxOntRZ9AHzG28NtmORVSUnkG/Ex+mnIoIhmN34Jdj+OjSPowhkY8+zSeHR4EOTvoBFTLvrC9J+r9JUgvH/0QoVycx/O/IJNvG1BFYlEFS3HfZ13q4vr3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=na6YMRHF; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb75200275so884770566b.3;
+        Tue, 25 Feb 2025 05:05:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740488705; x=1741093505; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OxrLbfbfoAQxm9Jib0ykAP2wsZvBazEkzjSnu1OQ64Q=;
+        b=na6YMRHFbZgKEeFpxSiuCjDPGd5suSChfXrzCS8Uu6LUlrow0mePbGSfr4XZ96W8se
+         0SgIJMYs+5rrkmNFTTqCIIb0u9gQ89G+DHOYrBDYfSRIwsUNPxMrRBtmQU40lRyNXmxR
+         ybyxgqmVheeOnJ0oXu1Baii0jIZRUR+LtYfnSWczRzpWmbGAnv+WOMqMnR/mTfWubeKc
+         9ZTjQKPsRQVS1VE8PzofnycDdmPohSISC2cJPo4VVq1SANi+8jukUOzoT6MqoVxcapGe
+         Yptvgw/IqmJ384/+FXRWZSVON1R7HeilGNILPiixDzEasajsAk1d+eyyIDDQC7FSBCG+
+         elXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740488705; x=1741093505;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxrLbfbfoAQxm9Jib0ykAP2wsZvBazEkzjSnu1OQ64Q=;
+        b=FGJISPjjNjv1rskmu2mjU5kSVTLGRdfaKxQh5goDJLZYnlqD6pzEWIrTbYxAm9WgF8
+         ivBVSVydglTrLqyMTkWNYgeUFI8GFw9sPa8PROVk/4/4NImtiM3N4iRI4X6WYXLzx27z
+         pjwh/+iRcMtuSJGjo6I3twyJp8iAB3wac0Ag+x6vaH8NltK8yTZ/rgqlnNqEomGRqTjs
+         tfEDEEg/ntFuLJwFx4S8NzfajG+Kgon1zZYSiZ/moo0k2jPpRHTld3/2zmhNZG7Xe0EP
+         tcvoARJQx41R4zeGxZNv2dZTbH3aIgi33DJtXu+As/fcKB8QElEVy6EzVhkvcpujQhCD
+         HnpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHvM+vdwiO1IY+Cmb/EdRDlAmu0xJ9DnS7vemtMRWDeYXiGAsTgP2AFl3moqlXdbPy+XDa0Tmsjg==@vger.kernel.org, AJvYcCVIkPXp6joTj8PHgabvjE8kPs9Eav9pBMjPWHNLWCUswd4v5YlgDVfaJ8+pYRqaA63EQlbNSsOYq+fjvmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/HRdcU7SZJZMt1twby80AiGBZfOVAUcijjwUyOjH6sOYzV4SP
+	KxzFmMxXdxWwrI9+SbYJxB0FsxRxWKjGikKEW+tv+AfSDV7x4mBs
+X-Gm-Gg: ASbGncuZoo9yuojqX/gjuX5wU4UxBEAQiLxJ83P/wNJLwnpKjzQUPMr2+gNoi34GS5f
+	8ffCgOq8sU1ozR5lotmdWakBZU6nyl80TGuGrt+WGm71dHP9EtfEp57odC/zz2n6OVVrQ80zga0
+	128lymFoefTvEm8EXafij/M4KRljbArUHiHuk4VgYQCl+Jf1AWgMwDq1gZif8sg1feDHzKRpuJy
+	AKAsfEFUKWmK0JxVvHLdqCIDIHSYjduf95ec+503hrXG+fWC3rAYVkFLWJOBshWzN4a6MIuF1wN
+	16JmVagm4IzOviRFnhKi6lT3oZFV2PdKSdVyUItkGJqQ9LdCIuxnNK1xIC0=
+X-Google-Smtp-Source: AGHT+IGTqG7HfTAP2eYJcsr7XX1L3wlxJOuEu7+IAvLLjDqA6/VVsycXL53oTUttGijB+Xw0W2r+AA==
+X-Received: by 2002:a17:907:2dab:b0:ab6:b9c0:1ea2 with SMTP id a640c23a62f3a-abc09a62edbmr1953413166b.25.1740488703975;
+        Tue, 25 Feb 2025 05:05:03 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:9e08])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20b4fdfsm138494166b.170.2025.02.25.05.05.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 05:05:03 -0800 (PST)
+Message-ID: <89efbcee-09fa-43e0-ad9e-de143add05f8@gmail.com>
+Date: Tue, 25 Feb 2025 13:06:03 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224213116.3509093-10-kbusch@meta.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4 5/5] io_uring: cache nodes and mapped buffers
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com, axboe@kernel.dk,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org, bernd@bsbernd.com,
+ csander@purestorage.com
+References: <20250218224229.837848-1-kbusch@meta.com>
+ <20250218224229.837848-6-kbusch@meta.com>
+ <d2889d14-27d2-4a64-b8d1-ff0e4af6d552@gmail.com>
+ <Z7dJNx5yIneheFsd@kbusch-mbp>
+ <00375984-956d-4a25-aae2-e2d72a91c62a@gmail.com>
+ <Z7ze-kzDuoP_XPBx@kbusch-mbp>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z7ze-kzDuoP_XPBx@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 01:31:14PM -0800, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On 2/24/25 21:04, Keith Busch wrote:
+> On Thu, Feb 20, 2025 at 04:06:21PM +0000, Pavel Begunkov wrote:
+>> On 2/20/25 15:24, Keith Busch wrote:
+>>>>> +		node = io_cache_alloc(&ctx->buf_table.node_cache, GFP_KERNEL);
+>>>>
+>>>> That's why node allocators shouldn't be a part of the buffer table.
+>>>
+>>> Are you saying you want file nodes to also subscribe to the cache? The
+>>
+>> Yes, but it might be easier for you to focus on finalising the essential
+>> parts, and then we can improve later.
+>>
+>>> two tables can be resized independently of each other, we don't know how
+>>> many elements the cache needs to hold.
+>>
+>> I wouldn't try to correlate table sizes with desired cache sizes,
+>> users can have quite different patterns like allocating a barely used
+>> huge table. And you care about the speed of node change, which at
+>> extremes is rather limited by CPU and performance and not spatiality
+>> of the table. And you can also reallocate it as well.
 > 
-> Provide new operations for the user to request mapping an active request
-> to an io uring instance's buf_table. The user has to provide the index
-> it wants to install the buffer.
-> 
-> A reference count is taken on the request to ensure it can't be
-> completed while it is active in a ring's buf_table.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  drivers/block/ublk_drv.c      | 117 +++++++++++++++++++++++-----------
->  include/uapi/linux/ublk_cmd.h |   4 ++
->  2 files changed, 85 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 529085181f355..a719d873e3882 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -51,6 +51,9 @@
->  /* private ioctl command mirror */
->  #define UBLK_CMD_DEL_DEV_ASYNC	_IOC_NR(UBLK_U_CMD_DEL_DEV_ASYNC)
->  
-> +#define UBLK_IO_REGISTER_IO_BUF		_IOC_NR(UBLK_U_IO_REGISTER_IO_BUF)
-> +#define UBLK_IO_UNREGISTER_IO_BUF	_IOC_NR(UBLK_U_IO_UNREGISTER_IO_BUF)
-> +
->  /* All UBLK_F_* have to be included into UBLK_F_ALL */
->  #define UBLK_F_ALL (UBLK_F_SUPPORT_ZERO_COPY \
->  		| UBLK_F_URING_CMD_COMP_IN_TASK \
-> @@ -201,7 +204,7 @@ static inline struct ublksrv_io_desc *ublk_get_iod(struct ublk_queue *ubq,
->  						   int tag);
->  static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
->  {
-> -	return ub->dev_info.flags & UBLK_F_USER_COPY;
-> +	return ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY);
->  }
+> Having the cache size and lifetime match a table that it's providing
 
-I'd suggest to set UBLK_F_USER_COPY explicitly either from userspace or
-kernel side.
+You don't need to align it with the table size, I actually
+overlooked it, will comment on v5.
 
-One reason is that UBLK_F_UNPRIVILEGED_DEV mode can't work for both.
+> seems as simple as I can make this. This is still an optimization at the
+> end of the day, so it's not strictly necessary to take the last two
+> patches from this series to make zero copy work if you don't want to
+> include it from the beginning.
 
+Ok. As I mentioned above, I do think it's wrong for nodes, but
+we can merge the patch and rework on top.
 
-
-Thanks,
-Ming
+-- 
+Pavel Begunkov
 
 

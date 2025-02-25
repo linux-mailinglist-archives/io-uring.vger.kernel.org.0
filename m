@@ -1,86 +1,86 @@
-Return-Path: <io-uring+bounces-6760-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6761-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5FEA44E1F
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 21:59:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170C2A44E86
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 22:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314D33A9112
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 20:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F881899099
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 21:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3802046B1;
-	Tue, 25 Feb 2025 20:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995D521019A;
+	Tue, 25 Feb 2025 21:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="U2JpH1Ew"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="B5xgEVTN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1101A3142
-	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 20:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B612F20F06E
+	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 21:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517138; cv=none; b=TdRe6MHWKCrc8tQud4bG2w0B6dSexwMrr4EB+cahC4X/zSWkHM2bBsQpzlLhQgIrkjBMrKn3rU8/1Djej4TzIfXhpnbz+OCRLei59F8LAcDWWhIGL4VD0bofrEjywd4Lw2KiLKCk8nl1/xpIQBuN9M9iPMBjnrRY+kCdZ1fiWiI=
+	t=1740518094; cv=none; b=W7G7KqoOYyr+sH5No2DiTRRYzY40sed8rgyL+gzJC/tuOtFphx5VSxybUOd/MnNh9G4vh4NGqxtA1TSvO41BtEBRz/AWTJAUHA8/ZE+XodOY1ggnjy7vFsQA+8hkhJ7s05cRlCuXBvmIInATOUnizP553FY+RJ51uDnn3jUcjQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517138; c=relaxed/simple;
-	bh=qkFTxSfJpD+0LIkxun9qCJJ9p5YQg9CwYjmtlsbI5rU=;
+	s=arc-20240116; t=1740518094; c=relaxed/simple;
+	bh=n11yKJ/XUOHHHtUtLdxxZo6YMyQawd2VxE9bfT3uHmU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e7nt+1YflaGAls+aII/8aIXsSj0xMi6oaOO8h9n1j0o1hwrpwVgtjh9tu6pYlvgmVkhOHoykq+P4MpouXlIWvz39qYsE6z/6C4NoeED69dSSaELoH/tIl60DtRXuW6vi6cR1wrai6rNwA2IyMOEopznffiSRldQge3XmqEpUBlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=U2JpH1Ew; arc=none smtp.client-ip=209.85.216.53
+	 To:Cc:Content-Type; b=Uu6+vjFLR+aczvrO60DFXp/u7UcPy7nYT7nqaHTuyNjFWpKD4QvYveLQMgVWp5PbipxBj8HywpqcLoXyeiX2faTVEQN47uSDzzFsIEPLAaWTzkhOhJ5kSuXZVixeAoTRxTImhOnICj8/2yeJoxDA0AW/0sx+CieqXogPFjHdwZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=B5xgEVTN; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so1605695a91.0
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 12:58:55 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fbf706c9cbso1520866a91.3
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 13:14:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740517135; x=1741121935; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1740518092; x=1741122892; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w8kVezVrAcJKDJFMuTzmtnUuA8DHsRC/LzdjW6ubIq4=;
-        b=U2JpH1EwB04SzocCP5vR9qVIc8RTbplk2QhrG4UTdLnG3dgdEWE0AzuFO/rKlX0vpn
-         66uE+BspKno65MMlLoiSv3gNHBeCyIZbG0NfFpyRBjYeO5fCCpSdgx2tcFsftG4XyApH
-         rqhRbHdj3iXgkKdoPFl9SoaGRg0hu9lnQFtN2V1vfA5eaw7RTs0jPHrPpcy2er07mN09
-         Pdmyrmxcg81M2oPuKd11Ed+JSVA91odsew+C78rWfdq5vhnC79599ccsC8xClqptHxAb
-         rN1rO1fwZg39cEtGGP+ZGIHbWmfmFEVitT6ZvTZ3PHCOQDz1zBNPgMCzM/nnmWYuUCL7
-         r8Jw==
+        bh=4OXvxLiWlJtD6MNQmCGa7+Dtk3fvzc2JcxyyAEw+Cl0=;
+        b=B5xgEVTN7WRHAXcLvpvUOLdHK8FjR8jK1cOMR4jhi6w4InzhF0bTGisqqu47zkuLrj
+         kk111Ol+pWexjX7Q1k1I7vqYNqlIfhMYcrItsJJkweToppo0RKSNv44G7FqJiH/Btf28
+         BEVg3p+xsUKDRIdEA5Itnm6YRDaZAu9DiSS3rSdZoQ4ir80+Hp+jdVsoj++1B9aiRZE0
+         IdWQ/2B5RQWHH2+oh4vRNJkttweP5hXNAAYyr53IFS3hzz6KWnaAub0hLaZ/k3n5U1TY
+         bBqJVY/KiZKr6FnNX+owF0jeCbqViEMwzMU8bqKiZxV15GKvZLU9DW5uSrT587/TWJyp
+         kPgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740517135; x=1741121935;
+        d=1e100.net; s=20230601; t=1740518092; x=1741122892;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w8kVezVrAcJKDJFMuTzmtnUuA8DHsRC/LzdjW6ubIq4=;
-        b=fXIzlzl2P/shSrfOhJJBtM4eOkO8md2VzYruAvY2LDyWbRhmdTV+mlwD2Mt1/E0Nxm
-         e7wZd+zYfqHfKL/3/0SAxhS2M76rL10Szys3Xnee5uuIE/4314ObpwpQWarYhDJQcOCK
-         iRfjRLiisHU+81aYnPPJp9/jZqRhmSVwfn4kwAfINjZRnLs6IAlygl7fiQ5Utpt+gMWj
-         9Ss8fMs63E2RooUfNL7hrx6XvIjIi+E5YdIns69XHrVlS3Lcd65tqxXcQqxbzYksN2S/
-         nJvY9vcqWLSxuUW68Q2thH+3Gpy2KHKS6V62fQpk5KLqfJWabt7SCV8dcCwyyWzM7hp3
-         7G0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuf8HRov07uvu4joMUwq5ONsGJDWO0lf8LC98L8fQm7KxyWH0qCmoGFJzpaQShKgHWPkmL3w/WEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyebFoVY9vDpeOB+hv1DsrliKwcG0yxf9F/ouaV5EmNQ6D0CcPT
-	+qGblH7NaulAuuMzzxcIQ9S+x3UMUYVpmgngYETCbjOV2JnwCzV2QmDUgJMb9xv8SeTTI/5OzOf
-	82Pm1GT7g4X+DqsJOeFAJCaEkyJPPtbOSKAhVUw==
-X-Gm-Gg: ASbGncsirm8Jiv8+FxiG8GZZfaB8GtPbtSe3EThVtlrJSD4gucJBwzowO1Yc23JOjDk
-	1FvG5hbrM790zZ7ZPzbwQQaTK0u6dqsXPdLmtcfPODNR1rY5+uBsRHRmIMtk+L2qR9YR2vuxQqK
-	osTZbGKg==
-X-Google-Smtp-Source: AGHT+IFtCpB78XzmbgpGiWKMacJsPPZ+r4r4NuNEzLMmxS84MrKWoCpBypXNynKti/77UrzVFpai7iz8m0OUJsLRyhk=
-X-Received: by 2002:a17:90b:2811:b0:2fe:7f51:d2ec with SMTP id
- 98e67ed59e1d1-2fe7f51d429mr280856a91.0.1740517134894; Tue, 25 Feb 2025
- 12:58:54 -0800 (PST)
+        bh=4OXvxLiWlJtD6MNQmCGa7+Dtk3fvzc2JcxyyAEw+Cl0=;
+        b=FIwuNpmxFYyd5w/zWHvocEuoim+PoAtlF6cr0aMTVjDPiLKj633jHBf+bc5z5FvedF
+         Lj8cdPDW78y07MS+4kHV7GBtJGy4W8o+Is+QVB4wUmKsHGIWXz9ueK4TRLHASeUH9aio
+         eFMxVSa86H67UPNEPhcQCgt5OkCN0WwukpctgtyQootW9DuU2cUHniTrB1Y2MOJU/+rL
+         XFx+epUbepBctxUhOaJk8dmbxUFI9Je3bGqtg3gFsKrmp1Lh1jSPw85bL1WQX8G39ICY
+         abTERAXLTSeyYErVaLmWlLBpJBIpfU096+MFdfecQuwJkEaDO/1PuYDYx+mhgCblxy7O
+         kcvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL+mBinKmXADS3A3A8Rooxro0mvX/ywOGBrwXwlZnlzVOW5Pa7sRbuNJYYgtlLAwRCmsm/Hfb8fA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7svBF7LOvKXDKiI+3XrTmSz959xH6DcfcdtRKh7et7oYBGfhJ
+	Hv4gLuVnK3Iu2khUGvUrUqFZ2Ug0crOI9OBGammiLxZw44RmP7gz6bwNlt9tJ+8nZuaRB8QpBA2
+	vI+cqdzX1gcn0bXfscgumpxSghyXooTf2qvf0IA==
+X-Gm-Gg: ASbGncug9B95ERZWQQri0DToMyFV6bWr9POzxaZfUM5NManZsXWHjVJ2gF0qlN2EiLY
+	mExZEeVYgJqx7LebS6GhJEwkIdOlZ7XNAm+cD0E8UXTqP47J3b6ndX4xSjQLe8Jyy9ZtHMBartE
+	Ml8tTLPg==
+X-Google-Smtp-Source: AGHT+IE50MjoGcSCMnJzKG2scJXjCJKX4X7FbnEkntQnInGIq3YY2rA8EuIx8/svX3TY/zMcYPIc9lLwCO7OivRbzwQ=
+X-Received: by 2002:a17:90b:3b8e:b0:2ee:d372:91bd with SMTP id
+ 98e67ed59e1d1-2fce77a6618mr11923594a91.2.1740518091913; Tue, 25 Feb 2025
+ 13:14:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224213116.3509093-1-kbusch@meta.com> <20250224213116.3509093-8-kbusch@meta.com>
-In-Reply-To: <20250224213116.3509093-8-kbusch@meta.com>
+References: <20250224213116.3509093-1-kbusch@meta.com> <20250224213116.3509093-10-kbusch@meta.com>
+In-Reply-To: <20250224213116.3509093-10-kbusch@meta.com>
 From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 25 Feb 2025 12:58:43 -0800
-X-Gm-Features: AWEUYZl9nMXZ-1DULImO5mGipJatSmFAgm4tn0bLWbkupi0yR8cVo28IU5SD5dE
-Message-ID: <CADUfDZreF+YLLkE4Z+UniVXBo7HRm9nTd+O9yRVqJ9STpFJaJA@mail.gmail.com>
-Subject: Re: [PATCHv5 07/11] io_uring: add support for kernel registered bvecs
+Date: Tue, 25 Feb 2025 13:14:40 -0800
+X-Gm-Features: AWEUYZmlDAOCvhcNkpfhcW755PQ6MyJDFj18xWwb2Ynp2yNFCT9B59GtWKB7q24
+Message-ID: <CADUfDZo_--ha_GyLp_b6OfLx5JohnyHiGbQ6Je0yZYawCgCb6w@mail.gmail.com>
+Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
 To: Keith Busch <kbusch@meta.com>
 Cc: ming.lei@redhat.com, asml.silence@gmail.com, axboe@kernel.dk, 
 	linux-block@vger.kernel.org, io-uring@vger.kernel.org, bernd@bsbernd.com, 
@@ -93,283 +93,241 @@ On Mon, Feb 24, 2025 at 1:31=E2=80=AFPM Keith Busch <kbusch@meta.com> wrote=
 >
 > From: Keith Busch <kbusch@kernel.org>
 >
-> Provide an interface for the kernel to leverage the existing
-> pre-registered buffers that io_uring provides. User space can reference
-> these later to achieve zero-copy IO.
+> Provide new operations for the user to request mapping an active request
+> to an io uring instance's buf_table. The user has to provide the index
+> it wants to install the buffer.
 >
-> User space must register an empty fixed buffer table with io_uring in
-> order for the kernel to make use of it.
+> A reference count is taken on the request to ensure it can't be
+> completed while it is active in a ring's buf_table.
 >
 > Signed-off-by: Keith Busch <kbusch@kernel.org>
 > ---
->  include/linux/io_uring/cmd.h |   7 ++
->  io_uring/rsrc.c              | 123 +++++++++++++++++++++++++++++++++--
->  io_uring/rsrc.h              |   8 +++
->  3 files changed, 131 insertions(+), 7 deletions(-)
+>  drivers/block/ublk_drv.c      | 117 +++++++++++++++++++++++-----------
+>  include/uapi/linux/ublk_cmd.h |   4 ++
+>  2 files changed, 85 insertions(+), 36 deletions(-)
 >
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index 87150dc0a07cf..cf8d80d847344 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -4,6 +4,7 @@
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index 529085181f355..a719d873e3882 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -51,6 +51,9 @@
+>  /* private ioctl command mirror */
+>  #define UBLK_CMD_DEL_DEV_ASYNC _IOC_NR(UBLK_U_CMD_DEL_DEV_ASYNC)
 >
->  #include <uapi/linux/io_uring.h>
->  #include <linux/io_uring_types.h>
-> +#include <linux/blk-mq.h>
->
->  /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
->  #define IORING_URING_CMD_CANCELABLE    (1U << 30)
-> @@ -125,4 +126,10 @@ static inline struct io_uring_cmd_data *io_uring_cmd=
-_get_async_data(struct io_ur
->         return cmd_to_io_kiocb(cmd)->async_data;
->  }
->
-> +int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq=
-,
-> +                           void (*release)(void *), unsigned int index,
-> +                           unsigned int issue_flags);
-> +void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int in=
-dex,
-> +                              unsigned int issue_flags);
+> +#define UBLK_IO_REGISTER_IO_BUF                _IOC_NR(UBLK_U_IO_REGISTE=
+R_IO_BUF)
+> +#define UBLK_IO_UNREGISTER_IO_BUF      _IOC_NR(UBLK_U_IO_UNREGISTER_IO_B=
+UF)
 > +
->  #endif /* _LINUX_IO_URING_CMD_H */
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index f814526982c36..e0c6ed3aef5b5 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -9,6 +9,7 @@
->  #include <linux/hugetlb.h>
->  #include <linux/compat.h>
->  #include <linux/io_uring.h>
-> +#include <linux/io_uring/cmd.h>
->
->  #include <uapi/linux/io_uring.h>
->
-> @@ -104,14 +105,21 @@ int io_buffer_validate(struct iovec *iov)
->  static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node=
- *node)
+>  /* All UBLK_F_* have to be included into UBLK_F_ALL */
+>  #define UBLK_F_ALL (UBLK_F_SUPPORT_ZERO_COPY \
+>                 | UBLK_F_URING_CMD_COMP_IN_TASK \
+> @@ -201,7 +204,7 @@ static inline struct ublksrv_io_desc *ublk_get_iod(st=
+ruct ublk_queue *ubq,
+>                                                    int tag);
+>  static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
 >  {
->         struct io_mapped_ubuf *imu =3D node->buf;
-> -       unsigned int i;
->
->         if (!refcount_dec_and_test(&imu->refs))
->                 return;
-> -       for (i =3D 0; i < imu->nr_bvecs; i++)
-> -               unpin_user_page(imu->bvec[i].bv_page);
-> -       if (imu->acct_pages)
-> -               io_unaccount_mem(ctx, imu->acct_pages);
-> +
-> +       if (imu->release) {
-> +               imu->release(imu->priv);
-> +       } else {
-> +               unsigned int i;
-> +
-> +               for (i =3D 0; i < imu->nr_bvecs; i++)
-> +                       unpin_user_page(imu->bvec[i].bv_page);
-> +               if (imu->acct_pages)
-> +                       io_unaccount_mem(ctx, imu->acct_pages);
-> +       }
-> +
->         kvfree(imu);
+> -       return ub->dev_info.flags & UBLK_F_USER_COPY;
+> +       return ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZE=
+RO_COPY);
 >  }
 >
-> @@ -761,6 +769,9 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
->         imu->len =3D iov->iov_len;
->         imu->nr_bvecs =3D nr_pages;
->         imu->folio_shift =3D PAGE_SHIFT;
-> +       imu->release =3D NULL;
-> +       imu->priv =3D NULL;
-> +       imu->perm =3D IO_IMU_READABLE | IO_IMU_WRITEABLE;
->         if (coalesced)
->                 imu->folio_shift =3D data.folio_shift;
->         refcount_set(&imu->refs, 1);
-> @@ -857,6 +868,95 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx,=
- void __user *arg,
->         return ret;
+>  static inline bool ublk_dev_is_zoned(const struct ublk_device *ub)
+> @@ -581,7 +584,7 @@ static void ublk_apply_params(struct ublk_device *ub)
+>
+>  static inline bool ublk_support_user_copy(const struct ublk_queue *ubq)
+>  {
+> -       return ubq->flags & UBLK_F_USER_COPY;
+> +       return ubq->flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)=
+;
 >  }
 >
-> +int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq=
-,
-> +                           void (*release)(void *), unsigned int index,
-> +                           unsigned int issue_flags)
+>  static inline bool ublk_need_req_ref(const struct ublk_queue *ubq)
+> @@ -1747,6 +1750,77 @@ static inline void ublk_prep_cancel(struct io_urin=
+g_cmd *cmd,
+>         io_uring_cmd_mark_cancelable(cmd, issue_flags);
+>  }
+>
+> +static inline struct request *__ublk_check_and_get_req(struct ublk_devic=
+e *ub,
+> +               struct ublk_queue *ubq, int tag, size_t offset)
 > +{
-> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
-> +       struct io_rsrc_data *data =3D &ctx->buf_table;
-> +       struct req_iterator rq_iter;
-> +       struct io_mapped_ubuf *imu;
-> +       struct io_rsrc_node *node;
-> +       struct bio_vec bv, *bvec;
-> +       u16 nr_bvecs;
-> +       int ret =3D 0;
+> +       struct request *req;
 > +
+> +       if (!ublk_need_req_ref(ubq))
+> +               return NULL;
 > +
-> +       io_ring_submit_lock(ctx, issue_flags);
-> +       if (index >=3D data->nr) {
-> +               ret =3D -EINVAL;
-> +               goto unlock;
-> +       }
-> +       index =3D array_index_nospec(index, data->nr);
+> +       req =3D blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
+> +       if (!req)
+> +               return NULL;
 > +
-> +       if (data->nodes[index] ) {
-
-nit: extra space before )
-
-> +               ret =3D -EBUSY;
-> +               goto unlock;
-> +       }
+> +       if (!ublk_get_req_ref(ubq, req))
+> +               return NULL;
 > +
-> +       node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-> +       if (!node) {
-> +               ret =3D -ENOMEM;
-> +               goto unlock;
-> +       }
+> +       if (unlikely(!blk_mq_request_started(req) || req->tag !=3D tag))
+> +               goto fail_put;
 > +
-> +       nr_bvecs =3D blk_rq_nr_phys_segments(rq);
-> +       imu =3D kvmalloc(struct_size(imu, bvec, nr_bvecs), GFP_KERNEL);
-> +       if (!imu) {
-> +               kfree(node);
-> +               ret =3D -ENOMEM;
-> +               goto unlock;
-> +       }
+> +       if (!ublk_rq_has_data(req))
+> +               goto fail_put;
 > +
-> +       imu->ubuf =3D 0;
-> +       imu->len =3D blk_rq_bytes(rq);
-> +       imu->acct_pages =3D 0;
-> +       imu->folio_shift =3D PAGE_SHIFT;
-> +       imu->nr_bvecs =3D nr_bvecs;
-> +       refcount_set(&imu->refs, 1);
-> +       imu->release =3D release;
-> +       imu->priv =3D rq;
+> +       if (offset > blk_rq_bytes(req))
+> +               goto fail_put;
 > +
-> +       if (op_is_write(req_op(rq)))
-> +               imu->perm =3D IO_IMU_WRITEABLE;
-> +       else
-> +               imu->perm =3D IO_IMU_READABLE;
-
-imu->perm =3D 1 << rq_data_dir(rq); ?
-
-> +
-> +       bvec =3D imu->bvec;
-> +       rq_for_each_bvec(bv, rq, rq_iter)
-> +               *bvec++ =3D bv;
-> +
-> +       node->buf =3D imu;
-> +       data->nodes[index] =3D node;
-> +unlock:
-> +       io_ring_submit_unlock(ctx, issue_flags);
-> +       return ret;
+> +       return req;
+> +fail_put:
+> +       ublk_put_req_ref(ubq, req);
+> +       return NULL;
 > +}
-> +EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
 > +
-> +void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int in=
-dex,
-> +                              unsigned int issue_flags)
+> +static void ublk_io_release(void *priv)
 > +{
-> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
-> +       struct io_rsrc_data *data =3D &ctx->buf_table;
-> +       struct io_rsrc_node *node;
+> +       struct request *rq =3D priv;
+> +       struct ublk_queue *ubq =3D rq->mq_hctx->driver_data;
 > +
-> +       io_ring_submit_lock(ctx, issue_flags);
-> +       if (index >=3D data->nr)
-> +               goto unlock;
-> +       index =3D array_index_nospec(index, data->nr);
+> +       ublk_put_req_ref(ubq, rq);
+> +}
 > +
-> +       node =3D data->nodes[index];
-> +       if (!node || !node->buf->release)
-> +               goto unlock;
+> +static int ublk_register_io_buf(struct io_uring_cmd *cmd,
+> +                               struct ublk_queue *ubq, unsigned int tag,
+> +                               const struct ublksrv_io_cmd *ub_cmd,
+> +                               unsigned int issue_flags)
+> +{
+> +       struct ublk_device *ub =3D cmd->file->private_data;
+> +       int index =3D (int)ub_cmd->addr, ret;
+> +       struct request *req;
+> +
+> +       req =3D __ublk_check_and_get_req(ub, ubq, tag, 0);
+> +       if (!req)
+> +               return -EINVAL;
+> +
+> +       ret =3D io_buffer_register_bvec(cmd, req, ublk_io_release, index,
+> +                                     issue_flags);
+> +       if (ret) {
+> +               ublk_put_req_ref(ubq, req);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
+> +                                 const struct ublksrv_io_cmd *ub_cmd,
+> +                                 unsigned int issue_flags)
+> +{
+> +       int index =3D (int)ub_cmd->addr;
+> +
+> +       io_buffer_unregister_bvec(cmd, index, issue_flags);
+> +       return 0;
+> +}
+> +
+>  static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+>                                unsigned int issue_flags,
+>                                const struct ublksrv_io_cmd *ub_cmd)
+> @@ -1798,6 +1872,10 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd=
+ *cmd,
+>
+>         ret =3D -EINVAL;
+>         switch (_IOC_NR(cmd_op)) {
+> +       case UBLK_IO_REGISTER_IO_BUF:
+> +               return ublk_register_io_buf(cmd, ubq, tag, ub_cmd, issue_=
+flags);
+> +       case UBLK_IO_UNREGISTER_IO_BUF:
+> +               return ublk_unregister_io_buf(cmd, ub_cmd, issue_flags);
 
-Would it be useful to return some error code in these cases so
-userspace can tell that the unregistration parameters were invalid?
+In the other cases, completion happens asynchronously by returning
+-EIOCBQUEUED and calling io_uring_cmd_done() when the command
+finishes. It looks like that's necessary because
+ublk_ch_uring_cmd_cb() ignores the return value from
+__ublk_ch_uring_cmd()/ublk_ch_uring_cmd_local(). (In the non-task-work
+case, ublk_ch_uring_cmd() does propagate the return value.) Maybe
+ublk_ch_uring_cmd_cb() should check the return value and call
+io_uring_cmd_done() if it's not -EIOCBQUEUED.
 
 Best,
 Caleb
 
 
-> +
-> +       io_put_rsrc_node(ctx, node);
-> +       data->nodes[index] =3D NULL;
-> +unlock:
-> +       io_ring_submit_unlock(ctx, issue_flags);
-> +}
-> +EXPORT_SYMBOL_GPL(io_buffer_unregister_bvec);
-> +
->  static int io_import_fixed(int ddir, struct iov_iter *iter,
->                            struct io_mapped_ubuf *imu,
->                            u64 buf_addr, size_t len)
-> @@ -871,6 +971,8 @@ static int io_import_fixed(int ddir, struct iov_iter =
-*iter,
->         /* not inside the mapped region */
->         if (unlikely(buf_addr < imu->ubuf || buf_end > (imu->ubuf + imu->=
-len)))
->                 return -EFAULT;
-> +       if (!(imu->perm & (1 << ddir)))
-> +               return -EFAULT;
+>         case UBLK_IO_FETCH_REQ:
+>                 /* UBLK_IO_FETCH_REQ is only allowed before queue is setu=
+p */
+>                 if (ublk_queue_ready(ubq)) {
+> @@ -1872,36 +1950,6 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd=
+ *cmd,
+>         return -EIOCBQUEUED;
+>  }
 >
->         /*
->          * Might not be a start of buffer, set size appropriately
-> @@ -883,8 +985,8 @@ static int io_import_fixed(int ddir, struct iov_iter =
-*iter,
->                 /*
->                  * Don't use iov_iter_advance() here, as it's really slow=
- for
->                  * using the latter parts of a big fixed buffer - it iter=
-ates
-> -                * over each segment manually. We can cheat a bit here, b=
-ecause
-> -                * we know that:
-> +                * over each segment manually. We can cheat a bit here fo=
-r user
-> +                * registered nodes, because we know that:
->                  *
->                  * 1) it's a BVEC iter, we set it up
->                  * 2) all bvecs are the same in size, except potentially =
-the
-> @@ -898,8 +1000,15 @@ static int io_import_fixed(int ddir, struct iov_ite=
-r *iter,
->                  */
->                 const struct bio_vec *bvec =3D imu->bvec;
+> -static inline struct request *__ublk_check_and_get_req(struct ublk_devic=
+e *ub,
+> -               struct ublk_queue *ubq, int tag, size_t offset)
+> -{
+> -       struct request *req;
+> -
+> -       if (!ublk_need_req_ref(ubq))
+> -               return NULL;
+> -
+> -       req =3D blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
+> -       if (!req)
+> -               return NULL;
+> -
+> -       if (!ublk_get_req_ref(ubq, req))
+> -               return NULL;
+> -
+> -       if (unlikely(!blk_mq_request_started(req) || req->tag !=3D tag))
+> -               goto fail_put;
+> -
+> -       if (!ublk_rq_has_data(req))
+> -               goto fail_put;
+> -
+> -       if (offset > blk_rq_bytes(req))
+> -               goto fail_put;
+> -
+> -       return req;
+> -fail_put:
+> -       ublk_put_req_ref(ubq, req);
+> -       return NULL;
+> -}
+> -
+>  static inline int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
+>                 unsigned int issue_flags)
+>  {
+> @@ -2527,9 +2575,6 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *c=
+md)
+>                 goto out_free_dev_number;
+>         }
 >
-> +               /*
-> +                * Kernel buffer bvecs, on the other hand, don't necessar=
-ily
-> +                * have the size property of user registered ones, so we =
-have
-> +                * to use the slow iter advance.
-> +                */
->                 if (offset < bvec->bv_len) {
->                         iter->iov_offset =3D offset;
-> +               } else if (imu->release) {
-> +                       iov_iter_advance(iter, offset);
->                 } else {
->                         unsigned long seg_skip;
+> -       /* We are not ready to support zero copy */
+> -       ub->dev_info.flags &=3D ~UBLK_F_SUPPORT_ZERO_COPY;
+> -
+>         ub->dev_info.nr_hw_queues =3D min_t(unsigned int,
+>                         ub->dev_info.nr_hw_queues, nr_cpu_ids);
+>         ublk_align_max_io_size(ub);
+> @@ -2860,7 +2905,7 @@ static int ublk_ctrl_get_features(struct io_uring_c=
+md *cmd)
+>  {
+>         const struct ublksrv_ctrl_cmd *header =3D io_uring_sqe_cmd(cmd->s=
+qe);
+>         void __user *argp =3D (void __user *)(unsigned long)header->addr;
+> -       u64 features =3D UBLK_F_ALL & ~UBLK_F_SUPPORT_ZERO_COPY;
+> +       u64 features =3D UBLK_F_ALL;
 >
-> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-> index f0e9080599646..64bf35667cf9c 100644
-> --- a/io_uring/rsrc.h
-> +++ b/io_uring/rsrc.h
-> @@ -20,6 +20,11 @@ struct io_rsrc_node {
->         };
->  };
+>         if (header->len !=3D UBLK_FEATURES_LEN || !header->addr)
+>                 return -EINVAL;
+> diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.=
+h
+> index a8bc98bb69fce..74246c926b55f 100644
+> --- a/include/uapi/linux/ublk_cmd.h
+> +++ b/include/uapi/linux/ublk_cmd.h
+> @@ -94,6 +94,10 @@
+>         _IOWR('u', UBLK_IO_COMMIT_AND_FETCH_REQ, struct ublksrv_io_cmd)
+>  #define        UBLK_U_IO_NEED_GET_DATA         \
+>         _IOWR('u', UBLK_IO_NEED_GET_DATA, struct ublksrv_io_cmd)
+> +#define        UBLK_U_IO_REGISTER_IO_BUF       \
+> +       _IOWR('u', 0x23, struct ublksrv_io_cmd)
+> +#define        UBLK_U_IO_UNREGISTER_IO_BUF     \
+> +       _IOWR('u', 0x24, struct ublksrv_io_cmd)
 >
-> +enum {
-> +       IO_IMU_READABLE         =3D 1 << 0,
-> +       IO_IMU_WRITEABLE        =3D 1 << 1,
-> +};
-> +
->  struct io_mapped_ubuf {
->         u64             ubuf;
->         unsigned int    len;
-> @@ -27,6 +32,9 @@ struct io_mapped_ubuf {
->         unsigned int    folio_shift;
->         refcount_t      refs;
->         unsigned long   acct_pages;
-> +       void            (*release)(void *);
-> +       void            *priv;
-> +       u8              perm;
->         struct bio_vec  bvec[] __counted_by(nr_bvecs);
->  };
->
+>  /* only ABORT means that no re-fetch */
+>  #define UBLK_IO_RES_OK                 0
 > --
 > 2.43.5
 >

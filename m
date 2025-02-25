@@ -1,104 +1,132 @@
-Return-Path: <io-uring+bounces-6754-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6755-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F021BA4464B
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 17:38:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12E6A446E9
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 17:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C68168D95
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 16:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28419866C04
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82641624D4;
-	Tue, 25 Feb 2025 16:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1821A238A;
+	Tue, 25 Feb 2025 16:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUslR0U9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhl5E+0D"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF81414A60A;
-	Tue, 25 Feb 2025 16:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4767F19E833;
+	Tue, 25 Feb 2025 16:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501332; cv=none; b=ovyJMoyg4LxYqOdWP67KPU00E9B/iIkZICWO4tdylJF9FRYPruk1b9HgwI3C23K9lc+f6131eCQRDz2M4N/g2CNBwsa5cYzujJlP1L2glGEt8PkB46yymxYEA5vID+AMK5eR9GbS4xqBK6/hNVbKzo+i8fLuBQVxFuIZU5DuZSU=
+	t=1740501723; cv=none; b=c0m6McybNAdlWebBeDpab6u9xL1bQ1fVqn4D3XUy2W9gkEpDzwI6bsXfLzBquT12g7x4QBKsNyWW5WZsCIuAZv0A6CJVKqPJo7q3atqokY46+w1hpG/LxmfB/dvjxp+KnmZMkIgvgda9jXhUa/QMMT8VGBjSgacq/VZi2hjpUAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501332; c=relaxed/simple;
-	bh=Ykn0C4HLFEsQK4qrX/0l8sje7kziHCbfxpSSCii//EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMZTUkTekUdsFlkpl+tk7xrdL4IpNcPHID7xUxEyjbrLdeWt0pMg4xnCQDMlBhcWcbEEpd5fChrQQ2GCL0W01NMNf213ugqoRep/i9TunDo4XZa1HwrG5TPHSyU3elHHOlbQcHbF0NE82CeAUTgFdsFoyQKiYQwbyP1qaTc6Oac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUslR0U9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9874C4CEE6;
-	Tue, 25 Feb 2025 16:35:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740501332;
-	bh=Ykn0C4HLFEsQK4qrX/0l8sje7kziHCbfxpSSCii//EU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hUslR0U9ai+X6gm+GJ/cS7VXQTeV3aAElXNexNV3a91PkV7Sl55ZXNZmldY8Tf0Ar
-	 C/H+N8eEe5fmr6swT2BFA8N302TMp7Ccvt8xMKkA4ISAm/G0jAChau5tl63V0n3bIm
-	 z301KeA9GY5HZCDl4BauKgP4asbgx4vq+O6LOWGMDH8rnjK7s8lOiUn+uv1scwusKE
-	 dW1rybdxAhLCp3/Mee/P9AnNwXWSWorCqXOBpKhxMTsgpPuVlDzpmSCopvVP0YKT6G
-	 DOIxNBw8nlJ0XgYj2Jx56EEd1qX8/DsdP6+IsvRBVVP+6CLK7URIFSV2SS9Z22Ha9l
-	 hnsKTNUqLyJ+g==
-Date: Tue, 25 Feb 2025 09:35:30 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Keith Busch <kbusch@meta.com>, asml.silence@gmail.com, axboe@kernel.dk,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	bernd@bsbernd.com, csander@purestorage.com
-Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
-Message-ID: <Z73xUhaRezPMy_Dz@kbusch-mbp>
-References: <20250224213116.3509093-1-kbusch@meta.com>
- <20250224213116.3509093-10-kbusch@meta.com>
- <Z72itckfQq5p6xC2@fedora>
+	s=arc-20240116; t=1740501723; c=relaxed/simple;
+	bh=5wViJJEj6/LQCu+K0zKR02MkuSbh0RR1FMo5caHQGBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fTQt7y44T0hnar87ylcdQmadAeOmOFMOSS9hlOAJobjQb8Pa759piJzTx8cqxylyE7Wz2UAdOxEQxO/daKzYVTjERX7Cjaoqk5cJjGM35WSYUfbYk4zmLUMh0Pr1sd2dB7n5bBMlnWnWlzt04tDAY9JGJer5IxaavX3uynH9moc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhl5E+0D; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so10855183a12.3;
+        Tue, 25 Feb 2025 08:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740501720; x=1741106520; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YiO5nCJ4pTXrhAnu9JQmLGsbsio1bUQAT86cUyjkyRk=;
+        b=Uhl5E+0DZz7OwOjiiNpXxWR4/Ixv/5Pt7H00JS4z1v6qyHmMeQNMcGCjOU3Dji90MS
+         8U+9zhYeu0hoKHJ/HUjSgqPgcSJjX3dnwidDfUTbLhQXNX+yURVWUkEs28Nr5P+dBJ8O
+         d2biuIr38uD/xHvdWHUYiKz0qnsAVTamF4rZfB+pFcUeRvOW4XQ1mfn66urGkkU/LyUd
+         8VnYwtQ3z7JGkMX0LxsC5an2d1BlN0mCimVES2WhcSTO0ApPp+Fgw2jmb7fYMjm0OVMB
+         TtfnkhIgJsStdAvSuMaRF0CbeEJVtCSMqJZOvbvRbiGX++xQSIZl/daRf5s9ZkjLCdhM
+         nBew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740501720; x=1741106520;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YiO5nCJ4pTXrhAnu9JQmLGsbsio1bUQAT86cUyjkyRk=;
+        b=N6oQpDO++Ud/NQ91HRKLfpv+6vpnNzsGk3ydQ0YP3eLfn1M6P2XWR7JR/xuvgq9sb7
+         R5aKk0uliGviTCy1jiGSE6NLKi6P2s2x4TIZNZxXAxsWYWHP8twf2wVLCyD/ia6zHkaf
+         EgQ1LYKFvB89twUIz2B23nl3+ZqPdoyls+GFK4LrukzDXkaVDi5r2ECML+ku4mY9gt16
+         XFZEkEtJ9EdF5lKgS1yu8xd+JyoE0grCQuiPrJBQvn4A+1kQyh7SOszoVzQMoVD4x/3a
+         TH4Dg8w/xFqwAiJO+B3TJhBE0BX5sTdS6DkirnZUfVNQ7rO+8HWeRZYXH+4KXO9naNtL
+         0Ukw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHfTnQeAiri1PoGRtBn6rvxwJxDEblrcROPeX00LVH1OOCfgw6caKmcKXmPXAMWYTrzcqcbUu2mA==@vger.kernel.org, AJvYcCXdX2djRWpNKk2ouCEXBO55qcyo9uvZeCP51C2arPdp6c7sBQAx2n0pJHu59OfhLEKSVPZ2zibWtpr0xxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrh7fsBZ5c2YlFSiVdUe8tkiy24QDjgkKFvWCDfNX5g6BPnX40
+	Yr9Vyl0D94kliB+39WfGjWN2wDVN8xpHKxFE+I8s3O2dEIX3UI02
+X-Gm-Gg: ASbGncv9Y6UU4oBh+2Qu8JOyS99w49FG2UZRvCT7yYbUIoXmL5iapCQCd1EYkzD6Vby
+	eXxMmdzAHWewXNbB+urJ1znjaAYAYnjt7yUgc39GpOC34TqcyxM+WW3Z/LqZq80yf71F3w3QyFm
+	5l3sxvRivAQPkDvFF+WP5NU/dMR2oObRep1msDlQEdf4wRuQKb7PtatmbCmsOGHG3zzI9jv8H23
+	T2MfOiY1Lo/Zdk635GoEPxsGiNhOqWgV2/9A+pRqA7f4M2leK+b9HZ3XTIfqP1bnyYOSmJkNYDB
+	yMuHu8VUAiH6FLgYk7cutBzjCQ9G1DNJ2KGPsRebQdoMz2UJYXFgXMgV+D8=
+X-Google-Smtp-Source: AGHT+IEcpZ/XeO55JOHBakTYiykv0xTRGYQBELCSzDDzvL4T4jgen0+Sa5FQWNx8N0wSzBdgwrCdZQ==
+X-Received: by 2002:a05:6402:4611:b0:5e4:a0c4:e31f with SMTP id 4fb4d7f45d1cf-5e4a0c4e3a9mr218820a12.0.1740501720494;
+        Tue, 25 Feb 2025 08:42:00 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:9e08])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e460ff8694sm1433571a12.50.2025.02.25.08.41.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 08:41:59 -0800 (PST)
+Message-ID: <a5ceb705-a561-4f84-a4de-5f2e4b3e2de8@gmail.com>
+Date: Tue, 25 Feb 2025 16:42:59 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z72itckfQq5p6xC2@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com, axboe@kernel.dk,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org, bernd@bsbernd.com,
+ csander@purestorage.com
+References: <20250224213116.3509093-1-kbusch@meta.com>
+ <20250224213116.3509093-10-kbusch@meta.com>
+ <90747c18-01ae-4995-9505-0bd29b7f17ab@gmail.com>
+ <Z73vfy0wlCxwf4hp@kbusch-mbp>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z73vfy0wlCxwf4hp@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 07:00:05PM +0800, Ming Lei wrote:
-> On Mon, Feb 24, 2025 at 01:31:14PM -0800, Keith Busch wrote:
-> >  static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
-> >  {
-> > -	return ub->dev_info.flags & UBLK_F_USER_COPY;
-> > +	return ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY);
-> >  }
+On 2/25/25 16:27, Keith Busch wrote:
+> On Tue, Feb 25, 2025 at 04:19:37PM +0000, Pavel Begunkov wrote:
+>> On 2/24/25 21:31, Keith Busch wrote:
+>>> From: Keith Busch <kbusch@kernel.org>
+>>>
+>>> Provide new operations for the user to request mapping an active request
+>>> to an io uring instance's buf_table. The user has to provide the index
+>>> it wants to install the buffer.
+>>
+>> Do we ever fail requests here? I don't see any result propagation.
+>> E.g. what if the ublk server fail, either being killed or just an
+>> io_uring request using the buffer failed? Looking at
+>> __ublk_complete_rq(), shouldn't someone set struct ublk_io::res?
 > 
-> I'd suggest to set UBLK_F_USER_COPY explicitly either from userspace or
-> kernel side.
+> If the ublk server is killed, the ublk driver timeout handler will abort
+> all incomplete requests.
 > 
-> One reason is that UBLK_F_UNPRIVILEGED_DEV mode can't work for both.
+> If a backend request using this buffer fails, for example -EFAULT, then
+> the ublk server notifies the ublk driver frontend with that status in a
+> COMMIT_AND_FETCH command, and the ublk driver completes that frontend
+> request with an appropriate error status.
 
-In my reference implementation using ublksrv, I had the userspace
-explicitly setting F_USER_COPY automatically if zero copy was requested.
-Is that what you mean? Or do you need the kernel side to set both flags
-if zero copy is requested too?
+I see. IIUC, the API assumes that in normal circumstances you
+first unregister the buffer, and then issue another command like
+COMMIT_AND_FETCH to finally complete the ublk request. Is that it?
 
-I actually have a newer diff for ublksrv making use of the SQE links.
-I'll send that out with the next update since it looks like there will
-need to be at least one more version.
+Regardless
 
-Relevant part from the cover letter,
-https://lore.kernel.org/io-uring/20250203154517.937623-1-kbusch@meta.com/
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
 
-diff --git a/ublksrv_tgt.cpp b/ublksrv_tgt.cpp
-index 8f9cf28..f3ebe14 100644
---- a/ublksrv_tgt.cpp
-+++ b/ublksrv_tgt.cpp
-@@ -723,7 +723,7 @@ static int cmd_dev_add(int argc, char *argv[])
- 			data.tgt_type = optarg;
- 			break;
- 		case 'z':
--			data.flags |= UBLK_F_SUPPORT_ZERO_COPY;
-+			data.flags |= UBLK_F_SUPPORT_ZERO_COPY | UBLK_F_USER_COPY;
- 			break;
- 		case 'q':
- 			data.nr_hw_queues = strtol(optarg, NULL, 10);
+-- 
+Pavel Begunkov
 
 

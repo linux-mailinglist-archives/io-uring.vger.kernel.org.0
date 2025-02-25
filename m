@@ -1,110 +1,83 @@
-Return-Path: <io-uring+bounces-6757-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6758-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AC7A4475F
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 18:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF68FA448C2
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 18:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0713A30E4
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 17:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF570885111
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2025 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E92154449;
-	Tue, 25 Feb 2025 17:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFF518C034;
+	Tue, 25 Feb 2025 17:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dUWljmuv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X079AkK5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C77664C6
-	for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1715445D;
+	Tue, 25 Feb 2025 17:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502882; cv=none; b=qYiNJRZUqQOqCJLS7N311JqS11BqZ3MEpK34h5rf2ucp9HGn/st1Wd1Qsl3cP2kmcvgP1wK8R5rKv2lzrCE4OUI8nwV2uzJOGqQ/1meipvj3F6VE0FCB/zw50dH6mLJrEG7sivNwSozpJtP7a5IDFHYS2BRZQeMxI+JY0zgucPw=
+	t=1740504753; cv=none; b=XHZJgea/DYe9t0OpsjdAQy32XQP17nPoHv+58Io9la4e9rjQ2PHbuzksXJk7Jh1Ex7+6xSbsHiawnBk/GrpBkEVaB+ARs1+rdPBCWhEQe0aC0S/m5F0T1Ey9r+XApQdfqlzg1fLCs2jaYC4yoEssU5viAaX2AfRCrlLKVQklnvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502882; c=relaxed/simple;
-	bh=pLAuf/Dpvj0u7A7Tjnl9enCxpyFmvZb3KNMIIcJhYPY=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kTgOfykTBPYWj/WERoeW5D29VVD4ySO98pD4b8LpBqoTYBTW4EMt2p1/J4CeCb9V+bE/3E7WeOcFPJ3fta84zyzjFjQ7RbhKFZXMHe9KX7ZsUOJGS3ccgXBQJYoxv/k21w9qBA9e50XrqAKeEPE8v32+NzVTKC6cIsNDQHhQDtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dUWljmuv; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8553e7d9459so179178339f.2
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 09:01:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740502878; x=1741107678; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=beajZc/o5FcVnwhbX6k5eNtLa2cYqhPEW/MgY847j1w=;
-        b=dUWljmuvnpvPGimE9xWPU0qBFBeTgEqlXgZ5jRzIzG5WJr+dSo0s2rhbQq1KB1p1rH
-         51Nd47AZDxoyBvB037jOP5tSvudYIpodnDVPhJAkMwCI4pSYLlD2PAWbPO3cfbGlXNwA
-         3R9NSLrwEauMrfHsg5XEyWywqrrp7ozxLRJD566R6kGO36TXl53q+3AntZVUoTfsRTEY
-         fvG5pbDn4hfiUYPijNmFECTu1cjRhIlvEdn2NZsJKPS63+AYM5ijAxWf8tlOqz/Uk3eL
-         /iNmCBFT7fVlCl/P/l0rBnAvKRAy4cb1L7XeKg4rcEGlOxtmrQVUDJpx6pi9il7W4NoO
-         f5UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502878; x=1741107678;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=beajZc/o5FcVnwhbX6k5eNtLa2cYqhPEW/MgY847j1w=;
-        b=bW2jUrCf0CCAtRJ9ZVBCOfSGhyzXUPvJRxKuPMK9yAVBUqEyJeaKBvfof2luWIPhs4
-         QC8MpCYw3TeqaUc8SiC5ZQywO1xs0GofEqBUl1EG7y9cmxw8EmUD+arC1MXqv0EODjl1
-         bVOXAp9rlWDNWeBqPYWHyt1Shz6VhzUFucqqs0pJmt5WGFu4OTkUT2JKXEZHdk9axxfZ
-         WQHa+wdUhXXlrMqN/SGqutmGFfjxHeBJvTo3YTa6WMKk38/6FTTWJyIJYyiwTUie2vXM
-         QsS19viRAEXx2O7naz+7JzR9/nyYvB/X+0GTAC5JBF+VWBXDIL8+LKQCjoUezQugbrFT
-         bvoQ==
-X-Gm-Message-State: AOJu0Yy0sCQ+jlS8bDoA2bUaMytb4QUDN6gvcasdA4BRzE6yjxZFN+FU
-	H0muNriuRkGNz3uRPShcge5LJPuyktOkWSNFbzlG822cTFrdc7ln4D0Co4iOA0gNDWf/gtyqMSj
-	D
-X-Gm-Gg: ASbGncuBzZJwBqKa+BJEcu3LA0pzlPNymx/1++PwQgQn6SHPkMi1Obzy7HFaaEYO5O+
-	V4VF2Qa+wIpr3zEoKEvdbCCT2Mk/FKJFSzBbzIosPMtZUB+bATjqk6bKezpCnBjGjFt0ZK5+b/3
-	kzwVSL/oP2vyIcEpUiv+Uq/ZfKu2r617l30YULgCcp/usV4ZMf4PnOvZJkAqi2SZ0V7qFMEKvVq
-	WSCKkCPmUdHW3rPB4yNNxe2tkvWA0Wx/Yzdjt0Kimk4P2qnoZKBshZ9KvzHYQoqV4fb7FyMSEfm
-	ENlc5I4PNNsyLBZj
-X-Google-Smtp-Source: AGHT+IGVj7BSANTQgC0TFjSuD+6Gn4emsTNNiIOTOT286JPp/05CmH/WbyUaMjv+tb89iPruI7DuAw==
-X-Received: by 2002:a05:6602:3f8f:b0:84a:7906:eeb7 with SMTP id ca18e2360f4ac-857928e7956mr4441639f.0.1740502878125;
-        Tue, 25 Feb 2025 09:01:18 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-856208e4a3csm38023639f.0.2025.02.25.09.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:01:17 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <2a8418821fe83d3b64350ad2b3c0303e9b732bbd.1740498502.git.asml.silence@gmail.com>
-References: <2a8418821fe83d3b64350ad2b3c0303e9b732bbd.1740498502.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/net: save msg_control for compat
-Message-Id: <174050287671.2154077.744765624189703033.b4-ty@kernel.dk>
-Date: Tue, 25 Feb 2025 10:01:16 -0700
+	s=arc-20240116; t=1740504753; c=relaxed/simple;
+	bh=WXTf3EqU+ttyrsGnWXKJb8I6GmW83f0L9J4CqehU8Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tn+OqFeLKjcO9snEf5z8BTeBsDqXm4z1UN2SCyW/c3PquL4s2ejixXnRplz8GK6/VfVASIsImGxi5Z7sE1P+nVR2xjswFX77bX2seL1AECybm8c0u4yNCfKu1VjpM/HgsXcu0+ts7XSE9tXxTkMtBco09jCTORc9eV8NT6X0M9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X079AkK5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D09C4CEDD;
+	Tue, 25 Feb 2025 17:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740504752;
+	bh=WXTf3EqU+ttyrsGnWXKJb8I6GmW83f0L9J4CqehU8Is=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X079AkK5UjPQoakZXniCf36gK4StJwq2QKaa7mb3jAvAFIkV1rHc+WtKpglxSrUeI
+	 mrAVWrB0eElkMF7lTkI3ik9ja0gwFKD8JkAxU7RZwEvrpNPiSKq/ew2RhOLRRBGWpu
+	 EMrcePCe5gmiq1zRhraWyqHpK2jgglwfYPhlPdPoOhjeb1EqOL606N2SoizB9C80vu
+	 wM4KlINOwfl7M/NvIW8eKj4H23SMoN8dUJGL7Tivt7czgQnPFG6p15ABk4jIVPvvPH
+	 RVYJFLi+sA05+RSdViA4a6urHNSANtd0TlWVpqHX/cIFyjbEyP5ccrXp+qiZSmAinB
+	 1+cyxbjIU2dtw==
+Date: Tue, 25 Feb 2025 10:32:30 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Keith Busch <kbusch@meta.com>, asml.silence@gmail.com, axboe@kernel.dk,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	bernd@bsbernd.com, csander@purestorage.com
+Subject: Re: [PATCHv5 07/11] io_uring: add support for kernel registered bvecs
+Message-ID: <Z73-rhNw3zgvUuZr@kbusch-mbp>
+References: <20250224213116.3509093-1-kbusch@meta.com>
+ <20250224213116.3509093-8-kbusch@meta.com>
+ <Z72P_nnZD9i-ya-1@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z72P_nnZD9i-ya-1@fedora>
 
-
-On Tue, 25 Feb 2025 15:59:02 +0000, Pavel Begunkov wrote:
-> Match the compat part of io_sendmsg_copy_hdr() with its counterpart and
-> save msg_control.
+On Tue, Feb 25, 2025 at 05:40:14PM +0800, Ming Lei wrote:
+> On Mon, Feb 24, 2025 at 01:31:12PM -0800, Keith Busch wrote:
+> > +
+> > +	if (op_is_write(req_op(rq)))
+> > +		imu->perm = IO_IMU_WRITEABLE;
+> > +	else
+> > +		imu->perm = IO_IMU_READABLE;
 > 
+> Looks the above is wrong, if request is for write op, the buffer
+> should be readable & !writeable.
 > 
+> IO_IMU_WRITEABLE is supposed to mean the buffer is writeable, isn't it?
 
-Applied, thanks!
+In the setup I used here, IMU_WRITEABLE means this can be used in a
+write command. You can write from this buffer, not to it.
 
-[1/1] io_uring/net: save msg_control for compat
-      commit: 6ebf05189dfc6d0d597c99a6448a4d1064439a18
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+I think this is the kind of ambiguity that lead iov iter to call these
+buffers SOURCE and DEST instead of WRITE and READ.
 

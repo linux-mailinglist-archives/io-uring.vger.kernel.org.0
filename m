@@ -1,187 +1,103 @@
-Return-Path: <io-uring+bounces-6774-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6775-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA83A4551E
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 06:56:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505C8A457ED
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 09:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFD7189B44E
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 05:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3D67A624F
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 08:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644CB260A45;
-	Wed, 26 Feb 2025 05:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B3E258CEC;
+	Wed, 26 Feb 2025 08:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dSH5giKN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17BB22FDE4
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 05:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F862AE9A
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740549383; cv=none; b=QKGBmPIcQsqVJ84fJDouSiWFLPf7w5xgctr5LjNWd2e/vNZbjejiuK4aFh4F+kbEVZZi+2kKPV0lTG/e0cU1K1FEc5bhSEXHjCWqmOIC61yQAXNNZ+S1km3BAJZN9BoyiFJ6XvleN1s9Acp8Ivr1lkGkUbLXCP0MsfzI40fWjsk=
+	t=1740557762; cv=none; b=FZPxq0UIj67DjXqCLRuyax9Ek3iiX4JaBQWRyBUtCsDhr8NIxbubD1CowGGgYTSR8X4ndxO4uESfbOOk5lNQ9Ff/EM/Snkunyjr537l1xVJnz0cf4kKgCNMWZELu71y3F+bBOx7VzpNKTiDbQrGek/0InRCKk/L4/L1QOl52feg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740549383; c=relaxed/simple;
-	bh=aJ1CDj6IHG5CdCYhUfhaAMuHbGLGkJsU8mSDkSUKG/k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jU9+QJ9OfeWgSy3r1QcwD6v/Tghs075NCt7Z7Qfu0Csvv6UULHiKM3qg6dckuDHu8R1mbcggnbIS9uauCbE1MxWwgY5RwzLcoGxHWklLHJZJGUm1jpGWag5KVF+qai/KucALGrSZiFOAg9EDRXY7jTOfokBMrCFjLxDTjGx7Wi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so131010505ab.0
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 21:56:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740549381; x=1741154181;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HSP8CbSQTbCE3z3gezg5yrid18Cgij6SuX+4IyN9t1k=;
-        b=AteonjBCfb4j64yJ5K/EOgcu8aBYnNLXtzKDJ1oQomOoXyMsOE0KuxWLPuKEFx3fN0
-         Q1/K6sGpzTHd5R/NJJhe5hlAU9n2YJNbBJCMGv/oV0ElyDn1VOUb+5eUWE0hDB0Rh46D
-         a7O/y8yNF81DRPcXuuUBRJ0z0XwhgLTFVU1Zj4lh5VSKByGySTqcBsl2Dowp2CM3FV/A
-         qK2kGOq84LARtXVdVzww16pgg+UBUO3+7OrSlo90KnOtsue972mtb9hu148+Y2GAjHNQ
-         cCWsoToVv8mrzt66GQiAgcmpTnvR+Uu6AbiXaVjSEZD6hlquJBGQddPqIGenQ0a1M6Er
-         /8HA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7D2PW5SCY+n9I01QA6YR5hh0q5qnRjlUafQaO3l16D2l8Ph6PwkbalYwXNQdl34F5gOUy05xTZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh/xgbGwXExrhxvJl+5hEYbbto6oKXIb/T/ELZ+XkU4XNIyPGA
-	AkyO/0bldCmdfk/NTykjmed9MYXzJTm31WNSKOmsdNJ1BLiVsUlB/NSCM79UcO6cdeu3JSpKVIN
-	IKinFp0kr+k+3LL9ppmB4GAbxrFwdWJ3cPuzEvCOUkF5lQsLayEA99as=
-X-Google-Smtp-Source: AGHT+IEI/C25oLPvNScwmmGwkgadLS4wD1Jjf3Kg5w27gYr7QxYS7Y67gF1WFdlmVBm20HQhF1It5bWJCaUtmVBn4tQ04g1Gf0mf
+	s=arc-20240116; t=1740557762; c=relaxed/simple;
+	bh=nALpxznmBhzULFmfDkpB8aWVcJCEE83NjjXYdSRCF6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/9BHUE85ygCIJBbmHDz9nNwTZsiYVo0zdWCFXCWTNzD0fwwV10/SDI7vnMDiTeEILJIMaxvRhMprUACJlWyn7HemDOi4Wr+vP4AUxc7zxPwRlSboON3uKAT1tiGrvYA42/x3kVdeMg8pcb4crGqHfIu53P1wxwMWPZUYadHsKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dSH5giKN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740557760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IkUcDBu8Qo7NTXBR3iH6KjBpPvAxntcf8hHlhE3zaYc=;
+	b=dSH5giKNFw+S/pF+G0pWnaRAq1HolnXDuwN1x7Fr1pInmZsMsK99CXBdgq1fW6qX6ipV8W
+	0kXw7vf7rW7ImGMLpWXSyzLDIDsBUCxKg1i27rQyYfRsceQX7SwIKqDHdwNwXsFWWtHzHP
+	FRTiB1k9YsGlKxeG6SttHXi+NBZkI10=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-lMLmeSYlPcSKOrHiRuniNw-1; Wed,
+ 26 Feb 2025 03:15:53 -0500
+X-MC-Unique: lMLmeSYlPcSKOrHiRuniNw-1
+X-Mimecast-MFC-AGG-ID: lMLmeSYlPcSKOrHiRuniNw_1740557752
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7455219039C2;
+	Wed, 26 Feb 2025 08:15:52 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.27])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F7FA1800359;
+	Wed, 26 Feb 2025 08:15:45 +0000 (UTC)
+Date: Wed, 26 Feb 2025 16:15:39 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: asml.silence@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org, bernd@bsbernd.com,
+	csander@purestorage.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
+Message-ID: <Z77Nq_5ZGxUjxkau@fedora>
+References: <20250224213116.3509093-1-kbusch@meta.com>
+ <20250224213116.3509093-10-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:310f:b0:3cf:fe21:af8 with SMTP id
- e9e14a558f8ab-3d2cb432219mr213116715ab.4.1740549380868; Tue, 25 Feb 2025
- 21:56:20 -0800 (PST)
-Date: Tue, 25 Feb 2025 21:56:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bead04.050a0220.38b081.0002.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in native_tss_update_io_bitmap
-From: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224213116.3509093-10-kbusch@meta.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+On Mon, Feb 24, 2025 at 01:31:14PM -0800, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> Provide new operations for the user to request mapping an active request
+> to an io uring instance's buf_table. The user has to provide the index
+> it wants to install the buffer.
+> 
+> A reference count is taken on the request to ensure it can't be
+> completed while it is active in a ring's buf_table.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
 
-syzbot found the following issue on:
+Looks IO_LINK doesn't work, and UNREG_BUF cqe can be received from userspace.
 
-HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fcd7f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e2b1803445d236442e54
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149427a4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ed06e4580000
+It is triggered reliably in the ublk selftests(test_loop_03.sh) I just post out:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 5891 Comm: iou-sqp-5889 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
-Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
-RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
-R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
-R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- task_update_io_bitmap+0xb8/0xf0 arch/x86/kernel/ioport.c:47
- io_bitmap_exit+0x62/0xf0 arch/x86/kernel/ioport.c:57
- exit_thread+0x76/0xa0 arch/x86/kernel/process.c:123
- copy_process+0x277d/0x3cf0 kernel/fork.c:2638
- create_io_thread+0x16a/0x1e0 kernel/fork.c:2746
- create_io_worker+0x176/0x540 io_uring/io-wq.c:862
- io_wq_create_worker io_uring/io-wq.c:332 [inline]
- io_wq_enqueue+0x7b5/0xa00 io_uring/io-wq.c:989
- io_queue_iowq+0x433/0x670 io_uring/io_uring.c:542
- io_submit_state_end io_uring/io_uring.c:2215 [inline]
- io_submit_sqes+0x1940/0x1cf0 io_uring/io_uring.c:2335
- __io_sq_thread io_uring/sqpoll.c:189 [inline]
- io_sq_thread+0xc8c/0x1fd0 io_uring/sqpoll.c:312
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
-Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
-RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
-R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
-R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	df 48 89             	fisttps -0x77(%rax)
-   3:	44 24 50             	rex.R and $0x50,%al
-   6:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
-   b:	74 08                	je     0x15
-   d:	48 89 df             	mov    %rbx,%rdi
-  10:	e8 cf 75 c7 00       	call   0xc775e4
-  15:	48 89 5c 24 58       	mov    %rbx,0x58(%rsp)
-  1a:	4c 8b 2b             	mov    (%rbx),%r13
-  1d:	4c 89 f0             	mov    %r14,%rax
-  20:	48 c1 e8 03          	shr    $0x3,%rax
-  24:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
-* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	4c 89 f7             	mov    %r14,%rdi
-  33:	e8 ac 75 c7 00       	call   0xc775e4
-  38:	49 8b 1e             	mov    (%r14),%rbx
-  3b:	4c 89 ef             	mov    %r13,%rdi
-  3e:	48                   	rex.W
+https://lore.kernel.org/linux-block/20250226081136.2410001-4-ming.lei@redhat.com/T/#m3adfecbfa33de9f9f728ccb4ab1185091be34797
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+Ming
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 

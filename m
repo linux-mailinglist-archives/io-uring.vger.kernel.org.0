@@ -1,121 +1,173 @@
-Return-Path: <io-uring+bounces-6824-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6822-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF803A46C8B
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 21:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD6EA46C86
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 21:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D508616ED52
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 20:36:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458563ADD10
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 20:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA352185B8;
-	Wed, 26 Feb 2025 20:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B668B1E1DE7;
+	Wed, 26 Feb 2025 20:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OGC0f7lO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cGzMNATk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0035427561C
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 20:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093E12755FD
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 20:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740602179; cv=none; b=fIyMf63FP14svXCSuXqW7xoNyEZN76abhirJXg7SY6GQgzZ1NkertPfjIpiJd7DfFaA8mVzUAWpqmrKODm8zHJKhiQePCB0srk76N9tQlmAYXB5WOi55ow6UF8o1Uop0352DOiJdTZDpXIETQM6N7QyVe4CVe48OM6LNb98RYFo=
+	t=1740602130; cv=none; b=TZU6FH9q2jJzR3fh+sRrsvwYG/e8iMq4Y+kqdV3RKmOuCRTIyyFeJj3ldzroP6Iuz5B2rHopI7MYbE8qc/r1yteKhV/QaNdFQ8e2/X3Ok1BPU+nQSIg28UcroBK89BXCSuLwqxi0U15CUjATyvfT0jDEi9bmWYjELdXbuz47Db4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740602179; c=relaxed/simple;
-	bh=VC3SAPTEl0i49ihRbrDdJsQYLdTwF6Wi5VeIuAFox50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dRsskKxM8kupFokNA7zssn8D6XReLCg+AwWInrarvwx0AaIRsCmjhIu1hKhPNIMcHG/qXzkTxNg0NVULltzz+73iIhGLV5ai9Nu5SwAEkJRyaVHhVCCxAi2KVejgVZQeT5ZgrQ5A9ZzUvYfLTRWu+n/OBR/PuWB9pJjQ5OQ913g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OGC0f7lO; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3d1a428471fso1926755ab.2
-        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 12:36:16 -0800 (PST)
+	s=arc-20240116; t=1740602130; c=relaxed/simple;
+	bh=k+/mf0Ke/9caeU94urH6uJJzbl20lNFagF35hCU1yPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KBQglgg3QhkAvdd8D1jlnTTJZ6TM5ueIej9WTfNfoyzXl5DhBJD4OLg7Y4t7wgXNyFDLTdjt4V94ChCKuN2tSRFjIXyX4O+D4+8LNv6rPWSj6f1J6ZTs7BESQq3HTunI6xDIR8VguCIA61/I7wY8OljisRxPP/RSL6lIYIGoebY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cGzMNATk; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab771575040so236636366b.1
+        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 12:35:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740602176; x=1741206976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hmzqUtuLFgT2c7u/W65oS618sUsNHDHfq220kvzNU6c=;
-        b=OGC0f7lOayOhgQ/acv2MgoIggYZT2/PmQAxeu71GXIKDaGy0ueYZKv91gACs0/x59u
-         NCFiQDz4gTdHNOoTEeIl7acP0HguFFND/nSR7lvZ/YFpVAyb3rHfwrTcy5WJcD9Hj9Bu
-         hmNFFo4TuFw5zWTTGiekt+5J4qTRh2bSKBeM4BXFOTzA4W5K8ydm1F4LRwyCJnNBUrXM
-         CdW2j2szmGOpLZYmx6WhmQreYVJjjhK0iUs8d3Utzh7g8igzbDN2yn32vMlBZp343Iyi
-         Rt6TxXyHelHgY0zSdvEgqCqoIDnylW8h/xrZEqgUr3b9U7cjzgYFm7nSDax1ie2e8gnj
-         Yzrw==
+        d=gmail.com; s=20230601; t=1740602127; x=1741206927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDxxqhrZdvdGgk4uAfOkfCZ1hI0TZ27DIS134xcwkxc=;
+        b=cGzMNATkixPVhkszYu9fMT2QivbGXYzJmj2j6XLFg4IfJGsWhnUOXQsTcYyQNQq0L4
+         vjK6+evBuk8SwEoImHe6D/NoGysxIYsn+e0T7r8GQVPm2xtgsKGZ4kDR3lYjpiPU2GXM
+         MFVxRFWyZVFva06w6DPEIIXwlyL8G6j/QQlc+00BO5KoREyuyiKPqOcyjaWcvOYsE5GV
+         Z8IWnX2b04HKpuqNFKctGIGagr4BoE0ZI3DOORxOlLSahO4sDzFGWb17r19w2ArWn3Z0
+         qNuTlmeNjrIwWaQSlCo1on+CE25TUCEW067J/rsAlOTIfR6nDpY2G4tuX+WGFMN51O8r
+         uRdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740602176; x=1741206976;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmzqUtuLFgT2c7u/W65oS618sUsNHDHfq220kvzNU6c=;
-        b=IhQ2onvKN9E44PJ5sh+8g7FE+gJ+IzZMcVt8bDCNEvanoHk/Lp9sbdmlVJ9RpVG0Y0
-         sFsn9qT2/3NoKFRWpfyYGpjhKnRn9lONm/QYLnhG3b1JkGdVv4eabkncM/f4EzUk8Snu
-         jTOIPRiOSMEJdGqOsqvMVVeZJbsdATSMmI50062jraM+exdzy4qiUuN08bdLR/6IAlBw
-         pKwy45nbnHBxDRCoeMW0s9OPM9l5DiCqtVEx1q+c+R1tCtLjguc6cwDl4SuVvTtt0qz8
-         8KYYJm/UQiJd+qtXsbJEHMWQx4FmOjRAbb87kmrPxs0U8QzzwY7t/t6dyl5jICLUNHXO
-         /5jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHDAa1BPSW/gf31ltsAOnB8Bap5LseEyR8jlffrvLbGFVqiHnuZNl6XuKZ64lSJP8scIjp1HncwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYLIOBKkKG0sfZC9/8CE5LH3fiqLmO31IEl1qE+0Lzu/J1C67K
-	IUvkGdrmq9XUhe8tu+sRpwYOn0E65xKmjD7w2RUQZGSyGQ5VJPcSWEl65WN09gE=
-X-Gm-Gg: ASbGncuH3goFnVU1ULm7eCPO4bdW9Fb5CZfHp2wyBTP+dMj8CA3jx0CxHe1QGGuEYIo
-	sqlNb2/7z+hLkOXJsdjtvLH1UYna7WnfBDJJdT3U3eyCYBH84ShKFWVnyIO4H5byDhvjXZfEMyD
-	axOg3eu77L8KO1gx3ALLQvpJ58IryUOK4qUa5rU/eOboxirJQObgUFIDlJN3XPZ5HivbKRKL8+c
-	3QoLeRhkzDaR3WtqRa/RfCk4nH4i4nvRuCbJiWiavzC6M58Ys8d2N6eXV23TzuD+8XMHZ6cgbzO
-	tDQy2lCF8wG0bd6IZRH2Mw==
-X-Google-Smtp-Source: AGHT+IFZhUDa0aBEcOlvPZddOMoMuQxC93b3SQFzlP0FnLZWxjGnGimX11rNVAbPFw+yMxcl4BKkvQ==
-X-Received: by 2002:a05:6e02:1906:b0:3d3:d4a2:94a0 with SMTP id e9e14a558f8ab-3d3d4a29640mr41989075ab.8.1740602175816;
-        Wed, 26 Feb 2025 12:36:15 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061fa8750sm12443173.136.2025.02.26.12.36.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 12:36:15 -0800 (PST)
-Message-ID: <e7e3d82d-d983-4073-8cfa-91f2a3f2ea62@kernel.dk>
-Date: Wed, 26 Feb 2025 13:36:14 -0700
+        d=1e100.net; s=20230601; t=1740602127; x=1741206927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tDxxqhrZdvdGgk4uAfOkfCZ1hI0TZ27DIS134xcwkxc=;
+        b=wfAeJhO8of4dZF2ZFhDWEmk8REyyjXPyXajEypFsx8571362+o1GmbU+xrsaqyHtdY
+         CltlmZMMc97g2c/YNzigygtnLw0YIdQU4FlQTCmEjNQd8Ne8sb8Wv/sLscux8Fukf6w3
+         QSM5hkLRu99XnUAq/cBBT1xP3DYGVD1FecUdce81gMBcfOZfS4tkeZ3UN133EfFT8ORy
+         ZVOVqj1/tOcfPFF9RNi4DoR/dugS351w2zB/zUSt2qy9lXaF5B8QF+B4kKHmRd2Puvep
+         qKF1jXMl5vyjEFBdkxs6REInt8Adix66X/k4AXJs4BQa/kDrW7qXSjmjRH+ahUpc2p89
+         e2WA==
+X-Gm-Message-State: AOJu0YwwV3O3gwz+TIyqnCtUId7T+8s+2CwTJOG7WeZjagBDEzI3RjOH
+	XL9wegCNthLAVVzeIzjXoQ8uq91oV3G/adRVl7+hlZmufc5yX2Pfe9vmOw==
+X-Gm-Gg: ASbGnctEadD1yM0iPmEhpLdmNYX4UWRWdkb2rfSOhQiyv/OHm5qwA/XtvwaDo+JwCQ6
+	XlmnKFqgwGxiU0H4S7PVo1ItGwgT6cTIktwaP+BjwVawGrimaS9WX/Ib0iNpD06onxy456PCngg
+	A4mkz4pNPbGQdj1seiXBMK/SYQxp3n+Vm5B7iESTclNT9cDnNTzhRIljUT8hvZfsQQafBOLZpxZ
+	UmxCVHOB3EdRnsFCLvKtI80/e6DiO6jZMHO4m30day0MxukgX+lHCq2V0x82OH05LlyR6Y7VyST
+	3UyXlGE8nRdyOLNnZqXgRLTKgNJLYs3rlPNf1g==
+X-Google-Smtp-Source: AGHT+IEqVgH7oFcSwFKWSxb7gau2qOo2AbvMAPKkPKWaZDgrL/Xs++SuFYhF71tmms2iUnh8fAZxNA==
+X-Received: by 2002:a17:907:2d0b:b0:ab7:f92c:8fde with SMTP id a640c23a62f3a-abf06260abamr111920666b.30.1740602126759;
+        Wed, 26 Feb 2025 12:35:26 -0800 (PST)
+Received: from 127.0.0.1localhost ([85.255.235.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d65sm387912266b.138.2025.02.26.12.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 12:35:26 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH liburing 1/1] tests/send-zerocopy: add flag to disable huge pages
+Date: Wed, 26 Feb 2025 20:36:15 +0000
+Message-ID: <5748afaecdf24e8ca1f1c9d407e809e8a485fe16.1740601594.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv7 2/6] io_uring: add support for kernel registered bvecs
-To: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
- asml.silence@gmail.com, linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Cc: bernd@bsbernd.com, csander@purestorage.com,
- linux-nvme@lists.infradead.org, Keith Busch <kbusch@kernel.org>
-References: <20250226182102.2631321-1-kbusch@meta.com>
- <20250226182102.2631321-3-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250226182102.2631321-3-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/26/25 11:20 AM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> Provide an interface for the kernel to leverage the existing
-> pre-registered buffers that io_uring provides. User space can reference
-> these later to achieve zero-copy IO.
-> 
-> User space must register an empty fixed buffer table with io_uring in
-> order for the kernel to make use of it.
+Huge page test is too heavy for low powered setups, so add a convenient
+way to disable them.
 
-Just a suggestion, but might make sense to not use ->release() as
-a gating whether this is a kernel buffer or not, there's room in the
-struct anyway with the 'u8 perm' having holes anyway. And if we did
-that, then we could just have a default release that does the unpin
-and put rather than needing to check and have branches for the two
-types of release. Yes the indirect function call isn't free either,
-like the branches aren't, but I don't think it matters on the release
-side. At least not enough to care, and it'd help streamline the code
-a bit and not overload ->release() with meaning "oh this is a kernel
-buffer".
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/send-zerocopy.c | 44 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 28 insertions(+), 16 deletions(-)
 
+diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
+index 7135f57c..c8eafe28 100644
+--- a/test/send-zerocopy.c
++++ b/test/send-zerocopy.c
+@@ -72,6 +72,7 @@ static struct iovec buffers_iov[__BUF_NR];
+ static bool has_sendzc;
+ static bool has_sendmsg;
+ static bool hit_enomem;
++static bool try_hugepages = 1;
+ 
+ static int probe_zc_support(void)
+ {
+@@ -900,6 +901,15 @@ static int run_basic_tests(void)
+ 	return 0;
+ }
+ 
++static void free_buffers(void)
++{
++	if (tx_buffer)
++		free(tx_buffer);
++	if (rx_buffer)
++		free(rx_buffer);
++	tx_buffer = rx_buffer = NULL;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	size_t len;
+@@ -920,27 +930,29 @@ int main(int argc, char *argv[])
+ 
+ 	page_sz = sysconf(_SC_PAGESIZE);
+ 
+-	len = LARGE_BUF_SIZE;
+-	tx_buffer = aligned_alloc(page_sz, len);
+-	rx_buffer = aligned_alloc(page_sz, len);
+-	if (tx_buffer && rx_buffer) {
+-		buffers_iov[BUF_T_LARGE].iov_base = tx_buffer;
+-		buffers_iov[BUF_T_LARGE].iov_len = len;
+-	} else {
+-		if (tx_buffer)
+-			free(tx_buffer);
+-		if (rx_buffer)
+-			free(rx_buffer);
++	if (try_hugepages) {
++		len = LARGE_BUF_SIZE;
++		tx_buffer = aligned_alloc(page_sz, len);
++		rx_buffer = aligned_alloc(page_sz, len);
+ 
+-		printf("skip large buffer tests, can't alloc\n");
++		if (tx_buffer && rx_buffer) {
++			buffers_iov[BUF_T_LARGE].iov_base = tx_buffer;
++			buffers_iov[BUF_T_LARGE].iov_len = len;
++		} else {
++			printf("skip large buffer tests, can't alloc\n");
++			free_buffers();
++		}
++	}
+ 
++	if (!tx_buffer) {
+ 		len = 2 * page_sz;
+ 		tx_buffer = aligned_alloc(page_sz, len);
+ 		rx_buffer = aligned_alloc(page_sz, len);
+-	}
+-	if (!tx_buffer || !rx_buffer) {
+-		fprintf(stderr, "can't allocate buffers\n");
+-		return T_EXIT_FAIL;
++
++		if (!tx_buffer || !rx_buffer) {
++			fprintf(stderr, "can't allocate buffers\n");
++			return T_EXIT_FAIL;
++		}
+ 	}
+ 
+ 	srand((unsigned)time(NULL));
 -- 
-Jens Axboe
+2.48.1
 
 

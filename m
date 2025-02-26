@@ -1,176 +1,285 @@
-Return-Path: <io-uring+bounces-6791-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6792-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D079A463F8
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 16:02:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6450DA46783
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63BAE3AFAA4
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 15:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314D53A6E8D
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 17:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1B19CD0B;
-	Wed, 26 Feb 2025 15:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CC52248B5;
+	Wed, 26 Feb 2025 17:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ozu8qxXD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0M7GPZf3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzAs2B+9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E04415278E;
-	Wed, 26 Feb 2025 15:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185FE2248AC;
+	Wed, 26 Feb 2025 17:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582121; cv=none; b=MTvuNSYpdXAkYjS2n6cqYPaDpmMMdVvJhboQMrAfhuKKscBTJVOgcs/D8fGoXWloT301lYOmgE09eoXvGCixtLQnoiE5vUjaOyfpPlg2SAt3XxQR+5IQqPf3Eg6fjj8iZEyQbte7X1+1LygS63Di+PtbzF2ZQSNAfGrkJmnHlqQ=
+	t=1740589835; cv=none; b=bIPZxyVpOwkQKqzngI9AOG4qXhskzYE0ev9g16HtxyXBESLI2kRGgtUyUApHjPTDDnSCs/JPVY4y5YQzWPQfSeNb2tTPjV8JAURGh8tqvHeoPiPDi4vSD08bK+Q5MIbXurT2QiHDmBNj3mH2Kt1tSoip/9ySQ1oLbHhW5Q0TI/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582121; c=relaxed/simple;
-	bh=celbQI4md4Nw9NiTcdx99RF7CX7CNJgN/S3lD5ArXGI=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J26rD4/3UNZUrdD9uiMwvQQg87OCVdNqcZxisIc3fowrXTXqWpA5s4GDNCLxTXIq22AlKo9ngd1k+EHQwcucdCc9p9m4b0J5dTeB9AxTGeox/CIhi9Er8/iTGUdJsFW+q3q7VcZaa9UWPkvgKQr3SViAah0+p8WimKwlxDxbn0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ozu8qxXD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0M7GPZf3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740582118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JWlX9TJLo6j7kLc4k/KFCY/zN5HPB61jkl2jDj8mI+4=;
-	b=Ozu8qxXDgHlyYDgOIOrHxApCO4stPIj6JjjCbdNoJMzVCmA1zGPro86S1pXvvhGk4LmEp+
-	XSAS0m/tKXYVxXvKNCKzcVgIaAsDdON/wFO9TqZAcULl8eVTLe2EGVkcdBaJgArIJ44m7W
-	6gljhBtPvnu4o4uO0q1EiJjmm8icUBGiJK4O8CI3WiiS0sNXiq4ODv17LqBkayLOZwUKH6
-	7aEtFQq3hx6bcyUKcXklxLJCsx8+FXzPHMrFO42mMAcRJrKyCOYlMVtUzrvr0dsWioWx9l
-	B9diGFKhAsLety4R0kbJSGlw6SChnU0svqLjpEftN9Sq4ryHL3BGHUyBO7Vfdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740582118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JWlX9TJLo6j7kLc4k/KFCY/zN5HPB61jkl2jDj8mI+4=;
-	b=0M7GPZf3s+9CFrwhjsGBGwadoUM4Lp5OV+6AA7HjCpgMYRqYgK3FzTWHSJGxVnYD/I+QrS
-	lqfT8G6EytwcmUCw==
-To: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org
-Subject: [PATCH] x86/iopl: Cure TIF_IO_BITMAP inconsistencies
-In-Reply-To: <67bead04.050a0220.38b081.0002.GAE@google.com>
-References: <67bead04.050a0220.38b081.0002.GAE@google.com>
-Date: Wed, 26 Feb 2025 16:01:57 +0100
-Message-ID: <87wmdceom2.ffs@tglx>
+	s=arc-20240116; t=1740589835; c=relaxed/simple;
+	bh=L/OAu1/Elx04wc3U3fD0kyjGYwdzW/nGzcSlbj1elIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U++uUd94sO5psxeSNuB/ywB6A+2a69SzVWYA315KNV2Qagfg0yT+n/4z+/2RoTpnaq/vZSHWsP0tSGsCHbLq716j1A4kZWmmFqSIn+bXm5YpCydpT5v9P4XQSljUlLJParJXZodxCtTn2A4QRCh/QS4JrRKIx3YPlBdLiOwOBaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FzAs2B+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8C0C4CEE4;
+	Wed, 26 Feb 2025 17:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740589834;
+	bh=L/OAu1/Elx04wc3U3fD0kyjGYwdzW/nGzcSlbj1elIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FzAs2B+9aPHSVeqURKUrYEldPQ1U0fiyAMWYX244a7xgLP+h6NF+Yov7WoS94b9e1
+	 nipW/LfPIJumeItVfcm80iBnvvDVcO+lp35f7dCDGLWMOUOq5D7qQeATEfrywyJ3zE
+	 y08FEfvTZWdktz2PmZRcWG2YlPMB444JNuewyuYKDnrTZJamvnTDfccV09Lg88fOBR
+	 un4vF1pEg1WIfjHnL77I9qjqkq8wumpighJRiHe2APss21W6wK5Q10ZAKnkCmxVGP9
+	 thKdpD4qiu1eL0T6nnyJt60QzKr2I826EpR/LBO6kKvQdJjju48n2Ei5chb265slsO
+	 KZXGQkGJMUlZw==
+Date: Wed, 26 Feb 2025 10:10:31 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Keith Busch <kbusch@meta.com>, asml.silence@gmail.com, axboe@kernel.dk,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	bernd@bsbernd.com, csander@purestorage.com
+Subject: Re: [PATCHv5 09/11] ublk: zc register/unregister bvec
+Message-ID: <Z79LB3T5Aa6RoaDo@kbusch-mbp>
+References: <20250224213116.3509093-1-kbusch@meta.com>
+ <20250224213116.3509093-10-kbusch@meta.com>
+ <Z77Nq_5ZGxUjxkau@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z77Nq_5ZGxUjxkau@fedora>
 
-io_bitmap_exit() is invoked from exit_thread() when a task exists or
-when a fork fails. In the latter case the exit_thread() cleans up
-resources which were allocated during fork().
+On Wed, Feb 26, 2025 at 04:15:39PM +0800, Ming Lei wrote:
+> On Mon, Feb 24, 2025 at 01:31:14PM -0800, Keith Busch wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > 
+> > Provide new operations for the user to request mapping an active request
+> > to an io uring instance's buf_table. The user has to provide the index
+> > it wants to install the buffer.
+> > 
+> > A reference count is taken on the request to ensure it can't be
+> > completed while it is active in a ring's buf_table.
+> > 
+> > Signed-off-by: Keith Busch <kbusch@kernel.org>
+> > ---
+> 
+> Looks IO_LINK doesn't work, and UNREG_BUF cqe can be received from userspace.
 
-io_bitmap_exit() invokes task_update_io_bitmap(), which in turn ends up
-in tss_update_io_bitmap(). tss_update_io_bitmap() operates on the
-current task. If current has TIF_IO_BITMAP set, but no bitmap installed,
-tss_update_io_bitmap() crashes with a NULL pointer dereference.
+You can link the register, but should do the unregister with COMMIT
+command on the frontend when the backend is complete. This doesn't need
+the triple SQE requirement.
 
-There are two issues, which lead to that problem:
+I was going to share with the next version, but since you bring it up
+now, here's the reference patch for ublksrv using links:
 
-  1) io_bitmap_exit() should not invoke task_update_io_bitmap() when
-     the task, which is cleaned up, is not the current task. That's a
-     clear indicator for a cleanup after a failed fork().
-
-  2) A task should not have TIF_IO_BITMAP set and neither a bitmap
-     installed nor IOPL emulation level 3 activated.
-
-     This happens, when a kernel thread is created in the context of a
-     user space thread, which has TIF_IO_BITMAP set as the thread flags
-     are copied and the IO bitmap pointer is cleared.
-
-     Other than in the failed fork() case this has no impact because
-     kernel threads including IO workers never return to user space and
-     therefore never invoke tss_update_io_bitmap().
-
-Cure this by adding the missing cleanups and checks:
-
-  1) Prevent io_bitmap_exit() to invoke task_update_io_bitmap() if
-     the to be cleaned up task is not the current task.
-
-  2) Clear TIF_IO_BITMAP in copy_thread() unconditionally. For user
-     space forks it is set later, when the IO bitmap is inherited in
-     io_bitmap_share().
-
-For paranoia sake, add a warning into tss_update_io_bitmap() to catch
-the case, when that code is invoked with inconsistent state.
-
-Fixes: ea5f1cd7ab49 ("x86/ioperm: Remove bitmap if all permissions dropped")
-Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
 ---
-
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -33,8 +33,9 @@ void io_bitmap_share(struct task_struct
- 	set_tsk_thread_flag(tsk, TIF_IO_BITMAP);
- }
+diff --git a/include/ublk_cmd.h b/include/ublk_cmd.h
+index 0150003..07439be 100644
+--- a/include/ublk_cmd.h
++++ b/include/ublk_cmd.h
+@@ -94,6 +94,10 @@
+ 	_IOWR('u', UBLK_IO_COMMIT_AND_FETCH_REQ, struct ublksrv_io_cmd)
+ #define	UBLK_U_IO_NEED_GET_DATA		\
+ 	_IOWR('u', UBLK_IO_NEED_GET_DATA, struct ublksrv_io_cmd)
++#define UBLK_U_IO_REGISTER_IO_BUF	\
++	_IOWR('u', 0x23, struct ublksrv_io_cmd)
++#define UBLK_U_IO_UNREGISTER_IO_BUF	\
++	_IOWR('u', 0x24, struct ublksrv_io_cmd)
  
--static void task_update_io_bitmap(struct task_struct *tsk)
-+static void task_update_io_bitmap(void)
- {
-+	struct task_struct *tsk = current;
- 	struct thread_struct *t = &tsk->thread;
+ /* only ABORT means that no re-fetch */
+ #define UBLK_IO_RES_OK			0
+diff --git a/include/ublksrv_tgt.h b/include/ublksrv_tgt.h
+index 1deee2b..c331963 100644
+--- a/include/ublksrv_tgt.h
++++ b/include/ublksrv_tgt.h
+@@ -99,6 +99,7 @@ struct ublk_io_tgt {
+ 	co_handle_type co;
+ 	const struct io_uring_cqe *tgt_io_cqe;
+ 	int queued_tgt_io;	/* obsolete */
++	bool needs_unregister;
+ };
  
- 	if (t->iopl_emul == 3 || t->io_bitmap) {
-@@ -54,7 +55,12 @@ void io_bitmap_exit(struct task_struct *
- 	struct io_bitmap *iobm = tsk->thread.io_bitmap;
- 
- 	tsk->thread.io_bitmap = NULL;
--	task_update_io_bitmap(tsk);
-+	/*
-+	 * Don't touch the TSS when invoked on a failed fork(). TSS
-+	 * reflects the state of @current and not the state of @tsk.
-+	 */
-+	if (tsk == current)
-+		task_update_io_bitmap();
- 	if (iobm && refcount_dec_and_test(&iobm->refcnt))
- 		kfree(iobm);
- }
-@@ -192,8 +198,7 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
+ static inline struct ublk_io_tgt *__ublk_get_io_tgt_data(const struct ublk_io_data *io)
+diff --git a/lib/ublksrv.c b/lib/ublksrv.c
+index 16a9e13..7205247 100644
+--- a/lib/ublksrv.c
++++ b/lib/ublksrv.c
+@@ -619,6 +619,15 @@ skip_alloc_buf:
+ 		goto fail;
  	}
  
- 	t->iopl_emul = level;
--	task_update_io_bitmap(current);
--
-+	task_update_io_bitmap();
- 	return 0;
++	if (ctrl_dev->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) {
++		ret = io_uring_register_buffers_sparse(&q->ring, q->q_depth);
++		if (ret) {
++			ublk_err("ublk dev %d queue %d register spare buffers failed %d",
++					q->dev->ctrl_dev->dev_info.dev_id, q->q_id, ret);
++			goto fail;
++		}
++	}
++
+ 	io_uring_register_ring_fd(&q->ring);
+ 
+ 	/*
+diff --git a/tgt_loop.cpp b/tgt_loop.cpp
+index 0f16676..91f8c81 100644
+--- a/tgt_loop.cpp
++++ b/tgt_loop.cpp
+@@ -246,12 +246,70 @@ static inline int loop_fallocate_mode(const struct ublksrv_io_desc *iod)
+        return mode;
  }
  
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -176,6 +176,7 @@ int copy_thread(struct task_struct *p, c
- 	frame->ret_addr = (unsigned long) ret_from_fork_asm;
- 	p->thread.sp = (unsigned long) fork_frame;
- 	p->thread.io_bitmap = NULL;
-+	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
- 	p->thread.iopl_warn = 0;
- 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
- 
-@@ -464,6 +465,11 @@ void native_tss_update_io_bitmap(void)
- 	} else {
- 		struct io_bitmap *iobm = t->io_bitmap;
- 
-+		if (WARN_ON_ONCE(!iobm)) {
-+			clear_thread_flag(TIF_IO_BITMAP);
-+			native_tss_invalidate_io_bitmap();
-+		}
++static inline void io_uring_prep_buf_register(struct io_uring_sqe *sqe,
++		int dev_fd, int tag, int q_id, __u64 index)
++{
++	struct ublksrv_io_cmd *cmd = (struct ublksrv_io_cmd *)sqe->cmd;
 +
- 		/*
- 		 * Only copy bitmap data when the sequence number differs. The
- 		 * update time is accounted to the incoming task.
++	io_uring_prep_read(sqe, dev_fd, 0, 0, 0);
++	sqe->opcode		= IORING_OP_URING_CMD;
++	sqe->flags		|= IOSQE_IO_LINK | IOSQE_CQE_SKIP_SUCCESS | IOSQE_FIXED_FILE;
++	sqe->cmd_op		= UBLK_U_IO_REGISTER_IO_BUF;
++
++	cmd->tag		= tag;
++	cmd->addr		= index;
++	cmd->q_id		= q_id;
++}
++
++static inline void io_uring_prep_buf_unregister(struct io_uring_sqe *sqe,
++		int dev_fd, int tag, int q_id, __u64 index)
++{
++	struct ublksrv_io_cmd *cmd = (struct ublksrv_io_cmd *)sqe->cmd;
++
++	io_uring_prep_read(sqe, dev_fd, 0, 0, 0);
++	sqe->opcode             = IORING_OP_URING_CMD;
++	sqe->flags              |= IOSQE_CQE_SKIP_SUCCESS | IOSQE_FIXED_FILE;
++	sqe->cmd_op             = UBLK_U_IO_UNREGISTER_IO_BUF;
++
++	cmd->tag                = tag;
++	cmd->addr               = index;
++	cmd->q_id               = q_id;
++}
++
++static void loop_unregister(const struct ublksrv_queue *q, int tag)
++{
++	struct io_uring_sqe *sqe;
++
++	ublk_get_sqe_pair(q->ring_ptr, &sqe, NULL);
++	io_uring_prep_buf_unregister(sqe, 0, tag, q->q_id, tag);
++}
++
+ static void loop_queue_tgt_read(const struct ublksrv_queue *q,
+-		const struct ublksrv_io_desc *iod, int tag)
++		const struct ublk_io_data *data, int tag)
+ {
++	struct ublk_io_tgt *io = __ublk_get_io_tgt_data(data);
++	const struct ublksrv_io_desc *iod = data->iod;
++	const struct ublksrv_ctrl_dev_info *info =
++		ublksrv_ctrl_get_dev_info(ublksrv_get_ctrl_dev(q->dev));
+ 	unsigned ublk_op = ublksrv_get_op(iod);
+ 
+-	if (user_copy) {
++	if (info->flags & UBLK_F_SUPPORT_ZERO_COPY) {
++		struct io_uring_sqe *reg;
++		struct io_uring_sqe *read;
++
++		ublk_get_sqe_pair(q->ring_ptr, &reg, &read);
++
++		io_uring_prep_buf_register(reg, 0, tag, q->q_id, tag);
++
++		io_uring_prep_read_fixed(read, 1 /*fds[1]*/,
++			0,
++			iod->nr_sectors << 9,
++			iod->start_sector << 9,
++			tag);
++		io_uring_sqe_set_flags(read, IOSQE_FIXED_FILE);
++		read->user_data = build_user_data(tag, ublk_op, 0, 1);
++		io->needs_unregister = true;
++	} else if (user_copy) {
+ 		struct io_uring_sqe *sqe, *sqe2;
+ 		__u64 pos = ublk_pos(q->q_id, tag, 0);
+ 		void *buf = ublksrv_queue_get_io_buf(q, tag);
+@@ -284,11 +342,31 @@ static void loop_queue_tgt_read(const struct ublksrv_queue *q,
+ }
+ 
+ static void loop_queue_tgt_write(const struct ublksrv_queue *q,
+-		const struct ublksrv_io_desc *iod, int tag)
++		const struct ublk_io_data *data, int tag)
+ {
++	const struct ublksrv_io_desc *iod = data->iod;
++	const struct ublksrv_ctrl_dev_info *info =
++		ublksrv_ctrl_get_dev_info(ublksrv_get_ctrl_dev(q->dev));
+ 	unsigned ublk_op = ublksrv_get_op(iod);
+ 
+-	if (user_copy) {
++	if (info->flags & UBLK_F_SUPPORT_ZERO_COPY) {
++		struct ublk_io_tgt *io = __ublk_get_io_tgt_data(data);
++		struct io_uring_sqe *reg;
++		struct io_uring_sqe *write;
++
++		ublk_get_sqe_pair(q->ring_ptr, &reg, &write);
++		io_uring_prep_buf_register(reg, 0, tag, q->q_id, tag);
++
++		io_uring_prep_write_fixed(write, 1 /*fds[1]*/,
++			0,
++			iod->nr_sectors << 9,
++			iod->start_sector << 9,
++			tag);
++		io_uring_sqe_set_flags(write, IOSQE_FIXED_FILE);
++		write->user_data = build_user_data(tag, ublk_op, 0, 1);
++
++		io->needs_unregister = true;
++	} else if (user_copy) {
+ 		struct io_uring_sqe *sqe, *sqe2;
+ 		__u64 pos = ublk_pos(q->q_id, tag, 0);
+ 		void *buf = ublksrv_queue_get_io_buf(q, tag);
+@@ -352,10 +430,10 @@ static int loop_queue_tgt_io(const struct ublksrv_queue *q,
+ 		sqe->user_data = build_user_data(tag, ublk_op, 0, 1);
+ 		break;
+ 	case UBLK_IO_OP_READ:
+-		loop_queue_tgt_read(q, iod, tag);
++		loop_queue_tgt_read(q, data, tag);
+ 		break;
+ 	case UBLK_IO_OP_WRITE:
+-		loop_queue_tgt_write(q, iod, tag);
++		loop_queue_tgt_write(q, data, tag);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -387,6 +465,10 @@ static co_io_job __loop_handle_io_async(const struct ublksrv_queue *q,
+ 		if (io->tgt_io_cqe->res == -EAGAIN)
+ 			goto again;
+ 
++		if (io->needs_unregister) {
++			io->needs_unregister = false;
++			loop_unregister(q, tag);
++		}
+ 		ublksrv_complete_io(q, tag, io->tgt_io_cqe->res);
+ 	} else if (ret < 0) {
+ 		ublk_err( "fail to queue io %d, ret %d\n", tag, tag);
+diff --git a/ublksrv_tgt.cpp b/ublksrv_tgt.cpp
+index 8f9cf28..f3ebe14 100644
+--- a/ublksrv_tgt.cpp
++++ b/ublksrv_tgt.cpp
+@@ -723,7 +723,7 @@ static int cmd_dev_add(int argc, char *argv[])
+ 			data.tgt_type = optarg;
+ 			break;
+ 		case 'z':
+-			data.flags |= UBLK_F_SUPPORT_ZERO_COPY;
++			data.flags |= UBLK_F_SUPPORT_ZERO_COPY | UBLK_F_USER_COPY;
+ 			break;
+ 		case 'q':
+ 			data.nr_hw_queues = strtol(optarg, NULL, 10);
+--
 

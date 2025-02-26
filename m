@@ -1,67 +1,67 @@
-Return-Path: <io-uring+bounces-6804-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6799-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C612A46926
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:12:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06100A4691F
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB9A47A9FF0
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 322597A92A4
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E74236440;
-	Wed, 26 Feb 2025 18:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F4A2356A4;
+	Wed, 26 Feb 2025 18:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="a/N31Uuj"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Dd3NM7ZA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3A236445
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ED422F163
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593427; cv=none; b=Jkr4t5IZTYQygQiKAU4xKxLYgHEK5Fw/5jtMl+WiUgJDjd3bYUHMha03LUNB/VE6SappTNQ/3fPrDA7bSPXlqSq9Eo16RLwkMkjqpuWL8yAu3pzm3eSbSnWa4tzYZXpWX85AYTysSAFBQ8niYmVG8hIk88uGSop7yyRT/iP5ngM=
+	t=1740593421; cv=none; b=ARYKKR6/3C65mgJkVZeSRPsCcsKCGGUcNX4eJB9z0AIHzSTUCoGUUdsXeJriWjIvh1NWWktfZw+W4iRNk3Fg2ZBd72IHbswSru/jVx8OaVyX4Jb4lFDMk6imSocHNsMXcFWOnp5bZEyFKUuXyzrTbjJ6+6Q5PVuugkVcKppDvuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593427; c=relaxed/simple;
+	s=arc-20240116; t=1740593421; c=relaxed/simple;
 	bh=Dt4ivYC3SR2/vPzCzMkzFgxjvTtJGc+6CyD7PH7YyEk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ghtw0QLBriAjxO5H2mthJGfs17gF2Q9H5Pz5VTL/gg1jLCaOhHa2tQgcctTVdSSk6haM88yedJNc8FhNL0TY0AJazkBhYaRfur38MByHt7ZNaD+cJaRdox6K4WrHKQjsIpeOkVuro5Uck/uYd6WK9J+sRGMBziTHqJVoXLX3e94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=a/N31Uuj; arc=none smtp.client-ip=67.231.153.30
+	 MIME-Version:Content-Type; b=a9jK4GulX6QjG0ZVjYkl59eC2MH7RyXH0IHAiH7P9q1CRWQwM3qHUzstFMqYLuPaJNG4E8Tjvq7Ac00uLdah9eXdGy3zTGB6X38yBb3ojw5tJurCxdZXWHZ7fkFsOcukVZ6Ax/90om755uFv3QuHQWNNQGZXF/Rx7GWVtxU1wxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Dd3NM7ZA; arc=none smtp.client-ip=67.231.153.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 51QFa2jv015036
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:10:25 -0800
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QF0jRE019840
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:10:18 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=hbunRQgRX+ReeqwUe8G8nMtr7PKoD5fxxeT5ERKFNGQ=; b=a/N31Uuj1cs2
-	vIhCtCDJKM0lZBzxUUwnvN7e4oG247ffIvM4ro80ztl8758Ll8CpsSsyuEJFEHA8
-	CHVFbGqSKbZbQv1hVh0nUFffRfgxvpGJHcBjwr9wLY3n5sOt5ZKMYJdMzA5f9ipo
-	c6OGi9RAqNmdEfnv93O6FGUCp0ZiA0YtL0hTzL5qL+/niVRg8/Z79UTPUPJWSIYe
-	NRRg8MOurFTuTBiYc1trRvUCUytIHf592/BNLJvc3SkzM1Kk1j4+S1oF64wMPXVk
-	2CdIVR7NllrR0BSCSSnFecl3eer1MNh4XKqFLQFyaYvtZg9nFjhHg/eP2pT6l7kf
-	2fekFYvMmg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0001303.ppops.net (PPS) with ESMTPS id 4525r796m0-16
+	 bh=hbunRQgRX+ReeqwUe8G8nMtr7PKoD5fxxeT5ERKFNGQ=; b=Dd3NM7ZA7oRh
+	eFW5/kUo6oevtHZOEOHzkFIqG1Dhc+a+cIfqy60De1qw5+qT6ywMifET66lRBq1m
+	53OMRduI2EQtCX84nM+hHRmZAW2uKyXO0i4B/srZS58vqFBWlpkkJoOgm/FSOr1E
+	AsjpK6m9cngh1DKuX6jhCx5dwcE/xIj0WboI47tNS87DRRjY25DfZCYqs1oDtIwu
+	vng5i0doRB8JF7PdTSW6bZ3Un7dMSHcZoHJfaCx99KAnCVuZehAFTMeR2WSH5U/q
+	+0kJ2oUUpqUFbw5qUfEQSUuLaXY70FGCKRUsUk+zbMqgg8p7ym0jgW6zSREtvhCv
+	rQ49pRIBpQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 45257j1ewn-13
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:10:24 -0800 (PST)
-Received: from twshared32179.32.frc3.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:10:17 -0800 (PST)
+Received: from twshared55211.03.ash8.facebook.com (2620:10d:c0a8:1c::1b) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 26 Feb 2025 18:10:11 +0000
+ 15.2.1544.14; Wed, 26 Feb 2025 18:10:02 +0000
 Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 181F5187C4AE8; Wed, 26 Feb 2025 10:10:07 -0800 (PST)
+	id 2468D187C4AEA; Wed, 26 Feb 2025 10:10:07 -0800 (PST)
 From: Keith Busch <kbusch@meta.com>
 To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
         <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
 CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
         <linux-nvme@lists.infradead.org>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv6 5/5] io_uring: cache nodes and mapped buffers
-Date: Wed, 26 Feb 2025 10:10:01 -0800
-Message-ID: <20250226181002.2574148-11-kbusch@meta.com>
+Subject: [PATCHv6 6/6] io_uring: cache nodes and mapped buffers
+Date: Wed, 26 Feb 2025 10:10:02 -0800
+Message-ID: <20250226181002.2574148-12-kbusch@meta.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250226181002.2574148-1-kbusch@meta.com>
 References: <20250226181002.2574148-1-kbusch@meta.com>
@@ -74,8 +74,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: LgOnbVzfySX5WW4VA0GxDN3_Eo5ZvKn2
-X-Proofpoint-ORIG-GUID: LgOnbVzfySX5WW4VA0GxDN3_Eo5ZvKn2
+X-Proofpoint-ORIG-GUID: EwNax3Kvc2m2CXYaZAOy89_uZKgnBkKK
+X-Proofpoint-GUID: EwNax3Kvc2m2CXYaZAOy89_uZKgnBkKK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01

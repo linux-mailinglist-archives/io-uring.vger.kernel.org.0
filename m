@@ -1,67 +1,67 @@
-Return-Path: <io-uring+bounces-6812-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6810-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33396A469AD
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:27:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DC6A469B0
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B110718887BE
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:27:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58CCD7A870F
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D358923E229;
-	Wed, 26 Feb 2025 18:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FC719A288;
+	Wed, 26 Feb 2025 18:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="mBPpl/vb"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="BkNh5K0N"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E699223E23C
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85FB2356CB
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594087; cv=none; b=gU7WwHh57N4uiwJ5Dr65gWygsmoda1qmISGvDT4Pb/pmtHEo3Cr5gg9mgsOa16vSJQRLOZ8e58iKRndbt9gQbtvrHbcRoLho1fQwq1T7sF78dYtx0HRM+BNvTLqQVVOw7XaD8O4/cbhoZI4Xm5KbOfx9sZm1+Dr/2/ZqUqzYwus=
+	t=1740594084; cv=none; b=HhjBMTjFmBKkZSx36hnNl/4F2T7Li+F9PEe53pAk8rhVHPBp2FT3V0gZcd2ZrynUdVbu8VhjbTkqCo5bzPR/5LQb7BANzostHi7DYJTPnO9cuz+LzoFQfP+BJjJp0Py+AasubDkZ2jbK2TP5A1ildjY6CBVkmLou6zRmfO49sQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594087; c=relaxed/simple;
-	bh=dTwn1OBTOCnfmKkMGRk3k1UBYGieZ5Xe61oqEFDuBks=;
+	s=arc-20240116; t=1740594084; c=relaxed/simple;
+	bh=l1AFxrxGgV95zI+B1/sL16G/usO1VwzeRMdezrsrExg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tmQ1AGX/7bXEr5f9z9p/itUEYshsJjuGf7upR/d1TfEvMQseK+qB3bS1fn6dIoOzbqEJBse7yF3xe29mlUR2Ip4kFp5OTEM4189GXl3jLFT+tcEerSxwB2ROHgaXZtdSWrBe8PRm/93z9xJVokW/tlpQMOHIEH5JKmRdkxkufu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=mBPpl/vb; arc=none smtp.client-ip=67.231.153.30
+	 MIME-Version:Content-Type; b=mNGkP4fu9FEfiNhMZ7vIOez39B1tgUzPafxVbZCelSpMrXy8xaDmdPTu7KP7CyBi6qKKxM1bYiQyL41EcU/JSBGi/if8aVl0nYuc9lREbiEsvuC9pENAsD/d+Ahyum+BVhB1J/81rKzayiCbXNvBds1y/0Rr7g6sxanAPH29LQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=BkNh5K0N; arc=none smtp.client-ip=67.231.153.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QEmouW004006
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:24 -0800
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 51QFa2lq015036
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:21 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=nwmAP8sUV6CYBzcCZL2YWO0LfzfSw2Y16cunh72RRkE=; b=mBPpl/vbpajt
-	+gtCNXSCiZ4jTDpRSp/WZQ1VqyxMFNQbOU/kdPGAWfCtogiHC6mTSDqr00Qo/2Mn
-	eWMBv71hAwKf6wFbl3EwEmOK1VkRhoxrelkDmYdLJ4Qo4mbIzOrqZltEZzeVxAdo
-	+7GJfzxZqW0oFmI0gQQOkXpvIn4eU3990JTCzqUK7dTXnsmM9jr3fupIzbN9z3BD
-	OKu16syt9Nvd4vK2et2zO7VROw7mSXZFPv6vmKApepoGfu5vhRlbIt0PSRneV7kG
-	uM/8brGNBnWcnQrbGIpl35Tihl6LNux5aNP/J6e6cbDQNPM0iNZNyXTLHpjfqvUC
-	E5rK/BfPbw==
+	 bh=pZ7hsLEDh+ICLvM8xUOac2m7aznqbKdVGcLsSqsMS4I=; b=BkNh5K0N5A4+
+	93+lFRD1QfZd04qczr6QmAw54owfpVPGFTPxrfWkM1TKMMKb6QZlCD9MixrSvYp0
+	0BB0yvmBbzhtub+SpRWdd87+c3SBGTZnewIcf/2B/zFo8N3u0EfJyDD2S2OdYk5W
+	KEYTkVvabf+Z6pSg0f6aqWp2f7P+YyGQZgdiOkJ9AJ0jrjU9xQyV9M/r1PUOWgjR
+	eNzH5h9Jv5cYzugctEvc6ivwKsnRQHBwe4/y6Zyw1RccL7xXRZ0EWjVoLfAl0t79
+	J4bkp823xImhw7Vevf1hUJttygpSeYXi0SSUR5R0LAfUiJWUVAmnqFwDML6EurJu
+	yZcUWibfQw==
 Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 45251shpd8-3
+	by m0001303.ppops.net (PPS) with ESMTPS id 4525r799f0-20
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:24 -0800 (PST)
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:21 -0800 (PST)
 Received: from twshared46479.39.frc1.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.2.1544.14; Wed, 26 Feb 2025 18:21:01 +0000
 Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id C6D67187C82CA; Wed, 26 Feb 2025 10:21:04 -0800 (PST)
+	id D0FFA187C82CC; Wed, 26 Feb 2025 10:21:04 -0800 (PST)
 From: Keith Busch <kbusch@meta.com>
 To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
         <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
 CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
         <linux-nvme@lists.infradead.org>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv7 4/6] ublk: zc register/unregister bvec
-Date: Wed, 26 Feb 2025 10:20:59 -0800
-Message-ID: <20250226182102.2631321-5-kbusch@meta.com>
+Subject: [PATCHv7 5/6] io_uring: add abstraction for buf_table rsrc data
+Date: Wed, 26 Feb 2025 10:21:00 -0800
+Message-ID: <20250226182102.2631321-6-kbusch@meta.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250226182102.2631321-1-kbusch@meta.com>
 References: <20250226182102.2631321-1-kbusch@meta.com>
@@ -74,239 +74,298 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: N_2kdhqgGqPBg-ictXiAs38yqvodP8WX
-X-Proofpoint-ORIG-GUID: N_2kdhqgGqPBg-ictXiAs38yqvodP8WX
+X-Proofpoint-GUID: yaXhmSJ6953wSH2wp4Z8fz8Myiex_tUd
+X-Proofpoint-ORIG-GUID: yaXhmSJ6953wSH2wp4Z8fz8Myiex_tUd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
 
 From: Keith Busch <kbusch@kernel.org>
 
-Provide new operations for the user to request mapping an active request
-to an io uring instance's buf_table. The user has to provide the index
-it wants to install the buffer.
+We'll need to add more fields specific to the registered buffers, so
+make a layer for it now. No functional change in this patch.
 
-A reference count is taken on the request to ensure it can't be
-completed while it is active in a ring's buf_table.
-
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- drivers/block/ublk_drv.c      | 119 +++++++++++++++++++++++-----------
- include/uapi/linux/ublk_cmd.h |   4 ++
- 2 files changed, 86 insertions(+), 37 deletions(-)
+ include/linux/io_uring_types.h |  6 +++-
+ io_uring/fdinfo.c              |  8 +++---
+ io_uring/nop.c                 |  2 +-
+ io_uring/register.c            |  2 +-
+ io_uring/rsrc.c                | 51 +++++++++++++++++-----------------
+ 5 files changed, 36 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 529085181f355..dc9ff869aa560 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -51,6 +51,9 @@
- /* private ioctl command mirror */
- #define UBLK_CMD_DEL_DEV_ASYNC	_IOC_NR(UBLK_U_CMD_DEL_DEV_ASYNC)
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
+s.h
+index c0fe8a00fe53a..a05ae4cb98a4c 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -69,6 +69,10 @@ struct io_file_table {
+ 	unsigned int alloc_hint;
+ };
 =20
-+#define UBLK_IO_REGISTER_IO_BUF		_IOC_NR(UBLK_U_IO_REGISTER_IO_BUF)
-+#define UBLK_IO_UNREGISTER_IO_BUF	_IOC_NR(UBLK_U_IO_UNREGISTER_IO_BUF)
++struct io_buf_table {
++	struct io_rsrc_data	data;
++};
 +
- /* All UBLK_F_* have to be included into UBLK_F_ALL */
- #define UBLK_F_ALL (UBLK_F_SUPPORT_ZERO_COPY \
- 		| UBLK_F_URING_CMD_COMP_IN_TASK \
-@@ -201,7 +204,7 @@ static inline struct ublksrv_io_desc *ublk_get_iod(st=
-ruct ublk_queue *ubq,
- 						   int tag);
- static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
- {
--	return ub->dev_info.flags & UBLK_F_USER_COPY;
-+	return ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COP=
-Y);
- }
+ struct io_hash_bucket {
+ 	struct hlist_head	list;
+ } ____cacheline_aligned_in_smp;
+@@ -293,7 +297,7 @@ struct io_ring_ctx {
+ 		struct io_wq_work_list	iopoll_list;
 =20
- static inline bool ublk_dev_is_zoned(const struct ublk_device *ub)
-@@ -581,7 +584,7 @@ static void ublk_apply_params(struct ublk_device *ub)
+ 		struct io_file_table	file_table;
+-		struct io_rsrc_data	buf_table;
++		struct io_buf_table	buf_table;
 =20
- static inline bool ublk_support_user_copy(const struct ublk_queue *ubq)
- {
--	return ubq->flags & UBLK_F_USER_COPY;
-+	return ubq->flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY);
- }
+ 		struct io_submit_state	submit_state;
 =20
- static inline bool ublk_need_req_ref(const struct ublk_queue *ubq)
-@@ -1747,6 +1750,77 @@ static inline void ublk_prep_cancel(struct io_urin=
-g_cmd *cmd,
- 	io_uring_cmd_mark_cancelable(cmd, issue_flags);
- }
-=20
-+static inline struct request *__ublk_check_and_get_req(struct ublk_devic=
-e *ub,
-+		struct ublk_queue *ubq, int tag, size_t offset)
-+{
-+	struct request *req;
-+
-+	if (!ublk_need_req_ref(ubq))
-+		return NULL;
-+
-+	req =3D blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
-+	if (!req)
-+		return NULL;
-+
-+	if (!ublk_get_req_ref(ubq, req))
-+		return NULL;
-+
-+	if (unlikely(!blk_mq_request_started(req) || req->tag !=3D tag))
-+		goto fail_put;
-+
-+	if (!ublk_rq_has_data(req))
-+		goto fail_put;
-+
-+	if (offset > blk_rq_bytes(req))
-+		goto fail_put;
-+
-+	return req;
-+fail_put:
-+	ublk_put_req_ref(ubq, req);
-+	return NULL;
-+}
-+
-+static void ublk_io_release(void *priv)
-+{
-+	struct request *rq =3D priv;
-+	struct ublk_queue *ubq =3D rq->mq_hctx->driver_data;
-+
-+	ublk_put_req_ref(ubq, rq);
-+}
-+
-+static int ublk_register_io_buf(struct io_uring_cmd *cmd,
-+				struct ublk_queue *ubq, unsigned int tag,
-+				const struct ublksrv_io_cmd *ub_cmd,
-+				unsigned int issue_flags)
-+{
-+	struct ublk_device *ub =3D cmd->file->private_data;
-+	int index =3D (int)ub_cmd->addr, ret;
-+	struct request *req;
-+
-+	req =3D __ublk_check_and_get_req(ub, ubq, tag, 0);
-+	if (!req)
-+		return -EINVAL;
-+
-+	ret =3D io_buffer_register_bvec(cmd, req, ublk_io_release, index,
-+				      issue_flags);
-+	if (ret) {
-+		ublk_put_req_ref(ubq, req);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
-+				  const struct ublksrv_io_cmd *ub_cmd,
-+				  unsigned int issue_flags)
-+{
-+	int index =3D (int)ub_cmd->addr;
-+
-+	io_buffer_unregister_bvec(cmd, index, issue_flags);
-+	return 0;
-+}
-+
- static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
- 			       unsigned int issue_flags,
- 			       const struct ublksrv_io_cmd *ub_cmd)
-@@ -1798,6 +1872,10 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd=
- *cmd,
-=20
- 	ret =3D -EINVAL;
- 	switch (_IOC_NR(cmd_op)) {
-+	case UBLK_IO_REGISTER_IO_BUF:
-+		return ublk_register_io_buf(cmd, ubq, tag, ub_cmd, issue_flags);
-+	case UBLK_IO_UNREGISTER_IO_BUF:
-+		return ublk_unregister_io_buf(cmd, ub_cmd, issue_flags);
- 	case UBLK_IO_FETCH_REQ:
- 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
- 		if (ublk_queue_ready(ubq)) {
-@@ -1872,36 +1950,6 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd=
- *cmd,
- 	return -EIOCBQUEUED;
- }
-=20
--static inline struct request *__ublk_check_and_get_req(struct ublk_devic=
-e *ub,
--		struct ublk_queue *ubq, int tag, size_t offset)
--{
--	struct request *req;
--
--	if (!ublk_need_req_ref(ubq))
--		return NULL;
--
--	req =3D blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
--	if (!req)
--		return NULL;
--
--	if (!ublk_get_req_ref(ubq, req))
--		return NULL;
--
--	if (unlikely(!blk_mq_request_started(req) || req->tag !=3D tag))
--		goto fail_put;
--
--	if (!ublk_rq_has_data(req))
--		goto fail_put;
--
--	if (offset > blk_rq_bytes(req))
--		goto fail_put;
--
--	return req;
--fail_put:
--	ublk_put_req_ref(ubq, req);
--	return NULL;
--}
--
- static inline int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
-@@ -2459,7 +2507,7 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *c=
-md)
- 		 * buffer by pwrite() to ublk char device, which can't be
- 		 * used for unprivileged device
- 		 */
--		if (info.flags & UBLK_F_USER_COPY)
-+		if (info.flags & UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)
- 			return -EINVAL;
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index f60d0a9d505e2..d389c06cbce10 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -217,12 +217,12 @@ __cold void io_uring_show_fdinfo(struct seq_file *m=
+, struct file *file)
+ 			seq_puts(m, "\n");
+ 		}
  	}
+-	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
+-	for (i =3D 0; has_lock && i < ctx->buf_table.nr; i++) {
++	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.data.nr);
++	for (i =3D 0; has_lock && i < ctx->buf_table.data.nr; i++) {
+ 		struct io_mapped_ubuf *buf =3D NULL;
 =20
-@@ -2527,9 +2575,6 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *c=
-md)
- 		goto out_free_dev_number;
- 	}
+-		if (ctx->buf_table.nodes[i])
+-			buf =3D ctx->buf_table.nodes[i]->buf;
++		if (ctx->buf_table.data.nodes[i])
++			buf =3D ctx->buf_table.data.nodes[i]->buf;
+ 		if (buf)
+ 			seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
+ 		else
+diff --git a/io_uring/nop.c b/io_uring/nop.c
+index ea539531cb5f6..da8870e00eee7 100644
+--- a/io_uring/nop.c
++++ b/io_uring/nop.c
+@@ -66,7 +66,7 @@ int io_nop(struct io_kiocb *req, unsigned int issue_fla=
+gs)
 =20
--	/* We are not ready to support zero copy */
--	ub->dev_info.flags &=3D ~UBLK_F_SUPPORT_ZERO_COPY;
--
- 	ub->dev_info.nr_hw_queues =3D min_t(unsigned int,
- 			ub->dev_info.nr_hw_queues, nr_cpu_ids);
- 	ublk_align_max_io_size(ub);
-@@ -2860,7 +2905,7 @@ static int ublk_ctrl_get_features(struct io_uring_c=
-md *cmd)
- {
- 	const struct ublksrv_ctrl_cmd *header =3D io_uring_sqe_cmd(cmd->sqe);
- 	void __user *argp =3D (void __user *)(unsigned long)header->addr;
--	u64 features =3D UBLK_F_ALL & ~UBLK_F_SUPPORT_ZERO_COPY;
-+	u64 features =3D UBLK_F_ALL;
+ 		ret =3D -EFAULT;
+ 		io_ring_submit_lock(ctx, issue_flags);
+-		node =3D io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
++		node =3D io_rsrc_node_lookup(&ctx->buf_table.data, req->buf_index);
+ 		if (node) {
+ 			io_req_assign_buf_node(req, node);
+ 			ret =3D 0;
+diff --git a/io_uring/register.c b/io_uring/register.c
+index cc23a4c205cd4..f15a8d52ad30f 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -926,7 +926,7 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, =
+unsigned int, opcode,
+ 	ret =3D __io_uring_register(ctx, opcode, arg, nr_args);
 =20
- 	if (header->len !=3D UBLK_FEATURES_LEN || !header->addr)
+ 	trace_io_uring_register(ctx, opcode, ctx->file_table.data.nr,
+-				ctx->buf_table.nr, ret);
++				ctx->buf_table.data.nr, ret);
+ 	mutex_unlock(&ctx->uring_lock);
+=20
+ 	fput(file);
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 5b234e84dcba6..c30a5cda08f3e 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -236,9 +236,9 @@ static int __io_sqe_buffers_update(struct io_ring_ctx=
+ *ctx,
+ 	__u32 done;
+ 	int i, err;
+=20
+-	if (!ctx->buf_table.nr)
++	if (!ctx->buf_table.data.nr)
+ 		return -ENXIO;
+-	if (up->offset + nr_args > ctx->buf_table.nr)
++	if (up->offset + nr_args > ctx->buf_table.data.nr)
  		return -EINVAL;
-diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.=
-h
-index a8bc98bb69fce..74246c926b55f 100644
---- a/include/uapi/linux/ublk_cmd.h
-+++ b/include/uapi/linux/ublk_cmd.h
-@@ -94,6 +94,10 @@
- 	_IOWR('u', UBLK_IO_COMMIT_AND_FETCH_REQ, struct ublksrv_io_cmd)
- #define	UBLK_U_IO_NEED_GET_DATA		\
- 	_IOWR('u', UBLK_IO_NEED_GET_DATA, struct ublksrv_io_cmd)
-+#define	UBLK_U_IO_REGISTER_IO_BUF	\
-+	_IOWR('u', 0x23, struct ublksrv_io_cmd)
-+#define	UBLK_U_IO_UNREGISTER_IO_BUF	\
-+	_IOWR('u', 0x24, struct ublksrv_io_cmd)
 =20
- /* only ABORT means that no re-fetch */
- #define UBLK_IO_RES_OK			0
+ 	for (done =3D 0; done < nr_args; done++) {
+@@ -270,9 +270,9 @@ static int __io_sqe_buffers_update(struct io_ring_ctx=
+ *ctx,
+ 			}
+ 			node->tag =3D tag;
+ 		}
+-		i =3D array_index_nospec(up->offset + done, ctx->buf_table.nr);
+-		io_reset_rsrc_node(ctx, &ctx->buf_table, i);
+-		ctx->buf_table.nodes[i] =3D node;
++		i =3D array_index_nospec(up->offset + done, ctx->buf_table.data.nr);
++		io_reset_rsrc_node(ctx, &ctx->buf_table.data, i);
++		ctx->buf_table.data.nodes[i] =3D node;
+ 		if (ctx->compat)
+ 			user_data +=3D sizeof(struct compat_iovec);
+ 		else
+@@ -550,9 +550,9 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, vo=
+id __user *arg,
+=20
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+ {
+-	if (!ctx->buf_table.nr)
++	if (!ctx->buf_table.data.nr)
+ 		return -ENXIO;
+-	io_rsrc_data_free(ctx, &ctx->buf_table);
++	io_rsrc_data_free(ctx, &ctx->buf_table.data);
+ 	return 0;
+ }
+=20
+@@ -579,8 +579,8 @@ static bool headpage_already_acct(struct io_ring_ctx =
+*ctx, struct page **pages,
+ 	}
+=20
+ 	/* check previously registered pages */
+-	for (i =3D 0; i < ctx->buf_table.nr; i++) {
+-		struct io_rsrc_node *node =3D ctx->buf_table.nodes[i];
++	for (i =3D 0; i < ctx->buf_table.data.nr; i++) {
++		struct io_rsrc_node *node =3D ctx->buf_table.data.nodes[i];
+ 		struct io_mapped_ubuf *imu;
+=20
+ 		if (!node)
+@@ -809,7 +809,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
+void __user *arg,
+=20
+ 	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >=3D (1u << 16));
+=20
+-	if (ctx->buf_table.nr)
++	if (ctx->buf_table.data.nr)
+ 		return -EBUSY;
+ 	if (!nr_args || nr_args > IORING_MAX_REG_BUFFERS)
+ 		return -EINVAL;
+@@ -862,7 +862,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
+void __user *arg,
+ 		data.nodes[i] =3D node;
+ 	}
+=20
+-	ctx->buf_table =3D data;
++	ctx->buf_table.data =3D data;
+ 	if (ret)
+ 		io_sqe_buffers_unregister(ctx);
+ 	return ret;
+@@ -873,7 +873,7 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd,=
+ struct request *rq,
+ 			    unsigned int issue_flags)
+ {
+ 	struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+-	struct io_rsrc_data *data =3D &ctx->buf_table;
++	struct io_rsrc_data *data =3D &ctx->buf_table.data;
+ 	struct req_iterator rq_iter;
+ 	struct io_mapped_ubuf *imu;
+ 	struct io_rsrc_node *node;
+@@ -937,7 +937,7 @@ void io_buffer_unregister_bvec(struct io_uring_cmd *c=
+md, unsigned int index,
+ 			       unsigned int issue_flags)
+ {
+ 	struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+-	struct io_rsrc_data *data =3D &ctx->buf_table;
++	struct io_rsrc_data *data =3D &ctx->buf_table.data;
+ 	struct io_rsrc_node *node;
+=20
+ 	io_ring_submit_lock(ctx, issue_flags);
+@@ -1034,7 +1034,7 @@ static inline struct io_rsrc_node *io_find_buf_node=
+(struct io_kiocb *req,
+ 		return req->buf_node;
+=20
+ 	io_ring_submit_lock(ctx, issue_flags);
+-	node =3D io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
++	node =3D io_rsrc_node_lookup(&ctx->buf_table.data, req->buf_index);
+ 	if (node)
+ 		io_req_assign_buf_node(req, node);
+ 	io_ring_submit_unlock(ctx, issue_flags);
+@@ -1084,10 +1084,10 @@ static int io_clone_buffers(struct io_ring_ctx *c=
+tx, struct io_ring_ctx *src_ctx
+ 	if (!arg->nr && (arg->dst_off || arg->src_off))
+ 		return -EINVAL;
+ 	/* not allowed unless REPLACE is set */
+-	if (ctx->buf_table.nr && !(arg->flags & IORING_REGISTER_DST_REPLACE))
++	if (ctx->buf_table.data.nr && !(arg->flags & IORING_REGISTER_DST_REPLAC=
+E))
+ 		return -EBUSY;
+=20
+-	nbufs =3D src_ctx->buf_table.nr;
++	nbufs =3D src_ctx->buf_table.data.nr;
+ 	if (!arg->nr)
+ 		arg->nr =3D nbufs;
+ 	else if (arg->nr > nbufs)
+@@ -1097,13 +1097,13 @@ static int io_clone_buffers(struct io_ring_ctx *c=
+tx, struct io_ring_ctx *src_ctx
+ 	if (check_add_overflow(arg->nr, arg->dst_off, &nbufs))
+ 		return -EOVERFLOW;
+=20
+-	ret =3D io_rsrc_data_alloc(&data, max(nbufs, ctx->buf_table.nr));
++	ret =3D io_rsrc_data_alloc(&data, max(nbufs, ctx->buf_table.data.nr));
+ 	if (ret)
+ 		return ret;
+=20
+ 	/* Fill entries in data from dst that won't overlap with src */
+-	for (i =3D 0; i < min(arg->dst_off, ctx->buf_table.nr); i++) {
+-		struct io_rsrc_node *src_node =3D ctx->buf_table.nodes[i];
++	for (i =3D 0; i < min(arg->dst_off, ctx->buf_table.data.nr); i++) {
++		struct io_rsrc_node *src_node =3D ctx->buf_table.data.nodes[i];
+=20
+ 		if (src_node) {
+ 			data.nodes[i] =3D src_node;
+@@ -1112,7 +1112,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
+, struct io_ring_ctx *src_ctx
+ 	}
+=20
+ 	ret =3D -ENXIO;
+-	nbufs =3D src_ctx->buf_table.nr;
++	nbufs =3D src_ctx->buf_table.data.nr;
+ 	if (!nbufs)
+ 		goto out_free;
+ 	ret =3D -EINVAL;
+@@ -1132,7 +1132,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
+, struct io_ring_ctx *src_ctx
+ 	while (nr--) {
+ 		struct io_rsrc_node *dst_node, *src_node;
+=20
+-		src_node =3D io_rsrc_node_lookup(&src_ctx->buf_table, i);
++		src_node =3D io_rsrc_node_lookup(&src_ctx->buf_table.data, i);
+ 		if (!src_node) {
+ 			dst_node =3D NULL;
+ 		} else {
+@@ -1154,7 +1154,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
+, struct io_ring_ctx *src_ctx
+ 	 * old and new nodes at this point.
+ 	 */
+ 	if (arg->flags & IORING_REGISTER_DST_REPLACE)
+-		io_rsrc_data_free(ctx, &ctx->buf_table);
++		io_sqe_buffers_unregister(ctx);
+=20
+ 	/*
+ 	 * ctx->buf_table must be empty now - either the contents are being
+@@ -1162,10 +1162,9 @@ static int io_clone_buffers(struct io_ring_ctx *ct=
+x, struct io_ring_ctx *src_ctx
+ 	 * copied to a ring that does not have buffers yet (checked at function
+ 	 * entry).
+ 	 */
+-	WARN_ON_ONCE(ctx->buf_table.nr);
+-	ctx->buf_table =3D data;
++	WARN_ON_ONCE(ctx->buf_table.data.nr);
++	ctx->buf_table.data =3D data;
+ 	return 0;
+-
+ out_free:
+ 	io_rsrc_data_free(ctx, &data);
+ 	return ret;
+@@ -1190,7 +1189,7 @@ int io_register_clone_buffers(struct io_ring_ctx *c=
+tx, void __user *arg)
+ 		return -EFAULT;
+ 	if (buf.flags & ~(IORING_REGISTER_SRC_REGISTERED|IORING_REGISTER_DST_RE=
+PLACE))
+ 		return -EINVAL;
+-	if (!(buf.flags & IORING_REGISTER_DST_REPLACE) && ctx->buf_table.nr)
++	if (!(buf.flags & IORING_REGISTER_DST_REPLACE) && ctx->buf_table.data.n=
+r)
+ 		return -EBUSY;
+ 	if (memchr_inv(buf.pad, 0, sizeof(buf.pad)))
+ 		return -EINVAL;
 --=20
 2.43.5
 

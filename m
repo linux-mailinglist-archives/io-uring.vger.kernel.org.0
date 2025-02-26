@@ -1,176 +1,187 @@
-Return-Path: <io-uring+bounces-6773-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6774-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCDFA454B2
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 05:52:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA83A4551E
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 06:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9717A2A67
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 04:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFD7189B44E
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 05:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBEF18DB19;
-	Wed, 26 Feb 2025 04:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RIxDCrbM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644CB260A45;
+	Wed, 26 Feb 2025 05:56:23 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7815B99E
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 04:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17BB22FDE4
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 05:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740545560; cv=none; b=bwkJQLb8Z9dFgB6wr5DPQfUTphWawxg2yBJObzu63PM0+0ILKqLD9b4+JWML8wdHMPVJF99xwo2/KCzRzjX+BViNPHpiebfEvqAj81cP936R2lQgSVCIscISOovF3oeAVYEZmj/M8LEkM8KuTN3kkkI1Dx5AULc+TAzMDDnajvk=
+	t=1740549383; cv=none; b=QKGBmPIcQsqVJ84fJDouSiWFLPf7w5xgctr5LjNWd2e/vNZbjejiuK4aFh4F+kbEVZZi+2kKPV0lTG/e0cU1K1FEc5bhSEXHjCWqmOIC61yQAXNNZ+S1km3BAJZN9BoyiFJ6XvleN1s9Acp8Ivr1lkGkUbLXCP0MsfzI40fWjsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740545560; c=relaxed/simple;
-	bh=OmfKcIAXaMCIcV/1SJXlDjghgEnw5iTB1qPbh4UoXiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGHVZq6DVACC5bjh1stmYi/nfdRderFKZwMyJA5duQb+tEFzj9Cmc681YsNx0cdbp/kRY3stHAimVKhxQ6FXlmjCWBXR+5L0rkolAvsd9Tk4a6fjGjk3qBQaOHceV8EYxNQMTDnyYnG48Ry/6z5SefSuQalD4Ir8cn9f+T6V8vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RIxDCrbM; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso12586293a91.2
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 20:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1740545558; x=1741150358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kRY67v9dQslVh/+ZppBDHnsBMteDEDnqoVjoXMai1aA=;
-        b=RIxDCrbM99rty5fjz+w724MEeZDQktDtJWmx6V9eIz2SdYfPh0M+JysEBBLf/pdkua
-         mTJ2tTmAXcQzrq/VundPtwJNxDL4VxVzMecCNd9aQR9NDA+V+kOgj1gGXNhc5H2lEALx
-         NBtLNVkIfSYp84Vqza7BpcesDxyRu5FT117cUP9RYm9liVnl2VbKC6Bq0n9w0ANoJp+p
-         0uuXpmBqFlCvL4rChL+9/vcnNF854+INbKdg8iSFsmK5J2MAbYk64SdFznN70LRX31wt
-         2I3+8ouQKiyJoLh5ZXGq42Na30XNvHerIzrEeK1Eyn8X0fTwTcd4QBVSYHkEjd6mIICn
-         HWZw==
+	s=arc-20240116; t=1740549383; c=relaxed/simple;
+	bh=aJ1CDj6IHG5CdCYhUfhaAMuHbGLGkJsU8mSDkSUKG/k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jU9+QJ9OfeWgSy3r1QcwD6v/Tghs075NCt7Z7Qfu0Csvv6UULHiKM3qg6dckuDHu8R1mbcggnbIS9uauCbE1MxWwgY5RwzLcoGxHWklLHJZJGUm1jpGWag5KVF+qai/KucALGrSZiFOAg9EDRXY7jTOfokBMrCFjLxDTjGx7Wi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so131010505ab.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2025 21:56:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740545558; x=1741150358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kRY67v9dQslVh/+ZppBDHnsBMteDEDnqoVjoXMai1aA=;
-        b=ek1AKJpfxIvlRR12fZweLwnwBYj+gzLIUnWl/KUszOl9+KDYSCwNanenebTh4f2ikE
-         MgemGYNCnFJyNxt1oDsa/OXyA2i1BRPD6P/c398ld/+JS4As0vbukgRuI8X5PJPgAOMx
-         YoQGgqbN842ppcO9OVgQ7VP6DD0GORnKxUxd+bZz1z2dM1qm5mbVGZYKJxm2P6AAMOx0
-         oK64jIYOtvCZDLcxUUor79SPeG4V9Clm/F4oni0x1XwAb79wjPeehjryQXc99idU4ee8
-         jGHEdX9f4/iVO2YsBO7x5MJxFq+t+l+oNCA5pvtF+MvliG4ZzVZcaYrHqt77pGcncPBS
-         kk6A==
-X-Gm-Message-State: AOJu0YycuvEnur5EUSQTYcQTgmMAGHC+b+7Ezy0xqlkMzVnJbrGvr2rK
-	30+nUz0iPXxIBmEFSne3/+LXeOLMz85ngTnCnryWSaZbmhZR1h1r28eXyyMwTfU=
-X-Gm-Gg: ASbGnctqjldY0zXPgMM6evIt1fDgZQojJvT1voqnmGSTHgHfPOmWycSGXN5p8fkWGvS
-	/Sqh+WiXIp7qzzO6WeJGpst1xIbLElTbMOSjuPs8I0GiCrmqnqTLZdDzdj5YKyxk1y1ZPTxvk3G
-	rOWN2M5SntVVYxehGUqzRwuspLnPJ3ooDKAtATMA+SWKb9a3gN8QhzDgSmCuu7a/XLeIHzXpIFT
-	Mw8IArKVxYtN5kZ6Hbdl6l/HXlyzIfv63ShH6DywJrfGQeTBRBwKbuePwNenzAqM/jjqtl91JY+
-	yltMgudhTspIXgC/Tc2xMFI8kNM27hIlml0DYN2quKUk8dm0+/dIeYjq01/GCaHIWcS3w+ZYcAs
-	q7w==
-X-Google-Smtp-Source: AGHT+IEKkYTV+HlV6GSN1kPh9Q2+3D2op5mHnHlKQYTUWJMxMwtJjAzeHEOVmGEAdo1mJMcC5Oq4EQ==
-X-Received: by 2002:a05:6a21:10e:b0:1ee:d860:61eb with SMTP id adf61e73a8af0-1f0fc89a19dmr10136147637.39.1740545557911;
-        Tue, 25 Feb 2025 20:52:37 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6b8a82sm2440416b3a.6.2025.02.25.20.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 20:52:37 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tn9PO-000000063jC-21Q7;
-	Wed, 26 Feb 2025 15:52:34 +1100
-Date: Wed, 26 Feb 2025 15:52:34 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	wu lei <uwydoc@gmail.com>
-Subject: Re: [PATCH 1/1] iomap: propagate nowait to block layer
-Message-ID: <Z76eEu4vxwFIWKj7@dread.disaster.area>
-References: <ca8f7e4efb902ee6500ab5b1fafd67acb3224c45.1740533564.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1740549381; x=1741154181;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HSP8CbSQTbCE3z3gezg5yrid18Cgij6SuX+4IyN9t1k=;
+        b=AteonjBCfb4j64yJ5K/EOgcu8aBYnNLXtzKDJ1oQomOoXyMsOE0KuxWLPuKEFx3fN0
+         Q1/K6sGpzTHd5R/NJJhe5hlAU9n2YJNbBJCMGv/oV0ElyDn1VOUb+5eUWE0hDB0Rh46D
+         a7O/y8yNF81DRPcXuuUBRJ0z0XwhgLTFVU1Zj4lh5VSKByGySTqcBsl2Dowp2CM3FV/A
+         qK2kGOq84LARtXVdVzww16pgg+UBUO3+7OrSlo90KnOtsue972mtb9hu148+Y2GAjHNQ
+         cCWsoToVv8mrzt66GQiAgcmpTnvR+Uu6AbiXaVjSEZD6hlquJBGQddPqIGenQ0a1M6Er
+         /8HA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7D2PW5SCY+n9I01QA6YR5hh0q5qnRjlUafQaO3l16D2l8Ph6PwkbalYwXNQdl34F5gOUy05xTZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh/xgbGwXExrhxvJl+5hEYbbto6oKXIb/T/ELZ+XkU4XNIyPGA
+	AkyO/0bldCmdfk/NTykjmed9MYXzJTm31WNSKOmsdNJ1BLiVsUlB/NSCM79UcO6cdeu3JSpKVIN
+	IKinFp0kr+k+3LL9ppmB4GAbxrFwdWJ3cPuzEvCOUkF5lQsLayEA99as=
+X-Google-Smtp-Source: AGHT+IEI/C25oLPvNScwmmGwkgadLS4wD1Jjf3Kg5w27gYr7QxYS7Y67gF1WFdlmVBm20HQhF1It5bWJCaUtmVBn4tQ04g1Gf0mf
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca8f7e4efb902ee6500ab5b1fafd67acb3224c45.1740533564.git.asml.silence@gmail.com>
+X-Received: by 2002:a05:6e02:310f:b0:3cf:fe21:af8 with SMTP id
+ e9e14a558f8ab-3d2cb432219mr213116715ab.4.1740549380868; Tue, 25 Feb 2025
+ 21:56:20 -0800 (PST)
+Date: Tue, 25 Feb 2025 21:56:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bead04.050a0220.38b081.0002.GAE@google.com>
+Subject: [syzbot] [io-uring?] general protection fault in native_tss_update_io_bitmap
+From: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 01:33:58AM +0000, Pavel Begunkov wrote:
-> There are reports of high io_uring submission latency for ext4 and xfs,
-> which is due to iomap not propagating nowait flag to the block layer
-> resulting in waiting for IO during tag allocation.
-> 
-> Cc: stable@vger.kernel.org
-> Link: https://github.com/axboe/liburing/issues/826#issuecomment-2674131870
-> Reported-by: wu lei <uwydoc@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/iomap/direct-io.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index b521eb15759e..25c5e87dbd94 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -81,6 +81,9 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
->  		WRITE_ONCE(iocb->private, bio);
->  	}
->  
-> +	if (iocb->ki_flags & IOCB_NOWAIT)
-> +		bio->bi_opf |= REQ_NOWAIT;
+Hello,
 
-ISTR that this was omitted on purpose because REQ_NOWAIT doesn't
-work in the way iomap filesystems expect IO to behave.
+syzbot found the following issue on:
 
-I think it has to do with large direct IOs that require multiple
-calls to submit_bio(). Each bio that is allocated and submitted
-takes a reference to the iomap_dio object, and the iomap_dio is not
-completed until that reference count goes to zero.
+HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13fcd7f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e2b1803445d236442e54
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149427a4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ed06e4580000
 
-hence if we have submitted a series of bios in a IOCB_NOWAIT DIO
-and then the next bio submission in the DIO triggers a REQ_NOWAIT
-condition, that bio is marked with a BLK_STS_AGAIN and completed.
-This error is then caught by the iomap dio bio completion function,
-recorded in the iomap_dio structure, but because there is still
-bios in flight, the iomap_dio ref count does not fall to zero and so
-the DIO itself is not completed.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
 
-Then submission loops again, sees dio->error is set and aborts
-submission. Because this is AIO, and the iomap_dio refcount is
-non-zero at this point, __iomap_dio_rw() returns -EIOCBQUEUED.
-It does not return the -EAGAIN state that was reported to bio
-completion because the overall DIO has not yet been completed
-and all the IO completion status gathered.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
 
-Hence when the in flight async bios actually complete, they drop the
-iomap dio reference count to zero, iomap_dio_complete() is called,
-and the BLK_STS_AGAIN error is gathered from the previous submission
-failure. This then calls AIO completion, and reports a -EAGAIN error
-to the AIO/io_uring completion code.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 5891 Comm: iou-sqp-5889 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
+Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
+RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
+R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
+R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ task_update_io_bitmap+0xb8/0xf0 arch/x86/kernel/ioport.c:47
+ io_bitmap_exit+0x62/0xf0 arch/x86/kernel/ioport.c:57
+ exit_thread+0x76/0xa0 arch/x86/kernel/process.c:123
+ copy_process+0x277d/0x3cf0 kernel/fork.c:2638
+ create_io_thread+0x16a/0x1e0 kernel/fork.c:2746
+ create_io_worker+0x176/0x540 io_uring/io-wq.c:862
+ io_wq_create_worker io_uring/io-wq.c:332 [inline]
+ io_wq_enqueue+0x7b5/0xa00 io_uring/io-wq.c:989
+ io_queue_iowq+0x433/0x670 io_uring/io_uring.c:542
+ io_submit_state_end io_uring/io_uring.c:2215 [inline]
+ io_submit_sqes+0x1940/0x1cf0 io_uring/io_uring.c:2335
+ __io_sq_thread io_uring/sqpoll.c:189 [inline]
+ io_sq_thread+0xc8c/0x1fd0 io_uring/sqpoll.c:312
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
+Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
+RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
+R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
+R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	df 48 89             	fisttps -0x77(%rax)
+   3:	44 24 50             	rex.R and $0x50,%al
+   6:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+   b:	74 08                	je     0x15
+   d:	48 89 df             	mov    %rbx,%rdi
+  10:	e8 cf 75 c7 00       	call   0xc775e4
+  15:	48 89 5c 24 58       	mov    %rbx,0x58(%rsp)
+  1a:	4c 8b 2b             	mov    (%rbx),%r13
+  1d:	4c 89 f0             	mov    %r14,%rax
+  20:	48 c1 e8 03          	shr    $0x3,%rax
+  24:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 f7             	mov    %r14,%rdi
+  33:	e8 ac 75 c7 00       	call   0xc775e4
+  38:	49 8b 1e             	mov    (%r14),%rbx
+  3b:	4c 89 ef             	mov    %r13,%rdi
+  3e:	48                   	rex.W
 
-IOWs, -EAGAIN is *not reported to the IO submitter* that needs
-this information to defer and resubmit the IO - it is reported to IO
-completion where it is completely useless and, most likely, not in a
-context that can resubmit the IO.
 
-Put simply: any code that submits multiple bios (either individually
-or as a bio chain) for a single high level IO can not use REQ_NOWAIT
-reliably for async IO submission.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-We have similar limitations on IO polling (IOCB_HIPRI) in iomap, but
-I'm not sure if REQ_NOWAIT can be handled the same way. i.e. only
-setting REQ_NOWAIT on the first bio means that the second+ bio can
-still block and cause latency issues.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-So, yeah, fixing this source of latency is not as simple as just
-setting REQ_NOWAIT. I don't know if there is a better solution that
-what we currently have, but causing large AIO DIOs to
-randomly fail with EAGAIN reported at IO completion (with the likely
-result of unexpected data corruption) is far worse behaviour that
-occasionally having to deal with a long IO submission latency.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

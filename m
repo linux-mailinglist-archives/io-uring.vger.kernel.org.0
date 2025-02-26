@@ -1,515 +1,170 @@
-Return-Path: <io-uring+bounces-6809-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6814-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2A9A469A5
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C05FBA469F1
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 19:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B7E16E4FF
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37BB16C8D7
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 18:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048E323C369;
-	Wed, 26 Feb 2025 18:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE87A21E096;
+	Wed, 26 Feb 2025 18:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="QcbbXikN"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HUaa5P1B"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD3E23C8C7
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2702222CF
+	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 18:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594079; cv=none; b=tnDnHYP6qb8bOgQJPHYS/wN38fbiqLMcy9U8tiKxOID5YYAkKYRyzjZ6g31PKd4jvEoa5k58Cb7oFgriXwxUvic66tL3lHiM6uviLZmZWWxLIAGpTT5K0NwurjljPtrKNSWPIBI4buxrOam+4+Yl85FuVraOvYtJwJ0TVoe3fIA=
+	t=1740595230; cv=none; b=dwZVNbScIjTcelDqXOe9cW90mSO+EIjcgj06JK08gBK4rk796NWdfLKzDbDY+0CNDIEx4NW0HMU5Rys/bKyFOkqwhpGOK4bqKEjP2OFZqbMzctw0Sblau2JJXBKHnvrDp8azKHlK38oDNldu338QNSDIek9w8HcvhTGe9BlEReg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594079; c=relaxed/simple;
-	bh=Dt4ivYC3SR2/vPzCzMkzFgxjvTtJGc+6CyD7PH7YyEk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G8NBIT1wqGzUIzrCRS79p6EQBOzf4XUWHKn+50gbFkfRhHtzbpDcIabJFlfjX8J/5CNW4QuGkShWYzgIhanirOKG8fR328rFXZK4bMOcoKxLplFN/gBP4XLqSfv63q+ht8SZfIX6tBAtZDC2NHMEVjnePCXEAZYsq5Q9I5ITL78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=QcbbXikN; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 51QFa2lf015036
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=hbunRQgRX+ReeqwUe8G8nMtr7PKoD5fxxeT5ERKFNGQ=; b=QcbbXikN7qc9
-	QxoQzX8d51lfZlIB8bV47zLdBAPoJ4qw0OLAPHIT/KiboNnwGtAgAx2z4ZF/zF3K
-	VsdjI0hTUgSLKXpWOIzWWaWd+GjOOBQeJxiFrBopltZCvX4C6R76vDhxWhsBspAX
-	R1nDujpgaKRfIijxXR62ZOuVSFNx1vJIJFg8xEZ5EjFE9fjVq0ddkeZtguKFlzg4
-	YMvT3CPjzBDVu0yiqegCCdGPHXdGldKQ2HoEHLinGIXOkYd8quBXIwkDUDnv4llF
-	ZGQJ0nsJdApvlg/PD3nvfwGik9JR3h2gqkSYC3coYmIA8+dV4kHjJwP5G5OIhbzN
-	AEQU5QRQWg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0001303.ppops.net (PPS) with ESMTPS id 4525r799f0-10
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:21:15 -0800 (PST)
-Received: from twshared55211.03.ash8.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 26 Feb 2025 18:21:01 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id D71F6187C82CE; Wed, 26 Feb 2025 10:21:04 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
-        <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
-CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
-        <linux-nvme@lists.infradead.org>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv7 6/6] io_uring: cache nodes and mapped buffers
-Date: Wed, 26 Feb 2025 10:21:01 -0800
-Message-ID: <20250226182102.2631321-7-kbusch@meta.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250226182102.2631321-1-kbusch@meta.com>
-References: <20250226182102.2631321-1-kbusch@meta.com>
+	s=arc-20240116; t=1740595230; c=relaxed/simple;
+	bh=SDS0zwcWP2Bd6umi8vdUr3ksCcJLy0HftJFhDpHch6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EGAhxRQzB73EwL+wLX4ZeYKyY5NTKrdT70HkNZkzHnvIeyJpERFPsgM99My5fQkZZ5RPIQ7oBSv0mUO/+gPVsxuZTpBTpiGB0lykxcAGCeKUbCUD8cUyvwyxpxdl9aqgoX/fYtCCBm8N2rrZY4wKcYm2S7fgTLeDBfTqIRsXn1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HUaa5P1B; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-854a68f5aeeso3561839f.0
+        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 10:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740595227; x=1741200027; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=symdU9EMvj/OBJzqzheNQbsiM+qkoxN4bra1Wzcsq1I=;
+        b=HUaa5P1B61CeVR4yzIeb40L4W1lNYAMP+Ls0sQLoCvEKekHVSS3NG5NNZ5FG+PW57I
+         U2iS+eJrulNo2wAG7Uq1JIbmzyI5Dy3kAUgimN7wRg8giPpvfFyA2FlcZXnNmnTxSM0h
+         U+5hPcP3iJms3aKcKlhgEdc+fi9ZvKnTg3sAJ0xWlo4WqZt0eitaj0Nr+qEr5nYXOE2G
+         eXfTf+R3xMtaHT8GQ3DDIrv+Lmt9NEacNM/o38jYvDfezXlNFsZn6tfOnEQpFKcloECu
+         pYrKdZogP1VT4h21LFMuCq65yZsFzQ7d6L0w4xj+EywQRrlfk6jl5tWrY3HRjknfrCAi
+         nzTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740595227; x=1741200027;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=symdU9EMvj/OBJzqzheNQbsiM+qkoxN4bra1Wzcsq1I=;
+        b=YM4Q77S5fGeEM4eTfEZXLp5CEPLMA/zQ/2WOcywYPFn2L5+ibBdRtCqgPYf/VeEoqT
+         lZIXLdXh+UOnoGq/o6xDTmRqgNb7hxBSY6LyaGrMQkwi50sXLu5hjAUiFTQj9o9oPnIw
+         HMnw0eUXQxNWgsBYS0v6Giw1khphA+7zPtH0fSID5K1B1knxoZhKiYm9prFCBXq5NBNW
+         RVDrMDSC9aqd1OGcHnJs2puB5IyVVKxP6WF1jdNRkKpfSKXpqR9vBKFYyJi2Dtyn8eJx
+         0vvInWVGnpX95WSJOyjnhPL+IKglhQ2AfEK2o1wpB+UBTpKnyEoc8ffzWO+HJ3/EYiby
+         Kbcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMzt0nKH7FrPQPHSysPCY+AxH/77t7QkO/t4Eff53sxqO/8/5I5/8zz3LZCOKUXpiaGw53T5p44A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT4yxinPqdWFffBMPXibuIdg53tLhPgP+D6uISL2HK3N3V7VZf
+	f0lDJtbCS/n+TQpPc+1K53SSOO7mTmpXhrb5qUmZsZnBYz9mA2oLlDgha7SbB/Q=
+X-Gm-Gg: ASbGnctC7Jt4CGmEsYMsxzKrCX5Pd/HuLrV9VU4xNbvoUQxSIuIp/SStWMQ5x+2V9Rr
+	Wwo5nMrY6OMKMw04Lk6rtLgE/BI8KuJPDmX3SCjUR+EGWSVhhKvR9pTZF6nz2zzIcvk0InWeK24
+	mTS/67EM3w/3eT6m3DHoGFLCe3Gikvj/L74Ad4b/lVq7thzgOjte7swqq6qWZLcM8LBjjhP/EAr
+	ADa07NYi0x99sq2J0RyH2pBadh+1gIUqPf1LJDGtnxymCuOpviaucppg7gIDnLQyQMh96WWRGx6
+	mka6tlJfIujIaZYpUSJLSA==
+X-Google-Smtp-Source: AGHT+IEcVGZxj+MZL024go/7Ek44HCywTu0ZTaoD2vxe2DtY/vJ/oJ+MqLDaGS+x97+xAMqCCyDQ4g==
+X-Received: by 2002:a05:6e02:339f:b0:3d3:d23b:21f7 with SMTP id e9e14a558f8ab-3d3d23b23a8mr56142825ab.18.1740595226635;
+        Wed, 26 Feb 2025 10:40:26 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f047530650sm1033139173.117.2025.02.26.10.40.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 10:40:26 -0800 (PST)
+Message-ID: <f987f9da-4aa0-47d0-b906-8790afe6be60@kernel.dk>
+Date: Wed, 26 Feb 2025 11:40:25 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: HX7Ug9SAjl5WmNdLKDt0sIUkO9tDkWmu
-X-Proofpoint-ORIG-GUID: HX7Ug9SAjl5WmNdLKDt0sIUkO9tDkWmu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv7 4/6] ublk: zc register/unregister bvec
+To: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
+ asml.silence@gmail.com, linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc: bernd@bsbernd.com, csander@purestorage.com,
+ linux-nvme@lists.infradead.org, Keith Busch <kbusch@kernel.org>
+References: <20250226182102.2631321-1-kbusch@meta.com>
+ <20250226182102.2631321-5-kbusch@meta.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250226182102.2631321-5-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Keith Busch <kbusch@kernel.org>
+On 2/26/25 11:20 AM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> Provide new operations for the user to request mapping an active request
+> to an io uring instance's buf_table. The user has to provide the index
+> it wants to install the buffer.
+> 
+> A reference count is taken on the request to ensure it can't be
+> completed while it is active in a ring's buf_table.
 
-Frequent alloc/free cycles on these is pretty costly. Use an io cache to
-more efficiently reuse these buffers.
+Looks pretty sane to me, just a few minor nits below where only one of
+them actually is required to change.
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- include/linux/io_uring_types.h |  18 ++---
- io_uring/filetable.c           |   2 +-
- io_uring/rsrc.c                | 123 +++++++++++++++++++++++++--------
- io_uring/rsrc.h                |   2 +-
- 4 files changed, 107 insertions(+), 38 deletions(-)
+> +static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
+> +				  const struct ublksrv_io_cmd *ub_cmd,
+> +				  unsigned int issue_flags)
+> +{
+> +	int index = (int)ub_cmd->addr;
+> +
+> +	io_buffer_unregister_bvec(cmd, index, issue_flags);
+> +	return 0;
+> +}
+> +
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-index a05ae4cb98a4c..fda3221de2174 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -69,8 +69,18 @@ struct io_file_table {
- 	unsigned int alloc_hint;
- };
-=20
-+struct io_alloc_cache {
-+	void			**entries;
-+	unsigned int		nr_cached;
-+	unsigned int		max_cached;
-+	unsigned int		elem_size;
-+	unsigned int		init_clear;
-+};
-+
- struct io_buf_table {
- 	struct io_rsrc_data	data;
-+	struct io_alloc_cache	node_cache;
-+	struct io_alloc_cache	imu_cache;
- };
-=20
- struct io_hash_bucket {
-@@ -224,14 +234,6 @@ struct io_submit_state {
- 	struct blk_plug		plug;
- };
-=20
--struct io_alloc_cache {
--	void			**entries;
--	unsigned int		nr_cached;
--	unsigned int		max_cached;
--	unsigned int		elem_size;
--	unsigned int		init_clear;
--};
--
- struct io_ring_ctx {
- 	/* const or read-mostly hot data */
- 	struct {
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index dd8eeec97acf6..a21660e3145ab 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -68,7 +68,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ct=
-x, struct file *file,
- 	if (slot_index >=3D ctx->file_table.data.nr)
- 		return -EINVAL;
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 	if (!node)
- 		return -ENOMEM;
-=20
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index c30a5cda08f3e..8823f15d8fe2e 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -33,6 +33,9 @@ static struct io_rsrc_node *io_sqe_buffer_register(stru=
-ct io_ring_ctx *ctx,
- #define IORING_MAX_FIXED_FILES	(1U << 20)
- #define IORING_MAX_REG_BUFFERS	(1U << 14)
-=20
-+#define IO_CACHED_BVECS_SEGS	32
-+#define IO_CACHED_ELEMS		64
-+
- int __io_account_mem(struct user_struct *user, unsigned long nr_pages)
- {
- 	unsigned long page_limit, cur_pages, new_pages;
-@@ -102,6 +105,22 @@ int io_buffer_validate(struct iovec *iov)
- 	return 0;
- }
-=20
-+static struct io_mapped_ubuf *io_alloc_imu(struct io_ring_ctx *ctx,
-+					   int nr_bvecs)
-+{
-+	if (nr_bvecs <=3D IO_CACHED_BVECS_SEGS)
-+		return io_cache_alloc(&ctx->buf_table.imu_cache, GFP_KERNEL);
-+	return kvmalloc(struct_size_t(struct io_mapped_ubuf, bvec, nr_bvecs),
-+			GFP_KERNEL);
-+}
-+
-+static void io_free_imu(struct io_ring_ctx *ctx, struct io_mapped_ubuf *=
-imu)
-+{
-+	if (imu->nr_bvecs > IO_CACHED_BVECS_SEGS ||
-+	    !io_alloc_cache_put(&ctx->buf_table.imu_cache, imu))
-+		kvfree(imu);
-+}
-+
- static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node=
- *node)
- {
- 	struct io_mapped_ubuf *imu =3D node->buf;
-@@ -120,22 +139,35 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx=
-, struct io_rsrc_node *node)
- 			io_unaccount_mem(ctx, imu->acct_pages);
- 	}
-=20
--	kvfree(imu);
-+	io_free_imu(ctx, imu);
- }
-=20
--struct io_rsrc_node *io_rsrc_node_alloc(int type)
-+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int typ=
-e)
- {
- 	struct io_rsrc_node *node;
-=20
--	node =3D kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (type =3D=3D IORING_RSRC_FILE)
-+		node =3D kmalloc(sizeof(*node), GFP_KERNEL);
-+	else
-+		node =3D io_cache_alloc(&ctx->buf_table.node_cache, GFP_KERNEL);
- 	if (node) {
- 		node->type =3D type;
- 		node->refs =3D 1;
-+		node->tag =3D 0;
-+		node->file_ptr =3D 0;
- 	}
- 	return node;
- }
-=20
--__cold void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_da=
-ta *data)
-+static __cold void __io_rsrc_data_free(struct io_rsrc_data *data)
-+{
-+	kvfree(data->nodes);
-+	data->nodes =3D NULL;
-+	data->nr =3D 0;
-+}
-+
-+__cold void io_rsrc_data_free(struct io_ring_ctx *ctx,
-+			      struct io_rsrc_data *data)
- {
- 	if (!data->nr)
- 		return;
-@@ -143,9 +175,7 @@ __cold void io_rsrc_data_free(struct io_ring_ctx *ctx=
-, struct io_rsrc_data *data
- 		if (data->nodes[data->nr])
- 			io_put_rsrc_node(ctx, data->nodes[data->nr]);
- 	}
--	kvfree(data->nodes);
--	data->nodes =3D NULL;
--	data->nr =3D 0;
-+	__io_rsrc_data_free(data);
- }
-=20
- __cold int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr)
-@@ -159,6 +189,33 @@ __cold int io_rsrc_data_alloc(struct io_rsrc_data *d=
-ata, unsigned nr)
- 	return -ENOMEM;
- }
-=20
-+static __cold int io_rsrc_buffer_alloc(struct io_buf_table *table, unsig=
-ned nr)
-+{
-+	const int imu_cache_size =3D struct_size_t(struct io_mapped_ubuf, bvec,
-+						 IO_CACHED_BVECS_SEGS);
-+	const int node_size =3D sizeof(struct io_rsrc_node);
-+	int ret;
-+
-+	ret =3D io_rsrc_data_alloc(&table->data, nr);
-+	if (ret)
-+		return ret;
-+
-+	if (io_alloc_cache_init(&table->node_cache, IO_CACHED_ELEMS,
-+				node_size, 0))
-+		goto free_data;
-+
-+	if (io_alloc_cache_init(&table->imu_cache, IO_CACHED_ELEMS,
-+				imu_cache_size, 0))
-+		goto free_cache;
-+
-+	return 0;
-+free_cache:
-+	io_alloc_cache_free(&table->node_cache, kfree);
-+free_data:
-+	__io_rsrc_data_free(&table->data);
-+	return -ENOMEM;
-+}
-+
- static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				 struct io_uring_rsrc_update2 *up,
- 				 unsigned nr_args)
-@@ -208,7 +265,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *=
-ctx,
- 				err =3D -EBADF;
- 				break;
- 			}
--			node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+			node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 			if (!node) {
- 				err =3D -ENOMEM;
- 				fput(file);
-@@ -460,6 +517,8 @@ void io_free_rsrc_node(struct io_ring_ctx *ctx, struc=
-t io_rsrc_node *node)
- 	case IORING_RSRC_BUFFER:
- 		if (node->buf)
- 			io_buffer_unmap(ctx, node);
-+		if (io_alloc_cache_put(&ctx->buf_table.node_cache, node))
-+			return;
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
-@@ -528,7 +587,7 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, vo=
-id __user *arg,
- 			goto fail;
- 		}
- 		ret =3D -ENOMEM;
--		node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+		node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 		if (!node) {
- 			fput(file);
- 			goto fail;
-@@ -548,11 +607,19 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, =
-void __user *arg,
- 	return ret;
- }
-=20
-+static void io_rsrc_buffer_free(struct io_ring_ctx *ctx,
-+				struct io_buf_table *table)
-+{
-+	io_rsrc_data_free(ctx, &table->data);
-+	io_alloc_cache_free(&table->node_cache, kfree);
-+	io_alloc_cache_free(&table->imu_cache, kfree);
-+}
-+
- int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
- {
- 	if (!ctx->buf_table.data.nr)
- 		return -ENXIO;
--	io_rsrc_data_free(ctx, &ctx->buf_table.data);
-+	io_rsrc_buffer_free(ctx, &ctx->buf_table);
- 	return 0;
- }
-=20
-@@ -733,7 +800,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 	if (!iov->iov_base)
- 		return NULL;
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 	if (!node)
- 		return ERR_PTR(-ENOMEM);
- 	node->buf =3D NULL;
-@@ -753,7 +820,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 			coalesced =3D io_coalesce_buffer(&pages, &nr_pages, &data);
- 	}
-=20
--	imu =3D kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
-+	imu =3D io_alloc_imu(ctx, nr_pages);
- 	if (!imu)
- 		goto done;
-=20
-@@ -789,7 +856,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 	}
- done:
- 	if (ret) {
--		kvfree(imu);
-+		io_free_imu(ctx, imu);
- 		if (node)
- 			io_put_rsrc_node(ctx, node);
- 		node =3D ERR_PTR(ret);
-@@ -802,9 +869,9 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
-void __user *arg,
- 			    unsigned int nr_args, u64 __user *tags)
- {
- 	struct page *last_hpage =3D NULL;
--	struct io_rsrc_data data;
- 	struct iovec fast_iov, *iov =3D &fast_iov;
- 	const struct iovec __user *uvec;
-+	struct io_buf_table table;
- 	int i, ret;
-=20
- 	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >=3D (1u << 16));
-@@ -813,13 +880,14 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx=
-, void __user *arg,
- 		return -EBUSY;
- 	if (!nr_args || nr_args > IORING_MAX_REG_BUFFERS)
- 		return -EINVAL;
--	ret =3D io_rsrc_data_alloc(&data, nr_args);
-+	ret =3D io_rsrc_buffer_alloc(&table, nr_args);
- 	if (ret)
- 		return ret;
-=20
- 	if (!arg)
- 		memset(iov, 0, sizeof(*iov));
-=20
-+	ctx->buf_table =3D table;
- 	for (i =3D 0; i < nr_args; i++) {
- 		struct io_rsrc_node *node;
- 		u64 tag =3D 0;
-@@ -859,10 +927,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx,=
- void __user *arg,
- 			}
- 			node->tag =3D tag;
- 		}
--		data.nodes[i] =3D node;
-+		table.data.nodes[i] =3D node;
- 	}
--
--	ctx->buf_table.data =3D data;
- 	if (ret)
- 		io_sqe_buffers_unregister(ctx);
- 	return ret;
-@@ -893,14 +959,15 @@ int io_buffer_register_bvec(struct io_uring_cmd *cm=
-d, struct request *rq,
- 		goto unlock;
- 	}
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 	if (!node) {
- 		ret =3D -ENOMEM;
- 		goto unlock;
- 	}
-=20
- 	nr_bvecs =3D blk_rq_nr_phys_segments(rq);
--	imu =3D kvmalloc(struct_size(imu, bvec, nr_bvecs), GFP_KERNEL);
-+
-+	imu =3D io_alloc_imu(ctx, nr_bvecs);
- 	if (!imu) {
- 		kfree(node);
- 		ret =3D -ENOMEM;
-@@ -1066,7 +1133,7 @@ static void lock_two_rings(struct io_ring_ctx *ctx1=
-, struct io_ring_ctx *ctx2)
- static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx =
-*src_ctx,
- 			    struct io_uring_clone_buffers *arg)
- {
--	struct io_rsrc_data data;
-+	struct io_buf_table table;
- 	int i, ret, off, nr;
- 	unsigned int nbufs;
-=20
-@@ -1097,7 +1164,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 	if (check_add_overflow(arg->nr, arg->dst_off, &nbufs))
- 		return -EOVERFLOW;
-=20
--	ret =3D io_rsrc_data_alloc(&data, max(nbufs, ctx->buf_table.data.nr));
-+	ret =3D io_rsrc_buffer_alloc(&table, max(nbufs, ctx->buf_table.data.nr)=
-);
- 	if (ret)
- 		return ret;
-=20
-@@ -1106,7 +1173,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 		struct io_rsrc_node *src_node =3D ctx->buf_table.data.nodes[i];
-=20
- 		if (src_node) {
--			data.nodes[i] =3D src_node;
-+			table.data.nodes[i] =3D src_node;
- 			src_node->refs++;
- 		}
- 	}
-@@ -1136,7 +1203,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 		if (!src_node) {
- 			dst_node =3D NULL;
- 		} else {
--			dst_node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+			dst_node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 			if (!dst_node) {
- 				ret =3D -ENOMEM;
- 				goto out_free;
-@@ -1145,12 +1212,12 @@ static int io_clone_buffers(struct io_ring_ctx *c=
-tx, struct io_ring_ctx *src_ctx
- 			refcount_inc(&src_node->buf->refs);
- 			dst_node->buf =3D src_node->buf;
- 		}
--		data.nodes[off++] =3D dst_node;
-+		table.data.nodes[off++] =3D dst_node;
- 		i++;
- 	}
-=20
- 	/*
--	 * If asked for replace, put the old table. data->nodes[] holds both
-+	 * If asked for replace, put the old table. table.data->nodes[] holds b=
-oth
- 	 * old and new nodes at this point.
- 	 */
- 	if (arg->flags & IORING_REGISTER_DST_REPLACE)
-@@ -1163,10 +1230,10 @@ static int io_clone_buffers(struct io_ring_ctx *c=
-tx, struct io_ring_ctx *src_ctx
- 	 * entry).
- 	 */
- 	WARN_ON_ONCE(ctx->buf_table.data.nr);
--	ctx->buf_table.data =3D data;
-+	ctx->buf_table =3D table;
- 	return 0;
- out_free:
--	io_rsrc_data_free(ctx, &data);
-+	io_rsrc_buffer_free(ctx, &table);
- 	return ret;
- }
-=20
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 9668804afddc4..4b39d8104df19 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -47,7 +47,7 @@ struct io_imu_folio_data {
- 	unsigned int	nr_folios;
- };
-=20
--struct io_rsrc_node *io_rsrc_node_alloc(int type);
-+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int typ=
-e);
- void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *nod=
-e);
- void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_data *dat=
-a);
- int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
---=20
-2.43.5
+Minor nit here too, I'd drop 'index' and just cast it in the argument.
 
+> -static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
+> -		struct ublk_queue *ubq, int tag, size_t offset)
+> -{
+> -	struct request *req;
+> -
+> -	if (!ublk_need_req_ref(ubq))
+> -		return NULL;
+> -
+> -	req = blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
+> -	if (!req)
+> -		return NULL;
+> -
+> -	if (!ublk_get_req_ref(ubq, req))
+> -		return NULL;
+> -
+> -	if (unlikely(!blk_mq_request_started(req) || req->tag != tag))
+> -		goto fail_put;
+> -
+> -	if (!ublk_rq_has_data(req))
+> -		goto fail_put;
+> -
+> -	if (offset > blk_rq_bytes(req))
+> -		goto fail_put;
+> -
+> -	return req;
+> -fail_put:
+> -	ublk_put_req_ref(ubq, req);
+> -	return NULL;
+> -}
+> -
+
+This could be a prep patch to cut down on unrelated changes, but not
+really important.
+
+> @@ -2459,7 +2507,7 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
+>  		 * buffer by pwrite() to ublk char device, which can't be
+>  		 * used for unprivileged device
+>  		 */
+> -		if (info.flags & UBLK_F_USER_COPY)
+> +		if (info.flags & UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)
+>  			return -EINVAL;
+>  	}
+
+Missing parens here around mask.
+
+-- 
+Jens Axboe
 

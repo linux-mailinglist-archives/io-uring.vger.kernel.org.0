@@ -1,203 +1,433 @@
-Return-Path: <io-uring+bounces-6786-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6787-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C63A45D64
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 12:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F30C8A45E41
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 13:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AB6169C18
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 11:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4229717D687
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2025 12:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447512153D1;
-	Wed, 26 Feb 2025 11:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98CB221F37;
+	Wed, 26 Feb 2025 12:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwrqWEqY"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A/RvDrnq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738762153F0
-	for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 11:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466D4221F1F;
+	Wed, 26 Feb 2025 12:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570048; cv=none; b=devLdtTGy1qb/btQHEiUr4wE/9ap/JJfjdAqzZgnxgAIhivdWNCrYyHH/la2cQbMOqU5o4clCHWc2tSKt1VIshh63Av1CYJatak0wLx7yTdSLLaOHVLAGDSjtM4Ch+bVeWOW7bh/vziQ0Wdb1qm2XnxoB24myRixaJRL7WcfNvc=
+	t=1740571466; cv=none; b=rYbAAR/Gy8jxbXRuNSaIE8AZOm8Iqp71fNVDTbAsJuFTL1ZvppjqDMO6rcPnkQUp5yc8it+6JcuB5IoQcxeAR7N9rVnbevEGsmxH6MaUgjjrd/iOqMSF2io9JXnOirbxfs3mjP4u3QWA+i5rqUra1UlHcSE7wQ+xR1dfK5R+1DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570048; c=relaxed/simple;
-	bh=K5wqmtjAIu1Q8YZOIlGwSGOozfn6OjTt8K3q2ZLDtzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M30iRGPXUvNGwzaoyLurk/1O9MzBdA5QZgZtzkZU7GRy4naWKsf1fHl7EsRJNBQJW1ARkj+KloDgFXSwduR8ewd+grExxJiW6Tjrkn9UvuWlq/IWUENgc4C0PPNto5KS8dMt7BAs1kH2j6SFZHqayMadrP+dS1cGIufya4XyU+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwrqWEqY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5deb1266031so12185504a12.2
-        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2025 03:40:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740570043; x=1741174843; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AY/GD7BWTRCQXLBYMXkRaYEXNHAXYnnP2VHqb/Vhtds=;
-        b=iwrqWEqYjbhlKrJqM4JVN8+4JmTfr3qfK+s1xEDfo9aulyiOTwDrhXYFR0OQDw1Eeu
-         uAPSJKlXqNaaljDu9QfRtV7T9Ngpg81IfxF1n7fVTzS4uxGVwmbYrAfLcTejw7rjVcvV
-         jaQj+MdT51X3eR+8hQY1LDU7ghIqyWVMAXO2Asue8+Kwq9ykCNwTXbURpC8r93IJDPiG
-         lUBbh14XOG5WIUi0Gix1z/yeS4FTKX+NTCKRDDMcgY85vtfL8ZxlXLkQv7N8Zd1nhh4F
-         vW0ZWUk9iwou+Ny3bAFvIPOf+ggWMlmG9NWFqhbXxY29VNa2cnkduls7LlRS2Nng4+T4
-         7NCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740570043; x=1741174843;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AY/GD7BWTRCQXLBYMXkRaYEXNHAXYnnP2VHqb/Vhtds=;
-        b=cLT+3AJ6zNuNLuQbhoEOHCotTJo58WQjgYbzRijmCu3zZR4BjZks/Ck129T4WNTSGS
-         Z4XkVwjJDF1ZibevN8z7vyzpKVlLF2sttgtnJkMjiViZNK/rOHx+J/kkaXXn8FJDAWzl
-         2T4/SPbBIzspheXcJvVkkSUowjfbAEgtxPjlEoE7bCPcghlTB7POXx4ONbYWYQngSHBN
-         yOlCBhYfTRicAUPhP4VGvmjECPvwwPWwBL4YJey776e6KbYQI6b06dpf2jnEkqTJVXZa
-         KTAd3GPmL8nw3u6hUv5lCDVkat/w9RitAmP8mBf1ZRDfWLkennWGurGCqzDvlozwTQ5V
-         1D0g==
-X-Gm-Message-State: AOJu0YyHyZVsJ3AwwCSODSH+ThAwFg8w18i0v8c50amIH7MfZ2wFXk5g
-	eeta9pOGn03t6ry3QlcDschEq7FgibzHPvfu99dfaZK9Ae8o4Ua4zOr3PQ==
-X-Gm-Gg: ASbGncvLaMDwzii6880wJx+/PWlNJUosjiTkGt3iUZxvpxOIbaoR86+2DXFwPjR135g
-	FO5DKiTicz/4OzXBMcTtlC3qHRmuQ8mQJnyl361JwVVZ9bQkg2BzgM/Y3ZJefOiX+0L4OOOzEs7
-	TVnZFfqiBOn5KV/hCsJnicwJ4LtqH8RbAVe/X0VoO3Ux0gzcKyN2dd6ZFwxEETfXUd/a+P6e8Ym
-	dKTn/D8p21fxR19wBvcxKsBd1uhRheE8dsGConkmWubG3VwC9eJ3iZReZByYopW1IRdiGOcliWq
-	dINvE0SKfA==
-X-Google-Smtp-Source: AGHT+IEtMmUSLZ/lUbTw2llTTM5a3LvsgSq+V6tAAH957GCmzdrtEXwfvZ3n7eSWj02wXIMuRNmVcQ==
-X-Received: by 2002:a05:6402:518f:b0:5e0:51c0:701e with SMTP id 4fb4d7f45d1cf-5e0b7254f98mr21055638a12.32.1740570043245;
-        Wed, 26 Feb 2025 03:40:43 -0800 (PST)
-Received: from 127.com ([2620:10d:c092:600::1:7b07])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e45b80b935sm2692418a12.41.2025.02.26.03.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 03:40:41 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 7/7] io_uring/net: extract iovec import into a helper
-Date: Wed, 26 Feb 2025 11:41:21 +0000
-Message-ID: <6a5f8c526f6732c4249a7fa0213b49e1a3ecccf0.1740569495.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1740569495.git.asml.silence@gmail.com>
-References: <cover.1740569495.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1740571466; c=relaxed/simple;
+	bh=tq9ItEHDOF/EU6fXfoAv0mrW5orE9FlUkuJQMNvZN7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VK/ACGBZObLdBTL5wmhcUTd2Yf44GfhH8Gb9zTzOx3VEoOs0w1zUmKfH4gUKn6eMgjkzzLoKSueoC8RnTC1Dg+ozoAz7/5ZNmOlLnR+9b/YN8+M+ukLmXwflPDl2MvHzGw+wm1gqIWbf+TBP708ITCrBm44Z0loxhnpwPeH8t24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A/RvDrnq; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740571453; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bMY0I/faBqsEl+K1JuLDXBif0Lf6N8G7fWUGI8Oe4ys=;
+	b=A/RvDrnqDaIrBEhuheiR3lpBsRgNmQp+HfR3z38o0pU9gsFFuwYWsleaLncab65aiOCY0kwIgKbDynHW7aRApEKEJ8oIzWC66Y56/K7L9u/rP4hCfkxlxHFKeaLuFZ2GAofN8yWjEDfDWVwYar0so/lPfMuWfm5exaVH4Nlpviw=
+Received: from 30.221.130.195(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WQIZgr3_1740571452 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 20:04:12 +0800
+Message-ID: <86311349-5ce2-4a67-87d2-c0080946bb7a@linux.alibaba.com>
+Date: Wed, 26 Feb 2025 20:04:11 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] virtio-blk: add uring_cmd support for I/O passthru
+ on chardev.
+To: lizetao <lizetao1@huawei.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Christoph Hellwig
+ <hch@infradead.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>
+References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
+ <20241218092435.21671-3-mengferry@linux.alibaba.com>
+ <e7e8751a45334b9c8ac75ac8ed325d7c@huawei.com>
+Content-Language: en-US
+From: Ferry Meng <mengferry@linux.alibaba.com>
+In-Reply-To: <e7e8751a45334b9c8ac75ac8ed325d7c@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Deduplicate iovec imports between compat and !compat by introducing a
-helper function.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 62 +++++++++++++++++++++++---------------------------
- 1 file changed, 28 insertions(+), 34 deletions(-)
-
-diff --git a/io_uring/net.c b/io_uring/net.c
-index de2d6bd44ef0..da6c828b9985 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -192,6 +192,29 @@ static inline void io_mshot_prep_retry(struct io_kiocb *req,
- 	req->buf_index = sr->buf_group;
- }
- 
-+static int io_net_import_vec(struct io_kiocb *req, struct io_async_msghdr *iomsg,
-+			     const struct iovec __user *uiov, unsigned uvec_seg,
-+			     int ddir)
-+{
-+	struct iovec *iov;
-+	int ret, nr_segs;
-+
-+	if (iomsg->free_iov) {
-+		nr_segs = iomsg->free_iov_nr;
-+		iov = iomsg->free_iov;
-+	} else {
-+		nr_segs = 1;
-+		iov = &iomsg->fast_iov;
-+	}
-+
-+	ret = __import_iovec(ddir, uiov, uvec_seg, nr_segs, &iov,
-+			     &iomsg->msg.msg_iter, io_is_compat(req->ctx));
-+	if (unlikely(ret < 0))
-+		return ret;
-+	io_net_vec_assign(req, iomsg, iov);
-+	return 0;
-+}
-+
- #ifdef CONFIG_COMPAT
- static int io_compat_msg_copy_hdr(struct io_kiocb *req,
- 				  struct io_async_msghdr *iomsg,
-@@ -200,8 +223,7 @@ static int io_compat_msg_copy_hdr(struct io_kiocb *req,
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct compat_iovec __user *uiov;
--	struct iovec *iov;
--	int ret, nr_segs;
-+	int ret;
- 
- 	if (copy_from_user(msg, sr->umsg_compat, sizeof(*msg)))
- 		return -EFAULT;
-@@ -229,21 +251,8 @@ static int io_compat_msg_copy_hdr(struct io_kiocb *req,
- 		return 0;
- 	}
- 
--	if (iomsg->free_iov) {
--		nr_segs = iomsg->free_iov_nr;
--		iov = iomsg->free_iov;
--	} else {
--		iov = &iomsg->fast_iov;
--		nr_segs = 1;
--	}
--
--	ret = __import_iovec(ddir, (struct iovec __user *)uiov, msg->msg_iovlen,
--				nr_segs, &iov, &iomsg->msg.msg_iter, true);
--	if (unlikely(ret < 0))
--		return ret;
--
--	io_net_vec_assign(req, iomsg, iov);
--	return 0;
-+	return io_net_import_vec(req, iomsg, (struct iovec __user *)uiov,
-+				 msg->msg_iovlen, ddir);
- }
- #endif
- 
-@@ -271,8 +280,7 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct user_msghdr __user *umsg = sr->umsg;
--	struct iovec *iov;
--	int ret, nr_segs;
-+	int ret;
- 
- 	ret = io_copy_msghdr_from_user(msg, umsg);
- 	if (unlikely(ret))
-@@ -300,21 +308,7 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
- 		return 0;
- 	}
- 
--	if (iomsg->free_iov) {
--		nr_segs = iomsg->free_iov_nr;
--		iov = iomsg->free_iov;
--	} else {
--		iov = &iomsg->fast_iov;
--		nr_segs = 1;
--	}
--
--	ret = __import_iovec(ddir, msg->msg_iov, msg->msg_iovlen, nr_segs,
--				&iov, &iomsg->msg.msg_iter, false);
--	if (unlikely(ret < 0))
--		return ret;
--
--	io_net_vec_assign(req, iomsg, iov);
--	return 0;
-+	return io_net_import_vec(req, iomsg, msg->msg_iov, msg->msg_iovlen, ddir);
- }
- 
- static int io_sendmsg_copy_hdr(struct io_kiocb *req,
--- 
-2.48.1
-
+On 1/7/25 9:14 PM, lizetao wrote:
+> Hi,
+>
+>> -----Original Message-----
+>> From: Ferry Meng <mengferry@linux.alibaba.com>
+>> Sent: Wednesday, December 18, 2024 5:25 PM
+>> To: Michael S . Tsirkin <mst@redhat.com>; Jason Wang
+>> <jasowang@redhat.com>; linux-block@vger.kernel.org; Jens Axboe
+>> <axboe@kernel.dk>; virtualization@lists.linux.dev
+>> Cc: linux-kernel@vger.kernel.org; io-uring@vger.kernel.org; Stefan Hajnoczi
+>> <stefanha@redhat.com>; Christoph Hellwig <hch@infradead.org>; Joseph Qi
+>> <joseph.qi@linux.alibaba.com>; Jeffle Xu <jefflexu@linux.alibaba.com>; Ferry
+>> Meng <mengferry@linux.alibaba.com>
+>> Subject: [PATCH v1 2/3] virtio-blk: add uring_cmd support for I/O passthru on
+>> chardev.
+>>
+>> Add ->uring_cmd() support for virtio-blk chardev (/dev/vdXc0).
+>> According to virtio spec, in addition to passing 'hdr' info into kernel, we also
+>> need to pass vaddr & data length of the 'iov' requeired for the writev/readv op.
+>>
+>> Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
+>> ---
+>>   drivers/block/virtio_blk.c      | 223 +++++++++++++++++++++++++++++++-
+>>   include/uapi/linux/virtio_blk.h |  16 +++
+>>   2 files changed, 235 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c index
+>> 3487aaa67514..cd88cf939144 100644
+>> --- a/drivers/block/virtio_blk.c
+>> +++ b/drivers/block/virtio_blk.c
+>> @@ -18,6 +18,9 @@
+>>   #include <linux/vmalloc.h>
+>>   #include <uapi/linux/virtio_ring.h>
+>>   #include <linux/cdev.h>
+>> +#include <linux/io_uring/cmd.h>
+>> +#include <linux/types.h>
+>> +#include <linux/uio.h>
+>>
+>>   #define PART_BITS 4
+>>   #define VQ_NAME_LEN 16
+>> @@ -54,6 +57,20 @@ static struct class *vd_chr_class;
+>>
+>>   static struct workqueue_struct *virtblk_wq;
+>>
+>> +struct virtblk_uring_cmd_pdu {
+>> +	struct request *req;
+>> +	struct bio *bio;
+>> +	int status;
+>> +};
+>> +
+>> +struct virtblk_command {
+>> +	struct virtio_blk_outhdr out_hdr;
+>> +
+>> +	__u64	data;
+>> +	__u32	data_len;
+>> +	__u32	flag;
+>> +};
+>> +
+>>   struct virtio_blk_vq {
+>>   	struct virtqueue *vq;
+>>   	spinlock_t lock;
+>> @@ -122,6 +139,11 @@ struct virtblk_req {
+>>   	struct scatterlist sg[];
+>>   };
+>>
+>> +static void __user *virtblk_to_user_ptr(uintptr_t ptrval) {
+>> +	return (void __user *)ptrval;
+>> +}
+>> +
+>>   static inline blk_status_t virtblk_result(u8 status)  {
+>>   	switch (status) {
+>> @@ -259,9 +281,6 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   	if (!IS_ENABLED(CONFIG_BLK_DEV_ZONED) &&
+>> op_is_zone_mgmt(req_op(req)))
+>>   		return BLK_STS_NOTSUPP;
+>>
+>> -	/* Set fields for all request types */
+>> -	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+>> -
+>>   	switch (req_op(req)) {
+>>   	case REQ_OP_READ:
+>>   		type = VIRTIO_BLK_T_IN;
+>> @@ -309,9 +328,11 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   		type = VIRTIO_BLK_T_ZONE_RESET_ALL;
+>>   		break;
+>>   	case REQ_OP_DRV_IN:
+>> +	case REQ_OP_DRV_OUT:
+>>   		/*
+>>   		 * Out header has already been prepared by the caller
+>> (virtblk_get_id()
+>> -		 * or virtblk_submit_zone_report()), nothing to do here.
+>> +		 * virtblk_submit_zone_report() or io_uring passthrough cmd),
+>> nothing
+>> +		 * to do here.
+>>   		 */
+>>   		return 0;
+>>   	default:
+>> @@ -323,6 +344,7 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   	vbr->in_hdr_len = in_hdr_len;
+>>   	vbr->out_hdr.type = cpu_to_virtio32(vdev, type);
+>>   	vbr->out_hdr.sector = cpu_to_virtio64(vdev, sector);
+>> +	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+>>
+>>   	if (type == VIRTIO_BLK_T_DISCARD || type ==
+>> VIRTIO_BLK_T_WRITE_ZEROES ||
+>>   	    type == VIRTIO_BLK_T_SECURE_ERASE) { @@ -832,6 +854,7 @@
+>> static int virtblk_get_id(struct gendisk *disk, char *id_str)
+>>   	vbr = blk_mq_rq_to_pdu(req);
+>>   	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
+>>   	vbr->out_hdr.type = cpu_to_virtio32(vblk->vdev,
+>> VIRTIO_BLK_T_GET_ID);
+>> +	vbr->out_hdr.ioprio = cpu_to_virtio32(vblk->vdev,
+>> +req_get_ioprio(req));
+>>   	vbr->out_hdr.sector = 0;
+>>
+>>   	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES,
+>> GFP_KERNEL); @@ -1250,6 +1273,197 @@ static const struct blk_mq_ops
+>> virtio_mq_ops = {
+>>   	.poll		= virtblk_poll,
+>>   };
+>>
+>> +static inline struct virtblk_uring_cmd_pdu *virtblk_get_uring_cmd_pdu(
+>> +		struct io_uring_cmd *ioucmd)
+>> +{
+>> +	return (struct virtblk_uring_cmd_pdu *)&ioucmd->pdu; }
+>> +
+>> +static void virtblk_uring_task_cb(struct io_uring_cmd *ioucmd,
+>> +		unsigned int issue_flags)
+>> +{
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +	struct virtblk_req *vbr = blk_mq_rq_to_pdu(pdu->req);
+>> +	u64 result = 0;
+>> +
+>> +	if (pdu->bio)
+>> +		blk_rq_unmap_user(pdu->bio);
+>> +
+>> +	/* currently result has no use, it should be zero as cqe->res */
+>> +	io_uring_cmd_done(ioucmd, vbr->in_hdr.status, result, issue_flags); }
+>> +
+>> +static enum rq_end_io_ret virtblk_uring_cmd_end_io(struct request *req,
+>> +						   blk_status_t err)
+>> +{
+>> +	struct io_uring_cmd *ioucmd = req->end_io_data;
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +
+>> +	/*
+>> +	 * For iopoll, complete it directly. Note that using the uring_cmd
+>> +	 * helper for this is safe only because we check blk_rq_is_poll().
+>> +	 * As that returns false if we're NOT on a polled queue, then it's
+>> +	 * safe to use the polled completion helper.
+>> +	 *
+>> +	 * Otherwise, move the completion to task work.
+>> +	 */
+>> +	if (blk_rq_is_poll(req)) {
+>> +		if (pdu->bio)
+>> +			blk_rq_unmap_user(pdu->bio);
+>> +		io_uring_cmd_iopoll_done(ioucmd, 0, pdu->status);
+>> +	} else {
+>> +		io_uring_cmd_do_in_task_lazy(ioucmd, virtblk_uring_task_cb);
+>> +	}
+>> +
+>> +	return RQ_END_IO_FREE;
+>> +}
+>> +
+>> +static struct virtblk_req *virtblk_req(struct request *req) {
+>> +	return blk_mq_rq_to_pdu(req);
+>> +}
+>> +
+>> +static inline enum req_op virtblk_req_op(const struct virtblk_uring_cmd
+>> +*cmd) {
+>> +	return (cmd->type & VIRTIO_BLK_T_OUT) ? REQ_OP_DRV_OUT :
+>> +REQ_OP_DRV_IN; }
+>> +
+>> +static struct request *virtblk_alloc_user_request(
+>> +		struct request_queue *q, struct virtblk_command *cmd,
+>> +		blk_opf_t rq_flags, blk_mq_req_flags_t blk_flags) {
+>> +	struct request *req;
+>> +
+>> +	req = blk_mq_alloc_request(q, rq_flags, blk_flags);
+>> +	if (IS_ERR(req))
+>> +		return req;
+>> +
+>> +	req->rq_flags |= RQF_DONTPREP;
+>> +	memcpy(&virtblk_req(req)->out_hdr, &cmd->out_hdr, sizeof(struct
+>> virtio_blk_outhdr));
+>> +	return req;
+>> +}
+>> +
+>> +static int virtblk_map_user_request(struct request *req, u64 ubuffer,
+>> +		unsigned int bufflen, struct io_uring_cmd *ioucmd,
+>> +		bool vec)
+>> +{
+>> +	struct request_queue *q = req->q;
+>> +	struct virtio_blk *vblk = q->queuedata;
+>> +	struct block_device *bdev = vblk ? vblk->disk->part0 : NULL;
+>> +	struct bio *bio = NULL;
+>> +	int ret;
+>> +
+>> +	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+>> +		struct iov_iter iter;
+>> +
+>> +		/* fixedbufs is only for non-vectored io */
+>> +		if (WARN_ON_ONCE(vec))
+>> +			return -EINVAL;
+> Shoule be goto out here? Or req will not be free. And I suggest to
+> free request in virtblk_uring_cmd_io().
+Thx, u are right. This will be fixed in v2 series.
+I will send out v2 in next week.
+>> +		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
+>> +				rq_data_dir(req), &iter, ioucmd);
+>> +		if (ret < 0)
+>> +			goto out;
+>> +		ret = blk_rq_map_user_iov(q, req, NULL,
+>> +			&iter, GFP_KERNEL);
+>> +	} else {
+>> +		ret = blk_rq_map_user_io(req, NULL,
+>> +				virtblk_to_user_ptr(ubuffer),
+>> +				bufflen, GFP_KERNEL, vec, 0,
+>> +				0, rq_data_dir(req));
+>> +	}
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	bio = req->bio;
+>> +	if (bdev)
+>> +		bio_set_dev(bio, bdev);
+>> +	return 0;
+>> +
+>> +out:
+>> +	blk_mq_free_request(req);
+>> +	return ret;
+>> +}
+>> +
+>> +static int virtblk_uring_cmd_io(struct virtio_blk *vblk,
+>> +		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool
+>> vec) {
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +	const struct virtblk_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd-
+>>> sqe);
+>> +	struct request_queue *q = vblk->disk->queue;
+>> +	struct virtblk_req *vbr;
+>> +	struct virtblk_command d;
+>> +	struct request *req;
+>> +	blk_opf_t rq_flags = REQ_ALLOC_CACHE | virtblk_req_op(cmd);
+>> +	blk_mq_req_flags_t blk_flags = 0;
+>> +	int ret;
+>> +
+>> +	if (!capable(CAP_SYS_ADMIN))
+>> +		return -EACCES;
+>> +
+>> +	d.out_hdr.ioprio = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd-
+>>> ioprio));
+>> +	d.out_hdr.type = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd->type));
+>> +	d.out_hdr.sector = cpu_to_virtio64(vblk->vdev, READ_ONCE(cmd-
+>>> sector));
+>> +	d.data = READ_ONCE(cmd->data);
+>> +	d.data_len = READ_ONCE(cmd->data_len);
+>> +
+>> +	if (issue_flags & IO_URING_F_NONBLOCK) {
+>> +		rq_flags |= REQ_NOWAIT;
+>> +		blk_flags = BLK_MQ_REQ_NOWAIT;
+>> +	}
+>> +	if (issue_flags & IO_URING_F_IOPOLL)
+>> +		rq_flags |= REQ_POLLED;
+>> +
+>> +	req = virtblk_alloc_user_request(q, &d, rq_flags, blk_flags);
+>> +	if (IS_ERR(req))
+>> +		return PTR_ERR(req);
+>> +
+>> +	vbr = virtblk_req(req);
+>> +	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
+>> +	if (d.data && d.data_len) {
+>> +		ret = virtblk_map_user_request(req, d.data, d.data_len,
+>> ioucmd, vec);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	/* to free bio on completion, as req->bio will be null at that time */
+>> +	pdu->bio = req->bio;
+>> +	pdu->req = req;
+>> +	req->end_io_data = ioucmd;
+>> +	req->end_io = virtblk_uring_cmd_end_io;
+>> +	blk_execute_rq_nowait(req, false);
+>> +	return -EIOCBQUEUED;
+>> +}
+>> +
+>> +
+>> +static int virtblk_uring_cmd(struct virtio_blk *vblk, struct io_uring_cmd
+>> *ioucmd,
+>> +			     unsigned int issue_flags)
+>> +{
+>> +	int ret;
+>> +
+>> +	BUILD_BUG_ON(sizeof(struct virtblk_uring_cmd_pdu) >
+>> +sizeof(ioucmd->pdu));
+>> +
+>> +	switch (ioucmd->cmd_op) {
+>> +	case VIRTBLK_URING_CMD_IO:
+>> +		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, false);
+>> +		break;
+>> +	case VIRTBLK_URING_CMD_IO_VEC:
+>> +		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, true);
+>> +		break;
+>> +	default:
+>> +		ret = -ENOTTY;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int virtblk_chr_uring_cmd(struct io_uring_cmd *ioucmd, unsigned
+>> +int issue_flags) {
+>> +	struct virtio_blk *vblk = container_of(file_inode(ioucmd->file)->i_cdev,
+>> +			struct virtio_blk, cdev);
+>> +
+>> +	return virtblk_uring_cmd(vblk, ioucmd, issue_flags); }
+>> +
+>>   static void virtblk_cdev_rel(struct device *dev)  {
+>>   	ida_free(&vd_chr_minor_ida, MINOR(dev->devt)); @@ -1297,6
+>> +1511,7 @@ static int virtblk_cdev_add(struct virtio_blk *vblk,
+>>
+>>   static const struct file_operations virtblk_chr_fops = {
+>>   	.owner		= THIS_MODULE,
+>> +	.uring_cmd	= virtblk_chr_uring_cmd,
+>>   };
+>>
+>>   static unsigned int virtblk_queue_depth; diff --git
+>> a/include/uapi/linux/virtio_blk.h b/include/uapi/linux/virtio_blk.h index
+>> 3744e4da1b2a..93b6e1b5b9a4 100644
+>> --- a/include/uapi/linux/virtio_blk.h
+>> +++ b/include/uapi/linux/virtio_blk.h
+>> @@ -313,6 +313,22 @@ struct virtio_scsi_inhdr {  };  #endif
+>> /* !VIRTIO_BLK_NO_LEGACY */
+>>
+>> +struct virtblk_uring_cmd {
+>> +	/* VIRTIO_BLK_T* */
+>> +	__u32 type;
+>> +	/* io priority. */
+>> +	__u32 ioprio;
+>> +	/* Sector (ie. 512 byte offset) */
+>> +	__u64 sector;
+>> +
+>> +	__u64 data;
+>> +	__u32 data_len;
+>> +	__u32 flag;
+>> +};
+>> +
+>> +#define VIRTBLK_URING_CMD_IO		1
+>> +#define VIRTBLK_URING_CMD_IO_VEC	2
+>> +
+>>   /* And this is the final byte of the write scatter-gather list. */
+>>   #define VIRTIO_BLK_S_OK		0
+>>   #define VIRTIO_BLK_S_IOERR	1
+>> --
+>> 2.43.5
+>>
+>>
 

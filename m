@@ -1,222 +1,229 @@
-Return-Path: <io-uring+bounces-6832-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6833-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79539A47625
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 07:57:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD86A47CB9
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 12:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288BC188EF0F
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 06:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C77C3AC6CA
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 11:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573221FF1B4;
-	Thu, 27 Feb 2025 06:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024C322A1CF;
+	Thu, 27 Feb 2025 11:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bz8u17XL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+uCb33f"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7621EB5ED
-	for <io-uring@vger.kernel.org>; Thu, 27 Feb 2025 06:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B869227599;
+	Thu, 27 Feb 2025 11:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740639445; cv=none; b=BFcSN1/fG3hZVUAQMkxlCUrcLMRzW/liX/kVtjDTZC+S0Ip04JY8LxpCqZJh63CXW+S2bHQ6aCTuw8lGXmvsAk/gQDeiGDjuqPEZQCKPCgrTjg/mPGojbYeafyFvSPlqo79y6KHxnTOu+UKK9yfTsuSJ3nt/yvWICKQqyJtskrk=
+	t=1740657449; cv=none; b=BNENpVC6+HB9Lz/9o5xlxlqhwr7uyhxoYKGYuJSmVemEn1vSky1l+AfI7kcpY0mD5RZrjmOpOZbBb2arXT4QkduXl9yWLmJ35n26I3izrRtlSnzRP+M0MW6TimhUjxzP6q2eY4p4dVLAi7kJC7X0+wlF85VDAiSN2y/qe8HAPg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740639445; c=relaxed/simple;
-	bh=+t1vB+e+bOKQTWYHRPeG3VR1xS2UIFEHDuINsmtsQSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndx2A0Q7DLCuwcBwxy4HIkXmtlXGLOFxiD03FK46A402vVoaSY5cRGlzs84bJAKKEbhQ68OkLa5RddpDDQpexBlAIZggCBirtWVkVt+repUNF4Kjm6Ym/BHJ7fal70eO4amXRyclvSHVJ6aDtQaranhaQ5PRZL3ffcbcouReeRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bz8u17XL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740639442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fN9zyRpTMvyZXcI47Dudh0fWxP2P2sHISATio+64sck=;
-	b=Bz8u17XLWGwKTooGeDDorQPyJl5vjFoNUFgsY401yKUXvHo/ol3/ykWfRuBGijHwQFl9Dj
-	9lWHEls0KvdIADplwYYHh4mfa5T0OJCIfFGeigMmQ9N0i5MhXxHXNwFkL0t1ikVgOdIFw1
-	PXUgSTSmYPOu2rTP5BtGXcA0gtwE0HU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-HLnvhgB0Or-cduU6yFqZwQ-1; Thu,
- 27 Feb 2025 01:57:17 -0500
-X-MC-Unique: HLnvhgB0Or-cduU6yFqZwQ-1
-X-Mimecast-MFC-AGG-ID: HLnvhgB0Or-cduU6yFqZwQ_1740639436
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3F411800874;
-	Thu, 27 Feb 2025 06:57:15 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.46])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6771D19560AE;
-	Thu, 27 Feb 2025 06:57:13 +0000 (UTC)
-Date: Thu, 27 Feb 2025 14:57:11 +0800
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Ferry Meng <mengferry@linux.alibaba.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>
-Subject: Re: [PATCH v1 0/3] virtio-blk: add io_uring passthrough support.
-Message-ID: <20250227065711.GB85709@fedora>
-References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
- <20250219020112.GB38164@fedora>
- <be8704b0-81a4-403b-8b42-d3612099279f@linux.alibaba.com>
+	s=arc-20240116; t=1740657449; c=relaxed/simple;
+	bh=rGTjWMY7XwVDnvHA5Z64VEBYNX/wac8hYc+GBCRTjJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2Yatajt8+ffPV1aMhPNVX16FIWBmxEIvVQfFgB7Mf+DyaUJD/7yEoEumJqqH0BoG0haRZlfXfweevCqar+Vk2g8b/kXQ0LUDKPL6lbke+JHtIHGy3u6A3jKfCg49J5D0t6jGA4gu7zt+GcYQD/ylxkII7XEglbixWciAblGUFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+uCb33f; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf17fa4a29so50444966b.3;
+        Thu, 27 Feb 2025 03:57:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740657446; x=1741262246; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CrI91tLdiEt7M/XW95bclUn0WDE3jwBds2FECmKWUEs=;
+        b=G+uCb33f9sD0SlJvYm7gvEekAZ+waqrtTdC3YxBGMlTXAuMPUqdzHQyzoBz9mE1lZ/
+         mbPB2vZoJCI9YDd81F40wYiYBUpNELUwN46WNOAqYIkAy87Jpw5SLtlyrZJ0vqWqeB1n
+         sgvKsMXVlw9YaU7evGlW0zMnTNcSyli/2VXHwPCj9yIqGSjwA8GDF5+ehxaEh9aM9Df2
+         WwnNbc/GgIav7ZLChStu6YAmg2CIfw2v7RSvaDKYudgp5wwAopDaxJORwo5zVOw37Ezv
+         cnZ4SlUGkYE2FjlyRM3At3+RWaom2ract8g+86CgWIr4O2ci0wnW2IEN1pEuECYEuWvH
+         FAog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740657446; x=1741262246;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CrI91tLdiEt7M/XW95bclUn0WDE3jwBds2FECmKWUEs=;
+        b=ePU0BwYbVHxpnfSjOvEPMmK0sHmsRrjs+/47ZNgW5paLeHBoGnmA7KiQSMg7wHYyPw
+         Uvbsr1djTKRKK7caUeTLd8SRFWkcg3UJYvwWKc9xUTHsVY6KRjrEiWKsY05UdgRUbAGi
+         h2qKZ1TXU0CJxJGwUujdjjYxmZNG1j/Ca0wMcUdhmJ0SMfweTSnayG3DDKW2uflLciwy
+         6RaTATlXWM/2YbOVNgf2oN7V2tzPyuTUgSPWN5HvWuAJHYO8WIWmlDE6POiY8aEsXRRf
+         /suinGdqv7+EKq3ZEUAnMUMIg+DjpTSPY9pJPflKLNq8e1GwAToaXEzV0DGxovNpAJ24
+         7eTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW591s6WcRbwciRiZKsnW9mKIuwdLrhQw5hsYnnKg0/17TtcGT0FbfOuvN6RYmAMdJL6lhZ0SqCGrNh@vger.kernel.org, AJvYcCXwrQh+T5Mg+S2F5ROV0834lxG+F+X+FI/c0MwroEgvXdwq5hThMSQesg6dWQ9znotWaY4eo0630xwDzJaq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoqk+uqi/IDoiM68H9pPA8Z6FzBRveodqqsSnHz8np3DjhwtyB
+	3JrvBgTZ/uFMNu/vvE8kaMfYHeUWVbzt+DHF/EkurDEXa25OUGC49R369Q==
+X-Gm-Gg: ASbGncvRSWkg2BQZHl8ey9Gha9teamHhc6dE7sqa7AZ5eKBwtN2kHc0dB9cih7xFSZX
+	MRMyvseH3W+nZ1fC1GVnjjXfl/Zi9CIBqZYu1wBDWIga6mO0TSKgHUdwHrYsPVpUCHZrPxFxEb5
+	X94eqr5iX6HNmDjahb/6LHt0AbRBVCOeatq1LqC5rg0AUX2VHatEeuJMhQWQ58qaY5a3wYSSKR+
+	C+B6AjZLuFhu5QhcOSEvlsCTqw+/l3kJEgTPAHfKub2eYlpZzrjJYHYd/sPOCpvAmbLUoNP5GDK
+	hECmU32ncjqTWAGZPDtH/C9tYNr7VuuBCm38XXckjZondF1IpeBXyOOlW7s=
+X-Google-Smtp-Source: AGHT+IE0NpnK1nCAt/oaKhM5+h2yiALTwE8EA9YyzKWJXJQnRRA01wCtDxog1sMK7wKKg2OeDprrQA==
+X-Received: by 2002:a05:6402:40ca:b0:5e0:922e:527a with SMTP id 4fb4d7f45d1cf-5e43c17fd68mr30521489a12.0.1740657446065;
+        Thu, 27 Feb 2025 03:57:26 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:4215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c7bc015sm109917566b.164.2025.02.27.03.57.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 03:57:25 -0800 (PST)
+Message-ID: <cedd1f78-7fa6-41f5-9481-c6757762dc66@gmail.com>
+Date: Thu, 27 Feb 2025 11:58:23 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QutFJKJ1ZBtQgHGb"
-Content-Disposition: inline
-In-Reply-To: <be8704b0-81a4-403b-8b42-d3612099279f@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iomap: propagate nowait to block layer
+To: Dave Chinner <david@fromorbit.com>
+Cc: io-uring@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
+References: <ca8f7e4efb902ee6500ab5b1fafd67acb3224c45.1740533564.git.asml.silence@gmail.com>
+ <Z76eEu4vxwFIWKj7@dread.disaster.area>
+ <7b440d54-b519-4995-9f5f-f3e636c6d477@gmail.com>
+ <Z79-PEZ2YQybCjmi@dread.disaster.area>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z79-PEZ2YQybCjmi@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2/26/25 20:49, Dave Chinner wrote:
+> On Wed, Feb 26, 2025 at 12:33:21PM +0000, Pavel Begunkov wrote:
+>> On 2/26/25 04:52, Dave Chinner wrote:
+>>> On Wed, Feb 26, 2025 at 01:33:58AM +0000, Pavel Begunkov wrote:
+...
+>>> Put simply: any code that submits multiple bios (either individually
+>>> or as a bio chain) for a single high level IO can not use REQ_NOWAIT
+>>> reliably for async IO submission.
+>>
+>> I know the issue, but admittedly forgot about it here, thanks for
+>> reminding! Considering that attempts to change the situation failed
+>> some years ago and I haven't heard about it after, I don't think
+>> it'll going to change any time soon.
+>>
+>> So how about to follow what the block layer does and disable multi
+>> bio nowait submissions for async IO?
+>>
+>> if (!iocb_is_sync(iocb)) {
+>> 	if (multi_bio)
+>> 		return -EAGAIN;
+>> 	bio_opf |= REQ_NOWAIT;
+>> }
+> 
+> How do we know it's going to be multi-bio before we actually start
+> packing the data into the bios? More below, because I kinda pointed
 
---QutFJKJ1ZBtQgHGb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The same way block layer is gauging it
 
-On Wed, Feb 26, 2025 at 07:10:36PM +0800, Ferry Meng wrote:
->=20
-> On 2/19/25 10:01 AM, Stefan Hajnoczi wrote:
-> > On Wed, Dec 18, 2024 at 05:24:32PM +0800, Ferry Meng wrote:
-> > > This patchset implements io_uring passthrough surppot in virtio-blk
-> > > driver, bypass vfs and part of block layer logic, resulting in lower
-> > > submit latency and increased flexibility when utilizing virtio-blk.
-> > Hi,
-> > What is the status of this patch series?
-> >=20
-> > Stefan
->=20
-> I apologize for the delayed response. It seems that the maintainer has not
-> yet provided feedback on this patch series, and I was actually waiting for
-> his comments before proceeding. I have received the feedback from the oth=
-er
-> reviewers & have already discovered some obvious mistakes in v1 series.
->=20
->=20
-> Although I'm occupied with other tasks recently, I expect to send out v2
-> patches *in a week*.
+nr = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
+if (nr > BIO_MAX_VECS)
+	// multiple bios
 
-Great. I'll review the next revision in more detail.
+Let me try to prepare that one, and we can discuss there.
 
-Thanks,
-Stefan
+> out how this might be solved...
+> 
+>> Is there anything else but io_uring and AIO that can issue async
+>> IO though this path?
+> 
+> We can't assume anything about the callers in the lower layers.
+> Anything that can call the VFS read/write paths could be using async
+> IO.
+> 
+>>> We have similar limitations on IO polling (IOCB_HIPRI) in iomap, but
+>>> I'm not sure if REQ_NOWAIT can be handled the same way. i.e. only
+>>> setting REQ_NOWAIT on the first bio means that the second+ bio can
+>>> still block and cause latency issues.
+> 
+> Please have a look at how IOCB_HIPRI is handled by iomap for
+> multi-bio IOs. I -think- the same can be done with IOMAP_NOWAIT
+> bios, because the bio IO completion for the EAGAIN error will be
+> present on the iomap_dio by the time submit_bio returns. i.e.
+> REQ_NOWAIT can be set on the first bio in the submission chain,
+> but only on the first bio.
+> 
+> i.e. if REQ_NOWAIT causes the first bio submission to fail with
+> -EAGAIN being reported to completion, we abort the submission or
+> more bios because dio->error is now set. As there are no actual bios
+> in flight at this point in time, the only reference to the iomap_dio
+> is held by the iomap submission code.  Hence as we finalise the
+> aborted DIO submission, __iomap_dio_rw() drops the last reference
+> and iomap_dio_rw() calls iomap_dio_complete() on the iomap_dio. This
+> then gathers the -EAGAIN error that was stashed in the iomap_dio
+> and returns it to the caller.
+> 
+> i.e. I *think* this "REQ_NOWAIT only for the first bio" method will
+> solve most of the issues that cause submission latency (especially
+> for apps doing small IOs), but still behave correctly when large,
+> multi-bio DIOs are submitted.
+> 
+> Confirming that the logic is sound and writing fstests that exercise
+> the functionality to demonstrate your eventual kernel change works
+> correctly (and that we don't break it in future) is your problem,
+> though.
 
->=20
->=20
-> Thanks.
->=20
-> > > In this version, currently only supports READ/WRITE vec/no-vec operat=
-ions,
-> > > others like discard or zoned ops not considered in. So the userspace-=
-related
-> > > struct is not complicated.
-> > >=20
-> > > struct virtblk_uring_cmd {
-> > > 	__u32 type;
-> > > 	__u32 ioprio;
-> > > 	__u64 sector;
-> > > 	/* above is related to out_hdr */
-> > > 	__u64 data;  // user buffer addr or iovec base addr.
-> > > 	__u32 data_len; // user buffer length or iovec count.
-> > > 	__u32 flag;  // only contains whether a vector rw or not.
-> > > };
-> > >=20
-> > > To test this patch series, I changed fio's code:
-> > > 1. Added virtio-blk support to engines/io_uring.c.
-> > > 2. Added virtio-blk support to the t/io_uring.c testing tool.
-> > > Link: https://github.com/jdmfr/fio
-> > >=20
-> > >=20
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > Performance
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >=20
-> > > Using t/io_uring-vblk, the performance of virtio-blk based on uring-c=
-md
-> > > scales better than block device access. (such as below, Virtio-Blk wi=
-th QEMU,
-> > > 1-depth fio)
-> > > (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
-> > > slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
-> > > clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
-> > > lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
-> > > (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
-> > > slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
-> > > clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
-> > > lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
-> > >=20
-> > > Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
-> > > and 'engines=3Dio_uring' also demonstrates improvements in submit lat=
-ency.
-> > > (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B=
-0 -O0 -n1 -u1 /dev/vdcc0
-> > > IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
-> > > IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
-> > > (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -=
-O0 -n1 -u0 /dev/vdc
-> > > IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
-> > > IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
-> > >=20
-> > > =3D=3D=3D=3D=3D=3D=3D
-> > > Changes
-> > > =3D=3D=3D=3D=3D=3D=3D
-> > >=20
-> > > Changes in v1:
-> > > --------------
-> > > * remove virtblk_is_write() helper
-> > > * fix rq_flags type definition (blk_opf_t), add REQ_ALLOC_CACHE flag.
-> > > https://lore.kernel.org/io-uring/202412042324.uKQ5KdkE-lkp@intel.com/
-> > >=20
-> > > RFC discussion:
-> > > ---------------
-> > > https://lore.kernel.org/io-uring/20241203121424.19887-1-mengferry@lin=
-ux.alibaba.com/
-> > >=20
-> > > Ferry Meng (3):
-> > >    virtio-blk: add virtio-blk chardev support.
-> > >    virtio-blk: add uring_cmd support for I/O passthru on chardev.
-> > >    virtio-blk: add uring_cmd iopoll support.
-> > >=20
-> > >   drivers/block/virtio_blk.c      | 320 +++++++++++++++++++++++++++++=
-++-
-> > >   include/uapi/linux/virtio_blk.h |  16 ++
-> > >   2 files changed, 331 insertions(+), 5 deletions(-)
-> > >=20
-> > > --=20
-> > > 2.43.5
-> > >=20
->=20
+IIUC, it'll try to probe if block can accommodate one bio. Let's say
+it can, however if there are more bios to the request they might
+sleep. And that's far from improbable, especially with the first bio
+taking one tag. Unless I missed something, it doesn't really looks
+like a solution.
 
---QutFJKJ1ZBtQgHGb
-Content-Type: application/pgp-signature; name="signature.asc"
+>>> So, yeah, fixing this source of latency is not as simple as just
+>>> setting REQ_NOWAIT. I don't know if there is a better solution that
+>>> what we currently have, but causing large AIO DIOs to
+>>> randomly fail with EAGAIN reported at IO completion (with the likely
+>>> result of unexpected data corruption) is far worse behaviour that
+>>> occasionally having to deal with a long IO submission latency.
+>>
+>> By the end of the day, it's waiting for IO, the first and very thing
+>> the user don't want to see for async IO, and that's pretty much what
+>> makes AIO borderline unusable.  We just can't have it for an asynchronous
+>> interface.
+> 
+> Tough cookies. Random load related IO errors that can result in
+> unexpected user data corruption is a far worse outcome than an
+> application suffering from a bit of unexpected latency. You are not
+> going to win that argument, so don't bother wasting time on it.
 
------BEGIN PGP SIGNATURE-----
+I didn't argue with that, the goal is to not have either. The 3rd
+dimension is efficiency, and it's likely where compromise will need to
+be. Executing all fs IO in a worker is too punitive for performance,
+but doing that for multi bio IO and attempting async if there is a
+single bio should be reasonable enough.
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmfADMYACgkQnKSrs4Gr
-c8jz7gf/c3Twnw6cmUIGZ/fNaLP0eld0k8vAGDGtBoL4DmX6CVcdgbnhvoYfvAca
-lXiz+VFWI1azdrIkU1cuvHfInJgVFrL9Rkq9F6pAEZEplHesY5iRR53l45+eKeM+
-/YVI4jJaZQkEsr9YyNkY0TBLLom0o2de0npgg7Plu1j6Bfn7f/omyvyBBCgqEk8x
-/RBA8JQ/b2ltF5KV8aIEoXTUiiN43O205Lqx0UlVvahvlWY29WY5k70bFy9Wn7gK
-TnDL4NrddTl6vvP5CCo5TQDHZBZNRyQegTpJbc1g7cR6egz5RsNrJ1OeOA7MVpxL
-hNoD9AKorcwvOiA7VNcgL6lvIFG6Mw==
-=Ccdx
------END PGP SIGNATURE-----
+>> If we can't fix it up here, the only other option I see
+>> is to push all such io_uring requests to a slow path where we can
+>> block, and that'd be quite a large regression.
+> 
+> Don't be so melodramatic. Async IO has always been, and will always
 
---QutFJKJ1ZBtQgHGb--
+It's not melodramatic, just pointing that the alternative is ugly, and
+I don't see any good way to work it around in io_uring, so would really
+love to find something that will work.
+
+> be, -best effort- within the constraints of filesystem
+> implementation, data integrity and behavioural correctness.
+
+The thing is, it blocks all requests in the submission queue as well as
+handling of inflight requests, which can get pretty ugly pretty fast.
+The choice the user have to make is usually not whether the latency is
+tolerable, but rather whether the async interface is reliable or should
+it use worker threads instead. Unfortunately, the alternative approach
+has already failed.
+
+Yes, things can happen, c'est la vie, but if we're reported a problem
+io_uring should get it sorted somehow.
+
+-- 
+Pavel Begunkov
 
 

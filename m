@@ -1,130 +1,144 @@
-Return-Path: <io-uring+bounces-6835-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6836-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B711A48020
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 14:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99539A48085
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 15:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9EE17B5D2
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 13:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E5417CCD0
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2025 13:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A14233D87;
-	Thu, 27 Feb 2025 13:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD31C22C35C;
+	Thu, 27 Feb 2025 13:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe5ptzh6"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fmvTZrn0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="flsWnd2A"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C6F23371B;
-	Thu, 27 Feb 2025 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC465270052;
+	Thu, 27 Feb 2025 13:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664113; cv=none; b=aTcCFWSaoqAKBJR2cT/q05ZxSdt8xnkP23CR9YS2doJTnPF0q9T0dEbAAEtiloh8laF45dB9ehwZueB6A32PDjm00OQ1x2zCrmVlvZIieyE6UjG28KoXIKpSQxhAt91+Yz76QMVuIHu1qwg9o9jGT2znDApo48US+otxJ3cXG0w=
+	t=1740664760; cv=none; b=FODU8PN+JZKef8hSAfQ5c7hZPh20RlXA/b9CY4JXgtQdPlC0GZNCu9DVI1VlIAmr4CbvqCldw8SfkD7C1IHog0hbFXGGBjrzmG/bYmI9PCCAqvE6bgBtHSqSjPzbpk29f5ad6cHhCqX2GjPDUCB6wRLCGPegTyzkrHQt3Epk07g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664113; c=relaxed/simple;
-	bh=slAOqw7zVI++LpNh8v72VWXj4oE//9x/CEl1pfW2jzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCH9tQ6Mb1+0MEu4yNRcRAA4gU5izhSchavefbxaM+qSZW7EmNoKvi788d5XfoYKbA+WgAkl94e28jCIIPspOJo6b86M8qup5WLgrEIPw105GfBYFCCjEeT5FM2Sr9RmH4ZoDklBeRfI5ozB28o1Yoc6FRynMEbq64Ltb+DRgNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pe5ptzh6; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso1493319a12.2;
-        Thu, 27 Feb 2025 05:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740664110; x=1741268910; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EApx63Q1qzZyL10SeStYtTlNysvrIBtUNsuVUpFQBUg=;
-        b=Pe5ptzh6xmc/JTn2dzTDFDhb/lPVT+uiUuORHq83+dZHxshhMw9leBHrpAGidu7ONA
-         wSWnM1IYQpPRl4KagfbJdaRe1ZeIlDd3u54I9A3eeiow50MQrdIGzezt9EEYoykhsEQn
-         AHuJAdTA4/aAOyBG2628VaCSbKdpgcC5SDrAJ03ytK3tMnTvXqaie7d8A399E9obzAWU
-         69YglZ/AiBBZWYPL5sgNHqx9Vnl17eHf4T7pHQyKtVdLpol9bSL3ZIoXLPwknUmd6pk0
-         ueKlePuvGSZ2TQI8wF0pqugZwUnBpxGzCAYhXDjQ6paDmIBKMJVDRCxEPaRjRlIp3cpl
-         zTNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740664110; x=1741268910;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EApx63Q1qzZyL10SeStYtTlNysvrIBtUNsuVUpFQBUg=;
-        b=pztZUmP45KbiuMzCL35YTSGWOFVcPXDz2U4cQgqcl5aIT9hsE90f1U6lgAokr3p8OW
-         yyfoQ5UJM7pgrkex+mWWsNEj/Xa5+7hU6CIikx0FvVCVXDPzd0C+B2qLYkHGaO4i5k59
-         D+vKk9AfR/8R/9j+KrQ/TriB1wToPM04AbGCkMx1W/yyhar0RG3mzrFBpmMH0DXy7zkp
-         wdjHBMDs2oYqrcmOEFa5AfYz/q/8Qwp+yAz+hH/GNYSKEPj4oTvJ8oBBo1ESXmJFmpll
-         Sv6zxMIBXeTfQE6aP29v60x4dM5rk5kRlgNVSBB8afymbnhA8lmM7Dzl4wfDkLlAocA/
-         ABJA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1X1llXneIuEarGBaeX8BtoTV6w6kXrRnBsnKAkP1IBLG8TkU4quapy9j0+87GkLUAmakO8ORsxQ==@vger.kernel.org, AJvYcCWsTyEklMbG67wROeqLnwEZmZRU/fkov0wPhX4u2fC8tI2OGRHOU/oxAg/Bl07eLOzVYWXbqOtwVbOmWkaD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwwm2P4EXb5TR8q1v9FMAwItXiEbLdgmrmd3RXOnpAh+fXon5l
-	+vxudk4LSbWPQhTA6LBqzC1vmNIZ1Gh8+XroMnCyQeAKSsb8fPfO
-X-Gm-Gg: ASbGncvV9qPpCMxPtftKTHUNP1r8Lkb1EttdaiqKwXnNfPZqH42DJVun5JZt5oHz3uj
-	rp/knH3RIeI15FIu26Bwo+qucmPY8ytONwdgNGkmjd7Wit5J6KtvzFDs/iL8065WNOXzQXrIKvo
-	XZS6eT6FYqsZJgdTl7k5t181Aj4v/1F+CZymHh0UbfklkQfELVihWWIEnhp9BixjrpKCC9Lo6Uc
-	XqDeOLGgGzPtM+rrEZCLvrqQ45AJNNsUfGQ9DOvNDdYzmawLjaxO0G4kU50C3tfFCb/s8vhLxoc
-	VzSfg134BjFfq3n0VuDf2MPmQBx75St62Kr0r4OBiTjj1UT9DmO2CFpNUXg=
-X-Google-Smtp-Source: AGHT+IH3pFb3xUoGobJjFElugknrrTtEoeRHI7mgyioAHss2k1r2qXSU8ambiAnFRRCVG7ANyROG2g==
-X-Received: by 2002:a05:6402:2b95:b0:5dc:7725:a0e0 with SMTP id 4fb4d7f45d1cf-5e4a0d830eemr9784545a12.15.1740664109570;
-        Thu, 27 Feb 2025 05:48:29 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:4215])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a6f2bsm1110746a12.75.2025.02.27.05.48.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 05:48:27 -0800 (PST)
-Message-ID: <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
-Date: Thu, 27 Feb 2025 13:49:25 +0000
+	s=arc-20240116; t=1740664760; c=relaxed/simple;
+	bh=y+Bkv+VAEn09oS8FSYeFM5PWtC+mtLYKTSBaTQol2mY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=H63DLyy3hCj7ZEbqoOmFmh6ITzNg8KCf8nIj6g9YFiiiaRLJ9f6k+HnLTDVIEcZvEaNXb2pSe8LTkgVFoIm5WEC+hLJDsqIC24Lt931Rf2/YluDfN3Z1dtvvNLFavRemgqZCHa650A4NWcvQn1peOfmFSYLAu4TBsgV6JC7zOcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fmvTZrn0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=flsWnd2A; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C989D25400BC;
+	Thu, 27 Feb 2025 08:59:16 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Thu, 27 Feb 2025 08:59:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740664756;
+	 x=1740751156; bh=LV/WRSas3PMFQMKytZr9MeXHFEcC6OwrMrorB24cdCc=; b=
+	fmvTZrn0JXHJdcLxLj35zXruAx13i1axGpMHA7J02NJUm/rgsSRzZBNgaUo2vgKG
+	IbApSFgWDy37K72HaJuMgrotCQarLz46vOYWMqXgSYZZpIlNcAWaQBP9L8yIdYDx
+	rCSF5Ht2UbiZjzgj56m7WB95zNnwcLV6uRmK8YiL44MzA4L6jeKWvh+dxDqij5tL
+	7YsQrsjljSXRvAe5ni9RDL2bBu1Jgvj9MwbYlc1CktCgauilxTNfk5EB/3OShhH2
+	Y+8gUZ3rzdyvVvlCBveWFJfQSpnXZuPPQw1JYyDiGQUh7Waf5s6DSpfdwX9Qi+TI
+	lbxC8ciyclAFnAH2kIqWKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740664756; x=
+	1740751156; bh=LV/WRSas3PMFQMKytZr9MeXHFEcC6OwrMrorB24cdCc=; b=f
+	lsWnd2AjyipmUfreWrE469HkXPxVsVk+vcCkhS8vBy5K+p0BTT0TPMeYIcAt6Gq8
+	Aj4dQq60LdiPx+xA/YcVTNAI3ZcVT6+KrkmyL5j1sfX5iqPbkYwe5dMB14sWCi+o
+	INfc037KrGvgWkLKZOQlwTCWOA3nwFyom+hDT7aAWQOmCqOer4BW8fvtDwCnkt1t
+	ZEDUChjn5YCFnTqzsyQg+5y7yUUo6G13KITPKvCjJtvHJahFLPM7WvqpVxGYWOj/
+	yt/yJECcjl+ObvvoU7iPBDjLC6a1LwZp4rMnvcVpDwOe5sNMQJ+2JXpIvDkwO0VS
+	EMlm2dOhfGcp4giCpnoDQ==
+X-ME-Sender: <xms:s2_AZ9gMmvWWs2xgfqo-fwGBgCMEaaOCd26RDcGtRWLRRJjDBBGOYQ>
+    <xme:s2_AZyCkN2lIRU92iI2HdqDZtV-p7oy59jVXxhzMnKJJ1OKpouEd-Bi06QjTK31vI
+    F_x2q8Y9lC0zLXsL4M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegufiesuggrvhhiugifvghirdhukh
+    dprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphht
+    thhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghrnhgusehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehkrhhishhmrghnsehsuhhsvgdruggvpdhrtghpthht
+    ohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:s2_AZ9H5Bc-ZumG0jf6bcdHXnVceKT-TvJWwfuycWdoWX5U-wlAy8w>
+    <xmx:s2_AZySQjFM3Xc-jS7NlIszjjbNM2B_fHGxHl9qtdAr0VOaFnK7Ntw>
+    <xmx:s2_AZ6x7zTEv_zW0IRY3OrQHIp1TnCKkCl3lRVakoXRtRu1EQhpiMQ>
+    <xmx:s2_AZ47MEH17T6RIwrl4xSnHnjq0y5Zbabm6J3nbXf_StjA_gZWHfw>
+    <xmx:tG_AZxlYhA0pD4Xods2ezKRaOCrC_babLhBzYxqg1HnZJexergIoegjb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D5C8D2220076; Thu, 27 Feb 2025 08:59:15 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: fix build warning for !CONFIG_COMPAT
-To: Arnd Bergmann <arnd@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Gabriel Krisman Bertazi <krisman@suse.de>,
- David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Date: Thu, 27 Feb 2025 14:58:55 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Pavel Begunkov" <asml.silence@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Jens Axboe" <axboe@kernel.dk>
+Cc: "Gabriel Krisman Bertazi" <krisman@suse.de>, "David Wei" <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <9ef40a88-6243-4baf-8774-e4b72bfbb2f3@app.fastmail.com>
+In-Reply-To: <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
 References: <20250227132018.1111094-1-arnd@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250227132018.1111094-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
+Subject: Re: [PATCH] io_uring/net: fix build warning for !CONFIG_COMPAT
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 2/27/25 13:20, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A code rework resulted in an uninitialized return code when COMPAT
-> mode is disabled:
+On Thu, Feb 27, 2025, at 14:49, Pavel Begunkov wrote:
+> On 2/27/25 13:20, Arnd Bergmann wrote:
+>>        |                      ^~~
+>> 
+>> Since io_is_compat() turns into a compile-time 'false', the #ifdef
+>> here is completely unnecessary, and removing it avoids the warning.
+>
+> I don't think __get_compat_msghdr() and other helpers are
+> compiled for !COMPAT.
 
-As mentioned in the lkp report, it should be a false positive.
+They are not defined without CONFIG_COMPAT. My point in the
+message is that io_is_compat() turning into a compile-time
+'false' value means that they also don't get called, because
+compilers are really good at this type of dead code elimination.
 
-> 
-> io_uring/net.c:722:6: error: variable 'ret' is used uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
->    722 |         if (io_is_compat(req->ctx)) {
->        |             ^~~~~~~~~~~~~~~~~~~~~~
-> io_uring/net.c:736:15: note: uninitialized use occurs here
->    736 |         if (unlikely(ret))
->        |                      ^~~
-> 
-> Since io_is_compat() turns into a compile-time 'false', the #ifdef
-> here is completely unnecessary, and removing it avoids the warning.
+> I'd just silence it like:
+>
+> if (io_is_compat(req->ctx)) {
+> 	ret = -EFAULT;
+> #ifdef CONFIG_COMPAT
+> 	...
+> #endif CONFIG_COMPAT
+> }
 
-I don't think __get_compat_msghdr() and other helpers are
-compiled for !COMPAT. I'd just silence it like:
+That seems even less readable. If you want to be explicit
+about it, you could use
 
-if (io_is_compat(req->ctx)) {
-	ret = -EFAULT;
-#ifdef CONFIG_COMPAT
-	...
-#endif CONFIG_COMPAT
-}
-	
-Let's see if Jens wants to fix it up in the tree.
+     if (IS_ENABLED(CONFIG_COMPAT) && io_is_compat(req->ctx)) {
 
--- 
-Pavel Begunkov
+to replace the #ifdef, but as I wrote in the patch
+description, the compile-time check is really redundant
+because io_is_compat() is meant to do exactly that.
 
+       Arnd
 

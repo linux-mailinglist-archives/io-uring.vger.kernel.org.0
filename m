@@ -1,91 +1,91 @@
-Return-Path: <io-uring+bounces-6863-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6864-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CEBA4A5BF
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2025 23:15:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF5A4A5EF
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2025 23:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F151175B53
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2025 22:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB381773E4
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2025 22:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4881DE4DC;
-	Fri, 28 Feb 2025 22:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FFB1DE8AB;
+	Fri, 28 Feb 2025 22:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DsZMDuky"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ZqvA/69B"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f98.google.com (mail-oa1-f98.google.com [209.85.160.98])
+Received: from mail-io1-f100.google.com (mail-io1-f100.google.com [209.85.166.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0521C6FEE
-	for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 22:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51431BC9EE
+	for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 22:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740780925; cv=none; b=J1XU5dHzSjkXW7P+DwUarjRAzQUZ4MJBg7qCSb3f+0+tiy/PfMBft5/0NX8mu3LT/IxVb8b7Zq1EkuuRKl1Xw8IqRGdd6uH8iTpR48ESkMdfhkg5gsD6TKYe3Vz1b65gBZgvqrsEfJJ4yomlRYlcFIRVUNQjlB1nGVJPIIhbE68=
+	t=1740781894; cv=none; b=a76kKr8i9ftNc3TKjmMzHYOEtt0hwRRDTuEkV1TYyBBlT+tNacSRYh+KwSUfUSDXmdZE4T+p+MNAzTq1O0RYzRLSnA+aWRhxx7cj1K21PWkNvxGkTgmKqDHWPEq1j44VhDcTW22400Qn0v8Zs6cB/ZJU34AROSInG8xMV4aW5bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740780925; c=relaxed/simple;
-	bh=ZAtHRud4MMjlHTqigW4Ubbx0wxFM6EXdQHtTR6ONheE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upa/wUylOfAXp1TIgSerV8Qs+k57u1secSAgPaBcAhlsCkVPt5kgEo3NU6Mod/eyt72U6liOl9OL57QN6krCxoTinEJc0VE7DwI7HmRiw5cXM4fqnirBz1t4h2BxrK+0K7iylAucQZHt0FlXVO7MmiqeVMVbdHG/nNsKpNHDoxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DsZMDuky; arc=none smtp.client-ip=209.85.160.98
+	s=arc-20240116; t=1740781894; c=relaxed/simple;
+	bh=doQuaoN9u7OELR40CVjM5Wacan+eeA7kQjC+1Mvrbao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u+40YUgobvrdJtrHYQS6WsVfueNrYi49l6NpofEG4vqGa8BFVi96+Ubv65xhHWCTxN4CSuah15935W5TMT5IgqIKFUr0Dhi1PvVRk32Mfrz9eqgDIUGbBwS65X7M5FKAbwaT4cIxG2f+66hc2ZBFwyl4zRmZKmPAt0jr9BmQb/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ZqvA/69B; arc=none smtp.client-ip=209.85.166.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oa1-f98.google.com with SMTP id 586e51a60fabf-2b840c17e9eso443334fac.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 14:15:21 -0800 (PST)
+Received: by mail-io1-f100.google.com with SMTP id ca18e2360f4ac-855a8275737so8815439f.2
+        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 14:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740780921; x=1741385721; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1740781890; x=1741386690; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Cir2LSQzIhQDWFjN8hKDuCrYLHrrp3l+4avtAPTWII=;
-        b=DsZMDukylVBXBYixsPO3AVJogk6Z+i0s8g5ff9WKGxAp2zho4cOp9MIhVJPSA85M7o
-         uoxA+Ku7a4JGO39SoLVYa3mLwLjpiaMiIUr5oYJ7erUhW97/0kapfNGCeq8oi1cXSp+K
-         DBezCezY/hs+haOoJmsozhu6/FIqRa15Tue6OaHT+ElgH6A+/Ns/K4DpILPK1VHpuNcN
-         9SdWRcSQkoYbF2I/yin0pb9DMJxgbZutCmu5WDa5FUd6K20oemzjG1Hs/a95KOmVQa8y
-         ZxnOrR6mDe42cUAwyU4YCbgJ5ZEB9DKG3xmbrjf3H13ukhc2jPfW9tazWOgA2GIbCCNv
-         P83w==
+        bh=+2T1gHynTazYnP2hzcbY2sNMNgTOV0NNTMpa17eKN4U=;
+        b=ZqvA/69BIeuGmkQ2dhlqb5mb0DpkRhOvF40MHhBd/xFHRLoKsJar6wuYLdKjhlr/be
+         /fUc96MHmEmvUTnFy5yhGv9StY2PaNrQ23P0/5FM/M6uprBBSBfgI8wk1YtVC+/IEMWL
+         tvwEj65CKNaYgVoc/i/uj3DxLrFt60iIZLl6DDmwFjBlhRa1wGPbJcEjJSLHh1x1VGzE
+         HBtSdvEFuzEsG1uo4GcvDPt3mS3Vm1njBRnzV6iaj23/7ekvl9qUeSTShe0X6lfbVfLO
+         HPwlsiLVLjaM9tXcd3wdBJX5JHpwh1FMVusrJ7/sQ+6+kim4/VVnjyFA0Ql9HZz8Qjd7
+         wuMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740780921; x=1741385721;
+        d=1e100.net; s=20230601; t=1740781890; x=1741386690;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2Cir2LSQzIhQDWFjN8hKDuCrYLHrrp3l+4avtAPTWII=;
-        b=MZtr0RmdRgStK5OVuKg6RoQJ1EyNVGR1r0k5eOSoD83/WkmlyIzVx7k+g0RrsEJ3/A
-         wmDpAETltuvyknHZvfMKmez6xigx/Kq8hNM6QatZ9udCRHJsio6UfnQ10qwCr5ffLlkD
-         ybEWs0JEQ7pzlgk98y8vOilnjYQjxQKKgh9ilpnkV4Jox2DQXSmahVGsAiGhjVqJiGct
-         lGwLKnOQWvjjwonoR2Ii+ysC22lmvf9J1wcd87PTLlyUlFtfaJ3goN/MH6fyz1W9/t4z
-         l/DL81lQiT+PNg4c+475bAD5cH1r4UJdCki9bDAz0inX4lgBreRyL8PuDfitld0r/SBg
-         JPjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfC9CSLCj27+ppE62zD24Z4MCWxWwD+F/321d5oSq7rjJNygDIYTGGrkoYqVjkVzrU+VCBwYPLiA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2C6GdS2TLdTcZ7sRIhDLP+Cdsia3NNpFSvWEjJ7Y+GeTbPSEw
-	LXEZSllwd3B9CIfKgKn2H9Z46soYsjJKdBLVyT9dvBQy/KraO3m1iDSy7xEn6vfzEQ4rLyvB9yW
-	Vq/x+HvnH3UD9h4ZtaH/dLmSGjzrmDMlv
-X-Gm-Gg: ASbGncsU9M1qZq3dzO97vP1azAIwssrywBKCGdN2Pd381JW9tyho/YgIgD9hujN6COC
-	5lOhZnwwxV2lo/LSXBoe7HEfyRNl6YFoDG4oAw0pKjMGcMwRX0yD/Lgfmt/KX+ABNjhw4Jt1qaT
-	DXBr5Zowt0lkgL0GbM4T0DAqT/9JbOh3f1B9Tq9F0wZ1qpIn9Ti7U4/G6kIqHXMn07JXgR9gL+N
-	74VnuAlgQAODULHzsdXtsSfcpYvyjW5hIZLzBbDSmQt1YzSQ2BTSiCDKTG2ZPYxe5+Z7/Og5i8h
-	aMD9d4f7DyMs0CD4GBDrfbpOkr3CUQZpPDba1aHlmc19P9mk
-X-Google-Smtp-Source: AGHT+IGM7zr5Q3iNiBBpZHeO1Fl1xOII9V2n1xyulg7j5Ht02fikpB49bBxs9S7F0Qpw0HhV5WokJdEjU5LZ
-X-Received: by 2002:a05:6870:1707:b0:29e:5f79:21b4 with SMTP id 586e51a60fabf-2c178715fdemr1125824fac.13.1740780920913;
-        Fri, 28 Feb 2025 14:15:20 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-2c15c568f0esm229187fac.41.2025.02.28.14.15.20
+        bh=+2T1gHynTazYnP2hzcbY2sNMNgTOV0NNTMpa17eKN4U=;
+        b=E2IgIiRt8CT/x6D8dsD3tn4Ut5/vxiUwmAokM8vs5MfrRGa9ZxCxQBIVHe2NXzT7LZ
+         qsOq95rHJWJPqwe5DYR691wSRdwEIC2k0q0Xf0IiOiymfIMgZA+n9VMJFdNebolu5n26
+         ZljenfXtCzM6V1jYzXVIhSOHG5BQetwsBy1u/J8CSE+Yth6Oakr14Z6Y9F4Dq+etJ7hR
+         C69hHLkUANWbSjPEbpdP+FOBoFTy9KD6IolFKw+Yah6WKuS72asxnx/xG8rXf4z6Oz2W
+         2vSvQp5Chsej/Gn0kW3Z2b8No+WK1dSzz4Lp+naUK0aotLNWWRsHkKrnmaY9oa3Qhgpy
+         5irw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbwnfbQ7ATtJ+AivShsMru08W0yQu8kpXxCkR/umvWhxleAHqkCfdFJfiQ8tZ4WNy3B43TcGVemg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqG91JiBVamLKbaTbGBYwing6deB4bZl+5xVyHEp9RaKcTpcr9
+	+LHUCpPIEIM7d7A4gKMeVLZ5YSgXC5wTei9rKGIYMeFsobywU3a61R4R7kh9mu8yHCYpmqCroFk
+	EY74pHDXI0gwp+rN4DaTDs9ww0+XirxMW
+X-Gm-Gg: ASbGncsYvz0fY/xhiWR/DLtWstvZDOwecw2uuzI3Soe7EyWVWKiFAVVjTTAsRKTzNMa
+	LH1aZvYvmF5YNYppD6T42M2EsizNnge1z75fu6b4t20KfqGJQSHl2sQKND0Wq5cxcCSVF4QtGX6
+	iiw07saqLYOTz57A8wJF4SNdLi+xAjz5x1qKp7vt7SFaXAjgsifRsEo7sLkZLwwqtktmNC/lTQL
+	+jLOF7W8icSN+oSyWex4MzFQIdL0aRcEy0O4AnmSK/L+euFDP5NDEcIPaMcwHzs20m6CJcyd4tG
+	QOH5oNA2upcFXYNvV5++BKuduwsG/rlLtDD+iM7zCnpVZqXp
+X-Google-Smtp-Source: AGHT+IGlrTCdO8WZvksVSjTwN72/t2bqEU9x93lBJ54pXZl2ReyCbDq7nfRgjsOsu7MOcrYaXpdeJCTb1pEd
+X-Received: by 2002:a05:6602:1490:b0:855:c259:70e1 with SMTP id ca18e2360f4ac-85881df0152mr149012839f.0.1740781890680;
+        Fri, 28 Feb 2025 14:31:30 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id ca18e2360f4ac-85875116281sm25664539f.7.2025.02.28.14.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 14:15:20 -0800 (PST)
+        Fri, 28 Feb 2025 14:31:30 -0800 (PST)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id DD08F34028F;
-	Fri, 28 Feb 2025 15:15:19 -0700 (MST)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id CEAC934028F;
+	Fri, 28 Feb 2025 15:31:29 -0700 (MST)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id CD5AAE419C2; Fri, 28 Feb 2025 15:15:19 -0700 (MST)
+	id BA052E419FF; Fri, 28 Feb 2025 15:30:59 -0700 (MST)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
 Cc: Caleb Sander Mateos <csander@purestorage.com>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/uring_cmd: specify io_uring_cmd_import_fixed() pointer type
-Date: Fri, 28 Feb 2025 15:15:13 -0700
-Message-ID: <20250228221514.604350-1-csander@purestorage.com>
+Subject: [PATCH] io_uring/rsrc: use rq_data_dir() to compute bvec dir
+Date: Fri, 28 Feb 2025 15:30:56 -0700
+Message-ID: <20250228223057.615284-1-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -95,70 +95,35 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_uring_cmd_import_fixed() takes a struct io_uring_cmd *, but the type
-of the ioucmd parameter is void *. Make the pointer type explicit so the
-compiler can type check it.
+The macro rq_data_dir() already computes a request's data direction.
+Use it in place of the if-else to set imu->dir.
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- include/linux/io_uring/cmd.h | 10 ++++++----
- io_uring/uring_cmd.c         |  3 ++-
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ io_uring/rsrc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index cf8d80d84734..5bc4f0d58506 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -38,11 +38,12 @@ static inline void io_uring_cmd_private_sz_check(size_t cmd_sz)
- 	((pdu_type *)&(cmd)->pdu) \
- )
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 45bfb37bca1e..3107a03d56b8 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -957,15 +957,11 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+ 	imu->nr_bvecs = nr_bvecs;
+ 	refcount_set(&imu->refs, 1);
+ 	imu->release = release;
+ 	imu->priv = rq;
+ 	imu->is_kbuf = true;
+-
+-	if (op_is_write(req_op(rq)))
+-		imu->dir = IO_IMU_SOURCE;
+-	else
+-		imu->dir = IO_IMU_DEST;
++	imu->dir = 1 << rq_data_dir(rq);
  
- #if defined(CONFIG_IO_URING)
- int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
--			      struct iov_iter *iter, void *ioucmd,
-+			      struct iov_iter *iter,
-+			      struct io_uring_cmd *ioucmd,
- 			      unsigned int issue_flags);
+ 	bvec = imu->bvec;
+ 	rq_for_each_bvec(bv, rq, rq_iter)
+ 		*bvec++ = bv;
  
- /*
-  * Completes the request, i.e. posts an io_uring CQE and deallocates @ioucmd
-  * and the corresponding io_uring request.
-@@ -66,13 +67,14 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- 
- /* Execute the request from a blocking context */
- void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd);
- 
- #else
--static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
--			      struct iov_iter *iter, void *ioucmd,
--			      unsigned int issue_flags)
-+static inline int
-+io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-+			  struct iov_iter *iter, struct io_uring_cmd *ioucmd,
-+			  unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
- static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
- 		u64 ret2, unsigned issue_flags)
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 31d5e0948af1..de39b602aa82 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -243,11 +243,12 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
- 
- int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
--			      struct iov_iter *iter, void *ioucmd,
-+			      struct iov_iter *iter,
-+			      struct io_uring_cmd *ioucmd,
- 			      unsigned int issue_flags)
- {
- 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
- 
- 	return io_import_reg_buf(req, iter, ubuf, len, rw, issue_flags);
 -- 
 2.45.2
 

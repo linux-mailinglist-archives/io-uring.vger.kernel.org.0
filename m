@@ -1,115 +1,142 @@
-Return-Path: <io-uring+bounces-6894-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6895-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99937A4A812
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 03:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E3EA4A819
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 03:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791D3177E71
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BB8189A045
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C2A1B424F;
-	Sat,  1 Mar 2025 02:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B785128819;
+	Sat,  1 Mar 2025 02:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="So5E9MlT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q85dqksK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8391B5EB5
-	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 02:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983A14F11E;
+	Sat,  1 Mar 2025 02:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740795825; cv=none; b=rD0/e2CpLtlKJkiamgIwcuhxrEvd67XemZyrq/bUaHJAsvIhmXonk3nplw1OPTF5zM6sMp0DoaJ0fWAWght2ykBPvr0ylYCCSmpbkCDs7SxX1WeU5aDIEDHwR8wuNe+RiDZ/8wMIl7lrCbnTcKjBEkMCvlF1ZRb+tHmm7Ef8HDo=
+	t=1740796213; cv=none; b=Ga16lkufb2r59q8nT/X1Ha4KDRwXi121Rtlf6MgfPYkIJgI+UY/wIDebqLbsDzTIeE/g9crGOequvF4FBpGpwZNlBWitF2psc7Ox1snXAxPzHuiKqsQIO66TCFPboCyjNCsDffYD0oiMPAXuIWYF5WpObGZM1eH5wYnlVu2ZmtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740795825; c=relaxed/simple;
-	bh=xY/UISVIf1atfvS7OMuZEMjN7lkQ/iikiRcjhdY1uUg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fjqQBmSwXU4N2czjyrEqbwfeACUVqZ6dK8uGzDGC/mb0p33wic0ZSjuuGP9lhKovBH+VNVBQ9VwDVC0vNofFCOyFg/xfmyMQpnKaGh9wF2eM5U77sPD9++IDkcbmRmGRPmG+KC/UHgo5z+XBpD9f28Jvc4EUoN+/ACaiEKsTsTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=So5E9MlT; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6f7031ea11cso28214577b3.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 18:23:43 -0800 (PST)
+	s=arc-20240116; t=1740796213; c=relaxed/simple;
+	bh=9tIX5thhpYwh28z/2Bwjdyep7WK8WiTG2cUxUzY8/8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mguLuNmjC5lKoDbPOHI/Nj4y3KxUIN+cAxIP/EGLy3GqkW2fCLgb3le/mX0E4YWrcRI5sdWkb5GsZ2IYjgeLdE2cjVWlGFINU4dPXs+1IM1Xdteo2Dpn05S7pphZUQVqAng7VfGRJwT4R2VvST92240ZWFnZspMr/1xsrYH+YLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q85dqksK; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso482522266b.3;
+        Fri, 28 Feb 2025 18:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740795822; x=1741400622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfDYi42gjS+u1iz1GYPicfPXnoYEpE1W6/kuhPU/S5Q=;
-        b=So5E9MlTlRzDmw0c+Z4XM5pR02TWjJnGjE8CZXyLYRLmebSsbsoyvn3pKFKGmET1kR
-         sALd7G0wtFM8fLOSwdwrksR/jGxMCtqIqkmKIqhP+PNsGMpu3pkK/niTppJhl+cRT/Pp
-         uxtSFNS53wGjqbOzPSZ+sKJ3SyyXqjxhIsDwcVhAMoXJlVY5OLg3NKQc4wWderLrfUA2
-         HI/u+NGSLEFmcW+Ur2yC7SdbTzaC0+WEik9f3xYNNJO9geDlSuhYOsN4EEwVZynCHLJm
-         Gis1J7py7xM9Jm7KBQ80IDMawiTPMGGFgocDebvZg4nCE+Z0jdWWkbbkpzdm+rs5BQWp
-         38xQ==
+        d=gmail.com; s=20230601; t=1740796209; x=1741401009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eGoFze/haLSNG7MuxPQWfgouNX1yDVGtlhX94dlm3Vo=;
+        b=Q85dqksKb3of42jvPlBfukgAQBUcDhKsAslUK4F2EUmLiKqDaOlOnzWl4X0JzbHs75
+         IYvjJAIb3wx6AlRzvlZl1s4CgoxUHIPoQkOUeUhCGDuoUg1WYRkkSIrxWNlHT2kcBzK0
+         MUvJVk8iRscOBZzYOM4EKplrXrHmSt8nFybRvvU7ibb6oOFmbuqbWLKB4/NuDUZqv9Ej
+         zYOWkxzFLTCPJ8UaJGo8tEGIOrfxpUsSsRGiy1d3a+ngZDTdSEOkBrNA0KD9JTT5MV9Z
+         A5yZcTojerF4ZBsL0FOpwYM3B+J0FVrWuMAGfs7ccQvoFJ7/tzIMaaQxBWw8JZfp4F/q
+         0jVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740795822; x=1741400622;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VfDYi42gjS+u1iz1GYPicfPXnoYEpE1W6/kuhPU/S5Q=;
-        b=dwWLXaaqTTtkrfjmiGc6n+r05dQHBPDU1WW/fHvgs/XEiZAqWY6CTB8nr6Hauriqgq
-         oskdX5c4tzKBtTc1bA4DMCkb5U4fD6FWnHYVDb5Ss7P9w8ypK9B+20FF7zXlvi/bHFiT
-         79krru+RrUAlChfONO5kZGc/lXn0X0v52XC9Z7a7SgVIYoXfnENCNTjCxSfs2lAKiYsI
-         KMl5gkW/gOghUn2wONzcY5A9+R8vLfWDHqzwAzgTl+doJ/QsfBpH+HtUWvgvrN0Ktu7/
-         yS53GJWwRgb5SaspvLvDerHeWtpYdcLuE/961JELcqWAxl0bYcjQ5bV/Casx0Rq9EixD
-         blOw==
-X-Gm-Message-State: AOJu0YwscSsbanjEhgXDZ9mMfwrsFWJzM9iCyGDZvSMFGL8gC4fXw7FG
-	3u8/900GhkLyxxcwEymKBqfGjYOlEoVvQRdYKJL0lrxhHEBO9uDFT8BjEd/dP0ZtUdGVxRsQqve
-	d
-X-Gm-Gg: ASbGncvziBYAG8oYfdGdlkvYH9TmBUQNf7wmJDM18HMIbNCqLzh3l3vI4dTYntUcjCB
-	RfD2qVydrBP6oHqhKwXavQGJeb4+/rT4UiVuoZ5fu2NhxERNNKD1laKdEspfP7dy8b6IsnPmU2H
-	U3kEtFtDLuMZTwDFptVJ25GbfbYqo5cFQ1xD24/VjPJjFcSwhJeiwG0omskUzonKVLZxdPmvYXO
-	sc6rA2eE8aR5JxAUJ1mtTqrNpUKou7pDtq2c4X5APBMgBKdo+tAqYJC96ioByRsUxKAHHW0KMDz
-	Phl+vk7kj/cOeKSdaUA4jSo4fMds0zFy9+NkPwA=
-X-Google-Smtp-Source: AGHT+IEBXBECUiYtnJB7xtAXg6I/62QADZwXGKn1Rg9EBrqtWsNXbyRRrltHVGhBDMtUTvfcTG7yjw==
-X-Received: by 2002:a05:690c:4b8c:b0:6fd:47b7:9730 with SMTP id 00721157ae682-6fd49fb60a6mr78166737b3.12.1740795822147;
-        Fri, 28 Feb 2025 18:23:42 -0800 (PST)
-Received: from [127.0.0.1] ([207.222.175.10])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3cb7e02dsm10175307b3.84.2025.02.28.18.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 18:23:41 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250301001610.678223-1-csander@purestorage.com>
-References: <20250301001610.678223-1-csander@purestorage.com>
-Subject: Re: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in
- header file
-Message-Id: <174079582102.2596794.10638072394312089078.b4-ty@kernel.dk>
-Date: Fri, 28 Feb 2025 19:23:41 -0700
+        d=1e100.net; s=20230601; t=1740796209; x=1741401009;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eGoFze/haLSNG7MuxPQWfgouNX1yDVGtlhX94dlm3Vo=;
+        b=lfGHzPpESOhJGUxRlVjm7YNrzefaH1jvyje2IViWusN9Ei0zISvYizsIor5dKebxA6
+         pV/AztPsZJjkYA437UEeV64WrKH3z/BTM9+/eA8KQlx1qNEUZnPbNdNGzKs9ZvEuH6LD
+         EI32DTatWRBVVQ64cGEmesEohPzM/qb9CkCvE5VKok8KoNj1UqfpHAOMZSai1dxfAY7f
+         HS5uzhV1za1PiGVBIYGBistSdaGYMYrCTW0+i0wLtzOJ46bkHXqiMZDGTcjoGru4rutO
+         QjK6iM1kWYBYdP3xYStOz9G2LwZ7QXnKcXqSu6OTBqieCllZh5FsVPpGdISPVYNCoUEn
+         W9Og==
+X-Forwarded-Encrypted: i=1; AJvYcCX75R9Ohmf5Gmz79vm1IjHFBmfPvYNBHc9ttnX0f+HdSRMv1yWV31eABlFdwfdWg3tKyywYAMLOfamS0rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEkowVAmEFeSwZqTTV9pe30dTdEiZwO++pkCpYij9hq5tWHj0T
+	xE1BiIQNEAU5n0gWscSfD8BPXPgAX84EzmDHhGJttlnJLW5fv8fO3aYKcA==
+X-Gm-Gg: ASbGnctL7nbmK+V1NFevVXtoIZ0aQTWdc3wuMz3aFWqMmebhqY87WeEjDCWDnbRtUod
+	cjVrMYvKSJcDPR7q+viRT72iTs6imciLHKXj+iLdu1spwDfFGPX9ZAdzuCmsPXITnVUmCle/iJJ
+	UcQAXzIQSutBjNzgta6QGwywR0/PUE6H9DvyPs/QEjod7xvOSYWFaYN0U/GVMjiGbZ/TpH5CiWs
+	ICsW4xcXBOKLTknHdLsvSzH64VijZs4UkBRv1xs9EU+rprQWcnNC0M2s45zZcsVPvNqe8YMIvu5
+	+YAlM/3HwxzVYOsbom2WrEamiTVEvfOw/8dgMMmc2gnVJHwCDJ24Jec=
+X-Google-Smtp-Source: AGHT+IHd7E18Z/swSSl1I3t85oHgsp3SyTLuApXdSR64kx/HrNHepkL1Xw9YYHf2HOWfakmUUEubww==
+X-Received: by 2002:a17:907:60d0:b0:ab7:f245:fbc1 with SMTP id a640c23a62f3a-abf261f9dffmr550078666b.3.1740796209515;
+        Fri, 28 Feb 2025 18:30:09 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.144.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf4b7385ebsm76224866b.106.2025.02.28.18.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 18:30:07 -0800 (PST)
+Message-ID: <f3033c30-8a0e-4a18-aeb8-82fa97020bc1@gmail.com>
+Date: Sat, 1 Mar 2025 02:31:14 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in header
+ file
+To: Jens Axboe <axboe@kernel.dk>,
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250301001610.678223-1-csander@purestorage.com>
+ <86d5f210-d70f-4854-8ecf-eb771f26685a@gmail.com>
+ <CADUfDZrOoSgT5n51N5=UFSum96mj2MAytQbJNbBVC1BJrmNVtA@mail.gmail.com>
+ <76a9617b-b1c8-44b0-8355-948758f6e70a@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <76a9617b-b1c8-44b0-8355-948758f6e70a@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Fri, 28 Feb 2025 17:16:07 -0700, Caleb Sander Mateos wrote:
-> Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
-> other files.
+On 3/1/25 02:22, Jens Axboe wrote:
+> On 2/28/25 7:04 PM, Caleb Sander Mateos wrote:
+>> On Fri, Feb 28, 2025 at 5:45 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>
+>>> On 3/1/25 00:16, Caleb Sander Mateos wrote:
+>>>> Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
+>>>> other files.
+>>>>
+>>>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>>>> ---
+>>>>    io_uring/rsrc.c | 4 ++--
+>>>>    io_uring/rsrc.h | 2 ++
+>>>>    2 files changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+>>>> index 45bfb37bca1e..4c4f57cd77f9 100644
+>>>> --- a/io_uring/rsrc.c
+>>>> +++ b/io_uring/rsrc.c
+>>>> @@ -1066,12 +1066,12 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+>>>>        }
+>>>>
+>>>>        return 0;
+>>>>    }
+>>>>
+>>>> -static inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+>>>> -                                                 unsigned issue_flags)
+>>>
+>>> That's a hot path, an extra function call wouldn't be great,
+>>> and it's an internal detail as well. Let's better see what we
+>>> can do with the nop situation.
+>>
+>> I can add back inline. With that, there shouldn't be any difference to
+>> the generated instructions for io_import_reg_buf().
 > 
-> 
+> Yeah, in general I don't like manual inlines, unless it's been proven
+> that the compiler messes it up for some reason. If it's short enough
+> it'll be inlined.
 
-Applied, thanks!
+It will _not_ be inlined in this case.
 
-[1/2] io_uring/rsrc: declare io_find_buf_node() in header file
-      commit: 98ddbefafecf270d51902cabfe289df10a702cef
-[2/2] io_uring/nop: use io_find_buf_node()
-      commit: 15d86dd9019c7a97bd8c5b6880870b97e7cc74ea
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Pavel Begunkov
 
 

@@ -1,140 +1,111 @@
-Return-Path: <io-uring+bounces-6872-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6874-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565F3A4A6E4
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:16:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18B2A4A74C
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2038D7ABC19
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 00:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9D83BAFB4
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49885234;
-	Sat,  1 Mar 2025 00:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549BA23F378;
+	Sat,  1 Mar 2025 01:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="TZRVwYdo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHWMRfQW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A79B676
-	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 00:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99355179A7
+	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 01:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740788177; cv=none; b=jvsNFlk/VfKGFFwzORfw+AmsTaFR2AJBZTQtgn1LNoHb11LhSEfqhVFmnime9PxSdceoEG5p6lk7OaHRFmcuCwa4vsBkgPOEZXjYX+AGDUKXERmoPM7hZHUEMLDJcvA3PVl+Bq3OmuLIyE9rN5Ob4znBAg4HGEf2KpuAPfy/5n4=
+	t=1740791513; cv=none; b=M4unqZztqnnXJm6ZceZO03oyVXiYmPUR+VzK3r7eiZd81d29tGEie7rDykXH8Rmb+nskAJxaKuzReOg0TsqIaYcA1+9IhhBZMDS0xLt0tmYjgp6uibQWB4goxmh+06xfp7D4xHA1VYD7NSJ2D/dsnJnbDv3VV8uJ/ilrQRmkImw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740788177; c=relaxed/simple;
-	bh=gEsO3KSN33JHbOjHTf+tQsfxSg1mhFmpgrI1pGdf+Bs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cfl/xFIcNWbTW38Gx768RBlsceVxdTaMPUdG2vHpSjfy7YB6bZzz80FelO3a/VnMVU4GWK7eT9ESlD/QbuytqAYxVWdfK/J6taO2ZEL+VFNJxq1vTW1hIu7PqpvyPtsWoQzKWN3bYQIgiivdWqVQtCkAwoY5vPR889+QK92o3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=TZRVwYdo; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-22367eba6f5so4644315ad.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2025 16:16:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740788174; x=1741392974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KQZ71ECrKkWECl6xiI/pDVZ0FP+103ZQTyoLJB/O+Z4=;
-        b=TZRVwYdothALMFYxxZa/Evs3/rFbbkU/wa1uWjzrTOUjVgwq17FPVQPzrkTWCAA8Bl
-         fpkOPqd3W2aSbJxd9IpD8nWrqHOqEA7Ck1K9wQJOmbUAq5Wt0uCH6PZNcQ95tx4vEjAm
-         k+GYwnbO9ql/SVCT8pJ4ZnggFcV5Hvvi4+vi0IbUdnpLbMFLdvXjURDkooiDMFTiHHZ1
-         nYEVTzWiwPiet2keQvBlHGyVYd+o7owLipLRw14tUMckM7zpWBrv4XISFgGuUGuSEVww
-         0Dnv6AWa2Dagd/IcH1pJUKuoDoycMGFVRJSW3EGIFrkUtWErlriueDZvyB82QwAQ6nDD
-         Cflg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740788174; x=1741392974;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KQZ71ECrKkWECl6xiI/pDVZ0FP+103ZQTyoLJB/O+Z4=;
-        b=erRUSWDosrA7ev7oiUQyGodoz0iOalZWoQtrwFn99uRrpKM9mIw12FWJ4eswqaObaV
-         baprprRNOedUABfLe2lVRh14maF8ezMIPyn2XZQgRot9uFl4kf/NCXQaXwesja47uVKV
-         2aL0tvcyWKkRdC8Oh6wvNg32x6kyN5VIEL+lh2uL9ULgdP+F9zyrrOlKtPFxM12goOxK
-         9eeeuAzR16raDp4ilomGi/f3Mzg5tBhbC9uzMyEVjoSZuliRXV45AyDtPqsuTrUVOo4L
-         w7qSKRmjzGYe/mJy7ZlZv2kZSINlGIBek7nsz+viDXtZ89FtYPu/viqtMglDp2FNlP6L
-         YsBg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+d0H8x77H+g8wMdC7WT+VSCbMuEmGJOj/dvWk3e4qXLACDMvDc+XiDDGCgnf4uNpYT8lQMTVC9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZJKmVInMkNsS/UkJhcOaSUp00QgjxzAUO/8oN0ayreHp2IWn4
-	FysYpV/027beZHnGT5Li42yhdObB/RQ+PYFMxaZkBOaIguAotaJ+zolbR4gsGX9aHbVGcCzLvgo
-	lVB6Rb7MTlfQnvQxDhIB3N1wzDY92rohE
-X-Gm-Gg: ASbGncttjsXqfDXJHaJQ6WkmaIPhxKr/ziv9T+iw5bFI8khlJOr5hsot3DKjuoqqZLp
-	U3qhw0F1x/FPs4QNK0LAoq6dp89CatZaLdCHG2E5mrX/tIw0n4GRYqWE42FMoqAs1+J1m4BtKCz
-	N278zCVs8fNdDvpnAD90emz7Gy3PGLgHhkjDRW4Gt2fPRqJdNXt+1fyAgq/EWgQD42a7ZetVapn
-	ADkdYMMT39nJ2gLl5VikxZTPLO85qeEa1i6IAqVH/H1OjTGQf97BwRWwBieeFtUTporTYmxPnPl
-	+NIr1e2uBGYwn5sX5nnup46s6cK22xOoFn5oxfu7n5k+/D2y
-X-Google-Smtp-Source: AGHT+IHm7l5gSAjpuXl6sjpSEETVwb08PP2ae8KBZIblUgIaqAeUNtu1Pov6eYfnSnHcoVeKU6k3kOvp+iND
-X-Received: by 2002:aa7:8895:0:b0:730:87b2:e848 with SMTP id d2e1a72fcca58-734ac4a764bmr3123476b3a.5.1740788174093;
-        Fri, 28 Feb 2025 16:16:14 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7349fde9edasm289102b3a.8.2025.02.28.16.16.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 16:16:14 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 8BA97340D6A;
-	Fri, 28 Feb 2025 17:16:13 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 86D82E419EA; Fri, 28 Feb 2025 17:16:13 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring/nop: use io_find_buf_node()
-Date: Fri, 28 Feb 2025 17:16:08 -0700
-Message-ID: <20250301001610.678223-2-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250301001610.678223-1-csander@purestorage.com>
-References: <20250301001610.678223-1-csander@purestorage.com>
+	s=arc-20240116; t=1740791513; c=relaxed/simple;
+	bh=FoQbHK1AHUhmV23+HHInjGmtXUQqxcsPl/gizIBaA/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqS3OMf3jPPStHz24dmkijFmWJLB4heV3HGYlROzKrf0Dcog7g+0by+YHXHwcbWlPeSNZ00QSZipYQQiRdIDC3u6V+OpIUGhKt9sTh3BR5eBMnUYTG4gPInd0Nj/gQfjOeCmIZ9PMU3YB87rdB8QZevXi7lKm3diF8d+Ca6sLmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHWMRfQW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740791510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYFUypGR1m+RxBQPIWa0pHntE0rb9GlxUKgPZ6Ol/5o=;
+	b=PHWMRfQWqSN5U0rRN5RrzNa+t0Lnqs1SPw5RsWFOtE548cxEDBNwm0BMKNxhi6sAX+CJwG
+	B02rzsAwzhu77J91xtnAXgvPb83yYGM7ytabd+2wHBHuVEYEtD+ubLjYbKViAOzuXjFZkb
+	6eXm4Bx8P/IxgEjNNCcESRVmeSCjcoI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-_zUIjpSwNvuGUWllmymjfg-1; Fri,
+ 28 Feb 2025 20:11:47 -0500
+X-MC-Unique: _zUIjpSwNvuGUWllmymjfg-1
+X-Mimecast-MFC-AGG-ID: _zUIjpSwNvuGUWllmymjfg_1740791506
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F11D1944F05;
+	Sat,  1 Mar 2025 01:11:45 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B03819560AE;
+	Sat,  1 Mar 2025 01:11:39 +0000 (UTC)
+Date: Sat, 1 Mar 2025 09:11:34 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org
+Subject: Re: [PATCH V3 0/3] selftests: add ublk selftests
+Message-ID: <Z8JexssISF2zsNRv@fedora>
+References: <20250228161919.2869102-1-ming.lei@redhat.com>
+ <360708f8-437f-4262-a734-b1bd680de339@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <360708f8-437f-4262-a734-b1bd680de339@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Call io_find_buf_node() to avoid duplicating it in io_nop().
+On Fri, Feb 28, 2025 at 09:37:47AM -0700, Jens Axboe wrote:
+> On 2/28/25 9:19 AM, Ming Lei wrote:
+> > Hello Jens,
+> > 
+> > This patchset adds ublk kernel selftests, which is very handy for
+> > developer for verifying kernel change, especially ublk heavily depends
+> > on io_uring subsystem. Also it provides template for target implementation.
+> > 
+> > Please consider it for v6.15.
+> 
+> Can we add the zc bits to the liburing test case as well?
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/nop.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+OK, will unify the two tests and cover liburing too.
 
-diff --git a/io_uring/nop.c b/io_uring/nop.c
-index ea539531cb5f..28f06285fdc2 100644
---- a/io_uring/nop.c
-+++ b/io_uring/nop.c
-@@ -59,21 +59,12 @@ int io_nop(struct io_kiocb *req, unsigned int issue_flags)
- 			ret = -EBADF;
- 			goto done;
- 		}
- 	}
- 	if (nop->flags & IORING_NOP_FIXED_BUFFER) {
--		struct io_ring_ctx *ctx = req->ctx;
--		struct io_rsrc_node *node;
--
--		ret = -EFAULT;
--		io_ring_submit_lock(ctx, issue_flags);
--		node = io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
--		if (node) {
--			io_req_assign_buf_node(req, node);
--			ret = 0;
--		}
--		io_ring_submit_unlock(ctx, issue_flags);
-+		if (!io_find_buf_node(req, issue_flags))
-+			ret = -EFAULT;
- 	}
- done:
- 	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_set_res(req, nop->result, 0);
--- 
-2.45.2
+BTW, would you like to consider to move liburing tests or part of them
+into kernel selftests? 
+
+This way looks more friendly for kernel developer:
+
+- single repo, and single patchset can include both io_uring kernel
+  patches and selftests change
+
+- easy to run test against same kernel repo
+
+Also liburing development may be decoupled from io_uring kernel
+a bit.
+
+
+
+Thanks,
+Ming
 
 

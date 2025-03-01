@@ -1,111 +1,138 @@
-Return-Path: <io-uring+bounces-6874-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6875-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18B2A4A74C
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:11:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845CEA4A758
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9D83BAFB4
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A631881327
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549BA23F378;
-	Sat,  1 Mar 2025 01:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE6563A9;
+	Sat,  1 Mar 2025 01:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHWMRfQW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiCNdXTh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99355179A7
-	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 01:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E2CBE6C;
+	Sat,  1 Mar 2025 01:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740791513; cv=none; b=M4unqZztqnnXJm6ZceZO03oyVXiYmPUR+VzK3r7eiZd81d29tGEie7rDykXH8Rmb+nskAJxaKuzReOg0TsqIaYcA1+9IhhBZMDS0xLt0tmYjgp6uibQWB4goxmh+06xfp7D4xHA1VYD7NSJ2D/dsnJnbDv3VV8uJ/ilrQRmkImw=
+	t=1740792215; cv=none; b=frHixKTRORyrXclMDR2/EE6x/rcL98/DfHlH4fTTij+B9J9WIE/0/EdBbGHBD1qYkdEevFSQVIe+FN0yS/UsOj9K762NJcBjuC97HHURzduzqtbzUuu/y/EAu4MyNkri391dgy9k+MqnyEYrhFIg2cgDCcdytS9foMUBuwo1Ckw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740791513; c=relaxed/simple;
-	bh=FoQbHK1AHUhmV23+HHInjGmtXUQqxcsPl/gizIBaA/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqS3OMf3jPPStHz24dmkijFmWJLB4heV3HGYlROzKrf0Dcog7g+0by+YHXHwcbWlPeSNZ00QSZipYQQiRdIDC3u6V+OpIUGhKt9sTh3BR5eBMnUYTG4gPInd0Nj/gQfjOeCmIZ9PMU3YB87rdB8QZevXi7lKm3diF8d+Ca6sLmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHWMRfQW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740791510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WYFUypGR1m+RxBQPIWa0pHntE0rb9GlxUKgPZ6Ol/5o=;
-	b=PHWMRfQWqSN5U0rRN5RrzNa+t0Lnqs1SPw5RsWFOtE548cxEDBNwm0BMKNxhi6sAX+CJwG
-	B02rzsAwzhu77J91xtnAXgvPb83yYGM7ytabd+2wHBHuVEYEtD+ubLjYbKViAOzuXjFZkb
-	6eXm4Bx8P/IxgEjNNCcESRVmeSCjcoI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-_zUIjpSwNvuGUWllmymjfg-1; Fri,
- 28 Feb 2025 20:11:47 -0500
-X-MC-Unique: _zUIjpSwNvuGUWllmymjfg-1
-X-Mimecast-MFC-AGG-ID: _zUIjpSwNvuGUWllmymjfg_1740791506
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F11D1944F05;
-	Sat,  1 Mar 2025 01:11:45 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.4])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B03819560AE;
-	Sat,  1 Mar 2025 01:11:39 +0000 (UTC)
-Date: Sat, 1 Mar 2025 09:11:34 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org
-Subject: Re: [PATCH V3 0/3] selftests: add ublk selftests
-Message-ID: <Z8JexssISF2zsNRv@fedora>
-References: <20250228161919.2869102-1-ming.lei@redhat.com>
- <360708f8-437f-4262-a734-b1bd680de339@kernel.dk>
+	s=arc-20240116; t=1740792215; c=relaxed/simple;
+	bh=PTNepDljdJmBLPx1Vt119k3gOjDnw3szWpNNxq3pGPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4xCkZEkHAMOQ5Q0YdCgK29Isw2p12s3awZyDiSIzWbxxx2Xn3ZDURZbsGdIwy5LGB/CJ3fNS+CDvExPUE6yhtI3gGp25I9GF58TZu159zNEklQL4miqysg+3CzHCYEBp78hhxXzlogXZPMVQxxYFypeDUqDYMlhcFcSWy+5De4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiCNdXTh; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4dc3d22b8so2555189a12.0;
+        Fri, 28 Feb 2025 17:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740792212; x=1741397012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
+        b=OiCNdXThHWlUlA0Vvm9JMiPWqo6rskc1v74Ww9Xa/wl2GErIRjAvqIFuZ02eZlXP6e
+         A20B3vHwSZrTzNM9g9Iu3T1XewQfl5c5aLAxTtlhJYkLV7GGWcWtI7mqWphvsyyhf3PW
+         M27y3zwBnzu3LPvZKGmxhE1bXbxjrUPRRUzW5Ph731q5NtQrE6tFS6dDe6VgamiYj7vH
+         prSFXypPs64GtBOjdfb+77muFdQstg2rv03UVzTU0YSB2vobTi3tvYlaJC1uR+N2lTJu
+         Sxk2+BKW7J1WKppWCtXvEzNI9QnDIjVHO9lX2CNLb0UAK3lt0ARY2bIvmMtcqfyULUeN
+         EnEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740792212; x=1741397012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
+        b=pIpdtNjf2cnrGzud7Lt1tHqz3EqTHrtgZyJPN/YwTJpS4VQtKgwOSB+u2q6ozu/ZR2
+         HaVtD6538vZx1NJp59uTX3OvjjRf0srvsIMzzC5hT/tcw0fmWQwE2+PF6z5gjRyxxGi/
+         0fe33cqyZR3LQUDnoTLVmSeWlIA/IHfyeWP4XZ7Vw+sSSbdwFh1SfwwO3bU6g8/Ur+Xm
+         buFAyOVCGlLkWYt+PiEwKuK1XGwwJ1s/QgdxHZ7Q8+/wlEJxifpx0LTSZlVWnEj+ufhA
+         J5LQD+NGJvFDxAQynF6UqIwjHXLZWtRWHTiHJ9hbb25GkXKDxUlo1ADeYxrJYQGV3aG3
+         aMBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvd7mvBNKxPBZqInINHU6tgANWO11sI4xNemcP1z9A4owDqouYwU885wrDVADY7oNb38l0l0dRSe0PRJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz+cziR97XOGhsmiVFeIRLWqZ648YmTZMkFPWIWeSNAdMKgepK
+	W8fjmK9RGZOPV7FfXuhS08hpTvrZyn/CJdcymu/EJbTFdGfuKg6jcU+6wA==
+X-Gm-Gg: ASbGncsVhxb3K7lD+CkGR39fTg2S4zV1Y2P50CO0S47jI8ueMPY18bpAwa4c7qFA2ES
+	kiVNVZeTkNP1bmX3grz6mLwivth42kh9vl73U0r3rgn6PwWckk2XVmkNKc3qP6y1BjBuGwqE6bO
+	Y6Jt6EDdv2A7Rhqgd6ym2NgzxP2smUB+nqdwzOVcPKGQW50+99MqJiS6qZD637DTs+syWQHSGcJ
+	9vAH6viThfGiasKPhR8pVUd3TMUc57ZGkCgQ+tV8fCZYaI+1Fl7SYQt+ARHDmgwYev0DnJ4yx18
+	KWYhq3n+KAL3VS6Wxj2soX6/JdhCxeG6dmyIBxz00fsaWkjDxxq9U/w=
+X-Google-Smtp-Source: AGHT+IHtFXWej0XzCMOuuyU0kbm3HzU+Nw3gsnAMeOWJO4CqvFP+K5eNx+djd4/aojUFBbQanSEADA==
+X-Received: by 2002:a17:907:1c8d:b0:abf:23a7:fc6 with SMTP id a640c23a62f3a-abf2656e759mr608356066b.16.1740792211898;
+        Fri, 28 Feb 2025 17:23:31 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.144.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf20eebff7sm274705266b.60.2025.02.28.17.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 17:23:30 -0800 (PST)
+Message-ID: <6272ce74-cd1e-4386-ac84-2ca7df5dab33@gmail.com>
+Date: Sat, 1 Mar 2025 01:24:36 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <360708f8-437f-4262-a734-b1bd680de339@kernel.dk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: use rq_data_dir() to compute bvec dir
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228223057.615284-1-csander@purestorage.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250228223057.615284-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 09:37:47AM -0700, Jens Axboe wrote:
-> On 2/28/25 9:19 AM, Ming Lei wrote:
-> > Hello Jens,
-> > 
-> > This patchset adds ublk kernel selftests, which is very handy for
-> > developer for verifying kernel change, especially ublk heavily depends
-> > on io_uring subsystem. Also it provides template for target implementation.
-> > 
-> > Please consider it for v6.15.
+On 2/28/25 22:30, Caleb Sander Mateos wrote:
+> The macro rq_data_dir() already computes a request's data direction.
+> Use it in place of the if-else to set imu->dir.
 > 
-> Can we add the zc bits to the liburing test case as well?
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>   io_uring/rsrc.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 45bfb37bca1e..3107a03d56b8 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -957,15 +957,11 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+>   	imu->nr_bvecs = nr_bvecs;
+>   	refcount_set(&imu->refs, 1);
+>   	imu->release = release;
+>   	imu->priv = rq;
+>   	imu->is_kbuf = true;
+> -
+> -	if (op_is_write(req_op(rq)))
+> -		imu->dir = IO_IMU_SOURCE;
+> -	else
+> -		imu->dir = IO_IMU_DEST;
+> +	imu->dir = 1 << rq_data_dir(rq);
 
-OK, will unify the two tests and cover liburing too.
+rq_data_dir returns READ/WRITE, which should be fine, but it'd
+be nicer to be more explicit unless it's already enforced
+somewhere else
 
-BTW, would you like to consider to move liburing tests or part of them
-into kernel selftests? 
-
-This way looks more friendly for kernel developer:
-
-- single repo, and single patchset can include both io_uring kernel
-  patches and selftests change
-
-- easy to run test against same kernel repo
-
-Also liburing development may be decoupled from io_uring kernel
-a bit.
+BUILD_BUG_ON(WRITE ==  ITER_SOURCE);
+ditto for READ
 
 
+>   
+>   	bvec = imu->bvec;
+>   	rq_for_each_bvec(bv, rq, rq_iter)
+>   		*bvec++ = bv;
+>   
 
-Thanks,
-Ming
+-- 
+Pavel Begunkov
 
 

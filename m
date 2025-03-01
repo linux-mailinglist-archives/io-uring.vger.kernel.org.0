@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6875-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6876-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845CEA4A758
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:23:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194A0A4A76E
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 02:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A631881327
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CECBF16B5EC
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 01:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE6563A9;
-	Sat,  1 Mar 2025 01:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAB25D477;
+	Sat,  1 Mar 2025 01:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiCNdXTh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="myZjqJDy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E2CBE6C;
-	Sat,  1 Mar 2025 01:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22B91401B;
+	Sat,  1 Mar 2025 01:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792215; cv=none; b=frHixKTRORyrXclMDR2/EE6x/rcL98/DfHlH4fTTij+B9J9WIE/0/EdBbGHBD1qYkdEevFSQVIe+FN0yS/UsOj9K762NJcBjuC97HHURzduzqtbzUuu/y/EAu4MyNkri391dgy9k+MqnyEYrhFIg2cgDCcdytS9foMUBuwo1Ckw=
+	t=1740792599; cv=none; b=mQ8nPG0aPojBTC76x4yz8wTc+yqD624vBpyV7YPHoaHVzLHb0K1ukC3LCvbxy4KH/VjHMjSicUOCUpVOR2gezQ0mICO6zRjLLtd9JuQCDv1loQNkwp5YD67Pw8FnG6Y2jpaxMRbZCpu8FDZfP44X8C+xYYRKv0bwwXyAQTF1CV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792215; c=relaxed/simple;
-	bh=PTNepDljdJmBLPx1Vt119k3gOjDnw3szWpNNxq3pGPY=;
+	s=arc-20240116; t=1740792599; c=relaxed/simple;
+	bh=XoGiOBjFqoa9nH3IYLssRq9uTZ9z2zegaFE5so9AYDc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f4xCkZEkHAMOQ5Q0YdCgK29Isw2p12s3awZyDiSIzWbxxx2Xn3ZDURZbsGdIwy5LGB/CJ3fNS+CDvExPUE6yhtI3gGp25I9GF58TZu159zNEklQL4miqysg+3CzHCYEBp78hhxXzlogXZPMVQxxYFypeDUqDYMlhcFcSWy+5De4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiCNdXTh; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:Content-Type; b=WMQXXT+gcj/bOw5djl3MR4/UpymvelvprM4ojBOFGVtf26QfmQ09ouPA5+Sm3B2oyvnS+B8lsN8wOJf1F71hNiei0+LezYTsMLZerY+J7wvBDnaEMapspaxshMtszasSWtAKgrTkz5voHN68neKvo8RtLh6E6B7Gi9OFwyMDQU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=myZjqJDy; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4dc3d22b8so2555189a12.0;
-        Fri, 28 Feb 2025 17:23:33 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so4926678a12.0;
+        Fri, 28 Feb 2025 17:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740792212; x=1741397012; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740792596; x=1741397396; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
-        b=OiCNdXThHWlUlA0Vvm9JMiPWqo6rskc1v74Ww9Xa/wl2GErIRjAvqIFuZ02eZlXP6e
-         A20B3vHwSZrTzNM9g9Iu3T1XewQfl5c5aLAxTtlhJYkLV7GGWcWtI7mqWphvsyyhf3PW
-         M27y3zwBnzu3LPvZKGmxhE1bXbxjrUPRRUzW5Ph731q5NtQrE6tFS6dDe6VgamiYj7vH
-         prSFXypPs64GtBOjdfb+77muFdQstg2rv03UVzTU0YSB2vobTi3tvYlaJC1uR+N2lTJu
-         Sxk2+BKW7J1WKppWCtXvEzNI9QnDIjVHO9lX2CNLb0UAK3lt0ARY2bIvmMtcqfyULUeN
-         EnEg==
+        bh=gBsTEmm2NFXsGIm9VrQhE7SE/X550vg/x0Q06Ef4Uws=;
+        b=myZjqJDy+9YrpwuMXzEwg65j+FcMQRLV3HjMU2AkoEGe5MMf23zjd8a9eh8938MGJ4
+         JdhV1MmInPBIh0ANK6kRYoJ+IoZfN74YQyiktXutUTjDNEa8fF9+cCr8IpMt6jUvkTTE
+         sZMv7HWttwrFr4QFB3GJ8Frxnkpp0tOhvL5WRVeaeckErOJK2dIOLm67CVARn5WmbP+Y
+         v4l39qh3eJdTcaMYNM4BU+IjfefCIdtrXxXTEvehh9FZ4Phe3l5WE7Yoadm3ZsRKzqjt
+         CByLE6u8VMVzpgDLn2o9iB7Z1U8ypXksIaAG/ZvTgFdMj97d6EiInZK8LHYM82c2Y5dL
+         0jXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740792212; x=1741397012;
+        d=1e100.net; s=20230601; t=1740792596; x=1741397396;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
-        b=pIpdtNjf2cnrGzud7Lt1tHqz3EqTHrtgZyJPN/YwTJpS4VQtKgwOSB+u2q6ozu/ZR2
-         HaVtD6538vZx1NJp59uTX3OvjjRf0srvsIMzzC5hT/tcw0fmWQwE2+PF6z5gjRyxxGi/
-         0fe33cqyZR3LQUDnoTLVmSeWlIA/IHfyeWP4XZ7Vw+sSSbdwFh1SfwwO3bU6g8/Ur+Xm
-         buFAyOVCGlLkWYt+PiEwKuK1XGwwJ1s/QgdxHZ7Q8+/wlEJxifpx0LTSZlVWnEj+ufhA
-         J5LQD+NGJvFDxAQynF6UqIwjHXLZWtRWHTiHJ9hbb25GkXKDxUlo1ADeYxrJYQGV3aG3
-         aMBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvd7mvBNKxPBZqInINHU6tgANWO11sI4xNemcP1z9A4owDqouYwU885wrDVADY7oNb38l0l0dRSe0PRJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz+cziR97XOGhsmiVFeIRLWqZ648YmTZMkFPWIWeSNAdMKgepK
-	W8fjmK9RGZOPV7FfXuhS08hpTvrZyn/CJdcymu/EJbTFdGfuKg6jcU+6wA==
-X-Gm-Gg: ASbGncsVhxb3K7lD+CkGR39fTg2S4zV1Y2P50CO0S47jI8ueMPY18bpAwa4c7qFA2ES
-	kiVNVZeTkNP1bmX3grz6mLwivth42kh9vl73U0r3rgn6PwWckk2XVmkNKc3qP6y1BjBuGwqE6bO
-	Y6Jt6EDdv2A7Rhqgd6ym2NgzxP2smUB+nqdwzOVcPKGQW50+99MqJiS6qZD637DTs+syWQHSGcJ
-	9vAH6viThfGiasKPhR8pVUd3TMUc57ZGkCgQ+tV8fCZYaI+1Fl7SYQt+ARHDmgwYev0DnJ4yx18
-	KWYhq3n+KAL3VS6Wxj2soX6/JdhCxeG6dmyIBxz00fsaWkjDxxq9U/w=
-X-Google-Smtp-Source: AGHT+IHtFXWej0XzCMOuuyU0kbm3HzU+Nw3gsnAMeOWJO4CqvFP+K5eNx+djd4/aojUFBbQanSEADA==
-X-Received: by 2002:a17:907:1c8d:b0:abf:23a7:fc6 with SMTP id a640c23a62f3a-abf2656e759mr608356066b.16.1740792211898;
-        Fri, 28 Feb 2025 17:23:31 -0800 (PST)
+        bh=gBsTEmm2NFXsGIm9VrQhE7SE/X550vg/x0Q06Ef4Uws=;
+        b=CCWuiailbszuOwr333cFl2eYGtNiotPowxHC0KgsHBH/00cl6xNwhA68lYNcFFDcA4
+         KGU1tNougAcuGDsLN7/jNifPF8bdkrLh4mLzHAoeSKy2bN7MqmnxxO13Pn1lTHPlDBpL
+         quk0bBYMIiLvyhhNIFgF9+n6uKRv5VpXeUT/qqMSN3VlPVnI6G8TN8zUJM4KL31HeXp4
+         q6F4rRHnKcm0m/mvgKE1P1w7CbFcOuwWeoeZ5JYkR8sn8BIVM8k0fsipEpnEeNjZXQD3
+         3ZeO5E4L8xe6K7STNwzdnqUg0k7y3U6BlYW7Ws0g0rxrYpa0TbFUHh08atJSxEFFFKVK
+         8AwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWf98aT7HPRCpRscNOelZKAOxW23urakRoIxki79iIPXH3aEzO1jKoWGWx/IXMtmGE2LZwBMkDJW1WVNwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKJ9cE0QW8FQmh0rdSe/GjuPWpF9gEj0+gn7F7rWKawvkViugn
+	J/UVnJVd7J//K7KnlcxzgWNG5Op3Lr1a6YGwGkZdrpWSBpN69+XZqb/6hA==
+X-Gm-Gg: ASbGncstEi+T8sR/vkBLQXqD8JsQy7QPuA0AWOb1v69jza2ka84iqICx2Pecbv3eFmR
+	dIh2R6X09gSF36szQUz6Dkl/O8eViqhXtwibbmiEohrRUhKosMZhgndhpg14od7QrPN5kFH1+cQ
+	EnY2X+byUE0B7k3VdvOqIPQEnzL2oyDLXkWGcKfEXs6uOADLpuYyn0YK8BNIljFNez00PzvF88W
+	BTaW6vmDIGkubkc3J/3+gOP0LsLmhCxktxZeMIQZ53mCt2jaBVwHXbNvV7kGUhFjcC8+xRuPiDh
+	I37vgoi7kFltWvY5trIcgIP4Beq6m8gyST4ZPH9nyZuJBxUJIck/Jqg=
+X-Google-Smtp-Source: AGHT+IHYUhXuWU0N5WG7qoHNGkQLKMFKP/jAELujC8+bQzMOfspfD43Bp9CcaJcdeNrMEAvpK1WUwA==
+X-Received: by 2002:a17:907:94c8:b0:abe:dd15:77bd with SMTP id a640c23a62f3a-abf2682b22bmr631323966b.51.1740792595914;
+        Fri, 28 Feb 2025 17:29:55 -0800 (PST)
 Received: from [192.168.8.100] ([148.252.144.117])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf20eebff7sm274705266b.60.2025.02.28.17.23.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf17fa4a4asm336579866b.92.2025.02.28.17.29.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 17:23:30 -0800 (PST)
-Message-ID: <6272ce74-cd1e-4386-ac84-2ca7df5dab33@gmail.com>
-Date: Sat, 1 Mar 2025 01:24:36 +0000
+        Fri, 28 Feb 2025 17:29:54 -0800 (PST)
+Message-ID: <f74d6e16-29fb-4a9a-a6aa-9a7170c683ba@gmail.com>
+Date: Sat, 1 Mar 2025 01:31:01 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,56 +81,47 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: use rq_data_dir() to compute bvec dir
+Subject: Re: [PATCH 3/5] io_uring/rsrc: call io_free_node() on
+ io_sqe_buffer_register() failure
 To: Caleb Sander Mateos <csander@purestorage.com>,
  Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250228223057.615284-1-csander@purestorage.com>
+References: <20250228235916.670437-1-csander@purestorage.com>
+ <20250228235916.670437-3-csander@purestorage.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250228223057.615284-1-csander@purestorage.com>
+In-Reply-To: <20250228235916.670437-3-csander@purestorage.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/28/25 22:30, Caleb Sander Mateos wrote:
-> The macro rq_data_dir() already computes a request's data direction.
-> Use it in place of the if-else to set imu->dir.
+On 2/28/25 23:59, Caleb Sander Mateos wrote:
+> io_sqe_buffer_register() currently calls io_put_rsrc_node() if it fails
+> to fully set up the io_rsrc_node. io_put_rsrc_node() is more involved
+> than necessary, since we already know the reference count will reach 0
+> and no io_mapped_ubuf has been attached to the node yet.
+> 
+> So just call io_free_node() to release the node's memory. This also
+> avoids the need to temporarily set the node's buf pointer to NULL.
 > 
 > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 > ---
->   io_uring/rsrc.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+>   io_uring/rsrc.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
 > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 45bfb37bca1e..3107a03d56b8 100644
+> index 748a09cfaeaa..398c6f427bcc 100644
 > --- a/io_uring/rsrc.c
 > +++ b/io_uring/rsrc.c
-> @@ -957,15 +957,11 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->   	imu->nr_bvecs = nr_bvecs;
->   	refcount_set(&imu->refs, 1);
->   	imu->release = release;
->   	imu->priv = rq;
->   	imu->is_kbuf = true;
-> -
-> -	if (op_is_write(req_op(rq)))
-> -		imu->dir = IO_IMU_SOURCE;
-> -	else
-> -		imu->dir = IO_IMU_DEST;
-> +	imu->dir = 1 << rq_data_dir(rq);
-
-rq_data_dir returns READ/WRITE, which should be fine, but it'd
-be nicer to be more explicit unless it's already enforced
-somewhere else
-
-BUILD_BUG_ON(WRITE ==  ITER_SOURCE);
-ditto for READ
-
-
+> @@ -780,11 +780,10 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+>   		return NULL;
 >   
->   	bvec = imu->bvec;
->   	rq_for_each_bvec(bv, rq, rq_iter)
->   		*bvec++ = bv;
->   
+>   	node = io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
+>   	if (!node)
+>   		return ERR_PTR(-ENOMEM);
+> -	node->buf = NULL;
+
+It's better to have it zeroed than set to a freed / invalid
+value, it's a slow path.
 
 -- 
 Pavel Begunkov

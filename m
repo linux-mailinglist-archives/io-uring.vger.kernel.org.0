@@ -1,174 +1,152 @@
-Return-Path: <io-uring+bounces-6900-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6901-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385B4A4AB5B
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 14:49:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB05A4AD53
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 19:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434B416BC37
-	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 13:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C81C3B4C98
+	for <lists+io-uring@lfdr.de>; Sat,  1 Mar 2025 18:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FEB1DED5A;
-	Sat,  1 Mar 2025 13:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC551DF985;
+	Sat,  1 Mar 2025 18:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gyPyNkQP"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fMRzFkOO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81531DEFE6
-	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 13:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D36219D067
+	for <io-uring@vger.kernel.org>; Sat,  1 Mar 2025 18:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836972; cv=none; b=I/yP5qn/qKY9qTPDTB8l/ndEwXDrljeKYZxDDbgP7Ro1+kGrBXeX6yCUV+BBdYp8lvpimx0ENfsHU/gB0uaf0xuSP1AP6ELn5B644cIPRyNfjfy0cm1DjnyiawQgUubSFWu1pb/KjjWXAN3Sxtz8Yr2O08ZdGRqIm4L2vl8Nf1M=
+	t=1740853607; cv=none; b=dJgwD7ZlykKVEuG2TPCtL890DOqyZx9zMKXbkSSW1ar1ScOaw79ccMcbx2EpyVn5M0412++AfUlBN/U7FyFJS0M516CydIf5WHwS4VI4f+D2D/rxv7gjbFtPkp451zDseL857U8vquM3yOgas9+P+IExwamoYxyzKyyZBOY6CFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836972; c=relaxed/simple;
-	bh=TdQrSsfUqsgjam5ayWXfQx9MiC0CEceDz3qNAdJSGZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDZj9Gy47RcT7onk/kHdSSWyeoIW+rb0IoMSAadgL9ZGwhUf3ooe26y1Hu9WfBant5hMizsa7Eh3Z7UgG4gFDgXMPfyefzY1170FYtndvl8HovGeRsW+x1BALtWaB2TrMSFQMcMoq4YgYby2Gqh+Cx5rdPWZz/wPbTICXNog3/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gyPyNkQP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740836969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yX8SsUhxK1pBuuAliUfaXKNUpsQ+odkuNQ8838vLa54=;
-	b=gyPyNkQP4SoUQaREpUoGMencnr5f9qaGzYzYn1GgV72IikZRfsbMhbC7fk+WbTZY3v5SlH
-	iaxZXMN1DwmrmH8XUvT25XAM5Xk4j7J3C5WJksPB8HTxK2x99s7zTNW9Yov9TY9HUH7Pt8
-	Jj0ncIka4ZWSNrRSyRKuccrwt47mvwU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-UsM1OL0dN9Cwo8BktjiVqw-1; Sat,
- 01 Mar 2025 08:49:25 -0500
-X-MC-Unique: UsM1OL0dN9Cwo8BktjiVqw-1
-X-Mimecast-MFC-AGG-ID: UsM1OL0dN9Cwo8BktjiVqw_1740836964
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E263180034A;
-	Sat,  1 Mar 2025 13:49:23 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F35E519560AD;
-	Sat,  1 Mar 2025 13:49:17 +0000 (UTC)
-Date: Sat, 1 Mar 2025 21:49:11 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH] io_uring/ublk: report error when unregister operation
- fails
-Message-ID: <Z8MQV0EGSFpiHwUC@fedora>
-References: <20250228231432.642417-1-csander@purestorage.com>
+	s=arc-20240116; t=1740853607; c=relaxed/simple;
+	bh=BUyMLGKoaHqFNhbLKEJ58fyXJjdRMGC55aFapC0p4wY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ee3TFoHFeOioRlkDLf7S1rPqvCvUz88HzKcJ3zzXb5OTwlTzk/vLgMmJM6LaqtuPowEuwBwFxZvgacYNql04Iwlo9MxMX8Mpg/b4dvo/vXNsjekLUSuW8J6xg9kD+6TtLM/Ep4q1JsqD78kcL4hy2jGdt2vINCpEu+c9Fz4AELU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fMRzFkOO; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fe99d5f1e8so828610a91.1
+        for <io-uring@vger.kernel.org>; Sat, 01 Mar 2025 10:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1740853604; x=1741458404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
+        b=fMRzFkOOKcMjTTlMfvXI6XW6m//lZz5lzzozKlSLnQjxSkA9qOyrEm1haetQuxpx7c
+         DfT01qDqg36rU8sS/AqFeDnacj3QzixK7JZTum5kXqicb3GGxeqt/XsJU/fOP7zKr1CJ
+         RZsWadzAR0tun23368kJ6MOoWoY7thSwziXsWkyDRuISH4JciN+D7Z6aQ5uXujPne+EM
+         xzdtO+hgf9Gq3lzcghkgO3QYN4/QEn2RDKHXeHN9AuL2oF0nE6kJR0Bp2RwYCir3OGk6
+         GInDlgaxm4qpJAMbzhBb2BcuIGEU8x9VGDyZ+uA6kfnK42NbMlrUCoJnLM8416+3MW2w
+         HPDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740853604; x=1741458404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
+        b=vfM5oDyWW1O9QYAYhG8fTQmTuDDhp17+Uz4RRLrVxIJJzEFpSY0qdRDyfitxa2JHgl
+         mSIiKqKTHCoAGiinXelIRfQge5P+cUeRm6Vigwk1YTz2lPc5x6scI4y8Q6F3FiZvhcmc
+         5OzXg+Gl/UTKou2B+fpfkNAE4KG1FnYBkrla8HnvTu0quXsyhtMbHrjCXG4QAjer9SAt
+         LrWN0p4Cfu/WmLpxRAB5yy+l90MtI78zesAel6HvP64L0RedwWR30FYjzlXF4t4uXodY
+         thXjvDfChIZEnKwi9f61OC1vscH2uVz/z02Uy84i8NnrZqUGCdBkGUYqKOnvsTOR6dMK
+         zl4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXno1P+OmvtNMOVTm96cPm9P9IP+GkjncxMhvLrUAxP/Rr1nVGA6TualeHaMJu5q+/Dnjwe903GHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZjE0z6I9SuS026Xm47HHAHPC28AtSuLtoWvsnaRrJnBqixVD8
+	CRTknPKh1aF0/vatWhasIoUiiQ1G4pG4K4Kq795v6uwSVBOT/cXcUV4DK13do92WMgGy0dg3s4F
+	d8p3Rm98G3cvhYZJDHUoTeM9BcnofqLQFwmgutA==
+X-Gm-Gg: ASbGncu/9acQIPDzFcV9Q6ArxRbJNvEHSHV3kYROsohC6f3gvkc8Lgixw0a+kgq0BwD
+	FkCggrFHzitWzlJXuO4kcYkUBqEsp4JgcwIPExoGKxsfGIwIUBmg7AW0se1JHwGnbx+P9bah3S7
+	AlZTDwg5E+raB9BiA3tupVRKx5
+X-Google-Smtp-Source: AGHT+IFldxOK6OJbDdbWpVRrspMM77OA3WhEQBn3nrMDky43Gr52XcLxm7oy/5RrmJlVL3sdDmhBzIRbDFjUTuC7qE4=
+X-Received: by 2002:a17:90b:1d10:b0:2fe:afef:b706 with SMTP id
+ 98e67ed59e1d1-2febac10656mr4566239a91.7.1740853604275; Sat, 01 Mar 2025
+ 10:26:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228231432.642417-1-csander@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250228235916.670437-1-csander@purestorage.com>
+ <20250228235916.670437-3-csander@purestorage.com> <f74d6e16-29fb-4a9a-a6aa-9a7170c683ba@gmail.com>
+ <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
+In-Reply-To: <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sat, 1 Mar 2025 10:26:32 -0800
+X-Gm-Features: AQ5f1JoAnn34QyE_05Wc_hwwFc2GahHIUfSpbqlLvw2hci4HLHC_a_BQDPGL19g
+Message-ID: <CADUfDZqZ794CXKPeXnJ3oX3MrKPg6VtgQATLOTmrMv5wEhucRA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] io_uring/rsrc: call io_free_node() on
+ io_sqe_buffer_register() failure
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 04:14:31PM -0700, Caleb Sander Mateos wrote:
-> Indicate to userspace applications if a UBLK_IO_UNREGISTER_IO_BUF
-> command specifies an invalid buffer index by returning an error code.
-> Return -EINVAL if no buffer is registered with the given index, and
-> -EBUSY if the registered buffer is not a kernel bvec.
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  drivers/block/ublk_drv.c     |  3 +--
->  include/linux/io_uring/cmd.h |  4 ++--
->  io_uring/rsrc.c              | 18 ++++++++++++++----
->  3 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index b5cf92baaf0f..512cbd456817 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -1785,12 +1785,11 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
->  
->  static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
->  				  const struct ublksrv_io_cmd *ub_cmd,
->  				  unsigned int issue_flags)
->  {
-> -	io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
-> -	return 0;
-> +	return io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
->  }
->  
->  static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
->  			       unsigned int issue_flags,
->  			       const struct ublksrv_io_cmd *ub_cmd)
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index cf8d80d84734..05d7b6145731 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -127,9 +127,9 @@ static inline struct io_uring_cmd_data *io_uring_cmd_get_async_data(struct io_ur
->  }
->  
->  int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  			    void (*release)(void *), unsigned int index,
->  			    unsigned int issue_flags);
-> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> -			       unsigned int issue_flags);
-> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> +			      unsigned int issue_flags);
->  
->  #endif /* _LINUX_IO_URING_CMD_H */
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 45bfb37bca1e..29c0c31092eb 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -975,30 +975,40 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  	io_ring_submit_unlock(ctx, issue_flags);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
->  
-> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> -			       unsigned int issue_flags)
-> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> +			      unsigned int issue_flags)
->  {
->  	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
->  	struct io_rsrc_data *data = &ctx->buf_table;
->  	struct io_rsrc_node *node;
-> +	int ret = 0;
->  
->  	io_ring_submit_lock(ctx, issue_flags);
-> -	if (index >= data->nr)
-> +	if (index >= data->nr) {
-> +		ret = -EINVAL;
->  		goto unlock;
-> +	}
->  	index = array_index_nospec(index, data->nr);
->  
->  	node = data->nodes[index];
-> -	if (!node || !node->buf->is_kbuf)
-> +	if (!node) {
-> +		ret = -EINVAL;
->  		goto unlock;
-> +	}
-> +	if (!node->buf->is_kbuf) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
+On Fri, Feb 28, 2025 at 6:23=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2/28/25 6:31 PM, Pavel Begunkov wrote:
+> > On 2/28/25 23:59, Caleb Sander Mateos wrote:
+> >> io_sqe_buffer_register() currently calls io_put_rsrc_node() if it fail=
+s
+> >> to fully set up the io_rsrc_node. io_put_rsrc_node() is more involved
+> >> than necessary, since we already know the reference count will reach 0
+> >> and no io_mapped_ubuf has been attached to the node yet.
+> >>
+> >> So just call io_free_node() to release the node's memory. This also
+> >> avoids the need to temporarily set the node's buf pointer to NULL.
+> >>
+> >> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> >> ---
+> >>   io_uring/rsrc.c | 3 +--
+> >>   1 file changed, 1 insertion(+), 2 deletions(-)
+> >>
+> >> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> >> index 748a09cfaeaa..398c6f427bcc 100644
+> >> --- a/io_uring/rsrc.c
+> >> +++ b/io_uring/rsrc.c
+> >> @@ -780,11 +780,10 @@ static struct io_rsrc_node *io_sqe_buffer_regist=
+er(struct io_ring_ctx *ctx,
+> >>           return NULL;
+> >>         node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
+> >>       if (!node)
+> >>           return ERR_PTR(-ENOMEM);
+> >> -    node->buf =3D NULL;
+> >
+> > It's better to have it zeroed than set to a freed / invalid
+> > value, it's a slow path.
+>
+> Agree, let's leave the clear, I don't like passing uninitialized memory
+> around.
 
-Good catch, otherwise, ublk request may never get completed if unreg
-command fails, which can happen really as one uring_cmd.
+io_rsrc_node_alloc() actually does already zero all of io_rsrc_node's
+fields (file_ptr is in a union with buf):
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type)
+{
+        struct io_rsrc_node *node;
+
+        node =3D io_cache_alloc(&ctx->node_cache, GFP_KERNEL);
+        if (node) {
+                node->type =3D type;
+                node->refs =3D 1;
+                node->tag =3D 0;
+                node->file_ptr =3D 0;
+        }
+        return node;
+}
+
+How about I remove the redundant node->buf =3D NULL; in a separate
+patch, since it's not dependent on switching the error path to
+io_free_node()?
 
 Thanks,
-Ming
-
+Caleb
 

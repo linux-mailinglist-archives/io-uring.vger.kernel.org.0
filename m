@@ -1,57 +1,93 @@
-Return-Path: <io-uring+bounces-6916-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6917-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27310A4CD1C
-	for <lists+io-uring@lfdr.de>; Mon,  3 Mar 2025 21:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B2BA4CD27
+	for <lists+io-uring@lfdr.de>; Mon,  3 Mar 2025 22:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9043AC747
-	for <lists+io-uring@lfdr.de>; Mon,  3 Mar 2025 20:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5EB23AC18A
+	for <lists+io-uring@lfdr.de>; Mon,  3 Mar 2025 21:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28599230278;
-	Mon,  3 Mar 2025 20:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B264214A91;
+	Mon,  3 Mar 2025 21:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JI2Z49xm"
+	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="R1QpYJXw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="6B/eGm7E"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FAA22E3F9
-	for <io-uring@vger.kernel.org>; Mon,  3 Mar 2025 20:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2AC1E9B3D
+	for <io-uring@vger.kernel.org>; Mon,  3 Mar 2025 21:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035452; cv=none; b=lmUUoVN42ONiJl48fD6A3skRvnGk5I/qaPtJNGPPwpMTuOIzCFmNTQ68cay1xLhu/hI+ZUYlvVSeWaGprlvEH6dfz0O0V0ygM5bPJrqVmLNYDJ69xK37rnNsX4IfrkQePMMLhfn2cR88CTHJIUAZorDr2PFZSxFfRdKZ63WTNIw=
+	t=1741035833; cv=none; b=OkSZIz+7HQZ7dLW3LIWph863t2qTt3aowXanVYBjXPSss2DC9H7lWKq60rBXQdkh/YeycSq0vOMVqim/GnmhgwNyiNXNcpKjJakj70cjAjuiBYybtpoUyWr0YRNjHKwwVbR44HOLv+9a3KOH/8TPsoU9J5RxjiuwW9wTKlCLxcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035452; c=relaxed/simple;
-	bh=ukzZkD+VnK4a9fcgQ9k6d/EDX8MIo+kpbp10m1ovY3Q=;
+	s=arc-20240116; t=1741035833; c=relaxed/simple;
+	bh=ASABhKAEL6ksuleta1d78UAHaWpw89wqwUQ8CB/EAxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tg88cRaAP9NWJkKQy43bK/iHqt/5BEuHr4yNkUu1pleVA450dlhgRp2SsZmn3MVf2GRD6O6WJnKOh2YfWsaSXq0a0LC8Sd9NUFdk/Uy5Gt0JpF6+kai3XWsJYflUUHsz/TVlEBzRlgsm/D85HhhDjii5pPSjWDo2wvTowprvRTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JI2Z49xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E20C4CED6;
-	Mon,  3 Mar 2025 20:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741035451;
-	bh=ukzZkD+VnK4a9fcgQ9k6d/EDX8MIo+kpbp10m1ovY3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JI2Z49xmh8yK+hZACTW6SV3iHhn6LwM+BMki3ESljybyrK2ylXt99nWK4NQvhD/5J
-	 n1OaB8B8nt81+E3csjXhLqYWVp4vCc9wLQ++GUEFNk05kqBt3B32h1nmLpEUlhnfcA
-	 Rt6OjAhqr7Z6EsMTtdsiFUnUOnO2JIj8Fq25f7n1YbbzYfIo/a8TX6Pe5qAk7YRRsx
-	 0Da/CUoWsCEpE6NeqjgyIwlDGa+LdE5CgC1713Cdo4iKhEEQBPMG67aXMNxzZ9f3iL
-	 v4gzbtWdsJNqaeoeFjgWfnJ9j11Siq6fNWfIWjlf/al6ZZ0ZdY96QVifshFMJmF11l
-	 z5TXuhfIWtJfA==
-Date: Mon, 3 Mar 2025 13:57:28 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-	Andres Freund <andres@anarazel.de>
-Subject: Re: [PATCH 2/8] io_uring: add infra for importing vectored reg
- buffers
-Message-ID: <Z8YXuIKio2r9OIkW@kbusch-mbp.dhcp.thefacebook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1SLlqebrwopNIph8GDcdzS9kIqRp6B6wFDAiiEMeucXnC8n79oYAlu1AickKeDx65cYa3S4hx2uMX9ZNLnZa8S97xo9EhMgl+u6np4YU/HEr5n0I+6gxTQT7b8kCwrIH4ei0KplbXuuU5SIr2JnULU5sAhsG/NJ4YyE1KnSSLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=R1QpYJXw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=6B/eGm7E; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 71388254018B;
+	Mon,  3 Mar 2025 16:03:50 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Mon, 03 Mar 2025 16:03:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1741035830; x=1741122230; bh=/ww3u6U3ZO
+	goAIaYqWY7G1eGE8BbQAOMle3lhpWWcZs=; b=R1QpYJXwRjX3ePpVpLY6lkAfiy
+	UbT6QssUMgNzHAc5QK3I7YuIGTqfEdwarJMRwEefYkX4vBIBI8vFptUSEY9PhOkg
+	KmoHWz0oY6WoKYSfu9Rmz/LhCApxHNPwUSTD6QUwsZqM8jjRI/ZTQCkHwbHYQY6W
+	RJnPFEGxPfHhS8DcA8Ehz8KJLeStQ0/5iJueubW9JULahZLuhQFpYkTZyZGkTfQ0
+	JXejI3H+3xvLhUNlTvFbUBQmqcvm+Y/av7/FfrmAbHfJkZ6urZvavS3cEjZ9yAnf
+	6eQF747wTzxBwd3VkA1ZzD5iTaQape031slQc2JTC9OJ4Ofe85ySRX4ZXI+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741035830; x=1741122230; bh=/ww3u6U3ZOgoAIaYqWY7G1eGE8BbQAOMle3
+	lhpWWcZs=; b=6B/eGm7ELYSJZrHGdVYPAlpElUD4ZG66neS5jw1gCYmWYCMoJTH
+	l4LC+85NLD+c6yR0ma2XJEc2IfPGW96NXqkfadU/pYi23qTZm6sCLEDjMVELqjUx
+	WDM2dJZZCE53w+JfSPzBkdCNbIzCVdXjKCcQUV4N1avcpq4zzJ5eRUuNxFk+0CY2
+	mSFUdgN3LXrUnzUd7UqlT5s/YE/1cdXstu4V7RphQFLLCwQAepXpemJYl/X1YtvE
+	7B3qrjyIG3uKoepAjt4cPMlKknaq/zEkd2HKGe3U8noMIxIjYX1XV134xA7+0h/q
+	o/9+e/gPxyHsnUQT/ltgYVE3LYw5QZgaTzw==
+X-ME-Sender: <xms:NhnGZwvAPxHi4ZMfV6hkGBHudafqeZ4kOYhXIY67TSN73eJsACwZnw>
+    <xme:NhnGZ9fCyHqZLsRP54Tp5CUOnlIAvEQBc2XJJnW_Q8tuV3iyxhWTBCRuPkY8x3Xeu
+    4RCpEjGvLKNEXP1pA>
+X-ME-Received: <xmr:NhnGZ7x3HK7oRtuBPpUi5o9pxEUVfnyVJEKO5jS4hwrnVNty7XPY2lHzk451xpppgpxfHaBbJtXPGyDK0uexcmNBdAEtygvzF4Ww4PKrBQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtudeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
+    fvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpeetnhgurhgvshcuhfhrvghu
+    nhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrghtthgvrhhnpe
+    effffgledvffegtdevlefgtdeggffhvdekgfegteeiveejkeetudelveejhfeugeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvsh
+    esrghnrghrrgiivghlrdguvgdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:NhnGZzNP5WOzbAfCWGqD7dRhwSvqhHsb8sISNg-7k49hyp4OxywTBA>
+    <xmx:NhnGZw9PEgef-gAJhO3sYjKRpzzPz9z6lbq9noTNmqGXBnpXRmfg2g>
+    <xmx:NhnGZ7W_jdoAk-y2AG5aXvyRi9Il9ZuRqNmm0Jk3Bw8-PqKj04yNew>
+    <xmx:NhnGZ5fPEIz5ulb8jiaps2cQdcPDggy8waNRhz4cutPXpKaqwQUOiA>
+    <xmx:NhnGZyKPbMOV8VcaHX-tj2ySP0CMycgUJ4NfCZ6UiEM5mrrCW_lTe6hH>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Mar 2025 16:03:50 -0500 (EST)
+Date: Mon, 3 Mar 2025 16:03:49 -0500
+From: Andres Freund <andres@anarazel.de>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH 0/8] Add support for vectored registered buffers
+Message-ID: <lscml6pt36b2nebr7mjt5z76mtj2bctr5jxjv7qc2x4cq4ggyv@x35mco47jda6>
 References: <cover.1741014186.git.asml.silence@gmail.com>
- <841b4d5b039b9db84aa1e1415a6d249ea57646f6.1741014186.git.asml.silence@gmail.com>
- <CADUfDZobvM1V38qSizh=WqAv1o5-pTOSZ+PUDMgEhgY3OVAssg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -60,31 +96,38 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADUfDZobvM1V38qSizh=WqAv1o5-pTOSZ+PUDMgEhgY3OVAssg@mail.gmail.com>
+In-Reply-To: <cover.1741014186.git.asml.silence@gmail.com>
 
-On Mon, Mar 03, 2025 at 12:49:38PM -0800, Caleb Sander Mateos wrote:
-> > +               u64 buf_end;
-> > +
-> > +               if (unlikely(check_add_overflow(buf_addr, (u64)iov_len, &buf_end)))
-> > +                       return -EFAULT;
-> > +               if (unlikely(buf_addr < imu->ubuf || buf_end > (imu->ubuf + imu->len)))
-> > +                       return -EFAULT;
-> > +
-> > +               total_len += iov_len;
-> > +               /* by using folio address it also accounts for bvec offset */
-> > +               offset = buf_addr - folio_addr;
-> > +               src_bvec = imu->bvec + (offset >> imu->folio_shift);
-> > +               offset &= folio_mask;
-> > +
-> > +               for (; iov_len; offset = 0, bvec_idx++, src_bvec++) {
-> > +                       size_t seg_size = min_t(size_t, iov_len,
-> > +                                               folio_size - offset);
-> > +
-> > +                       res_bvec[bvec_idx].bv_page = src_bvec->bv_page;
-> > +                       res_bvec[bvec_idx].bv_offset = offset;
-> > +                       res_bvec[bvec_idx].bv_len = seg_size;
+Hi,
+
+On 2025-03-03 15:50:55 +0000, Pavel Begunkov wrote:
+> Add registered buffer support for vectored io_uring operations. That
+> allows to pass an iovec, all entries of which must belong to and
+> point into the same registered buffer specified by sqe->buf_index.
+
+This is very much appreciated!
+
+
+> The series covers zerocopy sendmsg and reads / writes. Reads and
+> writes are implemented as new opcodes, while zerocopy sendmsg
+> reuses IORING_RECVSEND_FIXED_BUF for the api.
 > 
-> Could just increment res_bvec to avoid the variable bvec_idx?
+> Results are aligned to what one would expect from registered buffers:
+> 
+> t/io_uring + nullblk, single segment 16K:
+>   34 -> 46 GiB/s
 
-And utilizing bvec_set_page() to initialize looks a bit cleaner too.
+FWIW, I'd expect bigger wins with real IO when using 1GB huge pages. I
+encountered when there were a lot of reads from a large nvme raid into a small
+set of shared huge pages (database buffer pool), by many proceses
+concurrently. The constant pinning/unpinning of the relevant folio caused a
+lot of contention.
+
+Unfortunately switching to registered buffers would, until now, have required
+using non-vectored IO, which causes significant performance regressions in
+other cases...
+
+Greetings,
+
+Andres Freund
 

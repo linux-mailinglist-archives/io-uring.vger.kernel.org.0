@@ -1,116 +1,141 @@
-Return-Path: <io-uring+bounces-6933-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6934-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF082A4E37D
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 16:33:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79761A4E577
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 17:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA4217F4E5
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE7A188754B
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDA0291FBD;
-	Tue,  4 Mar 2025 15:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF492BF3F1;
+	Tue,  4 Mar 2025 15:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXVqitqv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5mT+gbs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235DE28D05D
-	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FED2BF3E7
+	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101425; cv=none; b=axRNFEIHrlXhJXC5mFNaOOtdguCvGD/WohsytQqRjMJ5LbK6LDuN1jkxhxoY029w73pOUt0FK5fhgbVn5gHErRxd/4yjQxjE871SfZVtvZM3mA/1Z+JPbXOAUhBqgSqOc2erXvX1M5Y5bv2KDp4H35PEXngL3TQrFuUE5ANnXag=
+	t=1741102775; cv=none; b=kobaHXdgzUMS7G/HKdxEvloiE3I22AiNQ00dzEwExnbfLldSWR/q8+Kr6ysrun3+Qgk17mXwpf72v5E0Yqqhn5UXNH+s4q6Ldp8grvH772820iskQj+lAierRjUO1F/avAvuZLq0SEa6YQ21os907B1gZY7++g407Q7SgULciSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101425; c=relaxed/simple;
-	bh=xjcKEXP5jAfCiSUUz6fjVd8Hsn30AytpNcFfT7b8uIw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XtI+akFyu/q38PDBuaQ/9HEWkzjn/z7fva4cD79hcHAUo9OfldJWMAcZPeDhvXA6dz8CHFKcBu4qAiHMikYKwaAcfe4m3Gt743luHl3zZcF9z38eMSBcFg5EoqBx9M3uJx9SrEHI9pfzE8K6v8wt21+7fcjrXcHPcj/tpR2NHzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXVqitqv; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1741102775; c=relaxed/simple;
+	bh=Pp1PAO2Y8SwZIjdJKW1tBodLgBIqBPbl2mOjZO7kVtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hwAAfD6rfw5IKt7GczIxn03NeSPHT0fYfEtyjov9DQY4j7IIn2tgBBLZqXtJcQtmSSZDnwCooatllK3VbTZ7x1puYduTP8fUtRuK8mfY2FzX8MmFETdn4DMCnCd9kzY5b0oUjXqkVkiYgyPOcbLSoAUARWxoJ9aZenPanzIHu9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5mT+gbs; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so8875498a12.0
-        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:17:03 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso8763748a12.1
+        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:39:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741101422; x=1741706222; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+ALTJqAZUqbI5/3XhYOF3OjwZcPQJTsmPJuGItJiNXw=;
-        b=MXVqitqvOacLtnhFCX9cSlU6TFKGgn9dKWC5Fwo4VJHo20cjFR/1PzMbB3Or2pvMuf
-         gYjiVpaorXZQ9JMe/om8Ktm1CsbyXsxmZHpRfL/Km0cU4vYSxs24iDsHYSKz5QV2iDm2
-         3PFdLB9elD6Apl/vhb5VTBVE2scnFVJc50JmPC9/KuTERK3ScBCadVFz064EyKnMZDb6
-         gxOLukyMtOkZRbHp/CZ79326FXVOiJu/aI2dj3yeFFeagJMIxOPRSAf5FNo9oBhX97/t
-         LqC5YskykKDJc+GMKJlg88rz5Xtr6wzbyRfFU5pcjzBBAiUU0uEnHNXwNIqKOZ2RQrF8
-         dC8w==
+        d=gmail.com; s=20230601; t=1741102771; x=1741707571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sLSEs+5Zj6Ap+cMQAkDec6FLj0eKS1tYEqeGUIaFdGw=;
+        b=H5mT+gbszq85TqCkbvY4rAq249Zx/a8XMqYoV/CuftOVt6tAUbGCOdHtz1VpnlZxti
+         WVrYAk8S9tZ8AhHa7bGN44+Fl373WPR8A6XPOSFWfBVBJUHEMKm5PzwZU8S3xqWlG9UD
+         Ddz/uXp7iWRM4vorqS21GFdZT2fzNEAWTcz/k9fofoHI5tAYnPA8is9p7xNZZzyGK7gn
+         5MvTokvuT+IAr01clIFWih04Vu+MxEQm9dFCQH2bCLxJeQ63ZTQh+Gavp1T+nrk5XYA4
+         V1WSNHyCMedX77TVVS9HIZWRnMFsxSZvROd750B7yRqjGVRTjRc10jprnJ785jclj9ns
+         0f9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741101422; x=1741706222;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ALTJqAZUqbI5/3XhYOF3OjwZcPQJTsmPJuGItJiNXw=;
-        b=blFECPD4TDiNPLNY24+o9BoADUlC63mcIQUd2W7vDLlEbUdZ37yxJLmkDEMp+TxcLV
-         S9bSr9Y1J0ENXg8TR6+gG0O1kdYwC+lRPKCsX7Ak54/1m8s4rFr6MdXushyzmVUgqrKi
-         1PZtqg54qopXeMZhSJ9kEE25ZcMMxUnFiyB0CGEvxzH9JAXMFLBZ+V9Q3526gtpNbCr6
-         bEzHuyveqhwfDZqlL1w8N7jvhDDOqiWS9vAVVNNHYthilGCGXf62Vw94JUdVu0Y/lYHQ
-         r5Y7ReMocU1BKWIqhbwRGqgvl7JE1ImonNoElYYT67A7cPB1J9KVDSfgb+MQvn/7/F8O
-         wQ7Q==
-X-Gm-Message-State: AOJu0Yy67YWwVgF64snrOAJsY9mvTvQlWnS1AvyLbbXm5VLJ8SOlnI3s
-	8jmPr5FyafN0PZXIP0/GoYeRHPntNOpSWjKLiw7Oq9gZp9M8CflRnLkPGg==
-X-Gm-Gg: ASbGncvToIlMM+MHrcef8PIAKQB2lqE0pVtN60TjP28z4i7O/lDJhw4/SRGGmSOKa53
-	4hS5pAs3V7RQX9Hjx5WCo7twXgGorVssTRBEuXJrZfSaxJRIXkvZQdkjsQLLiPJf+o31x3S105X
-	pzi94JP0l9tgS+wkVFgLtGQotf+FNOxgJW88yq1383kq/5IV9AjDMJ0AyoK7sAe6bRAyXIYAQyR
-	pbqY4z8B8ASkIlJ8e00+b0tOHoOsqecWOvbj9/sKmqJMv3TAQXoL61iMhTESCwpWChU66yMTnBf
-	gdX7w8LBtGDmUbQsB28YHALPq7KDE1jQHwHR37JR+eJilFp68mvf7gKyjo+xuINkUMGv6hsY8yj
-	ZdA==
-X-Google-Smtp-Source: AGHT+IFB55EU4r74eXyi4FeDQ/EZeYJI0r2S4hTUrTCICWBqc3Dv5rqmMrg7olPKf+OJY8GO8wpTOA==
-X-Received: by 2002:a17:907:1ca2:b0:abf:6842:d46 with SMTP id a640c23a62f3a-abf684213e6mr1003486866b.32.1741101422006;
-        Tue, 04 Mar 2025 07:17:02 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:3bd7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e5aff06esm218450266b.130.2025.03.04.07.17.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 07:17:01 -0800 (PST)
-Message-ID: <8ad09b2e-7bc6-4379-be68-033e9e164ee8@gmail.com>
-Date: Tue, 4 Mar 2025 15:18:11 +0000
+        d=1e100.net; s=20230601; t=1741102771; x=1741707571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sLSEs+5Zj6Ap+cMQAkDec6FLj0eKS1tYEqeGUIaFdGw=;
+        b=Z2RXvU2wZPfZFf4+f4ax5BYqwoUTFKsJ6ULauQG6SeW/ezYeKaNBufsbJZ0RcJxRjn
+         VVT236VjFIlrgFCiOtGAnMSDzotup4vr737o0e6/KHYBIYXrCZSkCCJWbggJToXvZbsh
+         ViS81FUNxJD3JoQi9bdV+943fhUHVCBXSECC28bUz3YU6ro3eq57sY6F1aXwkKBfp6Am
+         uemRhkI2f7Dr3r9inRv4mVEMGPzTYnKfZPbnxVNvVzJZoTmRLmStQv8sIHOslOhaRwcj
+         j8pOhzpo/VN+c0WTJHNsoHteEuZoccOL9m2SIZcSpNfa/+tp/GvRpTB5IbNIgPgWKK0S
+         ciVQ==
+X-Gm-Message-State: AOJu0Yx9c380gC5bWGRa1ZJSDTFMA4qMPWIxaKdxNoX0bKhrDvg6m4Jz
+	fQFzaTzVu1Lmh7ppGPuKxyqoIx2l0Ms85ADC/N0KehFUiHLA50iAiXKjYA==
+X-Gm-Gg: ASbGncuRAFCXx+gOFNIr3ZfMYhGcIOVgKJeYuLA/jiiyMHYRcvuXyO7JZ8Qzf8dv7tf
+	fL6u+DRljyHVMwD4E18yiaXWDfHCMba3CuuG9YbhdFFiy4ZxYfPJru3B8wtb2C/kC8TJQmIX/yN
+	6yVHYUZs7E6y8Bw2aH2xRcm0jFrxFDLNOkI1+u2CSnLNWe57bmKUN04KfSZ1z3ZEcGn8i3bwqKl
+	0oTF7OVkfoLswLZtwHuYWj/OMYOj0HGtJtQie4RvIbKtmQn+S3aCCUJogUiT4S8E5IeSqsVPgbQ
+	GS5gXEWSArD8wYm+JSeKxpX7di9Z
+X-Google-Smtp-Source: AGHT+IFiJP6gwiXS9JZy6YRz5biun2OIWlI9lL11yA9V1HYTeBZTOmWc08sZEc0iK1S7pf9Zjpc2SQ==
+X-Received: by 2002:a17:907:1c8e:b0:abf:6a8d:76b8 with SMTP id a640c23a62f3a-ac1f0ef6981mr388470966b.11.1741102771470;
+        Tue, 04 Mar 2025 07:39:31 -0800 (PST)
+Received: from 127.com ([2620:10d:c092:600::1:3bd7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ecafa17fsm168420966b.162.2025.03.04.07.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:39:30 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	Andres Freund <andres@anarazel.de>
+Subject: [PATCH v2 0/9] Add support for vectored registered buffers
+Date: Tue,  4 Mar 2025 15:40:21 +0000
+Message-ID: <cover.1741102644.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] io_uring: add infra for importing vectored reg
- buffers
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, Andres Freund <andres@anarazel.de>
-References: <cover.1741014186.git.asml.silence@gmail.com>
- <841b4d5b039b9db84aa1e1415a6d249ea57646f6.1741014186.git.asml.silence@gmail.com>
- <CADUfDZobvM1V38qSizh=WqAv1o5-pTOSZ+PUDMgEhgY3OVAssg@mail.gmail.com>
- <9a5e3d75-afef-4942-881c-444d35472758@gmail.com>
-Content-Language: en-US
-In-Reply-To: <9a5e3d75-afef-4942-881c-444d35472758@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 3/4/25 10:05, Pavel Begunkov wrote:
-> On 3/3/25 20:49, Caleb Sander Mateos wrote:
->> On Mon, Mar 3, 2025 at 7:51 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> ...
->>> +       for (i = 0; i < nr_iovs; i++)
->>> +               max_segs += (iov[i].iov_len >> shift) + 2;
->>
->> Sees like this may overestimate a bit. I think something like this
->> would give the exact number of segments for each iovec?
->> (((u64)iov_base & folio_mask) + iov_len + folio_mask) >> folio_shift
-> 
-> It's overestimated exactly to avoid a beast like this.
+Add registered buffer support for vectored io_uring operations. That
+allows to pass an iovec, all entries of which must belong to and
+point into the same registered buffer specified by sqe->buf_index.
 
-And it'd be broken as well for 0 len.
+The series covers zerocopy sendmsg and reads / writes. Reads and
+writes are implemented as new opcodes, while zerocopy sendmsg
+reuses IORING_RECVSEND_FIXED_BUF for the api.
+
+Results are aligned to what one would expect from registered buffers:
+
+t/io_uring + nullblk, single segment 16K:
+  34 -> 46 GiB/s
+examples/send-zerocopy.c default send size (64KB):
+  82558 -> 123855 MB/s
+
+The series is placed on top of 6.15 + zcrx.
+
+liburing + tests:
+https://github.com/isilence/liburing.git regbuf-import
+
+v2:
+    Nowarn alloc
+    Cap bvec caching
+    Check length overflow
+    Reject 0 len segments
+    Other minor changes
+
+Pavel Begunkov (9):
+  io_uring: introduce struct iou_vec
+  io_uring: add infra for importing vectored reg buffers
+  io_uring/rw: implement vectored registered rw
+  io_uring/rw: defer reg buf vec import
+  io_uring/net: combine msghdr copy
+  io_uring/net: pull vec alloc out of msghdr import
+  io_uring/net: convert to struct iou_vec
+  io_uring/net: implement vectored reg bufs for zctx
+  io_uring: cap cached iovec/bvec size
+
+ include/linux/io_uring_types.h |  11 ++
+ include/uapi/linux/io_uring.h  |   2 +
+ io_uring/alloc_cache.h         |   9 --
+ io_uring/net.c                 | 180 +++++++++++++++++++++------------
+ io_uring/net.h                 |   6 +-
+ io_uring/opdef.c               |  39 +++++++
+ io_uring/rsrc.c                | 131 ++++++++++++++++++++++++
+ io_uring/rsrc.h                |  24 +++++
+ io_uring/rw.c                  |  99 ++++++++++++++++--
+ io_uring/rw.h                  |   6 +-
+ 10 files changed, 415 insertions(+), 92 deletions(-)
 
 -- 
-Pavel Begunkov
+2.48.1
 
 

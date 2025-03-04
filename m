@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-6935-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6936-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906A2A4E55B
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 17:17:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EDBA4E4F7
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 17:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B29F8A6E7A
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9482119C6811
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057DF255231;
-	Tue,  4 Mar 2025 15:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E9D2BF3CF;
+	Tue,  4 Mar 2025 15:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJe2IuyF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9THVGdl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DED2BF3EE
-	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49623255220
+	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102776; cv=none; b=mHV2/i7ZUF7wdzTWQ6KCWpOOr4OFHm2OUplbd1J6wmWojvfmwyffnl6gZhA6LbcDtd8k5cKK++hz5RSEj6IPhSLiA5dDkIBA1ZoqLFQ/QSzmqqUDK/wJStq+dEzwFBkgt2w7HV4BqJKcvxMrO9X+GiOGfr2q2htk8ow09Otm0lQ=
+	t=1741102778; cv=none; b=foBS3XpyiQbaoY4NmDq4jG7r63sHCXwkVl7WzGKAz3Lx5zbEqMB49sBOhNzHcIJfckZEV9YXzMUEqp+mDQ8EJ+NOIrr9h0hYCm6MoYVExJzmbZjS1F9y6ntwalEiknh6VrxbH9bX+F2ZOPjs856BSBu5/r61R+sUUvGNKhvGjmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102776; c=relaxed/simple;
-	bh=1d6ejyiPzFsCP/aRWcF09WW+bogzzbEaHRwv2dQmFps=;
+	s=arc-20240116; t=1741102778; c=relaxed/simple;
+	bh=BvSYcKZjJx2mcN6MisvhcNvhByGtN1LJqFZE5JCFyus=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l1Ubq68t2G1OuyojDxt+/vMamIF6myVKBHfL3cFg5IsFmh5J5YAFfOyYSSVaqqoIT1+dIEB50ATfllWpTjBmwxSBHbFYCjvibtg1JMOC6NRPaNtqKkxcxrzd7Wuv4Nl1wN0txwQrQXPiZtyPysnMDNdnFj7SRC2ELFGothJqosg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJe2IuyF; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=LoiF41TIMIvwxudKgNCiHRXOKBfkMnMqrWtD/0cMgWsKA2ZGcclZOeEPAR4Zfn7wFDqvo3nlQYw1Rz1LldgiUnswUuvEQfq+dNLobg+dalb3V5djSDiBmjGTTDl+r36FZdG/tepjzOrFrWFW9q/3mjJvsh46DIg0mnT8owBSxk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9THVGdl; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso839141166b.1
-        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:39:34 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab744d5e567so980242366b.1
+        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:39:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741102773; x=1741707573; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741102774; x=1741707574; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t91HrX4L7T7hAfZHnOYG8rdRL8w+TWHVfgfNwFTUYR0=;
-        b=hJe2IuyFDaDSLeEW6KqnPVlU7WYKsMaRreM8Xbr47dnmMr7vlYl/yJE3mvDbryFhLG
-         eerXJeq7lGzVTwZBipAsKOP0Fyksk0mcNuZD1s86fK72FwtA+IBDO3tFUmL9HJyyUSmZ
-         YMZuuoCsbTDJ4UnmSlBPGfINVqnEMwLBukDIaUdmDDiLyswOh4+pEtQo5q5oOYqZi2GA
-         vGtCyaelIhsiZY3aKBrp/p5NYecj8sO2xXPoUALz6zyNPs3I121rQIgr/LQ+tNW2qbKs
-         o3oZ0Aps0xj1oKRM6Z9NQgEyiwi0ehD6E9uwuAoGYQt6YKk68zyT51DyUi9zR/t6d2Xw
-         NwKQ==
+        bh=/qLKGOdBl3cLNSyd8QE3mj2clAx9J3/j7tRp1rR5kGA=;
+        b=S9THVGdlCOXkZwCuEVo5FskGBUqFBN1Tcgpk0siIptGlRdgA67O5nQN3yPg9C07C5p
+         kggV5aHav5AjfD8Ga04bPkGTFO/vyQmZvcLDI+fgGK0tifA8reNCg9/wUKx/Hp+IWoHs
+         kfYPsE3Xp2k7txCialtPp95jwpIt6vGYtHCu3xPxdqgQfN43huP7T3JgTygjiROcIpXl
+         zLM/9w1HGiwoLqmy5ZT6FRclglGc0KQgOoBlsLzDhFShMqGk6J0nnHtm4DdCwlB7qpVQ
+         GqvIQBpFsFJkYqAIDFSgjS+SUeSfPfNbdBA97M7G0S391+ZB2V8/jRnNq/h7wY2FKOWm
+         AKUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102773; x=1741707573;
+        d=1e100.net; s=20230601; t=1741102774; x=1741707574;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t91HrX4L7T7hAfZHnOYG8rdRL8w+TWHVfgfNwFTUYR0=;
-        b=XouXJqK8bBa8Cf8qD9OYq64Ai9GQLw7aCv2KbWWvaptSUMyYfDJKGOdDKd3TpCGP/+
-         sasDH42mK9I92/LySHAB03ynq9O6kpxMyMgVNevOvQcYGhVZ0D+9Q8KQquiMQzbhGXX9
-         onWbEOHjCnMVsK/fuFY8EOYmdrTqzE9QR21jjQvBJMaZmWT0E8Nd/gU7MwotbIKO2HHf
-         k8sdP4HuvT+vXbC72QgsjzPh3BRIQPDuGFCBRbbWLqHaB8JmwUfOy00i/hKMmhno4bo4
-         mNaCEVuPsWeCUAjwMGfw4DXKZit6uHbnUG0QhHQFg76jYdKupFPzkZR5/OlBg785y7M2
-         YrCA==
-X-Gm-Message-State: AOJu0Yx0/TaZePxQzF26gSUKtjAgud5jpvfBFogsun7SdQlbFhXU2M18
-	v76eJivAdCM2Wnu2HKPaDx+pkQntdJiTqyB5B5v+3IpoKwkCO3e/z84SWg==
-X-Gm-Gg: ASbGnctiiARZgARFcSmgQa+R4Li436hIcrm+qmqOdy7SlI0vM6Shrp+R75fZ6UHgX7w
-	JicV/DyVi9ohWH3IhkRCtZUqF/HzeUvGKkc3tCCUoAlv4MpFtVekUt6k8ansjWVWthmxPBF1fUB
-	TJX1bciH3DUAQBUOJZVNhhn1jhfdYOuI124ucAuURpHNTW0a7GLC1yBPRz5qoknCkxXHIVdHiPL
-	8+5VMxF2Mnjm6KFALVAxiwfs+tIeuzYElC7jva3BZ3lFheMKvUrdtWXzFJeGG7jnNDbCm8FDdRn
-	Q5gyL5e87OAJNu+17XMVHRP9w2dg
-X-Google-Smtp-Source: AGHT+IF+gX1CuwYUt5SAiOpKhQHMz0CxBZWBVNKjgKuy/Laqtd/JRSNMG0aJsMwYqsDi8FpDN+yLdw==
-X-Received: by 2002:a17:907:2d0b:b0:abf:77f3:d1d8 with SMTP id a640c23a62f3a-abf77f3d653mr972926366b.19.1741102772620;
-        Tue, 04 Mar 2025 07:39:32 -0800 (PST)
+        bh=/qLKGOdBl3cLNSyd8QE3mj2clAx9J3/j7tRp1rR5kGA=;
+        b=QuyoAed2O+E5cgtZ//tcHkwxcRJVeaIjwy1tT3kKZl9umPv9X4W9ErHk/FyxnPesyc
+         Mqe44ly3PXOOcYCL7hJ8ZoyG24Ml38rCv7Q5jfaUQ9DkOaao4EkrCGL18Dkj/jfMDDE7
+         ueirTZoQEn1Wbi89TComNaYo20fRLWwT4W0HJINs7LlK2MnpyxhkUQyzGKK0+Lv+NW5A
+         ln0QQVIQINX1Cm4Ta41XwRA2ILahUgJIq1IncR6WNbTlhhmtGtgPiUQaSLZyDxP/ukwb
+         jeoLlF+HY/oiduPjKSuGTwzegmHICjaLS5/E8ktVou+6GSH/Wlz9VpYtSVpfL+473Qqw
+         lecQ==
+X-Gm-Message-State: AOJu0YyuPFuAtlx65TfbUNKoZfFEVPtLqQKKKQWNHIqh5aHm+s/0b88J
+	HDfRGoGv/Jsp7b+gT5KLgghjw6UqH05/R+4MmX5E72lH7N+NXXKNqnhAEw==
+X-Gm-Gg: ASbGncteidr7XIjXu0QYqtc6+aNgXOlVPyXIxFZRC5rDt5HJ/gaYc0NXsvm8Nm6H65z
+	KQ4e0diTkD2S5f+KRkoNmr3bOlPja2wmSE+lU1x2KeRRm+12Ph/9BqBL9L2KOAl/Xn2PKgsCBY1
+	6fR+pApR6idSe92R/NwWGc8YrbPSteOLiX+z7UNnVMIH85Q3N+ZHaeFMJC3VbfxlOzYM8F450zv
+	iPNvKgpgjMoGTLhdmW1kD7akXmcgS9GuHWznvHxaDn2kY3BRarkwEPiFSoQBRvPpxGFSrE4ugOp
+	WpHGmDHZKYxwHwn2ug7SJBlLr+u0
+X-Google-Smtp-Source: AGHT+IFnSvS5AA6q3trOnwz01vkMEsxJkG3SHhEHr6Is9agUdriICyt+uPbb+V13o8bhS2hswzCbAA==
+X-Received: by 2002:a17:907:d24:b0:ac0:4364:407e with SMTP id a640c23a62f3a-ac1f0eb69d1mr396984366b.4.1741102774029;
+        Tue, 04 Mar 2025 07:39:34 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:3bd7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ecafa17fsm168420966b.162.2025.03.04.07.39.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ecafa17fsm168420966b.162.2025.03.04.07.39.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:39:31 -0800 (PST)
+        Tue, 04 Mar 2025 07:39:33 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Andres Freund <andres@anarazel.de>
-Subject: [PATCH v2 1/9] io_uring: introduce struct iou_vec
-Date: Tue,  4 Mar 2025 15:40:22 +0000
-Message-ID: <c7ce0c6574e31005d193e0f8eafdadfb638cba5d.1741102644.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/9] io_uring: add infra for importing vectored reg buffers
+Date: Tue,  4 Mar 2025 15:40:23 +0000
+Message-ID: <b054a88092767f7767f8447e7a5bdab15fcc0759.1741102644.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741102644.git.asml.silence@gmail.com>
 References: <cover.1741102644.git.asml.silence@gmail.com>
@@ -89,159 +89,193 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I need a convenient way to pass around and work with iovec+size pair,
-put them into a structure and makes use of it in rw.c
+Add io_import_reg_vec(), which will be responsible for importing
+vectored registered buffers. iovecs are overlapped with the resulting
+bvec in memory, which is why the iovec is expected to be padded in
+iou_vec.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  5 +++++
- io_uring/rsrc.c                |  9 +++++++++
- io_uring/rsrc.h                | 17 +++++++++++++++++
- io_uring/rw.c                  | 17 +++++++----------
- io_uring/rw.h                  |  4 ++--
- 5 files changed, 40 insertions(+), 12 deletions(-)
+ include/linux/io_uring_types.h |   5 +-
+ io_uring/rsrc.c                | 122 +++++++++++++++++++++++++++++++++
+ io_uring/rsrc.h                |   5 ++
+ 3 files changed, 131 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 35fc241c4672..9101f12d21ef 100644
+index 9101f12d21ef..b770a2b12da6 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -110,6 +110,11 @@ struct io_uring_task {
- 	} ____cacheline_aligned_in_smp;
+@@ -111,7 +111,10 @@ struct io_uring_task {
  };
  
-+struct iou_vec {
-+	struct iovec		*iovec;
-+	unsigned		nr;
-+};
-+
- struct io_uring {
- 	u32 head;
- 	u32 tail;
+ struct iou_vec {
+-	struct iovec		*iovec;
++	union {
++		struct iovec	*iovec;
++		struct bio_vec	*bvec;
++	};
+ 	unsigned		nr;
+ };
+ 
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index d6ac41840900..9b05e614819e 100644
+index 9b05e614819e..38743886bbf4 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -1264,3 +1264,12 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
- 	fput(file);
- 	return ret;
+@@ -1267,9 +1267,131 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
+ 
+ void io_vec_free(struct iou_vec *iv)
+ {
++	BUILD_BUG_ON(sizeof(struct bio_vec) > sizeof(struct iovec));
++
+ 	if (!iv->iovec)
+ 		return;
+ 	kfree(iv->iovec);
+ 	iv->iovec = NULL;
+ 	iv->nr = 0;
  }
 +
-+void io_vec_free(struct iou_vec *iv)
++int io_vec_realloc(struct iou_vec *iv, unsigned nr_entries)
 +{
-+	if (!iv->iovec)
-+		return;
-+	kfree(iv->iovec);
-+	iv->iovec = NULL;
-+	iv->nr = 0;
++	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
++	struct iovec *iov;
++
++	iov = kmalloc_array(nr_entries, sizeof(iov[0]), gfp);
++	if (!iov)
++		return -ENOMEM;
++
++	io_vec_free(iv);
++	iv->iovec = iov;
++	iv->nr = nr_entries;
++	return 0;
++}
++
++static int io_vec_fill_bvec(int ddir, struct iov_iter *iter,
++				struct io_mapped_ubuf *imu,
++				struct iovec *iovec, unsigned nr_iovs,
++				struct iou_vec *vec)
++{
++	unsigned long folio_size = 1 << imu->folio_shift;
++	unsigned long folio_mask = folio_size - 1;
++	u64 folio_addr = imu->ubuf & ~folio_mask;
++	struct bio_vec *res_bvec = vec->bvec;
++	size_t total_len = 0;
++	unsigned bvec_idx = 0;
++	unsigned iov_idx;
++
++	for (iov_idx = 0; iov_idx < nr_iovs; iov_idx++) {
++		size_t iov_len = iovec[iov_idx].iov_len;
++		u64 buf_addr = (u64)iovec[iov_idx].iov_base;
++		struct bio_vec *src_bvec;
++		size_t offset;
++		u64 buf_end;
++
++		if (unlikely(check_add_overflow(buf_addr, (u64)iov_len, &buf_end)))
++			return -EFAULT;
++		if (unlikely(buf_addr < imu->ubuf || buf_end > (imu->ubuf + imu->len)))
++			return -EFAULT;
++		if (unlikely(!iov_len))
++			return -EFAULT;
++		if (unlikely(check_add_overflow(total_len, iov_len, &total_len)))
++			return -EOVERFLOW;
++
++		/* by using folio address it also accounts for bvec offset */
++		offset = buf_addr - folio_addr;
++		src_bvec = imu->bvec + (offset >> imu->folio_shift);
++		offset &= folio_mask;
++
++		for (; iov_len; offset = 0, bvec_idx++, src_bvec++) {
++			size_t seg_size = min_t(size_t, iov_len,
++						folio_size - offset);
++
++			bvec_set_page(&res_bvec[bvec_idx],
++				      src_bvec->bv_page, seg_size, offset);
++			iov_len -= seg_size;
++		}
++	}
++	if (total_len > MAX_RW_COUNT)
++		return -EINVAL;
++
++	iov_iter_bvec(iter, ddir, res_bvec, bvec_idx, total_len);
++	return 0;
++}
++
++static int io_estimate_bvec_size(struct iovec *iov, unsigned nr_iovs,
++				 struct io_mapped_ubuf *imu)
++{
++	unsigned shift = imu->folio_shift;
++	size_t max_segs = 0;
++	unsigned i;
++
++	for (i = 0; i < nr_iovs; i++)
++		max_segs += (iov[i].iov_len >> shift) + 2;
++	return max_segs;
++}
++
++int io_import_reg_vec(int ddir, struct iov_iter *iter,
++			struct io_kiocb *req, struct iou_vec *vec,
++			unsigned nr_iovs, unsigned iovec_off,
++			unsigned issue_flags)
++{
++	struct io_rsrc_node *node;
++	struct io_mapped_ubuf *imu;
++	struct iovec *iov;
++	unsigned nr_segs;
++
++	node = io_find_buf_node(req, issue_flags);
++	if (!node)
++		return -EFAULT;
++	imu = node->buf;
++	if (imu->is_kbuf)
++		return -EOPNOTSUPP;
++	if (!(imu->dir & (1 << ddir)))
++		return -EFAULT;
++
++	iov = vec->iovec + iovec_off;
++	nr_segs = io_estimate_bvec_size(iov, nr_iovs, imu);
++
++	if (WARN_ON_ONCE(iovec_off + nr_iovs != vec->nr) ||
++	    nr_segs > vec->nr) {
++		struct iou_vec tmp_vec = {};
++		int ret;
++
++		ret = io_vec_realloc(&tmp_vec, nr_segs);
++		if (ret)
++			return ret;
++
++		iovec_off = tmp_vec.nr - nr_iovs;
++		memcpy(tmp_vec.iovec + iovec_off, iov, sizeof(*iov) * nr_iovs);
++		io_vec_free(vec);
++
++		*vec = tmp_vec;
++		iov = vec->iovec + iovec_off;
++		req->flags |= REQ_F_NEED_CLEANUP;
++	}
++
++	return io_vec_fill_bvec(ddir, iter, imu, iov, nr_iovs, vec);
 +}
 diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 284e300e63fb..ff78ead6bc75 100644
+index ff78ead6bc75..f1496f7d844f 100644
 --- a/io_uring/rsrc.h
 +++ b/io_uring/rsrc.h
-@@ -4,6 +4,7 @@
+@@ -62,6 +62,10 @@ struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 			u64 buf_addr, size_t len, int ddir,
+ 			unsigned issue_flags);
++int io_import_reg_vec(int ddir, struct iov_iter *iter,
++			struct io_kiocb *req, struct iou_vec *vec,
++			unsigned nr_iovs, unsigned iovec_off,
++			unsigned issue_flags);
  
- #include <linux/io_uring_types.h>
- #include <linux/lockdep.h>
-+#include <linux/io_uring_types.h>
- 
- enum {
- 	IORING_RSRC_FILE		= 0,
-@@ -145,4 +146,20 @@ static inline void __io_unaccount_mem(struct user_struct *user,
- 	atomic_long_sub(nr_pages, &user->locked_vm);
+ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg);
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+@@ -147,6 +151,7 @@ static inline void __io_unaccount_mem(struct user_struct *user,
  }
  
-+void io_vec_free(struct iou_vec *iv);
-+
-+static inline void io_vec_reset_iovec(struct iou_vec *iv,
-+				      struct iovec *iovec, unsigned nr)
-+{
-+	io_vec_free(iv);
-+	iv->iovec = iovec;
-+	iv->nr = nr;
-+}
-+
-+static inline void io_alloc_cache_vec_kasan(struct iou_vec *iv)
-+{
-+	if (IS_ENABLED(CONFIG_KASAN))
-+		io_vec_free(iv);
-+}
-+
- #endif
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 5ee9f8949e8b..ad7f647d48e9 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -87,9 +87,9 @@ static int io_import_vec(int ddir, struct io_kiocb *req,
- 	int ret, nr_segs;
- 	struct iovec *iov;
+ void io_vec_free(struct iou_vec *iv);
++int io_vec_realloc(struct iou_vec *iv, unsigned nr_entries);
  
--	if (io->free_iovec) {
--		nr_segs = io->free_iov_nr;
--		iov = io->free_iovec;
-+	if (io->vec.iovec) {
-+		nr_segs = io->vec.nr;
-+		iov = io->vec.iovec;
- 	} else {
- 		nr_segs = 1;
- 		iov = &io->fast_iov;
-@@ -101,9 +101,7 @@ static int io_import_vec(int ddir, struct io_kiocb *req,
- 		return ret;
- 	if (iov) {
- 		req->flags |= REQ_F_NEED_CLEANUP;
--		io->free_iov_nr = io->iter.nr_segs;
--		kfree(io->free_iovec);
--		io->free_iovec = iov;
-+		io_vec_reset_iovec(&io->vec, iov, io->iter.nr_segs);
- 	}
- 	return 0;
- }
-@@ -151,7 +149,7 @@ static void io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
- 		return;
- 
--	io_alloc_cache_kasan(&rw->free_iovec, &rw->free_iov_nr);
-+	io_alloc_cache_vec_kasan(&rw->vec);
- 	if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
- 		req->async_data = NULL;
- 		req->flags &= ~REQ_F_ASYNC_DATA;
-@@ -201,7 +199,7 @@ static int io_rw_alloc_async(struct io_kiocb *req)
- 	rw = io_uring_alloc_async_data(&ctx->rw_cache, req);
- 	if (!rw)
- 		return -ENOMEM;
--	if (rw->free_iovec)
-+	if (rw->vec.iovec)
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	rw->bytes_done = 0;
- 	return 0;
-@@ -1327,7 +1325,6 @@ void io_rw_cache_free(const void *entry)
- {
- 	struct io_async_rw *rw = (struct io_async_rw *) entry;
- 
--	if (rw->free_iovec)
--		kfree(rw->free_iovec);
-+	io_vec_free(&rw->vec);
- 	kfree(rw);
- }
-diff --git a/io_uring/rw.h b/io_uring/rw.h
-index bf121b81ebe8..529fd2f96a7f 100644
---- a/io_uring/rw.h
-+++ b/io_uring/rw.h
-@@ -9,13 +9,13 @@ struct io_meta_state {
- };
- 
- struct io_async_rw {
-+	struct iou_vec			vec;
- 	size_t				bytes_done;
--	struct iovec			*free_iovec;
-+
- 	struct_group(clear,
- 		struct iov_iter			iter;
- 		struct iov_iter_state		iter_state;
- 		struct iovec			fast_iov;
--		int				free_iov_nr;
- 		/*
- 		 * wpq is for buffered io, while meta fields are used with
- 		 * direct io
+ static inline void io_vec_reset_iovec(struct iou_vec *iv,
+ 				      struct iovec *iovec, unsigned nr)
 -- 
 2.48.1
 

@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-6939-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6940-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9785EA4E4E3
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 17:05:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AB8A4E4E7
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 17:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930CB17D5A9
-	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61679421C99
+	for <lists+io-uring@lfdr.de>; Tue,  4 Mar 2025 15:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEFE298CC1;
-	Tue,  4 Mar 2025 15:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A009C298CC4;
+	Tue,  4 Mar 2025 15:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ukz/llAq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2/Ix5ii"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EC0298CB1
-	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93FC298CC0
+	for <io-uring@vger.kernel.org>; Tue,  4 Mar 2025 15:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102781; cv=none; b=jDhzLOXbzore0P7KwCNm43VvyqagJyXGRiZK77VL/DJM6eQtyhL7LsoyYOldF2mXinfdkM1IV7DHozE3tFa7HAL/MYnFeWL+Fk2oN9HaVOrbIgZPynw9iXRFH4kB43jAFhoNNHGMaHnnj0j29T4gnHjn0plT2J6EMyTEbspTK20=
+	t=1741102783; cv=none; b=BSx2au0cD+/vZ7PsDkHhZEOA/fjjLvgbuHoczf3MVCX2MSuMBSTyTTVcWBibsRJet5LvCeQLTOU0KmUsiHYr/H5zeXzJQ2+YSRk4FPLahUqyZqCChTwr3jPWIbTb+/kBPvB9ipN4HRRxWjpEr6SS5ygqmE0ufjIgN3bmHpIbnnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102781; c=relaxed/simple;
-	bh=q/FZLY6NX7KPIL9q2sRYyOUjPSfSZOW4huImrRHQGAc=;
+	s=arc-20240116; t=1741102783; c=relaxed/simple;
+	bh=dFLQOj2ZLIbINKKwcv5tlrqtAVZRjLUjvTJ5sPCh7Go=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K9CSTeebjzENmXZL5Un4fk4ZtuBWnyqXERJYF5+AeCwfrvHKshKdxf2ZUaN0o/fs8pTsNODLAPTlAnHywibWGckMdtgKqqDAsKV0g8xbm6yperkRo5fuNaMa8bo2DaocwV4Ds0oP047RJOp6OrFoeUs3p3g4ujzQkmqGW7idj3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ukz/llAq; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=SKrnpYZeA4DjSV8hjrGdLX6805MeA7Yzrf0BZpObIjNu0eQCEVE+njO2f/x1z/8MytI+c6gpApBX3xvoN55OMfuwhlYho50rs6b6DcTYwW2+flrgjqhVWnnts6LAp4QON2I5vcgEd5/LWxOdAigesgoNv9Oe+/FRC3ipf0mWmhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2/Ix5ii; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf538f7be0so530306766b.3
-        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:39:40 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so317715766b.0
+        for <io-uring@vger.kernel.org>; Tue, 04 Mar 2025 07:39:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741102778; x=1741707578; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741102780; x=1741707580; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VMFfmh910ijk2bF3gt2GcETiZRuBH9+UmQ8at+7H2ws=;
-        b=Ukz/llAqzz6nnEYUXolgAhE2DfJkyrC3eWtiRPhJ2gNv4teohr07Ckqf36d+cy5rd8
-         aeIlWTdxV5AD06/OWFdACSPw2ZwR/XA2CSZgBP6Fr/td10j60q1IzLsTO+Zu/ph727dp
-         igkr1C5CmPciWqrOjy6yIE+E6iJSDk9Fz4E3rdXKR1NNO1s6hZ8Qn3cwB7WZ/k7pdvwv
-         7IBpcu0rkPzoe4Wk79SIU4DKgvMkW3GzkCKMDOhq0om2TUaWhQn2ALCL4RawVYKifn+z
-         zLelnPB4cxoP0TeuwX7mlHviPCx1GEc3RNnZTaj/+LgjtLEVaHhvlBRnntWmQSMtUcA3
-         nKAw==
+        bh=xq9H3dhjnKdFz5nEV9/T6Wusp8ITCyq4E/MzF/cO3lc=;
+        b=e2/Ix5ii5OQnGxMJ3vq1Cl9PTF89ydKooRd/cnf8QPbwZtAXg3bSZ4PdJAilRrcOMr
+         1XKONrX2ZU/w6rI04KK0EuCyfhZ7O5B0E45mC10J0egye3EkUFQm05OubNMLFoWzRud5
+         OW3xpm8q6l62lqlBMy1lcXfV6FATZWSwfjWi2g5bSC5yPZV2rJrCQwQjRGD/o7tujSAP
+         n/Q11WTnDmADvEEkpuxA9qOmaajrVELPSW6Hap89AFdYnwbPTumwviP6X21rAIE3Mxsb
+         VYK5MAAA0IYn3bvoVobtK4cxdkCF4QZrWYodPLYSdzApt87JWqq2dZ23NINYJd9riPuh
+         yKgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102778; x=1741707578;
+        d=1e100.net; s=20230601; t=1741102780; x=1741707580;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VMFfmh910ijk2bF3gt2GcETiZRuBH9+UmQ8at+7H2ws=;
-        b=Sqs4C4Q7LX+TPgyEccfJbfJd2s9Y+fGqTcuqOalDy0qK55CVMgHrHixKqq8nK8xUTs
-         FUKi1QLzOIrdgSiEKy96+oO6DYEjirwd3XLTOYQbySFFUrMCePjbvb8RtWvG8h+Q78Ay
-         CSw754Qh7j3LiTHzkuRmk+9XRtzY2N7AUim0D0yH0I+/OoK3msDHbz7I/oKNBcOkKFC9
-         WGZpkB7tWN87Mmk7E9Qjn/mmqc8xtCIfD4h+1LH8IBevYTKiRYfeEnhdjPai8HS6Z4oJ
-         3Jy0mzM086F3y5IFIgiJQRBVTfOc7CagoeB1SknHqkleXHMC9HXkVP8NW8FFaSGl+Q7V
-         UgCQ==
-X-Gm-Message-State: AOJu0YyJypv+bbN0Q2K4EGzTRGVHimYkGL76j6bwZI9tHcYcICLYDx8f
-	ITF6xPI/SYWFnum0dUAKdlXajLnaXHtoi5JABRNsAhfbKLk8SyJQGBINlA==
-X-Gm-Gg: ASbGncu2KbHG2eYkoHWpBeDjW30yOoRfdFYjnKfSKxOEEAeGHDFM3f3SR+FbMu/XAxm
-	9qnRz+QR5BYeNwN4rY518fqmVt+y8sNwupHNXYi7gupGnwYb+9fTEmOINKCd+vxem5Mt62ojlrN
-	oP7veWd1Y2aSZGvkEsNokLkfqaNSFB2JthrWZcZ7mN3ipULGBj5wrGQD8tOxOEnYFWRhdMa8SXH
-	2c2XcXFpt9rPVdX6t9VkpWM9HOjF0kWQsVLGlJr3kJnzGB4nfuBUoRkIX8aQjUpLyzRp71McreS
-	jvZHq9tniBg7MNQJKNAVpVw0yx3f
-X-Google-Smtp-Source: AGHT+IEtrgiSzJbLJs07GbvYBSwaLhqcbcC8rTo/06QM7KJC5+aYR1gtYi1diGno/MnOfnHrgjNFPA==
-X-Received: by 2002:a17:906:d54f:b0:ac1:ffde:7706 with SMTP id a640c23a62f3a-ac1ffde7a3emr156100066b.25.1741102778207;
-        Tue, 04 Mar 2025 07:39:38 -0800 (PST)
+        bh=xq9H3dhjnKdFz5nEV9/T6Wusp8ITCyq4E/MzF/cO3lc=;
+        b=XX0lx7hXVv6G10/M0h5aNOUcmPisRpn5zYzxA/BBWhO9E+ahPnNLG3LIVxmHkFnoD+
+         a77f0O0t3BH/YwLNuBLw0q4ApJGmIBoGwb3bWGayxD08mMAuftPH7zUZrMq9jbrHlL2H
+         RklxKNgUUwhNV3Oxbkuj5UbSaknXVbGBJn28JAa5IkMQzsr6s9YKRY9ZFwunkDhqfBIk
+         csu9HtpjIA1pmPpCJdtxyYwOiv4kd05FS12pcU3S4BLsSW/N15WxGzvp160+KJWRQeR7
+         dQhqZoYHjvo03X9YpKphyOSe20WNG3+MhB7Jyo8V5VfEpOvWROAHayjy478xGDM+rgwm
+         PkkQ==
+X-Gm-Message-State: AOJu0YwofqqkiAa/Zy99yqLuFX0pouffLjqNFT5w1WxQOIcp/123gD0b
+	Kr+7Qrwt8+ZO7Crlrm+jj5cIMmL1csAMNSQkzPi1RPD8nnncO3AGBYRzOw==
+X-Gm-Gg: ASbGncsDXhuWzNAOhRiQE4s3dii7QFnikeE05JrUqyzUkRY3fbO2GbNA5CKpTGr0rBg
+	1duqubVqc5D3Fzy0ShN+wc9gDf3SzMzrdx2+p9qfpepYtZnRaAciT0tdN3L4y+wKCr2z8yjoec3
+	Sb57x1MJ0izQq4PVCQu0TOmCaSj4n1BBn40QIpyY/FYVDz8QMulK00D7DUqLcMl84lPWn+cVHpV
+	1nUEH/l1MmzCpl7xfDiBxbuizei+QRymqKQ9NEiOr3+WPNfj5i4Xj6ecLoO5vZMYBhF/obF9glS
+	z7fpt2FY2WKKv/dKzQAEIWbfpUtP
+X-Google-Smtp-Source: AGHT+IFZriAoSOp8xxvRw4vAE9UxOIJvovmxB3/Tv8kdwinW9oWTcfgPKQ1Sz6jIeCu2HzEn1cBHvQ==
+X-Received: by 2002:a05:6402:34c6:b0:5de:4a8b:4c9c with SMTP id 4fb4d7f45d1cf-5e4d6b62f6emr45746979a12.32.1741102779457;
+        Tue, 04 Mar 2025 07:39:39 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:3bd7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ecafa17fsm168420966b.162.2025.03.04.07.39.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ecafa17fsm168420966b.162.2025.03.04.07.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:39:37 -0800 (PST)
+        Tue, 04 Mar 2025 07:39:38 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Andres Freund <andres@anarazel.de>
-Subject: [PATCH v2 5/9] io_uring/net: combine msghdr copy
-Date: Tue,  4 Mar 2025 15:40:26 +0000
-Message-ID: <71be0fd66b80847a948855d825f6db0bb24e049f.1741102644.git.asml.silence@gmail.com>
+Subject: [PATCH v2 6/9] io_uring/net: pull vec alloc out of msghdr import
+Date: Tue,  4 Mar 2025 15:40:27 +0000
+Message-ID: <3e9edc3be022d9dc2ada8577c73b3532f836aaad.1741102644.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741102644.git.asml.silence@gmail.com>
 References: <cover.1741102644.git.asml.silence@gmail.com>
@@ -89,85 +89,71 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Call the compat version from inside of io_msg_copy_hdr() and don't
-duplicate it in callers.
+I'll need more control over iovec management, move
+io_net_import_vec() out of io_msg_copy_hdr().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/net.c | 46 +++++++++++++++++++---------------------------
- 1 file changed, 19 insertions(+), 27 deletions(-)
+ io_uring/net.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 905d1ee01201..33076bd22c16 100644
+index 33076bd22c16..cbb889b85cfc 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -287,6 +287,24 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
- 	struct user_msghdr __user *umsg = sr->umsg;
+@@ -253,12 +253,8 @@ static int io_compat_msg_copy_hdr(struct io_kiocb *req,
+ 				return -EFAULT;
+ 			sr->len = tmp_iov.iov_len;
+ 		}
+-
+-		return 0;
+ 	}
+-
+-	return io_net_import_vec(req, iomsg, (struct iovec __user *)uiov,
+-				 msg->msg_iovlen, ddir);
++	return 0;
+ }
+ 
+ static int io_copy_msghdr_from_user(struct user_msghdr *msg,
+@@ -328,10 +324,8 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
+ 				return -EFAULT;
+ 			sr->len = tmp_iov.iov_len;
+ 		}
+-		return 0;
+ 	}
+-
+-	return io_net_import_vec(req, iomsg, msg->msg_iov, msg->msg_iovlen, ddir);
++	return 0;
+ }
+ 
+ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+@@ -342,6 +336,12 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
  	int ret;
  
-+	iomsg->msg.msg_name = &iomsg->addr;
-+	iomsg->msg.msg_iter.nr_segs = 0;
-+
-+	if (io_is_compat(req->ctx)) {
-+		struct compat_msghdr cmsg;
-+
-+		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ddir, save_addr);
-+		if (ret)
-+			return ret;
-+
-+		memset(&msg, 0, sizeof(msg));
-+		msg->msg_namelen = cmsg.msg_namelen;
-+		msg->msg_controllen = cmsg.msg_controllen;
-+		msg->msg_iov = compat_ptr(cmsg.msg_iov);
-+		msg->msg_iovlen = cmsg.msg_iovlen;
-+		return 0;
-+	}
-+
- 	ret = io_copy_msghdr_from_user(msg, umsg);
- 	if (unlikely(ret))
- 		return ret;
-@@ -323,18 +341,6 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 	struct user_msghdr msg;
- 	int ret;
- 
--	iomsg->msg.msg_name = &iomsg->addr;
--	iomsg->msg.msg_iter.nr_segs = 0;
--
--	if (io_is_compat(req->ctx)) {
--		struct compat_msghdr cmsg;
--
--		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ITER_SOURCE,
--					     NULL);
--		sr->msg_control = iomsg->msg.msg_control_user;
--		return ret;
--	}
--
  	ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_SOURCE, NULL);
++	if (unlikely(ret))
++		return ret;
++
++	if (!(req->flags & REQ_F_BUFFER_SELECT))
++		ret = io_net_import_vec(req, iomsg, msg.msg_iov, msg.msg_iovlen,
++					ITER_SOURCE);
  	/* save msg_control as sys_sendmsg() overwrites it */
  	sr->msg_control = iomsg->msg.msg_control_user;
-@@ -710,21 +716,7 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
- 	struct user_msghdr msg;
- 	int ret;
- 
--	iomsg->msg.msg_name = &iomsg->addr;
--	iomsg->msg.msg_iter.nr_segs = 0;
--
--	if (io_is_compat(req->ctx)) {
--		struct compat_msghdr cmsg;
--
--		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ITER_DEST,
--					     &iomsg->uaddr);
--		memset(&msg, 0, sizeof(msg));
--		msg.msg_namelen = cmsg.msg_namelen;
--		msg.msg_controllen = cmsg.msg_controllen;
--	} else {
--		ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_DEST, &iomsg->uaddr);
--	}
--
-+	ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_DEST, &iomsg->uaddr);
+ 	return ret;
+@@ -719,6 +719,13 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_DEST, &iomsg->uaddr);
  	if (unlikely(ret))
  		return ret;
++
++	if (!(req->flags & REQ_F_BUFFER_SELECT)) {
++		ret = io_net_import_vec(req, iomsg, msg.msg_iov, msg.msg_iovlen,
++					ITER_DEST);
++		if (unlikely(ret))
++			return ret;
++	}
  	return io_recvmsg_mshot_prep(req, iomsg, msg.msg_namelen,
+ 					msg.msg_controllen);
+ }
 -- 
 2.48.1
 

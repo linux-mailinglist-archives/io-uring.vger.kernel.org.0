@@ -1,119 +1,116 @@
-Return-Path: <io-uring+bounces-6967-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6968-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B897A5017E
-	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 15:11:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54DAA5029C
+	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 15:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7847189264F
-	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 14:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2AA1626E3
+	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 14:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8670224A073;
-	Wed,  5 Mar 2025 14:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9754824E4A8;
+	Wed,  5 Mar 2025 14:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kQzhYj77"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="blp8zjFj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F00155751;
-	Wed,  5 Mar 2025 14:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D58248885
+	for <io-uring@vger.kernel.org>; Wed,  5 Mar 2025 14:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741183861; cv=none; b=MvcnTlCabcHpfMjiXBV5qdC+QaFXV6Ee1Pot7vgXXFhJE5vx4NppfMjNiynUfXJa7QoVoFMutHUlP7WXbAjg2fUpMvhGAgpqs4zC2MpiWos6OFhOmVzABvczeJl94+15Qt3Sw7wZaMi0kbeOTa313j19EpHOYQQtnH0vyvwOiow=
+	t=1741185930; cv=none; b=FdF21yQEUyabGFXNaxyJRMFO3qil2AuiEIiOTxqlqUvTTor4QNCvp9mYZ4Hb/xRhOECRAVgFD3d+zzAw0t9jaB/6VHgRm/4xf9jl029K1CVA1f5Js3wzuACAi5zxqRAQkWcaUinhYVg3LFlo+81nS8f2W1kNwWe/SUKLeE7NuNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741183861; c=relaxed/simple;
-	bh=RigXWhKk1lS/tegXjHPsbf8sEUN3NntaWaJoQ+Izwa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETSbW50oPeNcW1PIOY9kCVL8yNIZxsSwgZ7l3hSWMU8E3EgrIZAaFwxND3pDjpnExHp3/YFO8fUJzZWaZEvHqYahSNuY+yuSrCgvaTD4IbjN2UXcEj490HUK0NnL7tXYZKTgbxGOlU8oJbMOgWh8jcm2jPyIXrasmHf91cxZang=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kQzhYj77; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jOWrYc0+9HlzrR3aKKb90D4IoCghYF5gZHmBO6zxWks=; b=kQzhYj77dCGr+9N1uRZlvvEzHD
-	1OFRwZH7vwensH3pcwxMTpkm+1e/O/GUE7NAq0djcZiBrStOOE2hAZ8azU4qSiUCRoOvgr1Jnnguc
-	Vk/Ya19P+7MXGBFIIv0NoMR2LCqYNlJz0A+KgoNIb3iYzstJEWnD+BRG7iqkMUBFA1Jejn7Yar0pJ
-	j66CZz3pKtKEqjZIpvSKmFLhwLROnQEFHMyM6/bT2cHLkG3oCKQAwATyL7Y3jlx7NTwODm/Y/ujDb
-	KZy5nlR6yizfmOCTjU3MbR+gmrUUwV4LWnwYEC8GQHduIaQpQgzfN0bRdPOB8qE8AJ1wWrpjIBsgn
-	sTruLyvA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tppSd-00000008IPY-0VCH;
-	Wed, 05 Mar 2025 14:10:59 +0000
-Date: Wed, 5 Mar 2025 06:10:59 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	wu lei <uwydoc@gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-Message-ID: <Z8hbc5Nzp6cFMpXO@infradead.org>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8dsfxVqpv-kqeZy@dread.disaster.area>
- <970ec89d-4161-41f4-b66f-c65ebd4bd583@gmail.com>
- <Z8emslEolstG76A7@dread.disaster.area>
+	s=arc-20240116; t=1741185930; c=relaxed/simple;
+	bh=gyWV7YvGW+ooACaK5nWmdJ0YTuhR9JJJPh/VOE/DVDs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sgJMhRrlwBDz53qKCubsuYGOPBqYu/F09MfdfXlDGnbTRyPsrX0ru4kwzBmP+krMMG58QC2n1wDwpWji3lSkexZrH75hC8ktPBdnSDezMpQF3wOINpR5U3SvohXWUWyMUylUw5xapq0VOQD9KEtBYigjjC3Ok+Rf9TwdMQvvpsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=blp8zjFj; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d04932a36cso68073215ab.1
+        for <io-uring@vger.kernel.org>; Wed, 05 Mar 2025 06:45:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741185927; x=1741790727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8hx3WPr3Ij6YvWamKNFqC9J9nfj7Y917rEHjG4+YRU=;
+        b=blp8zjFjNcAsZTxQg/2ppO56M/QxGyb7M9sGo1v0i0bFh9ticeaZrogKjcIAbjz6ba
+         giVAmpqHCae17+m33HEbEQfyMu3XDBmLLChj52BxzwwPYRr/csR9cy/GAWVl33cJDKAQ
+         lUnfesGk6Jend1cGrblk3Zvrk0kttZFCo9IJqEVaFv35+zqwxFSG6Dgc0HL5mMKkFCqM
+         WYbukYblVI4QVUIjn1s6yBjfyuH8KgD24SovRg721sXl9uVIMHxdw8fspC1OHY7YDTIr
+         ekQdexUa38jz70DDyzJKwNNcETnfMJhPz1hGkZTQp2VKE8yNx1pcCTrYoKuNQ9uOO9br
+         ROMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741185927; x=1741790727;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8hx3WPr3Ij6YvWamKNFqC9J9nfj7Y917rEHjG4+YRU=;
+        b=mGtUIJ4gMY1MHEVfGN1Q6IMOY3rlUbWq3Gz5I/J9qr7uSPK11Za4zSDUibma+xLDYQ
+         lU2fl0fHdDXusrtgQbUKj7Dv5WTNRksSx8Lsv7Bzk5PCnnc9t4i+59NSq43KlbFcXvRI
+         rNInPCYdVaZrHjdJmQH4zNxsLirQvJG5ByYtCvH7cnjK3L1seaREXKQ3J1jyzO+TScwh
+         cazIEC9R/W2Tvfe8trvcoBo7pDqCur/Px/QkzihKJAWIzkUPtC6u1ChMo2rxx6ExbuMJ
+         PkMKIVHx4TgiYKaUvRDaJ5FA5noYEdxuiX39qDKMq9UHxLX0IsPXeMSeMoUpw76ktGmw
+         d14A==
+X-Gm-Message-State: AOJu0YxXmgTt5u8RsDjUjcOHTBKZVQxvm3abuiAvQxi+69AKUH2S88az
+	3Gp+aFe/ZUY+EwaK8fgfWwElNNofsiao+r/3keQCJZ/dfM6R7Ael2Ngl1rQmUN0Y9wadHb6Mbcb
+	c
+X-Gm-Gg: ASbGnct+QFA8S7N8Eok+6SqZ6uKhp9pFCoqIbEHoP+e6S0orabo8ysEkraUom2iaYKL
+	zMauQpxQwdggtKgRgr4iKf7EAAbh2MATrbrSoZa58Hop1VKA6GCmKN7zbQEjWbrDt2xhrRMH+s4
+	4LPpcdXy8bH9sCsXVoAO7DNZQKIIUV8T8GnFAAhJeddzxYUcWgkg7q6OdrDV+yORrxgjZ24yfYk
+	4DyigbuNTuqBDttxIlKhkU27gJ1nKx2oha0PtTy521hIVQfgpI4nCwcLt8AUnrq5OJdEm5QHXsl
+	V0e/4FPwlq/5AokmShDf1okl59URrrzQ99Q=
+X-Google-Smtp-Source: AGHT+IEWXGGY/waAyVY7J+OzEL0duzUGaUsJRJKqUSxfQmBXQI5guIsFf1ubFIkjLSp2+56bEpx3lQ==
+X-Received: by 2002:a05:6e02:b27:b0:3d4:2409:ce6 with SMTP id e9e14a558f8ab-3d42b881a52mr44547825ab.5.1741185927104;
+        Wed, 05 Mar 2025 06:45:27 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061c07b73sm3585381173.23.2025.03.05.06.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 06:45:25 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250304194814.2346705-1-csander@purestorage.com>
+References: <20250304194814.2346705-1-csander@purestorage.com>
+Subject: Re: [PATCH] io_uring: introduce io_cache_free() helper
+Message-Id: <174118592580.8596.405686502009114886.b4-ty@kernel.dk>
+Date: Wed, 05 Mar 2025 07:45:25 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8emslEolstG76A7@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-94c79
 
-On Wed, Mar 05, 2025 at 12:19:46PM +1100, Dave Chinner wrote:
-> I really don't care about what io_uring thinks or does. If the block
-> layer REQ_NOWAIT semantics are unusable for non-blocking IO
-> submission, then that's the problem that needs fixing. This isn't a
-> problem we can (or should) try to work around in the iomap layer.
 
-Agreed.  The problem are the block layer semantics.  iomap/xfs really
-just is the messenger here.
-
-> For example: we have RAID5 witha 64kB chunk size, so max REQ_NOWAIT
-> io size is 64kB according to the queue limits. However, if we do a
-> 64kB IO at a 60kB chunk offset, that bio is going to be split into a
-> 4kB bio and a 60kB bio because they are issued to different physical
-> devices.....
+On Tue, 04 Mar 2025 12:48:12 -0700, Caleb Sander Mateos wrote:
+> Add a helper function io_cache_free() that returns an allocation to a
+> io_alloc_cache, falling back on kfree() if the io_alloc_cache is full.
+> This is the inverse of io_cache_alloc(), which takes an allocation from
+> an io_alloc_cache and falls back on kmalloc() if the cache is empty.
 > 
-> There is no way the bio submitter can know that this behaviour will
-> occur, nor should they even be attempting to predict when/if such
-> splitting may occur.
-
-And for something that has a real block allocator it could also be
-entirely dynamic.  But I'm not sure if dm-thinp or bcache do anything
-like that at the moment.
-
-> > Are you only concerned about the size being too restrictive or do you
-> > see any other problems?
+> Convert 4 callers to use the helper.
 > 
-> I'm concerned abou the fact that REQ_NOWAIT is not usable as it
-> stands. We've identified bio chaining as an issue, now bio splitting
-> is an issue, and I'm sure if we look further there will be other
-> cases that are issues (e.g. bounce buffers).
-> 
-> The underlying problem here is that bio submission errors are
-> reported through bio completion mechanisms, not directly back to the
-> submitting context. Fix that problem in the block layer API, and
-> then iomap can use REQ_NOWAIT without having to care about what the
-> block layer is doing under the covers.
+> [...]
 
-Exactly.  Either they need to be reported synchronously, or maybe we
-need a block layer hook in bio_endio that retries the given bio on a
-workqueue without ever bubbling up to the caller.  But allowing delayed
-BLK_STS_AGAIN is going to mess up any non-trivial caller.  But even
-for the plain block device is will cause duplicate I/O where some
-blocks have already been read/written and then will get resubmitted.
+Applied, thanks!
 
-I'm not sure that breaks any atomicity assumptions as we don't really
-give explicit ones for block devices (except maybe for the new
-RWF_ATOMIC flag?), but it certainly is unexpected and suboptimal.
+[1/1] io_uring: introduce io_cache_free() helper
+      commit: 0d83b8a9f180436a84fbdeb575696b0c3ae0ac0c
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

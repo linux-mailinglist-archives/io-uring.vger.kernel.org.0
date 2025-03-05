@@ -1,97 +1,144 @@
-Return-Path: <io-uring+bounces-6960-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6961-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7594A4F1FE
-	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 01:01:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C5EA4F235
+	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 01:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0679E188CF3E
-	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 00:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACD93AA5B1
+	for <lists+io-uring@lfdr.de>; Wed,  5 Mar 2025 00:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545B21FDA;
-	Wed,  5 Mar 2025 00:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A358F54;
+	Wed,  5 Mar 2025 00:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L7P9wnUb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kiyB8H2Y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B8C4C7D;
-	Wed,  5 Mar 2025 00:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D938460;
+	Wed,  5 Mar 2025 00:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741132887; cv=none; b=c+11aqPvXGyK9+rcauc5mWVuvvAkAPUyEpVYobhGiGLcG6GU0tkwxJOd3446ubw/vmHkNiOG1HIwyo1tRz8x7YqpKYNJ2Z69txd6nvGgVjPCwLHVIHrwJEuMB+UnTwcK+d8uWsaiktxYPhuY8rDpquJu5WED4Y4QIbkT9WvAYFM=
+	t=1741133595; cv=none; b=BUV/JcYLv2ExULzVCxtUc1eR3U/6JSp3AGdScmxfZKVuxjqcgOYla2hpwU05q5lanjWWQeI4qDjxD5IhrYBZoKCsvM7EFYQEj+tOAblgvc8aXyEKMGkkqqDl6ukbmeaE2Vhu/TRPcR0uT2aAiU/eBmVoRpXv4zjcwmmCMD0JKJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741132887; c=relaxed/simple;
-	bh=NsFdvokmDwtRG/3Jkin6bWmAUWDRLCpraJ8X3HUuMkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QkxcwXFLPkY3m05ai5+H+rK64gFlaRJunOm2pdDXam/+ODYg74tlCxqM9vK0/hx80pHV01mSXWUj2XB3eIRc/0pCpOW5Eg/sb1jlc392M7skiHI+9pqK2tmyQpI4/lH2HMUOykmRVgaWo+iD69XcEdJy5/Ft5Nz7Gn2J5A8XtXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L7P9wnUb; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Fsywue9rlH/mIZo7+SU832OJHSex48bjtHHpvJ2zoX0=; b=L7P9wnUbfw/lruC6syYinp568F
-	qikqyAkn/4Zp7dblCs05eDijffMFDTcpVS5dands069A94KwFhP3r9qdmnE7UGe4CY0a+1sCkbz8X
-	UQRafeI/ufDeCk8MRjjndo4JY/DlUP3AvFDhWSxJkH+en8V4td4+Tg6kb1cUZSeXTkyTfefUkyh7L
-	+L4NHqm140lUCq8m3T1KRWSg255YtBwYmVILuwCHe7BBvLVVCU66LaRQ+z53JDHNxkcaNqMGe9F01
-	X0eV7xVwdz4lr8N0fR5a6+YnRVNsrtMrUIo3qXTJ6diEZZOdzjbJ7lSgEHKwg7cGXO8T+IUPM9lfK
-	UifO+YCg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpcCT-00000006aH6-1JoY;
-	Wed, 05 Mar 2025 00:01:25 +0000
-Date: Tue, 4 Mar 2025 16:01:25 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-	io-uring@vger.kernel.org, linux-xfs@vger.kernel.org,
-	wu lei <uwydoc@gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-Message-ID: <Z8eUVcqMYfCJtdge@infradead.org>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
- <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
- <20250304192205.GD2803749@frogsfrogsfrogs>
- <6374c617-e9a3-4e1c-86ee-502356c46557@gmail.com>
+	s=arc-20240116; t=1741133595; c=relaxed/simple;
+	bh=/NMG+TkUsLf+Gpl4yGEpk6rCebR2sm8ZJtsrneu+iSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKE88Iuz/Wghbab2jBjoFFOJX3FCVi13DZmmRU/e5RcYZs1NmqKicX1LI0L0yk4rw4ewMkI1LJHJvckIR5w4cYZmWua3GWhq0OCl0uJmCw++q4vX9UXTyoofVazxsmTA5DMdjOuA8Ax5QxMd3H+09GASQ6+pyQEX7I2VridTA+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kiyB8H2Y; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso42332925e9.1;
+        Tue, 04 Mar 2025 16:13:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741133592; x=1741738392; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGDYWToi51HAr4FUfzKygqXeMjBB7qFkR/KOntX10mk=;
+        b=kiyB8H2Yl3AeBHBL2H0pyTKW27AIATBagHL03R9A95UTOdHFdu2Sy3L6brYFb2hxo6
+         ExkmdA+iy8M0SekMekexP15Rubnrcv9biWGriDXQMF0T+8Ji6BF/uGfCp5WZx0UTvMYC
+         vkWwdEFsveEZyfJR0Zxw7BMZNn4mq7Winx5fZrlA0rqpxuD4C94vtNplVqfUaqJ2kTqh
+         m42Lfa1vPBV0ubbREgmYh8+7LJb5mmchadp0PBSsEWstCpFppqSGCUvF8DCul0hi/tiX
+         JY6b8vQuFaJdXsUQCpKYl40sFdEb+yDOzK27YDo8WI1k7+jOZqERxTNXW0tVmgBPsWW9
+         ElWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741133592; x=1741738392;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGDYWToi51HAr4FUfzKygqXeMjBB7qFkR/KOntX10mk=;
+        b=Jl1SQNONIL+ma+6UC6dIfxrGUSewVvJxIy92aSju8QwSI21waTwsXLQh4Slpvsx57I
+         Yi1/dkCQNfdXJ1tAVWSXICeE2y8cuQ6TFLNzQRfPm/ymsks4j6e+LshvbsrVCFXZfyDU
+         /rJlCZJRSfTpN9bf1RpB6ArGRT6S5XwKEbmrKNvEdK9qZTZpXKGg95oigXRJa1hXjCXk
+         4V3wlDn+EaSNdVDRdWSBMLQY9eqVduxM2dEQKlfZ48n/i7OJj2HI8yTibvKCli9VABJO
+         wt4XD9jF5TTnqYKKRkP1Ky/YhlewmCvnxfVb0kko5a1K/3hRgm3uDHuWVDqVMlntSihq
+         NB+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCIc4Qy9cdfivXkfDvamYSJ7+XrZ4RVZyMMal2e3smNwXTxQqEAtnaO7y73SeZOT6VY9y3qeTwutD3uaGUmQ==@vger.kernel.org, AJvYcCUnVWSZE1RsLFijOsBsAel/PYHlv27Sc6iwO6ypx816omFOPfHHxu8LSNF/sdyvhcV5k8u47sOoADHZ@vger.kernel.org, AJvYcCXfOr2ZgHMQZjptJ3ynZx+fJg0NGAgM7JwJlAeiGd9b132IJVF4pgprR5Ufb1mN7KbX5dUaEldFGg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLjizmUrMsZvow3OpfxbwKPW3Tkl3NocVOb590pg/f+GA4V++w
+	SOrWZMOgpqvQG5JYmccWLne7P+IlueH+sreRoYquj7C60p5QKA3r
+X-Gm-Gg: ASbGnctNjDOqG/awD/l4CtDXIziUVoJmBmqYitIaLsEzUxHj69a1IO5bnGCb2EzJFVu
+	F2Fm5AW0cRos9C9KO4y2yDQsBsj6DGR3ejcuknHOnGXL09H1Tv+k0wwD+96XfujPzJpESanDBji
+	PHDI7v2fwroj7arqfGrlTPg9CyhddHt+Wnh9Y/b05GWEuCh9+fgLWjAN9Zt3rd+RjUqBjZnddXD
+	UaKczydmO7vN6LyNzTP7X6cfMgtrwC51LVRxt4YZ9SibOyKS5tO9i3Aj1Ak0fZydTPUIxGSLOKN
+	M744dOJ5VYP5pm4hU28Ogpzj/MNtLYo8AP7RfZe+SJPacH75E0/hWg==
+X-Google-Smtp-Source: AGHT+IHdwHCN+ZucN0bMC4qc13SbHe9Zn6LvULS4Ryq2FWrWeBIMGNbgjZRKOz8dtja5liQt92OwGQ==
+X-Received: by 2002:a05:6000:1562:b0:38d:e6f4:5a88 with SMTP id ffacd0b85a97d-3911f749c86mr573478f8f.12.1741133592112;
+        Tue, 04 Mar 2025 16:13:12 -0800 (PST)
+Received: from [192.168.8.100] ([185.69.144.147])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844514sm19181494f8f.76.2025.03.04.16.13.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 16:13:11 -0800 (PST)
+Message-ID: <0113b102-2bc9-4f0a-817b-54a6f2fe0a3c@gmail.com>
+Date: Wed, 5 Mar 2025 00:14:19 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6374c617-e9a3-4e1c-86ee-502356c46557@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
+To: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+ wu lei <uwydoc@gmail.com>
+References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
+ <Z8clJ2XSaQhLeIo0@infradead.org>
+ <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
+ <Z8cxVLEEEwmUigjz@infradead.org>
+ <1e7bbcdf-f677-43e4-b888-7a4614515c62@kernel.dk>
+ <Z8eMPU7Tvduo0IVw@infradead.org>
+ <876fa989-ee26-41b3-9cd4-2663343d21f7@kernel.dk>
+ <Z8eReV3_yMOVOe3k@infradead.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z8eReV3_yMOVOe3k@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 08:35:52PM +0000, Pavel Begunkov wrote:
-> Clarification: the mentioned work was reverted or pulled out _upstream_,
-> it wasn't about back porting.
+On 3/4/25 23:49, Christoph Hellwig wrote:
+> On Tue, Mar 04, 2025 at 04:43:29PM -0700, Jens Axboe wrote:
+>> On 3/4/25 4:26 PM, Christoph Hellwig wrote:
+>>> On Tue, Mar 04, 2025 at 10:36:16AM -0700, Jens Axboe wrote:
+>>>> stable and actual production certainly do. Not that this should drive
+>>>> upstream development in any way, it's entirely unrelated to the problem
+>>>> at hand.
+>>>
+>>> And that's exactly what I'm saying.  Do the right thing instead of
+>>> whining about backports to old kernels.
+>>
+>> Yep we agree on that, that's obvious. What I'm objecting to is your
+>> delivery, which was personal rather than factual, which you should imho
+>> apologize for.
+> 
+> I thus sincerly apologize for flaming Pavel for whining about
 
-I don't think we ever tried synchronous reporting of wouldblock errors,
-but maybe i'm just too old and confused by now.
+Again, pretty interesting choice of words, because it was more akin
+to a tantrum. I hope you don't think you'd be taken seriously after
+that, I can't, and not only from this conversation.
 
-> lines. And Christoph even of confirmed that the main check in the patch
-> does what's intended,
+> backporting, but I'd still prefer he would have taken up that proposal
+> on technical grounds as I see absolutely no alternatively to
+> synchronously returning an error.
 
-I absolutely did not.
+The "You have to do X" hardly reveals any details to claim "technical
+grounds". Take stable out of the question, and I would still think
+that a simple understandable fix for upstream is better than jumping
+to a major rework right away.
 
-> Another option is to push all io_uring filesystem / iomap requests
-> to the slow path (where blocking is possible) and have a meaningful
-> perf regression for those who still use fs+io_uring direct IO. And
-> I don't put any dramaticism into it, it's essentially what users
-> who detect the problem already do, either that but from the user
-> space or disabling io_uring all together.
+>> And honestly pretty tiring that this needs to be said, still. Really.
+> 
+> An I'm really tired of folks whining about backporting instead of
+> staying ontopic.
 
-If you don't want to do synchronous wouldblock errors that's your
-only option.  I think it would suck badly, but it's certainly easier
-to backport.
+
+
+-- 
+Pavel Begunkov
 
 

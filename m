@@ -1,139 +1,177 @@
-Return-Path: <io-uring+bounces-7018-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7019-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6893CA56E27
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 17:45:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891BBA56EC5
+	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 18:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27D4164A15
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 16:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B7A1891E7A
+	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 17:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A097B23ED6F;
-	Fri,  7 Mar 2025 16:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D93623E35E;
+	Fri,  7 Mar 2025 17:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqmbsUlj"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="c0XBOpOB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19C923ED6C;
-	Fri,  7 Mar 2025 16:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EFE23ED66
+	for <io-uring@vger.kernel.org>; Fri,  7 Mar 2025 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741365917; cv=none; b=D2wodK7TmY9t98F0C34Pda5ebYQAd0kQWJ7HLzLXifeDPlMtWLBk8gY6a3pQxB4MyKCM+iS/WOiRv8Ez/Imbe9lEguzFRfb+2zmC94RX0Q+NVE+4Ge9M/Vlfk/q+ImAjj9c4lCY40z3KU/Vry/tU2WkojsNUfHrbjsHSjtcg5Cc=
+	t=1741367456; cv=none; b=j/2Xzs6GuTJ5a200LaQNiY73lF7EJNeH1JDwGO7Tk6JJw6o2vf40e0kYN/FHXn4HNLuaS1TI6j5Gqcz9f5rXjwBJhNcvLYtspxnVMXI2yLpXhAOAhWblMGMdrAVo0UU8Y8+Oc6cuOlYUoUvZxKn2f8ob9z0tyODLuw/yguNMZtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741365917; c=relaxed/simple;
-	bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
+	s=arc-20240116; t=1741367456; c=relaxed/simple;
+	bh=jJyW6NsJ/fSAE1zbuWPjETJYimkoivGARb8bYKnhpsY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwshlAb8u62coUf5Rfz5oFaIsQ0WhPyhRnTFro88HfUXdgSyCnDxo9Kna7+LPlrTPevorwQhVlihzBmiH+E7qQc+u0AmaDAIk8YjLNMdrYJqOmQw5JNN01JHhe7RrdJCArEjAzSGK1lMiHIBfof0GrW+NnISYdqHS+miZYHXKEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqmbsUlj; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso638112466b.0;
-        Fri, 07 Mar 2025 08:45:15 -0800 (PST)
+	 To:Cc:Content-Type; b=RJfW8nZABL0ZkKwORsVhNG7exPRpA35XMD4pFpQFOTlvvy/gV61gm2W0swwlH5yLvxGFT4JGeDc3LFMKo7+YjAryBnRX8C4OyoHDEvzkFBIiptyOJbnDCIUrB4Yazb8ynejaSaBejEcdo1fGK2gMBHKWI+7nH0+Vspzno4MnAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=c0XBOpOB; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f74e6c6cbcso518394a91.2
+        for <io-uring@vger.kernel.org>; Fri, 07 Mar 2025 09:10:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741365914; x=1741970714; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1741367453; x=1741972253; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
-        b=FqmbsUljJvricopOXuQYTOvAi2FJFVXWwp0DyS7By5HKelgVwF4qXU3C/H4Z0y7jDC
-         XuM960LpiUMax1q0MqyDNUP+9JXz6dAfhLXpJKhQ5eYT+TlGunGK+0JETwnjHLWbuHvl
-         2s3oTLytaBQUI88m8npHZSL2oSNuiqE+lxAvwEXkdeWKnocfQUUcgavGzrplYKoh4reT
-         3gbcXHX6s4VLphoCvsuw6YxmOhyYFAjQYKVQQTpzRmoOksxdF9pKqZ9RjIPZZR8cjblK
-         WAqqMOg/90WYsK0vvV0PoOyRL4/fYpL5powMV9vC+Za1CK3Rfe78fgDIX+PXj0FVbaAt
-         FLzQ==
+        bh=cZO2a9y09q8n8x+bulNZwymJHalHaUTtfP9FeKfIoYk=;
+        b=c0XBOpOBmMhfgt2xbejYPdQzN2lnUI4lrS/AcQf6g4wqXQ1uKxHx6UMSbODcuwAPGJ
+         iUIMdIyGhNtKeOJn/Ci3EM2vPChzqYU3MlWtsyPEYSEWOSfqi/rPmuMmoXjHIwshsbYl
+         QFOiXgkLk+vF6cLv3hAqDBETUHeqLac/qm3gkCRqNvwC2kh6cbjd+FaxO3twS7eHtgTJ
+         NSyw3eIg3QwM5IaKrZy5+WoIY3XSiNw/TaDMlmDwT8f5ct8iBqXtM5a2pa9a/4/2PehR
+         Cwm3+sChuMipwwLSzXW6WcmXY+Wu1iHLTKmguXDCp9pP09KK8qYznGLKtV3O0N7zBBu4
+         Om3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741365914; x=1741970714;
+        d=1e100.net; s=20230601; t=1741367453; x=1741972253;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
-        b=v6lNpwSVXRsukhYUQiCfm/xWUARHF6eZQTRHIxq6BcuPrFvKcplZH2vDzbXf5mnQ/W
-         lmIj3r4PTTz9QrsFQRs/PFK14lmVUgmsI7j6+om6YGqF8RtiKFOYf7OfKq9WjC9/aaHx
-         nNMZI7XVdyGmyEgSXElgskpOwBfP9+tw1cTx2wD0HM6CSkPJwFsRfuWv2R6uJQzWaYof
-         nNjm82cbINTqgLcfIVZpQflBhHTv65uMduehwvzCPa8dNUAWHL41elCby0onWr+udV75
-         /eA7ptYGVb7eWO8GAltjDdyJLd+joaCzjvYYTlHigmfbbZDWVjR+PhZrDX5uyOm8B2Ok
-         dHhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTXeQp5r1yslMAegoHG/HevkC1hM2ZIHiNqE1Q1EFH91zthLIwz1Dmiyi57zhTHuBOyh6sI4Jvtc2qybfj@vger.kernel.org, AJvYcCVwpEG8J5viT930zGGplaKJm1lw4pKy55Z/e4lxrgUiCmCNGuwqwcIbILwLQtDzhviVURZ7KiYVwmQ=@vger.kernel.org, AJvYcCWQl/N2saa3PA5jXW4+AA6LmaF8sVzfQifmV7QZFednZTwSta5a5ljEJqaGbzefS8Efm4zvnUDwL9OTI0mDuw==@vger.kernel.org, AJvYcCWuhYHBwUGGbg53cciUcqstgmkS9tD/oKIvmp/3JyUxVEeMYmx/DEOo9RUHiWl0Jd7eSq/DmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy68SwHb79X0wYNsSrzVG+vu8qI/9+Cyb9uQf2851gv0P0WOjK
-	nK46PSF2aegiN+e0oURm58IZ/zw7JYMNH6Oe9fJHFA/NDCjwto5LWVWY224UCU9NGgSzl34stkt
-	9bF9bDWyD7hSGtZMdw52MKy0ZRGo=
-X-Gm-Gg: ASbGnctq0hYWK2Ka/rK0KrXuhfT94iUB9pW80R7T3qHJxbahjx+GfL3AKlF/zyD4V/C
-	eW8B6uOTwfaj7nE/Tkl41THEQfORlMLRrmc/pQsvmlby7l7m2Snl+w/APBIuit0/WncVz6JqKRP
-	RzhURWWF42n8dKkdoz6pHHQQASuQ==
-X-Google-Smtp-Source: AGHT+IHopYBJx1mgx5LeTQc4m4LZnSKPLCKXMYn0njA5opMfDTmm8qs1SyU+pxRhHh07QewdZn5f2BsnGaQ6vCQYGE8=
-X-Received: by 2002:a17:907:c913:b0:abf:23a7:fc6 with SMTP id
- a640c23a62f3a-ac26cab9079mr23579566b.16.1741365913939; Fri, 07 Mar 2025
- 08:45:13 -0800 (PST)
+        bh=cZO2a9y09q8n8x+bulNZwymJHalHaUTtfP9FeKfIoYk=;
+        b=seaf2SKgslQXcVSX5Y+T0/qHoW/fsYmJUaTrfZipExCGIueX58jKpyeG/cg6aMwrPl
+         nlO+SRuHZ/+LvyteqbBBcglxTf0fSy/xdF7isV0exlJb5q0QBNz4aZD9vwarUqfeSzIe
+         JKutxI/ZxidLPxmEIUF8RadaO7IxNhmnamgAX8hRoDwq2bbTXzByw2SO3Nd1VwJ50res
+         hnBuXD/l4wF+mND8gO5H0omoOy7RRTPnBOsm5oJN8TatLWNUfmtXrMy14pIMljNQM/wb
+         cpltskg2uV+Z+1QmIOppQ/zNVu+Nbu7tfaWN3ZZCGO/BqBmC/PE9xvsgwsdk/Y/3zLCe
+         jSyQ==
+X-Gm-Message-State: AOJu0YyIAle0rSTk668kwZNpabpoawxlKgt+0zDlNE5Q+AsVkNfvj068
+	u66VHEvM6XZdxxB0KoVOaegeW5oz1i8drgrWiDQBYDZ+ubQodTArBYc5LDK9Mnca7MfavAII9pX
+	dm9kUHl4JTzrys851zezrmeqUuP/49K7/m0wMRg==
+X-Gm-Gg: ASbGncu9UC7K7rXZrxxsyyrZSaVDf8z+KkowbBTsHXh8xKUkWHeolO5prhRLrBiFebi
+	ua2qgBeDps8HnywdIMArXZBh/vGrikEEu4tx+SSGdaD3D118tZYut7QL7oXXW1AcCHtWX2nPogs
+	zeV2VLa7ALtcnea7j37fJQ3DZy
+X-Google-Smtp-Source: AGHT+IFWZMjEEadusv8NnjB1t7QOZGyChl5178Y7kISe0t9XXXD0H5DjFostsowDbyKOjpHQQvVUgJDK+MLk9A4CDkg=
+X-Received: by 2002:a17:90b:3b83:b0:2ff:4a6d:b359 with SMTP id
+ 98e67ed59e1d1-2ff8f90bacfmr204948a91.7.1741367453432; Fri, 07 Mar 2025
+ 09:10:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307161155.760949-1-mjguzik@gmail.com> <20250307164216.GI2023217@ZenIV>
-In-Reply-To: <20250307164216.GI2023217@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 7 Mar 2025 17:44:57 +0100
-X-Gm-Features: AQ5f1Jpo1dIuW1b7ry84nc2tM9AJQequs9mTW__QY0p-auFq_EfDunHxvmPQwlo
-Message-ID: <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	audit@vger.kernel.org, axboe@kernel.dk
+References: <cover.1741364284.git.asml.silence@gmail.com> <60182eae68ff13f31d158e08abc351205d59c929.1741364284.git.asml.silence@gmail.com>
+In-Reply-To: <60182eae68ff13f31d158e08abc351205d59c929.1741364284.git.asml.silence@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 7 Mar 2025 09:10:41 -0800
+X-Gm-Features: AQ5f1JoI_-BHJYW5BwWNjjnFqrOB14hXP5d9WZ_WTdjSclQ1t3svQwYZ2Zt-NkQ
+Message-ID: <CADUfDZpzxCDR8g7iP=3wSRMJW6q3fACEgLFvYYHHG_yDd=ht=A@mail.gmail.com>
+Subject: Re: [PATCH liburing 1/4] Add vectored registered buffer req init helpers
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 7, 2025 at 5:42=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
+On Fri, Mar 7, 2025 at 8:22=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
 >
-> On Fri, Mar 07, 2025 at 05:11:55PM +0100, Mateusz Guzik wrote:
-> > Atomics are only needed for a combination of io_uring and audit.
-> >
-> > Regular file access (even with audit) gets around fine without them.
-> >
-> > With this patch 'struct filename' starts with being refcounted using
-> > regular ops.
-> >
-> > In order to avoid API explosion in the getname*() family, a dedicated
-> > routine is added to switch the obj to use atomics.
-> >
-> > This leaves the room for merely issuing getname(), not issuing the
-> > switch and still trying to manipulate the refcount from another thread.
-> >
-> > Catching such cases is facilitated by CONFIG_DEBUG_VFS-dependent
-> > tracking of who created the given filename object and having refname()
-> > and putname() detect if another thread is trying to modify them.
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  src/include/liburing.h | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 >
-> Not a good way to handle that, IMO.
+> diff --git a/src/include/liburing.h b/src/include/liburing.h
+> index d162d0e6..e71551ed 100644
+> --- a/src/include/liburing.h
+> +++ b/src/include/liburing.h
+> @@ -556,6 +556,16 @@ IOURINGINLINE void io_uring_prep_read_fixed(struct i=
+o_uring_sqe *sqe, int fd,
+>         sqe->buf_index =3D (__u16) buf_index;
+>  }
 >
-> Atomics do hurt there, but they are only plastering over the real
-> problem - names formed in one thread, inserted into audit context
-> there and operation involving them happening in a different thread.
->
-> Refcounting avoids an instant memory corruption, but the real PITA
-> is in audit users of that stuff.
->
-> IMO we should *NOT* grab an audit names slot at getname() time -
-> that ought to be done explicitly at later points.
->
-> The obstacle is that currently there still are several retry loop
-> with getname() done in it; I've most of that dealt with, need to
-> finish that series.
->
-> And yes, refcount becomes non-atomic as the result.
+> +IOURINGINLINE void io_uring_prep_readv_fixed(struct io_uring_sqe *sqe, i=
+nt fd,
+> +                                            const struct iovec *iovecs,
+> +                                            unsigned nr_vecs, __u64 offs=
+et,
+> +                                            int flags, int buf_index)
+> +{
+> +       io_uring_prep_readv2(sqe, fd, iovecs, nr_vecs, offset, flags);
+> +       sqe->opcode =3D IORING_OP_WRITE_FIXED;
 
-Well yes, it was audit which caused the appearance of atomics in the
-first place. I was looking for an easy way out.
+Presumably should be IORING_OP_READV_FIXED? You'll probably need to
+copy the UAPI header changes to liburing.
 
-If you have something which gets rid of the underlying problem and it
-is going to land in the foreseeable future, I wont be defending this
-approach.
+> +       sqe->buf_index =3D (__u16)buf_index;
+> +}
+> +
+>  IOURINGINLINE void io_uring_prep_writev(struct io_uring_sqe *sqe, int fd=
+,
+>                                         const struct iovec *iovecs,
+>                                         unsigned nr_vecs, __u64 offset)
+> @@ -580,6 +590,16 @@ IOURINGINLINE void io_uring_prep_write_fixed(struct =
+io_uring_sqe *sqe, int fd,
+>         sqe->buf_index =3D (__u16) buf_index;
+>  }
+>
+> +IOURINGINLINE void io_uring_prep_writev2_fixed(struct io_uring_sqe *sqe,=
+ int fd,
+> +                                      const struct iovec *iovecs,
+> +                                      unsigned nr_vecs, __u64 offset,
+> +                                      int flags, int buf_index)
+> +{
+> +       io_uring_prep_writev2(sqe, fd, iovecs, nr_vecs, offset, flags);
+> +       sqe->opcode =3D IORING_OP_WRITE_FIXED;
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+IORING_OP_WRITEV_FIXED?
+
+Best,
+Caleb
+
+> +       sqe->buf_index =3D (__u16)buf_index;
+> +}
+> +
+>  IOURINGINLINE void io_uring_prep_recvmsg(struct io_uring_sqe *sqe, int f=
+d,
+>                                          struct msghdr *msg, unsigned fla=
+gs)
+>  {
+> @@ -964,6 +984,17 @@ IOURINGINLINE void io_uring_prep_sendmsg_zc(struct i=
+o_uring_sqe *sqe, int fd,
+>         sqe->opcode =3D IORING_OP_SENDMSG_ZC;
+>  }
+>
+> +IOURINGINLINE void io_uring_prep_sendmsg_zc_fixed(struct io_uring_sqe *s=
+qe,
+> +                                               int fd,
+> +                                               const struct msghdr *msg,
+> +                                               unsigned flags,
+> +                                               unsigned buf_index)
+> +{
+> +       io_uring_prep_sendmsg_zc(sqe, fd, msg, flags);
+> +       sqe->ioprio |=3D IORING_RECVSEND_FIXED_BUF;
+> +       sqe->buf_index =3D buf_index;
+> +}
+> +
+>  IOURINGINLINE void io_uring_prep_recv(struct io_uring_sqe *sqe, int sock=
+fd,
+>                                       void *buf, size_t len, int flags)
+>  {
+> --
+> 2.48.1
+>
+>
 

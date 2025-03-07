@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-6996-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6997-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D43A56CEB
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 17:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD47A56CF3
+	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 17:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DDC17B175
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 16:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F42E3B9148
+	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 16:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E2422156A;
-	Fri,  7 Mar 2025 15:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06DB22170F;
+	Fri,  7 Mar 2025 15:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJ0VZAY+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bufB9Tsj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8670E194C78
-	for <io-uring@vger.kernel.org>; Fri,  7 Mar 2025 15:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111E221700
+	for <io-uring@vger.kernel.org>; Fri,  7 Mar 2025 15:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363192; cv=none; b=insEzv5OFoWDFPAVlxzE6XYEOJ1vAmJyRwo54AqzwrDZXD8FO7tggfm6WvfY1eqCUquGrLDruCDy9bKq+haBcYpS7eQdAvbjZEnB7GQozoquwzahMv0QKu00x0o0yYAajXBcXAXD0gImjGBXCpvwzlPVrASM6mUSmYbA0bWCFCA=
+	t=1741363193; cv=none; b=XsWTj/kJPEuk0GSLOQnlb1BqrXuMCaachqLuC29zpE8f2rsqSqiu6Quy/EULXU/V3NylVym5QKGLJ1np/CIsSbp4SwrLhwt1vcSI3a3fB/8Yy6Xr+aiCl1LG5rd8D6RyvNVaUCWfngyCFSEbauIhU0p81RJQv2CR9ooO4B80rAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363192; c=relaxed/simple;
-	bh=gNKF/L5J2pAWM9hL6RvdhhPWEP4Yq0qat+0Q7PL2fuM=;
+	s=arc-20240116; t=1741363193; c=relaxed/simple;
+	bh=q/FZLY6NX7KPIL9q2sRYyOUjPSfSZOW4huImrRHQGAc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oFjYftPfFm/30KjLUkPOwYPGYO5gtD9UGKyf2zEEes5NIrJYnZb46w8eh6hwV6ZU/Zn3CsmNhe/fgMN3W+2rMrDZUdXw3T2sFdV1Oq+Ooc+CDs+x0WF4VHYPxaMmafzc/PddyhaDzPdYn8ogR/ABIYpAgZHe2gFfbmQ2FSz9pK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJ0VZAY+; arc=none smtp.client-ip=209.85.218.53
+	 MIME-Version; b=NKxa1cJFI2EM6/A6KVMO2iBBKzHKU5rubxeG6CsmKjsG+pumefOpFS+ULZi1+Cguw947hMlr8w24gkZmyla373fvvTD8bRr3WVAHmjV4GTs+dzfVPFSqyB2NjlO+2t+Khe8qyehiCmDqr8/phaXfwx8gGhF0C2uqrvDOEiHJt1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bufB9Tsj; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2400d1c01so326436566b.1
-        for <io-uring@vger.kernel.org>; Fri, 07 Mar 2025 07:59:50 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e4ebc78da5so3783903a12.2
+        for <io-uring@vger.kernel.org>; Fri, 07 Mar 2025 07:59:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741363188; x=1741967988; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741363190; x=1741967990; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=93tvkzOu0v7DF9VuZKcubARhjargqjujprNt6uu0n0M=;
-        b=FJ0VZAY+yvxL5mE1UhWRYElrcCEg91v/gq9szfnPdT3bw0PHVhJjPB5Fo/OaR2oVCo
-         O0dMG2AZFjRHdyqWcXVtw/SiUz0eaq//jI0vYnRdyl/YmGbXBAzhMHtNlx4/TLcuQ4Zy
-         ADmCiK5IfwjyymToUrOO5BoNJZgBViGjV2dzQWnDvc+aJM2SL1cQRi6h1f7f+j/AG3X8
-         zO0Noi1sjWc6P5lkLJh7SsboBniyRux3nq9/3JsW5Ilp0aIRzysDgykPcxGGlcMMEPCi
-         jw4WEvoiHcz1UoaN+y3f+j1lyEOoM4IHLXeXhxxjsEGYXf0quMk7EkHic+IwYjD+cvp6
-         3+gg==
+        bh=VMFfmh910ijk2bF3gt2GcETiZRuBH9+UmQ8at+7H2ws=;
+        b=bufB9TsjEUcNygk9ED7RNbWJTPvkuRC80AIVWXAVX9P47HgnTd4HVS61GWfudUvUjW
+         95+i3Ea5Tljdth0NJdi2hR2882EKRWr8ohPfkiYs877VBI+piyD2cqqlVy8rfq/EkREW
+         nZcU78SeS0ZwAdrMMponUCAmG+t93W8IW3Pv9Bfd3qq+TQOSQkvRjqceMzrshv4RRjyF
+         MBiTivr073aPWEmGsO6zmGqWnAUWsF9qyOBXkerp7GQbLhEoCqCfuJ0qGs828BnMmeYg
+         kUGeLFB/onoWOTZmrbTB/md/LNy5KHvoBZfoSeyZEMUnhuOmNTJ2ZXLBLDlpZ0YZItSS
+         K9cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741363188; x=1741967988;
+        d=1e100.net; s=20230601; t=1741363190; x=1741967990;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=93tvkzOu0v7DF9VuZKcubARhjargqjujprNt6uu0n0M=;
-        b=cVeJQVCOS7xZG3fYcIoMqNyndm37vzEeChTpXyB0gyqG5BwBo8UVInjnVxQhNJIWap
-         IlFcbTeGLpPQrB9R3xpd9UiT0Ho99YEXME5sOoJe9hKbu7iUk9ZJkg092YxUcT/T9t9/
-         u0krsc5kVbMfnIAwtK1e46pIwm8i8mxOefJBvnr0C0hOLe1d8/B/1BQ2iVvna0UpAGqe
-         2X9sc6GZA+DLhwsC/b844dls5qtYL1fwk61k6tDCmPKh43FgHx4FpdFApPINXr7IUvHh
-         PdOWRUiujaEaEIkqbsqkfhP62MRF4q+LbvyWcSM6vUNpMd+o5ibwzs5QmAsXzwrJPvSG
-         AYQw==
-X-Gm-Message-State: AOJu0YwLCL22TEJ1BEgn4dh/kpBSHv/2rE1Vw8CBjWENPPkdV5vMMBwA
-	Q1zwoHz5ujGtCMjbJ3vhMTKnmeRwG3jkOSVjk/Y1ghJ5B8v1MOVvkeBgYQ==
-X-Gm-Gg: ASbGncsXiVJN/ujtiIpJ53rm91Un+hA6yrbUOOVHAlBaZ9olB4F+0AU9hUS2/TJBvbO
-	FOEo3SJ96CYuQFOd/U6QDDTae1pnbfUQznlvlKi7rut9i/ffTzy9QLTu+xYUA1jrPOsc7hsar1f
-	7PFQH7DufAjtsg9F89c6t3+TRn6E0eNQg3pEXwB4PIgvxxrnGQU+hoZO0rAya7bOyYj7K/lPfms
-	5mi/ofufQAbmhyM/PSS3c08gePD26T0fC1azAaJizbue7c0NfvqWR06SMxxHnVy7fX+vrJL86V7
-	n7FUGY3kgryIC+fNJW+rv4oWkaHK
-X-Google-Smtp-Source: AGHT+IGV9eH1SpNxkOV4jv5qlfSbSVvRiVruu0fnQeARy7WuDeD+rNa1ovI/PzduZEvIgsPB523Eag==
-X-Received: by 2002:a17:907:84c1:b0:abf:68b5:f78b with SMTP id a640c23a62f3a-ac26cc4b0bamr2294166b.24.1741363188173;
-        Fri, 07 Mar 2025 07:59:48 -0800 (PST)
+        bh=VMFfmh910ijk2bF3gt2GcETiZRuBH9+UmQ8at+7H2ws=;
+        b=NAMGwdpjVFUGJEhKZ7ZCpJ5AQhS9d/krw2PKrwOpSJOPJnheovczmeiIUSB5U+Q3Js
+         uYPH6gbc2enhqKceBLTc+IJ6LpZIrLmcg9smw5bq8mJvRCpsGPUtymafAeloaf0bPklT
+         P+kcDqhfvySfjltZEsvo15oJT/PvAz7Xb2TdqnmEvGO016BUg/O3kMr8z2h6mxa1gce3
+         Ltuxc5tN832BZ2RnXVweexiwiOq2FlOaQMJFUmbhuIjKZ8EtQk8AmEzK/twR/dg3EGyg
+         eTpK5qTGhk3x/X1Xcs9VREiS5FW4oFGsYkAOsHDLGEO4WcRqrLJ8pWl/9LCaX69XezwC
+         CU9w==
+X-Gm-Message-State: AOJu0YwkIvHe0VMyjBa3R96r7bdRBhuk71vZuIzpT4ye4ziEi33MPNHY
+	9zUta2OmCoM+SJcb+BIv28SC+RqgdjIznoAfXkNng3ADsB3z5OjPvz23XQ==
+X-Gm-Gg: ASbGncun5efxW4i+vyglAI/Jh9XKOSYgrUSrxQClptDzN5ve0fMz7LErbL26jSSo2G2
+	Xc0+Xa4By8cvYMDkdvPPBnU8ziJ34Dq/Ffd8KwK72Qmf6CbKdt/9UA7xTxBdaLNrroJwSLvSyZH
+	xJY7XWyj+D1icENBobc7MI52KL6YCUpM04FAoRh/ZBn7O6D+ef5czayomlUCEO06sNRmGpEXsTn
+	voX/2CAZf1JHVi6eRy/Pc7jeLfMtuo3Bao6uCKF2RxqDLchdiImrGsVTLySbAVVL7/+5ntiFu/L
+	J6T6cMGGCVMMh8VBYGUqECAX80Ht
+X-Google-Smtp-Source: AGHT+IESAV9FwjXI0vCPxaqBaKD+zN4bGui3c5TxUArk14HeoW1pYdOWE40jQPjX3kFQViZzelhinQ==
+X-Received: by 2002:a17:907:1c1f:b0:abf:72c1:6e6c with SMTP id a640c23a62f3a-ac252ba1906mr475468066b.45.1741363189458;
+        Fri, 07 Mar 2025 07:59:49 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:a068])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d7a17sm297369166b.179.2025.03.07.07.59.47
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d7a17sm297369166b.179.2025.03.07.07.59.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:59:47 -0800 (PST)
+        Fri, 07 Mar 2025 07:59:48 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v4 4/9] io_uring/rw: defer reg buf vec import
-Date: Fri,  7 Mar 2025 16:00:32 +0000
-Message-ID: <e8491c976e4ab83a4e3dc428e9fe7555e59583b8.1741362889.git.asml.silence@gmail.com>
+Subject: [PATCH v4 5/9] io_uring/net: combine msghdr copy
+Date: Fri,  7 Mar 2025 16:00:33 +0000
+Message-ID: <25795660f7b31f9273911c99f495d9c2b169ecda.1741362889.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741362889.git.asml.silence@gmail.com>
 References: <cover.1741362889.git.asml.silence@gmail.com>
@@ -88,124 +88,85 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Import registered buffers for vectored reads and writes later at issue
-time as we now do for other fixed ops.
+Call the compat version from inside of io_msg_copy_hdr() and don't
+duplicate it in callers.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  3 +++
- io_uring/rw.c                  | 42 +++++++++++++++++++++++++++-------
- 2 files changed, 37 insertions(+), 8 deletions(-)
+ io_uring/net.c | 46 +++++++++++++++++++---------------------------
+ 1 file changed, 19 insertions(+), 27 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index cc84f6e5a64c..0e87e292bfb5 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -502,6 +502,7 @@ enum {
- 	REQ_F_BUFFERS_COMMIT_BIT,
- 	REQ_F_BUF_NODE_BIT,
- 	REQ_F_HAS_METADATA_BIT,
-+	REQ_F_IMPORT_BUFFER_BIT,
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 905d1ee01201..33076bd22c16 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -287,6 +287,24 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
+ 	struct user_msghdr __user *umsg = sr->umsg;
+ 	int ret;
  
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -584,6 +585,8 @@ enum {
- 	REQ_F_BUF_NODE		= IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
- 	/* request has read/write metadata assigned */
- 	REQ_F_HAS_METADATA	= IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
-+	/* resolve padded iovec to registered buffers */
-+	REQ_F_IMPORT_BUFFER	= IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
- };
- 
- typedef void (*io_req_tw_func_t)(struct io_kiocb *req, io_tw_token_t tw);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 4c4229f41aaa..e62f4ce34171 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -381,7 +381,25 @@ int io_prep_write_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return __io_prep_rw(req, sqe, ITER_SOURCE);
- }
- 
--static int io_rw_prep_reg_vec(struct io_kiocb *req, int ddir)
-+static int io_rw_import_reg_vec(struct io_kiocb *req,
-+				struct io_async_rw *io,
-+				int ddir, unsigned int issue_flags)
-+{
-+	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-+	unsigned uvec_segs = rw->len;
-+	unsigned iovec_off = io->vec.nr - uvec_segs;
-+	int ret;
++	iomsg->msg.msg_name = &iomsg->addr;
++	iomsg->msg.msg_iter.nr_segs = 0;
 +
-+	ret = io_import_reg_vec(ddir, &io->iter, req, &io->vec,
-+				uvec_segs, iovec_off, issue_flags);
-+	if (unlikely(ret))
-+		return ret;
-+	iov_iter_save_state(&io->iter, &io->iter_state);
-+	req->flags &= ~REQ_F_IMPORT_BUFFER;
-+	return 0;
-+}
++	if (io_is_compat(req->ctx)) {
++		struct compat_msghdr cmsg;
 +
-+static int io_rw_prep_reg_vec(struct io_kiocb *req)
- {
- 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
- 	struct io_async_rw *io = req->async_data;
-@@ -406,10 +424,8 @@ static int io_rw_prep_reg_vec(struct io_kiocb *req, int ddir)
- 	if (IS_ERR(res))
- 		return PTR_ERR(res);
- 
--	ret = io_import_reg_vec(ddir, &io->iter, req, &io->vec,
--				uvec_segs, iovec_off, 0);
--	iov_iter_save_state(&io->iter, &io->iter_state);
--	return ret;
-+	req->flags |= REQ_F_IMPORT_BUFFER;
-+	return 0;
- }
- 
- int io_prep_readv_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -419,7 +435,7 @@ int io_prep_readv_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	ret = __io_prep_rw(req, sqe, ITER_DEST);
- 	if (unlikely(ret))
- 		return ret;
--	return io_rw_prep_reg_vec(req, ITER_DEST);
-+	return io_rw_prep_reg_vec(req);
- }
- 
- int io_prep_writev_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -429,7 +445,7 @@ int io_prep_writev_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	ret = __io_prep_rw(req, sqe, ITER_SOURCE);
- 	if (unlikely(ret))
- 		return ret;
--	return io_rw_prep_reg_vec(req, ITER_SOURCE);
-+	return io_rw_prep_reg_vec(req);
- }
- 
- /*
-@@ -906,7 +922,11 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
- 	ssize_t ret;
- 	loff_t *ppos;
- 
--	if (io_do_buffer_select(req)) {
-+	if (req->flags & REQ_F_IMPORT_BUFFER) {
-+		ret = io_rw_import_reg_vec(req, io, ITER_DEST, issue_flags);
-+		if (unlikely(ret))
++		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ddir, save_addr);
++		if (ret)
 +			return ret;
-+	} else if (io_do_buffer_select(req)) {
- 		ret = io_import_rw_buffer(ITER_DEST, req, io, issue_flags);
- 		if (unlikely(ret < 0))
- 			return ret;
-@@ -1117,6 +1137,12 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 	ssize_t ret, ret2;
- 	loff_t *ppos;
- 
-+	if (req->flags & REQ_F_IMPORT_BUFFER) {
-+		ret = io_rw_import_reg_vec(req, io, ITER_SOURCE, issue_flags);
-+		if (unlikely(ret))
-+			return ret;
++
++		memset(&msg, 0, sizeof(msg));
++		msg->msg_namelen = cmsg.msg_namelen;
++		msg->msg_controllen = cmsg.msg_controllen;
++		msg->msg_iov = compat_ptr(cmsg.msg_iov);
++		msg->msg_iovlen = cmsg.msg_iovlen;
++		return 0;
 +	}
 +
- 	ret = io_rw_init_file(req, FMODE_WRITE, WRITE);
+ 	ret = io_copy_msghdr_from_user(msg, umsg);
  	if (unlikely(ret))
  		return ret;
+@@ -323,18 +341,6 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+ 	struct user_msghdr msg;
+ 	int ret;
+ 
+-	iomsg->msg.msg_name = &iomsg->addr;
+-	iomsg->msg.msg_iter.nr_segs = 0;
+-
+-	if (io_is_compat(req->ctx)) {
+-		struct compat_msghdr cmsg;
+-
+-		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ITER_SOURCE,
+-					     NULL);
+-		sr->msg_control = iomsg->msg.msg_control_user;
+-		return ret;
+-	}
+-
+ 	ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_SOURCE, NULL);
+ 	/* save msg_control as sys_sendmsg() overwrites it */
+ 	sr->msg_control = iomsg->msg.msg_control_user;
+@@ -710,21 +716,7 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	struct user_msghdr msg;
+ 	int ret;
+ 
+-	iomsg->msg.msg_name = &iomsg->addr;
+-	iomsg->msg.msg_iter.nr_segs = 0;
+-
+-	if (io_is_compat(req->ctx)) {
+-		struct compat_msghdr cmsg;
+-
+-		ret = io_compat_msg_copy_hdr(req, iomsg, &cmsg, ITER_DEST,
+-					     &iomsg->uaddr);
+-		memset(&msg, 0, sizeof(msg));
+-		msg.msg_namelen = cmsg.msg_namelen;
+-		msg.msg_controllen = cmsg.msg_controllen;
+-	} else {
+-		ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_DEST, &iomsg->uaddr);
+-	}
+-
++	ret = io_msg_copy_hdr(req, iomsg, &msg, ITER_DEST, &iomsg->uaddr);
+ 	if (unlikely(ret))
+ 		return ret;
+ 	return io_recvmsg_mshot_prep(req, iomsg, msg.msg_namelen,
 -- 
 2.48.1
 

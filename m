@@ -1,163 +1,172 @@
-Return-Path: <io-uring+bounces-7030-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7031-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77398A57586
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 23:59:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8593EA57A85
+	for <lists+io-uring@lfdr.de>; Sat,  8 Mar 2025 14:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F8170904
-	for <lists+io-uring@lfdr.de>; Fri,  7 Mar 2025 22:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDE31895528
+	for <lists+io-uring@lfdr.de>; Sat,  8 Mar 2025 13:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD24A2580DD;
-	Fri,  7 Mar 2025 22:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7371C6FF1;
+	Sat,  8 Mar 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfOv1wsC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q2EkWaQS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296602580C3;
-	Fri,  7 Mar 2025 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C721BC41;
+	Sat,  8 Mar 2025 13:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741388345; cv=none; b=fdJped+3+3He+nY8DNGi2RBZv/FA4gOJWVqLw5j76DxmRn1uLNUCQCtqfsVGqHF5sYNycp5eCSZyrkO+mROU7n/hSitjtvaYFN0nxbDHxOABFBkti792pu0RL7zIbh+QQ+g0iAKVQ0/BX6oPUXBnXsN08T9Eelflk7Yvk9+nid4=
+	t=1741440983; cv=none; b=n113Bu5rRaZET5WwhDXR8ADRe2S1Xexu2RDxKNcjCm7ftcSTH8hPm68/zR/JmTruExcAThcov2RZ/9ax5CeRAIXy2DxClYsUW41B+etgVWLwCTPNqdoaFfY4379Ux8qkiBsU/i7lWB+sXIvMuhTG629EsNncqjBIIL9xW82xB5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741388345; c=relaxed/simple;
-	bh=HlYncOphUK+gScOpQibhtWz3I5JVYWqT9ueOhL8vm5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eIbynoRpXmos7halIbfCmSMFtBeBu9Uh3BtnhW8Y14pIpk9q7xMooJDsNVdDS+VocsxtgvVnfVOgYpzl+1K88u5PDAcVQWLUZOno66hpFIhyP+w10OqEmdM/iuYND+ZajXpR76mkrZd5qRhv6nuulleeR4PFhskIiLGwg55hWNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfOv1wsC; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abf48293ad0so379043466b.0;
-        Fri, 07 Mar 2025 14:59:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741388342; x=1741993142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ALyoB0KlEvFAPp+SQpsC3awxPQHvuRybFzmDW1XIvk=;
-        b=OfOv1wsChShBItToBe9pKApY08HN99LFi+spuR89yNosBKCre9DoYMuOhOcaef+yA6
-         WsDfc2l+ZQk5TwDewcCvfg/9tRMl9hnEtAZ2HL4/+iNuIwjeNEAUhP85DLrZfcmfR7H4
-         tXMmUrdxHwZY1NnExkD92D53Yiw4h3pJanRH5C5uJqrP4I6evOIbMdTKwODhSQyr9mR+
-         sLqeos2YywacKgD+/VoUrpCImHYFHl6b2gahj1DcOR20ncYUhAuzYQn+t0fvHMGjgsob
-         /D+dsVVrOhTHnQ41V4iwEva1BM0pHee2Pux3UZPetSlr2mstQsBrac28+kXxyR+GxDiU
-         5Oog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741388342; x=1741993142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ALyoB0KlEvFAPp+SQpsC3awxPQHvuRybFzmDW1XIvk=;
-        b=MFsv03BVsD5rtXxiDWiFxludEtRfm9DJwzZ23BNB/yCiQv8qoJQdK4APmubfPnjaJU
-         7xMq6SBGCkR+CdiGtgnlL2HjZEfIhEUhKcqZJUHZwSkj3dZCWr/OYYsk3g/1yVQCqAGo
-         C2VgJtpTaYlvdtpqkUH2pSdL67rAOHtwl1w33PuK9Bq52WybSez+K3p3o/yC1+GLv/ll
-         uWN+mFrMCIXktlVNDNAhasuzr3EcrF0rbOVBqHCd/AlH0ACeCyeJ3UCjPZXguwitfJjA
-         afPJP2lcefdwc4Tuw7nVNS9XOozvueIggXS5YCCjz1ke60hjU3DxxLodGocIT2+CplJt
-         K3Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSbdtKd/sMfdc5jZOGhiGo7aQUsL22apflQwiI8TZB9fbZKify7soC6a2+L8o+VOsrVEeymeI3Rhh7f6sV+g==@vger.kernel.org, AJvYcCV9+eJ9IZYqicnzV9tVSGTcB9fqI+pyiDMluHMcVFHvYRlQVNbbnTFDQY8+OnfnyL2WImxQYW35rKM=@vger.kernel.org, AJvYcCXEToaGQbFGpu2VXS3V55p0kEYhMo9qXqXwQrBDYt96eQQ2K/XGK6KcrvJO4Nyh5QySM/ABlw==@vger.kernel.org, AJvYcCXVnvUAw8FjH2b4cLr7BiDzLFeXiWCpJZ38l7n+LsIs0oXNl3rI8U1p9N0W+YhPoMIAQXGMmjTyDB8x3Avk@vger.kernel.org
-X-Gm-Message-State: AOJu0YytY8XYBJ9S4eS3ZIJhe2DhRwxU1Te2SA3CGe5r56XqMf+OLp1U
-	wvLB+tRMeno9CTnjb7JwjxA8pgGIigxEWPRBjQkiskIUry7QSCH8WmYs9Uct/FHVdOGKH3ugVwr
-	CLNyPgSJOd7kIdljNpdU5fZyL4bE=
-X-Gm-Gg: ASbGncsThArmVOy9TW+66P1SNZEoFzbQG6TLqCbNRC2XzebTPDoAfdryyKChP2cfC5i
-	0rOiIW2h2prU4+P7t2Fp0zErrmztNAJVZ951u6dHdUrko4A/AjYUR3DYw1zQ0/pJsw4+4K+4UE/
-	vLYAPVDgt7QRkFH2wC2XifEFnC2A==
-X-Google-Smtp-Source: AGHT+IEihscYizM8NaBKVgZobWKOR2h/cfILGw+7AJBNzL9suSvFIcK5GQAP0Jw187BKOcYel7wqCk4TsjWFtR+TmAQ=
-X-Received: by 2002:a17:906:dc8b:b0:ab7:6fa9:b0a9 with SMTP id
- a640c23a62f3a-ac2525e0417mr581474066b.11.1741388342270; Fri, 07 Mar 2025
- 14:59:02 -0800 (PST)
+	s=arc-20240116; t=1741440983; c=relaxed/simple;
+	bh=WM7b4EhgJ9Elb2J//99kUcCyNjVVSd3WMLVSJauZ8qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULtZ9xENQxrtPySjD3VVXFhJjdQPjtqIleX5AyRycOp20yptg7aLFV6oRWBQSMEeJUYojmx8JxuNF9WzTUG3YZ0EQgabM1VuXVs2XGQEp8SrtB719BBHEzV5bjgsRmTpIwR+6qfxGUpf5b0gPrWldOZRmTlpOa8TP+Iw9I2DZ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q2EkWaQS; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741440982; x=1772976982;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WM7b4EhgJ9Elb2J//99kUcCyNjVVSd3WMLVSJauZ8qU=;
+  b=Q2EkWaQSXARj9jWOOPqBRCIKy1DI17fjF0OfbMZ5Kqvu686Knjeayw9y
+   nNyWWJnt36aGFCQuAkuWgCSLDH5+N+igWmW7VI3mq/EaRV3s6WRGwkxiT
+   YY83eYc8/HAcQH4yIlAqU62XkLpIJUoh/4/wyD4mMv4BfaqUswioeTBtH
+   wO7/bB4bvFfSxvmvYz46p7h7UYso9jrnJ5J8CDP6fQbaVX6XKj9QXaUrx
+   0l/0/OIApIUXwXr/eDpamOGW7ogtpO4JqdHZvGBgYheZBUQcO09ajpOG4
+   BYg6F2p7Bf4llzd+u/8XYLvjEttM6oq1Bwe1k+NKjSX/A3VrMQU/e6A0a
+   A==;
+X-CSE-ConnectionGUID: AdeM49ZkQAa//gDyMBBM3A==
+X-CSE-MsgGUID: 6aGyUOVgSkOfxL0u7gPeqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="64921391"
+X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
+   d="scan'208";a="64921391"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 05:36:21 -0800
+X-CSE-ConnectionGUID: 306oRoH8RmmrYWtwACr4Dw==
+X-CSE-MsgGUID: syZEQ7H3R2Gs+oRwBssLrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="156778569"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 08 Mar 2025 05:36:18 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tquLf-0001vk-2f;
+	Sat, 08 Mar 2025 13:36:15 +0000
+Date: Sat, 8 Mar 2025 21:35:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	audit@vger.kernel.org, axboe@kernel.dk,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: support filename refcount without atomics
+Message-ID: <202503082153.UnKZ6sGP-lkp@intel.com>
+References: <20250307161155.760949-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307161155.760949-1-mjguzik@gmail.com> <20250307164216.GI2023217@ZenIV>
- <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-In-Reply-To: <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 7 Mar 2025 23:58:50 +0100
-X-Gm-Features: AQ5f1JpqEqIz2mVVbaZO-Aa9fh9ukY9RzK2Rqy_i9kZ-m73UGmKAXQmsDmSY6mI
-Message-ID: <CAGudoHE+VQUtxqtc3v38XFGVojTLqiYXoBU==PFvj=A5kmMMHw@mail.gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	audit@vger.kernel.org, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307161155.760949-1-mjguzik@gmail.com>
 
-On Fri, Mar 7, 2025 at 5:44=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
->
-> On Fri, Mar 7, 2025 at 5:42=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
-> > Not a good way to handle that, IMO.
-> >
-> > Atomics do hurt there, but they are only plastering over the real
-> > problem - names formed in one thread, inserted into audit context
-> > there and operation involving them happening in a different thread.
-> >
-> > Refcounting avoids an instant memory corruption, but the real PITA
-> > is in audit users of that stuff.
-> >
-> > IMO we should *NOT* grab an audit names slot at getname() time -
-> > that ought to be done explicitly at later points.
-> >
+Hi Mateusz,
 
-I was looking at doing that, but the code is kind of a mess and I bailed.
+kernel test robot noticed the following build errors:
 
-> > The obstacle is that currently there still are several retry loop
-> > with getname() done in it; I've most of that dealt with, need to
-> > finish that series.
-> >
-> > And yes, refcount becomes non-atomic as the result.
->
-> Well yes, it was audit which caused the appearance of atomics in the
-> first place. I was looking for an easy way out.
->
-> If you have something which gets rid of the underlying problem and it
-> is going to land in the foreseeable future, I wont be defending this
-> approach.
->
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.14-rc5 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It is unclear to me if you are NAKing the patch, or merely pointing
-out this can be done in a better way (which I agree with)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-support-filename-refcount-without-atomics/20250308-002442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250307161155.760949-1-mjguzik%40gmail.com
+patch subject: [PATCH] fs: support filename refcount without atomics
+config: i386-buildonly-randconfig-003-20250308 (https://download.01.org/0day-ci/archive/20250308/202503082153.UnKZ6sGP-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503082153.UnKZ6sGP-lkp@intel.com/reproduce)
 
-Some time ago I posted a much simpler patch to merely dodge the last
-decrement [1], which already accomplishes what I was looking for.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503082153.UnKZ6sGP-lkp@intel.com/
 
-Christian did not like it and wanted something which only deals with
-atomics when audit is enabled.
+All errors (new ones prefixed by >>):
 
-I should have done that patch slightly differently, but bottom line is
-the following in putname():
+   In file included from arch/x86/kernel/asm-offsets.c:14:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:17:
+>> include/linux/fs.h:2875:19: error: no member named 'owner' in 'struct filename'
+    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |                    ~~~~  ^
+   include/linux/vfsdebug.h:35:47: note: expanded from macro 'VFS_BUG_ON'
+      35 | #define VFS_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
+         |                                               ^~~~
+   include/linux/build_bug.h:30:63: note: expanded from macro 'BUILD_BUG_ON_INVALID'
+      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+         |                                                               ^
+   In file included from arch/x86/kernel/asm-offsets.c:14:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:17:
+   include/linux/fs.h:2884:19: error: no member named 'owner' in 'struct filename'
+    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |                    ~~~~  ^
+   include/linux/vfsdebug.h:35:47: note: expanded from macro 'VFS_BUG_ON'
+      35 | #define VFS_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
+         |                                               ^~~~
+   include/linux/build_bug.h:30:63: note: expanded from macro 'BUILD_BUG_ON_INVALID'
+      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+         |                                                               ^
+   2 errors generated.
+   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=2759713076
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=2759713076
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2759713076
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2759713076
+   make: Target 'prepare' not remade because of errors.
 
-        refcnt =3D atomic_read(&name->refcnt);
-        if (refcnt !=3D 1) {
-                if (WARN_ON_ONCE(!refcnt))
-                        return;
 
-                if (!atomic_dec_and_test(&name->refcnt))
-                        return;
-        }
+vim +2875 include/linux/fs.h
 
-So if you are NAKing the regular -> atomic switch patch, how about the
-above as a quick hack until the issue gets resolved? It is trivial to
-reason about (refcnt =3D=3D 1 means nobody can do anything) and guarantees
-to dodge one atomic (which in case of no audit means all consumers). I
-can repost touched up if you are OK with it (the original posting
-issues atomic_read twice).
+  2866	
+  2867	static inline void makeatomicname(struct filename *name)
+  2868	{
+  2869		VFS_BUG_ON(IS_ERR_OR_NULL(name));
+  2870		/*
+  2871		 * The name can legitimately already be atomic if it was cached by audit.
+  2872		 * If switching the refcount to atomic, we need not to know we are the
+  2873		 * only non-atomic user.
+  2874		 */
+> 2875		VFS_BUG_ON(name->owner != current && !name->is_atomic);
+  2876		/*
+  2877		 * Don't bother branching, this is a store to an already dirtied cacheline.
+  2878		 */
+  2879		name->is_atomic = true;
+  2880	}
+  2881	
 
-As for the bigger patch posted here, Jens wants the io_uring bits done
-differently and offered to handle them in the upcoming week. I think a
-clear statement if the patch is a no-go would be appreciated.
-
-Link 1: https://lore.kernel.org/linux-fsdevel/20240604132448.101183-1-mjguz=
-ik@gmail.com/
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

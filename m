@@ -1,199 +1,335 @@
-Return-Path: <io-uring+bounces-7044-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7045-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F732A5A45B
-	for <lists+io-uring@lfdr.de>; Mon, 10 Mar 2025 21:05:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32C9A5BE1E
+	for <lists+io-uring@lfdr.de>; Tue, 11 Mar 2025 11:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6AC18906A0
-	for <lists+io-uring@lfdr.de>; Mon, 10 Mar 2025 20:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527393A95B1
+	for <lists+io-uring@lfdr.de>; Tue, 11 Mar 2025 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C4D1D516F;
-	Mon, 10 Mar 2025 20:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60BB23F382;
+	Tue, 11 Mar 2025 10:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="X5cyNkP9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bxX99SXU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DE11CAA6E
-	for <io-uring@vger.kernel.org>; Mon, 10 Mar 2025 20:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A44923F37D
+	for <io-uring@vger.kernel.org>; Tue, 11 Mar 2025 10:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637126; cv=none; b=UH37yvOSp5Fs+ULm5hZ/hpt8szr1nZW6l1uYpes7IPeERjcyTZsSc4ATYQU9RIPZahINiJ7vQKr+/m828BL2Cg7HRucoxPawktNdJHIW4DdLGiUKhk9HbRuiz4yh+h5ubo8KuhVhJ06yZXKqKdTmIDZoj9ve9uJbbOXDvzph0gg=
+	t=1741689825; cv=none; b=eZJ85QOS+4NGSVVTpGr7UmU61sbpFSTNBTk/c4c6cb+gU4BJKvHyVLYfmKclMqvuhqsLkdE6ofXucT9ywa37GXBP1IOWQ+HMmi6Ctiy+Hm61s08mdHlo6HdLSTPnHMZ4nsNWci1B3rTlzkGqSOSs7AFczIwtA38AcywxZ1bRsFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637126; c=relaxed/simple;
-	bh=v1HBclBEBISrWL2Z3pM/F0n+3v3jsiTA0XLUfOTB4YY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Vai5KJeyifAG3UUU2kFBGCgyhDJOyatyUy8LWSYokUJZle/0FOKtTvrs9TiC102pvydocdXBtpbVqIy4Vd42xN1sGAu8xcrOuDBncT85VnK8zg2GVGt53FTt+LUtyf4yE6pI0AWjPAqBsSUv9M3KiIuOi1TZ0nmKQMIeWJsTdIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=X5cyNkP9; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d43bb5727fso12535495ab.1
-        for <io-uring@vger.kernel.org>; Mon, 10 Mar 2025 13:05:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741637123; x=1742241923; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A5jXE+EfgC2NQwlhQ5BhRsFPXk03BSSkw0E6bWQipqs=;
-        b=X5cyNkP99BnU406iF81jP+kjCe/VNMAX81Lm6xEn1Qw0QEwulNqIQjYmf0Tr5s+RPv
-         J/5fUiZyBALsQ7O9DPKMy0/mgHkIG3RGcy/RKOsETZFaZl3rN3AFsNzn2T2vXZhTmdjh
-         Ebk4tpgtRN46i83OMxC687FQGGXU/YIYKG/X1SrLyI7wXn1IiiaREEY+cZzPVztL+zYd
-         dt/G1JPIQ3KMzrl/rhVFjUxM2BL9FyTK9gihHFVn5kUpIqwFR9uIETfmQTaM+jYN7c3C
-         VyDFFZE8Nusv8az9+iHlaWP6G0pLnqZ5U+/qNLNaSZ7xui55nDmS6LuEF+pNiX4MjTkB
-         GkRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741637123; x=1742241923;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A5jXE+EfgC2NQwlhQ5BhRsFPXk03BSSkw0E6bWQipqs=;
-        b=xE1Pgia5xuXyxHg1GFsY5U/1EKWioTaOSsHA/ngw2DBDEtiJZW+q9r8unZUvAXTLjg
-         Z2gOMY8hKFPl5yA6xUuNw5H0xOE75+QqlbsYM8b249L2H4vs6yWVfOpT/LfY7B2VZliE
-         FSqmpoN3tSYTuhYPI3eRyNZuLSczR97wIpLCAFpCnW6EyyBxCGddzd96Dhd5z7cm4/MR
-         8J5lxcS5k/FUUg0MiPebOdH1hcXIQi6cV4+EKXhWIQCeTdgbWH6Mf3R3wTx6ylBGIi6Y
-         RNwFMcfqFKac/mXYavWa4oLdRJ7BQlqSjrlJPMTVnfEBlQuVXMTV6u5fUPzSFsHZUVzG
-         nsyQ==
-X-Gm-Message-State: AOJu0YzEBXvX0JtgL5c3gAzP8Kocl5kN2pBaVqEIEXJmt91WEktwtgP/
-	C36M7K+zwjCSMyj++/9YV97WTT4JQqitQowLv2E6xVdzTnycnQqz4QNaVIWHm+MbAmUWtS0pfVX
-	q
-X-Gm-Gg: ASbGnctzZWrhgLtDY8niuWsboHM5k8K33X2SdtZiCOV1Vk0J4eKx2m6Pfi16Tyha516
-	YOfm73a8eMXjKtlCPYqCIOyQJM3gPBRQplSdBjDxy5HxnBmnU5bwKM9FhNpYWCcGU3XFHLfARIa
-	E6A9CPV+EAGuhro0qkdGP+nOgSKw7xAjNJtMisRYVTAOyRjKVab7naqRB3ixpk+acHDQ9/b4lBd
-	q3HzIT7Gxcs8UM3chAEi+6E8ez0QBCuzZaFZHhw8AZN99kqF6uce0uBdb732Cj0wO8mKOBnfIde
-	9ATuj9vRlh/ukf4GkdnjCGFHsrQeWblitW6e3VJCBT9IM+wmsT8=
-X-Google-Smtp-Source: AGHT+IEUryGoxB1K+wwtE+zdaqDWQ6alw8JJ75FNq7SdwrVepRckt7fEHSH2KnsWjBP5R7D8CkymKQ==
-X-Received: by 2002:a05:6e02:17cc:b0:3d4:3ac3:4ca2 with SMTP id e9e14a558f8ab-3d44196ea56mr158548185ab.16.1741637122876;
-        Mon, 10 Mar 2025 13:05:22 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f22f1eabffsm1097193173.127.2025.03.10.13.05.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 13:05:22 -0700 (PDT)
-Message-ID: <04a240e1-a3ca-4140-8600-6271b8bbefa8@kernel.dk>
-Date: Mon, 10 Mar 2025 14:05:21 -0600
+	s=arc-20240116; t=1741689825; c=relaxed/simple;
+	bh=NDwrEIZNfNjx9TGRyM9gQPDMqS+Y0o92VGzdpyG3Afs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEaYzVXodupyUy5+GcDCntdXm/rsHppOyQKyowfd8u9wui19K2ysFxlhDwUaF4uNYIVBPtSYyQh/lzgQtFxKQlhPg/1riXDOENYH6y5OEtJSFKXG9LaCrfEsoaefY5fGT7/FHNoDTnBGxWp70BHMeLu9VmkuuBS8nV0nDZejO+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bxX99SXU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741689822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gNTaRcQRZpz5AR59VTWcpjr921hgmtZv7ZHul/eXdxI=;
+	b=bxX99SXUK9Cmdpb++0NEqX0AYYdTEBd0zh4aYNQ9pCah9CRXBlaa6Kkclz/LUxHJHOPVGY
+	Xv7vG4O8ou32PGhpoIRvfybBdrrXCjPn6UbNKhKe6NkRjuvV/c1BNhbjQyZAYNiVnVkAc0
+	DqlWMZnv2fsjtZhqkNf0pFw7YX+X5Eo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-193-D5yxNuwVOomwOm4HF4M5XA-1; Tue,
+ 11 Mar 2025 06:43:39 -0400
+X-MC-Unique: D5yxNuwVOomwOm4HF4M5XA-1
+X-Mimecast-MFC-AGG-ID: D5yxNuwVOomwOm4HF4M5XA_1741689818
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E597195608A;
+	Tue, 11 Mar 2025 10:43:37 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.28])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCD9A1828A93;
+	Tue, 11 Mar 2025 10:43:28 +0000 (UTC)
+Date: Tue, 11 Mar 2025 18:43:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+	Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z9ATyhq6PzOh7onx@fedora>
+References: <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
+ <Z8XlvU0o3C5hAAaM@infradead.org>
+ <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
+ <Z8Zh5T9ZtPOQlDzX@dread.disaster.area>
+ <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com>
+ <Z8eURG4AMbhornMf@dread.disaster.area>
+ <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
+ <Z8zbYOkwSaOJKD1z@fedora>
+ <a8e5c76a-231f-07d1-a394-847de930f638@redhat.com>
+ <Z8-ReyFRoTN4G7UU@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Norman Maurer <norman_maurer@apple.com>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/kbuf: enable bundles for incrementally consumed
- buffers
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8-ReyFRoTN4G7UU@dread.disaster.area>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The original support for incrementally consumed buffers didn't allow it
-to be used with bundles, with the assumption being that incremental
-buffers are generally larger, and hence there's less of a nedd to
-support it.
+On Tue, Mar 11, 2025 at 12:27:23PM +1100, Dave Chinner wrote:
+> On Mon, Mar 10, 2025 at 12:18:51PM +0100, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Sun, 9 Mar 2025, Ming Lei wrote:
+> > 
+> > > On Fri, Mar 07, 2025 at 04:21:58PM +0100, Mikulas Patocka wrote:
+> > > > > I didn't say you were. I said the concept that dm-loop is based on
+> > > > > is fundamentally flawed and that your benchmark setup does not
+> > > > > reflect real world usage of loop devices.
+> > > > 
+> > > > > Where are the bug reports about the loop device being slow and the
+> > > > > analysis that indicates that it is unfixable?
+> > > > 
+> > > > So, I did benchmarks on an enterprise nvme drive (SAMSUNG 
+> > > > MZPLJ1T6HBJR-00007). I stacked ext4/loop/ext4, xfs/loop/xfs (using losetup 
+> > > > --direct-io=on), ext4/dm-loop/ext4 and xfs/dm-loop/xfs. And loop is slow.
+> > > > 
+> > > > synchronous I/O:
+> > > > fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+> > > > raw block device:
+> > > >    READ: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3985MiB (4179MB), run=10001-10001msec
+> > > >   WRITE: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3990MiB (4184MB), run=10001-10001msec
+> > > > ext4/loop/ext4:
+> > > >    READ: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2232MiB (2341MB), run=10002-10002msec
+> > > >   WRITE: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2231MiB (2339MB), run=10002-10002msec
+> > > > xfs/loop/xfs:
+> > > >    READ: bw=220MiB/s (230MB/s), 220MiB/s-220MiB/s (230MB/s-230MB/s), io=2196MiB (2303MB), run=10001-10001msec
+> > > >   WRITE: bw=219MiB/s (230MB/s), 219MiB/s-219MiB/s (230MB/s-230MB/s), io=2193MiB (2300MB), run=10001-10001msec
+> > > > ext4/dm-loop/ext4:
+> > > >    READ: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3383MiB (3547MB), run=10002-10002msec
+> > > >   WRITE: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3385MiB (3549MB), run=10002-10002msec
+> > > > xfs/dm-loop/xfs:
+> > > >    READ: bw=375MiB/s (393MB/s), 375MiB/s-375MiB/s (393MB/s-393MB/s), io=3752MiB (3934MB), run=10002-10002msec
+> > > >   WRITE: bw=376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), io=3756MiB (3938MB), run=10002-10002msec
+> > > > 
+> > > > asynchronous I/O:
+> > > > fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+> > > > raw block device:
+> > > >    READ: bw=1246MiB/s (1306MB/s), 1246MiB/s-1246MiB/s (1306MB/s-1306MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
+> > > >   WRITE: bw=1247MiB/s (1308MB/s), 1247MiB/s-1247MiB/s (1308MB/s-1308MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
+> > > > ext4/loop/ext4:
+> > > >    READ: bw=274MiB/s (288MB/s), 274MiB/s-274MiB/s (288MB/s-288MB/s), io=2743MiB (2877MB), run=10001-10001msec
+> > > >   WRITE: bw=275MiB/s (288MB/s), 275MiB/s-275MiB/s (288MB/s-288MB/s), io=2747MiB (2880MB), run=10001-10001msec
+> > > > xfs/loop/xfs:
+> > > >    READ: bw=276MiB/s (289MB/s), 276MiB/s-276MiB/s (289MB/s-289MB/s), io=2761MiB (2896MB), run=10002-10002msec
+> > > >   WRITE: bw=276MiB/s (290MB/s), 276MiB/s-276MiB/s (290MB/s-290MB/s), io=2765MiB (2899MB), run=10002-10002msec
+> > > > ext4/dm-loop/ext4:
+> > > >    READ: bw=1189MiB/s (1247MB/s), 1189MiB/s-1189MiB/s (1247MB/s-1247MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
+> > > >   WRITE: bw=1190MiB/s (1248MB/s), 1190MiB/s-1190MiB/s (1248MB/s-1248MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
+> > > > xfs/dm-loop/xfs:
+> > > >    READ: bw=1209MiB/s (1268MB/s), 1209MiB/s-1209MiB/s (1268MB/s-1268MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
+> > > >   WRITE: bw=1210MiB/s (1269MB/s), 1210MiB/s-1210MiB/s (1269MB/s-1269MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
+> > > 
+> > > Hi Mikulas,
+> > > 
+> > > Please try the following patchset:
+> > > 
+> > > https://lore.kernel.org/linux-block/20250308162312.1640828-1-ming.lei@redhat.com/
+> > > 
+> > > which tries to handle IO in current context directly via NOWAIT, and
+> > > supports MQ for loop since 12 io jobs are applied in your test. With this
+> > > change, I can observe similar perf data on raw block device and loop/xfs
+> > > over mq-virtio-scsi & nvme in my test VM.
+> 
+> I'm not sure RWF_NOWAIT is a workable solution.
+> 
+> Why?
 
-But that assumption may not be correct - it's perfectly viable to use
-smaller buffers with incremental consumption, and there may be valid
-reasons for an application or framework to do so.
+It is just the sane implementation of Mikulas's static mapping
+approach: no need to move to workqueue if the mapping is immutable
+or sort of.
 
-As there's really no need to explicitly disable bundles with
-incrementally consumed buffers, allow it. This actually makes the peek
-side cheaper and simpler, with the completion side basically the same,
-just needing to iterate for the consumed length.
+Also it matches with io_uring's FS read/write implementation:
 
-Reported-by: Norman Maurer <norman_maurer@apple.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+- try to submit IO with NOWAIT first
 
----
+- then fallback to io-wq in case of -EAGAIN
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3478be6d02ab..098109259671 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -32,6 +32,25 @@ struct io_provide_buf {
- 	__u16				bid;
- };
- 
-+static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
-+{
-+	while (len) {
-+		struct io_uring_buf *buf;
-+		u32 this_len;
-+
-+		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
-+		this_len = min_t(int, len, buf->len);
-+		buf->len -= this_len;
-+		if (buf->len) {
-+			buf->addr += this_len;
-+			return false;
-+		}
-+		bl->head++;
-+		len -= this_len;
-+	}
-+	return true;
-+}
-+
- bool io_kbuf_commit(struct io_kiocb *req,
- 		    struct io_buffer_list *bl, int len, int nr)
- {
-@@ -42,20 +61,8 @@ bool io_kbuf_commit(struct io_kiocb *req,
- 
- 	if (unlikely(len < 0))
- 		return true;
--
--	if (bl->flags & IOBL_INC) {
--		struct io_uring_buf *buf;
--
--		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
--		if (WARN_ON_ONCE(len > buf->len))
--			len = buf->len;
--		buf->len -= len;
--		if (buf->len) {
--			buf->addr += len;
--			return false;
--		}
--	}
--
-+	if (bl->flags & IOBL_INC)
-+		return io_kbuf_inc_commit(bl, len);
- 	bl->head += nr;
- 	return true;
- }
-@@ -226,25 +233,14 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 	buf = io_ring_head_to_buf(br, head, bl->mask);
- 	if (arg->max_len) {
- 		u32 len = READ_ONCE(buf->len);
-+		size_t needed;
- 
- 		if (unlikely(!len))
- 			return -ENOBUFS;
--		/*
--		 * Limit incremental buffers to 1 segment. No point trying
--		 * to peek ahead and map more than we need, when the buffers
--		 * themselves should be large when setup with
--		 * IOU_PBUF_RING_INC.
--		 */
--		if (bl->flags & IOBL_INC) {
--			nr_avail = 1;
--		} else {
--			size_t needed;
--
--			needed = (arg->max_len + len - 1) / len;
--			needed = min_not_zero(needed, (size_t) PEEK_MAX_IMPORT);
--			if (nr_avail > needed)
--				nr_avail = needed;
--		}
-+		needed = (arg->max_len + len - 1) / len;
-+		needed = min_not_zero(needed, (size_t) PEEK_MAX_IMPORT);
-+		if (nr_avail > needed)
-+			nr_avail = needed;
- 	}
- 
- 	/*
+It isn't perfect, sometime it may be slower than running on io-wq
+directly.
 
--- 
-Jens Axboe
+But is there any better way for covering everything?
+
+I guess no, because FS can't tell us when the IO can be submitted
+successfully via NOWAIT, and we can't know if it may succeed without
+trying. And basically that is what the interface is designed.
+
+> 
+> IO submission is queued to a different thread context because to
+> avoid a potential deadlock. That is, we are operating here in the
+> writeback context of another filesystem, and so we cannot do things
+> like depend on memory allocation making forwards progress for IO
+> submission.  RWF_NOWAIT is not a guarantee that memory allocation
+> will not occur in the IO submission path - it is implemented as best
+> effort non-blocking behaviour.
+
+Yes, that is why BLK_MQ_F_BLOCKING is added.
+
+> 
+> Further, if we have stacked loop devices (e.g.
+> xfs-loop-ext4-loop-btrfs-loop-xfs) we can will be stacking
+> RWF_NOWAIT IO submission contexts through multiple filesystems. This
+> is not a filesystem IO path I want to support - being in the middle
+> of such a stack creates all sorts of subtle constraints on behaviour
+> that otherwise wouldn't exist. We actually do this sort of multi-fs
+> stacking in fstests, so it's not a made up scenario.
+> 
+> I'm also concerned that RWF_NOWAIT submission is not an optimisation
+> at all for the common sparse/COW image file case, because in this
+> case RWF_NOWAIT failing with EAGAIN is just as common (if not
+> moreso) than it succeeding.
+> 
+> i.e. in this case, RWF_NOWAIT writes will fail with -EAGAIN very
+> frequently, so all that time spent doing IO submission is wasted
+> time.
+
+Right.
+
+I saw that when I wrote ublk/zoned in which every write needs to
+allocate space. It is workaround by preallocating space for one fixed
+range or the whole zone.
+
+> 
+> Further, because allocation on write requires an exclusive lock and
+> it is held for some time, this will affect read performance from the
+> backing device as well. i.e. block mapping during a read while a
+> write is doing allocation will also return EAGAIN for RWF_NOWAIT.
+
+But that can't be avoided without using NOWAIT, and read is blocked
+when write(WAIT) is in-progress.
+
+> This will push the read off to the background worker thread to be
+> serviced and so that will go much slower than a RWF_NOWAIT read that
+> hits the backing file between writes doing allocation. i.e. read
+> latency is going to become much, much more variable.
+> 
+> Hence I suspect RWF_NOWAIT is simply hiding the underlying issue
+> by providing this benchmark with a "pure overwrite" fast path that
+> avoids the overhead of queueing work through loop_queue_work()....
+> 
+> Can you run these same loop dev tests using a sparse image file and
+> a sparse fio test file so that the fio benchmark measures the impact
+> of loop device block allocation on the test? I suspect the results
+> with the RWF_NOWAIT patch will be somewhat different to the fully
+> allocated case...
+
+Yes, it will be slower, and io_uring FS IO application is in
+the same situation, and usually application doesn't have such
+knowledge if RWF_NOWAIT can succeed.
+
+However, usually meta IO is much less compared with normal IO, so most
+times it will be a win to try NOWAIT first.
+
+> 
+> > 
+> > Yes - with these patches, it is much better.
+> > 
+> > > 1) try single queue first by `modprobe loop`
+> > 
+> > fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+> > xfs/loop/xfs
+> >    READ: bw=302MiB/s (317MB/s), 302MiB/s-302MiB/s (317MB/s-317MB/s), io=3024MiB (3170MB), run=10001-10001msec
+> >   WRITE: bw=303MiB/s (317MB/s), 303MiB/s-303MiB/s (317MB/s-317MB/s), io=3026MiB (3173MB), run=10001-10001msec
+> > 
+> > fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+> > xfs/loop/xfs
+> >    READ: bw=1055MiB/s (1106MB/s), 1055MiB/s-1055MiB/s (1106MB/s-1106MB/s), io=10.3GiB (11.1GB), run=10001-10001msec
+> >   WRITE: bw=1056MiB/s (1107MB/s), 1056MiB/s-1056MiB/s (1107MB/s-1107MB/s), io=10.3GiB (11.1GB), run=10001-10001msec
+> 
+> Yup, this sort of difference in performance simply from bypassing
+> loop_queue_work() implies the problem is the single threaded loop
+> device queue implementation needs to be fixed.
+> 
+> loop_queue_work()
+> {
+> 	....
+> 	spin_lock_irq(&lo->lo_work_lock);
+> 	....
+> 
+>         } else {
+>                 work = &lo->rootcg_work;
+>                 cmd_list = &lo->rootcg_cmd_list;
+>         }
+> 	list_add_tail(&cmd->list_entry, cmd_list);
+> 	queue_work(lo->workqueue, work);
+> 	spin_unlock_irq(&lo->lo_work_lock);
+> }
+> 
+> Not only does every IO that is queued takes this queue lock, there
+> is only one work instance for the loop device. Therefore there is
+> only one kworker process per control group that does IO submission
+> for the loop device. And that kworker thread also takes the work
+> lock to do dequeue as well.
+> 
+> That serialised queue with a single IO dispatcher thread looks to be
+> the performance bottleneck to me. We could get rid of the lock by
+> using a llist for this multi-producer/single consumer cmd list
+> pattern, though I suspect we can get rid of the list entirely...
+> 
+> i.e. we have a work queue that can run a
+> thousand concurrent works for this loop device, but the request
+> queue is depth limited to 128 requests. hence we can have a full
+> set of requests in flight and not run out of submission worker
+> concurrency. There's no need to isolate IO from different cgroups in
+> this situation - they will not get blocked behind IO submission
+> from a different cgroup that is throttled...
+> 
+> i.e. the cmd->list_entry list_head could be replaced with a struct
+> work_struct and that whole cmd list management and cgroup scheduling
+> thing could be replaced with a single call to
+> queue_work(cmd->io_work). i.e. the single point that all IO
+
+Then there will be many FS write contention, :-)
+
+> submission is directed through goes away completely.
+
+It has been shown many times that AIO submitted from single or much less
+contexts is much more efficient than running IO concurrently from multiple
+contexts, especially for sequential IO.
+
+Please see the recent example of zloop vs. ublk/zoned:
+
+https://lore.kernel.org/linux-block/d5e59531-c19b-4332-8f47-b380ab9678be@kernel.org/
+
+When zloop takes single dispatcher just like the in-tree loop, sequential
+WRITE performs much better than initial version of ublk/zoned, which just
+handles every IO in its own io-wq(one time NOWAIT & -EAGAIN and one time fallback
+to io-wq). I tried to submit FS WRITE via io-wq directly and it becomes what
+your suggested, the improvement is small, and still much worse than zloop's
+single dispatcher.
+
+Later, when I switch to pre-allocate space for each zone or one fixed range,
+each write is submitted with NOWAIT successfully, then the sequential write perf
+is improved much:
+
+https://lore.kernel.org/linux-block/Z6QrceGGAJl_X_BM@fedora/
+
+
+
+Thanks,
+Ming
 
 

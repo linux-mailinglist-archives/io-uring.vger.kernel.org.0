@@ -1,98 +1,117 @@
-Return-Path: <io-uring+bounces-7058-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7059-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9B5A5D84F
-	for <lists+io-uring@lfdr.de>; Wed, 12 Mar 2025 09:36:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55150A5DD68
+	for <lists+io-uring@lfdr.de>; Wed, 12 Mar 2025 14:08:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C53B3B3C29
-	for <lists+io-uring@lfdr.de>; Wed, 12 Mar 2025 08:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B2D07ACF1C
+	for <lists+io-uring@lfdr.de>; Wed, 12 Mar 2025 13:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD83F23278D;
-	Wed, 12 Mar 2025 08:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C8A245013;
+	Wed, 12 Mar 2025 13:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRbA55BK"
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="nlpvLYg6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0651DB356;
-	Wed, 12 Mar 2025 08:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D385324338F
+	for <io-uring@vger.kernel.org>; Wed, 12 Mar 2025 13:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768576; cv=none; b=TEd/5et2p2mrKe/Hna1NQXFYYgju08mqu6CaH3GOFt4ONo6UnlPxjbwGmtaUAFr8ApvcXiWV5QXNvG6J1kbjabS7wOWQnUnVvcA3EhAvkQvg3q+dVRURnjJB8BjWlavJYZ8eRhUEffLJG/6EvveKclWZja9xZpGN/2/8wU5NooA=
+	t=1741784818; cv=none; b=vDFYjwUoRvXXAk16Yji/43KRif7Edqipech9m9MeiF3vG4NKzRQeQbWasoIXlj+RTRM9+KSnE5n8ZvfXOKxMq3rumDRUVnNQza1YTBsGfnF7N/+genhhMowuGzWoAZ5JTB1mjyMsWiGpUq0Lv16zyEQE6mXclbSFEsnQLURA3xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768576; c=relaxed/simple;
-	bh=rAnPETvJ1xWsUR/LEodaT72moPokpP2sjBnMZ54f35U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q9a5wUvSwiCKu8QRW4iGM7ooFa1D4iFSTrQG2y57n3f0nvghWsn7XL+nQBV1wWTQ+ZvUf68r8lhpnE6L6sxXv8HuE5tYKadPJC29nqlyS2WvCQsvJvpo3Iub4kXaMysTT7Nk8szGwESo4XQmgLGCny+FiVG1Xs9QVSOrrpsOnDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRbA55BK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9511DC4CEE3;
-	Wed, 12 Mar 2025 08:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741768576;
-	bh=rAnPETvJ1xWsUR/LEodaT72moPokpP2sjBnMZ54f35U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GRbA55BKdEP2X00NG+FMCqNQ7hjGMlhWXGYiB76VnY5W7+Z0XJhLa+J3TsIrE2tMX
-	 GGcYg4KK5ZNkqpwP51pKaHYS5zo1HtxpFhHLBMOy5bt+yl2ccP3MdCw3UzeKJlJENl
-	 QzQF+iM5vTSCE5xsoUciSvrCMhR0mEObkYf5dSFpv+oAtYwp+tr54DlOGSZkVIZPpQ
-	 VOlRJBEBhsZh1pW9rF1aekQM0HNuk7g2Gwsf65CNaai5lzDdy1N/RCPZSZLxNz2uZg
-	 rzShVnYs6FSYdDXH9LwwDM2dO+vmlBjP2iSVBzfjt4Aj6/eLnsE09fKT2bZoe88meF
-	 56J+Y6R+BUZfQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1741784818; c=relaxed/simple;
+	bh=Vv8RYYNN32jkVSIlC3HEqjsVMtw6rjCGH2BUjDQtq4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XnrGyQf77mN2qGJV/s0Dwo9DSV9I6nKL37L4wB8kXJ/pvTAvXelqrfaV0DTJMReGGZ6bUnw+O7ZcPJQTVnIc8O3kgk9fGixXgnA7iZlg+tPlKGedE/6tzh63iw5pD8g3l39uldzrmW0o1ZfJDdAZiYhq00UR0w57etdxcMvgdRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=nlpvLYg6; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223a7065ff8so35592035ad.0
+        for <io-uring@vger.kernel.org>; Wed, 12 Mar 2025 06:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741784816; x=1742389616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DjzZK8IYtDnC7MfW99ZbF8PngYp+A/NXbbGv9fyWHAs=;
+        b=nlpvLYg6WRGtMArxzvLvRaDRKJp+d5jFAdwXbOo0jDaBkWH3dUz19QRuRXz/J3AOc/
+         lDLxDCQzZlL2NcyH8Rnclx0jt0n6GrFIEk0R+222qgCAkVwc5QStAisXJH0C2wcDS4l0
+         OanfFEdGkNlLVg0sJ7PhOnoMMZhK+wAHigV6dNZ8duBS1xnQcCkAxNjHH8/g6jh8dzVi
+         8SDQhpF5AFk+7xXcBjyFQyQYoJrjZAHMk9SWNfdBdTWkkzTcV+P59n7DjQbAErySeDIv
+         1PjVpt+pS1beV6Lgn0+sDF70C5o6I1it3QJz1KjaSfPLyUQooTN1zwRScf8HelI0dUwf
+         ipbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741784816; x=1742389616;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DjzZK8IYtDnC7MfW99ZbF8PngYp+A/NXbbGv9fyWHAs=;
+        b=Fkw2KJBJqOK+eBRjvM9wB3LBB16MI4QztWZq7LtnphUUdUJ89YAoSZce+AcCgSbyJl
+         9NlCygL2IP2ONc1vj3dZT5I9pkswUpUALfPjqKpxPOONh1tYL9OHr5OfTxd54zG5rraW
+         ucJPyZMTF7eQpDyoTTQbbahnNf0MVXeXVCHWfJxHbu3Yll599KosBDwxY0KHHcUhQ8wG
+         zbRkFOE6XQ49AuM6ZP3noWuJs45QkAhs6lEVk3XnLFZ4Xh87qLM92tlbZ09qKYrR9eh2
+         lXxHK4b/QTbiNHV9uxuRLvXIVgz7ijCJlW3viHgYBkZjpVAhhcqUKBjayBzd+NqbUYVy
+         x3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVASVsCzHO04F8+kIlKuqA33POfU3MM72q0AD2II6R7p7auK9aiQ28Az8kde/ow9oLoHn3Ozg+2UQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA+D3ng2unzRDlY2w3f527BUMCvpapTmc8vIL5UjDwO6caKPSU
+	V7A7FRep3t4pdOzpxtHvSxeurGFbrhwy7q3S1U0mqxUPdjS9cOjju9H4TQ3ln3k=
+X-Gm-Gg: ASbGnctnXxKJGD0hlNCvMXbd+py69w0XiVrMoCnatpc4yxAfhs1dOlthJ/bG8Zx/xW7
+	H/KnQtJ+gL7l6OH/fre2SymVNRKfMlJ/qDu/RMwNBONCvzSiZQ4bDVkZivsnrZdn9Vm3VDGvHgx
+	PIdUafqkByMhZ4GhssrLei1O8EfCHBS80QZfGMDmlhekJaRZX1l5CppbzGVIf0MViY5pxBqG8g9
+	/cxnUtqyaVBagz+ZazaLq2dNiAKaEgs1IEQjelaE+AzibhDuHO77/LcbIQUyIeWZZGLL30qI67e
+	lu09OBI0nCNdh9x7MCOezPiqze+LOQALh4TdiTcSr81ubzvkziOEcxR199KjG5p88fatfWuPlwV
+	Wdv/J
+X-Google-Smtp-Source: AGHT+IFamjSNfNQnwjC1H9gJyAaC00Hj63Guc4XKOhRigG44Fv7J/0RmFyGsrfXvYamATdRL+j5vPw==
+X-Received: by 2002:a17:903:283:b0:21f:74ec:1ff0 with SMTP id d9443c01a7336-22428ab7961mr347898355ad.32.1741784816077;
+        Wed, 12 Mar 2025 06:06:56 -0700 (PDT)
+Received: from sidong.sidong.yang.office.furiosa.vpn ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7fc55sm115418185ad.138.2025.03.12.06.06.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 06:06:55 -0700 (PDT)
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: Sidong Yang <sidong.yang@furiosa.ai>,
 	io-uring@vger.kernel.org,
-	audit@vger.kernel.org,
-	axboe@kernel.dk,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: dodge an atomic in putname if ref == 1
-Date: Wed, 12 Mar 2025 09:36:00 +0100
-Message-ID: <20250312-zwang-farbbeutel-a4c031fd05df@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250311181804.1165758-1-mjguzik@gmail.com>
-References: <20250311181804.1165758-1-mjguzik@gmail.com>
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org
+Subject: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
+Date: Wed, 12 Mar 2025 13:04:49 +0000
+Message-ID: <20250312130455.11323-1-sidong.yang@furiosa.ai>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1101; i=brauner@kernel.org; h=from:subject:message-id; bh=rAnPETvJ1xWsUR/LEodaT72moPokpP2sjBnMZ54f35U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfdC8/qhb3VNT6qUXTrfW2pXzzhRMVM/8d1xfcvDjhR eizt+c6OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZieoDhf+0mrRVrZW9OuGA6 t+7I5S1lhpOtbirMLRV1XS4/panBYj/Df+8Psku+MP/luc937fHuO88eBvfc2lyy6P7OaVE3vx7 ecoMBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Mar 2025 19:18:04 +0100, Mateusz Guzik wrote:
-> While the structure is refcounted, the only consumer incrementing it is
-> audit and even then the atomic operation is only needed when it
-> interacts with io_uring.
-> 
-> If putname spots a count of 1, there is no legitimate way for anyone to
-> bump it.
-> 
-> [...]
+This patche series introduce io_uring_cmd_import_vec. With this function,
+Multiple fixed buffer could be used in uring cmd. It's vectored version
+for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+for new api for encoded read in btrfs by using uring cmd.
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+v2:
+ - don't export iou_vc, use bvec for btrfs
+ - use io_is_compat for checking compat
+ - reduce allocation/free for import fixed vec
+ 
+Sidong Yang (2):
+  io_uring: cmd: introduce io_uring_cmd_import_fixed_vec
+  btrfs: ioctl: use registered buffer for IORING_URING_CMD_FIXED
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+ fs/btrfs/ioctl.c             | 27 ++++++++++++++++++++++-----
+ include/linux/io_uring/cmd.h | 14 ++++++++++++++
+ io_uring/uring_cmd.c         | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+), 5 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+--
+2.43.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] fs: dodge an atomic in putname if ref == 1
-      https://git.kernel.org/vfs/vfs/c/c93617c0f22c
 

@@ -1,132 +1,136 @@
-Return-Path: <io-uring+bounces-7070-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7071-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20BB6A5F12E
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 11:44:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C50A5F32E
+	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 12:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6431B3AB161
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 10:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092421890CD1
+	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 11:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAAF264FBD;
-	Thu, 13 Mar 2025 10:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D26D26869D;
+	Thu, 13 Mar 2025 11:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="W5ZpnldR"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BZURCnv0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837161FBCAF
-	for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93C01FAC5A
+	for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 11:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862661; cv=none; b=hp91IBdUsl7w9dh7zLPr5XfjpY2iGlfOC2GKZFaj07v+Yp8A44PN8BTyhbGth1dc6KfGUk1HKRaSOFesEOpA71oeJO4pTtMMT7Yu9xd5a6hJx00/unmwgxxv8a8fafUe0xcr/fEF+v3Wzo1O3QJdSXvsW/ib7ncmqtCldVM159U=
+	t=1741866293; cv=none; b=qV580y/kTh2ISAH6ht1tibxVTvs0uizrs51c8jRA65TAM8dnmcsJPkHmRuzEkyNt1rcDKGcl+xbZ7GquBiQlG2pdh8I60r6n15RX3y7y3690/aBctSVMQxYeRv6U06iiH0DRJ7iJ3505KXYbg8ynlPr2RtWpexCgBuCMbCSxfP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862661; c=relaxed/simple;
-	bh=cdJZRMBGrkonFB3hvNUzys+FuUKN9910SmSB9F1d9xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlPeFJKUx8meD+y5ltE93He9kOcPTftAN1Fl+o5jsTfoDgCMi0ReZZYOHFPSH9jhPRXTSCSdcAkakneKo/vkfqkNYUGPKQ4x8Z7CH9GrFX2ogomTCZmriIrH3Kzy1gboeJAmDb1EJbasE9AFkQvS0rSOKVsWiGy+Ort7610VtUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=W5ZpnldR; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff65d88103so1367819a91.2
-        for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 03:44:19 -0700 (PDT)
+	s=arc-20240116; t=1741866293; c=relaxed/simple;
+	bh=NXl1n3p8QHYL9t33kprYE487+Jvior6WSgQbFflFOcM=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=sQ/2U7IprEfRy3QO5z1wU0TOnF/Zg/51rgrlUBoP6VlB9Oqicj0L9B1KbO3EULkyGXdcmqPugDX0y85zc2xEGaXpmuAIrFhJyc+GZ28+hawgw4YfYrhecxmSL9T6iEHL+f1Ox9urgqdsOBZlKFj7U2IEf14jk5kUtgqaBL1ZypU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BZURCnv0; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so8729855ab.0
+        for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 04:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741862659; x=1742467459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ek1S1M2Z/3jRrIpDz7olPRb3vs2yw04VJj39Sas7Xhc=;
-        b=W5ZpnldRQfxcSJJinZVeOcGGXQfAX49Kypw13lm1k9ifGsLkO2alZ2e/WEcN9RxQA0
-         D54te9B60rKU0TItcrivmXHWUgw1+VNTi8TWTL5aKNhu5bG+Kgh+VAFPGdgdWLJmn2Qa
-         G/Gbn5Il1b+KVPrdM0fE4ECOns6zvhuEugCN4+FLA+kBK2UIeLIP8ZGTOllycjybHD19
-         PsVKL7TGiKDcRtt8dLu8RG4snOzZvJtt0MpH1BIHlDk3GO67DZElgpaNPXtAyKBlG+86
-         TXwhrYFzhZNyYQVZjN8e/IyxV/caOpcn8ev4/g2wrzLGAeslKn0TUkfI+lPtF2TIyu+y
-         hkrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741862659; x=1742467459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741866289; x=1742471089; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ek1S1M2Z/3jRrIpDz7olPRb3vs2yw04VJj39Sas7Xhc=;
-        b=d0lpM2EbhUrYoE+lEhQSeuSmLUa0wT+OUFZfWW/I+bkiqIjy33RmSBnmTyykKdGY8O
-         5rg8Y4mKsdu4lUsQcjYDf6RREx37aWcXg+shPsN7zECsB1ogsCm0meDQBy0xVvVFroz0
-         nUg8OgI0uF/0wUUbR5ed08b0M2U33wvYWsHZ3LqQILjeHz9KJMm/VDr05TpqqMU4BkV4
-         04AU3+1+utTjd10MrN8ebEWR/VAiRoAh2se5PToOnRK2e5jbTKUk2AU2Oiwj4m2kTgLo
-         hNCRgxboqEGf6K2sWzA4IWxtQcFTMJxiLzB8UEvbBI62vAlWEn8Ak6JgAjYsgK/BEnwQ
-         ZU+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXuAuhqSexHgMlcLyrPZyRJgJsIyJHUv6VG+Zl1Ona2x9UDPHM5Qq+JtzW7BO/FXXHz32tu95lA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj3nWRwdtuu7yz/AxXUdDqB9xIb3aWzF5Lg9ukYu/E1ONd1PaW
-	7zNaJUb6XO+gPXBBuvPNvM5QznYk5ze1FEA24yhgkJXSMhoIuiKMs6z3TeQ5u7/WTfgZ11iYOPO
-	V
-X-Gm-Gg: ASbGnctc4xkNcfVVnkLj5TJZ1hOVuo3Z4NT1JSOI8EDpcn6p51fTyqLIt69gJg7fy0H
-	BT0MoCB0B78lPE5XPE9PpgeN14ToFUiqNsAKi1jLMOZHVYIiGCnU+KPDLXBzFysBLFS9nmt6qnF
-	uEfsoayws9jyd4CNWJffVLXOVxllGm0dZNNoLriy2zjATUxErcs62SIT98XxXOzFUoXE7hEHnbX
-	+kaL64DlR9OOeSmLAEFdBChJ+7WAaCvdLfr4+wOB7sjodYLBmk5/q2LTwIgJjH3Uq3VA1WV/jzC
-	aNFXvLULrfZq9keGUBlc8rfRtvGUN+uBR0HmvG8NoG32AoO+u5T129OJZKpCeHEuPAYlKgBOE+T
-	D
-X-Google-Smtp-Source: AGHT+IHsVelts5SRr/WJziCKIuWWVYPcap8L5SU4CGAcvx6m6TS5z81715eoW1D7sFPeTWFvFyFeiA==
-X-Received: by 2002:a17:90b:17d0:b0:2ee:ee5e:42fb with SMTP id 98e67ed59e1d1-2ff7ce7abc1mr36460554a91.13.1741862658705;
-        Thu, 13 Mar 2025 03:44:18 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3011928706bsm3493605a91.46.2025.03.13.03.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 03:44:18 -0700 (PDT)
-Date: Thu, 13 Mar 2025 19:44:10 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-Message-ID: <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+        bh=s+v48lbxZUu071LEemghCjKImRwZF6oHZSHUEFUZvNE=;
+        b=BZURCnv0AaJXp07JJOS/s/1HTMLmqQqpuAEzw9dXSGoBZdFQgizCQH4C9+vONvvZZq
+         CEAhOf/6NO5oqGQm/iXzPBf7IPP6cQRUaf641c5mC1FRmNZLVFmcu4xlu+8ImJc7JeN/
+         NfNtVMXgrb7/A1IxC5jCS9Zto0RZuyfKGg3dZfpZEr4JHTE9go0DJzXxhn+UWFCdcZO5
+         obY0ncef9e+rx2JwI+oc0eXtTkQyKS7gNWDbZrVz2IAv7+eCI4R+Jc/eoR+AGqrrE5uO
+         F4HU8JLl8gqY1LBkFYdvkjm/UG6yCpPkEmR3Zoq4udEgSlMIHq7jWtBFJJX2DwbE3RM5
+         97nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741866289; x=1742471089;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s+v48lbxZUu071LEemghCjKImRwZF6oHZSHUEFUZvNE=;
+        b=HPs7V/YM0h/shNKaTM9DJjpa7xRu8hIhc1wUUKgsHW4Bq4xdAKxHN2gtwhA8IMu3Nx
+         nJMke4TUgzqzbRK/gVBeGogIuP6Lo8NlzokhwsZ95nw7tZXcpvRdep0rFS2U83Lv6H1i
+         nCEMBMcegBhM70J80wXBkn64fJpCt/Hob9ueBcR7jSTySQmNcZpFYGnBa9aC9gYr8tvB
+         OE/xvhj+oepRDIFZAMSmFWGe48N1OY3LZ+nKYyuk0A8IT9fdsbXm7T+E6GtLlh4TUq9s
+         EHQ2HKW6P+784pXVSYz2jrZJxSYSCdz4mS9Qpy7LpdKNVOmCW/5DPa9a2a9Mc32yB8Ar
+         2s2A==
+X-Gm-Message-State: AOJu0Ywwjx0b39Xn7eaW3A62SDzPZ6kUyMlIZhB5hx0GN2i9oZnMpWbO
+	ZF8pbx/8T0ODOCxuNYArqT9tGfl+WJF//A6gFokZK7eHnGzKlqleQoAxQkcW1Hr+dH5q0VxC9SY
+	o
+X-Gm-Gg: ASbGncujVuxrzkpQMLd1EoZ9NfB/CqIH2XuN0PMJr/Ze9aTYohsamsWNbUh2SFa5H/l
+	J61nRHuZLpQzSL1dF8/suuoTSMSqF/bcfUIlOtHvWKOcd9P73oLXdtLJ0JBqBc0e8pYFtzdl4hp
+	py9P6PlQmwOZNuGs9LzDCj+l+YLdTgfMfi/x7qRLQ9GGjXDOu3D+C13qZHINXlJBXShNhQr9pa9
+	MS8HlaUcAiK/KEzQz6geo1KuyS6Bmo+5DtT6b0dCklbLRTI85XXPxkAZvXNZfpngdZxw4uzmySf
+	1j64w4yEXeUQmiJn4pGVTBAW3Czb8igQNN6LHBMwUw==
+X-Google-Smtp-Source: AGHT+IG4BovY6HccycTT8JLWnFxsYThxxFckaApBTeS+ShAenJHDO+NdXrzySp44Ai2f3qrf1CLvqQ==
+X-Received: by 2002:a05:6e02:219c:b0:3d3:e41b:936f with SMTP id e9e14a558f8ab-3d44187c07emr291778885ab.3.1741866288981;
+        Thu, 13 Mar 2025 04:44:48 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2638147d7sm291968173.122.2025.03.13.04.44.47
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 04:44:48 -0700 (PDT)
+Message-ID: <a41f0843-21dd-469a-bc01-420a59f3ef45@kernel.dk>
+Date: Thu, 13 Mar 2025 05:44:47 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/memmap: move vm_flags_set() outside of
+ ctx->mmap_lock
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
-> On 3/12/25 14:23, Sidong Yang wrote:
-> > This patche series introduce io_uring_cmd_import_vec. With this function,
-> > Multiple fixed buffer could be used in uring cmd. It's vectored version
-> > for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> > for new api for encoded read in btrfs by using uring cmd.
-> 
-> Pretty much same thing, we're still left with 2 allocations in the
-> hot path. What I think we can do here is to add caching on the
-> io_uring side as we do with rw / net, but that would be invisible
-> for cmd drivers. And that cache can be reused for normal iovec imports.
-> 
-> https://github.com/isilence/linux.git regvec-import-cmd
-> (link for convenience)
-> https://github.com/isilence/linux/tree/regvec-import-cmd
-> 
-> Not really target tested, no btrfs, not any other user, just an idea.
-> There are 4 patches, but the top 3 are of interest.
+syzbot complaints that sometimes the ordering between ctx->mmap_lock
+and vma->vm_lock->lock aren't the same, which obviously makes lockdep
+unhappy.
 
-Thanks, I justed checked the commits now. I think cache is good to resolve
-this without allocation if cache hit. Let me reimpl this idea and test it
-for btrfs.
+We'd normally expect the ctx->mmap_lock to nest inside the vma lock,
+but vm_flags_set() -> vma_start_write() from the ->mmap() patch can
+happen in the opposite order.
 
-> 
-> Another way would be to cache in btrfs, but then btrfs would need to
-> care about locking for the cache and some other bits, and we wouldn't
-> be able to reuse it for other drivers.
+Move the vm_flags_set() to before ctx->mmap_lock is grabbed. This does
+potentially leak the VM_DONT_EXPAND set for that vma, and while that
+could get cleared, doesn't look like it's necessary to do so. Hence just
+keep it simple.
 
-Agreed, it could be better to reuse it for other driver.
+Reported-by: syzbot+96c4c7891428e8c9ac1a@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/io-uring/67d0bee4.050a0220.14e108.001f.GAE@google.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks,
-Sidong
-> 
-> -- 
-> Pavel Begunkov
-> 
+---
+
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 361134544427..d325b6ab6b99 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -309,7 +309,6 @@ static int io_region_mmap(struct io_ring_ctx *ctx,
+ {
+ 	unsigned long nr_pages = min(mr->nr_pages, max_pages);
+ 
+-	vm_flags_set(vma, VM_DONTEXPAND);
+ 	return vm_insert_pages(vma, vma->vm_start, mr->pages, &nr_pages);
+ }
+ 
+@@ -322,6 +321,8 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct io_mapped_region *region;
+ 	void *ptr;
+ 
++	vm_flags_set(vma, VM_DONTEXPAND);
++
+ 	guard(mutex)(&ctx->mmap_lock);
+ 
+ 	ptr = io_uring_validate_mmap_request(file, vma->vm_pgoff, sz);
+
+-- 
+Jens Axboe
+
 

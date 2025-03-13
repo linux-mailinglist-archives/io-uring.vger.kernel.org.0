@@ -1,155 +1,143 @@
-Return-Path: <io-uring+bounces-7076-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7077-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB247A5F7D9
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 15:21:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851F5A5FBEC
+	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 17:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ADF01770A0
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 14:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580421887FF8
+	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 16:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42A3267B9C;
-	Thu, 13 Mar 2025 14:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B052676FD;
+	Thu, 13 Mar 2025 16:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="PzHs8stW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ha4zscPH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F98267B85
-	for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 14:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4AD1487D1
+	for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 16:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741875698; cv=none; b=kD9kclaS63uktFg7/D3Kx+EbEtNuRWab63ush4aTX9VeoH216O1KT/zqfSkSDwNTmVlMCZY26kttztLAVm9rQD+K6ecl7Oi70YM2Y1sJ2q8VY9ZQF9Ga+aK7zNisCZB+jLBhgF+2VxoDo2JsHTn4b1Z1oNjTN+Tk3FWhyjdO9qk=
+	t=1741883828; cv=none; b=jg/RK/7+hW9o1/s3dLL1qaIv+PdwHjQIdKoXxBdtie+dP5SsFoZsm2s3L+cFzUNrZKoJZyv097oYDDkLvHvUkrQ9etOHOniHoifB78cOEQLgkDJiQ2tkK+ErJE9e/pKQM1w79sVWxaHiMwKsrdlWimtnoX2N2FCYeGt5QzMcA/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741875698; c=relaxed/simple;
-	bh=WpvnsUzxl6gpZMtFBMkL0WHekJbk8BwBrLg5RdPfqlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVPpTNzXreifhdLcc4TRR6FFVBKSXHO9RKwpMyM9/2KmoYRKA0/kIctt5wN5EfH/FS/QP7EwTk7TFDh5vFT+5n9kMRUvO29sG+YFl39PZqa1jOVAK4zG3ex41uPIEzkEpiQ8MY9RlGz2Wp2MJC3qsgsRbuGAfimfXqcGe+9diUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=PzHs8stW; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22403cbb47fso20208115ad.0
-        for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 07:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741875696; x=1742480496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0tetsoKa2ISM18bfiufTSiFquhBJtIAvJUABcLWCV4=;
-        b=PzHs8stWv3CkhdJNpveHIyT2gRaaww2ivWO3szaAoNnaXW3VZqM5ipx/kVvRF3dAaH
-         /544wV2IdaBd1jtbzHqClaBAuzz0cbTG77luMTeMzuZV8+Pt90x8A1hqlLMWUcHSnhJV
-         36gjVMJy9TW2tBrBszvnHx4ax4OiFXTfSjUW3hGsN+Ip6zpgirewI7yen0E6EURXrd1W
-         +mUwZwLsI1hL6E0wZNrFRXeUmgVS8zjP4gHJl3kjRftGqVqIgOn0NRabM7ASFDmiakdz
-         ZqsAGAZpWubw/WAgMqcTjkpv24CBEX1jI9J6O6w4xhTZUVTfsN1A5uoZ+0JAABaZeGbH
-         Godw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741875696; x=1742480496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L0tetsoKa2ISM18bfiufTSiFquhBJtIAvJUABcLWCV4=;
-        b=RVqVuAWnOZ+Q99ZCMr8+LOp6G52O9e5odiog1dRhn8hqc1zJuZDg0qhWZytWdznR/e
-         loC93DLMPYmNsn38VJCDGlA0/io2p28znavmSMeZ7jEBXZWh2EPA8aWYOMm8JJbXYiMy
-         WKLPPQzZvGxSwUAjHfp8iCGY62hgc3rqqiHWGDSVtwX8i1/WtQX+1m5U10gs9or5JlQP
-         jq159dlQpXTlnJRPtLNra0LsET6mdOVDf+IfFmmWpsN8OFp4wDxQRic+4AQBloI9bVdH
-         H+Uxj3NYWv/4RfOpCsrRergl5ZS97F1fT7zrL+PpF7B272ltjngX3S5WnAjsNMOSbYKT
-         FQVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHEhIr+qUIVVwynzg9aXQJ9I/9PZjpAxC86WZaqBsIpeRWRutPXhcxmPzx85AXMpi3zGdIr/rw1g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0rNta5kkQTSXfIeyot+1F/AgBoLDNUHyklAH+QE2AEjIn7/DY
-	mUlHGSPd/VLsPHDo+xGNBcC6BRp+R5Iheqx+B4NV6xyqYDk1X8whAOy5OYsHiN8=
-X-Gm-Gg: ASbGncsq2cTADuxJah1rAWUR5PfxTobDCZ0LQYjEMiqRahTQ8XYVh2m17tSp35RDc4t
-	goeeN6eR/tZZmzM+0iIfwSrr6e4LYzcLOj0hT1WCIjc/gVr3pClkGueRAoM+eg/JqROhOdNgew3
-	8N5YLSOYI5kFeYy+SIGIx2yQBWeo6SD4lX484aOfseWD70K9ptbXlQAaMLDJYEikk1YQiwM3+vz
-	d58a2ugJSXh4LeG0GfXTGt/J9j2GGbpYVe3o+y5CE2mqhSuIWMyFnBYnmQXrvCRHc9lMm6lIXIX
-	tMLNnRkaORdkalLIFWaWPI3x6aPiT5OmANa/Kadr7HGE+hEOANOvE1F3/eXswYgHtc1TnW/0oMp
-	i+cEGhQ==
-X-Google-Smtp-Source: AGHT+IFrm0PyIULGxF7uMa1YAcLldt1ymHl/9crA3Otf7vM1iRhdF/1Q7ffqxaW5uccJLGntcMfu/A==
-X-Received: by 2002:a17:903:283:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-2242888bfe4mr406203255ad.14.1741875696042;
-        Thu, 13 Mar 2025 07:21:36 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe77csm13577465ad.194.2025.03.13.07.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 07:21:35 -0700 (PDT)
-Date: Thu, 13 Mar 2025 23:21:31 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
-Message-ID: <Z9Lp60B4o2Y3AzhD@sidongui-MacBookPro.local>
-References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
- <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
- <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
- <95529e8f-ac4d-4530-94fa-488372489100@gmail.com>
- <fd3264c8-02be-4634-bab2-2ad00a40a1b7@gmail.com>
- <Z9Lj8s-pTTEJhMOn@sidongui-MacBookPro.local>
- <ab277f0b-fdf6-4f20-9fe0-0e0a1ebcc906@kernel.dk>
+	s=arc-20240116; t=1741883828; c=relaxed/simple;
+	bh=H6qhc40XwMTUNTQh23ECN9sTs54dQPRbwVzPji3aicg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bJTcd7NFZO0N+rJHj3OoDKy2Mc/Ir6UK07JYP97IZOkFhA0ic+UI7xEr/VztFDLCjW+rQJIA5tuRTmmX3RA3byuhqwxvVdCYaGBEesAmL9Ng3D2z0rR5/eOhGwCLeH35dwSfyy0TrzufLNcuagJaFWdriYSTU9m1//cSX71i6xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ha4zscPH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741883826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nteGkwPas523gY7jS4Tf+BW9z14N+lQLPYEP7Fix3sA=;
+	b=Ha4zscPHuqGOtxdDk8FRuVcsUbaPt6wNW1O0mO5twsPSQmngHqcByqTlUDR0YnYDYWbc2V
+	fozDpIZ7HmuiSI0CBiTE9hXxN4HFd2UPENNMfE/IFK50P3SQBegKnLaI1kFj+EysFo7hf0
+	yiHuab4nhPSFdvHg3yH9qNkkTDimtgU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-223--VLMEIm8OcWI3lihAJX-HQ-1; Thu,
+ 13 Mar 2025 12:37:03 -0400
+X-MC-Unique: -VLMEIm8OcWI3lihAJX-HQ-1
+X-Mimecast-MFC-AGG-ID: -VLMEIm8OcWI3lihAJX-HQ_1741883821
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1170418007E1;
+	Thu, 13 Mar 2025 16:37:01 +0000 (UTC)
+Received: from [10.22.82.75] (unknown [10.22.82.75])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A01561800944;
+	Thu, 13 Mar 2025 16:36:56 +0000 (UTC)
+Date: Thu, 13 Mar 2025 17:36:53 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Ming Lei <ming.lei@redhat.com>
+cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+    Jens Axboe <axboe@kernel.dk>, Jooyung Han <jooyung@google.com>, 
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com, 
+    dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+In-Reply-To: <Z9FFTiuMC8WD6qMH@fedora>
+Message-ID: <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+References: <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com> <Z8Zh5T9ZtPOQlDzX@dread.disaster.area> <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com> <Z8eURG4AMbhornMf@dread.disaster.area> <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com> <Z8zbYOkwSaOJKD1z@fedora>
+ <a8e5c76a-231f-07d1-a394-847de930f638@redhat.com> <Z8-ReyFRoTN4G7UU@dread.disaster.area> <Z9ATyhq6PzOh7onx@fedora> <Z9DymjGRW3mTPJTt@dread.disaster.area> <Z9FFTiuMC8WD6qMH@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab277f0b-fdf6-4f20-9fe0-0e0a1ebcc906@kernel.dk>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Mar 13, 2025 at 08:01:15AM -0600, Jens Axboe wrote:
-> On 3/13/25 7:56 AM, Sidong Yang wrote:
-> > On Thu, Mar 13, 2025 at 01:17:44PM +0000, Pavel Begunkov wrote:
-> >> On 3/13/25 13:15, Pavel Begunkov wrote:
-> >>> On 3/13/25 10:44, Sidong Yang wrote:
-> >>>> On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
-> >>>>> On 3/12/25 14:23, Sidong Yang wrote:
-> >>>>>> This patche series introduce io_uring_cmd_import_vec. With this function,
-> >>>>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
-> >>>>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> >>>>>> for new api for encoded read in btrfs by using uring cmd.
-> >>>>>
-> >>>>> Pretty much same thing, we're still left with 2 allocations in the
-> >>>>> hot path. What I think we can do here is to add caching on the
-> >>>>> io_uring side as we do with rw / net, but that would be invisible
-> >>>>> for cmd drivers. And that cache can be reused for normal iovec imports.
-> >>>>>
-> >>>>> https://github.com/isilence/linux.git regvec-import-cmd
-> >>>>> (link for convenience)
-> >>>>> https://github.com/isilence/linux/tree/regvec-import-cmd
-> >>>>>
-> >>>>> Not really target tested, no btrfs, not any other user, just an idea.
-> >>>>> There are 4 patches, but the top 3 are of interest.
-> >>>>
-> >>>> Thanks, I justed checked the commits now. I think cache is good to resolve
-> >>>> this without allocation if cache hit. Let me reimpl this idea and test it
-> >>>> for btrfs.
-> >>>
-> >>> Sure, you can just base on top of that branch, hashes might be
-> >>> different but it's identical to the base it should be on. Your
-> >>> v2 didn't have some more recent merged patches.
-> >>
-> >> Jens' for-6.15/io_uring-reg-vec specifically, but for-next likely
-> >> has it merged.
+
+
+On Wed, 12 Mar 2025, Ming Lei wrote:
+
+> > > It isn't perfect, sometime it may be slower than running on io-wq
+> > > directly.
+> > > 
+> > > But is there any better way for covering everything?
 > > 
-> > Yes, there is commits about io_uring-reg-vec in Jens' for-next. I'll
-> > make v3 based on the branch.
+> > Yes - fix the loop queue workers.
 > 
-> Basing patches on that is fine, just never base branches on it. My
-> for-next branch is just a merge point for _everything_ that's queued for
-> the next release, io_uring and block related. The right branch to base
-> on for this case would be for-6.15/io_uring-reg-vec, which is also in my
-> for-next branch.
+> What you suggested is threaded aio by submitting IO concurrently from
+> different task context, this way is not the most efficient one, otherwise
+> modern language won't invent async/.await.
+> 
+> In my test VM, by running Mikulas's fio script on loop/nvme by the attached
+> threaded_aio patch:
+> 
+> NOWAIT with MQ 4		:   70K iops(read), 70K iops(write), cpu util: 40%
+> threaded_aio with MQ 4	:	64k iops(read), 64K iops(write), cpu util: 52% 
+> in tree loop(SQ)		:   58K	iops(read), 58K iops(write)	
+> 
+> Mikulas, please feel free to run your tests with threaded_aio:
+> 
+> 	modprobe loop nr_hw_queues=4 threaded_aio=1
+> 
+> by applying the attached the patch over the loop patchset.
+> 
+> The performance gap could be more obvious in fast hardware.
 
-Agreed, for-6.15/io_uring-reg-vec is the right base branch for this. 
+With "threaded_aio=1":
 
-Thanks,
-Sidong
-> 
-> This is more of a FYI than anything, as you're not doing a pull request.
-> Using for-next for patches is fine.
-> 
-> -- 
-> Jens Axboe
+Sync io
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+xfs/loop/xfs
+   READ: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3001MiB (3147MB), run=10001-10001msec
+  WRITE: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3004MiB (3149MB), run=10001-10001msec
+
+Async io
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+xfs/loop/xfs
+   READ: bw=869MiB/s (911MB/s), 869MiB/s-869MiB/s (911MB/s-911MB/s), io=8694MiB (9116MB), run=10002-10002msec
+  WRITE: bw=870MiB/s (913MB/s), 870MiB/s-870MiB/s (913MB/s-913MB/s), io=8706MiB (9129MB), run=10002-10002msec
+
+
+Without "threaded_aio=1":
+
+Sync io
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+xfs/loop/xfs
+   READ: bw=348MiB/s (365MB/s), 348MiB/s-348MiB/s (365MB/s-365MB/s), io=3481MiB (3650MB), run=10001-10001msec
+  WRITE: bw=348MiB/s (365MB/s), 348MiB/s-348MiB/s (365MB/s-365MB/s), io=3484MiB (3653MB), run=10001-10001msec
+
+Async io
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+xfs/loop/xfs
+   READ: bw=1186MiB/s (1244MB/s), 1186MiB/s-1186MiB/s (1244MB/s-1244MB/s), io=11.6GiB (12.4GB), run=10001-10001msec
+  WRITE: bw=1187MiB/s (1245MB/s), 1187MiB/s-1187MiB/s (1245MB/s-1245MB/s), io=11.6GiB (12.5GB), run=10001-10001msec
+
+Mikulas
+
 

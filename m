@@ -1,143 +1,214 @@
-Return-Path: <io-uring+bounces-7077-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7078-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851F5A5FBEC
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 17:37:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B01A61623
+	for <lists+io-uring@lfdr.de>; Fri, 14 Mar 2025 17:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580421887FF8
-	for <lists+io-uring@lfdr.de>; Thu, 13 Mar 2025 16:37:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B383B656E
+	for <lists+io-uring@lfdr.de>; Fri, 14 Mar 2025 16:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B052676FD;
-	Thu, 13 Mar 2025 16:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EF01FECA9;
+	Fri, 14 Mar 2025 16:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ha4zscPH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Hq5/B6/F"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4AD1487D1
-	for <io-uring@vger.kernel.org>; Thu, 13 Mar 2025 16:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955E60B8A
+	for <io-uring@vger.kernel.org>; Fri, 14 Mar 2025 16:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883828; cv=none; b=jg/RK/7+hW9o1/s3dLL1qaIv+PdwHjQIdKoXxBdtie+dP5SsFoZsm2s3L+cFzUNrZKoJZyv097oYDDkLvHvUkrQ9etOHOniHoifB78cOEQLgkDJiQ2tkK+ErJE9e/pKQM1w79sVWxaHiMwKsrdlWimtnoX2N2FCYeGt5QzMcA/s=
+	t=1741969366; cv=none; b=Lpyk6bk7USnHbFxALjlxlTbrGnaub4cgrBhCW4E4zLAplRlH1hki+0g1JIHMyafUaZFkOk4v/uGzDssnNy3Rbi0OEsXCoQdVzL/p3bfntw/oPd5bb4YqluCJbJFqGkzz00N9c+dA6j82J8Kr2s59wEpEXk7T+WEjxChq3Jm5tmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883828; c=relaxed/simple;
-	bh=H6qhc40XwMTUNTQh23ECN9sTs54dQPRbwVzPji3aicg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bJTcd7NFZO0N+rJHj3OoDKy2Mc/Ir6UK07JYP97IZOkFhA0ic+UI7xEr/VztFDLCjW+rQJIA5tuRTmmX3RA3byuhqwxvVdCYaGBEesAmL9Ng3D2z0rR5/eOhGwCLeH35dwSfyy0TrzufLNcuagJaFWdriYSTU9m1//cSX71i6xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ha4zscPH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741883826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nteGkwPas523gY7jS4Tf+BW9z14N+lQLPYEP7Fix3sA=;
-	b=Ha4zscPHuqGOtxdDk8FRuVcsUbaPt6wNW1O0mO5twsPSQmngHqcByqTlUDR0YnYDYWbc2V
-	fozDpIZ7HmuiSI0CBiTE9hXxN4HFd2UPENNMfE/IFK50P3SQBegKnLaI1kFj+EysFo7hf0
-	yiHuab4nhPSFdvHg3yH9qNkkTDimtgU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-223--VLMEIm8OcWI3lihAJX-HQ-1; Thu,
- 13 Mar 2025 12:37:03 -0400
-X-MC-Unique: -VLMEIm8OcWI3lihAJX-HQ-1
-X-Mimecast-MFC-AGG-ID: -VLMEIm8OcWI3lihAJX-HQ_1741883821
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1170418007E1;
-	Thu, 13 Mar 2025 16:37:01 +0000 (UTC)
-Received: from [10.22.82.75] (unknown [10.22.82.75])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A01561800944;
-	Thu, 13 Mar 2025 16:36:56 +0000 (UTC)
-Date: Thu, 13 Mar 2025 17:36:53 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Ming Lei <ming.lei@redhat.com>
-cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
-    Jens Axboe <axboe@kernel.dk>, Jooyung Han <jooyung@google.com>, 
-    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com, 
-    dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-In-Reply-To: <Z9FFTiuMC8WD6qMH@fedora>
-Message-ID: <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
-References: <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com> <Z8Zh5T9ZtPOQlDzX@dread.disaster.area> <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com> <Z8eURG4AMbhornMf@dread.disaster.area> <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com> <Z8zbYOkwSaOJKD1z@fedora>
- <a8e5c76a-231f-07d1-a394-847de930f638@redhat.com> <Z8-ReyFRoTN4G7UU@dread.disaster.area> <Z9ATyhq6PzOh7onx@fedora> <Z9DymjGRW3mTPJTt@dread.disaster.area> <Z9FFTiuMC8WD6qMH@fedora>
+	s=arc-20240116; t=1741969366; c=relaxed/simple;
+	bh=mc8KTESZVMgmCNUJuTSDE0H9jd5EvLy3nwU4dBVYB50=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=mvQiI008kPSe3SxyeN5aTMTZ2G48NlVbCv95FEMT/XJxodNtJg2ZG76Kg4gL7jJH7YVlrW3O1XcPoytP0XhAo0JLDz4NxfAk5EbIjhZcdaT70/FQjHv1xB1vMZHVpu7ye9vZXv7RJ99s1iHeJnaoNmWTWTRIjp6NMhx/XE+6DyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Hq5/B6/F; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3cfc8772469so9254195ab.3
+        for <io-uring@vger.kernel.org>; Fri, 14 Mar 2025 09:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741969363; x=1742574163; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WLvXMnt3mmDY7IDQcH5hm0cFaI8beFDv4MU8xSfplmE=;
+        b=Hq5/B6/Fn8FtYw4LVKNsXoVSBakftoO2u1s9cGKJbBfa0MyOF9PB5iEP1+n4oDkOwB
+         eNaZhRnrwzQZfLPy4htaQbG8+KMoXjCLRo39bxbvm4n0/1RbtTPg4NjxRm4ao1ipzcvK
+         gRyY7MnSZiQBRHIRV1+GJmI+FK5reNe+1OqVarKRvj1FIEJ694yBCSrjsx+XvfDJmXrJ
+         a7j5Ivsg6V1OrL9yPX9eY1cCRHjpMsgZUI4jMupk0fsqu3WnYbLulLMEdRnFvJgA8ijm
+         4AyhiT6zkxh9OGvM0LR/KvrCvgs5qYzrrD+/u2shBwyCQ7NBHpiGE9ctIwIlDJvZ5OhN
+         cgWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741969363; x=1742574163;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WLvXMnt3mmDY7IDQcH5hm0cFaI8beFDv4MU8xSfplmE=;
+        b=LoYAGKXB00iZN8onHMJOxm4ee0jBAZdQuFBZhLDKvqIKxaw+B7d86iTbm9eyCml9YE
+         rkW397Pz0SwIFflyhqHZs2jy9soEf3ISc4QwAgSeHoGbKyJxHjz5SlhoeBkWoFu9Yapg
+         NypsJTzK5J3kfvi0klvcVaQ2QVaDcn1Swr9PgRGeyxPaK8l3scUvsESwxiqK0uLQ0x/q
+         OdUhIkcQ0XhMxDXwXogVTTA9KVxUaMdFna4NwOsnDPewVTybw9ZpuQVQ4BKSwtIFCpLb
+         aUalYL3vKdiFE2wMnruKxVjzMuKPLC0ryJgErHpMsM9eP3x4Q774GaJXVH0yKDssJEFJ
+         o/rA==
+X-Gm-Message-State: AOJu0Yymkk1NlPtAJnjqrNviZa2L6Wdr1SgRgKifR7oFoOajiuMfWeNY
+	jO8rdIAM1Kq6Ntvo+6Z72kuwc4b8ZsasY8EkuU7l1/DmXu2iVOkT63R/W20aEmcFoTndj7c9iQS
+	Y
+X-Gm-Gg: ASbGnct7Tu/RnlUIFpiB+cy2kMY0ZNDdTWsxaxM988B249o4kBV7fTd02RloB6af6HC
+	So/AbWvMqqZ9+oDABUo+EaripkNYogmWgx0ew8Dtwtl5OkKIs45DZXxvXQx7h3FaUoSiDN+L323
+	IP4eRTxY6GB7/v1Jj+NPvZw4+rnge1Uyh9t4Gf9uzjNVke+J9FbTCTfDsbmbrrlAUqJPBcLoQSa
+	paeM9ktP6dWPgKESvIxVRKDhG1dlp2kpiPy/dMq7gGWE9HULFxl0WKEIKA5mNlIOPN4AZKNNZwH
+	u91mjtNTaZqWbbNsS5VkiMukNr7ndABxmFtCst/8bw==
+X-Google-Smtp-Source: AGHT+IH2O0Pkk00Qud1delcH7nE8eZSoh+0Y80M9y3M1DEEMy8/i2Ofv1G+x4Od21JTX9ObFRPTT7Q==
+X-Received: by 2002:a05:6e02:2184:b0:3d1:9236:ca52 with SMTP id e9e14a558f8ab-3d48398237emr20879825ab.0.1741969363121;
+        Fri, 14 Mar 2025 09:22:43 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637fe8a3sm906899173.101.2025.03.14.09.22.42
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 09:22:42 -0700 (PDT)
+Message-ID: <d665dd6a-ab8d-4f43-8280-e70b5f064866@kernel.dk>
+Date: Fri, 14 Mar 2025 10:22:41 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: enable toggle of iowait usage when waiting on CQEs
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+By default, io_uring marks a waiting task as being in iowait, if it's
+sleeping waiting on events and there are pending requests. This isn't
+necessarily always useful, and may be confusing on non-storage setups
+where iowait isn't expected. It can also cause extra power usage, by
+preventing the CPU from entering lower sleep states.
 
+This adds a new enter flag, IORING_ENTER_NO_IOWAIT. If set, then
+io_uring will not mark the sleeping task as being in iowait.
 
-On Wed, 12 Mar 2025, Ming Lei wrote:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> > > It isn't perfect, sometime it may be slower than running on io-wq
-> > > directly.
-> > > 
-> > > But is there any better way for covering everything?
-> > 
-> > Yes - fix the loop queue workers.
-> 
-> What you suggested is threaded aio by submitting IO concurrently from
-> different task context, this way is not the most efficient one, otherwise
-> modern language won't invent async/.await.
-> 
-> In my test VM, by running Mikulas's fio script on loop/nvme by the attached
-> threaded_aio patch:
-> 
-> NOWAIT with MQ 4		:   70K iops(read), 70K iops(write), cpu util: 40%
-> threaded_aio with MQ 4	:	64k iops(read), 64K iops(write), cpu util: 52% 
-> in tree loop(SQ)		:   58K	iops(read), 58K iops(write)	
-> 
-> Mikulas, please feel free to run your tests with threaded_aio:
-> 
-> 	modprobe loop nr_hw_queues=4 threaded_aio=1
-> 
-> by applying the attached the patch over the loop patchset.
-> 
-> The performance gap could be more obvious in fast hardware.
+---
 
-With "threaded_aio=1":
+This is easily paired with an io_uring_set_iowait(ring, bool) on the
+liburing side, which can add it to its internal flags. Might be worth
+adding a FEAT flag for this too, so a caller knows if it'll be honored
+or not. Can also be detected by an EINVAL return on the first
+io_uring_enter(2) call with the flag set, but that's a bit more
+cumbersome.
 
-Sync io
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-xfs/loop/xfs
-   READ: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3001MiB (3147MB), run=10001-10001msec
-  WRITE: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3004MiB (3149MB), run=10001-10001msec
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 9e5eec7490bb..f82a92c5c823 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -546,6 +546,7 @@ struct io_cqring_offsets {
+ #define IORING_ENTER_REGISTERED_RING	(1U << 4)
+ #define IORING_ENTER_ABS_TIMER		(1U << 5)
+ #define IORING_ENTER_EXT_ARG_REG	(1U << 6)
++#define IORING_ENTER_NO_IOWAIT		(1U << 7)
+ 
+ /*
+  * Passed in for io_uring_setup(2). Copied back with updated info on success
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 5ff30a7092ed..6e5096837784 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2483,8 +2483,18 @@ static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
+ 	return READ_ONCE(iowq->hit_timeout) ? -ETIME : 0;
+ }
+ 
++struct ext_arg {
++	size_t argsz;
++	struct timespec64 ts;
++	const sigset_t __user *sig;
++	ktime_t min_time;
++	bool ts_set;
++	bool iowait;
++};
++
+ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 				     struct io_wait_queue *iowq,
++				     struct ext_arg *ext_arg,
+ 				     ktime_t start_time)
+ {
+ 	int ret = 0;
+@@ -2494,7 +2504,7 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	 * can take into account that the task is waiting for IO - turns out
+ 	 * to be important for low QD IO.
+ 	 */
+-	if (current_pending_io())
++	if (ext_arg->iowait && current_pending_io())
+ 		current->in_iowait = 1;
+ 	if (iowq->timeout != KTIME_MAX || iowq->min_timeout)
+ 		ret = io_cqring_schedule_timeout(iowq, ctx->clockid, start_time);
+@@ -2507,6 +2517,7 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ /* If this returns > 0, the caller should retry */
+ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 					  struct io_wait_queue *iowq,
++					  struct ext_arg *ext_arg,
+ 					  ktime_t start_time)
+ {
+ 	if (unlikely(READ_ONCE(ctx->check_cq)))
+@@ -2520,17 +2531,9 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	if (unlikely(io_should_wake(iowq)))
+ 		return 0;
+ 
+-	return __io_cqring_wait_schedule(ctx, iowq, start_time);
++	return __io_cqring_wait_schedule(ctx, iowq, ext_arg, start_time);
+ }
+ 
+-struct ext_arg {
+-	size_t argsz;
+-	struct timespec64 ts;
+-	const sigset_t __user *sig;
+-	ktime_t min_time;
+-	bool ts_set;
+-};
+-
+ /*
+  * Wait until events become available, if we don't already have some. The
+  * application must reap them itself, as they reside on the shared cq ring.
+@@ -2608,7 +2611,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 							TASK_INTERRUPTIBLE);
+ 		}
+ 
+-		ret = io_cqring_wait_schedule(ctx, &iowq, start_time);
++		ret = io_cqring_wait_schedule(ctx, &iowq, ext_arg, start_time);
+ 		__set_current_state(TASK_RUNNING);
+ 		atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+ 
+@@ -3265,6 +3268,8 @@ static int io_get_ext_arg(struct io_ring_ctx *ctx, unsigned flags,
+ 	const struct io_uring_getevents_arg __user *uarg = argp;
+ 	struct io_uring_getevents_arg arg;
+ 
++	ext_arg->iowait = !(flags & IORING_ENTER_NO_IOWAIT);
++
+ 	/*
+ 	 * If EXT_ARG isn't set, then we have no timespec and the argp pointer
+ 	 * is just a pointer to the sigset_t.
+@@ -3342,7 +3347,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
+ 			       IORING_ENTER_REGISTERED_RING |
+ 			       IORING_ENTER_ABS_TIMER |
+-			       IORING_ENTER_EXT_ARG_REG)))
++			       IORING_ENTER_EXT_ARG_REG |
++			       IORING_ENTER_NO_IOWAIT)))
+ 		return -EINVAL;
+ 
+ 	/*
 
-Async io
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-xfs/loop/xfs
-   READ: bw=869MiB/s (911MB/s), 869MiB/s-869MiB/s (911MB/s-911MB/s), io=8694MiB (9116MB), run=10002-10002msec
-  WRITE: bw=870MiB/s (913MB/s), 870MiB/s-870MiB/s (913MB/s-913MB/s), io=8706MiB (9129MB), run=10002-10002msec
-
-
-Without "threaded_aio=1":
-
-Sync io
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-xfs/loop/xfs
-   READ: bw=348MiB/s (365MB/s), 348MiB/s-348MiB/s (365MB/s-365MB/s), io=3481MiB (3650MB), run=10001-10001msec
-  WRITE: bw=348MiB/s (365MB/s), 348MiB/s-348MiB/s (365MB/s-365MB/s), io=3484MiB (3653MB), run=10001-10001msec
-
-Async io
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-xfs/loop/xfs
-   READ: bw=1186MiB/s (1244MB/s), 1186MiB/s-1186MiB/s (1244MB/s-1244MB/s), io=11.6GiB (12.4GB), run=10001-10001msec
-  WRITE: bw=1187MiB/s (1245MB/s), 1187MiB/s-1187MiB/s (1245MB/s-1245MB/s), io=11.6GiB (12.5GB), run=10001-10001msec
-
-Mikulas
+-- 
+Jens Axboe
 
 

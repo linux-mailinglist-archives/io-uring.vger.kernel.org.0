@@ -1,133 +1,140 @@
-Return-Path: <io-uring+bounces-7090-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7091-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74604A651F0
-	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 14:57:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2286AA651FB
+	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 14:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A94E3A6D5F
-	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 13:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0DA1890C3E
+	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 13:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC222405E0;
-	Mon, 17 Mar 2025 13:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601202405E9;
+	Mon, 17 Mar 2025 13:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="fKVBbdN3"
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="gwSr+gjo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7871723F397
-	for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 13:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D170923FC49
+	for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 13:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742219832; cv=none; b=i5TN6WvEBBbBK15oS4DH5U/+81m0Mfktesl2sKCeuKmmO1jvlP22E8I6LzB3aox8x3Ddd2dLwKpKtJc9UxhU1DR1eK2lAd2wSe0FN9b78qlgmfRnIi4a466fHEw+iuKZPXb2jjoWDfijv5ABR0H5QlOpAtqjUkEY11hOLzpktNo=
+	t=1742219876; cv=none; b=glUuDhsAQT6jARKMqpMiJySrCVxduJ265DvmXLeoWbISVEmU2Ycqigt38LZQ+u9DDw7A/Wtz7juuTF486M9QGBk0XlIuzJLGovRb+VSnbCIPaNfrCSUhaHzCD+a9QeqWU+Sgmj7uDPcLXhK5w/Lg5YpYUp9HpJLDmNzuHq04GaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742219832; c=relaxed/simple;
-	bh=0/JBhcmr6RbYakMo+6DE8lgQPZhpL+1uoSnywA7R3cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ufWZoYtjo4OKmqM2Y55CywYv7bjhrADWpIBIZ1fTzk1m2EJ6pPEq2S0AiC5+EjQuflkKc5K1jJjc3ZZkvoEud/Rbazcs/wN47y6WvNhJd7JIYhzVajiacOFYwKfZrOSA/uDR1UwnjjMLWyhENTzwy8lpF/xnN2vL887Gn6OJPgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=fKVBbdN3; arc=none smtp.client-ip=209.85.166.44
+	s=arc-20240116; t=1742219876; c=relaxed/simple;
+	bh=wGoKlRovkcSIj/T7hxHTG3NpPue/tx6XfmWqTslw2qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kt5/alCBnEtLa4FYGx2AuniYFTzoC5GAo9C9MTMgI+gTWT56W58QKYSv3M3MVeFtnzunxap+azUWKBfUUqo3D7Hys5q3Cup3M+OTijpGQmnoSJxQwPAUHh45opZTEIwOcEP8QxN+VWbEXudjIFHAUP9CL3q7QNKwDJQfyntCNtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=gwSr+gjo; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85da539030eso148763839f.1
-        for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 06:57:09 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff64550991so2406850a91.0
+        for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 06:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1742219828; x=1742824628; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8SfYp7nbKw8yT4ZK7FK7ta60vIOnSkRlh8C+eZnMPUg=;
-        b=fKVBbdN3cuvigvxP1zYXuYCTGnjRCfwERQAlbtT98ZJ5J6PyZREdmEyxSpEHH8Dax8
-         X/8gP/b6PUUEwKERr4juhINSNzHD769FfL2VkgbuF7rtNRAkyUdYk+hA8uE5EXEuZFQB
-         +AUz2C4EADEiv9NUAJQusO638Qbc1adxh0BHM=
+        d=furiosa.ai; s=google; t=1742219874; x=1742824674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Bz/g5TokYhhZnry08jrr2seVYJeiHTnX0+tpRF1Wak=;
+        b=gwSr+gjoSXt+8cIttEF9oJqRHXWdjxfkQhFXg5i/MbcF2cRdaciLBpSCQjZ8SoJy/T
+         1YpfaJUywVuqZZEsijol1hsS9APsXLKEJgEruSGMoJXS9Rmyka3TpxG0Ww/QAEvI7dP/
+         Vj1H2Eug9scKyawaWxm9RgTl2mWU94VsrXEnI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742219828; x=1742824628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8SfYp7nbKw8yT4ZK7FK7ta60vIOnSkRlh8C+eZnMPUg=;
-        b=eG3hk3+HGz11kzFu7pBBxOJMhGnUlzIh/wN9kUvWvc/lMRDl0J7s2Hl5ZqbXeAjiL2
-         KEZ6p9NDTbtkVb0lPna5h5ywdBf8RAnjJ79QST5czhJr5SmVJwI0wqrOMOCj+OuhhJ2y
-         9y5107LEy4ffnTcsa/PYoN24mMyPeTxQX6oRC7YtWATDUirt15J/degj8jL/X2IfATKR
-         BFYc7x3hxiWf8Poka/3Ci36Z47EoT/IeplzDDfBU+xkPeyp1U+zaQouUaZGeB1avS9SW
-         bjEOzpZD5A5CjtVvoyFHHrnBUgEqJLgd8Tq2l9X6j/B3pzVUOOCxENgJNLE4FyB0jRQ1
-         0Y8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXPMZhLVbdDpnK1U/kWxbUV0V67NLMGPQm7CDNi6Mt32HqBZQimP9oo/dM3K/4ynuzEW5B4Y8W+8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8FPeW/fnu5ewIN9KGg9GXLEK5qJHWAWM/XdOfVYVy5lAiamDc
-	aNJGhlJyKbAoGBa74amPVm2hT38YXiihiGWuKDGFwkYVx3Vrh9NsjFHnaMylhZVm8UVvxhYrajp
-	D
-X-Gm-Gg: ASbGncs86g9pG1lu71C2HSu7Y7vWPyDvVqlzs8HeVCT3Dgf9Z0xoZQ1teabngnecJcZ
-	/NSMWAPWcvY+pFgL0hWJ4VPn85HnKqz8FnaID+PsK1g3PaNHNYF5X/9xjAPY1IRkd5/q+2LQAGP
-	YzSveNT0rrhGG65+6yVEBIJggYDq7i60OifTREmnKW6b3CKJx1WLA/IBMGtX4bM9fRo14fC3Lbi
-	MgXdhlqlk3JV2kIr8AhpfQEJJA9nZHNu68XkqvfulCcX7xqQ86TL5sfd7NhQISn5EC7UeXabfLx
-	lf/wgcV6nSKygXenSE6snfXovFQqo1O0D85GmjJ40fv0JAmXemmska9iptWwC0Itho8fGj/8Lqa
-	T
-X-Google-Smtp-Source: AGHT+IHVUTBLBxTZC8HdLXhH7rWvOJoPaV2M14f1jVdqw63OUcUgLVqKDEC+//Li+SKHHS24f1zgCQ==
-X-Received: by 2002:a5e:df42:0:b0:85b:3ae9:da01 with SMTP id ca18e2360f4ac-85db85a4420mr1487523439f.4.1742219828514;
-        Mon, 17 Mar 2025 06:57:08 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637fb30dsm2273057173.90.2025.03.17.06.57.05
+        d=1e100.net; s=20230601; t=1742219874; x=1742824674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Bz/g5TokYhhZnry08jrr2seVYJeiHTnX0+tpRF1Wak=;
+        b=E+Am5JZdjsJScKTn+r6RMytas5+iNBOV2tGURTsVzDcjbRN2rYBBhBg1YoZkcmjHyr
+         NRUqzdr/ByUZzN97keJuMCIijv6V0KIW35zCojuSKmn5DinWCkRyTs2+2SW31UHZoJMk
+         txck2EoqRSK/mwx3B6//J/IdyPSiyZUhB+fQbZGTtydOshv/G2FhZXJExJUTTiRtbiTx
+         LYWKE5yU3gGwLmc/K40jRxryQCVxfRMFkNxB2xLEueTg4nGQvovmGDkGGLZWFCmmmlPy
+         ZtN8G4LJrB0csJUaAdUT+p9jJYH46P3bfzGqx+I61jz2Tm5B1loYGl0bsSHtMvRwmiEI
+         FGyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFkTdIR6qEOZUybY5szp7zHS8bk4b8gmDRwOb+sZg4aOwejl4Q+ZLQzCoYUdXV5dfF4Cd+Qe6WZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7ESDnUTF4TsW/Sev00SqVQWkKoIG7bBuatnDv9IgofRN0XnxS
+	G5QrwKkPjZABhRzz/2WGW7OBn/Lo9T9MEyeKwZQ7xUcmXJ/ZZ6lekL3FKSCDXdk=
+X-Gm-Gg: ASbGncuU2D360Nvgm5EGzpfP+yjMrAk6XVAJRpDWcRmqTIIAj35tEqw1jaz0H2vz53k
+	pnzxYO184KyCEQQYyNx8ntaVATyIY2rhzpgADr/1TdU/0h4bRa3cLvjrTbP1pcKIST3B/widSoy
+	+yGAVxWxJM7mFS708CI41lmsvED3/Tv4B63tJDlVLweczvfVDUCkrMW6HTsYNZigsq7JRl9zfr3
+	MigEbFWbHfsgHBdMpq2Wg5elhnr21OJNLlro2qAFgdHKWcZRdVXkOOK3piMfgc+rlno/MSV0igW
+	HeDVgxda0u7tXEpFBflNhhWU0s+CHfhZb9E3J4r/kMuvAtvO84T5TWs0OUxWtZb9OQyzedfy/5o
+	cZxIw
+X-Google-Smtp-Source: AGHT+IGjeD5qKqA+5dvmm+hH7T9m3tyf3Uwy0/XL7H36bYl9iyVycjQQb3s6qqGRky9DCPwWyGrndg==
+X-Received: by 2002:a17:90b:2707:b0:2ee:c918:cd60 with SMTP id 98e67ed59e1d1-30151ca0e05mr15523148a91.20.1742219874094;
+        Mon, 17 Mar 2025 06:57:54 -0700 (PDT)
+Received: from sidong.sidong.yang.office.furiosa.vpn ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153b99508sm5993742a91.39.2025.03.17.06.57.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 06:57:08 -0700 (PDT)
-Date: Mon, 17 Mar 2025 22:56:48 +0900
+        Mon, 17 Mar 2025 06:57:53 -0700 (PDT)
 From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Mark Harmstone <maharmstone@meta.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+To: Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
 	Jens Axboe <axboe@kernel.dk>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 0/3] introduce io_uring_cmd_import_fixed_vec
-Message-ID: <Z9gqILpSLiHJXDGK@sidongui-MacBookPro.local>
-References: <20250315172319.16770-1-sidong.yang@furiosa.ai>
- <3c8fbd0d-b361-4da5-86e5-9ee3b909382b@gmail.com>
- <785d1da7-cf19-4f7b-a356-853e35992f82@meta.com>
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	Sidong Yang <sidong.yang@furiosa.ai>
+Subject: [RFC PATCH v4 0/5] introduce io_uring_cmd_import_fixed_vec
+Date: Mon, 17 Mar 2025 13:57:37 +0000
+Message-ID: <20250317135742.4331-1-sidong.yang@furiosa.ai>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <785d1da7-cf19-4f7b-a356-853e35992f82@meta.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 10:32:02AM +0000, Mark Harmstone wrote:
-> On 16/3/25 07:22, Pavel Begunkov wrote:
-> > > 
-> > On 3/15/25 17:23, Sidong Yang wrote:
-> >> This patche series introduce io_uring_cmd_import_vec. With this function,
-> >> Multiple fixed buffer could be used in uring cmd. It's vectored version
-> >> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> >> for new api for encoded read/write in btrfs by using uring cmd.
-> >>
-> >> There was approximately 10 percent of performance improvements through 
-> >> benchmark.
-> >> The benchmark code is in
-> >> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
-> >> ./main -l
-> >> Elapsed time: 0.598997 seconds
-> >> ./main -l -f
-> >> Elapsed time: 0.540332 seconds
-> > 
-> > It's probably precise, but it's usually hard to judge about
-> > performance from such short runs. Mark, do we have some benchmark
-> > for the io_uring cmd?
-> 
-> Unfortunately not. My plan was to plug it in to btrfs-receive and to use 
-> that as a benchmark, but it turned out that the limiting factor there 
-> was the dentry locking.
-> 
-> Sidong, Pavel is right - your figures would be more useful if you ran it 
-> 1,000 times or so.
+This patche series introduce io_uring_cmd_import_vec. With this function,
+Multiple fixed buffer could be used in uring cmd. It's vectored version
+for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+for new api for encoded read/write in btrfs by using uring cmd.
 
-Yes, it would be useful for large number of repetitions.
+There was approximately 10 percent of performance improvements through benchmark.
+The benchmark code is in
+https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
 
-Thanks,
-Sidong
+./main -l
+Elapsed time: 0.598997 seconds
+./main -l -f
+Elapsed time: 0.540332 seconds
 
-> 
-> Mark
+Additionally, There is a commit that fixed a memory bug in btrfs uring encoded
+read.
+
+v2:
+ - don't export iou_vc, use bvec for btrfs
+ - use io_is_compat for checking compat
+ - reduce allocation/free for import fixed vec
+
+v3:
+ - add iou_vec cache in io_uring_cmd and use it
+ - also encoded write fixed supported
+
+v4:
+ - add a patch that introduce io_async_cmd
+ - add a patch that fixes a bug in btrfs encoded read
+
+Sidong Yang (5):
+  io_uring/cmd: introduce io_async_cmd for hide io_uring_cmd_data
+  io-uring/cmd: add iou_vec field for io_uring_cmd
+  io-uring/cmd: introduce io_uring_cmd_import_fixed_vec
+  btrfs: ioctl: introduce btrfs_uring_import_iovec()
+  btrfs: ioctl: don't free iov when -EAGAIN in uring encoded read
+
+ fs/btrfs/ioctl.c             | 35 ++++++++++++++++-----
+ include/linux/io_uring/cmd.h | 14 +++++++++
+ io_uring/io_uring.c          |  4 +--
+ io_uring/opdef.c             |  3 +-
+ io_uring/uring_cmd.c         | 60 +++++++++++++++++++++++++++++++-----
+ io_uring/uring_cmd.h         | 10 ++++++
+ 6 files changed, 108 insertions(+), 18 deletions(-)
+
+-- 
+2.43.0
+
 

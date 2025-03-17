@@ -1,231 +1,230 @@
-Return-Path: <io-uring+bounces-7088-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7089-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C13A634BB
-	for <lists+io-uring@lfdr.de>; Sun, 16 Mar 2025 09:50:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E803BA64A06
+	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 11:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C873D1704DA
-	for <lists+io-uring@lfdr.de>; Sun, 16 Mar 2025 08:50:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F307A450B
+	for <lists+io-uring@lfdr.de>; Mon, 17 Mar 2025 10:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B6E191F6D;
-	Sun, 16 Mar 2025 08:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071DB23372E;
+	Mon, 17 Mar 2025 10:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="FrU5Z/Ve"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="YN1rZSqo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B352218DB0D
-	for <io-uring@vger.kernel.org>; Sun, 16 Mar 2025 08:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742115004; cv=none; b=B6jtnhAhausO/Yp3l3k7o+uR0QomryEd5HQpVGI6JQ9JQRWwSSHE12NXZ1LgXIPsk3WsbgMb3F7cA9J2fK1I+pM8cX9JdUmsvpC2lnT4sAb87kJ+M55L897gC3cRXIB+avAr+lVZJFPENHYMlaiFKvPKxoflCot4yb7MPwucG0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742115004; c=relaxed/simple;
-	bh=MlPySl3ACm5OC8MT1lGjuC4BtV8C3P3CkbQqd9j9HqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDkzpBfwOtM5MHWbrpDp/BA2bA+1gIXum5BVqqMv3tyunQxMR+N5G7dic95vQ52APgtLFoSiyCIDVbBZTH6rDfnhfTHB9Ywz/im4HG35yTYkwtekZ7Wprq7ukyx4zO2RPLZ4aJ0rBEqCLvgRTpyWIoLM7XHtHOO8Vf4E2C/rK6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=FrU5Z/Ve; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223a7065ff8so12180905ad.0
-        for <io-uring@vger.kernel.org>; Sun, 16 Mar 2025 01:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1742115002; x=1742719802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=soOsMjUDX0L3z68pN83CLYXGQKPqqXJHBRzUH/+iQu4=;
-        b=FrU5Z/Ve4KI2EJ5dpYWsk+rRaYpNJii8NKRM/FOkVFL56m5v4V/LXT6hZ7Z/5jmH7b
-         CqWGqqRIymLu+1lUIFkJ7+tkUm3maYzbsjN8VGcmxSFhWq5Y5LlRfN4/Pa2+emh3Bf2I
-         6arc1LUM6ABEzHBev6naLyPISV3l4hqRXpM7uDLX3dvCwBrynGgihqc91EW5ImUR8kgf
-         iM4Z4Rm5wsvGTm2ylupZjwKLcGZGoRNFfAZXaM7GVXIUFVD8mTAlW2y8mJ2QwsE26m8y
-         cdOBkwN88PGyXHtHXjid/joZGEnLqiyUSFfs8sKHcwyRfUYHwnRKxP86PIoOEPWtvG4M
-         LNtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742115002; x=1742719802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=soOsMjUDX0L3z68pN83CLYXGQKPqqXJHBRzUH/+iQu4=;
-        b=midOLIoiBh+MhIh9RGQtA/H8F4roOFtv3yPi13tUErScmfo2J7unQ4eyBdSzOhD1ku
-         Q1usnlsLObixMmSGA5y5p/X9wvPLQutONc6caK9rezHqmd9e31m6Nz2/DDDVAKXkDxHr
-         /wR12GoNAujgOW0yC2kD9a31VHPE0DmZiavcGdnwRLd0ZMr1Q+3qYyFoeqQQH/o5np6C
-         ze7Wa77pH6PTULseaQ/8KyoyeUnEE0MYmMO3SA7N8x6QrKo3V2E3Au+nOGCb8Nloaw5I
-         /Iad7cf64wI9rsGGigSxj6H4ZJUl4co/HB/zcPRHjneeiRNlGJipZuZ5dXdViWMsSqmc
-         dY/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZX3YoKOpJcgW0R8GYQ+77bXWyHJc79mSpDrUaFsfsX7KmpG14yhJmkEoyMvKCDdL5z5DUZU68qw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD3hoRiUAhvengLtPDMS1zRJTjcIT3OUZIATQgeGHaq6pkCLs1
-	xun/YNXMolPBVTPL1mQYuXpgaPO8Aepd2orc3oXpbsCwdf5aZrQuGL9cXlBrI16c+CN0OvYVj46
-	c
-X-Gm-Gg: ASbGnctb+LVNTwXpX5NGL9tx/CVLehgakRhBPSGZ5+THwjwjyY2cEaXLcvdWR/wDgnC
-	Wa7Y2TaCIKoH7v5je8r0dDRgqRnuHkR8j3gm+SHV0NzrVZAfNno26Hw4t1Is/eWL5grmbnvR+sv
-	O7neMIENTQYvkN8ki9IAMBjbvcnQYy5ckBio919rx4LNWb5mWt3meq9xRbhkxRB6lepq2v5VJqP
-	LxKTds+BiWLBk/Yh439GUqitCnz0rxlnkRX4gWiNrKXnIwE+/f+48kQaOnbDQrnlT8Gr1HI9HDd
-	/FCRx71F/hHp+O/1ZspG5XZKXAEyQL0FrI57TO+9uDq4afhMlzhPcswX76Pc2P/9MuOZytizvnw
-	hZh2XoA==
-X-Google-Smtp-Source: AGHT+IEzVK5LsPCPJLOxGzZJMLs0Hpz7cAwlexEXo204aa6yKZYCWEHtDLdFcGmAFiv30Ov47TIhNg==
-X-Received: by 2002:a17:902:f693:b0:21d:3bd7:afdd with SMTP id d9443c01a7336-225e0868050mr111601535ad.0.1742115001911;
-        Sun, 16 Mar 2025 01:50:01 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301539ed069sm3896109a91.17.2025.03.16.01.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 01:50:01 -0700 (PDT)
-Date: Sun, 16 Mar 2025 17:49:51 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 1/3] io-uring/cmd: add iou_vec field for
- io_uring_cmd
-Message-ID: <Z9aQr9iUJecNdPQ4@sidongui-MacBookPro.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDC4229B28;
+	Mon, 17 Mar 2025 10:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742207528; cv=fail; b=eD09cpkd5meagO/rQWFysON5nCIKgzSdUIkuk+GLE+Nbk2Yo7ytbJGCS12VW2tghkYBBtH3AEqrhMNTXh6n+i2mgNF82wATe/h2CVVyNnwSs25EmRwaDoUR8phX/kHA7niDxnWolDqvhWWQdYCjQTQBtju5eGpwLsiIFIKLLi1M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742207528; c=relaxed/simple;
+	bh=osJKbui3KzINKSwfFM9oMkDVQTRit3CP+D8NzTtuHac=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=CxfjaSva4ZSUWvUlCQZXLnypp8EG3v9rNseVKfBkOLfdTak2THf8JOEs/IENmsdD0Lgo7oVrgZYbpXjxeFD+fe1P+vVnSSomPXopW8lndF/LNtex5e1HFREMUydwJNdd9cZdaEczmaj/sb4Mrcr3UksMPcrxQjs/aFS0TLnZ85o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=YN1rZSqo; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H7YiK7021902;
+	Mon, 17 Mar 2025 03:32:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	s2048-2021-q4; bh=osJKbui3KzINKSwfFM9oMkDVQTRit3CP+D8NzTtuHac=; b=
+	YN1rZSqohHRECCP6Bz4S/vzp1phcPICM8ZZlzrChm098Z1udow4yfHGXUmoMtmI7
+	Rf116DjaGnWZTlh1EOZWWaZD5yt+pr81N30rwl7LBsTjjD5Az2HrRmFREfk1uzG+
+	vP5Nou5pVwyePXAG5zYIh7Btuk9BjtfJFggO4hiTD2CnlA7Fflw5FanK5mA11fbn
+	/YMWmgCsCMP/vZQkHJo0O0pM4oJ+LHta+4dwZC96qomMAfwxmt8u+3tGC5CugYIM
+	Lwpx5VT10sPfxqOsqWSfrrbP16kT/HAU9W5A7JlzfPW16lWYGS7YRZAdR165qxG1
+	LWqpwsPBufMASsC0HkZ0wg==
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2045.outbound.protection.outlook.com [104.47.74.45])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 45d8v1cdet-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 03:32:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=anr8WpBinUBidQS14A17RxWilpiObzxj1RRZ891cO6Z2lnnOLThztf4jJqhEUxHCxZYnAWnOJc42/NWDQyoWyumuYnD7lOQkXSJr4CD9e3NJ8pU1iY53ijThvEjRoltHMdu0zQ3krUfbYamkbI9SNZsLA//mhPxgPj9YnrWSzMV76n9b7oockpnfWlNjHwJrcdc11rdxwSpVhGGH168vfeY/xCkNJI51tMivcg2+lTqn6FLSLCiNyLZLTp6xrlvG2trUAlYLSHRMoyqW5toGpUsBxZnk8huAmT0BhKfp34xSFdIISysA/RnJn6bjjYS4WdjbYXvgJt+Xe1HqZhf0uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NeG+YvhZgOFXxtXDSU7nDejvicfVBoli7I1SJij+wOM=;
+ b=dIYE13NRoICfk7KTE7ffV9N1vnqxL+N2UK7Ne7Y3f7g5t31ooDnyuXYxNExkcDjqEGkxDnC3f+qdupmA90wQuwixdOzvGww0+8Yg9F4x6vc97veoT3u2xz2qfHNd6vHu6ZZkvTMBNCgY6czKqTgvhREugBT6Mj6HbbppWUydGPcAz5zh/5ZAQGx5EtnwgLcZWavMx0+3WJun9bX2km8bu1HOa2tjaWB9aSQ0ND7eNKcYRl1rTbxeZFtGSCPM3zrMKcm4/BzENGZ5Ibys4mOXV9mdf/m4DZTRnvSjdnlMpEKxGBsr9PDM50lSe9zl1iejA7dELEmUfejCpE2mbH9bPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SJ2PR15MB5669.namprd15.prod.outlook.com (2603:10b6:a03:4c0::15)
+ by IA1PR15MB5534.namprd15.prod.outlook.com (2603:10b6:208:419::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 10:32:02 +0000
+Received: from SJ2PR15MB5669.namprd15.prod.outlook.com
+ ([fe80::bff4:aff5:7657:9fe8]) by SJ2PR15MB5669.namprd15.prod.outlook.com
+ ([fe80::bff4:aff5:7657:9fe8%7]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 10:32:02 +0000
+From: Mark Harmstone <maharmstone@meta.com>
+To: Pavel Begunkov <asml.silence@gmail.com>,
+        Sidong Yang
+	<sidong.yang@furiosa.ai>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>,
+        Jens Axboe <axboe@kernel.dk>
+CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 0/3] introduce io_uring_cmd_import_fixed_vec
+Thread-Topic: [RFC PATCH v3 0/3] introduce io_uring_cmd_import_fixed_vec
+Thread-Index: AQHblc8LqwQUPcHiI0SUWoKr8+1R7bN1XKIAgAHHYoA=
+Date: Mon, 17 Mar 2025 10:32:02 +0000
+Message-ID: <785d1da7-cf19-4f7b-a356-853e35992f82@meta.com>
 References: <20250315172319.16770-1-sidong.yang@furiosa.ai>
- <20250315172319.16770-2-sidong.yang@furiosa.ai>
- <da0445a9-1fb4-4b75-b939-b38ce976205f@gmail.com>
- <Z9aFgKTUmcx-YCMf@sidongui-MacBookPro.local>
+ <3c8fbd0d-b361-4da5-86e5-9ee3b909382b@gmail.com>
+In-Reply-To: <3c8fbd0d-b361-4da5-86e5-9ee3b909382b@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ2PR15MB5669:EE_|IA1PR15MB5534:EE_
+x-ms-office365-filtering-correlation-id: 142a7c0b-7736-4c75-58ad-08dd653ef48f
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?a254dGlPYUxaUktxOTJxS2llMDZXdk00d29BdEJrR29TN2NpVXRRd3BhdWxD?=
+ =?utf-8?B?bWNLYTl6Tm5OSHdPU3hjRUtaTDVqcVc4d1JNbmZKcVpzUUc1eXpKMkNvZWNK?=
+ =?utf-8?B?Yld2dXRqb3hBdGtmQzdad2J2aXdTU0dDakNGcDJackpheGVqRkY3NmpFbC9C?=
+ =?utf-8?B?cDU5L0hTUENZZzU3SUtqaWxKUERqNkNPMlVCVnRUOEVpci9MTnNkWEoyYm5F?=
+ =?utf-8?B?d2k3WnlZRDhwV2xnU2JiWEkyZW13R0tFMkROLzAzaldJV2lJVkNLaXRjckN3?=
+ =?utf-8?B?RmFFVEZLYTY2MUhvbmp6aG9ibzk2TW53STVTR08zMCtqZGoyQi94Ykt6MGZO?=
+ =?utf-8?B?MEFTdGtrWG1rMTBxcjdzWFFjUitmSWtZREdoeVR6REhXV2gwZTA2RXZ4ODRC?=
+ =?utf-8?B?V3BBVFZIcTR3MzVGTU43dVIya09VZERTczgwUElUSEIxRjZNbkVKVzM5anIz?=
+ =?utf-8?B?T0tteWMrdGtKMVhpa3hkMEFtZldONllBbWRjSStHTnJyOWJvZHNjSWJjSUhH?=
+ =?utf-8?B?eDRSaEY5cEhyNmJDaU5aRWQ0VGRkdENwRkFtSnIzb0lvd3p0MHZFR2tuUk5s?=
+ =?utf-8?B?cjRYU2tJWVAvYTlORnYxM3pxSFEydmw2dXQwUE5lSGpJVU1qcnNYS0FHQ3dQ?=
+ =?utf-8?B?Uk9vREJRNFE0TW9raFpFQVdqOCszNWJMNFg4Tjc1SC91MExpd0NSUGVjOC9N?=
+ =?utf-8?B?TmVORS9VNC9TUFMxWGl1NFl4MmpQa2MwN050aDd4K3hlV1NUUzI2eEJIRnEw?=
+ =?utf-8?B?a2ZXUVl4bVNRYTZtSzBFZytSVXRNUXk2MlcwU3A5RTVmQ3ZQL2J6TnR0L0tr?=
+ =?utf-8?B?Tys5UFVhK1QrZEZpSE83UDZQS3o5YWJJeGhnWmlmZUN5T3MxRThSMGVURG1T?=
+ =?utf-8?B?WWxadUZTdDNtOWZVYXFiY0lPckFJSTA0dVRndlVvSzA1V3c3WUxlWi9UK2pH?=
+ =?utf-8?B?ckgvcmszdUxoVkJCV3lRNXIxZUVRSEF2ZjVNK2JTT0NvcGc0SWVQVU1KQXFF?=
+ =?utf-8?B?YnVXY2VWbU01RDFMTUNaY0M2UitaL1lpZ1VnRHlQZWFXYXJFN3hDTThqcDFQ?=
+ =?utf-8?B?bG5leVZRdlVLa29YYmVXUG54eEk0L2psNDcyVFpBRGU0UFpmc3lyUk5TTmQx?=
+ =?utf-8?B?YTVVK1dwOCs5Q1VjOTg5dHZFK09vZGUzb1EwbFAzSXlDSmtkZTlJd09DbmZx?=
+ =?utf-8?B?VUZMaFZsOTR2Nyt4Qjh3UHRBa3k5dWN4RVF6bzMwK2lZUEtvMGdMeWhMaGZY?=
+ =?utf-8?B?UEh4WGpJU1IyMlZQV1JheStGVTh2Y3JOMW9jMXl4WWtKYkROQTBIU21Hbmgz?=
+ =?utf-8?B?czRJdUM5eFR3czFtL2ZrUjM3ZWlCcUphMTlZNjJnZXM2UHFieXhubk9MSHF0?=
+ =?utf-8?B?aXlzRkM3endYbzBkK2dMZEUrVWdTM1Z1aUp6aGZOWWpBZGVjVUVaR3BoaVFV?=
+ =?utf-8?B?RVVNVkltb3NIM1dVRWNsN1JhUTR2ejRvKy9JNlNNU2hQSS83L0hjS0piakw1?=
+ =?utf-8?B?eGhkZGZ4WjFhTmNGbVBDck91N0FjVkVGb2IwWWpMWHVFWDUyV01ZTGkwQmpz?=
+ =?utf-8?B?VjhvWG9JSkNtTE43ZDlHV3RlWkM2WjdsQmUyeEcyd1J4Mkg4eEFhUzk5WGZx?=
+ =?utf-8?B?QlZZSVh3aERZcUdQRCs5UThuSUFvV2ZQRWlRd0lMSjNYNGZIZk1qeDlxQzBt?=
+ =?utf-8?B?d1BYMitrY2EwbHlwYU11VWVXY1BJWW91aHdmMkFaZWlTNnI3Z1h0TTlFblpi?=
+ =?utf-8?B?UzY2QTI1d2s3bVgwekJ3R1VQYVJ2RzRMMWR6czRHMnJRL2IraXNhTGtGcWQ2?=
+ =?utf-8?B?M1BRTFR3cWUzN004Um5JWWFzeGZYVkdRR0FkODd2KzBHS05aZFhtelVsdVBB?=
+ =?utf-8?B?WVlBOURvKzE4cFFVY3RkTUZLTkFlZ2dRc3dvNW1hVkpxTkxuMGIxOFNBMWto?=
+ =?utf-8?Q?Wif3B7r/1V7godaC31aVaBgNgXMXy98k?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR15MB5669.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZFUyS1B3N3JUSmpPeTR0akpuNFJrb2dTcStndUZ4bTZ2MWxtQTBmMHBSYzEy?=
+ =?utf-8?B?b0JsNkQyWURuQnFhK3NuMEkyaHQzaGxjOGFkbHA4MEZuWEFuRHNoVHltUXpn?=
+ =?utf-8?B?VnNjT2g5UUFCL0lEaDQ2VGdaQVNRdk5mVmJISDNOVU1BNTQvdDNMOHZLNWY5?=
+ =?utf-8?B?aUtyaVAvem1ibG9yUG05dXNuZnBzMmU5MlVyZnRLVFRtWWY3Vm5ZQ0VrWmRT?=
+ =?utf-8?B?VElCaVZzZUhCczY2L1NDdHpKYWdKYWRGbkx0YkhIV25rdDZqM2lxdVE0UGxL?=
+ =?utf-8?B?RWErelVGNWtlWkp2VTFjQXRyYWgzTkJhUnJScWU5WWFzNnE2a2Z1RGtmdEVI?=
+ =?utf-8?B?ai90T2ZWN2l2OXFucWJ6ckcvOUFnOTZnVjk5cDdJUmVMWERrUzc5OFVCVUY4?=
+ =?utf-8?B?cThmNVVVcmRRa05DYmFTT0NEa1Y0elVMOFRmQXQyZUprTVh4S1gvaFpWOGhF?=
+ =?utf-8?B?eDVURk9QUEYycnNLNUY3RE5YSFUyMWNZMmpFSjB1Z3Z4TTVGb09SQllKZVhV?=
+ =?utf-8?B?anZsRXVvR2pDYnQwbU1iOTVINVZiVFRjSHZUcHFTaTJya1g1WGt6SUZza3p3?=
+ =?utf-8?B?VkpZWFpIWGxJY05RdER6dFhua1E1SGxMTDVJZHBFeFRMTmNYVVkvbDdlWWU1?=
+ =?utf-8?B?cTNuTjZyckNpWGJkT045NHd4cnNTdTRHMlVvd3phd0VrS1IzdUhKKzZkSGJV?=
+ =?utf-8?B?RzgxYWF3TkQ4alF0eWM2Y2JkSUZkZWcydUY0NTVET1NEcFB4K0dUajBjeU0y?=
+ =?utf-8?B?T0ZLZFVlaU13M2xQaFpFUlFoci9zLzB0TWJRd2dPSHRZZE5Va2hUeXFuWUlk?=
+ =?utf-8?B?RXN6V1RHeG1HaEROYlc2Vjlsakp0NFN5em9kbU4wTWNtRFFvQWpmMmt0NnpB?=
+ =?utf-8?B?cUZySUVvQktjRXdISDRWTU9Ibm1peExLOXhNSVhzTzN6MWdVa0FBditwNk95?=
+ =?utf-8?B?Qlh2M1phZkl1VGw5UEo4czIxZEVtajIzYVpDYmNJRFNFSmRWcGZyTyt6WlpL?=
+ =?utf-8?B?UEY1V1krQzdLaEMyTHBFdUtwaHdseGlFNDVMN21NNHdVbVRNYjAwTkRZdFQw?=
+ =?utf-8?B?QkVFRDFyVy9aZjVNMTVabDU2MXljNEFlWFhLRk1oVHhhaTI5Ym1lY0Y0QXo2?=
+ =?utf-8?B?dm1pRWNrSFVoY2JYL2grY216YzdkVmpmTnBiUGI0RmJFb1hBcmZVT0hBUFV2?=
+ =?utf-8?B?eThQZGhXYUlZTmo1MTVhRjFhdTg5YjZuMXBNQ0lUMEFuQXluTzN3SnRRa1Qz?=
+ =?utf-8?B?QUFGTWRPWDVMQjl0NGdyN2tsUXAxTEw0L3VxMUxJUlBCOUVNQlBGWFRzeU1s?=
+ =?utf-8?B?d0xtWVJmNTlsVHFXQXZHRWpjUnVvdndmZVhlWmRhbGRvT3MwQWdkbUIrLzlU?=
+ =?utf-8?B?SmkrVWpRb3BKZkdNSHNZc2tqWHFBVi9GQkVmY1dKS0hvSXBieXZPazZFeDI0?=
+ =?utf-8?B?eWhCOGk2cEx2RzVjYlA3TmxwNzdHZnNlU2lCSjZFVDlJZURCZHVpZC9DcGtw?=
+ =?utf-8?B?YUxZeDFnNUpzMCsrM2FOYS9MbEJ5Umx4NFJ1b0xQRlJaS0RvRmpFaWhIL0Z3?=
+ =?utf-8?B?ZmVEYThqdHRJZVpDZ3FHRGVlNkl5aEpSZDB3SjVFaHJhSklUMGhUVVpCNFg5?=
+ =?utf-8?B?Z3grRXYxZjFKRDY1UGZEd1VKSm1yLzdTQmFlK2Z3aWdVUlZhMStrR0JOelcr?=
+ =?utf-8?B?dkM2ZEZPV3QydlRoYm12UTlMMy9kbHlaNTF5a1NwOWMray9VK0hRa0huckcy?=
+ =?utf-8?B?Qm4wVjFOUTFIRDIwUjJxRzRhbkdpejNVL0JBc09PaUlhbkdWQlI5M1FzVExW?=
+ =?utf-8?B?VW1qVXhSZ1NqcGVhaUlXZkRsR2lzZ0RSb2FJeGNBNUc4ZFVULzluTGRoZVBC?=
+ =?utf-8?B?SHhpYzZkeFpiTEVLdndzbDZncGFRZ3pkNkJQdWhXR2V6WGRUWHdoRWRZZTNu?=
+ =?utf-8?B?OWwyOFBTRmdmWnd2ejFGclhzY0NxTGFycWZ6bFc4dzJuQS9odWM0QW5Hdk9F?=
+ =?utf-8?B?YWRYSUtWRENVeGJocHdtZGZLTG1vMlNxcEJBcW9OMmtENjMrRjhGazhOempN?=
+ =?utf-8?B?UE5KMEk4bkRjUXZkTW9tV05KMWVGL0FvR3dJVitsRXU1MUMvREZCa3huTVFL?=
+ =?utf-8?B?d0NJRk5lb0hGMFFGZFZISXdOdkVVbHdzS0xLbEVSdkJvNXAvNmQ3bVc0RDlo?=
+ =?utf-8?Q?47g2uo3A0Ldi5IausNXTrYY=3D?=
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9aFgKTUmcx-YCMf@sidongui-MacBookPro.local>
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR15MB5669.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 142a7c0b-7736-4c75-58ad-08dd653ef48f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2025 10:32:02.1851
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SQWZEfGjqikN/YTesHf/McxeBcphWrYeHFndAIzcVqJnR6uxXrAG3tJ24gS+PekIO0CnCKanjQwc7mzqeLcVDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR15MB5534
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-ID: <DAACC1375066F34A97358CAB7019B00A@namprd15.prod.outlook.com>
+X-Proofpoint-ORIG-GUID: 7GW4dt_ihVpvNQD0D89rN3augbGH9OQn
+X-Proofpoint-GUID: 7GW4dt_ihVpvNQD0D89rN3augbGH9OQn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
 
-On Sun, Mar 16, 2025 at 05:02:19PM +0900, Sidong Yang wrote:
-> On Sun, Mar 16, 2025 at 07:24:32AM +0000, Pavel Begunkov wrote:
-> > On 3/15/25 17:23, Sidong Yang wrote:
-> > > This patch adds iou_vec field for io_uring_cmd. Also it needs to be
-> > > cleanup for cache. It could be used in uring cmd api that imports
-> > > multiple fixed buffers.
-> > 
-> > Sidong, I think you accidentially erased my authorship over the
-> > patch. The only difference I see is that you rebased it and dropped
-> > prep patches by placing iou_vec into struct io_uring_cmd_data. And
-> > the prep patch was mandatory, once something is exported there is
-> > a good chance it gets [ab]used, and iou_vec is not ready for it.
-> 
-> Yes, First I thought it's not mandatory for this function. But it seems that
-> it's needed. I see that your patch hides all fields in io_uring_cmd_data but
-> op_data needed to be accessable for btrfs cmd. And I'll take a look for the
-> code referencing sqes in io_uring_cmd_data. Let me add the commit for next
-> version v4.
+On 16/3/25 07:22, Pavel Begunkov wrote:
+> >=20
+> On 3/15/25 17:23, Sidong Yang wrote:
+>> This patche series introduce io_uring_cmd_import_vec. With this function,
+>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+>> for new api for encoded read/write in btrfs by using uring cmd.
+>>
+>> There was approximately 10 percent of performance improvements through=20
+>> benchmark.
+>> The benchmark code is in
+>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+>> ./main -l
+>> Elapsed time: 0.598997 seconds
+>> ./main -l -f
+>> Elapsed time: 0.540332 seconds
+>=20
+> It's probably precise, but it's usually hard to judge about
+> performance from such short runs. Mark, do we have some benchmark
+> for the io_uring cmd?
 
-I've just realized that your commit don't need to be modified. It's okay to
-cast async_data to io_uring_cmd_data. 
+Unfortunately not. My plan was to plug it in to btrfs-receive and to use=20
+that as a benchmark, but it turned out that the limiting factor there=20
+was the dentry locking.
 
-Thanks,
-Sidong
-> 
-> Thanks,
-> Sidong
-> 
-> > 
-> > 
-> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > ---
-> > >   include/linux/io_uring/cmd.h |  1 +
-> > >   io_uring/io_uring.c          |  2 +-
-> > >   io_uring/opdef.c             |  1 +
-> > >   io_uring/uring_cmd.c         | 20 ++++++++++++++++++++
-> > >   io_uring/uring_cmd.h         |  3 +++
-> > >   5 files changed, 26 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> > > index 598cacda4aa3..74b9f0aec229 100644
-> > > --- a/include/linux/io_uring/cmd.h
-> > > +++ b/include/linux/io_uring/cmd.h
-> > > @@ -22,6 +22,7 @@ struct io_uring_cmd {
-> > >   struct io_uring_cmd_data {
-> > >   	void			*op_data;
-> > >   	struct io_uring_sqe	sqes[2];
-> > > +	struct iou_vec		iou_vec;
-> > >   };
-> > >   static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-> > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > > index 5ff30a7092ed..55334fa53abf 100644
-> > > --- a/io_uring/io_uring.c
-> > > +++ b/io_uring/io_uring.c
-> > > @@ -289,7 +289,7 @@ static void io_free_alloc_caches(struct io_ring_ctx *ctx)
-> > >   	io_alloc_cache_free(&ctx->apoll_cache, kfree);
-> > >   	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
-> > >   	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
-> > > -	io_alloc_cache_free(&ctx->uring_cache, kfree);
-> > > +	io_alloc_cache_free(&ctx->uring_cache, io_cmd_cache_free);
-> > >   	io_alloc_cache_free(&ctx->msg_cache, kfree);
-> > >   	io_futex_cache_free(ctx);
-> > >   	io_rsrc_cache_free(ctx);
-> > > diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> > > index 7fd173197b1e..e275180c2077 100644
-> > > --- a/io_uring/opdef.c
-> > > +++ b/io_uring/opdef.c
-> > > @@ -755,6 +755,7 @@ const struct io_cold_def io_cold_defs[] = {
-> > >   	},
-> > >   	[IORING_OP_URING_CMD] = {
-> > >   		.name			= "URING_CMD",
-> > > +		.cleanup		= io_uring_cmd_cleanup,
-> > >   	},
-> > >   	[IORING_OP_SEND_ZC] = {
-> > >   		.name			= "SEND_ZC",
-> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > index de39b602aa82..315c603cfdd4 100644
-> > > --- a/io_uring/uring_cmd.c
-> > > +++ b/io_uring/uring_cmd.c
-> > > @@ -28,6 +28,13 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> > >   	if (issue_flags & IO_URING_F_UNLOCKED)
-> > >   		return;
-> > > +
-> > > +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> > > +
-> > > +	io_alloc_cache_vec_kasan(&cache->iou_vec);
-> > > +	if (cache->iou_vec.nr > IO_VEC_CACHE_SOFT_CAP)
-> > > +		io_vec_free(&cache->iou_vec);
-> > > +
-> > >   	if (io_alloc_cache_put(&req->ctx->uring_cache, cache)) {
-> > >   		ioucmd->sqe = NULL;
-> > >   		req->async_data = NULL;
-> > > @@ -35,6 +42,11 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> > >   	}
-> > >   }
-> > > +void io_uring_cmd_cleanup(struct io_kiocb *req)
-> > > +{
-> > > +	io_req_uring_cleanup(req, 0);
-> > > +}
-> > > +
-> > >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> > >   				   struct io_uring_task *tctx, bool cancel_all)
-> > >   {
-> > > @@ -339,3 +351,11 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
-> > >   #endif
-> > > +
-> > > +void io_cmd_cache_free(const void *entry)
-> > > +{
-> > > +	struct io_uring_cmd_data *cache = (struct io_uring_cmd_data *)entry;
-> > > +
-> > > +	io_vec_free(&cache->iou_vec);
-> > > +	kfree(cache);
-> > > +}
-> > > diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-> > > index f6837ee0955b..d2b9c1522e22 100644
-> > > --- a/io_uring/uring_cmd.h
-> > > +++ b/io_uring/uring_cmd.h
-> > > @@ -1,7 +1,10 @@
-> > >   // SPDX-License-Identifier: GPL-2.0
-> > > +#include <linux/io_uring_types.h>
-> > >   int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
-> > >   int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-> > > +void io_uring_cmd_cleanup(struct io_kiocb *req);
-> > >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> > >   				   struct io_uring_task *tctx, bool cancel_all);
-> > > +void io_cmd_cache_free(const void *entry);
-> > 
-> > -- 
-> > Pavel Begunkov
-> > 
+Sidong, Pavel is right - your figures would be more useful if you ran it=20
+1,000 times or so.
+
+Mark
 

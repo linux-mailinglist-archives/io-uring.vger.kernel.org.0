@@ -1,183 +1,156 @@
-Return-Path: <io-uring+bounces-7102-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7103-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBECCA66849
-	for <lists+io-uring@lfdr.de>; Tue, 18 Mar 2025 05:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CFBA66AA1
+	for <lists+io-uring@lfdr.de>; Tue, 18 Mar 2025 07:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED3B3ACB36
-	for <lists+io-uring@lfdr.de>; Tue, 18 Mar 2025 04:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B22E3B2424
+	for <lists+io-uring@lfdr.de>; Tue, 18 Mar 2025 06:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B8419C553;
-	Tue, 18 Mar 2025 04:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2FB19F47E;
+	Tue, 18 Mar 2025 06:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="QI3FYAhu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEb+T0ZM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15AB18EFD1
-	for <io-uring@vger.kernel.org>; Tue, 18 Mar 2025 04:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392E346426
+	for <io-uring@vger.kernel.org>; Tue, 18 Mar 2025 06:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742272074; cv=none; b=a0Rd1BZKTaajJdsx0B60ASPzdx6BY/j+HT40UU4QlZ3V2xUKKaHkhvl5EEFAzgczJXqyNRgBUryQN1Zajhr6mfQpCOeE5KJQMZ3Xe0gfHrOxswZ0uhjnpKPpUhhsIvgYt+eyanyLvapZhBFeZfubWPZJ5t4vk7UMIMkU4g5ieq4=
+	t=1742279915; cv=none; b=ruU+28qIr+x2TCgvwjJ8f+BTYbK0sjAMWcjZ7k1st4qmPwKP1GZ6BS6LuX+WEdjvxWR0/uQAlSdTzn74XsXknp0EMp3PwpB7+BYX29y3owG+dvM67KwGV0/RheISCK6s4Ay7Igh/jSzEpnpmicyX1DjWq4YPj77/BGJDdrwsBCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742272074; c=relaxed/simple;
-	bh=srA+q9MSQgaN6WLXZ6Fi+ogQLhqIIEk23l8zby1Wc7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lykUDy8gCWWNUDtf8HoBKTYDjB2KF8jOUol1gYjVmJtRG2uYm2uaTZTjZd+sOvtUf8njrtp3F9joBhCnxXV6cfyQKyom1xyArir4yR9juytevC+wYF+6ygEXEKxbUYGJRsYx0ATUqfhHisaEH0LymY0Loi1I1dJgnpghCUmgUKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=QI3FYAhu; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-225b5448519so95777585ad.0
-        for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 21:27:52 -0700 (PDT)
+	s=arc-20240116; t=1742279915; c=relaxed/simple;
+	bh=hasqdvqfoBjdQ2p8EKWtyOLNW1RYaQ6grbm/M5KjMBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=K0j4dSXBB80DSPuQ2CM1C1g8RodSAi9tMN3m7UUtxpM9hcxueDK5Q2O7X9KVQnURO/lpyTyYBdao8yk3Sj+u/OsnrtiEgugsc6/70YJIGdu2FAXBD86YwqRXvubdsgJdEA5wfxEytedQjuIzb1sqGctLozM8CPUlVH8EfcIO1Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEb+T0ZM; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so18288655e9.3
+        for <io-uring@vger.kernel.org>; Mon, 17 Mar 2025 23:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1742272072; x=1742876872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Bvbi8MEXLRlCCrJ+n1plPSBWAVgIDFdEH1YSugngWM=;
-        b=QI3FYAhuf5rGKmOtlqwv3vraK3Sb603QoSjP30pd2TvjxX9nIetTTCb5SFlo8DBW/V
-         KGFLbyGuFRxU4x/WvH7y8R6Z931kacye0GuQ6YfpDmv1qrmD47Eair6vxBXFGmago7Mw
-         gaFnE1UcuFH7hRX11yIvxYt+K7ikDv1OoHl9hswyL6T1DJ5u2EYndZJVbwwSiOPU8OIO
-         xB2XX/BycxYjK4Gx9gvnmglQGb/05cMCwAcM+wrCH9XPRPKOdkADms4sY7RuX4whc0Mq
-         hbiKgsS8uv0BQ1rd+UZGs8SVjQOx3/4+vP5IILqcZR1gV2RyoXt/jQVPs4cAouIFh4nK
-         E42w==
+        d=gmail.com; s=20230601; t=1742279911; x=1742884711; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=y0JB/622jUc7ROxuFmcYxy/RMyD/NKcsl7EkhpEMgHc=;
+        b=PEb+T0ZMETeuvQ85Q0/a3K3NIyrWxPmhyH/3di54pIZwbuSXNMBYDopkWfkc84nzi6
+         Osxb+hdJAsHXGPy+8gjMExX7xe+gqKpzyY6Vw/HaUGs9IJPzQ4grtbnXWtzw1+bO/8HD
+         LryOck1iq4LoR4l/2aP17wcJMZsb9ARIvBl7c8O7ft5a2BYopVWJqvhkmyb7L6DGTAxo
+         90ML6q+/ySvX7ybDFmTeihEsMVeZ0MllDp3YMgnNGd+jIr+V482OPAMvJopS+qasytN9
+         nJ1HDUtq9o2Y1DdmuExFqpAd0xGk6NK8UsWvhAWnv26yxWUvXu8yMfDMnBj5t34X0SNB
+         uMAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742272072; x=1742876872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Bvbi8MEXLRlCCrJ+n1plPSBWAVgIDFdEH1YSugngWM=;
-        b=vaLN1SURhR+dIxinoV/VQXYwI4sIFqK4BjKAppdJolJITzxjXjywv3MCBufoVl6LzL
-         gusNX0sDj3Q3gARsdTlT+FYDOg9tgYo2wkC8VxV3eQlFmQaby2II1JPpjuCvW/6hkEaG
-         NZGhzrO9IywGKsrE25Pa7kovZ/XcqAAhIZmm04lO3Ipdz/giuakYug3popn47QJZJOH8
-         p4ErF8fdmdvu7sbyNTipol4BzVOev8N0l0Of0BRUJvrZ76J/ZbYXtuI17MyyiyGlfmYc
-         8Z3ceZJA2kDBjluysYPyZvG8Rq3RATUJ38eR7W7nWhZBwnCqiEkurY4fWAsqXRawulUk
-         zn8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kpdxQVGixQXLiw85J8r/58u4iZsdR2jIFYNeSI6+VnFLalhz9nHI4sc3XU1KQFbZ7yTkdDvIfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7lDxFLZR0DCab5soth8IajwkZJ2Bl9ZwTgUTbw6yMe9GmMIr6
-	ZiYTu1JL8v4fpVkbDu9hPVKe9HqszMI47JBV+TKqmCAUokA2JG/MtmsMY0hCU8E=
-X-Gm-Gg: ASbGnctBxDCFOZok/iQeJIrkljnP8Zf2f6MKQ2zs+ju3BGHyxTqa/m94AuT6aCVfjFm
-	n7enQ87imfPC7CxktEHn37RFlcUkiPj9dUNAoVqRnZVnQMTEHx235OhrX+on5PYfDDr8Q12YEvW
-	1uMGTfRp9vHqkv27IiplkNQW7LqloEnprAaJ5RjNuYcRV8L6Hn5e0aBSHTXjplmZPNWd+BoM8I/
-	H3zWQYmofnM5nwCNzrdUfVu3+YNbY/OFAihCpM0kviJH2ami5vYUtUNe46kEvRzFs7JHSG+IMPR
-	xZLIa+xF8XfdmmoUWx6EWMRItWVGbE4ESj5sYfwbvm4csgAB85JzwklK0mruueISmc3kgMD7b+c
-	AkgKI2zkzbQTtfuUnP0lw
-X-Google-Smtp-Source: AGHT+IEIoB7CIEagexG9dSh2PwOOPrD7z9rjV7q8EIOGmEEOrLTSZBzMWQfJ3dAVwm8AVI/GgNiNmQ==
-X-Received: by 2002:a17:902:f602:b0:224:e33:889b with SMTP id d9443c01a7336-225e0a3a5cbmr228469435ad.12.1742272072130;
-        Mon, 17 Mar 2025 21:27:52 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-36-239.pa.vic.optusnet.com.au. [49.186.36.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a84besm84363465ad.79.2025.03.17.21.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 21:27:51 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tuOYO-0000000EZ8R-3bIs;
-	Tue, 18 Mar 2025 15:27:48 +1100
-Date: Tue, 18 Mar 2025 15:27:48 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@infradead.org>,
-	Jens Axboe <axboe@kernel.dk>, Jooyung Han <jooyung@google.com>,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <Z9j2RJBark15LQQ1@dread.disaster.area>
-References: <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com>
- <Z8eURG4AMbhornMf@dread.disaster.area>
- <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
- <Z8zbYOkwSaOJKD1z@fedora>
- <a8e5c76a-231f-07d1-a394-847de930f638@redhat.com>
- <Z8-ReyFRoTN4G7UU@dread.disaster.area>
- <Z9ATyhq6PzOh7onx@fedora>
- <Z9DymjGRW3mTPJTt@dread.disaster.area>
- <Z9FFTiuMC8WD6qMH@fedora>
- <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+        d=1e100.net; s=20230601; t=1742279911; x=1742884711;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0JB/622jUc7ROxuFmcYxy/RMyD/NKcsl7EkhpEMgHc=;
+        b=e1PNLXDAiirxyNcymZLgp7ByDxAYtzvqpnp1Ni0zlVuYBv0tf6/rvMUROIT5Tbvzau
+         YtraehgsHXSFQdS1YNqOqmTgkkbjfuc0kTXRQsMNffWvzNwiAbCpdmJhCF4HwEbxFlky
+         FdeEpHImrxHLZnFTPYJasXlnlgbL5hHn7//3LiGpr39Hqel61q94gyT8O1xGxOZ2UnvE
+         2HWfEM0Ji1qdjQ9PRESLDq+QFfcDe1iO+DjUh9e47QvAoS6ZmO+aOv78+Oc4ZXz3isz7
+         iMVA0u1fHYUQPnoROhjVbMGh1UYcWdG7NYUtZZgem560GPJy0z5hnxyZzyzrjMHIcgyt
+         k1+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVz9gfeGn3fLjOeB094RyeEiKq0To68zRwWrpZ5ocnJB4h8DJ6ttXP9Zd6K7JLID/rwJlR8IhrE+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEyMrONpSZxVsdI5ryTpgNFnFCVP0AJnVTnDfm2EhF2YI9xkGY
+	hgY0OjJGu4Qa41G4zcI7PJfN4reHf1G4bEy+yPCYbX5Py9Hof7+G7Zc2JNOW
+X-Gm-Gg: ASbGncsH+oSkeH+4tLlKMan/dQj9pNXk5LbBaaT+5/f1FgCgAIJAcHXj/RsaWUbgf4h
+	Ib2jY0RqCF2Ue+s6DDGmWc4a3cYq8Qunh74N7gwCSnQSEtNCvCE7Q1837GEeWHdjLY++rbGsrZn
+	GEM6h0BicPVCOp7jkkuLVHCGAtyebO1ftjNFeRM3WYhocDcgi9khwifC8Pw+kifNhIEJ/LtlNo+
+	apKot5CUipHZDNhgE2kGlXKnwDXwo3WWJjmsTYXLKwC2oXag42G584Bt1gzwek36+7cm691TxSt
+	Ai90dyweZTUaw5+SJmpmpcVjxZ1P5qpgZAmhy8vJCU4Dy8eC1yMoAJo7eBc1aY39jl1+S9JLryS
+	eSLKtWAdK
+X-Google-Smtp-Source: AGHT+IHEHee7IS1UYO52IQVFRd0wr6lnRzXPPDNKwavgm96HIhjleS/bdWGU9BWuRIAxq6trGaOHYg==
+X-Received: by 2002:a05:600c:2d45:b0:43d:2313:7b49 with SMTP id 5b1f17b1804b1-43d3c956e2amr4334305e9.12.1742279911146;
+        Mon, 17 Mar 2025 23:38:31 -0700 (PDT)
+Received: from [172.17.3.89] (philhot.static.otenet.gr. [79.129.48.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3cd70c26sm5761435e9.2.2025.03.17.23.38.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 23:38:30 -0700 (PDT)
+Message-ID: <42d8e234-21b0-49d9-b048-421f4d4a30b6@gmail.com>
+Date: Tue, 18 Mar 2025 06:39:27 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] io_uring: enable toggle of iowait usage when waiting
+ on CQEs
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <f548f142-d6f3-46d8-9c58-6cf595c968fb@kernel.dk>
+ <c8e9602a-a510-4e7a-b4e9-1234e7e17ca9@gmail.com>
+ <37fcb9fb-a396-477e-9fe5-ab530c5c26b5@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <37fcb9fb-a396-477e-9fe5-ab530c5c26b5@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 05:36:53PM +0100, Mikulas Patocka wrote:
-> On Wed, 12 Mar 2025, Ming Lei wrote:
+On 3/17/25 14:07, Jens Axboe wrote:
+> On 3/16/25 12:57 AM, Pavel Begunkov wrote:
+>> On 3/14/25 18:48, Jens Axboe wrote:
+>>> By default, io_uring marks a waiting task as being in iowait, if it's
+>>> sleeping waiting on events and there are pending requests. This isn't
+>>> necessarily always useful, and may be confusing on non-storage setups
+>>> where iowait isn't expected. It can also cause extra power usage, by
+>>
+>> I think this passage hints on controlling iowait stats, and in my opinion
+>> we shouldn't conflate stats and optimisations. Global iowait stats
+>> is there to stay, but ideally we want to never account io_uring as iowait.
+>> That's while there were talks about removing optimisation toggle at all
+>> (and do it as internal cpufreq magic, I suppose).
+>>
+>> How about posing it as an optimisation option only and that iowait stat
+>> is a side effect that can change. Explicitly spelling that in the commit
+>> message and in a comment on top of the flag in an attempt to avoid the
+>> uapi regression trap. We'd also need it in the option's man when it's
+>> written. And I'd also add "hint" to the flag name, like
+>> IORING_ENTER_HINT_NO_IOWAIT, as we might need to nop it if anything
+>> changes on the cpufreq side.
 > 
-> > > > It isn't perfect, sometime it may be slower than running on io-wq
-> > > > directly.
-> > > > 
-> > > > But is there any better way for covering everything?
-> > > 
-> > > Yes - fix the loop queue workers.
-> > 
-> > What you suggested is threaded aio by submitting IO concurrently from
-> > different task context, this way is not the most efficient one, otherwise
-> > modern language won't invent async/.await.
-> > 
-> > In my test VM, by running Mikulas's fio script on loop/nvme by the attached
-> > threaded_aio patch:
-> > 
-> > NOWAIT with MQ 4		:   70K iops(read), 70K iops(write), cpu util: 40%
-> > threaded_aio with MQ 4	:	64k iops(read), 64K iops(write), cpu util: 52% 
-> > in tree loop(SQ)		:   58K	iops(read), 58K iops(write)	
-> > 
-> > Mikulas, please feel free to run your tests with threaded_aio:
-> > 
-> > 	modprobe loop nr_hw_queues=4 threaded_aio=1
-> > 
-> > by applying the attached the patch over the loop patchset.
-> > 
-> > The performance gap could be more obvious in fast hardware.
+> Having potentially the control of both would be useful, the stat
+
+It's not the right place to control the stat accounting though,
+apps don't care about iowait, it's usually monitored by a different
+entity / person from outside the app, so responsibilities don't
+match. It's fine if you fully control the stack, but just imagine
+a bunch of apps using different frameworks with io_uring inside
+that make different choices about it. The final iowait reading
+would be just a mess. With this patch at least we can say it's
+an unfortunate side effect.
+If we can separately control the accounting, a sysctl knob would
+probably be better, i.e. to be set globally from outside of an
+app, but I don't think we care enough to add extra logic / overhead
+for handling it.
+
+> accounting and the cpufreq boosting. I do think the current name is
+> better, though, the hint doesn't really add anything. I think we'd want
+
+"Hint" tells the user that it's legit for the kernel to ignore
+it, including the iowait stat differences the user may see. And
+we may actually need to drop the flag if task->iowait knob will
+get hidden from io_uring in the future. The main benefit here
+is for it to be in the name, because there are always those who
+don't read comments.
+
+
+> to have it be clear on one controlling accounting only. Maybe adding
+> both flagts now would be the better choice, except you'd get -EINVAL if
+> you set IORING_ENTER_IOWAIT_BOOST. And then you'd need two FEAT flags,
+> which is pretty damn wasteful.
 > 
-> With "threaded_aio=1":
+> Hmm...
 > 
-> Sync io
-> fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-> xfs/loop/xfs
->    READ: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3001MiB (3147MB), run=10001-10001msec
->   WRITE: bw=300MiB/s (315MB/s), 300MiB/s-300MiB/s (315MB/s-315MB/s), io=3004MiB (3149MB), run=10001-10001msec
-> 
-> Async io
-> fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-> xfs/loop/xfs
->    READ: bw=869MiB/s (911MB/s), 869MiB/s-869MiB/s (911MB/s-911MB/s), io=8694MiB (9116MB), run=10002-10002msec
->   WRITE: bw=870MiB/s (913MB/s), 870MiB/s-870MiB/s (913MB/s-913MB/s), io=8706MiB (9129MB), run=10002-10002msec
 
-The original numbers for the xfs/loop/xfs performance were 220MiB/s
-(sync) and 276MiB/s (async), so this is actually a very big step
-forward compared to the existing code.
-
-Yes, it's not quite as fast as the NOWAIT case for pure overwrites -
-348MB/s (sync) and 1186MB/s (async), but we predicted (and expected)
-that this would be the case.
-
-However, this is still testing the static file, pure overwrite case
-only, so there is never any IO that blocks during submission. When
-IO will block (because there are allocating writes in progress)
-performance in the NOWAIT case will trend back towards the original
-performance levels because the single loop queue blocking submission
-will still be the limiting factor for all IO that needs to block.
-
-IOWs, these results show that to get decent, consistent performance
-out of the loop device we need threaded blocking submission so users
-do not have to care about optimising individual loop device
-instances for the layout of their image files.
-
-Yes, NOWAIT may then add an incremental performance improvement on
-top for optimal layout cases, but I'm still not yet convinced that
-it is a generally applicable loop device optimisation that everyone
-wants to always enable due to the potential for 100% NOWAIT
-submission failure on any given loop device.....
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Pavel Begunkov
+
 

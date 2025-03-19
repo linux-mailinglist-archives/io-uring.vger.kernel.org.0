@@ -1,145 +1,128 @@
-Return-Path: <io-uring+bounces-7129-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7130-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8D8A68E5C
-	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 14:59:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F32A69349
+	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 16:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0468188D28C
-	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 13:51:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F2947AF1DB
+	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 15:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5BA2FC23;
-	Wed, 19 Mar 2025 13:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727DC1CAA7D;
+	Wed, 19 Mar 2025 15:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fPEeKXil"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F7oM9l28"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A5374EA
-	for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 13:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A551BD9C6
+	for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 15:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742392267; cv=none; b=gXemXn4HXiHHNMJnvRVLjqulMqQmiR4l6LtBKPtvCygdAcgrxUp7ZrWhtGbirBE7hN84tnWcsSjg7LhpdDbuE/UyF+gqNCqqygdlaGhkiC+kCSoxMablwdaqNVfSSidwmr350dZh4AfLIy7CVUJjYWzAshMthB2hzPKVGzcT2II=
+	t=1742397995; cv=none; b=luTI2qZDVFbFHOafLfvujung90DYha5ZvGMRW6eCUdKA0wn712qD3aZ+2/gBEBKTDDc8ikT+zeP9EKh8UVZKrVjHCMetCae8YLtxnf21f8ZMsZ+C4dSwbsDeQt/8KklvSwtvIho9yDAsTumYDcTI94LzJLdM38/KzBjz4qzR+PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742392267; c=relaxed/simple;
-	bh=9h4yrDbJTQ2nrIwLEI1MvkBMzEf7Z2GjBg4elQFZEvU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=R6fdkL+2lG+YrFr8R3m/R0bvvlfVPwcd2RBF8Fy1gmilwCpbkrz3lV+FCvrrK3INjY6FZFsIsDxpgscrGJ3lmiAK4iszYQafEOXBAVR8o3/gw9Pyjrxi4Etqh3EacX5u/bTKxNVeiPH8aKaqxVOW9CfwyZoEU1tAxRYuXCORgqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fPEeKXil; arc=none smtp.client-ip=209.85.166.49
+	s=arc-20240116; t=1742397995; c=relaxed/simple;
+	bh=b6OGf6ty07rhqd72Rca7OnvW4KUA/qKgWWNZmFcHBF8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Cds2R3LfqzC2LqVxl1wVuy6dCAcoEIticoQCYHWobhm4J275QaTrZcNSn5KrMpvLVmZYpqY8DiigDcDhGNSSWwAHd8cB/fIxzaO9NDjh1dTKHU8xv2BjWh/PmdmRUIyXeMbf88xBUgoDb1uW72/SAxR/NT89/4lvf6gzMAuDorg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F7oM9l28; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85e15dc801aso52505439f.2
-        for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 06:51:04 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d589227978so2231685ab.1
+        for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 08:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742392264; x=1742997064; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mf0ZY3RkAnGlVXskDazzHa97ybeJQ7TVxm1TpoxB27M=;
-        b=fPEeKXilfa0Tf+LbQ891KGzDGbtXvwUkY4W9sTyKwlyyS1J4hVHPdHouFQ+jQ7Tn1I
-         C+f1GP3MXbYed+uCnQELda6tsd1lXXCbLzQq41Od2pw94ihVeCQZeqYf0UvUiPLOJWzx
-         twq/dmqltPLg9GhG9tdrcjsKJ/6DY+w28+SE9fTQ8wvAvHYwM7+c3WQETOCSJMkGA7Hl
-         f/nKBRSfXa6D/elufJ1Bbi6mc/ZsbtXrbKrJ/pFYpeChlkHoL1jHBuHpW7eesdItX+UA
-         XgxklhbJpLOhxg783x4pFe03jWAy8rWcdgMt0jA/UM7U5KHSB+4pCMq/TQm01SogsgXg
-         BhPg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742397991; x=1743002791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C6s7stxj6j02Q9GM2Q+eifwtx2fkSLIEYuHEkF4Kxt0=;
+        b=F7oM9l28PN32B/udFja7KBDY4deoNldFRvcNzN0nXA3ZGQoxW0WkOhvOrTLQIjTFhX
+         kcFOX961epeGJdJkW5dWlUTNJ4OzONPClAtI/eHUNcuxbH8DkvMLjreaWfb5AhDYqEjG
+         uhChtoWVGJfyjm/3GqRBa4jwhXjT5dSn7OPM4mtNaGPqjRM3/x/B/fs9eTkLA2nPDhii
+         qAkKO+wy70ZPomeK6H0s8yes4HIAXlmEO9L/egyP4o3lkqkLJw/Vm3LMxc6F3F/emHPr
+         gJEeiaiDsZ2bgFy72rj9gMyx8rimUaLRWHufduSKMPvKa6hSaHXO51F1LxKdaJPM62Lt
+         Q8MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742392264; x=1742997064;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mf0ZY3RkAnGlVXskDazzHa97ybeJQ7TVxm1TpoxB27M=;
-        b=Lmv/pVNEoHvUTQAENPEyR1j5hp1k7URGBhYm7Fx50qTtUF8/CXW3VHgAGd/xKJkhz8
-         /sJBWMDSUBTps+rPUx2RzfItLTR1LWUy/ON7I1hHFGa2OpBGF8uAOFcif713eJCEnOw6
-         GjepnquH8HpyLEd4pl5SbVZAvRC+EDPbM7fqKc+CV8OX1lRNYGqjgjjMDm1AF8Bz/eYJ
-         gjk1zZSsZFRS2GxCFH5Xtsg1jZs76FsIoPRzhfnsPby89QyBYLVVhR/0aXUXK3BKpiek
-         xJaooCiiRNkwoZvvDk/7jm7+Eb6tMLluPOPIkgQz/Ih201/c9BKwe0Tcu9RBbkVzPRfJ
-         rZYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJfKauK0EsZ1ZPzM0pFjpJOpBkl8aTT77/ekBhh5KD5vkOO+yFTcaxY63X28WtmcXPfI5li+koTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YweTWhmLGnQkAfPOkppumaTJRYz2oOrSZAcIr8OSASCWTv6JQNE
-	D8Zct0LkV9eL0zrEFY/cZYIwvevrdK3fwKkjznBEgZeSpJyYxY0kW/J6b+C6Azg=
-X-Gm-Gg: ASbGncv/cBcgTl7J0jWFyUfNUF3/H/iAEIhXlm9S/mh3rv0gtaSI6dM7sIlS7qJTssO
-	MOD2WZ/td0QahqvNbhZ+3GPMtZ749XA7xBGYT0zV11Pxvr4ajjO+W9s0HVMesFYcZVb+wY5a6/W
-	GvdMfsd/Wh0WMf9kZzujmp1uUSPLLEmeEgVWL0w26jGkuShlTcwuOxkz1+q+CDIAJmqvZBNj6Ql
-	Ot0dvC8ZUkf/PsRImLuzxuU53MPeFrtL9dykMKQSlO8c8zWykgX3ie2Gq9xLj0MCekCojtW3+Ba
-	I2DzoBbVumZlSgY4/A5Uzia6Xa1rpy9xl/rXzFe/
-X-Google-Smtp-Source: AGHT+IF5tihSvg6sYp+HsiOElzFbkZks9n7c92h1aR2beYXIBTdkUxMb0S2TthzIJ6ra3b8Nqhx3Hw==
-X-Received: by 2002:a05:6602:4815:b0:85b:4941:3fe6 with SMTP id ca18e2360f4ac-85e137dfce5mr320217739f.7.1742392263760;
-        Wed, 19 Mar 2025 06:51:03 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637faa36sm3215415173.77.2025.03.19.06.51.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 06:51:03 -0700 (PDT)
-Message-ID: <5d5c5b74-2da6-4118-9559-4dee0e9d9a72@kernel.dk>
-Date: Wed, 19 Mar 2025 07:51:02 -0600
+        d=1e100.net; s=20230601; t=1742397991; x=1743002791;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C6s7stxj6j02Q9GM2Q+eifwtx2fkSLIEYuHEkF4Kxt0=;
+        b=pY2m/aBGBYynVYrRCUGI8G+gB4UxAOSlMnDOdD1tPPY5dSqBSJv042FX4dYFv95jZw
+         ArFXEsrcfwar4LFR8dXW8pU/Eq+60lTccAE/sUe9cPZN8iWV8r91Do5+l5AMlP1XT41e
+         5/5GuqZq4YZhbJShMFpRiRJpKcL8sxb3bvPtmjHEEwnXbn6QE2yyvvEJp3C8pEecr43d
+         E49Ksmr12p+v4lAyaS1xRyjN+LnASYcVH+JVabWJOeoDeap4fVP/DtwJQ9yhbERXT5gk
+         ZJt717qNoAfk4YDZ2/4nXtrmzEI+lBk0WX+r3knUSHC9wei++qo5yuza6kZ8UkcEr3MD
+         W2gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMRhZB95iiutcBcOIdvn43BPYLaZunCIzrVuQo9TC8FDqajXqCX39uS7E0YKxuLhWOAzSjBtpFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws+umFrqfGPdVdrVoLUEMlomX2U3Xj/LGQOxbvKh5w4Dwndg09
+	g+7w2ETYInf3p9JUmO3+jMQtCrkxdYteER302a0I6uIphM6UG61jsfkHdF0WNvJa7l4zcTG6PpY
+	c
+X-Gm-Gg: ASbGncsrrr0BKyLHkaF9lsp4oWB0553lAmW2KS43OFgyMyADweLfPLb2yVgqvXCTsLs
+	O/NF8X+KdCHBpPn9hncvNbEYLuPh3G3E4qANuFt5ZL5uct9zF993jzfNDvmp6szkgU2IznMhg+1
+	cpfXw44XVJmR1jqnB8JD1eJWTJhcNMPFHE1HuoxPE4Nw/nSur0YqCTU9iM/EV0q5KynfR72TvvS
+	Box4yLFqDKSzvIrqn/CP3Ww7JZfHSSG5WGKrk1GOa/Qtf/7TWUtrCMSx73kfI/DiN50w2B4m1n9
+	qrP2+vy7NHaajsesBbv+AnN8ytf3dRy8800=
+X-Google-Smtp-Source: AGHT+IEPszl/ebd/oSF2Uq2+SIS8aH9d2S8RxCBgdwIWLD2tLo1SckfHzcpZd8Mmqb1Lnvr1oYw0lQ==
+X-Received: by 2002:a05:6e02:c6d:b0:3d3:d08d:d526 with SMTP id e9e14a558f8ab-3d57c4448b1mr60362905ab.11.1742397990791;
+        Wed, 19 Mar 2025 08:26:30 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a83850esm38761295ab.64.2025.03.19.08.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 08:26:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Sidong Yang <sidong.yang@furiosa.ai>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ io-uring@vger.kernel.org
+In-Reply-To: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
+ io_uring_cmd_import_fixed_vec
+Message-Id: <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
+Date: Wed, 19 Mar 2025 09:26:29 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] liburing: test: replace ublk test with kernel
- selftests
-From: Jens Axboe <axboe@kernel.dk>
-To: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org
-References: <20250319092641.4017758-1-ming.lei@redhat.com>
- <b49e66d9-d7d7-4450-b124-c2a1cb6277b7@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <b49e66d9-d7d7-4450-b124-c2a1cb6277b7@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-On 3/19/25 7:47 AM, Jens Axboe wrote:
-> On 3/19/25 3:26 AM, Ming Lei wrote:
->> Hi Jens,
->>
->> The 1st patch removes the liburing ublk test source, and the 2nd patch
->> adds the test back with the kernel ublk selftest source.
->>
->> The original test case is covered, and io_uring kernel fixed buffer and
->> ublk zero copy is covered too.
->>
->> Now the ublk source code is one generic ublk server implementation, and
->> test code is shell script, this way is flexible & easy to add new tests.
-> 
-> Fails locally here, I think you'll need a few ifdefs for having a not
-> completely uptodate header:
-> 
-> ublk//kublk.c: In function ?cmd_dev_get_features?:
-> ublk//kublk.c:997:30: error: ?UBLK_F_USER_RECOVERY_FAIL_IO? undeclared (first use in this function); did you mean ?UBLK_F_USER_RECOVERY_REISSUE??
->   997 |                 [const_ilog2(UBLK_F_USER_RECOVERY_FAIL_IO)] = "RECOVERY_FAIL_IO",
->       |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> With
-> 
-> #ifndef UBLK_F_USER_RECOVERY_FAIL_IO
-> #define UBLK_F_USER_RECOVERY_FAIL_IO   (1ULL << 9)
-> #endif
-> 
-> added it works as expected for me, but might not be a bad idea to
-> include a few more? Looks like there's a good spot for it in kublk.h
-> where there's already something for UBLK_U_IO_REGISTER_IO_BUF.
-> 
-> Outside of that, when running this in my usual vm testing, I see:
-> 
-> Running test ublk/test_stress_02.sh                                 modprobe: FATAL: Module ublk_drv not found in directory /lib/modules/6.14.0-rc7-00360-ge07e8363c5e8
-> 
-> as I have ublk built-in. The test still runs, but would be nice to
-> get rid of that complaint.
 
-Oh, and looks like it should also skip the test if an argument is
-passed in. My usual setup has 4-5 devices/paths defined for
-testing, and tests that don't take a file argument should just
-skip.
+On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
+> This patche series introduce io_uring_cmd_import_vec. With this function,
+> Multiple fixed buffer could be used in uring cmd. It's vectored version
+> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+> for new api for encoded read/write in btrfs by using uring cmd.
+> 
+> There was approximately 10 percent of performance improvements through benchmark.
+> The benchmark code is in
+> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+> 
+> [...]
 
-Forgot to mention, that unifying the selftests and liburing test
-is a really good idea! Will make it easier to sync them up and
-get coverage both ways.
+Applied, thanks!
 
+[1/5] io_uring: rename the data cmd cache
+      commit: 575e7b0629d4bd485517c40ff20676180476f5f9
+[2/5] io_uring/cmd: don't expose entire cmd async data
+      commit: 5f14404bfa245a156915ee44c827edc56655b067
+[3/5] io_uring/cmd: add iovec cache for commands
+      commit: fe549edab6c3b7995b58450e31232566b383a249
+[4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+      commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+
+Best regards,
 -- 
 Jens Axboe
+
+
 
 

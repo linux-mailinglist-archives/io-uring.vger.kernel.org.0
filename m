@@ -1,179 +1,162 @@
-Return-Path: <io-uring+bounces-7132-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7133-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380A3A6950F
-	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 17:33:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE48A69516
+	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 17:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659D6189CF4D
-	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 16:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589EF16B67B
+	for <lists+io-uring@lfdr.de>; Wed, 19 Mar 2025 16:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DC51DEFC5;
-	Wed, 19 Mar 2025 16:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253C1DED4C;
+	Wed, 19 Mar 2025 16:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6A/67I7"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xzQrTZ1X"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E0A1DE4FB
-	for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 16:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78E31D6199
+	for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 16:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742402016; cv=none; b=OYVsAjWggyDH7TUlOSjfI90s5OySIPPw1kklk/pToimwsLHmhk26vFrGO9TWJuAPT/iX8LABmG7jj06231FtyO84Btwzm88VtWDc0DS6NwKeLI/KWQ7fw79DEuXLALwshV5YFVnOJXMW0/3WtBWnwooHf45M9Zxj8ZDo54bR0fo=
+	t=1742402245; cv=none; b=XvaZBlE4Ycivf0V86TNyEsQlJ46f/OGhwCkWHFDkydnSfI417q6INSbZ8ccN5lOXfPQdGckQW3IFZDJobqKfwyTMjiIZ77l5Y5sZDYnh+TA17QMmXuat/Tpk5qOO6Av1OxfHHYlOX+0rl4HhtgCx4/FvbCxSOuBn26INWXIzZMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742402016; c=relaxed/simple;
-	bh=b5JoerGjzoODytPs4/JCCgsORTIkD1OWdTmBFC8AjPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmvMbHoY/C5BBLGlu2zTAmWXbkJO4BXTQ+15i5v5N+Lc4IMykbhE6/TtX00tMgVjkydDhIYzFodqheTnwZQ0HJuNzMkAnpGDHkqwZEQ0ULuLX8XZ7Hajej2DUR9SDcuqghwRfy41OqUNfl8sQXixZyMH2B8IYnB6dUJHWDAzfHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A6A/67I7; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523efb24fb9so2967340e0c.3
-        for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 09:33:33 -0700 (PDT)
+	s=arc-20240116; t=1742402245; c=relaxed/simple;
+	bh=aP0Rl7w80xWkGkqKHRr67yXDm7ulD+sujdgDABoMhX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIEGrejAzqEquU5JEiKexinnG6dlLp4jgXc4GoqCVeU7Hie3iSwWWHmWheE+yjIw0jfbbHNtTQOwk7yq/KRgeeMauu7REMNRE/24WsVZDuyyslda8kqRBPeV7j0NPoTUoRxULwbshJonC+bwH/QVl8RFzsmBM1LnlCqOtEfl138=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xzQrTZ1X; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso38528425ab.1
+        for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 09:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742402013; x=1743006813; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OVuqKpUv1pEU4LzOHuIA6EH8XUgNHnH2M2llTP84R4g=;
-        b=A6A/67I7CkMWwUadriYwzJU/lkazyWM2kNKMUtyaTwie3iaKbuhInQoWY5vYbCLqBC
-         gRSzPna9jvRlZ8PzRcSshfJlpC8uTumAng6LmkJbI59MQjb9B9uvh+8bFDv3GxmfF5JY
-         q1GLtFM5x9O41LvK3MycD5eqhpE4JaWi+45b24GkpjKVRHaAqIWUIIZdsUqBbAsZwqwh
-         v9gAfOoX49+wuqyKEiSmq88hYsdGL5thq8CXV8o5oqHX/cM6HbKV34xAh4QMmTlxQwes
-         vQLY9FL+q3P0FksMdJ9SnoygTIIHxhjwG8JOXO3/51tBu362ll4uSFD2gZdrP2sCpS0S
-         VM1g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742402242; x=1743007042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1jhbbYo54FrkdrbzdWrKMeFfQjie6aK1LbfZTGe7VZs=;
+        b=xzQrTZ1XIVc6mPXq022aBYdfXbDbWyNwCCT5DJmOBDwaE/mpk5u9iqK4cHk9eD9YOQ
+         /67wuWkwOIX80yILEJUB/KUG+G52PESppL26V5pDNpCkTz+p/C+SJbTT405x1bnOU747
+         Jju5j5FvcxcL5W4MIYwT3abumdxA94kkIU7xA1X80lbv4a13mB4ir2JEE/GENujCi6p/
+         sSPXimimK10gDdfOT76hWPLFW6fZ3rDzj/Em7cPjo3V+vkZfsC0m3FsxFkHBzpixjGZM
+         oEBkWpS4blVRxl3J9J6GCzLundEC4RDc7uZe0PYx6CMy2pholBJnrr0ZxDxhWy+7r/jE
+         buOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742402013; x=1743006813;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OVuqKpUv1pEU4LzOHuIA6EH8XUgNHnH2M2llTP84R4g=;
-        b=BiE8bOaH0srPo6GLL0fCnJYSvzCYwrnlbDqwu1AjB09n/ySOqk20ylpvahmkGDdr8l
-         RxhckO+SlSRvNRiRVCe8Zu6B6znO/qPJHUdUmYb35+o5Gg1g5S4PIJOq/1WH30VvF+1s
-         zGot6QkyO7YQ297mxijti//ABZOiOwA0Mnw9zg9ZUvKlrvkzi8xJLBHsB/vDqr/ajoi4
-         gFTnfim1Hms6UCqs+bCJxCrD7zy20wROf9eXLp4AV96/PfYA0aFN0Xnxk40EhxJq+Ihw
-         aMX8TtfBW50H9I5S7KimAmHpPwHfzesv/21ip/MeeoY+CLGyJUfICZ4Nj6h0EBd+CA6o
-         kNDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLWkhPLHfla2uTQgppHC4TsSNPykPnIsYvJ+W/k7I8hkZCc+Xp0tD7S+CuZktA0FeAsoilfDxq3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9vO8nfEA2v5+fVo2NUSvJ4s8dyLj+5SwyUwfjLSWs3W9HRGSH
-	nGLi84gUOaCuWmcUn/u2OvNXm0h+iAn27AKb/5R9MNJvgfOa5kFvFmNxMGNyv0qHiwMvHrL3OzX
-	DL2PwO/BnpIPSdmLIl8KYcVhb/3hY7ehKJZQEBQ==
-X-Gm-Gg: ASbGncspCHymd5/klW8ycgBRJcyJpU0S83yufQzyindneKj5c4tqkp496GIsaI3efbb
-	/fBDiZeAAzCixzoPf5YOh1u6bOo7h/zCzihG2Kb5sPHicKZxNKIAB0wxEV7AEdVT23Hm382uKKc
-	iBzuVjlgRsd1+I+SP9CxprLHqjWZT6lpX//eBOQJdM5OQLabM0W65f3OM=
-X-Google-Smtp-Source: AGHT+IHWmBTfBeI+pX6l/d4K6vWO07nXM028XzAozff8NwOIYDbLIFEeoObpskDnFhKhHnfnKlb6wiHJoN9ZGxWxSfQ=
-X-Received: by 2002:a05:6122:8890:b0:525:9440:243c with SMTP id
- 71dfb90a1353d-525944025e4mr695738e0c.11.1742402012994; Wed, 19 Mar 2025
- 09:33:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742402242; x=1743007042;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1jhbbYo54FrkdrbzdWrKMeFfQjie6aK1LbfZTGe7VZs=;
+        b=fkBIF+vgmFgGnqEN3TyCSO2DbA5lAAuAvOIbqbHuW/Zv91yAjbxEZWYFZ8CWXcVTl3
+         0MhrYftqDbL/C8cWFXDuE6eQyQdJjUAZp/5bC4WgEJenVRCzf06Qrfu4vJZysJvs+GFh
+         vYbqivz5KuxYgBmUYn5USiwqmJtWZG5yzplNt2toZgmAzwF2FgGVP7Lgbjyi5PQG8C2V
+         E22A0r8x9rXnCajZOCGVfuLQMcLOfm7qQtmtGNUNWHQs5Gsdolml21Pyxj5rUmJdw7GX
+         QCYDD3HZQfyNlbVFe9RSEKRTDpw0GWfhWrR3L3tIdJ1c96g2kKaACLeHI8VWhtvmeEmT
+         q2/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9upfY+AuuAMhyecKR/2sX4jikM7EbkZ1dpNuijP1jCefjmwv67o7bn6Ee0M5aBuof6zrv4sjtyA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeg3IQ+M42f9cVulnnnGjBvged21wz9SXSm2FH+4LEtzrXVgZR
+	Ntfdx3/K/SKsV0CnObdngwEz4Bm90x6eEbMBSpblGZ+KZd82XQjurUurn414cus=
+X-Gm-Gg: ASbGncu3NQHBfS1CsLKU56jm2srHNiZ7TdYfkxY5iTA0Aa0AOo5IHMAaqVqhBJ9NPit
+	u96cjV9MQYSRamEVU79NLEItI4uzG1l9dawpWy6YiIljk1feG7zCsnZx5uo0E2PxtfRD0mWPox8
+	Ct/nbPJjyM8PADC4OgBpy8tIPB8GslPMHQCCV0QVhW6Ea8vgStMjet4nOLyJJmFVhdHm96hmuGT
+	x5qhF9O24kpKHQwutI2VIul2xPIlBVsiltIfdbqPmi+3nBxGA2W4RXQ3/PK1Co7ZvnaaSzGb8h1
+	6UZBVv/xAkzgngCnWbF8ZhUtyi//gFD2h6aed63SnQB42ecxolA=
+X-Google-Smtp-Source: AGHT+IGaCxxqOmIU5qslU5LzXO4appalUTv0emoln2y9KsdecB1szM6soHATQf4I1FwwkjFCnXzgvA==
+X-Received: by 2002:a05:6e02:1d0e:b0:3d4:36c3:7fe3 with SMTP id e9e14a558f8ab-3d586b44302mr26627605ab.9.1742402241910;
+        Wed, 19 Mar 2025 09:37:21 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637fb2b2sm3303066173.94.2025.03.19.09.37.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 09:37:21 -0700 (PDT)
+Message-ID: <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
+Date: Wed, 19 Mar 2025 10:37:20 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319143019.983527953@linuxfoundation.org>
-In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 19 Mar 2025 22:03:20 +0530
-X-Gm-Features: AQ5f1JqIqR8G0jdBi-EqCaYlr4_sxu0nohARN-WaSCDfLRpd0KihGkC9ntbmtXw
-Message-ID: <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ io-uring@vger.kernel.org
+References: <20250319143019.983527953@linuxfoundation.org>
+ <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.84 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 3/19/25 10:33 AM, Naresh Kamboju wrote:
+> On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>>
+>> This is the start of the stable review cycle for the 6.6.84 release.
+>> There are 166 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
+>> or in the git tree and branch at:
+>>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+>> and the diffstat can be found below.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> Regressions on mips the rt305x_defconfig builds failed with gcc-12
+> the stable-rc v6.6.83-167-gd16a828e7b09
+> 
+> First seen on the v6.6.83-167-gd16a828e7b09
+>  Good: v6.6.83
+>  Bad: v6.6.83-167-gd16a828e7b09
+> 
+> * mips, build
+>   - gcc-12-rt305x_defconfig
+> 
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducibility? Yes
+> 
+> Build regression: mips implicit declaration of function 'vunmap'
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Regressions on mips the rt305x_defconfig builds failed with gcc-12
-the stable-rc v6.6.83-167-gd16a828e7b09
+Ah that's my fault, forgot to include the backport of:
 
-First seen on the v6.6.83-167-gd16a828e7b09
- Good: v6.6.83
- Bad: v6.6.83-167-gd16a828e7b09
+commit 62346c6cb28b043f2a6e95337d9081ec0b37b5f5
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sat Mar 16 07:21:43 2024 -0600
 
-* mips, build
-  - gcc-12-rt305x_defconfig
+    mm: add nommu variant of vm_insert_pages()
 
-Regression Analysis:
- - New regression? Yes
- - Reproducibility? Yes
+for 6.1-stable and 6.6-stable. Greg, can you just cherry pick that one?
+It'll pick cleanly into both, should go before the io_uring mmap series
+obviously.
 
-Build regression: mips implicit declaration of function 'vunmap'
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Sorry about that! I did have it in my local trees, but for some reason
+forgot to include it in the sent in series.
 
-## Build log
-io_uring/io_uring.c: In function 'io_pages_unmap':
-io_uring/io_uring.c:2708:17: error: implicit declaration of function
-'vunmap'; did you mean 'kunmap'?
-[-Werror=implicit-function-declaration]
- 2708 |                 vunmap(ptr);
-      |                 ^~~~~~
-      |                 kunmap
-io_uring/io_uring.c: In function '__io_uaddr_map':
-io_uring/io_uring.c:2784:21: error: implicit declaration of function
-'vmap'; did you mean 'kmap'? [-Werror=implicit-function-declaration]
- 2784 |         page_addr = vmap(page_array, nr_pages, VM_MAP, PAGE_KERNEL);
-      |                     ^~~~
-      |                     kmap
-io_uring/io_uring.c:2784:48: error: 'VM_MAP' undeclared (first use in
-this function); did you mean 'VM_MTE'?
- 2784 |         page_addr = vmap(page_array, nr_pages, VM_MAP, PAGE_KERNEL);
-      |                                                ^~~~~~
-      |                                                VM_MTE
-
-## Source
-* Kernel version: 6.6.84-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: d16a828e7b0965ca37245ebea19052ad7b4b2f9b
-* Git describe: v6.6.83-167-gd16a828e7b09
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/
-
-## Build
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZlKzVxja3mOQfRLlPRxHzd5L/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZlKzVxja3mOQfRLlPRxHzd5L/config
-
-## Steps to reproduce
- - tuxmake --runtime podman --target-arch mips --toolchain gcc-12
---kconfig rt305x_defconfig
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Jens Axboe
 

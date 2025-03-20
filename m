@@ -1,91 +1,71 @@
-Return-Path: <io-uring+bounces-7138-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7139-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98154A69DC1
-	for <lists+io-uring@lfdr.de>; Thu, 20 Mar 2025 02:48:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30E2A69DC9
+	for <lists+io-uring@lfdr.de>; Thu, 20 Mar 2025 02:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83E83BC00B
-	for <lists+io-uring@lfdr.de>; Thu, 20 Mar 2025 01:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7237A8A348C
+	for <lists+io-uring@lfdr.de>; Thu, 20 Mar 2025 01:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873DF1D5CFD;
-	Thu, 20 Mar 2025 01:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC181B85C5;
+	Thu, 20 Mar 2025 01:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="TK3PNrbc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="abrR/Kbn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A5118CC1D
-	for <io-uring@vger.kernel.org>; Thu, 20 Mar 2025 01:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886E770807
+	for <io-uring@vger.kernel.org>; Thu, 20 Mar 2025 01:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435280; cv=none; b=Ra3OiVuHxJBNzUWSoAPf9lEWJqqK9rKTfX10rJGlduVQxJdSUlYZvUUa9K4IdFblidhwjyGphfPjhU6Kt3SPQdtJoqDKFAC31bXr5tf69eBF2th+KMe6VwjyOens5cvvpQpBWAYD8eVoiF3o5LmiYUbZog3VLb1xoIBKG6ZVJrY=
+	t=1742435659; cv=none; b=tTjjBhxBg0JaLNhq1oSjy0j/UUI6r45acvM2RaDY1/+xhNhazIXXn9IrukJVsEsv0wujGijZ9inV9NtoHv8PVNX04qMGc+HErb9iuunDo6BZBHbMwrq4b/nFHSFT8BHx7rb18sw9ZRmbbka4x6iK+WK1Lvfjc10xRD+4W3ODeX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435280; c=relaxed/simple;
-	bh=8vd93+qClvT7Jmn/2fjitb9N8zbtZJSVzHQ/sb/MSvY=;
+	s=arc-20240116; t=1742435659; c=relaxed/simple;
+	bh=QGSaxFO0QMwdVEC/h8PanKsgUxKJlN2XevO7hBWd9NE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyKssFL4MNHidG+blTD58GUJDxJxFOtWJeApXlJsZqgBsQjwrt469N04PQpawKQxTk/VSupCQCgV98Ek5hE16czb2MXjltVrrnwXeX53XSig5C/7nI6YMQ8z0Zt5pcIGqyo4AkIgp5jhGW+CY7O+fnHhKkXxF7+Iw6kd08cWyGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=TK3PNrbc; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22398e09e39so3327285ad.3
-        for <io-uring@vger.kernel.org>; Wed, 19 Mar 2025 18:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1742435278; x=1743040078; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
-        b=TK3PNrbchWhUgvSI65oeS5fc4fFkbRpkO/Dn3pC9UIN81mP9SlyYHM8VhVky7V4XTL
-         zEnJnKFxj568lbZKhNjUsbWaNLssmUxadLKEPhmWkZMuCgRlLmg4ZMqyE2HFy28LrXp3
-         KfzhqBtwV8Rbb4oFIIN3VXy7f0sUqyIvKy8JA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742435278; x=1743040078;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
-        b=PEieQ62L13RCcicBEMkZ2qSzlkbvuXusjZlZqYzfauqhHuBfRLiQFF6fTkrW9yfXqH
-         FVkw+46OjN85KyQPF8/po7CnpOjUrSbMbDnMh+2Hq85BmbehxXQtSUZhuWWfp5IaUAZw
-         nLzvRtDhjGD69ooLbPeH3Y2Ar1ID8qdMEJ5f3L2Xrb07Krleffx/twcV7ABgowJtsWWt
-         oiIyKwx7rDhQNvyPUd+25+SopRzQe7JzJf+ljqE05pwJf8kgQocxDzc1FaeN6Oz4Wg2s
-         AhlityX4kPMPvSthahqnG/SRUT5UstvkAIkr0xF+DZufo5Qmp47q6bgms/Sz5PAff1LD
-         2TFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl635W80Kr2C3U2ABnPQ64sR3EIGoWKH8qzi33U/Hqn3wkSAdJt0P1UpGAlrmJpOQkPjKstvgmrw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9QoV3VlR6kPCrqwk8CaH9S5ub1DGPWuzMANL+i7PmeJw9os7P
-	eDcohXVuSzXv4IB5MlULKiXrMTIzsDctB0RG1acokXKgaUtQWaJL3JTVjUtsdbkG4MyteORibsV
-	0
-X-Gm-Gg: ASbGnctN+YL4HuWTv/p6FqN40ecm7kmBrOJBt7kImT/pOJ3uBtWQj/2BMVOmiDWIC0o
-	cb2YV4txouavUScvuMMcNME8NaG6N2dNLB7W2i9dwVi8R5hdsZgVFTiqQ52JVgElsic4z5zVaKK
-	vrbepOS5WqzbN3BGVVicNaSduDKEddw1OEC0OUpVUTn6wHzdIsuUofZbhujEv6n6zTYJ0xVtU1q
-	uZYzjW4nPBZBnA/+SrY4L12KkegPmBeMB7lKeeqXW+VewexKmVvW3zGVc6EdXbsOchgrrB5QbPn
-	H67R6mYOxr7iEZVWHh/Pk4HfituAsxv3ukSnTdXxoEuinpRGvPPwWNtdasvqNSLS/jLD+9y/wet
-	B
-X-Google-Smtp-Source: AGHT+IEnL5zS2NVHMqd/Y2yTk6lYwUWXQfuMKAs4klVP0D5Ix1QzfZttlHpANYf8RWDNJxVQfzHybA==
-X-Received: by 2002:a17:902:c944:b0:223:4d7e:e523 with SMTP id d9443c01a7336-2265ee93b4cmr19116065ad.50.1742435277699;
-        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152931bsm12453091b3a.3.2025.03.19.18.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:47:43 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cev+LHKwtplVBr7LxjVOrLzqSzXyeJB0DhHKP0xGq5FnY/H1UGAPB5PY8wsHAxYIP7n7U3SfbZl/24isWzdtckMNcTznYcryw5UuHI/LRvd6dni9iPbforZgJm2Yk+FN/VNgNa9jo++IrT6CA6EmJaO38PWuocYiD1Fv1clJ2dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=abrR/Kbn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742435654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVhGKns/Mdbu0IrhF0QwPcQUJXq5WBpNvo7BxQCX6Sg=;
+	b=abrR/Kbnl8yaqXnuyZxXavMTWXFbzM9TnwoNjdZgfm0FhJyRzWpKTs5HZUZfsGBfRDSQxJ
+	OJ7RPOQiDYYv7jzuUzotatlJftj+53vUZPHSUjHoSwkGDWrQ2cKw682RRihP7jk0y3CDcU
+	q7v55a0feoFAc2kzUmDqX4xy8qQZd68=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-taJf7LwEMxWKEcpite2SaA-1; Wed,
+ 19 Mar 2025 21:54:10 -0400
+X-MC-Unique: taJf7LwEMxWKEcpite2SaA-1
+X-Mimecast-MFC-AGG-ID: taJf7LwEMxWKEcpite2SaA_1742435649
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D15F19560AB;
+	Thu, 20 Mar 2025 01:54:09 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB1693001D15;
+	Thu, 20 Mar 2025 01:54:06 +0000 (UTC)
+Date: Thu, 20 Mar 2025 09:54:00 +0800
+From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>
-Cc: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
- io_uring_cmd_import_fixed_vec
-Message-ID: <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
-References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
- <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
- <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
- <20250319170710.GK32661@suse.cz>
- <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH 0/2] liburing: test: replace ublk test with kernel
+ selftests
+Message-ID: <Z9t1OIWJyzJDCcCW@fedora>
+References: <20250319092641.4017758-1-ming.lei@redhat.com>
+ <b49e66d9-d7d7-4450-b124-c2a1cb6277b7@kernel.dk>
+ <5d5c5b74-2da6-4118-9559-4dee0e9d9a72@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -94,52 +74,71 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+In-Reply-To: <5d5c5b74-2da6-4118-9559-4dee0e9d9a72@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Mar 19, 2025 at 11:10:07AM -0600, Jens Axboe wrote:
-> On 3/19/25 11:07 AM, David Sterba wrote:
-> > On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
-> >> On 3/19/25 9:26 AM, Jens Axboe wrote:
-> >>>
-> >>> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
-> >>>> This patche series introduce io_uring_cmd_import_vec. With this function,
-> >>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
-> >>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> >>>> for new api for encoded read/write in btrfs by using uring cmd.
-> >>>>
-> >>>> There was approximately 10 percent of performance improvements through benchmark.
-> >>>> The benchmark code is in
-> >>>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
-> >>>>
-> >>>> [...]
-> >>>
-> >>> Applied, thanks!
-> >>>
-> >>> [1/5] io_uring: rename the data cmd cache
-> >>>       commit: 575e7b0629d4bd485517c40ff20676180476f5f9
-> >>> [2/5] io_uring/cmd: don't expose entire cmd async data
-> >>>       commit: 5f14404bfa245a156915ee44c827edc56655b067
-> >>> [3/5] io_uring/cmd: add iovec cache for commands
-> >>>       commit: fe549edab6c3b7995b58450e31232566b383a249
-> >>> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
-> >>>       commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+On Wed, Mar 19, 2025 at 07:51:02AM -0600, Jens Axboe wrote:
+> On 3/19/25 7:47 AM, Jens Axboe wrote:
+> > On 3/19/25 3:26 AM, Ming Lei wrote:
+> >> Hi Jens,
 > >>
-> >> 1-4 look pretty straight forward to me - I'll be happy to queue the
-> >> btrfs one as well if the btrfs people are happy with it, just didn't
-> >> want to assume anything here.
+> >> The 1st patch removes the liburing ublk test source, and the 2nd patch
+> >> adds the test back with the kernel ublk selftest source.
+> >>
+> >> The original test case is covered, and io_uring kernel fixed buffer and
+> >> ublk zero copy is covered too.
+> >>
+> >> Now the ublk source code is one generic ublk server implementation, and
+> >> test code is shell script, this way is flexible & easy to add new tests.
 > > 
-> > For 6.15 is too late so it makes more sense to take it through the btrfs
-> > patches targetting 6.16.
+> > Fails locally here, I think you'll need a few ifdefs for having a not
+> > completely uptodate header:
+> > 
+> > ublk//kublk.c: In function ?cmd_dev_get_features?:
+> > ublk//kublk.c:997:30: error: ?UBLK_F_USER_RECOVERY_FAIL_IO? undeclared (first use in this function); did you mean ?UBLK_F_USER_RECOVERY_REISSUE??
+> >   997 |                 [const_ilog2(UBLK_F_USER_RECOVERY_FAIL_IO)] = "RECOVERY_FAIL_IO",
+> >       |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > With
+> > 
+> > #ifndef UBLK_F_USER_RECOVERY_FAIL_IO
+> > #define UBLK_F_USER_RECOVERY_FAIL_IO   (1ULL << 9)
+> > #endif
+> > 
+> > added it works as expected for me, but might not be a bad idea to
+> > include a few more? Looks like there's a good spot for it in kublk.h
+> > where there's already something for UBLK_U_IO_REGISTER_IO_BUF.
+> > 
+> > Outside of that, when running this in my usual vm testing, I see:
+> > 
+> > Running test ublk/test_stress_02.sh                                 modprobe: FATAL: Module ublk_drv not found in directory /lib/modules/6.14.0-rc7-00360-ge07e8363c5e8
+> > 
+> > as I have ublk built-in. The test still runs, but would be nice to
+> > get rid of that complaint.
 > 
-> No problem - Sidong, guessing you probably want to resend patch 5/5 once
-> btrfs has a next branch based on 6.15-rc1 or later.
+> Oh, and looks like it should also skip the test if an argument is
+> passed in. My usual setup has 4-5 devices/paths defined for
+> testing, and tests that don't take a file argument should just
+> skip.
+> 
+> Forgot to mention, that unifying the selftests and liburing test
+> is a really good idea! Will make it easier to sync them up and
+> get coverage both ways.
 
-Thanks, I'll resend only patch 5/5 then.
+Yeah, the kernel selftest side can be thought as upstream, :-)
+
+I just sent three ublk kernel selftest patches, which covers all
+the above problems. With the three changes, only three lines of code
+change on test_common.sh is needed for liburing test:
+
+```
+#liburing
+UBLK_TEST_SHOW_RESULT=0
+UBLK_SKIP_CODE=77
+[ $# -ne 0 ] && exit "$UBLK_SKIP_CODE"
+```
 
 Thanks,
-Sidong
-> 
-> -- 
-> Jens Axboe
-> 
+Ming
+
 

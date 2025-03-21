@@ -1,86 +1,87 @@
-Return-Path: <io-uring+bounces-7186-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7187-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268BDA6C511
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 22:24:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA66A6C548
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 22:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E6D483205
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 21:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CEB3174CEF
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 21:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DDC231A37;
-	Fri, 21 Mar 2025 21:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB5022FDEE;
+	Fri, 21 Mar 2025 21:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IYYF0198"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="D3YWjS1N"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CDE230BC5
-	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 21:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559C91F0E29
+	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 21:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742592260; cv=none; b=Rz9P5AsSF5/Kif+9Y4NHbFPKhvl3EK2U7wUfBf/WEZH1KbnjNjIeGpyi3uVyRj1+cXUAyZA+hJPiFC8ka5H+Ow8W+1qw9I4fbDhwbrSbbMCcoGdTeSMMisgy8BGVgS0uG6fqFSXybGnVW++c253SxIXFXLKBJyUzE5Lm0IeXYqs=
+	t=1742593112; cv=none; b=asq1mtfxBS8Ep1zvRUN3Gf8Fy9R+23ZTJ0eR/9HMacCciYdxjenVjjmV9H0SdZy3OwGfbAxs0TkUaA0fO2upf8At5aG1bzEdgbfy33iwdWmnIyh4jNanaKxzw5vY01v7QDct8g93QKFr71Sg0sLP7fpdzCg2k2qCt63mhkjtqbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742592260; c=relaxed/simple;
-	bh=xgEexH4YlzNQooQdAkGITDiRNkQG2ag5mUu5UecmzPo=;
+	s=arc-20240116; t=1742593112; c=relaxed/simple;
+	bh=0s8PHm04p4vmMdRlrDb7etA3hydAU6JK9t4r3Yd98L8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HwhMS+Laa4ySYxNPWUN9ncHwV4jgaB1kuxqnQNU0hqR0X3P8LDOgqDyZlFIWBjYjX2LXaN9LJJmX/vvi3641FvndjsarDfccFuQfw7xv0k9h8VXAkgPBNFnOCZI8TZ+oNBaaHj9X+jWnElDbH/cpFxrjo09pecUWBeNu2I+Np/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IYYF0198; arc=none smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=T0OmpjI7jci4Sban+38AMuoVQMb/Z8wAC5is5DZsIar5GLSNr5bh30QAvOMRtGXvlmntoT1uxTH/oBTrCKm4Dv0O3AB3LNMp56QD+01ZjNPqcE55/49kZ9LuqNtGkeFmLzDOiIjRR/puafPoYj0SPwarTsCo5XbGSLksCh+96ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=D3YWjS1N; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301317939a0so651390a91.2
-        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 14:24:18 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2260202c2a1so5660845ad.3
+        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 14:38:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742592258; x=1743197058; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1742593110; x=1743197910; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xgEexH4YlzNQooQdAkGITDiRNkQG2ag5mUu5UecmzPo=;
-        b=IYYF01985D9yvKCk2MjWBG431+Jzo8ey8cwDWapZo+t/ACvSnefnWLeOQEceH0cZb5
-         1GhaKhd6WKFN1VJG8TYbPLRZkQ6ElZlTejKCVp8byI9LIu/hVDfIjNrDZkod4tnT4bB6
-         5BeLTa06w71yjAEiHXfd++Ft2sESA87vp+dt/9JD2JeCFsEVveh/9t/JXin7QUQybWRy
-         /+XU4I2M9bIzJQ6uPyJgWnVEAZuZegYNJgL3hUtcTZtMXUsbC/xCH14hD/9tgyRchwib
-         oY9C88Kjm0GyPhnKxDXYaha9ELJ/G/4VynWHO1RnjW66Xk2CQ1kNIkoX7PIW5DM5fvaQ
-         j9+g==
+        bh=0s8PHm04p4vmMdRlrDb7etA3hydAU6JK9t4r3Yd98L8=;
+        b=D3YWjS1NLsOrQQgbH7niTFYfhZE0Njg3cCEj01M2mCK3fDbRsGWAP+kVkScg8jXePb
+         6Pzo3q5IwnaRm4YCaru+xtjxTLS1A8iF8OGFAxtceJYxoHQMnJ6eVxnPUJzz1TWHcB2O
+         fKCkkh04HcG7FOpKKvy7wfXPTgEkxiGX5gOwA1VQUAjYDDHqYNPOSGaXhNYebj+Pymgr
+         ILiwVRYYoZlpqgl3X0PMNpVjT5axrDs9dsFk75R6leq4hJc47nTk3/fb2If2aCKo8IJD
+         A+ZzFGMNixKLEe+i6s+VOqJAphwpw/OpDJqg4tpTM0+VDbNbmhXpqFt0Ba8NooHCKlBd
+         2dnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742592258; x=1743197058;
+        d=1e100.net; s=20230601; t=1742593110; x=1743197910;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xgEexH4YlzNQooQdAkGITDiRNkQG2ag5mUu5UecmzPo=;
-        b=CMRa82VZX5cxOyQrRUuqo3HgaD3iQKVRtGbCdCLtb+htdl9UrGmjjd5rb7QH8WXuOq
-         Ds8VLtKpMmC060WVi3Y70ARg9DOZTJDJKdGCBjzEHscSAjD28hcHCVhXimwuarquUaEH
-         rsKW3DLrM+9pDIuGGXbjFGiGRbv/HijDoXcNMViKDQpYTbmsJapn4JLmeNf3KcGwTb7l
-         Gc7KOrpsIQxdg3ixBZb+nk68yYl+66PI5JUbImq5SCQqy2yvjsAhMTNtQW28WlS+M2ZD
-         tl5+KDDFtYELGlgKvCsoAB6p1C39PjPLTebODAv37EQ/ZjYEzWJpdCWoo4yszAG+7YfC
-         E/sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJaOkbW0SzT81pzwuyMB64xZqqCDaXh7FmGvkqzIZd+lKZcqucos3UG97M6DZlg8BZbg1go2fFvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxguJk5yu4e6E52H9SvaSlWB9KErPW7AtOXm0YwiH9j3lJDy1HR
-	Nojmn5GQmqTsk3hITFmPUz+Zq8xAfGYnlegi0UQFLSJreySKCr0IL40VofH5n4stGlmBKXkg4yY
-	SQ1J72uNoRfDMoh75aspWgkZCX08rDWc3yoA/HVj11O3BqXssHD8=
-X-Gm-Gg: ASbGnctW818p8PlE16B4NYOO9a3do6/7mZMGyKLZMPEZQDu9V0NZbb8d8nrw0sDy0r0
-	m/Cuxsweu++SKjShScrLuSugnReCVmHeuX8ngb4QH+RE9LIQ3960RYfsemz+KIwkkH3hL3mTjtW
-	ipX1ZoTAK1PGMDLQhWbbTyoc9S
-X-Google-Smtp-Source: AGHT+IEWKjJGtm5ghineH2xwXYNT84KCnqIRLDNZSQSW8P28Btfs8lapQkXp4I96X8icAPuhtpGyDCSg8I4uBIG6u90=
-X-Received: by 2002:a17:90b:3a86:b0:2ff:7b67:2358 with SMTP id
- 98e67ed59e1d1-3030fe6df4bmr2143070a91.2.1742592257499; Fri, 21 Mar 2025
- 14:24:17 -0700 (PDT)
+        bh=0s8PHm04p4vmMdRlrDb7etA3hydAU6JK9t4r3Yd98L8=;
+        b=E83DIYM3iyagPg9yK2miAvXKEQ43YfaLow6sLZ/8V30wDK/nkIzWIsTcsPThbdxuEk
+         R0v4MVE/Z4hjFN+QgWdNvySRx6GjGLF/QsG7n1HLQAb+YX8/Cd8QIXyq4JExFzqInjUb
+         RF36ZEs5xzlTOjRi6aXjwLv0s95rMwV/NAo7oZHPd/BJdE7VvJ0jaXhtbaECbixP8lr7
+         I5sb/TK1FZAGq+athFOgotlnXF1hJiVY+4YKNT/+q2xPsBydWnZnxkcdXM2iQRmCUWEi
+         8hvbBxUdX20wKvdbhyPSDYeV39ewrdh7wi81y2XE3t6u40ke8VLi0OSgpAWPyMmrLj4r
+         4ylQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbsv8wHqrZuu//0aAF0CcqCMAy57hEfno7RrTUOYVWqa3NvDQ0xIbIwWnkXktqHreI3teFlqeWLg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK/eA18vfqXFrnxA12IPloMnwEwibOXARcMuWy/4knEsJ+3BbB
+	L7sRhFYxoXoZPWHWlw6f45NtlH8IQIjm+7ldCdthcntTVFnL06MEOKtDFZA13heXLGBa6Nt0gMB
+	jfXoR0ybLDU54892/KN4cbs30rIwmOmrIOxClRg==
+X-Gm-Gg: ASbGncsi2ISJDek4iUNTVSg2cWTlG1dZ4g2/49in8KVOOpor8VnHr+E2YSnlCR+rMJN
+	wCpUXMNUPJFrXM2tk+HNVYVXkNeq+UoPU2Jx0hgIucHJ3Xp6shO8bWDJ4eYlQLHvyiW2Sykjrx2
+	iNpehDSeHEOXqmpBMwtyNzCPCB
+X-Google-Smtp-Source: AGHT+IGSk+bsBxz+JO9UqX1StGRAOw80slB+xBi/7szzHuQU/IKincKxZ1fz09uQ/n1u+YujF0fQ7TN14YtlTnBH7/c=
+X-Received: by 2002:a17:902:db0e:b0:21b:b115:1dd9 with SMTP id
+ d9443c01a7336-22780c7cad0mr28361055ad.5.1742593110608; Fri, 21 Mar 2025
+ 14:38:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321184819.3847386-1-csander@purestorage.com> <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
-In-Reply-To: <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
+References: <20250321184819.3847386-1-csander@purestorage.com>
+ <20250321184819.3847386-4-csander@purestorage.com> <8338ac70-ed0b-4df5-a052-9ab1dfec9e26@gmail.com>
+In-Reply-To: <8338ac70-ed0b-4df5-a052-9ab1dfec9e26@gmail.com>
 From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 21 Mar 2025 14:24:06 -0700
-X-Gm-Features: AQ5f1JovqdCIrHb51iECUiV7-0VxJPfIpPS2a0CZYqJvx9jgCUTe3TWJ9VOPsBk
-Message-ID: <CADUfDZo5qKymN515sFKma1Eua0bUxThM5yr_LeQHR=ahQuS_wg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
+Date: Fri, 21 Mar 2025 14:38:19 -0700
+X-Gm-Features: AQ5f1JqF7084HWCX45pZ6paHlx6q6XUtczTCEEBO8pEFGjQNkwueLYbERoxLSfY
+Message-ID: <CADUfDZoELiri8Fuq3tHSsKf1XhPVaZ1eoCzfXK7g994VY4o9Vg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] io_uring/uring_cmd: import fixed buffer before going async
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>, 
 	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
@@ -89,75 +90,37 @@ Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 1:23=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+On Fri, Mar 21, 2025 at 1:34=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
 com> wrote:
 >
 > On 3/21/25 18:48, Caleb Sander Mateos wrote:
-> > To use ublk zero copy, an application submits a sequence of io_uring
-> > operations:
-> > (1) Register a ublk request's buffer into the fixed buffer table
-> > (2) Use the fixed buffer in some I/O operation
-> > (3) Unregister the buffer from the fixed buffer table
-> >
-> > The ordering of these operations is critical; if the fixed buffer looku=
-p
-> > occurs before the register or after the unregister operation, the I/O
-> > will fail with EFAULT or even corrupt a different ublk request's buffer=
-.
-> > It is possible to guarantee the correct order by linking the operations=
-,
-> > but that adds overhead and doesn't allow multiple I/O operations to
-> > execute in parallel using the same ublk request's buffer. Ideally, the
-> > application could just submit the register, I/O, and unregister SQEs in
-> > the desired order without links and io_uring would ensure the ordering.
-> > This mostly works, leveraging the fact that each io_uring SQE is preppe=
-d
-> > and issued non-blocking in order (barring link, drain, and force-async
-> > flags). But it requires the fixed buffer lookup to occur during the
-> > initial non-blocking issue.
+> > For uring_cmd operations with fixed buffers, the fixed buffer lookup
+> > happens in io_uring_cmd_import_fixed(), called from the ->uring_cmd()
+> > implementation. A ->uring_cmd() implementation could return -EAGAIN on
+> > the initial issue for any reason before io_uring_cmd_import_fixed().
+> > For example, nvme_uring_cmd_io() calls nvme_alloc_user_request() first,
+> > which can return -EAGAIN if all tags in the tag set are in use.
 >
-> In other words, leveraging internal details that is not a part
-> of the uapi, should never be relied upon by the user and is fragile.
-> Any drain request or IOSQE_ASYNC and it'll break, or for any reason
-> why it might be desirable to change the behaviour in the future.
+> That's up to command when it resolves the buffer, you can just
+> move the call to io_import_reg_buf() earlier in nvme cmd code
+> and not working it around at the io_uring side.
 >
-> Sorry, but no, we absolutely can't have that, it'll be an absolute
-> nightmare to maintain as basically every request scheduling decision
-> now becomes a part of the uapi.
+> In general, it's a step back, it just got cleaned up from the
+> mess where node resolution and buffer imports were separate
+> steps and duplicate by every single request type that used it.
 
-I thought we discussed this on the ublk zero copy patchset, but I
-can't seem to find the email. My recollection is that Jens thought it
-was reasonable for userspace to rely on the sequential prep + issue of
-each SQE as long as it's not setting any of these flags that affect
-their order. (Please correct me if that's not what you remember.)
-I don't have a strong opinion about whether or not io_uring should
-provide this guarantee, but I was under the impression this had
-already been decided. I was just trying to fix the few gaps in this
-guarantee, but I'm fine dropping the patches if Jens also feels
-userspace shouldn't rely on this io_uring behavior.
-
->
-> There is an api to order requests, if you want to order them you
-> either have to use that or do it in user space. In your particular
-> case you can try to opportunistically issue them without ordering
-> by making sure the reg buffer slot is not reused in the meantime
-> and handling request failures.
-
-Yes, I am aware of the other options. Unfortunately, io_uring's linked
-operation interface isn't rich enough to express an arbitrary
-dependency graph. We have multiple I/O operations operating on the
-same ublk request's buffer, so we would either need to link the I/O
-operations (which would prevent them from executing in parallel), or
-use a separate register/unregister operation for every I/O operation
-(which has considerable overhead). We can also wait for the completion
-of the I/O operations before submitting the unregister operation, but
-that adds latency to the ublk request and requires another
-io_uring_enter syscall.
-
-We are using separate registered buffer indices for each ublk request
-so at least this scenario doesn't lead to data corruption. And we can
-certainly handle the EFAULT when the operation goes asynchronous, but
-it would be preferable not to need to do that.
+Yes, I considered just reordering the steps in nvme_uring_cmd_io().
+But it seems easy for a future change to accidentally introduce
+another point where the issue can go async before it has looked up the
+fixed buffer. And I am imagining there will be more uring_cmd fixed
+buffer users added (e.g. btrfs). This seems like a generic problem
+rather than something specific to NVMe passthru.
+My other feeling is that the fixed buffer lookup is an io_uring-layer
+detail, whereas the use of the buffer is more a concern of the
+->uring_cmd() implementation. If only the opcodes were consistent
+about how a fixed buffer is requested, we could do the lookup in the
+generic io_uring code like fixed files already do.
+But I'm open to implementing a different fix here if Jens would prefer.
 
 Best,
 Caleb

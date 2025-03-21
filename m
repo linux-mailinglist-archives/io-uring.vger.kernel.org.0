@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-7167-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7166-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F9DA6C216
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:05:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A326A6C212
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113E77A86C7
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 18:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33842465B42
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 18:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC4222E3E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC9D22E405;
 	Fri, 21 Mar 2025 18:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQ8V6obG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSE+IC0C"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E971DB366
-	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 18:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C336E78F5B
+	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 18:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742580229; cv=none; b=m6ewJADQ+HjVASBhZtuGAAv3v4QX9LRZ9XaqhQz9OvlwOREi9w5OkFCxaCmUtvE3Nblp6ZmbGHRn0eTaR7MZYqB7DyKKLoWU9VnX+PC2kMiG0hKMzVkfmd86wjv1l5x2B8gY3VFPnc4Uclo/9r8FQo5lRpJP23umOH0XeiPbEQk=
+	t=1742580229; cv=none; b=QpeNTSP7oRQ+SxYVyQJ6zLinnfKWJEiCBlMYYJEfs8iH3d55PKVW34Libom5bJkq5XcjWy71GdKUg5NCW6T9QUTzhfCClGAFxrH92Ye32HMdHQcuPDyaa8iRm4o1Qy/Gck8d+7IuJRBZUE01WeqIUskEj66fA+kbtllKb3kCxos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742580229; c=relaxed/simple;
-	bh=c57QQ6t7C1AigZNTzPTEjK1RPP9Q5YHrl1t3mRVf5sI=;
+	bh=Qiq9QCrGk5TkB9pGm0wq49GL9GKj3R/yxn7kdMkwhdo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uFVCL9KUY2y7l7d6JluNMO0JrbNCNhHXmv2BRYanyJNP/mrxCQynV/gq5VNiFWr01VrXevPYh+GTA0t+ByWm+vRQJp12GawEDua7ggR6Big9DMPJEDrNGlT1kM0u1qRLoh6Nj3du4W/b3b6K6hu2QZG4onwomt/L7OEUCMBCZII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQ8V6obG; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version; b=Ae0d2UGilZncuI4HEZ2+3qtLtzUUwfCthyTAbK887GTy4dMaQasYxsJf/3h4PskAC0uj9tYr88x0ZWY9zW8E9lCqOJ37YoCjrC6uFX9BMpQvZ9IXaAikixAI7cqbTAC0oo+KoHBuAyH48jCcIBerCc02FU8aV+5Ct6iUd/8Nv5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSE+IC0C; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac27cb35309so403765166b.2
-        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 11:03:45 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac34257295dso477474066b.2
+        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 11:03:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742580224; x=1743185024; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742580225; x=1743185025; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bEw6jKWRjhUbQvTGDrTYeSSfCLGZM3wSVTv+AB5qA04=;
-        b=QQ8V6obG7Zxo8481hdaBuXHYb38YV1g7e+LfU5dGaLbdoI+YKH9dMQQpVa18u630T2
-         g9vYRP2Lk0xEBADePwvJHqleImdRuZO6L6QBZ0qBCfWY+4dnG/hfZXtb+xelfbuYYWRJ
-         xV/mQ2RwRiSSkCL3sZgJs4jrVPpg7jBUEi6cWVqDCk3fNhAZZ9lRuU9FVkqdtj//XrEg
-         EyHFKPchag01fNsVx/xosGx/CRG8tFg9pCkB1/w2bvMFom00ignskUWZxDtpF6gqRYew
-         t9QAcG/t6Z4iYx3QRADRIsumR5K93di4qsc5VeHRZbdlG+m5pl8vCB9HhLiB1lWO0IdZ
-         qgwA==
+        bh=hIAG2Vk8MTGRYi2E9GE6atqWdSHnwdRL99A7etsMoU8=;
+        b=WSE+IC0Cve2DjgbHbVz5t5JGpgwrbksWd66mj/ZBfyBiOb0BMp6jXCfK33qYSyqpEJ
+         81yg7Dih+aw4P0nUx3fMTO2pG0H9moRQDF4pwddKbl3pgixp5ORpY183OwvdkksPWFHZ
+         krzgnXDlbWrkabMPJD59EflmV5ywqwHSlJtlxPCKCIe5SKLLM3Klw/TGqdoOi5Gz5hjb
+         9bi4v3FwZAX4BThmwTqDhCqqmgqDi6UjKgMGfaLxUeZa8nZuExkxnNFQFDsLX0TLvPiw
+         nxOPr0mZLGvLDd5v7vDxybew7OZONsq1VAV2NMdf3opEzMkQ6TkGOsjFDVpTcSF/WYqE
+         kSZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742580224; x=1743185024;
+        d=1e100.net; s=20230601; t=1742580225; x=1743185025;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bEw6jKWRjhUbQvTGDrTYeSSfCLGZM3wSVTv+AB5qA04=;
-        b=Awtxp3AS6KaUOd0+2CKLs1FP7eCZglMDrIjYvAwnLgyhgrrmZSiwMBueXs5j6frS2G
-         p9GpbjHNmdEEp1FKmCMatJ8BFlLeMK6j/Nz9SK3DH67TAeMt9hkvSoVVYzVwq61yjnBU
-         /u4ljPE/kGqyZohpyI8/m7FpwaQme9S0UJA3L6Vopyo6ETkaCI+DhLs9kTx/NH2E2haA
-         JIkdArRFYYQD/1QE8INgst1/2s5lldN65+SI6+4f9asn38Zm3Wtf92Alfi//qHH2yFEP
-         h7aYVL/5GcDvcJMcf1F8tlLL9GHWdk17HiYQbEkx+U8VUdlBwPsQOjgIqLvLUfiJxEUn
-         wtAg==
-X-Gm-Message-State: AOJu0YxjR7AfHd0o6gFO+h1eu0va4UAtHzc8xxZdGLEIIBG851cWHA9S
-	sGgZw02LSA35pYDe3hLHUjRgzv+s3d2vxYX/gHCQHyc1SRNSrFSVjjZ4TQ==
-X-Gm-Gg: ASbGncuFX0aLdCi1+q00mvm5khT4WaA3vpwDMRon8M7G+mz19FHdUQK7WMap3JsASSE
-	pHvoX9IVaoI7JSUBQNIMuaGR9rNq4v4E1tMBCahX25sQ71AwDlCaF/cBLo0BHImxpbtO9TGbMKd
-	Omv1hyhSjsh1ylP/Y0JKg+G5gs9niKizut+jy0Lk9wBV1nxZGjT87qgZaEyAba7+MIIZIs11boT
-	SaSWLe/fFWRtcIdyz4yo1qsdwqBpI82cq7cZ8tTi6VucxeoFUCdzNpovs4SdFMyRlLXzOeT2kl1
-	IvEylzJJbYvSY+dZ9WY3yymqdqF+rc4YjGABX3DcwkVouwCBmApEFI9PNQ==
-X-Google-Smtp-Source: AGHT+IF6M8x1x8aPCH4HVxgZNTaNUYNCn+1K8lCX1ll1uGYaMmRS5munx/ESh82U4pOM12hSHBocKw==
-X-Received: by 2002:a17:907:97ce:b0:ac3:bd68:24f0 with SMTP id a640c23a62f3a-ac3f2100aeamr465765166b.7.1742580223906;
-        Fri, 21 Mar 2025 11:03:43 -0700 (PDT)
+        bh=hIAG2Vk8MTGRYi2E9GE6atqWdSHnwdRL99A7etsMoU8=;
+        b=Qej4izsodt1T6PktUBU3eKymcBRVI7vtjlbNpBYP/yUKC1UoRXhbK2CyhEzjWwNydC
+         AsDBdWPWqaAUKxO47TzSKuIoXc33tQ9vm+a4hX7/9ckWWwW5ycrwhnhq/iBQQo4PPno2
+         ke7QDayfw+7P6jb4p9snfgPwk6wYJTdALIaMc+EucVol6v+pomOufZxFcfgvBTWaK/CI
+         nLTEnFqH97TKRmJ9DJfXJFCmaHnCNUzIBwz8ipe4jkB/isTsBQw6SGvGmNnUgqdd53Zz
+         u88x7lFf8q5WCEr+W18b31pgQwuBnDVMC4jWM0nc5fIf6LRbyBBviAjSPNmIzBzLSmTc
+         nKIg==
+X-Gm-Message-State: AOJu0YxSk+/bSqmNsBsIpTFvZ58KndLbLpcfkNIDJ1n7eDerCG/FRLG0
+	UvkW6rrbakagh2Hem23NymWipyrKgznoSkr4+EOitrJf73ikhSD7cmqCvg==
+X-Gm-Gg: ASbGnctcMjaa+iHpgVB8rXPG1uO9O6aWERcPhAF3+0XVQDktPSkCABwBF9+TJ5TnBTt
+	AkjXvK0dZA4vtHFa2cXgK4+A9FlIRGpVBAJAhwCxN9Fw5W8llNVZA1hcw11dJXkRJ8QmoMhwA2M
+	oSnprEvXdLtNAMUdVoz2ZoGFr+fIkBQdTFCqWRWYWRm9p/7omEp6Dijr1VOJ/lKammQth9Iup3e
+	aBUlfdHbEgJK9SEGKKSW7psl3tWzGjrCBZZhm5Oj8/nK3aJyaYEgpRfxTOSvTcyzWoz8bew77gA
+	HvLVNgWz3ogGcWBgGQiK6/JfCkAAIZgb+sVdOMYrOe6YZHoKfQ7CrZfvBBDmnQPUb6Ns
+X-Google-Smtp-Source: AGHT+IGAd76VyOxZpXJIiG/687vva2mxveWIlU2r5kJ9yKxKCnDt5nEv66XBodvllg2UyDdfoyt4+g==
+X-Received: by 2002:a17:906:c105:b0:ac1:fab4:a83 with SMTP id a640c23a62f3a-ac3f22aec3fmr420811566b.25.1742580225273;
+        Fri, 21 Mar 2025 11:03:45 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.236.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d3d2dsm191646266b.60.2025.03.21.11.03.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d3d2dsm191646266b.60.2025.03.21.11.03.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 11:03:43 -0700 (PDT)
+        Fri, 21 Mar 2025 11:03:44 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v2 1/2] io_uring/cmd: add iovec cache for commands
-Date: Fri, 21 Mar 2025 18:04:33 +0000
-Message-ID: <c0f2145b75791bc6106eb4e72add2cf6a2c72a7a.1742579999.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/2] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+Date: Fri, 21 Mar 2025 18:04:34 +0000
+Message-ID: <97487a80dec3fb8cf8aeedf1f9026ef6d503fe4b.1742579999.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1742579999.git.asml.silence@gmail.com>
 References: <cover.1742579999.git.asml.silence@gmail.com>
@@ -88,123 +88,94 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add iou_vec to commands and wire caching for it, but don't expose it to
-users just yet. We need the vec cleared on initial alloc, but since
-we can't place it at the beginning at the moment, zero the entire
-async_data. It's cached, and the performance effects only the initial
-allocation, and it might be not a bad idea since we're exposing those
-bits to outside drivers.
+io_uring_cmd_import_fixed_vec() is a cmd helper around vectored
+registered buffer import functions, which caches the memory under
+the hood. The lifetime of the vectore and hence the iterator is bound to
+the request. Furthermore, the user is not allowed to call it multiple
+times for a single request.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c  |  5 +++--
- io_uring/opdef.c     |  1 +
- io_uring/uring_cmd.c | 20 +++++++++++++++++++-
- io_uring/uring_cmd.h |  5 +++++
- 4 files changed, 28 insertions(+), 3 deletions(-)
+ include/linux/io_uring/cmd.h | 13 +++++++++++++
+ io_uring/uring_cmd.c         | 19 +++++++++++++++++++
+ io_uring/uring_cmd.h         |  6 ++++++
+ 3 files changed, 38 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5eb9be063a7c..e1128b9551aa 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -289,7 +289,7 @@ static void io_free_alloc_caches(struct io_ring_ctx *ctx)
- 	io_alloc_cache_free(&ctx->apoll_cache, kfree);
- 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
- 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
--	io_alloc_cache_free(&ctx->cmd_cache, kfree);
-+	io_alloc_cache_free(&ctx->cmd_cache, io_cmd_cache_free);
- 	io_alloc_cache_free(&ctx->msg_cache, kfree);
- 	io_futex_cache_free(ctx);
- 	io_rsrc_cache_free(ctx);
-@@ -335,7 +335,8 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 			    sizeof(struct io_async_rw),
- 			    offsetof(struct io_async_rw, clear));
- 	ret |= io_alloc_cache_init(&ctx->cmd_cache, IO_ALLOC_CACHE_MAX,
--			    sizeof(struct io_async_cmd), 0);
-+			    sizeof(struct io_async_cmd),
-+			    sizeof(struct io_async_cmd));
- 	spin_lock_init(&ctx->msg_lock);
- 	ret |= io_alloc_cache_init(&ctx->msg_cache, IO_ALLOC_CACHE_MAX,
- 			    sizeof(struct io_kiocb), 0);
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index e4aa61a414fb..489384c0438b 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -755,6 +755,7 @@ const struct io_cold_def io_cold_defs[] = {
- 	},
- 	[IORING_OP_URING_CMD] = {
- 		.name			= "URING_CMD",
-+		.cleanup		= io_uring_cmd_cleanup,
- 	},
- 	[IORING_OP_SEND_ZC] = {
- 		.name			= "SEND_ZC",
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 598cacda4aa3..e6723fa95160 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -43,6 +43,11 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter,
+ 			      struct io_uring_cmd *ioucmd,
+ 			      unsigned int issue_flags);
++int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
++				  const struct iovec __user *uvec,
++				  size_t uvec_segs,
++				  int ddir, struct iov_iter *iter,
++				  unsigned issue_flags);
+ 
+ /*
+  * Completes the request, i.e. posts an io_uring CQE and deallocates @ioucmd
+@@ -76,6 +81,14 @@ io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
++						const struct iovec __user *uvec,
++						size_t uvec_segs,
++						int ddir, struct iov_iter *iter,
++						unsigned issue_flags)
++{
++	return -EOPNOTSUPP;
++}
+ static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
+ 		u64 ret2, unsigned issue_flags)
+ {
 diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 7c126ee497ea..6a21cdaaf495 100644
+index 6a21cdaaf495..f2cfc371f3d0 100644
 --- a/io_uring/uring_cmd.c
 +++ b/io_uring/uring_cmd.c
-@@ -16,6 +16,14 @@
- #include "rsrc.h"
- #include "uring_cmd.h"
- 
-+void io_cmd_cache_free(const void *entry)
-+{
-+	struct io_async_cmd *ac = (struct io_async_cmd *)entry;
-+
-+	io_vec_free(&ac->vec);
-+	kfree(ac);
-+}
-+
- static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-@@ -29,13 +37,23 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	if (issue_flags & IO_URING_F_UNLOCKED)
- 		return;
-+
-+	io_alloc_cache_vec_kasan(&ac->vec);
-+	if (ac->vec.nr > IO_VEC_CACHE_SOFT_CAP)
-+		io_vec_free(&ac->vec);
-+
- 	if (io_alloc_cache_put(&req->ctx->cmd_cache, cache)) {
- 		ioucmd->sqe = NULL;
- 		req->async_data = NULL;
--		req->flags &= ~REQ_F_ASYNC_DATA;
-+		req->flags &= ~(REQ_F_ASYNC_DATA|REQ_F_NEED_CLEANUP);
- 	}
+@@ -277,6 +277,25 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
  }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
  
-+void io_uring_cmd_cleanup(struct io_kiocb *req)
++int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
++				  const struct iovec __user *uvec,
++				  size_t uvec_segs,
++				  int ddir, struct iov_iter *iter,
++				  unsigned issue_flags)
 +{
-+	io_req_uring_cleanup(req, 0);
-+}
++	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
++	struct io_async_cmd *ac = req->async_data;
++	int ret;
 +
- bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
- 				   struct io_uring_task *tctx, bool cancel_all)
++	ret = io_prep_reg_iovec(req, &ac->vec, uvec, uvec_segs);
++	if (ret)
++		return ret;
++
++	return io_import_reg_vec(ddir, iter, req, &ac->vec, uvec_segs,
++				 issue_flags);
++}
++EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_vec);
++
+ void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
  {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
 diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-index 2ec3a8785534..b45ec7cffcd1 100644
+index b45ec7cffcd1..14e525255854 100644
 --- a/io_uring/uring_cmd.h
 +++ b/io_uring/uring_cmd.h
-@@ -1,13 +1,18 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io_uring/cmd.h>
-+#include <linux/io_uring_types.h>
- 
- struct io_async_cmd {
- 	struct io_uring_cmd_data	data;
-+	struct iou_vec			vec;
- };
- 
- int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
- int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+void io_uring_cmd_cleanup(struct io_kiocb *req);
- 
- bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
+@@ -16,3 +16,9 @@ bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
  				   struct io_uring_task *tctx, bool cancel_all);
+ 
+ void io_cmd_cache_free(const void *entry);
 +
-+void io_cmd_cache_free(const void *entry);
++int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
++				  const struct iovec __user *uvec,
++				  size_t uvec_segs,
++				  int ddir, struct iov_iter *iter,
++				  unsigned issue_flags);
 -- 
 2.48.1
 

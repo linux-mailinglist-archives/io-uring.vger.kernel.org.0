@@ -1,103 +1,101 @@
-Return-Path: <io-uring+bounces-7180-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7181-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE52A6C3C7
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 20:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCE6A6C41D
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 21:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476F217B114
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A842484655
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 20:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000B322F16C;
-	Fri, 21 Mar 2025 19:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBA3230BD1;
+	Fri, 21 Mar 2025 20:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yxERy65R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ9fjajj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D00522F38B
-	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 19:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8C62309A6;
+	Fri, 21 Mar 2025 20:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742586827; cv=none; b=WqE5hq76yKB/+bi/iRynPm7lbs50PFhTft/d52rzi7iFdQK0yZSCqRXV7RL2JURjEAe17rdR1M4SgDHDJYof5erGkotaqe9J9MmN2gXjPzqyr8kAp01OCxnnbDpA69wEQWrj+kCT2fyEfhrCjlksiylyk+nQxRacV0PPpXJXlDA=
+	t=1742588638; cv=none; b=Gyz6ZxFEfcOeFQuacW/vX/P1XhB1z1moGZDfatGHBeONKWpdxAs5Wo2NUEYt1Nl7l1GjCJY4Q4A1ymWEjrqEdwXKGitrRjLyONXkD92Adxpgl8CabSSr7LskZUo9j0ixLvYb/UseUaKzBMkBmZaT7BDQRRBe3fFzsggIzW9EkIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742586827; c=relaxed/simple;
-	bh=R1bFxZwTHqysjq7Q8LQpThhzLH0VTcsOTt2iO+OFDYM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DmcUbNhZ0W7Y+YODn4UXlMynfjORBzj3gq+RHxxkaXSM7+EYh0pKmibdb62VmXdGHQ3txBD5APEwDDR5brFaBWPBaRpPZ2CLwuHSBvFy/BON2HGiq6ja7Z9IvV8nJvur7ecbJZBUsulzVmAKXihBV/n+LE0mfOCsMYp59ajhJoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yxERy65R; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d58908c43fso6497215ab.0
-        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 12:53:45 -0700 (PDT)
+	s=arc-20240116; t=1742588638; c=relaxed/simple;
+	bh=FZPVNC1hAlqDTDyrlm9WoSjlmfBUINapL7lp89sBvQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXW+mR01pgEHDeyFAn+uYieLJHeZaytY69cg2Lrvv4GAp8p3aM3IBxdoaObcTqMIHXqGi/jpsCFAIQvryFPnRCl6frQOW2vGqSYZurr/I7R3bDXLZpw/KV7PihLGUCb+S4J0wW42dxSiry+9qh7w+xHKDU/YOVGUgO0BlCWfsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ9fjajj; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso261972066b.0;
+        Fri, 21 Mar 2025 13:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742586824; x=1743191624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YzesUfd46zeebs0CrPG+xIoJVH8zLtMaJo8L9ii+mr0=;
-        b=yxERy65Rk7349aDhsUFGXhyYl4dTWQpcERfGYO42dUDpwhr2IOb+Piv0hdJmz8Jrc/
-         eQx5ns6VS+N3w7OkLaM8Dw6VArcNuTi7klx94FWEIB98duNhlsvXJlLH5fRVvZcfoUgw
-         n9729LoDEbgGHxL8jB7UsRpl1GR8WOeYuhuZiPj6IB5KM4qsAZ8Kj2ES4IsZJnCPRepf
-         b4DQTh7lkMu2ujMy8waGhMwke19/dxPwCwmQVmuPfZ/age/Er916soQZxgIdPxLmQYZy
-         ZCT7gufJNW0VrUM7drfNYB0qEC/0LO/T5qb6uZxpZS+8jsq/0b6UTHuj0IqNV/sO/e1f
-         CfHQ==
+        d=gmail.com; s=20230601; t=1742588631; x=1743193431; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=98i6jddSp1LUQoUVE86JTvhDACCODQSOsoi4JvJF9ns=;
+        b=lQ9fjajjf76ESxzMJ7vcAs8JaWQqr0OaHQLADrrS9IBtv+AVtbjD6GywOtGP7rdFoW
+         AUQ4itqQsYNSNAIprTDKSgyC4sruled7yhbWnAJm+Cit88nYbYL1XUYz55sAKv7ZoUvv
+         S1ipGjKDiqyeF/XbcdtXThRMX/N7zPKH7UIKr3YBel9VN06nQVy4f5zLao5XLBHBBuOy
+         FUSC3vyo0LqjMkNY6unJSJQO35vuPxY3NhA4tBqmYz3JcgL5suce9EJKBzHtpztTvfE2
+         lOx/lRGds7FFsAo8Coxi3Cnav7dQtRZJ3mToVujdgPCujWmBv2fGK0P8dyh5DYHBv20J
+         QoDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742586824; x=1743191624;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzesUfd46zeebs0CrPG+xIoJVH8zLtMaJo8L9ii+mr0=;
-        b=cElOkYMndpL8LNieaXUMZsPDuME5/73QIun1xvh46FUad44c6tNcAVS5dpCfuhk77u
-         b9hIbpTmRGa5ZmYYG4/9kRMkB9vqFiGNGMWqWKfL5uTW3NUtWJC8o1Q7PHvYH+sQVhqX
-         TKfpuvsl/rn6MHzblTbRzAMLqf2Vvx0WL4X9anxcP1MJrmakcPzUpc5FOx/a+O/HnIOQ
-         xZdwQi5fL342ORFWPREofBq8hNjGmc/miZEb9Pu+Fs5hI4FSURfKEmEMlgEKHHmgrWIV
-         jB3A6i2KGpq3FhQKU0FwpzPtFZiNQ6dxjpLjLUxHJmSJ7YHhJf15JX+14SATPC7TbG62
-         jP4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUifEuFF4ui1csIyHqeF8ki6Y2iXGULdX3dVYsRBI0j00OCndS1MmNNTQcmyrHQAYV+tw5H19kTUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCiRMu578JB8/5Ge+KU/YJYM93ROAM9pICxEOX2xpfUwiJFTid
-	+VnrMmZbkImnLHO309oSfu1iwZWR+iw9dGEfKihu20uPgM0Ir9n22ZsWlI4w/d7XpNuzgciWj8k
-	1
-X-Gm-Gg: ASbGncu0ciMQYFijGUWhRGjbcqloTmJyEtOI8mN8bKBXWd6fYNwsAUhQlxwNi1Het6g
-	TcUGO5O+u9HJp+vXpw6H9Hh/Cs1mmjmlASElZWjTHr32DSBSaJrNUfPUFfUeJMReI3DHqTjMBqx
-	dDLdUkIBWKQvzirx3g72wkpRzjlwa2sK5tN1nvxII/RMvDLZhHb5hS9o3lJaou9LEGXJc+Ju2WK
-	jKIOsybNW1cZ/r2k+n3ApSL6r2mwt3DZ494/dZv071ZhBXAhcjTxbeRpe84NA+KXkW3MP/Hrvb0
-	OaT2n0kZ8SG8G56wanYxQUR5718MF13lvb9s
-X-Google-Smtp-Source: AGHT+IGn7T9SD5ve8iBciVQ/OCx5fdDy3xWn9IiJSqNMPE9sGxY4HUf5wukQHEc1lEXa/fwCOdPLkg==
-X-Received: by 2002:a05:6e02:3112:b0:3d5:894b:dfc7 with SMTP id e9e14a558f8ab-3d59616b1c9mr51603165ab.16.1742586824296;
-        Fri, 21 Mar 2025 12:53:44 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d59607e77dsm5694405ab.16.2025.03.21.12.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 12:53:43 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, Ming Lei <ming.lei@redhat.com>, 
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-In-Reply-To: <20250321184819.3847386-1-csander@purestorage.com>
-References: <20250321184819.3847386-1-csander@purestorage.com>
-Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going
- async
-Message-Id: <174258682264.742943.2572990287219952668.b4-ty@kernel.dk>
-Date: Fri, 21 Mar 2025 13:53:42 -0600
+        d=1e100.net; s=20230601; t=1742588631; x=1743193431;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=98i6jddSp1LUQoUVE86JTvhDACCODQSOsoi4JvJF9ns=;
+        b=trKkVfI1fsTIK4XtTYLyl/vfLRy5Ko+3p6+eUtS+YxQe6lG8jJCPYZV8KSFx66zFMN
+         FNoi1U0u0I6VdmV8MmNxXy9blgbzVpQuwyepDyo7kusiluKgALzESO3Py67hC8oZ318i
+         PvdRKwS0s3o7zKKhK6FseDkS9z9y6GMPgoUOPWFmNTCRW0HnQyiWnmTsrneY2tTlW+77
+         75i+Ei1wqdd+KcRkrBONDcTTUQ9l7XJRtJ5RHvcVLS00FhHuncxrgwd+WjCwGM0VReL0
+         P5pQhotQuozr0FudbE+SYRG1plPKsfAT/FqPA/vbWpudo1VOUr3bpKUws5wEYVGM9qbU
+         vj6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUl6NOIyS1tC3M3LONqi+F/+DF7Sc/xeXgUKUA4i/oWfcqRfFCaZM1v0tW12SoXGksSGJBPVJqNgBfKia8y@vger.kernel.org, AJvYcCV0YiA3yRRx28I8sHsthayjHWxSw5QdZOcNLXK1+AGkP76Ol1HYBgLxftf3qqHluMJLsIX3gXnbgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxupUPhJ21dZuvr/bbOs1uSx3Gi2+9r377vQQpKw/su+vZYLF59
+	bQx95NCdRLGagmTyPM1qAp2+0/NHuunWJQ2wE1NVCoUTHDXN9gKN
+X-Gm-Gg: ASbGncsMQ6uHenrL1qSyp97Ct2dpoJfJnNs7s3ylIZ1gwMxkydKWJY+PBiienh4VBoR
+	4fyaFx53/47NVfrgYXH1yrC2JdGi28Wpo8xeJ/7P9WAQI6jiaz1yEtxYJPNardrqPAhaPGsTrhy
+	NI5ooLW2l+ljefc7x3G0I2t/RjKn4skmSf/dGBnnk/GtTeouB1S+VH/UZheSh2bMSFWu2Q7SDsw
+	lm1OsZfo39sHZ/GJbrNhijaw8aUa3A1yi/KA/kgdzjfxFPMrenOTzQS4nCcrogoMZydmOWCmJin
+	ulwX6OZkjwa60Q0aEjRK8+ZI3018wR9OpNCxogkPOmf7Rnnoiv3v8w==
+X-Google-Smtp-Source: AGHT+IHUOzcwaXlpNWBFMCvXm29GsUaXBZabenP63aTlTLUFy9HWP8Is4hA3JffnNo7TVQo1z8BGCw==
+X-Received: by 2002:a17:907:3e8b:b0:ac3:d0e4:3a9e with SMTP id a640c23a62f3a-ac3f251f1fbmr460422266b.43.1742588631294;
+        Fri, 21 Mar 2025 13:23:51 -0700 (PDT)
+Received: from [192.168.8.100] ([85.255.236.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb64b06sm210671766b.94.2025.03.21.13.23.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 13:23:50 -0700 (PDT)
+Message-ID: <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
+Date: Fri, 21 Mar 2025 20:24:43 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>
+Cc: Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <20250321184819.3847386-1-csander@purestorage.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250321184819.3847386-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
 
-
-On Fri, 21 Mar 2025 12:48:16 -0600, Caleb Sander Mateos wrote:
+On 3/21/25 18:48, Caleb Sander Mateos wrote:
 > To use ublk zero copy, an application submits a sequence of io_uring
 > operations:
 > (1) Register a ublk request's buffer into the fixed buffer table
@@ -116,22 +114,23 @@ On Fri, 21 Mar 2025 12:48:16 -0600, Caleb Sander Mateos wrote:
 > and issued non-blocking in order (barring link, drain, and force-async
 > flags). But it requires the fixed buffer lookup to occur during the
 > initial non-blocking issue.
-> 
-> [...]
 
-Applied, thanks!
+In other words, leveraging internal details that is not a part
+of the uapi, should never be relied upon by the user and is fragile.
+Any drain request or IOSQE_ASYNC and it'll break, or for any reason
+why it might be desirable to change the behaviour in the future.
 
-[1/3] io_uring/net: only import send_zc buffer once
-      commit: 8e3100fcc5cbba03518b8b5c059624aba5c29d50
-[2/3] io_uring/net: import send_zc fixed buffer before going async
-      commit: 15f4c96bec5d0791904ee68c0f83ba18cab7466d
-[3/3] io_uring/uring_cmd: import fixed buffer before going async
-      commit: 70085217bec1eb8bbd19e661da9f1734ed8d35ca
+Sorry, but no, we absolutely can't have that, it'll be an absolute
+nightmare to maintain as basically every request scheduling decision
+now becomes a part of the uapi.
 
-Best regards,
+There is an api to order requests, if you want to order them you
+either have to use that or do it in user space. In your particular
+case you can try to opportunistically issue them without ordering
+by making sure the reg buffer slot is not reused in the meantime
+and handling request failures.
+
 -- 
-Jens Axboe
-
-
+Pavel Begunkov
 
 

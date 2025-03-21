@@ -1,79 +1,80 @@
-Return-Path: <io-uring+bounces-7156-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7157-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FC9A6B8C4
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 11:27:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0008BA6B9B4
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 12:17:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E351E3B1A1D
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 10:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CA73B511B
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B484C1FFC7B;
-	Fri, 21 Mar 2025 10:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736DE1F17EB;
+	Fri, 21 Mar 2025 11:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZVH63ge"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yMIVhXf5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA16F20B20A;
-	Fri, 21 Mar 2025 10:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0081FAD2F
+	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 11:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552843; cv=none; b=EUjjOfW4wevXKR9LYU1zLp0lyJqpTWiWJKvsPSixvFeXv4FstJfw8Mq6dh5/KhFyiKHdMafG2Hxl8BUAXTMfcY6yQa+mJTfLFYqVBEoq9LT74usjKId7sxlI2JoaLDeyWVA6a2+YuQIWckXDfsgUPEtM+OtiLHvYtvbeJt71YDg=
+	t=1742555839; cv=none; b=J58g+2USJcHe54IpzrXIOkjZFuRj+d8GToHzOYz7hMhR7jYAoQAWmfEknjz/MDlUKd6JSF5axx9yzn8NdHtcyyiOMt87xRdUqq+fGbhAASReuX0deOe0UJb2Kyea7rb9pEBInBY6jRsISUziUryZSJVv60gUnRfWCNS9wTx62YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552843; c=relaxed/simple;
-	bh=imUR6PLo95tiJzxLNzsMyiDnmu7u6xwtSjqyOg7ZicY=;
+	s=arc-20240116; t=1742555839; c=relaxed/simple;
+	bh=m2vc6ZJ6JSH7alaxCXpXJz+S+m3RfjPoDbd/zOWr3bo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GADwDNrr0zX1BcbWpO3Bt8SfzNobaxAenpgBqGVsRChboHC5rFYsEaTApPdcGc9rqswdrWV6f/XVt/PtotCsLdh5es5Y1GjwCO9MIZ3ICBGvmkeml9GMQvdvLakYCBgwES2bIkmQm4GwDYaFICQD6Vps4LqV0artLICF1Kv+7Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZVH63ge; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac345bd8e13so322097166b.0;
-        Fri, 21 Mar 2025 03:27:21 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=nBJFUd1yIB1LeVj6mIyYGeRGv0FRYh9mru4BmSnMlZOaUB5knd7wZ0ISAvgQTcHERvIM3AJXWq701fuhVtdakeXNf9wvDoV/8NoPDOXzZfONvTdl/W8IuDEuBVcAqxZYOhy38BGsw8OwV+lGuf//ieaJ3XCnYm0llvYN13tTgrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yMIVhXf5; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85e15dc8035so38246939f.0
+        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 04:17:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742552840; x=1743157640; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742555837; x=1743160637; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MzyjBm2EYqeQrBTSgKit4AgE1JZmqApLPAOxaryRyV8=;
-        b=DZVH63gejHW+STCeLzhNUZU97lly/vqWLsBWK8KvquPOlnDJhnRUdSum+wQmzUQjF6
-         iNOswy+NM9Cy1IfGq/3yuKB/wId++ku2o8/9TpeaBc7GzAo0fCFxW4QjVnogQ2tyl5Ue
-         vtpVHXeQuJZnuny+eaRRVQeGcD/PCvYI/yc82CECr5Hi/8WyDRhc+gvleiDLXIHuyse4
-         KnMWTUTIBZIhrt3Wr9wYG3L6ho0YRH1JMhSyhCxQeCIX2jrF9EXmo/q2Zwu4pBznvEJn
-         9kfxAJKMHbpPqsmktmWPHKto4AA3+3W44uEB2j///t9eXEcihYJM15jgMmV2HSaCQgcy
-         cE+g==
+        bh=59LLzW7ToEBWUOpkdwZSTFFdcnkJr66vbvUK+dy5Qmk=;
+        b=yMIVhXf5Mqo0ShzlMSrLXH6x1Nw8VmuZ9KYMVOt2NxSaRM0Gxn1aIxizXWYQoDV9zN
+         PGxZqsAYKFXHUkas/DChYcxMgMLKYV8kvbJZZZqA0+yhTFhFxzG11ipFt+q+nogS7ON4
+         Qa4/Jfc9bdNyGCsMHNYzle4Kl6vbKm6il2Mo4Qg8h0mu2ZetP2I8lWM4ybBqQIxy1uRI
+         wme/cqL3NANjczAY0ejYgJNj+3ro5tD4vIeKpw/x1L2ope5wirAimi4/e++xYOfwEsJ8
+         1I35Af6oBXry9iOgHAmzr/UrOwSS3mu8Yu44lphJUF2dYr0uOFhYVLBbzn9bqW3SA+IP
+         wlUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742552840; x=1743157640;
+        d=1e100.net; s=20230601; t=1742555837; x=1743160637;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzyjBm2EYqeQrBTSgKit4AgE1JZmqApLPAOxaryRyV8=;
-        b=tC6m5ZzAwtpCDbTZi1rT3/lehvlftgHHZqrN6MrT46GenFCCISVw6S7OmWfKrt4f24
-         TB5ENPKXJF9kN/Wg6Bho7mQ3iSytOWCFvFBNADfNUwZmKIQ0f7b+V46GnBzvFlOa5BXv
-         Rb8/nT9TGQQujPKYRc9h49XzMevmkoM+rWnOj9RJEB2QNzxHfjr/ckZkjMwPqd6SqBF3
-         BhNpWaNRfplMpmDgVT01TM4615p6rz+wFcI3LqhFxk0v6BYMIThlZ2XYw6IA7ygwT/up
-         g9MiCJkik0nilaNwmT0WBYKigVm5EBnve8SPZUXLmZcEnBiz2D3DNC6sLZt8rzG5BNOZ
-         g5XA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWSAJJ87B6EV2Zmr+9ba1Ek/BRSdSFdshLOjs3CqEUP5yipCM33F8qYZ1sP80v7R53ILvAEQEUVQ==@vger.kernel.org, AJvYcCWvzhWWisWTd04htKzQxKkDOzShwtWs5muMP8YXV9k1TAbLGSgrPmwCjJbr/eON6bc3tY7uZJ0MWemeOjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIlL0qZXiVNyhYx302HwudIALqCJgVMTeVvkLEa/5TkQ/AO2KW
-	OH8Co5dJKQSllKCXRmMasN8LPOu10dflxV8mOa1wyabX4NoJnpq/
-X-Gm-Gg: ASbGnct1kE50DH8M+eb+j9dxSlGRcqZf1aoVGd5X1/euzxhlR6bMqB9DwOJogRUm0ke
-	aX4mrlIDX5mi6dbfSoI5NnEFXKpf0acA/wW0r+pdBHAoddSsej/EQFc0A+1txmvazhVo1YLxOkk
-	XUfNDO1LfLSmxeQCQ+d3jDX9YCdgL1Yl3DwLQa0p0CYFu8OF1S8otrC2y4jilPdR2b9D4tnleMa
-	57FUxhoJC0n6wYn2zxnFGuUbr2Af+TspykPE3NsVYtLOg/FFVndRLvnRitgb/fMABbitcx+jCHG
-	swkjrALPx7eDvgNuV8TRM/mWYU+6HXa7hS2dThio690Edg3g7UZFyQ==
-X-Google-Smtp-Source: AGHT+IHor5hxivejUzn4LpCJTPWXVRlk3laGsP9D+83u93hHqavWD/kc43hNyq+9V2w6U72DLejjPA==
-X-Received: by 2002:a17:907:3f24:b0:ac0:b05:f0c0 with SMTP id a640c23a62f3a-ac3f20d767fmr230447866b.1.1742552839950;
-        Fri, 21 Mar 2025 03:27:19 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.236.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb658f9sm123644366b.120.2025.03.21.03.27.18
+        bh=59LLzW7ToEBWUOpkdwZSTFFdcnkJr66vbvUK+dy5Qmk=;
+        b=TNc7Kl/TYYXWMoWZaC+dzd3DEBgiw0lDd72j1zy9qLzcnv8Klr95dimC3pkltXpBxY
+         HafFWaDyQ2iNs2EHaE70UaY07EGnrFmt60PQ6n9HderMJmeIbNrkSd94r7SATLr9jVdt
+         qnNn9eDFSJ9qU1C9zw6LMkyE/nAooRqYYg9U8DiZzqVysbr6dlz1dHswbHaTcUpn14I+
+         wXh112ix9RNl18mqxRq2uF4OA4FOE9DRMG/HryB9g3GBdF8dbe+bREOBBLQoIiakympb
+         t8IPQrRjpTX14A+1TSHVhh3eZ7Ajn4g8CMpWmQLJQgC7kdWabEDlL9TnogfmInsjdh9I
+         gU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUg4JK/pX2vleMAgvGggdmlNUtRua6x89q7HKD4PLQBhlB2Pg2Lo0QRfZaRkUTLIPE3nLzUM2cDdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXbmybnNFsnN+P2hIzFdFcV58H0GZeU41JMT68vuj3JSBkH5ea
+	iJPWOqhS4+MC7H0bUtDxUCkcT1/6SgeM31YMBGUPnlK8wy+mA6Sz6988icSzW6SDv4nJD+mY997
+	i
+X-Gm-Gg: ASbGncsmNrme/9UhU4M6mT0bl79ozDp0C34eth5JvG74ZUMg8TCrPOglPvNn4WxZ1l2
+	v8XvNh8B7n7dmzDMmRQSpB9nRtAlAU7YuhJ2ZdPjiRkppK4obIjIT/xmXhi1eTtVT8LB25kPzJY
+	bxztyOcW6fv+7c4c04a6KoelUR/syC4RNcizjaBQg3O+Sz3Q6nP+F7MxnYZCtlzAzuKehFBP5/5
+	oqPb33dpXm673P4amXdMX5MXYYYLRQ3CDd+jlxvf+RI+iVxhIIPieHuOqwDTAspJyfP+i7wLKLU
+	x8jupvYY/1rp31Vyse+XoFovifY7650J42vElzGsTQ==
+X-Google-Smtp-Source: AGHT+IFjSZ3fb43kry5hTLE5e6mSs3SJ1Pz758OOHDAPWAP28kapByaxuk0gb0pJL8JPkKgr4JClUA==
+X-Received: by 2002:a05:6602:1356:b0:85d:b7a3:b850 with SMTP id ca18e2360f4ac-85e2ca55c90mr318446239f.5.1742555836923;
+        Fri, 21 Mar 2025 04:17:16 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdb3ae2sm382359173.5.2025.03.21.04.17.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 03:27:19 -0700 (PDT)
-Message-ID: <c9a3c5bb-06ca-48ee-9c04-d4de07eb5860@gmail.com>
-Date: Fri, 21 Mar 2025 10:28:14 +0000
+        Fri, 21 Mar 2025 04:17:16 -0700 (PDT)
+Message-ID: <812ae44c-28e9-40a8-a6f0-b9517c55e513@kernel.dk>
+Date: Fri, 21 Mar 2025 05:17:15 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,47 +84,56 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH v5 5/5] btrfs: ioctl: introduce
  btrfs_uring_import_iovec()
-To: Sidong Yang <sidong.yang@furiosa.ai>
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Sidong Yang <sidong.yang@furiosa.ai>
 Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
- io-uring@vger.kernel.org
+ linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org
 References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
  <20250319061251.21452-6-sidong.yang@furiosa.ai>
  <14f5b4bc-e189-4b18-9fe6-a98c91e96d3d@gmail.com>
  <Z9xAFpS-9CNF3Jiv@sidongui-MacBookPro.local>
+ <c9a3c5bb-06ca-48ee-9c04-d4de07eb5860@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z9xAFpS-9CNF3Jiv@sidongui-MacBookPro.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <c9a3c5bb-06ca-48ee-9c04-d4de07eb5860@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/20/25 16:19, Sidong Yang wrote:
-> On Thu, Mar 20, 2025 at 12:01:42PM +0000, Pavel Begunkov wrote:
->> On 3/19/25 06:12, Sidong Yang wrote:
->>> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
->>> with uring cmd, it uses import_iovec without supporting fixed buffer.
->>> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
->>> IORING_URING_CMD_FIXED.
+On 3/21/25 4:28 AM, Pavel Begunkov wrote:
+> On 3/20/25 16:19, Sidong Yang wrote:
+>> On Thu, Mar 20, 2025 at 12:01:42PM +0000, Pavel Begunkov wrote:
+>>> On 3/19/25 06:12, Sidong Yang wrote:
+>>>> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
+>>>> with uring cmd, it uses import_iovec without supporting fixed buffer.
+>>>> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
+>>>> IORING_URING_CMD_FIXED.
+>>>
+>>> Looks fine to me. The only comment, it appears btrfs silently ignored
+>>> IORING_URING_CMD_FIXED before, so theoretically it changes the uapi.
+>>> It should be fine, but maybe we should sneak in and backport a patch
+>>> refusing the flag for older kernels?
 >>
->> Looks fine to me. The only comment, it appears btrfs silently ignored
->> IORING_URING_CMD_FIXED before, so theoretically it changes the uapi.
->> It should be fine, but maybe we should sneak in and backport a patch
->> refusing the flag for older kernels?
+>> I think it's okay to leave the old version as it is. Making it to refuse
+>> the flag could break user application.
 > 
-> I think it's okay to leave the old version as it is. Making it to refuse
-> the flag could break user application.
+> Just as this patch breaks it. The cmd is new and quite specific, likely
+> nobody would notice the change. As it currently stands, the fixed buffer
+> version of the cmd is going to succeed in 99% of cases on older kernels
+> because we're still passing an iovec in, but that's only until someone
+> plays remapping games after a registration and gets bizarre results.
+> 
+> It's up to btrfs folks how they want to handle that, either try to fix
+> it now, or have a chance someone will be surprised in the future. My
+> recommendation would be the former one.
 
-Just as this patch breaks it. The cmd is new and quite specific, likely
-nobody would notice the change. As it currently stands, the fixed buffer
-version of the cmd is going to succeed in 99% of cases on older kernels
-because we're still passing an iovec in, but that's only until someone
-plays remapping games after a registration and gets bizarre results.
+I'd strongly recommend that the btrfs side check for valid flags and
+error it. It's a new enough addition that this should not be a concern,
+and silently ignoring (currently) unsupported flags rather than erroring
+them is a mistake.
 
-It's up to btrfs folks how they want to handle that, either try to fix
-it now, or have a chance someone will be surprised in the future. My
-recommendation would be the former one.
+Sidong, please do send a patch for that so it can go into 6.13 stable
+and 6.14 to avoid any confusion in this area in the future.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

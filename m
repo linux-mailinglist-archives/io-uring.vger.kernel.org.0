@@ -1,79 +1,108 @@
-Return-Path: <io-uring+bounces-7164-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7165-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7FBA6C1BC
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 18:41:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C89A6C211
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F5A485858
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 17:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87203464BAF
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 18:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35D222D7A0;
-	Fri, 21 Mar 2025 17:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC30C22B8D7;
+	Fri, 21 Mar 2025 18:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOLhGMdG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lO+RZUuy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB7522D7A4
-	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 17:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBBC78F5B
+	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 18:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742578771; cv=none; b=DplLOuMZI91WRMMdvxAo2RbdM5H+lovxIP48f64a+ClCpXszg8BljmmuZZBwDBUWap7J0z7ftzPtY6PIVynzURxUi0mThZSLJ/damUDD6Nkd+BEHD6Uz+xIky7uhvkngtkvqyUGKQxIDy6TgybTDEKpFWRxVzKNRjQil4ijpXYQ=
+	t=1742580226; cv=none; b=jJQ2GMf6q9P4UZ+64YwBwnxs1NBy7rdRY9fWTPcXQ05XtnmEBn+vJytCbvGvPCis2Iy7ZvgJXGNMIv+Q6YeAwiVR7/jq9EcWG3hbpmQryKyTtccW852VjKS0w6ambtHOL8upV9OsW7hnGKIrAj78pL0a4JZAkF+6wLBYOrVlgPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742578771; c=relaxed/simple;
-	bh=3aBfQ/susEbCMJ/8KH/uMjp1/AYooD/edtSDHPOA4gI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=teEDqFcTITN5CTKR5MGvs6wbbjh+41miSrLlstLpr4ZCGV0R8VUtWnwVXAPqOtR+vmzn5CEgPoow7yi3xoNvaKdRfhfaal7VSOncHb2PsrIB00hV/xBSqayE3fRb05oJt+8cV2wjFLJRvDE7OA517PAdpo3c7QATlQhrAh5DexQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOLhGMdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB37C4CEE3;
-	Fri, 21 Mar 2025 17:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742578771;
-	bh=3aBfQ/susEbCMJ/8KH/uMjp1/AYooD/edtSDHPOA4gI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=dOLhGMdGY2fn6Bjs8LtHbRcPfQaKxboReoDeti5GKjmBLr6kRq4vuqOZ0K9XtM9k4
-	 /d5//Xfs0kA6zZD+9cGh5sRZpmj5kvAp8KF2nvcH0ub7IjVTYP1PJxFh5eHO9gWfey
-	 /akUAyigRD0x3NxHa8/CvcbZ/36DrsmbikWVZ3zsA5zLyCWGNt9TjAvpRva9SSxyi+
-	 W7sWfgKmJU+ho5q09TTe5jmg2F1IGTXFX/qm+Cb3OQNGksvnlty0VsxAmFQ8nOJ17f
-	 GsjmqehR0ZPDqN/ki9sAUEcPw4s/3HhWcfsEZfL9boYzTWsvfZmiiCkoyz7R8CViSD
-	 oS+i410rAkysA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7548C3806659;
-	Fri, 21 Mar 2025 17:40:08 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 6.14-final
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <9f3a5862-cd77-462c-bb8a-3cc26f905391@kernel.dk>
-References: <9f3a5862-cd77-462c-bb8a-3cc26f905391@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9f3a5862-cd77-462c-bb8a-3cc26f905391@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.14-20250321
-X-PR-Tracked-Commit-Id: cc34d8330e036b6bffa88db9ea537bae6b03948f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d07de43e3f05576fd275c8c82e413d91932119a5
-Message-Id: <174257880706.2568513.10469142209466929774.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Mar 2025 17:40:07 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1742580226; c=relaxed/simple;
+	bh=C2Ovl/ql9v52vTluBwm7mzhfy5adAruZ1YvCzz/rizI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUSRMIPprLwehKCYiBdyBqKExVc6lJzfdVbzZepnk22RU2pYXc48Zkx5ku0oecj4wj0YkudwbX2bXvQyUnDUfaamPm1VJX5oGYuBUDGMNIT9qlJt7P/uijmoEelQyD6oX7j9Aw4ZKX5HxgaMKgTFQTrCOLUvKc5AXPfwnUTrBLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lO+RZUuy; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbb12bea54so166272566b.0
+        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 11:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742580223; x=1743185023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihZzH21oCqcApq+l0ox4pVhNkKTYm6orKVZ/tzPoNp8=;
+        b=lO+RZUuyn0eMAK2M1NnloJFA0YcPBrDpdvB6kMzuVsXZ5THxUyCPW8JYbqqLbF+uWs
+         BdPb/A0yGk66IJpe3GS7xAyneRyGFslfifFDPtr5PwnWYpPYdNohjYN7u+/SzlHgy3Vu
+         UiouYQbrtNm8T1GZKEm6a8bPtsZrpoYA/zpBHPpO6bR7+6Jb6YfsNRXl3wzxGJeHZMyV
+         1MzBN27a9LuiaTypu5hpZyI7RNlX+ENL+dhdlZ/DNBihaDsO4HBjAzQawTMdl/7KoPni
+         3f7zA5lUcD2iSz8Rbw50QjCx5d5/qo1GKYplonOn98hfCtCbtjF1ljt9lP/lbuh2PwYE
+         aBjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742580223; x=1743185023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ihZzH21oCqcApq+l0ox4pVhNkKTYm6orKVZ/tzPoNp8=;
+        b=d0A/8X+91jWFfLdc4gU5pydN+USpBDQi3BceBNEhda7ucOwAXcKIaRBjHVCR8AwsXn
+         UMn84ku0yYbPLIzVVNEJhM973hz05cx0HyWnAj1xB9lUR6MYyXSrExcJKVwN9VdrZAHe
+         KpSO+c/XIR3YsB/wKsNxiujMY+/pnIkb1Mktx8QrdfYH0taezkRVrc3a+cYHzl7Tv9Z5
+         44//TJVz/qtiuxt766PJ1tJFUsKudPhZ9/RyOlXdUAJ3BfuJnZPlqHq7jwThbKRpoYFk
+         qmk7B2GlDZUKuLDt9MjIfITAHpE0D47a5CspDs2yCDRV2dSpeszSIQghRusf4UIHnKcW
+         xSAA==
+X-Gm-Message-State: AOJu0YwiqdsZdIBhaxXTyIC/jD/XB6D5GrBxdp4Bwyj2O8b8+q48Pg0o
+	1buxuf8EWVhc3HtOlqmyz1FPmkCmDPEDb3UTWZbs2gi1XdBMuzxrhHcoIw==
+X-Gm-Gg: ASbGnctjXM9a/yWTEWi3Uo69EYPWn5+KYYF3f9TdtOvi+eiU4SJMNDMCvotDR89xHrg
+	OJMCwn3fdAuaMx1+pnd2GJeiSggDTe4cywtfi9TCJS6xjClbBKBvq1Ob1moX3LTuBuSWxyYMlw1
+	MwQPiC2TIigRViISH4IBDdzlELNPd6J/RXl1EqxMDWIT35woEY1lsgoMGgJ/+IQPKXi7K7VnWmZ
+	mTkGHJYkUsgDwL5qElgT9LKq6+zmttq4DXJUuSabOLToQz60nPrWeriR47+mvU6Lj574QW9IBgh
+	PJVN1ZB1mfg/jkn3z0diFIilxhBebxMf311hB1E+cVfNb2Iz1FQiPgnJVA==
+X-Google-Smtp-Source: AGHT+IFNhIxIYJ0gKLtEz7qqzTSXNjlNoTedjD3ki8uYtzuS/MRazjLrrGnfVHmQDmLGhQULQ+IucQ==
+X-Received: by 2002:a17:907:94d0:b0:ac2:dcb9:d2d4 with SMTP id a640c23a62f3a-ac3f2116cfdmr437020866b.14.1742580222583;
+        Fri, 21 Mar 2025 11:03:42 -0700 (PDT)
+Received: from 127.0.0.1localhost ([85.255.236.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d3d2dsm191646266b.60.2025.03.21.11.03.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 11:03:41 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH v2 0/2] cmd infra for caching iovec/bvec
+Date: Fri, 21 Mar 2025 18:04:32 +0000
+Message-ID: <cover.1742579999.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 21 Mar 2025 06:53:13 -0600:
+Add infrastructure that is going to be used by commands for importing
+vectored registered buffers. It can also be reused later for iovec
+caching.
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.14-20250321
+v2: clear the vec on first ->async_data allocation
+    fix a memory leak
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d07de43e3f05576fd275c8c82e413d91932119a5
+Pavel Begunkov (2):
+  io_uring/cmd: add iovec cache for commands
+  io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
 
-Thank you!
+ include/linux/io_uring/cmd.h | 13 ++++++++++++
+ io_uring/io_uring.c          |  5 +++--
+ io_uring/opdef.c             |  1 +
+ io_uring/uring_cmd.c         | 39 +++++++++++++++++++++++++++++++++++-
+ io_uring/uring_cmd.h         | 11 ++++++++++
+ 5 files changed, 66 insertions(+), 3 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.48.1
+
 

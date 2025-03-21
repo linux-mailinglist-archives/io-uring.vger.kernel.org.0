@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-7173-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7175-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C03A6C35A
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 20:31:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1B3A6C35C
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 20:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625163A8F66
-	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34DE4814ED
+	for <lists+io-uring@lfdr.de>; Fri, 21 Mar 2025 19:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A26322DF95;
-	Fri, 21 Mar 2025 19:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4720F22C35D;
+	Fri, 21 Mar 2025 19:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="U27JJS2W"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Sa752X2G"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E522C35D
-	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 19:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB477225A20
+	for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 19:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742585505; cv=none; b=UWSxTMsHiOdpGe1mq65X3VNDx+FGHyHsjzJGzwZd5JvEcMQP7V/SOMAJPgbG+GIFrSR26aSj+J+o7rd6twRnTHrpkXhpzIRzM0z/9oms45T+IwpH2uV/iT0fvpsin66sIsnyTtXHjMWZL1P5LNqdVVCmkSa+c4po2mWq3l3y27I=
+	t=1742585506; cv=none; b=J3fJgCK7EDA9g97DJfiH5CKSCqCi9EeSbfcWRAwiad2K0iuGvbcYACjC5f8HMcLqSZrQ+6jOnAbvdqGYgnQK013+ihJvN2NlSX02ppTmIizohUCCw7LNJAW6bGLJ30q6RyVjRFi9JDER78XkQsprjdHOh+lK4C9rNdT7tzMjH44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742585505; c=relaxed/simple;
-	bh=tmu44H8PHF/Ekh/eMQW+LHxOQINbgxEcpXVMvOIj8SI=;
+	s=arc-20240116; t=1742585506; c=relaxed/simple;
+	bh=TWHf8sidIKTXj3vh9lpN8ep+HAEsBdmybz1YeWb2ICk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qX25ERdRKPqRNY0mpGAl04ocu67qvn3jtEdu7U87+89hEkSaLye479vXF1mUY+4lVM1Mm1ZedZCfJONotj1b4O0zv9G/Hb3avtvIDyDUDHbXERExcHfbmhizL5M1JkV/uyvy35gylatm04L0mEtdV1LwSi1XYkIUTKKIRzScTV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=U27JJS2W; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=Qnhn8R30D6syBb/rX30WhAnFDQYTCiYUsjYtezqsIlMjzkWMH7FIIlmIW85et6HKw4wpMri3QMucHvoRWWJQOrFa+6Weahl0GKTYgTra8xRpYggcMbBqpOMGvzIJwH1mZSyOcvxTlI1nGIq0k7Y8R6PbhQznp44IMy3JmjaDmgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Sa752X2G; arc=none smtp.client-ip=209.85.166.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85b4170f1f5so64571339f.3
-        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 12:31:41 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85b3f92c8dfso77926139f.2
+        for <io-uring@vger.kernel.org>; Fri, 21 Mar 2025 12:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742585500; x=1743190300; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742585502; x=1743190302; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bZ6z0kB+ScBGWw7Jv+htutGbkm2LGsdDyHzOuI7s9j0=;
-        b=U27JJS2W20uEb9gj1lm2ksItiVXuKaPV/snpjWrM5NpEn2iZ0+dvUb5Xi+mziEqYqf
-         aZSnEj/aCM6rxZQBlb6VOE9N3ZF/KEHvq0oiNSgq4HoroHX8KRxjHrYhnoFZdzPBI7a1
-         rfy5vK5eEpSzHqldgSBTtYf5cJv8+8z6TDfIPbPFsiXO9UkBOij9550S0FE41ceuxn+6
-         rJnLmklfUOlRuJznzmJzOTMj9oNNxeP3O+tGxoYwdNceM87CeleYr2oQSK0pD4ss3ga9
-         h7OeANT+DpoKCNoMpSXcPEOR2RNnAHXK2Afo3uKUem/4ZhZu3cjtcELLhhogPHaVeL/2
-         O5Qg==
+        bh=S7ct+aok0+e88ngkQ9ijTRO+pVsgJ58u38oJY4wLvbk=;
+        b=Sa752X2G2rnVOzVbozn+OZJBJ/0aSI75br0WaBL+JfzRNgiFyMdTQinRSK9XyQ750p
+         UE3T0F0AwLDWd8ha+L37W2SSqjrMmRB1tYbK9uAd6Nbi4JBI6QumNYR4yzfiZFAbA0LI
+         v/+j0FflOCrNAE9S7hHHPB2eXMrC8Xm8I4pfrlZ3TNGMLqbaac+/jHIxHjLxccyhl7R+
+         yfC16BvkGX+D7/Qmuod8jXBtr8GiP1sEwlrZc3SC80fZgfB1xwXGBexaX4JNMvAjIWFw
+         VvGFNbfGDAvhZIATPHVSHEWpvw+Y2q9d2VL/vQFteO/++CXPeVkcmSDp1jBbb0bxzyzK
+         XEqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742585500; x=1743190300;
+        d=1e100.net; s=20230601; t=1742585502; x=1743190302;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bZ6z0kB+ScBGWw7Jv+htutGbkm2LGsdDyHzOuI7s9j0=;
-        b=ce8s1/ptbktbVGEoP+9l5GbzUqvpPWJnxhiualYmb9cMpXJas3zufVVUGsu9E2GuvD
-         iDanwJq1pPlDX55cPDPrcyxteuX7LmL5TuFOgewdyTJKjoHpDER2FqGCdH9+i0GTdm+a
-         lTlF6gPg5QuD4E1RhECKQStEubOQRIrZvrVtE6s0GavB0QmJZFhK6X28rfLy1FI3VzmV
-         26useDwQHZwwi+8oIlWi8WNm7aEZKEcMLjE4Y/eLvoF5cPoyjKLbvjK3rVXCw4EK+IVC
-         Im/9CeszquHRnxTdG/oRsgZvNI44Od4vSgkYS63wQcgwKWWoLx5k2uUJPsUk4Duz/y5l
-         yTow==
-X-Gm-Message-State: AOJu0YyE+qZ0ANnEn6kCFKuge677tg8sy/VvGQ1pslfDYALclClSNhz/
-	ksqPcRbZQTaEMEw5YefZLh8Tk90eZJHSVh2wCQp8dMOeqJOFZVzdJorue/2CUdXNI9IS2dNvHC1
-	I
-X-Gm-Gg: ASbGncsDZoXDNqFvDx6Sjjflc3IKLbpSRNSUjCEGVN4PjnSymdk3XugE9/+tjUfR3s8
-	ptiwFH2KO5n7DLrTsDmHZstaN6bmtQx1XsZaxrCUAht9x3E6YiRfZeFXdenHqnnas/tYcPr9Rt6
-	m5FFdOgM/9FfoZ5Ag4IQbToy0ps7klpv2zZ0/xbU+Kj3SWMLo/v1OlsNX28e9KTDBr67DwLQ9iV
-	glns2sYm8CQ31X6474cmXi4ETjp2e9yJKJE1i2dpI4ceH/+f5dOVhbcL8v8LQtme62wwXFneYVy
-	OU+ql72Dy50p9QzKSP4/Jh480jb0Pj/2pR2+7wxKZhg/dbU+tA==
-X-Google-Smtp-Source: AGHT+IH8zFuinsrUjDC6QESRtve95GCm71awmku+n53Oz5A6Zkkm6aPHDG+1m96v56KKBok9sBl3Vg==
-X-Received: by 2002:a05:6602:b8b:b0:85b:3763:9551 with SMTP id ca18e2360f4ac-85e2ca756a0mr561008539f.7.1742585500522;
-        Fri, 21 Mar 2025 12:31:40 -0700 (PDT)
+        bh=S7ct+aok0+e88ngkQ9ijTRO+pVsgJ58u38oJY4wLvbk=;
+        b=Yk0hDQxuEaP8J4qSJa5yEPaFKY6DjqmTb7acloqHp42pqXhH5EE7u+ZmiESWtyL6Fm
+         w35m0J0jYuPuS8gbRl4L1XvnGMoEK/qR4bhHKT8m++oRQmdIQ0XktvKMOuj6AupSBIYd
+         PZIRQW2EjnyyDWhN1txL3WSzB/vmSp4flVcwqIlw01v99rb0nUPhef0QLbT/wnlvs8S6
+         6AHiAvix68BVs8Q72rLsxsIhND9uUxHqf5l4LB5nP9R4abfU5ZP9czgZad6gC/x+/qe0
+         EQbIgw36l4p3O74SEecYDYDyxbE0wZ709Or9YAcIqnDSsNFDTlENqVTjbiQBRag+sstr
+         8KJA==
+X-Gm-Message-State: AOJu0YwnKPFCQfPFj5o9yTpy5iNQZbc1kiUpW06gPwWD4qeD6+MP9nHM
+	eU/JWK2V5Mgob3iQJxSHTEfd7xRJ/vrZUTKjU9SQBSpEGQLKyrTRqZiqtTx/ie8oh+mbq0q7eE6
+	j
+X-Gm-Gg: ASbGncscRw3aTFUdV2qJa3LOu2S3GVVAd6+eFIZa8yF8jzdbihURRLylp2405MapI3L
+	umyvyAn+XNc7ltF439uhG3GlBsqegg05We2+EaVmVH6lVOSsORoznSoYIu3qJlsLRaIuyzSQffo
+	ngo8GG+lCySi1nTu4Cde4yXREkZx89F7cmTzRtLZwvEorK1gHo96dh32zb1op8dyUHh8qrg4mJM
+	ZlKQMEIvxv7cNOsWNpUJMPlt1aCp8xhoKICp8otgaUdbhoQJ1YjkVtnhQPKL30T9XFq+bXadxpX
+	Su1sfjbx7QxaQCirK2z7Sw5Mg2olI/p32UdmFoKflNhSs5JObA==
+X-Google-Smtp-Source: AGHT+IGNRnt4rzZJAHoD3dEpG69YDtr4uytrMiOPn8OYlhL2VyHmNMiPkUwqJjwR9eZumSUgTZkY/A==
+X-Received: by 2002:a05:6602:a10d:b0:85b:46b5:6fb5 with SMTP id ca18e2360f4ac-85e2cb4605cmr333349939f.11.1742585502149;
+        Fri, 21 Mar 2025 12:31:42 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdeac82sm571268173.71.2025.03.21.12.31.39
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdeac82sm571268173.71.2025.03.21.12.31.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 21 Mar 2025 12:31:40 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
-Date: Fri, 21 Mar 2025 13:24:55 -0600
-Message-ID: <20250321193134.738973-2-axboe@kernel.dk>
+Subject: [PATCH 2/5] io_uring: mark exit side kworkers as task_work capable
+Date: Fri, 21 Mar 2025 13:24:56 -0600
+Message-ID: <20250321193134.738973-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250321193134.738973-1-axboe@kernel.dk>
 References: <20250321193134.738973-1-axboe@kernel.dk>
@@ -90,59 +90,90 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than hardwire this to kernel threads, add a task flag that tells
-us whether the task in question runs task_work or not. At fork time,
-this flag is set for kernel threads. This is in preparation for allowing
-kernel threads to signal that they will run deferred task_work.
+There are two types of work here:
 
-No functional changes in this patch.
+1) Fallback work, if the task is exiting
+2) The exit side cancelations
+
+and both of them may do the final fput() of a file. When this happens,
+fput() will schedule delayed work. This slows down exits when io_uring
+needs to wait for that work to finish. It is possible to flush this via
+flush_delayed_fput(), but that's a big hammer as other unrelated files
+could be involved, and from other tasks as well.
+
+Add two io_uring helpers to temporarily clear PF_NO_TASKWORK for the
+worker threads, and run any queued task_work before setting the flag
+again. Then we can ensure we only flush related items that received
+their final fput as part of work cancelation and flushing.
+
+For now these are io_uring private, but could obviously be made
+generically available, should there be a need to do so.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/file_table.c       | 2 +-
- include/linux/sched.h | 2 +-
- kernel/fork.c         | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ io_uring/io_uring.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 5c00dc38558d..d824f1330d6e 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -520,7 +520,7 @@ void fput(struct file *file)
- 			file_free(file);
- 			return;
- 		}
--		if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-+		if (likely(!in_interrupt() && !(task->flags & PF_NO_TASKWORK))) {
- 			init_task_work(&file->f_task_work, ____fput);
- 			if (!task_work_add(task, &file->f_task_work, TWA_RESUME))
- 				return;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 9c15365a30c0..301f5dda6a06 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1709,7 +1709,7 @@ extern struct pid *cad_pid;
- 						 * I am cleaning dirty pages from some other bdi. */
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
--#define PF__HOLE__00800000	0x00800000
-+#define PF_NO_TASKWORK		0x00800000	/* task doesn't run task_work */
- #define PF__HOLE__01000000	0x01000000
- #define PF__HOLE__02000000	0x02000000
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 735405a9c5f3..3745407624c7 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2235,7 +2235,7 @@ __latent_entropy struct task_struct *copy_process(
- 		goto fork_out;
- 	p->flags &= ~PF_KTHREAD;
- 	if (args->kthread)
--		p->flags |= PF_KTHREAD;
-+		p->flags |= PF_KTHREAD | PF_NO_TASKWORK;
- 	if (args->user_worker) {
- 		/*
- 		 * Mark us a user worker, and block any signal that isn't
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 5f625be52e52..2b9dae588f04 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -238,6 +238,20 @@ static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx
+ 	wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
+ }
+ 
++static __cold void io_kworker_tw_start(void)
++{
++	if (WARN_ON_ONCE(!(current->flags & PF_NO_TASKWORK)))
++		return;
++	current->flags &= ~PF_NO_TASKWORK;
++}
++
++static __cold void io_kworker_tw_end(void)
++{
++	while (task_work_pending(current))
++		task_work_run();
++	current->flags |= PF_NO_TASKWORK;
++}
++
+ static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
+ {
+ 	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
+@@ -253,6 +267,8 @@ static __cold void io_fallback_req_func(struct work_struct *work)
+ 	struct io_kiocb *req, *tmp;
+ 	struct io_tw_state ts = {};
+ 
++	io_kworker_tw_start();
++
+ 	percpu_ref_get(&ctx->refs);
+ 	mutex_lock(&ctx->uring_lock);
+ 	llist_for_each_entry_safe(req, tmp, node, io_task_work.node)
+@@ -260,6 +276,7 @@ static __cold void io_fallback_req_func(struct work_struct *work)
+ 	io_submit_flush_completions(ctx);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	percpu_ref_put(&ctx->refs);
++	io_kworker_tw_end();
+ }
+ 
+ static int io_alloc_hash_table(struct io_hash_table *table, unsigned bits)
+@@ -2879,6 +2896,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 	struct io_tctx_node *node;
+ 	int ret;
+ 
++	io_kworker_tw_start();
++
+ 	/*
+ 	 * If we're doing polled IO and end up having requests being
+ 	 * submitted async (out-of-line), then completions can come in while
+@@ -2935,6 +2954,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 		 */
+ 	} while (!wait_for_completion_interruptible_timeout(&ctx->ref_comp, interval));
+ 
++	io_kworker_tw_end();
++
+ 	init_completion(&exit.completion);
+ 	init_task_work(&exit.task_work, io_tctx_exit_cb);
+ 	exit.ctx = ctx;
 -- 
 2.49.0
 

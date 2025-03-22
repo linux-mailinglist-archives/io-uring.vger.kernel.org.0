@@ -1,140 +1,92 @@
-Return-Path: <io-uring+bounces-7200-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7201-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CA0A6CA66
-	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 14:51:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486BBA6CA88
+	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 15:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD7C188A861
-	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 13:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA3D882F24
+	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 14:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE931F8EEE;
-	Sat, 22 Mar 2025 13:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnQZl43B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1B522155E;
+	Sat, 22 Mar 2025 14:21:07 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761D1E9907
-	for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 13:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCE01F4CAF
+	for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 14:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742651457; cv=none; b=A8mQFBUSy9U3QB0QBVvYhMEcPCERVY1+BGqlULTtTcNrntE52Qvoywh1b395g1BCc7PJ5MsDN1aHJKzC0O4rMmB256lWqB5HOxN1yyzjKHgroc+DGZQH9urLxdPRPHj+Qnu0aJDJXIlV/jcnIaFcTO3DBa12YNn6PAGqjV7fBrc=
+	t=1742653267; cv=none; b=WmyRvExj3KayQKWtJq8lSXQsb4XBWRHJCQulERoRJJbysNQIJl2xdcVuUTEgH8sI0CuYuSb+OCso8I0ex9id1udht5yXVzQ9UFc4AVEuqV0sZxGiT3eQUOSWLZWhlHY0p3h20mmC+eTsq0SbCrbkr22Rq11guFIl4QEiFpNJv4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742651457; c=relaxed/simple;
-	bh=SL42mpQxWpOVoD8q9XJf5kFxnrFiZayq4czxIFAw4zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndENVQ7gMOefBNLiukBe8YzQ3Nf/2HcLNaXKodTy5e5GKidMo0YdgENaLqekTf5lqjVdRTYUFcVpeAzQMDz/gAU93FQ3qeV62P+Ld5/iEHz1WRPuGZ8UOh0bjA3B8Eyd7TtBfxSF1u4geOHCf5s7G7FvmQk5sDwwQZwX66wpCVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnQZl43B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742651452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=05614ULnI1KQttOcKLmxexxB7yhTuSQdYOQtOKcUV98=;
-	b=UnQZl43B2NOmPkp/iULWYs8YhB39P2JrcycztyTxp+mWgMLnYT296hMOUvhUJxu2GVPrNF
-	nP0nm7BgtKAgkUxjpeCtAoDNQ8FalZrfFUUkUSR6C4xZOtHmS6ZGFJh6MflaazejDrt3aG
-	z4TVxXCrMOQK0pRP71jal0tqqckjR4k=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-WHXNd8CoMxuFA-kx8RWunA-1; Sat,
- 22 Mar 2025 09:50:49 -0400
-X-MC-Unique: WHXNd8CoMxuFA-kx8RWunA-1
-X-Mimecast-MFC-AGG-ID: WHXNd8CoMxuFA-kx8RWunA_1742651448
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0DE918004A9;
-	Sat, 22 Mar 2025 13:50:47 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.4])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49099195609D;
-	Sat, 22 Mar 2025 13:50:42 +0000 (UTC)
-Date: Sat, 22 Mar 2025 21:50:37 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH] io_uring: zero remained bytes when reading to fixed
- kernel buffer
-Message-ID: <Z97ALTDd-s0-uT7O@fedora>
-References: <20250322075625.414708-1-ming.lei@redhat.com>
- <ae74ba78-d102-42de-95a6-1834f5f85dc6@gmail.com>
+	s=arc-20240116; t=1742653267; c=relaxed/simple;
+	bh=GV5ScpaW94JpIvrpJFW1esYd0UofIMH6efGT6ajycpU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QkZrvT206x/cDsFVi9bgoIiTViQurMQRnTpNa9gBfsMmMFGDgO1vMrjT2r1tIk0fl6PxKaRGy0JIGHWjxBOMpmv2kr/kll0VEXXH3Syecqb+fEelAp/mNAEqkMVj3ldoMeQEfOIKL5TGIGQFEHTNvTL2pmDVgCkcjQte7CNWjpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d434c328dbso53502675ab.3
+        for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 07:21:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742653264; x=1743258064;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JK5ZXI6vbQAIZxy13h5qPA6KYskAYkIUEuDZySyhb0A=;
+        b=AO7ITsknUvWUYpjYA7FieXsHPGb/DOixt0Q3VKCr0AeuhelUBaY4DWSC5JBXzqZOAt
+         r0KDcrhZoJV+HpfMOYVQOrx11P5fWqLxXUm9PxYDDK3rQkUOzWLBus5srJ+ruQYp5iNn
+         JJqGtMUU0KRSnFRJrswtIrTxg+DRcfP56kRvUitUIkHAgjcdgHr9eHHxzvzGe63ALPL5
+         AB1jhdYXEJ6ENFvoMt+Iwo78YwH9/xZQPMVe5qF3NNBBDmZ5BoJgNeE0cH7eLbSQgvYm
+         3sx0ch4oB3+qI3nnyZpZUQuEL0XvQ6afXTt42zKupNvOeE7AiYj8iT/bVy1haUY+X+zB
+         esEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSERZGw04ccb8mVS3HfGHcftIpUK6EKF7VMWWihe/adOVqvABsJygEHJTboy1ByOQMMoQyBddCgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySy/30luckkOpMl/h3cpsRVtRpYF8an/QA07f+TTyapTKdxCTn
+	abQcEV/c9zSpw9NJYeJlLzPk5EsXZiaTlvTk3R8B0RwKJXEgZ3x/18YRgTAdywiCXEKVVE5jIK6
+	1qmEhOQudbsEz+9CmJIk/xAryGFLO+uiOxY3T6GqkJyWijpAx5WEeDkA=
+X-Google-Smtp-Source: AGHT+IGCFPzSPPNaIKguvkQ1WT+OSMolQs7AmmRdajAqaldrzDzcQ1lTxjFWUpRhGeR0zPfdvEhekvGPfOClbBndJbI8tYg3c2c8
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae74ba78-d102-42de-95a6-1834f5f85dc6@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6e02:1c21:b0:3d0:237e:c29c with SMTP id
+ e9e14a558f8ab-3d59615d8bdmr91271625ab.12.1742653264601; Sat, 22 Mar 2025
+ 07:21:04 -0700 (PDT)
+Date: Sat, 22 Mar 2025 07:21:04 -0700
+In-Reply-To: <67de616f.050a0220.31a16b.002b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dec750.050a0220.31a16b.003e.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] WARNING: refcount bug in io_send_zc_cleanup (2)
+From: syzbot <syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Mar 22, 2025 at 12:02:02PM +0000, Pavel Begunkov wrote:
-> On 3/22/25 07:56, Ming Lei wrote:
-> > So far fixed kernel buffer is only used for FS read/write, in which
-> > the remained bytes need to be zeroed in case of short read, otherwise
-> > kernel data may be leaked to userspace.
-> 
-> Can you remind me, how that can happen? Normally, IIUC, you register
-> a request filled with user pages, so no kernel data there. Is it some
-> bounce buffers?
+syzbot has bisected this issue to:
 
-For direct io, it is filled with user pages, but it can be buffered IO,
-and the page can be mapped to userspace.
+commit cc34d8330e036b6bffa88db9ea537bae6b03948f
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Mar 20 18:25:12 2025 +0000
 
-> 
-> > Add two helpers for fixing this issue, meantime replace one check
-> > with io_use_fixed_kbuf().
-> > 
-> > Cc: Caleb Sander Mateos <csander@purestorage.com>
-> > Cc: Keith Busch <kbusch@kernel.org>
-> > Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> ...
-> > +/* zero remained bytes of kernel buffer for avoiding to leak data */
-> > +static inline void io_req_zero_remained(struct io_kiocb *req,
-> > +					struct iov_iter *iter)
-> > +{
-> > +	size_t left = iov_iter_count(iter);
-> > +
-> > +	if (left > 0 && iov_iter_rw(iter) == READ)
-> > +		iov_iter_zero(left, iter);
-> > +}
-> > +
-> >   #endif
-> > diff --git a/io_uring/rw.c b/io_uring/rw.c
-> > index 039e063f7091..67dc1a6710c9 100644
-> > --- a/io_uring/rw.c
-> > +++ b/io_uring/rw.c
-> > @@ -541,6 +541,12 @@ static void __io_complete_rw_common(struct io_kiocb *req, long res)
-> >   	} else {
-> >   		req_set_fail(req);
-> >   		req->cqe.res = res;
-> > +
-> > +		if (io_use_fixed_kbuf(req)) {
-> > +			struct io_async_rw *io = req->async_data;
-> > +
-> > +			io_req_zero_remained(req, &io->iter);
-> > +		}
-> 
-> I think it can be exploited. It's called from ->ki_complete, i.e.
-> io_complete_rw, so make the request size enough, if you're stuck
-> copying in [soft]irq for too long.
+    io_uring/net: don't clear REQ_F_NEED_CLEANUP unconditionally
 
-Short read seldom happens, so how it can be exploited? And the request size
-can't be too big in this(ublk) use case.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15ef043f980000
+start commit:   d07de43e3f05 Merge tag 'io_uring-6.14-20250321' of git://g..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17ef043f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ef043f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=620facf12ff15d10
+dashboard link: https://syzkaller.appspot.com/bug?extid=cf285a028ffba71b2ef5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16be1c4c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12223004580000
 
-Thanks,
-Ming
+Reported-by: syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com
+Fixes: cc34d8330e03 ("io_uring/net: don't clear REQ_F_NEED_CLEANUP unconditionally")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 

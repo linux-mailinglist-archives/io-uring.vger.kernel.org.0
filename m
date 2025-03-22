@@ -1,88 +1,115 @@
-Return-Path: <io-uring+bounces-7193-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7194-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F218A6C8B4
-	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 10:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA857A6C8DA
+	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 10:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D454608A4
-	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 09:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A394636B9
+	for <lists+io-uring@lfdr.de>; Sat, 22 Mar 2025 09:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8471D88D0;
-	Sat, 22 Mar 2025 09:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5A91EFF85;
+	Sat, 22 Mar 2025 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bq0WEWY1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51642127E18
-	for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A18A1EBFE2
+	for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 09:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742635684; cv=none; b=VixLcJRgWQHre6vwKa8kOm4LKtvtNHkT9DWjt/SNwwgIK/Oc5f3x7HZqEMU+xlB8nlWspG/1uzO3cdgKTQ6mX+BPd5f9lFYor2Pmpzo6HS0F5NLE8dB3M6lfjm59W1SW4a/VyeGv5HAGK9mB0VjfHqU5Ve97q9uPa23zC+xXRa4=
+	t=1742636550; cv=none; b=MvC/G/g9vU61/iIlKCimB81JdwPQ+AD8kURx29HSYHShbHNT+2vh1RTkx5f8M8XpRRq9oviOicwF4aW52piD34syfus8x7ZjOJxvWSh1ITAhY/zZS7WUDwvgTHmidkll4Ji1xWZ0ir+EjzUb+k1M1+OsIS03u/w3rbhD1/yK6s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742635684; c=relaxed/simple;
-	bh=YvP5plOupe1A1k9EZ7yU2X0y7ycDWIcFtZyz/cs0EWs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NDyY78wxfuMgWXAcq7DhHnRgCoqNXWViePVVT761k+JEUWbzUlKpJvGECg9RwzN317Mw6mOSZlWeLheTJO8wzx3jNOcxlUYO+Q/0E4kCMDQc3NQsUYwoJE/egdikG0p70Lr1WLEwPRjAIgdzUi8MWSxzpmWNNs4v6/f7IyhSP9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85b3f480d86so223484739f.3
-        for <io-uring@vger.kernel.org>; Sat, 22 Mar 2025 02:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742635682; x=1743240482;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/1/8NSp23q/ACQLJxacEQ6xVJJpFBAovimyCbTcpNc=;
-        b=YeQ//yFDVvNOhdMz3tyrkmlrEtI9elKd/TRAgQvcPFPHcNm95HgXL8/EBJ2t7jjUyT
-         70Rh/K7OGQ+Url3w49RDsmR+pWh8PGEGS/cvjIS2RM2t/KjoARPyggdV9m2VfVbgC5fr
-         sM9tESHpWH3rSV7gDa0p7Fk8CbtwONCeR/tGkHyT+Dl5q3b7LpHxwBFjWqrltcHdsCX9
-         t8WKi+ipEH5bFoAPcIpjnAxj6BtyNsL9rR5K6uRFG4dHEC7PuAsJzzn8BiHt2Aq46qHv
-         zFWAaH0BpyBkKlAG80Pl2qNKIFFCd/GEpkW6BsaMoU+C54GjQTqMrvmvaEvIfnCw4KgP
-         JUNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBoI4atJCpBuWIVGO+X/E3iCSFsKioyDypuhDtMrJ1wxYPxiLwfDB2QPgkC3AwUFLkCwAO1ZzqAQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxGzsC5wmctyFnAD+RpbBuwclDlhnUmAQfIhRMcDEP5C+50LAc
-	6PsbX/kzohMXbQxQQtjMJ07o6IjDedxxv0ppOnUHkFdha5yTtewsNqlsEh3YAjfe2oxgJy3uK/a
-	knD7yBrbc28Hd113HJa1KhyEW5iOBUTy9cVBdO8Yhab3UO4/l4i5mVvQ=
-X-Google-Smtp-Source: AGHT+IFsGhUOtcYYvOrW0tXzabFLcCZgbkG7y/DFv1qHp9uYbi8OSs02v+7vcOGJWwbwXCdClCGkWwkdlJZzy90RPDkfS+SkGEki
+	s=arc-20240116; t=1742636550; c=relaxed/simple;
+	bh=nvQ9tPLrRSXIM+10AemHsXcSf7ifGhZzqtdFrruZXlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmzs7fRUEQ6VL9GORzni5RAmdWmA1DNJ+9Z1stnaNQRW63nmaaN79XQGaT13ktsSPyPNOd0xN4BV5wrN6JyHbNQIu+LE/setw5HFiN6KOi94dcuWxgdrk91/up2OgTX0YIOmoz+fErdzF+7h8BMg913+4w6OCY0wnbkrhebsCbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bq0WEWY1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742636547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMaX8bUezeBQP1VAg4uk80uWFS5hWFj4E09SSplPiv0=;
+	b=Bq0WEWY1YoAFBjYyEXcK6zxtlIRPwEtPBNbtZ+JtmNP0bsr5zvqZbGBrdI7guiOnPt2qsu
+	+Z8J/PXX+WOXzpdUyF7Jcv9OP3UnzupLynC4joxC9B1J3Bh5YEA3e+/UxxnhfRN9sUpEiZ
+	h6u+uUuPgeFDhIZyni6JpXhNJza5r5E=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-ot8t2G2zMReIOa3EmMnEMw-1; Sat,
+ 22 Mar 2025 05:42:22 -0400
+X-MC-Unique: ot8t2G2zMReIOa3EmMnEMw-1
+X-Mimecast-MFC-AGG-ID: ot8t2G2zMReIOa3EmMnEMw_1742636541
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC7501933B48;
+	Sat, 22 Mar 2025 09:42:21 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.5])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD581180A803;
+	Sat, 22 Mar 2025 09:42:18 +0000 (UTC)
+Date: Sat, 22 Mar 2025 17:42:12 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] cmd infra for caching iovec/bvec
+Message-ID: <Z96F9J5gixbb52E-@fedora>
+References: <cover.1742579999.git.asml.silence@gmail.com>
+ <0c6e6b27-05db-4709-be80-52d0f877d2ce@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:220f:b0:3d5:7f32:8d24 with SMTP id
- e9e14a558f8ab-3d59616b952mr65624375ab.15.1742635682477; Sat, 22 Mar 2025
- 02:28:02 -0700 (PDT)
-Date: Sat, 22 Mar 2025 02:28:02 -0700
-In-Reply-To: <fde4a18e-0376-4c3f-9b27-b644c211618e@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67de82a2.050a0220.31a16b.002e.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING: refcount bug in io_send_zc_cleanup (2)
-From: syzbot <syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c6e6b27-05db-4709-be80-52d0f877d2ce@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+On Fri, Mar 21, 2025 at 01:13:23PM -0600, Jens Axboe wrote:
+> On 3/21/25 12:04 PM, Pavel Begunkov wrote:
+> > Add infrastructure that is going to be used by commands for importing
+> > vectored registered buffers. It can also be reused later for iovec
+> > caching.
+> > 
+> > v2: clear the vec on first ->async_data allocation
+> >     fix a memory leak
+> > 
+> > Pavel Begunkov (2):
+> >   io_uring/cmd: add iovec cache for commands
+> >   io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+> > 
+> >  include/linux/io_uring/cmd.h | 13 ++++++++++++
+> >  io_uring/io_uring.c          |  5 +++--
+> >  io_uring/opdef.c             |  1 +
+> >  io_uring/uring_cmd.c         | 39 +++++++++++++++++++++++++++++++++++-
+> >  io_uring/uring_cmd.h         | 11 ++++++++++
+> >  5 files changed, 66 insertions(+), 3 deletions(-)
+> 
+> This version works for me - adding in Ming, so he can test and
+> verify as well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+With the two patches, all ublk selftest can run to pass, and kernel doesn't
+panic any more.
 
-Reported-by: syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com
-Tested-by: syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com
+BTW, I meant vectored fix kernel buffer support for FS read/write, which
+looks not supported yet.
 
-Tested on:
+And it can be useful in the following case:
 
-commit:         e1306007 io_uring/net: fix sendzc double notif flush
-git tree:       https://github.com/isilence/linux.git syz/sendzc-cleanup
-console output: https://syzkaller.appspot.com/x/log.txt?x=15809c4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fa548b75e783182
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf285a028ffba71b2ef5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+https://lore.kernel.org/linux-block/20250322093218.431419-9-ming.lei@redhat.com/T/#u
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+
+Thanks,
+Ming
+
 

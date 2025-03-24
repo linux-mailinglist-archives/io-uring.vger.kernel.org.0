@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-7225-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7226-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2CBA6E3F1
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7590FA6E3EF
 	for <lists+io-uring@lfdr.de>; Mon, 24 Mar 2025 21:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEF2E7A5DE3
-	for <lists+io-uring@lfdr.de>; Mon, 24 Mar 2025 20:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DEE1890DE2
+	for <lists+io-uring@lfdr.de>; Mon, 24 Mar 2025 20:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4257C1C7017;
-	Mon, 24 Mar 2025 20:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3681C860F;
+	Mon, 24 Mar 2025 20:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bv11I3vp"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="gMxxYlSS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
+Received: from mail-io1-f100.google.com (mail-io1-f100.google.com [209.85.166.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE6C192D77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8C1C07D9
 	for <io-uring@vger.kernel.org>; Mon, 24 Mar 2025 20:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742846786; cv=none; b=fimamsfG2HWh4s7SyNkqiqj6zxMpJItF+vtay3wszHv00rvhlTJctl1cZ4MZRP0s3cTy22ljgvySOakntoAnmRwMvsZB7uqwzsSU3B7wYxgw2cvcov08Amn/O5ulgDup9Qzno5JtfVAOxKOuvFTRtsnYIIVigpOEk/AONJfnfF8=
+	t=1742846787; cv=none; b=c7ikgMGQk2MNzb1j0ohojijt4UiDks1VpN3iuwO2FKX+Lq4OowHYSF/M6jyfGxmlWU6Ow46aa1zeNcypy/505qhcwh8TZAfU//nM+I0hoFL3T+MgAFJ6mfMjAQNkNsKaiptEBLsH6RPGDOFNhm4HGK5rvpKwV24d7ykFR6YV5jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742846786; c=relaxed/simple;
-	bh=1iS4mGcy0YW42yJZNnESJIZkw5XDhoB+d/oFC8PEVes=;
+	s=arc-20240116; t=1742846787; c=relaxed/simple;
+	bh=a/OqDesckC4x9orY8rbOzrIOx5U2C6nDLJe9hDC2J94=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rDJmD83+Oc6aYlbAGDbCiF6MBxOOvjPiyKB0cyC8/wQymVE5/FGWN0Zw0gWExb4KIW4nYNTkoznIVagGzsf7QE9Pt7kTnhjboYp2H7BoBOAJCD96J0cwhulyaoGpULu6SdhagZRjKPbrKJvz6s1SYuCNZSV5cogQfyoRk8qXeHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bv11I3vp; arc=none smtp.client-ip=209.85.166.225
+	 MIME-Version; b=ay1lPD+GnYXO4em/PezLSEq9s7UbwERzZwaTFRyf/APbnEAQlE53r+CAxHIQNYrsDK1bkn5TxD/P3aZP9tk3GTJjB6QgfZhO0dHNIdrb6pbgUtluweWuYZc94AabvtEvxA+/KPL6wJRMXuOcOrbVZTnWPiZqiNAUmW4BfS/2o6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=gMxxYlSS; arc=none smtp.client-ip=209.85.166.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3d441a4b283so1496605ab.1
+Received: by mail-io1-f100.google.com with SMTP id ca18e2360f4ac-85b418faf5cso15545639f.3
         for <io-uring@vger.kernel.org>; Mon, 24 Mar 2025 13:06:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742846783; x=1743451583; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1742846784; x=1743451584; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PBv3iNMxv4+elhFyGCYrja1iq4HKQSGLUCy5fijhOxs=;
-        b=bv11I3vp1V3iQBDBm58FK2aDobHabnlnKGlQaRY+8i7FCqj+qaC10f07PM6MSrRuIe
-         8/iWK60x/PBKsd00BR3eWzL7LI9bI14Akeasgst/6D6u/LNB3PUwNf/kqzUJaCpOVnAH
-         gw29xFfqH0Hgia/JRehpOCUgYWaRuNIpVpeOwFtmeJRQG3rUQKL6P9JA8ye/q8eCEL0h
-         ioSsp3HLCVmPG3H1R+UoR3tbGPKRcKvi9xE6jYHM8ODWIWs9pXwviGcCWGF6uV+x8DvA
-         DfeZN3yXsmi+Dr9/2AY39OmKH7lg334ul0lUD7HC5amaECkEh1f+UvBKL93lYvk3gJxC
-         giIg==
+        bh=2AeP3tUa1PaSAs4qnZHRPSHqiV7KLICBeUZhC4wZNt0=;
+        b=gMxxYlSSSZKUnoHpp5k9MJ+HOoWOaY+QgeIQSiySVnnHh55opDlSu63Dm1pEglWdFu
+         LDIyE7k/nqnibjCYWtSlQ2Dn+P9YQnTaDJrehcoPFpcGrT2nfm50lV1r8kDcr1BnK4cy
+         CtW8yE64+VNYDq6mOQQoSZ1mQ9UHPmPl4v9EJq9sJQ7fXxz59iweZ6wD+u0ZqAjYDbj6
+         ashJdT+Jr4pZS/mFQKApnzCcJZNce8VFbAQ6eUQeEP+BwAdltsfnUejCmpgepRn8lXOL
+         V0lu+2fAasJ3lcCcm20JfSVaLzPENjN60tK5dUbxX3gS0T/TIu3Rfc0gpQzu2hAhhj0o
+         t3Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742846783; x=1743451583;
+        d=1e100.net; s=20230601; t=1742846784; x=1743451584;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PBv3iNMxv4+elhFyGCYrja1iq4HKQSGLUCy5fijhOxs=;
-        b=eawUnz/Hv0ohu6E1SX3Kb1oZtoC8/ZQ+gCwHbrCQsgMGJgXCBEgaa3ngcABPXSeGEF
-         v1JTSn7eUV/Wy6Ayravzech9lIhrQCr+yclWOyihggAfbRAoxvAwVctd1n77QKt4Xg14
-         T9h4vjZb47Pw4NjioQ4i8goMYgZEYGGXg4sHzPlz9qIFTJVUnFIr+UGotvi4qkRADt7+
-         18wJfYsyfaIXt4BlAvWzijVzx76fmVtIp76hYqNPJDf+FmPi1DfU9crhVppvbT0j16xu
-         cQ/wbz+8eFTLR7Krw+hrF2IqOazuDKg9fiZ0T3vRUbGnEyXCdmlFsel+TaeNeDJwgGw4
-         AcsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKNW+J+BLmdO70sJPwo7TK+JmORP4ergKzXYOoxk6/z/Lmou2BQZSQnUgmHji1+Bb0o/Nd6DnmPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL5hm9tDoe4iG0n4tr1HcfoewJYhhTTyEDkFwNHKAD/gIMcG7b
-	oSanoIO2LVPOfOx1i7UE/1hKMnZPRknedNC2kTMGKoBcyx4W2e3WJLn9quKRoVZOSEG9G2vhRmW
-	wv5aqcb6cHy88eWfin5RmZ/JVaMbC6uU1
-X-Gm-Gg: ASbGncui7uVSZEnCaFMyRQixzmMJqyq0j8ldGYAVXOA8eN2EaddcnTuepyjD9xA/ht+
-	87kZQnTGUVmZ7BrA0iE14gEgIq3vE2PWEqEarOskbS8CccEuC8zXViq99bGegHsZjrFCUYWawCe
-	6TrjOD878U+YIpHJBZdfg/SObXQNAJqpsF4ClAyYTXGShC9dHShSI6QxHP+Ou7QJgrdxhFidvOJ
-	zyb/GgHfuSbv0OijI7OzE4z1kDj9F5oqa3TA9PoEySIY6vw/UkuykRgj4Ql1Hj02raKPJZfylt/
-	9x29omX25wyY8VvS3Hf9tbR6gQnRI05ZEc/cwUHCszlHVT4D
-X-Google-Smtp-Source: AGHT+IEV+lCwII9GhQtPHGVDcjw8YXVvBkkja75sRJDPkHKdd3G9TROtFMPaXK5/0cUjj2j8hg6M5JXiMBNm
-X-Received: by 2002:a05:6e02:1c2e:b0:3d3:fd18:4360 with SMTP id e9e14a558f8ab-3d5961854a9mr39970815ab.6.1742846783185;
+        bh=2AeP3tUa1PaSAs4qnZHRPSHqiV7KLICBeUZhC4wZNt0=;
+        b=FeYbghB1iMxSqeho6F/5DL1r7isv/QTURyJ4B80DM5GOZik+LQY0kieTzgqObNM0qC
+         ePYgxKJF3iNXwI9z5BvE3+5IBer4kY/CPQ12PpHjOYqb1Ssk8qtzhnxj2m1hv3u7Wrlx
+         aRS+tZ66/BoePQu8KtA+dzIlfnQPbRutdFJh2YpyPYWre8FFm/KEULdoiQe4xrFBw/++
+         C89jrbZlkVwlxWgXfGUP82grWZ/Aszcxqrb1gB8+830DSBuf312SujNukymKz/R0hAhe
+         k/QeoSmDv/Dd5fSe3dgkdjwSPEOFgZXo6fGVkwNJw6O5+Y/q7Qd2T/O3BC91KIcLJ3Gv
+         h+AA==
+X-Forwarded-Encrypted: i=1; AJvYcCXm4EbRHca5XVvmp77PjbgBvK1Dm/tsEu/f1KNfs0bHmSVfYQo+PyRagPWi/OyWy7aqHkl6+lSoHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9Py4ZqecSPyxnuaXHv7wG07W6i5jRy5Ow9HIvqFjXcABpJcjw
+	FnZQLyUaPJuwVAr+8xS625ebRAMPVO97rW25u+ZgZw8O/wp8sHfRjNeXBnJGgJ5jKrD4W/4zFNc
+	+NRWi++Du0HkWKQVMcxuLdxcYHZe3kQT9YO1/inK8mc/0LbUq
+X-Gm-Gg: ASbGncvBiKl4/9Jhrr/J2BBCo9w5BkfcBBIFYP8DUkZ7w9iECUXbuj1xQ7X+qhG4+tW
+	tQMKWyrOZd9lh6S2eSkScaeod/oLQxKRNQ89X1E4XjwC2VIfAbkHyapg4N9dnUl1HUVks4BGyov
+	L473WhMwugdOPh0hRSSUDWi1o5ocYZndzzPAZyCNVCQVwRpvET9LAChOJgywI4o8bZmIguYqSbx
+	uzwPEZNu0vRn96eBAgNyUaKgFvYcZyuoR1RhFB2WjttQnDyPKT5Pn9AX7Ww1OATA6W6tkmmSazb
+	HcuSR2ZHGrsU+6q5h50e/0PPWonEZK+2Mw==
+X-Google-Smtp-Source: AGHT+IHNqvmP9ln5GrZ4X4+8LO1tZJJn7NGCANLbaSu7JIy8WsCk3TVzlhQISS+g7lZW4375/xs/ty7i0mo7
+X-Received: by 2002:a05:6e02:1946:b0:3d4:3aba:9547 with SMTP id e9e14a558f8ab-3d59616811cmr38294575ab.4.1742846783927;
         Mon, 24 Mar 2025 13:06:23 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d596095834sm3865285ab.40.2025.03.24.13.06.22
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d5960fdf9bsm3732575ab.52.2025.03.24.13.06.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 24 Mar 2025 13:06:23 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 29F58340363;
-	Mon, 24 Mar 2025 14:06:22 -0600 (MDT)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0B9543404B9;
+	Mon, 24 Mar 2025 14:06:23 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 2180EE40ADF; Mon, 24 Mar 2025 14:05:52 -0600 (MDT)
+	id 00019E40AE6; Mon, 24 Mar 2025 14:05:52 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Keith Busch <kbusch@kernel.org>,
 	Jens Axboe <axboe@kernel.dk>,
@@ -90,9 +90,9 @@ Cc: Xinyu Zhang <xizhang@purestorage.com>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 2/3] nvme/ioctl: move blk_mq_free_request() out of nvme_map_user_request()
-Date: Mon, 24 Mar 2025 14:05:39 -0600
-Message-ID: <20250324200540.910962-3-csander@purestorage.com>
+Subject: [PATCH v3 3/3] nvme/ioctl: move fixed buffer lookup to nvme_uring_cmd_io()
+Date: Mon, 24 Mar 2025 14:05:40 -0600
+Message-ID: <20250324200540.910962-4-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250324200540.910962-1-csander@purestorage.com>
 References: <20250324200540.910962-1-csander@purestorage.com>
@@ -104,139 +104,148 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The callers of nvme_map_user_request() (nvme_submit_user_cmd() and
-nvme_uring_cmd_io()) allocate the request, so have them free it if
-nvme_map_user_request() fails.
+nvme_map_user_request() is called from both nvme_submit_user_cmd() and
+nvme_uring_cmd_io(). But the ioucmd branch is only applicable to
+nvme_uring_cmd_io(). Move it to nvme_uring_cmd_io() and just pass the
+resulting iov_iter to nvme_map_user_request().
+
+For NVMe passthru operations with fixed buffers, the fixed buffer lookup
+happens in io_uring_cmd_import_fixed(). But nvme_uring_cmd_io() can
+return -EAGAIN first from nvme_alloc_user_request() if all tags in the
+tag set are in use. This ordering difference is observable when using
+UBLK_U_IO_{,UN}REGISTER_IO_BUF SQEs to modify the fixed buffer table. If
+the NVMe passthru operation is followed by UBLK_U_IO_UNREGISTER_IO_BUF
+to unregister the fixed buffer and the NVMe passthru goes async, the
+fixed buffer lookup will fail because it happens after the unregister.
+
+Userspace should not depend on the order in which io_uring issues SQEs
+submitted in parallel, but it may try submitting the SQEs together and
+fall back on a slow path if the fixed buffer lookup fails. To make the
+fast path more likely, do the import before nvme_alloc_user_request().
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- drivers/nvme/host/ioctl.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ drivers/nvme/host/ioctl.c | 45 +++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 0634e24eac97..f6576e7201c5 100644
+index f6576e7201c5..da0eee21ecd0 100644
 --- a/drivers/nvme/host/ioctl.c
 +++ b/drivers/nvme/host/ioctl.c
-@@ -127,41 +127,39 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	int ret;
+@@ -112,12 +112,11 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
+ 	return req;
+ }
  
- 	if (!nvme_ctrl_sgl_supported(ctrl))
- 		dev_warn_once(ctrl->device, "using unchecked data buffer\n");
- 	if (has_metadata) {
--		if (!supports_metadata) {
--			ret = -EINVAL;
--			goto out;
--		}
-+		if (!supports_metadata)
-+			return -EINVAL;
-+
+ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
+-		struct io_uring_cmd *ioucmd, unsigned int flags,
+-		unsigned int iou_issue_flags)
++		struct iov_iter *iter, unsigned int flags)
+ {
+ 	struct request_queue *q = req->q;
+ 	struct nvme_ns *ns = q->queuedata;
+ 	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
+ 	bool supports_metadata = bdev && blk_get_integrity(bdev->bd_disk);
+@@ -135,28 +134,16 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
  		if (!nvme_ctrl_meta_sgl_supported(ctrl))
  			dev_warn_once(ctrl->device,
  				      "using unchecked metadata buffer\n");
  	}
  
- 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
- 		struct iov_iter iter;
- 
- 		/* fixedbufs is only for non-vectored io */
--		if (flags & NVME_IOCTL_VEC) {
--			ret = -EINVAL;
--			goto out;
--		}
-+		if (flags & NVME_IOCTL_VEC)
-+			return -EINVAL;
-+
- 		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
- 				rq_data_dir(req), &iter, ioucmd,
- 				iou_issue_flags);
- 		if (ret < 0)
--			goto out;
-+			return ret;
- 		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
- 	} else {
+-	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+-		struct iov_iter iter;
+-
+-		/* fixedbufs is only for non-vectored io */
+-		if (flags & NVME_IOCTL_VEC)
+-			return -EINVAL;
+-
+-		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
+-				rq_data_dir(req), &iter, ioucmd,
+-				iou_issue_flags);
+-		if (ret < 0)
+-			return ret;
+-		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
+-	} else {
++	if (iter)
++		ret = blk_rq_map_user_iov(q, req, NULL, iter, GFP_KERNEL);
++	else
  		ret = blk_rq_map_user_io(req, NULL, nvme_to_user_ptr(ubuffer),
  				bufflen, GFP_KERNEL, flags & NVME_IOCTL_VEC, 0,
  				0, rq_data_dir(req));
- 	}
+-	}
  
  	if (ret)
--		goto out;
-+		return ret;
+ 		return ret;
  
  	bio = req->bio;
- 	if (bdev)
- 		bio_set_dev(bio, bdev);
+@@ -194,11 +181,11 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ 		return PTR_ERR(req);
  
-@@ -174,12 +172,10 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	return ret;
- 
- out_unmap:
- 	if (bio)
- 		blk_rq_unmap_user(bio);
--out:
--	blk_mq_free_request(req);
- 	return ret;
- }
- 
- static int nvme_submit_user_cmd(struct request_queue *q,
- 		struct nvme_command *cmd, u64 ubuffer, unsigned bufflen,
-@@ -200,11 +196,11 @@ static int nvme_submit_user_cmd(struct request_queue *q,
  	req->timeout = timeout;
  	if (ubuffer && bufflen) {
  		ret = nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
- 				meta_len, NULL, flags, 0);
+-				meta_len, NULL, flags, 0);
++				meta_len, NULL, flags);
  		if (ret)
--			return ret;
-+			goto out_free_req;
+ 			goto out_free_req;
  	}
  
  	bio = req->bio;
- 	ctrl = nvme_req(req)->ctrl;
+@@ -465,10 +452,12 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+ 	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
+ 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
+ 	struct nvme_uring_data d;
+ 	struct nvme_command c;
++	struct iov_iter iter;
++	struct iov_iter *map_iter = NULL;
+ 	struct request *req;
+ 	blk_opf_t rq_flags = REQ_ALLOC_CACHE;
+ 	blk_mq_req_flags_t blk_flags = 0;
+ 	int ret;
  
-@@ -212,15 +208,16 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 	ret = nvme_execute_rq(req, false);
- 	if (result)
- 		*result = le64_to_cpu(nvme_req(req)->result.u64);
- 	if (bio)
- 		blk_rq_unmap_user(bio);
--	blk_mq_free_request(req);
+@@ -500,10 +489,24 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	d.addr = READ_ONCE(cmd->addr);
+ 	d.data_len = READ_ONCE(cmd->data_len);
+ 	d.metadata_len = READ_ONCE(cmd->metadata_len);
+ 	d.timeout_ms = READ_ONCE(cmd->timeout_ms);
  
- 	if (effects)
- 		nvme_passthru_end(ctrl, ns, effects, cmd, ret);
++	if (d.data_len && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
++		/* fixedbufs is only for non-vectored io */
++		if (vec)
++			return -EINVAL;
++
++		ret = io_uring_cmd_import_fixed(d.addr, d.data_len,
++			nvme_is_write(&c) ? WRITE : READ, &iter, ioucmd,
++			issue_flags);
++		if (ret < 0)
++			return ret;
++
++		map_iter = &iter;
++	}
++
+ 	if (issue_flags & IO_URING_F_NONBLOCK) {
+ 		rq_flags |= REQ_NOWAIT;
+ 		blk_flags = BLK_MQ_REQ_NOWAIT;
+ 	}
+ 	if (issue_flags & IO_URING_F_IOPOLL)
+@@ -513,13 +516,13 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	if (IS_ERR(req))
+ 		return PTR_ERR(req);
+ 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
  
-+out_free_req:
-+	blk_mq_free_request(req);
- 	return ret;
- }
- 
- static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
- {
-@@ -520,20 +517,24 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
  	if (d.data_len) {
- 		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
- 			d.metadata_len, ioucmd, vec, issue_flags);
+-		ret = nvme_map_user_request(req, d.addr,
+-			d.data_len, nvme_to_user_ptr(d.metadata),
+-			d.metadata_len, ioucmd, vec, issue_flags);
++		ret = nvme_map_user_request(req, d.addr, d.data_len,
++			nvme_to_user_ptr(d.metadata), d.metadata_len,
++			map_iter, vec);
  		if (ret)
--			return ret;
-+			goto out_free_req;
+ 			goto out_free_req;
  	}
  
  	/* to free bio on completion, as req->bio will be null at that time */
- 	pdu->bio = req->bio;
- 	pdu->req = req;
- 	req->end_io_data = ioucmd;
- 	req->end_io = nvme_uring_cmd_end_io;
- 	blk_execute_rq_nowait(req, false);
- 	return -EIOCBQUEUED;
-+
-+out_free_req:
-+	blk_mq_free_request(req);
-+	return ret;
- }
- 
- static bool is_ctrl_ioctl(unsigned int cmd)
- {
- 	if (cmd == NVME_IOCTL_ADMIN_CMD || cmd == NVME_IOCTL_ADMIN64_CMD)
 -- 
 2.45.2
 

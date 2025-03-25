@@ -1,240 +1,166 @@
-Return-Path: <io-uring+bounces-7238-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7239-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829D8A70308
-	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 15:01:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE45AA70402
+	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 15:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00261653AC
-	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 13:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F47B3A8C1F
+	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 14:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FF71F55EF;
-	Tue, 25 Mar 2025 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681EC25A34E;
+	Tue, 25 Mar 2025 14:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P9+5jSwL"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Xdasmq6k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEC819CC2E
-	for <io-uring@vger.kernel.org>; Tue, 25 Mar 2025 13:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1A253F0E
+	for <io-uring@vger.kernel.org>; Tue, 25 Mar 2025 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742910757; cv=none; b=dxLzbjHi2ziQ8s0mh8wMHWWCY3L0dGEBtPxgFD7X5seMSCDMWPpEnRJHYeCJtyOuw93oNMuOg4Zb8r0V+yU/zU0HzTPvcm4T+JZEzEPxPGc9lSvGZGPHVN6CR6SyZ+ldWP02EVfnuR6f4tU4I/OqyjW6dfe5EzBv+ACnt1QNLE0=
+	t=1742913559; cv=none; b=dNTCV60CDzoIWH4EYAk/KDXnSjcamuisQPl7BaidMffslqM+611CKPaJf0JK3dMeSHkd2M5vyp4uhHvpbPA73toW+mCmT8CswVpx0LMRKDrFErowCO59ByVEQ+aK3I2mOSEz6hM7utN1ZPRgz3/zT6Q7oDFoPCPXNmeCgvyLbWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742910757; c=relaxed/simple;
-	bh=FwrxkCFJG4F70/anpzaL3+28jjGJ5iICqnIY3ARep98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p50ygrXdOLghLTHmujzB9mmpdTv/XL4GeoxF4jHC2WQLU01F2mUVdyavqWI9fcXuQARN0LzNgtILgq4guYGTRFR0YFJaRpBmtLjaKcCb/MrTWHysu3vGUnZt3Ad9O4RPpUU+sW77Xpjt+pZepHtCQcH/yLG9Rm+kGzPuHNmi9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P9+5jSwL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742910754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9rkCEpFx95kanqFRf/MgwM1jjt3NtateXS8tqInieTs=;
-	b=P9+5jSwL5+YsR4CS5+HVGAvQ22Oi1i36Q+4Dcv0TouiETOomFo9TPGv2te5TGFH87AWK9q
-	SLon56WbM1D8zL/lgB7V1awlypyYVB1UOLtDwax4e2MSNDoC9Ll6qMiFSkZ9MnlFjBoa99
-	MxqXp8mYTauPBCUiA2ZmkV9+j37PzJI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-ZEF0iGyhPwG4UZjPawVyyw-1; Tue,
- 25 Mar 2025 09:52:30 -0400
-X-MC-Unique: ZEF0iGyhPwG4UZjPawVyyw-1
-X-Mimecast-MFC-AGG-ID: ZEF0iGyhPwG4UZjPawVyyw_1742910749
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC3F51933B4F;
-	Tue, 25 Mar 2025 13:52:29 +0000 (UTC)
-Received: from localhost (unknown [10.72.120.3])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B4C2F180A802;
-	Tue, 25 Mar 2025 13:52:28 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 4/4] selftests: ublk: enable zero copy for stripe target
-Date: Tue, 25 Mar 2025 21:51:53 +0800
-Message-ID: <20250325135155.935398-5-ming.lei@redhat.com>
-In-Reply-To: <20250325135155.935398-1-ming.lei@redhat.com>
-References: <20250325135155.935398-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1742913559; c=relaxed/simple;
+	bh=93eWenbFX4Qctz6lS+ZM7ptfCzMUV8wfEb7lTyzGPMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YV0PcrNN/SRa7VMRHmY0eouY6VG78OjFw0qslPKcIr+55v19uJoUDIO3GArsCUee99d4Tlm7iQuy9kxduvJF7TrE4oxylo50EAlAJHoO74hEhPUtgGTUe8+IhhaOiu10CQK11al0/IZBUYsFYDz1WFfsZDkqKMTQy1EKYbzhzEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Xdasmq6k; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff73032ac0so1560595a91.3
+        for <io-uring@vger.kernel.org>; Tue, 25 Mar 2025 07:39:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1742913556; x=1743518356; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K5+emjeFfRDf3d8vzGiMI59WxZfGi88bAPj4rxcKWnI=;
+        b=Xdasmq6kbva6eSwW0l1wHu71yw6sMqRKaj/k4RILNQo0sLM9Wjt9oU+PUiZVMv+QUE
+         F5qVIBXjD04qnte1zLTx3OWp1ydUV0ZEHuJHs8VlvvEd2iWHYAV199g3AhymN7piHR5d
+         K6rRQdZaCYD7IUqinp/6pOcAX6QIuTUUH0OmjuNChUvPr4OyhUIp8l4ZdVQ2lGhkoVRT
+         hOfxWKsUBw7Jx2MYyMp5AI2z+xuUBFiaH7aBXZnV4GddMCIzELgmdiWKWAz1Qm7gmEB7
+         5rEt8G/AZHEroh997xoCv6LbkBxaXhJjAIAsIUHCLjQt/7pHJUAbHB0vvHNOod45a9+0
+         ox+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742913556; x=1743518356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K5+emjeFfRDf3d8vzGiMI59WxZfGi88bAPj4rxcKWnI=;
+        b=qsMkJlUauhN6eZ7iOrnIVOZAGfhfFIREtzKjXj/n4Wy2O/Z/srlJHgNuYI6RwD9/Ho
+         qQYHf/uY8KZUUKXIztSvurzD90Njn828luGmjleqWovCfjHOr+3l6cJxeuc1Gi1ZRK/X
+         FSG0xUoQTBXkg/3mGCwJ4BEIngaRR8nxfRiR6CgTduILqkiimKtPwadb2+yx9j2XDty9
+         WiqmChjo3pAFcgCorGVLw2qZoYzoSTCjlNoSSdCTSgE23rms3UOfz29NEDBCTSO9PsUX
+         01rWEIgmkLOwLGr6SOLtvm9t6vr60xEIiwCdC2ofvSu3B/6w3NrF7BAdPNrTi4xjbrJC
+         mCmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVD6KCxFIeCzg0vSr2/onCQSiikJlqIhnb203wQxeuB9CZjkBoR9sxz8fqdEKyANGOK+TzGyyK0MQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4y4vM/NLv27W65T95NEtcpXjaYBSLlE0E7kuIwIbWPedhBAn/
+	JV6YniKFFXpD/+XN6tR5yujd95Ql6g/uBs77zSgVo+eY1NTfe7+1K53fXE/kI8wgMFTvHpfMu7P
+	HUI/bcMetN2i3AhamZ2SInGJ462pJqMMQoxogfbQdCRNgb8fzNvw=
+X-Gm-Gg: ASbGncuCqU/nkBGRdXGnNo5MfckG7WjY/gNy6DbXOB3ZtQMktbl4lVGzxKFghaaecwj
+	N+T1LpBR/Rbu9ivSVaYEzPRmFVNyMR6aJL2XisOuAWoejJ9pR+1ptbRyBzmIRG7OkT4goxvI8b8
+	NqB9NnMpkozMWPKjbvjK1RMpDz
+X-Google-Smtp-Source: AGHT+IELDUGTHhhfY6IuAt3IGxep+aF++UUFDx9mIkxkIg5Rky6VYHfF/K2vYvRLeDpg3qkuJHKzbYSL5b1iC44oGPc=
+X-Received: by 2002:a17:90b:1b52:b0:2fe:a747:935a with SMTP id
+ 98e67ed59e1d1-3030fef1da3mr10236262a91.4.1742913555742; Tue, 25 Mar 2025
+ 07:39:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250324151123.726124-1-csander@purestorage.com> <8b22d0df-f0ea-4667-b161-0ca42f03a232@gmail.com>
+In-Reply-To: <8b22d0df-f0ea-4667-b161-0ca42f03a232@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 25 Mar 2025 07:39:04 -0700
+X-Gm-Features: AQ5f1JrNvLHl-Bc07IZmeCK7EzYr-z2R9_YgkneyPMAWniWHWnNox-4XX-GkLxQ
+Message-ID: <CADUfDZocNe0jm1n3WxO+hHqVcQcgj5PtA4h+S3EsiB0D=-m+dA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use io_uring vectored fixed kernel buffer for handling stripe IO.
+On Tue, Mar 25, 2025 at 6:30=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 3/24/25 15:11, Caleb Sander Mateos wrote:
+> > Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
+> > track whether io_send_zc() has already imported the buffer. This flag
+> > already serves a similar purpose for sendmsg_zc and {read,write}v_fixed=
+.
+> >
+> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+> > ---
+> >   include/linux/io_uring_types.h | 5 ++++-
+> >   io_uring/net.c                 | 8 +++-----
+> >   2 files changed, 7 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_ty=
+pes.h
+> > index c17d2eedf478..699e2c0895ae 100644
+> > --- a/include/linux/io_uring_types.h
+> > +++ b/include/linux/io_uring_types.h
+> > @@ -583,11 +583,14 @@ enum {
+> >       REQ_F_BUFFERS_COMMIT    =3D IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT)=
+,
+> >       /* buf node is valid */
+> >       REQ_F_BUF_NODE          =3D IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
+> >       /* request has read/write metadata assigned */
+> >       REQ_F_HAS_METADATA      =3D IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
+> > -     /* resolve padded iovec to registered buffers */
+> > +     /*
+> > +      * For vectored fixed buffers, resolve iovec to registered buffer=
+s.
+> > +      * For SEND_ZC, whether to import buffers (i.e. the first issue).
+> > +      */
+> >       REQ_F_IMPORT_BUFFER     =3D IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
+> >   };
+> >
+> >   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, io_tw_token_t =
+tw);
+> >
+> > diff --git a/io_uring/net.c b/io_uring/net.c
+> > index c87af980b98e..b221abe2600e 100644
+> > --- a/io_uring/net.c
+> > +++ b/io_uring/net.c
+> > @@ -75,11 +75,10 @@ struct io_sr_msg {
+> >       unsigned                        nr_multishot_loops;
+> >       u16                             flags;
+> >       /* initialised and used only by !msg send variants */
+> >       u16                             buf_group;
+> >       bool                            retry;
+> > -     bool                            imported; /* only for io_send_zc =
+*/
+> >       void __user                     *msg_control;
+> >       /* used only for send zerocopy */
+> >       struct io_kiocb                 *notif;
+> >   };
+> >
+> > @@ -1305,12 +1304,11 @@ int io_send_zc_prep(struct io_kiocb *req, const=
+ struct io_uring_sqe *sqe)
+> >       struct io_ring_ctx *ctx =3D req->ctx;
+> >       struct io_kiocb *notif;
+> >
+> >       zc->done_io =3D 0;
+> >       zc->retry =3D false;
+> > -     zc->imported =3D false;
+> > -     req->flags |=3D REQ_F_POLL_NO_LAZY;
+> > +     req->flags |=3D REQ_F_POLL_NO_LAZY | REQ_F_IMPORT_BUFFER;
+>
+> This function is shared with sendmsg_zc, so if we set it here,
+> it'll trigger io_import_reg_vec() in io_sendmsg_zc() even for
+> non register buffer request.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- tools/testing/selftests/ublk/Makefile |  1 +
- tools/testing/selftests/ublk/stripe.c | 69 ++++++++++++++++++++-------
- 2 files changed, 53 insertions(+), 17 deletions(-)
+Good catch. I keep forgetting which prep and issue functions are
+shared between which opcodes.
 
-diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
-index d98680d64a2f..c7781efea0f3 100644
---- a/tools/testing/selftests/ublk/Makefile
-+++ b/tools/testing/selftests/ublk/Makefile
-@@ -17,6 +17,7 @@ TEST_PROGS += test_loop_05.sh
- TEST_PROGS += test_stripe_01.sh
- TEST_PROGS += test_stripe_02.sh
- TEST_PROGS += test_stripe_03.sh
-+TEST_PROGS += test_stripe_04.sh
- 
- TEST_PROGS += test_stress_01.sh
- TEST_PROGS += test_stress_02.sh
-diff --git a/tools/testing/selftests/ublk/stripe.c b/tools/testing/selftests/ublk/stripe.c
-index 98c564b12f3c..179731c3dd6f 100644
---- a/tools/testing/selftests/ublk/stripe.c
-+++ b/tools/testing/selftests/ublk/stripe.c
-@@ -111,43 +111,67 @@ static void calculate_stripe_array(const struct stripe_conf *conf,
- 	}
- }
- 
--static inline enum io_uring_op stripe_to_uring_op(const struct ublksrv_io_desc *iod)
-+static inline enum io_uring_op stripe_to_uring_op(
-+		const struct ublksrv_io_desc *iod, int zc)
- {
- 	unsigned ublk_op = ublksrv_get_op(iod);
- 
- 	if (ublk_op == UBLK_IO_OP_READ)
--		return IORING_OP_READV;
-+		return zc ? IORING_OP_READV_FIXED : IORING_OP_READV;
- 	else if (ublk_op == UBLK_IO_OP_WRITE)
--		return IORING_OP_WRITEV;
-+		return zc ? IORING_OP_WRITEV_FIXED : IORING_OP_WRITEV;
- 	assert(0);
- }
- 
- static int stripe_queue_tgt_rw_io(struct ublk_queue *q, const struct ublksrv_io_desc *iod, int tag)
- {
- 	const struct stripe_conf *conf = get_chunk_shift(q);
--	enum io_uring_op op = stripe_to_uring_op(iod);
-+	int zc = !!(ublk_queue_use_zc(q) != 0);
-+	enum io_uring_op op = stripe_to_uring_op(iod, zc);
- 	struct io_uring_sqe *sqe[NR_STRIPE];
- 	struct stripe_array *s = alloc_stripe_array(conf, iod);
- 	struct ublk_io *io = ublk_get_io(q, tag);
--	int i;
-+	int i, extra = zc ? 2 : 0;
- 
- 	io->private_data = s;
- 	calculate_stripe_array(conf, iod, s);
- 
--	ublk_queue_alloc_sqes(q, sqe, s->nr);
--	for (i = 0; i < s->nr; i++) {
--		struct stripe *t = &s->s[i];
-+	ublk_queue_alloc_sqes(q, sqe, s->nr + extra);
-+
-+	if (zc) {
-+		io_uring_prep_buf_register(sqe[0], 0, tag, q->q_id, tag);
-+		sqe[0]->flags |= IOSQE_CQE_SKIP_SUCCESS | IOSQE_IO_HARDLINK;
-+		sqe[0]->user_data = build_user_data(tag,
-+			ublk_cmd_op_nr(sqe[0]->cmd_op), 0, 1);
-+	}
-+
-+	for (i = zc; i < s->nr + extra - zc; i++) {
-+		struct stripe *t = &s->s[i - zc];
- 
- 		io_uring_prep_rw(op, sqe[i],
- 				t->seq + 1,
- 				(void *)t->vec,
- 				t->nr_vec,
- 				t->start << 9);
--		io_uring_sqe_set_flags(sqe[i], IOSQE_FIXED_FILE);
-+		if (zc) {
-+			sqe[i]->buf_index = tag;
-+			io_uring_sqe_set_flags(sqe[i],
-+					IOSQE_FIXED_FILE | IOSQE_IO_HARDLINK);
-+		} else {
-+			io_uring_sqe_set_flags(sqe[i], IOSQE_FIXED_FILE);
-+		}
- 		/* bit63 marks us as tgt io */
--		sqe[i]->user_data = build_user_data(tag, ublksrv_get_op(iod), i, 1);
-+		sqe[i]->user_data = build_user_data(tag, ublksrv_get_op(iod), i - zc, 1);
-+	}
-+	if (zc) {
-+		struct io_uring_sqe *unreg = sqe[s->nr + 1];
-+
-+		io_uring_prep_buf_unregister(unreg, 0, tag, q->q_id, tag);
-+		unreg->user_data = build_user_data(tag, ublk_cmd_op_nr(unreg->cmd_op), 0, 1);
- 	}
--	return s->nr;
-+
-+	/* register buffer is skip_success */
-+	return s->nr + zc;
- }
- 
- static int handle_flush(struct ublk_queue *q, const struct ublksrv_io_desc *iod, int tag)
-@@ -208,19 +232,27 @@ static void ublk_stripe_io_done(struct ublk_queue *q, int tag,
- 	struct ublk_io *io = ublk_get_io(q, tag);
- 	int res = cqe->res;
- 
--	if (res < 0) {
-+	if (res < 0 || op != ublk_cmd_op_nr(UBLK_U_IO_UNREGISTER_IO_BUF)) {
- 		if (!io->result)
- 			io->result = res;
--		ublk_err("%s: io failure %d tag %u\n", __func__, res, tag);
-+		if (res < 0)
-+			ublk_err("%s: io failure %d tag %u\n", __func__, res, tag);
- 	}
- 
-+	/* buffer register op is IOSQE_CQE_SKIP_SUCCESS */
-+	if (op == ublk_cmd_op_nr(UBLK_U_IO_REGISTER_IO_BUF))
-+		io->tgt_ios += 1;
-+
- 	/* fail short READ/WRITE simply */
- 	if (op == UBLK_IO_OP_READ || op == UBLK_IO_OP_WRITE) {
- 		unsigned seq = user_data_to_tgt_data(cqe->user_data);
- 		struct stripe_array *s = io->private_data;
- 
--		if (res < s->s[seq].vec->iov_len)
-+		if (res < s->s[seq].nr_sects << 9) {
- 			io->result = -EIO;
-+			ublk_err("%s: short rw op %u res %d exp %u tag %u\n",
-+					__func__, op, res, s->s[seq].vec->iov_len, tag);
-+		}
- 	}
- 
- 	if (ublk_completed_tgt_io(q, tag)) {
-@@ -253,7 +285,7 @@ static int ublk_stripe_tgt_init(const struct dev_ctx *ctx, struct ublk_dev *dev)
- 	struct stripe_conf *conf;
- 	unsigned chunk_shift;
- 	loff_t bytes = 0;
--	int ret, i;
-+	int ret, i, mul = 1;
- 
- 	if ((chunk_size & (chunk_size - 1)) || !chunk_size) {
- 		ublk_err("invalid chunk size %u\n", chunk_size);
-@@ -295,8 +327,11 @@ static int ublk_stripe_tgt_init(const struct dev_ctx *ctx, struct ublk_dev *dev)
- 	dev->tgt.dev_size = bytes;
- 	p.basic.dev_sectors = bytes >> 9;
- 	dev->tgt.params = p;
--	dev->tgt.sq_depth = dev->dev_info.queue_depth * conf->nr_files;
--	dev->tgt.cq_depth = dev->dev_info.queue_depth * conf->nr_files;
-+
-+	if (dev->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY)
-+		mul = 2;
-+	dev->tgt.sq_depth = mul * dev->dev_info.queue_depth * conf->nr_files;
-+	dev->tgt.cq_depth = mul * dev->dev_info.queue_depth * conf->nr_files;
- 
- 	printf("%s: shift %u files %u\n", __func__, conf->shift, conf->nr_files);
- 
--- 
-2.47.0
-
+Thanks,
+Caleb
 

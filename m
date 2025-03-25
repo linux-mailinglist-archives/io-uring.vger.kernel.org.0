@@ -1,252 +1,198 @@
-Return-Path: <io-uring+bounces-7226-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7227-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7590FA6E3EF
-	for <lists+io-uring@lfdr.de>; Mon, 24 Mar 2025 21:06:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F36A6ED5E
+	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 11:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DEE1890DE2
-	for <lists+io-uring@lfdr.de>; Mon, 24 Mar 2025 20:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA4F1890FE2
+	for <lists+io-uring@lfdr.de>; Tue, 25 Mar 2025 10:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3681C860F;
-	Mon, 24 Mar 2025 20:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A27815199A;
+	Tue, 25 Mar 2025 10:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="gMxxYlSS"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oRdac0lw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f100.google.com (mail-io1-f100.google.com [209.85.166.100])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8C1C07D9
-	for <io-uring@vger.kernel.org>; Mon, 24 Mar 2025 20:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635851EA7F9
+	for <io-uring@vger.kernel.org>; Tue, 25 Mar 2025 10:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742846787; cv=none; b=c7ikgMGQk2MNzb1j0ohojijt4UiDks1VpN3iuwO2FKX+Lq4OowHYSF/M6jyfGxmlWU6Ow46aa1zeNcypy/505qhcwh8TZAfU//nM+I0hoFL3T+MgAFJ6mfMjAQNkNsKaiptEBLsH6RPGDOFNhm4HGK5rvpKwV24d7ykFR6YV5jY=
+	t=1742897732; cv=none; b=evRLdxqAkL3LAu+JHRLta0eLOfrs/SFUlOcDOv3vLE5LywIEv8o48sSo6Etfw3DSCY6FRhHkbR7GftKra+VkhHE6qOMKtc3sorqBrbdkxBNaibT0B1RQNEGRb2lI6tzb+fO4tLIxor/A9u3OgbzN2/5J1I4fHrdk06vNtWJ872Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742846787; c=relaxed/simple;
-	bh=a/OqDesckC4x9orY8rbOzrIOx5U2C6nDLJe9hDC2J94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ay1lPD+GnYXO4em/PezLSEq9s7UbwERzZwaTFRyf/APbnEAQlE53r+CAxHIQNYrsDK1bkn5TxD/P3aZP9tk3GTJjB6QgfZhO0dHNIdrb6pbgUtluweWuYZc94AabvtEvxA+/KPL6wJRMXuOcOrbVZTnWPiZqiNAUmW4BfS/2o6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=gMxxYlSS; arc=none smtp.client-ip=209.85.166.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-io1-f100.google.com with SMTP id ca18e2360f4ac-85b418faf5cso15545639f.3
-        for <io-uring@vger.kernel.org>; Mon, 24 Mar 2025 13:06:24 -0700 (PDT)
+	s=arc-20240116; t=1742897732; c=relaxed/simple;
+	bh=Ef4HGfhFH2O5B+2fOUPuazpKm+OfKzc+RqhjPOtADx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kID7xmfXTfwr/sep6bXj+ivDbxNPbDiQ5YTwmBVYrpVN0CS67Ls3u7Wk7snWrmT7sbPmP/1NIVuLv86L6MnPyspp6aawyo3eXbCBoiBNZuqH98X2NSA9SbNDCP/QZqkEvmIstaOgSJ+EJW2CyAAXYeXb37KJYmnn4LO3886JdW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oRdac0lw; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22580c9ee0aso105741065ad.2
+        for <io-uring@vger.kernel.org>; Tue, 25 Mar 2025 03:15:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742846784; x=1743451584; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2AeP3tUa1PaSAs4qnZHRPSHqiV7KLICBeUZhC4wZNt0=;
-        b=gMxxYlSSSZKUnoHpp5k9MJ+HOoWOaY+QgeIQSiySVnnHh55opDlSu63Dm1pEglWdFu
-         LDIyE7k/nqnibjCYWtSlQ2Dn+P9YQnTaDJrehcoPFpcGrT2nfm50lV1r8kDcr1BnK4cy
-         CtW8yE64+VNYDq6mOQQoSZ1mQ9UHPmPl4v9EJq9sJQ7fXxz59iweZ6wD+u0ZqAjYDbj6
-         ashJdT+Jr4pZS/mFQKApnzCcJZNce8VFbAQ6eUQeEP+BwAdltsfnUejCmpgepRn8lXOL
-         V0lu+2fAasJ3lcCcm20JfSVaLzPENjN60tK5dUbxX3gS0T/TIu3Rfc0gpQzu2hAhhj0o
-         t3Lw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1742897730; x=1743502530; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOl85kkn8EDad0L2ymXY6WKpnUIUcFZbIKv6caJf9qs=;
+        b=oRdac0lwMHoLY2V2nvORNbtoPjkNkOC6xmfpd+36Bpm5rWZ2prgOSvqfT8i760aIsn
+         iNBVDR7PZpM7v8y0i727giaNmFjAyESgFHg8kNvjRmhDS059+9G0j2ZYP1ZxM8Iv6phP
+         hSCoNoCilYwRth8A0PscgguLNER8o7CWJwX3TXJ2B3f7zd/UMw9vZQx72HiWKQ8dHAi5
+         mzXWxuB9fZeVL910QIATuxOJjGqiwmw5qlEtTrW4FI772lo4e756ChV1DV+Un474r+pt
+         xF/SMN6d3x2Xt8njzapFDI4O+x9VjBzvB9LhS1cZ/AZXj9wR84JiBGyOkOgiy1Xnjvpr
+         ygIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742846784; x=1743451584;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2AeP3tUa1PaSAs4qnZHRPSHqiV7KLICBeUZhC4wZNt0=;
-        b=FeYbghB1iMxSqeho6F/5DL1r7isv/QTURyJ4B80DM5GOZik+LQY0kieTzgqObNM0qC
-         ePYgxKJF3iNXwI9z5BvE3+5IBer4kY/CPQ12PpHjOYqb1Ssk8qtzhnxj2m1hv3u7Wrlx
-         aRS+tZ66/BoePQu8KtA+dzIlfnQPbRutdFJh2YpyPYWre8FFm/KEULdoiQe4xrFBw/++
-         C89jrbZlkVwlxWgXfGUP82grWZ/Aszcxqrb1gB8+830DSBuf312SujNukymKz/R0hAhe
-         k/QeoSmDv/Dd5fSe3dgkdjwSPEOFgZXo6fGVkwNJw6O5+Y/q7Qd2T/O3BC91KIcLJ3Gv
-         h+AA==
-X-Forwarded-Encrypted: i=1; AJvYcCXm4EbRHca5XVvmp77PjbgBvK1Dm/tsEu/f1KNfs0bHmSVfYQo+PyRagPWi/OyWy7aqHkl6+lSoHg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9Py4ZqecSPyxnuaXHv7wG07W6i5jRy5Ow9HIvqFjXcABpJcjw
-	FnZQLyUaPJuwVAr+8xS625ebRAMPVO97rW25u+ZgZw8O/wp8sHfRjNeXBnJGgJ5jKrD4W/4zFNc
-	+NRWi++Du0HkWKQVMcxuLdxcYHZe3kQT9YO1/inK8mc/0LbUq
-X-Gm-Gg: ASbGncvBiKl4/9Jhrr/J2BBCo9w5BkfcBBIFYP8DUkZ7w9iECUXbuj1xQ7X+qhG4+tW
-	tQMKWyrOZd9lh6S2eSkScaeod/oLQxKRNQ89X1E4XjwC2VIfAbkHyapg4N9dnUl1HUVks4BGyov
-	L473WhMwugdOPh0hRSSUDWi1o5ocYZndzzPAZyCNVCQVwRpvET9LAChOJgywI4o8bZmIguYqSbx
-	uzwPEZNu0vRn96eBAgNyUaKgFvYcZyuoR1RhFB2WjttQnDyPKT5Pn9AX7Ww1OATA6W6tkmmSazb
-	HcuSR2ZHGrsU+6q5h50e/0PPWonEZK+2Mw==
-X-Google-Smtp-Source: AGHT+IHNqvmP9ln5GrZ4X4+8LO1tZJJn7NGCANLbaSu7JIy8WsCk3TVzlhQISS+g7lZW4375/xs/ty7i0mo7
-X-Received: by 2002:a05:6e02:1946:b0:3d4:3aba:9547 with SMTP id e9e14a558f8ab-3d59616811cmr38294575ab.4.1742846783927;
-        Mon, 24 Mar 2025 13:06:23 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d5960fdf9bsm3732575ab.52.2025.03.24.13.06.23
+        d=1e100.net; s=20230601; t=1742897730; x=1743502530;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rOl85kkn8EDad0L2ymXY6WKpnUIUcFZbIKv6caJf9qs=;
+        b=Tx72+eLoarb/OYksJUXB8aOPcu8TbcN1HNEsVCD0jE+LSSid52AaitSJJF1Fkf8cnG
+         /WHgysQBuN3fYqIWmRaGLR91C25E8FXHPct89KUzvh24jiMO3bReA/nbXWBtBg5Lee96
+         jnJDU7aWSj413EPdPSX8Gpp+1ES2rqIJwPUd1JRye+J8HJMGHH+/UPNuCKF+p+8iyXwb
+         +IsJpWNG+XJbySleNVeZ7V3BgziQRIwCeJlVYiK8PCU1zfCvKCD5/YASkdCqDZe9FzuI
+         XD0gxZ7Mz2W0F1BsRv9wuJ+sUfFLhGs/1ikzkuv+4m+5iOyGMNY/MpoIXeP9lbA7a9J0
+         cnsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXE03qsqqBWgBKQsve5WFn/YSXxfQXoeX7aGhU/x0O0ZF1GcwJAZ9lN/w8Nk72J+24TQIOP+kA04g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZl76qvl2cKx7phpkjRlswh4tO/qfIfuTLFXkZmK9+YKNTTkqB
+	+4pTq0Y9mgRcpr4CrnsM/yh42bSfXERKD9WvxBnf2mT+kTxA1dOcVDKL48Vq36k=
+X-Gm-Gg: ASbGnctJ6MOdhGHrT+rh7b4rUUyuCPkhIJFy7g62ff1G3B1OoOeCfPwdnqAg1ryN2AU
+	bthGF2oTghHZoU6hgpFF4QKICPIv4sYbIYlv6tX5j4kvrl23XYivz6zzK4TWJRW0jY/f8GrM+XJ
+	kF3slSVyPUZMm817cutrn9xhfwnxENb4nNS/AKClUD4dTJ9UW4LHArxOnslawOhNGLVp4bTPwIr
+	ub0X/5p9R+ja1OB/MKx9hMvLAQ4kq/ykveC6hMB2QIaHAJhyjal9rjmbZNkHDTBdHx54e8G1auU
+	hTrjAgKlKS0qcCkYywcTkXDkXAzhrfxDSjhcY+QwmOWIgzLYZykU0uBbqlQA3tBEv6AVyrO/7Mw
+	CcGtkrRzIYVWKwQq+zfJZ
+X-Google-Smtp-Source: AGHT+IFYqGWlzR8VFFYDQinF38dCfjE8ZCvm9Px3j5zTOBDRVJpAJEvMsURXg6g0GEroKGOZlrSeAw==
+X-Received: by 2002:a17:902:da82:b0:224:162:a3e0 with SMTP id d9443c01a7336-22780e2a37fmr236154395ad.49.1742897729510;
+        Tue, 25 Mar 2025 03:15:29 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-36-239.pa.vic.optusnet.com.au. [49.186.36.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f397cesm85648665ad.52.2025.03.25.03.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 13:06:23 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0B9543404B9;
-	Mon, 24 Mar 2025 14:06:23 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 00019E40AE6; Mon, 24 Mar 2025 14:05:52 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Xinyu Zhang <xizhang@purestorage.com>,
-	linux-nvme@lists.infradead.org,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 3/3] nvme/ioctl: move fixed buffer lookup to nvme_uring_cmd_io()
-Date: Mon, 24 Mar 2025 14:05:40 -0600
-Message-ID: <20250324200540.910962-4-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250324200540.910962-1-csander@purestorage.com>
-References: <20250324200540.910962-1-csander@purestorage.com>
+        Tue, 25 Mar 2025 03:15:28 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tx1Je-0000000049n-0EgB;
+	Tue, 25 Mar 2025 21:15:26 +1100
+Date: Tue, 25 Mar 2025 21:15:26 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z-KCPvmBO3AeuiDf@dread.disaster.area>
+References: <Z8-ReyFRoTN4G7UU@dread.disaster.area>
+ <Z9ATyhq6PzOh7onx@fedora>
+ <Z9DymjGRW3mTPJTt@dread.disaster.area>
+ <Z9FFTiuMC8WD6qMH@fedora>
+ <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+ <Z9j2RJBark15LQQ1@dread.disaster.area>
+ <Z9knXQixQhs90j5F@infradead.org>
+ <Z9k-JE8FmWKe0fm0@fedora>
+ <Z9u-489C_PVu8Se1@infradead.org>
+ <Z9vGxrPzJ6oswWrS@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9vGxrPzJ6oswWrS@fedora>
 
-nvme_map_user_request() is called from both nvme_submit_user_cmd() and
-nvme_uring_cmd_io(). But the ioucmd branch is only applicable to
-nvme_uring_cmd_io(). Move it to nvme_uring_cmd_io() and just pass the
-resulting iov_iter to nvme_map_user_request().
+On Thu, Mar 20, 2025 at 03:41:58PM +0800, Ming Lei wrote:
+> On Thu, Mar 20, 2025 at 12:08:19AM -0700, Christoph Hellwig wrote:
+> > On Tue, Mar 18, 2025 at 05:34:28PM +0800, Ming Lei wrote:
+> > > On Tue, Mar 18, 2025 at 12:57:17AM -0700, Christoph Hellwig wrote:
+> > > > On Tue, Mar 18, 2025 at 03:27:48PM +1100, Dave Chinner wrote:
+> > > > > Yes, NOWAIT may then add an incremental performance improvement on
+> > > > > top for optimal layout cases, but I'm still not yet convinced that
+> > > > > it is a generally applicable loop device optimisation that everyone
+> > > > > wants to always enable due to the potential for 100% NOWAIT
+> > > > > submission failure on any given loop device.....
+> > > 
+> > > NOWAIT failure can be avoided actually:
+> > > 
+> > > https://lore.kernel.org/linux-block/20250314021148.3081954-6-ming.lei@redhat.com/
+> > 
+> > That's a very complex set of heuristics which doesn't match up
+> > with other uses of it.
+> 
+> I'd suggest you to point them out in the patch review.
 
-For NVMe passthru operations with fixed buffers, the fixed buffer lookup
-happens in io_uring_cmd_import_fixed(). But nvme_uring_cmd_io() can
-return -EAGAIN first from nvme_alloc_user_request() if all tags in the
-tag set are in use. This ordering difference is observable when using
-UBLK_U_IO_{,UN}REGISTER_IO_BUF SQEs to modify the fixed buffer table. If
-the NVMe passthru operation is followed by UBLK_U_IO_UNREGISTER_IO_BUF
-to unregister the fixed buffer and the NVMe passthru goes async, the
-fixed buffer lookup will fail because it happens after the unregister.
+Until you pointed them out here, I didn't know these patches
+existed.
 
-Userspace should not depend on the order in which io_uring issues SQEs
-submitted in parallel, but it may try submitting the SQEs together and
-fall back on a slow path if the fixed buffer lookup fails. To make the
-fast path more likely, do the import before nvme_alloc_user_request().
+Please cc linux-fsdevel on any loop device changes you are
+proposing, Ming. It is as much a filesystem driver as it is a block
+device, and it changes need review from both sides of the fence.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/nvme/host/ioctl.c | 45 +++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
+> > > > Yes, I think this is a really good first step:
+> > > > 
+> > > > 1) switch loop to use a per-command work_item unconditionally, which also
+> > > >    has the nice effect that it cleans up the horrible mess of the
+> > > >    per-blkcg workers.  (note that this is what the nvmet file backend has
+> > > 
+> > > It could be worse to take per-command work, because IO handling crosses
+> > > all system wq worker contexts.
+> > 
+> > So do other workloads with pretty good success.
+> > 
+> > > 
+> > > >    always done with good result)
+> > > 
+> > > per-command work does burn lots of CPU unnecessarily, it isn't good for
+> > > use case of container
+> > 
+> > That does not match my observations in say nvmet.  But if you have
+> > numbers please share them.
+> 
+> Please see the result I posted:
+> 
+> https://lore.kernel.org/linux-block/Z9FFTiuMC8WD6qMH@fedora/
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index f6576e7201c5..da0eee21ecd0 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -112,12 +112,11 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
- 	return req;
- }
- 
- static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
--		struct io_uring_cmd *ioucmd, unsigned int flags,
--		unsigned int iou_issue_flags)
-+		struct iov_iter *iter, unsigned int flags)
- {
- 	struct request_queue *q = req->q;
- 	struct nvme_ns *ns = q->queuedata;
- 	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
- 	bool supports_metadata = bdev && blk_get_integrity(bdev->bd_disk);
-@@ -135,28 +134,16 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		if (!nvme_ctrl_meta_sgl_supported(ctrl))
- 			dev_warn_once(ctrl->device,
- 				      "using unchecked metadata buffer\n");
- 	}
- 
--	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
--		struct iov_iter iter;
--
--		/* fixedbufs is only for non-vectored io */
--		if (flags & NVME_IOCTL_VEC)
--			return -EINVAL;
--
--		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
--				rq_data_dir(req), &iter, ioucmd,
--				iou_issue_flags);
--		if (ret < 0)
--			return ret;
--		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
--	} else {
-+	if (iter)
-+		ret = blk_rq_map_user_iov(q, req, NULL, iter, GFP_KERNEL);
-+	else
- 		ret = blk_rq_map_user_io(req, NULL, nvme_to_user_ptr(ubuffer),
- 				bufflen, GFP_KERNEL, flags & NVME_IOCTL_VEC, 0,
- 				0, rq_data_dir(req));
--	}
- 
- 	if (ret)
- 		return ret;
- 
- 	bio = req->bio;
-@@ -194,11 +181,11 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 		return PTR_ERR(req);
- 
- 	req->timeout = timeout;
- 	if (ubuffer && bufflen) {
- 		ret = nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
--				meta_len, NULL, flags, 0);
-+				meta_len, NULL, flags);
- 		if (ret)
- 			goto out_free_req;
- 	}
- 
- 	bio = req->bio;
-@@ -465,10 +452,12 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
- 	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
- 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
- 	struct nvme_uring_data d;
- 	struct nvme_command c;
-+	struct iov_iter iter;
-+	struct iov_iter *map_iter = NULL;
- 	struct request *req;
- 	blk_opf_t rq_flags = REQ_ALLOC_CACHE;
- 	blk_mq_req_flags_t blk_flags = 0;
- 	int ret;
- 
-@@ -500,10 +489,24 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	d.addr = READ_ONCE(cmd->addr);
- 	d.data_len = READ_ONCE(cmd->data_len);
- 	d.metadata_len = READ_ONCE(cmd->metadata_len);
- 	d.timeout_ms = READ_ONCE(cmd->timeout_ms);
- 
-+	if (d.data_len && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
-+		/* fixedbufs is only for non-vectored io */
-+		if (vec)
-+			return -EINVAL;
-+
-+		ret = io_uring_cmd_import_fixed(d.addr, d.data_len,
-+			nvme_is_write(&c) ? WRITE : READ, &iter, ioucmd,
-+			issue_flags);
-+		if (ret < 0)
-+			return ret;
-+
-+		map_iter = &iter;
-+	}
-+
- 	if (issue_flags & IO_URING_F_NONBLOCK) {
- 		rq_flags |= REQ_NOWAIT;
- 		blk_flags = BLK_MQ_REQ_NOWAIT;
- 	}
- 	if (issue_flags & IO_URING_F_IOPOLL)
-@@ -513,13 +516,13 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
- 
- 	if (d.data_len) {
--		ret = nvme_map_user_request(req, d.addr,
--			d.data_len, nvme_to_user_ptr(d.metadata),
--			d.metadata_len, ioucmd, vec, issue_flags);
-+		ret = nvme_map_user_request(req, d.addr, d.data_len,
-+			nvme_to_user_ptr(d.metadata), d.metadata_len,
-+			map_iter, vec);
- 		if (ret)
- 			goto out_free_req;
- 	}
- 
- 	/* to free bio on completion, as req->bio will be null at that time */
+You are arguing in circles about how we need to optimise for static
+file layouts.
+
+Please listen to the filesystem people when they tell you that
+static file layouts are a -secondary- optimisation target for loop
+devices.
+
+The primary optimisation target is the modification that makes all
+types of IO perform better in production, not just the one use case
+that overwrite-specific IO benchmarks exercise.
+
+If you want me to test your changes, I have a very loop device heavy
+workload here - it currently creates about 300 *sparse* loop devices
+totalling about 1.2TB of capacity, then does all sorts of IO to them
+through both the loop devices themselves and filesystems created on
+top of the loop devices. It typically generates 4-5GB/s of IO
+through the loop devices to the backing filesystem and it's physical
+storage.
+
+Speeding up or slowing down IO submission through the loop devices
+has direct impact on the speed of the workload. Using buffered IO
+through the loop device right now is about 25% faster than using
+aio+dio for the loop because there is some amount of re-read and
+re-write in the filesystem IO patterns. That said, AIO+DIO should be
+much faster than it is, hence my interest in making all the AIO+DIO
+IO submission independent of potential blocking operations.
+
+Hence if you have patch sets that improve loop device performance,
+then you need to make sure filesystem people like myself see those
+patch series so they can be tested and reviewed in a timely manner.
+That means you need to cc loop device patches to linux-fsdevel....
+
+-Dave.
 -- 
-2.45.2
-
+Dave Chinner
+david@fromorbit.com
 

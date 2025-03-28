@@ -1,153 +1,83 @@
-Return-Path: <io-uring+bounces-7280-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7281-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED169A74F2B
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 18:21:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594A2A74F40
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 18:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48923A4A5E
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 17:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BB8189102C
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 17:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FFE1B5EA4;
-	Fri, 28 Mar 2025 17:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5F41DDC36;
+	Fri, 28 Mar 2025 17:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REuSyWp5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1oEExVc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C0D23CB
-	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 17:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD51DDC20;
+	Fri, 28 Mar 2025 17:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743182425; cv=none; b=ZdtORqPIDJn1p55Zrv6MM1lhdpD8iq8Y7oEsysN0ac2ulrNQwcBrrUX2KmXN7b2O8vW4lPfVIpKnR+OVCv5LRFC/Xmme8lBZU/eu483RbfeTG++dKilWnMN6ZGe+kBvV883h0Iv3hrupsOs9KaqUPzfCTjdwhohmT9WzVFdFATo=
+	t=1743183071; cv=none; b=pSl21a8PNcnEXpq1LbJAkkjBq3AdfgUAcARQsUSb7up/tOHmCzfhDNPoyn1T8eUpibchlXgXi80NqbETjg/EwTkIN1BatayJ3qyaJL7vasWJooiu3MPS77g6Jzi5iLshB6uecrqyPyVvUqUCDVq+gudlZe642AeZXYkMnJOVzRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743182425; c=relaxed/simple;
-	bh=ertufSeix6OBwMwo2sAZj35yCvtTgBFqB2KLwJXefv0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PC4DKflTzSwDkXdt5e4tCkPfMiHOO/TvvEDJjcvfFEO0VQcsVtasYmsI2YNeMNKIJn4BVjc7Sea0XUGnNde7NDeHNgbr4wZiYW6S/C3qNw38nJHHE1DbZ5xt9jXeX0MfhI/FygnpFsiJfs6BAryGAAJgqjwAdhKYSY3U1+m6ChM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REuSyWp5; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac41514a734so396774866b.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 10:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743182421; x=1743787221; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MCyf98BfZWDmImYjm0eOMyT9cDL31SNbsQ9t2XSZdck=;
-        b=REuSyWp500KEc3XnUib2IKBPV9l7fckCkQ1aVtzU/PqwbclY3enUFxNXLtgA9k2zvL
-         BC7Yh/KCKKY6vmbuYPV1BDOxfEua9kVwRUpuSEQPvsNhzbaReuc9tKch2onbjv98d5OO
-         Cpke8bvuEG+zbwTpsn8dVvnV/ZWaJT0Ju1Gl/+y8FIUJh+EbRZK0/9MinmdZ4kQ8V603
-         pr3bT2JWjY2FOd6j/zleEZ3/0aYa/64rmt91xv2WKRItH5RnjIys0SojW1yi4gx1UQWi
-         ULzMQmakP12uiWIxxKlDhtts0bpivuBSd2Ee8SNXyQEtR3PNLzZmoKD1UZIucmqPSb5H
-         5s+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743182421; x=1743787221;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCyf98BfZWDmImYjm0eOMyT9cDL31SNbsQ9t2XSZdck=;
-        b=q71/cQWMx/CzQrVrjCfnhLv9lI9E+lnfOkELrBdkyVmINJtBRZpjkRoLHYB+DYI4NQ
-         K9/ODnYAsV6+jqPMY734/xBayr7taZu86heh6MTJcVQeh2sXLB5ZLAV10CUR/iVfvIye
-         kGgMndT3vEELWsIaDqrCuiFNT4GWRK1Yf+D0Iym0XL14I36CQPuVQu6WVK7IBdBbJ5mo
-         xr+eS/lhtJOpoeYMv8y2UcWUpDqoZiSF+fYFTgDBm0wV55mGHikVDKJEJLmEONPQVbM/
-         voVIOh3Fkftrv+j14m9XVkxpqk7qyHBFgNwdekcpR2r9COWkL92d/a4kr1G6noXdpEKb
-         bn9A==
-X-Gm-Message-State: AOJu0Yz/Qw2jlnsavQhRMf6dyniUNfzCcUH81R5bDWRNQEAJp+NNGZ3s
-	QinNqHijt06a00BjLazMbnn6Pi85RV8a+mcf9dyHzXKAubbWhN2W
-X-Gm-Gg: ASbGnct8HC4XsdubBoHhwyu0oWV4neehbdcUe1MndZaODnRSSkXjto8JhY9Feaub3tc
-	lUyvGuks3Gi3MmMm4gF9L2MN45jXRYc3MJFtR0X0g7cbIFa6+jtDA0iW5MOpVYB0tDvnkRCBdb4
-	UBbkP3egxd7u5eoUY0MEwUB/S/F050Sxl2xzFVEprlN5FepLcZ1Rf7Cx1NPyJ5fslMexdFZacnN
-	uD7RgOCOSbgZTxI4D3wtJMDlSvyjMAX3eCP7X1XiHrMhahUjhk7AC9KtUz24/2rKqXFS/ZAC6EP
-	jDlCTmxeH9Z3S1bA0o4AAWwjGs0cq/0lbuC50xEjPYipULKsMFNv3fg=
-X-Google-Smtp-Source: AGHT+IHMVrVd3+DsZOleHWPePCROGPYJF3FvcGPW4dpOAsDDNRDGZBWnBoUrmia4U6ULpIjatszOnQ==
-X-Received: by 2002:a17:906:f587:b0:ac4:5f1:a129 with SMTP id a640c23a62f3a-ac6faed1862mr929072966b.15.1743182420789;
-        Fri, 28 Mar 2025 10:20:20 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.129.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927afcesm193536566b.55.2025.03.28.10.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 10:20:20 -0700 (PDT)
-Message-ID: <876b1590-0576-40f8-af9a-bcd135374320@gmail.com>
-Date: Fri, 28 Mar 2025 17:21:06 +0000
+	s=arc-20240116; t=1743183071; c=relaxed/simple;
+	bh=YbxivTapwxnGN4pqI9VK6fEXAti0c2E3era2k3yXVM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2wxrebUTheGInrTT6uId9AfQiZazTJGWu0/EU4iozzzMHT7TcAgyyQCqu/XKWRYLUZfUylbwDL9QL1NbJZMDGYCUTc+Wq6i8pZxgwmIygSOuh46CsfIY0Tos4ZwXul3YlE1RU3DPhn2c//2Hg6FHNd8UQ0ZQq5jop/ClIRVGcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1oEExVc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3F0C4CEE8;
+	Fri, 28 Mar 2025 17:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743183071;
+	bh=YbxivTapwxnGN4pqI9VK6fEXAti0c2E3era2k3yXVM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D1oEExVcXQbCEh2YWXY33OVsDVJYwbiuItRF9rNQv6dH66HeXXkjcYskgDFE7OYWx
+	 OP7QmH6lMxk4kT1NSWmKN5a4TouMb4PuyMPXGjVXvrr4vykQzrL0z1Lglxy4GSYoqV
+	 Qa4/ntx7Kcec7IL2iPiMaUfaTHqtmouHRVsh8NZxARYAjin6PjObu5b2PL9bGWtKQQ
+	 GP7R3TPIRzSQbDiKaQecA5HkU/xSWKociWe8UC1axnp49qOEpABOloaZiyY7Lelpqt
+	 rxnuK9txRzhgr0P4FbLNmp26d+VVsb5R0kb0CH6sqs9OQiJWKzCWgKuG/Qdsgt+gEW
+	 rXHzrWEc+po3Q==
+Date: Fri, 28 Mar 2025 11:31:08 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] nvme_map_user_request() cleanup
+Message-ID: <Z-bc3Hjc2eVSRK7X@kbusch-mbp.dhcp.thefacebook.com>
+References: <20250328154647.2590171-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SOCKET_URING_OP_GETSOCKOPT SOL_SOCKET restriction
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
-Cc: io-uring <io-uring@vger.kernel.org>, Breno Leitao <leitao@debian.org>
-References: <a41d8ee5-e859-4ec6-b01f-c0ea3d753704@samba.org>
- <272ceaca-3e53-45ae-bbd4-2590f36c7ef8@kernel.dk>
- <8ba612c4-c3ed-4b65-9060-d24226f53779@gmail.com>
- <3b59c209-374c-4d04-ad5d-7ad8aa312c0b@kernel.dk>
- <e5cac037-f729-4d3a-9fe6-2c9ba9d55894@gmail.com>
-Content-Language: en-US
-In-Reply-To: <e5cac037-f729-4d3a-9fe6-2c9ba9d55894@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250328154647.2590171-1-csander@purestorage.com>
 
-On 3/28/25 17:18, Pavel Begunkov wrote:
-> On 3/28/25 16:34, Jens Axboe wrote:
->> On 3/28/25 9:02 AM, Pavel Begunkov wrote:
->>> On 3/28/25 14:30, Jens Axboe wrote:
->>>> On 3/28/25 8:27 AM, Stefan Metzmacher wrote:
->>>>> Hi Jens,
->>>>>
->>>>> while playing with the kernel QUIC driver [1],
->>>>> I noticed it does a lot of getsockopt() and setsockopt()
->>>>> calls to sync the required state into and out of the kernel.
->>>>>
->>>>> My long term plan is to let the userspace quic handshake logic
->>>>> work with SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT.
->>>>>
->>>>> The used level is SOL_QUIC and that won't work
->>>>> as io_uring_cmd_getsockopt() has a restriction to
->>>>> SOL_SOCKET, while there's no restriction in
->>>>> io_uring_cmd_setsockopt().
->>>>>
->>>>> What's the reason to have that restriction?
->>>>> And why is it only for the get path and not
->>>>> the set path?
->>>>
->>>> There's absolutely no reason for that, looks like a pure oversight?!
->>>
->>> Cc Breno, he can explain better, but IIRC that's because most
->>> of set/get sockopt options expect user pointers to be passed in,
->>> and io_uring wants to use kernel memory. It's plumbed for
->>> SOL_SOCKET with sockptr_t, but there was a push back against
->>> converting the rest.
->>
->> Gah yes, now I remember. What's pretty annoying though, as it leaves the
->> get/setsockopt parts less useful than they should be, compared to the
->> regular syscalls.
->>
->> Did we ever ponder ways of getting this sorted out on the net side?
-> 
-> I remember Breno looking at several different options.
-> 
-> Breno, can you remind me, why can't we convert ->getsockopt to
-> take a normal kernel ptr for length while passing a user ptr
-> for value as before?
+On Fri, Mar 28, 2025 at 09:46:44AM -0600, Caleb Sander Mateos wrote:
+> The first commit removes a WARN_ON_ONCE() checking userspace values.
+> The last 2 move code out of nvme_map_user_request() that belongs better
+> in its callers, and move the fixed buffer import before going async.
+> As discussed in [1], this allows an NVMe passthru operation submitted at
+> the same time as a ublk zero-copy buffer unregister operation to succeed
+> even if the initial issue goes async. This can improve performance of
+> userspace applications submitting the operations together like this with
+> a slow fallback path on failure. This is an alternate approach to [2],
+> which moved the fixed buffer import to the io_uring layer.
 
-Similar to this:
+Thanks, applied to nvme for-next. I'll replay this to nvme-6.15 after
+block-6.15 rebases to Linus master.
+ 
+> There will likely be conflicts with the parameter cleanup series Keith
+> posted last month in [3].
 
-getsockopt_syscall(void __user *len_uptr) {
-	int klen;
-
-	copy_from_user(&klen, len_uptr);
-	->getsockopt(&klen);
-	copy_to_user(len_uptr, &klen);
-}
-
--- 
-Pavel Begunkov
-
+No worries, this actually makes some of those cleanups eaiser.
 

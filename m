@@ -1,78 +1,53 @@
-Return-Path: <io-uring+bounces-7271-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7272-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0F5A74D49
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:03:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7EFA74D6C
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D3F7A441A
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 15:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4043AAB16
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 15:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF53C1C84A9;
-	Fri, 28 Mar 2025 15:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF13E1A9B5D;
+	Fri, 28 Mar 2025 15:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rf1pJWx6"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="k9yjoY6H"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454651C5F29
-	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4D91B4F15
+	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 15:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743174196; cv=none; b=H70h1Vt7BWO0vkn76ROrbP5YfG9lQHPL3i+JGPee9C04e+gMj1mrJCDsutidiIALnguF7T9y6IlEDttvcpeDrJUbKYSukm37enZA8W5trCQ0TcWMfe/pDy5LYJsrOvxc56tBYMvyY8g+iZtYF/s+JuqwM/8Fz227tCp8rS4l/aM=
+	t=1743174538; cv=none; b=In05GEkhsaZYQM+f/A7KEu+AxKdgaNS7cw2Vxrj8GuSlrhINKU6Bu1nYSdSTntBMyuDGlNily63ZMAUsKUF2lGNSvRBXdukAJgiMrEhSTt6bq9Ptw/qmJHIPRCwPdYMqKbYLYMUqbfWq2jVulnimoz/BxG3KldzaITwySIqzrcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743174196; c=relaxed/simple;
-	bh=mmkekYoxBImyft3w6keX+52W8yg9Ky3aQa4IH1CCqos=;
+	s=arc-20240116; t=1743174538; c=relaxed/simple;
+	bh=VRYm18uJ88BAeuAIdxwIclAuUDFTNaVJ5W992LUlAxc=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ka0ZJ6ogLxl3zXt9ediAapWEUPisrZ9cKp76AuED6X0vP91AgzahqzTcTtOmgibDMW3ObSaUPpdVbH9ULj8ImXjTa00MwFR9b6JqH/kap39fejEk4gkuIkNe6Iph4fJ8l5sEdYlR24t4Y8dIYHTyQBG6JMphYCtV3flHELK7AWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rf1pJWx6; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab78e6edb99so283665066b.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 08:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743174192; x=1743778992; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=B494ZOsFmjWmHyFym9cCvJ5Fd2BYVVH/8s3Rx/2tejg=;
-        b=Rf1pJWx6cvgRhRBr03DEAPa3ymBUdxNKhP0FuBbE6oNKsxaCPIr0LIjD0kkLj0sss8
-         ztNCPHp7XfkjmRs9hnyxWEjBNzNqms4XbcU8BkghSsYEN8CTJnHQijYXAdfI2l/2SNk2
-         YpgnL2uyJaC+ZnWEooyGoEiFBmGyDSUL2rs0dl7hhk90jA8eqLD4N6BrXc5TE0E7dDXl
-         FljaHj5EzS+TwFR/NGfiY+WYZWmP9q8+qTbAQ8/ozcuZT6s1sm+P5ThJuhy+w7APOFP9
-         OEw7xe35BFXcT8V9KLH8ZtQ/IBYGsmXkk7Bh1nsk2FZxYa12hzT58kw56xJac6xvI8UA
-         ckjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743174192; x=1743778992;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B494ZOsFmjWmHyFym9cCvJ5Fd2BYVVH/8s3Rx/2tejg=;
-        b=uqlNIB06hExx2eGh7nwLjj2zq98AcJnI2sAdl+RbLla2gAJawupnyp2iY2OIBvNTba
-         j6YGQnLoU5ouJaCnjYvkIt9KBcUpImMXCKh9giQ93V+rIXdrk06yR7fkrXU+nFqISfGW
-         ucNiPKYz7bFpGZOw4/qyijX05pSwCpV/WmatZgtWCIZK91M0kW5jB0D+KT2b0GGJgqJU
-         gntRskFx3aAkvdXmSKKRz0T4sJHUdO5+8T1iCue4ZJeHG0zwcu5DgeAABEcVZC/nqWxw
-         Lk7MOigt1seBDgJYVqFwAAp390aYy4F9HgYpprfM5WCl5biM96HGWho6LLBioLMHzfqX
-         k+0g==
-X-Gm-Message-State: AOJu0YyEK3PKIolk7OoVZQXHtV8kvB8kTWjdrBJMx2kLqkkCybXV1OpV
-	HjHLzBWEXPrJmE6dIcRcT/K3/9P5I0Oqaq2+zglX5LmG8KumpWX8
-X-Gm-Gg: ASbGncuxqdaCZUFwCwAy1/0SFgOTqXocq9JCCyWwcTiCRP+KIoT7ODyJq6lhYqx7tn5
-	Rx31Rgj4RWo4CltHvzGVeWHmLsXrXiR7kqguwrFG6u2qkDxZqrLdIsjxcXQYnHMJLufJBlaqcZ4
-	T9nWwGrZo3SWAbV/X2diDVLp1INU/AZQsBjI1qw8VhA2GPZ/UhiAB7NwIkdgFINMyZAke9zc2Z7
-	QlMpu2m1P9Em4OupZ2TjV+lRtk4lkXNYhu9TYSBQgFWsW+22JvfQMx91yVr5qQ5OlPX5/dt1MTR
-	D5tyiNKpbdF6GHYQaYzw/pjkMH7/zo3swLI0cyW60mwpcPlPhv4vLaDq9TbpbrLYAns=
-X-Google-Smtp-Source: AGHT+IGixhUoDYlpwo+2Md+2QPjUeZKBcFQt1VdDffY726u4Gp50VIn8aWat2eLWn+wA64zWXZSKow==
-X-Received: by 2002:a17:906:7313:b0:ac3:898a:f36d with SMTP id a640c23a62f3a-ac6faf0a6bfmr785939466b.30.1743174191865;
-        Fri, 28 Mar 2025 08:03:11 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::ee? ([2620:10d:c092:600::1:f2cb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927afe0sm176164766b.52.2025.03.28.08.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 08:03:11 -0700 (PDT)
-Message-ID: <e560527a-4efc-4e10-bd37-3a282516430a@gmail.com>
-Date: Fri, 28 Mar 2025 15:03:56 +0000
+	 In-Reply-To:Content-Type; b=F/5jr3y1z03zDqjGprYwNmEBN2jBiISWZfJX/HjKdHI74PWvCxe6VnksanSL+2uBzlvXPH1L88r4QkVeRinUWHQtUpu3Bx7m7wQZTyntQbW1otTSDx3xUMqZTVSTjKVgfebH75y6WSkVc0XC7ZdAv/ryQLcbNvPd9MsmpPCk1YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=k9yjoY6H; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=Cc:To:From:Date:Message-ID;
+	bh=k8d+DDvGLbz5QPJw0Yh9axFiyMnpU1amBg6HeJaNcSA=; b=k9yjoY6HLXxhoZw/7qtwynEadF
+	e3cuIeIbVjXMRkAZeZ/NR5DQWvGYHBR5CjDKDme+hsXgnJ/fVqr1xgfyWgn7EdDS78QDTxRF3nOzW
+	orIrWaINJwgYVwMXV6QzG3koYXlkWPlC7Idch2P2zTMYM0bs0hk7kJbUVscuEO4R7k9y/Z4czhZfd
+	ifZ6nqWwS8D0XnPUyVMtXeJ6X3QvAIyTKCnIMlMUS5hUfKEjmvllCJkTB1mbUDXgJ7QRghWgaOqTE
+	E2Wu4sDALaDJuU5xp6hz8t80WLEkY8yeVxNHuC57RMSV10taL64sbtZWmB5mLNjwm93zFowHMlw6k
+	xhOba6sm6ExXeG9wOOV+aW2AnQYbaFFVhM8di5RWqpZJLAhVVT5LedaQ+GPy40duHo1BtIDq34gHV
+	N96XP2+DY/p14+Tj8qEapRAklFcvLl2jA01TqkBE9hrhdDK9fsqxkje1i7hAlCzvcx19t7PkgF+92
+	wN4JaKmqhDheBVdNsaxXcEpZ;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tyBKI-0077Ss-1M;
+	Fri, 28 Mar 2025 15:08:54 +0000
+Message-ID: <032c0b03-5ad5-40a8-a496-c626ff335b2d@samba.org>
+Date: Fri, 28 Mar 2025 16:08:53 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,19 +56,20 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: SOCKET_URING_OP_GETSOCKOPT SOL_SOCKET restriction
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
-Cc: io-uring <io-uring@vger.kernel.org>, Breno Leitao <leitao@debian.org>
+From: Stefan Metzmacher <metze@samba.org>
+To: Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
+ Christoph Hellwig <hch@lst.de>
+Cc: io-uring <io-uring@vger.kernel.org>
 References: <a41d8ee5-e859-4ec6-b01f-c0ea3d753704@samba.org>
  <272ceaca-3e53-45ae-bbd4-2590f36c7ef8@kernel.dk>
- <8ba612c4-c3ed-4b65-9060-d24226f53779@gmail.com>
-Content-Language: en-US
-In-Reply-To: <8ba612c4-c3ed-4b65-9060-d24226f53779@gmail.com>
+ <0fd93d3b-6646-4399-8eb8-32262fd32ab3@samba.org>
+Content-Language: en-US, de-DE
+In-Reply-To: <0fd93d3b-6646-4399-8eb8-32262fd32ab3@samba.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/28/25 15:02, Pavel Begunkov wrote:
-> On 3/28/25 14:30, Jens Axboe wrote:
+Am 28.03.25 um 16:02 schrieb Stefan Metzmacher:
+> Am 28.03.25 um 15:30 schrieb Jens Axboe:
 >> On 3/28/25 8:27 AM, Stefan Metzmacher wrote:
 >>> Hi Jens,
 >>>
@@ -115,24 +91,40 @@ On 3/28/25 15:02, Pavel Begunkov wrote:
 >>
 >> There's absolutely no reason for that, looks like a pure oversight?!
 > 
-> Cc Breno, he can explain better, but IIRC that's because most
-> of set/get sockopt options expect user pointers to be passed in,
-> and io_uring wants to use kernel memory. It's plumbed for
-> SOL_SOCKET with sockptr_t, but there was a push back against
-> converting the rest.
+> It seems RFC had the limitation on both:
+> https://lore.kernel.org/io-uring/20230724142237.358769-1-leitao@debian.org/
 > 
-> The implications are not the uapi side. For example, io_uring
-
-s/not/on/
-
-> get/setsockopt returns err / len in a cqe->res. We can't do
-> that for SOL_SOCKET without the kernel pointer support, otherwise
-> io-uring uapi would need to get hacky. E.g. you'd need to
-> pass another user pointer is an SQE for socklen and read it
-> after completion.
+> v0 had it only for get because of some userpointer restrictions:
+> https://lore.kernel.org/io-uring/20230724142237.358769-1-leitao@debian.org/
 > 
+> The merged v7 also talks about the restriction:
+> https://lore.kernel.org/all/20231016134750.1381153-1-leitao@debian.org/
+> 
+> Adding Breno ...
+> 
+> It seems proto_ops->getsockopt is the problem as it's not changed
+> to sockptr_t yet.
 
--- 
-Pavel Begunkov
+commit a7b75c5a8c41445f33efb663887ff5f5c3b4454b
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Thu Jul 23 08:09:07 2020 +0200
+
+     net: pass a sockptr_t into ->setsockopt
+
+     Rework the remaining setsockopt code to pass a sockptr_t instead of a
+     plain user pointer.  This removes the last remaining set_fs(KERNEL_DS)
+     outside of architecture specific code.
+
+     Signed-off-by: Christoph Hellwig <hch@lst.de>
+     Acked-by: Stefan Schmidt <stefan@datenfreihafen.org> [ieee802154]
+     Acked-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+     Signed-off-by: David S. Miller <davem@davemloft.net>
+
+only converted setsockopt function pointer...
+
+Is there any reason not to change getsockopt too?
+Except for someone needs to do the work?
+
+metze
 
 

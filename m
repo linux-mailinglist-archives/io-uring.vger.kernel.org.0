@@ -1,61 +1,61 @@
-Return-Path: <io-uring+bounces-7285-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7286-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AB1A75256
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 23:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CA1A75257
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 23:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510121712C1
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 22:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956D517126D
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 22:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9931F099A;
-	Fri, 28 Mar 2025 22:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5513F1F09B0;
+	Fri, 28 Mar 2025 22:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU461rBn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS7pzWnp"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970DD1E835F
-	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 22:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFDD1E835F
+	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 22:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743199829; cv=none; b=TFoZeAIjie0HHHP3uBDw8pNq09ZW42wbA1iy3u1bimg4M+ljspQ0CVEMf6CFDG6zXrYwNCqiursBCqhflcO3mcHrjnF043Gi7pbe8s8l+zHe6eCC9dVuwGrtRMdXfFTE39hHIm0mjEioBwOeuMj1Rp53wT2aMSYynASlfhp27UA=
+	t=1743199832; cv=none; b=AtXHmm1Qm7MI+FXmCms2yPisqMEopv0iHrkzZG+7IwQGkndbD6ChGRXl5eJtCfJ9tyZlI5ZwaFrt2cG9pxs+rx3zNEmRgwP6gI/wxEPo18Nb2yoVq0CKvc9lNrm5DBlH29mUAExat3ipF7Jt1LraJ8gKcKSfncG8jUO51jdXK2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743199829; c=relaxed/simple;
-	bh=XYAjvU/bKxnA5U8ucTaceH+tPiIqnHFFcSx9fbwIUAY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LjrnZhwCRVkF1thanbKzkInCQz8xNAvrIbAzCR/D7xTNZKhYB6W4sp93e0P7QZ672zWgrc3gVpBtLZHv5f7iqFzS8qeeiYzREfKvzSRH51VpyHm1gTe7biziXxB/MevP+BT0UfbynuZjJwsmyS8FY6D42GYcWSPC0JHqV98emD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU461rBn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7921DC4CEE4;
-	Fri, 28 Mar 2025 22:10:29 +0000 (UTC)
+	s=arc-20240116; t=1743199832; c=relaxed/simple;
+	bh=Z4nZM1m5j2jT/GzcDwtL4FSzsRlFeid5Nhkk3tiMs7Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kEsUFLQCXOo5YGMqsA9Ytnl5QTC84tAhFs+op1P3hqeyuklXviygAlxHS6cXvbJ7CYGkFjsowuKONxgdsRJQikder5ToGU+i+KFyfVRF8f7m3qVYZzWFdGELNNCGJWLUrzww32C2Vx6+QlUghVdTh//gi/5z/RFwww5R2hKpkbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS7pzWnp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0493AC4CEE4;
+	Fri, 28 Mar 2025 22:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743199829;
-	bh=XYAjvU/bKxnA5U8ucTaceH+tPiIqnHFFcSx9fbwIUAY=;
+	s=k20201202; t=1743199832;
+	bh=Z4nZM1m5j2jT/GzcDwtL4FSzsRlFeid5Nhkk3tiMs7Q=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tU461rBnyhCknDpH/JPf7+TLyozdIk8FZBuno/09SavhmUha/jCDiiduwtIVG/su5
-	 /JA796wPjiLLFMoEfMen3zJNdr9ExtLHTDSK6/RjKq5us5rWWC5aumOvkIAmi6TuOP
-	 50gKlzTH+ivmvHWqFZ4MKS6oEL9hjitTDY4B2Z+LAnZPF+HfnfbYk0/We01qUprZ52
-	 FoAmKaKFCatxcnXTHTfdnVcleIbp4jhiNO1fl3HBBbgIJaWpcnbkPxNoGgl6jCI1T+
-	 zCqGVPFUcQwAgzjk9n7etpf7CTl+nJ6Kfim/m/QTy8wO3vtTGbZ7SF1z0bsOF46Hdz
-	 VOkZ3ggc7XCaw==
+	b=JS7pzWnpmP5nu+ij97VFN4YXpvDQ3/e1GtB87Dtlvh8ciyI9OQLVaqyI6XU0kNrbW
+	 16O6TtBlKTxAFH4AgbkzcfSgTBhyrkNHaJqw8pqe0YjTx9PKwKpn7QwTDPrGpmpinf
+	 FZTNCr67MKWJjNqI0v8hu04ezn4iLrazdp7tBm7o5sox9l9GUiBMx2CZOoMGugktay
+	 Xt8LzwTmmTGq3OP+8ZXzH4S21FapQoYjqlguP2WteF6yDR866no4yJVhQZpPEoRbdQ
+	 LR3s1N2miaEqOKGkm4R9JGezgNQ21O5zKFBWCpXscpt1dpIbJ7K3rk2qtsnAqwhffZ
+	 FfS60P8hrjojA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3446E3805D89;
-	Fri, 28 Mar 2025 22:11:07 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring epoll reaping support
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCE83805D89;
+	Fri, 28 Mar 2025 22:11:09 +0000 (UTC)
+Subject: Re: [GIT PULL] Final io_uring updates/fixes for 6.15-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <3ad3c346-1415-45bd-bcb2-2f9b46164f30@kernel.dk>
-References: <3ad3c346-1415-45bd-bcb2-2f9b46164f30@kernel.dk>
+In-Reply-To: <7994e6dd-e5da-4527-b08b-337b5cb3e3dd@kernel.dk>
+References: <7994e6dd-e5da-4527-b08b-337b5cb3e3dd@kernel.dk>
 X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <3ad3c346-1415-45bd-bcb2-2f9b46164f30@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git for-6.15/io_uring-rx-zc-20250325
-X-PR-Tracked-Commit-Id: 19f7e942732766aec8a51d217ab5fb4a7fe3bb0d
+X-PR-Tracked-Message-Id: <7994e6dd-e5da-4527-b08b-337b5cb3e3dd@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.15/io_uring-reg-vec-20250327
+X-PR-Tracked-Commit-Id: 6889ae1b4df1579bcdffef023e2ea9a982565dff
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6e3da40ed6f3508dcf34b1539496bcccef7015ef
-Message-Id: <174319986566.2977572.14810897991710218628.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Mar 2025 22:11:05 +0000
+X-PR-Merge-Commit-Id: eff5f16bfd87ae48c56751741af41a825d5d4618
+Message-Id: <174319986817.2977572.11092009295745358353.pr-tracker-bot@kernel.org>
+Date: Fri, 28 Mar 2025 22:11:08 +0000
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
@@ -64,12 +64,12 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Thu, 27 Mar 2025 05:47:56 -0600:
+The pull request you sent on Thu, 27 Mar 2025 08:38:25 -0600:
 
-> git://git.kernel.dk/linux.git for-6.15/io_uring-rx-zc-20250325
+> git://git.kernel.dk/linux.git tags/for-6.15/io_uring-reg-vec-20250327
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6e3da40ed6f3508dcf34b1539496bcccef7015ef
+https://git.kernel.org/torvalds/c/eff5f16bfd87ae48c56751741af41a825d5d4618
 
 Thank you!
 

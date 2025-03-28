@@ -1,133 +1,133 @@
-Return-Path: <io-uring+bounces-7277-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7278-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55691A74E82
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 17:24:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E85A74E92
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 17:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3371897089
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFC53B4B71
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDEC1D86D6;
-	Fri, 28 Mar 2025 16:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368152AF07;
+	Fri, 28 Mar 2025 16:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Tgnque9x"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1284A935
-	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 16:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3292AEED
+	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 16:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743179063; cv=none; b=JTDfz3d09PTSTmwhyz3cI6e208Fcn7ugDEaNybyhEsVh/RIVns6bH7e1EkEii0eLcQLHLE3CovC/l4gMHn4E80R/N0wHDKEHajrxCG+LNKPDWbrexRr8b6IfG8E5t4JbLzl4Z/NfFLLATyAnyl96/gRV3rpk/yzYcWZzmOg22Hs=
+	t=1743179692; cv=none; b=Xo9Rzu0hIFI+h497vr0Q4O0FXDcbSsFmnsgceQpZdK2NqyfVuU/dDluRGlfwSw7SFjQbNNpN4NmGk4L+G1Qsrk/wEsKzCWjYImDlOY9QneNcAWvkvOxknuTwBx6/GKLbTnxpeRmAxwsfnLHHGLfbjmTZQSIH9NjcTQrTXyLu640=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743179063; c=relaxed/simple;
-	bh=+MvUFuYzb97LX8ICIqK9rHlbHywyqNdUPum8D4pGCWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRFEB+QklFIYsQ3C+wwY7FBu+CTd6jqfSUyEKzkbSYIN52HxbdzwR34OSzW4E1539DwNuHY+VSZL3BsExoIiGupDhduYdKa/Vmt9KvhTq78hn+IiqNeA+SdiP/aFbbYD+4pObaZJw3VYECASw676jNLDj+UJk1Orrg1szG4b0PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so304558666b.3
-        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 09:24:21 -0700 (PDT)
+	s=arc-20240116; t=1743179692; c=relaxed/simple;
+	bh=Goq0sc9w2c98tp76TmXi/Pg9/jUIGit6I5+eg7N+1j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=om43dXMoUv9BjMoFB0+3IyVBuW9vvcnjF+Zf9vJ0o62KNDeJoRmZkLRCgeJGnlRNAdcb7UQLcrf8fM3+HGqOPW+2vUBcvWtOPme9QM5A+b1KzZllAfaVe84lQN2oaLfwE3GjG5Kpu6CI2AwFZPm54hh7zyONX1X+oIuJheq6ccE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Tgnque9x; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-855fc51bdfcso93404539f.0
+        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 09:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743179688; x=1743784488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5y8qmDTUCBGqQfqV+HdsWLJFfT7S2rNM2Zj7K4eVV+w=;
+        b=Tgnque9xXk6YZufnFSo3sc1KRmm0q10484qly5WyluoLd8xfGzw2afY4e4MD7a5HrI
+         oPpwV391QUENaEm90Ie/d2wS5b/6ez5YJgTukRaUvN8B7wR8KRzT4CMaoHJ0qzMlT9P8
+         nt/gwZqW+ARYVtRlyGWLNKnDeZJIRPfUuNG5HqK9qwM/svGciINOg8IeM1wtp6fT2W41
+         46MzLPzt7LQN2DLDBe8/kDZo+ahQ3o3u307TdVp9A7gAao2b+6x9RW+IE/hfvivKHsEM
+         T1HfORQchwy99/hFiHByH1uLDNKceUI/vAq1+Zv3vg7YRtUbtu//J+0wiJ092oLevwTp
+         VCrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743179060; x=1743783860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t/3AOMfE1dZzd7hApPMsAvbA0NJtPN85Z3Fvp8YCVrs=;
-        b=g0yuX9OwvqQbgh/ytLuZEsFgKln20VyS5MUv2ESRvIvkyC0UiZAiraEL3eRX9Bj1r8
-         29WYRbM90eAhK0z8fBD2/a6+1zhRlm//O+nPhquXAT/ulWTGpLJlsPwgaDCXu8R9iWB4
-         +Jlu+n9bxmi1fhkhS92ODTNXY4M05hWHlMnwzB0fR0t/0ypAGFm6Cj2ByjJYzGhXThDp
-         xYjWoKNed4ea0aWrpoivP/qDpjGzGxvofc3OeW+/85wn46MQZGyYbnfOjfln8gIjrvlh
-         zrY3bzFqExbbgyWJWy3kAvf/8lXmDlu0q7KlGlFIf8GfIBM0Vb/tOBEJdb/a7hq9dL1i
-         7IIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1VxiVDgmOQ3Dzv4ty/73Upj2cksgKHCqyhPG/5XJB3NDCK7OZHSA6k42104b1CR6nAy1NORZJqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2ruIxn+J0tU1cB+KWrQ/v41SX7XjMT8SpFvxR/QVvSpQOSHHP
-	9fokUx/0goPIKo6r1FTWUpYKsoO/1ZyYrJ19V231W4YbKrU5/p2noW/ybQ==
-X-Gm-Gg: ASbGncvA4UpKIrOuH9aLS6uOxTiChP+luoiM5Z4pCEsxmfvqZDWGcQ93nxy2EZnB/j0
-	XIvjOFOaYkfwc+Dp2rZTcAddRupMCBM0RkltQLnG6aHHpuNmgF8ilQbrf4irw5QnwUhOq7KSpiT
-	zcEoBqmk7+cJWdKvJQv55X3+AOPAGh99GdZS47/vsxQFRE2P5vbLk9VxUxFaQUa/iPNBqflbQ2L
-	A/Weho+Zkq9wfsYfy2s+kjbXJ44Ar56yZUboHVDGswtu/FaInOTiuNu/2mzzfO1wkaRakmIkPzL
-	Ez9+/Dp2oP2B1JJiW5JrIvG4SLcI7MU4l8Ws
-X-Google-Smtp-Source: AGHT+IHNovzTSNPdHIFxcqcWSkpahSvZMkPd4fpnnWXySLeXj0s6TWLxH/O+6XGjb/RoeZl1/oMmkQ==
-X-Received: by 2002:a17:907:9485:b0:ac2:87b0:e4a5 with SMTP id a640c23a62f3a-ac6faeaf925mr783278966b.2.1743179059619;
-        Fri, 28 Mar 2025 09:24:19 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:70::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b0ffsm188283066b.66.2025.03.28.09.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 09:24:19 -0700 (PDT)
-Date: Fri, 28 Mar 2025 09:24:17 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Subject: Re: SOCKET_URING_OP_GETSOCKOPT SOL_SOCKET restriction
-Message-ID: <20250328-careful-sturdy-jellyfish-ddabbb@leitao>
-References: <a41d8ee5-e859-4ec6-b01f-c0ea3d753704@samba.org>
- <272ceaca-3e53-45ae-bbd4-2590f36c7ef8@kernel.dk>
- <0fd93d3b-6646-4399-8eb8-32262fd32ab3@samba.org>
+        d=1e100.net; s=20230601; t=1743179688; x=1743784488;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5y8qmDTUCBGqQfqV+HdsWLJFfT7S2rNM2Zj7K4eVV+w=;
+        b=VQDNlRWek8uLxeyb/zpur/wUkRvcHuxDLp5IlalNLGoBdcnIEn65JWvOtxcFZHiT22
+         8FPYvhOsRa0FAk0v+O6rQatEUrgfLXI30U74j/ycCokZ0LyGGI2a4o1wVxuN1jy16zVh
+         43dNPsW2ADylNh2EG7kXUkfBADEcleunMMMNo8fle1/LVt+eHpiYaTTpZdNvADFwDoQJ
+         i5uvwGl5mDe+CXmJ6qzSVM4tUceu7HFK6+Ktdhozr09qTjgbmY60WUvFsX7wDx6vNmP/
+         0RC69Hj/nebeXSLCUW86Rqyij1uvz0ECcNFFN2UoeDJasrkeFHujxy0u9KJXXMqdpV6t
+         4qhA==
+X-Gm-Message-State: AOJu0YxWF4HWFM31VeK/JGGmlM34WlZctt5iySHN4Il0lx/QE31V289B
+	1CDzimtLj8PiarJxN7lvAHL56JMY8CVVB9o7H/jZ5PkCSmwYwG9vi0SAP/eusjM=
+X-Gm-Gg: ASbGncvE7l2Q5U5Mpi5s/y2aOoFtmYelsrC9jp+zEg8k9vUNWRfnMysijq8xtlFvFqT
+	gny1yewVnYamOuEsk0zbhR2BNXG16uvKBuA8oJL92jOmyBmPwQacMdQOTT+t/+tMSlTLGzR1yVY
+	mCPelQ59Fw1WYJJtKNSDaLUxuwGz7oj3GHzHu78us16WdFrrl+XYdBI0OqjdDeE/p3o3VNXpI5u
+	Xqj+GzXQs31vZxYbX136cWAbwr949sHr+Mr43Qb8JQ1oDw48bM/nnkI1cXH5Tmm3XM7EhP7M7j6
+	KhSqIsXkdBsdqYYlSjqMidG9lJFeXNgHXlQ5zgEn
+X-Google-Smtp-Source: AGHT+IFsZ2ix015eSvkDf4/8WtxyNR7hSBSVZ+ZHayUebuaM8rzbDz4EzscjO/sTsCdiTVAZIAmtrw==
+X-Received: by 2002:a05:6602:4c0e:b0:85b:4310:a91c with SMTP id ca18e2360f4ac-85e9e846441mr16179339f.1.1743179687841;
+        Fri, 28 Mar 2025 09:34:47 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e90249a32sm44471239f.31.2025.03.28.09.34.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 09:34:47 -0700 (PDT)
+Message-ID: <3b59c209-374c-4d04-ad5d-7ad8aa312c0b@kernel.dk>
+Date: Fri, 28 Mar 2025 10:34:46 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0fd93d3b-6646-4399-8eb8-32262fd32ab3@samba.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: SOCKET_URING_OP_GETSOCKOPT SOL_SOCKET restriction
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Stefan Metzmacher <metze@samba.org>
+Cc: io-uring <io-uring@vger.kernel.org>, Breno Leitao <leitao@debian.org>
+References: <a41d8ee5-e859-4ec6-b01f-c0ea3d753704@samba.org>
+ <272ceaca-3e53-45ae-bbd4-2590f36c7ef8@kernel.dk>
+ <8ba612c4-c3ed-4b65-9060-d24226f53779@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8ba612c4-c3ed-4b65-9060-d24226f53779@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Stefan,
-
-On Fri, Mar 28, 2025 at 04:02:35PM +0100, Stefan Metzmacher wrote:
-> Am 28.03.25 um 15:30 schrieb Jens Axboe:
-> > On 3/28/25 8:27 AM, Stefan Metzmacher wrote:
-> > > Hi Jens,
-> > > 
-> > > while playing with the kernel QUIC driver [1],
-> > > I noticed it does a lot of getsockopt() and setsockopt()
-> > > calls to sync the required state into and out of the kernel.
-> > > 
-> > > My long term plan is to let the userspace quic handshake logic
-> > > work with SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT.
-> > > 
-> > > The used level is SOL_QUIC and that won't work
-> > > as io_uring_cmd_getsockopt() has a restriction to
-> > > SOL_SOCKET, while there's no restriction in
-> > > io_uring_cmd_setsockopt().
-> > > 
-> > > What's the reason to have that restriction?
-> > > And why is it only for the get path and not
-> > > the set path?
-> > 
-> > There's absolutely no reason for that, looks like a pure oversight?!
+On 3/28/25 9:02 AM, Pavel Begunkov wrote:
+> On 3/28/25 14:30, Jens Axboe wrote:
+>> On 3/28/25 8:27 AM, Stefan Metzmacher wrote:
+>>> Hi Jens,
+>>>
+>>> while playing with the kernel QUIC driver [1],
+>>> I noticed it does a lot of getsockopt() and setsockopt()
+>>> calls to sync the required state into and out of the kernel.
+>>>
+>>> My long term plan is to let the userspace quic handshake logic
+>>> work with SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT.
+>>>
+>>> The used level is SOL_QUIC and that won't work
+>>> as io_uring_cmd_getsockopt() has a restriction to
+>>> SOL_SOCKET, while there's no restriction in
+>>> io_uring_cmd_setsockopt().
+>>>
+>>> What's the reason to have that restriction?
+>>> And why is it only for the get path and not
+>>> the set path?
+>>
+>> There's absolutely no reason for that, looks like a pure oversight?!
 > 
-> It seems RFC had the limitation on both:
-> https://lore.kernel.org/io-uring/20230724142237.358769-1-leitao@debian.org/
-> 
-> v0 had it only for get because of some userpointer restrictions:
-> https://lore.kernel.org/io-uring/20230724142237.358769-1-leitao@debian.org/
-> 
-> The merged v7 also talks about the restriction:
-> https://lore.kernel.org/all/20231016134750.1381153-1-leitao@debian.org/
-> 
-> Adding Breno ...
-> 
-> It seems proto_ops->getsockopt is the problem as it's not changed
-> to sockptr_t yet.
+> Cc Breno, he can explain better, but IIRC that's because most
+> of set/get sockopt options expect user pointers to be passed in,
+> and io_uring wants to use kernel memory. It's plumbed for
+> SOL_SOCKET with sockptr_t, but there was a push back against
+> converting the rest.
 
-Correct. That is because Linus detests sockptr and didn't recommend
-adding new code to use it.
+Gah yes, now I remember. What's pretty annoying though, as it leaves the
+get/setsockopt parts less useful than they should be, compared to the
+regular syscalls.
 
- > New code does *not* have that excuse.
+Did we ever ponder ways of getting this sorted out on the net side?
 
-  https://lore.kernel.org/all/CAHk-=wgGV61xrG=gO0=dXH64o2TDWWrXn1mx-CX885JZ7h84Og@mail.gmail.com/
-
-This was raised by Jakub in:
-
-  https://lore.kernel.org/all/20230905154951.0d0d3962@kernel.org/
-
-So, in order to implement the missing part, we need to move this to
-something else. The initial suggestion was to use iovec, but, I found it
-very hard to move that code to iovec.
+-- 
+Jens Axboe
 

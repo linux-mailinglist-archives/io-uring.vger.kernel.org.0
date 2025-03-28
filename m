@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-7275-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7276-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EE7A74E06
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:47:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45807A74E09
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 16:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71AC817451B
-	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 15:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241E11893E5B
+	for <lists+io-uring@lfdr.de>; Fri, 28 Mar 2025 15:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC621DA10C;
-	Fri, 28 Mar 2025 15:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5A91D54F4;
+	Fri, 28 Mar 2025 15:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ayti3Y4A"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YbDvoBPv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
+Received: from mail-io1-f97.google.com (mail-io1-f97.google.com [209.85.166.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA9C1C4A2D
-	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 15:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85A31C4A2D
+	for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 15:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743176840; cv=none; b=nzD82WW+UF4XRTzLWHJ1SOWPutWzsmexyhVajADEMZk5EXE4CzGvHrAgVaxF6cOZvmJHhmemNPjmYhS3xgjWsBHrhfbO+12G75/ZyOE+RjxSMD62YX0VQXjHhUeTE0i0JB0GKIpqLQXaDXzuy4HsOhylzelLeKuQSZ/Osbf3pmc=
+	t=1743176871; cv=none; b=mqZkPymMbyZLtxjtb9EBjn87Fzy3pozZlW9drYa8VaeXco3+gQ9YuaY3yxnQ/pp16xxFwIEcpg4vYzbmeUm4SY9Vgy//ZUzXe3yjngq9HaYqxQzRNMfXsE4ElmEqggm1yAMwx8w9e6z+O7FEoBpx+LvWFGn1hlx2NerXvQ2iU7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743176840; c=relaxed/simple;
-	bh=fUXrNvezfQcUlckLuYQ/mreZHTic4EIPjfaDUroijsU=;
+	s=arc-20240116; t=1743176871; c=relaxed/simple;
+	bh=yYtWoyv8WbfgloYoO/rNNRvz+4dqKS+a7SoTZFAZSuE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ki5Y4Sbnbks0q2t0ljmwv4/sW74uCqlTUKSmwm/q7YHS7J/Xuyh/z+SbUwKLgvchFUTUxYGFHnyS7rQzJE2ozxXxGgcAghXkVOIGqLUavUoVXTfOt6B6P2fkQPRbo1OpcwcChxXfszskdkwfkQ6ZSKSB8xu97GP4xle3Ccitpj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ayti3Y4A; arc=none smtp.client-ip=209.85.214.225
+	 MIME-Version; b=AI+M7UgFN7EfnBpb36K9TdANp9rngLO5teAVd0vNbFedDXxa2OyUk2Ky3H1fensGKWpOSx+yQjnJWNNS1HiCbs97g2oeabncLhiDWmbAV8GDoPwUAbGbYB9PpCHZvobg4wBJGJVJfOTTicDx2VGKdL7zE+CFbNVhi0xAlBgQQFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YbDvoBPv; arc=none smtp.client-ip=209.85.166.97
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-227c7e4d5feso6375875ad.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 08:47:17 -0700 (PDT)
+Received: by mail-io1-f97.google.com with SMTP id ca18e2360f4ac-85da20b2640so9458939f.1
+        for <io-uring@vger.kernel.org>; Fri, 28 Mar 2025 08:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743176837; x=1743781637; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1743176869; x=1743781669; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0mVM8AOP/uQwd1MDpgpJ58oiDfod93l3Y9l0W6NadbQ=;
-        b=ayti3Y4AZ/Tmx5mEhS53XGb9xnP5Bj3IV/ePBkbyXJFa70JE2iOUO0bagfcfuU6xr4
-         cKnbi2UlHNIoGvBTNnmWgEJjIJtuAokU7vECYf1wk/cnDgHcTu/yuffbYLrLhsmKiOvL
-         yRN2XahA6kxEWA3OmexT05Lu4f4VmwvYwBhhpSsH3mYWRAUlhXpaBLuNyCpZxpxPb8oe
-         +Nlux3f3shJwBaKHryYHLkP3CHY3PPpH/P9rwUIE991DuQjs3mWClnOZTns8o2mRgkYk
-         KLXNY/MT2w1ar/Th0puIGWhFuwDphafG/asCQriz0zbkTIFXnF2a+li6mdx107AhzGof
-         4+hg==
+        bh=rvZNgJEOLv7vlUnMHFowwsJc7mv9fgxFUo+rGJDtCw4=;
+        b=YbDvoBPvwxVGErSHBFK5ec+eZhMjiXZ78OEA0dZxg8V0BG2b0aO33aQtZKPoFtdd0X
+         BDDzwLHFwNTXf81d8YoWWc3ket/6YjAtBbcdENnszTXsgkxXyIUUN3Q6zoikOERZa1q8
+         OD2ljfPZVYKQbMk62u4qR+D7HC4BGEAzkLE0X0o/Tzdf/61/2FoQCoAsihByF7hfzGxb
+         l9nd8QyRMs93rySULY2c75GXJ/Da15HrFuRqev84Cq14Dn018fXQCDlWLyDbuyVFiZnf
+         cpDm3S8reN8qXAl0f1HLoFp0KcprJ5OcsjPqdpJvPKLcrN8qv4P4wuuXe5DO4eG5ry9L
+         fzuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743176837; x=1743781637;
+        d=1e100.net; s=20230601; t=1743176869; x=1743781669;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0mVM8AOP/uQwd1MDpgpJ58oiDfod93l3Y9l0W6NadbQ=;
-        b=Q2LwsWToFf/79yt0NFRbMz553+U3DaFXw9vfPGP5lh4INAYIiW4K4U6apLSQLOC0cB
-         c7LyIzkDW6AnNEFCxQIkhBLynuCjn6RikoNr2Yi1rTaJIcyD8HlXMyu/eu8S1mgqC+kg
-         PLVOBtCfDIpgjmbkQS6FG4zr+MjDXLoScJyD5mzi4jpeh4WqXjY4CT7q9uu7yslYtfZl
-         29Z1L6pf60S/hgLrykgdj1TPKa7uSROBW5HjT3sDBrwFXCM9yMcERrF6i5r/+EaFTVC6
-         30ILqrQED2R3MdLma7fuZkY/LeTcqw+QZ4/8mv1pEtT/McgmS20CSCLPqNEvjKrGoGIf
-         ZE2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSW84I2W/mUcTC4TUOiTmci+AKBY4MlxqqNS3Lh4urBMrVEni73R5FuWhEYGYBu8G17pTyhrxBFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrVzTKcmQHOC7y71YMyzm+p6gNRPP8uBaMSbGwKPC++6j4SWAP
-	/MO/ujVwEM8ACLm29y5uycetBKgl6pBiQrG0bCsraWejD8/FA/rBtKu8xKkkwsvNOqvLMTjsCMU
-	BcEg2VKJdj4TrnVzU65grpc5g/fZZBRHpizQkns8jbk97lbWI
-X-Gm-Gg: ASbGncs4k0d9vKO9w69WLGEpsCh4zFyHdHqx1occ8oF8ux3Py/mBJVT22/MJNje4h4q
-	e8sD4O8ekG11vU7nENs07M658BlMlm0bw8yD7s9lfz9EjKhpsV9d2mM2hA398mPtcOhQ+9BQlNo
-	1dviZ2cE49b0YJt43wsFLFZ9LWk2UIkfeojEONH0ekdmMBIh6I3E+rUt7bi9NOllvHzOXMnL+G1
-	pOfNjHadaCvSwTq+/8ZfH/DsJqoLnV/yJg1s66H+NQZAmRGFxI12bDcT5PydJKpArtnng0dbHKD
-	Vk9EfYVYpy7/eek9iZo6I0TDSIMjUs7Y6A==
-X-Google-Smtp-Source: AGHT+IHcHduh5E0s2skNSV47XrUM4N9lgZTh46ndYiV2vIM8885gcd/Exi/meEMDt1hOO7Sm4si1VNwfTQYp
-X-Received: by 2002:a17:903:985:b0:223:28a8:610b with SMTP id d9443c01a7336-229200f26damr22792405ad.14.1743176836796;
-        Fri, 28 Mar 2025 08:47:16 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-2291f1db993sm2730225ad.126.2025.03.28.08.47.16
+        bh=rvZNgJEOLv7vlUnMHFowwsJc7mv9fgxFUo+rGJDtCw4=;
+        b=ElSrL6uxpscJFp+nJ/aQp6Hhewcu0urR8PCakmsNfffx3W1o/h0Pyj/6jwul/pbOaL
+         1GXnOOWMugkJN9gEu8BlJeGL/wOlh+TXixs+d1mGxxFrZf4r4Eg735ToCxTTThdhlkv+
+         zAeBGXd/MKCrEf9zz37CGmoAWnStZ/UGW7AQnuaxyi+VBnMk6boPFxB9m1ktVzO/FN/E
+         c4zTuwj6teimo4R0ge4m7BGlrBg0UzD0ITW/8OLZqrd46SZP5smeVfn8WBJOdvOPunaz
+         VqbbNfUIuGt068JdgssWXUrvwDLYXVOG1oRVXLCv/9l4GqgNO2ePAi8vYl5qnAU/ek7s
+         y/DA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaaJGs2b9nCNcDah6goO2q0xN3KYKbtwhW8bmn0StGq7Pn7yDzeYjexJrj4GIBeiZvnhF/wS60vg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNPe/mdFAbNazzwLq8hs/mpAObUzcSjRQjGPbYMuw/PGtzS6Gi
+	/pdDteVYE77nMOuZuMf+PGuSvYECMHe/Xfj2p77rYvjvkT5rosWosM52qrl23Z1TetLgCpmyjvj
+	gDBKS9r89IaJBzR+7QwaukpZCE128dx7/
+X-Gm-Gg: ASbGncvU57jlFvamZMc+Zv9D6EmYhOlTeqFgDJ4XuuLZRcSEjkme288VJWVo67iAc/Q
+	6C8ywpbjA8IFzghBU0PljmQcDaUOCe4nSxjurc97uGhjvWb+YIGutDY/j4QqibbZpGDlSZ9jAGd
+	K6NOeffTkBa1aKFjdebsR6d2zX4bsVpYI22o0RSxzVBevJeJClVkzo1RE0WL035V1SDoLH5q9/o
+	AHDaERZ/x82ZP1P6OHgLp9X8tWD6UesBta6GJg228O3afx+wdLxNfpkRDPh17SLI4CT3s7Le4F8
+	RwbYdQH31N6LMM+rjGuRL2vjt40zHz0PhT8vvuZh6OJ3Nb8Y
+X-Google-Smtp-Source: AGHT+IHZyp/hTQTgBPdjdI/PAGSVR+TwdInUQ4bs/fMWlLnjp1ni0mf8CfgyGlPr5zMbfOYKigzJ9+sGNsfR
+X-Received: by 2002:a05:6602:1691:b0:855:d60d:1104 with SMTP id ca18e2360f4ac-85e83cee041mr242544339f.2.1743176868650;
+        Fri, 28 Mar 2025 08:47:48 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id ca18e2360f4ac-85e900121a8sm23348939f.11.2025.03.28.08.47.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 08:47:16 -0700 (PDT)
+        Fri, 28 Mar 2025 08:47:48 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 31D4F34018F;
-	Fri, 28 Mar 2025 09:47:16 -0600 (MDT)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 9515D34018F;
+	Fri, 28 Mar 2025 09:47:47 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 2FA11E40A9F; Fri, 28 Mar 2025 09:47:16 -0600 (MDT)
+	id 912C3E40A9F; Fri, 28 Mar 2025 09:47:17 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Keith Busch <kbusch@kernel.org>,
 	Jens Axboe <axboe@kernel.dk>,
@@ -90,9 +90,9 @@ Cc: Chaitanya Kulkarni <kch@nvidia.com>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v4 2/3] nvme/ioctl: move blk_mq_free_request() out of nvme_map_user_request()
-Date: Fri, 28 Mar 2025 09:46:46 -0600
-Message-ID: <20250328154647.2590171-3-csander@purestorage.com>
+Subject: [PATCH v4 3/3] nvme/ioctl: move fixed buffer lookup to nvme_uring_cmd_io()
+Date: Fri, 28 Mar 2025 09:46:47 -0600
+Message-ID: <20250328154647.2590171-4-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328154647.2590171-1-csander@purestorage.com>
 References: <20250328154647.2590171-1-csander@purestorage.com>
@@ -104,138 +104,150 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The callers of nvme_map_user_request() (nvme_submit_user_cmd() and
-nvme_uring_cmd_io()) allocate the request, so have them free it if
-nvme_map_user_request() fails.
+nvme_map_user_request() is called from both nvme_submit_user_cmd() and
+nvme_uring_cmd_io(). But the ioucmd branch is only applicable to
+nvme_uring_cmd_io(). Move it to nvme_uring_cmd_io() and just pass the
+resulting iov_iter to nvme_map_user_request().
+
+For NVMe passthru operations with fixed buffers, the fixed buffer lookup
+happens in io_uring_cmd_import_fixed(). But nvme_uring_cmd_io() can
+return -EAGAIN first from nvme_alloc_user_request() if all tags in the
+tag set are in use. This ordering difference is observable when using
+UBLK_U_IO_{,UN}REGISTER_IO_BUF SQEs to modify the fixed buffer table. If
+the NVMe passthru operation is followed by UBLK_U_IO_UNREGISTER_IO_BUF
+to unregister the fixed buffer and the NVMe passthru goes async, the
+fixed buffer lookup will fail because it happens after the unregister.
+
+Userspace should not depend on the order in which io_uring issues SQEs
+submitted in parallel, but it may try submitting the SQEs together and
+fall back on a slow path if the fixed buffer lookup fails. To make the
+fast path more likely, do the import before nvme_alloc_user_request().
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 Reviewed-by: Jens Axboe <axboe@kernel.dk>
 Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- drivers/nvme/host/ioctl.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ drivers/nvme/host/ioctl.c | 45 +++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 0634e24eac97..42dfd29ed39e 100644
+index 42dfd29ed39e..400c3df0e58f 100644
 --- a/drivers/nvme/host/ioctl.c
 +++ b/drivers/nvme/host/ioctl.c
-@@ -127,41 +127,39 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	int ret;
+@@ -112,12 +112,11 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
+ 	return req;
+ }
  
- 	if (!nvme_ctrl_sgl_supported(ctrl))
- 		dev_warn_once(ctrl->device, "using unchecked data buffer\n");
- 	if (has_metadata) {
--		if (!supports_metadata) {
--			ret = -EINVAL;
--			goto out;
--		}
-+		if (!supports_metadata)
-+			return -EINVAL;
-+
+ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
+-		struct io_uring_cmd *ioucmd, unsigned int flags,
+-		unsigned int iou_issue_flags)
++		struct iov_iter *iter, unsigned int flags)
+ {
+ 	struct request_queue *q = req->q;
+ 	struct nvme_ns *ns = q->queuedata;
+ 	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
+ 	bool supports_metadata = bdev && blk_get_integrity(bdev->bd_disk);
+@@ -135,28 +134,16 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
  		if (!nvme_ctrl_meta_sgl_supported(ctrl))
  			dev_warn_once(ctrl->device,
  				      "using unchecked metadata buffer\n");
  	}
  
- 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
- 		struct iov_iter iter;
- 
- 		/* fixedbufs is only for non-vectored io */
--		if (flags & NVME_IOCTL_VEC) {
--			ret = -EINVAL;
--			goto out;
--		}
-+		if (flags & NVME_IOCTL_VEC)
-+			return -EINVAL;
-+
- 		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
- 				rq_data_dir(req), &iter, ioucmd,
- 				iou_issue_flags);
- 		if (ret < 0)
--			goto out;
-+			return ret;
- 		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
- 	} else {
+-	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+-		struct iov_iter iter;
+-
+-		/* fixedbufs is only for non-vectored io */
+-		if (flags & NVME_IOCTL_VEC)
+-			return -EINVAL;
+-
+-		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
+-				rq_data_dir(req), &iter, ioucmd,
+-				iou_issue_flags);
+-		if (ret < 0)
+-			return ret;
+-		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
+-	} else {
++	if (iter)
++		ret = blk_rq_map_user_iov(q, req, NULL, iter, GFP_KERNEL);
++	else
  		ret = blk_rq_map_user_io(req, NULL, nvme_to_user_ptr(ubuffer),
  				bufflen, GFP_KERNEL, flags & NVME_IOCTL_VEC, 0,
  				0, rq_data_dir(req));
- 	}
+-	}
  
  	if (ret)
--		goto out;
-+		return ret;
+ 		return ret;
  
  	bio = req->bio;
- 	if (bdev)
- 		bio_set_dev(bio, bdev);
+@@ -194,11 +181,11 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ 		return PTR_ERR(req);
  
-@@ -174,12 +172,10 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	return ret;
- 
- out_unmap:
- 	if (bio)
- 		blk_rq_unmap_user(bio);
--out:
--	blk_mq_free_request(req);
- 	return ret;
- }
- 
- static int nvme_submit_user_cmd(struct request_queue *q,
- 		struct nvme_command *cmd, u64 ubuffer, unsigned bufflen,
-@@ -200,11 +196,11 @@ static int nvme_submit_user_cmd(struct request_queue *q,
  	req->timeout = timeout;
  	if (ubuffer && bufflen) {
  		ret = nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
- 				meta_len, NULL, flags, 0);
+-				meta_len, NULL, flags, 0);
++				meta_len, NULL, flags);
  		if (ret)
--			return ret;
-+			goto out_free_req;
+ 			goto out_free_req;
  	}
  
  	bio = req->bio;
- 	ctrl = nvme_req(req)->ctrl;
+@@ -467,10 +454,12 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+ 	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
+ 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
+ 	struct nvme_uring_data d;
+ 	struct nvme_command c;
++	struct iov_iter iter;
++	struct iov_iter *map_iter = NULL;
+ 	struct request *req;
+ 	blk_opf_t rq_flags = REQ_ALLOC_CACHE;
+ 	blk_mq_req_flags_t blk_flags = 0;
+ 	int ret;
  
-@@ -216,11 +212,14 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 		blk_rq_unmap_user(bio);
- 	blk_mq_free_request(req);
+@@ -502,10 +491,24 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	d.addr = READ_ONCE(cmd->addr);
+ 	d.data_len = READ_ONCE(cmd->data_len);
+ 	d.metadata_len = READ_ONCE(cmd->metadata_len);
+ 	d.timeout_ms = READ_ONCE(cmd->timeout_ms);
  
- 	if (effects)
- 		nvme_passthru_end(ctrl, ns, effects, cmd, ret);
-+	return ret;
++	if (d.data_len && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
++		/* fixedbufs is only for non-vectored io */
++		if (vec)
++			return -EINVAL;
++
++		ret = io_uring_cmd_import_fixed(d.addr, d.data_len,
++			nvme_is_write(&c) ? WRITE : READ, &iter, ioucmd,
++			issue_flags);
++		if (ret < 0)
++			return ret;
++
++		map_iter = &iter;
++	}
++
+ 	if (issue_flags & IO_URING_F_NONBLOCK) {
+ 		rq_flags |= REQ_NOWAIT;
+ 		blk_flags = BLK_MQ_REQ_NOWAIT;
+ 	}
+ 	if (issue_flags & IO_URING_F_IOPOLL)
+@@ -515,13 +518,13 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	if (IS_ERR(req))
+ 		return PTR_ERR(req);
+ 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
  
-+out_free_req:
-+	blk_mq_free_request(req);
- 	return ret;
- }
- 
- static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
- {
-@@ -520,20 +519,24 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
  	if (d.data_len) {
- 		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
- 			d.metadata_len, ioucmd, vec, issue_flags);
+-		ret = nvme_map_user_request(req, d.addr,
+-			d.data_len, nvme_to_user_ptr(d.metadata),
+-			d.metadata_len, ioucmd, vec, issue_flags);
++		ret = nvme_map_user_request(req, d.addr, d.data_len,
++			nvme_to_user_ptr(d.metadata), d.metadata_len,
++			map_iter, vec);
  		if (ret)
--			return ret;
-+			goto out_free_req;
+ 			goto out_free_req;
  	}
  
  	/* to free bio on completion, as req->bio will be null at that time */
- 	pdu->bio = req->bio;
- 	pdu->req = req;
- 	req->end_io_data = ioucmd;
- 	req->end_io = nvme_uring_cmd_end_io;
- 	blk_execute_rq_nowait(req, false);
- 	return -EIOCBQUEUED;
-+
-+out_free_req:
-+	blk_mq_free_request(req);
-+	return ret;
- }
- 
- static bool is_ctrl_ioctl(unsigned int cmd)
- {
- 	if (cmd == NVME_IOCTL_ADMIN_CMD || cmd == NVME_IOCTL_ADMIN64_CMD)
 -- 
 2.45.2
 

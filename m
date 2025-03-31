@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-7305-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7306-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384DFA76096
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 09:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D30A760A1
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 09:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAEC188B878
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 07:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD2E1884924
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 07:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6314B1C84A0;
-	Mon, 31 Mar 2025 07:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548AC1E492;
+	Mon, 31 Mar 2025 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OspcRl8T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jI1enAUD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE97B1C862F
-	for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 07:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDFB1C5D4E
+	for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 07:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743407601; cv=none; b=MxgIl7jz5O127aLnSuEnR1es/X4vNNl9dw2s6tpLbf3u6ArUoJUtNF5dQBwXPPaT+SElE5OuMniA70MR41sisJjgt+cbkJdMVQg9VxF4aw6J5Xea76z6yvs5E8BgoA/rGG3G3tqYQSxnUXGCFHGc+CLcnTzh7FLBU+BQc1NoaF4=
+	t=1743407671; cv=none; b=MH3dfiyvRaNZbwovOBSyizHUETUtaiBsLLTS4IjXOMKHsHuVNLZJNDxH3tvCwKCLhVnP8xVFOWsorBoJSHXJp6TnM06B5kCWJnNnuVMZOmaTV7PSFVb9thSL/2G9zbBaBVBaqLnm9+tZNNdN1wL88SS1rxmSFG68iUBw4SXmnKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743407601; c=relaxed/simple;
-	bh=yMoHSrhDQ+T6pBaSQ4bn87MHukS4vJ1t3zxVB5FWy1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rYgkurAJcDBUPWcOa8xOjTFs76GTsZ+DKVqeXb9+1rUOy4+9yGY7PsObbRLrzSylCrEmz3JUp3IvE5DoWid5ZjOO+FU38pErGCTjnCL8FlLKskEVNf5DEqqGSSYDI7djIxhxctLXwhzpuHN08UoTCNjrzYjCdh4KrsTXNmnnQ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OspcRl8T; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1743407671; c=relaxed/simple;
+	bh=c0MThJ8I4Y/XaQ9k0cK5GwVQNcH7vhHQkPg2ZDyFh7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tWdT3Q8Ikdz/tm+eEDEBILuJ1QfLj7Fdt899/dL8z3K6xQ++/om77TOeZW6pzX9KeLD0QWiN3azKW6gx+lYvg7XLWT0W8xyGLjiOCkueZhDOfAhHguufqeKJq7GInFcDKMFyqhxcA64J01biNuucO3AA1MPpV0/rUF/ivKW/5fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jI1enAUD; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac339f53df9so752504166b.1
-        for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 00:53:19 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so7767435a12.1
+        for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 00:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743407597; x=1744012397; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743407667; x=1744012467; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rUMwizFlfzrlmQAtc5ZiznvNselCFbiWERkVRdbZKtE=;
-        b=OspcRl8TNcnXLEEX+8prQ574l2g/vQjOVqNvHknq2fRn6ws0SB+GQ/FS4o5kZ6yuVU
-         0dlMNzabw6ypI/jIk9XhqiENhAGpeiY3HGnZfit9CvA6NO80Ep/JiqkKHlSWcOHsbaTv
-         n+RKTCKXDZgfXTUsLkk2wObdKOAbQgqckElrXRYckMzk2LPV+SD2RF+YfTXY/u+5Mx/2
-         CXNRBrX3QN1GozEWbbDdmAEyIieLKbmZqgzrxMPuHpTbL9n9PAPia6iwCNsQTbi5hkqc
-         lqTBS6vUidmYVzPHM+Rql9HNjC39YFy0DjegALbJ7e2lmimHZWIIGedybXvYMgnm/9Sq
-         088Q==
+        bh=Aq5tIWO0SMpa2qpN+s2oYdTRkFhEkHXek5UxXuZRStk=;
+        b=jI1enAUDPUWx+8oHUJzP2Ns1tQ4s0Jlm9acax0XND7tVfY3k2yeQbk3pHvxmuCm5MP
+         zwuI1p5a/4tKkRmx2XFI8a6tj+Th40evLt+iXFtQDBuwNFwNzfRe/PK2EaI/NhwpkL9y
+         5IHMFGWYqh+4uMSt6hvF33vNzE682+kOynebNIIuNonKCn0zuZAQ0oDWxXnA+juJ78gs
+         7DnT/jUXnRt8O9Jflykcbrys1BK5fiE+jaJpi8SIerM8/lvUV8E7mOxhBJa3N8TB4eJh
+         qciH1CPr4r2jmBXrOVjQag+Rwpne0ti3F+MdO+FLS0sul1xcA+D7mVzPQMBvFarIjXgH
+         Xhbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743407597; x=1744012397;
+        d=1e100.net; s=20230601; t=1743407667; x=1744012467;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rUMwizFlfzrlmQAtc5ZiznvNselCFbiWERkVRdbZKtE=;
-        b=k85FXtIeIuOltsbOK9GaeHI8aA9sm1Ealxrznj7CJgJH3gh5eEQNwc/pz6hF9pPGbQ
-         jUBLsEikJrd29plnvKPox/aAKDSViBaxSkcpBuH3CKYggcssnFU1i69Bj6/YnxB4woCX
-         jTKMSAWka98hQX4FYH4ib4HulQAWmAp3tZIpZxKwc/hYCsq/L+BoJN53GgB1jh+LjPF9
-         1x2OHSsJ9BceCpRkCNd9mGtHHe0r1TIF9xIjdjTdNKojGWt3HZg/PqI1xYsI2emLDzx6
-         uTp8RB44n+gY/l1GeUXTkXG0xSgH/Ljrpyg0P9Q8upHzq5+hs34oN/qopcbEY85bcD4v
-         8IMw==
-X-Gm-Message-State: AOJu0YxUeHHTn1+E/A1JkKQuEqS1y9Eie1GiZZ6MHYqD5FHr1BGDfRZi
-	CFNF4TBSz+ad97Rgd5P137oaWgjaOSaHMxNBhAw6zpAUdXutNWcFY5GE8g==
-X-Gm-Gg: ASbGncuKFZn3tgO4IhWgZEwEYrRY7Btddqe8iyvXoxU6bwfgclp1Hxr02ibAEF/ILBp
-	9dd3syL4eN3Jsa/B58WbCT6yUv6Di1XamBrPK9TGeNv+VtHWO90CkdPeGrbl1RB9Mj4eLEyfYQv
-	bdC+0OTmM4Wu168lWC2Xglnf3bws+2JO4Oxl3QcPEZhfA/FESBDtyab5bOl5DZZQ8P+0tIaM8WO
-	uj5Fj2ZPhurd/QxV29EqJYO6SV3SzaqC/kH+0k4ZGtDtOdAflVR0Wu10uh74qDVfsRWpMvEdcHu
-	jr1vXxEfYU3j8npwMREDt689NRs=
-X-Google-Smtp-Source: AGHT+IGndo/+RIqL8eRJbMaNr7J2N8CHYT6Gn8N3w40NkkRZnimKvV68MAw3UK1QvjQeHrp8rWYU8A==
-X-Received: by 2002:a17:907:84a:b0:ac2:49b1:166f with SMTP id a640c23a62f3a-ac738bfee57mr718865766b.52.1743407597162;
-        Mon, 31 Mar 2025 00:53:17 -0700 (PDT)
+        bh=Aq5tIWO0SMpa2qpN+s2oYdTRkFhEkHXek5UxXuZRStk=;
+        b=FL4fLz12ZVZCn0lYzamHcrUuZmTnTQeZEr2Xrpg/43Sgjts1A9oP0PI0OH9TnP5uc4
+         PijAfslay+uV3lkhq4zFBfLyLBV6WPW0QQLzcnHcr5menCVob2nHjzPFz0TJezwm3CdN
+         c6rz8dozVv4EJymAuuwKJ5DOngSYrCvcC1Ls2v/9mMN2MsX48xIWlhK9n8RweQ6dD3Ti
+         CM0VjebgZ0DfR3FPPO/BC6+8m7tIc2uqRnRILU2tV1DJqKxy4D8QkgozlByQsdONz1Bw
+         EPj+b9YwK5/wSSxr5h6t7ofm1BerpYXw6CqNB7T+GoOKSPklUCN1RTCH+AfiGjdZ/Z13
+         j/oQ==
+X-Gm-Message-State: AOJu0YxdBpUU3334R4wdGp4IFOyqv2jDM9CfRNgBefFslz5Q+VieIXUc
+	UpSV+ufClMkhT/J+IMSX5IP6zgZb+Q5GoLorsffOhmpi21/IecVqJWTGFQ==
+X-Gm-Gg: ASbGnctprWuHa0+dye0GgUFq0D7WJ97Rz2hSknRNSxDtfuDfXe0JjGKwaYDD4flg8cs
+	MU0rSparo5r3LpkBGVUwQ4UW88KinkL0PmowqpRjvAYlqkmUsgtXuYo/CZel2JmAEJpYm+Evghj
+	IznFn3gQzgHBGy5Xi8XNzWN6V9QxrNKxiKqM0h611v5D7rnqeUPkijppEAEFUDDv31fmlhQ6GaS
+	s8nwdDYbYHL2Mx0wKmZggySMQeaIVZK8s077PS/wBp/AHpRn4NyUMQXM3G/ygsbGetii56lkPe0
+	7PkrZO9i1q94zLbPmYUfxEINTF4=
+X-Google-Smtp-Source: AGHT+IEjLHr2Q2R32eeuJgC5BXGTFuAqlHpzdHcp1pwDomyB027S0wrM62LAG/xogE5s6U9nMFMY+Q==
+X-Received: by 2002:a05:6402:2794:b0:5eb:4e69:2578 with SMTP id 4fb4d7f45d1cf-5edfcd526d2mr7477995a12.13.1743407667347;
+        Mon, 31 Mar 2025 00:54:27 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:345])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71922b8aesm595545466b.13.2025.03.31.00.53.16
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17b2eacsm5266739a12.59.2025.03.31.00.54.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 00:53:16 -0700 (PDT)
+        Mon, 31 Mar 2025 00:54:26 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: add req flag invariant build assertion
-Date: Mon, 31 Mar 2025 08:54:00 +0100
-Message-ID: <9877577b83c25dd78224a8274f799187e7ec7639.1743407551.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring: cleanup {g,s]etsockopt sqe reading
+Date: Mon, 31 Mar 2025 08:55:11 +0100
+Message-ID: <8dbac0f9acda2d3842534eeb7ce10d9276b021ae.1743357108.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -84,27 +84,61 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We're caching some of file related request flags in a tricky way, put
-a build check to make sure flags don't get reshuffled.
+Add a local variable for the sqe pointer to avoid repetition.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
+ io_uring/uring_cmd.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cb17deffd6ca..6df996d01ccf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1643,6 +1643,8 @@ io_req_flags_t io_file_get_flags(struct file *file)
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 89cee2af0ec1..a9ea7d29cdd9 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -307,17 +307,18 @@ static inline int io_uring_cmd_getsockopt(struct socket *sock,
+ 					  struct io_uring_cmd *cmd,
+ 					  unsigned int issue_flags)
  {
- 	io_req_flags_t res = 0;
++	const struct io_uring_sqe *sqe = cmd->sqe;
+ 	bool compat = !!(issue_flags & IO_URING_F_COMPAT);
+ 	int optlen, optname, level, err;
+ 	void __user *optval;
  
-+	BUILD_BUG_ON(REQ_F_ISREG_BIT != REQ_F_SUPPORT_NOWAIT_BIT + 1);
-+
- 	if (S_ISREG(file_inode(file)->i_mode))
- 		res |= REQ_F_ISREG;
- 	if ((file->f_flags & O_NONBLOCK) || (file->f_mode & FMODE_NOWAIT))
+-	level = READ_ONCE(cmd->sqe->level);
++	level = READ_ONCE(sqe->level);
+ 	if (level != SOL_SOCKET)
+ 		return -EOPNOTSUPP;
+ 
+-	optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
+-	optname = READ_ONCE(cmd->sqe->optname);
+-	optlen = READ_ONCE(cmd->sqe->optlen);
++	optval = u64_to_user_ptr(READ_ONCE(sqe->optval));
++	optname = READ_ONCE(sqe->optname);
++	optlen = READ_ONCE(sqe->optlen);
+ 
+ 	err = do_sock_getsockopt(sock, compat, level, optname,
+ 				 USER_SOCKPTR(optval),
+@@ -333,15 +334,16 @@ static inline int io_uring_cmd_setsockopt(struct socket *sock,
+ 					  struct io_uring_cmd *cmd,
+ 					  unsigned int issue_flags)
+ {
++	const struct io_uring_sqe *sqe = cmd->sqe;
+ 	bool compat = !!(issue_flags & IO_URING_F_COMPAT);
+ 	int optname, optlen, level;
+ 	void __user *optval;
+ 	sockptr_t optval_s;
+ 
+-	optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
+-	optname = READ_ONCE(cmd->sqe->optname);
+-	optlen = READ_ONCE(cmd->sqe->optlen);
+-	level = READ_ONCE(cmd->sqe->level);
++	optval = u64_to_user_ptr(READ_ONCE(sqe->optval));
++	optname = READ_ONCE(sqe->optname);
++	optlen = READ_ONCE(sqe->optlen);
++	level = READ_ONCE(sqe->level);
+ 	optval_s = USER_SOCKPTR(optval);
+ 
+ 	return do_sock_setsockopt(sock, compat, level, optname, optval_s,
 -- 
 2.48.1
 

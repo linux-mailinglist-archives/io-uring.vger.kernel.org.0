@@ -1,51 +1,51 @@
-Return-Path: <io-uring+bounces-7329-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7330-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315FAA76ED0
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 22:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCCEDA76EDF
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 22:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADAC43A1973
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 20:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D65A3AB4C6
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 20:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFBE21CC7C;
-	Mon, 31 Mar 2025 20:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACDA21A928;
+	Mon, 31 Mar 2025 20:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="utyKiDRo"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="Xak0cnp3"
 X-Original-To: io-uring@vger.kernel.org
 Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B421B9C3;
-	Mon, 31 Mar 2025 20:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA221A43B;
+	Mon, 31 Mar 2025 20:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743451961; cv=none; b=IMUkv35zvHj4pOs059AbX1WVfSbpiAe74K50dkh+2qtUjmz3JqMaPCt7tz2/UNi7yAhsB1b7nS2DG2pttaB4wysYm3+USqBObq9dyBvG7ZPq9T5DaQpkaavx6B7i1i6SZQpq1ZbjaT15lIaO75lmxveVbWyKm8PYxCZHb44a9po=
+	t=1743451974; cv=none; b=nBAO4jZROEXUGTIc3sOsgmY22N6fhzOz4ceL9OK6LMOW6YMU6vsz52lg/qAba4JCzBLNR3SR3Xd23mN1qfEPCoUrvBc4Ep6zPWzUYZgpGMK9hR7k7s0FPhiT4DNbQw6M3jYTU+3tPHuqsyPq692yaA6QPdC2oSz/4v38WGgXdHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743451961; c=relaxed/simple;
-	bh=M2Fp7exY4cxRbGe1lOl1dPG0xLZZ+A8jahAEIaGY12s=;
+	s=arc-20240116; t=1743451974; c=relaxed/simple;
+	bh=lvZ73xzz3mMkJwAURa9e3ydTBqQTchnZWwnxcU8/e2g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZcE40xwRimw/hriE9nG+OyccyA6q49fXI6ktdNi4z6CWUypjbiQrQMn9mRo0YrhIg4poKwp5JRXDLJN/SgDtm05GpJwEfc4c7YpUpUy1/euGCnn4hInYe75+Fjf84TueAmxBEzCykJckicgYorJVWi3OjrBoWU0nDuFIZYnuoIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=utyKiDRo; arc=none smtp.client-ip=144.76.82.148
+	 MIME-Version:Content-Type; b=Hhfm8zsbolBQSWPKHcIBq0cWmcze9816XLKuQTyfyCwrG+tWwDTBpM/EE91HeOo5ULTyZSPyZIcLuQhhiDF7JHXmR3M6fkV0BlIiR4qJMzjdQjuk8yVKJRLKaGQRs393KH4TmV52a8SaXTqatKmG055HxfWzbttmc6dH9KSNxxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=Xak0cnp3; arc=none smtp.client-ip=144.76.82.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
 	s=42; h=Message-Id:Date:Cc:To:From;
-	bh=F2PVnOBJYHIqIOs+UI7Bgnf84OIiQjHeCtccLCUmP1A=; b=utyKiDRouLC30Mip7B0Rdp/0UF
-	lX4zlJy9xyEqAZfMk5bmwlArknGpBTZCx9x+KtkujSyR4YIfAQBtD2oDZbzN9fpOwy3+eEgciLSTl
-	hQv+KJriEUECzmzS/Ypj+2bXC7ykTD0oJHESqgonh2sUlmznRNURVlDrHv8CW9JomQ3gBU+3Tb3dO
-	U+55Fxx3rWiqs2FRTHh+TZn5II+ahLpdwnLNH48FsaOGBq8VUDPbqQr83p3nsYTtvUpPUM62AQUpK
-	6IKiNKDUG2h9yJjz6ZEDFfOlfZjLnrD0eFEB7DLTytNriY+ER0J4TZ8EfQJFkZ5ZQLEIJCLReN0hK
-	tCaSqIl2WUM5pFmE2EUGm+M/48P9v6fxAeTSHmq4ws8RvrQ4ZELgOv2GOWpGJflYZFsK6NH/8xm/H
-	iy2r+DC+YRP84swgbSb91M6IpBl9WO3gBdGmN3DdCDFx5lH6EbfXY4UThQ64yw1gzAxKMRX3azfYd
-	Gob0TDZg6JCGblq1aQTLbCW+;
+	bh=+UPgsoYyuTHoMpsEKfJbS83mget/Pt2RmairKSJfS28=; b=Xak0cnp3eC8vOcjRAmxhSzY8or
+	2ms51j9kwZ1j9gIgrhniOYdwKhaCSLkvMAzSsB13j5fW24Fn9N4r0G7o+JLiV4Jim2ehU9QMjLI/x
+	MT1xKsKlR048ZocTScVzlgzGvLIn86CkVMKH+3vlZd8IVmXEl1AtfZJmysQ/w1i5/w1s1EDLVd2EU
+	lmqtgGDBeVOMHtDw3AH38UOjan0N79BO8U3ne3Y6gpiRU9WwuNUpelZlVKnzxv4g0hnoLKJOV7yds
+	VUQ3iGNNMyE1r1ujQccxBuvwnA6ubRqR+LTje4X0ZZjlBuJ4YQEmbPxfE2LAjlzZ+0T53syP9/Ds9
+	w8gMyZ6VWeVNfn2lt+dc3VKBYUAl98jEsFqoe+OYds4YpSjRk9iNBvGnWXbNlmJDWcln+mLRk75WB
+	FO0XUUIsIiNT/TqLX8q+GxomIf5bbiv/WLO3mQnFCgN74NWzI7vElK7sMVqnIlGxQCsxx1OksawWH
+	wFYOTpCl6/Ns2jtL/6xPHTZv;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
 	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
 	(Exim)
-	id 1tzLUm-007Y8E-3A;
-	Mon, 31 Mar 2025 20:12:33 +0000
+	id 1tzLUy-007Y96-2f;
+	Mon, 31 Mar 2025 20:12:45 +0000
 From: Stefan Metzmacher <metze@samba.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jens Axboe <axboe@kernel.dk>
@@ -128,9 +128,9 @@ Cc: Stefan Metzmacher <metze@samba.org>,
 	bpf@vger.kernel.org,
 	isdn4linux@listserv.isdn4linux.de,
 	io-uring@vger.kernel.org
-Subject: [RFC PATCH 3/4] net: pass a kernel pointer via 'optlen_t' to proto[ops].getsockopt() hooks
-Date: Mon, 31 Mar 2025 22:10:55 +0200
-Message-Id: <d482e207223f434f0d306d3158b2142dceac4631.1743449872.git.metze@samba.org>
+Subject: [RFC PATCH 4/4] io_uring: let io_uring_cmd_getsockopt() allow level other than SOL_SOCKET
+Date: Mon, 31 Mar 2025 22:10:56 +0200
+Message-Id: <330de91a48996e6dc5cdc844b74fb17fb933326c.1743449872.git.metze@samba.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1743449872.git.metze@samba.org>
 References: <cover.1743449872.git.metze@samba.org>
@@ -143,43 +143,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The motivation for this is to remove the SOL_SOCKET limitation
-from io_uring_cmd_getsockopt().
-
-The reason for this limitation is that io_uring_cmd_getsockopt()
-passes a kernel pointer.
-
-The first idea would be to change the optval and optlen arguments
-to the protocol specific hooks also to sockptr_t, as that
-is already used for setsockopt() and also by do_sock_getsockopt()
-sk_getsockopt() and BPF_CGROUP_RUN_PROG_GETSOCKOPT().
-
-But as Linus don't like 'sockptr_t' I used a different approach.
-
-Instead of passing the optlen as user or kernel pointer,
-we only ever pass a kernel pointer and do the
-translation from/to userspace in do_sock_getsockopt().
-
-The simple solution would be to just remove the
-'__user' from the int *optlen argument, but it
-seems the compiler doesn't complain about
-'__user' vs. without it, so instead I used
-a helper struct in order to make sure everything
-compiles with a typesafe change.
-
-That together with get_optlen() and put_optlen() helper
-macros make it relatively easy to review and check the
-behaviour is most likely unchanged.
-
-In order to avoid uapi changes regarding different error
-code orders regarding -EFAULT, the real -EFAULT handling
-is deferred to get_optlen() and put_optlen().
-
-This allows io_uring_cmd_getsockopt() to remove the
-SOL_SOCKET limitation.
-
-Removing 'sockptr_t optlen' from existing code
-is for patch for another day.
+do_sock_getsockopt() works with a kernel pointer for optlen now.
 
 Link: https://lore.kernel.org/io-uring/86b1dce5-4bb4-4a0b-9cff-e72f488bf57d@samba.org/T/#t
 Cc: Jens Axboe <axboe@kernel.dk>
@@ -265,113 +229,23 @@ Cc: isdn4linux@listserv.isdn4linux.de
 Cc: io-uring@vger.kernel.org
 Signed-off-by: Stefan Metzmacher <metze@samba.org>
 ---
- include/linux/sockptr.h | 20 +++++++++++++++-----
- net/socket.c            | 31 +++++++++++++++++++++++++++++--
- 2 files changed, 44 insertions(+), 7 deletions(-)
+ io_uring/uring_cmd.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/include/linux/sockptr.h b/include/linux/sockptr.h
-index 1baf66f26f4f..06ec7fd73028 100644
---- a/include/linux/sockptr.h
-+++ b/include/linux/sockptr.h
-@@ -170,20 +170,25 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
- }
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index f2cfc371f3d0..8b0cc919a60c 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -312,9 +312,6 @@ static inline int io_uring_cmd_getsockopt(struct socket *sock,
+ 	void __user *optval;
  
- typedef struct {
--	int __user *up;
-+	int *kp;
- } optlen_t;
- 
- #define __check_optlen_t(__optlen)				\
- ({								\
- 	optlen_t *__ptr __maybe_unused = &__optlen; \
--	BUILD_BUG_ON(sizeof(*((__ptr)->up)) != sizeof(int));	\
-+	BUILD_BUG_ON(sizeof(*((__ptr)->kp)) != sizeof(int));	\
- })
- 
- #define get_optlen(__val, __optlen)				\
- ({								\
- 	long __err;						\
- 	__check_optlen_t(__optlen);				\
--	__err = get_user(__val, __optlen.up);			\
-+	if ((__optlen).kp != NULL) {				\
-+		(__val) = *((__optlen).kp);			\
-+		__err = 0;					\
-+	} else {						\
-+		__err = -EFAULT;				\
-+	}							\
- 	__err;							\
- })
- 
-@@ -191,13 +196,18 @@ typedef struct {
- ({								\
- 	long __err;						\
- 	__check_optlen_t(__optlen);				\
--	__err = put_user(__val, __optlen.up);			\
-+	if ((__optlen).kp != NULL) {				\
-+		*((__optlen).kp) = (__val);			\
-+		__err = 0;					\
-+	} else {						\
-+		__err = -EFAULT;				\
-+	}							\
- 	__err;							\
- })
- 
- static inline sockptr_t OPTLEN_SOCKPTR(optlen_t optlen)
- {
--	return (sockptr_t) { .user = optlen.up, };
-+	return (sockptr_t) { .kernel = optlen.kp, .is_kernel = true };
- }
- 
- #endif /* _LINUX_SOCKPTR_H */
-diff --git a/net/socket.c b/net/socket.c
-index fa2de12c10e6..81e5c9767bbc 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2350,15 +2350,42 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
- 	} else if (unlikely(!ops->getsockopt)) {
- 		err = -EOPNOTSUPP;
- 	} else {
--		optlen_t _optlen = { .up = NULL, };
-+		optlen_t _optlen = { .kp = NULL, };
-+		int koptlen;
- 
- 		if (WARN_ONCE(optval.is_kernel,
- 			      "Invalid argument type"))
- 			return -EOPNOTSUPP;
- 
--		_optlen.up = optlen.user;
-+		if (optlen.is_kernel) {
-+			_optlen.kp = optlen.kernel;
-+		} else if (optlen.user != NULL) {
-+			/*
-+			 * If optlen.user is NULL,
-+			 * we pass _optlen.kp = NULL
-+			 * in order to avoid breaking
-+			 * any uapi for getsockopt()
-+			 * implementations that ignore
-+			 * the optlen pointer completely
-+			 * or do any level and optname
-+			 * checking before hitting a
-+			 * potential -EFAULT condition.
-+			 *
-+			 * Also when optlen.user is not NULL,
-+			 * but copy_from_sockptr() causes -EFAULT,
-+			 * we'll pass optlen.kp = NULL in order
-+			 * to defer a possible -EFAULT return
-+			 * to the caller to get_optlen() and put_optlen().
-+			 */
-+			if (copy_from_sockptr(&koptlen, optlen, sizeof(koptlen)) == 0)
-+				_optlen.kp = &koptlen;
-+		}
- 		err = ops->getsockopt(sock, level, optname, optval.user,
- 				      _optlen);
-+		if (err != -EFAULT && _optlen.kp == &koptlen) {
-+			if (copy_to_sockptr(optlen, &koptlen, sizeof(koptlen)))
-+				return -EFAULT;
-+		}
- 	}
- 
- 	if (!compat)
+ 	level = READ_ONCE(cmd->sqe->level);
+-	if (level != SOL_SOCKET)
+-		return -EOPNOTSUPP;
+-
+ 	optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
+ 	optname = READ_ONCE(cmd->sqe->optname);
+ 	optlen = READ_ONCE(cmd->sqe->optlen);
 -- 
 2.34.1
 

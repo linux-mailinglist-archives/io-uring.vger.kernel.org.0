@@ -1,109 +1,89 @@
-Return-Path: <io-uring+bounces-7313-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7314-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFA6A76698
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 15:09:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D46A768A2
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 16:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112BD3A6667
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 13:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33DB188D383
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 14:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24E72AE8D;
-	Mon, 31 Mar 2025 13:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB5B228CB0;
+	Mon, 31 Mar 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bA8jgjXz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIR7XGd4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CC211282
-	for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 13:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B4021859F;
+	Mon, 31 Mar 2025 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743426542; cv=none; b=n8M4MaZ+jB6tSmRSBNWNs/FZ2pvRltXxFOo+x+hndP50swnikwNdnXUSNpRn/4C8Ny+g5gOT7rr3DDC/94vrYFgaHhlOY/SYp3jeBVbMxz47sJcJXXGv0aBaGGRtbBpy4KxutDkONAenlove6b5hAMH4VJH7ljpO51yxAmgMeNU=
+	t=1743431806; cv=none; b=K9lBTa1nziLW5SHIGDKm6hh1GYuFjc8DfcBIJjU9ir6Jh/dj7qflnslstLPDgWDSL5Lz5YcDyPSYErjcgEq6NxVDHzdIf3yynqJvb+PG0rKQLVweGIg/2wszv2riSkDRYmSApqUHbMNLLE9wPEiFTkVtANgoMNUf27NGcQXQmL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743426542; c=relaxed/simple;
-	bh=neKlkun2pHQuQ/aXLgAVLioFZ4urTrXsjxXhDKVioao=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Kmt2CiYdJAckAVgDempia4eg7H8twUfOIPzemA8K7Td6Vx1S5VS22Gu1mT+TwVkDX9gVBURPqivI8lahrWP1ClE91vdc3cFM1RxDuMsL0FA1VFsZvDvW1AWLWAncWvmGHdtAXuk+dTD0vLYXvYP9mo6LNfj9TAORSGzPXpPYAq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bA8jgjXz; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85ea482e3adso42393839f.0
-        for <io-uring@vger.kernel.org>; Mon, 31 Mar 2025 06:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743426539; x=1744031339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pKIQkhxWM0XWIKpq/oW+DhSYXLrD/8S92rdBVfqJllM=;
-        b=bA8jgjXzBLbZE2GMTgblrE+Vx1/zAlrYSzJE55ZYTIa46Kse1esOY4WafZoK981e3p
-         HlEjbTD0sDsLhET2BjiyL4ldmBFxeagtVyLTKcIsyK0meqJVDdl2JOnY8wETEufUCmip
-         DEIpHMvwSqLjyzJLO2G6lc8jvqsLr+czFXb1xrd31cvF8nETffYjSF6lFPMl58K+N9dm
-         sLM/cKwea+JOLtDWGCGy90sDXApwG3eE05rQEc7k+Y2IaMv6240z6oRlXQGnEQQa2yEC
-         +qkO64ixTug8RqdAketjaWbyamYBKIRYL0PmrtqfgsAjNkvS6j1qTjX8+5cboLYW8L0a
-         mh2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743426539; x=1744031339;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pKIQkhxWM0XWIKpq/oW+DhSYXLrD/8S92rdBVfqJllM=;
-        b=adll7pG70mqT3GPh6jveCZwgdh/+NRpyrNCxtD5HTimYV5Ea3II1de9B3lWr6A9xCx
-         n1C1nWPRTWVHhWdcqeXGRK+OcXxV4FEf0eW7WwODcnkI7NkfEHGBDS+SwaLNvVEkGE5b
-         TQ+FdPOSfy8SK2M/JvNnAavVlpIQLFLTegGDy2KTJ2yzAa59bqRyx3CM65oHyXT0idJZ
-         sxVg7LGwPr9d79aa30W+ipR12bBhbWNBPnRzIql32gBZNWiN0GcnS/pF66mpx4fadX10
-         nQsq/OEXFxIjbf1F95DQk41yMn2UIqpH3wabsqT9WqnLK61cIoaiAaiioEg1PyRJmQZA
-         WmNg==
-X-Gm-Message-State: AOJu0YxosJ69mXrStDXbmvVJtZiY+KiICzodj82YWxs/hY2sv9lyqVRx
-	FS+ucb+AWZscpO0sYVrPVGFRwiIMfnRufNKIQbfB5TVypPI2lH/FldE7RofUJA4xFJZpOG3zR2U
-	U
-X-Gm-Gg: ASbGnctnZxJKzjPQ/KM1R84Vs5GWTW2w5RCVVLrHLRFHdQn46d2xoBHf1+BsuD4L4hv
-	MuViS6yXQuDVccJ3FWhc3bN4ln6kzp5N41xBGjcktbpfk4df4DITZvcYd9u9gHvBmd9YNZRydiO
-	F8ttXvgIG0003SeBheAhMjOexXRpr8+M5ItuTqL4tdQ6A0+Ed7q/6szhs6XxCqSzkuY3hza0dqj
-	AETJrNmBZqTDJZs4cbcikpG5kM8Cli0OBKciUn/8KOddfSj1cyTlKlF7RZn2h1XNsIqKgODhz0A
-	guDGKJ7Q0bbd2xD0fwp3Yr/5whACqibQeaIT
-X-Google-Smtp-Source: AGHT+IHTqKUhyDW5NdBUJR9Gn8x9Im3OK5k5ZtAojG7ke/9ty9cSS81jvbsPJ5CWNwn12NtgKjej0Q==
-X-Received: by 2002:a05:6602:2112:b0:85b:3ae9:da01 with SMTP id ca18e2360f4ac-85e91e14e4dmr942775439f.4.1743426539377;
-        Mon, 31 Mar 2025 06:08:59 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f464871886sm1838311173.92.2025.03.31.06.08.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 06:08:58 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <8dbac0f9acda2d3842534eeb7ce10d9276b021ae.1743357108.git.asml.silence@gmail.com>
-References: <8dbac0f9acda2d3842534eeb7ce10d9276b021ae.1743357108.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: cleanup {g,s]etsockopt sqe reading
-Message-Id: <174342653808.1705439.15777817976481332490.b4-ty@kernel.dk>
-Date: Mon, 31 Mar 2025 07:08:58 -0600
+	s=arc-20240116; t=1743431806; c=relaxed/simple;
+	bh=saBfwSTx9+zrA2PPu4GkKVVeKaJUPYevf/A5oECr0ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Atx99MmGOBTo3I5oX869dZbc26YR8rrohPo/IyHqzWdqGIzJUV0gZInHmTBW+8r+8rRA/6hMG4yxzck/mfMxdWQerHjlggHyOOLS6eqAdKAN2UN2T40Ur7ZxZIxc0yAw5cOGQOUpwiwEHjROn348+XuYsuV9A+TuHJWnx9MXyxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIR7XGd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6394CC4CEED;
+	Mon, 31 Mar 2025 14:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743431806;
+	bh=saBfwSTx9+zrA2PPu4GkKVVeKaJUPYevf/A5oECr0ks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIR7XGd4L3Iz9uJZYZ/LcQjWI9ZXFd2ChMXVauWYXRo3tIRGb1kn3kwp/B7V2Jskb
+	 6PDPr0nOrrCS2KTkQp8zwJPJ7qwsdTGnTHLyEHms9ZErYZE8aand4okT8pSWsLgXHQ
+	 ybNAiGdg6EORQ4xfV2u4PSKvE5dZq9+IMPgWcQ/IpFL5v5Jus3F7SKMhgEl9jTEds9
+	 Wm00667Wx3UtCd1xzPJQlVt1Tz5X0/tuZfQapA2UBXtEU7ZtX9FnNzBxCppbSfmspK
+	 86P63Vs1o3tDnvbXpDntX3NkoyoigIUZ4eX25iPgUUmI7g8jYBc1oCgkfIPG0LePEw
+	 p5IuDtle2V8Qg==
+Date: Mon, 31 Mar 2025 08:36:42 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] nvme/ioctl: move fixed buffer lookup to
+ nvme_uring_cmd_io()
+Message-ID: <Z-qoevl5Jaf7WFsQ@kbusch-mbp.dhcp.thefacebook.com>
+References: <20250328154647.2590171-1-csander@purestorage.com>
+ <CGME20250328155548epcas5p2368eb1a59883b133a9baf4ac39d6bac6@epcas5p2.samsung.com>
+ <20250328154647.2590171-4-csander@purestorage.com>
+ <48b9a876-0e3b-4c89-9aa3-b48f502868c3@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48b9a876-0e3b-4c89-9aa3-b48f502868c3@samsung.com>
 
-
-On Mon, 31 Mar 2025 08:55:11 +0100, Pavel Begunkov wrote:
-> Add a local variable for the sqe pointer to avoid repetition.
+On Mon, Mar 31, 2025 at 12:16:58PM +0530, Kanchan Joshi wrote:
+> On 3/28/2025 9:16 PM, Caleb Sander Mateos wrote:
+> > For NVMe passthru operations with fixed buffers, the fixed buffer lookup
+> > happens in io_uring_cmd_import_fixed(). But nvme_uring_cmd_io() can
+> > return -EAGAIN first from nvme_alloc_user_request() if all tags in the
+> > tag set are in use. This ordering difference is observable when using
+> > UBLK_U_IO_{,UN}REGISTER_IO_BUF SQEs to modify the fixed buffer table. If
+> > the NVMe passthru operation is followed by UBLK_U_IO_UNREGISTER_IO_BUF
+> > to unregister the fixed buffer and the NVMe passthru goes async, the
+> > fixed buffer lookup will fail because it happens after the unregister.
 > 
-> 
+> while the patch looks fine, I wonder what setup is required to 
+> trigger/test this. Given that io_uring NVMe passthru is on the char 
+> device node, and ublk does not take char device as the backing file. 
+> Care to explain?
 
-Applied, thanks!
-
-[1/1] etsockopt sqe reading
-      commit: ed344511c584479ce2130d7e01a9a1e638850b0c
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Not sure I understand the question. A ublk daemon can use anything it
+wants on the backend. Are you just referring to the public ublksrv
+implementation? That's not used here, if that's what you mean.
 

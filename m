@@ -1,51 +1,51 @@
-Return-Path: <io-uring+bounces-7327-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7328-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C1CA76E17
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 22:13:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11A0A76E9F
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 22:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41D43AB1C9
-	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 20:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E1F7A4293
+	for <lists+io-uring@lfdr.de>; Mon, 31 Mar 2025 20:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5743F21A95D;
-	Mon, 31 Mar 2025 20:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7034121B8F5;
+	Mon, 31 Mar 2025 20:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NQj/+Dfw"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="HaMLT+pu"
 X-Original-To: io-uring@vger.kernel.org
 Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E136219A86;
-	Mon, 31 Mar 2025 20:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B5021ADA7;
+	Mon, 31 Mar 2025 20:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743451936; cv=none; b=pcHRRj32lgWtlCHjFHu99fgJqD/mpzVTxFy2Q/fjsgUpR5gyNbRiQdlSArrjQXGSgO0bQw77Ea0oJXRLZDnHLK2PdyZt18duCQuf2bpN/AXPK/nr6ru1S23fYvL17jghjuWQ2F+wHp11Oc58cqqL2ji4Ejy886uuxUyS+Db2n9E=
+	t=1743451952; cv=none; b=SC+MEMHMyWrKJ6moW/ycq8jIEU92a+J5iQ7xe7RuYGi2+L7x6HxBoL2B4Peq8Jz4bPdJewJsOusi7ohrD/42ZIyDtggF/G6+Z5tgCYDbjLuIpjJUljGq8iQ5EGN0/FNs9QN/XjG8F7Op5miaIcfNINzOS+RAb5/fnb+qwtxHRS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743451936; c=relaxed/simple;
-	bh=dDnjsm5X53BOLJc3f5Jka16o9WCVtOzDP6mP3wIQvGY=;
+	s=arc-20240116; t=1743451952; c=relaxed/simple;
+	bh=iPpSVkPLCqTR2FyjxqGiQmNQFigqWYQjZN94TFT+FdI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GV9/OvEJdh867+wnc1SEAltWVFCNyt9DrwTMsKpwYCkAkQdvy1Ynn5PLI16JhXHaRq4wE/tPHDlN6FLsUpJSjErSRQU0vaQZPokzJ72j+4BRPSJUxG+DogVbvsBzHfXtm1O6wtj5HOqmBSxSFapGx0o1XozsYN47G1G6BSmJb0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NQj/+Dfw; arc=none smtp.client-ip=144.76.82.148
+	 MIME-Version:Content-Type; b=EDT7TiULtQQyUaSUA3YQVb9fx+MmeiyuA0/tJC/anN2eOZtm1P1OZA75+Km2Yn+x/3Q8QcF9sVQjQS+9u4DTSEij/Rt0ssqcx5cFWMV8GDL+AurZ/Av+8Pva5xjX4QJQ071a7eKb+nvWIZKIFa0F7/B1RYclQ48Pk3HjpSPjzns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=HaMLT+pu; arc=none smtp.client-ip=144.76.82.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
 	s=42; h=Message-Id:Date:Cc:To:From;
-	bh=Td3FiJjrExi0Y1kYmHCq2ftd2Font3pOCCyP5A7L1Kk=; b=NQj/+DfwJWDFI9m4Oo6V0gmvoR
-	elmI1xKYQ7A3NBaPKuMupZzx9ZxFRGItZlfiZXQc8fDshztC9QT73Y2P+aBkfeZveeS5VydwPXU7w
-	J3V4c9GO8dqQ4yRUr+fr3Ax7zgmJf/QF9V9fNEfNunlWNhyZthBUUcs550JO9z3Bk3FMpfv5Aud5K
-	sfPyh9RGNyruLMw1nMY/afPZ5RRtw/XB1SQF5GbqX4PK4ixX+LTafcYDqw35xNWXz72A11pnnAv2e
-	y/dZY9f4BfAzzrvcTczxVSxUgwgnSvV6MKZQDhHHrwkLI3DezZaDqE8hDpN9L/vsC3FrEVO1twuo+
-	oquIQ2ISl9MCrNFHdF6iH34IO5FsjMwxy8xaZwkppMBYhC4Cqc/jYmsj0I7ZbBUkN7sElQUDBhFr9
-	qzSen9Jw5B0u38NtzBppiC8OU7gQ8vROPmcoR8crlNqzfE5SPYuVhEevOuUcQZCM5Yn9QmN0rBHLK
-	hr8T+PCZfFdZUQblRUB6SOzg;
+	bh=corXYKtJ23LaPpSvYrVPsGmSDY+XSF/X9wsRycS5+lc=; b=HaMLT+pumF/qmIZ13QXemGXEwX
+	sYHRpFvy0hXU5/Dn5vxkEodSQLsOeCRPc3TY5LAkZ2TdMmATbkbxe0yXJyuER/Cha98NqygrSrBEc
+	UTDnkILhhkbDs926rZydbqnlyJ+O1w9XG5dP8SzzIosjC4mcyFNlCj5ToWLt33gvNnEA+Msoe2+8S
+	ET3vtpbehK0NwuPq3HnYSIEEi16uObgQ6tx8gZ7n77xjfIznVtAVrwstvnBYYjyte9bvL0Bu8ZSjF
+	RJ0lyuqUmcRhxKq+m+lb9KLrxYL6Dhv1fIH6hIZLBeZ/vV5o54ADhLEB7/dPFXCdlMVfHy6fpQipM
+	vFqlxP//PbHP2KzSYDUsE9CbqW6kVosi3e3hk3ud8UdyVgTZ8ZpG9+Tv5yVL16TMkOdOWQuKRycFo
+	xAYxn91c6Ukt52iQtqkDiqNoLV3FNumCnB917CBatfogcmbL0FZROEBDVgt058ezGrtYythRtgmLU
+	PiKHg4O/1I5bdsqycnyN9bDM;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
 	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
 	(Exim)
-	id 1tzLUM-007Y6R-1T;
-	Mon, 31 Mar 2025 20:12:06 +0000
+	id 1tzLUc-007Y7K-13;
+	Mon, 31 Mar 2025 20:12:22 +0000
 From: Stefan Metzmacher <metze@samba.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jens Axboe <axboe@kernel.dk>
@@ -128,9 +128,9 @@ Cc: Stefan Metzmacher <metze@samba.org>,
 	bpf@vger.kernel.org,
 	isdn4linux@listserv.isdn4linux.de,
 	io-uring@vger.kernel.org
-Subject: [RFC PATCH 1/4] net: introduce get_optlen() and put_optlen() helpers
-Date: Mon, 31 Mar 2025 22:10:53 +0200
-Message-Id: <156e83128747b2cf7c755bffa68f2519bd255f78.1743449872.git.metze@samba.org>
+Subject: [RFC PATCH 2/4] net: pass 'optlen_t' to proto[ops].getsockopt() hooks
+Date: Mon, 31 Mar 2025 22:10:54 +0200
+Message-Id: <76db80040bdeeb4a0221b5b6583fda4988afa64e.1743449872.git.metze@samba.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1743449872.git.metze@samba.org>
 References: <cover.1743449872.git.metze@samba.org>
@@ -146,11 +146,23 @@ Content-Transfer-Encoding: 8bit
 The motivation for this is to remove the SOL_SOCKET limitation
 from io_uring_cmd_getsockopt().
 
-As a first step this adds get_optlen() and put_optlen() helper
-macros make it relatively easy to review and check the
-behaviour is most likely unchanged, before the 'int __user *optlen'
-of the low level .getsockopt() hooks will be changed into a kernel
-pointer.
+The reason for this limitation is that io_uring_cmd_getsockopt()
+passes a kernel pointer.
+
+The first idea would be to change the optval and optlen arguments
+to the protocol specific hooks also to sockptr_t, as that
+is already used for setsockopt() and also by do_sock_getsockopt()
+sk_getsockopt() and BPF_CGROUP_RUN_PROG_GETSOCKOPT().
+
+But as Linus don't like 'sockptr_t' I used a different approach.
+
+This step only introduces 'optlen_t' as a trivial wrapper of
+the 'int __user *', it makes sure that the optlen argument
+is only ever used by get_optval(), put_optval.
+For some corner cases OPTLEN_SOCKPTR().
+
+We still expect a __user pointer, so this should be easy to
+review and don't change the logic.
 
 Link: https://lore.kernel.org/io-uring/86b1dce5-4bb4-4a0b-9cff-e72f488bf57d@samba.org/T/#t
 Cc: Jens Axboe <axboe@kernel.dk>
@@ -236,1626 +248,1829 @@ Cc: isdn4linux@listserv.isdn4linux.de
 Cc: io-uring@vger.kernel.org
 Signed-off-by: Stefan Metzmacher <metze@samba.org>
 ---
- drivers/isdn/mISDN/socket.c |   2 +-
- include/linux/sockptr.h     |  22 ++++++++
- net/atm/common.c            |   2 +-
- net/atm/svc.c               |   2 +-
- net/ax25/af_ax25.c          |   4 +-
- net/bluetooth/hci_sock.c    |   2 +-
- net/bluetooth/iso.c         |   4 +-
- net/bluetooth/l2cap_sock.c  |   4 +-
- net/bluetooth/rfcomm/sock.c |   4 +-
- net/bluetooth/sco.c         |   6 +-
- net/can/isotp.c             |   4 +-
- net/can/j1939/socket.c      |   4 +-
- net/can/raw.c               |  12 ++--
- net/dccp/ccid.c             |   2 +-
- net/dccp/ccids/ccid3.c      |   4 +-
- net/dccp/proto.c            |   6 +-
- net/ieee802154/socket.c     |   4 +-
- net/ipv4/ip_sockglue.c      |   4 +-
- net/ipv4/raw.c              |   4 +-
- net/ipv4/udp.c              |   4 +-
- net/ipv6/ipv6_sockglue.c    |   4 +-
- net/ipv6/raw.c              |   8 +--
- net/iucv/af_iucv.c          |   4 +-
- net/kcm/kcmsock.c           |   4 +-
- net/l2tp/l2tp_ppp.c         |   4 +-
- net/llc/af_llc.c            |   4 +-
- net/mctp/af_mctp.c          |   2 +-
- net/mptcp/sockopt.c         |  18 +++---
- net/netlink/af_netlink.c    |   6 +-
- net/netrom/af_netrom.c      |   4 +-
- net/nfc/llcp_sock.c         |   4 +-
- net/packet/af_packet.c      |   4 +-
- net/phonet/pep.c            |   4 +-
- net/rds/af_rds.c            |   6 +-
- net/rds/info.c              |   4 +-
- net/rose/af_rose.c          |   4 +-
- net/rxrpc/af_rxrpc.c        |   4 +-
- net/sctp/socket.c           | 108 ++++++++++++++++++------------------
- net/smc/af_smc.c            |   4 +-
- net/tipc/socket.c           |   6 +-
- net/tls/tls_main.c          |   8 +--
- net/vmw_vsock/af_vsock.c    |   4 +-
- net/x25/af_x25.c            |   4 +-
- net/xdp/xsk.c               |   8 +--
- 44 files changed, 176 insertions(+), 154 deletions(-)
+ drivers/isdn/mISDN/socket.c                   |   2 +-
+ .../chelsio/inline_crypto/chtls/chtls_main.c  |   4 +-
+ include/linux/net.h                           |   2 +-
+ include/linux/sockptr.h                       |  17 ++-
+ include/net/inet_connection_sock.h            |   2 +-
+ include/net/ip.h                              |   2 +-
+ include/net/ipv6.h                            |   2 +-
+ include/net/sctp/structs.h                    |   2 +-
+ include/net/sock.h                            |   4 +-
+ include/net/tcp.h                             |   2 +-
+ include/net/udp.h                             |   2 +-
+ net/atm/common.c                              |   2 +-
+ net/atm/common.h                              |   2 +-
+ net/atm/pvc.c                                 |   2 +-
+ net/atm/svc.c                                 |   2 +-
+ net/ax25/af_ax25.c                            |   2 +-
+ net/bluetooth/hci_sock.c                      |   4 +-
+ net/bluetooth/iso.c                           |   2 +-
+ net/bluetooth/l2cap_sock.c                    |   4 +-
+ net/bluetooth/rfcomm/sock.c                   |   4 +-
+ net/bluetooth/sco.c                           |   4 +-
+ net/can/isotp.c                               |   2 +-
+ net/can/j1939/socket.c                        |   2 +-
+ net/can/raw.c                                 |   2 +-
+ net/core/sock.c                               |   2 +-
+ net/dccp/ccid.c                               |   2 +-
+ net/dccp/ccid.h                               |  10 +-
+ net/dccp/ccids/ccid3.c                        |   4 +-
+ net/dccp/dccp.h                               |   2 +-
+ net/dccp/proto.c                              |   6 +-
+ net/ieee802154/socket.c                       |   4 +-
+ net/ipv4/ip_sockglue.c                        |   4 +-
+ net/ipv4/raw.c                                |   6 +-
+ net/ipv4/tcp.c                                |   4 +-
+ net/ipv4/udp.c                                |   4 +-
+ net/ipv4/udp_impl.h                           |   2 +-
+ net/ipv6/ipv6_sockglue.c                      |   4 +-
+ net/ipv6/raw.c                                |   6 +-
+ net/ipv6/udp.c                                |   2 +-
+ net/ipv6/udp_impl.h                           |   2 +-
+ net/iucv/af_iucv.c                            |   2 +-
+ net/kcm/kcmsock.c                             |   2 +-
+ net/l2tp/l2tp_ppp.c                           |   2 +-
+ net/llc/af_llc.c                              |   2 +-
+ net/mctp/af_mctp.c                            |   2 +-
+ net/mptcp/protocol.h                          |   2 +-
+ net/mptcp/sockopt.c                           |  30 ++---
+ net/netlink/af_netlink.c                      |   2 +-
+ net/netrom/af_netrom.c                        |   2 +-
+ net/nfc/llcp_sock.c                           |   2 +-
+ net/packet/af_packet.c                        |   2 +-
+ net/phonet/pep.c                              |   2 +-
+ net/rds/af_rds.c                              |   2 +-
+ net/rds/info.c                                |   2 +-
+ net/rds/info.h                                |   2 +-
+ net/rose/af_rose.c                            |   2 +-
+ net/rxrpc/af_rxrpc.c                          |   2 +-
+ net/sctp/socket.c                             | 112 +++++++++---------
+ net/smc/af_smc.c                              |   4 +-
+ net/smc/smc.h                                 |   2 +-
+ net/socket.c                                  |   7 +-
+ net/tipc/socket.c                             |   2 +-
+ net/tls/tls_main.c                            |  10 +-
+ net/vmw_vsock/af_vsock.c                      |   2 +-
+ net/x25/af_x25.c                              |   2 +-
+ net/xdp/xsk.c                                 |   2 +-
+ 66 files changed, 178 insertions(+), 166 deletions(-)
 
 diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index b215b28cad7b..b750cc0dfa4a 100644
+index b750cc0dfa4a..233426f24ab6 100644
 --- a/drivers/isdn/mISDN/socket.c
 +++ b/drivers/isdn/mISDN/socket.c
-@@ -438,7 +438,7 @@ static int data_sock_getsockopt(struct socket *sock, int level, int optname,
+@@ -433,7 +433,7 @@ static int data_sock_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int data_sock_getsockopt(struct socket *sock, int level, int optname,
+-				char __user *optval, int __user *optlen)
++				char __user *optval, optlen_t optlen)
+ {
  	struct sock *sk = sock->sk;
  	int len, opt;
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+index daa1ebaef511..ac73ed4fc5d4 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+@@ -466,7 +466,7 @@ static int chtls_uld_rx_handler(void *handle, const __be64 *rsp,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+ static int do_chtls_getsockopt(struct sock *sk, char __user *optval,
+-			       int __user *optlen)
++			       optlen_t optlen)
+ {
+ 	struct tls_crypto_info crypto_info = { 0 };
  
- 	if (len != sizeof(char))
+@@ -477,7 +477,7 @@ static int do_chtls_getsockopt(struct sock *sk, char __user *optval,
+ }
+ 
+ static int chtls_getsockopt(struct sock *sk, int level, int optname,
+-			    char __user *optval, int __user *optlen)
++			    char __user *optval, optlen_t optlen)
+ {
+ 	struct tls_context *ctx = tls_get_ctx(sk);
+ 
+diff --git a/include/linux/net.h b/include/linux/net.h
+index 0ff950eecc6b..f8b2728f993c 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -193,7 +193,7 @@ struct proto_ops {
+ 				      int optname, sockptr_t optval,
+ 				      unsigned int optlen);
+ 	int		(*getsockopt)(struct socket *sock, int level,
+-				      int optname, char __user *optval, int __user *optlen);
++				      int optname, char __user *optval, optlen_t optlen);
+ 	void		(*show_fdinfo)(struct seq_file *m, struct socket *sock);
+ 	int		(*sendmsg)   (struct socket *sock, struct msghdr *m,
+ 				      size_t total_len);
 diff --git a/include/linux/sockptr.h b/include/linux/sockptr.h
-index 3e6c8e9d67ae..28dbc3e27374 100644
+index 28dbc3e27374..1baf66f26f4f 100644
 --- a/include/linux/sockptr.h
 +++ b/include/linux/sockptr.h
-@@ -169,4 +169,26 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
+@@ -169,17 +169,21 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
  	return memchr_inv(src.kernel + offset, 0, size) == NULL;
  }
  
-+#define __check_optlen_t(__optlen)				\
-+({								\
-+	int __user *__ptr __maybe_unused = __optlen; 		\
-+	BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));		\
-+})
++typedef struct {
++	int __user *up;
++} optlen_t;
 +
-+#define get_optlen(__val, __optlen)				\
-+({								\
-+	long __err;						\
-+	__check_optlen_t(__optlen);				\
-+	__err = get_user(__val, __optlen);			\
-+	__err;							\
-+})
-+
-+#define put_optlen(__val, __optlen) 				\
-+({								\
-+	long __err;						\
-+	__check_optlen_t(__optlen);				\
-+	__err = put_user(__val, __optlen);			\
-+	__err;							\
-+})
+ #define __check_optlen_t(__optlen)				\
+ ({								\
+-	int __user *__ptr __maybe_unused = __optlen; 		\
+-	BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));		\
++	optlen_t *__ptr __maybe_unused = &__optlen; \
++	BUILD_BUG_ON(sizeof(*((__ptr)->up)) != sizeof(int));	\
+ })
+ 
+ #define get_optlen(__val, __optlen)				\
+ ({								\
+ 	long __err;						\
+ 	__check_optlen_t(__optlen);				\
+-	__err = get_user(__val, __optlen);			\
++	__err = get_user(__val, __optlen.up);			\
+ 	__err;							\
+ })
+ 
+@@ -187,8 +191,13 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
+ ({								\
+ 	long __err;						\
+ 	__check_optlen_t(__optlen);				\
+-	__err = put_user(__val, __optlen);			\
++	__err = put_user(__val, __optlen.up);			\
+ 	__err;							\
+ })
+ 
++static inline sockptr_t OPTLEN_SOCKPTR(optlen_t optlen)
++{
++	return (sockptr_t) { .user = optlen.up, };
++}
 +
  #endif /* _LINUX_SOCKPTR_H */
+diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
+index 1735db332aab..3a3d03308611 100644
+--- a/include/net/inet_connection_sock.h
++++ b/include/net/inet_connection_sock.h
+@@ -47,7 +47,7 @@ struct inet_connection_sock_af_ops {
+ 	int	    (*setsockopt)(struct sock *sk, int level, int optname,
+ 				  sockptr_t optval, unsigned int optlen);
+ 	int	    (*getsockopt)(struct sock *sk, int level, int optname,
+-				  char __user *optval, int __user *optlen);
++				  char __user *optval, optlen_t optlen);
+ 	void	    (*mtu_reduced)(struct sock *sk);
+ };
+ 
+diff --git a/include/net/ip.h b/include/net/ip.h
+index 8a48ade24620..9f725642a42e 100644
+--- a/include/net/ip.h
++++ b/include/net/ip.h
+@@ -802,7 +802,7 @@ int ip_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ int do_ip_getsockopt(struct sock *sk, int level, int optname,
+ 		     sockptr_t optval, sockptr_t optlen);
+ int ip_getsockopt(struct sock *sk, int level, int optname, char __user *optval,
+-		  int __user *optlen);
++		  optlen_t optlen);
+ int ip_ra_control(struct sock *sk, unsigned char on,
+ 		  void (*destructor)(struct sock *));
+ 
+diff --git a/include/net/ipv6.h b/include/net/ipv6.h
+index 2ccdf85f34f1..99e655db1dde 100644
+--- a/include/net/ipv6.h
++++ b/include/net/ipv6.h
+@@ -1186,7 +1186,7 @@ int ipv6_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		       sockptr_t optval, sockptr_t optlen);
+ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+-		    char __user *optval, int __user *optlen);
++		    char __user *optval, optlen_t optlen);
+ 
+ int __ip6_datagram_connect(struct sock *sk, struct sockaddr *addr,
+ 			   int addr_len);
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 31248cfdfb23..15f9b9ece3ea 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -441,7 +441,7 @@ struct sctp_af {
+ 					 int level,
+ 					 int optname,
+ 					 char __user *optval,
+-					 int __user *optlen);
++					 optlen_t optlen);
+ 	void		(*get_dst)	(struct sctp_transport *t,
+ 					 union sctp_addr *saddr,
+ 					 struct flowi *fl,
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 8daf1b3b12c6..94c0e90d8901 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1248,7 +1248,7 @@ struct proto {
+ 					unsigned int optlen);
+ 	int			(*getsockopt)(struct sock *sk, int level,
+ 					int optname, char __user *optval,
+-					int __user *option);
++					optlen_t optlen);
+ 	void			(*keepalive)(struct sock *sk, int valbool);
+ #ifdef CONFIG_COMPAT
+ 	int			(*compat_ioctl)(struct sock *sk,
+@@ -1856,7 +1856,7 @@ int sock_no_mmap(struct file *file, struct socket *sock,
+  * uses the inet style.
+  */
+ int sock_common_getsockopt(struct socket *sock, int level, int optname,
+-				  char __user *optval, int __user *optlen);
++				  char __user *optval, optlen_t optlen);
+ int sock_common_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 			int flags);
+ int sock_common_setsockopt(struct socket *sock, int level, int optname,
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index df04dc09c519..75e6bcd6eac4 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -449,7 +449,7 @@ __poll_t tcp_poll(struct file *file, struct socket *sock,
+ int do_tcp_getsockopt(struct sock *sk, int level,
+ 		      int optname, sockptr_t optval, sockptr_t optlen);
+ int tcp_getsockopt(struct sock *sk, int level, int optname,
+-		   char __user *optval, int __user *optlen);
++		   char __user *optval, optlen_t optlen);
+ bool tcp_bpf_bypass_getsockopt(int level, int optname);
+ int do_tcp_setsockopt(struct sock *sk, int level, int optname,
+ 		      sockptr_t optval, unsigned int optlen);
+diff --git a/include/net/udp.h b/include/net/udp.h
+index 6e89520e100d..a846681ae497 100644
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@ -418,7 +418,7 @@ struct sk_buff *skb_udp_tunnel_segment(struct sk_buff *skb,
+ 				       netdev_features_t features,
+ 				       bool is_ipv6);
+ int udp_lib_getsockopt(struct sock *sk, int level, int optname,
+-		       char __user *optval, int __user *optlen);
++		       char __user *optval, optlen_t optlen);
+ int udp_lib_setsockopt(struct sock *sk, int level, int optname,
+ 		       sockptr_t optval, unsigned int optlen,
+ 		       int (*push_pending_frames)(struct sock *));
 diff --git a/net/atm/common.c b/net/atm/common.c
-index 9b75699992ff..e95371abd705 100644
+index e95371abd705..55844a930ccf 100644
 --- a/net/atm/common.c
 +++ b/net/atm/common.c
-@@ -792,7 +792,7 @@ int vcc_getsockopt(struct socket *sock, int level, int optname,
+@@ -787,7 +787,7 @@ int vcc_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ int vcc_getsockopt(struct socket *sock, int level, int optname,
+-		   char __user *optval, int __user *optlen)
++		   char __user *optval, optlen_t optlen)
+ {
  	struct atm_vcc *vcc;
  	int len;
+diff --git a/net/atm/common.h b/net/atm/common.h
+index a1e56e8de698..67a25f92a929 100644
+--- a/net/atm/common.h
++++ b/net/atm/common.h
+@@ -23,7 +23,7 @@ int vcc_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
+ int vcc_setsockopt(struct socket *sock, int level, int optname,
+ 		   sockptr_t optval, unsigned int optlen);
+ int vcc_getsockopt(struct socket *sock, int level, int optname,
+-		   char __user *optval, int __user *optlen);
++		   char __user *optval, optlen_t optlen);
+ void vcc_process_recv_queue(struct atm_vcc *vcc);
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (__SO_LEVEL_MATCH(optname, level) && len != __SO_SIZE(optname))
- 		return -EINVAL;
+ int atmpvc_init(void);
+diff --git a/net/atm/pvc.c b/net/atm/pvc.c
+index 66d9a9bd5896..2f01f862d0fb 100644
+--- a/net/atm/pvc.c
++++ b/net/atm/pvc.c
+@@ -75,7 +75,7 @@ static int pvc_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int pvc_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int error;
 diff --git a/net/atm/svc.c b/net/atm/svc.c
-index f8137ae693b0..a706c5f77d8e 100644
+index a706c5f77d8e..600f7d381348 100644
 --- a/net/atm/svc.c
 +++ b/net/atm/svc.c
-@@ -511,7 +511,7 @@ static int svc_getsockopt(struct socket *sock, int level, int optname,
- 		error = vcc_getsockopt(sock, level, optname, optval, optlen);
- 		goto out;
- 	}
--	if (get_user(len, optlen)) {
-+	if (get_optlen(len, optlen)) {
- 		error = -EFAULT;
- 		goto out;
- 	}
+@@ -501,7 +501,7 @@ static int svc_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int svc_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int error = 0, len;
 diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-index 3ee7dba34310..b184e2cb4b50 100644
+index b184e2cb4b50..0e069f2ceb12 100644
 --- a/net/ax25/af_ax25.c
 +++ b/net/ax25/af_ax25.c
-@@ -728,7 +728,7 @@ static int ax25_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_AX25)
- 		return -ENOPROTOOPT;
+@@ -715,7 +715,7 @@ static int ax25_setsockopt(struct socket *sock, int level, int optname,
+ }
  
--	if (get_user(maxlen, optlen))
-+	if (get_optlen(maxlen, optlen))
- 		return -EFAULT;
- 
- 	if (maxlen < 1)
-@@ -805,7 +805,7 @@ static int ax25_getsockopt(struct socket *sock, int level, int optname,
- 	}
- 	release_sock(sk);
- 
--	if (put_user(length, optlen))
-+	if (put_optlen(length, optlen))
- 		return -EFAULT;
- 
- 	return copy_to_user(optval, valptr, length) ? -EFAULT : 0;
+ static int ax25_getsockopt(struct socket *sock, int level, int optname,
+-	char __user *optval, int __user *optlen)
++	char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	ax25_cb *ax25;
 diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index 022b86797acd..4b4e476e4e7c 100644
+index 4b4e476e4e7c..90949b8dad2e 100644
 --- a/net/bluetooth/hci_sock.c
 +++ b/net/bluetooth/hci_sock.c
-@@ -2061,7 +2061,7 @@ static int hci_sock_getsockopt_old(struct socket *sock, int level, int optname,
+@@ -2053,7 +2053,7 @@ static int hci_sock_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	BT_DBG("sk %p, opt %d", sk, optname);
+ static int hci_sock_getsockopt_old(struct socket *sock, int level, int optname,
+-				   char __user *optval, int __user *optlen)
++				   char __user *optval, optlen_t optlen)
+ {
+ 	struct hci_ufilter uf;
+ 	struct sock *sk = sock->sk;
+@@ -2119,7 +2119,7 @@ static int hci_sock_getsockopt_old(struct socket *sock, int level, int optname,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
+ static int hci_sock_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int err = 0;
 diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index 3501a991f1c6..f6624b6e5485 100644
+index f6624b6e5485..72369c912161 100644
 --- a/net/bluetooth/iso.c
 +++ b/net/bluetooth/iso.c
-@@ -1731,7 +1731,7 @@ static int iso_sock_getsockopt(struct socket *sock, int level, int optname,
+@@ -1721,7 +1721,7 @@ static int iso_sock_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	BT_DBG("sk %p", sk);
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
-@@ -1777,7 +1777,7 @@ static int iso_sock_getsockopt(struct socket *sock, int level, int optname,
- 		len = min_t(unsigned int, len, base_len);
- 		if (copy_to_user(optval, base, len))
- 			err = -EFAULT;
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			err = -EFAULT;
- 
- 		break;
+ static int iso_sock_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int len, err = 0;
 diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 5aa55fa69594..8ae25a918fd3 100644
+index 8ae25a918fd3..ac36d0ec08d3 100644
 --- a/net/bluetooth/l2cap_sock.c
 +++ b/net/bluetooth/l2cap_sock.c
-@@ -445,7 +445,7 @@ static int l2cap_sock_getsockopt_old(struct socket *sock, int optname,
+@@ -433,7 +433,7 @@ static int l2cap_get_mode(struct l2cap_chan *chan)
+ }
  
- 	BT_DBG("sk %p", sk);
+ static int l2cap_sock_getsockopt_old(struct socket *sock, int optname,
+-				     char __user *optval, int __user *optlen)
++				     char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
+@@ -553,7 +553,7 @@ static int l2cap_sock_getsockopt_old(struct socket *sock, int optname,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
-@@ -570,7 +570,7 @@ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_BLUETOOTH)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
+ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname,
+-				 char __user *optval, int __user *optlen)
++				 char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
 diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
-index 913402806fa0..785894b79dd8 100644
+index 785894b79dd8..10ec25dc038d 100644
 --- a/net/bluetooth/rfcomm/sock.c
 +++ b/net/bluetooth/rfcomm/sock.c
-@@ -734,7 +734,7 @@ static int rfcomm_sock_getsockopt_old(struct socket *sock, int optname, char __u
+@@ -722,7 +722,7 @@ static int rfcomm_sock_setsockopt(struct socket *sock, int level, int optname,
+ 	return err;
+ }
  
- 	BT_DBG("sk %p", sk);
+-static int rfcomm_sock_getsockopt_old(struct socket *sock, int optname, char __user *optval, int __user *optlen)
++static int rfcomm_sock_getsockopt_old(struct socket *sock, int optname, char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct sock *l2cap_sk;
+@@ -798,7 +798,7 @@ static int rfcomm_sock_getsockopt_old(struct socket *sock, int optname, char __u
+ 	return err;
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
-@@ -813,7 +813,7 @@ static int rfcomm_sock_getsockopt(struct socket *sock, int level, int optname, c
- 	if (level != SOL_BLUETOOTH)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
+-static int rfcomm_sock_getsockopt(struct socket *sock, int level, int optname, char __user *optval, int __user *optlen)
++static int rfcomm_sock_getsockopt(struct socket *sock, int level, int optname, char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct bt_security sec;
 diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-index 2945d27e75dc..25910eca759c 100644
+index 25910eca759c..e95d924fe41d 100644
 --- a/net/bluetooth/sco.c
 +++ b/net/bluetooth/sco.c
-@@ -1047,7 +1047,7 @@ static int sco_sock_getsockopt_old(struct socket *sock, int optname,
+@@ -1037,7 +1037,7 @@ static int sco_sock_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	BT_DBG("sk %p", sk);
+ static int sco_sock_getsockopt_old(struct socket *sock, int optname,
+-				   char __user *optval, int __user *optlen)
++				   char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct sco_options opts;
+@@ -1099,7 +1099,7 @@ static int sco_sock_getsockopt_old(struct socket *sock, int optname,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
-@@ -1117,7 +1117,7 @@ static int sco_sock_getsockopt(struct socket *sock, int level, int optname,
- 	if (level == SOL_SCO)
- 		return sco_sock_getsockopt_old(sock, optname, optval, optlen);
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	lock_sock(sk);
-@@ -1266,7 +1266,7 @@ static int sco_sock_getsockopt(struct socket *sock, int level, int optname,
- 
- 		lock_sock(sk);
- 
--		if (!err && put_user(buf_len, optlen))
-+		if (!err && put_optlen(buf_len, optlen))
- 			err = -EFAULT;
- 
- 		break;
+ static int sco_sock_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int len, err = 0;
 diff --git a/net/can/isotp.c b/net/can/isotp.c
-index 1efa377f002e..aa9ab87d5e14 100644
+index aa9ab87d5e14..2a321400a9f8 100644
 --- a/net/can/isotp.c
 +++ b/net/can/isotp.c
-@@ -1495,7 +1495,7 @@ static int isotp_getsockopt(struct socket *sock, int level, int optname,
+@@ -1486,7 +1486,7 @@ static int isotp_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	if (level != SOL_CAN_ISOTP)
- 		return -EINVAL;
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < 0)
- 		return -EINVAL;
-@@ -1530,7 +1530,7 @@ static int isotp_getsockopt(struct socket *sock, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, val, len))
- 		return -EFAULT;
+ static int isotp_getsockopt(struct socket *sock, int level, int optname,
+-			    char __user *optval, int __user *optlen)
++			    char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct isotp_sock *so = isotp_sk(sk);
 diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 17226b2341d0..b2b538528c2e 100644
+index b2b538528c2e..606f8b3ac96f 100644
 --- a/net/can/j1939/socket.c
 +++ b/net/can/j1939/socket.c
-@@ -766,7 +766,7 @@ static int j1939_sk_getsockopt(struct socket *sock, int level, int optname,
+@@ -754,7 +754,7 @@ static int j1939_sk_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	if (level != SOL_CAN_J1939)
- 		return -EINVAL;
--	if (get_user(ulen, optlen))
-+	if (get_optlen(ulen, optlen))
- 		return -EFAULT;
- 	if (ulen < 0)
- 		return -EINVAL;
-@@ -793,7 +793,7 @@ static int j1939_sk_getsockopt(struct socket *sock, int level, int optname,
- 	 */
- 	if (len > ulen)
- 		ret = -EFAULT;
--	else if (put_user(len, optlen))
-+	else if (put_optlen(len, optlen))
- 		ret = -EFAULT;
- 	else if (copy_to_user(optval, val, len))
- 		ret = -EFAULT;
+ static int j1939_sk_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct j1939_sock *jsk = j1939_sk(sk);
 diff --git a/net/can/raw.c b/net/can/raw.c
-index 020f21430b1d..8d1a1626d1a4 100644
+index 8d1a1626d1a4..59c6d701db05 100644
 --- a/net/can/raw.c
 +++ b/net/can/raw.c
-@@ -762,7 +762,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
+@@ -753,7 +753,7 @@ static int raw_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	if (level != SOL_CAN_RAW)
- 		return -EINVAL;
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < 0)
- 		return -EINVAL;
-@@ -779,7 +779,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
- 			if (len < fsize) {
- 				/* return -ERANGE and needed space in optlen */
- 				err = -ERANGE;
--				if (put_user(fsize, optlen))
-+				if (put_optlen(fsize, optlen))
- 					err = -EFAULT;
- 			} else {
- 				if (len > fsize)
-@@ -793,7 +793,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
- 		release_sock(sk);
+ static int raw_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct raw_sock *ro = raw_sk(sk);
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 323892066def..2cd7bd5b2a05 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3854,7 +3854,7 @@ EXPORT_SYMBOL(sock_recv_errqueue);
+  *	this means if you specify SO_ERROR (otherwise what is the point of it).
+  */
+ int sock_common_getsockopt(struct socket *sock, int level, int optname,
+-			   char __user *optval, int __user *optlen)
++			   char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
  
- 		if (!err)
--			err = put_user(len, optlen);
-+			err = put_optlen(len, optlen);
- 		return err;
- 	}
- 	case CAN_RAW_ERR_FILTER:
-@@ -833,7 +833,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
- 		if (len < sizeof(ro->raw_vcid_opts)) {
- 			/* return -ERANGE and needed space in optlen */
- 			err = -ERANGE;
--			if (put_user(sizeof(ro->raw_vcid_opts), optlen))
-+			if (put_optlen(sizeof(ro->raw_vcid_opts), optlen))
- 				err = -EFAULT;
- 		} else {
- 			if (len > sizeof(ro->raw_vcid_opts))
-@@ -842,7 +842,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
- 				err = -EFAULT;
- 		}
- 		if (!err)
--			err = put_user(len, optlen);
-+			err = put_optlen(len, optlen);
- 		return err;
- 	}
- 	case CAN_RAW_JOIN_FILTERS:
-@@ -855,7 +855,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, val, len))
- 		return -EFAULT;
 diff --git a/net/dccp/ccid.c b/net/dccp/ccid.c
-index 6beac5d348e2..6f495ffb1d60 100644
+index 6f495ffb1d60..b5fad2a7e9a8 100644
 --- a/net/dccp/ccid.c
 +++ b/net/dccp/ccid.c
-@@ -66,7 +66,7 @@ int ccid_getsockopt_builtin_ccids(struct sock *sk, int len,
- 	if (ccid_get_builtin_ccids(&ccid_array, &array_len))
- 		return -ENOBUFS;
+@@ -58,7 +58,7 @@ int ccid_get_builtin_ccids(u8 **ccid_array, u8 *array_len)
+ }
  
--	if (put_user(array_len, optlen))
-+	if (put_optlen(array_len, optlen))
- 		err = -EFAULT;
- 	else if (len > 0 && copy_to_user(optval, ccid_array,
- 					 len > array_len ? array_len : len))
+ int ccid_getsockopt_builtin_ccids(struct sock *sk, int len,
+-				  char __user *optval, int __user *optlen)
++				  char __user *optval, optlen_t optlen)
+ {
+ 	u8 *ccid_array, array_len;
+ 	int err = 0;
+diff --git a/net/dccp/ccid.h b/net/dccp/ccid.h
+index 105f3734dadb..2758d760af36 100644
+--- a/net/dccp/ccid.h
++++ b/net/dccp/ccid.h
+@@ -78,11 +78,11 @@ struct ccid_operations {
+ 	int		(*ccid_hc_rx_getsockopt)(struct sock *sk,
+ 						 const int optname, int len,
+ 						 u32 __user *optval,
+-						 int __user *optlen);
++						 optlen_t optlen);
+ 	int		(*ccid_hc_tx_getsockopt)(struct sock *sk,
+ 						 const int optname, int len,
+ 						 u32 __user *optval,
+-						 int __user *optlen);
++						 optlen_t optlen);
+ };
+ 
+ extern struct ccid_operations ccid2_ops;
+@@ -106,7 +106,7 @@ static inline void *ccid_priv(const struct ccid *ccid)
+ bool ccid_support_check(u8 const *ccid_array, u8 array_len);
+ int ccid_get_builtin_ccids(u8 **ccid_array, u8 *array_len);
+ int ccid_getsockopt_builtin_ccids(struct sock *sk, int len,
+-				  char __user *, int __user *);
++				  char __user *, optlen_t );
+ 
+ struct ccid *ccid_new(const u8 id, struct sock *sk, bool rx);
+ 
+@@ -240,7 +240,7 @@ static inline void ccid_hc_tx_get_info(struct ccid *ccid, struct sock *sk,
+ 
+ static inline int ccid_hc_rx_getsockopt(struct ccid *ccid, struct sock *sk,
+ 					const int optname, int len,
+-					u32 __user *optval, int __user *optlen)
++					u32 __user *optval, optlen_t optlen)
+ {
+ 	int rc = -ENOPROTOOPT;
+ 	if (ccid != NULL && ccid->ccid_ops->ccid_hc_rx_getsockopt != NULL)
+@@ -251,7 +251,7 @@ static inline int ccid_hc_rx_getsockopt(struct ccid *ccid, struct sock *sk,
+ 
+ static inline int ccid_hc_tx_getsockopt(struct ccid *ccid, struct sock *sk,
+ 					const int optname, int len,
+-					u32 __user *optval, int __user *optlen)
++					u32 __user *optval, optlen_t optlen)
+ {
+ 	int rc = -ENOPROTOOPT;
+ 	if (ccid != NULL && ccid->ccid_ops->ccid_hc_tx_getsockopt != NULL)
 diff --git a/net/dccp/ccids/ccid3.c b/net/dccp/ccids/ccid3.c
-index f349d16dd8f6..648aa5270f37 100644
+index 648aa5270f37..8e4f16ccba57 100644
 --- a/net/dccp/ccids/ccid3.c
 +++ b/net/dccp/ccids/ccid3.c
-@@ -543,7 +543,7 @@ static int ccid3_hc_tx_getsockopt(struct sock *sk, const int optname, int len,
- 		return -ENOPROTOOPT;
- 	}
+@@ -518,7 +518,7 @@ static void ccid3_hc_tx_get_info(struct sock *sk, struct tcp_info *info)
+ }
  
--	if (put_user(len, optlen) || copy_to_user(optval, val, len))
-+	if (put_optlen(len, optlen) || copy_to_user(optval, val, len))
- 		return -EFAULT;
+ static int ccid3_hc_tx_getsockopt(struct sock *sk, const int optname, int len,
+-				  u32 __user *optval, int __user *optlen)
++				  u32 __user *optval, optlen_t optlen)
+ {
+ 	const struct ccid3_hc_tx_sock *hc = ccid3_hc_tx_sk(sk);
+ 	struct tfrc_tx_info tfrc;
+@@ -813,7 +813,7 @@ static void ccid3_hc_rx_get_info(struct sock *sk, struct tcp_info *info)
+ }
  
- 	return 0;
-@@ -833,7 +833,7 @@ static int ccid3_hc_rx_getsockopt(struct sock *sk, const int optname, int len,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen) || copy_to_user(optval, val, len))
-+	if (put_optlen(len, optlen) || copy_to_user(optval, val, len))
- 		return -EFAULT;
- 
- 	return 0;
+ static int ccid3_hc_rx_getsockopt(struct sock *sk, const int optname, int len,
+-				  u32 __user *optval, int __user *optlen)
++				  u32 __user *optval, optlen_t optlen)
+ {
+ 	const struct ccid3_hc_rx_sock *hc = ccid3_hc_rx_sk(sk);
+ 	struct tfrc_rx_info rx_info;
+diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
+index 1f748ed1279d..f6d99913e1ca 100644
+--- a/net/dccp/dccp.h
++++ b/net/dccp/dccp.h
+@@ -289,7 +289,7 @@ struct sk_buff *dccp_make_response(const struct sock *sk, struct dst_entry *dst,
+ int dccp_connect(struct sock *sk);
+ int dccp_disconnect(struct sock *sk, int flags);
+ int dccp_getsockopt(struct sock *sk, int level, int optname,
+-		    char __user *optval, int __user *optlen);
++		    char __user *optval, optlen_t optlen);
+ int dccp_setsockopt(struct sock *sk, int level, int optname,
+ 		    sockptr_t optval, unsigned int optlen);
+ int dccp_ioctl(struct sock *sk, int cmd, int *karg);
 diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index fcc5c9d64f46..8d6461ef8b50 100644
+index 8d6461ef8b50..2255f359058d 100644
 --- a/net/dccp/proto.c
 +++ b/net/dccp/proto.c
-@@ -603,7 +603,7 @@ static int dccp_getsockopt_service(struct sock *sk, int len,
- 		goto out;
+@@ -586,7 +586,7 @@ EXPORT_SYMBOL_GPL(dccp_setsockopt);
  
- 	err = 0;
--	if (put_user(total_len, optlen) ||
-+	if (put_optlen(total_len, optlen) ||
- 	    put_user(dp->dccps_service, optval) ||
- 	    (sl != NULL && copy_to_user(optval + 1, sl->dccpsl_list, slen)))
- 		err = -EFAULT;
-@@ -618,7 +618,7 @@ static int do_dccp_getsockopt(struct sock *sk, int level, int optname,
+ static int dccp_getsockopt_service(struct sock *sk, int len,
+ 				   __be32 __user *optval,
+-				   int __user *optlen)
++				   optlen_t optlen)
+ {
+ 	const struct dccp_sock *dp = dccp_sk(sk);
+ 	const struct dccp_service_list *sl;
+@@ -613,7 +613,7 @@ static int dccp_getsockopt_service(struct sock *sk, int len,
+ }
+ 
+ static int do_dccp_getsockopt(struct sock *sk, int level, int optname,
+-		    char __user *optval, int __user *optlen)
++		    char __user *optval, optlen_t optlen)
+ {
  	struct dccp_sock *dp;
  	int val, len;
+@@ -681,7 +681,7 @@ static int do_dccp_getsockopt(struct sock *sk, int level, int optname,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < (int)sizeof(int))
-@@ -674,7 +674,7 @@ static int do_dccp_getsockopt(struct sock *sk, int level, int optname,
- 	}
- 
- 	len = sizeof(val);
--	if (put_user(len, optlen) || copy_to_user(optval, &val, len))
-+	if (put_optlen(len, optlen) || copy_to_user(optval, &val, len))
- 		return -EFAULT;
- 
- 	return 0;
+ int dccp_getsockopt(struct sock *sk, int level, int optname,
+-		    char __user *optval, int __user *optlen)
++		    char __user *optval, optlen_t optlen)
+ {
+ 	if (level != SOL_DCCP)
+ 		return inet_csk(sk)->icsk_af_ops->getsockopt(sk, level,
 diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
-index 18d267921bb5..cc1788853c08 100644
+index cc1788853c08..7fb31054c0ad 100644
 --- a/net/ieee802154/socket.c
 +++ b/net/ieee802154/socket.c
-@@ -841,7 +841,7 @@ static int dgram_getsockopt(struct sock *sk, int level, int optname,
- 	if (level != SOL_IEEE802154)
- 		return -EOPNOTSUPP;
+@@ -380,7 +380,7 @@ static void ieee802154_raw_deliver(struct net_device *dev, struct sk_buff *skb)
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+ static int raw_getsockopt(struct sock *sk, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -832,7 +832,7 @@ static int ieee802154_dgram_deliver(struct net_device *dev, struct sk_buff *skb)
+ }
  
- 	len = min_t(unsigned int, len, sizeof(int));
-@@ -871,7 +871,7 @@ static int dgram_getsockopt(struct sock *sk, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
+ static int dgram_getsockopt(struct sock *sk, int level, int optname,
+-			    char __user *optval, int __user *optlen)
++			    char __user *optval, optlen_t optlen)
+ {
+ 	struct dgram_sock *ro = dgram_sk(sk);
  
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
 diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index 6d9c5c20b1c4..4d372f76b317 100644
+index 4d372f76b317..6757c8d12778 100644
 --- a/net/ipv4/ip_sockglue.c
 +++ b/net/ipv4/ip_sockglue.c
-@@ -1771,12 +1771,12 @@ int ip_getsockopt(struct sock *sk, int level,
- 			!ip_mroute_opt(optname)) {
- 		int len;
+@@ -1758,12 +1758,12 @@ int do_ip_getsockopt(struct sock *sk, int level, int optname,
+ }
  
--		if (get_user(len, optlen))
-+		if (get_optlen(len, optlen))
- 			return -EFAULT;
+ int ip_getsockopt(struct sock *sk, int level,
+-		  int optname, char __user *optval, int __user *optlen)
++		  int optname, char __user *optval, optlen_t optlen)
+ {
+ 	int err;
  
- 		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
- 		if (err >= 0)
--			err = put_user(len, optlen);
-+			err = put_optlen(len, optlen);
- 		return err;
- 	}
- #endif
+ 	err = do_ip_getsockopt(sk, level, optname,
+-			       USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
++			       USER_SOCKPTR(optval), OPTLEN_SOCKPTR(optlen));
+ 
+ #ifdef CONFIG_NETFILTER
+ 	/* we need to exclude all possible ENOPROTOOPTs except default case */
 diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
-index 6aace4d55733..89d70acdacdc 100644
+index 89d70acdacdc..de8c67c08c20 100644
 --- a/net/ipv4/raw.c
 +++ b/net/ipv4/raw.c
-@@ -811,7 +811,7 @@ static int raw_geticmpfilter(struct sock *sk, char __user *optval, int __user *o
+@@ -807,7 +807,7 @@ static int raw_seticmpfilter(struct sock *sk, sockptr_t optval, int optlen)
+ 	return 0;
+ }
+ 
+-static int raw_geticmpfilter(struct sock *sk, char __user *optval, int __user *optlen)
++static int raw_geticmpfilter(struct sock *sk, char __user *optval, optlen_t optlen)
  {
  	int len, ret = -EFAULT;
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		goto out;
- 	ret = -EINVAL;
- 	if (len < 0)
-@@ -819,7 +819,7 @@ static int raw_geticmpfilter(struct sock *sk, char __user *optval, int __user *o
- 	if (len > sizeof(struct icmp_filter))
- 		len = sizeof(struct icmp_filter);
- 	ret = -EFAULT;
--	if (put_user(len, optlen) ||
-+	if (put_optlen(len, optlen) ||
- 	    copy_to_user(optval, &raw_sk(sk)->filter, len))
- 		goto out;
- 	ret = 0;
+@@ -847,7 +847,7 @@ static int raw_setsockopt(struct sock *sk, int level, int optname,
+ }
+ 
+ static int do_raw_getsockopt(struct sock *sk, int optname,
+-			     char __user *optval, int __user *optlen)
++			     char __user *optval, optlen_t optlen)
+ {
+ 	if (optname == ICMP_FILTER) {
+ 		if (inet_sk(sk)->inet_num != IPPROTO_ICMP)
+@@ -859,7 +859,7 @@ static int do_raw_getsockopt(struct sock *sk, int optname,
+ }
+ 
+ static int raw_getsockopt(struct sock *sk, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	if (level != SOL_RAW)
+ 		return ip_getsockopt(sk, level, optname, optval, optlen);
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index ea8de00f669d..89d7a5b0364e 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -4732,7 +4732,7 @@ bool tcp_bpf_bypass_getsockopt(int level, int optname)
+ EXPORT_IPV6_MOD(tcp_bpf_bypass_getsockopt);
+ 
+ int tcp_getsockopt(struct sock *sk, int level, int optname, char __user *optval,
+-		   int __user *optlen)
++		   optlen_t optlen)
+ {
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 
+@@ -4741,7 +4741,7 @@ int tcp_getsockopt(struct sock *sk, int level, int optname, char __user *optval,
+ 		return READ_ONCE(icsk->icsk_af_ops)->getsockopt(sk, level, optname,
+ 								optval, optlen);
+ 	return do_tcp_getsockopt(sk, level, optname, USER_SOCKPTR(optval),
+-				 USER_SOCKPTR(optlen));
++				 OPTLEN_SOCKPTR(optlen));
+ }
+ EXPORT_IPV6_MOD(tcp_getsockopt);
+ 
 diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index d0bffcfa56d8..17c3fb1acb30 100644
+index 17c3fb1acb30..b27954698f5e 100644
 --- a/net/ipv4/udp.c
 +++ b/net/ipv4/udp.c
-@@ -3058,7 +3058,7 @@ int udp_lib_getsockopt(struct sock *sk, int level, int optname,
+@@ -3053,7 +3053,7 @@ int udp_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ }
+ 
+ int udp_lib_getsockopt(struct sock *sk, int level, int optname,
+-		       char __user *optval, int __user *optlen)
++		       char __user *optval, optlen_t optlen)
+ {
  	struct udp_sock *up = udp_sk(sk);
  	int val, len;
+@@ -3114,7 +3114,7 @@ int udp_lib_getsockopt(struct sock *sk, int level, int optname,
+ EXPORT_IPV6_MOD(udp_lib_getsockopt);
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+ int udp_getsockopt(struct sock *sk, int level, int optname,
+-		   char __user *optval, int __user *optlen)
++		   char __user *optval, optlen_t optlen)
+ {
+ 	if (level == SOL_UDP  ||  level == SOL_UDPLITE)
+ 		return udp_lib_getsockopt(sk, level, optname, optval, optlen);
+diff --git a/net/ipv4/udp_impl.h b/net/ipv4/udp_impl.h
+index e1ff3a375996..67a01fd5154f 100644
+--- a/net/ipv4/udp_impl.h
++++ b/net/ipv4/udp_impl.h
+@@ -15,7 +15,7 @@ void udp_v4_rehash(struct sock *sk);
+ int udp_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ 		   unsigned int optlen);
+ int udp_getsockopt(struct sock *sk, int level, int optname,
+-		   char __user *optval, int __user *optlen);
++		   char __user *optval, optlen_t optlen);
  
- 	if (len < 0)
-@@ -3105,7 +3105,7 @@ int udp_lib_getsockopt(struct sock *sk, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
+ int udp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int flags,
+ 		int *addr_len);
 diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-index 1e225e6489ea..9b1843288035 100644
+index 9b1843288035..253e420802ca 100644
 --- a/net/ipv6/ipv6_sockglue.c
 +++ b/net/ipv6/ipv6_sockglue.c
-@@ -1487,12 +1487,12 @@ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+@@ -1470,7 +1470,7 @@ int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
+ }
+ 
+ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+-		    char __user *optval, int __user *optlen)
++		    char __user *optval, optlen_t optlen)
+ {
+ 	int err;
+ 
+@@ -1481,7 +1481,7 @@ int ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		return -ENOPROTOOPT;
+ 
+ 	err = do_ipv6_getsockopt(sk, level, optname,
+-				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
++				 USER_SOCKPTR(optval), OPTLEN_SOCKPTR(optlen));
+ #ifdef CONFIG_NETFILTER
+ 	/* we need to exclude all possible ENOPROTOOPTs except default case */
  	if (err == -ENOPROTOOPT && optname != IPV6_2292PKTOPTIONS) {
- 		int len;
- 
--		if (get_user(len, optlen))
-+		if (get_optlen(len, optlen))
- 			return -EFAULT;
- 
- 		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
--			err = put_user(len, optlen);
-+			err = put_optlen(len, optlen);
- 	}
- #endif
- 	return err;
 diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
-index fda640ebd53f..90216d7e2af6 100644
+index 90216d7e2af6..679ba4799c79 100644
 --- a/net/ipv6/raw.c
 +++ b/net/ipv6/raw.c
-@@ -957,13 +957,13 @@ static int rawv6_geticmpfilter(struct sock *sk, int optname,
+@@ -951,7 +951,7 @@ static int rawv6_seticmpfilter(struct sock *sk, int optname,
+ }
  
- 	switch (optname) {
- 	case ICMPV6_FILTER:
--		if (get_user(len, optlen))
-+		if (get_optlen(len, optlen))
- 			return -EFAULT;
- 		if (len < 0)
- 			return -EINVAL;
- 		if (len > sizeof(struct icmp6_filter))
- 			len = sizeof(struct icmp6_filter);
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			return -EFAULT;
- 		if (copy_to_user(optval, &raw6_sk(sk)->filter, len))
- 			return -EFAULT;
-@@ -1055,7 +1055,7 @@ static int do_rawv6_getsockopt(struct sock *sk, int level, int optname,
- 	struct raw6_sock *rp = raw6_sk(sk);
- 	int val, len;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	switch (optname) {
-@@ -1080,7 +1080,7 @@ static int do_rawv6_getsockopt(struct sock *sk, int level, int optname,
- 
- 	len = min_t(unsigned int, sizeof(int), len);
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index cc2b3c44bc05..ce0c68c9513c 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1543,7 +1543,7 @@ static int iucv_sock_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_IUCV)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -1572,7 +1572,7 @@ static int iucv_sock_getsockopt(struct socket *sock, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index 24aec295a51c..68b6a8bd0cdb 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1153,7 +1153,7 @@ static int kcm_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_KCM)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -1169,7 +1169,7 @@ static int kcm_getsockopt(struct socket *sock, int level, int optname,
- 		return -ENOPROTOOPT;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-index fc5c2fd8f34c..aa3e34ef6b5c 100644
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -1343,7 +1343,7 @@ static int pppol2tp_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_PPPOL2TP)
- 		return -EINVAL;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -1374,7 +1374,7 @@ static int pppol2tp_getsockopt(struct socket *sock, int level, int optname,
- 	}
- 
- 	err = -EFAULT;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto end_put_sess;
- 
- 	if (copy_to_user((void __user *)optval, &val, len))
-diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
-index 0259cde394ba..a8e5d6eb5ad1 100644
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -1179,7 +1179,7 @@ static int llc_ui_getsockopt(struct socket *sock, int level, int optname,
- 	lock_sock(sk);
- 	if (unlikely(level != SOL_LLC))
- 		goto out;
--	rc = get_user(len, optlen);
-+	rc = get_optlen(len, optlen);
- 	if (rc)
- 		goto out;
- 	rc = -EINVAL;
-@@ -1210,7 +1210,7 @@ static int llc_ui_getsockopt(struct socket *sock, int level, int optname,
- 		goto out;
- 	}
- 	rc = 0;
--	if (put_user(len, optlen) || copy_to_user(optval, &val, len))
-+	if (put_optlen(len, optlen) || copy_to_user(optval, &val, len))
- 		rc = -EFAULT;
- out:
- 	release_sock(sk);
-diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
-index f6de136008f6..2cff81d47b76 100644
---- a/net/mctp/af_mctp.c
-+++ b/net/mctp/af_mctp.c
-@@ -335,7 +335,7 @@ static int mctp_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_MCTP)
- 		return -EINVAL;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (optname == MCTP_OPT_ADDR_EXT) {
-diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
-index 3caa0a9d3b38..25b780598888 100644
---- a/net/mptcp/sockopt.c
-+++ b/net/mptcp/sockopt.c
-@@ -996,7 +996,7 @@ static int mptcp_getsockopt_info(struct mptcp_sock *msk, char __user *optval, in
- 	struct mptcp_info m_info;
+ static int rawv6_geticmpfilter(struct sock *sk, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
  	int len;
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+@@ -1050,7 +1050,7 @@ static int rawv6_setsockopt(struct sock *sk, int level, int optname,
+ }
  
- 	/* When used only to check if a fallback to TCP happened. */
-@@ -1007,7 +1007,7 @@ static int mptcp_getsockopt_info(struct mptcp_sock *msk, char __user *optval, in
+ static int do_rawv6_getsockopt(struct sock *sk, int level, int optname,
+-			    char __user *optval, int __user *optlen)
++			    char __user *optval, optlen_t optlen)
+ {
+ 	struct raw6_sock *rp = raw6_sk(sk);
+ 	int val, len;
+@@ -1088,7 +1088,7 @@ static int do_rawv6_getsockopt(struct sock *sk, int level, int optname,
+ }
  
- 	mptcp_diag_fill_info(msk, &m_info);
+ static int rawv6_getsockopt(struct sock *sk, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	switch (level) {
+ 	case SOL_RAW:
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 024458ef163c..861691ba88cd 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1843,7 +1843,7 @@ int udpv6_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ }
  
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
+ int udpv6_getsockopt(struct sock *sk, int level, int optname,
+-		     char __user *optval, int __user *optlen)
++		     char __user *optval, optlen_t optlen)
+ {
+ 	if (level == SOL_UDP  ||  level == SOL_UDPLITE)
+ 		return udp_lib_getsockopt(sk, level, optname, optval, optlen);
+diff --git a/net/ipv6/udp_impl.h b/net/ipv6/udp_impl.h
+index 0590f566379d..a23db3c3ca9a 100644
+--- a/net/ipv6/udp_impl.h
++++ b/net/ipv6/udp_impl.h
+@@ -17,7 +17,7 @@ int udp_v6_get_port(struct sock *sk, unsigned short snum);
+ void udp_v6_rehash(struct sock *sk);
  
- 	if (copy_to_user(optval, &m_info, len))
-@@ -1028,7 +1028,7 @@ static int mptcp_put_subflow_data(struct mptcp_subflow_data *sfd,
- 	else
- 		copied = copylen;
+ int udpv6_getsockopt(struct sock *sk, int level, int optname,
+-		     char __user *optval, int __user *optlen);
++		     char __user *optval, optlen_t optlen);
+ int udpv6_setsockopt(struct sock *sk, int level, int optname, sockptr_t optval,
+ 		     unsigned int optlen);
+ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len);
+diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+index ce0c68c9513c..00b6ba3f23ff 100644
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -1533,7 +1533,7 @@ static int iucv_sock_setsockopt(struct socket *sock, int level, int optname,
+ }
  
--	if (put_user(copied, optlen))
-+	if (put_optlen(copied, optlen))
- 		return -EFAULT;
+ static int iucv_sock_getsockopt(struct socket *sock, int level, int optname,
+-				char __user *optval, int __user *optlen)
++				char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct iucv_sock *iucv = iucv_sk(sk);
+diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+index 68b6a8bd0cdb..ddc46864643e 100644
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1145,7 +1145,7 @@ static int kcm_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	if (copy_to_user(optval, sfd, copylen))
-@@ -1043,7 +1043,7 @@ static int mptcp_get_subflow_data(struct mptcp_subflow_data *sfd,
+ static int kcm_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct kcm_sock *kcm = kcm_sk(sock->sk);
+ 	int val, len;
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index aa3e34ef6b5c..c9effe687625 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -1332,7 +1332,7 @@ static int pppol2tp_session_getsockopt(struct sock *sk,
+  * or the special tunnel type.
+  */
+ static int pppol2tp_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct l2tp_session *session;
+diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
+index a8e5d6eb5ad1..08ac78fb2b5d 100644
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -1170,7 +1170,7 @@ static int llc_ui_setsockopt(struct socket *sock, int level, int optname,
+  *	Get connection specific socket information.
+  */
+ static int llc_ui_getsockopt(struct socket *sock, int level, int optname,
+-			     char __user *optval, int __user *optlen)
++			     char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct llc_sock *llc = llc_sk(sk);
+diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
+index 2cff81d47b76..ec34e4dc0642 100644
+--- a/net/mctp/af_mctp.c
++++ b/net/mctp/af_mctp.c
+@@ -327,7 +327,7 @@ static int mctp_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int mctp_getsockopt(struct socket *sock, int level, int optname,
+-			   char __user *optval, int __user *optlen)
++			   char __user *optval, optlen_t optlen)
+ {
+ 	struct mctp_sock *msk = container_of(sock->sk, struct mctp_sock, sk);
+ 	int len, val;
+diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
+index d409586b5977..7187d7583e7c 100644
+--- a/net/mptcp/protocol.h
++++ b/net/mptcp/protocol.h
+@@ -862,7 +862,7 @@ bool mptcp_schedule_work(struct sock *sk);
+ int mptcp_setsockopt(struct sock *sk, int level, int optname,
+ 		     sockptr_t optval, unsigned int optlen);
+ int mptcp_getsockopt(struct sock *sk, int level, int optname,
+-		     char __user *optval, int __user *option);
++		     char __user *optval, optlen_t option);
+ 
+ u64 __mptcp_expand_seq(u64 old_seq, u64 cur_seq);
+ static inline u64 mptcp_expand_seq(u64 old_seq, u64 cur_seq, bool use_64bit)
+diff --git a/net/mptcp/sockopt.c b/net/mptcp/sockopt.c
+index 25b780598888..88480bbcfd39 100644
+--- a/net/mptcp/sockopt.c
++++ b/net/mptcp/sockopt.c
+@@ -906,7 +906,7 @@ int mptcp_setsockopt(struct sock *sk, int level, int optname,
+ }
+ 
+ static int mptcp_getsockopt_first_sf_only(struct mptcp_sock *msk, int level, int optname,
+-					  char __user *optval, int __user *optlen)
++					  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = (struct sock *)msk;
+ 	struct sock *ssk;
+@@ -991,7 +991,7 @@ void mptcp_diag_fill_info(struct mptcp_sock *msk, struct mptcp_info *info)
+ }
+ EXPORT_SYMBOL_GPL(mptcp_diag_fill_info);
+ 
+-static int mptcp_getsockopt_info(struct mptcp_sock *msk, char __user *optval, int __user *optlen)
++static int mptcp_getsockopt_info(struct mptcp_sock *msk, char __user *optval, optlen_t optlen)
+ {
+ 	struct mptcp_info m_info;
+ 	int len;
+@@ -1019,7 +1019,7 @@ static int mptcp_getsockopt_info(struct mptcp_sock *msk, char __user *optval, in
+ static int mptcp_put_subflow_data(struct mptcp_subflow_data *sfd,
+ 				  char __user *optval,
+ 				  u32 copied,
+-				  int __user *optlen)
++				  optlen_t optlen)
+ {
+ 	u32 copylen = min_t(u32, sfd->size_subflow_data, sizeof(*sfd));
+ 
+@@ -1039,7 +1039,7 @@ static int mptcp_put_subflow_data(struct mptcp_subflow_data *sfd,
+ 
+ static int mptcp_get_subflow_data(struct mptcp_subflow_data *sfd,
+ 				  char __user *optval,
+-				  int __user *optlen)
++				  optlen_t optlen)
  {
  	int len, copylen;
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	/* if mptcp_subflow_data size is changed, need to adjust
-@@ -1229,7 +1229,7 @@ static int mptcp_get_full_info(struct mptcp_full_info *mfi,
- 	BUILD_BUG_ON(offsetof(struct mptcp_full_info, mptcp_info) !=
- 		     MIN_FULL_INFO_OPTLEN_SIZE);
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < MIN_FULL_INFO_OPTLEN_SIZE)
-@@ -1257,7 +1257,7 @@ static int mptcp_put_full_info(struct mptcp_full_info *mfi,
- 			       int __user *optlen)
- {
- 	copylen += MIN_FULL_INFO_OPTLEN_SIZE;
--	if (put_user(copylen, optlen))
-+	if (put_optlen(copylen, optlen))
- 		return -EFAULT;
- 
- 	if (copy_to_user(optval, mfi, copylen))
-@@ -1344,7 +1344,7 @@ static int mptcp_put_int_option(struct mptcp_sock *msk, char __user *optval,
- {
- 	int len;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < 0)
- 		return -EINVAL;
-@@ -1353,13 +1353,13 @@ static int mptcp_put_int_option(struct mptcp_sock *msk, char __user *optval,
- 		unsigned char ucval = (unsigned char)val;
- 
- 		len = 1;
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			return -EFAULT;
- 		if (copy_to_user(optval, &ucval, 1))
- 			return -EFAULT;
- 	} else {
- 		len = min_t(unsigned int, len, sizeof(int));
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			return -EFAULT;
- 		if (copy_to_user(optval, &val, len))
- 			return -EFAULT;
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index e8972a857e51..3cde0f15deed 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1715,7 +1715,7 @@ static int netlink_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_NETLINK)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < 0)
- 		return -EINVAL;
-@@ -1746,7 +1746,7 @@ static int netlink_getsockopt(struct socket *sock, int level, int optname,
- 				break;
- 			}
- 		}
--		if (put_user(ALIGN(BITS_TO_BYTES(nlk->ngroups), sizeof(u32)), optlen))
-+		if (put_optlen(ALIGN(BITS_TO_BYTES(nlk->ngroups), sizeof(u32)), optlen))
- 			err = -EFAULT;
- 		netlink_unlock_table();
- 		return err;
-@@ -1773,7 +1773,7 @@ static int netlink_getsockopt(struct socket *sock, int level, int optname,
- 	len = sizeof(int);
- 	val = test_bit(flag, &nlk->flags);
- 
--	if (put_user(len, optlen) ||
-+	if (put_optlen(len, optlen) ||
- 	    copy_to_user(optval, &val, len))
- 		return -EFAULT;
- 
-diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
-index 6ee148f0e6d0..6039b5219460 100644
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -356,7 +356,7 @@ static int nr_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_NETROM)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -389,7 +389,7 @@ static int nr_getsockopt(struct socket *sock, int level, int optname,
- 
- 	len = min_t(unsigned int, len, sizeof(int));
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return copy_to_user(optval, &val, len) ? -EFAULT : 0;
-diff --git a/net/nfc/llcp_sock.c b/net/nfc/llcp_sock.c
-index 57a2f97004e1..5e588640c22f 100644
---- a/net/nfc/llcp_sock.c
-+++ b/net/nfc/llcp_sock.c
-@@ -316,7 +316,7 @@ static int nfc_llcp_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_NFC)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	local = llcp_sock->local;
-@@ -372,7 +372,7 @@ static int nfc_llcp_getsockopt(struct socket *sock, int level, int optname,
- 
- 	release_sock(sk);
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return err;
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 3e9ddf72cd03..f35ab96fbcad 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4117,7 +4117,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_PACKET)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -4223,7 +4223,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
- 
- 	if (len > lv)
- 		len = lv;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, data, len))
- 		return -EFAULT;
-diff --git a/net/phonet/pep.c b/net/phonet/pep.c
-index 53a858478e22..78b269ddf28b 100644
---- a/net/phonet/pep.c
-+++ b/net/phonet/pep.c
-@@ -1070,7 +1070,7 @@ static int pep_getsockopt(struct sock *sk, int level, int optname,
- 
- 	if (level != SOL_PNPIPE)
- 		return -ENOPROTOOPT;
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	switch (optname) {
-@@ -1097,7 +1097,7 @@ static int pep_getsockopt(struct sock *sk, int level, int optname,
- 	}
- 
- 	len = min_t(unsigned int, sizeof(int), len);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (put_user(val, (int __user *) optval))
- 		return -EFAULT;
-diff --git a/net/rds/af_rds.c b/net/rds/af_rds.c
-index 8435a20968ef..3395062245c5 100644
---- a/net/rds/af_rds.c
-+++ b/net/rds/af_rds.c
-@@ -490,7 +490,7 @@ static int rds_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_RDS)
- 		goto out;
- 
--	if (get_user(len, optlen)) {
-+	if (get_optlen(len, optlen)) {
- 		ret = -EFAULT;
- 		goto out;
- 	}
-@@ -506,7 +506,7 @@ static int rds_getsockopt(struct socket *sock, int level, int optname,
- 			ret = -EINVAL;
- 		else
- 		if (put_user(rs->rs_recverr, (int __user *) optval) ||
--		    put_user(sizeof(int), optlen))
-+		    put_optlen(sizeof(int), optlen))
- 			ret = -EFAULT;
- 		else
- 			ret = 0;
-@@ -519,7 +519,7 @@ static int rds_getsockopt(struct socket *sock, int level, int optname,
- 		trans = (rs->rs_transport ? rs->rs_transport->t_type :
- 			 RDS_TRANS_NONE); /* unbound */
- 		if (put_user(trans, (int __user *)optval) ||
--		    put_user(sizeof(int), optlen))
-+		    put_optlen(sizeof(int), optlen))
- 			ret = -EFAULT;
- 		else
- 			ret = 0;
-diff --git a/net/rds/info.c b/net/rds/info.c
-index b6b46a8214a0..1990d068f6ee 100644
---- a/net/rds/info.c
-+++ b/net/rds/info.c
-@@ -168,7 +168,7 @@ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
- 	int len;
- 	int total;
- 
--	if (get_user(len, optlen)) {
-+	if (get_optlen(len, optlen)) {
- 		ret = -EFAULT;
- 		goto out;
- 	}
-@@ -230,7 +230,7 @@ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
- 		ret = lens.each;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		ret = -EFAULT;
- 
- out:
-diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-index a4a668b88a8f..a1299e9dd3e6 100644
---- a/net/rose/af_rose.c
-+++ b/net/rose/af_rose.c
-@@ -463,7 +463,7 @@ static int rose_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_ROSE)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-@@ -504,7 +504,7 @@ static int rose_getsockopt(struct socket *sock, int level, int optname,
- 
- 	len = min_t(unsigned int, len, sizeof(int));
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return copy_to_user(optval, &val, len) ? -EFAULT : 0;
-diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
-index 86873399f7d5..a88c635888fd 100644
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -763,7 +763,7 @@ static int rxrpc_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_RXRPC)
- 		return -EOPNOTSUPP;
- 
--	if (get_user(optlen, _optlen))
-+	if (get_optlen(optlen, _optlen))
- 		return -EFAULT;
- 
- 	switch (optname) {
-@@ -771,7 +771,7 @@ static int rxrpc_getsockopt(struct socket *sock, int level, int optname,
- 		if (optlen < sizeof(int))
- 			return -ETOOSMALL;
- 		if (put_user(RXRPC__SUPPORTED - 1, (int __user *)optval) ||
--		    put_user(sizeof(int), _optlen))
-+		    put_optlen(sizeof(int), _optlen))
- 			return -EFAULT;
- 		return 0;
- 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 36ee34f483d7..5120dc7728b7 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -1423,7 +1423,7 @@ static int sctp_getsockopt_connectx3(struct sock *sk, int len,
- 	if (err == 0 || err == -EINPROGRESS) {
- 		if (copy_to_user(optval, &assoc_id, sizeof(assoc_id)))
- 			return -EFAULT;
--		if (put_user(sizeof(assoc_id), optlen))
-+		if (put_optlen(sizeof(assoc_id), optlen))
- 			return -EFAULT;
- 	}
- 
-@@ -5464,7 +5464,7 @@ static int sctp_getsockopt_sctp_status(struct sock *sk, int len,
- 	if (status.sstat_primary.spinfo_state == SCTP_UNKNOWN)
- 		status.sstat_primary.spinfo_state = SCTP_ACTIVE;
- 
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		retval = -EFAULT;
- 		goto out;
- 	}
-@@ -5532,7 +5532,7 @@ static int sctp_getsockopt_peer_addr_info(struct sock *sk, int len,
- 	if (pinfo.spinfo_state == SCTP_UNKNOWN)
- 		pinfo.spinfo_state = SCTP_ACTIVE;
- 
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		retval = -EFAULT;
- 		goto out;
- 	}
-@@ -5563,7 +5563,7 @@ static int sctp_getsockopt_disable_fragments(struct sock *sk, int len,
- 
- 	len = sizeof(int);
- 	val = (sctp_sk(sk)->disable_fragments == 1);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -5586,7 +5586,7 @@ static int sctp_getsockopt_events(struct sock *sk, int len, char __user *optval,
- 		return -EINVAL;
- 	if (len > sizeof(struct sctp_event_subscribe))
- 		len = sizeof(struct sctp_event_subscribe);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	for (i = 0; i < len; i++)
-@@ -5618,7 +5618,7 @@ static int sctp_getsockopt_autoclose(struct sock *sk, int len, char __user *optv
- 	if (len < sizeof(int))
- 		return -EINVAL;
- 	len = sizeof(int);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (put_user(sctp_sk(sk)->autoclose, (int __user *)optval))
- 		return -EFAULT;
-@@ -5729,7 +5729,7 @@ static int sctp_getsockopt_peeloff(struct sock *sk, int len, char __user *optval
- 		goto out;
- 
- 	/* Return the fd mapped to the new socket.  */
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		fput(newfile);
- 		put_unused_fd(retval);
- 		return -EFAULT;
-@@ -5764,7 +5764,7 @@ static int sctp_getsockopt_peeloff_flags(struct sock *sk, int len,
- 		goto out;
- 
- 	/* Return the fd mapped to the new socket.  */
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		fput(newfile);
- 		put_unused_fd(retval);
- 		return -EFAULT;
-@@ -6014,7 +6014,7 @@ static int sctp_getsockopt_peer_addr_params(struct sock *sk, int len,
- 	if (copy_to_user(optval, &params, len))
- 		return -EFAULT;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -6112,7 +6112,7 @@ static int sctp_getsockopt_delayed_ack(struct sock *sk, int len,
- 	if (copy_to_user(optval, &params, len))
- 		return -EFAULT;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -6134,7 +6134,7 @@ static int sctp_getsockopt_initmsg(struct sock *sk, int len, char __user *optval
- 	if (len < sizeof(struct sctp_initmsg))
- 		return -EINVAL;
- 	len = sizeof(struct sctp_initmsg);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &sctp_sk(sk)->initmsg, len))
- 		return -EFAULT;
-@@ -6187,7 +6187,7 @@ static int sctp_getsockopt_peer_addrs(struct sock *sk, int len,
- 	if (put_user(cnt, &((struct sctp_getaddrs __user *)optval)->addr_num))
- 		return -EFAULT;
- 	bytes_copied = ((char __user *)to) - optval;
--	if (put_user(bytes_copied, optlen))
-+	if (put_optlen(bytes_copied, optlen))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -6333,7 +6333,7 @@ static int sctp_getsockopt_local_addrs(struct sock *sk, int len,
- 	/* XXX: We should have accounted for sizeof(struct sctp_getaddrs) too,
- 	 * but we can't change it anymore.
- 	 */
--	if (put_user(bytes_copied, optlen))
-+	if (put_optlen(bytes_copied, optlen))
- 		err = -EFAULT;
- out:
- 	kfree(addrs);
-@@ -6374,7 +6374,7 @@ static int sctp_getsockopt_primary_addr(struct sock *sk, int len,
- 	sctp_get_pf_specific(sk->sk_family)->addr_to_user(sp,
- 			(union sctp_addr *)&prim.ssp_addr);
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &prim, len))
- 		return -EFAULT;
-@@ -6400,7 +6400,7 @@ static int sctp_getsockopt_adaptation_layer(struct sock *sk, int len,
- 
- 	adaptation.ssb_adaptation_ind = sctp_sk(sk)->adaptation_ind;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &adaptation, len))
- 		return -EFAULT;
-@@ -6462,7 +6462,7 @@ static int sctp_getsockopt_default_send_param(struct sock *sk,
- 		info.sinfo_timetolive = sp->default_timetolive;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &info, len))
- 		return -EFAULT;
-@@ -6506,7 +6506,7 @@ static int sctp_getsockopt_default_sndinfo(struct sock *sk, int len,
- 		info.snd_context = sp->default_context;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &info, len))
- 		return -EFAULT;
-@@ -6534,7 +6534,7 @@ static int sctp_getsockopt_nodelay(struct sock *sk, int len,
- 
- 	len = sizeof(int);
- 	val = (sctp_sk(sk)->nodelay == 1);
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -6587,7 +6587,7 @@ static int sctp_getsockopt_rtoinfo(struct sock *sk, int len,
- 		rtoinfo.srto_min = sp->rtoinfo.srto_min;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (copy_to_user(optval, &rtoinfo, len))
-@@ -6657,7 +6657,7 @@ static int sctp_getsockopt_associnfo(struct sock *sk, int len,
- 					sasoc_number_peer_destinations;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (copy_to_user(optval, &assocparams, len))
-@@ -6687,7 +6687,7 @@ static int sctp_getsockopt_mappedv4(struct sock *sk, int len,
- 
- 	len = sizeof(int);
- 	val = sp->v4mapped;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -6721,7 +6721,7 @@ static int sctp_getsockopt_context(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->default_rcv_context
- 				  : sctp_sk(sk)->default_rcv_context;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &params, len))
- 		return -EFAULT;
-@@ -6786,7 +6786,7 @@ static int sctp_getsockopt_maxseg(struct sock *sk, int len,
- 	else
- 		params.assoc_value = sctp_sk(sk)->user_frag;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len == sizeof(int)) {
- 		if (copy_to_user(optval, &params.assoc_value, len))
-@@ -6814,7 +6814,7 @@ static int sctp_getsockopt_fragment_interleave(struct sock *sk, int len,
- 	len = sizeof(int);
- 
- 	val = sctp_sk(sk)->frag_interleave;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -6838,7 +6838,7 @@ static int sctp_getsockopt_partial_delivery_point(struct sock *sk, int len,
- 	len = sizeof(u32);
- 
- 	val = sctp_sk(sk)->pd_point;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -6913,7 +6913,7 @@ static int sctp_getsockopt_hmac_ident(struct sock *sk, int len,
- 	len = sizeof(struct sctp_hmacalgo) + data_len;
- 	num_idents = data_len / sizeof(u16);
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (put_user(num_idents, &p->shmac_num_idents))
- 		return -EFAULT;
-@@ -6954,7 +6954,7 @@ static int sctp_getsockopt_active_key(struct sock *sk, int len,
- 		val.scact_keynumber = ep->active_key_id;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -6999,7 +6999,7 @@ static int sctp_getsockopt_peer_auth_chunks(struct sock *sk, int len,
- 		return -EFAULT;
- num:
- 	len = sizeof(struct sctp_authchunks) + num_chunks;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (put_user(num_chunks, &p->gauth_number_of_chunks))
- 		return -EFAULT;
-@@ -7049,7 +7049,7 @@ static int sctp_getsockopt_local_auth_chunks(struct sock *sk, int len,
- 		return -EFAULT;
- num:
- 	len = sizeof(struct sctp_authchunks) + num_chunks;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (put_user(num_chunks, &p->gauth_number_of_chunks))
- 		return -EFAULT;
-@@ -7081,7 +7081,7 @@ static int sctp_getsockopt_assoc_number(struct sock *sk, int len,
- 		val++;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -7104,7 +7104,7 @@ static int sctp_getsockopt_auto_asconf(struct sock *sk, int len,
- 	len = sizeof(int);
- 	if (sctp_sk(sk)->do_auto_asconf && sctp_is_ep_boundall(sk))
- 		val = 1;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -7152,7 +7152,7 @@ static int sctp_getsockopt_assoc_ids(struct sock *sk, int len,
- 		ids->gaids_assoc_id[num++] = asoc->assoc_id;
- 	}
- 
--	if (put_user(len, optlen) || copy_to_user(optval, ids, len)) {
-+	if (put_optlen(len, optlen) || copy_to_user(optval, ids, len)) {
- 		kfree(ids);
- 		return -EFAULT;
- 	}
-@@ -7215,7 +7215,7 @@ static int sctp_getsockopt_paddr_thresholds(struct sock *sk,
- 	}
- 
- out:
--	if (put_user(len, optlen) || copy_to_user(optval, &val, len))
-+	if (put_optlen(len, optlen) || copy_to_user(optval, &val, len))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -7274,7 +7274,7 @@ static int sctp_getsockopt_assoc_stats(struct sock *sk, int len,
- 	/* Mark beginning of a new observation period */
- 	asoc->stats.max_obs_rto = asoc->rto_min;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	pr_debug("%s: len:%d, assoc_id:%d\n", __func__, len, sas.sas_assoc_id);
-@@ -7297,7 +7297,7 @@ static int sctp_getsockopt_recvrcvinfo(struct sock *sk,	int len,
- 	len = sizeof(int);
- 	if (sctp_sk(sk)->recvrcvinfo)
- 		val = 1;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -7317,7 +7317,7 @@ static int sctp_getsockopt_recvnxtinfo(struct sock *sk,	int len,
- 	len = sizeof(int);
- 	if (sctp_sk(sk)->recvnxtinfo)
- 		val = 1;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-@@ -7352,7 +7352,7 @@ static int sctp_getsockopt_pr_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.prsctp_capable
- 				  : sctp_sk(sk)->ep->prsctp_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7398,7 +7398,7 @@ static int sctp_getsockopt_default_prinfo(struct sock *sk, int len,
- 		info.pr_value = sp->default_timetolive;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &info, len))
-@@ -7453,7 +7453,7 @@ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
- 			asoc->abandoned_sent[__SCTP_PR_INDEX(policy)];
- 	}
- 
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		retval = -EFAULT;
- 		goto out;
- 	}
-@@ -7522,7 +7522,7 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
- 			streamoute->abandoned_sent[__SCTP_PR_INDEX(policy)];
- 	}
- 
--	if (put_user(len, optlen) || copy_to_user(optval, &params, len)) {
-+	if (put_optlen(len, optlen) || copy_to_user(optval, &params, len)) {
- 		retval = -EFAULT;
- 		goto out;
- 	}
-@@ -7560,7 +7560,7 @@ static int sctp_getsockopt_reconfig_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.reconf_capable
- 				  : sctp_sk(sk)->ep->reconf_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7599,7 +7599,7 @@ static int sctp_getsockopt_enable_strreset(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->strreset_enable
- 				  : sctp_sk(sk)->ep->strreset_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7638,7 +7638,7 @@ static int sctp_getsockopt_scheduler(struct sock *sk, int len,
- 	params.assoc_value = asoc ? sctp_sched_get_sched(asoc)
- 				  : sctp_sk(sk)->default_ss;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7678,7 +7678,7 @@ static int sctp_getsockopt_scheduler_value(struct sock *sk, int len,
- 	if (retval)
- 		goto out;
- 
--	if (put_user(len, optlen)) {
-+	if (put_optlen(len, optlen)) {
- 		retval = -EFAULT;
- 		goto out;
- 	}
-@@ -7719,7 +7719,7 @@ static int sctp_getsockopt_interleaving_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.intl_capable
- 				  : sctp_sk(sk)->ep->intl_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7742,7 +7742,7 @@ static int sctp_getsockopt_reuse_port(struct sock *sk, int len,
- 
- 	len = sizeof(int);
- 	val = sctp_sk(sk)->reuse;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (copy_to_user(optval, &val, len))
-@@ -7777,7 +7777,7 @@ static int sctp_getsockopt_event(struct sock *sk, int len, char __user *optval,
- 	subscribe = asoc ? asoc->subscribe : sctp_sk(sk)->subscribe;
- 	param.se_on = sctp_ulpevent_type_enabled(subscribe, param.se_type);
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (copy_to_user(optval, &param, len))
-@@ -7813,7 +7813,7 @@ static int sctp_getsockopt_asconf_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.asconf_capable
- 				  : sctp_sk(sk)->ep->asconf_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7852,7 +7852,7 @@ static int sctp_getsockopt_auth_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.auth_capable
- 				  : sctp_sk(sk)->ep->auth_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7891,7 +7891,7 @@ static int sctp_getsockopt_ecn_supported(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->peer.ecn_capable
- 				  : sctp_sk(sk)->ep->ecn_enable;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7930,7 +7930,7 @@ static int sctp_getsockopt_pf_expose(struct sock *sk, int len,
- 	params.assoc_value = asoc ? asoc->pf_expose
- 				  : sctp_sk(sk)->pf_expose;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	if (copy_to_user(optval, &params, len))
-@@ -7995,7 +7995,7 @@ static int sctp_getsockopt_encap_port(struct sock *sk, int len,
- 	if (copy_to_user(optval, &encap, len))
- 		return -EFAULT;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -8055,7 +8055,7 @@ static int sctp_getsockopt_probe_interval(struct sock *sk, int len,
- 	if (copy_to_user(optval, &params, len))
- 		return -EFAULT;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return 0;
-@@ -8082,7 +8082,7 @@ static int sctp_getsockopt(struct sock *sk, int level, int optname,
- 		return retval;
- 	}
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	if (len < 0)
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 3e6cb35baf25..405c0bff7121 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -2996,7 +2996,7 @@ static int __smc_getsockopt(struct socket *sock, int level, int optname,
- 
- 	smc = smc_sk(sock->sk);
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	len = min_t(int, len, sizeof(int));
-@@ -3012,7 +3012,7 @@ static int __smc_getsockopt(struct socket *sock, int level, int optname,
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &val, len))
- 		return -EFAULT;
-diff --git a/net/tipc/socket.c b/net/tipc/socket.c
-index 65dcbb54f55d..23822d9230e4 100644
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -3239,10 +3239,10 @@ static int tipc_getsockopt(struct socket *sock, int lvl, int opt,
- 	int res;
- 
- 	if ((lvl == IPPROTO_TCP) && (sock->type == SOCK_STREAM))
--		return put_user(0, ol);
-+		return put_optlen(0, ol);
- 	if (lvl != SOL_TIPC)
- 		return -ENOPROTOOPT;
--	res = get_user(len, ol);
-+	res = get_optlen(len, ol);
- 	if (res)
- 		return res;
- 
-@@ -3292,7 +3292,7 @@ static int tipc_getsockopt(struct socket *sock, int lvl, int opt,
- 	if (copy_to_user(ov, &value, sizeof(value)))
- 		return -EFAULT;
- 
--	return put_user(sizeof(value), ol);
-+	return put_optlen(sizeof(value), ol);
+@@ -1076,7 +1076,7 @@ static int mptcp_get_subflow_data(struct mptcp_subflow_data *sfd,
  }
  
- static int tipc_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ static int mptcp_getsockopt_tcpinfo(struct mptcp_sock *msk, char __user *optval,
+-				    int __user *optlen)
++				    optlen_t optlen)
+ {
+ 	struct mptcp_subflow_context *subflow;
+ 	struct sock *sk = (struct sock *)msk;
+@@ -1168,7 +1168,7 @@ static void mptcp_get_sub_addrs(const struct sock *sk, struct mptcp_subflow_addr
+ }
+ 
+ static int mptcp_getsockopt_subflow_addrs(struct mptcp_sock *msk, char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct mptcp_subflow_context *subflow;
+ 	struct sock *sk = (struct sock *)msk;
+@@ -1222,7 +1222,7 @@ static int mptcp_getsockopt_subflow_addrs(struct mptcp_sock *msk, char __user *o
+ 
+ static int mptcp_get_full_info(struct mptcp_full_info *mfi,
+ 			       char __user *optval,
+-			       int __user *optlen)
++			       optlen_t optlen)
+ {
+ 	int len;
+ 
+@@ -1254,7 +1254,7 @@ static int mptcp_get_full_info(struct mptcp_full_info *mfi,
+ static int mptcp_put_full_info(struct mptcp_full_info *mfi,
+ 			       char __user *optval,
+ 			       u32 copylen,
+-			       int __user *optlen)
++			       optlen_t optlen)
+ {
+ 	copylen += MIN_FULL_INFO_OPTLEN_SIZE;
+ 	if (put_optlen(copylen, optlen))
+@@ -1266,7 +1266,7 @@ static int mptcp_put_full_info(struct mptcp_full_info *mfi,
+ }
+ 
+ static int mptcp_getsockopt_full_info(struct mptcp_sock *msk, char __user *optval,
+-				      int __user *optlen)
++				      optlen_t optlen)
+ {
+ 	unsigned int sfcount = 0, copylen = 0;
+ 	struct mptcp_subflow_context *subflow;
+@@ -1340,7 +1340,7 @@ static int mptcp_getsockopt_full_info(struct mptcp_sock *msk, char __user *optva
+ }
+ 
+ static int mptcp_put_int_option(struct mptcp_sock *msk, char __user *optval,
+-				int __user *optlen, int val)
++				optlen_t optlen, int val)
+ {
+ 	int len;
+ 
+@@ -1369,7 +1369,7 @@ static int mptcp_put_int_option(struct mptcp_sock *msk, char __user *optval,
+ }
+ 
+ static int mptcp_getsockopt_sol_tcp(struct mptcp_sock *msk, int optname,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = (void *)msk;
+ 
+@@ -1412,7 +1412,7 @@ static int mptcp_getsockopt_sol_tcp(struct mptcp_sock *msk, int optname,
+ }
+ 
+ static int mptcp_getsockopt_v4(struct mptcp_sock *msk, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = (void *)msk;
+ 
+@@ -1437,7 +1437,7 @@ static int mptcp_getsockopt_v4(struct mptcp_sock *msk, int optname,
+ }
+ 
+ static int mptcp_getsockopt_v6(struct mptcp_sock *msk, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = (void *)msk;
+ 
+@@ -1457,7 +1457,7 @@ static int mptcp_getsockopt_v6(struct mptcp_sock *msk, int optname,
+ }
+ 
+ static int mptcp_getsockopt_sol_mptcp(struct mptcp_sock *msk, int optname,
+-				      char __user *optval, int __user *optlen)
++				      char __user *optval, optlen_t optlen)
+ {
+ 	switch (optname) {
+ 	case MPTCP_INFO:
+@@ -1474,7 +1474,7 @@ static int mptcp_getsockopt_sol_mptcp(struct mptcp_sock *msk, int optname,
+ }
+ 
+ int mptcp_getsockopt(struct sock *sk, int level, int optname,
+-		     char __user *optval, int __user *option)
++		     char __user *optval, optlen_t option)
+ {
+ 	struct mptcp_sock *msk = mptcp_sk(sk);
+ 	struct sock *ssk;
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 3cde0f15deed..ffb6ff92abc9 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1705,7 +1705,7 @@ static int netlink_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int netlink_getsockopt(struct socket *sock, int level, int optname,
+-			      char __user *optval, int __user *optlen)
++			      char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct netlink_sock *nlk = nlk_sk(sk);
+diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
+index 6039b5219460..21335e970f4c 100644
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -346,7 +346,7 @@ static int nr_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int nr_getsockopt(struct socket *sock, int level, int optname,
+-	char __user *optval, int __user *optlen)
++	char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct nr_sock *nr = nr_sk(sk);
+diff --git a/net/nfc/llcp_sock.c b/net/nfc/llcp_sock.c
+index 5e588640c22f..a19bd39a0329 100644
+--- a/net/nfc/llcp_sock.c
++++ b/net/nfc/llcp_sock.c
+@@ -302,7 +302,7 @@ static int nfc_llcp_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int nfc_llcp_getsockopt(struct socket *sock, int level, int optname,
+-			       char __user *optval, int __user *optlen)
++			       char __user *optval, optlen_t optlen)
+ {
+ 	struct nfc_llcp_local *local;
+ 	struct sock *sk = sock->sk;
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index f35ab96fbcad..6afa989386e4 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4103,7 +4103,7 @@ packet_setsockopt(struct socket *sock, int level, int optname, sockptr_t optval,
+ }
+ 
+ static int packet_getsockopt(struct socket *sock, int level, int optname,
+-			     char __user *optval, int __user *optlen)
++			     char __user *optval, optlen_t optlen)
+ {
+ 	int len;
+ 	int val, lv = sizeof(val);
+diff --git a/net/phonet/pep.c b/net/phonet/pep.c
+index 78b269ddf28b..d66776ed765e 100644
+--- a/net/phonet/pep.c
++++ b/net/phonet/pep.c
+@@ -1063,7 +1063,7 @@ static int pep_setsockopt(struct sock *sk, int level, int optname,
+ }
+ 
+ static int pep_getsockopt(struct sock *sk, int level, int optname,
+-				char __user *optval, int __user *optlen)
++				char __user *optval, optlen_t optlen)
+ {
+ 	struct pep_sock *pn = pep_sk(sk);
+ 	int len, val;
+diff --git a/net/rds/af_rds.c b/net/rds/af_rds.c
+index 3395062245c5..12bc0352ba6e 100644
+--- a/net/rds/af_rds.c
++++ b/net/rds/af_rds.c
+@@ -481,7 +481,7 @@ static int rds_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int rds_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct rds_sock *rs = rds_sk_to_rs(sock->sk);
+ 	int ret = -ENOPROTOOPT, len;
+diff --git a/net/rds/info.c b/net/rds/info.c
+index 1990d068f6ee..b0d594026a48 100644
+--- a/net/rds/info.c
++++ b/net/rds/info.c
+@@ -156,7 +156,7 @@ EXPORT_SYMBOL_GPL(rds_info_copy);
+  * in the snapshot.
+  */
+ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
+-			int __user *optlen)
++			optlen_t optlen)
+ {
+ 	struct rds_info_iterator iter;
+ 	struct rds_info_lengths lens;
+diff --git a/net/rds/info.h b/net/rds/info.h
+index a069b51c4679..aa25aaeb154f 100644
+--- a/net/rds/info.h
++++ b/net/rds/info.h
+@@ -22,7 +22,7 @@ typedef void (*rds_info_func)(struct socket *sock, unsigned int len,
+ void rds_info_register_func(int optname, rds_info_func func);
+ void rds_info_deregister_func(int optname, rds_info_func func);
+ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
+-			int __user *optlen);
++			optlen_t optlen);
+ void rds_info_copy(struct rds_info_iterator *iter, void *data,
+ 		   unsigned long bytes);
+ void rds_info_iter_unmap(struct rds_info_iterator *iter);
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index a1299e9dd3e6..481279525981 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -453,7 +453,7 @@ static int rose_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ static int rose_getsockopt(struct socket *sock, int level, int optname,
+-	char __user *optval, int __user *optlen)
++	char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct rose_sock *rose = rose_sk(sk);
+diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
+index a88c635888fd..0373aa629885 100644
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -756,7 +756,7 @@ static int rxrpc_setsockopt(struct socket *sock, int level, int optname,
+  * Get socket options.
+  */
+ static int rxrpc_getsockopt(struct socket *sock, int level, int optname,
+-			    char __user *optval, int __user *_optlen)
++			    char __user *optval, optlen_t _optlen)
+ {
+ 	int optlen;
+ 
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index 5120dc7728b7..2f2f6f0058b0 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -1386,7 +1386,7 @@ struct compat_sctp_getaddrs_old {
+ 
+ static int sctp_getsockopt_connectx3(struct sock *sk, int len,
+ 				     char __user *optval,
+-				     int __user *optlen)
++				     optlen_t optlen)
+ {
+ 	struct sctp_getaddrs_old param;
+ 	sctp_assoc_t assoc_id = 0;
+@@ -4557,7 +4557,7 @@ static int sctp_setsockopt_probe_interval(struct sock *sk,
+  * The syntax is:
+  *
+  *   ret = getsockopt(int sd, int level, int optname, void __user *optval,
+- *                    int __user *optlen);
++ *                    optlen_t optlen);
+  *   ret = setsockopt(int sd, int level, int optname, const void __user *optval,
+  *                    int optlen);
+  *
+@@ -5412,7 +5412,7 @@ EXPORT_SYMBOL_GPL(sctp_transport_traverse_process);
+  */
+ static int sctp_getsockopt_sctp_status(struct sock *sk, int len,
+ 				       char __user *optval,
+-				       int __user *optlen)
++				       optlen_t optlen)
+ {
+ 	struct sctp_status status;
+ 	struct sctp_association *asoc = NULL;
+@@ -5492,7 +5492,7 @@ static int sctp_getsockopt_sctp_status(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_peer_addr_info(struct sock *sk, int len,
+ 					  char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct sctp_paddrinfo pinfo;
+ 	struct sctp_transport *transport;
+@@ -5554,7 +5554,7 @@ static int sctp_getsockopt_peer_addr_info(struct sock *sk, int len,
+  * instead a error will be indicated to the user.
+  */
+ static int sctp_getsockopt_disable_fragments(struct sock *sk, int len,
+-					char __user *optval, int __user *optlen)
++					char __user *optval, optlen_t optlen)
+ {
+ 	int val;
+ 
+@@ -5576,7 +5576,7 @@ static int sctp_getsockopt_disable_fragments(struct sock *sk, int len,
+  * ancillary data the user wishes to receive.
+  */
+ static int sctp_getsockopt_events(struct sock *sk, int len, char __user *optval,
+-				  int __user *optlen)
++				  optlen_t optlen)
+ {
+ 	struct sctp_event_subscribe subscribe;
+ 	__u8 *sn_type = (__u8 *)&subscribe;
+@@ -5610,7 +5610,7 @@ static int sctp_getsockopt_events(struct sock *sk, int len, char __user *optval,
+  * integer defining the number of seconds of idle time before an
+  * association is closed.
+  */
+-static int sctp_getsockopt_autoclose(struct sock *sk, int len, char __user *optval, int __user *optlen)
++static int sctp_getsockopt_autoclose(struct sock *sk, int len, char __user *optval, optlen_t optlen)
+ {
+ 	/* Applicable to UDP-style socket only */
+ 	if (sctp_style(sk, TCP))
+@@ -5712,7 +5712,7 @@ static int sctp_getsockopt_peeloff_common(struct sock *sk, sctp_peeloff_arg_t *p
+ 	return retval;
+ }
+ 
+-static int sctp_getsockopt_peeloff(struct sock *sk, int len, char __user *optval, int __user *optlen)
++static int sctp_getsockopt_peeloff(struct sock *sk, int len, char __user *optval, optlen_t optlen)
+ {
+ 	sctp_peeloff_arg_t peeloff;
+ 	struct file *newfile = NULL;
+@@ -5746,7 +5746,7 @@ static int sctp_getsockopt_peeloff(struct sock *sk, int len, char __user *optval
+ }
+ 
+ static int sctp_getsockopt_peeloff_flags(struct sock *sk, int len,
+-					 char __user *optval, int __user *optlen)
++					 char __user *optval, optlen_t optlen)
+ {
+ 	sctp_peeloff_flags_arg_t peeloff;
+ 	struct file *newfile = NULL;
+@@ -5913,7 +5913,7 @@ static int sctp_getsockopt_peeloff_flags(struct sock *sk, int len,
+  *                     IPv4- or IPv6- layer setting.
+  */
+ static int sctp_getsockopt_peer_addr_params(struct sock *sk, int len,
+-					    char __user *optval, int __user *optlen)
++					    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_paddrparams  params;
+ 	struct sctp_transport   *trans = NULL;
+@@ -6057,7 +6057,7 @@ static int sctp_getsockopt_peer_addr_params(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_delayed_ack(struct sock *sk, int len,
+ 					    char __user *optval,
+-					    int __user *optlen)
++					    optlen_t optlen)
+ {
+ 	struct sctp_sack_info    params;
+ 	struct sctp_association *asoc = NULL;
+@@ -6129,7 +6129,7 @@ static int sctp_getsockopt_delayed_ack(struct sock *sk, int len,
+  * by the change).  With TCP-style sockets, this option is inherited by
+  * sockets derived from a listener socket.
+  */
+-static int sctp_getsockopt_initmsg(struct sock *sk, int len, char __user *optval, int __user *optlen)
++static int sctp_getsockopt_initmsg(struct sock *sk, int len, char __user *optval, optlen_t optlen)
+ {
+ 	if (len < sizeof(struct sctp_initmsg))
+ 		return -EINVAL;
+@@ -6143,7 +6143,7 @@ static int sctp_getsockopt_initmsg(struct sock *sk, int len, char __user *optval
+ 
+ 
+ static int sctp_getsockopt_peer_addrs(struct sock *sk, int len,
+-				      char __user *optval, int __user *optlen)
++				      char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_association *asoc;
+ 	int cnt = 0;
+@@ -6239,7 +6239,7 @@ static int sctp_copy_laddrs(struct sock *sk, __u16 port, void *to,
+ 
+ 
+ static int sctp_getsockopt_local_addrs(struct sock *sk, int len,
+-				       char __user *optval, int __user *optlen)
++				       char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_bind_addr *bp;
+ 	struct sctp_association *asoc;
+@@ -6347,7 +6347,7 @@ static int sctp_getsockopt_local_addrs(struct sock *sk, int len,
+  * association peer's addresses.
+  */
+ static int sctp_getsockopt_primary_addr(struct sock *sk, int len,
+-					char __user *optval, int __user *optlen)
++					char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_prim prim;
+ 	struct sctp_association *asoc;
+@@ -6389,7 +6389,7 @@ static int sctp_getsockopt_primary_addr(struct sock *sk, int len,
+  * Indication parameter for all future INIT and INIT-ACK exchanges.
+  */
+ static int sctp_getsockopt_adaptation_layer(struct sock *sk, int len,
+-				  char __user *optval, int __user *optlen)
++				  char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_setadaptation adaptation;
+ 
+@@ -6429,7 +6429,7 @@ static int sctp_getsockopt_adaptation_layer(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_default_send_param(struct sock *sk,
+ 					int len, char __user *optval,
+-					int __user *optlen)
++					optlen_t optlen)
+ {
+ 	struct sctp_sock *sp = sctp_sk(sk);
+ 	struct sctp_association *asoc;
+@@ -6475,7 +6475,7 @@ static int sctp_getsockopt_default_send_param(struct sock *sk,
+  */
+ static int sctp_getsockopt_default_sndinfo(struct sock *sk, int len,
+ 					   char __user *optval,
+-					   int __user *optlen)
++					   optlen_t optlen)
+ {
+ 	struct sctp_sock *sp = sctp_sk(sk);
+ 	struct sctp_association *asoc;
+@@ -6525,7 +6525,7 @@ static int sctp_getsockopt_default_sndinfo(struct sock *sk, int len,
+  */
+ 
+ static int sctp_getsockopt_nodelay(struct sock *sk, int len,
+-				   char __user *optval, int __user *optlen)
++				   char __user *optval, optlen_t optlen)
+ {
+ 	int val;
+ 
+@@ -6555,7 +6555,7 @@ static int sctp_getsockopt_nodelay(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_rtoinfo(struct sock *sk, int len,
+ 				char __user *optval,
+-				int __user *optlen) {
++				optlen_t optlen) {
+ 	struct sctp_rtoinfo rtoinfo;
+ 	struct sctp_association *asoc;
+ 
+@@ -6609,7 +6609,7 @@ static int sctp_getsockopt_rtoinfo(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_associnfo(struct sock *sk, int len,
+ 				     char __user *optval,
+-				     int __user *optlen)
++				     optlen_t optlen)
+ {
+ 
+ 	struct sctp_assocparams assocparams;
+@@ -6677,7 +6677,7 @@ static int sctp_getsockopt_associnfo(struct sock *sk, int len,
+  * addresses on the socket.
+  */
+ static int sctp_getsockopt_mappedv4(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	int val;
+ 	struct sctp_sock *sp = sctp_sk(sk);
+@@ -6700,7 +6700,7 @@ static int sctp_getsockopt_mappedv4(struct sock *sk, int len,
+  * (chapter and verse is quoted at sctp_setsockopt_context())
+  */
+ static int sctp_getsockopt_context(struct sock *sk, int len,
+-				   char __user *optval, int __user *optlen)
++				   char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -6757,7 +6757,7 @@ static int sctp_getsockopt_context(struct sock *sk, int len,
+  * assoc_value:  This parameter specifies the maximum size in bytes.
+  */
+ static int sctp_getsockopt_maxseg(struct sock *sk, int len,
+-				  char __user *optval, int __user *optlen)
++				  char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -6804,7 +6804,7 @@ static int sctp_getsockopt_maxseg(struct sock *sk, int len,
+  * (chapter and verse is quoted at sctp_setsockopt_fragment_interleave())
+  */
+ static int sctp_getsockopt_fragment_interleave(struct sock *sk, int len,
+-					       char __user *optval, int __user *optlen)
++					       char __user *optval, optlen_t optlen)
+ {
+ 	int val;
+ 
+@@ -6828,7 +6828,7 @@ static int sctp_getsockopt_fragment_interleave(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_partial_delivery_point(struct sock *sk, int len,
+ 						  char __user *optval,
+-						  int __user *optlen)
++						  optlen_t optlen)
+ {
+ 	u32 val;
+ 
+@@ -6852,7 +6852,7 @@ static int sctp_getsockopt_partial_delivery_point(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_maxburst(struct sock *sk, int len,
+ 				    char __user *optval,
+-				    int __user *optlen)
++				    optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -6891,7 +6891,7 @@ static int sctp_getsockopt_maxburst(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_hmac_ident(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_endpoint *ep = sctp_sk(sk)->ep;
+ 	struct sctp_hmacalgo  __user *p = (void __user *)optval;
+@@ -6927,7 +6927,7 @@ static int sctp_getsockopt_hmac_ident(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_active_key(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_endpoint *ep = sctp_sk(sk)->ep;
+ 	struct sctp_authkeyid val;
+@@ -6963,7 +6963,7 @@ static int sctp_getsockopt_active_key(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_peer_auth_chunks(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_authchunks __user *p = (void __user *)optval;
+ 	struct sctp_authchunks val;
+@@ -7007,7 +7007,7 @@ static int sctp_getsockopt_peer_auth_chunks(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_local_auth_chunks(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_endpoint *ep = sctp_sk(sk)->ep;
+ 	struct sctp_authchunks __user *p = (void __user *)optval;
+@@ -7063,7 +7063,7 @@ static int sctp_getsockopt_local_auth_chunks(struct sock *sk, int len,
+  * to a one-to-many style socket.  The option value is an uint32_t.
+  */
+ static int sctp_getsockopt_assoc_number(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_sock *sp = sctp_sk(sk);
+ 	struct sctp_association *asoc;
+@@ -7094,7 +7094,7 @@ static int sctp_getsockopt_assoc_number(struct sock *sk, int len,
+  * See the corresponding setsockopt entry as description
+  */
+ static int sctp_getsockopt_auto_asconf(struct sock *sk, int len,
+-				   char __user *optval, int __user *optlen)
++				   char __user *optval, optlen_t optlen)
+ {
+ 	int val = 0;
+ 
+@@ -7119,7 +7119,7 @@ static int sctp_getsockopt_auto_asconf(struct sock *sk, int len,
+  * the SCTP associations handled by a one-to-many style socket.
+  */
+ static int sctp_getsockopt_assoc_ids(struct sock *sk, int len,
+-				    char __user *optval, int __user *optlen)
++				    char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_sock *sp = sctp_sk(sk);
+ 	struct sctp_association *asoc;
+@@ -7170,7 +7170,7 @@ static int sctp_getsockopt_assoc_ids(struct sock *sk, int len,
+  */
+ static int sctp_getsockopt_paddr_thresholds(struct sock *sk,
+ 					    char __user *optval, int len,
+-					    int __user *optlen, bool v2)
++					    optlen_t optlen, bool v2)
+ {
+ 	struct sctp_paddrthlds_v2 val;
+ 	struct sctp_transport *trans;
+@@ -7229,7 +7229,7 @@ static int sctp_getsockopt_paddr_thresholds(struct sock *sk,
+  */
+ static int sctp_getsockopt_assoc_stats(struct sock *sk, int len,
+ 				       char __user *optval,
+-				       int __user *optlen)
++				       optlen_t optlen)
+ {
+ 	struct sctp_assoc_stats sas;
+ 	struct sctp_association *asoc = NULL;
+@@ -7287,7 +7287,7 @@ static int sctp_getsockopt_assoc_stats(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_recvrcvinfo(struct sock *sk,	int len,
+ 				       char __user *optval,
+-				       int __user *optlen)
++				       optlen_t optlen)
+ {
+ 	int val = 0;
+ 
+@@ -7307,7 +7307,7 @@ static int sctp_getsockopt_recvrcvinfo(struct sock *sk,	int len,
+ 
+ static int sctp_getsockopt_recvnxtinfo(struct sock *sk,	int len,
+ 				       char __user *optval,
+-				       int __user *optlen)
++				       optlen_t optlen)
+ {
+ 	int val = 0;
+ 
+@@ -7327,7 +7327,7 @@ static int sctp_getsockopt_recvnxtinfo(struct sock *sk,	int len,
+ 
+ static int sctp_getsockopt_pr_supported(struct sock *sk, int len,
+ 					char __user *optval,
+-					int __user *optlen)
++					optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7366,7 +7366,7 @@ static int sctp_getsockopt_pr_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_default_prinfo(struct sock *sk, int len,
+ 					  char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct sctp_default_prinfo info;
+ 	struct sctp_association *asoc;
+@@ -7412,7 +7412,7 @@ static int sctp_getsockopt_default_prinfo(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
+ 					  char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct sctp_prstatus params;
+ 	struct sctp_association *asoc;
+@@ -7471,7 +7471,7 @@ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+ 					   char __user *optval,
+-					   int __user *optlen)
++					   optlen_t optlen)
+ {
+ 	struct sctp_stream_out_ext *streamoute;
+ 	struct sctp_association *asoc;
+@@ -7535,7 +7535,7 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_reconfig_supported(struct sock *sk, int len,
+ 					      char __user *optval,
+-					      int __user *optlen)
++					      optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7574,7 +7574,7 @@ static int sctp_getsockopt_reconfig_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_enable_strreset(struct sock *sk, int len,
+ 					   char __user *optval,
+-					   int __user *optlen)
++					   optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7613,7 +7613,7 @@ static int sctp_getsockopt_enable_strreset(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_scheduler(struct sock *sk, int len,
+ 				     char __user *optval,
+-				     int __user *optlen)
++				     optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7652,7 +7652,7 @@ static int sctp_getsockopt_scheduler(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_scheduler_value(struct sock *sk, int len,
+ 					   char __user *optval,
+-					   int __user *optlen)
++					   optlen_t optlen)
+ {
+ 	struct sctp_stream_value params;
+ 	struct sctp_association *asoc;
+@@ -7694,7 +7694,7 @@ static int sctp_getsockopt_scheduler_value(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_interleaving_supported(struct sock *sk, int len,
+ 						  char __user *optval,
+-						  int __user *optlen)
++						  optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7733,7 +7733,7 @@ static int sctp_getsockopt_interleaving_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_reuse_port(struct sock *sk, int len,
+ 				      char __user *optval,
+-				      int __user *optlen)
++				      optlen_t optlen)
+ {
+ 	int val;
+ 
+@@ -7752,7 +7752,7 @@ static int sctp_getsockopt_reuse_port(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_event(struct sock *sk, int len, char __user *optval,
+-				 int __user *optlen)
++				 optlen_t optlen)
+ {
+ 	struct sctp_association *asoc;
+ 	struct sctp_event param;
+@@ -7788,7 +7788,7 @@ static int sctp_getsockopt_event(struct sock *sk, int len, char __user *optval,
+ 
+ static int sctp_getsockopt_asconf_supported(struct sock *sk, int len,
+ 					    char __user *optval,
+-					    int __user *optlen)
++					    optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7827,7 +7827,7 @@ static int sctp_getsockopt_asconf_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_auth_supported(struct sock *sk, int len,
+ 					  char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7866,7 +7866,7 @@ static int sctp_getsockopt_auth_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_ecn_supported(struct sock *sk, int len,
+ 					 char __user *optval,
+-					 int __user *optlen)
++					 optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7905,7 +7905,7 @@ static int sctp_getsockopt_ecn_supported(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_pf_expose(struct sock *sk, int len,
+ 				     char __user *optval,
+-				     int __user *optlen)
++				     optlen_t optlen)
+ {
+ 	struct sctp_assoc_value params;
+ 	struct sctp_association *asoc;
+@@ -7943,7 +7943,7 @@ static int sctp_getsockopt_pf_expose(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt_encap_port(struct sock *sk, int len,
+-				      char __user *optval, int __user *optlen)
++				      char __user *optval, optlen_t optlen)
+ {
+ 	struct sctp_association *asoc;
+ 	struct sctp_udpencaps encap;
+@@ -8003,7 +8003,7 @@ static int sctp_getsockopt_encap_port(struct sock *sk, int len,
+ 
+ static int sctp_getsockopt_probe_interval(struct sock *sk, int len,
+ 					  char __user *optval,
+-					  int __user *optlen)
++					  optlen_t optlen)
+ {
+ 	struct sctp_probeinterval params;
+ 	struct sctp_association *asoc;
+@@ -8062,7 +8062,7 @@ static int sctp_getsockopt_probe_interval(struct sock *sk, int len,
+ }
+ 
+ static int sctp_getsockopt(struct sock *sk, int level, int optname,
+-			   char __user *optval, int __user *optlen)
++			   char __user *optval, optlen_t optlen)
+ {
+ 	int retval = 0;
+ 	int len;
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 405c0bff7121..da20193e2925 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -2989,7 +2989,7 @@ int smc_shutdown(struct socket *sock, int how)
+ }
+ 
+ static int __smc_getsockopt(struct socket *sock, int level, int optname,
+-			    char __user *optval, int __user *optlen)
++			    char __user *optval, optlen_t optlen)
+ {
+ 	struct smc_sock *smc;
+ 	int val, len;
+@@ -3141,7 +3141,7 @@ int smc_setsockopt(struct socket *sock, int level, int optname,
+ }
+ 
+ int smc_getsockopt(struct socket *sock, int level, int optname,
+-		   char __user *optval, int __user *optlen)
++		   char __user *optval, optlen_t optlen)
+ {
+ 	struct smc_sock *smc;
+ 	int rc;
+diff --git a/net/smc/smc.h b/net/smc/smc.h
+index 78ae10d06ed2..abcf01824fa8 100644
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -59,7 +59,7 @@ int smc_shutdown(struct socket *sock, int how);
+ int smc_setsockopt(struct socket *sock, int level, int optname,
+ 		   sockptr_t optval, unsigned int optlen);
+ int smc_getsockopt(struct socket *sock, int level, int optname,
+-		   char __user *optval, int __user *optlen);
++		   char __user *optval, optlen_t optlen);
+ int smc_sendmsg(struct socket *sock, struct msghdr *msg, size_t len);
+ int smc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 		int flags);
+diff --git a/net/socket.c b/net/socket.c
+index 9a0e720f0859..fa2de12c10e6 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2350,12 +2350,15 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+ 	} else if (unlikely(!ops->getsockopt)) {
+ 		err = -EOPNOTSUPP;
+ 	} else {
+-		if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
++		optlen_t _optlen = { .up = NULL, };
++
++		if (WARN_ONCE(optval.is_kernel,
+ 			      "Invalid argument type"))
+ 			return -EOPNOTSUPP;
+ 
++		_optlen.up = optlen.user;
+ 		err = ops->getsockopt(sock, level, optname, optval.user,
+-				      optlen.user);
++				      _optlen);
+ 	}
+ 
+ 	if (!compat)
+diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+index 23822d9230e4..24db67f7f21a 100644
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -3229,7 +3229,7 @@ static int tipc_setsockopt(struct socket *sock, int lvl, int opt,
+  * Return: 0 on success, errno otherwise
+  */
+ static int tipc_getsockopt(struct socket *sock, int lvl, int opt,
+-			   char __user *ov, int __user *ol)
++			   char __user *ov, optlen_t ol)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct tipc_sock *tsk = tipc_sk(sk);
 diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index cb86b0bf9a53..f4e87b4295b4 100644
+index f4e87b4295b4..1069c8ca5aad 100644
 --- a/net/tls/tls_main.c
 +++ b/net/tls/tls_main.c
-@@ -445,7 +445,7 @@ static int do_tls_getsockopt_conf(struct sock *sk, char __user *optval,
- 	struct cipher_context *cctx;
- 	int len;
+@@ -436,7 +436,7 @@ static __poll_t tls_sk_poll(struct file *file, struct socket *sock,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+ static int do_tls_getsockopt_conf(struct sock *sk, char __user *optval,
+-				  int __user *optlen, int tx)
++				  optlen_t optlen, int tx)
+ {
+ 	int rc = 0;
+ 	const struct tls_cipher_desc *cipher_desc;
+@@ -497,7 +497,7 @@ static int do_tls_getsockopt_conf(struct sock *sk, char __user *optval,
+ }
  
- 	if (!optval || (len < sizeof(*crypto_info))) {
-@@ -503,7 +503,7 @@ static int do_tls_getsockopt_tx_zc(struct sock *sk, char __user *optval,
+ static int do_tls_getsockopt_tx_zc(struct sock *sk, char __user *optval,
+-				   int __user *optlen)
++				   optlen_t optlen)
+ {
+ 	struct tls_context *ctx = tls_get_ctx(sk);
  	unsigned int value;
- 	int len;
+@@ -517,7 +517,7 @@ static int do_tls_getsockopt_tx_zc(struct sock *sk, char __user *optval,
+ }
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
+ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
+-				    int __user *optlen)
++				    optlen_t optlen)
+ {
+ 	struct tls_context *ctx = tls_get_ctx(sk);
+ 	int value, len;
+@@ -545,7 +545,7 @@ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
+ }
  
- 	if (len != sizeof(value))
-@@ -525,7 +525,7 @@ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
- 	if (ctx->prot_info.version != TLS_1_3_VERSION)
- 		return -EINVAL;
+ static int do_tls_getsockopt(struct sock *sk, int optname,
+-			     char __user *optval, int __user *optlen)
++			     char __user *optval, optlen_t optlen)
+ {
+ 	int rc = 0;
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < sizeof(value))
- 		return -EINVAL;
-@@ -536,7 +536,7 @@ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
- 	if (value < 0)
- 		return value;
+@@ -574,7 +574,7 @@ static int do_tls_getsockopt(struct sock *sk, int optname,
+ }
  
--	if (put_user(sizeof(value), optlen))
-+	if (put_optlen(sizeof(value), optlen))
- 		return -EFAULT;
- 	if (copy_to_user(optval, &value, sizeof(value)))
- 		return -EFAULT;
+ static int tls_getsockopt(struct sock *sk, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct tls_context *ctx = tls_get_ctx(sk);
+ 
 diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 7e3db87ae433..c21a3bfcdd75 100644
+index c21a3bfcdd75..5f4ff266cf5e 100644
 --- a/net/vmw_vsock/af_vsock.c
 +++ b/net/vmw_vsock/af_vsock.c
-@@ -1884,7 +1884,7 @@ static int vsock_connectible_getsockopt(struct socket *sock,
- 	if (level != AF_VSOCK)
- 		return -ENOPROTOOPT;
- 
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	memset(&v, 0, sizeof(v));
-@@ -1919,7 +1919,7 @@ static int vsock_connectible_getsockopt(struct socket *sock,
- 	if (copy_to_user(optval, &v, len))
- 		return -EFAULT;
- 
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		return -EFAULT;
- 
- 	return 0;
+@@ -1866,7 +1866,7 @@ static int vsock_connectible_setsockopt(struct socket *sock,
+ static int vsock_connectible_getsockopt(struct socket *sock,
+ 					int level, int optname,
+ 					char __user *optval,
+-					int __user *optlen)
++					optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct vsock_sock *vsk = vsock_sk(sk);
 diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
-index 8dda4178497c..4eb65c05b3b9 100644
+index 4eb65c05b3b9..863819103621 100644
 --- a/net/x25/af_x25.c
 +++ b/net/x25/af_x25.c
-@@ -457,7 +457,7 @@ static int x25_getsockopt(struct socket *sock, int level, int optname,
- 		goto out;
+@@ -448,7 +448,7 @@ static int x25_setsockopt(struct socket *sock, int level, int optname,
+ }
  
- 	rc = -EFAULT;
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		goto out;
- 
- 	rc = -EINVAL;
-@@ -467,7 +467,7 @@ static int x25_getsockopt(struct socket *sock, int level, int optname,
- 	len = min_t(unsigned int, len, sizeof(int));
- 
- 	rc = -EFAULT;
--	if (put_user(len, optlen))
-+	if (put_optlen(len, optlen))
- 		goto out;
- 
- 	val = test_bit(X25_Q_BIT_FLAG, &x25_sk(sk)->flags);
+ static int x25_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	int val, len, rc = -ENOPROTOOPT;
 diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index e5d104ce7b82..7cae6f4114b5 100644
+index 7cae6f4114b5..7b75b6217ba1 100644
 --- a/net/xdp/xsk.c
 +++ b/net/xdp/xsk.c
-@@ -1470,7 +1470,7 @@ static int xsk_getsockopt(struct socket *sock, int level, int optname,
- 	if (level != SOL_XDP)
- 		return -ENOPROTOOPT;
+@@ -1461,7 +1461,7 @@ struct xdp_statistics_v1 {
+ };
  
--	if (get_user(len, optlen))
-+	if (get_optlen(len, optlen))
- 		return -EFAULT;
- 	if (len < 0)
- 		return -EINVAL;
-@@ -1507,7 +1507,7 @@ static int xsk_getsockopt(struct socket *sock, int level, int optname,
- 
- 		if (copy_to_user(optval, &stats, stats_size))
- 			return -EFAULT;
--		if (put_user(stats_size, optlen))
-+		if (put_optlen(stats_size, optlen))
- 			return -EFAULT;
- 
- 		return 0;
-@@ -1559,7 +1559,7 @@ static int xsk_getsockopt(struct socket *sock, int level, int optname,
- 
- 		if (copy_to_user(optval, to_copy, len))
- 			return -EFAULT;
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			return -EFAULT;
- 
- 		return 0;
-@@ -1579,7 +1579,7 @@ static int xsk_getsockopt(struct socket *sock, int level, int optname,
- 		len = sizeof(opts);
- 		if (copy_to_user(optval, &opts, len))
- 			return -EFAULT;
--		if (put_user(len, optlen))
-+		if (put_optlen(len, optlen))
- 			return -EFAULT;
- 
- 		return 0;
+ static int xsk_getsockopt(struct socket *sock, int level, int optname,
+-			  char __user *optval, int __user *optlen)
++			  char __user *optval, optlen_t optlen)
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct xdp_sock *xs = xdp_sk(sk);
 -- 
 2.34.1
 

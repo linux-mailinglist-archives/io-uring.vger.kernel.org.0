@@ -1,113 +1,123 @@
-Return-Path: <io-uring+bounces-7346-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7348-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3960BA77F42
-	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 17:45:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C326A78036
+	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 18:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A8C189023F
-	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 15:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC8116FC89
+	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 16:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38A420C03E;
-	Tue,  1 Apr 2025 15:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD13220D4F8;
+	Tue,  1 Apr 2025 16:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOOlMsmR"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dgiu43TZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB1420C027
-	for <io-uring@vger.kernel.org>; Tue,  1 Apr 2025 15:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865A213240
+	for <io-uring@vger.kernel.org>; Tue,  1 Apr 2025 16:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743522303; cv=none; b=bRxmsj4ayMSUhns8qp92oOrQeKz3vEf2eCO8OM34zlNgly4JAbJHaudVSiwxuYKhLit6+G2llO76KsWv8ztlgK907z+CCPzMqFYsXQJuNnNvmuQ21hvqdJI/Vzp3JltjcvC5RWDbQjsepBF3yjNCUIPP8EtfF6dDcJDAcQ9kaRs=
+	t=1743524012; cv=none; b=M04A3p9L7h7BKBIcq7IPMh6jHNVRfHm2hc6bAFm+fGitkuTEnmkXpMO5AhmeHabsKZlTe0UEW/7rvZ9uRvfRKnMSI8MvaJ5MRr3DOtVY4LCCqmKt7m/KLyolqfM8c21SO/Yjv2vZdd4i6BA2Wz+V7Iavy3IM71IsBIUOME6bHYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743522303; c=relaxed/simple;
-	bh=To+ZIS6y9amnx3D3q0apiArudSLor6epXqAOZ5i6dpc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u/MgeYXSRDTYwH4+k6h8g2A5NbqYhDKoCYo7QFclifb/O1i1e5AKaokxqCVeq+nVeXFQwgJTytnFgYsQ/EzhASG1qEVLpaxNdTogeUAYCphETeKe8hE8Q0qYnRT/ckSDzVU/tMAXxrpuJLpXZ6PdSmUvvuw5yWdCXEIx75/imOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOOlMsmR; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so908169766b.1
-        for <io-uring@vger.kernel.org>; Tue, 01 Apr 2025 08:45:01 -0700 (PDT)
+	s=arc-20240116; t=1743524012; c=relaxed/simple;
+	bh=x1sZes37bkNAV4PZM/FDi5+EDjdAwj6nkiHn54Y817s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VP5dJfDUk+rqoPhjAiiqq4d5j92U6wp6DZ+H0KyzSm64UltOgyFl+kq0Zdqq88G9bnx1PMQiW1Ou+E8+pZBqTbPwma1yij2mK/XLJZmNDTrpf8JEhBqF4pLWPRiw0Z6tLiE6jn03+8MwGmvXqOIK8fRAi4duYffDZyuZV81tQo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dgiu43TZ; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-85e1b1f08a5so133389339f.2
+        for <io-uring@vger.kernel.org>; Tue, 01 Apr 2025 09:13:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743522300; x=1744127100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqbS7ka2VHAGeI0eMEemx5lSh/7rv/QDT3KYEcCNgxA=;
-        b=YOOlMsmR0v6ODmUGwBy+oA2o76vwdawXqUdVfogl/ohVo9/BNQhZPl0kgpraXii20x
-         FkeOd8OAYZFuzzo0kAH9u2wTwY/gLAkGlZHuDL2KrVZ37Ymfu9szStXGDGIE+E+7bEQO
-         QQ2Y28ElRk17d3ZxBuoFbfrHAk1WGVy/hsEqyUM/GHj/5NNaQBG4liVjLfCDdhOYYSLD
-         /v61RwaYBjnOHNDKnIrXYHgY8r4OJNvDqMIL6QEw4bvdeW2tuVP8RHbpxuOKdPIAYhvc
-         cl1zyNL2xqKfmjZwlk/298LRZ2myZ9U/hbMRo8JYmLByMPWANKwwuCCs4cNd3Pnsu8nb
-         TFug==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743524009; x=1744128809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=crYPG9KAfumDvhww+Tnd6Ddcecr+v2JwT03XGk7Szzw=;
+        b=dgiu43TZc2OSLNA1di0N6314WYp3bHQaESRv1l0/SaXKWyjOMfNdJN6R7sP/5yzx18
+         gVfwYE+743hyrYtiAmsfFNSEW34fTv9MxP/6Esn5bh2alUDWO4B3smPehnpfHg9LeucB
+         ExvfWr5piZ6KQAXUFnHng1Lt9kreTAP1pdkBNtvhWhOpPtBBblqzUHGWPc25O5xzQ1zI
+         gNokdXf3TEXh/SaOh+V+hLYc1Kgok3d8izfv7cWPHJ8pq+wPDzZkISHPqGYitTKFZ+uD
+         8By8A8VjkUqP4+xiOT9jxijEtkU0gk+78unRDG3ddMQmo3ttUUfrYsQQ8CXQ9ND12LRA
+         743g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743522300; x=1744127100;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xqbS7ka2VHAGeI0eMEemx5lSh/7rv/QDT3KYEcCNgxA=;
-        b=uoR+ZkBnCAfJcbWjmhUfsE7ynu79niiE6G2gTI+5VkW+0s/LXhzLfTWNgUe5QPsb4e
-         TqaT3plj3jrAgCk5Az9fW3OBXtHxd0jTUuBR+19cnsBbfeEhNhMiLvHW0N013NrmSdHn
-         1gk+g11S1BpdCAXKwGLLVtN150J3bj8bGMn5KDEhMRmLfo2eMWmh7XzJl2+8CpicMzaD
-         DSX+zCT+hW3FRNLnb6917FELrEjfJz9TPkB3slCiDOHeA7onEwSpbhX9u0L0upu7qpZw
-         WxJYjQeDFEZrdFMsu2YDqvYQeWxTbe8SxDY3BfQfjTEErXpXzSDjz53jdInHDJK+aLpD
-         pX8Q==
-X-Gm-Message-State: AOJu0Yz5mw7TGjEbh9rphx8taHiOqjZCdD8JC0dmk1Vnh9CUTOyj30Va
-	QO0QNqPGdEEVmoUnZj2GV6YUrmnrRGelyWlTiSBp1LyT80MxdeaWLrC4gw==
-X-Gm-Gg: ASbGncsQeKADDBgnXOniy4EAcRvKjQ0z+twj4PxbBLWYtbySnZJ48Ms5hEHDQwU/N6r
-	/hxonkp9Ww9MQdOIzKKCl2rl5/hnsDU3ImSGKA4uTCevC/89C5C6/FClrTW5d4tXjekYbv5sTjv
-	P4/PGEb69y6xWoE6egdexOphXQjZSg+eqDKzdWWs4PzdGuyTto61qKFi2aVUdOiXspcWXk84pwy
-	tfMi7rbTWL5xm76fBwC4npVH/krp+mfQcO0yQy0Dw9lUVt31jzJQg8eGDNMllxDoPcQB7YpnLv+
-	odbbaHErfR6wj6UnFC/mk+mPPIESRV2B5CPJio7dxvpZOo83ZTjKR8G9TSg=
-X-Google-Smtp-Source: AGHT+IHveVmmj7p/32fQC6MMJdYC5AgC9TFZ58CZQH4axmy8EPevmDh2/dDO93qvb3TNCbcXv6nkGA==
-X-Received: by 2002:a17:906:f58f:b0:ac3:1763:cc32 with SMTP id a640c23a62f3a-ac738b37e88mr1309921966b.29.1743522299613;
-        Tue, 01 Apr 2025 08:44:59 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.140.143])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71922bf43sm776731466b.6.2025.04.01.08.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 08:44:59 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: add lockdep checks for io_handle_tw_list
-Date: Tue,  1 Apr 2025 16:46:16 +0100
-Message-ID: <ffd30102aee729e48911f595d1c05804e59b0403.1743522348.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1743524009; x=1744128809;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=crYPG9KAfumDvhww+Tnd6Ddcecr+v2JwT03XGk7Szzw=;
+        b=BdCNmrIoC3TSdxT7a8xyuZ8mqxKB40RnbBC7KihZHkGysM7XnN8wjdg818Y/vjZrwb
+         1vMx38VWljjqxB99V/nPFCNNb6TsCbHOGPn3HcnDfBMyYw0g+7Hhitw6jqRoXYLIoAzb
+         9h5lLLUmYkpYk1sANIvtanR47kfqHV37BQTvVh35TgJcJlmEnCGOHUkgQzIbKjBLgWVw
+         IgiMh177iaNnL8SVZeoO+s7Zk3r1bZmx4vlzR8FizQb2UqlJdkwBa7eeNgWvmuIyyvWS
+         Gm/FEOPXSpnOoPFH0RWWIE2VUkl5zItbxLHPK07ZllmrYHchy9DadPT0X7T1DpqVydI9
+         xRUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsXM0Nqg1wlsOm4Z05bd6cPNwepc4dLdrDqO/u0bBxEZ3eu258BCIk++SlgsaNoYkys5bpv16yBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4p5HtPp2/EOhjuMq77X4UairKjhY3x6Kuc7DK+d7v9Slb4ttd
+	C89/9mkZ76BL70NjhRHXWECiEMJW1C9z4wzwMzAqsBD6xk27xJ+4C+XHxozVtMY=
+X-Gm-Gg: ASbGncv0IOQ7FEoX67HpWMPQ3KFmiDTWI6fevEBF1eXT+fXKQOSZNYsvefobxovgnU3
+	EiKYHKMzjI75AbV0ROHg3U0Ol93LuR0MiAiAgk433kMe8qbY6lX4X3p7P0PP6KppBOAmoR8OOiz
+	VXM8AREdkWf/Mk7MWBQU9P13Y7toCmTdnk6eWDcdGk0S7a2IFvLEUF+ZrZUd6MF7I0MO55UZZhI
+	9A7HmCkWEjPLgxAPxQg3QFbR3sNps/yPq3laiSC+BZdEjpoDsQUntJ0RSS4TwxBxC/kPF0dJ97Z
+	Ia0safFCYoGnOou7eqGzXQdK/sxF2023MYL/B5dn4A==
+X-Google-Smtp-Source: AGHT+IEQuxqU6W0i2KV7/oh5TeZrFFWbyo7vnf/AfwrpX3AAoL8zL9J1fkgVgW4pxIPF7NrabRaung==
+X-Received: by 2002:a05:6602:6a8b:b0:85b:4940:65ab with SMTP id ca18e2360f4ac-85e9e865794mr1373580239f.5.1743524008384;
+        Tue, 01 Apr 2025 09:13:28 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e8ff80297sm203241339f.7.2025.04.01.09.13.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 09:13:27 -0700 (PDT)
+Message-ID: <65765d68-cda0-41fb-acdf-58e7b5c1243f@kernel.dk>
+Date: Tue, 1 Apr 2025 10:13:27 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring: add lockdep checks for io_handle_tw_list
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <ffd30102aee729e48911f595d1c05804e59b0403.1743522348.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ffd30102aee729e48911f595d1c05804e59b0403.1743522348.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a lockdep check to io_handle_tw_list() verifying that the context is
-locked and no task work drops it by accident.
+On 4/1/25 9:46 AM, Pavel Begunkov wrote:
+> Add a lockdep check to io_handle_tw_list() verifying that the context is
+> locked and no task work drops it by accident.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/io_uring.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I think we'd want a bit more of a "why" explanation here, but I can add
+that while committing.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6df996d01ccf..13e0b48d1aac 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1054,6 +1054,10 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
- 			mutex_lock(&ctx->uring_lock);
- 			percpu_ref_get(&ctx->refs);
- 		}
-+
-+		lockdep_assert(req->ctx == ctx);
-+		lockdep_assert_held(&ctx->uring_lock);
-+
- 		INDIRECT_CALL_2(req->io_task_work.func,
- 				io_poll_task_func, io_req_rw_complete,
- 				req, ts);
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 6df996d01ccf..13e0b48d1aac 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -1054,6 +1054,10 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
+>  			mutex_lock(&ctx->uring_lock);
+>  			percpu_ref_get(&ctx->refs);
+>  		}
+> +
+> +		lockdep_assert(req->ctx == ctx);
+> +		lockdep_assert_held(&ctx->uring_lock);
+> +
+>  		INDIRECT_CALL_2(req->io_task_work.func,
+>  				io_poll_task_func, io_req_rw_complete,
+>  				req, ts);
+
+If the assumption is that some previous tw messed things up, might not
+be a bad idea to include dumping of that if one of the above lockdep
+asserts fail? Preferably in such a way that code generation is the same
+when lockdep isn't set...
+
 -- 
-2.48.1
-
+Jens Axboe
 

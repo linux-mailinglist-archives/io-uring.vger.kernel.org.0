@@ -1,53 +1,79 @@
-Return-Path: <io-uring+bounces-7339-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7340-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D2DA77AC3
-	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 14:23:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A509A77BD1
+	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 15:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1991886FFD
-	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 12:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39EF616B363
+	for <lists+io-uring@lfdr.de>; Tue,  1 Apr 2025 13:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBF2202F7B;
-	Tue,  1 Apr 2025 12:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58A81F0982;
+	Tue,  1 Apr 2025 13:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NNx7X1Kg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h5ugPYgr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237C51EC01F;
-	Tue,  1 Apr 2025 12:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30E01EEA3E
+	for <io-uring@vger.kernel.org>; Tue,  1 Apr 2025 13:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743510186; cv=none; b=kFtQzMQ4KIb/2CD3NkC8rES50yDZ7LNE4ldukAh9cnzVlrf5IRpJH3EiIiF+90B1htTg2kOlbCI1bR4E66YYI3jsotM88fvC7GaKwbxS/MoNpjzmcgtHF/RAOqCruWExcp1JnQ3UTq6sPP85fGVJQg74e29oMbMiXfrZyYQ9Xsg=
+	t=1743513188; cv=none; b=YGfiaITcAjORcdG8P+2yUvSWO7Nnl+AzyNoy9KUvJepk9ive5nqc9Lb0GDkj/+1382ql++i26YilVrIqfHx0bQf6edqX9I3t50gxB22u0tlcB1vfKWp5/WoX9pPSUMOpGIFjkMiBgCL+PBAib19S3IugFH8tMWzEfCunZsauo6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743510186; c=relaxed/simple;
-	bh=nuFVkx1gSbh4qc7RrSJfuZzmwSyBRBVnMv6MbRTUtVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M+3CGc25SHpXV1eiiC/ujzSosyAZRhsFgPnqfapoSDb5nubHKQemvyLGzGmNIvRYsm/FFxC6LDLgYNQqFCBf9Hs22CYP54pjb0AofitVcdsCQm20kvF3J0o7PosJ1Y5FkpVWO0t0jNLDcEX11RapvoDkqbifa7JdU+F5dI6Jtc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NNx7X1Kg; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=fXdP5m0ZfPSz1DCg8m7bHCvssJrloz5WEMURjzb5wGU=; b=NNx7X1KgxaoNizApKT4nEGh0VL
-	TGXirsgcIpnzdque+dVehm+1Tms3SXSsd7iM+6q4mUCrukCWCzPb/kRCv/sWx7yfj1mHD9NU7X6oo
-	epSzGFjQ4i5pCNGDZ8QPQgJ2B6Re9BC6Ic1yBAfMTuxRJRIzF8JRwzrmeFYIpXjJOlTA4ZYCL5do8
-	ZXZfYvn8pBVK6gXe68FC77o8qpqw3oTmlW5HTc62MArhedoCnqSIkZItfNurjAp5ZL7aQ3vcj1isa
-	cpWbEDYpECNC8BStyIHEbTHmr+MyjMxWa/mLIsm5UpwuJKQZ9Oy6QjDb2MPF0QJFHSQyp46vgkHts
-	vSV/eLKzGqGbmWRDHFg2h9Gp/NLJlQ1p55u0hN8SVsl/TkKI6+b3vm5ZUkb0CeiPnAYUdAw0kygT+
-	g70lflOMXItrRQip5T+0JvwyCbtEkovTQg7l4G1+ZAUuzdVHJgcZf0MkUOq6EkXxnsRniPEgSIL2e
-	pp2AWQE9Cjwn43SOh2NEtikk;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tzadp-007fH3-2j;
-	Tue, 01 Apr 2025 12:22:53 +0000
-Message-ID: <90334e83-618b-41e0-a35c-9ce8b0d1d990@samba.org>
-Date: Tue, 1 Apr 2025 14:22:50 +0200
+	s=arc-20240116; t=1743513188; c=relaxed/simple;
+	bh=Y17B0019XLV7AEbq7syUavp2Ljkx416PdM8lPWJcHOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Uxe86PZD77E5rriEFmjyr7oggoaVjCnl+AkCk0LCokDG8J8jakoGBEadwC7UlVtXFQzIrz4mkO0Umlh5l2M2PjlNgN87LfNwaXzT3E0MrpCDvFXLYgaHMTTia9elOlj3SYYDaIFRK2XdIH9F1Eb+qKU80IZ6VSsdxWgrsapYyNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h5ugPYgr; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85b40c7d608so485488239f.3
+        for <io-uring@vger.kernel.org>; Tue, 01 Apr 2025 06:13:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743513184; x=1744117984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dLVkSTEvuc5xjQBTF8WVqNAg0DDVts1ja1fSI1qTvZM=;
+        b=h5ugPYgr0NOqYRSG4e7rz9wgj1V426oD0XabsPiEmmFc7zZqzBaCgCq6viJxf6WJWS
+         l9Si0Ut9e0+bJH6ZMRmRKijAhjObz1fNkX73PB0zjB7iApmCGUytAcsBMoWVL27+VU5+
+         ree10oNUiXOMjglSjo3YC5QOVPWJyQ62JJh565Tt5Kfd3LbQubcfPxdI0Xypm09mDJLs
+         DSpfBrBhYrLFoQS3yVP6uq8o7fQu9NSRCO54oOZlenFXQrLvNIsmrs3W4j48mIgtCkfn
+         hcoN5ffI42wBldXn0IUT6NpZV1hIPgWesMihcSsjCIeyLbGtWyJYahy8csj1WHTHSkFK
+         SNyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743513184; x=1744117984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLVkSTEvuc5xjQBTF8WVqNAg0DDVts1ja1fSI1qTvZM=;
+        b=waWJcAVOGV6uTDI0kqUIKjvH5DdYMYGsZy07pdg1PRjJYj8hsNO0svqTW1+F1Jg/1z
+         Wm3ZF1YWF6IB4r29dVz7DA+YMyKE5SWVYDEgSL6CuorLN+5zgCdCRvIBhp086RLoIIKA
+         EqDli+pFxJnCdEor12sbB0TUSkJO6ksXlaXkckCBl2MytXQv64wFzoa6jA4h738J8Jz2
+         28Mbe5c/depArEiyEFvHwvRdZffSEhkP1xtuVyM1XRE/5qt+EhwR3LcqnJhc7UHMJUTM
+         anKLheYRqfEEtPRTLhSUcpSQ4SLHR2cKO8auYnBhvNuvrvDB5h13MmlgpFLSXsS/6Y1W
+         nr2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXq+MgOj3JVWAiiC3meZ989mxDUJGHBuJWJdlvUVxVdgoF9rW2uqLStzHK2zu6qh29BW//iiurnFw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvxSsm1Rq1u+6kXMvezh3ncXKoB4+bkFR7p8KmH2wnM2CL6DGi
+	6Bsgu3NFwrCeOtT3LQRH+MTTMRhKRUR/aICFia9c/btirYmGgXTd2yrcjynnV70=
+X-Gm-Gg: ASbGncuPntAl6M521ROQF1XilnFA1l/01bcXeoJY1L2J/kuPYe6GN/j9nt7NMeU1FvT
+	rOVkALbBxgtu0dbagV/70F+BK41qVyDhkT7knp8nKEXdqDKXow1HqHZkyJQy+gXOgRshBJJlz1m
+	idPvEKLI8ejzLhI2A7rWnS0X1ahOp8EYSLApI7It/LzClW8enwkXj5wZCy84Opr8TuWV2BwGsJq
+	OfEv9ZZUjkXEDYclDsuG0X3zKKkuhmDhnY6g9oluwvhnHdrdStaUj7zEC9AS1ojz7ormnktm7fW
+	WwAKGX7MV24kdUGUCimLoSW2fD7L+nSmxZOhvQCtlrlxLEbTlIiS
+X-Google-Smtp-Source: AGHT+IG2Myb1j3bgYJCBjZwS8JpzBECAvjWKCz4PrTlCmzxFy48v9E6ItwzLtAYsuFCEKgHxXkPcmA==
+X-Received: by 2002:a05:6602:4181:b0:85b:505a:7def with SMTP id ca18e2360f4ac-85e9e85c51amr1255843539f.6.1743513183562;
+        Tue, 01 Apr 2025 06:13:03 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e9027bd75sm214465939f.42.2025.04.01.06.13.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 06:13:02 -0700 (PDT)
+Message-ID: <968861d1-23c0-40e6-9f7e-c306db54bb8d@kernel.dk>
+Date: Tue, 1 Apr 2025 07:13:00 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -55,102 +81,24 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] net: introduce get_optlen() and put_optlen()
- helpers
-To: Breno Leitao <leitao@debian.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Karsten Keil <isdn@linux-pingi.de>, Ayush Sawal <ayush.sawal@chelsio.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
- <willemb@google.com>, David Ahern <dsahern@kernel.org>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Xin Long <lucien.xin@gmail.com>, Neal Cardwell <ncardwell@google.com>,
- Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Oliver Hartkopp <socketcan@hartkopp.net>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Robin van der Gracht <robin@protonic.nl>,
- Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
- Alexander Aring <alex.aring@gmail.com>,
- Stefan Schmidt <stefan@datenfreihafen.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Alexandra Winter <wintera@linux.ibm.com>,
- Thorsten Winkler <twinkler@linux.ibm.com>,
- James Chapman <jchapman@katalix.com>, Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Remi Denis-Courmont <courmisch@gmail.com>,
- Allison Henderson <allison.henderson@oracle.com>,
- David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
- Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
- "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>,
- Wen Gu <guwen@linux.alibaba.com>, Jon Maloy <jmaloy@redhat.com>,
- Boris Pismenny <borisp@nvidia.com>, John Fastabend
- <john.fastabend@gmail.com>, Stefano Garzarella <sgarzare@redhat.com>,
- Martin Schiller <ms@dev.tdt.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-hams@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-can@vger.kernel.org, dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
- linux-s390@vger.kernel.org, mptcp@lists.linux.dev,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- linux-afs@lists.infradead.org, tipc-discussion@lists.sourceforge.net,
- virtualization@lists.linux.dev, linux-x25@vger.kernel.org,
- bpf@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
- io-uring@vger.kernel.org
-References: <cover.1743449872.git.metze@samba.org>
- <156e83128747b2cf7c755bffa68f2519bd255f78.1743449872.git.metze@samba.org>
- <Z+vZRcbvh6r1fnZL@gmail.com>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <Z+vZRcbvh6r1fnZL@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/1] io_uring/kbuf: remove last buf_index manipulation
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <0c01d76ff12986c2f48614db8610caff8f78c869.1743500909.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <0c01d76ff12986c2f48614db8610caff8f78c869.1743500909.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hello Breno,
+On 4/1/25 5:15 AM, Pavel Begunkov wrote:
+> It doesn't cause any problem, but there is one more place missed where
+> we set req->buf_index back to bgid. Remove it.
 
-> On Mon, Mar 31, 2025 at 10:10:53PM +0200, Stefan Metzmacher wrote:
->> --- a/include/linux/sockptr.h
->> +++ b/include/linux/sockptr.h
->> @@ -169,4 +169,26 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
->>   	return memchr_inv(src.kernel + offset, 0, size) == NULL;
->>   }
->>   
->> +#define __check_optlen_t(__optlen)				\
->> +({								\
->> +	int __user *__ptr __maybe_unused = __optlen; 		\
->> +	BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));		\
->> +})
-> 
-> I am a bit confused about this macro. I understand that this macro's
-> goal is to check that __optlen is a pointer to an integer, otherwise
-> failed to build.
-> 
-> It is unclear to me if that is what it does. Let's suppose that __optlen
-> is not an integer pointer. Then:
-> 
->> int __user *__ptr __maybe_unused = __optlen;
-> 
-> This will generate a compile failure/warning due invalid casting,
-> depending on -Wincompatible-pointer-types.
-> 
->> BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));
-> 
-> Then this comparison will always false, since __ptr is a pointer to int,
-> and you are comparing the size of its content with the sizeof(int).
+Want me to just fold that in with the previous one, it's top of
+tree anyway and part of the 6.16 series that I haven't even
+pushed out yet?
 
-Yes, it redundant in the first patch, it gets little more useful in
-the 2nd and 3rd patch.
+-- 
+Jens Axboe
 
-metze
 

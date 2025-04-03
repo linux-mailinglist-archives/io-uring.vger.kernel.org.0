@@ -1,79 +1,78 @@
-Return-Path: <io-uring+bounces-7381-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7382-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A66A7B058
-	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 23:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FDDA7B204
+	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 00:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAB03BE0E5
-	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 21:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E015189AF42
+	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 22:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD011A2C11;
-	Thu,  3 Apr 2025 20:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3EC2E62AE;
+	Thu,  3 Apr 2025 22:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EP3SeADq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kL/hE8Vh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0941F872F
-	for <io-uring@vger.kernel.org>; Thu,  3 Apr 2025 20:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7AA18CBFB
+	for <io-uring@vger.kernel.org>; Thu,  3 Apr 2025 22:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743712007; cv=none; b=JKED80cSEwNrsmAKHxFdt2uf68ShnCCYoeX5dv6N5vif34CU9GCCntbz8xiAwGnBUd19q7WJk3rf9I3BAYDq39uyT/H0Kk602Pxa53gT1QP2X6ywR38jJ8YV3r/u08NGLDTGxZwO1R2e0KtFouNMF/Thn5jpla0ULuUBNVpf1jI=
+	t=1743718996; cv=none; b=ktEtLBbbm++Wg0dX0XlBoBpKIgC+VtI5YFEPv8VT+xx8iVrbRjySWQ1J4Fcxq3m06jy/9egKV8Lq34w4sK+VJuaBF6LVPtoiz40+6hbNd/PTS/V1nLWCTCudGAUkN1jzlidofUBXGaiap8Pyl9JvVTK8sdT1MvqL1hUgwZPJCZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743712007; c=relaxed/simple;
-	bh=dUs3ikQdh9urwqoQfdHe4pEYmUGd5G3N6MeYGz4SS0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hi//l6j5hCQQhlHvG1TbA8FBCd+/jnlNtAp75g/p+zz4ErtSOjUIbBlQ7w/of6b7UBy4r10NDqkq2YwjyWJgMJbgKw7ML75idVBqLSxI4kUKwEpiXuxTxz/rAUktkRnJQqdEBmsEzHxXfaYWimeJ7hLoBKk+/OJmKrE4xNy7RO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EP3SeADq; arc=none smtp.client-ip=209.85.166.179
+	s=arc-20240116; t=1743718996; c=relaxed/simple;
+	bh=opVZbBqBReuW36Vy+9r/IkhG6aZI8JbfmChiSky7BUs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KgGR/3X8rJodn04zEBdhzfuXJD6eyy6XFx5xB5T7+6vcRfZHDohbU3m7HeS+CRjigd2SjXSm86vU6tg6rfjiHU/JQ/cMCQh7nztzmNeS4WNF6HcsUrQiGeGjaaBtGX7CAFW3L965FvYdpiFSgB/FQnoT5piOiDKAPESznqLRis4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kL/hE8Vh; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso10497775ab.0
-        for <io-uring@vger.kernel.org>; Thu, 03 Apr 2025 13:26:42 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d4436ba324so13445755ab.2
+        for <io-uring@vger.kernel.org>; Thu, 03 Apr 2025 15:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743712002; x=1744316802; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9yX5oMLVRLKCtHtM+a4BLeMyVq9i0SQTDEEgNqzkE24=;
-        b=EP3SeADqbuz+aw5utz5ILZzo6bTywC/v3r/356O/fufuke785C2EwC80Vz+wssPIV+
-         I1MVD4sd5TGRheNwCPA5qsMnDa3I8oCpChxV5Q1m6xNw4baeagYzMMBCIXJc/KsHdb3j
-         nTp+BWF1T1fwI/FqRNogY+25Ofo61t32rR9bFm+xKF+IQ5+6hcaDJ0QB5xKgYl+7CXem
-         6dPFwPLj87thYWLipD4RItNHLxCaW13yWgFywXyRs5+nTWq6lN1p6ErGH+mVMf9ejUjA
-         MkGadT+iroH+MytRTq24vpu88Ny/UVgvafJtWqZfg6iZaUznrnPwkU+AcSUJaz7bIkXL
-         xIpw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743718991; x=1744323791; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YMDkGkGsFc6bLNhDydJiLiUCQZo2g13CLPlUjPWAPnY=;
+        b=kL/hE8VhjtZvqGbAI+ws+KRhFxMjeSQVJsvCDCP5DE9s3rfkmOsGbWOHp5n4bLb7Tj
+         B4lgHl041F9kQUzDBBbuRoJnoFz0QnNoDWs9ZpS4lEJV7GYzz8zqf9ToV4SFTCrkJpqK
+         77sISkeKkKZ1iLmbhpZxwNdjYul4r0hJwFgUDxuEsUiP645zNYKxhFyXdILjU11ApiMb
+         +8XhAkMkKnYbbqtsPOr0n18Edl8V6AUaFXk8TTwaQAULTHUmEhVXGFNbf8e8oGCilGR6
+         bjeuJY/PbrJXFeREjYGJttkaWm2Ur4gR1Rj0rLoqDB4JP5aLz3lSlgxh2mGkSbruqd5X
+         n8Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743712002; x=1744316802;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9yX5oMLVRLKCtHtM+a4BLeMyVq9i0SQTDEEgNqzkE24=;
-        b=PzocEBP9zbUU+3VW4YfxWO0Xh03jsH8V/0zcRIruOEUwX4zwjeY5feBpU7Zxk4g98F
-         iTHFuL3MqJfJ9B2SY4EY0cMvWHHrxAVmktmDbIt2yE1DEQ3w/O2/92as12X/3VkgurxK
-         NJJRNgMb4J/zc7vVSrpH1R71ZjrP3D6HQk2rLJVnfxcJcLuzcR8wU40/5lmoNHGeQXSI
-         psUyZA9neiY8S9LdszPZQ+w/n5gXK1MpR5PVI+qUr2UqaF8/Rn8CyLj03bVKOyqQkIxS
-         lJU2iTGN7vQYo4zNbV/pjWZgvBPZEoFL8fka4dSAJRbj98sNyupIJMecVZ8YmUOHahmS
-         R3Ug==
-X-Gm-Message-State: AOJu0Yy/l7IYYgXhp6w5V1gAz6ZkpHHCFNdjpAElGnWdh9g62j2++txI
-	0RK3lMMZty+BB4d9VRfsSPeBY8eodZLrD40LuoJdf0gxvLcMYfxMDlQMxdaiw4A1ji5hTlIGFtq
-	P
-X-Gm-Gg: ASbGncsluJP7t2yY67X6JcQPNyk81so0jO8U6e1+RXfra8+7X7WfgHK5IiqptjWqBtQ
-	g7KQBefeIS7/KHX15UJQb0dx6v8ir8vtvi1aaQvt+dd5RxFhkbO56EnyFmjEf1MS5h5H+l7Okpb
-	PHaYIQKQHCud1LfXSCvbPxxS3du85ae9kGkJoEeIhF1rR0WluQtQ8WTPLwkoTATO5LxRoyYA5Y/
-	ZQ4kQ2UAP+cjKbB/EixlNx8sjJvMlCnWuehfPzrhX6bcD+vJ+oQujrzxD1adqwWZapWtKAaustW
-	eCyIUfOVc1yjq/aq9RAx2jG5PSeWIvuOHbeL2wa/
-X-Google-Smtp-Source: AGHT+IEBeuIOh1oqFqGYP0SFhZ1rgiR6eJW6xc8I/NaV9hYSutXgBsQuxXeUltzrgQOZ9D45Nqv64A==
-X-Received: by 2002:a05:6e02:3108:b0:3d6:cbc5:a102 with SMTP id e9e14a558f8ab-3d6e3f1b250mr12069775ab.13.1743712001857;
-        Thu, 03 Apr 2025 13:26:41 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4b5c49cacsm461012173.40.2025.04.03.13.26.40
+        d=1e100.net; s=20230601; t=1743718991; x=1744323791;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YMDkGkGsFc6bLNhDydJiLiUCQZo2g13CLPlUjPWAPnY=;
+        b=rkchwHbkDrIzNGZJZnj62l3DE+du4KHCjTudjeLiYNJXLs25nmpwXtvPL68ONotqqT
+         tgmY0W8RR3d1VEUZm2ppcNO3yC0I4gYetsXH1ZxJgpUGSwOhc++/oTTAIfC/YCABfkys
+         uUgrlwsr3LmPV1A07Ik9FqItw19p+tVZKDj9PaUcHOl2Fy+tL71wF8VjjS/0dvbdJbrr
+         9+1EPJ/T7pOYAjpWf+tIZfLbDAuHiyl0bnY5gfodzK3CLTkv5ivzZFJzWW0CleW4Hyov
+         NYjwfzhGPmBuA4htspaac+ggsZfViNuySw32YjczSt+IkSPmZ49YixBY51FXCyhZ0YF8
+         tx/w==
+X-Gm-Message-State: AOJu0YyIINRQTm7ZtIQpNDSiEYotcocIB7Vxwg+B8GxmU2bAk8GCBnpV
+	7MK8P5/eMSVkOcXKEUr3CJKazpmt+94e4y2lbQmlxHG+ikBCsrbWR07TZCdXjxf+mtUUiG45EBJ
+	o
+X-Gm-Gg: ASbGncuhET5rAoNbjHeNGQeSWvAefkICZviCZhC9WFM1YUo8/m34VRBMB9Unw7ztC75
+	2NhBE1QvkX8jkpV+nzKv4sfBAFm2FF/IhCL2S3WtNAMHt3nPXh0WO+e7GMN+bS/KL/gVkOFMtsB
+	D8nq3kWNoQ+n3zhXkV/7L/vAj48IkgAqh6Uevgi6gR5e10qn0+DBiX8GbmEoLkZ+jCfiFSLQVYM
+	QWayB5A+VJK+DXGosqa2hVPX1PeztPzoAXttE3DmAhFa69QhO6Kk8dR72MP+9LGI4FiaCM9aDaD
+	clIi/mhjzX4fB6xq9JC2jdlcq/fpRPx05kSEMIVaZO9Qz0cn+f07
+X-Google-Smtp-Source: AGHT+IHG0Zdm/hNwzrRzbB4oRg/AXx/TKglOABebm//DJBAFcC3tqCBBbqAm7PV/KcsefFhhDTzBwQ==
+X-Received: by 2002:a05:6e02:3e05:b0:3d6:cbad:235c with SMTP id e9e14a558f8ab-3d6e3efb961mr13077705ab.6.1743718991500;
+        Thu, 03 Apr 2025 15:23:11 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4b5c2e8acsm511550173.1.2025.04.03.15.23.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 13:26:40 -0700 (PDT)
-Message-ID: <94da2142-d7c1-46bb-bc35-05d0d1c28182@kernel.dk>
-Date: Thu, 3 Apr 2025 14:26:40 -0600
+        Thu, 03 Apr 2025 15:23:10 -0700 (PDT)
+Message-ID: <2f74c42b-7f6a-4d04-b7f2-e0ca5eb33ff4@kernel.dk>
+Date: Thu, 3 Apr 2025 16:23:10 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,46 +80,162 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/sqpoll: Increase task_work submission batch size
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <20250403195605.1221203-1-krisman@suse.de>
 Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250403195605.1221203-1-krisman@suse.de>
+Subject: [GIT PULL] Final io_uring updates for 6.15-rc1
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4/3/25 1:56 PM, Gabriel Krisman Bertazi wrote:
-> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index d037cc68e9d3..e58e4d2b3bde 100644
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -20,7 +20,7 @@
->  #include "sqpoll.h"
->  
->  #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
-> -#define IORING_TW_CAP_ENTRIES_VALUE	8
-> +#define IORING_TW_CAP_ENTRIES_VALUE	1024
+Hi Linus,
 
-That's a huge bump! This should not be a submission side thing, it's
-purely running the task work. For this test case, I'm assuming you don't
-see any io-wq activity, and hence everything is done purely inline from
-the SQPOLL thread? This confuses me a bit, as this should not be driving
-the queue depth at all, as submissions would be done by
-__io_sq_thread(). And that part only caps when there is more than a
-single ctx in there, which your case would not have. IOW, it should
-submit everything that's there and hence this change should not change
-the submission/queueing side of things. It only really deals with
-running the task_work that will post the completion.
+Set of fixes/updates for io_uring that should go into this release. The
+ublk bits could've gone via either tree - usually I put them in block,
+but they got a bit mixed this series with the zero-copy supported that
+ended up dipping into both trees.
 
-Maybe we should just not submit more until we've depleted the tw list?
+This pull request contains:
 
-In any case, we can _probably_ make this 32 or something without
-worrying too much about it, though I would like to fully understand why
-it's slower. Maybe it's the getrusage() that we do for every loop? You
-could try and disable that just to see if it makes a difference?
+- Fix for sendmsg zc, include in pinned pages accounting like we do for
+  the other zc types.
+
+- Series for ublk fixing request aborting, doing various little
+  cleanups, fixing some zc issues, and adding queue_rqs support.
+
+- Another ublk series doing some code cleanups.
+
+- Series cleaning up the io_uring send path, mostly in preparation for
+  registered buffers.
+
+- Series doing little MSG_RING cleanups.
+
+- Fix for the newly added zc rx, fixing len being 0 for the last
+  invocation of the callback.
+
+- Add vectored registered buffer support for ublk. With that, then ublk
+  also supports this feature in the kernel revision where it could
+  generically introduced for rw/net.
+
+- A bunch of selftest additions for ublk. This is the majority of the
+  diffstat.
+
+- Silence a KCSAN data race warning for io-wq
+
+- Various little cleanups and fixes.
+
+Please pull!
+
+
+The following changes since commit eff5f16bfd87ae48c56751741af41a825d5d4618:
+
+  Merge tag 'for-6.15/io_uring-reg-vec-20250327' of git://git.kernel.dk/linux (2025-03-28 15:07:04 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.15-20250403
+
+for you to fetch changes up to 390513642ee6763c7ada07f0a1470474986e6c1c:
+
+  io_uring: always do atomic put from iowq (2025-04-03 08:31:57 -0600)
+
+----------------------------------------------------------------
+io_uring-6.15-20250403
+
+----------------------------------------------------------------
+Caleb Sander Mateos (7):
+      ublk: remove unused cmd argument to ublk_dispatch_req()
+      ublk: skip 1 NULL check in ublk_cmd_list_tw_cb() loop
+      ublk: get ubq from pdu in ublk_cmd_list_tw_cb()
+      ublk: avoid redundant io->cmd in ublk_queue_cmd_list()
+      ublk: store req in ublk_uring_cmd_pdu for ublk_cmd_tw_cb()
+      ublk: specify io_cmd_buf pointer type
+      selftests: ublk: specify io_cmd_buf pointer type
+
+David Wei (1):
+      io_uring/zcrx: return early from io_zcrx_recv_skb if readlen is 0
+
+Jens Axboe (1):
+      Documentation: ublk: remove dead footnote
+
+Ming Lei (15):
+      ublk: make sure ubq->canceling is set when queue is frozen
+      ublk: comment on ubq->canceling handling in ublk_queue_rq()
+      ublk: remove two unused fields from 'struct ublk_queue'
+      ublk: add helper of ublk_need_map_io()
+      ublk: call io_uring_cmd_to_pdu to get uring_cmd pdu
+      ublk: add segment parameter
+      ublk: document zero copy feature
+      ublk: implement ->queue_rqs()
+      ublk: rename ublk_rq_task_work_cb as ublk_cmd_tw_cb
+      selftests: ublk: add more tests for covering MQ
+      selftests: ublk: add test for checking zero copy related parameter
+      io_uring: add validate_fixed_range() for validate fixed buffer
+      block: add for_each_mp_bvec()
+      io_uring: support vectored kernel fixed buffer
+      selftests: ublk: enable zero copy for stripe target
+
+Pavel Begunkov (18):
+      io_uring/net: account memory for zc sendmsg
+      io_uring/net: open code io_sendmsg_copy_hdr()
+      io_uring/net: open code io_net_vec_assign()
+      io_uring/net: combine sendzc flags writes
+      io_uring/net: unify sendmsg setup with zc
+      io_uring/net: clusterise send vs msghdr branches
+      io_uring/net: set sg_from_iter in advance
+      io_uring/net: import zc ubuf earlier
+      io_uring/msg: rename io_double_lock_ctx()
+      io_uring/msg: initialise msg request opcode
+      io_uring: don't pass ctx to tw add remote helper
+      io_uring: add req flag invariant build assertion
+      io_uring: make zcrx depend on CONFIG_IO_URING
+      io_uring: hide caches sqes from drivers
+      io_uring: cleanup {g,s]etsockopt sqe reading
+      io_uring/rsrc: check size when importing reg buffer
+      io_uring/net: avoid import_ubuf for regvec send
+      io_uring: always do atomic put from iowq
+
+Uday Shankar (2):
+      selftests: ublk: kublk: use ioctl-encoded opcodes
+      selftests: ublk: kublk: fix an error log line
+
+ Documentation/block/ublk.rst                    |  37 ++--
+ drivers/block/ublk_drv.c                        | 223 +++++++++++++++++++-----
+ include/linux/bvec.h                            |   6 +
+ include/linux/io_uring/cmd.h                    |   1 -
+ include/uapi/linux/ublk_cmd.h                   |  25 +++
+ io_uring/Kconfig                                |   1 +
+ io_uring/io_uring.c                             |  18 +-
+ io_uring/io_uring.h                             |   3 +-
+ io_uring/msg_ring.c                             |  11 +-
+ io_uring/net.c                                  | 135 ++++++--------
+ io_uring/refs.h                                 |   7 +
+ io_uring/rsrc.c                                 | 126 +++++++++++--
+ io_uring/uring_cmd.c                            |  22 +--
+ io_uring/uring_cmd.h                            |   1 +
+ io_uring/zcrx.c                                 |   8 +
+ tools/testing/selftests/ublk/Makefile           |   5 +
+ tools/testing/selftests/ublk/kublk.c            |   8 +-
+ tools/testing/selftests/ublk/kublk.h            |   4 +-
+ tools/testing/selftests/ublk/null.c             |  11 +-
+ tools/testing/selftests/ublk/stripe.c           |  69 ++++++--
+ tools/testing/selftests/ublk/test_common.sh     |   6 +
+ tools/testing/selftests/ublk/test_generic_02.sh |  44 +++++
+ tools/testing/selftests/ublk/test_generic_03.sh |  28 +++
+ tools/testing/selftests/ublk/test_loop_01.sh    |  14 +-
+ tools/testing/selftests/ublk/test_loop_03.sh    |  14 +-
+ tools/testing/selftests/ublk/test_loop_05.sh    |  28 +++
+ tools/testing/selftests/ublk/test_stress_01.sh  |   6 +-
+ tools/testing/selftests/ublk/test_stress_02.sh  |   6 +-
+ tools/testing/selftests/ublk/test_stripe_01.sh  |  14 +-
+ tools/testing/selftests/ublk/test_stripe_03.sh  |  30 ++++
+ 30 files changed, 673 insertions(+), 238 deletions(-)
+ create mode 100755 tools/testing/selftests/ublk/test_generic_02.sh
+ create mode 100755 tools/testing/selftests/ublk/test_generic_03.sh
+ create mode 100755 tools/testing/selftests/ublk/test_loop_05.sh
+ create mode 100755 tools/testing/selftests/ublk/test_stripe_03.sh
 
 -- 
 Jens Axboe
+
 

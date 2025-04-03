@@ -1,114 +1,179 @@
-Return-Path: <io-uring+bounces-7379-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7380-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF739A7A543
-	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 16:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44695A7AFE9
+	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 23:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867F43BA314
-	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 14:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1506A1629B4
+	for <lists+io-uring@lfdr.de>; Thu,  3 Apr 2025 20:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7627A24BC06;
-	Thu,  3 Apr 2025 14:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A875025A623;
+	Thu,  3 Apr 2025 19:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aw7/Mhsp"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2GXLyLfH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YNmVbSmG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2GXLyLfH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YNmVbSmG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4924C08A
-	for <io-uring@vger.kernel.org>; Thu,  3 Apr 2025 14:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5651254877
+	for <io-uring@vger.kernel.org>; Thu,  3 Apr 2025 19:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690745; cv=none; b=oksZDJ8SCn7Dem2d+nUKEO5isVpMZTPif2Twt0Gzl6FnWLBFH8YejoipTgOQ1gJxcY6T1l3fosZEf7/7eWrBaUz0jlxn4N/GNHm/kcStkq4iefcuNQ/K21Tw/+5ztl/bFF8/R2Cx4kHEUJSqqQUbZT59E0bhnL1uh9pE55thtvs=
+	t=1743710177; cv=none; b=pF1iYcVEZJ+O6mnrGIo2HMXrqSH6B6eoVDvYj+rkTY8I855klHCypCrI26nwHDikzegT4893P9HOnMAhSXAEOyh87n4Xdx1beMIaFzM6whVa0m6a/kIERdHb1DmhJOUcnyNAPeKbZs8uRxRS+LEFAyLAsgvy8N4FWfMG8dVX3IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690745; c=relaxed/simple;
-	bh=6ycuuFGYDUoISrOZU+vg45uaTxz5KKbLr+W+6GlK5vs=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FD6WqSd0vTVDvxwyah1ZUyHYTR1mBHDCKnnLnvP0vxIA3ai32n98K6KwjZSY5+lksETT7XnDK+Y6mMTsMeAXbLHrNfsG+xxKSBzQ6H0CEzDh/xjrBpFuP5vdZ8nYk0P3/CFWCJf2tx7Utl1zyCXekqaJf4v8b0XpceloEP7L6Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aw7/Mhsp; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d6e11cd7e2so2700255ab.3
-        for <io-uring@vger.kernel.org>; Thu, 03 Apr 2025 07:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743690741; x=1744295541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c6QhqDBfLB8BMGQdUu9jL1ZFuZXg4bem5gk6VCsoPzk=;
-        b=aw7/MhspxtaZ3HFF7IlfS1rz88Xgo6jHh9wRCNipkZReYy3tjpZTjLVrSywGF8UeBz
-         ZmWh68heute6ugAQNXzdqKqFxPoYqnoVa4r2jfXlMu0aTYP8XXC6Ghfuc9UTbk8A8bWY
-         u8By7bYoEvvV4vQpIB6N4uBVa9aI43pbbsk11/cgB48vUS29LkNSQ+9piqoXe4omdMSX
-         YUhCegQp0WwmeuNHlMWZFk/DqPCcD9ENOUWSltQrFSqtvy9jt7XtLz67gVaLRhEI5mz9
-         ZN8Tj+XLuJKgNLN/Jn5WJM54r14/HXVGHpfC3nUOur4p1s0Jj4diRrpCciznJYzbsV+c
-         bRsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743690741; x=1744295541;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c6QhqDBfLB8BMGQdUu9jL1ZFuZXg4bem5gk6VCsoPzk=;
-        b=MWM7P2JtI7ZjTB7M1KjebIQHsR1KTJnCiYBCsJlWcm2jt1reL3mcFhPBRhNUWMpUT3
-         Xe87gvUsybzWQCZkRlNTPYA+xNgaQL4lNl+BH6UOMNAEkTLxlMjXxcbVyrhMLM6kSfR2
-         rNN8Ve4pkGVldD2jq7PQVsoQPwwKKKqkyyxnAqdneTlS3j7JsZXHp+nXgFNE+kqyKCyu
-         d+9X0uos1TlPwSDe8vW1IwM2olFbS7Dl03NQipDxB6oTPCbTo41+faBmHuhcYn7+qIj7
-         RfiyfipFstqmv90AoOQ0gc3+tlz9IP1md9I2UFWHIZvuImNrAic9BV8q5y3rzwvHHD8v
-         Bbsw==
-X-Gm-Message-State: AOJu0Yz4gVDfyqBtIRJq5rLFUyAQmJTGid7H4VExzUlqYjgkZyXu2V1M
-	0Q+EI0KTKjqjmFF/Vse/uoXGidmtp6J5r1BC5hpTiN/vNtjJn7qBrEVU8l0Ei1XcEhNfeOSq+8S
-	8
-X-Gm-Gg: ASbGnctEKcXy7r/zK1J4tOG1FGd+c2V2tKUUmZhN0Pf/si7+9ttQkXwh/ttXefDC9RS
-	YPiaWPYdwfYu3dOQ2gwcWZ6gVQwStJ7CkrDl354RNiK8539pwLd+6IRjZofkfLOt75xJ0tS/u8l
-	9DXsrA36OBBX0llxnL/yWCOVcKUk3JveOXSaui5gAHLp7htVaaHn1/bJZLcqUoTBFm6VL1kMoiA
-	enl4XlcP9+FtlMmuIHeKNgLtK9KmJnYUIG3oCecYg8vJx46/5/7CqI94ZSzhB0Ol9SgMqImzMeU
-	KqFqLA76HexswGjrwSKbM9I4nu/+NZor0hyBraQLUiF1yg==
-X-Google-Smtp-Source: AGHT+IH+cxlOVxTNGwGgZR2RsF04yOPOOcnJpQQ6I3gd7WIbKZIQIzhzzJa/N5II3b+rnoo5EbXnvA==
-X-Received: by 2002:a05:6e02:3d84:b0:3d6:d162:be54 with SMTP id e9e14a558f8ab-3d6d554380emr67174665ab.14.1743690740778;
-        Thu, 03 Apr 2025 07:32:20 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d6de79f259sm3196695ab.13.2025.04.03.07.32.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 07:32:20 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <d880bc27fb8c3209b54641be4ff6ac02b0e5789a.1743679736.git.asml.silence@gmail.com>
-References: <d880bc27fb8c3209b54641be4ff6ac02b0e5789a.1743679736.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: always do atomic put from iowq
-Message-Id: <174369074004.172837.7459354560566437088.b4-ty@kernel.dk>
-Date: Thu, 03 Apr 2025 08:32:20 -0600
+	s=arc-20240116; t=1743710177; c=relaxed/simple;
+	bh=wQQSroiO+2Anp0hYg0betnfaREmugjBdVGyZEaMaFNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G16/bT9V+3eU5xDVNZFqKyp9fXGxaAAmlD4pKEmBlh/dky9XR25PLO6mUpdmzVd+aFzwRe1vp2UbyV3VzoGcZ0FaD2VBtSDRNfH1M9VsAuPo4nSgBK7MLzp+UG27y1ABZTzMCOnmAMx7plYsvfU1Pua/kyCLHGLfkUgvhUyzU1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2GXLyLfH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YNmVbSmG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2GXLyLfH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YNmVbSmG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D152F1F385;
+	Thu,  3 Apr 2025 19:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743710172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mrXHUxDrzRHebZPZsnHja139LhyFykeGWvO1UgI8n+Y=;
+	b=2GXLyLfHoF4oNS+VisH+e+kro9HFBganZX1VgGGHNnJCPWmUyqFVcX42vv2WwWSTYinwZV
+	SoF0vIKRSAyrf5jinNXOCUzxanaGafLlqFpUHD+iO23ZjRgcdp3zvpwhra7YqToUS0G8Ot
+	tkyDdwNFt1Ua6FZiA7SICqmvSRmDq+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743710172;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mrXHUxDrzRHebZPZsnHja139LhyFykeGWvO1UgI8n+Y=;
+	b=YNmVbSmGEX/L6kBigbDLOiRoXEZ3nsz54+XXoZoy2krJw4i9ahYXy2Nq2UXl2FbELf/I1i
+	LiNupbO2Pw9T0yCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743710172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mrXHUxDrzRHebZPZsnHja139LhyFykeGWvO1UgI8n+Y=;
+	b=2GXLyLfHoF4oNS+VisH+e+kro9HFBganZX1VgGGHNnJCPWmUyqFVcX42vv2WwWSTYinwZV
+	SoF0vIKRSAyrf5jinNXOCUzxanaGafLlqFpUHD+iO23ZjRgcdp3zvpwhra7YqToUS0G8Ot
+	tkyDdwNFt1Ua6FZiA7SICqmvSRmDq+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743710172;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mrXHUxDrzRHebZPZsnHja139LhyFykeGWvO1UgI8n+Y=;
+	b=YNmVbSmGEX/L6kBigbDLOiRoXEZ3nsz54+XXoZoy2krJw4i9ahYXy2Nq2UXl2FbELf/I1i
+	LiNupbO2Pw9T0yCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9823313A2C;
+	Thu,  3 Apr 2025 19:56:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yY4OH9zn7mdFNgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 03 Apr 2025 19:56:12 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH] io_uring/sqpoll: Increase task_work submission batch size
+Date: Thu,  3 Apr 2025 15:56:05 -0400
+Message-ID: <20250403195605.1221203-1-krisman@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+Our QA team reported a 10%-23% throughput reduction on an io_uring
+sqpoll testcase that I traced back to a reduction of the device
+submission queue depth when doing io over an sqpoll. After commit
+af5d68f8892f ("io_uring/sqpoll: manage task_work privately"), we capped
+the number of tw entries that can be executed from a single spin of
+sqpoll to only 8 entries, before the sqpoll goes around to try to sleep.
+My understanding is that this starves the device, as seen in device
+utilization, mostly because it reduced the opportunity for plugging in the
+block layer.
 
-On Thu, 03 Apr 2025 12:29:30 +0100, Pavel Begunkov wrote:
-> io_uring always switches requests to atomic refcounting for iowq
-> execution before there is any parallilism by setting REQ_F_REFCOUNT,
-> and the flag is not cleared until the request completes. That should be
-> fine as long as the compiler doesn't make up a non existing value for
-> the flags, however KCSAN still complains when the request owner changes
-> oter flag bits:
-> 
-> [...]
+A simple usecase that showcases the issue is using sqpoll against a
+nullblk:
 
-Applied, thanks!
+fio --ioengine=io_uring --direct=1 --iodepth=128 --runtime=300 --bs=4k \
+    --invalidate=1 --time_based  --ramp_time=10 --group_reporting=1 \
+    --filename=/dev/nullb0 --name=RandomReads-direct-nullb-sqpoll-4k-1 \
+    --rw=randread --numjobs=1 --sqthread_poll
 
-[1/1] io_uring: always do atomic put from iowq
-      commit: 390513642ee6763c7ada07f0a1470474986e6c1c
+One QA test machine yielded, with the above command:
 
-Best regards,
+SLE Kernel predating af5d68f8892f:
+ READ: bw=9839MiB/s (10.3GB/s), 9839MiB/s-9839MiB/s (10.3GB/s-10.3GB/s), io=2883GiB (3095GB), run=300001-300001msec
+
+SLE kernel after af5d68f8892f:
+ READ: bw=8288MiB/s (8691MB/s), 8288MiB/s-8288MiB/s (8691MB/s-8691MB/s), io=2428GiB (2607GB), run=300001-300001msec
+
+Ideally, the tw cap size would at least be the deep enough to fill the
+device queue (assuming all uring commands are against only one device),
+but we can't predict that behavior and thus can't guess the batch size.
+We also don't want to let the tw run unbounded, though I'm not sure it
+is really a problem.  Instead, let's just give it a more sensible value that
+will allow for more efficient batching.
+
+With this patch, my test machine (not the same as above) yielded a
+consistent 10% throughput increase when doing randreads on nullb.  Our QE
+team also reported it solved the regression on all machines they tested.
+
+Fixes: af5d68f8892f ("io_uring/sqpoll: manage task_work privately")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+---
+ io_uring/sqpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index d037cc68e9d3..e58e4d2b3bde 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -20,7 +20,7 @@
+ #include "sqpoll.h"
+ 
+ #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
+-#define IORING_TW_CAP_ENTRIES_VALUE	8
++#define IORING_TW_CAP_ENTRIES_VALUE	1024
+ 
+ enum {
+ 	IO_SQ_THREAD_SHOULD_STOP = 0,
 -- 
-Jens Axboe
-
-
+2.49.0
 
 

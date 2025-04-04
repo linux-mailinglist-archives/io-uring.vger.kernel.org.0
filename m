@@ -1,152 +1,235 @@
-Return-Path: <io-uring+bounces-7387-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7388-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CE3A7B550
-	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 03:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A55A7B564
+	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 03:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A07CB7A5D3E
-	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 01:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EC31744AD
+	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 01:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC4563CB;
-	Fri,  4 Apr 2025 01:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8A28F5C;
+	Fri,  4 Apr 2025 01:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Ok53p5cU"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LGrV44Zi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fTQ2AXL1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LGrV44Zi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fTQ2AXL1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f98.google.com (mail-qv1-f98.google.com [209.85.219.98])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029D8748D
-	for <io-uring@vger.kernel.org>; Fri,  4 Apr 2025 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B5BC8FE
+	for <io-uring@vger.kernel.org>; Fri,  4 Apr 2025 01:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743728983; cv=none; b=rTzJWRgBKmYsRxjEpdHDSpkAHnYQCOH6YMGcUuzNervx/CcKaOci9wCQVf65C0J0a+wJkuetsic2a/PYW6vsRQR/NHeFPSILT9w3+RpPpckNZPyIyya1Zb2cQy4LxhlUSDEkP5seFk5aPsAOvuk8YMSbV0v1BWbFR4FF20J63ok=
+	t=1743729503; cv=none; b=fmDwuIpqClkiWjQuom+x/yFixcObo1k8ejYd+liKl7LFHu7ZUmxmND4VuHnzJJrzEFvFOfUKU505PHOwKt+vdgXy4yUEcBFm7o2yNWP8IEf1QtAgQDTPRFNHJld4eJ198JTy/59caM1puYfoWw+nnfKzi03uXKYwXu4jAUU3oiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743728983; c=relaxed/simple;
-	bh=29lT6XM9PTfZ4QzSmdqHkLSRtATT0hhp6i8w7wwJdS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKI4yJdwl7i+h1ZYS82jOeP0hVzHNUpr0WOa+RGfN5lVAD3Wm6NRBaAAsYB68nkFBa35kycjL4Qd0BuJUrYsGvM7KP2UaqMXEooH+7D6U77KIlM5LLjBJg9tX+2FnQAtxCg4hB9gK/XIihILnojhdFC9Wt3k19JduYk0DNdpXPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Ok53p5cU; arc=none smtp.client-ip=209.85.219.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qv1-f98.google.com with SMTP id 6a1803df08f44-6e8ffa00555so13503366d6.0
-        for <io-uring@vger.kernel.org>; Thu, 03 Apr 2025 18:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743728979; x=1744333779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwQEWgYNpeA/XdQZYs4KZSISRZNjHiSXarPqse8C4Lo=;
-        b=Ok53p5cUkWo8cU1moT01qVu8snJJ5mjp7gly+uVYK652Gz4hj3XzaY8EaOS4soXNBd
-         tFJle0JsSh1Fgc6bUhz3ngWUBhhaorvdnfzI6RDWQ0ldxFPmdUpssxGuxoO7ChvmIfae
-         8/lCexvd+fkJoS+8bp8kWvIeTytSSNXqTA271rvZPAlqeUj5DfmxolMRz1RhjRxpqGI+
-         w5ewCGsPn7BztHyYcbxTFBXiSWMqw4If76evALuzMQk9uxg7lMVOKN5aPMCct+aHXb7O
-         1siKM84Xy6a+FzXKE7zqohp/Z5pjMmQroY4auhQHmGspipLML1urj9iyf0LV2wg2Jq0i
-         yLaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743728979; x=1744333779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jwQEWgYNpeA/XdQZYs4KZSISRZNjHiSXarPqse8C4Lo=;
-        b=n5OrTm5qzPT6g49mPJZ3UdLZUT7SH7a6h4Sk+ICbusXFEpljOR2dMZHrYxS7mI7l8P
-         ts8h5G9ExHUbMTjZsUyRdo9b0XSIjpdsp17Bla+RjCV2mo5tDo7CFlKzIfxPMMqpIYQ9
-         +UuEm1zjs3eN4SMxMZgpdYQGSNlyPFGujAjuPAaQQjpsHg/a9cbvnulic7Ob7B08Amgj
-         jO+3tGh3KssJFEuYaVAjRfRg3BU8WbcxaKZOdn8W3nGlaaCy+0V7lhfZoQTOeil8zhzj
-         eAvDIPsRlPsPRgne4Z6HtSHoBz5fBtMn1g0TirLr42qLA6vW5zRUZPlBzps8xGNnsHaX
-         7p0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXIXcn3geW2wJvwwNoH+a42ZW135yYNRTTJcSmjAh1ALH6RemzNmFRy51LNWBW+5Gr18Jx6rJoi5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEH5ef7QHAhLE9lWmkBiKGv4EyLmcdRs5ar8rOAFsyTyufYTos
-	7gtgAgFX7uyLKvHTmseeL2r2tkrURzfBZ41Zx6pU7zyhpKR+6YJ7IENppdq/t5cS7KcBqMYUL/g
-	RAARAa4v8+QVBxHaHjE4WqKD5WsK/keCdFenicxOLJts5aSDS
-X-Gm-Gg: ASbGncsQrKXID/Mb25COGa60Q2BxDgF7YOnyE11vDz1AR1zruZR21QKvPln1yK1O/Z2
-	+XF6viZaGIdiTIMc6wNxPnLyRBwiyxOY6uqwUDck7DJ0X4/h+titl+Ajo97bVhoqXxqvPkMCSPy
-	hJlVPL/xQ6p0TozC2V5njWuUmsu2ZaM/WjUCUIcgXfGMWJ7zb/NDqI1rH8XHGifGZD1NAw0H83g
-	zW1RPfTx9Pp4s4ZN66couRnyN/I8dBYcMdAzZPCs+f0JpSRJmRB9/LtFcygCwTQgOGJg3pwPiYm
-	FmsBtAeQLQZUmIeuPblMV9yHNDb9+Td/3qY=
-X-Google-Smtp-Source: AGHT+IFbaP0mwBaR8q8i3zD2ZnPyJe0r1qMugaz1L2sPKth/VzHKfAqr2DbO/d4t7VG2fNT5giS7BAelJDKT
-X-Received: by 2002:a05:6214:409:b0:6e8:f3c3:9809 with SMTP id 6a1803df08f44-6f01e7268d0mr26670476d6.20.1743728978718;
-        Thu, 03 Apr 2025 18:09:38 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-6ef0f00ec55sm4209416d6.17.2025.04.03.18.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 18:09:38 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 844D6340166;
-	Thu,  3 Apr 2025 19:09:37 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 791DFE40506; Thu,  3 Apr 2025 19:09:37 -0600 (MDT)
-Date: Thu, 3 Apr 2025 19:09:37 -0600
-From: Uday Shankar <ushankar@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: Re: [PATCH] selftests: ublk: fix test_stripe_04
-Message-ID: <Z+8xUR/Ocbmorisk@dev-ushankar.dev.purestorage.com>
-References: <20250404001849.1443064-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1743729503; c=relaxed/simple;
+	bh=Y6KdQ1Bc4GBVEN6KJXTbRxHmSBRwRSWsbl3Vng1tZIQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AUzDusgDyPxOC/LVj9fiicU61OzN6mnnMNdzMp49R7hBvqLpv307G40U8ffk3KfxoiSmpoC4HvCkBuj2IHi0aziZaVty1TA6TIvaCn/+eLw1Ms68Fw4QUH7oZVr+Vc79q4ccm0HlRnfyuNiNjjP5u5o5ZVTbeMNoQ53H7KS5DbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LGrV44Zi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fTQ2AXL1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LGrV44Zi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fTQ2AXL1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C9521211A5;
+	Fri,  4 Apr 2025 01:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743729497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jSNBrprBzOaZrLxbv/dh5MDZsrUs70sm/59jdSyXcfc=;
+	b=LGrV44Zig5RcgoweaoRRgQZ8EE+HhUvWKD80KYGIuvRbCGC4m8AIcdrf/QZGSSScNb6CEw
+	HbN7pzk/2j/YmspZ7oI9T2iAkOgsFM9DC5rspXWmZLpKddYaLGKZ3YwoPVTgEXriUzTciN
+	Ulou8zlCG4yx3dQBP4YjTkaZgaPNe78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743729497;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jSNBrprBzOaZrLxbv/dh5MDZsrUs70sm/59jdSyXcfc=;
+	b=fTQ2AXL1su85ra6axt8xOb69fj0DQyJVY5HYq3QtvRFVCmBFVfnicNbBLFSrLWYGt0GUVy
+	7aNHEGmSdIrHQHDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743729497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jSNBrprBzOaZrLxbv/dh5MDZsrUs70sm/59jdSyXcfc=;
+	b=LGrV44Zig5RcgoweaoRRgQZ8EE+HhUvWKD80KYGIuvRbCGC4m8AIcdrf/QZGSSScNb6CEw
+	HbN7pzk/2j/YmspZ7oI9T2iAkOgsFM9DC5rspXWmZLpKddYaLGKZ3YwoPVTgEXriUzTciN
+	Ulou8zlCG4yx3dQBP4YjTkaZgaPNe78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743729497;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jSNBrprBzOaZrLxbv/dh5MDZsrUs70sm/59jdSyXcfc=;
+	b=fTQ2AXL1su85ra6axt8xOb69fj0DQyJVY5HYq3QtvRFVCmBFVfnicNbBLFSrLWYGt0GUVy
+	7aNHEGmSdIrHQHDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7819E13691;
+	Fri,  4 Apr 2025 01:18:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YAIvEVkz72dFCAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 04 Apr 2025 01:18:17 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring/sqpoll: Increase task_work submission batch size
+In-Reply-To: <94da2142-d7c1-46bb-bc35-05d0d1c28182@kernel.dk> (Jens Axboe's
+	message of "Thu, 3 Apr 2025 14:26:40 -0600")
+Organization: SUSE
+References: <20250403195605.1221203-1-krisman@suse.de>
+	<94da2142-d7c1-46bb-bc35-05d0d1c28182@kernel.dk>
+Date: Thu, 03 Apr 2025 21:18:15 -0400
+Message-ID: <87friod8rs.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404001849.1443064-1-ming.lei@redhat.com>
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Fri, Apr 04, 2025 at 08:18:49AM +0800, Ming Lei wrote:
-> Commit 57ed58c13256 ("selftests: ublk: enable zero copy for stripe target")
-> added test entry of test_stripe_04, but forgot to add the test script.
-> 
-> So fix the test by adding the script file.
-> 
-> Reported-by: Uday Shankar <ushankar@purestorage.com>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Jens Axboe <axboe@kernel.dk> writes:
 
-Reviewed-by: Uday Shankar <ushankar@purestorage.com>
+> On 4/3/25 1:56 PM, Gabriel Krisman Bertazi wrote:
+>> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+>>  #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
+>> -#define IORING_TW_CAP_ENTRIES_VALUE	8
+>> +#define IORING_TW_CAP_ENTRIES_VALUE	1024
+>
+> That's a huge bump! This should not be a submission side thing, it's
+> purely running the task work. For this test case, I'm assuming you don't
+> see any io-wq activity, and hence everything is done purely inline from
+> the SQPOLL thread?
+> This confuses me a bit, as this should not be driving
+> the queue depth at all, as submissions would be done by
+> __io_sq_thread().
 
-Thanks for the quick fix!
+Indeed, the submission happens fully inside __io_sq_thread, and I can
+confirm that from the profile.  What is interesting is that, once I lift
+the cap, we end up spending more time inside io_submit_sqes, which means
+it is able to drive more requests.
 
-> ---
->  .../testing/selftests/ublk/test_stripe_04.sh  | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100755 tools/testing/selftests/ublk/test_stripe_04.sh
-> 
-> diff --git a/tools/testing/selftests/ublk/test_stripe_04.sh b/tools/testing/selftests/ublk/test_stripe_04.sh
-> new file mode 100755
-> index 000000000000..1f2b642381d1
-> --- /dev/null
-> +++ b/tools/testing/selftests/ublk/test_stripe_04.sh
-> @@ -0,0 +1,24 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +. "$(cd "$(dirname "$0")" && pwd)"/test_common.sh
-> +
-> +TID="stripe_04"
-> +ERR_CODE=0
-> +
-> +_prep_test "stripe" "mkfs & mount & umount on zero copy"
-> +
-> +backfile_0=$(_create_backfile 256M)
-> +backfile_1=$(_create_backfile 256M)
-> +dev_id=$(_add_ublk_dev -t stripe -z -q 2 "$backfile_0" "$backfile_1")
-> +_check_add_dev $TID $? "$backfile_0" "$backfile_1"
-> +
-> +_mkfs_mount_test /dev/ublkb"${dev_id}"
-> +ERR_CODE=$?
-> +
-> +_cleanup_test "stripe"
-> +
-> +_remove_backfile "$backfile_0"
-> +_remove_backfile "$backfile_1"
-> +
-> +_show_result $TID $ERR_CODE
-> -- 
-> 2.47.1
-> 
+Let me share the profile in case it rings a bell:
+
+This is perf-record on a slow kernel:
+
+   - 49.30% io_sq_thread
+      - 41.86% io_submit_sqes
+         - 20.57% io_issue_sqe
+            - 19.89% io_read
+               - __io_read
+                  - 18.19% blkdev_read_iter
+                     - 17.84% blkdev_direct_IO.part.21
+                        + 7.25% submit_bio_noacct_nocheck
+                        + 6.49% bio_iov_iter_get_pages
+                        + 1.80% bio_alloc_bioset
+                          1.27% bio_set_pages_dirty
+                  + 0.78% security_file_permission
+         - 10.88% blk_finish_plug
+            - __blk_flush_plug
+               - 10.80% blk_mq_flush_plug_list.part.88
+                  + 10.69% null_queue_rqs
+           0.83% io_prep_rw
+      - 4.11% io_sq_tw
+         - 3.62% io_handle_tw_list
+            - 2.76% ctx_flush_and_put.isra.72
+                 2.67% __io_submit_flush_completions
+              0.58% io_req_rw_complete
+      + 1.15% io_sq_update_worktime.isra.9
+        1.05% mutex_unlock
+      + 1.05% getrusage
+
+After my patch:
+
+   - 50.07% io_sq_thread
+      - 47.22% io_submit_sqes
+         - 38.04% io_issue_sqe
+            - 37.19% io_read
+               - 37.10% __io_read
+                  - 34.79% blkdev_read_iter
+                     - 34.34% blkdev_direct_IO.part.21
+                        + 21.01% submit_bio_noacct_nocheck
+                        + 8.30% bio_iov_iter_get_pages
+                        + 2.21% bio_alloc_bioset
+                        + 1.52% bio_set_pages_dirty
+                  + 1.19% security_file_permission
+         - 3.29% blk_finish_plug
+            - __blk_flush_plug
+               - 3.27% blk_mq_flush_plug_list.part.88
+                  - 3.25% null_queue_rqs
+                     + null_queue_rq
+           1.16% io_prep_rw
+      - 2.25% io_sq_tw
+         - tctx_task_work_run
+            - 2.00% io_handle_tw_list
+               - 1.08% ctx_flush_and_put.isra.72
+                    1.07% __io_submit_flush_completions
+                 0.68% io_req_rw_complete
+
+> And that part only caps when there is more than a
+> single ctx in there, which your case would not have. IOW, it should
+> submit everything that's there and hence this change should not change
+> the submission/queueing side of things. It only really deals with
+> running the task_work that will post the completion.
+>
+> Maybe we should just not submit more until we've depleted the tw list?
+>
+> In any case, we can _probably_ make this 32 or something without
+> worrying too much about it, though I would like to fully understand why
+> it's slower. Maybe it's the getrusage() that we do for every loop? You
+> could try and disable that just to see if it makes a difference?
+
+While the overhead of the usage accounting is very visible in the
+profile, my first test when I got this bug was to drop that code, and it
+had very little impact on throughput (around 1%).  The main difference
+really seems to be around the number of ios we queue per iteration. In
+fact, looking at iostat, I can see a very noticeable difference in
+aqu-sz between both kernels.
+
+A lower limit should work, yes, but I'm also quite curious how the tw
+affects the submission. But also, what is the reason to cap it in the
+first place?  io_handle_tw_list does a cond_reesched() on each
+iteration, so it wont hog to the cpu and, if we drop the cap, we'll have
+the behavior of not submitting more until the tw list is empty, as you
+suggested.
+
+-- 
+Gabriel Krisman Bertazi
 

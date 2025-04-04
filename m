@@ -1,102 +1,88 @@
-Return-Path: <io-uring+bounces-7411-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7412-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF04BA7C649
-	for <lists+io-uring@lfdr.de>; Sat,  5 Apr 2025 00:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C594A7C672
+	for <lists+io-uring@lfdr.de>; Sat,  5 Apr 2025 00:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7393A17BBE4
-	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 22:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220BA1B60B78
+	for <lists+io-uring@lfdr.de>; Fri,  4 Apr 2025 22:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4AE1B0F30;
-	Fri,  4 Apr 2025 22:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Oc2ZgsP1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337D1A8404;
+	Fri,  4 Apr 2025 22:54:04 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CCA19047A
-	for <io-uring@vger.kernel.org>; Fri,  4 Apr 2025 22:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EEF1A4F2D
+	for <io-uring@vger.kernel.org>; Fri,  4 Apr 2025 22:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743805628; cv=none; b=ahB8oDMMh4VC46QOXBzEIxi6HM8AOC+qIiLqZATxfTT0D4b2brdRbPoTPdJlaiicj0G4brnQTbFrG3TbPghrHn5MR3n467fVkU9kgdV2AH62VJGoCWMXB11ogit4LnHn/EXjYiKu74Vlctbvjl+JdvtZW6SsEv8amylSv9WW314=
+	t=1743807244; cv=none; b=W95gskfgut29Xf8qeXmAfWGPH8B9k9U0Yf/GhDo5VfoEbYd/3jnIoDDXP37VP17zyB/gyzDYewBJ9yToxyuTC9Yx2pyoBSItCDGHpkT7AXLIuxF8CtaaTUw11UlNyjbFMTWT7FlP+MuNBRPzG2YkfUPBmEWWRhtREEYj3Dt3Fy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743805628; c=relaxed/simple;
-	bh=oDB4FOmqbfKc1ikhTffNPxD6xNsSA0M2/yxz609lUHo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=QnoBUKuIP3/9zq0qoSY5U+J+QYeo1YJjo0GjaCFx1dwadzfen+wY/qr0hiVV9xkpCW9t9RnZ+JEfWsazb3oJGa73QLpm7pCi+oUMxzqv2Y0USXP8w9kkayvOrC6xXzB9mW5jg2ipdb+763nRr1BJJUoWpwO5cWLDQ+eLvf6mUhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Oc2ZgsP1; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso12594175ab.1
-        for <io-uring@vger.kernel.org>; Fri, 04 Apr 2025 15:27:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743805625; x=1744410425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KnXKzRjUwS68PKHOAd+R3tn7FfZvEPjHDBFqIRHSypk=;
-        b=Oc2ZgsP1KxpZcBWhapIzaABigJ6gIUGMVqWP0uQvBa6RGvgAUMWpdo2BK+IOyEWchP
-         imgfJLcAVNucBoaY6OEgRRpkdGzTwCH2uQ3MxeUGe714bB79+Zjf0NYqqwyGBVrbFCFl
-         LEjzR9rsaUV4+wON0hTqfjvkWU3jIQ3t+8055FmJbuKMAKRvMqhYZuiJSN4pekSgc6MN
-         QJ3c6xtSzZmvwDaUY7HlqGXCt4Z5ZhVq+QC6YTYBe+9j8SLWY/NV2yw3PPMTF85D9uO7
-         jcmSnEd7bmyTCxno4Suk0sAHAqJn5XC5B7HrEgQvCz/HTkTHeJO/mRkqY2MBfCS2pOYx
-         umBw==
+	s=arc-20240116; t=1743807244; c=relaxed/simple;
+	bh=CCboKF0E0pOUDrcALP+xPG44ezRrXKgwlgnWWox3uZE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m4Wrq/5Nzjqu91sroR/SS07kWary1PZHEu8TAcejHq9n/nkpwzF3Bo0+9igh6zdvzWtxe3TNtS717ThdXVgejgarsc4zYySjWLS6Dmpirm2qzqpsqpVqDKWFBotnooGMTWKU+uzO4IWeTy79u/T5lkIiJcO/MebFeHBan75rb3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85c552b10b9so309255739f.1
+        for <io-uring@vger.kernel.org>; Fri, 04 Apr 2025 15:54:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743805625; x=1744410425;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1743807241; x=1744412041;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KnXKzRjUwS68PKHOAd+R3tn7FfZvEPjHDBFqIRHSypk=;
-        b=a0d3+LrP12idCkus/X5i5HUnWuyRJRWfZqmT0EPORFZs9OqPmvy5HDoj778wmahjQs
-         7vD9dEn6YKwWLNkrh6zig4XMDwO5Q1HY4MwHBoCP1NHhmOVyRWZ1f0i12Y9Nk6lc28r2
-         RJ9qPDNMTjqg9Jlfx9oc1Xr8tMxCk5f9a7X4ZHz7m2I9puev+Yru0jt/pK6QvHSkfo/T
-         GKj2UZ9Ei7oK9v9IOiqUzpzAEVTrbDhz/Z80mMzLo6JEV5rjnfbt45pnBNsM9dazSXil
-         ToRwXpq4fGx/PcOu5OarIcjsbBFBJYb1r2vI4NWPiWHSb3/7X5UopMfQyrd31O396NI/
-         SQ2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXJAclo+At4/QDBho7IaMe/kaTXovtEk+i5heF/PjLaeb379ErQXSStK2XZOpbA1+8idB7wu2U/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf9KyxUGpMFzkm9G7cLy7IhrxnZyWAkMQ6rGdEEKT5eXpE5Cfx
-	HC67QkXOmTXTrHT1R44MtL3ttgnucn3LO6pnE51M8SpTh4hq+1qviAKrDt/Ktks=
-X-Gm-Gg: ASbGncsNiazAYmys7rqswbkz1nKXH/0lOahq/38Xdi6f5xzgeawiyIijwLu/vhj8zJF
-	8EOfM56spw2W2hue0t9TYP15u04L4IECElkE6YCHUdXpL49f4n0DZL58C8RSuq5aukaKsOS9JDE
-	PL/lh6TwYr6nNWXhGxGKq31Jsf+X6ccWt5qPBz4GvNtFHhmWpUqRm8lhgxjtH4J8m8cTclKiCuk
-	3ircbXyI+eLX53p4RPnmjRPWFl0rZSlYbqgpKmwRGlBFW5I3zmL+JoVtK4vZu5ciK09eWiBCi5v
-	KlYpE9zPfijbE8jl09lCRnIcIPE9ZoHi5uzcseYNwA==
-X-Google-Smtp-Source: AGHT+IEgfnLlKAzuh1GsWc2Ym5gBelLO47cG+8FB7ArPAEAWjADWt9YtIwfc3C/AqJZ94vb7llKBhQ==
-X-Received: by 2002:a05:6e02:338d:b0:3d6:cbed:32fa with SMTP id e9e14a558f8ab-3d6e3eea4b0mr60058395ab.5.1743805625207;
-        Fri, 04 Apr 2025 15:27:05 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d6de79f182sm10348915ab.4.2025.04.04.15.27.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 15:27:04 -0700 (PDT)
-Message-ID: <7472b072-9c08-4e5a-8f16-8a56647ebc9a@kernel.dk>
-Date: Fri, 4 Apr 2025 16:27:03 -0600
+        bh=BEWRvuZ+p60fVNjWGYQzVIHkSUDv98jwFOKe49syq3k=;
+        b=TCwBHj2SIIdh/MCF1SAOEBe6+It0AqFhdw+4th0Weo8TQIUdt+TWX3tzvrq2shdB8N
+         +fskwiBXldPJ57ehvnHhiZLxfhlnjJ2Tw2srectj3ucAZ0FczHOyLHJVJ9f7w4H9Djhw
+         Yjy0KnZ/9u4fhaDbg3ssrA1m94GtoKE/zUXpTW2os5bSELe7PTttbH1ljppfwL65Pzw3
+         Ws2Ck0HgDf1WHJTzL7Keicc2mpkF50IjzNeXsl3jmWr1fAypeypKJ4IhRgbS371YCcBE
+         bYqzP6tMYzlagW6VhnWP/reWw+xiyT7N8fTLnGhemLChDzEKwUNexziH+RuQoCG4kONJ
+         z+mA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXts94aukz0LRDTdH3xC/ryTuh6/LJVJrTsmZcLwMY/opLEC2Dw71rMXUKeyew9MOMXPA3ACT3sw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPC2WEOatSaSihvjkMym0d7N3jmoBngOUHPUmX2e7Qey4j8qDd
+	GabgiM5hcapJsQp3zsPayZfBuOofky2ZwpskqSVCBdmDaAaFY6zNp6JY1oqt2i74/0NEVPQb1DQ
+	zWE1TCSfKFyRND/Ukp5UKML5xL1dUqlHAY1j+kEdJIEo4fMjHHd9N9UU=
+X-Google-Smtp-Source: AGHT+IFamuhyyN733T8LzkJlkNQKtpHf+l7lPROYrZ0KNuXw9tziMkAnJXM1Gpc5xEhMYY6926lIrdIRyJt20mn2V2ws3WsU60Yr
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
+X-Received: by 2002:a05:6e02:2198:b0:3d3:dcc4:a58e with SMTP id
+ e9e14a558f8ab-3d6e531f3e2mr54965625ab.8.1743807241675; Fri, 04 Apr 2025
+ 15:54:01 -0700 (PDT)
+Date: Fri, 04 Apr 2025 15:54:01 -0700
+In-Reply-To: <7472b072-9c08-4e5a-8f16-8a56647ebc9a@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f06309.050a0220.0a13.0226.GAE@google.com>
 Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_wq_put_and_exit (4)
-To: syzbot <syzbot+58928048fd1416f1457c@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <671c817d.050a0220.2b8c0f.01ad.GAE@google.com>
- <5ed947b0-5762-4631-8633-b737bc09eebf@kernel.dk>
- <b51adba8-7722-4f74-a865-47bf1638820f@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <b51adba8-7722-4f74-a865-47bf1638820f@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: syzbot <syzbot+58928048fd1416f1457c@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test: git://git.kernel.dk/linux.git io_uring-6.15
+Hello,
 
--- 
-Jens Axboe
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
+
+
+Tested on:
+
+commit:         d1005530 io_uring/kbuf: conditional schedule on buffer..
+git tree:       git://git.kernel.dk/linux.git io_uring-6.15
+console output: https://syzkaller.appspot.com/x/log.txt?x=14566fb0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca8bc6e23acb2
+dashboard link: https://syzkaller.appspot.com/bug?extid=58928048fd1416f1457c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 

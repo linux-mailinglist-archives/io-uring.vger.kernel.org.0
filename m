@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-7421-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7422-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60AEA7D0CC
-	for <lists+io-uring@lfdr.de>; Sun,  6 Apr 2025 23:53:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7064A7D0DB
+	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 00:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8773E3ADAD3
-	for <lists+io-uring@lfdr.de>; Sun,  6 Apr 2025 21:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FAED188CCB3
+	for <lists+io-uring@lfdr.de>; Sun,  6 Apr 2025 22:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC50D19047A;
-	Sun,  6 Apr 2025 21:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6EC188587;
+	Sun,  6 Apr 2025 22:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+NzoOmX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="byIfw+PV"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4BC8C1F
-	for <io-uring@vger.kernel.org>; Sun,  6 Apr 2025 21:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF7F25634
+	for <io-uring@vger.kernel.org>; Sun,  6 Apr 2025 22:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743976412; cv=none; b=HNMxZFYBhZkq3Gg6BXwP4UphJq0DrVUUguRxROzi5hTx9Uk9OoMFrZDh+YytKVFo+Y7xN5mil+upvujF0+kZoxRKmDWG2iz1PFG5uqVNAl/LQwxkqhTRLM9lFhFkSqq4ZgzHABji4kvsmrkBQ9oARzc1oMWR4QtCCk0EyZuR0qY=
+	t=1743976838; cv=none; b=nuwMXYHNggZbzsx05f7RoXTG74bPNcbqrLvEtnND0sWmAjcteA2PBag+WTZC9V2OZFvva7KsoisRTlCKDbgI10FViiRWR03BPWuPSQBGUpRZXh1biznPe1VMipmtVD6lPh9tWHcLzY0tqwca0cI3oBWOprYNx7G35ziamCwO8XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743976412; c=relaxed/simple;
-	bh=0F3HMEhboW4phadPSNQlhuo0PTKuI8ktGIYTCuAE3tU=;
+	s=arc-20240116; t=1743976838; c=relaxed/simple;
+	bh=NenNfLt56wsUL1jj9zHUnnqcNUDN203dseeyclvBJQI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XcY6m8OZ4PEcvvchyDONCzseNOBD4hBJZGQWIj10K9eUXzDC6K6LhoiScwjxyvgYpy5l2mNrK3BWzZf+aW86uGIEHmOuDhb+aWECoGerCDEsOaNK7bVaKWYU17Hs59Hs5x0aYqGWXklaxNBqAhAMYAid94ShnD9tHNPqh0LDgUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+NzoOmX; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:Content-Type; b=rHEtB0VtwYOiNYU7zeIfmcYXMCgHzvI5B2UJa0XFNd/JhAsUH/rJiC1HsAbR5DdiM96mFaVgRFZ9xQ5MLXxkZR9WVaOyYGMHLAbZaOK8d6+Faj2n8WiiV8Cxx9mMF9IxYQFSkTLq+JP0gsSlRtouwEbtsgJLxivuFR7TUgQC7xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=byIfw+PV; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso504171866b.1
-        for <io-uring@vger.kernel.org>; Sun, 06 Apr 2025 14:53:30 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac298c8fa50so626973166b.1
+        for <io-uring@vger.kernel.org>; Sun, 06 Apr 2025 15:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743976409; x=1744581209; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743976834; x=1744581634; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=34pWYhYYDUqq6oYxaWbkKJ/uIfmIP5EhONY3szOjnug=;
-        b=Q+NzoOmXTTW88GgVL8IHNeCIwrjoN+PLzoJ/hAxKb62O+PR7msxWsfqeSVdN9Jo3Zf
-         S5Uxhx/GAS2aYXPAkAG1uVIUqw4ZpRiKqf8TTpQ6fRHL/rl7/bD2rE9JhyjcO3umCUN4
-         u2J5jlU30aqacXl07lJFluAk0zdyMfHXpDmgqTbNJxIxqlSa3PKSbIU3ypJIIuFs5gcg
-         1nsubua2e4pnzUhyHebCOGPZzFIPxuCA1Z10hKaPQ+iPvago8/r4dYZYXF/o5LWvKsvr
-         VdhisF4WsPGGueg3AJdxvrs3A/OwurttPvh+jmyVIoYt/CKD2Scf2Ucbw89rbovt8X5y
-         wkcw==
+        bh=TNEj3oRQc7i+proNhaHKnpBUf6WAE4S0TVYwxPkXTOk=;
+        b=byIfw+PVOWZuquixDEiMPNwmI8ZBw+vsFl+EQyWbIxEa+hnBxG0nKLwHyL8EFl1Pd0
+         EGLQZaFc/FoiWbu4ogl8dNm4Ar+Fb5tDYGhNJh5dDg7gZBhALyesFqcS2dTpEugLVI6s
+         7ZD7JkIXcCQ6kEDQaoUw6Q+WD4calrVWCrVwanURUbosaA47MNobem68eFd+NeVNyowu
+         YMyEWoikC+hjvWMyq+4b1+SCXl6D7iRoOud/+fgz6Hm/33UlulZ1+ORCww6FsYwsL3gv
+         +iK2Gx85YGWfKl43RnxyKkWPp6fnD9qdZdncYJERTISHGyyPkgr2Cfy62F5vJjhdWita
+         bRCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743976409; x=1744581209;
+        d=1e100.net; s=20230601; t=1743976834; x=1744581634;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=34pWYhYYDUqq6oYxaWbkKJ/uIfmIP5EhONY3szOjnug=;
-        b=KANr8srmALBRotX6Ebo+cEvZ10wy3mqWvSXimGbvXA/rLfSslF2raJex7dUYxnFfW7
-         kbUEV6ZnXAMEc+jY1QrxHHZixR2qLfEWMy+tBI8144H8PAPIpC6veQC1rZFymQGShEta
-         DMxSQvbkfsTaERLrWZ3ErflgZ6DsgNo2dZJ2iFckqosedw3BL8TwQqQvNZUUUdmVEnNL
-         vL+lVhjIbjMNPSQpKlDxSecuKHrg3ZV6vQuNbMoCQFVTVxCYS/4cNjNfyVuO6z38ajjk
-         cCYrhOOE9MX6p6xjRbe5jBX2KKCar96LozbJYqwsgIbHw0acovhmRY02/eBJrrFHeHHO
-         Vxmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNZzu/mjuy5lczf3p/+hOyTS/rEdFm4HD+UW2TLXYZKGFXHEsxdeDNAM/Vv9FqSB76kgIy04VdCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0qobirgUG2wdVfD5XR6ky4NwpxOE3cddWFfBH5UKH3u2bAgYc
-	1hQ6fyP3dBvVl9fdOAu+53fRK8n97brK/hJO3ik/IxGxMkB+XcopMs29pw==
-X-Gm-Gg: ASbGncvxIuW+jUTNjpNPQq6xutzhhsghWgQ6t/aOSBfhfYU5uUacDfrG0ENVqwEVOYP
-	UhhSERicO+SCLRw34pJvatLU89xC16ywHESANb3wQFS84WeWNJUOH0Ncm35miBrUxfzDEteDrCB
-	qKGJqhu50uUSK8QvyQmo4r5gdNFfLYL/83UsHTD4KFGoxE0LtnTc2a37vi8em0jMY1ZnM7Tj7BN
-	si8WBhDA0EDi6b9DmvyRuVqNo3msk82qKOE02flBopMVW7SHY6MNpapEcFZ7b2KZnAQEA3e21IJ
-	iKiZCGvVUvxHgfJCMQMcxTbWO/Nx/FNocVMpHyAuzUZV9IlBKujwew==
-X-Google-Smtp-Source: AGHT+IED97r956s1ZWqHWk6WmFCC7S26nUygkx3PKEdE0eVriKgOw+x73RhKTaHFCyvQQlIw2MR9pw==
-X-Received: by 2002:a17:907:2d8b:b0:ac7:322c:fd0c with SMTP id a640c23a62f3a-ac7d6ebb801mr923821766b.40.1743976408573;
-        Sun, 06 Apr 2025 14:53:28 -0700 (PDT)
+        bh=TNEj3oRQc7i+proNhaHKnpBUf6WAE4S0TVYwxPkXTOk=;
+        b=joTaagClnZiK6OVqLbUSahehRwm03fSDWXcRHvtMLCrCZnYSXq7kBEHjOtM2hhuAri
+         LzqfpkpPRybvOA3O/esiUrZVqb0zZJxgzsuZzlKIxprV6fJxli/Zb1FxVI1MChS/zn42
+         NBrgNeFsh7GA7yMcDAFuTMXHjdd1BH7knPoYMfYWucwmjPjdFn3jpdIuqN79s0dTQPJv
+         fh6Tu06SlQQui9ZT2NcVzzpsl1ftkXGTKr3J2QrkPD966OD5ub3OpZ710YCaJi0TQ6Y4
+         TuY5HYGWDjJYKAwPIo6N2HNwKLG8PTzVfKWTaTO7yFJ2zHeovT0zkSQOdDAgcjwBXVxW
+         6V1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCfwget6s8bWTwK2TsokYOiuK8IlCLSl3Fdu+MAa70vfR9ai+G/IyZWNJbHebVm6VkZquBuIyWgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFpy9jvQLZFIaW0GAJk/4zPICIAagzT1LEwu/CYNRqYEhZatWV
+	uoUy4ZLitiCIHm86qB/7OQT6XVpKuo2Dcj/sTrpj8CBTRCR58NHUbCasNQ==
+X-Gm-Gg: ASbGncutXRmGtzwxgBuA8PFx6JrupfRLfcvhXFK3QwhruI5teYrHwJug0XZZ3lAGjJO
+	Q6gtHngVJo2aaqaEd5BIx+2EXpn4k+9JxvH8uc2iV56xuwq8035UWjKOLP+NR6LzQMdtdPcynoS
+	eKYenElBLxm5RQ3w2yIScktq9iolFKtbZzKhrvpF7xEgFfzN336cOD4v4pu/X7LuSXxcnFBmn6Q
+	A6nADGV6kkd5zR78Lo0LQEFU0go2zq0v8vI+w5hVFuAZm/OKBykrCAhqMBIm9slsgXR6NBflVpM
+	U7CWxCYULfkLin175K/eKb0lcLvZdhdSuRtHULOmKGw9PDgzCeK5zBCjKP8HNf5g
+X-Google-Smtp-Source: AGHT+IGXU4H6USw6eguPgtkpT46G2+MCNRv7Luwc8mUUfBS+hPV5v5iCfDFCxPQkhMRKiNCSaHV5Tw==
+X-Received: by 2002:a17:907:7214:b0:ac6:b811:e65b with SMTP id a640c23a62f3a-ac7d1821920mr939825066b.36.1743976834353;
+        Sun, 06 Apr 2025 15:00:34 -0700 (PDT)
 Received: from [192.168.8.100] ([148.252.147.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfea2a67sm633112166b.73.2025.04.06.14.53.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f29csm634924366b.113.2025.04.06.15.00.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Apr 2025 14:53:27 -0700 (PDT)
-Message-ID: <d48a2c85-1ee3-45c0-8798-16116097584b@gmail.com>
-Date: Sun, 6 Apr 2025 22:54:44 +0100
+        Sun, 06 Apr 2025 15:00:33 -0700 (PDT)
+Message-ID: <d7a31a1e-87bd-4a3b-abbb-f1e26b2a03f8@gmail.com>
+Date: Sun, 6 Apr 2025 23:01:50 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,23 +85,46 @@ Subject: Re: io_uring zero-copy send test results
 To: vitalif@yourcmc.ru, io-uring@vger.kernel.org
 References: <5ce812ab-29a6-4132-a067-27ea27895940@gmail.com>
  <f1600745ba7b328019558611c1ad7684@yourcmc.ru>
- <37b5fd439fc2af5b3d8ffb0bd0c8277d@yourcmc.ru>
+ <f7e03e2c113fbbf45a4910538a9528ef@yourcmc.ru>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <37b5fd439fc2af5b3d8ffb0bd0c8277d@yourcmc.ru>
+In-Reply-To: <f7e03e2c113fbbf45a4910538a9528ef@yourcmc.ru>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 4/5/25 22:46, vitalif@yourcmc.ru wrote:
-...
->> Perf profiles would also be useful to have if you can grab and post
->> them.
+On 4/6/25 22:08, vitalif@yourcmc.ru wrote:
+> Hi again!
 > 
-> I.e. flamegraphs?
+> More interesting data for you. :-)
+> 
+> We tried iommu=pt.
 
-Doesn't matter, flamegraphs, perf report, raw perf script should also
-be fine, but if you do a visualisation, I'd appreciate if it's
-interactive, i.e. svg rather than png, as the later loses details.
+What kernel version you use? I'm specifically interested whether it has:
+
+6fe4220912d19 ("io_uring/notif: implement notification stacking")
+
+That would explain why it's slow even with huge pages.
+
+...
+> Xeon Gold 6342 + Mellanox ConnectX-6 Dx
+> 
+>             4096  8192   10000  12000  16384  32768  65435
+> zc MB/s    2060  2950   2927   2934   2945   2945   2947
+> zc CPU     99%   62%    59%    29%    22%    23%    11%
+> send MB/s  2950  2949   2950   2950   2949   2949   2949
+> send CPU   64%   44%    50%    46%    51%    49%    45%
+> 
+> Xeon Gold 6342 + Mellanox ConnectX-6 Dx + iommu=pt
+> 
+>             4096  8192   10000  12000  16384  32768  65435
+> zc MB/s    2165  2277   2790   2802   2871   2945   2944
+> zc CPU     99%   89%    75%    65%    53%    34%    36%
+> send MB/s  2902  2912   2945   2943   2927   2935   2941
+> send CPU   80%   63%    55%    64%    78%    68%    65%
+> 
+> Here, disabling iommu actually makes things worse - CPU usage increases in all tests. The default mode is optimal.
+
+That doesn't make sense. Do you see anything odd in the profile?
 
 -- 
 Pavel Begunkov

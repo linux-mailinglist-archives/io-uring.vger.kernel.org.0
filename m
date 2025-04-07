@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-7428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A4AA7EB6E
-	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 20:53:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206FCA7EB78
+	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 20:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7254208B8
-	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 18:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BEE3BB33A
+	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 18:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA3F270ED3;
-	Mon,  7 Apr 2025 18:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAFB278144;
+	Mon,  7 Apr 2025 18:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBuYJlMO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJEBpoT+"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85596270ECE;
-	Mon,  7 Apr 2025 18:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4A527701E;
+	Mon,  7 Apr 2025 18:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049838; cv=none; b=R21S6CCqr+vAHUxbHC9cUxhxzo5X9urWQni8YVBm4qgw76LNifMY2SSBaaSVIvleG0tOEvHeVGFrMRyTZHOWG/EyMqe5eEuTBKieVITDo/PvQjmgCTdZ2rdefkfnKRIOOxEWlrRx7FLxSkVDLyD9E8dLsSQIOJbD090oIq7MeIs=
+	t=1744049854; cv=none; b=NaxvkATXHBkOFgFANucTEQ5y24kRHkif0N8CQAbcR62qTxhTS6O5ncgZgj3dn7qM9RDytnH/DesVC6wbVZtHKCmZG0Nl0Q84wNOh8EijFBHyvThwY0IgcmoHi0pNQMwYE1lEW0T0OslsAAhobwxLvELy4wH8PpfxmzWqivrHeU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049838; c=relaxed/simple;
-	bh=Ta8XYuWHED4rqL7tcXUHVcYcjqXQRiH2ImfMiGy00Rg=;
+	s=arc-20240116; t=1744049854; c=relaxed/simple;
+	bh=5evpH7KrkcUE9zXoSBjBvxbB9cUmImDEXNehQE3J3k8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ocO11WRKcbJPT0U4AQRsJljtPo4mlB9FDD+uYP4w9giomCRGwmrZ2P1xACCmW2IMMo/gZW7pJ1gXQxgv7t8yb+/2VbQDE1QeMUg6S2iUBcibKlTbOvhO8bq9gLwa3soMuDRmIgy2bNOaAdI7P57ovHbQLU2NvXQX1TKMxR+oXjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBuYJlMO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFC1C4CEE7;
-	Mon,  7 Apr 2025 18:17:17 +0000 (UTC)
+	 MIME-Version; b=QAxBKVjVyrC2NuIEWwqOh92opbOb+tnKrBNDpskyDWCxgRQ/BWhyd7ZSEFY6j4gQDjBOQlr7UVJ4a0NXe5UT13tbOMgeAM8HNMStQCfyBlYSn5ct1oW5nsAb2DEt+uaFeiMCX5zLiBhhNEjQvHEIri8V5AapNHUMFhpXH30Bv54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJEBpoT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EE8C4CEDD;
+	Mon,  7 Apr 2025 18:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744049838;
-	bh=Ta8XYuWHED4rqL7tcXUHVcYcjqXQRiH2ImfMiGy00Rg=;
+	s=k20201202; t=1744049854;
+	bh=5evpH7KrkcUE9zXoSBjBvxbB9cUmImDEXNehQE3J3k8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WBuYJlMOhPuYV5d54iB8GmyJGYgHR/cfuIkvSnMsEropi2bwp6DzctjD+PSLimtSZ
-	 l71SyPT0eO8YPe+oY27VGtFav1XATGnK8GzvdMioj719LFpFcuTqvU64prlT/jppfa
-	 tDBLMs9x37mrmZXqay8W3vPP6FLV/8EFc8dA12XXQvBUjPjgxIPRWBibVxo6xdX2tu
-	 VOnsDSZNksvynLBHLV0HJ4Idrdut2qWj4+5E8NGgn+XWqUfTvZs7SN4S8frBEF0nwh
-	 pjspt5ZaX1tebqZ6udevyfJw0uajgPC6xEsZZuW6o1ZkdlueIJhab6wDYfNmyX8pAp
-	 UgeqKV6NmMudg==
+	b=vJEBpoT+lyE17UgFJW2QWm77+DiirZmMAO38PSPiGNQ5aRoAv9w8zErjByaeonUun
+	 YO1gyCcLlFrWKHpe+3n88oxyjCcEcc4Bq/dQRO5i8g7E+01gy71FEFfiyAP4w5TdJy
+	 MSfUK6GUxzoKgwJP8ArNWrbTFTJMQ13RwhzewuXpQKWXsjhWW4JualRWAfWbiasTSY
+	 qKvmR5RbO6s5hiCnWqDsUUIHqzYv6Aa+IiMHFZehZE5t4oMvs1le1gEhIAq2T4g2MR
+	 10ZX8sKlKChFLAFJdo4q1HOM/o3hLaRixLIFeXMnCVjF7M90cdDVRV2wUZWDIp4kc6
+	 wiOUx18KpMeOw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Pavel Begunkov <asml.silence@gmail.com>,
 	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 8/8] io_uring: always do atomic put from iowq
-Date: Mon,  7 Apr 2025 14:16:58 -0400
-Message-Id: <20250407181658.3184231-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 7/7] io_uring: always do atomic put from iowq
+Date: Mon,  7 Apr 2025 14:17:18 -0400
+Message-Id: <20250407181718.3184348-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407181658.3184231-1-sashal@kernel.org>
-References: <20250407181658.3184231-1-sashal@kernel.org>
+In-Reply-To: <20250407181718.3184348-1-sashal@kernel.org>
+References: <20250407181718.3184348-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.10
+X-stable-base: Linux 6.12.22
 Content-Transfer-Encoding: 8bit
 
 From: Pavel Begunkov <asml.silence@gmail.com>
@@ -95,10 +95,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 0b0dfef934803..6a2d154bbd7a2 100644
+index cf28d29fffbf0..20b6a9ec9da70 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1774,7 +1774,7 @@ struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
+@@ -1777,7 +1777,7 @@ struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
  	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
  	struct io_kiocb *nxt = NULL;
  

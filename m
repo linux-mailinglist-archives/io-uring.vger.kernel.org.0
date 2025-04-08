@@ -1,131 +1,159 @@
-Return-Path: <io-uring+bounces-7430-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7431-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B060A7EBB4
-	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 20:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B351BA7F29B
+	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 04:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC93B444055
-	for <lists+io-uring@lfdr.de>; Mon,  7 Apr 2025 18:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ECB73A5BCB
+	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 02:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF10627BF7B;
-	Mon,  7 Apr 2025 18:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B0718DB03;
+	Tue,  8 Apr 2025 02:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHGLjuu1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isq88Sq5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95565257430;
-	Mon,  7 Apr 2025 18:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774C126289
+	for <io-uring@vger.kernel.org>; Tue,  8 Apr 2025 02:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049868; cv=none; b=aIajw/LdzZt0K9314pe3yrIsNsOLORCtzC2BG4Nkikr48w70mNTtazDpSTut1CFzRtniHtNSWP8zOgbVJ9d4CG6c697Z8lvf4unYljeXFPxCvvYwi1BKIVtd5S639yeUqVVecTx4+v9KoFyk7zV8XNdapi1y/eF6e7oL9p4yCa0=
+	t=1744078738; cv=none; b=kMFZt6OHr7DxoQnMK9FmXu+SxqjLv5Gt5LAbdKYbYFMhIWICp4s0zxIvCoQx/yhkvTG3ujTWVdpSVtOBOdSz0+IwdG0UPYHfKUbyo4/zQIZfOk5dQ+81zGECsEQPYeDraCHW2HKmpn2AT4b/5UNxt0algukame+GDWG2v2h3asw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049868; c=relaxed/simple;
-	bh=+K4elNOCVD6f+pv9zdcp/CntamgEd7MMFRGjVYKIlGY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XO5Ru5X0VpPcxI6hp8d1N5yyMwOiN9G0OxvBzaCKk8JwSl0rhNEe51KemKvX3NeDp3rhb0gdkZ/AwGIQiI7xFoQbN7Hy9YB5/UrsWET2yAr3Iheb2VQQrzdGFbA9xWtv6FBHDU1RRVlfwz/oYS6DJAv01UvOtucNKJGryQ0vI4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHGLjuu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2E1C4CEDD;
-	Mon,  7 Apr 2025 18:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744049868;
-	bh=+K4elNOCVD6f+pv9zdcp/CntamgEd7MMFRGjVYKIlGY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GHGLjuu1ILkj4lG0T1OwouRd8CrruAhIcy1X1Q1DJs7ANZ66tBOA2eb0J7xrQUnZk
-	 ReXUDtnAcaF7kZYwu0xGJlbaOIJQJvD98sOADiquu7wERHzkzsNKNaWvvG6xHLUuv/
-	 w4egwD0t6twFT69p5AzjwaHq/s/Nt/2zegwiXKCdaLM4USNwdEn3goGvivcGVASRI8
-	 iOSTWNtCIXvCZRGmqfxVqpj/cLE0mKry5SvafPAaCUk2W48XaV1sGvGavnyAP588yQ
-	 18v1XhZq2cTCV57D3ZMhaS5uaETSw3sMPpGsnWbvylHG6h/l1Y6X4rBpOQ6tvXo+H6
-	 3fB5jDprmp/Sg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	syzbot+903a2ad71fb3f1e47cf5@syzkaller.appspotmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 6/6] io_uring: always do atomic put from iowq
-Date: Mon,  7 Apr 2025 14:17:34 -0400
-Message-Id: <20250407181734.3184450-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407181734.3184450-1-sashal@kernel.org>
-References: <20250407181734.3184450-1-sashal@kernel.org>
+	s=arc-20240116; t=1744078738; c=relaxed/simple;
+	bh=PGknkL79QrF0GWiMVHIjmUZq9fxHfFywiGclnhTR5Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoVVC38D3InQ6spq1vFwJpoz+0ym25r0oQZY+tJ9JOh1oCgA/kr5IvIkaOIWlVZrk3lzXaBqU523yRHeOLXEvHTEKShikY58qAK4ZKfxMqHtGhMUtvdqqONWI6LdP2xsbhJVOlV6r1ZTVnlxk8iGZZEAgCvmH5dsev8Cyelj1iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isq88Sq5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744078734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o2ir94nAodn7ZBCiKYPmHi42mGL9HdQDliiivjmmEPg=;
+	b=isq88Sq5BmD/AmRlibHYZoBzSdyBdRQ1ImZskw7rUiO3Lp24VSnfO59jG8ZvU1yOR7Cvxb
+	JqOdW44v3d7mKePEcP7qbwPEEcVVGjvw591LBma9EJ1d0iVy6Z4x953K41LL4xVvp53afE
+	AKTE1oNqTz3jtf/nDSG3k2pVL8hnO3k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-110-Z70jT3cHOyK4klZ9cj9ZnQ-1; Mon,
+ 07 Apr 2025 22:18:40 -0400
+X-MC-Unique: Z70jT3cHOyK4klZ9cj9ZnQ-1
+X-Mimecast-MFC-AGG-ID: Z70jT3cHOyK4klZ9cj9ZnQ_1744078719
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB3161828B8E;
+	Tue,  8 Apr 2025 02:18:32 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.20])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D3E4B180174E;
+	Tue,  8 Apr 2025 02:18:26 +0000 (UTC)
+Date: Tue, 8 Apr 2025 10:18:21 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Uday Shankar <ushankar@purestorage.com>,
+	Keith Busch <kbusch@kernel.org>, io-uring@vger.kernel.org
+Subject: Re: [PATCH 01/13] ublk: delay aborting zc request until io_uring
+ returns the buffer
+Message-ID: <Z_SHbVr3QM9Ay3ed@fedora>
+References: <20250407131526.1927073-1-ming.lei@redhat.com>
+ <20250407131526.1927073-2-ming.lei@redhat.com>
+ <CADUfDZodKfOGUeWrnAxcZiLT+puaZX8jDHoj_sfHZCOZwhzz6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.86
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZodKfOGUeWrnAxcZiLT+puaZX8jDHoj_sfHZCOZwhzz6A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Mon, Apr 07, 2025 at 08:02:24AM -0700, Caleb Sander Mateos wrote:
+> On Mon, Apr 7, 2025 at 6:15 AM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > When one request buffer is leased to io_uring via
+> > io_buffer_register_bvec(), io_uring guarantees that the buffer will
+> > be returned. However ublk aborts request in case that io_uring context
+> > is exiting, then ublk_io_release() may observe freed request, and
+> > kernel panic is triggered.
+> 
+> Not sure I follow how the request can be freed while its buffer is
+> still registered with io_uring. It looks like __ublk_fail_req()
+> decrements the ublk request's reference count (ublk_put_req_ref()) and
+> the reference count shouldn't hit 0 if the io_uring registered buffer
+> is still holding a reference. Is the problem the if
+> (ublk_nosrv_should_reissue_outstanding()) case, which calls
+> blk_mq_requeue_request() without checking the reference count?
 
-[ Upstream commit 390513642ee6763c7ada07f0a1470474986e6c1c ]
+Yeah, that is the problem, the request can be failed immediately after
+requeue & re-dispatch, then trigger the panic, and I verified that the
+following patch does fix it:
 
-io_uring always switches requests to atomic refcounting for iowq
-execution before there is any parallilism by setting REQ_F_REFCOUNT,
-and the flag is not cleared until the request completes. That should be
-fine as long as the compiler doesn't make up a non existing value for
-the flags, however KCSAN still complains when the request owner changes
-oter flag bits:
 
-BUG: KCSAN: data-race in io_req_task_cancel / io_wq_free_work
-...
-read to 0xffff888117207448 of 8 bytes by task 3871 on cpu 0:
- req_ref_put_and_test io_uring/refs.h:22 [inline]
-
-Skip REQ_F_REFCOUNT checks for iowq, we know it's set.
-
-Reported-by: syzbot+903a2ad71fb3f1e47cf5@syzkaller.appspotmail.com
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/d880bc27fb8c3209b54641be4ff6ac02b0e5789a.1743679736.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- io_uring/io_uring.c | 2 +-
- io_uring/refs.h     | 7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index efa7849b82c18..031b9c00c4489 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1916,7 +1916,7 @@ struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
- 	struct io_kiocb *nxt = NULL;
- 
--	if (req_ref_put_and_test(req)) {
-+	if (req_ref_put_and_test_atomic(req)) {
- 		if (req->flags & IO_REQ_LINK_FLAGS)
- 			nxt = io_req_find_next(req);
- 		io_free_req(req);
-diff --git a/io_uring/refs.h b/io_uring/refs.h
-index 1336de3f2a30a..21a379b0f22d6 100644
---- a/io_uring/refs.h
-+++ b/io_uring/refs.h
-@@ -17,6 +17,13 @@ static inline bool req_ref_inc_not_zero(struct io_kiocb *req)
- 	return atomic_inc_not_zero(&req->refs);
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 2fd05c1bd30b..41bed67508f2 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -1140,6 +1140,25 @@ static void ublk_complete_rq(struct kref *ref)
+ 	__ublk_complete_rq(req);
  }
  
-+static inline bool req_ref_put_and_test_atomic(struct io_kiocb *req)
++static void ublk_do_fail_rq(struct request *req)
 +{
-+	WARN_ON_ONCE(!(data_race(req->flags) & REQ_F_REFCOUNT));
-+	WARN_ON_ONCE(req_ref_zero_or_close_to_overflow(req));
-+	return atomic_dec_and_test(&req->refs);
++	struct ublk_queue *ubq = req->mq_hctx->driver_data;
++
++	if (ublk_nosrv_should_reissue_outstanding(ubq->dev))
++		blk_mq_requeue_request(req, false);
++	else
++		__ublk_complete_rq(req);
 +}
 +
- static inline bool req_ref_put_and_test(struct io_kiocb *req)
++static void ublk_fail_rq_fn(struct kref *ref)
++{
++	struct ublk_rq_data *data = container_of(ref, struct ublk_rq_data,
++			ref);
++	struct request *req = blk_mq_rq_from_pdu(data);
++
++	ublk_do_fail_rq(req);
++}
++
+ /*
+  * Since ublk_rq_task_work_cb always fails requests immediately during
+  * exiting, __ublk_fail_req() is only called from abort context during
+@@ -1153,10 +1172,13 @@ static void __ublk_fail_req(struct ublk_queue *ubq, struct ublk_io *io,
  {
- 	if (likely(!(req->flags & REQ_F_REFCOUNT)))
--- 
-2.39.5
+ 	WARN_ON_ONCE(io->flags & UBLK_IO_FLAG_ACTIVE);
+ 
+-	if (ublk_nosrv_should_reissue_outstanding(ubq->dev))
+-		blk_mq_requeue_request(req, false);
+-	else
+-		ublk_put_req_ref(ubq, req);
++	if (ublk_need_req_ref(ubq)) {
++		struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
++
++		kref_put(&data->ref, ublk_fail_rq_fn);
++	} else {
++		ublk_do_fail_rq(req);
++	}
+ }
+ 
+ static void ubq_complete_io_cmd(struct ublk_io *io, int res,
+
+
+Thanks,
+Ming
 
 

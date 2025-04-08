@@ -1,79 +1,80 @@
-Return-Path: <io-uring+bounces-7433-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7434-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D281BA812B9
-	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 18:45:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71462A815BF
+	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 21:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF1D1882C65
-	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 16:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55323AD776
+	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 19:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E3622FAD4;
-	Tue,  8 Apr 2025 16:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068B717C91;
+	Tue,  8 Apr 2025 19:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mVgS8cav"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MpI9x2Ru"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604422ACE3
-	for <io-uring@vger.kernel.org>; Tue,  8 Apr 2025 16:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7060B20E332
+	for <io-uring@vger.kernel.org>; Tue,  8 Apr 2025 19:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744130746; cv=none; b=Rfp9IPyvNuscFOySLH3Ad+Yhovn6qdS+qaj+MCumHGdDr3lL81QBUNoidcxRXlya/ndE9pAWI3KyG8ubZLc1ZhOAsSgXKl9Gys9dtzn0vUlbWemv7InfCoZe3Vk0+wBwyUiQC50J1Dr/O7SPbBn5g9OiAApCbWzzw1NIkcseepE=
+	t=1744140163; cv=none; b=OmxB/82hbnEqquI0UYXDxZp7g5sv49xPVsRaWKeJFfsrPTfh6cfJOo263mStc+0W1G9PRiXdZGPIN2PMaolAtlDJcTd7o98w2k4At+68eVErtppuWXF4U+zctMFnkuiPq7dlP7MHUvjCXCKxS+hnYcXyF64sbfBnBK69jaLBSWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744130746; c=relaxed/simple;
-	bh=6IkMnC+3c3s0F0p3oWToGaeROc2suAE6HuFOHw7LtyI=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=eh0wDGlsOKkHArvdmTb1RLVV3I2noMdcKPT0/oe2XMOt52fJW0pslcgUKC1EJQOWNLmIXpX2/Z/uvMNvpY4uAJApmliBC0t43HY+H26nFu2HGf3faDz/F8QjmpjMPf9bbiAgzRjFOzzvKraCzvUClcscdMkbEi7k0WnzfLw9JVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mVgS8cav; arc=none smtp.client-ip=209.85.166.53
+	s=arc-20240116; t=1744140163; c=relaxed/simple;
+	bh=cyWiAO1F+ck3wufO38yfVfZMUxByyoYpBEG4/cla5PQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fZy7nc7smMxNqVIugwaRk16h4fzNtppXlcVaIPfzeUKyBXYsScbp5y8RpdMrLZgzBHIMz0OyhvHzGIiUyyg4lDItYhNTcj2AVo+dWbI5ZgFhGBHZQY6yiXmwhWwiM01Nz07vECcd2/9oN4nKHj5cEjGvQO1pAMT7wvSR5rfLyco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MpI9x2Ru; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85e751cffbeso449283139f.0
-        for <io-uring@vger.kernel.org>; Tue, 08 Apr 2025 09:45:42 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86135ad7b4cso73657639f.1
+        for <io-uring@vger.kernel.org>; Tue, 08 Apr 2025 12:22:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744130741; x=1744735541; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=efa2n046kXBjx5lGK///lUP4SKY46XQmnVMmonbr9Mo=;
-        b=mVgS8cavtxPRuIne2oufe/sQU9F/9TXNXcH/gUTnkiq5ANwINFx7MYxRsHgrfTQ3Ru
-         av/G9dgpcihouXdqHglTYiA5f7nVpNLZKCxLMDU/9zAtsorlrL+VDGQa47SU9gNJBUJ7
-         8892IvMloBSluC1gohKvDFEy+4cjrKsipIS0oRb5QB9n+yZZOHoEq8uaLCTBksi64nRQ
-         qGSaId9CsPfu8FGc93FuVsR7oftaJURSW/oLFbmEU9B5upVl8D7XWGPMrkoFij/QakY3
-         X8i04pcNhxMJZeXfPdUDMqzgRNFO8726lPOeCuWx/lOfBfqy5OO7ka3Xlt4V6vYuB0po
-         Njug==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744140158; x=1744744958; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rOgalVljpRqYXcaMbe6L63KcQ/EhYTQhQ9hKYvApvQc=;
+        b=MpI9x2RupKxULhH0h3Ky1txl+qVlYGfD+olN8TfR9MPz1JOcVQXUr+FaqeklZGTo9+
+         TJwKC+UwhxMy0kLLhPJYuvL/Q5DtsfxWVOGPRRGftCuqninryMcLD+3R7aNMoJswq1Dx
+         x+8kBg2oVRDrR1c5UNdrlCnD49CUALPDvhMXroIIyepkOv6vftoTgDjxQw49NyR8emPH
+         XdfutU+3yuyLuvSZRTTKF77nufaAgXeV6VXj9147xyOnLuvHvBTgDkNhZ1k/zdT1yaGJ
+         sHaoqZ/bSoLvEj5oEpDHk8N8kr+8Scy59lqjeziiCrvC9xBUEJ2Klr183jHxuDEsSWmt
+         a5ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744130741; x=1744735541;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=efa2n046kXBjx5lGK///lUP4SKY46XQmnVMmonbr9Mo=;
-        b=hL2DYilfTK3fv/qSC33m+r8tY8qW2iNhCMZMs0408r6lz9x0ooGsUzxG0SclcDgIEN
-         o4NBO3nBqI7uS1uJr4TdOvWiYwNW+RSMdcsjGo4/F2pzZw+5D/IpCE5tWovjIIv+yIRQ
-         emw+aP4mwSD4kxF+KntxJtVBvjhmGGBnyIG2mOcCzeKeaV+J4dcnrUMzefZLaUxOQF9m
-         Zgos1RHpkfcb9QlRNgjRLhUu/7M+U3UkbRufg2YT6ld4SYEy9aVOSPfByziTS0HGb+cK
-         257DFg0bWsUjvag00X1f9Rf9rA9qKeRs51jCazCk/Yrrql8nb2cFRD6Mniul2tLsctOf
-         oZVw==
-X-Gm-Message-State: AOJu0YyBeBWzCih/NpsY+nUEg8o82d6N81/6FdfVO3Mm7slnq89SOHi8
-	PnEncZrSNBhdcPHxrLcVffgz8ljtIbNebObxzcxW0bHpEqJ6OG2shW/C0A3tg7CR9utoxd8tUYy
-	h
-X-Gm-Gg: ASbGnctnOha54lmJykgMBpXN94IU8BQgZOVoND8yBSZsHsDEaGqUxdDwglRsZckFIKq
-	6gfNDQhda0MV+6nVy8AzVK8n2pUqpxFKZ1d1fWz14hSle/JL9PHhNfiWDTSE/sPS9kCG6/0ExbO
-	0N0JrIoA+MsGGHeT/MWnLYB3EMRB0eJhu4JjSLULp8wXPNhgOgseo4YhkiSEwcgJDJtfB7l7ygh
-	g9jOz9UaPkncGEmlg88vxiDTt8x99lx07CSWN6EbIgvCyrt29bc6LaATEcEXC9/qtXAmWGKmm2F
-	mGej87J8G2gRFcm6R2xR6zTnAds3DQ9bGrS1Gpzk
-X-Google-Smtp-Source: AGHT+IGCsyEuNEP44MoGo4BtaaTVek3l/k3V5+bjMVEPMXsJGdKxQTxhbMgUuAK/VahXsk2y0FpY5g==
-X-Received: by 2002:a05:6602:728b:b0:85b:5869:b6a with SMTP id ca18e2360f4ac-8611b3d63a2mr1992937439f.3.1744130741267;
-        Tue, 08 Apr 2025 09:45:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744140158; x=1744744958;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOgalVljpRqYXcaMbe6L63KcQ/EhYTQhQ9hKYvApvQc=;
+        b=CGht4CsvoJrv3Jm1kxuArM42+bSuOQWwedmv2SmWaBN8AfJ3hCkG8f2PfojxhRR9IY
+         y6cCMcc1kyIyITP8FmzpbrM3C3K9vZUDX2v3wC5VMRk/pPNgnwUbzOCYIKUYekh2Sxiz
+         Ieo5NntPezOs2thzAGENrJqYl/QBBf4vqWIRc8FtWx8bRYD8ShPTeV4jF7HUf2TR/Ncf
+         84rOlsjOn0ax2RhmWB3Vb28y0yuqADwCiSRi0vMTMTDLYa0Lzn9heRgebx1z0hMADrbM
+         0AIpq3A+9EhtnWKbzDCXbM1wbyQ2zpkIOqCcfCAlejELC90F/MCscH/R04Tn70we/pxC
+         d7Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcXIBvw1dLjhuNSzpivXJGnVH659qBKJxk3Nh9VuFYotTW/Du89BIvOXdHrks6qJ6NF7i6RKYq8g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyekDF+8SwwnNJn2gd3cHUloLUS2wcODbnU+ueJV+vMq4e7yE4X
+	OqAryokrKX0AtU52b4AO6LgNSBhkXdDw75Zv4pUVyqunEMHoZOuAfZoqWKZKVxLpebQ2vAufc+G
+	W
+X-Gm-Gg: ASbGnctZyP1f+LHyQGLP9uc1/de+r5q3wIPPtqLT2kTrGUcRNQ6/AYBobgAzIT4pQHl
+	IGu/ZPryI/hKSdJI+05R7177GiS6GxvMc6voP1rkLDd8tVMlUTPXnrK3YK6UvDIJbzM0QbPIHu0
+	qrZnywyOHbILy3k9sUJQcEwQy38LyyvOsx+pJ2ZqkAnujLmcwAEVQi/Pbhdgs2lrMrY6dRrHO7x
+	+9pSiIye/xI1TGPRvzCPodFXfhAKnYzEpTQaSaFDUibGw3VxtC/rfAVl+CxWKSKpKZCpVV1WZL3
+	UFdyFP0NmDLduFACO0sXUGh62+dQhQJQ4g6F27vC
+X-Google-Smtp-Source: AGHT+IGd+NqjUncx7BfRfuo2rCi8OfI/LYa+5AeV2IlKoGr3AZal2gujQLKVsl6vZByoY8iIGqwF/w==
+X-Received: by 2002:a05:6602:7284:b0:85b:3885:1595 with SMTP id ca18e2360f4ac-861611919b7mr45563939f.3.1744140158408;
+        Tue, 08 Apr 2025 12:22:38 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44e28ccsm569718173.130.2025.04.08.09.45.40
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f43d5477sm631701173.54.2025.04.08.12.22.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 09:45:40 -0700 (PDT)
-Message-ID: <0d00a292-4aab-4554-8bbc-cfdd852f9988@kernel.dk>
-Date: Tue, 8 Apr 2025 10:45:39 -0600
+        Tue, 08 Apr 2025 12:22:37 -0700 (PDT)
+Message-ID: <27a391b1-80a1-43ae-9550-73f48c1b8fea@kernel.dk>
+Date: Tue, 8 Apr 2025 13:22:37 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,240 +82,60 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] io_uring: consider ring dead once the ref is marked
+ dying
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20250321193134.738973-1-axboe@kernel.dk>
+ <20250321193134.738973-4-axboe@kernel.dk>
+ <c84461d9-3394-4bbf-88d5-38a4a2f6dccd@gmail.com>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: add support for IORING_OP_PIPE
+In-Reply-To: <c84461d9-3394-4bbf-88d5-38a4a2f6dccd@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-This works just like pipe2(2), except it also supports fixed file
-descriptors. Used in a similar fashion as for other fd instantiating
-opcodes (like accept, socket, open, etc), where sqe->file_slot is set
-appropriately if two direct descriptors are desired rather than a set
-of normal file descriptors.
+(getting back to this post the merge window)
 
-sqe->addr must be set to a pointer to an array of 2 integers, which
-is where the fixed/normal file descriptors are copied to.
+On 3/21/25 3:22 PM, Pavel Begunkov wrote:
+> On 3/21/25 19:24, Jens Axboe wrote:
+>> Don't gate this on the task exiting flag. It's generally not a good idea
+> 
+> Do you refer to tw add and the PF_EXITING logic inside? We can't gate
+> it solely on dying refs as it's not sync'ed (and the patch doesn't).
+> And task is dying is not same as ring is closed. E.g. a task can
+> exit(2) but leave the ring intact to other tasks.
 
-sqe->pipe_flags contains flags, same as what is allowed for pipe2(2).
+It's not gated solely on dying refs, it's an addition.
 
-Future expansion of per-op private flags can go in sqe->ioprio,
-like we do for other opcodes that take both a "syscall" flag set and
-an io_uring opcode specific flag set.
+>> to gate it on the task PF_EXITING flag anyway. Once the ring is starting
+>> to go through ring teardown, the ref is marked as dying. Use that as
+>> our fallback/cancel mechanism.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>   io_uring/io_uring.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index 2b9dae588f04..984db01f5184 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -555,7 +555,8 @@ static void io_queue_iowq(struct io_kiocb *req)
+>>        * procedure rather than attempt to run this request (or create a new
+>>        * worker for it).
+>>        */
+>> -    if (WARN_ON_ONCE(!same_thread_group(tctx->task, current)))
+>> +    if (WARN_ON_ONCE(!same_thread_group(tctx->task, current) &&
+>> +             !percpu_ref_is_dying(&req->ctx->refs)))
+> 
+> Should it be "||"? Otherwise I don't understand the purpose of it.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Yep that's a braino, it should be:
 
----
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index ed2beb4def3f..431c156f9fe8 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -73,6 +73,7 @@ struct io_uring_sqe {
- 		__u32		futex_flags;
- 		__u32		install_fd_flags;
- 		__u32		nop_flags;
-+		__u32		pipe_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -283,6 +284,7 @@ enum io_uring_op {
- 	IORING_OP_EPOLL_WAIT,
- 	IORING_OP_READV_FIXED,
- 	IORING_OP_WRITEV_FIXED,
-+	IORING_OP_PIPE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 489384c0438b..db36433c2294 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -569,6 +569,10 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_prep_writev_fixed,
- 		.issue			= io_write,
- 	},
-+	[IORING_OP_PIPE] = {
-+		.prep			= io_pipe_prep,
-+		.issue			= io_pipe,
-+	},
- };
- 
- const struct io_cold_def io_cold_defs[] = {
-@@ -815,6 +819,9 @@ const struct io_cold_def io_cold_defs[] = {
- 		.cleanup		= io_readv_writev_cleanup,
- 		.fail			= io_rw_fail,
- 	},
-+	[IORING_OP_PIPE] = {
-+		.name			= "PIPE",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index e3357dfa14ca..4dd461163457 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -6,6 +6,8 @@
- #include <linux/fdtable.h>
- #include <linux/fsnotify.h>
- #include <linux/namei.h>
-+#include <linux/pipe_fs_i.h>
-+#include <linux/watch_queue.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
-@@ -302,3 +304,134 @@ int io_install_fixed_fd(struct io_kiocb *req, unsigned int issue_flags)
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
-+
-+struct io_pipe {
-+	struct file *file;
-+	int __user *fds;
-+	int flags;
-+	int file_slot;
-+	unsigned long nofile;
-+};
-+
-+int io_pipe_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_pipe *p = io_kiocb_to_cmd(req, struct io_pipe);
-+
-+	if (sqe->fd || sqe->off || sqe->addr3)
-+		return -EINVAL;
-+
-+	p->fds = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	p->flags = READ_ONCE(sqe->pipe_flags);
-+	if (p->flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT | O_NOTIFICATION_PIPE))
-+		return -EINVAL;
-+
-+	p->file_slot = READ_ONCE(sqe->file_index);
-+	p->nofile = rlimit(RLIMIT_NOFILE);
-+	return 0;
-+}
-+
-+static int io_pipe_fixed(struct io_kiocb *req, struct file **files,
-+			 unsigned int issue_flags)
-+{
-+	struct io_pipe *p = io_kiocb_to_cmd(req, struct io_pipe);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	int ret, fds[2] = { -1, -1 };
-+	int slot = p->file_slot;
-+
-+	if (p->flags & O_CLOEXEC)
-+		return -EINVAL;
-+
-+	io_ring_submit_lock(ctx, issue_flags);
-+
-+	ret = __io_fixed_fd_install(ctx, files[0], slot);
-+	if (ret < 0)
-+		goto err;
-+	fds[0] = ret;
-+	files[0] = NULL;
-+
-+	/*
-+	 * If a specific slot is given, next one will be used for
-+	 * the write side.
-+	 */
-+	if (slot != IORING_FILE_INDEX_ALLOC)
-+		slot++;
-+
-+	ret = __io_fixed_fd_install(ctx, files[1], slot);
-+	if (ret < 0)
-+		goto err;
-+	fds[1] = ret;
-+	files[1] = NULL;
-+
-+	io_ring_submit_unlock(ctx, issue_flags);
-+
-+	if (!copy_to_user(p->fds, fds, sizeof(fds)))
-+		return 0;
-+
-+	ret = -EFAULT;
-+	io_ring_submit_lock(ctx, issue_flags);
-+err:
-+	if (fds[0] != -1)
-+		io_fixed_fd_remove(ctx, fds[0]);
-+	if (fds[1] != -1)
-+		io_fixed_fd_remove(ctx, fds[1]);
-+	io_ring_submit_unlock(ctx, issue_flags);
-+	return ret;
-+}
-+
-+static int io_pipe_fd(struct io_kiocb *req, struct file **files)
-+{
-+	struct io_pipe *p = io_kiocb_to_cmd(req, struct io_pipe);
-+	int ret, fds[2] = { -1, -1 };
-+
-+	ret = __get_unused_fd_flags(p->flags, p->nofile);
-+	if (ret < 0)
-+		goto err;
-+	fds[0] = ret;
-+
-+	ret = __get_unused_fd_flags(p->flags, p->nofile);
-+	if (ret < 0)
-+		goto err;
-+	fds[1] = ret;
-+
-+	if (!copy_to_user(p->fds, fds, sizeof(fds))) {
-+		fd_install(fds[0], files[0]);
-+		fd_install(fds[1], files[1]);
-+		return 0;
-+	}
-+	ret = -EFAULT;
-+err:
-+	if (fds[0] != -1)
-+		put_unused_fd(fds[0]);
-+	if (fds[1] != -1)
-+		put_unused_fd(fds[1]);
-+	return ret;
-+}
-+
-+int io_pipe(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_pipe *p = io_kiocb_to_cmd(req, struct io_pipe);
-+	struct file *files[2];
-+	int ret;
-+
-+	ret = create_pipe_files(files, p->flags);
-+	if (ret)
-+		return ret;
-+	files[0]->f_mode |= FMODE_NOWAIT;
-+	files[1]->f_mode |= FMODE_NOWAIT;
-+
-+	if (!!p->file_slot)
-+		ret = io_pipe_fixed(req, files, issue_flags);
-+	else
-+		ret = io_pipe_fd(req, files);
-+
-+	io_req_set_res(req, ret, 0);
-+	if (!ret)
-+		return IOU_OK;
-+
-+	req_set_fail(req);
-+	if (files[0])
-+		fput(files[0]);
-+	if (files[1])
-+		fput(files[1]);
-+	return ret;
-+}
-diff --git a/io_uring/openclose.h b/io_uring/openclose.h
-index 8a93c98ad0ad..4ca2a9935abc 100644
---- a/io_uring/openclose.h
-+++ b/io_uring/openclose.h
-@@ -13,5 +13,8 @@ int io_openat2(struct io_kiocb *req, unsigned int issue_flags);
- int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_close(struct io_kiocb *req, unsigned int issue_flags);
- 
-+int io_pipe_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_pipe(struct io_kiocb *req, unsigned int issue_flags);
-+
- int io_install_fixed_fd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_install_fixed_fd(struct io_kiocb *req, unsigned int issue_flags);
+if (!same_thread_group(req->task, current) ||
+    io_ring_ref_is_dying(req->ctx))
+	atomic_or(IO_WQ_WORK_CANCEL, &req->work.flags);
 
 -- 
 Jens Axboe
-
 

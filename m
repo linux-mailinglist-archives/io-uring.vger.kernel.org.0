@@ -1,80 +1,79 @@
-Return-Path: <io-uring+bounces-7434-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7435-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71462A815BF
-	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 21:22:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C38A820CD
+	for <lists+io-uring@lfdr.de>; Wed,  9 Apr 2025 11:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55323AD776
-	for <lists+io-uring@lfdr.de>; Tue,  8 Apr 2025 19:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52978464938
+	for <lists+io-uring@lfdr.de>; Wed,  9 Apr 2025 09:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068B717C91;
-	Tue,  8 Apr 2025 19:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE3525D531;
+	Wed,  9 Apr 2025 09:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MpI9x2Ru"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkP3ZIsd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7060B20E332
-	for <io-uring@vger.kernel.org>; Tue,  8 Apr 2025 19:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507AB25D524
+	for <io-uring@vger.kernel.org>; Wed,  9 Apr 2025 09:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744140163; cv=none; b=OmxB/82hbnEqquI0UYXDxZp7g5sv49xPVsRaWKeJFfsrPTfh6cfJOo263mStc+0W1G9PRiXdZGPIN2PMaolAtlDJcTd7o98w2k4At+68eVErtppuWXF4U+zctMFnkuiPq7dlP7MHUvjCXCKxS+hnYcXyF64sbfBnBK69jaLBSWY=
+	t=1744190077; cv=none; b=PXMKRqF+1C1snDtgeOr476Y4ZPVr49dPKUcnAAKFUZcO6aUlimoaul6OdHWMwJWsuGveBQTTmyNDJJ4Yq3WkMLEunaeDG8lR5qMOOwUpzLJp7LY4am3PuPTu2Sv+YRrpi/dt3wekl0ynlDgKTJNwo/9OM/tCwkfx6kIqlu0MCK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744140163; c=relaxed/simple;
-	bh=cyWiAO1F+ck3wufO38yfVfZMUxByyoYpBEG4/cla5PQ=;
+	s=arc-20240116; t=1744190077; c=relaxed/simple;
+	bh=sPpL66boZ6o4WeoYyBoKQHH37xkutX4pwZNROTBXp3w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fZy7nc7smMxNqVIugwaRk16h4fzNtppXlcVaIPfzeUKyBXYsScbp5y8RpdMrLZgzBHIMz0OyhvHzGIiUyyg4lDItYhNTcj2AVo+dWbI5ZgFhGBHZQY6yiXmwhWwiM01Nz07vECcd2/9oN4nKHj5cEjGvQO1pAMT7wvSR5rfLyco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MpI9x2Ru; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86135ad7b4cso73657639f.1
-        for <io-uring@vger.kernel.org>; Tue, 08 Apr 2025 12:22:39 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=IokmfHE/36tQuNuiV3r8usOQdsE+lawXZu29zPBHivMCttvxf+DBFOZKQMfNPP/87ssjdDQ138udignhLPkKIUMYvhfBAe4lhHcGjv1f5UmtLQJlZF61xIdXLdNOWDJ0VX3RIPKNr4LkMEWgUKFJloIcLkoq2sCQ2ZyogR7VZOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkP3ZIsd; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac73723b2d5so1333133366b.3
+        for <io-uring@vger.kernel.org>; Wed, 09 Apr 2025 02:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744140158; x=1744744958; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744190074; x=1744794874; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rOgalVljpRqYXcaMbe6L63KcQ/EhYTQhQ9hKYvApvQc=;
-        b=MpI9x2RupKxULhH0h3Ky1txl+qVlYGfD+olN8TfR9MPz1JOcVQXUr+FaqeklZGTo9+
-         TJwKC+UwhxMy0kLLhPJYuvL/Q5DtsfxWVOGPRRGftCuqninryMcLD+3R7aNMoJswq1Dx
-         x+8kBg2oVRDrR1c5UNdrlCnD49CUALPDvhMXroIIyepkOv6vftoTgDjxQw49NyR8emPH
-         XdfutU+3yuyLuvSZRTTKF77nufaAgXeV6VXj9147xyOnLuvHvBTgDkNhZ1k/zdT1yaGJ
-         sHaoqZ/bSoLvEj5oEpDHk8N8kr+8Scy59lqjeziiCrvC9xBUEJ2Klr183jHxuDEsSWmt
-         a5ZQ==
+        bh=GzD85fDh1Wo0r2Gm0sjlh15ahKvdwokkc82X/VIPfvo=;
+        b=TkP3ZIsdoOtUYL9rf3ihHMnqPZIXNGwFKNbm9wwkANHmnSpO/+p7KzxnVx1u51E/Uf
+         ab8lbvQyTYtHaU7hWnciOjPrF3VTI29kZ34U0CIlcckFJwLCcMhbmKRN0mBLf/k+EV2G
+         fnJioZwfam4oijTrUn4s8jzJeQguQLbmwxsW2utte05eIShmPwFpW7cZPysMLJcEuqXw
+         1XS/9+HD/Inyot8icLLHCf1P/sSk1NbgOlIy0zYL4ipWxy3nim2ALEektxVS/0DHz2M8
+         Np4jS6RKkJTsyXZx1Zu+ktPhwlZjb5XUSxdO14u8ofD5Ve9aSA5Bs4/Vhwmy0LoOAqTy
+         qLAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744140158; x=1744744958;
+        d=1e100.net; s=20230601; t=1744190074; x=1744794874;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOgalVljpRqYXcaMbe6L63KcQ/EhYTQhQ9hKYvApvQc=;
-        b=CGht4CsvoJrv3Jm1kxuArM42+bSuOQWwedmv2SmWaBN8AfJ3hCkG8f2PfojxhRR9IY
-         y6cCMcc1kyIyITP8FmzpbrM3C3K9vZUDX2v3wC5VMRk/pPNgnwUbzOCYIKUYekh2Sxiz
-         Ieo5NntPezOs2thzAGENrJqYl/QBBf4vqWIRc8FtWx8bRYD8ShPTeV4jF7HUf2TR/Ncf
-         84rOlsjOn0ax2RhmWB3Vb28y0yuqADwCiSRi0vMTMTDLYa0Lzn9heRgebx1z0hMADrbM
-         0AIpq3A+9EhtnWKbzDCXbM1wbyQ2zpkIOqCcfCAlejELC90F/MCscH/R04Tn70we/pxC
-         d7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcXIBvw1dLjhuNSzpivXJGnVH659qBKJxk3Nh9VuFYotTW/Du89BIvOXdHrks6qJ6NF7i6RKYq8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyekDF+8SwwnNJn2gd3cHUloLUS2wcODbnU+ueJV+vMq4e7yE4X
-	OqAryokrKX0AtU52b4AO6LgNSBhkXdDw75Zv4pUVyqunEMHoZOuAfZoqWKZKVxLpebQ2vAufc+G
-	W
-X-Gm-Gg: ASbGnctZyP1f+LHyQGLP9uc1/de+r5q3wIPPtqLT2kTrGUcRNQ6/AYBobgAzIT4pQHl
-	IGu/ZPryI/hKSdJI+05R7177GiS6GxvMc6voP1rkLDd8tVMlUTPXnrK3YK6UvDIJbzM0QbPIHu0
-	qrZnywyOHbILy3k9sUJQcEwQy38LyyvOsx+pJ2ZqkAnujLmcwAEVQi/Pbhdgs2lrMrY6dRrHO7x
-	+9pSiIye/xI1TGPRvzCPodFXfhAKnYzEpTQaSaFDUibGw3VxtC/rfAVl+CxWKSKpKZCpVV1WZL3
-	UFdyFP0NmDLduFACO0sXUGh62+dQhQJQ4g6F27vC
-X-Google-Smtp-Source: AGHT+IGd+NqjUncx7BfRfuo2rCi8OfI/LYa+5AeV2IlKoGr3AZal2gujQLKVsl6vZByoY8iIGqwF/w==
-X-Received: by 2002:a05:6602:7284:b0:85b:3885:1595 with SMTP id ca18e2360f4ac-861611919b7mr45563939f.3.1744140158408;
-        Tue, 08 Apr 2025 12:22:38 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f43d5477sm631701173.54.2025.04.08.12.22.37
+        bh=GzD85fDh1Wo0r2Gm0sjlh15ahKvdwokkc82X/VIPfvo=;
+        b=UUuBenrAJPDGoyiyKwZDfnEg385kIO6By7PQf+kacugBQMeXLbCawKy9m8BTe/xwDQ
+         narSmCZDMCoq5b/DS65V4uDMXw/BRPA7jkYpu9OIPpKhinxC8GbNvVO7NPb7QOz9XUUQ
+         VE2ZVBhUU8ep5LnauXwLfDMbeKZhCAnYVb3ruM90MkRTsF5t/nmJFUQXVlwS0AjYqb/c
+         8WbidJ82Glbzto61UNCzolIGqIrJDNDLVjVzi2R1AQZS3Tb+cfGFoYfWua8fXd7vVA4X
+         VQiVK3MfGSHlDvgaywl2g4bPEYijgOCUW4w/9h+VwwHAP/iJx84IbBtaiQ3HgesaqKXn
+         espA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT1ZJIygoynC+YSQlYGU4fOukplZ2ZdYCCu10MhJTuOAM4Srlc+gULu9h9i/XxMRV0xePk3uQmKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSM5BiluDe76FV2LhxX4gKOyhermhjnHwdF0y/Hhdq8EynLvXb
+	oXU2l/oQCI3fXpWm1dvIXjQr3LE4xfsLJCCIr5eGUq8wljlvJ8FeildywA==
+X-Gm-Gg: ASbGncskaSUkkcV0HAe2Ylbn0caQRh4uIo0Cnr8jz/AHN3EZfwbIBYXNEMLrMYC3/RI
+	L1ECvwBdWgHjgiPp7i2cIW1puqa/Yd3cg9HC0z3vB9SkEQDO63usiWAtPS5uDVgO1WttXpYwe4W
+	G36MOWtzSYN9lE4CfaoZtIn8tPnf4rgSLSNIlXvvGyqF6JiQJBCE9NIJx321BczhpWDGqJCxO5i
+	ds9OkIeXe952NPB6guvnrelBhf4NMhvhR00RNnhiWnh0c1QDn94wMrFTxuxShjZ9AHq/biXyLwP
+	nCGv39UureILkdRd/5HRQbCWYyEhBgiU6odlFeQSo3yEC3DcKKdb
+X-Google-Smtp-Source: AGHT+IHZSjBVdG3FRuwrtL8oR5kvmmATkeJcnnrgFxjxOfbCZMiVNkIar958gXPXTaL+gQ0+HtkI6g==
+X-Received: by 2002:a17:907:d8c:b0:ac7:3918:50f5 with SMTP id a640c23a62f3a-aca9b79c761mr177598966b.60.1744190074375;
+        Wed, 09 Apr 2025 02:14:34 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::5b? ([2620:10d:c092:600::1:f00d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1c01e25sm62805466b.79.2025.04.09.02.14.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 12:22:37 -0700 (PDT)
-Message-ID: <27a391b1-80a1-43ae-9550-73f48c1b8fea@kernel.dk>
-Date: Tue, 8 Apr 2025 13:22:37 -0600
+        Wed, 09 Apr 2025 02:14:33 -0700 (PDT)
+Message-ID: <07b0ced0-cbf6-44a6-add0-e0cb1854cde2@gmail.com>
+Date: Wed, 9 Apr 2025 10:15:39 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -84,58 +83,36 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/5] io_uring: consider ring dead once the ref is marked
  dying
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20250321193134.738973-1-axboe@kernel.dk>
  <20250321193134.738973-4-axboe@kernel.dk>
  <c84461d9-3394-4bbf-88d5-38a4a2f6dccd@gmail.com>
+ <27a391b1-80a1-43ae-9550-73f48c1b8fea@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <c84461d9-3394-4bbf-88d5-38a4a2f6dccd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <27a391b1-80a1-43ae-9550-73f48c1b8fea@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-(getting back to this post the merge window)
-
-On 3/21/25 3:22 PM, Pavel Begunkov wrote:
-> On 3/21/25 19:24, Jens Axboe wrote:
->> Don't gate this on the task exiting flag. It's generally not a good idea
+On 4/8/25 20:22, Jens Axboe wrote:
+> (getting back to this post the merge window)
 > 
-> Do you refer to tw add and the PF_EXITING logic inside? We can't gate
-> it solely on dying refs as it's not sync'ed (and the patch doesn't).
-> And task is dying is not same as ring is closed. E.g. a task can
-> exit(2) but leave the ring intact to other tasks.
-
-It's not gated solely on dying refs, it's an addition.
-
->> to gate it on the task PF_EXITING flag anyway. Once the ring is starting
->> to go through ring teardown, the ref is marked as dying. Use that as
->> our fallback/cancel mechanism.
+> On 3/21/25 3:22 PM, Pavel Begunkov wrote:
+>> On 3/21/25 19:24, Jens Axboe wrote:
+>>> Don't gate this on the task exiting flag. It's generally not a good idea
 >>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>   io_uring/io_uring.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 2b9dae588f04..984db01f5184 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -555,7 +555,8 @@ static void io_queue_iowq(struct io_kiocb *req)
->>        * procedure rather than attempt to run this request (or create a new
->>        * worker for it).
->>        */
->> -    if (WARN_ON_ONCE(!same_thread_group(tctx->task, current)))
->> +    if (WARN_ON_ONCE(!same_thread_group(tctx->task, current) &&
->> +             !percpu_ref_is_dying(&req->ctx->refs)))
+>> Do you refer to tw add and the PF_EXITING logic inside? We can't gate
+>> it solely on dying refs as it's not sync'ed (and the patch doesn't).
+>> And task is dying is not same as ring is closed. E.g. a task can
+>> exit(2) but leave the ring intact to other tasks.
 > 
-> Should it be "||"? Otherwise I don't understand the purpose of it.
+> It's not gated solely on dying refs, it's an addition.
 
-Yep that's a braino, it should be:
-
-if (!same_thread_group(req->task, current) ||
-    io_ring_ref_is_dying(req->ctx))
-	atomic_or(IO_WQ_WORK_CANCEL, &req->work.flags);
+Right, which is why the commit message stating "don't gate on the
+task exiting flag" and leaving it gated on the task exiting flag
+is confusing.
 
 -- 
-Jens Axboe
+Pavel Begunkov
+
 

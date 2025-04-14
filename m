@@ -1,124 +1,183 @@
-Return-Path: <io-uring+bounces-7457-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7458-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E58A8859C
-	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 16:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06403A88967
+	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 19:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011B7164F96
-	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 14:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43DD3B3D07
+	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 17:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3B02820AE;
-	Mon, 14 Apr 2025 14:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933DF1F236B;
+	Mon, 14 Apr 2025 17:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="W6FdC4D/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMrIBYrI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3466617597
-	for <io-uring@vger.kernel.org>; Mon, 14 Apr 2025 14:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA97D27B4F9;
+	Mon, 14 Apr 2025 17:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744640980; cv=none; b=YkiPyQft77mY2ZJlOx3LZmVTIFFW41sujTn3CeguXtQw2yUerwdNgheRrNqde+H+uwmYAcuoBZonDSaHLFcHX+e3zmBaLjfmPq1ULv26BPbrJ1gpXA4zAJlQxK8+goAco5HQajAB3gW82a6Kbm6OZf06O9sKkTfbjYNtng+is8s=
+	t=1744650702; cv=none; b=thciUaY+VcgWyQwcnnrVJxqvn8+cMZn1viguvYFbd0BsY4pFAq7dw8llxOCIagzcBBrpK5pL3K3XZJL8uGS76SxVXCheGwkpyntgQ71QZ/OaKbH76MGe7OjOvVtzXNq17DU1iOo/mA/R8pBmAQZ8FbmuY6iYpLoIUMUeQDJgdiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744640980; c=relaxed/simple;
-	bh=xrn5wfYhTrS14m3EcQUIIlXCmc+aQ3BjPvdH9k2BM7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5IoPnkGi8zQmtUbWhE8nbNqi130lGurix0SpvWfZfF/MgjmWbVrussDKC0ujL6nOJ2P7DinHntNQR7bY3bHhxRFjNYOGAcJ9zlCEki0H3AHqJdmOzZS7N/Q74GgJq6kF2wktZcOBOmn7YCeq4M59G01gxY/QcApbYtxsIKoePg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=W6FdC4D/; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d5e43e4725so14785975ab.1
-        for <io-uring@vger.kernel.org>; Mon, 14 Apr 2025 07:29:37 -0700 (PDT)
+	s=arc-20240116; t=1744650702; c=relaxed/simple;
+	bh=ck+m1PSg9GahaYEhevrrlgN/zQ9PTfapMVgglxCXq3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLtJKMafGdw/i6KllaDyYL6fZbtWgpdrvYDIHUwpCVwrIeFlmeLRKeYxqCRZaspXqfwfomGSeBuAWZcgWOCrxFbRgs8wlUJ0hEyBWmT10raigGgz6pbcNzI5uCGaXBG46mSvbO4EzmtzTzAprnh0AjAerWtSS6WO4DDttMyFk78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMrIBYrI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so39462065e9.3;
+        Mon, 14 Apr 2025 10:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744640977; x=1745245777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+1yYu8yQXLwEhLZXB69bga+C1rfzPofidjpYU39w4VI=;
-        b=W6FdC4D/EtDU6mrXG8WyvRLIs/9PNzhOHxSEI89kNCJsqZCTmjpI7oEH8stZsujaES
-         LyKAYzIeG/LNi0GGbr10EaYNNl/7Bwwmvon4Z62Le9vhc/sKbB9zwA5uXbsTRCxtWVKx
-         ZXIPgF9+ydIw1JOlH2OjI6gugVNHIZ0h9eO4dxuMnbaxyhR6s9ffMkiFjdWysOg6yj40
-         fabMhtxrjXvQKme11XnK3B3FXNPGCKojgUG4t/v7ziriPkdPoXjwMinvLl6M5iP+iNu0
-         u9zzZxvq8h6xk8fkDwox0V+MwxmlHpgU+HBowaj+jm0uNKfjaIbu6VgpuOOTDjvu+Ry1
-         Z3RA==
+        d=gmail.com; s=20230601; t=1744650699; x=1745255499; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UC3vPHRe+zUrpoVanQyCstzz7M5adlvJuH9P7U1QAZ4=;
+        b=dMrIBYrIYjG21JSMfnJF+uszormbNz1xL1kYWPor5ld4yhCYzuNxR6Q0j8R0vZHZQT
+         AoJD1k2g1y2ToUMDO9+D333b/gdLHurr4HXI+1vY+xWCzXt08+4hKPwAMWvkt3mNTNbZ
+         PZQ+wuVq4shT+qlf22fgpHzVYfJb4xfeJrkWw/QkvncjMPWXJn+AOjrhC3ND99nZjRE6
+         uRY4lEzIpHWlDvHt7PveCWxU6HGU+NQsAAc0VZulC7s9VuW48faYW3GgzlMKbuA2WMEh
+         nI5GW8W7E30Cl1tSG+ipHT1Zxt8rmpLOEexGWbc1aR9ygUzWSiUrf+JphmpsUBTlPjOu
+         Ab+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744640977; x=1745245777;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1yYu8yQXLwEhLZXB69bga+C1rfzPofidjpYU39w4VI=;
-        b=sR3EO3CqHohuNdqRUdQPvm7bV0EUBd1tw+1ieYig6PFJc+rpZC4dnBwwNsqKIu6mca
-         nAIUOcwUIx/aAVp50as5+fYtjsyIgBO8dIyGoxr4DYiIyLHNrg7eOb9LyZgXi+TPQM9M
-         edSInxQ1fhVCiX/+AXNIyI7r0K52ry1LXnjlszYsEdAwbPebgel1pDmsVUzUTVa4Jmsj
-         VVtzHrXrA9cYgY1KnjCwD9xvsFpuXVswTzhc8aRTyOKY5k6+STFMY6sF0HsBfUgq9KW3
-         E4Lfhgaw0BAvxE9ZW1Qr0IDW554UF0uX/trccqeDBjeacJf5oNUSf6elB7l8HKhVAPBO
-         ZkwA==
-X-Gm-Message-State: AOJu0YyhIyuDdVWMH5ZJrxVSKk5+27x42DdsBscUneRVj2svE+iJFLKR
-	nbGhJAkvSXs1glAdy9SYcOb1j8cI2HXav3lgWW49Q4aE5G5vfWqjD3GCaespS2s=
-X-Gm-Gg: ASbGncvNRx/FHUUERCxdK/863zW3E6zONL+ykFzqKb9yjhltwvssT2YPWrpSvxaY6pd
-	2Ftkp3OVoRz02OzZzrmVaj7gamNDP4dn2Y0kUtgzU15bURGIpYonVcN13FsD5KuWTA8vYirAHkA
-	VJDS8oGemOCt8y3o+eWO9w96Z8YwOH52jeX+XtBeb6FSVzd4J50lJEeKPpklef2XslYpeWVDkKS
-	hYi4YGQFHY7oA0bedynUUZE+42tFFbkO2xZgppfSy/rVgyhbBnyxjy1n7m0owXWtSF+ZnEHabb1
-	k/3aFdrL3RI17W8Mxs2ZMYePuDDacgmlaL1KSw==
-X-Google-Smtp-Source: AGHT+IHgTb9OceURQXdiw9lwy+AMm5msOzwoMDpCHAEMkovZJ6nZ8AbWOE6ZRjIkVixcOUjTYcnLQQ==
-X-Received: by 2002:a05:6e02:3f05:b0:3d1:966c:fc8c with SMTP id e9e14a558f8ab-3d7ec27c9a3mr124172185ab.17.1744640977074;
-        Mon, 14 Apr 2025 07:29:37 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dba85487sm27743155ab.23.2025.04.14.07.29.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 07:29:35 -0700 (PDT)
-Message-ID: <85587075-1d54-4b79-94d4-39f615eeee24@kernel.dk>
-Date: Mon, 14 Apr 2025 08:29:35 -0600
+        d=1e100.net; s=20230601; t=1744650699; x=1745255499;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UC3vPHRe+zUrpoVanQyCstzz7M5adlvJuH9P7U1QAZ4=;
+        b=VIvHBIoHHydzA/nCna5tGkWWTfp6TC1nxj/9FyBg9kSGXhz/E4dSp/PBiRXRCiUb88
+         Xyq82t2E9IUZ/z3btKzR0jCvLqBGRfovl9OUR8H5OzlggYla0FPCuAAdcV4HABI+A5IP
+         RvlMf1WoJjn0R9PYYFEXkqq78sNvHpfW4b0HpU0MX46mlVZnA9fcMyeG3eUpzLNF313f
+         Lmes9gVfr5d5E4JD5tOqLiovKImbJZZkYwKf/YuPS/zbHTfQYEsF4BvqjGU0Rf5N9y6Q
+         pLGrqU74a4YmQqXJdP/ifOu/NW8FOhZ2uxNixfJl0v++ho27wLFKsV9BOdhqaBOw5g93
+         f07A==
+X-Forwarded-Encrypted: i=1; AJvYcCXpa5LHyXzCbMrce7m8Tx/BjIxvAT3c9LXV5SYUfWPmo7qUVoIJ2BMEyECgt5OhYgppun7qdhW38PAJ0NLK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBaG7VG989aedhKOaI6SwY2xPwV+Tw00bHs/R8py4hXvraKDqF
+	7DEvLx8QJX0ziKCXJJJzHCswBqULb8PNTVf/Vr99ebJo7hf/mVZu
+X-Gm-Gg: ASbGncts0NBNwyql0MfAfa65P1AEllHpZm4MKGynIDY1ht1cF3rqemFc69ru7PhKNcA
+	7PknF4avrXTkOvsm5R/mLw1Jp+ttiIzs2OMUlzliElQvS6tOSWZQ4MDOSVGNs2O8Vt3s9JOwBT+
+	jT69+eRLgBN2pwcx4MKewMFXSDvWxNtg+CiuVVrIY9v8LQT1f5ean2voXIVlwq1vBolsTMbLtp6
+	TGAt+Sw37ezuRT4se16TLTBhygpH+K7Y1N5gkSyy4ymFrDSwyoQTcD1+mfxbmBLy4qsrVv01BMM
+	rWu8Jda6WDtnOv3M6AkXp4KMZQ3K4i7pSNtLio0g14BZhdBPwn6xQQ==
+X-Google-Smtp-Source: AGHT+IFtNo+5Lyy948LZ2irnXhEhkkwUe2Ihm61wmkbWkSNp7Ep2XqopfYnp5O2HXXK3GuAuTUNtiA==
+X-Received: by 2002:a05:600c:b8d:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-43f4aac8753mr73938965e9.17.1744650698579;
+        Mon, 14 Apr 2025 10:11:38 -0700 (PDT)
+Received: from f (cst-prg-79-34.cust.vodafone.cz. [46.135.79.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm180544885e9.10.2025.04.14.10.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 10:11:37 -0700 (PDT)
+Date: Mon, 14 Apr 2025 19:11:30 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
+Message-ID: <gj6liprp6wtwgabimozkpaw6rv5xfotyi62zuegy5ffjxjdrrs@325g7wcnir6t>
+References: <20250409134057.198671-1-axboe@kernel.dk>
+ <20250409134057.198671-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
-To: Christian Brauner <brauner@kernel.org>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org
-References: <20250409134057.198671-1-axboe@kernel.dk>
- <20250409134057.198671-2-axboe@kernel.dk>
- <20250411-teebeutel-begibt-7d9c0323954b@brauner>
- <87fcae79-674c-4eea-8e65-4763c6fced44@kernel.dk>
- <20250414-unwiderruflich-daheim-8e14b89e7845@brauner>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250414-unwiderruflich-daheim-8e14b89e7845@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250409134057.198671-2-axboe@kernel.dk>
 
-On 4/14/25 4:10 AM, Christian Brauner wrote:
-> On Fri, Apr 11, 2025 at 08:37:51AM -0600, Jens Axboe wrote:
->> On 4/11/25 7:48 AM, Christian Brauner wrote:
->>> Seems fine. Although it has some potential for abuse. So maybe a
->>> VFS_WARN_ON_ONCE() that PF_NO_TASKWORK is only used with PF_KTHREAD
->>> would make sense.
->>
->> Can certainly add that. You'd want that before the check for
->> in_interrupt and PF_NO_TASKWORK? Something ala
->>
->> 	/* PF_NO_TASKWORK should only be used with PF_KTHREAD */
->> 	VFS_WARN_ON_ONCE((task->flags & PF_NO_TASKWORK) && !(task->flags & PF_KTHREAD));
->>
->> ?
+On Wed, Apr 09, 2025 at 07:35:19AM -0600, Jens Axboe wrote:
+> fput currently gates whether or not a task can run task_work on the
+> PF_KTHREAD flag, which excludes kernel threads as they don't usually run
+> task_work as they never exit to userspace. This punts the final fput
+> done from a kthread to a delayed work item instead of using task_work.
 > 
-> Yeah, sounds good!
+> It's perfectly viable to have the final fput done by the kthread itself,
+> as long as it will actually run the task_work. Add a PF_NO_TASKWORK flag
+> which is set by default by a kernel thread, and gate the task_work fput
+> on that instead. This enables a kernel thread to clear this flag
+> temporarily while putting files, as long as it runs its task_work
+> manually.
+> 
+> This enables users like io_uring to ensure that when the final fput of a
+> file is done as part of ring teardown to run the local task_work and
+> hence know that all files have been properly put, without needing to
+> resort to workqueue flushing tricks which can deadlock.
+> 
+> No functional changes in this patch.
+> 
+> Cc: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/file_table.c       | 2 +-
+>  include/linux/sched.h | 2 +-
+>  kernel/fork.c         | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index c04ed94cdc4b..e3c3dd1b820d 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -521,7 +521,7 @@ static void __fput_deferred(struct file *file)
+>  		return;
+>  	}
+>  
+> -	if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
+> +	if (likely(!in_interrupt() && !(task->flags & PF_NO_TASKWORK))) {
+>  		init_task_work(&file->f_task_work, ____fput);
+>  		if (!task_work_add(task, &file->f_task_work, TWA_RESUME))
+>  			return;
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index f96ac1982893..349c993fc32b 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1736,7 +1736,7 @@ extern struct pid *cad_pid;
+>  						 * I am cleaning dirty pages from some other bdi. */
+>  #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
+>  #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
+> -#define PF__HOLE__00800000	0x00800000
+> +#define PF_NO_TASKWORK		0x00800000	/* task doesn't run task_work */
+>  #define PF__HOLE__01000000	0x01000000
+>  #define PF__HOLE__02000000	0x02000000
+>  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index c4b26cd8998b..8dd0b8a5348d 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -2261,7 +2261,7 @@ __latent_entropy struct task_struct *copy_process(
+>  		goto fork_out;
+>  	p->flags &= ~PF_KTHREAD;
+>  	if (args->kthread)
+> -		p->flags |= PF_KTHREAD;
+> +		p->flags |= PF_KTHREAD | PF_NO_TASKWORK;
+>  	if (args->user_worker) {
+>  		/*
+>  		 * Mark us a user worker, and block any signal that isn't
 
-I used the usual XOR trick for this kind of test, but placed in the same
-spot:
+I don't have comments on the semantics here, I do have comments on some
+future-proofing.
 
-https://git.kernel.dk/cgit/linux/commit/?h=io_uring-exit-cancel.2&id=d5ab108781ccc2f0f013fe009a010a1f29a4785d
+To my reading kthreads on the stock kernel never execute task_work.
 
+This suggests it would be nice for task_work_add() to at least WARN_ON
+when executing with a kthread. After all you don't want a task_work_add
+consumer adding work which will never execute.
 
--- 
-Jens Axboe
+But then for your patch to not produce any splats there would have to be
+a flag blessing select kthreads as legitimate task_work consumers.
 
+So my suggestion would be to add the WARN_ON() in task_work_add() prior
+to anything in this patchset, then this patch would be extended with a
+flag (PF_KTHREAD_DOES_TASK_WORK?) and relevant io_uring threads would
+get the flag.
+
+Then the machinery which sets/unsets PF_NO_TASKWORK can assert that:
+1. it operates on a kthread...
+2. ...with the PF_KTHREAD_DOES_TASK_WORK flag
+
+This is just a suggestion though.
 

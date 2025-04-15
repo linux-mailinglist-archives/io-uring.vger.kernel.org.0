@@ -1,193 +1,133 @@
-Return-Path: <io-uring+bounces-7459-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7460-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E451A88C52
-	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 21:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E804A89EFA
+	for <lists+io-uring@lfdr.de>; Tue, 15 Apr 2025 15:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7D457A7960
-	for <lists+io-uring@lfdr.de>; Mon, 14 Apr 2025 19:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC1161DFE
+	for <lists+io-uring@lfdr.de>; Tue, 15 Apr 2025 13:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC691ADFE4;
-	Mon, 14 Apr 2025 19:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA41296D3D;
+	Tue, 15 Apr 2025 13:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="I6sy5nJI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHnRc6YN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451D01AD403
-	for <io-uring@vger.kernel.org>; Mon, 14 Apr 2025 19:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948DC2957AB
+	for <io-uring@vger.kernel.org>; Tue, 15 Apr 2025 13:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744659331; cv=none; b=AvkUt3/R6tpwMUly08BPTSiCBbL6OssryHRfe5qjd1ba5az0hZmYXVJTJm2vixmil7AHF2FvOGJfSCoQ6hHXBOGoFgHh6U834nJew3xbzKC5ToQhxFESOcjN4w0k6N6oR3RJvTchw+SwcKJe5O8GMLXtgV6DICQGS9wyErANawQ=
+	t=1744722523; cv=none; b=gqwD2OlGfL/FD2pNlBb7aLrBoqtVl2zk0XVM1QTe0Q9sZoAXZwDv3f3yMqlj7207ee1i2eJ1EiK8db3IK8Lxy4mf7TmxtHLqDtw6GyDQK4B0y6eOmEPzMLhvniD3skgdqbwKkDKm3ApwuYT+Ij9D+FmB8spToX2z/TX/UgVAY60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744659331; c=relaxed/simple;
-	bh=4DYoBFJNUP3UkiuUtc/FGAzvL3hBom3dR3htenqLAy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y+KHX6nF5u3ZG8KFjBGlsDSVhXVtE4E7FeOB50kd0PQdfbWmRcMNs+NTy5e5WcGBDcaS/xzTSDruudIJXr6o46yvvy4LAFfK9Ig0O3g0yWIfe8Qus/MEgW1nGKpcuAUhmHVnEwNj3si6k6mRKk9tdtD9KlXR+uuvO55YZMm0VDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=I6sy5nJI; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d445a722b9so23190895ab.3
-        for <io-uring@vger.kernel.org>; Mon, 14 Apr 2025 12:35:28 -0700 (PDT)
+	s=arc-20240116; t=1744722523; c=relaxed/simple;
+	bh=z/TwN/ai/7v+E0B/nNAKsZ3a0K4NKx1TowBjKYQvkOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XnzsdpbP0ZN1uQfyhIHeFnVp7PiwlTL4YPToxiUIoKhRQOkQ25vHJX+hekpsEP4Z1AjlJb4YqXdZIXC8+MuYTsKmnnGHlf9y39oEKgb3YPFPBv8PHHfSCx+U5yaj6mzqeQghwnDPXN6CNKNq3wplU4KdUBnTMZeqzxT0MwcZxyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHnRc6YN; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so903088466b.1
+        for <io-uring@vger.kernel.org>; Tue, 15 Apr 2025 06:08:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744659328; x=1745264128; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kQcWlSOKyFtlnxBLYEiwaL3kPiNi8IsyhCrMWx8B53M=;
-        b=I6sy5nJId6XtzmTrG0gu55ku0Vy8MpqDCMXiCgOI/MpRvpB6vMlvEZFRZRd14xMdJk
-         TeA2EKzWQxNyRlG+shG4qaTj83HCUHsEcq0s7IwrFGvlHCkTb6hqeJDehHiQUYes8vm3
-         1Bnak40dFmTOuBeNxHOQ4dJ8eEK+lcT/g1p4/9VvcbzFojfgIxOGguTFkyUf9+pt7Yrl
-         JFRxwrc/xAVocKM55V6z60zqg/vvSVr6nnyEzNJmDg33kfFwMF22FNwCaWXIgF+hrXs3
-         TyQo6DzD95Z95M4jQmubvmbobF2QH+TwJZNa0SynxwqK/P/BYOotz6tF7GlEJRfgaQdF
-         4B3A==
+        d=gmail.com; s=20230601; t=1744722518; x=1745327318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iPT2GBGRZS79eEIclYQh95KKYsjo2P+GFDqPMMndKmc=;
+        b=MHnRc6YNkhSEWW8Vk4s6e34+EsB82l7GoTl4GASM3h3VB5TSsbEBxLP2cY/0arJc19
+         tn6/e7YRC6gxct/ac9KtrySJ1ejMiX6DmRknN5smZvC7X6ii7sYl7e0SsR/ifVatjNU/
+         HDKVRZzIIPFI9xn1r3iPBHAF0Pyk9F2zMxEne2JlzlNXpTKJMC1B7VoQfPyynux/UKlM
+         HUwv16cylYe8fDDSKOqDbgu6lkYCVpBlybbmRH5bvMjG97tCd9Qmv98ZRVZKZc99RqD1
+         wvoi4rHmS2keld060i25gvDKDNU1/hOxhOvzdk98ORHbqe+nf85fnHBChWh8HwUCF6OA
+         m6bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744659328; x=1745264128;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQcWlSOKyFtlnxBLYEiwaL3kPiNi8IsyhCrMWx8B53M=;
-        b=jgBQWREXvgKHRtYO6J/+5J07oTjgl/bQVwIKsrhmm5y2+UJM2i59F3AODSU2LN7LKE
-         o70zBgnNc5AL9NpQBENosi7BFH16ZOC11FOe4XIwJumJoyfJcpOv1Pi1u/ACV8AjTBnr
-         XfuqwJTGvYbAx8co5R/YhpcBNAgPh4uwEPW7CzzEse0I2uAVmh3D8cFrmvWCaPsyzpFR
-         XnYguYdax5Od0Ans4E0so4TippsPaCOe6ZN+nN3jqVxhumcOOV+9QPH8dhye95NNgf+/
-         aGi91/jpDgjhUj1xcfieVNX8JipkMAqWna4vgugXCR3PEmTxV7wYzWjj1fJL+goB8bPg
-         TPkA==
-X-Gm-Message-State: AOJu0YwZ5Ne28kDWNfzc9gXEVreO3uegjYAjNTtcPWle+d+85Rm44G0P
-	sggqu/TdOUQXhlYZiTN0wsNHOhUfUQiau+bZvc5RPA+XJnUHXH572pLRyhpZoh0=
-X-Gm-Gg: ASbGnctsJmwSN+/Ub/RA5+1AlcVnr3s1WTDwxXPKjmwFmQmMkLysrB6ZBIy9BIa8Nfe
-	oANklJecFC4AFyQZdTxuLTnlaIWtsU4FOuvzk/m+wYqqyGROiqF/ZEHluysXaJ8nMnWQV+bABs6
-	pA87/tCtyw4p1ngsPV3nt6TIEQMNq5ZIfa8dyS2bBZ2E6GmQ7Uu45BcEvg0/8VtxkZpD7f8ooiC
-	mm4wfzZPzN3N8TdorhBan+l93KBZcWie/uM+juSecaaRs5wON+0VGq5UdhGeT/YzLVm6LWQepsW
-	0e5oJk+BpAbVKUMPT4QdHgy1P0LjN//PfgBv
-X-Google-Smtp-Source: AGHT+IFZFvf9s9O3yFwQDM03lsEZMLEJdiLpa/o6o5Qz1t59pba0q9aXsHOkfOYTUGsRk4DsYjI+3A==
-X-Received: by 2002:a05:6e02:3b89:b0:3d3:fdcc:8fb8 with SMTP id e9e14a558f8ab-3d7ec2035camr123753565ab.10.1744659328187;
-        Mon, 14 Apr 2025 12:35:28 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e7da54sm2703561173.140.2025.04.14.12.35.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 12:35:27 -0700 (PDT)
-Message-ID: <c83ab29b-48e5-44b1-8902-2711a806739f@kernel.dk>
-Date: Mon, 14 Apr 2025 13:35:26 -0600
+        d=1e100.net; s=20230601; t=1744722518; x=1745327318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iPT2GBGRZS79eEIclYQh95KKYsjo2P+GFDqPMMndKmc=;
+        b=Gy7o4X9tgy/8jBVmjJ9jup69J86SG0r5D1MFjPsjE8gcYGZg9VMUR9Jiek5rjc9Jrx
+         dsWlOmTqVesirPrP8GzEFMBLvhQ94Sa8LHs/dN7z/d/PBSSvFPYot4R1vseucb4r0ECP
+         7uTkf4g+DAExH6zrsovkfOZZCzHQSrg3L4ZtPNOx+M8Mt7/Oc5DJYIVQmHich9uedh4w
+         qLZqjYMc6eCRjet4rLP6fqep29KtwRY4Octr3q6WQStNnmFcqyAIB04Weaa5L4f3jImu
+         Q5SV/bIgWYH4muaAOZpOY6Aa6Ai3Cx1VeZ2Vz+j0dNDlYTsUSUMTLU7T5iqdxnR4mlVE
+         WoXQ==
+X-Gm-Message-State: AOJu0Yxfvv2RHxX5joK/VqWR8eaif332sl5DCtN4xGK5LqvqgB8gw+A6
+	CLVQyMaiRP/zcL+qKEGDX7fPrYvhD7x0Y6ONiKjPwR8mW8cBNcsbJdQpDw==
+X-Gm-Gg: ASbGncts9xoh+4OLTOzmzVJfuIfyj/MYky3n7n17pZkmTWO8jVC+2VQ3dT3Ky3kDWOn
+	wlijEOZAO10gBffUvB3P6gDn9eTI9+XWfvRxH0RHovAebuQoEBS34afQ2cObNEW/ArgURuJ+YIb
+	r8a0nWoAjwfBq+1v/1xpSfPPbfRp6K6TNlgydCf2NhrZiREqKgtmdG92NwTECdyyHvhlYrL9tDW
+	fDQLPCv4a+ttVcp3d58Ksn+NaIfjuAQd5EHL9jjyaflO/xYuBAk/eb4To5tnwgBevfoMuj9daft
+	KxiVSo2Pkwf/dOmw0n/7Di74
+X-Google-Smtp-Source: AGHT+IF/83/OhtZmR+mm96qDsB+DYM7y8Yalh23CUK4VNBrGrsjt57WN4VaPJ2DDRvWGJTQ7LEQbYQ==
+X-Received: by 2002:a17:907:d92:b0:abf:3cb2:1c04 with SMTP id a640c23a62f3a-acad3456ba4mr1297172966b.9.1744722515114;
+        Tue, 15 Apr 2025 06:08:35 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:9066])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc157sm1109284266b.142.2025.04.15.06.08.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 06:08:34 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	David Wei <dw@davidwei.uk>
+Subject: [PATCH 1/1] io_uring/zcrx: return ifq id to the user
+Date: Tue, 15 Apr 2025 14:09:45 +0100
+Message-ID: <8714667d370651962f7d1a169032e5f02682a73e.1744722517.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250409134057.198671-1-axboe@kernel.dk>
- <20250409134057.198671-2-axboe@kernel.dk>
- <gj6liprp6wtwgabimozkpaw6rv5xfotyi62zuegy5ffjxjdrrs@325g7wcnir6t>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <gj6liprp6wtwgabimozkpaw6rv5xfotyi62zuegy5ffjxjdrrs@325g7wcnir6t>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/14/25 11:11 AM, Mateusz Guzik wrote:
-> On Wed, Apr 09, 2025 at 07:35:19AM -0600, Jens Axboe wrote:
->> fput currently gates whether or not a task can run task_work on the
->> PF_KTHREAD flag, which excludes kernel threads as they don't usually run
->> task_work as they never exit to userspace. This punts the final fput
->> done from a kthread to a delayed work item instead of using task_work.
->>
->> It's perfectly viable to have the final fput done by the kthread itself,
->> as long as it will actually run the task_work. Add a PF_NO_TASKWORK flag
->> which is set by default by a kernel thread, and gate the task_work fput
->> on that instead. This enables a kernel thread to clear this flag
->> temporarily while putting files, as long as it runs its task_work
->> manually.
->>
->> This enables users like io_uring to ensure that when the final fput of a
->> file is done as part of ring teardown to run the local task_work and
->> hence know that all files have been properly put, without needing to
->> resort to workqueue flushing tricks which can deadlock.
->>
->> No functional changes in this patch.
->>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  fs/file_table.c       | 2 +-
->>  include/linux/sched.h | 2 +-
->>  kernel/fork.c         | 2 +-
->>  3 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/file_table.c b/fs/file_table.c
->> index c04ed94cdc4b..e3c3dd1b820d 100644
->> --- a/fs/file_table.c
->> +++ b/fs/file_table.c
->> @@ -521,7 +521,7 @@ static void __fput_deferred(struct file *file)
->>  		return;
->>  	}
->>  
->> -	if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
->> +	if (likely(!in_interrupt() && !(task->flags & PF_NO_TASKWORK))) {
->>  		init_task_work(&file->f_task_work, ____fput);
->>  		if (!task_work_add(task, &file->f_task_work, TWA_RESUME))
->>  			return;
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index f96ac1982893..349c993fc32b 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1736,7 +1736,7 @@ extern struct pid *cad_pid;
->>  						 * I am cleaning dirty pages from some other bdi. */
->>  #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
->>  #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
->> -#define PF__HOLE__00800000	0x00800000
->> +#define PF_NO_TASKWORK		0x00800000	/* task doesn't run task_work */
->>  #define PF__HOLE__01000000	0x01000000
->>  #define PF__HOLE__02000000	0x02000000
->>  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
->> diff --git a/kernel/fork.c b/kernel/fork.c
->> index c4b26cd8998b..8dd0b8a5348d 100644
->> --- a/kernel/fork.c
->> +++ b/kernel/fork.c
->> @@ -2261,7 +2261,7 @@ __latent_entropy struct task_struct *copy_process(
->>  		goto fork_out;
->>  	p->flags &= ~PF_KTHREAD;
->>  	if (args->kthread)
->> -		p->flags |= PF_KTHREAD;
->> +		p->flags |= PF_KTHREAD | PF_NO_TASKWORK;
->>  	if (args->user_worker) {
->>  		/*
->>  		 * Mark us a user worker, and block any signal that isn't
-> 
-> I don't have comments on the semantics here, I do have comments on some
-> future-proofing.
-> 
-> To my reading kthreads on the stock kernel never execute task_work.
+IORING_OP_RECV_ZC requests take a zcrx object id via sqe::zcrx_ifq_idx,
+which binds it to the corresponding if / queue. However, we don't return
+that id back to the user. It's fine as currently there can be only one
+zcrx and the user assumes that its id should be 0, but as we'll need
+multiple zcrx objects in the future let's explicitly pass it back on
+registration.
 
-Correct
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ include/uapi/linux/io_uring.h | 4 +++-
+ io_uring/zcrx.c               | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-> This suggests it would be nice for task_work_add() to at least WARN_ON
-> when executing with a kthread. After all you don't want a task_work_add
-> consumer adding work which will never execute.
-
-I don't think there's much need for that, as I'm not aware of any kernel
-usage that had a bug due to that. And if you did, you'd find it pretty
-quick during testing as that work would just never execute.
-
-> But then for your patch to not produce any splats there would have to be
-> a flag blessing select kthreads as legitimate task_work consumers.
-
-This patchset very much adds a specific flag for that, PF_NO_TASKWORK,
-and kernel threads have it set by default. It just separates the "do I
-run task_work" flag from PF_KTHREAD. So yes you could add:
-
-WARN_ON_ONCE(task->flags & PF_NO_TASKWORK);
-
-to task_work_add(), but I'm not really convinced it'd be super useful.
-
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index ed2beb4def3f..8f1fc12bac46 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -1010,7 +1010,9 @@ struct io_uring_zcrx_ifq_reg {
+ 	__u64	region_ptr; /* struct io_uring_region_desc * */
+ 
+ 	struct io_uring_zcrx_offsets offsets;
+-	__u64	__resv[4];
++	__u32	zcrx_id;
++	__u32	__resv2;
++	__u64	__resv[3];
+ };
+ 
+ #ifdef __cplusplus
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 0f46e0404c04..d0eccf277a20 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -354,7 +354,8 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 		return -EFAULT;
+ 	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
+ 		return -EFAULT;
+-	if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)))
++	if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)) ||
++	    reg.__resv2 || reg.zcrx_id)
+ 		return -EINVAL;
+ 	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
+ 		return -EINVAL;
 -- 
-Jens Axboe
+2.48.1
+
 

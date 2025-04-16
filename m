@@ -1,295 +1,159 @@
-Return-Path: <io-uring+bounces-7491-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7492-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726D8A90791
-	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 17:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C81BA908F6
+	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 18:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E62183B45E8
-	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 15:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A3B446715
+	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 16:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B167D20C497;
-	Wed, 16 Apr 2025 15:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444B4211A38;
+	Wed, 16 Apr 2025 16:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enangsgB"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="hFmNgp3A"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF76A208973
-	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 15:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6704C212D8A
+	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 16:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744816815; cv=none; b=UAxM2zUROuHW6XF1B0E1ObsdiQ6LgJ/yYex19hCbxW63ToG21Ojpz3IQkGcXBiS1CW6XTFXkms+IRMlwo14JgzQLqosTngnpiIqeEBIgzyWJ9qAC7z3QShKrDDavtPp89DxsCS8BiYnVF2zfjrjPaEAGGovBtYhvRPJSOIRWcpU=
+	t=1744820914; cv=none; b=FxMvVvyiGoY4/R1xg40RcKNTZr5da8pgPkiQoF1DfSFnkRf6xKHHLs3cU1r8f2jTcDVOilAqrObDdNxNspHyWT0qEZk/71laUH2i7SLWwXzPw00Hlc7DsV+xkjM71gtO/cD2FHeUTZUHPoGPJa460KN+NcaTTZIyCx3hZLsZxr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744816815; c=relaxed/simple;
-	bh=1ePJyRu6W/I6SmleKQ3yQktN6PgQQTjfZfz064GYiYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fzQOFKWyZDNl+33Yqgl4kKDmKFtjVSl9mT0hhZCGOz2F0vS44LlmGuK/+at/FN5qFSu83goEEda8No8L79YCAMrcwb21ZOGb4/DPUZ8Q3Vx0E7c0Mq9L5wn8fJ1ccMaTzDE9SbpSPBDk/zUVEYSq6OX7XEogBMM21XM/ai15K7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enangsgB; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so5196529a12.1
-        for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 08:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744816812; x=1745421612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yqk0dwcv+WXlX7iSuMOHO7EetCa6wGQFZf8zB+QYfKM=;
-        b=enangsgBTScyt11R7dQ8w+W0uuRLRWmOA9esCZRndJrrfvCyOINl+SPpOJ8R0pIpDo
-         NTFMSo2h4i7/j4gsAkygBuHAA16wYj8LYKK75AWm04/GXF6pkceHDIfSwkDydWgb5mfz
-         xgvA3wDVaUaYj/YMI/Ol2iD47gY+WR7kpe1GFDzRUyGAIpQZ8XL3KBN2fo4x1B3xjpkL
-         zgDIPA3PRYgRKX44ev/TMPfJFI0AkgBcFPs3dcIeRO2O+vSdtVxdHGeudFxd/xJRIDoS
-         zldrt5EYGYY9ZeuAoeYxXxoREmqCD6FzW/vwmZHNby35YbfFB/VB7x5RPpgmfXm6D30N
-         vphA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744816812; x=1745421612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yqk0dwcv+WXlX7iSuMOHO7EetCa6wGQFZf8zB+QYfKM=;
-        b=GYq3gpPZws9+R2rS35thYMRe+sD7xK1gtSkRHmrGJbKy+OamOekf+ircGf1Ng7noqw
-         be8ivV6mVvvzj3AYpCoxe9FggmWaPu6A7cFCWSy3SHiU76/FxthHzzleK5TZqrvB8omh
-         cn49ckke9ivWbN4/qo60zkheUfAI0IO6t8O4BtzJ9rxYUxgSh/AVCK9ahSyb+B5lMJUW
-         mJqlOUSzR15Tlq7kPffLih4Y7ZJu9VBJUN6gpkvQfSuAzxR/r9hs1jH8SCaSg1sVea3b
-         x7Mei3zRq4rjvEMtjDyDeLSkXxlXxMUsxyPKzIcK4i9oQaAxKUz+BFNY2FYVETUPuqlc
-         psNw==
-X-Gm-Message-State: AOJu0YzVm+XSKmgHFE+xa1lhrv+Lf/u48OiAD/wzLeUPQLFIwSqPmfG1
-	FCbkHiyfug7bttBWBfP4Btaz1Cs1GynCgwoP19/UxCj+joO7FcvApdIiXnz8
-X-Gm-Gg: ASbGncsK6iScnSvfuEqRiQj7LDMOHpMekN6leZEhtsQf+zsdAsT/t8lKgKAe5l6Vr6y
-	Mqh4kSLY/ejbDzZVnNTl+eLL1YzoCyd8m6DhqZ7Me/82O8fs5FkavVclxOn8lSLai+uqdyvxWtW
-	/322g5x7sI4/AbbqIKETc0qnJPV8AwbbFnz58M4E264gwIRocMpYwI29/yG7hHXkCjfxzH4zgX+
-	+w7XZjhIcWp8+QR/eXvzwTJIuahKcG8fxRIfhGLUR971KndwYnZQ35LM1DCgcy4e51cXD0wi4Gj
-	ZxCKv6Q2r3x2Ry1AVCIwYEYjrcUrvlSEBfo=
-X-Google-Smtp-Source: AGHT+IFXeSkN5oADVzT2DsqFQc1OT0JgnxsDNWrxmGNs92bSsFYiN4QkmMdz2ycF3mXB8QtzSZtZag==
-X-Received: by 2002:a17:907:d716:b0:ac7:e5c4:1187 with SMTP id a640c23a62f3a-acb4288417emr203890966b.11.1744816811353;
-        Wed, 16 Apr 2025 08:20:11 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:1ccb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3cd61f75sm144579566b.35.2025.04.16.08.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 08:20:10 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	David Wei <dw@davidwei.uk>
-Subject: [PATCH 5/5] io_uring/zcrx: add support for multiple ifqs
-Date: Wed, 16 Apr 2025 16:21:20 +0100
-Message-ID: <8d8ddd5862a4793cdb1b4486601e285d427df22e.1744815316.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1744815316.git.asml.silence@gmail.com>
-References: <cover.1744815316.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1744820914; c=relaxed/simple;
+	bh=Z+kMjhspGHSNg5C0M6NZoqL+m6CyPP37mRh30J8MTOo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i1+kdTVUwoqP0H/FzxLpXh1V3ZhyPeI4HoABswvHUsdPEt2gUxCA1/MK4xXzvZ4Uv/S0t02w6YCaaJOq0+SJhtaJ24kHn0MTlYoD6+cViT3COhIxBPz8y3PAed/i4jzDmpy+sE2BiN6dh+E8bTv7WWC3r/C88wZyrdoauYw4tL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=hFmNgp3A; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 53GF6w0s003190
+	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 09:28:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=2CAx0zndR8kw+WwSos
+	uULyHlN4brk2LFu25zyUnfFhs=; b=hFmNgp3AwRjHSrkeIhTz6e6UVAx3PEP6P5
+	Fyr0WKW4qwHWUNVTL1PFesTDqCd9cm5qRvy1dU6bPGo4vUTXX5kSQZX6idqqcaAO
+	GKcirQyo+m8nU127KXmF2+VBC5fXO10qNN3wIA5DcFi9VwYqU7HBtju6UMQKpCWb
+	9pN5WMHCVZk/VUWxRRqcuDQ+fxzgegRP8HC7cyvMkGxxoEq5iJHHe3/TUZZEPvn3
+	DtYDbEdqw7QuvvjXAzMw8Th9K5nM9+XzbfFFjzRgNFfywf4AYfD5sCRWLFQZxMAR
+	S0DPQ5svf7ZExLYmFC+7zdvNy5LIYxk2y0RbiM+4qApaExa+KmNw==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 4623tpcke9-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 09:28:29 -0700 (PDT)
+Received: from twshared60378.16.frc2.facebook.com (2620:10d:c0a8:1c::11) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 16 Apr 2025 16:28:20 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 18D2D1A552C7C; Wed, 16 Apr 2025 09:28:03 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <axboe@kernel.dk>, <io-uring@vger.kernel.org>
+CC: Keith Busch <kbusch@kernel.org>
+Subject: [PATCH] liburing/io_passthrough: use metadata if format requires it
+Date: Wed, 16 Apr 2025 09:28:02 -0700
+Message-ID: <20250416162802.3614051-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: FyB09nLpehLQNKd8FBDChmY5_cLNVL7k
+X-Authority-Analysis: v=2.4 cv=dLammPZb c=1 sm=1 tr=0 ts=67ffdaad cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=ECus0urKE0Kxf4j2yicA:9
+X-Proofpoint-GUID: FyB09nLpehLQNKd8FBDChmY5_cLNVL7k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_06,2025-04-15_01,2024-11-22_01
 
-Allow the user to register multiple ifqs / zcrx contexts. With that we
-can use multiple interfaces / interface queues in a single io_uring
-instance.
+From: Keith Busch <kbusch@kernel.org>
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- include/linux/io_uring_types.h |  5 ++--
- io_uring/io_uring.c            |  3 +-
- io_uring/net.c                 |  8 ++---
- io_uring/zcrx.c                | 53 +++++++++++++++++++++-------------
- 4 files changed, 40 insertions(+), 29 deletions(-)
+ test/io_uring_passthrough.c | 16 ++++++++++++++++
+ test/nvme.h                 |  2 ++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 06d722289fc5..7e23e993280e 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -40,8 +40,6 @@ enum io_uring_cmd_flags {
- 	IO_URING_F_TASK_DEAD		= (1 << 13),
- };
- 
--struct io_zcrx_ifq;
--
- struct io_wq_work_node {
- 	struct io_wq_work_node *next;
- };
-@@ -394,7 +392,8 @@ struct io_ring_ctx {
- 	struct wait_queue_head		poll_wq;
- 	struct io_restriction		restrictions;
- 
--	struct io_zcrx_ifq		*ifq;
-+	/* Stores zcrx object pointers of type struct io_zcrx_ifq */
-+	struct xarray			zcrx_ctxs;
- 
- 	u32			pers_next;
- 	struct xarray		personalities;
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 61514b14ee3f..ed85c9374f6e 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -359,6 +359,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->tctx_list);
- 	ctx->submit_state.free_list.next = NULL;
- 	INIT_HLIST_HEAD(&ctx->waitid_list);
-+	xa_init_flags(&ctx->zcrx_ctxs, XA_FLAGS_ALLOC);
- #ifdef CONFIG_FUTEX
- 	INIT_HLIST_HEAD(&ctx->futex_list);
- #endif
-@@ -2888,7 +2889,7 @@ static __cold void io_ring_exit_work(struct work_struct *work)
- 			io_cqring_overflow_kill(ctx);
- 			mutex_unlock(&ctx->uring_lock);
+diff --git a/test/io_uring_passthrough.c b/test/io_uring_passthrough.c
+index bea4f39..66c97da 100644
+--- a/test/io_uring_passthrough.c
++++ b/test/io_uring_passthrough.c
+@@ -17,6 +17,7 @@
+ #define BS		8192
+ #define BUFFERS		(FILE_SIZE / BS)
+=20
++static void *meta_mem;
+ static struct iovec *vecs;
+ static int no_pt;
+=20
+@@ -193,6 +194,12 @@ static int __test_io(const char *file, struct io_uri=
+ng *ring, int tc, int read,
+ 			cmd->addr =3D (__u64)(uintptr_t)&vecs[i];
+ 			cmd->data_len =3D 1;
  		}
--		if (ctx->ifq) {
-+		if (!xa_empty(&ctx->zcrx_ctxs)) {
- 			mutex_lock(&ctx->uring_lock);
- 			io_shutdown_zcrx_ifqs(ctx);
- 			mutex_unlock(&ctx->uring_lock);
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 5f1a519d1fc6..b3a643675ce8 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -1185,16 +1185,14 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	struct io_recvzc *zc = io_kiocb_to_cmd(req, struct io_recvzc);
- 	unsigned ifq_idx;
- 
--	if (unlikely(sqe->file_index || sqe->addr2 || sqe->addr ||
--		     sqe->addr3))
-+	if (unlikely(sqe->addr2 || sqe->addr || sqe->addr3))
- 		return -EINVAL;
- 
- 	ifq_idx = READ_ONCE(sqe->zcrx_ifq_idx);
--	if (ifq_idx != 0)
--		return -EINVAL;
--	zc->ifq = req->ctx->ifq;
-+	zc->ifq = xa_load(&req->ctx->zcrx_ctxs, ifq_idx);
- 	if (!zc->ifq)
- 		return -EINVAL;
 +
- 	zc->len = READ_ONCE(sqe->len);
- 	zc->flags = READ_ONCE(sqe->ioprio);
- 	zc->msg_flags = READ_ONCE(sqe->msg_flags);
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index d56665fd103d..e4ce971b1257 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -172,9 +172,6 @@ static int io_allocate_rbuf_ring(struct io_zcrx_ifq *ifq,
- 
- static void io_free_rbuf_ring(struct io_zcrx_ifq *ifq)
- {
--	if (WARN_ON_ONCE(ifq->ctx->ifq))
--		return;
--
- 	io_free_region(ifq->ctx, &ifq->region);
- 	ifq->rq_ring = NULL;
- 	ifq->rqes = NULL;
-@@ -334,11 +331,11 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
- struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
- 					    unsigned int id)
- {
-+	struct io_zcrx_ifq *ifq = xa_load(&ctx->zcrx_ctxs, id);
-+
- 	lockdep_assert_held(&ctx->mmap_lock);
- 
--	if (id != 0 || !ctx->ifq)
--		return NULL;
--	return &ctx->ifq->region;
-+	return ifq ? &ifq->region : NULL;
- }
- 
- int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
-@@ -350,6 +347,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	struct io_uring_region_desc rd;
- 	struct io_zcrx_ifq *ifq;
- 	int ret;
-+	u32 id;
- 
- 	/*
- 	 * 1. Interface queue allocation.
-@@ -362,8 +360,6 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
- 	      ctx->flags & IORING_SETUP_CQE32))
- 		return -EINVAL;
--	if (ctx->ifq)
--		return -EBUSY;
- 	if (copy_from_user(&reg, arg, sizeof(reg)))
- 		return -EFAULT;
- 	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
-@@ -424,14 +420,21 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	reg.offsets.head = offsetof(struct io_uring, head);
- 	reg.offsets.tail = offsetof(struct io_uring, tail);
- 
-+	scoped_guard(mutex, &ctx->mmap_lock) {
-+		ret = xa_alloc(&ctx->zcrx_ctxs, &id, ifq, xa_limit_31b, GFP_KERNEL);
-+		if (ret)
-+			goto err;
-+	}
-+
-+	reg.zcrx_id = id;
- 	if (copy_to_user(arg, &reg, sizeof(reg)) ||
- 	    copy_to_user(u64_to_user_ptr(reg.region_ptr), &rd, sizeof(rd)) ||
- 	    copy_to_user(u64_to_user_ptr(reg.area_ptr), &area, sizeof(area))) {
-+		scoped_guard(mutex, &ctx->mmap_lock)
-+			xa_erase(&ctx->zcrx_ctxs, id);
- 		ret = -EFAULT;
- 		goto err;
- 	}
--	scoped_guard(mutex, &ctx->mmap_lock)
--		ctx->ifq = ifq;
- 	return 0;
- err:
- 	io_zcrx_ifq_free(ifq);
-@@ -440,16 +443,23 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 
- void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
- {
--	struct io_zcrx_ifq *ifq = ctx->ifq;
-+	struct io_zcrx_ifq *ifq;
-+	unsigned long id;
- 
- 	lockdep_assert_held(&ctx->uring_lock);
- 
--	if (!ifq)
--		return;
-+	while (1) {
-+		scoped_guard(mutex, &ctx->mmap_lock) {
-+			ifq = xa_find(&ctx->zcrx_ctxs, &id, ULONG_MAX, XA_PRESENT);
-+			if (ifq)
-+				xa_erase(&ctx->zcrx_ctxs, id);
++		if (meta_size) {
++			cmd->metadata =3D (__u64)(uintptr_t)(meta_mem +
++						meta_size * i * (nlb + 1));
++			cmd->metadata_len =3D meta_size * (nlb + 1);
 +		}
-+		if (!ifq)
-+			break;
-+		io_zcrx_ifq_free(ifq);
-+	}
- 
--	scoped_guard(mutex, &ctx->mmap_lock)
--		ctx->ifq = NULL;
--	io_zcrx_ifq_free(ifq);
-+	xa_destroy(&ctx->zcrx_ctxs);
- }
- 
- static struct net_iov *__io_zcrx_get_free_niov(struct io_zcrx_area *area)
-@@ -506,12 +516,15 @@ static void io_zcrx_scrub(struct io_zcrx_ifq *ifq)
- 
- void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
- {
-+	struct io_zcrx_ifq *ifq;
-+	unsigned long index;
+ 		cmd->nsid =3D nsid;
+=20
+ 		offset +=3D BS;
+@@ -404,6 +411,12 @@ static int test_io_uring_submit_enters(const char *f=
+ile)
+ 		cmd->addr =3D (__u64)(uintptr_t)&vecs[i];
+ 		cmd->data_len =3D 1;
+ 		cmd->nsid =3D nsid;
 +
- 	lockdep_assert_held(&ctx->uring_lock);
- 
--	if (!ctx->ifq)
--		return;
--	io_zcrx_scrub(ctx->ifq);
--	io_close_queue(ctx->ifq);
-+	xa_for_each(&ctx->zcrx_ctxs, index, ifq) {
-+		io_zcrx_scrub(ifq);
-+		io_close_queue(ifq);
-+	}
- }
- 
- static inline u32 io_zcrx_rqring_entries(struct io_zcrx_ifq *ifq)
--- 
-2.48.1
++		if (meta_size) {
++			cmd->metadata =3D (__u64)(uintptr_t)(meta_mem +
++						meta_size * i * (nlb + 1));
++			cmd->metadata_len =3D meta_size * (nlb + 1);
++		}
+ 	}
+=20
+ 	/* submit manually to avoid adding IORING_ENTER_GETEVENTS */
+@@ -451,6 +464,9 @@ int main(int argc, char *argv[])
+ 		return T_EXIT_SKIP;
+=20
+ 	vecs =3D t_create_buffers(BUFFERS, BS);
++	if (meta_size)
++		t_posix_memalign(&meta_mem, 0x1000,
++				 meta_size * BUFFERS * (BS >> lba_shift));
+=20
+ 	for (i =3D 0; i < 32; i++) {
+ 		int read =3D (i & 1) !=3D 0;
+diff --git a/test/nvme.h b/test/nvme.h
+index 1254b92..9c3cfa1 100644
+--- a/test/nvme.h
++++ b/test/nvme.h
+@@ -59,6 +59,7 @@ enum nvme_io_opcode {
+=20
+ static int nsid;
+ static __u32 lba_shift;
++static __u32 meta_size;
+=20
+ struct nvme_lbaf {
+ 	__le16			ms;
+@@ -157,6 +158,7 @@ static int nvme_get_info(const char *file)
+=20
+ 	lba_size =3D 1 << ns.lbaf[(ns.flbas & 0x0f)].ds;
+ 	lba_shift =3D ilog2(lba_size);
++	meta_size =3D ns.lbaf[(ns.flbas & 0x0f)].ms;
+=20
+ 	close(fd);
+ 	return 0;
+--=20
+2.47.1
 
 

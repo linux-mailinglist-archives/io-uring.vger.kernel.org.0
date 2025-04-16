@@ -1,129 +1,172 @@
-Return-Path: <io-uring+bounces-7482-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7483-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1538A906E4
-	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 16:48:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E4AA906F8
+	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 16:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E09163DF0
-	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 14:48:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EFE67ACD6E
+	for <lists+io-uring@lfdr.de>; Wed, 16 Apr 2025 14:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DD77E110;
-	Wed, 16 Apr 2025 14:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6911EF39B;
+	Wed, 16 Apr 2025 14:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vm9dIVJa"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2DgFswpW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC8681E
-	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 14:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2257E110
+	for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 14:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744814889; cv=none; b=RlNNAL2+7jFD0mVXVClpP/b/AAbWmQDZjpA+hXjISsQbi10+jNioWN5ir5jCEHnAJPGdpc+iMNIgj2CAewLsubuK3/RlUMsevJYYD+SBNd3eTXCG4h/jDmheM26mSyjaAQGlpkutG8yJqkKCqmT0Q77AXZ0kc+HE49kC+8fczCY=
+	t=1744814952; cv=none; b=pcKcolBa2uVtjVVxDIth6CI/TTr2GnhL5XjPa+tdH2Qv0eXESvcT+x80k+bbyxMI4NDq4j++rPYxbmuUJSWehYMrbgzpBOh2fuj6B51pwtgcxL011PQ29v5UjWxPbvKTfr+xFTITfnmljBB2sgiFvQhJL5vKu42wmVvLmAfecY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744814889; c=relaxed/simple;
-	bh=K9u6qju8uPbBtfMTuHW4Zfa2EXt8CDs7OtfeVdZ8soU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Xi7dgrsZhl45OnUF6sSLIlNUNED06/eLGVObLKBBXcnINg6UODXMzk+gqtE/n7/IiXxB82zHFep07KsJqLkXiiikC9gBkYmu6XIoHK/Bi7jDDIPYkyNU5+lW2rwmO5NrDRqsf/hcO9YQDdY7m3F5JbXsRRvtQxryAs5zvPf+Yyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vm9dIVJa; arc=none smtp.client-ip=209.85.166.182
+	s=arc-20240116; t=1744814952; c=relaxed/simple;
+	bh=SQ8+5p7Nlq1fOvBkIy/o1kBhFodGK97yw495ZecXZFM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PBmGvIydF4gHx2Uhptr5PhUVURT3PKnzotfYTlXqfwAJX6qazbwqzvDgqZn3GJOZVb3BRyTB+veogCbQpWoxRS/KKZoabYFEqUnmGUXSPOJmTHG5au8BjVD7717VkYkIoQWvmta2Oy3Msu7v1IRnYM7y9cE8jStLv3J0DynyIXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2DgFswpW; arc=none smtp.client-ip=209.85.166.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d439dc0548so23328645ab.3
-        for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 07:48:06 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-86135ae2a29so604644839f.2
+        for <io-uring@vger.kernel.org>; Wed, 16 Apr 2025 07:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744814885; x=1745419685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FZ6eUAHnXm6ngzc6Y+R4E0QjjI0mFAYSeyQFy9lQmoo=;
-        b=Vm9dIVJanNE0K5h6rO+ma9OsmvCvjT0Toz4jJBs1btj7AzJAdmSxLp/SwmMp3YlYrj
-         v53O0hjS53+58dHC3ZLKEhqJ+epvfnVrdO6kRQ6DTcRXXdH+u7QK6F3ZLo7bTXfhm0cA
-         FkQTEASGAbEn9vWbJnyhFOn1nHbyT4Jw+ia0IEHa/3lwu+eH6aoyy1WVT/yigkPG2auV
-         QPE4grLaabB+AciHQ1/1itii7e+/tdY5jFRZP3080ywBPnICoPWs7dXlYgBo97c23aV5
-         x62QnpARlRp5hzbzXzNjfbngshl6XYH5zWjpGHAVJRUFVIrsBP8Plz5d9EL/Z1L1LvoZ
-         rOBg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744814948; x=1745419748; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MAddcC1f4xDb/YfiGnMxU0srI5s/b5cLv3g1/6rru6M=;
+        b=2DgFswpWsY+/3tF/DSNNhc964uj9kEJNS/Hly5mC+r3tZsXkp7VTZX8IKclpvEZn8E
+         iszkWU9bU6sIljQD56/5R82yVvVaAQhsVhNucf5BiilU+5ffAVk+9qv4lOdeKQDRNQ9s
+         /RGhA9bD4Tc8zBvwG8iJ5fediRwXVzkyJk9rGnKnM3wMpzA6I7pflB23aE4wXcWIbtpJ
+         /x9tqxymZgDBMOw8yBo8o7JNAzaFTmfse7icN/A0iPLcDbMMDj4CBv1rPokXDURlwjEb
+         y9lsrIirvEJvlxto/sTdXyY7+b9vjWvrizYWdm6QjCeT6h7tkqgCHK7LKqOHWPdAeARe
+         /HMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744814885; x=1745419685;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FZ6eUAHnXm6ngzc6Y+R4E0QjjI0mFAYSeyQFy9lQmoo=;
-        b=npLIXxSnS7bXpsaZ+R3NMwOQSr3xoFHw69WgAArlkdUU5tksdBtvfzhxuLGl62cllT
-         seKvl1Zxy+WnE9161SQnyaqLbzNu2ntGuuwRowqU2PZob2kGx9kl0lVVCG1lGoitXPOH
-         AwhVy4iY/DnJy+BRwRVONJO1qMZgCSPz06jvZFev6E2+fL01FCqi8jQcx8/ym6flRiQy
-         26Z8w7As2mogysrLDE3iWP1Bf0B9DSHwSNWQD2KE54OhePFBwt9JkV3WmywO9nB69NTv
-         FO3EjG8P3FTOow8QaesoR2F3+11ZYKXit1bcQgM0a4QK8OGmjmfCy07kSRR8DA/1etkm
-         8vJg==
-X-Gm-Message-State: AOJu0YyFUbJ15QOqgk4/DW6X965fug8l14WdPzX9S3/0TAPw2z/Bki5n
-	jFiWrm0pLTMQMa+wC53W9YoVLu79W70/B7eBg6pzUCdPmsGtxs0/5y009pjCinQpWtxG6zZsRcB
-	Z
-X-Gm-Gg: ASbGncvfmbwRQzZuc35mtQ12fBofSKbY8Woz8RKN1ERqEsjISRvLZgGzYKAvN/zMMty
-	1FJZXTMfDLMp1l5g2PX7z6eRdcuAC1D14aKs4GcI4at9oFZOAzWx0rfJLt4c+FhIX0EFrVBszBt
-	IWAU1j+jWqPntogMVIwpLTCiQ++OFyJ3Je8c6LrTp+1zy2rKZuIQ4ERwCVnLgIrSPiT5A/67Jim
-	NvA6ksuYPfHNaTT0grGH6VEWfhTuW2fylSPjuAWbOwxb6bkGhrjSq6FpSS7/J2umI2I3ZumjuDV
-	bmAVngpKgT3hD6uZl9YoschwYLhRE6ZoMvmGeS/EGA==
-X-Google-Smtp-Source: AGHT+IEJIITrZwADkHN7Ju8BdcceDkouhm51fqj/BQ4Eb/8tKjSeL4DT/J55Fkz2O4vKZBzXPSSsqw==
-X-Received: by 2002:a05:6e02:b4d:b0:3d3:f27a:9101 with SMTP id e9e14a558f8ab-3d815af46b6mr20330215ab.1.1744814884717;
-        Wed, 16 Apr 2025 07:48:04 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2e63dsm3630764173.114.2025.04.16.07.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 07:48:04 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>
-In-Reply-To: <cover.1744793980.git.asml.silence@gmail.com>
-References: <cover.1744793980.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 0/5] zcrx example and other changes
-Message-Id: <174481488391.330050.9226351914108896133.b4-ty@kernel.dk>
-Date: Wed, 16 Apr 2025 08:48:03 -0600
+        d=1e100.net; s=20230601; t=1744814948; x=1745419748;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAddcC1f4xDb/YfiGnMxU0srI5s/b5cLv3g1/6rru6M=;
+        b=TbqDZVw8+owfTy3tn1ERNHztpdl5YXzWnxXey1OxK/MpzhFygTIUNAeLhYhxmenbul
+         v7z/aVdhu8rOOvoXBZmjQqgmlfSDA3Mos9+WAR1cgZGkODMaVhgJYsuoQok1XnzF4ArI
+         e9wDDntcMci7wuy/nnIRStGJnQHTha8Mb6LS5gfaR2IxIaRN0rJuEliCnUh95gb73W3U
+         fJ3j1GlTG8vKyIJAyHG9piXqKKz1ao7F3G21/6p56/ZkAT6Ki67hi929OG5B7ts/eg+A
+         PFhWrpHEBmlBQMD+f5udtoO+ZoEHd54sFe4H1u1mbhbzUkMTM/pVA3mH2vIpvWXXbaO2
+         Ly3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtYlZPxRypPtDlb/QWxPxrJ7Lhz3RlZECTkfDtT3k1BN4lwnZb7H6q8EXSVYOVeoN05r0yXRbgPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4oRhQTVc4u3cZ/cijjhVdGR3k2hjZSJDlfgrxXyMEHP0yhQta
+	naDjzQX4i5Lo5zsELtg0Yj0FOPw2gz2AvpZyPAIfFDmQQuZ9dqrwxul7znIdGrQ=
+X-Gm-Gg: ASbGnctQVXi9Y0PSiirN7H1Rmq1F1glIVJA8SVZT2j5ZVFgolOmcEPPJYm2iRs0PIcG
+	3CxbSepMw1SpsXlatCAw14xWm9RvOBuCTZ8mXlhkPmZeDISxkXaKy9aNOW3AEFafwkGS8l0t93B
+	wg6Xgypphfd3f19Ell/ddIjNbXHuPFopopfbu+FEc1S8aPeCm1wgrQyWZt2VLAkWbqG+7MYJZze
+	dmKpx2GoeBJ+/QbDO5DaC1vFd0ZYVYroO47U1nBtVD4yAF4AyRSl8F8TUfvBrx+Pk+qkFB4KLGD
+	8rd2fSERv3kmCTiQILt34mVcRUTRm3J4HJ+p
+X-Google-Smtp-Source: AGHT+IE28GiU5e4LeBm4Ix2sbRDwdsdmtN0VHMhSjY11H/dWVE28Hy19YquGA/Fly88a1VUkrA0byw==
+X-Received: by 2002:a05:6602:3a83:b0:861:c4cf:cae8 with SMTP id ca18e2360f4ac-861c4f641f4mr218897339f.2.1744814948691;
+        Wed, 16 Apr 2025 07:49:08 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-861650858c0sm292564939f.0.2025.04.16.07.49.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 07:49:08 -0700 (PDT)
+Message-ID: <f4da5d66-9ae4-4a61-8c6c-394009c12c4c@kernel.dk>
+Date: Wed, 16 Apr 2025 08:49:07 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
+From: Jens Axboe <axboe@kernel.dk>
+To: Nitesh Shetty <nj.shetty@samsung.com>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
+ <20250416054413.10431-1-nj.shetty@samsung.com>
+ <4ed32b40-47ee-43f8-b3e3-88fdc6ca60fa@kernel.dk>
+ <ee2850a5-6269-48c3-a843-4d87c9e107f8@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <ee2850a5-6269-48c3-a843-4d87c9e107f8@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
 
-
-On Wed, 16 Apr 2025 10:01:12 +0100, Pavel Begunkov wrote:
-> We need a simple example for zcrx to show case how the api works
-> and how to use features. Patch 5 is a brushed up version of the
-> zcrx selftest.
+On 4/16/25 8:43 AM, Jens Axboe wrote:
+> On 4/16/25 8:19 AM, Jens Axboe wrote:
+>> On 4/15/25 11:44 PM, Nitesh Shetty wrote:
+>>> Sending exact nr_segs, avoids bio split check and processing in
+>>> block layer, which takes around 5%[1] of overall CPU utilization.
+>>>
+>>> In our setup, we see overall improvement of IOPS from 7.15M to 7.65M [2]
+>>> and 5% less CPU utilization.
+>>>
+>>> [1]
+>>>      3.52%  io_uring         [kernel.kallsyms]     [k] bio_split_rw_at
+>>>      1.42%  io_uring         [kernel.kallsyms]     [k] bio_split_rw
+>>>      0.62%  io_uring         [kernel.kallsyms]     [k] bio_submit_split
+>>>
+>>> [2]
+>>> sudo taskset -c 0,1 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2
+>>> -r4 /dev/nvme0n1 /dev/nvme1n1
+>>
+>> This must be a regression, do you know which block/io_uring side commit
+>> caused the splits to be done for fixed buffers?
+>>
+>>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>>> ---
+>>>  io_uring/rsrc.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+>>> index b36c8825550e..6fd3a4a85a9c 100644
+>>> --- a/io_uring/rsrc.c
+>>> +++ b/io_uring/rsrc.c
+>>> @@ -1096,6 +1096,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+>>>  			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
+>>>  		}
+>>>  	}
+>>> +	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
+>>> +		iter->count + ((1UL << imu->folio_shift) - 1)) /
+>>> +		(1UL << imu->folio_shift);
+>>
+>> 	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
+>> 		iter->count + ((1UL << imu->folio_shift) - 1)) >> imu->folio_shift;
+>>
+>> to avoid a division, seems worthwhile?
 > 
-> Apart from that update headers and use the kernel return zcrx id.
+> And we should be able to drop the ->nr_segs assignment in the above
+> section as well with this change.
 > 
-> Pavel Begunkov (5):
->   Update io_uring.h for zcrx
->   tests/zcrx: rename a test
->   tests/zcrx: use returned right zcrx id
->   examples: add extra helpers
->   examples: add a zcrx example
+> Tested on a box here, previously:
 > 
-> [...]
+> IOPS=99.19M, BW=48.43GiB/s, IOS/call=32/31
+> IOPS=99.48M, BW=48.57GiB/s, IOS/call=32/32
+> IOPS=99.43M, BW=48.55GiB/s, IOS/call=32/32
+> IOPS=99.48M, BW=48.57GiB/s, IOS/call=31/31
+> IOPS=99.49M, BW=48.58GiB/s, IOS/call=32/32
+> 
+> and with the fix:
+> 
+> IOPS=103.28M, BW=50.43GiB/s, IOS/call=32/31
+> IOPS=103.18M, BW=50.38GiB/s, IOS/call=32/32
+> IOPS=103.22M, BW=50.40GiB/s, IOS/call=32/31
+> IOPS=103.18M, BW=50.38GiB/s, IOS/call=31/32
+> IOPS=103.19M, BW=50.38GiB/s, IOS/call=31/32
+> IOPS=103.12M, BW=50.35GiB/s, IOS/call=32/31
+> 
+> and I do indeed see the same ~4% time wasted on splits.
 
-Applied, thanks!
+Applied this with a pre-patch to avoid overly long lines, and
+with the redundant nr_segs removed and the division eliminated.
+See here:
 
-[1/5] Update io_uring.h for zcrx
-      (no commit info)
-[2/5] tests/zcrx: rename a test
-      (no commit info)
-[3/5] tests/zcrx: use returned right zcrx id
-      (no commit info)
-[4/5] examples: add extra helpers
-      (no commit info)
-[5/5] examples: add a zcrx example
-      (no commit info)
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-6.15
 
-Best regards,
 -- 
 Jens Axboe
-
-
-
 

@@ -1,115 +1,180 @@
-Return-Path: <io-uring+bounces-7520-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7523-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48539A91F0B
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 16:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633A5A920C4
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 17:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660244478F5
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 14:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE60188620B
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C4F186E2D;
-	Thu, 17 Apr 2025 14:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2B61A4F21;
+	Thu, 17 Apr 2025 15:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjsSLf8i"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cw1+ntgT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC02217CA12
-	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 14:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA0826289
+	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 15:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744898461; cv=none; b=EFuRKPm/sMgUGJWLX3xABJOveaBGJX5m93mZ4Drtj3Jld89wiyTs8ey1gYqI0h6KB61v7zIUE5h93/rvqOjemPnc5QO9tAJ3djC8tj2Bvji9DTz1lPRgQMUakgCr9h9VftYJhNFlS1OjevTCUgh+tSgtuUjaPh1wgDPvByDgMp0=
+	t=1744902322; cv=none; b=RO+EnYEK8O1/zhmIdrq7qi+6oeEu6MnmXX68bPstWb27wKEqwOaVmoHEie574UOqpF+pDCSqZ05SMO+4Wnr71EkKFFLRFEjlAL8ss6mdAOvnSr4sM3ZH39AUp8bdJm/YI6Pm2JlubCr4Gl1sSKqEOekpYa2J2k9GLIOwKSh5SWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744898461; c=relaxed/simple;
-	bh=S33vVH62Ipcxp0rWly3eyOchMSqBzBo+OASVpMIetFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qEsg1QFMabGdMvUDtPDWwpu2OXcOMg8SMJ2uo9VTCS9g8v6cYKERrpZVff+FLiYeG0kf1SyAHYvFLcjVb8zeW3JrG5RHumievBWONwNXR7xkZEGyzTQrovKzpfy7EhoUB/r3fLyxL/nhvd9Kv6k79z0Ke65qjQS3vBt8zE39NDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjsSLf8i; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f435c9f2f9so1275959a12.1
-        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 07:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744898458; x=1745503258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xKq4ypYBfvFz1mRzRFiyY7Cej4SfNKK6kZkOocBR5Xk=;
-        b=jjsSLf8iQ6HqrT/IvgBHZ/vVI9jqfBsdILt3sFBwXheDfsecIN1pmricf9maV/VwsS
-         G1tAGOJ0R+1i5tDvO0tvcv2RggtvPLOgNS7l0BKRSLWyTsOzkFx9eT/zvuU2+GBRDosO
-         iMGUYB/qIlzk8H5SohJ0N1MCeuKdG7fMGnvvDDB166rBzYSJOkYTI+U63roggzdZxFhb
-         ci/UbT0Ew38W0426cqHyvCm8Kj11cQEJ/xgN0A2a4/CITnLbe97y7SPXRhmQv6u+NkMA
-         L6e/wg+7qvQraZV7pbIipDpJF0Iy9SopnNIiGTwjWTU/QN5a0Nx2fLmyu5SaZmdNiUUQ
-         D0yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744898458; x=1745503258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xKq4ypYBfvFz1mRzRFiyY7Cej4SfNKK6kZkOocBR5Xk=;
-        b=ezG+AVPo40NXqd3uwZsn5HobsNeuzHV8nUDgqEui1HMbtFQuhO7zmulHJlycb/slgL
-         bDgkw4BgkxN2fFHwMsBV1Ro3Y1eyHF7gKyG7QMdVL2+n/O4SnOM8P8S5eUwlXzprNo4r
-         arjx9Ih5z/PtTnvJOF36caG31qYn1G+NLggl+wWL5g6e2+mwaqdnf2H9dXxbBaCbwVq6
-         Su5Q8SduP0HRid+ZEh8O+DWl1z3laZ6hSV8KjEbShY139p5ERlNBAvJwZsUCCK9Zzjg8
-         zibHOqknS1jyPSCieVKQ2WF74b4Su4iZrHztxBymi2I2QFJEkBhTRofMLDEwqV2bSZJa
-         0/2w==
-X-Gm-Message-State: AOJu0YyWrXgkLiV+ge4onSNi3AYZmyEaYavTvkrShMXHLXGmyjEeJET6
-	IB7uo9Xanx9ValP+cMLubxSrCplQQ7GUPOdUXTV0nYJV+7aQZ4GpYW0R2w==
-X-Gm-Gg: ASbGnct1loM9O4C/qrtKl/nSjGCgsiU7T6FOKKKmCrIvvVhR1GhC9JPvBB1qf/tIVug
-	kSBSjei350YJpWenRHilJEf+eQ6t6tQbAnePLvHPkq9pfk8dDSgdis7SefSE8N3cotcGbxQUowd
-	o7smne2ryJcpklnML06HYfk1DgKte1XcYOQAbDsF5fN2tStXJ04O6byz0lDHaq33yWtPUU68QvQ
-	tLJNLbDBPoUsHCYJ+mgyNv2HAPo0EJ/tVNlLOTNfVNYIcx5L4sYK73QxnuJSmG7ndR8+bIu262J
-	eRCS5RtN9ze34fVQGFr714xyBgPN5IuUK5BE2xTnbyCUljhb8Uo2aA==
-X-Google-Smtp-Source: AGHT+IERCcDohMefhcxVCl/DLtDlTP8oUA7TNuqpUig6wSfjaZTfKzpPxj2vvPV38J2AzxuFrzAt1g==
-X-Received: by 2002:a05:6402:42c5:b0:5eb:cc22:aa00 with SMTP id 4fb4d7f45d1cf-5f4b748ff90mr4970448a12.19.1744898456757;
-        Thu, 17 Apr 2025 07:00:56 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1e4? ([2620:10d:c092:600::1:f7d5])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee5500dsm9906082a12.4.2025.04.17.07.00.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 07:00:55 -0700 (PDT)
-Message-ID: <167282a3-7b78-4692-8e8e-261a964b3556@gmail.com>
-Date: Thu, 17 Apr 2025 15:02:11 +0100
+	s=arc-20240116; t=1744902322; c=relaxed/simple;
+	bh=dJ67Yle79Bh4xzuljdGSxSQ1lTd+upiH/VCV9UUqEZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=JwU9uwAAiQxJfpYYuDCOHSaT1oDevuHKNlOj+DyK0HCNzAik2olIh1olDzt9Dm/N3uboFcV+KksxMLVsPL2acONcZpTUStad4uop3Yk0XlIOYx7xbfS7zZwZkumPBjch3q6fOMb7iPvQteXJM+E5zhgLO2iG4Z7/tHcXev1OJ/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cw1+ntgT; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250417150517epoutp046e9b0a50206f23d628352832233cc746~3I2m6QgCT1020710207epoutp04H
+	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 15:05:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250417150517epoutp046e9b0a50206f23d628352832233cc746~3I2m6QgCT1020710207epoutp04H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744902317;
+	bh=+zsW3bGXuv86tJqCp2dlgg7hkdz9BMeaA2j5Au6PoRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cw1+ntgTf+pMyF4+h7H1/MuKil95oQzzfh8wGQBFqCLLb6XRTjnxxXXf9o6Mc4HmC
+	 weco5Huz2SXPj0TAfmprHBCuBA86k45/QS0pyMPdeXd3EbBngfL1yLQPiLxtoE9N6R
+	 9aUCvby7qxbPGfWd+kSh6nZY9QpaWjUV1Ubgqb9w=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250417150517epcas5p22e2871c5c4ea555ce1a4be2212fe646a~3I2molDy12012220122epcas5p2S;
+	Thu, 17 Apr 2025 15:05:17 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4Zdh5m05rlz2SSKX; Thu, 17 Apr
+	2025 15:05:16 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250417140224epcas5p1f881e8a204df88d33365f3e8acba6a89~3H-siMm870919509195epcas5p1M;
+	Thu, 17 Apr 2025 14:02:24 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250417140224epsmtrp1e4d8f96cc55cfd8d371a7c9885bdb145~3H-shqUc30820608206epsmtrp1P;
+	Thu, 17 Apr 2025 14:02:24 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-ef-680109ef8484
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	31.67.19478.FE901086; Thu, 17 Apr 2025 23:02:24 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250417140223epsmtip28bdc19a7e5daf9babe5220e91f52fa2e~3H-r09l5x2510225102epsmtip2Q;
+	Thu, 17 Apr 2025 14:02:23 +0000 (GMT)
+Date: Thu, 17 Apr 2025 19:23:57 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>, Pavel Begunkov
+	<asml.silence@gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: ensure segments counts are correct on
+ kbuf buffers
+Message-ID: <20250417135357.aiobpzii6mviujyu@ubuntu>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] io_uring/rsrc: send exact nr_segs for fixed buffer
-To: Jens Axboe <axboe@kernel.dk>, Nitesh Shetty <nj.shetty@samsung.com>
-Cc: io-uring@vger.kernel.org
-References: <cover.1744882081.git.asml.silence@gmail.com>
- <7a1a49a8d053bd617c244291d63dbfbc07afde36.1744882081.git.asml.silence@gmail.com>
- <d699cc5b-acc9-4e47-90a4-2a36dc047dc5@gmail.com>
- <CGME20250417103133epcas5p32c1e004e7f8a5135c4c7e3662b087470@epcas5p3.samsung.com>
- <20250417102307.y2f6ac2cfw5uxfpk@ubuntu>
- <20250417115016.d7kw4gch7mig6bje@ubuntu>
- <ca357dbb-cc51-487c-919e-c71d3856f915@gmail.com>
- <603628d3-78ec-47a3-804a-ee6dc93639fd@kernel.dk>
- <f8e4d7d9-fb06-4a1b-9cba-0a42982bce48@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <f8e4d7d9-fb06-4a1b-9cba-0a42982bce48@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9c129aed-6e07-4f23-934b-951d3585cd5a@kernel.dk>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvO4HTsYMg5M7GS3mrNrGaLH6bj+b
+	xbvWcywOzB47Z91l97h8ttTj8ya5AOYoLpuU1JzMstQifbsEroxnWw6yFlzhq/j/fAt7A+MT
+	7i5GTg4JAROJvme7mboYuTiEBLYzSrz6+IYNIiEpsezvEWYIW1hi5b/n7BBFjxglOu6vB0uw
+	CKhKnHh6Bcjm4GAT0JY4/Z8DJCwioCDR83sl2BxmgSCJxqmdYLawQITEiaVTWUFsXqDF93d/
+	B7OFBGwkHt1dxA4RF5Q4OfMJC0SvmcS8zQ/BxjMLSEss/wc2nlPAVmLpnS+sExgFZiHpmIWk
+	YxZCxwJG5lWMoqkFxbnpuckFhnrFibnFpXnpesn5uZsYwSGqFbSDcdn6v3qHGJk4GA8xSnAw
+	K4nwnjP/ly7Em5JYWZValB9fVJqTWnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXA
+	JP50NavUYis7iR/Xu+butViUuk5KlYvv9Do1leVKbbyV/dt42zqOs767WPnkmoc1KytDgbaR
+	7kGbgLUKT8pLlp00Xt96/uSUY33TlcTUWQ93q1otuq5rGLLiyFRDnrrs6RcWPLaIKfFfp5pd
+	t2ue3DaDQhmZ9IUXzjBOETPhcTQ+6ZmsOmN6pdjvox5/NnTGrTPwF7vdPWXh950sh+PZt/mI
+	i7Zsen9T4fE1m2cdXEWtCz/bM3646/f/++l1u6o+tjKt/PFzQVu4096YjbFa9za3eK74nem4
+	NKhQ4Pn9P7Nd/u5bGdhnbSZ8+oFfy4KApW+jEr7Klp3Q2HDG7mqsw/t9Stv/VJ01S5znNSnK
+	R4mlOCPRUIu5qDgRAPwOE6TAAgAA
+X-CMS-MailID: 20250417140224epcas5p1f881e8a204df88d33365f3e8acba6a89
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_90f_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250417140224epcas5p1f881e8a204df88d33365f3e8acba6a89
+References: <9c129aed-6e07-4f23-934b-951d3585cd5a@kernel.dk>
+	<CGME20250417140224epcas5p1f881e8a204df88d33365f3e8acba6a89@epcas5p1.samsung.com>
 
-On 4/17/25 14:57, Jens Axboe wrote:
-> On 4/17/25 7:41 AM, Jens Axboe wrote:
->> I'll turn the test case into something we can add to liburing, and fold
->> in that change.
-> 
-> Here's what I tested, fwiw, and it reliably blows up pre the fixup. I'll
-> turn it into a normal test case, and then folks can add more invariants
-> to this one if they wish.
+------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_90f_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Awesome, thanks!
+On 17/04/25 06:29AM, Jens Axboe wrote:
+>kbuf imports have the front offset adjusted and segments removed, but
+>the tail segments are still included in the segment count that gets
+>passed in the iov_iter. As the segments aren't necessarily all the
+>same size, move importing to a separate helper and iterate the
+>mapped length to get an exact count.
+>
+>Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>
+>---
+>
+>Same as the one I sent out yesterday, but just for the kbuf part.
+>
+>diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+>index 4099b8225670..04e19689d2f3 100644
+>--- a/io_uring/rsrc.c
+>+++ b/io_uring/rsrc.c
+>@@ -1032,6 +1032,26 @@ static int validate_fixed_range(u64 buf_addr, size_t len,
+> 	return 0;
+> }
+>
+>+static int io_import_kbuf(int ddir, struct iov_iter *iter,
+>+			  struct io_mapped_ubuf *imu, size_t len, size_t offset)
+>+{
+>+	size_t count = len + offset;
+>+
+>+	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, count);
+>+	iov_iter_advance(iter, offset);
+>+
+>+	if (count < imu->len) {
+>+		const struct bio_vec *bvec = iter->bvec;
+>+
+>+		while (len > bvec->bv_len) {
+>+			len -= bvec->bv_len;
+>+			bvec++;
+>+		}
+>+		iter->nr_segs = 1 + bvec - iter->bvec;
+>+	}
+>+	return 0;
+>+}
+>+
+> static int io_import_fixed(int ddir, struct iov_iter *iter,
+> 			   struct io_mapped_ubuf *imu,
+> 			   u64 buf_addr, size_t len)
+>@@ -1052,11 +1072,8 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+>
+> 	offset = buf_addr - imu->ubuf;
+>
+>-	if (imu->is_kbuf) {
+>-		iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
+>-		iov_iter_advance(iter, offset);
+>-		return 0;
+>-	}
+>+	if (imu->is_kbuf)
+>+		return io_import_kbuf(ddir, iter, imu, len, offset);
+>
+> 	/*
+> 	 * Don't use iov_iter_advance() here, as it's really slow for
+>
+Looks good.
 
--- 
-Pavel Begunkov
+Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
 
+------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_90f_
+Content-Type: text/plain; charset="utf-8"
+
+
+------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_90f_--
 

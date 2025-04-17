@@ -1,181 +1,154 @@
-Return-Path: <io-uring+bounces-7516-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7514-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71BDA91C65
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 14:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D9FA91C33
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 14:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D656E1693AE
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 12:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06DC3B903A
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 12:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C548A1E49F;
-	Thu, 17 Apr 2025 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBA12417F0;
+	Thu, 17 Apr 2025 12:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j3Eq/VKb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FfciR4Pv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE9D156CA
-	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 12:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3F2245007
+	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 12:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744893369; cv=none; b=peQ0MJAP+3BPs99rjTRgPf6SU2DE0Z+4aYq1hwUBoEHnOIz07qKO2NmmdYbIfL6s22i0PWCnQa6P8IxOKaUmT3keL8VpORWMfl0jvWjNZfU2RJvBdS2adRIo4ShIixdpOeB1t2TGf4t6FFiwzuJJJw2CKOKBNcZf/FoP9yr3UI0=
+	t=1744892949; cv=none; b=ZtEq12MbEW5nbILN1Iqv3IoteBZiXQR6vpAPrW5oTVJDhC/geFuT55ER+RFdubZKIA1ImDt2mqt9F0t+ItCqRmqqV0DAqur8FJUUMCBjbwSsZyFc4HpZ6oNFIrNPQzNVk/m+6hyM9U0OupWmNFUiMyxGzDzWN2ksamliQh1HjKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744893369; c=relaxed/simple;
-	bh=IAiucThut58RDk8ZhhimqED1zyoLwVw90iq0QCwQpPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=UbDTPpISoMgtgr1tOWVeHT9R0jGQuzdAC3g3MkR6+eYSJWXNt2eQ26y6vey1zIzwiWqyjIuuWisxV2BdS8tsEOxjfx6uloLeIonhrjCM+X2veAHi4vsMEv/83bvbWS66t0NKnZsAPIqbGUgcFSQn3vbDYRf/mNDSBl+TClgAH6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=j3Eq/VKb; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250417123603epoutp02aa9ad1993de5f65edc0a6a32e7513884~3G0T3RdN10278302783epoutp02S
-	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 12:36:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250417123603epoutp02aa9ad1993de5f65edc0a6a32e7513884~3G0T3RdN10278302783epoutp02S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744893363;
-	bh=dbM7SFnXuTW60BkIOGq/jdvJYedD/gfHBLOZQiDITLY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j3Eq/VKbnBfIfz3CgTcuFPqCys1hVj281oyUl3FmHQIYSTZj9UkJ5YBWG6NsRxuh+
-	 Ozhgj/xibk5AbVJ82lk/y/8akkxLhsBriCqiLbZ2kvAh4tHBAQjmjzgLl0KfAy5FeO
-	 Qxj1jJw8K+2oZx4Em1peV80ZQ499WPZgfNwUaq2o=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250417123603epcas5p1f09e87644d5784e08c37874b40b1b637~3G0TV8AzH1441114411epcas5p1Z;
-	Thu, 17 Apr 2025 12:36:03 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZdcnY5x5Rz3hhT4; Thu, 17 Apr
-	2025 12:36:01 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250417115843epcas5p2e2586ad60698927d9f200cd05871996e~3GTtWoMdm2941029410epcas5p2M;
-	Thu, 17 Apr 2025 11:58:43 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250417115843epsmtrp1d5e1ae85e50d0a75fdd449fd8555d9a3~3GTtWEa2D3244832448epsmtrp1x;
-	Thu, 17 Apr 2025 11:58:43 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-c7-6800ecf3a055
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B2.90.19478.3FCE0086; Thu, 17 Apr 2025 20:58:43 +0900 (KST)
-Received: from ubuntu (unknown [107.99.41.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250417115842epsmtip1927666472c859f3ff11ad5a846dd9e15~3GTstPlXd2540025400epsmtip1q;
-	Thu, 17 Apr 2025 11:58:42 +0000 (GMT)
-Date: Thu, 17 Apr 2025 17:20:16 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/4] io_uring/rsrc: send exact nr_segs for fixed buffer
-Message-ID: <20250417115016.d7kw4gch7mig6bje@ubuntu>
+	s=arc-20240116; t=1744892949; c=relaxed/simple;
+	bh=9tN1vYbaB7fASiPzLOgP8r0aiZDvefENHpdU1liyys8=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=XAWO7VwPCcgQVnf/D/nYSDzxg1RWyt8fgWE4uhN1/uvXOGuz5knyp35FT6JShxBQnSEDYMMlo7vXAU9h97PgDMTN9UrU04XXit/GRaIrwMKR86Co2aMti3qr4Pqt/OIPYnjKvhfIVMYHAMt7LzVBx/CbsrA1u+Yp+ROVcg/jBDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FfciR4Pv; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso3000625ab.1
+        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 05:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744892945; x=1745497745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gstty6uiv8V52+U4oFg1laBsa0dh1V5FdpOlSDxRmv4=;
+        b=FfciR4PvHGCaS7hWyZxhADxp/Lk+zr3G2C2Y21piqX0uf2HBRnbAvqq6jw3UkuRrjC
+         LuaPOaOdwGY7TNf/YSriAg5ba2uQxcwCqzdzABLzjlx0Np5BakBe46HP6FyEMg6hbNUs
+         DdMrq7jHTfejowsu4EJUgL2q/eOKLtzI9zf0Rnr8zAkZpaub0UNq8lUH4LoAhG6osb2X
+         a+wlW+7FJ+8tag8t0SesgC7Y8BMP6LheJ9sRzz/AtFP4MsWtmWcu4b3w0IhfbFd/IKBG
+         hJ/W4PzbIyLWWZ4p/kXUAklXMJiN++deYsFWf6vuA+NxzOEoBW2XMmo54/gcs5uH76G3
+         6ilg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744892945; x=1745497745;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gstty6uiv8V52+U4oFg1laBsa0dh1V5FdpOlSDxRmv4=;
+        b=nifD74XgzAktT0ZDpQ7RlAZQjK4R4Ng+GtJd5Ky2Lgm/FosaeQkDyPt05jJLHr29u/
+         XEwaukosLi2yoqEYbOAYMcjpEWyl0YdVKUZ4cnlKC4DTq0wM1qlpFJqSRQNtPcyveUot
+         6YckmRg+pxE732SkHiAtHg9N4jrveV6FwuZP/HOBGkxgaVdHLZP8RumPk2rjTfTd42bq
+         BBe5tLGetwEL/tETee3cvYfoImu3Rr5qUjpCVePCKNtaqmbLJ/953v5EEYlkZt7FIxPZ
+         CDyvvPKlEDi0i6fsncx5fbTStT7kjhGlH2ubOz3KZ9sAkGWApY7+RiAtW+aFgZux0KGI
+         ALEA==
+X-Gm-Message-State: AOJu0YwLdzRlPKupslWbUpoaHYMaJh706vM1Ix37gpDSJdBm7BJRupLP
+	odsGZEB2w6jjm65Bft9Me0+2yF7Cvv8lkyOEst/4IXkoW4va6qi5qJYm1Gubrtxg+4fX6orNXiB
+	i
+X-Gm-Gg: ASbGncsRYpxATKcrK8iIbD0Nnlk1B08o1099OPmE2DNHfks39cdnMR7A1nDIxPAJzW0
+	MxcM0bS1wTXrv99QTRDvuZ+ktVdAui6foZ4CLseXbfODixWjb0hjP2rtPaTtj/D1i+fWbn1bsCG
+	wMIlL6fkcbiScnV44bt6CwiS28G997R6CUeiNL9HK+kgyD1YTfGL0M7Jmj9C4HkBsrh2Buih8Ad
+	/zq27UORjnjQCyUB4XVv8u/2NGDwFclVUIOy2DxzkkPffE2We6fyuiTCHnzDHWXfxQfFjgYr80a
+	vyB4wmpeqfCbibZTVYBc4go/dK/dWgSrbFf2Cg==
+X-Google-Smtp-Source: AGHT+IFKG9ev1w5c16K9Ne3asz7TyWPW5AzNR8t/rHOqwLUWce/C9IYtELevGoBcDmHZc5kOTL2ACg==
+X-Received: by 2002:a05:6e02:160f:b0:3d3:fcff:edae with SMTP id e9e14a558f8ab-3d815afbdadmr55522885ab.3.1744892945678;
+        Thu, 17 Apr 2025 05:29:05 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dba958d2sm41906095ab.31.2025.04.17.05.29.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 05:29:05 -0700 (PDT)
+Message-ID: <9c129aed-6e07-4f23-934b-951d3585cd5a@kernel.dk>
+Date: Thu, 17 Apr 2025 06:29:04 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250417102307.y2f6ac2cfw5uxfpk@ubuntu>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKLMWRmVeSWpSXmKPExsWy7bCSnO7nNwwZBn8WcljMWbWN0eJd6zkW
-	ByaPnbPusnt83iQXwBTFZZOSmpNZllqkb5fAlfFu1mmmgneCFdvatzA3MK7n62Lk5JAQMJH4
-	9vw9WxcjF4eQwHZGiW2fJrBAJCQllv09wgxhC0us/PecHaLoEaNE76HHbCAJFgFViRudU4Ea
-	ODjYBLQlTv/nAAmLAJmvrx9iB7GZBWQkJs+5DGYLC3hLLDx/BKyVF2jxlWfnmCFm7mOS+HWy
-	CSohKHFy5hMWiGYziXmbHzKDzGcWkJZY/g9sPqeAqcT39r9MExgFZiHpmIWkYxZCxwJG5lWM
-	oqkFxbnpuckFhnrFibnFpXnpesn5uZsYwSGpFbSDcdn6v3qHGJk4GA8xSnAwK4nwnjP/ly7E
-	m5JYWZValB9fVJqTWnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXAtNnxzDXpamuZ
-	Qp+jD1ZXx65i4hDNeiuQ5d+hLNG5fdW855eELQ81Ty6dNiElMn7XxmtOb6eE2Puzsa76YLHi
-	Swtr7YLdIQd0WZ+IpbtMuV/jYCm6temKIl9Yz3n9X7FdS8tl737fv0l+qVvlJn8mFw6jxGTl
-	sL2HLT5eq3pTPVHTbr/C3TZ3Jmdm6T9yOaax+nLa7QV1U57MVG/pUox9wmn84FbZNSdhu61t
-	HqYaF5XYmHanuB9i/s1tIXVetZohvudCtuqGjFP+Ef4T5TUdL3yrWOtyO8r89NYIPXnJ04/2
-	5M+5Krim9ODnlvcPEvQd8/LfPREILMtXYJaYuqN95rziV9WCPYtTDi/MWqnEUpyRaKjFXFSc
-	CAB5CsTxuAIAAA==
-X-CMS-MailID: 20250417115843epcas5p2e2586ad60698927d9f200cd05871996e
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_2f7_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250417103133epcas5p32c1e004e7f8a5135c4c7e3662b087470
-References: <cover.1744882081.git.asml.silence@gmail.com>
-	<7a1a49a8d053bd617c244291d63dbfbc07afde36.1744882081.git.asml.silence@gmail.com>
-	<d699cc5b-acc9-4e47-90a4-2a36dc047dc5@gmail.com>
-	<CGME20250417103133epcas5p32c1e004e7f8a5135c4c7e3662b087470@epcas5p3.samsung.com>
-	<20250417102307.y2f6ac2cfw5uxfpk@ubuntu>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rsrc: ensure segments counts are correct on kbuf
+ buffers
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+ Nitesh Shetty <nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_2f7_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+kbuf imports have the front offset adjusted and segments removed, but
+the tail segments are still included in the segment count that gets
+passed in the iov_iter. As the segments aren't necessarily all the
+same size, move importing to a separate helper and iterate the
+mapped length to get an exact count.
 
-On 17/04/25 03:53PM, Nitesh Shetty wrote:
->On 17/04/25 10:34AM, Pavel Begunkov wrote:
->>On 4/17/25 10:32, Pavel Begunkov wrote:
->>>From: Nitesh Shetty <nj.shetty@samsung.com>
->>...
->>>diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->>>index 5cf854318b1d..4099b8225670 100644
->>>--- a/io_uring/rsrc.c
->>>+++ b/io_uring/rsrc.c
->>>@@ -1037,6 +1037,7 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
->>> 			   u64 buf_addr, size_t len)
->>> {
->>> 	const struct bio_vec *bvec;
->>>+	size_t folio_mask;
->>> 	unsigned nr_segs;
->>> 	size_t offset;
->>> 	int ret;
->>>@@ -1067,6 +1068,7 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
->>> 	 * 2) all bvecs are the same in size, except potentially the
->>> 	 *    first and last bvec
->>> 	 */
->>>+	folio_mask = (1UL << imu->folio_shift) - 1;
->>> 	bvec = imu->bvec;
->>> 	if (offset >= bvec->bv_len) {
->>> 		unsigned long seg_skip;
->>>@@ -1075,10 +1077,10 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
->>> 		offset -= bvec->bv_len;
->>> 		seg_skip = 1 + (offset >> imu->folio_shift);
->>> 		bvec += seg_skip;
->>>-		offset &= (1UL << imu->folio_shift) - 1;
->>>+		offset &= folio_mask;
->>> 	}
->>>-	nr_segs = imu->nr_bvecs - (bvec - imu->bvec);
->>>+	nr_segs = (offset + len + folio_mask) >> imu->folio_shift;
->>
->>Nitesh, let me know if you're happy with this version.
->>
->This looks great to me, I tested this series and see the
->improvement in IOPS from 7.15 to 7.65M here.
->
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-There is corner case where this might not work,
-This happens when there is a first bvec has non zero offset.
-Let's say bv_offset = 256, len = 512, iov_offset = 3584 (512*7, 8th IO),
-here we expect IO to have 2 segments with present codebase, but this
-patch set produces 1 segment.
+---
 
-So having a fix like this solves the issue,
-+	nr_segs = (offset + len + bvec->bv_offset + folio_mask) >> imu->folio_shift;
+Same as the one I sent out yesterday, but just for the kbuf part.
 
-Note:
-I am investigating whether this is a valid case or not, because having a
-512 byte IO with 256 byte alignment feel odd. So have sent one patch for
-that as well[1]. If that patch[1] is upstreamed then above case is taken
-care of, so we can use this series as it is.
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 4099b8225670..04e19689d2f3 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1032,6 +1032,26 @@ static int validate_fixed_range(u64 buf_addr, size_t len,
+ 	return 0;
+ }
+ 
++static int io_import_kbuf(int ddir, struct iov_iter *iter,
++			  struct io_mapped_ubuf *imu, size_t len, size_t offset)
++{
++	size_t count = len + offset;
++
++	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, count);
++	iov_iter_advance(iter, offset);
++
++	if (count < imu->len) {
++		const struct bio_vec *bvec = iter->bvec;
++
++		while (len > bvec->bv_len) {
++			len -= bvec->bv_len;
++			bvec++;
++		}
++		iter->nr_segs = 1 + bvec - iter->bvec;
++	}
++	return 0;
++}
++
+ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 			   struct io_mapped_ubuf *imu,
+ 			   u64 buf_addr, size_t len)
+@@ -1052,11 +1072,8 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 
+ 	offset = buf_addr - imu->ubuf;
+ 
+-	if (imu->is_kbuf) {
+-		iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
+-		iov_iter_advance(iter, offset);
+-		return 0;
+-	}
++	if (imu->is_kbuf)
++		return io_import_kbuf(ddir, iter, imu, len, offset);
+ 
+ 	/*
+ 	 * Don't use iov_iter_advance() here, as it's really slow for
 
-Thanks,
-Nitesh
+-- 
+Jens Axboe
 
-[1]
-https://lore.kernel.org/all/20250415181419.16305-1-nj.shetty@samsung.com/
-
-
-------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_2f7_
-Content-Type: text/plain; charset="utf-8"
-
-
-------BT9WqRiWUEIwQLQqwzcffU0e5sYl32tGYDBltTglx_TmJHNe=_2f7_--
 

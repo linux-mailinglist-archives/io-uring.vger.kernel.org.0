@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-7508-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7509-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABF0A917E8
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEB8A917E6
 	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 11:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 580F57A22FA
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 09:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E71189D75C
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 09:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBC6221D85;
-	Thu, 17 Apr 2025 09:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B7A2253E1;
+	Thu, 17 Apr 2025 09:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcuCtBP3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evHHukfM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B971CB9E2
-	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 09:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10CF1898FB
+	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 09:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744882306; cv=none; b=CoOIezqs4dykEDo8XVRv9D7UaPJx02k3unGdEZHhryN5580iKSeJDySFG7RYQpzsrU7ajNdKAUTnPZPj5ORNpv28NdchlwCXVwYeAHQk1DxZ3HEx4LJlq6yfxrWvjgMxSIIEzzcnDDVi4oIKheCPJ32D3C4lF8/trHM4WQeosiA=
+	t=1744882307; cv=none; b=iQfx0tBISw2fUwsLSTMvh+RWrnkR4ugM48nUhLBPZfstd6o9D0NepoT95Y7nw3IHDdvHMPD/4eaBqqtqjYjpCo6Nsqtbgh/MNz/rWLDSjHLQbaAr0rBgTi3V+K/Y4OO5ZerIWVQ9DvHEln10XlBtyTxP4WMPdPI4PJN+7ELjpTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744882306; c=relaxed/simple;
-	bh=geL4sBTku0Cj9x+h2OXPph8dSbQ7eVgmip2+ObLan1g=;
+	s=arc-20240116; t=1744882307; c=relaxed/simple;
+	bh=8HLGWGJiqXgNNsigXpjdVc4Scs8ivCHM0e8R5zDdzdo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZpXti7NLxVwF3ah01HkKnTAVKV0s3MMpBWJ1advRcAM2z3kdbvI03zp0xVGxe8UlouPq/Yptr6m6Q3tZDUWuGaTwyrX5BbwFoK5lYVvCSE7IAvrby94KjfmRs+PvQoRwbbgEHrKHnT/4JwVvCA5xySpEKRKPrOjPlgETmU9vJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcuCtBP3; arc=none smtp.client-ip=209.85.208.44
+	 MIME-Version; b=Z9/4hMi+DnmusVu1D6hI21WDAmDk/LvH+BCIeauRSof9kFpv5gdz1gqjo6WPDyIdYqv/LaGc+g4pnKXdEWaGMGiI07l6/C1oKbTiZ3rSkqKAui+1aXaZTR4RFODg5/Jz3mNLrsTyhYaEalwpfqY6N8QRhkz0Tqs45USIr0pcRbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evHHukfM; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f4b7211badso946719a12.2
-        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 02:31:44 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso107673266b.3
+        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 02:31:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744882303; x=1745487103; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744882304; x=1745487104; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5pF087HclG7wJWl6q/YftzPKmorzEsPMx+UexYOz8mg=;
-        b=HcuCtBP3mQM8u1Zs4BX3oF9dJgaqh7wkvKXJPNMdGZsOcCB7Ok30MZn8IFEOfUN06X
-         o13av+tOKDEM1z1DOA0U9qxy+/CNpizKorX4CjaLDL1iP4njITFXDzbiTXNSzxT6eLMG
-         js8VY6ZwUav3A5gRwcnYOiaU59D+b91YVSXTxw6wgnF3MYXwVTurGHRGQadHqJwcSq37
-         1t3rLc4gZOBwrkpT0iUPzq7Yl3RxqK7I+J23J0Pq1/n93hha9PmhWhjomi+C11OsY2Xf
-         iSjkuJuUBVi+j4CjrOIIexWMKk0F5dhoMIPI+1We0+fv2GaHeucWL17y/GVZxcV3VjJT
-         g/ig==
+        bh=ZLxMaEsDEEd30KccamXmu/sFkEm9mpR6aMO6lOwp/Lk=;
+        b=evHHukfMuZM0ykZ0qoi3VFT0qdHvn6X9xaZu2NYT/lj1MpQeIIuidG786StxjpSoHn
+         kgXp4KXW9g8iRWnmQqDE2XC4QxDBzRpvujl5I8qR5IftHdy4ea7owIdXdAodd7/2Hsol
+         RKQDp7WP7xJx+UWC3TX7KVIZDMiiW+vvWix5K07CDvE/1wV6NB1ZcMUCaWW8c5IN9WTb
+         WtQXxP3qt+q8CL0E5rP/TGrfJtVRxaPJSAMQ7Zi3bo7Kw7H9r5zbn1cw4LF7Hwc0ZfpM
+         ISgggFz5gemalg6Guu771eVupVJhrXzBikHLb5AWfOJ4bQ27vKj/rKrbrHxoRM1BcXY9
+         cslw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744882303; x=1745487103;
+        d=1e100.net; s=20230601; t=1744882304; x=1745487104;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5pF087HclG7wJWl6q/YftzPKmorzEsPMx+UexYOz8mg=;
-        b=rN+cruB4yph6PGqY09RKfjSz753uweQVKdt1CrmLwVbhs/YjvblENoLLWlLjMXlcrB
-         CYQYogYLg4yqLnRW5T30D0Jg1cdUSS8z4lL9NrMIcy7XUy+uVK5s7MIJC4oIGG2hHeGm
-         6dl20x6tj1FZCh7XpyJGZa+OSvH0K27Ol4oJHQCeND+SmG+LB66NJH+IV2e7GxOodVH+
-         PFd1mnqU0+mv2xrAFY0zvQm43ARSX4VqnxUL4mpVVwYVxDZNxESHU4iiajB5IeeLC1L2
-         eQScQFQ48BYm2ksiTFE21JnjaBsP9UwuY/8sCUouW3Gb7e9uylv4U601+uAZOplMJhr7
-         7slg==
-X-Gm-Message-State: AOJu0YyPy6pBbi6Vdg0q3ClFAPUl7i+cFpt2Ah9eEjcwS5GW8sLRz0K4
-	pUDbF0oNtqT35dd1Kg3gfVOCHEbXhj9Uowxshr5V6p+3YAR/CJdYkS2H4r37
-X-Gm-Gg: ASbGncuKNXtlSfK/ChxbUojEurmdezIcNei+36InPKAprFgzQWQUCOJXSZcu/yjQxw1
-	+nB80p2y3mrCASgIRjJDptMFKiLxqjmZ4oZcehLX/5mVVAZkZ3oJc1GGZUQCJkF4XdXwYo0cyH4
-	yB2QIvYvGA8UrAwQt/YWOuOuJb5d1hqtqsQE/KQ8arVqetx5IAn+YBnnT96OwHBKkvi/ZxtojdN
-	SEtoXCVTOUW/fTMys3SXCqmeB56IlvPTWFj+GeSPOmZGbSJzb0F6iaOIIIkKgD3rYu8RG1I4+QJ
-	+RJIrT81A490TESNwii9oWx8
-X-Google-Smtp-Source: AGHT+IHWkUJU0Ff+n7wRW4QPPah6EGKrWQu36MBACH0Ef+l7SEWylpzccUsQUR5rcFSzwNIRXBJYXg==
-X-Received: by 2002:a17:907:968f:b0:ac8:1798:f57 with SMTP id a640c23a62f3a-acb42ad581emr480557566b.38.1744882302395;
-        Thu, 17 Apr 2025 02:31:42 -0700 (PDT)
+        bh=ZLxMaEsDEEd30KccamXmu/sFkEm9mpR6aMO6lOwp/Lk=;
+        b=U8SO582llT1FMHhCg0cdv24Wx0Wq4k9fGVV9IMrFdXxVKkavTD7BI/R568vStiUKic
+         SeoGLO8fq3Sys13tX1YZNSkCbuKbxY7fouepae9x+3CI11+MsAMAtNU2EjlZBheh7ahj
+         AbbsOOsZHIIVyI1MkoenjWJFXfb49yWHgteQWvhiDSde+PzRdVvPvGcIky0qFoHr8oe0
+         ceL0QlOSVYqyxQ0qv9Jc1joiea1pyJ4zWmgXBeoN7ehvr1+0KR75SQIxA0B8Vw8jY0qa
+         ngAYlPPYDvkhy5GvkBZhBC3FfK4hRlvSMqIHwVXAgL4XL7+nw+x810WsZ5tX0Bm+BBPg
+         /O4A==
+X-Gm-Message-State: AOJu0YzUfIX+0k8GZUDp870ujxiDN8kEljzhFylGmeEoJNdbW//l9E7E
+	EbTC4JUL0kro8ZziunTzRVhV0m1nU6vUVSK2kuAZGqETe2X7VCJDOdekeEOV
+X-Gm-Gg: ASbGncu9fhWI0H3BQQNi+dT7MhMDc3s8MYB6SIPfpCGbXkaYSTDjpx/FRbxGS1krwhM
+	q19W+nNMviqDFOSioNOqTRYpDb38tsRmgm4o+hozsI5NvNpDvxDiZKMerGz86LNzY6Ubh9PkPn2
+	RV3xxXh+JOjsXL3nWBqOOLg1ERXpR078NusVNwQjwaYUnhrFaV0/CRVhoxUKK5s1DlW7D7iXwhU
+	zBdE/OZI7M7oWdjCmYdpHF03ow3bzcfco0TRchDXTaj+ziFU/mXQHaNk7iyxm+Prn7rjN1LQ1Z5
+	TVLrjHoytNQVDsCxxC8+4hII
+X-Google-Smtp-Source: AGHT+IFC3lfd2BLJAkVP7288tj90epylKcafHvCsL7GPD3+Xv/CI1uwNBjt5r8cVDt2Yu+AFLScZrQ==
+X-Received: by 2002:a17:907:f496:b0:ac2:9ac:a062 with SMTP id a640c23a62f3a-acb429e6a44mr492931866b.23.1744882303669;
+        Thu, 17 Apr 2025 02:31:43 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:c8e6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb62b93234sm51717966b.86.2025.04.17.02.31.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb62b93234sm51717966b.86.2025.04.17.02.31.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 02:31:41 -0700 (PDT)
+        Thu, 17 Apr 2025 02:31:42 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Nitesh Shetty <nj.shetty@samsung.com>
-Subject: [PATCH 1/4] io_uring/rsrc: don't skip offset calculation
-Date: Thu, 17 Apr 2025 10:32:31 +0100
-Message-ID: <1c2beb20470ee3c886a363d4d8340d3790db19f3.1744882081.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring/rsrc: separate kbuf offset adjustments
+Date: Thu, 17 Apr 2025 10:32:32 +0100
+Message-ID: <4e9e5990b0ab5aee723c0be5cd9b5bcf810375f9.1744882081.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1744882081.git.asml.silence@gmail.com>
 References: <cover.1744882081.git.asml.silence@gmail.com>
@@ -89,112 +89,56 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Don't optimise for requests with offset=0. Large registered buffers are
-the preference and hence the user is likely to pass an offset, and the
-adjustments are not expensive and will be made even cheaper in following
-patches.
+Kernel registered buffers are special because segments are not uniform
+in size, and we have a bunch of optimisations based on that uniformity
+for normal buffers. Handle kbuf separately, it'll be cleaner this way.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rsrc.c | 75 ++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 38 deletions(-)
+ io_uring/rsrc.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index b36c8825550e..4d62897d1c89 100644
+index 4d62897d1c89..fddde8ffe81e 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -1036,6 +1036,7 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
- 			   struct io_mapped_ubuf *imu,
- 			   u64 buf_addr, size_t len)
- {
-+	const struct bio_vec *bvec;
- 	size_t offset;
- 	int ret;
+@@ -1048,11 +1048,14 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 	if (!(imu->dir & (1 << ddir)))
+ 		return -EFAULT;
  
-@@ -1054,47 +1055,45 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+-	/*
+-	 * Might not be a start of buffer, set size appropriately
+-	 * and advance us to the beginning.
+-	 */
  	offset = buf_addr - imu->ubuf;
++
++	if (imu->is_kbuf) {
++		iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
++		iov_iter_advance(iter, offset);
++		return 0;
++	}
++
  	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
  
--	if (offset) {
--		/*
--		 * Don't use iov_iter_advance() here, as it's really slow for
--		 * using the latter parts of a big fixed buffer - it iterates
--		 * over each segment manually. We can cheat a bit here for user
--		 * registered nodes, because we know that:
--		 *
--		 * 1) it's a BVEC iter, we set it up
--		 * 2) all bvecs are the same in size, except potentially the
--		 *    first and last bvec
--		 *
--		 * So just find our index, and adjust the iterator afterwards.
--		 * If the offset is within the first bvec (or the whole first
--		 * bvec, just use iov_iter_advance(). This makes it easier
--		 * since we can just skip the first segment, which may not
--		 * be folio_size aligned.
--		 */
--		const struct bio_vec *bvec = imu->bvec;
-+	/*
-+	 * Don't use iov_iter_advance() here, as it's really slow for
-+	 * using the latter parts of a big fixed buffer - it iterates
-+	 * over each segment manually. We can cheat a bit here for user
-+	 * registered nodes, because we know that:
-+	 *
-+	 * 1) it's a BVEC iter, we set it up
-+	 * 2) all bvecs are the same in size, except potentially the
-+	 *    first and last bvec
-+	 *
-+	 * So just find our index, and adjust the iterator afterwards.
-+	 * If the offset is within the first bvec (or the whole first
-+	 * bvec, just use iov_iter_advance(). This makes it easier
-+	 * since we can just skip the first segment, which may not
-+	 * be folio_size aligned.
-+	 */
-+	bvec = imu->bvec;
+ 	/*
+@@ -1072,17 +1075,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 	 * be folio_size aligned.
+ 	 */
+ 	bvec = imu->bvec;
+-
+-	/*
+-	 * Kernel buffer bvecs, on the other hand, don't necessarily
+-	 * have the size property of user registered ones, so we have
+-	 * to use the slow iter advance.
+-	 */
+ 	if (offset < bvec->bv_len) {
+ 		iter->count -= offset;
+ 		iter->iov_offset = offset;
+-	} else if (imu->is_kbuf) {
+-		iov_iter_advance(iter, offset);
+ 	} else {
+ 		unsigned long seg_skip;
  
--		/*
--		 * Kernel buffer bvecs, on the other hand, don't necessarily
--		 * have the size property of user registered ones, so we have
--		 * to use the slow iter advance.
--		 */
--		if (offset < bvec->bv_len) {
--			iter->count -= offset;
--			iter->iov_offset = offset;
--		} else if (imu->is_kbuf) {
--			iov_iter_advance(iter, offset);
--		} else {
--			unsigned long seg_skip;
-+	/*
-+	 * Kernel buffer bvecs, on the other hand, don't necessarily
-+	 * have the size property of user registered ones, so we have
-+	 * to use the slow iter advance.
-+	 */
-+	if (offset < bvec->bv_len) {
-+		iter->count -= offset;
-+		iter->iov_offset = offset;
-+	} else if (imu->is_kbuf) {
-+		iov_iter_advance(iter, offset);
-+	} else {
-+		unsigned long seg_skip;
- 
--			/* skip first vec */
--			offset -= bvec->bv_len;
--			seg_skip = 1 + (offset >> imu->folio_shift);
-+		/* skip first vec */
-+		offset -= bvec->bv_len;
-+		seg_skip = 1 + (offset >> imu->folio_shift);
- 
--			iter->bvec += seg_skip;
--			iter->nr_segs -= seg_skip;
--			iter->count -= bvec->bv_len + offset;
--			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
--		}
-+		iter->bvec += seg_skip;
-+		iter->nr_segs -= seg_skip;
-+		iter->count -= bvec->bv_len + offset;
-+		iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
- 	}
- 
- 	return 0;
 -- 
 2.48.1
 

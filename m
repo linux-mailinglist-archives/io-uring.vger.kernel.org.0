@@ -1,111 +1,110 @@
-Return-Path: <io-uring+bounces-7525-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7526-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A688A9251C
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 20:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2DCA92533
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 20:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A544466C4F
-	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 18:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920CF8A45D3
+	for <lists+io-uring@lfdr.de>; Thu, 17 Apr 2025 18:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C4A2580C0;
-	Thu, 17 Apr 2025 17:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B91256C62;
+	Thu, 17 Apr 2025 17:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z6van2kq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Pivu9uw7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED317257443
-	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 17:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2AA2566DF
+	for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 17:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744912725; cv=none; b=gycfv3tARr7CLzVYvXRCA2P0ntRnxn/iz2bzDCdFLnIb9B1Kl973rqPDUPGcMlVyVWyVGFYLkXDGXusg5MzWij3mmcHx6Fa7s0ULBuimT8bIobWemzrzHatx/KKGMNrQFJPM7XayMrbzL3bt6FSNdCLl5z196g47iHfxH1oaG9Y=
+	t=1744912730; cv=none; b=BtbTWYFUPLaTaQsTdbZ4vjzjxRv8yg2rFIsMjTQSb+9Jgqf+iQhSGzQwytdCKv8N3lDQD3CVknepzXhaTsezK12Dpihae/HkRRfiDeX8MQc+X/LMyof+HC/tZCEfcIC0C7GfEcfmgypF7UYMkhfGAGEed7/9LQDTirV+AgEpv9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744912725; c=relaxed/simple;
-	bh=Bs5SCkOVySPKeGtVbyBhS1WPbEpKWdnuLF1Ek6on3yU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I6WSomVa2RBkJzBKE2zL+aT1CPBx/96/ydYrqcRiQDnvsYRP/N4HLs9gTxUeU8GskWtatNNJ5wkd0oxzLZeTI6BVJQlU3Iy0r7zmqkjm8qLL9xWUKJDyl5kOllW39kl51/YGn9DIpyVNwpWeCeOK84OFlTHjLHoJlWTG6ljawkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z6van2kq; arc=none smtp.client-ip=209.85.166.45
+	s=arc-20240116; t=1744912730; c=relaxed/simple;
+	bh=60nJmnx3MpJvFHRrRqMRRBa8qayiooTzlCfcUmHdYLY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RQCbGDzJ4+2RE3DqHr+/79WFsiKyGletODz98YhH6E8ryIg5FgP52WImkMjT2Lr+AjoGQW0uqi+qUvNur2bN4K0+nfKS0612H+iNRtOMoQrQpRuDzOngEKysiSnMCoGwhyUekAUWghFkm4PptepIAF6mq2592UXSQdY+jw4DcUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Pivu9uw7; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-855bd88ee2cso28885339f.0
-        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 10:58:43 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d439f01698so7107825ab.1
+        for <io-uring@vger.kernel.org>; Thu, 17 Apr 2025 10:58:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744912723; x=1745517523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lbc8tv95Wm48XTivRQLot66sPcLLH5kDzb3ZX/Hnfp0=;
-        b=z6van2kqeuxe3LRqs69fqb0n2V5ZaIreFpuAC/OH07IUO2buJ+Lf+n2OI6eSjiTIG3
-         gEPPtKsm12CNR92SQe82WqhnVJSw/xJ8Gk57mUQz+0DTF/odfnr20Jt7gbvGBkpQDXIb
-         WpW8euHqwBwRQwsyuoe9lKyNt2LiMbX/w49txu/gXhal1U18lg3w4Pt/T4SJF1L9asL0
-         q1YjtP+wWDcfs/IWFSTMq9A9PMV+yra7pueo7uZN4Oe3+QvH1Hzh/8JWQV53LPjjkEMm
-         dteRqjOdqizH9BUdGMNBQlnlS41dPkIAasYRHcfPzocEUX/5NuRCXYHCkT22fuA1BzP/
-         tfrg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744912727; x=1745517527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c1Ouhv4iXNdiyCWT3HOHjBHRrXqfNmgu2cI3KFHudj8=;
+        b=Pivu9uw7Ha2S3uLyr1mTLMAGVDRZMtSaGBbyks10xiojzdUMzEMMFkQrFx7W5ocpwM
+         UcifvBs53Jub2NJtTjMwF7wv1ec1VmP15bBPdayxn6MelTC7t2mzGcr4Tp5903EDmSlA
+         uMfkGcI9Y8E+nOPj5wXDnAiePitT9EUL6htkiKsf0GdJBeyx2rM5fDVCH7kxCn5F8YYT
+         aWHoJdk0oJJZ2LGYeIjz4Ikt/W/3sFbrXZc4QtQqEMONS+Sg3oT7mrkyavwJlOOO5OW5
+         qam25N2EkX6SNU6JShqtMNsyKABDOTKhTt0ptTtoGo85MbOCTRN6rFKUb7YHmyzcMkpk
+         FnDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744912723; x=1745517523;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lbc8tv95Wm48XTivRQLot66sPcLLH5kDzb3ZX/Hnfp0=;
-        b=v6OsC+GVCcle1+9HM+1rNZCXDICqs1QmHDljHFh4e06D7SAMKvjQIgMkdf//naZDmt
-         NztgBx/A7guVLDp+gK58lXyxoEYtcwMWf1szrmtyagY19/PzG9mExi787Ce6WOuzXiV3
-         QNhPS2Ws4BkmLj/WLCxtAS4aUpEHF9T1mBTXT30NyQK+7FC+nFspRy9bFEKYuTNyfknQ
-         0/o+rKGPU6yuKOpx+2xAJSPOSRW/2SlZ4k6mjnPJady44iAdPAKlTCZehe/SnAcN6VpV
-         5dVgeaBHy0bb6FC2aKod5lH4vOIPEpU1wZ5QSW4O6IHd6z80UwYg4+UaQzGCLOclfHJ/
-         u2HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuk0EsodAoujhG7kzKD3Vcy0HVTdu8Q/kB9Q0aiNrhK9sPC2sfs1K0eVV00iK4vR2CFt718ghEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzzRvch0ZUd/t+DRm4x06+Y1kk5k48zyBznmeoDWyWhRBqc+t1
-	MvW8kSTVlyqOdRaUyW6otVMub7Jd100UOLu7iYDAzdUBZXcAgl1mWuCtrLJU0as=
-X-Gm-Gg: ASbGnctqAKteX0V4f8rseffUJCxRo91UEUphuL8liUkRtGMXuMgxqqrhSDA//+H0h6i
-	H/w78RLxj8W2OyTUErEI5hBu3MO59Cts8m7gogF/sIzBiYg8c1AHYg9iLkiNEVi24VSv+qlVJrY
-	ZxTqgrqDk43ad4DYfsZApZseABXr7aANrBsz4AVqPCJcN2GZO+YdsIOcMUMCATLQ0dnCFlPzs+4
-	H1fhbPUWAcTBG/rT2EAymyLkK1znn555Q1ojmRqO4AfRHHGtESWfRv8HyFMhgE1teBLJpCIjw1n
-	2QDGqdWxtoG4OeNLrcolcKcbTbTUVzU3O/J0hQ==
-X-Google-Smtp-Source: AGHT+IGhnXFhAoK20gE/YOBSvPiWGC/tr2SXmWdunqYH0pqB+f1afJCFBZtiLXCNmPmGFJdAsiF2Aw==
-X-Received: by 2002:a05:6e02:32ca:b0:3d8:2085:a16e with SMTP id e9e14a558f8ab-3d88ed7c379mr323385ab.1.1744912723080;
-        Thu, 17 Apr 2025 10:58:43 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a39991desm55087173.136.2025.04.17.10.58.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 10:58:42 -0700 (PDT)
-Message-ID: <67cffda3-c211-419c-8e49-cf38def85b63@kernel.dk>
-Date: Thu, 17 Apr 2025 11:58:41 -0600
+        d=1e100.net; s=20230601; t=1744912727; x=1745517527;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c1Ouhv4iXNdiyCWT3HOHjBHRrXqfNmgu2cI3KFHudj8=;
+        b=MrFxPlVkRD9OGsJqL2fjfqaHXE8/FHvBfSUCIcMx0TfVKNgrrvORUkACNzquglvCp7
+         EbN9+J5DwZRu7LoB3R5kl/OVFpEIyq5OwlokBGLywVxATFY1iccRwIrr8zg7yvXkX7pu
+         i6XsHwX5b7OeXE5YRDGntH7rZDvzt1cFijW/F2Al2J7mhqKxe2Zeo3y7fjKXOO4B6wI4
+         G0+qjZY7cRtTcpB7L+SX9zmApnOloZMoj5xLYeqFM3QMkKaC2Awcaxx5fOY9ih4ES5Yi
+         i1TxrDTXi8GimdfNbujsYWprXwVgCoVzyPCn/ev0mCJ0h6zjm1aODowjqrOc7G+5bjUG
+         5TWQ==
+X-Gm-Message-State: AOJu0Yz61u1/8VIF+6/uP1naKgIQ+lPuSiDc8lQh+JRVuBh1t1oIf075
+	Q8WYxZxAyTeB4fuIc/WAdAd1zr6Nn2BVd6Ui9EBeNV0I+emP6xOY4u4r+VSOc3s9pMavRF/lTfE
+	u
+X-Gm-Gg: ASbGncsuoj9ErjnAQLKGWSByWj+ViBoH45gJn2Ll3zNVq6AyrtsFoKinPXNNrYQUz2Z
+	1FUxwdk2+Yl/IWSVEASIEfmWl4HZw5eCZ7J12hT8qO978D8vHffTF4qlZ7O6oZ6epsB4KIEcmBp
+	esEw/Z407Yxy6veSzmBiJhq/rUfTSPfqWM9tMud5sBBKl1WhdpYL+y0QljC1WgKn5hEX2Y1lIg0
+	X4jQ0NgvLrn5UreSN8L8mc0kNCXzL0SlqK3KC8KVdGKx4RRC0JV3a3mXJLa0+9mlfvHL6E15B2V
+	LLUioIpisOYTYqBIkA5MrILzTGh7yMruk/poB6vFSZo=
+X-Google-Smtp-Source: AGHT+IEUBlFC8+J/k502mwW6SqJWN/Wyqa9hfQ2e8//bXkVEzGoshv7m8swQsgT+0KShnh+lTblB7Q==
+X-Received: by 2002:a05:6e02:c67:b0:3d2:ed3c:67a8 with SMTP id e9e14a558f8ab-3d821d3070emr8411085ab.4.1744912727013;
+        Thu, 17 Apr 2025 10:58:47 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3933d11sm56331173.82.2025.04.17.10.58.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 10:58:46 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Keith Busch <kbusch@meta.com>
+Cc: Keith Busch <kbusch@kernel.org>
+In-Reply-To: <20250416162802.3614051-1-kbusch@meta.com>
+References: <20250416162802.3614051-1-kbusch@meta.com>
+Subject: Re: [PATCH] liburing/io_passthrough: use metadata if format
+ requires it
+Message-Id: <174491272628.586352.6084809783557155719.b4-ty@kernel.dk>
+Date: Thu, 17 Apr 2025 11:58:46 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] liburing/io_passthrough: use metadata if format requires
- it
-To: Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
- io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>
-References: <CGME20250416162937epcas5p462a7895320769fbf9f5011c104def842@epcas5p4.samsung.com>
- <20250416162802.3614051-1-kbusch@meta.com>
- <3606b88e-67f3-45c1-94b5-db01c20c9d2a@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <3606b88e-67f3-45c1-94b5-db01c20c9d2a@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-On 4/17/25 8:51 AM, Kanchan Joshi wrote:
-> The patch looks fine.
-> Just that it seems to have a conflict with the topmost patch [*] at this 
-> point.
+
+On Wed, 16 Apr 2025 09:28:02 -0700, Keith Busch wrote:
 > 
-> [*] man: Fix syscall wrappers in example code
 
-Confused, there should be zero overlap between this patch and the
-posted one?
 
+Applied, thanks!
+
+[1/1] liburing/io_passthrough: use metadata if format requires it
+      commit: 60cf4969bd3eca3aba1fc24b6e0af7f92d155351
+
+Best regards,
 -- 
 Jens Axboe
+
+
 
 

@@ -1,121 +1,163 @@
-Return-Path: <io-uring+bounces-7561-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7562-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E91A9438A
-	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 15:14:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50353A9439B
+	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 15:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDC61652FE
-	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 13:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6491417346D
+	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 13:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E931D86FF;
-	Sat, 19 Apr 2025 13:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719D81C8609;
+	Sat, 19 Apr 2025 13:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kdMLVfbM"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RnBzTyGO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D241C3F0C
-	for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 13:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3751D54FE
+	for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 13:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745068453; cv=none; b=sC96BDkMrCta+zZzOFdNqf7paTNKhwF4QrCXu0WwtXI0WYB12kkS19ObDAL+g4DbhxxcLL/QXR88Y5sdMM+IptyKH/89XgoGJPtpLaFU1298Az1vbIVurHTVWfWPFpaX25Jc6r5ncO5p4O0sGs5cauzug655RWpTYaoMnYWKnps=
+	t=1745069942; cv=none; b=D2KpKCEfkJRF/qTOAWCwuqAENPPMY5jKjM0a5fW+hnTjGAZ1YhyEwsqrUbiy8Xg3YOiPlskS02PHc5A01S3sotmibaDAMR6LNo/sZWRBe6pmFJ0SltY77Q/Q2JqyZe6dn6am8YGubqiDv9U65zI8QrMy+MIZxcVxBpTaPq5zMw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745068453; c=relaxed/simple;
-	bh=onrxbMV8iHZ8TsztepkrSg4U/6wxFOZoHDsOc24FZko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VxXB4o0cEJR6z2H071gueZOELxvvKSWbHPSiKkRtpRLMQPvUHjsPHL+bCuqYyGfp10tUVIOavDtfgOtJBlP9PNM3t8zfsbgBmPfAvRj6a8hxu7U6XlYRtQDPkTYRtF6OsmC3CUAbx/oCV3uGxbYEvTKP90nAfFFShzIdGOWZAGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kdMLVfbM; arc=none smtp.client-ip=220.197.31.5
+	s=arc-20240116; t=1745069942; c=relaxed/simple;
+	bh=nAjKgyxhGEckj6C/upbbntSbqwDtClSU6ONEmHPPIaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f9Y6PVvElO4JJm19YFUdq4rkXvCYOfKzMreaVnNhpJvt1etnu2Gvk1RRGc/x5cfleKt+ElQOFSSqhdZbExn9YC0WJrpDi2aFac4FJKXBzrcM/kdp/JCA3/rBx8C8jZvG/gfqch1JnDSRrU4BAMrvRJBF78oF/utohWsk2VEplSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RnBzTyGO; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=XA5ok6+ulZKDmDAR9m8pv8LYKrx90sH16rJajLciHg4=;
-	b=kdMLVfbMPaE6P4AT8IxQZWqHRTl2AePV7iO/0qD15EFfDdy6Ym4fQU6WwrCxil
-	DP1IVddntYKYFu/V4aSI+7NHA0zPOLrN6icNlWwt5nLRLdDTREQz6IdnZdPt76Jl
-	PqRdMOs+Ua75jQcGT8X0yjaw97/sg4ch+GXFVE233siuE=
-Received: from [192.168.31.211] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wC3MBGNoQNobeyGBA--.30774S2;
-	Sat, 19 Apr 2025 21:13:50 +0800 (CST)
-Message-ID: <ff6274aa-6953-4892-8649-a7f82d0e3091@163.com>
-Date: Sat, 19 Apr 2025 21:13:48 +0800
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=5FOcI
+	O3Hb6x0FYZAQ++V1dQbxwx9yQ4feZNnTgG04KY=; b=RnBzTyGOdLQP+alh6vRXp
+	vcrfTnpJh2N4iT3y+ExVU/7fxVMAm+qQTBJ7zeFQI3T3CwR/Zzc+QpLBEPk7B461
+	p3hyLuUYdYNuhdzwym6iu4TstH2R4ngYHMHoS+1uET9mxYQ/86uXjaleytEDSBtc
+	pBYBqcJyUA9OkhvOpKs17w=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD33+FlpwNo_e2yAw--.29628S2;
+	Sat, 19 Apr 2025 21:38:49 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: io-uring@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>
+Subject: [PATCH liburing v1] zcrx: Get the page size at runtime
+Date: Sat, 19 Apr 2025 21:38:06 +0800
+Message-ID: <20250419133819.7633-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v1 1/2] examples/zcrx: Use PAGE_SIZE for ring
- refill alignment
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20250419095732.4076-1-haiyuewa@163.com>
- <af78093c-9cf9-4e71-8d89-029ab460fab9@kernel.dk>
-From: Haiyue Wang <haiyuewa@163.com>
-In-Reply-To: <af78093c-9cf9-4e71-8d89-029ab460fab9@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wC3MBGNoQNobeyGBA--.30774S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KrW8ArWfZF1DXF43Ww47XFb_yoW8GF4xpr
-	429a4kCw4q9r1agayrJw1rC3WYvwsxA3W7urWrtFy0vF4qqFZagFWxKrWrWF4xZryv9F9r
-	ZwsrXFyrZFs8Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRrgA7UUUUU=
-X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiERQ0a2gDmnr0BAAAsh
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD33+FlpwNo_e2yAw--.29628S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArW7ZF17GF4UGFyktw17GFg_yoW5WFW5pF
+	4jka4vyF4Fka43KayrJrWkC3WYvws3JF47Zryku3WrZF13XrZIqa18tFy5KF4UXrWvvrWU
+	JrsIqF4ruF4UWF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pR_HUhUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiSgI0a2gDoBr3vwAAsO
 
+Use the API `sysconf()` to query page size at runtime, instead of using
+hard code number 4096.
 
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ examples/zcrx.c | 20 +++++++++++++-------
+ test/zcrx.c     | 11 +++++++++--
+ 2 files changed, 22 insertions(+), 9 deletions(-)
 
-On 2025/4/19 20:51, Jens Axboe wrote:
-> On 4/19/25 3:57 AM, Haiyue Wang wrote:
->> According to the 'Create refill ring' section in [1], use the macro
->> PAGE_SIZE instead of 4096 hard code number.
->>
->> [1]: https://www.kernel.org/doc/html/latest/networking/iou-zcrx.html
->>
->> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
->> ---
->>   examples/zcrx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/examples/zcrx.c b/examples/zcrx.c
->> index 8393cfe..c96bbfe 100644
->> --- a/examples/zcrx.c
->> +++ b/examples/zcrx.c
->> @@ -66,7 +66,7 @@ static inline size_t get_refill_ring_size(unsigned int rq_entries)
->>   	ring_size = rq_entries * sizeof(struct io_uring_zcrx_rqe);
->>   	/* add space for the header (head/tail/etc.) */
->>   	ring_size += PAGE_SIZE;
->> -	return T_ALIGN_UP(ring_size, 4096);
->> +	return T_ALIGN_UP(ring_size, PAGE_SIZE);
->>   }
->>   
->>   static void setup_zcrx(struct io_uring *ring)
-> 
-> Well, in that same file:
-> 
-> #define PAGE_SIZE (4096)
-> 
-> so this won't really fix anything. Examples or test code
-> should use:
-
-The original plan is to make the code consistent for page size as:
-	ring_size += PAGE_SIZE
-
-> 
-> sysconf(_SC_PAGESIZE)
-> 
-
-So fix it as 'examples/proxy'?
-
-	static long page_size;
-
-	page_size = sysconf(_SC_PAGESIZE);
-	if (page_size < 0) {
-		perror("sysconf(_SC_PAGESIZE)");
-		return 1;
-	}
-
-> to get the page size at runtime.
-> 
+diff --git a/examples/zcrx.c b/examples/zcrx.c
+index 8393cfe..9a9b8b9 100644
+--- a/examples/zcrx.c
++++ b/examples/zcrx.c
+@@ -39,8 +39,8 @@
+ #include "liburing.h"
+ #include "helpers.h"
+ 
+-#define PAGE_SIZE (4096)
+-#define AREA_SIZE (8192 * PAGE_SIZE)
++static long page_size;
++#define AREA_SIZE (8192 * page_size)
+ #define SEND_SIZE (512 * 4096)
+ 
+ static int cfg_port = 8000;
+@@ -65,8 +65,8 @@ static inline size_t get_refill_ring_size(unsigned int rq_entries)
+ {
+ 	ring_size = rq_entries * sizeof(struct io_uring_zcrx_rqe);
+ 	/* add space for the header (head/tail/etc.) */
+-	ring_size += PAGE_SIZE;
+-	return T_ALIGN_UP(ring_size, 4096);
++	ring_size += page_size;
++	return T_ALIGN_UP(ring_size, page_size);
+ }
+ 
+ static void setup_zcrx(struct io_uring *ring)
+@@ -169,7 +169,7 @@ static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
+ 
+ 	connfd = cqe->res;
+ 	if (cfg_oneshot)
+-		add_recvzc_oneshot(ring, connfd, PAGE_SIZE);
++		add_recvzc_oneshot(ring, connfd, page_size);
+ 	else
+ 		add_recvzc(ring, connfd);
+ }
+@@ -207,7 +207,7 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
+ 
+ 	if (cfg_oneshot) {
+ 		if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs) {
+-			add_recvzc_oneshot(ring, connfd, PAGE_SIZE);
++			add_recvzc_oneshot(ring, connfd, page_size);
+ 			cfg_oneshot_recvs--;
+ 		}
+ 	} else if (!(cqe->flags & IORING_CQE_F_MORE)) {
+@@ -329,7 +329,13 @@ static void parse_opts(int argc, char **argv)
+ 
+ int main(int argc, char **argv)
+ {
+-	parse_opts(argc, argv);
++	page_size = sysconf(_SC_PAGESIZE);
++	if (page_size < 0) {
++		perror("sysconf(_SC_PAGESIZE)");
++		return 1;
++	}
++
++        parse_opts(argc, argv);
+ 	run_server();
+ 	return 0;
+ }
+diff --git a/test/zcrx.c b/test/zcrx.c
+index b60462a..61c984d 100644
+--- a/test/zcrx.c
++++ b/test/zcrx.c
+@@ -19,10 +19,11 @@
+ 
+ static unsigned int ifidx, rxq;
+ 
++static long page_size;
++
+ /* the hw rxq must consume 128 of these pages, leaving 4 left */
+ #define AREA_PAGES	132
+-#define PAGE_SIZE	4096
+-#define AREA_SZ		AREA_PAGES * PAGE_SIZE
++#define AREA_SZ		(AREA_PAGES * page_size)
+ #define RQ_ENTRIES	128
+ /* this is one more than the # of free pages after filling hw rxq */
+ #define LOOP_COUNT	5
+@@ -822,6 +823,12 @@ int main(int argc, char *argv[])
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
+ 
++	page_size = sysconf(_SC_PAGESIZE);
++	if (page_size < 0) {
++		perror("sysconf(_SC_PAGESIZE)");
++		return T_EXIT_FAIL;
++	}
++
+ 	area_outer = mmap(NULL, AREA_SZ + 8192, PROT_NONE,
+ 		MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
+ 	if (area_outer == MAP_FAILED) {
+-- 
+2.49.0
 
 

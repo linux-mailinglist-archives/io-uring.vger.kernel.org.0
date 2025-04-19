@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-7568-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7569-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BE7A944E4
-	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 19:46:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC69DA944E5
+	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 19:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916981897AB6
-	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 17:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6A73B8F1F
+	for <lists+io-uring@lfdr.de>; Sat, 19 Apr 2025 17:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE57186E26;
-	Sat, 19 Apr 2025 17:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6106F099;
+	Sat, 19 Apr 2025 17:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGnOH4ku"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mv/1bCMK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E256F099
-	for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 17:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C73165F13
+	for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 17:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745084768; cv=none; b=G0jZXgtXZsgOCFp1RqWd/AuloNQDoAG086hUsdTJ6HPmH4tdmCtQq/QJ28gym3Q9EH9oRszvaIOdqxPeDEbMV7IGHW1BXjkeildWc4kDQzIL/hb3pwfiKAd+W4Mub241Cin8l9DHWWGjKrGxbnLhi2h2/loFwRzXpVnsf0NM98s=
+	t=1745084769; cv=none; b=hhGhOoznM9+DfUyEmk5kkuq9OL1sO+My2jLP3u6uNK6e4mOQnO3faGBMNNNsQ1TiwQsiHtb+EbgU8ttu88N/STTAhYYaX4vc36yT5BB8rX2clFk/dorXtV2Uxxnpxci1NZSVn/y4/NyAi9575zo9aJjL5ccngB/JyaZ5jvjJtV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745084768; c=relaxed/simple;
-	bh=F1HFflMSmL7tJYDbSTar6k6pFA+j8psKp0cqQFX3K7U=;
+	s=arc-20240116; t=1745084769; c=relaxed/simple;
+	bh=ZgoIHnMhN7lDo1D28NkOdmb+3Hz/ivEb9c2wc5e5jE4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=prx51AQSXFanyxZzkcGL2f0Z03BF880ONQkAQmotJSE6oCgYCfwrvtftSTmoaIhGFgsKsCFj4yVD3dxEwoJHc6Oseo5rOiNgPuv+jUM3NgR97C0cj+CZHbcz3OaYOY/sP0KxZs5JD+3WQ0hTbTzlPVm+8PtiQdmRSlerxWkTdBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGnOH4ku; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=VF2YI4xj4wHFdJ+8jCndL9ioHiQ15q4eG0dnK6rqim/uxK/RX30DA/a3DTS+6sSxg4llAKSf0SHZHJ4V/egml8FrRj7NPR2ho9Q936jhOEzQu+3Jm3P42pyW5+F2zDRHZy13XqIc03poBI6Rq1e7QMhfjiw+z42kqsLaOeO2EDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mv/1bCMK; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso2539706f8f.1
-        for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 10:46:06 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3913b539aabso1674533f8f.2
+        for <io-uring@vger.kernel.org>; Sat, 19 Apr 2025 10:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745084765; x=1745689565; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745084766; x=1745689566; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DT70DF6KQmD2cG3pCjP1KCm/JJF0iWQMN932x1Ui1/A=;
-        b=jGnOH4kujyjpCx3m6KolbKbE0gimV49KOKrEhzql09mlkuXvVnq30YD3BjDKds8Ezw
-         dcEvghmRDZ7GgeYiG5BdK60vLMlQIAIfsveC5uGF2ME7Ll6nYjRQzBUY0onNFXcgM5hu
-         eZKrZqaqswnHQXVljLT639LFdu4x8GiCzqBEX6YJ04vNhxZ3WB+1B3ZG9vfdy9xwA7LW
-         aHEAbkJVt4EoujRLQMd2aZ2DgyQ26sMWurFcB1PybgRPPguLYF+V8pwRmfA1WsNOvBX3
-         8OEqz/4RiW/saP8w70GevbYh+TzzqNDHfbplbdqE+9Fnxu4tvH4YO+NvzwuRa3UPJR5p
-         0KEA==
+        bh=e9DHhrucDVczK/CzhBpG42sO9/PT06wZS8DQ8dBq+ys=;
+        b=Mv/1bCMKKD7gw6UxxWZ05RwZQAl32z/KDfmOXWzF/u7GcEVrYrze09Rh/jnGZzw/uO
+         PbKCa9+FeQ8dLmRL2iXtScr2s4ZzE0mYotpoe7XhyN8P00/Cj8PY4jE0XghdT9eSU1JX
+         K/YXh1/l5fpNAEyj8bU04IZjtABnDrT/xptzMOYTYATv3Fo5W3UaM1MY1Heo0/ffDXmL
+         c8Btya+QaKYfEhtAyhwDyZaiywXzk7brZN2y3rcO7k+eiijX0mHkLE31DaVoE9bGfi3O
+         PL8/27P2KNfYmqU5WND8oWsIdrg4TtJpU0rkJAIGivAh/uogjLX6ALZlGezCoKR+jTEM
+         imgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745084765; x=1745689565;
+        d=1e100.net; s=20230601; t=1745084766; x=1745689566;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DT70DF6KQmD2cG3pCjP1KCm/JJF0iWQMN932x1Ui1/A=;
-        b=EZAbit6e3zEN+g4TVb8+hhiHn3NlNjurOvQYDo4H9h2+v30mCBE6fMsHK+BQ1dOlY8
-         aex1fKZceI2PE+5cwvbyNmIwpR7ZzRk+/o6fbEux/tkrzCfKvfMwrZ3X9PzBH4QUwe0Z
-         jGKWpxFsbAKUSKhCSzIm1+4RvoAo6MmLk90fFgL9s9anbjCEt6YwUcqsfOeZnOp4J3eq
-         ljU8fE5rA9gjuP4ggKX2fTmtA2d6h7tCphdisBcjXJTeIff0NRZj/Svym9XU9V4pzxub
-         F4z9CHnVWpPvoTvqgW1zkBxPygYGuRNKtT05eYoAyT9jRmzRf9dY7L/efCS4Jq5uXuoA
-         s+Iw==
-X-Gm-Message-State: AOJu0YzWxg9b7Y0uAVQlzzfX4r2yttRjLP5NUFVSVptLTVbCn1qgtiwj
-	slBTKTfMQTkpJpyNqlyiPT+ls8zCxdKlEGaD+rQDa7RRPc51OsXasvMbOw==
-X-Gm-Gg: ASbGncsQ/Yz8qjIiSwU4/eC9fLvVp4PW3mlq1rtiQjELMlhV69TyqME2ycnCr3DfTzR
-	JOh7RJpDT2gkpssXJWDOD9Gy4J3hAoc6HE67iHe0XNmZPe/W4d7n3fy/502Xp0jO+gy2wtOasSQ
-	07HxcDmAJEF0aS12ZhZk3xbIA7iZcyEMM28nkABSAUpfq4mrbdlprKEfrTiKhwB/Z6LazxCpzFG
-	oBwJXkvMQmSmROFTHghp962jT4gY2f1f0EBGcdQ6zggYJ0E2NRAq199jB8GJELJXkAwTKIfUAvI
-	oWUwIBPbVzBD0H0e9O51r4xiT4p3KmQmLPQfdJ5QF6C2XKrDt3KxZw==
-X-Google-Smtp-Source: AGHT+IE84WNK+aJIuK2nXZnQs5or5slEJiNtI7G1PP277y10aKodBcqhLjj5002wxokGL9w0ampHDg==
-X-Received: by 2002:a5d:64c2:0:b0:38d:e0a9:7e5e with SMTP id ffacd0b85a97d-39ef89b5dabmr5715001f8f.6.1745084764443;
-        Sat, 19 Apr 2025 10:46:04 -0700 (PDT)
+        bh=e9DHhrucDVczK/CzhBpG42sO9/PT06wZS8DQ8dBq+ys=;
+        b=YGNL+YoW+80euHPU/bgrsZXFo7rqfUMi7MiH5/W91DiwZd+YI1SxUxIPZ56q6ZGv4z
+         GnozaAwgciDtCZXszcpk8ObR8luJdhTQHKzZqPujhQ24l+1rfkCBgwSCh4cffBLmWBVr
+         g06HSqEAFSrcvwpjQzejg3KO9BIyWrGiwmLA5hFyoAiepfuyO+YhJrTSZE7zrvVKr3+H
+         s1o+xNKOlTFn4GS5GlUzTTkPTLkZ2BC4Txx78MXap6GaGYQUkG2EP46RAL+9kBtp7vIH
+         J2F4uw1bCv0maT/YfUlhjCEbzXXGEmnUPZ4ghlmRdY0CRldMqpPy3wSmmwyznvwfDJ33
+         q4xg==
+X-Gm-Message-State: AOJu0Yzt+C/3cYWvwJZ/xdsx/02DZ72lLCk7GowEaluqxV6/1pOTMo6+
+	9zED6iqRxu2EMy1nTraQdJxEDQWtLd7TXQdCHkRPGgtYuc6TCtgyN5/rsQ==
+X-Gm-Gg: ASbGncv5bDAJ8wyR9CgxpVJmAhW2iaStx716Tqo4U9Ryk5ykLUNNykB9d481vZdAWcG
+	+HcMEO9gY0XZJ8QbaUJSdQH+3ERZPpA+jvQTkvFtuE+dIoB+cIwRKoN654/1vqrqzQsSxZGdPhm
+	a+DFP6Goo4u0qt9k5siZ5WBzhJgWTR5WBCH/dnx+P4PqklWiZQNOL0m5Wiepc0sfvBGv1g0zsra
+	YmyJKhE53W0Kh0owAZS1A0Jwtg6R0xSC6dF+9YCxBhuRFLinRkiiSSetTZbMLHWrDDUrP3/wPeC
+	Bx6JcY3ibqXOrgeC4WqvHCgmXAEiMmpmkINLkEAKyfKC1s7xlRwx1w==
+X-Google-Smtp-Source: AGHT+IEH/U1z1WOlsZdK0Isx5JP/H57NSsgPpsF+2kdtJVINuEf+KrOC6YgVx0ZFzXfOeZQnsUyv7A==
+X-Received: by 2002:a05:6000:20c6:b0:391:3915:cfea with SMTP id ffacd0b85a97d-39efbae06b8mr2741295f8f.38.1745084765891;
+        Sat, 19 Apr 2025 10:46:05 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.237.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6dfe2esm69632785e9.34.2025.04.19.10.46.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6dfe2esm69632785e9.34.2025.04.19.10.46.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Apr 2025 10:46:03 -0700 (PDT)
+        Sat, 19 Apr 2025 10:46:05 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/3] io_uring/rsrc: use unpin_user_folio
-Date: Sat, 19 Apr 2025 18:47:04 +0100
-Message-ID: <e0b2be8f9ea68f6b351ec3bb046f04f437f68491.1745083025.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring/rsrc: clean up io_coalesce_buffer()
+Date: Sat, 19 Apr 2025 18:47:05 +0100
+Message-ID: <ad698cddc1eadb3d92a7515e95bb13f79420323d.1745083025.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1745083025.git.asml.silence@gmail.com>
 References: <cover.1745083025.git.asml.silence@gmail.com>
@@ -88,41 +88,78 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We want to have a full folio to be left pinned but with only one
-reference, for that we "unpin" all but the first page with
-unpin_user_pages(), which can be confusing. There is a new helper to
-achieve that called unpin_user_folio(), so use that.
+We don't need special handling for the first page in
+io_coalesce_buffer(), move it inside the loop.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rsrc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ io_uring/rsrc.c | 47 ++++++++++++++++++++++-------------------------
+ 1 file changed, 22 insertions(+), 25 deletions(-)
 
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index f80a77c4973f..40061a31cc1f 100644
+index 40061a31cc1f..21613e6074d4 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -699,10 +699,9 @@ static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
- 	 * The pages are bound to the folio, it doesn't
- 	 * actually unpin them but drops all but one reference,
- 	 * which is usually put down by io_buffer_unmap().
--	 * Note, needs a better helper.
- 	 */
- 	if (data->nr_pages_head > 1)
--		unpin_user_pages(&page_array[1], data->nr_pages_head - 1);
-+		unpin_user_folio(page_folio(new_array[0]), data->nr_pages_head - 1);
+@@ -685,37 +685,34 @@ static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
+ 				struct io_imu_folio_data *data)
+ {
+ 	struct page **page_array = *pages, **new_array = NULL;
+-	int nr_pages_left = *nr_pages, i, j;
+-	int nr_folios = data->nr_folios;
++	unsigned nr_pages_left = *nr_pages;
++	unsigned nr_folios = data->nr_folios;
++	unsigned i, j;
  
- 	j = data->nr_pages_head;
- 	nr_pages_left -= data->nr_pages_head;
-@@ -713,7 +712,7 @@ static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
- 		nr_unpin = min_t(unsigned int, nr_pages_left - 1,
- 					data->nr_pages_mid - 1);
- 		if (nr_unpin)
--			unpin_user_pages(&page_array[j+1], nr_unpin);
-+			unpin_user_folio(page_folio(new_array[i]), nr_unpin);
- 		j += data->nr_pages_mid;
- 		nr_pages_left -= data->nr_pages_mid;
+ 	/* Store head pages only*/
+-	new_array = kvmalloc_array(nr_folios, sizeof(struct page *),
+-					GFP_KERNEL);
++	new_array = kvmalloc_array(nr_folios, sizeof(struct page *), GFP_KERNEL);
+ 	if (!new_array)
+ 		return false;
+ 
+-	new_array[0] = compound_head(page_array[0]);
+-	/*
+-	 * The pages are bound to the folio, it doesn't
+-	 * actually unpin them but drops all but one reference,
+-	 * which is usually put down by io_buffer_unmap().
+-	 */
+-	if (data->nr_pages_head > 1)
+-		unpin_user_folio(page_folio(new_array[0]), data->nr_pages_head - 1);
+-
+-	j = data->nr_pages_head;
+-	nr_pages_left -= data->nr_pages_head;
+-	for (i = 1; i < nr_folios; i++) {
+-		unsigned int nr_unpin;
+-
+-		new_array[i] = page_array[j];
+-		nr_unpin = min_t(unsigned int, nr_pages_left - 1,
+-					data->nr_pages_mid - 1);
+-		if (nr_unpin)
+-			unpin_user_folio(page_folio(new_array[i]), nr_unpin);
+-		j += data->nr_pages_mid;
+-		nr_pages_left -= data->nr_pages_mid;
++	for (i = 0, j = 0; i < nr_folios; i++) {
++		struct page *p = compound_head(page_array[j]);
++		struct folio *folio = page_folio(p);
++		unsigned int nr;
++
++		WARN_ON_ONCE(i > 0 && p != page_array[j]);
++
++		nr = i ? data->nr_pages_mid : data->nr_pages_head;
++		nr = min(nr, nr_pages_left);
++		/* Drop all but one ref, the entire folio will remain pinned. */
++		if (nr > 1)
++			unpin_user_folio(folio, nr - 1);
++		j += nr;
++		nr_pages_left -= nr;
++		new_array[i] = p;
  	}
++
++	WARN_ON_ONCE(j != *nr_pages);
++
+ 	kvfree(page_array);
+ 	*pages = new_array;
+ 	*nr_pages = nr_folios;
 -- 
 2.48.1
 

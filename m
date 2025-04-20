@@ -1,82 +1,86 @@
-Return-Path: <io-uring+bounces-7572-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7573-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D74A94753
-	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 11:30:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DFEA94754
+	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 11:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE698188D913
-	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 09:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9DA188DB5B
+	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 09:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A835F2A1C9;
-	Sun, 20 Apr 2025 09:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96958192D96;
+	Sun, 20 Apr 2025 09:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gf3zU8JM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpWufVG2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB49013C3F2
-	for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B51155327
+	for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 09:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745141419; cv=none; b=is1W+/s9/8ruvY9FuriQv+WpfSp5IP4yk1SlaPQBwwAunSjFAHZ8ND3H//GdwvvdAOVF4I0Gr6xHoZZsu9FxA86VNWFz4mTlk5DByCdGSLC8JnEhuY2dZClLSXlX0XLW2HNI6zpxgBUNdrSON9XKbbPOEoCoN/ieROxbm3fiOuU=
+	t=1745141421; cv=none; b=muYV8+eO3qvGRt+wuw7PSNu5o8MAHYw5qYcp4rEl52NaS6saJcaLvEELuP8/HxR/GhRFpYYMBg0VBQHq3dTUIIbxndFI7XKgZ5LEnldFPw4IsQkVEb3zNBy+63JpZkUbMi1ll7wSBQyFEnj88inuW3Gz8v+GeRsD3qJ21+M9EyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745141419; c=relaxed/simple;
-	bh=s9Dlr/vatWcvsPy7fWTsa9pyPimWhaanL/LaAdmY/QM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OtBn5IkOIV8LiYIHEIqFG+yxyEBKhRTV3VgXSOCTO8dTgyrWW0/dUmO8HiYX8JM2GRJvytk/IbY5vksoiLwAKqJKAxXjfDWJPej/OTlM3FrCpbCsbZAkTa26rulpCBpc9+i+lEBdwpPEIJXUf49/WdwzG7M40jhWCWc7qp7nDQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gf3zU8JM; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1745141421; c=relaxed/simple;
+	bh=JGEsP80NRkvoSFJvoC/KB+Jll3KrBjZ+Ha6T5T+WCIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=k3XfOBIzjFvaDvKiEQ7kVgSjHvaqpBJZekn+Qo21YgnWJa4M2AmrmVIvu6OlZEV3RBpgIQykrUnUxMHGmrQFFNK3fEetzKCdle+G5aYiKwsK80mTGxp9vX9+aGXZ8DfyPylqmcmVIXtKFOGRf06+UZapP82VCzB1/AJSghM0umc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpWufVG2; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so2103573f8f.3
-        for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 02:30:16 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso2074090f8f.2
+        for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 02:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745141415; x=1745746215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zS4N2gIXv6i6irs36ZRFUD2b6Pc3yZMu674vVGglZRM=;
-        b=gf3zU8JMBmaD+bQhGoyftUp+whSvRGa6E7JsE/VUf/2CbUWNLbRcQ3OXjZno5XP93N
-         sNEW39ZNDU3nVv54OV2Hjb+o7kP9LdtpdnZLT6Uwep2enK5iK554fmciyCi7P5rGFS1Z
-         ToU2xW/aFADO7JumnrJ50E2Wlo0DTDl/RlFAk7b3qOpQCg9sJEzzpsHHqg1AqWnyiE5o
-         C1iIto4awCiDJJ9N9z2XJR3xTeZdtlzO6j/cMI1Asr8HfCFR+Q5Mvevw9eOyZwSvDGx8
-         L46C7Mk3mziWHXRePjwtUYM9v26LMFlNZC+qYrifvvyz9/eqEB1ImxP3/q2hZJos6Lwz
-         Bexg==
+        d=gmail.com; s=20230601; t=1745141417; x=1745746217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gjb97cg3nJTuOpUtchoWKelUalPRamTuJLvoNQC2fEY=;
+        b=mpWufVG2yRNF+/AfSevFA5Q6nVZJltEeWwYe7DVNNxad565ypnqg/AmmxixCauS67F
+         XlZyTI55FhOdzeQm9ZHfCgzUe/hhSQg8AEOJGdPi+dKgNpxpkGDqXhhmfw6iZOd6sxD8
+         1Y72QPML3uwV/8ncECY6TLkadZMr5x5Kmx989LpFdIwdV3KfxiFNJjVJkkohRi37dth9
+         UhU8/lrE644bIn9n6P7vYlPSbyZRjz3XIwRANFptIcs5THTAh23Doe5UABT7dwjcEJqh
+         mVRuF631IVGEPwcCsMLfahc+IlvmHWJSe2YeXwG16xrhV0X8CbRkS0xH5RM+fIYt7fcO
+         yZkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745141415; x=1745746215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zS4N2gIXv6i6irs36ZRFUD2b6Pc3yZMu674vVGglZRM=;
-        b=m9xOpN+t2EdoRkitdd8Nvchtu81FyYWVLbLAcKviiiJBc6JfmHOrBQJ+eINVgHo6aR
-         Pd3Q+lBefEPKsVsgSxRwbf78JdOPygU7VzeZWDN+s8rMEVw24iN+Lqsrb9eccSECKgiy
-         TxfSQRknUVy3yjLvPtYmh0iwGrtuDfPsC1/y88f3LAjLWE2xE6Clkbrj1XiaFjsDipB5
-         MTUrgVnsU5/Z6rCdssHARX7vxEv/Q41sYw1GcrXF0FYJxSzGjJJq6QNrOcM6vVtzP/5c
-         Kgk3Bi2/Kd5QSJtoeUnKA4Svu2cGedM4exc+igPCvEX5ZePyVnPJQmuYaGz3wtYRqfZi
-         ELSA==
-X-Gm-Message-State: AOJu0YzA1itCniAOU9UsrXEZoBwFBwCRcz0oxWajd1osLFN79iIS7tE4
-	MUnnLUvTY5dPS4owBEa92V6bicDiBDxNAw14J9WekB3Qz9PUG2l5QhTkJg==
-X-Gm-Gg: ASbGncu4eTfrHGNg3CZAgiaZx7xOHF7GkIc3dtJyIQImnVmoNl6puB1ebmkhlAfsPCO
-	SKzfHhjfTY7wFGSdqxJKSOVu2C6jtWOPgsTlodDq9qKaEB5KkeNnD5UvJPWXZtOQzYqcFY01GaZ
-	LpbGTXy7XcZlWk4q89W+Nxd4k8HI2fjPBymEPhHdsN40gbG41pH7O4sO29bmX67+Re5MDpQk/sU
-	RQGHxqG6Xp068u/G5l04EBD82h0VrQsRQdrrwVec655DQeKq3cx4u8mXIn/hWND6IhbeDhhKuXf
-	RY3CMmv2o0SSmxXlqfu+EwBAo8P1MzZJKNtH3jnLcTtqZc/qGBMrwBxvArKTU9W7
-X-Google-Smtp-Source: AGHT+IHJntysslEfTa+R5JCxwpSmi61P22SSjLfztldUTMlYffzuKro9aNhpshb4FO0xvJ7KrhETrA==
-X-Received: by 2002:a05:6000:400e:b0:39e:cbf3:2660 with SMTP id ffacd0b85a97d-39efba26294mr6165432f8f.3.1745141414580;
-        Sun, 20 Apr 2025 02:30:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745141417; x=1745746217;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gjb97cg3nJTuOpUtchoWKelUalPRamTuJLvoNQC2fEY=;
+        b=Zhou+6S71HMNWRQB7xjKcuzjozVPPNj4/510PEUqRlpj18r24hpMvtbH2Ktoldrc9w
+         NjnYiTH44tw3nofGWinuo5boEGP9In2v09305Ar6knM/4sEPVf3hrFs0hGpGPNHysppX
+         8C6mC3VgmA79XlXsffe7hHH4+plhovpRboOODMt/qyJAp8Ql30tjbVFy7xxsC6KiCpAz
+         DG8CWPCzL3JRi/gO8jGdE9C0hEf3priJfFjHfukdOK71r8onmrmAhMZk6eEjgU5gN16X
+         LwY5VmfzUKAxSUpmrpJqyqp3iBiwpUqTrGyRVXvVF0omeX/qtA/HE7td0CCxCfDO4gG1
+         fcKQ==
+X-Gm-Message-State: AOJu0YxwIKiAg/6XcelW07CiTgbkAjwR7kl5Q6usrqRBh6lEIIlcpO9P
+	yaBaMUzXQeELvxjLN61AEfbF4HxOXTUHpOEdkHDTr8YqKzFLQuoJjR7Iqw==
+X-Gm-Gg: ASbGncvOZIc4og6ogbTRKDkZR7dP9JOwipI8JZqDT00DiiZneWJMGnKgUHPW5TwTn+X
+	awOmTCVvfB1Qlev4MQ8cR4dVj7pedE8BLceQAXpa1iNicfceGRRN9JLbx/rCnxmh0qfQ+Tkq9+D
+	0MWVwwjQQ2rL4/ObWZAxncrKOQgbLDrQ2WTFKFM9x+PYFxmFoOPhvGdLZVnKNiilk4Qpm0h1Kg9
+	ck5boT++qxYWMer1uO/x8HLS9Vt3UeAwf3GcFS4GQmZ7FiN7XPrFdlT7XmLCZKQ/KWJ8YIsY5mw
+	H8eOrx/zf7zp0J7w82BTglIjRm10YH8twhyzS90es4S148SrgnHqOP9+DMa99gpl
+X-Google-Smtp-Source: AGHT+IFHc7TCmGKnQ9DssK1rLvfhzR3x5PIPS4tER9rRn5SIafvo79vlWg6fVRxDTZIleVBqK9ukUQ==
+X-Received: by 2002:a5d:5c84:0:b0:397:8ef9:9963 with SMTP id ffacd0b85a97d-39efbb092e4mr6625027f8f.55.1745141416723;
+        Sun, 20 Apr 2025 02:30:16 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.128.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5ccd43sm91188675e9.26.2025.04.20.02.30.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5ccd43sm91188675e9.26.2025.04.20.02.30.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Apr 2025 02:30:12 -0700 (PDT)
+        Sun, 20 Apr 2025 02:30:16 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	David Wei <dw@davidwei.uk>
-Subject: [PATCH v2 0/6] add support for multiple ifqs per io_uring
-Date: Sun, 20 Apr 2025 10:31:14 +0100
-Message-ID: <cover.1745141261.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/6] io_uring/zcrx: remove duplicated freelist init
+Date: Sun, 20 Apr 2025 10:31:15 +0100
+Message-ID: <71b07c4e00d1db65899d1ed8d603d961fe7d1c28.1745141261.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1745141261.git.asml.silence@gmail.com>
+References: <cover.1745141261.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,34 +89,29 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Note: depends on patches queued for 6.15-rcN.
+Several lines below we already initialise the freelist, don't do it
+twice.
 
-Patches 3-5 allow to register multiple ifqs within a single io_uring
-instance. That should be useful for setups with multiple interfaces.
+Reviewed-by: David Wei <dw@davidwei.uk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/zcrx.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Patch 1 and 2 and not related but I just bundled them together.
-
-v2: fix returning the user an incorrect offset for mmap
-    add IORING_OFF_ZCRX_SHIFT
-    split Patch 3 out of Patch 6
-
-Pavel Begunkov (6):
-  io_uring/zcrx: remove duplicated freelist init
-  io_uring/zcrx: move io_zcrx_iov_page
-  io_uring/zcrx: remove sqe->file_index check
-  io_uring/zcrx: let zcrx choose region for mmaping
-  io_uring/zcrx: move zcrx region to struct io_zcrx_ifq
-  io_uring/zcrx: add support for multiple ifqs
-
- include/linux/io_uring_types.h |   7 +--
- io_uring/io_uring.c            |   3 +-
- io_uring/memmap.c              |  11 ++--
- io_uring/memmap.h              |   2 +
- io_uring/net.c                 |   8 +--
- io_uring/zcrx.c                | 107 ++++++++++++++++++++++-----------
- io_uring/zcrx.h                |   8 +++
- 7 files changed, 96 insertions(+), 50 deletions(-)
-
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 5defbe8f95f9..659438f4cfcf 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -238,9 +238,6 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 	if (!area->freelist)
+ 		goto err;
+ 
+-	for (i = 0; i < nr_iovs; i++)
+-		area->freelist[i] = i;
+-
+ 	area->user_refs = kvmalloc_array(nr_iovs, sizeof(area->user_refs[0]),
+ 					GFP_KERNEL | __GFP_ZERO);
+ 	if (!area->user_refs)
 -- 
 2.48.1
 

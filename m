@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-7576-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7577-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9FFA94757
-	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 11:30:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984A2A94758
+	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 11:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777013B6AEC
-	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 09:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C95171C12
+	for <lists+io-uring@lfdr.de>; Sun, 20 Apr 2025 09:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062AA2A1C9;
-	Sun, 20 Apr 2025 09:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023AB14D29B;
+	Sun, 20 Apr 2025 09:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYwGTgBb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKv32UaD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241621DEFFC
-	for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 09:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238AD18E76B
+	for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 09:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745141424; cv=none; b=NxHbY8jf9VmpO+MzFKPqPDJWaudsxlXOnV9Jap7zkjDX//UY7sTvyYIuugoNS9tTj9KBxRbSMXh139t3zntpPSD2RF/YKv5Xqw+GjntSr3E4X79LXQCD1H6xRKZbBejkWCN1lA4iHGEzXF/PSzqsHL/YMC+eGT+lEEvAGMdfMBo=
+	t=1745141425; cv=none; b=eIOwAOBHXYurL4cvYGGzHN7/+9phqjTBEDVeLIxD2Up2+vEYcRaQBDdBLP6ddOMAmzB5Y5z/yXH93DA9zmper3YAbNX87608Linv2tw4tqmcYmLzvWph7UTfOuNB/i7PS+7kcDM95XUEx/SBwsRV+ivSOrg0rocY2b6bWZ+5KFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745141424; c=relaxed/simple;
-	bh=vR6JKd13hBVDZxNsHu+2d4QgRlMo/ozyhYklfkY+QZM=;
+	s=arc-20240116; t=1745141425; c=relaxed/simple;
+	bh=BluF1cmuwv/1hNkpnBDLmePDq50Uch1NfCiDWpvPGNg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ujt9TBj6TRom8St77w1SvhTxcbbLUsXtyaSS0A29y/Suu0nclJ+7lbxVZPKTHuO9dGfp6DsKMIInIGvWlcKWPjw9EUn2BJstGyuCF9byr+PGxMqpZEeYjGsgGKbyA9BpHN+s0Rqd6rMfchQ6kdJI+c3zoVCN+YZQm0VDyuHwb44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYwGTgBb; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=NU3SUyLY/Ylb+qgqOfN6VdtZp73YBSbSsnlfAX9xFPwJzBeNWNENv07Pguc3pLVaZM/DEiFRh4ZqZNRCbzxK9WVP9kTXUeEWIzncCbgihktSgzP6yn36LIxekQ0gxqV9UpEJuiKlZeztJWET+Y7d3NtBbZK0Ai/jELu/l7FoWgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKv32UaD; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so2146207f8f.0
-        for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 02:30:22 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso1892595f8f.2
+        for <io-uring@vger.kernel.org>; Sun, 20 Apr 2025 02:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745141421; x=1745746221; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745141422; x=1745746222; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u+3m+UMbYNf2r/11cc0B7NOrD6daXSaztZLpeLmd1w8=;
-        b=BYwGTgBbY9x8vaJhjO+1U6o+AxkRHXEVf+5ZvQSCddobETvTx0hygNxkRi1Ufo0NHa
-         k29WgXKOxsnIpNllJ5nniWy9o1YmpAsQH6Dq5TovLwn2lHFCw8U5jDgZAPgdLCcpkjel
-         MW4LeReRKc01VR0Xx74UJ/R4HfCVgxf+gKopPhjlhnogHzRRSjhgIHz7HUZuDI+BydFH
-         0Uj9ENWU+ZJA3rQHZdcycUMMPAh0l3kXutsnvqcJCCw06RpzbKVRtZshV7E57BDZolpr
-         VKAUPRFKCDGplL/GDJdVG1Gb7mR01uIYJ6I/Jo+1lxPpAKvwSVQjsiK9BSFPV0H1PjTq
-         tz3A==
+        bh=uQwgODJ6Vb7kWPYrfcPrYscgy1QhFfPjJg0VE6PizWQ=;
+        b=YKv32UaDQ16w56wNGcEJgWZh9EsXLNjafo/6W24c8g2mpIE/Dp7S0CfrsbB6cUStN+
+         W2s4JE6PbLRK1F2pT1+GRyz+cU3NmeA8nh9nrC1pFytN1MmieWN7h2OYnU+wcLv/nAVd
+         FRb4LPN48a44OusdfKix3+bDbmmdaqfjoGmLuZe2z/DY5+ZA1LmS3VgDrFKiqFDQOg9D
+         ZnoyOsD+BedeItMMVuaZpOjYjBT3YVrc+PNsrObPuK1aD3qZmmz/XhOnj3eXhanLlEg9
+         VZ2FiLFxq4rzbFI45M5JwBSoT8ZcmGF17qdPT6QQN3Ss+LkbDjRzAtRl0mDKx38cGg1O
+         brhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745141421; x=1745746221;
+        d=1e100.net; s=20230601; t=1745141422; x=1745746222;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u+3m+UMbYNf2r/11cc0B7NOrD6daXSaztZLpeLmd1w8=;
-        b=EjWD/uLarRir73/I/zpHegGFVujoDsbQpGgeY9mWlmcOiVj3S56fjonGuwMc5Gh14/
-         RPidt7USPIi/dg99BIrdYNw1iylaHOK4cRLTFRA/BJChtqvdNIVtxcaTBLhtgfN25M+8
-         qjkxrImznHF/IFLG4wvth+BVO7BtmiQc9pwaxrPgVc5KFWE2BuvTEYGbxNSKHP6Cwcs8
-         zl19QT1KBowo9C/Snv+WcQvax9/gv8bqYnPSosUZtQ56oEPZn651XAt13L0W8U538v5s
-         gQTlIDcL07gEqZvdi5it03VtPc9nHxhYg7DrZTk556HJEBC+8gyip11pITQr4wZZEdSD
-         pJhw==
-X-Gm-Message-State: AOJu0Yzb3q2wQK3BdVUFh7w/Eid4XnJv61cazF1xYYRqfeO8hhTNBj1/
-	zcXUh/T5V+fuWhxxYv2i8+MjGSd9IGMIeVaR3J7t8rWoXD1ll0vkeTvNJQ==
-X-Gm-Gg: ASbGncvRIbZtSPIvmmEoBQc3ALvFnkvKs2zSxZg7UewjVAmPQEc003eBBuNchE3TyWA
-	bxZq4705bP5B9JIYA8YDgKxIu/tG3IYcTTb1Jq8iC/9xAuWNBQd5/7RAX2DlxhRblt6RATQMazX
-	ljwxgbtbPRXY155wl8pj64uzGhVbk+ViuQtvlXaNWobMAYrg17sESXI9gSrioMdRlNGnrr5PGbv
-	IjWriVcQgR8ADWgdBCdw1pto/kyYhb5u74uL5a2BcqmLMzbOVCVZ503iGPYS8Gw50sx6BPr2+w/
-	IO7g5r8JRAYSsIHJYQGqSXmpxru+JHLwj4HxTKE1kSsvHMh7FtDvpA==
-X-Google-Smtp-Source: AGHT+IG74RSlz9gq3eQEx3BGFJJNzFx7nlBj9OLjx8MV3UiWhb509Ob8cAjOYHJFnPyVD5M5ouzWLg==
-X-Received: by 2002:a05:6000:2584:b0:39a:ca05:5232 with SMTP id ffacd0b85a97d-39efba399c5mr6642662f8f.5.1745141420644;
-        Sun, 20 Apr 2025 02:30:20 -0700 (PDT)
+        bh=uQwgODJ6Vb7kWPYrfcPrYscgy1QhFfPjJg0VE6PizWQ=;
+        b=GH4FEc/7hw7Y9liJwzKiUnoaezJDcoLiHOhXD1on/jiA16Gs0RXSEnKiQ0DgO9acSN
+         TEsdCPdRq01DIvt7lnxxWYCJazjsoup3W+WRyCEnk4jikzOzTHZvvBdk/GKeO9JnJ8BR
+         UvaP9o9LVrS6FI2fjT3zeQqCp7/+q6ZWtenO0T2KEGzSEzks/eUaC78WY9oPsD4AY0d+
+         xH/uErjf9Ryw0RvFtO7GJi0Oj+GVlwzAcBjuzPWSawZIlvVgrYtBn0utYS2AQ5fi1TAH
+         ecTKVgqFBvxTBu526Ll3g7bTlITlLPoPDdEjEM8Ps1ExyChHbk4aMd2/v9GNTbYPsZXJ
+         p+nA==
+X-Gm-Message-State: AOJu0Ywx73ICOpNaSCfxIdS0HFKVNBAR9Mjb1/+lQ5Qtwl/d8waTrq04
+	O35iMngrPJpG3eNmrQDhsJUdPvIa62lk57w+hNhD+l5iAnjnKh5tSCJnVw==
+X-Gm-Gg: ASbGncupH7hCgdRI+lx/7kLAm+gy5P7NPWcRvwOaRDitUVZDFyK6T9/Bcw6hVPg3Q1d
+	yGKmo/8+HkYqKZdaWAs19UubZpYG5qXSUlbTxpN7MOG+Xou++vanlpcaC0/Lgum/ztiaH8VWDuK
+	GWGBCV3kwA6MOskp84l/HOFJVlKBTr7FF2fe3MvBsOuCl7Bxz26A+4OPtjgubsPdnnNj7lGsPyZ
+	m2I03I/EX5qaCoV/DRIcUbblALaKwDxEi9aKq+ocmiDnZMHBJT1igDWXu+oGfG7fWs8jg+3TjPG
+	OMmBDBOSfGxNhDKF9AH+87c1i6fzOOEl1qNt2gYHUKK2DheD3w9AG0uHmzUtKdZT
+X-Google-Smtp-Source: AGHT+IEVFMQZIpZUQnXx/Pm+hV9cIwD7msbHL3VmIKwhxC9IU1enOAo+Zl35B++HdUlPuG9iA+IcmQ==
+X-Received: by 2002:a05:6000:438a:b0:39e:cc0c:9789 with SMTP id ffacd0b85a97d-39efba2ad6emr6836321f8f.11.1745141421992;
+        Sun, 20 Apr 2025 02:30:21 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.128.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5ccd43sm91188675e9.26.2025.04.20.02.30.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5ccd43sm91188675e9.26.2025.04.20.02.30.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Apr 2025 02:30:19 -0700 (PDT)
+        Sun, 20 Apr 2025 02:30:21 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	David Wei <dw@davidwei.uk>
-Subject: [PATCH v2 4/6] io_uring/zcrx: let zcrx choose region for mmaping
-Date: Sun, 20 Apr 2025 10:31:18 +0100
-Message-ID: <d9006e2ef8cd5e5b337c2ba2228ede8409eb60f2.1745141261.git.asml.silence@gmail.com>
+Subject: [PATCH v2 5/6] io_uring/zcrx: move zcrx region to struct io_zcrx_ifq
+Date: Sun, 20 Apr 2025 10:31:19 +0100
+Message-ID: <24f1a728fc03d0166f16d099575457e10d9d90f2.1745141261.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1745141261.git.asml.silence@gmail.com>
 References: <cover.1745141261.git.asml.silence@gmail.com>
@@ -89,116 +89,111 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding multiple ifqs, add a helper returning a region
-for mmaping zcrx refill queue. For now it's trivial and returns the same
-ctx global ->zcrx_region.
+Refill queue region is a part of zcrx and should stay in struct
+io_zcrx_ifq. We can't have multiple queues without it, so move it there.
 
+As a result there is no context global zcrx region anymore, and the
+region is looked up together with its ifq. To protect a concurrent mmap
+from seeing an inconsistent region we were protecting changes to
+->zcrx_region with mmap_lock, but now it protect the publishing of the
+ifq.
+
+Reviewed-by: David Wei <dw@davidwei.uk>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/memmap.c | 11 +++++++----
- io_uring/memmap.h |  2 ++
- io_uring/zcrx.c   | 10 ++++++++++
- io_uring/zcrx.h   |  7 +++++++
- 4 files changed, 26 insertions(+), 4 deletions(-)
+ include/linux/io_uring_types.h |  2 --
+ io_uring/zcrx.c                | 20 ++++++++++++--------
+ io_uring/zcrx.h                |  1 +
+ 3 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 76fcc79656b0..5cf3f23e751b 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -13,6 +13,7 @@
- #include "memmap.h"
- #include "kbuf.h"
- #include "rsrc.h"
-+#include "zcrx.h"
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 3b467879bca8..06d722289fc5 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -448,8 +448,6 @@ struct io_ring_ctx {
+ 	struct io_mapped_region		ring_region;
+ 	/* used for optimised request parameter and wait argument passing  */
+ 	struct io_mapped_region		param_region;
+-	/* just one zcrx per ring for now, will move to io_zcrx_ifq eventually */
+-	struct io_mapped_region		zcrx_region;
+ };
  
- static void *io_mem_alloc_compound(struct page **pages, int nr_pages,
- 				   size_t size, gfp_t gfp)
-@@ -258,7 +259,8 @@ static struct io_mapped_region *io_mmap_get_region(struct io_ring_ctx *ctx,
- 						   loff_t pgoff)
- {
- 	loff_t offset = pgoff << PAGE_SHIFT;
--	unsigned int bgid;
-+	unsigned int id;
-+
- 
- 	switch (offset & IORING_OFF_MMAP_MASK) {
- 	case IORING_OFF_SQ_RING:
-@@ -267,12 +269,13 @@ static struct io_mapped_region *io_mmap_get_region(struct io_ring_ctx *ctx,
- 	case IORING_OFF_SQES:
- 		return &ctx->sq_region;
- 	case IORING_OFF_PBUF_RING:
--		bgid = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
--		return io_pbuf_get_region(ctx, bgid);
-+		id = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
-+		return io_pbuf_get_region(ctx, id);
- 	case IORING_MAP_OFF_PARAM_REGION:
- 		return &ctx->param_region;
- 	case IORING_MAP_OFF_ZCRX_REGION:
--		return &ctx->zcrx_region;
-+		id = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_ZCRX_SHIFT;
-+		return io_zcrx_get_region(ctx, id);
- 	}
- 	return NULL;
- }
-diff --git a/io_uring/memmap.h b/io_uring/memmap.h
-index dad0aa5b1b45..24afb298e974 100644
---- a/io_uring/memmap.h
-+++ b/io_uring/memmap.h
-@@ -4,6 +4,8 @@
- #define IORING_MAP_OFF_PARAM_REGION		0x20000000ULL
- #define IORING_MAP_OFF_ZCRX_REGION		0x30000000ULL
- 
-+#define IORING_OFF_ZCRX_SHIFT		16
-+
- struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
- 
- #ifndef CONFIG_MMU
+ /*
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 0b56d5f84959..652daff0eb8d 100644
+index 652daff0eb8d..d56665fd103d 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -329,6 +329,16 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
- 	kfree(ifq);
+@@ -160,12 +160,11 @@ static int io_allocate_rbuf_ring(struct io_zcrx_ifq *ifq,
+ 	if (size > rd->size)
+ 		return -EINVAL;
+ 
+-	ret = io_create_region_mmap_safe(ifq->ctx, &ifq->ctx->zcrx_region, rd,
+-					 IORING_MAP_OFF_ZCRX_REGION);
++	ret = io_create_region(ifq->ctx, &ifq->region, rd, IORING_MAP_OFF_ZCRX_REGION);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ptr = io_region_get_ptr(&ifq->ctx->zcrx_region);
++	ptr = io_region_get_ptr(&ifq->region);
+ 	ifq->rq_ring = (struct io_uring *)ptr;
+ 	ifq->rqes = (struct io_uring_zcrx_rqe *)(ptr + off);
+ 	return 0;
+@@ -173,7 +172,10 @@ static int io_allocate_rbuf_ring(struct io_zcrx_ifq *ifq,
+ 
+ static void io_free_rbuf_ring(struct io_zcrx_ifq *ifq)
+ {
+-	io_free_region(ifq->ctx, &ifq->ctx->zcrx_region);
++	if (WARN_ON_ONCE(ifq->ctx->ifq))
++		return;
++
++	io_free_region(ifq->ctx, &ifq->region);
+ 	ifq->rq_ring = NULL;
+ 	ifq->rqes = NULL;
+ }
+@@ -334,9 +336,9 @@ struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
+ {
+ 	lockdep_assert_held(&ctx->mmap_lock);
+ 
+-	if (id != 0)
++	if (id != 0 || !ctx->ifq)
+ 		return NULL;
+-	return &ctx->zcrx_region;
++	return &ctx->ifq->region;
  }
  
-+struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
-+					    unsigned int id)
-+{
-+	lockdep_assert_held(&ctx->mmap_lock);
-+
-+	if (id != 0)
-+		return NULL;
-+	return &ctx->zcrx_region;
-+}
-+
  int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 			  struct io_uring_zcrx_ifq_reg __user *arg)
- {
+@@ -428,7 +430,8 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 		ret = -EFAULT;
+ 		goto err;
+ 	}
+-	ctx->ifq = ifq;
++	scoped_guard(mutex, &ctx->mmap_lock)
++		ctx->ifq = ifq;
+ 	return 0;
+ err:
+ 	io_zcrx_ifq_free(ifq);
+@@ -444,7 +447,8 @@ void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
+ 	if (!ifq)
+ 		return;
+ 
+-	ctx->ifq = NULL;
++	scoped_guard(mutex, &ctx->mmap_lock)
++		ctx->ifq = NULL;
+ 	io_zcrx_ifq_free(ifq);
+ }
+ 
 diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
-index 47f1c0e8c197..a183125e69f0 100644
+index a183125e69f0..e58191d56249 100644
 --- a/io_uring/zcrx.h
 +++ b/io_uring/zcrx.h
-@@ -48,6 +48,8 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx);
- int io_zcrx_recv(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 		 struct socket *sock, unsigned int flags,
- 		 unsigned issue_flags, unsigned int *len);
-+struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
-+					    unsigned int id);
- #else
- static inline int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 					struct io_uring_zcrx_ifq_reg __user *arg)
-@@ -66,6 +68,11 @@ static inline int io_zcrx_recv(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- {
- 	return -EOPNOTSUPP;
- }
-+static inline struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
-+							  unsigned int id)
-+{
-+	return NULL;
-+}
- #endif
+@@ -38,6 +38,7 @@ struct io_zcrx_ifq {
+ 	struct net_device		*netdev;
+ 	netdevice_tracker		netdev_tracker;
+ 	spinlock_t			lock;
++	struct io_mapped_region		region;
+ };
  
- int io_recvzc(struct io_kiocb *req, unsigned int issue_flags);
+ #if defined(CONFIG_IO_URING_ZCRX)
 -- 
 2.48.1
 

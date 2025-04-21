@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-7591-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7592-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBB1A94D11
-	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 09:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB47A94D12
+	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 09:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E341116DCCD
-	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 07:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5179170594
+	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 07:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645F20D517;
-	Mon, 21 Apr 2025 07:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A760120E00C;
+	Mon, 21 Apr 2025 07:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXd2Rs+h"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3Rd53b5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201C1C5D7A
-	for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 07:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14E920CCC9
+	for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745220269; cv=none; b=AqqxwzucWeDUjs6Hcb2JtCqwUwY66D5nGF5yrgKpCLa6fWm+gcdt6KgJT1pM4mGe0DO+bIw1USOFgnucjmNDud9++XOtL5/1l34Ct1N0ucjFYqLUVCV1Nq+41lnxII3JM5nXzW7tv8Lo0m76AxnBhXHjZPyr6yf25IFMYva3zfM=
+	t=1745220272; cv=none; b=t8zfnMIWVTOkkETUVhsEcqtJ3sc6qo+Td7lMZ5AnF2JGJq2qvSEI8xvRw31i7VpN1HWQTXhpTs5Kr01No3jF8qUgc7Y5GVX5894gj4p4hSeQy6pVfT7sv6dmmgwK9wC0drkaNqjn+1/YZFds9uIIXGvrso8KRSWaqBQL88KdyQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745220269; c=relaxed/simple;
-	bh=WO6QnIje4Bkhg/ph5RHwPZEZZoN/RcLOJwPdynjmRfI=;
+	s=arc-20240116; t=1745220272; c=relaxed/simple;
+	bh=YnK3sovi5lWGgPd7Udet3N32bYwqenorofxycyJN1eE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TM1yPTssgCzFPEWgvOGDy/xjCKNPeXI+L9xJt9Vyh79UiqwggvuEFxMYkrHNba7IgLF7R7/GRL59pcHejzYseAhmfHCrN8bqlHH6/W+M4+kPsx41JC1IR3PpF+jRjK/WEXstt/K4XCtVQobgy4ala+0I2OS1GjXRzEp2bCz4TF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXd2Rs+h; arc=none smtp.client-ip=209.85.208.51
+	 MIME-Version; b=ner3+kV3IMwkzcbWaaBTKLeIdysgETEVnQATVKM6HSEJRC6FWko1wIPbO8PXKO3+LGeUm2kdFcOWIo8sy8ydxcpdWDT27BlqNwDj+j/moMBe16/D7qRr1EOfpmiQtTJbS+cuNya5mwhI5jdud/159lHj4A7NNFcuIvEadGPZ2T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3Rd53b5; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f6222c6c4cso4770999a12.1
-        for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 00:24:27 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5f62d3ed994so4065467a12.2
+        for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 00:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745220265; x=1745825065; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745220269; x=1745825069; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IwD0uxpX6LTgbRYJjV9x5ESmm7Cc1Zf1afCIKJf586U=;
-        b=LXd2Rs+h9RPQu9Aw9s1xDHlSKWraifHmqwoIVItgyd6MgmRkYbiSgY02/ooPxVfFi6
-         HJPeL+gpomfYWin4bQJ5gmcdcGe/mvjJaczJMX0K6r6yhxLMXVnEubtn7y9NpEOKphcD
-         aH8f74hAA4YKjbzAVqzVd7xBGX/YP3fooxrrUmJnFgAxLGQMhEj8NWJbInAhHHZujiri
-         bGsmF0K6fLM4lz8n+BZCHmePgVxmFeRO8N3HKY3wNk8CZWYnQyNL4gHkMBYKbfxb57Iz
-         g1ciySPKr1ej9m9SEC23Mleo2qks1hqzmGZ3FPsOKzhKVo8SdeW0z/lZazXcOxix3I6u
-         tZuw==
+        bh=TdVcR9rHe8HlgSUoNOWmuUc4BxwMtg2e8JOLTUt2wng=;
+        b=P3Rd53b5C4rzbo2jkThOuPFmHx5jn8MWA87kkXKQwoi/fTyR87KeX5vKUr8YuXJYAI
+         FEK6UlT7FDgI8IXPKW60dYnNO6D2qCdEEeUPpeH9jm60K4ICyrV/LTy1o6ytwrOJhv3X
+         5CV4NbbCbXkc272cP2cVpTPyDokUl0ao3sz48HrzzQuiTaSfBMRBv29aqRK6+Ct3RKZ+
+         tFSKzjcaxeMWItoTkUi9COSt00fL41zRwRHChMgKPGQjqKc7tY/M88OgfZdfhtKhyuLM
+         XjNn1SXbjPGaT3sOxo7PgXc0SdhPx0eA0MbSc7+CgjXjiteVrBxrlLekTQ12hta3ZiCX
+         lB8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745220265; x=1745825065;
+        d=1e100.net; s=20230601; t=1745220269; x=1745825069;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IwD0uxpX6LTgbRYJjV9x5ESmm7Cc1Zf1afCIKJf586U=;
-        b=ltsfppcJFcDROCbUR/p82rx75ss4IC9lf3pG1s+R9mL9MUG7Pkb6KVJCd7Xa+bd627
-         MsVTiDGrkzhaV1DjnZ5EyI/UbvhYw8G7hTaokYIRFpEjAy5+3okrMBB1CVOcuvf0nuo0
-         CzE21hYgnYHXtxAcJN6CVatgSmu+kyUPGtfT5aEcFe4R8E9hC4cOIRj8fiphWEDDl8on
-         QpKMpPgXMkWOFf/SkHnvMS2oGJpcJUMgUSdxbP2ygl876ZTR+uSLR8l8brwgY8sjZ+g7
-         ljxnKZlNnDOXBrTBWFEjoQJzJtvFpQify/Yqj8Nx87IJsxsp0oT62K1JaQ0DipFdsssJ
-         dkLQ==
-X-Gm-Message-State: AOJu0YxVn8be0GMEDVaVu1fSUvGhe0N7SLLFzgg3bYHO5AKbTIk3JVDh
-	RN7nFYghOkZfUr5SW6Onklddtz193UsDl87BqKWX+qHWtgWvPf0gCIupAg==
-X-Gm-Gg: ASbGncuk+5AsEKtda8AUAGTPltrmD0RYk8OzdT+CGTKjlQMlhiHIRhiYM/PzfxE825p
-	mhR1lsohQKvFHCoFGvd6L76R851cn+R0ERychiXkCufl52hNdtsR1zrCE5WiYjLqt0o4vwXVZkg
-	yXgbky2RomKmEN3pU/9jVxSoQeVg4twF98rlbhMD4IT2aNaewJkloIN+O/EoJv/1GwivKsr4zsH
-	pzflgBVKGMrFq70Xdn/aTSzRIIXIlnIYp4yhXJ7rURqZb64hPuH3xbvV3fFikFHug3e5JM8P3y4
-	iNWqZDpcl/rL6PT+EhHfM9wGeuBGynfbRhsSOcgCKUV+hg/6UZ9RFd4pbp9Voijh
-X-Google-Smtp-Source: AGHT+IFRhPSoE2lZJRY93sbWOa1+c/832+h4zg34zs2xtg3B785RZPHEa5DFDXU6ll6shooz81K4Aw==
-X-Received: by 2002:a05:6402:3586:b0:5ed:44e7:dcf with SMTP id 4fb4d7f45d1cf-5f6285ed202mr9090307a12.24.1745220265297;
-        Mon, 21 Apr 2025 00:24:25 -0700 (PDT)
+        bh=TdVcR9rHe8HlgSUoNOWmuUc4BxwMtg2e8JOLTUt2wng=;
+        b=vQPUgQm0B0QeJ2wOUMDbu1o+OqJfLekb+Z8b4oS2SAx4eDKzAEWaLciDWT5daitAL8
+         hIM3tyMHAm8BGoAjLq9gM43m2t97tVKsnUQlpqfw81XyZtwiZ51dWnTN3joPIMGdlmRy
+         TUODe7Hc8rXZlNc11VIHu8l0FlfGbw6n1ybjQ/SRcsPNqcyaGWlAtdnDJwMz2gbNpdeO
+         TH0pw1vtNLOh/RWLi/K1wi7h09jeQ371T1C2qbTTylYitIKX0tAgHqImustGT29N/i93
+         lW+Cg2lDN88Mofm9Yvftr2HhlLAhTf3ucwbdVGz/Q8pkPmnoCvC3oDZg3TYCAUf9is5q
+         6qRQ==
+X-Gm-Message-State: AOJu0Yws0W/XCEX5NlorDpuYTkLYNSAXWcLhAK2s6DKoOTa//mqs8Ade
+	LjCv4M1jh8YV6bnSIsFJjZdj0QYoMO2LYj3Kqop8sK3XiZS6K85T85BJnw==
+X-Gm-Gg: ASbGncvFF75s008ASfT9rc1UHmIIAKRkHeh3pjGXJx3vdSePL/opisXkRNDUM0NshZU
+	6sTyDeRfGqZokvSxuX7pu52B2296Vxr1ac9KGCwr9KBx+o1fVS3CeUyOe5hXt6zKX8eH+0+ihBG
+	E1iQ8tDtPcXTp2Ewm8QMEZ5K+0CYUNmQl/ehgHrjv90DyswwEglxTH/y1DwvGceh20V6pGPIG9L
+	EetfYiiC6IPUadWbsL0w5ZRtI/g8+37gSs6EAuTbs91/HwqmYc0zHY7f17QWIk2HIA/X0kqadHY
+	cMaP3wHWSVzKP+dTbItp12KCvNDX1EnwbZa+9gy0oFz3sdxAEmuACg==
+X-Google-Smtp-Source: AGHT+IHGYcuol5GMzFgqthuEkvn8dIoHkxN+FCdc/UHskfjdNzQqU1/gPkchKziCqpvJ34swTSx2oA==
+X-Received: by 2002:a05:6402:5193:b0:5dc:c943:7b6 with SMTP id 4fb4d7f45d1cf-5f628219f12mr10302164a12.3.1745220268565;
+        Mon, 21 Apr 2025 00:24:28 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.128.74])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f625a5ec5bsm4175562a12.81.2025.04.21.00.24.22
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f625a5ec5bsm4175562a12.81.2025.04.21.00.24.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 00:24:23 -0700 (PDT)
+        Mon, 21 Apr 2025 00:24:26 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	David Wei <dw@davidwei.uk>
-Subject: [PATCH liburing v2 1/4] examples/zcrx: consolidate add_recvzc variants
-Date: Mon, 21 Apr 2025 08:25:29 +0100
-Message-ID: <321d834fffb337204ade9e693c97f3730747362b.1745220124.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 2/4] examples/zcrx: rework size limiting
+Date: Mon, 21 Apr 2025 08:25:30 +0100
+Message-ID: <236d055a6864ba1dc57f62727be36ca985da9e4e.1745220124.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1745220124.git.asml.silence@gmail.com>
 References: <cover.1745220124.git.asml.silence@gmail.com>
@@ -89,63 +89,103 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Pass len to add_recvzc, 0 means it's unlimited, and kill the oneshot
-variant.
+zcrx doesn't work in a single shot mode, we can limit the number of
+bytes it processes but not the number of cqes. Replace cfg_oneshot with
+total byte size limiting.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- examples/zcrx.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ examples/zcrx.c | 38 +++++++++++++++-----------------------
+ 1 file changed, 15 insertions(+), 23 deletions(-)
 
 diff --git a/examples/zcrx.c b/examples/zcrx.c
-index 32d9e4ae..727943c4 100644
+index 727943c4..5b06bb4c 100644
 --- a/examples/zcrx.c
 +++ b/examples/zcrx.c
-@@ -140,17 +140,7 @@ static void add_accept(struct io_uring *ring, int sockfd)
- 	sqe->user_data = 1;
- }
+@@ -46,9 +46,8 @@ static long page_size;
+ static int cfg_port = 8000;
+ static const char *cfg_ifname;
+ static int cfg_queue_id = -1;
+-static bool cfg_oneshot;
+-static int cfg_oneshot_recvs;
+ static bool cfg_verify_data = false;
++static size_t cfg_size = 0;
+ static struct sockaddr_in6 cfg_addr;
  
--static void add_recvzc(struct io_uring *ring, int sockfd)
--{
--	struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
--
--	io_uring_prep_rw(IORING_OP_RECV_ZC, sqe, sockfd, NULL, 0, 0);
--	sqe->ioprio |= IORING_RECV_MULTISHOT;
--	sqe->zcrx_ifq_idx = zcrx_id;
--	sqe->user_data = 2;
--}
--
--static void add_recvzc_oneshot(struct io_uring *ring, int sockfd, size_t len)
-+static void add_recvzc(struct io_uring *ring, int sockfd, size_t len)
- {
- 	struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
- 
-@@ -168,10 +158,7 @@ static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
+ static void *area_ptr;
+@@ -158,7 +157,7 @@ static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
  		t_error(1, 0, "Unexpected second connection");
  
  	connfd = cqe->res;
--	if (cfg_oneshot)
--		add_recvzc_oneshot(ring, connfd, page_size);
--	else
--		add_recvzc(ring, connfd);
-+	add_recvzc(ring, connfd, cfg_oneshot ? page_size : 0);
+-	add_recvzc(ring, connfd, cfg_oneshot ? page_size : 0);
++	add_recvzc(ring, connfd, cfg_size);
  }
  
  static void verify_data(char *data, size_t size, unsigned long seq)
-@@ -207,11 +194,11 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
- 
- 	if (cfg_oneshot) {
- 		if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs) {
--			add_recvzc_oneshot(ring, connfd, page_size);
-+			add_recvzc(ring, connfd, page_size);
- 			cfg_oneshot_recvs--;
- 		}
- 	} else if (!(cqe->flags & IORING_CQE_F_MORE)) {
--		add_recvzc(ring, connfd);
-+		add_recvzc(ring, connfd, 0);
+@@ -176,7 +175,8 @@ static void verify_data(char *data, size_t size, unsigned long seq)
  	}
+ }
+ 
+-static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
++static void process_recvzc(struct io_uring __attribute__((unused)) *ring,
++			   struct io_uring_cqe *cqe)
+ {
+ 	unsigned rq_mask = rq_ring.ring_entries - 1;
+ 	struct io_uring_zcrx_cqe *rcqe;
+@@ -184,22 +184,16 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
+ 	uint64_t mask;
+ 	char *data;
+ 
+-	if (cqe->res < 0)
+-		t_error(1, 0, "recvzc(): %d", cqe->res);
+-
+-	if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs == 0) {
++	if (!(cqe->flags & IORING_CQE_F_MORE)) {
++		if (!cfg_size || cqe->res != 0)
++			t_error(1, 0, "invalid final recvzc ret %i", cqe->res);
++		if (received != cfg_size)
++			t_error(1, 0, "total receive size mismatch %lu / %lu",
++				received, cfg_size);
+ 		stop = true;
+-		return;
+-	}
+-
+-	if (cfg_oneshot) {
+-		if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs) {
+-			add_recvzc(ring, connfd, page_size);
+-			cfg_oneshot_recvs--;
+-		}
+-	} else if (!(cqe->flags & IORING_CQE_F_MORE)) {
+-		add_recvzc(ring, connfd, 0);
+ 	}
++	if (cqe->res < 0)
++		t_error(1, 0, "recvzc(): %d", cqe->res);
  
  	rcqe = (struct io_uring_zcrx_cqe *)(cqe + 1);
+ 	mask = (1ULL << IORING_ZCRX_AREA_SHIFT) - 1;
+@@ -286,7 +280,7 @@ static void parse_opts(int argc, char **argv)
+ 	if (argc <= 1)
+ 		usage(argv[0]);
+ 
+-	while ((c = getopt(argc, argv, "vp:i:q:o:")) != -1) {
++	while ((c = getopt(argc, argv, "vp:i:q:s:")) != -1) {
+ 		switch (c) {
+ 		case 'p':
+ 			cfg_port = strtoul(optarg, NULL, 0);
+@@ -294,11 +288,9 @@ static void parse_opts(int argc, char **argv)
+ 		case 'i':
+ 			cfg_ifname = optarg;
+ 			break;
+-		case 'o': {
+-			cfg_oneshot = true;
+-			cfg_oneshot_recvs = strtoul(optarg, NULL, 0);
++		case 's':
++			cfg_size = strtoul(optarg, NULL, 0);
+ 			break;
+-		}
+ 		case 'q':
+ 			cfg_queue_id = strtoul(optarg, NULL, 0);
+ 			break;
 -- 
 2.48.1
 

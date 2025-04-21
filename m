@@ -1,121 +1,118 @@
-Return-Path: <io-uring+bounces-7599-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7600-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F898A95390
-	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 17:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50218A9555A
+	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 19:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C7C23A42D3
-	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 15:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADC73B3469
+	for <lists+io-uring@lfdr.de>; Mon, 21 Apr 2025 17:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17B31AAA1D;
-	Mon, 21 Apr 2025 15:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6271A23A1;
+	Mon, 21 Apr 2025 17:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YB1Kllg5"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="LmV/5xSD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C4A84039
-	for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 15:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C922C1DFFD
+	for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 17:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745249200; cv=none; b=MPmCLNvqyR1VDz+Y+G85v5JyoXpqYkYsyelhlW3cX5x+Xiwr7qzk0E4Wncs45UtXcCB0frcljDbNbSQAGoqjC2TpXjaeE0+8kOvKEsFwkwyzR+MjMjASZ21IIDMevuXho8pWWGSCsZKzFilrPAaMqGr0HHyoPPB3U6PPCLRelIo=
+	t=1745257112; cv=none; b=XJl/4lsQio0dTMK4ZBZuFMJtIhJr8g216/v3tcJGJa24RYBQvDbTD/tecO/mrRnX9Av6GZZQjNngo2zrMfAAvtHvVbUVkZHFbdCa/ZpVZ3uXUKLDiSe2scZi5OMH8joSd+stQ+OZvXFEHF3vz7l1Ub+vIHMfu72spYa29mcU4mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745249200; c=relaxed/simple;
-	bh=wF1cvRcQA8OuE7cPLgILoFQYSfKmmd6HUNWL8mmxJTE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=phkWMHnIcW4Y2x543qok0K3RZcBrxK0rgrnDh1n9yhXD0KGwD9kZ1jrcw1aCxSZMwDK2+/HhR6wGhySLxUf7B69dvu6FjEbzb36V2Y3NG7yOdDCdlIJTem3HJok7aWIyAmXDuuY620aTO5sRiranG2KsL6CGx1WAAgYSELsIYts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YB1Kllg5; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85b43b60b6bso106717239f.0
-        for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 08:26:38 -0700 (PDT)
+	s=arc-20240116; t=1745257112; c=relaxed/simple;
+	bh=hetrBE0XMRI/ejSuAGA8dfMhyL3cE7RdUOnctnqD6lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pQdvfcgf+OO1D8QLjQqoGtIhBpTRxYAbsIDqTUcieZ+7irkQn5R7R/Qjhno2/p96tVDEYBUrHwW9bpOuPMIZgfNcLjRkm+xgri7+jNlFiWd7Qt4e4YowDlH0r9+Qg40W0iX59qrLS/29j1lDcnaxpB9J5o1gVx4WePjZbZtj4yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=LmV/5xSD; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736b350a22cso3404984b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 21 Apr 2025 10:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745249198; x=1745853998; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d+J0bzbJA/HbZe12SWmVxLtZCzmpQd9s0ZQsi18wloA=;
-        b=YB1Kllg5uYYhvzB/zW9nay3jbHLQcjClW4CpKMwpH9EK9z4kJCnmKtnUzqf/Bz13J5
-         a50ys8xdyQyJnbpFhchYPB227rRF1BokFT4SecdGqEOIZIvfvTJchxt8nojE8x87wp5M
-         YCiHCowydFbaGs74capUc+ImS3evz/cbsX3Wdd0v8R2PzFwNEuxwXC9uh7jvYziWlqqn
-         ksiVc5hwjVuP7UB/W1OaJWmoTdMm7RuquUaMPtvpWTDnujx3j3bGWpP7r/LffLbGxa0d
-         ZGXQ1YXeLmZ+mqINpyvDC9c/sYctBAQiZUmFrH6QjauUaVe6pgZx26OTgtRw87t3iIgE
-         V9yg==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1745257110; x=1745861910; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eDfOTbeexJnkE5sAYh55Xe+pgtYFXT3HLU1AHnsFBw0=;
+        b=LmV/5xSDx7GWcYYB8Kupln3wlQ/k8z2pWUhMhtuL6pW10bAu0PQmKpkZKoLy+k+Vjd
+         Lr+kpXdMHFig26HiuYtMb/38P4RCfv6yq3fbtqCbXH8/42QDb7W1kH0P1XjDGWmDVRbu
+         YLHL6acG7f0tnOIU6PNOL9P8Yjjr1Un3RrtvBkvAMvw8zV307K58bX7b7X8Gu91C0Tb0
+         F0kenvpcc0ZnAOUtbU2SCK/ED1oQ+RBO8SuO2wtDxJsdPpHhvEmkbN1kg5qMolDxX6/x
+         y0vMjvbiyQQv35olMwmUdOOr7ffbXuo0QTNSawnC7FmESxwstXB/I3/NtLuej5ZR3J3/
+         iDYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745249198; x=1745853998;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d+J0bzbJA/HbZe12SWmVxLtZCzmpQd9s0ZQsi18wloA=;
-        b=k1J3ceMexlI6ydwMs0WGyZ3CKZFY/c24RXmbeoQS86k3BIGUD2RE6CIrG+EO8pgiaz
-         +Oc5b3UlIfNyFaSXqfuKzoGyhfI3hpQaZLi6fH0ErvYYsIhnwaXf5hJtMP8JmSgDO6df
-         SMN85EjQ7mFVbCwU5FmhnUVt8zIte/0G2ZfNA6AiuLdmLh4GUEisVowagBk3kzMiMmSV
-         gYo0fC3Q8cuhMJ+yCh1uT8PchzOkYaHGhwjdJkRlYjpKMg2C6TR3tZwfuvEkCbPk55r+
-         obXrl7oIqSRq7wlkw2iFBodxq5eMOPgvxZmcRG65ZveULlJPG3XkgvgT44SbHd5DSuY3
-         erkg==
-X-Gm-Message-State: AOJu0YyH7seGVPJuivP6Nh3hF5JCkUA3e/14GK69V0wR2WNXHGg1t7Q5
-	0wfobIBsq64lDKU0GlM1AaK9n/bKM9TvA1csQTMKwNdrZ+qr9dE0TD/+ZSMwRW/jNr0ME3ZVSv4
-	q
-X-Gm-Gg: ASbGncsP2JEc+XXlmmuqwTrIM0isAn65YCtsNFIrg1i2V00zNcZ3qfVB4qFvMIkXGm8
-	SrXCnQJ8E/V0EtYIr1tsCADARPrQlXKjxViDndyQysRgY5mTc90TpjrfS6nBqhAWW+wyumXCanF
-	ACEOP4KGJkpx7MmoJzFFEocqfkaN5QJ4LdkBR2/GmcEav2OieQOYrFOAZemFDgmiDAKZHHZwQ+H
-	HXoPAGQ7guHTzNzNpz3fXsajrawqhHLqEMTMecZKZMkdtjB9jchp9kUo5HK+FKzpS75VqsP1W66
-	XnTMTdp+ZrghYbYsLI1mX/SFu8NPsGk=
-X-Google-Smtp-Source: AGHT+IEL880l0i8RD+FQFAqV3Th70XaBaazGlgqhxXIp0iWExmVwsfeNRD7dSZzPcfrOdQZHNHg+ow==
-X-Received: by 2002:a5e:d718:0:b0:85e:22b3:812b with SMTP id ca18e2360f4ac-861d8a19580mr1062862739f.8.1745249197870;
-        Mon, 21 Apr 2025 08:26:37 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3958d60sm1800076173.114.2025.04.21.08.26.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 08:26:37 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>
-In-Reply-To: <cover.1745220124.git.asml.silence@gmail.com>
-References: <cover.1745220124.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing v2 0/4] zcrx refill queue allocation modes
-Message-Id: <174524919703.915029.9986070319607696246.b4-ty@kernel.dk>
-Date: Mon, 21 Apr 2025 09:26:37 -0600
+        d=1e100.net; s=20230601; t=1745257110; x=1745861910;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDfOTbeexJnkE5sAYh55Xe+pgtYFXT3HLU1AHnsFBw0=;
+        b=vjAog0ri6ctdF3DmM7aRaQopR7B4IObSIajW58QvlZdogXwI3b3oFELCvci47uVXU/
+         7TSduq4TFk3zFDZnPT62OkT11eCL9WTWf7Y8oGqz4u2Zxp79g+8+td3zPIikC32ufSr6
+         hoGcwRuYH6fa1uw54YZTMhwXnfQt4EL/UVEkgfmM7xd+KTNkQ247g0uhtX6tXjxivzJH
+         uemzO9IVtgX8XvS2EZEIW24pV7bE8U2sO/ZgSbICMwPKain1HNKJoJ1xyxbJ6gHleiMf
+         sQinvliaemMVMPbEiFT6ABYWnZ3PmIWEUmvDEXa8UKvkzBQ3RxlOdCc3OC5/201wVufN
+         vuoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7A9DuEuCNtNAv3zUp9GdJZjTcOb0otYE3Pgphs/ZkIu2YkXHfpmfh9EuvtrxAhakt/6+0guUFZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx08S9bzl+SnQLuBrOaStGUYL64cvtrxsRSa/zsjUPw99rl/W66
+	/hDYUGlsxilOuXLptriHuwFjqGNyvyk4rZ1ixQKaTrHZ3OBMIePJEDL+vosLSEg=
+X-Gm-Gg: ASbGnctOFrq8fExC3REi1w/XIY+OWEJlGIK7wmx0fMTqghDKmltDIKerSs7zPRJv7zi
+	XsbrsIpVEK5/5m3LMEzMmWrVZ5rOHN8v23NtbYKbywNR5jfVQi12INpvX2GGQRNXVHVeSf7VPvq
+	iXlGmvO0rkbcbiSWYiQA9oU7qsKAjPd5DqmNZQbB3VWq6VygzoF8ebp/JHiiaz0ZGwCExOBrktz
+	YIA9unXlbFddjibkAX1TcMK1vVj6Kjy2Ge0gsc36A3d+8UgltQSdF6VZJJ0gIfHmwbLHNm7NMVx
+	kWE/xlCBjxAAo/2Iu1DePIC7sZRkjrftiLrjH5U9amL7SXUJQ5ZgwhX35fkoV4r54NZ2FGKEZuz
+	5b1g=
+X-Google-Smtp-Source: AGHT+IFkXcylapXkQ5XIOQ2R6oOl/z4AAzkZT/512tZvQG5VPsOasfFpqlwakxOGKPSojI+YeV0iZw==
+X-Received: by 2002:a05:6a00:4608:b0:730:4c55:4fdf with SMTP id d2e1a72fcca58-73dc14a8851mr17491243b3a.7.1745257109893;
+        Mon, 21 Apr 2025 10:38:29 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1156:1:1cf1:8569:9916:d71f? ([2620:10d:c090:500::7:efc4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8e135csm6834482b3a.44.2025.04.21.10.38.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Apr 2025 10:38:29 -0700 (PDT)
+Message-ID: <eb4d1e04-b330-45e7-870b-fa254632519d@davidwei.uk>
+Date: Mon, 21 Apr 2025 10:38:27 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing 1/3] examples: remove zcrx size limiting
+Content-Language: en-GB
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1745146129.git.asml.silence@gmail.com>
+ <64f4734fbd7722e87a21959ac668b066bd984717.1745146129.git.asml.silence@gmail.com>
+ <5a6b754c-d511-42ce-a9db-5aa9ae222599@davidwei.uk>
+ <a5ad67ad-f5ca-49fd-9bcc-53277394fac1@gmail.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <a5ad67ad-f5ca-49fd-9bcc-53277394fac1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
 
-
-On Mon, 21 Apr 2025 08:25:28 +0100, Pavel Begunkov wrote:
-> Random patches for zcrx. Path 1 removes oneshot mode as it doesn't
-> give a good example, and Patch 3 allows to kernel allocations for
-> the refill queue.
+On 2025-04-20 23:40, Pavel Begunkov wrote:
+> On 4/21/25 01:22, David Wei wrote:
+>> On 2025-04-20 04:24, Pavel Begunkov wrote:
+>>> It's not handled too well and is not great at show casing the feature,
+>>> remove it for now, we may add it back later in a different form.
+>>>
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>> ---
+>>>   examples/zcrx.c | 34 ++++------------------------------
+>>>   1 file changed, 4 insertions(+), 30 deletions(-)
+>>>
+>>
+>> I'm relying on this selftest. Can the deletion wait until the
+>> replacement is ready?
 > 
-> v2: rework oneshot/size limiting instead of removal
->     fix flipped allocation mode check
+> I assumed you're using the selftest, and not this liburing/examples/*
 > 
-> [...]
+> Anyway, let's see what I can do with it
+> 
 
-Applied, thanks!
-
-[1/4] examples/zcrx: consolidate add_recvzc variants
-      commit: 17286dbf9017ae6f4c864216b59ab9919268aff6
-[2/4] examples/zcrx: rework size limiting
-      commit: b10430f9b004a4f1f54c1a4721c80ce3a98996a0
-[3/4] examples/zcrx: constants for request types
-      commit: 8cee8f8cbf9f91c4dca9298159f2c5c64f898080
-[4/4] examples/zcrx: add refill queue allocation modes
-      commit: 353fc7dcc61e059ac8890916f41d39df10e5bfa5
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Oh my mistake :facepalm: I got this mixed up with the selfteset.
 

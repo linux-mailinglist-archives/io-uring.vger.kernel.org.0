@@ -1,163 +1,131 @@
-Return-Path: <io-uring+bounces-7604-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7605-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A51A960EC
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 10:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 673BBA96309
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 10:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5903A93DE
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 08:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914453B5EFF
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 08:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D2F1F03DE;
-	Tue, 22 Apr 2025 08:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A902625EF96;
+	Tue, 22 Apr 2025 08:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBP/svYt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoNMZ1/g"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B41F03C5;
-	Tue, 22 Apr 2025 08:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01E225E806;
+	Tue, 22 Apr 2025 08:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745310189; cv=none; b=FoL9FDuaKzFBTaJ180NdsX4wO42d1C+Op58La3z656EJNdgF7z4FR5UyjhmikZPrDvjkm6JaupqsOJ16Qyw41LQgQB2sVc56IsTSY8aQmVMhWEHLwhSBeHxd0XWMTCs8OMgSF8yGTRT2otThehbyoWjrVtS0P0hgSP35DnT856I=
+	t=1745311432; cv=none; b=t/a/gMpN6s2P1GBqTs24228QdfApwU2qFU6+d/PcFidoGAsX8UM220HjWVL/4bKrwxIEAYGwNvqXPtVd3/Xk6g5vEM4eIcsMKJrmOhZ6MLm+4yOMwIPvZsxTAKlAo8wL02te1Tmu5+Dj9FXyGSF1IS017ojXhqJXNWQIKPjxk/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745310189; c=relaxed/simple;
-	bh=2uP34/FeIpIk/Wcl1gOmNK8ZKfSeIZaiwifRRNPt/Ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WqoLAH4Q9qu0uWb7fVl8AO4w1O5J0Stp48qXb4SNXmNuIG2ppuXevCti1Z5bxGd9sjsP044hEaYBndlL7Xy+6MTCXSermkm4jQX5uzJPjDPbqlVNIEFmurirndpDr+ZHNxKwq8b9kSV0zy9Q+kBuZVxpE+eNPBrJRoULkmPg3nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBP/svYt; arc=none smtp.client-ip=209.85.161.51
+	s=arc-20240116; t=1745311432; c=relaxed/simple;
+	bh=lqD7m89r2sQrsEOmBfAzRt8RKN827E6V2hOjWrQC4mY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lS4SUd4wqfue1F6+zrJ7DJXNYSbWCcggKJatgVlD/s8Y8R6fyPEMkNd29d+yLhIKihfNH5VBAOsYKnZ9YHN8UndOENlqCn5jJZnVuvU2Wgz3pviQiLlFpLh+C1rgOToN08sKJOkF7fSyX0wvLZtP2NZLebL2DTeFpv8c/ZUsRaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoNMZ1/g; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-604f0d27c24so2216160eaf.2;
-        Tue, 22 Apr 2025 01:23:07 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e8be1bdb7bso7483682a12.0;
+        Tue, 22 Apr 2025 01:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745310186; x=1745914986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
-        b=lBP/svYtkb1z0ZLBuCJdxxpt8ndFmN6x0+Cm4nBos1hHoRw+EiNKFLsyR9VTvhjY7C
-         RCCte8Z6ycudUM4YV4+nPipC46V3ppWwBuZGLdZzy+4M8M06UQVMgObMulSNxiKA+9TY
-         bfm9lLbVqy0NiEw2AG0kGm/DdrEt/2apjOmrOVFgYr4GOkstawGbb2NYIypCH6nY020n
-         DVAc9zsfwUmz3egTJb4jMsUUWySuBnHC33vofYE/7GhU2b0ed8zAd+39v7hnrPpghYHG
-         +DmrSr1RynWr+/ANNuhDepSmctTBnhmBa72HSZgd8kme8iQKoOhwDBq5UpDZHCIzPppi
-         etHg==
+        d=gmail.com; s=20230601; t=1745311429; x=1745916229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=03SE0QEScorD8X63ZKpeNL8JKETFXurDVO26PPtrnKM=;
+        b=JoNMZ1/gyxMannbt9i/1J5HgS+tzX6kFPLD2sL5PYwbHo3yIPeqp5LBG6Y9YiZbNEU
+         jb1RjSnjeCI2L70B16dp2zcgF9+uifk94Q9I+a5ltkqiWr66/n6y/ygqLMzvwPOzSdzr
+         pEo8aYtmSlaHG4oTi8RGB6jXrpU5WFo5y70SJ5/0K3zt9BmHvNH3qgGWdldRbitMF72A
+         Wo4YrAVMe+I8e7uz5YBdO6kLXJQbVd0Ch3pnoDyKV0WHDVfQnEPKEgRLrxEC11uJ/Qlt
+         NiG8obCWAt5o+mhExOrKPXppbGqFwWHsm82XyJsE6w2X8wKQkpQXk/kSmVqv9GLVsIFB
+         rEvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745310186; x=1745914986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
-        b=YcHzqbWq6hoAjfwVx2GeD2JDpQF6GW8JZnbpcYAbrPMf8tRnx1uze2NbCeEfIU0DPU
-         W3ctGlTSSwIbFcKhAHYh2g9GpKOsRX5ekBwli2mWbR0VKkKGfq15Dq4Eral3L0USGNsX
-         FHfNDWCTMhNGjFk9Gm2fPPsJ4/b8oQ7t6/t6ocE/jz5njg5KZjwhjh/cOPQxMQC//6lR
-         qoceBwvWg2RyWregzxfdJ32qbD1gIGr7eqnWrnFMq7vQWGHHGvFTUms+aIBR8cdJwFA+
-         XUe3sj99CPBSCYNwtk4ApmkgEtRLs116m7Gvz76Yl1cpMvWyJwiZZUkyOEpJ7WlXsT2T
-         tTSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5h5a38pC79u3Uz7FUkS74T6iU+kgYOC+hEhwv0L8D8IAaQZ/n2xW+7hQPc1ioZFb7QH8y/SVipE1u79bw@vger.kernel.org, AJvYcCXeOJKwLU+Q25in9laTb4CyKcXFYKVIBkttSSjK6SqREQ9O4IXb292TEYI5rl2YfwUhnk3PrHVIeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrUDDdGrlVnNYHgp77lLUp+fYhXmLXIhhiCm+rzfslF3fowH6U
-	k0I/KAPmTDot+8TjQ3xtB792nLxPomt60SAr8RncYz/lR7RiXO9XxCPVWXbkYrvEanvcwwti2y+
-	QjrdD6ITYL0LrtW0MUVzdIQ0z6uU=
-X-Gm-Gg: ASbGncu6wUbTiA9UTllz7iKz2qqxXUH7FAeOH6VCrxWzUqHxcvZDQkBtvIKy4Xrg5P2
-	5aEXvKnUOgLdoOzcCzLhUxia9Zc0YSF0GtC5X+NdQc+Uhr4GCJMtJXtd7S+p1wgaUbSwxbPFXjL
-	BKc3Kas4IJpREnPyVs7189R1M=
-X-Google-Smtp-Source: AGHT+IH73aeMXL7YPr7VbOhaDc7lZ6qCE8e7MFFs2JuKTrk1QSoj0Tr2ke5rvX4Jp7KqXTYvwKrnshZuvZZ1Nh9uScs=
-X-Received: by 2002:a05:6871:2109:b0:29e:74a0:e03f with SMTP id
- 586e51a60fabf-2d526d4efbcmr8286598fac.24.1745310186574; Tue, 22 Apr 2025
- 01:23:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745311429; x=1745916229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=03SE0QEScorD8X63ZKpeNL8JKETFXurDVO26PPtrnKM=;
+        b=VT7arvIDRfkpfquvs5JisdzgIBGVu1yu3iii6c7T7my9RMzVYEIkGz2BMQiE6Wskon
+         vs7XBZ6h7x0d9iJVY6lxAVAiX8ZRw3XZO4jB/NTQMNCzIogoMapWYOblkwrz1mQgi0Q6
+         oyYZeeXnHb290iVzgfSoiLf+YLvNCojKS0ccHhgbcaIqaZStecVe0RNc8ykJBP1wzv0Y
+         mKAA/ridEiN7lGw+WmtxDf6SHUSpJI/JY9UulRo0On1VgUHZaHZEyUy9hgLkS/aB1zBE
+         Dfc3AWKyQAbqgQ5fnphbw/NoHO80Ky9SAJdzaK60VvSRVH8tmnDS82lW5Gpwdjk8kSlP
+         9/4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQccODKIh6v81KYPAo8qCQAswkDnkbzFg5oOSRaVREzbTb4OJenc0img0Y3gVz2hP68edN4Rt@vger.kernel.org, AJvYcCVGyOfJGNaKImMFHUByDvcxvvxUK88N4cDLcx34I8aS+mFcKt+Terd7cVBf0d5/UQegrMkeQ4i+B0Uz@vger.kernel.org, AJvYcCW6fuFzWHhsfK0LtXIo8V3NUkvM675eG+BneXg+sEr5PMRvxHSEeZL5NiYlYxf1zcL5lkrv4r1XEA==@vger.kernel.org, AJvYcCWFr6zCvy+X0dwcTSWOxe8nKgh6iknO8rOauaRS9PmcMU2ZW+at7gNEYGvKkPmf5qR3tkYDdCqYIh2vvCbJCJOh@vger.kernel.org, AJvYcCWuX1tIyLmm8WC8WH/EedAnhFUGckwP3h50F3/B8NPovpH2yEMO+3UeL1bv29w4h/4V4Z1n@vger.kernel.org, AJvYcCX7H4ZZcsZ1DgwCJFknaFPXVOj2wWErha/hYHvnD1CQx8yYu7IlrkVYnmPFp9nY6swymRikZfnYgBIGMQfe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwChA7nRNMqYUmZ/d8UsxnwsT74ykiUv+pgWFT/dVY2jXlXzO07
+	rPuGZb97KwgDz084HOmWdNUxQAd7kCNDZDGdEATlqd5QdNucDn3B
+X-Gm-Gg: ASbGncs6fiXetxak4xhs/qqU3vDfUqmphGQikL479W1KSU5jBrdH1ePn/EyVCWtcWal
+	eIiZlWYCdEoS50ujMPAMO9rmG8yM/syKX5aTo0vjKnnKsJzneAk5AZevNkT9Jzlk7fh38M3wI1j
+	ZJPBJ2N81Fwp2VuknMbUB6DKSnYxJ/ljiDb0mBUWxDm33vzewxdwdVQG2Qr/XJnn4Pfd2IkR6N0
+	ZpRWwKxCy/n/Nq21HWCdJZmR1ASSI1uU2/JqGqU8Kh3pWCOgflvWqrqwBuEYqrTOtGdW7K9+uws
+	cWEEsBl1OMuwZSbgNGbmECLdL4SW1ayhUANaA0Y/AOWpSy/zTBT6v/37KqboHy9G
+X-Google-Smtp-Source: AGHT+IHwRLxRlfj/B+cZPJBkcYi+NC7m90ZU8vBSpXmplNdykziG156hWUX5aB76mCTOP3JqMinJQg==
+X-Received: by 2002:a17:906:ef05:b0:aca:db46:8170 with SMTP id a640c23a62f3a-acb74e79d11mr1252517166b.60.1745311429050;
+        Tue, 22 Apr 2025 01:43:49 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::158? ([2620:10d:c092:600::1:558d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec42af6sm623375166b.43.2025.04.22.01.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 01:43:48 -0700 (PDT)
+Message-ID: <484ecaad-56de-4c0d-b7fa-a3337557b0bf@gmail.com>
+Date: Tue, 22 Apr 2025 09:45:04 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422030153.1166445-1-qq282012236@gmail.com> <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
-In-Reply-To: <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
-From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Date: Tue, 22 Apr 2025 16:22:52 +0800
-X-Gm-Features: ATxdqUHsW549CjADjQkeF24dIy0oIJ_3wSQeFdmFn0yYeM8PaYZjnYbeZYtkTzQ
-Message-ID: <CANHzP_tebha40yy=8rqeu9DMqfrS-veF3=rp76H8udDvs69rfA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: Add new functions to handle user fault scenarios
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/9] net: add get_netmem/put_netmem support
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ io-uring@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
+ David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+References: <20250417231540.2780723-1-almasrymina@google.com>
+ <20250417231540.2780723-3-almasrymina@google.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250417231540.2780723-3-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 3:59=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 4/22/25 04:01, Zhiwei Jiang wrote:
-> ...
-> > I tracked the address that triggered the fault and the related function
-> > graph, as well as the wake-up side of the user fault, and discovered th=
-is
-> > : In the IOU worker, when fault in a user space page, this space is
-> > associated with a userfault but does not sleep. This is because during
-> > scheduling, the judgment in the IOU worker context leads to early retur=
-n.
-> > Meanwhile, the listener on the userfaultfd user side never performs a C=
-OPY
-> > to respond, causing the page table entry to remain empty. However, due =
-to
-> > the early return, it does not sleep and wait to be awakened as in a nor=
-mal
-> > user fault, thus continuously faulting at the same address,so CPU loop.
-> >
-> > Therefore, I believe it is necessary to specifically handle user faults=
- by
-> > setting a new flag to allow schedule function to continue in such cases=
-,
-> > make sure the thread to sleep.Export the relevant functions and struct =
-for
-> > user fault.
->
-> That's an interesting scenario. Not looking deeper into it, I don't see
-> any callers to set_userfault_flag_for_ioworker(), and so there is no one
-> to set IO_WORKER_F_FAULT. Is there a second patch patch I lost?
->
-> --
-> Pavel Begunkov
->
-Sorry, the following changes haven't been submitted yet. I was planning
-to submit them separately, thinking they belong to two different subsystems=
-.
-The other changes that haven't been submitted are as follows:
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index d80f94346199..74bead069e85 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -32,6 +32,7 @@
- #include <linux/swapops.h>
- #include <linux/miscdevice.h>
- #include <linux/uio.h>
-+#include "../io_uring/io-wq.h"
+On 4/18/25 00:15, Mina Almasry wrote:
+> Currently net_iovs support only pp ref counts, and do not support a
+> page ref equivalent.
 
- static int sysctl_unprivileged_userfaultfd __read_mostly;
+Makes me wonder why it's needed. In theory, nobody should ever be
+taking page references without going through struct ubuf_info
+handling first, all in kernel users of these pages should always
+be paired with ubuf_info, as it's user memory, it's not stable,
+and without ubuf_info the user is allowed to overwrite it.
 
-@@ -369,7 +370,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
-unsigned long reason)
-        vm_fault_t ret =3D VM_FAULT_SIGBUS;
-        bool must_wait;
-        unsigned int blocking_state;
-+       struct io_worker *worker =3D current->worker_private;
+Maybe there are some gray area cases like packet inspection or
+tracing? However in this case, after the ubuf_info is dropped, the
+user can overwrite the memory with its secrets. Definitely iffy
+in security terms.
 
-+       if (worker)
-+               set_userfault_flag_for_ioworker(worker);
-        /*
-         * We don't do userfault handling for the final child pid update
-         * and when coredumping (faults triggered by get_dump_page()).
-@@ -506,6 +510,9 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
-unsigned long reason)
+-- 
+Pavel Begunkov
 
-        __set_current_state(TASK_RUNNING);
-
-+       if (worker)
-+               clear_userfault_flag_for_ioworker(worker);
-+
-        /*
-         * Here we race with the list_del; list_add in
-         * userfaultfd_ctx_read(), however because we don't ever run
 

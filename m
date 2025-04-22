@@ -1,132 +1,163 @@
-Return-Path: <io-uring+bounces-7603-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7604-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8A7A960CF
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 10:16:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A51A960EC
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 10:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EABE18967AE
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 08:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5903A93DE
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 08:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691B71EDA2F;
-	Tue, 22 Apr 2025 08:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D2F1F03DE;
+	Tue, 22 Apr 2025 08:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NA+VTaMG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBP/svYt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90322F3E;
-	Tue, 22 Apr 2025 08:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B41F03C5;
+	Tue, 22 Apr 2025 08:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745309792; cv=none; b=dHcXZE+G5MWfBGWfcIXcqWtGUmhuz5OI4kXN5pvWRVn6f3h/+VX2zavO/4COdwCjF3pFcGPRApItzphy/tLDlD4P/5oqWY8go83dhlLj5MHTuolk6pCQKpUa3h95Skr9t1Y20q7GdQjr+srg6+4hGksb6VDY9Zx27vQDTlPRJho=
+	t=1745310189; cv=none; b=FoL9FDuaKzFBTaJ180NdsX4wO42d1C+Op58La3z656EJNdgF7z4FR5UyjhmikZPrDvjkm6JaupqsOJ16Qyw41LQgQB2sVc56IsTSY8aQmVMhWEHLwhSBeHxd0XWMTCs8OMgSF8yGTRT2otThehbyoWjrVtS0P0hgSP35DnT856I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745309792; c=relaxed/simple;
-	bh=IxR9R4dznHC7A3UhAAi8NByT8Ge6lacYIRr4lsdjXE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OWMzOz7hEA5laGuiV4IF7y48uC/o9n+5VuONFx/tbw0mvDpk4ZcM96Yfi2K0lzogGFanMRnrBqmU1iKTx1xCf3lDsnjr5N7z9/u9pWaIr2sw539fItMYWr2dDf4p1hWEWJ7cHzJKMAsrWqOY5QLJMTN8CaLPkscWXmLkj5py/wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NA+VTaMG; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1745310189; c=relaxed/simple;
+	bh=2uP34/FeIpIk/Wcl1gOmNK8ZKfSeIZaiwifRRNPt/Ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WqoLAH4Q9qu0uWb7fVl8AO4w1O5J0Stp48qXb4SNXmNuIG2ppuXevCti1Z5bxGd9sjsP044hEaYBndlL7Xy+6MTCXSermkm4jQX5uzJPjDPbqlVNIEFmurirndpDr+ZHNxKwq8b9kSV0zy9Q+kBuZVxpE+eNPBrJRoULkmPg3nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBP/svYt; arc=none smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac339f53df9so828304166b.1;
-        Tue, 22 Apr 2025 01:16:30 -0700 (PDT)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-604f0d27c24so2216160eaf.2;
+        Tue, 22 Apr 2025 01:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745309789; x=1745914589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cOlwuce44vKtv1OuDBF9isVVZKdS5EgivWfm0t2JhLQ=;
-        b=NA+VTaMG5Jd5S6hrAveld3neuGsqIXH/L8IQqWYkNHxVuDghVQekrvl/3qEJojJbrZ
-         XI5m/gGP8j6eKOSG6DFR19G5zKPoHaxWu8be6OT9tMZmjD4BYLDkcN3gb8GhPDDXHuP5
-         lZ8IoqWyl9wCMJYVi1oPKiU/ZNd3J2j2HyWziXSxhnSU0JaLgmTu+lHrbPFnnUYv38qM
-         JoGh7u1W37TaqcywpU66pyb/dApCB5gc5KlFAZB5KPml14sSib+K9rG7CuKXKEZENdbL
-         lp4JW5hz1bm4BrOukiu4VsrKwynJdumNgySHPpmlDU7j4tM02fASaNMFCIO0Rx6oUGmp
-         KcTQ==
+        d=gmail.com; s=20230601; t=1745310186; x=1745914986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
+        b=lBP/svYtkb1z0ZLBuCJdxxpt8ndFmN6x0+Cm4nBos1hHoRw+EiNKFLsyR9VTvhjY7C
+         RCCte8Z6ycudUM4YV4+nPipC46V3ppWwBuZGLdZzy+4M8M06UQVMgObMulSNxiKA+9TY
+         bfm9lLbVqy0NiEw2AG0kGm/DdrEt/2apjOmrOVFgYr4GOkstawGbb2NYIypCH6nY020n
+         DVAc9zsfwUmz3egTJb4jMsUUWySuBnHC33vofYE/7GhU2b0ed8zAd+39v7hnrPpghYHG
+         +DmrSr1RynWr+/ANNuhDepSmctTBnhmBa72HSZgd8kme8iQKoOhwDBq5UpDZHCIzPppi
+         etHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745309789; x=1745914589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cOlwuce44vKtv1OuDBF9isVVZKdS5EgivWfm0t2JhLQ=;
-        b=GlkNBoOMf1eZi46VsEq1+11Ju7yltK7Lj6oCG+0ctnC17ZBOSmzIrQMrBchGnrA7sk
-         lv0jkVYM9y7EoxF9HtGXOcJQHcuQJP2G6XdqjWmuJumOL4TpokSxx1H4a1Zz8rbeDt4v
-         AvdFCQOtT8bJHwOiEKd+8wbLQtUGd3ypQwPh5YL60zCCiKn2NO0sbyhkMIYiN3Cn5PUv
-         Pkk4R0ZeTSLMBa60VkpVYWfHpesywm7LzcVOFoEeoqwY+r/YnRW/qUu+Rt1lvZmfOQek
-         zupT7NPQM6LXj0xxnswzMhW4SIRfVzSLDRgsp4lXUTB/rOQu9DT2dYQ/bUixKwwA1gGO
-         aOxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ySgTppYCT1s/9mo7lwv7A654rXDrFcVVcEi4k94VC02f7scUUPhl2Ex/yl8XkTAtapRI@vger.kernel.org, AJvYcCVJE+ZeFwSSi7uASHkkMkxF79kLb/PAn4IVnL4Qx4TNX3mcHdIu4BvBub1M3l2Fqebc0qpqIGPQbiav@vger.kernel.org, AJvYcCVivvua8bq+MOaFmJqyF0Ht5ndA9dQ1x1ija//9eGIPNgD3S1hVaftIvqOUC9DKMgsYjuldUemAZNdmNP+rMTBr@vger.kernel.org, AJvYcCVroBig5FWPglu9lbLgg3SbM+Tl0xte7cT6v2hXqs7FJjznoGJ0beFLSZ/exW/cJi/csXdeG0uQSXEYkIyM@vger.kernel.org, AJvYcCWH3Iz6v/EmZuE1nGWFTbsmmeklluFubRdE0JdjuJWADxohQKQKqabLhhtRDhwz2g4/1CIWujH4@vger.kernel.org, AJvYcCX0Q1ok3Y3PwEJT8/KFc0u5ZEHyteMAr9/h8sbvuwT/Z1OdwgnFSBgvKKhl4gnEVbP1qe/B1Asfkw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtir3K1vLec5Steeamrmr0/q2eMM009bbMD5ASLgwUbtaia389
-	b7Ryes+DxxOkgjKnLgmvXh7JAGjwXmjo4CBV5tb3M3gkIeWa/xke
-X-Gm-Gg: ASbGncvAbXPaUzb+R9CWOK7VYjHczqcEChuD1fFvRL1klzHAqDdtIy5/imtpfmQSO06
-	z1wGw2iDSoGmfHdhIBsC1C9CS/9/s3dZxqcWJbNXDbbUW8/gjo76JWjXnM9K2YtbpmltdZffnUl
-	I8jZDLMCUnWLIB/B3hzpHyrXn30q4lPj7PA3pobucm3KsodCMRnHeHg2fmTiuEx9aDku9tIZzii
-	X6t8J+MZY6MpP4B8mTtYuj8vFKn2BbpD9CIx1va9+UDwrI1/fUMs06pL+LzSqZ8uQiHK3NDyOdQ
-	tixvJXD7uX8/SObDlTK5J7fUTfL6GvSUZB0abzgP1nig4xTo5lHoRA==
-X-Google-Smtp-Source: AGHT+IEoDhdUk4JqptbNDk1DSYTZqleRkQiE6D7lLk3MmjHoZyxA8pbW4BbGT1g4lHeJT+lVTudacg==
-X-Received: by 2002:a17:907:7f88:b0:acb:5f9a:72f4 with SMTP id a640c23a62f3a-acb74b8368dmr1158109666b.30.1745309788661;
-        Tue, 22 Apr 2025 01:16:28 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::158? ([2620:10d:c092:600::1:558d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb8cca2323sm471150066b.181.2025.04.22.01.16.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 01:16:27 -0700 (PDT)
-Message-ID: <f7a96367-1bb0-4ed2-8fbf-af7558fccc20@gmail.com>
-Date: Tue, 22 Apr 2025 09:17:43 +0100
+        d=1e100.net; s=20230601; t=1745310186; x=1745914986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eib6UYFi1fJr++H9on8mAKz/kr5wlL2zyWlhpLauZLc=;
+        b=YcHzqbWq6hoAjfwVx2GeD2JDpQF6GW8JZnbpcYAbrPMf8tRnx1uze2NbCeEfIU0DPU
+         W3ctGlTSSwIbFcKhAHYh2g9GpKOsRX5ekBwli2mWbR0VKkKGfq15Dq4Eral3L0USGNsX
+         FHfNDWCTMhNGjFk9Gm2fPPsJ4/b8oQ7t6/t6ocE/jz5njg5KZjwhjh/cOPQxMQC//6lR
+         qoceBwvWg2RyWregzxfdJ32qbD1gIGr7eqnWrnFMq7vQWGHHGvFTUms+aIBR8cdJwFA+
+         XUe3sj99CPBSCYNwtk4ApmkgEtRLs116m7Gvz76Yl1cpMvWyJwiZZUkyOEpJ7WlXsT2T
+         tTSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5h5a38pC79u3Uz7FUkS74T6iU+kgYOC+hEhwv0L8D8IAaQZ/n2xW+7hQPc1ioZFb7QH8y/SVipE1u79bw@vger.kernel.org, AJvYcCXeOJKwLU+Q25in9laTb4CyKcXFYKVIBkttSSjK6SqREQ9O4IXb292TEYI5rl2YfwUhnk3PrHVIeg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrUDDdGrlVnNYHgp77lLUp+fYhXmLXIhhiCm+rzfslF3fowH6U
+	k0I/KAPmTDot+8TjQ3xtB792nLxPomt60SAr8RncYz/lR7RiXO9XxCPVWXbkYrvEanvcwwti2y+
+	QjrdD6ITYL0LrtW0MUVzdIQ0z6uU=
+X-Gm-Gg: ASbGncu6wUbTiA9UTllz7iKz2qqxXUH7FAeOH6VCrxWzUqHxcvZDQkBtvIKy4Xrg5P2
+	5aEXvKnUOgLdoOzcCzLhUxia9Zc0YSF0GtC5X+NdQc+Uhr4GCJMtJXtd7S+p1wgaUbSwxbPFXjL
+	BKc3Kas4IJpREnPyVs7189R1M=
+X-Google-Smtp-Source: AGHT+IH73aeMXL7YPr7VbOhaDc7lZ6qCE8e7MFFs2JuKTrk1QSoj0Tr2ke5rvX4Jp7KqXTYvwKrnshZuvZZ1Nh9uScs=
+X-Received: by 2002:a05:6871:2109:b0:29e:74a0:e03f with SMTP id
+ 586e51a60fabf-2d526d4efbcmr8286598fac.24.1745310186574; Tue, 22 Apr 2025
+ 01:23:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 1/9] netmem: add niov->type attribute to
- distinguish different net_iov types
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- io-uring@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
- <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
- David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
- sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
- Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
- <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-References: <20250417231540.2780723-1-almasrymina@google.com>
- <20250417231540.2780723-2-almasrymina@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250417231540.2780723-2-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250422030153.1166445-1-qq282012236@gmail.com> <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
+In-Reply-To: <1c141101-035f-4ff6-a260-f31dca39fdc8@gmail.com>
+From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Date: Tue, 22 Apr 2025 16:22:52 +0800
+X-Gm-Features: ATxdqUHsW549CjADjQkeF24dIy0oIJ_3wSQeFdmFn0yYeM8PaYZjnYbeZYtkTzQ
+Message-ID: <CANHzP_tebha40yy=8rqeu9DMqfrS-veF3=rp76H8udDvs69rfA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: Add new functions to handle user fault scenarios
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/18/25 00:15, Mina Almasry wrote:
-> Later patches in the series adds TX net_iovs where there is no pp
-> associated, so we can't rely on niov->pp->mp_ops to tell what is the
-> type of the net_iov.
+On Tue, Apr 22, 2025 at 3:59=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 4/22/25 04:01, Zhiwei Jiang wrote:
+> ...
+> > I tracked the address that triggered the fault and the related function
+> > graph, as well as the wake-up side of the user fault, and discovered th=
+is
+> > : In the IOU worker, when fault in a user space page, this space is
+> > associated with a userfault but does not sleep. This is because during
+> > scheduling, the judgment in the IOU worker context leads to early retur=
+n.
+> > Meanwhile, the listener on the userfaultfd user side never performs a C=
+OPY
+> > to respond, causing the page table entry to remain empty. However, due =
+to
+> > the early return, it does not sleep and wait to be awakened as in a nor=
+mal
+> > user fault, thus continuously faulting at the same address,so CPU loop.
+> >
+> > Therefore, I believe it is necessary to specifically handle user faults=
+ by
+> > setting a new flag to allow schedule function to continue in such cases=
+,
+> > make sure the thread to sleep.Export the relevant functions and struct =
+for
+> > user fault.
+>
+> That's an interesting scenario. Not looking deeper into it, I don't see
+> any callers to set_userfault_flag_for_ioworker(), and so there is no one
+> to set IO_WORKER_F_FAULT. Is there a second patch patch I lost?
+>
+> --
+> Pavel Begunkov
+>
+Sorry, the following changes haven't been submitted yet. I was planning
+to submit them separately, thinking they belong to two different subsystems=
+.
+The other changes that haven't been submitted are as follows:
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index d80f94346199..74bead069e85 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -32,6 +32,7 @@
+ #include <linux/swapops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/uio.h>
++#include "../io_uring/io-wq.h"
 
-That's fine, but that needs a NULL pp check in io_uring as well,
-specifically in io_zcrx_recv_frag().
+ static int sysctl_unprivileged_userfaultfd __read_mostly;
 
-You can also move it to struct net_iov_area and check niov->owner->type
-instead. It's a safer choice than aliasing with struct page, there is
-no cost as you're loading ->owner anyway (e.g. for
-net_iov_virtual_addr()), and it's better in terms of normalisation /
-not unnecessary duplicating it, assuming we'll never have niovs of
-different types bound to the same struct net_iov_area.
+@@ -369,7 +370,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
+unsigned long reason)
+        vm_fault_t ret =3D VM_FAULT_SIGBUS;
+        bool must_wait;
+        unsigned int blocking_state;
++       struct io_worker *worker =3D current->worker_private;
 
--- 
-Pavel Begunkov
++       if (worker)
++               set_userfault_flag_for_ioworker(worker);
+        /*
+         * We don't do userfault handling for the final child pid update
+         * and when coredumping (faults triggered by get_dump_page()).
+@@ -506,6 +510,9 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,
+unsigned long reason)
 
+        __set_current_state(TASK_RUNNING);
+
++       if (worker)
++               clear_userfault_flag_for_ioworker(worker);
++
+        /*
+         * Here we race with the list_del; list_add in
+         * userfaultfd_ctx_read(), however because we don't ever run
 

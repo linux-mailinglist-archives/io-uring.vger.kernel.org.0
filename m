@@ -1,77 +1,79 @@
-Return-Path: <io-uring+bounces-7628-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7629-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3982CA972BD
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 18:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8B1A972BC
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 18:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7215E3A47B0
-	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 16:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95FB6188717B
+	for <lists+io-uring@lfdr.de>; Tue, 22 Apr 2025 16:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B175328FFE0;
-	Tue, 22 Apr 2025 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9C52900A2;
+	Tue, 22 Apr 2025 16:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7V38zcp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfoKYgLN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C93515098F;
-	Tue, 22 Apr 2025 16:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C282A14BFA2;
+	Tue, 22 Apr 2025 16:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339370; cv=none; b=J1bzPAT5CL7VTGJgHbyNJklZfXO42eR8JKGia5eAvJLjBVTTId1FeVbxNRu7xK3TsWyknQSC0iEq3Ia3Wb3Pq3t0QwXeg7VES45wvE+ZUsdrZ2bE6ezhD8s48tJ+Y51xzZlIuxVr7vYdvrYNcfgC/MOvUmeuwEMWx2JR7Ub7lsU=
+	t=1745339378; cv=none; b=GCIv+DufM6Pm1NIJOsLHhAWeRcnlLAK7UCHruoiZaOKsLu7woF6fpgItmOuEACqfnxa8RpcLXrEYcx5FiLTXKTFIN+NsDKVgWpN0GLpHRw5Ey4LXKpssbqRwRAQH2eJSMgG6FLmM8R2t8t/Sd4Lsyvdn+qzE+BQXe8tQHP3cUz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339370; c=relaxed/simple;
-	bh=qSqTKpu4LDNDGZIdCc0qOwHHWfSeJU5SAY2QSbYBuT8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FWjsNtKwraqFK/P7DLVSbVPqt31YqfY0P4d5jj9mS5Buu6SECN57c/Jo5g3sgb1ObR/DN4n91p+BAt8KDdZ40XR+1+wtHpAHs3S3SO1EqYZMAFeFvpHlyc/0w2UPLnkZz5ohIb9H22tiWanw4J2eoWkTusvJ37U6CXk3oHG/I+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7V38zcp; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1745339378; c=relaxed/simple;
+	bh=dhxu5LR1UmF1TPg70+vcukV/gUPUQPs6MmejTOLIgPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HYkxK1CACQaoSrZsnFW2t4lv5MFvRCdaPwynRLT2dOtGG6/VC+0GYijYiPJg1nc1JzCHSvvGtYX7xfBZ171/cIew/x6jAq4XuRRnbdip1TSsJBrQkd+CvpanFnJD7CNWuw/HXowJB1k2OeXKHimFbsL/ajQ7x0q20i/5rhSHeKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfoKYgLN; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22423adf751so55044765ad.2;
-        Tue, 22 Apr 2025 09:29:28 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223fd89d036so66534255ad.1;
+        Tue, 22 Apr 2025 09:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745339368; x=1745944168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqFQjXcx1dupphMpacBjgQn4b3sEJ6P436qTqlhXx8M=;
-        b=B7V38zcpxXOHWNAzvUGjUsCxDJgeSVQbLyRjaSfGE1VmvbEcFcToQ8Vn2OPjWhzBM2
-         HdOCx0RN1PM3sw+Eq8mIoti47nyYESyUqaYVbG/Z+mvt9tYDERAnE2u+iDgHbc6RcMLS
-         UkEtgHi72xrYi3wAj4aDA0Spa2apMTemtlrnwnnlGvi0YfRSx8gje1dXeg2u2c3xms8Q
-         /vid0snDYfQB+PkKdtHFgV8FT4egDoEzbZwPD1J2KghtEUKmWLFP5oo+sogbQJV3pITz
-         T/ptzD4+nAjpCOQlnDoHCzse4y5ADIbD2iRynHLoLDmgoS0HVRmeaHpDE7AKE6Ot8ZVh
-         vSOA==
+        d=gmail.com; s=20230601; t=1745339376; x=1745944176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZGWcwKQmaZiYdj1a1V7uIYMMhxfylLN6zGwOKb4RBME=;
+        b=hfoKYgLNNKjgjyrUIcxYCAapzLVvq6+0+KR0y3ukv1C6dmSxJNX4q6GDqRDf8ptKip
+         EHPhFzEvdn3HWmTpgbinlIC3ExUaX5cy0dZwSuFyXk0AYT+M1gXWLxErcO6kM2QnB486
+         VB6GEvnPD4iFHapEhZlndknfEOxjTLCl5WjON0o45gFlmMty8GEDl38tkW38w8cGVCVS
+         Bw/vrY3NTinxeK5LKZR3+uosfiv6XStLr0VGN4cKdzKDU+ha5jqDGyTZJLtxiRlfqNeg
+         64ePwrM0ASt+kKBawH4DDfDWzgjaiBNk/fkgKFKM619shacNhqAj/mUB1lHflpXO4Hg9
+         /WdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745339368; x=1745944168;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mqFQjXcx1dupphMpacBjgQn4b3sEJ6P436qTqlhXx8M=;
-        b=VwLjjCleiZ5RSw7mujAzvOWSRvM3E1hutKU8qaE8xo8gEakb7TS5tDbTf3OdboTHVA
-         6qtBzvj5eKYr25/TG2w3oa8kIpaOnWoZqD4/a/q7MJhCFSr89e59pMsYIBmpOfHRNBiX
-         D/v9VueTNaxOvnhk9mUKAYJqYNtSy95c+xRd6C4/N48ErusqE/OxgE0fxu6wpIgyd2mC
-         qHwe01KBbUWXoRB43Pfmb92f7Fp6vsYTJdz0p4WGgvYrFDsMzGeqBaYhbQ1zpDeqBCn/
-         0bZRbTVznnqfxO3sT5oBb14grj0dTP1k0m5CsU4ujGQftMfc2ljf5tIXVYcQLBXORcH5
-         lIZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVyvV8Inv5QrtgwrLYI1hIhKY7Vh9L603cuUhhKzUMR70G/yR15HsGtWEy+zwojl2wwpBQXtUeAQ==@vger.kernel.org, AJvYcCVYQ5O+jyyVSYeEZ+iton5Go4nkaJLNUy9nfMEBsg8Czbl7H5HJ/mTpSkP5hkeMR6C/PUWKjFLCXS8IVgZmNQ==@vger.kernel.org, AJvYcCX8/n84EXHZwIV1tP2fdMCHUew4WB7hRK5TMAU8wsDINKiABggMPyK9ncw9JYI2/CutH23tk1xdl5IXFR4+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY9O1wdq1s4Fm0kvYmaBYl3D4J7YBLV54Ddum93UWIMP+Br57/
-	4Ep5bcAi4qKlNDM7YTOX+MiKt7vFRVpgRgjwETgreaTdj8x/QZE4
-X-Gm-Gg: ASbGncs6ippQMS6N6jqOsOtbLV+4N7dr7fgEq6d6pYrpK4KAxJHUDiiuYI5G0Mt/HZX
-	DQRLxrzIYEViBfow0dv/+sPaI1ALn9ADiNMe/DNCo9aGivxpZjjMLZxt+/zNVlK1jgtdQUs8PUG
-	URyO9vsjajrwK/+AScWBx2Jij3Fn7/RvKZroX59AhKOpwszu3DmeGxBobERnHbi5bPKcDfUzIVW
-	cx+y8+ZHjaAS6fgMilD43PGxHx0l5w0xZ5w8cMZN4GveB92s96g5WCV4pX0S6o8HQq1I1tgVnFp
-	3oluQcCTlH/zGTGGHRGV2QyzJHI/GaIpzE+TOdJJ5vc1SLlN9VwNfIEvyvxTQpfVsurm7beArrE
-	uLASyyG5d28Oo0a504DQ813tbODMAx1dTlpztnhKql9Nj0wNJDv3dkvVSE3UoZ+3BfV6LlSMe6Y
-	3Pns9M
-X-Google-Smtp-Source: AGHT+IHEFpvt2yM13kra3DTZbBby3wsgWEMQQdPQlccwS0dzadJOUKXG3q6hx2tj8M9/i/HfEK2TNg==
-X-Received: by 2002:a17:903:1aa6:b0:224:2201:84da with SMTP id d9443c01a7336-22c5356de05mr207898855ad.6.1745339368281;
-        Tue, 22 Apr 2025 09:29:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745339376; x=1745944176;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZGWcwKQmaZiYdj1a1V7uIYMMhxfylLN6zGwOKb4RBME=;
+        b=Zq5ipDiNOhNTmjw65H757DPOJzETasX6inqQs/qdRzgcHrBIvrfKd3EFbqB1NLn450
+         gBCCA7bJD2YbnfC97VyPkHLsyvvWY1XSVSXfp31aV3KXHAT/TVORt8LFAnwMNW80PPsO
+         /Nta96t8iyK7jj3iH27pMdrrVpPtiy9Zg4w5QcKhVJbbOVbEqj/eTqZHREsp/v9p8mo1
+         7ajjJPxg/3mZ4cRlsbV2rvGv9lHGbGbzczSTI+odN9X9NxgKhMn9BCDXL8D557XC8AFE
+         isWAvPeUhHCnRd9utMDoCruT7nZG5iHO+L/4E1E6lvMlui2Vm0pvLuIc8QcZhgee2sXJ
+         H1oA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/gt/QIyMpDVemGWaNpHvBx7FTC1obbUWQuR/AlRg0keZPSAcojGp3P/sqfgVS6b3nBqvlqcpQz0dFg84Ypg==@vger.kernel.org, AJvYcCWbxzLr+g6K29952jhJMZBju3flZBNSNua7t/8pKkdFj2KIcDI9Eka817WS1ELFaZZ8gd1b8IPYx6xxUvV1@vger.kernel.org, AJvYcCXGt5+R8KTqtZMdNC5Jw3WVZH2CtgQz8Fi+y19WEKQ/Vgq/0y59kv7jInEcjVKlkztfXdT4JQUkNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa4XWBp90JzhD1Zi98btN2cAeQ4BeN2vRNaNruN7+Nr8ifXCRA
+	3emw5zouAXV+8YChkmM0zzmte7U+H3+yQq9b+ZkRNhsNTXitejOF
+X-Gm-Gg: ASbGncsygR6LAB49R7LMceBmP7Hu7eYWFLlnz9b4jvz/Oa27W5EDUzLWJHclk9SQmF3
+	AAt2tlW8khFak4cBO4L7g/Qa65iFKne1g9GcergmE9SxM2bRX0dApZFCyFQ1eyZtWsO486Evwit
+	f29QKj46iN2LMaJXD0M3bUGgeWOXH/cpgGr7lIo5L2cU5MofTrJtgmfBuNNlJrnMokIMV2UVEnU
+	+Z2qbfsYeZPmQnQbwIKhZ3BwdtF0xxvsWHJI7WrL8EV0btRl2AN9wiOj2+wKooF+kPA0kDj7Hkf
+	gI6pBjKiep+sVyfvahgyg4fU5nKxWSN2ehSzK6VvvVpSAfeWhNBZjc35DKFlG9LW9Qi3Uj5Cb+J
+	dbLwLe9e1bZaknpw7fAQjw0RBdeRRTi6p5hecqVrwJR/iLYluEBwLTAWLWwYtYOpJM0eigsSuAE
+	QdStZ7
+X-Google-Smtp-Source: AGHT+IElm/lh7VyfuLradDvOYg4VHePKck6v5HX980zzUVwjtUOMYXTrCjwOUmx6CbuBc8VgW4RtPw==
+X-Received: by 2002:a17:903:3bad:b0:223:4341:a994 with SMTP id d9443c01a7336-22c53285c80mr214749845ad.9.1745339375912;
+        Tue, 22 Apr 2025 09:29:35 -0700 (PDT)
 Received: from linux-devops-jiangzhiwei-1.asia-southeast1-a.c.monica-ops.internal (92.206.124.34.bc.googleusercontent.com. [34.124.206.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50fe20b0sm87481695ad.243.2025.04.22.09.29.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50fe20b0sm87481695ad.243.2025.04.22.09.29.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 09:29:27 -0700 (PDT)
+        Tue, 22 Apr 2025 09:29:35 -0700 (PDT)
 From: Zhiwei Jiang <qq282012236@gmail.com>
 To: viro@zeniv.linux.org.uk
 Cc: brauner@kernel.org,
@@ -85,10 +87,12 @@ Cc: brauner@kernel.org,
 	linux-kernel@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	Zhiwei Jiang <qq282012236@gmail.com>
-Subject: [PATCH v2 0/2] Fix 100% CPU usage issue in IOU worker threads
-Date: Tue, 22 Apr 2025 16:29:11 +0000
-Message-Id: <20250422162913.1242057-1-qq282012236@gmail.com>
+Subject: [PATCH v2 1/2] io_uring: Add new functions to handle user fault scenarios
+Date: Tue, 22 Apr 2025 16:29:12 +0000
+Message-Id: <20250422162913.1242057-2-qq282012236@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250422162913.1242057-1-qq282012236@gmail.com>
+References: <20250422162913.1242057-1-qq282012236@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -147,23 +151,108 @@ Meanwhile, the listener on the userfaultfd user side never performs a COPY
 to respond, causing the page table entry to remain empty. However, due to
 the early return, it does not sleep and wait to be awakened as in a normal
 user fault, thus continuously faulting at the same address,so CPU loop.
+
 Therefore, I believe it is necessary to specifically handle user faults by
 setting a new flag to allow schedule function to continue in such cases,
-make sure the thread to sleep.
+make sure the thread to sleep.Export the relevant functions and struct for
+user fault.
 
-Patch 1  io_uring: Add new functions to handle user fault scenarios
-Patch 2  userfaultfd: Set the corresponding flag in IOU worker context
-
-Changes since v1:
-- Optimized the code under Jens Axboe's suggestion to reduce the exposure
-  of IO worker structure.
-
-
- fs/userfaultfd.c |  4 ++++
+Signed-off-by: Zhiwei Jiang <qq282012236@gmail.com>
+---
  io_uring/io-wq.c | 35 +++++++++++++++++++++++++++++------
  io_uring/io-wq.h | 12 ++++++++++--
- 3 files changed, 43 insertions(+), 8 deletions(-)
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 04a75d666195..4a4f65de6699 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -30,6 +30,7 @@ enum {
+ 	IO_WORKER_F_UP		= 0,	/* up and active */
+ 	IO_WORKER_F_RUNNING	= 1,	/* account as running */
+ 	IO_WORKER_F_FREE	= 2,	/* worker on free list */
++	IO_WORKER_F_FAULT   = 3,    /* used for userfault */
+ };
+ 
+ enum {
+@@ -706,6 +707,26 @@ static int io_wq_worker(void *data)
+ 	return 0;
+ }
+ 
++void set_userfault_flag_for_ioworker(void)
++{
++	struct io_worker *worker;
++
++	if (!(current->flags & PF_IO_WORKER))
++		return;
++	worker = current->worker_private;
++	set_bit(IO_WORKER_F_FAULT, &worker->flags);
++}
++
++void clear_userfault_flag_for_ioworker(void)
++{
++	struct io_worker *worker;
++
++	if (!(current->flags & PF_IO_WORKER))
++		return;
++	worker = current->worker_private;
++	clear_bit(IO_WORKER_F_FAULT, &worker->flags);
++}
++
+ /*
+  * Called when a worker is scheduled in. Mark us as currently running.
+  */
+@@ -715,12 +736,14 @@ void io_wq_worker_running(struct task_struct *tsk)
+ 
+ 	if (!worker)
+ 		return;
+-	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+-		return;
+-	if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+-		return;
+-	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+-	io_wq_inc_running(worker);
++	if (!test_bit(IO_WORKER_F_FAULT, &worker->flags)) {
++		if (!test_bit(IO_WORKER_F_UP, &worker->flags))
++			return;
++		if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
++			return;
++		set_bit(IO_WORKER_F_RUNNING, &worker->flags);
++		io_wq_inc_running(worker);
++	}
+ }
+ 
+ /*
+diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+index d4fb2940e435..8567a9c819db 100644
+--- a/io_uring/io-wq.h
++++ b/io_uring/io-wq.h
+@@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
+ 					void *data, bool cancel_all);
+ 
+ #if defined(CONFIG_IO_WQ)
+-extern void io_wq_worker_sleeping(struct task_struct *);
+-extern void io_wq_worker_running(struct task_struct *);
++extern void io_wq_worker_sleeping(struct task_struct *tsk);
++extern void io_wq_worker_running(struct task_struct *tsk);
++extern void set_userfault_flag_for_ioworker(void);
++extern void clear_userfault_flag_for_ioworker(void);
+ #else
+ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
+ {
+@@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
+ static inline void io_wq_worker_running(struct task_struct *tsk)
+ {
+ }
++static inline void set_userfault_flag_for_ioworker(void)
++{
++}
++static inline void clear_userfault_flag_for_ioworker(void)
++{
++}
+ #endif
+ 
+ static inline bool io_wq_current_is_worker(void)
 -- 
 2.34.1
 

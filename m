@@ -1,168 +1,322 @@
-Return-Path: <io-uring+bounces-7678-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7679-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD4CA99756
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 19:59:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C80FA997D2
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 20:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A06A1B65A83
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 18:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5055C4A31E1
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 18:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C1828D85D;
-	Wed, 23 Apr 2025 17:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415D228E5E8;
+	Wed, 23 Apr 2025 18:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HACIZgpw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHxcg15r"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302EE28CF77
-	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 17:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CA028DF1D
+	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 18:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431174; cv=none; b=OBTMT7LnGAXTJgYJ0dpLfHbHJCneZhvLSYOT7tPqsXRVxVNH1lIoD66+igfm4Ae+Y8xHjiWO7J6Cu4GJuS7j8yDH36diyg+gz+9bwgWCsfgXdrAq5bzXr/4BvmtnIvhky5nN1i5CnLS36sI7T3cKxzSQe8Ys4O8UNlZvSN+4y9w=
+	t=1745432703; cv=none; b=vBDdv9er5tP6+GYOOaeVXAKaOumWQ3jTPzm3VIWaxhnrjg+A66Ct4Etkoom0uvmvbc6dh8eJAP7WjrESgiwhXwa+8lkbVa8gXhIVThnPXdcqrbugR3rUObGhUrpGTpd/ANKbfjtJd5TtAyW1/hGI9Op0DrowZSVhpgNRTyS+YEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431174; c=relaxed/simple;
-	bh=T2TBlvkxpqSt4Yg66wrWZfHI9nHaKVofCMCsYRliPm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AEt2H5TxMWj+1zAa9apPs5H+/bONR7t8gfUc1CI7/jZ7ZhMUiDVi6NWPzZtTInetwvNOYFDJAU2x6/OvI0e767b2ADhgZ7NhBV4H+4arNrKw9ANMPf0PZieeBfSnnIcXNjZBKZYOB4LBmgGFmpe0hNNwEHui57Hu+mF61JuxuPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HACIZgpw; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2263428c8baso16335ad.1
-        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 10:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745431171; x=1746035971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8ET6hBVRzBDqshUdhbgCvSUTaazcby/sOi3F1Bc3pI=;
-        b=HACIZgpw4Xflv3W6XmdPwNuTYxQ8zATeYzoR01w5U1QhvU797QxfB3VWNBYsoEXN0D
-         r1sBI0OEbn075eeaSweSTK9Kt/MJ+oPdDAesZPl/+gwjrSyjiKHi/louVdIOC2rBhz0F
-         gfHVMBUSPw9v6u9oUVGZYXOL2Hsolk65Haz4RZ3eyh8VtpyVn4oN+idH/iRyUan57kOv
-         VJ6+rf3ozumb3R4FPyShUVTDwoFxVdmAp+3zSh7bj83RiPJA3ghFhOAXou/grUCVcWQN
-         ED6+2Mxhsurs/2rbbxTEY/C3kPb4RP2/y6TjS8R445L88/BoxlCYyj8cauarXMlwAt0F
-         s43Q==
+	s=arc-20240116; t=1745432703; c=relaxed/simple;
+	bh=2kFipTkI9R4lAA/fVQ77ATu/54yZGXXZ2osRGeIHD58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dn5+W3Vqj6nqdEWRWxqzf3u/F2JF/a+3y5hcwPJ/j0LkhlfZLuy+onHleoHj84wiSACDIkZ3YGR0NzmDMpWKtBM9YyGlpC7Nlxr8yQ7nku+r646F6i0VoDaXLHj0pNCIz1ntiarU9MD6sABaqcNq7zC36JiMWxCnzAlZ21ztA74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHxcg15r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745432699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xDiBetsqPmhwr4oXU09zlLKMEaFLxeBh720CI/G1T2w=;
+	b=HHxcg15rmMCRKbi0OXfYLYOGtKL1R+JWzwcGeAJR2QFj0vKD84SpaMUhSAT8NNH+/bQtiC
+	EnhH21O5IC1bYtlBRzKFb2HS4jnLqFBEglOD6rDeeGsEntiLwSmd7gFveHowF1qE7O/5L2
+	ifXUtTlnwRLKRx+n9TJO9oImmE/IZbk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-1Qs4MyQGN1mLIDY6Qd6raQ-1; Wed, 23 Apr 2025 14:24:49 -0400
+X-MC-Unique: 1Qs4MyQGN1mLIDY6Qd6raQ-1
+X-Mimecast-MFC-AGG-ID: 1Qs4MyQGN1mLIDY6Qd6raQ_1745432688
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ceb011ea5so721155e9.2
+        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 11:24:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745431171; x=1746035971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+8ET6hBVRzBDqshUdhbgCvSUTaazcby/sOi3F1Bc3pI=;
-        b=Gw/ifhwszZu7wKRUh+/aRnKDOt6KwrXGf9S9M+wdjmXrebEtglsTMt3erBaYNrf7SI
-         +Kex/YJGb0f/h+wc+ddEFvAPtA6+6ovltWJPITqQBHic8qF/BR56eESIGv1FuEfyDkXj
-         nafUJ90cppnu0XuGaMq63/hGSzxQbJ+7fiRRs4o2w6LbDLElCsEpuFk8G7knmU3weshc
-         WZkik0lWrkrYIOlD6PjwX2y1IXp+nYigR5E8rF5+UmaAuLZndu+xxu1MmlOcdldhFkES
-         Nur4IhTwUVO6JhjUmjcgsk83eGhdauH2xV8pgg+H/Wf5CcBEpOU4sBjiCi/hHcfW28XS
-         vBFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhRKgbDjpUGpTq/nIk5EnTb8KpCrS7cIifC2/Er91NXRh80kDNPW+9+rmet+BaewvBjUX9WOqI/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB3dj0bEcFZpSxXOD9tQoYQ7rzehhSUHzCYbMLLs0CqoSOva2b
-	SEXsKE7aflkLLxX8tCaQeUtUfeCf/en1sqh0oJ4Ix0/H2TdH+fy01cvdebZoVM+h1ft0BaucFNt
-	v5sJa882mM+p72BH0IjbajhlF3Rn8Ew+fuZi0
-X-Gm-Gg: ASbGncv55YubfTz/D/Xv+CvSN07LPibLoOaqlA2f6ea9jagWwCWwG6OR8HLdihrpZdo
-	GEcRqxTeGjVD1JtmGuYm3DxhefPYw5l9AANtADS3O9SOCyBrO58oC8zRjYzgO6TqIbGbb+6sUnS
-	rWk6+M60hN3E0jyWi+l65AoMLYqTUQfTyElf9eKhZp/btA4mvLw5br
-X-Google-Smtp-Source: AGHT+IHvMK0SV6VtztVj+YoeYQ5/i4hvqsncQiTOPb2g+BToFdj7TZ78J3grFAhStRy75jc6hEr26BgE749DHVAlZwc=
-X-Received: by 2002:a17:902:ce08:b0:21f:3f5c:d24c with SMTP id
- d9443c01a7336-22db2089754mr282595ad.0.1745431171080; Wed, 23 Apr 2025
- 10:59:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745432688; x=1746037488;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xDiBetsqPmhwr4oXU09zlLKMEaFLxeBh720CI/G1T2w=;
+        b=nd2UJlDnf3U3tRDlRqv9PGBM3KOI/uAgxM9SsOCZrxPYDgfgpkkUT5L4TApj7cAEOS
+         LnUtNcyPaMfoflQvmjnMGS8Vg2L+gJlIjsleB22cp3wSLt7z9rqLd1aNxXISjQc3R6Lc
+         lYbi/9w0hFfMKE2uOFZ7HsJIGzuBnZxlSW3T/gLRJi147YQa5DHMzJ+zIs84D+T//eXh
+         v6duUVqJUwwMvY6X7Dz+/2WzR7lDCciyHgM5PgyrTqkcz7nP2JL4wivcyKXQpzAJ2Gy6
+         VBnzk9D53+fLpNOy19OGfNdYizQk2jmRrymaHAHHhLvVjzYANVBVKUww2/Nbgwj1YVzi
+         1BEg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0pyLNLqmA3UeWmIBb2I+CpJciXl4J81XerRK7pSYwUS7+3iLOeiCyZV0NvC44rICvTctox5B65Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgCumL1+EGk267oeTnNaSMJ/HhppK8yGXlg+2dLzNk4Orero8z
+	UM8PkjHPfoimr/JO5dkIg+ERXZj4ITsm0wovijEL0zmneyZHY+72g7duZqrlISDKAZz3KujaZQV
+	19PhU4OQwHzhPxbEetUTlgtf9mE0owcqOhT3rZcW28zuhCR6pS5Q+Lwi7
+X-Gm-Gg: ASbGncuUZ9d/nyWGRGpHa/UUMWEZTE1oj1AFf4S7Om5GREfHDWAtHWy+dtxX2lUSmTr
+	tYaQyGv/ui4+gOQ9V9zI2rNwdhdDKqhW2TRa+4AwUmXuPYS+lu9kjDnQd/72fJC/6YL8oeCUt7K
+	xuBbTsTk/OBo04Fspe+04qtL9on+yx83cq+tEUofey2fd77VT+3nIaKbg5BW8xgWAhCjxnZfJnK
+	FYD6bdjfJq6W+ovLeG+nTzgmUqYK2azDKy3qhrEJnNMiRWrSZK8wuDdUR7HUZcpcyHQMky3wS1/
+	6ZanBQ==
+X-Received: by 2002:a05:600c:1d18:b0:43c:f3e4:d6f6 with SMTP id 5b1f17b1804b1-4406ac27928mr208905665e9.31.1745432688474;
+        Wed, 23 Apr 2025 11:24:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhMUybKS0xk+duePsY3EIBDyJlRwfswDnOg4sEpKMj9IfeNCbDaS3GP/dkavlx5C/2n4m6hA==
+X-Received: by 2002:a05:600c:1d18:b0:43c:f3e4:d6f6 with SMTP id 5b1f17b1804b1-4406ac27928mr208905055e9.31.1745432687961;
+        Wed, 23 Apr 2025 11:24:47 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4931acsm19793032f8f.72.2025.04.23.11.24.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 11:24:47 -0700 (PDT)
+Date: Wed, 23 Apr 2025 14:24:42 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org,
+	virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	David Ahern <dsahern@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Victor Nogueira <victor@mojatatu.com>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	Samiullah Khawaja <skhawaja@google.com>,
+	Kaiyuan Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v10 4/9] net: devmem: Implement TX path
+Message-ID: <20250423140931-mutt-send-email-mst@kernel.org>
+References: <20250423031117.907681-1-almasrymina@google.com>
+ <20250423031117.907681-5-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423031117.907681-1-almasrymina@google.com>
- <20250423031117.907681-4-almasrymina@google.com> <m2y0vrtd5i.fsf@gmail.com>
-In-Reply-To: <m2y0vrtd5i.fsf@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 23 Apr 2025 10:59:17 -0700
-X-Gm-Features: ATxdqUHq-n2Ogx9j37-VJ8KU3c5QgjU5O-8PAbfORQ_YtioEYEuiwEUpYsuISUQ
-Message-ID: <CAHS8izNUOO-X0WHFTMd3_yEjCDu4sPYADE1oDEtWTYFNNMB5wQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 3/9] net: devmem: TCP tx netlink api
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423031117.907681-5-almasrymina@google.com>
 
-On Wed, Apr 23, 2025 at 5:11=E2=80=AFAM Donald Hunter <donald.hunter@gmail.=
-com> wrote:
->
-> Mina Almasry <almasrymina@google.com> writes:
->
-> > From: Stanislav Fomichev <sdf@fomichev.me>
-> >
-> > Add bind-tx netlink call to attach dmabuf for TX; queue is not
-> > required, only ifindex and dmabuf fd for attachment.
-> >
-> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >
-> > ---
-> >
-> > v3:
-> > - Fix ynl-regen.sh error (Simon).
-> >
-> > ---
-> >  Documentation/netlink/specs/netdev.yaml | 12 ++++++++++++
-> >  include/uapi/linux/netdev.h             |  1 +
-> >  net/core/netdev-genl-gen.c              | 13 +++++++++++++
-> >  net/core/netdev-genl-gen.h              |  1 +
-> >  net/core/netdev-genl.c                  |  6 ++++++
-> >  tools/include/uapi/linux/netdev.h       |  1 +
-> >  6 files changed, 34 insertions(+)
-> >
-> > diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/ne=
-tlink/specs/netdev.yaml
-> > index f5e0750ab71db..c0ef6d0d77865 100644
-> > --- a/Documentation/netlink/specs/netdev.yaml
-> > +++ b/Documentation/netlink/specs/netdev.yaml
-> > @@ -743,6 +743,18 @@ operations:
-> >              - defer-hard-irqs
-> >              - gro-flush-timeout
-> >              - irq-suspend-timeout
-> > +    -
-> > +      name: bind-tx
-> > +      doc: Bind dmabuf to netdev for TX
->
-> nit: maybe add "for RX" to the bind-rx doc.
+some nits
+
+On Wed, Apr 23, 2025 at 03:11:11AM +0000, Mina Almasry wrote:
+> @@ -189,43 +200,44 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+>  	}
+>  
+>  	binding->dev = dev;
+> -
+> -	err = xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id,
+> -			      binding, xa_limit_32b, &id_alloc_next,
+> -			      GFP_KERNEL);
+> -	if (err < 0)
+> -		goto err_free_binding;
+> -
+>  	xa_init_flags(&binding->bound_rxqs, XA_FLAGS_ALLOC);
+> -
+>  	refcount_set(&binding->ref, 1);
+> -
+>  	binding->dmabuf = dmabuf;
 >
 
-Thanks, will pull this with the next iteration.
+given you keep iterating, don't tweak whitespace in the same patch-
+will make the review a tiny bit easier.
 
-> > +      attribute-set: dmabuf
->
-> The bind-rx op has "flags: [ admin-perm ]", should bind-tx also?
->
+  
+>  	binding->attachment = dma_buf_attach(binding->dmabuf, dev->dev.parent);
+>  	if (IS_ERR(binding->attachment)) {
+>  		err = PTR_ERR(binding->attachment);
+>  		NL_SET_ERR_MSG(extack, "Failed to bind dmabuf to device");
+> -		goto err_free_id;
+> +		goto err_free_binding;
+>  	}
+>  
+>  	binding->sgt = dma_buf_map_attachment_unlocked(binding->attachment,
+> -						       DMA_FROM_DEVICE);
+> +						       direction);
+>  	if (IS_ERR(binding->sgt)) {
+>  		err = PTR_ERR(binding->sgt);
+>  		NL_SET_ERR_MSG(extack, "Failed to map dmabuf attachment");
+>  		goto err_detach;
+>  	}
+>  
+> +	if (direction == DMA_TO_DEVICE) {
+> +		binding->tx_vec = kvmalloc_array(dmabuf->size / PAGE_SIZE,
+> +						 sizeof(struct net_iov *),
+> +						 GFP_KERNEL);
+> +		if (!binding->tx_vec) {
+> +			err = -ENOMEM;
+> +			goto err_unmap;
+> +		}
+> +	}
+> +
+>  	/* For simplicity we expect to make PAGE_SIZE allocations, but the
+>  	 * binding can be much more flexible than that. We may be able to
+>  	 * allocate MTU sized chunks here. Leave that for future work...
+>  	 */
+> -	binding->chunk_pool =
+> -		gen_pool_create(PAGE_SHIFT, dev_to_node(&dev->dev));
+> +	binding->chunk_pool = gen_pool_create(PAGE_SHIFT,
+> +					      dev_to_node(&dev->dev));
+>  	if (!binding->chunk_pool) {
+>  		err = -ENOMEM;
+> -		goto err_unmap;
+> +		goto err_tx_vec;
+>  	}
+>  
+>  	virtual = 0;
+> @@ -270,24 +282,34 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+>  			niov->owner = &owner->area;
+>  			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
+>  						      net_devmem_get_dma_addr(niov));
+> +			if (direction == DMA_TO_DEVICE)
+> +				binding->tx_vec[owner->area.base_virtual / PAGE_SIZE + i] = niov;
+>  		}
+>  
+>  		virtual += len;
+>  	}
+>  
+> +	err = xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id,
+> +			      binding, xa_limit_32b, &id_alloc_next,
+> +			      GFP_KERNEL);
+> +	if (err < 0)
+> +		goto err_free_id;
+> +
+>  	return binding;
+>  
+> +err_free_id:
+> +	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+>  err_free_chunks:
+>  	gen_pool_for_each_chunk(binding->chunk_pool,
+>  				net_devmem_dmabuf_free_chunk_owner, NULL);
+>  	gen_pool_destroy(binding->chunk_pool);
+> +err_tx_vec:
+> +	kvfree(binding->tx_vec);
+>  err_unmap:
+>  	dma_buf_unmap_attachment_unlocked(binding->attachment, binding->sgt,
+>  					  DMA_FROM_DEVICE);
+>  err_detach:
+>  	dma_buf_detach(dmabuf, binding->attachment);
+> -err_free_id:
+> -	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+>  err_free_binding:
+>  	kfree(binding);
+>  err_put_dmabuf:
+> @@ -295,6 +317,21 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+>  	return ERR_PTR(err);
+>  }
+>  
+> +struct net_devmem_dmabuf_binding *net_devmem_lookup_dmabuf(u32 id)
+> +{
+> +	struct net_devmem_dmabuf_binding *binding;
+> +
+> +	rcu_read_lock();
+> +	binding = xa_load(&net_devmem_dmabuf_bindings, id);
+> +	if (binding) {
+> +		if (!net_devmem_dmabuf_binding_get(binding))
+> +			binding = NULL;
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	return binding;
+> +}
+> +
+>  void net_devmem_get_net_iov(struct net_iov *niov)
+>  {
+>  	net_devmem_dmabuf_binding_get(net_devmem_iov_binding(niov));
+> @@ -305,6 +342,53 @@ void net_devmem_put_net_iov(struct net_iov *niov)
+>  	net_devmem_dmabuf_binding_put(net_devmem_iov_binding(niov));
+>  }
+>  
+> +struct net_devmem_dmabuf_binding *net_devmem_get_binding(struct sock *sk,
+> +							 unsigned int dmabuf_id)
+> +{
+> +	struct net_devmem_dmabuf_binding *binding;
+> +	struct dst_entry *dst = __sk_dst_get(sk);
+> +	int err = 0;
+> +
+> +	binding = net_devmem_lookup_dmabuf(dmabuf_id);
 
-The omission of admin-perm for tx is intentional.
+why not initialize binding together with the declaration?
 
-Binding a dmabuf to an rx queue should and is a privileged operation,
-because basically the application doing the binding is taking
-ownership of this rx queue. For TX, no such queue ownership is being
-taken. The TX binding just gives the netdevice access to the dmabuf
-dma-addresses so the netdevice can send from there. It's very similar
-to a normal dma-map with normal memory. There is no need for privilege
-checks.
+> +	if (!binding || !binding->tx_vec) {
+> +		err = -EINVAL;
+> +		goto out_err;
+> +	}
+> +
+> +	/* The dma-addrs in this binding are only reachable to the corresponding
+> +	 * net_device.
+> +	 */
+> +	if (!dst || !dst->dev || dst->dev->ifindex != binding->dev->ifindex) {
+> +		err = -ENODEV;
+> +		goto out_err;
+> +	}
+> +
+> +	return binding;
+> +
+> +out_err:
+> +	if (binding)
+> +		net_devmem_dmabuf_binding_put(binding);
+> +
+> +	return ERR_PTR(err);
+> +}
+> +
+> +struct net_iov *
+> +net_devmem_get_niov_at(struct net_devmem_dmabuf_binding *binding,
+> +		       size_t virt_addr, size_t *off, size_t *size)
+> +{
+> +	size_t idx;
+> +
+> +	if (virt_addr >= binding->dmabuf->size)
+> +		return NULL;
+> +
+> +	idx = virt_addr / PAGE_SIZE;
 
---=20
-Thanks,
-Mina
+init this at where it's declared?
+or where it's used.
+
+
+> +
+> +	*off = virt_addr % PAGE_SIZE;
+> +	*size = PAGE_SIZE - *off;
+
+
+
+> +
+> +	return binding->tx_vec[idx];
+> +}
+> +
+>  /*** "Dmabuf devmem memory provider" ***/
+>  
+>  int mp_dmabuf_devmem_init(struct page_pool *pool)
+
+
+-- 
+MST
+
 

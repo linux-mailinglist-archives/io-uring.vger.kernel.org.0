@@ -1,224 +1,161 @@
-Return-Path: <io-uring+bounces-7663-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7664-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C91CA988FE
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 13:57:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03167A98943
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 14:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC9B444A6C
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 11:57:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5AAD3B896E
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 12:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95266265CAD;
-	Wed, 23 Apr 2025 11:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB12214A91;
+	Wed, 23 Apr 2025 12:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnSMPzYB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RA/IakGU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD14262FF3
-	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 11:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A460214238;
+	Wed, 23 Apr 2025 12:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745409460; cv=none; b=pbZM9oRMdG4cEiJrAZtyzvwTMTTpICPJzWpzApx8LangHA5A57U/yX6QXA3h76lYLtQW0yw3AgEzppLRQaLwpRJGBaOjxhwkcm54j250YwSdipvtN4bp2hRwFiTMltgIp+4IeppaAPv0N9VsBw8QltIdl0IBpSb3ifqbue2USkI=
+	t=1745410294; cv=none; b=llFNTFFFxB+rCEjG7eU03FDUcLfenujYoWN2VgK9vTv9YRay/xiSsFZ7+Ansjx38y0olOEsrnu6C4m3cXIUKgF1YOHP2OlPhRMTDICbRdorfQy+6yV4o0j1ZDMkNFWSbhw2mKrqAMJz42+P3Ki/UnqWLFdrEXlMoGdAySuRr2Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745409460; c=relaxed/simple;
-	bh=BPhBG9V6G93SS4l085tMMTA/8pBGp98MFJGIUQSbZEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=svh0DZNlsKfGdJjNnz8N3ZvLctaNgrVzsLbpkNd9WUT8uJz2DR2ztBdT3nTYNv/FnQChVhpv6KF5CYxYoJ2c1iem1WHw/h5cNB+9C7AwKhEEuU1IcuM2ra86oeTh6BEU6aBwIibYbRh/sicxWZxbPpdUlSKp+haoFKspSAr2bIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnSMPzYB; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1745410294; c=relaxed/simple;
+	bh=yQ1UlwAJJHcI/OsM/WOjpj6zZr5R1RBZAV3ItX0DC38=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=N+E4GB91T/PomlOsrtzww4SOOq7Zh+32cIITrX7auNyPgx3VWMQd6GYhf88pk66DC7O6KQL2f3BgDMlwtgiWg+iGR/CkcLJouaI3KU0Yr4hwWR7dgUMLUPLAuhJjFwxsn8p8O9KXQx42mCInMnJpPxWF1x1e31l0xGWspatb6CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RA/IakGU; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so11521453a12.1
-        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 04:57:38 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so4518732f8f.3;
+        Wed, 23 Apr 2025 05:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745409457; x=1746014257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzCQKpjpJHbFOa7bzgduie47wi7lZJN85+qikFyRtjI=;
-        b=ZnSMPzYB9BhzmpgZjHNv+FHiHJz0/Mc0ptqmHj8jRgnRc6n1mj/XpyziY3RXEL2+s8
-         sK9W4iRNaAgwk5yxR7OEWuT9ktQGslOkDiFhtCWM0tx6x3Ho3tjecjHUAYZ6s+J92v8R
-         RALpeEUwTB4h8l3W18GxAbU52op4wqYE0u5EI436FHhcfGPBtiNNg4u2OemFJwllH2kH
-         EMa0GnyVnGugMHEaGeXph5wGZOMQNujvW7W0AzIMj3AtbQKEGKkTQRf2bc63tR13Zjb6
-         Y5wmXwQzmtf2RE6minu7uXCIS8N1DoXtNHHPH4XeKOMtgzUUrYbBdRxjqNMWC5/bE5tQ
-         K2ZQ==
+        d=gmail.com; s=20230601; t=1745410291; x=1746015091; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X3ENo7G6TW6MBK7yQ4g9B813KgFySi5deAa4vwegzbo=;
+        b=RA/IakGUAE314HKgCxzSRavMmLjLVqVOywIwiiM6mYBNWaips1FG7WGC4DmitIqk6X
+         +BmqpAeMPYNFpmxVMBalFTt2Ozli1SavYqeyDEuElNPxrkXU5pEXedbD5xZk8yKs5VZw
+         rYUKkc/OA04td/Ok9a/0WapdC98OQkXlRM39KdI3Q+41k1LFCIQPmJNPutQD80WPI/Dw
+         MeQPrRTHh5hbcOWmuGp+ENR0xiq2uQqHiMWVL1Lf0Y67JgXUJU4S/fS1Yr/BQcZ6Vrb3
+         boB+Lia+UztsUdY9kpe/16SWLPk2f9LHD43qNtWko5o3IAoEVzHXjEXr+77RA/LhFnOG
+         /Yug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745409457; x=1746014257;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzCQKpjpJHbFOa7bzgduie47wi7lZJN85+qikFyRtjI=;
-        b=hQmgBgjJbSJYYiDRBiuNLMv89TQk2A2ExTnJ1E/M/YLp9FX15KRwq5+DkBrhNWzqXm
-         5IS5zFL64OjLdgU7LYbQsJEw0HV2o+OD59Cm0QoT7e0llhlUsHjnlXtQrL/h2ubnhcxk
-         PQxS8zTzgGQzA62yD6QlyUXTyXZIGsiHv6ctJNCXMIQrOE5mBegufigJEj/k2v45fovL
-         tL09mZ7x6R/bBmUD5vZq8CR1QC1y+UnmxrGaEQVID7LChM92E7DM4UY2SzAx6IuO+md8
-         xK/ap27Uv9OwQBtDjkFRaTXmXMnjHK4TnJ93W17wTfPLh7H6YYi+hXC2VvrEbemeMT3Y
-         aRvA==
-X-Gm-Message-State: AOJu0YzoK+2FrIz/2oPgoIJxzl0NQTTfHJzUTnfcQfU9i3urtQt33htZ
-	2guOiLBQqaxse6DQCWKaEnKKBuj0XSSx50o6zdJah6Rv0NWV/SlNMMBoLw==
-X-Gm-Gg: ASbGnctPSPCIstTUKE+uJ6NKqmiixmnVldat+EM7kQBowp7+uBLRAwkBP6t27acSLlo
-	LwqCE6Dddm/LeTd+tJkfDBrnNdHT/Fomu3CsaOak8PY+WTLT/qOBfklqolzEuOUdXThc8KFY/K/
-	Tkz/K881hhHcx6HongBRTe+Q9RzbrPZJkJZgsIugNpC8ZTaWiudO9lt6og7ART+vlz4xN64loPc
-	flcsIlLPWiTsHLJvSxzWWez/djxfx4xmb8pJrfHQ1d6sZx8TBix9PV/Tc7feipidMHk22936afz
-	NGQEsQFNqcSzmb4Xh0HEDgbTF+7EySBx+w14dH3rKHlOKZNY+reA5GU=
-X-Google-Smtp-Source: AGHT+IGYItAWnu7npNTeBL76b6N3LF9HF1hkRe/Qa3SjaFuhpL1iPKV9AOdksTWp6STb0fixg1wIpQ==
-X-Received: by 2002:a05:6402:d09:b0:5e0:82a0:50dd with SMTP id 4fb4d7f45d1cf-5f6285a9216mr17415380a12.27.1745409456236;
-        Wed, 23 Apr 2025 04:57:36 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.133.217])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f6258340c8sm7350983a12.58.2025.04.23.04.57.35
+        d=1e100.net; s=20230601; t=1745410291; x=1746015091;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X3ENo7G6TW6MBK7yQ4g9B813KgFySi5deAa4vwegzbo=;
+        b=i95qrxRgoro0W0QeSGXiFeecNWLObRKTRG0N9wL5fVmRQZafPHD5ke/o3/jRDmFUNU
+         t9+Q/ce3DpclvVedzhL7Y8MHwTWFmZ5jLSnjbyEZKBBO+T/vi6taybTwc+jZZKNJvS/k
+         vXcF7ZuPKPjXeK0t1WjXU9xo6eTHsmGfZdOnTdOLW5zR31U5PKYfcNFT5Zp4JMSWY237
+         VE6XvXDQLIir3YDj1jc4PjADOopvmdNrAw7efJSei6llViQRu/wkbyIK1/e8Aasf4loh
+         tDcWKJaXMmxzfSqo5jBG464clnV8ujfAa7tgScc4ra7ynZntiS2MLc0wK3Da/NMt8v/4
+         1P5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUE340jGHA5GeRGg2oc0Zk281QF4cfMEy8mJn4ngPSH9iW5bpyelbbM8eUR7FJIs1SHRpyW9yY/mt6VSc8vk6gk@vger.kernel.org, AJvYcCVhuygUCvyYhYt/IfW+CFJYhyGEJVftx7feUiqtqdB06kjyDPGTNkTEIIKPYZyeQe5siKXQ45h1Bc5iGWTA@vger.kernel.org, AJvYcCW2fMJOPO3fE+RyxLSpTpgJNylKfsGWbJdWl/sg86ML5gyRkxxFBRZnddLjklpFQ2ipxQSB@vger.kernel.org, AJvYcCXsPhFy+CwsWSs1veMVV5EXOn3CFu34ykI9kMm+DVl7sYMJtb42ZooyTOuGCRPV3nuDl+O/KD2rzw8p@vger.kernel.org, AJvYcCXu9dzhluoAmOl+jAwrRC9w3QBnUbR1J/yMZ6dBh7yVjMdrl47N3N/xKqG6y+sY5jpdC9vDMU9b8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1FUndCMvTWT3jAV3mB00v6KyV5sZcL2kG6FkdqcH0501HafHs
+	ooNVW4Ogw3xuaEupW1BacGN187BmufxDj1LBUbF9uHlnqYen1eJC
+X-Gm-Gg: ASbGncswlP4cMEFKAtNyGi4PAp5ecOLypw2x7vwYaOUAW/VsXHr1O2N30HiDI2TUfBQ
+	+mDLE56i6QTBdAdmh2WbFZCyR6/6JnuwGGiExTZj0ji6sFa3NWdTQ11zuw4MutVgk9ksfpAJwLI
+	2iOfeWlzwvK0BORsuITkZ+EZbJKqX9FniT91Pxn+hoAnVkFambsrI2eJ4SFLv7B3cYAf5huFcOM
+	pAFwBNqUAXKjXMMq3SViE+JabCmA26FESnNtZF94EPLs2NnxMwcU/STNebdp9EgVgogoGeFYt2k
+	tPaxrLLbFdUN+jh9ENVlFLTsUairbsxHDyauiOm2EDbzTFJKaCfZHU0v3w==
+X-Google-Smtp-Source: AGHT+IFZ8D9fn99GBdz1k+wnK9Zxq4FNrQ2P/nZKAH6ZFy9CpCQ91xB95fWpKA6Gc9C9vj8lWI9UZw==
+X-Received: by 2002:a5d:6da6:0:b0:391:2f2f:818 with SMTP id ffacd0b85a97d-39efba2619bmr16139209f8f.9.1745410290643;
+        Wed, 23 Apr 2025 05:11:30 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:80e4:de9:c3ea:a346])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4207c5sm18334945f8f.6.2025.04.23.05.11.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 04:57:35 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	David Wei <dw@davidwei.uk>
-Subject: [PATCH liburing 2/2] examples/zcrx: add huge page backed areas
-Date: Wed, 23 Apr 2025 12:58:38 +0100
-Message-ID: <e856b4e6ac2fc1bee54e66ee0130743097d67099.1745409376.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1745409376.git.asml.silence@gmail.com>
-References: <cover.1745409376.git.asml.silence@gmail.com>
+        Wed, 23 Apr 2025 05:11:30 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org,  io-uring@vger.kernel.org,
+  virtualization@lists.linux.dev,  kvm@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  Jakub Kicinski <kuba@kernel.org>,
+  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Simon Horman
+ <horms@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Lunn
+ <andrew+netdev@lunn.ch>,  Jeroen de Borst <jeroendb@google.com>,
+  Harshitha Ramamurthy <hramamurthy@google.com>,  Kuniyuki Iwashima
+ <kuniyu@amazon.com>,  Willem de Bruijn <willemb@google.com>,  Jens Axboe
+ <axboe@kernel.dk>,  Pavel Begunkov <asml.silence@gmail.com>,  David Ahern
+ <dsahern@kernel.org>,  Neal Cardwell <ncardwell@google.com>,  Stefan
+ Hajnoczi <stefanha@redhat.com>,  Stefano Garzarella <sgarzare@redhat.com>,
+  "Michael S. Tsirkin" <mst@redhat.com>,  Jason Wang <jasowang@redhat.com>,
+  Xuan Zhuo <xuanzhuo@linux.alibaba.com>,  =?utf-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>,  Shuah Khan <shuah@kernel.org>,  sdf@fomichev.me,
+  dw@davidwei.uk,  Jamal Hadi Salim <jhs@mojatatu.com>,  Victor Nogueira
+ <victor@mojatatu.com>,  Pedro Tammela <pctammela@mojatatu.com>,  Samiullah
+ Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v10 3/9] net: devmem: TCP tx netlink api
+In-Reply-To: <20250423031117.907681-4-almasrymina@google.com> (Mina Almasry's
+	message of "Wed, 23 Apr 2025 03:11:10 +0000")
+Date: Wed, 23 Apr 2025 10:55:53 +0100
+Message-ID: <m2y0vrtd5i.fsf@gmail.com>
+References: <20250423031117.907681-1-almasrymina@google.com>
+	<20250423031117.907681-4-almasrymina@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- examples/zcrx.c | 57 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 39 insertions(+), 18 deletions(-)
+Mina Almasry <almasrymina@google.com> writes:
 
-diff --git a/examples/zcrx.c b/examples/zcrx.c
-index 3073c4c5..d31c5b36 100644
---- a/examples/zcrx.c
-+++ b/examples/zcrx.c
-@@ -35,6 +35,7 @@
- #include <sys/types.h>
- #include <sys/un.h>
- #include <sys/wait.h>
-+#include <linux/mman.h>
- 
- #include "liburing.h"
- #include "helpers.h"
-@@ -48,12 +49,17 @@ enum {
- 
- static long page_size;
- #define AREA_SIZE (8192 * page_size)
--#define SEND_SIZE (512 * 4096)
- 
- #define REQ_TYPE_SHIFT	3
- #define REQ_TYPE_MASK	((1UL << REQ_TYPE_SHIFT) - 1)
- 
--enum request_type {
-+enum {
-+	AREA_TYPE_NORMAL,
-+	AREA_TYPE_HUGE_PAGES,
-+	__AREA_TYPE_MAX,
-+};
-+
-+enum {
- 	REQ_TYPE_ACCEPT		= 1,
- 	REQ_TYPE_RX		= 2,
- };
-@@ -64,6 +70,7 @@ static int cfg_queue_id = -1;
- static bool cfg_verify_data = false;
- static size_t cfg_size = 0;
- static unsigned cfg_rq_alloc_mode = RQ_ALLOC_USER;
-+static unsigned cfg_area_type = AREA_TYPE_NORMAL;
- static struct sockaddr_in6 cfg_addr;
- 
- static void *area_ptr;
-@@ -84,8 +91,31 @@ static inline size_t get_refill_ring_size(unsigned int rq_entries)
- 	return T_ALIGN_UP(ring_size, page_size);
- }
- 
-+static void zcrx_populate_area(struct io_uring_zcrx_area_reg *area_reg)
-+{
-+	unsigned flags = MAP_PRIVATE | MAP_ANONYMOUS;
-+	unsigned prot = PROT_READ | PROT_WRITE;
-+
-+	if (cfg_area_type == AREA_TYPE_NORMAL) {
-+		area_ptr = mmap(NULL, AREA_SIZE, prot,
-+				flags, 0, 0);
-+	} else if (cfg_area_type == AREA_TYPE_HUGE_PAGES) {
-+		area_ptr = mmap(NULL, AREA_SIZE, prot,
-+				flags | MAP_HUGETLB | MAP_HUGE_2MB, -1, 0);
-+	}
-+
-+	if (area_ptr == MAP_FAILED)
-+		t_error(1, 0, "mmap(): area allocation failed");
-+
-+	memset(area_reg, 0, sizeof(*area_reg));
-+	area_reg->addr = (__u64)(unsigned long)area_ptr;
-+	area_reg->len = AREA_SIZE;
-+	area_reg->flags = 0;
-+}
-+
- static void setup_zcrx(struct io_uring *ring)
- {
-+	struct io_uring_zcrx_area_reg area_reg;
- 	unsigned int ifindex;
- 	unsigned int rq_entries = 4096;
- 	unsigned rq_flags = 0;
-@@ -95,17 +125,7 @@ static void setup_zcrx(struct io_uring *ring)
- 	if (!ifindex)
- 		t_error(1, 0, "bad interface name: %s", cfg_ifname);
- 
--	area_ptr = mmap(NULL,
--			AREA_SIZE,
--			PROT_READ | PROT_WRITE,
--			MAP_ANONYMOUS | MAP_PRIVATE,
--			0,
--			0);
--	if (area_ptr == MAP_FAILED)
--		t_error(1, 0, "mmap(): zero copy area");
--
- 	ring_size = get_refill_ring_size(rq_entries);
--
- 	ring_ptr = NULL;
- 	if (cfg_rq_alloc_mode == RQ_ALLOC_USER) {
- 		ring_ptr = mmap(NULL, ring_size,
-@@ -123,11 +143,7 @@ static void setup_zcrx(struct io_uring *ring)
- 		.flags = rq_flags,
- 	};
- 
--	struct io_uring_zcrx_area_reg area_reg = {
--		.addr = (__u64)(unsigned long)area_ptr,
--		.len = AREA_SIZE,
--		.flags = 0,
--	};
-+	zcrx_populate_area(&area_reg);
- 
- 	struct io_uring_zcrx_ifq_reg reg = {
- 		.if_idx = ifindex,
-@@ -314,7 +330,7 @@ static void parse_opts(int argc, char **argv)
- 	if (argc <= 1)
- 		usage(argv[0]);
- 
--	while ((c = getopt(argc, argv, "vp:i:q:s:r:")) != -1) {
-+	while ((c = getopt(argc, argv, "vp:i:q:s:r:A:")) != -1) {
- 		switch (c) {
- 		case 'p':
- 			cfg_port = strtoul(optarg, NULL, 0);
-@@ -336,6 +352,11 @@ static void parse_opts(int argc, char **argv)
- 			if (cfg_rq_alloc_mode >= __RQ_ALLOC_MAX)
- 				t_error(1, 0, "invalid RQ allocation mode");
- 			break;
-+		case 'A':
-+			cfg_area_type = strtoul(optarg, NULL, 0);
-+			if (cfg_area_type >= __AREA_TYPE_MAX)
-+				t_error(1, 0, "Invalid area type");
-+			break;
- 		}
- 	}
- 
--- 
-2.48.1
+> From: Stanislav Fomichev <sdf@fomichev.me>
+>
+> Add bind-tx netlink call to attach dmabuf for TX; queue is not
+> required, only ifindex and dmabuf fd for attachment.
+>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+>
+> ---
+>
+> v3:
+> - Fix ynl-regen.sh error (Simon).
+>
+> ---
+>  Documentation/netlink/specs/netdev.yaml | 12 ++++++++++++
+>  include/uapi/linux/netdev.h             |  1 +
+>  net/core/netdev-genl-gen.c              | 13 +++++++++++++
+>  net/core/netdev-genl-gen.h              |  1 +
+>  net/core/netdev-genl.c                  |  6 ++++++
+>  tools/include/uapi/linux/netdev.h       |  1 +
+>  6 files changed, 34 insertions(+)
+>
+> diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
+> index f5e0750ab71db..c0ef6d0d77865 100644
+> --- a/Documentation/netlink/specs/netdev.yaml
+> +++ b/Documentation/netlink/specs/netdev.yaml
+> @@ -743,6 +743,18 @@ operations:
+>              - defer-hard-irqs
+>              - gro-flush-timeout
+>              - irq-suspend-timeout
+> +    -
+> +      name: bind-tx
+> +      doc: Bind dmabuf to netdev for TX
 
+nit: maybe add "for RX" to the bind-rx doc.
+
+> +      attribute-set: dmabuf
+
+The bind-rx op has "flags: [ admin-perm ]", should bind-tx also?
+
+> +      do:
+> +        request:
+> +          attributes:
+> +            - ifindex
+> +            - fd
+> +        reply:
+> +          attributes:
+> +            - id
 

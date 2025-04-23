@@ -1,201 +1,168 @@
-Return-Path: <io-uring+bounces-7673-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7678-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FACA99504
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 18:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD4CA99756
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 19:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C1A1881904
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 16:23:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A06A1B65A83
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 18:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4681527F745;
-	Wed, 23 Apr 2025 16:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C1828D85D;
+	Wed, 23 Apr 2025 17:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LVrjJUUu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HACIZgpw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5C554640
-	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 16:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302EE28CF77
+	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 17:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745425398; cv=none; b=eiDBMpQQLEW57LHIk1QPTpQBYLHprKqC/kW6qFp0gnII9nt5+TG2aUVjMvQrRH+Pap2fztW49kEQJRJM0DpZYT6nQWvSju4+o0nLlxQ68GXrbkdYLSZyrv29szqhZVQOpR4rX6i7JHrLyHZo0o9yiuTZEm150+UXSq7Kad5Ek5Q=
+	t=1745431174; cv=none; b=OBTMT7LnGAXTJgYJ0dpLfHbHJCneZhvLSYOT7tPqsXRVxVNH1lIoD66+igfm4Ae+Y8xHjiWO7J6Cu4GJuS7j8yDH36diyg+gz+9bwgWCsfgXdrAq5bzXr/4BvmtnIvhky5nN1i5CnLS36sI7T3cKxzSQe8Ys4O8UNlZvSN+4y9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745425398; c=relaxed/simple;
-	bh=shKmVGgvfgHgWNRKSnZX1dkD3RfPimNOXfffdFYgLjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MSzh2wKFblYSAxIQBv14HqezZBRYwvfnGhEF4JwTFYPFefyxqsEO1sPu00UPX2pF6+HIy1DEHnyzgJSCCnVFz9+cSAvxhFDt/s3UI514FXIVPUA3yvSpsqNAP76nhSTR0c9vgHXEKhpusmQGz0zjW9SrWABO50vwvc/rTkR1xpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LVrjJUUu; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8616987c261so2959239f.3
-        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 09:23:14 -0700 (PDT)
+	s=arc-20240116; t=1745431174; c=relaxed/simple;
+	bh=T2TBlvkxpqSt4Yg66wrWZfHI9nHaKVofCMCsYRliPm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AEt2H5TxMWj+1zAa9apPs5H+/bONR7t8gfUc1CI7/jZ7ZhMUiDVi6NWPzZtTInetwvNOYFDJAU2x6/OvI0e767b2ADhgZ7NhBV4H+4arNrKw9ANMPf0PZieeBfSnnIcXNjZBKZYOB4LBmgGFmpe0hNNwEHui57Hu+mF61JuxuPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HACIZgpw; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2263428c8baso16335ad.1
+        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 10:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745425394; x=1746030194; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9WgwtqZXRJEQM3pZXQxpD7hzXVzbdAqM+KQzabDh7EY=;
-        b=LVrjJUUuqXwuml3zowXO4tjw603keuvkMjClgwmQW0tCev0d2POf9jz54S0mslLDSw
-         wB2087rREdO+GW3K8KW4AcMvsCCTlxxhJmJXEASAz/r5jgEXezFaeVjS797lsuF8ZpCt
-         422wIUW2aPPB3XJzdN6+5cukC/gp48idsfwP4pemQBq4EFmUYSCaFsQCMtU/vwfZOgkT
-         EIJwVtLYoY775W7zDVkvB/x8b5kCo3E9PukE+5/fj8RkHe2uN0UPKH/W/1uV76+RYdjM
-         BW7u734CzzOjlqEvFt5qriH9oQNHW3tdgNBqHcXt0tX87ZLkrArkAnXv8Kzd9mBkYSkl
-         yuPA==
+        d=google.com; s=20230601; t=1745431171; x=1746035971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+8ET6hBVRzBDqshUdhbgCvSUTaazcby/sOi3F1Bc3pI=;
+        b=HACIZgpw4Xflv3W6XmdPwNuTYxQ8zATeYzoR01w5U1QhvU797QxfB3VWNBYsoEXN0D
+         r1sBI0OEbn075eeaSweSTK9Kt/MJ+oPdDAesZPl/+gwjrSyjiKHi/louVdIOC2rBhz0F
+         gfHVMBUSPw9v6u9oUVGZYXOL2Hsolk65Haz4RZ3eyh8VtpyVn4oN+idH/iRyUan57kOv
+         VJ6+rf3ozumb3R4FPyShUVTDwoFxVdmAp+3zSh7bj83RiPJA3ghFhOAXou/grUCVcWQN
+         ED6+2Mxhsurs/2rbbxTEY/C3kPb4RP2/y6TjS8R445L88/BoxlCYyj8cauarXMlwAt0F
+         s43Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745425394; x=1746030194;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WgwtqZXRJEQM3pZXQxpD7hzXVzbdAqM+KQzabDh7EY=;
-        b=hxdSTSifmEnxAtmhLBfrVeRZhWoWZ4gPxQo79yzIpl0/efSb9a2Rm4FDP8csE/njom
-         BWkkjHvARJYt9oLexknmvrNeHEabumWMS4PSKVY4qCZnKsHFOKhrOOKXzUTA1J2iZS7k
-         MzMKpwkM71bRqJmgi33/FzN3OaP6JkfOdjiiH+xv0DLmeLkLx2hmYZxov2iLUkn4zZXO
-         gKpq/viIOrc1PRWhe+zIUsyPTNcMuKVz560SHI8tEaSWBCg1Vbm9DMzqzrLjM3jvM0Rh
-         kr7FlaDE+hF+mC/OBHBN0p4z47tJCTL2mTpTtBTfTaTOkCUMzv1to/nMwm98dC4PxdX1
-         zX7w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4WtGu79K6JtoU8ml6MwpEX1ofLYSTMHElx//mVLSK6cTMooNmYWuqcaNNN+mpiOagAa2Mat+LWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxheB8/V0LeqqLLOZJmgvdgMhYtOWhaycOsGXbB8auH0ipIZJdf
-	vWfbw6OeHjFR9LAMS8Qo8YJOjwnBVdXVkxyhOULnjfdTGI4Wz9HAC7u/GOknXxI=
-X-Gm-Gg: ASbGncuTECUsoX6LjPUoCoL/8bEhEIqaATJoQL5NLAQnIGpDMD56nBGZ+dFeonLf9N+
-	6mOG/h86fYJS1ZizPLIy5WO1MS5Nrn/3aRhIzKoLjKjfFGAS5xbLqLb1fKYVBrXRn5/z4yh4hIw
-	QGw4zwc8Nda/HF/8QfDz+E6BE9fH1/kIVVx3dZvXF0xrVy6v7fGFedICfUkBvL0T7PfKfnJWMUT
-	KlFFdEihtRMMRr/Jcg/ZJUPX1EEWV9t8XJ01jdX5A0Q08jk/KdxlZ20cHyW7TH+j2UmHaUWG+K8
-	kJEJqRH9B2HbZSjWLyokyDWHg5cjxojefdC1
-X-Google-Smtp-Source: AGHT+IF57jCcvc6iss1E50MTJGmLwy68aLSyNWDrvGVMv0IcOE+2tTptvX1cLdDwGLpgUH9kkYlOYg==
-X-Received: by 2002:a5d:9f54:0:b0:862:fe54:df4e with SMTP id ca18e2360f4ac-862ff49043dmr1599069739f.7.1745425393949;
-        Wed, 23 Apr 2025 09:23:13 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86444801669sm37130139f.29.2025.04.23.09.23.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 09:23:13 -0700 (PDT)
-Message-ID: <4ec65451-d183-453e-a873-97b4abb4f884@kernel.dk>
-Date: Wed, 23 Apr 2025 10:23:12 -0600
+        d=1e100.net; s=20230601; t=1745431171; x=1746035971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+8ET6hBVRzBDqshUdhbgCvSUTaazcby/sOi3F1Bc3pI=;
+        b=Gw/ifhwszZu7wKRUh+/aRnKDOt6KwrXGf9S9M+wdjmXrebEtglsTMt3erBaYNrf7SI
+         +Kex/YJGb0f/h+wc+ddEFvAPtA6+6ovltWJPITqQBHic8qF/BR56eESIGv1FuEfyDkXj
+         nafUJ90cppnu0XuGaMq63/hGSzxQbJ+7fiRRs4o2w6LbDLElCsEpuFk8G7knmU3weshc
+         WZkik0lWrkrYIOlD6PjwX2y1IXp+nYigR5E8rF5+UmaAuLZndu+xxu1MmlOcdldhFkES
+         Nur4IhTwUVO6JhjUmjcgsk83eGhdauH2xV8pgg+H/Wf5CcBEpOU4sBjiCi/hHcfW28XS
+         vBFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhRKgbDjpUGpTq/nIk5EnTb8KpCrS7cIifC2/Er91NXRh80kDNPW+9+rmet+BaewvBjUX9WOqI/g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB3dj0bEcFZpSxXOD9tQoYQ7rzehhSUHzCYbMLLs0CqoSOva2b
+	SEXsKE7aflkLLxX8tCaQeUtUfeCf/en1sqh0oJ4Ix0/H2TdH+fy01cvdebZoVM+h1ft0BaucFNt
+	v5sJa882mM+p72BH0IjbajhlF3Rn8Ew+fuZi0
+X-Gm-Gg: ASbGncv55YubfTz/D/Xv+CvSN07LPibLoOaqlA2f6ea9jagWwCWwG6OR8HLdihrpZdo
+	GEcRqxTeGjVD1JtmGuYm3DxhefPYw5l9AANtADS3O9SOCyBrO58oC8zRjYzgO6TqIbGbb+6sUnS
+	rWk6+M60hN3E0jyWi+l65AoMLYqTUQfTyElf9eKhZp/btA4mvLw5br
+X-Google-Smtp-Source: AGHT+IHvMK0SV6VtztVj+YoeYQ5/i4hvqsncQiTOPb2g+BToFdj7TZ78J3grFAhStRy75jc6hEr26BgE749DHVAlZwc=
+X-Received: by 2002:a17:902:ce08:b0:21f:3f5c:d24c with SMTP id
+ d9443c01a7336-22db2089754mr282595ad.0.1745431171080; Wed, 23 Apr 2025
+ 10:59:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
- scenarios
-To: Pavel Begunkov <asml.silence@gmail.com>, =?UTF-8?B?5aec5pm65Lyf?=
- <qq282012236@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- akpm@linux-foundation.org, peterx@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com>
- <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
- <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
- <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
- <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
- <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
- <52d55891-36e3-43e7-9726-a2cd113f5327@kernel.dk>
- <00c7d434-d923-4b91-8ad0-5f3c8e0c6465@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <00c7d434-d923-4b91-8ad0-5f3c8e0c6465@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250423031117.907681-1-almasrymina@google.com>
+ <20250423031117.907681-4-almasrymina@google.com> <m2y0vrtd5i.fsf@gmail.com>
+In-Reply-To: <m2y0vrtd5i.fsf@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 23 Apr 2025 10:59:17 -0700
+X-Gm-Features: ATxdqUHq-n2Ogx9j37-VJ8KU3c5QgjU5O-8PAbfORQ_YtioEYEuiwEUpYsuISUQ
+Message-ID: <CAHS8izNUOO-X0WHFTMd3_yEjCDu4sPYADE1oDEtWTYFNNMB5wQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 3/9] net: devmem: TCP tx netlink api
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/23/25 10:17 AM, Pavel Begunkov wrote:
-> On 4/23/25 16:55, Jens Axboe wrote:
->> Something like this, perhaps - it'll ensure that io-wq workers get a
->> chance to flush out pending work, which should prevent the looping. I've
->> attached a basic test case. It'll issue a write that will fault, and
->> then try and cancel that as a way to trigger the TIF_NOTIFY_SIGNAL based
->> looping.
->>
->> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
->> index d80f94346199..e18926dbf20a 100644
->> --- a/fs/userfaultfd.c
->> +++ b/fs/userfaultfd.c
->> @@ -32,6 +32,7 @@
->>   #include <linux/swapops.h>
->>   #include <linux/miscdevice.h>
->>   #include <linux/uio.h>
->> +#include <linux/io_uring.h>
->>     static int sysctl_unprivileged_userfaultfd __read_mostly;
->>   @@ -376,6 +377,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>        */
->>       if (current->flags & (PF_EXITING|PF_DUMPCORE))
->>           goto out;
->> +    else if (current->flags & PF_IO_WORKER)
->> +        io_worker_fault();
->>         assert_fault_locked(vmf);
->>   diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
->> index 85fe4e6b275c..d93dd7402a28 100644
->> --- a/include/linux/io_uring.h
->> +++ b/include/linux/io_uring.h
->> @@ -28,6 +28,7 @@ static inline void io_uring_free(struct task_struct *tsk)
->>       if (tsk->io_uring)
->>           __io_uring_free(tsk);
->>   }
->> +void io_worker_fault(void);
->>   #else
->>   static inline void io_uring_task_cancel(void)
->>   {
->> @@ -46,6 +47,9 @@ static inline bool io_is_uring_fops(struct file *file)
->>   {
->>       return false;
->>   }
->> +static inline void io_worker_fault(void)
->> +{
->> +}
->>   #endif
->>     #endif
->> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
->> index d52069b1177b..f74bea028ec7 100644
->> --- a/io_uring/io-wq.c
->> +++ b/io_uring/io-wq.c
->> @@ -1438,3 +1438,13 @@ static __init int io_wq_init(void)
->>       return 0;
->>   }
->>   subsys_initcall(io_wq_init);
->> +
->> +void io_worker_fault(void)
->> +{
->> +    if (test_thread_flag(TIF_NOTIFY_SIGNAL))
->> +        clear_notify_signal();
->> +    if (test_thread_flag(TIF_NOTIFY_RESUME))
->> +        resume_user_mode_work(NULL);
->> +    if (task_work_pending(current))
->> +        task_work_run();
-> 
-> Looking at the stacktrace, that sounds dangerous
-> 
-> iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_worker
-> iou-wrk-44588  [kernel.kallsyms]  [k] io_worker_handle_work
-> iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_submit_work
-> iou-wrk-44588  [kernel.kallsyms]  [k] io_issue_sqe
-> iou-wrk-44588  [kernel.kallsyms]  [k] io_write
-> iou-wrk-44588  [kernel.kallsyms]  [k] blkdev_write_iter
-> iou-wrk-44588  [kernel.kallsyms]  [k] iomap_file_buffered_write
-> iou-wrk-44588  [kernel.kallsyms]  [k] iomap_write_iter
-> iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_iov_iter_readable
-> iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_readable
-> iou-wrk-44588  [kernel.kallsyms]  [k] asm_exc_page_fault
-> iou-wrk-44588  [kernel.kallsyms]  [k] exc_page_fault
-> iou-wrk-44588  [kernel.kallsyms]  [k] do_user_addr_fault
-> iou-wrk-44588  [kernel.kallsyms]  [k] handle_mm_fault
-> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_fault
-> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_no_page
-> iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_handle_userfault
-> iou-wrk-44588  [kernel.kallsyms]  [k] handle_userfault
-> 
-> It might be holding a good bunch of locks, and then it's trapped
-> in a page fault handler. Do normal / non-PF_IO_WORKER tasks run
-> task_work from handle_userfault?
+On Wed, Apr 23, 2025 at 5:11=E2=80=AFAM Donald Hunter <donald.hunter@gmail.=
+com> wrote:
+>
+> Mina Almasry <almasrymina@google.com> writes:
+>
+> > From: Stanislav Fomichev <sdf@fomichev.me>
+> >
+> > Add bind-tx netlink call to attach dmabuf for TX; queue is not
+> > required, only ifindex and dmabuf fd for attachment.
+> >
+> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> >
+> > ---
+> >
+> > v3:
+> > - Fix ynl-regen.sh error (Simon).
+> >
+> > ---
+> >  Documentation/netlink/specs/netdev.yaml | 12 ++++++++++++
+> >  include/uapi/linux/netdev.h             |  1 +
+> >  net/core/netdev-genl-gen.c              | 13 +++++++++++++
+> >  net/core/netdev-genl-gen.h              |  1 +
+> >  net/core/netdev-genl.c                  |  6 ++++++
+> >  tools/include/uapi/linux/netdev.h       |  1 +
+> >  6 files changed, 34 insertions(+)
+> >
+> > diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/ne=
+tlink/specs/netdev.yaml
+> > index f5e0750ab71db..c0ef6d0d77865 100644
+> > --- a/Documentation/netlink/specs/netdev.yaml
+> > +++ b/Documentation/netlink/specs/netdev.yaml
+> > @@ -743,6 +743,18 @@ operations:
+> >              - defer-hard-irqs
+> >              - gro-flush-timeout
+> >              - irq-suspend-timeout
+> > +    -
+> > +      name: bind-tx
+> > +      doc: Bind dmabuf to netdev for TX
+>
+> nit: maybe add "for RX" to the bind-rx doc.
+>
 
-Yeah, it's really just a test patch. Ideally we want this to do the
-usual thing, which is fall back and let it retry, where we can handle
-all of this too.
+Thanks, will pull this with the next iteration.
 
--- 
-Jens Axboe
+> > +      attribute-set: dmabuf
+>
+> The bind-rx op has "flags: [ admin-perm ]", should bind-tx also?
+>
+
+The omission of admin-perm for tx is intentional.
+
+Binding a dmabuf to an rx queue should and is a privileged operation,
+because basically the application doing the binding is taking
+ownership of this rx queue. For TX, no such queue ownership is being
+taken. The TX binding just gives the netdevice access to the dmabuf
+dma-addresses so the netdevice can send from there. It's very similar
+to a normal dma-map with normal memory. There is no need for privilege
+checks.
+
+--=20
+Thanks,
+Mina
 

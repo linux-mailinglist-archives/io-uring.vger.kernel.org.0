@@ -1,333 +1,212 @@
-Return-Path: <io-uring+bounces-7656-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7657-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906D3A97F12
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 08:22:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DE8A98063
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 09:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA8117A7B6
-	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 06:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5DA3B7FC3
+	for <lists+io-uring@lfdr.de>; Wed, 23 Apr 2025 07:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF42266B54;
-	Wed, 23 Apr 2025 06:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E8267B16;
+	Wed, 23 Apr 2025 07:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCDlIzZR"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mesS3JxQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9631F4CAB;
-	Wed, 23 Apr 2025 06:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B841DE4E3
+	for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 07:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745389366; cv=none; b=sE4kRSPyzKUzg5hzrrvnXYJzqN5cFU71vSpjwlMRUq+eXTJK5X1I3Zf2FuLqMpCyUzTZfvsHr9cnTGE7fvIO3GwSyAtsU6qkiGorNarig0beg/rKGNLGKL0iNZ6qCYGyPzyxOuh92qFoYZ2a9IgcxA7vNpTEWj8jOrRYIhlSzlo=
+	t=1745392542; cv=none; b=M25y7ev7CmUzxCY7S9Gyl/OKGAEDo7f47Epr6OeJV2Bjpd9KD/P+g7AwItMw+1E8QJ7Gu/wJTHCeL7F6j0mVSImPeHPH2Uu2W36H1M4DwF5KabOYiaODvI+oTbu16I/fd69aEe2gZfmE/6bhoFUsr4sUMWfOTY20BTJKlbRtNak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745389366; c=relaxed/simple;
-	bh=2NaBC53CM93y+f0uWzLpQCvSdiBcf01JUdUYGMwIE8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hzDQd1ctMTp5+EJh+eYQ7j6Ebzz5aDBm/rqHSl3e7hmOerBiT8NJ6JLeY8M8VA72meAHhcQE8tuF6ZFZq72kZlVlsHKp5R/CPeCyBskBR+M2prtfFFBzJsJpeieDvJ8i3M07jBbLZo2oM/7uXJ2LW/cmj12ZJeTTI2af7jLFUg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCDlIzZR; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2c769da02b0so5239064fac.3;
-        Tue, 22 Apr 2025 23:22:44 -0700 (PDT)
+	s=arc-20240116; t=1745392542; c=relaxed/simple;
+	bh=uI2wFD+Hm7/nLz67jPzMu1Ieo6hjbAhlm/gJ/rJb3Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=W+rZV/+xQOvG6Pkr3BmpHXYz0uLkcFb2CWMPiY5SJdULJE/CdtsE6tUZTF37nkPj6tP8MBPAy18s+Ntm4NLNCecyCnzZrIOU2839fphINxOrU3xggRwP3A6bY3BGtC5cQl5/Cr8oXfphkGE2pruqRznakURRFwYno7OSKdT9Gck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mesS3JxQ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso27818575e9.3
+        for <io-uring@vger.kernel.org>; Wed, 23 Apr 2025 00:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745389364; x=1745994164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sVcK8cLkuGa6/rpVR1IXkRLxN4IwCjNUW/jXWmtnhB0=;
-        b=lCDlIzZRIMSZSkrCcAxf0LLPm1JofGxDTqxz1aQhdE4Xn0mKwSSyQX9InMOFHdIuzU
-         MMvXng8A1DdHwHgDb2Wji9qBhNssuBc1t4M12U7btJeKr4txELDMWISsvF4qGmSAepy4
-         euw0SYO3Zy0XPO5HbWfAHTDQ2LUerdtJh8eEuUhHGh/Oxvd5cllTCx3ZJjmCHnAKIo8C
-         cm4E+lWavxZzQ2scZGdMEktOiIJii0CC8OhxkkA0dEGQM6mvXCn6slOYHoMNz6s7KCZ9
-         qWgUm8fJBvbcwE71Vu4Z4ZMFD2LL1aaGt8czUhKhAnUyxn8kBAnBVXNHQxKKb0mXLNSU
-         5JYQ==
+        d=linaro.org; s=google; t=1745392539; x=1745997339; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sh+uOd8eGU5o2ma6hdsKkM63VhkhvPlITdHi7SkwgXs=;
+        b=mesS3JxQSSrP62vVJ7eATHl9pQjWE4Lwt7aqBOaCXBqGWTuLbu/xOS3khr+jCsFdxq
+         ugwlbOCvEFyr01w/ePAtSamQY0IQ9dxWJwcqS04piJcldabkXWPT34WHrS/njo2onNZG
+         PqE3tuSnQr4q45fRDDzQ1lxZ+IKd6dc4KGZ7kY6P3IXrQ5PYZvTZaKXLR0wa9SCqDKq/
+         +JjRVRiRaUNSt2GomrPPn7nWQPq7TA1VK/cpXCkvTC5fnA//CvrrAy53BqSMNzik1Z+t
+         i4K5Ese/ESpTp728WxxFKyl9F16B1yaCOtRHoGfZyskItW0U6tFwkhKJfEm/ORH9ZHzo
+         QNyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745389364; x=1745994164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sVcK8cLkuGa6/rpVR1IXkRLxN4IwCjNUW/jXWmtnhB0=;
-        b=UFMemhAjRgB/4476lbDtSKAwFZQGkNICH6cjp2ksdOU5qofRCEnJim2yRmQkjCbNeG
-         mDPd04HS4dF+ohk5FDjjk9ErzYSxKV2H70Bnv7NeVhmWI/cesxBnAv0WXAxzNifPagB4
-         eDbjLGcL5GhFhRRuTvLDPfq5Sz+9+GDDWqXsWRg23dh2x01GbzhL49ZcCnxKB8dd8DsU
-         B1lJNpMCncholeS75tQZXusU4LLOsGLbfppbPl2e8yUlAfdD4zFV3+X0QTXLUdoZJfYr
-         0NuX+/cxXbd9tYYdNuUSMG6/20nxE92aClMIiOfHoN7L1zOE/I4YMIi4nHgr9P6zmWaC
-         dKYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqau2jAs6IQfLk5nNdWz10PwHOYDq5BXGKdut7LXkLHOh8c2c0uZXJUZkFuokQ5B1CZIvCCNSKbzNSL19XgQ==@vger.kernel.org, AJvYcCVQitnr2c0NB9UTlxUdqD5mXYwJTv1QLf+P7kil4Ol9pvKUWchvLIM0M4gXWC4UW7e2Q/SdNQcAnA==@vger.kernel.org, AJvYcCWTgevcu7kn6QNpTsn/RwKvVPULvFhP7B5tmJd4IQZQmSg7/ebeMbVT61TTh+IMGTVk7MQa/ZMTyC1f84zu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO34tOVRztusL6oBHeUnGMEJo46HukUNrGgAcyqoZEl/WCMM7z
-	+fQPs6nxzD4FzB4LcuJLFjfjLIy2aP2lFuj3FR+9XR05mKtXcZp5UnWmlA5OkSqdlv6oCNZiaoK
-	bBK/YVh4qstAX7GSDTEDk54u0j9I=
-X-Gm-Gg: ASbGncsaYZryBqCDYB2ZXLIEmP3qCkiUe2FPU9v06zvfS/jE9Pu+zvSRMYYkJ4samIJ
-	lrvFUzoNH+EwSQEIt0zUTxgK+25XnpyF1xZtoIpwJ2rDxe/Q1p584BNhfVDzX9qmPmqUWYAPGTF
-	SS1vimFckx4FBbAOOCnjr3Kg==
-X-Google-Smtp-Source: AGHT+IEf3Tx42zp6XYx0ZAYrVGRlkUyP8+/u5lxgWIosIHy0ODAGStT4FJNSvcHbhiDc4RgpkRie1Dcg/4szHJ7p9Eg=
-X-Received: by 2002:a05:6870:eca2:b0:29e:2594:81e with SMTP id
- 586e51a60fabf-2d526a2e955mr10065315fac.13.1745389363812; Tue, 22 Apr 2025
- 23:22:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745392539; x=1745997339;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sh+uOd8eGU5o2ma6hdsKkM63VhkhvPlITdHi7SkwgXs=;
+        b=NKGL3QSwddAVFgIXHA4sad6YI7glmxvZ/hqY0QeYqn70eRTaOxI31wFijfQNCdBwC9
+         D1TBI5rUN/iViE+DU3/IYmb0zhf3SX0diDaRO5GW6lnWaR09yyQYIW9dWlqs/WKqI3OL
+         dxYMe9NdOFNYBbo4OKZM8NpE9es4W/7Fcy8PgTUoRk+cvDdUWoNbgRRLOh0613nLpjDt
+         B+AR8Q6i4cq9uJnZKcy5/d0YWnEEpeODZdM9x707QnmBD/9H1NdIrWxYbGPOMLh3apbf
+         4umjc6n5qy4UD7QoRGU8x/W4RK8aW+cSrURWE3h6EtDBSOqsjs8vt581bzw5Kculs2O9
+         6PaQ==
+X-Gm-Message-State: AOJu0YzvFCaK2/RGegTK9xhNzYds40ZlVwsIi6ip+eW2OqZ4TTnznytr
+	GgZX7S3UJHYelBGQjSY3i+4YsBrsIMbA4C7WZkImyQu741pbp7nJUH46pVNmfEg=
+X-Gm-Gg: ASbGncucPs6tgk6YlNXdqW3phYmZ2B0Ya+UsBOKZn/NpZJ0B05gQTiY1+WooMnYXDDW
+	KPNTuidaXuldo3KkR+4SWwgG2j9Kh5LvXgWSNoXrzMb2VTWMBHB+pVYguciTU4uZrB6GaEjz7Kt
+	rkrkdbEbmkAO9lmC7iW/j14LijYgLz9Ep8EZHdsyukgI7MnvKQpL00tR/VGJNTBjBhf/hE61juQ
+	oR7GBmSdTJHbldgyniV9YPKCfexIy/N1Fn3jbZRbJYwTH/EPT9F8YTc/RxkFcm615RCDlSYkeAf
+	qqJ9KIclgDCM5BLlUMeqML89a0luMQUMdTTsguiXegeOmg==
+X-Google-Smtp-Source: AGHT+IEQxBQ5OB7PWPdmnaqMi44eqdBJvWkRTL+a+rC3OOnK0jkaH3wQeHe6rhSrEMtt/qE7EIkgPA==
+X-Received: by 2002:a05:600c:1383:b0:43d:585f:ebf5 with SMTP id 5b1f17b1804b1-4406ab7a7dfmr153659965e9.1.1745392538631;
+        Wed, 23 Apr 2025 00:15:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092d22f69sm14641505e9.10.2025.04.23.00.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 00:15:38 -0700 (PDT)
+Date: Wed, 23 Apr 2025 10:15:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Subject: [bug report] io_uring/zcrx: add support for multiple ifqs
+Message-ID: <aAiTlrx6uXuyoCkf@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com> <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
- <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
- <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk> <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
- <CANHzP_u3zN2a_t2O+BLwgV=KJZaXtANwXVq6VVD26TvF2hFL8Q@mail.gmail.com>
-In-Reply-To: <CANHzP_u3zN2a_t2O+BLwgV=KJZaXtANwXVq6VVD26TvF2hFL8Q@mail.gmail.com>
-From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Date: Wed, 23 Apr 2025 14:22:32 +0800
-X-Gm-Features: ATxdqUGJyNAYeV6aJ6me5GIU6PLK9S3z-8u-6Awas1fIjW75tEfnK1ENgFfPhF0
-Message-ID: <CANHzP_vsSQe2dRniHUFYCo6dkDA5UiGkkY+oXadebOoNkL0KFg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault scenarios
-To: Jens Axboe <axboe@kernel.dk>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Apr 23, 2025 at 11:11=E2=80=AFAM =E5=A7=9C=E6=99=BA=E4=BC=9F <qq282=
-012236@gmail.com> wrote:
->
-> Sorry, I may have misunderstood. I thought your test case
-> was working correctly. In io_wq_worker_running() it will return
-> if in io worker context, that is different from common progress
-> context.I hope the graph above can help you understand.
->
-> On Wed, Apr 23, 2025 at 10:49=E2=80=AFAM =E5=A7=9C=E6=99=BA=E4=BC=9F <qq2=
-82012236@gmail.com> wrote:
-> >
-> > On Wed, Apr 23, 2025 at 1:33=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wr=
-ote:
-> > >
-> > > On 4/22/25 11:04 AM, ??? wrote:
-> > > > On Wed, Apr 23, 2025 at 12:32?AM Jens Axboe <axboe@kernel.dk> wrote=
-:
-> > > >>
-> > > >> On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
-> > > >>> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
-> > > >>> index d4fb2940e435..8567a9c819db 100644
-> > > >>> --- a/io_uring/io-wq.h
-> > > >>> +++ b/io_uring/io-wq.h
-> > > >>> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq=
- *wq, work_cancel_fn *cancel,
-> > > >>>                                       void *data, bool cancel_all=
-);
-> > > >>>
-> > > >>>  #if defined(CONFIG_IO_WQ)
-> > > >>> -extern void io_wq_worker_sleeping(struct task_struct *);
-> > > >>> -extern void io_wq_worker_running(struct task_struct *);
-> > > >>> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
-> > > >>> +extern void io_wq_worker_running(struct task_struct *tsk);
-> > > >>> +extern void set_userfault_flag_for_ioworker(void);
-> > > >>> +extern void clear_userfault_flag_for_ioworker(void);
-> > > >>>  #else
-> > > >>>  static inline void io_wq_worker_sleeping(struct task_struct *tsk=
-)
-> > > >>>  {
-> > > >>> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struc=
-t task_struct *tsk)
-> > > >>>  static inline void io_wq_worker_running(struct task_struct *tsk)
-> > > >>>  {
-> > > >>>  }
-> > > >>> +static inline void set_userfault_flag_for_ioworker(void)
-> > > >>> +{
-> > > >>> +}
-> > > >>> +static inline void clear_userfault_flag_for_ioworker(void)
-> > > >>> +{
-> > > >>> +}
-> > > >>>  #endif
-> > > >>>
-> > > >>>  static inline bool io_wq_current_is_worker(void)
-> > > >>
-> > > >> This should go in include/linux/io_uring.h and then userfaultfd wo=
-uld
-> > > >> not have to include io_uring private headers.
-> > > >>
-> > > >> But that's beside the point, like I said we still need to get to t=
-he
-> > > >> bottom of what is going on here first, rather than try and paper a=
-round
-> > > >> it. So please don't post more versions of this before we have that
-> > > >> understanding.
-> > > >>
-> > > >> See previous emails on 6.8 and other kernel versions.
-> > > >>
-> > > >> --
-> > > >> Jens Axboe
-> > > > The issue did not involve creating new worker processes. Instead, t=
-he
-> > > > existing IOU worker kernel threads (about a dozen) associated with =
-the VM
-> > > > process were fully utilizing CPU without writing data, caused by a =
-fault
-> > > > while reading user data pages in the fault_in_iov_iter_readable fun=
-ction
-> > > > when pulling user memory into kernel space.
-> > >
-> > > OK that makes more sense, I can certainly reproduce a loop in this pa=
-th:
-> > >
-> > > iou-wrk-726     729    36.910071:       9737 cycles:P:
-> > >         ffff800080456c44 handle_userfault+0x47c
-> > >         ffff800080381fc0 hugetlb_fault+0xb68
-> > >         ffff80008031fee4 handle_mm_fault+0x2fc
-> > >         ffff8000812ada6c do_page_fault+0x1e4
-> > >         ffff8000812ae024 do_translation_fault+0x9c
-> > >         ffff800080049a9c do_mem_abort+0x44
-> > >         ffff80008129bd78 el1_abort+0x38
-> > >         ffff80008129ceb4 el1h_64_sync_handler+0xd4
-> > >         ffff8000800112b4 el1h_64_sync+0x6c
-> > >         ffff80008030984c fault_in_readable+0x74
-> > >         ffff800080476f3c iomap_file_buffered_write+0x14c
-> > >         ffff8000809b1230 blkdev_write_iter+0x1a8
-> > >         ffff800080a1f378 io_write+0x188
-> > >         ffff800080a14f30 io_issue_sqe+0x68
-> > >         ffff800080a155d0 io_wq_submit_work+0xa8
-> > >         ffff800080a32afc io_worker_handle_work+0x1f4
-> > >         ffff800080a332b8 io_wq_worker+0x110
-> > >         ffff80008002dd38 ret_from_fork+0x10
-> > >
-> > > which seems to be expected, we'd continually try and fault in the
-> > > ranges, if the userfaultfd handler isn't filling them.
-> > >
-> > > I guess this is where I'm still confused, because I don't see how thi=
-s
-> > > is different from if you have a normal write(2) syscall doing the sam=
-e
-> > > thing - you'd get the same looping.
-> > >
-> > > ??
-> > >
-> > > > This issue occurs like during VM snapshot loading (which uses
-> > > > userfaultfd for on-demand memory loading), while the task in the gu=
-est is
-> > > > writing data to disk.
-> > > >
-> > > > Normally, the VM first triggers a user fault to fill the page table=
-.
-> > > > So in the IOU worker thread, the page tables are already filled,
-> > > > fault no chance happens when faulting in memory pages
-> > > > in fault_in_iov_iter_readable.
-> > > >
-> > > > I suspect that during snapshot loading, a memory access in the
-> > > > VM triggers an async page fault handled by the kernel thread,
-> > > > while the IOU worker's async kernel thread is also running.
-> > > > Maybe If the IOU worker's thread is scheduled first.
-> > > > I?m going to bed now.
-> > >
-> > > Ah ok, so what you're saying is that because we end up not sleeping
-> > > (because a signal is pending, it seems), then the fault will never ge=
-t
-> > > filled and hence progress not made? And the signal is pending because
-> > > someone tried to create a net worker, and this work is not getting
-> > > processed.
-> > >
-> > > --
-> > > Jens Axboe
-> >         handle_userfault() {
-> >           hugetlb_vma_lock_read();
-> >           _raw_spin_lock_irq() {
-> >             __pv_queued_spin_lock_slowpath();
-> >           }
-> >           vma_mmu_pagesize() {
-> >             hugetlb_vm_op_pagesize();
-> >           }
-> >           huge_pte_offset();
-> >           hugetlb_vma_unlock_read();
-> >           up_read();
-> >           __wake_up() {
-> >             _raw_spin_lock_irqsave() {
-> >               __pv_queued_spin_lock_slowpath();
-> >             }
-> >             __wake_up_common();
-> >             _raw_spin_unlock_irqrestore();
-> >           }
-> >           schedule() {
-> >             io_wq_worker_sleeping() {
-> >               io_wq_dec_running();
-> >             }
-> >             rcu_note_context_switch();
-> >             raw_spin_rq_lock_nested() {
-> >               _raw_spin_lock();
-> >             }
-> >             update_rq_clock();
-> >             pick_next_task() {
-> >               pick_next_task_fair() {
-> >                 update_curr() {
-> >                   update_curr_se();
-> >                   __calc_delta.constprop.0();
-> >                   update_min_vruntime();
-> >                 }
-> >                 check_cfs_rq_runtime();
-> >                 pick_next_entity() {
-> >                   pick_eevdf();
-> >                 }
-> >                 update_curr() {
-> >                   update_curr_se();
-> >                   __calc_delta.constprop.0();
-> >                   update_min_vruntime();
-> >                 }
-> >                 check_cfs_rq_runtime();
-> >                 pick_next_entity() {
-> >                   pick_eevdf();
-> >                 }
-> >                 update_curr() {
-> >                   update_curr_se();
-> >                   update_min_vruntime();
-> >                   cpuacct_charge();
-> >                   __cgroup_account_cputime() {
-> >                     cgroup_rstat_updated();
-> >                   }
-> >                 }
-> >                 check_cfs_rq_runtime();
-> >                 pick_next_entity() {
-> >                   pick_eevdf();
-> >                 }
-> >               }
-> >             }
-> >             raw_spin_rq_unlock();
-> >             io_wq_worker_running();
-> >           }
-> >           _raw_spin_lock_irq() {
-> >             __pv_queued_spin_lock_slowpath();
-> >           }
-> >           userfaultfd_ctx_put();
-> >         }
-> >       }
-> > The execution flow above is the one that kept faulting
-> > repeatedly in the IOU worker during the issue. The entire fault path,
-> > including this final userfault handling code you're seeing, would be
-> > triggered in an infinite loop. That's why I traced and found that the
-> > io_wq_worker_running() function returns early, causing the flow to
-> > differ from a normal user fault, where it should be sleeping.
-> >
-> > However, your call stack appears to behave normally,
-> > which makes me curious about what's different about execution flow.
-> > Would you be able to share your test case code so I can study it
-> > and try to reproduce the behavior on my side?
-Sorry, I may have misunderstood. I thought your test case
-was working correctly. In io_wq_worker_running() it will return
-if in io worker context, that is different from common progress
-context.I hope the graph above can help you understand.
+Hello Pavel Begunkov,
 
-Also, regarding your initial suggestion to move the function into
-include/linux/io_uring.h,I=E2=80=99m not sure that=E2=80=99s the best fit =
-=E2=80=94 the
-problematic context (io_wq_worker) and the function needing changes
- (io_wq_worker_running) are both heavily tied to the internals of io-wq.
-I=E2=80=99m wondering if doing something like #include "../../io_uring/io-w=
-q.h"
-as in kernel/sched/core.c:96 might actually be a better choice here?
+Commit 9c2a1c508442 ("io_uring/zcrx: add support for multiple ifqs")
+from Apr 20, 2025 (linux-next), leads to the following Smatch static
+checker warning:
 
-And I=E2=80=99d still really appreciate it if you could share your test cas=
-e code
- it would help a lot. Thanks!
+	io_uring/zcrx.c:457 io_register_zcrx_ifq()
+	error: uninitialized symbol 'id'.
+
+io_uring/zcrx.c
+    355 int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+    356                           struct io_uring_zcrx_ifq_reg __user *arg)
+    357 {
+    358         struct pp_memory_provider_params mp_param = {};
+    359         struct io_uring_zcrx_area_reg area;
+    360         struct io_uring_zcrx_ifq_reg reg;
+    361         struct io_uring_region_desc rd;
+    362         struct io_zcrx_ifq *ifq;
+    363         int ret;
+    364         u32 id;
+    365 
+    366         /*
+    367          * 1. Interface queue allocation.
+    368          * 2. It can observe data destined for sockets of other tasks.
+    369          */
+    370         if (!capable(CAP_NET_ADMIN))
+    371                 return -EPERM;
+    372 
+    373         /* mandatory io_uring features for zc rx */
+    374         if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
+    375               ctx->flags & IORING_SETUP_CQE32))
+    376                 return -EINVAL;
+    377         if (copy_from_user(&reg, arg, sizeof(reg)))
+    378                 return -EFAULT;
+    379         if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
+    380                 return -EFAULT;
+    381         if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)) ||
+    382             reg.__resv2 || reg.zcrx_id)
+    383                 return -EINVAL;
+    384         if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
+    385                 return -EINVAL;
+    386         if (reg.rq_entries > IO_RQ_MAX_ENTRIES) {
+    387                 if (!(ctx->flags & IORING_SETUP_CLAMP))
+    388                         return -EINVAL;
+    389                 reg.rq_entries = IO_RQ_MAX_ENTRIES;
+    390         }
+    391         reg.rq_entries = roundup_pow_of_two(reg.rq_entries);
+    392 
+    393         if (copy_from_user(&area, u64_to_user_ptr(reg.area_ptr), sizeof(area)))
+    394                 return -EFAULT;
+    395 
+    396         ifq = io_zcrx_ifq_alloc(ctx);
+    397         if (!ifq)
+    398                 return -ENOMEM;
+    399 
+    400         scoped_guard(mutex, &ctx->mmap_lock) {
+    401                 /* preallocate id */
+    402                 ret = xa_alloc(&ctx->zcrx_ctxs, &id, NULL, xa_limit_31b, GFP_KERNEL);
+    403                 if (ret)
+    404                         goto err;
+
+Potentially uninitialized on this path.  Presumably we don't need to
+erase id if alloc fails.
+
+    405         }
+    406 
+    407         ret = io_allocate_rbuf_ring(ifq, &reg, &rd, id);
+    408         if (ret)
+    409                 goto err;
+    410 
+    411         ret = io_zcrx_create_area(ifq, &ifq->area, &area);
+    412         if (ret)
+    413                 goto err;
+    414 
+    415         ifq->rq_entries = reg.rq_entries;
+    416 
+    417         ret = -ENODEV;
+    418         ifq->netdev = netdev_get_by_index(current->nsproxy->net_ns, reg.if_idx,
+    419                                           &ifq->netdev_tracker, GFP_KERNEL);
+    420         if (!ifq->netdev)
+    421                 goto err;
+    422 
+    423         ifq->dev = ifq->netdev->dev.parent;
+    424         ret = -EOPNOTSUPP;
+    425         if (!ifq->dev)
+    426                 goto err;
+    427         get_device(ifq->dev);
+    428 
+    429         mp_param.mp_ops = &io_uring_pp_zc_ops;
+    430         mp_param.mp_priv = ifq;
+    431         ret = net_mp_open_rxq(ifq->netdev, reg.if_rxq, &mp_param);
+    432         if (ret)
+    433                 goto err;
+    434         ifq->if_rxq = reg.if_rxq;
+    435 
+    436         reg.offsets.rqes = sizeof(struct io_uring);
+    437         reg.offsets.head = offsetof(struct io_uring, head);
+    438         reg.offsets.tail = offsetof(struct io_uring, tail);
+    439         reg.zcrx_id = id;
+    440 
+    441         scoped_guard(mutex, &ctx->mmap_lock) {
+    442                 /* publish ifq */
+    443                 ret = -ENOMEM;
+    444                 if (xa_store(&ctx->zcrx_ctxs, id, ifq, GFP_KERNEL))
+    445                         goto err;
+    446         }
+    447 
+    448         if (copy_to_user(arg, &reg, sizeof(reg)) ||
+    449             copy_to_user(u64_to_user_ptr(reg.region_ptr), &rd, sizeof(rd)) ||
+    450             copy_to_user(u64_to_user_ptr(reg.area_ptr), &area, sizeof(area))) {
+    451                 ret = -EFAULT;
+    452                 goto err;
+    453         }
+    454         return 0;
+    455 err:
+    456         scoped_guard(mutex, &ctx->mmap_lock)
+--> 457                 xa_erase(&ctx->zcrx_ctxs, id);
+                                                  ^^
+
+    458         io_zcrx_ifq_free(ifq);
+    459         return ret;
+    460 }
+
+regards,
+dan carpenter
 

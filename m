@@ -1,115 +1,127 @@
-Return-Path: <io-uring+bounces-7714-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7715-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBA1A9B5FA
-	for <lists+io-uring@lfdr.de>; Thu, 24 Apr 2025 20:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD9EA9B6B0
+	for <lists+io-uring@lfdr.de>; Thu, 24 Apr 2025 20:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088DB4A7C90
-	for <lists+io-uring@lfdr.de>; Thu, 24 Apr 2025 18:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019FC4A7BD6
+	for <lists+io-uring@lfdr.de>; Thu, 24 Apr 2025 18:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386A828EA4B;
-	Thu, 24 Apr 2025 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B720289369;
+	Thu, 24 Apr 2025 18:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="bKZu2i/+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ylzR3I28"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB46728E614
-	for <io-uring@vger.kernel.org>; Thu, 24 Apr 2025 18:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA81B14B06C
+	for <io-uring@vger.kernel.org>; Thu, 24 Apr 2025 18:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745518205; cv=none; b=X/t9IQ8f4lNcvkSpEYoiRpJwfXnL/ZdzIJXulwS7Pr4Qd9uivjSiM64+zRTVREakrs0xdbG6bSgQActStsp2vYWlSN6uJorz3+m/4UcBZ/ooHEtGBbqmA0cKWnIMmUSDdNvBxpciy/FZYnNQV1s5G8JYLzgjPa9QOMJ7+xdcD8s=
+	t=1745520571; cv=none; b=AaGZ1RgfNIoyTJJ4MI+cRUZSbw+5Fk7dE7OuJ/z0QCtLAMhAFFrEL15n8d7P1h/C8EyoKUqNc96ocsoi148CxCANgeya/cdxWgZQ5hmSGr6XsU1whs5RHpy0TWhKPkXGP8yZij1FNoZmm0jWPHIFt7Z4uMA6MReuj39gYyXmmNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745518205; c=relaxed/simple;
-	bh=Wr8Howp6YUBHFQ5IXcbrHAh69nUeNbi1WwiX/cJv9UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pw7hawetXGPJZdQq77zn54XKmkNEDlZWWC1PKPy8CIiAzRxaKo6SZAEdl2Dz1tgmfIgSEGs+pB4SowNGBFIRQKF6HvR9PiGub+PfHj4et2276omcdY15j+qbceVDdytg9/oLo0GcW9ey2V/8o3x3fWVwHfKAdZQpv79899eGbNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=bKZu2i/+; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2295d78b45cso21556545ad.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Apr 2025 11:10:03 -0700 (PDT)
+	s=arc-20240116; t=1745520571; c=relaxed/simple;
+	bh=YJThV8OU+yLTh48RfiUdm+OTToDHsoL5U/oCrdFEqDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hBOaEcWCAhZd+9osiz235Da4BwYzd3FAeLCthz1HfOqzpcVY+HJbGobo57hKxE+nCXhwru7MmP1h2pD7rSN4kiHft5CICfSaPnCOFYic5MI7QmV8BBdE8GmU3hHE8MPIkueAqaVWddXpXB+9vRFCRQIMBcqcVKWD9vhu4J4ZlCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ylzR3I28; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2242ac37caeso17355ad.1
+        for <io-uring@vger.kernel.org>; Thu, 24 Apr 2025 11:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1745518203; x=1746123003; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+UKNt0lCLDr2VLT9kOvLTb2AuOQOpzIZeg4tCrvuwj0=;
-        b=bKZu2i/+MrIu2KWaD9cKAvnwOtvxeCXthuKHF+RSMnLrA28adNRkceF7FVKDQdVdOb
-         Nvq6c/Jj8r4Z19qC5Pwd3i793T8SUDrsgwkz5e/def9SNCHPVg8SYZ/nlELW5/MxEspu
-         3fkd6+cWdFheKMYW0CgmG5pGFUhTOq8OacB+G/Fubs4yQGoQoLNEiYqTUzGTeokFEQd5
-         o/G3Qe0xBpy2OFfQtwTjMjZfVpJgERu7ftw5jiMl+1hFlOiK+BFkFdUYxKr+kHfXTMN9
-         aP9osERILIZ6wsDW+OtIUr30RDevAJkzjjvHS0+p9M9XRYNWLF4ncQkUdhN2Pc/3Bius
-         9adQ==
+        d=google.com; s=20230601; t=1745520569; x=1746125369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YJThV8OU+yLTh48RfiUdm+OTToDHsoL5U/oCrdFEqDQ=;
+        b=ylzR3I28/yHFuETRVx8TQjGviT85wGYNO9xhZfMuqph6DIlhaSNwaWlvkbtPK+qs6B
+         ElMVBnjACjOFiHTrBVLwYd0Ca2Bvc55SIR11MRMKQdqC8pWDQ02LcBDNfeiyTRnZ5NNU
+         VMrctS6S7a6mrVAt0zxIvDmckXP/ME542w8bOGeXP/yi/f+pdH6jDv3F/FZqfds1HJIy
+         CmMS680r1gfHpGVYwT3Dpz2TINkurECqb7m/VPrDGvlHQ8N/F80q96LKwbu+ATbjBkLf
+         pAIcJXHi1I9IhYCmVJiTMIOvpxgVkg4KgEzzvZCM1nspYuccVgdk/hS2G9SO+thvSb9j
+         Wi/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745518203; x=1746123003;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+UKNt0lCLDr2VLT9kOvLTb2AuOQOpzIZeg4tCrvuwj0=;
-        b=MHfrX99qKoe6AGqY7f3UjJsMg09apcH2SgITPk7Lhu9dGe1Daq8Iqyt4KuHRB9L+Ug
-         DMdM7Ts87hMJz7aGxCC+5KingCEJpXhEszH4w+hPggd+VirVghRjOgSenImGVqZl6bJ9
-         sp5XKIP4z8S8kCwdUd3r1Ymj2KJg3KIVAdSXqGg+DdxEHfdCe8+XJ4056b85jj22yoJI
-         9lvxmHcZEPG/vGkfwc24x3rzpGtrdjFHm28WFznstf2O9aDioqwcJBwMz8quV+f+/BMx
-         cb+Ub0ijWVUqw+xvBQAgVzJcsQEZxkACUP0Fk21GlKBzRsDG/lA4n/eJr7agJNKtNkHz
-         Iw5A==
-X-Gm-Message-State: AOJu0YzEDkNDkv90hiKnvh7iIgyfk50tN/gYzs9ULcJk6KctsPBJkocf
-	yDx5DbMAkmMW6L28XUvBmONHxdhIBJiY6NaefxYzth0RoPK8Xc7dn2frgoj/A0k=
-X-Gm-Gg: ASbGncuZht9fmLygjDhBMqTN1s8S3CtOHIOpaqxaliz/aePv8KaL/Wd7hAnZn6Imqet
-	qheWfiIcx6WMC3DcAj/yhQmcsvMIyK5RyfcizquaUqH+QBTTy3X2ZiQL1VJL98g3+wfdcvmLHzE
-	KCh6jvMbDSNdO4UMub523pe5cVwPb5Xp3C/YIDJ7zwO60wspyGUrGgQCLcnwr5OrKzyntI+Bhf2
-	u+l1zXL7FW2FEfbl55fo0S6If4T5+xCGgaqEVm6QU1zGdsN169EaZHkhpG8HZOf2QaYTTwdpLQM
-	2TgZF5QpZt3yrO6oYPnZ9rv/AUQfUTwJF4mZXn+338Cs6TCfbsKWsoy8Se8yN/oj6TrPVmuRDP5
-	5XED/bUVi7ZfipevVHgA=
-X-Google-Smtp-Source: AGHT+IHnCaTt/PjXgficrL39pGhcE2L6yyJvkQieKK32vsywiH1L2LBk23RuW6NeWGc4L/G8Ur3ipA==
-X-Received: by 2002:a17:902:d50e:b0:22c:33b2:e420 with SMTP id d9443c01a7336-22dbd401ed7mr5490555ad.7.1745518202886;
-        Thu, 24 Apr 2025 11:10:02 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1156:1:1cf1:8569:9916:d71f? ([2620:10d:c090:500::6:c802])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e751dsm16782485ad.142.2025.04.24.11.10.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 11:10:02 -0700 (PDT)
-Message-ID: <6d9d6ad1-71cc-47f2-b7a8-d61f5ecdfa55@davidwei.uk>
-Date: Thu, 24 Apr 2025 11:09:59 -0700
+        d=1e100.net; s=20230601; t=1745520569; x=1746125369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YJThV8OU+yLTh48RfiUdm+OTToDHsoL5U/oCrdFEqDQ=;
+        b=nORKyuXF32zefT62N8vr6hBbEBUFgKH6L1TC5ESLbZXDVLwEUp59dwmEE/jhyI2q2P
+         11sQuND67nj4GMrncKopwSWEiyPcPXr7cHg2KLbyT1Es57of6Lbn2iVkC3IBrRu07Id9
+         QqtSk54TP9pwyKK5v2OSYIJ7SOUnnJI9LqpK+KXM4XTDM79h7CjuIxYWv3RmujSKDcQ1
+         AbNZ/0/90IcKZFV2/tHOGk7CsP8ymltxpWZBhhkNZd2va6thqOPW8LpUKbTi0Ndldnfn
+         nhK9Lcle7WjvTohfJtb4n6hKK/L0CjSF4MVH2HAFwnu5KVslvRIVL1PHYmR/Z+pS4eaN
+         HuSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXh7mCHm7W/LJv5gDYQmDWVKoQXFFiNpouqzLcpbNV6owEJ+5d07+XiQIvTYxOBt3Vo57iJHajKew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQt8eEhZARjg9wEHNfaUj15QEqC4SA6m8v8J9qu+FZv9tYeWwM
+	5z7fncWIZRSMNxbd3K9m1PMl+TdbziCSqFTHOv88SXk0Q+BIpawzf8U6IHYemWtrXZi4UIu5W8T
+	X4yorroTBQVyo28lkWglnNvQqyr6lptCa8gIp
+X-Gm-Gg: ASbGncswow8fkZ6vCHMGeHebzHC8SbLVgiY97xK1k/9Jr8WvNZe3AdiXcL6AUwlaJGg
+	NIk+fNhb/DPxRGYET6v/pELhn2taY3laT5sGx6ZniVPa4qYu9Wl7Mw97Bv0MRR8114EaPCUckJB
+	0HJzPtBy8W+1QQCUqn4nIzfkRENnexUQXEygjyk7wJIXAnRRp7RAWG
+X-Google-Smtp-Source: AGHT+IG7TvFiypkSdm6cFL8QXv7Geze56CiuyUqiMCDjIy5B3tjxrLsMvkElYIkhtHnXIN1qIRY0zGBcPAIono1A5h0=
+X-Received: by 2002:a17:903:2053:b0:220:ce33:6385 with SMTP id
+ d9443c01a7336-22dbdb49fd4mr181535ad.9.1745520568724; Thu, 24 Apr 2025
+ 11:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] selftests: iou-zcrx: Get the page size at runtime
-To: Simon Horman <horms@kernel.org>, Haiyue Wang <haiyuewa@163.com>
-Cc: io-uring@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250419141044.10304-1-haiyuewa@163.com>
- <20250424135559.GG3042781@horms.kernel.org>
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20250424135559.GG3042781@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250424040301.2480876-1-almasrymina@google.com>
+In-Reply-To: <20250424040301.2480876-1-almasrymina@google.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 24 Apr 2025 11:49:16 -0700
+X-Gm-Features: ATxdqUGSuXy2A5TP0CkyPakNQ5S2ontOlQJJboyrRu9J3Ao5kJdPZ2OrP3y4P5Q
+Message-ID: <CAHS8izOT38_nGbPnvxaqxV-y-dUcUkqEEjfSAutd0oqsYrB4RQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 0/8] Device memory TCP TX
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Victor Nogueira <victor@mojatatu.com>, Pedro Tammela <pctammela@mojatatu.com>, 
+	Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-04-24 06:55, Simon Horman wrote:
-> On Sat, Apr 19, 2025 at 10:10:15PM +0800, Haiyue Wang wrote:
->> Use the API `sysconf()` to query page size at runtime, instead of using
->> hard code number 4096.
->>
->> And use `posix_memalign` to allocate the page size aligned momory.
->>
->> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> 
+On Wed, Apr 23, 2025 at 9:03=E2=80=AFPM Mina Almasry <almasrymina@google.co=
+m> wrote:
+>
+> v11: https://lore.kernel.org/netdev/20250423031117.907681-1-almasrymina@g=
+oogle.com/
+>
+> Addressed a couple of nits and collected Acked-by from Harshitha
+> (thanks!)
+>
 
-Thanks Simon. I'll apply the patch and run the selftest to make sure it
-still works.
+Hello,
+
+I made a slight mistake sending this iteration and accidentally
+dropped patch 9, which contains the selftest. There is nothing wrong
+with the selftest in this iteration, I just accidentally cropped the
+series 1 patch too early.
+
+I'll repost after the cooldown, and if this happens to get merged I'll
+just send the selftest as a follow up patch, it's an independent
+change anyway.
+
+--=20
+Thanks,
+Mina
 

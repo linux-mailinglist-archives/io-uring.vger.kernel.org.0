@@ -1,50 +1,52 @@
-Return-Path: <io-uring+bounces-7721-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7722-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A282CA9BB87
-	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 01:59:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24C0A9C7D7
+	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 13:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD06D1BA67E4
-	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 00:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074601BC50EC
+	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 11:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5E0288C8D;
-	Thu, 24 Apr 2025 23:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFgGRM6Q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EAB14F9D9;
+	Fri, 25 Apr 2025 11:40:27 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6E820CCDF;
-	Thu, 24 Apr 2025 23:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34313241CB0
+	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 11:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745539190; cv=none; b=AlOlaIOcocTFyL19EinGXa4iYkjMdhM67aEl5O3y6R3qcTIHDhVQh9KKidfbG8CDzppOgRX3mPWlemqGwGWNjZYM1yUKch1DVaiso8RBDkAGd9CeiSIc1QNFppJn9PYe5MiigoWdi5AnHhj079fWOAiR6zfK1oxSMLeQYsTI8kE=
+	t=1745581227; cv=none; b=nTiyq9ktodzbiysZ3a63IJQkiZgMJPpY6ST9gn8cjKkGdKRzA+zYyiMRSdG+tBl2Kmvw/PzNmQh5AXZpq1WUIUM1kIzGpFzJGT0aXlOIGwyC+4CGbjf6Z9eKp+tG3zhX3zdXHyoDsXEzj5itqF10S4XakO7fsUqEczCxVSgZuHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745539190; c=relaxed/simple;
-	bh=uxkWEhvEgjBl6+I8KJLSIovkjWIVOEjUEOCh39u1z3k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dZUhmHyV4dPuYRmtJpus3tx4uwM6YlbloaC3FGo+qKdHkLEPVfgfFHkRDkQAKnCtlOzZZcUXacV+n3m3/Zzrim+mBxfKO/vq4x1rFL4lTN2u4+A/q5tECrH/dtdlaJbUPKcoFwmtQfUWloGnldcTKgBSl50eaJehWLxkrQClLfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFgGRM6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7ACC4CEE3;
-	Thu, 24 Apr 2025 23:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745539190;
-	bh=uxkWEhvEgjBl6+I8KJLSIovkjWIVOEjUEOCh39u1z3k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZFgGRM6QbzeSdwwFR+7RNV+Y5bfTFD+NctRfb4wervVFG/LXp8wnWv0t2CbeIdi3h
-	 XXGcUnqRYTZmyapJdM1Yul4l/5retcr/1KvcAq8Hs7t0EGt+BJ02tdPxFBkl94PDv9
-	 qNN8LYMErTMlIB63G9PJSc7EOs/wEO7lqcPh10cnUHTzmSNfuet5ZmTIokfjXBxS9n
-	 4T4uynO1EH43sUwGhNOp8bVHeeA5lba4JnaUTypTEAnFAsID9XdpEAC6/Ad70UEU0e
-	 GcDlDsQTB3XiSzsHTfQeIMOpuqmPoZ7mPGXQ8AtM72Rs7o/wzsolEyGbFdPE7zQ6Vl
-	 U/X+KCtLmdv3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADCF380CFD9;
-	Fri, 25 Apr 2025 00:00:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745581227; c=relaxed/simple;
+	bh=LuRENuViGYhX1lXI+70xuF4q626ocswUz0B07Msm3Lc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KdjAZp3Op5DU5uDRaBGpK98wkrcAhAgNniTJ26HbfQQf4d2/QiKXwOOP9IUk3yIdarpOnxOCbvYSb8pXBlUgUZ7pclsLsVSHtFy6dJWmhYUd+bMN+sqQ89+7ga8BB3MtwsI1EzyVqxfkXyYbyeuhzIXYoEYophDpeW/qm/i5HRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZkW96660wz4f3lVL
+	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 19:39:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6A51B1A06DC
+	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 19:40:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl+jdAtoVhkbKg--.322S4;
+	Fri, 25 Apr 2025 19:40:20 +0800 (CST)
+From: leo.lilong@huaweicloud.com
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: leo.lilong@huawei.com,
+	yangerkun@huawei.com,
+	io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: update parameter name in io_pin_pages function declaration
+Date: Fri, 25 Apr 2025 19:32:41 +0800
+Message-Id: <20250425113241.2017508-1-leo.lilong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -52,42 +54,49 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1] selftests: iou-zcrx: Get the page size at runtime
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174553922875.3525507.18267700755622543899.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Apr 2025 00:00:28 +0000
-References: <20250419141044.10304-1-haiyuewa@163.com>
-In-Reply-To: <20250419141044.10304-1-haiyuewa@163.com>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: io-uring@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
- dw@davidwei.uk, axboe@kernel.dk, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-CM-TRANSID:gCh0CgDHKl+jdAtoVhkbKg--.322S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw4furWrXry7GF4fXF4xZwb_yoWfuFb_Zr
+	Wktry09r4IqF10vFy3uF1xXr15XrnFkr48GF1UKrn0yr4fZFWkJrnYqF18Xry3Wr409Fy7
+	Wa95X3sxJw1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_JF0_
+	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UKZXOUUUUU=
+X-CM-SenderInfo: hohrhzxlor0w46kxt4xhlfz01xgou0bp/
 
-Hello:
+From: Long Li <leo.lilong@huawei.com>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Fix inconsistent first parameter name in io_pin_pages between declaration
+and implementation. Renamed `ubuf` to `uaddr` for better clarity.
 
-On Sat, 19 Apr 2025 22:10:15 +0800 you wrote:
-> Use the API `sysconf()` to query page size at runtime, instead of using
-> hard code number 4096.
-> 
-> And use `posix_memalign` to allocate the page size aligned momory.
-> 
-> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
-> 
-> [...]
+Fixes: 1943f96b3816 ("io_uring: unify io_pin_pages()")
+Signed-off-by: Long Li <leo.lilong@huawei.com>
+---
+ io_uring/memmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [v1] selftests: iou-zcrx: Get the page size at runtime
-    https://git.kernel.org/netdev/net-next/c/df8cf32413fa
-
-You are awesome, thank you!
+diff --git a/io_uring/memmap.h b/io_uring/memmap.h
+index dad0aa5b1b45..b9415a766c26 100644
+--- a/io_uring/memmap.h
++++ b/io_uring/memmap.h
+@@ -4,7 +4,7 @@
+ #define IORING_MAP_OFF_PARAM_REGION		0x20000000ULL
+ #define IORING_MAP_OFF_ZCRX_REGION		0x30000000ULL
+ 
+-struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
++struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages);
+ 
+ #ifndef CONFIG_MMU
+ unsigned int io_uring_nommu_mmap_capabilities(struct file *file);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
 

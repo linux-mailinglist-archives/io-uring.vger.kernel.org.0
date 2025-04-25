@@ -1,102 +1,129 @@
-Return-Path: <io-uring+bounces-7722-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7723-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24C0A9C7D7
-	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 13:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 815F6A9C809
+	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 13:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074601BC50EC
-	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 11:40:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DD61BC3397
+	for <lists+io-uring@lfdr.de>; Fri, 25 Apr 2025 11:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EAB14F9D9;
-	Fri, 25 Apr 2025 11:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D667E21ABA4;
+	Fri, 25 Apr 2025 11:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfueG8L5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34313241CB0
-	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 11:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1C323F40F
+	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 11:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581227; cv=none; b=nTiyq9ktodzbiysZ3a63IJQkiZgMJPpY6ST9gn8cjKkGdKRzA+zYyiMRSdG+tBl2Kmvw/PzNmQh5AXZpq1WUIUM1kIzGpFzJGT0aXlOIGwyC+4CGbjf6Z9eKp+tG3zhX3zdXHyoDsXEzj5itqF10S4XakO7fsUqEczCxVSgZuHY=
+	t=1745581549; cv=none; b=JW3GNsIczGgcd5d9jPQRi6kWk64LVzoJrbRSg5TBVQL8pgcU9E265KI5ROXSWn0vyMI6hQ747Bv2S2qs3aFAKMsGYaVI2DDEW0hImV5Y7vGKRa31ZR0QH9fG9PR/sBum2jfvQkFRSoQgU3DUNEvSU1wyaYcIjqXiupE1htATpu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581227; c=relaxed/simple;
-	bh=LuRENuViGYhX1lXI+70xuF4q626ocswUz0B07Msm3Lc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KdjAZp3Op5DU5uDRaBGpK98wkrcAhAgNniTJ26HbfQQf4d2/QiKXwOOP9IUk3yIdarpOnxOCbvYSb8pXBlUgUZ7pclsLsVSHtFy6dJWmhYUd+bMN+sqQ89+7ga8BB3MtwsI1EzyVqxfkXyYbyeuhzIXYoEYophDpeW/qm/i5HRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZkW96660wz4f3lVL
-	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 19:39:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6A51B1A06DC
-	for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 19:40:20 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKl+jdAtoVhkbKg--.322S4;
-	Fri, 25 Apr 2025 19:40:20 +0800 (CST)
-From: leo.lilong@huaweicloud.com
-To: axboe@kernel.dk,
-	asml.silence@gmail.com
-Cc: leo.lilong@huawei.com,
-	yangerkun@huawei.com,
-	io-uring@vger.kernel.org
-Subject: [PATCH] io_uring: update parameter name in io_pin_pages function declaration
-Date: Fri, 25 Apr 2025 19:32:41 +0800
-Message-Id: <20250425113241.2017508-1-leo.lilong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1745581549; c=relaxed/simple;
+	bh=6VkyXKXeJhG529YVCgOitZLGFUHhdoq47SN18V/vENM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nCodUtz8F8SOpzZt9hmvpcfp97z2mYBSddqrIiwGbjFfY7AdGsrLBnkciIXpDNEEA+HPnMUqAYLhcTeE7qAyVCu/cTWj9nOb86/5z8c2VG89ik6uLhinDZqyA2LsCepfkgm7NfQrVZobjWqPGSn1jClXM9ZbOLjjToZaVFJNly8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfueG8L5; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb1eso1681a12.0
+        for <io-uring@vger.kernel.org>; Fri, 25 Apr 2025 04:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745581546; x=1746186346; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hCePAq9q+LEkItPhO+xr6j/u2WwYKkwsx4oU9ouRbwk=;
+        b=WfueG8L5l7crUjQ1DcTJaBGBJUsuHU72P9UJTltP+aTiFsR5YfyjM5Vg3yJeaJx2YP
+         pFYyHIpx/qrueckVO9SJsGBOKooSiWQXDYMGZ4nIGQCYT2U67NnaORnuAlxpdjQKdm9x
+         LC4vs2m0AGhSccL+VBD0GobaZQtjHlDcXBLKpasjWS7ScCu0iGUtwFthpf2dlXB+vx63
+         MMydkANFLFSz8sVA1HPk0pj7JKZN+WIKYxp7NPYfu87E/jLVMBk+omwRRA82WwgnBEKv
+         w6v3FUw2bKCsAaQ3PXnlQgcC7YhHqj1kqIZRW0DjF8V/MVRyr/qGAjmyPSIR9RcvVy+u
+         RTQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745581546; x=1746186346;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCePAq9q+LEkItPhO+xr6j/u2WwYKkwsx4oU9ouRbwk=;
+        b=DjzqEO3R7uiYL8SLotxgzkNIxVyd0idDHtWBeZaBvrNzM1DxKmD8/9bVVqSac1SlQ+
+         NWMBXGaKmtLIfoFQpv5HaeRPqdG6spgBgyAsrbKcoOf0OWeLQCFqrCpqdr2ta5v5aklk
+         bkV5Ri40FrOjaJ4pwtoCCwIPCBD3D3TaDNhKlWr8EMhCyLfclFUAHlr9bCoZlassUpSw
+         71YFexY+PQWlZO+LjgZc4y30Dq+sSZSwzupyE2j4arFNow4Gpolg6qJlInt0bvAu+VEQ
+         dQZkFHeWaNLarCaH/1KEclPxvZvl1/rSBWxUejaJZ/XmXQL1iym3IJ2x48NUVVLZQw5s
+         ChTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvFtPGoRRPo+fxsIiCbsIoHP04SX23CmO9xoLeSSLZJPuejRsSz29uR8uXwbGeaChwhJpTpzOd2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzId3Ipvc2Eh0K5cS61Llw8cGtsnzw72Rai7ppjtfOAM/PQvVNp
+	25oTZpvZC632bdIX8rrtmm5BpwtJtOekhEHWqPQHW7an+prNMoCH
+X-Gm-Gg: ASbGncu8G7C9kJbgJBrhfXvdLaqg9WRZRFdeqappmYsmNQtZJiZBSWB2GLpqLp0kvoI
+	FHE+plK0nuSeMVSKTjuoHzAQWQMrQ7F2L0cSlwEga0NXD3RpdiIX2JlhVujt03ufZaTXAytK5Zi
+	H69NUKS3XIO95GKnvM3xe9IfV2PdkVjGZIg9Z9KKHpnwbnqKO113kguUH1QFp3P6v4r3x7KQdVb
+	QC6ncxqbXJLyu9tdqB8p47HTRCkNMPJt5UrhMZ0wpkDfSFbWiwE6SWfD9u3zC1qfD7IIfCkJjlI
+	gqIhmN5vQmG/TkWNDlcmC2OQrD7+InFJ1s6PmCShgIJURlMfhx6e
+X-Google-Smtp-Source: AGHT+IHkTv8Kt8zXt4iJahZ4yaJKMzOyXv+9msGhLwlW1MvfWicMWy+kbi8pdjjcjTyrzDWo9c5yGQ==
+X-Received: by 2002:a05:6402:26c6:b0:5f4:35c7:ff37 with SMTP id 4fb4d7f45d1cf-5f7257976d4mr1710666a12.1.1745581545784;
+        Fri, 25 Apr 2025 04:45:45 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::44? ([2620:10d:c092:600::1:9541])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7038323c1sm1140119a12.68.2025.04.25.04.45.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 04:45:45 -0700 (PDT)
+Message-ID: <92a8fd11-ddd8-4ab3-a983-ff5c4cedefc2@gmail.com>
+Date: Fri, 25 Apr 2025 12:47:00 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHKl+jdAtoVhkbKg--.322S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw4furWrXry7GF4fXF4xZwb_yoWfuFb_Zr
-	Wktry09r4IqF10vFy3uF1xXr15XrnFkr48GF1UKrn0yr4fZFWkJrnYqF18Xry3Wr409Fy7
-	Wa95X3sxJw1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_JF0_
-	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UKZXOUUUUU=
-X-CM-SenderInfo: hohrhzxlor0w46kxt4xhlfz01xgou0bp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: update parameter name in io_pin_pages function
+ declaration
+To: leo.lilong@huaweicloud.com, axboe@kernel.dk
+Cc: leo.lilong@huawei.com, yangerkun@huawei.com, io-uring@vger.kernel.org
+References: <20250425113241.2017508-1-leo.lilong@huaweicloud.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250425113241.2017508-1-leo.lilong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Long Li <leo.lilong@huawei.com>
+On 4/25/25 12:32, leo.lilong@huaweicloud.com wrote:
+> From: Long Li <leo.lilong@huawei.com>
+> 
+> Fix inconsistent first parameter name in io_pin_pages between declaration
+> and implementation. Renamed `ubuf` to `uaddr` for better clarity.
+> 
+> Fixes: 1943f96b3816 ("io_uring: unify io_pin_pages()")
 
-Fix inconsistent first parameter name in io_pin_pages between declaration
-and implementation. Renamed `ubuf` to `uaddr` for better clarity.
+I'm split on whether such patches make sense, slightly leaning
+that they don't, but regardless, why is it a fix and which
+problem exactly does it "fix"?
 
-Fixes: 1943f96b3816 ("io_uring: unify io_pin_pages()")
-Signed-off-by: Long Li <leo.lilong@huawei.com>
----
- io_uring/memmap.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> ---
+>   io_uring/memmap.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/memmap.h b/io_uring/memmap.h
+> index dad0aa5b1b45..b9415a766c26 100644
+> --- a/io_uring/memmap.h
+> +++ b/io_uring/memmap.h
+> @@ -4,7 +4,7 @@
+>   #define IORING_MAP_OFF_PARAM_REGION		0x20000000ULL
+>   #define IORING_MAP_OFF_ZCRX_REGION		0x30000000ULL
+>   
+> -struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
+> +struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages);
+>   
+>   #ifndef CONFIG_MMU
+>   unsigned int io_uring_nommu_mmap_capabilities(struct file *file);
 
-diff --git a/io_uring/memmap.h b/io_uring/memmap.h
-index dad0aa5b1b45..b9415a766c26 100644
---- a/io_uring/memmap.h
-+++ b/io_uring/memmap.h
-@@ -4,7 +4,7 @@
- #define IORING_MAP_OFF_PARAM_REGION		0x20000000ULL
- #define IORING_MAP_OFF_ZCRX_REGION		0x30000000ULL
- 
--struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
-+struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages);
- 
- #ifndef CONFIG_MMU
- unsigned int io_uring_nommu_mmap_capabilities(struct file *file);
 -- 
-2.39.2
+Pavel Begunkov
 
 

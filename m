@@ -1,169 +1,186 @@
-Return-Path: <io-uring+bounces-7760-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7761-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94144A9F617
-	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 18:45:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 744E9A9F714
+	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 19:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E1EA7AA5C9
-	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 16:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F115D3B366A
+	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 17:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784A4279786;
-	Mon, 28 Apr 2025 16:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E75028A1C4;
+	Mon, 28 Apr 2025 17:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ph9KMfpE"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="L2sdJm/i"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D17127CCD3
-	for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 16:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAB125CC7C
+	for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 17:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858723; cv=none; b=dwjSJFOUYg8T+UG6Xnpu6zzT/am9ADsemMchuXjkBrSTto5xcu5LhtFUvvENyW2Zsjw3aDLEAExa9WZy0B1IC9CUyGBzVI5oWn8errX21vsfF24/kdrFmSwnAQaEH6oO/cjDEr+L+a9O3HHPcGFm/ODoGf0MnlSt9PExxOZ9Mgs=
+	t=1745860429; cv=none; b=qTuyPPdBkwzFuXm5x9jmqKbq2qV1ErTQNtvND4jOxifLLYqLQ87iVuUiPvs1DZFM8T4WTGJukT4XpvHvJAgU2RElRYu8h8kdmEktFqCLqmjQxzxQO2N7LHbZlgWPNo5KAzJRlTTIqFwUVefPOvGqMLrsOIbWNGR4aaIy9A9TAzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858723; c=relaxed/simple;
-	bh=Z5cQJUX1NbkXvQwgA7QujW9GmijALGJJ/RcgDNIxvyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OabLEJFWIn8K38r/ehge+bXwbLLAlazhKjsC5SFz6UtmqOeuKPNQbw3ECG0oTsqYDHmDcRPrix7HZqghh2c2l5TIdugiOkHkAI0+k9n+QkGega9xet2VOQmkI366DdKYYgO3tF3d6RkdomVlrD3SSa9uGY5N0XUIyKpDZirKBVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ph9KMfpE; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so22769575ab.2
-        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 09:45:20 -0700 (PDT)
+	s=arc-20240116; t=1745860429; c=relaxed/simple;
+	bh=cgy8AVyfjzbaafjFGFIbiknfud7IpvHZ1FuIvqmcbdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IhZhkJPJUHJ9MFqTnhMCABQITMuChkF31tRz5yk+F/UMpIXfQVrrTBqtKFk2mdq8SlP2kl5XimmD8b+9cTNttkdkGmSzjfNZ/PET4/mMPS0qSTL5Eze1AwAaBuzoiYk+mnfr3+a8crg6/SgE3/XwXM34LBV7tFsV/wBMNzDmDsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=L2sdJm/i; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301a6347494so650320a91.3
+        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 10:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745858720; x=1746463520; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9MUWsMO8+zzeKqEoat3ch1kch4vWM2YGYaR6q5i5jRI=;
-        b=ph9KMfpEirpCgXCJgHKtKO/gGSts2nuGaBIEMT6T0ojOiqku7tX31Ndhki+y8cx6sW
-         3pa6kKG3OA76hQcGTvYY+pEr6S+WvSxuGwia1qOImhCoUAAh9a0SzazZpqKkUdbGsOCv
-         i5gcQl9DzLw0v6jihs9096G2AD7EOaVVjFtZTHa33j8wPmBDjmnSmEWKRLCmhSCAvLK7
-         mpcLQpgt7r2uRowKucyN13bDLI693xO8AYZG9gNKqNGuz1OMj1LhE2WIPVUP8+zR72hn
-         v295p8EoyiKN7GgF0RJHE97I2XyEHZfEKcnKIcXTnt44W19bxjtua3cMQaVVmPEAyt1T
-         BTtQ==
+        d=purestorage.com; s=google2022; t=1745860427; x=1746465227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4+O9hcnTfcLYnXLthbpKEzAnUbGOzzp38HULK9utAvg=;
+        b=L2sdJm/ixu3CiZLUCbrX3fvtYIxefgHWI17YZ9NxS8XqMYBDI7icFtQwaSnS8qqhfE
+         25DxvrAic5AgBl4as5zBomnFvoBsc/WK/a+SVKVdswPXU5EiERt08qRxnuDJha7BWMQm
+         pajfmjumNDDPZzzKH8xGxUzxYb4Y7r91bExKnQagzYAbf3RMTrRtaGeXhBF71NHhls1e
+         C+3bupLsd27aGq1nrisupwCm53cvdjFily6EmLFTJLLXQAKOG7CdOLIXGVpHQuuMvn7q
+         xuBUpIlwF3lm/e3iHjRc/sIGW3b3l6Ha5vdGzE7or2PGYMHnpoEjZl6UK/qhXnwq4cNp
+         Ystw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745858720; x=1746463520;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9MUWsMO8+zzeKqEoat3ch1kch4vWM2YGYaR6q5i5jRI=;
-        b=sC7zsq1Am1WCPOS8An5QgY5wyQMDWysSoI0jINEzt3Ut04aoBke35b8+ufTXJ4bC+m
-         ctawUNnk5LI7dHR4amUzUOgiLz6FlKGPpVctr5bx6l6CFIseyxK61UwV7hOMJ0edz2oV
-         1i36JrY6Kj03TWihCzQUGHetc9imEVCGYQAYidK4Shcvt5izLLg8IrOFsY04eSllQ1FZ
-         OCcWC36n2yHtW3/r034uleMQqol0D//2Glb+965PVYeLysiWvw4lpEKnrm0QeH/ykvwX
-         F0Il5eYQb4uN6F5mGqAHQy4lliohAYJjOEURkDeVmcaTFALc6w/x6GQ2fmUNIdPDhhNE
-         UXtA==
-X-Forwarded-Encrypted: i=1; AJvYcCViM7r64gBosz/obL6wPVF3HKEQDOKlz77MPoqFhwxPxWlX2nKlzUJ09jJRq1/gtoqXp3I2KzN/5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgYQzZ2F3PH224sCXTt/WVtE648XetuORTFIUDXklQlWUkkrL/
-	FfqiYntwj9i6yqo28mqW2+c58rIiMqKGGZFDIJBi1bUVwHhc6jznsAQEauleMPjCwAsGHVgWghG
-	c
-X-Gm-Gg: ASbGncuMl/Q//MVvJiZ/8K+DgQS4sqx0Iah65XaMqHYHDDbI0vJ5Vb84FEejwwo6I0n
-	Ockwjd6qR7ZQSQqwHN5dkdfSqZTrhrnhhEAspZnOH4gs0M5OqwwCsploRejcZBhwkzUsqYYXNx+
-	KTi+51tdsg90g+4PGVSexYe51hfOpxSHCbgqRWNRKYQQmI5aCyq0MxVmRzzqzW9PedGaXHJnv9V
-	lgE0PzfwPDF6AlGqJpENN5fmUe5vtG4SgeZ7t90lE82s6EPDZuUxYRmgGNpczVyIWuh8X5q2/06
-	MIDu+TCCCNGbkA2A5UKDFuhXmB+Dhg4BIt9zaaIlWVq5x2w=
-X-Google-Smtp-Source: AGHT+IG5qV/mX+wlx/OUaoyJ42BYYbyU09yi/RjQzH4juW3GMl5ZeowBow5Cy/cY5c60VK0rkXq88A==
-X-Received: by 2002:a05:6e02:1527:b0:3d8:20fb:f060 with SMTP id e9e14a558f8ab-3d942d1ddc2mr100354175ab.4.1745858720085;
-        Mon, 28 Apr 2025 09:45:20 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824a41dedsm2336055173.50.2025.04.28.09.45.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 09:45:19 -0700 (PDT)
-Message-ID: <c70692b8-4026-4ba7-b6a6-561bbb887001@kernel.dk>
-Date: Mon, 28 Apr 2025 10:45:18 -0600
+        d=1e100.net; s=20230601; t=1745860427; x=1746465227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4+O9hcnTfcLYnXLthbpKEzAnUbGOzzp38HULK9utAvg=;
+        b=fbcZArZRVi47UbI3RDGjeIpNVpLKv75YxBNuavSa9cHzT2Ar99tXEMts/u3eDmd0kr
+         aCuzcCyMiXwsGGl7P3xxS5m23l+Ohb3Qs5TxTcqwJBSxVYsjC8PdTsdwBBpVgpZVEOlO
+         cBTm68W/SRzwZmmmo5ewEIYI9sP6nGsz+2PVzVW7/yILcfJO3HQTHeey2euU6VgGfB1V
+         Jce6ahLh8/e8Dp1F2D65FSLJv3k4G/S6MOuFPJSFQ2A1XsgNkALU63jg0b3AsWVmBQN3
+         J+WGGEBCvU/OOlQA0CQ/VVZoGGGZO2NzHDhSmsgMNxObKhV7cEL5hXHMWnDmg6OghDcR
+         qmMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVa/Y4ZZR6bZbwFLyIvk5Ebza03cgOJ7WLIa1U9BQPZGahsuTrjOkszgyb13MMS06qgWa6bpLV2qA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiyadA9/jvSuVArduvEnjbN+NeoxJyKvtEdBx2XUXUovZl/Qi3
+	LEYJaT6dubqAZD6PshtP/mD1bfpdgTLerDq1ganog2EMvCqeRod/rYogEoin0sddH0y+t4+fN7f
+	X/LkSdKel3Ku8G1x66cG8tZpqHB3DyUdb5pUk0Q==
+X-Gm-Gg: ASbGncuJAdwyQ4bF341MDL+Gor8npnpQzIvogNLdKmraaHkboCC3+n5eKsA12FZ3IWy
+	sR0zIOzyexeakyJV0gfoOCWEviDXRHtVc7kbSnoqE2TGiqfkcimY4PiE160XC9cDrTiCjudYITx
+	Zo4WobndYptE4AdB6w8R6gow==
+X-Google-Smtp-Source: AGHT+IEe0qaC0lQE4vVBPq0O/UkufyhMgS9z3ZbPY1mvtJ8bizDhkkrVjsKtA3hkJLPYrj6rIi0bINvnfo6SXiRHqEk=
+X-Received: by 2002:a17:90b:2248:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-30a2205ed62mr68803a91.2.1745860426928; Mon, 28 Apr 2025
+ 10:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring] KMSAN: uninit-value in putname
-To: syzbot <syzbot+9b12063ba8beec94f5b8@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, brauner@kernel.org, io-uring@vger.kernel.org,
- jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <680f4c94.050a0220.2b69d1.035b.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <680f4c94.050a0220.2b69d1.035b.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250428094420.1584420-1-ming.lei@redhat.com> <20250428094420.1584420-5-ming.lei@redhat.com>
+In-Reply-To: <20250428094420.1584420-5-ming.lei@redhat.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 28 Apr 2025 10:13:35 -0700
+X-Gm-Features: ATxdqUFfaibAVOB9lsrlFcvbbkzlbm3pJ51B84XwwL59NRLca-HSsvfIndwZufY
+Message-ID: <CADUfDZrr19VZTm+rfN3Ks9Rrvek2CEBBt0V=CLO2uHayWffcow@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/7] ublk: convert to refcount_t
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-block@vger.kernel.org, 
+	Uday Shankar <ushankar@purestorage.com>, Keith Busch <kbusch@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/28/25 3:38 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a33b5a08cbbd Merge tag 'sched_ext-for-6.15-rc3-fixes' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13f77fac580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fca45111586bf9a6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9b12063ba8beec94f5b8
-> compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e23fd3b01d5c/disk-a33b5a08.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/d39e4ee184b3/vmlinux-a33b5a08.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d4117549249f/bzImage-a33b5a08.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9b12063ba8beec94f5b8@syzkaller.appspotmail.com
-> 
-> =====================================================
-> BUG: KMSAN: uninit-value in putname+0x8f/0x1d0 fs/namei.c:285
->  putname+0x8f/0x1d0 fs/namei.c:285
->  io_statx_cleanup+0x57/0x80 io_uring/statx.c:70
->  io_clean_op+0x154/0x690 io_uring/io_uring.c:411
->  io_free_batch_list io_uring/io_uring.c:1424 [inline]
->  __io_submit_flush_completions+0x1b00/0x1cd0 io_uring/io_uring.c:1465
->  io_submit_flush_completions io_uring/io_uring.h:165 [inline]
->  io_fallback_req_func+0x28e/0x4e0 io_uring/io_uring.c:260
->  process_one_work kernel/workqueue.c:3238 [inline]
->  process_scheduled_works+0xc1d/0x1e80 kernel/workqueue.c:3319
->  worker_thread+0xea3/0x1500 kernel/workqueue.c:3400
->  kthread+0x6ce/0xf10 kernel/kthread.c:464
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:153
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> 
-> Uninit was created at:
->  slab_post_alloc_hook mm/slub.c:4167 [inline]
->  slab_alloc_node mm/slub.c:4210 [inline]
->  kmem_cache_alloc_noprof+0x926/0xe20 mm/slub.c:4217
->  getname_flags+0x102/0xa20 fs/namei.c:146
->  getname_uflags+0x3a/0x50 fs/namei.c:222
->  io_statx_prep+0x26f/0x430 io_uring/statx.c:39
->  io_init_req io_uring/io_uring.c:2140 [inline]
->  io_submit_sqe io_uring/io_uring.c:2187 [inline]
->  io_submit_sqes+0x10c1/0x2f50 io_uring/io_uring.c:2342
->  __do_sys_io_uring_enter io_uring/io_uring.c:3402 [inline]
->  __se_sys_io_uring_enter+0x410/0x4db0 io_uring/io_uring.c:3336
->  __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3336
->  x64_sys_call+0x2dbb/0x3c80 arch/x86/include/generated/asm/syscalls_64.h:427
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x1b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> CPU: 0 UID: 0 PID: 10442 Comm: kworker/0:3 Tainted: G        W           6.15.0-rc3-syzkaller-00008-ga33b5a08cbbd #0 PREEMPT(undef) 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-> Workqueue: events io_fallback_req_func
-> =====================================================
+On Mon, Apr 28, 2025 at 2:45=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
+e:
+>
+> Convert to refcount_t and prepare for supporting to register bvec buffer
+> automatically, which needs to initialize reference counter as 2, and
+> kref doesn't provide this interface, so convert to refcount_t.
+>
+> Suggested-by: Caleb Sander Mateos <csander@purestorage.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  drivers/block/ublk_drv.c | 19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index ac56482b55f5..9cd331d12fa6 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -79,7 +79,7 @@
+>          UBLK_PARAM_TYPE_DMA_ALIGN | UBLK_PARAM_TYPE_SEGMENT)
+>
+>  struct ublk_rq_data {
+> -       struct kref ref;
+> +       refcount_t ref;
+>  };
+>
+>  struct ublk_uring_cmd_pdu {
+> @@ -484,7 +484,6 @@ static blk_status_t ublk_setup_iod_zoned(struct ublk_=
+queue *ubq,
+>  #endif
+>
+>  static inline void __ublk_complete_rq(struct request *req);
+> -static void ublk_complete_rq(struct kref *ref);
+>
+>  static dev_t ublk_chr_devt;
+>  static const struct class ublk_chr_class =3D {
+> @@ -644,7 +643,7 @@ static inline void ublk_init_req_ref(const struct ubl=
+k_queue *ubq,
+>         if (ublk_need_req_ref(ubq)) {
+>                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
+>
+> -               kref_init(&data->ref);
+> +               refcount_set(&data->ref, 1);
+>         }
+>  }
+>
+> @@ -654,7 +653,7 @@ static inline bool ublk_get_req_ref(const struct ublk=
+_queue *ubq,
+>         if (ublk_need_req_ref(ubq)) {
+>                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
+>
+> -               return kref_get_unless_zero(&data->ref);
+> +               return refcount_inc_not_zero(&data->ref);
+>         }
+>
+>         return true;
+> @@ -666,7 +665,8 @@ static inline void ublk_put_req_ref(const struct ublk=
+_queue *ubq,
+>         if (ublk_need_req_ref(ubq)) {
+>                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
+>
+> -               kref_put(&data->ref, ublk_complete_rq);
+> +               if(refcount_dec_and_test(&data->ref))
 
-I took a look at this and there should be no way for this to happen.
-Then I looked at the dmesg log, and there's a ton of failures prior
-to this, including what looks like memory corruption due to UAF
-on other pages.
+nit: missing space after if
 
-#syz invalid
+Other than that,
 
--- 
-Jens Axboe
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 
+> +                       __ublk_complete_rq(req);
+>         } else {
+>                 __ublk_complete_rq(req);
+>         }
+> @@ -1124,15 +1124,6 @@ static inline void __ublk_complete_rq(struct reque=
+st *req)
+>         blk_mq_end_request(req, res);
+>  }
+>
+> -static void ublk_complete_rq(struct kref *ref)
+> -{
+> -       struct ublk_rq_data *data =3D container_of(ref, struct ublk_rq_da=
+ta,
+> -                       ref);
+> -       struct request *req =3D blk_mq_rq_from_pdu(data);
+> -
+> -       __ublk_complete_rq(req);
+> -}
+> -
+>  static void ublk_complete_io_cmd(struct ublk_io *io, struct request *req=
+,
+>                                  int res, unsigned issue_flags)
+>  {
+> --
+> 2.47.0
+>
 

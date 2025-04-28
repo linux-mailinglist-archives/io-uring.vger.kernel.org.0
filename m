@@ -1,186 +1,113 @@
-Return-Path: <io-uring+bounces-7761-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7762-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744E9A9F714
-	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 19:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73061A9F7BC
+	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 19:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F115D3B366A
-	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 17:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E093BE786
+	for <lists+io-uring@lfdr.de>; Mon, 28 Apr 2025 17:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E75028A1C4;
-	Mon, 28 Apr 2025 17:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3796D25E462;
+	Mon, 28 Apr 2025 17:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="L2sdJm/i"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h/BHLcNG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAB125CC7C
-	for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 17:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E03F26A0E3
+	for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 17:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745860429; cv=none; b=qTuyPPdBkwzFuXm5x9jmqKbq2qV1ErTQNtvND4jOxifLLYqLQ87iVuUiPvs1DZFM8T4WTGJukT4XpvHvJAgU2RElRYu8h8kdmEktFqCLqmjQxzxQO2N7LHbZlgWPNo5KAzJRlTTIqFwUVefPOvGqMLrsOIbWNGR4aaIy9A9TAzs=
+	t=1745862670; cv=none; b=eGOX/d8JKDjBB565HGNOtjHmQ268ltweRsNb7FjGkMze8r5VwNH4bCFWnt8RUWqQ+naTuqCrMv8eVUWvD4tuKtA/puZjHGsqgU7yyuSlP4nQ9TP2kbmO6Y0gMiUGUVCT3Up6Tmg5tLvfKYSj3HyO/MSsLKVCZ1adqvqlxIHhKYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745860429; c=relaxed/simple;
-	bh=cgy8AVyfjzbaafjFGFIbiknfud7IpvHZ1FuIvqmcbdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IhZhkJPJUHJ9MFqTnhMCABQITMuChkF31tRz5yk+F/UMpIXfQVrrTBqtKFk2mdq8SlP2kl5XimmD8b+9cTNttkdkGmSzjfNZ/PET4/mMPS0qSTL5Eze1AwAaBuzoiYk+mnfr3+a8crg6/SgE3/XwXM34LBV7tFsV/wBMNzDmDsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=L2sdJm/i; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301a6347494so650320a91.3
-        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 10:13:47 -0700 (PDT)
+	s=arc-20240116; t=1745862670; c=relaxed/simple;
+	bh=/t0NtFMXvimhMn9+qylrBPaNASSBQar0XVauRpOTeJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UJRKq5B6pOCzePHjqfiKDf+2Oeb4p7T6+z2xF3oT3676808+sJUWhIpK7lEpGxuiZhzqP2iGjym5Oi9ZY5hY45i0i6mGfZgpzxaTZSOzplsJWJm2y2V1HlTeGt0PHr2gLeLuZNciZzkaI4CWbI88/4UFBSSGM+ahWQMF2BNfKbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h/BHLcNG; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8616987c261so169713439f.3
+        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 10:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1745860427; x=1746465227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4+O9hcnTfcLYnXLthbpKEzAnUbGOzzp38HULK9utAvg=;
-        b=L2sdJm/ixu3CiZLUCbrX3fvtYIxefgHWI17YZ9NxS8XqMYBDI7icFtQwaSnS8qqhfE
-         25DxvrAic5AgBl4as5zBomnFvoBsc/WK/a+SVKVdswPXU5EiERt08qRxnuDJha7BWMQm
-         pajfmjumNDDPZzzKH8xGxUzxYb4Y7r91bExKnQagzYAbf3RMTrRtaGeXhBF71NHhls1e
-         C+3bupLsd27aGq1nrisupwCm53cvdjFily6EmLFTJLLXQAKOG7CdOLIXGVpHQuuMvn7q
-         xuBUpIlwF3lm/e3iHjRc/sIGW3b3l6Ha5vdGzE7or2PGYMHnpoEjZl6UK/qhXnwq4cNp
-         Ystw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745862665; x=1746467465; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h4wyA4meYu/jGC2JOtjrK8EL7T0Nz2LNZVXKvpx9L58=;
+        b=h/BHLcNG5HItLkfoHc9b3QIZZ0xLk25kT7I/P+vd5iMAEmAVmm7AnOeEjB5TLgIIXh
+         ZBKX6Alh7/vf4DxeW7fm5mybJAKKWzrNags/S83x36bfD0yb7ZL5FM20Kuj2oe7I/hGo
+         lgb23CJxxicgs3iv8Y1vlLnETpWuBpwzYNpIuhywvWAiEaVgc48NEBAe9YDpo1uyKscJ
+         2YcTlma0chO22OtO8vhcPj7i4SUmFCHbNOODwKEvTM/wgLIrHmJyGXkau4DSypW8MlrX
+         yzKudeM4kQ1MSW6ppcQa4yoCCFe+qs/aX1+P2T/I4DoSaGkTZBoz1xtewX6UjRdMFARD
+         U2pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745860427; x=1746465227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4+O9hcnTfcLYnXLthbpKEzAnUbGOzzp38HULK9utAvg=;
-        b=fbcZArZRVi47UbI3RDGjeIpNVpLKv75YxBNuavSa9cHzT2Ar99tXEMts/u3eDmd0kr
-         aCuzcCyMiXwsGGl7P3xxS5m23l+Ohb3Qs5TxTcqwJBSxVYsjC8PdTsdwBBpVgpZVEOlO
-         cBTm68W/SRzwZmmmo5ewEIYI9sP6nGsz+2PVzVW7/yILcfJO3HQTHeey2euU6VgGfB1V
-         Jce6ahLh8/e8Dp1F2D65FSLJv3k4G/S6MOuFPJSFQ2A1XsgNkALU63jg0b3AsWVmBQN3
-         J+WGGEBCvU/OOlQA0CQ/VVZoGGGZO2NzHDhSmsgMNxObKhV7cEL5hXHMWnDmg6OghDcR
-         qmMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa/Y4ZZR6bZbwFLyIvk5Ebza03cgOJ7WLIa1U9BQPZGahsuTrjOkszgyb13MMS06qgWa6bpLV2qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiyadA9/jvSuVArduvEnjbN+NeoxJyKvtEdBx2XUXUovZl/Qi3
-	LEYJaT6dubqAZD6PshtP/mD1bfpdgTLerDq1ganog2EMvCqeRod/rYogEoin0sddH0y+t4+fN7f
-	X/LkSdKel3Ku8G1x66cG8tZpqHB3DyUdb5pUk0Q==
-X-Gm-Gg: ASbGncuJAdwyQ4bF341MDL+Gor8npnpQzIvogNLdKmraaHkboCC3+n5eKsA12FZ3IWy
-	sR0zIOzyexeakyJV0gfoOCWEviDXRHtVc7kbSnoqE2TGiqfkcimY4PiE160XC9cDrTiCjudYITx
-	Zo4WobndYptE4AdB6w8R6gow==
-X-Google-Smtp-Source: AGHT+IEe0qaC0lQE4vVBPq0O/UkufyhMgS9z3ZbPY1mvtJ8bizDhkkrVjsKtA3hkJLPYrj6rIi0bINvnfo6SXiRHqEk=
-X-Received: by 2002:a17:90b:2248:b0:2fe:91d0:f781 with SMTP id
- 98e67ed59e1d1-30a2205ed62mr68803a91.2.1745860426928; Mon, 28 Apr 2025
- 10:13:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745862665; x=1746467465;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h4wyA4meYu/jGC2JOtjrK8EL7T0Nz2LNZVXKvpx9L58=;
+        b=go6mgcXGxba5W5KDkLe72s0b/bBitgPlqQIAA0DbV+aZLsolw5tHdHaFyq4AFVNw9e
+         7hUX6wuwxpdMIXhLKBLh2Z6B+SoRwAjgmhUYtlOLTizAcEvj3Oz8UZM1O+HM8jqpjuv7
+         sd5j3l7FUZR0+Q2FaYHwmM3maxK+kI/Y+/jxORi639hiNqQqaPyBXicHQhKqS/dIYF3t
+         vpvW9RsZ2p7j0wEKc5L0dBpZNunBsglRoRb9VIYbr27oxyJ7glJTNNNxdXOK8KW2cRaQ
+         mozwK2pvCjgWSjdNPJy2NG6eLw2VibRn0tcAJsSQhpV8+yvpOuGyE85cZwc2/D/QjTka
+         LaGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUYZRexYOioYBNRvu7hpffUme8m4OZ/14eFqmL3ndRLuKQoMhzBziOddRGQM+wCGUzmoxKXRSmZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5fRb9a5kU3cnOEW6dMi1kpV0UxQxAHfEqWr+nJjrU2GxaPdl1
+	yClxY/1bZnhA5DXf9935PpHPtB7m2NRxGyLAlcnsydTg0dOsfG/1U9SDHYjwJEgwKVMcgEGx8oQ
+	y
+X-Gm-Gg: ASbGncu2PO8d+mYTW/oVgmo3D8ezXzkcOKYC6TTSFOV0T0HocNfgWvgIRun/Iq/gVO5
+	yiyLOzK4uikcyqATS2xrJxuGPZ3SVyE5TvNbEsUikHDWMh5cobZU1XCNIgXDYCQT8NDOBdiaiZ0
+	kxR+pvC9ezN0ESXfUWvdm1Z+/+sd0H+581ccJPbR+wepK9oeRMKffraZZEnj6E9nx6lRkbHEQ7s
+	tEbYBZIiD/WywzpzgvLFSQbp+Txqkbs8Ue08vG2A3r+ef4+k6kogS5mYoQzYo3FZFC+vcVm1xJB
+	2ImuwR5GWPmk2h93qEI3mbM4a1YAmxkbXwMb
+X-Google-Smtp-Source: AGHT+IHoelBKLB3nVFdyMYqp/t44lbX4GPWzngTAnmCnA+yGBY80X2S0xHatnLd32WDYzruryj8Wqg==
+X-Received: by 2002:a05:6602:4c84:b0:864:4a86:5be1 with SMTP id ca18e2360f4ac-864886b941fmr110415739f.8.1745862665536;
+        Mon, 28 Apr 2025 10:51:05 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824b81d12sm2362461173.91.2025.04.28.10.51.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Apr 2025 10:51:05 -0700 (PDT)
+Message-ID: <00316c59-8d27-42ef-b78f-c4c69334549c@kernel.dk>
+Date: Mon, 28 Apr 2025 11:51:04 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428094420.1584420-1-ming.lei@redhat.com> <20250428094420.1584420-5-ming.lei@redhat.com>
-In-Reply-To: <20250428094420.1584420-5-ming.lei@redhat.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 28 Apr 2025 10:13:35 -0700
-X-Gm-Features: ATxdqUFfaibAVOB9lsrlFcvbbkzlbm3pJ51B84XwwL59NRLca-HSsvfIndwZufY
-Message-ID: <CADUfDZrr19VZTm+rfN3Ks9Rrvek2CEBBt0V=CLO2uHayWffcow@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/7] ublk: convert to refcount_t
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-block@vger.kernel.org, 
-	Uday Shankar <ushankar@purestorage.com>, Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/7] tx timestamp io_uring commands
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+References: <cover.1745843119.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <cover.1745843119.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 28, 2025 at 2:45=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> Convert to refcount_t and prepare for supporting to register bvec buffer
-> automatically, which needs to initialize reference counter as 2, and
-> kref doesn't provide this interface, so convert to refcount_t.
->
-> Suggested-by: Caleb Sander Mateos <csander@purestorage.com>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  drivers/block/ublk_drv.c | 19 +++++--------------
->  1 file changed, 5 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index ac56482b55f5..9cd331d12fa6 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -79,7 +79,7 @@
->          UBLK_PARAM_TYPE_DMA_ALIGN | UBLK_PARAM_TYPE_SEGMENT)
->
->  struct ublk_rq_data {
-> -       struct kref ref;
-> +       refcount_t ref;
->  };
->
->  struct ublk_uring_cmd_pdu {
-> @@ -484,7 +484,6 @@ static blk_status_t ublk_setup_iod_zoned(struct ublk_=
-queue *ubq,
->  #endif
->
->  static inline void __ublk_complete_rq(struct request *req);
-> -static void ublk_complete_rq(struct kref *ref);
->
->  static dev_t ublk_chr_devt;
->  static const struct class ublk_chr_class =3D {
-> @@ -644,7 +643,7 @@ static inline void ublk_init_req_ref(const struct ubl=
-k_queue *ubq,
->         if (ublk_need_req_ref(ubq)) {
->                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
->
-> -               kref_init(&data->ref);
-> +               refcount_set(&data->ref, 1);
->         }
->  }
->
-> @@ -654,7 +653,7 @@ static inline bool ublk_get_req_ref(const struct ublk=
-_queue *ubq,
->         if (ublk_need_req_ref(ubq)) {
->                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
->
-> -               return kref_get_unless_zero(&data->ref);
-> +               return refcount_inc_not_zero(&data->ref);
->         }
->
->         return true;
-> @@ -666,7 +665,8 @@ static inline void ublk_put_req_ref(const struct ublk=
-_queue *ubq,
->         if (ublk_need_req_ref(ubq)) {
->                 struct ublk_rq_data *data =3D blk_mq_rq_to_pdu(req);
->
-> -               kref_put(&data->ref, ublk_complete_rq);
-> +               if(refcount_dec_and_test(&data->ref))
+On 4/28/25 6:52 AM, Pavel Begunkov wrote:
+> Vadim expressed interest in having an io_uring API for tx timestamping,
+> and the series implements a rough prototype to support that. It
+> introduces a new socket command, which works in a multishot polling
+> mode, i.e. it polls the socket and posts CQEs when a timestamp arrives.
+> It reuses most of the bits on the networking side by grabbing timestamp
+> skbs from the socket's error queue.
+> 
+> The ABI and net bits like skb parsing will need to be discussed and
+> ironed before posting a non-RFC version.
 
-nit: missing space after if
+Implementation looks nice and clean and straight forward, don't see why
+this can't be a non-RFC posting. At least in my opinion!
 
-Other than that,
+I'll queue up the first 2 patches.
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
-
-> +                       __ublk_complete_rq(req);
->         } else {
->                 __ublk_complete_rq(req);
->         }
-> @@ -1124,15 +1124,6 @@ static inline void __ublk_complete_rq(struct reque=
-st *req)
->         blk_mq_end_request(req, res);
->  }
->
-> -static void ublk_complete_rq(struct kref *ref)
-> -{
-> -       struct ublk_rq_data *data =3D container_of(ref, struct ublk_rq_da=
-ta,
-> -                       ref);
-> -       struct request *req =3D blk_mq_rq_from_pdu(data);
-> -
-> -       __ublk_complete_rq(req);
-> -}
-> -
->  static void ublk_complete_io_cmd(struct ublk_io *io, struct request *req=
-,
->                                  int res, unsigned issue_flags)
->  {
-> --
-> 2.47.0
->
+-- 
+Jens Axboe
 

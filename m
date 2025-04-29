@@ -1,386 +1,375 @@
-Return-Path: <io-uring+bounces-7770-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7771-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75ED6A9FE9C
-	for <lists+io-uring@lfdr.de>; Tue, 29 Apr 2025 02:52:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C628AA0044
+	for <lists+io-uring@lfdr.de>; Tue, 29 Apr 2025 05:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BBD5A4F03
-	for <lists+io-uring@lfdr.de>; Tue, 29 Apr 2025 00:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C4446726B
+	for <lists+io-uring@lfdr.de>; Tue, 29 Apr 2025 03:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8729C8837;
-	Tue, 29 Apr 2025 00:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AD7270557;
+	Tue, 29 Apr 2025 03:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="LAjfjoiO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2doDEciO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BB22AEFB
-	for <io-uring@vger.kernel.org>; Tue, 29 Apr 2025 00:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CE72147F7
+	for <io-uring@vger.kernel.org>; Tue, 29 Apr 2025 03:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745887963; cv=none; b=KFTjxxufH2RmOw4as5ShKsKpulgFvFkGSfyIcbyPRgcLmWboQ3Kr0yFJEt5LvpnSgeEZAZZRH45PWv1VpIJpfXfnwvdxyXZbe/e1AMGE6bp7bb1E8qeQfMV/hojBSs/4UNctvIdXGUePj0CSQtR1gxn33KuwktxUCRLTLe1+/Y0=
+	t=1745897210; cv=none; b=JxMAhYkezMUACJtgNq4imHMDow7VLNA8eaFFug7ZIPCXftIST9r/GaA2d8bjDM65UMn8TYO3zduvsXIilVL/G5YQ/Td7aYo+S46NYb8/YufYxQcxEr+4587rqgJOCuc1/bo3hPqfRmNBkx6Uq2orCymaj9zCm5sN6+0U5HWEAsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745887963; c=relaxed/simple;
-	bh=XBW4PdYmoJwv7cr2F+SjA/TIZHLvre4tERkia1y8Zvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f7OxcAzS/5Vg3ZnhnEWR1mURdF68x/jn9Zk8z1/WIE9Hu4FShcVtgcrS41cWhOGY5H9xsUGIW+v3PLAI9whiIlp2cEfXCY/srHS4IcAqLwm6DRO/u+eStaeE2cOMXixcL5hkxxOkiJVlh6n/hK2n7J2LGHfGW37KfkdMOhWOC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=LAjfjoiO; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-af5499ca131so583032a12.3
-        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 17:52:40 -0700 (PDT)
+	s=arc-20240116; t=1745897210; c=relaxed/simple;
+	bh=pVWNnw+VrTtCs/KYH9fNRegsSM6AgJuO+C4fehW3t0s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BlbOMgsfyqxcIQC81rScwJR5EoI41e+h+/SJ82xLSb72URV6l5+dL7bzmQHbCqmwL/S4r+9DJb4G1cJ9iAjqXWWQF9XLoSbS4Eebc3ArQ/nP0sZFG7jFjwpfFA78TuzUP4WCOrOUUkYWDPJcP94j254xPZfAydMivE6HjJg9Hts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2doDEciO; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af9564001cbso3342863a12.3
+        for <io-uring@vger.kernel.org>; Mon, 28 Apr 2025 20:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1745887960; x=1746492760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=leZG6VNjzi4cxvLRuL6zWtXVaJUcCgfQ98z1HUj4Z20=;
-        b=LAjfjoiO590owarj2tvPQXPjDjBtT/jAsmoDOzTI6i5PbwoClDN7w3u74sFvMJekcH
-         o8C/70AwD1x0P8Aooj4fbYMtgAzdDPc7g9bPrMX7MQvtWn+7OrHn4qsxrMoGh6Yd4DFT
-         KQoeo+TX4FGcjdSnb+KtqCuR9Y7tO/MdLby0T2zfEeHrWmQxRmOMAnLnqmZ2BdKzTttu
-         ReL7fEzkcnvZUFvmyq+lOL4+zBpyLocxqgOrGytPMQwWgDDGrh57d5UBmQskf7+9oHUH
-         bS7duwLEPn6W+4vO30sjXedD9gl0Od42v8QFUskZ50RQ7sK1TtE3RCsAoR8WNrNcPVEd
-         dfaA==
+        d=google.com; s=20230601; t=1745897207; x=1746502007; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pAhN58w7LrRsnk32jx8DwkELByg2oiFxPx+yIaTkjK8=;
+        b=2doDEciO+QM9EQs4Y/OSwmM9d8+OND8CivRzA4Una4/zggWgwJnIWo4TH5b0uy+y5g
+         VngbUEPedtqfAEomKqJt72LCADAul+dZvY7SFkE17EWr013hvZkd1zYefxIKC3xQovJh
+         qEixyQIC8HrmCIF1yIEZZi+A6NQ/zSpTOAUAaH8FQHmbd2cbSXYZGn7NBs3CyU0rdeqm
+         Fc/LFmLcOAYrKodUXEfxgi0M5p5kS0GEVnYfO1kn8GDBGhNEzw1hQc3/TQv+9pRuRct/
+         4s5/osJpIs74gQLALRgVWIEe/8RLgRYa5pjLCKsfZV0mQ1n5SaneoYcwQ1Y/E7RCebAz
+         ueXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745887960; x=1746492760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=leZG6VNjzi4cxvLRuL6zWtXVaJUcCgfQ98z1HUj4Z20=;
-        b=BndNXfBTSTzy/91nKg9Ix5oh8qaS8JLaWwnZFqjO5hAeApNaQ1AWOkQVAtXYEI7uIu
-         oblao5kaEzhxOLclGQWN0a1Iq/C8iBkY9XUMJMo2W5fT5PAti2rJD+uTEqOPYX6lw1AE
-         Vk6XH4Qek7hKItZnU7kiDPHxGlYe47UWjXBYhe8FzgCgpgiVBli5SsgaJEt8OdE4h1L/
-         +F4qiwBii9Luae6ClfXwW8Pbfn5nqKjsGdLXpOhADboTin3914PjwbYrjiL5qhMgpJqa
-         co1/SiXMSksRPiH/u1bthKcAl3jgcp0xuaysDPAlifxO0yz+CviP0gIMVeprDvT18+QT
-         VVqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp4u1iMUlQBY3BSOkTAlYVXrrsU8G12QEfNqElnodWAekFqVW901ZXgJpTchB8ia8s4gj04oZf1A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTb7mbUNgS7oVE4dpejWVzBu/Q/zwI3SnGY7fM67Y5SOcHhWRC
-	SfWQR1QyzS8KlN0d5HHA3kpTT/u+b7rJ41jNJZJUgOL5OV9JANeudfTT+OxTOWf9E/6uMGLw2iA
-	orSwuTLoBHswwaVZ6jCkNqwSBsSoUr1Rut0RSGivgbHWJe6fh1gvxZg==
-X-Gm-Gg: ASbGncsj2qeFi4TWsOLHh+HgVnEoNYZdL04tKIefnj3EbCTvAn4/LkYOf44+UbnFxdt
-	kX8w/85WycxpVlF8llQdjvGWJjSN+DKQJwzXbXQDkdyMtZOslNf9KgebTkl5G4QBeFLAMbf2f7T
-	Jp/BC80RXaUGN1vUdb/Xc0
-X-Google-Smtp-Source: AGHT+IGPO8x50CgpLXr/qTZKQVBotFxGO1VNmKCIJtfTX/F8Zv68Tp0DvxNzOBfOMNRfQkJlrXGnFAvXmkHFcuTBDCU=
-X-Received: by 2002:a17:90b:1c92:b0:305:5f31:6c63 with SMTP id
- 98e67ed59e1d1-30a220f0442mr701573a91.6.1745887960143; Mon, 28 Apr 2025
- 17:52:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745897207; x=1746502007;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pAhN58w7LrRsnk32jx8DwkELByg2oiFxPx+yIaTkjK8=;
+        b=IqORQkgvIkdMph7uOXI/S/pb/+q/ZV8pUs3tPQK2egX6UTqkWge0y4Zh0JpTQ5Aw8H
+         NTfGqKHgRlnLtKKHC5SXq0q/awmXqCfmEv20h2G+CY0dSbvt3zSBKo1W1Vl+SqCFdcf5
+         5c9krff3rJmaSEoN6Ey0JAYBq/1OZWe4CrKNxJV/KfktC2Mvi7zl8oHjyeu0EvtZWoYz
+         1rb5R4OGPbkdUiG+4Bv36g7j7dY+5WpVbsxeTzZzrXi3Ca4V54ZjyK/Iqv3ncRa1yMHo
+         s0JKssFmFleE8dpYtVLJ9GWDOTDShhSfiAtIwI+z6nX5kfPzOKXYpXSQJFE/n+OV3MZc
+         igbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwrDft8r6Gpf8Awgt2tH12lDZi+io781Y9qwLpyeGbb8WbvkmjJqP/VIBRbfMaLBKnUlQo771a0A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycndOhb1bYwEtpfqULqWumHabajKeX65RwJqxGnts+Ho/eEIny
+	9sN/WioLoGM0YB/9fw6+P7kZOOZoex86e4Z0RM9UsLq+GWok4va1eBzu+AbZLzMo1zKgqPHeIdb
+	RAe5uLgljraaZdPguJSFx+A==
+X-Google-Smtp-Source: AGHT+IHPGrbrkLrPlxuB9ba2UkDM0NP8sdzNVktyOUF/jvXAIbAYsA2yohXW8qB/SHe824C2SSjJtCI+XZ/y6fu51w==
+X-Received: from pgcp16.prod.google.com ([2002:a63:7410:0:b0:af2:448e:a04d])
+ (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:7fa6:b0:1f5:7f45:7f95 with SMTP id adf61e73a8af0-2093e7242afmr2572864637.27.1745897207047;
+ Mon, 28 Apr 2025 20:26:47 -0700 (PDT)
+Date: Tue, 29 Apr 2025 03:26:36 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250428094420.1584420-1-ming.lei@redhat.com> <20250428094420.1584420-7-ming.lei@redhat.com>
-In-Reply-To: <20250428094420.1584420-7-ming.lei@redhat.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 28 Apr 2025 17:52:28 -0700
-X-Gm-Features: ATxdqUGco17VJBbTA1kkMaxnpql1LkS1kUajLakqLD1r_sP5m-AdIWRemExdYMo
-Message-ID: <CADUfDZrFDbYmnm7LEt94UVhn-tqGM6Fnfqvc2fuq8OqQPdNu3Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/7] ublk: register buffer to specified io_uring & buf
- index via UBLK_F_AUTO_BUF_REG
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-block@vger.kernel.org, 
-	Uday Shankar <ushankar@purestorage.com>, Keith Busch <kbusch@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
+Message-ID: <20250429032645.363766-1-almasrymina@google.com>
+Subject: [PATCH net-next v13 0/9] Device memory TCP TX
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"=?UTF-8?q?Eugenio=20P=C3=A9rez?=" <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 2:45=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> Add UBLK_F_AUTO_BUF_REG for supporting to register buffer automatically
-> to specified io_uring context and buffer index.
->
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  drivers/block/ublk_drv.c      | 56 ++++++++++++++++++++++++++++-------
->  include/uapi/linux/ublk_cmd.h | 38 ++++++++++++++++++++++++
->  2 files changed, 84 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 1fd20e481a60..e82618442749 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -66,7 +66,8 @@
->                 | UBLK_F_USER_COPY \
->                 | UBLK_F_ZONED \
->                 | UBLK_F_USER_RECOVERY_FAIL_IO \
-> -               | UBLK_F_UPDATE_SIZE)
-> +               | UBLK_F_UPDATE_SIZE \
-> +               | UBLK_F_AUTO_BUF_REG)
->
->  #define UBLK_F_ALL_RECOVERY_FLAGS (UBLK_F_USER_RECOVERY \
->                 | UBLK_F_USER_RECOVERY_REISSUE \
-> @@ -146,7 +147,10 @@ struct ublk_uring_cmd_pdu {
->
->  struct ublk_io {
->         /* userspace buffer address from io cmd */
-> -       __u64   addr;
-> +       union {
-> +               __u64   addr;
-> +               struct ublk_auto_buf_reg buf;
+v13: https://lore.kernel.org/netdev/20250425204743.617260-1-almasrymina@google.com/
+===
 
-Maybe add a comment justifying why these fields can overlap? From my
-understanding, buf is valid iff UBLK_F_AUTO_BUF_REG is set on the
-ublk_queue and addr is valid iff neither UBLK_F_USER_COPY,
-UBLK_F_SUPPORT_ZERO_COPY, nor UBLK_F_AUTO_BUF_REG is set.
+Changelog:
 
-> +       };
->         unsigned int flags;
->         int res;
->
-> @@ -626,7 +630,7 @@ static inline bool ublk_support_zero_copy(const struc=
-t ublk_queue *ubq)
->
->  static inline bool ublk_support_auto_buf_reg(const struct ublk_queue *ub=
-q)
->  {
-> -       return false;
-> +       return ubq->flags & UBLK_F_AUTO_BUF_REG;
->  }
->
->  static inline bool ublk_support_user_copy(const struct ublk_queue *ubq)
-> @@ -1177,6 +1181,16 @@ static inline void __ublk_abort_rq(struct ublk_que=
-ue *ubq,
->                 blk_mq_end_request(rq, BLK_STS_IOERR);
->  }
->
-> +
-> +static inline void ublk_init_auto_buf_reg(const struct ublk_io *io,
-> +                                         struct io_buf_data *data)
-> +{
-> +       data->index =3D io->buf.index;
-> +       data->ring_fd =3D io->buf.ring_fd;
-> +       data->has_fd =3D true;
-> +       data->registered_fd =3D io->buf.flags & UBLK_AUTO_BUF_REGISTERED_=
-RING;
-> +}
-> +
->  static bool ublk_auto_buf_reg(struct ublk_queue *ubq, struct request *re=
-q,
->                               struct ublk_io *io, unsigned int issue_flag=
-s)
->  {
-> @@ -1187,6 +1201,9 @@ static bool ublk_auto_buf_reg(struct ublk_queue *ub=
-q, struct request *req,
->         };
->         int ret;
->
-> +       if (ublk_support_auto_buf_reg(ubq))
+- Fix unneeded error label pointed out by Christoph, and addressed
+  nitpick.
 
-This check seems redundant with the check in the caller? Same comment
-about ublk_auto_buf_unreg(). That would allow you to avoid adding the
-ubq argument to ublk_auto_buf_unreg().
+v12: https://lore.kernel.org/netdev/20250423031117.907681-1-almasrymina@google.com/
+====
 
-> +               ublk_init_auto_buf_reg(io, &data);
-> +
->         /* one extra reference is dropped by ublk_io_release */
->         ublk_init_req_ref(ubq, req, 2);
->         ret =3D io_buffer_register_bvec(io->cmd, &data, issue_flags);
-> @@ -2045,7 +2062,7 @@ static int ublk_fetch(struct io_uring_cmd *cmd, str=
-uct ublk_queue *ubq,
->                  */
->                 if (!buf_addr && !ublk_need_get_data(ubq))
->                         goto out;
-> -       } else if (buf_addr) {
-> +       } else if (buf_addr && !ublk_support_auto_buf_reg(ubq)) {
->                 /* User copy requires addr to be unset */
->                 ret =3D -EINVAL;
->                 goto out;
-> @@ -2058,13 +2075,17 @@ static int ublk_fetch(struct io_uring_cmd *cmd, s=
-truct ublk_queue *ubq,
->         return ret;
->  }
->
-> -static void ublk_auto_buf_unreg(struct ublk_io *io, struct io_uring_cmd =
-*cmd,
-> +static void ublk_auto_buf_unreg(const struct ublk_queue *ubq,
-> +                               struct ublk_io *io, struct io_uring_cmd *=
-cmd,
->                                 struct request *req, unsigned int issue_f=
-lags)
->  {
->         struct io_buf_data data =3D {
->                 .index =3D req->tag,
->         };
->
-> +       if (ublk_support_auto_buf_reg(ubq))
-> +               ublk_init_auto_buf_reg(io, &data);
-> +
->         WARN_ON_ONCE(io_buffer_unregister_bvec(cmd, &data, issue_flags));
->         io->flags &=3D ~UBLK_IO_FLAG_AUTO_BUF_REG;
->  }
-> @@ -2088,7 +2109,8 @@ static int ublk_commit_and_fetch(const struct ublk_=
-queue *ubq,
->                 if (!ub_cmd->addr && (!ublk_need_get_data(ubq) ||
->                                         req_op(req) =3D=3D REQ_OP_READ))
->                         return -EINVAL;
-> -       } else if (req_op(req) !=3D REQ_OP_ZONE_APPEND && ub_cmd->addr) {
-> +       } else if ((req_op(req) !=3D REQ_OP_ZONE_APPEND &&
-> +                               !ublk_support_auto_buf_reg(ubq)) && ub_cm=
-d->addr) {
->                 /*
->                  * User copy requires addr to be unset when command is
->                  * not zone append
-> @@ -2097,7 +2119,7 @@ static int ublk_commit_and_fetch(const struct ublk_=
-queue *ubq,
->         }
->
->         if (io->flags & UBLK_IO_FLAG_AUTO_BUF_REG)
-> -               ublk_auto_buf_unreg(io, cmd, req, issue_flags);
-> +               ublk_auto_buf_unreg(ubq, io, cmd, req, issue_flags);
->
->         ublk_fill_io_cmd(io, cmd, ub_cmd->addr);
->
-> @@ -2788,6 +2810,11 @@ static int ublk_ctrl_add_dev(const struct ublksrv_=
-ctrl_cmd *header)
->         else if (!(info.flags & UBLK_F_UNPRIVILEGED_DEV))
->                 return -EPERM;
->
-> +       /* F_AUTO_BUF_REG and F_SUPPORT_ZERO_COPY can't co-exist */
-> +       if ((info.flags & UBLK_F_AUTO_BUF_REG) &&
-> +                       (info.flags & UBLK_F_SUPPORT_ZERO_COPY))
-> +               return -EINVAL;
-> +
->         /* forbid nonsense combinations of recovery flags */
->         switch (info.flags & UBLK_F_ALL_RECOVERY_FLAGS) {
->         case 0:
-> @@ -2817,8 +2844,11 @@ static int ublk_ctrl_add_dev(const struct ublksrv_=
-ctrl_cmd *header)
->                  * For USER_COPY, we depends on userspace to fill request
->                  * buffer by pwrite() to ublk char device, which can't be
->                  * used for unprivileged device
-> +                *
-> +                * Same with zero copy or auto buffer register.
->                  */
-> -               if (info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_=
-COPY))
-> +               if (info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_=
-COPY |
-> +                                       UBLK_F_AUTO_BUF_REG))
->                         return -EINVAL;
->         }
->
-> @@ -2876,17 +2906,22 @@ static int ublk_ctrl_add_dev(const struct ublksrv=
-_ctrl_cmd *header)
->                 UBLK_F_URING_CMD_COMP_IN_TASK;
->
->         /* GET_DATA isn't needed any more with USER_COPY or ZERO COPY */
-> -       if (ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_=
-COPY))
-> +       if (ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_=
-COPY |
-> +                               UBLK_F_AUTO_BUF_REG))
->                 ub->dev_info.flags &=3D ~UBLK_F_NEED_GET_DATA;
->
->         /*
->          * Zoned storage support requires reuse `ublksrv_io_cmd->addr` fo=
-r
->          * returning write_append_lba, which is only allowed in case of
->          * user copy or zero copy
-> +        *
-> +        * UBLK_F_AUTO_BUF_REG can't be enabled for zoned because it need
-> +        * the space for getting ring_fd and buffer index.
->          */
->         if (ublk_dev_is_zoned(ub) &&
->             (!IS_ENABLED(CONFIG_BLK_DEV_ZONED) || !(ub->dev_info.flags &
-> -            (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)))) {
-> +            (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)) ||
-> +            (ub->dev_info.flags & UBLK_F_AUTO_BUF_REG))) {
->                 ret =3D -EINVAL;
->                 goto out_free_dev_number;
->         }
-> @@ -3403,6 +3438,7 @@ static int __init ublk_init(void)
->
->         BUILD_BUG_ON((u64)UBLKSRV_IO_BUF_OFFSET +
->                         UBLKSRV_IO_BUF_TOTAL_SIZE < UBLKSRV_IO_BUF_OFFSET=
-);
-> +       BUILD_BUG_ON(sizeof(struct ublk_auto_buf_reg) !=3D sizeof(__u64))=
-;
->
->         init_waitqueue_head(&ublk_idr_wq);
->
-> diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.=
-h
-> index be5c6c6b16e0..3d7c8c69cf06 100644
-> --- a/include/uapi/linux/ublk_cmd.h
-> +++ b/include/uapi/linux/ublk_cmd.h
-> @@ -219,6 +219,30 @@
->   */
->  #define UBLK_F_UPDATE_SIZE              (1ULL << 10)
->
-> +/*
-> + * request buffer is registered automatically to ublk server specified
-> + * io_uring context before delivering this io command to ublk server,
-> + * meantime it is un-registered automatically when completing this io
-> + * command.
-> + *
-> + * For using this feature:
-> + *
-> + * - ublk server has to create sparse buffer table
-> + *
-> + * - pass io_ring context FD from `ublksrv_io_cmd.buf.ring_fd`, and the =
-FD
-> + *   can be registered io_ring FD if `UBLK_AUTO_BUF_REGISTERED_RING` is =
-set
-> + *   in `ublksrv_io_cmd.flags`, or plain FD
-> + *
-> + * - pass buffer index from `ublksrv_io_cmd.buf.index`
-> + *
-> + * This way avoids extra cost from two uring_cmd, but also simplifies ba=
-ckend
-> + * implementation, such as, the dependency on IO_REGISTER_IO_BUF and
-> + * IO_UNREGISTER_IO_BUF becomes not necessary.
-> + *
-> + * This feature isn't available for UBLK_F_ZONED
-> + */
-> +#define UBLK_F_AUTO_BUF_REG    (1ULL << 11)
-> +
->  /* device state */
->  #define UBLK_S_DEV_DEAD        0
->  #define UBLK_S_DEV_LIVE        1
-> @@ -339,6 +363,14 @@ static inline __u32 ublksrv_get_flags(const struct u=
-blksrv_io_desc *iod)
->         return iod->op_flags >> 8;
->  }
->
-> +struct ublk_auto_buf_reg {
-> +       __s32  ring_fd;
-> +       __u16  index;
-> +#define UBLK_AUTO_BUF_REGISTERED_RING            (1 << 0)
-> +       __u8   flags;
+No changes in v12, just restored the selftests patch I accidentally dropped in
+v11
 
-The flag could potentially be stored in ublk_io's flags field instead
-to avoid taking up this byte.
+v11: https://lore.kernel.org/netdev/20250423031117.907681-1-almasrymina@google.com/
+====
 
-Best,
-Caleb
+Addressed a couple of nits and collected Acked-by from Harshitha
+(thanks!)
+
+v10: https://lore.kernel.org/netdev/20250417231540.2780723-1-almasrymina@google.com/
+====
+
+Addressed comments following conversations with Pavel, Stan, and
+Harshitha. Thank you guys for the reviews again. Overall minor changes:
+
+Changelog:
+- Check for !niov->pp in io_zcrx_recv_frag, just in case we end up with
+  a TX niov in that path (Pavel).
+- Fix locking case in !netif_device_present (Jakub/Stan).
+
+v9: https://lore.kernel.org/netdev/20250415224756.152002-1-almasrymina@google.com/
+===
+
+Changelog:
+- Use priv->bindings list instead of sock_bindings_list. This was missed
+  during the rebase as the bindings have been updated to use
+  priv->bindings recently (thanks Stan!)
+
+v8: https://lore.kernel.org/netdev/20250308214045.1160445-1-almasrymina@google.com/
+===
+
+Only address minor comments on V7
+
+Changelog:
+- Use netdev locking instead of rtnl_locking to match rx path.
+- Now that iouring zcrx is in net-next, use NET_IOV_IOURING instead of
+  NET_IOV_UNSPECIFIED.
+- Post send binding to net_devmem_dmabuf_bindings after it's been fully
+  initialized (Stan).
+
+v7: https://lore.kernel.org/netdev/20250227041209.2031104-1-almasrymina@google.com/
+===
+
+Changelog:
+- Check the dmabuf net_iov binding belongs to the device the TX is going
+  out on. (Jakub)
+- Provide detailed inspection of callsites of
+  __skb_frag_ref/skb_page_unref in patch 2's changelog (Jakub)
+
+v6: https://lore.kernel.org/netdev/20250222191517.743530-1-almasrymina@google.com/
+===
+
+v6 has no major changes. Addressed a few issues from Paolo and David,
+and collected Acks from Stan. Thank you everyone for the review!
+
+Changes:
+- retain behavior to process MSG_FASTOPEN even if the provided cmsg is
+  invalid (Paolo).
+- Rework the freeing of tx_vec slightly (it now has its own err label).
+  (Paolo).
+- Squash the commit that makes dmabuf unbinding scheduled work into the
+  same one which implements the TX path so we don't run into future
+  errors on bisecting (Paolo).
+- Fix/add comments to explain how dmabuf binding refcounting works
+  (David).
+
+v5: https://lore.kernel.org/netdev/20250220020914.895431-1-almasrymina@google.com/
+===
+
+v5 has no major changes; it clears up the relatively minor issues
+pointed out to in v4, and rebases the series on top of net-next to
+resolve the conflict with a patch that raced to the tree. It also
+collects the review tags from v4.
+
+Changes:
+- Rebase to net-next
+- Fix issues in selftest (Stan).
+- Address comments in the devmem and netmem driver docs (Stan and Bagas)
+- Fix zerocopy_fill_skb_from_devmem return error code (Stan).
+
+v4: https://lore.kernel.org/netdev/20250203223916.1064540-1-almasrymina@google.com/
+===
+
+v4 mainly addresses the critical driver support issue surfaced in v3 by
+Paolo and Stan. Drivers aiming to support netmem_tx should make sure not
+to pass the netmem dma-addrs to the dma-mapping APIs, as these dma-addrs
+may come from dma-bufs.
+
+Additionally other feedback from v3 is addressed.
+
+Major changes:
+- Add helpers to handle netmem dma-addrs. Add GVE support for
+  netmem_tx.
+- Fix binding->tx_vec not being freed on error paths during the
+  tx binding.
+- Add a minimal devmem_tx test to devmem.py.
+- Clean up everything obsolete from the cover letter (Paolo).
+
+v3: https://patchwork.kernel.org/project/netdevbpf/list/?series=929401&state=*
+===
+
+Address minor comments from RFCv2 and fix a few build warnings and
+ynl-regen issues. No major changes.
+
+RFC v2: https://patchwork.kernel.org/project/netdevbpf/list/?series=920056&state=*
+=======
+
+RFC v2 addresses much of the feedback from RFC v1. I plan on sending
+something close to this as net-next  reopens, sending it slightly early
+to get feedback if any.
+
+Major changes:
+--------------
+
+- much improved UAPI as suggested by Stan. We now interpret the iov_base
+  of the passed in iov from userspace as the offset into the dmabuf to
+  send from. This removes the need to set iov.iov_base = NULL which may
+  be confusing to users, and enables us to send multiple iovs in the
+  same sendmsg() call. ncdevmem and the docs show a sample use of that.
+
+- Removed the duplicate dmabuf iov_iter in binding->iov_iter. I think
+  this is good improvment as it was confusing to keep track of
+  2 iterators for the same sendmsg, and mistracking both iterators
+  caused a couple of bugs reported in the last iteration that are now
+  resolved with this streamlining.
+
+- Improved test coverage in ncdevmem. Now multiple sendmsg() are tested,
+  and sending multiple iovs in the same sendmsg() is tested.
+
+- Fixed issue where dmabuf unmapping was happening in invalid context
+  (Stan).
+
+====================================================================
+
+The TX path had been dropped from the Device Memory TCP patch series
+post RFCv1 [1], to make that series slightly easier to review. This
+series rebases the implementation of the TX path on top of the
+net_iov/netmem framework agreed upon and merged. The motivation for
+the feature is thoroughly described in the docs & cover letter of the
+original proposal, so I don't repeat the lengthy descriptions here, but
+they are available in [1].
+
+Full outline on usage of the TX path is detailed in the documentation
+included with this series.
+
+Test example is available via the kselftest included in the series as well.
+
+The series is relatively small, as the TX path for this feature largely
+piggybacks on the existing MSG_ZEROCOPY implementation.
+
+Patch Overview:
+---------------
+
+1. Documentation & tests to give high level overview of the feature
+   being added.
+
+1. Add netmem refcounting needed for the TX path.
+
+2. Devmem TX netlink API.
+
+3. Devmem TX net stack implementation.
+
+4. Make dma-buf unbinding scheduled work to handle TX cases where it gets
+   freed from contexts where we can't sleep.
+
+5. Add devmem TX documentation.
+
+6. Add scaffolding enabling driver support for netmem_tx. Add helpers, driver
+feature flag, and docs to enable drivers to declare netmem_tx support.
+
+7. Guard netmem_tx against being enabled against drivers that don't
+   support it.
+
+8. Add devmem_tx selftests. Add TX path to ncdevmem and add a test to
+   devmem.py.
+
+Testing:
+--------
+
+Testing is very similar to devmem TCP RX path. The ncdevmem test used
+for the RX path is now augemented with client functionality to test TX
+path.
+
+* Test Setup:
+
+Kernel: net-next with this RFC and memory provider API cherry-picked
+locally.
+
+Hardware: Google Cloud A3 VMs.
+
+NIC: GVE with header split & RSS & flow steering support.
+
+Performance results are not included with this version, unfortunately.
+I'm having issues running the dma-buf exporter driver against the
+upstream kernel on my test setup. The issues are specific to that
+dma-buf exporter and do not affect this patch series. I plan to follow
+up this series with perf fixes if the tests point to issues once they're
+up and running.
+
+Special thanks to Stan who took a stab at rebasing the TX implementation
+on top of the netmem/net_iov framework merged. Parts of his proposal [2]
+that are reused as-is are forked off into their own patches to give full
+credit.
+
+[1] https://lore.kernel.org/netdev/20240909054318.1809580-1-almasrymina@google.com/
+[2] https://lore.kernel.org/netdev/20240913150913.1280238-2-sdf@fomichev.me/T/#m066dd407fbed108828e2c40ae50e3f4376ef57fd
+
+Cc: sdf@fomichev.me
+Cc: asml.silence@gmail.com
+Cc: dw@davidwei.uk
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Victor Nogueira <victor@mojatatu.com>
+Cc: Pedro Tammela <pctammela@mojatatu.com>
+Cc: Samiullah Khawaja <skhawaja@google.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
 
 
-> +       __u8   _pad;
-> +};
-> +
->  /* issued to ublk driver via /dev/ublkcN */
->  struct ublksrv_io_cmd {
->         __u16   q_id;
-> @@ -363,6 +395,12 @@ struct ublksrv_io_cmd {
->                  */
->                 __u64   addr;
->                 __u64   zone_append_lba;
-> +
-> +               /*
-> +                * for AUTO_BUF_REG feature, F_ZONED can't be supported,
-> +                * and ->addr isn't used for zero copy
-> +                */
-> +               struct ublk_auto_buf_reg auto_buf;
->         };
->  };
->
-> --
-> 2.47.0
->
+Mina Almasry (8):
+  netmem: add niov->type attribute to distinguish different net_iov
+    types
+  net: add get_netmem/put_netmem support
+  net: devmem: Implement TX path
+  net: add devmem TCP TX documentation
+  net: enable driver support for netmem TX
+  gve: add netmem TX support to GVE DQO-RDA mode
+  net: check for driver support in netmem TX
+  selftests: ncdevmem: Implement devmem TCP TX
+
+Stanislav Fomichev (1):
+  net: devmem: TCP tx netlink api
+
+ Documentation/netlink/specs/netdev.yaml       |  12 +
+ Documentation/networking/devmem.rst           | 150 ++++++++-
+ .../networking/net_cachelines/net_device.rst  |   1 +
+ Documentation/networking/netdev-features.rst  |   5 +
+ Documentation/networking/netmem.rst           |  23 +-
+ drivers/net/ethernet/google/gve/gve_main.c    |   3 +
+ drivers/net/ethernet/google/gve/gve_tx_dqo.c  |   8 +-
+ include/linux/netdevice.h                     |   2 +
+ include/linux/skbuff.h                        |  17 +-
+ include/linux/skbuff_ref.h                    |   4 +-
+ include/net/netmem.h                          |  34 +-
+ include/net/sock.h                            |   1 +
+ include/uapi/linux/netdev.h                   |   1 +
+ io_uring/zcrx.c                               |   3 +-
+ net/core/datagram.c                           |  48 ++-
+ net/core/dev.c                                |  34 +-
+ net/core/devmem.c                             | 131 ++++++--
+ net/core/devmem.h                             |  83 ++++-
+ net/core/netdev-genl-gen.c                    |  13 +
+ net/core/netdev-genl-gen.h                    |   1 +
+ net/core/netdev-genl.c                        |  80 ++++-
+ net/core/skbuff.c                             |  48 ++-
+ net/core/sock.c                               |   6 +
+ net/ipv4/ip_output.c                          |   3 +-
+ net/ipv4/tcp.c                                |  50 ++-
+ net/ipv6/ip6_output.c                         |   3 +-
+ net/vmw_vsock/virtio_transport_common.c       |   5 +-
+ tools/include/uapi/linux/netdev.h             |   1 +
+ .../selftests/drivers/net/hw/devmem.py        |  26 +-
+ .../selftests/drivers/net/hw/ncdevmem.c       | 300 +++++++++++++++++-
+ 30 files changed, 1008 insertions(+), 88 deletions(-)
+
+
+base-commit: 0d15a26b247d25cd012134bf8825128fedb15cc9
+-- 
+2.49.0.901.g37484f566f-goog
+
 

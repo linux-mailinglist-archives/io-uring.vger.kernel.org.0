@@ -1,126 +1,128 @@
-Return-Path: <io-uring+bounces-7787-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7788-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73553AA4AAE
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 14:10:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4ABAAA4D57
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 15:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD2316E7DB
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 12:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25F7188C3B3
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 13:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B660A25E475;
-	Wed, 30 Apr 2025 12:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC8A25A359;
+	Wed, 30 Apr 2025 13:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0HMdrnvn"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fXye02IT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A29F25A356;
-	Wed, 30 Apr 2025 12:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3B4254852
+	for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 13:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746014802; cv=none; b=DeP+eRCEY8ykNsXBzAAKHiDGBXFD9B4R93R7pjw3PIHSXb1Ww04sb2kB6U1BhlUWBYj8EYBfbdONfUmbP0q+TnYT4RUe9snsvr8E4GVTeqk4w9Fm1VxjJZ4s9I5kfdaS8K9vhc88gJQHpqecEHlV8slt6TBZRlwo3mI7EDJelHg=
+	t=1746019236; cv=none; b=pw2Nd4vE7S77QGDqW5ClouyxfZ3c8TIAQ9NaeVS8ONUiQL3LgwH87UHSH4svonuo4CAjC29dmfV5OPiLwt8AwX+IqhwhdmQjdqO44s59N1Z8X6gCW/iTYfrmaq29mDhRTgNLKY72Nyw3hzDc4VF9bEq1VSZkgBGOzigdtz2dKWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746014802; c=relaxed/simple;
-	bh=KxtFBMueiirNWiwnyrAtoulWVdHm+lR5mj1ckpWIfuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osfIklCQxfJg+SMvHWwYvNKqElpF8IIwZEtx0Je3FsAm8IaM884JxhqPTKN2iVDv55MPmD3jhVOijuVUMCcMyNggmTlxU0Tuxtc2xFonBM/QMuBd+DdI29KMzI7De5d68NxVFXK1X52khED/+RVXA/WSLtpc+8/29LJquW1DEXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0HMdrnvn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17254C4CEE9;
-	Wed, 30 Apr 2025 12:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746014802;
-	bh=KxtFBMueiirNWiwnyrAtoulWVdHm+lR5mj1ckpWIfuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0HMdrnvnoik3wEGng8o6argm2Gw8rEtSYc55G3B28GQuBEFRqSFdNaxsHBXyLh841
-	 T7/Ps0yfVdJBG8N7LxX50V2mgE56JDHe3hoMp9z/Q1oNed7fPNABCIynsVHDDKk1Tl
-	 28VprGO4rlzsTCYcVEOg3Rex4+mEC7PcGf6RNmKo=
-Date: Wed, 30 Apr 2025 12:58:13 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-s390@vger.kernel.org, linux-mips@vger.kernel.org,
-	io-uring@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH 6.1 000/167] 6.1.136-rc1 review
-Message-ID: <2025043049-banked-doorpost-5e06@gregkh>
-References: <20250429161051.743239894@linuxfoundation.org>
- <CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com>
+	s=arc-20240116; t=1746019236; c=relaxed/simple;
+	bh=0eFmUYgILcxq+Aa96fLO3XMiQA7OBWgNXp332ZXi6T0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=JrNxLA2DBb9ydEBQGnih+/cEtmCtnIfQYx3DYFd0qEIgw7Tm4eCO5TFR+4ZwpsHYDaIHoTf/rNasiHEdmIpL+7av7iAwlxKILx06nu9ZevesroEv1lUeDu1/xVPmOo4HrXgdPrLu3pMWQs8qGxd0p3aT897dYo5XFq5vhnrfKb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fXye02IT; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85e15dc8035so187277439f.0
+        for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 06:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746019230; x=1746624030; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yJkrDBQmU2DGIQW9dUTJ28X9ZuomwnHwa7eSUZZQyPA=;
+        b=fXye02IToOG2xpn/LxoCkgvzQUnNIbehSieO9JSKEeVvoaFm/4DomHfJFB5/6M9WK0
+         1jpN38LXRLJOUMVkaV8Sl8Fow6xRyoKE1AIPswvM8YyVx4a2+dI4FhPfuKkh/4J9M0OC
+         qF6n/GScrJBE0hEYWxmbVMUsWIyb49DAuxVv34loWY4toVe8WGG+wi60JJxrlEfLQSOO
+         VYa1xNgDiA3hOLcoqUcUFw6uNRVCtCeVzyuT80iZpAX17gO6m8mku1m/n8Swh5XGeeNx
+         /nkJSgo0eIlf8RwsHkClrU/9jarPLLRkgrzTBfVwjjJ6dJdcah3c60kJu7tQH9vnJ9wH
+         adlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746019230; x=1746624030;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yJkrDBQmU2DGIQW9dUTJ28X9ZuomwnHwa7eSUZZQyPA=;
+        b=mqVL80Uf/822jMuhMm3jp4ZPRUeaXawKVtN9m8Yu+4MCadat0MizPja7W5b7jsRCP8
+         jB9rB2c7tbXMgymPkDVawstlvRvDqgVaL1/QMmFgShcAIVs3J9Qkya+kh4uJgmQextgp
+         nM/VsBBfpH3b12KuvcLv/j70dexW/USQAZvThrX15foMlR47XJLhKaECW3fAwqw8SC2N
+         FLB5amkN6EuQThHWj0ChWQHMCDHx9yvq9L0ra2hXm+0rTUrnOFW8IUWhKYhr4kLLrson
+         vYEtTKGyNsD6/0kgpbeMHf5ctaoUTPfc+6BVJ9kbLJMkfsMylWp5h6lBhNeP+LRT3Dpq
+         UCkA==
+X-Gm-Message-State: AOJu0Yw7iEn2Sp/fYGMfrlyz7eCbV3SWGgyyZ6JwqJ2+TS4mSD6bXf4a
+	zrVVfNUda7y1jEi0foJYI8g+aSb19MqMnkWmSssZgbtgqBYa7maTwUknrRPu/PcVzRQ7Rue2kMy
+	d
+X-Gm-Gg: ASbGncuMhkxGVEUpFU2X3UyI53c7i1nH1763Fczn4P7YKyarigQNk9fKgrQqOYDcVII
+	mz+j6giQq6qZ96ZnF9B8mVlp3JGURxmKBEis277OQDV3nxoMOSgjfO7dBM1/+zmcWMFKUdtZsX7
+	A4oITPYMPTT0KXTU++Pruq+fkOFAtEoO4EvtTfbv/wTmktZfk4CC7pokuNLZ15yXPdHsqn7OVcf
+	199JUEW135n9g4URavYnQzUnVxSxzHJdPtY7FoOk8JSQ67hIK2mT4Nf8slC24MHIRQRCEXiTgxx
+	+uRWvT2P9SIH3ftQPCcoELqOCwMzyJwvwl8/
+X-Google-Smtp-Source: AGHT+IHd/i1eeH1gwQWvVI6Kw8lJpesbgY2jMrMFWc2N6n8xlM+FvqgFHKDpJI7pOflfKlfLthZf/A==
+X-Received: by 2002:a05:6602:b86:b0:861:6f49:626 with SMTP id ca18e2360f4ac-86497f92685mr269674939f.6.1746019229894;
+        Wed, 30 Apr 2025 06:20:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f862e83662sm731364173.43.2025.04.30.06.20.28
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 06:20:29 -0700 (PDT)
+Message-ID: <580faa83-869c-404a-a50a-ed8d35ba11d0@kernel.dk>
+Date: Wed, 30 Apr 2025 07:20:28 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/fdinfo: annotate racy sq/cq head/tail reads
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30, 2025 at 04:09:18PM +0530, Naresh Kamboju wrote:
-> On Tue, 29 Apr 2025 at 23:31, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.136 release.
-> > There are 167 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 01 May 2025 16:10:15 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.136-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> There are three build regressions and two build warnings.
-> 
-> 1)
-> Regressions on x86_64 with defconfig builds with clang-nightly toolchain
-> on the stable-rc 6.1.136-rc1.
-> 
-> * x86_64, build
->   - clang-nightly-lkftconfig
->   - clang-nightly-x86_64_defconfig
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducibility? Yes
-> 
-> Build regression: x86_64 clang-nightly net ip.h error default
-> initialization of an object of type 'typeof (rt->dst.expires)'
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Build error x86_64
-> include/net/ip.h:462:14: error: default initialization of an object of
-> type 'typeof (rt->dst.expires)' (aka 'const unsigned long') leaves the
-> object uninitialized and is incompatible with C++
-> [-Werror,-Wdefault-const-init-unsafe]
->   462 |                 if (mtu && time_before(jiffies, rt->dst.expires))
->       |                            ^
+syzbot complains about the cached sq head read, and it's totally right.
+But we don't need to care, it's just reading fdinfo, and reading the
+CQ or SQ tail/head entries are known racy in that they are just a view
+into that very instant and may of course be outdated by the time they
+are reported.
 
-This isn't c++, so are you sure this isn't just a clang bug?
+Annotate both the SQ head and CQ tail read with data_race() to avoid
+this syzbot complaint.
 
-thanks,
+Link: https://lore.kernel.org/io-uring/6811f6dc.050a0220.39e3a1.0d0e.GAE@google.com/
+Reported-by: syzbot+3e77fd302e99f5af9394@syzkaller.appspotmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-greg k-h
+---
+
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index f60d0a9d505e..9414ca6d101c 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -123,11 +123,11 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+ 	seq_printf(m, "SqMask:\t0x%x\n", sq_mask);
+ 	seq_printf(m, "SqHead:\t%u\n", sq_head);
+ 	seq_printf(m, "SqTail:\t%u\n", sq_tail);
+-	seq_printf(m, "CachedSqHead:\t%u\n", ctx->cached_sq_head);
++	seq_printf(m, "CachedSqHead:\t%u\n", data_race(ctx->cached_sq_head));
+ 	seq_printf(m, "CqMask:\t0x%x\n", cq_mask);
+ 	seq_printf(m, "CqHead:\t%u\n", cq_head);
+ 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
+-	seq_printf(m, "CachedCqTail:\t%u\n", ctx->cached_cq_tail);
++	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
+ 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
+ 	sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
+ 	for (i = 0; i < sq_entries; i++) {
+
+-- 
+Jens Axboe
+
 

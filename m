@@ -1,128 +1,203 @@
-Return-Path: <io-uring+bounces-7788-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7789-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4ABAAA4D57
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 15:21:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450C1AA4EF0
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 16:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25F7188C3B3
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 13:20:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A127A825C
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 14:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC8A25A359;
-	Wed, 30 Apr 2025 13:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8E725E45A;
+	Wed, 30 Apr 2025 14:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fXye02IT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R0nCTuj9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3B4254852
-	for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 13:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6AD25EF84
+	for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 14:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746019236; cv=none; b=pw2Nd4vE7S77QGDqW5ClouyxfZ3c8TIAQ9NaeVS8ONUiQL3LgwH87UHSH4svonuo4CAjC29dmfV5OPiLwt8AwX+IqhwhdmQjdqO44s59N1Z8X6gCW/iTYfrmaq29mDhRTgNLKY72Nyw3hzDc4VF9bEq1VSZkgBGOzigdtz2dKWM=
+	t=1746024286; cv=none; b=Pqd2kZ5/NDKvX98YpJ0sLJ//ryMNHzJ4W+4GymNOWMhwhsNJ1NKObI/Fvc4P+8s89Zyt+HykiYm/qwN3eRT03m/+XT8LIpNeXbgcaa3ArTHg06cbsV4TPC1KsNwbaUcZdconVkyAwllOYWe2Zqvht6WFNSNkMp1uci326gq2Jz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746019236; c=relaxed/simple;
-	bh=0eFmUYgILcxq+Aa96fLO3XMiQA7OBWgNXp332ZXi6T0=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=JrNxLA2DBb9ydEBQGnih+/cEtmCtnIfQYx3DYFd0qEIgw7Tm4eCO5TFR+4ZwpsHYDaIHoTf/rNasiHEdmIpL+7av7iAwlxKILx06nu9ZevesroEv1lUeDu1/xVPmOo4HrXgdPrLu3pMWQs8qGxd0p3aT897dYo5XFq5vhnrfKb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fXye02IT; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85e15dc8035so187277439f.0
-        for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 06:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746019230; x=1746624030; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yJkrDBQmU2DGIQW9dUTJ28X9ZuomwnHwa7eSUZZQyPA=;
-        b=fXye02IToOG2xpn/LxoCkgvzQUnNIbehSieO9JSKEeVvoaFm/4DomHfJFB5/6M9WK0
-         1jpN38LXRLJOUMVkaV8Sl8Fow6xRyoKE1AIPswvM8YyVx4a2+dI4FhPfuKkh/4J9M0OC
-         qF6n/GScrJBE0hEYWxmbVMUsWIyb49DAuxVv34loWY4toVe8WGG+wi60JJxrlEfLQSOO
-         VYa1xNgDiA3hOLcoqUcUFw6uNRVCtCeVzyuT80iZpAX17gO6m8mku1m/n8Swh5XGeeNx
-         /nkJSgo0eIlf8RwsHkClrU/9jarPLLRkgrzTBfVwjjJ6dJdcah3c60kJu7tQH9vnJ9wH
-         adlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746019230; x=1746624030;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yJkrDBQmU2DGIQW9dUTJ28X9ZuomwnHwa7eSUZZQyPA=;
-        b=mqVL80Uf/822jMuhMm3jp4ZPRUeaXawKVtN9m8Yu+4MCadat0MizPja7W5b7jsRCP8
-         jB9rB2c7tbXMgymPkDVawstlvRvDqgVaL1/QMmFgShcAIVs3J9Qkya+kh4uJgmQextgp
-         nM/VsBBfpH3b12KuvcLv/j70dexW/USQAZvThrX15foMlR47XJLhKaECW3fAwqw8SC2N
-         FLB5amkN6EuQThHWj0ChWQHMCDHx9yvq9L0ra2hXm+0rTUrnOFW8IUWhKYhr4kLLrson
-         vYEtTKGyNsD6/0kgpbeMHf5ctaoUTPfc+6BVJ9kbLJMkfsMylWp5h6lBhNeP+LRT3Dpq
-         UCkA==
-X-Gm-Message-State: AOJu0Yw7iEn2Sp/fYGMfrlyz7eCbV3SWGgyyZ6JwqJ2+TS4mSD6bXf4a
-	zrVVfNUda7y1jEi0foJYI8g+aSb19MqMnkWmSssZgbtgqBYa7maTwUknrRPu/PcVzRQ7Rue2kMy
-	d
-X-Gm-Gg: ASbGncuMhkxGVEUpFU2X3UyI53c7i1nH1763Fczn4P7YKyarigQNk9fKgrQqOYDcVII
-	mz+j6giQq6qZ96ZnF9B8mVlp3JGURxmKBEis277OQDV3nxoMOSgjfO7dBM1/+zmcWMFKUdtZsX7
-	A4oITPYMPTT0KXTU++Pruq+fkOFAtEoO4EvtTfbv/wTmktZfk4CC7pokuNLZ15yXPdHsqn7OVcf
-	199JUEW135n9g4URavYnQzUnVxSxzHJdPtY7FoOk8JSQ67hIK2mT4Nf8slC24MHIRQRCEXiTgxx
-	+uRWvT2P9SIH3ftQPCcoELqOCwMzyJwvwl8/
-X-Google-Smtp-Source: AGHT+IHd/i1eeH1gwQWvVI6Kw8lJpesbgY2jMrMFWc2N6n8xlM+FvqgFHKDpJI7pOflfKlfLthZf/A==
-X-Received: by 2002:a05:6602:b86:b0:861:6f49:626 with SMTP id ca18e2360f4ac-86497f92685mr269674939f.6.1746019229894;
-        Wed, 30 Apr 2025 06:20:29 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f862e83662sm731364173.43.2025.04.30.06.20.28
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 06:20:29 -0700 (PDT)
-Message-ID: <580faa83-869c-404a-a50a-ed8d35ba11d0@kernel.dk>
-Date: Wed, 30 Apr 2025 07:20:28 -0600
+	s=arc-20240116; t=1746024286; c=relaxed/simple;
+	bh=mQ1nUfr3r0AWtmrt9nX4KeiiUEY/U/ZQW81KloBmOLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KIKv7HAaj8gJX3JR6lYxny7QFHFxU3vb7CwIKfqf95pDhGnxCHvugDOqGaG+SYJUHvNhSnJEqFjC5TVWXT9SCaEIaZJlVYzVOkIy12qOql/63Pgjs/xKK+2ktQy6krP6TpfWHeAVF4PtpYhuoiZE+mi+UqMiBRFmk3kvS4mFcDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R0nCTuj9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746024283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=67X7e6EZg84mUYXBshhaXpQX/0XSaWfbYre1VLGYK3A=;
+	b=R0nCTuj94ZlR/XwqdfnZ66/v9HwKNIY/rKJMcmqDAbz9NxHaWI1KgeHm+CQnM/TZ349Gsk
+	OggvW63pLD2cWZdCmgeTkQXA2gee6wdYpsKAtRXyYpK01y2cZAhErhiqCXXHup7S/4JAXW
+	N8hVPqAdI6nyv8SdF8Rck5Bj6KECs7E=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-bdODkDkmNCylVI9pdCZNRQ-1; Wed,
+ 30 Apr 2025 10:44:41 -0400
+X-MC-Unique: bdODkDkmNCylVI9pdCZNRQ-1
+X-Mimecast-MFC-AGG-ID: bdODkDkmNCylVI9pdCZNRQ_1746024279
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5239A1956086;
+	Wed, 30 Apr 2025 14:44:39 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.59])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 221F318001D7;
+	Wed, 30 Apr 2025 14:44:34 +0000 (UTC)
+Date: Wed, 30 Apr 2025 22:44:29 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Uday Shankar <ushankar@purestorage.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [RFC PATCH 3/7] io_uring: support to register bvec buffer to
+ specified io_uring
+Message-ID: <aBI3TfR1MBGR2K5m@fedora>
+References: <20250428094420.1584420-1-ming.lei@redhat.com>
+ <20250428094420.1584420-4-ming.lei@redhat.com>
+ <0c542e65-d203-4a3e-b9fd-aa090c144afd@gmail.com>
+ <aBAhr01KAr2qj5qi@fedora>
+ <2ad7f153-9d22-43df-8b7d-3d098916c62b@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/fdinfo: annotate racy sq/cq head/tail reads
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ad7f153-9d22-43df-8b7d-3d098916c62b@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-syzbot complains about the cached sq head read, and it's totally right.
-But we don't need to care, it's just reading fdinfo, and reading the
-CQ or SQ tail/head entries are known racy in that they are just a view
-into that very instant and may of course be outdated by the time they
-are reported.
+On Wed, Apr 30, 2025 at 09:25:33AM +0100, Pavel Begunkov wrote:
+> On 4/29/25 01:47, Ming Lei wrote:
+> > On Mon, Apr 28, 2025 at 11:28:30AM +0100, Pavel Begunkov wrote:
+> > > On 4/28/25 10:44, Ming Lei wrote:
+> > > > Extend io_buffer_register_bvec() and io_buffer_unregister_bvec() for
+> > > > supporting to register/unregister bvec buffer to specified io_uring,
+> > > > which FD is usually passed from userspace.
+> > > > 
+> > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > > > ---
+> > > >    include/linux/io_uring/cmd.h |  4 ++
+> > > >    io_uring/rsrc.c              | 83 +++++++++++++++++++++++++++---------
+> > > >    2 files changed, 67 insertions(+), 20 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> > > > index 78fa336a284b..7516fe5cd606 100644
+> > > > --- a/include/linux/io_uring/cmd.h
+> > > > +++ b/include/linux/io_uring/cmd.h
+> > > > @@ -25,6 +25,10 @@ struct io_uring_cmd_data {
+> > > ...
+> > > >    	io_ring_submit_lock(ctx, issue_flags);
+> > > > -	ret = __io_buffer_unregister_bvec(ctx, buf);
+> > > > +	if (reg)
+> > > > +		ret = __io_buffer_register_bvec(ctx, buf);
+> > > > +	else
+> > > > +		ret = __io_buffer_unregister_bvec(ctx, buf);
+> > > >    	io_ring_submit_unlock(ctx, issue_flags);
+> > > >    	return ret;
+> > > >    }
+> > > > +
+> > > > +static int io_buffer_reg_unreg_bvec(struct io_ring_ctx *ctx,
+> > > > +				    struct io_buf_data *buf,
+> > > > +				    unsigned int issue_flags,
+> > > > +				    bool reg)
+> > > > +{
+> > > > +	struct io_ring_ctx *remote_ctx = ctx;
+> > > > +	struct file *file = NULL;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (buf->has_fd) {
+> > > > +		file = io_uring_register_get_file(buf->ring_fd, buf->registered_fd);
+> > > 
+> > > io_uring_register_get_file() accesses task private data and the request
+> > > doesn't control from which task it's executed. IOW, you can't use the
+> > > helper here. It can be iowq or sqpoll, but either way nothing is
+> > > promised.
+> > 
+> > Good catch!
+> > 
+> > Actually ublk uring_cmd is guaranteed to be issued from user context.
+> > 
+> > We can enhance it by failing buffer register:
+> > 
+> > 	if ((current->flags & PF_KTHREAD) || (issue_flags & IO_URING_F_IOWQ))
+> > 		return -EACCESS;
+> 
+> Can it somehow check that current matches the desired task? That's exactly
+> the condition where it can go wrong, and that's much better than listing all
+> corner cases that might change.
+> 
+> Just to avoid confusion, it's not guaranteed by io_uring it'll be run from
+> the "right" task. If that changes in the future, either the ublk uapi should
+> be mandating the user to fall back to something else like regular fds, or
+> ublk will need to handle it somehow.
 
-Annotate both the SQ head and CQ tail read with data_race() to avoid
-this syzbot complaint.
+ublk does track the task context, and I will enhance the check for
+registered ring fd in ublk driver side, and make sure that it won't be
+used if the task context isn't ubq_daemon context.
 
-Link: https://lore.kernel.org/io-uring/6811f6dc.050a0220.39e3a1.0d0e.GAE@google.com/
-Reported-by: syzbot+3e77fd302e99f5af9394@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+If task context doesn't match, the uring command can be completed and ublk
+server gets notified for handling the failure, such as, by sending register io buffer
+command.
 
----
+> 
+> > > > +		if (IS_ERR(file))
+> > > > +			return PTR_ERR(file);
+> > > > +		remote_ctx = file->private_data;
+> > > > +		if (!remote_ctx)
+> > > > +			return -EINVAL;
+> > > 
+> > > nit: this check is not needed.
+> > 
+> > OK.
+> > 
+> > > 
+> > > > +	}
+> > > > +
+> > > > +	if (remote_ctx == ctx) {
+> > > > +		do_reg_unreg_bvec(ctx, buf, issue_flags, reg);
+> > > > +	} else {
+> > > > +		if (!(issue_flags & IO_URING_F_UNLOCKED))
+> > > > +			mutex_unlock(&ctx->uring_lock);
+> > > 
+> > > We shouldn't be dropping the lock in random helpers, for example
+> > > it'd be pretty nasty suspending a submission loop with a submission
+> > > from another task.
+> > > 
+> > > You can try lock first, if fails it'll need a fresh context via
+> > > iowq to be task-work'ed into the ring. see msg_ring.c for how
+> > > it's done for files.
+> > 
+> > Looks trylock is better, will take this approach by returning -EAGAIN,
+> > and let ublk driver retry.
+> 
+> Is there a reliable fall back path for the userspace? Hammering the
+> same thing until it succeeds in never a good option.
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index f60d0a9d505e..9414ca6d101c 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -123,11 +123,11 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 	seq_printf(m, "SqMask:\t0x%x\n", sq_mask);
- 	seq_printf(m, "SqHead:\t%u\n", sq_head);
- 	seq_printf(m, "SqTail:\t%u\n", sq_tail);
--	seq_printf(m, "CachedSqHead:\t%u\n", ctx->cached_sq_head);
-+	seq_printf(m, "CachedSqHead:\t%u\n", data_race(ctx->cached_sq_head));
- 	seq_printf(m, "CqMask:\t0x%x\n", cq_mask);
- 	seq_printf(m, "CqHead:\t%u\n", cq_head);
- 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
--	seq_printf(m, "CachedCqTail:\t%u\n", ctx->cached_cq_tail);
-+	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
- 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
- 	sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
- 	for (i = 0; i < sq_entries; i++) {
+It is the simplest way to retry until it succeeds.
 
--- 
-Jens Axboe
+But we can improve it by retrying several times, if it still can't succeed,
+complete the uring command and let ublk server send register buffer
+command for registering the buffer manually.
+
+
+thanks,
+Ming
 
 

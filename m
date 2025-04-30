@@ -1,108 +1,140 @@
-Return-Path: <io-uring+bounces-7795-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7796-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEDFAA540D
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 20:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2254AA58BA
+	for <lists+io-uring@lfdr.de>; Thu,  1 May 2025 01:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85231741C1
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 18:47:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F91250062C
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 23:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4013D21930B;
-	Wed, 30 Apr 2025 18:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEAF22A4E0;
+	Wed, 30 Apr 2025 23:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAnOselr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIzTjYsF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EBD1CEACB
-	for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 18:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745BA22576A;
+	Wed, 30 Apr 2025 23:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746038814; cv=none; b=o7aV4yvmpqrsVSNoSuHNld86em723wUXU/jbgx02mT2G6mtGoH27IgfvM02nxnJXLSl0jyaj9eIaYmUFAi/g8nfQf5QG4zBILTwTFTmHLY/fnEDinV+0c8trzSXWV+lik3d+rGoLX/SoLimP5m/VHDdTqSRMyQZH0vlPK9Yyusc=
+	t=1746055942; cv=none; b=uFizHAE0MaHPGZD0Td4CpPezbuC2lwspyHRr4V2kSKG7+4ZiLWnTZ1xMuVWxeMJ9EIVKBEEupAGPGPVXhFyBiUQf6p42tGPuUSUVq4RITJ6eJA2wAa/JA7ccNd0DGXRYOIZUZq35OLeK+YpR5KibgdOVImk+raagxy9hF8/gkOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746038814; c=relaxed/simple;
-	bh=RvF1X27KOJYjwejPDZCh6K7rbDJ0POirQIB/j3wwUOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qX0GDW0vidLAHzpSrSWksWDmv7PRQmu2ziELDr2Zpo1a17JFsc9ylouWy3723w4BJhaTE5YS02Qs3CF2XR1qz32NIWVauaCxG/O82fWWTznrYpOqCu5K5d4E+zu/gxo9EHHQnQtZ5NED2t+PKqT1GNCQX18s5R9/eTbi7VV4nl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAnOselr; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac7bd86f637so242537666b.1
-        for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 11:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746038811; x=1746643611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TFgt/+IOftp6W7Vful+Y7kcOEFanRHBagi/KJfW/KTs=;
-        b=EAnOselr2PEPjPRD14m96nQxOgf3GatM/BwDddvWV6UEeBV3OfgsGyXSI8aq3juUwT
-         FDeCtYSB7sJhGIRfCx67JY7dgnMis0Eh1t0YcJbsi+Vo/QvpG4EeEU4ryZgRMtgE56+B
-         3St37zbS3MrxgJxnNJs5jDTRpT7Og2N8pW2AUQpFW+5ZAvj/JIrOw24blSSDJcglcCss
-         BGXS+zg6GZWabpmQ3ahr+tJt5ZWoc8GzEdEDzP/HUxq8gkDnZtkAYZdUcO0VGy8S0cSv
-         oiErdOtzY4Zt9obiIvd1kMIjQyWiySn78pRhqiaUvokUtgOIZysfrbZLHtpZJUAkkqDx
-         b8Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746038811; x=1746643611;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TFgt/+IOftp6W7Vful+Y7kcOEFanRHBagi/KJfW/KTs=;
-        b=WGyFDuKkRUgX9j8Kefkj2LOWTRE/NhXhUyOo38YYpGN6nzATqndGHcp2yycUSdvWeK
-         UhXtIiJNSO5NhZtdjUR9WggDArx0aT5MM0KbBQCGKSXJMCbcQVryVV/CErwtG9omCEM8
-         VKyss2OsCs08PvoBLFb4FxZ44KAf/HtD8B7d8PQRLj4IL23MO5Jd+MlPAQjNGeX2aHu9
-         ian/Z/5V1cYliV6v1A4sXYsHRvyk9T44OwNybSrptmJFn4GiTY7Egb0lTiqQOSrbVuPF
-         PjlE4Pvqfp+D/BXjMfDn9A8jrA8Q5m15XTvyHWXVK4W+wOh4EIU3LgBYM2N4xOzljt5z
-         caig==
-X-Forwarded-Encrypted: i=1; AJvYcCWgX1KRhPoTexnJgFfectQzudN7HOgLnZQ9rl/LTGzA14kGgUZ72STH1LlL3IVLvV3tYxDGiYKWCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwxldyCEwFpWBkkmXPu0RMk5XjDjkjuzkAB6uMqnHDNIPuA3Ee
-	VcfJtNb9ntQp9kjH00ikUSoLhbBxZzmU83NhIjdr+DxJ5N3fiLRQmPYw/A==
-X-Gm-Gg: ASbGncuoQlL3/BeffjiWwPoYIwM3BoNusMf608vflFADDomHdVumv1cq8YjWZjjqf6i
-	rE+TId0tCTyOcwjnPuGWz6eM4VjXMggZNX8Esmy75lG03OEN/sLSQYdFcHMM48STWTKZIg4lxs9
-	5HOP56v5YUtkuUSpKT1QUW57SdfxVOK+fHY+CDb0h5znBkTDjpC0nxk4kup7mNaZ+V4cgQyhrYm
-	nciv/IfyNyYNqWHnpUJ1eHrNJuxIJAEIsVPOfMkh2pVfTA91cAxhIJICDgLXtjZrQBCzYdurjxL
-	pRziScAy4ugloDXtK6nCLBJEGNnCghs6qOsEkjLCrNS2G3b66OIQhJfwNl0E
-X-Google-Smtp-Source: AGHT+IH8wVTib/pOYcL58ail77r4YneFWzSmrfzpTyRBOhdOb0cFw+U/gV/7eafmJu7AHqS48Ck3pw==
-X-Received: by 2002:a17:906:6a26:b0:ac7:b231:9554 with SMTP id a640c23a62f3a-acef2762289mr64860366b.11.1746038810354;
-        Wed, 30 Apr 2025 11:46:50 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.129.38])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf7397sm974302366b.92.2025.04.30.11.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 11:46:49 -0700 (PDT)
-Message-ID: <3738954c-d6fb-4071-be4c-0673f69863e3@gmail.com>
-Date: Wed, 30 Apr 2025 19:47:56 +0100
+	s=arc-20240116; t=1746055942; c=relaxed/simple;
+	bh=injRZ9eFv1pQlB4XTtV4bwLucOJq7jcy48IS30S1PN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgMpdk3SQneVSwHVifizXZMuzOXShsxNgvEg+3k2Ag8Ne4ikyTdsC6jKtq7Rs5a34jWXDVsKAtoSk7vNdBAv5E532DACGsas6Ohprg3Phab5e2kUlRzBFcQwyO5TeSRwUFyA6zQ/CrN9KjzdhuhdX6jTCyx97TjoPkEVAOZFvlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIzTjYsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACAD0C4CEE7;
+	Wed, 30 Apr 2025 23:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746055941;
+	bh=injRZ9eFv1pQlB4XTtV4bwLucOJq7jcy48IS30S1PN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jIzTjYsFTFwiwRq3tj7yguqrHRe0TbnVzePwStGnaGhUKS6nUd7TqBQ10jr+2jhe2
+	 neo9h6UBYhG2zD3AKVhHK9X7x9hqwgTQGFgUD7AkT00FkxYP3RE6c/sAO2jfFEDEUJ
+	 rjiylF2zs2vkmsALcnTpUvKuWvymy471JQ5zS+yfQCYxS0sOogEza44RfhdjIq8W6M
+	 5lpr0Y5JWS8gy9EV8AulHk8dddIciPhJ8yXKguc2jb5DefDhVLBZh7/sD/wuFAm5Pk
+	 aQ2FOToLP19T6JIZjCofYoWGS59sGBPL/f4Sm9xD7C6+5OuqWuyqsS/185Krzi159A
+	 tpVP1UwtIbWMA==
+Date: Wed, 30 Apr 2025 16:32:14 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-s390@vger.kernel.org, linux-mips@vger.kernel.org,
+	io-uring@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH 6.1 000/167] 6.1.136-rc1 review
+Message-ID: <20250430233214.GC3715926@ax162>
+References: <20250429161051.743239894@linuxfoundation.org>
+ <CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com>
+ <2025043049-banked-doorpost-5e06@gregkh>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: A write to a TCP-stream overtook another write
-To: Andreas Wagner <andreasw3756@gmail.com>, io-uring@vger.kernel.org
-References: <edf639304e2401047a791b2de7254f7613a390a1.camel@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <edf639304e2401047a791b2de7254f7613a390a1.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025043049-banked-doorpost-5e06@gregkh>
 
-On 4/30/25 16:33, Andreas Wagner wrote:
-> Dear everyone,
+On Wed, Apr 30, 2025 at 12:58:13PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Apr 30, 2025 at 04:09:18PM +0530, Naresh Kamboju wrote:
+> > Regressions on x86_64 with defconfig builds with clang-nightly toolchain
+> > on the stable-rc 6.1.136-rc1.
+
+clang-nightly is always a moving target so for the sake of the stable
+-rc reports, I would only focus on issues that appear with just those
+patches, as you should see this issue on 6.1.136.
+
+> > * x86_64, build
+> >   - clang-nightly-lkftconfig
+> >   - clang-nightly-x86_64_defconfig
+> > 
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> > 
+> > Build regression: x86_64 clang-nightly net ip.h error default
+> > initialization of an object of type 'typeof (rt->dst.expires)'
+> > 
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > ## Build error x86_64
+> > include/net/ip.h:462:14: error: default initialization of an object of
+> > type 'typeof (rt->dst.expires)' (aka 'const unsigned long') leaves the
+> > object uninitialized and is incompatible with C++
+> > [-Werror,-Wdefault-const-init-unsafe]
+> >   462 |                 if (mtu && time_before(jiffies, rt->dst.expires))
+> >       |                            ^
 > 
-> during development of an HTTP-server, I ran into a problem: A write to
-> a TCP-stream overtook another write to the same stream.
+> This isn't c++, so are you sure this isn't just a clang bug?
 
-Requests can be reordered in many ways, you can't submit two requests
-to a tcp socket and expect that they'll get executed in order. It was
-mentioned many times before, for example, look through this thread:
+Yes, it is intentional that this warns for C code, the clang maintainer
+felt that the default initialization behavior of const variables not
+marked as static or thread local was worth warning about by default.
 
-https://github.com/axboe/liburing/issues/1359
+https://github.com/llvm/llvm-project/pull/137166
 
--- 
-Pavel Begunkov
+But it is going to be adjusted to allow the kernel to opt-out of the
+warning for aggregate members, as that triggers often in the kernel:
 
+https://github.com/llvm/llvm-project/pull/137961
+
+The only instance of -Wdefault-const-init-var-unsafe that I have found
+so far is in typecheck(), which should be easy enough to clean up.
+
+Cheers,
+Nathan
+
+diff --git a/include/linux/typecheck.h b/include/linux/typecheck.h
+index 46b15e2aaefb..5b473c9905ae 100644
+--- a/include/linux/typecheck.h
++++ b/include/linux/typecheck.h
+@@ -7,8 +7,8 @@
+  * Always evaluates to 1 so you may use it easily in comparisons.
+  */
+ #define typecheck(type,x) \
+-({	type __dummy; \
+-	typeof(x) __dummy2; \
++({	type __dummy = {}; \
++	typeof(x) __dummy2 = {}; \
+ 	(void)(&__dummy == &__dummy2); \
+ 	1; \
+ })
 

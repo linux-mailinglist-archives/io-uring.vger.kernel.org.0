@@ -1,341 +1,194 @@
-Return-Path: <io-uring+bounces-7792-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7793-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA7CAA50A6
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 17:45:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCB2AA50E7
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 17:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769C14A05DE
-	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 15:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C4E4C2CEA
+	for <lists+io-uring@lfdr.de>; Wed, 30 Apr 2025 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6EF213E61;
-	Wed, 30 Apr 2025 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116AE2609D0;
+	Wed, 30 Apr 2025 15:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIsDFk41"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K2wiGfB1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE5717C208
-	for <io-uring@vger.kernel.org>; Wed, 30 Apr 2025 15:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54525DAFB;
+	Wed, 30 Apr 2025 15:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746027940; cv=none; b=HAJh+ACHYEw2xPaM4iOUF1ORrlSt77i0o+89TmcBXdQflJi8YYe8qyxXA0woFaBHJ6VBmZOlixruzxGmUDq6pwDZPDEq8NljJAYa7R/FLymfMd9otlnMq7d6ovfvcNy1iGnoxXLqFFXs/H44Zr0tZ/AsVZgGz03V2/V+viiQY2w=
+	t=1746028534; cv=none; b=SntuzETGlUnzhR0gtWvHSal0Xx1lBD6uG0IJTQGjTnSuUHkcsJYdPQZiCLgEeX19Mrz+9q/F7LBxt5egLpAUSDsfdM72ZvWWSwzQe+EMcYod7PjgQWLPS3DlP6Wf1aJRL3ti84u0pGFnujmjh5RUXhnih9nBHNKgaLZpv0nVFDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746027940; c=relaxed/simple;
-	bh=RyGVPkWYS+/VV1uZ+cR/9FQvC7S8InZgmsAcvPNs368=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lwn/L88ncGexsPLceI/bsRUcRBsoKosKyXQfYqUkZ7i7aHp1C5a8PuZg3ACSVR/XeCCwvUyRmXZQrF7+IvSJiT368+RayqHrBAMq9+ElDgsGmvp5rnW6RYIqTAIuJTLGODK+VuC6p+59UyYUd/b1X8Cy3+g8rdthO9p5ygiuCi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PIsDFk41; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746027937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AkxAQ8Ac1h09FrUsrv0c5VWKxJ0IZI6QzEiN6TIA6DQ=;
-	b=PIsDFk41+aOuAwG9oIVajB79/59mQ6gX8Kz/f1HdDm/aU2DpIcTM8B26n3BX2eUxoU4KTK
-	9GnooMKridhixMfw/MGXzxTuUwEcZHvjqxcVAQSHvi14UyMhIn8U4lh/TFC5eNpULUiNae
-	n6F58lHUeiyumz1MQ3wp/gO25CtIws0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-xmyxc27tMJWu9u0QskiE1g-1; Wed,
- 30 Apr 2025 11:45:33 -0400
-X-MC-Unique: xmyxc27tMJWu9u0QskiE1g-1
-X-Mimecast-MFC-AGG-ID: xmyxc27tMJWu9u0QskiE1g_1746027932
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B26819560B2;
-	Wed, 30 Apr 2025 15:45:32 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.59])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D791230002C2;
-	Wed, 30 Apr 2025 15:45:27 +0000 (UTC)
-Date: Wed, 30 Apr 2025 23:45:23 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org,
-	Uday Shankar <ushankar@purestorage.com>,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [RFC PATCH 6/7] ublk: register buffer to specified io_uring &
- buf index via UBLK_F_AUTO_BUF_REG
-Message-ID: <aBJFk0FuWwt9GpC_@fedora>
-References: <20250428094420.1584420-1-ming.lei@redhat.com>
- <20250428094420.1584420-7-ming.lei@redhat.com>
- <CADUfDZrFDbYmnm7LEt94UVhn-tqGM6Fnfqvc2fuq8OqQPdNu3Q@mail.gmail.com>
+	s=arc-20240116; t=1746028534; c=relaxed/simple;
+	bh=pAi1g0+GcrXhsxxUwg/COVu8QWbSDq0H9FeDRKmvTZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OJbQgkD6jSq9Auoskjsuuwj7G0Tv7aWDOmOD7UqydCATVtyIX6s2gRgK8YC5zO0tnVfpI1laAt+vnwfBnWqE6fLuawu7E5eJgUPTSYVTGx3AIHM56HwEkyHcnEK+66nu9QWAkilfi9ZkLtmaVZV0UqSQVRPqgIaJDuHwF3x3Wus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K2wiGfB1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UDnBtg027609;
+	Wed, 30 Apr 2025 15:54:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0rJOsX
+	oPMQhpiqynyefL1qZwMh6TkDUagnvd4/qOyd8=; b=K2wiGfB15TYazXEnpvRv1V
+	CpV8N8jNb1inCirUlCY5p1+Mpp/dKc9l6G+rth3k3o7nHl5+c3OWq6Npvs5h+nWW
+	Lcm7zbgzHrVXdY7cUj0/fjTV+4A4ELvvRncr/+0hlIFwk2gjmH6ZoCB6G0CyPiN4
+	t+9DR3Qccj5dFQ7j4N9y9zmHw41KNdMG97QxmQR2mwoi9YwYnLWa5FAT9QD4tTC2
+	o/vT7uGXCG51UopyBrzbcy+ZWUZaOvOD1xUxDrAeHcxBG94GyS7dFD3TvnLmt6k6
+	mApOaKQs/+bHcz4nY8N1iERMAdVAhklDXOEMNCGfpp9xY/TLyRj0g5TGw8etc08Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0un51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:54:55 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53UFmj17027098;
+	Wed, 30 Apr 2025 15:54:54 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0un4u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:54:54 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53UFdC7A031677;
+	Wed, 30 Apr 2025 15:54:53 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4699tu8pwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:54:53 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53UFspgu14156496
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 15:54:52 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C11CE5805A;
+	Wed, 30 Apr 2025 15:54:51 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B44C25805C;
+	Wed, 30 Apr 2025 15:54:49 +0000 (GMT)
+Received: from [9.61.85.22] (unknown [9.61.85.22])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Apr 2025 15:54:49 +0000 (GMT)
+Message-ID: <c8e88c29-e1bb-4845-a362-dc352d690508@linux.ibm.com>
+Date: Wed, 30 Apr 2025 11:54:49 -0400
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZrFDbYmnm7LEt94UVhn-tqGM6Fnfqvc2fuq8OqQPdNu3Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/167] 6.1.136-rc1 review
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+        jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+        hargar@microsoft.com, broonie@kernel.org,
+        clang-built-linux <llvm@lists.linux.dev>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>, linux-s390@vger.kernel.org,
+        linux-mips@vger.kernel.org, io-uring@vger.kernel.org,
+        virtualization@lists.linux.dev, Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>
+References: <20250429161051.743239894@linuxfoundation.org>
+ <CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com>
+Content-Language: en-US
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDExMSBTYWx0ZWRfX7Wf07gSrdqCk zb0K3R03TxsVsyR1iTUQrpsn8SgfAs0YFKySz/5l60nS4Ty5Ocio1IGZiRsSV+b6BaQ34Fw0vKl ioFN6STKCZicQtlKBajk+fMGVQHIWLwsOHmjMfdnISc6UX6/lQi32CbkOacKy/qWe59SsGqD1FW
+ yGAw7jomIrcY7Y+QlX3QnxqhlFLuOCqh+3nvUuQYjBBEicyOXHCNHfg56gMlKo5TQ/HU7CKD1Vz W4soxBFSdg8ydvaCNHKx0zyGUk5RgEVNwU6w4KkJxsKXecKKMDQcqtH9SDveCufpn4QuNdXaLOW HAoIki6/XzHtkh/RZDURZLd+FVRmQ2ZYWFKlr3RObtf5HJq1oVyxlxnHoPOrM947oMgF6/F//iH
+ LrRowoVxEOQ07s5PL23CPXOo0ntDDhtUxrPRU8Domof8K1cr/useUFXFiV+noDH/q8fUiJLd
+X-Authority-Analysis: v=2.4 cv=OqdPyz/t c=1 sm=1 tr=0 ts=681247cf cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=eZE_XS7iPCa-stX4-vkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Sij4fx90_ksNlpmCP9y4w-QIVKqfbDsT
+X-Proofpoint-ORIG-GUID: 2ilcYsyPiGbEAPeMVPlTbkq5Tf2pWo3G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1011 spamscore=0 mlxlogscore=602
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300111
 
-On Mon, Apr 28, 2025 at 05:52:28PM -0700, Caleb Sander Mateos wrote:
-> On Mon, Apr 28, 2025 at 2:45 AM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > Add UBLK_F_AUTO_BUF_REG for supporting to register buffer automatically
-> > to specified io_uring context and buffer index.
-> >
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  drivers/block/ublk_drv.c      | 56 ++++++++++++++++++++++++++++-------
-> >  include/uapi/linux/ublk_cmd.h | 38 ++++++++++++++++++++++++
-> >  2 files changed, 84 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > index 1fd20e481a60..e82618442749 100644
-> > --- a/drivers/block/ublk_drv.c
-> > +++ b/drivers/block/ublk_drv.c
-> > @@ -66,7 +66,8 @@
-> >                 | UBLK_F_USER_COPY \
-> >                 | UBLK_F_ZONED \
-> >                 | UBLK_F_USER_RECOVERY_FAIL_IO \
-> > -               | UBLK_F_UPDATE_SIZE)
-> > +               | UBLK_F_UPDATE_SIZE \
-> > +               | UBLK_F_AUTO_BUF_REG)
-> >
-> >  #define UBLK_F_ALL_RECOVERY_FLAGS (UBLK_F_USER_RECOVERY \
-> >                 | UBLK_F_USER_RECOVERY_REISSUE \
-> > @@ -146,7 +147,10 @@ struct ublk_uring_cmd_pdu {
-> >
-> >  struct ublk_io {
-> >         /* userspace buffer address from io cmd */
-> > -       __u64   addr;
-> > +       union {
-> > +               __u64   addr;
-> > +               struct ublk_auto_buf_reg buf;
+
+> 2)
+> Regressions on s390 with defconfig builds with gcc-13, gcc-8 and
+> clang-20 and clang-nightly toolchains on the stable-rc 6.1.136-rc1.
 > 
-> Maybe add a comment justifying why these fields can overlap? From my
-> understanding, buf is valid iff UBLK_F_AUTO_BUF_REG is set on the
-> ublk_queue and addr is valid iff neither UBLK_F_USER_COPY,
-> UBLK_F_SUPPORT_ZERO_COPY, nor UBLK_F_AUTO_BUF_REG is set.
-
-->addr is for storing the userspace buffer, which is only used in
-non-zc cases(zc, auto_buf_reg) or user copy case.
-
+> * s390, build
+>   - clang-20-defconfig
+>   - clang-nightly-defconfig
+>   - gcc-13-allmodconfig
+>   - gcc-13-defconfig
+>   - gcc-8-defconfig-fe40093d
 > 
-> > +       };
-> >         unsigned int flags;
-> >         int res;
-> >
-> > @@ -626,7 +630,7 @@ static inline bool ublk_support_zero_copy(const struct ublk_queue *ubq)
-> >
-> >  static inline bool ublk_support_auto_buf_reg(const struct ublk_queue *ubq)
-> >  {
-> > -       return false;
-> > +       return ubq->flags & UBLK_F_AUTO_BUF_REG;
-> >  }
-> >
-> >  static inline bool ublk_support_user_copy(const struct ublk_queue *ubq)
-> > @@ -1177,6 +1181,16 @@ static inline void __ublk_abort_rq(struct ublk_queue *ubq,
-> >                 blk_mq_end_request(rq, BLK_STS_IOERR);
-> >  }
-> >
-> > +
-> > +static inline void ublk_init_auto_buf_reg(const struct ublk_io *io,
-> > +                                         struct io_buf_data *data)
-> > +{
-> > +       data->index = io->buf.index;
-> > +       data->ring_fd = io->buf.ring_fd;
-> > +       data->has_fd = true;
-> > +       data->registered_fd = io->buf.flags & UBLK_AUTO_BUF_REGISTERED_RING;
-> > +}
-> > +
-> >  static bool ublk_auto_buf_reg(struct ublk_queue *ubq, struct request *req,
-> >                               struct ublk_io *io, unsigned int issue_flags)
-> >  {
-> > @@ -1187,6 +1201,9 @@ static bool ublk_auto_buf_reg(struct ublk_queue *ubq, struct request *req,
-> >         };
-> >         int ret;
-> >
-> > +       if (ublk_support_auto_buf_reg(ubq))
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducibility? Yes
 > 
-> This check seems redundant with the check in the caller? Same comment
-> about ublk_auto_buf_unreg(). That would allow you to avoid adding the
-> ubq argument to ublk_auto_buf_unreg().
+...
+> drivers/s390/virtio/virtio_ccw.c:88:9: error: unknown type name 'dma64_t'
+>    88 |         dma64_t queue;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c:95:9: error: unknown type name 'dma64_t'
+>    95 |         dma64_t desc;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c:99:9: error: unknown type name 'dma64_t'
+>    99 |         dma64_t avail;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c:100:9: error: unknown type name 'dma64_t'
+>   100 |         dma64_t used;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c:109:9: error: unknown type name 'dma64_t'
+>   109 |         dma64_t summary_indicator;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c:110:9: error: unknown type name 'dma64_t'
+>   110 |         dma64_t indicator;
+>       |         ^~~~~~~
+> drivers/s390/virtio/virtio_ccw.c: In function 'virtio_ccw_drop_indicator':
+> drivers/s390/virtio/virtio_ccw.c:370:25: error: implicit declaration
+> of function 'virt_to_dma64'; did you mean 'virt_to_page'?
+> [-Werror=implicit-function-declaration]
+>   370 |                         virt_to_dma64(get_summary_indicator(airq_info));
+>       |                         ^~~~~~~~~~~~~
+>       |                         virt_to_page
+> drivers/s390/virtio/virtio_ccw.c:374:28: error: implicit declaration
+> of function 'virt_to_dma32'; did you mean 'virt_to_page'?
+> [-Werror=implicit-function-declaration]
+>   374 |                 ccw->cda = virt_to_dma32(thinint_area);
+>       |                            ^~~~~~~~~~~~~
+>       |                            virt_to_page
+> drivers/s390/virtio/virtio_ccw.c: In function 'virtio_ccw_setup_vq':
+> drivers/s390/virtio/virtio_ccw.c:552:45: error: implicit declaration
+> of function 'u64_to_dma64' [-Werror=implicit-function-declaration]
+>   552 |                 info->info_block->l.queue = u64_to_dma64(queue);
+>       |                                             ^~~~~~~~~~~~
+> drivers/s390/virtio/virtio_ccw.c: In function 'virtio_ccw_find_vqs':
+> drivers/s390/virtio/virtio_ccw.c:654:9: error: unknown type name 'dma64_t'
+>   654 |         dma64_t *indicatorp = NULL;
+>       |         ^~~~~~~
+> cc1: some warnings being treated as errors
 
-Yeah, actually I removed one feature which just registers buffer to
-the uring command context, then forget to update the check.
+The virtio_ccw errors are caused by '[PATCH 6.1 033/167] s390/virtio_ccw: fix virtual vs physical address confusion'
 
-> 
-> > +               ublk_init_auto_buf_reg(io, &data);
-> > +
-> >         /* one extra reference is dropped by ublk_io_release */
-> >         ublk_init_req_ref(ubq, req, 2);
-> >         ret = io_buffer_register_bvec(io->cmd, &data, issue_flags);
-> > @@ -2045,7 +2062,7 @@ static int ublk_fetch(struct io_uring_cmd *cmd, struct ublk_queue *ubq,
-> >                  */
-> >                 if (!buf_addr && !ublk_need_get_data(ubq))
-> >                         goto out;
-> > -       } else if (buf_addr) {
-> > +       } else if (buf_addr && !ublk_support_auto_buf_reg(ubq)) {
-> >                 /* User copy requires addr to be unset */
-> >                 ret = -EINVAL;
-> >                 goto out;
-> > @@ -2058,13 +2075,17 @@ static int ublk_fetch(struct io_uring_cmd *cmd, struct ublk_queue *ubq,
-> >         return ret;
-> >  }
-> >
-> > -static void ublk_auto_buf_unreg(struct ublk_io *io, struct io_uring_cmd *cmd,
-> > +static void ublk_auto_buf_unreg(const struct ublk_queue *ubq,
-> > +                               struct ublk_io *io, struct io_uring_cmd *cmd,
-> >                                 struct request *req, unsigned int issue_flags)
-> >  {
-> >         struct io_buf_data data = {
-> >                 .index = req->tag,
-> >         };
-> >
-> > +       if (ublk_support_auto_buf_reg(ubq))
-> > +               ublk_init_auto_buf_reg(io, &data);
-> > +
-> >         WARN_ON_ONCE(io_buffer_unregister_bvec(cmd, &data, issue_flags));
-> >         io->flags &= ~UBLK_IO_FLAG_AUTO_BUF_REG;
-> >  }
-> > @@ -2088,7 +2109,8 @@ static int ublk_commit_and_fetch(const struct ublk_queue *ubq,
-> >                 if (!ub_cmd->addr && (!ublk_need_get_data(ubq) ||
-> >                                         req_op(req) == REQ_OP_READ))
-> >                         return -EINVAL;
-> > -       } else if (req_op(req) != REQ_OP_ZONE_APPEND && ub_cmd->addr) {
-> > +       } else if ((req_op(req) != REQ_OP_ZONE_APPEND &&
-> > +                               !ublk_support_auto_buf_reg(ubq)) && ub_cmd->addr) {
-> >                 /*
-> >                  * User copy requires addr to be unset when command is
-> >                  * not zone append
-> > @@ -2097,7 +2119,7 @@ static int ublk_commit_and_fetch(const struct ublk_queue *ubq,
-> >         }
-> >
-> >         if (io->flags & UBLK_IO_FLAG_AUTO_BUF_REG)
-> > -               ublk_auto_buf_unreg(io, cmd, req, issue_flags);
-> > +               ublk_auto_buf_unreg(ubq, io, cmd, req, issue_flags);
-> >
-> >         ublk_fill_io_cmd(io, cmd, ub_cmd->addr);
-> >
-> > @@ -2788,6 +2810,11 @@ static int ublk_ctrl_add_dev(const struct ublksrv_ctrl_cmd *header)
-> >         else if (!(info.flags & UBLK_F_UNPRIVILEGED_DEV))
-> >                 return -EPERM;
-> >
-> > +       /* F_AUTO_BUF_REG and F_SUPPORT_ZERO_COPY can't co-exist */
-> > +       if ((info.flags & UBLK_F_AUTO_BUF_REG) &&
-> > +                       (info.flags & UBLK_F_SUPPORT_ZERO_COPY))
-> > +               return -EINVAL;
-> > +
-> >         /* forbid nonsense combinations of recovery flags */
-> >         switch (info.flags & UBLK_F_ALL_RECOVERY_FLAGS) {
-> >         case 0:
-> > @@ -2817,8 +2844,11 @@ static int ublk_ctrl_add_dev(const struct ublksrv_ctrl_cmd *header)
-> >                  * For USER_COPY, we depends on userspace to fill request
-> >                  * buffer by pwrite() to ublk char device, which can't be
-> >                  * used for unprivileged device
-> > +                *
-> > +                * Same with zero copy or auto buffer register.
-> >                  */
-> > -               if (info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY))
-> > +               if (info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY |
-> > +                                       UBLK_F_AUTO_BUF_REG))
-> >                         return -EINVAL;
-> >         }
-> >
-> > @@ -2876,17 +2906,22 @@ static int ublk_ctrl_add_dev(const struct ublksrv_ctrl_cmd *header)
-> >                 UBLK_F_URING_CMD_COMP_IN_TASK;
-> >
-> >         /* GET_DATA isn't needed any more with USER_COPY or ZERO COPY */
-> > -       if (ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY))
-> > +       if (ub->dev_info.flags & (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY |
-> > +                               UBLK_F_AUTO_BUF_REG))
-> >                 ub->dev_info.flags &= ~UBLK_F_NEED_GET_DATA;
-> >
-> >         /*
-> >          * Zoned storage support requires reuse `ublksrv_io_cmd->addr` for
-> >          * returning write_append_lba, which is only allowed in case of
-> >          * user copy or zero copy
-> > +        *
-> > +        * UBLK_F_AUTO_BUF_REG can't be enabled for zoned because it need
-> > +        * the space for getting ring_fd and buffer index.
-> >          */
-> >         if (ublk_dev_is_zoned(ub) &&
-> >             (!IS_ENABLED(CONFIG_BLK_DEV_ZONED) || !(ub->dev_info.flags &
-> > -            (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)))) {
-> > +            (UBLK_F_USER_COPY | UBLK_F_SUPPORT_ZERO_COPY)) ||
-> > +            (ub->dev_info.flags & UBLK_F_AUTO_BUF_REG))) {
-> >                 ret = -EINVAL;
-> >                 goto out_free_dev_number;
-> >         }
-> > @@ -3403,6 +3438,7 @@ static int __init ublk_init(void)
-> >
-> >         BUILD_BUG_ON((u64)UBLKSRV_IO_BUF_OFFSET +
-> >                         UBLKSRV_IO_BUF_TOTAL_SIZE < UBLKSRV_IO_BUF_OFFSET);
-> > +       BUILD_BUG_ON(sizeof(struct ublk_auto_buf_reg) != sizeof(__u64));
-> >
-> >         init_waitqueue_head(&ublk_idr_wq);
-> >
-> > diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
-> > index be5c6c6b16e0..3d7c8c69cf06 100644
-> > --- a/include/uapi/linux/ublk_cmd.h
-> > +++ b/include/uapi/linux/ublk_cmd.h
-> > @@ -219,6 +219,30 @@
-> >   */
-> >  #define UBLK_F_UPDATE_SIZE              (1ULL << 10)
-> >
-> > +/*
-> > + * request buffer is registered automatically to ublk server specified
-> > + * io_uring context before delivering this io command to ublk server,
-> > + * meantime it is un-registered automatically when completing this io
-> > + * command.
-> > + *
-> > + * For using this feature:
-> > + *
-> > + * - ublk server has to create sparse buffer table
-> > + *
-> > + * - pass io_ring context FD from `ublksrv_io_cmd.buf.ring_fd`, and the FD
-> > + *   can be registered io_ring FD if `UBLK_AUTO_BUF_REGISTERED_RING` is set
-> > + *   in `ublksrv_io_cmd.flags`, or plain FD
-> > + *
-> > + * - pass buffer index from `ublksrv_io_cmd.buf.index`
-> > + *
-> > + * This way avoids extra cost from two uring_cmd, but also simplifies backend
-> > + * implementation, such as, the dependency on IO_REGISTER_IO_BUF and
-> > + * IO_UNREGISTER_IO_BUF becomes not necessary.
-> > + *
-> > + * This feature isn't available for UBLK_F_ZONED
-> > + */
-> > +#define UBLK_F_AUTO_BUF_REG    (1ULL << 11)
-> > +
-> >  /* device state */
-> >  #define UBLK_S_DEV_DEAD        0
-> >  #define UBLK_S_DEV_LIVE        1
-> > @@ -339,6 +363,14 @@ static inline __u32 ublksrv_get_flags(const struct ublksrv_io_desc *iod)
-> >         return iod->op_flags >> 8;
-> >  }
-> >
-> > +struct ublk_auto_buf_reg {
-> > +       __s32  ring_fd;
-> > +       __u16  index;
-> > +#define UBLK_AUTO_BUF_REGISTERED_RING            (1 << 0)
-> > +       __u8   flags;
-> 
-> The flag could potentially be stored in ublk_io's flags field instead
-> to avoid taking up this byte.
+Picking the following 2 dependencies would resolve the build error:
 
-`ublk_auto_buf_reg` takes the exact ->addr space in both 'struct ublk_io'
-and 'struct ublksrv_io_cmd', this way won't take extra byte, but keep code simple
-and reuse for dealing with auto_buf_reg from both 'struct ublk_io' and
-'struct ublksrv_io_cmd'.
-
-
-Thanks, 
-Ming
-
+1bcf7f48b7d4 s390/cio: use bitwise types to allow for type checking
+8b19e145e82f s390/cio: introduce bitwise dma types and helper functions
 

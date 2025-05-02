@@ -1,177 +1,275 @@
-Return-Path: <io-uring+bounces-7827-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7828-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B1AA7A2D
-	for <lists+io-uring@lfdr.de>; Fri,  2 May 2025 21:25:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CE4AA7B52
+	for <lists+io-uring@lfdr.de>; Fri,  2 May 2025 23:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407FF4C70E5
-	for <lists+io-uring@lfdr.de>; Fri,  2 May 2025 19:25:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B6A3BCB38
+	for <lists+io-uring@lfdr.de>; Fri,  2 May 2025 21:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7451F1538;
-	Fri,  2 May 2025 19:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E913202981;
+	Fri,  2 May 2025 21:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ro3aLQGX"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Y3KOmvge"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2539F1EFFA2
-	for <io-uring@vger.kernel.org>; Fri,  2 May 2025 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF59202978
+	for <io-uring@vger.kernel.org>; Fri,  2 May 2025 21:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746213939; cv=none; b=jYCVEZw5CF/ZEhz6xhGwIfFnuAXFHzwipe/a68Ah1ZddR34Be+M8xaCKAq1K3gYPoT01NloLPPmZ92U+wMdtPcsSzL1vUg6OXRuB2Jgwmqec8UXF6p+AYVSV73WFMg4wkCFNcIruMN1btoStP1RmMe6NVEqq/Ui9n/G65S1pg20=
+	t=1746220881; cv=none; b=KnxpBxaGsINAuNU3HAx4G1/GJpcVbHzuCu6s+zBJw0G0aZCNindBBzeW9j5Vyzzub8F4G5GQRv6cqClKSeVLOShJzm2fG7spFioi72Y4WrmCZLQ7exPNKYAgTFWF9NBxt/P2IErELFh6Lllj8dlvtA/Zt7xIhoG6Qbjx6naiD9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746213939; c=relaxed/simple;
-	bh=ZOraj867pk/cuv9sGYnTnO1GOcFc4HnKNvgp4QcVTF8=;
+	s=arc-20240116; t=1746220881; c=relaxed/simple;
+	bh=5qzvUAzjMKZ98X02mWPJ9V1UfMrvM30yqBubo7Y4XZA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbBUnUAbKq8YVrBcRYDtAWuTQjRLI7AsZvQiHFwQFAY/zYrjP0VYgbqteVLgvMgK0abbsT/D5uH+FMnrRWqnriso1PKnlKEViROowdVWNM7zzuyP5R8/q6998A6lierOUzlU7Qj1RXe3/MWIKHmdtG2TZimm9DWY0vlb7z0T1sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ro3aLQGX; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2264c9d0295so31825ad.0
-        for <io-uring@vger.kernel.org>; Fri, 02 May 2025 12:25:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZsHbR84TZktE5eCDA8esFereZA6mAAJkKXIIUWuRbEjGxUx7XM+qT+4CGLFKE8oVo87rjY/MfVXUWGi2RUnBOBTFLxAU1InYZ23dtUmG+CAsS6KZq8dhsYqtK4Gt4vJDDSPkf0pbpHQdz0Iep+Yb+GngOIvN4am3vTtyAGBNoOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Y3KOmvge; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224104a9230so4070715ad.1
+        for <io-uring@vger.kernel.org>; Fri, 02 May 2025 14:21:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746213937; x=1746818737; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1746220876; x=1746825676; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZOraj867pk/cuv9sGYnTnO1GOcFc4HnKNvgp4QcVTF8=;
-        b=Ro3aLQGXP8CNe9vRdK6XeulHVcTX2VBrUyrixmFqJdUgryLQtuH8O9cayvD79Dqomd
-         hHQSiFSkuPc95X4JNas9F2/1xwcaILkXQgzpKCY86CeiOFD+5Sy0rkj8IdkC9tG64AFB
-         +sLGwf0iJDKBNf46VNhOVRoslDOQ196S0dd0WmPb+3GIOS0GZsBtYyrBQgSFUD+hgnDw
-         lPFeizJfOAIUiji8A8rGz1sEsM/yvDyh8s1u+zu5Oml7qMF86VPdPkxZzBC9Ue5D6ta5
-         ogZi4kL6PgyFcScnHTl1aC7EYD3oJFVe7/pDKpJuFv0se1smNPI6iRl9/1tRg8oY0tuB
-         Q0rg==
+        bh=BGdpwYguXPs2lAGo5+MRzYtLbXouPVwccJyaENazssQ=;
+        b=Y3KOmvgeo3fJTqwPsvTJAsdAgiazQjFeZ5TMS9tTR76/fg8TM1tdrS6DH+Ew/KBeD8
+         gSS6HTZWOnBWaaHI59AwzvR1hoLe039UN0tlrgCALz7/E2SN5iYXnw9gpiBbVW+7L0w7
+         twGUfzXri0UQXvboZJ2yqtwwWHg2jjongcURN6pYJ9ekCHzCsWHbCcJ3dzB2iyG8Hwl3
+         tRpylVzEmFpy8JwXiVHzuEV6vfvsttUwSUEsUwkR8STmOx6VcceginBQv2YffeYrjC7O
+         tGD4KNfWbW7KGSwpJOHAVRo/S+YQg0VEiq0ELSXWfPZSb5JXFOwjtcO3qJbvE8GvqNTF
+         g2zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746213937; x=1746818737;
+        d=1e100.net; s=20230601; t=1746220876; x=1746825676;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZOraj867pk/cuv9sGYnTnO1GOcFc4HnKNvgp4QcVTF8=;
-        b=McK6CqJQ7OxwvSXGGvYU6jcM4AlJYzntKVl0kIHX6cgJpU5jn1aRSwqJ00IREe0TMA
-         RflmKhNFwkjF32GJKshCQnSWWWU5gMP43UH840JgBTw9CQqUt71WWikLmPFoQFIw0Y29
-         PmeflsSn8PkT8RaJSJToN5mdK6dpo925gVsfCZy4UmTTFzrBkkIxT4PThN/+SNVfrkvL
-         GvNRlq1FIDEGr/TQpKiCyPKEQ5Q0qS6d75mppJdTakqsBXL5ajFPcSjTwiIDeNwWnI2m
-         JL47rDLmmUsi2S9b2tT6mGVNRITYS4f12oPrKw9CGw9oXdoHLAprpB9uvvf7UcD8zoVy
-         E0Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT/HciFOxH3QMk89/fmzivqzCykrw+i2skinun2xEypiZ806SjGVA+C5UilStCKtQEuX3YaZ00eg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH/j9MH+7X6423v9G3UP1NkZzO1TQB57Jg4cM3Y4BUCIF/FxL1
-	71hHx6r+Lnkkl8JDBTFPAIMyTkBnqQyO72VwAojXJv47kZRzjvaoDnG84GMGwBEjy9HtMTOzShV
-	8qih+jvjvsXD6WC7OqBStsfpprvaJgHn7pnjt
-X-Gm-Gg: ASbGncvTLsTWtDRlJsMNNVablXm5lHGysOfqS4fmMel42MCT8kthnZ6rLmtzES7iXXt
-	/0p45whAr3jyY5P1cdioiqwlYivitKZnmHpVcW+cocoR5VNLy4RHkiVZSYeTiZvZtWFsjxs7/bq
-	KtIlOZFV3wftlO5+MM25SIfdJAhYZypX/y8A==
-X-Google-Smtp-Source: AGHT+IHUOjgBbVOP8EhCotYEtz1xj8om994DHh63iGGlYgne8/oHskra7BjgsemS01jDY9TsbdDObHSsJ810l2GltBI=
-X-Received: by 2002:a17:902:ce07:b0:21f:4986:c7d5 with SMTP id
- d9443c01a7336-22e18a3edccmr455755ad.8.1746213937102; Fri, 02 May 2025
- 12:25:37 -0700 (PDT)
+        bh=BGdpwYguXPs2lAGo5+MRzYtLbXouPVwccJyaENazssQ=;
+        b=fOjeyMkIUtkcTiFUifUyyskVE825MINHI+VgROvJ2mul5rhA7/SvONH7bkNhAAhZu+
+         kf/0UXkkEdD1D8EdlXz3Wb/py6DxJ0kgNi6njE8NAaUzbWRdN9zuI8AdRs0rJwZkBdEH
+         B3HRh/RX1T8Prm/qfwKGK3kce75vLbV1b9nEmhW3Y55dUbRYxp1zOTvl91Vjy3g6D2mf
+         MLb7LQ1vnavSGTxnQnbaQ0vl9sSPYTxTWHuHq4Ux8qsSe/Q59F8cA7WECsuZ0ZGDausA
+         1h01zj9Hzf06t+oVjB6erPQ+ql/92lN/PQQy4bxaJGklQaIcCEgCUivNiAJDLPla0XZ/
+         sCMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB1XvGA/lxDUJ4mq8YhCM645i4vyTbjrBnErOkci/3+BpZSo+a5JubMxqJWb5rcRM090oldxDpDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXRwKyA9pYqNynMwpfqmvAmsrr5WrqY9YJSorr2/TPD5xhPApc
+	6NTSxhkINLcYWxzn4G6vB6FLxpzFFbcQEsSPE9gjL+DfmNViWrF5gCAvP1rozNWMn7gjT31SK2D
+	Myg+CqmoIlHWbfSv44oWaCVaOehp3ZJKpRxYcFw==
+X-Gm-Gg: ASbGncvIcIBtHRMQcjIgKZqXTggU71b1U7ANi4AXEaLOZfAp2HRluzgNZdZPXhH23dK
+	jbIyICqpnyqiYrguG8K3AJ7s+QY0kHAcEQs95xqH/dvjMpG+WtS/FF9v4UlazOHqQcu/zgh/Tem
+	npI7tNX/LVWF5Cq+MnUPn/1BQA86gDCJA=
+X-Google-Smtp-Source: AGHT+IEekHOSH67QQO93z3HxLM7D2jg+Tc2O2qhVSg0XxBBXf6I/qf3ryBFJNoqliUj2t5cYKBs6x4eXT+wjer3RIRg=
+X-Received: by 2002:a17:902:d504:b0:223:659d:ac66 with SMTP id
+ d9443c01a7336-22e103446c8mr27465575ad.12.1746220876553; Fri, 02 May 2025
+ 14:21:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429032645.363766-1-almasrymina@google.com>
- <20250429032645.363766-5-almasrymina@google.com> <53433089-7beb-46cf-ae8a-6c58cd909e31@redhat.com>
- <fd7f21d9-3f45-4f68-85cb-dd160a0a95ca@redhat.com>
-In-Reply-To: <fd7f21d9-3f45-4f68-85cb-dd160a0a95ca@redhat.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 2 May 2025 12:25:23 -0700
-X-Gm-Features: ATxdqUFE7sBpQ0aEoZkfu-r1bro_WuWZDP8nLd_pOK-7HB7CvYHcAcfjkOn9v8E
-Message-ID: <CAHS8izPr_yt+PtG5Q++Ub=D4J=H7nP0S_7rOP9G7W=i2Zeau3g@mail.gmail.com>
-Subject: Re: [PATCH net-next v13 4/9] net: devmem: Implement TX path
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Victor Nogueira <victor@mojatatu.com>, Pedro Tammela <pctammela@mojatatu.com>, 
-	Samiullah Khawaja <skhawaja@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20250428094420.1584420-1-ming.lei@redhat.com> <20250428094420.1584420-4-ming.lei@redhat.com>
+ <CADUfDZrXTzXM4tA6vRcOz1qn61he+Y6p5UsLeprbmhDVJe0gbg@mail.gmail.com>
+ <aBJDClTlYV48h3P3@fedora> <CADUfDZoROJeDKNWOzbgEqrs_B7kU2qNWwZxfnS2TDqYxiXrY0w@mail.gmail.com>
+ <aBTr5fz5KOgd9RiD@fedora>
+In-Reply-To: <aBTr5fz5KOgd9RiD@fedora>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 2 May 2025 14:21:05 -0700
+X-Gm-Features: ATxdqUFbCpcOs7pkSiWyjPo8U72KxIZTNWjfqU_o_S_MVX0DxXE_7x-nakROhVA
+Message-ID: <CADUfDZqetfAE_s8-GDSLmYTdgrqFLv+YZ1vndg0uD38NuXW3Nw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/7] io_uring: support to register bvec buffer to
+ specified io_uring
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-block@vger.kernel.org, 
+	Uday Shankar <ushankar@purestorage.com>, Keith Busch <kbusch@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 2, 2025 at 4:51=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wrot=
-e:
+On Fri, May 2, 2025 at 8:59=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrote=
+:
 >
-> On 5/2/25 1:47 PM, Paolo Abeni wrote:
-> > On 4/29/25 5:26 AM, Mina Almasry wrote:
-> >> Augment dmabuf binding to be able to handle TX. Additional to all the =
-RX
-> >> binding, we also create tx_vec needed for the TX path.
-> >>
-> >> Provide API for sendmsg to be able to send dmabufs bound to this devic=
-e:
-> >>
-> >> - Provide a new dmabuf_tx_cmsg which includes the dmabuf to send from.
-> >> - MSG_ZEROCOPY with SCM_DEVMEM_DMABUF cmsg indicates send from dma-buf=
-.
-> >>
-> >> Devmem is uncopyable, so piggyback off the existing MSG_ZEROCOPY
-> >> implementation, while disabling instances where MSG_ZEROCOPY falls bac=
-k
-> >> to copying.
-> >>
-> >> We additionally pipe the binding down to the new
-> >> zerocopy_fill_skb_from_devmem which fills a TX skb with net_iov netmem=
-s
-> >> instead of the traditional page netmems.
-> >>
-> >> We also special case skb_frag_dma_map to return the dma-address of the=
-se
-> >> dmabuf net_iovs instead of attempting to map pages.
-> >>
-> >> The TX path may release the dmabuf in a context where we cannot wait.
-> >> This happens when the user unbinds a TX dmabuf while there are still
-> >> references to its netmems in the TX path. In that case, the netmems wi=
-ll
-> >> be put_netmem'd from a context where we can't unmap the dmabuf, Resolv=
-e
-> >> this by making __net_devmem_dmabuf_binding_free schedule_work'd.
-> >>
-> >> Based on work by Stanislav Fomichev <sdf@fomichev.me>. A lot of the me=
-at
-> >> of the implementation came from devmem TCP RFC v1[1], which included t=
-he
-> >> TX path, but Stan did all the rebasing on top of netmem/net_iov.
-> >>
-> >> Cc: Stanislav Fomichev <sdf@fomichev.me>
-> >> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> >> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+> On Thu, May 01, 2025 at 06:31:03PM -0700, Caleb Sander Mateos wrote:
+> > On Wed, Apr 30, 2025 at 8:34=E2=80=AFAM Ming Lei <ming.lei@redhat.com> =
+wrote:
+> > >
+> > > On Mon, Apr 28, 2025 at 05:43:12PM -0700, Caleb Sander Mateos wrote:
+> > > > On Mon, Apr 28, 2025 at 2:44=E2=80=AFAM Ming Lei <ming.lei@redhat.c=
+om> wrote:
+> > > > >
+> > > > > Extend io_buffer_register_bvec() and io_buffer_unregister_bvec() =
+for
+> > > > > supporting to register/unregister bvec buffer to specified io_uri=
+ng,
+> > > > > which FD is usually passed from userspace.
+> > > > >
+> > > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > > > > ---
+> > > > >  include/linux/io_uring/cmd.h |  4 ++
+> > > > >  io_uring/rsrc.c              | 83 +++++++++++++++++++++++++++---=
+------
+> > > > >  2 files changed, 67 insertions(+), 20 deletions(-)
+> > > > >
+> > > > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_urin=
+g/cmd.h
+> > > > > index 78fa336a284b..7516fe5cd606 100644
+> > > > > --- a/include/linux/io_uring/cmd.h
+> > > > > +++ b/include/linux/io_uring/cmd.h
+> > > > > @@ -25,6 +25,10 @@ struct io_uring_cmd_data {
+> > > > >
+> > > > >  struct io_buf_data {
+> > > > >         unsigned short index;
+> > > > > +       bool has_fd;
+> > > > > +       bool registered_fd;
+> > > > > +
+> > > > > +       int ring_fd;
+> > > > >         struct request *rq;
+> > > > >         void (*release)(void *);
+> > > > >  };
+> > > > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > > > > index 5f8ab130a573..701dd33fecf7 100644
+> > > > > --- a/io_uring/rsrc.c
+> > > > > +++ b/io_uring/rsrc.c
+> > > > > @@ -969,21 +969,6 @@ static int __io_buffer_register_bvec(struct =
+io_ring_ctx *ctx,
+> > > > >         return 0;
+> > > > >  }
+> > > > >
+> > > > > -int io_buffer_register_bvec(struct io_uring_cmd *cmd,
+> > > > > -                           struct io_buf_data *buf,
+> > > > > -                           unsigned int issue_flags)
+> > > > > -{
+> > > > > -       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > > > > -       int ret;
+> > > > > -
+> > > > > -       io_ring_submit_lock(ctx, issue_flags);
+> > > > > -       ret =3D __io_buffer_register_bvec(ctx, buf);
+> > > > > -       io_ring_submit_unlock(ctx, issue_flags);
+> > > > > -
+> > > > > -       return ret;
+> > > > > -}
+> > > > > -EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
+> > > > > -
+> > > > >  static int __io_buffer_unregister_bvec(struct io_ring_ctx *ctx,
+> > > > >                                        struct io_buf_data *buf)
+> > > > >  {
+> > > > > @@ -1006,19 +991,77 @@ static int __io_buffer_unregister_bvec(str=
+uct io_ring_ctx *ctx,
+> > > > >         return 0;
+> > > > >  }
+> > > > >
+> > > > > -int io_buffer_unregister_bvec(struct io_uring_cmd *cmd,
+> > > > > -                             struct io_buf_data *buf,
+> > > > > -                             unsigned int issue_flags)
+> > > > > +static inline int do_reg_unreg_bvec(struct io_ring_ctx *ctx,
+> > > > > +                                   struct io_buf_data *buf,
+> > > > > +                                   unsigned int issue_flags,
+> > > > > +                                   bool reg)
+> > > > >  {
+> > > > > -       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > > > >         int ret;
+> > > > >
+> > > > >         io_ring_submit_lock(ctx, issue_flags);
+> > > > > -       ret =3D __io_buffer_unregister_bvec(ctx, buf);
+> > > > > +       if (reg)
+> > > > > +               ret =3D __io_buffer_register_bvec(ctx, buf);
+> > > > > +       else
+> > > > > +               ret =3D __io_buffer_unregister_bvec(ctx, buf);
+> > > >
+> > > > It feels like unifying __io_buffer_register_bvec() and
+> > > > __io_buffer_unregister_bvec() would belong better in the prior patc=
+h
+> > > > that changes their signatures.
+> > >
+> > > Can you share how to do above in previous patch?
 > >
-> > I'm sorry for the late feedback. A bunch of things I did not notice
-> > before...
+> > I was thinking you could define do_reg_unreg_bvec() in the previous
+> > patch. It's a logical step once you've extracted out all the
+> > differences between io_buffer_register_bvec() and
+> > io_buffer_unregister_bvec() into the helpers
+> > __io_buffer_register_bvec() and __io_buffer_unregister_bvec(). But
+> > either way is fine.
 >
-> The rest LGTM,
-
-Does this imply I should attach your Reviewed-by or Acked-by on follow
-up submissions if any? I'm happy either way, just checking.
-
-> and my feedback here ranges from nit to corner-cases, so
-> we are probably better off with a follow-up than with a repost, other
-> opinions welcome!
+> 'has_fd' and 'ring_fd' fields isn't added yet, the defined do_reg_unreg_b=
+vec()
+> could be quite simple, looks no big difference, I can do that...
 >
+> >
+> > >
+> > > >
+> > > > >         io_ring_submit_unlock(ctx, issue_flags);
+> > > > >
+> > > > >         return ret;
+> > > > >  }
+> > > > > +
+> > > > > +static int io_buffer_reg_unreg_bvec(struct io_ring_ctx *ctx,
+> > > > > +                                   struct io_buf_data *buf,
+> > > > > +                                   unsigned int issue_flags,
+> > > > > +                                   bool reg)
+> > > > > +{
+> > > > > +       struct io_ring_ctx *remote_ctx =3D ctx;
+> > > > > +       struct file *file =3D NULL;
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       if (buf->has_fd) {
+> > > > > +               file =3D io_uring_register_get_file(buf->ring_fd,=
+ buf->registered_fd);
+> > > > > +               if (IS_ERR(file))
+> > > > > +                       return PTR_ERR(file);
+> > > >
+> > > > It would be good to avoid the overhead of this lookup and
+> > > > reference-counting in the I/O path. Would it be possible to move th=
+is
+> > > > lookup to when UBLK_IO_FETCH_REQ (and UBLK_IO_COMMIT_AND_FETCH_REQ,=
+ if
+> > > > it specifies a different ring_fd) is submitted? I guess that might
+> > > > require storing an extra io_ring_ctx pointer in struct ublk_io.
+> > >
+> > > Let's start from the flexible way & simple implementation.
+> > >
+> > > Any optimization & improvement can be done as follow-up.
+> >
+> > Sure, we can start with this as-is. But I suspect the extra
+> > reference-counting here will significantly decrease the benefit of the
+> > auto-register register feature.
+>
+> The reference-counting should only be needed for registering buffer to
+> external ring, which may have been slow because of the cross-ring thing..=
+.
 
-Agreed a follow-up is better, but up to you and other maintainers.
-There is some mounting urgency on my side (we're in the process of
-optimistical backports and migrating the devmem TCP userspace that we
-previously open sourced to the upstream UAPI), but we'll oblige either
-way.
+The current code is incrementing and decrementing the io_uring file
+reference count even if the remote_ctx =3D=3D ctx, right? I agree it
+should definitely be possible to skip the reference count in that
+case, as this code is already running in task work context for a
+command on the io_uring. It should also be possible to avoid atomic
+reference-counting in the UBLK_AUTO_BUF_REGISTERED_RING case too.
 
---=20
-Thanks,
-Mina
+>
+> Maybe we can start automatic buffer register for ubq_daemon context only,
+> meantime allow to register buffer from external io_uring by adding per-io
+> spin_lock, which may help the per-io task Uday is working on too.
+
+I'm not sure I understand why a spinlock would be required? In Uday's
+patch set, each ublk_io still belongs to a single task. So no
+additional locking should be required.
+
+>
+> And the interface still allow to support automatic buffer register to
+> external io_uring since `ublk_auto_buf_reg` includes 'flags' field, we ca=
+n
+> enable it in future when efficient implementation is figured out.
+
+Sure, we can definitely start with support only for auto-registering
+the buffer with the ublk command's own io_uring. Implementing a flag
+in the future to specify a different io_uring seems like a good
+approach.
+
+Best,
+Caleb
 

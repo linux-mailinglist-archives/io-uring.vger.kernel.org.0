@@ -1,56 +1,57 @@
-Return-Path: <io-uring+bounces-7836-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7837-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F610AA9EF1
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 00:16:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F30AAA5B6
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 01:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9768017ED48
-	for <lists+io-uring@lfdr.de>; Mon,  5 May 2025 22:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7FE9188D777
+	for <lists+io-uring@lfdr.de>; Mon,  5 May 2025 23:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A01C27B4EE;
-	Mon,  5 May 2025 22:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C637315FB1;
+	Mon,  5 May 2025 22:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F163Hjl7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czGF6xSQ"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B7C27B4E3;
-	Mon,  5 May 2025 22:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F848315FAB;
+	Mon,  5 May 2025 22:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483278; cv=none; b=Po2uFA5Hf+LowSu0w4qPEpmiro0OK4t/xEr9BoteeRvbLwlH21K9oP0EoB4YetUf1ixzTlUBxdkmdrwAMG9LgSRuY7PxDmR2hrkXaVR5Mb9zrn+xrDf0kPVgdZEg2KkFvGEMaPiSEeZ1DYHJcDVFPziq6LEaDU9F0k2flJGTcYk=
+	t=1746484251; cv=none; b=bToUXq+zftK3N5QhFaGANPlt+2bCKP0/+ivfsjEKrhc5tuvkB67kNPq8VnuodDrRPtbIM1vsFApV2Av4rN4YY0GURR7BMmOvQ7LrJ+/FUI87TaP7hpZrlFgwcVfl3dkdaxpkIuLYwwKmgUcrhzZ9VRck3YOrG5P66rPgeKuVwo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483278; c=relaxed/simple;
-	bh=Oz3eyYIFP4kwj0nI69Wh/mRzmq93sGznS23VdlXRZAg=;
+	s=arc-20240116; t=1746484251; c=relaxed/simple;
+	bh=loTJ5DJF4JJVQC8r51AXErWlY78aV8+JQ6HsvoiNgCY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h5wp8Oa9RtyVb0HwK083dwurZixu9T8F1ty67mMOOa81Adkd7Zz+DGg8QtZWbO7gSwMky1tQF4T3zuVoGY8whFkd5fcs06lFlb60vj6XrYz6HQxBa41QzjuJJgXPgdD52HyWUef5VT05sgQ6niyh7Iso+YON7m7XDcnMdLS483w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F163Hjl7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE28C4CEED;
-	Mon,  5 May 2025 22:14:37 +0000 (UTC)
+	 MIME-Version; b=RrZ1WB+quIc0x5Pn8G/UKYuBFxN4Ahl7R0uMbQvW4d/MRmk2E7SqXd/45ROkPlJ7yUri2J6Cd5zN/B45rsOfsfZYutXZkm7FWRM49Wd8l5XE4k0M0I7D9R+Gbk8fEFZwqQdxHchiInI7MPrKpM9+y9Nec7EMNkHxguc6MwpunoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czGF6xSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CB2C4CEED;
+	Mon,  5 May 2025 22:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483278;
-	bh=Oz3eyYIFP4kwj0nI69Wh/mRzmq93sGznS23VdlXRZAg=;
+	s=k20201202; t=1746484251;
+	bh=loTJ5DJF4JJVQC8r51AXErWlY78aV8+JQ6HsvoiNgCY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F163Hjl7RgcFSvlDxfBjupVplZ72qwU0WuiNPYixzOgJVhZ2yjB4z95iZ6MdlSMA/
-	 iT0K7CSAFx9jLSoGjdfTMj0l68pu0Qk2LMcyyQY5+hQqajx1dkXX+arw5qH4h3k/TL
-	 jcYHHkn5Zt8UVw0FZ0WTs3TYTtm4iQgoEuEGIz3koLc6OCgX8R8Xpxy9levodkMubY
-	 5DVR+UJVlMt4n6vaVg0Oo8h/54CzfudHY0wubKGZMj+oyBVWGJAGoZyQs6TB4wQhxY
-	 aEAlCET55Egno0fAVsiq9+fvthIx7hOq7n5YnBKPQ/v7x5jjnAj/uLRAUPxjNFnNM7
-	 dELIhTpw4ggRQ==
+	b=czGF6xSQ8o6tz3XVy7oOmq9u/MhCsR2cYACqvwbLhpymxl/3gze4+7Pp/0OcIpbJD
+	 9BNOqT4ulJM9epSOR9EK3yRYpdjk5cWX7MmHunqLaWY3vxY4Z/qOwD/XkUpUOv7PHb
+	 5G3ip5pqVBC2/AAZN/my1w097N3ghXfDZMgWFNWexRl0/C1r5Y8q9SmSnYJOUxyFVL
+	 dA454BQN7zUldmklA9mVd6OuXSgmBBOOSTdi2HTRb7o8Bb5Vqy7scUR9mbn/DM4jRU
+	 VJVtFjlv1ltQ+snRy19hRk80++sg+WPBWiAtXuhAERdESsQgMuw9hzd9LGNpYqETYx
+	 Tg+qed7VcwZ4Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
 	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
+	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 011/642] io_uring/msg: initialise msg request opcode
-Date: Mon,  5 May 2025 18:03:47 -0400
-Message-Id: <20250505221419.2672473-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 412/642] io_uring: use IO_REQ_LINK_FLAGS more
+Date: Mon,  5 May 2025 18:10:28 -0400
+Message-Id: <20250505221419.2672473-412-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -65,34 +66,57 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
 
-[ Upstream commit 9cc0bbdaba2a66ad90bc6ce45163b7745baffe98 ]
+[ Upstream commit 0e8934724f78602635d6e11c97ef48caa693cb65 ]
 
-It's risky to have msg request opcode set to garbage, so at least
-initialise it to nop. Later we might want to add a user inaccessible
-opcode for such cases.
+Replace the 2 instances of REQ_F_LINK | REQ_F_HARDLINK with
+the more commonly used IO_REQ_LINK_FLAGS.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/9afe650fcb348414a4529d89f52eb8969ba06efd.1743190078.git.asml.silence@gmail.com
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Link: https://lore.kernel.org/r/20250211202002.3316324-1-csander@purestorage.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- io_uring/msg_ring.c | 1 +
- 1 file changed, 1 insertion(+)
+ io_uring/io_uring.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 7e6f68e911f10..f844ab24cda42 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -93,6 +93,7 @@ static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		kmem_cache_free(req_cachep, req);
- 		return -EOWNERDEAD;
- 	}
-+	req->opcode = IORING_OP_NOP;
- 	req->cqe.user_data = user_data;
- 	io_req_set_res(req, res, cflags);
- 	percpu_ref_get(&ctx->refs);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 24b9e9a5105d4..96c660bf4ef59 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -110,11 +110,13 @@
+ #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
+ 			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
+ 
++#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
++
+ #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
+ 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
+ 				REQ_F_ASYNC_DATA)
+ 
+-#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
++#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | IO_REQ_LINK_FLAGS | \
+ 				 REQ_F_REISSUE | IO_REQ_CLEAN_FLAGS)
+ 
+ #define IO_TCTX_REFS_CACHE_NR	(1U << 10)
+@@ -131,7 +133,6 @@ struct io_defer_entry {
+ 
+ /* requests with any of those set should undergo io_disarm_next() */
+ #define IO_DISARM_MASK (REQ_F_ARM_LTIMEOUT | REQ_F_LINK_TIMEOUT | REQ_F_FAIL)
+-#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
+ 
+ /*
+  * No waiters. It's larger than any valid value of the tw counter
+@@ -1158,7 +1159,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 	 * We don't know how many reuqests is there in the link and whether
+ 	 * they can even be queued lazily, fall back to non-lazy.
+ 	 */
+-	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
++	if (req->flags & IO_REQ_LINK_FLAGS)
+ 		flags &= ~IOU_F_TWQ_LAZY_WAKE;
+ 
+ 	guard(rcu)();
 -- 
 2.39.5
 

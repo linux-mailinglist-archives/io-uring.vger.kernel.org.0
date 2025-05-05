@@ -1,57 +1,56 @@
-Return-Path: <io-uring+bounces-7837-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7838-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F30AAA5B6
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 01:56:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B6AAAA5BE
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 01:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7FE9188D777
-	for <lists+io-uring@lfdr.de>; Mon,  5 May 2025 23:53:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4BD37A9895
+	for <lists+io-uring@lfdr.de>; Mon,  5 May 2025 23:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C637315FB1;
-	Mon,  5 May 2025 22:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B994F28D841;
+	Mon,  5 May 2025 22:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czGF6xSQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSQTOacl"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F848315FAB;
-	Mon,  5 May 2025 22:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E52828CF5E;
+	Mon,  5 May 2025 22:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484251; cv=none; b=bToUXq+zftK3N5QhFaGANPlt+2bCKP0/+ivfsjEKrhc5tuvkB67kNPq8VnuodDrRPtbIM1vsFApV2Av4rN4YY0GURR7BMmOvQ7LrJ+/FUI87TaP7hpZrlFgwcVfl3dkdaxpkIuLYwwKmgUcrhzZ9VRck3YOrG5P66rPgeKuVwo8=
+	t=1746484252; cv=none; b=AyzOZ0tZ+XOVwOH3GvKN7F7dB8JbDqu1tE/jvWP30dZ21mSeCXg7POaq30bLMf86yO76I6P0swuVU3ucMYSKrjZtRTG5DYGMAkRusU2ndS6w4q24Zieq8CQeQ2C4F6KmleyeYPdEKx9TdBuBYHSzhoBoHjLd5T2XL6W51X/s/l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484251; c=relaxed/simple;
-	bh=loTJ5DJF4JJVQC8r51AXErWlY78aV8+JQ6HsvoiNgCY=;
+	s=arc-20240116; t=1746484252; c=relaxed/simple;
+	bh=777VY6Mu1P9Z4jqCtcNKZWrGxYdlrwWcqoOiOUx/R58=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RrZ1WB+quIc0x5Pn8G/UKYuBFxN4Ahl7R0uMbQvW4d/MRmk2E7SqXd/45ROkPlJ7yUri2J6Cd5zN/B45rsOfsfZYutXZkm7FWRM49Wd8l5XE4k0M0I7D9R+Gbk8fEFZwqQdxHchiInI7MPrKpM9+y9Nec7EMNkHxguc6MwpunoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czGF6xSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CB2C4CEED;
-	Mon,  5 May 2025 22:30:50 +0000 (UTC)
+	 MIME-Version; b=Jly7maXnSyAtf90YAg9f4LXV/HAtShT/hfnH4aIMSZpuDEWv+9STwcVQjDHaKOEAgT2x8H4HshUoyLFPK0lxJEV5XTklgZSpn92QfalW6XrUFbaTF0E6HjF5OIToFFg3G2m0v+3KBjjOW8HR7xCekb9es3KKEiBA85cwj7Et98I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSQTOacl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9966C4CEED;
+	Mon,  5 May 2025 22:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484251;
-	bh=loTJ5DJF4JJVQC8r51AXErWlY78aV8+JQ6HsvoiNgCY=;
+	s=k20201202; t=1746484252;
+	bh=777VY6Mu1P9Z4jqCtcNKZWrGxYdlrwWcqoOiOUx/R58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=czGF6xSQ8o6tz3XVy7oOmq9u/MhCsR2cYACqvwbLhpymxl/3gze4+7Pp/0OcIpbJD
-	 9BNOqT4ulJM9epSOR9EK3yRYpdjk5cWX7MmHunqLaWY3vxY4Z/qOwD/XkUpUOv7PHb
-	 5G3ip5pqVBC2/AAZN/my1w097N3ghXfDZMgWFNWexRl0/C1r5Y8q9SmSnYJOUxyFVL
-	 dA454BQN7zUldmklA9mVd6OuXSgmBBOOSTdi2HTRb7o8Bb5Vqy7scUR9mbn/DM4jRU
-	 VJVtFjlv1ltQ+snRy19hRk80++sg+WPBWiAtXuhAERdESsQgMuw9hzd9LGNpYqETYx
-	 Tg+qed7VcwZ4Q==
+	b=OSQTOaclwVqOnlbCx2LYOoE2uIv9v9J/nez7KMat4xob8r8LDAcUumjTInqJeqqWh
+	 TDjvZKcT6uJjoVbLyQqETZD5gvAFpL1jvH71VTz0Hgg3kIkyHDcGJuREaEYq1FIdC2
+	 2/za1hQhqRNbdDH4RaXJlj+2nEue76jJ9xYTxW/iMxqv3MO6nt9c8w45WygiM19IQG
+	 G8b/PCfyZeUYitfbk4gvy5QzGQlyz1k/Am/DgoJmHcla6+OQjeFDlsQx/lLvcGmZxS
+	 tl+CJOeBzh2joXGw4Fv+jUKfewj1rJO98JcJfGQb3ZKFG7kRHVG65b6evzWlaod6as
+	 IH/2eWbCejEgg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
 	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
-	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 412/642] io_uring: use IO_REQ_LINK_FLAGS more
-Date: Mon,  5 May 2025 18:10:28 -0400
-Message-Id: <20250505221419.2672473-412-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 413/642] io_uring: sanitise ring params earlier
+Date: Mon,  5 May 2025 18:10:29 -0400
+Message-Id: <20250505221419.2672473-413-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -66,57 +65,133 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Caleb Sander Mateos <csander@purestorage.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-[ Upstream commit 0e8934724f78602635d6e11c97ef48caa693cb65 ]
+[ Upstream commit 92a3bac9a57c39728226ab191859c85f5e2829c0 ]
 
-Replace the 2 instances of REQ_F_LINK | REQ_F_HARDLINK with
-the more commonly used IO_REQ_LINK_FLAGS.
+Do all struct io_uring_params validation early on before allocating the
+context. That makes initialisation easier, especially by having fewer
+places where we need to care about partial de-initialisation.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-Link: https://lore.kernel.org/r/20250211202002.3316324-1-csander@purestorage.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Link: https://lore.kernel.org/r/363ba90b83ff78eefdc88b60e1b2c4a39d182247.1738344646.git.asml.silence@gmail.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- io_uring/io_uring.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ io_uring/io_uring.c | 77 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 44 insertions(+), 33 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 24b9e9a5105d4..96c660bf4ef59 100644
+index 96c660bf4ef59..bb4fb2faf6baf 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -110,11 +110,13 @@
- #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
- 			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
+@@ -3539,6 +3539,44 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
+ 					 O_RDWR | O_CLOEXEC, NULL);
+ }
  
-+#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
++static int io_uring_sanitise_params(struct io_uring_params *p)
++{
++	unsigned flags = p->flags;
 +
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
- 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
- 				REQ_F_ASYNC_DATA)
++	/* There is no way to mmap rings without a real fd */
++	if ((flags & IORING_SETUP_REGISTERED_FD_ONLY) &&
++	    !(flags & IORING_SETUP_NO_MMAP))
++		return -EINVAL;
++
++	if (flags & IORING_SETUP_SQPOLL) {
++		/* IPI related flags don't make sense with SQPOLL */
++		if (flags & (IORING_SETUP_COOP_TASKRUN |
++			     IORING_SETUP_TASKRUN_FLAG |
++			     IORING_SETUP_DEFER_TASKRUN))
++			return -EINVAL;
++	}
++
++	if (flags & IORING_SETUP_TASKRUN_FLAG) {
++		if (!(flags & (IORING_SETUP_COOP_TASKRUN |
++			       IORING_SETUP_DEFER_TASKRUN)))
++			return -EINVAL;
++	}
++
++	/* HYBRID_IOPOLL only valid with IOPOLL */
++	if ((flags & IORING_SETUP_HYBRID_IOPOLL) && !(flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
++
++	/*
++	 * For DEFER_TASKRUN we require the completion task to be the same as
++	 * the submission task. This implies that there is only one submitter.
++	 */
++	if ((flags & IORING_SETUP_DEFER_TASKRUN) &&
++	    !(flags & IORING_SETUP_SINGLE_ISSUER))
++		return -EINVAL;
++
++	return 0;
++}
++
+ int io_uring_fill_params(unsigned entries, struct io_uring_params *p)
+ {
+ 	if (!entries)
+@@ -3549,10 +3587,6 @@ int io_uring_fill_params(unsigned entries, struct io_uring_params *p)
+ 		entries = IORING_MAX_ENTRIES;
+ 	}
  
--#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
-+#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | IO_REQ_LINK_FLAGS | \
- 				 REQ_F_REISSUE | IO_REQ_CLEAN_FLAGS)
+-	if ((p->flags & IORING_SETUP_REGISTERED_FD_ONLY)
+-	    && !(p->flags & IORING_SETUP_NO_MMAP))
+-		return -EINVAL;
+-
+ 	/*
+ 	 * Use twice as many entries for the CQ ring. It's possible for the
+ 	 * application to drive a higher depth than the size of the SQ ring,
+@@ -3614,6 +3648,10 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	struct file *file;
+ 	int ret;
  
- #define IO_TCTX_REFS_CACHE_NR	(1U << 10)
-@@ -131,7 +133,6 @@ struct io_defer_entry {
- 
- /* requests with any of those set should undergo io_disarm_next() */
- #define IO_DISARM_MASK (REQ_F_ARM_LTIMEOUT | REQ_F_LINK_TIMEOUT | REQ_F_FAIL)
--#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
- 
- /*
-  * No waiters. It's larger than any valid value of the tw counter
-@@ -1158,7 +1159,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
- 	 * We don't know how many reuqests is there in the link and whether
- 	 * they can even be queued lazily, fall back to non-lazy.
++	ret = io_uring_sanitise_params(p);
++	if (ret)
++		return ret;
++
+ 	ret = io_uring_fill_params(entries, p);
+ 	if (unlikely(ret))
+ 		return ret;
+@@ -3661,37 +3699,10 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	 * For SQPOLL, we just need a wakeup, always. For !SQPOLL, if
+ 	 * COOP_TASKRUN is set, then IPIs are never needed by the app.
  	 */
--	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
-+	if (req->flags & IO_REQ_LINK_FLAGS)
- 		flags &= ~IOU_F_TWQ_LAZY_WAKE;
+-	ret = -EINVAL;
+-	if (ctx->flags & IORING_SETUP_SQPOLL) {
+-		/* IPI related flags don't make sense with SQPOLL */
+-		if (ctx->flags & (IORING_SETUP_COOP_TASKRUN |
+-				  IORING_SETUP_TASKRUN_FLAG |
+-				  IORING_SETUP_DEFER_TASKRUN))
+-			goto err;
++	if (ctx->flags & (IORING_SETUP_SQPOLL|IORING_SETUP_COOP_TASKRUN))
+ 		ctx->notify_method = TWA_SIGNAL_NO_IPI;
+-	} else if (ctx->flags & IORING_SETUP_COOP_TASKRUN) {
+-		ctx->notify_method = TWA_SIGNAL_NO_IPI;
+-	} else {
+-		if (ctx->flags & IORING_SETUP_TASKRUN_FLAG &&
+-		    !(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
+-			goto err;
++	else
+ 		ctx->notify_method = TWA_SIGNAL;
+-	}
+-
+-	/* HYBRID_IOPOLL only valid with IOPOLL */
+-	if ((ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_HYBRID_IOPOLL)) ==
+-			IORING_SETUP_HYBRID_IOPOLL)
+-		goto err;
+-
+-	/*
+-	 * For DEFER_TASKRUN we require the completion task to be the same as the
+-	 * submission task. This implies that there is only one submitter, so enforce
+-	 * that.
+-	 */
+-	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
+-	    !(ctx->flags & IORING_SETUP_SINGLE_ISSUER)) {
+-		goto err;
+-	}
  
- 	guard(rcu)();
+ 	/*
+ 	 * This is just grabbed for accounting purposes. When a process exits,
 -- 
 2.39.5
 

@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-7879-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7880-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249ECAAD004
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 23:46:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77762AAD022
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 23:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464D53A35B2
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 21:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518573AC36A
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 21:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1B022FF35;
-	Tue,  6 May 2025 21:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83280220F2B;
+	Tue,  6 May 2025 21:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/anUP+b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwWJg+Xk"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A7B22FE0C;
-	Tue,  6 May 2025 21:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55053220F29;
+	Tue,  6 May 2025 21:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567431; cv=none; b=cLL18+hGjrVfycu8a3FpS81d5+hoXLS3mT6ye05Q82VModzHuNzyyqX3kormhaU1We/Ux90QPVkjiw1GpxmDLRIZgku8qYikwUYGlnY+h3z5gn9RMidA1UCzm+S7tAhDiOY0/CJQiKmfQbGAyRzqFXUMHmBOkT5D90cV/HbUH7I=
+	t=1746567454; cv=none; b=prkTw7iI09JUcEbpFoN94eXlRzQtbfhnc3Udg3qkZuxfOIcJm/OVxiqoGEAGHcAPuNV9aQ/RwFi0x80POasiRvDa6LsyXx2orAEjBtx04jJUb15s6mwuGfGkkpyL3r1jB13glZ5qUEl17Ua+nAzDFsvggihEMtNCS6r2Y2qHAQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567431; c=relaxed/simple;
-	bh=H/10vPzZx7bbzGtn1cMttwk6Sw/HfJXo1GFSccFfT4Q=;
+	s=arc-20240116; t=1746567454; c=relaxed/simple;
+	bh=us1N00jgeX6leiAkF9ub6JMcyUj2YMNyUHWD7NPKT3A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VquCqKNKw7jduTeVXKLDX6veFFj9DzdZdq9vZbIbVfxwf07twGLQgnPIBEWolvpTSjxUKIdPh8AcsMhk+LBoCkQnFG5gBi2ulw5tBe9jjmH1G7oCjkwj4trAPszlOJWunPYOROkUSO2qxjPRcGSoNqzMyJeJQkpCx4KNZ9WpJAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/anUP+b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7AA7C4CEEE;
-	Tue,  6 May 2025 21:37:09 +0000 (UTC)
+	 MIME-Version; b=FEHLeaNyf9aveGCzjHbDCdMAAqWR38Xf1g6qwXOYTdguOdPKv1sLOQNiacPRRo5KeYaFs6xuXrTQGDJBQ1SmQCWDJ0kAsEX/DcVg09M1ahHVB6A0TARjlUREwf+olHtJzKCC5+AnSxTINxvWnaVzJn4HGvqhZ4TYXThApQjD8rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwWJg+Xk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F30C4CEEE;
+	Tue,  6 May 2025 21:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746567430;
-	bh=H/10vPzZx7bbzGtn1cMttwk6Sw/HfJXo1GFSccFfT4Q=;
+	s=k20201202; t=1746567453;
+	bh=us1N00jgeX6leiAkF9ub6JMcyUj2YMNyUHWD7NPKT3A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q/anUP+bO7XuC5N8ZY4o6X6qEHUdxN3myJoLjDN4ed/NRQ5sz8NWnlyctDVGdya4R
-	 sYg5Yzi82xnlDGMNRe0LdrWr8T2OaG9SOA+Dpvr1QRPxFs9+Y0kx0r3yWkaq52gMVZ
-	 ke7fTI9kpQJhgDRH9NmgXXpZfHcBUo2riP5jepqsfmiOqIv9NiXr0M9pvmwEsX8pk0
-	 f3hduJtgcEW+S+k1CAEaeRRSD25tPBiDRg916AeEEZfjmcvblmjhPnQxwSFKcG8F4j
-	 MN0S0grvdnVKNErKpdNbWrOiubLHfOIQt71ytF67//3eQQi8TxHDExGIIkxod+1gGp
-	 AlbSm3TuHTxUQ==
+	b=MwWJg+XkJerWUBlOYko0DAvHKqtb1NkE+4KYvT6H/hs/VxWPw71CsiUrBKNmBD/LD
+	 MPD9O9Up/QJsrs/oV93R2gnFrWfvp8A0jAYwy/CJuGVZUIPHPD0nT9+vgel/o9E+EC
+	 t0VRq7TzEV2NRJKzq0Pt8DGNU1SDF/g2okpXEPaZIqBRBKPDYao6H7ucq8nhXdilzs
+	 w80Cbp8f3vQPWaLHdSL7dppBMAoS+OAtUJWDrdZxQCmAPKsY536xibK6sSAAtYux9H
+	 kA8Sh5CIXc1OYXXBfLOIh0a6Aj0m/iFC/jFUogF7PDRpGOQfC3J6m8XMLHLM2MiYFQ
+	 6idNcUAv527UA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 10/12] io_uring/fdinfo: annotate racy sq/cq head/tail reads
-Date: Tue,  6 May 2025 17:36:45 -0400
-Message-Id: <20250506213647.2983356-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 6/6] io_uring/fdinfo: annotate racy sq/cq head/tail reads
+Date: Tue,  6 May 2025 17:37:14 -0400
+Message-Id: <20250506213714.2983569-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250506213647.2983356-1-sashal@kernel.org>
-References: <20250506213647.2983356-1-sashal@kernel.org>
+In-Reply-To: <20250506213714.2983569-1-sashal@kernel.org>
+References: <20250506213714.2983569-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
+X-stable-base: Linux 6.1.137
 Content-Transfer-Encoding: 8bit
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -89,10 +89,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 976e9500f6518..a26cf840e623d 100644
+index ea2c2ded4e412..4a50531699777 100644
 --- a/io_uring/fdinfo.c
 +++ b/io_uring/fdinfo.c
-@@ -81,11 +81,11 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+@@ -79,11 +79,11 @@ static __cold void __io_uring_show_fdinfo(struct io_ring_ctx *ctx,
  	seq_printf(m, "SqMask:\t0x%x\n", sq_mask);
  	seq_printf(m, "SqHead:\t%u\n", sq_head);
  	seq_printf(m, "SqTail:\t%u\n", sq_tail);

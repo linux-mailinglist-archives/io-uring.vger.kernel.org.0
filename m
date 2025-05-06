@@ -1,98 +1,306 @@
-Return-Path: <io-uring+bounces-7840-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7841-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C9AAAB8AD
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 08:39:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1908DAAB97F
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 08:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51C53A5C03
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 06:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961051C28182
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 06:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD97F27B4FE;
-	Tue,  6 May 2025 04:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AAE27F73F;
+	Tue,  6 May 2025 04:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUcv5z9c"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UPy+Q0BG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2606B297128;
-	Tue,  6 May 2025 01:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C82BEC47
+	for <io-uring@vger.kernel.org>; Tue,  6 May 2025 02:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746495481; cv=none; b=Xy2iGnBdSqfoJ7Wby26DGDLEq/UZHkekL2gUmJhuo3dtaFpJ8U4Io0XSu8rrHzOnlY74YWYLGr/Xkzg0ZohZXOL9qeHrpe7HoizYiRhfScjcU1SZ5HOe/7fmZqacXU9BN9Gg/inehlZU+5G83F4J16qlE6mY+Emy03jEKiykWZI=
+	t=1746499574; cv=none; b=hk7IPqgsJyGR+wzUztMHi75dRAveIJDRvZ+5rRVAayec4h45zM95IVG5z4I+eY9qlxAa0hr4F7avJerG90AIyx2Ii+gdwzRaTRJ2Esg1g0dVh62/nm+YDa++aAje1T0R/xTpTY6rz43rKjhcvSQ3qZJ0sGHMQVCgU0oQHB1rt1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746495481; c=relaxed/simple;
-	bh=zKECytagb87TMOLvGwWUa+PfDXa1A/lXuEpkDrkjAnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E6EZ+dZ+f9hOKTVe0R7h0+p/Dkze0edVobRPa0BNczcIdkxQQLkyKQm7JrX+IC6dwdd9YJAFD21QM5no9RiRrmG97l6RY7fhEr/1DgPLLeKXvW2em9w88B/2Hu7gWee7GKntQVyh/pSRmjQOZ5pyIH3mfPdMg/EPk+HwRCJ0C6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUcv5z9c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AD4C4CEE4;
-	Tue,  6 May 2025 01:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746495480;
-	bh=zKECytagb87TMOLvGwWUa+PfDXa1A/lXuEpkDrkjAnM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AUcv5z9ca99yIo2NLkz4SbM2b9WWkH0uw/wz4j+St1LLxEyfCJEsFq1ZdUTAa9c2L
-	 TDlUp+WqRO3spDiJ7VP6zq4YtkngpCzgRsN3AhxF+iHbRhEpHJo/NGCGI/GH8hrwir
-	 akWRoH0LOdfxi2MuogXg+4weQT1gWeuj3VxnAbtPI8laajeMTjyU2oJPsHI0FtLUlN
-	 26f/mL+aTgG6bFUz9+H/yNgZjmt9fEPOoYa+C6GN7FIUyKlwExDdKuTyScVnhiGYBJ
-	 3wSuE0Q1rlqd6GvOeqkb9nRRKhcVH1g7UT3bBvgRcbZWqs/1L0pgZ/upZbY7X5pSUU
-	 kUOM/O+IQitUQ==
-Date: Mon, 5 May 2025 18:37:58 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, io-uring@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy
- <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de
- Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov
- <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, Neal Cardwell
- <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
- <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, "Eugenio
- =?UTF-8?B?UMOpcmV6?=" <eperezma@redhat.com>, Stefan Hajnoczi
- <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan
- <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim
- <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
- <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>, Kaiyuan
- Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v13 4/9] net: devmem: Implement TX path
-Message-ID: <20250505183758.7778811c@kernel.org>
-In-Reply-To: <20250429032645.363766-5-almasrymina@google.com>
-References: <20250429032645.363766-1-almasrymina@google.com>
-	<20250429032645.363766-5-almasrymina@google.com>
+	s=arc-20240116; t=1746499574; c=relaxed/simple;
+	bh=MuBiG0/S7UIZBD5rKs0TbzCcJT2CaK2ppbhy9ywFbOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oHNhGF66Tep1OKm+0nUOTIg2RG97+rBJ9P8KjM75sAsXMDH4m01F8egaJ9sh8h8NZ4hnTq2mhm/VW9g59kRi+w4HxvO7vdJprZ6yz+29fgrJAOhya1ytkxAhKFLkBVioIIhWFBmjiphPp4EjqtzF8JQw3wXQq8DBVJW/eqEyi4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UPy+Q0BG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746499569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dw4JE7DaO2HFUMVygjFqgHglIdpP20re07MpV/DiLWg=;
+	b=UPy+Q0BGvmKMofyNsVs6rtmFiAoDktAMshh977+UrP6tWFhvtuDomxBlt/5v3hM6HqXzLn
+	cVI3tXeFSoS0iaZCFim+/7UereT07CCBnbOrRNq4A2oumP1onhqQVf9XITFaWGpevelCES
+	X10TSX+O9VuFjnioNNz0nL8VyV7IB0U=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-212-rM5Jc4Q6NzWz8f_0MAVCmw-1; Mon,
+ 05 May 2025 22:46:04 -0400
+X-MC-Unique: rM5Jc4Q6NzWz8f_0MAVCmw-1
+X-Mimecast-MFC-AGG-ID: rM5Jc4Q6NzWz8f_0MAVCmw_1746499559
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C38FC19560AD;
+	Tue,  6 May 2025 02:45:58 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.13])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4CC419560AF;
+	Tue,  6 May 2025 02:45:54 +0000 (UTC)
+Date: Tue, 6 May 2025 10:45:49 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org,
+	Uday Shankar <ushankar@purestorage.com>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [RFC PATCH 3/7] io_uring: support to register bvec buffer to
+ specified io_uring
+Message-ID: <aBl33aVsZ-s2-Kpx@fedora>
+References: <20250428094420.1584420-1-ming.lei@redhat.com>
+ <20250428094420.1584420-4-ming.lei@redhat.com>
+ <CADUfDZrXTzXM4tA6vRcOz1qn61he+Y6p5UsLeprbmhDVJe0gbg@mail.gmail.com>
+ <aBJDClTlYV48h3P3@fedora>
+ <CADUfDZoROJeDKNWOzbgEqrs_B7kU2qNWwZxfnS2TDqYxiXrY0w@mail.gmail.com>
+ <aBTr5fz5KOgd9RiD@fedora>
+ <CADUfDZqetfAE_s8-GDSLmYTdgrqFLv+YZ1vndg0uD38NuXW3Nw@mail.gmail.com>
+ <aBVqndZc-FjlHG-V@fedora>
+ <CADUfDZoypP63aBjwUB50hZTiZ_ouN1Bt73-hHBY75xsNq9OGZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZoypP63aBjwUB50hZTiZ_ouN1Bt73-hHBY75xsNq9OGZQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Functionally LGTM. But I'm not sure if the discussion with Paolo is
-resolved, so here's a couple more nit picks:
+On Sat, May 03, 2025 at 11:55:05AM -0700, Caleb Sander Mateos wrote:
+> On Fri, May 2, 2025 at 6:00 PM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > On Fri, May 02, 2025 at 02:21:05PM -0700, Caleb Sander Mateos wrote:
+> > > On Fri, May 2, 2025 at 8:59 AM Ming Lei <ming.lei@redhat.com> wrote:
+> > > >
+> > > > On Thu, May 01, 2025 at 06:31:03PM -0700, Caleb Sander Mateos wrote:
+> > > > > On Wed, Apr 30, 2025 at 8:34 AM Ming Lei <ming.lei@redhat.com> wrote:
+> > > > > >
+> > > > > > On Mon, Apr 28, 2025 at 05:43:12PM -0700, Caleb Sander Mateos wrote:
+> > > > > > > On Mon, Apr 28, 2025 at 2:44 AM Ming Lei <ming.lei@redhat.com> wrote:
+> > > > > > > >
+> > > > > > > > Extend io_buffer_register_bvec() and io_buffer_unregister_bvec() for
+> > > > > > > > supporting to register/unregister bvec buffer to specified io_uring,
+> > > > > > > > which FD is usually passed from userspace.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > > > > > > > ---
+> > > > > > > >  include/linux/io_uring/cmd.h |  4 ++
+> > > > > > > >  io_uring/rsrc.c              | 83 +++++++++++++++++++++++++++---------
+> > > > > > > >  2 files changed, 67 insertions(+), 20 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> > > > > > > > index 78fa336a284b..7516fe5cd606 100644
+> > > > > > > > --- a/include/linux/io_uring/cmd.h
+> > > > > > > > +++ b/include/linux/io_uring/cmd.h
+> > > > > > > > @@ -25,6 +25,10 @@ struct io_uring_cmd_data {
+> > > > > > > >
+> > > > > > > >  struct io_buf_data {
+> > > > > > > >         unsigned short index;
+> > > > > > > > +       bool has_fd;
+> > > > > > > > +       bool registered_fd;
+> > > > > > > > +
+> > > > > > > > +       int ring_fd;
+> > > > > > > >         struct request *rq;
+> > > > > > > >         void (*release)(void *);
+> > > > > > > >  };
+> > > > > > > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > > > > > > > index 5f8ab130a573..701dd33fecf7 100644
+> > > > > > > > --- a/io_uring/rsrc.c
+> > > > > > > > +++ b/io_uring/rsrc.c
+> > > > > > > > @@ -969,21 +969,6 @@ static int __io_buffer_register_bvec(struct io_ring_ctx *ctx,
+> > > > > > > >         return 0;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > -int io_buffer_register_bvec(struct io_uring_cmd *cmd,
+> > > > > > > > -                           struct io_buf_data *buf,
+> > > > > > > > -                           unsigned int issue_flags)
+> > > > > > > > -{
+> > > > > > > > -       struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
+> > > > > > > > -       int ret;
+> > > > > > > > -
+> > > > > > > > -       io_ring_submit_lock(ctx, issue_flags);
+> > > > > > > > -       ret = __io_buffer_register_bvec(ctx, buf);
+> > > > > > > > -       io_ring_submit_unlock(ctx, issue_flags);
+> > > > > > > > -
+> > > > > > > > -       return ret;
+> > > > > > > > -}
+> > > > > > > > -EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
+> > > > > > > > -
+> > > > > > > >  static int __io_buffer_unregister_bvec(struct io_ring_ctx *ctx,
+> > > > > > > >                                        struct io_buf_data *buf)
+> > > > > > > >  {
+> > > > > > > > @@ -1006,19 +991,77 @@ static int __io_buffer_unregister_bvec(struct io_ring_ctx *ctx,
+> > > > > > > >         return 0;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > -int io_buffer_unregister_bvec(struct io_uring_cmd *cmd,
+> > > > > > > > -                             struct io_buf_data *buf,
+> > > > > > > > -                             unsigned int issue_flags)
+> > > > > > > > +static inline int do_reg_unreg_bvec(struct io_ring_ctx *ctx,
+> > > > > > > > +                                   struct io_buf_data *buf,
+> > > > > > > > +                                   unsigned int issue_flags,
+> > > > > > > > +                                   bool reg)
+> > > > > > > >  {
+> > > > > > > > -       struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
+> > > > > > > >         int ret;
+> > > > > > > >
+> > > > > > > >         io_ring_submit_lock(ctx, issue_flags);
+> > > > > > > > -       ret = __io_buffer_unregister_bvec(ctx, buf);
+> > > > > > > > +       if (reg)
+> > > > > > > > +               ret = __io_buffer_register_bvec(ctx, buf);
+> > > > > > > > +       else
+> > > > > > > > +               ret = __io_buffer_unregister_bvec(ctx, buf);
+> > > > > > >
+> > > > > > > It feels like unifying __io_buffer_register_bvec() and
+> > > > > > > __io_buffer_unregister_bvec() would belong better in the prior patch
+> > > > > > > that changes their signatures.
+> > > > > >
+> > > > > > Can you share how to do above in previous patch?
+> > > > >
+> > > > > I was thinking you could define do_reg_unreg_bvec() in the previous
+> > > > > patch. It's a logical step once you've extracted out all the
+> > > > > differences between io_buffer_register_bvec() and
+> > > > > io_buffer_unregister_bvec() into the helpers
+> > > > > __io_buffer_register_bvec() and __io_buffer_unregister_bvec(). But
+> > > > > either way is fine.
+> > > >
+> > > > 'has_fd' and 'ring_fd' fields isn't added yet, the defined do_reg_unreg_bvec()
+> > > > could be quite simple, looks no big difference, I can do that...
+> > > >
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > >         io_ring_submit_unlock(ctx, issue_flags);
+> > > > > > > >
+> > > > > > > >         return ret;
+> > > > > > > >  }
+> > > > > > > > +
+> > > > > > > > +static int io_buffer_reg_unreg_bvec(struct io_ring_ctx *ctx,
+> > > > > > > > +                                   struct io_buf_data *buf,
+> > > > > > > > +                                   unsigned int issue_flags,
+> > > > > > > > +                                   bool reg)
+> > > > > > > > +{
+> > > > > > > > +       struct io_ring_ctx *remote_ctx = ctx;
+> > > > > > > > +       struct file *file = NULL;
+> > > > > > > > +       int ret;
+> > > > > > > > +
+> > > > > > > > +       if (buf->has_fd) {
+> > > > > > > > +               file = io_uring_register_get_file(buf->ring_fd, buf->registered_fd);
+> > > > > > > > +               if (IS_ERR(file))
+> > > > > > > > +                       return PTR_ERR(file);
+> > > > > > >
+> > > > > > > It would be good to avoid the overhead of this lookup and
+> > > > > > > reference-counting in the I/O path. Would it be possible to move this
+> > > > > > > lookup to when UBLK_IO_FETCH_REQ (and UBLK_IO_COMMIT_AND_FETCH_REQ, if
+> > > > > > > it specifies a different ring_fd) is submitted? I guess that might
+> > > > > > > require storing an extra io_ring_ctx pointer in struct ublk_io.
+> > > > > >
+> > > > > > Let's start from the flexible way & simple implementation.
+> > > > > >
+> > > > > > Any optimization & improvement can be done as follow-up.
+> > > > >
+> > > > > Sure, we can start with this as-is. But I suspect the extra
+> > > > > reference-counting here will significantly decrease the benefit of the
+> > > > > auto-register register feature.
+> > > >
+> > > > The reference-counting should only be needed for registering buffer to
+> > > > external ring, which may have been slow because of the cross-ring thing...
+> > >
+> > > The current code is incrementing and decrementing the io_uring file
+> > > reference count even if the remote_ctx == ctx, right? I agree it
+> >
+> > Yes, but it can be changed to drop the inc/dec file reference easily since we
+> > have a flag field.
+> >
+> > > should definitely be possible to skip the reference count in that
+> > > case, as this code is already running in task work context for a
+> > > command on the io_uring.
+> >
+> > The current 'uring_cmd' instance holds one reference of the
+> > io_ring_ctx instance.
+> >
+> > > It should also be possible to avoid atomic
+> > > reference-counting in the UBLK_AUTO_BUF_REGISTERED_RING case too.
+> >
+> > For registering buffer to external io_ring, it is hard to avoid to grag
+> > the io_uring_ctx reference when specifying the io_uring_ctx via its FD.
+> 
+> If the io_uring is specified by a file descriptor (not using
+> UBLK_AUTO_BUF_REGISTERED_RING), I agree reference counting is
+> necessary.
+> But the whole point of registering ring fds is to avoid reference
+> counting of the io_uring file. See how IORING_ENTER_REGISTERED_RING is
+> handled in io_uring_enter(). It simply indexes
+> current->io_uring->registered_rings to get the file, skipping the
+> fget() and fput(). Since the auto register is running in task work
+> context, it should also be able to access the task-local
+> registered_rings without reference counting.
 
-On Tue, 29 Apr 2025 03:26:40 +0000 Mina Almasry wrote:
-> +	case SCM_DEVMEM_DMABUF:
-> +		if (cmsg->cmsg_len != CMSG_LEN(sizeof(u32)))
-> +			return -EINVAL;
-> +		sockc->dmabuf_id = *(u32 *)CMSG_DATA(cmsg);
-> +
->  		break;
+registered ring requires the io_uring is registered & used in the local
+pthread, which usage is still very limited.
 
-The empty line before break is very odd.
+> 
+> >
+> > >
+> > > >
+> > > > Maybe we can start automatic buffer register for ubq_daemon context only,
+> > > > meantime allow to register buffer from external io_uring by adding per-io
+> > > > spin_lock, which may help the per-io task Uday is working on too.
+> > >
+> > > I'm not sure I understand why a spinlock would be required? In Uday's
+> > > patch set, each ublk_io still belongs to a single task. So no
+> > > additional locking should be required.
+> >
+> > I think it is very useful to allow to register io buffer in the
+> > other(non-ubq_daemon) io_uring context by the offload style.
+> >
+> > Especially the register/unregister io buffer uring_cmd is for handling
+> > target IO, which should have been issued in same context of target io
+> > handling.
+> >
+> > Without one per-io spinlock, it is hard to avoid one race you mentioned:
+> 
+> I don't believe a spinlock is necessary. It should be possible to
+> avoid accessing the ublk_io at all when registering the request
+> buffer. __ublk_check_and_get_req() calls kref_get_unless_zero() on the
+> request, which already ensures the request is owned by the ublk server
 
-> +	sockc = (struct sockcm_cookie){ .tsflags = READ_ONCE(sk->sk_tsflags),
-> +					.dmabuf_id = 0 };
+I thought the request still may be completed & recycled before calling
+__ublk_check_and_get_req(). But it can be treated as one ublk server
+logic bug since use-after-free doesn't exist actually.
 
-Too ugly to exist, either full init fits on a line or there needs to be
-a line break after {.
+> and prevents it from completing while its buffer is registered. This
+> is analogous to how UBLK_F_USER_COPY works;
+> ublk_ch_read_iter()/ublk_ch_write_iter() can be safely called from any
+> thread.
+
+OK, spinlock isn't needed.
+
+
+Thanks,
+Ming
+
 

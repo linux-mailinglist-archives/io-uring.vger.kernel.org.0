@@ -1,147 +1,140 @@
-Return-Path: <io-uring+bounces-7858-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7860-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB69FAAC436
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 14:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF94AAC6E3
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 15:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BE44C18B7
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 12:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5C51C01105
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 13:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703D42820D5;
-	Tue,  6 May 2025 12:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483B628153C;
+	Tue,  6 May 2025 13:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO4lJZcl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="P96rtaq8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3A2283129
-	for <io-uring@vger.kernel.org>; Tue,  6 May 2025 12:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8E91F5849
+	for <io-uring@vger.kernel.org>; Tue,  6 May 2025 13:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746534606; cv=none; b=TTYoHWmFJQjrvSrNTbNZQaIlCgL4ut5SQ7LMrU6IkZHVSnGZNdGkXHeymd05Zj91KLZ3Pm6A7ojlnRmcw7nlk2ArHU/XEQZv0B1yEle/3nQVN8p/LZNnQ03mBDQOIY9SeCghllt7mp73DR77XqF7hf32HX9jx6jmw8MnyKE+2mI=
+	t=1746539314; cv=none; b=jPKMKS6NGSXSD3+2iF++DahCXoNfWyWBIkDP9ndB2zlbKtF2dnFijsvbE0Zfn0asRQItmG0W3nocPRwyRi6rIV+EzUwMzJ6OK+N8qP2z66KLmHciURHRZ1MWQE8+v81R3whXU0DW/cVcHXPlzGys1ydgs9He4R1y3E8kSiwuQVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746534606; c=relaxed/simple;
-	bh=pLaRflHqHqdWQceOz6caTx0j4EJlB+3nm3piQ1AnlEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=et2TpWKUnC9uI1k5jyy8SbXdssvybIJr3ImYYsg+12EpCucHaYcazOzmWi0D480wBukD4ZfW9lC8s/txuPEi/8LxBlW/zVTNH+bl3iHfWXRCOpOtqSRm33jiJdIYXJbqFKkLZ0+iYrI+SmoNpYpGSJgQJNozkZe5qHM4C602Gfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO4lJZcl; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-acbb85ce788so49571166b.3
-        for <io-uring@vger.kernel.org>; Tue, 06 May 2025 05:30:04 -0700 (PDT)
+	s=arc-20240116; t=1746539314; c=relaxed/simple;
+	bh=F33ltflILZaO4kCD4Wzy/q5GHLExZInJUrC5PJN1Ay0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PESZpK40yfIOoSEP0Sha4VNdjejJCKFqWRA7Yz0VUYcF2QCGe3sJnKC3cO67ZY9xz6Xt7OtOFINSd3qjZUPlxJ/civ1RWjh0080o6+eR7GHvvYVzwMzJZ828ZSiw+5e43QYCF0+JToz/HvTms5Ky2Rk2zir4ehfCUNHH+7WoJHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=P96rtaq8; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d96d16b375so29768365ab.1
+        for <io-uring@vger.kernel.org>; Tue, 06 May 2025 06:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746534602; x=1747139402; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2osDlI57om4Zr3bjDLy7mJHqS7V0COhwMXyTMzM59IQ=;
-        b=HO4lJZclwBdfQkHTLNGX+DK/usqGdXqdzNkFeEvBLbIJMuGLu3IBl8jK1UKJJeU41Y
-         XNUocRh3e60GOMRFqTDn+M2drGlvxndhAMNsvkh9zyss+VRV/KyqnWxApfOsdn4n7NFk
-         dK7t11qjbEsLiQhRyYIIKZ865V3hHWuBDbIuLgINZm8lYLnKT3Rs3P0P1Y2yPBqL2Jkp
-         GbeEwXHKI63Utk10hMXVsUI53lDsEGuBUOIAfnZxqLaGRsxo9l2iM57iAjpdPY42MJxK
-         CwLeFlmUBNFHx1SwgBK71YfjfejoQAs8MiN52eqQCpCVxtNccp8bg0A/Cnx6vxtcFmrf
-         m9sg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746539311; x=1747144111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nwZo3vS66EatPpWKcNBFiFt6i1hah0QeRGJTjdHslY4=;
+        b=P96rtaq88ORNphdm2vWWhyTv8bMCBisrYNjIbntDbADaTpPHYLHpZEFp0yvLP8RtDt
+         PVTB758FVLVu6ye/AWZLdrd9m9MuXDGao8jd+i1Qy/+gV5J3Ubz5Zat6yqOEBu2OzWYS
+         gRc0lv8uZNcAbMFj72wiSVIynB7rPdAjvOub6uYdJedvv7zKHHcpNlSFCVhsgLgN0e3a
+         cTYi511qb59Ew8asTiX6N0o1RnyEogS74Y1bhnrWSHRIawgC8GuVkST5T2ijkbTAMmBe
+         eDKbA5eTlNGiJtjHE4kuATSlD9X0c/gkQ9WrHhibj8mO1GFMbA+ABKSDepfBcDXpqHGt
+         oarQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746534602; x=1747139402;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2osDlI57om4Zr3bjDLy7mJHqS7V0COhwMXyTMzM59IQ=;
-        b=nMDTDTarV4PqWzQEPhcqbFMDiFXqd2c4IMvLjj/eYKNF4IxnE4Jt0D0wXhiajbvREy
-         pzRJtuALHE8+cErXT1ElBTOz+P3hraqqjZ1rmx4VN8DK2TmrJ7SBrwyAjKQUm10apRuv
-         N1sHZr/d3RnlpGqhnX8cFrCtUCVv+IRV09rA7FP50HgI/5FBGAWYSItqdPODVc4ylh2p
-         Z6GKqymC9NfjCLcycJdAlK60CYprY4Hq5A9g0PBPz6gfhNCyU7/RXRv9lcxCogAw76SY
-         AsfLDPQ98mNxPJvHH65/gC2zUJHb834ZScLmlIa3XC1TbQcU+Vyt1a2GWswUX/9qzJtN
-         9q9w==
-X-Gm-Message-State: AOJu0YzQBtXNFPU9h0aIihRdJ/YE+/T4RDV9BRr7dalajYuwdEU2XTcE
-	PHO4MFiTD6CivASn1yyleDmw5TYwDirGU4+hlfcAFA6vzpCnm83x8NscWw==
-X-Gm-Gg: ASbGncsP9Ox9ZJJe2rUbHA1OdKbFUgZToQfGgwE5pDKFuOSXVA3i5PaxFz9Yz1WOgb2
-	M7zil9IFO83LzZGx/n9Z94R6f6wT42569OBVPyv4Vmrd53mTnH65fYsa/jTXIHEhK2292bNP4tE
-	2kr8KWfmPVeHFKqX2S3Mh4wpYTbgf/LCiYpOIfXJazFJB5wXSBysS40p5uVovkYQR8/J6Y1FqJh
-	b7J742tNMfOY3an9ubtCdI0vI/awHb+BmITfnSz+SZbxtFtV6k+qg8qbqYog3QFTuGkKkE0OVUa
-	V1Hxz8JH818a0noefjo+q41B
-X-Google-Smtp-Source: AGHT+IGfhx3lxxkO5pbAZE03wmaUO0A4I1e5hNNJl8oXSpfEMQUymPU0r7m3CNatux7vAArkwLa4BA==
-X-Received: by 2002:a17:906:7311:b0:ac1:e53c:d13f with SMTP id a640c23a62f3a-ad1d46dd5bfmr211921466b.50.1746534602153;
-        Tue, 06 May 2025 05:30:02 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:b5bd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a766fsm707714566b.69.2025.05.06.05.30.01
+        d=1e100.net; s=20230601; t=1746539311; x=1747144111;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nwZo3vS66EatPpWKcNBFiFt6i1hah0QeRGJTjdHslY4=;
+        b=GkaiLiNQVakXufPzrmyA3yWiRCDwdN/PWgU+Q+Dwvr/PLvGgB2FlwQNOw6jQf+eP3J
+         FE3aMtcgKK3sXMxQSkhlf565s9y2nqXNxMtRTf/K0vTWWy3ngIzScmK7RRLXstfsY08T
+         oWSrXjlPn2RwSl7K6Qe+3yQME7fydLQVSDK7WBBQ9s4aO3Hv1C5jesFxNMr2OkOpEi1n
+         sU+Wb+jL1Yihrht86wDTJCXnEU8YsNYyXbDU1HNjwsS6cFYfi9TmT6+yb97YZJDg1kCG
+         AP//d9wsYUJj4aymLA65HJ8plWOEoUpRjDGg7ozyShcKsFTxEDC/BsOMpf3NVWbZnyxZ
+         ynWA==
+X-Gm-Message-State: AOJu0YziYZ0/L69Za6t3RjAQftM1Tqu5+2lB9cnCiIHtJmiVd4vTYJpO
+	MVFJrWb/Mn6XAOkW40inEDLSvVNdUqFZVnSSQXivfVfdfOmSUx3WWw1GEEI6HL0=
+X-Gm-Gg: ASbGnctJynE8Ol3gdPWKxAEPAkMuleJponSf6IcxVwwf0EcyiqzmrQB1Ty8hxcqUNjq
+	IyZk8xbUJgt8zb9+10qq3bputQ0R1HoI44+XmUuJ3DBdddmGy16HXZUEmLVXLTaW2Z/5VLYIwLd
+	Y85TqvJzNHTPprzxPIbpe1nRotOtuYeEdhGGuV/ugFVmTgM8zZPkuo8wgwVkP5mHtUzBl0kD8tz
+	V1Kah5lJfNYn55/66XvH8gw6+o5sW19sVv63jLqy0l7w9vqPJ81hZ/dJuJDGMndntFeTmv9QjTk
+	WcODRZaz8zMOTDbBGFRcJdR7AGq79Cw=
+X-Google-Smtp-Source: AGHT+IG7WE7HRobsTLuIHeNzb6EgLlDBqw2C/DFW2yv8E33HAfisJnBRcMgTyQ4uXgsmnCPMeMlQDQ==
+X-Received: by 2002:a05:6e02:1fe6:b0:3d4:6ff4:261e with SMTP id e9e14a558f8ab-3da6cd50eb1mr34812345ab.0.1746539311539;
+        Tue, 06 May 2025 06:48:31 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d975f58be3sm25930915ab.58.2025.05.06.06.48.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 05:30:01 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: move io_req_put_rsrc_nodes()
-Date: Tue,  6 May 2025 13:31:16 +0100
-Message-ID: <bb73fb42baf825edb39344365aff48cdfdd4c692.1746533789.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Tue, 06 May 2025 06:48:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: kbusch@kernel.org, hch@lst.de, asml.silence@gmail.com, 
+ Kanchan Joshi <joshi.k@samsung.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org
+In-Reply-To: <20250506121732.8211-1-joshi.k@samsung.com>
+References: <CGME20250506122633epcas5p21d2c989313f38dea82162fff7b9856e7@epcas5p2.samsung.com>
+ <20250506121732.8211-1-joshi.k@samsung.com>
+Subject: Re: [PATCH v16 00/11] Block write streams with nvme fdp
+Message-Id: <174653931017.1466231.2831663960512265480.b4-ty@kernel.dk>
+Date: Tue, 06 May 2025 07:48:30 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-It'd be nice to hide details of how rsrc nodes are used by a request
-from rsrc.c, specifically which request fields store them, and what bits
-are signifying if there is a node in a request. It rather belong to
-generic request handling, so move the helper to io_uring.c. While doing
-so remove clearing of ->buf_node as it's controlled by REQ_F_BUF_NODE
-and doesn't require zeroing.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/io_uring.c | 10 ++++++++++
- io_uring/rsrc.h     | 12 ------------
- 2 files changed, 10 insertions(+), 12 deletions(-)
+On Tue, 06 May 2025 17:47:21 +0530, Kanchan Joshi wrote:
+> The series enables FDP support for block IO.
+> The patches
+> - Add ki_write_stream in kiocb (patch 1), and bi_write_stream in bio (patch 2).
+> - Introduce two new queue limits - max_write_streams and
+>   write_stream_granularity (patch 3, 4)
+> - Pass write stream (either from kiocb, or from inode write hints)
+>   for block device (patch 5)
+> - Per I/O write stream interface in io_uring (patch 6)
+> - Register nvme fdp via write stream queue limits (patch 10, 11)
+> 
+> [...]
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3d20f3b63443..0d051476008c 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1369,6 +1369,16 @@ void io_queue_next(struct io_kiocb *req)
- 		io_req_task_queue(nxt);
- }
- 
-+static inline void io_req_put_rsrc_nodes(struct io_kiocb *req)
-+{
-+	if (req->file_node) {
-+		io_put_rsrc_node(req->ctx, req->file_node);
-+		req->file_node = NULL;
-+	}
-+	if (req->flags & REQ_F_BUF_NODE)
-+		io_put_rsrc_node(req->ctx, req->buf_node);
-+}
-+
- static void io_free_batch_list(struct io_ring_ctx *ctx,
- 			       struct io_wq_work_node *node)
- 	__must_hold(&ctx->uring_lock)
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 2818aa0d0472..0d2138f16322 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -115,18 +115,6 @@ static inline bool io_reset_rsrc_node(struct io_ring_ctx *ctx,
- 	return true;
- }
- 
--static inline void io_req_put_rsrc_nodes(struct io_kiocb *req)
--{
--	if (req->file_node) {
--		io_put_rsrc_node(req->ctx, req->file_node);
--		req->file_node = NULL;
--	}
--	if (req->flags & REQ_F_BUF_NODE) {
--		io_put_rsrc_node(req->ctx, req->buf_node);
--		req->buf_node = NULL;
--	}
--}
--
- int io_files_update(struct io_kiocb *req, unsigned int issue_flags);
- int io_files_update_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- 
+Applied, thanks!
+
+[01/11] fs: add a write stream field to the kiocb
+        commit: 732f25a2895a8c1c54fb56544f0b1e23770ef4d7
+[02/11] block: add a bi_write_stream field
+        commit: 5006f85ea23ea0bda9a8e31fdda126f4fca48f20
+[03/11] block: introduce max_write_streams queue limit
+        commit: d2f526ba27d29c442542f7c5df0a86ef0b576716
+[04/11] block: introduce a write_stream_granularity queue limit
+        commit: c23acfac10786ac5062a0615e23e68b913ac8da0
+[05/11] block: expose write streams for block device nodes
+        commit: c27683da6406031d47a65b344d04a40736490d95
+[06/11] io_uring: enable per-io write streams
+        commit: 02040353f4fedb823f011f27962325f328d0689f
+[07/11] nvme: add a nvme_get_log_lsi helper
+        commit: d4f8359eaecf0f8b0a9f631e6652b60ae61f3016
+[08/11] nvme: pass a void pointer to nvme_get/set_features for the result
+        commit: 7a044d34b1e21fc4e04d4e48dae1dc3795621570
+[09/11] nvme: add FDP definitions
+        commit: ee203d3d86113559b77b1723e0d10909ebbd66ad
+[10/11] nvme: register fdp parameters with the block layer
+        commit: 30b5f20bb2ddab013035399e5c7e6577da49320a
+[11/11] nvme: use fdp streams if write stream is provided
+        commit: 38e8397dde6338c76593ddb17ccf3118fc3f5203
+
+Best regards,
 -- 
-2.48.1
+Jens Axboe
+
+
 
 

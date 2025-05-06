@@ -1,125 +1,120 @@
-Return-Path: <io-uring+bounces-7874-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7875-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18351AACBC6
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 19:02:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1712AACCEB
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 20:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D1D4E23D8
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 16:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060A41C039DC
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 18:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D07B284688;
-	Tue,  6 May 2025 16:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BA92857DC;
+	Tue,  6 May 2025 18:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhgXTJ7M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcrI+Mt8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730F1285409
-	for <io-uring@vger.kernel.org>; Tue,  6 May 2025 16:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12EC283C93;
+	Tue,  6 May 2025 18:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746550754; cv=none; b=iNOZI2KZ/+Ykh+yZJkIcWzA5oDwsvbLHunis7Ns6YxTKey9j5nBtHkvco/1LEwuOlfBxeV1n3YHeAMZkx/LBuX3MFq33lpQpNW+kwzlVKk9SLpm0F5aljlgj4JbZk1drRZ/qdjw6M2T+stTrU9Kzs6GtECtFaA5D977Iz4NqWAM=
+	t=1746555296; cv=none; b=NVFm3zyICAKYYiCMgC+UHctdWHvjiaubvRHOzmK188JfjTSn9MHjkbn1yRcyrgFkfq6BFlthuZtM3np1eU/dWgLF6MTIWUAHK/2n7s1DuGSqbRk/aWzE/PnlxyZCZvjhgadfH9pLgVw6mPO575m6z50HInU15h+jiVxPGAwuT1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746550754; c=relaxed/simple;
-	bh=H6JR/Mm0mEFBDu/7Ip86fI2Pri0aszEKMd4LwSC3i+8=;
+	s=arc-20240116; t=1746555296; c=relaxed/simple;
+	bh=aZkpd2dcF5uB3syEqGA8WZiEqSkxrG768idsWlJZohA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X9Gx/eRCerfoSYFwDiM+Va7acOcVRp8IhnHAaF+lck+/NjLfP1JxTY4r+CeRpUtshX4/ZEf2OxFx4Vb+MS0fRZnV4M0PbVEDNXz7jU2KbZezERsQ88+iCm02KUEVms6zNWeqBZXE+w3ugLzCQpoixq6JO/BsP3v9lJa57yvKRAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhgXTJ7M; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=uj8U95vUoZbvIfx/7S5rolbKKNXYmd7bVulvTMo5I1TDixEnA1GvwS26QO5ADmex8rP7+tzb/HBthVNsocpK6mKl87Yg2zm36NzPd85UrgME2vtYtBWYVeqzjrM0rxw1UuWWyakHgwgr8qaO36yT4n21MEvKiwnJvxK5HZfqMGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcrI+Mt8; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-477296dce8dso69163061cf.3
-        for <io-uring@vger.kernel.org>; Tue, 06 May 2025 09:59:12 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30a452d3b38so5300939a91.3;
+        Tue, 06 May 2025 11:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746550751; x=1747155551; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746555294; x=1747160094; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QoqIvS5Bzy6Oo8AwXf1abQ+tdHS+SHHQ3iRGjLWXkYg=;
-        b=FhgXTJ7MYwJ/pvkZxNDy8db2DI4qgkUL5hgbhUdZV3yWiGc/b5shenoWgKz9kGZOGR
-         UI4itouNKgFf5xpmW5lUPpbfAew6r0dGRI3YU5jksglcoMlSxUr8mbaFfEX67YGSWB+d
-         gICUKpNWN82xN9+bfhdVzd9YjpP8+s59lIJkfAOJVNSrcq7Bwkgi+BM/4vKcYGuOpb8d
-         IDKRK/FXFmO9KMVrdWGcDRE/Ef2EZETMRqeyeoRhUbj4fRa3vRc43Ub/TTNWwSPb+wOb
-         1KJ0bnE3YMztPtyoBW0Cx/87PzaBr757LSl0qsQQVp2gMGMoFL+tHBrMFv3PNuMGxmKr
-         tL4Q==
+        bh=LgUTLFyRDWkYKDEpuIhDqP9z1m1Yv8U7iugtqQBuYj8=;
+        b=DcrI+Mt8RujXBdJgfpEHGVuXWW/OIOe4zk5wKTDDHDVsbXGotXaaIkClQQyw41h6y1
+         iitityQ6AR2pmKGhV/eTtqWDCMxbJ6mlQEaEFSCwBqY/jZXtyuhWc3elYph8xsVsCmyl
+         QAm6gS+J6RGbsW3A8qlKVy1WDEJTYF/SNlwvJxnP+lf7SnCCdEzJ/3lfMgEIYvbRHIYE
+         bURN21F/1D2PIkPaeOPtV4n1OtvoPf0Aw9y3M8ucZt1tWLlhdgujU75qudTmg3B0Li7Y
+         Ogd2nmKzsJdovc7jRamsnoTvI8ksDFKZIO/JEEye5a74WjpeIPwP2YST6n9vW6N8W/ht
+         Y0Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746550751; x=1747155551;
+        d=1e100.net; s=20230601; t=1746555294; x=1747160094;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QoqIvS5Bzy6Oo8AwXf1abQ+tdHS+SHHQ3iRGjLWXkYg=;
-        b=hrYyyxrAbXDdUswFFER6CWr0E4WmjJVS5dDLUlvvWhrXaux4yDJpARNGyFBHrGmx7K
-         CSXMCnIGFbyZfSkXHgCtzBb4SIJlDCFO/gSPP3TQPTxyluk2+QfDOcJ0rAqrUGAwP9iE
-         wSJsKE2Ekh8Gt5yf9QGDz/piiGYZrq3kXq7u6+8Oi6j+lmrzahNYMlLbiR+6cD9pofvC
-         N7/tlLW0qTAb8KaC4HrPGHnuFIG/ba5apEe5eIkPVrqrHJBq8XeG7ASnKGVJ9i/6CPdd
-         W1Ci84uT89b9wH3BhIqOfMTGWQZUslj1AVShCxyl3dhDdf860zzyNALmIK1B0EQYykng
-         LjcA==
-X-Gm-Message-State: AOJu0YwyEuhIn0MzmPVAOLoomOmwpvXwFDCzyJC7snlcwZ2TwJVYpU/Z
-	oovkYibM+DB2G2o2ayV6Cz6fg+9pnvyJo3CNiTKbk6ANibxn3bS9eku/C8JY2zC2icxFjnOVizu
-	o+lQKRzO08NiPUGBYCRRuVqszTfe0tJLn6+4=
-X-Gm-Gg: ASbGncvgktyQME93xU6Nz5Qc2CNKA6YW1azz7yNyAg8Bd/6X8US+o9rzNm2l9Ie7fM0
-	ca+3x33eAJwUYGdfgetJyNtRcIpy7hgYoHtR2kXJTA9Ao9t3F6CS2Zl06vHgCV4UqoJyNJjTyiR
-	fDQNGnmZG5bQJJKe5WdQ7q
-X-Google-Smtp-Source: AGHT+IFCojf477Hg1XNap42r6BUfpS1OEUXhIe5ugrAhAa/9MTICxGVpXQfeQOIy5XT/4Lsy8ORfWn8rbX3AuYCD6Tw=
-X-Received: by 2002:a05:622a:180e:b0:48e:170c:cc63 with SMTP id
- d75a77b69052e-4920c1d4387mr4928601cf.18.1746550751210; Tue, 06 May 2025
- 09:59:11 -0700 (PDT)
+        bh=LgUTLFyRDWkYKDEpuIhDqP9z1m1Yv8U7iugtqQBuYj8=;
+        b=RkVxVdUWgH9prykgyg+5cRtWc1/3e9AEND/+peqeihABdMUceWmr1OdbwDspreak0K
+         011BtSi8RYLaADOeYuwPz06JYHxokei69/1OQG+78l4FoCVArDOxU2wrzpn/+z1nqtvQ
+         VSUFxEx97IOhitoFBLPvQjZp82+sA7jQAyYH3XjC5ARoiUuOuMQo5b0uMx9laBUyPm/B
+         fSs3EkMs4/z1nLdAsULOMQs140NNh8+Lb5ywgtxkSJpNjlWoXwS3j9F/icmk9/xdIqnt
+         SkTF70NfBe55JOpcSjduQEfaWw1W/jBZHM2/KtkcWDXHeEx58jVLaxKqILZFF0hEVSYY
+         wlPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUggVTu6e78MMyS6XE54ecU2UPFMwHpeyrhmP/HjhiOk7B35Zv1o3SUfpJaEJclrnEQJ3TTHRjR9aF4Ks4=@vger.kernel.org, AJvYcCVaUzFjUOUTD1t4bm1568Tt+na8xK5Jcwv1id1biWij7lMYutV675yM58qBnwdDcwsVcT+oMy30YNNCanOjFQ==@vger.kernel.org, AJvYcCX7uGGTAgeiL7q34An/2jdQBtg1JNYZ98XF4CvduZ0tF6LfNxH+RrvRCu+zt0QnYYdfdMYkwJZcug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRidb95n8c91IOHYYi86QSwDIM7ZFdGp2JvE5QCkQNCZpaedDN
+	faEzo8l80jIa6xmnFiKqCN7JavMEnkkN9FhyL7y2Jb90kbE4wHcA+sV+De1S0oLxTMaAB6rjhNH
+	I7DlDlDifTmXUZo37GRqPbe8Joqs=
+X-Gm-Gg: ASbGnctA7UDQs9O+656zEGTOL4lMSKQFfIV9WHcg2sSzlqP7oCdJ0+0sn5+e1pC+waG
+	B9Hbx8UnzXGrVKjdiBOnC0bvf65cEfmw/yvQvECgFz+H1hOF1pe2aDONVHexekEXquf7Ozp9M0W
+	4j4lBhqvJC51zRXqy73FmN8DEFGIvvrSau6BhYMuvKl8ewHYnYqpveWhgP
+X-Google-Smtp-Source: AGHT+IGwp2IFUitVkyl1IAWa+05GwLKsvMJm418R5rpT8coYjf649UgitPuIXI5xNWy57+nYxUYyxUOZvofrUpHZ/pg=
+X-Received: by 2002:a17:90b:394f:b0:305:5f55:899 with SMTP id
+ 98e67ed59e1d1-30aac184a9fmr718325a91.11.1746555294071; Tue, 06 May 2025
+ 11:14:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6e37db97303212bbd8955f9501cf99b579f8aece.1746547722.git.asml.silence@gmail.com>
-In-Reply-To: <6e37db97303212bbd8955f9501cf99b579f8aece.1746547722.git.asml.silence@gmail.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Tue, 6 May 2025 20:58:59 +0400
-X-Gm-Features: ATxdqUE7ENYQqBh7U1L9xcInH3HwVibMf7P-3a-vSMl_Coc8LprUcbVa7a3V8TY
-Message-ID: <CABjd4Yz01BWsS=2dnk-81oZLoGxsGGaGZ1yMayTsyx_WjygeAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/zcrx: fix builds without dmabuf
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org
+References: <CGME20250506122651epcas5p4100fd5435ce6e6686318265b414c1176@epcas5p4.samsung.com>
+ <20250506121732.8211-1-joshi.k@samsung.com> <20250506121732.8211-11-joshi.k@samsung.com>
+ <CADUfDZqqqQVHqMpVaMWre1=GZfu42_SOQ5W9m0vhSZYyp1BBUA@mail.gmail.com> <aBo4OiOOY3tCh_02@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <aBo4OiOOY3tCh_02@kbusch-mbp.dhcp.thefacebook.com>
+From: Kanchan Joshi <joshiiitr@gmail.com>
+Date: Tue, 6 May 2025 23:44:27 +0530
+X-Gm-Features: ATxdqUG9RIoJxTdSYclAXfevasZNEUaF6CXTR24bqSobnO_8A3U2eC19Wgde8B0
+Message-ID: <CA+1E3rJx3Ch2POT_t4DWiqb2nJiX7bHPrGVMW_ZviJ_b0o9UvQ@mail.gmail.com>
+Subject: Re: [PATCH v16 10/11] nvme: register fdp parameters with the block layer
+To: Keith Busch <kbusch@kernel.org>
+Cc: Caleb Sander Mateos <csander@purestorage.com>, Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, 
+	hch@lst.de, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>, 
+	Nitesh Shetty <nj.shetty@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 6, 2025 at 8:07=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.c=
+On Tue, May 6, 2025 at 9:56=E2=80=AFPM Keith Busch <kbusch@kernel.org> wrot=
+e:
+>
+> On Tue, May 06, 2025 at 09:13:33AM -0700, Caleb Sander Mateos wrote:
+> > On Tue, May 6, 2025 at 5:31=E2=80=AFAM Kanchan Joshi <joshi.k@samsung.c=
 om> wrote:
+> > > @@ -2225,6 +2361,12 @@ static int nvme_update_ns_info_block(struct nv=
+me_ns *ns,
+> > >         if (!nvme_init_integrity(ns->head, &lim, info))
+> > >                 capacity =3D 0;
+> > >
+> > > +       lim.max_write_streams =3D ns->head->nr_plids;
+> > > +       if (lim.max_write_streams)
+> > > +               lim.write_stream_granularity =3D max(info->runs, U32_=
+MAX);
+> >
+> > What is the purpose of this max(..., U32_MAX)? Should it be min() inste=
+ad?
 >
-> armv7a-unknown-linux-gnueabihf-ld: io_uring/zcrx.o: in function
-> `io_release_dmabuf':
-> zcrx.c:(.text+0x1c): undefined reference to `dma_buf_unmap_attachment_unl=
-ocked'
-> armv7a-unknown-linux-gnueabihf-ld: zcrx.c:(.text+0x30): undefined
-> reference to `dma_buf_detach'
-> armv7a-unknown-linux-gnueabihf-ld: zcrx.c:(.text+0x40): undefined
-> reference to `dma_buf_put'
-> armv7a-unknown-linux-gnueabihf-ld: io_uring/zcrx.o: in function
-> `io_register_zcrx_ifq':
-> zcrx.c:(.text+0x15cc): undefined reference to `dma_buf_get'
-> armv7a-unknown-linux-gnueabihf-ld: zcrx.c:(.text+0x15e8): undefined
-> reference to `dma_buf_attach'
-> armv7a-unknown-linux-gnueabihf-ld: zcrx.c:(.text+0x1604): undefined
-> reference to `dma_buf_map_attachment_unlocked'
-> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
-> make[1]: *** [/home/alchark/linux/Makefile:1242: vmlinux] Error 2
-> make: *** [Makefile:248: __sub-make] Error 2
->
-> There are no definitions for dma-buf functions without
-> CONFIG_DMA_SHARED_BUFFER, make sure we don't try to link to them
-> if dma-bufs are not enabled.
->
-> Reported-by: Alexey Charkov <alchark@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  io_uring/zcrx.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> You're right, should have been min. Because "runs" is a u64 and the
+> queue_limit is a u32, so U32_MAX is the upper limit, but it's not
+> supposed to exceed "runs".
 
-Just wanted to confirm that this fixes the build in my setup, thanks a
-lot Pavel!
-
-Best regards,
-Alexey
+Would it be better to change write_stream_granularity to "long
+unsigned int" so that it matches with what is possible in nvme?
 

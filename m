@@ -1,99 +1,98 @@
-Return-Path: <io-uring+bounces-7839-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7840-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AEDAAA851
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 02:51:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C9AAAB8AD
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 08:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2FE51899DA5
-	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 00:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51C53A5C03
+	for <lists+io-uring@lfdr.de>; Tue,  6 May 2025 06:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B0E34BA10;
-	Mon,  5 May 2025 22:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD97F27B4FE;
+	Tue,  6 May 2025 04:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g093yXm4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUcv5z9c"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20A34BA0A;
-	Mon,  5 May 2025 22:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2606B297128;
+	Tue,  6 May 2025 01:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484780; cv=none; b=uha6HtbzfcXBLwbXeQd+o6idFvAbuNWFB9IeF7vDgXhoDW3FF9s8Xkz3EEo8Vm5KwFMvZBvb7+vSukbtGV6ncYZSKEKjF/+N6DvasoRucSW/akSiakKdV1C0mXu1z+Az57sssxK3CH5MPOFdjcP+qiiOxsa448/QLRS/MkLmKIM=
+	t=1746495481; cv=none; b=Xy2iGnBdSqfoJ7Wby26DGDLEq/UZHkekL2gUmJhuo3dtaFpJ8U4Io0XSu8rrHzOnlY74YWYLGr/Xkzg0ZohZXOL9qeHrpe7HoizYiRhfScjcU1SZ5HOe/7fmZqacXU9BN9Gg/inehlZU+5G83F4J16qlE6mY+Emy03jEKiykWZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484780; c=relaxed/simple;
-	bh=MPVCttLUZ6Z5MP4A3tCxoU+d/xL1p3APePi299j9y8c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uWsen5R3li+FRp8OOKVzu35p/4IAMtsUm6p1LJUdOxwMuVH6OrBYmNNJd+GKKzGPy4pQj0jGBPYlv9IxaQC0zRedKWxWSvgZEZKSo95xPEKvtg48sKnxagvYkVNSC1bw7SjX74AVuN5jlbKCR6znLKQstbG8aOKRm/61vDPbJtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g093yXm4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0FFC4AF0C;
-	Mon,  5 May 2025 22:39:39 +0000 (UTC)
+	s=arc-20240116; t=1746495481; c=relaxed/simple;
+	bh=zKECytagb87TMOLvGwWUa+PfDXa1A/lXuEpkDrkjAnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E6EZ+dZ+f9hOKTVe0R7h0+p/Dkze0edVobRPa0BNczcIdkxQQLkyKQm7JrX+IC6dwdd9YJAFD21QM5no9RiRrmG97l6RY7fhEr/1DgPLLeKXvW2em9w88B/2Hu7gWee7GKntQVyh/pSRmjQOZ5pyIH3mfPdMg/EPk+HwRCJ0C6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUcv5z9c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AD4C4CEE4;
+	Tue,  6 May 2025 01:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484780;
-	bh=MPVCttLUZ6Z5MP4A3tCxoU+d/xL1p3APePi299j9y8c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g093yXm4mARMS2IcDJCM02g2NLQb/MKyYUpoidTLtnzwH/rw3XujaT542vxOBBbt+
-	 ZqBuT8xENzPTHejOd9sjXbMCrNtrmudsf57StjEkF0Gsek6v1MiXR0cF8rHJbK/qKc
-	 QjWqZUaJzhsgSj4FTgsIIdPAhUsqlNNvf5rJTkuO/kuaVQ4IOqlZWJZG4Ee0MkCBdJ
-	 0WNYMcpOrEQT7/Yj4KfVtDTuhv1yTi+mxjVo0RaAIMmQiK+iD1ysLuw+s4MnNLobRg
-	 KUm1OfAdKrf2tqHkEInUOUJZ07CHuvjq7M3FmKiUHTRPqUychfDiIDUuZMggcVKt3u
-	 J34e78sIjJ0IQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 010/486] io_uring/msg: initialise msg request opcode
-Date: Mon,  5 May 2025 18:31:26 -0400
-Message-Id: <20250505223922.2682012-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
-References: <20250505223922.2682012-1-sashal@kernel.org>
+	s=k20201202; t=1746495480;
+	bh=zKECytagb87TMOLvGwWUa+PfDXa1A/lXuEpkDrkjAnM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AUcv5z9ca99yIo2NLkz4SbM2b9WWkH0uw/wz4j+St1LLxEyfCJEsFq1ZdUTAa9c2L
+	 TDlUp+WqRO3spDiJ7VP6zq4YtkngpCzgRsN3AhxF+iHbRhEpHJo/NGCGI/GH8hrwir
+	 akWRoH0LOdfxi2MuogXg+4weQT1gWeuj3VxnAbtPI8laajeMTjyU2oJPsHI0FtLUlN
+	 26f/mL+aTgG6bFUz9+H/yNgZjmt9fEPOoYa+C6GN7FIUyKlwExDdKuTyScVnhiGYBJ
+	 3wSuE0Q1rlqd6GvOeqkb9nRRKhcVH1g7UT3bBvgRcbZWqs/1L0pgZ/upZbY7X5pSUU
+	 kUOM/O+IQitUQ==
+Date: Mon, 5 May 2025 18:37:58 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, io-uring@vger.kernel.org,
+ virtualization@lists.linux.dev, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy
+ <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de
+ Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov
+ <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, Neal Cardwell
+ <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
+ <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, "Eugenio
+ =?UTF-8?B?UMOpcmV6?=" <eperezma@redhat.com>, Stefan Hajnoczi
+ <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>, Kaiyuan
+ Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v13 4/9] net: devmem: Implement TX path
+Message-ID: <20250505183758.7778811c@kernel.org>
+In-Reply-To: <20250429032645.363766-5-almasrymina@google.com>
+References: <20250429032645.363766-1-almasrymina@google.com>
+	<20250429032645.363766-5-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.26
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Functionally LGTM. But I'm not sure if the discussion with Paolo is
+resolved, so here's a couple more nit picks:
 
-[ Upstream commit 9cc0bbdaba2a66ad90bc6ce45163b7745baffe98 ]
+On Tue, 29 Apr 2025 03:26:40 +0000 Mina Almasry wrote:
+> +	case SCM_DEVMEM_DMABUF:
+> +		if (cmsg->cmsg_len != CMSG_LEN(sizeof(u32)))
+> +			return -EINVAL;
+> +		sockc->dmabuf_id = *(u32 *)CMSG_DATA(cmsg);
+> +
+>  		break;
 
-It's risky to have msg request opcode set to garbage, so at least
-initialise it to nop. Later we might want to add a user inaccessible
-opcode for such cases.
+The empty line before break is very odd.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/9afe650fcb348414a4529d89f52eb8969ba06efd.1743190078.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- io_uring/msg_ring.c | 1 +
- 1 file changed, 1 insertion(+)
+> +	sockc = (struct sockcm_cookie){ .tsflags = READ_ONCE(sk->sk_tsflags),
+> +					.dmabuf_id = 0 };
 
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 7fd9badcfaf81..35b1b585e9cbe 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -94,6 +94,7 @@ static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		kmem_cache_free(req_cachep, req);
- 		return -EOWNERDEAD;
- 	}
-+	req->opcode = IORING_OP_NOP;
- 	req->cqe.user_data = user_data;
- 	io_req_set_res(req, res, cflags);
- 	percpu_ref_get(&ctx->refs);
--- 
-2.39.5
-
+Too ugly to exist, either full init fits on a line or there needs to be
+a line break after {.
 

@@ -1,105 +1,215 @@
-Return-Path: <io-uring+bounces-7917-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7918-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1FFAAFF66
-	for <lists+io-uring@lfdr.de>; Thu,  8 May 2025 17:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C04FAB0230
+	for <lists+io-uring@lfdr.de>; Thu,  8 May 2025 20:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3629F1BC2FD6
-	for <lists+io-uring@lfdr.de>; Thu,  8 May 2025 15:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD83C1B60122
+	for <lists+io-uring@lfdr.de>; Thu,  8 May 2025 18:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C815821ADA3;
-	Thu,  8 May 2025 15:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FA9281523;
+	Thu,  8 May 2025 18:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qx9Fqp0T"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j7tGPOA6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cux2VOhp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j7tGPOA6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cux2VOhp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218DBEACE
-	for <io-uring@vger.kernel.org>; Thu,  8 May 2025 15:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8701538384
+	for <io-uring@vger.kernel.org>; Thu,  8 May 2025 18:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746718937; cv=none; b=UK3gD4wEEDi5/hFbWWVxGMilTg0/2JgmGLbbfRAZlnl0QiI0PAGpu6+7PU/6j1F5Sb8B8zWTREFOpposRWHPoLY/pt3aE4pvoJtyNLixcCQ23RiUVdFt8i3YpLIMgpVAGiZDmkmW/bt+/Vl6JiYBaeQpoD0JgCSISTFYo/8qAJ0=
+	t=1746727936; cv=none; b=LyOUIBQYka2hVfRCWP+rBP7nPS6nn8NTVd4E0fe6afSHlXXkHO+FXCnzPpVxvkXrY8k4FzLrBz8Rpig9/y/DhEYdti+sqXKUuDM/iPK+NR5IsoObOn2ybpA5tKvNwaqe7qUui7gbzzCyKILpFNz7ocJMEAyxLD+/wp9ot952oFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746718937; c=relaxed/simple;
-	bh=/P455RKNmIaMVq4nDiGQ7xDlSzC+yNHsbqrjbOjo+8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pyOuZGpXpecfSb2zQ2XxxrtsCjHqgvgfUky0VBs2xCdeuRRvZfVyUGbz4wQf893ilyLHs0V7eeMNHs87Z16NVeexaxRFfkUiC1uxHplJllsUtToMJaotdavz8W9DuEJnnIc54xo8/WCaZ68e22Lvln7NLGbRkbiGe/rn/8JWPzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qx9Fqp0T; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so2178133a12.0
-        for <io-uring@vger.kernel.org>; Thu, 08 May 2025 08:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746718933; x=1747323733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8ijsT0/WGLv4W7K3V9UOlRSBehXFi3lP1ZGmjyd4h+g=;
-        b=Qx9Fqp0TbCi5Wb3UUo8r5fAJqWkEUmRMJ6tZiAvVZ/VzQumGY28Q4X07krlneeKZD+
-         Cge/4Ybu6231Tji5y2KS3uRPg7MsYpdj5NhGlqmbywCr7UAvMTa4eWVK4Oh95nazvlR0
-         nzhk1otlIiOaPiP5LysXjqRwH2/HMIHFKPhXmiTQ28NSdNlN3whyb3LG6fj0RRv3aQ4q
-         IbfRi9t+TzcsDsJ1GBtJ5+l8bLeQQi/6TVsUAbNBDpO4smjnu50ZEakLRdZh6Ev4MIrc
-         EM/rwYmfaFBoqXYg5zxbH1z8cfaLW4BvzBG7pBB0d0Tt/U9uadwvmK3v7gzh4f9TvVbQ
-         LDIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746718933; x=1747323733;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ijsT0/WGLv4W7K3V9UOlRSBehXFi3lP1ZGmjyd4h+g=;
-        b=TUgtEX+b/LAxLOjXBv4aoRz6JvVF3et9ZfMo2ZtnVTI4Q3JRzQ+m/qdStAG2SAp6Fo
-         VVr0EpRbzMvzKv3eSmNbUz+upz3JZR0MfNJm2LSMwCN0Xfo3igrflcjDHvken8AYGLbz
-         gpqA0ytdNhVjDXyAHgZJXwh/X9fXyJJ5TiEjGUhRaY2egI9q7XvTOcW80exJxISQ4wOW
-         XUMjxvntjAORqK+GIhcFg1ELVfmd6ufjyZFw5yKZm2WE+77tzu1pNIB8pYSwv2CqkxnI
-         YEV9PCmnUwGgT4arFvMzYDvp8BowhTYo0Lg5RsLEZC5OkxcEEQag/LlhJxT43PtD6/TZ
-         1KqA==
-X-Forwarded-Encrypted: i=1; AJvYcCULcZEmEAmu2JxWcRf87Rqde/mWlA8CND/KmVqJsDnn8SnLsllzhZHye14QhSv09DgrqmKKBMAKTg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoQlG7TGAzekph5/3swWpT7Grg18FzCZV0mUI+C8zhCflKfI1f
-	3rBsZ36XYQzCS/NGk3sb8jXYzy5GYzhm/JYb7QJV1P28hlhM61wd
-X-Gm-Gg: ASbGncsxsd7e1+8hsBIusTg5FzJk1raHIfNTVjZdAGPP5Zr0uh82PDhLOJY5cD8H8D6
-	hvLRzYW2cThq1cnYzWVR3jLqUaSpyrzQ7b9LFIRtO8SGyr9OVkoR9N9KihE286RdmIj6FHiD7L6
-	IVwOjWBY6iqDVRLXRVzhraDNNNBYvirpukvpoyMgN9IetsA+rM401aiQ5a+0t1+Q9X1rYu2jAWm
-	N5TJnGkR5cBXGzFJU+Kq7vZlEaDYXlFpBrYLELe1Xn+QJ51vIKjbstyqQfHJw7ykWdsH4zeJ3iD
-	Vpj0zFwkBJXYtm1+lTTbPFu29A7GgPyApueEw3xJb9KbOfLW
-X-Google-Smtp-Source: AGHT+IGlWPvGS6nvGHrkZPIlL9BAbdFjbDxeeI5GcW4XhPnM4UfBkfK74+Ht28X/YbAJKbHqZGgu9w==
-X-Received: by 2002:a17:907:97d6:b0:ad1:fa32:b608 with SMTP id a640c23a62f3a-ad219170628mr9884166b.42.1746718933212;
-        Thu, 08 May 2025 08:42:13 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.133.7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21985858asm1053566b.176.2025.05.08.08.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 08:42:12 -0700 (PDT)
-Message-ID: <64fbb741-a50d-4cc3-af2a-e90c7a8c6ac5@gmail.com>
-Date: Thu, 8 May 2025 16:43:26 +0100
+	s=arc-20240116; t=1746727936; c=relaxed/simple;
+	bh=fzY+fQyfxpulI4WAecMRSJvl5lyUV0ZIh8+zJcFc8iU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSb7IzNc8DUB4LIyUHDIRyF+7WBW1y5NBZGpdmov8zoAZegStb4REDQbwOapAUWtJsfHmlAXBU8zQ4HYQqbC18aVnlVjSo+LhwwD1gVT+S0KL9dhLRkPV9RJ01Zw/BxcuJQ4GLblJf2Sve1axdhWS9t5xxsz+bI0Fe+17kEiFtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j7tGPOA6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cux2VOhp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j7tGPOA6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cux2VOhp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EF381F38E;
+	Thu,  8 May 2025 18:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746727927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Y5qr6rxqsUlzjEZHPpb8pTqr4CoBUfkqn96vcskDN0Q=;
+	b=j7tGPOA6viCRnS8fxnJfRPmlW6/z9IHiOltMDChNYs0mRLqlT3y+wN3eOGLhFQaY1F57+B
+	FnzX1GBMob84oJS8ocHUGP3uBB9EHV7GlLRjMTHg9fz3r1hdOjpPInj9BPnAi0Z/yyjMmK
+	v0HbM1iR/zGXpfJsptmt6rV7wgsG9EY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746727927;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Y5qr6rxqsUlzjEZHPpb8pTqr4CoBUfkqn96vcskDN0Q=;
+	b=cux2VOhp6bZ48r9xXjvDgryx7fhq7LVoQ01dQ43XB7exRrRqWybWA80MnYMhjbzd3VkOTq
+	iCF5MGpI98KKkgDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746727927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Y5qr6rxqsUlzjEZHPpb8pTqr4CoBUfkqn96vcskDN0Q=;
+	b=j7tGPOA6viCRnS8fxnJfRPmlW6/z9IHiOltMDChNYs0mRLqlT3y+wN3eOGLhFQaY1F57+B
+	FnzX1GBMob84oJS8ocHUGP3uBB9EHV7GlLRjMTHg9fz3r1hdOjpPInj9BPnAi0Z/yyjMmK
+	v0HbM1iR/zGXpfJsptmt6rV7wgsG9EY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746727927;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Y5qr6rxqsUlzjEZHPpb8pTqr4CoBUfkqn96vcskDN0Q=;
+	b=cux2VOhp6bZ48r9xXjvDgryx7fhq7LVoQ01dQ43XB7exRrRqWybWA80MnYMhjbzd3VkOTq
+	iCF5MGpI98KKkgDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3385113712;
+	Thu,  8 May 2025 18:12:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zMWEBvfzHGj0BgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 08 May 2025 18:12:07 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH] io_uring/sqpoll: Increase task_work submission batch size
+Date: Thu,  8 May 2025 14:12:03 -0400
+Message-ID: <20250508181203.3785544-1-krisman@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] io_uring: consolidate drain seq checking
-To: Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-References: <cover.1746702098.git.asml.silence@gmail.com>
- <4fab0c9fc5e785d7c49db39c464455b46aa35872.1746702098.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <4fab0c9fc5e785d7c49db39c464455b46aa35872.1746702098.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 
-On 5/8/25 12:52, Pavel Begunkov wrote:
-> We check sequences when queuing drained requests as well when flushing
-> them. Instead, always queue and immediately try to flush, so that all
-> seq handling can be kept contained in the flushing code.
+Our QA team reported a 10%-23%, throughput reduction on an io_uring
+sqpoll testcase doing IO to a null_blk, that I traced back to a
+reduction of the device submission queue depth utilization. It turns out
+that, after commit af5d68f8892f ("io_uring/sqpoll: manage task_work
+privately"), we capped the number of task_work entries that can be
+completed from a single spin of sqpoll to only 8 entries, before the
+sqpoll goes around to (potentially) sleep.  While this cap doesn't drive
+the submission side directly, it impacts the completion behavior, which
+affects the number of IO queued by fio per sqpoll cycle on the
+submission side, and io_uring ends up seeing less ios per sqpoll cycle.
+As a result, block layer plugging is less effective, and we see more
+time spent inside the block layer in profilings charts, and increased
+submission latency measured by fio.
 
-That might be not entirely correct, I'll need to remake it.
+There are other places that have increased overhead once sqpoll sleeps
+more often, such as the sqpoll utilization calculation.  But, in this
+microbenchmark, those were not representative enough in perf charts, and
+their removal didn't yield measurable changes in throughput.  The major
+overhead comes from the fact we plug less, and less often, when submitting
+to the block layer.
 
+My benchmark is:
+
+fio --ioengine=io_uring --direct=1 --iodepth=128 --runtime=300 --bs=4k \
+    --invalidate=1 --time_based  --ramp_time=10 --group_reporting=1 \
+    --filename=/dev/nullb0 --name=RandomReads-direct-nullb-sqpoll-4k-1 \
+    --rw=randread --numjobs=1 --sqthread_poll
+
+In one machine, tested on top of Linux 6.15-rc1, we have the following
+baseline:
+  READ: bw=4994MiB/s (5236MB/s), 4994MiB/s-4994MiB/s (5236MB/s-5236MB/s), io=439GiB (471GB), run=90001-90001msec
+
+With this patch:
+  READ: bw=5762MiB/s (6042MB/s), 5762MiB/s-5762MiB/s (6042MB/s-6042MB/s), io=506GiB (544GB), run=90001-90001msec
+
+which is a 15% improvement in measured bandwidth.  The average
+submission latency is noticeably lowered too.  As measured by
+fio:
+
+Baseline:
+   lat (usec): min=20, max=241, avg=99.81, stdev=3.38
+Patched:
+   lat (usec): min=26, max=226, avg=86.48, stdev=4.82
+
+If we look at blktrace, we can also see the plugging behavior is
+improved. In the baseline, we end up limited to plugging 8 requests in
+the block layer regardless of the device queue depth size, while after
+patching we can drive more io, and we manage to utilize the full device
+queue.
+
+In the baseline, after a stabilization phase, an ordinary submission
+looks like:
+  254,0    1    49942     0.016028795  5977  U   N [iou-sqp-5976] 7
+
+After patching, I see consistently more requests per unplug.
+  254,0    1     4996     0.001432872  3145  U   N [iou-sqp-3144] 32
+
+Ideally, the cap size would at least be the deep enough to fill the
+device queue, but we can't predict that behavior, or assume all IO goes
+to a single device, and thus can't guess the ideal batch size.  We also
+don't want to let the tw run unbounded, though I'm not sure it would
+really be a problem.  Instead, let's just give it a more sensible value
+that will allow for more efficient batching.  I've tested with different
+cap values, and initially proposed to increase the cap to 1024.  Jens
+argued it is too big of a bump and I observed that, with 32, I'm no
+longer able to observe this bottleneck in any of my machines.
+
+Fixes: af5d68f8892f ("io_uring/sqpoll: manage task_work privately")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+---
+ io_uring/sqpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index d037cc68e9d3..03c699493b5a 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -20,7 +20,7 @@
+ #include "sqpoll.h"
+ 
+ #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
+-#define IORING_TW_CAP_ENTRIES_VALUE	8
++#define IORING_TW_CAP_ENTRIES_VALUE	32
+ 
+ enum {
+ 	IO_SQ_THREAD_SHOULD_STOP = 0,
 -- 
-Pavel Begunkov
+2.49.0
 
 

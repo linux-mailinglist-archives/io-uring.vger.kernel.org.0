@@ -1,147 +1,126 @@
-Return-Path: <io-uring+bounces-7946-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7947-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CACAB2FB9
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 08:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516EEAB36DE
+	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 14:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7111644E8
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 06:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C081167652
+	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 12:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6A72550B0;
-	Mon, 12 May 2025 06:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C39929290F;
+	Mon, 12 May 2025 12:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pzmtOihY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062F1255F5A
-	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 06:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0640F265CDF
+	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 12:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747031791; cv=none; b=bvVgI6ZoxsBQ3MKCwubJVWOAYCHOw/bkr5IjEMCsLM1nTM9+SZ9Fdx0FPx6UbH7Tq2zxsTSJK8QcF5EIPcQA75LiZoGjX76Zxg6gMrrgBq/OfKfzKRPMfNo7t9LvHSU0Jw+XmDeWRy3xMC9oIqaWy4aYQD55E/XzNhxc4HdvGSI=
+	t=1747052510; cv=none; b=YZPsx9LAHksO5Msjr+4WZRi3Z+Pk2V0jJCrHGfHMDjjGfbdCdmqEe2iO3VkwPFRN9I9xwzs1vybCONiYJ2+gv1+gkgDvumTQDc+3Unp7wvrTLIs5++zlIE9rkDzFaObraR11W4B7NTlPuO9p0IORk7u5/AYnVGjl2asnZVlcN7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747031791; c=relaxed/simple;
-	bh=iTY5OVB5ZVBPsC3hHGreLcDqY72ZXsOXDjGTDKRQE8s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K7YG8sl+sLo8EcImZ0C3/2d7I8yczVvYqo+16hYTJeQJJz16/QXVP3DbHTE5HU/nKXN8Bt4QvHB6L9XuhXySPCcXmIOgqB5nqcL/z79vZngZikQaXbnRAwU4I8zm/sDb3Pxn/Gy734xenD66Z5kBfbGbCvFC1U1tv3XkN4M9u84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-869e9667f58so183171239f.3
-        for <io-uring@vger.kernel.org>; Sun, 11 May 2025 23:36:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747031789; x=1747636589;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ALCSqFqOa8mQuP4T7hyujJbBxYyxsR29K9a4OWtUl2Q=;
-        b=qynRtNbkUjn2gHyVbdlcrQdlP/a+WmbrVDcbKRmk+h2Z+Dgmw3rVUq1PetTxUNHDkz
-         6MXJ0jVqdHSjqabRR49eBXPQ1x80iotyewdMPv80GR7YWFlm6KC/U35qY85352XIx4oc
-         4POIQZ7DNE4CeBVyD4exmzGyQ3QqkuGyUzi7XqhFrFkIEk5UJhzD+nFQI+ZxTXwGPE+Z
-         ejErJ/1guQGE8l4I/wX0sCRt4uvpPeVNtM/dN1JpY7DP2flsn3AUoWzBtwPXrDprkRyc
-         egjsjoF5MnKNaOkilM9MmAA50OYy5ViwWtqG1Mvp8bPf+DRNahzD8E9f5XI6605TpQ5u
-         4qKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCYqhZYBWVSmcDF3HFYiurmVbQHOv1XDUp+4bz5idLSGRIMgw/ViiUa3rz3mDLHAwL5g8lVgLvNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1pzyuUs6OBuS3BT2vQOxPv5ocftaAbKQh64Cz+e0gvATyt9oE
-	0aUKKTcYvw+IX6dol2jpB5aSZeJpb8nMh1hter799DUhAlICpW4yYnoSVtziZDkPZ06oUxiItQC
-	UFlQrutKLSpX7lXN/vYOZwXzLEGSbKk0YXI86nIaVjtwqts2ToDy/Oxs=
-X-Google-Smtp-Source: AGHT+IFrz6OdnWcXPFcMz403h0bQpLQC4w0dlRYsMQZIzSqGXNC/QwPEzmDggiFo5lAYIAt+VtSCMBPGOGoGg1jMPAJ8JiF46l+y
+	s=arc-20240116; t=1747052510; c=relaxed/simple;
+	bh=E8Q0t4tYPPEBMuJEvjp55laKSxT9IdSbrYeq30WraHI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:In-Reply-To:
+	 Content-Type:References; b=DsIb7nnGfqgLsIl7lpg86DI5yx3eORuvJP4tXjCzZJ0M7wcnrISr+NP8LGVcLKoevcMCZteglkkJFedtgTHp2S5ZUgTBoiFEBY72jekctQyqbYNxOIqvPouiC/txTFBHpN94oJPoz/ai40Zdq6xoFFkrH/7Dzz1clWeXEALEBks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pzmtOihY; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250512122144epoutp03fcadb937e8b6e3eae14149bda9d9d766~_xv8l_WkJ2348223482epoutp03U
+	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 12:21:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250512122144epoutp03fcadb937e8b6e3eae14149bda9d9d766~_xv8l_WkJ2348223482epoutp03U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747052504;
+	bh=90yH+fOYwmwgLgQ5fSmeg9hn5rwHaXe/i+CF88wYckg=;
+	h=Date:From:Subject:To:In-Reply-To:References:From;
+	b=pzmtOihYFyAg/X+/tQPEQeim8Hyl9HdQfK5jO52N9anMtEQnNkW1zXlCNnnILZF1t
+	 bQ4JgUlkvVRRm9uem5OpiCvas28uVl+9E+v/sKWnnqq2/a4U0kC6WbMrfuADLHytEa
+	 bR89GMpZSM3Abgz55LEs7ZlJmxIf6eDZNvGOK62c=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250512122144epcas5p31fd52c7f1cffd406a5cd6c707be76a43~_xv8Suwac3232732327epcas5p3T;
+	Mon, 12 May 2025 12:21:44 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZwzHV6P6Fz2SSKZ; Mon, 12 May
+	2025 12:21:42 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250512122142epcas5p3ee943a941e0a6daca487552343014157~_xv6dHv-I3011730117epcas5p37;
+	Mon, 12 May 2025 12:21:42 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250512122142epsmtrp23acfa5728aaa0c164e00746941fc0ee8~_xv6cjwDW1707417074epsmtrp2V;
+	Mon, 12 May 2025 12:21:42 +0000 (GMT)
+X-AuditID: b6c32a28-46cef70000001e8a-99-6821e7d6c651
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CF.45.07818.6D7E1286; Mon, 12 May 2025 21:21:42 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250512122141epsmtip27b69053d787f4d8e089b6a8ad983047e~_xv5lSWyB1768717687epsmtip2G;
+	Mon, 12 May 2025 12:21:41 +0000 (GMT)
+Message-ID: <2a4cf64a-ec6b-4daf-ae0e-dcac2a51fda1@samsung.com>
+Date: Mon, 12 May 2025 17:51:32 +0530
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3423:b0:85d:a5d3:618c with SMTP id
- ca18e2360f4ac-86763653dbdmr1331586039f.11.1747031789138; Sun, 11 May 2025
- 23:36:29 -0700 (PDT)
-Date: Sun, 11 May 2025 23:36:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682196ed.050a0220.f2294.0053.GAE@google.com>
-Subject: [syzbot] [io-uring] KCSAN: data-race in copy_mm / percpu_counter_destroy_many
-From: syzbot <syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Kanchan Joshi/Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH] io_uring/uring_cmd: fix hybrid polling initialization
+ issue
+To: hexue <xue01.he@samsung.com>, axboe@kernel.dk, asml.silence@gmail.com,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+In-Reply-To: <20250512052025.293031-1-xue01.he@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsWy7bCSvO6154oZBpta+C3mrNrGaLH6bj+b
+	xbvWcywWl3fNYbPounCKzYHVY+esu+wel8+WevRtWcXo8XmTXABLFJdNSmpOZllqkb5dAlfG
+	56arzAXfWSour2NpYGxl6WLk4JAQMJFY/pOpi5GLQ0hgN6PEvMMv2LsYOYHi4hLN135A2cIS
+	K/89Z4coes0osfHDXBaQBK+AncTh3a/BilgEVCWePb3IDBEXlDg58wlYjaiAvMT9WzPAatgE
+	zCW2zzsDViMsECQx//ETVpChIgLNjBJfL+xhhNjQxyhxde0SVpAqZqAzbj2ZzwRicwpYS9yZ
+	fpMFIm4m0bW1ixHClpfY/nYO8wRGwVlIls9C0j4LScssJC0LGFlWMUqmFhTnpucmGxYY5qWW
+	6xUn5haX5qXrJefnbmIEh7+Wxg7Gd9+a9A8xMnEwHmKU4GBWEuFt3K6YIcSbklhZlVqUH19U
+	mpNafIhRmoNFSZx3pWFEupBAemJJanZqakFqEUyWiYNTqoGpPsL4X9TJw7xyAVoTz32VjG42
+	fT73r5XbcjudX5/Dd1id9vqifVbW6CjPXcUNlXenuUr3HLXo0LLX+PPY/X9Gl/pb1YmcZVFN
+	17ebd9V2LHlwbbW+Ase5SY++Zrcv8aoyunz06/b7kQ4az2c93mTAuUxO6jiHrvH/Ja4qJ054
+	1t5c0DlpV+CMfPsXv8o+r2n4v2HFkttawS/P3bq0vjDhStDuGZujg3RFmpf55rVtnW+0+39t
+	Dcc1rZOzJVd+PfPwfJ3hj11HfdMuJEau39PYefm/EZOlJ9t37+WZKxS/WF+OfvM6aa3pSy8v
+	FY2KCSGF1/XSfotLTf/y0CLpbnbRlWtRjosLT8443Lfg+Y+GD0osxRmJhlrMRcWJAEaXqSnu
+	AgAA
+X-CMS-MailID: 20250512122142epcas5p3ee943a941e0a6daca487552343014157
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250512052032epcas5p46bb23adcb4a467aa7f66b82d3548b124
+References: <CGME20250512052032epcas5p46bb23adcb4a467aa7f66b82d3548b124@epcas5p4.samsung.com>
+	<20250512052025.293031-1-xue01.he@samsung.com>
 
-Hello,
+On 5/12/2025 10:50 AM, hexue wrote:
+> Modify the defect that the timer is not initialized during IO transfer
+> when passthrough is used with hybrid polling to ensure that the program
+> can run normally.
+> 
+> Fixes: 01ee194d1aba ("io_uring: add support for hybrid IOPOLL")
+> Signed-off-by: hexue<xue01.he@samsung.com>
 
-syzbot found the following issue on:
+So without this patch, liburing passthrough test 
+(io_uring_passthrough.t) gets stuck.
+With this patch, I do not see the issue and test runs to completion.
 
-HEAD commit:    3ce9925823c7 Merge tag 'mm-hotfixes-stable-2025-05-10-14-2..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ff74d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6154604431d9aaf9
-dashboard link: https://syzkaller.appspot.com/bug?extid=8be9bf36c3cf574426c8
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+This may need stable tag though
+Cc: stable@vger.kernel.org # 6.13+
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/afdc6302fc05/disk-3ce99258.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fc7f98d3c420/vmlinux-3ce99258.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ea7ca2da2258/bzImage-3ce99258.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in copy_mm / percpu_counter_destroy_many
-
-write to 0xffff8881045e19d8 of 8 bytes by task 2123 on cpu 0:
- __list_del include/linux/list.h:195 [inline]
- __list_del_entry include/linux/list.h:218 [inline]
- list_del include/linux/list.h:229 [inline]
- percpu_counter_destroy_many+0xc7/0x2b0 lib/percpu_counter.c:244
- __mmdrop+0x22e/0x350 kernel/fork.c:947
- mmdrop include/linux/sched/mm.h:55 [inline]
- io_ring_ctx_free+0x31e/0x360 io_uring/io_uring.c:2740
- io_ring_exit_work+0x529/0x560 io_uring/io_uring.c:2962
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
- worker_thread+0x582/0x770 kernel/workqueue.c:3400
- kthread+0x486/0x510 kernel/kthread.c:464
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-read to 0xffff8881045e1600 of 1344 bytes by task 5051 on cpu 1:
- dup_mm kernel/fork.c:1728 [inline]
- copy_mm+0xfb/0x1310 kernel/fork.c:1786
- copy_process+0xcf1/0x1f90 kernel/fork.c:2429
- kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
- __do_sys_clone kernel/fork.c:2987 [inline]
- __se_sys_clone kernel/fork.c:2971 [inline]
- __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
- x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:57
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 5051 Comm: syz.1.494 Not tainted 6.15.0-rc5-syzkaller-00300-g3ce9925823c7 #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+With that,
+Reviewed and Tested by: Kanchan Joshi <joshi.k@samsung.com>
 

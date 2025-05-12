@@ -1,125 +1,229 @@
-Return-Path: <io-uring+bounces-7957-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7958-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CB0AB3C15
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 17:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69749AB3EAE
+	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 19:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F041734D2
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 15:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB4819E5544
+	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 17:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117751C701C;
-	Mon, 12 May 2025 15:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664D12957BE;
+	Mon, 12 May 2025 17:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NFhpcZJ+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iRTPiAKC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F622A1D4
-	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 15:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567172957B9
+	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 17:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747063723; cv=none; b=ZI5BZ8LJG0eJcRxjuxganvESXAhOl+viBpvMiEsycqq2X4Y7qJ2gbjS+MBcBqKzE+eGBm+gKVuAzTJLt/DMr0L30hsKapJhddlqVxDFjjaRKx00Ndg8/ioYpJHVNNQeIeurLRq/xBaaytn4nRKPWfCdwvYBusvsvLe3dZAlwIWs=
+	t=1747069769; cv=none; b=lNHp7c+G7SeYiSVEOy/6N3dbKn4pJqKEjN+0FsqDEH3b/L8D6BUQaVbZ5MNOgnCbmZUxmVa2JpUhxO99uXCBBj/OkTBpwSqu850gVfe4FBrO7AizdiJ00bgLlJdY7OGSZLIFUyASZJtQFVmmsuYOkfGGO8zyi/W169jjbPTkhL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747063723; c=relaxed/simple;
-	bh=qKCU+7UCDjMl0dLPeICjK6GXo/Qb2btpvGDXh5B5CDE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XGzvTOaYMCW0Od/YY05v+XApPfMESHE+8O562xYnyqgkuHXq0Q51pu22bkFh9zKwu4Mimg1LivJ1j3nPevgjUdQ+z7Lv/Ao/Ho7e3ohIWbgwk46XA3ZaObQt4XMOAYUnzPRD1XMsxiCh7mM7GS8TPNrz6UjWYOx3Rv0SGaqFHo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NFhpcZJ+; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-861525e9b0aso456091939f.3
-        for <io-uring@vger.kernel.org>; Mon, 12 May 2025 08:28:39 -0700 (PDT)
+	s=arc-20240116; t=1747069769; c=relaxed/simple;
+	bh=KN+BalTZObaLwr9dLx72cSrNDW6JS71GgaSDZm64U5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sYyqLtm0DAeObISo2LlaPHd6EGFpqTDWciNxVR8TfG7RMjoNsFJLB3VtmQi4gU65admLdobIqyIrsR/8ysBOCIF6PK2L5q/Rkm7ONnCBnFAYxr4vOCchljko6niX7WugS1YS21rhj8f6LDy+9KPgDdY+XLIFRyIJCf/ZKvXo8yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iRTPiAKC; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso659a12.0
+        for <io-uring@vger.kernel.org>; Mon, 12 May 2025 10:09:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747063719; x=1747668519; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1747069765; x=1747674565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3/kejXVvA2MMgNmzBuN/sV4QfZ1J0vcmhkB8AvPwkX0=;
-        b=NFhpcZJ+vncdto1FPDQRFQOGfsyDG8sK0ZIU4h7rbxVjMo0WeYYRBudGBT7XgF/1Er
-         PHO2NsAO2/Uqinupj489l7T4K8lqpLRsTI3jZuvcFc/tDeaI/7tFQKRVACu5Dp/T5mYx
-         Lz7uW5YVNeSQoVUiwrxSCeTETyT9nSnHvzTx6qSOF/kVLMUlxjBvHqKgdp9CkqE1sefL
-         7P7sN+RnaL/9iTh/KM5KPByBwBez37WPxX3E4X4Cw7dBkazokZikpQXJeD5CiBtCpsKI
-         dJJd9xhL0uJxyJhD5eWi6Ks+LsA8qXsDem4HOuTA/gle9ui+mzG/jl9r3F4t4PtXLFdr
-         7WpA==
+        bh=6xA4hXDiJTOqrw9v7C63HCsGIrY+T2CW3IJC/Gos96Q=;
+        b=iRTPiAKCB5lXQaq9Tg1XE3JDHNUT0c0yiZGs258mpaxuvUD39+Dkl6KU5gPbKJlyDA
+         8ErJLQyfLveLCXVTbdc68pKTCUJXoICxoH2NzAOFyW+lc7BAEsVpwfMTGDQAjoOC4YEB
+         wjNi6D5CbC95gYE3O4cEWeuIIAWnx5Sa+PPximvQ8tyi+3eo0fXxSyt8JdHg3OVqXqsk
+         JxNgYBGsYkvqQq62/dlTH3XLP22TQKFK4GH6w/Sh3j9ZkF6bc6PNMu72kF4BY7Xz5+no
+         4xGITJ+wh93o3ATM+sowGpS0DG5Uqoi1lWnJ+kFy+UXTyLmLV0lHzG631qdr1V7F7r3k
+         P7lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747063719; x=1747668519;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3/kejXVvA2MMgNmzBuN/sV4QfZ1J0vcmhkB8AvPwkX0=;
-        b=euL8A6zbknFWm5H4bMWSvozbG2YXd1pK05XHeO/SVQZyTmIjL9tie9UN9Djl+kZ8eI
-         K/YBXok8I8w3H23WmeoUbSX06sOwx29FxAG/Ta97tpfvVFKX739qSDW4AJG8+DpjYIf7
-         Ev2BIPbkk0ns5SKnVWBPQ2Wag1CGxT9GFhMnSXeMyh9tFfAfYEFPFnxWAKCLNKygKYVd
-         PnzImUajL8BdjhsgJUjf0pXlsGybYzcddlT+wSWcRJQ6P1eo4jopUvcnZ6nZqzk91Iqe
-         kCYKxhZ4wKaVzPycGrWWCok/i/1eP+POZE0UHbS0ThNkLhGK82ujT4OJJ8A5vwInNh8z
-         Jkmw==
-X-Gm-Message-State: AOJu0Yzciq4pHtEb31duqQ9C4fksAKjK54ahta6ex7C6SoMqhjQw7MqF
-	HILrilrN+XjV1IrC07xWKNCUXdN8XhNrTOCrefT0VU8bjsnKCbR1FJgT1WgOHYZCNcIMOsUuQ6/
-	y
-X-Gm-Gg: ASbGncuw89nMSq/tD7YgDi4tq8u9nZuG0XLXpZ+U7BhDONeYjfW0FHAWf4CwtLTOfyj
-	SlKhI+I8fI0qcOpcoCCz6SS3VALQ5U2nx3RiPHvrPs+2LqY2EAibk0ZRA4rJL6lHyGftMlRy7cU
-	RllcW7Pzhf4uvNLO4Jk0DIB8OMmqgMpjVqcPsXw5R/Xq1GPS7Lvdlhy40uqM+f6EVyOUbpI4zXL
-	guLjUIeQhjN4W5F0GKiQc9iWkLvVrR+dfd+DIXNrkuCah5hqoTj/8PsZiFyCnpbS5kkHaDMSIO4
-	AwT4TaNL7J+tsl2aqrYJM3/jAqzeXH6KkDiMVWgHehnutsc=
-X-Google-Smtp-Source: AGHT+IEXkj8Zgy5q5654Fb0zJY2x4SYK3Syzd61wOjeUEhC8J+E4Rj5ubym98xr/0uHdC8kVZN9CGw==
-X-Received: by 2002:a05:6e02:349a:b0:3d9:6cb5:3be4 with SMTP id e9e14a558f8ab-3da7e20d096mr174078115ab.15.1747063703741;
-        Mon, 12 May 2025 08:28:23 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa22685366sm1624203173.142.2025.05.12.08.28.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 08:28:23 -0700 (PDT)
-Message-ID: <438add4a-4bc3-4303-941f-e9470fed9b1c@kernel.dk>
-Date: Mon, 12 May 2025 09:28:22 -0600
+        d=1e100.net; s=20230601; t=1747069765; x=1747674565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6xA4hXDiJTOqrw9v7C63HCsGIrY+T2CW3IJC/Gos96Q=;
+        b=SssD/QQ3QPnESY96FwNiOUuVf3oByClyEka8z0lx3qOrnoJ+OQr0F+2zw+tCbNeB9o
+         b1TP1SZSqbxfYQBjmVINK4gsoE1AZliZ1p4nJBa73U3AJL/uEgqX3jvGlhDpoNlPSKFL
+         dGZab6uQdUaVJsn7S7ccripfmDuYJstCxrTK0+51WzPutgPATNIxPqbE9vjokzHPuzu1
+         pjiZb+wFb1qZH0AFGibDiw3tspI1++KGGE3A+0xRnI35aRMPPWs0kyfd7zJauD1EbQZW
+         k6utrxgakDh5ZwrFUlAwsLc+jFlOSwgEbD2PGmdIZdxhbiGP8wimqmNmiO+5UaXCz2By
+         re+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtE8Fm0p6UUqJBjQcDALUVITyi/mMXArmObifKDDXS8cr3k0wtFvHnzjoS53FvzGpFi3a/DNeSMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys16jCj3E5T8HmkiLwHKY0if5m61vUrj6a/uA3I31n4+R69v+a
+	/mXk6sc+TvPKj5unP1sQQoYPiSEaWuOFE4WBKLt4NZ+GyaEucbLmXdji9BwqoYEN/3IgXCAVLhM
+	opkPBeL0+1vYBteEwnpUeoJWEeQHBjotJPaNI
+X-Gm-Gg: ASbGncuYcSFh14AOQgdKqruCQbdap6aBRX3MqZZDegZ8xi6LmOlu+LB701eYtYQF4Ru
+	Qef9GoNl7GvSloa/5qQtF0IbjBoIxCnbxq54QAWj1hQnsc4gxHRvNFqJmjbgrsPIz4iM/VxXzHJ
+	i8q+/zrxPNvl+NOBBOeI5tKIwLDJmmzG+XW1KzBOKMgmnqnpZx3oCNfhYV6Vs=
+X-Google-Smtp-Source: AGHT+IHcOgWNDsuVhEhzn0EYH1WFbiw9zSlOfSNM8iF5SvBUQFz6ojSSaePK3bgKsjQtCwbXMxK3NhJBcJSkE6DzCgE=
+X-Received: by 2002:a50:cd08:0:b0:5fd:6065:7bbc with SMTP id
+ 4fb4d7f45d1cf-5fd60657bf5mr95281a12.0.1747069765111; Mon, 12 May 2025
+ 10:09:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/memmap: don't use page_address() on a highmem page
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <682196ed.050a0220.f2294.0053.GAE@google.com> <81a0d2da-d863-4a6e-8d3b-b899d38ea605@kernel.dk>
+In-Reply-To: <81a0d2da-d863-4a6e-8d3b-b899d38ea605@kernel.dk>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 12 May 2025 19:08:49 +0200
+X-Gm-Features: AX0GCFuq_g4AfY0PHmir37iGT2R5rx3E-VYkDkABiEeWv2bw0Ptt1mi7L2zvqoc
+Message-ID: <CAG48ez20ot+-H1DmJ86COL4p_oif4mw9dvBRD7Ff5B-=axhtPQ@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring] KCSAN: data-race in copy_mm / percpu_counter_destroy_many
+To: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>
+Cc: syzbot <syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com>, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	Linux-MM <linux-mm@kvack.org>, dennis@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For older/32-bit systems with highmem, don't assume that the pages in
-a mapped region are always going to be mapped. If io_region_init_ptr()
-finds that the pages are coalescable, also check if the first page is
-a HighMem page or not. If it is, fall through to the usual vmap()
-mapping rather than attempt to get the unmapped page address.
++mmap maintainers
 
-Cc: stable@vger.kernel.org
-Fixes: c4d0ac1c1567 ("io_uring/memmap: optimise single folio regions")
-Link: https://lore.kernel.org/all/681fe2fb.050a0220.f2294.001a.GAE@google.com/
-Reported-by: syzbot+5b8c4abafcb1d791ccfc@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/681fed0a.050a0220.f2294.001c.GAE@google.com/
-Reported-by: syzbot+6456a99dfdc2e78c4feb@syzkaller.appspotmail.com
-Tested-by: syzbot+6456a99dfdc2e78c4feb@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On Mon, May 12, 2025 at 3:51=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+> On 5/12/25 12:36 AM, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    3ce9925823c7 Merge tag 'mm-hotfixes-stable-2025-05-10-1=
+4-2..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14ff74d4580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6154604431d=
+9aaf9
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D8be9bf36c3cf5=
+74426c8
+> > compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89=
+dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/afdc6302fc05/d=
+isk-3ce99258.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/fc7f98d3c420/vmli=
+nux-3ce99258.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/ea7ca2da2258=
+/bzImage-3ce99258.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KCSAN: data-race in copy_mm / percpu_counter_destroy_many
+> >
+> > write to 0xffff8881045e19d8 of 8 bytes by task 2123 on cpu 0:
+> >  __list_del include/linux/list.h:195 [inline]
+> >  __list_del_entry include/linux/list.h:218 [inline]
+> >  list_del include/linux/list.h:229 [inline]
+> >  percpu_counter_destroy_many+0xc7/0x2b0 lib/percpu_counter.c:244
+> >  __mmdrop+0x22e/0x350 kernel/fork.c:947
+> >  mmdrop include/linux/sched/mm.h:55 [inline]
+> >  io_ring_ctx_free+0x31e/0x360 io_uring/io_uring.c:2740
+> >  io_ring_exit_work+0x529/0x560 io_uring/io_uring.c:2962
+> >  process_one_work kernel/workqueue.c:3238 [inline]
+> >  process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
+> >  worker_thread+0x582/0x770 kernel/workqueue.c:3400
+> >  kthread+0x486/0x510 kernel/kthread.c:464
+> >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> >
+> > read to 0xffff8881045e1600 of 1344 bytes by task 5051 on cpu 1:
+> >  dup_mm kernel/fork.c:1728 [inline]
+> >  copy_mm+0xfb/0x1310 kernel/fork.c:1786
+> >  copy_process+0xcf1/0x1f90 kernel/fork.c:2429
+> >  kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
+> >  __do_sys_clone kernel/fork.c:2987 [inline]
+> >  __se_sys_clone kernel/fork.c:2971 [inline]
+> >  __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
+> >  x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.=
+h:57
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Reported by Kernel Concurrency Sanitizer on:
+> > CPU: 1 UID: 0 PID: 5051 Comm: syz.1.494 Not tainted 6.15.0-rc5-syzkalle=
+r-00300-g3ce9925823c7 #0 PREEMPT(voluntary)
+>
+> This doesn't look like an io_uring issue, it's successive setup and teard=
+own
+> of a percpu counter. Adding some relevant folks.
 
----
+This is an intentional-but-dodgy data race:
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 76fcc79656b0..07f8a5cbd37e 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -116,7 +116,7 @@ static int io_region_init_ptr(struct io_mapped_region *mr)
- 	void *ptr;
- 
- 	if (io_check_coalesce_buffer(mr->pages, mr->nr_pages, &ifd)) {
--		if (ifd.nr_folios == 1) {
-+		if (ifd.nr_folios == 1 && !PageHighMem(mr->pages[0])) {
- 			mr->ptr = page_address(mr->pages[0]);
- 			return 0;
- 		}
+dup_mm() does memcpy() of the entire old mm_struct, while the old
+mm_struct is not yet locked, in order to initialize some parts of the
+new mm_struct that are expected to be stable (I guess?); and then
+afterwards re-initializes all the important fields with proper
+locking.
 
--- 
-Jens Axboe
+(What happens in the KCSAN report is that one mm is being forked while
+an **unrelated** mm is being destroyed; and the unrelated mm's
+destruction involves a linked list deletion at mm.rss_stat[].list, and
+the two mm's happen to be adjacent on this linked list, so destroying
+the unrelated mm updates a linked list element embedded in the first
+mm.)
 
+This design is pretty dirty, and it would be a good idea to get rid of
+that memcpy() by going through every mm_struct field, checking whether
+it is already initialized after the memcpy(), and figuring out proper
+initialization if it isn't; another easier, less clean approach would
+be to just slap a data_race() annotation around the memcpy() for now.
+
+From a quick look, I think these are the fields that might not be reinitial=
+ized:
+
+Fields that are safe to copy without lock because they're immutable:
+
+ - mmap_{compat_,}{legacy_,}base
+ - task_size
+ - binfmt
+
+Fields which could actually race but only if CRIU-specific APIs raced
+with execve:
+
+ - {start,end}_{code,data}
+ - start_brk, start_stack
+ - {arg,env}_{start,end}
+ - saved_auxv
+
+Fields which actually look like they might be data racing in practice
+(but with most of these, probably not much bad stuff actually results
+from that):
+
+ - membarrier_state
+ - mm_cid_next_scan
+ - brk
+ - numa_scan_offset
+ - tlb_flush_batched
+ - ksm_merging_pages, ksm_rmap_items, ksm_zero_pages
+
+And then there's arch-specific stuff in mm_context_t, I haven't looked
+at that for all architectures. But there is some pretty dodgy stuff in
+there too, for example on X86 the mm->context.vdso_image pointer can
+be updated through the CRIU API concurrently with the memcpy(), and it
+doesn't look like that pointer is re-initialized later, so I think
+that could theoretically result in a torn pointer being accessed later
+on in the child. (Note that memcpy() is very much not guaranteed to
+copy pointer-sized fields atomically, though it tends to often do that
+in practice.)
 

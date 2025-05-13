@@ -1,229 +1,166 @@
-Return-Path: <io-uring+bounces-7958-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7959-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69749AB3EAE
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 19:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B799CAB4EE2
+	for <lists+io-uring@lfdr.de>; Tue, 13 May 2025 11:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB4819E5544
-	for <lists+io-uring@lfdr.de>; Mon, 12 May 2025 17:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9930D3BADE5
+	for <lists+io-uring@lfdr.de>; Tue, 13 May 2025 09:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664D12957BE;
-	Mon, 12 May 2025 17:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2014C213E9C;
+	Tue, 13 May 2025 09:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iRTPiAKC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CACUYGAj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567172957B9
-	for <io-uring@vger.kernel.org>; Mon, 12 May 2025 17:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FDA212B2B
+	for <io-uring@vger.kernel.org>; Tue, 13 May 2025 09:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747069769; cv=none; b=lNHp7c+G7SeYiSVEOy/6N3dbKn4pJqKEjN+0FsqDEH3b/L8D6BUQaVbZ5MNOgnCbmZUxmVa2JpUhxO99uXCBBj/OkTBpwSqu850gVfe4FBrO7AizdiJ00bgLlJdY7OGSZLIFUyASZJtQFVmmsuYOkfGGO8zyi/W169jjbPTkhL0=
+	t=1747127534; cv=none; b=b9AirdmSSYrSnvBXNwZS0b8Y38kLWO2Jol6zChcX1+rS5S4xm+8RVcri043FbxAHQ01Ad07exRWlzJAVJ3cm6n6bW59o08eC4Q1rMngv8Kqlcg6SCRlHVKrdiFMvG8cBYOFn6ll+NewYIBcfa0meWAGyY+DFfg7/Cco3wK2/KXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747069769; c=relaxed/simple;
-	bh=KN+BalTZObaLwr9dLx72cSrNDW6JS71GgaSDZm64U5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sYyqLtm0DAeObISo2LlaPHd6EGFpqTDWciNxVR8TfG7RMjoNsFJLB3VtmQi4gU65admLdobIqyIrsR/8ysBOCIF6PK2L5q/Rkm7ONnCBnFAYxr4vOCchljko6niX7WugS1YS21rhj8f6LDy+9KPgDdY+XLIFRyIJCf/ZKvXo8yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iRTPiAKC; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso659a12.0
-        for <io-uring@vger.kernel.org>; Mon, 12 May 2025 10:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747069765; x=1747674565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6xA4hXDiJTOqrw9v7C63HCsGIrY+T2CW3IJC/Gos96Q=;
-        b=iRTPiAKCB5lXQaq9Tg1XE3JDHNUT0c0yiZGs258mpaxuvUD39+Dkl6KU5gPbKJlyDA
-         8ErJLQyfLveLCXVTbdc68pKTCUJXoICxoH2NzAOFyW+lc7BAEsVpwfMTGDQAjoOC4YEB
-         wjNi6D5CbC95gYE3O4cEWeuIIAWnx5Sa+PPximvQ8tyi+3eo0fXxSyt8JdHg3OVqXqsk
-         JxNgYBGsYkvqQq62/dlTH3XLP22TQKFK4GH6w/Sh3j9ZkF6bc6PNMu72kF4BY7Xz5+no
-         4xGITJ+wh93o3ATM+sowGpS0DG5Uqoi1lWnJ+kFy+UXTyLmLV0lHzG631qdr1V7F7r3k
-         P7lg==
+	s=arc-20240116; t=1747127534; c=relaxed/simple;
+	bh=WDlpFsWbDcfzZLGnp/d3QNExJHb0unwOgNVXbvwod6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ptJHkUlBt6A4nPb8lXHwCx/orH0eQu2WRlsgqQS8R5KT7e6XBsCSzZL1s8LSp23T1iyMTlLNk1hOb/45Np4iL+XFsP4JM/EXhDNrANSPcZTd4uU+AbWwiAspNbFiEqDYgaGXb4cC0wVNVHwEgi2l33Z2hkQ897005uOSXyj0+GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CACUYGAj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747127531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lSKXGvXgaIuXifWFUaLvMDff9Ik6twAKIvR+Y496sQE=;
+	b=CACUYGAjsm56aOJwv6UP3RGQM2dzjQ896IV1q1FoIdH1qXZEiZiFqZgbtWDAzIbsNo6lGp
+	TajrgtCE+ZyKdzUmVwWMVA4JzWokwTFOKNf4R/IAA5wd9FHrRG6LmmDkz/B3hsWJafUY6a
+	hYAGkAN7e7HLHb1rS8bQfpftAUK7yoc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-yq-H_KQ5MBeguC34_RIEIw-1; Tue, 13 May 2025 05:12:10 -0400
+X-MC-Unique: yq-H_KQ5MBeguC34_RIEIw-1
+X-Mimecast-MFC-AGG-ID: yq-H_KQ5MBeguC34_RIEIw_1747127528
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-442cdf07ad9so22222805e9.2
+        for <io-uring@vger.kernel.org>; Tue, 13 May 2025 02:12:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747069765; x=1747674565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6xA4hXDiJTOqrw9v7C63HCsGIrY+T2CW3IJC/Gos96Q=;
-        b=SssD/QQ3QPnESY96FwNiOUuVf3oByClyEka8z0lx3qOrnoJ+OQr0F+2zw+tCbNeB9o
-         b1TP1SZSqbxfYQBjmVINK4gsoE1AZliZ1p4nJBa73U3AJL/uEgqX3jvGlhDpoNlPSKFL
-         dGZab6uQdUaVJsn7S7ccripfmDuYJstCxrTK0+51WzPutgPATNIxPqbE9vjokzHPuzu1
-         pjiZb+wFb1qZH0AFGibDiw3tspI1++KGGE3A+0xRnI35aRMPPWs0kyfd7zJauD1EbQZW
-         k6utrxgakDh5ZwrFUlAwsLc+jFlOSwgEbD2PGmdIZdxhbiGP8wimqmNmiO+5UaXCz2By
-         re+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtE8Fm0p6UUqJBjQcDALUVITyi/mMXArmObifKDDXS8cr3k0wtFvHnzjoS53FvzGpFi3a/DNeSMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys16jCj3E5T8HmkiLwHKY0if5m61vUrj6a/uA3I31n4+R69v+a
-	/mXk6sc+TvPKj5unP1sQQoYPiSEaWuOFE4WBKLt4NZ+GyaEucbLmXdji9BwqoYEN/3IgXCAVLhM
-	opkPBeL0+1vYBteEwnpUeoJWEeQHBjotJPaNI
-X-Gm-Gg: ASbGncuYcSFh14AOQgdKqruCQbdap6aBRX3MqZZDegZ8xi6LmOlu+LB701eYtYQF4Ru
-	Qef9GoNl7GvSloa/5qQtF0IbjBoIxCnbxq54QAWj1hQnsc4gxHRvNFqJmjbgrsPIz4iM/VxXzHJ
-	i8q+/zrxPNvl+NOBBOeI5tKIwLDJmmzG+XW1KzBOKMgmnqnpZx3oCNfhYV6Vs=
-X-Google-Smtp-Source: AGHT+IHcOgWNDsuVhEhzn0EYH1WFbiw9zSlOfSNM8iF5SvBUQFz6ojSSaePK3bgKsjQtCwbXMxK3NhJBcJSkE6DzCgE=
-X-Received: by 2002:a50:cd08:0:b0:5fd:6065:7bbc with SMTP id
- 4fb4d7f45d1cf-5fd60657bf5mr95281a12.0.1747069765111; Mon, 12 May 2025
- 10:09:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747127528; x=1747732328;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSKXGvXgaIuXifWFUaLvMDff9Ik6twAKIvR+Y496sQE=;
+        b=roCJq62jO02ruKlnlegS1NyF0e0WxnJzKwRJ6IRzBNrIfXOerR8c7Q3bmciz2c+eQz
+         H8ltpSBabavueCTjwNcmU4XaVymlXUEay5zxzevu5Ywg5mA0VuM2sKkyqoo9QtW6kjv/
+         LEj9eaBKaaGFYP4neBpRCjicJ2WaAGSN1Z+0upcB/857ze85wJOIpIPnkAmiSMj+Z6tU
+         7PMxnYO7KeLlVihELxtvqRMGa0hukCuJByFsCqJTH/gSBVve/lRyQpA1tBMPpVscqokn
+         gC9BZ0Myl9jWYcGDEJ/v/jsvosZCVyitus1ibSOEZjbkeEik4Qd8StiY5Sa9QM0mOjhg
+         RQ1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXmiyCkqFQ51+jdniigid9VDqUdYOiBWyWhM96eHTUOfsakoRs2dimqGAMJqU5PK5Zh+d2godRApg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI9ZZBwgwLRttWw5/WKEyHDExdNpwbaM0u6KeHyYveQeTzKSQU
+	PfqammHGINgdbRdBOifrVTzGNkMcHB1vQd+VmdwN48P9TMamOwvZTBwg3A7OOMGj0cP1oLMMHZM
+	SqhyBA0fIGlbFlQ/4gc9BZ4vsI4h389KAGrORObdJvevMZ8ESiIYhXeRR
+X-Gm-Gg: ASbGncvYR4aQ4ZaeZuIllboc72qUiXMBo7RT1jgBvUvFnc4r41puHRtdnq5Y7M/h0vn
+	rHjdzMoA04F5YvQ2zpmpltdL3BI0tDWlIwDBx/XjosK8eLa3nrglZGsuWnY/rK1uF/2qWqC1JJM
+	ARgo8Ke6ZCWJpFiLqrHArFyxLjI1cWY/mDOyRnfsYV5rmui6ePbx0smUTTriDjvujM6wzPISir6
+	tlpZ5Q+W0jIx9tk8ZDwHEhYag+O2Orpm84AkLuwC1OxGG9/4hQ3DoPFI9a+Njd4+TcijZWABSMm
+	2pd3cEWWvrL/hRz9eXI=
+X-Received: by 2002:a05:600c:4454:b0:440:9b1a:cd78 with SMTP id 5b1f17b1804b1-442d6d44aa7mr175600145e9.10.1747127527697;
+        Tue, 13 May 2025 02:12:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7UByCIdv1fV6GeTCbxFUgA3MTskc+HSiE9ez+aliKyTiJ4Fv/7gBQk/cE3vpwwsDlBoiWaw==
+X-Received: by 2002:a05:600c:4454:b0:440:9b1a:cd78 with SMTP id 5b1f17b1804b1-442d6d44aa7mr175599485e9.10.1747127527311;
+        Tue, 13 May 2025 02:12:07 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:cc59:6510::f39? ([2a0d:3341:cc59:6510::f39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442ea367102sm36670345e9.3.2025.05.13.02.12.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 02:12:06 -0700 (PDT)
+Message-ID: <085a78fc-acfc-4a86-9dbf-18795ad68b4c@redhat.com>
+Date: Tue, 13 May 2025 11:12:04 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <682196ed.050a0220.f2294.0053.GAE@google.com> <81a0d2da-d863-4a6e-8d3b-b899d38ea605@kernel.dk>
-In-Reply-To: <81a0d2da-d863-4a6e-8d3b-b899d38ea605@kernel.dk>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 12 May 2025 19:08:49 +0200
-X-Gm-Features: AX0GCFuq_g4AfY0PHmir37iGT2R5rx3E-VYkDkABiEeWv2bw0Ptt1mi7L2zvqoc
-Message-ID: <CAG48ez20ot+-H1DmJ86COL4p_oif4mw9dvBRD7Ff5B-=axhtPQ@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring] KCSAN: data-race in copy_mm / percpu_counter_destroy_many
-To: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>
-Cc: syzbot <syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com>, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Linux-MM <linux-mm@kvack.org>, dennis@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v14 4/9] net: devmem: Implement TX path
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ io-uring@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20250508004830.4100853-1-almasrymina@google.com>
+ <20250508004830.4100853-5-almasrymina@google.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250508004830.4100853-5-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-+mmap maintainers
+On 5/8/25 2:48 AM, Mina Almasry wrote:
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 86c427f166367..0ae265d39184e 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1059,6 +1059,7 @@ int tcp_sendmsg_fastopen(struct sock *sk, struct msghdr *msg, int *copied,
+>  
+>  int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>  {
+> +	struct net_devmem_dmabuf_binding *binding = NULL;
+>  	struct tcp_sock *tp = tcp_sk(sk);
+>  	struct ubuf_info *uarg = NULL;
+>  	struct sk_buff *skb;
+> @@ -1066,11 +1067,23 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>  	int flags, err, copied = 0;
+>  	int mss_now = 0, size_goal, copied_syn = 0;
+>  	int process_backlog = 0;
+> +	bool sockc_valid = true;
+>  	int zc = 0;
+>  	long timeo;
+>  
+>  	flags = msg->msg_flags;
+>  
+> +	sockc = (struct sockcm_cookie){ .tsflags = READ_ONCE(sk->sk_tsflags) };
+> +	if (msg->msg_controllen) {
+> +		err = sock_cmsg_send(sk, msg, &sockc);
+> +		if (unlikely(err))
+> +			/* Don't return error until MSG_FASTOPEN has been
+> +			 * processed; that may succeed even if the cmsg is
+> +			 * invalid.
+> +			 */
+> +			sockc_valid = false;
 
-On Mon, May 12, 2025 at 3:51=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
-> On 5/12/25 12:36 AM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    3ce9925823c7 Merge tag 'mm-hotfixes-stable-2025-05-10-1=
-4-2..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14ff74d4580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6154604431d=
-9aaf9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D8be9bf36c3cf5=
-74426c8
-> > compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89=
-dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/afdc6302fc05/d=
-isk-3ce99258.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/fc7f98d3c420/vmli=
-nux-3ce99258.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/ea7ca2da2258=
-/bzImage-3ce99258.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+8be9bf36c3cf574426c8@syzkaller.appspotmail.com
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > BUG: KCSAN: data-race in copy_mm / percpu_counter_destroy_many
-> >
-> > write to 0xffff8881045e19d8 of 8 bytes by task 2123 on cpu 0:
-> >  __list_del include/linux/list.h:195 [inline]
-> >  __list_del_entry include/linux/list.h:218 [inline]
-> >  list_del include/linux/list.h:229 [inline]
-> >  percpu_counter_destroy_many+0xc7/0x2b0 lib/percpu_counter.c:244
-> >  __mmdrop+0x22e/0x350 kernel/fork.c:947
-> >  mmdrop include/linux/sched/mm.h:55 [inline]
-> >  io_ring_ctx_free+0x31e/0x360 io_uring/io_uring.c:2740
-> >  io_ring_exit_work+0x529/0x560 io_uring/io_uring.c:2962
-> >  process_one_work kernel/workqueue.c:3238 [inline]
-> >  process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
-> >  worker_thread+0x582/0x770 kernel/workqueue.c:3400
-> >  kthread+0x486/0x510 kernel/kthread.c:464
-> >  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >
-> > read to 0xffff8881045e1600 of 1344 bytes by task 5051 on cpu 1:
-> >  dup_mm kernel/fork.c:1728 [inline]
-> >  copy_mm+0xfb/0x1310 kernel/fork.c:1786
-> >  copy_process+0xcf1/0x1f90 kernel/fork.c:2429
-> >  kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
-> >  __do_sys_clone kernel/fork.c:2987 [inline]
-> >  __se_sys_clone kernel/fork.c:2971 [inline]
-> >  __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
-> >  x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.=
-h:57
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 1 UID: 0 PID: 5051 Comm: syz.1.494 Not tainted 6.15.0-rc5-syzkalle=
-r-00300-g3ce9925823c7 #0 PREEMPT(voluntary)
->
-> This doesn't look like an io_uring issue, it's successive setup and teard=
-own
-> of a percpu counter. Adding some relevant folks.
+It occurred to me a bit too late that this chunk of code could be
+cleaned-up a bit using a 'sockc_err' variable to store the
+sock_cmsg_send() return code instead of the 'sockc_valid' bool. It
+should avoid a conditional here and in the later error check.
 
-This is an intentional-but-dodgy data race:
+(just to mention a possible follow-up! no need to repost!)
 
-dup_mm() does memcpy() of the entire old mm_struct, while the old
-mm_struct is not yet locked, in order to initialize some parts of the
-new mm_struct that are expected to be stable (I guess?); and then
-afterwards re-initializes all the important fields with proper
-locking.
+Thanks,
 
-(What happens in the KCSAN report is that one mm is being forked while
-an **unrelated** mm is being destroyed; and the unrelated mm's
-destruction involves a linked list deletion at mm.rss_stat[].list, and
-the two mm's happen to be adjacent on this linked list, so destroying
-the unrelated mm updates a linked list element embedded in the first
-mm.)
+Paolo
 
-This design is pretty dirty, and it would be a good idea to get rid of
-that memcpy() by going through every mm_struct field, checking whether
-it is already initialized after the memcpy(), and figuring out proper
-initialization if it isn't; another easier, less clean approach would
-be to just slap a data_race() annotation around the memcpy() for now.
-
-From a quick look, I think these are the fields that might not be reinitial=
-ized:
-
-Fields that are safe to copy without lock because they're immutable:
-
- - mmap_{compat_,}{legacy_,}base
- - task_size
- - binfmt
-
-Fields which could actually race but only if CRIU-specific APIs raced
-with execve:
-
- - {start,end}_{code,data}
- - start_brk, start_stack
- - {arg,env}_{start,end}
- - saved_auxv
-
-Fields which actually look like they might be data racing in practice
-(but with most of these, probably not much bad stuff actually results
-from that):
-
- - membarrier_state
- - mm_cid_next_scan
- - brk
- - numa_scan_offset
- - tlb_flush_batched
- - ksm_merging_pages, ksm_rmap_items, ksm_zero_pages
-
-And then there's arch-specific stuff in mm_context_t, I haven't looked
-at that for all architectures. But there is some pretty dodgy stuff in
-there too, for example on X86 the mm->context.vdso_image pointer can
-be updated through the CRIU API concurrently with the memcpy(), and it
-doesn't look like that pointer is re-initialized later, so I think
-that could theoretically result in a torn pointer being accessed later
-on in the child. (Note that memcpy() is very much not guaranteed to
-copy pointer-sized fields atomically, though it tends to often do that
-in practice.)
 

@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-7973-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7974-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B85AB6541
-	for <lists+io-uring@lfdr.de>; Wed, 14 May 2025 10:06:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94419AB6540
+	for <lists+io-uring@lfdr.de>; Wed, 14 May 2025 10:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886A73A792F
-	for <lists+io-uring@lfdr.de>; Wed, 14 May 2025 08:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 510F618954B4
+	for <lists+io-uring@lfdr.de>; Wed, 14 May 2025 08:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B663E21ABD2;
-	Wed, 14 May 2025 08:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479F1219A90;
+	Wed, 14 May 2025 08:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdjQn84c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHvlSSdE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8F820B7EE
-	for <io-uring@vger.kernel.org>; Wed, 14 May 2025 08:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF5A216386
+	for <io-uring@vger.kernel.org>; Wed, 14 May 2025 08:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747209982; cv=none; b=YP95mfBhrUtvbn/8TszP6L7spA2Py0euEd7izbTppzMLBmzz4yxXfdDApJNeJC2ELbSaheMLj5WRwu4fnkiLqdJ60U0S+29MRhaQNzIQiRn7UauarRc5kmpfYeIP3s1XqEebif6zbrjbCx6PKZIxEVtzieFaDPNIpGBxz5laWqs=
+	t=1747209984; cv=none; b=gKTB3nf7baq+Rrt9TSQpEW1ainhX2r8uGzKcXryO2bAVTHeOIeWPA3b4YPmqzulI4Y+XoqBWoL8a4Va/PxZBsWnhcyziWwx6A3Mb6eBmxRxKrTEZHhT+nuWGzOHS/Y/Q5sW+gAoQjoNltjXEsPPHB0E1M+piKOTtGr5HN0F1dd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747209982; c=relaxed/simple;
-	bh=2k+hEysu5k1s7P5NjzJkjEb1CmbOUsZOr+XCFzFQTzs=;
+	s=arc-20240116; t=1747209984; c=relaxed/simple;
+	bh=204pmrYjTfgBN0mS2MdJhJIdCcMi5belC1jnHSvLhdo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VhokAphyoFFAV4xzV7u7Q9B4T3vusTbra+D7O1QefhJ1NjDz3otQvOlsA06akhv9htP/lXfi3L+vr0ZIFAh6lbQ7cbcVxo4GYWdXf5S+u8tCFIQu2581CdAlYYF745DakjZG/cQH35JLe+lzytIqBoxSnJt2baxhr90F5t90r9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdjQn84c; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=gNWPFBTh18YabzpV1Q2QFZZmFdSduMaHF/sSjYHi5a9i9DgRQdd9fZy6yssD3R/6bstm3JX+gqboRfRI51yBhpZG7nDZtJHyrVIhP56QhjWDeXM/zaxM6E5YpIo/Kk1NWFB5T6F4klO39SUIAlHB3O62QdEFP/Z1nPuWyJuFdFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHvlSSdE; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5feb22e7d84so4280438a12.3
-        for <io-uring@vger.kernel.org>; Wed, 14 May 2025 01:06:20 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5fbc736f0c7so1691767a12.2
+        for <io-uring@vger.kernel.org>; Wed, 14 May 2025 01:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747209979; x=1747814779; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747209980; x=1747814780; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oItU02zh1aVbjvMDQUYhwBHON5n9CitHGx/S1hZ22eM=;
-        b=CdjQn84c4dKve3WxaE1bMC0KKHQBlv/Xa1zRTbaGbbcA/8aD/snDeydDWwcUa65WKl
-         1XY86/lA7QnfZMIVl1R43NyDcXWUIcgLTMR8Nyps98QA9IiJkKXZJflYxRHMul/loMn2
-         zb1OMqBIs4mkVvvlAJzPAEK8RKQIv28Aq4jpOZ5vSVslN5m1vv+E9qW3NDCgDUGdXtWZ
-         dfwI3oyFtfjpFC2jF8IlZZJGLuoU8wyZ3D97Mi/GWBc95dCQHM70oIlT7scafjdJf+YO
-         GYqEPeIQZDQbkLMUBb8vmx2a5PeDHA3Lw3JzDWP+MUK8hCUYsD/TtLkTP/ioTR6rDNYX
-         rv3A==
+        bh=+j4bbviRRSShgMw1jC9iBGi3IVPPNSQKVGpKLTB5Kd8=;
+        b=NHvlSSdEfgu+VFYcynRJ7RvfdjXuRy3ZP6CH5H8ZizjRKo2ZnPJe8wafPSOhJdeurg
+         SEqfNvKcspGaetK/SM2TXdJNj8gn2/CTutysZT06Gkbf1Kmya4rmOP5QWOWmsofymH8z
+         0+IJOSb1nrTG/nYTH60jQw+BsCdkl/QzDpywQlkvug2+2jRYU3uRYtPKREuLJ+cfMwEc
+         KyLtgjU3wkqj3OxTxJGW7zOSx4dqw5M0SC6uylAIqSMXOMoYkQjJ+QiiLq8SV6+E39Vk
+         Fsed7ju6or/RhZ8LvgOvf/Mv5CyDP9qom7kQBwDFleuPMeXmPkiCjuVh5nlNX0J2ADNu
+         netg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747209979; x=1747814779;
+        d=1e100.net; s=20230601; t=1747209980; x=1747814780;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oItU02zh1aVbjvMDQUYhwBHON5n9CitHGx/S1hZ22eM=;
-        b=ttq4G4+naHt96K6hyQ9FtTVoEsoGVSD4VTk0IlUoni9vm6qzDDUQe2YEq5q5z3Af/8
-         MUqc8pB0uzSNlrwNYthUPpwQ8/EWpdRuWQEzPA2m96xKiy+vLAhhSLZ5XV+Gx3h7ci9O
-         6eHqWC6bBJ7VnXJE+Xs2aCjJj3TYS06iUTlb5I0wKN86S2DfINJYWgQJzjP91bxM6Ues
-         YKpJYT92HjXpo39YewGRY5+CwHMmhI2MaVgyhlLuQQyABPRSSKPlyjRGtLHglXIw942M
-         0fXkj06gb/4VRwmDxwIdtm/YUSR3SRUfrfNOVcRO4rNg92HNkcZplgnaeuDk4VWlA+St
-         jZag==
-X-Gm-Message-State: AOJu0Yxj0S7OgeYCkWt+Zacty7bIZ1Ibk2yeVovEbxaomTI2EKCCwNSI
-	b5pzBmaNOJa6b0ZAwy93Zo3BwRW9VRKqztdwrdnV2HGpm2v5EUQSS8Ng8w==
-X-Gm-Gg: ASbGncuOC32Ibgl+y++XDd+ZU9cIo5suZohq6Epnw3duxknh5MnZXHWCPf5eIiwoEUc
-	nt4HkGe01y2Sk3Is6CTPYAk7TgAWypiTPiW4vJWbyUmE0HHt73vyWNdLlg6sejcCZkDGvLAqcF2
-	9GeNL6Sx0ZZRbgT78iRaWIrCK3i5rQtNoyMAK1sTvDxXGY3fUMn+CHcW93rKbgZsSn3RyUJCJGC
-	ZEqkagkrb/xutJjV6t8Iw3e0Tpi4IFtlg8Nuh8QBK7D273/kFSpGG39vi0du5vQe+iI9VivbVtF
-	q9dK+GpR8ciZnXOk8HqrA5cuRDswWEF6jsQvBXxt//rMPw==
-X-Google-Smtp-Source: AGHT+IHzmIxn/iuD6U+PpCH+LkVgnu2YELxX2lv6J/Fi79sSOIAxNC7lZFiASchkrIOQrEVwAylGBg==
-X-Received: by 2002:a05:6402:d0d:b0:5fb:1c08:d8f7 with SMTP id 4fb4d7f45d1cf-5ff988a6036mr1654348a12.12.1747209978419;
-        Wed, 14 May 2025 01:06:18 -0700 (PDT)
+        bh=+j4bbviRRSShgMw1jC9iBGi3IVPPNSQKVGpKLTB5Kd8=;
+        b=gB8rvYq2Jxgkdso+ryQW636hBGMRo0agkvT9KgO10UGFKyrf0x77PZyi2i8UveJyHH
+         53WmwHqbDB/f6Wt1yqfAZiWmazQtl7dRJtZDF6X7kUMqVIlA/AbiA8c/L3D93FARdh3i
+         UNnnOmsVJPrXcOMZy2PqWVgXJzNnsTugpVR6HdXGtrm7jQ7tWpXVL3MoM2e+48aAty2H
+         SZkqv853mWHGDRSGJWUHvHQ/vAilU89p2beUGM7EbPDqhMiK3WS/RMeZWyEbId60CT2F
+         rrJXcFxST5088AN8c70vJY0nh69xn4NLSDssC5YnwYAUZpfwL+OFaE6FQ5tpSCyO8kLF
+         DgMQ==
+X-Gm-Message-State: AOJu0YyPlW3KCOpvZWTDAW+RJkW6tyJll2qnbRmWVgsNi6WqkEZGZqZ+
+	XLGzk7EguLyLsjO80p0bekcF/jHfEMhZjCqza1ckTtbhVJ2a+dw8c9GRag==
+X-Gm-Gg: ASbGncu8WArGe6IH/gqg0BgrsT0n/mMZ/nc6JIAtdmrsXfxEuQeHiJpXGvT5t2SwF+x
+	X3NfabEHNsHBN0yTbtAA1L1UFg/GVX/dJu4jrUl+YEabAOz1jVmoSKPPVJhx5j0EOieQsmMRPhR
+	cOgFhmrH6KT4Ih81CDhWis2n42cVQ/4jwkS4FDcJxcBYRGsJPKC52XK8yuXByWAqgM9bPF7UkFK
+	12cl2wHXsZvVd8dYWl/SEj3MFt2KjmSec5k6XWSep8oh9+RPZ1OZJM+vJywvhMULEyZu2S79CSh
+	Oq7xThBrgd0NhqYx96YlwwaKmKI40pp3jPQ=
+X-Google-Smtp-Source: AGHT+IF42meUi5LmZ83mn1kogTG818AqyZo2hGZSmYKO3CH9U7XEoyPoMqiGT2gxAvCswjJLTByqwg==
+X-Received: by 2002:a05:6402:254d:b0:5fb:1bd8:2f95 with SMTP id 4fb4d7f45d1cf-5ff988dd383mr1631401a12.29.1747209979733;
+        Wed, 14 May 2025 01:06:19 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:ee61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fd29adb7absm4969579a12.32.2025.05.14.01.06.17
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fd29adb7absm4969579a12.32.2025.05.14.01.06.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 01:06:17 -0700 (PDT)
+        Wed, 14 May 2025 01:06:18 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/4] io_uring: open code io_req_cqe_overflow()
-Date: Wed, 14 May 2025 09:07:20 +0100
-Message-ID: <ad959f0172688456bb3e4bf6a8a0bf46d8893475.1747209332.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring: move locking inside overflow posting
+Date: Wed, 14 May 2025 09:07:21 +0100
+Message-ID: <56fb1f1b3977ae5eec732bd5d39635b69a056b3e.1747209332.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747209332.git.asml.silence@gmail.com>
 References: <cover.1747209332.git.asml.silence@gmail.com>
@@ -88,54 +88,110 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A preparation patch, just open code io_req_cqe_overflow().
+A preparation patch moving locking protecting the overflow list into
+io_cqring_event_overflow(). The locking needs to be conditional because
+callers might already hold the lock. It's not the prettiest option, but
+it's not much different from the current state. Hopefully, one day we'll
+get rid of this nasty locking pattern.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ io_uring/io_uring.c | 53 +++++++++++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 21 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9a9b8d35349b..068e140b6bd8 100644
+index 068e140b6bd8..5b253e2b6c49 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -760,14 +760,6 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
+@@ -718,8 +718,9 @@ static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
+ 	}
+ }
+ 
+-static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
+-				     s32 res, u32 cflags, u64 extra1, u64 extra2)
++static bool __io_cqring_event_overflow(struct io_ring_ctx *ctx,
++				       u64 user_data, s32 res, u32 cflags,
++				       u64 extra1, u64 extra2)
+ {
+ 	struct io_overflow_cqe *ocqe;
+ 	size_t ocq_size = sizeof(struct io_overflow_cqe);
+@@ -760,6 +761,24 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
  	return true;
  }
  
--static void io_req_cqe_overflow(struct io_kiocb *req)
--{
--	io_cqring_event_overflow(req->ctx, req->cqe.user_data,
--				req->cqe.res, req->cqe.flags,
--				req->big_cqe.extra1, req->big_cqe.extra2);
--	memset(&req->big_cqe, 0, sizeof(req->big_cqe));
--}
--
++static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, bool locked,
++				     u64 user_data, s32 res, u32 cflags,
++				     u64 extra1, u64 extra2)
++{
++	bool queued;
++
++	if (locked) {
++		queued = __io_cqring_event_overflow(ctx, user_data, res, cflags,
++						    extra1, extra2);
++	} else {
++		spin_lock(&ctx->completion_lock);
++		queued = __io_cqring_event_overflow(ctx, user_data, res, cflags,
++						    extra1, extra2);
++		spin_unlock(&ctx->completion_lock);
++	}
++	return queued;
++}
++
  /*
   * writes to the cq entry need to come after reading head; the
   * control dependency is enough as we're using WRITE_ONCE to
-@@ -1442,11 +1434,19 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 		    unlikely(!io_fill_cqe_req(ctx, req))) {
- 			if (ctx->lockless_cq) {
- 				spin_lock(&ctx->completion_lock);
--				io_req_cqe_overflow(req);
-+				io_cqring_event_overflow(req->ctx, req->cqe.user_data,
-+							req->cqe.res, req->cqe.flags,
-+							req->big_cqe.extra1,
-+							req->big_cqe.extra2);
- 				spin_unlock(&ctx->completion_lock);
- 			} else {
--				io_req_cqe_overflow(req);
-+				io_cqring_event_overflow(req->ctx, req->cqe.user_data,
-+							req->cqe.res, req->cqe.flags,
-+							req->big_cqe.extra1,
-+							req->big_cqe.extra2);
- 			}
+@@ -825,7 +844,8 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+ 	io_cq_lock(ctx);
+ 	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
+ 	if (!filled)
+-		filled = io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
++		filled = io_cqring_event_overflow(ctx, true,
++						  user_data, res, cflags, 0, 0);
+ 	io_cq_unlock_post(ctx);
+ 	return filled;
+ }
+@@ -839,11 +859,9 @@ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 	lockdep_assert(ctx->lockless_cq);
+ 
+-	if (!io_fill_cqe_aux(ctx, user_data, res, cflags)) {
+-		spin_lock(&ctx->completion_lock);
+-		io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
+-		spin_unlock(&ctx->completion_lock);
+-	}
++	if (!io_fill_cqe_aux(ctx, user_data, res, cflags))
++		io_cqring_event_overflow(ctx, false, user_data, res, cflags, 0, 0);
 +
-+			memset(&req->big_cqe, 0, sizeof(req->big_cqe));
+ 	ctx->submit_state.cq_flush = true;
+ }
+ 
+@@ -1432,20 +1450,13 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 		 */
+ 		if (!(req->flags & (REQ_F_CQE_SKIP | REQ_F_REISSUE)) &&
+ 		    unlikely(!io_fill_cqe_req(ctx, req))) {
+-			if (ctx->lockless_cq) {
+-				spin_lock(&ctx->completion_lock);
+-				io_cqring_event_overflow(req->ctx, req->cqe.user_data,
+-							req->cqe.res, req->cqe.flags,
+-							req->big_cqe.extra1,
+-							req->big_cqe.extra2);
+-				spin_unlock(&ctx->completion_lock);
+-			} else {
+-				io_cqring_event_overflow(req->ctx, req->cqe.user_data,
+-							req->cqe.res, req->cqe.flags,
+-							req->big_cqe.extra1,
+-							req->big_cqe.extra2);
+-			}
++			bool locked = !ctx->lockless_cq;
+ 
++			io_cqring_event_overflow(req->ctx, locked,
++						req->cqe.user_data,
++						req->cqe.res, req->cqe.flags,
++						req->big_cqe.extra1,
++						req->big_cqe.extra2);
+ 			memset(&req->big_cqe, 0, sizeof(req->big_cqe));
  		}
  	}
- 	__io_cq_unlock_post(ctx);
 -- 
 2.49.0
 

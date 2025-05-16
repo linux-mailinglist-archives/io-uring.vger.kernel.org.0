@@ -1,77 +1,79 @@
-Return-Path: <io-uring+bounces-7987-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-7988-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F37AB9D2C
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 15:23:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6367AB9E20
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 16:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45369E3CAF
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 13:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939B83AFD15
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 14:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3777238F9C;
-	Fri, 16 May 2025 13:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883351A29A;
+	Fri, 16 May 2025 14:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bzvFA5Ln"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zYHuYNix"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3CE4B1E4A
-	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 13:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5046FC1D
+	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 14:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401806; cv=none; b=icxyUU5nupR9TeTL/PQlDih46TgOcEUWBZaUdlJSLPiaG28qqNlUHfvBCi+4kF4N8Ta59+F2/xCFXq+JASHC/dqK+e4yyv7C35ulrx0ig4n5L7HZMrYbx3T+l0oYb+gc0l1NPphIwrc7/QFsMuxA8iZUXA7Pbb2KThDwTzvzGvw=
+	t=1747404288; cv=none; b=NAIgiG1CL6pTDiRAlzZr4jyl5X0I+LE9x/vE/9gSQ8tulwmTjk26TXVfJfC8uC5IfWMLUMGDc1uQnKjXD4EbepQ3aSKROWDukOeRST6x17afT4UqgJKCcrrdMIika5mJM0PTmsU/7Ts//jP0c0Bw6EtCflmAefdLGqusqLYXRSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401806; c=relaxed/simple;
-	bh=6Fb/vW9DQJ6Bop7iYVHdcqP8i3yN23D1T1N0sD5iNm8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=W2ncRGOlqeSIkZDL/nR/QCMXUa+1moRnYStjscFa8WLCysT9X3cMA9BeZ0GgwdO8TsU00/68s1M4k7ONfOvV1RmuUoFmvO56W4zfy4MuNOsFLzqmR/QJXuxZpbwu2MCUOPEZ6eVR7/s1nUAH7pK9/rWYoXbmXy0vWSv6zkart5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bzvFA5Ln; arc=none smtp.client-ip=209.85.166.177
+	s=arc-20240116; t=1747404288; c=relaxed/simple;
+	bh=M3zmC76ClxnzwAkF9MYCy10BBXh+eZlVQZ3NHB4c2I8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=b2ajbLFySAKcX9UsvcNGW8gmLnapyrIMiFo/F/UWL1tzYEVcBYmNWBGPVGd4SFf5gUCoHwsME3VgS+4DzGvHVSeGv3H+lNu4WhWk6KBKoVxK18F4lxL9mRMTmoiPUbLoyKgFkh6K+qoXB+ZfhCg/Er1gFw0PxL/keBcSBWjF4A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zYHuYNix; arc=none smtp.client-ip=209.85.166.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3da82c6c5d4so14865335ab.1
-        for <io-uring@vger.kernel.org>; Fri, 16 May 2025 06:23:22 -0700 (PDT)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3db6cda65efso11257985ab.1
+        for <io-uring@vger.kernel.org>; Fri, 16 May 2025 07:04:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747401802; x=1748006602; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pV3e9bh0EJ50idrTK+ejc//aUOITsh/G/CbwfNCkSYQ=;
-        b=bzvFA5Lnb50M6M/WG8l4SMksNUL3ZYY+s+NshwVVcELIotUe1v5n926Ns2GPhtmkNu
-         FMMWJKaBrHVN3q2PcDpS8Cc+Tdd/xbgEZKuR4cs1J48YasyAhPHI8Mk5kydff697rGez
-         kZnxLDVs7+LpC6AVHtwTgablfDUDPUK2hbfclbT6lqTbJFBlioMEnmgUcWABPrrnV29O
-         haXeekchPkBatLjWMIbwtic98YowWuekYnLmpWDyqNBcwjmmsFV4bWSSfHrsnuDdSNpc
-         yD4Sr1NltOD5NilBgQXGeqInEu6NRY2UXQDlP6WhUDv52hGW8SjDtQEDPcrY1hL5NsMf
-         PoVQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747404284; x=1748009084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NC+YoAfFScARNlAWt5LjiPnBvecoahJqpxajqfWZECE=;
+        b=zYHuYNix9cFXykSNZGr8fuKVgOn3wCCV2Qxc+W+Tr4hPohMTYlEYwWHvuzJHYvjAl8
+         nQsZPE4db6Q5LbLImAe5SklQPTT/dixb/rqURJY0cudYOSdXh2HNPsiTkp35TKE9i+d2
+         4M7fRVZK1k01WnyAd9zUZqzXEnYbCohVJQpTD0AXR8R8uyZoIcBs7yeyPoqXxvzQLIqh
+         bNrt8E3nu+vYr/JqnU+xlWN+bBk9d7cG7zQwO7uHinWafTlTlaoiv74B6CDpiUH9d39d
+         wvIfqzxAFug168I0bfRtOX5V5vKwZdECjaU6YNQDUzmhKzdzD46rjQBlREErIms3EZ2L
+         nNkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747401802; x=1748006602;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pV3e9bh0EJ50idrTK+ejc//aUOITsh/G/CbwfNCkSYQ=;
-        b=q0inSu5SxYa6ck766X82Z1oWRBoWAgK2rmhpwQ2mSNX1dE5SmLBzjPjOOwCfECopHt
-         tSkdxz77Yyoan3jxhMXN6ONnccwU3piaJXttv5YsOsS/iozUQe7ZsusGOt6Wm7JzKqgf
-         QvqR1eJsgEUNjmB8xlyGTkcqz4ilomt7v8h43VsgCsDZZXh4sL7fndR4TWYy03CFRXjk
-         UY9UyFlTN5vZAxf7DbNhiDFIS3t4btmOHCAVsOzBbKNE17NdUnxNe1yGXlURnLFYkACK
-         5lrR5Wl3sQtiRsJf5ObDu+/nxnK9Xa2cjG/0WsuHYuTJYaGNadR3RljcRmrX3wo0P3bh
-         VFCw==
-X-Gm-Message-State: AOJu0Yxu0MCcSGlA0f7ioRFq+PLr9R9R/5Yiu/oj7AICwPSzyz9tp9Mx
-	i/kzVCuQa9JrzN0i8mi38pJn1DfywNBjHppVRO1VADVI+DgTw6519khouTtmfSEk0Ak=
-X-Gm-Gg: ASbGncuCP0Qw4yeZ/V393nYQEGqaAci2JPpzchU7USS0mTQUYtEoNTVORoLNUGVgRAp
-	Rohm5rv/j5KdIW8gZdBE/D48jAdBMM7b93t0GAzb6HlhFSLckf/NNh4ascPBxHEKXnXcP5OP1QJ
-	so5vF5SbDXBeCxq0JJ9bwZ2hPYh7JTjqeNJoF5sYw1QQdSpkGnFDaBfF6+BSVpi3E5mfXS9LljO
-	5EGF3Koaz0NoWA3ML6+6Xvjz3MjGw1BTzkJL+z/zHJ1dIhguPfw8qmFeWRlGY0rvT75IRYhqrVI
-	FMvQhQdufZiKj7XBahJj5eedIaqxFQ8xrKWuH7oWpZDCxM0=
-X-Google-Smtp-Source: AGHT+IFtI3kd6U8CLddXUa0mNuGetBf95dpawOllDY6vAuOTB0AfKH0O2AYXaqsHK5uyxdjrX2XnNw==
-X-Received: by 2002:a05:6e02:1949:b0:3da:7176:81c3 with SMTP id e9e14a558f8ab-3db84338490mr40632875ab.22.1747401801531;
-        Fri, 16 May 2025 06:23:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747404284; x=1748009084;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NC+YoAfFScARNlAWt5LjiPnBvecoahJqpxajqfWZECE=;
+        b=gE4bKOPJDYdG+mGYIagL65wh9oNPQGc034b0h+fLTYUYVvObyyCSnKl1f5U4l2HWpI
+         RUFmLaFLnawnELN6fdbAltKfVJuWMhjCN58IkD+RCKIw6H25wbcuwG36dEOKDhN/nUC/
+         BfMKLg9fYOZ2GddKOtJLV5whnTlzxNMtdvRZYG98RiGdq6MEeJMr0Or0eIz9axAaUd6z
+         EFwUOfsSF4UyxD+gZHQedPf7HUXnUNYZlUmzTypt3kVsvCBDLkQD6QSg3GkptduEqC62
+         h8Y9FWA0YLnxXLvegdOpuMOAp2+gh9bry09xMtQJG6k4LxXduHdFeRSR9jCOqtAs/8BJ
+         ifzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzRMuSCeXCFEauTcPFP8kbl3zT3PLolEoQlCwUgemjci8WDia60T9deHNorMqiTq67Ldf9JJxMSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhQcJ10QZoVYraZ4J8oI4f99S0t7jOP0KKZvCwfErm/Z80Hzf7
+	IgxauLKBFpWrRzfT2ugp9r4tuH5uM7pT4A754fSO49pF2PUbS3yjZydxAFvYWAZCGmQ=
+X-Gm-Gg: ASbGncsIGyDxGJWnTiZ+eSTyoSUTFUhoWayfJq3xfp+FIu4RMcMYTmzT3qUDiaov6OB
+	/i8kMeHYqToAsLGQpMJWTFdDbvJ913ETE6a3kXQMZ6U4DvUh03XaFY0ddkEvnV1dho+0RSQzNP2
+	AFofmZZUTWKHrLuUPUTlAVci7f6HhiC6I24+6OqosDuEd0IMF9CB8sHNC4TCqIx1LoLRoYFz8t+
+	y++bg8t/QxCNCpjfRZF2I0h3jvxg4D2mk6eZgQOkT8WZbeirhhK/dG/qSQMRkzfogoWsAMXK3F4
+	PI4/Lz1JZu53zS9BZEKiNuOs1HMDP9q3ilCeG/zswAmyHHw=
+X-Google-Smtp-Source: AGHT+IFzbHlMije369co62TJykOZIAmQiwmQqgBANUZkq9ryyEZnRfDxRHf/xkhvadquA9wQ2iXEJw==
+X-Received: by 2002:a05:6e02:1848:b0:3d6:d838:8b93 with SMTP id e9e14a558f8ab-3db848d9c8emr35340205ab.7.1747404283773;
+        Fri, 16 May 2025 07:04:43 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3db843e0807sm4844905ab.24.2025.05.16.06.23.20
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3db8443a3a1sm4956265ab.58.2025.05.16.07.04.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 06:23:20 -0700 (PDT)
-Message-ID: <a27ba3d8-e12b-4d0a-919b-6874c2b3b3b4@kernel.dk>
-Date: Fri, 16 May 2025 07:23:20 -0600
+        Fri, 16 May 2025 07:04:43 -0700 (PDT)
+Message-ID: <c5f3ce6e-271e-43fd-9628-0a1a858a628c@kernel.dk>
+Date: Fri, 16 May 2025 08:04:42 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,59 +81,26 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing v2] register: Remove deprecated
+ io_uring_cqwait_reg_arg
+To: Haiyue Wang <haiyuewa@163.com>, io-uring@vger.kernel.org
+References: <20250516091040.32374-1-haiyuewa@163.com>
 Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.16-rc7
+In-Reply-To: <20250516091040.32374-1-haiyuewa@163.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 5/16/25 3:09 AM, Haiyue Wang wrote:
+> The opcode IORING_REGISTER_CQWAIT_REG and its argument io_uring_cqwait_reg_arg
+> have been removed by [1] and [2].
+> 
+> And a more generic opcode IORING_REGISTER_MEM_REGION has been introduced by [3]
+> since Linux 6.13.
 
-A few fixes for io_uring that should go into the 6.15 kernel release.
-This pull request contains:
-
-- Fix for a regression with highmem and mapping of regions, where the
-  coalescing code assumes any page is directly mapped.
-
-- Fix for an issue with HYBRID_IOPOLL and passthrough commands, where
-  the timer wasn't always setup correctly.
-
-- Fix for an issue with fdinfo not correctly locking around reading the
-  rings, which can be an issue if the ring is being resized at the same
-  time.
-
-Please pull!
-
-
-The following changes since commit 92835cebab120f8a5f023a26a792a2ac3f816c4f:
-
-  io_uring/sqpoll: Increase task_work submission batch size (2025-05-09 07:56:53 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.15-20250515
-
-for you to fetch changes up to d871198ee431d90f5308d53998c1ba1d5db5619a:
-
-  io_uring/fdinfo: grab ctx->uring_lock around io_uring_show_fdinfo() (2025-05-14 07:15:28 -0600)
-
-----------------------------------------------------------------
-io_uring-6.15-20250515
-
-----------------------------------------------------------------
-Jens Axboe (2):
-      io_uring/memmap: don't use page_address() on a highmem page
-      io_uring/fdinfo: grab ctx->uring_lock around io_uring_show_fdinfo()
-
-hexue (1):
-      io_uring/uring_cmd: fix hybrid polling initialization issue
-
- io_uring/fdinfo.c    | 48 +++++++++++++++++++++++++-----------------------
- io_uring/memmap.c    |  2 +-
- io_uring/uring_cmd.c |  5 +++++
- 3 files changed, 31 insertions(+), 24 deletions(-)
+It's a shame to remove this (though of course it needs to go) and not
+add the MEM_REGION replacement instead. Any interest in adding those
+parts?
 
 -- 
 Jens Axboe

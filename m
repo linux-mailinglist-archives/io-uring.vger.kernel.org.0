@@ -1,82 +1,98 @@
-Return-Path: <io-uring+bounces-8003-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8004-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B356ABA1C2
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 19:15:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CBCABA28A
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 20:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01946188AE50
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 17:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C212116DC53
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 18:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C56A31;
-	Fri, 16 May 2025 17:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8DB2E628;
+	Fri, 16 May 2025 18:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FXjRHd8o"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="P218QAM+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C601D5174
-	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 17:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1B1AAA1E
+	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 18:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747415752; cv=none; b=QmY2odTnWXHEUvuR/ffWeFWFXRX8MdTExjinT8lbC8sXx7QykgOwowuFYdRRv0KoKRnzomQkcKrQRorNp0n+JKiX+0nm4XWarbv2aaUDIqaGpSmWZRWoDDp3qvrDkXMsm93x+NBqLXWV1E2EZStf4vHjVlYhyATc3vrC6AwJCR4=
+	t=1747419048; cv=none; b=HmgrNmLeyY62nldxbGPnZNNIt+fdCY8Js9agr1TF8sYjFPYY2H3iDS8Dzlpi+ax9uDnYQ/iNCfOwEdcAXoCnaEhkvDZF5JMA+dMrusSAPqZ9Vqk1LMKYt8hYNwwCDDOTWufXa35WzUVRyo1d0QAYqtpo75nY/8fMPBtt2DtfX4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747415752; c=relaxed/simple;
-	bh=M6V1jV+g9SqfaZEcCjgdimRw9kqkqkiU4kIHIwizReM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sgLhcY2n2zwjJ5UCt3LCUFtfuBFkPl4UCO8G+Wgf2ypMsuo76VP2wKxT3DRCFJkraws5SikWQQt0hgp+8yN4t9KUVkHoj3VZToe9SgOz0m3ca3QgTLUTaEI3Leb6lLo8nIgjWMdAGGsofDLd0TXRBuLLXhYXprQHjaXoNJIWz+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FXjRHd8o; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=Wm9FQu/ttTmV7Y01VNMky5fMxig3RI+DVbM+I+XZLHQ=;
-	b=FXjRHd8o78tKrubuUXmQEjuoqeMZoyNSOYlMP5gQCN9lYivTi/DO6KG0mhT9Zl
-	fZ5StKeye8UBYGKPDKyYi2nZPiVrWQxo/0JZRrNaixYjh56Yx9OZyapIXe2AM1gg
-	c9DytrurP7Et1D7ibkNGBKNUqHriN1U65zdozog5d3bIs=
-Received: from [192.168.31.211] (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgCXJm+Vcido7cCyAw--.4336S2;
-	Sat, 17 May 2025 01:15:02 +0800 (CST)
-Message-ID: <9eec6ea3-369f-408d-8eef-6788ad1d380f@163.com>
-Date: Sat, 17 May 2025 01:15:00 +0800
+	s=arc-20240116; t=1747419048; c=relaxed/simple;
+	bh=OuKJZTjdA0CZmbVdm+dSmqPK5tAh++NDCTgR9KrKWVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jGXwbUF+QamTDlaEb6hwSVwTQfDtZXHEYjicaQxM9LVhmk/U1kNdrHVR7t4DJVII7mcPiR8l9XpmfRWEJ/yQyo2ElG4tTrQ3rb+GdT5z/HuNZhceaEK+9/9X5qNGupe/wggOH8mIa5R/S0l2tC4IMQ90N8d9ZVWH/rFAy7dwsB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=P218QAM+; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b078bb16607so163672a12.2
+        for <io-uring@vger.kernel.org>; Fri, 16 May 2025 11:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1747419045; x=1748023845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OuKJZTjdA0CZmbVdm+dSmqPK5tAh++NDCTgR9KrKWVI=;
+        b=P218QAM+80NmIzSuxX7g9hGymwX7hRX9p5p5Xhiu3C7WfLziT/hSC6Y+FkQShc+IhC
+         1D2y9jUAC51/ZimUwfYb2UhNwORIUT9Ggwc7vyGoyfBvsWneWBvcQ9XBUWi95JSNKNqo
+         ij/3GoqEmGOssB2B0ss7CfE1E5CDfvQu75X7R+kQF9nZEDhjNnxcIwwoG/X3rQ94qBqF
+         8kouReBPZ0WFbVOXti6bYKYHeoJG7tX9lMOBNLMG7MyIKEWgVJsZs1uaFJ8AB8nIcFMT
+         jQNwxGPk79FnMMOv5yNuUgWsTPHdwZScVpm+5nKYBFd9YNzFVd64P1nDXjMxWYj9dwMg
+         lppA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747419045; x=1748023845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OuKJZTjdA0CZmbVdm+dSmqPK5tAh++NDCTgR9KrKWVI=;
+        b=anBseRuzcoLDogpv/xeA5i+Uhx/4TawpDZSRm7AgFacERkurV5RF12GPvg8umCBMFO
+         maxqX/PrkwZiOZ1K3usjRTwJxequxWK9H1z7mQbKw7vH74ODqyU9jEyvkr+p1G3SzkbA
+         2ftSRl7nBgCeNu/A47bk/fKnu+bd1Pn8M8vMFShn0RjE0klq6ZMFZ56VYDgKiNP88kYP
+         BWRIVSdCNO55Dvc7Mywt//6uP7xAB/fqhBDrH6TJk2TM7nlnoFXi37FUfOMNnbegHRaC
+         YC1huFCfKMgEuvVHeO7F4Abb5HklLlaix/L06E1yuRl3E9y+izDoBVU3wFnqDZI+fmhY
+         77hw==
+X-Gm-Message-State: AOJu0YwEr4ZAxqKudR/yK/HEe3Ote3+OVqdmo5qaKWUZaFAe37ROdvyj
+	sZklRoLv/XgQ3FM8j4FJM7VuUCRcdsKhIAjVA2f6dDz/axfz4wbtxnJG6BaI/U1y18KauIceAue
+	YThPWwpRf8nhQBCLfkkkLbEHNnbtnxv7P3pLOhyXOurN/S8WBEhTQ0QE2ZA==
+X-Gm-Gg: ASbGncuzmtcBDi2eeSyYOiGQy4TqPDI3lO6LIONivP5qMJnT2fy6qoJa1ZGjgtWFd/g
+	LSTgD8Qfz18Ksp8JIrqk2csiWiqCiBFckszYwGVw602BIpQ8qapJDbRma5Jt+WFzpAxIxkTcdlt
+	XqXHvZoow7eIXoiNYMy8M+ZI7Y3ulnz4Q=
+X-Google-Smtp-Source: AGHT+IGBtkEzTI7hjZxBww+K0YS21g/GwOm25YcC8E6rgR9zXTpWMjLSqzake4kfyjQ92QQi7cZ0OklNo8EISNnewbo=
+X-Received: by 2002:a17:902:c951:b0:22e:72fe:5f8c with SMTP id
+ d9443c01a7336-231d452dd8cmr21948515ad.13.1747419045411; Fri, 16 May 2025
+ 11:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v2] register: Remove deprecated
- io_uring_cqwait_reg_arg
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20250516091040.32374-1-haiyuewa@163.com>
- <c5f3ce6e-271e-43fd-9628-0a1a858a628c@kernel.dk>
-From: Haiyue Wang <haiyuewa@163.com>
-In-Reply-To: <c5f3ce6e-271e-43fd-9628-0a1a858a628c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PygvCgCXJm+Vcido7cCyAw--.4336S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4ifHUBDUUUU
-X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiEQBPa2gna4mweQAAsR
+References: <20250516165518.429979-1-axboe@kernel.dk> <20250516165518.429979-2-axboe@kernel.dk>
+In-Reply-To: <20250516165518.429979-2-axboe@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 16 May 2025 11:10:33 -0700
+X-Gm-Features: AX0GCFuytvvk9oc47LFwcsOZfXw_6yreMCq_Ku6WeS6lYjf9MxL_ysT0VnGoOTs
+Message-ID: <CADUfDZrSbZTke3kwdgtUgOa_8hNGi7Bem5-_Ge0OUpAttaML+w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] io_uring: open code io_req_cqe_overflow()
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 16, 2025 at 9:55=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> From: Pavel Begunkov <asml.silence@gmail.com>
+>
+> A preparation patch, just open code io_req_cqe_overflow().
+>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-
-On 2025/5/16 22:04, Jens Axboe wrote:
-> On 5/16/25 3:09 AM, Haiyue Wang wrote:
->> The opcode IORING_REGISTER_CQWAIT_REG and its argument io_uring_cqwait_reg_arg
->> have been removed by [1] and [2].
->>
->> And a more generic opcode IORING_REGISTER_MEM_REGION has been introduced by [3]
->> since Linux 6.13.
-> 
-> It's a shame to remove this (though of course it needs to go) and not
-> add the MEM_REGION replacement instead. Any interest in adding those
-> parts?
-
-Try to figure out the structure relationship in v3.
-
-> 
-
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 

@@ -1,81 +1,86 @@
-Return-Path: <io-uring+bounces-8007-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8006-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD4DABA329
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 20:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BFCABA328
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 20:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4C73BAD7E
-	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 18:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB94C16951D
+	for <lists+io-uring@lfdr.de>; Fri, 16 May 2025 18:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349C427C862;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0731C27AC42;
 	Fri, 16 May 2025 18:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FXuzuWUL"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RJSIizaD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9931627A47E
-	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 18:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB198274FF9
+	for <io-uring@vger.kernel.org>; Fri, 16 May 2025 18:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747421420; cv=none; b=oWMu05svfg4iKWVTQJ6vcXm06x0AA7T3AzToMU4dtzNzd3V9YC6VZ0oeAmbj8exKG7ThhrseXnAmXJgVQicWG7J6AZr34qaOMadwEmDa6Y79efxW+tjysDMWuIgol8X/GstC1AV4HrGnIocsdomWYoQm9QwhzE+5QaqgHUtKO7g=
+	t=1747421419; cv=none; b=F5JxAQsJHEA0uxOEpXHYEa5KjU4mJLM2AVdBb1tIAbbsaidoiHox025bE9RHVt4TUeQhgg67vg8vdQkYzdJ98MNSDpbDf/JDUzUMFxb+lWPqQsAdYi+BB0yLyllCn4w01j/HN8nPl2imNBKcabfsvEvheO1IHOl+5TleHEC9JUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747421420; c=relaxed/simple;
-	bh=N//9YMoubIYw0Ap76lN5e9+z1x7/5Fr4VMNeMVJa8gA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=eGAkK1oF2K6/KuH+Nx3Kgyq+Kh4AbR9TrJrvw7E9hoVCo45u+c1oHqLSIDeDgNHn+d4rDHoLyG/32o83MypYU0UP3PsnkF1ivOx80qI4cQzMDWmfujTqVnHxsFKlmOQZMHNwLajJrocfkaq+GTDJYsWyeBiuRcgvaOMhpuZ9wNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FXuzuWUL; arc=none smtp.client-ip=209.85.166.41
+	s=arc-20240116; t=1747421419; c=relaxed/simple;
+	bh=eV+ZDvxsRGKdghYpfMk3rY0Sc72kFvnm+CCA/lgtFMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BpPD3o/jROl4B8SIfuGnigy3ESqd7ptxYT5z7Hj1zritcW+tygD78uPRug1TtSivHAiNdv+d2EDS0Uj3Be1wrH/96iqyV5wQQEpqEESeOqy7NLqkHxjkd3Je3F2GbYz0D0n9L5JgO9g3frvZ1B0k+lncMcaiuxaxdl04RBnkAiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RJSIizaD; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85e15dc801aso195848439f.2
-        for <io-uring@vger.kernel.org>; Fri, 16 May 2025 11:50:15 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3da785e3f90so12318915ab.2
+        for <io-uring@vger.kernel.org>; Fri, 16 May 2025 11:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747421414; x=1748026214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iqEQ2p27FDhJKwGXnI7veduhqr5UVc9whYftooXd4mw=;
-        b=FXuzuWULmESAPmmVrd+5vQOA+4o5ThczpafzMicI5AcU3OFJItVbah8jKsQy1Mvl2J
-         qb0izXkx/sy05ZNa1rou0heS/HBOlhep8PYxY+IXYfjRMVxugevtd8om/Gb1TerBviXg
-         7gF/BiXahPNWXFGzWRfsGg8dYP0BubOEoaoQli8DZ/mFwU6XdOsOJK9MT3jxR3Yq369H
-         zv8drIKXV0WiJqrPsd9LQHarzIBj0W0x9l6wTxuGNqiqXt9pn0tRku+xNdoMVW18f0ui
-         Nrl0yS/ZUzGmy7RMdpeKSpdp/Ul+DVO96bEXyGjiIHJmVI64KWIl/DYhTPN9U4nuUIVi
-         i8lw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747421415; x=1748026215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qxer+HPLQFWo4HOVClNFo40C9ULWGTJH+H5OO8uVAHA=;
+        b=RJSIizaD/BG0SCuQ6I1349vCxD47AS+sQTk1fYDV6kEZDX9Yqqbb/AoJlC7tktmtg6
+         iTjSwdP/fXPF/yiwnazRlkM1gX7ymBveNJ8Idc6EOYX8vAnzpaEtl3EeLEvOW+FAGFY3
+         AEom0bTlX/029g6cArS7agQIlvT4HrcssooXZ3ouPZ7J9OVQhMCb0LCHJ6/laNRdjvoY
+         DuZIRTCHFc9M5/kWSxXmSeMYgxRccXUvIcUWDRc7W8EuZw7VlhL4tF0kGEGvcFQnoyE6
+         m/X5EHp5sc0r48S3TQBzkpO/vTi9m5wsNENdbjtN7NbfGlYGbthQ66WSFTSeChdUkkFp
+         /bxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747421414; x=1748026214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iqEQ2p27FDhJKwGXnI7veduhqr5UVc9whYftooXd4mw=;
-        b=k8IuUcb1NgkWX29WvVFx57ume6We3cu+tFkEwiFiX2+kPHj4agxSLcOic7zQ+GaqVH
-         luKBHN73d9SmC3fLajmUsXtIRXpbBRowuH39z7rpGykJXEkKxu9zLk7Pc4Ex568vQRuR
-         klFZ5HxLGy5e+FNEN+b10q3hjkeMrOY66v19yCH4U0U7YskvpfwH03WRaTCfU+WWtU1z
-         ZlOn/Ktaxo4UDkBVtqcfa4AZM8dqehfy6K3gfOxYKdHpgALOGq5nXXrdHgA3R4JmKBTr
-         Pm6WpRO9ivuKWoa8bm0h86x7iC3QuI+1fjnMDcaQj4uFxmK2j4rA7LAJFFCm/8arovPL
-         prlw==
-X-Gm-Message-State: AOJu0YyDcWeR3IdqbkiF4xQwftQxQu9M4Tzhk6sjjfNPb9peOZ6Q1xXy
-	FZRuEtEckaVhg6IkwG0ZUsrxbDcEfdaz5Uw3WOA8Fbk6pizgihc9mcJXJ5BuxhjgiUrv+obVyAV
-	rOdZ6
-X-Gm-Gg: ASbGncsfJgbgb3r/xWhN3ddMSTcmY8gxSFO3GYMpqYCVCQ8BnHLPZ7WW+rQZZrJkC46
-	0KtyFQcUaNqfvfYLEeV9+YrWv9KDaDXKmhWVdCbFhbrN96Cv5NR23Cb4K/9MjshFEmuQv31Y2OD
-	3wirsAnCd1ERwtY5RoN51bqMYlSXRckjzksmK5tZTsc99HKxx51lbvkbOf3wnaZoWI6jx+d+BYe
-	byVp+5i5Rq/xKFvsdzKngILC0PKN/7sKSzpHTCSoL8C3mlh5ExmKedyLtV2z/VIycqyAeUgxBVj
-	ONbN29YlRwL7SYoud3ZZMTfEJ7uq0azofUpCV466aemwCBlRbW4luqnt
-X-Google-Smtp-Source: AGHT+IG/iB+EHmFYicAcmQ/IzzH7S0hFf0YtDXQP+JICiktYeSn1rp5eNdQ7n2P0xPB9XNtzO8GlPQ==
-X-Received: by 2002:a92:ca0d:0:b0:3d9:3a09:415e with SMTP id e9e14a558f8ab-3db84331476mr60984085ab.19.1747421413711;
-        Fri, 16 May 2025 11:50:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747421415; x=1748026215;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qxer+HPLQFWo4HOVClNFo40C9ULWGTJH+H5OO8uVAHA=;
+        b=SNLG9pWy9e696ugKvDeJX0hgyuhZLq0flY3eaWD78a5Iee+MzB4JeAlF7+mR8enTnd
+         oixYBFApeWBYePD3AwE9voy7jaggJmptusXIUY5keTUo/1jzWj715PCkNNBUSNUG4cf4
+         Pow1coszyd+rOZC1pFCp56g7CjMrXAlOHZUvPM+6qWoiGLOoVobkfPeRKPJClC5mcCbH
+         hOZDVJAEOef4iyXs8YShUOdxwxWO2C87rjC3xsg02xqFICAI9Vq4do5L8+USW6SL4BZC
+         V7vZt0JTAl39q9+Sl+601o9afe1kcvJrxLZF8TWvZjvcj+HznajQUVnqwNR0uSDzAdOc
+         /Xrw==
+X-Gm-Message-State: AOJu0YwsAjp+FKSDjUPWwNOsj/oloIioJJemSYy7/Ec46HCfJbq23/aF
+	24XZjyeD38PON63f0t43/q0dFyJdchTw1ipxX62Xf3ABUt2khNq66rCbbCB3DL7cXnNFwgvlX4X
+	zyw7H
+X-Gm-Gg: ASbGnctpwL0UBD3zSumPPgWAwtLNsJoPKRIeIjB5+o8L+QVP5hgrO5pIA+Tsgd862vt
+	N3d31afpxH/3tFo9gqJXxoOtG/Gdi2enDXkb2SCnRdW0W4ZmHT2Br7y1p2sZ0QBgUVSkaQTfMK2
+	wBXZkDEp+wHGpdf1IxuaMrHrAfz/nQrxAFTiEOfEM9hsoqHKjoQ9gBzN6SmzRZuHHHlU0Wc4JcX
+	iHSQYGzXkHSo7R7UUDkMVq5qLKsUDyIYBNYu01KI+jW5PXzjWjJ7stXWrP6DjWLIFvySWpOLM2C
+	GaLa2jqAwKqFysCYhHhqfS93dotrWdF/bDP5zSA6Mm0FgJ9BM/MfsAzm
+X-Google-Smtp-Source: AGHT+IE1KeF59gml3eR7MZDdhbHiLnYNxaBdd0ao7B22Pc4X3/KQ0ZqEnC+OVfrZ/32FA5eReuaNMw==
+X-Received: by 2002:a05:6e02:3f11:b0:3d9:3e8e:60da with SMTP id e9e14a558f8ab-3db857a6ec4mr36664245ab.17.1747421415593;
+        Fri, 16 May 2025 11:50:15 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
         by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3db8443ae8dsm6162115ab.49.2025.05.16.11.50.13
-        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 16 May 2025 11:50:13 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
-Subject: [PATCHSET 0/2] io_uring fdinfo cleanups
-Date: Fri, 16 May 2025 12:48:45 -0600
-Message-ID: <20250516185010.443874-1-axboe@kernel.dk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/2] io_uring/fdinfo: only compile if CONFIG_PROC_FS is set
+Date: Fri, 16 May 2025 12:48:46 -0600
+Message-ID: <20250516185010.443874-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250516185010.443874-1-axboe@kernel.dk>
+References: <20250516185010.443874-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -84,22 +89,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Rather than wrap fdinfo.c in one big if, handle it on the Makefile
+side instead. io_uring.c already conditionally sets fops->fdinfo()
+anyway.
 
-Just two minor patches in here, cleaning up the fdinfo parts a little
-bit:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/Makefile | 3 ++-
+ io_uring/fdinfo.c | 2 --
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-1) Only compile fdinfo.c if CONFIG_PROC_FS is set, rather than wrap all
-   of fdinfo.c in a if/endif section.
-
-2) Get rid of dumping credentials in fdinfo. I'm not at all convinced
-   this is either useful or necessary, so get rid of it.
-
- io_uring/Makefile |  3 ++-
- io_uring/fdinfo.c | 40 ----------------------------------------
- 2 files changed, 2 insertions(+), 41 deletions(-)
-
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index 11a739927a62..d97c6b51d584 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -11,7 +11,7 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o opdef.o kbuf.o rsrc.o notif.o \
+ 					eventfd.o uring_cmd.o openclose.o \
+ 					sqpoll.o xattr.o nop.o fs.o splice.o \
+ 					sync.o msg_ring.o advise.o openclose.o \
+-					statx.o timeout.o fdinfo.o cancel.o \
++					statx.o timeout.o cancel.o \
+ 					waitid.o register.o truncate.o \
+ 					memmap.o alloc_cache.o
+ obj-$(CONFIG_IO_URING_ZCRX)	+= zcrx.o
+@@ -20,3 +20,4 @@ obj-$(CONFIG_FUTEX)		+= futex.o
+ obj-$(CONFIG_EPOLL)		+= epoll.o
+ obj-$(CONFIG_NET_RX_BUSY_POLL)	+= napi.o
+ obj-$(CONFIG_NET) += net.o cmd_net.o
++obj-$(CONFIG_PROC_FS) += fdinfo.o
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index e0d6a59a89fa..b83296eee5f8 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -15,7 +15,6 @@
+ #include "cancel.h"
+ #include "rsrc.h"
+ 
+-#ifdef CONFIG_PROC_FS
+ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+ 		const struct cred *cred)
+ {
+@@ -264,4 +263,3 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+ 		mutex_unlock(&ctx->uring_lock);
+ 	}
+ }
+-#endif
 -- 
-Jens Axboe
+2.49.0
 
 

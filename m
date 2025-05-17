@@ -1,85 +1,85 @@
-Return-Path: <io-uring+bounces-8028-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8029-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD62EABA9E6
-	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 13:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0420ABA9E7
+	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 13:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439814A4D72
-	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 11:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39E99E23AD
+	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 11:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6251FBEB0;
-	Sat, 17 May 2025 11:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2301F4C9F;
+	Sat, 17 May 2025 11:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AheC/m49"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d53wucTy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8687F1F4C9F
-	for <io-uring@vger.kernel.org>; Sat, 17 May 2025 11:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BDD1F5425
+	for <io-uring@vger.kernel.org>; Sat, 17 May 2025 11:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747482591; cv=none; b=AUi13XEI0UOLuQa1zakCCq+xsahE1ubHfvEfJB/pSI01HEQ9FnMJivE1rXJsGonXyo2cll1+HHnFoEEEEqMwCU+wpO8A2Q/0wKPG5Hn51JJekiGrlUCUNY4j81bSEl5DT/4U2AkKWajS9IqOVjhVv7WbeAwEmCRpiNdwAsh9gj0=
+	t=1747482592; cv=none; b=nRZMFrppZy+zmarPkm5+6uZBSOuLyIuSMmNSYhDAWs/OLUvr1lCdRgOLeeTlQt6B4BG19OIFbvGDeSKSjAXKvwRCbeDHyw+E53p/mb3GFB+Ml2FFV9fC0GURz/jwdDv+iQg9Y7+Mt4yDFp0GZTAeFRbUZt4sL5zVH1RWhzZbsU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747482591; c=relaxed/simple;
-	bh=KAA9/pCFgJfB5rDBaEeDoITmF+5yNJS16EYHfwsswP0=;
+	s=arc-20240116; t=1747482592; c=relaxed/simple;
+	bh=LJE9R47X4Aq5cfC4sSmQVP/3gfoCRVdrXOSvm48axLI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qc5knH4IhaHF7yK+rlOyui0Dp1lnJFaO9nsN38uM77x4lRHn4E/6vPDh+fm+iznKbHAe5jIh7117anPpS5WFts5Ky0rraHiCHPoYUr0H+a5eTQlNZOUjXNTwVA8aE9Q4ZJSM0WQrBP+m6WJ750zkR9IOwoHDsN9J1v8iu1VIc+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AheC/m49; arc=none smtp.client-ip=209.85.166.42
+	 MIME-Version; b=GroI27HDDNkPMA1ksLK+M1//Iore2th2NRq05ttIHh2wVCNc7Qozk3mf9Hjx0OY9C+y+ZEE8Uw+IHsHOZ4IOErZqK34KRFRdTVVCkiHL7pVg5xsW4Wb3570IQ7grV4BrzaQa5ww0U9Qu4Uqot7APaQey9IBNY+Pct3ypW2hOpKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d53wucTy; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-86135ad7b4cso135590739f.1
-        for <io-uring@vger.kernel.org>; Sat, 17 May 2025 04:49:49 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3dc636c80d1so543275ab.1
+        for <io-uring@vger.kernel.org>; Sat, 17 May 2025 04:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747482588; x=1748087388; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747482589; x=1748087389; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OT5NRwBAa7z+dA+SItfqRLrgvLPkDvp36tWJQ392TqI=;
-        b=AheC/m49E7UxT8T0W5P59z0ZAC7keht6cdeHnJEGsBYyT9vWtqBVJoa4gvhAJ4q1B2
-         nzjkgNNUjAxEpP4Go0eBHE0opaZEqHxB8zig8yzGnRX7B1eopNASaIuAtsKkIQ/EIQqV
-         Gdk8pCF/yDYGjSXDxy3SXaCAYFHMEg0MySWdNA0gTKHfreF72viktZM7VS3ss1KoGGR0
-         vMoBURh0PfmRV7unyiF6plJQ3YYWnJUISaCzqzk7TyM8C5LIw2/ookqpQVCucQ0G7lse
-         5IZj2Z10lNdoNBH2VhUQQVbLz6JRQVh0QFIN93wbz/qqI2G7tlzUeWAYdKif21ZADalz
-         VEPQ==
+        bh=GFS9mzuh1BPwBjO1OFeSgl547C44qXbEsPHn6qeYufI=;
+        b=d53wucTy2exPv3rWcNyxjM7ut50G4W02/VYV1NjzCZEYKseKWLFDPIod0utFOHiB9b
+         t8L2ybLKxHprCfXVAojJZb4SjtgDjM2vJ7oYWzfluD2erFmCPgmFA8Ditmi2rK4gC3L8
+         L75C4QlSHskZazVyVVGbwRTnD1uT0tIT3g3mEqPWdLExO35HVPhMhMi8BTJa+fLHk+mF
+         Myuz903csHR686uB8Q+5xDlmNQJ/Rl5Ze2XryMTa8rEW5OE4bqc2v73SIBZ0YFKpdR7v
+         NRrxM2fh4YyrepOOvAwqqeX+4f4+RdMoBDzP+zig/5UseSq09G72IIhupRYyn/9hy2TS
+         R+rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747482588; x=1748087388;
+        d=1e100.net; s=20230601; t=1747482589; x=1748087389;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OT5NRwBAa7z+dA+SItfqRLrgvLPkDvp36tWJQ392TqI=;
-        b=HcCEM61dYbGovIE2SXEo6wIOSV0lRMwTs87/5kscbh4l3vQK9hI4BHZxtC8mz/mQoP
-         CllfL3ZaYPZMoZlsgEPEwNyzJTAaRCFdja1q7UfWPROc3m0DdmOSSlz6efd2ViMutUF9
-         zz8dJIxHwQfcy2cUl/adtDKsfowRvFAghI5a3Zm3qu3isbA7aObWeO7munzQXkvw3ltl
-         BqKZSdPmNzyYivaoB+270YMAXUFIv76XKEEaTaGAkEABiYKAMA7Ub7WvgZDYcpJzPZ6+
-         1aQt6Mx0Rmu8U2r55swnUoNZgDLGcYelAzO95XZuXw5Udo7q58y6C2iNpztHZy6ZepkB
-         T09w==
-X-Gm-Message-State: AOJu0YwJo5sWxKq3o3ZbfBYi3tw6wpzv6MeLqrnP/oUMzTau+omJAefs
-	sBQxJ6RvtjGs+slw0ci8PMkwKxgLfuWfAcdXJ4v4YYVKg5GiG6kwVccyGAd/k2WB0J8+i6CdzeU
-	tKISj
-X-Gm-Gg: ASbGnctzQGD+T/40cEmMi8Vr/8Lxe+vtRtSmTp54/v4uWQbpCRsi3WCZDOCrYiUaDrU
-	rdKbYTmzppCDlefFIUMXWfy0Zeh36FBo/NUWUbQpsxE6KGIKysHpwUvGXx05IjRCBi0QwxOh++8
-	5NEfMniv54KmofFc18rReR1UvP+F57lysiq1fEydvadCi+1l3Wuxwiupl7j7nbrZa6vYs9+n4Cr
-	kOjEqF8nXsiXoHebziG09vHfNUct6xbUPVVPdxYlId+yi2PEVSEqkQuwyvCzj7Yh8j4O3IqaPQO
-	Q6O5spL/f4+zavk92yJ9p9TpN3PaUFB85sKI4uoCtVknsJCrjX70W/7F
-X-Google-Smtp-Source: AGHT+IFmLwKYG5O1hggsj7cIzHqkCe9BZSXQY26js35tFmI0Ljn/FT4gtCsjOUoXOnMTnSfGnR9ACg==
-X-Received: by 2002:a5d:8181:0:b0:86a:24a7:cecb with SMTP id ca18e2360f4ac-86a24a7d12dmr680277439f.4.1747482588094;
-        Sat, 17 May 2025 04:49:48 -0700 (PDT)
+        bh=GFS9mzuh1BPwBjO1OFeSgl547C44qXbEsPHn6qeYufI=;
+        b=vJGzD+XfPxs3v3l1T9OQ7JKgycRtqAqS0ndUBT9ZHb1A/0JXio+xCNOLsBRuKt+CVy
+         TkZ0QD+kPbmJT4Jn1tyK9TnZrrfDlDHRCPapXO3KRjagonQ1MzU3bI44K+bbbAVnXAjw
+         7PfPFnpLY4TxIGM2jcleEEUtokuGoovd3K8mwbnsiY+0CGuhxCRW+6SrpPWhZURFAW+u
+         69G9nDWkInYLyNbkq8lwnMC+ySmmhFQpHuoGdehy+eQqALk1D5Mg8cbP3fxUgTWaN4rS
+         0M3ei4CU33bi7IerODRRewScZWRty3lLQhyWVwiOrQ1CEjcLMj3Z+gHmFPNU0DJGLvL+
+         CjLw==
+X-Gm-Message-State: AOJu0YylsTb6zFruJKmUKJqA7I0IooYwqFzFMELA6rNZeTJXIIwNqzen
+	ieEvBXupsoLxDa789/fSzXr4W9eJqIq2HE1o8K7io/fv7Fen3w3qgH6zKfu3yjlLGoebkpGhxt5
+	JpxEf
+X-Gm-Gg: ASbGnctsGbQ/Lkg1d4yYzP5odOSxJTtIIph69718V5rxTvwJ40aSfeyPWkHZkRU/PGw
+	jWOnxvCsOYK60agV4B2iqmpzaTSavoAsDEwDUkP4PUYUfu4flZr84odtFgK0/oP2QDl6VZGIs7H
+	rVOUlmg/qoDT/pe9kcH5Ug6Ux+eeQYJsoFkanlGJ7bIncEO9JiC0S6scqUV8rQwIGv/R44Xt4ZZ
+	aYaS+iuwG5+udWue9NKEh/j0KiJRox/gFdrKrpiZFQBAI5TVJm0wN88sS0k8GDBbBdx/X7vnSp9
+	YG1IVlz3wG1lZwLsbFqUjjInDUe+VuwCxHpDj+SxsTwh+djPeB5ggi1X
+X-Google-Smtp-Source: AGHT+IEnK6ovOT39P04kv4OQEhSiOHR5tCZ3/QXvYIgqKwU6QOAra/EFwa/OyACaugrFwcGUrF/glg==
+X-Received: by 2002:a05:6e02:2407:b0:3d6:cd54:ba53 with SMTP id e9e14a558f8ab-3db857c0338mr51384685ab.22.1747482589446;
+        Sat, 17 May 2025 04:49:49 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc3b1a8bsm874354173.47.2025.05.17.04.49.46
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc3b1a8bsm874354173.47.2025.05.17.04.49.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 May 2025 04:49:47 -0700 (PDT)
+        Sat, 17 May 2025 04:49:48 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	csander@purestorage.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/5] io_uring: pass in struct io_big_cqe to io_alloc_ocqe()
-Date: Sat, 17 May 2025 05:42:14 -0600
-Message-ID: <20250517114938.533378-5-axboe@kernel.dk>
+Subject: [PATCH 5/5] io_uring: add new helpers for posting overflows
+Date: Sat, 17 May 2025 05:42:15 -0600
+Message-ID: <20250517114938.533378-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250517114938.533378-1-axboe@kernel.dk>
 References: <20250517114938.533378-1-axboe@kernel.dk>
@@ -91,106 +91,112 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than pass extra1/extra2 separately, just pass in the (now) named
-io_big_cqe struct instead. The callers that don't use/support CQE32 will
-now just pass a single NULL, rather than two seperate mystery zero
-values.
+Add two helpers, one for posting overflows for lockless_cq rings, and
+one for non-lockless_cq rings. The former can allocate sanely with
+GFP_KERNEL, but needs to grab the completion lock for posting, while the
+latter must do non-sleeping allocs as it already holds the completion
+lock.
 
-Move the clearing of the big_cqe elements into io_alloc_ocqe() as well,
-so it can get moved out of the generic code.
+While at it, mark the overflow handling functions as __cold as well, as
+they should not generally be called during normal operations of the
+ring.
 
 Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/io_uring_types.h |  2 +-
- io_uring/io_uring.c            | 22 +++++++++++-----------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ io_uring/io_uring.c | 50 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 00dbd7cd0e7d..2922635986f5 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -710,7 +710,7 @@ struct io_kiocb {
- 	const struct cred		*creds;
- 	struct io_wq_work		work;
- 
--	struct {
-+	struct io_big_cqe {
- 		u64			extra1;
- 		u64			extra2;
- 	} big_cqe;
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 1cf9d68b4964..4081ffd890af 100644
+index 4081ffd890af..3c4a9561941f 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -724,8 +724,8 @@ static bool io_cqring_add_overflow(struct io_ring_ctx *ctx,
- }
- 
- static struct io_overflow_cqe *io_alloc_ocqe(struct io_ring_ctx *ctx,
--					     struct io_cqe *cqe, u64 extra1,
--					     u64 extra2, gfp_t gfp)
-+					     struct io_cqe *cqe,
-+					     struct io_big_cqe *big_cqe, gfp_t gfp)
- {
- 	struct io_overflow_cqe *ocqe;
- 	size_t ocq_size = sizeof(struct io_overflow_cqe);
-@@ -734,17 +734,19 @@ static struct io_overflow_cqe *io_alloc_ocqe(struct io_ring_ctx *ctx,
- 	if (is_cqe32)
- 		ocq_size += sizeof(struct io_uring_cqe);
- 
--	ocqe = kmalloc(ocq_size, gfp | __GFP_ACCOUNT);
-+	ocqe = kzalloc(ocq_size, gfp | __GFP_ACCOUNT);
- 	trace_io_uring_cqe_overflow(ctx, cqe->user_data, cqe->res, cqe->flags, ocqe);
- 	if (ocqe) {
- 		ocqe->cqe.user_data = cqe->user_data;
- 		ocqe->cqe.res = cqe->res;
- 		ocqe->cqe.flags = cqe->flags;
--		if (is_cqe32) {
--			ocqe->cqe.big_cqe[0] = extra1;
--			ocqe->cqe.big_cqe[1] = extra2;
-+		if (is_cqe32 && big_cqe) {
-+			ocqe->cqe.big_cqe[0] = big_cqe->extra1;
-+			ocqe->cqe.big_cqe[1] = big_cqe->extra2;
- 		}
+@@ -697,8 +697,8 @@ static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
  	}
-+	if (big_cqe)
-+		big_cqe->extra1 = big_cqe->extra2 = 0;
- 	return ocqe;
  }
  
-@@ -821,7 +823,7 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
- 		struct io_overflow_cqe *ocqe;
+-static bool io_cqring_add_overflow(struct io_ring_ctx *ctx,
+-				   struct io_overflow_cqe *ocqe)
++static __cold bool io_cqring_add_overflow(struct io_ring_ctx *ctx,
++					  struct io_overflow_cqe *ocqe)
+ {
+ 	lockdep_assert_held(&ctx->completion_lock);
+ 
+@@ -813,6 +813,27 @@ static inline struct io_cqe io_init_cqe(u64 user_data, s32 res, u32 cflags)
+ 	return (struct io_cqe) { .user_data = user_data, .res = res, .flags = cflags };
+ }
+ 
++static __cold void io_cqe_overflow(struct io_ring_ctx *ctx, struct io_cqe *cqe,
++			           struct io_big_cqe *big_cqe)
++{
++	struct io_overflow_cqe *ocqe;
++
++	ocqe = io_alloc_ocqe(ctx, cqe, big_cqe, GFP_KERNEL);
++	spin_lock(&ctx->completion_lock);
++	io_cqring_add_overflow(ctx, ocqe);
++	spin_unlock(&ctx->completion_lock);
++}
++
++static __cold bool io_cqe_overflow_locked(struct io_ring_ctx *ctx,
++					  struct io_cqe *cqe,
++					  struct io_big_cqe *big_cqe)
++{
++	struct io_overflow_cqe *ocqe;
++
++	ocqe = io_alloc_ocqe(ctx, cqe, big_cqe, GFP_ATOMIC);
++	return io_cqring_add_overflow(ctx, ocqe);
++}
++
+ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+ {
+ 	bool filled;
+@@ -820,11 +841,9 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+ 	io_cq_lock(ctx);
+ 	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
+ 	if (unlikely(!filled)) {
+-		struct io_overflow_cqe *ocqe;
  		struct io_cqe cqe = io_init_cqe(user_data, res, cflags);
  
--		ocqe = io_alloc_ocqe(ctx, &cqe, 0, 0, GFP_ATOMIC);
-+		ocqe = io_alloc_ocqe(ctx, &cqe, NULL, GFP_ATOMIC);
- 		filled = io_cqring_add_overflow(ctx, ocqe);
+-		ocqe = io_alloc_ocqe(ctx, &cqe, NULL, GFP_ATOMIC);
+-		filled = io_cqring_add_overflow(ctx, ocqe);
++		filled = io_cqe_overflow_locked(ctx, &cqe, NULL);
  	}
  	io_cq_unlock_post(ctx);
-@@ -841,7 +843,7 @@ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
- 		struct io_overflow_cqe *ocqe;
+ 	return filled;
+@@ -840,13 +859,9 @@ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+ 	lockdep_assert(ctx->lockless_cq);
+ 
+ 	if (!io_fill_cqe_aux(ctx, user_data, res, cflags)) {
+-		struct io_overflow_cqe *ocqe;
  		struct io_cqe cqe = io_init_cqe(user_data, res, cflags);
  
--		ocqe = io_alloc_ocqe(ctx, &cqe, 0, 0, GFP_KERNEL);
-+		ocqe = io_alloc_ocqe(ctx, &cqe, NULL, GFP_KERNEL);
- 		spin_lock(&ctx->completion_lock);
- 		io_cqring_add_overflow(ctx, ocqe);
- 		spin_unlock(&ctx->completion_lock);
-@@ -1451,8 +1453,7 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 			gfp_t gfp = ctx->lockless_cq ? GFP_KERNEL : GFP_ATOMIC;
- 			struct io_overflow_cqe *ocqe;
- 
--			ocqe = io_alloc_ocqe(ctx, &req->cqe, req->big_cqe.extra1,
--					     req->big_cqe.extra2, gfp);
-+			ocqe = io_alloc_ocqe(ctx, &req->cqe, &req->big_cqe, gfp);
- 			if (ctx->lockless_cq) {
- 				spin_lock(&ctx->completion_lock);
- 				io_cqring_add_overflow(ctx, ocqe);
-@@ -1460,7 +1461,6 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 			} else {
- 				io_cqring_add_overflow(ctx, ocqe);
- 			}
--			memset(&req->big_cqe, 0, sizeof(req->big_cqe));
+-		ocqe = io_alloc_ocqe(ctx, &cqe, NULL, GFP_KERNEL);
+-		spin_lock(&ctx->completion_lock);
+-		io_cqring_add_overflow(ctx, ocqe);
+-		spin_unlock(&ctx->completion_lock);
++		io_cqe_overflow(ctx, &cqe, NULL);
+ 	}
+ 	ctx->submit_state.cq_flush = true;
+ }
+@@ -1450,17 +1465,10 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 		 */
+ 		if (!(req->flags & (REQ_F_CQE_SKIP | REQ_F_REISSUE)) &&
+ 		    unlikely(!io_fill_cqe_req(ctx, req))) {
+-			gfp_t gfp = ctx->lockless_cq ? GFP_KERNEL : GFP_ATOMIC;
+-			struct io_overflow_cqe *ocqe;
+-
+-			ocqe = io_alloc_ocqe(ctx, &req->cqe, &req->big_cqe, gfp);
+-			if (ctx->lockless_cq) {
+-				spin_lock(&ctx->completion_lock);
+-				io_cqring_add_overflow(ctx, ocqe);
+-				spin_unlock(&ctx->completion_lock);
+-			} else {
+-				io_cqring_add_overflow(ctx, ocqe);
+-			}
++			if (ctx->lockless_cq)
++				io_cqe_overflow(ctx, &req->cqe, &req->big_cqe);
++			else
++				io_cqe_overflow_locked(ctx, &req->cqe, &req->big_cqe);
  		}
  	}
  	__io_cq_unlock_post(ctx);

@@ -1,93 +1,98 @@
-Return-Path: <io-uring+bounces-8042-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8043-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F6CABAAC0
-	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 16:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B8BABACD7
+	for <lists+io-uring@lfdr.de>; Sun, 18 May 2025 01:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC703A48BB
-	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 14:36:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6271898F8E
+	for <lists+io-uring@lfdr.de>; Sat, 17 May 2025 23:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4267C1E519;
-	Sat, 17 May 2025 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C4D1BEF7D;
+	Sat, 17 May 2025 23:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iA9HDM00"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="EqR5CFGN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF31E3DF4
-	for <io-uring@vger.kernel.org>; Sat, 17 May 2025 14:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0574F1B85CC
+	for <io-uring@vger.kernel.org>; Sat, 17 May 2025 23:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747492607; cv=none; b=QivHJZb6+YnTre+3PfElCl2sxJVM3u2pDdMmYHQAZUhZnrQUteyLg1C5QjmsLrXkxmcLUyEhlitAGlrlZf7HLjI4ATe5UZ3TTbAAbznWaPPEOJKEGfjx2vqJ4Zh86pnqPW23kiKlprm5IQD1aAJOzdTD7QcNP8b5hQJgAA4HUNk=
+	t=1747524537; cv=none; b=Nr8ThvYESp/yQ6kqGDnhGgUaY8sfR/yJwj3+G9b/BeH/etLI6PH+xg18CIQ7ZfkxHWG7vm4BIP7aE/MxaHvexsOFiXrV50u0+jQjarDxBMqet8N9gKsRdUh0R75o3eswJ5WCnm4CsTfPb65Q7EOlsRLs/6fsGoQzBjcxL/kEEYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747492607; c=relaxed/simple;
-	bh=TNnCWZdlQEp+GIqo9nb5nDXEZe/tCO9hV4e3k7NdwDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UKIJYPduCc49o1MZFRg668BVxkvfOZ5IEYacphbTNnRtZH/cQwBT83qQMu3Ml4lNmZVaEzK9QMTSaMrViAGdFVB9m2849H9zuLSmcKqeyEKNq6BNRLJryXO69iTW6yryxNzgKJIQhSdHDkXugaGRkaS+RkqgmShFZ5AwbAWGjbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iA9HDM00; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=I+uruZI8GJkL4owb21/kMJIkKUy8+DCUZ1JjlMfDAl0=;
-	b=iA9HDM00nOc3ikf9CdwlqpsAmhheaLQ9+8K1pTWwGHtbK7ZEU+k531SMrP5feu
-	VSaPNuqv2sSGbYlX56dC07D+e9me8i/vX1YwYGoAiAqzId81KSUm5G35hnNjoXJm
-	Nx3KzbCLg7tqRek8Al+TeZZ1oheIHf+aNo8PBt3BL8gDA=
-Received: from [192.168.31.211] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wC36o7unihojLkxCA--.37997S2;
-	Sat, 17 May 2025 22:36:31 +0800 (CST)
-Message-ID: <bf2520b3-c704-45aa-a2d5-afca575d5fe6@163.com>
-Date: Sat, 17 May 2025 22:36:29 +0800
+	s=arc-20240116; t=1747524537; c=relaxed/simple;
+	bh=7aogNg/azqstKXt6vbif/vRc3yaPdwvSjADi+vGQj9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y1RXHfzYJnaI/KprULlSRaRxhvMp9CaZn7mqLGqgXVdL+XIn6ZDB4m8MSeRbSrDxqp4VDKk00CN00bnr6lYsqXk60YlC/W3E3rF/582+93ACFZiTkhOSybQRXi7F+4foFdz3DIuJfmUVtKn4t7TQtC8oeeR03K5xtKNOA1EYhLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=EqR5CFGN; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-30eccc61f96so98384a91.2
+        for <io-uring@vger.kernel.org>; Sat, 17 May 2025 16:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1747524534; x=1748129334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7aogNg/azqstKXt6vbif/vRc3yaPdwvSjADi+vGQj9Y=;
+        b=EqR5CFGNhyAIXlrpxTAuizTl6yqvSiLH8a3ao7/KZ83WqfAAnv2eNv1JBO5x9FkTLe
+         BRaNCiCmKJJMNtBGdvCNSG7TtYEtMQAYwrqOW+H7q3OtXcWowAwTVU2GBOx2QmJNczsU
+         yRhPTF9JHKIbz42iWwtJPAyKpKcNIKciefympScFBYb4YJGibzZ1L7lm8y/3uUDa/ZAI
+         Q93VchC+DcYKUMnPxwteISdXQ+3+Dpd0w/p9p8N9+jp4+HqEJTI4xVYqRYJtqSTooRMg
+         4ol5VKpj4yu0UphU8JvkL7V2BJrmRD1qmoV3q/B5c2Kii6hPvJJfvQWsoIqd2B82Tc/q
+         1Hyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747524534; x=1748129334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7aogNg/azqstKXt6vbif/vRc3yaPdwvSjADi+vGQj9Y=;
+        b=ieCZ2mDVTWhYMTa+vMHvE9xxDUL7Rzo4TzKImuqwr1/Wn163XeULfEHp0dfSP4Sary
+         Sb56/eROAV/rXXT3aGf2hXvKUxWLryowZOroW9XPBTatyrdXbvTFlc8WgqF9mS/xsrGt
+         xX7mBGrbkLDwJi0dkPCC3Q5dAlWvoAWJxfbPbr6DsWwg3FpxpPtAP3df2GMy3v0Xa9UU
+         XrzWlyg/qxJmQHqVsOxp+T5ntMLA0sFagj4xcH5ZbCXF41sIuwRWqHy6XWTy8VTDFQS4
+         Ad5xfxq52I+XdifbxvpqUgWPX4M2Lsi83LIJwkkuXEN9V4/Pd8b14PYbsrmpYOy1pJlx
+         LBxQ==
+X-Gm-Message-State: AOJu0YyMGG2kTsm/0EC/tkaNyRpZhceJ1ESgK6rx3VDewiWHJWLIMahD
+	BVMDpLWnodwY6Gwh87CsCdLSpPnRzTj3fEfSDANnUQV6ktAo6+Q6B3zX7UFK+RTWLS7w2jcowJ0
+	QtG3rCZvLf0NES5YkN6GIsvyQpGBTekoOTEhrOptDMGaACbzKjphiamORLw==
+X-Gm-Gg: ASbGncvqjRbdtpmodEClb1bv5RcFPEknJM9VPLshiDdYh6z/D3rvyUIGBrJ9BIbel+O
+	NuAavDvPIJD0X3y0DEAaiYW6AY0DWk3usdjrVSy/aM0TP1AXipp2G1+AcAGQBxm3/j7UZN+ZNru
+	N1Vd4GXRC/x8G/BtYfYt/rcWepU9Hg3bY=
+X-Google-Smtp-Source: AGHT+IH5mMCCS3Y/onqzjY2g3rraZ2Fvwo7ETQ73eIGxilaskIxPUDtF+/1S84H1ZcPweAG/piSfuYtDBp9cVnT/qY8=
+X-Received: by 2002:a17:902:ccc1:b0:22d:e53d:efb7 with SMTP id
+ d9443c01a7336-231d43a65dcmr44861315ad.4.1747524534200; Sat, 17 May 2025
+ 16:28:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v1] register: Remove old API
- io_uring_register_wait_reg
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20250517140725.24052-1-haiyuewa@163.com>
- <80d92472-402b-407c-8e39-ce39b8ef46ed@kernel.dk>
- <e6efc1d8-f317-4475-b33e-0027d4c4d140@163.com>
- <1c9d0a4e-d615-4a12-b2e1-cb3bb6030e77@kernel.dk>
-From: Haiyue Wang <haiyuewa@163.com>
-In-Reply-To: <1c9d0a4e-d615-4a12-b2e1-cb3bb6030e77@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wC36o7unihojLkxCA--.37997S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw47urW7WrW8Cr15Ar1xGrg_yoW3Zwb_Xr
-	Wqkwn3C3yUKas7t3Z8JFsYyrWvqwn8Cr43CFyUKryfAwnxt345WF1kJF1vg34UX3WY9Fna
-	kFs0vF45AFWjvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRBOJYtUUUUU==
-X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiShVQa2gomddxeQAAsi
+References: <20250517114938.533378-1-axboe@kernel.dk> <20250517114938.533378-4-axboe@kernel.dk>
+In-Reply-To: <20250517114938.533378-4-axboe@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sat, 17 May 2025 16:28:42 -0700
+X-Gm-Features: AX0GCFsPddHMa5-bYekCjL4SiPfqFJSvAIxNX746wlCr6OQnlnVH2rm4bMnoWeg
+Message-ID: <CADUfDZqLYC5cLFU2uBsRQzqRZgXL_MnS7dOmmu7wNKF3-cfxJQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] io_uring: make io_alloc_ocqe() take a struct io_cqe pointer
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, May 17, 2025 at 4:49=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> The number of arguments to io_alloc_ocqe() is a bit unwieldy. Make it
+> take a struct io_cqe pointer rather than three separate CQE args. One
+> path already has that readily available, add an io_init_cqe() helper for
+> the remaining two.
+>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-
-On 2025/5/17 22:33, Jens Axboe wrote:
-> On 5/17/25 8:31 AM, Haiyue Wang wrote:
->>
->>
->> On 2025/5/17 22:20, Jens Axboe wrote:
->>> On 5/17/25 8:07 AM, Haiyue Wang wrote:
->>>> The commit b38747291d50 ("queue: break reg wait setup") just left this
->>>> API definition with always "-EINVAL" result for building test.
->>>>
->>>> And new API 'io_uring_submit_and_wait_reg' has been implemented.
->>>
->>> You can't just remove symbols from a previously released
->>> version of the library...
->>
->> Cna only remove during the development cycle ?
-> 
-> Once a symbol is in a released version, it can't go away or you'd
-> break both compile and runtime use of it. The only symbols that can get
-> modified/removed are the ones that haven't been released yet, which
-> right now would be the 2.10 symbols.
-Oh, got it, thanks.
-> 
-
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 

@@ -1,96 +1,82 @@
-Return-Path: <io-uring+bounces-8079-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8080-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395DAAC0F62
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 17:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BEAAC0F79
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 17:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22B14A4363
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 15:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC0A4E1414
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 15:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8A528D83D;
-	Thu, 22 May 2025 15:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA45E28FAB5;
+	Thu, 22 May 2025 15:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="UZjVpM9c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/60D1fH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f99.google.com (mail-ot1-f99.google.com [209.85.210.99])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B94728C865
-	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 15:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139A928FAB4
+	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 15:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926349; cv=none; b=ZoY5xcgn6TzRqHHZLa3akEs2PtcfLEpahqdfH2UQnT5lM1sCmfy9DwchWJ9VIvItxoQPzYGD08x4EPbiXMyFwkrZGp2BDFdCIadcY6nu3SGQ6Og0mKNUoumfuHEjMFyNPzKBLDPY727/77APZ/v/9746B4Uiw9rmQuhhmzhDUdU=
+	t=1747926550; cv=none; b=Vh/xANfuRBhrn1UDrGzzCQlANYXwGw0wUTqCp2MY/iaEBGchPYGIow67XDpEfUEAhLTAbvX1dqNXv7pYbpdtOPUwmJLwex2HS1sNFnEGzkwCqwAiVoQIMEOu5N5so5RjK2O43is6DOGAWCiEg9rXR6nBsSgYZZPFsRhSVAMcrdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926349; c=relaxed/simple;
-	bh=7H2/E89fciRxCRq+D4loQo9VPhae2DqqRu/RRY5fbaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YjaatowgQldAiV4lyeiEYR3+HwOzbKsz/PaSMmdZWt5+qiee+ptMqz6mgq9ifRVsA33/thueBDn8U0XqkokhAY/90ZFlDAU7RBkp4+1o+eq0Y4izyf/+cIPRoi3IRinP7rPQPfryYCPRbjV6BjZkQDR57ZldebM/h5nVZWRCivI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=UZjVpM9c; arc=none smtp.client-ip=209.85.210.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-ot1-f99.google.com with SMTP id 46e09a7af769-72c73b2558eso906547a34.3
-        for <io-uring@vger.kernel.org>; Thu, 22 May 2025 08:05:46 -0700 (PDT)
+	s=arc-20240116; t=1747926550; c=relaxed/simple;
+	bh=WznFwBeUQZADdPkpKI4GrzYIdw/FtjPOShVX4OOZNz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D7azFUbtbGyUvrl4b8QeRP9zer0jZPc/PL0BzJ+lli2m6+24l1Ad3u5o/5tMPw0SPb9gNIBjh9IvHTPlz2iZVNINhJqzK7TflUBa+uCq3Nj3l7PuEI8VRgYQc07dm3+TEaEaHmq73AT0RDCWIyBoL9q/IT/2jSaEqA7M+x7hQmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/60D1fH; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60119cd50b6so10696810a12.0
+        for <io-uring@vger.kernel.org>; Thu, 22 May 2025 08:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1747926345; x=1748531145; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747926547; x=1748531347; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PfVvvdWGG0adnBwzws5Hqth/btOaihCNY1aQF7gASIY=;
-        b=UZjVpM9cu7Ti7Q8ewkdTEhmJqXeQw69vvPJIGnzX5h7ZrezZAZ5Ibj4oIYXZPR9sWy
-         ujHyfYif5Y6xt7mAmrmy3qY1ywPit2EJQX0y0FFWSVgRBdIcMNV3cpYNrgOGguJ3yqls
-         ybXYWcyKZ6RK8mUJ9sOErf/9Lvo4O0wVkoqxn9IgG90EJn/CLqmqLnuLxqovuiau4dIN
-         vsB+qbXgJTCCFHlxfcpxiVSeC+DxtDwJ/8FMTzQyAGbNfpTs2qjpSLJ2a9J21LjjAZVs
-         Nlc66XqKAiF2ii9xSi+jFbtURt32bcM30J22W4K9EuVUnuxUBikoe5a9RgcW4Q8imnDi
-         sAYg==
+        bh=Vx5TJkM3JkH4ATf1GXyEN1qkZQqFYBlG2C9p676wH4U=;
+        b=j/60D1fHlbkDHl10hzLGR0u3DXl2ptiHTbp9u8pXyo+Fz3C5U5fML88ZHhSRCSs2c9
+         L6X2gWuYwG2ZJ7K1/IJ6NDHXvN01quR6Iac+CImzJVOish+LVQPKFjQHRBS13QIhfw1j
+         Gr+jOFUuSfHVeXJ3O/oQUDT/c3pC1aqLX5rrIIl7zmqrbtB6OCtNZ32sHfGaCszCXu67
+         nrWh39ezIZFIGqS/57sgdVvQkWrNNqJm4+8vVDlbgt0nq8OwDWxwNgusvION3EhwhgrH
+         NspFNtYOYmx3AAN3pMKhmL6BPeCThegybVmOfUdgmb4jhChXPuIjzRPdfc04IZoNV1pv
+         bgwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926345; x=1748531145;
+        d=1e100.net; s=20230601; t=1747926547; x=1748531347;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PfVvvdWGG0adnBwzws5Hqth/btOaihCNY1aQF7gASIY=;
-        b=TQFSsrp0/4CuHUJoHG9T4HskjDpQeDNHZF4sEMYw7/iJLmy/aVeec6rY/Xb+wb+Wbu
-         i49B0GXQY3xu3Wp1CqVyQ/JG/hVyZGBGmf78ZgEA5I2pj1wQfAey9XtSXtq9oM1Sd7Mu
-         J1Ye6pUvHww/jDv0rGPbfDbcfFQcbXvbaCTMetqJEuUuNZx8hH8wIcgjBrV4dXgVJd5n
-         SYdfVRTla7/b0iXbTTGg0N2sGWo4ysnshD394eo9ZWZYRuu9sA/mDoqY5Zg5NWOEhfaJ
-         5fJ/FKZEMhfbAYFx1+SOvT201IF8H9yYG8z9oitcb3BBqdJxhcFdtq5hDe0j304aaBGS
-         wErQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVss4yba0xUnCa19qmxdTxcPqrAnTorKEA5EoWUFgzWMmOw323QG8ZlwjWoBdOnBDpoacW3Du+YtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKRKh7IOUuSuG48H3nrBr9QmiQRUU8h01zDYoCEOim2uxl02O3
-	RBt5t6NtSDJA4OoGAY2UWNhxJn6G3PcOLM3XDyE2zskU9N6KBmPFN5QZmXm+ZoVA2bskmzfNgi1
-	gYx1l3l7aQduBQsIgqyq+eD9G7bRXG3a2ab7gArcxSHWBY/Y4FSyC
-X-Gm-Gg: ASbGncvVcjkaTMvoNGmDlM4nFxy2uCshL0RssxJdsfGE7wwJm8BezcK1JVW77uRMizq
-	C+YP8zLy5D14UUirdSk2MDKbVFsvS2C38lbEoZnSYGo8DDIC6hXyW/+msRJG6KYhh1k84dDxXt9
-	sgt3QAB3EfwW8aDz3jtEdGgaA68EjLYFADI7UMXfcxy15Qyqv9c0FVyE0SyvWlIWGs3hNLsUmj+
-	sEnuyYYwGrbdKeeYotevO97XEhtiV6sJdKtutgS02HX3Ct5uzmdlIbIxjt2Pv5B3TW0Lao8rZj7
-	9weqaRgnLn5XENSoSIWydv5EbKOWbA==
-X-Google-Smtp-Source: AGHT+IEYt0bFnFpqhd2H1XnceM8lYVhuAHUarQy8gh4pLinv73lfLkgJKvqyllIgt5EGZDv1rrVoDWxaCb89
-X-Received: by 2002:a05:6870:fe85:b0:2d6:1e7:f583 with SMTP id 586e51a60fabf-2e3c1b8e07dmr5370430fac.3.1747926345338;
-        Thu, 22 May 2025 08:05:45 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 006d021491bc7-609f2fbf362sm587638eaf.12.2025.05.22.08.05.45
+        bh=Vx5TJkM3JkH4ATf1GXyEN1qkZQqFYBlG2C9p676wH4U=;
+        b=BFQzv3bgk7BN44TwTca5TQXkkXRv2REUVJscZK7oVMX7jBoCbDofV9LLvZFFEMwJff
+         08gF2NH1nuwMHn0qcwt+CFvcaEFpczK0OKc9wqcCaBKPpzhHq6Rp1FsAluMqpvR10Z0y
+         WMKjy06qsDKrXzuxlxQCjVfZsuUclK3M03F5qPiaFNEf3ZfzqKySGJBkSY/INP9F8PEx
+         W9H0AUlgaXzhUwGl53V0NlX4Z1dyCIyq2eYcIyZBJvS4Aom6fkKuHKOVrQ5UauEhTy/N
+         V9GSqNS2I5UYmHt0Aexn3VPXjVNzhFyCkQ3pbbw3W9rA8yjlXaZJPGr4Uq6zo80g/y82
+         PZ8Q==
+X-Gm-Message-State: AOJu0YxDn+FnjMUFwy1Jz2g+sNKNF0pO7Yh82uJVtu/57AI0L01p4udH
+	hQUiKKoT4bc/C194bsgWacvsDzrqWxmf72ImitPfCfo2UeJpv8eSpPmHOJlu7A==
+X-Gm-Gg: ASbGncsRR1K6d5jyIX3Y0E0PGbQbpADtTSHKK3zpVV79aNpI2bx/MR9P1nBboHnYaV4
+	eecT1DjDx1mdSmwhEPloISzPJZOmnqesCQvpa82i2xZTDiW95gZ/FK8bYeXm+1DiwFl6aAj88JS
+	VidQwbHW9FkQdn7RCSkaFiIFp3/GGBibN41E4aGkgrMRhxdzJ9nT4lOQ5OuCuV6qPz+cfLnChgJ
+	S69NiJSopgdS7zO4vBrugQwUBEHIDqcHSQ/z3qlCsu6+S7Gx94sYq3KqZkwK0JNPj2TgzVqImtj
+	2YgDcLHg8LtRAOcDgAmM+3cKdk3qkCLEBbg=
+X-Google-Smtp-Source: AGHT+IFRHt5jLQilASj/ju0WYCBoN5qLQ6eoQ7X9D2AwL2wcUp268NGrry/657d4tLg8kNNTReebbA==
+X-Received: by 2002:a05:6402:3589:b0:602:262f:1de7 with SMTP id 4fb4d7f45d1cf-602262f24d8mr7528664a12.2.1747926546458;
+        Thu, 22 May 2025 08:09:06 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:30e5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005ae3953esm10684305a12.73.2025.05.22.08.09.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 08:05:45 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 90DE9340286;
-	Thu, 22 May 2025 09:05:44 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 8A9F5E419EF; Thu, 22 May 2025 09:05:44 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] trace/io_uring: fix io_uring_local_work_run ctx documentation
-Date: Thu, 22 May 2025 09:04:50 -0600
-Message-ID: <20250522150451.2385652-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        Thu, 22 May 2025 08:09:05 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	chase xd <sl1589472800@gmail.com>
+Subject: [RFC 0/2] mock files for advanced io_uring testing
+Date: Thu, 22 May 2025 16:10:05 +0100
+Message-ID: <cover.1747922436.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -99,33 +85,37 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The comment for the tracepoint io_uring_local_work_run refers to a field
-"tctx" and a type "io_uring_ctx", neither of which exist. "tctx" looks
-to mean "ctx" and "io_uring_ctx" should be "io_ring_ctx".
+There are core io_uring features that are hard to test without having
+some specific file types. That includes various read/write and polling
+edge cases, but the problem got even more distinct with the introduction
+of commands and io_uring adding new features for them.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- include/trace/events/io_uring.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For improving testing we need a finer control over file behaviour. Add
+special / mock files we can create and configure. First, the file is
+implementing a set of io_uring commands that uses various cmd io_uring
+features.
+Chase also suggestedd adding read/write/poll file operations and varying
+their characteristics: pollability, nowait support, whether the IO is
+async, etc., which will be added in the future.
 
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
-index fb81c533b310..178ab6f611be 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -643,11 +643,11 @@ TRACE_EVENT(io_uring_short_write,
- );
- 
- /*
-  * io_uring_local_work_run - ran ring local task work
-  *
-- * @tctx:		pointer to a io_uring_ctx
-+ * @ctx:		pointer to an io_ring_ctx
-  * @count:		how many functions it ran
-  * @loops:		how many loops it ran
-  *
-  */
- TRACE_EVENT(io_uring_local_work_run,
+Liburing tests:
+
+https://github.com/isilence/liburing/tree/mock-file-tests
+git https://github.com/isilence/liburing.git mock-file-tests
+
+Pavel Begunkov (2):
+  io_uring/mock: add basic infra for test mock files
+  io_uring/mock: add cmd using vectored regbufs
+
+ init/Kconfig         |  11 +++
+ io_uring/Makefile    |   1 +
+ io_uring/mock_file.c | 207 +++++++++++++++++++++++++++++++++++++++++++
+ io_uring/mock_file.h |  34 +++++++
+ 4 files changed, 253 insertions(+)
+ create mode 100644 io_uring/mock_file.c
+ create mode 100644 io_uring/mock_file.h
+
 -- 
-2.45.2
+2.49.0
 
 

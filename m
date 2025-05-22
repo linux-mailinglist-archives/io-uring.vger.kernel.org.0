@@ -1,250 +1,147 @@
-Return-Path: <io-uring+bounces-8071-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8070-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7C1AC0AEA
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 13:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97196AC0AB1
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 13:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660304E12FA
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 11:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C569F1BC0E9B
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 11:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9F928982B;
-	Thu, 22 May 2025 11:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF4ADF58;
+	Thu, 22 May 2025 11:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hsOXIyaD"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XnfAXtJi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C041EE00C
-	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 11:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763261C32
+	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 11:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747915013; cv=none; b=C5zuQOJBn8tF5FdboSV0TMZpEI0GU46DVJrFrcY8C1MwufzL2syC2Ev5vT9EO1S/Ps60Hex9UiK194JoL2JBRzOaU6wym570Hrgr/l6kL53LlLkxYhV3FBbbiuJTbBqtAVrn7HinrIr6ZEWC+lOAmMzfh6Kd26qHvWLQ9T3qF6o=
+	t=1747913703; cv=none; b=isldCR4sdp+c4PZ+sw/w91s+jvsanGhP3FQdy2LGqHr3EJuAOS0V/m3pIZxFmUaEus2H8VKv6raswGLzaQp2rWat2a+D/tORRHcbCZ5m8weTvvE05RelA8YDhksJEXOZ2as0YfEOnEYj3VhXoFcfq66FIxNWSuT4jU0CFToowwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747915013; c=relaxed/simple;
-	bh=SpenVr3w1qaH98/caqbxsnhjqpXBI+j5b5fXQ50oaXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=W3e+lMNpvtAQhdCYwFFIDXRlRMx7QIn6Eqya9zSeyOW3ryOL0HxWbLCb8RxGeDqMRZfrWOJVdd3miP5wYZWp0LQS5UFUbTt1FFnq27HM8B5m86hI8/fscT69sTtNEUXyGWnMLRbesX6/sNO7OmfmqCwaUCguAKh0Mzp0mSG62Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hsOXIyaD; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250522115642epoutp04ef18ae2407275d07295dbfab8fc12fed~B128ZrCbg2978229782epoutp04Q
-	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 11:56:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250522115642epoutp04ef18ae2407275d07295dbfab8fc12fed~B128ZrCbg2978229782epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747915002;
-	bh=2qDM2iSRPAfeA6VJl7YO03JNFrjloGgZCpt2Fe3bmB0=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=hsOXIyaD675mKC3YeLt6Mj4VnQQnnxj8YSVEoSK9rOefUI7+bU7AmELI0pXDF516R
-	 TWF+yFhDmsbAl3ZLOonrmkIbe7aKTrVHGGf8kdNpdivmjGZi0RIWaQSCxF8+VOvSND
-	 iGmuR5sllJCMhShZlXgLV0a2BlursWIrynUXwMvc=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250522115642epcas5p4efae5aaaf34cd9485ac4ede683d48e9b~B128JAEpO0784607846epcas5p4I;
-	Thu, 22 May 2025 11:56:42 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4b36G04l5bz6B9m4; Thu, 22 May
-	2025 11:56:40 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250522114649epcas5p26e8ab0fef3ff0d39a64345c3d63f64a2~B1uTqwV1u0958909589epcas5p2U;
-	Thu, 22 May 2025 11:46:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250522114649epsmtrp150dd8d86d2815a032b269fcdb8464e7b~B1uTqGFTl2485424854epsmtrp13;
-	Thu, 22 May 2025 11:46:49 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-0b-682f0ea8865b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6B.FE.19478.8AE0F286; Thu, 22 May 2025 20:46:49 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250522114648epsmtip132b66912ad7e12f6a71af492844ee32e~B1uStWX_52721427214epsmtip1Z;
-	Thu, 22 May 2025 11:46:47 +0000 (GMT)
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: io-uring@vger.kernel.org, anuj1072538@gmail.com, axboe@kernel.dk,
-	asml.silence@gmail.com
-Cc: joshi.k@samsung.com, Anuj Gupta <anuj20.g@samsung.com>
-Subject: [PATCH liburing] test/io_uring_passthrough: enhance vectored I/O
- test coverage
-Date: Thu, 22 May 2025 16:59:48 +0530
-Message-Id: <20250522112948.2386-1-anuj20.g@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747913703; c=relaxed/simple;
+	bh=M+1fBZX/ceR+2GnSdK9hGTw+rCAEtdMzJOFRMNPEQfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LS29KYDTsPaF1FSk6ocNw4xx20baNYJQu0+0n+YAB+bECQFluSHfwMcNlbMLTmmBELIJPB4jlEvIIKDWTzsiturHeNejsOmfMJ9Tl+zByPiXj9MFCywSfdXK3rLRpyBeeaZzPDwgCgYdkzN6lWqbNfQrLbDkuh+wnDprPlVeO5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XnfAXtJi; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86a52889f45so118767039f.3
+        for <io-uring@vger.kernel.org>; Thu, 22 May 2025 04:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747913699; x=1748518499; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I9svoeSLe8BB4WjKOJ1VT+IJ+0NN4bnyMdvWVmm3244=;
+        b=XnfAXtJi9VSun93Jl9vac0l70KAhqSXfWYaxxjwKhqi6Ii/BSdVIveenwLzJoAeI52
+         qkFoho0J8o14sqF02ohEmSF5qsfjmmaUrWLCcRoOERhsG2fVBYFpGSRttpuViXDpRYia
+         zjm3pN2Gt43RvwzXHC3rbjI3iLJ7LBIIP6pDlD/CZ0GUaNQyONVnx3w4KGNTbeCAbsGt
+         6elEuVQ/76/RXMY7fNRYpD4L/4X8vi5HVGdS7Gmjkk3BPO2AgFyukANmc8/KbYoDlnu3
+         +S5l5zLF+XIKYXdTtgWcuA0KbmCEomq91RJ7vda+3CSIfJXObWXCw/g+4/135/R3fAAo
+         gkyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747913699; x=1748518499;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I9svoeSLe8BB4WjKOJ1VT+IJ+0NN4bnyMdvWVmm3244=;
+        b=A2udAyoRlUxWXrK0QkCwW0Wkb2l9e7KXHTfrxpwO8j+gXM+yexZf3pLATEGlzVPXAm
+         W31FA05TgmjvztuUVFfGlH1P8pHeuIc3bSm6PDHi8NB9Ew5WyWCdWXX9LRWH7WVwJHAL
+         7Un0fGdYCWVaGmQZ6Um88NIZ0NMUZvaiPsKtTmMVa0dN2XDQ4kVMyGKeaCDwllFWU77M
+         LASnnK8qMibYkvldtXzwbVwz0vJjPtOflYp3DvvDf5EYF5WjlxWoT9T1IkjlRv/SA7xP
+         yOc2OdIIRiJpd6VFwK7vLNDZSVF0V/0fQneEToUHkbTkkHpXMTPvpBBa5lx5lQKJDhgu
+         x2KA==
+X-Gm-Message-State: AOJu0YyXkbipulftUokeR6FckYyCWFBwwqmu8M6hCpu0xP+OS2i4mBLE
+	Z28PbGhG6y+Ouhw3mcUtUkG2wdJhavNQW+LXLrWrwXWlLae8VedcELkAPFnQrNQcKo8=
+X-Gm-Gg: ASbGncszmt1n2R+VO938neR9JmLSA4bx6TUXxzDi2O8s6v7wDvSCQm0ME3il+/pkQ4F
+	qCzGM9crO1mZGqRKKv4Rme1v5nXMLCbpf5SkIh0NBkHjzndSaGcJAjhvJnsXO2cOH/NPRbqOlPZ
+	IckyLpJO4Xw+dCPxsVh9LGCc7oHrzUh+lDFcE8X1pnCh7w1JktALG7FmgRhgt3SAfmBhg0GLAnv
+	cxVJYQuh5F2HbVMXQkg2L5siSgdBiyBVcQdNoG/FU2BiYdZY2hB2qAGk8tkVg5psMNfD7IQ5yqT
+	VRL1lSL7L7X4oA5KCDmQ6P4zZ/urViRepIdEa52XHBBHwytENMV8jAe4xUw=
+X-Google-Smtp-Source: AGHT+IENdiAZi0+lKxPAEZ+oG4gaKy10MBmWLdm6mf2eXZFAZDAY+UDTIqIDzILKGupO2B9W8Lx5tg==
+X-Received: by 2002:a05:6602:3a08:b0:861:7d39:d4d3 with SMTP id ca18e2360f4ac-86a2316d84cmr3352497739f.3.1747913699372;
+        Thu, 22 May 2025 04:34:59 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc38a534sm3136608173.24.2025.05.22.04.34.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 04:34:58 -0700 (PDT)
+Message-ID: <b8cd8947-76fa-4863-a1f6-119c6d086196@kernel.dk>
+Date: Thu, 22 May 2025 05:34:58 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsWy7bCSnO5KPv0Mgyc9jBYfv/5msWia8JfZ
-	Ys6qbYwWq+/2s1m8az3HYnH0/1s2BzaPnbPusntcPlvq0bdlFaPH501yASxRXDYpqTmZZalF
-	+nYJXBlHV59lLdijUrGqezZLA+MmmS5GTg4JAROJBW9+M3cxcnEICWxnlPgx8TYTREJC4tTL
-	ZYwQtrDEyn/P2SGKPjJKbOqbClbEJqAuceR5K1iRiECSxL8Ny1i7GDk4mAVsJC5cjgYxhQXC
-	Jc7c5gKpYBFQldi9ZC4riM0rYCHxvr+ZDWK8vMTMS9/ZIeKCEidnPmEBsZmB4s1bZzNPYOSb
-	hSQ1C0lqASPTKkbR1ILi3PTc5AJDveLE3OLSvHS95PzcTYzgINQK2sG4bP1fvUOMTByMhxgl
-	OJiVRHiPPtPLEOJNSaysSi3Kjy8qzUktPsQozcGiJM6rnNOZIiSQnliSmp2aWpBaBJNl4uCU
-	amDqEfw24Wvcpt9XyvSNbVYIG/7ZJ50QxSATvftL2u4lPZ8e/eTI+7gr5ovRXXf7O9tucF4+
-	3pJ+myFq9elqyd3Plv6J64zXenr83M6Lgmsebe9foX399v1/uyfPtPBS8ny+0e78mRv5h6Lq
-	JZ4oft+m/nyPB9u+3AczfUxXPNS9/mv1vkadizcy5q6/dPDofe7Kvso3z97t9IxQWRF0zM4z
-	3jJ0+utvkp1F1rJakhK6MRtLVnbtbg53sOW4raHwP/KQm6RZIfupaoH1nIffe4S1Jxk51l5L
-	W7deaUO9eKOh2Z8u+4X6dZ69hxfcW7Dp9dm+ZCnJszILY7XSLAtXSW9MnOGWHS4z5aBWU2WH
-	4h8nJZbijERDLeai4kQAwxjSXrECAAA=
-X-CMS-MailID: 20250522114649epcas5p26e8ab0fef3ff0d39a64345c3d63f64a2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250522114649epcas5p26e8ab0fef3ff0d39a64345c3d63f64a2
-References: <CGME20250522114649epcas5p26e8ab0fef3ff0d39a64345c3d63f64a2@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] io_uring: fix io worker thread that keeps creating
+ and destroying
+To: Fengnan Chang <changfengnan@bytedance.com>, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, Diangang Li <lidiangang@bytedance.com>
+References: <20250522090909.73212-1-changfengnan@bytedance.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250522090909.73212-1-changfengnan@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch improves the vectored io test coverage by ensuring that we
-exercise all three kinds of iovec imports:
-1. Single segment iovec
-2. Multi segment iovec, below dynamic allocation threshold
-3. Multi segment iovec, above dynamic allocation threshold
+On 5/22/25 3:09 AM, Fengnan Chang wrote:
+> When running fio with buffer io and stable iops, I observed that
+> part of io_worker threads keeps creating and destroying.
+> Using this command can reproduce:
+> fio --ioengine=io_uring --rw=randrw --bs=4k --direct=0 --size=100G
+> --iodepth=256 --filename=/data03/fio-rand-read --name=test
+> ps -L -p pid, you can see about 256 io_worker threads, and thread
+> id keeps changing.
+> And I do some debugging, most workers create happen in
+> create_worker_cb. In create_worker_cb, if all workers have gone to
+> sleep, and we have more work, we try to create new worker (let's
+> call it worker B) to handle it.  And when new work comes,
+> io_wq_enqueue will activate free worker (let's call it worker A) or
+> create new one. It may cause worker A and B compete for one work.
+> Since buffered write is hashed work, buffered write to a given file
+> is serialized, only one worker gets the work in the end, the other
+> worker goes to sleep. After repeating it many times, a lot of
+> io_worker threads created, handles a few works or even no work to
+> handle,and exit.
+> There are several solutions:
+> 1. Since all work is insert in io_wq_enqueue, io_wq_enqueue will
+> create worker too, remove create worker action in create_worker_cb
+> is fine, maybe affect performance?
+> 2. When wq->hash->map bit is set, insert hashed work item, new work
+> only put in wq->hash_tail, not link to work_list,
+> io_worker_handle_work need to check hash_tail after a whole dependent
+> link, io_acct_run_queue will return false when new work insert, no
+> new thread will be created either in io_wqe_dec_running.
+> 3. Check is there only one hash bucket in io_wqe_dec_running. If only
+> one hash bucket, don't create worker, io_wq_enqueue will handle it.
 
-To support this we adjust the test logic to vary iovcnt appropriately
-across submissions. For fixed vectored I/O support (case 2 and 3), we
-register a single large buffer and slice it into vecs[]. This ensures
-that all iovecs map to valid regions within the registered fixed buffer.
-Additionally buffer allocation is adjusted accordingly, while
-maintaining compatibility with existing non-vectored  tests.
+Nice catch on this! Does indeed look like a problem. Not a huge fan of
+approach 3. Without having really looked into this yet, my initial idea
+would've been to do some variant of solution 1 above. io_wq_enqueue()
+checks if we need to create a worker, which basically boils down to "do
+we have a free worker right now". If we do not, we create one. But the
+question is really "do we need a new worker for this?", and if we're
+inserting hashed worked and we have existing hashed work for the SAME
+hash and it's busy, then the answer should be "no" as it'd be pointless
+to create that worker.
 
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
----
- test/io_uring_passthrough.c | 40 +++++++++++++++++++++++++++----------
- 1 file changed, 30 insertions(+), 10 deletions(-)
+Would it be feasible to augment the check in there such that
+io_wq_enqueue() doesn't create a new worker for that case? And I guess a
+followup question is, would that even be enough, do we always need to
+cover the io_wq_dec_running() running case as well as
+io_acct_run_queue() will return true as well since it doesn't know about
+this either?
 
-diff --git a/test/io_uring_passthrough.c b/test/io_uring_passthrough.c
-index 74bbfe0..5efe2a0 100644
---- a/test/io_uring_passthrough.c
-+++ b/test/io_uring_passthrough.c
-@@ -13,12 +13,14 @@
- #include "../src/syscall.h"
- #include "nvme.h"
- 
-+#define min(a, b)	((a) < (b) ? (a) : (b))
-+
- #define FILE_SIZE	(256 * 1024)
- #define BS		8192
- #define BUFFERS		(FILE_SIZE / BS)
- 
- static void *meta_mem;
--static struct iovec *vecs;
-+static struct iovec *vecs, *backing_vec;
- static int no_pt;
- static bool vec_fixed_supported = true;
- 
-@@ -75,7 +77,7 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 	struct nvme_uring_cmd *cmd;
- 	int open_flags;
- 	int do_fixed;
--	int i, ret, fd = -1, use_fd = -1;
-+	int i, ret, fd = -1, use_fd = -1, submit_count = 0;
- 	off_t offset;
- 	__u64 slba;
- 	__u32 nlb;
-@@ -86,7 +88,7 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 		open_flags = O_WRONLY;
- 
- 	if (fixed) {
--		ret = t_register_buffers(ring, vecs, BUFFERS);
-+		ret = t_register_buffers(ring, backing_vec, 1);
- 		if (ret == T_SETUP_SKIP)
- 			return 0;
- 		if (ret != T_SETUP_OK) {
-@@ -116,6 +118,9 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 
- 	offset = 0;
- 	for (i = 0; i < BUFFERS; i++) {
-+		unsigned int iovcnt = 1;
-+		size_t total_len;
-+
- 		sqe = io_uring_get_sqe(ring);
- 		if (!sqe) {
- 			fprintf(stderr, "sqe get failed\n");
-@@ -129,7 +134,7 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 		if (fixed && (i & 1))
- 			do_fixed = 0;
- 		if (do_fixed)
--			sqe->buf_index = i;
-+			sqe->buf_index = 0;
- 		if (nonvec)
- 			sqe->cmd_op = NVME_URING_CMD_IO;
- 		else
-@@ -147,8 +152,14 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 
- 		cmd->opcode = read ? nvme_cmd_read : nvme_cmd_write;
- 
-+		if (!nonvec) {
-+			iovcnt = (submit_count % 3 == 0) ? 1 : ((submit_count % 3 == 1) ? 3 : 9);
-+			iovcnt = min(iovcnt, BUFFERS - i);
-+		}
-+		total_len = BS * iovcnt;
-+
- 		slba = offset >> lba_shift;
--		nlb = (BS >> lba_shift) - 1;
-+		nlb = (total_len >> lba_shift) - 1;
- 
- 		/* cdw10 and cdw11 represent starting lba */
- 		cmd->cdw10 = slba & 0xffffffff;
-@@ -160,7 +171,7 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 			cmd->data_len = vecs[i].iov_len;
- 		} else {
- 			cmd->addr = (__u64)(uintptr_t)&vecs[i];
--			cmd->data_len = 1;
-+			cmd->data_len = iovcnt;
- 		}
- 
- 		if (meta_size) {
-@@ -170,16 +181,19 @@ static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
- 		}
- 		cmd->nsid = nsid;
- 
--		offset += BS;
-+		offset += total_len;
-+		if (!nonvec)
-+			i += iovcnt - 1;
-+		submit_count++;
- 	}
- 
- 	ret = io_uring_submit(ring);
--	if (ret != BUFFERS) {
-+	if (ret != submit_count) {
- 		fprintf(stderr, "submit got %d, wanted %d\n", ret, BUFFERS);
- 		goto err;
- 	}
- 
--	for (i = 0; i < BUFFERS; i++) {
-+	for (i = 0; i < submit_count; i++) {
- 		ret = io_uring_wait_cqe(ring, &cqe);
- 		if (ret) {
- 			fprintf(stderr, "wait_cqe=%d\n", ret);
-@@ -439,7 +453,13 @@ int main(int argc, char *argv[])
- 	if (ret)
- 		return T_EXIT_SKIP;
- 
--	vecs = t_create_buffers(BUFFERS, BS);
-+	vecs = t_malloc(BUFFERS * sizeof(struct iovec));
-+	backing_vec = t_create_buffers(1, BUFFERS * BS);
-+	/* Slice single large backing_vec into multiple smaller vecs */
-+	for (int i = 0; i < BUFFERS; i++) {
-+		vecs[i].iov_base = backing_vec[0].iov_base + i * BS;
-+		vecs[i].iov_len = BS;
-+	}
- 	if (meta_size)
- 		t_posix_memalign(&meta_mem, 0x1000,
- 				 meta_size * BUFFERS * (BS >> lba_shift));
+I'll take a closer look at this later today, but figured I'd shoot some
+questions your way first...
+
 -- 
-2.25.1
-
+Jens Axboe
 

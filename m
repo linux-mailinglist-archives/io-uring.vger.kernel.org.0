@@ -1,163 +1,262 @@
-Return-Path: <io-uring+bounces-8075-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8076-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36412AC0D48
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 15:51:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4082FAC0E19
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 16:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505A61BC6720
-	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 13:51:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85F917A73D2
+	for <lists+io-uring@lfdr.de>; Thu, 22 May 2025 14:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36D928C03C;
-	Thu, 22 May 2025 13:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7271428D8C0;
+	Thu, 22 May 2025 14:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bAnagRsc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AcmcionP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF2828C03A
-	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 13:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837528CF70
+	for <io-uring@vger.kernel.org>; Thu, 22 May 2025 14:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747921872; cv=none; b=oDpRjYCCFyY98fiHcc3ZOuvmM2GVBoAkPyWbSQelIuNdaZTdPE32ubieo9y6DiRqo2wUSmN6bWGRZnjxDS9zHruWSbGDzoHFx2EM8o3KzEXQsIbZtjE4LHaNzhS7CIbHGKU7ocY0+Q2t0dCPo96OBckcq1ZLII8k9WJM8/PucVw=
+	t=1747924152; cv=none; b=gv3a4qgkI9urCJsmg8oGEMspuVrzhedTethgzRd/Bo5L/Bo+XytUebil6PnDRugw0+m5GOfz+Ci4SKecaPGMhUfOwZRMKVnW5O0Xy+DsMfi0EmY+DvMrRXZ/BiZaBIOPEebtv7YpqISdO8dXZdxxZlUnOtiy2+fX/0VuBugmGEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747921872; c=relaxed/simple;
-	bh=IvTLk0ne+tnJRHNHNtvrMKfkDsnwJqQmiFRotsQFt+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XJxtJxa2oXHGmOT8can9pvZnvsmOuyrl3S5JYh103lnCpjbChpYIdtP9vs7C7QsiJVAfxMIlPo6poZvtFgsGGnfAjyA+xq5O/OXsMpJauOzYLDFv7+tx4xzbtxE/QsRDUhMcigfKR2RUnXBQoweV9BGTCHE2sh5Ec16l948fOSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bAnagRsc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747921869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiLrG9bEpsUO1Ce5rq6VuNkuxwGnEmCexhtvodJCoKY=;
-	b=bAnagRscCYmls4Xj+e5zLgEWIkAPBX82p7cb9lJX3hgFHvNbgt9VcIDrzY7y9LK6iQ5als
-	43HZa7RT2gEbID2qfcrm4+SW2lPeX+TTVXEIEWXmn8C5aSWdL1njCpnedZo66qhcmagE+b
-	SA6TXWAQgmJS0KnvPFlMGThIBzW/zGA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-250-6OaNHq4PNniw1k6v36FxAQ-1; Thu,
- 22 May 2025 09:51:06 -0400
-X-MC-Unique: 6OaNHq4PNniw1k6v36FxAQ-1
-X-Mimecast-MFC-AGG-ID: 6OaNHq4PNniw1k6v36FxAQ_1747921865
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8040D195608A;
-	Thu, 22 May 2025 13:51:05 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.39])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59443195608F;
-	Thu, 22 May 2025 13:51:03 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org
-Cc: Uday Shankar <ushankar@purestorage.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 2/2] ublk: run auto buf unregister on same io_ring_ctx with register
-Date: Thu, 22 May 2025 21:50:43 +0800
-Message-ID: <20250522135045.389102-3-ming.lei@redhat.com>
-In-Reply-To: <20250522135045.389102-1-ming.lei@redhat.com>
-References: <20250522135045.389102-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1747924152; c=relaxed/simple;
+	bh=r2LZxWRstnfqOfz6zqOYkJsezvBQqEC0wh7WpiANxcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4k+3qplP3zuM+AyketnfKBILJKi9vHzmQ77GB7tEdxb8+4HmqtuVxHxXFrpWo15eDoqw+Tffj6zOUh1ujP+nnHulGUaxFvQJ7qE7ZKfcby0E020hGCETOmJq63olqRE/ELU1LfhTvwe4OT9rNZUnln0a9ZmPkVrnaLgf/pTxk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AcmcionP; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85db3475637so286792939f.1
+        for <io-uring@vger.kernel.org>; Thu, 22 May 2025 07:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747924148; x=1748528948; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jox6fHChgx2DKpsUcWB+z7QcdOVB6yy+gzDP4Sg34eo=;
+        b=AcmcionPidefJSydbBseZuxZ8s3OSZUn1re1leC0TLXzCP9jne/RdF7dolCGSe3HZc
+         Znr9O8QNZtsrStGkMS1TgRGD+E++coojdqADkMB1yivL3OrUdOgtkyPOBBgkujP5TeS/
+         J05pdPLJoH6gRxSHJfRwmHwKhQFF+bvVA5FXXA5cVUuojEUYSBQyGUIgji0joYwB9SKQ
+         C9fVT8YTanSfN5p+6JWpMSoMJVcxc9/U9D/wsW98vaR1Kc4YKHytmldAy+J1m2PN3C1u
+         7DrZ5f4gu+s6nvPc7ePPePuLiQSHTlMaHxH5AJuQXSr61HuO/pXdmyZEYR6BjWxS91/w
+         c4ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747924148; x=1748528948;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jox6fHChgx2DKpsUcWB+z7QcdOVB6yy+gzDP4Sg34eo=;
+        b=rzQn5jsh+pPCVgjW0pdIh/F5vyKl8XieeDdM2xXu5fFyGpnEHjZpPieg5wvrQu3s+l
+         TocZMK8nepGBzA0wX7XbvDbyieEnBG67MbqQByuA4roWMaA41MBmRORCNpsnmpj0mcgq
+         S1hUZWaatFubJIy9DH4em2+DwaQhGLkV94iD7XoIm+YglDE28MC57JTtXwJKyS3IkM1I
+         OKijPDaZlCUEOll3cZGtf2rBQUFO/I8MHVEp1kxL7Mr9iH01oDhk27KPNdcgIL4lmMcT
+         gAkwKgsh2ZXvklvgKvbrKy9OHamcU8JMt3MCSSsGZtkS5hQZQ8Th2aoN6iCIt1Qf1vPn
+         IXrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0RD1XXFfLUwbH0KOuRpQ4VRZizSKD6KXK5EcLhEUGzHL3uVH4vZYnrtUDOhC7iyGDBANYRQBqpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFg6LJe+LJF3zNwTpGbCHEhYqkmEfSAeiiE5ioAKZjz4PhoASR
+	vyQPlRg2qSrhzTukL2/2epdORWY3GzEVEudZvZ4tXihFrYchdbbtW7s6xcTT5bsj8NU=
+X-Gm-Gg: ASbGncv/0GocyqP8bOmRgSziWZC0mIuaIDpmk2HWW3kV0+/DKU8vZtNOyvKtOZ+Psnb
+	30H453UH8toLnf9CiTEMetusYOIE7b37TUHkzO3DW2d8iAk67au5KzzyRlV1zKrV2ez4MKeXSiq
+	fNDiAzAquRyAOdBJSREy8Ya56vvtDygW9oPyYavH3V2jUlq2Z2fSAQCuK33hGSNmW+B7Nw66NaL
+	qg0X/y7YtLZQ5tkE+egvaBtlFxUDo6+0hGQZfBljOOYNh/Lhczfqd5dJmPVHlx8EsaKFdlYGWtc
+	dSY/X7kSq6gGebtbIQhPdtiuan5XXhsmQzQXeCEpqjSsTCM=
+X-Google-Smtp-Source: AGHT+IGN/wNIN2Gg430VbEDEGkh7ybOrIq6+S1g/X0QuvcVn2z4T3bBqJhNcyE4CdmPhkoa7Km65qA==
+X-Received: by 2002:a92:cdae:0:b0:3dc:8e8b:42af with SMTP id e9e14a558f8ab-3dc8e8b43a9mr19548725ab.7.1747924147550;
+        Thu, 22 May 2025 07:29:07 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc88f188c9sm6877135ab.3.2025.05.22.07.29.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 07:29:06 -0700 (PDT)
+Message-ID: <356c5068-bd97-419a-884c-bcdb04ad6820@kernel.dk>
+Date: Thu, 22 May 2025 08:29:05 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [RFC PATCH] io_uring: fix io worker thread that
+ keeps creating and destroying
+To: Fengnan Chang <changfengnan@bytedance.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ Diangang Li <lidiangang@bytedance.com>
+References: <20250522090909.73212-1-changfengnan@bytedance.com>
+ <b8cd8947-76fa-4863-a1f6-119c6d086196@kernel.dk>
+ <CAPFOzZtxRYsCg1BVdpDUH=_bsLEQRvsp5+x-7Kpwow66poUVtA@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <CAPFOzZtxRYsCg1BVdpDUH=_bsLEQRvsp5+x-7Kpwow66poUVtA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-UBLK_F_AUTO_BUF_REG requires that the buffer registered automatically
-is unregistered in same `io_ring_ctx`, so check it explicitly.
+On 5/22/25 6:01 AM, Fengnan Chang wrote:
+> Jens Axboe <axboe@kernel.dk> ?2025?5?22??? 19:35???
+>>
+>> On 5/22/25 3:09 AM, Fengnan Chang wrote:
+>>> When running fio with buffer io and stable iops, I observed that
+>>> part of io_worker threads keeps creating and destroying.
+>>> Using this command can reproduce:
+>>> fio --ioengine=io_uring --rw=randrw --bs=4k --direct=0 --size=100G
+>>> --iodepth=256 --filename=/data03/fio-rand-read --name=test
+>>> ps -L -p pid, you can see about 256 io_worker threads, and thread
+>>> id keeps changing.
+>>> And I do some debugging, most workers create happen in
+>>> create_worker_cb. In create_worker_cb, if all workers have gone to
+>>> sleep, and we have more work, we try to create new worker (let's
+>>> call it worker B) to handle it.  And when new work comes,
+>>> io_wq_enqueue will activate free worker (let's call it worker A) or
+>>> create new one. It may cause worker A and B compete for one work.
+>>> Since buffered write is hashed work, buffered write to a given file
+>>> is serialized, only one worker gets the work in the end, the other
+>>> worker goes to sleep. After repeating it many times, a lot of
+>>> io_worker threads created, handles a few works or even no work to
+>>> handle,and exit.
+>>> There are several solutions:
+>>> 1. Since all work is insert in io_wq_enqueue, io_wq_enqueue will
+>>> create worker too, remove create worker action in create_worker_cb
+>>> is fine, maybe affect performance?
+>>> 2. When wq->hash->map bit is set, insert hashed work item, new work
+>>> only put in wq->hash_tail, not link to work_list,
+>>> io_worker_handle_work need to check hash_tail after a whole dependent
+>>> link, io_acct_run_queue will return false when new work insert, no
+>>> new thread will be created either in io_wqe_dec_running.
+>>> 3. Check is there only one hash bucket in io_wqe_dec_running. If only
+>>> one hash bucket, don't create worker, io_wq_enqueue will handle it.
+>>
+>> Nice catch on this! Does indeed look like a problem. Not a huge fan of
+>> approach 3. Without having really looked into this yet, my initial idea
+>> would've been to do some variant of solution 1 above. io_wq_enqueue()
+>> checks if we need to create a worker, which basically boils down to "do
+>> we have a free worker right now". If we do not, we create one. But the
+>> question is really "do we need a new worker for this?", and if we're
+>> inserting hashed worked and we have existing hashed work for the SAME
+>> hash and it's busy, then the answer should be "no" as it'd be pointless
+>> to create that worker.
+> 
+> Agree
+> 
+>>
+>> Would it be feasible to augment the check in there such that
+>> io_wq_enqueue() doesn't create a new worker for that case? And I guess a
+>> followup question is, would that even be enough, do we always need to
+>> cover the io_wq_dec_running() running case as well as
+>> io_acct_run_queue() will return true as well since it doesn't know about
+>> this either?
+> Yes?It is feasible to avoid creating a worker by adding some checks in
+> io_wq_enqueue. But what I have observed so far is most workers are
+> created in io_wq_dec_running (why no worker create in io_wq_enqueue?
+> I didn't figure it out now), it seems no need to check this
+> in io_wq_enqueue.  And cover io_wq_dec_running is necessary.
 
-Document this requirement for UBLK_F_AUTO_BUF_REG.
+The general concept for io-wq is that it's always assumed that a worker
+won't block, and if it does AND more work is available, at that point a
+new worker is created. io_wq_dec_running() is called by the scheduler
+when a worker is scheduled out, eg blocking, and then an extra worker is
+created at that point, if necessary.
 
-Drop WARN_ON_ONCE() which is triggered from userspace code path.
+I wonder if we can get away with something like the below? Basically two
+things in there:
 
-Fixes: 99c1e4eb6a3f ("ublk: register buffer to local io_uring with provided buf index via UBLK_F_AUTO_BUF_REG")
-Reported-by: Caleb Sander Mateos <csander@purestorage.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/block/ublk_drv.c      | 19 ++++++++++++++++---
- include/uapi/linux/ublk_cmd.h |  6 +++++-
- 2 files changed, 21 insertions(+), 4 deletions(-)
+1) If a worker goes to sleep AND it doesn't have a current work
+   assigned, just ignore it. Really a separate change, but seems to
+   conceptually make sense - a new worker should only be created off
+   that path, if it's currenly handling a work item and goes to sleep.
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 180386c750f7..a56e07ee9d4b 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -84,6 +84,7 @@ struct ublk_rq_data {
+2) If there is current work, defer if it's hashed and the next work item
+   in that list is also hashed and of the same value.
+
+
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index d52069b1177b..cd1fcb115739 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -150,6 +150,16 @@ static bool io_acct_cancel_pending_work(struct io_wq *wq,
+ static void create_worker_cb(struct callback_head *cb);
+ static void io_wq_cancel_tw_create(struct io_wq *wq);
  
- 	/* for auto-unregister buffer in case of UBLK_F_AUTO_BUF_REG */
- 	u16 buf_index;
-+	unsigned long buf_ctx_id;
- };
- 
- struct ublk_uring_cmd_pdu {
-@@ -1211,6 +1212,8 @@ static bool ublk_auto_buf_reg(struct request *req, struct ublk_io *io,
- 	}
- 	/* one extra reference is dropped by ublk_io_release */
- 	refcount_set(&data->ref, 2);
++static inline unsigned int __io_get_work_hash(unsigned int work_flags)
++{
++	return work_flags >> IO_WQ_HASH_SHIFT;
++}
 +
-+	data->buf_ctx_id = io_uring_cmd_ctx_handle(io->cmd);
- 	/* store buffer index in request payload */
- 	data->buf_index = pdu->buf.index;
- 	io->flags |= UBLK_IO_FLAG_AUTO_BUF_REG;
-@@ -2111,12 +2114,22 @@ static int ublk_commit_and_fetch(const struct ublk_queue *ubq,
- 	if (ublk_support_auto_buf_reg(ubq)) {
- 		int ret;
++static inline unsigned int io_get_work_hash(struct io_wq_work *work)
++{
++	return __io_get_work_hash(atomic_read(&work->flags));
++}
++
+ static bool io_worker_get(struct io_worker *worker)
+ {
+ 	return refcount_inc_not_zero(&worker->ref);
+@@ -409,6 +419,30 @@ static bool io_queue_worker_create(struct io_worker *worker,
+ 	return false;
+ }
  
-+		/*
-+		 * `UBLK_F_AUTO_BUF_REG` only works iff `UBLK_IO_FETCH_REQ`
-+		 * and `UBLK_IO_COMMIT_AND_FETCH_REQ` are issued from same
-+		 * `io_ring_ctx`.
-+		 *
-+		 * If this uring_cmd's io_uring_ctx isn't same with the
-+		 * one for registering the buffer, it is ublk server's
-+		 * responsibility for unregistering the buffer, otherwise
-+		 * this ublk request gets stuck.
-+		 */
- 		if (io->flags & UBLK_IO_FLAG_AUTO_BUF_REG) {
- 			struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
++/* Defer if current and next work are both hashed to the same chain */
++static bool io_wq_hash_defer(struct io_wq_work *work, struct io_wq_acct *acct)
++{
++	unsigned int hash, work_flags;
++	struct io_wq_work *next;
++
++	lockdep_assert_held(&acct->lock);
++
++	work_flags = atomic_read(&work->flags);
++	if (!__io_wq_is_hashed(work_flags))
++		return false;
++
++	/* should not happen, io_acct_run_queue() said we had work */
++	if (wq_list_empty(&acct->work_list))
++		return true;
++
++	hash = __io_get_work_hash(work_flags);
++	next = container_of(acct->work_list.first, struct io_wq_work, list);
++	work_flags = atomic_read(&next->flags);
++	if (!__io_wq_is_hashed(work_flags))
++		return false;
++	return hash == __io_get_work_hash(work_flags);
++}
++
+ static void io_wq_dec_running(struct io_worker *worker)
+ {
+ 	struct io_wq_acct *acct = io_wq_get_acct(worker);
+@@ -419,8 +453,14 @@ static void io_wq_dec_running(struct io_worker *worker)
  
--			WARN_ON_ONCE(io_buffer_unregister_bvec(cmd,
--						data->buf_index,
--						issue_flags));
-+			if (data->buf_ctx_id == io_uring_cmd_ctx_handle(cmd))
-+				io_buffer_unregister_bvec(cmd, data->buf_index,
-+						issue_flags);
- 			io->flags &= ~UBLK_IO_FLAG_AUTO_BUF_REG;
- 		}
+ 	if (!atomic_dec_and_test(&acct->nr_running))
+ 		return;
++	if (!worker->cur_work)
++		return;
+ 	if (!io_acct_run_queue(acct))
+ 		return;
++	if (io_wq_hash_defer(worker->cur_work, acct)) {
++		raw_spin_unlock(&acct->lock);
++		return;
++	}
  
-diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
-index c4b9942697fc..5203963cd08a 100644
---- a/include/uapi/linux/ublk_cmd.h
-+++ b/include/uapi/linux/ublk_cmd.h
-@@ -226,7 +226,11 @@
-  *
-  * For using this feature:
-  *
-- * - ublk server has to create sparse buffer table
-+ * - ublk server has to create sparse buffer table on the same `io_ring_ctx`
-+ *   for issuing `UBLK_IO_FETCH_REQ` and `UBLK_IO_COMMIT_AND_FETCH_REQ`.
-+ *   If uring_cmd isn't issued on same `io_uring_ctx`, it is ublk server's
-+ *   responsibility to unregister the buffer by issuing `IO_UNREGISTER_IO_BUF`
-+ *   manually, otherwise this ublk request get stuck.
-  *
-  * - ublk server passes auto buf register data via uring_cmd's sqe->addr,
-  *   `struct ublk_auto_buf_reg` is populated from sqe->addr, please see
--- 
-2.47.0
+ 	raw_spin_unlock(&acct->lock);
+ 	atomic_inc(&acct->nr_running);
+@@ -454,16 +494,6 @@ static void __io_worker_idle(struct io_wq_acct *acct, struct io_worker *worker)
+ 	}
+ }
+ 
+-static inline unsigned int __io_get_work_hash(unsigned int work_flags)
+-{
+-	return work_flags >> IO_WQ_HASH_SHIFT;
+-}
+-
+-static inline unsigned int io_get_work_hash(struct io_wq_work *work)
+-{
+-	return __io_get_work_hash(atomic_read(&work->flags));
+-}
+-
+ static bool io_wait_on_hash(struct io_wq *wq, unsigned int hash)
+ {
+ 	bool ret = false;
 
+-- 
+Jens Axboe
 

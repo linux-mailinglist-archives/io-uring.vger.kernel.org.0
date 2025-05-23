@@ -1,80 +1,78 @@
-Return-Path: <io-uring+bounces-8100-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8101-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC769AC2650
-	for <lists+io-uring@lfdr.de>; Fri, 23 May 2025 17:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E77AC2B13
+	for <lists+io-uring@lfdr.de>; Fri, 23 May 2025 22:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EE49E5242
-	for <lists+io-uring@lfdr.de>; Fri, 23 May 2025 15:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9451B62C68
+	for <lists+io-uring@lfdr.de>; Fri, 23 May 2025 20:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF951C861A;
-	Fri, 23 May 2025 15:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC92E1607AC;
+	Fri, 23 May 2025 20:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yRuy3thP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Yt3XwVVL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C7207DFD
-	for <io-uring@vger.kernel.org>; Fri, 23 May 2025 15:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA3E1EEF9
+	for <io-uring@vger.kernel.org>; Fri, 23 May 2025 20:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748013628; cv=none; b=ffkvmH55dw4xgZc20bWIY8THQqgHtMhxqBQFWvMJHFr0xf6v9v9zJnWS0A/+/Snt2eJyrDN8L6qqtDaueqPHw7aHJdSkif5GSAnjGHntiA3Q6xUkxq775CNAiA68cmy0ClUhSF49/DZJMNbdPiT31VWe7Qc48MJYniZCqf3AxFU=
+	t=1748033121; cv=none; b=BVMPOPHvlayYROM/Sm+wnHk4AGFbsE4cLUvnxmg2uqI2uSCIJ/2upY/bmqdvYnthbLdxxnonxnC7eDz+7RsbcUSTWi40asouhQNvwo8cgFmSyucu6htm0MKxSwkyAUfSarE9ahyRT/mhZ9d7D2O3/TwmchMEQf1h5mwsg32mmRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748013628; c=relaxed/simple;
-	bh=N2fQnVtiM1LPGY/BgxpNgU5JtkCT9zoy1sn8EfPk0C4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mRf3sZq8EFXy8RLBCyuMSKfzAZZ5vzngS3GCQndPQ4kUUEZ1hAPRust6CeoAsR1WEW7NzowOebvEXrkFPM/WFd8fw/rpCQwkyIxZkca/oXcsGiujjgclHPp3JZ4oHgRmF8ZBtaSwnyh9kMisEae+tpHQiGlVyv9dG+y51D8WOZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yRuy3thP; arc=none smtp.client-ip=209.85.166.182
+	s=arc-20240116; t=1748033121; c=relaxed/simple;
+	bh=kk3rwkYgJZaIug/zByzcSIEdw62Qp+H3FMishPW6lMo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=a+sJ+zj6S9W8NN1DFEBGjfIgrHRcSz58UCKZ1vczbgPVH5bjCEwtars3lYDScRMY3dpRbBLUQkigFyJ8pBQf0mNUtNi2R4PKKdCBDeUzpMaIOTCuJT4VjVeq8bBOHexeaJzSagSfRRWTnEdL4AmTW6VDHX0xAL6wUgaG4S6RFv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Yt3XwVVL; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d8020ba858so40495ab.0
-        for <io-uring@vger.kernel.org>; Fri, 23 May 2025 08:20:26 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d948ce7d9dso1005985ab.2
+        for <io-uring@vger.kernel.org>; Fri, 23 May 2025 13:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748013626; x=1748618426; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6tIK28SwckRL9twqRdIeEiS4a3kgn/1/MK/6zCmJpSA=;
-        b=yRuy3thPV3L6pInKN3WMGGJ2KR3ljyZseRTaQtUZez/4p7Lc/SRY4F/x2VelddLZpK
-         OAlSk+DFE8qoeKZwaS4rT7DLMpvUddzFdmNhaLBVIbqllDnqLUoDY5dubDm/Vzw/+fTR
-         jDTsdviNRr/cCg8thhRBbFhHvPVS7mvhVO+YKUz89SrJfrzSI5RTRH/HPBT5XQnGiWJi
-         eiSXX/6+G5T03xADeRbM0Jw73zWejvFm1p/EFmEsqGiyaSqAC44W5HupRd5PKB208tI5
-         za+6orHkhGv/TF39C8QHcJi3FhnFMD2KV0x6AmcFxug6p69SWm2z9fjyNlUnimwDKqdE
-         9FnQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748033115; x=1748637915; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uJzB0ArkTYZhn++AMMyQZIBNAdmNnQnnZ454mypDwKo=;
+        b=Yt3XwVVL0itA932MPKMb2UOI74CjioQjW1lScgD4UnmkEAspeA3nAw0a96OX6qzFhm
+         1Zg5NKuRAM1ivmiw/wPSZf3XRq+cdqxynwVAVJ6MiQiGhPo8U4TxPfWJLsKAC3gGHgyW
+         EMqnYGFunQXBSS2I231IPGBwOX1k2piC7ct64HhqahAs5MSB/IGXHB5YbgWPKqzhLom1
+         J5kaTdGlyK2Xvauu0B5XQkd3ew0gvTBc6M1nVAzMrLlLr3fxRxLYsabr3AV9kdKAQdqP
+         f9TYgdVysmiW21K2yZMjEydUS3QqF8XGnfcmSIEjdII8hG/e7b7p87u0vVznd0JGps0h
+         huiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748013626; x=1748618426;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6tIK28SwckRL9twqRdIeEiS4a3kgn/1/MK/6zCmJpSA=;
-        b=GjIM4MhrGPuhoMEzl4q7ONsOar0jPuvEfeEqJXPs/0rRG0/0sYxf6rs6AEozXatU4T
-         /7cfe+8c66tQIFtw1QwI2vYxqUXAbZ/3ZBepKRDPSSnAfbOodI2uF7wcj8o4iw7fEBu3
-         SsmI+K4Uja92reW1dmd5FUf+Nmtt+e76ztQZwx8ZCd9BwZizrWZ28WKLiPWeLt6DCiXX
-         YapX3YZ9FMtSRmzdoXVk2qeJTa/FeXPVNErBlOOU3FrCc+cSnHBDjHOKmkwpKgSybMza
-         U9xPiFEiOkyEPL80zPBa40nCl6n3cKc5z8Aq+XJA7k+c/g5m2hgJLKmZ6H/NDinNZHeT
-         8Srw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSJV5kVQV2t8v1SMddiIWVC6Xx6O958HR2bSKmUgGoD4OHb6tBBzBH/U+4nXEVw5zqXgFtIXp64w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW2AA6LOFpdmWtYTl9mIS1qcZX7gGUM6RuNde65s+c1S4f0BhU
-	70+rZ7rkJbufFyE2or0hj4/IgLDsEikAf9ryO0oGGWFhJvr7z1BncTmZo5zsp0DBd7gen5LU0g9
-	m43HW
-X-Gm-Gg: ASbGnctd2FDr2vC4zxFyDFrNIvDtZqMp5VIRxhjUbkWHq1g4uF1awvkzI67aChbB3ZG
-	fNSg8gWLj0hq4dUmpMEi/50VgenATBKZ9iNvX96CO0bLuleQOKT7H3OBb7Lcsv6TI37BA4gFDVu
-	QcG+zFG/ZvJEmswWLjhG20qwnWS6MUxTXyNevBO+8h2OUd6MTYpHKMLaTb7hsxid/JvhT0HenQZ
-	7yzyXoikuIpgYAYmrbM2GozyOk9nljiCZR6GzaUZSosw87zQxYn/nkQCAXDBVd67RA01XIXztvh
-	r5bn0bGkfuYfVlnuML7YeUjstlvj6cLNlulUCCFdMXklLlQ=
-X-Google-Smtp-Source: AGHT+IEkBP7ibxM3selZY1Oa2jjX46/6SejGZhcFxk0eFjYCzfRMr03bOmeuR3eqjAikHvfcCvaq1w==
-X-Received: by 2002:a05:6e02:2788:b0:3d8:1b25:cc2 with SMTP id e9e14a558f8ab-3dc9326cf12mr36070505ab.8.1748013614110;
-        Fri, 23 May 2025 08:20:14 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc84ceeccesm14519445ab.45.2025.05.23.08.20.13
+        d=1e100.net; s=20230601; t=1748033115; x=1748637915;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uJzB0ArkTYZhn++AMMyQZIBNAdmNnQnnZ454mypDwKo=;
+        b=igabn7QJGfPeujBM9/86CL/X+1insyzMsKYpJyKIIzTgY1zKDdbi51brv2peeHitqh
+         VfNjpzYDdmM0fA9tEIqTgjg2oQN778ZiUJoHLSrC8tQm7AUTZBbDlJjaH4gR2d3nCrTX
+         irzQtTv3Sled4ELYbrCncZCV9HgTUN4RvwVjSVbJMQfCzM/HJAmWwmRBGcMJMV4yCzXw
+         qU0H9eBn+JrhBGiCXaP/qkRZUtsVI5jz1S4psv53KUY3FO75sGPTyyj4FJYvr7mpjQ0I
+         v6cXDazQAP4FMuygq4bteQ7enZke999KqngvLjXiHmyMd2FPZgbUTynu48SuqHADPiwA
+         n3Xg==
+X-Gm-Message-State: AOJu0YwVKnzZm5zb4tibY6Fbqe96FjMa04+wF+0f8NsvqvcqRAhIiuEj
+	PSFqs/clHejN8yX86Ip6voJ/ORJMl614oJAd79uJtYNCykT69cTEmybXL/8Y23k1QHvw0qdn/R/
+	QiMmq
+X-Gm-Gg: ASbGncvmqPTMLAykMb5Sm2NFi9UlpfdM3qFZEg8G1wZSLdmWE4Qm9CVOzQrYu7mlvY6
+	Eu2cQoylBnuCBGS4OGEwa0/iuewxlVFUe8iMQ4KyEpK9BoeJSHIoTDjt1isz7wo41YrXuXfBOMh
+	e2Uc/xUi/kQymK/85GGHl/0iBspRzAKs0fgBs7cP1wmTRaVjR37Sl32iCpZfjEWmtmc+6BH9Uuz
+	lXq5hHc5W4PYWVBMSeomlx92DV2xj9Y/ARa1VbqfNAvtJjWvefPwL6YwF+okcu6UfCsmcEuNP5U
+	NuEwsaL0GPohetnZsKw8gMLDPlhaXf/znxOCzA1V+wSNRYyOChGNHpQKjY4=
+X-Google-Smtp-Source: AGHT+IGa30U3gs/rKVyXDESdco57g7aXc25yreJ+Cto91H5Lgo1ZsPXdxyhyz1otVkdxrB7keNRoMA==
+X-Received: by 2002:a05:6e02:180a:b0:3dc:854a:ef3e with SMTP id e9e14a558f8ab-3dc9b686aedmr5257325ab.8.1748033115209;
+        Fri, 23 May 2025 13:45:15 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc76c160acsm24780845ab.24.2025.05.23.13.45.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 08:20:13 -0700 (PDT)
-Message-ID: <7bf620dc-1b5c-4401-a03c-16978de0598a@kernel.dk>
-Date: Fri, 23 May 2025 09:20:12 -0600
+        Fri, 23 May 2025 13:45:14 -0700 (PDT)
+Message-ID: <1849db19-119a-4b1f-8ed6-df861d7d9c8f@kernel.dk>
+Date: Fri, 23 May 2025 14:45:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,108 +80,192 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [RFC PATCH] io_uring: fix io worker thread that
- keeps creating and destroying
-To: Fengnan Chang <changfengnan@bytedance.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- Diangang Li <lidiangang@bytedance.com>
-References: <20250522090909.73212-1-changfengnan@bytedance.com>
- <b8cd8947-76fa-4863-a1f6-119c6d086196@kernel.dk>
- <CAPFOzZtxRYsCg1BVdpDUH=_bsLEQRvsp5+x-7Kpwow66poUVtA@mail.gmail.com>
- <356c5068-bd97-419a-884c-bcdb04ad6820@kernel.dk>
- <CAPFOzZtxXOQvC0wcNLaj-hZUOf2PWqon0uEvbQh7if7a7DdX=g@mail.gmail.com>
 From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring updates for 6.16-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
 Content-Language: en-US
-In-Reply-To: <CAPFOzZtxXOQvC0wcNLaj-hZUOf2PWqon0uEvbQh7if7a7DdX=g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/23/25 1:57 AM, Fengnan Chang wrote:
-> Jens Axboe <axboe@kernel.dk> ?2025?5?22??? 22:29???
->>
->> On 5/22/25 6:01 AM, Fengnan Chang wrote:
->>> Jens Axboe <axboe@kernel.dk> ?2025?5?22??? 19:35???
->>>>
->>>> On 5/22/25 3:09 AM, Fengnan Chang wrote:
->>>>> When running fio with buffer io and stable iops, I observed that
->>>>> part of io_worker threads keeps creating and destroying.
->>>>> Using this command can reproduce:
->>>>> fio --ioengine=io_uring --rw=randrw --bs=4k --direct=0 --size=100G
->>>>> --iodepth=256 --filename=/data03/fio-rand-read --name=test
->>>>> ps -L -p pid, you can see about 256 io_worker threads, and thread
->>>>> id keeps changing.
->>>>> And I do some debugging, most workers create happen in
->>>>> create_worker_cb. In create_worker_cb, if all workers have gone to
->>>>> sleep, and we have more work, we try to create new worker (let's
->>>>> call it worker B) to handle it.  And when new work comes,
->>>>> io_wq_enqueue will activate free worker (let's call it worker A) or
->>>>> create new one. It may cause worker A and B compete for one work.
->>>>> Since buffered write is hashed work, buffered write to a given file
->>>>> is serialized, only one worker gets the work in the end, the other
->>>>> worker goes to sleep. After repeating it many times, a lot of
->>>>> io_worker threads created, handles a few works or even no work to
->>>>> handle,and exit.
->>>>> There are several solutions:
->>>>> 1. Since all work is insert in io_wq_enqueue, io_wq_enqueue will
->>>>> create worker too, remove create worker action in create_worker_cb
->>>>> is fine, maybe affect performance?
->>>>> 2. When wq->hash->map bit is set, insert hashed work item, new work
->>>>> only put in wq->hash_tail, not link to work_list,
->>>>> io_worker_handle_work need to check hash_tail after a whole dependent
->>>>> link, io_acct_run_queue will return false when new work insert, no
->>>>> new thread will be created either in io_wqe_dec_running.
->>>>> 3. Check is there only one hash bucket in io_wqe_dec_running. If only
->>>>> one hash bucket, don't create worker, io_wq_enqueue will handle it.
->>>>
->>>> Nice catch on this! Does indeed look like a problem. Not a huge fan of
->>>> approach 3. Without having really looked into this yet, my initial idea
->>>> would've been to do some variant of solution 1 above. io_wq_enqueue()
->>>> checks if we need to create a worker, which basically boils down to "do
->>>> we have a free worker right now". If we do not, we create one. But the
->>>> question is really "do we need a new worker for this?", and if we're
->>>> inserting hashed worked and we have existing hashed work for the SAME
->>>> hash and it's busy, then the answer should be "no" as it'd be pointless
->>>> to create that worker.
->>>
->>> Agree
->>>
->>>>
->>>> Would it be feasible to augment the check in there such that
->>>> io_wq_enqueue() doesn't create a new worker for that case? And I guess a
->>>> followup question is, would that even be enough, do we always need to
->>>> cover the io_wq_dec_running() running case as well as
->>>> io_acct_run_queue() will return true as well since it doesn't know about
->>>> this either?
->>> Yes?It is feasible to avoid creating a worker by adding some checks in
->>> io_wq_enqueue. But what I have observed so far is most workers are
->>> created in io_wq_dec_running (why no worker create in io_wq_enqueue?
->>> I didn't figure it out now), it seems no need to check this
->>> in io_wq_enqueue.  And cover io_wq_dec_running is necessary.
->>
->> The general concept for io-wq is that it's always assumed that a worker
->> won't block, and if it does AND more work is available, at that point a
->> new worker is created. io_wq_dec_running() is called by the scheduler
->> when a worker is scheduled out, eg blocking, and then an extra worker is
->> created at that point, if necessary.
->>
->> I wonder if we can get away with something like the below? Basically two
->> things in there:
->>
->> 1) If a worker goes to sleep AND it doesn't have a current work
->>    assigned, just ignore it. Really a separate change, but seems to
->>    conceptually make sense - a new worker should only be created off
->>    that path, if it's currenly handling a work item and goes to sleep.
->>
->> 2) If there is current work, defer if it's hashed and the next work item
->>    in that list is also hashed and of the same value.
-> I like this change, this makes the logic clearer. This patch looks good,
-> I'll do more tests next week.
+Hi Linus,
 
-Thanks for taking a look - I've posted it as a 3 patch series, as 1+2
-above are really two separate things that need sorting imho. I've queued
-it up for the next kernel release, so please do test next week when you
-have time.
+Here are the io_uring updated scheduled for the 6.16-rc1 kernel release.
+Pretty quiet round this time, mostly just cleanups and fixes. This pull
+request contains:
+
+- Avoid indirect function calls in io-wq for executing and freeing work.
+  The design of io-wq is such that it can be a generic mechanism, but as
+  it's just used by io_uring now, may as well avoid these indirect
+  calls.
+
+- Series cleaning up registered buffers for networking.
+
+- Add support for IORING_OP_PIPE. Pretty straight forward, allows
+  creating pipes with io_uring, particularly useful for having these be
+  instantiated as direct descriptors.
+
+- Series cleaning up the coalescing support fore registered buffers.
+
+- Add support for multiple interface queues for zero-copy rx networking.
+  As this feature was merged for 6.15 it supported just a single ifq per
+  ring.
+
+- Series cleaning up the eventfd support.
+
+- Series adding dma-buf support to zero-copy rx.
+
+- Series cleaning up and improving the request draining support.
+
+- Series cleaning up provided buffer support, most notably with an eye
+  toward making the legacy support less intrusive.
+
+- Minor fdinfo cleanups, dropping support for dumping what credentials
+  are registered.
+
+- Improve support for overflow CQE handling, getting rid of GFP_ATOMIC
+  for allocating overflow entries where possible.
+
+- Improve detection of cases where io-wq doesn't need to spawn a new
+  worker unnecessarily.
+
+- Various little cleanups.
+
+Please pull!
+
+
+The following changes since commit d871198ee431d90f5308d53998c1ba1d5db5619a:
+
+  io_uring/fdinfo: grab ctx->uring_lock around io_uring_show_fdinfo() (2025-05-14 07:15:28 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.16/io_uring-20250523
+
+for you to fetch changes up to 6faaf6e0faf1cc9a1359cfe6ecb4d9711b4a9f29:
+
+  io_uring/cmd: warn on reg buf imports by ineligible cmds (2025-05-23 06:31:06 -0600)
+
+----------------------------------------------------------------
+for-6.16/io_uring-20250523
+
+----------------------------------------------------------------
+Caleb Sander Mateos (2):
+      io_uring/wq: avoid indirect do_work/free_work calls
+      trace/io_uring: fix io_uring_local_work_run ctx documentation
+
+Jens Axboe (13):
+      io_uring: add support for IORING_OP_PIPE
+      io_uring/rsrc: remove node assignment helpers
+      Merge branch 'io_uring-6.15' into for-6.16/io_uring
+      io_uring/fdinfo: only compile if CONFIG_PROC_FS is set
+      io_uring/fdinfo: get rid of dumping credentials
+      io_uring: split alloc and add of overflow
+      io_uring: make io_alloc_ocqe() take a struct io_cqe pointer
+      io_uring: pass in struct io_big_cqe to io_alloc_ocqe()
+      io_uring: add new helpers for posting overflows
+      io_uring: finish IOU_OK -> IOU_COMPLETE transition
+      io_uring/io-wq: move hash helpers to the top
+      io_uring/io-wq: ignore non-busy worker going to sleep
+      io_uring/io-wq: only create a new worker if it can make progress
+
+Long Li (1):
+      io_uring: update parameter name in io_pin_pages function declaration
+
+Pavel Begunkov (44):
+      io_uring/net: don't use io_do_buffer_select at prep
+      io_uring: set IMPORT_BUFFER in generic send setup
+      io_uring/kbuf: pass bgid to io_buffer_select()
+      io_uring: don't store bgid in req->buf_index
+      io_uring/rsrc: use unpin_user_folio
+      io_uring/rsrc: clean up io_coalesce_buffer()
+      io_uring/rsrc: remove null check on import
+      io_uring/zcrx: remove duplicated freelist init
+      io_uring/zcrx: move io_zcrx_iov_page
+      io_uring/zcrx: remove sqe->file_index check
+      io_uring/zcrx: let zcrx choose region for mmaping
+      io_uring/zcrx: move zcrx region to struct io_zcrx_ifq
+      io_uring/zcrx: add support for multiple ifqs
+      io_uring/eventfd: dedup signalling helpers
+      io_uring/eventfd: clean up rcu locking
+      io_uring/eventfd: open code io_eventfd_grab()
+      io_uring: delete misleading comment in io_fill_cqe_aux()
+      io_uring/cmd: move net cmd into a separate file
+      io_uring/zcrx: improve area validation
+      io_uring/zcrx: resolve netdev before area creation
+      io_uring/zcrx: split out memory holders from area
+      io_uring/zcrx: split common area map/unmap parts
+      io_uring/zcrx: dmabuf backed zerocopy receive
+      io_uring/timeout: don't export link t-out disarm helper
+      io_uring: remove io_preinit_req()
+      io_uring: move io_req_put_rsrc_nodes()
+      io_uring/net: move CONFIG_NET guards to Makefile
+      io_uring: add lockdep asserts to io_add_aux_cqe
+      io_uring: account drain memory to cgroup
+      io_uring: fix spurious drain flushing
+      io_uring: simplify drain ret passing
+      io_uring: remove drain prealloc checks
+      io_uring: consolidate drain seq checking
+      io_uring: open code io_account_cq_overflow()
+      io_uring: count allocated requests
+      io_uring: drain based on allocates reqs
+      io_uring/kbuf: account ring io_buffer_list memory
+      io_uring/kbuf: use mem_is_zero()
+      io_uring/kbuf: drop extra vars in io_register_pbuf_ring
+      io_uring/kbuf: don't compute size twice on prep
+      io_uring/kbuf: refactor __io_remove_buffers
+      io_uring/kbuf: unify legacy buf provision and removal
+      io_uring: open code io_req_cqe_overflow()
+      io_uring/cmd: warn on reg buf imports by ineligible cmds
+
+ include/linux/io_uring_types.h  |  15 +-
+ include/trace/events/io_uring.h |   2 +-
+ include/uapi/linux/io_uring.h   |   8 +-
+ io_uring/Makefile               |   6 +-
+ io_uring/advise.c               |   4 +-
+ io_uring/cancel.c               |   2 +-
+ io_uring/cmd_net.c              |  83 +++++++
+ io_uring/epoll.c                |   4 +-
+ io_uring/eventfd.c              |  66 ++----
+ io_uring/eventfd.h              |   3 +-
+ io_uring/fdinfo.c               |  40 ----
+ io_uring/fs.c                   |  10 +-
+ io_uring/futex.c                |   6 +-
+ io_uring/io-wq.c                |  65 ++++--
+ io_uring/io-wq.h                |   5 -
+ io_uring/io_uring.c             | 285 ++++++++++++------------
+ io_uring/io_uring.h             |   4 +-
+ io_uring/kbuf.c                 | 148 +++++--------
+ io_uring/kbuf.h                 |   8 +-
+ io_uring/memmap.c               |  11 +-
+ io_uring/memmap.h               |   4 +-
+ io_uring/msg_ring.c             |   2 +-
+ io_uring/net.c                  |  62 +++---
+ io_uring/nop.c                  |   2 +-
+ io_uring/notif.c                |   1 +
+ io_uring/opdef.c                |  11 +-
+ io_uring/openclose.c            | 139 +++++++++++-
+ io_uring/openclose.h            |   3 +
+ io_uring/poll.c                 |   4 +-
+ io_uring/rsrc.c                 |  91 ++++----
+ io_uring/rsrc.h                 |  28 +--
+ io_uring/rw.c                   |   7 +-
+ io_uring/rw.h                   |   2 +
+ io_uring/splice.c               |   4 +-
+ io_uring/statx.c                |   2 +-
+ io_uring/sync.c                 |   6 +-
+ io_uring/tctx.c                 |   2 -
+ io_uring/timeout.c              |  13 +-
+ io_uring/timeout.h              |  13 --
+ io_uring/truncate.c             |   2 +-
+ io_uring/uring_cmd.c            |  91 +-------
+ io_uring/waitid.c               |   2 +-
+ io_uring/xattr.c                |   8 +-
+ io_uring/zcrx.c                 | 372 +++++++++++++++++++++++++-------
+ io_uring/zcrx.h                 |  26 ++-
+ 45 files changed, 958 insertions(+), 714 deletions(-)
 
 -- 
 Jens Axboe
+
 

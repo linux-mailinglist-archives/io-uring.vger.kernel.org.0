@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-8105-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8106-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9245BAC3AA9
-	for <lists+io-uring@lfdr.de>; Mon, 26 May 2025 09:31:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF397AC3AAA
+	for <lists+io-uring@lfdr.de>; Mon, 26 May 2025 09:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155C71894DAA
-	for <lists+io-uring@lfdr.de>; Mon, 26 May 2025 07:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 712367A2346
+	for <lists+io-uring@lfdr.de>; Mon, 26 May 2025 07:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645AA1DF990;
-	Mon, 26 May 2025 07:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278B81E130F;
+	Mon, 26 May 2025 07:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcaAxGJY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3dw3gqP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADD61876
-	for <io-uring@vger.kernel.org>; Mon, 26 May 2025 07:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361561DF270
+	for <io-uring@vger.kernel.org>; Mon, 26 May 2025 07:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748244687; cv=none; b=L0wdrt6l2oYPS/a2ZiUJGW98AB0XgifxvIySdXNyOYiZegQ9ATAtEatfyNFmE72mRMxc7dgHt+2pg4ox7JmhfLv78xhHeB1DTc9e1FnQyknoIiox/3Caf6uUcJjfreRt0PRx1ShP9Nre1PIR7nvlt8sTrcOHeTadnYNrnGQa7Do=
+	t=1748244689; cv=none; b=dXUmgIbPFv+Rygt8MM0VVqJ9dJ7FSYKUrosplShxVtIAIJmikHD4j3e06n6xC4zhDT6rt23Gz8zV2JWIEJV+N9Nhd9EFVLlE3au/AWcUUnPAwqdfDfDVW42R9Un6IGN8Gw6nhR7tRBBJQoWamaHakW/DTxF3mXMKE+J6if0rfCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748244687; c=relaxed/simple;
-	bh=OsMrzxwrIa9RiA/xJDMU4JLeIaGeS3vdYPlJwbJDQm4=;
+	s=arc-20240116; t=1748244689; c=relaxed/simple;
+	bh=35AZYdg4J0r6ittgurqKQICiwBIJX9nvm4pGjOAUrNg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z4FidOM5wQIZN7UdlK9S39RMtLzSqd8NwzUe0PHJswRigIMSPnyvc+VXozVVPejStRjfjquO7UbsjZs2DmNjd7Viyci3y2huXVidR8vHfNOcaIdvi39ICPrmsN+01kXf2GWrL8oSWKGVZzaN/vcEv9RQytew3Cob8BWnbgfL1v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcaAxGJY; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=p6uyef6jip7AYh+lmD8ugxXAC346wNQ0fk71rRQspMM80WYuidQdjnzLPEwBwFjiQv6nU6ciCoTTDPfpAKYf5W6D2tRJCJ7fjRTAFRmINBvpXwIRh9Q499IL1CUbJ46fypbUNZP9gXO4Ufy5VeQdjd/n6aHoai6KBhfsBJpaaEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3dw3gqP; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acacb8743a7so362871466b.1
-        for <io-uring@vger.kernel.org>; Mon, 26 May 2025 00:31:25 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac34257295dso394043966b.2
+        for <io-uring@vger.kernel.org>; Mon, 26 May 2025 00:31:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748244683; x=1748849483; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748244685; x=1748849485; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yJssw0pNnyo1E63xpgw3M3NlpEWxzrnqeMBA/eWMmLk=;
-        b=gcaAxGJYvRr9EcaYwa7rCfr5wk4wcLRHIZ8c+rC37J5Tx6eJFUeYq7y3GHwfQQ9Eyn
-         7FCSasZgVODoj5Nr7jrMwQgzD660FA+5E3IHKI6A+/IO3M2jlqJzN1z0tnL0M3Gul+QP
-         +YZws8E5S8qua5e/6Epe6PkNQVdFUiaRvebk6+7xH4cBBmDunXhEEpQ6Ww2vgCozK7iM
-         1Y36tSu8jwokmZ9TeD95Z3Y8tF68xZ8/Bekebkv727xp7wpvkQqjERZz6q3gUavBCUZS
-         +0PYrKWmEmionxIOqvCuVVFacKfI/Ep7nB5xN1rnBopB61CpsrKL6iVZZcphItxZqfdU
-         KnUg==
+        bh=sH1tT4PH7AkwUcGEWr07xjTn4FFO9TACfC9ggHqKbd4=;
+        b=k3dw3gqPx/syfo50jcMl52jaP+NchAv7SH6HelVxDy9KI/fnuO8ZpL8R7wGu2RNS+2
+         ZBP2tgytI4tO+Xdz71tQynTI9SzEKgf4FAYetKYgM0Dal8+0y/8Uxsp4GR2zUb9WWQ+x
+         WviMa8vu+Z2CidQCvAzFaFOMKi6DDNVusENoTjdEAWBUf6Md/VHNvTPoxGsLL5WEff/9
+         0Q3O79WzTROx22odUYZ6NqQF+HfLLcKMKZ+E8sl6PexSGaUHf6GyilNvPCSJKtSwfQzX
+         AST4c/JHutpFaISImObJ5yRF6YZrpIxazgw5uDQnbhdUnIa/yW1fHHAxZ5LrduiPDoFz
+         6TYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748244683; x=1748849483;
+        d=1e100.net; s=20230601; t=1748244685; x=1748849485;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yJssw0pNnyo1E63xpgw3M3NlpEWxzrnqeMBA/eWMmLk=;
-        b=WJAwVjeQghPFn8CxMxI+v+3f/xNlpsUP8V7D8h4EC2bP4/wjRMHsJ2YqIYbCJtokjz
-         iZGhDX9OTtF6IWXCLaLcLU70vHjlbQGFciiKT4/qFiFnwuZA/0AgbJ3hJai0OCMTW6zi
-         CfQrK/qsM+zFQrXmjlkGbwS/DMe318WBryXEJ1MF6wSjNY7vW2SSinLEpBeUbgsw623X
-         DFbfkdTNwRnKJeBcgSohktLWun37TGuO+6x7NLSmSHtDYags11lgj9NsBKb4J+Jnq4Lq
-         GxiCfT9N54YWtvLk0pXgHI2he4++Y6zdP2m6n9z/kE37yNWuwtIs4HajtWsIYv0N/MYU
-         FDQg==
-X-Gm-Message-State: AOJu0YxYFvdHRNXNlRKPITJK7DfY3tz2gIYb/zI4wX7a7aRd8miV7XCO
-	Jc2tdB48b9l812wymt+jdIGSSByKam0gcl69OOGGqvu6YYI8DMQJaFo18fKo5g==
-X-Gm-Gg: ASbGncvinCu1XBdz4RYC8nEix8nOU8ExcYDQxanSQegN5BMjQk/87QkEuQT31yuboDS
-	eg9ih3KOzb5AeVNUgnLo1sAzSuXLL0JyBCc6eLWfXvMfACZIJgdHBJpLiBGWO6tE00Cuegdpfpc
-	3+WOD4Mvn7Y0rIamOXMfK8UPpJMlbOvPchQ4c+U17MO9Dsh+nAc7Rtnt7jB2rIoyL6MtU0EpCUh
-	EcBgJyzA7FeZSOjjpCabZentFN8fHQHiDldEHm8U0ImiuZEgYFEmsUSZVHlB/Ij9x++N5yp8QAR
-	d1z5pabxXZ7m8fHxsYuJm9ylrbejVHpuElRsKFGw08viQ5W+Qdqi/GEv8RY4/jRw
-X-Google-Smtp-Source: AGHT+IH/aEYHOwjA8VMlJqHLHVXEvcs+tERBpH+dR1RfnUtX+VE/yBpPWADPT++BZX3gmYgur/H2Qw==
-X-Received: by 2002:a17:907:9412:b0:ad5:5086:c2c7 with SMTP id a640c23a62f3a-ad64dc76264mr1111478666b.15.1748244683085;
-        Mon, 26 May 2025 00:31:23 -0700 (PDT)
+        bh=sH1tT4PH7AkwUcGEWr07xjTn4FFO9TACfC9ggHqKbd4=;
+        b=TRvuNglltHDX1hJcfnktRmdePka64KiVOMdmOvFDTJypNNkKN0xAGQiP5kn5Rx3d9f
+         GjA966qSyhahC84ItyfVfU4S5/hw1jZ+Wy+gyTWvmsYYDwxBNeYljkQkZyGC2Lqfe3h0
+         3WtQHnLj6jAYY66HyQ9YIBvDi11ISEvvJBUKXTMLxsfH8BtwJjzvUABs+QLUxtITJKaB
+         WoVhU1XAFch6ba96PTHvcjDvXr8+LWmEeuJGM/GxuMC/7J6eo11uhmg27iAEDg7LGT9p
+         rAvBVvGzF5iHyHUzR9SksdxT9Xg9b0zRRXVzEQizq/wv/NHVBK5MUDcuucICKMGV9cMI
+         48Ig==
+X-Gm-Message-State: AOJu0YyktldFzBao87s37h+/d3ELLBeUNvu8stpvMbvmaiX2ojwbkZAt
+	i8n+D3bJz0+rkOD6LKgFa8c+mAgD6TSUASet7JffFfl8dAYW6otSb287ZPWZ3g==
+X-Gm-Gg: ASbGnctX6ZNPIUjEGutYqKPh2ohTMA/WMCKTLeJA4sjd0BYG9QX+GkENeUfaWxttdRz
+	mxrTwGJOZE5X6ZQ/jFS2WHqWoW4shF5ZZJLQvixl3d85Iav26UgAWxSrf2h+4RQxxpDGS/QFYmo
+	nlCXI3vkPUA0zmVush1BCxgj4T0ZFlSqRgSYGFlzGYZDa1WCOmFfTIhV5b2a9moPYv981iHNZ15
+	FJtm2Uduu1tzWk8Kf3rYDV1dw/0UDm4G/qaZfjZTzZrfLxx5kkraXwR7vUYq3c+mhATeCkuHjK+
+	hSDKG3uKNgOHOrUSY3cNhaxLJVVL4FxRJizl+x7b2eZ3LjnFH3RTC5tlFMLESFs6
+X-Google-Smtp-Source: AGHT+IHYLI+/kDGdyf6Q3ts/bF7tA7n5414Kj1FK5Ib+ZgDw9aBcTXiGsBjMdPgwRkttPnasbICkwA==
+X-Received: by 2002:a17:906:f595:b0:ad2:48f4:5968 with SMTP id a640c23a62f3a-ad85b1bd264mr701177166b.25.1748244684785;
+        Mon, 26 May 2025 00:31:24 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.132.24])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8816eb7e3sm12395166b.50.2025.05.26.00.31.21
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8816eb7e3sm12395166b.50.2025.05.26.00.31.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 00:31:22 -0700 (PDT)
+        Mon, 26 May 2025 00:31:24 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	chase xd <sl1589472800@gmail.com>
-Subject: [PATCH v2 2/6] io_uring/mock: add cmd using vectored regbufs
-Date: Mon, 26 May 2025 08:32:24 +0100
-Message-ID: <fcad3a40b1a2f6016a4abf60978297992036f857.1748243323.git.asml.silence@gmail.com>
+Subject: [PATCH v2 3/6] io_uring/mock: add sync read/write
+Date: Mon, 26 May 2025 08:32:25 +0100
+Message-ID: <3ab0c417b401d0230e8fd0cc64e52c731e195ab6.1748243323.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1748243323.git.asml.silence@gmail.com>
 References: <cover.1748243323.git.asml.silence@gmail.com>
@@ -89,137 +89,146 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a command api allowing to import vectored registered buffers,
-add a new mock command that uses the feature and simply copies the
-specified registered buffer into user space or vice versa.
+Add support for synchronous zero read/write for mock files.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/mock_file.c | 70 +++++++++++++++++++++++++++++++++++++++++++-
- io_uring/mock_file.h | 14 +++++++++
- 2 files changed, 83 insertions(+), 1 deletion(-)
+ io_uring/mock_file.c | 58 ++++++++++++++++++++++++++++++++++++++++----
+ io_uring/mock_file.h |  4 ++-
+ 2 files changed, 56 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/mock_file.c b/io_uring/mock_file.c
-index e8ec0aeddbae..6d6100052a26 100644
+index 6d6100052a26..eaecad34ef03 100644
 --- a/io_uring/mock_file.c
 +++ b/io_uring/mock_file.c
-@@ -9,8 +9,76 @@
+@@ -9,6 +9,10 @@
  #include <linux/io_uring_types.h>
  #include "mock_file.h"
  
-+#define IO_VALID_COPY_CMD_FLAGS		IORING_MOCK_COPY_FROM
++struct io_mock_file {
++	size_t size;
++};
 +
-+static int io_copy_regbuf(struct iov_iter *reg_iter, void __user *ubuf)
-+{
-+	size_t ret, copied = 0;
-+	size_t buflen = PAGE_SIZE;
-+	void *tmp_buf;
-+
-+	tmp_buf = kzalloc(buflen, GFP_KERNEL);
-+	if (!tmp_buf)
-+		return -ENOMEM;
-+
-+	while (iov_iter_count(reg_iter)) {
-+		size_t len = min(iov_iter_count(reg_iter), buflen);
-+
-+		if (iov_iter_rw(reg_iter) == ITER_SOURCE) {
-+			ret = copy_from_iter(tmp_buf, len, reg_iter);
-+			if (ret <= 0)
-+				break;
-+			if (copy_to_user(ubuf, tmp_buf, ret))
-+				break;
-+		} else {
-+			if (copy_from_user(tmp_buf, ubuf, len))
-+				break;
-+			ret = copy_to_iter(tmp_buf, len, reg_iter);
-+			if (ret <= 0)
-+				break;
-+		}
-+		ubuf += ret;
-+		copied += ret;
-+	}
-+
-+	kfree(tmp_buf);
-+	return copied;
-+}
-+
-+static int io_cmd_copy_regbuf(struct io_uring_cmd *cmd, unsigned int issue_flags)
-+{
-+	const struct io_uring_sqe *sqe = cmd->sqe;
-+	const struct iovec __user *iovec;
-+	unsigned flags, iovec_len;
-+	struct iov_iter iter;
-+	void __user *ubuf;
-+	int dir, ret;
-+
-+	ubuf = u64_to_user_ptr(READ_ONCE(sqe->addr3));
-+	iovec = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	iovec_len = READ_ONCE(sqe->len);
-+	flags = READ_ONCE(sqe->file_index);
-+
-+	if (unlikely(sqe->ioprio || sqe->__pad1))
-+		return -EINVAL;
-+	if (flags & ~IO_VALID_COPY_CMD_FLAGS)
-+		return -EINVAL;
-+
-+	dir = (flags & IORING_MOCK_COPY_FROM) ? ITER_SOURCE : ITER_DEST;
-+	ret = io_uring_cmd_import_fixed_vec(cmd, iovec, iovec_len, dir, &iter,
-+					    issue_flags);
-+	if (ret)
-+		return ret;
-+	ret = io_copy_regbuf(&iter, ubuf);
-+	return ret ? ret : -EFAULT;
-+}
-+
- static int io_mock_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
-+	switch (cmd->cmd_op) {
-+	case IORING_MOCK_CMD_COPY_REGBUF:
-+		return io_cmd_copy_regbuf(cmd, issue_flags);
-+	}
+ #define IO_VALID_COPY_CMD_FLAGS		IORING_MOCK_COPY_FROM
+ 
+ static int io_copy_regbuf(struct iov_iter *reg_iter, void __user *ubuf)
+@@ -82,18 +86,50 @@ static int io_mock_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
  	return -ENOTSUPP;
  }
  
-@@ -85,7 +153,7 @@ static int io_probe_mock(struct io_uring_cmd *cmd)
- 	if (!mem_is_zero(&mp, sizeof(mp)))
- 		return -EINVAL;
- 
--	mp.features = 0;
-+	mp.features = IORING_MOCK_FEAT_END;
- 
- 	if (copy_to_user(uarg, &mp, uarg_size))
- 		return -EFAULT;
-diff --git a/io_uring/mock_file.h b/io_uring/mock_file.h
-index de7318a5b1f1..0833eb7af1ac 100644
---- a/io_uring/mock_file.h
-+++ b/io_uring/mock_file.h
-@@ -3,6 +3,12 @@
- 
- #include <linux/types.h>
- 
-+enum {
-+	IORING_MOCK_FEAT_CMD_COPY,
++static ssize_t io_mock_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct io_mock_file *mf = iocb->ki_filp->private_data;
++	size_t len = iov_iter_count(to);
 +
-+	IORING_MOCK_FEAT_END,
-+};
++	if (iocb->ki_pos + len > mf->size)
++		return -EINVAL;
++	return iov_iter_zero(len, to);
++}
 +
- struct io_uring_mock_probe {
- 	__u64		features;
- 	__u64		__resv[9];
-@@ -19,4 +25,12 @@ enum {
- 	IORING_MOCK_MGR_CMD_CREATE,
++static ssize_t io_mock_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct io_mock_file *mf = iocb->ki_filp->private_data;
++	size_t len = iov_iter_count(from);
++
++	if (iocb->ki_pos + len > mf->size)
++		return -EINVAL;
++	iov_iter_advance(from, len);
++	return len;
++}
++
++static loff_t io_mock_llseek(struct file *file, loff_t offset, int whence)
++{
++	struct io_mock_file *mf = file->private_data;
++
++	return fixed_size_llseek(file, offset, whence, mf->size);
++}
++
+ static const struct file_operations io_mock_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.uring_cmd	= io_mock_cmd,
++	.read_iter	= io_mock_read_iter,
++	.write_iter	= io_mock_write_iter,
++	.llseek		= io_mock_llseek,
  };
  
-+enum {
-+	IORING_MOCK_CMD_COPY_REGBUF,
-+};
+ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ {
+ 	const struct io_uring_sqe *sqe = cmd->sqe;
+ 	struct io_uring_mock_create mc, __user *uarg;
++	struct io_mock_file *mf = NULL;
+ 	struct file *file = NULL;
+ 	size_t uarg_size;
+-	int fd, ret;
++	int fd = -1, ret;
+ 
+ 	uarg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	uarg_size = READ_ONCE(sqe->len);
+@@ -108,18 +144,28 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
+ 		return -EFAULT;
+ 	if (!mem_is_zero(mc.__resv, sizeof(mc.__resv)) || mc.flags)
+ 		return -EINVAL;
++	if (mc.file_size > SZ_1G)
++		return -EINVAL;
++	mf = kzalloc(sizeof(*mf), GFP_KERNEL_ACCOUNT);
++	if (!mf)
++		return -ENOMEM;
+ 
+-	fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
++	ret = fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
+ 	if (fd < 0)
+-		return fd;
++		goto fail;
+ 
++	mf->size = mc.file_size;
+ 	file = anon_inode_create_getfile("[io_uring_mock]", &io_mock_fops,
+-					 NULL, O_RDWR | O_CLOEXEC, NULL);
++					 mf, O_RDWR | O_CLOEXEC, NULL);
+ 	if (IS_ERR(file)) {
+ 		ret = PTR_ERR(file);
+ 		goto fail;
+ 	}
+ 
++	file->f_mode |= FMODE_READ | FMODE_CAN_READ |
++			FMODE_WRITE | FMODE_CAN_WRITE |
++			FMODE_LSEEK;
 +
-+enum {
-+	IORING_MOCK_COPY_FROM			= 1,
-+};
-+
- #endif
-\ No newline at end of file
+ 	mc.out_fd = fd;
+ 	if (copy_to_user(uarg, &mc, uarg_size)) {
+ 		fput(file);
+@@ -130,7 +176,9 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
+ 	fd_install(fd, file);
+ 	return 0;
+ fail:
+-	put_unused_fd(fd);
++	if (fd >= 0)
++		put_unused_fd(fd);
++	kfree(mf);
+ 	return ret;
+ }
+ 
+diff --git a/io_uring/mock_file.h b/io_uring/mock_file.h
+index 0833eb7af1ac..85be7597c8db 100644
+--- a/io_uring/mock_file.h
++++ b/io_uring/mock_file.h
+@@ -5,6 +5,7 @@
+ 
+ enum {
+ 	IORING_MOCK_FEAT_CMD_COPY,
++	IORING_MOCK_FEAT_RW_ZERO,
+ 
+ 	IORING_MOCK_FEAT_END,
+ };
+@@ -17,7 +18,8 @@ struct io_uring_mock_probe {
+ struct io_uring_mock_create {
+ 	__u32		out_fd;
+ 	__u32		flags;
+-	__u64		__resv[15];
++	__u64		file_size;
++	__u64		__resv[14];
+ };
+ 
+ enum {
 -- 
 2.49.0
 

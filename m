@@ -1,148 +1,118 @@
-Return-Path: <io-uring+bounces-8116-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8117-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1459AC51CE
-	for <lists+io-uring@lfdr.de>; Tue, 27 May 2025 17:15:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DD9AC5200
+	for <lists+io-uring@lfdr.de>; Tue, 27 May 2025 17:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E77916694E
-	for <lists+io-uring@lfdr.de>; Tue, 27 May 2025 15:15:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425D0166ED8
+	for <lists+io-uring@lfdr.de>; Tue, 27 May 2025 15:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F6527A476;
-	Tue, 27 May 2025 15:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB6027990B;
+	Tue, 27 May 2025 15:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngvLMpEV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4CD15624D
-	for <io-uring@vger.kernel.org>; Tue, 27 May 2025 15:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D40253B4C
+	for <io-uring@vger.kernel.org>; Tue, 27 May 2025 15:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748358936; cv=none; b=rH17Q+rxR896P+Vm7MjMPZBcBaPqbYd6S3Ytmi5bHkvxvkeDVUroqBJhkmsa4/Uq0TwN3LoxNyKGU/h0J4cAnNXjLxBbznoRePCDtKq69MccRTHsaQ1bFIuJusnb96SqDDjC4TZB7nV4l+o2foI7pBCj2/MFupP29hqvtY0f5ig=
+	t=1748359616; cv=none; b=iriqNV/gYR4IY/VXz1iyz5CbRRm1EKt83MZ5EazVJNYoaRfFmXFZcMPosfK+b1FuYOF/CGtwoN06KAxohQzfDGlAevmR5uhknPPq3NdacWkXz5tfsXvmFLgf93kdqw0x8V7Nk2349hseaPJqwVhCiMK+x9VwDJuYcRu/dwyWM4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748358936; c=relaxed/simple;
-	bh=o52gIWJXV36NqQKPyb9vj8CUHghtyk5NZwiBeUlu15o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U7atf5wxSZkSTE4cr0bzOodEcCBOwKx/WldSLGYiEO8quDOsEbtAYFBxYFJcNvVM89XSfG+buip3FHgxgJws3BAmKLBdR6lWJc2XArACLBha+aRXCisyBURW00qMD7CFX1CAkKvC5nJj8h3QwnLQv2waPgyPEWJaOzwnvX6vhR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86a3d964d9fso355519839f.0
-        for <io-uring@vger.kernel.org>; Tue, 27 May 2025 08:15:34 -0700 (PDT)
+	s=arc-20240116; t=1748359616; c=relaxed/simple;
+	bh=phMO+ISNVTOQMSs+cLJK9pcLHhaZ/dcH+8NUvbYyNVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ssp1p7L9dfRUNgagPv/99uIKdJp8Y9zm/vx0UqCJo6gGC3NqJpWSu6Zso43yqVEm+gFHPtLOE8wbUmGnQ5MvlmHcRN9JpQvrn7n0OyJSWk/EnDi0X4jV4YZrAuHGXG4D5QVbFEfDBwir3hB+sP8C6pLn+UEtB25Sm3DldBLlcw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngvLMpEV; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad51ef2424bso709463966b.0
+        for <io-uring@vger.kernel.org>; Tue, 27 May 2025 08:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748359613; x=1748964413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jzi6DEsqtvesWkQgW21rjp6w06wt727BDcWCBAVYIig=;
+        b=ngvLMpEVTCEU8p30loqbzaWsuMOk5itkPO8y76AwDadsKPPE4R3zj0OuM3isu4kunk
+         LUKOjGLFw1UDK3ckIC+D90zR69vQu/ee+lDxL42QBGLRA4Qf3xSVn/16AQSuwvOLfGOd
+         tlH+CC/OTjVdLCpTZZ9B/MEdStdQoGCn1+8bRxzIgLfP7kTjdgSHadqqEie2pALtEGhT
+         GesRMkFVtzdb2igTGNuekQldeZoXiQ0LfdPMxmhBWM8KbAknzC6zMX0h/vEe6ylGNATW
+         QVEZkWzqGBVqwTCjoe+hGENs5FimI4BQiICRpr6oz7lyiBDvrH//Tirdt6QDXob/hLpA
+         OSpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748358934; x=1748963734;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tuF2cvvL2P3Eod+mVUZAyivjhb60HVt8Np+UoU6NyzQ=;
-        b=R+7kDb58NGFwLYX1yE01Ob2BPyxfXNu2N6UK0+8h8gSTFzjTuTGEgK3YPMsafoKqlX
-         rQuqVhBwtjHlWJVJr0KQ5MYTKzPNF1EFJpk20mXwfxhXjTIniYvaQhAddYqVi3ffjMo+
-         JZZyWuYeBWeNoyCjQlY1Z2DI9TliMBRq2ravn5/+LyCNQq/FlBLeFjHEs9586eVeQS1U
-         NNWljL+9bH46gdldGCZ+3FmvRrkyFDi+S/6K5htEzOujE9ieDHw72W396q12afbilBnw
-         thzy0YPj3F9/7iAnSeUSII4SSP7SJ142S5YbGtt5pKxyJdJFXFsxIRKg30KDbXR45ln0
-         Xq1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVi2gIpHOEls+mhsvK/mxlpNv9AQ0k/o13XdPKXix99911McDtAuip4k1xLD7FtCNvmapXK105cZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHHtaWq6IVl8IWJcjnC2TYIRn7RQe35D+7fgYpGcpG9Qi72GeO
-	3Un/ywnmgIDk096Ois+kOzGCY16+qWiAgxZlmFyXi+RxqhxCFrVs5otpd0Ks8NGJztNIYEFwYh9
-	caAfWWk17qqyn1HYyf5vsFV1KTeKFS7l6T5rEui8FCx4vxRhaDU/s1yFqhRI=
-X-Google-Smtp-Source: AGHT+IFJ78q6Mrhi/GYctD+xVYoqs8X59Kofc60QxI1Eltbvz3rLJ81rZOhvG6LYwKU6xUyTxF4dQCG9uRIJjOArSz0TifO7nFEt
+        d=1e100.net; s=20230601; t=1748359613; x=1748964413;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jzi6DEsqtvesWkQgW21rjp6w06wt727BDcWCBAVYIig=;
+        b=EDT8gqpn7kkfRKdku3RxunULCijnG0/vz3iy61NSO/cU+8vAcLekDGkKUFnQp3cMpd
+         DILxvKEqLqmhSdEUMx19n5DmblhBGkggk/uximXVNz31/B6wBdBkJcs2HBIDTrq0EAS1
+         utQRy84Qe+mqDeLOBXWiZTP7edvniwthxL9PtZY38OoVOrQvrtswQ4blAnrDSUVyKo1s
+         JzDXthB6ij7ee3DlQzmlqxywjNpgFE/IbLxUm+O/4IebzVq4UkDXZVDv0VMErVZeJsSg
+         OWFcydIl027SBj3wlwcG3iXQv3NU3NuRAGm3HCc1Hh5CJTx4BWvmpG3e/QYWBCeD1TOw
+         wwZg==
+X-Gm-Message-State: AOJu0YyYv4wvgtEPJ1scT4hqHix1LfoTSxXp0saO3+sCH4+8vBcwYOs7
+	NklJWUlv1fLcQ1PysCHt3jjUcAXlo1Cd1If+ePVKJRDwDg+AJ65rxRESDpaSgw==
+X-Gm-Gg: ASbGncunDDk5zmIQnfFMpnzBJdltWhM7tOYkdBKZQqHWfI6zehLQmGvK1ZfguU6/aEz
+	Jzh105Lorr9uUw0EA1XT6ED8z9g+kXTe+gDBloTxChdFvmASwo3Ura5sLha+G8UKN7XxEv6EM1F
+	3l/uXoMdh4atcrOv6btDbOHAacDBHm1LKkMx0Z7Hr9MB1I62IoEdyEHV1hMzJbFcSsa5dD22auh
+	a0oys10TcvDHvjL3k7mWvFnHx4T5ApcnEI1tSv7Jw4utrG2I6AI8ChHerBOuHo+GYNPRQJLqcJr
+	A5gXBtYi5czglUxgNY5KPRTyP+bJCuJxweDil5b0oKYhgg==
+X-Google-Smtp-Source: AGHT+IFZ96X1ZssRgdsKfFzYa3eeJ6HxzeDmGw4euj2uZECzyGrF3QmvedgE1lAu0OPdag70jsoI/w==
+X-Received: by 2002:a17:906:c4d1:b0:ad8:8529:4f9b with SMTP id a640c23a62f3a-ad885295575mr358266566b.38.1748359612906;
+        Tue, 27 May 2025 08:26:52 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:b3f0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad88d055614sm132462966b.29.2025.05.27.08.26.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 08:26:52 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring/zcrx: init id for xa_find
+Date: Tue, 27 May 2025 16:27:57 +0100
+Message-ID: <faea44ef63131e6968f635e1b6b7ca6056f1f533.1748359655.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:36cc:b0:867:16f4:5254 with SMTP id
- ca18e2360f4ac-86ce426ef9dmr173883639f.6.1748358933947; Tue, 27 May 2025
- 08:15:33 -0700 (PDT)
-Date: Tue, 27 May 2025 08:15:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6835d715.a70a0220.253bc2.00bb.GAE@google.com>
-Subject: [syzbot] [io-uring?] KMSAN: uninit-value in xa_find
-From: syzbot <syzbot+c3ff04150c30d3df0f57@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+xa_find() interprets id as the lower bound and thus expects it initialised.
 
-syzbot found the following issue on:
-
-HEAD commit:    914873bc7df9 Merge tag 'x86-build-2025-05-25' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14727df4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=19f03604c8d216a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c3ff04150c30d3df0f57
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/624ebec879d9/disk-914873bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f44c87154c1f/vmlinux-914873bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a922731b5aab/bzImage-914873bc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
 Reported-by: syzbot+c3ff04150c30d3df0f57@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in xas_start lib/xarray.c:193 [inline]
-BUG: KMSAN: uninit-value in xas_load+0xd20/0xd70 lib/xarray.c:239
- xas_start lib/xarray.c:193 [inline]
- xas_load+0xd20/0xd70 lib/xarray.c:239
- xas_find+0x2c8/0xd40 lib/xarray.c:1406
- xa_find+0x15a/0x2a0 lib/xarray.c:2194
- io_unregister_zcrx_ifqs+0x75/0x1d0 io_uring/zcrx.c:639
- io_ring_ctx_free+0x61/0x740 io_uring/io_uring.c:2723
- io_ring_exit_work+0xdec/0xe20 io_uring/io_uring.c:2963
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xb97/0x1d90 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd5c/0xf00 kernel/kthread.c:464
- ret_from_fork+0x71/0x90 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was stored to memory at:
- xa_find+0x26c/0x2a0 lib/xarray.c:2186
- io_unregister_zcrx_ifqs+0x75/0x1d0 io_uring/zcrx.c:639
- io_ring_ctx_free+0x61/0x740 io_uring/io_uring.c:2723
- io_ring_exit_work+0xdec/0xe20 io_uring/io_uring.c:2963
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xb97/0x1d90 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd5c/0xf00 kernel/kthread.c:464
- ret_from_fork+0x71/0x90 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Local variable id created at:
- io_unregister_zcrx_ifqs+0x3d/0x1d0 io_uring/zcrx.c:633
- io_ring_ctx_free+0x61/0x740 io_uring/io_uring.c:2723
-
-CPU: 0 UID: 0 PID: 3749 Comm: kworker/u8:17 Not tainted 6.15.0-syzkaller-01972-g914873bc7df9 #0 PREEMPT(undef) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: iou_exit io_ring_exit_work
-=====================================================
-
-
+Fixes: 76f1cc98b23ce ("io_uring/zcrx: add support for multiple ifqs")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ io_uring/zcrx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 9a568d049204..0c5b7d8f8d67 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -630,12 +630,13 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
+ {
+ 	struct io_zcrx_ifq *ifq;
+-	unsigned long id;
+ 
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 
+ 	while (1) {
+ 		scoped_guard(mutex, &ctx->mmap_lock) {
++			unsigned long id = 0;
++
+ 			ifq = xa_find(&ctx->zcrx_ctxs, &id, ULONG_MAX, XA_PRESENT);
+ 			if (ifq)
+ 				xa_erase(&ctx->zcrx_ctxs, id);
+-- 
+2.49.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 

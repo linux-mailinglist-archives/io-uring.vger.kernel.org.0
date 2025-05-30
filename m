@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-8135-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8136-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8730CAC8D6D
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 14:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD082AC8D71
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 14:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724704A6123
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 12:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE321BA3D23
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 12:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF31F22B59C;
-	Fri, 30 May 2025 12:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D6822B8BC;
+	Fri, 30 May 2025 12:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h96kjmYR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyW+3uSZ"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12E421C9EE;
-	Fri, 30 May 2025 12:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9932A21CC52;
+	Fri, 30 May 2025 12:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748607440; cv=none; b=H7/ZqIUuRtowSb+a/xZlM0VeUGfzjj/h98P/DfiRx7uO39o/7z5x8K/mBHI2sVjpBjPkbhXD44/NKWNQVhsmBHvXBQSO9+Y8iJmhGVelYInLRRPjUfc2UJUpcnFCtHEOctYq3lxuQTcUNRzLMRHffES1Yrh9Py72o0ocGqHNLmI=
+	t=1748607441; cv=none; b=htQzPVOCI0Q61LVYfvbbbrrBDgeIkMqvJNV0fnyp+tlqmE/w/KbvemqrBax3y/Xm/0rvRPtn5hxz8RwuUul0jEvEU4AfTte9aoU2Y99mIWtbx5M1FeB9fbOsWbAz2qnOI4nlMsdJz+eFDg1V8J37G18hQIp6J1xICIfdIZYgUJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748607440; c=relaxed/simple;
-	bh=YbfIkc//Kmljvr0OZiIDpcB+fBCJ+pbNP/fXoRedj4w=;
+	s=arc-20240116; t=1748607441; c=relaxed/simple;
+	bh=wYJOuL6S093inTGvvfWTLKx8WcK0RaSvoTbskIP5tdE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dJqA+7YYNonH1t6zDLMBdSeRoJI/Njc4gSbKpk5mEmJDiFzUya4YxclFSdI82keuETvdrQ1sq+aVhvI2NXFis/qVOjN9D1rJCED5yYUv3gU5raIsWgJ33EUpQrh4eqg/hJg7XBm56FeFVKWB3JvC2FMz3oy9keVXSRzzqRmHf3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h96kjmYR; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=Xqm3dxi27H446U14Yx+SrnMC/27ZbI84W04odcaNb15wRoz/KQW99jqPrWFK+U9bg2AJNya95et0ybSUnA5BbYsNZc5MOL1LJO/+f4uKRuzvjJkyIv4rUTdKc7Gd6lYphagH6eFr5xRNm1MC4V8yqhIn/XHsAcx6YZb5uUT9xNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyW+3uSZ; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad89333d603so371296966b.2;
-        Fri, 30 May 2025 05:17:17 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad891bb0957so348350166b.3;
+        Fri, 30 May 2025 05:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748607436; x=1749212236; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748607437; x=1749212237; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0ir6qIV4Qi5CAi8BKrklc5pqwQtTpVQLCz2EN46firE=;
-        b=h96kjmYRIprQJT+JPlF/yg8qy8thpLJvpoHkBLeAi1qKBU5vt+bBfA7IZa+d7RKyJN
-         wBHsl+Xs52XNqr5eL2VzoDRgo1riqeH1yxyqKbW1AAJRGWES5/gl+0hdk1E9+6a5HZAX
-         81hziO0U3PyNXUnjmm0toNcggCCDmihgfVYTwa1YIVUj1cUF3SPtYwcfDwxHombwOrVp
-         HANozS5qeetMnophwp3r0ElR46oBOQ8/BHq+CtTL//9OhlStoFeLNnyuZr1nXPlntJ4w
-         6epHZmcTd+HlCsyF3avWXmr6+ovW4HV9LcAhtgs2jZuUvbS+wxZxoCmmDWT33bfZVpMp
-         s9eg==
+        bh=N97/0PsfFcq0hHRyfvZ+ENfqQRwwjgDWrJVrn6txEtc=;
+        b=GyW+3uSZOCubL6/b0mreOwD65J3vgrGHztK1gzjVsro0/xsnZy74euBFgQ6e9Qbbjm
+         dqp4kmMmIKAtfSnRP12MvnEzAjDMq9bHvDOdO5+o67OHJtI9sEVK3DrFTC3OP1T1MyXW
+         3TIjmvfZAvS9Xp7K7rR5OmXgzG077g951762VkbjaoBsIBx/Snpiq2d82Gz2cTWnA++3
+         E7y4RzuVdY1Fw6U2SqZfFkwllsf85BL4M1NqRaD0EDMcobPHcJvLdDkIPJ/o+HvxRaso
+         +htOKnlF9kqvEtVX9f3nWACJzIeTCalRMiKPDY4buxFaCFael6SWuoQRa+Yj4LpQf4Gm
+         2lRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748607436; x=1749212236;
+        d=1e100.net; s=20230601; t=1748607437; x=1749212237;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0ir6qIV4Qi5CAi8BKrklc5pqwQtTpVQLCz2EN46firE=;
-        b=aba3VO7JyLQ+fKNBcRe0gjto4N1kBwSpyujxOSLmxMCca9PkT3iys9tJbLR/rwDcin
-         xVosz6+Ipo4Qtpa/Iu2BD1F+f7wKIh3O/PguPq6UQu7xVMy8eI9gqWNciUQ5fAUREE/S
-         kewlLZPAWA8IhfqTZBU/6kD68Lwfj+wdYhuSY8XZ1pfND6t9nac/dh3TRV/3kEU84yLx
-         0GSe2sDxeenvrVMdVs4YwaJfGxnMS64BvJBYdF6P+u42K5THslJib3/Cbwharhcf2QRK
-         NNnsidVS8rImd7fFzls1dg4ZD5+BX+moaVvJQuugIWfroHnEOK8xWTjH1GJplMQrBPrn
-         fwzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj8caPulmAmPFrMwRL9a/ypKn/GC9lH/l5V+/Cb3HG+c1Pnz20NUpJAsNLnDnRD8RcK/u0abs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9qUnWbnXrB+aaq/u7OGEhRwma/8VoXD/vOaWD4RQlUnGNySuP
-	7pez7h5h3FHNiNI9Rfc+28WvYUtjuiVJElMonWYJ1Tp3sdWf3uH6kmkBVERb+Q==
-X-Gm-Gg: ASbGncvlLwt9jOE4rTn07G/iKchpiDu2l7XY35DzjpsqIbYwlfCJVL33mV+8v0k3Pdk
-	/C1M0oo/fhU5C2tEr+nA7ArdBypk+2DgqWVe9uHegnuKAIyN7AXSgpVdbB0GFdXZ6HaUtmSYYKx
-	zAICccp7qlBZZwvEjr34DVJ4xiskzJdmTmHLJPlm4BqYzr5Fdjqgca8RaNCGVZSy+SmaCaED5Sp
-	Xcj8nYCi9TTGxbMChtIgenMi7zXz6ThbtKVgZPJgJAvsEiQfks2WK4wF9uVTgWtboZZ1oXjHgx3
-	vEQQ2pYcZQRCYiqeyYAXy2WKxEzKWeaXMXc=
-X-Google-Smtp-Source: AGHT+IGHW1q9k2QHuemDmWVc766bpzqUcJ0Dtv/D5xosMv11AvcZ7hWp8q2EprkT559mXBXieddHpg==
-X-Received: by 2002:a17:906:730a:b0:ad8:9257:5742 with SMTP id a640c23a62f3a-adb32284e2bmr310935066b.15.1748607435488;
-        Fri, 30 May 2025 05:17:15 -0700 (PDT)
+        bh=N97/0PsfFcq0hHRyfvZ+ENfqQRwwjgDWrJVrn6txEtc=;
+        b=V+2Kfn3I9c4zyNm3efIIIvhdgOmoOAiY23Tw8tjSraVBruK2reoJN5D95uH+QgmX3m
+         qkmuzQ31hbGr+2zklWalrZCGEehqzT33VLoMK47sOxVmEMdSfQsVPuKN7G8dcvHPGb27
+         uzUhZ48KkqIa9W0vaGsU9XvJCX7aIY/yHhg0IKkKnhZeCKoDv3YnV1HXYtmDTqlh3Scd
+         U7ztXiZfGXQLCvKxh/f5VwVx6rJrucxYyow45dn+ske5VecBFyKKBTMFrKcZvyYaNeE+
+         6W60g3HeBE/UGdbtLjpgNxnvIex2PHX83Tj/3M9JVMJhaF7A1+f08Ah1PLyO/qKgUXHl
+         laww==
+X-Forwarded-Encrypted: i=1; AJvYcCVPKSRkViiDeX6P1Xt/EEsh4gvZ67l0PRrKX1oJYnF4AMDExkoiI5C/uZ/chvwQobAxpyzPKLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXY2lp0X6uIuAWbSBfkzNpamgbE28IacpSHw1y5AsAUB69tLw8
+	IKmlBQSxBWBMmxhX2VnO0TzSD6K6PhlPJWjowsmS2tRHMedI2jh96Y2xRcaaCg==
+X-Gm-Gg: ASbGnctwMxECRCgaTuijLl9+HE96cXK6aVkgh2dFcx4AfnNuArMjrMQJcoBL7MjeCF+
+	2k1o+MsDpJL1Lo6sNiV+xli7AaCAwFo6CXUcRcK7dWca6/2zMszpLf29fqHlIasEXrkLaM0YS1w
+	d4ORhjoyM/u4u9rQR/sxRzhGJfFjuWN0tXYRpGiVHtJDArbtFS16jIWF6RSgNZEg7KGEIrxYcD2
+	Fxdl+nvEm/XhOkTE9QN7UiTSIQxW8Kr27rovx6WsBs1pu5m4VUfJ14oD4vmCY4hmQCKnV7O5GCJ
+	oaQ6WF0M69wGzfm3WN6lmJPQF2ZH6it2lWI=
+X-Google-Smtp-Source: AGHT+IEFK5nse8en/rEKm5VRsPRbQoVZVVLB+qKDiwmuk3UGnC//ZUFKPqjV/MHS5FPH1cRqEOufkA==
+X-Received: by 2002:a17:907:3e0c:b0:ad2:313f:f550 with SMTP id a640c23a62f3a-adb322fcd7dmr299487166b.29.1748607437145;
+        Fri, 30 May 2025 05:17:17 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:a320])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82ccedsm318566966b.48.2025.05.30.05.17.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82ccedsm318566966b.48.2025.05.30.05.17.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 05:17:14 -0700 (PDT)
+        Fri, 30 May 2025 05:17:16 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
@@ -84,9 +84,9 @@ Cc: asml.silence@gmail.com,
 	"David S . Miller" <davem@davemloft.net>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Richard Cochran <richardcochran@gmail.com>
-Subject: [PATCH 1/5] net: timestamp: add helper returning skb's tx tstamp
-Date: Fri, 30 May 2025 13:18:19 +0100
-Message-ID: <6e83dc97b172c2adb2b167f2eda5c3ec2063abfe.1748607147.git.asml.silence@gmail.com>
+Subject: [PATCH 2/5] io_uring/poll: introduce io_arm_apoll()
+Date: Fri, 30 May 2025 13:18:20 +0100
+Message-ID: <8abeb8e2328e923515c63e43a1942802efabb3b1.1748607147.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1748607147.git.asml.silence@gmail.com>
 References: <cover.1748607147.git.asml.silence@gmail.com>
@@ -98,90 +98,101 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a helper function skb_get_tx_timestamp() that returns a tx timestamp
-associated with an skb from an queue queue.
+In preparation to allowing commands to do file polling, add a helper
+that takes the desired poll event mask and arms it for polling. We won't
+be able to use io_arm_poll_handler() with IORING_OP_URING_CMD as it
+tries to infer the mask from the opcode data, and we can't unify it
+across all commands.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/net/sock.h |  4 ++++
- net/socket.c       | 49 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
+ io_uring/poll.c | 43 ++++++++++++++++++++++++++-----------------
+ io_uring/poll.h |  1 +
+ 2 files changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 92e7c1aae3cc..b0493e82b6e3 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -2677,6 +2677,10 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
- void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
- 			     struct sk_buff *skb);
- 
-+bool skb_has_tx_timestamp(struct sk_buff *skb, struct sock *sk);
-+bool skb_get_tx_timestamp(struct sk_buff *skb, struct sock *sk,
-+			  struct timespec64 *ts);
-+
- static inline void
- sock_recv_timestamp(struct msghdr *msg, struct sock *sk, struct sk_buff *skb)
- {
-diff --git a/net/socket.c b/net/socket.c
-index 9a0e720f0859..d1dc8ab28e46 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -843,6 +843,55 @@ static void put_ts_pktinfo(struct msghdr *msg, struct sk_buff *skb,
- 		 sizeof(ts_pktinfo), &ts_pktinfo);
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 0526062e2f81..e323221317f7 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -669,33 +669,17 @@ static struct async_poll *io_req_alloc_apoll(struct io_kiocb *req,
+ 	return apoll;
  }
  
-+bool skb_has_tx_timestamp(struct sk_buff *skb, struct sock *sk)
+-int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
++int io_arm_apoll(struct io_kiocb *req, unsigned issue_flags, __poll_t mask)
+ {
+-	const struct io_issue_def *def = &io_issue_defs[req->opcode];
+ 	struct async_poll *apoll;
+ 	struct io_poll_table ipt;
+-	__poll_t mask = POLLPRI | POLLERR | EPOLLET;
+ 	int ret;
+ 
+-	if (!def->pollin && !def->pollout)
+-		return IO_APOLL_ABORTED;
+ 	if (!io_file_can_poll(req))
+ 		return IO_APOLL_ABORTED;
+ 	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
+ 		mask |= EPOLLONESHOT;
+ 
+-	if (def->pollin) {
+-		mask |= EPOLLIN | EPOLLRDNORM;
+-
+-		/* If reading from MSG_ERRQUEUE using recvmsg, ignore POLLIN */
+-		if (req->flags & REQ_F_CLEAR_POLLIN)
+-			mask &= ~EPOLLIN;
+-	} else {
+-		mask |= EPOLLOUT | EPOLLWRNORM;
+-	}
+-	if (def->poll_exclusive)
+-		mask |= EPOLLEXCLUSIVE;
+-
+ 	apoll = io_req_alloc_apoll(req, issue_flags);
+ 	if (!apoll)
+ 		return IO_APOLL_ABORTED;
+@@ -712,6 +696,31 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
+ 	return IO_APOLL_OK;
+ }
+ 
++int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
 +{
-+	u32 tsflags = READ_ONCE(sk->sk_tsflags);
-+	struct sock_exterr_skb *serr = SKB_EXT_ERR(skb);
++	const struct io_issue_def *def = &io_issue_defs[req->opcode];
++	__poll_t mask = POLLPRI | POLLERR | EPOLLET;
 +
-+	if (serr->ee.ee_errno != ENOMSG ||
-+	   serr->ee.ee_origin != SO_EE_ORIGIN_TIMESTAMPING)
-+		return false;
++	if (!def->pollin && !def->pollout)
++		return IO_APOLL_ABORTED;
++	if (!io_file_can_poll(req))
++		return IO_APOLL_ABORTED;
 +
-+	/* software time stamp available and wanted */
-+	if ((tsflags & SOF_TIMESTAMPING_SOFTWARE) && skb->tstamp)
-+		return true;
-+	/* hardware time stamps available and wanted */
-+	return (tsflags & SOF_TIMESTAMPING_RAW_HARDWARE) &&
-+		skb_hwtstamps(skb)->hwtstamp;
-+}
++	if (def->pollin) {
++		mask |= EPOLLIN | EPOLLRDNORM;
 +
-+bool skb_get_tx_timestamp(struct sk_buff *skb, struct sock *sk,
-+			  struct timespec64 *ts)
-+{
-+	u32 tsflags = READ_ONCE(sk->sk_tsflags);
-+	bool false_tstamp = false;
-+	ktime_t hwtstamp;
-+	int if_index = 0;
-+
-+	if (sock_flag(sk, SOCK_RCVTSTAMP) && skb->tstamp == 0) {
-+		__net_timestamp(skb);
-+		false_tstamp = true;
++		/* If reading from MSG_ERRQUEUE using recvmsg, ignore POLLIN */
++		if (req->flags & REQ_F_CLEAR_POLLIN)
++		mask &= ~EPOLLIN;
++	} else {
++		mask |= EPOLLOUT | EPOLLWRNORM;
 +	}
++	if (def->poll_exclusive)
++		mask |= EPOLLEXCLUSIVE;
 +
-+	if ((tsflags & SOF_TIMESTAMPING_SOFTWARE) &&
-+	    ktime_to_timespec64_cond(skb->tstamp, ts))
-+		return true;
-+
-+	if (!(tsflags & SOF_TIMESTAMPING_RAW_HARDWARE) ||
-+	    skb_is_swtx_tstamp(skb, false_tstamp))
-+		return false;
-+
-+	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP_NETDEV)
-+		hwtstamp = get_timestamp(sk, skb, &if_index);
-+	else
-+		hwtstamp = skb_hwtstamps(skb)->hwtstamp;
-+
-+	if (tsflags & SOF_TIMESTAMPING_BIND_PHC)
-+		hwtstamp = ptp_convert_timestamp(&hwtstamp,
-+						READ_ONCE(sk->sk_bind_phc));
-+	return ktime_to_timespec64_cond(hwtstamp, ts);
++	return io_arm_apoll(req, issue_flags, mask);
 +}
 +
  /*
-  * called from sock_recv_timestamp() if sock_flag(sk, SOCK_RCVTSTAMP)
+  * Returns true if we found and killed one or more poll requests
   */
+diff --git a/io_uring/poll.h b/io_uring/poll.h
+index 27e2db2ed4ae..c8438286dfa0 100644
+--- a/io_uring/poll.h
++++ b/io_uring/poll.h
+@@ -41,6 +41,7 @@ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags);
+ struct io_cancel_data;
+ int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
+ 		   unsigned issue_flags);
++int io_arm_apoll(struct io_kiocb *req, unsigned issue_flags, __poll_t mask);
+ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags);
+ bool io_poll_remove_all(struct io_ring_ctx *ctx, struct io_uring_task *tctx,
+ 			bool cancel_all);
 -- 
 2.49.0
 

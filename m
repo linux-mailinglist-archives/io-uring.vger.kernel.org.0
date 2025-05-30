@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8155-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8156-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5DAC90C6
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 15:56:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46358AC913E
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 16:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D625167C3F
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 13:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1717D1C06A0C
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 14:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5E622A811;
-	Fri, 30 May 2025 13:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1452288C0;
+	Fri, 30 May 2025 14:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oe0albk1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlXuJ2eb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C530B12D758
-	for <io-uring@vger.kernel.org>; Fri, 30 May 2025 13:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6633222DA1F
+	for <io-uring@vger.kernel.org>; Fri, 30 May 2025 14:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748613383; cv=none; b=fQFiKAmtIV3j6ZolvQNPRQMXwFLb64OnwSZIkGxIjcMMS/AMNsl9kb4b3KiNvqu/+RFVm/Oiz8nDmD08V9cfhlS9RZZnFzcWn5U96/574+lWgJeQck39Oduo2lCeK5BdYzIjGjXRcHf/Z0A2uYa8eQrG+/yfGNwtf/KR5Udk0l8=
+	t=1748614106; cv=none; b=mKddMjoilHsUN1zzuHS9RSNyUVxonS6sIVrQwZtlttoniudBI6al2FYL8LIp+40IQp1hRc1jRGfXB7e7DnHIFECt5U6dQbVKgMWE4RU8hovQyajwavH1e9ssRQLoVeuzDzoC3otTYDVGOJcWqHrOTCznLlo81G744kChmG/UcVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748613383; c=relaxed/simple;
-	bh=5qL5/Z1Hz/sRpndGxX8EAPnvuKYZQTRXavy02HplYFw=;
+	s=arc-20240116; t=1748614106; c=relaxed/simple;
+	bh=/J59H0w1ZQ5tS6RoSyQuBXRf40t6zltX6W48R+K+R5c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kcaIku7hWz9/Il5ug3C49XXdcLILnu0+wTMiiyeNKHEN8Tt4z6FI3oHAr1Opxv2XntjMC6fcxc9ZIVsCdxwKlzkQR9gC6aYP4PHDXTMwKkjEC2iK1yuP+xxoRm3L1gQUBWCqALXUHeI24lXVJbNuKcPc+BJSGSnejxSya6kJrFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oe0albk1; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=L9VsZbGA9wM3+ZjOY00iJuOtdIjhtcVkdbTrFHQVglQaUf3kGpdq8S53bGoqFlp8QsqhITC74vWlgwsWO6Oc3LF/EVIYeL/waV4Bk917sCFHb21eVo9cqS2hWBmc1v53yOzj9zFHnbActSi68YOoCu68ISEjJx2LuI4J2oqj+Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlXuJ2eb; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad5273c1fd7so425847466b.1
-        for <io-uring@vger.kernel.org>; Fri, 30 May 2025 06:56:19 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad89f9bb725so414894366b.2
+        for <io-uring@vger.kernel.org>; Fri, 30 May 2025 07:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748613378; x=1749218178; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748614102; x=1749218902; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=KVAK1oaLM+/4Empv+rU+alktw3eoKHIc+iBjTojin5w=;
-        b=Oe0albk10/PD+ukV1vIOkB5TdbuDeEIderJymLmTJX1T+4Batz3VS3Ir7Cfg9MVWLR
-         RXMUG4KFtm7nrEsOEe4NEhwF+LDoOEZ6t3++mEnVk6ZTy3W4e4eC7tjsPsELIFP2lCOA
-         u2AouurYq/dgIQPyeFeos1+RwJYVwLEAMb7LAaWIW7wXT/kFoROrvmn/EOdbTJ51QL66
-         OverliXE4hDbUrb62WNogjhUi2lT09uzRpvRXcRx5N00HcWrE8YsmbgPVK+GyoETqhbt
-         0RimPE+D4lHec642MJ2861iB3UdqSJpjWKDH6JYpQGbib5L2gICLjuY2reE+gjxJEAnP
-         RAWA==
+        bh=W8OdFsWCm4+wtbuLprhNqESJQ9dgB/rD2jz40JcbnhU=;
+        b=BlXuJ2ebaivy6xnCVSQZ8u73e79dKMg95wXg7rZRzZb4AfeMsXgQZuRQozt4R2tvlU
+         NaKfL09MpKU5dYFUVE3Ai+sJ5Mfbc/roqSzoWadyXNcTBGQnuNKbjsYuP5Tp/2kF/9tv
+         cNX4isM0Z1yq/Bi8VdO66dGFoOto1ZnZ+OtveWANf5qYkj9dFluvdIyYM+TFJGCQcGYn
+         PLv/7OYuK27jC8wIPEYMFYEsD6Kgclr8Ik73eBP3j7j39fRJncXprFZfJY4fcgTr9JbY
+         tUaKFhUYYKWjfUAVh+BfpHUIVr3aZ5jQzdIc9g+xH9Sf/hwMYKiujCRcSiIcSX8nzFwB
+         /K4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748613378; x=1749218178;
+        d=1e100.net; s=20230601; t=1748614102; x=1749218902;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KVAK1oaLM+/4Empv+rU+alktw3eoKHIc+iBjTojin5w=;
-        b=Taqe9LXwR7h4Nv7moZylAGMTfN7k/6wWVXR15tVPkOq3ah8HsVXbYT5l6v/yTRHFkq
-         AHmcjYlV2CrAxrxWmPSpAZjAU0PAPSoABo7rRrIQX+G9T3Bouib7l//mBnGQ2IPL1I2B
-         SdImhwOJXBQRFwzXQsnuTCdH+YWzKDsqLIYWMOqYK0sJmVqM8Z/NHQJOlgYDja/Tbi2u
-         o/+ED9UZvtdhe7X+4BwV1DjhYy2122eKBu64vZrE2oeOdSaFFfpaz6l2WUbCQtHxEm/Q
-         J81/nYRBbRjRst7piZUgypU4BbnEL5SGwVTzjIwP6u2CRDIBBs4aGr1+8ieiQc765lHv
-         OHfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYXnC/91zMfnzxrzp5d263WPxV1lII1AJxhvy2eFHWGO7GZhhKycUssYmmCujHyznr3d1LrPDS/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjMPOGGtNVB6ePHLysLeqKOALsujK48LVZSFYp1qEmC5e1IVIl
-	kFgtk3BUs6D/M9yPJMCty88huupi6jeTDcxJ8Yp19XKvzRchu05qdqDN
-X-Gm-Gg: ASbGncu/KDiugc7NYZpfik+/+pFUJqwjeny/2j5Zsg/ttHQrxxKYQCwaduuw6WCF5xL
-	Khk2iz+FlWFEAnHGbzPp5LWmnYWpt90Ho6V7SNXaCCMF06FXtZo80asH4XZLlRy2gA/ktAlQCy1
-	/4ZsD9UaIERkMPP8t7waAaoYXTsnb1Wg4WPlqmDm9LIQC/eeeAfz8vpatpNsSTm+PdBF4rOzuC0
-	iz8IXEWLDokbd+abpmfRN4Q0OBtsYVKwJRQUxoAwOs14fj5g1ytHLwajFI2G8GzWbXqUweAKWE8
-	WjM/h3Zsy8YGZQgVOkIboP6G67W+SuReDfysWAddTNPSk3cm2wJC6tgMUbhYIewD
-X-Google-Smtp-Source: AGHT+IFlfKooJz9TX7Hi2ru7syVsRYDDlC1+bk0aTkoURXKuNk73jwXDjtzK3E4p4XbltfGjBJHj9w==
-X-Received: by 2002:a17:907:60ca:b0:ad8:9909:20a4 with SMTP id a640c23a62f3a-adb36bee5d5mr231897266b.45.1748613377792;
-        Fri, 30 May 2025 06:56:17 -0700 (PDT)
+        bh=W8OdFsWCm4+wtbuLprhNqESJQ9dgB/rD2jz40JcbnhU=;
+        b=sIy3qKDdrrcHAI7EA+Z5QCljsEGDwVaAdo3HWzN0xPB4mghsyjXkd5UYRq20asg92V
+         PiugRjRvwamD08RSmscfdsttGE99uljv1cXIuvdeU0EAtPEUD44tdE3TAtdCxDSrNnyx
+         F/ZWnTaAuOJOKcBhfyHkzdqG51/rZ35jyTb+T6Bly/4uEhqXMq74WVgohDy9d0JOKnSY
+         dA9qGCsNJv5T1HzSam1s483eSKqf77W8qazWRuqrAp+GuzwKzCyM3J9pSM6T8BKKwOvu
+         TmUSzRkVh/LZxjFhZaYk3wcTDx+H79OrU0p1oWJYIl3IU9rqcV8fiFi7kvoVj+k5wT/G
+         /Tjw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+j+YKQ8aun2yPokFGgQUlUGHujQSY0aRl/equUANwBMcTq8nNeg/Y6I2B53cpPFBUn8d4TIvSEg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUlJKTLQQzJR1CQ8vrWn9Q11aGP3Qn7qUHf1kKQFlmdwI5zczV
+	Mlgr1M/30i4YA6D86KhrJ0LKe0dyWQX9nSlFBxB3Qg2WQ9kNe2aNtQQUYmBgkA==
+X-Gm-Gg: ASbGncu92V/qw2Cf6CJ/ExPquGZFPVJIb7ZQadlJ3fx8VnLcWIc+d2cHxEHi3pEyuJ/
+	YcDmizA2Dqp/SXW9sRrgTmgYv8dKPo4PSSNxlSYQJI0C9qjpT9R5amqZ2R9QkSvLVQvE1NcwYLv
+	q9TZagERU5xjV4SDi30kOzg0Iihg6l6P7rhjd57UQnLGdgPKoGalWeciXGinCW94qQOU3dSVDnk
+	/cCIqtrO8IcPdQN8X8oDWb8SUv/kxwsiKSXucv3KLJqb/SaVgfDQANdyr22tgpz4N/KbvaXsZWb
+	7+ZUJgCZZsXHeIgxsdKBpL+/S6pvNRBdJZyPARjzvqTlgPu1L3Byx9K67vG3ge5i
+X-Google-Smtp-Source: AGHT+IHZeTXMASk7+Y5SPBqv9uRNM3kxrQP6EWzoSTiihMqjozXL3bLjOg+fIZdkqxg0Pl8Weq2PfA==
+X-Received: by 2002:a17:907:2da1:b0:adb:1b2b:fe20 with SMTP id a640c23a62f3a-adb36be2152mr214387066b.34.1748614102363;
+        Fri, 30 May 2025 07:08:22 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325::15c? ([2620:10d:c092:600::1:a320])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fed8bsm332298166b.28.2025.05.30.06.56.16
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5dd043d5sm332836266b.121.2025.05.30.07.08.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 06:56:17 -0700 (PDT)
-Message-ID: <29438fa9-8228-462a-869d-9e2b82096790@gmail.com>
-Date: Fri, 30 May 2025 14:57:30 +0100
+        Fri, 30 May 2025 07:08:21 -0700 (PDT)
+Message-ID: <eb81c562-7030-48e0-85de-6192f3f5845a@gmail.com>
+Date: Fri, 30 May 2025 15:09:35 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -115,21 +115,13 @@ On 5/30/25 14:28, Jens Axboe wrote:
 > 
 > As mentioned in the other email, I don't think we should include KASAN
 > here.
-> 
->> +struct io_uring_mock_create {
->> +	__u32		out_fd;
->> +	__u32		flags;
->> +	__u64		__resv[15];
->> +};
-> 
-> Do we want to have a type here for this? Eg regular file, pipe, socket,
-> etc?
 
-That can be added when/if they're mocked. This set tries to atomize
-file rw execution characteristics, pipes should be just a particular
-set of those (e.g. +option stream vs offset based file). There might
-be some interest to test some interactions like with page cache, but
-that's beyond the scope, at least for now.
+I disagree. It's supposed to give a superset of coverage, if not,
+mocking should be improved. It might be seen as a nuisance that you
+can't run it with a stock kernel, but that desire is already half
+step from "let's enable it for prod kernels for testing", and then
+distributions will start forcing it on, because as you said "People
+do all sorts of weird stuff".
 
 -- 
 Pavel Begunkov

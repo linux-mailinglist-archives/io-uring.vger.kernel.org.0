@@ -1,127 +1,132 @@
-Return-Path: <io-uring+bounces-8133-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8134-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1371AAC8D25
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 13:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A57AC8D6B
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 14:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49AC63A40D7
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 11:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51AA3B4001
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 12:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0255225788;
-	Fri, 30 May 2025 11:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BE521D3D3;
+	Fri, 30 May 2025 12:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="az7yeyp7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAzOuNG/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FC33FC2
-	for <io-uring@vger.kernel.org>; Fri, 30 May 2025 11:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E838DF9;
+	Fri, 30 May 2025 12:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748605743; cv=none; b=bce3J6ScAPZWUP9lyBtkLCpUME7OfPCBclKJDGHiKrFtdLCQCAYfSn66s9VgzEgenuIyaNtIHENO7N2gr+/bJdeQiILb7nF1njQ2t0Yb13sBB0c1lqWxWUybuFrzIMfKzqP/3CBT2MlEqWw6LdaPEl7F+b82rfNnC8geEFQYOFY=
+	t=1748607439; cv=none; b=p9FVcvSAe6bVh3GIHa1ldSbQbOPyOXyJtjg6jiZXC8cg3262qFg2YM8kzdhATddAubg+7duIgM0ngxJj6Ug37uBxAI9cXn4cs1gj/6XEPbKLHKMee2FN9x37KUnHKvoPPyrYop8iRuqAKEcNqwhuSWna02ENkHCn4UipMSEnoO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748605743; c=relaxed/simple;
-	bh=I2Kcmgwk9kkuVff5nYzmRnGEWITcCKZBKBLFZOoh9MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I1O6qTC+Dzkeu6pVOLPCTqFCGEAyWVupd9jr8oZL5NGDMrsEycIQsNfjJeqpzPsY7GzdvSsnArrcKyIiEudaJzDvJZbKB9EyAnlPSo89vtJLwxCGp0Cc9Hqh7xvhY2tH3zJxoEhLr/+qQxciI3S6seQlnUDOV8XykfwaQCjXOvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=az7yeyp7; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-86a464849c2so61360239f.1
-        for <io-uring@vger.kernel.org>; Fri, 30 May 2025 04:49:00 -0700 (PDT)
+	s=arc-20240116; t=1748607439; c=relaxed/simple;
+	bh=Dl0or4c6Uc3Qr21hPBlAdyjFLBBjiTCbqz/trLFGue0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mu6OGJuipfBL5qe8h6G+ooWLoodzqI1yj8F+mHInrIa7CeifhoeLqkcTZbXh9E0/i/YcqWf3EdrAqyaevr3s5a5RjiXqNYFS8CTrXptWJ6MqObnir0P9PsK7PDbaRkZTaOroTq6q8w09xwUw0oAHIycr7t0lRccoUtnSIK/5ZIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAzOuNG/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad69e4f2100so299671866b.2;
+        Fri, 30 May 2025 05:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748605740; x=1749210540; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JoKaNof+ATgeTKNw2AjeHvtVN1VbHcYHmeEbozD/JLg=;
-        b=az7yeyp70ez9qi6Pae+ILUOi33NyPqU6xOhVfTdPqs59BS3w5PWC2/ScpmLSRZCbOR
-         gESLlO3MKAPX7f8hOux8BwYXlprjgL968bO0tiOtUGqyHYRKiHhC98HFAsWuh2vOOFjD
-         9Aj6XIj/WpfgOer8WVIqGf61KHMJITvA0/0TriXR0s9bn59aD39tlUWQfa8v64d8LKRi
-         U3zU75qUzYWFRqD5wKvPLJxyMzCcrOWk66KOpYBZz0thkNB7RPUKUdJzlgCIZEQgyIJ1
-         bXxHmURI3Sz2hJmsnJMIi4fiMhjdCLh6U8Hhli9z/J93+dzhsftANVLN5q+LzbqZBlJr
-         UW9A==
+        d=gmail.com; s=20230601; t=1748607434; x=1749212234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=00AEb2KGuYMJCeS8MDt+GUEv6nAsvPAvD/wXq4V+AfY=;
+        b=EAzOuNG//SUANJ03Sm8eE2F8dG7fSUV2WVwQrCoJ+uc/nAhL89G6lB+DSadGBWHsyG
+         7iLfrwyIONbIyYVyAk5BasZ+yIAw9/SZ6X29UPVWbQcJJYd9XC00NO/HFNKLawsk2tTj
+         4krwMmg6BTW/lFdH17+auQfkqmh64XXNmduRMi6uauI8ORUh2f1k8KwFPE/L5ylF52d4
+         wCpi5K5bRc3Nj/kGN60f9ILBZh9BG9xor1xU+xZnqHMGmCDI1Pm/BgWYrvPNhiHuzUC8
+         aQ/g2zJhO3PVAk5JK2ZCc0xmMpdbTUsM0BkZhDE5x98tVn1i9mUn5oiIUeuKDnYaRrVx
+         rxQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748605740; x=1749210540;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JoKaNof+ATgeTKNw2AjeHvtVN1VbHcYHmeEbozD/JLg=;
-        b=piUXLCh1cttJnAhJq3tSwaxhCIh8Ea5izd4juP7n6F1iEMXa/O1lugF/LA1284Sikq
-         d7SjcC7+qtEYL+Bz51arSk+a7tBJGR02yemFN9g+yd7iMSQLvXEar+hPYc2oDI8ajcLq
-         jhCJkFca4cpTCPiTS4w10OxNb+eusXYFHkpP7KEzLyLoS3TZXiXF7GnPjHu/vEWnHTIe
-         FtfCuvtwLe3uK9uvAtFG6DVnB/xdkjKjH+YYBnZfxFmFakeKKGIeoPh3KyIcJzKZho/7
-         VQNIl/MrW38rSwiCmud9XFYkigc2quk6xA3PJtnKLaZsLT/8B3dakwaCODkcV3iYWF/7
-         VUmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxBV1SQSLZl6+rSX/p3f6j7GUpTyWZyBi0NAdvBYu7J4BAiuNbZWMPB/P4mgn6R5jqQwCkYdKO1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzokocpjoieBCrCfz8cGGSmJBu+WfmQLmzkLuMs5x/TsqoZS1K+
-	2UrD/TKGSILuDqZNg/1nDVs6YDp7dVHI7ua7qQpP2tHwi6DqfeVt/qj7NZQxiR2FAqo=
-X-Gm-Gg: ASbGncvLHUu/ipYM6ozytCL+2wJXB5LzyvedG3ddKa4DeggQvmu7KpSoiuIOSI09Nm+
-	7nLPoaWC+reS2v8u5qCuoQJwnxItqzw9MWpYMWkrdrJhanirwze8PfLLwhWv95BrI3F3TMVcfAJ
-	cKvvcpuqUMLQlgI12Q3pPj7csG2PtYAcjjFvtn+2ZMzkrNWLOmoFGTYX7IBxhxufnBixxY+Zflt
-	do/WHhAzk/R3Iu499y6Kw2uktD05FHIy0NIOFBxIBP3CMOydN+SulCv8tI7XEIbdR2zrSPCsPsy
-	Om4jzwJXVNr8LLSfjtq1XdBWUqQLdzry7V0pj0Wz4P4W/Giu
-X-Google-Smtp-Source: AGHT+IGb2Nf1LlXrvq+rJjKsom2ByYACOpqekt0wMpKAFEpJYHX3iyETxDt1ITBZ6fZtnDxbNtxspA==
-X-Received: by 2002:a05:6602:4a0c:b0:867:16f4:5254 with SMTP id ca18e2360f4ac-86d0106747dmr344518139f.6.1748605739644;
-        Fri, 30 May 2025 04:48:59 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86cf5e79c13sm62974439f.18.2025.05.30.04.48.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 04:48:59 -0700 (PDT)
-Message-ID: <fdb9c49e-b8b6-42cc-8a6e-010d0906dbed@kernel.dk>
-Date: Fri, 30 May 2025 05:48:58 -0600
+        d=1e100.net; s=20230601; t=1748607434; x=1749212234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=00AEb2KGuYMJCeS8MDt+GUEv6nAsvPAvD/wXq4V+AfY=;
+        b=OEcB8uvKEZNQsDyWoPICyrOOnb9yZX0jvp/3sOfN5hdCr+hS0UXKSLElVDtUC4UL0R
+         xF0YSdhpEUFXvME+eu5KcMEg6mOmxuGjNr5R8RK9CD9XgwXNLzZjVcg/iZklF7WhqjH/
+         i1bnScZHMK6SDvNwpS1q3PGbaJmKoXYdUhTdSAs3Ma7r2JxGKwchs8ovcgPxU9FLpTVF
+         231CKxYJ/Mdzplmg6nOdpeQhlEYo/ers40ZxPQyIJVOSLuoiTKnKSgIPeSz7m5qHVCGX
+         cY0uhNzJ7Q2FsOFvT6KbU+So8ndvpRZORyaXodIwgo5rejB21FbFn2nvDQ+zv72mGlbv
+         /1Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJgTMkUCjAPyI+ZJERSaAPob3Tn5TT4wE/xYmEgO00Ux2ucCAayDW4FQV995g5oUY5Hj++27w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFkhE6x3PlbXMvwszTKjkFwZ+lXsdZSZfOecWI0EpxLj2qU5PR
+	4Pcttrv9rglBfqHKPhTpAg1gh5S1Bqk9YRR375rcAUm6Iy6G28Iud1PQrst8aQ==
+X-Gm-Gg: ASbGncswLvO/5a7RCiHFrHyOLTX3VYH4wpMH2nZDNX5B6gyKiZUSEyxAKCsCzaKJ7xx
+	xz/qZ2OQvLrwbdYpL5MoLxY/DigbchTXHwvbjyGBsBT3is4EqKwUq0C08V32PLqo/9QJHKQDjJa
+	nslaGw8N+Q/lNhvu/ZcA6iw6V+KbjQLcqWGc+2hJQ2Z0vpcauicnytbmZ9vQn3czhm+XShCZq2d
+	nK5mr8deuXxiNSoPUGdRwKGWGG/9bwpmJjqbU/upIKr0hY/BVXtdmICl+beVvE0GBdbOeNrwJx7
+	kfaJr4PC9bMfIHFBXmv6RCoC+2F6zwkg9VY=
+X-Google-Smtp-Source: AGHT+IGmvUgZU38AqfgxvmUConGqJIqYwbVNECpMz9O2ddRpTlNYS0WVxMM+6GOEUb0d+2sVW/a3bw==
+X-Received: by 2002:a17:907:db03:b0:ad2:28be:9a16 with SMTP id a640c23a62f3a-adb36c117ffmr178979666b.51.1748607433613;
+        Fri, 30 May 2025 05:17:13 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:a320])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82ccedsm318566966b.48.2025.05.30.05.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 05:17:12 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: asml.silence@gmail.com,
+	netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>
+Subject: [PATCH io_uring-next 0/5] io_uring cmd for tx timestamps
+Date: Fri, 30 May 2025 13:18:18 +0100
+Message-ID: <cover.1748607147.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] io_uring/mock: add basic infra for test mock files
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1748594274.git.asml.silence@gmail.com>
- <5e09d2749eec4dead0f86aa18ae757551d9b2334.1748594274.git.asml.silence@gmail.com>
- <f3941c74-5afa-43fe-93c1-f605b4cbeb82@kernel.dk>
- <7518de34-8473-4fa0-9a3f-42769de4c03a@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <7518de34-8473-4fa0-9a3f-42769de4c03a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/30/25 5:45 AM, Pavel Begunkov wrote:
-> On 5/30/25 12:31, Jens Axboe wrote:
->> On 5/30/25 2:38 AM, Pavel Begunkov wrote:
->>> io_uring commands provide an ioctl style interface for files to
->>> implement file specific operations. io_uring provides many features and
->>> advanced api to commands, and it's getting hard to test as it requires
->>> specific files/devices.
->>>
->>> Add basic infrastucture for creating special mock files that will be
->>> implementing the cmd api and using various io_uring features we want to
->>> test. It'll also be useful to test some more obscure read/write/polling
->>> edge cases in the future.
->>
->> Do we want to have the creation of a mock file be a privileged
->> operation?
-> 
-> It doesn't do anything that would warrant that, maybe just yet.
-> Do you mean from the security perspective? i.e. making sure a
-> user can't exploit it if there is anything to be exploited.
-> I'd really hope nobody would compile this thing for non-test
-> kernels. Maybe I should make it dependent on lockdep to enforce
-> it.
+Vadim Fedorenko suggested to add an alternative API for receiving
+tx timestamps through io_uring. The series introduces io_uring socket
+cmd for fetching tx timestamps, which is a polled multishot request,
+i.e. internally polling the socket for POLLERR and posts timestamps
+when they're arrives. For the API description see Patch 5.
 
-People do all sorts of weird stuff. I know it doesn't do anything
-that warrants making it root only, but at least as root only, any
-side effects will be limited to that. I think that'd be better than
-making it forcibly depend on something unrelated (but debug'y) like
-lockdep.
+It reuses existing timestamp infra and takes them from the socket's
+error queue. For networking people the important parts are Patch 1,
+and io_uring_cmd_timestamp() from Patch 5 walking the error queue.
+
+It should be reasonable to take it through the io_uring tree once
+we have consensus, but let me know if there are any concerns.
+
+Pavel Begunkov (5):
+  net: timestamp: add helper returning skb's tx tstamp
+  io_uring/poll: introduce io_arm_apoll()
+  io_uring/cmd: allow multishot polled commands
+  io_uring: add mshot helper for posting CQE32
+  io_uring/netcmd: add tx timestamping cmd support
+
+ include/net/sock.h            |  4 ++
+ include/uapi/linux/io_uring.h |  6 +++
+ io_uring/cmd_net.c            | 77 +++++++++++++++++++++++++++++++++++
+ io_uring/io_uring.c           | 40 ++++++++++++++++++
+ io_uring/io_uring.h           |  1 +
+ io_uring/poll.c               | 43 +++++++++++--------
+ io_uring/poll.h               |  1 +
+ io_uring/uring_cmd.c          | 34 ++++++++++++++++
+ io_uring/uring_cmd.h          |  7 ++++
+ net/socket.c                  | 49 ++++++++++++++++++++++
+ 10 files changed, 245 insertions(+), 17 deletions(-)
 
 -- 
-Jens Axboe
+2.49.0
+
 

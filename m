@@ -1,79 +1,80 @@
-Return-Path: <io-uring+bounces-8163-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8164-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42278AC91E0
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 16:52:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A95AC9213
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 17:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51A75026DD
-	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 14:52:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E5167A871E
+	for <lists+io-uring@lfdr.de>; Fri, 30 May 2025 15:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36CA235065;
-	Fri, 30 May 2025 14:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2F8235065;
+	Fri, 30 May 2025 15:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5rFgJn6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8iTd2pd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CC522D782
-	for <io-uring@vger.kernel.org>; Fri, 30 May 2025 14:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF87921CA0A
+	for <io-uring@vger.kernel.org>; Fri, 30 May 2025 15:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748616717; cv=none; b=bqjwMqAmdwK9bx2o1YHJS/Snqwo92OUoz2NW4qUfB3Grj54ZOyQRIRD62LaoLpn4XM+HhTR6n3/RVSkw3wwRXhq4L1y381ks7OJL8nTnM9B3B5ruFxDY4V1MJ45uFeD4ypQSNgKDVKN5PDd7SeupxWBtLQPe0yNtvQl6Xgp/Wdg=
+	t=1748617829; cv=none; b=Oc9SbF03MlLF9wvU3W4w/x2ZppPSTSkGGoCaDCSMGsoMuc4NmIQDTRumsAeiTU+i8263oEL2zsRm4p/xkDJME2ux7OarWCO37SCylorRBScSGpX5jmZJm1m2bsZjGEkb1gPBXmBdiHOyV0dArt5abSk87SsX6ObnCkFCRYJiz/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748616717; c=relaxed/simple;
-	bh=umj6ga3RgziNmWL939by+HZcadg7rZBcwNAyHIuf4hg=;
+	s=arc-20240116; t=1748617829; c=relaxed/simple;
+	bh=jY8M6S69Cg6lcSE15oPsKDH1X8buNHQMNPE+8IAz1Pk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=raxKjQPrZapSF3xUgLdKUUPcIzcasu0Ek61LWJbDZMrlQUWf/np8H7IakulfFxAwPPvDHD6zV6X3T/Cs0Rt9EemWiN6WDoJ3eOSWVWoze2o1AXJ/3cJphlbISk44m9Q/bWmLsLBcATb0r1zc6We8whhaG9tjy8v7obY7/EvCkyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5rFgJn6; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:Content-Type; b=U0690uo5rof7+JzCTdA41fwFPZtDyp4zs1P7/YAHOArpts6Pkw/CB/3OgEE+orKEUgNd5R+UmD6fTou0g/n3QThTBGSsvbJbxs4AuVyvgf27buaFTPde/8M3el6JRKP4N8zf+gLzeB01XJPsiYCJDQcjb/rIKBaNCHNuNkwFKEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8iTd2pd; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso387838166b.0
-        for <io-uring@vger.kernel.org>; Fri, 30 May 2025 07:51:55 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad574992fcaso370550366b.1
+        for <io-uring@vger.kernel.org>; Fri, 30 May 2025 08:10:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748616714; x=1749221514; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748617826; x=1749222626; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=plZqDCvFF4hfrcsQ8SmxmaCb847Brdnb5oY90DIGvmc=;
-        b=C5rFgJn6vbL0FVs8TpWZh7Ns73vRSIhOBU+F/LbswWMcl4YMaEbBjRzid3Ol57gFC8
-         RJ4X00ap40Dd2qPjO2a7OcOAytd5QXrD/Llz/nyfDrbVA6kMIa7tqnF8370FtN8fxFAz
-         KIqEb1SmutD9KwGMyRppFuy4mYvglWG5bZR7CW2Ph6VHr/InuZr/wmqcEmW1DO9/8e4O
-         me1Sn3zpJbnbGg0WtNoDlmwUJPVflulawmmv9WGeEJneIe/Mj9Ng6Ccd4/iTDxIwodf1
-         SmeaCo5asz+slcd9vJdKBDW1WoCSTdpzH5iY16dvSCgSWSTBRUwuKluNqDXIJkGrGO69
-         vK2A==
+        bh=pEFHGBaTggfP5PrN12r9EK1eQJz2ElF+Jy1K40jbj1M=;
+        b=g8iTd2pdJ3/XQ/M+7z66T5Z2mnTADLZTGmLrW/cwFG0UXSg1MXf1m5xGhO+QCA2kGH
+         3JRVuFtRq4r2U4nKcbIC+UOrRvEtzJgUP4rDxCEEL2+tnzaW04ZB4GPbw2LV1sUEEV2L
+         jx0kk21FLxLVvF/orSDhfT++7ILQ2oRm84ITAdKgGvW3Au3kxHjvl7fysFh592Uuitds
+         9lkZ8Lf7zij39SBBXuCXOkGcv5udCZ0W1KuvNNxbBMOHsvIxuzt9uZzFmyNV4DxOS0V5
+         o4eBQOFNCW+9KYihoAEsWdmltwka+4hzgXG5IocS88JZRcKV8b1ZrawQM+0TRW+o5QwN
+         cdAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748616714; x=1749221514;
+        d=1e100.net; s=20230601; t=1748617826; x=1749222626;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=plZqDCvFF4hfrcsQ8SmxmaCb847Brdnb5oY90DIGvmc=;
-        b=LYDdYwXbhR1+ik/msWR+5I6LeAdQuJ3jv4C8Bo7nn9Bnx1ubGOMtjwYbp0NJCCpWzL
-         yZH3/itJveW+ToaqUHdQb8jGr99AGIn6QyS+cNajq4EsmwSN/WUo3G3i5ICLzWAw6rtB
-         7jEC9hTENQ0QUZZWrMFrd3dvKAg2mpDUMDiSiTBTgP4RewTzZn0P1eKsXjIq/cpVrGdl
-         dHFw2u+LPdh6KJAh5Y1DUp5pz/7rNDWkkqnPCOB6bOtbxj0MMwPfQkJqVHp8tdy1UdgY
-         gf7m2U4btNsWHHJ5dFXqfUMfYbjn87JG65p503iG3tNYuljOzAwAI1JGuohuCjjcBZB4
-         RaGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeta1TeCmAf2Jh474vOhwfnPykFcGanz/fCh5DP/i+DHThwTUUy6CBif27ZtLwpBp1Vwo+P16RSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyK28x5QlFXeLRyBtKeuh4nwBz6o7FAl+Ccu9eRjUgcZxkUvUY
-	xv9eaXxL86decUpDsWvvX62H5v/HtCoIcWGQp2jecY15cCYL/98PcUcX8/7wZQ==
-X-Gm-Gg: ASbGncvtYnU2hrBbXj6Od/O9n6ZmHmVttEjTZPzp4MbkF6gU+WxeON2h7DI5LNTzyr1
-	ACYuNc4AUHEwBVcVCSt1bpjS+bW88rlDRpB7V2j7UBqrTWSdjfcHSAYhYJj2Rh6LvSlTLtlc0Fy
-	0GvIa+cQjeKs8Ah60iwQ8V/Nd+mDpgz5kIPM/m/Zwn9utSkFoHlNDB1bDNaRhxKG9YaF/KxE00o
-	vD8CIDEcJ/bnHjxgdxFZwT1Cmt3otSfvQ2/6twS2is751+Bh08M8kgeBUmZrUjb9uqiPyBQdwxi
-	nwacNd2MbnmOuX4RX1DvvWrNQv42hekg74AcXqNf6ga1P+k4sVnyaMS+8BNqczwi
-X-Google-Smtp-Source: AGHT+IHr30AU8gUkUOajtLDfUZ4mNBp7HWZ5NYougOaC3hffGqaK7vxtWi1W/pr9TfB7/KbC+9COCw==
-X-Received: by 2002:a17:907:7210:b0:ad5:3055:784d with SMTP id a640c23a62f3a-adb322b02c7mr322484466b.34.1748616714093;
-        Fri, 30 May 2025 07:51:54 -0700 (PDT)
+        bh=pEFHGBaTggfP5PrN12r9EK1eQJz2ElF+Jy1K40jbj1M=;
+        b=Ni7RrZYvXa2TkDGC9WapN+wxIwG/5drGxkGQ/fHidgR7zXDpPzZFO6JH+vWEuqjkIh
+         dQnf4dJekoQ3s2PPtJ17V1GEJJIDAZPn4KZU6Mnsz5oIfEnTrzYyRQMyua6ciODNlOL2
+         0xhad3NzRb4lpHeVnRgZ6c990J71S4qYaLKeZVwHpPORnvHOxw6uFC8fpcMcynvome95
+         iYKNki5uKbegtv4BAE0t+JcLkyIUZMsqfQQ6TYARsuSwsKocrQW2nGCU2m+U/3FtPcZb
+         axwdUKjyFFIUvxtLEaaoYyps1gTEarTcqjGfT6QqfeQfefyqJ0kEOvrLOwYgHtx+I3UB
+         yGwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVODPPgHgS6X+zTNdrjY6ck5RkOmQGjbcLO9eAuRuirRKXMwLuBtJsqBF5Wwwvaj18F3RKH0ehq1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm2VpGXGGxRWcSLp51x2J7VDYyXqwLLfYFTKJjDKWll/EESzUM
+	5RpFulOPUnhBXJcy7Pboc2Pf+btZCXKFyeMIR+ZHNKwCSqdFf/UIByQLfk9p5w==
+X-Gm-Gg: ASbGnctHVbpv2hcGBmVT10JwVkui0x+7gIOxLK1+RBMqL6rUj1XO/0eqZ4eNLUeoVxW
+	iBX9ypP8JPc2v7QnzKLOw3iA2w6o0yUup8xkb7ysRLrDCKFGCGnn9HDgsjhqFMfbtqghrQgBml7
+	LIXIUpXYvVCSOzAsQjelhKMrh/GV6ae1OFXxmS5nRBBhxzAO+EkzHrnpSm0+rUVrc6hBifH0V9c
+	4/G9ubgw/QDLXGWAXMXIKhPyddzm9gelGOqoclbGVcV65tF2i8rYlty8/rvrFb9IZCnGtwldsOf
+	0Nyt9nM2D6+jH4ggLVrkmBXIzPkWQXKFlJrg91ur5bSnGVVKwobwmz9XzL2cfKjuKtMB/2+/Fdg
+	=
+X-Google-Smtp-Source: AGHT+IFa1cZ073vPjlnDxOfgk300DzyiSgXrT+BuyyX8ztXdx8KnhvYkTP4JRy2LJ1qUnWUxBqS9/w==
+X-Received: by 2002:a17:907:3d9f:b0:adb:2a21:28b3 with SMTP id a640c23a62f3a-adb3244ce26mr367416466b.54.1748617825662;
+        Fri, 30 May 2025 08:10:25 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325::15c? ([2620:10d:c092:600::1:a320])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad39e15sm338851066b.149.2025.05.30.07.51.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5e2bf088sm345473066b.106.2025.05.30.08.10.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 07:51:53 -0700 (PDT)
-Message-ID: <4e5e0207-9749-4d49-8d55-9710c972b673@gmail.com>
-Date: Fri, 30 May 2025 15:53:06 +0100
+        Fri, 30 May 2025 08:10:24 -0700 (PDT)
+Message-ID: <ac55e11c-feb2-45a3-84d4-d84badab477e@gmail.com>
+Date: Fri, 30 May 2025 16:11:38 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,69 +82,106 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] io_uring/mock: add cmd using vectored regbufs
+Subject: Re: [PATCH v4 1/6] io_uring/mock: add basic infra for test mock files
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1748609413.git.asml.silence@gmail.com>
- <a515c20227be445012e7a5fc776fb32fcb72bcbb.1748609413.git.asml.silence@gmail.com>
- <bd72b25d-b809-4743-a857-7744a3586bea@kernel.dk>
- <4207774d-5f78-46d6-9829-4feb24c81799@gmail.com>
- <341c18d0-dce2-451d-86a6-ad4c05267388@kernel.dk>
+ <6c51a2bb26dbb74cbe1ca0da137a77f7aaa59b6c.1748609413.git.asml.silence@gmail.com>
+ <cf2e4b4b-c229-408d-ac86-ab259a87e90e@kernel.dk>
+ <eb81c562-7030-48e0-85de-6192f3f5845a@gmail.com>
+ <e6ea9f6c-c673-4767-9405-c9179edbc9c6@gmail.com>
+ <8cdda5c4-5b05-4960-90e2-478417be6faf@gmail.com>
+ <311e2d72-3b30-444e-bd18-a39060e5e9fa@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <341c18d0-dce2-451d-86a6-ad4c05267388@kernel.dk>
+In-Reply-To: <311e2d72-3b30-444e-bd18-a39060e5e9fa@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/30/25 15:37, Jens Axboe wrote:
-> On 5/30/25 7:40 AM, Pavel Begunkov wrote:
->> On 5/30/25 14:25, Jens Axboe wrote:
->>> On 5/30/25 6:51 AM, Pavel Begunkov wrote:
->>>> +static int io_copy_regbuf(struct iov_iter *reg_iter, void __user *ubuf)
->>>> +{
->>>> +    size_t ret, copied = 0;
->>>> +    size_t buflen = PAGE_SIZE;
->>>> +    void *tmp_buf;
->>>> +
->>>> +    tmp_buf = kzalloc(buflen, GFP_KERNEL);
->>>> +    if (!tmp_buf)
->>>> +        return -ENOMEM;
->>>> +
->>>> +    while (iov_iter_count(reg_iter)) {
->>>> +        size_t len = min(iov_iter_count(reg_iter), buflen);
->>>> +
->>>> +        if (iov_iter_rw(reg_iter) == ITER_SOURCE) {
->>>> +            ret = copy_from_iter(tmp_buf, len, reg_iter);
->>>> +            if (ret <= 0)
->>>> +                break;
->>>> +            if (copy_to_user(ubuf, tmp_buf, ret))
->>>> +                break;
->>>> +        } else {
->>>> +            if (copy_from_user(tmp_buf, ubuf, len))
->>>> +                break;
->>>> +            ret = copy_to_iter(tmp_buf, len, reg_iter);
->>>> +            if (ret <= 0)
->>>> +                break;
->>>> +        }
+On 5/30/25 15:41, Jens Axboe wrote:
+> On 5/30/25 8:26 AM, Pavel Begunkov wrote:
+>> On 5/30/25 15:12, Pavel Begunkov wrote:
+>>> On 5/30/25 15:09, Pavel Begunkov wrote:
+>>>> On 5/30/25 14:28, Jens Axboe wrote:
+>>>>> On 5/30/25 6:51 AM, Pavel Begunkov wrote:
+>>>>>> diff --git a/init/Kconfig b/init/Kconfig
+>>>>>> index 63f5974b9fa6..9e8a5b810804 100644
+>>>>>> --- a/init/Kconfig
+>>>>>> +++ b/init/Kconfig
+>>>>>> @@ -1774,6 +1774,17 @@ config GCOV_PROFILE_URING
+>>>>>>          the io_uring subsystem, hence this should only be enabled for
+>>>>>>          specific test purposes.
+>>>>>> +config IO_URING_MOCK_FILE
+>>>>>> +    tristate "Enable io_uring mock files (Experimental)" if EXPERT
+>>>>>> +    default n
+>>>>>> +    depends on IO_URING && KASAN
+>>>>>> +    help
+>>>>>> +      Enable mock files for io_uring subststem testing. The ABI might
+>>>>>> +      still change, so it's still experimental and should only be enabled
+>>>>>> +      for specific test purposes.
+>>>>>> +
+>>>>>> +      If unsure, say N.
+>>>>>
+>>>>> As mentioned in the other email, I don't think we should include KASAN
+>>>>> here.
+>>>>
+>>>> I disagree. It's supposed to give a superset of coverage, if not,
+>>>> mocking should be improved. It might be seen as a nuisance that you
+>>>> can't run it with a stock kernel, but that desire is already half
+>>>> step from "let's enable it for prod kernels for testing", and then
+>>>> distributions will start forcing it on, because as you said "People
+>>>> do all sorts of weird stuff".
 >>>
->>> Do copy_{to,from}_iter() not follow the same "bytes not copied" return
->>> value that the copy_{to,from}_user() do? From a quick look, looks like
->>> they do.
->>>
->>> Minor thing, no need for a respin just for that.
+>>> The purpose is to get the project even more hardened / secure through
+>>> elaborate testing, that would defeat the purpose if non test systems
+>>> will start getting errors because of some mess up, let's say in the
+>>> driver.
 >>
->> One returns 0 on success the other the number of processed bytes.
+>> Alternatively, it doesn't help with bloating, but tainting the kernel
+>> might be enough to serve the purpose.
 > 
-> copy_{to,from}_user() returns bytes NOT processed, and I guess the iter
+> I think taint or KASAN dependencies is over-reaching. It has nothing to
+> do with KASAN, and there's absolutely zero reason for it to be gated on
+> KASAN (or lockdep, or whatever). You're never going to prevent people
+> from running this in odd cases, and I think it's a mistake to try and do
+> that. If the thing is gated on CAP_SYS_ADMIN, then that's Good Enough
+> imho.
+> 
+> It'll make my life harder for coverage testing, which I think is reason
+> enough alone to not have a KASAN dependency. No other test code in the
+> kernel has unrelated dependencies like KASAN, unless they are related to
+> KASAN. We should not add one here for some notion of preventing people
+> from running it on prod stuff, in fact it should be totally fine to run
+> on a prod kernel. Might actually be useful in some cases, to verify or
+> test some behavior on that specific kernel, without needing to build a
+> new kernel for it.
 
-Sure, it doesn't contradict it, they follow different semantics.
+commit 2852ca7fba9f77b204f0fe953b31fadd0057c936
+Author: David Gow <davidgow@google.com>
+Date:   Fri Jul 1 16:47:41 2022 +0800
 
-> versions return bytes processed. Guess the code is fine, it's more so
-> the API that's a bit wonky on the copy/iter side.
+     panic: Taint kernel if tests are run
+     
+     Most in-kernel tests (such as KUnit tests) are not supposed to run on
+     production systems: they may do deliberately illegal things to trigger
+     errors, and have security implications (for example, KUnit assertions
+     will often deliberately leak kernel addresses).
+     
+     Add a new taint type, TAINT_TEST to signal that a test has been run.
+     This will be printed as 'N' (originally for kuNit, as every other
+     sensible letter was taken.)
+     
+     This should discourage people from running these tests on production
+     systems, and to make it easier to tell if tests have been run
+     accidentally (by loading the wrong configuration, etc.)
+     
+     Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+     Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+     Signed-off-by: David Gow <davidgow@google.com>
+     Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Which API? This command or copy helpers? copy_{to,from}_user are used
-here in the way they're always used in the kernel, and that's fine,
-they're not supposed to fail for valid input. That's unlike iter
-helpers, which may return a partial result.
+
+The same situation, it's a special TAINT_TEST, and set for a good
+reason. And there is also a case of TAINT_CRAP for staging.
 
 -- 
 Pavel Begunkov

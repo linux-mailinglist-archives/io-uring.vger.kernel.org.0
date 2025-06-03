@@ -1,134 +1,239 @@
-Return-Path: <io-uring+bounces-8190-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8191-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B8ACB90A
-	for <lists+io-uring@lfdr.de>; Mon,  2 Jun 2025 17:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF79ACC307
+	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 11:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4923E3B0E8D
-	for <lists+io-uring@lfdr.de>; Mon,  2 Jun 2025 15:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EE93A3BB6
+	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 09:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9978A221DB7;
-	Mon,  2 Jun 2025 15:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6D7280CE0;
+	Tue,  3 Jun 2025 09:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aHMfpUqo"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="CaDjHJu9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward201b.mail.yandex.net (forward201b.mail.yandex.net [178.154.239.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA639175BF
-	for <io-uring@vger.kernel.org>; Mon,  2 Jun 2025 15:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483E1F583D
+	for <io-uring@vger.kernel.org>; Tue,  3 Jun 2025 09:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748878896; cv=none; b=kmc98mVBPrZFOBak1TLg6hHX4mVK5lyKEwqLBPIKQNikDVAc1UqQpDDNSB3ibPIC+duRPQc7e0WI5xWMiJSmKgrUR3PlAT3Ik581lXQ5MVcyguMrMFsvvv9wSiRvSrdDwEV3hIZaKeefizvsSt1v+dJfGIRbmvuylaWoNl1lqNc=
+	t=1748942960; cv=none; b=ZC6HYSRz35r/isrpwwgzlRB+o7sIsu+n2SymfXS+nTNTLLA0Gi0WwdONwJvp/gTe0iuWkTzlLV+IZLEFo++Q1ftr684JoArQqh7K+cBMv17pqmufOTHS/ZGWAHuLodWCKimvREYzjmgCFgmK6XlmIr14wND/hcKVlTgHK3OqHfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748878896; c=relaxed/simple;
-	bh=sxSWYhV9G7V5ejIhJM/2inXd3xFFDbcg1M1/m4COJ0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EwkQkDu8o8sIYtknf3i2ZcOa81eq5CAFTFsKCHZfzr5dWXCjx9+xAOI37ZfcWCVl4pPxYktDeByXG+0l1+qGSKr4gPA9jARXastrzED9P0h3QBIK4g8oeZGp0LcBe/Hh4Iwo05+pcxnYzxTulCGKPY7AtHaOSOk2A0nQWQWZSCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aHMfpUqo; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86d2d984335so203179039f.3
-        for <io-uring@vger.kernel.org>; Mon, 02 Jun 2025 08:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748878893; x=1749483693; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9tACN594XC/T0M0VtSDYk74zSDy7r+dnG7sNaOAP8k4=;
-        b=aHMfpUqoSr/ojdQHFaAj6ibFSUGpdoAjdU01vVE3KJawuyXPVtTehWdxtpINDsKp2I
-         FJQZUFZT1Pw9UG1h00yV+xnGfYvOMftduKpw18DxF5Ajj3QW34I5vrUqID78dtPUHMgp
-         zUyHT97gxLZ0AFvOlD7csT0kqgcgPHm2MlzyeOHHTGZZZyJaCv5FBImcVVUOEaxLn8Ha
-         lqxRwT/54cvKZ1Z+V6RBzD7trYis0P/Rm1+XCxWA4HIhIv4YW2oD71iFqUe8FQPh+Bsz
-         dzrED1fA3RT/p3QPSpstM6vDmvLDe0D8O4Ve0ooXEJfHbRc3cZuxWhrBCW9adSzHTPAJ
-         Zqhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748878893; x=1749483693;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tACN594XC/T0M0VtSDYk74zSDy7r+dnG7sNaOAP8k4=;
-        b=wT2IAhlztgUnA9URYpW4mYfMUw8N3MY8sKbfJs8jazKPNJmPPheWCt3FDPUYlISDHX
-         9OwuYiM+gfObA7XulL+DPnai5iw7T58RFO66Kt7rjAlsslapZ4aIB+ta/JwPhStwoxnx
-         pmLUFSnGYAIRR4cMdfHnOw8YbhfEEJiq6uovpQCeDSa2ZxX6fvGp3zFP9reNiUOat4gR
-         hceecWD9qJZkLFplCWHW06RjUiS8BB5QmoAuJDvguYMY8uBCaOE4ftOvFo9Kwr4pDVkP
-         7TVpAzjR5Ef3VyDWBmsVhsNu1jExHVw4YRLCsLhjEP5I0864QMLzPs0ee4xiTSU2i+o9
-         TWIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXbOq2ngTXgOCmnIHTtpm5Dv5spAeoiU3iGGNN7FJ4eZTMf3cQ7e9c2N2KBAcrzj+qRHgWOz1L7w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQrViigkRB/ePVQ3YGnnWxWmX2I9dlr2xe99eCq1CbTLr2FE6K
-	7sBZPszYOGK4wqtL+Z5nR8zc+ZvYRfGNfulsimdSKq9XPfeN5r/Sy0mH/Na/Yc+o5G4j3JMzwTe
-	0EBwx
-X-Gm-Gg: ASbGncus1YT8OiAy/p1Xj7kU787Jv0EXbDXxb6PhzAfgV+ph14OzoS6SWPi2HcNfx6u
-	HRH9+fzbBEXvAo0LRwvpmwwpLGYIlRVsmk1rwZxDW8j2H/pJW9LHBelQRP7/39dJON4qKBPJ6Zd
-	eGFq1u6pwpi9/QPJut+4+Et/2c4NQKozjwemM6cTQjDrdInOg6eJ8o6bwjtBU8IQVjUexgsut+b
-	ZriFngbixESBpuDGL532FOKwJdF0ZF2bOxjkLEn0iuvAX2XbRNw6biMfyq7Wxglw9Vn6vKLZSbo
-	ZtUXrsr3nHV/L17h7dsfPOeRL2ul/L+tlF38ods67GOuUrI=
-X-Google-Smtp-Source: AGHT+IFbq/GrEA3Q5q1M6EpjwlTIwX6m8yt28tg2BDOeXgRFpzSALoO/XHEES3dQz1os+f8ZHAs87g==
-X-Received: by 2002:a05:6602:3f0d:b0:86c:ff6a:985d with SMTP id ca18e2360f4ac-86d0519267dmr1588669539f.6.1748878892917;
-        Mon, 02 Jun 2025 08:41:32 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7e3bfc8sm1768176173.62.2025.06.02.08.41.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 08:41:32 -0700 (PDT)
-Message-ID: <29e97864-5406-4338-81ef-4974881e74c3@kernel.dk>
-Date: Mon, 2 Jun 2025 09:41:31 -0600
+	s=arc-20240116; t=1748942960; c=relaxed/simple;
+	bh=r4MSoTvvvcJ4poUznnQkWS+T9m9spfzl8u7CJP/dxYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=edO+IYjBPjMgPcAJ4YqPsqLGh0QnKz4Pu8ZLHz5qqwmQhmgYa+InR+nTvJVvzxb5OVcu9JLcRl5BZQ3QNBGnVY4uEOlKNdFs1UsoVheqjXJ5twFPOJeufMKJaPqKPh7W2qRNAUEkQT7Zs2cX8vfQtJjUvebENHQSvgkEEkR3Ja0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=CaDjHJu9; arc=none smtp.client-ip=178.154.239.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
+	by forward201b.mail.yandex.net (Yandex) with ESMTPS id C8A4E66072
+	for <io-uring@vger.kernel.org>; Tue,  3 Jun 2025 12:23:25 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:aaac:0:640:94d6:0])
+	by forward103b.mail.yandex.net (Yandex) with ESMTPS id E21BC60AF6;
+	Tue,  3 Jun 2025 12:23:17 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GNX0coDLdeA0-Y24eWWMd;
+	Tue, 03 Jun 2025 12:23:17 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1748942597; bh=pSTuiAoI7oG3mDOGAKeeZ6AKTJneSBjhj5v1La1Hr28=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=CaDjHJu9I4o4jgwquy9PcHtUulVhn2Z1whqQv0hhMoQ9GGK/yxOpNEwTtSeI5GHwv
+	 NYRJKa0tKK4FkQ9ezqKuqL46f0YfvAviMpfKN748ohS6TCL9kIlSx4hdpK0AtSGAMU
+	 ool/eaIjTKiIx6uPCfwN+U+c3b8+rJ8Zd7fIz2t4=
+Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org,
+	Dmitry Antipov <dmantipov@yandex.ru>
+Subject: [PATCH] io_uring: miscellaneous spelling fixes
+Date: Tue,  3 Jun 2025 12:20:45 +0300
+Message-ID: <20250603092045.384197-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] io_uring/mock: add basic infra for test mock files
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1748609413.git.asml.silence@gmail.com>
- <6c51a2bb26dbb74cbe1ca0da137a77f7aaa59b6c.1748609413.git.asml.silence@gmail.com>
- <cf2e4b4b-c229-408d-ac86-ab259a87e90e@kernel.dk>
- <eb81c562-7030-48e0-85de-6192f3f5845a@gmail.com>
- <e6ea9f6c-c673-4767-9405-c9179edbc9c6@gmail.com>
- <8cdda5c4-5b05-4960-90e2-478417be6faf@gmail.com>
- <311e2d72-3b30-444e-bd18-a39060e5e9fa@kernel.dk>
- <ac55e11c-feb2-45a3-84d4-d84badab477e@gmail.com>
- <d285d003-b160-4174-93bc-223bfbc7fd7c@kernel.dk>
- <b601b46f-d4b5-4ffc-af8a-3c2e58cdd62d@gmail.com>
- <44e37cb0-9a89-4c88-8fa1-2a51abad34f7@kernel.dk>
- <e0e4562a-07e2-4874-b42b-1fa48c02c38d@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <e0e4562a-07e2-4874-b42b-1fa48c02c38d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/2/25 9:31 AM, Pavel Begunkov wrote:
-> On 6/2/25 16:19, Jens Axboe wrote:
->> On 5/30/25 12:14 PM, Pavel Begunkov wrote:
->>> On 5/30/25 16:30, Jens Axboe wrote:
-> ...>>>> The same situation, it's a special TAINT_TEST, and set for a good
->>>>> reason. And there is also a case of TAINT_CRAP for staging.
->>>>
->>>> TAINT is fine, I don't care about that. So we can certainly do that. My
->>>
->>> Good you changed your mind
->>
->> Yes, my main objection was (and is) having nonsensical dependencies.
-> 
-> "I think taint (snip) is over-reaching" says otherwise. 
+Correct spelling here and there as suggested by codespell.
 
-Since you clearly want to keep harping on this, I said "yes" and clarified
-that the main objection was bogus dependencies.
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ io_uring/cancel.c    | 4 ++--
+ io_uring/io-wq.c     | 2 +-
+ io_uring/io_uring.c  | 8 ++++----
+ io_uring/notif.c     | 2 +-
+ io_uring/poll.c      | 2 +-
+ io_uring/rw.c        | 4 ++--
+ io_uring/tctx.h      | 2 +-
+ io_uring/uring_cmd.c | 2 +-
+ io_uring/waitid.c    | 2 +-
+ 9 files changed, 14 insertions(+), 14 deletions(-)
 
-Can we stop wasting time on this?
-
-> Anyway, it's
-> regrettable you don't take security arguments into consideration, but
-> that's your choice.
-
-??
-
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index 6d57602304df..6d46a0ac278a 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -306,8 +306,8 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
+ 	}
+ 
+ 	/*
+-	 * Keep looking until we get -ENOENT. we'll get woken everytime
+-	 * every time a request completes and will retry the cancelation.
++	 * Keep looking until we get -ENOENT. We'll get woken every
++	 * time a request completes and will retry the cancellation.
+ 	 */
+ 	do {
+ 		cd.seq = atomic_inc_return(&ctx->cancel_seq);
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index cd1fcb115739..70fdf174e4a1 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -605,7 +605,7 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+ 		work = io_get_next_work(acct, wq);
+ 		if (work) {
+ 			/*
+-			 * Make sure cancelation can find this, even before
++			 * Make sure cancellation can find this, even before
+ 			 * it becomes the active work. That avoids a window
+ 			 * where the work has been removed from our general
+ 			 * work list, but isn't yet discoverable as the
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index c7a9cecf528e..abbb4f3dad88 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1157,7 +1157,7 @@ static void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
+ 	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
+ 
+ 	/*
+-	 * We don't know how many reuqests is there in the link and whether
++	 * We don't know how many requests is there in the link and whether
+ 	 * they can even be queued lazily, fall back to non-lazy.
+ 	 */
+ 	if (req->flags & IO_REQ_LINK_FLAGS)
+@@ -2848,7 +2848,7 @@ static __cold void io_tctx_exit_cb(struct callback_head *cb)
+ 	 * When @in_cancel, we're in cancellation and it's racy to remove the
+ 	 * node. It'll be removed by the end of cancellation, just ignore it.
+ 	 * tctx can be NULL if the queueing of this task_work raced with
+-	 * work cancelation off the exec path.
++	 * work cancellation off the exec path.
+ 	 */
+ 	if (tctx && !atomic_read(&tctx->in_cancel))
+ 		io_uring_del_tctx_node((unsigned long)work->ctx);
+@@ -2980,7 +2980,7 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ 	/*
+ 	 * Use system_unbound_wq to avoid spawning tons of event kworkers
+ 	 * if we're exiting a ton of rings at the same time. It just adds
+-	 * noise and overhead, there's no discernable change in runtime
++	 * noise and overhead, there's no discernible change in runtime
+ 	 * over using system_wq.
+ 	 */
+ 	queue_work(iou_wq, &ctx->exit_work);
+@@ -3152,7 +3152,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+ 		if (!tctx_inflight(tctx, !cancel_all))
+ 			break;
+ 
+-		/* read completions before cancelations */
++		/* read completions before cancellations */
+ 		inflight = tctx_inflight(tctx, false);
+ 		if (!inflight)
+ 			break;
+diff --git a/io_uring/notif.c b/io_uring/notif.c
+index 9a6f6e92d742..93140abebd10 100644
+--- a/io_uring/notif.c
++++ b/io_uring/notif.c
+@@ -87,7 +87,7 @@ static int io_link_skb(struct sk_buff *skb, struct ubuf_info *uarg)
+ 	prev_nd = container_of(prev_uarg, struct io_notif_data, uarg);
+ 	prev_notif = cmd_to_io_kiocb(nd);
+ 
+-	/* make sure all noifications can be finished in the same task_work */
++	/* make sure all notifications can be finished in the same task_work */
+ 	if (unlikely(notif->ctx != prev_notif->ctx ||
+ 		     notif->tctx != prev_notif->tctx))
+ 		return -EEXIST;
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 0526062e2f81..dafe04dd6915 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -440,7 +440,7 @@ static bool io_poll_double_prepare(struct io_kiocb *req)
+ 	/*
+ 	 * poll arm might not hold ownership and so race for req->flags with
+ 	 * io_poll_wake(). There is only one poll entry queued, serialise with
+-	 * it by taking its head lock. As we're still arming the tw hanlder
++	 * it by taking its head lock. As we're still arming the tw handler
+ 	 * is not going to be run, so there are no races with it.
+ 	 */
+ 	if (head) {
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 710d8cd53ebb..e7e30af269a9 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -186,7 +186,7 @@ static void io_req_rw_cleanup(struct io_kiocb *req, unsigned int issue_flags)
+ 	 * This is really a bug in the core code that does this, any issue
+ 	 * path should assume that a successful (or -EIOCBQUEUED) return can
+ 	 * mean that the underlying data can be gone at any time. But that
+-	 * should be fixed seperately, and then this check could be killed.
++	 * should be fixed separately, and then this check could be killed.
+ 	 */
+ 	if (!(req->flags & (REQ_F_REISSUE | REQ_F_REFCOUNT))) {
+ 		req->flags &= ~REQ_F_NEED_CLEANUP;
+@@ -347,7 +347,7 @@ static int io_prep_rwv(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 
+ 	/*
+ 	 * Have to do this validation here, as this is in io_read() rw->len
+-	 * might have chanaged due to buffer selection
++	 * might have changed due to buffer selection
+ 	 */
+ 	return io_iov_buffer_select_prep(req);
+ }
+diff --git a/io_uring/tctx.h b/io_uring/tctx.h
+index 608e96de70a2..1c10a3a1a00e 100644
+--- a/io_uring/tctx.h
++++ b/io_uring/tctx.h
+@@ -20,7 +20,7 @@ int io_ringfd_unregister(struct io_ring_ctx *ctx, void __user *__arg,
+ 			 unsigned nr_args);
+ 
+ /*
+- * Note that this task has used io_uring. We use it for cancelation purposes.
++ * Note that this task has used io_uring. We use it for cancellation purposes.
+  */
+ static inline int io_uring_add_tctx_node(struct io_ring_ctx *ctx)
+ {
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 929cad6ee326..40e35e8f8821 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -126,7 +126,7 @@ static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
+ 	if (io_should_terminate_tw())
+ 		flags |= IO_URING_F_TASK_DEAD;
+ 
+-	/* task_work executor checks the deffered list completion */
++	/* task_work executor checks the deferred list completion */
+ 	ioucmd->task_work_cb(ioucmd, flags);
+ }
+ 
+diff --git a/io_uring/waitid.c b/io_uring/waitid.c
+index e07a94694397..149439fdfcac 100644
+--- a/io_uring/waitid.c
++++ b/io_uring/waitid.c
+@@ -282,7 +282,7 @@ int io_waitid(struct io_kiocb *req, unsigned int issue_flags)
+ 	atomic_set(&iw->refs, 1);
+ 
+ 	/*
+-	 * Cancel must hold the ctx lock, so there's no risk of cancelation
++	 * Cancel must hold the ctx lock, so there's no risk of cancellation
+ 	 * finding us until a) we remain on the list, and b) the lock is
+ 	 * dropped. We only need to worry about racing with the wakeup
+ 	 * callback.
 -- 
-Jens Axboe
+2.49.0
 
 

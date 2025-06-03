@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8197-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8198-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFFBACC9DD
-	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 17:11:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AE3ACCF0E
+	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 23:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC627A1E5B
-	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 15:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4073A4404
+	for <lists+io-uring@lfdr.de>; Tue,  3 Jun 2025 21:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28770223316;
-	Tue,  3 Jun 2025 15:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C40225419;
+	Tue,  3 Jun 2025 21:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="t7hLirZk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0gcA2Mts"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AAD1DA23
-	for <io-uring@vger.kernel.org>; Tue,  3 Jun 2025 15:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E22221FBE
+	for <io-uring@vger.kernel.org>; Tue,  3 Jun 2025 21:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748963483; cv=none; b=jz1urkN8U+Yg4rSY/OznDjM8zuleV1mtMCG3Dvg9xIR3z4g1it3hGzULaLflnYNij6h6dewP3JMQ+H/KMFrEoDPajsWIIvWV8aUqI9B+JMFIWj7PjEy42ZMFZgpEqzQLZv/sFtBNfq10iNL09Dz5s9hYAUU0Vu9JlvnPpi6wqEY=
+	t=1748986417; cv=none; b=cgWJlTDs6loh1FOR8MT2o/DF+MpL3BS39dt2xDM9IwEqoChpp121dhqeTjX0PCHfmC0vsLvDKwxFcGisnwWmCLX06rKiUjX6ihqi0GaZJV/N0Oe/mE/kZKLmFNFSADO3rtfVgdsPuIZmfYbB3HbvqLwGubuZf7Csuk0JoRi4tJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748963483; c=relaxed/simple;
-	bh=P0y3o16XGa3S6zBmnVm2d+XAyvvVuhr34DOoLsoAwDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t1xbL4tNLJp+7tywOUU4+ExPOOPfBm1ektMqEM/7xJJZnGKlkIdop14PPbA2RloT/cuvoWzy0s4y4YVqpAovP2poYie0EKzmsGiVdoRz+xKdt1q58WeFZxeUIn2BB4VSTHLX9MINOventGdRCaJF2KotqcWYi6pfvn6hDWhtBEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=t7hLirZk; arc=none smtp.client-ip=209.85.166.172
+	s=arc-20240116; t=1748986417; c=relaxed/simple;
+	bh=E3LImC9ZRPHumtO8/6aYxw1xJL6L5ekGh5AGH8vMRFg=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=s4/pxfFm/c5rT9xiDbsCYOiz9RA6s9ABSbOfFP7lFIBnDTwUXajAZ96xTNCo5yajjXQyYP5K9Ocz9lmdSrGPq7jv9QIpS79n2kXzsG1qrC+Y2Yshkc+5qloXjlUl5MekW62BUG7uadFrIcAAfF+GaxM4KfOkTCn6FCjSOOiP89Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0gcA2Mts; arc=none smtp.client-ip=209.85.166.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3da831c17faso16301225ab.3
-        for <io-uring@vger.kernel.org>; Tue, 03 Jun 2025 08:11:17 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8647e143f28so479351539f.1
+        for <io-uring@vger.kernel.org>; Tue, 03 Jun 2025 14:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748963476; x=1749568276; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ENZPVk28fyhK8QBCNn1dutmAmP0iQqTHH437t9XffpQ=;
-        b=t7hLirZkwFXcZXd6UFU0waePKN/r4+X9RCr9LA92jg8PF4Z9IJWqGGs+Ls4OMOs1Xu
-         Pa3FPDtOwDarcg5cuzyKZ0tu+PUdSEYvRl40mry4ElsI+RiyX71w6RUDiHAPQjA8jjFG
-         JOOAi8HRUqEVI41UFVFODu2vXDpvr7GVRfE7d5l2TIprRexAlgzXnko0mVxtQvh0vDvl
-         rPv/aO5H5gS5MVGQK2RTF5uVZioMhSgyuKNOEEY0zU8foKP1W5+ANTPYng226a1uRIhG
-         qAlUCtD2qCGzNLuBwtjcL7swqKrdn7N20AmsG8oXsu6rw5xRoDVPyFDKVaBUZTZGH2Em
-         isQg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748986413; x=1749591213; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bFOyrP65C3TJ7VY07W4POWgT7PyM1x5S8R2W0sDm0TE=;
+        b=0gcA2Mts0rhMaaWp0wT9Sh9WNSFSehwnRWguQ+WCEcoeOkILESp0vODy9NVO3lJlPK
+         d8QbUa7yPDBsS7/GLjF3Q8VlVLRaKN1pTG5ZkSC5YU7lzGvPe7OR1w4yXEuJaqaiY5rM
+         e79Z1PqJzb53EcvvWNL8HSSa4w9fw0pX/NIVqlKrqF/e2Vzb4UPI3X6layemxTUPKJeA
+         CuHnJO4Zl2VBaO5gh32xn3R7FKqjTkErwYkpr4Khpb8vJdRAwhC8/arq5EORVdt3VMPH
+         jOVoS2kUAlY8e61IwYz31EB71nF0WSEuM1EiOoJzsUnVHrNz9E5OLJIm16jfPP+d6Osv
+         phWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748963476; x=1749568276;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ENZPVk28fyhK8QBCNn1dutmAmP0iQqTHH437t9XffpQ=;
-        b=l2FwEJuZgntuQas87QS2P93qO2rm6qngGwldBgr9In5nLFu3NUpJrHjDVN/nBE9CrA
-         6R7l1ZmF7Gzp4z9b/OnGE31DsPS7eEjzBH7c0CX7yT7YSxgW3iAwUuVrksaDCBo7cT00
-         oVAbZok1s02JbF7wi38Tkom0Bo1V3E4RmaQK73HdmKRPBDYk5yiUhyOQWxcUDxOA5dhN
-         b/3Z2eRknc2BJBtBAfcaPNDnBk/nkKPOEsyVKd0eR9Cwp+a9MifFwSN1bYXJA1iqfQGB
-         74L0Kgw6P5/h3zTnYCKiAyAC+sRKXCBXkB+mk5tKFHGn7P58tPJDwgHILcnKaGGjVp/X
-         +2kw==
-X-Gm-Message-State: AOJu0Yx5OgU05yb4MfUTp7lm1dPw+rHukC23YL6+zV84OuUqqwZUrJ1y
-	DhA5gHOMVzyMo7CzQ/G0xEyZoAVTAinmUbn9Tb2x2a5/fxoCG8xg0XHfJLSbsYTM9p2dXtRVn95
-	4knvs
-X-Gm-Gg: ASbGnctROQtUosIhoSPBTIwLp/eR+NqqWDnHa34vK8DtGCqDk3ICI59nSLuHI0ULNue
-	+KLFw1HJ6ebeFRngDCiV432qHFy21fk3Oz2TmbYr+UGPa6ex0Dhm/4in3SbDM/loVy0CqpRIias
-	ssgiwTih51i7b1MKBjUuh3ZFdwhqLE8zyAihQozYpRd91/tTAZj/d8uEJpDzd2uMJgzvX0o1R71
-	DAzb7t14P3v8rHFjUdKBFOu09nwyuDfdi1yO246ooDUac1uRKspnfYYWc7FiABjpxuFKG8I1hVY
-	ni9UvAs8hmDCCzFtnsmqIbCsl+HrYiHarFAn/iTEKJibCrsWeZOpTrVmmA==
-X-Google-Smtp-Source: AGHT+IEojq6Uj4It+9Vg5kasvnyap8r0oWKnt4AYXmVYB+Efqs3lX4me8337zc/pHzWTDQY30P632g==
-X-Received: by 2002:a05:6e02:1562:b0:3dc:787f:2bc4 with SMTP id e9e14a558f8ab-3dd99c2b6d6mr217730115ab.18.1748963475803;
-        Tue, 03 Jun 2025 08:11:15 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dd9353587fsm26617075ab.7.2025.06.03.08.11.14
+        d=1e100.net; s=20230601; t=1748986413; x=1749591213;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bFOyrP65C3TJ7VY07W4POWgT7PyM1x5S8R2W0sDm0TE=;
+        b=Tu8uAwh8apFmzTY9jpeli37RsOFwinQoXGccGLqRNh+vNGPSWNqGXmvBElYPKhE4hR
+         gsQKnUkhTHrUVIAHWsjkDRFQHIEq2AdbJmkSkvXPOCKEE0OxCY9IeaNrDJIzX6UYvItv
+         DaeiAvuBDkMsmE4Crdzmh7o2/eYuCkWD2aZ+es2KRglPWyb+KWL8jHAx33f+/k29+OmG
+         RbPQfgE+xtUfKlmsb4veP2l+jZlM52lkXCi/30uTO7iZ8084hdgg27YE2384OaFp7cP7
+         H+Obcs9Gmy+HuaJRq7OvCctNyckjU3pwTcl3XILwbFOt54B+zA/S5FjUHgQCwqCZsMD7
+         1Tdg==
+X-Gm-Message-State: AOJu0Yybq6670Wru87T80tJVZ0hwsNSmrAL3KNlPgiYAdlpqiGWFQEG8
+	hxC1tl+uZYG2L5nD+sypC0c4JgflCHtHXbvVERo3R1GWbfznIT4oGU8hw2+uW2FrjetJTyR+RaL
+	ZmYBr
+X-Gm-Gg: ASbGncsTZTTjCg/zo3xSESh66ye0XoHsnz3W/rliDb6keucbu5pydgM6+d8sBfvJ8QR
+	hPzH4gRhE8wXR+XvYaUsX1goi9d0MJ0u8T+T1X6Iu2Jyyzvg1UPCIglubtVCCcPRRG8uIg3EkOS
+	ei8v1nBdTe2SAu5nrQHlOQ7QNKuIOb7bgGv8jDaglWc5Jm5igNZIEkEjJfY1oLIRPgNpzWGS4H1
+	UWC6z3kb5KQLGLLF40m1WHpbJyEeRik44l1wABVhUvh6H4GHX+UNQklYZ/PSxhshxa3SNE93GV3
+	mJd/0s2FUd1D44Lr7nEGmsFRImbdr1TP68UjNHE2Q/EYA+5EwaOFcMVJgAU=
+X-Google-Smtp-Source: AGHT+IFIr6Ib/JcbXYMN596RYOrlPG1b61IP94Q9XOeYX3DBHoftQiC9aZPci3zd47ROQiSv5Nbx+w==
+X-Received: by 2002:a05:6602:400b:b0:864:4890:51e4 with SMTP id ca18e2360f4ac-8731c60aa6bmr75320239f.14.1748986413322;
+        Tue, 03 Jun 2025 14:33:33 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7dff196sm2447836173.4.2025.06.03.14.33.32
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 08:11:15 -0700 (PDT)
-Message-ID: <9dd8a125-5d15-4480-a86e-87ee96e238a4@kernel.dk>
-Date: Tue, 3 Jun 2025 09:11:14 -0600
+        Tue, 03 Jun 2025 14:33:32 -0700 (PDT)
+Message-ID: <6033108d-ad91-42d1-89f7-6fc5a4c89302@kernel.dk>
+Date: Tue, 3 Jun 2025 15:33:32 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,136 +81,108 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/uring_cmd: be smarter about SQE copying
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring <io-uring@vger.kernel.org>
-References: <5d03de61-1419-443f-b3a4-e1f2ac2fe137@kernel.dk>
- <CADUfDZo=mbiz=0wxKSihhw9cxRdj5Uojh=XO0aPxKOZKtEc22A@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <CADUfDZo=mbiz=0wxKSihhw9cxRdj5Uojh=XO0aPxKOZKtEc22A@mail.gmail.com>
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: PATCH v2] io_uring/kbuf: limit legacy provided buffer lists to
+ USHRT_MAX
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/3/25 9:05 AM, Caleb Sander Mateos wrote:
-> On Sat, May 31, 2025 at 1:52?PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> uring_cmd currently copies the SQE unconditionally, which was introduced
->> as a work-around in commit:
->>
->> d6211ebbdaa5 ("io_uring/uring_cmd: unconditionally copy SQEs at prep time")
->>
->> because the checking for whether or not this command may have ->issue()
->> called from io-wq wasn't complete. Rectify that, ensuring that if the
->> request is marked explicitly async via REQ_F_FORCE_ASYNC or if it's
->> part of a link chain, then the SQE is copied upfront.
->>
->> Always copying can be costly, particularly when dealing with SQE128
->> rings. But even a normal 64b SQE copy is noticeable at high enough
->> rates.
->>
->> Reported-by: Caleb Sander Mateos <csander@purestorage.com>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
->> index 929cad6ee326..cb4b867a2656 100644
->> --- a/io_uring/uring_cmd.c
->> +++ b/io_uring/uring_cmd.c
->> @@ -181,29 +181,42 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, u64 res2,
->>  }
->>  EXPORT_SYMBOL_GPL(io_uring_cmd_done);
->>
->> +static void io_uring_sqe_copy(struct io_kiocb *req, struct io_uring_cmd *ioucmd)
->> +{
->> +       struct io_async_cmd *ac = req->async_data;
->> +
->> +       if (ioucmd->sqe != ac->sqes) {
->> +               memcpy(ac->sqes, ioucmd->sqe, uring_sqe_size(req->ctx));
->> +               ioucmd->sqe = ac->sqes;
->> +       }
->> +}
->> +
->>  static int io_uring_cmd_prep_setup(struct io_kiocb *req,
->>                                    const struct io_uring_sqe *sqe)
->>  {
->>         struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
->> +       struct io_ring_ctx *ctx = req->ctx;
->>         struct io_async_cmd *ac;
->>
->>         /* see io_uring_cmd_get_async_data() */
->>         BUILD_BUG_ON(offsetof(struct io_async_cmd, data) != 0);
->>
->> -       ac = io_uring_alloc_async_data(&req->ctx->cmd_cache, req);
->> +       ac = io_uring_alloc_async_data(&ctx->cmd_cache, req);
->>         if (!ac)
->>                 return -ENOMEM;
->>         ac->data.op_data = NULL;
->>
->>         /*
->> -        * Unconditionally cache the SQE for now - this is only needed for
->> -        * requests that go async, but prep handlers must ensure that any
->> -        * sqe data is stable beyond prep. Since uring_cmd is special in
->> -        * that it doesn't read in per-op data, play it safe and ensure that
->> -        * any SQE data is stable beyond prep. This can later get relaxed.
->> +        * Copy SQE now, if we know we're going async. Drain will set
->> +        * FORCE_ASYNC, and assume links may cause it to go async. If not,
->> +        * copy is deferred until issue time, if the request doesn't issue
->> +        * or queue inline.
->>          */
->> -       memcpy(ac->sqes, sqe, uring_sqe_size(req->ctx));
->> -       ioucmd->sqe = ac->sqes;
->> +       ioucmd->sqe = sqe;
->> +       if (req->flags & (REQ_F_FORCE_ASYNC| REQ_F_LINK | REQ_F_HARDLINK) ||
->> +           ctx->submit_state.link.head)
-> 
-> To check my understanding, io_init_req() will set REQ_F_FORCE_ASYNC on
-> any request with IOSQE_IO_DRAIN as well as all subsequent requests
-> until the IOSQE_IO_DRAIN request completes? Looks like this condition
+The buffer ID for a provided buffer is an unsigned short, and hence
+there can only be 64k added to any given buffer list before having
+duplicate BIDs. Cap the legacy provided buffers at 64k in the list.
+This is mostly to prevent silly stall reports from syzbot, which
+likes to dump tons of buffers into a list and then have kernels with
+lockdep and kasan churning through them and hitting long wait times
+for buffer pruning at ring exit time.
 
-Correct
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> should work then. I think you can drop REQ_F_LINK | REQ_F_HARDLINK,
-> though; the initial request of a linked chain will be issued
-> synchronously, and ctx->submit_state.link.head will be set for the
-> subsequent requests.
-> 
-> I do share Pavel's concern that whether or not a request will be
-> initially issued asynchronously is up to the core io_uring code, so it
-> seems a bit fragile to make these assumptions in the uring_cmd layer.
-> I think I would prefer either passing a bool issue_async to the
-> ->prep() handler, or adding an optional ->prep_async() hook called if
-> the initial issue may happen asynchronously.
+---
 
-Yes I do too, which is why I suggested we add a specific cold handler
-for this kind of case. That leaves the core of io_uring calling it
-appropriately, and eliminates the need for storing an sqe pointer. Which
-would've been fine before resizing, but not a great idea to do now. I'll
-do a v2 of this with that in mind, just haven't gotten around to it yet.
+Since v1:
+- Actually use the added 'ret' variable io_add_buffers()
 
->> +               io_uring_sqe_copy(req, ioucmd);
->> +
->>         return 0;
->>  }
->>
->> @@ -259,6 +272,12 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->>         }
->>
->>         ret = file->f_op->uring_cmd(ioucmd, issue_flags);
->> +       if (ret == -EAGAIN) {
->> +               io_uring_sqe_copy(req, ioucmd);
->> +               return ret;
->> +       } else if (ret == -EIOCBQUEUED) {
->> +               return ret;
->> +       }
->>         if (ret == -EAGAIN || ret == -EIOCBQUEUED)
->>                 return ret;
-> 
-> This if condition is always false now, remove it?
-
-Heh yes, just forgot to remove those lines when adding the above change.
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 8cce3ebd813f..2ea65f3cef72 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -108,6 +108,7 @@ bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ 	buf = req->kbuf;
+ 	bl = io_buffer_get_list(ctx, buf->bgid);
+ 	list_add(&buf->list, &bl->buf_list);
++	bl->nbufs++;
+ 	req->flags &= ~REQ_F_BUFFER_SELECTED;
+ 
+ 	io_ring_submit_unlock(ctx, issue_flags);
+@@ -122,6 +123,7 @@ static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
+ 
+ 		kbuf = list_first_entry(&bl->buf_list, struct io_buffer, list);
+ 		list_del(&kbuf->list);
++		bl->nbufs--;
+ 		if (*len == 0 || *len > kbuf->len)
+ 			*len = kbuf->len;
+ 		if (list_empty(&bl->buf_list))
+@@ -390,6 +392,7 @@ static int io_remove_buffers_legacy(struct io_ring_ctx *ctx,
+ 	for (i = 0; i < nbufs && !list_empty(&bl->buf_list); i++) {
+ 		nxt = list_first_entry(&bl->buf_list, struct io_buffer, list);
+ 		list_del(&nxt->list);
++		bl->nbufs--;
+ 		kfree(nxt);
+ 		cond_resched();
+ 	}
+@@ -491,14 +494,24 @@ static int io_add_buffers(struct io_ring_ctx *ctx, struct io_provide_buf *pbuf,
+ {
+ 	struct io_buffer *buf;
+ 	u64 addr = pbuf->addr;
+-	int i, bid = pbuf->bid;
++	int ret = -ENOMEM, i, bid = pbuf->bid;
+ 
+ 	for (i = 0; i < pbuf->nbufs; i++) {
++		/*
++		 * Nonsensical to have more than sizeof(bid) buffers in a
++		 * buffer list, as the application then has no way of knowing
++		 * which duplicate bid refers to what buffer.
++		 */
++		if (bl->nbufs == USHRT_MAX) {
++			ret = -EOVERFLOW;
++			break;
++		}
+ 		buf = kmalloc(sizeof(*buf), GFP_KERNEL_ACCOUNT);
+ 		if (!buf)
+ 			break;
+ 
+ 		list_add_tail(&buf->list, &bl->buf_list);
++		bl->nbufs++;
+ 		buf->addr = addr;
+ 		buf->len = min_t(__u32, pbuf->len, MAX_RW_COUNT);
+ 		buf->bid = bid;
+@@ -508,7 +521,7 @@ static int io_add_buffers(struct io_ring_ctx *ctx, struct io_provide_buf *pbuf,
+ 		cond_resched();
+ 	}
+ 
+-	return i ? 0 : -ENOMEM;
++	return i ? 0 : ret;
+ }
+ 
+ static int __io_manage_buffers_legacy(struct io_kiocb *req,
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index 4d2c209d1a41..5d83c7adc739 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -21,6 +21,9 @@ struct io_buffer_list {
+ 		struct list_head buf_list;
+ 		struct io_uring_buf_ring *buf_ring;
+ 	};
++	/* count of classic/legacy buffers in buffer list */
++	int nbufs;
++
+ 	__u16 bgid;
+ 
+ 	/* below is for ring provided buffers */
 
 -- 
 Jens Axboe
+
 

@@ -1,205 +1,114 @@
-Return-Path: <io-uring+bounces-8218-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8219-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5D8ACE21E
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 18:23:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69634ACE2A1
+	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 18:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31601749CD
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 16:23:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B4D189C704
+	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 16:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F04118DB0D;
-	Wed,  4 Jun 2025 16:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CDC1E1C36;
+	Wed,  4 Jun 2025 16:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jacUaG1T"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rzmJLHEO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A43339A1
-	for <io-uring@vger.kernel.org>; Wed,  4 Jun 2025 16:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EAF18E1F
+	for <io-uring@vger.kernel.org>; Wed,  4 Jun 2025 16:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749054184; cv=none; b=Q3iN3z5QlSdPyORxRD0IXz/GTrFVyOFR8G+r4zgLbNLRrrjghAbKjpp1x7tqG7ibNORx7swbyxhLis7/v+y8asLDQVXkdJfyY45zrJ6MquzSq7I+BoSgU5lbasCHGGUFQQ+6QuXqFPOe+3dF0NeURT+N37IaAZEsKnT0mafDWhw=
+	t=1749056215; cv=none; b=na2OjFPEX7xILIj8pbM6OFc6WnDSh9ZWNzF2zBZyhkO7gCoPp7EfpOUfC9K+/IqgMSrrjArwffMxHQLCH45ZNJGtV1+2j+MlTe6ZfKpOSgdMaEKwnoSZj4RLFCtBHJSxoG86s4pNbcsPFyqfykeoyfCyfDIGqwVvJBtLs6YXORc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749054184; c=relaxed/simple;
-	bh=G8XnbaULPLcDjOyVHPeJKzp/IS+ID1Su416mQKqW7W0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=nkVl084OBG++Isr35N6rfUMxO/YWwYzkE4n0ZCWqMqRPdxX8neoo+Ab/ThBc1DXROVbOImSj8B7zDMbdwS+HiHY5vU4uW0vykgWW0igMkcd8A9MnkDlIJ9PKT2iAHpgDHrJw+FsyJA3oXKSL7+fjgVmXT6zwcwWepszzpa6XCRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jacUaG1T; arc=none smtp.client-ip=209.85.166.45
+	s=arc-20240116; t=1749056215; c=relaxed/simple;
+	bh=+LwhPN+64+kQ+PQ3GHI55Wi8GS2yMJFMiuqOu05BpO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0AJPnQgt4Ghq+QkwnWy0X6EjxVB7Fq3ApfUuvI99rd5+RCzRhZGWkHPMLwNkF3eUMNDdsScxoaubUPA3202vsm8AzjzS3heveRIvPj3C94i+mLKcH0SxeWQQv3ZsoeTJrE+gsUcjHssSN3xONCea2LDBMzgdXStePzRBBLbQcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rzmJLHEO; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86d0bd7ebb5so98895939f.0
-        for <io-uring@vger.kernel.org>; Wed, 04 Jun 2025 09:23:00 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86cef0b4d96so258339f.0
+        for <io-uring@vger.kernel.org>; Wed, 04 Jun 2025 09:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749054180; x=1749658980; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XyhIZjH3unPDui+KeHV33K37nxqpfBPoYqjsFZR8JX8=;
-        b=jacUaG1T5jV2AHkVd0aVKR+dyP5wPW0UFVk33MpALB/4Tu3TN10qXarAP0mjDvX6h4
-         AKzCk5l04rTcKDgvTQO6L0boex2FTcD7XOfEd5q9gF1vQ26ln9wvo0Y7F8vfOa5eETyq
-         lJ9sWgIJDPfR4ufabAZiNbSYIuYAmrdeBx0q+bgXNf/IDs49e0gJqGStEBYp4n98dBq4
-         75BaNakhpBxN8b+POqBLmsuatTChesAKF1/W6kdw8Wl4yIk4zbHGFM1GhAFdI8/Lajbq
-         i83hRYeXR7a7IRhTzXxeiTdwTJpJJnngN/iY8rApGejlg4d6oUP8YlWVOHTLARx0hpCe
-         mvCw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749056211; x=1749661011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=71Lzis6DOHTvS+XSE2VEmFRRvtGIhjKlEZrYkLsNct4=;
+        b=rzmJLHEOPeyPOnavmq+vz7xyNkR9/OJxa8vPiVgryqMukDir8VHkKjbJ+tMam/rPIT
+         UcLHTELJgOgWZmOlw/xUPJd+NudrFlPxgPKvZ3qHeHtGr6MA80TAq2VQUNCLWFXD/K4M
+         IQne5i/xSVDBh7kxRL9Ivh085YXIhXvFuc7nCQmONvEwxvBMqwF1lA7FM/01lJ2JNeBZ
+         WWWR9u140vvQC1s0l/L7VZv208YY1jN2n5OC5O8XKOUU9RuO1I/8rQS50Di99d6odm65
+         ucQFiAtH/IIfgI8TlTrGTsYDLOS+BVZh8um+HCmRHT9VClNNpKw2TNvN5Y51x1gmMl/H
+         sBgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749054180; x=1749658980;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyhIZjH3unPDui+KeHV33K37nxqpfBPoYqjsFZR8JX8=;
-        b=NOsDJSzAmHeefvXvMMFn103Gl/DGV2kUhq6O2ri1C+VqnsoeKh6uLoNgygauogYSEg
-         xiq3vtY23ik57p9mJJFtuOgzr7yGjCAyTn0Yu9dyMjXybRV98CayXIrn9/lao4PAxyWQ
-         sVnnXW3FhWMrXmdIqZxHzq8XRTDrvhSb8h6W55iiIRD3C3i37pN8jtNHGVcG1TJnEW2G
-         JKNluUAatqmCbtmFxXNLMPZvtJyRftli6qts3xComR0Un86f8NDDk+0N+tzbb+PGhFqg
-         DLjfIWI+GaA5AZMDtKHc8TihHyuAWndnAIsLFbO5CJeNGlV2Fs5XDtj3bTxADTOuJ4b8
-         y0Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZqHyTjFFk9NQC58ae+2y6ajDvzK/ViX9oz8lGGsNPosJrhK+hpamFOpNXZ43YOC5WES9JH/X9JQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcruUpEeSA4ORPIwfFsj3yhHj2z099qOkE1sp8o4Y/8bhl4Na+
-	r3FVYe5u+xqHlZuo+thnC9fSR6bQB2pjTsTQ8MnXEeK0SxMQqWnb+MVPySuHGnIgHZ6//2tXKfJ
-	LZ/w+
-X-Gm-Gg: ASbGncuHmCMYQzaobzJSQpJC78VC52ulwfa1S0+EgD3T/vPkfJF17f0PSoH1zg/+da9
-	XZKZb9FsNzan3luiO1BN8PUMamjPubXAgafTbfjr6agVwRbuhYXNLgqJcMIeIt83LHNFXvVpMTo
-	WNEi/Jg6F7iOtcBxR195TB2GYFyGwIiYldhzRytEdec/PErOUyQrvJ1Km34mo+qOqjnvmHiQE3n
-	8AiGTaajc43I5Cq6qGXpO1vI7VUmyL4tFVa9MAzOk5yAV2xkuJxnagm+ZkgkLvYfmfqPbiQEhi9
-	loPIXpjTYpk82bCc/buSkrhOPnk9uPD29/MTtEQfWSNlqW8=
-X-Google-Smtp-Source: AGHT+IEeW++KBiAGsLPKE+7TlkP5jKjZdBC0hfRWiZg2lDDnNdULaJYHOYOwjNyrMkf5wreZqo7f5Q==
-X-Received: by 2002:a05:6602:3787:b0:86d:71:d9a with SMTP id ca18e2360f4ac-8731c4e6870mr467014739f.2.1749054179775;
-        Wed, 04 Jun 2025 09:22:59 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7f22014sm2817370173.136.2025.06.04.09.22.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 09:22:59 -0700 (PDT)
-Message-ID: <6b5b368b-310b-41ca-9ce8-cb54e6c5b8f3@kernel.dk>
-Date: Wed, 4 Jun 2025 10:22:58 -0600
+        d=1e100.net; s=20230601; t=1749056211; x=1749661011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=71Lzis6DOHTvS+XSE2VEmFRRvtGIhjKlEZrYkLsNct4=;
+        b=pPij8BgsIsZJ82L1mHusTALoQWB1LwJ8RtdzmPLEPwn4/K0GmGvquRJ6nCVJZWtko6
+         YyQv3eKIGpcKtVSbI+x9L0VJKyS6TqykxdRLGHMgksxGR5mGMNgKgb/ueBqiR1eAVqos
+         tsMFitK1KE9Ly8/ifNQix/sCikElBH/cJu1BRJpOmF1QzBiBKIe98I4/LqNxA+3nC2v7
+         v24NtjiVZgZVCou5+WiAP2fVQlMbsXhPx7cJQE6Q05CfFX+JsYvfjPsBMjyQxu3B/YCw
+         TBoyS7cRn9MrPFIIePcdCrOGKanoj0a5fBa+3xIT+mUGJeQiKcj/tABVs1cQK+L58y04
+         IZZQ==
+X-Gm-Message-State: AOJu0Yy+Mlhq+87u0YsIwgyEJeU6g4uFh6dHoWVOhYPsPf37mPyEUd2h
+	GhfvKbFLhUnBdOls7f8KuhC1QjzbVckyExznwKcf738Ex/jP3tURwzvb+pda87mCqGQhhEuIbWv
+	gYNlY
+X-Gm-Gg: ASbGncvdeO8ob/ZJna8V1WvsUG8kljOqzNU+R7p/WMx9BBCAg8qgZIUIeirucBKVLVp
+	krvxE8EMQ8wOP3xQCErZnyZyjhvf9YcKk34SaposxENBLLWGxkPAv7NVUp5pv3dnzhzevyLJLIc
+	TUaqoq4P3HRZPx5503gyZRE3qs9WO5H6K4uQEKKkNVnYgUYVtqJl0r2k3SYmNL7pjuCN1JyQLou
+	K7n6J3B3lTpUeFQw5CtFURt4/eOOxAIoLNmBmOPe8a8KTy4X6ioyFsyp+EKLbaO4eV88OgRy23o
+	ba7iyT66gQGOoSzgvZCWNs/ptAmy7qpWpTESBKkHv+sCa208vfz2N6U=
+X-Google-Smtp-Source: AGHT+IFVafbnmxIghI23Eql69NiNRPFtDZDM6vD7fG7peWEAw7kifyfqHMKv0CSFOqnOLp61KE9V/Q==
+X-Received: by 2002:a05:6602:c8b:b0:873:1ad3:e353 with SMTP id ca18e2360f4ac-8731c5d244bmr428821839f.9.1749056210863;
+        Wed, 04 Jun 2025 09:56:50 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7e3c18dsm2751391173.69.2025.06.04.09.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 09:56:50 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: rtm@csail.mit.edu,
+	asml.silence@gmail.com
+Subject: [PATCHSET 0/2] io_uring futex cleanup and fix
+Date: Wed,  4 Jun 2025 10:53:33 -0600
+Message-ID: <20250604165647.293646-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: use-after-free if killed while in IORING_OP_FUTEX_WAIT
-From: Jens Axboe <axboe@kernel.dk>
-To: rtm@csail.mit.edu, Pavel Begunkov <asml.silence@gmail.com>,
- io-uring@vger.kernel.org
-References: <38053.1749045482@localhost>
- <83793604-3f0e-4496-a7c2-75f318219bee@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <83793604-3f0e-4496-a7c2-75f318219bee@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/4/25 8:12 AM, Jens Axboe wrote:
-> On 6/4/25 7:58 AM, rtm@csail.mit.edu wrote:
->> If a process is killed while in IORING_OP_FUTEX_WAIT, do_exit()'s call
->> to exit_mm() causes the futex_private_hash to be freed, along with its
->> buckets' locks, while the iouring request still exists. When (a little
->> later in do_exit()) the iouring fd is fput(), the resulting
->> futex_unqueue() tries to use the freed memory that
->> req->async_data->lock_ptr points to.
->>
->> I've attached a demo:
->>
->> # cc uring46b.c
->> # ./a.out
->> killing child
->> BUG: spinlock bad magic on CPU#0, kworker/u4:1/26
->> Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b711b
->> Current kworker/u4:1 pgtable: 4K pagesize, 39-bit VAs, pgdp=0x000000008202a000
->> [6b6b6b6b6b6b711b] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
->> Oops [#1]
->> Modules linked in:
->> CPU: 0 UID: 0 PID: 26 Comm: kworker/u4:1 Not tainted 6.15.0-11192-ga82d78bc13a8 #553 NONE 
->> Hardware name: riscv-virtio,qemu (DT)
->> Workqueue: iou_exit io_ring_exit_work
->> epc : spin_dump+0x38/0x6e
->>  ra : spin_dump+0x30/0x6e
->> epc : ffffffff80003354 ra : ffffffff8000334c sp : ffffffc600113b60
->> ...
->> status: 0000000200000120 badaddr: 6b6b6b6b6b6b711b cause: 000000000000000d
->> [<ffffffff80003354>] spin_dump+0x38/0x6e
->> [<ffffffff8009b78a>] do_raw_spin_lock+0x10a/0x126
->> [<ffffffff811e6552>] _raw_spin_lock+0x1a/0x22
->> [<ffffffff800eb80c>] futex_unqueue+0x2a/0x76
->> [<ffffffff8069e366>] __io_futex_cancel+0x72/0x88
->> [<ffffffff806982fe>] io_cancel_remove_all+0x50/0x74
->> [<ffffffff8069e4ac>] io_futex_remove_all+0x1a/0x22
->> [<ffffffff80010a7e>] io_uring_try_cancel_requests+0x2e2/0x36e
->> [<ffffffff80010bf6>] io_ring_exit_work+0xec/0x3f0
->> [<ffffffff80057f0a>] process_one_work+0x132/0x2fe
->> [<ffffffff8005888c>] worker_thread+0x21e/0x2fe
->> [<ffffffff80060428>] kthread+0xe8/0x1ba
->> [<ffffffff80022fb0>] ret_from_fork_kernel+0xe/0x5e
->> [<ffffffff811e8566>] ret_from_fork_kernel_asm+0x16/0x18
->> Code: 4517 018b 0513 ca05 00ef 3b60 2603 0049 2601 c491 (a703) 5b04 
->> ---[ end trace 0000000000000000 ]---
->> Kernel panic - not syncing: Fatal exception
->> ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> Thanks, I'll take a look!
+Hi,
 
-I think this would be the least intrusive fix, and also avoid fiddling
-with mmget() for the PRIVATE case. I'll write a test case for this and
-send it out as a real patch.
+Patch 1 is just a cleanup that I came across while looking into an issue
+and patch 2 fixes and issue introduced in this merge window with io_uring
+futex handling. Patch 2 works around the fact that since:
 
+commit 80367ad01d93ac781b0e1df246edaf006928002f
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Wed Apr 16 18:29:12 2025 +0200
 
-diff --git a/io_uring/futex.c b/io_uring/futex.c
-index 383e0d99ad27..246bfb862db9 100644
---- a/io_uring/futex.c
-+++ b/io_uring/futex.c
-@@ -148,6 +148,8 @@ int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	    !futex_validate_input(iof->futex_flags, iof->futex_mask))
- 		return -EINVAL;
- 
-+	/* Mark as inflight, so file exit cancelation will find it */
-+	io_req_track_inflight(req);
- 	return 0;
- }
- 
-@@ -194,6 +196,8 @@ int io_futexv_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return ret;
- 	}
- 
-+	/* Mark as inflight, so file exit cancelation will find it */
-+	io_req_track_inflight(req);
- 	iof->futexv_unqueued = 0;
- 	req->flags |= REQ_F_ASYNC_DATA;
- 	req->async_data = ifd;
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c7a9cecf528e..cf759c172083 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -408,7 +408,12 @@ static void io_clean_op(struct io_kiocb *req)
- 	req->flags &= ~IO_REQ_CLEAN_FLAGS;
- }
- 
--static inline void io_req_track_inflight(struct io_kiocb *req)
-+/*
-+ * Mark the request as inflight, so that file cancelation will find it.
-+ * Can be used if the file is an io_uring instance, or if the request itself
-+ * relies on ->mm being alive for the duration of the request.
-+ */
-+inline void io_req_track_inflight(struct io_kiocb *req)
- {
- 	if (!(req->flags & REQ_F_INFLIGHT)) {
- 		req->flags |= REQ_F_INFLIGHT;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 0ea7a435d1de..d59c12277d58 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -83,6 +83,7 @@ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
- bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
- 
-+void io_req_track_inflight(struct io_kiocb *req);
- struct file *io_file_get_normal(struct io_kiocb *req, int fd);
- struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- 			       unsigned issue_flags);
+    futex: Add basic infrastructure for local task local hash
+
+futex is reliant on ->mm staying alive for the duration of the futex
+or futexv wait requests, if those requests are using FUTEX2_PRIVATE.
+These types of futex requests use a per-task private hash queue, and
+will actively remove those at __mmput() time.
+
+ io_uring/futex.c    | 11 ++++++-----
+ io_uring/io_uring.c |  7 ++++++-
+ io_uring/io_uring.h |  1 +
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
 -- 
 Jens Axboe
+
 

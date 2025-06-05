@@ -1,109 +1,113 @@
-Return-Path: <io-uring+bounces-8222-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8223-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D604ACE559
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 21:53:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E01ACE7A1
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 02:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5754E173253
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jun 2025 19:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8A23A889C
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 00:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDE91F4E34;
-	Wed,  4 Jun 2025 19:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36322EF5;
+	Thu,  5 Jun 2025 00:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUee7+F+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+qu7ud2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B31A111BF;
-	Wed,  4 Jun 2025 19:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4EE1E89C;
+	Thu,  5 Jun 2025 00:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749066811; cv=none; b=fFMBSmVJy2VMPoO0E5sO2ObVmqp4twjnbNo7rLZxE8IBTCHpznXB0TiqEk+ku4F+xglUvXnMlV+gOyN0I4SWHDbErnOCa5wZwM9x0IGkXiTBWGRC74CYysKkZc4LKwsSdPSQvoRcTEQhT4UOLjkL3H/wXSNUUo8GVMZi1wgWCyY=
+	t=1749084736; cv=none; b=ATqISxnsCd3mEhD6miXCnGBntTPIuTfDFFsjcwws+IRARx0tDJgQRykVRtXw0uXyK1fAW3noeSQzuz9AEyTU0syw1UcTaP1vKMy0j2yT+7vDOhroJ2sq9Xzax0ePTv4nLpII1B/aU3q+RNQdRGS6iAl63UbLXoAdv/qhAi5RRKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749066811; c=relaxed/simple;
-	bh=6SAVqw289jRcTcQ+PCiFQKMlpJilukYhNge2apyk/+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=evM9hOpismL3S3TtTyQx3FRsa3ePT8fxFydZ/cmvaiuGDtCUYbY5fzMzIRtVqYTcDn0P541fwaPreJd0o81642tnEHPbK7QWaCQgBs6QnJkSuBmi6tKapjur8nyXYqDvvAp5KM7sfZtXyLoqVu3/wsSi+XdNuDhHs00MqN0PS/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUee7+F+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEEE5C4CEE4;
-	Wed,  4 Jun 2025 19:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749066810;
-	bh=6SAVqw289jRcTcQ+PCiFQKMlpJilukYhNge2apyk/+I=;
-	h=Date:Subject:To:Cc:References:From:Reply-To:In-Reply-To:From;
-	b=aUee7+F+VVbFb88Y+zuXz53ah29uxU/8HSb3RpOHsN2DQOtp+vQSPXhub6o9Ki7Xi
-	 ZabbZoTNumzuubufi1SPerZWVcxenWAo75fitcEUkEWI4TDVowNr78LX0C20rDYjB2
-	 IlpNNcK7s5e9peptryVBghiubwhbwMdH0F/iq3AdwyO0RnjA82O3XFwAwGQ3IQSW/o
-	 P+5DlQuCzULmDrY+s47xBwokZ9UDO0x5ScCHr5XxGUHn4izBuBYVr0rGAJE8HfGTLN
-	 ntxhkvGJvcdBRbtDcgjjYeze7iDfknq95/gseMhxCIlY2g0vfRQpZuNTmcn756qImY
-	 uiPKIenAXPnyw==
-Message-ID: <2a5d123a-3c95-47dc-8306-df76bb2b077b@kernel.org>
-Date: Wed, 4 Jun 2025 21:53:24 +0200
+	s=arc-20240116; t=1749084736; c=relaxed/simple;
+	bh=vt+Pta5l6VKjBGY0bOoA33qviYDttG4cdTNnsvCbKOI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=FV7oI4fgd2kvugKbMhRsDdKDqBFeNvtz5cB0nvdaVL4yU2FAI+2a/3Rb0NKeaLoYzRQWsNdl+YYbY0zFrfnDfGcbyrAs/FoKop/JKJ50UuJsn1NVnUuNJRajeApcWOZ044qK3guTAmRIyENKzJF68igeVUjS5xXpleBrIHkvvMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+qu7ud2; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70e75bf727fso5572247b3.0;
+        Wed, 04 Jun 2025 17:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749084733; x=1749689533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=glu8vbkBrFWNWoHGJ5RBuQpTGB2a4rq3PbUqccEpoxI=;
+        b=E+qu7ud2ZVXe2+Nr+luHdUmVnMSibQB6WOtY/S0d4L2MJ+T3ScJ8AFSyA6JYa8dRYA
+         w5VmkE8WJEWzapd//IJDloGB//FhABj/Iai+F6MTDRk992NfPi0vUPJMLAgAD4JgDNzh
+         OQDNLbnQkhnmRiT45eADczK0VwWui8y6wDfJLqEJhBhz9ymC00NBXzEeGu7MGaYxJ4C5
+         4DlpiM7Qz4+NWVibkbj5o1iR/39QPlSAEzpuuR+8MpFl4CNP7MJwSpJ2Xlp7D7DDk9Ge
+         qta45h7OOYe60mlyiCAPO4J0ucujLT0IYnukEyyKaSvbf7S23c4vYQkm55aC6pz/YjcT
+         HIgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749084733; x=1749689533;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=glu8vbkBrFWNWoHGJ5RBuQpTGB2a4rq3PbUqccEpoxI=;
+        b=gerfN8xecdp2kea/+lu/DPpbxvTxz+LeTQH5EHMW7FddPh4EdCx0EFfgfhlv/tIiGg
+         F7zu1XdaTesCzVnISh63By13EEfCUFH4Py1rcYErRdHcImX+LJJZmU248W96zLixSJtC
+         UUWXLAWxu5gDnn2BxmrC7eQe6dxsR8Tb7wIYStm9XyJ952PJcHp7I5XdFLoahymPKkfH
+         kv5lO301S13vDddtbJ0CaklpBmTtT+r+iTFm/TaqQcjBFIhctgMWiJSvl1hUOUVzyifp
+         fNk+mbgIZgXf+4qEAHc7ELda+Hf+Ud5W4cGNbq5kWJAKTMTQpPe7173ZQBcRp4YhQMCF
+         Xgxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb+0yzeyaI2yTRjUH3G2hbFjzcxILXPy1XKI8uANyVfYt4avvdeiY8wdyv6vGzfiNMRuRMTY5J8w==@vger.kernel.org, AJvYcCWjf3e35fAuB97AUGfHStRRFEyT7hUd2AxPvQpKJW8Bc664aDEwH6Ydv6MalocZdd+2B9Fkfx2D@vger.kernel.org
+X-Gm-Message-State: AOJu0YxadfYpJgjDuZLzmYe5+sTlKjrvw119waffKZEnKBztahNOQlRX
+	L2OEC10fYjil80GJBCWl4qOefGv8CvQiEUHqYgpoXljzGsSGQD7VMWQj
+X-Gm-Gg: ASbGncvROgLroEnti6uV68id0vzX4TWeZjxTVzIxxOX/9RHvlfQN8mQQKaUYQhC6jAQ
+	JrbYEZR9+8qWfJY30gG7CdO9PZBhSDADtOoqVHuGJxsgx30S3XGURi6S785AAgf3Tm8/dvW6cGP
+	DllEcb2Dz9plzF/waDcZHoVfFYUO9RqkWd4Jyf18RWwrQIsJj+AXzeo1GFsFrFM2IiH4/71kmRe
+	W1IV/9lbMugUY9OpOw5RqnYA3egJlBuNDW32CwNzpma2YOW0ns847MPfMu2HeY4puDHt95sRFtt
+	raUJL7DJmeOUsTj1mgxSr9d3gRMUd85Dbqz/liaystIoFEKCg6ozloCn0utaTGu22PHooucfxEU
+	cZAA1+KkE2GitmTrAfuSqDG0yeo7fNRI=
+X-Google-Smtp-Source: AGHT+IEP+W8LTR+OikT/YtPqzkTGEqdr/cGF3bG3tLMyRTWnxd778ThyB3tquCIQgrIXr+ObL4cskg==
+X-Received: by 2002:a05:690c:5c0a:b0:710:e7ad:9d52 with SMTP id 00721157ae682-710e7ade8c1mr22240517b3.14.1749084733416;
+        Wed, 04 Jun 2025 17:52:13 -0700 (PDT)
+Received: from localhost (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-70f8abeed16sm32434927b3.48.2025.06.04.17.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 17:52:12 -0700 (PDT)
+Date: Wed, 04 Jun 2025 20:52:12 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ io-uring@vger.kernel.org, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: asml.silence@gmail.com, 
+ netdev@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>
+Message-ID: <6840ea3c58328_1af4929475@willemb.c.googlers.com.notmuch>
+In-Reply-To: <3fd901885e836b924b9acc4c9dc1b0148612a480.1749026421.git.asml.silence@gmail.com>
+References: <cover.1749026421.git.asml.silence@gmail.com>
+ <3fd901885e836b924b9acc4c9dc1b0148612a480.1749026421.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v2 1/5] net: timestamp: add helper returning skb's tx
+ tstamp
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/10] Read/Write with meta/integrity
-To: Christoph Hellwig <hch@infradead.org>, Anuj Gupta <anuj20.g@samsung.com>,
- shinichiro.kawasaki@wdc.com, Luis Chamberlain <mcgrof@kernel.org>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
- martin.petersen@oracle.com, asml.silence@gmail.com, anuj1072538@gmail.com,
- brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
- io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-block@vger.kernel.org, gost.dev@samsung.com,
- linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org
-References: <CGME20241128113036epcas5p397ba228852b72fff671fe695c322a3ef@epcas5p3.samsung.com>
- <20241128112240.8867-1-anuj20.g@samsung.com> <aD_qN7pDeYXz10NU@infradead.org>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Reply-To: da.gomez@kernel.org
-Organization: kernel.org
-In-Reply-To: <aD_qN7pDeYXz10NU@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On 04/06/2025 08.39, Christoph Hellwig wrote:
-> On Thu, Nov 28, 2024 at 04:52:30PM +0530, Anuj Gupta wrote:
->> This adds a new io_uring interface to exchange additional integrity/pi
->> metadata with read/write.
->>
->> Example program for using the interface is appended below [1].
->>
->> The patchset is on top of block/for-next.
->>
->> Testing has been done by modifying fio:
->> https://github.com/SamsungDS/fio/tree/priv/feat/pi-test-v11
+Pavel Begunkov wrote:
+> Add a helper function skb_get_tx_timestamp() that returns a tx timestamp
+> associated with an skb from an queue queue.
 > 
-> It looks like this never got into upstream fio.  Do you plan to submit
-> it?  It would also be extremely useful to have a testing using it in
-> blktests, because it seems like we don't have any test coverage for the
-> read/write with metadata code at the moment.
-> 
-> Just bringing this up because I want to be able to properly test the
-> metadata side of the nvme/block support for the new DMA mapping API
-> and I'm ѕtruggling to come up with good test coverage.
-> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-FWIW, we’re interested [1] in helping get this part properly tested as well.
-We're already running blktests in CI as part of kdevops, regularly testing
-against both linux-next and Linus' latest tags [2].
-
-[1]
-https://lore.kernel.org/all/Z9v-1xjl7dD7Tr-H@bombadil.infradead.org/
-
-[2]
-https://github.com/linux-kdevops/kdevops-ci/actions
-
-Shin'ichiro, the current CI implementation is still experimental (we are missing
-a few things like archive results and dashboard reporting) but we hope we can
-discuss soon the possibility to automatically reporting tests results to the
-mailing list
+Acked-by: Willem de Bruijn <willemb@google.com>
 

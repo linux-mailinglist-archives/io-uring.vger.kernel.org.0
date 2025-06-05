@@ -1,132 +1,165 @@
-Return-Path: <io-uring+bounces-8233-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8234-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33A8ACF74B
-	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 20:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD415ACF848
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 21:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688373ADC63
-	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 18:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7EC171C0E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jun 2025 19:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F30627F72E;
-	Thu,  5 Jun 2025 18:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7889A27A92A;
+	Thu,  5 Jun 2025 19:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MomzGR2r"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VqXT+lW2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A6F1F099A
-	for <io-uring@vger.kernel.org>; Thu,  5 Jun 2025 18:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300FE27EC74
+	for <io-uring@vger.kernel.org>; Thu,  5 Jun 2025 19:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749148466; cv=none; b=o7YlfvkA0b1Q+neiAlXtJzyQ+JdmGzxLhcdZRuP/Eeg4j2RbktMcHtiUyoTbJZA5iMo1B9OvWLLRuS5tDm0l26GQW6+/KaE02eiAQmWnU9vjzXsmuiVVPMrIyewksJ/J5TeV2SNyc068WzZuy5qrL3/DI5Ubg99E+XdElqIf9pc=
+	t=1749152856; cv=none; b=Yxjf1TnkozFIIFib1IcDS5xA25C5ZKuE2+KZNtpuz1rLifVVWTkVl3bDQYC2rgc7os3BFD4qdhVN54c2zrrSxSefG8fyb+/P+36vvjC2J16B9eXN1A5MZpYRYO6/gYEKZb20kxMRxaEHlYNXzt+Y0Ck94hEtJF7pvUbmH3gBcOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749148466; c=relaxed/simple;
-	bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rj9n8RtH8BIyT/hse9TQWmwYYW9icKpTqqeytruG6lzBWU1YXAJdvDJ+VYWMtJEx1lI/Rl1ZDlvmRo76O0IA17s8I1bQbaY5pRz9L0gylD+Qmtkob8BAL3WlteWTht30FPgJInlD60f3UzVvvDNWaBQg3ypar2ewz7Q/x053ti4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MomzGR2r; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a58197794eso36201cf.1
-        for <io-uring@vger.kernel.org>; Thu, 05 Jun 2025 11:34:24 -0700 (PDT)
+	s=arc-20240116; t=1749152856; c=relaxed/simple;
+	bh=RCKDLPEkdNEJvweUS21C9OxKl+5cERpDXzhnGgCMrrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/XAdcftukH9lzqG6tGqSHQamKJJYxHdNL+XncT8N6kXjhtyst1d+wqL0yDfeROyfjJM39PldN99ufJluf1tznDCK61xKOewGYkArE3CjDDKQ94pagZ7vFhSC4DUh8TeHWk7UK88E8cfeyrgBSOOUUBqSgaMw3PphU5Q3VXTfUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VqXT+lW2; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-86d1131551eso39510639f.3
+        for <io-uring@vger.kernel.org>; Thu, 05 Jun 2025 12:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749148463; x=1749753263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
-        b=MomzGR2r3obVuNha5cQvSi//2Zr+arQY4N0awS2YWS2fCY0QRhigIYfeyuEDb9BKBu
-         fGy+fjmd/CpeIeznLkVDpAwwvAbpudvFP5cqK2F5qSwZlxXcOITnbcxwr5IfjHxZoCyF
-         fVOiUe2uRZ6Mhs4fZNshLqZEJBNckADVikCQ0L5OKriMW8cU+/0t2GCTXFra3KayrIDb
-         7LHWz9uVvJ24vfDM9EZ4a9vLhQwMTAIlqHC7wRaVM61NY+q7g+hmwYRBiATmENTHdIq4
-         wntzoVcu6E49uxqUqhMcmDyAXY71mC3Xu3PzzIk+NVcVF4Oo2aDXEKDLVJ8MA0bbNUS0
-         2Puw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749152852; x=1749757652; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5ebHgbhVRHP9V7Ojvo4OMGh3VpUrR4CWjq/65kMr8M=;
+        b=VqXT+lW2xLkB7FdRM+iZEsRdI59nBnWr7hMA9SMGg+81EgxXJOOn9WyeJj8hRY/HgQ
+         mHMmfqfAnrYgLQbI/rX+SCMt3n4a5T1PX1WFVODs9CNj8ERSzFxFQOvIyA2Q8yp8FTTj
+         OGVxSiK0l0Ql86kjBUyw43mEUX2WTBtu6q/jVyfsdAaLaEzSoUMrLj+ikiq7gcGtr6h8
+         AtNCTgcxgllXWIw92kkclAqgdDkEfTKjsphyRWIewpiNCT31+c8EkGv6KbXcsbV7B38t
+         jdFIw8MY9Q6l3FOdIKGDUk15+qg928xQbwwnPnVHcBTrpsQ8w4w006ti+LPt3bqdE5sJ
+         MMzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749148463; x=1749753263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
-        b=IWu+q5Rdp2nbBePtqv74ZJMrkkGTSzC632tiMOcctKdc+9UGLDI2t4UogDsTLB6O0h
-         DvxEol8YiBCvTuBv6byOP0rQafgpxejMbV+5UdDv7iZETTCA+EG8qpaidalOW9yKIxii
-         FuMkGBxTJGDYSbuvH+yd3xJdyzAntN8TuzQbiy8iqs0MQDnzJUHdF7NUpevNxSLnoQTa
-         TNBCNgQ0J+i0gE8VT/pUmUzxquJtcT3aj75THeaFFv3oNhmldZztcUr1z/oZiNnrBdFg
-         dmGwMbp/2IulExj57PInhxEg9amUrW12mW+GTqAHkofglDRghabXLigcuo3dvdRjzpml
-         Q9Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7lSu6KNypMs3SBCmHwBTMu2jaPsGpOf2vE4uULwL4FnYiNKTiVtADCQRDTtSkoq74mULfpGlkRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJksdFDXGvLK6jrb5QIdrLob+fdT46mzGBKjuNTvQLjia9smXV
-	mrdGheP8xvqR6iGebpypYCzDEmthA1AYMtWyhjN5OEBTlhQTebecJGZNrrMrVwx8w0I2zMRXv51
-	SJpZWZtmtKJIg4l0fC2Qtkgpm8Ax6rcOD/A02uhzmAT90t9eOqCqV34YgtL4=
-X-Gm-Gg: ASbGncuywoXMm3qRDO6aibuaGxgxrxfLOhJX25Lz11fsT9kakLQEidVQUG5oI3Jw4Qo
-	lrxvZ4zssF1+8HbFaXpMQFE9rU6bF3znzDrfBIJs0juxTXg8pNDgjVk3o9nM1Md8nqCK18ZTgMe
-	OOQkmNyKPelQEbi5Md22OID0aoRlDQxpQpoZtrdPnaaV8NSE0eKiFakuwjb7XDVU6qWrVjUYqHa
-	Q==
-X-Google-Smtp-Source: AGHT+IHJgivjORRUGSyOdnKwc/j/YUOaIyFLPXMeXTtZN3bS7fASxuj1kukT7nKX2tz03k/1gqjLUSAvmHiOo/kmYCo=
-X-Received: by 2002:ac8:5c93:0:b0:48a:5b89:473b with SMTP id
- d75a77b69052e-4a5cb4260ffmr132921cf.7.1749148463196; Thu, 05 Jun 2025
- 11:34:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749152852; x=1749757652;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o5ebHgbhVRHP9V7Ojvo4OMGh3VpUrR4CWjq/65kMr8M=;
+        b=TLTl/1PhIcLFueVIg/FVErccMII7o4L8mbQonkZxlQUydtC0CmCf4mInd0YWSOib4f
+         oxpCOVwPZ8P74Lbn38J0u3M23heS2y41Wu/Bal7x8egLUECc1rB9wnfcm+pgSpapdiUF
+         x/15z74QYCr+iZoewrRgn2F2Q9OmXFdbGTPSO9zc8n9k3aqigbdWDddEbO0xbgPx8IRu
+         z1p0x6sVOHbVE1PPe6eGpWUOw9zfaXEPE3ONLbIbByh+SQEV52pqt5Q8ltz026Ug+EHr
+         n3rxOnjSrmmxViUX+naxKXOr7qT2nfaS6WcNppIlxgecrNSwyisqViVhI9VNmJqc9C+2
+         15QQ==
+X-Gm-Message-State: AOJu0YyWeEc1QQ1jzNEQZ/RAKrJmpRO0sRcGH1AZPWRJf1MLysbup/xt
+	BMGjUsP+1uUiu4n2V+o57flzSiCp4N2rmW8tV3oyVR1guf14bBdIgt3O4FNBa7PS4rZcyeO8so9
+	uYgp/
+X-Gm-Gg: ASbGnct+EBxPhu9ZYx1VcefeEPHvSdCQ63+58tSQt/ewXr3pbXSsht0782TcsXNv4/w
+	nZESDtasSIzaJIHWgRIjZ9zPfDAvrxLbHfttMOXKmsDMzYvVH47GlVTc3GBoeKY2eCkWEUvKGlU
+	9yBYaywjlndqzNDqQJWewmpfbGwP//8ZUwwNaXfCas2w/fcOFgPAvfCpCY2hozSs8GOtjBVhN7g
+	qEQ9NPKoqMjXgL8yS1vr8xT0qtMBHdBaoG57SHOxhuyqQWHy5juXMaxSJZU0RLCMlc4D/TID1z9
+	FDoPLgWGpAubafM1hhfnzoMKeXGKuwf3rpZ3w8iVdSUiwi5Tv42QMabw74c3Lzr8s10L+3KaHyD
+	6
+X-Google-Smtp-Source: AGHT+IFsWVDgt6RAUPuJOwPclLUGN0ZH1Ns9OuWRibf3ozLpSS57z91Xu4mu64fFrmYcVm4DdqOs4g==
+X-Received: by 2002:a05:6602:4142:b0:86c:f0d9:553 with SMTP id ca18e2360f4ac-87336655c73mr114721639f.5.1749152851766;
+        Thu, 05 Jun 2025 12:47:31 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86cf5e79acfsm317783639f.19.2025.06.05.12.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 12:47:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: csander@purestorage.com
+Subject: [PATCHSET RFC v2 0/4] uring_cmd copy avoidance
+Date: Thu,  5 Jun 2025 13:40:40 -0600
+Message-ID: <20250605194728.145287-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com> <68342b47.a70a0220.253bc2.0090.GAE@google.com>
-In-Reply-To: <68342b47.a70a0220.253bc2.0090.GAE@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 5 Jun 2025 11:34:12 -0700
-X-Gm-Features: AX0GCFsaIXiP66tcFR1RPkYYCN8KeQPAYTtDTfBLiOP4HzV-Eu2RNhwCtT_7elw
-Message-ID: <CAJuCfpGur7p19=HKkmqfD-KXf6FEbvwCV1ewFgBCGPDkoY0Wdw@mail.gmail.com>
-Subject: Re: [syzbot] general protection fault in lock_vma_under_rcu
-To: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
-	eadavis@qq.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, shivankg@amd.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 26, 2025 at 1:50=E2=80=AFAM syzbot
-<syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com> wrote:
->
-> This bug is marked as fixed by commit:
-> mm: fix a crash due to vma_end_read() that should have been removed
->
-> But I can't find it in the tested trees[1] for more than 90 days.
-> Is it a correct commit? Please update it by replying:
->
-> #syz fix: exact-commit-title
+Hi,
 
-Yeah, the fix was folded into the original patch
+Currently uring_cmd unconditionally copies the SQE at prep time, as it
+has no other choice - the SQE data must remain stable after submit.
+This can lead to excessive memory bandwidth being used for that copy,
+as passthrough will often use 128b SQEs, and efficiency concerns as
+those copies will potentially use quite a lot of CPU cycles as well.
 
-#syz fix: mm: replace vm_lock and detached flag with a reference count
+As a quick test, running the current -git kernel on a box with 23
+NVMe drives doing passthrough IO, memcpy() is the highest cycle user
+at 9.05%, which is all off the uring_cmd prep path. The test case is
+a 512b random read, which runs at 91-92M IOPS.
 
->
-> Until then the bug is still considered open and new crashes with
-> the same signature are ignored.
->
-> Kernel: Linux
-> Dashboard link: https://syzkaller.appspot.com/bug?extid=3D556fda2d78f9b0d=
-aa141
->
-> ---
-> [1] I expect the commit to be present in:
->
-> 1. for-kernelci branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
->
-> 2. master branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
->
-> 3. master branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
->
-> 4. main branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
->
-> The full list of 10 trees can be found at
-> https://syzkaller.appspot.com/upstream/repos
+With these patches, memcpy() is gone from the profiles, and it runs
+at 98-99M IOPS, or about 7-8% faster.
+
+Before:
+
+IOPS=91.12M, BW=44.49GiB/s, IOS/call=32/32
+IOPS=91.16M, BW=44.51GiB/s, IOS/call=32/32
+IOPS=91.18M, BW=44.52GiB/s, IOS/call=31/32
+IOPS=91.92M, BW=44.88GiB/s, IOS/call=32/32
+IOPS=91.88M, BW=44.86GiB/s, IOS/call=32/32
+IOPS=91.82M, BW=44.83GiB/s, IOS/call=32/31
+IOPS=91.52M, BW=44.69GiB/s, IOS/call=32/32
+
+with the top perf report -g --no-children being:
+
++    9.07%  io_uring  [kernel.kallsyms]  [k] memcpy
+
+and after:
+
+# bash run-peak-pass.sh
+[...]
+IOPS=99.30M, BW=48.49GiB/s, IOS/call=32/32
+IOPS=99.27M, BW=48.47GiB/s, IOS/call=31/32
+IOPS=99.60M, BW=48.63GiB/s, IOS/call=32/32
+IOPS=99.68M, BW=48.67GiB/s, IOS/call=32/31
+IOPS=99.80M, BW=48.73GiB/s, IOS/call=31/32
+IOPS=99.84M, BW=48.75GiB/s, IOS/call=32/32
+
+with memcpy not even in profiles. If you do the actual math of 100M
+requests per second, and 128b of copying per IOP, then it's almost
+12GB/sec of reduced memory bandwidth.
+
+Even for lower IOPS production testing, Caleb reports that memcpy()
+overhead is in the realm of 1.1% of CPU time.
+
+v2 of this patchset takes a different approach than v1 did - rather
+than have the core mark a request as being potentially issued
+out-of-line, this one adds an io_cold_def ->sqe_copy() helper, and
+puts the onus on io_uring core to call it appropriately. Outside of
+that, it also adds an IO_URING_F_INLINE flag so that the copy helper
+_knows_ if it may sanely copy the SQE, or whether there's a bug in
+the core and it should just be ended with -EFAULT. Where possible,
+the actual SQE is also passed in.
+
+I think this approach is saner, and in fact it can be extended to
+reduce over-eager copies in other spots. For now I just did uring_cmd,
+and verified that the memcpy's are still gone from my test.
+
+Can also be found here:
+
+https://git.kernel.dk/cgit/linux/log/?h=uring_cmd.2
+
+ include/linux/io_uring_types.h |  2 ++
+ io_uring/io_uring.c            | 35 +++++++++++++++------
+ io_uring/opdef.c               |  1 +
+ io_uring/opdef.h               |  1 +
+ io_uring/uring_cmd.c           | 57 ++++++++++++++++++----------------
+ io_uring/uring_cmd.h           |  2 ++
+ 6 files changed, 63 insertions(+), 35 deletions(-)
+
+-- 
+Jens Axboe
+
 

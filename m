@@ -1,154 +1,176 @@
-Return-Path: <io-uring+bounces-8256-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8257-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF4EAD044E
-	for <lists+io-uring@lfdr.de>; Fri,  6 Jun 2025 16:57:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A764AD0780
+	for <lists+io-uring@lfdr.de>; Fri,  6 Jun 2025 19:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B863517AA88
-	for <lists+io-uring@lfdr.de>; Fri,  6 Jun 2025 14:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03203B19A2
+	for <lists+io-uring@lfdr.de>; Fri,  6 Jun 2025 17:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C02171C9;
-	Fri,  6 Jun 2025 14:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0443D28A1FC;
+	Fri,  6 Jun 2025 17:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hMtKoXXh"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="L9pJJPI/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF54E1BCA07
-	for <io-uring@vger.kernel.org>; Fri,  6 Jun 2025 14:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2745712CDBE
+	for <io-uring@vger.kernel.org>; Fri,  6 Jun 2025 17:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749221831; cv=none; b=KUUvR42KOdZGzz3g7htwibpaqPDy1Wq/eB2CnDGPlNdu62Ko2Ek+/qS/bC3sQOext7RanJuUzObAg/eq6L5Z9bdnRvQepaL+iFn8lXwwaqVUOb31CwEHvvBDqCCUzXI+oEJ3+KUSgAuJOCc0pZ2A4Idl4ckQuAVcAZVG9xH6RYg=
+	t=1749230988; cv=none; b=f0sYg+CNlnw5zEKrK6WMpjTAC6eWUQkrvRzR1xv7Y6d/rqel5q90gY1RkQ1OJpQRbpYDh0VC99ZEWm9ENyOWlq/O5UqV/eHqjRnd9C7aC3KepdcY1amBqcrl2alMgPEhvYg1GFnAmxTUmAjcLWLAsC9Q7aUUy1XnKee/cmvTeCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749221831; c=relaxed/simple;
-	bh=5rLk0Y1o9Yqu936oDGAf+guTBOuXSZ/KP5hY7VpGzCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8x7Z87GkYHCV+5JEhopNr1r4wsUX/IbY0TXBx8Y8B6QlsX+FaIaxI6ItcIFqG9GuMg7XWi2UXnoIm2zLhMSwJ6pPhtcEpHeMUq3I66A0CemrD81GSpTOgnIX+gox87XRRNFCynVDxzzvJnNXlHyeCtsiA8RUay4+M+2zLOG4FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hMtKoXXh; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-86d02c3aab0so59968339f.2
-        for <io-uring@vger.kernel.org>; Fri, 06 Jun 2025 07:57:08 -0700 (PDT)
+	s=arc-20240116; t=1749230988; c=relaxed/simple;
+	bh=QGa/r4NvxxBUOuLFkmnFO/aFQspYw5McwDjicNaVcSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ujNM5Nke8+i7xKLCGoGCWaNofQ3gyCTFPrbOpQJ6QAIBqvlf3sBoswsyG/yn3zufH9sncbBL+Nx8G5ZaPdzS8FCmrFmqCJ54kQCigOZcHt450ad7Lew07SvSL/se81Bx3+johiJ/z9WFObR22AxK02lixj3xnwV/GhWeQNt16fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=L9pJJPI/; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b2f0fcee268so255308a12.3
+        for <io-uring@vger.kernel.org>; Fri, 06 Jun 2025 10:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749221828; x=1749826628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y4SilW7Kz/GqOrsdyu9o99hQfeO+kZMJ6kTTI3SZL88=;
-        b=hMtKoXXh8+5SC4d//xyI/YsWQof1pTyJgp8PvZMRjJEr+ZXGQDP6PiKucpYcvXxhgt
-         R/v1olg0Jg27bs2vAvbXLvE45rYoG68EZ58vWZtBT+YKvSE/Y61EG6Jgsuv5c7j7Q4CT
-         N/ZaM/yXxUEhAabGOWU23a3e2mAqusOZvhacUnQPB8HTsuTR9UlfgAN8gIV3ssAnmWfq
-         YqQLiPlal2Hv22VEolt+uyoxborkDCIxNRXuov18yx2KNRy3TAqCcSFxGpvuQVV8gXia
-         HlbkOMQthwezDppKAreITxg5uCk6PNvrqFLM4Aw9kHo6ObeJR3xcgVGqd6O2DVHzEjiY
-         Txdg==
+        d=purestorage.com; s=google2022; t=1749230986; x=1749835786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMFW2j4wIp2oeYGfJIUIHO+7IhFhpheSjLwv4P4KCYg=;
+        b=L9pJJPI/+gO7qU8Qy2TQIJGdIomFvv0YubDujo5UnMtlnVrgFS4qNeEkprUpL8FiVF
+         S7OG8GX37g8+YjJ6Zza+TiFErh+e90rSmqrfhwO32P5hCR5BKH/ObnrX4J35wilYtagh
+         bGIkx3DnJwXpJ8vYnekOH4sQFSulluNqzsfjYRnVRSTYh6ITnxbapPXyEN0tckOuG53M
+         +/OeK9bi56peHhJDKwrppRzvLjcuaLi8AjDIs+bOOXG1lnI2JtVLt/Wu2KdYCQ3vvzoY
+         uyP+qPlMMK35+uBmVOqxJGXLzKUYsdRYwT5n+jqej39T6pVcttGr4I2Y3FqmW7UQd8N5
+         +Gbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749221828; x=1749826628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4SilW7Kz/GqOrsdyu9o99hQfeO+kZMJ6kTTI3SZL88=;
-        b=M61OW+oeBsYVUQ5rJBH/YxQtF5/QlanEafWRjc4bDiCfWIbV5CumYCdTwf68EkN3WK
-         +cbqfoQ6nN0j/8aMWa9V5L3JubsOE75u3KgRP3jAbfDIq8L9QKAL/GtsNenstBV9MvwD
-         5jVlNxfgBJ4qxiH85Z2tiNSsH9sftT5zBs0SYlp95tJTLHi4ZTzniif1Ojs5PwGbqgkg
-         z6nYcEcjv6xuawNAZeVjmC5Ki066X66iiQWn+KO1bmyV+T40FWkLAlB+zUQuOZhREd+8
-         l80/G7miHSiBycTzgb0+5D1v82eQrpgPENV6tosc+eOQ66qO7RwYkJ5EnICgegM0jeG1
-         mmPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsfJ4sj3Og2YR9ftnOQJEbjbASqZ5E7kNhzaw4zl7WZROvkHm/Xu7yShjJJyBCSNy1pqnKUeeolg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWW83oX19jisXoRBRR6xtnGiCR2qu0Vk5VIREgPnlUwiFIw0JU
-	DlZ5Wrlm87yNt6AKf4GyAl1GZJ+NC+/OHfrn0y/uYGInK345b+8Fha0HUPdpI1aC0f8=
-X-Gm-Gg: ASbGncuVhAWO7JP86gLIs7cSqqAmu+3f7R84UA/eyVjC4fcM7XcqRMzfAe9EXTolyrj
-	2ObcjqqZgPY3X0pGrycKcJIeYN970JBrp3+JwsGOgLyOGVB4KqNK1YRf56ka23ON0wTzCVZ4aIh
-	Tj9piD3b8vTjROU5QXc79hwes7DHpiOx1Wu275LjC5l9VX++DI3gTFg0ljfugW9jRwTxjaKwmnS
-	Iv9Y1OZuy67cQw2E3lSEe5zbfSce+st79qFrU4wwhtlFHfnf1yHByBsuYJZZb4ufLpxHR42TxMy
-	+w32EHfeajXi9GMv15iJ++pEJaMCkCUtJ3LMYJ7Zmc34T3cKW0DQQxEo1Q==
-X-Google-Smtp-Source: AGHT+IHCqdvcPc2EHD8OF2SGiY28FRz5VxV/iMut9sL/Iq4G5xTeNxhhacKuQVTKYCyvf5H+SS82Sg==
-X-Received: by 2002:a05:6602:4c03:b0:86c:fa3a:fe97 with SMTP id ca18e2360f4ac-873366c4eb2mr364557439f.10.1749221827729;
-        Fri, 06 Jun 2025 07:57:07 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-87338782c7dsm37099439f.2.2025.06.06.07.57.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 07:57:07 -0700 (PDT)
-Message-ID: <9b9199f0-347b-42fb-984a-761f0e738837@kernel.dk>
-Date: Fri, 6 Jun 2025 08:57:06 -0600
+        d=1e100.net; s=20230601; t=1749230986; x=1749835786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nMFW2j4wIp2oeYGfJIUIHO+7IhFhpheSjLwv4P4KCYg=;
+        b=GFj1ygT8jY0uH4FXdiuAJGQcK8RjVGuSN+zVVesxfbNgtt0WQHhw65iT4nlNyrFegr
+         +VNqriWp9OXcfooL16J7YPXiDWHiDe2XFdxjcOHerBGKr6y84bc7UfbAzf7qF0jvT8Ww
+         O+aIGaxCutHm9zC/pe+aVe9Zhq25mdDQAorHOn3PQxURYdu1XySPui8kLx2sZ3QnYFF3
+         ISc3+KNBc+pTlpSI/VYTAu5cJFSATFQNKV5B2A/6GTAyyv6jMG1JfxtpDU2qanEdhow0
+         Tik8ZnohBhb5wTSmqpnEu+IJnMFdvdb04aYnaIYUSaO1dtsIElsTU8dvoghWHdVXN5hK
+         ZNwg==
+X-Gm-Message-State: AOJu0YwlKS5h/b7O9+swtmMGCBixkKmbH5FiYHrSoKqZtAwJoaHIUiPn
+	SaSK99i7QsGfswdFBazkHWKVugYR/yXelysMERCv8O4G2GUSMjyEsDJ/3EjmYWR2O0d7iu1MABr
+	1VUPmZfmcHuyuI16D9oL/AuLsLZEoHLbaavwCbi5MX1vdwGpxnY/j
+X-Gm-Gg: ASbGncukfehFZF99KHbPLBGOmAUsbcRbQvzYCOzRw2W5q/TZfzHXmZkqk0eT4/G3ifo
+	zW7y/b+v/WyJGpdXrkvP68giYgEJM6IZAbZSEzozVdq++rGICU/G7UTwNw6kC43fxhBH4Mzna6b
+	OQoT9TxNf4Aj/njc8GDVP6heZN5TzfuSl9VQbrPTR067ZhS2OhuxwACQ==
+X-Google-Smtp-Source: AGHT+IGOcGPW8kgVurrC3GkIU/UG83SaDkRmxQppW2+SprBNMSy8sRkQx4q7erxD+Kxp7TUdumsLM1NflrvLjSffdxU=
+X-Received: by 2002:a17:902:e54a:b0:234:a66d:ccd7 with SMTP id
+ d9443c01a7336-236040387b1mr16476755ad.7.1749230986168; Fri, 06 Jun 2025
+ 10:29:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 3/5] io_uring/bpf: implement struct_ops registration
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1749214572.git.asml.silence@gmail.com>
- <f43e5d4e5e1797312ef3ee7986f4447bddac1d3c.1749214572.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f43e5d4e5e1797312ef3ee7986f4447bddac1d3c.1749214572.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250605194728.145287-1-axboe@kernel.dk>
+In-Reply-To: <20250605194728.145287-1-axboe@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 6 Jun 2025 10:29:34 -0700
+X-Gm-Features: AX0GCFvUT64HJE2ROsqf2n4rMkEOHlbEEK6RP94C1S72aCxLi0xevpEg8QzO9bo
+Message-ID: <CADUfDZrSAUYtd2988vSUryNt2voSUbngXtBcAU3Cb+JqYuuxTg@mail.gmail.com>
+Subject: Re: [PATCHSET RFC v2 0/4] uring_cmd copy avoidance
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/25 7:58 AM, Pavel Begunkov wrote:
-> Add ring_fd to the struct_ops and implement [un]registration.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  io_uring/bpf.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++-
->  io_uring/bpf.h |  3 +++
->  2 files changed, 69 insertions(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-> index 3096c54e4fb3..0f82acf09959 100644
-> --- a/io_uring/bpf.c
-> +++ b/io_uring/bpf.c
-> @@ -3,6 +3,8 @@
->  #include "bpf.h"
->  #include "register.h"
->  
-> +DEFINE_MUTEX(io_bpf_ctrl_mutex);
-> +
->  static struct io_uring_ops io_bpf_ops_stubs = {
->  };
->  
-> @@ -50,20 +52,83 @@ static int bpf_io_init_member(const struct btf_type *t,
->  			       const struct btf_member *member,
->  			       void *kdata, const void *udata)
->  {
-> +	u32 moff = __btf_member_bit_offset(t, member) / 8;
-> +	const struct io_uring_ops *uops = udata;
-> +	struct io_uring_ops *ops = kdata;
-> +
-> +	switch (moff) {
-> +	case offsetof(struct io_uring_ops, ring_fd):
-> +		ops->ring_fd = uops->ring_fd;
-> +		return 1;
-> +	}
-> +	return 0;
+On Thu, Jun 5, 2025 at 12:47=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Hi,
+>
+> Currently uring_cmd unconditionally copies the SQE at prep time, as it
+> has no other choice - the SQE data must remain stable after submit.
+> This can lead to excessive memory bandwidth being used for that copy,
+> as passthrough will often use 128b SQEs, and efficiency concerns as
+> those copies will potentially use quite a lot of CPU cycles as well.
+>
+> As a quick test, running the current -git kernel on a box with 23
+> NVMe drives doing passthrough IO, memcpy() is the highest cycle user
+> at 9.05%, which is all off the uring_cmd prep path. The test case is
+> a 512b random read, which runs at 91-92M IOPS.
+>
+> With these patches, memcpy() is gone from the profiles, and it runs
+> at 98-99M IOPS, or about 7-8% faster.
+>
+> Before:
+>
+> IOPS=3D91.12M, BW=3D44.49GiB/s, IOS/call=3D32/32
+> IOPS=3D91.16M, BW=3D44.51GiB/s, IOS/call=3D32/32
+> IOPS=3D91.18M, BW=3D44.52GiB/s, IOS/call=3D31/32
+> IOPS=3D91.92M, BW=3D44.88GiB/s, IOS/call=3D32/32
+> IOPS=3D91.88M, BW=3D44.86GiB/s, IOS/call=3D32/32
+> IOPS=3D91.82M, BW=3D44.83GiB/s, IOS/call=3D32/31
+> IOPS=3D91.52M, BW=3D44.69GiB/s, IOS/call=3D32/32
+>
+> with the top perf report -g --no-children being:
+>
+> +    9.07%  io_uring  [kernel.kallsyms]  [k] memcpy
+>
+> and after:
+>
+> # bash run-peak-pass.sh
+> [...]
+> IOPS=3D99.30M, BW=3D48.49GiB/s, IOS/call=3D32/32
+> IOPS=3D99.27M, BW=3D48.47GiB/s, IOS/call=3D31/32
+> IOPS=3D99.60M, BW=3D48.63GiB/s, IOS/call=3D32/32
+> IOPS=3D99.68M, BW=3D48.67GiB/s, IOS/call=3D32/31
+> IOPS=3D99.80M, BW=3D48.73GiB/s, IOS/call=3D31/32
+> IOPS=3D99.84M, BW=3D48.75GiB/s, IOS/call=3D32/32
+>
+> with memcpy not even in profiles. If you do the actual math of 100M
+> requests per second, and 128b of copying per IOP, then it's almost
+> 12GB/sec of reduced memory bandwidth.
+>
+> Even for lower IOPS production testing, Caleb reports that memcpy()
+> overhead is in the realm of 1.1% of CPU time.
+>
+> v2 of this patchset takes a different approach than v1 did - rather
+> than have the core mark a request as being potentially issued
+> out-of-line, this one adds an io_cold_def ->sqe_copy() helper, and
+> puts the onus on io_uring core to call it appropriately. Outside of
+> that, it also adds an IO_URING_F_INLINE flag so that the copy helper
+> _knows_ if it may sanely copy the SQE, or whether there's a bug in
+> the core and it should just be ended with -EFAULT. Where possible,
+> the actual SQE is also passed in.
 
-Possible to pass in here whether the ring fd is registered or not? Such
-that it can be used in bpf_io_reg() as well.
+I like the ->sqe_copy() approach. I'm not totally convinced the
+complexity of computing and checking IO_URING_F_INLINE is worth it for
+what's effectively an assertion, but I'm not strongly opposed to it
+either.
 
-> +static int io_register_bpf_ops(struct io_ring_ctx *ctx, struct io_uring_ops *ops)
-> +{
-> +	if (ctx->bpf_ops)
-> +		return -EBUSY;
-> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-> +		return -EOPNOTSUPP;
-> +
-> +	percpu_ref_get(&ctx->refs);
-> +	ops->ctx = ctx;
-> +	ctx->bpf_ops = ops;
->  	return 0;
->  }
+Thanks,
+Caleb
 
-Haven't looked too deeply yet, but what's the dependency with
-DEFER_TASKRUN?
 
--- 
-Jens Axboe
+>
+> I think this approach is saner, and in fact it can be extended to
+> reduce over-eager copies in other spots. For now I just did uring_cmd,
+> and verified that the memcpy's are still gone from my test.
+>
+> Can also be found here:
+>
+> https://git.kernel.dk/cgit/linux/log/?h=3During_cmd.2
+>
+>  include/linux/io_uring_types.h |  2 ++
+>  io_uring/io_uring.c            | 35 +++++++++++++++------
+>  io_uring/opdef.c               |  1 +
+>  io_uring/opdef.h               |  1 +
+>  io_uring/uring_cmd.c           | 57 ++++++++++++++++++----------------
+>  io_uring/uring_cmd.h           |  2 ++
+>  6 files changed, 63 insertions(+), 35 deletions(-)
+>
+> --
+> Jens Axboe
+>
 

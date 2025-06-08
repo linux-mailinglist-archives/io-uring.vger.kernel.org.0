@@ -1,210 +1,87 @@
-Return-Path: <io-uring+bounces-8280-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8281-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6550AD0D0C
-	for <lists+io-uring@lfdr.de>; Sat,  7 Jun 2025 13:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9F7AD1415
+	for <lists+io-uring@lfdr.de>; Sun,  8 Jun 2025 21:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CAF18931F3
-	for <lists+io-uring@lfdr.de>; Sat,  7 Jun 2025 11:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C233A9A97
+	for <lists+io-uring@lfdr.de>; Sun,  8 Jun 2025 19:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EF6218AD1;
-	Sat,  7 Jun 2025 11:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63D9165F1A;
+	Sun,  8 Jun 2025 19:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZyFwAtGD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsJ5wHYz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC63420D4E3
-	for <io-uring@vger.kernel.org>; Sat,  7 Jun 2025 11:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D56916132F
+	for <io-uring@vger.kernel.org>; Sun,  8 Jun 2025 19:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749295007; cv=none; b=lZHsYuBzKSKlexOcSP64155QnTPqfZyw7Fbn6svpUxOqEx/HbG74tBL1o7vk8cOiSKyHm1ZUIT5VxrTv+zyJWuQrDg9gzNa+awppn2SaW4NdI6j4DrMMYhtCMuxzDayLKJbHGixCd4n6dG8qrRZyGH7++ZOqnb7tmpIWMO5QuYo=
+	t=1749412695; cv=none; b=j3/zZi92LnlTH6xG1sY5nfnzGT/FasRwlbgYpBVmkw+4z5K7hiWqngonppPMsNBQXXFKp3+L1Qqnq8dfyLF+2aGa+b74CSqPgtXHpipHCkwAJX4AiS4uhDosZP81ZeQuZVQMC+/Z02Is+mls8aixdfgo+mLn7zmJ5gUXMF9LMvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749295007; c=relaxed/simple;
-	bh=HsSh9Px86fmtilbvzvdF3EZ8sLLs1eerbydCqBn2m2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GV4FzranPv9CyXxTAJkUyRKz9OGF9XFLqtMZLItA5V/lMMNgDV29n9XJXu243OPnQgoKp7ScXix3+9KNcLM+vp/2l54X0GryuLxw6lyXB9SgrNtAYeOsCUPHOd0P7nxTzJCzujacAwT3g7y6Nls1206Pv+xd4K4TAXLCRwh13FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZyFwAtGD; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8723a232750so256301739f.1
-        for <io-uring@vger.kernel.org>; Sat, 07 Jun 2025 04:16:42 -0700 (PDT)
+	s=arc-20240116; t=1749412695; c=relaxed/simple;
+	bh=gm1y3HjSbfjetP2qj6SkQ/PvAerOiP935sq/jHQIUpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XPhruSrPk5rujrmyOJnF1FC5ii+FZhDebdo6lC8NFCzFRBIGKl8+1kqdK8dQJXWtLvkZALcdz4U9aBPJKvrT2xxu7d3QrLQxGuIndQclIjlAxu6czIwKuk8XVgxHaOs8Jz5kGgL/LxJd64qtzHppowzgJ55jo4QatbTXEbZZmOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsJ5wHYz; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so3793685a12.0
+        for <io-uring@vger.kernel.org>; Sun, 08 Jun 2025 12:58:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749295001; x=1749899801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6+fv+VxiPPdnUoibaG8YqzN011wU+7ut+7GZYmILV6Y=;
-        b=ZyFwAtGD6LuQcplBWAUWbcqyl60Y9ns150piuwZr+crOa+1n6fy1nXZucg5o5keYol
-         U6upDSFz0/Vo6mYe6bvaHgKQbfwW3+5AhYa8W9wcmjtg83Z9fAgmVocatShKsLGuSuFV
-         EhRZDyvQTpaT+z7nq84zqTs7qSUIWoZufqc3tQEGdsspWu7U9RVRqOGTCayf39c789p6
-         dHZsujLJSjv4fhbT+beG5DiuispsttpjH0x1T3d4aFwdCHwtdMmBPINW7in9bTxRoY0d
-         /0fhYpWNmBLpevTHAj38VqEHHJGi5v8imQcV4A4YPROHpgIwkOrqD+TzZ3FDowxF6g9L
-         A3SA==
+        d=gmail.com; s=20230601; t=1749412692; x=1750017492; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gm1y3HjSbfjetP2qj6SkQ/PvAerOiP935sq/jHQIUpg=;
+        b=RsJ5wHYzuH9PTuKtDguIMI0n1AfGXim/Jus32s3h3oBfA8WU2zP07agtVrlEay2KFx
+         TFYxGYlt5/Q9eG4tcTW1+AqOBCOLwqfNOaC4/6miWlHpto5GpNftdMyu+TrW5Yb28hyN
+         rqChEMGh7/QBnSifvnl9Muemzsg8rQ5lZoCHm4M0Mhn8g0Ipug9cNGJC/us+WeOhbmet
+         HUHZ72+PP+Po5DFRca2RpesKEE1auIjbs3Q6XIo6cg+9/+mrv+AVvBxuy6f4bE9yQN5r
+         fDyUsW1j/JQVerWPZ1W1MLH6m5Bqq5CjTIO/CtH8gC4JJaTwNS9pxdzZ8euFP3FjVJjz
+         /aLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749295001; x=1749899801;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6+fv+VxiPPdnUoibaG8YqzN011wU+7ut+7GZYmILV6Y=;
-        b=WbpM3G/E9oKR0wz84ja+2dSJWQsd1/ZHM5woQx17sClCPHiUdA10kCoBvOW+xszFmX
-         9Vdso57fUUtP4zndJTf08zrmc9DGTsDrfK44bmXZuSPuk+KJ+wkkE8FsWthamTxVLTSD
-         ua++zUJBO4n0wjdaFOWnAwEBwb4Em3FrJPBminuOsBdGAifWSfx+EN+6mdM9pmR6AZ4D
-         Q2oATgEd+k9gNBotBSnEc1zqMQ+1hFEVJpPZtJ8I6tuZKYW6/YUe+LoOKGi3GcQ29qtu
-         lsWez8/tNkwlaRHjLLo2Htv0AdRnvt/OidEefE9CbVBNJTZAjfoqgTaFhF7bqNZ/nxOR
-         y01g==
-X-Gm-Message-State: AOJu0YzzjvOuAhn8tcKjkizr7VqfaD+yzyAqmPNQTbEpLMGhb9JAD0V9
-	Nd93MTsdBalRb0O0BysbLuHMRfr8EfoycX+t/VNgEjjFfd1HngsYlgAJHDSN39qWm+8=
-X-Gm-Gg: ASbGncuDdyFshVucrJhQjRBmtgd0XTgNgEnUdEFQ0ssEQIdz0iUmvdrPUg0KZJ2e3dI
-	ZXvMnXPuQGuIulncZCyy4vpRLQEoClNgSk0eErXR5arWxncNn/DjMrKvi39An1tRpSMlyTunrsC
-	mYcqYLz+mofvXYNWa4bHMcWWkQa/7oA9szNMA/OeS77hINuOVwWWlmPFOdymVucPEEj4mC+K+nH
-	+GvqQsZSYtxyBMiF5WfSBLOpRaU6QLWGT9DqbgL/Yp77T5dBOzEgyaCBhLWJm3ii31gW9C2EYz3
-	eHYYmHy7IunYYOK9u1QTEz2Of2x2MijMoLpD+K8T+XsJND2vNm3QwE5JTGHtjFXmDLS8Ag==
-X-Google-Smtp-Source: AGHT+IGwr+7KS+nc6edKpc7KPDI+/In+EwsQFsrOVblG3CqpkHhN/DbCA+K3DtPuHfxZ0/3go/Fwyw==
-X-Received: by 2002:a05:6e02:219e:b0:3dc:8667:3426 with SMTP id e9e14a558f8ab-3ddce46e8d1mr71230425ab.17.1749295001526;
-        Sat, 07 Jun 2025 04:16:41 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ddcf13ec9esm9038085ab.4.2025.06.07.04.16.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jun 2025 04:16:40 -0700 (PDT)
-Message-ID: <950a9907-6820-4c2f-9901-8454b418e884@kernel.dk>
-Date: Sat, 7 Jun 2025 05:16:39 -0600
+        d=1e100.net; s=20230601; t=1749412692; x=1750017492;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gm1y3HjSbfjetP2qj6SkQ/PvAerOiP935sq/jHQIUpg=;
+        b=o7LPohu9a16iALINuqkP0Sr8bSC9ptABRFmtz6sOBcJYzSXms6ZNo9zeVobyU5ZDxV
+         7/62H/EM9lQtMWcf3FqW1tkxf5pwqlECL64jdXJmen+kFqwH5XGspU1T4hbr4NLwH7pf
+         eGQPJtF7gFoQvtkCof46ZMug2Xqe1W4aczqt/s2MVcZjeCx78KyaboDopZGBwKWRTW47
+         nodvMUDnyNFw+P6FKw2AqGw8842lItUoILfkl8+EVQG96My9ACS+j2pbIcz/pjWFz1//
+         wVtTvBk2J0iUZew7SXG73ODs/A0hwIXOaw1uauLmUnxHamdyX94Csu//A7ey44TywEbN
+         +joQ==
+X-Gm-Message-State: AOJu0Yz9IqDVXVePwqD9r//CRjQpMtUyI3IE0XfOTN1s3MFU0haSDjdP
+	Cc77Q3+G/uORl6hLb0l2tRXca8d/It4nXMS/JM+wAU9JgRtYK+JUT63wXFA20aCivtbeFK14qt3
+	k3H11r4oSucAQKWbXMhr2li6+Oj74M0me9YV3qjNO
+X-Gm-Gg: ASbGnculpPz1APVbmO41djhAMGFBeSxZ7zBdGBkr3Ry6Jo9Y3UExJyfDWubafGD/VuC
+	SDPFyQrrbJINu15g+HOrekqv7OOJeoFoXW+xbvs3n4yGfhhk66CLwCTJLB3EAR3ddMnLVkNAbod
+	eHs2aKQjVb1pkZdjyXd3+lZZXxB78ytR1Utv4vYsM2yXConfi7OlvqVzSct2kFfJ8=
+X-Google-Smtp-Source: AGHT+IHg2qai5Z5zTyWupIuQeSLbFWpkObMn2mxNbIo99OIDR7/S+k22f/weEEuWM57fa3/Uu/7vnmrODnMwySg435Y=
+X-Received: by 2002:a17:907:c22:b0:ad8:87a0:62aa with SMTP id
+ a640c23a62f3a-ade1aab90f1mr1074788966b.27.1749412692208; Sun, 08 Jun 2025
+ 12:58:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] io_uring: add struct io_cold_def->sqe_copy() method
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org
-References: <20250606215633.322075-1-axboe@kernel.dk>
- <20250606215633.322075-3-axboe@kernel.dk>
- <CADUfDZq45a9K9SHEeTTFU5vpbbkFtOhjpW_ovAiV_Y-Xbdy=uA@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <CADUfDZq45a9K9SHEeTTFU5vpbbkFtOhjpW_ovAiV_Y-Xbdy=uA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250606215633.322075-1-axboe@kernel.dk> <20250606215633.322075-4-axboe@kernel.dk>
+In-Reply-To: <20250606215633.322075-4-axboe@kernel.dk>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Mon, 9 Jun 2025 01:27:34 +0530
+X-Gm-Features: AX0GCFvftffipWVQu5yGTYGSpC1KgWk5sszS_gDtsOfa5TF6QQbIU7u6zbLxz6k
+Message-ID: <CACzX3Ave=aqgaED2NqDiC7cdh65q7BQwBcCrYjbSkyKY3+ijzA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] io_uring/uring_cmd: get rid of io_uring_cmd_prep_setup()
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, csander@purestorage.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/6/25 6:50 PM, Caleb Sander Mateos wrote:
-> On Fri, Jun 6, 2025 at 2:56?PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Will be called by the core of io_uring, if inline issue is not going
->> to be tried for a request. Opcodes can define this handler to defer
->> copying of SQE data that should remain stable.
->>
->> Only called if IO_URING_F_INLINE is set. If it isn't set, then there's a
->> bug in the core handling of this, and -EFAULT will be returned instead
->> to terminate the request. This will trigger a WARN_ON_ONCE(). Don't
->> expect this to ever trigger, and down the line this can be removed.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  io_uring/io_uring.c | 25 ++++++++++++++++++++++---
->>  io_uring/opdef.h    |  1 +
->>  2 files changed, 23 insertions(+), 3 deletions(-)
->>
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 0f9f6a173e66..9799a31a2b29 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -1935,14 +1935,31 @@ struct file *io_file_get_normal(struct io_kiocb *req, int fd)
->>         return file;
->>  }
->>
->> -static void io_queue_async(struct io_kiocb *req, int ret)
->> +static int io_req_sqe_copy(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +       const struct io_cold_def *def = &io_cold_defs[req->opcode];
->> +
->> +       if (!def->sqe_copy)
->> +               return 0;
->> +       if (WARN_ON_ONCE(!(issue_flags & IO_URING_F_INLINE)))
-> 
-> I'm pretty confident that every initial async path under
-> io_submit_sqe() will call io_req_sqe_copy(). But I'm not positive that
-> io_req_sqe_copy() won't get called *additional* times from non-inline
-> contexts. One example scenario:
-> - io_submit_sqe() calls io_queue_sqe()
-> - io_issue_sqe() returns -EAGAIN, so io_queue_sqe() calls io_queue_async()
-> - io_queue_async() calls io_req_sqe_copy() in inline context
-> - io_queue_async() calls io_arm_poll_handler(), which returns
-> IO_APOLL_READY, so io_req_task_queue() is called
-> - Some other I/O to the file (possibly on a different task) clears the
-> ready poll events
-> - io_req_task_submit() calls io_queue_sqe() in task work context
-> - io_issue_sqe() returns -EAGAIN again, so io_queue_async() is called
-> - io_queue_async() calls io_req_sqe_copy() a second time in non-inline
-> (task work) context
-> 
-> If this is indeed possible, then I think we may need to relax this
-> check so it only verifies that IO_URING_F_INLINE is set *the first
-> time* io_req_sqe_copy() is called for a given req. (Or just remove the
-> IO_URING_F_INLINE check entirely.)
-
-Yes, the check is a bit eager indeed. I've added a flag for this, so
-that we only go through the IO_URING_F_INLINE check and ->sqe_copy()
-callback once.
-
->> +               return -EFAULT;
->> +       def->sqe_copy(req);
->> +       return 0;
->> +}
->> +
->> +static void io_queue_async(struct io_kiocb *req, unsigned int issue_flags, int ret)
->>         __must_hold(&req->ctx->uring_lock)
->>  {
->>         if (ret != -EAGAIN || (req->flags & REQ_F_NOWAIT)) {
->> +fail:
->>                 io_req_defer_failed(req, ret);
->>                 return;
->>         }
->>
->> +       ret = io_req_sqe_copy(req, issue_flags);
->> +       if (unlikely(ret))
->> +               goto fail;
->> +
->>         switch (io_arm_poll_handler(req, 0)) {
->>         case IO_APOLL_READY:
->>                 io_kbuf_recycle(req, 0);
->> @@ -1971,7 +1988,7 @@ static inline void io_queue_sqe(struct io_kiocb *req, unsigned int extra_flags)
->>          * doesn't support non-blocking read/write attempts
->>          */
->>         if (unlikely(ret))
->> -               io_queue_async(req, ret);
->> +               io_queue_async(req, issue_flags, ret);
->>  }
->>
->>  static void io_queue_sqe_fallback(struct io_kiocb *req)
->> @@ -1986,6 +2003,8 @@ static void io_queue_sqe_fallback(struct io_kiocb *req)
->>                 req->flags |= REQ_F_LINK;
->>                 io_req_defer_failed(req, req->cqe.res);
->>         } else {
->> +               /* can't fail with IO_URING_F_INLINE */
->> +               io_req_sqe_copy(req, IO_URING_F_INLINE);
->>                 if (unlikely(req->ctx->drain_active))
->>                         io_drain_req(req);
->>                 else
->> @@ -2201,7 +2220,7 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->>                 link->last = req;
->>
->>                 if (req->flags & IO_REQ_LINK_FLAGS)
->> -                       return 0;
->> +                       return io_req_sqe_copy(req, IO_URING_F_INLINE);
-> 
-> I still think this misses the last req in a linked chain, which will
-> be issued async but won't have IO_REQ_LINK_FLAGS set. Am I missing
-> something?
-
-Indeed, we need to call this before that section. Fixed that up too,
-thanks.
-
--- 
-Jens Axboe
+Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
 

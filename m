@@ -1,108 +1,111 @@
-Return-Path: <io-uring+bounces-8302-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8303-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E543AD4373
-	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 22:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34C4AD43A2
+	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 22:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A16B3A5056
-	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 20:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADE0189D82F
+	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 20:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50CE264A77;
-	Tue, 10 Jun 2025 20:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEDB26560B;
+	Tue, 10 Jun 2025 20:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qlxma1rE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok+VBh8X"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E368A1AF0C8
-	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 20:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8954B264F99
+	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 20:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749585888; cv=none; b=noRdHTJoQCoIeIEVZEjgI1zEGy7DgdEoF+vVkKyvWeDhCZQNZ3WnWMED4kg+iJKxMpp1EjcTMFkhIMQp6LbCsrrwGaCkE7ZsvQdKAwzwXYZjZNo6Y1mmUQxoIlexa2ZeE6ra5f6jRr1n+WrzCo7P0ESLnGuj7EFQoczA7honChU=
+	t=1749586851; cv=none; b=ZMQmjdKVxRU04z2HqOqmJlR6oJRJ/pD81qLI4D37uOrv/OkA7uD1PnNuJGgoGykesUCN3EJXBRgCuB2BKEcx6vdqdkhU574inHW+qXbTljdQiL81j4Fg9CXUv7Oe1yP5ib1VnlGO3d0hcgxlH/uRsVpgIdGQs8L1BCyOuBHMGUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749585888; c=relaxed/simple;
-	bh=bLl4sfmdbloKYoV1oO7+4ZYfwJCLBoJIeKinAZvXNTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cG/vYESLfRZqp9rItxqJ8ZtCE4aBIjhNEq4CqDOd5ti7RK55Sw0VOIOKW4kgLAnlYf21j59gfaJae53qtg8rRTnC3KkZgamrxtdUtLL5fj+4RmRMrsQ/PsI3nRmaDnAUtYWN6kHtyDs5BSbeEDCZioct6GZoJh95iwTT2pnYlPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qlxma1rE; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-875b52a09d1so27807939f.0
-        for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 13:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749585882; x=1750190682; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VqQtA4MmKk0w6NnjcEvo7w7mNMeRdsLUpT+FfH57D7E=;
-        b=qlxma1rEy9ZL0FcF1SpJyu4qVJuFR/CBai0KDJZm57snpHtjmPJjlG30R9yuFzHjTW
-         DnbJTYby9qEjWGoXvBYrtXqT7IBNCewa5oFoAcyN0eGwE6ZrUdfGJifXtjQnvdGig0o0
-         opKCxxdILYofTU/aoiXX/zo7UGZ6rz0ve0bmXRAZMBbbWHlYps1kdBNsjmRk6LKUkK+i
-         GqQfBRzYH0/beKTciInd2Pm/imy8UN9s2o0dAEoZbU65vnoWAtPjbKpFHNg3lz7q5BLd
-         Z3cXZ24LsV3OSmO0ghXpoDLWuc6d0TjVZVJvbiBQygYLmOnJzF/i4liTkT3DpHdp1ZT8
-         SJVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749585882; x=1750190682;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqQtA4MmKk0w6NnjcEvo7w7mNMeRdsLUpT+FfH57D7E=;
-        b=nvohTudjZ9SeOpXzvnwSDiS/WES0OQwbmhcRy6ul/nOOyA93E/L6JK7rTaG/31Tyh+
-         MzI0F5ssM/nlxTNxFjSyQpZ4OVk51ATgyvvsRXSMBFwGI5N+9IJE5OFxxj7P1dcwXykx
-         SNrHuZFJb6shrbRXVPsznqF6p/rN5VNbeTgGnsEcRoB51cWsCrH1LnkWMqOH5zhbjYr2
-         2Dl1qpCDaB7YBCW2Q8g9lxTqxC8GR+cShZqWnIML0PwnviTfepfj+SNohipzkUoByPlS
-         FF8cPsmVVD02g7I/9+HqaimO2GpPnSWfo8RY1KDz6BFlxkBG9uyu9FmJntpxhcmC0Mnc
-         gUdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+662S6Bh15GPV/wSr2tmnosbzPNL16dK0aXhHQK1We14k9zms8/NdjyfhiT/5oztfFlJkxsgmHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFDx7K0xdWG68AuIfrR6znUnWRct961rKFl88JH6nRKm+7sb5a
-	8eg2hKeOtmrxeSfRc9CmJNSJxldKeE4NbymAmQvkICLujtVSWFWEHYy0+0/Gc3cwiXY=
-X-Gm-Gg: ASbGnctQFLGNCYZu8bTpho6/fpEj+VmiPeV9Et9KMkJAnu/zXtlrO3qhX1MRxgvmDGj
-	PkEcORFjV5Yf8FAOJSNDaOZbHUJdGmB9vzgYCoI7SrdRmxh2twoQqSehsVaaKwmmuidoU4uW511
-	gQ1xww2fkFSv+8hr/+EltnShZbyCKCTLV87/1nQ/GxcLumWV2fuDupbuNQ2XCLqn5PouTUnPBL5
-	HKZ/G3wChGoDDj2LZJjRZVxa1FYMrhXiwe1e9a06YnVw2Wws8WqlpxK23oXCjvJgbYkgQF0+dnv
-	lpZsceAcNBJMhGn/PWGwXTqXRY3IbHiotebEtkIek7nPqnDTOaZDmivNcdM=
-X-Google-Smtp-Source: AGHT+IFjnpaLl8kD6SaM0WKJDRkuBVNr3GoDl6wqiW9wqyJYhH2Lk+cg8DvulY2bvA3EwW4FsNUwUQ==
-X-Received: by 2002:a05:6602:3719:b0:873:1cc0:ae59 with SMTP id ca18e2360f4ac-875bc3b9c6dmr113697839f.5.1749585882640;
-        Tue, 10 Jun 2025 13:04:42 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5012a90b5acsm61515173.24.2025.06.10.13.04.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 13:04:42 -0700 (PDT)
-Message-ID: <c2f09260-46c8-4108-b190-232c025947df@kernel.dk>
-Date: Tue, 10 Jun 2025 14:04:41 -0600
+	s=arc-20240116; t=1749586851; c=relaxed/simple;
+	bh=OKAhe7RVk7e3Jy7xcLnQfensj8kvM3IfDsgJ+mNymfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwbsHqIhHuetQXsOAMUf1Yjh3PWglnwiec//lXS1abcqa0Se7Iyt3s9NmNcb1V9J1vH7d7zS7rDe0F6F85yHa4R0I1X6W1yZ7ePwB/b1vbqqa7ZYKL+nT4nsy1WMghfwAtb3C2eHTOntG5T9GUC9O4i3uSaQMrcrCaKXI+/xARU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok+VBh8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A1FC4CEF0;
+	Tue, 10 Jun 2025 20:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749586851;
+	bh=OKAhe7RVk7e3Jy7xcLnQfensj8kvM3IfDsgJ+mNymfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ok+VBh8XX6722qDjqDb7mSdk11NfVBrz94UzXaBoPlv5YToRz92F0NwU9UHCHpZkq
+	 5po/8Udg85TSUEApHFzR6hU9jGmD3PGxzw1pSAJcrI2nZhQK+BNZeYhvibyPM3Lofs
+	 EciVe/wwciL2Zcy9viR4PLRdztrtf54BVNZdadMJ3K+CA89+TP6nvfhksqbwLpP4EV
+	 7LZ0jW5QC+zBUHpAY1vtnKqcg96XIrYuXOnOVXQTezBNNdm0ILDetaPo4rYVQGf3GS
+	 Cs0kcq6KKk52DujZdV0SBBb6xZ6RWfLFjJGpGsiNlt0ZFRzYqNjRtfG/FQYekmzuYy
+	 nKY/3tXoLL4Vg==
+Date: Tue, 10 Jun 2025 14:20:49 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
+	superman.xpt@gmail.com
+Subject: Re: [PATCH] io_uring: consistently use rcu semantics with sqpoll
+ thread
+Message-ID: <aEiToYXiUneeNFq_@kbusch-mbp>
+References: <20250610193028.2032495-1-kbusch@meta.com>
+ <c2f09260-46c8-4108-b190-232c025947df@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: consistently use rcu semantics with sqpoll
- thread
-To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
-Cc: superman.xpt@gmail.com, Keith Busch <kbusch@kernel.org>
-References: <20250610193028.2032495-1-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250610193028.2032495-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c2f09260-46c8-4108-b190-232c025947df@kernel.dk>
 
-On 6/10/25 1:30 PM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On Tue, Jun 10, 2025 at 02:04:41PM -0600, Jens Axboe wrote:
+> On 6/10/25 1:30 PM, Keith Busch wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > 
+> > It is already dereferenced with rcu read protection, so it needs to be
+> > annotated as such, and consistently use rcu helpers for access and
+> > assignment.
 > 
-> It is already dereferenced with rcu read protection, so it needs to be
-> annotated as such, and consistently use rcu helpers for access and
-> assignment.
+> There are some bits in io_uring.c that access it, which probably need
+> some attention too I think. One of them a bit trickier.
 
-There are some bits in io_uring.c that access it, which probably need
-some attention too I think. One of them a bit trickier.
+Oh, sure is. I just ran 'make C=1' on the originally affected files, but
+should have ran it on all of io_uring/.
 
--- 
-Jens Axboe
+I think the below should clear up the new warnings. I think it's safe to
+hold the rcu read lock for the tricky one as io_wq_cancel_cb() doesn't
+appear to make any blocking calls.
 
+---
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index cf759c172083c..c6502197eb6b2 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2906,10 +2906,12 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 			struct task_struct *tsk;
+ 
+ 			io_sq_thread_park(sqd);
+-			tsk = sqd->thread;
++			rcu_read_lock();
++			tsk = rcu_dereference(sqd->thread);
+ 			if (tsk && tsk->io_uring && tsk->io_uring->io_wq)
+ 				io_wq_cancel_cb(tsk->io_uring->io_wq,
+ 						io_cancel_ctx_cb, ctx, true);
++			rcu_read_unlock();
+ 			io_sq_thread_unpark(sqd);
+ 		}
+ 
+@@ -3142,7 +3144,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+ 	s64 inflight;
+ 	DEFINE_WAIT(wait);
+ 
+-	WARN_ON_ONCE(sqd && sqd->thread != current);
++	WARN_ON_ONCE(sqd && rcu_access_pointer(sqd->thread) != current);
+ 
+ 	if (!current->io_uring)
+ 		return;
+--
 

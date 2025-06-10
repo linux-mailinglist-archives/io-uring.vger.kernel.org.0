@@ -1,178 +1,108 @@
-Return-Path: <io-uring+bounces-8301-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8302-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E4DAD42EA
-	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 21:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E543AD4373
+	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 22:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E8413A408D
-	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 19:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A16B3A5056
+	for <lists+io-uring@lfdr.de>; Tue, 10 Jun 2025 20:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0066B263F52;
-	Tue, 10 Jun 2025 19:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50CE264A77;
+	Tue, 10 Jun 2025 20:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="ZkPlCIK+"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qlxma1rE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453111D9663
-	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 19:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E368A1AF0C8
+	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 20:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749583845; cv=none; b=QcTe3qXgvGnwly/JssN/UTHYzOIXhsOqhZ2E57HgLmgpO5GdJiqkcNdzeMlFKYctQSoAH21y2RoE4znPQH1wtuUkGaW0bhksHRhUThXonagxZ4EinUcVkG8s43BTtxcaXfKzq+Yz+CFa71gjqJ7QqtovnGKf5JFN6Sc1iYyKupY=
+	t=1749585888; cv=none; b=noRdHTJoQCoIeIEVZEjgI1zEGy7DgdEoF+vVkKyvWeDhCZQNZ3WnWMED4kg+iJKxMpp1EjcTMFkhIMQp6LbCsrrwGaCkE7ZsvQdKAwzwXYZjZNo6Y1mmUQxoIlexa2ZeE6ra5f6jRr1n+WrzCo7P0ESLnGuj7EFQoczA7honChU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749583845; c=relaxed/simple;
-	bh=sIHOlrBbhM+t1QCAhYC/OueNLdcHAXerOXm5uC//Z7Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ljoMjVkOvlWYmfVu4fpn+5JMTQdjtlOCCI9q2SOER/oWXwKtgr2m8PDuP1xTPABiQiGokAIfrEbU+pLwJqnLZAu2XQMzfwYcrO8CP1Ro7bYRxKiiddfIohGOyX9Jsfv2AE5JZtlA/gKuQUtKnIrXklCQmMmRNi/MxUNQ8exIFHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=ZkPlCIK+; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AJJAgf006856
-	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 12:30:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2021-q4; bh=yWONeWdLpy+4u/B7Rg
-	wymF2j5hN0t5CRXawTaIqHTPA=; b=ZkPlCIK+mp6IgTfcnFsuQB7suGkgsxEA2i
-	c5dAKJ2/3O29YBp7BvC8kcoLMkw/c5Uwiby6DYV4yO/sIqxJJvQsiEwUXbCDV3hR
-	Z82G4NaY6cBxtUCVTMZshVeIzfTbnj1b0uLAJvhT8tQZKRzls3DIdkLdglkihuVP
-	OH5qtWpIgj0eLLkGfpbd20BEzFNsYzhyBpIoOCfXBPqogXn6B7iugd4ga6BGOnjc
-	tJv/b9zZwuLpMQY8xCA8VLMdwHaqvRUsbNkpfpm/HRG5p1x2qg3rF9vmXfHdX1lR
-	K1p2lZVCoUar6dw0W+SGKreAWonRc+5ZHD6pxUFLynFm0IDOi6lg==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 476tfcg761-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 12:30:43 -0700 (PDT)
-Received: from twshared35278.32.frc3.facebook.com (2620:10d:c0a8:1c::11) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.24; Tue, 10 Jun 2025 19:30:41 +0000
-Received: by devbig209.atn5.facebook.com (Postfix, from userid 544533)
-	id C949185AB85; Tue, 10 Jun 2025 12:30:31 -0700 (PDT)
-From: Keith Busch <kbusch@meta.com>
-To: <io-uring@vger.kernel.org>
-CC: <axboe@kernel.dk>, <superman.xpt@gmail.com>,
-        Keith Busch
-	<kbusch@kernel.org>
-Subject: [PATCH] io_uring: consistently use rcu semantics with sqpoll thread
-Date: Tue, 10 Jun 2025 12:30:28 -0700
-Message-ID: <20250610193028.2032495-1-kbusch@meta.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1749585888; c=relaxed/simple;
+	bh=bLl4sfmdbloKYoV1oO7+4ZYfwJCLBoJIeKinAZvXNTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cG/vYESLfRZqp9rItxqJ8ZtCE4aBIjhNEq4CqDOd5ti7RK55Sw0VOIOKW4kgLAnlYf21j59gfaJae53qtg8rRTnC3KkZgamrxtdUtLL5fj+4RmRMrsQ/PsI3nRmaDnAUtYWN6kHtyDs5BSbeEDCZioct6GZoJh95iwTT2pnYlPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qlxma1rE; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-875b52a09d1so27807939f.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Jun 2025 13:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749585882; x=1750190682; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VqQtA4MmKk0w6NnjcEvo7w7mNMeRdsLUpT+FfH57D7E=;
+        b=qlxma1rEy9ZL0FcF1SpJyu4qVJuFR/CBai0KDJZm57snpHtjmPJjlG30R9yuFzHjTW
+         DnbJTYby9qEjWGoXvBYrtXqT7IBNCewa5oFoAcyN0eGwE6ZrUdfGJifXtjQnvdGig0o0
+         opKCxxdILYofTU/aoiXX/zo7UGZ6rz0ve0bmXRAZMBbbWHlYps1kdBNsjmRk6LKUkK+i
+         GqQfBRzYH0/beKTciInd2Pm/imy8UN9s2o0dAEoZbU65vnoWAtPjbKpFHNg3lz7q5BLd
+         Z3cXZ24LsV3OSmO0ghXpoDLWuc6d0TjVZVJvbiBQygYLmOnJzF/i4liTkT3DpHdp1ZT8
+         SJVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749585882; x=1750190682;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqQtA4MmKk0w6NnjcEvo7w7mNMeRdsLUpT+FfH57D7E=;
+        b=nvohTudjZ9SeOpXzvnwSDiS/WES0OQwbmhcRy6ul/nOOyA93E/L6JK7rTaG/31Tyh+
+         MzI0F5ssM/nlxTNxFjSyQpZ4OVk51ATgyvvsRXSMBFwGI5N+9IJE5OFxxj7P1dcwXykx
+         SNrHuZFJb6shrbRXVPsznqF6p/rN5VNbeTgGnsEcRoB51cWsCrH1LnkWMqOH5zhbjYr2
+         2Dl1qpCDaB7YBCW2Q8g9lxTqxC8GR+cShZqWnIML0PwnviTfepfj+SNohipzkUoByPlS
+         FF8cPsmVVD02g7I/9+HqaimO2GpPnSWfo8RY1KDz6BFlxkBG9uyu9FmJntpxhcmC0Mnc
+         gUdg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+662S6Bh15GPV/wSr2tmnosbzPNL16dK0aXhHQK1We14k9zms8/NdjyfhiT/5oztfFlJkxsgmHA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFDx7K0xdWG68AuIfrR6znUnWRct961rKFl88JH6nRKm+7sb5a
+	8eg2hKeOtmrxeSfRc9CmJNSJxldKeE4NbymAmQvkICLujtVSWFWEHYy0+0/Gc3cwiXY=
+X-Gm-Gg: ASbGnctQFLGNCYZu8bTpho6/fpEj+VmiPeV9Et9KMkJAnu/zXtlrO3qhX1MRxgvmDGj
+	PkEcORFjV5Yf8FAOJSNDaOZbHUJdGmB9vzgYCoI7SrdRmxh2twoQqSehsVaaKwmmuidoU4uW511
+	gQ1xww2fkFSv+8hr/+EltnShZbyCKCTLV87/1nQ/GxcLumWV2fuDupbuNQ2XCLqn5PouTUnPBL5
+	HKZ/G3wChGoDDj2LZJjRZVxa1FYMrhXiwe1e9a06YnVw2Wws8WqlpxK23oXCjvJgbYkgQF0+dnv
+	lpZsceAcNBJMhGn/PWGwXTqXRY3IbHiotebEtkIek7nPqnDTOaZDmivNcdM=
+X-Google-Smtp-Source: AGHT+IFjnpaLl8kD6SaM0WKJDRkuBVNr3GoDl6wqiW9wqyJYhH2Lk+cg8DvulY2bvA3EwW4FsNUwUQ==
+X-Received: by 2002:a05:6602:3719:b0:873:1cc0:ae59 with SMTP id ca18e2360f4ac-875bc3b9c6dmr113697839f.5.1749585882640;
+        Tue, 10 Jun 2025 13:04:42 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5012a90b5acsm61515173.24.2025.06.10.13.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 13:04:42 -0700 (PDT)
+Message-ID: <c2f09260-46c8-4108-b190-232c025947df@kernel.dk>
+Date: Tue, 10 Jun 2025 14:04:41 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDE1OSBTYWx0ZWRfX+tvW7lPEmPn2 wSH9+BJzYLVnuaVLmo9pIdSBVzfjYEWYiyB9x6ueqoZ84hXANtnuYfNAT7gtavm8GxMKHIInluT lxt1s6pkjlnB3H3ibo3GwUEAPpo1AyR0rh8WnJcrEI5JqHn7DmSNskqlyv++SULa4W0OuTNQimS
- msTTgkhznX6T2tl18E0UmP8yaM8W187LP2qiGis4wiGigW9TJgGmfVvgdGzAjYJ0VCOHekEJ6pE PcdctnC36YiM+MZOGaTwAE4Vp6qw76ttAVtqm9d8ffbzt+pWcYKsoGkBnK8eJzb4riux09GkXaP 7igInN6Y5oxB2Ujy13/VIz6Cnj4wtvGwkM6D7/pxTzzZD6hQBSh/8ZcWV50GlPQjNutq4UwxKBX
- z+JnSICDaPZ7QBjn0tGqbGq3cTK0aT0Dod7pOxabAC0zl48ClxvSyk43Br5iOHbxWprpw3CN
-X-Proofpoint-ORIG-GUID: INVd-Ulk1k-2JnVZl9BdBvVfdWOBZogb
-X-Proofpoint-GUID: INVd-Ulk1k-2JnVZl9BdBvVfdWOBZogb
-X-Authority-Analysis: v=2.4 cv=X81SKHTe c=1 sm=1 tr=0 ts=684887e3 cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=R9wSGXSy0-88cy7IuDgA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_09,2025-06-10_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: consistently use rcu semantics with sqpoll
+ thread
+To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
+Cc: superman.xpt@gmail.com, Keith Busch <kbusch@kernel.org>
+References: <20250610193028.2032495-1-kbusch@meta.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250610193028.2032495-1-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Keith Busch <kbusch@kernel.org>
+On 6/10/25 1:30 PM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> It is already dereferenced with rcu read protection, so it needs to be
+> annotated as such, and consistently use rcu helpers for access and
+> assignment.
 
-It is already dereferenced with rcu read protection, so it needs to be
-annotated as such, and consistently use rcu helpers for access and
-assignment.
+There are some bits in io_uring.c that access it, which probably need
+some attention too I think. One of them a bit trickier.
 
-Fixes: ac0b8b327a5677d ("io_uring: fix use-after-free of sq->thread in __=
-io_uring_show_fdinfo()")
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- io_uring/sqpoll.c | 16 +++++++++-------
- io_uring/sqpoll.h |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 0625a421626f4..7c6d7de05e0a0 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -30,7 +30,7 @@ enum {
- void io_sq_thread_unpark(struct io_sq_data *sqd)
- 	__releases(&sqd->lock)
- {
--	WARN_ON_ONCE(sqd->thread =3D=3D current);
-+	WARN_ON_ONCE(rcu_access_pointer(sqd->thread) =3D=3D current);
-=20
- 	/*
- 	 * Do the dance but not conditional clear_bit() because it'd race with
-@@ -46,24 +46,24 @@ void io_sq_thread_unpark(struct io_sq_data *sqd)
- void io_sq_thread_park(struct io_sq_data *sqd)
- 	__acquires(&sqd->lock)
- {
--	WARN_ON_ONCE(data_race(sqd->thread) =3D=3D current);
-+	WARN_ON_ONCE(data_race(rcu_access_pointer(sqd->thread)) =3D=3D current)=
-;
-=20
- 	atomic_inc(&sqd->park_pending);
- 	set_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state);
- 	mutex_lock(&sqd->lock);
- 	if (sqd->thread)
--		wake_up_process(sqd->thread);
-+		wake_up_process(rcu_access_pointer(sqd->thread));
- }
-=20
- void io_sq_thread_stop(struct io_sq_data *sqd)
- {
--	WARN_ON_ONCE(sqd->thread =3D=3D current);
-+	WARN_ON_ONCE(rcu_access_pointer(sqd->thread) =3D=3D current);
- 	WARN_ON_ONCE(test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state));
-=20
- 	set_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
- 	mutex_lock(&sqd->lock);
- 	if (sqd->thread)
--		wake_up_process(sqd->thread);
-+		wake_up_process(rcu_access_pointer(sqd->thread));
- 	mutex_unlock(&sqd->lock);
- 	wait_for_completion(&sqd->exited);
- }
-@@ -486,7 +486,7 @@ __cold int io_sq_offload_create(struct io_ring_ctx *c=
-tx,
- 			goto err_sqpoll;
- 		}
-=20
--		sqd->thread =3D tsk;
-+		rcu_assign_pointer(sqd->thread, tsk);
- 		task_to_put =3D get_task_struct(tsk);
- 		ret =3D io_uring_alloc_task_context(tsk, ctx);
- 		wake_up_new_task(tsk);
-@@ -517,7 +517,9 @@ __cold int io_sqpoll_wq_cpu_affinity(struct io_ring_c=
-tx *ctx,
- 		io_sq_thread_park(sqd);
- 		/* Don't set affinity for a dying thread */
- 		if (sqd->thread)
--			ret =3D io_wq_cpu_affinity(sqd->thread->io_uring, mask);
-+			ret =3D io_wq_cpu_affinity(
-+				rcu_access_pointer(sqd->thread)->io_uring,
-+				mask);
- 		io_sq_thread_unpark(sqd);
- 	}
-=20
-diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
-index 4171666b1cf4c..43f69d3cf2959 100644
---- a/io_uring/sqpoll.h
-+++ b/io_uring/sqpoll.h
-@@ -8,7 +8,7 @@ struct io_sq_data {
- 	/* ctx's that are using this sqd */
- 	struct list_head	ctx_list;
-=20
--	struct task_struct	*thread;
-+	struct task_struct __rcu *thread;
- 	struct wait_queue_head	wait;
-=20
- 	unsigned		sq_thread_idle;
---=20
-2.47.1
+-- 
+Jens Axboe
 
 

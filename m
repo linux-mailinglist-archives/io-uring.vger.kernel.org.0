@@ -1,80 +1,78 @@
-Return-Path: <io-uring+bounces-8319-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8320-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B722DAD71D0
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jun 2025 15:27:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA96BAD7332
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jun 2025 16:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A017B560
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jun 2025 13:27:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A7A87A51A1
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jun 2025 14:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D57C254848;
-	Thu, 12 Jun 2025 13:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595F1248881;
+	Thu, 12 Jun 2025 14:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWiypeyi"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jLMaqWT1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F82242927;
-	Thu, 12 Jun 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16117185E4A
+	for <io-uring@vger.kernel.org>; Thu, 12 Jun 2025 14:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734738; cv=none; b=tQXAElJtrYAUXYdnqGArPJt29xEiojLZvYxXX2Ux7PjjswI+0zr29CP9IgBXiWKjAvn3dJF+e/BkJeHBxQtnyMfaEk0TEL3Jeqdss+ghyPY/U+BCYLQi6iaflV9BcvWrR8CfOApTaEYtIZTpqWlgc9FvKzjxWow8bhlyMdcsvtA=
+	t=1749737179; cv=none; b=EpY864CtB1f/s52ZGt+6meVxQdlCov4jUi6nZJre50s1eAIz54wnbuA3yGGP1MMnnrifYfD7ZztzqwkoDDMZCcKaclhDZaZAUAn+ehSjZ7LBZ003fF/rYbfzWD2yvRm0nDABN0PYFb/Yf3Q42gz8CTOR18/ZiC/GiXVMXFstDUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734738; c=relaxed/simple;
-	bh=x/LX/NF49fH82gw7hAYoUm3U1ut5qzEj5rfuDlwbzng=;
+	s=arc-20240116; t=1749737179; c=relaxed/simple;
+	bh=4ChK7e4PZIbGo6yIhGanb9DQUsVcV2UEtIFr/3kfE74=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3HBPu+RqUodywqVqXJ31wLIObwZ73h/TH9EYyffPOWlKLexSeFolMVHrmw5KszJqNTxbI7Q836m5NeqCMQtlASJOOEgDCtHkd8dcm9zRM3V4M2tKgADk6GLcz99M+DuCLyrezc6eBnPT65D8Ey56l1sUtPnMB342Z8zYaOw2jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWiypeyi; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60727e46168so1744340a12.0;
-        Thu, 12 Jun 2025 06:25:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=gG1cVpkZd3mwmHGgHMXzAWUoHrTB6V5nHQwkrC9hvU20WGBL+B2zBz+QMi9lFryydzBMsJyQMRhdr2wFxq9Zer/87vdKg0tl3Am5aVxTUu+d8gkQJVA0uOqqafbT+glxaRr3IMiGOdFdNt5a50R4ENE7buSw8U927oY8vm2APwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jLMaqWT1; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86a052d7897so87994239f.0
+        for <io-uring@vger.kernel.org>; Thu, 12 Jun 2025 07:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749734735; x=1750339535; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749737176; x=1750341976; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kWQJ78NSqKK670VP4Vaoznw10u+sraccs8botEaierk=;
-        b=GWiypeyi2PbZmQS8haI3Uc2XJ34KqFG7WWEjQlxygn8mSiwlQtXYXF3QSl3aK7EZgY
-         36EveIbXGHavbs9AsTUQZotkFH+D3TqHNrXjnDgcodivfEM6ZzxiASAE+h6G7TfPLWnU
-         PqS1bMpijoAShhsGJwP8ws/YZpSVg9nJ5qVgUgCy/X6xPDVkpNegXSr2FPu46OheRfCE
-         opI3LS5lPwTbyzuuNz2buLJwOybneAsERyL+Oo7gHg1Osz7XtmNaOhXMQdqR5N+h3W4o
-         KSluUgpiU7LSaRm4JkfMvHWPCkdw4mIRXClQBdy7xblF9DOMuHr4Dg2xBFNLX6ZPu/Tf
-         iC0A==
+        bh=bU6I8KFtIF7gtlB8ZnFNNleYs6udjVIddSeSWWR+RTk=;
+        b=jLMaqWT1BEgl0/V26AQ6QvbOzAwrlSs6JmaTA/YqKMgf3CGUpUJey8j6TYA9+bpF6z
+         hrHwFR4BplAvwb3U+OE70O4z2OhO4kfFkgBuiktW+5HKHPK+7FEwEd6xn4DMoJG1CCMi
+         4CpqQM37OLf3pxLphThmlhZSMVQnbiAPEalhpi6g9LSChwx4vATi7FTQiCwH/bItCC4t
+         OWfVrrWWKnksu6ZmXeamxhTmFU9JciUVqNXwJnhHasBMiG0a12bgqImDxEPgi1bk5smP
+         SOg+sxWUzPwnh2Q/DyLroiUYLmIgnFYbiLGwEJL80pU5XoQyfQyIieOmWomvjYZODEqP
+         5qKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749734735; x=1750339535;
+        d=1e100.net; s=20230601; t=1749737176; x=1750341976;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kWQJ78NSqKK670VP4Vaoznw10u+sraccs8botEaierk=;
-        b=WkYDv3udKeMRbiRXeoGa94Uo5IwwyUq003tNjopJraLvfgAp1YmVGGaJT2UuO7VtJ8
-         ZfyKilDYBZEULs3L24Y2N1wWE19HSLLQUX2hwB5ddiP5EtL8uqwMu8cDCunB2rG+UT3F
-         Ebj8iCTF/LGhypSLokWlv7+mxAiIMtsYBFL8lSnynJQiny18rJgozgUHnj/79UAtYEMJ
-         5Lt94mk6fUYGxA61xsEMlu8xIrW7XMeg8SHgR/4UkXdSAQbXccv6EeQ2pn4cK5mrvH1O
-         sVq1pMHwlIiFw8oqFoBcxLwIvC2oEv6K8Q7VSMVRYuXG/YTl3r6yCZWNcQ0vkaP5ayIU
-         qETw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPoTttE/c8HgY4VKUH8NZx6s8zLOOYMHKlmzkJFKZiSMy2DtQ3ueF/JGVaKrSA0p9x4c1pPuRcUJM59aco@vger.kernel.org, AJvYcCVEf+0CGUMCczzRZOB5bZAbGP8Xb75o6rnQEgB2bwH7by9Ej467F+z53NTfRNK2XjF7m5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOs8Omvuctw9lFV5ZOsVPH8FJvbUsXIp0OqZe9LvsMmfulJjkj
-	gzaMdTbbKWa0apnZZeiZuoUYb64fVyJ3q401q8htO7QxHtp8D3O/faLz
-X-Gm-Gg: ASbGncsunKhxv6aEgZ2xtcMKKqV0t3PQYFh4vXlkRlvNs4RWfWlmtkw4rGFlSmxDDUw
-	bg2j+v9QAaZ15QNXOyYLP+Ui9B5//jIXnI7l2Vwrui1z7+K0Qlny2t4cwKbjSwSh9c7oCuV1KTX
-	VDBqysPkchSNqkyr5gHSNH3SkJtl/mW6BUsC9w5g6zUTl2z3fG0vm0U+IQfYrg74Lkf18D9ft80
-	ZRhVO0N+Zhw0FRkmFbKquGSHKy7FoL2qbT069UhllSbMUKQl7/QftBw4zAxiaaWrtt+KHumyNxm
-	NlUTXI5jmsGCR8B6zfzSbXJ7l1bEDa3TO00rLQIr3EqjlAK/5hqM1gS2gS0lOsQq40JOc1kCwrH
-	Tb8KvUAOuKScE2m/CYw==
-X-Google-Smtp-Source: AGHT+IFZxvwRQiBgTxSNHZLFGXnyUwZuR+Pl8ThdMj5kISrDwLpDREt72ApHyIV8rpIEcy5wIbNuRw==
-X-Received: by 2002:a05:6402:5113:b0:607:323e:8071 with SMTP id 4fb4d7f45d1cf-6086389b344mr3524281a12.14.1749734734468;
-        Thu, 12 Jun 2025 06:25:34 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:be2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6086b22ab35sm1183704a12.60.2025.06.12.06.25.33
+        bh=bU6I8KFtIF7gtlB8ZnFNNleYs6udjVIddSeSWWR+RTk=;
+        b=CtjsFBUbt6f9rKEsHWmV3b9jSzjT7tWJe8H0F7spnudRf8GRdv4qdvHYD3Af63maMn
+         pAVH98IZe/T3ESE8JZJyFq15Q7MJrLkIFs5P1HHfdNzGEaMWc7uTvo5EDhOazcyLZFcy
+         DB924Xl9eJnjzrJ7k4fYZ+ZPR8uDEpuSrI542aoRWEqFkGiG6gskNlZnNnjdYK8GsmHQ
+         F7lXhjm6jBuIzOWJfYKMLNTUixzgDU2Vs4R7/B555ek0jFiS69xhZiN3JaSxJozY98TD
+         2CvaPgljFYuow9LSryrSOvccQGR23gCepQ/c7BKEfyeWRla3r5CB3Tg6XU1uJfdaQOst
+         K4dg==
+X-Gm-Message-State: AOJu0YzJJ436YxCiDzcgcxcstvTwfUh99XGoeSY6GuIRe8N5ivmTVPoQ
+	Hh/gUDgSTiJgjYN7xiwuNTtjyc3fbY6mKlqbR4ksB80GzPr+wp1SwNmBLGOU/tKdD6Y=
+X-Gm-Gg: ASbGnctjBC07F29yYXgw2LnbBMENW1Iv9wkliv8BCMKjcI4YC9FACS9sXoTeAkINbCE
+	flZMqAEZNMMg8q5kfY4l8vhF69Q3MQzUB0iXOBEspYvgOh0GCKLFXZGRHQnbcy814vpIiWdHjQn
+	f1vHD9HCJC82TK1MRM12vDTdLI/BnMPV/eQZUUyaGetl/oIB/+g362+yYWYyAOZyLRdurGqnhUL
+	oAE0kt1e1bAuNz/COgJsRiy1+UfI4fPzpF1asRq37TjbjfIg/MHPT1G7OwT+kyT8JuP6xO3kkHa
+	M6VXKolI3H48Kdyp9OfFwxXUc4dullj7u0kqDV8EVJdF0juE4/Hxjy94oWA=
+X-Google-Smtp-Source: AGHT+IGwa/W/bwZ6mhkAXRr6G5LVK0LhE+hanV4uE2MJO+JAFyftWu8co4CAKe/KphaDCpHFbCPT8Q==
+X-Received: by 2002:a05:6602:3a03:b0:869:d4df:c2a6 with SMTP id ca18e2360f4ac-875bc49bbd2mr915998539f.14.1749737176105;
+        Thu, 12 Jun 2025 07:06:16 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-875c7f64de6sm35469939f.33.2025.06.12.07.06.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 06:25:33 -0700 (PDT)
-Message-ID: <8aa7b962-40a6-4bbc-8646-86dd7ce3380e@gmail.com>
-Date: Thu, 12 Jun 2025 14:26:58 +0100
+        Thu, 12 Jun 2025 07:06:15 -0700 (PDT)
+Message-ID: <e6194c29-18de-4dc9-a2fb-2ad63816481d@kernel.dk>
+Date: Thu, 12 Jun 2025 08:06:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,216 +81,38 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC v2 5/5] io_uring/bpf: add basic kfunc helpers
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc: io-uring@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
  bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 References: <cover.1749214572.git.asml.silence@gmail.com>
  <c4de7ed6e165f54e2166e84bc88632887d87cfdf.1749214572.git.asml.silence@gmail.com>
  <CAADnVQJgxnQEL+rtVkp7TB_qQ1JKHiXe=p48tB_-N6F+oaDLyQ@mail.gmail.com>
+ <8aa7b962-40a6-4bbc-8646-86dd7ce3380e@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAADnVQJgxnQEL+rtVkp7TB_qQ1JKHiXe=p48tB_-N6F+oaDLyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8aa7b962-40a6-4bbc-8646-86dd7ce3380e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/12/25 03:47, Alexei Starovoitov wrote:
-> On Fri, Jun 6, 2025 at 6:58 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...>> +__bpf_kfunc
->> +struct io_uring_cqe *bpf_io_uring_extract_next_cqe(struct io_ring_ctx *ctx)
->> +{
->> +       struct io_rings *rings = ctx->rings;
->> +       unsigned int mask = ctx->cq_entries - 1;
->> +       unsigned head = rings->cq.head;
->> +       struct io_uring_cqe *cqe;
->> +
->> +       /* TODO CQE32 */
->> +       if (head == rings->cq.tail)
->> +               return NULL;
->> +
->> +       cqe = &rings->cqes[head & mask];
->> +       rings->cq.head++;
->> +       return cqe;
->> +}
->> +
->> +__bpf_kfunc_end_defs();
->> +
->> +BTF_KFUNCS_START(io_uring_kfunc_set)
->> +BTF_ID_FLAGS(func, bpf_io_uring_submit_sqes, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_post_cqe, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_queue_sqe, KF_SLEEPABLE);
->> +BTF_ID_FLAGS(func, bpf_io_uring_get_cqe, 0);
->> +BTF_ID_FLAGS(func, bpf_io_uring_extract_next_cqe, KF_RET_NULL);
->> +BTF_KFUNCS_END(io_uring_kfunc_set)
+On 6/12/25 7:26 AM, Pavel Begunkov wrote:
+>> For next revision please post all selftest, examples,
+>> and bpf progs on the list,
+>> so people don't need to search github.
 > 
-> This is not safe in general.
-> The verifier doesn't enforce argument safety here.
-> As a minimum you need to add KF_TRUSTED_ARGS flag to all kfunc.
-> And once you do that you'll see that the verifier
-> doesn't recognize the cqe returned from bpf_io_uring_get_cqe*()
-> as trusted.
+> Did the link in the cover letter not work for you? I'm confused
+> since it's all in a branch in my tree, but you linked to the same
+> patches but in Jens' tree, and I have zero clue what they're
+> doing there or how you found them.
 
-Thanks, will add it. If I read it right, without the flag the
-program can, for example, create a struct io_ring_ctx on stack,
-fill it with nonsense and pass to kfuncs. Is that right?
+Puzzled me too, but if you go there, github will say:
 
-> Looking at your example:
-> https://github.com/axboe/liburing/commit/706237127f03e15b4cc9c7c31c16d34dbff37cdc
-> it doesn't care about contents of cqe and doesn't pass it further.
-> So sort-of ok-ish right now,
-> but if you need to pass cqe to another kfunc
-> you would need to add an open coded iterator for cqe-s
-> with appropriate KF_ITER* flags
-> or maybe add acquire/release semantics for cqe.
-> Like, get_cqe will be KF_ACQUIRE, and you'd need
-> matching KF_RELEASE kfunc,
-> so that 'cqe' is not lost.
-> Then 'cqe' will be trusted and you can pass it as actual 'cqe'
-> into another kfunc.
-> Without KF_ACQUIRE the verifier sees that get_cqe*() kfuncs
-> return 'struct io_uring_cqe *' and it's ok for tracing
-> or passing into kfuncs like bpf_io_uring_queue_sqe()
-> that don't care about a particular type,
-> but not ok for full tracking of objects.
+"This commit does not belong to any branch on this repository, and may
+ belong to a fork outside of the repository."
 
-I don't need type safety for SQEs / CQEs, they're supposed to be simple
-memory blobs containing userspace data only. SQ / CQ are shared with
-userspace, and the kfuncs can leak the content of passed CQE / SQE to
-userspace. But I'd like to find a way to reject programs stashing
-kernel pointers / data into them.
-
-BPF_PROG(name, struct io_ring_ctx *io_ring)
-{
-     struct io_uring_sqe *cqe = ...;
-     cqe->user_data = io_ring;
-     cqe->res = io_ring->private_field;
-}
-
-And I mentioned in the message, I rather want to get rid of half of the
-kfuncs, and give BPF direct access to the SQ/CQ instead. Schematically
-it should look like this:
-
-BPF_PROG(name, struct io_ring_ctx *ring)
-{
-     struct io_uring_sqe *sqes = get_SQ(ring);
-
-     sqes[ring->sq_tail]->opcode = OP_NOP;
-     bpf_kfunc_submit_sqes(ring, 1);
-
-     struct io_uring_cqe *cqes = get_CQ(ring);
-     print_cqe(&cqes[ring->cq_head]);
-}
-
-I hacked up RET_PTR_TO_MEM for kfuncs, the diff is below, but it'd be
-great to get rid of the constness of the size argument. I need to
-digest arenas first as conceptually they look very close.
-
-> For next revision please post all selftest, examples,
-> and bpf progs on the list,
-> so people don't need to search github.
-
-Did the link in the cover letter not work for you? I'm confused
-since it's all in a branch in my tree, but you linked to the same
-patches but in Jens' tree, and I have zero clue what they're
-doing there or how you found them.
-
-
-diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-index 9494e4289605..400a06a74b5d 100644
---- a/io_uring/bpf.c
-+++ b/io_uring/bpf.c
-@@ -2,6 +2,7 @@
-  #include <linux/bpf_verifier.h>
-  
-  #include "io_uring.h"
-+#include "memmap.h"
-  #include "bpf.h"
-  #include "register.h"
-  
-@@ -72,6 +73,14 @@ struct io_uring_cqe *bpf_io_uring_extract_next_cqe(struct io_ring_ctx *ctx)
-  	return cqe;
-  }
-  
-+__bpf_kfunc
-+void *bpf_io_uring_get_region(struct io_ring_ctx *ctx, u64 size__retsz)
-+{
-+	if (size__retsz > ((u64)ctx->ring_region.nr_pages << PAGE_SHIFT))
-+		return NULL;
-+	return io_region_get_ptr(&ctx->ring_region);
-+}
-+
-  __bpf_kfunc_end_defs();
-  
-  BTF_KFUNCS_START(io_uring_kfunc_set)
-@@ -80,6 +89,7 @@ BTF_ID_FLAGS(func, bpf_io_uring_post_cqe, KF_SLEEPABLE);
-  BTF_ID_FLAGS(func, bpf_io_uring_queue_sqe, KF_SLEEPABLE);
-  BTF_ID_FLAGS(func, bpf_io_uring_get_cqe, 0);
-  BTF_ID_FLAGS(func, bpf_io_uring_extract_next_cqe, KF_RET_NULL);
-+BTF_ID_FLAGS(func, bpf_io_uring_get_region, KF_RET_NULL);
-  BTF_KFUNCS_END(io_uring_kfunc_set)
-  
-  static const struct btf_kfunc_id_set bpf_io_uring_kfunc_set = {
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 54c6953a8b84..ac4803b5933c 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -343,6 +343,7 @@ struct bpf_kfunc_call_arg_meta {
-  		int uid;
-  	} map;
-  	u64 mem_size;
-+	bool mem_size_found;
-  };
-  
-  struct btf *btf_vmlinux;
-@@ -11862,6 +11863,11 @@ static bool is_kfunc_arg_ignore(const struct btf *btf, const struct btf_param *a
-  	return btf_param_match_suffix(btf, arg, "__ign");
-  }
-  
-+static bool is_kfunc_arg_ret_size(const struct btf *btf, const struct btf_param *arg)
-+{
-+	return btf_param_match_suffix(btf, arg, "__retsz");
-+}
-+
-  static bool is_kfunc_arg_map(const struct btf *btf, const struct btf_param *arg)
-  {
-  	return btf_param_match_suffix(btf, arg, "__map");
-@@ -12912,7 +12918,21 @@ static int check_kfunc_args(struct bpf_verifier_env *env, struct bpf_kfunc_call_
-  				return -EINVAL;
-  			}
-  
--			if (is_kfunc_arg_constant(meta->btf, &args[i])) {
-+			if (is_kfunc_arg_ret_size(btf, &args[i])) {
-+				if (!tnum_is_const(reg->var_off)) {
-+					verbose(env, "R%d must be a known constant\n", regno);
-+					return -EINVAL;
-+				}
-+				if (meta->mem_size_found) {
-+					verbose(env, "Only one return size argument is permitted\n");
-+					return -EINVAL;
-+				}
-+				meta->mem_size = reg->var_off.value;
-+				meta->mem_size_found = true;
-+				ret = mark_chain_precision(env, regno);
-+				if (ret)
-+					return ret;
-+			} else if (is_kfunc_arg_constant(meta->btf, &args[i])) {
-  				if (meta->arg_constant.found) {
-  					verbose(env, "verifier internal error: only one constant argument permitted\n");
-  					return -EFAULT;
-@@ -13816,6 +13836,12 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
-  		} else if (btf_type_is_void(ptr_type)) {
-  			/* kfunc returning 'void *' is equivalent to returning scalar */
-  			mark_reg_unknown(env, regs, BPF_REG_0);
-+
-+			if (meta.mem_size_found) {
-+				mark_reg_known_zero(env, regs, BPF_REG_0);
-+				regs[BPF_REG_0].type = PTR_TO_MEM;
-+				regs[BPF_REG_0].mem_size = meta.mem_size;
-+			}
-  		} else if (!__btf_type_is_struct(ptr_type)) {
-  			if (!meta.r0_size) {
-  				__u32 sz;
+which is exactly because it's not in my tree, but in your fork of
+my tree. Pretty wonky GH behavior if you ask me, but there it is.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

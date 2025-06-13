@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-8338-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8339-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E47AD947B
-	for <lists+io-uring@lfdr.de>; Fri, 13 Jun 2025 20:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BBAAD947C
+	for <lists+io-uring@lfdr.de>; Fri, 13 Jun 2025 20:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A542C1E4961
-	for <lists+io-uring@lfdr.de>; Fri, 13 Jun 2025 18:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B2C1BC2CCA
+	for <lists+io-uring@lfdr.de>; Fri, 13 Jun 2025 18:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC84238179;
-	Fri, 13 Jun 2025 18:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BF5239E6F;
+	Fri, 13 Jun 2025 18:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Isuf67+R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJkjmBm1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE004236A8B;
-	Fri, 13 Jun 2025 18:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BDA23814C;
+	Fri, 13 Jun 2025 18:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749839493; cv=none; b=F7mQsNzVbqef2wBdcc7YXR9/nRcml+CcN79LVXtJ/dyHOfws3mtSllOuaY/nd+QwOcpKowrJHvWIq4RZY+dFKfF2sfqxwwj27LXrx3FsCGvcF/0WvDvzPrwcWM94pjfEsDjda7ALBAaSximvYnozz0+y05WKT8LdR48WQZRCJUA=
+	t=1749839494; cv=none; b=TXf/ff7oXaGZ76j9h28ugTT9+6QvaVqag6hIabvDEuj614TJ8H32EPRPKknMdNPY4dCWlQEnVqUhwBkDNPOumnYK4Q+Fm48QsrJ24o1e9+zxPbCl08fJhNgqrSzILYWotVKUpzKnPz9Zt2iT996TgBgSqLQOENo7qigkcGAag7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749839493; c=relaxed/simple;
-	bh=eMUl/jO2IVLo6EW2JY+EPAcCS4TRrMK9eFzvDVA1m+U=;
+	s=arc-20240116; t=1749839494; c=relaxed/simple;
+	bh=kAZ5psEFA82bcJIWxJ/RhBfYCAexF+CUyzpr9B/CVwk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hGR6A3+2HIDiKdqqXlEm+XX7px+MIqULkaYMkEUAdBLi97yLsPSG55jqHfLdwBlEx2n167qx1+simMl6W/RKZVec0tQX3bw+sn7gE/PHDIPZ18YJ1VkVaXSI4ArPOg14oV5zZiAxfU2muQPgKQsGfmnougdEHvZk/xUO2BETKQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Isuf67+R; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=govAKavSgMBPhGBj9fvA9JJ5738lK14T7pzI9z/1HkVI0hq2vQUXFty0rkLjAU7IflKw3qWl0mQXZV/luELYCtKLox4ZnenBz1NAvkzaY9Iht/I6SAd3Jtc5b5Jz0L9DC30oSuCBccjBQitk22uJEBbmBFeyP/3avOSDiRQ0evI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJkjmBm1; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-adb47e0644dso419318666b.0;
-        Fri, 13 Jun 2025 11:31:30 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ade33027bcfso387934766b.1;
+        Fri, 13 Jun 2025 11:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749839489; x=1750444289; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749839491; x=1750444291; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m8eHglNY3BYuvhpWh6vTwMM9gZVFRkTRv6U8o7bWvz4=;
-        b=Isuf67+RniYEkCFRP+vlVgyNHh//ydqRDrbnlk0njWd1yPMx1RgJnin4SVHaFgYwu7
-         ImPRQc9hB3F4xFl29bCB9YUvPwXWz1/Y7o4NtcQIqJr275oiWvZfWkWqKo5dBsfKTU5t
-         tdhl6WGRX2qBxiKgNFjM58TUczvIwigFdnEfEMnJ9/qotD0jtmfbvZp8MABinYskwUU7
-         0/H3IM6bOAOj2qTZg+t/x6Sq2rEzadd/TOckrfkBks65U137zuY6FOh+IdEt5oe006Vt
-         NlMiMKQzg9b6EYhp2QqbnLOlg/5tIafIwrWWtG044OG5FENnE657sRH5X4HPd3kucBlh
-         KwmQ==
+        bh=VMT/TmzdnwX8gjT0kL+5VZilMO9bSQWco01HwQIhqxw=;
+        b=dJkjmBm1Mex9rgzB6NZPg3Nj+MmYLN7P+HI9+XltlMs1QKHI74wiBvmYw5DeBf9l0n
+         m+BJNfhoqwcifxN2hWibR48WXmqQrNDcrUFA8n6+BxyggDBGU1MsgIthxte9stuKuRlj
+         ZTt8AV5zBm/Wo5+e+hUIenN3vdaU6ab11DdHu8fhGTf60ctfvTpFhflkKWYBeZ3HbNLG
+         +6n+YIyYU0w9W4/YSDgP2HnrclITXAlL30/rhSG2xz2mT8UkVrZ1nDKMabzJ2bgJ7Gt5
+         51W7WQbZ3GcBYd6jjErng+xYDJjvPEuZyQmDm7gTC3XSYcFW8eiCyJyzUr1o9kN+TKj/
+         NW7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749839489; x=1750444289;
+        d=1e100.net; s=20230601; t=1749839491; x=1750444291;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m8eHglNY3BYuvhpWh6vTwMM9gZVFRkTRv6U8o7bWvz4=;
-        b=kYzhGA7ZJJdQMKPYBcZXlQ0ugtSHpJda+zHHWbPPCcmL2M5TvIAI5bT7R2t5Z4m7xM
-         P4TC0riUkdE/nvQzU937drYB1v+9sKWXBAP0QHsJYxT96Sc674B7EKZYBIp/jr8hybJ6
-         iRhfs2obnYLWESdtsno9PMUqtJlTTBAyxpafVJjPGfQOoOJAD2zs1H8763aK/CIXsVR0
-         OQkKcbn+cnpD12ryFSAmsl/rWkVRuBixzTOXOoad7Uyj5M6MZzO10ca/gM4dIr3jjmHd
-         1SxBLJcDaJOnNDlODcFv+0fCVEOsdgU6O1zq0a5LZR3D8mI7NwdRtOjf6CIvymuh1LAv
-         Rogg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0IQ9IYS4aS+eJ8FN0ag+Bh8uF7+PetBLu+Pbprb3216y1Czxo9HJ9MRQg8bO7+nlgnYWhH+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD2hQYOnlO2cnk5LyvJs1TK3eWiQl4gqmGvTdhb802EFPGyYf3
-	Ti0rIDredZPbcvcs/JhqBuY07JZZLwPXh+QlbQvlqjfyYXMvIkICKKIPaGgl3A==
-X-Gm-Gg: ASbGncvLDcDVNrZaBJ+lmQVjnqnMm8pmCcjDqoOdhW2K9LP9CMiTj7kBjLmisCXFPWM
-	haGPywT2WR2MOwz6Ro3qF+I0E4H0MONdpplTfnkB9dxvtqaBc2Am6/5GShlrTwZ5F5VHMHoZZtG
-	yuCE/YCT3zzFio+yYfAjStNv9AZPRoeuTb/Qj6B7HBTVYAupdPwqASMTnV/SjXdMk2nBAU1nxPV
-	1gZejGFyM3o0KGJNbDjGcs0EY6QL//vQErUtZLiiUoXHnELuPRjJ176D861WyQgWyXF//TSRxYo
-	lAPhzbB0XXANRTkULEerjfJ8+a03bKW7lYSDGKZ1NQRngEL0D/k+NPYmv04/zrXJ3FYyBurvMA=
+        bh=VMT/TmzdnwX8gjT0kL+5VZilMO9bSQWco01HwQIhqxw=;
+        b=Tw/6L/HRqxRW3ol3EMJAUWDRhNAO3dqci2R6F7IVgJko5ADAVTtw6KT4hp8sw8jQdE
+         Cl0n81ioygHAAo776Z5gGHWGV2h3rnnJHljvZYrAmwKPfeZLkt0CecP7n25nXGBZV1/x
+         7c6k7Ou9QMfHCBfanMbAqHi5vbNT5vg5e06ziDV49oCgFV7CQTzVdVakgtZbmf4VkoWN
+         X7OTUanbn7j4qJL/GybegatAe6R8g8Sa7g7elvaVwWETqxV3+fP4Z1eVC547wlee91zG
+         R5YM4NzQ6zM0hXbz1KBP9Gq1L15hlXAzMovoY0HWmqlAN9zokcXEJaJTQ8ifyvTTfzw1
+         u5kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcDYRqeu0u8s5JfSTpbNwiJ3Y0k8f64k27WhUlSNGBXOZ85YRzX0iOx4tKyuKuD8RBh4vkqCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyds5kDbJBS40OzgZW7/QCqHVHf0/395POLIRW8QTm8ENpUFJcP
+	Dr1tgHom3zqwZV1+1JYlmBC08CzviFUAZAQa5X0y+YnZWJn0lg6JCU2p9/cikw==
+X-Gm-Gg: ASbGncv2cMvPBmwPgJBB6pUVfiVG72IN50wZae1BgZ8xXHazSLo7QxJNmH2m9AcYlA4
+	Q85OTxQ3zU+zhTrxe8CMhMOJGKvXiaFSGLhIogYvrgmkmKTgdrvjd1ZISl6Ff5ITs/MVyxFjkFi
+	n9uewcBa3Tpj1xMV5lhEo6p5Z0DJPCQoYFU5nyaE7ikuCGhPyBhooxerNWVPpn5UrGm6ISAIdlI
+	D/K4tW9gOgkEIZmo2XywAr3eUWl1vB9LC8uirAopw7153Mu49npCcWiWU3+BeRdyv5zT/O6GqtJ
+	1t6jLfq4TcvhTb+IwSdV+xiceLR5jq4lUOKGihIgIdLKaMBa29QWfnw76Z3JM+P+chkiKFEY1w=
 	=
-X-Google-Smtp-Source: AGHT+IFExsLG3+fDNtemycT0Ie6KRePdGrNigXwu+9VBG0p41iagp3qlXQKE+8AYRBN7c845lL+MXw==
-X-Received: by 2002:a17:907:788:b0:ad8:91e4:a931 with SMTP id a640c23a62f3a-adf9f89f4femr73140566b.26.1749839488713;
-        Fri, 13 Jun 2025 11:31:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeUfgADXjw1DWGlSslGcDBMnyEvRJirfyXeCHzyKXDq7jfThdI6tOWKEsX3EVS6pHqwUY6gw==
+X-Received: by 2002:a17:906:6a0a:b0:ad5:372d:87e3 with SMTP id a640c23a62f3a-adfad36811fmr23135766b.27.1749839490576;
+        Fri, 13 Jun 2025 11:31:30 -0700 (PDT)
 Received: from 127.0.0.1localhost ([185.69.144.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adf688970a1sm54772466b.175.2025.06.13.11.31.26
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adf688970a1sm54772466b.175.2025.06.13.11.31.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 11:31:27 -0700 (PDT)
+        Fri, 13 Jun 2025 11:31:29 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
@@ -87,9 +87,9 @@ Cc: asml.silence@gmail.com,
 	Richard Cochran <richardcochran@gmail.com>,
 	Stanislav Fomichev <sdf@fomichev.me>,
 	Jason Xing <kerneljasonxing@gmail.com>
-Subject: [PATCH v4 4/5] io_uring: add mshot helper for posting CQE32
-Date: Fri, 13 Jun 2025 19:32:26 +0100
-Message-ID: <c595a2393f1fdcdeaefef6097274ba0c16246c4d.1749839083.git.asml.silence@gmail.com>
+Subject: [PATCH v4 5/5] io_uring/netcmd: add tx timestamping cmd support
+Date: Fri, 13 Jun 2025 19:32:27 +0100
+Message-ID: <a0e726f33e940429276a209532b36090d3976fa5.1749839083.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1749839083.git.asml.silence@gmail.com>
 References: <cover.1749839083.git.asml.silence@gmail.com>
@@ -101,125 +101,160 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a helper for posting 32 byte CQEs in a multishot mode and add a cmd
-helper on top. As it specifically works with requests, the helper ignore
-the passed in cqe->user_data and sets it to the one stored in the
-request.
+Add a new socket command which returns tx time stamps to the user. It
+provide an alternative to the existing error queue recvmsg interface.
+The command works in a polled multishot mode, which means io_uring will
+poll the socket and keep posting timestamps until the request is
+cancelled or fails in any other way (e.g. with no space in the CQ). It
+reuses the net infra and grabs timestamps from the socket's error queue.
 
-The command helper is only valid with multishot requests.
+The command requires IORING_SETUP_CQE32. All non-final CQEs (marked with
+IORING_CQE_F_MORE) have cqe->res set to the tskey, and the upper 16 bits
+of cqe->flags keep tstype (i.e. offset by IORING_CQE_BUFFER_SHIFT). The
+timevalue is store in the upper part of the extended CQE. The final
+completion won't have IORING_CQE_F_MORE and will have cqe->res storing
+0/error.
 
+Suggested-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c  | 40 ++++++++++++++++++++++++++++++++++++++++
- io_uring/io_uring.h  |  1 +
- io_uring/uring_cmd.c | 11 +++++++++++
- io_uring/uring_cmd.h |  4 ++++
- 4 files changed, 56 insertions(+)
+ include/uapi/linux/io_uring.h | 16 +++++++
+ io_uring/cmd_net.c            | 82 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 98 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 98a701fc56cc..4352cf209450 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -793,6 +793,21 @@ bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow)
- 	return true;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index cfd17e382082..dcadf709bfc4 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -968,6 +968,22 @@ enum io_uring_socket_op {
+ 	SOCKET_URING_OP_SIOCOUTQ,
+ 	SOCKET_URING_OP_GETSOCKOPT,
+ 	SOCKET_URING_OP_SETSOCKOPT,
++	SOCKET_URING_OP_TX_TIMESTAMP,
++};
++
++/*
++ * SOCKET_URING_OP_TX_TIMESTAMP definitions
++ */
++
++#define IORING_TIMESTAMP_HW_SHIFT	16
++/* The cqe->flags bit from which the timestamp type is stored */
++#define IORING_TIMESTAMP_TYPE_SHIFT	(IORING_TIMESTAMP_HW_SHIFT + 1)
++/* The cqe->flags flag signifying whether it's a hardware timestamp */
++#define IORING_CQE_F_TSTAMP_HW		((__u32)1 << IORING_TIMESTAMP_HW_SHIFT);
++
++struct io_timespec {
++	__u64		tv_sec;
++	__u64		tv_nsec;
+ };
+ 
+ /* Zero copy receive refill queue entry */
+diff --git a/io_uring/cmd_net.c b/io_uring/cmd_net.c
+index e99170c7d41a..39726283b951 100644
+--- a/io_uring/cmd_net.c
++++ b/io_uring/cmd_net.c
+@@ -1,5 +1,6 @@
+ #include <asm/ioctls.h>
+ #include <linux/io_uring/net.h>
++#include <linux/errqueue.h>
+ #include <net/sock.h>
+ 
+ #include "uring_cmd.h"
+@@ -51,6 +52,85 @@ static inline int io_uring_cmd_setsockopt(struct socket *sock,
+ 				  optlen);
  }
  
-+static bool io_fill_cqe_aux32(struct io_ring_ctx *ctx,
-+			      struct io_uring_cqe src_cqe[2])
++static bool io_process_timestamp_skb(struct io_uring_cmd *cmd, struct sock *sk,
++				     struct sk_buff *skb, unsigned issue_flags)
 +{
-+	struct io_uring_cqe *cqe;
++	struct sock_exterr_skb *serr = SKB_EXT_ERR(skb);
++	struct io_uring_cqe cqe[2];
++	struct io_timespec *iots;
++	struct timespec64 ts;
++	u32 tstype, tskey;
++	int ret;
 +
-+	if (WARN_ON_ONCE(!(ctx->flags & IORING_SETUP_CQE32)))
-+		return false;
-+	if (unlikely(!io_get_cqe(ctx, &cqe)))
++	BUILD_BUG_ON(sizeof(struct io_uring_cqe) != sizeof(struct io_timespec));
++
++	ret = skb_get_tx_timestamp(skb, sk, &ts);
++	if (ret < 0)
 +		return false;
 +
-+	memcpy(cqe, src_cqe, 2 * sizeof(*cqe));
-+	trace_io_uring_complete(ctx, NULL, cqe);
-+	return true;
++	tskey = serr->ee.ee_data;
++	tstype = serr->ee.ee_info;
++
++	cqe->user_data = 0;
++	cqe->res = tskey;
++	cqe->flags = IORING_CQE_F_MORE;
++	cqe->flags |= tstype << IORING_TIMESTAMP_TYPE_SHIFT;
++	if (ret == NET_TIMESTAMP_ORIGIN_HW)
++		cqe->flags |= IORING_CQE_F_TSTAMP_HW;
++
++	iots = (struct io_timespec *)&cqe[1];
++	iots->tv_sec = ts.tv_sec;
++	iots->tv_nsec = ts.tv_nsec;
++	return io_uring_cmd_post_mshot_cqe32(cmd, issue_flags, cqe);
 +}
 +
- static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res,
- 			      u32 cflags)
- {
-@@ -904,6 +919,31 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
- 	return posted;
- }
- 
-+/*
-+ * A helper for multishot requests posting additional CQEs.
-+ * Should only be used from a task_work including IO_URING_F_MULTISHOT.
-+ */
-+bool io_req_post_cqe32(struct io_kiocb *req, struct io_uring_cqe cqe[2])
++static int io_uring_cmd_timestamp(struct socket *sock,
++				  struct io_uring_cmd *cmd,
++				  unsigned int issue_flags)
 +{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	bool posted;
++	struct sock *sk = sock->sk;
++	struct sk_buff_head *q = &sk->sk_error_queue;
++	struct sk_buff *skb, *tmp;
++	struct sk_buff_head list;
++	int ret;
 +
-+	lockdep_assert(!io_wq_current_is_worker());
-+	lockdep_assert_held(&ctx->uring_lock);
++	if (!(issue_flags & IO_URING_F_CQE32))
++		return -EINVAL;
++	ret = io_cmd_poll_multishot(cmd, issue_flags, EPOLLERR);
++	if (unlikely(ret))
++		return ret;
 +
-+	cqe[0].user_data = req->cqe.user_data;
-+	if (!ctx->lockless_cq) {
-+		spin_lock(&ctx->completion_lock);
-+		posted = io_fill_cqe_aux32(ctx, cqe);
-+		spin_unlock(&ctx->completion_lock);
-+	} else {
-+		posted = io_fill_cqe_aux32(ctx, cqe);
++	if (skb_queue_empty_lockless(q))
++		return -EAGAIN;
++	__skb_queue_head_init(&list);
++
++	scoped_guard(spinlock_irq, &q->lock) {
++		skb_queue_walk_safe(q, skb, tmp) {
++			/* don't support skbs with payload */
++			if (!skb_has_tx_timestamp(skb, sk) || skb->len)
++				continue;
++			__skb_unlink(skb, q);
++			__skb_queue_tail(&list, skb);
++		}
 +	}
 +
-+	ctx->submit_state.cq_flush = true;
-+	return posted;
++	while (1) {
++		skb = skb_peek(&list);
++		if (!skb)
++			break;
++		if (!io_process_timestamp_skb(cmd, sk, skb, issue_flags))
++			break;
++		__skb_dequeue(&list);
++		consume_skb(skb);
++	}
++
++	if (!unlikely(skb_queue_empty(&list))) {
++		scoped_guard(spinlock_irqsave, &q->lock)
++			skb_queue_splice(q, &list);
++	}
++	return -EAGAIN;
 +}
 +
- static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index d59c12277d58..1263af818c47 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -81,6 +81,7 @@ void io_req_defer_failed(struct io_kiocb *req, s32 res);
- bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
- void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
- bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
-+bool io_req_post_cqe32(struct io_kiocb *req, struct io_uring_cqe src_cqe[2]);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
- 
- void io_req_track_inflight(struct io_kiocb *req);
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 02cec6231831..b228b84a510f 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -328,3 +328,14 @@ int io_cmd_poll_multishot(struct io_uring_cmd *cmd,
- 	ret = io_arm_apoll(req, issue_flags, mask);
- 	return ret == IO_APOLL_OK ? -EIOCBQUEUED : -ECANCELED;
- }
-+
-+bool io_uring_cmd_post_mshot_cqe32(struct io_uring_cmd *cmd,
-+				   unsigned int issue_flags,
-+				   struct io_uring_cqe cqe[2])
-+{
-+	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
-+
-+	if (WARN_ON_ONCE(!(issue_flags & IO_URING_F_MULTISHOT)))
-+		return false;
-+	return io_req_post_cqe32(req, cqe);
-+}
-diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-index 50a6ccb831df..9e11da10ecab 100644
---- a/io_uring/uring_cmd.h
-+++ b/io_uring/uring_cmd.h
-@@ -17,6 +17,10 @@ void io_uring_cmd_cleanup(struct io_kiocb *req);
- bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
- 				   struct io_uring_task *tctx, bool cancel_all);
- 
-+bool io_uring_cmd_post_mshot_cqe32(struct io_uring_cmd *cmd,
-+				   unsigned int issue_flags,
-+				   struct io_uring_cqe cqe[2]);
-+
- void io_cmd_cache_free(const void *entry);
- 
- int io_cmd_poll_multishot(struct io_uring_cmd *cmd,
+ 	struct socket *sock = cmd->file->private_data;
+@@ -76,6 +156,8 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 		return io_uring_cmd_getsockopt(sock, cmd, issue_flags);
+ 	case SOCKET_URING_OP_SETSOCKOPT:
+ 		return io_uring_cmd_setsockopt(sock, cmd, issue_flags);
++	case SOCKET_URING_OP_TX_TIMESTAMP:
++		return io_uring_cmd_timestamp(sock, cmd, issue_flags);
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
 -- 
 2.49.0
 

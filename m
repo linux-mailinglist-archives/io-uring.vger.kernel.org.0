@@ -1,107 +1,115 @@
-Return-Path: <io-uring+bounces-8364-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8365-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B09ADB39C
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:23:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4FCADB488
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03AB1734AE
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 14:22:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88BE37A294F
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 14:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B34B2BF00D;
-	Mon, 16 Jun 2025 14:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0C02BF012;
+	Mon, 16 Jun 2025 14:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SM1x2MV3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fx.arvanta.net (93-87-244-166.static.isp.telekom.rs [93.87.244.166])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06A01F37A1
-	for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.87.244.166
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38DA176AC5;
+	Mon, 16 Jun 2025 14:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083538; cv=none; b=BGd7ZaKmqH1ODrjIiYXfhF3J8vREJ8VYtii72X1U2BlAxMdccQsrJqiw0f2MirsOPX6uZs15KWG7hWGvLGYy8Z4T8lkJeNexp/fo5TchjgyRytgNKdqa7NLBXm0ttq2SvRpXQMtirUGauI2ZuftT5lWosCgA9zKCduGDgirzVTE=
+	t=1750085614; cv=none; b=SqfnOkRt3m0gQ+57rWE5jm7UmKeXL8yRKcYCPWOztuhCTG1ph9nH6EQxx8AWsfOwjlCZOh6KwFeYli3iyQHBjk4wqtoFezKlmXRs9i6OH5ke5rlj5V6qXYmWv+6JsLx1T6qW3tyVBLHFTbYLk1z75mCsNWf2UZ4QR1ak7YTt3Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083538; c=relaxed/simple;
-	bh=rrE+PMbJugMXjmkoAZ1yGUFhmAabCOSR2/oFF6A7ycg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YclC1nivN+3H4EF7Mv73u91ZvvNBoNEwKRFcKlQ4dHfZhBdmKHpX25U+45/J8Nc+9fvmuoj2SKOW7kcPnARwPaY9lHjLHIbDVXXOAQCvzkCrvwqpZmSQ+XFLgPVxXBM1ZaV+VcvHGwgsY6lGNoIz6QcOC4CmGOO+VAKFTkHk+4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arvanta.net; spf=pass smtp.mailfrom=arvanta.net; arc=none smtp.client-ip=93.87.244.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arvanta.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arvanta.net
-Received: from m1pro.arvanta.net (m1pro.arvanta.net [10.5.1.11])
-	by fx.arvanta.net (Postfix) with ESMTP id 2EDCF10A77;
-	Mon, 16 Jun 2025 16:18:55 +0200 (CEST)
-Date: Mon, 16 Jun 2025 16:18:23 +0200
-From: Milan =?utf-8?Q?P=2E_Stani=C4=87?= <mps@arvanta.net>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Subject: Re: Building liburing on musl libc gives error that errno.h not found
-Message-ID: <20250616141823.GA27374@m1pro.arvanta.net>
-References: <20250615171638.GA11009@m1pro.arvanta.net>
- <b94bfb39-0083-446a-bc76-79b99ea84a4e@kernel.dk>
- <20250615195617.GA15397@m1pro.arvanta.net>
- <1198c63d-4fe8-4dda-ae9f-23a9f5dafd5c@kernel.dk>
- <20250616130612.GA21485@m1pro.arvanta.net>
- <39ae421b-a633-4b47-bf2b-6a55d818aa7c@kernel.dk>
+	s=arc-20240116; t=1750085614; c=relaxed/simple;
+	bh=xK4CduiMa57XqNZZ3qsiup/fd4KpMPJRP2hf58ywbtI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=PutXBPIRkGs4lnau/716vfLdoQbtHEyijnYQdETiniW/dVww5DnAPiLiQcyHR/q24aGnkAJMb3JSZjgnklYTu3ULHZGaBL5YQe+PtRjyWbpPp+Bttx6FT5XbjVwoVRRUloVYm/h+hBHDVzPKxyI9qKwy3GL+Pbd9Iw2wFmhmtFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SM1x2MV3; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70f862dbeaeso45046397b3.1;
+        Mon, 16 Jun 2025 07:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750085612; x=1750690412; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5VQE+OauxeCKEmTfpf9PoviywXszi+tFuUWbU7eiSKM=;
+        b=SM1x2MV30kA0ciD8d+fS8+RrWbtqDKbIS717p+nr2tZBVDwX1Rgj5EnWhtC+GG/4ll
+         3BT+TWi/u1XCpewHT0Ob2+879iWML/vqAGSG8F0hX6rViVsYhEzFog7EKfr0NeyQLqtX
+         2ovfq8JPLU11Lka6nGLuxgIzBWipO4domrAWqQvDAAWl4HMnmdWbGcpSvyMEvTiHl4gq
+         ZVGfEFGOiS0O/oXTCvh/ym+W0kkH8BrlsnXaDDIFmcn9SXVwX0Ys6y41j7jJkEIIxPfo
+         i/NdyRCcSld6UvRC0Cc9RpO3a6bDtfq2OpNJXgyf8hQ20JD+JG9dR27U8xilZd5CnBdc
+         QhWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750085612; x=1750690412;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5VQE+OauxeCKEmTfpf9PoviywXszi+tFuUWbU7eiSKM=;
+        b=eDy6FpJbYTzsxemAEhdHyWzcnJRs6R0iQ/RcqEyvFR1nQnxrS3T3sfqOvHrpIPZ5tb
+         fG9XU9tcbyfUO96kWdMnzeHnfzS2F2HbOQqkyh07TNLbF0BLxmlKYL2a7tUgKT0/s+lA
+         3JYjOhwON5lU2PGf48WdjsXj2hoM+RErDiIt3774ItaZMXIgaFLGS4HUjOGaF8Jf1t+z
+         +ERo3wL2fXEDALuCQ1oHSFztsXKrndBqKCxYH+JRao1+Xk978VzN2DM7zRWcEwJvYIQo
+         3miBseBwBMaIYTHKW2xSY2NxbzRlKDjBe3U3tLP/ZsqdhpzlyRdFMJkfNypH3+l7cmm0
+         dRUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn2TsTrHdyEIwI8iOo1mwhcEjJsZvAERcsw4p6pGXwhPRmKBRW3GTUphu1VK4ztX6ixaQcbhau@vger.kernel.org, AJvYcCXpTdfy/lR+RXBh2RUK2meUNc02X5qUjHxdwBTUlmZWWdMGZzLjnTF07qzB2yn9ZLUBUgStNyiGtw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjEgh4Xq1Xym+LeSSyzrElbvRjbK37bfOtJY+Mgb5b8p0VvmcC
+	AM3PoDj9AQhKq7KVxm7sBQo5kIwfA57QnYWGRlwLuwzDpCkoPRVPkPxL
+X-Gm-Gg: ASbGnctcfgCdB7n41n2yIbWcQC57msubNsmP6gPyXVsPo/Bk8si+VU1yHnLkWRHmjHb
+	OCenRVDa/phW+0AGNJPq9waVnJhQhLm36Nl2bS9plrRIIoHbiWt3xEmSVKQ2zdDEkIsUIdN84HS
+	/gpeKAe/9woNphUMQzuIMboL2ui8rekuHHbTjvE2nNCwfyVMpimUKPWpEwRM6eaFReKqhMESeMq
+	HoxvkjzJDC3cfEPnOt6n2YhGVJRn7XBtraUKtJMGLfk2Lu19j3Acpptpj4MDxObip5ZRnIzuHPE
+	nu7ARDtwGbvkxks6OL0EQUg9j4rLxrEEHKgOQVy0e+WnPrtfucu4JaUQ8Bz1zDdf4MquHCj6rt4
+	Pug4TfHrnIBWSctnNOrJ6BnWc1he2/OGroCQkT49YawggSj49r4T6
+X-Google-Smtp-Source: AGHT+IHoqCJrYRdyUIXTOCrEUdPAaLyx1d7jVQxXIARSYU44p6FBM5bl0U/AGzqVxIrp/hQGdD90yQ==
+X-Received: by 2002:a05:690c:3808:b0:70f:83ef:ddff with SMTP id 00721157ae682-7117544368dmr135204427b3.30.1750085611934;
+        Mon, 16 Jun 2025 07:53:31 -0700 (PDT)
+Received: from localhost (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-7118589be31sm7096047b3.80.2025.06.16.07.53.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 07:53:31 -0700 (PDT)
+Date: Mon, 16 Jun 2025 10:53:31 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ io-uring@vger.kernel.org, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: asml.silence@gmail.com, 
+ netdev@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, 
+ Jason Xing <kerneljasonxing@gmail.com>
+Message-ID: <68502feb1175d_20ce862947@willemb.c.googlers.com.notmuch>
+In-Reply-To: <702357dd8936ef4c0d3864441e853bfe3224a677.1750065793.git.asml.silence@gmail.com>
+References: <cover.1750065793.git.asml.silence@gmail.com>
+ <702357dd8936ef4c0d3864441e853bfe3224a677.1750065793.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v5 1/5] net: timestamp: add helper returning skb's tx
+ tstamp
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <39ae421b-a633-4b47-bf2b-6a55d818aa7c@kernel.dk>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-06-16 at 07:59, Jens Axboe wrote:
-> On 6/16/25 7:06 AM, Milan P. Stanić wrote:
-> > On Mon, 2025-06-16 at 06:34, Jens Axboe wrote:
-> >> On 6/15/25 1:56 PM, Milan P. Stani? wrote:
-> >>> On Sun, 2025-06-15 at 12:57, Jens Axboe wrote:
-> >>>> On 6/15/25 11:16 AM, Milan P. Stani? wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> Trying to build liburing 2.10 on Alpine Linux with musl libc got error
-> >>>>> that errno.h is not found when building examples/zcrx.c
-> >>>>>
-> >>>>> Temporary I disabled build zcrx.c, merge request with patch for Alpine
-> >>>>> is here:
-> >>>>> https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/84981
-> >>>>> I commented in merge request that error.h is glibc specific.
-> >>>>
-> >>>> I killed it, it's not needed and should've been caught during review.
-> >>>> We should probably have alpine/musl as part of the CI...
-> >>>
-> >>> Fine.
-> >>>
-> >>>>> Side note: running `make runtests` gives 'Tests failed (32)'. Not sure
-> >>>>> should I post full log here.
-> >>>>
-> >>>> Either that or file an issue on GH. Sounds like something is very wrong
-> >>>> on the setup if you get failing tests, test suite should generally
-> >>>> pass on the current kernel, or any -stable kernel.
-> >>>>
-> >>> I'm attaching log here to this mail. Actually it is one bug but repeated
-> >>> in different tests, segfaults
-> >>
-> >> Your kernel is ancient, and that will surely account from some of the
-> >> failures you see. A 6.6 stable series from January 2024 is not current
-> >> by any stretch, should definitely upgrade that. But I don't think this
-> >> accounts for all the failures seen, it's more likely there's some musl
-> >> related issue as well which is affecting some of the tests.
-> > 
-> > This happens also on 6.14.8-1 asahi kernel on apple m1pro machine.
-> > I forgot to mention this in previous mail, sorry.
+Pavel Begunkov wrote:
+> Add a helper function skb_get_tx_timestamp() that returns a tx timestamp
+> associated with an error queue skb.
 > 
-> Also on musl, correct?
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Yes, correct.
-
-> Guessing it must be some musl oddity. I'll try and setup a vm with
-> alpine and see how that goes.
-
-It could be. I can ask on #musl IRC channel on libera.chat
-
--- 
-Kind regards
+Acked-by: Willem de Bruijn <willemb@google.com>
 

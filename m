@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8369-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8370-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02FEADB562
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 17:29:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9945ADB58C
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 17:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42EEB7ABD44
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 15:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C568B18893FB
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE05522F75E;
-	Mon, 16 Jun 2025 15:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B952F21ABAD;
+	Mon, 16 Jun 2025 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="p74RM3hf"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lmKSEyOI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ACB27E073
-	for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 15:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FAD214A94
+	for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 15:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750087602; cv=none; b=atV8pPHu1DuXmwbV95TUk7Z9ACTh7pYNx3zBrwQUVuy4aWKPtZP92oiPvsqe+nSf28bxuKWagQtVYVK+ZK6VAYaTncEURZM5fjzFgxmB6vetIPRB1Dl34xeWQAYs7Wg+rA0sKIcyNxNBLwdF9+WCcUr7foswsQfNsVwMNBo+rsY=
+	t=1750088134; cv=none; b=FHYl9lf2me/a4doeoct58UPqjgw0ODOvkN3z6LQFmc1QofA4NUJsWmj9nlvecMkbXDBtUtlQxuNlFCraGDauq7Uy6x/n9TaoFdsuhTP8R4Xnq2oYGdO9E6tE9PD1S6DEu46kPHCWMalJYL+NaFKwSyoKmsMIVW4ev+JVxrDzJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750087602; c=relaxed/simple;
-	bh=hWGGS0HIfyjaMYMIf9r/DqUND98vpTpoiNpsZ6g/MVU=;
+	s=arc-20240116; t=1750088134; c=relaxed/simple;
+	bh=ZAHdBuK1SaolaqO19wnp2+pCadbZnXUUD2E2cKZKxC0=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=COCbHempomqkwnb/wyjwO/S47AibWeAIz+myBpYebbqqfuLabK8dGu1/7jnAKbJpsVhRhF8kJyGOR1elawmX+arH4M3+FqwMeUK6clEVEqi21WbC3eO680Av1Fx6knfZJTRCOvLtpezeFLVVmSofD0sGv4Fa9D0xlFVNwsABLQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=p74RM3hf; arc=none smtp.client-ip=209.85.166.170
+	 In-Reply-To:Content-Type; b=FK6icrQ7taTzDQ6n4u++86a/OE+wFSNVATixPIv5bwAbSbWLjvX4RcD2NlWQBBySofP6hNwMOUmz6EjrDT8hOV0tYeOFkWPEQ8F4sJ4/r/r/f/zILvGWMTTBEWGcidUB6d5szna+WddiOK3hvWA0D3MPiZs6zK6rI+YIogtf8VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lmKSEyOI; arc=none smtp.client-ip=209.85.166.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3da82c6c5d4so45379395ab.1
-        for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 08:26:39 -0700 (PDT)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddc4ad070bso15045265ab.3
+        for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 08:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750087598; x=1750692398; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750088131; x=1750692931; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Z24bYW2OmAl+0Lo30RqKasxRKDEdr99aPGQ8W9WrRE8=;
-        b=p74RM3hfwGXuvnWqka6DWjeyYJLLf8oFNPdBdT3ibijA1eC0xOkMgOkWim7bXWdx+8
-         v/e/rnssYV/tSOqThcHwZzHaXG7QJ7utoim7YAebTLt9OBiv7EU6WndJr6ByuhApN0PU
-         wWtOUtZDTs+ze7xKBP2AHnbegdiaNQOosD0jTAUlL0568bac8emUqyXCp33d5en3sWgi
-         VB+s/cSosiXR1RERzCdHp4Km/6y3wEjjzwrR2cHe6gU/pvuDp0l0G9cuypN6aQHxRz8g
-         BV2f2Xcy+k6P/c+4lGpTNgrE+jECQb4W8prV+6IhyKd+z4yW4WJZLcR8DL9qAmKweeiU
-         v7dQ==
+        bh=zr040FXfDALzYQB3oH79aTMY/bon9PirUbN0NZKSvc4=;
+        b=lmKSEyOILHNbDWQnIK8lfN9P2voM93FqaIrGwc6ZPgHLL2i2kA4l326YxC+3znOkkl
+         EPExX/WsF/LM/u5A1dkHoOiLGZ5wqvBW4ZS/Jo3hFLGZR8qI5j0PcPsEBFn3n1eoJKg4
+         dmbeacjDAdcCDFDDIQ6W71m4dCoqlXbNgoD2f5jd7iszyQrL+OA4NRzaR5pqLSVSuECv
+         o9dNLBTkaFC3vcoZEN/3iFQ2dYDSwpVL8dBZxO9dfn6R1cFCIdNsIVhba4akBT0joMGf
+         GSPVnLvW0cuI3jsPqtfiv33OqEfr5YS7k/sTrc3SNwseUlg7Q7se7ktLSOa5ov2aKV1H
+         FCzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750087598; x=1750692398;
+        d=1e100.net; s=20230601; t=1750088131; x=1750692931;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z24bYW2OmAl+0Lo30RqKasxRKDEdr99aPGQ8W9WrRE8=;
-        b=mxWbtWNEEDOAKHbyluAzfTyhtC1XHIUNZAkRYy+mvifZmHHF/oiUcylYN5L+EJy/0X
-         5+x+R6cK4Fwcetbn4ZrDr7J2yk1WoRat04qXETppxikBMTRvS5xVqxT4qnr98Qx8Ip5t
-         Wi6sa4ciLUAdHYQa2KIyL1WJtmUZcDUgkZMSArmC1Y3TUQF3AuD75opL46Kw6Q/PUKPQ
-         E6rLsUAyglj7v11Ed/LD/Sm0D29Feu2GiWLbiUnFv81w38uD6gEDdK40Z9ypLY5PVUSE
-         Pf3pSV2dxFdLfzUD8323fd/k7kqJ/i+nzWifLUWOd+Si0ekYhPKjANeqyRBnjUdg5g+T
-         h25w==
-X-Gm-Message-State: AOJu0Yxx3PGc48aXBq2eCUGYUAiFdzgWJdMart5My2CJHDfLp9241Ivu
-	y8bDoT4D1Fs5wRCgjp2Y8HBxFcDJQdb5H+TG+gpfljpRM8Rew8pqgfbXAnGaNYeN6p5NBFcExhY
-	YDFpD
-X-Gm-Gg: ASbGncu/Hcktq5VkTMQoixPWVEfUbAm1SzDvyXMThTTMWsgAsHjAhik7wWUxoAQitwZ
-	wF/BqNNHBYkaQq36fKLCpnflsqJvEsvWQZsiNoj1fzpWpW2i9gcVdbJDkwx9iAUOqih8cPbO0bD
-	BBS6ehoBoTbXmD4m79YVcNSIQ/IRnqp1d60AmKcTXQ5cTMIzvUqXKx+vjI2RTMwueogjMM8k6Vm
-	+vih3wbyNnb9udxkFT9hbfqJyBCBFmQGawhp1XQ9IftfNHFna7CX0AtQIGSoVeXxZrGxnq0bVJP
-	sXuoyezON+sF/lUYd1k/005Mvm5HI/AbmSMyfM46JFrKqiu6m/zhIVJhM0I=
-X-Google-Smtp-Source: AGHT+IG4nlRVTKb3MGnd7BtOjFtWB//o13dqLWXENV1T5PwoGwDu9qKPRNJvwu/ttY0ZncsTvW81Zg==
-X-Received: by 2002:a05:6e02:198d:b0:3dc:7fa4:804 with SMTP id e9e14a558f8ab-3de07ced6acmr105677865ab.16.1750087598445;
-        Mon, 16 Jun 2025 08:26:38 -0700 (PDT)
+        bh=zr040FXfDALzYQB3oH79aTMY/bon9PirUbN0NZKSvc4=;
+        b=a5JQ2RalYyoB33OPdw51bVKkIWi9Ed+INhmmUtkwuAVjQ/OuiKISl+BTYQyKSarq4u
+         yv1oJ6S0fc295tFstmTMJZh7Fz+tRLVQ1Pgr3bNZNTkWZCS3yE12OfJC0SpClAxIU3r8
+         u936vtV2EpyOtBQuacynzlyGljlT5kwj5ibLH9Qp2vtMAluIUIL0wzphsxhveipGCEic
+         MQNjG1RBYEdl7XEtvptB7EEt2QxVe1A9baGoUNwQxZFIbdOTdVWOt5t5ws5Ls1dXBlkD
+         HwBoQDU3lxVIJYYO6YEMz7Wc0cSdJmb6+tHgimO5KqA4TwHO3fR0CN0CzfRk7KEfTRaB
+         4xcA==
+X-Gm-Message-State: AOJu0YzDJ3UKQMyzmozSCpMPor+2n6Q+8E5ykhI0pqtDJ/vjf/DearpO
+	SuIpMnZ7HTdZu/5raxcyL375/MvFVa1gEgp12O3pfl4fMqY0xSQfAkcpFmRi35mTRoM7MyQjYV1
+	WQAA7
+X-Gm-Gg: ASbGncsQoSfrfS3aiXhK3bEP1UcOd2yGs6XUWpBXh2tbtRVhtVfpPX+rL1KKTR2adcP
+	kTPTKhCdcvoGC7yn3zIxT39k+aXsVZK2z36RWMvqqkwNrCXVBQ7hX0MLPUup3Yyv2k24n93Mm8C
+	gHTPspMfYI0trLChVu5c5H2sqQz5MBF3i8XUU1tOe6LR8sCsci0ebgc//oleAv7NswoT3FtOj0g
+	NSv1wwG8pD3ERCcTWnnAH8xyHr5XICZxrUsp+YwixmfhDXwOwRuxysWzj8LsVdggBK+lz23EQ5b
+	KbIx9qz3t7yQR62oniyACwrpSPqoHG1dlp57its3Pcb4okD1bD2IInmvpDU=
+X-Google-Smtp-Source: AGHT+IE6ZMCPjqZWaUT4ZB3x17bOCNzJrkVTRCi7Q6KXxPouF8LZ5EwM+JBG1ysRg6JzZizxj2r9pg==
+X-Received: by 2002:a92:ca4a:0:b0:3dd:b726:cc52 with SMTP id e9e14a558f8ab-3de07cdb48amr115775725ab.5.1750088131042;
+        Mon, 16 Jun 2025 08:35:31 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de134094f6sm9620455ab.9.2025.06.16.08.26.37
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149b7adaasm1767971173.9.2025.06.16.08.35.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 08:26:37 -0700 (PDT)
-Message-ID: <536b7d81-d64a-4ba4-9f07-5bfa8286bf1b@kernel.dk>
-Date: Mon, 16 Jun 2025 09:26:37 -0600
+        Mon, 16 Jun 2025 08:35:30 -0700 (PDT)
+Message-ID: <a3aaaba3-17d6-4d23-8723-2a25526a4587@kernel.dk>
+Date: Mon, 16 Jun 2025 09:35:29 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -152,25 +152,13 @@ On 6/16/25 9:13 AM, Jens Axboe wrote:
 > Probably easier if I just take a look at it, as long as I can get
 > an alpine vm image going.
 
-Works fine here, only tests that seem to mess up are the ones that
-assume a fully featured ps is there:
+Pure guesswork, but you are most likely running into default ulimit
+limits being tiny. Probably something ala:
 
-Running test sq-poll-kthread.t                                      ps: unrecognized
- option: ppid
-BusyBox v1.37.0 (2025-05-26 20:04:45 UTC) multi-call binary.
+rc_ulimit="-n 524288 -l 262144"
 
-Usage: ps [-o COL1,COL2=HEADER] [-T]
-
-Show list of processes
-
-	-o COL1,COL2=HEADER	Select columns for display
-	-T			Show threads
-ps: unrecognized option: ppid
-
-Unsure what's going on at your end. This is using a recent -git
-kernel, fwiw.
+in /etc/rc.conf would help.
 
 -- 
 Jens Axboe
-
 

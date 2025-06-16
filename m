@@ -1,151 +1,150 @@
-Return-Path: <io-uring+bounces-8376-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8374-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671BBADB744
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 18:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02779ADB741
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 18:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63BF63B0531
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F26188A3B1
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C31A286D62;
-	Mon, 16 Jun 2025 16:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C002877E4;
+	Mon, 16 Jun 2025 16:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuL5ocsI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fx.arvanta.net (93-87-244-166.static.isp.telekom.rs [93.87.244.166])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFA32853E5
-	for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 16:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.87.244.166
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548F32868BE;
+	Mon, 16 Jun 2025 16:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750092275; cv=none; b=UYSlzOANOnN6D6yExYTmxL3/Pzf9xuzUcYLHP7vMfcXGFeV0bfukNGvrUka0AU8LjfH7RWe2KbxrI0jGPUgI2mgasZtlGMQ2Wz4D1GA49//fo8GG9Gp3ha/AsFnQsXPhbWRQ2bl3zwVh7ml6mvD4HTbrUeLfYH3ziE6cigphJ9M=
+	t=1750092225; cv=none; b=YZTL+X0ylY3pFAvZb+pXswOgISLhTri4YRSA92ejRPECbIRacagnYyI7V3A7aDbebJn9BwSBlXAMMc2gZAbyA1tmFrUM1zYBPsxV8mALmFy+2VSOKEM0RVOPeH8sOhLc7Zv6KEG8addX8HQRE47FtsFD1z/iUcZ2yaEXm4pFheI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750092275; c=relaxed/simple;
-	bh=Nbo08adM22amw50MHM0cMWoI1TzYUlabtPRpiZE8gpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oH6oouL9zqiV3SUPPe1RlGa25MgaSKYwUa6IGe2lSM74Ip9xQdS8jAYmbNxkPexxPlHmsjo9xsP6mzTMto6wRHaESAdIRiL1AB8gzECSA0v+wPAbX3xu46Kr8BUbcPimjgVrz9bW6PJLAcKUCNqLWug7BReoEIZbYa+yIgENSwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arvanta.net; spf=pass smtp.mailfrom=arvanta.net; arc=none smtp.client-ip=93.87.244.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arvanta.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arvanta.net
-Received: from m1pro.arvanta.net (m1pro.arvanta.net [10.5.1.11])
-	by fx.arvanta.net (Postfix) with SMTP id 0DF7D10A7C;
-	Mon, 16 Jun 2025 18:44:32 +0200 (CEST)
-Date: Mon, 16 Jun 2025 18:44:00 +0200
-From: Milan =?utf-8?Q?P=2E_Stani=C4=87?= <mps@arvanta.net>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Subject: Re: Building liburing on musl libc gives error that errno.h not found
-Message-ID: <20250616164400.GA24503@m1pro.arvanta.net>
-References: <b94bfb39-0083-446a-bc76-79b99ea84a4e@kernel.dk>
- <20250615195617.GA15397@m1pro.arvanta.net>
- <1198c63d-4fe8-4dda-ae9f-23a9f5dafd5c@kernel.dk>
- <20250616130612.GA21485@m1pro.arvanta.net>
- <39ae421b-a633-4b47-bf2b-6a55d818aa7c@kernel.dk>
- <20250616141823.GA27374@m1pro.arvanta.net>
- <290bfa14-b595-4fea-b1fe-a3f0881f4220@kernel.dk>
- <a3aaaba3-17d6-4d23-8723-2a25526a4587@kernel.dk>
- <20250616163244.GA16126@m1pro.arvanta.net>
- <f5b6a7f1-ecb2-4247-b339-b7a3f51f5216@kernel.dk>
+	s=arc-20240116; t=1750092225; c=relaxed/simple;
+	bh=t/rcOgrqV4GUMhRY/s8qMXwRBu0gGDxETR85eeBHoxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmUBYMOhnG/ePkumkEbnU2K0k29VthbseE5q3hxfCEe9YuIUN0ejTcSdJ+xTn0q06UP9PpSA1FMZrxv+7c4v/2gFAII1q7sxiOCrM2fbqZLHrnOaVW/DkPhk86o4DcQto6lIHkcAN6EUUFU5X5QTs6bMui/bS82Q3G2MgeA9V1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuL5ocsI; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45310223677so38861265e9.0;
+        Mon, 16 Jun 2025 09:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750092221; x=1750697021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MJu/DRgKxbvGWmrmMICOxRmLs/eFEaqIfRF424VViBo=;
+        b=SuL5ocsIU1theeMGlhz3+K4XCVwXXVKX3uX6J1zPIYehq56nYWN5K3X/e380/tMUYE
+         1rxg0TkFq2I8QlCRRFoSRlNs0EY7d2XUuECDQ+3kyrR4j1RkhfgPFqqb2BXfS/VY2fFf
+         HdDofRz2frFJvXHMAVQP6qz5PbB9YqhKkuuwBUTLKa306JnmFA4tpRFgmwet4kAt3bSJ
+         rim/Z4/sWs+4NMSvDD3rEoznN0BdetGoVCKFRbH4ddyS4k83xPUqHN2r6l+XqbC5t0uV
+         tqMOd75TNi4d8ZvOSeMWJiMb3VSTdPK8luvIXvtuyWIk+o+6rgHnz3Xmxc57cAMYSITh
+         N3hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750092221; x=1750697021;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJu/DRgKxbvGWmrmMICOxRmLs/eFEaqIfRF424VViBo=;
+        b=kB/WF8YsO9HlN1mUiex0yi57X7z1BdkT3Gp2oBxRRKXhUO78lhqKzuTzCjQ2QIjbNV
+         jTRN6OOWO1AMt6vYEtu8Hz39ZNPEOHbRVZwOjpkhOcIeSeOzDwhKwjvYmLRZUrDOhlPg
+         upIT1yh4VBApPHL3X8TYZpLz9xYgH3ZtOxLxDRFIdVU6YdeJgTaxZ0ug7bFC0KIwTWKn
+         ENzL++3KQw0L36CrTUVPMEQucYBC8xjLZHySoFq6yDiJAJ7dHAJqYK/bgznZSqfyFueL
+         uDf5k1l4NqLxWvYwQbJXflxSUknymlhOWuclwE9LdGxJq1QeE/naUOA2R4d6xZm3ilBl
+         zKyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcfZkc77U0W0ZNEU5BgPPVRSgDi5qNXhnXdiaCS86NSSySoyAtRuuK2FmrSph2Ek+a4TqzrU6iyg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmwQzaklkNWv2L3pc57pCXMvXoAuE9ADeVqM3njUd/dis07Rsr
+	6HV8THFADp2E5HSJ5RGHxlVqXWaf31PItUVSgRJg6WN4MJXwOVEp7WfM
+X-Gm-Gg: ASbGncst+O8/dBHzuv5pXkJMf/xobObJ53Lp4XBgw9MCp2Xtnf17ofaMx/7bXqdyQZ+
+	Uedi0ghAB0GCEuw3S94JE4Ncb+vm65HVcplbOva7iT5hSelu3QMt0K4ZMzBZQq4/YyFlu4CGmg1
+	QeBu+WEidsXMTS999dCecxMWuPHPtb2XPnuclfoGtNiIRh6Nwm/3TdVvZgO0ZMhW1WuUsWWvWhV
+	Xm31hiEOx+gh9rfE3AVX2yRO+Kh/Fe0HNPwrjuNwY2wjmxm1cgwL7o9OvRbjgk1WbSYqSrFzA+N
+	/RFg/fBFpsuC8o5YsEqZrHo6ak0jUEJyKY1Uv8gWJb7NcueMH9ZvYFrs2R3SrxJJ/A0vHQ==
+X-Google-Smtp-Source: AGHT+IFgBj38TtIwuUXZqKCW9/IRbWhyd/rx6Z7YVLb5wsrzaOAK3EnCZ4cxViz3ola/pveQOmj5aQ==
+X-Received: by 2002:a05:600c:3496:b0:442:f4d4:522 with SMTP id 5b1f17b1804b1-4533ca9467emr91887555e9.5.1750092221378;
+        Mon, 16 Jun 2025 09:43:41 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4531febf905sm180848865e9.0.2025.06.16.09.43.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Jun 2025 09:43:40 -0700 (PDT)
+Message-ID: <e96805aa-2ce8-46c0-b136-4781cf4092ce@gmail.com>
+Date: Mon, 16 Jun 2025 17:44:57 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5b6a7f1-ecb2-4247-b339-b7a3f51f5216@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] net: timestamp: add helper returning skb's tx
+ tstamp
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ io-uring@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Jason Xing <kerneljasonxing@gmail.com>
+References: <cover.1749839083.git.asml.silence@gmail.com>
+ <766c5e599bc94296fe58087e4c30226260cddff8.1749839083.git.asml.silence@gmail.com>
+ <684f8218f2e39_1e2690294dd@willemb.c.googlers.com.notmuch>
+ <560f6cd7-f66e-43ca-b458-ae362d0779de@gmail.com>
+ <685031054a4b2_20ce86294c8@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <685031054a4b2_20ce86294c8@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-06-16 at 10:35, Jens Axboe wrote:
-> On 6/16/25 10:32 AM, Milan P. Stani? wrote:
-> > On Mon, 2025-06-16 at 09:35, Jens Axboe wrote:
-> >> On 6/16/25 9:13 AM, Jens Axboe wrote:
-> >>> On 6/16/25 8:18 AM, Milan P. Stani? wrote:
-> >>>> On Mon, 2025-06-16 at 07:59, Jens Axboe wrote:
-> >>>>> On 6/16/25 7:06 AM, Milan P. Stani? wrote:
-> >>>>>> On Mon, 2025-06-16 at 06:34, Jens Axboe wrote:
-> >>>>>>> On 6/15/25 1:56 PM, Milan P. Stani? wrote:
-> >>>>>>>> On Sun, 2025-06-15 at 12:57, Jens Axboe wrote:
-> >>>>>>>>> On 6/15/25 11:16 AM, Milan P. Stani? wrote:
-> >>>>>>>>>> Hi,
-> >>>>>>>>>>
-> >>>>>>>>>> Trying to build liburing 2.10 on Alpine Linux with musl libc got error
-> >>>>>>>>>> that errno.h is not found when building examples/zcrx.c
-> >>>>>>>>>>
-> >>>>>>>>>> Temporary I disabled build zcrx.c, merge request with patch for Alpine
-> >>>>>>>>>> is here:
-> >>>>>>>>>> https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/84981
-> >>>>>>>>>> I commented in merge request that error.h is glibc specific.
-> >>>>>>>>>
-> >>>>>>>>> I killed it, it's not needed and should've been caught during review.
-> >>>>>>>>> We should probably have alpine/musl as part of the CI...
-> >>>>>>>>
-> >>>>>>>> Fine.
-> >>>>>>>>
-> >>>>>>>>>> Side note: running `make runtests` gives 'Tests failed (32)'. Not sure
-> >>>>>>>>>> should I post full log here.
-> >>>>>>>>>
-> >>>>>>>>> Either that or file an issue on GH. Sounds like something is very wrong
-> >>>>>>>>> on the setup if you get failing tests, test suite should generally
-> >>>>>>>>> pass on the current kernel, or any -stable kernel.
-> >>>>>>>>>
-> >>>>>>>> I'm attaching log here to this mail. Actually it is one bug but repeated
-> >>>>>>>> in different tests, segfaults
-> >>>>>>>
-> >>>>>>> Your kernel is ancient, and that will surely account from some of the
-> >>>>>>> failures you see. A 6.6 stable series from January 2024 is not current
-> >>>>>>> by any stretch, should definitely upgrade that. But I don't think this
-> >>>>>>> accounts for all the failures seen, it's more likely there's some musl
-> >>>>>>> related issue as well which is affecting some of the tests.
-> >>>>>>
-> >>>>>> This happens also on 6.14.8-1 asahi kernel on apple m1pro machine.
-> >>>>>> I forgot to mention this in previous mail, sorry.
-> >>>>>
-> >>>>> Also on musl, correct?
-> >>>>
-> >>>> Yes, correct.
-> >>>>
-> >>>>> Guessing it must be some musl oddity. I'll try and setup a vm with
-> >>>>> alpine and see how that goes.
-> >>>>
-> >>>> It could be. I can ask on #musl IRC channel on libera.chat
-> >>>
-> >>> Probably easier if I just take a look at it, as long as I can get
-> >>> an alpine vm image going.
-> >>
-> >> Pure guesswork, but you are most likely running into default ulimit
-> >> limits being tiny. Probably something ala:
-> >>
-> >> rc_ulimit="-n 524288 -l 262144"
-> >>
-> >> in /etc/rc.conf would help.
-> > 
-> > Tried, but didn't help.
-> > 
-> > I will left it for now and return to test it when new liburing is
-> > released. It must pass our builders and CI, so I disabled test earlier.
-> > 
-> > Thank you for help.
+On 6/16/25 15:58, Willem de Bruijn wrote:
+> Pavel Begunkov wrote:
+>> On 6/16/25 03:31, Willem de Bruijn wrote:
+>>> Pavel Begunkov wrote:
+>>>> Add a helper function skb_get_tx_timestamp() that returns a tx timestamp
+>>>> associated with an error queue skb.
+>>>>
+>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>>> ---
+>>>>    include/net/sock.h |  9 +++++++++
+>>>>    net/socket.c       | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>>>>    2 files changed, 55 insertions(+)
+>>>>
+>>>> diff --git a/include/net/sock.h b/include/net/sock.h
+>>>> index 92e7c1aae3cc..0b96196d8a34 100644
+>>>> --- a/include/net/sock.h
+>>>> +++ b/include/net/sock.h
+>>>> @@ -2677,6 +2677,15 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+>>>>    void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+>>>>    			     struct sk_buff *skb);
+>>>>    
+>>>> +enum {
+>>>> +	NET_TIMESTAMP_ORIGIN_SW		= 0,
+>>>> +	NET_TIMESTAMP_ORIGIN_HW		= 1,
+>>>> +};
+>>>
+>>> Can you avoid introducing a new enum, and instead just return
+>>> SOF_TIMESTAMPING_TX_HARDWARE (1) or SOF_TIMESTAMPING_TX_SOFTWARE (2)?
+>>
+>> I can't say I like it more because TX_{SW,HW} is just a small
+>> subset of SOF_TIMESTAMPING_* flags and the caller by default
+>> could assume that there might be other values as well, but let
+>> me send v5 and we'll see which is better.
 > 
-> That's fine, I don't recommend distros attempt to verify it by using
-> the test suite anyway, that's not really its intended purpose. Though it
-> can be useful in terms of verifying all relevant fixes are backported,
-> particular if the distro is one of those oddballs that don't base on or
-> pull in -stable.
+> This is quite a lot of new timestamping logic for only io_uring as
+> user, and I don't see any other user of it coming soon. I also see no
+> easy way to make it more concise, so it's fine. But this at least
+> avoids one extra new enum.
 
-Fine for me also. So I will keep tests disabled for Alpine in future.
-
-> I'll be releasing 2.11 shortly, but it likely won't change anything on
-> your end, outside of having the examples/zcrx compilation fixed.
-
-ok.
-
-> FWIW, I'm on Alpine Linux 3.22 and it passes here.
-
-We do developing new release in 'edge' (something like rolling release)
-and only backport for security fixes and some bugs to stable releases.
-So, I always  run all things on 'edge' (except servers, ofc)
+enums are free :) Anyway, I don't have plans for further changes,
+so I agree, SOF_TIMESTAMPING_* shouldn't be a problem.
 
 -- 
-Kind regards
+Pavel Begunkov
+
 

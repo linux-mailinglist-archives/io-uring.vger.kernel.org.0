@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-8357-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8358-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4ABADAC3A
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 11:45:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8337FADAC3D
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 11:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633F2172026
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 09:45:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B897A883A
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 09:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB337274660;
-	Mon, 16 Jun 2025 09:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0043274672;
+	Mon, 16 Jun 2025 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlP9N4F+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgQLR6JK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0328F4A;
-	Mon, 16 Jun 2025 09:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228926E153;
+	Mon, 16 Jun 2025 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750067130; cv=none; b=FSrdYJcoIT0+L5nfqbqMRAKjU9479ma75Ft8NVkbIHle+58Q5GwP6C5eybhAUvxMG8QHHDPDRy5wWtXqigMO2JpD2VlPhDQHx5l29/T2eRrONqGK5akXyeWIR9q8VnH5nnY6QyX66jLL1A/60yo7PAphoLSk03eYoTZS41vFtsA=
+	t=1750067132; cv=none; b=KXw777fZaALpk2AuIvaOs5FOE/c6REYNWgNlSKyfgfFihYM90qOTETxkVzNbRHi5OEepW9JOuFMRzXwsKaFc3GNrX7+6slb4U6R/x7v9ucn7VB8mvu4ldytQ4YIoM5psSNk+HNp78q7jOuegSXUkYRv9gL9N8FO8Sc+VFhmGNKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750067130; c=relaxed/simple;
-	bh=Jjjo60WITY9GtZmvz8RE7uP2zNvDt+TkJqvuQdBjyZk=;
+	s=arc-20240116; t=1750067132; c=relaxed/simple;
+	bh=2efenWFVRJ0EilBZaGipZU21tMPXsU85DniQxQSKJZ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pWnkIuxJogu3vDTlvgLQr2iWdRSnrQIWbu868SPg/b3o1l0mytYEP0abBb6m1ttJU4dilgUXIpkLpZLtq/wmaYzgDS7veSiJerlN5Xxd/LgI3n/XjQ5fcUT3SR6Ed7agJ3ob1WYqBfi0t5ax+dhvnpiTJUSwdQJt1eAbq92HTgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlP9N4F+; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version; b=boDo3QQttemrdhB62JlxYnvZwSuZlT3pNEINVTq8ZJDee2br6OUpeIrogZtaVoPZQ8IB3UXV178JQLi/wVoIFymd8+XSnyC64b25gx+1owrD7NDToLfSJQ+YrD82zubdN67Kpt3+Jc4urCWnUY8vWmx1AbxjGg0zNwCRlFf+Fig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgQLR6JK; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ade30256175so835978266b.1;
-        Mon, 16 Jun 2025 02:45:28 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso787853466b.3;
+        Mon, 16 Jun 2025 02:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750067127; x=1750671927; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750067129; x=1750671929; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aD7+pJreiHwF0tkKY4KqPuG7e7WnlVtmgmXqmSRVJZA=;
-        b=VlP9N4F+9pB6Aujc8o+sDWJLGHho8Z/63dCQE4hJ2vphvZ9i36exQ78s7FpofOHl2a
-         Y26ynMV3LwsFqoRnGHm8gEbJNJ2VM8fT+j21mHONv1AsV9UwkwmUdRYRj+DNt5bcVc7i
-         LqXWD0L6xYhD91BFjizCerfNN5oSUWpY8XI3hcthQjXlaUB3oaj6+tov4AbJbEKuRjvU
-         D1NmcSSsyqSZr3QBiOGrFldgXTUE/zgGjYuJk6KFBKjIqOugENkPEmd9eDKgBvP6INTF
-         6CFcjp577goCnEOUZgwcABtdqTZVf4UkSbR9A8KR7J+DVrAG5vZAYapIcGxoTq70VK8w
-         8c9A==
+        bh=ogbrohRyhOQkQnsNYMhiGAZZpnvN6u565D9/k0Fb8TU=;
+        b=JgQLR6JKlBypmLZ30B4dT9hGNKc8rCx5QGOxMQOkUyubhHNL0ZWQgkkRtKsgbgFX0C
+         SnPLF/KlGcxL9OZUO2DpyUU+xvzbPqpl2kyXeLO4ihNs/TtjAmUaoML434EsHXZJIznt
+         lzCJlJ7AS+Bcbid7NtR2zoIzRvV1mBlaAm6B+W1AKPDbporXqCtFTs2K3rMP+BwZRkR/
+         ApdK+M8wz4+3bDKmwiBbXyB/ADKwq/0upTp27lSNr0Ey0UNOFNHsibo52YcbUNj+eTPm
+         eywOMINLqES9m0qLPSkQJKPOczEfCj5Jb7kX9fXomUJay7o/cAeQu7FonCG/BxoRqC5s
+         wFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750067127; x=1750671927;
+        d=1e100.net; s=20230601; t=1750067129; x=1750671929;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aD7+pJreiHwF0tkKY4KqPuG7e7WnlVtmgmXqmSRVJZA=;
-        b=TkRtx2zETsL2nWyYq6yNyNRe74hieU2s1LMOU9fkSADtduPsLPtUbploJepfiPr9sz
-         8kGwbdd2BlvwbYlyK7oMs65MIQ805gRZcUdTJrD0+P5JA6+TzSsf552M8LE7lAIyYyf0
-         +dUYAGSVo1kXC0weXTRLyVN0S+5qCpv4GPcSG71cwIIeZbIWgL8+Jwnv44FbMryyFiB9
-         WnXojWkzvdELaXFmMq3fAUqPr+4A1oURJFvfQuerIWxdwq4nUOKeBta2DhK8eROwbHaN
-         R9QiltXuCZVM5CpSXncdigk/3VL7WSQD79AO1FBl2q3bHVtH0Du2xNqpTbpVEsraCPl+
-         nOXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJI8O0rd7n830mGiPb51IbeYgvCKe1CJMf0/JstixspoamlSgyM5hsD9ctyx+o1Doy9crvAG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJXVHieb1asThejOeW4zyIJlFWSkzwpVt2F7GbQJHieuDlbdK1
-	CigondJUsZUO7dgqTlmPZgQZg78SCLn2tSowXvWGWJ4i+cDAxK3L+NmYIOS5WQ==
-X-Gm-Gg: ASbGncu33KGZOaRI6N5skc6UhFEworPXvT9JIrgTO3GmLCJNdwJCLaVpKn5J2CM9ggT
-	LxgC1pRKbyNVUwvPVQ2mdnOvXA21WC4MP7RSOsbiSAESZUixpCX8pOTZhfvqnriwhrZIyUDc5JR
-	5+kyf9sUhjiW3nte0mCrTjrsHVTxAd0+yKiQXKmTJDF7Hn+JhuVZAnJd2AqD89NpiBIWYpbeV9W
-	x97H5pmcYOXi71JZebYHXq2/0s7kJ5wsMFpg/eR7G+2BIm4nsOSyw3S7qf23OYPzTrGxgdusDAJ
-	zNIF4hxEyvRiJxu5vVPZAzk+NF/MGqRP1eSMwk/ocUWqSw==
-X-Google-Smtp-Source: AGHT+IHykhQQxoMiX9eHz+kfP19B7s8I7Ekhevw3qg1xNANG3H2W+pTJjBw94jwd5bHC1jhmz0+LuA==
-X-Received: by 2002:a17:906:c103:b0:ad8:a41a:3cba with SMTP id a640c23a62f3a-adfad43c58fmr968410666b.43.1750067126798;
-        Mon, 16 Jun 2025 02:45:26 -0700 (PDT)
+        bh=ogbrohRyhOQkQnsNYMhiGAZZpnvN6u565D9/k0Fb8TU=;
+        b=cVO1rAcyoD34pM20hd53/0bO9ZoyvE4dhnt+Tzt7JOVB8sVJX/1Pl6h+NpXGz0tSlv
+         xl38l0INaJm16mxvO/5pIG9HdwwbILtMmAJ1gwsf9HF1mP+K/jJ75cIWA5fMqngqvlcg
+         M8ndkwflmFLNGsoInfmiWI69LGSfECqEZwngVgOgYyOQ8kTNIJeM3qGOkBruQfUuYNGe
+         PhB7bWkiAoC+s1cU34Q6oR1YDthHi1rXTNw0b3eKGz//jHsPKGGxwG1bvTg+EuELV30h
+         7BpxNZXByE+qNcigFxQjBTq88klutXh2e+8hsQlmckH1p++WmMvz3w45d1QsOAVTZmVk
+         YnuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLtx3ShmZJnUWvY19J5fblVY+mah5pFS2odSUxghT9UxMBFH1sYS6yiONO3npPtFu7Y6jQzlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx97PilbsyKU4qwx3+Mnix5YY4MJj9PNqdM2l36tSUEWNmd0mES
+	CeGpDhQ0cLHNKt+eYnQ1vxTV5X+kRXVvNjiwTlfgQZ4gijtcB9+y+wswscAy6Q==
+X-Gm-Gg: ASbGncuptT/EA6x6sNQmgRn4Gl6jWUXA7l5m1kWMutRM9cg/qvI+ZIzYxKmQsgGgsDF
+	k29vT5mRyUbKZMTJmMSY2ZBXobdNELelxqTqQjDQCCsdVjA6ToO0qHoPpux4v334VOFmoF2nT4p
+	BwQdH2M/AAWA60619/A2/k9DcVO+bCJRZIAuIkRcXARW46IaUPIHtn/xtnBVkBep+EQ8CDvPI09
+	8Eq9HEJO3GxZgzY1ZzoaKL+I2wIyfHJsjDUguwUTJRCD/g9a/vWR6323WAlNOTv1XiG22ooAXjd
+	JFAsSozDPktzsMjIToAkYevw3d8/4BzZvPCJuKNJc8Na534Qotzg41Oa
+X-Google-Smtp-Source: AGHT+IH55t+IfswXmuF7yutu5ot1GzAPVWWYpzodjZN054UuM/1/mHxMqO8LCUOIR+qyWoVHh7iI4g==
+X-Received: by 2002:a17:907:3ea2:b0:ade:355e:d655 with SMTP id a640c23a62f3a-adfad43d903mr825682966b.41.1750067128342;
+        Mon, 16 Jun 2025 02:45:28 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:a3c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159393sm629363266b.15.2025.06.16.02.45.25
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159393sm629363266b.15.2025.06.16.02.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 02:45:25 -0700 (PDT)
+        Mon, 16 Jun 2025 02:45:27 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org,
 	Vadim Fedorenko <vadim.fedorenko@linux.dev>
@@ -86,9 +86,9 @@ Cc: asml.silence@gmail.com,
 	Richard Cochran <richardcochran@gmail.com>,
 	Stanislav Fomichev <sdf@fomichev.me>,
 	Jason Xing <kerneljasonxing@gmail.com>
-Subject: [PATCH v5 2/5] io_uring/poll: introduce io_arm_apoll()
-Date: Mon, 16 Jun 2025 10:46:26 +0100
-Message-ID: <7ee5633f2dc45fd15243f1a60965f7e30e1c48e8.1750065793.git.asml.silence@gmail.com>
+Subject: [PATCH v5 3/5] io_uring/cmd: allow multishot polled commands
+Date: Mon, 16 Jun 2025 10:46:27 +0100
+Message-ID: <bcf97c31659662c72b69fc8fcdf2a88cfc16e430.1750065793.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750065793.git.asml.silence@gmail.com>
 References: <cover.1750065793.git.asml.silence@gmail.com>
@@ -100,102 +100,89 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation to allowing commands to do file polling, add a helper
-that takes the desired poll event mask and arms it for polling. We won't
-be able to use io_arm_poll_handler() with IORING_OP_URING_CMD as it
-tries to infer the mask from the opcode data, and we can't unify it
-across all commands.
+Some commands like timestamping in the next patch can make use of
+multishot polling, i.e. REQ_F_APOLL_MULTISHOT. Add support for that,
+which is condensed in a single helper called io_cmd_poll_multishot().
+
+The user who wants to continue with a request in a multishot mode must
+call the function, and only if it returns 0 the user is free to proceed.
+Apart from normal terminal errors, it can also end up with -EIOCBQUEUED,
+in which case the user must forward it to the core io_uring. It's
+forbidden to use task work while the request is executing in a multishot
+mode.
+
+The API is not foolproof, hence it's not exported to modules nor exposed
+in public headers.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/poll.c | 44 +++++++++++++++++++++++++++-----------------
- io_uring/poll.h |  1 +
- 2 files changed, 28 insertions(+), 17 deletions(-)
+ io_uring/uring_cmd.c | 23 +++++++++++++++++++++++
+ io_uring/uring_cmd.h |  3 +++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 0526062e2f81..c7e9fb34563d 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -669,33 +669,18 @@ static struct async_poll *io_req_alloc_apoll(struct io_kiocb *req,
- 	return apoll;
- }
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 9ad0ea5398c2..02cec6231831 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -12,6 +12,7 @@
+ #include "alloc_cache.h"
+ #include "rsrc.h"
+ #include "uring_cmd.h"
++#include "poll.h"
  
--int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
-+int io_arm_apoll(struct io_kiocb *req, unsigned issue_flags, __poll_t mask)
+ void io_cmd_cache_free(const void *entry)
  {
--	const struct io_issue_def *def = &io_issue_defs[req->opcode];
- 	struct async_poll *apoll;
- 	struct io_poll_table ipt;
--	__poll_t mask = POLLPRI | POLLERR | EPOLLET;
- 	int ret;
+@@ -136,6 +137,9 @@ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
  
--	if (!def->pollin && !def->pollout)
--		return IO_APOLL_ABORTED;
-+	mask |= EPOLLET;
- 	if (!io_file_can_poll(req))
- 		return IO_APOLL_ABORTED;
- 	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
- 		mask |= EPOLLONESHOT;
++	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
++		return;
++
+ 	ioucmd->task_work_cb = task_work_cb;
+ 	req->io_task_work.func = io_uring_cmd_work;
+ 	__io_req_task_work_add(req, flags);
+@@ -158,6 +162,9 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, u64 res2,
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
  
--	if (def->pollin) {
--		mask |= EPOLLIN | EPOLLRDNORM;
--
--		/* If reading from MSG_ERRQUEUE using recvmsg, ignore POLLIN */
--		if (req->flags & REQ_F_CLEAR_POLLIN)
--			mask &= ~EPOLLIN;
--	} else {
--		mask |= EPOLLOUT | EPOLLWRNORM;
--	}
--	if (def->poll_exclusive)
--		mask |= EPOLLEXCLUSIVE;
--
- 	apoll = io_req_alloc_apoll(req, issue_flags);
- 	if (!apoll)
- 		return IO_APOLL_ABORTED;
-@@ -712,6 +697,31 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- 	return IO_APOLL_OK;
++	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
++		return;
++
+ 	io_uring_cmd_del_cancelable(ioucmd, issue_flags);
+ 
+ 	if (ret < 0)
+@@ -305,3 +312,19 @@ void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
+ 
+ 	io_req_queue_iowq(req);
  }
- 
-+int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
++
++int io_cmd_poll_multishot(struct io_uring_cmd *cmd,
++			  unsigned int issue_flags, __poll_t mask)
 +{
-+	const struct io_issue_def *def = &io_issue_defs[req->opcode];
-+	__poll_t mask = POLLPRI | POLLERR;
++	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
++	int ret;
 +
-+	if (!def->pollin && !def->pollout)
-+		return IO_APOLL_ABORTED;
-+	if (!io_file_can_poll(req))
-+		return IO_APOLL_ABORTED;
++	if (likely(req->flags & REQ_F_APOLL_MULTISHOT))
++		return 0;
 +
-+	if (def->pollin) {
-+		mask |= EPOLLIN | EPOLLRDNORM;
++	req->flags |= REQ_F_APOLL_MULTISHOT;
++	mask &= ~EPOLLONESHOT;
 +
-+		/* If reading from MSG_ERRQUEUE using recvmsg, ignore POLLIN */
-+		if (req->flags & REQ_F_CLEAR_POLLIN)
-+			mask &= ~EPOLLIN;
-+	} else {
-+		mask |= EPOLLOUT | EPOLLWRNORM;
-+	}
-+	if (def->poll_exclusive)
-+		mask |= EPOLLEXCLUSIVE;
-+
-+	return io_arm_apoll(req, issue_flags, mask);
++	ret = io_arm_apoll(req, issue_flags, mask);
++	return ret == IO_APOLL_OK ? -EIOCBQUEUED : -ECANCELED;
 +}
+diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
+index a6dad47afc6b..50a6ccb831df 100644
+--- a/io_uring/uring_cmd.h
++++ b/io_uring/uring_cmd.h
+@@ -18,3 +18,6 @@ bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
+ 				   struct io_uring_task *tctx, bool cancel_all);
+ 
+ void io_cmd_cache_free(const void *entry);
 +
- /*
-  * Returns true if we found and killed one or more poll requests
-  */
-diff --git a/io_uring/poll.h b/io_uring/poll.h
-index 27e2db2ed4ae..c8438286dfa0 100644
---- a/io_uring/poll.h
-+++ b/io_uring/poll.h
-@@ -41,6 +41,7 @@ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags);
- struct io_cancel_data;
- int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
- 		   unsigned issue_flags);
-+int io_arm_apoll(struct io_kiocb *req, unsigned issue_flags, __poll_t mask);
- int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags);
- bool io_poll_remove_all(struct io_ring_ctx *ctx, struct io_uring_task *tctx,
- 			bool cancel_all);
++int io_cmd_poll_multishot(struct io_uring_cmd *cmd,
++			  unsigned int issue_flags, __poll_t mask);
 -- 
 2.49.0
 

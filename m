@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8373-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8372-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBEBADB713
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 18:36:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B094AADB70F
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 18:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EF618840A4
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41B6168F63
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jun 2025 16:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7892868AA;
-	Mon, 16 Jun 2025 16:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C147269CF0;
+	Mon, 16 Jun 2025 16:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KTcKSmqV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OL7AUP4E"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32D81F9F7A
-	for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 16:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0BA2868AA;
+	Mon, 16 Jun 2025 16:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091760; cv=none; b=hR/5KjeMqE6x4wJxu4KpnlJmBRJVvCMnHU1lbOB1qiUcGtzNf3IC0xp9VKmnITb9NT6hO+UpiEob0/DdtWs7n7pvZT051UfJ6dwzPzlV7wnBpa1M39D9k6Kzf8UI0s/iQ0rqeg3sV/JXY4SqbU7IWiaqZtl6G+lSKBePJpI9RHo=
+	t=1750091749; cv=none; b=WDcaAOoVZXd49BgPt06S6IzJKtjWMoVGFpmXzWY73CWP4odnlbcGuCUpCd1jHH4c5I8D8IrQ/+wnXdclXAIdKz/MqhegGoCyr3CCfmm+EzkK9r7AltSyPAv8VGx8zODLQWe8+GxTwcoHSCQ0750dOeFE8YgAx1+okHzgLi0OVnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091760; c=relaxed/simple;
-	bh=PlJutQVv0CC/CeFsaLjKbuHaBPAaX9JwqDzPiUHqoNM=;
+	s=arc-20240116; t=1750091749; c=relaxed/simple;
+	bh=f//04nA86a2frPrdLvlf59G2O/r7xSN5UM0jMXIiuxU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JimwYZ6sTG+r9Mg7iui5W729uMnlyQjsc850XV4UnE63y4fXZ0ACKJXemjJXHnhNi+Qt5TFDAKo2CqGh07+JhbjFq1CHn8Ibd9gVOrzWmFgd3VzTpq7SZr1JlYzILAEe4vyCPDgNTagU3tR1vkX14cjN2GrgNEkfPvJIAPy2mCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KTcKSmqV; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d8020ba858so53761555ab.0
-        for <io-uring@vger.kernel.org>; Mon, 16 Jun 2025 09:35:57 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Vfa1WZ2o1pFu2hZOg9rjosu1VNYPMZNpLnfrdDNp3K18nNQtUpNXPLlxXkDG9EOgjvvmVEHcjyG0+0T4dzUgQjEKPI/amdHWx6n5BuQa/QFWThQ0zo2cwE4AOIAy5/rn8dq3+HtMLd4DleEJB+g7U48H8zF9RH8PK53DA3hCKH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OL7AUP4E; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d7b50815so39843025e9.2;
+        Mon, 16 Jun 2025 09:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750091757; x=1750696557; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750091746; x=1750696546; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3dedbl7KF0M309NmbvhdrBdhuZGznIkcgu4Wmdr0qwU=;
-        b=KTcKSmqVdb9j6Y7pTJDmGmCA8qVZvwkvixg85t9Kt8QF7emBm2BvNtY/yL1XPSRs8h
-         2jEWI0hOfoQoMoqyu9GCtdud8FXDJbwiodXHfqkGJLI8Uj/rN/1FXUGPOFdZ5Rn6qbcv
-         8Zd58OcSd37bs/Vlmcn4VwTJMM9mLgbawLlv2QfL1m8OYGH41gikyXuADqLgYAyoJQNU
-         ekgiYoiQjh7y6Fx4WmKoIy6nydnVm/WLAKb1dGIM1xuZu2xcAa14Nmnulfe7p8Bk//pl
-         cgdvGO69Bptiaefp4l9PdSW9MaLBCCpkFINERvqGuYmj6xQS8I7l0EDnzK6qBCwRZO5q
-         n60Q==
+        bh=p95WO1l7RogtvAaExfdpVHlBm0jGWO82lMgNc0hMKck=;
+        b=OL7AUP4EPe2KUXh2EN10joQXfUR6H/MEpImeGSREg71O1VpMz5heF8zPOoYxrDzG7E
+         +KULryfEasa49qnAf+hYcSkA0GjE/HSU64tN4EfgASezkDCgYWcUg7gryJlJ00cIm5cE
+         tk1q1N8doOxIxJel9Nn0XTQV/XQ/htu0VXuvox/urm8sybmpk9ReSTT58/FM1dfhKOT4
+         FbBb64zNx1E4k6aJ1bcebYLSXlognMx3iOyR3CxwbA9thWL576LwtIpXXxTnDLcaCdct
+         FQ9eEuk7nTyaucahwIi7yeY2jSN44Wk6Ct4nBXHW37mlsbm6qd2wddGdbMmkKDDroLUY
+         qIvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750091757; x=1750696557;
+        d=1e100.net; s=20230601; t=1750091746; x=1750696546;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3dedbl7KF0M309NmbvhdrBdhuZGznIkcgu4Wmdr0qwU=;
-        b=enLf0LvtaWxYIKj+iV9DhzZKs1xLH5Aosns7I27hP4d1sLvcYdYyRsrcM+EeQXwebb
-         +1oAAag9Vu5p1nm4hoHE65ePxWCayOgctuGDiGeWUTJf59y2hV6QaADlWDMZ38O2i8we
-         hXqEtnL/2EJpI4eF+9g3np1ay7K1H/s0EU3EHiVoq/CsoCddiVg+UUh43wtkRP8zbB3p
-         9y6Xr0S1mgpOzFakWvlEHTwO8a29Wkf6Lvbj0cdx33mCeT0HYP26YJN+dISpojSUk+gk
-         cnrtMCimjpKQON2RJN7So1IByRmnZEko8bpzHy6AqZ0JiFe4a2UxG6YivuKo2yj270XS
-         oRuA==
-X-Gm-Message-State: AOJu0Yz+OtuR1wlHSyYK10sSgbOltFti/HgNWG7newB5rEHqwo8/vmYh
-	ay2cwgrZWNS7miSOinv3+pFKzFA/pTJE1gXJvU9k+xToLAWrNsomLD88gIWSfCaJ6aF8MeWXPJr
-	ZuQfi
-X-Gm-Gg: ASbGnctF9O5+c9gibxLIe3WY+d/MFRf5uFABVcJhYXpWlmBVKjCh6usi9fM1Sgebsxy
-	OwdZbxejr8bJsys8CjvsdHLW4cEHii8GoAsoETQjpxYO1zN9MaO3uwbRL0gymcR152Gr/4bWzC4
-	oB9pfr/eu/iEnqrkLHUvfrK9qW01JatYhPXqDWB3XEZfOXR5WI1+B0JOWrWBh7/fZinsZ9yH3Wy
-	EpxqXzEtQS5vENUGrQNxjYHcEfpPO2v7O0nf2RrUerw7teUJsxn+RZkJCjIXaXQARvh09vut6Ss
-	xA43EM4zWAvfMr7SferGdPsmmzK9pWfrujmb695YWPkTgg2eAHrE8OvoExA=
-X-Google-Smtp-Source: AGHT+IF/Uk+eQA1bTEeB0Uq7dwQBGeWi1CQE3et9Bbbsir81pkhSeM40zBr87sadSs00JoMXy/g7YQ==
-X-Received: by 2002:a05:6e02:310c:b0:3dd:b5fd:aafd with SMTP id e9e14a558f8ab-3de07c53c80mr121510365ab.2.1750091756578;
-        Mon, 16 Jun 2025 09:35:56 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149c85bf7sm1759951173.107.2025.06.16.09.35.55
+        bh=p95WO1l7RogtvAaExfdpVHlBm0jGWO82lMgNc0hMKck=;
+        b=wtMrQuXD2w43gsQEO/QZascAv5uPfmwxFHE7SuzW81dJG+rtEIRNoPs0G/l9Ex0lLr
+         fWZGws46YmXLH0JVCGvEpwfcCPk4/RLReZXRVVy07hOXGxasazjWbwBld4aP0EUM5AH0
+         fdskonC/zx9bkKgE/FGCc4eshxgoQzmiS+8zkKoY6l4T40PhluJT2lVRAKNeRAOOlD5b
+         8XSULib+Nrrz6HBCtqOU//n3gLjtVzHVvfOxf/z9lSgWKZTUiADsKrsxnVg2K3FluQfZ
+         RZKo6zKKj4m17E0JF6RIj+DWFJ+fOrDHD5EOKScAYTlhdWOqB6rFY/BLbolQ5skbhLYA
+         0Jsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB3T4BmB8ZvJ9vsTTe5UG+iy0ZavbvbbFPeyYKQsQEb4lEFVxRjwpqBL/no9VqgSHL9P63L+DHDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWwfjuFrDEbV+m1TBNQVPxC+TSHVQiiYt8GayHP2us3wkmbKr0
+	AOdciTEXXcOmJIDawXw2SrwFsbAUn/LPieYbmTtBqC8dHwQ6yEEm8fQa
+X-Gm-Gg: ASbGnct59Cu/z1MSClWxo+5Yt5pd+tY6n6Xm7LshzjfVE+tDxNj3tV6birCakOlOlT5
+	s/kuztkBM8VR26pqNaazGrjNyUHdaYTS5Wg/vz1lJn9b29zixHMScstG6pgjeyBG1/OFHwL0Bji
+	9mEaCcsbw93U5n9bSypkdBb//7+bAoI6tZaGGadsJE8IvZeIjdLdbvHSjM/tldS8iKgLuM6hkel
+	mVCvhjrwYBqHTN+G0kjBCAm6mMOIGKQI0UYgp6GFByg5ju9sqMKO06vDPTXMzcq/EnFcjXO7vcn
+	UcLHln+cVPLnh1C5hE/Bj4liYQqjLJB3TEvCE5KnxbR7Qt38Sj4HPhy8OWclj2FYLXM2oQ==
+X-Google-Smtp-Source: AGHT+IFAPTIK3NWEph1La8TZ7u5iliYHvGiUwHtrT/yqY1uJDb81dZz062orV4ofhNmW3Oz3uIwG7Q==
+X-Received: by 2002:a05:600c:1e1d:b0:453:6ca:16a6 with SMTP id 5b1f17b1804b1-4533cae690dmr118354705e9.10.1750091745437;
+        Mon, 16 Jun 2025 09:35:45 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e172b03sm149127985e9.36.2025.06.16.09.35.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 09:35:56 -0700 (PDT)
-Message-ID: <f5b6a7f1-ecb2-4247-b339-b7a3f51f5216@kernel.dk>
-Date: Mon, 16 Jun 2025 10:35:55 -0600
+        Mon, 16 Jun 2025 09:35:44 -0700 (PDT)
+Message-ID: <65907669-80cb-4c79-9979-4bd2c159c0ed@gmail.com>
+Date: Mon, 16 Jun 2025 17:37:01 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,106 +81,74 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Building liburing on musl libc gives error that errno.h not found
-To: =?UTF-8?Q?Milan_P=2E_Stani=C4=87?= <mps@arvanta.net>
-Cc: io-uring@vger.kernel.org
-References: <20250615171638.GA11009@m1pro.arvanta.net>
- <b94bfb39-0083-446a-bc76-79b99ea84a4e@kernel.dk>
- <20250615195617.GA15397@m1pro.arvanta.net>
- <1198c63d-4fe8-4dda-ae9f-23a9f5dafd5c@kernel.dk>
- <20250616130612.GA21485@m1pro.arvanta.net>
- <39ae421b-a633-4b47-bf2b-6a55d818aa7c@kernel.dk>
- <20250616141823.GA27374@m1pro.arvanta.net>
- <290bfa14-b595-4fea-b1fe-a3f0881f4220@kernel.dk>
- <a3aaaba3-17d6-4d23-8723-2a25526a4587@kernel.dk>
- <20250616163244.GA16126@m1pro.arvanta.net>
+Subject: Re: [PATCH v5 1/5] net: timestamp: add helper returning skb's tx
+ tstamp
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ io-uring@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Jason Xing <kerneljasonxing@gmail.com>
+References: <cover.1750065793.git.asml.silence@gmail.com>
+ <702357dd8936ef4c0d3864441e853bfe3224a677.1750065793.git.asml.silence@gmail.com>
+ <685031d760515_20ce862942c@willemb.c.googlers.com.notmuch>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250616163244.GA16126@m1pro.arvanta.net>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <685031d760515_20ce862942c@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/16/25 10:32 AM, Milan P. Stani? wrote:
-> On Mon, 2025-06-16 at 09:35, Jens Axboe wrote:
->> On 6/16/25 9:13 AM, Jens Axboe wrote:
->>> On 6/16/25 8:18 AM, Milan P. Stani? wrote:
->>>> On Mon, 2025-06-16 at 07:59, Jens Axboe wrote:
->>>>> On 6/16/25 7:06 AM, Milan P. Stani? wrote:
->>>>>> On Mon, 2025-06-16 at 06:34, Jens Axboe wrote:
->>>>>>> On 6/15/25 1:56 PM, Milan P. Stani? wrote:
->>>>>>>> On Sun, 2025-06-15 at 12:57, Jens Axboe wrote:
->>>>>>>>> On 6/15/25 11:16 AM, Milan P. Stani? wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> Trying to build liburing 2.10 on Alpine Linux with musl libc got error
->>>>>>>>>> that errno.h is not found when building examples/zcrx.c
->>>>>>>>>>
->>>>>>>>>> Temporary I disabled build zcrx.c, merge request with patch for Alpine
->>>>>>>>>> is here:
->>>>>>>>>> https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/84981
->>>>>>>>>> I commented in merge request that error.h is glibc specific.
->>>>>>>>>
->>>>>>>>> I killed it, it's not needed and should've been caught during review.
->>>>>>>>> We should probably have alpine/musl as part of the CI...
->>>>>>>>
->>>>>>>> Fine.
->>>>>>>>
->>>>>>>>>> Side note: running `make runtests` gives 'Tests failed (32)'. Not sure
->>>>>>>>>> should I post full log here.
->>>>>>>>>
->>>>>>>>> Either that or file an issue on GH. Sounds like something is very wrong
->>>>>>>>> on the setup if you get failing tests, test suite should generally
->>>>>>>>> pass on the current kernel, or any -stable kernel.
->>>>>>>>>
->>>>>>>> I'm attaching log here to this mail. Actually it is one bug but repeated
->>>>>>>> in different tests, segfaults
->>>>>>>
->>>>>>> Your kernel is ancient, and that will surely account from some of the
->>>>>>> failures you see. A 6.6 stable series from January 2024 is not current
->>>>>>> by any stretch, should definitely upgrade that. But I don't think this
->>>>>>> accounts for all the failures seen, it's more likely there's some musl
->>>>>>> related issue as well which is affecting some of the tests.
->>>>>>
->>>>>> This happens also on 6.14.8-1 asahi kernel on apple m1pro machine.
->>>>>> I forgot to mention this in previous mail, sorry.
->>>>>
->>>>> Also on musl, correct?
->>>>
->>>> Yes, correct.
->>>>
->>>>> Guessing it must be some musl oddity. I'll try and setup a vm with
->>>>> alpine and see how that goes.
->>>>
->>>> It could be. I can ask on #musl IRC channel on libera.chat
->>>
->>> Probably easier if I just take a look at it, as long as I can get
->>> an alpine vm image going.
+On 6/16/25 16:01, Willem de Bruijn wrote:
+> Pavel Begunkov wrote:
+>> Add a helper function skb_get_tx_timestamp() that returns a tx timestamp
+>> associated with an error queue skb.
 >>
->> Pure guesswork, but you are most likely running into default ulimit
->> limits being tiny. Probably something ala:
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>   include/net/sock.h |  4 ++++
+>>   net/socket.c       | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 50 insertions(+)
 >>
->> rc_ulimit="-n 524288 -l 262144"
->>
->> in /etc/rc.conf would help.
+>> diff --git a/include/net/sock.h b/include/net/sock.h
+>> index 92e7c1aae3cc..f5f5a9ad290b 100644
+>> --- a/include/net/sock.h
+>> +++ b/include/net/sock.h
+>> @@ -2677,6 +2677,10 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+>>   void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+>>   			     struct sk_buff *skb);
+>>   
+>> +bool skb_has_tx_timestamp(struct sk_buff *skb, const struct sock *sk);
+>> +int skb_get_tx_timestamp(struct sk_buff *skb, struct sock *sk,
+>> +			 struct timespec64 *ts);
+>> +
+>>   static inline void
+>>   sock_recv_timestamp(struct msghdr *msg, struct sock *sk, struct sk_buff *skb)
+>>   {
+>> diff --git a/net/socket.c b/net/socket.c
+>> index 9a0e720f0859..2cab805943c0 100644
+>> --- a/net/socket.c
+>> +++ b/net/socket.c
+>> @@ -843,6 +843,52 @@ static void put_ts_pktinfo(struct msghdr *msg, struct sk_buff *skb,
+>>   		 sizeof(ts_pktinfo), &ts_pktinfo);
+>>   }
+>>   
+>> +bool skb_has_tx_timestamp(struct sk_buff *skb, const struct sock *sk)
+>> +{
 > 
-> Tried, but didn't help.
+> I forgot to ask earlier, and not a reason for a respin.
 > 
-> I will left it for now and return to test it when new liburing is
-> released. It must pass our builders and CI, so I disabled test earlier.
-> 
-> Thank you for help.
+> Is the only reason that skb is not const here skb_hwtstamps?
 
-That's fine, I don't recommend distros attempt to verify it by using
-the test suite anyway, that's not really its intended purpose. Though it
-can be useful in terms of verifying all relevant fixes are backported,
-particular if the distro is one of those oddballs that don't base on or
-pull in -stable.
-
-I'll be releasing 2.11 shortly, but it likely won't change anything on
-your end, outside of having the examples/zcrx compilation fixed.
-
-FWIW, I'm on Alpine Linux 3.22 and it passes here.
+Yes, and also get_timestamp() for skb_get_tx_timestamp(). It's easy to patch,
+but I was hoping we can merge it through the io_uring tree without deps on
+net-next and add const to the new helpers after. It's definitely less trouble
+than orchestrating a separate branch otherwise. FWIW, it'd be fine to add
+const to the existing helpers in the meantime as long as the new functions
+stay non-const for now. Hope that works
 
 -- 
-Jens Axboe
+Pavel Begunkov
+
 

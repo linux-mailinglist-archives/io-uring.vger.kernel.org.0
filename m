@@ -1,143 +1,153 @@
-Return-Path: <io-uring+bounces-8386-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8387-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62F4ADCBF1
-	for <lists+io-uring@lfdr.de>; Tue, 17 Jun 2025 14:50:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B12ADCC04
+	for <lists+io-uring@lfdr.de>; Tue, 17 Jun 2025 14:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0258718984E6
-	for <lists+io-uring@lfdr.de>; Tue, 17 Jun 2025 12:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 024483AFD29
+	for <lists+io-uring@lfdr.de>; Tue, 17 Jun 2025 12:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6188F28BAB3;
-	Tue, 17 Jun 2025 12:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B128BAB1;
+	Tue, 17 Jun 2025 12:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LzKYQwER"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PGMUNoX4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7241F874C
-	for <io-uring@vger.kernel.org>; Tue, 17 Jun 2025 12:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0621D28BAA4
+	for <io-uring@vger.kernel.org>; Tue, 17 Jun 2025 12:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750164569; cv=none; b=bH6OGpIVIvUwi4MQa7j7BTvamC8FhrPT6dv19A4ijA7+JOVlaFGkt7p8b6utFdbnmiQJVgcjV5zieDGTDsPZFuG01K9bmJGLjTK+vS2hmgN/vZT0OxyDYbLMgZySDFgGqb5M9Me95Qh82hbz73srwCCNEBWH0cjtSDGmf0r1uuE=
+	t=1750164787; cv=none; b=n2OYSDZPatLnQu7D1dk6LgQya5Ix4oFaMTYWYM6ksUguVFxEcCiiVkG3NQYnJp7om7pfsnKhXbh9wXRrRCjOdpCRwBb435vg3j8clIWSoYxPbG10wBohySuxP+IYx98Cn5rlJpYMcumP3vMXGhWF18lVWqTDRVFfZVOyIRptu3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750164569; c=relaxed/simple;
-	bh=YnhGYsChP7V5qQvM8tVIaMv/2vyhq0Olayiiz1sEQFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=clsW4CAgw+EwwodM8qIYsrbGt3epmTU3wqM+JQq7KMdFUj9ApuhSplzOI+We5KHSAjkdytFWXA0wrlm06oKonjGrfRkHDmwCY6jT8Wo4wKSOyb0gGra3G4xFkVVwnCve3nqVkB9TXiGVcUb1UviIrI6EX0EYrn8xm39kJ+VIqUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LzKYQwER; arc=none smtp.client-ip=209.85.166.182
+	s=arc-20240116; t=1750164787; c=relaxed/simple;
+	bh=F3+s0/pmwGLdnQuK7Ff/UG+BEutCPeAOuuzNIRijpf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OXRlvkpoRtvdVmy/nnmBD/3VG7UiyR1VrL5kHVDasRtTxdVFhWgO37abcVZ3e2n7Q+5i5Qv5z88Kl7QH8Sym5cYsIGulR/vE+I9fIZvjYD/eCdPTnML8vzfasKVOjrRkFQvUcUKb02UGvoVQdzFIq+S3BUPZ7HGMdoKbiGOR16A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PGMUNoX4; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3de0f5ff22dso8994715ab.1
-        for <io-uring@vger.kernel.org>; Tue, 17 Jun 2025 05:49:27 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3ddda8e419bso24667925ab.0
+        for <io-uring@vger.kernel.org>; Tue, 17 Jun 2025 05:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750164566; x=1750769366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+v1TEp7JFvHZOwfztPs2w4IdI9A1YGYm2Jk/PztqfwQ=;
-        b=LzKYQwER8VMjbni9dOm1PpFfGQYGK/JSl7kzdD+5IcJDA3Uo29ymt8XfYOHSe2ecYZ
-         lh/hIT/GQD9hJ3yhxmU711mAalGXlA1rs+1MGQcq8qCM4nNL68S0DyypPRHwTcTrdOL0
-         d/+QA/Djagx+cFs0lsDRgJo/RsHgGm00ON8cEHd7Xe+g2Z8JKgSVybjfyvpJJlvWuvam
-         wyNlMPd6JG7e7upwUyCvrGaAddTkBp38Fhw0+4j67Bf4FHrXd6wl+OXsiAo69pRApbZF
-         mnncvaIQ1qUNNnzSjBEuGgOAHiFUBHPA6EH/ZkySlqR+S2HAdzzj0C0eJz99+Fyp9uai
-         Y0sA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750164785; x=1750769585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PJYeeTODD5BQ4jLbpOEHvWLsKMTX6dvTlOoHFR5Ubkc=;
+        b=PGMUNoX4lZ2F4O1EtkSTWwSLPO3luThB8SbIV4trlRPnQZxp2WJJlS3L+95sAYSlgG
+         2x462oRMxvxyCc/FbWG3LvBsvLmz/rZ62JDCvC5WtYfQWry2dYGdPVOZbt26EIDYDIT0
+         pKZ48J86M+JKvLlONUvzoGZYpOcmQn6rv23wXS0gexCssEno0/IPBTOCxChCw1QNlAk2
+         mZKxRymlPybMEFNc0VSn4di3SuFGK9HoqhA/jAj1FRJbckuGfJLj9+ujIwsaK/xqtj7k
+         hoeYc9VCk5dm6lkjaMjTb1SQElQkqOTYTtVyr+e+rMM8PnlsDfx3dm3bVdoDeGikiIYM
+         vnvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750164566; x=1750769366;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+v1TEp7JFvHZOwfztPs2w4IdI9A1YGYm2Jk/PztqfwQ=;
-        b=P6nKmnBYNUrDq7M+aA+cNdnwtg6beM2peShhNhsSxuwC9JEb21/Bq8E4AvzN+JQGr7
-         Q9LtMKQv2ihAj0CQ0lVgYU2bpmFHEwVuIBY/x3deOwUUuuwliMH/VIrk037BP7mq6kcu
-         iEJr724ALl9DWVFBuDZGgDTlslGz5cOr5neN/2GBSY+tZvDdt5K1KNujxZYNlKvk016q
-         arnT2IX7Ol+5keAvr7hpNisIpAZkZzkjDNQZSP+0Wc843CchKdNFMEtBUCHlL4l/eziZ
-         hWYp76frUy67tgK1hZiEfUdc6HcVeb3plPF9ihuYHZ9NEGpE9OOsihy4kEhFHGFFc5YY
-         cwbg==
-X-Gm-Message-State: AOJu0Yw9T45RQP4ow37fXY3WbpVLIgoPHC3RcsT/B6Kkq3+R6vSugf15
-	UyzmFW3dYq606f+J3mA742UmttZN5CxYFnAFkO0a7Y+5O/+9ymilPyvbfjsb44smUNLjF2Jh5W2
-	Y7JRW
-X-Gm-Gg: ASbGncsxEBlsyd5uPvfw75o50yPkSMWC+Yqmenqj6EiXGvzENtyR6fxDuFYzNqj4tGo
-	V0LWiGSIDiTc1zncHGGgPiXp5L9+NOy7/ZTWEgaa8hLZP6NPef+2vIQDPwStKHTE8teuzBwTdS8
-	2A6eyJxOrJliwAvHEz9NV5r9+xTxddC4qrWOPrx2iauk89sgaNoRMQ/vkwlgWWZBpclz+DrZKBv
-	diy1vYxSeaQ9hhcXQ5jPka4vOamb75cKRGIbAvFJyH4GurZwjVlA9gOqOoVTx3Lc0Pf03I/GSnH
-	DeHOh/l7MHFrEIT4sMah742kxXDdL85SBn2BTJw26HFl4HI2IiEKUBmF
-X-Google-Smtp-Source: AGHT+IF7PRjzCR0vK3rffdZAWLOVjbGDrFc+KLhuLQLtrcgtjxqGSBYXrKZnC9KHhbQJHO7FEO41EQ==
-X-Received: by 2002:a05:6e02:461b:b0:3dd:c067:20bf with SMTP id e9e14a558f8ab-3de22c13552mr28391185ab.2.1750164566109;
-        Tue, 17 Jun 2025 05:49:26 -0700 (PDT)
-Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149c6c900sm2161057173.76.2025.06.17.05.49.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 05:49:25 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	syzbot+763e12bbf004fb1062e4@syzkaller.appspotmail.com
-Subject: [PATCH 2/2] io_uring/sqpoll: don't put task_struct on tctx setup failure
-Date: Tue, 17 Jun 2025 06:48:32 -0600
-Message-ID: <20250617124920.1187544-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250617124920.1187544-1-axboe@kernel.dk>
-References: <20250617124920.1187544-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1750164785; x=1750769585;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJYeeTODD5BQ4jLbpOEHvWLsKMTX6dvTlOoHFR5Ubkc=;
+        b=GCGzUik1csLJwOz1d0pMbE8+QwR3v6osnLLr9ETJtNZ1v+K3fNPqdyAbImhrmA+Xhw
+         E18JbqenPQNcxgSX8ir4OjCXbMkgOD6JE8RyujrrFbu3YzEFZCckgDuy0Y/Mbwv5ia99
+         tHyGYqSsPURowa39Tb2cf1woNnD7aa14UTzkeZt53ZOI7/YOGN7+90GPRqAqurbzu61U
+         ZviCh7Ivi4BSofsYazrzlNkH7fOVnGO7HPj/IDl2PcFZQqajjEulRAyxh7GYnxiG3Gvs
+         pCAu533rUboWLwQTLpHM8i8l0mkajRs5aL9ViUo6QJ95O4TshH/J6djcZeXRdPWZNBX6
+         UxSw==
+X-Gm-Message-State: AOJu0YzPmanZpGBOPRezjqz7u7glXcinqxpzjoCpkwwMeFubwM1kaXst
+	t1DlNq2H6LpGubOfHgv7bV3ZotuMTiAUcsrgdMUkqOv1uOUQ5wU1/aHik6e4QhHolurtsjJpW7Y
+	44SQw
+X-Gm-Gg: ASbGncsGPnWtd12znYzfKXircym6aX7fWMZuwhd2IzOEP91j93xxuWGP0W9NYNRcUCZ
+	Dd9eA/pMOjAWBmvF7dbOz4vUofHJxZMH3bwUqC+krrYuP3TwzjJdkzA0SIexoChoPPL55ub461M
+	tC7GRCLUwXaM3saTCONCvjGPUVVHsEEO1+NWsjrhDYX0K7z5htiuYQXLl1CeeLbduQ0p+bUcNVV
+	6dp+kd56qLh9mblvPU5d+AQ8RmFVw117a3WrSFI00MaIJ7jpmJi1OuuVcBfxwZ+DxAFVpqWZuPb
+	0+R+GwFvZE4WVM/DHUVigtRJYPwJExwbOgVVJ8uSSsJALFJ1fCWap5aPr7I=
+X-Google-Smtp-Source: AGHT+IGTDtrBNhMSg0LnpVaxRJ2O/+fab9261ZO16IUYHhfjbaPWlLLSejyGQyz21sFlQkWoUp+I/A==
+X-Received: by 2002:a05:6e02:450e:b0:3dd:bf91:23f7 with SMTP id e9e14a558f8ab-3de22cc97bamr26264915ab.7.1750164785074;
+        Tue, 17 Jun 2025 05:53:05 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149c85c1asm2209755173.111.2025.06.17.05.53.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 05:53:04 -0700 (PDT)
+Message-ID: <618aaa53-14a7-4d85-90d4-6e4a8e1ce3a1@kernel.dk>
+Date: Tue, 17 Jun 2025 06:53:04 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: fix page leak in io_sqe_buffer_register()
+To: Penglei Jiang <superman.xpt@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250617123940.40113-1-superman.xpt@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250617123940.40113-1-superman.xpt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A recent commit moved the error handling of sqpoll thread and tctx
-failures into the thread itself, as part of fixing an issue. However, it
-missed that tctx allocation may also fail, and that
-io_sq_offload_create() does its own error handling for the task_struct
-in that case.
+On 6/17/25 6:39 AM, Penglei Jiang wrote:
+> Add missing unpin_user_pages() in the error path
+> 
+> Fixes: d8c2237d0aa9 ("io_uring: add io_pin_pages() helper")
+> Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+> ---
+>  io_uring/rsrc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index c592ceace97d..f5ac1b530e21 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -804,8 +804,10 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+>  	}
+>  
+>  	imu = io_alloc_imu(ctx, nr_pages);
+> -	if (!imu)
+> +	if (!imu) {
+> +		unpin_user_pages(pages, nr_pages);
+>  		goto done;
+> +	}
+>  
+>  	imu->nr_bvecs = nr_pages;
+>  	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
 
-Remove the manual task putting in io_sq_offload_create(), as
-io_sq_thread() will notice that the tctx did not get setup and hence it
-should put itself and exit.
+Wouldn't it be better to have the unpin be part of the normal error
+handling? Not sure why the pin accounting failure doesn't do that
+already.
 
-Reported-by: syzbot+763e12bbf004fb1062e4@syzkaller.appspotmail.com
-Fixes: ac0b8b327a56 ("io_uring: fix use-after-free of sq->thread in __io_uring_show_fdinfo()")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/sqpoll.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Totally untested...
 
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index fa5a6750ee52..a3f11349ce06 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -420,7 +420,6 @@ void io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
- __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 				struct io_uring_params *p)
- {
--	struct task_struct *task_to_put = NULL;
- 	int ret;
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 94a9db030e0e..a68f0cd677a3 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -809,10 +809,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
  
- 	/* Retain compatibility with failing for an invalid attach attempt */
-@@ -499,7 +498,7 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		rcu_assign_pointer(sqd->thread, tsk);
- 		mutex_unlock(&sqd->lock);
+ 	imu->nr_bvecs = nr_pages;
+ 	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
+-	if (ret) {
+-		unpin_user_pages(pages, nr_pages);
++	if (ret)
+ 		goto done;
+-	}
  
--		task_to_put = get_task_struct(tsk);
-+		get_task_struct(tsk);
- 		ret = io_uring_alloc_task_context(tsk, ctx);
- 		wake_up_new_task(tsk);
- 		if (ret)
-@@ -514,8 +513,6 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 	complete(&ctx->sq_data->exited);
- err:
- 	io_sq_thread_finish(ctx);
--	if (task_to_put)
--		put_task_struct(task_to_put);
- 	return ret;
- }
- 
+ 	size = iov->iov_len;
+ 	/* store original address for later verification */
+@@ -840,6 +838,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 	}
+ done:
+ 	if (ret) {
++		unpin_user_pages(pages, nr_pages);
+ 		if (imu)
+ 			io_free_imu(ctx, imu);
+ 		io_cache_free(&ctx->node_cache, node);
+
 -- 
-2.50.0
-
+Jens Axboe
 

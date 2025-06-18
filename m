@@ -1,138 +1,120 @@
-Return-Path: <io-uring+bounces-8428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1980ADF186
-	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 17:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9663ADF225
+	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 18:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D49C3AF8F6
-	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 15:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A501882B5E
+	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 16:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990E32EE26E;
-	Wed, 18 Jun 2025 15:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6566D2EB5A3;
+	Wed, 18 Jun 2025 16:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2ejdJ2F"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qNceykLg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748A2EFDA7;
-	Wed, 18 Jun 2025 15:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451131E47A5
+	for <io-uring@vger.kernel.org>; Wed, 18 Jun 2025 16:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750261172; cv=none; b=fiY98+/QkoxZ4GvHRnwwAv7+MrVuF7JLrr05g+8jKrmKznEYJUFqFackw9LPo6d0TD/ob2M6XURwvWe4cIvSC4hP1wwQbAyA1+BjXMSMEr8q2uGKEG6z2QyiFLNTtJIIGKngtMaKgKAemUlxt1v1nPxOpGSSM/3tQF7QAuB7RJY=
+	t=1750262710; cv=none; b=n2Mz+wyW5NkHv20EI+JTFlLqlUtKBmBq1v8rP1OLQtTcaTJUHBzuQ3IQ10CcXfGO81EYX5hb5ydXcmbDwb2hdnR4t8eozyihHUrjDfzHYpuQojPO1l6X7fu+vcq2O32LCvlgj8NswmTNAHRYZNRNc7KJ4sdSA6v2ul+60lleNdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750261172; c=relaxed/simple;
-	bh=7lErsAHSRoCyQEMmRAoJeuAHaQ8/QZ36UhrYB62zQHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XIAT5/O4CSrDnkXkbstAVDAgNxG3WUELb82HRsHr1A9zGmdCRRgmvuRzhyoKLVdN55u6/t9BX2YYTlgaYMafD+q8w33g/wL6vlPNjdBPBIkEnoDi64Q4tDO1D+H4hfIVXYiyJ6685k6i1SKrHBfwhbpNS0YNpoFrBl5cwes0gH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2ejdJ2F; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade750971f2so934653266b.2;
-        Wed, 18 Jun 2025 08:39:30 -0700 (PDT)
+	s=arc-20240116; t=1750262710; c=relaxed/simple;
+	bh=CvalzuTJTr/xQ/8YqSU8zWYdFESXvli+w/9NE/yX0Yg=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=I5EiM4G6RVfpHoussqGFPub8G1tDDwXiV5g7janhonjW76BlWt3YQBwIK+rIYHnBkjrd15fhw8Qd+KSDjLpkm+ksLYepoujHp0mKDd73yJfNy94089OLZ18/8oSCXRVkUP/ta8kIgQHM5LZ5eoIMGWIbGs371tIo4sinbx3Ki7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qNceykLg; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3ddda0a8ba2so69758765ab.0
+        for <io-uring@vger.kernel.org>; Wed, 18 Jun 2025 09:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750261169; x=1750865969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0+WVJxBsXeB2LzI73CXOJ5+vwmAsCvL86Bnd2mBbtAQ=;
-        b=c2ejdJ2FDe3YyBDNOBbRo1SLDgjn6V0FiAhVIpmsr8uZWaKgzygaVsCxeV0HFdlO8y
-         zKtpP++cfqVOxVwto7ScXBNt+mpJumtkxh3xkQ14lgkhoFaHhj4kVpg/hGwUn+GhjMXk
-         KIGio5Z8UCIM64HApZc6g43usEam3XXnroBZfwsRCLHJ5dPFPCsGfcnApbJgI0SmPuHz
-         2uYDfYzf4Q25e3YULKuePIMeRHC+xEKhLCeXxz5euOb/Xpy2X42TITl4Bf4vBC6sb8Ul
-         6eximFl7VRJcRb6GyL9UBAOQPw+LCTSn4PAOLki70TbzRbwSh0oVuTwrNNos57/x4O3M
-         dsyQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750262706; x=1750867506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kY9pb2w5U/7ZA/i2Mx7xXGyHN6hWwcWkO+v8i1+mOSw=;
+        b=qNceykLgULPjXfY0slDKFhrTdAusBGuZU356Pwi7lG4D5Krq55K1453eNcwpaXkGFA
+         rvOn/XIm0NVILQtFM6eDhLWvKwxn1ZM76dtHq15BmEN9GVKedL1xEiNE5Mus5POrD04D
+         3veWmjNzBdt2LJyvGmHRP7NqZ5U8aIvA1/AKqiMAsGkNeHLD83VrW4eBSfPj580r9YMM
+         hsM9GUbA6+EJDpCY7pP672AXn1OxIFtBsa5vSJedA27f2NNsxcNTIpixkx1UJekGz5RJ
+         3uytolOLcP4gVtT+bIykK86xgO4IdDYrAyFp4LvhXEj82r4n8TqvJVEqWIbYIideMc5j
+         q0aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750261169; x=1750865969;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0+WVJxBsXeB2LzI73CXOJ5+vwmAsCvL86Bnd2mBbtAQ=;
-        b=hlKeS1IRIrkbk8yPR6riU7o1BdgM9YaGHe0s2TOeVkKxgDXO++BZvbpRE4kpugUJEI
-         WNNo6x6Vhw8NzgcZ0bBN3840e8/Sc710s8n1JaQeBWsfH5hJFMTrCtaAR+bWz9AZLszR
-         P5qNkN2Go98Ll4dljfJM+A42U7qVpBJczv/SU5YXjB2NR1yJEI0bn9ztDCxSpjCMyk3B
-         F01DP3K6cem7AyZ1vP88nf4q5QFiu/jvdxBnwU9em1uo++6wfGcsV0iCjdTsupBQ2AD6
-         jQlp0pDNbEWgwEP8uC3CxctEhpKoAXfTQ0DX8KycRYtb5QZfJh7fYxW3Uit+1PveYYe5
-         O0AA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH8j49cx+IvJ9NLwmOu5dHChC/wAcd3A9zpoFAR+PmcGJhQx9IXPi1mB43Jlf++kuu//GzEKTCMJz+PxxqXA==@vger.kernel.org, AJvYcCXXeYcu5PHClOyiCwufAIWKBPss3ayGhHryuuTISfOhfDZ6dZT8VG0EdZKPX+/oL7mkyXDtC8kzCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrLuC9FHEpYoQSwxWjpBbNyT9SEZWD9yyKZkGjC1On9OBMRmY7
-	kliCnw2DqzvrADashMOzZXy0PagS5C8w4WppJsVDmifkKEPA34tt67bj
-X-Gm-Gg: ASbGncvnsIV9dgxO1M/Jr7aLUQgtn6axSuEzwlKJL65OR0LmIimbvPy/joq0M0fzSmW
-	NeNWLFvpEaowjC+y047Tk1ohC13t19m0yRASP0ZVZ4A2DeeCbDoMawYaEqvyFO6wSQeWzRNBVc5
-	k90RslNVIMFvPvL5kzM4q+9H5cLQWcaIPgu2oXNBzINQlILpEpOgB2/TyULkqm2lAIZZ5BfvsGx
-	eJ/0lW+0QePEtMI/1mnnKf7IrPVtMW+wVNz5Emgh8ldvqHZqXVKpBZlAN8fYbtQ2D4lnOLmVyid
-	hICHMoUMZNHFaz0JY+i6VQ+t1w6V1DXJPItko3iYPjcZpHefgoZrPdDpYTHTon4nLNXiQEA=
-X-Google-Smtp-Source: AGHT+IGr1F+id+XITad14BlMe6GcxiFKdR9ap4zvcM+8Wpqe/H6QSqtveU0SqzXbNEX1fb0XeP8VtA==
-X-Received: by 2002:a17:907:1c0d:b0:ad2:2ef3:d487 with SMTP id a640c23a62f3a-adfad4f68f8mr1503412266b.58.1750261168737;
-        Wed, 18 Jun 2025 08:39:28 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.141.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm1066214866b.9.2025.06.18.08.39.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 08:39:28 -0700 (PDT)
-Message-ID: <a60a8c3e-e777-4f2f-ad83-916bb7b5bd2b@gmail.com>
-Date: Wed, 18 Jun 2025 16:40:45 +0100
+        d=1e100.net; s=20230601; t=1750262706; x=1750867506;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kY9pb2w5U/7ZA/i2Mx7xXGyHN6hWwcWkO+v8i1+mOSw=;
+        b=ds2u7nX9DiL4f6S4Wqk85npMsrMF3g5uCaJFdAN5IimgjX/+d4/4cz4+7hF0sMlVZW
+         5fVulQB0ji7ValiQQxlDvOzW9yunTFvT0LEW5ogEjT5+1VTzz21Yy2eZ5A0pKh3Aq3p6
+         98VQ7M7yOXW6kmKAIuIF2k5BJ5g4K8UqVORR2noLNkRaykjMg3DXPblGq7C0hY0Yi6PE
+         hzeeB5jJY6T+pvgH7GJHNpd29hwz3nQ6xvutSIQIFpl+zDPXKJ6AmJ5KfDWYfrEr+agZ
+         2Cu3Ku3dojCnVocaNVBC2KPSKOaTo/lhwYF94tEYdrqE5WJKCxLnmXxeWYEEdhMw3/Sr
+         3HxQ==
+X-Gm-Message-State: AOJu0YwoQbR7vL3nCjpfpzx1V/QrqrBwMK29ZdgXxDJeEdbaWdZFpD1v
+	iBnU4tWcUWSIJJUez1QeUwdjPEtPfbm5l1P742Y74amfHWgSypIu+iJuwKp4vuMiyIiqj0g+4WJ
+	uMDhA
+X-Gm-Gg: ASbGnctbBRnmdTnE1GoWwUq0THjM43LOU5uarWtTXAQ8W7jhYcyPXJC613uAZFz9gZ3
+	4HlmeIc8VuWk/WrT7VrGAjqFmqFkFv6jtxyaFu6QQRMQ93Y1K2PcZSxWZHm96XE8pG8ce0veXz3
+	pw1g5VM75xSoXh6q+WbqTTt/ZbX2gCFbpUCuZzZJvoN4nxQj3yrdgSEY/9vHPEi4HUCipDdH01o
+	rkgrg0jnpAWnwFmmINqt3eceZM2q6Q44mEpPBlt4359rk4YlMCJXmegAD5/sawTwpplTjlS6/0v
+	ual3sHcNQSEQ/cZn+uM6pmfcsgcMCrLDYboM9XEMka4yoBnOlp7YAReH9mO+hLU=
+X-Google-Smtp-Source: AGHT+IGtpcIxq0gPGqxSojUxocNU0dp284Sa0Ni0UaQyXtR6phyq++qUdGN/7bxL1UMmut0Z+LH7/A==
+X-Received: by 2002:a05:6e02:178f:b0:3dd:be49:9278 with SMTP id e9e14a558f8ab-3de07b9b644mr196923335ab.0.1750262706076;
+        Wed, 18 Jun 2025 09:05:06 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5017eecb389sm642738173.26.2025.06.18.09.05.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 09:05:05 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Haiyue Wang <haiyue.wang@cloudprime.ai>
+In-Reply-To: <916859AE41FC06CF+20250618110034.30904-2-haiyue.wang@cloudprime.ai>
+References: <20250618110034.30904-1-haiyue.wang@cloudprime.ai>
+ <916859AE41FC06CF+20250618110034.30904-2-haiyue.wang@cloudprime.ai>
+Subject: Re: [PATCH liburing v2 1/6] Add uring_ptr_to_u64() helper
+Message-Id: <175026270523.1507493.8726750465152127655.b4-ty@kernel.dk>
+Date: Wed, 18 Jun 2025 10:05:05 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring.
-To: Keith Busch <kbusch@kernel.org>, Bernd Schubert <bschubert@ddn.com>
-Cc: "xiaobing.li" <xiaobing.li@samsung.com>, amir73il@gmail.com,
- axboe@kernel.dk, io-uring@vger.kernel.org, joannelkoong@gmail.com,
- josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
- tom.leiming@gmail.com, kun.dou@samsung.com, peiwei.li@samsung.com,
- xue01.he@samsung.com, cliang01.li@samsung.com, joshi.k@samsung.com,
- David Wei <dw@davidwei.uk>
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
- <CGME20250618105918epcas5p472b61890ece3e8044e7172785f469cc0@epcas5p4.samsung.com>
- <20250618105435.148458-1-xiaobing.li@samsung.com>
- <dc5ef402-9727-4168-bdf4-b90217914841@ddn.com> <aFLbq5zYU6_qu_Yk@kbusch-mbp>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aFLbq5zYU6_qu_Yk@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-On 6/18/25 16:30, Keith Busch wrote:
-> On Wed, Jun 18, 2025 at 03:13:41PM +0200, Bernd Schubert wrote:
->> On 6/18/25 12:54, xiaobing.li wrote:
->>>
->>> Hi Bernd,
->>>
->>> Do you have any plans to add zero copy solution? We are interested in
->>> FUSE's zero copy solution and conducting research in code.
->>> If you have no plans in this regard for the time being, we intend to
->>>   submit our solution.
->>
->> Hi Xiobing,
->>
->> Keith (add to CC) did some work for that in ublk and also planned to
->> work on that for fuse (or a colleague). Maybe Keith could
->> give an update.
+
+On Wed, 18 Jun 2025 18:55:38 +0800, Haiyue Wang wrote:
+> Add this helper to convert '*ptr' type to '__u64' type directly.
 > 
-> I was initially asked to implement a similar solution that ublk uses for
-> zero-copy, but the requirements changed such that it won't work. The
-> ublk server can't directly access the zero-copy buffers. It can only
-> indirectly refer to it with an io_ring registered buffer index, which is
-> fine my ublk use case, but the fuse server that I was trying to
-> enable does in fact need to directly access that data.
 > 
-> My colleauge had been working a solution, but it required shared memory
-> between the application and the fuse server, and therefore cooperation
-> between them, which is rather limiting. It's still on his to-do list,
-> but I don't think it's a high priority at the moment. If you have
-> something in the works, please feel free to share it when you're ready,
-> and I would be interested to review.
 
-CC David
+Applied, thanks!
 
+[1/6] Add uring_ptr_to_u64() helper
+      commit: 74cc0d8eb1b6bc6d875eb3ae3bcfb332ea0b2e8e
+[2/6] liburing: use uring_ptr_to_u64() helper to convert ptr to u64
+      commit: eafce79e41a53faa8c25f80356f2e8326b2fd299
+[3/6] examples/reg-wait: use uring_ptr_to_u64() helper to convert ptr to u64
+      commit: db4caf372864c9cbfcab6c075830f26f1426cec9
+[4/6] examples/zcrx: use uring_ptr_to_u64() helper to convert ptr to u64
+      commit: 1d90b6b0466523f2b5b323a4a5a02f7613748a2f
+[5/6] test/reg-wait: use uring_ptr_to_u64() helper to convert ptr to u64
+      commit: 1f79da0ffb43d14a5cd0880e42c344b7665ad5dd
+[6/6] test/zcrx: use uring_ptr_to_u64() helper to convert ptr to u64
+      commit: c2b3a104304b5b67702efe09e2673079932fd1b0
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

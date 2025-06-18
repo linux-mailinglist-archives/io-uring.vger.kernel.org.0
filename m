@@ -1,49 +1,49 @@
-Return-Path: <io-uring+bounces-8415-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8410-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C10ADE4E1
-	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 09:51:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA57ADE4DB
+	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 09:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC57179771
-	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 07:51:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7E13BCB33
+	for <lists+io-uring@lfdr.de>; Wed, 18 Jun 2025 07:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4D325A33A;
-	Wed, 18 Jun 2025 07:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A946A1D5CEA;
+	Wed, 18 Jun 2025 07:51:18 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.58.6])
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77D07E105
-	for <io-uring@vger.kernel.org>; Wed, 18 Jun 2025 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.58.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529B125A33A
+	for <io-uring@vger.kernel.org>; Wed, 18 Jun 2025 07:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233098; cv=none; b=aelr1GJ++pxefd0Moe9mKM0C4an3/3Uep3Fqf+x2qVtW4szAWwV2C12PbDuFzRK1BP/zcJ+ct4UCZJFYndl2su26BuI0L+TbgtHDZj995+tGWzpJAjvV583VGeoLvjuAxc0Q+0BtSJbiDNMV0zlicjm/AcaFLK81vAYVzvjKyS8=
+	t=1750233078; cv=none; b=ktIg/XTet527vcBYZFOGso1zcygHZTHL+WeEkg3VpJECW3gCIucWjVE3qRCBtdJZUqB4wscPz4DNl3B8mhOBtEgqtG0IvYPNBtscNTfZEaKsdYZs2QVsCeg5ROoYLlxp1XRLY58sm1Pfm6hUqZeYFc95YtISTsDvEGjCQeD1uwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233098; c=relaxed/simple;
-	bh=Sd2+rinfXNFORFv5YPnfSf1Jtu/5E4qznIAezT45lZc=;
+	s=arc-20240116; t=1750233078; c=relaxed/simple;
+	bh=jEGcUrUzW4bBd4XLG92+QqiiXo/KXyBHaL1GxUKmxeM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ioC8fHxbjs9ikJlhyhGA8i3ZZng+sReVUtq3GtW2adSuQarFSEGFoS49a7DP5pbg6W+9XCrvaOCnR9yXqkSf+m8/QXgtvdu1tfXfUJFAcdl4p+modOzCPJAMl6tnu7GtCyb2oKc6xU31Syzqz8HamwaKs+E5XLuINLYENvwaokQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cloudprime.ai; spf=none smtp.mailfrom=cloudprime.ai; arc=none smtp.client-ip=114.132.58.6
+	 MIME-Version; b=lhQ4uVlOpM37IXkwb0Od/xWtjX3a06cQWvNxe4/reRs1tObqBCrsYkVB4WbPZT1bhKFCFi46XhrhVGXoSsdOs3aZ8IT/oGKQHPsPIV5eudt3Idytnp4DnIGtKH2w0/A8aGq/CckCwGbe0QvpOE6JCt3x4ZSQnsB1Tyr3NV5kKyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cloudprime.ai; spf=none smtp.mailfrom=cloudprime.ai; arc=none smtp.client-ip=54.92.39.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cloudprime.ai
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cloudprime.ai
-X-QQ-mid: zesmtpgz1t1750233067t2163279a
-X-QQ-Originating-IP: CcIfWSRlPwB9vLauNETTdNT1ZmI5mFVMOVMM+CA5ulc=
+X-QQ-mid: zesmtpgz1t1750233069t230d9931
+X-QQ-Originating-IP: fSynssGf0uTaYUHV1mZRBypWe+DYBpAPFoNVmbkEzyQ=
 Received: from haiyue-pc.localdomain ( [222.64.207.179])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 18 Jun 2025 15:51:07 +0800 (CST)
+	id ; Wed, 18 Jun 2025 15:51:08 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17761109489978830081
+X-BIZMAIL-ID: 9162071731163168030
 EX-QQ-RecipientCnt: 2
 From: Haiyue Wang <haiyue.wang@cloudprime.ai>
 To: io-uring@vger.kernel.org
 Cc: Haiyue Wang <haiyue.wang@cloudprime.ai>
-Subject: [PATCH liburing v1 1/6] Add uring_ptr_to_u64() helper
-Date: Wed, 18 Jun 2025 15:49:16 +0800
-Message-ID: <4039F3DF27B2BC61+20250618075056.142118-2-haiyue.wang@cloudprime.ai>
+Subject: [PATCH liburing v1 2/6] liburing: use uring_ptr_to_u64() helper to convert ptr to u64
+Date: Wed, 18 Jun 2025 15:49:17 +0800
+Message-ID: <D389371A903202C0+20250618075056.142118-3-haiyue.wang@cloudprime.ai>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250618075056.142118-1-haiyue.wang@cloudprime.ai>
 References: <20250618075056.142118-1-haiyue.wang@cloudprime.ai>
@@ -56,47 +56,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:cloudprime.ai:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: Mnff/9wu0oJYYL1JhmxiaOijUl5q19Tehm4JcHGMBdF+IWgGAxgXwP1I
-	Bb3MqKTpfzXCTdg3gCQcJrYT2t3nGuX2xcoBpBzFjGVZFBTT7Q9IOXKIeGhXeQgyOTNZqyJ
-	TuKU97KoEDA4TjTOzKFyhnCpD/jOsJVTI0mywKOCjLyOLnMt6WJMzbaQlTh7T+6t5l7cT9v
-	73LdorSvw4x2y09ALVyBuZ6qgQPuTwW5q73ZsTIPryU0BvqyRUPe4/NyrE+HcE9HknzhFEx
-	7wurrz7uAM7pbQSldh+wa62txNJxertzjPA3X6LXkTXBTPlJWZV79AcswYDdQWJ4kVDZEjh
-	U0DRF1pAMwiwmKQeEU9yYKooZOvE+o2G2asytsuEytTWg1n+NJXn8CI0xGHZL/YZdHH36di
-	hP9P5gAF3ROZkd0dVu5PMnRblBh/1KrxQq1Cyb0wxnGL1uzxRxREUNOdb2RnJLs+nRVa8rD
-	OagFyTFdWdx3BjVp0HSp8zEZt33Fkqq8xBceSGRUySLWfZKZzpiG5H2VcQXDLSrWePoNRKw
-	Rb86+IWeYAHKHhxFH3Oag4u1y7KuLqPMnIDa6Y70QJ1xqmrpU0rjD9jmowW25+bKGjO9ASk
-	GgwUd1hyH1jWevINNCw6Cp3aKDwlQApfsMajQSR7BWrffzMynXNS0QpYnIWQmDrPcXKbLwO
-	7BmDKMKOXJgA5R7mVsZz6A2+Pr+Xyx+8Z7Gg+kh1M0sFa++AoXrx3lGGDeAis6Yj29yQPzo
-	/K/uUDI0OKfg//vBwnLvy8+YHpTkqbfVU3QFCAvMHq9kwW2Q3yhA3U6wP4sqZNiXu75tTS7
-	BH3Oxb+x5vizMHisMqysenrq6Z5Lmg6HdYmfalFkD2mtKqDkdirqaqJW1EuJyPEFc35xJFe
-	jaHTHAghq18x4OohSAJzaVul5wL0cb/S0gM+ln1BEwR+9X/wK4FUzCCw/kZYf5D18XamX3y
-	XZnRd0LBOMym2KCiAK0AByQ8IN9rp7KDlVtv7OaVBuHg2+w==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-XMAILINFO: NY3HYYTs4gYS6+JgFWz3tulITIAZWRmatxfh+0+7KtV7YyHs5cH/IHvG
+	oGGwHZJafPoMBigTcOabIHyFQLc1tMn+QoNL4/fWRt+9Of9+CPPoiTH+HXQzsEy9oKWiofY
+	e8Vsx6ISrTC/FPk+99cP9RjIrwTAa3NRQM2eLXA+HHB7Fyb0aG8vGoekqqJFCkVjM9X6Rw8
+	AkDYjjHGh9m272NPgntNAOqnJKCaoVIvnzNOYexRcOzxxjExktRReTyof3WobMNJwOS8uMT
+	S4pXl3Z+vZbuxlaAlGudhOnlPP1MxnnC2WJpnHqA9YLrv/kBs6Gb35NNVinbVfFASyXb+TZ
+	Tl4/gnG8pTwDWfQozUIaY98/8q9iBVPll66fbifxSSDB4qdfyZSm7TCu1cdgbIUwvTI97LJ
+	Hifdc6vrKdECWmTtezBbbicnkm7k3WiQ8/40QNmRQ+aK6u0Hxdv63Ni0twNM2IB5dYmZfjC
+	9MIc5AWjgaceSJi12Sr3GJe4PA4ppE+GDXPsN+qS7iw4C9bcveOPnM2VDZ9j1diGxrxiHJX
+	DufAxzn/u0xzBvloGkn7iIsKV7QOR99xn7aZrr/CvREOAeWKMg8QlqOcJqW8Ha2WL1mBIhs
+	Rcvq1VcxtSTdnvJY0VdFkQrmPYb2WK3yy3AwdcozxjN4a/bSRwRaGWJyF47xev8Mnh7Hb5k
+	szsOdVNySkTGX68iw+0v7pbq0wyjt8O+/i7N76k5JT6OKHor+RZaE3ddeQUiQVQASSxv2h3
+	YeMFrOjysHifQAkbEnXdQppU43ceDRgLykA1o3bNsi8tVAvIRXkLMHJBRj9vCesQUHYEtkt
+	gyiaZ/JmxIracjJiKpe54g5MRN8RPCYjTVfth9BkEQ+crNhXiTQPKI73yIeBXrzAefzqpSi
+	/MQlzFYc+JARXWBADUXVi9Q6y1+oNO9k43oCJqsZnE0Y9+vH0XZ0qP5yTS+Kxqs9I5Ve/AT
+	/9DFgjAu6HcY0lbAFfhQvHbtTlkWs2dAdKc3zWL0l2zGZSBV23GPM8Hxp7ca4wqddG4ZFK4
+	V5e2939iTMCZ8EH/BI
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 
-Add this helper to convert *ptr type to u64 type easily.
+Use the helper to handle type convertions, instead of two type
+convertions by hand: '(__u64) (unsigned long)'
 
 Signed-off-by: Haiyue Wang <haiyue.wang@cloudprime.ai>
 ---
- src/include/liburing.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ src/include/liburing.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 96eeed3..6d87248 100644
+index 6d87248..9f13e78 100644
 --- a/src/include/liburing.h
 +++ b/src/include/liburing.h
-@@ -32,6 +32,11 @@
- #define IOURINGINLINE static inline
- #endif
+@@ -721,7 +721,7 @@ IOURINGINLINE void io_uring_prep_accept(struct io_uring_sqe *sqe, int fd,
+ 					socklen_t *addrlen, int flags)
+ {
+ 	io_uring_prep_rw(IORING_OP_ACCEPT, sqe, fd, addr, 0,
+-				(__u64) (unsigned long) addrlen);
++				uring_ptr_to_u64(addrlen));
+ 	sqe->accept_flags = (__u32) flags;
+ }
  
-+IOURINGINLINE __u64 uring_ptr_to_u64(const void *ptr)
-+{
-+	return (__u64) (unsigned long) ptr;
-+}
-+
- #ifdef __alpha__
- /*
-  * alpha and mips are the exceptions, all other architectures have
+@@ -907,7 +907,7 @@ IOURINGINLINE void io_uring_prep_statx(struct io_uring_sqe *sqe, int dfd,
+ 				       unsigned mask, struct statx *statxbuf)
+ {
+ 	io_uring_prep_rw(IORING_OP_STATX, sqe, dfd, path, mask,
+-				(__u64) (unsigned long) statxbuf);
++				uring_ptr_to_u64(statxbuf));
+ 	sqe->statx_flags = (__u32) flags;
+ }
+ 
 -- 
 2.49.0
 

@@ -1,79 +1,46 @@
-Return-Path: <io-uring+bounces-8446-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8447-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBA2AE29F5
-	for <lists+io-uring@lfdr.de>; Sat, 21 Jun 2025 17:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C71DAE2E63
+	for <lists+io-uring@lfdr.de>; Sun, 22 Jun 2025 06:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF15189923D
-	for <lists+io-uring@lfdr.de>; Sat, 21 Jun 2025 15:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA9B18941F6
+	for <lists+io-uring@lfdr.de>; Sun, 22 Jun 2025 04:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F62221FAC;
-	Sat, 21 Jun 2025 15:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9mJ00bU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDCC15E5D4;
+	Sun, 22 Jun 2025 04:55:18 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bolin (vbox.bolinlang.com [155.138.147.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08A422156F
-	for <io-uring@vger.kernel.org>; Sat, 21 Jun 2025 15:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0D0219FC
+	for <io-uring@vger.kernel.org>; Sun, 22 Jun 2025 04:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.138.147.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750520826; cv=none; b=hz9oGit0Dy8/fXNkui07qRN/tL9b5a37c2rSWa9GLVPe/FGAU8FrseALtJRhrP9IqIO1nEZR8T0UEjmWLiJofm6GVxKW9SFisyoyepoVUu4vzkoLoB4sPJapYAVDs422Q86hXt2iTHWzUsP1oF31Y5N/1JU0/HMGm5K9+f5+efo=
+	t=1750568118; cv=none; b=F2MI/67x26P+yfRnnmIQb42QDV6OY6qKQG1Yiv5PzFGI/hUP3EOanIAN9XHecpkwEobo7ziuz4UpFbUvJ89HvN6GPmKNlM5AGRiJD72PQefX4wRk8H2y4Q38M6WACoGS2kHeUtvtkcMZxV7Xtn2crskDqBVPwqyoHm1uCpbCdlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750520826; c=relaxed/simple;
-	bh=QAQs7r+fz8EV2yOWtKxC2kQERwSc1slAosdfV8RvHvY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=shLI9U38m39VxEyIyKdp3R9PSnzLh2/ichHzT6jMgPd0Dolf9XzKRCrkqtHyk+4S1auZ/878h7KYMgjIwS+ENCyPVGBgW1IjvnUCDH2rqvN4eVyVgRs2jqrOAbofgi0wq4dSCDj3wIlOLDEn8sTtJWJj2FsxhyDk0L7/ymwRYrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9mJ00bU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FF6C4CEE7;
-	Sat, 21 Jun 2025 15:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750520826;
-	bh=QAQs7r+fz8EV2yOWtKxC2kQERwSc1slAosdfV8RvHvY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=k9mJ00bUxzcD4/1Km7VajJ8izFzF06lt5AMEszymWPVvlHJQc9EpLBPF15G5b9Acq
-	 QisTg5e3eb/4t635M+Opdv6FzbddIrz7t4HV+cHlnPUHqs5XUT1bssmYzPbBSrVd7N
-	 jYoIQrfFQ7C7iZ+Tseg8dgFp6R5nVYz+iE6bYURX3FwByxIrNIDhLrtgDgGOBoPD3D
-	 XZEiodvCvpvOGMy/E+1a/9lPj8lJAo9tZSGOoGjF43W5A3xZwuwPRcXSdaQ1ISEm62
-	 2cay+5johT/PSHY3RhoCZ0yfVABeo6ajWI1gLr8GUwACQcoIVzODQ9CSnrKeItxQ4m
-	 MrnXtZQyiW06g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70AC138111DD;
-	Sat, 21 Jun 2025 15:47:35 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 6.16-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <d84da304-de2c-4587-a78b-20efdff71787@kernel.dk>
-References: <d84da304-de2c-4587-a78b-20efdff71787@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d84da304-de2c-4587-a78b-20efdff71787@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.16-20250621
-X-PR-Tracked-Commit-Id: 51a4598ad5d9eb6be4ec9ba65bbfdf0ac302eb2e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f7301f856d351f068f807d0a3d442b85b2c6a01d
-Message-Id: <175052085408.1887408.6688069743352580354.pr-tracker-bot@kernel.org>
-Date: Sat, 21 Jun 2025 15:47:34 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1750568118; c=relaxed/simple;
+	bh=trq2IBXlxZHH5Rbeo2tJTXJNcjhM+5F+uWEfbTvGE7M=;
+	h=From:To:Subject:Date:Message-Id; b=MPuuoaEDixyDZq4RpBg3te4CzdcxW8WWbMB6tAqBllP77jbBmIR7dQGNZk28xp/UqG3/Zp8te/rJmb2vly/cmsbl3wsa6fmGd7UNatSxppPVuFCs1IvmahPgYuxtiCvDaMdcOTfGUnzbKueq8h2VeWp97I7lTbSlGYFV3+F56UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=mail9fcb1a.bolinlang.com; spf=none smtp.mailfrom=mail9fcb1a.bolinlang.com; arc=none smtp.client-ip=155.138.147.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=mail9fcb1a.bolinlang.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mail9fcb1a.bolinlang.com
+Received: by bolin (Postfix, from userid 1000)
+	id A15A2FA301; Sun, 22 Jun 2025 04:46:38 +0000 (UTC)
+From: Levo D <l-asm@mail9fcb1a.bolinlang.com>
+To: <io-uring@vger.kernel.org>
+Subject: Place to read io_uring design?
+User-Agent: mail (GNU Mailutils 3.15)
+Date: Sun, 22 Jun 2025 04:46:38 +0000
+Message-Id: <20250622044638.A15A2FA301@bolin>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sat, 21 Jun 2025 06:57:59 -0600:
-
-> git://git.kernel.dk/linux.git tags/io_uring-6.16-20250621
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f7301f856d351f068f807d0a3d442b85b2c6a01d
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I read the man pages. I have a good idea of how to use the API but I can't understand why the API is the way it is. I have a handful of complaints, but I would rather learn more about the design so the API may make more sense to me. I'm specifically talking about the kernel api (I used it through syscalls,) not the c wrapper. Is there a document or something I can read?
 

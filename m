@@ -1,130 +1,169 @@
-Return-Path: <io-uring+bounces-8452-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8453-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07329AE47D0
-	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 17:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E88AE51BB
+	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 23:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB41117CC4B
-	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 15:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40008442788
+	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 21:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C1A26D4F9;
-	Mon, 23 Jun 2025 15:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4E221FCC;
+	Mon, 23 Jun 2025 21:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="P7wf07CI"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="nC7nBa7N";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dpYGdihb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A7F24BC09
-	for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 15:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5C06136;
+	Mon, 23 Jun 2025 21:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690885; cv=none; b=NolOKrUkLywKbLZuC/mlUxYP6sYWziXadaW1PL+mNC/hbed13z+C6tTBAEW4+pV2e7BNeKCSTJoFqwKuzeuQYesBShkrwliNKrSs/5c+wweAzxL6L32kUU6TUH0R9Nq1rExrJss+OpmXTNle/Oo3pAMzngF2d62XUUJY6xTDthc=
+	t=1750714617; cv=none; b=UjcaeLmjYsZev1pih2KJ815NB3UF1h0WtSlxqvNrR1uGGqCw6EedAgpK8+KhJHSQ9BCoOzGMMyM0ah+VuxRL4DVxDOi0wn+3MaLhAl8oVhVSztKy3t9Tz3k96M3vByRVte/5UUTu8q586M6qDwckxx6F1WsuoWfsqoulEEPhxLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690885; c=relaxed/simple;
-	bh=oWGurdLLaATQUzuTwWzIpzQUAFQvFzDZgQR1mTaU0w8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cntGOER0Dy26cV9az9iWA4Ax2wYoRPFG5JRUiGXhMDzLOr6oxmi9xWWg0j1T0jQK4nCTJt6jf6uUSGoeKdNPozBxDTGXui9NJL+CkVaqIPnuRm+VSZbZAWPZ9vaGbRkpzWdR3yaQhNgmXLTYbzcF9cqJTV/G6ivtUMRnVeKiz8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=P7wf07CI; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ea292956so45194945ad.1
-        for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 08:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750690883; x=1751295683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e12FTwFtz4sV1UkZylA7otkUya2j0xykUDCjLjiczB0=;
-        b=P7wf07CIcMAtYSPpO2nnQqKV5DX0b/0kgKOD5nkhmRMt7QV8iADHNUzt442kKaMj3n
-         q/bqkud80N4RPzOnpcvdXCxpmEbvhJmBcsBXsWx7oEYmtv8s4SRdmK+3VvAG1YYyf3Wf
-         ztIdqx+gBQ8xqJq/cUIWeBe74tTcn/LXrxYPUSLG6yyPKMIgKEUPKkP2WQY5m6pHu/5y
-         dl4IQzHQQZ3DiRGb8Bp1krXJ/XRhX0muwjy/uVyXp8aLSy5hKlNor2E3wlPAvV6szyC6
-         A7mVCZIV3GoRlRYKn55InUBUWC3YSNwMHCNuW/ScrRCFo/01fC5zgLfVQxuPl59IBMOp
-         iVGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750690883; x=1751295683;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e12FTwFtz4sV1UkZylA7otkUya2j0xykUDCjLjiczB0=;
-        b=VVBOaTHmyDJ9FoqYvKjep+0+6doMWaCnPAbiNgW/zNuqQw4jos3xyaMRlM5hVjOllP
-         AV/pkyPCEhmlCIGTEyLSwj0bVU/toFaHsua0ANmrJMvGhih9I6vd+eEJDax+9P0d+/Ha
-         xpskvYBmmp2+JFZc11zBvNAJN/qkA4I0eD9D+wDwwAd07pfwTWtGKcZ05o8XJG4bBrqc
-         pSWah5ACnFuj7L8/3FnOC9tQmu/Sma6FNUeVXWCsG2SriNDNXfkYA3E+PXeHX97vFhVJ
-         IeFjW323LjfTEDvuK275VU1FxOJQreIEzl9nCW3ofrca2Czos+5r/xoRwCvUKo8i2Wey
-         lvgQ==
-X-Gm-Message-State: AOJu0YyajdXCshOwLLMATLrVy7dvtCYf+1X/hfO8H2pU6s2WCGUP29QG
-	vxkR40yNSSJhb1ycQd9nhvwaL409VEagFe1SkExd4TGyJWTuAXyOFwpeRLFFr0f+YKQ=
-X-Gm-Gg: ASbGncuSoD4nR4yvU3ud83wyJ/0GFeJHHIyF/E5I6g3dcQnK+JrJkTgSbv+tVgIwvjt
-	vS+VRe/ZVpTtLRVD2OdsXYBXlbCbTDJNMry06nbmwVwMgkpZwNOfkc5UEYgn0Cdliaww/3l7Gt7
-	nJWSxpHkkBNNoN3WXLo+44Vk/tB3J7PciI1q7agFaPgLzW9rJ9Yt6uwUMWOjQpwIovcynubmDyH
-	opY1oqW0WGepZNH5/8QVbi9DYzgBwOA87lRF66w8mucsUOQ9JIagBH+1sNBFuKbkkYtPKGNney+
-	PEJyIt/300PxeGSuAh26xzyCMfgxaGJKMj+23jUrNIE3gmBSi5uDJg==
-X-Google-Smtp-Source: AGHT+IGi8tgAngjx8JCTmimwDLIle5eZHSxrUUJ6vtXCGMkHWEBUYNEJ+ETEzVSa87f+OYzrXIsSpQ==
-X-Received: by 2002:a17:903:1988:b0:234:ed31:fc96 with SMTP id d9443c01a7336-237d9954d67mr198312765ad.26.1750690883317;
-        Mon, 23 Jun 2025 08:01:23 -0700 (PDT)
-Received: from [127.0.0.1] ([12.48.65.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d873b5d2sm86886405ad.246.2025.06.23.08.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:01:22 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
- "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Jason Xing <kerneljasonxing@gmail.com>, 
- Kuniyuki Iwashima <kuniyu@google.com>
-In-Reply-To: <cover.1750065793.git.asml.silence@gmail.com>
-References: <cover.1750065793.git.asml.silence@gmail.com>
-Subject: Re: (subset) [PATCH v5 0/5] io_uring cmd for tx timestamps
-Message-Id: <175069088204.49729.7974627770604664371.b4-ty@kernel.dk>
-Date: Mon, 23 Jun 2025 09:01:22 -0600
+	s=arc-20240116; t=1750714617; c=relaxed/simple;
+	bh=SCn1Yx2GJkVpjOpv/4QEPjgM9kYQui+0rL7plOJZwiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mLHrYdcYF/NtfTkDEUiC0s+RhP1/bGhtmw/au0+lOZYTOjsSlBozPZFgLADqjWoujSjzp9tffru/RfL4ncjCmMYY86T6i86uXq7htl6Rkg/V0/tgfQEOmevFu3tL5aPRDELz01S+V92kLpXXRZoH1H0EmgQDz1Pj4eDf1Y8X3PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=nC7nBa7N; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dpYGdihb; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id F2A1F1D0006C;
+	Mon, 23 Jun 2025 17:36:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 23 Jun 2025 17:36:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1750714612;
+	 x=1750801012; bh=1O5oTAsfQtJqqg2dLOQIjX/38obNeA6p5ZjB+E45Xr0=; b=
+	nC7nBa7NytWBA0YuhznDUxw9NFNIwr/XlAjC03YeREIRMFeuQevMQG/kBCP75o4f
+	H1bJxSotFFlpE6WYgNjuRIs/S7N9D56IKcYhHCfTZR6H14pV2sSBnWqBaqSv2j2x
+	qdEKrTXcJLOMepOaLES0tMw1YkrP2sN3UqOpwcEASrYCCpiTx0WCbzrCAP/uT5nb
+	WoL+OKNbnf6FYNq92o8+J/9LKBXsDoBrXU34pkNu9zRB5Er+VZldoSQg3J7/MfFJ
+	3yd0K9Ku9q+QrQWXd0CpGkusS9RGYsA+p+YuHY2498FDwjZXhlJsUb3JanCPRu/1
+	5QFQL48/wY9bXZQJ5SoHIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750714612; x=
+	1750801012; bh=1O5oTAsfQtJqqg2dLOQIjX/38obNeA6p5ZjB+E45Xr0=; b=d
+	pYGdihbxd7De67dYbuEoKn/910NeBTV1zsUfnPPd0Xh4qEXsrGFL1sedTQscZIQM
+	nlzVP7y8sAYbh+CL984vzXEHA9zC9rdORCbTwfgBCalfdQD6R6QTfVNEK9chgnQ1
+	KKyjb5WxJWOSWtOPKx92mwhhhqAXKXAbux0sRq5SWfzqNDM3WDdqdDGJoO+a4ISd
+	BbcxeDgJVMYrShDBrAboQMBaihcH3Fi8o7Nw8EdkHCXlUdE3EA1aXJX6q2Zd1ZZq
+	DELuPxm3q+aPyxSxmihAMiBOZ8G+ANKDMch2Wby1lCyLkL/qneHQbjs9VvbHT0b3
+	P5erXr4ZAqbZJ1IQl2CgQ==
+X-ME-Sender: <xms:88hZaM7B-7Nhc9-IsdT-P23diQU16q5iohoso8hTOCMcy0q1CmXjeA>
+    <xme:88hZaN60LmjiG9BCInb9CRoFmVuQI5E3q9VhXoyErInmjBs5yxHCFzu8nutWoTIhR
+    le2kOU2GEeQ5r-h>
+X-ME-Received: <xmr:88hZaLfOaoqyYmMnQyyVwS4HngPeGxEr6dlA0rW10h-5v9aMECsMR18hY2HJr7lW58cDztOO4ywZwljmiZIAcjgigQgcAuSiEBvgmfFLcFkYJvmr1a43>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddukeduvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertd
+    dtvdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgs
+    vghrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtd
+    elffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsg
+    gprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepgihirgho
+    sghinhhgrdhlihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegsshgthhhusggvrh
+    htseguughnrdgtohhmpdhrtghpthhtohepkhgsuhhstghhsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopegrsh
+    hmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegrgigsohgvsehk
+    vghrnhgvlhdrughkpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhm
+X-ME-Proxy: <xmx:88hZaBLayWyQbdvW8uE6G7H4cdze94u7P-baXDliNdJuURhFniC7rA>
+    <xmx:88hZaALKuYzA5g6k6lpjTmv2_zKONMdZ8r6Nc_sEv7793Y4ljoWsIQ>
+    <xmx:88hZaCxrV02JAh5mNojpewvG_f_w4Y0Lh2PbGHd1zsl9QJ0Oo2ZoEQ>
+    <xmx:88hZaEK7r9-K7SLrVnSg9oQBceyr4LKG0ULR3L0yMT60hQPslgnKCw>
+    <xmx:9MhZaKNtJ_KjHMA9v-WDweRIeeonGmOr7NE3tOMWFatNm1wmxINQEvCO>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 23 Jun 2025 17:36:48 -0400 (EDT)
+Message-ID: <7f7f843e-f1ad-4c1c-ad4b-00063b1b6624@bsbernd.com>
+Date: Mon, 23 Jun 2025 23:36:47 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring.
+To: "xiaobing.li" <xiaobing.li@samsung.com>, bschubert@ddn.com,
+ kbusch@kernel.org
+Cc: amir73il@gmail.com, asml.silence@gmail.com, axboe@kernel.dk,
+ io-uring@vger.kernel.org, joannelkoong@gmail.com, josef@toxicpanda.com,
+ linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, tom.leiming@gmail.com,
+ dw@davidwei.uk, kun.dou@samsung.com, peiwei.li@samsung.com,
+ xue01.he@samsung.com, cliang01.li@samsung.com, joshi.k@samsung.com
+References: <aFLbq5zYU6_qu_Yk@kbusch-mbp>
+ <CGME20250620014432epcas5p30841af52f56e49e557caef01f9e29e52@epcas5p3.samsung.com>
+ <20250620013948.901965-1-xiaobing.li@samsung.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250620013948.901965-1-xiaobing.li@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
 
 
-On Mon, 16 Jun 2025 10:46:24 +0100, Pavel Begunkov wrote:
-> Vadim Fedorenko suggested to add an alternative API for receiving
-> tx timestamps through io_uring. The series introduces io_uring socket
-> cmd for fetching tx timestamps, which is a polled multishot request,
-> i.e. internally polling the socket for POLLERR and posts timestamps
-> when they're arrives. For the API description see Patch 5.
+
+On 6/20/25 03:39, xiaobing.li wrote:
+> On Wed, Jun 18, 2025 at 09:30:51PM -0600, Keith Busch wrote:
+>> On Wed, Jun 18, 2025 at 03:13:41PM +0200, Bernd Schubert wrote:
+>>> On 6/18/25 12:54, xiaobing.li wrote:
+>>>>
+>>>> Hi Bernd,
+>>>>
+>>>> Do you have any plans to add zero copy solution? We are interested in
+>>>> FUSE's zero copy solution and conducting research in code.
+>>>> If you have no plans in this regard for the time being, we intend to
+>>>>  submit our solution.
+>>>
+>>> Hi Xiobing,
+>>>
+>>> Keith (add to CC) did some work for that in ublk and also planned to
+>>> work on that for fuse (or a colleague). Maybe Keith could
+>>> give an update.
+>>
+>> I was initially asked to implement a similar solution that ublk uses for
+>> zero-copy, but the requirements changed such that it won't work. The
+>> ublk server can't directly access the zero-copy buffers. It can only
+>> indirectly refer to it with an io_ring registered buffer index, which is
+>> fine my ublk use case, but the fuse server that I was trying to
+>> enable does in fact need to directly access that data.
+>>
+>> My colleauge had been working a solution, but it required shared memory
+>> between the application and the fuse server, and therefore cooperation
+>> between them, which is rather limiting. It's still on his to-do list,
+>> but I don't think it's a high priority at the moment. If you have
+>> something in the works, please feel free to share it when you're ready,
+>> and I would be interested to review.
 > 
-> It reuses existing timestamp infra and takes them from the socket's
-> error queue. For networking people the important parts are Patch 1,
-> and io_uring_cmd_timestamp() from Patch 5 walking the error queue.
+> Hi Bernd and Keith,
 > 
-> [...]
+> In fact, our current idea is to implement a similar solution that ublk uses 
+> for zero-copy. If this can really further improve the performance of FUSE, 
+> then I think it is worth trying.
+> By the way, if it is convenient, could you tell me what was the original 
+> motivation for adding io_uring, or why you want to improve the performance 
+> of FUSE and what you want to apply it to?
 
-Applied, thanks!
-
-[2/5] io_uring/poll: introduce io_arm_apoll()
-      commit: 162151889267089bb920609830c35f9272087c3f
-[3/5] io_uring/cmd: allow multishot polled commands
-      commit: b95575495948a81ac9b0110aa721ea061dd850d9
-[4/5] io_uring: add mshot helper for posting CQE32
-      commit: ac479eac22e81c0ff56c6bdb93fad787015149cc
-[5/5] io_uring/netcmd: add tx timestamping cmd support
-      commit: 9e4ed359b8efad0e8ad4510d8ad22bf0b060526a
-
-Best regards,
--- 
-Jens Axboe
+At DDN we have mainly a network file system using fuse - the faster it
+runs the better. But we need access to the data for erasure,
+compression, etc. Zero-copy would be great, but I think it is
+unrealistic that application would change their API just for fuse to get
+the coorporating model that David suggests (at least in our case).
 
 
-
+Thanks,
+Bernd
 

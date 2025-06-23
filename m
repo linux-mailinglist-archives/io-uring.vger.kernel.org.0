@@ -1,111 +1,129 @@
-Return-Path: <io-uring+bounces-8450-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8451-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3135AE47B9
-	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 17:01:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21117AE47CE
+	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 17:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0FC1883902
-	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 14:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8451E160E0C
+	for <lists+io-uring@lfdr.de>; Mon, 23 Jun 2025 15:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D832324DCE8;
-	Mon, 23 Jun 2025 14:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8668726FA76;
+	Mon, 23 Jun 2025 15:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="b3y9Dqy6"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wLlW136u"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85DE25E839
-	for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 14:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D326FA5A
+	for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 15:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690749; cv=none; b=n5sbcvfafK89+RL3HfFSdo3xMRByUEznNWWt4OjKK/iGkoqQN6PRCiaTVQ0lSlg1NHlYskmUdsB8UKaxnsWEfQuYq7gJ74o8rkstjBpWIdWEZI9DoqUbXhDVtgcLfQVOY4xZxGP7f6qRYjG/qyurRDUtfQ2G26A7GNe0Q7fuQao=
+	t=1750690861; cv=none; b=LApxo6tHqK6qExNuZGuvBQtbX/t0J+amaOeNgoDy+xFytHYSE0rg6CP3H9/DiMwZRNlGUEINxUQjS5bq+rYamCS8fLu7Xu7CkeU9byYAx+up6Q8c3+cTsOzmy29UfHGntYC7C6maBX3nEFSv3VQ4X1NcyNvk+Q4IiE6KVZV89Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690749; c=relaxed/simple;
-	bh=hx8ntCgRo+ZB8/WslKubMzSR7Qpl5s/6TXJeGl0BVDg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=V5FiSmj85HxhS085EuBgPrsqY0pKxluKOydBBS+k//1y80JWOzE0KzeFKpNPUNkypcfYK1zvc2LYFsP04iyWD2vL4LAjLJ3ZkK3qJviz2aYBWkK5IbqT7yw6Z9ftdu1U8n1qtxCagVOb/gczfrI6jOBS3J4lt0ODrR1uufE4m+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=b3y9Dqy6; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1750690861; c=relaxed/simple;
+	bh=DWG8vtTRJO+BwOywGgWtNmxhuxvbJmczNlvdJL8Ky58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rbMzqIg/PIhfvwj6SaV1wLD1kojPASW20OLEcgO26uYJa1HQHHE0hIw7BbUZ5kufzfUvyTWATDsQZI/B2M5HhqObxKnExmKRT5mqnyp14yjGQbQrf9WAxnX3F0Yy8B8r/4m7ScaF2kz8VO9t75ekrggDDfUjCGhLZMQefJ0QBO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wLlW136u; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b271f3ae786so3231229a12.3
-        for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 07:59:06 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3122a63201bso3060479a91.0
+        for <io-uring@vger.kernel.org>; Mon, 23 Jun 2025 08:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750690746; x=1751295546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H7F8sOqomppPYAeF6JrDjbcHhxF/KM+mu9Ng4FE7SwE=;
-        b=b3y9Dqy6PRkSEC+q1bmT4gbjevOn0zNO2UWO83VeGg/oMLbiEceWApsOg840qgbtwz
-         XJyiFEXaABHWvgyR7NCmxjo5QzI5P+vVG1S7zYCtgeRdW9uBsqott6d7swLGgKuPyGFj
-         pqr9VulUK70I9kj8Wjj9E7Zyzly3VuNJ29a+vyGFaBbhd/JEv5lOxqvw8TxYSiDAhNyH
-         T3G9ubAUwUqlVAYdpMoJWU1uPSxgag4Yr0JmoHPawPa4tp/DlyaO1a+PqP0ogFUQHn19
-         O3oqjxpPgS+I2NynjT5+UXIouMvggEDvnHu1EnEXrx9U43Ed0G9c+GTvzFAsG8OmQoed
-         UtdA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750690858; x=1751295658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Efb7h4IiluZ8rF9i5BpJjDumz0UB34EpNqVIk+T6z0=;
+        b=wLlW136uAiMH7DxLLvH7WmLv1A5VP+RO7/RYN59n8y2CD5Vtlvz/e1IPQAHwHtMawZ
+         Li+cnta3H1udrgJ6Bt2TLWMdSxOPwASQo+RcYHqni185Cw4j4jm3aEUMZi5oZd6E68iR
+         H41iJx712BaVxL+qOE5MlMexH5sC+Zp/REquWEdMkjQvN4TgB08JD718jgLXFumeRXCi
+         IZeyiEV2J2aLzVOLX8ZUnbddrjv4dR8zpXPrcNepSh4PlaRg22C7XH4PDVoSd2Vj+Hkg
+         rw3+M1Ue2IGhJ89VeekClTjnE+o8zScdjouP5tCu2oAVcymsHWya2lw5sUeq5sj2w/32
+         0iAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750690746; x=1751295546;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H7F8sOqomppPYAeF6JrDjbcHhxF/KM+mu9Ng4FE7SwE=;
-        b=LJYBOfRT5bsfApWOX5TwwLAwRVVNXTD43sUWwRVv5reWaPssunC/OWkLNupzEKqXiq
-         KIksAiJjwDMgX8ay0bnin79L8e/rZ8KWH2a7/W8GPhiisyEM6YI8P6UXMzFRd1bOZHAc
-         aUSnxDSMdMDbPv8mjCRZb21n+kFqVVnjDa3kTpZrnLsrHnvXMUevFzCdydXkPZJVB+7L
-         rhs0V2TWGkhNA2DRcktyj2NBEdsY/LJMY+zGKsqslVSoWG8Fj+0bFP2ZSRb3+w0sR1uO
-         UEwA9Ci5GUr9+HTCRTtNIffYE8iE+XPrYSnTddN0i7U+4v7/YDhTTKgksX+D0UDC28Jn
-         vh7A==
-X-Gm-Message-State: AOJu0YxsyfMHG5pzuW8g38OoBoKt/Cqzl7tduTTZpH1kyl7e2uI7muEo
-	wPaGLU5R2Sy+6IZu6zt7+KDUWqQ0WOA40c8lJP31mOMKUC1pD56056NpBfKF6eQ3nyK6Abh/9Rq
-	ioFG1
-X-Gm-Gg: ASbGncvEh7PeYMV6f0BJzeueI5JUuQ6/RG1pfIOB8qlA724L+tHzwhPLDD0YUqt2Mnc
-	A0TKqTxdnW/WhN28xM0U1WZWnJFooBypdGIFk6l0Yf6SUu6byxv9auJLYAZblBvXZq5n7q3oyM6
-	roC/NRWHYV9q53GUeuVGKY8J/nTy1aqW/csSKvwEZGzzOVgKBPuvUb6V0vBApb6vEWjPA7xVNOM
-	VELLiWWSFwlEn/J4O/gIrS5jbeh+IqumW7gQgQhJE4070Ca7+kr4f+SHV7g1NvQxNY4mzZ427gQ
-	aDUZ2mACQyXeplTNwQDpG50i0qbyBqXBbIZ/bP3qVQi1sMkLYFgPYg==
-X-Google-Smtp-Source: AGHT+IGrChfiEhdn8iNY4spB/7qcaP7gpVig8FaOb+cg0c0/67a4p3spy7QtbNOlXSUloXdHwH1ktg==
-X-Received: by 2002:a17:90b:5826:b0:2fe:e9c6:689e with SMTP id 98e67ed59e1d1-3159d64432cmr19715200a91.8.1750690746066;
-        Mon, 23 Jun 2025 07:59:06 -0700 (PDT)
-Received: from [127.0.0.1] ([12.48.65.201])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a3137b6sm10957606a91.33.2025.06.23.07.59.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 07:59:05 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Fengnan Chang <changfengnan@bytedance.com>
-In-Reply-To: <20250623110218.61490-1-changfengnan@bytedance.com>
-References: <20250623110218.61490-1-changfengnan@bytedance.com>
-Subject: Re: [PATCH] io_uring: make fallocate be hashed work
-Message-Id: <175069074512.48680.9575841881249533750.b4-ty@kernel.dk>
-Date: Mon, 23 Jun 2025 08:59:05 -0600
+        d=1e100.net; s=20230601; t=1750690858; x=1751295658;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Efb7h4IiluZ8rF9i5BpJjDumz0UB34EpNqVIk+T6z0=;
+        b=w+v/oIcFpzYJi/PUv2ZVTPwzqf9F0186WyPec8dCcOd2u+Ld7B2pr0+Cv3Fh2UqbAM
+         7IksGxhm2D3NjZzgrvxWzrMH+0QgxGOKlHxiLNz1mHIGFEjjCwZIFr2VpvDOA7uf5+Z+
+         hs+7cg2Ps2W3g7IOuVtJBaIGkwUL+epexIGxAGeN8YJYhf6AB56u49a0pSunbf80nagK
+         Xxhqtj86wQZGs4jMuS38KFK8pOEuJT08rRGCutWv38CBXmNRc/pf+qAmj6dBxRLxmfD8
+         N3bNUHLNCk6aKRUxzvyWeOzDNYxycrQlVG0ky/IFD708Xkm7byWTlJMu+/RdHJkWQe9e
+         Z3sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVslf1uaQD4oyVlZ/DZuPNXztm2z3xRKTPq4N8EoHjXXx5Y+f6f2sV8gQ+zc+QS3xcogVn9EjxDwg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+mx85SLcbGXdvXbBcPmxIAqrq/ajhH4B9/DMr8rcdJrD/3j+u
+	zwhFiYH6BEckEJvm+aLX72L3Nil4eL3reONpfL2+QPnZjhCEHrXdCI8bAafTmSo81dc=
+X-Gm-Gg: ASbGncuZAPhNDYhXHROtxk/F2zaof4dN18W4LGWTE5aujKzcUQvAKCOaBMmvt55rJYW
+	Idq2fZ06sakTDFChzcIhncIvzv1R8ORu7u8/jjiJ9K+/ngaDo3gD/vc/TvmWh86/Hl6KvyO9BvP
+	aqYC4BRGIR3ui3f4f8uznJVFrY1f7Gf6I2FENJZ/feMr3cYS0tzCVN4Dt5n6w5LwRNf6DPE0W39
+	mTT3Nk0Nlc9v3QpsHY/I/TyRFXjYB85LgTSpu6vK3mX79S7Bp8vUTE4VVklocyJvdgo7BXmXQrz
+	sK3olTydDbqqdZTKjgfpO6BIh1bvFxZnffKc48j4w+qBfx0garltNYrhDg==
+X-Google-Smtp-Source: AGHT+IGUUjQjuUqX05UT3HAo2u5Qjh7WVT+efnt7MqKr01cpayVTTMTARQsofUWceMLkZlA6eMUkqA==
+X-Received: by 2002:a17:90b:2ec3:b0:312:1c83:58e9 with SMTP id 98e67ed59e1d1-3159d62aba3mr18008699a91.5.1750690858254;
+        Mon, 23 Jun 2025 08:00:58 -0700 (PDT)
+Received: from [172.20.0.228] ([12.48.65.201])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315ac2991a7sm6350927a91.25.2025.06.23.08.00.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 08:00:57 -0700 (PDT)
+Message-ID: <1ccc3268-5977-40e4-8790-d0fe535a1329@kernel.dk>
+Date: Mon, 23 Jun 2025 09:00:56 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] io_uring cmd for tx timestamps
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Jason Xing <kerneljasonxing@gmail.com>
+References: <cover.1750065793.git.asml.silence@gmail.com>
+ <efd53c47-4be9-4a91-aef1-7f0cb8bae750@kernel.dk>
+ <20250617152923.01c274a1@kernel.org>
+ <520fa72f-1105-42f6-a16f-050873be8742@kernel.dk>
+ <20250617154103.519b5b9d@kernel.org>
+ <1fb789b2-2251-42ed-b3c2-4a5f31bca020@kernel.dk>
+ <20250620124643.6c2bdc14@kernel.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250620124643.6c2bdc14@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
 
-
-On Mon, 23 Jun 2025 19:02:18 +0800, Fengnan Chang wrote:
-> Like ftruncate and write, fallocate operations on the same file cannot
-> be executed in parallel, so it is better to make fallocate be hashed
-> work.
+On 6/20/25 1:46 PM, Jakub Kicinski wrote:
+> On Fri, 20 Jun 2025 08:31:25 -0600 Jens Axboe wrote:
+>> On 6/17/25 4:41 PM, Jakub Kicinski wrote:
+>>> On Tue, 17 Jun 2025 16:33:20 -0600 Jens Axboe wrote:  
+>>>> Can we put it in a separate branch and merge it into both? Otherwise
+>>>> my branch will get a bunch of unrelated commits, and pulling an
+>>>> unnamed sha is pretty iffy.  
+>>>
+>>> Like this?
+>>>
+>>>  https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git timestamp-for-jens  
+>>
+>> Branch seems to be gone?
 > 
-> 
+> Ah, I deleted when I was forwarding to Linus yesterday.
+> I figured you already pulled, sorry about that.
+> I've pushed it out again now.
 
-Applied, thanks!
+I've pulled it now, thanks Jakub.
 
-[1/1] io_uring: make fallocate be hashed work
-      commit: 88a80066af1617fab444776135d840467414beb6
-
-Best regards,
 -- 
 Jens Axboe
-
-
 
 

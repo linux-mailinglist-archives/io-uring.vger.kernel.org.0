@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-8467-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8468-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8ECAE6439
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 14:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E7DAE64B9
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 14:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DE44A01F8
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 12:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E4E160841
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 12:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15EB257AF0;
-	Tue, 24 Jun 2025 12:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355AB28136F;
+	Tue, 24 Jun 2025 12:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KH/rx7gm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTAqeC12"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504ED13C82E
-	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64690139E
+	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 12:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750766818; cv=none; b=mA6Uzz42RL+dkG2Vfsz6X1WtYqiuP2JPUSOu2uK56u4MC7+LqJFu2z2oMFqhMEdUvi6ooeTPaEg9yOQ+9YfyY36xnX8tzjil9iPTeOhojcJQ6DJ857qujavBbLVdtWhI/TOSPrQoEtHZB1pPcJaIjkQI7YWkaQlQdAYsajiaFhs=
+	t=1750767565; cv=none; b=Gftyq/AGY9CEj6CJh8IEigRwc1NMCgsgYqOJ19pSgbC0i4G5bIlwhXimTAs13eRdL2zhjIYPdP4fuDBluYBFolve4ZtRqGMRY/Xo5APTvTj50NRjupZ9v1yK7rdZsWQGyISyh0Xbc3WNFEXRfyhoX2J8FKbcYZP+6rchZZ5JoXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750766818; c=relaxed/simple;
-	bh=YOXeXx+NGcBevPYTv83Uwuc8xcvtvOeqhxGAARh1ce4=;
+	s=arc-20240116; t=1750767565; c=relaxed/simple;
+	bh=f+S8DWH2oimL9m/WpQyh9FpWlsCT7Ly2bT+7ObcUCCw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XG9cT0FVRnC960h8rv+oJQklZ+Yqy9cvY4ujoiQuDt/sGliF1aUp8c77x24lbTrXXPxSgogmZweWbW/UgHI/YNbNHH8VlH9r3TGpZn8ur5TP3+kfS97eR0c6g7yL6rbDc1JCieG8Q4gajvRPCCmKV3oxVDxDrPuGN+b1vOscDMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KH/rx7gm; arc=none smtp.client-ip=209.85.208.47
+	 In-Reply-To:Content-Type; b=F4sdyNDrIk6jrE0UEn1M59XjVb0Ib9er6vN8ztOg4DzjMPGEvDbKhDusOe9p7cdDyC90irJNTN+57tGAvUwNzXS+zX1tfX1IdPEUOs9W4M5k+hTIeVJRyur5j1yXgRGUSFjZq8W3Smox0eEd+CswfVlxK3mGkwLrkHCNe/Gvkl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTAqeC12; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso8325724a12.1
-        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 05:06:57 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ade5b8aab41so1088948866b.0
+        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 05:19:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750766816; x=1751371616; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750767562; x=1751372362; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=T7JxM8+KOnZkbYFOjvcFirFsraETh0dxKqIz0bVAKD4=;
-        b=KH/rx7gmodd3s4VydM/GartCNa7NurLlQLRkThKYAE3P8QYB6n87NeRdmRE4vgxbWs
-         MgsrLIaV7++8Npc/hU6HULMbMCpSfa/C671GI67/ygsNZQiGm+XYC0WYId8gzf6SPDhv
-         NTGcIUFQ8rjSwnHrXLV5STLN5aU5d4AFZwOcBUnRMPawoRHItKTjvN6Lll4XNh3q92dL
-         0be5iPmvIHt6QdjZSyR9XDp2zluJOloMYP11IQH26aD5NXSS2WG+Il0wOfJDKaSKWByE
-         XBYlExu0cfqsGga6kglnhrcW0W2qyGq4YUM/Nwi/nadk08Kb09IAfKDdoLSCWeCQM28B
-         V+2Q==
+        bh=zebCmG5/TIuOrAqQ8iU3GTeiKOHkUxXkHzDmO1pNjG4=;
+        b=UTAqeC12yiSHhcoBA6RqfTwCo/zeAoi+bMu3CXzrzsAMCr046cSPQ+/38ZX5BmjJsk
+         E8QFaLbXIhWyfO0VWO8eMoEAczhQ+6pSlCkcPPQdriXZ6qU9qn39RiNJU4bW4B1jfTkI
+         fLhMALotvdVxePENXFX2nVlCipVtDOfo3LGWfHzv2HNpWQpMCsDALqD9p//SP0oGilUn
+         L6Opo0maclVsMutL67DUZhR4wFhDP5w63qrmPH9ZKjSojKWiYPKFl1ZD5W1d7iQQVr20
+         XJuKToHwXZFXzsHl6hfn494vRXY3+gG+NSjHpeQFFNCfSkpez1vasAh7foPk2JJki4J1
+         JCFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750766816; x=1751371616;
+        d=1e100.net; s=20230601; t=1750767562; x=1751372362;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T7JxM8+KOnZkbYFOjvcFirFsraETh0dxKqIz0bVAKD4=;
-        b=v5DISKeLN1DIVvVEJ8tLkOfQS0YGLL/bEXg/brnMYJaMGdZbKTuzoItvdOorDXHmii
-         JsUDgTzBHOS0NtIk3z08hse29ii0EB4o/mLxYx2mwmn5KUrgTSAlWXUeHrrbct9e7QPA
-         FQ8KlqKnipYdv7FkpA9ATaF1JR0zjrPwl28DS40q4Fe3e8jDz0zn29++n+0fFAiNiUQA
-         2dw6TKYUQUzgMKtlKhM/S0G4elZIjBd4si64Qb8QnsVia7npYOQ1yyBk1k5y0Om/Yetq
-         9wdNMFsVIF7lgmR6MxyxvagMxfnPXcM1Oq6EP2Q12CfthtBKVZ3HoH8fOoUUW9gmHjhd
-         9D4g==
-X-Forwarded-Encrypted: i=1; AJvYcCX1n0qE3rgDeVShWRyanzQAm9Oii0ayf4IxOXpoRDOrPWNJ7e5ACyoP0T2cCbnrg8ztIw4tczH9UQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMATjJVVbmkd/P6pvi1apMuc28aQff7WXyER7BN7qs6jCu15NG
-	v+leqAe5iUzSuYTcmzRi+Gb+ZC2+/eiJUSdcX27PIC3Qzy/Oz5PcAeK2DQVhWQ==
-X-Gm-Gg: ASbGncvBalyzcJ6TFpbDnRFQRMPt2Tqt6G4z2ysc5g+3CnoMG/AuH2QKeqzTyKbHxAL
-	0Ob4kqpT3TwzZpaXpEiwQzrkfn7QQpZoEzTjc1zzMM2sbF80nSoOvI0hdWRtbHFj8cGVyqoYXy2
-	IflJ1aoKwKY4+i9Jj8fIg2nIpIUuSy/nbegnYgJwJtjjtAXwTYCqBtDjXH19neLRuVRv7pptGKI
-	h2aht9QMbl7ivfCl6KXCsyYOsS2rwKWZufnnyxBy7kPU47rBAIvleKZOoFt1K08ykRDyWnzYs/4
-	tcRT7Lq4vn/cGnLmjjI7LmDco3K5PK4JmKK2a3XGxPd1E5URd2h37Khcj4Hv1330J/xXw6vabfc
+        bh=zebCmG5/TIuOrAqQ8iU3GTeiKOHkUxXkHzDmO1pNjG4=;
+        b=TwJDvKOUSVS5Clo8hFBzA2RfKjSfPOKq6GMNi3qWSfXK89r/GYSRFPeIYh3vTO5yas
+         deWnXyJEoR0u86YA1uSERus1q6tg4ycoNNJPPdY6XEuFA0QDqjONmuDbnH7Q5r9C/z8b
+         nvmF10JkIlriUHHqfvQ3w38zgInoepOt9vtUroUWsPs7fopmDi9I7Saq1AuDkyYqKR+C
+         ajwaIESFZRyTEjej1gFQHY1f8hPyoGFX2a/pFshKItGK6fPq161BPezm3bHL8M7p89Mq
+         7YVMtdXb17vt6hOSrA29rTBrY4JfZGwrESS+rnry0T5C2cBrYqmikgCzKKuCUnrmds8D
+         vQLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1nIJgc/8FLSS7oWW879MuSBVWPERO6rH1gVWvzhGIQYpctf9KFv0YJ8d867+SUkFCPAUNZGQlQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQ4qFe4uFDa0CpCBJ6dP7KChrUnIPtDY8DuRvugaKmK0v9q5X
+	6G5DL/a0ZUtJn2yuyG9jESA10R3pPz0xl43Xr3yUlTsQYL8tIoD4nPcMcC3uBg==
+X-Gm-Gg: ASbGnctWVXMXhA4i0Raupn9sOXyH3x0IRK3vHi8ACFhb3CC1KCLfn6xILji/v2AqwEy
+	vpsSgZq13iCOOf7c333qbA9Kwwam+efFxtzUS+Y4DMkScICZQuP4tVv4YW6L4UzjppQQBn4JaEu
+	rfK1GM6eZbuJWzQrROvNd0DAtgEDX/O10GncF78Ir39zGLJyAEeWc4W3Fo1tJybpId8L01bvAT8
+	HNSX/k2glIh1UoR+xMkYeA6oxaO665e94hs+b8krl6O8QikNLvv4fvQNU3Lq+MDYPiGQCNFi6FN
+	JYbfrCXS7eKTWqFJX5WTDdocAdneeL/crahNgtlupy3kbhj0lD2ygSz1tU2AVXpXzouCv9I4lHE
 	=
-X-Google-Smtp-Source: AGHT+IHcnM8CM7psfj9FGndHruTR2jXDrpB523tZ6m8dbUcTdVM0HYLFExD5ngUrOpBnY/BanZRfRQ==
-X-Received: by 2002:a05:6402:2554:b0:607:f431:33f8 with SMTP id 4fb4d7f45d1cf-60a1d18f46emr14025081a12.24.1750766815316;
-        Tue, 24 Jun 2025 05:06:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHtMwlzv4tEcZQPPPql4IroieEtG5pLqd5A4tN2V3A3hMzU++L1ws3AA92bAiuA3lcL4q2/g==
+X-Received: by 2002:a17:906:6a11:b0:ade:44f8:569 with SMTP id a640c23a62f3a-ae057bc80d4mr1497933766b.42.1750767561243;
+        Tue, 24 Jun 2025 05:19:21 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325::2ef? ([2620:10d:c092:600::1:112b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f196f3bsm960426a12.9.2025.06.24.05.06.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0a4da13fcsm157761666b.20.2025.06.24.05.19.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 05:06:54 -0700 (PDT)
-Message-ID: <7c922136-39e6-4206-93ab-b3150b52a3c7@gmail.com>
-Date: Tue, 24 Jun 2025 13:08:18 +0100
+        Tue, 24 Jun 2025 05:19:20 -0700 (PDT)
+Message-ID: <5dcd8826-697b-46c8-a4e7-d1b9802092e8@gmail.com>
+Date: Tue, 24 Jun 2025 13:20:46 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,57 +82,57 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] io_uring/rsrc: fix folio unpinning
+Subject: Re: [PATCH v1 2/3] io_uring/rsrc: don't rely on user vaddr alignment
 To: David Hildenbrand <david@redhat.com>, io-uring@vger.kernel.org
 References: <cover.1750760501.git.asml.silence@gmail.com>
- <380d4fed5a9c49448f7ae030c54a6c0c5ec514c0.1750760501.git.asml.silence@gmail.com>
- <731f7ada-2544-483f-b33e-84c19d62d6e6@redhat.com>
+ <6a34d1600f48ece651ac7f240cb81166670da23d.1750760501.git.asml.silence@gmail.com>
+ <e013216a-c0bb-4ea9-84ee-d3771beaa733@redhat.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <731f7ada-2544-483f-b33e-84c19d62d6e6@redhat.com>
+In-Reply-To: <e013216a-c0bb-4ea9-84ee-d3771beaa733@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 6/24/25 12:57, David Hildenbrand wrote:
+On 6/24/25 12:53, David Hildenbrand wrote:
 > On 24.06.25 12:35, Pavel Begunkov wrote:
->> [  108.070381][   T14] kernel BUG at mm/gup.c:71!
->> [  108.070502][   T14] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
->> [  108.123672][   T14] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20250221-8.fc42 02/21/2025
->> [  108.127458][   T14] Workqueue: iou_exit io_ring_exit_work
->> [  108.174205][   T14] Call trace:
->> [  108.175649][   T14]  sanity_check_pinned_pages+0x7cc/0x7d0 (P)
->> [  108.178138][   T14]  unpin_user_page+0x80/0x10c
->> [  108.180189][   T14]  io_release_ubuf+0x84/0xf8
->> [  108.182196][   T14]  io_free_rsrc_node+0x250/0x57c
->> [  108.184345][   T14]  io_rsrc_data_free+0x148/0x298
->> [  108.186493][   T14]  io_sqe_buffers_unregister+0x84/0xa0
->> [  108.188991][   T14]  io_ring_ctx_free+0x48/0x480
->> [  108.191057][   T14]  io_ring_exit_work+0x764/0x7d8
->> [  108.193207][   T14]  process_one_work+0x7e8/0x155c
->> [  108.195431][   T14]  worker_thread+0x958/0xed8
->> [  108.197561][   T14]  kthread+0x5fc/0x75c
->> [  108.199362][   T14]  ret_from_fork+0x10/0x20
->>
->> We can pin a tail page of a folio, but then io_uring will try to unpin
->> the the head page of the folio. While it should be fine in terms of
->> keeping the page actually alive, but mm folks say it's wrong and
->> triggers a debug warning. Use unpin_user_folio() instead of
->> unpin_user_page*.
-> 
-> Right, unpin_user_pages() expects that you unpin the exact pages you pinned,
-> not some other pages of the same folio.
-> 
+>> There is no guaranteed alignment for user pointers, however the
+>> calculation of an offset of the first page into a folio after
+>> coalescing uses some weird bit mask logic, get rid of it.
 >>
 >> Cc: stable@vger.kernel.org
 >> Reported-by: David Hildenbrand <david@redhat.com>
+>> Fixes: a8edbb424b139 ("io_uring/rsrc: enable multi-hugepage buffer coalescing")
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>   io_uring/rsrc.c | 8 +++++++-
+>>   io_uring/rsrc.h | 1 +
+>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+>> index e83a294c718b..5132f8df600f 100644
+>> --- a/io_uring/rsrc.c
+>> +++ b/io_uring/rsrc.c
+>> @@ -734,6 +734,8 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+>>       data->nr_pages_mid = folio_nr_pages(folio);
+>>       data->folio_shift = folio_shift(folio);
+>> +    data->first_page_offset = page_array[0] - compound_head(page_array[0]);
+>> +    data->first_page_offset <<= PAGE_SHIFT;
 > 
-> Probably should be:
+> Would that also cover when we have something like
 > 
-> Debugged-by: David Hildenbrand <david@redhat.com>
-> Reported-by: syzbot+1d335893772467199ab6@syzkaller.appspotmail.com
-> Closes: https://lkml.kernel.org/r/683f1551.050a0220.55ceb.0017.GAE@google.com
+> nr_pages = 4
+> pages[0] = folio_page(folio, 1);
+> pages[1] = folio_page(folio, 2);
+> pages[2] = folio_page(folio2, 1);
+> pages[3] = folio_page(folio2, 2);
+> 
+> Note that we can create all kinds of crazy partially-mapped THP layouts using VMAs.
 
-Sure, we can do that
+It'll see that pages[2] is not the first page of folio2
+and return that it can't be coalesced
+
+if (/* ... */ || folio_page_idx(folio, page_array[i]) != 0)
+	return false;
 
 -- 
 Pavel Begunkov

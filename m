@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-8465-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8466-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13209AE63E8
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 13:53:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C67AE63F5
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 13:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D8E7A974D
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 11:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B6C174516
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 11:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A920921A42F;
-	Tue, 24 Jun 2025 11:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF8D252287;
+	Tue, 24 Jun 2025 11:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNUcvvpX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HPyg1135"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9A28C864
-	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 11:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171528EA4D
+	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 11:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765990; cv=none; b=FKVJvjake6g3seIAi0u9pGrO9CHuIYIHF4CZzGSzrQ8a4a2GaFK2YJbWtJ7BiyrfJgEXQ+arLPU0xaL49Zl/c9TtOPBQESNw/3P/XIgM8hkmYUHDp2zE8owgvB5lzAxo+gMnvxXf06K8L4C424sTQ3U1M1SpNPGYIR0fyDJooVc=
+	t=1750766251; cv=none; b=Fm/7R3MGuGt4TeYFB5wNUsp5moG1R/ltVWTG+4bdnhWMujpBNlhI7fNH5kwiO6zLDQeffEBYKkxVP8i+IDzBnJR/VH8e18uiOlnmfoH6t3T+4nabUY3TjCgM2TZBomeW0qzaMBQ9l+sIHUGoc3fQqdtUn9xAZi7VFCU7Ooaj09o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765990; c=relaxed/simple;
-	bh=k4QTziNw/yLw2IGFn9Oi9LcO/6OT0NHW/Ee7DABG6oM=;
+	s=arc-20240116; t=1750766251; c=relaxed/simple;
+	bh=406JsfbV3wkEZ6a6a8M6TGy1hBce9VFR0b4RqdtEUmA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q8NQlwr3aflyXCirAupTzFC9Ly28ymD5eLvCF1sMKOIActVXorLHEBE8tMf4zLAd7IqIKUec86eNuhY5psfZ9FUoiEr7hCbzzuNZdCo3fpXFQEzlZSJvQydsiZcvxeFkTUmI2vhkhX5yq/+eQs5SFFMv0Ip4ohj92wJUuxrtxH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNUcvvpX; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=rAWxpreMMB9ZwLS4pjP91lU7gJ+bikk1xUHb5NY1JJqgNhZQhc4aneYKb2Gc92v2sIHMzxkYJNB7dxOEC8hHrE6RDNN00DU+Aqtu5F6ohKJpYtQyK17zdyNUxgqGmfsV4B/A5Bu4Sr/JOTEMgGp1dgp0ufx90GcG3ZRQyCx7wk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HPyg1135; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750765987;
+	s=mimecast20190719; t=1750766249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4fHIO/pCpcv4cnf0qkZ0isdrYJvWHg9BVm6xplAgUCw=;
-	b=jNUcvvpXtrVZM+Yc+qoguLqcbdaKWqZ+q8iOfVeAsOBGmuLZg9oq9oI84O3WoumxmXKBvi
-	M+MZsUyeJIEu9xuj8FK1qZbQX5e0K1nAV2yFWiP8769A+W4sYUak8PyHqNBIZogEL5DM9H
-	8OvUQxXdE5nYjK6ay9ciGyCSCobDfPQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=z1V8dxB5/t6XmTrfBw33D/WiQ0b3b2IUzkoO3yElUk8=;
+	b=HPyg11359FSbkeoCm1SCshjJpoKKGRPAOWZsrampYhP6lBby055Cw2eBc18Q3fcdbr+HP1
+	0AJBdk8lIngVJUpjNxp2gHrLNm6UZ21UjpZeCEAcOWWaIU6qgQnm7q/4Lc6rJmG/E19ZfE
+	l5MTwXrASvHr7xIMfSobVDvp0XDQn40=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-304-RYy-mn1lPJalq5ZcgwL5nQ-1; Tue, 24 Jun 2025 07:53:06 -0400
-X-MC-Unique: RYy-mn1lPJalq5ZcgwL5nQ-1
-X-Mimecast-MFC-AGG-ID: RYy-mn1lPJalq5ZcgwL5nQ_1750765985
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso3042113f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 04:53:06 -0700 (PDT)
+ us-mta-122-DnhPx_O6Nr6g2lqShGsiEQ-1; Tue, 24 Jun 2025 07:57:27 -0400
+X-MC-Unique: DnhPx_O6Nr6g2lqShGsiEQ-1
+X-Mimecast-MFC-AGG-ID: DnhPx_O6Nr6g2lqShGsiEQ_1750766246
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4535d300d2dso2983945e9.1
+        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 04:57:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750765985; x=1751370785;
+        d=1e100.net; s=20230601; t=1750766246; x=1751371046;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4fHIO/pCpcv4cnf0qkZ0isdrYJvWHg9BVm6xplAgUCw=;
-        b=fnkqKo9oRyfWROaaQ1uq+tnNhldl79PPQj+JRK0DAAmB73vw0sv1pXBd6UZ3DiFxdv
-         n0PQlMRH9jlX+BJsC8pJky2ynX9gSEJ/+CAXM2mdcD06I+4RvhFleO336S3mqYsYKvLT
-         JEg4OWerl6JvhVUdjtpQBImJnY3LY5TkjB36FXX+G4m/Zm6wlodlthajhTzVK6eji+ZW
-         6bA0nW+b+9PEsUYLiIRo0bjKMnC3tvKu4Ewuy9NdgfN31QpgpBnuix9WL0gc55DIjDwT
-         zcRC7XrDeGgB0YPHua4HU/GRAt0MBnm00geZaErwjMcxSQcT83ycWTlSCtj4TPN9KStP
-         /5xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0R9JEojY0rbvawWRj4j7cEtheX3+bVAo5fDm4dWWHqvVNAYGxaJ6fbQ6/lq2lBOFnKdmObhdvpw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0hpLaLisfIuJutir1MCsOJm9UhVmVYXkWX+QIjevKMW28I1Ei
-	9nZ7v2pyZ/mxmLZtQGArqr8WR4dphhRBZXzNY62BjFw/YlUloS43p67cZ8/4PGevoKLmjuHuBqg
-	GYTMzv+ErwgXmKUEAKBgCEMmMyONZXlv9eA3DERi4dqQhYgMHuLorxy20Uyli/JrCh8kBa3g=
-X-Gm-Gg: ASbGncsuk3SYx2k3NL3z/xjNKPYMHfKEGBk5iZK/kcY0SZ2SQmy//6n5SNgAfCi5DEu
-	zhvZF1N7NNC+qpjz6P/m146TXr7cTDsM070Khe4IFJ4nAq1EJ68X57dYfMZBSAgytwPJjV1k1/F
-	GZ8ix9fPTddKa8HpOgZMpyIl7tyhLrYHb/s8z9P7Vb9yavJdmH0tWhPByrz3h0/np66rLL+rn19
-	j7Ve9sC8pfHh2EviRaXeGemASCg6S1pxUocmSjWzeAOjqfE9Ym65v1q2q0Mf4PTum0CQ5a7ZobY
-	Tyl5b5zZhZG7TKl1fhbg9WFGXKa94rs41tZzWCAUGpQC9wa2oQpVtW0=
-X-Received: by 2002:adf:9dd1:0:b0:3a4:f655:8c4d with SMTP id ffacd0b85a97d-3a6d131787bmr11516680f8f.27.1750765985041;
-        Tue, 24 Jun 2025 04:53:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMunSMQCPebSHjk6E16xbcHpI4NVeq1bdixSul+GCXMHPQzMKERKienasLSIDnN5UveE/Rcw==
-X-Received: by 2002:adf:9dd1:0:b0:3a4:f655:8c4d with SMTP id ffacd0b85a97d-3a6d131787bmr11516661f8f.27.1750765984645;
-        Tue, 24 Jun 2025 04:53:04 -0700 (PDT)
+        bh=z1V8dxB5/t6XmTrfBw33D/WiQ0b3b2IUzkoO3yElUk8=;
+        b=jp+eYGQTjWANSz8VEYS2JhVUPEZzacrme+X03fV3s5A3idrfyMh4gvSW2JE0WbGN+L
+         c3rz+JeJau+IOVn8dmznYDfKA77ppyKHcttacARWvQlCE9CxsUCiWdRwXXuOBaAVBcqK
+         pp6r7mqal4ewnF5lEBqqJW645ujSGiJKbchj9qAPoTgbmVkivZ78a5ReZ5tKFAAP9h8f
+         26Vnd60rFAEDsUYcjRWhvjPTPqXl15YBP/MwWlYL0VTJ/b4QwM+Ej2ztHlub4TT5jN/T
+         qUYqfynjJx0vz6U0TMTTeHGeMnzfEJ4IdV7+bw6WbJeyY00tpAVxfOKoWI1lFi8SvQZg
+         7PXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVW4GOe1ByG8I+i5lT/xRJU2kqaSsvUvjyqOGZzxttIMMd5tMZhISmeSKomadXL79WRl7xBGOXD3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvFxMQ+tVwTF1jFyOjJSRjBcUuzgPGCMk8WUUpM1d8oi5WCLJ7
+	R9o3aO5Y3LQ7o/tj1NVDDYmzgQFoNynRJC3sWJNGMsNx3zBLk4p/AqJb9uK9HZgYxkhNelS4JbG
+	DmsGIN4w3si1imv704A42jgr9CPCCzJMP+HxDKrLlYvEBsuMgfwtQkE7gSV5r
+X-Gm-Gg: ASbGncu66NK07OITTcr4GO1TF6/OLmM8SHjS0Yf6M024zU84WmlYewOz33oW75PXmZq
+	QQCURNN1UjiIusvXRAFcg8cRSFlaqz+/PnkMb2IkMD/Qre0vz5T8Xt1gjM3JiOw3cNCFOTb3WJg
+	uXweHFT7UY/SBJ0pvtD1JqSdzfKXloqBIQ5sOiQFd0NnnuFd8vsiI7qGkKwba49cEbYZs6mWRbw
+	rAnv5G49KWSIKeqf3gndqjXj6FdglclPclmavZeuUDtImgb0PKW5M5Bvvq8JpsbFoyAaPJcqyXa
+	mg0SbRMm1F92jB5RmBr24/gDIg+Iuu4u2E28f7yeksq6HhGf3kTBy9Q=
+X-Received: by 2002:a05:6000:4185:b0:3a5:2923:8006 with SMTP id ffacd0b85a97d-3a6d12daab6mr10560879f8f.25.1750766246211;
+        Tue, 24 Jun 2025 04:57:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8oV+65pjonZUUT2twzKhe4SP46fCBrgrxk3fCoS8F5YXm8ASpJVR0Qh9yZ13liHrE8jbSBw==
+X-Received: by 2002:a05:6000:4185:b0:3a5:2923:8006 with SMTP id ffacd0b85a97d-3a6d12daab6mr10560867f8f.25.1750766245810;
+        Tue, 24 Jun 2025 04:57:25 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e81105f0sm1797112f8f.90.2025.06.24.04.53.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8069d78sm1763378f8f.45.2025.06.24.04.57.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 04:53:04 -0700 (PDT)
-Message-ID: <e013216a-c0bb-4ea9-84ee-d3771beaa733@redhat.com>
-Date: Tue, 24 Jun 2025 13:53:03 +0200
+        Tue, 24 Jun 2025 04:57:25 -0700 (PDT)
+Message-ID: <731f7ada-2544-483f-b33e-84c19d62d6e6@redhat.com>
+Date: Tue, 24 Jun 2025 13:57:24 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -89,10 +89,10 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] io_uring/rsrc: don't rely on user vaddr alignment
+Subject: Re: [PATCH v1 1/3] io_uring/rsrc: fix folio unpinning
 To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1750760501.git.asml.silence@gmail.com>
- <6a34d1600f48ece651ac7f240cb81166670da23d.1750760501.git.asml.silence@gmail.com>
+ <380d4fed5a9c49448f7ae030c54a6c0c5ec514c0.1750760501.git.asml.silence@gmail.com>
 Content-Language: en-US
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
@@ -140,45 +140,51 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <6a34d1600f48ece651ac7f240cb81166670da23d.1750760501.git.asml.silence@gmail.com>
+In-Reply-To: <380d4fed5a9c49448f7ae030c54a6c0c5ec514c0.1750760501.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 24.06.25 12:35, Pavel Begunkov wrote:
-> There is no guaranteed alignment for user pointers, however the
-> calculation of an offset of the first page into a folio after
-> coalescing uses some weird bit mask logic, get rid of it.
+> [  108.070381][   T14] kernel BUG at mm/gup.c:71!
+> [  108.070502][   T14] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+> [  108.123672][   T14] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20250221-8.fc42 02/21/2025
+> [  108.127458][   T14] Workqueue: iou_exit io_ring_exit_work
+> [  108.174205][   T14] Call trace:
+> [  108.175649][   T14]  sanity_check_pinned_pages+0x7cc/0x7d0 (P)
+> [  108.178138][   T14]  unpin_user_page+0x80/0x10c
+> [  108.180189][   T14]  io_release_ubuf+0x84/0xf8
+> [  108.182196][   T14]  io_free_rsrc_node+0x250/0x57c
+> [  108.184345][   T14]  io_rsrc_data_free+0x148/0x298
+> [  108.186493][   T14]  io_sqe_buffers_unregister+0x84/0xa0
+> [  108.188991][   T14]  io_ring_ctx_free+0x48/0x480
+> [  108.191057][   T14]  io_ring_exit_work+0x764/0x7d8
+> [  108.193207][   T14]  process_one_work+0x7e8/0x155c
+> [  108.195431][   T14]  worker_thread+0x958/0xed8
+> [  108.197561][   T14]  kthread+0x5fc/0x75c
+> [  108.199362][   T14]  ret_from_fork+0x10/0x20
+> 
+> We can pin a tail page of a folio, but then io_uring will try to unpin
+> the the head page of the folio. While it should be fine in terms of
+> keeping the page actually alive, but mm folks say it's wrong and
+> triggers a debug warning. Use unpin_user_folio() instead of
+> unpin_user_page*.
+
+Right, unpin_user_pages() expects that you unpin the exact pages you pinned,
+not some other pages of the same folio.
+
 > 
 > Cc: stable@vger.kernel.org
 > Reported-by: David Hildenbrand <david@redhat.com>
+
+Probably should be:
+
+Debugged-by: David Hildenbrand <david@redhat.com>
+Reported-by: syzbot+1d335893772467199ab6@syzkaller.appspotmail.com
+Closes: https://lkml.kernel.org/r/683f1551.050a0220.55ceb.0017.GAE@google.com
+
+
 > Fixes: a8edbb424b139 ("io_uring/rsrc: enable multi-hugepage buffer coalescing")
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   io_uring/rsrc.c | 8 +++++++-
->   io_uring/rsrc.h | 1 +
->   2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index e83a294c718b..5132f8df600f 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -734,6 +734,8 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
->   
->   	data->nr_pages_mid = folio_nr_pages(folio);
->   	data->folio_shift = folio_shift(folio);
-> +	data->first_page_offset = page_array[0] - compound_head(page_array[0]);
-> +	data->first_page_offset <<= PAGE_SHIFT;
-
-Would that also cover when we have something like
-
-nr_pages = 4
-pages[0] = folio_page(folio, 1);
-pages[1] = folio_page(folio, 2);
-pages[2] = folio_page(folio2, 1);
-pages[3] = folio_page(folio2, 2);
-
-Note that we can create all kinds of crazy partially-mapped THP layouts 
-using VMAs.
 
 -- 
 Cheers,

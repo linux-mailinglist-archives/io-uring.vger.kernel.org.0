@@ -1,79 +1,87 @@
-Return-Path: <io-uring+bounces-8464-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8465-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EEDAE62A5
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 12:38:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13209AE63E8
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 13:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5001925123
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 10:38:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D8E7A974D
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jun 2025 11:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E68288CA2;
-	Tue, 24 Jun 2025 10:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A920921A42F;
+	Tue, 24 Jun 2025 11:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5vnEboQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNUcvvpX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D8D28689C
-	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 10:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9A28C864
+	for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 11:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761426; cv=none; b=V1AtXLSc+LbCQ5/Z5jxfb1zkXqXJpm3Amf0ERMWgbMoB+B+4KdUg36TBbTe68ZPQZQ93wiVUgdNWanx1ic70+AscBBiPBxJdJBwVdaRawuLWJtchWL2dyolsS7SiNQDCT9Zi6JOiXyuM6EK1Ji1+CMvWHul2jk66J6sZczHYU+M=
+	t=1750765990; cv=none; b=FKVJvjake6g3seIAi0u9pGrO9CHuIYIHF4CZzGSzrQ8a4a2GaFK2YJbWtJ7BiyrfJgEXQ+arLPU0xaL49Zl/c9TtOPBQESNw/3P/XIgM8hkmYUHDp2zE8owgvB5lzAxo+gMnvxXf06K8L4C424sTQ3U1M1SpNPGYIR0fyDJooVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761426; c=relaxed/simple;
-	bh=CIZW1ZGLxAsOZc77hXEfkx7JARkl8uHxlQi7UeqJMLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q25LRe5W2+7DWbP//x8lBax0dxLGdmULXhLEZx4RQNRDBNep1y27FQyMSFTLHeO5tix6PCvRWZBqg3ddNipMqZX+tV0HF4xQXVbNHe9epqX5ctC5wpfPMbGtb5eFOSVwc2Ol24Ti3sBYtIX5C1sG9pkSDKOpV7eDhczFVK5Boak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5vnEboQ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-acb5ec407b1so860051666b.1
-        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 03:37:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750761422; x=1751366222; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vig3sFKx5CIiTbV6+rwGmVyDkE6koLlV39giMQWKVyY=;
-        b=S5vnEboQMThQKeH/Ul/y36yz7LiNAtCy+DvAWlM+z6o5PiyFaj81E8PVv/re9s17P9
-         AELxxqzcVBSR092b9znUPi7dV3nfbBlAx47TJb1cn89e1A2OX/rfplEdtqGFS+GrcmPL
-         UqQ2s00N4FlZsb6735Rtofe2CjoROFTQ2x1K7OMZ8xx7W89qb0L6bDJrwzYC2F/oblYy
-         djg2pZvALJmuNJQ1yRx4BEke8roFb4HJcbeUcG1+ipzesk5ApPAi3HZmA6iT/0AxWFpc
-         arTbkO3KBMyAoUQkFENSvKBL5OiaqjS/8OF8f+TDOp6x5uXdeVCmPfkNYy1QSUmy5514
-         IzsA==
+	s=arc-20240116; t=1750765990; c=relaxed/simple;
+	bh=k4QTziNw/yLw2IGFn9Oi9LcO/6OT0NHW/Ee7DABG6oM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q8NQlwr3aflyXCirAupTzFC9Ly28ymD5eLvCF1sMKOIActVXorLHEBE8tMf4zLAd7IqIKUec86eNuhY5psfZ9FUoiEr7hCbzzuNZdCo3fpXFQEzlZSJvQydsiZcvxeFkTUmI2vhkhX5yq/+eQs5SFFMv0Ip4ohj92wJUuxrtxH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNUcvvpX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750765987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4fHIO/pCpcv4cnf0qkZ0isdrYJvWHg9BVm6xplAgUCw=;
+	b=jNUcvvpXtrVZM+Yc+qoguLqcbdaKWqZ+q8iOfVeAsOBGmuLZg9oq9oI84O3WoumxmXKBvi
+	M+MZsUyeJIEu9xuj8FK1qZbQX5e0K1nAV2yFWiP8769A+W4sYUak8PyHqNBIZogEL5DM9H
+	8OvUQxXdE5nYjK6ay9ciGyCSCobDfPQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-RYy-mn1lPJalq5ZcgwL5nQ-1; Tue, 24 Jun 2025 07:53:06 -0400
+X-MC-Unique: RYy-mn1lPJalq5ZcgwL5nQ-1
+X-Mimecast-MFC-AGG-ID: RYy-mn1lPJalq5ZcgwL5nQ_1750765985
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso3042113f8f.0
+        for <io-uring@vger.kernel.org>; Tue, 24 Jun 2025 04:53:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750761422; x=1751366222;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vig3sFKx5CIiTbV6+rwGmVyDkE6koLlV39giMQWKVyY=;
-        b=a0RkU6Rwg1i41MZ3uKkUS/mDYZk9lrdpQwrpRoetrb8lYxDb3t5F1jvw95Xp3q80L1
-         JFJdBh4KvDi8vecF2tXZ3KHkq2sg1NKcoszFhqmzTojGU4QUbXkGDfobfIAXt0qunKLJ
-         KAZmrTz5EM7OVLX8djzM93aXaBvYCRa/p2KdNdHrGtjmpGD+e+fcoRpwksGcLmIk9tHG
-         fkZvvEzbEGGJMmSX3KB1USJIDdrc9Sd9O37RbmQBnlwUulNe1v8rHDVbWCyEx2pqoD28
-         veGkiUOtS1NGQUaUKSuPBOjHkCa9Dn7LbbjNGpRE4g9Z3AHoH7U+MtjSKSoeW0bT4++K
-         LO/w==
-X-Gm-Message-State: AOJu0YyQWdetDiOgVqOZoB525xNqP/vrpQC9Ivk6txpUjJSPV1l5L80J
-	YFsMrB/ytmNIeDZ6CCgrGrPuvgESDiA09BIlcLR6zQgLBVhK0sS/2f4UR9w1FQ==
-X-Gm-Gg: ASbGnct9VkJ5j6VJ7Iq0pG/CqmuLTH3wXFxz8NPvMg02c4heCwmHMp6EeZGC0h8vCjq
-	I4mF+zMrvRtFLEYlch1cdufYAS6eXiA2wQpoKHfCa4c9sYSzBfnj7rwsQw0rMWJVXFd4JmcSBSW
-	DN3ZI3xFD8lbg7MnX496iiT2OyQSPatj9IKxYou+KdtVYPj6LjCIHFXuo4qElt1Ajwjzhnp8kU9
-	BlxEJmbAxHBDUJ2YTlTNzLbI+VjEjjCTvlCknM9ul1O7rRCtW1kHeW7muALecuxWWTUDQfEdNyk
-	YtZ+/bWGymIMkmG8fq/wsqHF1dzfZVa+pj7pGbzCtQYPLrgia9gJ6qwf4RyZShgC4GpTnWvQ6sw
-	=
-X-Google-Smtp-Source: AGHT+IF+OaKcpJfiLkROPRTBIAY/k9gadz0WYVALygSyByomb1HlUG5o5GaqRQ5SDpUygKy23rrgeg==
-X-Received: by 2002:a17:906:99c2:b0:ac6:fc40:c996 with SMTP id a640c23a62f3a-ae0579d88eemr1508775966b.23.1750761421818;
-        Tue, 24 Jun 2025 03:37:01 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::2ef? ([2620:10d:c092:600::1:112b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053e801c1sm875316966b.17.2025.06.24.03.37.00
+        d=1e100.net; s=20230601; t=1750765985; x=1751370785;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4fHIO/pCpcv4cnf0qkZ0isdrYJvWHg9BVm6xplAgUCw=;
+        b=fnkqKo9oRyfWROaaQ1uq+tnNhldl79PPQj+JRK0DAAmB73vw0sv1pXBd6UZ3DiFxdv
+         n0PQlMRH9jlX+BJsC8pJky2ynX9gSEJ/+CAXM2mdcD06I+4RvhFleO336S3mqYsYKvLT
+         JEg4OWerl6JvhVUdjtpQBImJnY3LY5TkjB36FXX+G4m/Zm6wlodlthajhTzVK6eji+ZW
+         6bA0nW+b+9PEsUYLiIRo0bjKMnC3tvKu4Ewuy9NdgfN31QpgpBnuix9WL0gc55DIjDwT
+         zcRC7XrDeGgB0YPHua4HU/GRAt0MBnm00geZaErwjMcxSQcT83ycWTlSCtj4TPN9KStP
+         /5xw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0R9JEojY0rbvawWRj4j7cEtheX3+bVAo5fDm4dWWHqvVNAYGxaJ6fbQ6/lq2lBOFnKdmObhdvpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0hpLaLisfIuJutir1MCsOJm9UhVmVYXkWX+QIjevKMW28I1Ei
+	9nZ7v2pyZ/mxmLZtQGArqr8WR4dphhRBZXzNY62BjFw/YlUloS43p67cZ8/4PGevoKLmjuHuBqg
+	GYTMzv+ErwgXmKUEAKBgCEMmMyONZXlv9eA3DERi4dqQhYgMHuLorxy20Uyli/JrCh8kBa3g=
+X-Gm-Gg: ASbGncsuk3SYx2k3NL3z/xjNKPYMHfKEGBk5iZK/kcY0SZ2SQmy//6n5SNgAfCi5DEu
+	zhvZF1N7NNC+qpjz6P/m146TXr7cTDsM070Khe4IFJ4nAq1EJ68X57dYfMZBSAgytwPJjV1k1/F
+	GZ8ix9fPTddKa8HpOgZMpyIl7tyhLrYHb/s8z9P7Vb9yavJdmH0tWhPByrz3h0/np66rLL+rn19
+	j7Ve9sC8pfHh2EviRaXeGemASCg6S1pxUocmSjWzeAOjqfE9Ym65v1q2q0Mf4PTum0CQ5a7ZobY
+	Tyl5b5zZhZG7TKl1fhbg9WFGXKa94rs41tZzWCAUGpQC9wa2oQpVtW0=
+X-Received: by 2002:adf:9dd1:0:b0:3a4:f655:8c4d with SMTP id ffacd0b85a97d-3a6d131787bmr11516680f8f.27.1750765985041;
+        Tue, 24 Jun 2025 04:53:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMunSMQCPebSHjk6E16xbcHpI4NVeq1bdixSul+GCXMHPQzMKERKienasLSIDnN5UveE/Rcw==
+X-Received: by 2002:adf:9dd1:0:b0:3a4:f655:8c4d with SMTP id ffacd0b85a97d-3a6d131787bmr11516661f8f.27.1750765984645;
+        Tue, 24 Jun 2025 04:53:04 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e81105f0sm1797112f8f.90.2025.06.24.04.53.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 03:37:01 -0700 (PDT)
-Message-ID: <a6be01c8-5e36-447d-acd1-3491bb50faaa@gmail.com>
-Date: Tue, 24 Jun 2025 11:38:27 +0100
+        Tue, 24 Jun 2025 04:53:04 -0700 (PDT)
+Message-ID: <e013216a-c0bb-4ea9-84ee-d3771beaa733@redhat.com>
+Date: Tue, 24 Jun 2025 13:53:03 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,37 +89,100 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] io_uring mm related abuses
-To: io-uring@vger.kernel.org
-Cc: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v1 2/3] io_uring/rsrc: don't rely on user vaddr alignment
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1750760501.git.asml.silence@gmail.com>
+ <6a34d1600f48ece651ac7f240cb81166670da23d.1750760501.git.asml.silence@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1750760501.git.asml.silence@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <6a34d1600f48ece651ac7f240cb81166670da23d.1750760501.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/24/25 11:35, Pavel Begunkov wrote:
-> Patch 1 uses unpin_user_folio instead of the page variant.
-> Patches 2-3 make sure io_uring doesn't make any assumptions
-> about user pointer alignments.
+On 24.06.25 12:35, Pavel Begunkov wrote:
+> There is no guaranteed alignment for user pointers, however the
+> calculation of an offset of the first page into a folio after
+> coalescing uses some weird bit mask logic, get rid of it.
+> 
+> Cc: stable@vger.kernel.org
+> Reported-by: David Hildenbrand <david@redhat.com>
+> Fixes: a8edbb424b139 ("io_uring/rsrc: enable multi-hugepage buffer coalescing")
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   io_uring/rsrc.c | 8 +++++++-
+>   io_uring/rsrc.h | 1 +
+>   2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index e83a294c718b..5132f8df600f 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -734,6 +734,8 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+>   
+>   	data->nr_pages_mid = folio_nr_pages(folio);
+>   	data->folio_shift = folio_shift(folio);
+> +	data->first_page_offset = page_array[0] - compound_head(page_array[0]);
+> +	data->first_page_offset <<= PAGE_SHIFT;
 
-I didn't reproduce the alignment issue, sth wrong with my
-KASAN'ed machine, need to fix that, and it did't trigger
-without it.
+Would that also cover when we have something like
 
-> 
-> Pavel Begunkov (3):
->    io_uring/rsrc: fix folio unpinning
->    io_uring/rsrc: don't rely on user vaddr alignment
->    io_uring: don't assume uaddr alignment in io_vec_fill_bvec
-> 
->   io_uring/rsrc.c | 28 +++++++++++++++++++++-------
->   io_uring/rsrc.h |  1 +
->   2 files changed, 22 insertions(+), 7 deletions(-)
-> 
+nr_pages = 4
+pages[0] = folio_page(folio, 1);
+pages[1] = folio_page(folio, 2);
+pages[2] = folio_page(folio2, 1);
+pages[3] = folio_page(folio2, 2);
+
+Note that we can create all kinds of crazy partially-mapped THP layouts 
+using VMAs.
 
 -- 
-Pavel Begunkov
+Cheers,
+
+David / dhildenb
 
 

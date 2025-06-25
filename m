@@ -1,118 +1,112 @@
-Return-Path: <io-uring+bounces-8484-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8485-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63034AE7F37
-	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 12:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD8AE871C
+	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 16:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560383B59FF
-	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 10:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5103189326D
+	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 14:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3545E1F3BB5;
-	Wed, 25 Jun 2025 10:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0DE1D5165;
+	Wed, 25 Jun 2025 14:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LP3h28ZG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2LJqB9Az"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43EB280CE0;
-	Wed, 25 Jun 2025 10:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB29F1D6193
+	for <io-uring@vger.kernel.org>; Wed, 25 Jun 2025 14:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750847233; cv=none; b=Pa11VCd+7J8mN4GpdMdbz3zu1mNmUvev/ao8Nd8vLhOxzpc+hvCsujjvvkB0FqboT8O6rGwyPLYf3HDWVU9hykLRuPAoU7Ffeap8M9JD4FmPxH7Pw44hMSyz8tyj2j2sJg02qwLFCzgaH84/Ma9hzIvJQ9zl9sNbuLFxObpIp1Y=
+	t=1750863161; cv=none; b=pRJIgWuoU5ghSG5kRc3YZOASSZFenj6kqDVcqGt2WbH51vuu6bKJ6w/CsLdod2iz8lDa8y3OmmdA3OkR50Tw9eAyhZ8SPn61cFnpdTTlv5TBsZUk8IU8s+MqGUa9A/FrL+C6wLk+Fevb7qbsl2qKOjgBtVxzjAEFHFY8r9ybuPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750847233; c=relaxed/simple;
-	bh=HSCjCiEHKsROo2fk/Ce1a6UUAjVcLaJv73jMuM0kV+4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=oPiCZO2YgAnp2SNZTo6oqQiByQ6+D5fh4hyes800rL7H1p/EB6qETP1AgNxlI29rSGPXPMrz+mMaFgueLsf0K3Y2waxPTfBmktBJRRVPfCe3lzHQrWM1VOyqLSuTrIffAxxqczRym+S+K8OCd0SEf/JAkWPO3ss08GhUVGaWZP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LP3h28ZG; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2360ff7ac1bso12488255ad.3;
-        Wed, 25 Jun 2025 03:27:11 -0700 (PDT)
+	s=arc-20240116; t=1750863161; c=relaxed/simple;
+	bh=blqNeUBeq4tjvuy/9Ly0dt0wfjN65t72jilSiX/+g7U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IVSJAfzZOvP2h7CshKgvr5wu1i1l8JAKDMSI5PXoFasAQ3CaUPbQ3kFJOhJfrJTmm9hRV9dKobhjzlbViCoKd535f8BTMq2bCYQE5BW5KmQsQbeq2qeuKaf2iPlt0i7JQ604sBjrxfUbtF8Pe3+Ao5z5zjTBnCqyGjxbEadTXvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2LJqB9Az; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b1fd59851baso4666733a12.0
+        for <io-uring@vger.kernel.org>; Wed, 25 Jun 2025 07:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750847231; x=1751452031; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750863157; x=1751467957; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zY7fKC/qV7ZHlYsM900r395rGJcUyLQ039J8xew1IFA=;
-        b=LP3h28ZGYVkcW4utc6U0bmY5yN5+kt0Gw85yN2hR8F2s7OatGoiQwg8iILAyAIm6Pz
-         5y4bnKHu21qx3HFvvZYc6Slr/7AcC1tB8N9hvne8lo7ER/RQk2UwcJpFVrv80QhaueNc
-         XahJb0XCDfK/7nGa6iuIIr6dQK93HKEYIfCKarfFujugFxYNtOj3uVr6Z8y4UVTVWrkM
-         46Xr0I3g1fHkH7MAecFltyfJRH1J3olktYUuKipzHvBJNFFGH5IAxq4DX/iJiwSAbg9Z
-         5+VqouXAz34Qzuvr0f5fYF5lGcyTZTIJ1JPJEfkL1ES/MM/enHVLBL2WN3KDG0E6ZZmm
-         Yd5Q==
+        bh=wz1Ak0wbeYwkM41lDzZf9Pz6IYC6aH7Ol1qRTwbIEuM=;
+        b=2LJqB9AzZ/XP6a6SKHG3xY37oXE3RqXGG3LcZhJij6/Co6eFDabh/uXgLX8/9TWcC6
+         Af0N4vTCc3YK1w1bHfG3NcA6cKhJGAzSiI3upkLqc1/X4zvCkLyitbeSBTl+hRDr7ifk
+         jVtGrvO9grwELQsDwN19/LHdl70au5fcTVNwJW7TuANpqAGWi67bPoXFI1Ar1ImmxUoX
+         ZiTIAeX7xyOBnYpJ7N1ly5Vq2h6/uh/VObTdvRcYbfahpm6c3rjYYcvNKDP4G+C4Hki/
+         W9n5EgCR7ymNVFKz26fLeVR5YT340D9kW41vU+fbbhyuCL7YuydTrndVqJyR32gdhgwN
+         Trbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750847231; x=1751452031;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750863157; x=1751467957;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zY7fKC/qV7ZHlYsM900r395rGJcUyLQ039J8xew1IFA=;
-        b=YzGkfXOsuQMt5DT+tJUF8l3RJkGzSeGVOZnwbUbZwloV8mqCXfHK9D/xRXx0krkuYU
-         5cAGcyJt24/XLLce0Qii+URM6M1hs1x5TO0wue98KxRtZ49dzvYKtyqn6nG55S8fh5DN
-         lSZK8rvYK2H4e1YzkEbex45LNPIOnzbuwP86uj5eZDjsERBog/9fFT7cLQ+CrbM7iB0O
-         n4HIZ8G8wl837ceEbuT9F9atx+JxHbHkNmq38T8rng0NosmlSKw2/2C9WfvmXS/rQft8
-         q9kFGwU2RobSv/dv60yFsFDkEriHYymL4HgTEyOw4zrjKk1HRvssWdYbXYltTg7w6TI3
-         wmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsLkhHhiwRC14F4ZdDf0kQFJkYcO8TF14DzILLpREMMo2IYMDqiZ8PlhgCWkTriKbtMhPAOpkwegvWw/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzARBZ6ms2biRZlTMkY4CHi0SN6vUdUIIKBsQXri/l0NZg7yyW
-	C+c6YpX9vnIhpxHd6v5KD8FadfCQwQQROdrsj0EK1mXFmUvAPTuFas56
-X-Gm-Gg: ASbGncsRvQQZUc6T+edR3jF646PkxaL/ZtlCFSXRJjiyC5BBjg5XghgWvKItEyDjFql
-	A8AbmeOjDgJtDOMvZahNGSVj9PHVik1u6k7jaHULR84hnLaA6xHAPJbQWcBRIndrNluin43ZDJi
-	poONkjU7T3RdAzhsggzGRqPxH3TV1Q42NQ/Sn2iNZ4sQRsR254bfwwMJuw1zY5PVQsBpsQ6wftY
-	hBqCntYOc+n6YagRFHRrBMqGDE6Scyx9URbkZ/lBpmbyTA9Dxbl1ozC1un1A/oCzmOR52Bd2ajS
-	18xF/dCjVPJuiqvY/ZQLZdfiLGRhiLHCtGF7l8sYDkcJkPsxWrIzp0XrC6lbFyNxuDrrv6ofqUb
-	0OkrB8HGg
-X-Google-Smtp-Source: AGHT+IFlIjrksnX9+mThUlVZlM9ouOL4FyPUOwuFYKC6Nsq007BT2Fo3tCOGrcfFXd8IRbbqNkRUQQ==
-X-Received: by 2002:a17:903:2304:b0:234:1163:ff99 with SMTP id d9443c01a7336-2382478cecemr47637105ad.43.1750847230907;
-        Wed, 25 Jun 2025 03:27:10 -0700 (PDT)
-Received: from ubuntu.localdomain ([27.213.151.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8640c61sm134185795ad.141.2025.06.25.03.27.08
+        bh=wz1Ak0wbeYwkM41lDzZf9Pz6IYC6aH7Ol1qRTwbIEuM=;
+        b=pINzUafHyRzdwmrEP4G1946phHmH5O7GG/pYB+Hxwg3gaTS6YfX+x4r68QZ0KbS+jV
+         FvPrWBPzAYWiK4VdNBKXqfwEsFf58/2tpbtxfJGEjT1nuGP67A7XjlRMbujzy+WCf+ND
+         0juZ2h1myut1gpXe5ZLb1nBJGJrMh+6i6bSCcjk8gQbmUxxV0kI60IgIpNAj98VWxOKV
+         eyFRsuwatKwIzIw+XLNvVAcKXtYoFcndXnytPHVRAbCvkIzgaPXxWkVWMldl30J1KySX
+         W85kIOkba8J2RhwRfpq+XiIFeNrB476ltP93T/ryGQCSfwul7YeI2/ALWSvTwYxBg4sB
+         hAqA==
+X-Gm-Message-State: AOJu0YwNBfgsN+21Fcys+NLyUW3ii5iUzIw+YqPUVmPBD2FcVGg/+5CK
+	uplwF8CQnTPN+ho4TG1h1agxKnlyPCxZbXdci0B/zWF6g8hM1D9q2PUo3g7rnAfBOKRzTsTaNg0
+	BV4sb
+X-Gm-Gg: ASbGncvvhqaYdMo39Kr29rbYv5E19HJQ50os659jmy1NRnuYTtwpOhqJ99PLBrVmIcY
+	xEqSEssSya80VHBy/ReZpI0FhRWqZ2tW/0vjv8j3shKKb6H2stvlnaljhn7Ui0xJk3UxFIYcJWX
+	5EAZs3G+DGE1nS2OcNddV3Yc6Uu8kOtdZQZBj5zZKwmJVvQokLTL39gyX6gFtjbaVRtBBD8Ssyd
+	FYr1i4xuYRJkKfoHcCDXJm3ahrsNjOqa0Ep5kNcqCiZwCiCCKFA/OL+6wuJCMkPtMwE+Qtm48ud
+	MQP7UyK5/VnAtEKSIxel63PV0IwnNC0TMHBJSEOeqmu9EoX3nMoLqg==
+X-Google-Smtp-Source: AGHT+IH1ttY22NoB2TLT5LMAa1LZM20YfAQYpf+mdNR1+XahCsy7uPx4SRjp6id1ToSCVSVCJE/K2w==
+X-Received: by 2002:a17:902:dac4:b0:234:bfcb:5bfa with SMTP id d9443c01a7336-23823fc4f7cmr57992235ad.15.1750863156996;
+        Wed, 25 Jun 2025 07:52:36 -0700 (PDT)
+Received: from [127.0.0.1] ([12.48.65.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d867f5cfsm133029065ad.181.2025.06.25.07.52.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 03:27:10 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com,
-	Penglei Jiang <superman.xpt@gmail.com>
-Subject: [PATCH] io_uring: fix resource leak in io_import_dmabuf()
-Date: Wed, 25 Jun 2025 03:27:03 -0700
-Message-Id: <20250625102703.68336-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 25 Jun 2025 07:52:36 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Penglei Jiang <superman.xpt@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ asml.silence@gmail.com
+In-Reply-To: <20250625102703.68336-1-superman.xpt@gmail.com>
+References: <20250625102703.68336-1-superman.xpt@gmail.com>
+Subject: Re: [PATCH] io_uring: fix resource leak in io_import_dmabuf()
+Message-Id: <175086315592.128628.9014300764157579909.b4-ty@kernel.dk>
+Date: Wed, 25 Jun 2025 08:52:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-Replace the return statement with setting ret = -EINVAL and jumping to
-the err label to ensure resources are released via io_release_dmabuf.
 
-Fixes: a5c98e942457 ("io_uring/zcrx: dmabuf backed zerocopy receive")
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- io_uring/zcrx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Wed, 25 Jun 2025 03:27:03 -0700, Penglei Jiang wrote:
+> Replace the return statement with setting ret = -EINVAL and jumping to
+> the err label to ensure resources are released via io_release_dmabuf.
+> 
+> 
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 797247a34cb7..085eeed8cd50 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -106,8 +106,10 @@ static int io_import_dmabuf(struct io_zcrx_ifq *ifq,
- 	for_each_sgtable_dma_sg(mem->sgt, sg, i)
- 		total_size += sg_dma_len(sg);
- 
--	if (total_size < off + len)
--		return -EINVAL;
-+	if (total_size < off + len) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
- 
- 	mem->dmabuf_offset = off;
- 	mem->size = len;
+Applied, thanks!
+
+[1/1] io_uring: fix resource leak in io_import_dmabuf()
+      commit: 7cac633a42a7b3c8146eb1db76fb80dc652998de
+
+Best regards,
 -- 
-2.17.1
+Jens Axboe
+
+
 
 

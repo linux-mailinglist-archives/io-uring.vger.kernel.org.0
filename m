@@ -1,137 +1,163 @@
-Return-Path: <io-uring+bounces-8493-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8494-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A75FAE911A
-	for <lists+io-uring@lfdr.de>; Thu, 26 Jun 2025 00:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7536AAE9130
+	for <lists+io-uring@lfdr.de>; Thu, 26 Jun 2025 00:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1EB87B003A
-	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 22:35:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CFE87B1A99
+	for <lists+io-uring@lfdr.de>; Wed, 25 Jun 2025 22:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4A225BF19;
-	Wed, 25 Jun 2025 22:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Whd01pHm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1CE2153F1;
+	Wed, 25 Jun 2025 22:41:34 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928791E2307
-	for <io-uring@vger.kernel.org>; Wed, 25 Jun 2025 22:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B688F4C83;
+	Wed, 25 Jun 2025 22:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750890993; cv=none; b=E7RCQIWrmvUULifPKok/1fCJ+7n92hcgtclQBXhaK+2aZ9bSbHzu0Q5hyn5XKKWXZKN7WOsldVKP4gdUbP9Wj0nNogrYOsxkrj5RRktIViv6PYzBUvAYGYaaZbQY4uHRwcdyCZKlqeiNOdN0fTOaHBsWyXKD/PxXsGLFTpQwSrk=
+	t=1750891294; cv=none; b=CBkDaochwI97KDiL6QAcIL7zGvUyuzXrBPwOVGsMwvvmpyB6an7pyCsBtVYXYMvIgeR9/uvxzcSClwH2IOi00J1PfORvt8Y4QmrEVVnu1y3SmzC9v9VwSCABqTmJrQ6EOhye2WfLu8xlR5z8dfAlwLGacB+6/wcr6hVt5nqe4W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750890993; c=relaxed/simple;
-	bh=EgO+UpU6lP0mRfnpMVhQpV/irTgo/+AiAgMLz5BgA3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDpgD+u2Q5wVCPt5tL9X39+ohDDx/MXYj/XYvjSoYkF76KTEhNimfpoPbY+0qWdvLNUsKdJ8ddZiYxNaaszqUvB8dg7qb1VfQDsb6IqPm9DJo9MGg7ShTpcmNmdyVqC5HSCPdy2BzqhjqFsIUs5mKUqaJncwrmtKYzOpS/x0w8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Whd01pHm; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-af51596da56so306876a12.0
-        for <io-uring@vger.kernel.org>; Wed, 25 Jun 2025 15:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750890991; x=1751495791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EKhqwFykWybKWKbhxA/cZcQ2alpWKBD3m9snmPZzMjY=;
-        b=Whd01pHmJoAN2k4fvJTa3u2T2tf4KSa/EYNcSsuojelo7sGaLQKsH8EL4uxIvqE4kQ
-         zYAZnPP6GjMRjXF/02BXHyPc0+iS1sPjUPpAu7Qw+zaGcEwvByWwbFxN1dWJLv3xRVWV
-         x5IStAD1oYVecT7bLU2M+wUmzpV77Mu1zrBrFjAGOo0nSGGpYdqjngrEVIJwOn3+RFAX
-         IK4urQ1ck4xYWOUmukzj3fnhaMTr9nRF0hRYDoDoJv/RdDYVFOD5k4T13MVyJYNz2Ngg
-         YI1zIs9MVmtUTtUBAvjDBnPf9zOtyidp96ua+3kO1u6RdWgNTP9EBb4ALBcoW1QOyxjj
-         Paow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750890991; x=1751495791;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EKhqwFykWybKWKbhxA/cZcQ2alpWKBD3m9snmPZzMjY=;
-        b=U26QRNitgv7sRMBITx9Ujae/j0rml9hh+CO8N/7Ik3loReqgiT0qrBO665BxxPfhQp
-         uMObarwgrw+l0SRa3spaS9SBep/3XbNeQgzn/LNTVrWtZRtTTMSikNtykGROmaiL85zj
-         TJfa9IrJHzHbSkbiLAjfJUgv3LEAvvPVi5+yVKc5tpCucvPq9sQFDdFHy6r31+6DUvw8
-         1gLKyjUJ6HQzQRO29MPkTJ0ZAc0bM56a5me86Fruqeio70fc3mL1warbjvxOtxFbRMcL
-         h1ECx/1m6E5y4dnQ6nlyJy2eqMggo730UjRk/qMxDdpxah/9kfCWsufS3zVLXkaaqTZT
-         vFxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsH10/ADw3Bi8wYC0uaoFWV887djOJK619x6OVMESwxCoS2OoTmcq/P5JGo7z/WicT9v89M7fCLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK9SZMH3TP+xct5OPqgz5Dr0dXStSWMf+A7hFEtkJjW4piZ34S
-	B76EHiubouuA3lZAhU0HmqBBN8bPx2Cy0jHWO4ushAVuYbJFsD3bLHJ2UbW31NxHfEtxGh8DnUI
-	YRDrW
-X-Gm-Gg: ASbGnctZU7rffZGxZzSbpyCeO3WRjHQ95HeTbFet0r/wwL9OO7womD6bTNjvJblWLZe
-	QCBoU697Rjlci3MgEi/Wicwn+N+ANB7jZSgs4YaN245BL26fl5Jg6nh6DqHZhygNxbIELs6f264
-	h4O/njU7ZSF5+75X1M8NpysxmjnGRwnfNetbZjjDz6wF4MN1mKOKveMr9B6CPjQ5ncP/n5jXrzL
-	rof0js88AVASZkAUN86z/mHE97/2YKqpHeJpwyTGQfh3gcbQHfwD/OBDcDXyLcqXIuQjAY/e0SE
-	nFYAdkvygpu2wUoyDEGGLUuEmaxQ0nz1dTbs48XPc6T83hbHClv0L210Fw==
-X-Google-Smtp-Source: AGHT+IHCEr8IOl/+zGFEjZVN/rndkf0HY9YdESSBaZcaKzBgGB0DwbLQsaF1aRrLw/1bdOef+LTpHg==
-X-Received: by 2002:a17:90b:1c09:b0:311:f05b:869b with SMTP id 98e67ed59e1d1-315f269d826mr6581926a91.30.1750890990723;
-        Wed, 25 Jun 2025 15:36:30 -0700 (PDT)
-Received: from [172.20.0.228] ([12.48.65.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8609973sm141282095ad.89.2025.06.25.15.36.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 15:36:30 -0700 (PDT)
-Message-ID: <c79a3aff-6b39-4040-94ec-2c6bf925af67@kernel.dk>
-Date: Wed, 25 Jun 2025 16:36:29 -0600
+	s=arc-20240116; t=1750891294; c=relaxed/simple;
+	bh=6vYEWu9DGhdUZ8Lpy0meruLoiFvzQfm2h/13pKWVoGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YW8R9TK/UXYMPlqwzJd2bcp1rSkZ7E1Pd74bnM+urBJoHVGCOBrvO6XgbUGtVC3Zh7Rx+Vog/lZBBhHGyEe5B2NqVCwJpZvXwXj3Ofmlv50JZ+hsYGGBDCKhwvJs8vgEw7GCodeNkOaODxC66QJLyhW0eSRQLl+xQcjNJCEaEGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 2A5C98077D;
+	Wed, 25 Jun 2025 22:41:25 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 3AFF220032;
+	Wed, 25 Jun 2025 22:41:23 +0000 (UTC)
+Date: Wed, 25 Jun 2025 18:41:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Jiazi Li <jqqlijiazi@gmail.com>, linux-kernel@vger.kernel.org,
+ "peixuan.qiu" <peixuan.qiu@transsion.com>, io-uring@vger.kernel.org, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] stacktrace: do not trace user stack for user_worker
+ tasks
+Message-ID: <20250625184144.48c87888@gandalf.local.home>
+In-Reply-To: <ddcbdaa0-479a-4821-9230-d3207be20b3c@kernel.dk>
+References: <20250623115914.12076-1-jqqlijiazi@gmail.com>
+	<20250624130744.602c5b5f@batman.local.home>
+	<80e637d3-482d-4f3a-9a86-948d3837b24d@kernel.dk>
+	<20250625165054.199093f1@batman.local.home>
+	<ddcbdaa0-479a-4821-9230-d3207be20b3c@kernel.dk>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] io_uring mm related abuses
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: David Hildenbrand <david@redhat.com>
-References: <cover.1750771718.git.asml.silence@gmail.com>
- <d0929e59-ffe1-4de8-ad3b-2f81d6f24f3b@kernel.dk>
- <adfde1ba-68fa-4bcc-a657-86e0d311bdd2@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <adfde1ba-68fa-4bcc-a657-86e0d311bdd2@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 3aczrkng4psaeafaurcpqqo4ezr1i7sp
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 3AFF220032
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX196oG4RSM3JQlF54pldebc54oHrSoL8/OM=
+X-HE-Tag: 1750891283-607082
+X-HE-Meta: U2FsdGVkX1/ukDzgmQB7p+I+ZdFCNBeYypRkgS5mGEAlv8nJGBVuCkRtxoY8zf1AzkEWF3t8Y+VCCg5yGUocEXMhpA6uqhWt6WI40CdTFzHEZ0+kVRihumPmzrnxu2q6TqUt5qsrs+rohaUWTlSSPsQ1fZmq54/MX6MZwVXsFJcPMQ6ZCjlVMo27P+0K6i6tHsAxEwIs/HEt4UxzixQ6zEoqu/2zIdNSmiGs71xlqalQMb2DrsR5fh8hU8jwvlPB7jgMnCIjah+qAvUYkq4YeM/Gk4lQhZxMprhgzHZTE/yktpK8f02TwmaE1aRyqjOYJgXxVO0YqYtvzFfnjUrHUDhM/21REIasIbQadXuLbEwgBRqhHrtuWVlYXYvFkTnSFrQGb9tYhJpA2StMcSa5PqV2XG57uxQ3xzjwgqnbQRo=
 
-On 6/25/25 2:24 PM, Pavel Begunkov wrote:
-> On 6/25/25 03:52, Jens Axboe wrote:
->> On 6/24/25 7:40 AM, Pavel Begunkov wrote:
->>> Patch 1 uses unpin_user_folio instead of the page variant.
->>> Patches 2-3 make sure io_uring doesn't make any assumptions
->>> about user pointer alignments.
->>>
->>> v2: change patch 1 tags
->>>      use folio_page_idx()
->>>
->>> Pavel Begunkov (3):
->>>    io_uring/rsrc: fix folio unpinning
->>>    io_uring/rsrc: don't rely on user vaddr alignment
->>>    io_uring: don't assume uaddr alignment in io_vec_fill_bvec
->>>
->>>   io_uring/rsrc.c | 27 ++++++++++++++++++++-------
->>>   io_uring/rsrc.h |  1 +
->>>   2 files changed, 21 insertions(+), 7 deletions(-)
->>
->> Hand applied, as this is against an older tree. Please check patch 1
->> in the current tree. Thanks!
+On Wed, 25 Jun 2025 16:30:55 -0600
+Jens Axboe <axboe@kernel.dk> wrote:
+
+> On 6/25/25 2:50 PM, Steven Rostedt wrote:
+> > [
+> >   Adding Peter Zijlstra as he has been telling me to test against
+> >   PF_KTHREAD instead of current->mm to tell if it is a kernel thread.
+> >   But that seems to not be enough!
+> > ]  
 > 
-> Turned to be for-next from a couple of days ago. Patch 1
-> looks the same, should be fine.
+> Not sure I follow - if current->mm is NULL, then it's PF_KTHREAD too.
+> Unless it's used kthread_use_mm().
+> 
+> PF_USER_WORKER will have current->mm of the user task that it was cloned
+> from.
 
-I don't always put current fixes in for-next, though I've tried to do it
-consistently more recently. But it's conflicting with the error path
-cleanup from about a week ago:
+The suggestion was to use (current->flags & PF_KTHREAD) instead of
+!current->mm to determine if a task is a kernel thread or not as we don't
+want to do user space stack tracing on kernel threads. Peter said that
+because of io threads which have current->mm set, you can't rely on that,
+so check the PF_KHTREAD flag instead. This was assuming that io kthreads
+had that set too, but apparently it does not and we need to check for
+PF_USER_WORKER instead of just PF_KTHREAD.
 
-commit e1c75831f682eef0f68b35723437146ed86070b1 (tag: io_uring-6.16-20250619)
-Author: Penglei Jiang <superman.xpt@gmail.com>
-Date:   Tue Jun 17 09:56:44 2025 -0700
+> 
+> > On Wed, 25 Jun 2025 10:23:28 -0600
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> >   
+> >> On 6/24/25 11:07 AM, Steven Rostedt wrote:  
+> >>> On Mon, 23 Jun 2025 19:59:11 +0800
+> >>> Jiazi Li <jqqlijiazi@gmail.com> wrote:
+> >>>     
+> >>>> Tasks with PF_USER_WORKER flag also only run in kernel space,
+> >>>> so do not trace user stack for these tasks.    
+> >>>
+> >>> What exactly is the difference between PF_KTHREAD and PF_USER_WORKER?    
+> >>
+> >> One is a kernel thread (eg no mm, etc), the other is basically a user
+> >> thread. None of them exit to userspace, that's basically the only
+> >> thing they have in common.  
+> > 
+> > Was it ever in user space? Because exiting isn't the issue for getting
+> > a user space stack. If it never was in user space than sure, there's no
+> > reason to look at the user space stack.  
+> 
+> It was never in userspace.
 
-    io_uring: fix potential page leak in io_sqe_buffer_register()
+OK then for user space stack tracing it is the same as a KTHREAD.
 
-and my hand-edit just put your hunk 2 of patch 1 into that cleanup path
-too. Thanks for checking!
+> 
+> >>> Has all the locations that test for PF_KTHREAD been audited to make
+> >>> sure that PF_USER_WORKER isn't also needed?    
+> >>
+> >> I did when adding it, to the best of my knowledge. But there certainly
+> >> could still be gaps. Sometimes not easy to see why code checks for
+> >> PF_KTHREAD in the first place.
+> >>  
+> >>> I'm working on other code that needs to differentiate between user
+> >>> tasks and kernel tasks, and having to have multiple flags to test is
+> >>> becoming quite a burden.    
+> >>
+> >> None of them are user tasks, but PF_USER_WORKER does look like a
+> >> user thread and acts like one, except it wasn't created by eg
+> >> pthread_create() and it never returns to userspace. When it's done,
+> >> it's simply reaped.
+> >>  
+> > 
+> > I'm assuming that it also never was in user space, which is where we
+> > don't want to do any user space stack trace.  
+> 
+> It was not.
+> 
+> > This looks like more rationale for having a kernel_task() user_task()
+> > helper functions:
+> > 
+> >   https://lore.kernel.org/linux-trace-kernel/20250425204120.639530125@goodmis.org/
+> > 
+> > Where one returns true for both PF_KERNEL and PF_USER_WORKER and the
+> > other returns false.  
+> 
+> On vacation right now, but you can just CC me on the next iteration and
+> I'll take a look.
+> 
 
--- 
-Jens Axboe
+Well, it was sortof NACKED by Ingo, and he started another version, but I
+don't know if that is still happening or not.
+
+  https://lore.kernel.org/linux-trace-kernel/aA0pDUDQViCA1hwi@gmail.com/
+
+Although, that patch just looks like its simply adding helper functions for
+all the pf flags, but doesn't solve the issue of just testing "Is this a
+kernel thread or user thread?"
+
+-- Steve
 

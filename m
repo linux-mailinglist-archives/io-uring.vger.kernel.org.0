@@ -1,156 +1,172 @@
-Return-Path: <io-uring+bounces-8498-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8499-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041B6AEB9CE
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 16:26:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6DDAEBB19
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 17:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 393524A38AB
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 14:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837303ACF06
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60692E4258;
-	Fri, 27 Jun 2025 14:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A62E8E01;
+	Fri, 27 Jun 2025 15:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="X/Nifwzn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiOG5irf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F672E3B08
-	for <io-uring@vger.kernel.org>; Fri, 27 Jun 2025 14:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330ED2E92D5;
+	Fri, 27 Jun 2025 15:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751034330; cv=none; b=qz/SpXwePJ6YKU/oeWimiwcMrDaEhyKvIYYo08q3QFT4SES63NHteJMHnJZ1A3a4EgQoNcmO4co/8hth3otIbxctTMZVerpg3NxbBailD9HXF7wtySxe2nZlviYHvpXOSOyUzzFTlyJhNXDwDWaLSrAeoRH6sU7kIepNDe2ZSII=
+	t=1751036962; cv=none; b=qJdvdzek/N8SBVXxGQ2TnGkvEFY2MWgvtYbcRQbsrTHCPA4gHpR5UjzKBXqsIOIx8gq5wTdVe8CFy9vZABwAxOQQ+YW6XYW2TS9zPO7rDXh4q98RVWa09KoMkFxioj9upFErcFWfRRvGDmucRI1aFefTE0hmjOv3oXQGUK1WP1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751034330; c=relaxed/simple;
-	bh=M+/ZB6XYsV4jXn2d2Z4PyR3g6DTKoKnsSomY7nC4NgQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=I5YTJeVIZr84/fzUxlKQVinmknCBr9n2MRSk8g26gD5i/q8ceyP/hTZ2foNOSLIxV4MWdqH3NshuFSkcLhfJckeBc3zcrjdQb6ZGQOsER/cOyi/2YdYGPljsjnzeuA9BXu+/E/q/z9WM44+m9qPEPaczvBj6idBCrdOrVuTCHr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=X/Nifwzn; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso1883038a12.2
-        for <io-uring@vger.kernel.org>; Fri, 27 Jun 2025 07:25:26 -0700 (PDT)
+	s=arc-20240116; t=1751036962; c=relaxed/simple;
+	bh=9JzwW3ptl69sT0tSXPYVpaHvb7h2Lc+pp8IUI3kUFpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aAKQ0xS6BUdXD1td9XYVKjkoUP2Tf2OeV7P9Fc9JVmUVeBXHXx3Jb1Yl9F9+CMh4YeLL+XJ0BTffOGjFIqhvhaDRcdDCK/0RT8R2wnMEPi+Yx6p21KxebHeJ++NK7hiUEt2zVlUjXeg95+u+w/1ZpveVPhHEb9XDqn6LlUOw0AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiOG5irf; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c63a9bbabso3926182a12.0;
+        Fri, 27 Jun 2025 08:09:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751034326; x=1751639126; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZ1iTZM7LOYhl/7fS4TVU9PkPZiypOWFGEQjtz+0LSc=;
-        b=X/NifwznLRap+I2ph+d9kg45RoZd34uGmglyeJdtEUvokUJ00S8pwCl3d2aT6dnZN0
-         cCD3nD2cZ0McOg40naiJ+BMuLs/eIknY2S+PLcxPECsTUvORPYcH2Up4oNctJtQ0oqs0
-         19pfRzgt0nO8jEBD4V+CqTtSGd4MJKSNth2UUFiBUPl4DbOdBBWqcRs/1QVeAZQiJ081
-         rtL6MTLJeyf0CSFM7SY8qrgCzTymeS/LVNOVlo/8OM5Snk4W346tNVYD4+I7leKefQDk
-         9FiqcTFNmFuUUqQRVYDZaXImaJUnyLeYG/HY6sVk8/rkFlCYjVqh14vd51vw0ycjRSEV
-         5QFg==
+        d=gmail.com; s=20230601; t=1751036958; x=1751641758; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=buVTdRxQKVlm30639PRVwQxRD/mm++iXvgZHcq077TM=;
+        b=jiOG5irfcKyCh0jy7uP1efUMECUEi/lsr8LUlRIXGJddZcdmJy6nbiPVVeS/nTl6LY
+         eoXMN32O7XtpmKdDq8fo+tdOjV+nkBYjhwDMc0o/qB7l2Pd6xcS7Fk2vHC5jhWaD7KP8
+         +zISW6fD52NXRYnvXGm/EDIypIrBM802QgPmCuDy/h9SODhVpBT+nwqJEAm7BHC/r720
+         bWf0IhTas4r+/xiRFSUl/qEyOPBWtF3J4QTRbI/D2ImHuEo21jWFNXqVkSMteluYjLkN
+         xOeUGe9SgHsq+ptaibfZBH/5Ggiwg9ZWn7uckziwIkp0fiquli9c+gaUt+R/xvKoMOYl
+         NCfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751034326; x=1751639126;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oZ1iTZM7LOYhl/7fS4TVU9PkPZiypOWFGEQjtz+0LSc=;
-        b=IX7T5oVVxJpn+5CBnrRST9geLQS5uZXKs0/BW1nb5CTuoInZZSl8Nclh0eb8GqGAhb
-         0ode6U6pNJs1rDLjflDhxaWSMgeTRqOJhjehPek4xr+6AVaqbauTEGx8xBIYNyJimngG
-         x9TMPVcJYvc6AJy4GhzpT+pmtzovwwMLhKehcX+RTgdWmNEWasP0M3ydKXPPtzoGt1IM
-         K/GmU+LXB6NDwq1TBtDoWeX+wWeqgQI4tdDIpmw5bDMmby7ni235r9r7i3X5vC3/JFyC
-         yz8ETgxhaz8ECu9sKjFkDg93dS17+mxREO68CIpFTeZMbscsDjF8BPKNtBz0v8n170uD
-         uCYg==
-X-Gm-Message-State: AOJu0Ywjb+VqtLm1ZP6W7rfYYm66sC1YXrg9qqoFW0vTHlj59NeYHGtL
-	mcpuKKzOGyHtWWdQrszsGOLouqAA35LaQZjIGbFr9kgps35A5a4IFZMx05W/JtUpA3GjfoaX1zI
-	EkuE0
-X-Gm-Gg: ASbGncvbKpVjpJSY4NvN0pXI4UZ8THdoM/rQJuSkaDncfsJ9xCDrKQ3pdJl86hS0rEu
-	Bx39V+pHJynm+OX0YSwmCZRX+PB8n9CwJwGekNXULKVslJnV9G0eQq2WC4Rqzs0EkWppA94golu
-	VQ20efW0OOgg7IWtklvjgU9QI9otrqq+ugWSTFqnsQ2hR87c/WNVmaRR2Fxw8Ld/EAEorMygIL7
-	gnE8/oRKNJvb89vb4oYid+rBuRH5p5CCuOzF1ASN+Et75dsV/M4pC7jDKLiCFwaJJDXabDp65ey
-	BYCRtNWAaGH1/n9SI4d5nWmlN0dJEwg+zEkmi3/TftiRS8cQN+q6iWLSEjAzlN0ByAFP
-X-Google-Smtp-Source: AGHT+IH1hyDvFL8B1oaOIqVtirZQUPJaTOWlCmMMmBCCb/CDEKV7ahl59wQi5+shKT0csFEb7V4g0A==
-X-Received: by 2002:a05:6a21:3284:b0:1f5:8cc8:9cbe with SMTP id adf61e73a8af0-220a12a66a3mr4874383637.5.1751034326071;
-        Fri, 27 Jun 2025 07:25:26 -0700 (PDT)
-Received: from [172.20.0.228] ([12.48.65.201])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3200fedsm1757229a12.73.2025.06.27.07.25.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 07:25:25 -0700 (PDT)
-Message-ID: <681fa987-b28b-4669-82f2-d8d89966561e@kernel.dk>
-Date: Fri, 27 Jun 2025 08:25:24 -0600
+        d=1e100.net; s=20230601; t=1751036958; x=1751641758;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=buVTdRxQKVlm30639PRVwQxRD/mm++iXvgZHcq077TM=;
+        b=avr0V2Cm0sSpRgEZIScCEyLFfp2E41B0Yp6Dayoh6jVWO0uO54ZeYCNlg2tv7dn4yq
+         1YEgVZV0kbBCXKMNimxkdua0imQDqvupZUHW/6jCvfibkL8QvnJWh4CJBLKb1sMclOPU
+         OfDR7JcyiK8clssvCj2UrLDL7fe2LI6g+QGuHScph3cOy75y16+FFXcYuI/2eMDRP2yF
+         Fjla59fLVveMh+Z6L01ovoifh6oTCksYDsM7tm505awa6LbgfouDtRr/sX6ejDcjkHnd
+         f9UGOoATYpZSKrM0TTUwO3Hc4paEBqnTbd4fCsqhV2tCRpfHOoTHcCn9haaKl3Bd/5ym
+         KO/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWek5im/d7oryqZ11MR8TaRxRpTvUagtnU25UckOEQEAMknApvF5yb44+My8LiY76if6koHoAYtwZpUNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkR/gy/nC/nD1W/UhbWX78d9eGVnYvpXo3ZPCPB0+jGMCT4WVy
+	TrawKBHiLEpGDfVaZ+jW9nDEDrNtRNqiZkglmoI2RwM1M8+lRwn5gERqL3W3vw==
+X-Gm-Gg: ASbGncuxr3KQeguCjCgpcG849j+XbIjcEfxyHGB8xfTHZBxijxrVKITUQnrpCh8v9PE
+	EbSQvOHRaAwKf1Igb2oGmET/OSpOsXgzExD8J24D0a/cGMPYBr9Czh97wmfubnlurS0bmA7sMPF
+	UNCwvm83dJLbOMcnOseUqvbYKqVzIOWRva0PV39wusl5p4ScjuH2Ud1TD7MeNLj7cWtkfczYTxl
+	PCd/HfWF4LtwVdNYBal54A1yU2M2EUwe4z7r8XVlS1KwCqMFyGMR77gK0V7MvE80VI84HIE0RyC
+	I+tYiF7wb+tsMg872kDsJskron11oHNYz2+RxeGpGWLUYI12ekOensiVaufQFuKmU1ovWLhBKXZ
+	+
+X-Google-Smtp-Source: AGHT+IGGVGhe3vS2MX4Bny8mW3sSHejhy+WJ+hlE6Qb2Yw/TDLjhQuciR1Hl9hydhejbDjoGD4VBxg==
+X-Received: by 2002:a17:906:794e:b0:acb:37ae:619c with SMTP id a640c23a62f3a-ae350363ad6mr366449166b.15.1751036957556;
+        Fri, 27 Jun 2025 08:09:17 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.147.145])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c014fbsm135802866b.86.2025.06.27.08.09.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 08:09:16 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>,
+	David Wei <dw@davidwei.uk>,
+	Vishal Verma <vishal1.verma@intel.com>,
+	asml.silence@gmail.com
+Subject: [RFC 00/12] io_uring dmabuf read/write support
+Date: Fri, 27 Jun 2025 16:10:27 +0100
+Message-ID: <cover.1751035820.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.16-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Disclaimer: haven't been tested well enough yet and needs more beating
 
-Set of fixes for io_uring that should go into the 6.16 kernel release.
-This pull request contains:
+For past couple of months David Wei, Vishal Verma and other folks
+have been mentioning that it'd be great to have dmabuf support for
+read/write and other operations in io_uring. The topic is not new,
+it has been discussed many times in different contexts including
+networking. The last relevant attempt was premapped dma tags by
+Keith [1], and this patch set took a lot from it.
 
-- Two tweaks for a recent fix: fixing a memory leak if multiple iovecs
-  were initially mapped but only the first was used and hence turned
-  into a UBUF rathan than an IOVEC iterator, and catching a case where a
-  retry would be done even if the previous segment wasn't full.
+This series implements it for read/write io_uring requests. The uAPI
+looks similar to normal registered buffers, the user will need to
+register a dmabuf in io_uring first and then use it as any other
+registered buffer. On registration the user also specifies a file
+to map the dmabuf for.
 
-- Small series fixing an issue making the vm unhappy if debugging is
-  turned on, hitting a VM_BUG_ON_PAGE().
+// register
+io_uring_update_buffers(ring, { dma_buf_fd, target_file_fd });
+// use
+reg_buf_idx = 0;
+io_uring_prep_read_fixed(sqe, target_file_fd, buffer_offset,
+                         buffer_size, file_offset, reg_buf_idx);
 
-- Fix a resource leak in io_import_dmabuf() in the error handling case,
-  which is a regression in this merge window.
+It's an RFC to discuss the overall direction. The series misses
+parts like bio splitting and nvme sgl support, and otherwise
+there are some rough edges and probably problems, which will
+need more testing and attention.
 
-- Mark fallocate as needing to be write serialized, as is already done
-  for truncate and buffered writes.
+[1] https://lore.kernel.org/io-uring/20220805162444.3985535-1-kbusch@fb.com/
 
-Please pull!
+simple liburing based example:
+git: https://github.com/isilence/liburing.git dmabuf-rw
+link: https://github.com/isilence/liburing/tree/dmabuf-rw
 
+kernel branch:
+git: https://github.com/isilence/linux.git dmabuf-rw-v1
 
-The following changes since commit 51a4598ad5d9eb6be4ec9ba65bbfdf0ac302eb2e:
+Pavel Begunkov (12):
+  file: add callback returning dev for dma operations
+  iov_iter: introduce iter type for pre-registered dma
+  block: move around bio flagging helpers
+  block: introduce dmavec bio type
+  block: implement ->get_dma_device callback
+  nvme-pci: add support for user passed dma vectors
+  io_uring/rsrc: extended reg buffer registration
+  io_uring: add basic dmabuf helpers
+  io_uring/rsrc: add imu flags
+  io_uring/rsrc: add dmabuf-backed buffer registeration
+  io_uring/rsrc: implement dmabuf regbuf import
+  io_uring/rw: enable dma registered buffers
 
-  io_uring/net: always use current transfer count for buffer put (2025-06-20 08:33:45 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.16-20250626
-
-for you to fetch changes up to 178b8ff66ff827c41b4fa105e9aabb99a0b5c537:
-
-  io_uring/kbuf: flag partial buffer mappings (2025-06-26 12:17:48 -0600)
-
-----------------------------------------------------------------
-io_uring-6.16-20250626
-
-----------------------------------------------------------------
-Fengnan Chang (1):
-      io_uring: make fallocate be hashed work
-
-Jens Axboe (2):
-      io_uring/net: mark iov as dynamically allocated even for single segments
-      io_uring/kbuf: flag partial buffer mappings
-
-Pavel Begunkov (3):
-      io_uring/rsrc: fix folio unpinning
-      io_uring/rsrc: don't rely on user vaddr alignment
-      io_uring: don't assume uaddr alignment in io_vec_fill_bvec
-
-Penglei Jiang (1):
-      io_uring: fix resource leak in io_import_dmabuf()
-
- io_uring/kbuf.c  |  1 +
- io_uring/kbuf.h  |  3 ++-
- io_uring/net.c   | 34 +++++++++++++++++++++-------------
- io_uring/opdef.c |  1 +
- io_uring/rsrc.c  | 30 ++++++++++++++++++++++--------
- io_uring/rsrc.h  |  1 +
- io_uring/zcrx.c  |  6 ++++--
- 7 files changed, 52 insertions(+), 24 deletions(-)
+ block/bdev.c                  |  11 ++
+ block/bio.c                   |  21 ++++
+ block/blk-merge.c             |  32 +++++
+ block/blk.h                   |   2 +-
+ block/fops.c                  |   3 +
+ drivers/nvme/host/pci.c       | 158 +++++++++++++++++++++++
+ include/linux/bio.h           |  59 ++++++---
+ include/linux/blk-mq.h        |   2 +
+ include/linux/blk_types.h     |   6 +-
+ include/linux/blkdev.h        |   2 +
+ include/linux/fs.h            |   2 +
+ include/linux/uio.h           |  14 +++
+ include/uapi/linux/io_uring.h |  13 +-
+ io_uring/Makefile             |   1 +
+ io_uring/dmabuf.c             |  60 +++++++++
+ io_uring/dmabuf.h             |  34 +++++
+ io_uring/rsrc.c               | 230 ++++++++++++++++++++++++++++++----
+ io_uring/rsrc.h               |  23 +++-
+ io_uring/rw.c                 |   7 +-
+ lib/iov_iter.c                |  70 ++++++++++-
+ 20 files changed, 701 insertions(+), 49 deletions(-)
+ create mode 100644 io_uring/dmabuf.c
+ create mode 100644 io_uring/dmabuf.h
 
 -- 
-Jens Axboe
+2.49.0
 
 

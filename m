@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-8507-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8508-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E071CAEBB2C
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 17:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D02AEBB2D
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 17:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF496A0239
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 15:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E37364828F
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 15:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7C32EA169;
-	Fri, 27 Jun 2025 15:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7A52EA160;
+	Fri, 27 Jun 2025 15:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTF237kB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYBQhNg9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A92E88A9;
-	Fri, 27 Jun 2025 15:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B952E88A7;
+	Fri, 27 Jun 2025 15:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036975; cv=none; b=fwSYES/VA3LYE/Zu9dWPfOT6qk0CDwIdMkWioFmcryuD1OHm03Kv0+1GTuOdoCINBwPWGbk/kZuZMNhqbJHgoExryee2e5d2F8mfL0tLdAJlusctkG+OvZq2/OHinTYr0Z9oILvu8m2OtOlhyeYq0P29cVE2v4/jO6vQQibs6iU=
+	t=1751036977; cv=none; b=p6uTniOq4ZPgf3hcUHrhM5heha6FqWuN/DbU4lWgOGir7bA2kFPjcLzUqC9wS6O+6UiKFRCUR1IbnOsT1mWxBu7S5bT9li1ZpYLeD4UY16wpKQEsbtB5NX2SUAeYQlFtbyMv3NR8fFVsPqqJwwHHHSwNW35qsvBdzzOu9RRsegY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036975; c=relaxed/simple;
-	bh=HxX8u79LkjkImKu5AYQKiBbZoe8dObl1LqEcm5aDl6g=;
+	s=arc-20240116; t=1751036977; c=relaxed/simple;
+	bh=V96MEyDGe/GqtyDnHCAGzmsnDz+zXktDncy+t+5k1oY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bASzp3CAyMXXROHjMQZSMrAzKNF5CspMjCOd8uPe5YhnoG4cuzQ6PbwrslUmu5GBCd7YXYz+TWwKE8s7C5kmbxyVDZ2D8W5Lx0FTodcEkPa6JejHZezEN6qVyyFsqHjBqoJjApZO3YCAMOC2nwirHwilRwODuBXlMimOTxRKA+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTF237kB; arc=none smtp.client-ip=209.85.208.53
+	 MIME-Version; b=QA2kMxoh392y9F1SvCFFvsRWPwTqngzpDI8/rD3NSmSoJHHyV2XoI3wMP4ZVs2C0P0szGsXfHMF4Mvfiuby/ptuu6Ol2qLzdMDBseHYhzbRhqG3h460CR0eahCFjlyHAN21WiUPnh6uXo1uRZSy046OFHTRB+8hxBOofkHF6jwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYBQhNg9; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so4117012a12.3;
-        Fri, 27 Jun 2025 08:09:33 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so3702858a12.2;
+        Fri, 27 Jun 2025 08:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751036971; x=1751641771; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751036973; x=1751641773; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0Te1jw7j483sy759tHuE76cyEE4rw44hR2ayhqjLm74=;
-        b=nTF237kB67M4sjImMBllMBRUWaOSbu9B2gRTqaj6Gx8cUh/grFMCJatUHM6RNkKEXS
-         86pLLqKPRTGogQxNv4O1Wk+YNbM0q/6C2ZJWSIL1J5u/vj5FRXMHk2pr0SjeknxfkSBq
-         n3cqqjnR6WBhBoFXBXpxbSQ3Rspzxm7OHl5+R1dB27s1VF59+ZPAIYx3ZJrrTqSBFkoQ
-         7gvmxVz6gRE/mvyLvzn8w3z3sR03UEqfZWGe+gyrLzg5icD1i76w4mc1Y2EzamysQF+f
-         wMF1TIZNdOzi9vVCOBPL2EF1+kKSq/eiazk1NECW1Xl5fle1iNhBJvoDWCoPVng3xxXj
-         QU1g==
+        bh=u26XwVa4Y9sa7m6bu4ldVW+GkLaumHhW61D3zghrsdY=;
+        b=JYBQhNg9Xw01Sq7Q6J1vH24brIIG9bkX66+XJllUqEao2YsZCoDCLHpeEBdv86TxBs
+         TIR7MZDvuf9idd4GA0EQiboRpNP8XhNdpmWABpPz1G7RGTfNgK0BWozB3m7OAWszzUi+
+         eOPWAPSgjc26X8IcnAh9btqCx+8VD/QMZQNmz2cjopVYINeCwYCEgccMJbHPZ91P114R
+         +SfxVoW0Oz5kcVKn2N78jqHHz3Nb9DHd1U72Ieb/NZhycggycoH2T5wGDpGn5CnFj3Bx
+         wATD7yEoaYt1OSRtPXctV7nlrf6griQBUeCFailkexWGB7W0ehl2QBDwNUq3G1UksCfP
+         tcfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751036971; x=1751641771;
+        d=1e100.net; s=20230601; t=1751036973; x=1751641773;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0Te1jw7j483sy759tHuE76cyEE4rw44hR2ayhqjLm74=;
-        b=RQdXZlWHIEKDz4oHH+j7q+BqvMaPe0E8u6QPUmaVKsFIDpfG4EpM8LT9hZnlbROn7m
-         dIfK2ZyfykIQ7GkatEgpBz+jddaWuZdFOmMWGzVejWwVOhy1VwKz6m4yNV7FT5CUkZQz
-         4DSJzfeZ6x/RXOSqr7oShcEny5/N1P5/92Brh4mt0C2fpU5iyv1kstclmWZVS1lSbXPj
-         lHpjtoi5tLVMcjkZK1qCvZFd/097/m7Q5CzTok7oX+gmiEiUp566sGCEzwthLEW54sgl
-         68TuBGH20mC6uM4pqxTIzRodkH+g+i/oi146gN6xw5Ju6SiN7iDZAEQ0c/me4rQIkxnW
-         xXhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHh3HVFYeskxYn2rk39Fig860N+hu8QsP2Dvr3ndik1x3HtRsuBdAbBOL69J1RZ0X5vXmxaN8ne84czQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE+UTeHLztVBswtsgbqYJZI6IKmFaKO27uI6bV0tPCEUbxcTnu
-	3wYqKeFtLzvATqC3/F0uU6BfgdV5ZeMeD4sgX+58gdx9qcyRknsVdSYlagSvJg==
-X-Gm-Gg: ASbGncu59WgCYBFAKjdmTa2YhL7Bo/mGi75bUbOU6jrs3WyGoZDeJlyz8mPYp5Jr13n
-	qoX/nHVlpuEvurVDcboLhUXCK0etCiQy6FDogiRFTPGldSj+ffBJ7oM+BaOrFwh4wKPLen/kLfP
-	HDAP63+HtzWyaPkBSafoOXIxmtufmMSIUfyF0wiSE0cVWT2i5iVw4jHFLV1uhipKaw4TuNwqz7r
-	mGWvb5YCh2HG4G5PerP80NoY3Pt+uBIo+EhItHm+M0MLhBOcyHm1MZm3SthRK5eLd6EdA7Z+sB3
-	hGa1H8HVv5p9XeP+ja2REP6Hi8Ux8mJIlUVUkzrB2VuCn+pZP0ymj3NtI4NdMyep8XdURIjAzO3
-	r
-X-Google-Smtp-Source: AGHT+IFaT5DW/2JEJLqmIAIFZpMMjsyw7WUr4bt/1UbUHg6LAPcXCFf1e2Lm3tP6AQM7KwFTHt2+kQ==
-X-Received: by 2002:a17:907:6d19:b0:ae0:b847:435 with SMTP id a640c23a62f3a-ae350129c6dmr333687666b.49.1751036970977;
-        Fri, 27 Jun 2025 08:09:30 -0700 (PDT)
+        bh=u26XwVa4Y9sa7m6bu4ldVW+GkLaumHhW61D3zghrsdY=;
+        b=Y1B89A3uRxM1yBrYCpxKS26B8bOpvT7QQ/oreYOCOAAWDIUqOAVVcLbf/70QX6XDu+
+         XkmHsHrSeUquparNkgw+Gzs46Fo3wCOVwvVKl02JZrG44/sIIatkbhqBPU1GmEFjs/cf
+         aNSHLvZAi2n15YoYxTI1JLP8qHwu6eoL0A17YGDJxSHRsCynX3cyJpuolCtKhsvNkeh1
+         twraDfKhJYRNLaX5WTPxuwZqlBWYIYmAIFXLxnsm5B4/fEGVKfORJRFOYAu9NdLlitcn
+         N/C7pXcJ5Sjh3PRIHhXQr/wS4CzPgNOnnEoxu5t9fqomdf8j+XD1H8nkRw1sY5AyVEP0
+         ywRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb6Q0V0GH3m+6+41MULe9JHAZiaxuH+FlFE8onu0cFKv7evyRCeqFZpHNSE9isHjcZUC64eT8BCgZ52w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznSz8p6IkLeMKt0I1X68UCw7m4Qb/ETPXQkVMy1AhD/2bsMXne
+	CLixHCEcCJIdw9GUc11zPA4chh7Kl8xDVqur1HyFpjGGK0qe59AqAk0HwF4prQ==
+X-Gm-Gg: ASbGncs+bz8edWkXKQuBmQN0R/vsgwkyf4oz4bGFEF0a2IbSdtx2tWHe1sCs5tsb/Bd
+	xn+CZY+awX0G/YcAEtfHgSr0BpHOqo4c9dLu3hHbdkaPSAyNO1Ly7CEaHJqHEKKfi7t3Hh5IwXD
+	uVr+tDKcZi9r+vhJRh6onDgMFuQBnGgizqGIV3UJbK/blrzDne7i52xpagPxkBE8Lg0s6nGm6W9
+	9LKfBNS2pkBI8UfN4C1ojypABsmPCM+sUMsPql3O5LrYi0BqyExA+NgN9Z/zvnaC1Nplb+mSL/H
+	I+TWWTJ9ZBdcsRxALDdOoPVuAENaKMy5nFoqpI/wx4UQ8D4/4W8B6IvVJUztpxl+kUSptZe9/Rb
+	/
+X-Google-Smtp-Source: AGHT+IFkXr9u8nDlNj9mlCHAPJP7fvPn3kwFSuk77qsB5ddM3lpGccW8aFFP0oRsAdnZ73s0dkmQow==
+X-Received: by 2002:a17:907:78c:b0:ad8:a41a:3cc5 with SMTP id a640c23a62f3a-ae34fd18405mr332552866b.6.1751036972952;
+        Fri, 27 Jun 2025 08:09:32 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.147.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c014fbsm135802866b.86.2025.06.27.08.09.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c014fbsm135802866b.86.2025.06.27.08.09.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 08:09:30 -0700 (PDT)
+        Fri, 27 Jun 2025 08:09:32 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org,
 	linux-block@vger.kernel.org,
@@ -82,9 +82,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	David Wei <dw@davidwei.uk>,
 	Vishal Verma <vishal1.verma@intel.com>,
 	asml.silence@gmail.com
-Subject: [RFC 08/12] io_uring: add basic dmabuf helpers
-Date: Fri, 27 Jun 2025 16:10:35 +0100
-Message-ID: <a4307ea944f7c8453165c02cb05839674f150b5f.1751035820.git.asml.silence@gmail.com>
+Subject: [RFC 09/12] io_uring/rsrc: add imu flags
+Date: Fri, 27 Jun 2025 16:10:36 +0100
+Message-ID: <ff094ad30f783ad515e48474d66201e909070827.1751035820.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1751035820.git.asml.silence@gmail.com>
 References: <cover.1751035820.git.asml.silence@gmail.com>
@@ -96,134 +96,112 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add basic dmabuf helpers and structures for io_uring, which will be used
-for dmabuf buffer registration. That can also be reused in other places
-in io_uring, which is ommited from the series.
+Replace is_kbuf with a flags field in io_mapped_ubuf. There will be new
+flags shortly, and bit fields are often not as convenient to work with.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/Makefile |  1 +
- io_uring/dmabuf.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++
- io_uring/dmabuf.h | 34 +++++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
- create mode 100644 io_uring/dmabuf.c
- create mode 100644 io_uring/dmabuf.h
+ io_uring/rsrc.c | 12 ++++++------
+ io_uring/rsrc.h |  6 +++++-
+ io_uring/rw.c   |  3 ++-
+ 3 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/io_uring/Makefile b/io_uring/Makefile
-index d97c6b51d584..0f5a7ec38452 100644
---- a/io_uring/Makefile
-+++ b/io_uring/Makefile
-@@ -21,3 +21,4 @@ obj-$(CONFIG_EPOLL)		+= epoll.o
- obj-$(CONFIG_NET_RX_BUSY_POLL)	+= napi.o
- obj-$(CONFIG_NET) += net.o cmd_net.o
- obj-$(CONFIG_PROC_FS) += fdinfo.o
-+obj-$(CONFIG_DMA_SHARED_BUFFER) += dmabuf.o
-diff --git a/io_uring/dmabuf.c b/io_uring/dmabuf.c
-new file mode 100644
-index 000000000000..cb9d8bb5d5b3
---- /dev/null
-+++ b/io_uring/dmabuf.c
-@@ -0,0 +1,60 @@
-+#include "dmabuf.h"
-+
-+void io_dmabuf_release(struct io_dmabuf *buf)
-+{
-+	if (buf->sgt)
-+		dma_buf_unmap_attachment_unlocked(buf->attach, buf->sgt,
-+						  buf->dir);
-+	if (buf->attach)
-+		dma_buf_detach(buf->dmabuf, buf->attach);
-+	if (buf->dmabuf)
-+		dma_buf_put(buf->dmabuf);
-+	if (buf->dev)
-+		put_device(buf->dev);
-+
-+	memset(buf, 0, sizeof(*buf));
-+}
-+
-+int io_dmabuf_import(struct io_dmabuf *buf, int dmabuf_fd,
-+		     struct device *dev, enum dma_data_direction dir)
-+{
-+	unsigned long total_size = 0;
-+	struct scatterlist *sg;
-+	int i, ret;
-+
-+	if (WARN_ON_ONCE(!dev))
-+		return -EFAULT;
-+
-+	buf->dir = dir;
-+	buf->dmabuf = dma_buf_get(dmabuf_fd);
-+	if (IS_ERR(buf->dmabuf)) {
-+		ret = PTR_ERR(buf->dmabuf);
-+		buf->dmabuf = NULL;
-+		goto err;
-+	}
-+
-+	buf->attach = dma_buf_attach(buf->dmabuf, dev);
-+	if (IS_ERR(buf->attach)) {
-+		ret = PTR_ERR(buf->attach);
-+		buf->attach = NULL;
-+		goto err;
-+	}
-+
-+	buf->sgt = dma_buf_map_attachment_unlocked(buf->attach, dir);
-+	if (IS_ERR(buf->sgt)) {
-+		ret = PTR_ERR(buf->sgt);
-+		buf->sgt = NULL;
-+		goto err;
-+	}
-+
-+	for_each_sgtable_dma_sg(buf->sgt, sg, i)
-+		total_size += sg_dma_len(sg);
-+
-+	buf->dir = dir;
-+	buf->dev = get_device(dev);
-+	buf->len = total_size;
-+	return 0;
-+err:
-+	io_dmabuf_release(buf);
-+	return ret;
-+}
-diff --git a/io_uring/dmabuf.h b/io_uring/dmabuf.h
-new file mode 100644
-index 000000000000..c785ccfe0b9e
---- /dev/null
-+++ b/io_uring/dmabuf.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef IOU_DMABUF_H
-+#define IOU_DMABUF_H
-+
-+#include <linux/io_uring_types.h>
-+#include <linux/dma-buf.h>
-+
-+struct io_dmabuf {
-+	size_t				len;
-+	struct dma_buf_attachment	*attach;
-+	struct dma_buf			*dmabuf;
-+	struct sg_table			*sgt;
-+	struct device			*dev;
-+	enum dma_data_direction		dir;
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 21f4932ecafa..274274b80b96 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -850,7 +850,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 	imu->folio_shift = PAGE_SHIFT;
+ 	imu->release = io_release_ubuf;
+ 	imu->priv = imu;
+-	imu->is_kbuf = false;
++	imu->flags = 0;
+ 	imu->dir = IO_IMU_DEST | IO_IMU_SOURCE;
+ 	if (coalesced)
+ 		imu->folio_shift = data.folio_shift;
+@@ -999,7 +999,7 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+ 	refcount_set(&imu->refs, 1);
+ 	imu->release = release;
+ 	imu->priv = rq;
+-	imu->is_kbuf = true;
++	imu->flags = IO_IMU_F_KBUF;
+ 	imu->dir = 1 << rq_data_dir(rq);
+ 
+ 	bvec = imu->bvec;
+@@ -1034,7 +1034,7 @@ int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
+ 		ret = -EINVAL;
+ 		goto unlock;
+ 	}
+-	if (!node->buf->is_kbuf) {
++	if (!(node->buf->flags & IO_IMU_F_KBUF)) {
+ 		ret = -EBUSY;
+ 		goto unlock;
+ 	}
+@@ -1100,7 +1100,7 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 
+ 	offset = buf_addr - imu->ubuf;
+ 
+-	if (imu->is_kbuf)
++	if (imu->flags & IO_IMU_F_KBUF)
+ 		return io_import_kbuf(ddir, iter, imu, len, offset);
+ 
+ 	/*
+@@ -1509,7 +1509,7 @@ int io_import_reg_vec(int ddir, struct iov_iter *iter,
+ 	iovec_off = vec->nr - nr_iovs;
+ 	iov = vec->iovec + iovec_off;
+ 
+-	if (imu->is_kbuf) {
++	if (imu->flags & IO_IMU_F_KBUF) {
+ 		int ret = io_kern_bvec_size(iov, nr_iovs, imu, &nr_segs);
+ 
+ 		if (unlikely(ret))
+@@ -1543,7 +1543,7 @@ int io_import_reg_vec(int ddir, struct iov_iter *iter,
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	}
+ 
+-	if (imu->is_kbuf)
++	if (imu->flags & IO_IMU_F_KBUF)
+ 		return io_vec_fill_kern_bvec(ddir, iter, imu, iov, nr_iovs, vec);
+ 
+ 	return io_vec_fill_bvec(ddir, iter, imu, iov, nr_iovs, vec);
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 0d2138f16322..15ad4a885ae5 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -28,6 +28,10 @@ enum {
+ 	IO_IMU_SOURCE	= 1 << ITER_SOURCE,
+ };
+ 
++enum {
++	IO_IMU_F_KBUF			= 1,
 +};
 +
-+#ifdef CONFIG_DMA_SHARED_BUFFER
-+void io_dmabuf_release(struct io_dmabuf *buf);
-+int io_dmabuf_import(struct io_dmabuf *buf, int dmabuf_fd,
-+		     struct device *dev, enum dma_data_direction dir);
-+
-+#else
-+static inline void io_dmabuf_release(struct io_dmabuf *buf)
-+{
-+}
-+
-+static inline int io_dmabuf_import(struct io_dmabuf *buf, int dmabuf_fd,
-+		     struct device *dev, enum dma_data_direction dir)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
-+#endif
+ struct io_mapped_ubuf {
+ 	u64		ubuf;
+ 	unsigned int	len;
+@@ -37,7 +41,7 @@ struct io_mapped_ubuf {
+ 	unsigned long	acct_pages;
+ 	void		(*release)(void *);
+ 	void		*priv;
+-	bool		is_kbuf;
++	u8		flags;
+ 	u8		dir;
+ 	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+ };
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 710d8cd53ebb..cfcd7d26d8dc 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -696,7 +696,8 @@ static ssize_t loop_rw_iter(int ddir, struct io_rw *rw, struct iov_iter *iter)
+ 	if ((kiocb->ki_flags & IOCB_NOWAIT) &&
+ 	    !(kiocb->ki_filp->f_flags & O_NONBLOCK))
+ 		return -EAGAIN;
+-	if ((req->flags & REQ_F_BUF_NODE) && req->buf_node->buf->is_kbuf)
++	if ((req->flags & REQ_F_BUF_NODE) &&
++	    (req->buf_node->buf->flags & IO_IMU_F_KBUF))
+ 		return -EFAULT;
+ 
+ 	ppos = io_kiocb_ppos(kiocb);
 -- 
 2.49.0
 

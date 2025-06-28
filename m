@@ -1,153 +1,136 @@
-Return-Path: <io-uring+bounces-8515-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8516-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F2BAEC2FF
-	for <lists+io-uring@lfdr.de>; Sat, 28 Jun 2025 01:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471DEAEC54B
+	for <lists+io-uring@lfdr.de>; Sat, 28 Jun 2025 08:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FDE73AAC4D
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jun 2025 23:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23600188ACE3
+	for <lists+io-uring@lfdr.de>; Sat, 28 Jun 2025 06:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C56290BA5;
-	Fri, 27 Jun 2025 23:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842021C9E0;
+	Sat, 28 Jun 2025 06:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auvHkqO9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNKQ5zRA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D702214813
-	for <io-uring@vger.kernel.org>; Fri, 27 Jun 2025 23:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8DC21FF25;
+	Sat, 28 Jun 2025 06:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751066925; cv=none; b=gAdvykR2LYHyQEnOTkcapmMEDgo4m8/B++NfblL94hKYH0RRarK1xqUp1bw2ZDLJh0bu2cMUxrOo2svzzqo8UH2GqbMSHxQB8QDi5Id1mblLUkhJjZRDPG2tf15UQxbXAkeOgGy+v46aA83B3qeqfjbpwCN3aOuu2mLG82Jql80=
+	t=1751090955; cv=none; b=mFY/dGiPXPl/KCqOq5KWyAB7AEhvt3qjbrl2dlh/ppXKInS3feWaq72AFcvLoeoiLsyI5tr5yLq24Z98zOf2/BJCnfSDvftMtDIpxLCpVUB5OE0AUcZEfp1RsMxqZop3P4LUAm2TyyEeuJcMYnWoEJSUyUCXzKDChnMVeWEycoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751066925; c=relaxed/simple;
-	bh=mmIYpuQVfYSKj+NHgnZaLphmUNhtR+O/tZWAQtxGcS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BtDpb2WmYEDuv/iN9S2aFfPtEZixYS1dhGGVnJPd3qTxB+US/vmP7PoIHl8T53U/jTkYnGRMoRNSqv6BuhukZHQiOYT0gtzcG58Cu5rBznzfLJPz2Z+HLvcz7vkAeuAElVB+gXYWclEWkrMemmieML3rFp1KEMvZpc0nonHZYh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auvHkqO9; arc=none smtp.client-ip=209.85.161.53
+	s=arc-20240116; t=1751090955; c=relaxed/simple;
+	bh=84pvm5Mnq9YsCdw62ki+3MLvyyjnuFdS03yKYpgzpHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fELR/bJYLsFalHdQipmvIawiLpdHMDON38CToH+cDjB+ymGNOfzDn1kcyB57/G8lcI7BOcWzZZ11YiN3Lcu803mIaBTvV85i+f/DGIm7oOtp9oKU/7PVZ4VQW7Ufv/uzcYUe+mcSY4yHWb/fc6uNTgowNw+EROaENE+ot1nKYJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNKQ5zRA; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6116d9bb6ecso232673eaf.3
-        for <io-uring@vger.kernel.org>; Fri, 27 Jun 2025 16:28:44 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso5210969a12.0;
+        Fri, 27 Jun 2025 23:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751066923; x=1751671723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhFS54RZ5e5FBjCi7j6/8xm0daxBFLkAHKsyZJXx2JE=;
-        b=auvHkqO9IBgyWbK8VR98TWArP1jmanOFt1GYXmuf+sQRmky4nK5Pht9Rst1R5OPuiM
-         MGcclG8tUSitGxxo8A+zByhoImGg/FmYj4JsIdkXJwgpFkm3NyQQzOuxIJMU5oCx0AhP
-         ESe4cpy2wlsc+uWwMTHasPuILfhzVR8O6EDpzAEDhFWFq2xHwg7M7lmP7QZ0gVvLzHq/
-         VAx4pvVmk0YN2lUEBvYCtrf6t1S9KgnyhkBp8s3JpgOsP7QNXCFaeAlUZJbdSabKT/ys
-         C04VGN/ACN18DNLNLn1tuMJn+is+Sxd0z6vmi00qP1jz5bnlZ/UXcxTF8StnZnibu85n
-         zyQw==
+        d=gmail.com; s=20230601; t=1751090952; x=1751695752; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ltk1TzaY6k6pKdbjauwlCcf5/+jayx56XkBsjqMYFvs=;
+        b=lNKQ5zRAX0bbNExhMYukOHiRLHRMtWQH1uaDVXgCUrplH+cEJ4DQitL6efeycbUjJU
+         LTsuakB4tjpRDzJYgxRWwuq6Sd81Tvsw79o/JEhh158kt0H9Dx16vo5ujYX3WmJLATHQ
+         tSrsj/ixrDqVqh6UPESmWTcvj9YHDexz3MFUkTSawEbFSIpeGp4O2GQkrEaQT3yowtYf
+         Zyuv2IS4WaE+1hDRbjuqssUD+Ipr4anj++GY+DJnA1Qk21uojcujks5zVPG98UuwgI6L
+         qjww2B91V2RaU21rBgfCuel0ordgoxlPRjz57Z3nZvvfY7tanQ0GKN6x/7+5NLbk6fD3
+         cjGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751066923; x=1751671723;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vhFS54RZ5e5FBjCi7j6/8xm0daxBFLkAHKsyZJXx2JE=;
-        b=h+FK0wA+e5vVzQp8NDEDioXJt0JkAs2YdotyS2OvDSWNt1MG8K/rQmHK/a+GPg7irg
-         L4m2efb9A197QyC0V/jVBwtANsKFH+IAkC31H5ocJe8lVLPKCQW6hhzP8WgSyjiUQELI
-         jc/UChr57S0QjODjnNavbF2dqpq2SU9ptw2MvDYiOS6dDfyq1nuqf4uktPX3mszaeXtI
-         5N3XHBi4UX7eD3OH706ejQWt6RAPnMR7TNdpLdntsTpo50Mzpzj9M89EvqdAfHpUGbNs
-         pZC3WESOsGVOHx1tbUEexF456iTbeZm28fm65ZUg4yhsh6hTUppS7ofT/BVl+qD//Vh0
-         JwHQ==
-X-Gm-Message-State: AOJu0YzTLhMqRuN3rtFfsDooIvgbaO0ezTpoWDPWXK2bmgra6blctQaN
-	MvU30tHlEOKXitqjJDVWvdBl9SDtta55lLTKPTDTTg01oIIIRTOXuRhdv0BkdAoLm48=
-X-Gm-Gg: ASbGncuwe4RU87g/8YcKldMBwveFSzFmaC7Xa3a3SL9CGkhSucYlSkKaEcsbXjHfsop
-	jewFYGi69NoE/OevTHkQw6om1XRCptqtgmmsWI716JLsT2fjcCJZ7rzVJDr9ZW2T1MMFPMXq2sP
-	WL2715awv0MwqVn6URjC5qNCyymD4OOXQh7p80RmSrVnx5sWet9ewb7OPwBMkOMEPaNQz/sQ2S1
-	P2SxpOcx193fppkmRjo0m2eTttu+jAguvJujC9C90KESmeAoT/ooKuhfy/tw25JupFrnMYD/ClI
-	lUJOng6tF8AypObLb6i2c/LFEFVJrdTMW55msWbdia6ISE0QP7TDKwa6Th0WDZdC2Hxv/IehnGV
-	1TB1GO6akVBXlcgBbd1kFCn07SBM6RDmUn3GU4nRo
-X-Google-Smtp-Source: AGHT+IFwjOO7/C98zSNOmhybfpS/lM8hs+3Imm+DreQcmBSA2pvPevAEaHixYzMrQ8CZCDz4GX6Jow==
-X-Received: by 2002:a05:6870:be97:b0:2ea:8c15:d6d7 with SMTP id 586e51a60fabf-2efed6f3da6mr3649368fac.27.1751066923007;
-        Fri, 27 Jun 2025 16:28:43 -0700 (PDT)
-Received: from anbernal-thinkpadt14sgen2i.boston.csb ([2600:4040:5b80:d200:2ccf:5acf:c5db:909c])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd4ef026esm1129912fac.11.2025.06.27.16.28.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 16:28:42 -0700 (PDT)
-From: Andrew Bernal <andrewlbernal@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
-	trivial@kernel.org,
-	Andrew Bernal <andrewlbernal@gmail.com>
-Subject: [PATCH][TRIVIAL] io_uring: fix four comment typos
-Date: Fri, 27 Jun 2025 19:27:26 -0400
-Message-ID: <20250627232726.58700-1-andrewlbernal@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1751090952; x=1751695752;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ltk1TzaY6k6pKdbjauwlCcf5/+jayx56XkBsjqMYFvs=;
+        b=XXJ8rVN6XXoQEasuzAWZJTZptJxSlubuSylvA4IYGjzJT68fSv0DTeW1qz/iCjUPIG
+         fawRGWMaWsu/FZkG3y7oJf4V14bo9u9GIMY8+n6ocwn8UaXkpqDA5bSkXR9qkjwaZCjl
+         ZubU+Vg52BfkTSYHB1StL/TKWIRH1qvLggybvCcgjWgdguBRwQEOkJCY6PuRlIPo6Ujf
+         UEfrSoAw+vXWI/yhh2N/rJ82RL+hI+g6h7w1cI9MtjCljBYFKJcSE8zks2XjVUgTVpN1
+         qlvEsqfp51cNbU64djQvWRgtQqr7DAH/4h63lc0EeCOt8rIH5V9XxeNW6PHgW/AvGdui
+         MeiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO79GyMW632lXwjR3uNX8g2c2mJoxkpFuu+08U6fSw2r5F7QHlotFn7AlEpkpIYAYt9f6taUnDbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUky4Y6kX46ykXJd8dIYY/+nWKpm3A5+PHFsO4hjPbqYraTUtj
+	yopco6QlOYMG2gKVRS4z4+1df2Kgb4pyAmCqNg9AiBOem2vz2kQN3WR5
+X-Gm-Gg: ASbGncuECivAtcEoUAqASGcPYcxj109O6XQici4MjrIULmKB79MaGecJa4asgJvS7pc
+	X65VuTSNbA3NYWbtNZ77E8/ZG+5yPrt1WKAKO711lZSihYvLSvYcZc6vcfitaHAwDEL2fTHYuL+
+	Nu37pjhEqTWshrf0DMAoPxUWQRbp8EkHCp4ynkjUxfpXsPRWcfzNbMNF7U+soA3YPkSKRFFLuS1
+	9WA8PXq8y36SOgBUf2JY6YByArd0LdY7uEtZf5g1pPP1EBEl4Dd8NUNKfsPL+2ATyQkgZRUFQyf
+	vphQGzV7CS7VgnVfZR0ayBF3bdQ2i15+cQIoFkeOFxotXVr/Z8RzzWjd6F3UwTEJe7SMk0dv
+X-Google-Smtp-Source: AGHT+IHtCKPUXPtDVjQl2CIBDxhzzZ75sdH4EGAh+qSXZjafoPEMpIf+xZXpEjm6sM9tk2COsGtFVA==
+X-Received: by 2002:a17:907:944e:b0:ad5:4806:4f07 with SMTP id a640c23a62f3a-ae34fd4476emr568552266b.2.1751090952250;
+        Fri, 27 Jun 2025 23:09:12 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.147.134])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353ca1d1asm251543666b.154.2025.06.27.23.09.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 23:09:11 -0700 (PDT)
+Message-ID: <cf277ccc-5228-41dc-abd5-d486244682dd@gmail.com>
+Date: Sat, 28 Jun 2025 07:10:36 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v5 0/5] io_uring cmd for tx timestamps
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Jason Xing
+ <kerneljasonxing@gmail.com>, Kuniyuki Iwashima <kuniyu@google.com>
+References: <cover.1750065793.git.asml.silence@gmail.com>
+ <175069088204.49729.7974627770604664371.b4-ty@kernel.dk>
+ <a3e2d283-37cd-4c96-ab0b-dfd1c50aae61@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <a3e2d283-37cd-4c96-ab0b-dfd1c50aae61@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix minor spelling mistakes in io_uring.c:
-  - cancelation -> cancellation
-  - reuqests -> requests
-  - discernable -> discernible
-  - cancelations -> cancellations
+On 6/27/25 18:07, Jens Axboe wrote:
+> On 6/23/25 9:01 AM, Jens Axboe wrote:
+>>
+>> On Mon, 16 Jun 2025 10:46:24 +0100, Pavel Begunkov wrote:
+>>> Vadim Fedorenko suggested to add an alternative API for receiving
+>>> tx timestamps through io_uring. The series introduces io_uring socket
+>>> cmd for fetching tx timestamps, which is a polled multishot request,
+>>> i.e. internally polling the socket for POLLERR and posts timestamps
+>>> when they're arrives. For the API description see Patch 5.
+>>>
+>>> It reuses existing timestamp infra and takes them from the socket's
+>>> error queue. For networking people the important parts are Patch 1,
+>>> and io_uring_cmd_timestamp() from Patch 5 walking the error queue.
+>>>
+>>> [...]
+>>
+>> Applied, thanks!
+>>
+>> [2/5] io_uring/poll: introduce io_arm_apoll()
+>>        commit: 162151889267089bb920609830c35f9272087c3f
+>> [3/5] io_uring/cmd: allow multishot polled commands
+>>        commit: b95575495948a81ac9b0110aa721ea061dd850d9
+>> [4/5] io_uring: add mshot helper for posting CQE32
+>>        commit: ac479eac22e81c0ff56c6bdb93fad787015149cc
+>> [5/5] io_uring/netcmd: add tx timestamping cmd support
+>>        commit: 9e4ed359b8efad0e8ad4510d8ad22bf0b060526a
+> 
+> Pavel, can you send in the liburing PR for these, please?
 
-Signed-off-by: Andrew Bernal <andrewlbernal@gmail.com>
----
- io_uring/io_uring.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+It needs a minor clean up, I'll send it by Monday
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5111ec040c53..6fe489d6ae83 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -409,7 +409,7 @@ static void io_clean_op(struct io_kiocb *req)
- }
- 
- /*
-- * Mark the request as inflight, so that file cancelation will find it.
-+ * Mark the request as inflight, so that file cancellation will find it.
-  * Can be used if the file is an io_uring instance, or if the request itself
-  * relies on ->mm being alive for the duration of the request.
-  */
-@@ -1162,7 +1162,7 @@ static void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
- 	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
- 
- 	/*
--	 * We don't know how many reuqests is there in the link and whether
-+	 * We don't know how many requests is there in the link and whether
- 	 * they can even be queued lazily, fall back to non-lazy.
- 	 */
- 	if (req->flags & IO_REQ_LINK_FLAGS)
-@@ -2856,7 +2856,7 @@ static __cold void io_tctx_exit_cb(struct callback_head *cb)
- 	 * When @in_cancel, we're in cancellation and it's racy to remove the
- 	 * node. It'll be removed by the end of cancellation, just ignore it.
- 	 * tctx can be NULL if the queueing of this task_work raced with
--	 * work cancelation off the exec path.
-+	 * work cancellation off the exec path.
- 	 */
- 	if (tctx && !atomic_read(&tctx->in_cancel))
- 		io_uring_del_tctx_node((unsigned long)work->ctx);
-@@ -2988,7 +2988,7 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 	/*
- 	 * Use system_unbound_wq to avoid spawning tons of event kworkers
- 	 * if we're exiting a ton of rings at the same time. It just adds
--	 * noise and overhead, there's no discernable change in runtime
-+	 * noise and overhead, there's no discernible change in runtime
- 	 * over using system_wq.
- 	 */
- 	queue_work(iou_wq, &ctx->exit_work);
-@@ -3160,7 +3160,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 		if (!tctx_inflight(tctx, !cancel_all))
- 			break;
- 
--		/* read completions before cancelations */
-+		/* read completions before cancellations */
- 		inflight = tctx_inflight(tctx, false);
- 		if (!inflight)
- 			break;
 -- 
-2.49.0
+Pavel Begunkov
 
 

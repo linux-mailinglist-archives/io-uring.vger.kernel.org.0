@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-8545-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8546-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6392EAEE8BA
-	for <lists+io-uring@lfdr.de>; Mon, 30 Jun 2025 22:59:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9061AEE8EA
+	for <lists+io-uring@lfdr.de>; Mon, 30 Jun 2025 23:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C1417F85D
-	for <lists+io-uring@lfdr.de>; Mon, 30 Jun 2025 20:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CB11BC32A7
+	for <lists+io-uring@lfdr.de>; Mon, 30 Jun 2025 21:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA101885A5;
-	Mon, 30 Jun 2025 20:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43315242925;
+	Mon, 30 Jun 2025 20:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icUIp79t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZMcENN4"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AE843AA8;
-	Mon, 30 Jun 2025 20:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192F221FF54;
+	Mon, 30 Jun 2025 20:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751317131; cv=none; b=N+isIN8CG1dh4OiX2Pc29FMnVN96Jo8Fxpi938WQWMg3dI6UPZK6b/HjXvMUZ4dY2ydNz6SMdd/XHBUKd5V7CAWOl3NH8vAJGRU56dOSfIJpn4h48l/aYSbnKRoyhy84osIaFPsYxFhdwxJDiE+bFpKoR2kUbdZzGf2jEUNJQJI=
+	t=1751317194; cv=none; b=u8P+XFouMiwhPbdXyI7Y5MOihQhRbtaiGW359+mG2juY6VYpPGdBE/rjyD2Pl9y4+xzvo7x7dn23AFFYXbWCGvdHfuPRt4hnL/hGnU120xtP3F5wCPqEZtlTMvBGkXmkTpH6NrRs0ZhpIsom9RFUIYTVBFCZ7I2tWk2dy13ghag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751317131; c=relaxed/simple;
-	bh=RmjfC70IGTG0gB9ct+Smd15Wpijo2sLfeQMmiEV8I3U=;
+	s=arc-20240116; t=1751317194; c=relaxed/simple;
+	bh=oFORV4dzEgYmS1n+mqQtzN85pIVLPVVCmyQAEfWgOgw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fxBIDS4wVP1ZKppKPzc95NFe984tMpMc0mSyBK54RT3BcHbX1ApJkq3FGa4+OjgbMNId77E2ltlQdMgSWslmhKYpXdLF5XwnpG2s3T3VEbqE4F6YOIXJiHAtdP9G+Xf1LFwXKabTjQ1Bh+C/Gc9+64kFC6tNrgKqRMloRkpUhiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icUIp79t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07A9C4CEE3;
-	Mon, 30 Jun 2025 20:58:49 +0000 (UTC)
+	 MIME-Version; b=EBCOkS3kx6mg/KBUEfqGoOacSmzIzNr456U+aPvn8OWiGlL+zgT5jb+jR1TRrWYt3VCeTYtTLEFo5QJWy3qbwrHnIqZO/Ui47lf5PsfIbN6lCJNPZB4rX11rcKYnXCWCH/yL2AxRuJP68fbvg6W53fT20+SrQ5vGHAyZB4VWgRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZMcENN4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E51EBC4CEE3;
+	Mon, 30 Jun 2025 20:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751317130;
-	bh=RmjfC70IGTG0gB9ct+Smd15Wpijo2sLfeQMmiEV8I3U=;
+	s=k20201202; t=1751317194;
+	bh=oFORV4dzEgYmS1n+mqQtzN85pIVLPVVCmyQAEfWgOgw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=icUIp79t9WFABkcopw3DStDe9L49o284gKecKTn1xEZkReSZB5ghboPzXOQ6rfrYR
-	 Go0tUMaTOyE1g+9EQJz5FmiySqEzZsAwgpuQqWJWq/n3kjfRUJ6zP3jE4zD7U4Estn
-	 Fw+1prCvzmg2uuhVQAkSYxEvfJzFuPyyyX5qk33jxekfJLei9Vy7R5tKydrVD+6Fjs
-	 cxW/zb4cx3CdPZpzehssugO+Tbeb8wbrPW7b41jfiFNg77jlw/ShDzIbx7GSaAsTmm
-	 D/B5WtWupfcm2F2yRlDamifcUFjXxu3Evsmyw5s3Y6u/ChEoDyy9c0XiTKxI/z0OS8
-	 qek+geiXzp7iQ==
+	b=NZMcENN47epvxF9o1yqNdNgb/bN+cBnQy1t1jD+5iWd74c33iDVvZuX7HTHn7fcZD
+	 49br05JHUfqhNSpc+zK3hun/ARKlik/xe/bhvvg7SHypJ0u+EJNvD7IJbVO7PtrwRC
+	 Mo3gFBHKsXwuSBIj3J+wjm2T9EV74Qx8ilapIJE9GYaGMZekX7sS1t4F+VyoFnp6Dk
+	 aj8S+SONDeOsoRWDPT8c1u2kK3sXbYjXQhQSv8KGvGe/BWf17F0zqRb2ILknOZ0UEz
+	 yCWlZzhbezeVBER5KvRFOn6aWZk8E19/NyAnVOyhOUdDg10rEbkNmbT43slu4UiVbp
+	 nQ/kvGBFFA/+g==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Fengnan Chang <changfengnan@bytedance.com>,
 	Sasha Levin <sashal@kernel.org>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 09/23] io_uring: make fallocate be hashed work
-Date: Mon, 30 Jun 2025 16:44:14 -0400
-Message-Id: <20250630204429.1357695-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 07/21] io_uring: make fallocate be hashed work
+Date: Mon, 30 Jun 2025 16:45:22 -0400
+Message-Id: <20250630204536.1358327-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250630204429.1357695-1-sashal@kernel.org>
-References: <20250630204429.1357695-1-sashal@kernel.org>
+In-Reply-To: <20250630204536.1358327-1-sashal@kernel.org>
+References: <20250630204536.1358327-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.4
+X-stable-base: Linux 6.12.35
 Content-Transfer-Encoding: 8bit
 
 From: Fengnan Chang <changfengnan@bytedance.com>
@@ -143,10 +143,10 @@ without introducing new functionality or risks.
  1 file changed, 1 insertion(+)
 
 diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 489384c0438bd..78ef5976bf003 100644
+index a2be3bbca5ffa..5dc1cba158a06 100644
 --- a/io_uring/opdef.c
 +++ b/io_uring/opdef.c
-@@ -216,6 +216,7 @@ const struct io_issue_def io_issue_defs[] = {
+@@ -214,6 +214,7 @@ const struct io_issue_def io_issue_defs[] = {
  	},
  	[IORING_OP_FALLOCATE] = {
  		.needs_file		= 1,

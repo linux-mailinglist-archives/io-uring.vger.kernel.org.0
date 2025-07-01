@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-8555-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8554-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C91AEFA9B
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 15:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D94AEFA8B
+	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 15:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A41481AE2
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 13:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3780C165F5C
+	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 13:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B45276037;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88E0275B16;
 	Tue,  1 Jul 2025 13:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAk1Z8Tl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O343WpkL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED312737F3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5C1275B1B
 	for <io-uring@vger.kernel.org>; Tue,  1 Jul 2025 13:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376381; cv=none; b=HkWdC0iHmbIi9oh+VDTegyiYMrfqsur19uC8gkN6N9N2hPQeWCZAV/OTPArERoRA1wthxiLxOMwGYnzmUUNshMSFDuzatjx/HC8oN+gVp/1Kr8x8Y+1sGy/Cl/V7n5lgHpBMhB2gxU4FtS/n0xPiQH3v6SvWwRwFqqACUpE8jkE=
+	t=1751376381; cv=none; b=hxfVslo+urrPrpcLhwcKRyMv/TiSoFheOw7lBtTJNWWvZmyJSNfNtHZiFK0pSpKsQ2jlNhdwDpggtDjD6VNVNXXCkPQRLayetuzQ9dy6UewfxwS0Sd1BppB1YpJSSlc+4V9POoD95oHQoGcb+Y8dVZ0pfKiSFXCTQryOgkkrSSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751376381; c=relaxed/simple;
-	bh=q44OxrFtZOhFQT9osumhX9S3b5HnaDQhGvmMAn5tXes=;
+	bh=UljhZlMSxv8RgS+FY7RwxMJ7ExrB1GveR2LYqaZ0Wio=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uk/DPTZuDrHzsbj3PILGIju5ujX4zJZQJ+AFUxgZNpjsOWvDugPiadY1rOVeyBqlHYzv7G3OnxhE4LkeK9cVpkbnQsrmRH+MWd/NQIgVLUmsE0g0/cC4Z668enm/ciIO7Q29IlYxqKegxwAOTD862lkBWRVIIhuKbtp+nB4ySRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAk1Z8Tl; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=gP1mb0l52YFvuGhixlw8hEXJdsCDRy39DvEyW6agdUclOaJCAB/0uPYNl+f/fwaM5EsVYKxvU4a2HRKXNh+FMPdfJzSJDHbmyX7WPTV9FZt3Bir0XlAnywZIy3sjs0i46XobtrvqC71fwX+mrpFuKvbanPdw7WrductDd6k+ZS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O343WpkL; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-747fc77bb2aso3024058b3a.3
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74af4af04fdso4075022b3a.1
         for <io-uring@vger.kernel.org>; Tue, 01 Jul 2025 06:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751376378; x=1751981178; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751376379; x=1751981179; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPx08quPNBwV5MOyLqfQgZOUKmsPp21mhER8U/xkdjM=;
-        b=cAk1Z8TlJC9Ge5VxVJXKEZr68JeryGV6yTI1WSaz31qAd0OBGpzTYJVooNYXLvEY3M
-         xFtSS0ClDxxnhArtAWi3OBprj7B6+UonyZFo4kq0HA+EmcHTjutScxoFmGaehyWP5kqU
-         mWYlWnLcXTVlOQyI9Bth+6S/lN70MpjOyApCxA4as1rBnH1y9+mTJTK07fXUR0o8Ndlu
-         /asV50O8aYi2LkGi706BQdkhsHMXU9Gjp94ap5YjWn1uOiq/hnV4udrQwkY8nZROS9wG
-         3SJOvqy43j0Y3C4dVGajuQtHrNgs+kLLSWu/9usHCGWTIO+UcLtKie3+mA9StRv7Dyor
-         5Ozw==
+        bh=Rd/GO95B8h5uuEHv6DXycfCIM9ZV9chlU0X+eVXZJwI=;
+        b=O343WpkLCVskCrumyIlHB+g2Vh7nHOZdEcVqBkOFXG8+kIJV3cO3cmAp0KgDwee5do
+         sAYVnASRa57k8UOpVI/iLp/p6N9Ch4icGe58iOSHWtnLbFJN5P5NxPcYI3vC3lQVHljD
+         lW7W824Qu6V2SMTpu6L1++KYfmL2pj6uHGsWMZ9Q2t8HTbq29PJy87eyC/1tU7Nhyz/s
+         KIfGGdtY4sJ1eRrFdaN7f6/F2TnwMDsyOtvv1dGGDYjEwaz5sl2CgPBhtW9DpjC2sxPe
+         /QET7JYG9drybZTnMqoAHpVOgReGdyb20eIsfVyWBVEteo3VOAHV0Li0EPrDfxP3Ldxr
+         ogDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751376378; x=1751981178;
+        d=1e100.net; s=20230601; t=1751376379; x=1751981179;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YPx08quPNBwV5MOyLqfQgZOUKmsPp21mhER8U/xkdjM=;
-        b=LkGIMj1gfcTa/6HiyXB90iYlw7muxC69F02eJkY5xhAUcbmSsOLI2eXCcjSvB+G4Up
-         I/CPjgrETsliVeMUEZ6+3kmxF2pqU3x13XTgY+o6UTpVMuzacxCjYwoVIwsi6FTXbmkT
-         mON9eiOBrlp/01Y40YrflTRSljscYGXS3hYZAlU1VZotJKawpaLIby7bga6dwVNcBcCj
-         gghEKut+8DZdqmRrlRk6oNZbPr+BSvTjU+G7ow6iIlACoer786h3ysoIk+9jocNQxZBw
-         2vuZkuyzIxJG3Zqy9sSQz8VZ5WQ6UnRvxNgWRBFoCpUkocyq/HmcQ2AA2Y8fDctBmGNv
-         ld0g==
-X-Gm-Message-State: AOJu0YwGYi6pQf5F1rSwBRHPKftN1bMKeqj9S4IF88vh+JLb4Dcu66b7
-	5XPLrl1b5l5KmhHEeMRBad8KTUA0JTJ7LL+9UbJE+IrfYGTnZe/KA1M/u85a/cQT
-X-Gm-Gg: ASbGncvscrL4gKyJBMhkm5kpaTpfxjqu/dLpin8wzN9bvaQCCglTpkVhVnD2VwmiAxI
-	HKY/Z4QY5Q9a57K86w/7wsLa5NC8HecYbPrr0dL9x5jwk6SZPqjNRom02yQ144h1rJgH68UpynW
-	WgxVjpL10KD8G2BqWXkFbR8w6JQrEaRyzaKCjRs/ahmD6GH2z3+PcGANZwI55yxfJr+8vVjbTZ5
-	lqg3nZs1qHzK8wzTukbVMprJ7tbxXHDzqVQrqWSOawcPBEzW0lAOmyl4FHFPQvFqblMEJeklAIe
-	ByxKtRh5IZWs39dmBDSbVFLVAdjwNZzNs6lwQGP/xS3AmJqUZvcfg3b54y4=
-X-Google-Smtp-Source: AGHT+IHULRZCBx/KnJ8HjIzon71lQcArQfUsL16GedGu+V4qyaNrCYp9kl8U7+rpZ+AXLUaE1A3O/Q==
-X-Received: by 2002:a05:6a00:2ea0:b0:736:51ab:7aed with SMTP id d2e1a72fcca58-74af6f4323fmr23547454b3a.16.1751376378053;
+        bh=Rd/GO95B8h5uuEHv6DXycfCIM9ZV9chlU0X+eVXZJwI=;
+        b=JFEpGECI5Z7YplA+i7bA4zoOfh3igE+Sd6zqGzlT2dhh33qrZ8tZ9CdULU0lwABlqy
+         tNvC8/h31l8ZlaJtjaKi0MSX4TX5JAxvVA4dh3jEMqBDuWWxksfLKxp9yY3tzwbIHl3C
+         FO9QgO6CCh5rFY0MhlcvgX1MdiArqRGN8wiO3pPxGx4cBDq9nw+Fatp+fDDkFBwn7eKV
+         QbM7wFrXRmyukwGfchAO5Qjntlkvo1VTK63HV/sMe/vEz3sr1FocVBuDRIjQrnVkgVKn
+         bjSMteM6jFcF1NDDM9UJ4mvZMxKgzy7Kfew7NndT33STSNVan1bjP9Z4F+9qknIMqFEJ
+         Q7Pg==
+X-Gm-Message-State: AOJu0Yyk41tIZfYsgzDdqfR8V1JRa8fyX3CZsiL7jg/KBgOAzX6Q++V7
+	8vG/QCxyLiRE+vNqwLMLottfzUA/D6rBM2gqfnOgLHa1PbeNGu6u+6gpOVwfbzeD
+X-Gm-Gg: ASbGncvGoqssotH5rBjooJAUFyKdgmrhwpsX/AuQYBu4jX7W1mbzdGup2fiTZ7DAx/4
+	AiMKjPQYLR2mBbZCbjy/+XDT9tuppkRLNbXbBer5KQyNHk5wc2PrxeGKlLPyr8/Y8vPT5RZg+1u
+	94yNw2Dxn/+EhFOcDpOWFLZ9qObfOSetHAkEAKKWY+Yc+hYs/3bcoIZWqwdNtgfvF/T+A6x21R3
+	6YrJQkKo7K9SNc9MZVa8J2AyzIkBdMMfHbcFn/oBcmuyCFLn5csAPVZDlGoBGFBnPg1h5yW9qFA
+	DykbhVeCkc0DqhogOxq5U3wXD86L7wjQ1JRvfX1qyMhPdwxFjlocxXSnFDM=
+X-Google-Smtp-Source: AGHT+IEX/77iofyT2tFh264WnF/2J17TfLe6epYnStIS+sUeJR5S7S4FYAxdnlQOx9+B/e5tcBnZlg==
+X-Received: by 2002:a05:6300:2404:b0:222:d9e:c5f6 with SMTP id adf61e73a8af0-222c9964a77mr3748442637.2.1751376378709;
         Tue, 01 Jul 2025 06:26:18 -0700 (PDT)
 Received: from 127.com ([50.230.198.98])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af557439csm11788025b3a.80.2025.07.01.06.26.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af557439csm11788025b3a.80.2025.07.01.06.26.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 06:26:17 -0700 (PDT)
+        Tue, 01 Jul 2025 06:26:18 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v2 3/6] io_uring/zcrx: introduce io_populate_area_dma
-Date: Tue,  1 Jul 2025 14:27:29 +0100
-Message-ID: <a8972a77be9b5675abc585d6e2e6e30f9c7dbd85.1751376214.git.asml.silence@gmail.com>
+Subject: [PATCH v2 4/6] io_uring/zcrx: allocate sgtable for umem areas
+Date: Tue,  1 Jul 2025 14:27:30 +0100
+Message-ID: <f3c15081827c1bf5427d3a2e693bc526476b87ee.1751376214.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1751376214.git.asml.silence@gmail.com>
 References: <cover.1751376214.git.asml.silence@gmail.com>
@@ -88,90 +88,151 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a helper that initialises page-pool dma addresses from a sg table.
-It'll be reused in following patches.
+Currently, dma addresses for umem areas are stored directly in niovs.
+It's memory efficient but inconvenient. I need a better format 1) to
+share code with dmabuf areas, and 2) for disentangling page, folio and
+niov sizes. dmabuf already provides sg_table, create one for user memory
+as well.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/zcrx.c | 56 +++++++++++++++++++++++++++----------------------
- 1 file changed, 31 insertions(+), 25 deletions(-)
+ io_uring/zcrx.c | 78 +++++++++++++++++--------------------------------
+ io_uring/zcrx.h |  1 +
+ 2 files changed, 28 insertions(+), 51 deletions(-)
 
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 2cde88988260..cef0763010a0 100644
+index cef0763010a0..fbcec06a1fb0 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -47,6 +47,35 @@ static inline struct page *io_zcrx_iov_page(const struct net_iov *niov)
- 	return area->mem.pages[net_iov_idx(niov)];
+@@ -159,7 +159,7 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
+ 			  struct io_uring_zcrx_area_reg *area_reg)
+ {
+ 	struct page **pages;
+-	int nr_pages;
++	int nr_pages, ret;
+ 
+ 	if (area_reg->dmabuf_fd)
+ 		return -EINVAL;
+@@ -170,6 +170,12 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
+ 	if (IS_ERR(pages))
+ 		return PTR_ERR(pages);
+ 
++	ret = sg_alloc_table_from_pages(&mem->page_sg_table, pages, nr_pages,
++					0, nr_pages << PAGE_SHIFT,
++					GFP_KERNEL_ACCOUNT);
++	if (ret)
++		return ret;
++
+ 	mem->pages = pages;
+ 	mem->nr_folios = nr_pages;
+ 	mem->size = area_reg->len;
+@@ -184,6 +190,7 @@ static void io_release_area_mem(struct io_zcrx_mem *mem)
+ 	}
+ 	if (mem->pages) {
+ 		unpin_user_pages(mem->pages, mem->nr_folios);
++		sg_free_table(&mem->page_sg_table);
+ 		kvfree(mem->pages);
+ 	}
+ }
+@@ -205,67 +212,36 @@ static int io_import_area(struct io_zcrx_ifq *ifq,
+ 	return io_import_umem(ifq, mem, area_reg);
  }
  
-+static int io_populate_area_dma(struct io_zcrx_ifq *ifq,
-+				struct io_zcrx_area *area,
-+				struct sg_table *sgt, unsigned long off)
-+{
-+	struct scatterlist *sg;
-+	unsigned i, niov_idx = 0;
-+
-+	for_each_sgtable_dma_sg(sgt, sg, i) {
-+		dma_addr_t dma = sg_dma_address(sg);
-+		unsigned long sg_len = sg_dma_len(sg);
-+		unsigned long sg_off = min(sg_len, off);
-+
-+		off -= sg_off;
-+		sg_len -= sg_off;
-+		dma += sg_off;
-+
-+		while (sg_len && niov_idx < area->nia.num_niovs) {
-+			struct net_iov *niov = &area->nia.niovs[niov_idx];
-+
-+			if (net_mp_niov_set_dma_addr(niov, dma))
-+				return -EFAULT;
-+			sg_len -= PAGE_SIZE;
-+			dma += PAGE_SIZE;
-+			niov_idx++;
-+		}
-+	}
-+	return 0;
-+}
-+
- static void io_release_dmabuf(struct io_zcrx_mem *mem)
+-static void io_zcrx_unmap_umem(struct io_zcrx_ifq *ifq,
+-				struct io_zcrx_area *area, int nr_mapped)
+-{
+-	int i;
+-
+-	for (i = 0; i < nr_mapped; i++) {
+-		netmem_ref netmem = net_iov_to_netmem(&area->nia.niovs[i]);
+-		dma_addr_t dma = page_pool_get_dma_addr_netmem(netmem);
+-
+-		dma_unmap_page_attrs(ifq->dev, dma, PAGE_SIZE,
+-				     DMA_FROM_DEVICE, IO_DMA_ATTR);
+-	}
+-}
+-
+-static void __io_zcrx_unmap_area(struct io_zcrx_ifq *ifq,
+-				 struct io_zcrx_area *area, int nr_mapped)
++static void io_zcrx_unmap_area(struct io_zcrx_ifq *ifq,
++				struct io_zcrx_area *area)
  {
- 	if (!IS_ENABLED(CONFIG_DMA_SHARED_BUFFER))
-@@ -119,33 +148,10 @@ static int io_import_dmabuf(struct io_zcrx_ifq *ifq,
+ 	int i;
  
- static int io_zcrx_map_area_dmabuf(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
+-	if (area->mem.is_dmabuf)
+-		io_release_dmabuf(&area->mem);
+-	else
+-		io_zcrx_unmap_umem(ifq, area, nr_mapped);
++	guard(mutex)(&ifq->dma_lock);
++	if (!area->is_mapped)
++		return;
++	area->is_mapped = false;
+ 
+ 	for (i = 0; i < area->nia.num_niovs; i++)
+ 		net_mp_niov_set_dma_addr(&area->nia.niovs[i], 0);
+-}
+-
+-static void io_zcrx_unmap_area(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
+-{
+-	guard(mutex)(&ifq->dma_lock);
+ 
+-	if (area->is_mapped)
+-		__io_zcrx_unmap_area(ifq, area, area->nia.num_niovs);
+-	area->is_mapped = false;
++	if (area->mem.is_dmabuf) {
++		io_release_dmabuf(&area->mem);
++	} else {
++		dma_unmap_sgtable(ifq->dev, &area->mem.page_sg_table,
++				  DMA_FROM_DEVICE, IO_DMA_ATTR);
++	}
+ }
+ 
+-static int io_zcrx_map_area_umem(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
++static unsigned io_zcrx_map_area_umem(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
  {
--	unsigned long off = area->mem.dmabuf_offset;
--	struct scatterlist *sg;
--	unsigned i, niov_idx = 0;
+-	int i;
 -
- 	if (!IS_ENABLED(CONFIG_DMA_SHARED_BUFFER))
- 		return -EINVAL;
+-	for (i = 0; i < area->nia.num_niovs; i++) {
+-		struct net_iov *niov = &area->nia.niovs[i];
+-		dma_addr_t dma;
 -
--	for_each_sgtable_dma_sg(area->mem.sgt, sg, i) {
--		dma_addr_t dma = sg_dma_address(sg);
--		unsigned long sg_len = sg_dma_len(sg);
--		unsigned long sg_off = min(sg_len, off);
--
--		off -= sg_off;
--		sg_len -= sg_off;
--		dma += sg_off;
--
--		while (sg_len && niov_idx < area->nia.num_niovs) {
--			struct net_iov *niov = &area->nia.niovs[niov_idx];
--
--			if (net_mp_niov_set_dma_addr(niov, dma))
--				return -EFAULT;
--			sg_len -= PAGE_SIZE;
--			dma += PAGE_SIZE;
--			niov_idx++;
+-		dma = dma_map_page_attrs(ifq->dev, area->mem.pages[i], 0,
+-					 PAGE_SIZE, DMA_FROM_DEVICE, IO_DMA_ATTR);
+-		if (dma_mapping_error(ifq->dev, dma))
+-			break;
+-		if (net_mp_niov_set_dma_addr(niov, dma)) {
+-			dma_unmap_page_attrs(ifq->dev, dma, PAGE_SIZE,
+-					     DMA_FROM_DEVICE, IO_DMA_ATTR);
+-			break;
 -		}
 -	}
++	int ret;
+ 
+-	if (i != area->nia.num_niovs) {
+-		__io_zcrx_unmap_area(ifq, area, i);
+-		return -EINVAL;
+-	}
 -	return 0;
-+	return io_populate_area_dma(ifq, area, area->mem.sgt,
-+				    area->mem.dmabuf_offset);
++	ret = dma_map_sgtable(ifq->dev, &area->mem.page_sg_table,
++				DMA_FROM_DEVICE, IO_DMA_ATTR);
++	if (ret < 0)
++		return ret;
++	return io_populate_area_dma(ifq, area, &area->mem.page_sg_table, 0);
  }
  
- static int io_import_umem(struct io_zcrx_ifq *ifq,
+ static int io_zcrx_map_area(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
+diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
+index 2f5e26389f22..89015b923911 100644
+--- a/io_uring/zcrx.h
++++ b/io_uring/zcrx.h
+@@ -14,6 +14,7 @@ struct io_zcrx_mem {
+ 
+ 	struct page			**pages;
+ 	unsigned long			nr_folios;
++	struct sg_table			page_sg_table;
+ 
+ 	struct dma_buf_attachment	*attach;
+ 	struct dma_buf			*dmabuf;
 -- 
 2.49.0
 

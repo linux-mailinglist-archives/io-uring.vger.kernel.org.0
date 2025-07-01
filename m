@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8560-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8561-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E69AF0349
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 21:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06C0AF0352
+	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 21:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3D21C06095
-	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 19:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A83CE4847D3
+	for <lists+io-uring@lfdr.de>; Tue,  1 Jul 2025 19:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1656722A7E2;
-	Tue,  1 Jul 2025 19:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306E827FB30;
+	Tue,  1 Jul 2025 19:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KrGHFDHq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="T9frOHSD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2A626E6FE
-	for <io-uring@vger.kernel.org>; Tue,  1 Jul 2025 19:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCB7245029
+	for <io-uring@vger.kernel.org>; Tue,  1 Jul 2025 19:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751396644; cv=none; b=Qqg8mslDeaXMVdh31/JZL9kzuHebPzVWnqYn5SjnYludccxMBtvSrX+FSKSdtoOSWrY7An2TA2ZCyeADaWrTo261QrvQzUhHQ/8nqOkCc7StWwLwRLGIpwFXQe/8Nu5/05g0bqHIlQlGHIWXadjnE1BV4T4U258O8QBu+gH8aMw=
+	t=1751396762; cv=none; b=DawTtaWr+ZhfnXvh001cR1xWRnAeYLGmk0P+loA5IHH9EYxQ1WOSiBaNcXTc0uHMUBT+fftDTwTBdZiQ8Lejf4/i1sG80MxYoVFB/LrDqR8xsKod8TEZOQJNmJX6NBt+qSKF1QEU0HL6+cKhN/Mo/98aFPAJvGHDPEctTekRy/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751396644; c=relaxed/simple;
-	bh=cwAPXgdl+hKLrBAUN++bv9WfGRh0/jEqtxFs1hUDy+w=;
+	s=arc-20240116; t=1751396762; c=relaxed/simple;
+	bh=3yZbjzxDVDYQJwaaKXh5NfwJopR6odWrswC4Uexz3EE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbDI1dAED2WIFmw8jS4bruthAIVnbrByOv+r/81qVs1yqYSDsjDBf41/APYulbwK2OK/M8/oPTdiahpsTNYoxU6npP8mmyzJ4fSa/0h60gymIq2FnkW+Z//1omKg1IhR0JKmRaMlJBvbji4ycvMvghGHL0UWOIRPbrbsd8OkRW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KrGHFDHq; arc=none smtp.client-ip=209.85.166.175
+	 In-Reply-To:Content-Type; b=fTOPJP7Y3tZ6rZVjVKFjO2VJYMcYBtd6dT6DWxwgZk7Ri7Q0sWFLOetzobrNjFm9m7iQGaJOhLjjaa0Nd1NKOE0cdzeQ9EsknJTILVxi8GjbjRDtrKqYBAoBbNG1B/6XLEMLyuK5UHfBA4V9/BJC4ipizrxEu3Bmx+enmVtTAbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=T9frOHSD; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3df2e7cdc69so16943525ab.2
-        for <io-uring@vger.kernel.org>; Tue, 01 Jul 2025 12:04:00 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86d01686196so180955339f.1
+        for <io-uring@vger.kernel.org>; Tue, 01 Jul 2025 12:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751396640; x=1752001440; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751396759; x=1752001559; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=B1OO9XKq5rOhwEPdCxdc4lC2/SKoAK+PxaPLLCcb7dc=;
-        b=KrGHFDHqFa1Xh63PvlFyS6Wjnrd7ik4zMEAcs8o0uWHPAz8KILJWgOXpUlicUgexAb
-         CkqP9UihNXPT7+O9aRExZXsKbEZevyE9tN9Sm0sC10XE5V6BJMjblVzuUG9cfyk/O8P5
-         FJKQsXE1TBiPrxXSs4p9GCuXj5txC5KP54Md1P3UHdOozdQ63bqU3phyGCugyQAtLDdv
-         oiU3OZg2413JKlaIt0bzL2VkT95rfs4DEMhxnpPFgncE+RK5katI0rkhQUf1sIHAa37/
-         QuzHbCfVrKvKL4XsdBzkgKCMWX4oy/0HTJiF6lwwJx97ioKdtfZoe36vWlC6x/V6crk8
-         ZIiA==
+        bh=v/rCw+Zb9Mvts9DJelBmRopD1r8plgjJIjK44R7yOGU=;
+        b=T9frOHSDOBCdAFJt1kmzXMDr/CXARB7S5lSdR+xvIha5y/TYEBrFK723FcvjGejiYe
+         iq08Cb1NQfaF0zVkYkJjP/ajgD48CSOd+dVt0z3FO2pkkE37fQ0I35G92skzGjJrhNvY
+         2o5qCDF2PqQ9Tq/JfZGiGyf9uPHxSEpqjgIhmFFQPcAMIx+06veheny05JFIWqvaDQOc
+         DaMRz1NJlxIS0ctvTjZm8pcfFqqVUBc7vngAZcVgPXojK84eoziDh79SR8gk/ZdNqr94
+         xhT6Gl1XfwRg0LYNtOsvJSauZAJkpL81uyTQNwnfcPj8YDlbikgkQw8l0/8NqlIksJl7
+         LKAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751396640; x=1752001440;
+        d=1e100.net; s=20230601; t=1751396759; x=1752001559;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1OO9XKq5rOhwEPdCxdc4lC2/SKoAK+PxaPLLCcb7dc=;
-        b=FSiBydgjhJyNOztyysGQmkcKdRF1n51dTVZM6eMuKteRiYONMvUb5asp7GDHS9cBBk
-         w1vK7BJsR+zyEwS0C2nJI5LGB+0JreH2bYC7+fckafUWPp7583yPP6jThalR1/uxm60o
-         huQiSKto4f0AyHgKWFRxovtO1WwcyazViq1kfhoNqAyCTGe7DwKVjN0vcvDdoykK0XC8
-         H5LBdATGT1dqBKZYOFaw1oKH84VALuqAALCKcnCiCkoPVlbMbGs+FSxINwrcWFrTdYFt
-         DoCXom+8ydwZygXPu17ROtO9fbuNVbyeHI9UJKSJUT3xflzbjGHrJ8uiqAZBKe3mX0DL
-         feqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJrefLnNOPXNXLGe3M6p1GYXs28iAXbQiAOXc3T+ABOX6d4AJ4Owmk2hTTqT3bU7JwMwO8KG5zJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzleHg6/LiGOBRn+a6bg4KlFrSTbkiWJamVlFJSRtOUpjt62j79
-	b5wX1qr6ip+kVtHqJu4oJMgSwwEAkUx8Ps95SaBxFTg3Uk70+2WZpNiFJif9aW8aHx0=
-X-Gm-Gg: ASbGncuX+vgqAakXT6Uisxk44+aJM8Q2/XjJLC/tD9Bu0oHDtlD3vbG4yNgPBYJEKHY
-	P17WKD8cocfeI33RkKJ7oPMX3Dy1p9Nl3HpxKMIxOEf88+ujmUqHhc7BxUvZrWwD/JC5oE4p1Mq
-	TqAyNPgXtaUanRH68fxJ/2z+k/f/6yPLW/gWMRMS3rkkcsSKFgIeif6LVRASX+UmbtwdhYgLjzw
-	aKw/LXuGQkt4aFoxRiBMzgQOFiFn1h/1ttLrbEBC+OzITDD3uquYIKrO3ZOYapM9UCHlyfdGtvz
-	sLlvRtoAzb2e8WTtpOGms67RqfueBv5Q+95ZsXr+A6G8qU+zcSCzSDAwM8cQcB+jyIDs
-X-Google-Smtp-Source: AGHT+IG7i3qoJ1qUqfQDZSOEDLwZsJ/iz/Ni2hzM4Q/Bn5B1fjgADlo2DriX2xo8k7cBTXFyqEIbVw==
-X-Received: by 2002:a05:6e02:1d8b:b0:3df:3bc5:bac1 with SMTP id e9e14a558f8ab-3e05495ef63mr1597045ab.5.1751396639972;
-        Tue, 01 Jul 2025 12:03:59 -0700 (PDT)
+        bh=v/rCw+Zb9Mvts9DJelBmRopD1r8plgjJIjK44R7yOGU=;
+        b=TtsTrgiClZPHtwFDHImN+3LzLsDoMCaBVm4cLiH8Mg1H2i+YDkE9HFpdm58h8UZoQY
+         vP/UIroKTHco6noY9KjQRbsvikqRVb870elIn8jHEYaCCNOOiS9tNnnroRukVjUIkTBj
+         9FQomtVDJvkfMSe9m4iZABeueF2Vp2Wichuxe+2gEFcCMxydAchbpBoT2+J8NAqVahHy
+         Z+/ZuDVeN1KpTw7JFyppK06db5If+56zC6L0P02CL/v8CFsfZicM9VuUzLBlC9pDbd6L
+         upqFCv6plQxmq7EieDF/yApEHLIyzx8PKFYum9dSGvjAOSYIB1S5qp1DBy3bfKN2d7Bg
+         ixsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWptcpu0vn/iESQKFei3bsbsJd/BXCYipoIWoIUi72wd/DxW0GScmi/L9OGEVl9hneW9SuvqTrXCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytBHUvj6BAENEu6lQylIUdRxhrXGpQtyXceuIWCqM3B4mUjyn5
+	xaEsFrDqeZEF/OkKyTOIxCYzTesekeZ+AljdZAKXU4asqwYP8tbFr4tk3q4o/h8Qk50=
+X-Gm-Gg: ASbGncuQfAUNK3Jis2LBRvlUF77gVw+F6gwb2kCmt4d26yS8hhRfU2oLk0YkEbeBwsg
+	zM0kMCiUGxJELxMbVy1ZEvnKxugKdCgJfYmalf3GyTpZbIRIQIEUDBF79T/AM0lld45W9eCbGIG
+	yOiGvv5b9utMu94KPKDU2XeoVVfogYvF9jZXL2ttW1bMzOGxMxoHG3xiQifwNHxW4aKOwOcCA4F
+	hRz3B6346xy9iA9w3TdCajjVogKECodnrvMlNvriTdupS32hO9krmfnKcRmS7kvd9GHuBQ04VxZ
+	lmyiIBrzCl1c5yE2yS5EDXZRXXGk5HDD0v8FvVGXqIkTe/3H0j5f9E66ZA==
+X-Google-Smtp-Source: AGHT+IGRWjQOhmtHj++QwKNWgHf7AHpn02TWL1X53w/dyXCPPx9y3hHFUywI0EXa9hDdgpHBFStmXA==
+X-Received: by 2002:a05:6e02:3805:b0:3dc:8423:5440 with SMTP id e9e14a558f8ab-3e05485c170mr2894785ab.0.1751396759152;
+        Tue, 01 Jul 2025 12:05:59 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50204ab618bsm2596889173.124.2025.07.01.12.03.59
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3df49fd4f86sm29817955ab.5.2025.07.01.12.05.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 12:03:59 -0700 (PDT)
-Message-ID: <76d3c110-821a-471a-ae95-3a4ab1bf3324@kernel.dk>
-Date: Tue, 1 Jul 2025 13:03:58 -0600
+        Tue, 01 Jul 2025 12:05:58 -0700 (PDT)
+Message-ID: <c83a2cb6-3486-4977-9e1e-abda015a4dad@kernel.dk>
+Date: Tue, 1 Jul 2025 13:05:57 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,44 +81,35 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
+Subject: Re: [PATCH 3/4] btrfs/ioctl: store btrfs_uring_encoded_data in
+ io_btrfs_cmd
 To: Caleb Sander Mateos <csander@purestorage.com>, Chris Mason <clm@fb.com>,
  Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
 Cc: Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org,
  io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250619192748.3602122-1-csander@purestorage.com>
- <20250619192748.3602122-3-csander@purestorage.com>
+ <20250619192748.3602122-4-csander@purestorage.com>
 From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <20250619192748.3602122-3-csander@purestorage.com>
+In-Reply-To: <20250619192748.3602122-4-csander@purestorage.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/19/25 1:27 PM, Caleb Sander Mateos wrote:
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 929cad6ee326..7cddc4c1c554 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -257,10 +257,12 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->  			req->iopoll_start = ktime_get_ns();
->  		}
->  	}
->  
->  	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
-> +	if (ret == -EAGAIN)
-> +		ioucmd->flags |= IORING_URING_CMD_REISSUE;
->  	if (ret == -EAGAIN || ret == -EIOCBQUEUED)
->  		return ret;
+> @@ -4811,11 +4813,15 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
+>  	loff_t pos;
+>  	struct kiocb kiocb;
+>  	struct extent_state *cached_state = NULL;
+>  	u64 start, lockend;
+>  	void __user *sqe_addr;
+> -	struct btrfs_uring_encoded_data *data = io_uring_cmd_get_async_data(cmd)->op_data;
+> +	struct io_btrfs_cmd *bc = io_uring_cmd_to_pdu(cmd, struct io_btrfs_cmd);
+> +	struct btrfs_uring_encoded_data *data = NULL;
+> +
+> +	if (cmd->flags & IORING_URING_CMD_REISSUE)
+> +		data = bc->data;
 
-Probably fold that under the next statement?
-
-	if (ret == -EAGAIN || ret == -EIOCBQUEUED) {
-		if (ret == -EAGAIN) {
-			ioucmd->flags |= IORING_URING_CMD_REISSUE;
-		return ret;
-	}
-
-?
+Can this be a btrfs io_btrfs_cmd specific flag? Doesn't seem like it
+would need to be io_uring wide.
 
 -- 
 Jens Axboe

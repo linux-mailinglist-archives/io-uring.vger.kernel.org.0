@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-8575-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8576-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394B9AF5B1B
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 16:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9066DAF5B1C
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 16:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC7C4E6F90
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 14:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A3518955D0
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 14:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6A72F4A0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC62F2F5310;
 	Wed,  2 Jul 2025 14:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBqwN6ew"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1FkIxHh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342470810
-	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 14:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4525C28B503
+	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 14:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751466470; cv=none; b=lwLGNRB5w3xmDKBGW+4lbS46sCMs8CKKAzZlS3L6NSgjuv8YAR8UAH98IglMx55JqXxusXVMzVCqG5KwMVKjaQl57YipR5TbDcBEj9bV3MoEsvxPjUxku3+wo1gLotUr7l+x8R1Hv9RqjEP/+VwTb9Dfua5PLrPqzVRcKy9W70w=
+	t=1751466470; cv=none; b=VODYOLUjWI5WBEsLOXwguxt4rm2Mk9/tZES8srlHoX4ftaO/zX2piTYIL4Hh+tMsy8/cqKhx8gbE5dMwMEBNooiuNu3NxsQ+rAxr6CQRomSCL6L7r3zRIByceRyzx6bIN0GZLOcQ2N30P9sN332Eb38tzdvpZa6hB2REOHcjLeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751466470; c=relaxed/simple;
-	bh=4OFf5Hb905eFuvFC3PdSs9Tv2OSIUaSCSMnXgwpLnT0=;
+	bh=Nv1J/YwJd/1WInHQulecxJCT+Owuj7WTyA5M9tdgtHM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i+NQId7LnF5PV0iTaPCms9XNCGLdwl2/AIif9GKJKuzu8UnV8mRiSTC8DbOFNHLW+Aa2cfRbpgZAOuIQygRWzR5pu7eCuCU1FkctBbeMDHEqL0x8h+2aDdoW0nqByJrOJFUyQRK/gBzv/S9EMgHM/ytrKSm5xaLtOzJpMyi+FjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBqwN6ew; arc=none smtp.client-ip=209.85.210.174
+	 MIME-Version; b=uBcfIwZC6Mz0Td1QlzKjeldmX3ycYxrTkncLvYIL1h/+Q+ljMivsLppRlbRbw6yCJHSpYLh35A6bznayp7hEEbIUNwVlIW0iElczRaRnYkQJd+ZisE1T/JtAe358KUzdeS7u/3pvTmRcbwtZHvMW7EOcfXoEY/ZmLSAbKhm1pCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1FkIxHh; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so6250253b3a.1
-        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 07:27:48 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-73c17c770a7so5666970b3a.2
+        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 07:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751466467; x=1752071267; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751466468; x=1752071268; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IAc+jVeSquKm/tIell4OX+9rFxYJdq94AKJ2GG1EWOY=;
-        b=UBqwN6ewe4YpTpHNbDurbnxK0Ar35RWnTDXiHegfe6JC4m6I+1n8x2WIrkaBi5T5W5
-         fHvAoMPS/ILpKHKVH8U+GbqqiEUg95gOQv5MtXtOIEwoBf355c7bkOgU0nqgv5P56Zv9
-         nsrLwbu9EPcNhMNonQS7NQX8PHL4AG9rgFgVrGQoSiHvx2wXGQoVU9Iwpbam3872CO6e
-         HqiCph4gJfg64Gca05sQER6GTRnNLaTxSS9VwXJWr6jqXzAZli61aC7JhBWZJlyRNxCI
-         f1t+I/e9bHyH5j0JlkARVAtE1Z0oHQ42F9Ht85+uUZAAnAN3EvS61g/8qW1jb7uEl+9z
-         dKEQ==
+        bh=BD3cUMqYJg997d1pue4/G4HDRqC/d97A0JSEAjfGGDE=;
+        b=L1FkIxHhZ6Bq0Oxhi1VyIJDQVURkLG1QIiJEd91RosSX9afEUtuQ9m07nOXBPfeqi2
+         6yuSm1mmH3IUrqwY2a8bWPOtPzrmBSNQZMmwP19IX92mkTYKvanX//1bkpZif7jdgr08
+         mIVaOAuSapdw0KW/+mWua4uNT/tzHpvrhUlCm/tXqtE8vriJ7U49f2YJjRS30hLysPoA
+         0VdH9+sGcm28ZVDjQ04LJybz22BiFGuiXMfqhwFNSWu/OqZmXCmBc4baVjzZhvOPI4AC
+         Cfv+Tr8ZLeAuwSbgwj7Vjxa5mJvOPJZfS8yMlFlTtpNOnPBGaECoIE7BOshSBmzFh5hT
+         xiOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751466467; x=1752071267;
+        d=1e100.net; s=20230601; t=1751466468; x=1752071268;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IAc+jVeSquKm/tIell4OX+9rFxYJdq94AKJ2GG1EWOY=;
-        b=oqhM+lnlT2rjO9N3u5wlRyrrHEdiOeNuz4yKM67Rnhx6B/gEeYNizNYVRBMkSM+ddM
-         BHQN3TnZKRfwsXisV+AaCCqPevQ7N0lbSuiB0JlI3lSepUw6/qHWX6NeTotgQcDFekId
-         BbZFe+hqK9hYB5M+NmFJyjUv6Q+KIQFuoCVARqW3oVSbZDCgj+AOyqtgWkOGJiaD3jfb
-         NJN1OUWt92hCv9RgEZ2t6JCUGlRJJQXdpNb+rylANOt85ir9487Lzl0ZMxWdn8GUBSmW
-         yMpni9lZqZiMVZOF2rsEgX/zeX/AyC7NJmwNrZ64iaZZqBMCJTOctnVSYy0GA0vow69k
-         2+fg==
-X-Gm-Message-State: AOJu0YyLWQ3gMqDlsddLBH3bxyGuDGO1YQkP5iekEe/OxKhQV+x/Cd9X
-	orrhMe/4QXRcjVDJg5GT3fqM5HkV94jHdeiIWac+bzW2uq4lqo5hprj2/w5GLMvh
-X-Gm-Gg: ASbGnctuCuiD0fCO6NEAAma8txZCOZDp5USO1sxlmYk0ayW7mg3d7rX9uolExp5f9Mw
-	szQgRqlnM7K2VJFQzBNw7z7aopc+XSFSVCYCfkDhIiXlcI+3smMVRjJMH8c4MQRkPNyuikiyrSG
-	CEhuORHFxBnUlkrVX5afUSlZnn/y88dR3CPd+QPRwZBrE5Z5ZK4SjBSaiCHDtbVew0vAeRcewtH
-	3ICeAtSi+EXW1GW+UsrBllhK4jOyNMKaruZDCJYpKvkrOdro7Y4xZKgReWFDTBpiZsSvvU5BoCw
-	ZmyAX438TNwJmfAZdApIfTytvfSMI5J+BiNz3IsR1h7yMwdKwk/Cbqb8yY8=
-X-Google-Smtp-Source: AGHT+IEd14ioKlRLvI9Da8pJroqt1Dp1Y4LxXALq0NbTC9pNes8ThWABlTx7XSwoD1it+vqIaveqkw==
-X-Received: by 2002:a05:6a00:3d4c:b0:744:a240:fb1b with SMTP id d2e1a72fcca58-74b51fa0bb1mr4366908b3a.5.1751466467331;
-        Wed, 02 Jul 2025 07:27:47 -0700 (PDT)
+        bh=BD3cUMqYJg997d1pue4/G4HDRqC/d97A0JSEAjfGGDE=;
+        b=oMPioT+roqq3QR7eJ/RgnilZNuuD2gY8KSMJqrbmX+VAxm56drP8dfQAt42QRq138Q
+         FFcun3+h3PIIAsCBsbGzCaM6y6xfFHStVdXDS/jt4v8p1v21lyTTemmPbV+gtItcEPDe
+         TchvTxlkAmZFOsnDcAB6Z/tS/EPFHDHKJ+zNL10qODYWm6bxTP+DV/eByLeMqMW0Ys1i
+         SKtrkyhW7Z0x1QUvW7W1hiZTtZc6B9TN0W+jHsvvW/41br1CvbZAev0RkioRkJA2MCxJ
+         aeMAMEmOR/TXa9QTyC1w7e9+dVc2rHSLLITvqs9R0GwBnnQzAXPRF0xW48tbr/ZDR9jQ
+         CEww==
+X-Gm-Message-State: AOJu0YzWR758AGCFX9BNphXdA2TA96sZG/QMlQwwb3tvdJGH4jBsHHzN
+	fUV5HRvsabkXlU7CHsMbNAW9hE9aUiyJ+wIFQaGuTtS28JiRNK+THxjmUd1b+0E/
+X-Gm-Gg: ASbGncuEDrSRWM9Lq4l+QZkF+xSJEsDABfgcB2soQAWpcB9z0/DPgwlxpkV985Q+2kj
+	INmMJt91aEWY8pk6ZZMN61kebK7CLx3ziTfJv0XiwAtkO/txDGMP1OHEUkf51VJ1IselhEd5Oxo
+	SiparD4PLo4dODfCpVqP7W5WWI4jDuWvN3iprOWdOPmv3GuACtjumrlFz0aglvN1S89mpcQ/hRs
+	6gAW/wtdOvd+QAjytx3kxtSAgxoUWbnq4fXfPLjSJOqfSM5c1HLsy6S5hTAEpojc8KiUUV27khr
+	gYUV1dUaYBaoLskrCYql071go0pqEBao2bAuPuoq+JOJykjtnpp0Wdd29fY=
+X-Google-Smtp-Source: AGHT+IEad+CLTTnKElupXv0onOo45z6FA07ieBvrpEY+2Zie/28bfBEDtfw9ZtUMJLoMdSMOPSfH2Q==
+X-Received: by 2002:a05:6a00:1ad0:b0:740:9d7c:8f5c with SMTP id d2e1a72fcca58-74b514c3b03mr4612790b3a.18.1751466468012;
+        Wed, 02 Jul 2025 07:27:48 -0700 (PDT)
 Received: from 127.com ([50.230.198.98])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5409a41sm13765094b3a.29.2025.07.02.07.27.46
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5409a41sm13765094b3a.29.2025.07.02.07.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:27:46 -0700 (PDT)
+        Wed, 02 Jul 2025 07:27:47 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v4 1/6] io_uring/zcrx: always pass page to io_zcrx_copy_chunk
-Date: Wed,  2 Jul 2025 15:29:04 +0100
-Message-ID: <b8f9f4bac027f5f44a9ccf85350912d1db41ceb8.1751466461.git.asml.silence@gmail.com>
+Subject: [PATCH v4 2/6] io_uring/zcrx: return error from io_zcrx_map_area_*
+Date: Wed,  2 Jul 2025 15:29:05 +0100
+Message-ID: <42668e82be3a84b07ee8fc76d1d6d5ac0f137fe5.1751466461.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1751466461.git.asml.silence@gmail.com>
 References: <cover.1751466461.git.asml.silence@gmail.com>
@@ -88,77 +88,78 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_zcrx_copy_chunk() currently takes either a page or virtual address.
-Unify the parameters, make it take pages and resolve the linear part
-into a page the same way general networking code does that.
+io_zcrx_map_area_*() helpers return the number of processed niovs, which
+we use to unroll some of the mappings for user memory areas. It's
+unhandy, and dmabuf doesn't care about it. Return an error code instead
+and move failure partial unmapping into io_zcrx_map_area_umem().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/zcrx.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ io_uring/zcrx.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 797247a34cb7..99a253c1c6c5 100644
+index 99a253c1c6c5..2cde88988260 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -943,8 +943,8 @@ static struct net_iov *io_zcrx_alloc_fallback(struct io_zcrx_area *area)
+@@ -139,13 +139,13 @@ static int io_zcrx_map_area_dmabuf(struct io_zcrx_ifq *ifq, struct io_zcrx_area
+ 			struct net_iov *niov = &area->nia.niovs[niov_idx];
+ 
+ 			if (net_mp_niov_set_dma_addr(niov, dma))
+-				return 0;
++				return -EFAULT;
+ 			sg_len -= PAGE_SIZE;
+ 			dma += PAGE_SIZE;
+ 			niov_idx++;
+ 		}
+ 	}
+-	return niov_idx;
++	return 0;
  }
  
- static ssize_t io_zcrx_copy_chunk(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
--				  void *src_base, struct page *src_page,
--				  unsigned int src_offset, size_t len)
-+				  struct page *src_page, unsigned int src_offset,
-+				  size_t len)
+ static int io_import_umem(struct io_zcrx_ifq *ifq,
+@@ -254,29 +254,30 @@ static int io_zcrx_map_area_umem(struct io_zcrx_ifq *ifq, struct io_zcrx_area *a
+ 			break;
+ 		}
+ 	}
+-	return i;
++
++	if (i != area->nia.num_niovs) {
++		__io_zcrx_unmap_area(ifq, area, i);
++		return -EINVAL;
++	}
++	return 0;
+ }
+ 
+ static int io_zcrx_map_area(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
  {
- 	struct io_zcrx_area *area = ifq->area;
- 	size_t copied = 0;
-@@ -958,7 +958,7 @@ static ssize_t io_zcrx_copy_chunk(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 		const int dst_off = 0;
- 		struct net_iov *niov;
- 		struct page *dst_page;
--		void *dst_addr;
-+		void *dst_addr, *src_addr;
+-	unsigned nr;
++	int ret;
  
- 		niov = io_zcrx_alloc_fallback(area);
- 		if (!niov) {
-@@ -968,13 +968,11 @@ static ssize_t io_zcrx_copy_chunk(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+ 	guard(mutex)(&ifq->dma_lock);
+ 	if (area->is_mapped)
+ 		return 0;
  
- 		dst_page = io_zcrx_iov_page(niov);
- 		dst_addr = kmap_local_page(dst_page);
--		if (src_page)
--			src_base = kmap_local_page(src_page);
-+		src_addr = kmap_local_page(src_page);
+ 	if (area->mem.is_dmabuf)
+-		nr = io_zcrx_map_area_dmabuf(ifq, area);
++		ret = io_zcrx_map_area_dmabuf(ifq, area);
+ 	else
+-		nr = io_zcrx_map_area_umem(ifq, area);
++		ret = io_zcrx_map_area_umem(ifq, area);
  
--		memcpy(dst_addr, src_base + src_offset, copy_size);
-+		memcpy(dst_addr, src_addr + src_offset, copy_size);
+-	if (nr != area->nia.num_niovs) {
+-		__io_zcrx_unmap_area(ifq, area, nr);
+-		return -EINVAL;
+-	}
+-
+-	area->is_mapped = true;
+-	return 0;
++	if (ret == 0)
++		area->is_mapped = true;
++	return ret;
+ }
  
--		if (src_page)
--			kunmap_local(src_base);
-+		kunmap_local(src_addr);
- 		kunmap_local(dst_addr);
- 
- 		if (!io_zcrx_queue_cqe(req, niov, ifq, dst_off, copy_size)) {
-@@ -1003,7 +1001,7 @@ static int io_zcrx_copy_frag(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 
- 	skb_frag_foreach_page(frag, off, len,
- 			      page, p_off, p_len, t) {
--		ret = io_zcrx_copy_chunk(req, ifq, NULL, page, p_off, p_len);
-+		ret = io_zcrx_copy_chunk(req, ifq, page, p_off, p_len);
- 		if (ret < 0)
- 			return copied ? copied : ret;
- 		copied += ret;
-@@ -1065,8 +1063,9 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
- 		size_t to_copy;
- 
- 		to_copy = min_t(size_t, skb_headlen(skb) - offset, len);
--		copied = io_zcrx_copy_chunk(req, ifq, skb->data, NULL,
--					    offset, to_copy);
-+		copied = io_zcrx_copy_chunk(req, ifq, virt_to_page(skb->data),
-+					    offset_in_page(skb->data) + offset,
-+					    to_copy);
- 		if (copied < 0) {
- 			ret = copied;
- 			goto out;
+ static void io_zcrx_sync_for_device(const struct page_pool *pool,
 -- 
 2.49.0
 

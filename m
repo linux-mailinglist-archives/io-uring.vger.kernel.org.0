@@ -1,143 +1,148 @@
-Return-Path: <io-uring+bounces-8564-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8565-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E49DAF0C1D
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 09:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12C6AF59F1
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 15:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E774E0386
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 07:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF0118858BA
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 13:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5A8137923;
-	Wed,  2 Jul 2025 07:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575C12749E6;
+	Wed,  2 Jul 2025 13:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnDpyaZa"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hHloAsGw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CEC8BEC;
-	Wed,  2 Jul 2025 07:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA54272E61
+	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 13:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751439625; cv=none; b=I/xjxRQQRUqLPh/km2Tbr1InRxkxx09XB8N3vYWmW8OsnMX76I6p/Hmcy1YfNl+0UVU9XJLmcfsMmvUpBR45mUEfNlM68ByDkuYBQ+pSRj/k8ynvgLtGO1r7MK979wfdGxGvC/lL3UxGIzxe/HRXId0N7qd/MCX+QIWUYHB8RRs=
+	t=1751464075; cv=none; b=Hmnh9o3byr4Cgw3RS5N+AXYKmzBJaDjgAFTrYoaeIlQ4DkWc2PSkHSa5xXWEi0PISFFpZ+WFj2Pte61nU6IQvhSw7IjS9Gu5oK2/k+Se3DXzzIDS+vEqzZ0I0eE5BsHI2CNnCZRkOUjyJKs9K8/hsOvmKuqadDQTzAZWfcryIic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751439625; c=relaxed/simple;
-	bh=2tZo2cCjA0Y2GCvOVo50+39/Qu2y80q7jpcHyKlVS+U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ZM1Lv2gDANoQZwHxO1aUWcL1+4KTwCvnw6xkhNqZYtfoLxuikVNQ9deZNblZG0OqUH0GfIkwrJNiKcL01fpsdPTLOHOAEiy6ZCgLr0UIBrNRsMjrm2XTiYBKPH/pHbUIwmv/gopI71Wh1gfZYdwrctIL/eSA4F7v63M16SlIoag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnDpyaZa; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2352400344aso61202815ad.2;
-        Wed, 02 Jul 2025 00:00:24 -0700 (PDT)
+	s=arc-20240116; t=1751464075; c=relaxed/simple;
+	bh=Wi4DQE46TrDLZnfWQdYfMnq4mgrm6vjP9wNScHh7p80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QClfbvTLnXWayPKN705wIrwp9kupLQcF220sVy2RPPFRpuTaAi++PP8VEpvjLvWff4u98oDgMzhF0a0DDHjECmOIObDY4cXXHsr3ze0ekqaOBRzAp+IA8WHoL+zpfQSeEK5LO/QwGJ3EANaDXP6k0jreOthTEKMgxE+hnr/j+EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hHloAsGw; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e0570a9b83so1767865ab.1
+        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 06:47:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751439623; x=1752044423; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HuJaex6WWCvWthSyFQwlZmsNHe6Z60g/4P8w8lI7ZPQ=;
-        b=EnDpyaZaNJ7vAtqD4lZEW524XZwvImU7IEEmvl4lDfeh6ZeKvl/9ZiexO+Vuhv27+V
-         u9SofFRqh79kPMvFDHbRbfg135DyHVGdoRKloJUnz9zPbVM8WHW7oeB/1yg9Yv09T1Ja
-         FpLUAghZKKrojsoMmlnV2kghZTh3O1LLC2EriVg5iRGLqkxLm0zz0hW/nsF6cNN64i+T
-         h79+zjVbRefrDQ7b+5R7ocCMMDpIaCOjedh7JiLphzJBfumm5JF7FtUSl2eY/YQVil6I
-         A4Dlv0ysrrtLJyw6tLl2fEwjIOtNwmPrZiL61JGacINgtZxNFl8Pq6vbu4UHsidRp75V
-         sGAQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751464072; x=1752068872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/fwakO58UBNp1YzQ6yMq0byfPqW91OqrWRj+mP3UNP0=;
+        b=hHloAsGwArENH/R+XqsXV/ujKD9sGOS7M9vlcn/v4DIJhXQeNMJ7c+c36C6ZA38ovw
+         PMZ3atoGJXsQD6l7XaWTpZpb7hEodsU6FkG5vuZIl7/TFRU8cSM9Uaz0ERHtyYdc2F7Q
+         +bwolhxGXKDCW3mS2h762ITvnwkL6o+xHC8n+zPq7CJAXpXHl744+QctkzWf0grcxBs9
+         NoVPwmqvu+U8y3zb9JT67eQwl8E1SO4PNtYRCKm6SATKL+TdusF7OWppT5p6HYU94TeJ
+         Hz4FBFhU8mUYQl53UBXSHiSFE3BknlBTNsUQyjNRH4QiVOQIbQcuOzR51psMKM7kJH96
+         OM6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751439623; x=1752044423;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HuJaex6WWCvWthSyFQwlZmsNHe6Z60g/4P8w8lI7ZPQ=;
-        b=n0LM39WnjqL9yanr8C92R/1M7P9+XR/VgWA5wO1pQQv8OFo3In4bdUwsm9XRT1dH3x
-         YFop4eNoVdtvWMGbAHHg4U7MrZQBvLlbym3U5e1YB5g83iaXJGAFdBVYpLmh6RWLbkyO
-         SU5G1BDxJ9f+WVpCCNfSb5yPE12Amb2IoMMJeiiYCJP4E8buTET+hPoD9tBPJuVOopDa
-         dJAgEteGwxsJ6OUq26wNltK+vuhuUfraLT6BSqtW5EySuqJVOEveZ/xybPuTWVVr3JcL
-         CTcdGvCIMKdDgljKRPd2GNjAj+8+aLGPk1mFzVmPfo6KwKcHBfXnDiBva57tcWT9OwDt
-         cKhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXVa1mbA4v/YsDRJXFy1aHGACaX9p4Mkg+77QP2UQgjQhOjn5PaiMrD6ruOi68GUMV40ayTLwQqeMF2iY=@vger.kernel.org, AJvYcCV3b/GzWjuT2uzhyPwc23ORp9gZ9wxGpVMLcrj2+C0EoupRr7fcP0CsmNhcJ71fRvS/3pjtcE6tUA==@vger.kernel.org, AJvYcCVNz/7y6HGiTE7t02+daNhvQKXTgcGf99f45aXCAvInDi0AMav3cB3wslswEfSJ7y076y+M919HRy1tNhjQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmCtSA5C7AJbARRRgAI0eOdToWs/YCCODvQwWZJf62Jv0q+0Zn
-	3MTtuxT3y4pxeAbQpER7AvPawG9drUPFZpTwTn+W9OLLyWrHeYHSeich
-X-Gm-Gg: ASbGncuf5mC/OxgxiJQeTz1gsPTI+GG8TVVnIT5TZD0Jxufp9SgzvZaDKpIfDE7LdzU
-	RcFKVXFEmyWExzy3B3IPGZAbIOIRsJZShKYBMEgGbk0h6EXio0BWJzqY4pUub8AVDeQ72ADvpoJ
-	JZaEbghY7omAIrrSfVp/vasX6Hxfp44VtPu1GLtzdjm8KDh4SJ27mMWZVpJSnc/XjODuwjytwFn
-	Z8k3YUIVK0JnJVJuqB1hjniPpZ9wSG4RdSrKDHEa2b8wdr1NqrCix6y3PFMwFsO/PzEsP6ppppO
-	FDGkBQLOnRaTGeOXlmZ+dCHezSsh/8hmmUU+Cf9yKZxf2Q==
-X-Google-Smtp-Source: AGHT+IFOdpABx4MlRPwIZhUJXprp9yFf7WggnL876/MWdg4L4MqT/Gj2sYyf+A7M2qEqkz2SU6wlVQ==
-X-Received: by 2002:a17:902:d2c6:b0:234:8ef1:aa7b with SMTP id d9443c01a7336-23c6e48f8admr21749835ad.20.1751439623346;
-        Wed, 02 Jul 2025 00:00:23 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3ad188sm121967755ad.147.2025.07.02.00.00.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jul 2025 00:00:22 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1751464072; x=1752068872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/fwakO58UBNp1YzQ6yMq0byfPqW91OqrWRj+mP3UNP0=;
+        b=Xa2+JXKMCedOtdXEr5H447JulJ/0u/MPXOXilfon/hK7K7iM1aPsq9zqIkBC6ST66/
+         76J2TExEVCw693WOHBCIp7lXBOPTa/f+k1XMkgT5xxA0dESEzBNhCc/IHyCuXZmMPHA8
+         0on/z2DwjWfxdJnKFXyy1zjfbOsjEy3KuhYEKyd9amGvqCY49Tt5gtgWMTOeN9CxGRhR
+         W9GoGQYBbCuv6+4PwpRjNFDmpwgiK4el3QB18BL98Xq77vgZZFEPQFBL9WNv6kie8OX8
+         Lw9iucfedUZksQKACdKVDHfENxu0fKWi0O0kdCYlJNAHowEqPAC86yKHtzexbwwkihJA
+         4y/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVlwwG//JKHbSxa2zgND4LDBw+elX9e9kKYtKICzTT5glEFodBRBj5Q9Z3TKWTChM8VzHn+ai55Yg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQBwVw56u1ZxiPk+dhUo/JjqtE5LzZBxQAuyzvMBf5WBr9noT2
+	V8wa6juBNcV9IddBMA44AbVT4pd59epuzNjHa/8jiT0RWqy9w4Hs0US7JMtVd8tZ0GBhcrTEFop
+	Y6LMJ
+X-Gm-Gg: ASbGncsRZcwWowY6vQqp2mDwPfsSttdZ3GtUsjjZCYiBj7rjgN8B0i6ngLX5RJD6Vb3
+	7uozqmRQrIt4u8grH5cDgnW7JyFa8GZwd8r0T4sBSPKpBv48Y2ck/LsPDC8WR1HPmC9Sue07yzE
+	sU8UMi5QTj/64GXaxj84mh9G5kreVlMq2nJtZQVNft776r+UzyY5PLB2PUmeuh8/yeRbOMcd2Oq
+	he2smVacjvc351HPSLCW0dw+TEJtHnlT6kY6kpH5idln4g3oRoSsVPpR2g+DlIpoKtxOJsfBTu4
+	HlqWtGLtQNMOCTtrlYLFpuBR4exmuthQr+ibBaaTWIENoOU1YtNLb3zW7HBHyE09f8MqPA==
+X-Google-Smtp-Source: AGHT+IErkdSR/RjPmfMVJFAgKC3aBMy2dkswaAi8yLVXilzzod2q6hfwnomvpLNcB1bsd9raBf8Kuw==
+X-Received: by 2002:a05:6e02:156f:b0:3df:2e87:7184 with SMTP id e9e14a558f8ab-3e054a64a4cmr32804285ab.20.1751464071869;
+        Wed, 02 Jul 2025 06:47:51 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3df4a0b6fa4sm36211665ab.66.2025.07.02.06.47.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 06:47:51 -0700 (PDT)
+Message-ID: <883afab8-336a-434a-b64d-13a5db7c0f24@kernel.dk>
+Date: Wed, 2 Jul 2025 07:47:50 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/4] io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <33d93770-886f-4337-a922-579e102c0067@gnuweeb.org>
-Date: Wed, 2 Jul 2025 15:00:07 +0800
-Cc: Daniel Vacek <neelx@suse.com>,
- Jens Axboe <axboe@kernel.dk>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>,
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>, Daniel Vacek <neelx@suse.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
  Mark Harmstone <maharmstone@fb.com>,
  Linux Btrfs Mailing List <linux-btrfs@vger.kernel.org>,
  io-uring Mailing List <io-uring@vger.kernel.org>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <07162148-1F57-4198-BC82-08501232C2A9@gmail.com>
 References: <20250619192748.3602122-1-csander@purestorage.com>
  <20250619192748.3602122-3-csander@purestorage.com>
  <76d3c110-821a-471a-ae95-3a4ab1bf3324@kernel.dk>
  <CAPjX3FfzsHWK=tRwDr4ZSOONq=RftF8THh5SWdT80N6EwesBVA@mail.gmail.com>
  <33d93770-886f-4337-a922-579e102c0067@gnuweeb.org>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <33d93770-886f-4337-a922-579e102c0067@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Jul 2, 2025, at 14:44, Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
-> 
+On 7/2/25 12:44 AM, Ammar Faizi wrote:
 > On 7/2/25 1:27 PM, Daniel Vacek wrote:
 >> On Tue, 1 Jul 2025 at 21:04, Jens Axboe <axboe@kernel.dk> wrote:
 >>> Probably fold that under the next statement?
->>> 
->>>         if (ret == -EAGAIN || ret == -EIOCBQUEUED) {
->>>                 if (ret == -EAGAIN) {
->>>                         ioucmd->flags |= IORING_URING_CMD_REISSUE;
->>>                 return ret;
->>>         }
->>> 
+>>>
+>>>          if (ret == -EAGAIN || ret == -EIOCBQUEUED) {
+>>>                  if (ret == -EAGAIN) {
+>>>                          ioucmd->flags |= IORING_URING_CMD_REISSUE;
+>>>                  return ret;
+>>>          }
+>>>
 >>> ?
+>>
 >> I'd argue the original looks simpler, cleaner.
 > 
 > I propose doing it this way:
 > 
-> if (ret == -EAGAIN) {
-> ioucmd->flags |= IORING_URING_CMD_REISSUE;
-> return ret;
-> }
+>     if (ret == -EAGAIN) {
+>         ioucmd->flags |= IORING_URING_CMD_REISSUE;
+>         return ret;
+>     }
 > 
-> if (ret == -EIOCBQUEUED)
-> return ret;
+>     if (ret == -EIOCBQUEUED)
+>         return ret;
 > 
 > It's simpler because the -EAGAIN is only checked once :)
 
+Mine was mostly done for code generation reasons, though probably
+the compiler is smart enough. I did consider yours as well, it's
+more readable. However I'd then write it as:
 
-Agreed
+if (ret == -EAGAIN) {
+	ioucmd->flags |= IORING_URING_CMD_REISSUE;
+	return -EAGAIN;
+} else if (ret == -EIOCBQUEUED) {
+	return -EIOCBQUEUED;
+}
 
+But we're obviously nitpicking now. The bigger question as posed in
+another patch in this series is whether we need IORING_URING_CMD_REISSUE
+at all in the first place.
 
-> 
-> -- 
-> Ammar Faizi
-> 
-
+-- 
+Jens Axboe
 

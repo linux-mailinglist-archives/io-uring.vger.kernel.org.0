@@ -1,116 +1,136 @@
-Return-Path: <io-uring+bounces-8585-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8586-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6913AF6353
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 22:30:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE263AF63C4
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 23:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D5A5200FE
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 20:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CE4480D2E
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 21:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650052DE714;
-	Wed,  2 Jul 2025 20:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD54238C1A;
+	Wed,  2 Jul 2025 21:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvSsDZqs"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="eJuEA5uR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E0248F54
-	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 20:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4762376F8
+	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 21:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751488232; cv=none; b=FYb0OgXfka1JQqjJ13bM2O7sHAIXugbPhfrUTwVGmTKrp6Nr2TaNdOpUXP2iMzeNSxm14ATP3o5Ny37rag8oHdmNwytTo5L0vQzTaH657ddCCq1y2zeL19KmfLOtKhoheXBdcZqIlp4lACPaxTLIxTG4pveKtV3xnXrcBbpcBBM=
+	t=1751490715; cv=none; b=IJX3HHuO/PN7r9H74jtOXjSI2ecKLVKKu7G6JZxlQLHIpM77DU5jDt8x2QjpHyqI1IMGNofPy5aikFBkflGScMBCpjR8GZ4e2pZQjHXeiHiqz8p1jzE2iqv+XQFdMwyKeGdkyGDn7r6LU9GNuWntnWp7DdsZN9iltLoHOOmSnpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751488232; c=relaxed/simple;
-	bh=5KLh4n9X2cvBK7ndtPjBLIAY8afytChW7yabpSakILI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kEGUIIBctcl07e3/pKBclgj/bNM/gMSYlQnBcbLzw6nXryKv1KSye2b8oltPyi0kxno76evlUNNyWJ5VPsZWRVXUCZznO3Hw2u1puudeMmjSvz0jiAOW2LHfW8nGM4MuRUvTCeIVWS+SeJSJ+91Eyllj0sSVWtY+VI8PVUjKlJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvSsDZqs; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236377f00easo59289115ad.1
-        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 13:30:30 -0700 (PDT)
+	s=arc-20240116; t=1751490715; c=relaxed/simple;
+	bh=r4ycxoolYmuKX0m2fIW1oV8sY58bOT134WmsNhkmxdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/seeKYvqHkifNP0qlfLMO5Q+59hsMTeDV8Q14MqDmkcVngTeZNeyJV5fuO0+LbgNYb7UigCUD5xfTn5OSvvi16KDyxt4kyKbiQzJRn4uvvLQYi8TWELFa4rXPi4J+nSSvmloMxqEmzy8u0tNrOXRrIaQiPaB6aIjIYn05MXZqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=eJuEA5uR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2369dd5839dso12901405ad.3
+        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 14:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751488230; x=1752093030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cY26jYg0d16gpE927qCu/X7Sfjc9MIjgUblxRpPhkFw=;
-        b=cvSsDZqssSS8oSS1lR1uv6UXBlpxCEcnF92Mj9E8nIXRW73uTi+TtB2X009ixkQn1w
-         ofvPvtYgTh80EQdbbVh3lgoK/hSBlv0Ri29kHeQhfws5BJTDC+mBnMJdGmaQFhOQBS0Z
-         239Q7rz3wmpDeQydHkuixOqkTZ2XTxu4cGc61cKtOvF7BssOLgRrvtjxaHm+leobObzx
-         sr++29Y+TeblwrAKeaJGZJl+eIGxBa3b16WhtceeeqETlvYACROyIKrPiMdkHlr5ujEg
-         r4KU59zoRdzAT7Iu67M6yLDSwf2E200erlIjOAYODaye9NCk3QzYj/T3ZAw79L9sWNKg
-         0/uQ==
+        d=purestorage.com; s=google2022; t=1751490713; x=1752095513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
+        b=eJuEA5uRye4ewsbqqtf3mko+4VCMtWArFtfxu+IphRRxyCpyR19cUc+9vvbruZq5v2
+         eDHL0HK2i/e0kibposvkeF/M9zToe21sUJ4XygzHek51RnbkGB/GVlcLHlDd/b8kag2H
+         UsKnWEqPtgzn8QH5NY/yVYcjNs7cSyeB6FPdBArimfEnPWJvi1kwbQiVK/7pRIUyrRBf
+         wvlNiMEaaDxkZQFN1Ccrxs8UrujlKG49AdzAn/95s0ALMgXyRQh4Pu2DyFQ9zc4loIUs
+         bmWV0OUROTySQP377KJNTEwM6p1oZ3aLEsFMDq9KGtndcnpzp5vt906JNTe0LoVQG9Qg
+         By2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751488230; x=1752093030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cY26jYg0d16gpE927qCu/X7Sfjc9MIjgUblxRpPhkFw=;
-        b=cC4sJnIuBJQ2Bs2LMMe8xOpTZBTOxNSBrRFpuWYShMUZFmV6HXz5qDIw2N7iHUmqwF
-         j5xMvVJ2KMcHPzPy+wt1k3IKIIgWhS3ix9+JOkZMmsSUFU+DiajihfypN5PEJgZ4pHYe
-         /3dBspiOWXUQqPNuYxaq0jZn59f+mOh+YuXpfya7kPMMFpaI2Q8alafmVNIhRwVTKhKq
-         myD56Ns/Eog8xFaXg7qXEZ0Sg7PARMSVR3bnCjMCys36716B3PDAdj54i0QUy/poYLvZ
-         aF8G8btUmhjn6pazbxbI/UdTXWXho4lt4pYXPCNjKQbgcg0cmn0gUs7Ttrqen3DxuP9I
-         TAfg==
-X-Gm-Message-State: AOJu0YyecRgxw9WczpKt9+9tLJIUIv5aJbcQToEQSohC6fTiJ8Luf2pI
-	fLeEKyn+wzigJMC49obzS89oX35+dxKJ5bZOhUxe9a8Sa/73iLovvP8FCH5L5d/3
-X-Gm-Gg: ASbGncvCz4Ct/dfrvJa+uWPSwNPO/sI3YHhGPCKFMnrbnJF0izqdXuTW+J1tiDZ0hcQ
-	LKjJYZjMwTTh5P6QjSjeF74xhwfGdTT5iNaEYFOwUBI5KIwqS0myc1T6N/U8MYEig1R+oLj0D3w
-	UXN6vz1y4CIZOlZExlAJRiaCAg/qm15gv1cWUlDSU9gjprnkH40G6HQekmYAUxoRh5P66hB4nig
-	GOEju/iehRn7H9UGvvU3SGhQk4YSQjMp56V7bXybz3N8lqugLJs+oya6peF7ki8SP2HKkSY3ieL
-	n5EYPotCgy+7JSbB9QZW3YGaCfJgQ8ya/lWdiynECzaWC6e1IHjdPIVy8ci6nyKNeQgycydwtJv
-	H
-X-Google-Smtp-Source: AGHT+IF7IK+V3xp+/sI4jMc1YIDh5ffUbFdcKXnJk0mJoH1Jg1eaUlzniEmAMbBw8Xxyt/JdjLTfUQ==
-X-Received: by 2002:a17:902:f606:b0:235:f70:fd39 with SMTP id d9443c01a7336-23c79624114mr11029255ad.10.1751488229739;
-        Wed, 02 Jul 2025 13:30:29 -0700 (PDT)
-Received: from 127.0.0.1localhost ([163.114.132.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c7041sm141376475ad.229.2025.07.02.13.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 13:30:29 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: don't use int for ABI
-Date: Wed,  2 Jul 2025 21:31:54 +0100
-Message-ID: <47c666c4ee1df2018863af3a2028af18feef11ed.1751412511.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1751490713; x=1752095513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
+        b=tuFI6gze0bRtCP3Q1MkRlLQTeGl3g3KgSfvJ9E+a/UmPxpAmDmEz+ZYxjNraGvCbHJ
+         T+r80JdFnB8Lh8lYDGYeqoAdTUXrbYBcsg/c05zM/Su9XJwGH7VkwabZr2tHlej8Yuuc
+         mj9+nx05AxKFncdZBvQfMoogtKbt6ApdGKlubapFaW3HKtESWdpxumDak75mX0+08U5F
+         UbhB2qAXttc6/vBezzXDM/89uocLvEnilsVjA96aR4orHuiXJ/MJvVg9acuEFzU6J5Di
+         frecfzkmoaAOS2XOlBalIaIcEWF15PlyOz2bHsRRzW23HQj6jZy9DKiULvu19PogVuod
+         LagQ==
+X-Gm-Message-State: AOJu0YxNlPgyEtePEQ+ONnWYoGi0je2rvESKlWFcVepwquDg8Jo3fQ9O
+	Fva/mEiT26KAKdiDDN4v7890dAiOss8KcXbLJb41sZ3DLeyHYSOBzZasoQi3ZK+7xJjmz5Nu7z+
+	8+98DUQQOoo5jqNx6bcucrUj1KX+kVyGgbQphaCpBxwBs4KKR1qQlcQc=
+X-Gm-Gg: ASbGncsaCGQRCKv+f1UfTNs2+RBpo19g6jfq52nu2itEQfdepmSxT3VvoVMsyQOUWd3
+	M8vd4jpAk2NyJIhUaT9FXBWCHNwJrTOyrSkr76LM36pLTfKK0X5S0H/17/uR3jpYAmEvs2u5Q10
+	k0609qcxHfBLwgcOTi9PAIkHzs6+/fVsE92nh2/TiDGX7J+t0hr2hA5A==
+X-Google-Smtp-Source: AGHT+IFuNZwePMXtrGGiy+Lal9FBipRUHE+tVSTERSi9lHrrMb5JTmkuRgmPnmoBG4HWQ7kRECEakR5dz4NREEM6yVA=
+X-Received: by 2002:a17:902:d4c5:b0:234:db06:ab5 with SMTP id
+ d9443c01a7336-23c6e50f8bcmr28811895ad.12.1751490713407; Wed, 02 Jul 2025
+ 14:11:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250619143435.3474028-1-csander@purestorage.com>
+In-Reply-To: <20250619143435.3474028-1-csander@purestorage.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 2 Jul 2025 17:11:42 -0400
+X-Gm-Features: Ac12FXyYeIjTfBC7VX_f4PgJXEIGElJPaVB7WXMGWA-c8qyxwbh-DBbEEDN0jU0
+Message-ID: <CADUfDZo5O1zONAdyLnp+Nm2ackD5K5hMtQsO_q4fqfxF2wTcPA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: skip atomic refcount for uncloned buffers
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-__kernel_rwf_t is defined as int, the actual size of which is
-implementation defined. It won't go well if some compiler / archs
-ever defines it as i64, so replace it with __u32, hoping that
-there is no one using i16 for it.
+Hi Jens,
+Any concerns with this one? I thought it was a fairly straightforward
+optimization in the ublk zero-copy I/O path.
 
-Cc: stable@vger.kernel.org
-Fixes: 2b188cc1bb857 ("Add io_uring IO interface")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/uapi/linux/io_uring.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Caleb
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 85600ad0ac08..fe45564579ab 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -50,7 +50,7 @@ struct io_uring_sqe {
- 	};
- 	__u32	len;		/* buffer size or number of iovecs */
- 	union {
--		__kernel_rwf_t	rw_flags;
-+		__u32		rw_flags;
- 		__u32		fsync_flags;
- 		__u16		poll_events;	/* compatibility */
- 		__u32		poll32_events;	/* word-reversed for BE */
--- 
-2.49.0
-
+On Thu, Jun 19, 2025 at 10:34=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> io_buffer_unmap() performs an atomic decrement of the io_mapped_ubuf's
+> reference count in case it has been cloned into another io_ring_ctx's
+> registered buffer table. This is an expensive operation and unnecessary
+> in the common case that the io_mapped_ubuf is only registered once.
+> Load the reference count first and check whether it's 1. In that case,
+> skip the atomic decrement and immediately free the io_mapped_ubuf.
+>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  io_uring/rsrc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 94a9db030e0e..9a1f24a43035 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -133,12 +133,14 @@ static void io_free_imu(struct io_ring_ctx *ctx, st=
+ruct io_mapped_ubuf *imu)
+>                 kvfree(imu);
+>  }
+>
+>  static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ub=
+uf *imu)
+>  {
+> -       if (!refcount_dec_and_test(&imu->refs))
+> -               return;
+> +       if (unlikely(refcount_read(&imu->refs) > 1)) {
+> +               if (!refcount_dec_and_test(&imu->refs))
+> +                       return;
+> +       }
+>
+>         if (imu->acct_pages)
+>                 io_unaccount_mem(ctx, imu->acct_pages);
+>         imu->release(imu->priv);
+>         io_free_imu(ctx, imu);
+> --
+> 2.45.2
+>
 

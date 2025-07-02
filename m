@@ -1,136 +1,131 @@
-Return-Path: <io-uring+bounces-8586-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8587-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE263AF63C4
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 23:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B856DAF6532
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 00:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CE4480D2E
-	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 21:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511631BC85ED
+	for <lists+io-uring@lfdr.de>; Wed,  2 Jul 2025 22:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD54238C1A;
-	Wed,  2 Jul 2025 21:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499E51EC014;
+	Wed,  2 Jul 2025 22:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="eJuEA5uR"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="POKCFPXc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4762376F8
-	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 21:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E7C70805
+	for <io-uring@vger.kernel.org>; Wed,  2 Jul 2025 22:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751490715; cv=none; b=IJX3HHuO/PN7r9H74jtOXjSI2ecKLVKKu7G6JZxlQLHIpM77DU5jDt8x2QjpHyqI1IMGNofPy5aikFBkflGScMBCpjR8GZ4e2pZQjHXeiHiqz8p1jzE2iqv+XQFdMwyKeGdkyGDn7r6LU9GNuWntnWp7DdsZN9iltLoHOOmSnpQ=
+	t=1751495243; cv=none; b=mO0Rlbr35mWF6gTk6X36mrIsaThWQ7V/N2XXxzb23Vh2fH7uewT1fEzOtnE5s11SjzTIabR3pvC5vbUr4Eo5NuCpAFFiRLe11C68fPPW8m1cToTLszFLP03Y7ZVvktQoWoBmfa53q6AiZHVmKu5Rt4jBmv5LO2tEQlTWuSJWJOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751490715; c=relaxed/simple;
-	bh=r4ycxoolYmuKX0m2fIW1oV8sY58bOT134WmsNhkmxdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W/seeKYvqHkifNP0qlfLMO5Q+59hsMTeDV8Q14MqDmkcVngTeZNeyJV5fuO0+LbgNYb7UigCUD5xfTn5OSvvi16KDyxt4kyKbiQzJRn4uvvLQYi8TWELFa4rXPi4J+nSSvmloMxqEmzy8u0tNrOXRrIaQiPaB6aIjIYn05MXZqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=eJuEA5uR; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2369dd5839dso12901405ad.3
-        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 14:11:53 -0700 (PDT)
+	s=arc-20240116; t=1751495243; c=relaxed/simple;
+	bh=o2UmIv2wdl+WSFsrQ1+lVA/esCIf5t47IL2pkxu9tTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KG/ccIHbC1PaQk7O5Ai6wc9Fg6/JOHR1bQoNyd+/ue18FFruGtoUfZfV979wcseD3Vw6CYztM7TnA60tvsaRgn62kFhG2JeusrlgNUK+aViEV6UTSoy3rTlebfNfk+FibtPr8Gshe2wd+HaE0mbASwPPhi+kElgMoIytIQgRPH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=POKCFPXc; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7490cb9a892so5194736b3a.0
+        for <io-uring@vger.kernel.org>; Wed, 02 Jul 2025 15:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1751490713; x=1752095513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
-        b=eJuEA5uRye4ewsbqqtf3mko+4VCMtWArFtfxu+IphRRxyCpyR19cUc+9vvbruZq5v2
-         eDHL0HK2i/e0kibposvkeF/M9zToe21sUJ4XygzHek51RnbkGB/GVlcLHlDd/b8kag2H
-         UsKnWEqPtgzn8QH5NY/yVYcjNs7cSyeB6FPdBArimfEnPWJvi1kwbQiVK/7pRIUyrRBf
-         wvlNiMEaaDxkZQFN1Ccrxs8UrujlKG49AdzAn/95s0ALMgXyRQh4Pu2DyFQ9zc4loIUs
-         bmWV0OUROTySQP377KJNTEwM6p1oZ3aLEsFMDq9KGtndcnpzp5vt906JNTe0LoVQG9Qg
-         By2A==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1751495241; x=1752100041; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=y3OobVHV6SRK/WjQ8ynuM9QZzgqND7jcfAvBPjJBK3g=;
+        b=POKCFPXcLJbhQJm0Lm3oK6NjVZ9Kyr7SylaarqJKFU0AZ0aQobKvozjArE+VzliNsI
+         a0ur6HoPnx9AvQOVN5AsK7I3D4OKl2Wu602cryjPFAc1LcMYDZ55ayA9PP1fWTB4YqIv
+         QCk1QjYbroM/szSzUHM6Y1YC4NP8II9Lmr3R3YNLWEKEl9aT+yQEZjaNe4Im2lv/8tLQ
+         ikpcKeQal2k/zpzKVvv045WyHiNVCKVLevNRFizWNP5mnlVhHV8eQ+61JbKGh36MpJMI
+         J9c8tIbiyr2EHfNXxxmXyeE9odCHeQ7tc4v2UAz5E6itbuloIS48XUgSen2H7NFgx3z5
+         piZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751490713; x=1752095513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
-        b=tuFI6gze0bRtCP3Q1MkRlLQTeGl3g3KgSfvJ9E+a/UmPxpAmDmEz+ZYxjNraGvCbHJ
-         T+r80JdFnB8Lh8lYDGYeqoAdTUXrbYBcsg/c05zM/Su9XJwGH7VkwabZr2tHlej8Yuuc
-         mj9+nx05AxKFncdZBvQfMoogtKbt6ApdGKlubapFaW3HKtESWdpxumDak75mX0+08U5F
-         UbhB2qAXttc6/vBezzXDM/89uocLvEnilsVjA96aR4orHuiXJ/MJvVg9acuEFzU6J5Di
-         frecfzkmoaAOS2XOlBalIaIcEWF15PlyOz2bHsRRzW23HQj6jZy9DKiULvu19PogVuod
-         LagQ==
-X-Gm-Message-State: AOJu0YxNlPgyEtePEQ+ONnWYoGi0je2rvESKlWFcVepwquDg8Jo3fQ9O
-	Fva/mEiT26KAKdiDDN4v7890dAiOss8KcXbLJb41sZ3DLeyHYSOBzZasoQi3ZK+7xJjmz5Nu7z+
-	8+98DUQQOoo5jqNx6bcucrUj1KX+kVyGgbQphaCpBxwBs4KKR1qQlcQc=
-X-Gm-Gg: ASbGncsaCGQRCKv+f1UfTNs2+RBpo19g6jfq52nu2itEQfdepmSxT3VvoVMsyQOUWd3
-	M8vd4jpAk2NyJIhUaT9FXBWCHNwJrTOyrSkr76LM36pLTfKK0X5S0H/17/uR3jpYAmEvs2u5Q10
-	k0609qcxHfBLwgcOTi9PAIkHzs6+/fVsE92nh2/TiDGX7J+t0hr2hA5A==
-X-Google-Smtp-Source: AGHT+IFuNZwePMXtrGGiy+Lal9FBipRUHE+tVSTERSi9lHrrMb5JTmkuRgmPnmoBG4HWQ7kRECEakR5dz4NREEM6yVA=
-X-Received: by 2002:a17:902:d4c5:b0:234:db06:ab5 with SMTP id
- d9443c01a7336-23c6e50f8bcmr28811895ad.12.1751490713407; Wed, 02 Jul 2025
- 14:11:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751495241; x=1752100041;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3OobVHV6SRK/WjQ8ynuM9QZzgqND7jcfAvBPjJBK3g=;
+        b=O/CGnI7b8EYKk5FH8bHmL5Wu/adsAxZcCJQnczSYQsJzszfJZw+BDVbpIoSEg8hrNn
+         HqZlOVqqJuSC+GVX/lVd2t7gMNCKl4CgZ5v9v3dkS2kJJol0aDzSEKKjcfcnG4VSdY8+
+         B8upjeHYs7GErjbe5nM4n/7qBPhFsi4LvgfYDT3tt9Rs57glxHzBm4Ejo6esUpm48bLG
+         FiD5eYRkAkVXv7gDiKjp8dcW14ChF6OVXEBcOwzDBGVXuLDo9XRIYSXa8Z3supPYmNLL
+         FvWTK0KCdzlNJa5PXl8Nc1e3RLas7bhASmTnO62bSUe5kydg76fTYuXJtGZklhXkIQAQ
+         rnGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpykDxTk5XZZ8CyUxCWwRf7H8w5AbBK1yedlpflwxmsfqcRoQeZJT6RDK5IHy6ZldycqSltChiHA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysHoMUcxji2AO7NhPLe+TDbX79wps79TH1YuF9wuGxJL8Bxkya
+	xw2xk/yShyRobUrtFGOsWUjdnGt9OO8BqeqUMBze5jZ8w8UPczlsTqd1umLLDdLBdovILUKT4qE
+	3HeLa1ro=
+X-Gm-Gg: ASbGncvlucleUdWR8SmZy2LuGIVeokUrCJpJVoDUQHcJbj4WDxvs2LxmceocX3KjlzS
+	lXdGsVyfk03mG9uOLvBPjmWn0Ragj1jL6gBpH0LhfEuHbyXJP5pcYELBiJs49RNuEkVsZiedmFL
+	e63ecGxIpqOBZnr1AXvte779Ak5Xq85R8IA/aLOJuPz6Kw/WJ16/yuF/2gIofivZgYKbbSp50Hk
+	7v9/54eA0EUgibxNM0WkpTTcoM404FBMXqMooVHqzKXfr0hzxSqiWkz0Aj/eu7zrwEPL/m+KDtT
+	Z46fg7e9P06NRw3O1eUnHD8/FmXI02qTdh+ujOCIXHKLuLvkUqiytrchTklfsKyqLtAbHwRGX+2
+	GO2aPdIBKzt26QuUz6aMX+klm
+X-Google-Smtp-Source: AGHT+IElWW91apliV0yfvAvVbAEaq3ylvi3VmhlILdYdmBgegg648J2Qgswc9cDoY+0GAe1YcE0z4w==
+X-Received: by 2002:a05:6a20:729d:b0:21a:e091:ac25 with SMTP id adf61e73a8af0-2240a01fcb6mr2179496637.6.1751495240958;
+        Wed, 02 Jul 2025 15:27:20 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1156:1:14f8:5a41:7998:a806? ([2620:10d:c090:500::5:b65f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541bb6csm15042622b3a.41.2025.07.02.15.27.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 15:27:20 -0700 (PDT)
+Message-ID: <bf0aac47-723e-40eb-a280-f8868edf9d26@davidwei.uk>
+Date: Wed, 2 Jul 2025 15:27:17 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619143435.3474028-1-csander@purestorage.com>
-In-Reply-To: <20250619143435.3474028-1-csander@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 2 Jul 2025 17:11:42 -0400
-X-Gm-Features: Ac12FXyYeIjTfBC7VX_f4PgJXEIGElJPaVB7WXMGWA-c8qyxwbh-DBbEEDN0jU0
-Message-ID: <CADUfDZo5O1zONAdyLnp+Nm2ackD5K5hMtQsO_q4fqfxF2wTcPA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring/rsrc: skip atomic refcount for uncloned buffers
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] io_uring/zcrx: return error from
+ io_zcrx_map_area_*
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1751466461.git.asml.silence@gmail.com>
+ <42668e82be3a84b07ee8fc76d1d6d5ac0f137fe5.1751466461.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <42668e82be3a84b07ee8fc76d1d6d5ac0f137fe5.1751466461.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jens,
-Any concerns with this one? I thought it was a fairly straightforward
-optimization in the ublk zero-copy I/O path.
-
-Thanks,
-Caleb
-
-On Thu, Jun 19, 2025 at 10:34=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> io_buffer_unmap() performs an atomic decrement of the io_mapped_ubuf's
-> reference count in case it has been cloned into another io_ring_ctx's
-> registered buffer table. This is an expensive operation and unnecessary
-> in the common case that the io_mapped_ubuf is only registered once.
-> Load the reference count first and check whether it's 1. In that case,
-> skip the atomic decrement and immediately free the io_mapped_ubuf.
->
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+On 2025-07-02 07:29, Pavel Begunkov wrote:
+> io_zcrx_map_area_*() helpers return the number of processed niovs, which
+> we use to unroll some of the mappings for user memory areas. It's
+> unhandy, and dmabuf doesn't care about it. Return an error code instead
+> and move failure partial unmapping into io_zcrx_map_area_umem().
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > ---
->  io_uring/rsrc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 94a9db030e0e..9a1f24a43035 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -133,12 +133,14 @@ static void io_free_imu(struct io_ring_ctx *ctx, st=
-ruct io_mapped_ubuf *imu)
->                 kvfree(imu);
->  }
->
->  static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ub=
-uf *imu)
->  {
-> -       if (!refcount_dec_and_test(&imu->refs))
-> -               return;
-> +       if (unlikely(refcount_read(&imu->refs) > 1)) {
-> +               if (!refcount_dec_and_test(&imu->refs))
-> +                       return;
-> +       }
->
->         if (imu->acct_pages)
->                 io_unaccount_mem(ctx, imu->acct_pages);
->         imu->release(imu->priv);
->         io_free_imu(ctx, imu);
-> --
-> 2.45.2
->
+>   io_uring/zcrx.c | 27 ++++++++++++++-------------
+>   1 file changed, 14 insertions(+), 13 deletions(-)
+> 
+> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+> index 99a253c1c6c5..2cde88988260 100644
+> --- a/io_uring/zcrx.c
+> +++ b/io_uring/zcrx.c
+
+...
+
+> @@ -254,29 +254,30 @@ static int io_zcrx_map_area_umem(struct io_zcrx_ifq *ifq, struct io_zcrx_area *a
+>   			break;
+>   		}
+>   	}
+> -	return i;
+> +
+> +	if (i != area->nia.num_niovs) {
+> +		__io_zcrx_unmap_area(ifq, area, i);
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+>   }
+
+Does io_release_dmabuf() still need to be called in
+io_zcrx_map_area_dmabuf() in case of failure, if say
+net_mp_niov_set_dma_addr() fails in the loop?
 

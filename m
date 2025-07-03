@@ -1,214 +1,365 @@
-Return-Path: <io-uring+bounces-8601-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8602-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA52AF77BD
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 16:37:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D695AAF7E07
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 18:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25F34E1121
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 14:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E52F1883799
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 16:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD312ED848;
-	Thu,  3 Jul 2025 14:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FF1253B7E;
+	Thu,  3 Jul 2025 16:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vr4BfFWK"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nYQMskTy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2049.outbound.protection.outlook.com [40.107.212.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C08A2ED16A;
-	Thu,  3 Jul 2025 14:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553451; cv=fail; b=IM2Z58oZ87APtuUZgNppMTHP3yGLa77Ehanr0fREglGjDRzoyJIKDi+peV3Z1yHAFS3Ik4Z0QRbLC34EWNVRw8I9d0boPxgmZdFUtIR3CUM9j8W4TWIXSVUsON1LIKWV+ymA/fTGlSWptnIf88knsTSBsTq20Mu1zSOEmtMx7Sc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553451; c=relaxed/simple;
-	bh=Q0bEPus0nlsF3eX57XumyiTNUYx5fWYmzOFEGYwkZCc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RScDxoJxUNyjI+4t/XvyPBA2LCTdUpLvgiBy0TS7D8gLuav0CXWrkvrlahsGDj6QCiW1v3znxMfbjOJX+Vt3NAr0IGM8q8ugfk09lNnh4BsCyLmXzd4pBx1cc7++YIMw9EnpYZYc93i4vc9Kb/QwS5k9ABkQdHFF01oiQqT+94A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vr4BfFWK; arc=fail smtp.client-ip=40.107.212.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TQUvqFtTobfkdouwoZY7G+bixl35o+DdZmtQJJlX8e8oCjZwS1SbK/aJfgXcCuBNTzMB4nfveOsbf/peotxcQPLH5VnK9LPqFjB+EL0apSRDLRjLYcmZ4NiC97cdvBM+c8pLVtmtIKzqUFhzLb6U9kjo53Jf/9GnH/ELjip7KjrrEsngfC6qbPSItm5NOOzV8jq2LQV66L5iWUG17zwRZqyKtxdedjHTxKD7vFQ15hx1CfR5cVFnlE0JANxl4haFg/jEqIQLNtGzoKXo8LuiY8EtA2/gtrXO1Y60m5FqHHsIWmavzafOCPttuMJNi1IqYS/3DNrZxOEW7DT4Si+qKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BxHMaho2erQqDxTATB+OACZguSTthkklO4vjRfJ4w84=;
- b=mGHuNS5E5fz6URRx1D6MFrBFcZTwadUiMm+8JKRJysdBg4GHQUMdZZT4458xhn+foBgdo9CV9fx4z65etkMceu6ajatSoJsIomtL1xPFTo8cEQUO+rPM9qdTcGMAX3C46fKtaPWo4fihSegkop+tB06o3E/29+yYgagYL0GFM7/hK46vLdQttuxExp4KkFHyqnCn1UK3ZNLlLBY4BrYwk/BMha+4FGpU9FK8N/HMbhP50qoMVAl+RoxsEa2jDsZ/rhAD+GxnKM5ewKi9r8VHLEEXCRo8oOYrf7GOjcbA7wQQUcIdqU/+Nd2kIvcyQW50ioSY9+fT743+c2aPFCp0lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BxHMaho2erQqDxTATB+OACZguSTthkklO4vjRfJ4w84=;
- b=vr4BfFWKBspdtH3EAZRl1qIqI6Fgd4UcMLCT+r4XSBc7RLAWxmy0PiaZHaolS/bTYAwkOdFTxRKkuDRQl/qq6PGVgnvDEE3G4ptYkn7JcLd3/OFFzG+Y14o7Fx3NPCUhnAYKC5ziW+PYvCaPLfP1JKuHZ0sQPl+UkFwPOZeZ0rk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS0PR12MB7897.namprd12.prod.outlook.com (2603:10b6:8:146::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Thu, 3 Jul
- 2025 14:37:25 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8901.018; Thu, 3 Jul 2025
- 14:37:24 +0000
-Message-ID: <cccb46ae-8b20-47fe-92b2-059a0afdf95f@amd.com>
-Date: Thu, 3 Jul 2025 16:37:19 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
-To: Christoph Hellwig <hch@infradead.org>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>, David Wei <dw@davidwei.uk>,
- Vishal Verma <vishal1.verma@intel.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <cover.1751035820.git.asml.silence@gmail.com>
- <aGaSb5rpLD9uc1IK@infradead.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <aGaSb5rpLD9uc1IK@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0133.namprd13.prod.outlook.com
- (2603:10b6:208:2bb::18) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85072566E9
+	for <io-uring@vger.kernel.org>; Thu,  3 Jul 2025 16:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751560730; cv=none; b=rymvzq7XaJks/8YXeKss5Yc5DWlScU9uVs05aeyLjaeDUQgNkK7U3vkpYjLO/YGqwV/bm+GdZz/2jDQmHf2QcUgx80JvS1wTU0Rp+Ilg5m3muXt0mK5NNLiu5eCtcyyrEWIaWf7Y5hQ4GGGa0bQlxqH3ApMat+K+9jukMJGbQeQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751560730; c=relaxed/simple;
+	bh=SA/wex1AbBBkZS7TG2wMDd092ZS0CGkEHx5CDrgZINA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=u6yihZQAhb3DrnPHij2dQPbe0zNa/EaF8lu2CJwjgt/sCGmcSzrSBl2AVe/fwRBmPRxJg2N1UyYqp1R5MG9/7K9xTJlbZyzDw7aA7GrPt+azCSKT2ryPNyH57eU1qzLDrC2LRx/ilPjFDA2aUIIEKqHMw36NYN5+h/WjAj5b+CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nYQMskTy; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso1002755ab.0
+        for <io-uring@vger.kernel.org>; Thu, 03 Jul 2025 09:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751560727; x=1752165527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kEQdwQJCqzV2qm4GEGBk18jy+8ZuQKC6dRo0GR3w/Ls=;
+        b=nYQMskTyNyx/RHrZuGVpGhu+aOTc6bpfB0PTlzTkFXPMrTl/aB9fbW8gOl22cMzCSO
+         VSAu4d0SFezQGGff09F4Aqsux9O8XBLP2gdmmKEsYp1QmR5pJLybYMH+g3qYSMKtSIKR
+         WNg2kMFwIUiR9hbWyWIvuk9uQqjQscr8BXlzpGoZDdbOX6rfd5nFIF1Iw9+rG5ifP8qa
+         zRvMvtkTfyjtuiE/jexFNJhtwf77Q1R7Cb4GJw96O5AguAhf5tbPnjlAqhs7h90xXw13
+         Zk1LTvgv1Dr4W3My2/OuM8f+f2yqZIQd2Ld+zymP09xAZpiZjtLQ6wgz4rzYDeU+hKUe
+         Hlrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751560727; x=1752165527;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kEQdwQJCqzV2qm4GEGBk18jy+8ZuQKC6dRo0GR3w/Ls=;
+        b=aUz37RjmhWAgkStH8D1cZnCc1TpArcyBrOBdECMMUkkdp5Tk3L5E2sfNepB989k6Qa
+         bwhG36LBRVe8GzvsOg2MOkIU/kCG9LQaICnmfk9Fw5zhw+Xc5WhdKExdybZawug7xPZ/
+         tOT3sK216jWxwMoROiDq8q53k7zRmO0kfntZrcD+wCqZHgXhac76OvBskusMWd1sorJ9
+         YVgMDtgRoXJMnKP+bcfGSPy0rp2JZz/kAjASoIDO2IXMwjTXfyV7nPImVNBm5Xy6e0bl
+         YVz/NHH+rjx0oaQxZ0W62bFsc0TfGuVJw4yvQWy9eD9Dhi1/QHlcjLI6w5t9WuYIXSTa
+         wGtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUt0bWLkSpUIQN5qZ0p698hazrC/NL/QENe7TTDr8tLhRjAjuiKPml/SMZV3a0RAa7AMMqdiZAk6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5+TQdlYYO9NWJzdhzRsda3BuxfCr5WB0P0rxm51W4EEgwgyiS
+	F+dHd6s/M2Nu+CFObblnrnGiq8+JaP1aGfc18J+YvxuN8hCZQM/utksW09UuGnQfOm8=
+X-Gm-Gg: ASbGncstrYO2W0mksxpIKjOEo2sGpxsmuDorLByRvY7BqoJFMrcEkehyqVr7AxdgZ3F
+	nOC3dP2o01vOd+s4G3QgoNfi3gBlYL3vGRhReRqNq01OYBjpvY/b7DB7c0NUmkPULYkA6f/Se8l
+	6FWHIEWPcQ5PbCI7s3MP/G/ZxnnFFNB/iVSRPpcX+bXbbTaw6x9BKO0UrgV6S6cFltZB1QfN10w
+	JPB0hzjDX1/bzXeg0cslindojNqSF1r7sDe+SYVlXf36EkN34VclzFM3WIpsHY4/+MLdv1Jkn/8
+	nG27ljj1eTdEHwQDVQbgKw2grXysofyd3y+h3gfJ0hpEBm9U2DDSO88yAUOb+3/jO4Fp
+X-Google-Smtp-Source: AGHT+IHclDOLLzOaVhifUJ+9ky0xY8wli+xXgoTJhHoyaNNYqriLQTuXz4h6QrohbrKj9j69YjtV9w==
+X-Received: by 2002:a05:6e02:1fe6:b0:3dd:b808:be68 with SMTP id e9e14a558f8ab-3e05c9b4c23mr42595465ab.16.1751560726411;
+        Thu, 03 Jul 2025 09:38:46 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e0fe2210d3sm554955ab.43.2025.07.03.09.38.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 09:38:45 -0700 (PDT)
+Message-ID: <f368bd06-73b4-47bb-acf1-b8eba2cfe669@kernel.dk>
+Date: Thu, 3 Jul 2025 10:38:44 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB7897:EE_
-X-MS-Office365-Filtering-Correlation-Id: c92afd25-501b-47ca-5709-08ddba3f206e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWx4VkVPczdvQW1qVTM2RkRJbnVKLzFiQVdEZlZwN2tqckViY0hEdmtLM0hT?=
- =?utf-8?B?WktZZzNPOFltNVlCUFNnTjgybG5kWXpDMndhc1Vlc0t0L0h3UkpOUVhsZlFY?=
- =?utf-8?B?aDdQdXN3elFUcTVVZjRZQzFLNVdFNGozazBzM2Z3WXpCU1dBc21wcDNXc1pO?=
- =?utf-8?B?Z0xXclI0aVcyU2cwdzFwY0ZZaHc4VExSYjNDbm91VWp5SytoMXROdHZXY0VZ?=
- =?utf-8?B?VHU2akRQSUluaVhFMjJGQjQ1eGZuT1REeWIwVDZJdVZwZHlKLzFZNXA4Y1VP?=
- =?utf-8?B?enRId2hFT2o0RThwRmR4Zk96WGNiODBaZjVSMStCSytJVFE1N3d6QVVDTzlI?=
- =?utf-8?B?eXpiUCtVMEYvL2NpcmhFOEVjckVvT1o5bUliTVIzK0NMTWJxNEJ3M2RhLzZs?=
- =?utf-8?B?Y2FJQytlTXcrTzErb3RLTW84bmtmZDA4dnlCQ2tDN2pkUEg1dkEvUnhXYnJm?=
- =?utf-8?B?b08xTzJYaFRXZ0JUSVYrSjNZNzF1U01NUTlxTGRZUFF5NnJSS1c2My9rU0N0?=
- =?utf-8?B?NjA0V1dlRk0xbExvN2h6MzRiYWdsc0ZZK1k2STZNZ0ZxREJIZStTN3dyWWpE?=
- =?utf-8?B?VzFjNU1lUUpQT0VUNFE0MHFiTEZUUW1iK3l3Sm8vYlVOTFloYjBWNDNMVldB?=
- =?utf-8?B?elhVZ2Y0M2xZM0xrTnk0M3JtS3ZQYUtKaHQ0SW01TnA3TnZicnE3cGZkTW9h?=
- =?utf-8?B?bk5CWVo4RWRYaWRJQmVnWnJJQUtNeDFoZUF2UXlDMnBFMEcxdlk2cnlBdVlF?=
- =?utf-8?B?UnVPRm1vakExWU1jaFpCNW1GVjBkMldNRnpDUVduakJORVdkYzgxZjRsQ3g5?=
- =?utf-8?B?NkJqOTM2eDhURk1vbjRmVTdhMW02WWhTUlllUkJ3djJqdEN4VDRlM1BieDRL?=
- =?utf-8?B?ZGZrZjBzVm5qbTVXbjFxUmR6bjFSNFFpOTZUcmQ2d3UwcDJkOFJkY01SbGc3?=
- =?utf-8?B?bHhucmxwQlJWSVhsVkpxMENXTlN2L1Rla2l4dUJpRmhiQW81NUNuZWc1NlMr?=
- =?utf-8?B?eGlQZ2FqSnFpeVA3YkhqMnpjSE90akgzU1NseU1oL2srNnV1NC9sMzdXd2xZ?=
- =?utf-8?B?djA5dnI5b2xhOW9YSWlXUmVoL0JnSEREYm9LZk4rejZ5S1UxcTZYZ0tyV0s1?=
- =?utf-8?B?eFpKYnFSK3pnR2JUQ0pWNTJESUlkMVFYYmpSVWFhcnhBa2ZvRVVYaTc3WU1j?=
- =?utf-8?B?dHFkR2tDc0ZnaGpEc2cwN0VwS25KbmNXTmxPMHNrQmlsTCt2bUEyWlJZcVdw?=
- =?utf-8?B?UktyWHhyMENwUE1mMUljSXZTV05QdmdraDdqV01wZ21BZVh2ZlNLZEtnUFM4?=
- =?utf-8?B?bjBGcklzejdlZXhRT1dOckVnb1BJN0NhV0hNK1NhUkRYNkh0RXBJaXFnazcv?=
- =?utf-8?B?dDRNU21aTkpRU0V4Q3hzVU9DRFNoL3NZeGE3bTlrUlRvM0hIV3RWQ2pxT0JZ?=
- =?utf-8?B?clY5a09zcVVoa1gzVWhaajZtL05jUUcrK2UrZkVhWVNycS9ISXM4cmc2cUJS?=
- =?utf-8?B?RlZJcFVOTzBPNHVmMjVmdnRpdHZ6M2tpOFlnUzk3MGJvRUdWdTFsdTZBWUp6?=
- =?utf-8?B?V0hGTmQvNEszb0MwSm1FM2xTUWZiTUNCWCtPQys1KzFmc0N4R1Q1dFdZN3dE?=
- =?utf-8?B?ZG9SYnRoRmFoNXNaejlqb3F3aW1EY1hIZ3poRG1uU1BmclRNMm9meDFGZGZS?=
- =?utf-8?B?ejUyeUw2UkVVWVFXRHdTck8rWWZTU0lUanR2R0pudlVKbWpiWm9QUHYzY1Vp?=
- =?utf-8?B?VEI1ditZYkhjdEVzVmxzVHlNaEVIUVIxSVF2dUV0OXlCeUR5bTlMdlUzYi9k?=
- =?utf-8?B?RXhxeVNFS3ZHYXprRFFrMzVzTTNuKy9vN2FFM0RrTHNtbmtnVGdYdUo5TDVk?=
- =?utf-8?B?cXovQ1NaejBiRnIybEhMVGFBb0NXSzVUWFNnZDVHOEtBb2s2bkg0b2N5ODBI?=
- =?utf-8?Q?QbOqz7vuCq8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SmxHVTdpRTJ5VWt6ZXl3aVBVNUpuUWZiRjBTbHBBTFNuT1hGMkNBOWNHczl4?=
- =?utf-8?B?Tnh5QmhJY3Uwd0wzLzVMT2FEYzliSEMrR0RwSVVlREU1YUpKTVl5WmsyYm1F?=
- =?utf-8?B?U1pJdnZHWi85QUkzWDZ2UXZwN1BuU0NlRGN0TTR3RDlWV202Y2x4dEg5dDVZ?=
- =?utf-8?B?aDdkMTFyWU81ZmhIdWNQWm9pWVROQmdTalNtYXlpUXNPb3JFZ0hucXByTTZP?=
- =?utf-8?B?ZHhwM2hUUFF6cnVKcVRLYWhGa2xBcUM0ZWtJeFhrTG1PSjJCc0o0SEcvU2tw?=
- =?utf-8?B?WEhWVU0xa2NvSk9BdHdueCtPSnVWOVhYVE94YlVkU1ZQNnVkQmJhSnFGUEVC?=
- =?utf-8?B?RUFWdm1IYlVqSlp1T1A5UUdpdnJoYzFUWWtTV3NYTzRabUVncjlMZHhtNG1r?=
- =?utf-8?B?cjdXUlR6eTByN3N2SFljWFVyUUN4OU96YWoveU8wZHNKb2ZmMUhtM0d2LzJi?=
- =?utf-8?B?MGw3UzRMdHFnc1dEVitvQytoUDVjME9sczBoNEZBb1g3SERZT2tmM3phUlRz?=
- =?utf-8?B?RVJBbStkcmtqVW5GYytsOWhjMzFqeGs2SXZMd1I0YzhhNDlORTEvTnJyR2Mr?=
- =?utf-8?B?NmNxeEZRb296UStiOVpPbmRXNWtRdVZwcm10UXRJN29FVlhmdlg0UnV1L3Zk?=
- =?utf-8?B?b2x1d202RFhmajJzTjRoajFUa0hPSWMvS3JKUjl0SG5HRHc5d0paL093aElN?=
- =?utf-8?B?QlY0amlwd0xvdjEyUVRoK1IxTnJmOHN2UHlad1NDRGV2bXJwMXNVRWVvUnNz?=
- =?utf-8?B?YnZwcllMYTY5RmM5aGhxWGhoeGovVEVmd3YwWnpPeHhXazhZMUNnYnQzY0tm?=
- =?utf-8?B?ZXNlbVFCbXczeTVzOTVZbytLdmQyK1Zjd25RMHVpR1FYMFp4bzFsZlJNcWoz?=
- =?utf-8?B?VVBxMTUzRFdHTUw0ZmhNUnM3ZzhhSHRXT1hMOEcwTVRoV2JUL0NKcS9WK2F1?=
- =?utf-8?B?MXUveEMzeHQ3Qk9ZN0V4REpmUzhHdWdHbjc0U2VIQlp4MnZDd3NldWtkREhn?=
- =?utf-8?B?aW9kNVJSaTlmdmpPaURsRjlseWxnVWV3U1BWZkxUeGNXT01YZHJLdHh0Nklp?=
- =?utf-8?B?Zi96eUVvZElhbGlMcmxtdDM4R3ZDVFBINUR1b3A5OWdpd2hLM0JPTXNQZ2Jx?=
- =?utf-8?B?a3I3TmZYTUxaWW5BY0lJK3pvbFhWZjd4RGZEcXk2T2I3WGtxOWdVeW9kUzZo?=
- =?utf-8?B?SFRDYlNQS0RFR1dseXFNU29Ha1YzRlBBVnY4T3VKWlFVZ01OaENOTERsRGtK?=
- =?utf-8?B?YzFlc3laVkExM0NkWk1lSitBaUd3Wk55MzU5RTNyUy9MajNxeFh6cnp2OGFL?=
- =?utf-8?B?TU1SVHNUT2NFc0ovZXNDRDljV3ZheUlDUDhQN1VnTDd1NGNmRHNYRUxZYUNZ?=
- =?utf-8?B?WU1DMXU1NUtKR2lpdHRsdTNSRHcrL2RHWCtoa0dneWEwRWVuREF2c0gvVUdp?=
- =?utf-8?B?RWRWZ0tKZjMvN0o3K3lROXBSZTBXcTdWeEVjbkN4Q215OHFneGJ6NXVNSHNT?=
- =?utf-8?B?YXlPRkxaaEFVNmRKNTZWV0FIYVZsaVo1MHJBSWsvQlExSEpsVUhVanRvUEpn?=
- =?utf-8?B?LzRYajFlRkRLUXdjei90NTdQdGlPeWVxUzl5RWkwR1VaNWZNYXo5UmRqcVJ0?=
- =?utf-8?B?RzdtMFdZTzFPRnpCWm45NXhQVkVYeGZqRHdRSmMvUHd1TU0wUG16b2hsd3dO?=
- =?utf-8?B?OFpBczNmM3QzK3BMRUxac1VTbVdUcGRQVDF0N1JiS2FibkljSjkxd29xN3pF?=
- =?utf-8?B?Z3Fua0ZaVG1kOTZwbE1hSmZ5dENCU1BVUnp1cFJ3Vmd1TTAzcGpqSGtRZ3hh?=
- =?utf-8?B?SzR4VVBlS0RjVkJXb0xFYTJobUJQSFNiSUdSelJ3ZDJ0clFhbVRCZ0dtNkFN?=
- =?utf-8?B?SzJOK2IyaHdqMnEzVm5INDRFT2RaZ3J1bXREN1hiVitxdXRmdUY0MXlZNmtR?=
- =?utf-8?B?UDhpcE41cjBGYkRGQmRQTFUxcERnTWlqNmpyc2xGWFd5ZkdVWTFPMDg0amtF?=
- =?utf-8?B?eU4xa3lnclNwRUM0bnVlZVpydTdtd1lLMzd1WHphNG45TjU5RzdxQ2xETWEw?=
- =?utf-8?B?Q3FrbElra2plcWhPdU1EeUlQTHE5MXE2VEhDQUtJUVRLWWVqRStZaHR4d1JP?=
- =?utf-8?Q?jCpc6+mYLxl6HwxDd+xtlPObE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c92afd25-501b-47ca-5709-08ddba3f206e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 14:37:24.8327
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C1K/4pYPWU43t+kChGriSXNTmOCcs4TUofrHjMimtXftHm9KlkKfLLixRzXWwnWl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7897
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] INFO: task hung in vfs_coredump
+To: syzbot <syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com>,
+ anna-maria@linutronix.de, frederic@kernel.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ tglx@linutronix.de
+References: <686555b9.a00a0220.270cb1.0002.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <686555b9.a00a0220.270cb1.0002.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03.07.25 16:23, Christoph Hellwig wrote:
-> [Note: it would be really useful to Cc all relevant maintainers]
+On 7/2/25 9:52 AM, syzbot wrote:
+> Hello,
 > 
-> On Fri, Jun 27, 2025 at 04:10:27PM +0100, Pavel Begunkov wrote:
->> This series implements it for read/write io_uring requests. The uAPI
->> looks similar to normal registered buffers, the user will need to
->> register a dmabuf in io_uring first and then use it as any other
->> registered buffer. On registration the user also specifies a file
->> to map the dmabuf for.
+> syzbot found the following issue on:
 > 
-> Just commenting from the in-kernel POV here, where the interface
-> feels wrong.
+> HEAD commit:    2aeda9592360 Add linux-next specific files for 20250627
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12f9a982580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7f5c1d958b70bf47
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c29db0c6705a06cb65f2
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ff688c580000
 > 
-> You can't just expose 'the DMA device' up file operations, because
-> there can be and often is more than one.  Similarly stuffing a
-> dma_addr_t into an iovec is rather dangerous.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/d532560074a3/disk-2aeda959.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/483001f76864/vmlinux-2aeda959.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8f233cdc1c77/bzImage-2aeda959.xz
 > 
-> The model that should work much better is to have file operations
-> to attach to / detach from a dma_buf, and then have an iter that
-> specifies a dmabuf and offsets into.  That way the code behind the
-> file operations can forward the attachment to all the needed
-> devices (including more/less while it remains attached to the file)
-> and can pick the right dma address for each device.
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com
 > 
-> I also remember some discussion that new dma-buf importers should
-> use the dynamic imported model for long-term imports, but as I'm
-> everything but an expert in that area I'll let the dma-buf folks
-> speak.
+> INFO: task syz.0.23:6175 blocked for more than 143 seconds.
+>       Not tainted 6.16.0-rc3-next-20250627-syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.0.23        state:D stack:27624 pid:6175  tgid:6170  ppid:5972   task_flags:0x400640 flags:0x00004006
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5313 [inline]
+>  __schedule+0x16f5/0x4d00 kernel/sched/core.c:6696
+>  __schedule_loop kernel/sched/core.c:6774 [inline]
+>  schedule+0x165/0x360 kernel/sched/core.c:6789
+>  schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
+>  do_wait_for_common kernel/sched/completion.c:100 [inline]
+>  __wait_for_common+0x3da/0x710 kernel/sched/completion.c:121
+>  wait_for_common kernel/sched/completion.c:132 [inline]
+>  wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:269
+>  coredump_wait fs/coredump.c:534 [inline]
+>  vfs_coredump+0x8c2/0x2ab0 fs/coredump.c:1128
+>  get_signal+0x1109/0x1340 kernel/signal.c:3019
+>  arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
+>  exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
+>  syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
+>  syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
+>  do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f612984f830
+> RSP: 002b:00007f612a722b38 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: 0000000000000000 RBX: 00007f6129bb6088 RCX: 00007f612998e929
+> RDX: 00007f612a722b40 RSI: 00007f612a722c70 RDI: 000000000000000b
+> RBP: 00007f6129bb6080 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6129bb608c
+> R13: 0000000000000000 R14: 00007fff3502f910 R15: 00007fff3502f9f8
+>  </TASK>
+> 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/31:
+>  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+>  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+>  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
+> 3 locks held by kworker/u9:1/5156:
+>  #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+>  #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3322
+>  #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3215 [inline]
+>  #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3322
+>  #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_open net/bluetooth/hci_core.c:428 [inline]
+>  #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_power_on+0x1ac/0x680 net/bluetooth/hci_core.c:959
+> 2 locks held by getty/5598:
+>  #0: ffff8880303340a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+>  #1: ffffc9000331b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+> 1 lock held by syz.0.23/6171:
+> 1 lock held by syz.2.43/6314:
+> 1 lock held by syz.3.47/6351:
+> 1 lock held by syz.4.49/6392:
+> 1 lock held by syz.5.51/6429:
+> 1 lock held by syz.6.54/6471:
+> 1 lock held by dhcpcd/6476:
+>  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+>  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: __sock_release net/socket.c:648 [inline]
+>  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: sock_close+0x9b/0x240 net/socket.c:1439
+> 2 locks held by dhcpcd/6477:
+>  #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
+>  #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
+>  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
+>  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
+> 1 lock held by dhcpcd/6478:
+>  #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
+>  #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
+> 1 lock held by syz-executor/6480:
+> 2 locks held by dhcpcd/6483:
+>  #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
+>  #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
+>  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
+>  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 1
+> CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+>  nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+>  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
+>  watchdog+0xfee/0x1030 kernel/hung_task.c:470
+>  kthread+0x711/0x8a0 kernel/kthread.c:463
+>  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 UID: 0 PID: 6314 Comm: syz.2.43 Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+> RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+> RIP: 0010:rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+> RIP: 0010:rcu_is_watching+0x5a/0xb0 kernel/rcu/tree.c:751
+> Code: f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 7c 42 7d 00 48 c7 c3 18 4f a1 92 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 <84> c0 75 34 8b 03 65 ff 0d 89 90 f9 10 74 11 83 e0 04 c1 e8 02 5b
+> RSP: 0018:ffffc900000079a8 EFLAGS: 00000802
+> RAX: 0000000000000000 RBX: ffff8880b8632f18 RCX: 1370d027c6756400
+> RDX: 0000000000000000 RSI: ffffffff8be31f60 RDI: ffffffff8be31f20
+> RBP: ffffffff81745448 R08: 0000000000000000 R09: 0000000000000000
+> R10: dffffc0000000000 R11: fffffbfff33acaae R12: 0000000000000002
+> R13: ffffffff8e13bfe0 R14: ffffffff8dbb8cb0 R15: dffffc0000000000
+> FS:  00007f61f8d9d6c0(0000) GS:ffff888125c1e000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055a134a81660 CR3: 000000007fa0a000 CR4: 00000000003526f0
+> Call Trace:
+>  <IRQ>
+>  trace_lock_acquire include/trace/events/lock.h:24 [inline]
+>  lock_acquire+0x5f/0x360 kernel/locking/lockdep.c:5834
+>  rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+>  rcu_read_lock_sched include/linux/rcupdate.h:932 [inline]
+>  pfn_valid include/linux/mmzone.h:2163 [inline]
+>  __virt_addr_valid+0x1e5/0x5c0 arch/x86/mm/physaddr.c:65
+>  kasan_addr_to_slab+0xf/0x90 mm/kasan/common.c:37
+>  kasan_record_aux_stack+0xf/0xd0 mm/kasan/generic.c:533
+>  insert_work+0x3d/0x330 kernel/workqueue.c:2187
+>  __queue_work+0xbaf/0xfb0 kernel/workqueue.c:2346
+>  call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
+>  expire_timers kernel/time/timer.c:1793 [inline]
+>  __run_timers kernel/time/timer.c:2372 [inline]
+>  __run_timer_base+0x646/0x860 kernel/time/timer.c:2384
+>  run_timer_base kernel/time/timer.c:2393 [inline]
+>  run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
+>  handle_softirqs+0x286/0x870 kernel/softirq.c:579
+>  __do_softirq kernel/softirq.c:613 [inline]
+>  invoke_softirq kernel/softirq.c:453 [inline]
+>  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5875
+> Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 5b 83 02 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
+> RSP: 0018:ffffc90003e6f980 EFLAGS: 00000206
+> RAX: 1370d027c6756400 RBX: 0000000000000000 RCX: 1370d027c6756400
+> RDX: 0000000000000000 RSI: ffffffff8db80736 RDI: ffffffff8be31f80
+> RBP: ffffffff84bc6539 R08: 0000000000000000 R09: ffffffff84bc6539
+> R10: ffffc90003e6fb00 R11: fffff520007cdf65 R12: 0000000000000000
+> R13: ffff88806038c0a8 R14: 0000000000000001 R15: 0000000000000246
+>  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+>  __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+>  io_cqring_do_overflow_flush+0x19/0x30 io_uring/io_uring.c:665
+>  io_cqring_wait io_uring/io_uring.c:2701 [inline]
+>  __do_sys_io_uring_enter io_uring/io_uring.c:3508 [inline]
+>  __se_sys_io_uring_enter+0x1fce/0x2b20 io_uring/io_uring.c:3403
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f61f7f8e929
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f61f8d9d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> RAX: ffffffffffffffda RBX: 00007f61f81b5fa0 RCX: 00007f61f7f8e929
+> RDX: 0000000000001797 RSI: 0000000000000001 RDI: 0000000000000003
+> RBP: 00007f61f8010b39 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f61f81b5fa0 R15: 00007ffcfc501968
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Completely correct.
 
-As long as you don't have a really good explanation and some mechanism to prevent abuse long term pinning of DMA-bufs should be avoided.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
 
-Regards,
-Christian.
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 886368cd2c40..887521656bca 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -660,11 +660,16 @@ static void io_cqring_overflow_kill(struct io_ring_ctx *ctx)
+ 		__io_cqring_overflow_flush(ctx, true);
+ }
+ 
+-static void io_cqring_do_overflow_flush(struct io_ring_ctx *ctx)
++static int io_cqring_do_overflow_flush(struct io_ring_ctx *ctx)
+ {
+-	mutex_lock(&ctx->uring_lock);
++	int ret;
++
++	ret = mutex_lock_killable(&ctx->uring_lock);
++	if (unlikely(ret))
++		return ret;
+ 	__io_cqring_overflow_flush(ctx, false);
+ 	mutex_unlock(&ctx->uring_lock);
++	return 0;
+ }
+ 
+ /* must to be called somewhat shortly after putting a request */
+@@ -2612,8 +2617,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 				  max(IO_LOCAL_TW_DEFAULT_MAX, min_events));
+ 	io_run_task_work();
+ 
+-	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq)))
+-		io_cqring_do_overflow_flush(ctx);
++	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))) {
++		ret = io_cqring_do_overflow_flush(ctx);
++		if (ret)
++			return ret;
++	}
+ 	if (__io_cqring_events_user(ctx) >= min_events)
+ 		return 0;
+ 
+@@ -2698,8 +2706,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 		check_cq = READ_ONCE(ctx->check_cq);
+ 		if (unlikely(check_cq)) {
+ 			/* let the caller flush overflows, retry */
+-			if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
+-				io_cqring_do_overflow_flush(ctx);
++			if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT)) {
++				ret = io_cqring_do_overflow_flush(ctx);
++				if (ret)
++					break;
++			}
+ 			if (check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT)) {
+ 				ret = -EBADR;
+ 				break;
+
+
+-- 
+Jens Axboe
 

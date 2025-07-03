@@ -1,99 +1,100 @@
-Return-Path: <io-uring+bounces-8599-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8600-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7EAAF6C9E
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 10:17:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C91AF7747
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 16:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B113B69C6
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 08:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16842177910
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 14:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363682D0C66;
-	Thu,  3 Jul 2025 08:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F772EA474;
+	Thu,  3 Jul 2025 14:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BSmjL+hK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4366295523
-	for <io-uring@vger.kernel.org>; Thu,  3 Jul 2025 08:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0826B2EA178;
+	Thu,  3 Jul 2025 14:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751530647; cv=none; b=QZf64/V9HNyZVVi8TGp407cV1yiSIpjSxHyLZp+YQebuPG+sEzYt6hfmSh45AWU1VVn2TwjAy0JDhyno+BxaF2N3W0rUffNRvOWBhLoNX0TdYao+A9dUl8R6etITdFjNLk6crrf0UzR11irxpyO+NwYj0HVOrnAL2PgGSfpah68=
+	t=1751552626; cv=none; b=uAwLqUBRS/RwnUhWV31kutRcRr3NRykiQ5eWzGcMKkB25IjIQirvZZMfxWMhpeluz1hPvK2gsB7f9iZwbkA7f6Iffiml4CmwevxQskuARsos0m9EJDqLRaJ+nQgRszMuGliTpCpn7/qmsoJI4RfGpA+cc3gn/u4RuM/SLJu7CyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751530647; c=relaxed/simple;
-	bh=J4AFSvgzTK4Mra/Rv6b9gZTK4Zq7nBJ7Dt9Sg9YzQ+I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XpGvvY+v1PCAlcpOxTUpUEpNfJh2E5l0xt452dkddcchGb+Gdhj9DWOFR+7fFslAKE7BH/o5rXqL2An8PUMxRnNVsNg5wTXLoNQACe/wM0A6FTKk5oCwgfM6u4oDJRSctM9AWHOGe3JXlkFXTmTjBmoRcaT65A7h5uSD07hQMaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87632a0275dso615227639f.1
-        for <io-uring@vger.kernel.org>; Thu, 03 Jul 2025 01:17:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751530645; x=1752135445;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dZ8l2fWEOizcSPsbXsRQAKJ6s0J1KI5GlXIwR8qauZ8=;
-        b=JIXgBqrbceSnP2Es/xbYEFu3h3Bb7NtQV+yP/JTV1qHoOPbc2KMyHH6MULNlad+Wtk
-         eGfRri4Crb7zxGHDGilTKr0hn0lDsQ1HCGi0Qmc6Hzi0b029VrbdwmxalOIGKBcqNDWS
-         RUn/D00z7y1CkdbOomgjpYDpB1brF94g92bd0Cm4zW/jbqRf3PhUWMNMduv9h7VYofsK
-         JSqnzh9gcZA2iThjcPapaY3IitSKQ0TbUwJBiyxez/yzZNzLJe1We1F9Kf5irZac69oS
-         Ef0HnN6yxDJWvb5sAh21kvqRhNfJ7XNMGAMeMd2EZuBAbsibsCn17i2jPUYyyHRy/iIK
-         z5vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf+NnQAKlFCY6hX41cY/B7rIN/pavbrGPHqjNPfdEFchlgtZQps66//Reff4/CEIePsDCPm+GxFw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZjpAI1W0/I+LllYFQr2wvmht9Zz4aUsLRle8YGS0eAnc0E9P6
-	3C1+OB14fOyfxOF1Td/USIgtA2AGF69VNNp0BP1nCm5xWfoKw2yRRPM70B6DmLLfaHmmxF8MKoO
-	qMbqhUXIk+XnK0s57Lee9AsOCZWi5+j1oWhgF4LPZvnh1nRANkCNzmsw2fgY=
-X-Google-Smtp-Source: AGHT+IHHXknABbqRXAynmCSbU37Zc4ri+45qAD660LeDcAX7dgb7lhTkzZB8H88tI3yHe9XKa5pgYJNONcD3Trloarb4x7Bixn6R
+	s=arc-20240116; t=1751552626; c=relaxed/simple;
+	bh=UqCHVI6XlSbC/TOR9oByBhaP+pzp8e91+zTZgpxb5M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVPBFolUpgJGutzw72yJ+iMy89qitWWdzHAFqMBziFDz+02ERpXlNaC48Yq9qjyjKQvJ4cEiLMZkABNLap+W9IlrRY2XkbS88rU2TcyKTinYHHsGRUPjNsfM7ha0hPOWltEurtyq4nzhdg0743E+p2hvj+6fGBXdpnMUPSsMptE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BSmjL+hK; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fdwQ7VoCdy9EDfz8qdHjHeqLPa9H8WWCarPWLj8vDE4=; b=BSmjL+hKMq+uETspb9lUMyEHQw
+	0bxFAeC2GxGIerv0/y1S/jtyOo7o3HC1cIdgrFj/cACDXHADEyUAeyoUOrq8ommeAQlnCoyHHfpHY
+	cLukEWcTdu23KMrC3Bql3cKQxdIc43/VGAmkIgT3U6kex/lPTpXOZ9DU9iScomTE/fckWN1rCQl3w
+	wUQm0VQRKQr9LO+52bCrAajjRBNfF83RTFXcqDrCuhW7+pKKDu8l5dOoQOVIuuCE79gDxCxnmPW5d
+	+NxJ9PmSYP0do/VK/Svlnk+pKid4eQ7cwDTOxHQ28VByz6yhjhnHBPZJW2Fk7L5l0D0rt+o48bZSW
+	YHaTLpvw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXKql-0000000BeR1-44Zb;
+	Thu, 03 Jul 2025 14:23:43 +0000
+Date: Thu, 3 Jul 2025 07:23:43 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>, David Wei <dw@davidwei.uk>,
+	Vishal Verma <vishal1.verma@intel.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
+Message-ID: <aGaSb5rpLD9uc1IK@infradead.org>
+References: <cover.1751035820.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:970c:0:b0:85d:b054:6eb9 with SMTP id
- ca18e2360f4ac-876c6a8df52mr687943039f.14.1751530644696; Thu, 03 Jul 2025
- 01:17:24 -0700 (PDT)
-Date: Thu, 03 Jul 2025 01:17:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68663c94.a70a0220.5d25f.0859.GAE@google.com>
-Subject: [syzbot] Monthly io-uring report (Jul 2025)
-From: syzbot <syzbot+list0205f720a3ad026252db@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1751035820.git.asml.silence@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello io-uring maintainers/developers,
+[Note: it would be really useful to Cc all relevant maintainers]
 
-This is a 31-day syzbot report for the io-uring subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/io-uring
+On Fri, Jun 27, 2025 at 04:10:27PM +0100, Pavel Begunkov wrote:
+> This series implements it for read/write io_uring requests. The uAPI
+> looks similar to normal registered buffers, the user will need to
+> register a dmabuf in io_uring first and then use it as any other
+> registered buffer. On registration the user also specifies a file
+> to map the dmabuf for.
 
-During the period, 1 new issues were detected and 2 were fixed.
-In total, 3 issues are still open and 123 have already been fixed.
+Just commenting from the in-kernel POV here, where the interface
+feels wrong.
 
-Some of the still happening issues:
+You can't just expose 'the DMA device' up file operations, because
+there can be and often is more than one.  Similarly stuffing a
+dma_addr_t into an iovec is rather dangerous.
 
-Ref Crashes Repro Title
-<1> 1345    No    WARNING in io_ring_exit_work (2)
-                  https://syzkaller.appspot.com/bug?extid=557a278955ff3a4d3938
-<2> 3       Yes   INFO: task hung in vfs_coredump
-                  https://syzkaller.appspot.com/bug?extid=c29db0c6705a06cb65f2
-<3> 2       No    WARNING in io_req_task_complete
-                  https://syzkaller.appspot.com/bug?extid=7039663f7490865be042
+The model that should work much better is to have file operations
+to attach to / detach from a dma_buf, and then have an iter that
+specifies a dmabuf and offsets into.  That way the code behind the
+file operations can forward the attachment to all the needed
+devices (including more/less while it remains attached to the file)
+and can pick the right dma address for each device.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I also remember some discussion that new dma-buf importers should
+use the dynamic imported model for long-term imports, but as I'm
+everything but an expert in that area I'll let the dma-buf folks
+speak.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 

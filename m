@@ -1,365 +1,89 @@
-Return-Path: <io-uring+bounces-8602-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8603-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D695AAF7E07
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 18:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D60EEAF81D9
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 22:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E52F1883799
-	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 16:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3AF1BC7D4C
+	for <lists+io-uring@lfdr.de>; Thu,  3 Jul 2025 20:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FF1253B7E;
-	Thu,  3 Jul 2025 16:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nYQMskTy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935A02BE62C;
+	Thu,  3 Jul 2025 20:20:05 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85072566E9
-	for <io-uring@vger.kernel.org>; Thu,  3 Jul 2025 16:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFC42BD5AB
+	for <io-uring@vger.kernel.org>; Thu,  3 Jul 2025 20:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751560730; cv=none; b=rymvzq7XaJks/8YXeKss5Yc5DWlScU9uVs05aeyLjaeDUQgNkK7U3vkpYjLO/YGqwV/bm+GdZz/2jDQmHf2QcUgx80JvS1wTU0Rp+Ilg5m3muXt0mK5NNLiu5eCtcyyrEWIaWf7Y5hQ4GGGa0bQlxqH3ApMat+K+9jukMJGbQeQ=
+	t=1751574005; cv=none; b=SA0958DCT1x1yNfLDxdFOhggVMWK97OMUyq5OfpGqWzU5qa/k85KC2WPwUUFTCW8qK6XCaqilhjBogQC+KqfRs7rikfrlkwMk5Rx5bG8BZwLK9wnYPG2u4IxdgZVjtCV4tf1yX/oxc7QtEg/2psE5HMghArGA1GxjOm+/BTSmfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751560730; c=relaxed/simple;
-	bh=SA/wex1AbBBkZS7TG2wMDd092ZS0CGkEHx5CDrgZINA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=u6yihZQAhb3DrnPHij2dQPbe0zNa/EaF8lu2CJwjgt/sCGmcSzrSBl2AVe/fwRBmPRxJg2N1UyYqp1R5MG9/7K9xTJlbZyzDw7aA7GrPt+azCSKT2ryPNyH57eU1qzLDrC2LRx/ilPjFDA2aUIIEKqHMw36NYN5+h/WjAj5b+CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nYQMskTy; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso1002755ab.0
-        for <io-uring@vger.kernel.org>; Thu, 03 Jul 2025 09:38:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751560727; x=1752165527; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kEQdwQJCqzV2qm4GEGBk18jy+8ZuQKC6dRo0GR3w/Ls=;
-        b=nYQMskTyNyx/RHrZuGVpGhu+aOTc6bpfB0PTlzTkFXPMrTl/aB9fbW8gOl22cMzCSO
-         VSAu4d0SFezQGGff09F4Aqsux9O8XBLP2gdmmKEsYp1QmR5pJLybYMH+g3qYSMKtSIKR
-         WNg2kMFwIUiR9hbWyWIvuk9uQqjQscr8BXlzpGoZDdbOX6rfd5nFIF1Iw9+rG5ifP8qa
-         zRvMvtkTfyjtuiE/jexFNJhtwf77Q1R7Cb4GJw96O5AguAhf5tbPnjlAqhs7h90xXw13
-         Zk1LTvgv1Dr4W3My2/OuM8f+f2yqZIQd2Ld+zymP09xAZpiZjtLQ6wgz4rzYDeU+hKUe
-         Hlrw==
+	s=arc-20240116; t=1751574005; c=relaxed/simple;
+	bh=ktUtWHn6ctGIrk0DA195Z10iPpgYiR4PsnMaxDvortA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RSQ1//sPJ5cauM9dEYvd6NtAplVA4hNrGZ7Xu/l6ca/Y7C+nqQlvdJsGwbIaxF1/nkTVrWK8nLlvUaqnVQ2WFw1BwQYnEQP1lTkiyQiLau1DXDBpbuHEO0MHNRigwpNxOh3F6j0jiGj8iDc8DoNDCWxmRdALUGgEdJQccIE8MOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cf89ff625so25330439f.0
+        for <io-uring@vger.kernel.org>; Thu, 03 Jul 2025 13:20:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751560727; x=1752165527;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1751574003; x=1752178803;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEQdwQJCqzV2qm4GEGBk18jy+8ZuQKC6dRo0GR3w/Ls=;
-        b=aUz37RjmhWAgkStH8D1cZnCc1TpArcyBrOBdECMMUkkdp5Tk3L5E2sfNepB989k6Qa
-         bwhG36LBRVe8GzvsOg2MOkIU/kCG9LQaICnmfk9Fw5zhw+Xc5WhdKExdybZawug7xPZ/
-         tOT3sK216jWxwMoROiDq8q53k7zRmO0kfntZrcD+wCqZHgXhac76OvBskusMWd1sorJ9
-         YVgMDtgRoXJMnKP+bcfGSPy0rp2JZz/kAjASoIDO2IXMwjTXfyV7nPImVNBm5Xy6e0bl
-         YVz/NHH+rjx0oaQxZ0W62bFsc0TfGuVJw4yvQWy9eD9Dhi1/QHlcjLI6w5t9WuYIXSTa
-         wGtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt0bWLkSpUIQN5qZ0p698hazrC/NL/QENe7TTDr8tLhRjAjuiKPml/SMZV3a0RAa7AMMqdiZAk6A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5+TQdlYYO9NWJzdhzRsda3BuxfCr5WB0P0rxm51W4EEgwgyiS
-	F+dHd6s/M2Nu+CFObblnrnGiq8+JaP1aGfc18J+YvxuN8hCZQM/utksW09UuGnQfOm8=
-X-Gm-Gg: ASbGncstrYO2W0mksxpIKjOEo2sGpxsmuDorLByRvY7BqoJFMrcEkehyqVr7AxdgZ3F
-	nOC3dP2o01vOd+s4G3QgoNfi3gBlYL3vGRhReRqNq01OYBjpvY/b7DB7c0NUmkPULYkA6f/Se8l
-	6FWHIEWPcQ5PbCI7s3MP/G/ZxnnFFNB/iVSRPpcX+bXbbTaw6x9BKO0UrgV6S6cFltZB1QfN10w
-	JPB0hzjDX1/bzXeg0cslindojNqSF1r7sDe+SYVlXf36EkN34VclzFM3WIpsHY4/+MLdv1Jkn/8
-	nG27ljj1eTdEHwQDVQbgKw2grXysofyd3y+h3gfJ0hpEBm9U2DDSO88yAUOb+3/jO4Fp
-X-Google-Smtp-Source: AGHT+IHclDOLLzOaVhifUJ+9ky0xY8wli+xXgoTJhHoyaNNYqriLQTuXz4h6QrohbrKj9j69YjtV9w==
-X-Received: by 2002:a05:6e02:1fe6:b0:3dd:b808:be68 with SMTP id e9e14a558f8ab-3e05c9b4c23mr42595465ab.16.1751560726411;
-        Thu, 03 Jul 2025 09:38:46 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e0fe2210d3sm554955ab.43.2025.07.03.09.38.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 09:38:45 -0700 (PDT)
-Message-ID: <f368bd06-73b4-47bb-acf1-b8eba2cfe669@kernel.dk>
-Date: Thu, 3 Jul 2025 10:38:44 -0600
+        bh=IMerz2n+tFN8TsF5zv7+dKlx5F1JGkpVWG+36MCX5+8=;
+        b=u3rm4DyxABg9fgvdqznQIsj+QV+mxFuO81+tsUnqT3Y28t2cO24/aRB4cpv8ku4q8q
+         5g9KgplIbbrcfJQy5Gj6QGBKLfNXIhRirisx6Tb2S4mPL8s1ySI7WDM1t1s889d4wY49
+         QHNKlzK2j+bsOBi8Nd3PQ79OA00OmVwqwZfoElosrYRbslOnGj/ONWoT5VFYJsGriJOz
+         mT7L+xXtBZSpm2tCvyNpqmR553vLgUN+xmASyx8zS+n/t8DEvkNnPlSVaIKlZRj9+l77
+         Fe83J93VKQBdcnYXgWLUljDGKh7FfH5UmqkYo1Zt0PZoeMlibsVILdsT3ZYaqZ5CBfOM
+         ldRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFn6SipKRtN5/OHpSfRK8gzw+77qTP4xhq3sGOFP2Rx3OVkSxEJCVOaxCZqSYqZvC2dV2IcOv2+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoV183yxDfh3bRCOhcbxS4C7Yo+Ol2WIsJygNv2uUioZmTlRdU
+	n4gcfq5766h0ByVRCSskQAhw8wJqzA16T+Wigj7N57F33cmnQG02e8nksmjLFoqWTBxLNoLVEcm
+	uJKNhRANvzc0pToRWMK9pgQkKH3NP90J8TwVknoD+p/I1wJqiCDe7tcUQuhE=
+X-Google-Smtp-Source: AGHT+IHSYeMvwEbudyKZxAAc16iQbkAMBdLxZVFQBfHXNJuS6bF4GAOQva2GfzxgT2xZB1qthR7gV5Llchlthg6MYhNLNnCBGksU
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+X-Received: by 2002:a05:6e02:3008:b0:3df:4ad5:3a71 with SMTP id
+ e9e14a558f8ab-3e0549c5d57mr92223615ab.11.1751574003214; Thu, 03 Jul 2025
+ 13:20:03 -0700 (PDT)
+Date: Thu, 03 Jul 2025 13:20:03 -0700
+In-Reply-To: <f368bd06-73b4-47bb-acf1-b8eba2cfe669@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6866e5f3.050a0220.37fcff.0006.GAE@google.com>
 Subject: Re: [syzbot] [io-uring?] INFO: task hung in vfs_coredump
-To: syzbot <syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com>,
- anna-maria@linutronix.de, frederic@kernel.org, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- tglx@linutronix.de
-References: <686555b9.a00a0220.270cb1.0002.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <686555b9.a00a0220.270cb1.0002.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: syzbot <syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, axboe@kernel.dk, frederic@kernel.org, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/2/25 9:52 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    2aeda9592360 Add linux-next specific files for 20250627
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12f9a982580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7f5c1d958b70bf47
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c29db0c6705a06cb65f2
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ff688c580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/d532560074a3/disk-2aeda959.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/483001f76864/vmlinux-2aeda959.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8f233cdc1c77/bzImage-2aeda959.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com
-> 
-> INFO: task syz.0.23:6175 blocked for more than 143 seconds.
->       Not tainted 6.16.0-rc3-next-20250627-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.23        state:D stack:27624 pid:6175  tgid:6170  ppid:5972   task_flags:0x400640 flags:0x00004006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5313 [inline]
->  __schedule+0x16f5/0x4d00 kernel/sched/core.c:6696
->  __schedule_loop kernel/sched/core.c:6774 [inline]
->  schedule+0x165/0x360 kernel/sched/core.c:6789
->  schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common+0x3da/0x710 kernel/sched/completion.c:121
->  wait_for_common kernel/sched/completion.c:132 [inline]
->  wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:269
->  coredump_wait fs/coredump.c:534 [inline]
->  vfs_coredump+0x8c2/0x2ab0 fs/coredump.c:1128
->  get_signal+0x1109/0x1340 kernel/signal.c:3019
->  arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
->  exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
->  exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
->  syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
->  do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f612984f830
-> RSP: 002b:00007f612a722b38 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: 0000000000000000 RBX: 00007f6129bb6088 RCX: 00007f612998e929
-> RDX: 00007f612a722b40 RSI: 00007f612a722c70 RDI: 000000000000000b
-> RBP: 00007f6129bb6080 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6129bb608c
-> R13: 0000000000000000 R14: 00007fff3502f910 R15: 00007fff3502f9f8
->  </TASK>
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/31:
->  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
->  #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-> 3 locks held by kworker/u9:1/5156:
->  #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
->  #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3322
->  #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3215 [inline]
->  #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3322
->  #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_open net/bluetooth/hci_core.c:428 [inline]
->  #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_power_on+0x1ac/0x680 net/bluetooth/hci_core.c:959
-> 2 locks held by getty/5598:
->  #0: ffff8880303340a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
->  #1: ffffc9000331b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-> 1 lock held by syz.0.23/6171:
-> 1 lock held by syz.2.43/6314:
-> 1 lock held by syz.3.47/6351:
-> 1 lock held by syz.4.49/6392:
-> 1 lock held by syz.5.51/6429:
-> 1 lock held by syz.6.54/6471:
-> 1 lock held by dhcpcd/6476:
->  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
->  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: __sock_release net/socket.c:648 [inline]
->  #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: sock_close+0x9b/0x240 net/socket.c:1439
-> 2 locks held by dhcpcd/6477:
->  #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
->  #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
->  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
->  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
-> 1 lock held by dhcpcd/6478:
->  #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
->  #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
-> 1 lock held by syz-executor/6480:
-> 2 locks held by dhcpcd/6483:
->  #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
->  #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
->  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
->  #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
->  nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
->  watchdog+0xfee/0x1030 kernel/hung_task.c:470
->  kthread+0x711/0x8a0 kernel/kthread.c:463
->  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0
-> CPU: 0 UID: 0 PID: 6314 Comm: syz.2.43 Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-> RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-> RIP: 0010:rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
-> RIP: 0010:rcu_is_watching+0x5a/0xb0 kernel/rcu/tree.c:751
-> Code: f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 7c 42 7d 00 48 c7 c3 18 4f a1 92 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 <84> c0 75 34 8b 03 65 ff 0d 89 90 f9 10 74 11 83 e0 04 c1 e8 02 5b
-> RSP: 0018:ffffc900000079a8 EFLAGS: 00000802
-> RAX: 0000000000000000 RBX: ffff8880b8632f18 RCX: 1370d027c6756400
-> RDX: 0000000000000000 RSI: ffffffff8be31f60 RDI: ffffffff8be31f20
-> RBP: ffffffff81745448 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff33acaae R12: 0000000000000002
-> R13: ffffffff8e13bfe0 R14: ffffffff8dbb8cb0 R15: dffffc0000000000
-> FS:  00007f61f8d9d6c0(0000) GS:ffff888125c1e000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055a134a81660 CR3: 000000007fa0a000 CR4: 00000000003526f0
-> Call Trace:
->  <IRQ>
->  trace_lock_acquire include/trace/events/lock.h:24 [inline]
->  lock_acquire+0x5f/0x360 kernel/locking/lockdep.c:5834
->  rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  rcu_read_lock_sched include/linux/rcupdate.h:932 [inline]
->  pfn_valid include/linux/mmzone.h:2163 [inline]
->  __virt_addr_valid+0x1e5/0x5c0 arch/x86/mm/physaddr.c:65
->  kasan_addr_to_slab+0xf/0x90 mm/kasan/common.c:37
->  kasan_record_aux_stack+0xf/0xd0 mm/kasan/generic.c:533
->  insert_work+0x3d/0x330 kernel/workqueue.c:2187
->  __queue_work+0xbaf/0xfb0 kernel/workqueue.c:2346
->  call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
->  expire_timers kernel/time/timer.c:1793 [inline]
->  __run_timers kernel/time/timer.c:2372 [inline]
->  __run_timer_base+0x646/0x860 kernel/time/timer.c:2384
->  run_timer_base kernel/time/timer.c:2393 [inline]
->  run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
->  handle_softirqs+0x286/0x870 kernel/softirq.c:579
->  __do_softirq kernel/softirq.c:613 [inline]
->  invoke_softirq kernel/softirq.c:453 [inline]
->  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
->  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5875
-> Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 5b 83 02 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-> RSP: 0018:ffffc90003e6f980 EFLAGS: 00000206
-> RAX: 1370d027c6756400 RBX: 0000000000000000 RCX: 1370d027c6756400
-> RDX: 0000000000000000 RSI: ffffffff8db80736 RDI: ffffffff8be31f80
-> RBP: ffffffff84bc6539 R08: 0000000000000000 R09: ffffffff84bc6539
-> R10: ffffc90003e6fb00 R11: fffff520007cdf65 R12: 0000000000000000
-> R13: ffff88806038c0a8 R14: 0000000000000001 R15: 0000000000000246
->  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
->  __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
->  io_cqring_do_overflow_flush+0x19/0x30 io_uring/io_uring.c:665
->  io_cqring_wait io_uring/io_uring.c:2701 [inline]
->  __do_sys_io_uring_enter io_uring/io_uring.c:3508 [inline]
->  __se_sys_io_uring_enter+0x1fce/0x2b20 io_uring/io_uring.c:3403
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f61f7f8e929
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f61f8d9d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-> RAX: ffffffffffffffda RBX: 00007f61f81b5fa0 RCX: 00007f61f7f8e929
-> RDX: 0000000000001797 RSI: 0000000000000001 RDI: 0000000000000003
-> RBP: 00007f61f8010b39 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007f61f81b5fa0 R15: 00007ffcfc501968
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+Reported-by: syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com
+Tested-by: syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 886368cd2c40..887521656bca 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -660,11 +660,16 @@ static void io_cqring_overflow_kill(struct io_ring_ctx *ctx)
- 		__io_cqring_overflow_flush(ctx, true);
- }
- 
--static void io_cqring_do_overflow_flush(struct io_ring_ctx *ctx)
-+static int io_cqring_do_overflow_flush(struct io_ring_ctx *ctx)
- {
--	mutex_lock(&ctx->uring_lock);
-+	int ret;
-+
-+	ret = mutex_lock_killable(&ctx->uring_lock);
-+	if (unlikely(ret))
-+		return ret;
- 	__io_cqring_overflow_flush(ctx, false);
- 	mutex_unlock(&ctx->uring_lock);
-+	return 0;
- }
- 
- /* must to be called somewhat shortly after putting a request */
-@@ -2612,8 +2617,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 				  max(IO_LOCAL_TW_DEFAULT_MAX, min_events));
- 	io_run_task_work();
- 
--	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq)))
--		io_cqring_do_overflow_flush(ctx);
-+	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))) {
-+		ret = io_cqring_do_overflow_flush(ctx);
-+		if (ret)
-+			return ret;
-+	}
- 	if (__io_cqring_events_user(ctx) >= min_events)
- 		return 0;
- 
-@@ -2698,8 +2706,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 		check_cq = READ_ONCE(ctx->check_cq);
- 		if (unlikely(check_cq)) {
- 			/* let the caller flush overflows, retry */
--			if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
--				io_cqring_do_overflow_flush(ctx);
-+			if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT)) {
-+				ret = io_cqring_do_overflow_flush(ctx);
-+				if (ret)
-+					break;
-+			}
- 			if (check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT)) {
- 				ret = -EBADR;
- 				break;
+Tested on:
 
+commit:         8d6c5833 Add linux-next specific files for 20250703
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11670582580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d7dc16394230c170
+dashboard link: https://syzkaller.appspot.com/bug?extid=c29db0c6705a06cb65f2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16837770580000
 
--- 
-Jens Axboe
+Note: testing is done by a robot and is best-effort only.
 

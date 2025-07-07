@@ -1,161 +1,113 @@
-Return-Path: <io-uring+bounces-8606-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8607-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197A6AFB213
-	for <lists+io-uring@lfdr.de>; Mon,  7 Jul 2025 13:14:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6851AFB3A9
+	for <lists+io-uring@lfdr.de>; Mon,  7 Jul 2025 14:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54ABB7A234D
-	for <lists+io-uring@lfdr.de>; Mon,  7 Jul 2025 11:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260983B85A1
+	for <lists+io-uring@lfdr.de>; Mon,  7 Jul 2025 12:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E63292900;
-	Mon,  7 Jul 2025 11:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4890929ACEA;
+	Mon,  7 Jul 2025 12:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMo9NfOm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DKBWh0hU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F072286412;
-	Mon,  7 Jul 2025 11:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683DE28FFE6
+	for <io-uring@vger.kernel.org>; Mon,  7 Jul 2025 12:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751886869; cv=none; b=hURLY24HF5GErRBNwW4W3k/avBviE1u7M83jQqHiygLsC1dUllPhQsygoz6ey3hHuEh1bvGWzo07PCYsC1kGC8pYklVW5TAYAPyZwS4BiZGYkeGuXS2Q9lGXdXqlgtgrBdE+cp/y1thfykZiUqQnwv+ZU+0K2Lg7lbB7V52i+vQ=
+	t=1751892856; cv=none; b=E9xlFLrKF4BzUIGKLjjE0oL7mkq+oJrtzVtvlMcK6kWJTR5Ae6w0qsk7JzcjjEWEJwbMyYgqA9R7ifYZGspni6zl2CzXTKWvZj5BLtLk8VzQaGj/QxSzLuFTEgCYhH/AQMNGsjIV74k0Xyl6IQZRI9pXUE2JPtPRDGytudo4D6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751886869; c=relaxed/simple;
-	bh=wwNXOhUEkGQ4Opb7mt27btwQxprj7tTLk9RgnSGIES0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHPAyOKQ6iH+I46CPTAoS9HdbTcLBjgLsctVFunNyMVvk/YNXq/114klT2LQC68BLhUnXIbM/zxg1L5yxS9LJgfmPiFONM+OOW2fNO0FqKXkLczvORc9xbvVbFM9bt13Sfl1XsNonOXdelPTypooAasTfay0jR8bIGULtgO73V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UMo9NfOm; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so618688866b.3;
-        Mon, 07 Jul 2025 04:14:27 -0700 (PDT)
+	s=arc-20240116; t=1751892856; c=relaxed/simple;
+	bh=zU5ICYxdOhqEQI0YzmOnIIls7EKKnOVi9Zt+4LYhXdk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mPQJF21cuwauzmG2RWeqVSoHteHIlmdvh5U02Wwv2bhURcwNZyFOD6rgt8OHaKxEeD3qSoW1OmhBK5Krqp2f8Yn/vUoX2P3x2XCd2ik3Hf6WDB+fVWqT/KrfXhPoHzr1r0miSHH6Hjc2i5wCWFc4tzgZyec2UoPzRc4soaCQlDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DKBWh0hU; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3df30d542caso14690365ab.1
+        for <io-uring@vger.kernel.org>; Mon, 07 Jul 2025 05:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751886866; x=1752491666; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ISbJeBw9NAi5f57BeJCVw181+eBAYp7u8b9Kdohio9o=;
-        b=UMo9NfOmOSGbxiBAzf71HNdkuFC5l6f3NKcKIe/1W3nD8dQtvnRGhSKGe9N3kgqLxJ
-         41X9JZwffr7XouSoEVHQjND8TLxbfW/2qZj40hmu/i46j3hemHHY8XurNwq//FdeVaDX
-         JcYm3cmDw58v8QAZF+EP1hvFS3gc8PRWrG5c9a3v969N1b0iWn3RTRWene2enUdaajcf
-         OvkyJuq+JmKljJ+lruF/YQR2JxanWFp+XhoK5bO97v+4/WCpdTAFvuzaxcSnvM4S+nnt
-         vvChgeURE04XN4ZyUAYf4u+3uLlBS5qQhFwrQAVuR41VXH8rxKPCAAJau/d9LWyS8Cvx
-         /qcg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751892850; x=1752497650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uPhUmF9Q+Kv6AqcYA8nIbGuanQg4FsiLgdHt7YXmsfg=;
+        b=DKBWh0hUpEKfHR4pViCWoDYtwtJj/tPyrFIdkv4hQ61TAvL+JgWrWo6QrDo2Vv39jF
+         zVNZHOZRhtzrXk5J2YyeNnVLVewKUV5sKVp7uovYzaG/vGonYuUUbT1PEvJ8D5YLU03O
+         7VDv0N6vYu2KuVb5R3eylCQzWqK/3aRLXwu6twediAE1pNBW1onPwHz8yqyO67nDznAX
+         pIo+ZBTnFR94iNvFnA6ek2RV8Kta2E0qMSqwv6IGPHQrDEWj04wbWqVtb8is3iE6TMYE
+         peaJCXuSemHN3P1c9pjtT1bSSfwfdC+MD9DxIWhirxIZ9m8UUyfQldFd1U8LZTjAD6Jg
+         cr9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751886866; x=1752491666;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISbJeBw9NAi5f57BeJCVw181+eBAYp7u8b9Kdohio9o=;
-        b=BwYJRzgP46HkG1xNF5NtkIBueXuidvFuHaSWzZb/Wmc2fhKlDwqn+cZUSHd15q2OJ0
-         3rBsd0IKcGx0UmIIIEtdEb1ix9BcKkXH7XKNYGUDUtG6KQbMkp/nJLc61KeaVg+nAEvQ
-         j4SnDt9BvmQdF2RYNOKMll9s8UUoyfvfgvmJ+XmybOX9Q9XkOWvdJqOAoUpGpBCYN1Ml
-         oAMC8g/G9kTwLVZU8etG5HkZE9QGXzq0OxCKDqpFy2P3iJiUCNkKMjJI7hPCahWEjzU0
-         7xMAJpTkL1+NgBcZAEPEQu4kwWVe8kRZTWDxiVgGSA0nZmXhyUPgC+nIcE8mfzi0xs8Y
-         rFcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxlyDx0+Ns6tyCgxIlkv3LXrtzRJeI5WmXX5kZWgUu7pqgci/X1bdjuEIv9VQEja+ITMOntn72jFtmAw==@vger.kernel.org, AJvYcCXLDUGzRzAWeqvNqLSj5iZrhJneSQYwThUl2v3bnYDPyLyfrNVYNx3YtwZX1c7JcETdnz5albyX4wxOx5E=@vger.kernel.org, AJvYcCXNwYqwZdySWRHcpa4J48mneLc5v5SHS8CdGVvTO31NXZQ+WgAIBqg6bzUklnAu0m0q8e5qn5U22RKfPeSVyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSCerHjTCL5obybB1SlBlneKeQMOtH1Z3Dkrto4swHdr4Yahhy
-	XgBq09s8PtfTA7pVWc4VNIrBjnsuJQ6ldtVCXM28UCz2c7GMHmdUfp9I
-X-Gm-Gg: ASbGncumIL/65aVnZoCmuOBo6Ycyhv9uDb42KabGuTiFH7V9AO0KB/Mg2MW0LUJP1TE
-	nPt0/7dB87PW8XovK0ENs10m+/fzvemEwlTZHTlPyjXgr/70KmV2msAbdgkKCvR8g8l+C7H3ET5
-	9BMRdGO6+kXzRySBFGogLiabWFq9KSwenIUKeX7yJfUl0umbFdfhw3eHG/7LqE8vbPBmmkxyUd4
-	NweLz7NkkgAXmScTBWYaRZ2iOQpq5jW+tZHyAosuOh0NZnCwRhC2awpV9iZcNuFF59DOHvQ7lHl
-	0sEN8gmT39N7fgbcRSeF+d69WxBO4pE5Iymz+CHBWgVYArP00CsYOfxwtUUa+DVL0MeNS/kRg9b
-	Fs6H5SujD9A==
-X-Google-Smtp-Source: AGHT+IHXy0DieX4Ryfe7fnqNm2npiGA05vFcH84u4de0iwjmdTb2PEXlvbji/iKcic0iBMD+4uS9wg==
-X-Received: by 2002:a17:907:dab:b0:ae0:c523:780c with SMTP id a640c23a62f3a-ae4108c85a2mr739098066b.5.1751886865420;
-        Mon, 07 Jul 2025 04:14:25 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:adc3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b0336asm688993666b.115.2025.07.07.04.14.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 04:14:24 -0700 (PDT)
-Message-ID: <f2216c30-6540-4b1a-b798-d9a3f83547b2@gmail.com>
-Date: Mon, 7 Jul 2025 12:15:54 +0100
+        d=1e100.net; s=20230601; t=1751892850; x=1752497650;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uPhUmF9Q+Kv6AqcYA8nIbGuanQg4FsiLgdHt7YXmsfg=;
+        b=AYlg2SxQC1iIxslml8LBnNtRSTl9PBbC6DJCyffR1peNsd1exq0AmBO1e52/YW9MOY
+         DJ/xjCQNaeQBMyhDLubnkMDegFv6UAXBd9Pj4nwr6y6F1MYhLsGaP21wLwcl+iVGA+vn
+         57U/PxCNuqzT8k4iX8aI4TyTyVzXorXP0i3qfv+cGd8zRR77bXbgWeCe+NOPSlyDpuhO
+         KUi3dUknhNwMDqtJaRg1a+kqRAHiasIwmk9JueaxPrp/4wXQK8QwI5ESnXxOge1Wijv9
+         yIeyj+dGGRParASWyW9IFGSK7yuBEL9/sm2uGnMtgSj2QKS9GYkodNTjwAdipbjjKP8G
+         wJ9w==
+X-Gm-Message-State: AOJu0YyNhstYFMjdvrPFRxvye0qBHW0d422wffl3cd1H1S+vvhVQ66P7
+	EUQOnDlkB2WPRuQaiiJ6XS8MIhOgDQpKlM21vd9aqMYOIpDAeF9ZX9wRQprm2M3U1Z1bC147K8E
+	Zxquz
+X-Gm-Gg: ASbGncu1yBNhVUefLXJgP04+78lkMyd8ZFqCeKauIJqAQso8PXj7Asf/0H+krhxqZUs
+	t1utiCibNY2I5Mljw+nL2kxx9S/VrwjjQBUghshT9FYHt59K8r60jwEAQLpgGcyLyyy+2woGOY/
+	1s5oWtnXp34iG42QVxM/oZtPR4MCqvdtq+IXiKjyBVfDaoW04KpDbg5geQFzqb2kDP9oUGNA3bk
+	B2UFEq9ehsxWCG7slxQLwp6yOd5wes2/ZpGoO8MqIcjLa2v7+f9bnsn/lX4855i0f9Rm4Sxr5qP
+	PhVd1BOvS2YAHY3HHc8LDwCePxcrtbThJ2vdNv3ol+u3HfDkvKaBmQ==
+X-Google-Smtp-Source: AGHT+IGL9UxdmYsE4nm1AopWGCo+Ral1ohw+sAh6LoY4x30qkq102l7udq2d38VtrR0hyiHkproxCA==
+X-Received: by 2002:a05:6e02:380d:b0:3df:2f47:dc21 with SMTP id e9e14a558f8ab-3e137204107mr113838465ab.22.1751892850073;
+        Mon, 07 Jul 2025 05:54:10 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e0f9b8daecsm25445965ab.20.2025.07.07.05.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 05:54:09 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc: Pedro Tammela <pctammela@mojatatu.com>
+In-Reply-To: <b9e6d919d2964bc48ddbf8eb52fc9f5d118e9bc1.1751878185.git.asml.silence@gmail.com>
+References: <b9e6d919d2964bc48ddbf8eb52fc9f5d118e9bc1.1751878185.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/zcrx: fix pp destruction warnings
+Message-Id: <175189284920.872716.1677022799006887221.b4-ty@kernel.dk>
+Date: Mon, 07 Jul 2025 06:54:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
-To: Christoph Hellwig <hch@infradead.org>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>, David Wei <dw@davidwei.uk>,
- Vishal Verma <vishal1.verma@intel.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <cover.1751035820.git.asml.silence@gmail.com>
- <aGaSb5rpLD9uc1IK@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aGaSb5rpLD9uc1IK@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-On 7/3/25 15:23, Christoph Hellwig wrote:
-> [Note: it would be really useful to Cc all relevant maintainers]
 
-Will do next time
-
-> On Fri, Jun 27, 2025 at 04:10:27PM +0100, Pavel Begunkov wrote:
->> This series implements it for read/write io_uring requests. The uAPI
->> looks similar to normal registered buffers, the user will need to
->> register a dmabuf in io_uring first and then use it as any other
->> registered buffer. On registration the user also specifies a file
->> to map the dmabuf for.
+On Mon, 07 Jul 2025 09:52:33 +0100, Pavel Begunkov wrote:
+> With multiple page pools and in some other cases we can have allocated
+> niovs on page pool destruction. Remove a misplaced warning checking that
+> all niovs are returned to zcrx on io_pp_zc_destroy(). It was reported
+> before but apparently got lost.
 > 
-> Just commenting from the in-kernel POV here, where the interface
-> feels wrong.
 > 
-> You can't just expose 'the DMA device' up file operations, because
-> there can be and often is more than one.  Similarly stuffing a
-> dma_addr_t into an iovec is rather dangerous.
-> 
-> The model that should work much better is to have file operations
-> to attach to / detach from a dma_buf, and then have an iter that
-> specifies a dmabuf and offsets into.  That way the code behind the
-> file operations can forward the attachment to all the needed
-> devices (including more/less while it remains attached to the file)
-> and can pick the right dma address for each device.
 
-By "iter that specifies a dmabuf" do you mean an opaque file-specific
-structure allocated inside the new fop? Akin to what Keith proposed back
-then. That sounds good and has more potential for various optimisations.
-My concern would be growing struct iov_iter by an extra pointer:
+Applied, thanks!
 
-struct dma_seg {
-	size_t 	off;
-	unsigned len;
-};
+[1/1] io_uring/zcrx: fix pp destruction warnings
+      commit: 203817de269539c062724d97dfa5af3cdf77a3ec
 
-struct iov_iter {
-	union {
-		struct iovec *iov;
-		struct dma_seg *dmav;
-		...
-	};
-	void *dma_token;	
-};
-
-But maybe that's fine. It's 40B -> 48B, and it'll get back to
-40 when / if xarray_start / ITER_XARRAY is removed.
-
-> I also remember some discussion that new dma-buf importers should
-> use the dynamic imported model for long-term imports, but as I'm
-> everything but an expert in that area I'll let the dma-buf folks
-> speak.
-
-I'll take a look
-
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

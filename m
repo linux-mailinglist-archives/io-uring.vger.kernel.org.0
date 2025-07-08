@@ -1,133 +1,124 @@
-Return-Path: <io-uring+bounces-8612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8613-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6963AAFC565
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 10:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9063DAFC74B
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 11:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3051BC2E91
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 08:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDD21AA02E4
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 09:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4F32BE059;
-	Tue,  8 Jul 2025 08:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840C02135D7;
+	Tue,  8 Jul 2025 09:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKeLe21O"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UWKNWOvb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE9B2BE637;
-	Tue,  8 Jul 2025 08:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AA72AE90;
+	Tue,  8 Jul 2025 09:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962974; cv=none; b=pEAa7/0M2xyUJ4wUg1bJ7M+LW7jU1Zvfe/7o84wDvJ1EwqfpfQmXZs2PNxJoxBnIQk1OTZMzk+ufZFItJ3LlnLSLY4u0ZsPEGGRrlPPNTuWkycj5ZV1MIVkUYLSuq01g5LF2rJgA9tVKs534dv3ux13NwYnK5E+0XQ2eUlAbEBw=
+	t=1751967917; cv=none; b=U0ws0NvccN/8Y8Z3boVfVzondSmbcKe7RHzX1biU/BT9vxS6FN2v28wnqFpbEFjffLM3+/s9qeaGaaF603N0O0wSX5jRJ89F15Msm+sknn8dWEKMAlmbgfgBuVybRP9o+ylFzGOQsZhyvejLPDm3MRULY/9KHImb1SAoTfeczv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962974; c=relaxed/simple;
-	bh=jualjBCwRjVeX+QgNMtQhdaM5v4JwMGLvjZ44KhUcy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=B6+te/Mz0azKfQp/hdVUDWrPtRXUuDTDFybJGLuh6FpFJulqDKnoWH0+YoVk1bS9ND5VdjARTdqHPr5lQTVPdLbQfOeeSDDsnDInlu4kqUk/kAhbSmfC5rWbZpYKHANlmxU7zQKho8b1D/cfmLPuq+T3N0eSxnwv5XXqRw7sqQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKeLe21O; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0e0271d82so826948666b.3;
-        Tue, 08 Jul 2025 01:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751962971; x=1752567771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=HKeLe21OVJRBTWnZKK7TvGTZE+8YqAqqKcjchc7wXY4LrR2CRJlC2kkM3W0cAsJgfg
-         ZqgLMa62zi81XdDppCE+i9jYkLXB0WR/r4rm4VkZGTAFeOAWKwy1OAIfuu1XLQJ5NQhn
-         ZtvPj/WZ25xcRjH1/t7R+dJSO6KPVJSXRtPC10ho0fxiYCj/xo6Tzzk3j+Da3LzJb3NK
-         CmYeTaeRtrnX+fci7TdyqOJTCW6/m/74pgappP4N+htpQB3SjMof4kBodjKTHvNimW42
-         VnEK/RnRFhFapSiNNEs77EJNwaQvJkAVoo9/9KQcBQJweuJ+Ibf2CYLYNUlL1Cqdkde7
-         I+cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751962971; x=1752567771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=WPq7wxIDrSyzBKwGWwc4FtoFiFGkp+II1e/fW3WMyLvWIgPWU43PBGC8xlzD6V9Eo7
-         +VbSsEMmcehbwXQaBItKR5YrKmMILcKI8icnMOQzsWRuT4lUYa4RQxho4zBwJ8Ia3yPZ
-         L2YFsbbqV12ufr3h5b36wIvQfcF3//szPzM3MsSXx5dnxNqWF5qJrBa6eRCTn1vkicVX
-         DsmXHVxvap5SIwymfiefrvEdg5Rce2g4TLmtbaxCi33ZpFnFEeOd02neb6J1Pbv1exg+
-         S4EhU+n4J4RzZWx+dgu0GuSHYSvjQtJ93yr4GE8Rvj+ODoZhZ4wmVYYdAthvtA7Uw1tX
-         2Jsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUurj4a7Sl9FroXhPOZ4zc2mZYcBiGv/rf6kkDuJBCACsSTfVRA+7bitoRGiC81bFj0UUcC/bmkmg==@vger.kernel.org, AJvYcCWi5K0W8TulPoKGSy/npnJ1Rs63VYNmoHdBBqyGMSK854UGvZjnE6tfgbQdyh9E0cDUWHfBeKlkiYWkapLu@vger.kernel.org, AJvYcCXvtyhHHKtUm04NWcTqZ1PXCTpEtp9A7CaagjdF9dsyOxPLOlCOOcVscr+9WgGmOZa/XXetXNEaHuHby4QpdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUhI1B+6ymj+yGXIS1yo2/TucZfUX5MYIQ13GgB/OMsHjEXZ23
-	BCo2Sa989vWcKxTfYV1wzK8w3iujOR+lS2FqEhTqjmfJfCHvH7wDbx9+
-X-Gm-Gg: ASbGncvw+5ne3L+1xp7lwJRmbBrmRgP/PnGUH9EDUBYDLhusi0YVvz0cq72ULePjLbX
-	Gz9jYxsRgJAw3XZmAOy7KKylQCH5PKR/T6DHVPocApTZhvUubRHJbb2abCP5FhKHkVDLRPCiYTp
-	pJZIPlvkXfKvf2qZgDwrBf6e28vxNliC1gk62njhSiUcmpf6k77PTo2SN/iHFafVu0DbwFKElr+
-	J8ftrbkX83DnlTWVPn2RBgNEfJO/uXV8uJC/NiYpNCZe/IGeNUCsrg45SKJfDfuBqxTf8cHOB6d
-	dKS/El6JDQdNQVx6L5eLWNznrlUplhxMdWZFHOlEDse+nFJ63Qmh5sOqg56L5vwS/VJKhwgdN8o
-	=
-X-Google-Smtp-Source: AGHT+IGMRQ61VwYQ2vN+Uf4NWX9g1lKr9RmLW1NnlHUktgMRBPQgnpFd7IvsAZfTjj5Azpyp5TXuCQ==
-X-Received: by 2002:a17:906:d54c:b0:ae3:a3f7:ad8e with SMTP id a640c23a62f3a-ae6b061b38bmr206333866b.25.1751962971375;
-        Tue, 08 Jul 2025 01:22:51 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:4dfd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac679esm854716966b.104.2025.07.08.01.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 01:22:50 -0700 (PDT)
-Message-ID: <9bfb10a9-0400-461f-af4d-54946455e74c@gmail.com>
-Date: Tue, 8 Jul 2025 09:24:18 +0100
+	s=arc-20240116; t=1751967917; c=relaxed/simple;
+	bh=dGcUdxYiM4ayxMycyB2LSOUC00gSDU0QfvS9fJ9kzxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkP4ufBrUnCAl3E2Ztt2umBH5PfpMl/zyLZEWHlxoOnFzIlVU2oHYfkr0u9z1jZ8ZAaVkOko3wKg5rSYp0qDzJ0CxEs4ny6S1luJ+4tI7jh1TGd7nkOQIFDeqKoqgmL1n8QGa1cyQPF3fHXGPsdJU9TWC2LGRZpvKKEkaT7GrT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UWKNWOvb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aIbqbwBgG/lyES8ZapCr+jWLXI49EU1keL2UKBLl4ZQ=; b=UWKNWOvbW1xTiQyAkogBIy5vXY
+	1kMTpJM38uJiKRySLNvCg1/KWyoRb1P010eKGu0Ne4OmVDj2enRDpDMIYiYutgg62elXC6HX5fRwp
+	M1LNLNaS6wDYR9RjAnmSCamtrf8dgwjDhxgF2622TFGsWOtY8XIgCxUX7uUkeFHHe88+IJxPP1aH5
+	C5UZrWlj2eHwJoWhyOzwHz2bpVaRlInzIv2GdifcrnVgCksZ0myip6UGZhhb0Tu0LW3YV/B7CjhVD
+	9z4Jd2Nv/RLlugnLGApfhYL3NyOuZthIVKEvuC2NpqgIbuLqfHQrETLIoiOgkss1GF0ULYqQBX//B
+	eBqoAwnQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZ4t1-00000004vIx-0KrK;
+	Tue, 08 Jul 2025 09:45:15 +0000
+Date: Tue, 8 Jul 2025 02:45:15 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+	David Wei <dw@davidwei.uk>, Vishal Verma <vishal1.verma@intel.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
+Message-ID: <aGzoqyM06rgXIJst@infradead.org>
+References: <cover.1751035820.git.asml.silence@gmail.com>
+ <aGaSb5rpLD9uc1IK@infradead.org>
+ <f2216c30-6540-4b1a-b798-d9a3f83547b2@gmail.com>
+ <aGveLlLDcsyCBKuU@infradead.org>
+ <e210595b-d01f-4405-9b5d-a486ddca49ed@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [fs?] INFO: task hung in do_coredump (3)
-To: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>,
- anna-maria@linutronix.de, axboe@kernel.dk, brauner@kernel.org,
- frederic@kernel.org, gregkh@linuxfoundation.org, hdanton@sina.com,
- io-uring@vger.kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org,
- viro@zeniv.linux.org.uk
-References: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e210595b-d01f-4405-9b5d-a486ddca49ed@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 7/7/25 17:27, syzbot wrote:
-> syzbot has bisected this issue to:
+On Mon, Jul 07, 2025 at 04:41:23PM +0100, Pavel Begunkov wrote:
+> > I mean a reference the actual dma_buf (probably indirect through the file
+> > * for it, but listen to the dma_buf experts for that and not me).
 > 
-> commit 2af89abda7d9c2aeb573677e2c498ddb09f8058a
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Thu Aug 24 22:53:32 2023 +0000
+> My expectation is that io_uring would pass struct dma_buf to the
+
+io_uring isn't the only user.  We've already had one other use case
+coming up for pre-load of media files in mobile very recently.  It's
+also a really good interface for P2P transfers of any kind.
+
+> file during registration, so that it can do a bunch of work upfront,
+> but iterators will carry sth already pre-attached and pre dma mapped,
+> probably in a file specific format hiding details for multi-device
+> support, and possibly bundled with the dma-buf pointer if necessary.
+> (All modulo move notify which I need to look into first).
+
+I'd expect that the exported passed around the dma_buf, and something
+that has access to it then imports it to the file.  This could be
+directly forwarded to the device for the initial scrope in your series
+where you only support it for block device files.
+
+Now we have two variants:
+
+ 1) the file instance returns a cookie for the registration that the
+    caller has to pass into every read/write
+ 2) the file instance tracks said cookie itself and matches it on
+    every read/write
+
+1) sounds faster, 2) has more sanity checking and could prevent things
+from going wrong.
+
+(all this is based on my limited dma_buf understanding, corrections
+always welcome).
+
+> > > But maybe that's fine. It's 40B -> 48B,
+> > 
+> > Alternatively we could the union point to a struct that has the dma buf
+> > pointer and a variable length array of dma_segs. Not sure if that would
+> > create a mess in the callers, though.
 > 
->      io_uring: add option to remove SQ indirection
+> Iteration helpers adjust the pointer, so either it needs to store
+> the pointer directly in iter or keep the current index. It could rely
+> solely on offsets, but that'll be a mess with nested loops (where the
+> inner one would walk some kind of sg table).
 
-Doesn't look like the cause, the previous repro from 28 Oct 2024 didn't
-even have any io_uring, and the patch only reduces sizes of some
-allocations. The common part b/w programs is
-prctl(PR_SET_SYSCALL_USER_DISPATCH_ON), might be related to that.
-
-
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ec9582580000
-> start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ec9582580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12ec9582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a2228c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d48bd4580000
-> 
-> Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
-> Fixes: 2af89abda7d9 ("io_uring: add option to remove SQ indirection")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
--- 
-Pavel Begunkov
+Yeah.  Maybe just keep is as a separate pointer growing the structure
+and see if anyone screams.
 
 

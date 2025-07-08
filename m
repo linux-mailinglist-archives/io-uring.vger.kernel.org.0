@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-8614-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8617-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE23AFCDE0
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 16:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD860AFCDF8
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 16:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26093BB840
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 14:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD481188739C
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 14:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A222DFA24;
-	Tue,  8 Jul 2025 14:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F306F2E041C;
+	Tue,  8 Jul 2025 14:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tJ86WTpi"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JMYlcHjD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDABB2D8DA8
-	for <io-uring@vger.kernel.org>; Tue,  8 Jul 2025 14:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011C22DF3F9
+	for <io-uring@vger.kernel.org>; Tue,  8 Jul 2025 14:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985554; cv=none; b=ZO9D+b3eRAa4BW+nPhPw2kR9nZXMAIkl1IlBQwk6yNtMSa3aAR+Qygof6PLmiQRDTeWLtstCJeEhIjKwofJN0d7PvYRTAx2QjpPTGEQyIcmhBgF9Mr06qdR6iPNy3CoNd5/0Xv8xJcNXmgz7X2ShCZb1MUXcx9ZPBxhrhMcJTwM=
+	t=1751985556; cv=none; b=fFgnS/0e3zAFblYsmdEU7hYzmh5boTCVhOfmeCge6VP+VHPMrYBsL0m7oHTOQgu6bv9HFYpfhMot3TjUu07FTKajPGenryNZjWjkecMoJnKdthB5n2r3QSWeRIfgeOmaWQsyiaBHTtqBAn7MTtPZpe9MrsJwZ0VbR3lL0ycon1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985554; c=relaxed/simple;
-	bh=hK0x8tCd38wd1AcTPvD6hJnSew5C4/9y2Me6qtX6cPM=;
+	s=arc-20240116; t=1751985556; c=relaxed/simple;
+	bh=2j1zLmEy/NnkXPYEWIHNmK3kGhmgef9bfK5ol/Zxijk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V2WxkorFmlHdIAfYomzqJsARr8lbfQVmfkR751uwcHr92BZH+a2JAU6Om2RlzlGdgl2HnUdlWF4imp0mhBrlpb3z6uNHQAi/URTY1h5Rdk6nias2oR64yMVUUnGl6x3F6sEuPwotmqT/Ii3yrVIsxLGTResQbZHO8a2ZXsSnmlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tJ86WTpi; arc=none smtp.client-ip=209.85.166.44
+	 MIME-Version; b=Z76QMMzCjmXID1ZG+SNCxi4ZjSJtGZXiF8avSlJZ7xau1eBYnUlkEJrwMZib15Hjj5wVi6GhmgMOp4PQCSEltgpsU4rRRoMFatmAUHUpz3BpJqhqtgaL9ZuTVw0oDZfA4mAM7Hv1o+WGjzt3kMeeP0OOAdD2sUwgfWAMK8GNuac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JMYlcHjD; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8723a232750so443624539f.1
-        for <io-uring@vger.kernel.org>; Tue, 08 Jul 2025 07:39:11 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e058e82584so40213965ab.2
+        for <io-uring@vger.kernel.org>; Tue, 08 Jul 2025 07:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751985550; x=1752590350; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751985552; x=1752590352; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iGM1E3DYMEASkYf+b3zNDldK0JLh3lOR67oalgyg/HI=;
-        b=tJ86WTpiOXxjsszhIBlGO35+5QK6XLtW9eFDeDU1GEVUTzJIycSoarzHnPC067ID/p
-         wNRXH5GWYNt8z7atLpX/oU8LLEnkJXrYBg1kES64AEqHmYwtbLx2Ta/9My/yrGXCmg1i
-         HqPDn/7pRwmaVckvZRrHgdVq6OPczdAHQZL+mZ5SOy7FMay719hx8B8CHtuGmo9MkSd4
-         hGoKj4NSaLbEws8uPhV5Uoucc51Ifofs3qmJHEwI0zs3HEB3zRq3yB1XUzR8ZJ8Ph/vF
-         U/eHaHHlGejfZuR4pAlnjKx0s6bK5sNgQtfedCs11Ha9x9rZlNQcEaY6xiIGfvGqPTZp
-         qZgg==
+        bh=6EfX3T1uAHIwWZdbRKKci3AdqUBDNUEKUZwTSx/RaX0=;
+        b=JMYlcHjDTtLsZ0Kay9X/FrqVXywc8TG1D0WtSjGi6n0f/bGJM5jt7r91OMyZPE40Qz
+         aXNQlW8361lqMv0XSv9fUo7U9JSCLB1tNF7Lps+v7fkenfp9owvEGVaSQyRvYIWAl0ow
+         OAjO57eRFSM9h0ONNoMmDRrSAaaZI1LPdhgYpCXHt2q6avMOBx3hnyjwEC4l7ooA9dmP
+         TnMsdJ/90IArbf3b1fbdBODfUPaR0tkUpVpg2XcmMZnI/PvpN12Zngr4Srmtc56QzuQn
+         nEwWSck1zf7FPlMwZwbPcruxNpTQBDLg4gGZgJZjWwa94FzJFQ5i4BgjCrwH/LZe10su
+         Fy8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751985550; x=1752590350;
+        d=1e100.net; s=20230601; t=1751985552; x=1752590352;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iGM1E3DYMEASkYf+b3zNDldK0JLh3lOR67oalgyg/HI=;
-        b=MBdDDhFIc70CKOZKcQNrGrpp1THW3ADmphqo3HIjzPgIsmjHJYZpAkn3jgbrkYI9Sm
-         W6qu1R4NzAfHulht2txnmSF2MOy1YTkvmsLc512bM6TJALT8cIAwkgpd7umlt+kyqAqV
-         brZjtOaEYV4BHzjAWJHnu0/2l2rhfD33dwEsNyFaxOZCEqkZNVnkscZMv8XDA8hW9DNf
-         7q8kILk2t/ULha+bZiUl1fB3v5buh9USYKYH8tGt4GzIzXcLp+UGc9dIbQq2fS/C4bts
-         rOr6HLE+9rxOfN8Hcb7WKYKhyoqN6NI7uSKUb0LGCa/97hJMizxWByjfYGTn7u/3zdZI
-         t0GQ==
-X-Gm-Message-State: AOJu0YyMKXJUyLChDv05zS8tvy2tj0dBTkwxFwuYKjfPIOyvCNE+56gG
-	4m+YW2kSjQUb5qD3z5MHNynbIiLPqJgpiBlgJRhcidUr4bTwkk8iwJjCWYBpccadLfL3MNwoubW
-	t3zdC
-X-Gm-Gg: ASbGnctKrKLQk24pH9iUcDyfUwq2T7KUbNN45kLgC9nSFsAfZlp5ko0pGx9lvJERp+6
-	xhsmJ7Gisb+2PXBq48GsaN85p9iUPDWyknXl3An+eZagK+rHtdcgRy3t3dVPuXDjfR15kthF4p/
-	WHsrkG6HdWANBkG+pRruEh4e2WcQJPjs00kFU9fSmYxBPUx6iZtuNmVRTNr1bdXXmmT0ZLBsJuf
-	n0TibYeBUi4TAgn1Kzt7tnnjUTq8gYcpYoJh4x3K15tjkfl3mRTCblMsO/EVDXrlPPlphmaKsDM
-	zw+mrMCB6t9zJJm31DuoJpWWnUKiYCcc+niOPr7du0UJ9w==
-X-Google-Smtp-Source: AGHT+IH8RuHrEu01D6vtSFKy+cX6JkvKk1xzQbJ5MZ4RW97nNscHq1+OCHiXWF8/UyrAW34tfgDEkQ==
-X-Received: by 2002:a05:6602:b97:b0:873:1cc3:29d6 with SMTP id ca18e2360f4ac-876e15dfbd5mr1705273339f.8.1751985550141;
-        Tue, 08 Jul 2025 07:39:10 -0700 (PDT)
+        bh=6EfX3T1uAHIwWZdbRKKci3AdqUBDNUEKUZwTSx/RaX0=;
+        b=GM04QEF6W2f51PZZlFDXk4j1jEn1cf3OrvkPfSZip0X6tcwAU/oCPiLTrl4KloX+nj
+         PbaxQ/rcmNNb3sMbzDrLiKjFaRm7CaX4AkKC65TQ1ODnR0bTGFj724TsCJrkd/AKmJCG
+         4jBjZS4B51MbKxFiFg3p6oTFB/GxbbiRgPcZFQ65AdnMpeTK62UV94MJ1PqwM07W/gyv
+         //ETaNdxr2ANAGEJVteZNrcB7AhbPjglaiIhVJbukjlKqBFDF5dPQC/CAysjM9ebKQD1
+         MkwGZqcu/r45aTp7VBeNs4W3SWosgpXybZc80p+UdBS3fc1P3/WyXitKCTYKrWrJfsyj
+         WLQQ==
+X-Gm-Message-State: AOJu0YyFawF0ECgbk6N735g9k82E5ZaZWuYDOwEdiepFdCG2skArEb5R
+	HC2w2rImH9ZMJYIbrgQSz6c4Z1eT6m3zz07CdRS+pJI08izy6ZDIj3WjAVY+FBmAKzdes+QFeT7
+	JsopV
+X-Gm-Gg: ASbGncsoqwHBiYrN9TrB2rRpcVDuEvpGbZze+/UgyN4uLdVSKCWkzhStVZ2VcmP0n4V
+	BnhUQJBvAkDn98QMxFyblZRASHvqD27Mdm2VUBgs3d23RpvPvtK7mcNhTrdedwcHaO3xNLr2HzJ
+	UL1+fS+3ZZpEbfDZEfFiAa19Zrxh0iDTJzyHQCRr9g3LdcjaHIigu3PWzg4OzPk2S7inL2ywnBm
+	t4OowcH1wbwvFuto8YmGCWbwIbiX6sw/u/oCVd2t2hZ+tbLuzGp0rgT9ylAOkfKrSDQKtcx9+AB
+	nhIJrxlZBlU5vcvs1g5Mq7moKrYH69fJ4xDAkJO/QgXiJA==
+X-Google-Smtp-Source: AGHT+IETcLiGQk69kapDFoz5GxfupK4EueOEgU92wkwEVuVtpWdhc7n0O+o8iFUB/SeE+ucrZfkNIg==
+X-Received: by 2002:a05:6e02:228f:b0:3dc:79e5:e696 with SMTP id e9e14a558f8ab-3e154e4bdd8mr27663595ab.11.1751985552386;
+        Tue, 08 Jul 2025 07:39:12 -0700 (PDT)
 Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5053aa4e546sm166739173.134.2025.07.08.07.39.09
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5053aa4e546sm166739173.134.2025.07.08.07.39.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 07:39:09 -0700 (PDT)
+        Tue, 08 Jul 2025 07:39:10 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/3] io_uring/net: use passed in 'len' in io_recv_buf_select()
-Date: Tue,  8 Jul 2025 08:26:54 -0600
-Message-ID: <20250708143905.1114743-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring/net: allow multishot receive per-invocation cap
+Date: Tue,  8 Jul 2025 08:26:55 -0600
+Message-ID: <20250708143905.1114743-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250708143905.1114743-1-axboe@kernel.dk>
 References: <20250708143905.1114743-1-axboe@kernel.dk>
@@ -89,29 +89,113 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-len is a pointer to the desired len, use that rather than grab it from
-sr->len again. No functional changes as of this patch, but it does
-prepare io_recv_buf_select() for getting passed in a value that differs
-from sr->len.
+If an application is handling multiple receive streams using recv
+multishot, then the amount of retries and buffer peeking for multishot
+and bundles can process too much per socket before moving on. This isn't
+directly controllable by the application. By default, io_uring will
+retry a recv MULTISHOT_MAX_RETRY (32) times, if the socket keeps having
+data to receive. And if using bundles, then each bundle peek will
+potentially map up to PEEK_MAX_IMPORT (256) iovecs of data. Once these
+limits are hit, then a requeue operation will be done, where the request
+will get retried after other pending requests have had a time to get
+executed.
+
+Add support for capping the per-invocation receive length, before a
+requeue condition is considered for each receive. This is done by setting
+sqe->mshot_len to the byte value. For example, if this is set to 1024,
+then each receive will be requeued by 1024 bytes received.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/net.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 328301dc9a43..72276339e9e6 100644
+index 72276339e9e6..c96043c4e8ab 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -1084,7 +1084,7 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
+@@ -75,6 +75,7 @@ struct io_sr_msg {
+ 	u16				flags;
+ 	/* initialised and used only by !msg send variants */
+ 	u16				buf_group;
++	unsigned			mshot_len;
+ 	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
+@@ -87,9 +88,11 @@ struct io_sr_msg {
+ enum sr_retry_flags {
+ 	IORING_RECV_RETRY	= (1U << 15),
+ 	IORING_RECV_PARTIAL_MAP	= (1U << 14),
++	IORING_RECV_MSHOT_CAP	= (1U << 13),
+ 
+ 	IORING_RECV_RETRY_CLEAR	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP,
+-	IORING_RECV_INTERNAL	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP,
++	IORING_RECV_INTERNAL	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP |
++				  IORING_RECV_MSHOT_CAP,
+ };
+ 
+ /*
+@@ -202,7 +205,7 @@ static inline void io_mshot_prep_retry(struct io_kiocb *req,
+ 	req->flags &= ~REQ_F_BL_EMPTY;
+ 	sr->done_io = 0;
+ 	sr->flags &= ~IORING_RECV_RETRY_CLEAR;
+-	sr->len = 0; /* get from the provided buffer */
++	sr->len = sr->mshot_len;
+ }
+ 
+ static int io_net_import_vec(struct io_kiocb *req, struct io_async_msghdr *iomsg,
+@@ -790,13 +793,14 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		sr->buf_group = req->buf_index;
+ 		req->buf_list = NULL;
+ 	}
++	sr->mshot_len = 0;
+ 	if (sr->flags & IORING_RECV_MULTISHOT) {
+ 		if (!(req->flags & REQ_F_BUFFER_SELECT))
+ 			return -EINVAL;
+ 		if (sr->msg_flags & MSG_WAITALL)
+ 			return -EINVAL;
+-		if (req->opcode == IORING_OP_RECV && sr->len)
+-			return -EINVAL;
++		if (req->opcode == IORING_OP_RECV)
++			sr->mshot_len = sr->len;
+ 		req->flags |= REQ_F_APOLL_MULTISHOT;
+ 	}
+ 	if (sr->flags & IORING_RECVSEND_BUNDLE) {
+@@ -837,6 +841,8 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 				      issue_flags);
+ 		if (sr->flags & IORING_RECV_RETRY)
+ 			cflags = req->cqe.flags | (cflags & CQE_F_MASK);
++		if (sr->mshot_len && *ret >= sr->mshot_len)
++			sr->flags |= IORING_RECV_MSHOT_CAP;
+ 		/* bundle with no more immediate buffers, we're done */
+ 		if (req->flags & REQ_F_BL_EMPTY)
+ 			goto finish;
+@@ -867,10 +873,13 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 		io_mshot_prep_retry(req, kmsg);
+ 		/* Known not-empty or unknown state, retry */
+ 		if (cflags & IORING_CQE_F_SOCK_NONEMPTY || kmsg->msg.msg_inq < 0) {
+-			if (sr->nr_multishot_loops++ < MULTISHOT_MAX_RETRY)
++			if (sr->nr_multishot_loops++ < MULTISHOT_MAX_RETRY &&
++			    !(sr->flags & IORING_RECV_MSHOT_CAP)) {
+ 				return false;
++			}
+ 			/* mshot retries exceeded, force a requeue */
+ 			sr->nr_multishot_loops = 0;
++			sr->flags &= ~IORING_RECV_MSHOT_CAP;
+ 			if (issue_flags & IO_URING_F_MULTISHOT)
+ 				*ret = IOU_REQUEUE;
+ 		}
+@@ -1083,7 +1092,9 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
+ 			arg.mode |= KBUF_MODE_FREE;
  		}
  
- 		if (kmsg->msg.msg_inq > 1)
--			arg.max_len = min_not_zero(sr->len, kmsg->msg.msg_inq);
-+			arg.max_len = min_not_zero(*len, kmsg->msg.msg_inq);
+-		if (kmsg->msg.msg_inq > 1)
++		if (*len)
++			arg.max_len = *len;
++		else if (kmsg->msg.msg_inq > 1)
+ 			arg.max_len = min_not_zero(*len, kmsg->msg.msg_inq);
  
  		ret = io_buffers_peek(req, &arg);
- 		if (unlikely(ret < 0))
 -- 
 2.50.0
 

@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-8618-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8619-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7580AAFD4C3
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 19:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D591AAFD4D9
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 19:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3C716147E
-	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 17:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1D81889788
+	for <lists+io-uring@lfdr.de>; Tue,  8 Jul 2025 17:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9C6BE46;
-	Tue,  8 Jul 2025 17:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAB22E49A8;
+	Tue,  8 Jul 2025 17:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IlloH7vM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ChpgXjrT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AAF202F70
-	for <io-uring@vger.kernel.org>; Tue,  8 Jul 2025 17:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD362DFF04
+	for <io-uring@vger.kernel.org>; Tue,  8 Jul 2025 17:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994487; cv=none; b=R8hUBzkyQqkmnJjJf36K295kxxyjbetYQ6+76LxWqkLxC+LTignB/5XQ35CvytJ2scZgjcvP8/UtqDebV8pcBiKYk7W21AUJHM4vQHuYnLxZBnwyXLI7HvElxwEdfPNxhuN3YneAx5mm61+z0/S8klMdN144sFNAxgqWm9uZIsQ=
+	t=1751994581; cv=none; b=iSHiTbhK0Pk/XnvEYxduJILWgZyVbcgZzvhsvTer6/HiXe2fpI6ZBpK0t3xyh4WmvnhPseVcHYOeMmqYBoNs7bNeDBhjpOd2uhsNL5q76Cf7MOyOWoF+jMtOHURFkd7DdgqKqikFvWROxn2xgcipi3R4+rcvmqoyOKCeFwviGQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994487; c=relaxed/simple;
-	bh=OJ1GntkJ5ilDK16Xp2UzTIv0sVOw+Kywycg/F2S3Mbc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=B4FzibJxcT2nNFqqc8qpAAnGx1ra/7ItPPxjlPJEQ9cmkrP2NcFmtYDSg4PbcKnVjOPoH1C6Zt1hbcdbaJu0tT0oVC5T4stplnUSBLTeinItNWYEUxT2SMnRRUnCwDXzpgBJ5exEeZy31UmjB1F4d+EwtbVsGO3K8AoY3QGjQFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IlloH7vM; arc=none smtp.client-ip=209.85.166.172
+	s=arc-20240116; t=1751994581; c=relaxed/simple;
+	bh=faV15MfmlIdxVLJco81GESOng8jeEiipYPq7KIjfFr0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=KFLRgs2Wt1dF9RGM4sv8TWzZb7i/FjxkKHOeJGIgJt/VC/szogiGkcGm1WL6NTBIjen5U3og9LoLgkjB5Jz9ZkpSv3OeKUa+0ly0jGSYRpcRn0R61cl85CutqJDbi0tEvEWsaeGZ9JIcShCsgIFGxKfem5+NDuht3XfSEqOdABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ChpgXjrT; arc=none smtp.client-ip=209.85.166.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3df3891e28fso13045155ab.3
-        for <io-uring@vger.kernel.org>; Tue, 08 Jul 2025 10:08:01 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8762a0866a3so102138439f.2
+        for <io-uring@vger.kernel.org>; Tue, 08 Jul 2025 10:09:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751994480; x=1752599280; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751994577; x=1752599377; darn=vger.kernel.org;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0uR2AAERTefZNGbKh++1SWGh73kTa5RXmHePaXy+KtM=;
-        b=IlloH7vMUeZeoX0KMshpffa7q7Ad5WwyKX4JVLiKxCeiOp7IhKaMtNlsUoN6D40GM+
-         bOz8mJgseDN6lkgo0PRku5SyVtWPd3O5ntPT4n995rJOnkBX0q9S5ToAq94GCOQ680ez
-         1sT6MzMzCIOzMyn8u96Mg+2o+r5r5oUkAZnCoqAeHxEKnNdi5ZZVSnfMPRoNLuZQ+uaO
-         Sg9YYmc6jzlh8xlL+8QFqu00ZdwAn1d5uZ4TAk0RopougOcFFNFEjRxsz6K7oo6C7JMG
-         tkzErgGyJZaD1xEfvszFyFeRYRraaBkdUlZSNXH2J7LtEpopqfz0kAEyPwKcwqnnvg/y
-         b0gw==
+        bh=sVV+CVMuTfEIYsmAOqgA79niyyAfg9/ac2rHyVWYssA=;
+        b=ChpgXjrTsjUzHfsI08hEu2bfgs9V7QNPVFcrQFOoBHtWCLf9E+aqGBSj3mYGlQmN40
+         ieNhvP35jk0Dj7MeBBFKRMTXl5Y/ZAN4PEavsAkNOQIicJF0voUoPJblg95BK9OiiY6W
+         AMQvs8v1I/t+7wn0WlZRMSQkjIM/8Q9/46XIuOMircLob2/bWFN2caYu8jbvyTlPB85J
+         hM9xLlYc1pHGc63t7u+udx/4mF/QTIBMPArp0AM6fpB4V7mjwkQmGQ18m9OUuDSwzgYI
+         qWd0P6WkPuk08BR89fWlaDb2vGGPJJmX8iTkxlQgqUVPTNH++aBzhjosS2Z8STw/LhXw
+         Fi2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751994480; x=1752599280;
+        d=1e100.net; s=20230601; t=1751994577; x=1752599377;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=0uR2AAERTefZNGbKh++1SWGh73kTa5RXmHePaXy+KtM=;
-        b=J0ajiBJ/Y0Z9T9mbSlLGbanBWVil7toJK6RoO21xt1c6UBTo9PSy2LVcmNbFZwahSJ
-         2em6kPGYpO/Q1BiR6IGQ9oL1eWUbP1r0zX126v5cpU51IMaywUZB1t4UszqMU0M1oO7c
-         ijFBICWBDjfqfAmi4t76p9eNM0xO208NRWxnpvEyXUfswhIfGSQ+2UNaZuC9sipw74kq
-         9WXkl9hVHJfJHs96VNooNEflI90mmZzYwi25pEBHSj1dDaFYBJKadJfKCrqts4oJFFj/
-         PPCTORrQrGHe1tK4apjqD7IFRD6sZqK7IY5nKiyizeZfbU48YBQIte7oAtTgmtzzcx1d
-         LNqQ==
-X-Gm-Message-State: AOJu0YxH9R+w36D+AmTWl4Mptj/wN+fu50ps4WeEAYlWcE3apcQd84dR
-	Wyr46dUz7T+QlzoJT9yxNcWnKg1N/cNoGczxiwU+8DFEbZcTVgSR7govEjERm4245gWBCRYUIXS
-	aOOAz
-X-Gm-Gg: ASbGncv12w6g9dBgqEAumJyBunyyJ1kiqAduvuaqrytKWEzpMJ1SiQOp7lh+lF4Xm7R
-	ZfUjdLOZ7yLWABxekbT2OEYOOcynHzrFfE+rEQwCjtiA9FSOUz/xzEbWpYJqxRxpHCDlixTmJIU
-	B3GOiGFs689hp5PxPmu4d+wGx8ujQmZA9xC2c8PyH/plg58NneEobEldjkSrJJElfOTEY0eqfOH
-	ZKz3a/GQ41IoRkM7YK+asfPECnyWyx368rRbG/+ZeBuM0HzhEYyV6yI1vDtg0tNckxJlfZsn4nE
-	/tQ4h6pqPf546XwYUiVvKKHoezLr/XlxcnV4Oads0S+seTT/2qxZlNE9Ig==
-X-Google-Smtp-Source: AGHT+IHcDzzi3VQohlehf1tcp1kDecK87scu6yuaQJGCP9leKgOJzDYRcke5jbHJMNnpLLu/Vcr0qQ==
-X-Received: by 2002:a05:6e02:230a:b0:3e0:546c:bdc3 with SMTP id e9e14a558f8ab-3e135565182mr140719375ab.11.1751994480373;
-        Tue, 08 Jul 2025 10:08:00 -0700 (PDT)
+        bh=sVV+CVMuTfEIYsmAOqgA79niyyAfg9/ac2rHyVWYssA=;
+        b=Ma7M4C/TlvpFMJRR9cH2EDQ+d2B8CuVDqUu7n+UUxGxXFknn15Y2ZWb53fvQ5lNald
+         pqyZ12ywL62GZDpz0XS6AfSyg4aurriPISf1wk+xTTHjZbKbo2zJ1eMIMmju70CFSEiW
+         iezvGpOQd98Fyk8uwhWUZuUTYwFpH+LXJ9i9VyFlxjpFSGf1r8J9UAm1HLRMbHXGCDwf
+         meYtdkAar4vWA66gJI7O/F91FGGv7EjKE35fM11+T/CbenUPlwLqYYF2qd+WYLSXJ+kN
+         z1j2Ok8Uz3qDY0fFYMQp9XHvgtMlPn/udpQAKdSW/fzHtTFMBquxRfuXK5oZLjARYUkL
+         ZQHg==
+X-Gm-Message-State: AOJu0YwNi4JZU4mQcrqev8ydY5hB7LEsCx0ZdTdIj1L4ulqqzRtguj85
+	SjdQx3QfTI7QT7WvKI3yfvP7agj5WBDbxqlgdp6wB+bcxtCva84sQcDSHKeJCO9n8mlFJ3TgOeU
+	dq2Er
+X-Gm-Gg: ASbGncvWqvjBUmwpujf1xjQWVj3irYYQwPN5cGLrqbctAW/2MHqnuq98ZiQVKsEmzm3
+	iXcnD1/17dX9C95OD61O2qijhKvRbCn89CWT9xa+m4VnJhBbGUR/BUF3GMLY+gY6KA0IPt6JabZ
+	LL7QlR36SQiEWWcNRKHMsHLppyYlSV2GnEgxOscupnoClN848GWo/jyCcuE9isTCK00Z8/fDyq+
+	kpwttNBdYI6qJ+Kt5RX9Pqg0YZLdsuRHb7jZFjPvjEy1kkE0LMPKXgb5dANljYqOVgR+PaFkvnt
+	O/1P/wrnhuA8RJh+stys1LcBB/m2owxK4oqDzsej3iaO2e6nFStar6QiUw==
+X-Google-Smtp-Source: AGHT+IG/4dy16MaUniUvzjwmYu7A4GAbPy9pdkyjWQSegovj/QPIlj4oBaxBk8t2y9WH5w4CTofYsw==
+X-Received: by 2002:a05:6e02:b45:b0:3dc:8b57:b76c with SMTP id e9e14a558f8ab-3e16381868amr5452065ab.9.1751994576620;
+        Tue, 08 Jul 2025 10:09:36 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e15929ebedsm2701955ab.31.2025.07.08.10.07.59
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-503b599ec2bsm2288095173.19.2025.07.08.10.09.35
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 10:07:59 -0700 (PDT)
-Message-ID: <7f81d2ed-d5de-4fc2-b059-73ba00713a4f@kernel.dk>
-Date: Tue, 8 Jul 2025 11:07:59 -0600
+        Tue, 08 Jul 2025 10:09:36 -0700 (PDT)
+Message-ID: <c4dd5328-611b-46a8-8570-6ff37f4d7da6@kernel.dk>
+Date: Tue, 8 Jul 2025 11:09:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -84,40 +84,93 @@ User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] Revert "io_uring: gate REQ_F_ISREG on !S_ANON_INODE as well"
+Subject: [PATCH] io_uring/msg_ring: ensure io_kiocb freeing is deferred for
+ RCU
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-This reverts commit 6f11adcc6f36ffd8f33dbdf5f5ce073368975bc3.
+syzbot reports that defer/local task_work adding via msg_ring can hit
+a request that has been freed:
 
-The problematic commit was fixed in mainline, so the work-around in
-io_uring can be removed at this point. Anonymous inodes no longer
-pretend to be regular files after:
+CPU: 1 UID: 0 PID: 19356 Comm: iou-wrk-19354 Not tainted 6.16.0-rc4-syzkaller-00108-g17bbde2e1716 #0 PREEMPT(full)
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xd2/0x2b0 mm/kasan/report.c:521
+ kasan_report+0x118/0x150 mm/kasan/report.c:634
+ io_req_local_work_add io_uring/io_uring.c:1184 [inline]
+ __io_req_task_work_add+0x589/0x950 io_uring/io_uring.c:1252
+ io_msg_remote_post io_uring/msg_ring.c:103 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:133 [inline]
+ __io_msg_ring_data+0x820/0xaa0 io_uring/msg_ring.c:151
+ io_msg_ring_data io_uring/msg_ring.c:173 [inline]
+ io_msg_ring+0x134/0xa00 io_uring/msg_ring.c:314
+ __io_issue_sqe+0x17e/0x4b0 io_uring/io_uring.c:1739
+ io_issue_sqe+0x165/0xfd0 io_uring/io_uring.c:1762
+ io_wq_submit_work+0x6e9/0xb90 io_uring/io_uring.c:1874
+ io_worker_handle_work+0x7cd/0x1180 io_uring/io-wq.c:642
+ io_wq_worker+0x42f/0xeb0 io_uring/io-wq.c:696
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-1e7ab6f67824 ("anon_inode: rework assertions")
+which is supposed to be safe with how requests are allocated. But msg
+ring requests alloc and free on their own, and hence must defer freeing
+to a sane time.
 
+Add an rcu_head and use kfree_rcu() in both spots where requests are
+freed. Only the one in io_msg_tw_complete() is strictly required as it
+has been visible on the other ring, but use it consistently in the other
+spot as well.
+
+This should not cause any other issues outside of KASAN rightfully
+complaining about it.
+
+Link: https://lore.kernel.org/io-uring/686cd2ea.a00a0220.338033.0007.GAE@google.com/
+Reported-by: syzbot+54cbbfb4db9145d26fc2@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Fixes: 0617bb500bfa ("io_uring/msg_ring: improve handling of target CQE posting")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 73648d26a622..5111ec040c53 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1666,12 +1666,11 @@ static void io_iopoll_req_issued(struct io_kiocb *req, unsigned int issue_flags)
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 2922635986f5..a7efcec2e3d0 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -698,6 +698,8 @@ struct io_kiocb {
+ 		struct hlist_node	hash_node;
+ 		/* For IOPOLL setup queues, with hybrid polling */
+ 		u64                     iopoll_start;
++		/* for private io_kiocb freeing */
++		struct rcu_head		rcu_head;
+ 	};
+ 	/* internal polling, see IORING_FEAT_FAST_POLL */
+ 	struct async_poll		*apoll;
+diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+index 71400d6cefc8..4c2578f2efcb 100644
+--- a/io_uring/msg_ring.c
++++ b/io_uring/msg_ring.c
+@@ -82,7 +82,7 @@ static void io_msg_tw_complete(struct io_kiocb *req, io_tw_token_t tw)
+ 		spin_unlock(&ctx->msg_lock);
+ 	}
+ 	if (req)
+-		kmem_cache_free(req_cachep, req);
++		kfree_rcu(req, rcu_head);
+ 	percpu_ref_put(&ctx->refs);
+ }
  
- io_req_flags_t io_file_get_flags(struct file *file)
+@@ -90,7 +90,7 @@ static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 			      int res, u32 cflags, u64 user_data)
  {
--	struct inode *inode = file_inode(file);
- 	io_req_flags_t res = 0;
- 
- 	BUILD_BUG_ON(REQ_F_ISREG_BIT != REQ_F_SUPPORT_NOWAIT_BIT + 1);
- 
--	if (S_ISREG(inode->i_mode) && !(inode->i_flags & S_ANON_INODE))
-+	if (S_ISREG(file_inode(file)->i_mode))
- 		res |= REQ_F_ISREG;
- 	if ((file->f_flags & O_NONBLOCK) || (file->f_mode & FMODE_NOWAIT))
- 		res |= REQ_F_SUPPORT_NOWAIT;
+ 	if (!READ_ONCE(ctx->submitter_task)) {
+-		kmem_cache_free(req_cachep, req);
++		kfree_rcu(req, rcu_head);
+ 		return -EOWNERDEAD;
+ 	}
+ 	req->opcode = IORING_OP_NOP;
 
 -- 
 Jens Axboe

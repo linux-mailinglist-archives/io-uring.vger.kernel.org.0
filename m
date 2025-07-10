@@ -1,261 +1,103 @@
-Return-Path: <io-uring+bounces-8639-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8640-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DA5AFF50B
-	for <lists+io-uring@lfdr.de>; Thu, 10 Jul 2025 00:56:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E301B00AF6
+	for <lists+io-uring@lfdr.de>; Thu, 10 Jul 2025 20:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CCD4A5B0B
-	for <lists+io-uring@lfdr.de>; Wed,  9 Jul 2025 22:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61A156499A
+	for <lists+io-uring@lfdr.de>; Thu, 10 Jul 2025 18:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406A523E347;
-	Wed,  9 Jul 2025 22:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC672FC3AA;
+	Thu, 10 Jul 2025 18:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PY0a4vPm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jFuefslD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6DB235BE1
-	for <io-uring@vger.kernel.org>; Wed,  9 Jul 2025 22:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70F23506E
+	for <io-uring@vger.kernel.org>; Thu, 10 Jul 2025 18:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752101793; cv=none; b=ZxL5A+BcA3qrOIdC7+GeBD6aZspXgT27QH4ClUmjuOCHzjWN376Fceda3TIfUC3ufBGmmhRnL6p0143nkqsORzNQ1jajHe7PbmvOCEL6Ckq5nZw4EmBuOVoJnhRHqB+d/eNvD+4bDi1cbtdr2mYRS9mLrwJNoyZK+f+8eDxpAi8=
+	t=1752170519; cv=none; b=euUUc+fsJAUtUkh/jNMoOGi6ye6cF5QTVFQAqFnDEGH/SVxlHTHH5+CWPO4gHYHux/vQwybSakJar85fpnp6QY0Aeumakq8plUysj0vHTWWBQvvz+nsJkJzSxX0fmRV0haCmObhF5eeQyukBRC9jYH+xROV4fd+Agm992sVQAro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752101793; c=relaxed/simple;
-	bh=n9O063liQXJSgV2rV5XFUPRQVKrP0E98SbyoZ9cMOK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZRoizFRN/gZzpwhynE1c69ipmexJEHmjelLL+Z6EHqONRmMxLiuAOvZKZo5zoPCTjxZqSl7jZKxgODF+G4niEvURfv7xe7dZhBC2mg3Lf4LpKUS6OUysJO/vER1kuZ7DpH+TyXTQiVSulbkIVL8UvppNUa/GZs8Cq0C1ih14FQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PY0a4vPm; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-235e389599fso80885ad.0
-        for <io-uring@vger.kernel.org>; Wed, 09 Jul 2025 15:56:30 -0700 (PDT)
+	s=arc-20240116; t=1752170519; c=relaxed/simple;
+	bh=L5IkKlOj3J4XNHtFh8P5zmvhaqsB1+fRpTkoOEh9Oew=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C407QDStXcvfymByBX7eo0o95CX2DlY8iEIfTGR4uUl15aHL0yTijC2+XHJQkjfITEObIYswdypitRn8EFhkSnYu8lEMRQjy7S/glXMCvLjnL3UWlhr514KPCmb8D0fHH5JMGzxhmOb3RgpHU+9J4tqDC0JNI79ok/qwdDxIthY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jFuefslD; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3de2b02c69eso7176465ab.1
+        for <io-uring@vger.kernel.org>; Thu, 10 Jul 2025 11:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752101790; x=1752706590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=psTNSOzBn8OXtmmYI+qHnBQfX9pvC9szIAAFuognR9c=;
-        b=PY0a4vPmHEXvh7gHoasn45CxLns63iH9QshE/XJXTROkT2cwy105Q5vZL9sUT+rt/S
-         /erM7tPvmxdiUTPslWNcK3tIOhjWsYYzy0gumCna+TVVT3oidUTt3weWfJts7igljro1
-         yl4dlqLhjNE8laOhCD4Q/h9APd8dEyA9XWstGmdKsWozXtQDBHCS+kpnzU9S03F3JgPL
-         96v+oeowxtgCKtcTZYuNEe8IYD3Nka7Bsdwf1ZW3S4wS5j9XvFCH63z/EkACOsi7mOlW
-         MZbY6oWo/byr+lJ61L1crlSe0wPi41awdqvE6nlrm35YO9ESw2UDt2sC+uKExMWZIYKt
-         y7ZA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752170515; x=1752775315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0gJmPHmpJWqH0mqoGuNdr93R3misLm5TaevNQ3bEZao=;
+        b=jFuefslDhErnmDbVhv1nMLTDYOYNWs96jsi8KUcCFTFrSi1fHoiVaGRcXodOmyAstv
+         FMBza0ZbcVhnKOMvvmaIWLweGFLZmzRKn5AICELla8MkrvLX+6UXz0X8jakBGvt+k0S8
+         gJl7RKiw9TrfEepjCQ2LjXPffHrdZHF6yniFumppjXoYH3Rn7iR9DbYZIDb8dydSAdW4
+         Mh6yb25Y88GErGCgFZ0KXXLOOWzEuVWHVIOlbpVo0CudR1mcHBufWa5uIPWJDoKLvfSu
+         r1KJUYm/Z5RaVd56Sg9tHL7cItaER3K2EzC0y9MBbYBA5dsBIRxv926l6EyccqeliZD8
+         bSNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752101790; x=1752706590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=psTNSOzBn8OXtmmYI+qHnBQfX9pvC9szIAAFuognR9c=;
-        b=h0YMV2pS/nU6zeYfgGY0d4vk2j26MJ1/aQd28iKm/xefrcvBXz7bBcQ869jHYxpPel
-         yykp9KAE06zWi3PFgnVXtbRMcgHvPerjM0nKjsHRWLLQNq8qBE0CztEpZMX4klaYklzn
-         OaaAq6VLPSP88SF6CxdWbJtL9+2lVKraINjKCxdQo7TkfAhAc79Jq+LH1OynbjevEGZ8
-         D+RtUMpzoE5mJSLcQ1S4JCBjXXHxgmaMTJWNZ7GlmDbTtayoCQLyd/H5hYCxwdqyDhIu
-         M8owJZicfqlTK3YFbksNmb6C+572q8ZFZ9mUVVzRwR8DgXNHqfxgiSfna/nk//KAqxnH
-         Gbpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/zFMglAu/16kjbsKs/Jl03XdPEo5lhU+H9j0nPm1y1ifO/ky/KAkbHjPRJ/5YS+IArCUtrN/5jQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw74m7E7Hi6xSDWkaeyLqBal5lyF4FVdeXDPkNumuDvTf5WgmGw
-	1SAgqdBHrpjdNamOSvY+hi3usZv8SWysbFRe1zhH5ryduZ8XlPscept0X0cgv1gOQ4tGk9TK0Ta
-	MBITKgHw80T2hBCHUcK9+gRKJzdQHBs10WjfU+gB0
-X-Gm-Gg: ASbGncukJLLNZ1xYlGoEV9wj7wDoEMFUyQDioEv9GOT8lEuzcqxjsGDG5Y/dNSlNbY/
-	115VW4fnKzbrla8ceEpGI93KSymRKkBFH2EuWxnVi2/8hGmVRgJNeEM62RGABxSD9auRJnX/vgQ
-	qgSKfqTV0bC/XwB1N6WTqXUNRS82puIYsu4hC9oOftPW1U0PVzJ5+i9zs8zE2RpGVl1/HkcuWHQ
-	6i4hvLlX20=
-X-Google-Smtp-Source: AGHT+IGtnLZ7OWHggJ8+2pbK2Dk9UkhgmWPzA/1oDMJkDWju6K2XZ1R85Sq8cs803uGk0p6vBbGfH8ZG8DM1tLDCaZ8=
-X-Received: by 2002:a17:903:3b8e:b0:234:c37:85a with SMTP id
- d9443c01a7336-23de38106e0mr1297665ad.24.1752101789722; Wed, 09 Jul 2025
- 15:56:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752170515; x=1752775315;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0gJmPHmpJWqH0mqoGuNdr93R3misLm5TaevNQ3bEZao=;
+        b=cn3H6xO6aQsmy4ewnN3aIpN74K4+vK68uQcm7Fyuyq0V6cu8Itm0OEyekrncUclXFu
+         c1eee8pEsFzY6oCbI40VQ6ckmkt2rxgqPvnvhHM1tbETOnJQxWNBKmqM/pKCSnyF5sL+
+         AyhrM/qNjQJwisPLU0GVSpFNT2UrB8HcfpABtH9ogDlxF8FRv6XsxUrSBOx9r8sGTY0W
+         0Tq/aHrlbsRMd8oRzAGG34uykR+wFn5y5yn5UfczP9OUGU7gnBnphzFCQWOeJpKGZ6mK
+         /Q9jGbTR8yJp6bDwnI5Y3V8+DEc+oH5WCMx4SCBPMeR9ZU+hDxOxZq2WH0CLaNdjdSUu
+         UwfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZZSKPGPlLCcvIPBkkbwxgqTsHu2/45BKrg9Gn4kVaUu8/7aep7Nka71qSomL4h14vT54WHmMz4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZDrGJQ6wm8F3EHV0XPDaniZhmhAYUMGKQ4WLg2QL6eE415xgI
+	9cMvRLQHa2aP01Rv9q/J/3D2lwgaotGSBSVJQyRheju/yB5hkTQcXqZdYKUcIvGB1wSBF/u1NwT
+	a9Lap
+X-Gm-Gg: ASbGncu505sMyaB0pvH3DV0nyta+15oQSdhyDBp2Y583g8qNSCDrJqoYddU3V35qN7w
+	kvPFbcoS2Bl9+GP9W1Dn7mv3VL4tETO863QXVplbfXkomhLeVm6nDuRyyHHQ66DcTY9ohWiCJ6T
+	ULD2mYXxq7EgkW6V7H9Iyye4oR8pkqPJDNx4okPO7MJxEHaNXkw1i/Uv64kiFwOtIOlbf8nHD8f
+	Z50dK31yy7Pfs4L1i5iq10CRCjbLQDYSdajPLvj/hPefv+mZcrXPIt21l15L7WT35fu2J73a9xA
+	x7WVPODXjKbmz9oS56PKEY53JNs1p5FVtaCNn6GYalbwpn5DhJSB2Yq7F9g=
+X-Google-Smtp-Source: AGHT+IGoVnph16PY4CbMSMKUkPDzfgnKRaza6M6yhcl2rhW6kjzGYnA+ONxH4Ld7nu8Dhyjq47z5HQ==
+X-Received: by 2002:a05:6e02:b4a:b0:3de:287b:c445 with SMTP id e9e14a558f8ab-3e25318ec6amr5108425ab.0.1752170515179;
+        Thu, 10 Jul 2025 11:01:55 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24611c645sm6406375ab.12.2025.07.10.11.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 11:01:54 -0700 (PDT)
+Message-ID: <bf1b2aa4-9ce3-4ad5-b0d1-fa379b96c9a3@kernel.dk>
+Date: Thu, 10 Jul 2025 12:01:53 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709124059.516095-2-dtatulea@nvidia.com> <CAHS8izNHXvtXF+Xftocvi+1E2hZ0v9FiTWBxaY7NWhemhPy-hQ@mail.gmail.com>
- <bm4uszrqfszm5sgigrtmo2piowoaxzsprwxuezfze4lgbt22ki@rn2w2sncivv3>
-In-Reply-To: <bm4uszrqfszm5sgigrtmo2piowoaxzsprwxuezfze4lgbt22ki@rn2w2sncivv3>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 9 Jul 2025 15:56:16 -0700
-X-Gm-Features: Ac12FXwgXd9rszuQDYsn2GNHGMXg5QVxNUDYVkWuGeps_H3DDEY13GPvqZBPpZI
-Message-ID: <CAHS8izP18q7s8=fGCjknrEu3uJE5xnQCKceB8u1VvTV5GxTTTg@mail.gmail.com>
-Subject: Re: [PATCH net] net: Allow non parent devices to be used for ZC DMA
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: asml.silence@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>, cratiu@nvidia.com, 
-	parav@nvidia.com, Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [syzbot] [io-uring?] INFO: task hung in vfs_coredump
+To: syzbot <syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ tglx@linutronix.de
+References: <f368bd06-73b4-47bb-acf1-b8eba2cfe669@kernel.dk>
+ <6866e5f3.050a0220.37fcff.0006.GAE@google.com>
+Content-Language: en-US
+In-Reply-To: <6866e5f3.050a0220.37fcff.0006.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 9, 2025 at 12:54=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> On Wed, Jul 09, 2025 at 12:29:22PM -0700, Mina Almasry wrote:
-> > On Wed, Jul 9, 2025 at 5:46=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.=
-com> wrote:
-> > >
-> > > For zerocopy (io_uring, devmem), there is an assumption that the
-> > > parent device can do DMA. However that is not always the case:
-> > > ScalableFunction devices have the DMA device in the grandparent.
-> > >
-> > > This patch adds a helper for getting the DMA device for a netdev from
-> > > its parent or grandparent if necessary. The NULL case is handled in t=
-he
-> > > callers.
-> > >
-> > > devmem and io_uring are updated accordingly to use this helper instea=
-d
-> > > of directly using the parent.
-> > >
-> > > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> > > Fixes: 170aafe35cb9 ("netdev: support binding dma-buf to netdevice")
-> >
-> > nit: This doesn't seem like a fix? The current code supports all
-> > devices that are not SF well enough, right? And in the case of SF
-> > devices, I expect net_devmem_bind_dmabuf() to fail gracefully as the
-> > dma mapping of a device that doesn't support it, I think, would fail
-> > gracefully. So to me this seems like an improvement rather than a bug
-> > fix.
-> >
-> dma_buf_map_attachment_unlocked() will return a sg_table with 0 nents.
-> That is graceful. However this will result in page_pools that will
-> always be returning errors further down the line which is very confusing
-> regarding the motives that caused it.
->
-> I am also fine to not make it a fix btw. Especially since the mlx5
-> devmem code was just accepted.
->
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
-If you submit another version I'd rather it be a non-fix, especially
-since applying the io_uring hunk will be challenging when backporting
-this patch, but I assume hunk can be dropped while backporting, so I'm
-fine either way.
+-- 
+Jens Axboe
 
-> > > Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-> > > ---
-> > > Changes in v1:
-> > > - Upgraded from RFC status.
-> > > - Dropped driver specific bits for generic solution.
-> > > - Implemented single patch as a fix as requested in RFC.
-> > > - Handling of multi-PF netdevs will be handled in a subsequent patch
-> > >   series.
-> > >
-> > > RFC: https://lore.kernel.org/all/20250702172433.1738947-2-dtatulea@nv=
-idia.com/
-> > > ---
-> > >  include/linux/netdevice.h | 14 ++++++++++++++
-> > >  io_uring/zcrx.c           |  2 +-
-> > >  net/core/devmem.c         | 10 +++++++++-
-> > >  3 files changed, 24 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> > > index 5847c20994d3..1cbde7193c4d 100644
-> > > --- a/include/linux/netdevice.h
-> > > +++ b/include/linux/netdevice.h
-> > > @@ -5560,4 +5560,18 @@ extern struct net_device *blackhole_netdev;
-> > >                 atomic_long_add((VAL), &(DEV)->stats.__##FIELD)
-> > >  #define DEV_STATS_READ(DEV, FIELD) atomic_long_read(&(DEV)->stats.__=
-##FIELD)
-> > >
-> > > +static inline struct device *netdev_get_dma_dev(const struct net_dev=
-ice *dev)
-> > > +{
-> > > +       struct device *dma_dev =3D dev->dev.parent;
-> > > +
-> > > +       if (!dma_dev)
-> > > +               return NULL;
-> > > +
-> > > +       /* Some devices (e.g. SFs) have the dma device as a grandpare=
-nt. */
-> > > +       if (!dma_dev->dma_mask)
-> >
-> > I was able to confirm that !dev->dma_mask means "this device doesn't
-> > support dma". Multiple existing places in the code seem to use this
-> > check.
-> >
-> Ack. That was my understanding as well.
->
-> > > +               dma_dev =3D dma_dev->parent;
-> > > +
-> > > +       return (dma_dev && dma_dev->dma_mask) ? dma_dev : NULL;
-> >
-> > This may be a noob question, but are we sure that !dma_dev->dma_mask
-> > && dma_dev->parent->dma_mask !=3D NULL means that the parent is the
-> > dma-device that we should use? I understand SF devices work that way
-> > but it's not immediately obvious to me that this is generically true.
-> >
-> This is what I gathered from Parav's answer.
->
-> > For example pavel came up with the case where for veth,
-> > netdev->dev.parent =3D=3D NULL , I wonder if there are weird devices in
-> > the wild where netdev->dev.parent->dma_mask =3D=3D NULL but that doesn'=
-t
-> > necessarily mean that the grandparent is the dma-device that we should
-> > use.
-> >
-> Yep.
->
-> > I guess to keep my long question short: what makes you think this is
-> > generically safe to do? Or is it not, but we think most devices behave
-> > this way and we're going to handle more edge cases in follow up
-> > patches?
-> >
-> It is just what we know so far about SFs. See end of mail.
->
-
-I see. OK, even though this is 'just what we know so far', I'm still
-in favor of this simple approach, but I would say it would be good to
-communicate in the comments that this is a best-effort dma-device
-finding and doesn't handle every case under the sun. Something like
-(untested):
-
-static inline struct device *netdev_get_dma_dev(const struct net_device *de=
-v)
-{
-       struct device *parent =3D dev->dev.parent;
-
-       if (!parent)
-               return NULL;
-
-       /* For most netdevs, the parent supports dma and is the correct
-        * dma-device
-        */
-       if (parent->dma_mask)
-               return parent;
-
-       /* For SF devices, the parent doesn't support dma, but the grandpare=
-nt
-        * does, and is the correct dma-device to use (link to docs that exp=
-lain
-        * this if any).
-        */
-       if (parent->parent && parent->parent->dma_mask)
-               return parent->parent;
-
-       /* If neither the parent nor grandparent support dma, then we're not
-        * sure what dma-device to use. Error out. Special handling for new
-        * netdevs may need to be added in the future.
-        */
-       return NULL;
-}
-
-With some comments explaining the logic a bit, you can add:
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
-And let's see if Jakub likes this. If not, we can always do the future
-proof approach with the queue API giving the driver the ability to
-tell us what exactly is the dma-device to use (or whatever approach he
-prefers).
-
---=20
-Thanks,
-Mina
 

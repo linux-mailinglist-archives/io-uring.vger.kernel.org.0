@@ -1,130 +1,130 @@
-Return-Path: <io-uring+bounces-8648-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8649-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFFAB02363
-	for <lists+io-uring@lfdr.de>; Fri, 11 Jul 2025 20:13:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE7AB02829
+	for <lists+io-uring@lfdr.de>; Sat, 12 Jul 2025 02:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65654A0128
-	for <lists+io-uring@lfdr.de>; Fri, 11 Jul 2025 18:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C7B1886CCF
+	for <lists+io-uring@lfdr.de>; Sat, 12 Jul 2025 00:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DF52F1FEC;
-	Fri, 11 Jul 2025 18:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EED023BE;
+	Sat, 12 Jul 2025 00:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fFp7Yx9Q"
 X-Original-To: io-uring@vger.kernel.org
-Received: from gw.shic.co.uk (gw.shic.co.uk [94.23.159.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395DD2EF656
-	for <io-uring@vger.kernel.org>; Fri, 11 Jul 2025 18:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.23.159.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A08EC5
+	for <io-uring@vger.kernel.org>; Sat, 12 Jul 2025 00:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752257577; cv=none; b=qi/ZrX3aoqDnKsMnBvXNpYWAITK8lfWvSuqugjtSUkJKZWPXO7Gvt5HgkAJmeDQjbw6SuNlxEbjXCnQcv879kEFDJG7+4ZXGHMH/944FGB3+R/lyqucfKS8uVPjSCQqLY10crhOcMQnl6oHiSetY6vDND7ZDoKUhN7ddJHvYnCg=
+	t=1752278633; cv=none; b=fJ0aox+C8d90Y/9PQMWgZ6VZyfkkduaLyVt2IxRIB5PTaP6HBfsBUslDF2FAXo4gbJFCaCaYwTbg2pSdUvDtFaPa6a32kGSoDvS5R9Wr32gh/c30iVfiIE6ex+lmODjx5AlHcz1c1GCqP/cUsjW97DfuK1Lbxcj9/iPgdU2WV7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752257577; c=relaxed/simple;
-	bh=/ImE8cm7Bz2eXTHVDEt+THBs3B+giqwF+GbXqCnMccw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=YbSaBWcdQP6gMr0IWHwUC32X0qA7jfYOHTGPy39wSPvRBE22OhOstR95Xj3zwyGG1d6gV3X/M0p11v1a5ewV4ula8RkdDJRh8kgPkxFU2FF4rfg6uyFDznrIZu7Sv3CQo/YJoIyR/Z0HsdW6CaPZ932lSs/sFBJHrwH02KE+A4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shic.co.uk; spf=pass smtp.mailfrom=shic.co.uk; arc=none smtp.client-ip=94.23.159.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shic.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shic.co.uk
-Received: from localhost (localhost [127.0.0.1])
-	by gw.shic.co.uk (Postfix) with ESMTP id C8FCD16C0159
-	for <io-uring@vger.kernel.org>; Fri, 11 Jul 2025 19:12:52 +0100 (BST)
-X-Virus-Scanned: Debian amavisd-new at shic.co.uk
-Received: from gw.shic.co.uk ([192.168.42.2])
-	by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ItVdG4f3gotW for <io-uring@vger.kernel.org>;
-	Fri, 11 Jul 2025 19:12:48 +0100 (BST)
-Received: from [192.168.64.2] (han-router.han-router.shic.co.uk [192.168.33.129])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	by gw.shic.co.uk (Postfix) with ESMTPSA id 1B88216C011D
-	for <io-uring@vger.kernel.org>; Fri, 11 Jul 2025 19:12:48 +0100 (BST)
-Message-ID: <a11e741c-458f-4343-8f68-28ecc151cb34@shic.co.uk>
-Date: Fri, 11 Jul 2025 19:12:49 +0100
+	s=arc-20240116; t=1752278633; c=relaxed/simple;
+	bh=cnUw4flsweMd3AMDAEStCFDu4fvNN6+NyeTCAMR8qE4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KG7d1leacFHSgwRL9wlhYj9Ca7fUQ6lKu+SO1I//JwjDCM9eiqRPzt/wSlepXcooU5hpfXOgvYUyXk10W0JnzYj6D2IEitsItDa9N/tfUS9LLuNNauqe7wqoBiuWRW1zCZlB4FfeO5PesRE7TAKgKx8wNsESecL1RzuJh1Pz6Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fFp7Yx9Q; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-874a68f6516so230157239f.2
+        for <io-uring@vger.kernel.org>; Fri, 11 Jul 2025 17:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752278627; x=1752883427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3EcrRpoo60D2J7GXrlgXOhiO1WjhTSJAVtJIK3ZNY+c=;
+        b=fFp7Yx9QW8HxhSBsKqlleE1kACfgcstbdAuw/Ns/Zd1kLP85eSCgO2/S7wv2+yrcb9
+         DPQTqBrPQScaz6J8tKmrF3hHYiPTIVTCvZOEGTS0RCB6L2rE5B9jvT+C1O7d31QkOQlN
+         WwEVuZ6luLdywP9M37uYWwJ/O+bnuJ1FqOWsNw+2UOiSsDsYzOYGDPN/JPurxLvHX9YW
+         jQ5N191WICQdxC561GlcsOEsysvds7vj4DWXto3Yx58lbsfLbsBJPlRscmkF0k9wiRqb
+         dFGuLJTnCJveyBzmvMhhvODD2lq0TR9Q4Hk39jKgOtsMCnVLDkMP2D4x7WoAY/Jtr62T
+         hV5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752278627; x=1752883427;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3EcrRpoo60D2J7GXrlgXOhiO1WjhTSJAVtJIK3ZNY+c=;
+        b=omEuqQ0oIBAePEdLqf7+9mg46ZsPFlEybZ81LCR2QYeh3r+BhZhr/lKCeu/SlphHaJ
+         3kT3o53ldciLLkzxymh2v5ptg/T2zzieXpvuGET0G465sbhw4lBRxvsejO7jZAZ8t4Hb
+         WuS9zawxdFd/URbQ7UXvTJCLtcUy7qpXh7TbxBHiVu1LTcTZZSMl7xZfm52IkYPpyyBW
+         L5Ikv0mdKOU4EMjvoD1R3eGX0ChIZQKh1rTQQpWb7078Nkhud27jsKML7Icz9xSucRBt
+         iV2DksaMEUTvC87JWIPKnMDpQqbAAhFvV3nM7sxHNGiAbJw3oA+JsxkxdSbUTcAZ/ctY
+         etcw==
+X-Gm-Message-State: AOJu0YxXu++sQrrbQ3mLRo1dCQH3XLJy+NQ0IgUJD29G8iz0DClRq4/N
+	PO8G7CAeLbqu+pJwdmqNtDK2DlCNjUl/7MaWVJi1OQAJD0i39ZzASneTdxb0yqfPboLU/Lo9Wxx
+	XBXAP
+X-Gm-Gg: ASbGncuNNWBkklz2g1zVUfErv4DPbFKFzmMJLx4CNIFk9Rx+taf7Wprbby10Hh/bRXs
+	Bw45yatsVHk+s6RBu5R3r8iGRQcYmUTs0vTIT9XW368scw0URViIMeiHLIPAafmE2ArAl/ziY7T
+	+moCnmv+2tiwWX+m6x9ChmeFjvKTfYDan+xporMMemZAidxNGDpq45sexiYlqt3MK46G1yus1A2
+	3J7tpO+GIzPt3irXsEzSPMuPR2eROKc7NQc+YfZbhx6NiunKBDGSZdVcPgMGkmeOSaDxbZZKhr9
+	4AuQ4o12UXD99tjHmWnrRCAg6ksJVFGXXFmSv6m18ZfMBJw5SK6FLcb04heyO0A9Znr11kMuSR/
+	//SrjHw==
+X-Google-Smtp-Source: AGHT+IEsGxxE5s2ArXzcz+uOO4BaeWyPaL2bMu/hTZIefi/ZpP5OyrUv3Sah75RJePWJeOECMa6clw==
+X-Received: by 2002:a05:6602:6d8c:b0:85b:58b0:7ac9 with SMTP id ca18e2360f4ac-87977fd0e71mr637715239f.10.1752278627184;
+        Fri, 11 Jul 2025 17:03:47 -0700 (PDT)
+Received: from m2max ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8796bc12eb9sm129810439f.24.2025.07.11.17.03.46
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 17:03:46 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: 
+Date: Fri, 11 Jul 2025 17:59:22 -0600
+Message-ID: <20250712000344.1579663-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <[PATCHSET 0/3] Add support for IORING_CQE_F_POLLED>
+References: <[PATCHSET 0/3] Add support for IORING_CQE_F_POLLED>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Steve <steve_iouring_list@shic.co.uk>
-Subject: Relationship between io-uring asynchronous idioms and mmap/LRU
- paging.
-Content-Language: en-GB
-To: io-uring@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-I hope my post is appropriate for this list. Relative to other recent 
-posts on this list, my interests are high-level.
+Hi,
 
-I want to develop efficient, scalable, low-latency, asynchronous 
-services in user-space. I've dabbled with liburing in the context of an 
-experimental service involving network request/responses.  For the 
-purpose of this post, assume calculating responses, to requests, 
-requires looking-up pages in a huge read-only file.  In order to reap 
-all the performance benefits of io-uring, I know I should avoid blocking 
-calls in my event loop.
+It can be useful to know if a given file/socket/pipe needed to go
+through poll arming to successfully execute the request. For example, a
+write to a pipe will normally succeed inline. Ditto for a send on a
+socket. But if the socket or pipe is full, then io_uring must wait for a
+POLLOUT trigger to execute the request. This can be useful backpressure
+information for an application. On the read side, it'll tell the
+application whether data was readily available or not, if POLLIN
+triggering was needed to read/recv the data.
 
-If I were to use a multithreaded (c.f. asynchronous) paradigm... my 
-strategy, to look-up pages, would have been to mmap 
-<https://man7.org/linux/man-pages/man2/mmap.2.html> the huge file and 
-rely upon the kernel LRU cache. Cache misses, relative to the memory 
-mapped file will result in a page fault and a blocked thread. This could 
-be OK, if cache-misses are rare events... but, while cache hits are 
-expected to be frequent, I can't assume cache misses will be rare.
+This patchset adds support for IORING_CQE_F_POLLED, which is set in
+cqe->flags if a request needed to go through the poll machinery before
+it could get successfully executed.
 
-Options I have considered:
+Patch 1 is just an unrelated cleanup I spotted while doing this work.
+Patch 2 adds a request flag that gets set via poll wake, and patch 3
+wires up using this flag to set IORING_CQE_F_POLLED.
 
-   1. Introduce a thread-pool, with task-request and task-response 
-queues... using tasks to de-couple reading requests from writing 
-responses... the strategy would be to avoid the io-uring event loop 
-thread interacting with the memory mapped file. Intuitively, this seems 
-cumbersome - compared with using a 'more asynchronous' idiom to avoid 
-having to depend upon multithreaded concurrency and thread synchronisation.
+liburing test cases here:
 
-   2. Implement an explicit application-layer page cache. Pages could be 
-retrieved, into explicitly allocated memory, asynchronously... using 
-io-uring read requests. I could suspend request/response processing on 
-any cache miss... then resume processing when the io-uring completion 
-queue informs that each page has been loaded.  A C++20 coroutine, for 
-example, could allow this asynchronous suspension and resumption of 
-calculation of responses to requests. This approach seems to undermine 
-resource-use cooperation between processes. A single page on disk could 
-end-up cached separately by each process instance (inefficient) and 
-there would be difficulties efficiently managing appropriate sizes for 
-application layer caches.
+https://git.kernel.dk/cgit/liburing/log/?h=cqe-polled
 
-In an ideal world, I would like to fuse the benefits of mmap's 
-kernel-managed cache, with the advantages of an io-uring asynchronous 
-idiom.  I find myself wishing there were kernel-level APIs to:
+and the patches here can also be found here:
 
-   * Determine if a page, at a virtual address, is already cached in 
-RAM. [ Perhaps mincore() 
-<https://man7.org/linux/man-pages/man2/mincore.2.html> could be adequate? ]
-   * Submit an asynchronous io-uring request with comparable (but 
-non-blocking) effect to a page-fault for the virtual address whose page 
-was not in core.
-   * Receive notification, on the io-uring completion queue, that an 
-requested page has now been cached.
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-send-full
 
-If such facilities were to exist, I can imagine a process, using 
-io-uring asynchronous idioms, that retains the memory management 
-advantages associated with mmap... without introducing dependence upon 
-threads.  I've not found any documentation to suggest that my imagined 
-io-uring features exist.  Am I overlooking something? Are there plans to 
-implement asynchronous features involving the kernel page-cache and 
-io-uring scheduling?  Would io-uring experts consider option 1 a 
-sensible, pragmatic, choice... in a circumstance where kernel-level 
-caching of the mapped file seems desirable... or would a different 
-approach be more appropriate?
+ include/linux/io_uring_types.h |  3 +++
+ include/uapi/linux/io_uring.h  |  6 ++++++
+ io_uring/io_uring.c            | 14 ++++++--------
+ io_uring/io_uring.h            |  2 ++
+ io_uring/poll.c                |  1 +
+ 5 files changed, 18 insertions(+), 8 deletions(-)
 
-Thanks in advance for any comments.
-
-Steve
-
+-- 
+Jens Axboe
 
 

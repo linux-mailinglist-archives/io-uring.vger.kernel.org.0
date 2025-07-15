@@ -1,160 +1,203 @@
-Return-Path: <io-uring+bounces-8679-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8680-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8F0B055CA
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jul 2025 11:05:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145FDB05AB6
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jul 2025 15:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27967561FF5
-	for <lists+io-uring@lfdr.de>; Tue, 15 Jul 2025 09:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C9C3B3BDD
+	for <lists+io-uring@lfdr.de>; Tue, 15 Jul 2025 13:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C5E2D542F;
-	Tue, 15 Jul 2025 09:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50211A2387;
+	Tue, 15 Jul 2025 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAhkiQ1P"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="N9ThGKsZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDA92D3A7D
-	for <io-uring@vger.kernel.org>; Tue, 15 Jul 2025 09:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E138145355
+	for <io-uring@vger.kernel.org>; Tue, 15 Jul 2025 13:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752570299; cv=none; b=MF8tRRjg2Q451h03bpxe8LNNiK0boBzUBH8SIWF8Xs+o50avaDU6iz5KdqWSfkURqlEnhk0p8Q86KpPlk1XnSY8dUbU+VGog98ME6l7nLmokt08gHnVkQ342Fn2uymElyAOOFuB8pcGuxbMnEi3mYHqnDXOiTgOZA+QgyQhPOfY=
+	t=1752584441; cv=none; b=Y0NsV6jRvSsaa5jkvVDj23NWFu2LoMwcTleGOa8SlD/k0Oy1LOqwJamoUyDb8un6EkZqKZhOFWyRZaIYyT9kVXcA9rHIo7D6cz9rZ6T5hXqPQRt72kCMPt5Jt9PcCHou5vFPxz6JZctmjJxeiBE36XB/Ku/ahWl7XCmmvCVk/no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752570299; c=relaxed/simple;
-	bh=0u6wtuo5Ax0hLpCZ1uEw1YZT5pk5Poy/gDmxIy6VNrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DjiUS/HtP3tT05i+3M6YqAmSE/lpxzKKrK8akNB0DZi/ZRc5L6ZUBlC1jfMIws14ydTSMwW4ijlyv7S7wE9mVNpm61AOZ4yRx+vU2LNxKJiD0s2RhVZO7QK6zTg6ziTe50zS/KquYmOmRPlo+9z33E66GQiZ2FgtIaOQmt6ReZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAhkiQ1P; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so8072789a12.1
-        for <io-uring@vger.kernel.org>; Tue, 15 Jul 2025 02:04:57 -0700 (PDT)
+	s=arc-20240116; t=1752584441; c=relaxed/simple;
+	bh=s5cIcUPhwIp39aooWZIMdN9swiEqkCv/a4Z71bXWh8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tA018HTs+dmaPEE90qeP0DpzzmP/9cgAiCwpElOke1y64luspy0KGv4g3YNRPNr3TgU+9YUSCUvZQhdweZyUEJSC2Ev6XREZWmLv56J2L9Hx/IyhedeXr5sdQQJeHxWkXI7STG0PcAknFmOpnRatSbCFknI1uTAlat2QFt2G3LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=N9ThGKsZ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae3a604b43bso903726166b.0
+        for <io-uring@vger.kernel.org>; Tue, 15 Jul 2025 06:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752570296; x=1753175096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q8hPoCei1zjB4ZQBoq2ORv7XYY9v7i1ZLNtyWBH5kS8=;
-        b=fAhkiQ1PQPWmUXphbrZohzJKPwudn8BGMlfsf+G1pJ9l7pxv3DDmrBAg+IUgtJwq83
-         X9ZhRr39ZcqxlSX3+0bV3aHxrgdIGw5kg6xgba4S87cWUtCB8vmiyBm3HA+9PyHn+umI
-         np3mUZD4TgJ5Nx/uso9GKPKrKNBfbJdGb3i8JNPtLbxo+szDBs1zhJ+IC8mf4Em6Aat4
-         h6A0/pz8SgtJV+7LrxH4bEQlthPSqA0GpwwfFOswA0MlFEAudKAEV3AkTVNQfAUYJBsS
-         uCKHLUgbK6Zv2SsLFFmFXrViHdAneF9dpr4ip/IBPA3byAmyP0PhQrCMoFyjodoNkHw1
-         5/Nw==
+        d=googlemail.com; s=20230601; t=1752584437; x=1753189237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IMaErcKY87+oe7IIj+5FeEg2QxypZsBQ6R3Z2+F9oFQ=;
+        b=N9ThGKsZ1pAIgexv/9/y14VjMMfMGpKJBgE7FEHbu0EBl1m0/lUAi2VSG7NP6eZZ3L
+         /jP5vKxkv8ElVaPGgZjU4RbD6QKmCOjY8nsyG41JHOTaM+2T02o3+taL6/HZ669AYgn9
+         n0aHHrcSuYrIJKoSYIAPdIRzX45ISRDoQA70O0Gt2Bqt2CfNCeDPH6lG3nloj9MHBWwG
+         1MJ92Grzc5UENXFxRpGyiGiYliHL+kK8SgiZlZoPVLTGmFKbHTEtA4+FIw59FtPzvqPX
+         c0Mm30S/eiAKsv4KRv6/pCzs+/DNwMxf4/e42cfoigvnVSZYfr7YebRuvOJWLvcTjcVm
+         BdHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752570296; x=1753175096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8hPoCei1zjB4ZQBoq2ORv7XYY9v7i1ZLNtyWBH5kS8=;
-        b=PRAu+rIRRCisYNFBGFvgyddNE7Z4gHDk6EVnd/dVsALGdsRrDliYd9UjPwKEkFPBuA
-         UpPt0uA+d8L1kqDOAuumPmomWaIzgW6a9GSWPJn+sDS9r16x5Z18P7nQgye6YxHlepPX
-         SdoJE5eRkePE7lHTugbDXAK8xs49D0EwyHcP7vqc8wK3R3I1oio4H2BMnwCXUZL7t0Qk
-         X3fnvu8PjdDPJ7pei+65QWzd9eGrAQo/w/BD6Yj8m9sflmoXl54MQAcIg1/xK3F13LEn
-         42LNEvOaRnN0jadnQlCELK4NrrNFTyrHhGSAteEuViyNWHvYhIqvwo3VafZfW4D6kDGq
-         darQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY61DAWcIOhpCbENyJKZye7FWBPEkhvCeeOiGO2hzh7XZy+Nl8KL5uBlZi1d8XmKzvUrPFhsMGgg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWqSw+TG2Vj7hXYKwbEpEpIFedEaFl1tAvwXeaxd70zvPsrApv
-	e1A+cpvVYxOOkAtcqmFLZTBpBGQ4sFz4vzEY5uPnKpPXhXsbl58P3FrsYgWn6g==
-X-Gm-Gg: ASbGncus68+wL+jG+CaR/xX738lIk93RSsUpRMVAiM76mL4S+zb2Lak6TQJqoyVgMaE
-	6WDFLTxjnUcLylj2my60q2BX6U/FR1LLd3UxNvSY0V4msBCsIwel2Fl1VO64oKYoSJOIKNzG08a
-	JEI4SaEKjVEToj5hKKs6QaqAGUgg7aRRnsW4GRtTHEym0G43QWgfmI4JGLEQf0KsBKzK2hl1Lj2
-	6gcAI2EXDoR/6zs/b7S8zPDZCQyhGAQtorD+Akh131kfsSakV0XKD8/+nqX6VJDeueRz/UogFvN
-	JZdOPk/P7t3iNbn9pj894XJ6lh7mU5cG81vSiJd0cSg0ZQjq1Ay4aeHq4qhxq5km06F4vOMgAin
-	+5LIjphpgUicqTZkAcujfrJftW97ARgqGFVA=
-X-Google-Smtp-Source: AGHT+IGrmJC2D1bVWbaRTNbAkyJyUGWPPb3jlOZhyV9N7NOw5Qj2cATqcpXVpPUDONaqYheN97UsJA==
-X-Received: by 2002:a17:907:3f14:b0:ae3:90cc:37b3 with SMTP id a640c23a62f3a-ae6fca51aaemr1680732166b.17.1752570295640;
-        Tue, 15 Jul 2025 02:04:55 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:a4c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7c09dfdsm960544466b.0.2025.07.15.02.04.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 02:04:54 -0700 (PDT)
-Message-ID: <bf0de1c6-64e6-4a4a-b741-3fab0576339f@gmail.com>
-Date: Tue, 15 Jul 2025 10:06:24 +0100
+        d=1e100.net; s=20230601; t=1752584437; x=1753189237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IMaErcKY87+oe7IIj+5FeEg2QxypZsBQ6R3Z2+F9oFQ=;
+        b=P1k/mKoz83mvjGCfTcue2iWfsZIkhlCrlN/rqsDe60tH0wqetIev5QleDYOVaX9duV
+         MyLkr4U4RTxcq3cSTgT4TdDEpUbSCH1ZJZhrfBt0ViQN4MKmwqyYwRkj5V8XLrPWeV0x
+         mUMbdIZn+B/b9ErMBzDJxtoYtLMbuE0buizOd89v92Axt8sKpKIkC308mW3YgITtw301
+         rV5VXOeAmiob+JqMa/IUHHQAi1FFOzvrKJlaIUPWpWURb7VIk7KCXIPH7/LWS03S3wfI
+         gSWnt9sKtVn9RUfOjNfen1aUx7FY+kuapuUrMyckrJ7r+TmzYDuaNnNjyycT2WbVnMH1
+         Sdrg==
+X-Gm-Message-State: AOJu0YxzYjK4qgcW870VfphiDrAnivqRf6KMtstfqVMaOQPAI9ueOpc9
+	Wto4sbc2wjNRvIdm/8upX8uQxH3dcYDmTCVYvyN1C/gFuWHV/swX7AYyQZ4t7yTW
+X-Gm-Gg: ASbGnctXluruRa7S9InJSfWAYFH+PUlGcsBuvBMyWwUlcdaiqLZlJnSmbdX149E+80y
+	oeXVDEs2AYc0YmRNyYbo80yGETzH9bfStDCq58Z/ZPffZuf+A2Z9PWQ2Tro0WCSWzzo1/B459bn
+	Mtd+QfFZYqYY4Cnfw3j8Ed5cZ+vTm2Xf8joIYmg19s48wFZ18lD0j38sdSbZk0xthBPQ94FKNrC
+	flbMTV0PKRv/EMb/hfi4YK+oHMrpQ9coCNV1Z9NW5FtgqI6ka68+Ei5/pBIxuz+xIHACg4Sl4k/
+	AA6DCVpvx3GmshCOjdFvx0ondpybWyXX7k/N+QTMGc55zX0Jh+iOt9ChnkhdLNjkrG01xi4/K5P
+	eX3hUFitynI/apAhxvAxDel1e4ehc3XYsYQx2iezHIyQ9ZSZ964T1
+X-Google-Smtp-Source: AGHT+IFfSardFp/EWazNipUsHgh0+uxIkPppzlkDDf5fdDwf0ulKwv3HIqJibQ/EbeOyW+XigMJpBA==
+X-Received: by 2002:a17:907:9727:b0:ae3:cb50:2c6b with SMTP id a640c23a62f3a-ae6fbf61ab7mr1715424966b.38.1752584436865;
+        Tue, 15 Jul 2025 06:00:36 -0700 (PDT)
+Received: from asahi-studio.maurer.localnet ([2a02:908:2615:1680:3b5b:893:9595:77c2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee471asm1016043466b.54.2025.07.15.06.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 06:00:36 -0700 (PDT)
+From: Norman Maurer <norman.maurer@googlemail.com>
+X-Google-Original-From: Norman Maurer <norman_maurer@apple.com>
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk,
+	Norman Maurer <norman_maurer@apple.com>
+Subject: [PATCH] io_uring/net: Support multishot receive len cap
+Date: Tue, 15 Jul 2025 15:00:26 +0200
+Message-ID: <20250715130026.48204-1-norman_maurer@apple.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring/poll: fix POLLERR handling
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: dw@davidwei.uk
-References: <550b470aafd8d018e3e426d96ce10663da90ac45.1752443564.git.asml.silence@gmail.com>
- <62c40bff-f12e-456d-8d68-5cf5c696c743@kernel.dk>
- <dd1306f6-faae-4c90-bc1a-9f9639b102d6@gmail.com>
- <7432e60c-c34d-4929-b665-432b6d410b5b@kernel.dk>
- <3b7eb60d-9555-4fa4-a9b8-5605abd3988b@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <3b7eb60d-9555-4fa4-a9b8-5605abd3988b@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/14/25 21:45, Jens Axboe wrote:
-> On 7/14/25 11:51 AM, Jens Axboe wrote:
->> On 7/14/25 9:30 AM, Pavel Begunkov wrote:
->>> On 7/14/25 15:56, Jens Axboe wrote:
->>>> On 7/14/25 4:59 AM, Pavel Begunkov wrote:
->>>>> 8c8492ca64e7 ("io_uring/net: don't retry connect operation on EPOLLERR")
->>>>> is a little dirty hack that
->>>>> 1) wrongfully assumes that POLLERR equals to a failed request, which
->>>>> breaks all POLLERR users, e.g. all error queue recv interfaces.
->>>>> 2) deviates the connection request behaviour from connect(2), and
->>>>> 3) racy and solved at a wrong level.
->>>>>
->>>>> Nothing can be done with 2) now, and 3) is beyond the scope of the
->>>>> patch. At least solve 1) by moving the hack out of generic poll handling
->>>>> into io_connect().
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>> Fixes: 8c8492ca64e79 ("io_uring/net: don't retry connect operation on EPOLLERR")
->>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>> ---
->>>>>    io_uring/net.c  | 4 +++-
->>>>>    io_uring/poll.c | 2 --
->>>>>    2 files changed, 3 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/io_uring/net.c b/io_uring/net.c
->>>>> index 43a43522f406..e2213e4d9420 100644
->>>>> --- a/io_uring/net.c
->>>>> +++ b/io_uring/net.c
->>>>> @@ -1732,13 +1732,15 @@ int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>      int io_connect(struct io_kiocb *req, unsigned int issue_flags)
->>>>>    {
->>>>> +    struct poll_table_struct pt = { ._key = EPOLLERR };
->>>>>        struct io_connect *connect = io_kiocb_to_cmd(req, struct io_connect);
->>>>>        struct io_async_msghdr *io = req->async_data;
->>>>>        unsigned file_flags;
->>>>>        int ret;
->>>>>        bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
->>>>>    -    if (unlikely(req->flags & REQ_F_FAIL)) {
->>>>> +    ret = vfs_poll(req->file, &pt) & req->apoll_events;
->>>>> +    if (ret & EPOLLERR) {
->>>>>            ret = -ECONNRESET;
->>>>>            goto out;
->>>>
->>>> Is this req->apoll_events masking necessary or useful?
->>>
->>> good point, shouldn't be here
->>
->> Do you want to send a v2?
-> 
-> Actually I think it can be improved/fixed further. If POLLIN is set, we
+At the moment its very hard to do fine grained backpressure when using
+multishot as the kernel might produce a lot of completions before the
+user has a chance to cancel a previous submitted multishot recv.
 
-How is it related to POLLIN?
+This change adds support to issue a multishot recv that is capped by a
+len, which means the kernel will only rearm until X amount of data is
+received. When the limit is reached the completion will signal to the
+user that a re-arm needs to happen manually by not setting the IORING_CQE_F_MORE
+flag.
+---
+ io_uring/net.c | 38 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
-> should let it go through. And there should not be a need to call
-> vfs_poll() unless ->in_progress is already set. Something ala:
-
-In any case, v1 doesn't seem to work, so needs to be done differently.
-
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 639f111408a1..9965976c9a98 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -75,7 +75,10 @@ struct io_sr_msg {
+ 	u16				flags;
+ 	/* initialised and used only by !msg send variants */
+ 	u16				buf_group;
++	/* per-invocation mshot limit */
+ 	unsigned			mshot_len;
++	/* overall mshot byte limit */
++	unsigned			mshot_total_len;
+ 	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
+@@ -89,10 +92,14 @@ enum sr_retry_flags {
+ 	IORING_RECV_RETRY	= (1U << 15),
+ 	IORING_RECV_PARTIAL_MAP	= (1U << 14),
+ 	IORING_RECV_MSHOT_CAP	= (1U << 13),
++	IORING_RECV_MSHOT_LIM	= (1U << 12),
++	IORING_RECV_MSHOT_DONE	= (1U << 11),
+ 
+ 	IORING_RECV_RETRY_CLEAR	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP,
+ 	IORING_RECV_NO_RETRY	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP |
+ 				  IORING_RECV_MSHOT_CAP,
++	IORING_RECV_INTERNAL	= IORING_RECV_RETRY | IORING_RECV_PARTIAL_MAP |
++				  IORING_RECV_MSHOT_CAP | IORING_RECV_MSHOT_DONE,
+ };
+ 
+ /*
+@@ -765,7 +772,7 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	sr->done_io = 0;
+ 
+-	if (unlikely(sqe->file_index || sqe->addr2))
++	if (unlikely(sqe->addr2))
+ 		return -EINVAL;
+ 
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+@@ -790,16 +797,25 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		sr->buf_group = req->buf_index;
+ 		req->buf_list = NULL;
+ 	}
+-	sr->mshot_len = 0;
++	sr->mshot_total_len = sr->mshot_len = 0;
+ 	if (sr->flags & IORING_RECV_MULTISHOT) {
+ 		if (!(req->flags & REQ_F_BUFFER_SELECT))
+ 			return -EINVAL;
+ 		if (sr->msg_flags & MSG_WAITALL)
+ 			return -EINVAL;
+-		if (req->opcode == IORING_OP_RECV)
++		if (req->opcode == IORING_OP_RECV) {
+ 			sr->mshot_len = sr->len;
++			sr->mshot_total_len = READ_ONCE(sqe->optlen);
++			if (sr->mshot_total_len)
++				sr->flags |= IORING_RECV_MSHOT_LIM;
++		} else if (sqe->optlen) {
++			return -EINVAL;
++		}
+ 		req->flags |= REQ_F_APOLL_MULTISHOT;
++	} else if (sqe->optlen) {
++		return -EINVAL;
+ 	}
++
+ 	if (sr->flags & IORING_RECVSEND_BUNDLE) {
+ 		if (req->opcode == IORING_OP_RECVMSG)
+ 			return -EINVAL;
+@@ -831,6 +847,19 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 	if (kmsg->msg.msg_inq > 0)
+ 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
+ 
++	if (*ret > 0 && sr->flags & IORING_RECV_MSHOT_LIM) {
++		/*
++		 * If sr->len hits zero, the limit has been reached. Mark
++		 * mshot as finished, and flag MSHOT_DONE as well to prevent
++		 * a potential bundle from being retried.
++		 */
++		sr->mshot_total_len -= min_t(int, *ret, sr->mshot_total_len);
++		if (!sr->mshot_total_len) {
++			sr->flags |= IORING_RECV_MSHOT_DONE;
++			mshot_finished = true;
++		}
++	}
++
+ 	if (sr->flags & IORING_RECVSEND_BUNDLE) {
+ 		size_t this_ret = *ret - sr->done_io;
+ 
+@@ -1094,6 +1123,9 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
+ 		else if (kmsg->msg.msg_inq > 1)
+ 			arg.max_len = min_not_zero(*len, (size_t) kmsg->msg.msg_inq);
+ 
++		/* if mshot limited, ensure we don't go over */
++		if (sr->flags & IORING_RECV_MSHOT_LIM)
++			arg.max_len = min_not_zero(arg.max_len, sr->mshot_total_len);
+ 		ret = io_buffers_peek(req, &arg);
+ 		if (unlikely(ret < 0))
+ 			return ret;
 -- 
-Pavel Begunkov
+2.50.1
 
 

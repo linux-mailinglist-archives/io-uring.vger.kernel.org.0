@@ -1,127 +1,183 @@
-Return-Path: <io-uring+bounces-8698-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8699-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AE4B0781E
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 16:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62505B07882
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 16:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70643A7948
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 14:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFC11C22470
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 14:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1188126B76D;
-	Wed, 16 Jul 2025 14:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00E52F4304;
+	Wed, 16 Jul 2025 14:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Yxd1+z9F"
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="GG78rQB3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076B126981E
-	for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 14:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FEE2673A5;
+	Wed, 16 Jul 2025 14:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676209; cv=none; b=kFfpUtFGHwlR5V/tzNKpypP/XnDW4XW6GTaduM3SBoM0ag8+sEbbdDQERa3ARYUTTerRdQAkJvvDE7DEZDgscy1ggTs4S07EF2bML5bNnVazcql3dHbhLNI5gVMPDL7p+WJinaLH815LNx/7jXr4dexWBVl8YhPMCt8xkwJASEc=
+	t=1752677179; cv=none; b=WcWdngG373cf+wDwhsjLxnp2lOqcQ4IgPQFtDhX6eOSiaLWRaT8Fk8qytWHqN7elLpXmkJtlUd4rnpgpI9IjdjumejA4lU5aiQztUaYb3wwSvTHYiHG0NeOD5erQqvUT/3OqUCqkoYhcJQDjG5X5GmAaFopJLBzmANBYtKoAF/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676209; c=relaxed/simple;
-	bh=/fySb6zX4m+9WPPxh2LDL48r4LjPg+Qsne8ngkjNZMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9SPMG9tCnPrcJVE3eD4dSdFQcwWSAuU4fHF6jtvWsyP5pLoeLZbkqMmZDbIHFpAma8ADsSyM4FgTPxny/+09P4qii0uFhmoxbrj+QbZvr63/0wIZ7UfLQ+ifAr/hCS131G7cVTdZ9XVAIW0aEOO0pozKTG7NdszgK2LXyd3olE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Yxd1+z9F; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3df2d8cb8d2so24056365ab.2
-        for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 07:30:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752676206; x=1753281006; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Uojjm6fcLZ+mUddp83QrZxw9M8qmMMJaZaJ4O0EjFU=;
-        b=Yxd1+z9Fr2E2ck7ymxSz5K8tZjj5M/ei9VR94p6SkHhUKNVWZNMqJuPs+vI2B40VGJ
-         l6PqybHStKmJtJT+oEJbI5bXjH+kNCAg7/JdZeE8cqQfBUMSm5xgNA3fPF6EDxjHUHA0
-         OvMW+b4bLHwSxz99aKwLzqr3T6226TUk1qYBC7WA4eR4+xs/nyaqRRiyOxIqIsxHge9e
-         tu+27qTxx79YYvXabBPGyHoJiEdNAkySiV4dihaPykMYcqRd9Kf3hwVYm8xf31wovPK9
-         abDmU9Ep9jeIMj88/Mq6Xx5sA0isZJVdseiG8miX4aHdRWZIibzdzG6Us+zcZqjInkYt
-         nRxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752676206; x=1753281006;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Uojjm6fcLZ+mUddp83QrZxw9M8qmMMJaZaJ4O0EjFU=;
-        b=B0XX9euFFaKd4r6o0dSOlR6V0C7cvNEBxFx8pTyb1Zi+C+fUfS3kBFTg2dnBTjVlAP
-         NdgHawEFGLzbVj4jrMhSHv3YM28jcb0HOhvGnihxwM7e8Vi4cE8hF+GxjlPrI9X702SX
-         YBpCaPc6PIA/9Swm1APzpUzYxq4iouDK/CkJwdC9+5nJMAEo4Eg4dOF+lnilg+2ReyFq
-         0gd6uMr2WBKuwVDptmP+vE7BGD0/d1dPHMDfuekcHrI5Ald8RCOHQjJDqGmXC3LABh1o
-         Jgk3E+5s60U8eO9fjHGS73Or9Gn1nnWVg5PPSt1UUKaPw//kprgVrBH+oeUFTbw7lqAp
-         nHiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGq5xUxyn7ptbX82DCLtWKBKAnO9g9fgs/t3EDxu2HgkxN0TXKAyOn1McI6INAz0n9M/6RA2Pouw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnEHGI9ReRr3tnPPnxo1qgvV/RNaGUihbaMwx3AXe0/faSeKQe
-	zdWmxzcxcJnjqex5oI7ojjm7PKNNn8LzkNm6FpaGwJWHS1TUoYMvDV7icrKuV+oIaVA=
-X-Gm-Gg: ASbGncukkRoXuFnnVmZyoQYkMsMuloejEDHTcSp1VxDYWnxW8MIZKmtHFdb/O4MPKM6
-	BVqbKHY1IqTMSQYlLdxrqJ77v3JihQcUC2w2VC5CS1PMnps4BbDPYAWUr1DP9+6zCxp0+suF+CA
-	knFUgsFsW9PiF5hs5aaGgTQeh/tKo9YJTx1Wt+VEM2sKHVA9SAowiSSIEcgR8LmqwLGmrXqIxq3
-	EwwtRWQtMQjhtF8Q5lO/pxKwB48Sb96Ff39WGAItiOqf0R8pieBFtEU9FgG+Gy9RuVaHZQcXg4y
-	y8+xBU5GTDQoxXbv7PZOLg9TzLM4Uu/uCDh0a27dgCXRK+cLod0OHZTZqRnOl/qemeoIlpyGRkS
-	rQnTont2bOxRjhjhFwkU=
-X-Google-Smtp-Source: AGHT+IH+jLRGEsW4dtjrdZr5d6r5MlS0/wxSW+OlnfF/Bx4B5TKy4HEdvsg+u/BOVaab0R+9o6M71g==
-X-Received: by 2002:a05:6e02:4508:20b0:3df:4046:93a9 with SMTP id e9e14a558f8ab-3e282300e22mr24807975ab.5.1752676205462;
-        Wed, 16 Jul 2025 07:30:05 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556973079sm3091349173.63.2025.07.16.07.30.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 07:30:04 -0700 (PDT)
-Message-ID: <9df85c99-4f2d-4d12-875f-ce68e781c107@kernel.dk>
-Date: Wed, 16 Jul 2025 08:30:04 -0600
+	s=arc-20240116; t=1752677179; c=relaxed/simple;
+	bh=90oUzGeS1sxmgNEXlih3PNWaFw37jnsYtrSwVVPyoEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WHLv0CWwu+3rt+lopH7B0Lf6aOF2ld8qvNACC72IHYo2+ej5KNJvT2rilfq06F1FCnga0y+/LgN7aePqSfsDoUiUs8zoGgvHsc6vr6+YzhmntaCLFB67ROcG18hKn8i8eyvP/Mzjlv50klNQaM7lNN/BvmuPLRvIrKdM4msz+Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=GG78rQB3; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=default; t=1752677176;
+	bh=90oUzGeS1sxmgNEXlih3PNWaFw37jnsYtrSwVVPyoEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=GG78rQB3mnsDPQMFvOXFkdx6/qvPt0al0ctjGh/1FtRY8nYyxqIn9GD4TiC6iTRZ7
+	 BxBRAW7C8sV2pYIkgKzzFgxaDg5tia5yPJAhhrVtRMY54JTyt3vTbvNzZeFwH2VAVR
+	 BE22OjJPU+vJ3QF4T50P5pb/iHzz5NGEaeym/mgO02K1BNMh8bA/sLMxRNFQaOIZnM
+	 KDsCGguNbopUW3/b7b+wn23wEpIWiHEj7nHyXutSSe5w33VCNQLYHTrAXe2izgwOzQ
+	 +Ic0YU63t+287iVSu+1Twc3I2i7/yiKQuvjPhEjBxrsRKP1mTFWoOsygnRZmS2Yvun
+	 ZTrIMSotiMABA==
+Received: from localhost.localdomain (unknown [68.183.184.174])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 82E4E2109A94;
+	Wed, 16 Jul 2025 14:46:14 +0000 (UTC)
+From: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: [PATCH liburing v3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build error
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Wed, 16 Jul 2025 21:46:10 +0700
+Message-Id: <20250716144610.3938579-1-alviro.iskandar@gnuweeb.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v2 0/3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to
- fix Android build error
-To: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- io-uring Mailing List <io-uring@vger.kernel.org>
-References: <20250716004402.3902648-1-alviro.iskandar@gnuweeb.org>
- <3b28fddb-2171-4f2f-9729-0c0ed14d20cc@kernel.dk>
- <CAOG64qO1S+hd+cgabQn6uYMPGAMm7V-FRmm6btytZE270bEebA@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAOG64qO1S+hd+cgabQn6uYMPGAMm7V-FRmm6btytZE270bEebA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/16/25 8:28 AM, Alviro Iskandar Setiawan wrote:
-> On Wed, Jul 16, 2025 at 7:41?PM Jens Axboe wrote:
->> For patch 1, maybe just bring back the configure test and not bother
->> with a revert style commit? There is nothing in test/ that uses
->> memfd_create, so there's no point bringing it back in there.
-> 
-> Ah yea. That'd be easier. I'll copy the configure part instead of
-> modifying the git revert result ?
+Commit 732bf609b670 ("test/io_uring_register: kill old memfd test")
+removed the `CONFIG_HAVE_MEMFD_CREATE`, which was previously used to
+conditionally provide `memfd_create()` for an old test in
+`test/io_uring_register.c`.
 
-Exactly, just make it that single patch.
+Reintroduce `CONFIG_HAVE_MEMFD_CREATE` to resolve Android build error
+caused by commit:
 
->> IOW, patch 2 can be dropped, as it's really just dropping bits
->> that patch 1 re-added for some reason.
->>
->> All that's needed is to add it to the examples/ helpers. If it's
->> needed for test/ later, then it can get added at that time.
->>
->> All of that to say, I'd just add the configure bit and the examples/
->> helper in a single patch and not worry about test/ at all.
-> 
-> Understandable. I'll send a v3 revision shortly.
+  93d3a7a70b4a ("examples/zcrx: udmabuf backed areas")
 
-Thanks!
+It added a call to `memfd_create()`, which is unavailable on some
+Android toolchains, leading to the following build error:
+```
+  zcrx.c:111:10: error: call to undeclared function 'memfd_create'; ISO C99 and \
+  later do not support implicit function declarations \
+  [-Wimplicit-function-declaration]
+    111 |         memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+        |                 ^
+```
+Then, provide memfd_create() in examples/ if `CONFIG_HAVE_MEMFD_CREATE`
+is not set to fix the build error.
 
+v2 -> v3:
+  - Don't bother touching the test/ dir.
+    Link: https://lore.kernel.org/io-uring/3b28fddb-2171-4f2f-9729-0c0ed14d20cc@kernel.dk
+
+v1 -> v2:
+  - Omit the old memfd test because it's not needed anymore.
+    Link: https://lore.kernel.org/io-uring/4bc75566-9cb5-42ec-a6b7-16e04062e0c6@kernel.dk
+
+Co-authored-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+---
+ configure          | 19 +++++++++++++++++++
+ examples/helpers.c |  8 ++++++++
+ examples/helpers.h |  5 +++++
+ 3 files changed, 32 insertions(+)
+
+diff --git a/configure b/configure
+index 552f8ae..3c95214 100755
+--- a/configure
++++ b/configure
+@@ -379,6 +379,22 @@ if compile_prog "" "" "has_ucontext"; then
+ fi
+ print_config "has_ucontext" "$has_ucontext"
+ 
++##########################################
++# check for memfd_create(2)
++has_memfd_create="no"
++cat > $TMPC << EOF
++#include <sys/mman.h>
++int main(int argc, char **argv)
++{
++  int memfd = memfd_create("test", 0);
++  return 0;
++}
++EOF
++if compile_prog "-Werror=implicit-function-declaration" "" "has_memfd_create"; then
++  has_memfd_create="yes"
++fi
++print_config "has_memfd_create" "$has_memfd_create"
++
+ ##########################################
+ # Check NVME_URING_CMD support
+ nvme_uring_cmd="no"
+@@ -539,6 +555,9 @@ fi
+ if test "$array_bounds" = "yes"; then
+   output_sym "CONFIG_HAVE_ARRAY_BOUNDS"
+ fi
++if test "$has_memfd_create" = "yes"; then
++  output_sym "CONFIG_HAVE_MEMFD_CREATE"
++fi
+ if test "$nvme_uring_cmd" = "yes"; then
+   output_sym "CONFIG_HAVE_NVME_URING"
+ fi
+diff --git a/examples/helpers.c b/examples/helpers.c
+index 483ddee..8c112f1 100644
+--- a/examples/helpers.c
++++ b/examples/helpers.c
+@@ -13,6 +13,14 @@
+ 
+ #include "helpers.h"
+ 
++#ifndef CONFIG_HAVE_MEMFD_CREATE
++#include <sys/syscall.h>
++int memfd_create(const char *name, unsigned int flags)
++{
++	return (int)syscall(SYS_memfd_create, name, flags);
++}
++#endif
++
+ int setup_listening_socket(int port, int ipv6)
+ {
+ 	struct sockaddr_in srv_addr = { };
+diff --git a/examples/helpers.h b/examples/helpers.h
+index 44543e1..0b6f15f 100644
+--- a/examples/helpers.h
++++ b/examples/helpers.h
+@@ -17,4 +17,9 @@ void *t_aligned_alloc(size_t alignment, size_t size);
+ 
+ void t_error(int status, int errnum, const char *format, ...);
+ 
++#ifndef CONFIG_HAVE_MEMFD_CREATE
++#include <linux/memfd.h>
++#endif
++int memfd_create(const char *name, unsigned int flags);
++
+ #endif
+
+base-commit: aa9a6b701aa65b575412476d35e813e48119fe23
 -- 
-Jens Axboe
+Alviro Iskandar Setiawan
+
 

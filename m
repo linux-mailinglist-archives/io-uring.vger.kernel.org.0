@@ -1,121 +1,132 @@
-Return-Path: <io-uring+bounces-8700-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8701-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE89BB078BA
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 16:56:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19EEB07AE0
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 18:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD170188906B
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 14:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F5E1882276
+	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 16:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4482F2706;
-	Wed, 16 Jul 2025 14:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED8923ABB7;
+	Wed, 16 Jul 2025 16:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uTVHnCXJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhJAE2Et"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201EE2F433C
-	for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 14:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D09318D65C
+	for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 16:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752677469; cv=none; b=CblOQy6BQa+8mtf4gR9gMXGMLP55SqEJ0IJtIxsArWHxSFFZT5dFRqTp6q78M5ka5HQ5E5jiD8sbhXVv3PBbV1cZ7MdMoKC971VFXjdrKqJoetmQubAoCDo8yUcx4fYznsfgbcKITfFtICyT3aIN5p7GsZKo/rOeC4EfElSmO+c=
+	t=1752682617; cv=none; b=R8dwkkMMu2Dnws+t09n+iQG5Zuz9hnQVgNEQfE3Dj0spT7cNKV/teoFZ/3VNRjYRuEZIqRDIYMVrb+iZEIjHhAys9NmRJdw81drb4MRER2f2ftcUBVW9Aq+iU3oxRYQ5pNvE5EvyUtGTT84JgRiftgDCosoVqT0+8M5w+JtfQhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752677469; c=relaxed/simple;
-	bh=fwbD9UqZsH241N3eR2h9klJuicSlxQUaLnMjsuw1OwY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=e+HTT1lOpedty3CpLn8o07ltDM39mZGALsrmn5yso29sj3kg7h5W9KhnugMWUjByd7Ln9s6BupEqgrVoVQ3LMIe8jC9J9wxTkQoogw6GkgBDmMN2q/BP/NuFNe73bBcVIocV9gRhIWOavrgpNMpjrjE5cteP684j43zzGdIr8wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uTVHnCXJ; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3da73df6b6bso25368125ab.3
-        for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 07:51:06 -0700 (PDT)
+	s=arc-20240116; t=1752682617; c=relaxed/simple;
+	bh=VgHi1TW71jfIlxSFpsG07BqJdkZzTyJJqfdom6q1Etg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NCZwv52wRaFNrYSWPROlk0LiCabkqWEMztDNlYocPbah1XADkq7T2bFR5spQ5cdxQgywaXaSrkpqBG6YvOFwvVYzbh803dA316bheh+4D5hmLoXP2bJ3rQ6dzYBI7u1tOOgdovWPlGc5t5TaGpMva74H2RE6XLZDS8jckeOooTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhJAE2Et; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so10671431a12.1
+        for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 09:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752677466; x=1753282266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwbU0q/ifd6FalZH5HEq7gHegG0B7AyE43XqSR/SlAs=;
-        b=uTVHnCXJ5apqSXyWebs2aoGJqb82KYo9Wm80Rmlql7+xSlqwt3D+jkB4vZmzHkubEv
-         TUbEKRpHtCiiQSwl04UjvaXosbXD5fJx7D5njMS7znsIEATmXvivhFlumKWoT8l1IbVe
-         KbotzRNKhnM62IASqGTLLJ7UmwTjp6YN/ceaLyKVe8FkOQBgyEhQukKtabEruIK882eM
-         UJ2HAONUvSSFzseAaReuAghB7+139VupBpMJgeMYMEZ7rqmAwWUuU/GO8I46Z8te+QV/
-         yo0wQGDwH4bjDXNMR/X5ec0snRicAOWYeY5ALpWo+pp8+ikbWJh37kTXYDspxjnfsDBT
-         wOzA==
+        d=gmail.com; s=20230601; t=1752682614; x=1753287414; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LkmRgGtTYtH6ZoSisGFloXi1BecE6fYuwUc/wSEg9OY=;
+        b=NhJAE2EtNnywCFfiofG5BRsWvQeiOmtJXKSI9N/CGusjuIWfnRpGi9Z7MAPr4Am/J8
+         p/Gh5+alTGTa0f+igaRQbFh2f25Z17tYL5lo9hfA8eow/YW2yJrV1/3iscsBYsOtj/Vv
+         lMRo1LMzq8Q4PsALHfPau0G2Ao9DcDtyne+hTjSs9yW4ZO2E37PyPZ/PlH/tNNRt7lY9
+         67vImT3zwBmNZSxhZWZY68/gbv32+mYPfIWWUw3cNTqMh8ZbcR/FBnuNm3eTXTYUyUT0
+         Dzn136YzoNJtshj8JVOs1O9C/mOF4K/31/UXuEUPGQOb/QdmyAB1gGrY8SL68OTmnglK
+         EFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752677466; x=1753282266;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwbU0q/ifd6FalZH5HEq7gHegG0B7AyE43XqSR/SlAs=;
-        b=kSIlkbVf2hGEJTQASZxTGo4ara9MKTAhoN+RWXY5KCcj9gnO2R/Zj54802HZFsOwTB
-         IzAga67nMHp9kZg6syKJDEjW6XwI/fWGOC87/DoKVbHYbDkexzPGeKKkkzu8alApNVG3
-         s+o0pskbaNUxqHyVK3o7sKkkArDbwlMHsT5AQJ13nCIPzE7SWtFGw/OD7wbqyqJDkY+S
-         kud0o3x87Kf7kpjoM/o4bdb/3WziEpvKXpoeNc8oFM+PSbhBuHhdq9brWsdZqwPsM4Ez
-         3k/69hHSIDVnv8IH2eVTRanUBLYrWvkqFZbAEgcq/Qod9GC0fvrkP2IDal+1NQ8fAB2o
-         FkSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUflXMhYJ1T6IM/eOf4IXyly+Wpsf5Wk8fWsP0DRGXSyboDFGV7oqoNtucalorQJl9xgQu24jiA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkU0XMkC+1DkRki63ktjWXH7N8WUQ911zFbgetg3PVzgeqlBT1
-	RJuXfZChZ7GpMGleCz5j1XJfUFHhRmkCz5gXW036O/qCc7M9P4b55XmiaKO9Ib7zAmI=
-X-Gm-Gg: ASbGncsvSRJnyGYjQr+NiLE86Zde2t6pbQnOkCymZHG4b3N7C19cha8SiIIL6HCVTKE
-	SsKAyVwnjW/xH9WvE/66gQoE4rIAlHsH95kpTBPKg6yGUrJh7ZfwG4lo+0rL9Q6M/61jgw2mYe5
-	KE9tb3x1nU1inihe5Sh/TUDthzFWitOFhiOu1uTQP8BXcbQRiadWsgyuah/Ahm7l3UdibCKSVTb
-	Z8aO5SLyU2d//QtM51jPSngxcl6RV6AA6P5bi/P+kJR+HHlcXdM8gR4MccQqM73uPXTR4l8qPRN
-	aPSxPs7AJwijwBTni3zEpYyMIeTjipGetC3nCvmdFVIlxfqkE5e4JE9vQbbZNH8u5KOUjQ/JUHP
-	UY1PCll63cVvw6g==
-X-Google-Smtp-Source: AGHT+IHP4Rj05mgTi/TM+2sWnURzVs9GTrIAvMAgF7z97LxxXL0q66/VCKY85ikZmNl1jEito3jg6A==
-X-Received: by 2002:a05:6e02:1a09:b0:3e2:83d2:8b08 with SMTP id e9e14a558f8ab-3e283d28bb5mr23221745ab.6.1752677466082;
-        Wed, 16 Jul 2025 07:51:06 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-505569d0e4dsm3011781173.109.2025.07.16.07.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:51:05 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>, 
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
- io-uring Mailing List <io-uring@vger.kernel.org>
-In-Reply-To: <20250716144610.3938579-1-alviro.iskandar@gnuweeb.org>
-References: <20250716144610.3938579-1-alviro.iskandar@gnuweeb.org>
-Subject: Re: [PATCH liburing v3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to
- fix Android build error
-Message-Id: <175267746483.305834.15435352691107984360.b4-ty@kernel.dk>
-Date: Wed, 16 Jul 2025 08:51:04 -0600
+        d=1e100.net; s=20230601; t=1752682614; x=1753287414;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LkmRgGtTYtH6ZoSisGFloXi1BecE6fYuwUc/wSEg9OY=;
+        b=UyRpiXnzo5WlmX4+iVl+Uw3fR9ZBIdpUdD0cu/q6DX8qcQYBYGNPSC5Pl6J2UL0+8x
+         706gdPuT3aR8ceIOxHvD5pHyRi0Km/fMF5HfaNLPTc1bZ/qB7nBvS2VsLSSUTTqrCpB0
+         499IS4QCWdcn4OKu5CE2eWH2lTySqHTs4np3R3o9czYfZbN/yQiXfkoF6p4Dh5BQ1WlP
+         +pv/iqUikSDpXjJSjwHh6UvKNwtbKvgnLBXf/Uer77eEfGUQgn+fOYHJZX+wX0//ZY4c
+         5KovlIc4tn8/OccJwRuYxkAR8zude5UeH6iYhWoPIhRhjvbhaiGAGnj3x4ZxA7xI+EEC
+         JLtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVI+WnOOReAWGWITmps6wBwMNkKt5lvcEolWn60LXPVu5uTozlbadXp9FCaoietOmKu3u88lzfIIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrh5VYT2RHnhIpzf8MsRTWHjY8dz0QcB4zSFpMt+lPk8YSr8Gb
+	S14VhzjVCv6mlUpgYWK3DMLJovmp9wazxBcyFoLZbfqvF+jpQolATR8Yc/7Waw==
+X-Gm-Gg: ASbGncs5LU0WpIbc5JzbbG2N7gPaL1/QIQ9H5jNcVL4gAuHN/pbCGPtMbLQG47tdbPS
+	sCEtch4mlI5rYBFx4pyCKoXVymAtQoPWE+W+7iYtimooxIb2xlFtZUFG5RGPeZEJp9IBvlg9pt/
+	WYTMmSL5wI8vQxRjh5aKfWBwW4b4+dVBYWqv4/Btmt+ei61lqG2MaHP4xrEl3UWnNXYVUqOZMFm
+	hyyiSG8qXzDpoGjPDV6XQK6Z6lWyFkigQinj16FNdwGracWg45Hx4I6pOKjokPH+W7xdDXqXrgA
+	6pNp4yIuUMx/S6GzhkrfaIJQI2A0XxzkXjWnJ4psk+aY/g8OtV43RK6TFHKSpAZ4+rJdL+p0Kdi
+	xMOJloP5Iv02eXbSNdkkezL9gRnelbu6E
+X-Google-Smtp-Source: AGHT+IGTv4x5R9fggvNx+hGszefVTEEfhc4EvLngTiIBVRhkAyBD7Bm/i7PKbfZDLvjk3pTwDUkEcA==
+X-Received: by 2002:a05:6402:1d4b:b0:607:206f:a19 with SMTP id 4fb4d7f45d1cf-61285bfd69emr3087056a12.25.1752682613540;
+        Wed, 16 Jul 2025 09:16:53 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.133.211])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c9543144sm8863333a12.33.2025.07.16.09.16.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 09:16:52 -0700 (PDT)
+Message-ID: <2926a9d7-3484-4004-a40b-9a739bdaea13@gmail.com>
+Date: Wed, 16 Jul 2025 17:18:19 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring/poll: fix POLLERR handling
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <550b470aafd8d018e3e426d96ce10663da90ac45.1752443564.git.asml.silence@gmail.com>
+ <62c40bff-f12e-456d-8d68-5cf5c696c743@kernel.dk>
+ <dd1306f6-faae-4c90-bc1a-9f9639b102d6@gmail.com>
+ <7432e60c-c34d-4929-b665-432b6d410b5b@kernel.dk>
+ <3b7eb60d-9555-4fa4-a9b8-5605abd3988b@kernel.dk>
+ <bf0de1c6-64e6-4a4a-b741-3fab0576339f@gmail.com>
+ <8d9a1230-0db4-4f7a-bca8-565465d3c186@kernel.dk>
+ <cb896d1f-6260-4ba6-b6f6-6b4693f5e6b3@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cb896d1f-6260-4ba6-b6f6-6b4693f5e6b3@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
 
-
-On Wed, 16 Jul 2025 21:46:10 +0700, Alviro Iskandar Setiawan wrote:
-> Commit 732bf609b670 ("test/io_uring_register: kill old memfd test")
-> removed the `CONFIG_HAVE_MEMFD_CREATE`, which was previously used to
-> conditionally provide `memfd_create()` for an old test in
-> `test/io_uring_register.c`.
+On 7/15/25 20:12, Jens Axboe wrote:
+...>>> How is it related to POLLIN?
+>>
+>> Gah POLLOUT of course.
+>>
+>>>> should let it go through. And there should not be a need to call
+>>>> vfs_poll() unless ->in_progress is already set. Something ala:
+>>>
+>>> In any case, v1 doesn't seem to work, so needs to be done differently.
+>>
+>> RIght, that's what I aluded to in the "improved/fixed" further. FWIW, I
+>> did dig out the old test case I wrote for this and added it to liburing
+>> as well. So should have somewhat better coverage now.
 > 
-> Reintroduce `CONFIG_HAVE_MEMFD_CREATE` to resolve Android build error
-> caused by commit:
+> How about:
 > 
-> [...]
+> if (connect->in_progress) {
+> 	struct poll_table_struct pt = { ._key = EPOLLERR };
+> 
+> 	if (vfs_poll(req->file, &pt) & EPOLLERR)
+> 		goto get_sock_err;
+> }
+>   
+> with get_sock_err being where we do sock_error()?
 
-Applied, thanks!
+Seems to work. sock_error() can also race, but I don't want to
+waste any more time on it.
 
-[1/1] Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build error
-      commit: bc8776af071656b47114d777b56f0e598431cf5d
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Pavel Begunkov
 
 

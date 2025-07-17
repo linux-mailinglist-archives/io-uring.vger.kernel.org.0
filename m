@@ -1,123 +1,170 @@
-Return-Path: <io-uring+bounces-8708-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8709-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF06B08078
-	for <lists+io-uring@lfdr.de>; Thu, 17 Jul 2025 00:24:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4E9B08FDE
+	for <lists+io-uring@lfdr.de>; Thu, 17 Jul 2025 16:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462493B388C
-	for <lists+io-uring@lfdr.de>; Wed, 16 Jul 2025 22:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50587581636
+	for <lists+io-uring@lfdr.de>; Thu, 17 Jul 2025 14:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5466C1F2BAD;
-	Wed, 16 Jul 2025 22:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A69C2F8C45;
+	Thu, 17 Jul 2025 14:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eL+mTdOS"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jNUglk+n"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E34B660
-	for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 22:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A102F2F7D0B
+	for <io-uring@vger.kernel.org>; Thu, 17 Jul 2025 14:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704642; cv=none; b=eG4O4iBbSe4ybZr77adz+b52IOMmhsGTLUeSPKuVLe69Oe+w5Ud+SfPGenlyOd3J3ndiwEC97ETOI6dWv+wQFHuHhk7G4ZUyZRu9jP5xyAWjcvy1NqPgHRThBGSr/G0G5n+8C0dNBmsUlP3PhnAlFN+CcEyotUXLJF+8KhjgOR0=
+	t=1752763808; cv=none; b=WfOhmc9hNMNvX4PbufVid8CN5bs9YURxm1l5tr52mnA4IYFUqiyLayLkcQiDyTQL+O0zV/R48cXHmwtsTErZgwQesKjzpdlN2na4ervoLC1mfKw/St70XZ6YFuKBFa1W640f7sCztDgCoOzF1fN6CPMGPDAEu6GYG1oRn6MWKno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704642; c=relaxed/simple;
-	bh=seZdRAYTBmxNuMl50LDsc/CH2c2IaYrAmXI7Fepx6xI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YY+1Ytsx3KK0NiFODqtfgK1ep+gbKiTGiPDxcKwrHednh9tYhjQEhmUdg50dBo+5jONUhjGDYhFg00kuaPlBS34dggxFRVT88UxhYOgfgqbBKLjKnjVW2L7beeVJFIOfBFAgJCokgZVpBT7sqa5M3pa6A1xCeQLH7YssvbpVlzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eL+mTdOS; arc=none smtp.client-ip=209.85.166.169
+	s=arc-20240116; t=1752763808; c=relaxed/simple;
+	bh=5IVjB201Z9M1JrjnRRTGYI6g7gcFXQCY2rk0tBsCHGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SgThRGptzkmW1v23ev9dBUHH6DDoCfmIR9QfTO8zGvOsn4qcMDFLr/oVCdt1mKrJVPadINbWm1SFYQI+hR8SyKg+SNs0+QUJL1PhxwsYqrVbssY3xdwq5C1HpKoWY43LocUDeh/xPUzugYJhrsEgpy3YVZH/Jf9qeost/k/Lie0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jNUglk+n; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3e281f82060so2843535ab.2
-        for <io-uring@vger.kernel.org>; Wed, 16 Jul 2025 15:23:58 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3de252f75d7so8554545ab.3
+        for <io-uring@vger.kernel.org>; Thu, 17 Jul 2025 07:50:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752704636; x=1753309436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9rwIFgiiYdhwB2kvdGvafwg5PEM6edVv1Ly76l+PpDY=;
-        b=eL+mTdOSQIC1Z6I3XqFbafba2jteoMQFBSOvyIlB74VtCwf5RygVqV+RgZBWxbhnia
-         N+1PmIXTnfkF6tzMj/X5HeEju7Dg4SmN4U1oKnLVtmH5+fX99DxgSYo4JPNwPbbFW8My
-         icx7kFa8CUjITo1YhtTxDL80LGn9g0zreboYJS6efREePozXMGw78SsAvQqnjs8wOk22
-         keBPp/+zi5YU9dG3F7E7czcZP6rSwt7TBgxJ12sIcqjtjCjRgVdqx55d6TTyDuOwxs/v
-         16ogJY93tueTbRxvA6JwDevJod4kAwvA6DBKzsaJWuurMO3C+Es8lDnYnKecabJ9QNaW
-         Zytw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752763803; x=1753368603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CpBIweq0iD5LnrXWqctByL8uGzmcjIqlzYC72NvOVqQ=;
+        b=jNUglk+n1tGzPr2YaBmdivjgQYcUPJrKE5FrqpSwzJ8mO98PpVzyklaICSG/4QeEUn
+         FyNX4cafl8Zjj7lAVeeenffjEaR3h0mwkfrp2KICrYmKgoK4ygIjRNZjPkv0n7LTcp6X
+         qIX0/DwXKOAhijAuhSuir4yAteMGZbZ/oMtHar092sEVNNvv4Efn4ar/AIQe5oeo3vy4
+         3oI/8fmriBn9HFl/sEW8n0rTH7HljtNdGbEG2pWdwdLILo4DHuydxQoe+vmywKUhz0Iy
+         YVx2u2pAEk/A/8LVx1rzwl198+OlWRHEQvuzx8vVmfnvOQaxkbTw/7s7KbDAOdOBs5Nn
+         a6aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752704636; x=1753309436;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9rwIFgiiYdhwB2kvdGvafwg5PEM6edVv1Ly76l+PpDY=;
-        b=jaWCA4F44ZHbsVnw1mTHspfIBv99jUtZDoonoVOBTGqMnwm4SqAvJF+jVGWDESC0wE
-         xqd95OVGX898u4AMC6DoyV2ma9R9xnwU2PDW6yyqhALfTD2+ztISEESlXIwFgpYJZHF6
-         16a8AFJj7MVeUihg6PtSBp+awQXZBcE6U9FDdlx8rpj+yx1CksWphajIcDDYSy7l0tYo
-         FJNJ1OVWWqoUyIJJqJO2yeB+eUvHt+2IFS/JYj33Kv/6bsQK3cFXmMgtvbUVDwfcxq5E
-         VLHGeeBVgiGKESUfr9aDl51JeN/Ze6r03YXGH4hptyObdnbMQFg7Yd12A6wYnefHvOKM
-         yZcA==
-X-Gm-Message-State: AOJu0Yw6cyGlk/bMAa3uu7zo7zUq5q2AG/G+Gf8NH2cCqj9LmFnI/4tT
-	OVAFNTljZANkZMEpAeSrOX6xoSkcNzfn8a0D0JB9HF1bm0ocSc4hBwXjp7voBEnuLl35psiG+ft
-	l/4xD
-X-Gm-Gg: ASbGncvJcY7cVwWxZqdsPFjH2qBp7uPf5SeMImHHmg1+ER8FYyy4M5ZyfUazd7cal8K
-	51y3cfybUJnfmfruw2WamnqBdVyFmX3uJAgcH6L3/HZpAPLv0PF2cF2V32mzmbZ9/StS/tfSl+l
-	ULaQO6+PNdgL71r/bbCmFlZMOnLBTJMUc10gU8kwMS9lX45Juo9nSI6zF2FXOHtr3a+TLkEAC7E
-	8LeAwPIRv+BYonQfPIFabAgsAmhJ3sMY1uN/59XHMIylTA4l8kuGiUAYwDP1j4V4FtPWGiTH3Yu
-	aUtPUA1RgLL6tCfAQ5edtlH0FvNr3CMp7RWp/Tb9FV5/FSmHwsa6E7FQOypdFWakBh5Ip1Arswf
-	eH7kGQbt48ROemw==
-X-Google-Smtp-Source: AGHT+IHUeah28/kLYeMwxibutCqGoHPb7wVVdj6ijHuMypWsjOBWBIdzgJDB2V8QEPUZCPQWchbwow==
-X-Received: by 2002:a05:6e02:3113:b0:3dd:b808:be68 with SMTP id e9e14a558f8ab-3e282474739mr48840305ab.16.1752704636561;
-        Wed, 16 Jul 2025 15:23:56 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556b0fc3bsm3252971173.127.2025.07.16.15.23.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 15:23:55 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: dw@davidwei.uk
-In-Reply-To: <cover.1752699568.git.asml.silence@gmail.com>
-References: <cover.1752699568.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 0/2] account zcrx area pinned memory
-Message-Id: <175270463567.350203.14212720423307361681.b4-ty@kernel.dk>
-Date: Wed, 16 Jul 2025 16:23:55 -0600
+        d=1e100.net; s=20230601; t=1752763803; x=1753368603;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CpBIweq0iD5LnrXWqctByL8uGzmcjIqlzYC72NvOVqQ=;
+        b=BsgwVmKNY9FF6iOMBKM9wNkFvIZhAWpFsrl5R6wWflkxxkJv8t4k+c1L9FScE8Np/7
+         lv3/X68mSDty+nrKK1MslyKO8xPs0uLX5uGn6RFPp4jiYGIfW5rCWcJC6/yi+3TFzlum
+         gNYaf0BjD2n6l+EZOAElC/4yyXE3fmKZT+ZUN0gNaCxQjCYw8UjIDT+xbEc+TkfnXfkf
+         Ltw0CxYaMRllsFnyHUt/48jtVBTAped+5ainyzqmJ8kee+JEuBbgSul4uFI9QZh/dz17
+         7hE7gkG/HHU98fzzoQzT5voOcdS9tY+tMPfesB1lNAaL6g1AX89q0vJzngo5zU1GWpRv
+         m7oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDfntqHicxTzRyjK/XXDwY+ETBF0zk4hCCD6BgsY2ls6XqUif/9irI4I7QXk5TIt0TwVbnZJMRSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp9Tq5KJ894YqFGV9fpYBIqyvbuUUumAMXKRt1TLzj4I2OOdH1
+	vvz47+2V0dKwKLVwPiFFzp3z74lx9t0A6WASye4Rs5n5+0pzcUnoESEYiFAtS+Mgobw=
+X-Gm-Gg: ASbGncthHxqtzn7KjWptrYi4ff4keU8gAwvFAP3LVmbPVwegasReXPd08vF4wAtxNlQ
+	7CC5OQevHkxVJPej/EV0o0FW+9tgjwQLP8gcQXGOPSfBX/FVkMv7/6t4Dzkgah0tEGoz0pDnRJ8
+	fsqLN89v6OkeAoRAYE3cS6xxkFsy/aXd+hMotq0cc1VGR8+1ZsXZ3/wyXwr7wGqHXgNfczIWARp
+	L1ufWHLWIOSu2IrzMSbAS+b4IBSs6CiX9ZncA+BTA6Qom8Kz8swJFu+bsAtfdq0zqzR0oh5zJl3
+	u6SVUUn1pYPVpokVamPKLltDMCqWt/ipE3nIekE4PbToOdgAldlo5Wn7ZGzogj2FYeyEW03BpIJ
+	yzpLs7iYv6Ser1H+JP4s=
+X-Google-Smtp-Source: AGHT+IHtLbYFlyVOm/F+OnLZmEJAhgfTNwwhZKT2Wl+v/pteAXTPDXqnTMcRoU9m7xDgjJXxoWE01g==
+X-Received: by 2002:a05:6e02:2709:b0:3e0:ec1e:18fe with SMTP id e9e14a558f8ab-3e282e85d2emr73976565ab.15.1752763803325;
+        Thu, 17 Jul 2025 07:50:03 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24623ece5sm52186195ab.58.2025.07.17.07.50.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 07:50:02 -0700 (PDT)
+Message-ID: <0b3afe88-f6b8-47b4-9e59-9b232653f6a1@kernel.dk>
+Date: Thu, 17 Jul 2025 08:50:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Relationship between io-uring asynchronous idioms and mmap/LRU
+ paging.
+To: Steve <steve_iouring_list@shic.co.uk>, io-uring@vger.kernel.org
+References: <a11e741c-458f-4343-8f68-28ecc151cb34@shic.co.uk>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <a11e741c-458f-4343-8f68-28ecc151cb34@shic.co.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
 
+On 7/11/25 12:12 PM, Steve wrote:
+> I hope my post is appropriate for this list. Relative to other recent
+> posts on this list, my interests are high-level.
 
-On Wed, 16 Jul 2025 22:04:07 +0100, Pavel Begunkov wrote:
-> Honour RLIMIT_MEMLOCK while pinning zcrx areas.
+Certainly is.
+
+> I want to develop efficient, scalable, low-latency, asynchronous
+> services in user-space. I've dabbled with liburing in the context of
+> an experimental service involving network request/responses.  For the
+> purpose of this post, assume calculating responses, to requests,
+> requires looking-up pages in a huge read-only file.  In order to reap
+> all the performance benefits of io-uring, I know I should avoid
+> blocking calls in my event loop.
 > 
-> Pavel Begunkov (2):
->   io_uring: export io_[un]account_mem
->   io_uring/zcrx: account area memory
+> If I were to use a multithreaded (c.f. asynchronous) paradigm... my
+> strategy, to look-up pages, would have been to mmap
+> <https://man7.org/linux/man-pages/man2/mmap.2.html> the huge file and
+> rely upon the kernel LRU cache. Cache misses, relative to the memory
+> mapped file will result in a page fault and a blocked thread. This
+> could be OK, if cache-misses are rare events... but, while cache hits
+> are expected to be frequent, I can't assume cache misses will be rare.
 > 
-> io_uring/rsrc.c |  4 ++--
->  io_uring/rsrc.h |  2 ++
->  io_uring/zcrx.c | 27 +++++++++++++++++++++++++++
->  io_uring/zcrx.h |  1 +
->  4 files changed, 32 insertions(+), 2 deletions(-)
+> Options I have considered:
 > 
-> [...]
+>   1. Introduce a thread-pool, with task-request and task-response
+>   queues... using tasks to de-couple reading requests from writing
+>   responses... the strategy would be to avoid the io-uring event loop
+>   thread interacting with the memory mapped file. Intuitively, this
+>   seems cumbersome - compared with using a 'more asynchronous' idiom
+>   to avoid having to depend upon multithreaded concurrency and thread
+>   synchronisation.
+> 
+>   2. Implement an explicit application-layer page cache. Pages could
+>   be retrieved, into explicitly allocated memory, asynchronously...
+>   using io-uring read requests. I could suspend request/response
+>   processing on any cache miss... then resume processing when the
+>   io-uring completion queue informs that each page has been loaded.  A
+>   C++20 coroutine, for example, could allow this asynchronous
+>   suspension and resumption of calculation of responses to requests.
+>   This approach seems to undermine resource-use cooperation between
+>   processes. A single page on disk could end-up cached separately by
+>   each process instance (inefficient) and there would be difficulties
+>   efficiently managing appropriate sizes for application layer caches.
+> 
+> In an ideal world, I would like to fuse the benefits of mmap's
+> kernel-managed cache, with the advantages of an io-uring asynchronous
+> idiom.  I find myself wishing there were kernel-level APIs to:
+> 
+>   * Determine if a page, at a virtual address, is already cached in
+>   RAM. [ Perhaps mincore()
+>   <https://man7.org/linux/man-pages/man2/mincore.2.html> could be
+>   adequate? ]
+>   * Submit an asynchronous io-uring request with comparable (but
+>   non-blocking) effect to a page-fault for the virtual address whose
+>   page was not in core.
+>   * Receive notification, on the io-uring completion queue, that an
+>   requested page has now been cached.
+> 
+> If such facilities were to exist, I can imagine a process, using
+> io-uring asynchronous idioms, that retains the memory management
+> advantages associated with mmap... without introducing dependence upon
+> threads.  I've not found any documentation to suggest that my imagined
+> io-uring features exist.  Am I overlooking something? Are there plans
+> to implement asynchronous features involving the kernel page-cache and
+> io-uring scheduling?  Would io-uring experts consider option 1 a
+> sensible, pragmatic, choice... in a circumstance where kernel-level
+> caching of the mapped file seems desirable... or would a different
+> approach be more appropriate?
 
-Applied, thanks!
+Just a heads-up then I'm OOO for a bit, and since it looks like nobody
+else has replied to this, I'll take a closer look when I'm back next
+week.
 
-[1/2] io_uring: export io_[un]account_mem
-      commit: 11fbada7184f9e19bcdfa2f6b15828a78b8897a6
-[2/2] io_uring/zcrx: account area memory
-      commit: 262ab205180d2ba3ab6110899a4dbe439c51dfaa
-
-Best regards,
 -- 
 Jens Axboe
-
-
-
 

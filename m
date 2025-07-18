@@ -1,121 +1,103 @@
-Return-Path: <io-uring+bounces-8720-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8721-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4100CB0AA7A
-	for <lists+io-uring@lfdr.de>; Fri, 18 Jul 2025 20:57:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CC0B0AA7B
+	for <lists+io-uring@lfdr.de>; Fri, 18 Jul 2025 20:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1FB9188D690
-	for <lists+io-uring@lfdr.de>; Fri, 18 Jul 2025 18:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9BF3B7690
+	for <lists+io-uring@lfdr.de>; Fri, 18 Jul 2025 18:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FDC2E6D31;
-	Fri, 18 Jul 2025 18:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0738C2E6D31;
+	Fri, 18 Jul 2025 18:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzamZrWS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSeHo2Ak"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C2D2DAFDD
-	for <io-uring@vger.kernel.org>; Fri, 18 Jul 2025 18:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FCB18E20
+	for <io-uring@vger.kernel.org>; Fri, 18 Jul 2025 18:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752865073; cv=none; b=O/cFm+5btz6/5p+XYLoMjomJjEcaN0TdeLSi17YleSRaBZuWkvMMwcvG1AJviTFuRMCoOnvucTEUA8mXqmvkRTmNSmk91CkKHGYfI9UHyY20clI1aQn9wnhB0C7pA0xIqxed98RBnY59tEiOCJjpBX1HZGx455BI5ZtJ4AoKai4=
+	t=1752865181; cv=none; b=br/vrsOIX/epYH4gLCpL2lxoEIHrxPfdV3nWlno/nglxj8SsbYln50l+Ji1OmDjyCRF0o85WwQAK6I04zR4GRCeUzaHu+iP7N06RHksjLaitLb6vQ/ub9K/SGAAYRyMhOEOePHUYc1oRJNpBz4DH2wCGUxgU+2Vh8K4MbNaS1v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752865073; c=relaxed/simple;
-	bh=YgUaW2AR41TMARe481I4NV7oc+X4DYsJYsBVJbZwGNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P5EqWB2gk+m4ZCYHNu2rtyOrrEP7N8a5Vq0drJZPPFUWMgIt+dD0ohRPjd/SelC1slU7AKk+RL0uaQl/8nuF+lFdgqdo/b08FA8J3paCSPFCFDpywt/cyA3E+3QC4VkihOADmdNKOtR//UO+ou1tzg+nVCkxZSK21JnfUqfSPwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzamZrWS; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1752865181; c=relaxed/simple;
+	bh=G4f51BRTi6C/W+L9gnTqwbijvqcZYtbg9C94Byett0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pirFPFM2RN/gBXwxfXxEkbxRYxCaYAMmudJjqTpB0nnyjrWNBvdRmQuDDF/nieaWCHe/UbJjdWJ3f3Zk2dAPWkWOJCnKHEsUBl76zWiDhMEBcfaO5AgOve3+Hn+CyPc5gSmicTLDZGf6OGGB3BtclUCPwFYIj2rbZoRNlCZAwvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSeHo2Ak; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so3798142a12.3
-        for <io-uring@vger.kernel.org>; Fri, 18 Jul 2025 11:57:51 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso4130094a12.0
+        for <io-uring@vger.kernel.org>; Fri, 18 Jul 2025 11:59:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752865070; x=1753469870; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aGDqU1Q73PrWu5+33OEp0F3Z6bu9QDTf6ARIQc/QG3M=;
-        b=JzamZrWSQHFye/MDPF36jcIKMgRBHPOUxKyamjsPTFpxnZwRPPQgaEhQuBPa4V2s0O
-         ccJjKR6adRbAMNmuJHcQDStM2bjC+ZAITb+3uYIrMCISgAotS7l4FDsDE8776skCNVIj
-         wOT4N4GGEBmwVPkyD5fbPppMt7cz4aP82ZTARCvag1r0Qcfu9FjpdLlYQZ4Ut56neLWq
-         vtrZrCKQ35KGVguJhIMYqSyNp0veE3yjFFmyv4H3JdhzZD772AsYuviylxBxf4V+1Qpl
-         dvpxlA0w2RxsadvbhKvFWoeVXbnrTp6ItP1JLfQPHzqdx4qqRn10DbeB0G6RLmJbVbe9
-         O14A==
+        d=gmail.com; s=20230601; t=1752865178; x=1753469978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UBuAawgb76/Pc+oDVY6dTFunyywqW00LDyDItgXMHws=;
+        b=lSeHo2AkOs73+c3Q2vOcGmAy6fBCmBG13PaiZWFzeE9YTmSh3vvh//wU9eCrwJfx67
+         HJTreLZLbGjO4KOJIcCZBcqHPUzNI1dheBFw0/7SNjzQKYrrleGoxNKyenxygrOjxJsC
+         QC2vfkQ/q7dyHk4UcjtkcAy+kbZdF6thgNqsWfzIAgKPWcjbgeeuS6geogXoW8NWOKwG
+         fco0NBgs5WiDzegtfl2g79KijPfwqncMgWSuvBQgsmH0FG4ETYDnRy7AucxNaqX81pm2
+         eg4xUd3mUP76Txp/8T71BRdjoPPLNgrN0LtNhQEI/k2x7HdYqEEfgnqI1aQxM4xfydLe
+         87KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752865070; x=1753469870;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aGDqU1Q73PrWu5+33OEp0F3Z6bu9QDTf6ARIQc/QG3M=;
-        b=IUrQsr+al4hjgdVcB7MkK80vn628FhRSqU61hxg+1HSYmqVDMndn2tBTfRm5K+Ex/y
-         2tuBzwkTtjioN6pK1386XD2/9fhFOLbPazTjB2hY5V9boxJreezYw0/nJ8OuH0MsuWya
-         tAnDynoe33GEOBoDbLhYgqYau7Zel0pczjwSOjzmyZsWS1J484XuXThRwvRKEiL0Jsy5
-         +1JllK21bpKCxvBUmZnR84z69NUTh81ayE2hGhnND6jqswm8H1MNOday97yYPBG0O2Q4
-         fptgb9tA/t1vTmBd3OqFN80sM7rezL7/5DaParrp5IsJ/L+64u5FM5MQRGE/nzO0yFFZ
-         nehQ==
-X-Gm-Message-State: AOJu0YzfiJgcw/cIeKZS11YwIA+HMHlo/doU0dz/rG5XEB5CryiLjyPI
-	EpU4shrfrIm4ujaaxpPZsDCk2/Kau2m9KrzvxbiOKZEVD4ZLOmRcUx26XAyxsg==
-X-Gm-Gg: ASbGncvXvGTX7Cy8wLYeHggSDiyi3aRpC/WrAhnqfam0OgtprAkI9Ci+LXzqLc/OT9w
-	59Z97uiSQlxO1aXR82ToVasoWw061qeFEedP3V7Ap2eTrQulKldk6WEdBDpT7xa/KP2xPr4msyL
-	M4TjDa1QhY9DjcesNwBGYsXcH7ytAugOBZx/qhbmPeQqTA2rFEXcSdBmS43wXAuMjQJfMdlQU65
-	Zi/bnZXDt/AY3Kw3YYcOF4Yopu1sS8CqIty4kB0a1DEqV6+8rmAAjmGTRyKT7wrEK2Q1lB3Liwm
-	TxDF8zde1Yhh3lGTTLWozT32PMcUScyFDInqCsCJUuCVKJ5XedibialBDprv6wqX9RaFmr3n/G7
-	lY9lC2Jv53shWNQOtIWr9DtSl9bTMJsZNbtyP
-X-Google-Smtp-Source: AGHT+IHWXuKqOgRLjawsZ//Vku4KznuIyFmaeW9nkMomSBSUTQ9I8SrYNjd6f4ZFEOoMlif3jsIAbg==
-X-Received: by 2002:a05:6402:4410:b0:60c:9ef6:8138 with SMTP id 4fb4d7f45d1cf-61285dfdd72mr10571903a12.32.1752865069990;
-        Fri, 18 Jul 2025 11:57:49 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.141.246])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f09dbcsm1379130a12.12.2025.07.18.11.57.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 11:57:45 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	dw@davidwei.uk
-Subject: [PATCH v2 3/3] io_uring/zcrx: fix leaking pages on sg init fail
-Date: Fri, 18 Jul 2025 19:59:04 +0100
-Message-ID: <6febff574964426984ac7baf7389f1c047ffd633.1752865051.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1752865051.git.asml.silence@gmail.com>
-References: <cover.1752865051.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1752865178; x=1753469978;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBuAawgb76/Pc+oDVY6dTFunyywqW00LDyDItgXMHws=;
+        b=M8bCiKuyPpcaq6sZvMsJR8HkTNqVXFMflu3anukcvB69FHV0mXbZHWwvvajXJcypim
+         Qoe0rY9Duha4ekIKdzfAH2J0qVjooZ+QD1eSqREZBeLr1Xo5LVoTVw/XJ1k7F4mO5fKk
+         ciXC0yWXXo9qFd7lDr+vyqiAQ/1VsHlhnf31ycAe0VJNprtshE1qckxUeLaUZzNP7qQJ
+         94cmbj6tYeFBaLNB+EljL5wmu96rwNhXBAMQgDX7HxiK1FO6D45QSo7k9kermHSRlOBn
+         RZiIrijZPk1vK/JPA86fNbbzW8XH7DggJDC2VM/qqYYeJzSrkd1RO/cjeP7CwqqJdXAG
+         w7wQ==
+X-Gm-Message-State: AOJu0Yzqxr1sv/Pp/dcCFROH2mYZRN4scXTwJ4gcgVHOS27VHaP+EQwV
+	1fQt5ERVAaUpWcKECg95guZwIVcT8PN3H2AEG5bkVQHTH0qnstR15/jtXpD9rQ==
+X-Gm-Gg: ASbGncup7u9IKr+pJuQnu5f0ljueOpfcqT9Z62qVbX83/IcbztVjR+DWdyo8ifBHGG8
+	iqp6Nc2xHLaamZmB+McyA7JN0gpqdukT3KVzKpVX0pxE3kDbWjUxIUDaNYaygVz1hb28x2IShbb
+	0f+3HdTAkvLSAjQ7ZQ7tBPBtBRTYJvvw+iKQLnK1FmwJQEdYkjAeoQr87KRQLarBKC+XVtLnylJ
+	bN5+8VHDSfnKwU4FYjOyHJoX/jJNx+38xVaON8h5Eret3AJRFMkpV/mhGFE4DfzERV3gD2XZMXI
+	VQ0UTw7rB1TVM8KXyOawvsidbBDHYWvx/zHovytb3RV/TbDSRdeefzEaAnZVrxJVc9JytRyWZiQ
+	UQJyTiKLwkHanOFy7IfN2n9/Is456x9wueVsW7FFvvy4=
+X-Google-Smtp-Source: AGHT+IECElRbwyUuozjAVSUH4iNsTmIhd3CZRdbiCVkCCS3tAlJHKnumda75PiOlF95vypZj+9G7iQ==
+X-Received: by 2002:a17:907:3e1c:b0:ade:3bec:ea30 with SMTP id a640c23a62f3a-ae9cdda3627mr1166944966b.1.1752865177845;
+        Fri, 18 Jul 2025 11:59:37 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.141.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca7bc99sm166247366b.109.2025.07.18.11.59.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 11:59:37 -0700 (PDT)
+Message-ID: <ed4fcb1c-795c-4af2-bb47-7c6bd5c438cf@gmail.com>
+Date: Fri, 18 Jul 2025 20:01:06 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] account zcrx area pinned memory
+To: io-uring@vger.kernel.org
+Cc: dw@davidwei.uk
+References: <cover.1752865051.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1752865051.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If sg_alloc_table_from_pages() fails, io_import_umem() returns without
-cleaning up pinned pages first. Fix it.
+On 7/18/25 19:59, Pavel Begunkov wrote:
+> Honour RLIMIT_MEMLOCK while pinning zcrx areas.
 
-Fixes: b84621d96ee02 ("io_uring/zcrx: allocate sgtable for umem areas")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/zcrx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It appeared cleaner resending the whole thing. Let me know
+if a fixup patch is preferable.
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 4f9191f922a1..2c5d4e7c3b47 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -194,8 +194,10 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
- 	ret = sg_alloc_table_from_pages(&mem->page_sg_table, pages, nr_pages,
- 					0, nr_pages << PAGE_SHIFT,
- 					GFP_KERNEL_ACCOUNT);
--	if (ret)
-+	if (ret) {
-+		unpin_user_pages(pages, nr_pages);
- 		return ret;
-+	}
- 
- 	mem->account_pages = io_count_account_pages(pages, nr_pages);
- 	ret = io_account_mem(ifq->ctx, mem->account_pages);
 -- 
-2.49.0
+Pavel Begunkov
 
 

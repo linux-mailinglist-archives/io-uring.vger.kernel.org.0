@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-8729-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8730-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB1DB0B08E
-	for <lists+io-uring@lfdr.de>; Sat, 19 Jul 2025 17:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF132B0B0EC
+	for <lists+io-uring@lfdr.de>; Sat, 19 Jul 2025 18:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3C25674CD
-	for <lists+io-uring@lfdr.de>; Sat, 19 Jul 2025 15:00:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7AAA172225
+	for <lists+io-uring@lfdr.de>; Sat, 19 Jul 2025 16:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CF91A8F97;
-	Sat, 19 Jul 2025 15:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305752874ED;
+	Sat, 19 Jul 2025 16:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fu0Fx07c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2ft299x"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
+Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B232AE7F;
-	Sat, 19 Jul 2025 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676133FE4;
+	Sat, 19 Jul 2025 16:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752937223; cv=none; b=TS57jcoa39hT/efM4Ke+oy/0TMT3E+O3OFjtofGIRgsKe/uqZV/wdi5VxwyekZy4eRIi/DdkpWjms+djq8poL5esWlrb4aWe5TsKlfWdeSms621V2l3sgADX8i9rN59GxroUn8PvRuXMGFVILWe2LiKbGB2M8upOve+JEogaKNw=
+	t=1752942809; cv=none; b=AtoWFS+/HTZxY61pLTVkxMlTm/awbhrb8scGxp3hGdu2sx2wblAaS1EApnGGnNurLbVQStJ63eO/33YKmBwoCPu/TOtccObkX8gkwCYTt3cltYP8BfAAMlpy5Lo/XeBXK+/xmVfC64pQpL/+0rlJoxLigQx4LigZvfvWJMJeu4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752937223; c=relaxed/simple;
-	bh=fi13vCqJEGd137tgEmMNHiaDda2oZede3aS/KHWlgI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=INB0fjsPpSHQY3WitpQl8xwu6xMiMb4ovN1OjHoDXke1i4t4f+N3IdaiQ6BYLIY4au7/pVOOguZsUnsKYmEamK7GiyvkZTRFL/+lMuQe+zBmxk74CZgcjgg44WcXO3iq8Gabj4JIeCXBcYEtoFlYNd+2rAkPxjt/gy/xZzTIPcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fu0Fx07c; arc=none smtp.client-ip=209.85.167.68
+	s=arc-20240116; t=1752942809; c=relaxed/simple;
+	bh=H69+Qb0RjbhbD3usDIEtZepk26ILf+XJr0yH+gN3IKc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QDPu79z4nllmWGf52Hl52331b0MxxFJLSUdMoWRs0BBMhOEa5wYqMWZgTfZDfhMgQA0w8saOeWOFZn5L3QcKAEmTEvhGtcMKHHhHoN8jjb/pJJPLeJrlWU5dBx5UQVvRMP/eGRp7EmGDQieMK6Z3MhKM/b+lD3NMRBLGYVaFsNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2ft299x; arc=none smtp.client-ip=209.85.208.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-5550dca1241so2695035e87.0;
-        Sat, 19 Jul 2025 08:00:21 -0700 (PDT)
+Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-32ac42bb4e4so27853441fa.0;
+        Sat, 19 Jul 2025 09:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752937220; x=1753542020; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+        d=gmail.com; s=20230601; t=1752942805; x=1753547605; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:content-language:references:cc:to:from
          :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=OTmoQbpjm8KqAhEFENOq9qOlhu9S1c9X+cCKPZNoork=;
-        b=Fu0Fx07c+WC2UkYMDLrLZe5tOOlf1AdgQAwCrU627R7eBcigIPCS6K8l2hk2h/IusH
-         q8wcLaGyI0xrfQXXor8+g1X1hlL42nLqcvrIq0LXBRz+eRdNQq5ObYYZZRXyhKiRb1/h
-         byT0yjOLLz0pZfn8A8RhrIN+y+3dSGPtsQFSaNZ/exrXGrtKSxZI7NEiyyFV6V3UcKwF
-         KvHNkLkUE+5kr1ZqkWiX1F+bqfMEKj1V/mRWEcEjENZqJzNBM5ZIGRHIEfHeEJ8fRduq
-         9nU9aUihm1eaToC2kqVlSlVqdKoEvMP4lpMb7oseMX1Xqgfg1Z5zO9uXl1Fbs1MT6Z7d
-         m5og==
+        bh=eus8JC3eLmukQys43o2t7vBpweYjiLr1zvoFngiCEYU=;
+        b=R2ft299x03mmeoKbCfFEqCM3+9AXA5lJeMA6A7EefBw6jiamIDH3dfUsIiUTpl7rzI
+         IMaJx2wS8LLRZLTiAtu2bpK+/uwrXO4OeLckZ8uktXe9J7SDQonwYxuVYkdixQ6Z28rX
+         ftsUYUXRG5KDYy5hfMW6P+KYw+Y6ihpB+S6axLbvfdC3146f8LCmeij7S0GIUG0lTabs
+         frv2ZG1tBijV3IM9Kix80tdZAJQYx4iEzYVNuxGEaVi9+707REEnqKueSHNmR79jtnGt
+         e7a9N7uvkY3xoa0y0yVd7uE7Lf3QHyWhDl4eABsGJfKobX2lp/MSJTi1sZ0L2JvRDMA1
+         GGeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752937220; x=1753542020;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+        d=1e100.net; s=20230601; t=1752942805; x=1753547605;
+        h=in-reply-to:autocrypt:content-language:references:cc:to:from
          :subject:user-agent:mime-version:date:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OTmoQbpjm8KqAhEFENOq9qOlhu9S1c9X+cCKPZNoork=;
-        b=IPbM59Qbt09iWHN/7561CfCKJdkfK5Zx5DsVINUthxw4DfOcblhlwXe/joIEbCZg5k
-         t1zDEYpnwzFRWFIN2F22Oj1OcB1/BU7+jwIb0K0xWMCKqn/fF/MOMgEf7SI6b5FgxtQG
-         HXH6um8dsjWnOo2ZMUuuIMZKCeqofdFV+l5kVoqrcsYrbPx9B2i0XZ0G9q2kXEuab8sQ
-         x/CDMru2QYCr78RpC3Y5RVnbNqM7sQ2m3v87HbQfEnAIVnuURqhOfP0/KdRkM19Rk0TW
-         tmZugHgt07exjKdyl8954oyhth6l+uJBg7OZh3tWoSOHYzbDWYLvdzwYa7fjz9O6x3q5
-         h+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP5Mj516uFCJSuNSUDckdRwCyI8RqrNYY98k/4miZNd4Gvqm5GXyT1NNF8mrXqI9S6bxVUA3ytkTAbtuJe@vger.kernel.org, AJvYcCVqhMZB/JwysC3lI0TJgVqv1FHMwlawK14pHrFdas66XF9ILA/0c7Uk2RbstLgD8y12H6/vow2vdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzXaRRcobm5H60VBfHu3bLqIQbAs9J/IUhPbZaVnBVuI0dZzVi
-	CBta58sDXOjM9Vkg9zi5ktRMr+3KHmNNnsd/XdENG4Uhnxvv2lcX/2Pk5X1y5OACLp/koDU4
-X-Gm-Gg: ASbGncurNZ6/Zkhq4kKd3BnP6eY9HuT/PGIfLjsORZDucLos+BN19yX7oLdbMv7F3hE
-	4UiO9M73M2xpOr/FUBHcwSCYxcUlyZk7CzG9IJ+KRtOECU0CFCK0RorsKhiEhRZPWJ59PU6Jzln
-	rrfvIpP6oUT8hUf+Hek7w+BX825SsffZJCqjQHG15RulCymDy9EiPtWI9IOHrCwzN7hOh2nnWSg
-	CSuUAwL+LohyDFccIUtlmOI6yaZzYn/S+Yc/ARbwO02DuT3ssp19QfQG6+nXett/yeCXzRyiHo8
-	cHj6i+bq0s6n8UFOl8HbqS50OJN/TEKZp4kEwPWIqxYjXRMSeKMsXC4281HdmjJVFkuBKVLji1u
-	XjxKwJrXjMudRC225VhHpj94UFhcXANa+ta8OdJ04bdLqw/X5iV9MRx/RncxwjliViohoOAae0u
-	c85d0=
-X-Google-Smtp-Source: AGHT+IFjiYtW6BUQkvjPZxuXS0Om3ywQ0wpR3E7fNdCJf/ZDKnDiF4HHCCtnJnFsF93hJbKIceGOkQ==
-X-Received: by 2002:a05:6512:39c7:b0:553:2868:635e with SMTP id 2adb3069b0e04-55a23f03c38mr3699636e87.23.1752937219411;
-        Sat, 19 Jul 2025 08:00:19 -0700 (PDT)
+        bh=eus8JC3eLmukQys43o2t7vBpweYjiLr1zvoFngiCEYU=;
+        b=HxQ1tipr7mH8keD9AWa/ItoqZHKuNoRr+Y565CC61TeqMhb6bQ3Av5ZRQLTx68aUnl
+         TW6Jwtp+T1DxZFKAA+tRS/weTai0jaESoiSepseHPr54xc0kmM3zRoYitDTFJBPK0ZYg
+         dKg6dpcmi1xpxBsbHTjLgVp2gjQLbCeGJR76Agszf+7VJgblSslA10pFYQoPDWTL0xfK
+         sFCO2oW8sP5uCP9WOeF4kDlXJF914K+gyQpkUZMaif8YF9hepmyKMeUQmzhnJmQ51b7M
+         2Ly+p6U/Nc8zAYZ2SV1W657Jkq/ekQAUFaEzhtKpapwZSaEA6P7VrGAiyg6RMT4vw2l8
+         1VkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGkWlMmkTUUXsgnmBrPl5pQ0cqPRdVFchl7J0xcxKbyyguFr4PpWL3R2dsnUgFeEaIpya53VjOQ==@vger.kernel.org, AJvYcCX7O5An9m+gpfxBuCLxxy7gGl/czo07V6gWJLOsGJaxWRYEMhd3Xt+0hnLF4VOGTRiMUD6OU6PueOChGcRp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+FavaVYoMb/GXeWCEQZfO5Mmcqn8ECcye0UEITM8FAvGIM0gF
+	JxZSB6pt5oyctanN4h3ntecOG/LAjfNHw7XJn72UEf/ECqcsicb3p/dDpiliutX1DwEm35it
+X-Gm-Gg: ASbGncu/N01A7c+VbscBRO55bKhFuc8zxjlFBLb6FywdHo7KxZvC/fsvbNiIvrrl3iJ
+	U9LsAIKIs09qauCnBeyBgbe467Z2F4Levlu2wuHcyAZTqot7KWvoFGdkXM82KJgZlEBaCcYhxQw
+	75HVkF/IqX5wDWIf29HwElRamZKs2uDGaIuwkfrkdK1CEF96M15Aq8MQ2jVl6/B3I33YlEB6zjF
+	EWyiiQKzj6oqbL8gyBfxfdIJ3urUbahhv6ns93vfyLDipJF+4iAxTTnXJgMdSPisjdy+BxNf7Zr
+	z0lP5UHNRRc4U3vUEylVHorhaYOTiVpTza18Ym7el5Y59o8lTlugYMEcd8Kvxj0sqqSjk5gMEoy
+	H2ZDfUyaapJgLqu4SiftFi7+p7QzGXZrYskGI5Dt6PO/wM4SFeqfWn/QUoXKo7YtcvRgDyqnPAJ
+	8sMkBGoZEU9FfCAg==
+X-Google-Smtp-Source: AGHT+IFhRTZScwyncdRgLSz7mKqGmOsIOdaP+bqge111lth8nSCfjWGoskCguXa4CBcZUOeFcZmD2g==
+X-Received: by 2002:a05:6512:6c5:b0:554:f76a:bac2 with SMTP id 2adb3069b0e04-55a23f1efacmr4288779e87.17.1752942805115;
+        Sat, 19 Jul 2025 09:33:25 -0700 (PDT)
 Received: from [192.168.0.122] (broadband-5-228-80-49.ip.moscow.rt.ru. [5.228.80.49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31da58bcsm745119e87.197.2025.07.19.08.00.18
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31aacb2csm770225e87.64.2025.07.19.09.33.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Jul 2025 08:00:18 -0700 (PDT)
-Message-ID: <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
-Date: Sat, 19 Jul 2025 18:00:18 +0300
+        Sat, 19 Jul 2025 09:33:24 -0700 (PDT)
+Message-ID: <811cdd7f-6ab9-4ff4-9017-5162565fb1d7@gmail.com>
+Date: Sat, 19 Jul 2025 19:33:23 +0300
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -84,13 +84,14 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
+From: Nikita Krasnov <nikita.nikita.krasnov@gmail.com>
 To: Sidong Yang <sidong.yang@furiosa.ai>, Miguel Ojeda <ojeda@kernel.org>,
  Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
 Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  io-uring@vger.kernel.org
 References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+ <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
 Content-Language: en-US, ru
-From: Nikita Krasnov <nikita.nikita.krasnov@gmail.com>
 Autocrypt: addr=nikita.nikita.krasnov@gmail.com; keydata=
  xsDNBGf4964BDADGr5n+p1Sr7slmHHMPvp2/dLz0H0qkw1EcdWyX0EP3wlmBcWL5LVYjxO6O
  m/32hF2WeIYHYU9KZYfhraKCNicilz6HZQV31/ALNahNA5XuZYW9TXvdBpMfqYP8SpHOJZ3B
@@ -125,80 +126,84 @@ Autocrypt: addr=nikita.nikita.krasnov@gmail.com; keydata=
  lrxXFC/a8iQWvTxGBEPBzaSxx8+sybTS5uzrafFidLI0J1WwraAuhxi3BDIdqFBn0T+GtWNw
  4i4kR6ebfAnsAucg3zT3mGc8d3bDrqEFDQHnzQE14t44tLim6PjGq7S0B0lwT3JaF4sT1k1d
  sXwISql2dLWvF4EeopUcuqEmcKFKXR+Ifbxj7A==
-In-Reply-To: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+In-Reply-To: <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="------------XdbBg46w0jl7w0rF9ILsV4fh"
+ boundary="------------5By74vaeqFHeqgYqOBCC1fCc"
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------XdbBg46w0jl7w0rF9ILsV4fh
-Content-Type: multipart/mixed; boundary="------------zNyjZw7WoN7lR0SVHmhLHTXt";
+--------------5By74vaeqFHeqgYqOBCC1fCc
+Content-Type: multipart/mixed; boundary="------------tRpyyLBGeWNGMHsvQ4EnCaNL";
  protected-headers="v1"
 From: Nikita Krasnov <nikita.nikita.krasnov@gmail.com>
 To: Sidong Yang <sidong.yang@furiosa.ai>, Miguel Ojeda <ojeda@kernel.org>,
  Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
 Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  io-uring@vger.kernel.org
-Message-ID: <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
+Message-ID: <811cdd7f-6ab9-4ff4-9017-5162565fb1d7@gmail.com>
 Subject: Re: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
 References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
-In-Reply-To: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+ <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
+In-Reply-To: <43e162e8-aa22-40d0-93cb-4a83e7995877@gmail.com>
 
---------------zNyjZw7WoN7lR0SVHmhLHTXt
+--------------tRpyyLBGeWNGMHsvQ4EnCaNL
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 19, 2025 at 05:33:54PM +0300 Sidong Yang wrote:
-> This patch series implemens an abstraction for io-uring sqe and cmd and=
-
-> adds uring_cmd callback for miscdevice. Also there is an example that u=
-se
-> uring_cmd in rust-miscdevice sample.
+On Sat, Jul 19, 2025 at 06:00:18PM +0300 Nikita Krasnov wrote:
+> On Sat, Jul 19, 2025 at 05:33:54PM +0300 Sidong Yang wrote:
+>> This patch series implemens an abstraction for io-uring sqe and cmd an=
+d
+>> adds uring_cmd callback for miscdevice. Also there is an example that =
+use
+>> uring_cmd in rust-miscdevice sample.
+>>=20
+>> Sidong Yang (4):
+>>   rust: bindings: add io_uring headers in bindings_helper.h
+>>   rust: io_uring: introduce rust abstraction for io-uring cmd
+>>   rust: miscdevice: add uring_cmd() for MiscDevice trait
+>>   samples: rust: rust_misc_device: add uring_cmd example
+>>=20
+>>  rust/bindings/bindings_helper.h  |   2 +
+>>  rust/kernel/io_uring.rs          | 114 ++++++++++++++++++++++++++++++=
++
+>>  rust/kernel/lib.rs               |   1 +
+>>  rust/kernel/miscdevice.rs        |  34 +++++++++
+>>  samples/rust/rust_misc_device.rs |  30 ++++++++
+>>  5 files changed, 181 insertions(+)
+>>  create mode 100644 rust/kernel/io_uring.rs
+>>=20
 >=20
-> Sidong Yang (4):
->   rust: bindings: add io_uring headers in bindings_helper.h
->   rust: io_uring: introduce rust abstraction for io-uring cmd
->   rust: miscdevice: add uring_cmd() for MiscDevice trait
->   samples: rust: rust_misc_device: add uring_cmd example
->=20
->  rust/bindings/bindings_helper.h  |   2 +
->  rust/kernel/io_uring.rs          | 114 +++++++++++++++++++++++++++++++=
+> Is it just me or did the [PATCH 2/4] get lost? I only see=20
+> [RFC PATCH 0/4], [PATCH 1/4], [PATCH 3/4] and [PATCH 4/4].
 
->  rust/kernel/lib.rs               |   1 +
->  rust/kernel/miscdevice.rs        |  34 +++++++++
->  samples/rust/rust_misc_device.rs |  30 ++++++++
->  5 files changed, 181 insertions(+)
->  create mode 100644 rust/kernel/io_uring.rs
->=20
-
-Is it just me or did the [PATCH 2/4] get lost? I only see=20
-[RFC PATCH 0/4], [PATCH 1/4], [PATCH 3/4] and [PATCH 4/4].
+Never mind, there it is. Sorry for noise.
 
 --=20
 Nikita Krasnov
 
---------------zNyjZw7WoN7lR0SVHmhLHTXt--
+--------------tRpyyLBGeWNGMHsvQ4EnCaNL--
 
---------------XdbBg46w0jl7w0rF9ILsV4fh
+--------------5By74vaeqFHeqgYqOBCC1fCc
 Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-wsF5BAABCAAjFiEEpkOhtFujpzRWyb0a4A5zBMF+d4YFAmh7swIFAwAAAAAACgkQ4A5zBMF+d4ZG
-4g//dtsBQ5ABpmCT96JLoZQ4t08xAbTQMvI+FVkNJp2hA4J76Pl0O7acF94UHeK0IVjEGPECAj4l
-2WnDDPYY5o6rcZpv7MIpcrUGYVTap8i1idRiSdjl8krFS7yZWFG9NGKQUNEw9jJnrGhM/5AOi5QB
-QKP/9zXOQ2fL2xSigPGpoW9TN+7XzPOBVk1kAUgAiILrXeW3WyfGCUP9hyW5dSfmtwC8Xz1aHL/e
-Cb1Xja8KGjrG1o3G4IcfLOyrrPVrELN7gzG/J7TX/CLhnwIK7iXeySi+vhZshHSABI4efY6hLsbB
-3On45fQRmjBd3cXO0fdoQnxhHdLAXnYzLFOzoDnPWgtlTZP/eYmTVn2xxDTuX/zEcW8CzGBrf5ox
-aRGDSUTsdcruGUzeysYAwleEe4IFCL5k6hcfLXnsULkn22g8kBBubn1RDvovb/Ze972S4gDnAd91
-21zd4DlFmX9m9o1LBg15mQp0oPKflbmuPI8Xa3dmE2Z5FFoVtbz4/Rblm144mmj+0FaoJJKLPb8J
-ZKnYcCGEXfrSmKmNqlH0sqVgWtUX8rb2EcW6izZTHLE/Os1SBK/L4Y97mlPkHfyX61YCzNJcMLLt
-xX//UQukamA5rYNSIlkebuHNEGrELuQ2A/PhWe6qNpKoGVxoor/8ogys2TjzuTfNSssxUYvMXS42
-pg4=
-=rNmn
+wsF5BAABCAAjFiEEpkOhtFujpzRWyb0a4A5zBMF+d4YFAmh7yNMFAwAAAAAACgkQ4A5zBMF+d4a2
+yhAAnvXAMfqGUrly+ircAGDN8e+TE2mfNbub+z1X1tk3CQybqUZOvhouH7/8LiLtPVAhqXjoamp6
+wgv2B9ECo2Yd2ftbRyhpBLq5POAgw8X1pagPt0ChFyOLC94NEN8AiT0EmsHbSBMBMERSfrgDYgVr
+W/JzT5qLquei1fVBrNB5qLKGXpn1AE1YvC6b55FTXlm6Ki5IBiCCiDJCKJ1x85BwAraC/ebNWi8L
+HQE4YX/POejp12RaKsk7u9JCuXAQVnTiITnzrVurWgug8v/O0foiMz0YJuKHPygcKvpll6av1mka
+1nz/aCuAIrQ45MmutaMDgrW/d6jUXNy/uLnpd7fnqKfYT98ZdLt3/YL584SuWLf/UIDnsrugBFXs
+ALaKdZkALtwWgj8tZ5s1ZoGYRjrvDakvD4QH7XfQJ4xDSEIpvOUVYJwa0SyZrksXJkDUtOIvrACM
+sDTEazyZz/XaQ4rM2iQcIjfs6pHTFRQWI5K2ydzSXSrVdfxxRVNLdBeQvJ+B0JHiPUMLQ0QSVX0A
+vxWGaoc+pjnrjhBH0ZIx5ViTbOMUlZbJz4ynIqij/sx1+uG44R/5ZTfn4RUIFUWmEg0q+AbyxdQ7
+7zilz+tVTynw7Duz8VEz0bKzP5q8JbVkubcqtkFxnqwFxl7VkycCgxdPMKQ4B5sGm1jYrIT9oOsa
+OKU=
+=QEOo
 -----END PGP SIGNATURE-----
 
---------------XdbBg46w0jl7w0rF9ILsV4fh--
+--------------5By74vaeqFHeqgYqOBCC1fCc--
 

@@ -1,320 +1,333 @@
-Return-Path: <io-uring+bounces-8746-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8747-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80B0B0B7D5
-	for <lists+io-uring@lfdr.de>; Sun, 20 Jul 2025 21:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DBFB0B7E4
+	for <lists+io-uring@lfdr.de>; Sun, 20 Jul 2025 21:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1992178A4B
-	for <lists+io-uring@lfdr.de>; Sun, 20 Jul 2025 19:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D673AE599
+	for <lists+io-uring@lfdr.de>; Sun, 20 Jul 2025 19:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1891DF990;
-	Sun, 20 Jul 2025 19:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9161921CC60;
+	Sun, 20 Jul 2025 19:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n6JSzOiL"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HBBtFakw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EC8F6C
-	for <io-uring@vger.kernel.org>; Sun, 20 Jul 2025 19:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C842A1F3FE2
+	for <io-uring@vger.kernel.org>; Sun, 20 Jul 2025 19:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753038065; cv=none; b=Mvk1qlD0uLNRhpjZnyxDBgM1Y4+aMYyGWn1OC/S/AUOdGI/O2H2j8cP2ZkOt0sug8EvC3AgL70nTeccKhD1nIe0oX2UsrTiP849C4ol+h633GSfKqROjxlVwApwOgehol+4g075y7JauJJsHWm1P26eA7Lch1FzOpRMEMiHOK4A=
+	t=1753038642; cv=none; b=eSUcWv6PiIytCyiO4pBwDDCEpJDTKizmzkcMi2+YVVHTDHWLlbU9PmVGuInBtxL9awuY5Y/y5YmfpZ1LQof3hcAiU7WWKUz/6hSmnCLj/7apuysivvhYfd1P90KuAC9uK/kUE/BbwR5nzK/LfzrqaG4Hws1xirKfNsWTzwaD22A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753038065; c=relaxed/simple;
-	bh=0mS1ug5jO2aEKMpln36VCoQHVyMHlzbrwP4CqPz5fvY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=qz+G7U2uPCnx56nlnvcJrTntGD4LQqI8eckfqQfmvovsHW7Fex3rnzcKSp816n6HxHAPIM52ZGOeuO+C9Zqf+x+uL1zEx9bV2V/j4GgalZBxZYH/JmlNLKiWFFqnzka2imzovMnESE1/Y/JI/z+jpWXtLjug/n9AxITKcclLamk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n6JSzOiL; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235a3dd4f0dso21674365ad.0
-        for <io-uring@vger.kernel.org>; Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
+	s=arc-20240116; t=1753038642; c=relaxed/simple;
+	bh=JOvx3nh9mFDiLNBPYVwlUAlSvRSi4qYNxWKVj/fNYEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XkImBtSmey4GXyI0nwlD/aizmMyqMe33oWz0VwSlYlfknvNWhtJZMDWiN5cZo3PWEomksdgpDK/FXHYcrb5XKtaq4qSebyLMZcSa8n7EvcqL7UC5e3sf2YgG1xFZ4uHxKReBhBwjZfdU6zrMalHIga84HuPzcgNar2zzyKUGTcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HBBtFakw; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so996680a91.2
+        for <io-uring@vger.kernel.org>; Sun, 20 Jul 2025 12:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753038061; x=1753642861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
-        b=n6JSzOiLPG698coINUodV6PcoXCnKh70uWaDe2Lbiee/d5sgEPLHfbNX7UYJeYcbVd
-         Us1XwZM8RmAvv5KtXB0mfbkzK6zrO3ln1e7MSW9KHsAToJLZIwej39M2oBwmVHiQtdR8
-         xAXlLrlFElqhUxR5tzHgBkeQyuSyjmGK24Nshcx5MQRDrYHV7Q2abpWa7Xb69aaG60Tx
-         SxFCeIzri+4bMNzD5CelWq3X73ALNu3FRxJ8ichvIW0RKibnRzgNk/PIi90L0qVXln04
-         ZSQzFJtkGBYfvD3fXQ+z+CMTtrtbXMxd7mN1XblYhb4oEUmlCXdcNNKRup0vnWybzoYb
-         OphA==
+        d=purestorage.com; s=google2022; t=1753038640; x=1753643440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PmJl5FG+nYbKChQjlQ85TAcYbUyzcNej5BFeiW0cAQ8=;
+        b=HBBtFakwCzbl8SkKbpbRNLwgq4+fVQ9IPkdHh5pqVoKFohlKXI1yvePPt6HY+JGKeL
+         G6J/v7AlncDzbat6n8mbzuq2Cc5qXJevASZWCJkawwNljFBuY3Gdf36VXevVi9lyVAYP
+         uss+fgw9Amyzh6k+q6h4p1vVpXjv+hkQs4Tl4JjK6UWmZFZPUsr89GGOFnOiUxrmPebZ
+         PsJiDBBJSUJymrLYX2LXLtd+48RzN275SIZu6HocREPeuwUgMbVfTXh8lfWCHP7n/pfP
+         jYIHwfV84j2dy7oa6fNN8YsMp8rO9fSt3sqdusMwqxkAFKDZ+uCvZWl5nhhNZMaxnEdp
+         cb6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753038061; x=1753642861;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
-        b=b/lwsxjwMlJGfyycYBwrDM59UsLgQHaqTriWSrS/39RHjR02KSVcc5R+18c+ODQ5tq
-         YrWcU4XxhTLCPY3aj3Sqbr76BmvCUuCxn/YDJjbEUXckE7g3AzAOMHl3U9WKhDPI92fi
-         7XTBTB89m7yQQZzCIz2w3EbuPHFPB9enUDVDwiBIfM/vC1NACEEOOWfVOcvALn3mHrX2
-         KQYhjgtJsEZI6/vpASajBL2nGNNVyiHJt2zcAHNWLsP9irGZlunRIvGG8EnHnLvjTpUS
-         M8MhssMl6HuLj/z8SyE97CRckd/b+N7O2wswFx7nLhN5nDPWgKmnQ5Y4brsJhsCjXjop
-         8hWA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5wtyskQ8954uqMAFnSmhcga73Fnh10B83yzbAVOBOU6oUDPYARvuUOJwUb4Cil430yPt7UZh8ZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9OT1Dhz93y+2nwUVILQOH0E5+iMSUntsfHjuOV3L2sE6AApa6
-	EvluXqhksj5assDyLBWTHle0exKMZddG0f3S9/1dk8duxY2ShZqGzSJID3IR9ZGCVR0Kk8hRuX0
-	fXdTN
-X-Gm-Gg: ASbGncsebbmz60J2aVyjdrPflgrweEYX/pK1f8EwL2i78zsEmoRvII628u87g2u4369
-	bP1xdxr9yM2QFuEa+Q20Gn5oYjP278dWenpeBKwxbd88bdIz5Dp32UkJqbT+BeCdH1DrMXZPcp7
-	6hx9XDuwAl60tBLaaRHXwKzMMyNjp+HwcUJGjDCAqzGL5Olxex1bdzvty8oJesWuyAY+UEm7Oy7
-	WW7KZZf9opK/nJ6QmWMgzBFCsxUCJG6/lBk3q1jrHRSYLDUm7VU5vHvKRSaoSr+u3JXbacWZpAa
-	AjP2YBXQwPazZU/mG5vVlC6nrieEAU0mEAGF0y5JQy4c5ohgo8VDa1/mSc/2j8PLDFu5t0ajp7E
-	oZdVR/7pOsIiJnQlmqJmxyp4Lqc3qqHP6qg==
-X-Google-Smtp-Source: AGHT+IFzOKspwboXoOK4V7ADha2ZoUMC2ec10BhIvkdPzxROexeZUZSKH006rrchLbTfOu8wpRi+aQ==
-X-Received: by 2002:a17:903:1a84:b0:234:8a4a:ada5 with SMTP id d9443c01a7336-23e24f59832mr243164615ad.37.1753038061000;
-        Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
-Received: from [100.74.100.100] ([12.129.159.196])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60f2b7sm44665445ad.79.2025.07.20.12.00.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 12:00:59 -0700 (PDT)
-Message-ID: <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
-Date: Sun, 20 Jul 2025 13:00:59 -0600
+        d=1e100.net; s=20230601; t=1753038640; x=1753643440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PmJl5FG+nYbKChQjlQ85TAcYbUyzcNej5BFeiW0cAQ8=;
+        b=KujnROBm8TLUFhbtTm5ngIaY0lSvEjT3sMU5VOxwuNhD2HfaJDhucbCibYXVXxXjvC
+         w19FarYeEmVV+jezsgOjXkX7nq6EGnpGfTtilIDrxKO8tpeWe6uxTfi3fV0xWSF3aiHz
+         y/+jXetR8Ukg4DQu6vZGaJBlANzyTb1mC/urMTjAKGFKu0wZ8RPECcEOBbPSmvUveRkg
+         rmkm/q9VVJzKEBa6atpsASR/Yi6wpblMUeMliCAv9Sm973R9OjdqVO+tUzZ++SK5BIzQ
+         86u8QOaf+0WzOt/IJQrl+BPXYIbThBgoy+B9KNdbS05LvbLEEvarhTwA8NSiUUyb3b7r
+         HBfw==
+X-Forwarded-Encrypted: i=1; AJvYcCURqIERcBsqDOdDm8EBXr73izaiT/JC2LTeOX3nnwkeSKqxPPxvVgqFSdSq6I0hGWagYI4TVuUeSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlZL4JsVVAndiIrxJ008dzBssGmt1V7q0KN+lyZrVx7Gxs86H2
+	eRcmBfh46NlmG58390o0dkqcO3O47UG7pHCnoyTyex/LCMvaYEikGY36fy7uugg9+Vp8aUig3FY
+	IZPyrwWAaHMIjkZw/VrmXYuoybWMPK25mS3fTzZrCWw==
+X-Gm-Gg: ASbGncsj5QjIVF+XrE24Iil7vBQpSzOXN8QzrMwkWu/IQ5RufkXlzGMvT2ovm6nPc3Z
+	693gWo8eV3cVAlAPYgJeV2zgiUDlgc94iCmpqtyMzsrjQOwOwoYJs0aXGcqa6wBwKXwftU7gqKt
+	thbputBbjD+mocOCriNAZVfgLUYef5bg+Kul+RC1Th/jz0wrxmJIUtD8VEWJA62yFQFodcLd6OK
+	Wf7Vw==
+X-Google-Smtp-Source: AGHT+IGOGQVTZCwO/q58veRX4aZbzscVmWPDj+vfdXysc1G6WzI8O5zaqzuKd24XlOjO18sEzec0XfqkiPOIck3ILc8=
+X-Received: by 2002:a17:90b:5483:b0:311:e9a6:332e with SMTP id
+ 98e67ed59e1d1-31c9e60a04dmr11530858a91.0.1753038639935; Sun, 20 Jul 2025
+ 12:10:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-From: Jens Axboe <axboe@kernel.dk>
-To: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, abbotti@mev.co.uk,
- hsweeten@visionengravers.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
- <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai> <20250719143358.22363-3-sidong.yang@furiosa.ai>
+In-Reply-To: <20250719143358.22363-3-sidong.yang@furiosa.ai>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sun, 20 Jul 2025 15:10:28 -0400
+X-Gm-Features: Ac12FXyeTtvN7WKo8iZgnjOkCeidkzCzy-MFx0hny4yYfEzWm8YJLSVMr542AjI
+Message-ID: <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/20/25 12:49 PM, Jens Axboe wrote:
-> On 7/20/25 12:24 PM, Jens Axboe wrote:
->> On 7/19/25 11:29 AM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
->>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
->>>
->>> Downloadable assets:
->>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->>> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->>> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
->>>
->>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full) 
->>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->>> Workqueue: events io_fallback_req_func
->>> Call Trace:
->>>  <TASK>
->>>  __dump_stack lib/dump_stack.c:94 [inline]
->>>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->>>  print_address_description mm/kasan/report.c:378 [inline]
->>>  print_report+0xcd/0x610 mm/kasan/report.c:480
->>>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
->>>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
->>>  kasan_check_byte include/linux/kasan.h:399 [inline]
->>>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
->>>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
->>>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->>>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->>>  spin_lock_irq include/linux/spinlock.h:376 [inline]
->>>  io_poll_remove_entry io_uring/poll.c:146 [inline]
->>>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
->>>  io_poll_remove_entries io_uring/poll.c:159 [inline]
->>>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
->>>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
->>>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
->>>  process_scheduled_works kernel/workqueue.c:3321 [inline]
->>>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
->>>  kthread+0x3c5/0x780 kernel/kthread.c:464
->>>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>  </TASK>
->>>
->>> Allocated by task 6154:
->>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->>>  kmalloc_noprof include/linux/slab.h:905 [inline]
->>>  kzalloc_noprof include/linux/slab.h:1039 [inline]
->>>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
->>>  __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
->>>  comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
->>>  comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
->>>  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
->>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->>>  vfs_ioctl fs/ioctl.c:51 [inline]
->>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
->>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
->>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>
->>> Freed by task 6156:
->>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->>>  poison_slab_object mm/kasan/common.c:247 [inline]
->>>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->>>  kasan_slab_free include/linux/kasan.h:233 [inline]
->>>  slab_free_hook mm/slub.c:2381 [inline]
->>>  slab_free mm/slub.c:4643 [inline]
->>>  kfree+0x2b4/0x4d0 mm/slub.c:4842
->>>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
->>>  comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
->>>  do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
->>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->>>  vfs_ioctl fs/ioctl.c:51 [inline]
->>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
->>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
->>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> I took a quick look at this, and surely looks like a comedi bug. If you
->> call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just does
->> a detach and frees the device, regardless of whether anyone has it
->> opened or not?! It's got some odd notion of checking whether it's busy
->> or not. For this case, someone has a poll active on the device, yet it
->> still happily frees it.
->>
->> CC'ing some folks, as this looks utterly broken.
-> 
-> Case in point, I added:
-> 
-> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
-> index 376130bfba8a..4d5fde012558 100644
-> --- a/drivers/comedi/drivers.c
-> +++ b/drivers/comedi/drivers.c
-> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct comedi_device *dev)
->  				kfree(s->private);
->  			comedi_free_subdevice_minor(s);
->  			if (s->async) {
-> +				WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
->  				comedi_buf_alloc(dev, s, 0);
->  				kfree(s->async);
->  			}
-> 
-> and this is the first thing that triggers:
-> 
-> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170 comedi_device_detach+0x510/0x720
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE 
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 21400005 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> pc : comedi_device_detach+0x510/0x720
-> lr : comedi_device_detach+0x1dc/0x720
-> sp : ffff80008aeb7880
-> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
-> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
-> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
-> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
-> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
-> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
-> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
-> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
-> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
-> Call trace:
->  comedi_device_detach+0x510/0x720 (P)
->  do_devconfig_ioctl+0x37c/0x4b8
->  comedi_unlocked_ioctl+0x33c/0x2bd8
->  __arm64_sys_ioctl+0x124/0x1a0
->  invoke_syscall.constprop.0+0x60/0x2a0
->  el0_svc_common.constprop.0+0x148/0x240
->  do_el0_svc+0x40/0x60
->  el0_svc+0x44/0xe0
->  el0t_64_sync_handler+0x104/0x130
->  el0t_64_sync+0x170/0x178
-> 
-> Not sure what the right fix for comedi is here, it'd probably be at
-> least somewhat saner if it only allowed removal of the device when the
-> ref count would be 1 (for the ioctl itself). Just ignoring the file ref
-> and allowing blanket removal seems highly suspicious / broken.
-> 
-> As there's no comedi subsystem in syzbot, moving it to kernel:
-> 
-> #syz set subsystems: kernel
+On Sat, Jul 19, 2025 at 10:34=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.a=
+i> wrote:
+>
+> This patch introduces rust abstraction for io-uring sqe, cmd. IoUringSqe
+> abstracts io_uring_sqe and it has cmd_data(). and IoUringCmd is
+> abstraction for io_uring_cmd. From this, user can get cmd_op, flags,
+> pdu and also sqe.
+>
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+>  rust/kernel/io_uring.rs | 114 ++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs      |   1 +
+>  2 files changed, 115 insertions(+)
+>  create mode 100644 rust/kernel/io_uring.rs
+>
+> diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
+> new file mode 100644
+> index 000000000000..7843effbedb4
+> --- /dev/null
+> +++ b/rust/kernel/io_uring.rs
+> @@ -0,0 +1,114 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2025 Furiosa AI.
+> +
+> +//! Files and file descriptors.
+> +//!
+> +//! C headers: [`include/linux/io_uring/cmd.h`](srctree/include/linux/io=
+_uring/cmd.h) and
+> +//! [`include/linux/file.h`](srctree/include/linux/file.h)
+> +
+> +use core::mem::MaybeUninit;
+> +
+> +use crate::{fs::File, types::Opaque};
+> +
+> +pub mod flags {
+> +    pub const COMPLETE_DEFER: i32 =3D bindings::io_uring_cmd_flags_IO_UR=
+ING_F_COMPLETE_DEFER;
+> +    pub const UNLOCKED: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_=
+UNLOCKED;
+> +
+> +    pub const MULTISHOT: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F=
+_MULTISHOT;
+> +    pub const IOWQ: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_IOWQ=
+;
+> +    pub const NONBLOCK: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_=
+NONBLOCK;
+> +
+> +    pub const SQE128: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_SQ=
+E128;
+> +    pub const CQE32: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_CQE=
+32;
+> +    pub const IOPOLL: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_IO=
+POLL;
+> +
+> +    pub const CANCEL: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_CA=
+NCEL;
+> +    pub const COMPAT: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_CO=
+MPAT;
+> +    pub const TASK_DEAD: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F=
+_TASK_DEAD;
+> +}
+> +
+> +#[repr(transparent)]
+> +pub struct IoUringCmd {
+> +    inner: Opaque<bindings::io_uring_cmd>,
+> +}
+> +
+> +impl IoUringCmd {
+> +    /// Returns the cmd_op with associated with the io_uring_cmd.
+> +    #[inline]
+> +    pub fn cmd_op(&self) -> u32 {
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        unsafe { (*self.inner.get()).cmd_op }
+> +    }
+> +
+> +    /// Returns the flags with associated with the io_uring_cmd.
+> +    #[inline]
+> +    pub fn flags(&self) -> u32 {
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        unsafe { (*self.inner.get()).flags }
+> +    }
+> +
+> +    /// Returns the ref pdu for free use.
+> +    #[inline]
+> +    pub fn pdu(&mut self) -> MaybeUninit<&mut [u8; 32]> {
 
-Something like the below may help, at least it'll tell us the device is
-busy if there's a poll active on it.
+Should be &mut MaybeUninit, right? It's the bytes that may be
+uninitialized, not the reference.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        unsafe { MaybeUninit::new(&mut (*self.inner.get()).pdu) }
+> +    }
+> +
+> +    /// Constructs a new `struct io_uring_cmd` wrapper from a file descr=
+iptor.
 
+Why "from a file descriptor"?
 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 3383a7ce27ff..ea96bc4b818e 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct comedi_device *dev)
- static int is_device_busy(struct comedi_device *dev)
- {
- 	struct comedi_subdevice *s;
--	int i;
-+	int i, is_busy = 0;
- 
- 	lockdep_assert_held(&dev->mutex);
- 	if (!dev->attached)
- 		return 0;
- 
-+	/* prevent new polls */
-+	down_write(&dev->attach_lock);
-+
- 	for (i = 0; i < dev->n_subdevices; i++) {
- 		s = &dev->subdevices[i];
--		if (s->busy)
--			return 1;
--		if (s->async && comedi_buf_is_mmapped(s))
--			return 1;
-+		if (s->busy) {
-+			is_busy = 1;
-+			break;
-+		}
-+		if (!s->async)
-+			continue;
-+		if (comedi_buf_is_mmapped(s) ||
-+		    waitqueue_active(&s->async->wait_head)) {
-+			is_busy = 1;
-+			break;
-+		}
- 	}
--
--	return 0;
-+	up_write(&dev->attach_lock);
-+	return is_busy;
- }
- 
- /*
+Also, missing a comment documenting the safety preconditions?
 
--- 
-Jens Axboe
+> +    #[inline]
+> +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_cmd) -> &'=
+a IoUringCmd {
+
+Could take NonNull instead of a raw pointer.
+
+> +        // SAFETY: The caller guarantees that the pointer is not danglin=
+g and stays valid for the
+> +        // duration of 'a. The cast is okay because `File` is `repr(tran=
+sparent)`.
+
+"File" -> "IoUringCmd"?
+
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +
+> +    // Returns the file that referenced by uring cmd self.
+
+I had a hard time parsing this comment. How about "Returns a reference
+to the uring cmd's file object"?
+
+> +    #[inline]
+> +    pub fn file<'a>(&'a self) -> &'a File {
+
+Could elide the lifetime.
+
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        let file =3D unsafe { (*self.inner.get()).file };
+> +        unsafe { File::from_raw_file(file) }
+
+Missing a SAFETY comment for File::from_raw_file()? I would expect
+something about io_uring_cmd's file field storing a non-null pointer
+to a struct file on which a reference is held for the duration of the
+uring cmd.
+
+> +    }
+> +
+> +    // Returns the sqe  that referenced by uring cmd self.
+
+"Returns a reference to the uring cmd's SQE"?
+
+> +    #[inline]
+> +    pub fn sqe(&self) -> &IoUringSqe {
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        let ptr =3D unsafe { (*self.inner.get()).sqe };
+
+"ptr" isn't very descriptive. How about "sqe"?
+
+> +        unsafe { IoUringSqe::from_raw(ptr) }
+
+Similar, missing SAFETY comment for IoUringSqe::from_raw()?
+
+> +    }
+> +
+> +    // Called by consumers of io_uring_cmd, if they originally returned =
+-EIOCBQUEUED upon receiving the command
+> +    #[inline]
+> +    pub fn done(self, ret: isize, res2: u64, issue_flags: u32) {
+
+I don't think it's safe to move io_uring_cmd. io_uring_cmd_done(), for
+example, calls cmd_to_io_kiocb() to turn struct io_uring_cmd *ioucmd
+into struct io_kiocb *req via a pointer cast. And struct io_kiocb's
+definitely need to be pinned in memory. For example,
+io_req_normal_work_add() inserts the struct io_kiocb into a linked
+list. Probably some sort of pinning is necessary for IoUringCmd.
+
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        unsafe {
+> +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, iss=
+ue_flags);
+> +        }
+> +    }
+> +}
+> +
+> +#[repr(transparent)]
+> +pub struct IoUringSqe {
+> +    inner: Opaque<bindings::io_uring_sqe>,
+> +}
+> +
+> +impl<'a> IoUringSqe {
+> +    pub fn cmd_data(&'a self) -> &'a [Opaque<u8>] {
+> +        // SAFETY: The call guarantees that the pointer is not dangling =
+and stays valid
+> +        unsafe {
+> +            let cmd =3D (*self.inner.get()).__bindgen_anon_6.cmd.as_ref(=
+);
+> +            core::slice::from_raw_parts(cmd.as_ptr() as *const Opaque<u8=
+>, 8)
+
+Why 8? Should be 16 bytes for a 64-byte SQE and 80 bytes for a
+128-byte SQE, right?
+
+> +        }
+> +    }
+> +
+> +    #[inline]
+> +    pub unsafe fn from_raw(ptr: *const bindings::io_uring_sqe) -> &'a Io=
+UringSqe {
+
+Take NonNull here too?
+
+> +        // SAFETY: The caller guarantees that the pointer is not danglin=
+g and stays valid for the
+> +        // duration of 'a. The cast is okay because `File` is `repr(tran=
+sparent)`.
+> +        //
+> +        // INVARIANT: The caller guarantees that there are no problemati=
+c `fdget_pos` calls.
+
+Why "File" and "fdget_pos"?
+
+Best,
+Caleb
+
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 6b4774b2b1c3..fb310e78d51d 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -80,6 +80,7 @@
+>  pub mod fs;
+>  pub mod init;
+>  pub mod io;
+> +pub mod io_uring;
+>  pub mod ioctl;
+>  pub mod jump_label;
+>  #[cfg(CONFIG_KUNIT)]
+> --
+> 2.43.0
+>
+>
 

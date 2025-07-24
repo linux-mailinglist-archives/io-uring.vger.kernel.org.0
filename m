@@ -1,149 +1,143 @@
-Return-Path: <io-uring+bounces-8786-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8787-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFEAB10DFC
-	for <lists+io-uring@lfdr.de>; Thu, 24 Jul 2025 16:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5EDB10F62
+	for <lists+io-uring@lfdr.de>; Thu, 24 Jul 2025 18:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA51179C5F
-	for <lists+io-uring@lfdr.de>; Thu, 24 Jul 2025 14:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B45A17ECDB
+	for <lists+io-uring@lfdr.de>; Thu, 24 Jul 2025 16:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5471FE455;
-	Thu, 24 Jul 2025 14:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309322DE707;
+	Thu, 24 Jul 2025 16:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jcKW9405"
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="RTcZwWK0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDAA1C5F23
-	for <io-uring@vger.kernel.org>; Thu, 24 Jul 2025 14:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC5D1E47AD
+	for <io-uring@vger.kernel.org>; Thu, 24 Jul 2025 16:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753368546; cv=none; b=fGl9D+5zBT2yjJ95gULAE5NlcECmzeoQOf0iCrpgVcCRgt1S2+yUrb6bntPzbr0bQXsDKvIjfP/mnXH6yCh3elu8Hcn7YcyywzH0rkGhAoCyll/qg1rXQFwIdN3eItnbGKYyu3fkjWDUl10F2pQoFmi4kadefk8fkz2r+pL8DQU=
+	t=1753373134; cv=none; b=ZdIH4hBTHH9AGDHRWTRJ11Z2Mxk4N8pyAAT5wJt69/9b4dottHLsfv3xWKn4zDHr1BCoft+FPn9mpTmHRGumhDuGfw7VxkDNR6Z7dUYkJCY47/IxmuQ/TXFL/foT0pTlHeBcw6POrsqydu2dHxvJtsgoGB8VnYzwve1Jwv2znJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753368546; c=relaxed/simple;
-	bh=XtPaYn10BNsleUzP2QAy/hh18rXZPKq1F/5d1xCM8to=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYmtHzp+1YMQTUaTnREEtYkuDQeXtOicb/rPGOoeqvjo1B7K0MupaTJYlwqw23a5/u6EjV+c41EEX6A0UTYD9Io2Qrtr6uiKvJ4hFe2/mQUKMC+H7/nXlc15jE1lNC2aZuGhngipSy2qmAMXhyP0kC5l2ZYiQIxyMeKVvrRHTgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jcKW9405; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-879c49e8ac3so67749939f.1
-        for <io-uring@vger.kernel.org>; Thu, 24 Jul 2025 07:49:02 -0700 (PDT)
+	s=arc-20240116; t=1753373134; c=relaxed/simple;
+	bh=0VUcTAlTKI8Uut+YrFJ9JnFPeuS1MyI+ehjEzU6u9SU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSXLSZIa3X/rsVI4n6uxnUWbWZkCr7eKTpxE4n/8f5aw2Zxkg7YLsfZA4boQkVRytS5R23vQ51L3tyGxTuHkwMb8adZ9pcjxtTbg0vSZRDdaT3x9VKEXoIwukrVXB/f68y9hTjyi0JXyF2ea4zcaP4QEOqU2eEyU9HXD6N/xnR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=RTcZwWK0; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2363616a1a6so9839455ad.3
+        for <io-uring@vger.kernel.org>; Thu, 24 Jul 2025 09:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753368541; x=1753973341; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZTmXwk1ln2aXPH7A2yGIjn7/c0BIQF13mQsY+Oex6Mg=;
-        b=jcKW9405flgmNcwPe0H+Ovh+ThdhR+TOw/MuGwGqQJFd7QG3iAYfVUukM84dBmfEMe
-         3tHIxeD35bd6yofdVVPEq7e9qNKJctdGoU5RMW75JDjB+RK6Ii2zmN1/yN87wlC3ylJd
-         Gy/qRJQtivAM6o5+M+WJLiT/W3Wr0r94D++HHBZSVZpPeelQ81FOEp9OAnYtF4H3DhIv
-         e0cARnjnTCtMn3YAkD3Hua5CVFU2E759wZcnkEhtHH7DbEQWGqvK6FDuM9k2lzFvHYG2
-         ouC7TwrCaN9lJqkTfjvCVTnUl9Q9w210UD+CzCQ0jigNLmBvHAjfoUERtnS1Lix7vQmT
-         JswQ==
+        d=furiosa.ai; s=google; t=1753373132; x=1753977932; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPrDAQdM9SEh1PC8EgiE1RAI5sFJN3A+tD++JaDKFmM=;
+        b=RTcZwWK08KSyMDVKrfSebH8hoeuDIYUlw5feYTyayOgg2QYqwsMAVXlRuzUHzT0gGa
+         zh97hlaBLZd6JXnHS0NFBzg6Rph+ttaux0ByZIzet+MyJ9aSITzw04sUx4UlSlA2FSim
+         GofF3h7y09FlPRUGLA0dt1gPfICTmVsgF8I/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753368541; x=1753973341;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZTmXwk1ln2aXPH7A2yGIjn7/c0BIQF13mQsY+Oex6Mg=;
-        b=nu5nsj0A3eKPq6c0pQIxEfIIAcDTU9a7ze5qF4j7vsEX6YHmZQjq3RCcBm7aD0TDrE
-         MgcQp+zyjB65oWbnD18hESwJcAGoFehH5P2sCEni5eDJwxT1EgGCrF2M0h5/VO6ScKPp
-         ZVju8t83gs4kjYmLgImCc2f5nGTTZ6SvuwWSo5qpWhT4k/9guw8yojCvU3VMNWFdqS4k
-         cOsGbNMaD2l2fOHHY/b5xhnxWpmMSFfo+DewhYDFFbvRyLFV8BVkMPLcFIZe2jbsg5/E
-         KlL8l/TM6e2wRISQ9AeuMyoDgfRGRHzTkbpcSAlTpHygqJN6/RszjD4OqhRXs3mpSKk4
-         z0Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5UJ1CO9Vjq/96SBkBSXwTXa2srcKSuhedJcraAbkspMwzm4GDlQfn3qy+NbMwH2tqfy1c8195vg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFOVMcwvH8Eh1taMGmQBansx+WSCXwS3A7WbqqXCSx3mCx4r0f
-	DG1g+DWNVbYaKIdDC4zsecIVo/7K81tlkM8cXmxC5xIg6aDvBGahoRn0DYiqSijL6kwBykg/yBb
-	3ywDJ
-X-Gm-Gg: ASbGncvOGRDHBeuby/tNCSYyU+Zn5M5Qcqtr/mYPvIkEx92GAT6Q9UB79h458SoRw46
-	hboiyKvyB87MQxCT99zuAArdlPT8xJEghCTZjUDuigZ3uW9c101dmnMCJlcKLri1FnVhUa7fDeh
-	1EsFQhJJuNqiZFRDimxknYPIBCc0tKiOb4NdXqqnk0Tqdwj8REIaXMvZM4G+NwW0cxO0KEHajsy
-	r0ez91n6Z0guLAOCVRFNPmNhZcDxUynSxgyGn8p8trswssyFyO0Xq2ilObSLIWagWSsbhr1b/bQ
-	MuMi7hj2XQiDP4EpUZtG9fOtfMAWM4qkhg1xofdQ7KZzenlBtoHhHT3wbwwcysGc3kdVhwBlQdU
-	TSg1U/q9Cys7Azeb54A==
-X-Google-Smtp-Source: AGHT+IEsVhZp6sfXvvbrk0+pk8CrKgMTF0rbWs/Xg6wu9OFOJYI9phVzzEeaauuezSbMk24eFI2wlA==
-X-Received: by 2002:a6b:6113:0:b0:875:28e5:92e5 with SMTP id ca18e2360f4ac-87c6506dd59mr1083400639f.13.1753368541189;
-        Thu, 24 Jul 2025 07:49:01 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-87c743167d4sm47471639f.22.2025.07.24.07.49.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 07:49:00 -0700 (PDT)
-Message-ID: <9d13f0b8-e224-40ed-acb3-0dcd50f94ddd@kernel.dk>
-Date: Thu, 24 Jul 2025 08:49:00 -0600
+        d=1e100.net; s=20230601; t=1753373132; x=1753977932;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lPrDAQdM9SEh1PC8EgiE1RAI5sFJN3A+tD++JaDKFmM=;
+        b=Nx31gZu77E80ETFFfU7D38TipuTquCDO/PqCxCKnKynrk4kqpRCX4YVW4D0u+kBA/g
+         g3oMCE2kAt+IT5JooSYpyiKQJu2r0+3p8I86HXbgtawvZ7EFSVF56/c3KuAK2Wki3X9a
+         ZsUQ9N/uXWSfsYvrVtH6G/c6GdN9UQ16fN7gDFNojJuNj84IC7+Zs8Ii0Rpsil/5ruln
+         CbCD6tks1pf91Axi8LUrzNHVaJAvZHlv8n9WfNZL1tIs4dGLIka6blrDdn89ZnnaiyWF
+         Kf2hrgjfJF6rywuUnwtYbFUan/QqLavxM4OJvTu0GchiIy0GluTro1hzRdZXeHuUd4wI
+         5Phw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOFd3bYlUTZk3qX7WalG2CJYGWHAqGJX5LrIdxysmPzEE+c929pRYYCpGnXgj3Kn6z0Ni2qYP3Uw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRBh8vKHxycasbIQwSWevAGZ7xSJbofZhFhv7p0qXjaLQg6yqR
+	5MM7Xlxbf+7hS7C59sm1tLTC8dsr8XgQg8RJrIIXhGakqhZKxBhiLdgsb8Dq8t9nlZw=
+X-Gm-Gg: ASbGnct/QR8Lcls/oRgZ4/MhKfhAfTr2/GquDwP9KiHgrItm3UmKBxwRRASiMv+20xx
+	USx0GDekVSh8hPmXnBiNE4Tv0Dwkl23Xjf09wHnYZkTBOX7fkCmZc0sF5yH88qkVYx257ztP3Xy
+	USpL6GL8Puo74ZeekLcrPPG0Wzf446p0RmSwceB+tOYpNukXzx1JPkxwCFV9Wj2UbrGpScmOAfP
+	aFGCzUNAy0v8EnPPfdkz/PAw2tSfCfNcq7GgSO8vL3d1ybQZKGL2e2OFbJiGyyY7DMtHQCj971O
+	NqZ1uBnLOaFJnE+rj3130a0sF5OeslyNFObq4LpIydQO6IZKfN34N/J9vTIX1iYDoaW3AM4QbBj
+	lQ7/xwcy91jPGO0p1lwBNTi3fNvD6sW4O3QMsrst2vo4Zv2jyd9yj8HZh
+X-Google-Smtp-Source: AGHT+IFOb7VV+hEvYr5JMOJR9pYJzMfOIn04UMDsdukQyZlKdVzKoT94AbgXvi68H4CvfhuA1xh5ag==
+X-Received: by 2002:a17:902:d2ca:b0:234:8c64:7885 with SMTP id d9443c01a7336-23f981efd84mr99141955ad.53.1753373132037;
+        Thu, 24 Jul 2025 09:05:32 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f3d3sm18905165ad.40.2025.07.24.09.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 09:05:31 -0700 (PDT)
+Date: Fri, 25 Jul 2025 01:05:10 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+Message-ID: <aIJZthYtM4e7-E4v@sidongui-MacBookPro.local>
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+ <20250719143358.22363-3-sidong.yang@furiosa.ai>
+ <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
+ <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
+ <CADUfDZrLKrf6evTXQ03cJ1W4kj0gxsF9Bopu+i2SjkBObXKnMA@mail.gmail.com>
+ <aH5g-Q_hu6neI5em@sidongui-MacBookPro.local>
+ <DBHVI5WDLCY3.33K0F1UAJSHPK@kernel.org>
+ <aH-ga6WdOpkbRK3T@sidongui-MacBookPro.local>
+ <DBIT6WL2C5MG.2J7OBX6LCVYP7@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: Allow to do vectorized send
-To: norman.maurer@googlemail.com, io-uring@vger.kernel.org
-Cc: Norman Maurer <norman_maurer@apple.com>
-References: <20250724051643.91922-1-norman_maurer@apple.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250724051643.91922-1-norman_maurer@apple.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBIT6WL2C5MG.2J7OBX6LCVYP7@kernel.org>
 
-On 7/23/25 11:16 PM, norman.maurer@googlemail.com wrote:
-> From: Norman Maurer <norman_maurer@apple.com>
+On Tue, Jul 22, 2025 at 08:52:05PM +0200, Benno Lossin wrote:
+> On Tue Jul 22, 2025 at 4:30 PM CEST, Sidong Yang wrote:
+> > On Mon, Jul 21, 2025 at 06:28:09PM +0200, Benno Lossin wrote:
+> >> On Mon Jul 21, 2025 at 5:47 PM CEST, Sidong Yang wrote:
+> >> > It's safest to get NonNull from from_raw and it returns
+> >> > Pin<&mut IoUringCmd>.
+> >> 
+> >> I don't think you need `NonNull<T>`.
+> >
+> > NonNull<T> gurantees that it's not null. It could be also dangling but it's
+> > safer than *mut T. Could you tell me why I don't need it?
 > 
-> At the moment you have to use sendmsg for vectorized send. While this
-> works it's suboptimal as it also means you need to allocate a struct
-> msghdr that needs to be kept alive until a submission happens. We can
-> remove this limitation by just allowing to use send directly.
+> Raw pointers have better ergonomics and if you're just passing it back
+> into ffi, I don't see the point of using `NonNull`...
 
-Looks pretty clean, just a few minor comments below. For the commit
-message above, you should wrap it at ~72 chars.
+Agreed, from_raw() would be called in rust kernel unsafe condition not in safe
+driver. Thinking it over, using a raw pointer would be convenient.
 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index b8a0e70ee2fd..6957dc539d83 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -392,12 +392,16 @@ enum io_uring_op {
->   *				the starting buffer ID in cqe->flags as per
->   *				usual for provided buffer usage. The buffers
->   *				will be	contiguous from the starting buffer ID.
-> + *
-> + * IORING_SEND_VECTORIZED	If set, SEND[_ZC] will take a pointer to a io_vec
-> + * 				to allow vectorized send operations.
->   */
->  #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
->  #define IORING_RECV_MULTISHOT		(1U << 1)
->  #define IORING_RECVSEND_FIXED_BUF	(1U << 2)
->  #define IORING_SEND_ZC_REPORT_USAGE	(1U << 3)
->  #define IORING_RECVSEND_BUNDLE		(1U << 4)
-> +#define IORING_SEND_VECTORIZED		(1U << 5)
+> 
+> >> > from_raw() name is weird. it should be from_nonnnull()? Also, done()
+> >> > would get Pin<&mut Self>.
+> >> 
+> >> That sounds reasonable.
+> >> 
+> >> Are you certain that it's an exclusive reference?
+> >
+> > As far as I know, yes.
+> 
+> So the `IoUringCmd` is not refcounted and it is also not owned by the
+> `done` callee?
 
-Do we want to support this on the recv side too? I guess that can be
-added later and IORING_RECV_VECTORIZED can just be defined to
-IORING_SEND_VECTORIZED in that case.
+Yes, io_uring_cmd would be allocated in io_submit_sqes() and it's not accessed
+concurrently. io_uring_cmd_done() sets its result to io_uring_cmd and prepare
+some field to completion.
 
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index ba2d0abea349..d4a59f5461ed 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -420,6 +424,9 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  	sr->flags = READ_ONCE(sqe->ioprio);
->  	if (sr->flags & ~SENDMSG_FLAGS)
->  		return -EINVAL;
-> +        if (req->opcode != IORING_OP_SEND && req->opcode != IORING_OP_SEND_ZC && sr->flags & IORING_SEND_VECTORIZED)
-> +                return -EINVAL;
-> +
+Thanks,
+Sidong
 
-	if (req->opcode == IORING_OP_SENDMSG && sr->flags & IORING_SEND_VECTORIZED)
-		return -EINVAL;
-
-?
-
--- 
-Jens Axboe
+> 
+> ---
+> Cheers,
+> Benno
 

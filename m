@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-8829-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8828-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB38B13994
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:06:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5126B13995
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFF73BDF27
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 11:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6ED1679BF
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 11:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D87426463B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4112625BF1B;
 	Mon, 28 Jul 2025 11:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh/iaVV1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVUbHNJw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5546A264638;
-	Mon, 28 Jul 2025 11:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60B264634;
+	Mon, 28 Jul 2025 11:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700622; cv=none; b=Tvx6sbfV7nIu6QpTE4kNG4+eG35/G5MaxqS4pFO5zoua7OyFdLLnJnW27EM4AwoWFiu9wowM+KHP1Xgtl2AfAlD/wpC36W3XCE4Qmn4S/xxB0zFUcCzPkEgKIqwv9glowVxyEw/8/wMKfrIa8BUAs7LWCYjqYB/Jm8JqbLf6H3E=
+	t=1753700622; cv=none; b=tPVfYnJHt5wFajTuMYOaagoL2Op0vDYUpnLmVzVcxVIu76uwiKh6xd7Nwr+GXSJGA7+I7UVfC2mrhV4BfNtCcEflOE1DhLIyunRUbOFZ8wgt/mYw3ciR2iD0RWsMcMV9w/7ku6AY+xrPbfraTVXUCe6fXfJyHtVcp2fkn5T/Hdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753700622; c=relaxed/simple;
-	bh=MOYfhlQUTRo44dhkqbQEalJMeYCf6lWFNyV3noXKqZI=;
+	bh=Kazo359TedRr5WG5TZJXywgHN+i4PeBWRhr3xxErffc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qnx2NnaZHfx2DJ7WFQ/RpLY7viT5BIC29rcmmg/RhzwphGVa8ux2p5AMPbzObs22PC5uTjgPUO0Ae196TNg3QbinGpKRpqPqZFEcRy26D3Fm56AfCAo26Z4kV22XNMklLk8BCbYVM4y1y7oJuF+yCTAX5PGfD7rMkUq6TNJKS8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh/iaVV1; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=sig69zfanRVliV3ryLmtyxpb+b6rxCKDkmXN3Pj0OwLRINVqC7Ty/89ZUi4i6NjFTKaQ0hC7/tliN8NO6zITgi26AYct6rRZBYPP1Qiq3m6lVmM3pNMCrkjFxSZz9MwjmYyHuafJGOdS9V8S+t6+aBcfMJ4hPuEk4Z4N50VSDxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVUbHNJw; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so48251715e9.1;
-        Mon, 28 Jul 2025 04:03:38 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45629703011so29805005e9.0;
+        Mon, 28 Jul 2025 04:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753700617; x=1754305417; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753700619; x=1754305419; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3aIHOu0agWerK4KdkqjSh1PwY21jcrIA9F0ZwYm7qyU=;
-        b=jh/iaVV1a7nD9hsyi5LfO61En3qEClREWIwLByPF26y+RDWWgI3d85Wtv7OnZzK/tb
-         9shPLHzRoIjwZ5XXBJtiZRmi/rehAAFAu1FHqNlkbT6jSbdoT07iqAW5iaPmf+9UaxFW
-         NHuSQ5ESIWBJJHLL3CHRr2fCqujsPV6lI5scVMgILDgArVk6dnO2suQkVQjL2lPVG9Aw
-         8NQYtafy0N1GhaRZ33jI80JR91HnWUDYFAJG6vKFUYXLRknWWCQOORJzQsglFjSgyf88
-         jy53vzIW6Af3zmnhzgVmM3/f7cFepcFUnOTUmhiL+zhovkKa1ZUPTygaZ9yrAY/F28NU
-         1kuw==
+        bh=zwY2mzHwihlK+raHIl11LrN1Z4nwGPJ0gt9rWAafa6I=;
+        b=TVUbHNJwXpDWStbHryBkPdDS6B3E22YvH6Z+a4ROeNhxoWYDF/diedvU2zXUUzm2Rl
+         2wN9Sl811eyaN9AfRI092+yeHPe4I3lcoULyX3t2UBlWCGeudW3ZmrWKHzaDhgkQvOZO
+         pI53fzccw7FHW+RhpX8+4TyN1HELiwGHs99x2DKPbjQ2BSTB8/YA6Qm8xO3iNk+k08Oi
+         N4oLPpx6aPRQzrdJsTOA2tkwMsVnJK87orOU6AIvxGKQtP0G/qmYn+mbvj2hQLMmyVOF
+         HzdTLxiGyDXpactQrPaomAlNNhPd0kwPqRPtNxe6eYvrjy9D9NJQyq3u2pBfZFzZ9ScQ
+         fs1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700617; x=1754305417;
+        d=1e100.net; s=20230601; t=1753700619; x=1754305419;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3aIHOu0agWerK4KdkqjSh1PwY21jcrIA9F0ZwYm7qyU=;
-        b=L0sXNdvw4CV2vCYbXXnkmn6Uwd+FY2c3N479DNoTSz/ce2qw2YzmKIEOu35qzglEeI
-         oZ2yPeaNk+iVJjAusJ6l3CSDbSKc3otuHXT1LE0a0Wmr8gV1a6clRPu2Aaugq6Xms4kG
-         kh63MDJNYttiAOw5jnYttOI/SI1TvhRm+YosJsYNvnRhDVIwmq3AN/6dWYXateKTKpzK
-         bUYPmpNUpKB/KozjsrtQWNG9nfpP6aQzOvD4u4BA9iQt5+1yRNWsHtpah83TpAopSfZl
-         Erh6KAqKvn1p6nE5+BSecKyavLR8yKxFXyXZ63a5DHMLUDATrN2Gt2NgRfXBDXVX2b/l
-         De8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqyaAHL/PQJOryzlHP95FgC1ZSk1vGXQy7rCmzByxvXElAIMUTkR3yjylA6H+V1oB6ezAN9qDuwQ==@vger.kernel.org, AJvYcCVmtXV3xVYUlFbDzPGh/aUYbJpSKjOsaW4Kkt3w8XVGkcm3FsMcgCykX2KUAWsetNvRZy0jaZYm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHtKTPLE0zt8hWjL/yW8SXLqIZmMcj9hG+E5/E6iOhsegv44Y4
-	r2iMeUJ8iW755VrqKWA1LdiHzricWLbUThe+Sp8aoeGAEFeYs01ZHIhBp32EYg==
-X-Gm-Gg: ASbGncuF8uh9FYYNJGqZ/ZZ8UIQnt9PamefYQUZWtfQ2y6lb6W5ijmYzuYDaaMCJ1Es
-	CjI61qC2ITuy160J8KUaHqDTHr869fy1zwpzwc/BDGvNPRO2/nf6UcyG04ZvYzQ32nrMQ4+EwPI
-	+kefU8vqAgON11DFxRzikUwRWDtVGgHvk9D9p4PFWfaqPzcvV7/PrXdtUG/90bsqCUmcAxlTPN3
-	G66ukSEOJVhgNQq2BKiSb730qrMu9uG6EK6Oz4qnVsuP6tKkQEES5ZtAZjDxOakMmR88S/gh3a3
-	PHhLDK1atjYzxJPKZBgHkn/QJNSq77MTCar8tB+yxfzJwruhbzGD+sw4StDMw4U2ZLADg6bCUDA
-	yLlMnEnlYs8NDrQ==
-X-Google-Smtp-Source: AGHT+IFZuDhA4fhPZjGuhsvIBFn7CWdYfNMMp5KCEThI+vAVxFwGQaOfHiFn/uDKy+PuUHopdhgt/g==
-X-Received: by 2002:a05:600c:c173:b0:456:28d4:ef1 with SMTP id 5b1f17b1804b1-45877c53a3dmr77694155e9.29.1753700617098;
-        Mon, 28 Jul 2025 04:03:37 -0700 (PDT)
+        bh=zwY2mzHwihlK+raHIl11LrN1Z4nwGPJ0gt9rWAafa6I=;
+        b=hN0DTIJnT1u7rO26b6a9omWQrdhbm7e65ZZ8atFIL0/vwZ4D7eYaqIR9Qyb93oehKI
+         +MkUSHoztKq1jmbLNHOAvGhRPrXNB6Lb5/3J58Hcj2qQZRCFTPjPMn1LHgn6rQKmgf86
+         uTM5eSjChkzaOOl+QdlXJoHdjy89j2/JwK1yjpy3vRLq9UYo1lojSpxrT8OSs/bY//Z7
+         ZbDi+cj7ZLCwkEb8asp/oKBP/UlL017ilpRDWca+t81p79H8NqkfeIP4VEbog5+d46DC
+         ZRSkhPYNEsC83+Y8WOkKAFCGrA5Re3x7CfehNz11r12be+CYFD0DcxXXhJDPfApdGjVL
+         cG+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVk19s9kkpnBItkQgyq8GavR7RK/EtIdDZl9/mN1oa9z/LrHc3rFWOOuoeXawkBEoINM0h21Z2n@vger.kernel.org, AJvYcCXWmyo7KEoaYq217sC8dMwNVl0YBDk5ZVUvYLC7fwXVCptoNJGJSii5KyL8YDLbz1xa400QHVVGuA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQOsambtQyQQspiyFNNuZnXXR5opc26+d0IvvR7wmMG4GFFEwW
+	4o4yICLZhn+iRgtgcxL2MSCCaEMJIDlEycKBrWxXpNPC5CnRt/59lrMC
+X-Gm-Gg: ASbGncuJOmWvqzhA4k+Qw4Cy/mX7n3ZuHL33GASGfcnLdvSf3yd0A53EuvyTwaT0BMK
+	4EQCSV6RiNPTxa4WTjFz4v9SSRfneeMkK5DRDhDQc6Mckjm31McerWAYHsbgnvH7C93Y0aYgty1
+	gkQXfUVbOrO6QIt7mDrRu8A/uELGzhgoQmMiJGUW31KxoZ5QSIDSZwdPwDwjwH2ferl1BwsA4VS
+	VXwGlTjAPzUKyRFfQu7SHeD6yQNBfFCJ+13TPQh0YmzmuZwJ2WoIQGq400UqZUsUh7gQ0WSHoz5
+	HQuAEPaUbNfasO509ORvkp2RNkYQsPK2iNZWncFSVONT+PwClaYbrMO2NmXJgW6ZRXBBvZuJIRr
+	eg4g=
+X-Google-Smtp-Source: AGHT+IGxWEq5aSn5gpXyUQe13xUKL0fSwaP+FE72eqUUQlE+7Wb8qY0oE7jG2/6wC2l9zfoiH66WgA==
+X-Received: by 2002:a05:600c:699a:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-45876304b8dmr83534105e9.6.1753700618655;
+        Mon, 28 Jul 2025 04:03:38 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm157410235e9.28.2025.07.28.04.03.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm157410235e9.28.2025.07.28.04.03.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 04:03:36 -0700 (PDT)
+        Mon, 28 Jul 2025 04:03:37 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jakub Kicinski <kuba@kernel.org>,
 	netdev@vger.kernel.org
@@ -90,9 +90,9 @@ Cc: asml.silence@gmail.com,
 	michael.chan@broadcom.com,
 	dtatulea@nvidia.com,
 	ap420073@gmail.com
-Subject: [RFC v1 17/22] netdev: add support for setting rx-buf-len per queue
-Date: Mon, 28 Jul 2025 12:04:21 +0100
-Message-ID: <4db7b749277d4c0723f448cb143dab66959d618c.1753694914.git.asml.silence@gmail.com>
+Subject: [RFC v1 18/22] net: wipe the setting of deactived queues
+Date: Mon, 28 Jul 2025 12:04:22 +0100
+Message-ID: <e4626dc1eaf64506bf5661cfe3ffc875cdb9bcdc.1753694914.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1753694913.git.asml.silence@gmail.com>
 References: <cover.1753694913.git.asml.silence@gmail.com>
@@ -106,359 +106,78 @@ Content-Transfer-Encoding: 8bit
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-Zero-copy APIs increase the cost of buffer management. They also extend
-this cost to user space applications which may be used to dealing with
-much larger buffers. Allow setting rx-buf-len per queue, devices with
-HW-GRO support can commonly fill buffers up to 32k (or rather 64k - 1
-but that's not a power of 2..)
-
-The implementation adds a new option to the netdev netlink, rather
-than ethtool. The NIC-wide setting lives in ethtool ringparams so
-one could argue that we should be extending the ethtool API.
-OTOH netdev API is where we already have queue-get, and it's how
-zero-copy applications bind memory providers.
+Clear out all settings of deactived queues when user changes
+the number of channels. We already perform similar cleanup
+for shapers.
 
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- Documentation/netlink/specs/netdev.yaml | 15 ++++
- include/net/netdev_queues.h             |  5 ++
- include/net/netlink.h                   | 19 +++++
- include/uapi/linux/netdev.h             |  2 +
- net/core/netdev-genl-gen.c              | 15 ++++
- net/core/netdev-genl-gen.h              |  1 +
- net/core/netdev-genl.c                  | 92 +++++++++++++++++++++++++
- net/core/netdev_config.c                | 16 +++++
- tools/include/uapi/linux/netdev.h       |  2 +
- 9 files changed, 167 insertions(+)
+ net/core/dev.c           |  5 +++++
+ net/core/dev.h           |  2 ++
+ net/core/netdev_config.c | 13 +++++++++++++
+ 3 files changed, 20 insertions(+)
 
-diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
-index c0ef6d0d7786..5dd1eb5909cd 100644
---- a/Documentation/netlink/specs/netdev.yaml
-+++ b/Documentation/netlink/specs/netdev.yaml
-@@ -324,6 +324,10 @@ attribute-sets:
-         doc: XSK information for this queue, if any.
-         type: nest
-         nested-attributes: xsk-info
-+      -
-+        name: rx-buf-len
-+        doc: Per-queue configuration of ETHTOOL_A_RINGS_RX_BUF_LEN.
-+        type: u32
-   -
-     name: qstats
-     doc: |
-@@ -755,6 +759,17 @@ operations:
-         reply:
-           attributes:
-             - id
-+    -
-+      name: queue-set
-+      doc: Set per-queue configurable options.
-+      attribute-set: queue
-+      do:
-+        request:
-+          attributes:
-+            - ifindex
-+            - type
-+            - id
-+            - rx-buf-len
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 757fa06d7392..2446e7136bd8 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3190,6 +3190,8 @@ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
+ 		if (dev->num_tc)
+ 			netif_setup_tc(dev, txq);
  
- kernel-family:
-   headers: [ "net/netdev_netlink.h"]
-diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-index f75313fc78ba..cfd2d59861e1 100644
---- a/include/net/netdev_queues.h
-+++ b/include/net/netdev_queues.h
-@@ -38,6 +38,7 @@ struct netdev_config {
++		netdev_queue_config_update_cnt(dev, txq,
++					       dev->real_num_rx_queues);
+ 		net_shaper_set_real_num_tx_queues(dev, txq);
  
- /* Same semantics as fields in struct netdev_config */
- struct netdev_queue_config {
-+	u32	rx_buf_len;
- };
- 
- /* See the netdev.yaml spec for definition of each statistic */
-@@ -140,6 +141,8 @@ void netdev_stat_queue_sum(struct net_device *netdev,
- /**
-  * struct netdev_queue_mgmt_ops - netdev ops for queue management
-  *
-+ * @supported_ring_params: ring params supported per queue (ETHTOOL_RING_USE_*).
-+ *
-  * @ndo_queue_mem_size: Size of the struct that describes a queue's memory.
-  *
-  * @ndo_queue_cfg_defaults: (Optional) Populate queue config struct with
-@@ -170,6 +173,8 @@ void netdev_stat_queue_sum(struct net_device *netdev,
-  * be called for an interface which is open.
-  */
- struct netdev_queue_mgmt_ops {
-+	u32     supported_ring_params;
+ 		dev_qdisc_change_real_num_tx(dev, txq);
+@@ -3236,6 +3238,9 @@ int netif_set_real_num_rx_queues(struct net_device *dev, unsigned int rxq)
+ 						  rxq);
+ 		if (rc)
+ 			return rc;
 +
- 	size_t	ndo_queue_mem_size;
- 	void	(*ndo_queue_cfg_defaults)(struct net_device *dev,
- 					  int idx,
-diff --git a/include/net/netlink.h b/include/net/netlink.h
-index 90a560dc167a..c892cae8f592 100644
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -2186,6 +2186,25 @@ static inline struct nla_bitfield32 nla_get_bitfield32(const struct nlattr *nla)
- 	return tmp;
- }
- 
-+/**
-+ * nla_update_u32() - update u32 value from NLA_U32 attribute
-+ * @dst:  value to update
-+ * @attr: netlink attribute with new value or null
-+ *
-+ * Copy the u32 value from NLA_U32 netlink attribute @attr into variable
-+ * pointed to by @dst; do nothing if @attr is null.
-+ *
-+ * Return: true if this function changed the value of @dst, otherwise false.
-+ */
-+static inline bool nla_update_u32(u32 *dst, const struct nlattr *attr)
-+{
-+	u32 old_val = *dst;
-+
-+	if (attr)
-+		*dst = nla_get_u32(attr);
-+	return *dst != old_val;
-+}
-+
- /**
-  * nla_memdup - duplicate attribute memory (kmemdup)
-  * @src: netlink attribute to duplicate from
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index 7eb9571786b8..98fa988c8db2 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -152,6 +152,7 @@ enum {
- 	NETDEV_A_QUEUE_DMABUF,
- 	NETDEV_A_QUEUE_IO_URING,
- 	NETDEV_A_QUEUE_XSK,
-+	NETDEV_A_QUEUE_RX_BUF_LEN,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
-@@ -220,6 +221,7 @@ enum {
- 	NETDEV_CMD_BIND_RX,
- 	NETDEV_CMD_NAPI_SET,
- 	NETDEV_CMD_BIND_TX,
-+	NETDEV_CMD_QUEUE_SET,
- 
- 	__NETDEV_CMD_MAX,
- 	NETDEV_CMD_MAX = (__NETDEV_CMD_MAX - 1)
-diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-index 4fc44587f493..ac25584a829d 100644
---- a/net/core/netdev-genl-gen.c
-+++ b/net/core/netdev-genl-gen.c
-@@ -105,6 +105,14 @@ static const struct nla_policy netdev_bind_tx_nl_policy[NETDEV_A_DMABUF_FD + 1]
- 	[NETDEV_A_DMABUF_FD] = { .type = NLA_U32, },
- };
- 
-+/* NETDEV_CMD_QUEUE_SET - do */
-+static const struct nla_policy netdev_queue_set_nl_policy[NETDEV_A_QUEUE_RX_BUF_LEN + 1] = {
-+	[NETDEV_A_QUEUE_IFINDEX] = NLA_POLICY_MIN(NLA_U32, 1),
-+	[NETDEV_A_QUEUE_TYPE] = NLA_POLICY_MAX(NLA_U32, 1),
-+	[NETDEV_A_QUEUE_ID] = { .type = NLA_U32, },
-+	[NETDEV_A_QUEUE_RX_BUF_LEN] = { .type = NLA_U32, },
-+};
-+
- /* Ops table for netdev */
- static const struct genl_split_ops netdev_nl_ops[] = {
- 	{
-@@ -203,6 +211,13 @@ static const struct genl_split_ops netdev_nl_ops[] = {
- 		.maxattr	= NETDEV_A_DMABUF_FD,
- 		.flags		= GENL_CMD_CAP_DO,
- 	},
-+	{
-+		.cmd		= NETDEV_CMD_QUEUE_SET,
-+		.doit		= netdev_nl_queue_set_doit,
-+		.policy		= netdev_queue_set_nl_policy,
-+		.maxattr	= NETDEV_A_QUEUE_RX_BUF_LEN,
-+		.flags		= GENL_CMD_CAP_DO,
-+	},
- };
- 
- static const struct genl_multicast_group netdev_nl_mcgrps[] = {
-diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
-index cf3fad74511f..b7f5e5d9fca9 100644
---- a/net/core/netdev-genl-gen.h
-+++ b/net/core/netdev-genl-gen.h
-@@ -35,6 +35,7 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
- int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info);
- int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info);
- int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info);
-+int netdev_nl_queue_set_doit(struct sk_buff *skb, struct genl_info *info);
- 
- enum {
- 	NETDEV_NLGRP_MGMT,
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 2afa7b2141aa..52ec8287e835 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -372,6 +372,30 @@ static int nla_put_napi_id(struct sk_buff *skb, const struct napi_struct *napi)
- 	return 0;
- }
- 
-+static int
-+netdev_nl_queue_fill_cfg(struct sk_buff *rsp, struct net_device *netdev,
-+			 u32 q_idx, u32 q_type)
-+{
-+	struct netdev_queue_config *qcfg;
-+
-+	if (!netdev_need_ops_lock(netdev))
-+		return 0;
-+
-+	qcfg = &netdev->cfg->qcfg[q_idx];
-+	switch (q_type) {
-+	case NETDEV_QUEUE_TYPE_RX:
-+		if (qcfg->rx_buf_len &&
-+		    nla_put_u32(rsp, NETDEV_A_QUEUE_RX_BUF_LEN,
-+				qcfg->rx_buf_len))
-+			return -EMSGSIZE;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 			 u32 q_idx, u32 q_type, const struct genl_info *info)
-@@ -419,6 +443,9 @@ netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 		break;
++		netdev_queue_config_update_cnt(dev, dev->real_num_tx_queues,
++					       rxq);
  	}
  
-+	if (netdev_nl_queue_fill_cfg(rsp, netdev, q_idx, q_type))
-+		goto nla_put_failure;
-+
- 	genlmsg_end(rsp, hdr);
+ 	dev->real_num_rx_queues = rxq;
+diff --git a/net/core/dev.h b/net/core/dev.h
+index e0d433fb6325..4cdd8ac7df4f 100644
+--- a/net/core/dev.h
++++ b/net/core/dev.h
+@@ -101,6 +101,8 @@ void __netdev_queue_config(struct net_device *dev, int rxq,
+ 			   struct netdev_queue_config *qcfg, bool pending);
+ int netdev_queue_config_revalidate(struct net_device *dev,
+ 				   struct netlink_ext_ack *extack);
++void netdev_queue_config_update_cnt(struct net_device *dev, unsigned int txq,
++				    unsigned int rxq);
  
- 	return 0;
-@@ -558,6 +585,71 @@ int netdev_nl_queue_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
- 	return err;
- }
- 
-+int netdev_nl_queue_set_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct nlattr * const *tb = info->attrs;
-+	struct netdev_queue_config *qcfg;
-+	u32 q_id, q_type, ifindex;
-+	struct net_device *netdev;
-+	bool mod;
-+	int ret;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_QUEUE_ID) ||
-+	    GENL_REQ_ATTR_CHECK(info, NETDEV_A_QUEUE_TYPE) ||
-+	    GENL_REQ_ATTR_CHECK(info, NETDEV_A_QUEUE_IFINDEX))
-+		return -EINVAL;
-+
-+	q_id = nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
-+	q_type = nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]);
-+	ifindex = nla_get_u32(tb[NETDEV_A_QUEUE_IFINDEX]);
-+
-+	if (q_type != NETDEV_QUEUE_TYPE_RX) {
-+		/* Only Rx params exist right now */
-+		NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_TYPE]);
-+		return -EINVAL;
-+	}
-+
-+	ret = 0;
-+	netdev = netdev_get_by_index_lock(genl_info_net(info), ifindex);
-+	if (!netdev || !netif_device_present(netdev))
-+		ret = -ENODEV;
-+	else if (!netdev->queue_mgmt_ops)
-+		ret = -EOPNOTSUPP;
-+	if (ret) {
-+		NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_IFINDEX]);
-+		goto exit_unlock;
-+	}
-+
-+	ret = netdev_nl_queue_validate(netdev, q_id, q_type);
-+	if (ret) {
-+		NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUEUE_ID]);
-+		goto exit_unlock;
-+	}
-+
-+	ret = netdev_reconfig_start(netdev);
-+	if (ret)
-+		goto exit_unlock;
-+
-+	qcfg = &netdev->cfg_pending->qcfg[q_id];
-+	mod = nla_update_u32(&qcfg->rx_buf_len, tb[NETDEV_A_QUEUE_RX_BUF_LEN]);
-+	if (!mod)
-+		goto exit_free_cfg;
-+
-+	ret = netdev_rx_queue_restart(netdev, q_id, info->extack);
-+	if (ret)
-+		goto exit_free_cfg;
-+
-+	swap(netdev->cfg, netdev->cfg_pending);
-+
-+exit_free_cfg:
-+	__netdev_free_config(netdev->cfg_pending);
-+	netdev->cfg_pending = netdev->cfg;
-+exit_unlock:
-+	if (netdev)
-+		netdev_unlock(netdev);
-+	return ret;
-+}
-+
- #define NETDEV_STAT_NOT_SET		(~0ULL)
- 
- static void netdev_nl_stats_add(void *_sum, const void *_add, size_t size)
+ /* netdev management, shared between various uAPI entry points */
+ struct netdev_name_node {
 diff --git a/net/core/netdev_config.c b/net/core/netdev_config.c
-index fc700b77e4eb..ede02b77470e 100644
+index ede02b77470e..c5ae39e76f40 100644
 --- a/net/core/netdev_config.c
 +++ b/net/core/netdev_config.c
-@@ -67,11 +67,27 @@ int netdev_reconfig_start(struct net_device *dev)
+@@ -64,6 +64,19 @@ int netdev_reconfig_start(struct net_device *dev)
+ 	return -ENOMEM;
+ }
+ 
++void netdev_queue_config_update_cnt(struct net_device *dev, unsigned int txq,
++				    unsigned int rxq)
++{
++	size_t len;
++
++	if (rxq < dev->real_num_rx_queues) {
++		len = (dev->real_num_rx_queues - rxq) * sizeof(*dev->cfg->qcfg);
++
++		memset(&dev->cfg->qcfg[rxq], 0, len);
++		memset(&dev->cfg_pending->qcfg[rxq], 0, len);
++	}
++}
++
  void __netdev_queue_config(struct net_device *dev, int rxq,
  			   struct netdev_queue_config *qcfg, bool pending)
  {
-+	const struct netdev_config *cfg;
-+
-+	cfg = pending ? dev->cfg_pending : dev->cfg;
-+
- 	memset(qcfg, 0, sizeof(*qcfg));
- 
- 	/* Get defaults from the driver, in case user config not set */
- 	if (dev->queue_mgmt_ops->ndo_queue_cfg_defaults)
- 		dev->queue_mgmt_ops->ndo_queue_cfg_defaults(dev, rxq, qcfg);
-+
-+	/* Set config based on device-level settings */
-+	if (cfg->rx_buf_len)
-+		qcfg->rx_buf_len = cfg->rx_buf_len;
-+
-+	/* Set config dedicated to this queue */
-+	if (rxq >= 0) {
-+		const struct netdev_queue_config *user_cfg = &cfg->qcfg[rxq];
-+
-+		if (user_cfg->rx_buf_len)
-+			qcfg->rx_buf_len = user_cfg->rx_buf_len;
-+	}
- }
- 
- /**
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index 7eb9571786b8..98fa988c8db2 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -152,6 +152,7 @@ enum {
- 	NETDEV_A_QUEUE_DMABUF,
- 	NETDEV_A_QUEUE_IO_URING,
- 	NETDEV_A_QUEUE_XSK,
-+	NETDEV_A_QUEUE_RX_BUF_LEN,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
-@@ -220,6 +221,7 @@ enum {
- 	NETDEV_CMD_BIND_RX,
- 	NETDEV_CMD_NAPI_SET,
- 	NETDEV_CMD_BIND_TX,
-+	NETDEV_CMD_QUEUE_SET,
- 
- 	__NETDEV_CMD_MAX,
- 	NETDEV_CMD_MAX = (__NETDEV_CMD_MAX - 1)
 -- 
 2.49.0
 

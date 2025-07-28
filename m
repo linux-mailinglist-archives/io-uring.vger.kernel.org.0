@@ -1,122 +1,176 @@
-Return-Path: <io-uring+bounces-8850-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8851-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8A3B1446B
-	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 00:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DCAB14474
+	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 00:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A38D16EE1F
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 22:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0534E18C069B
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 22:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E24229B15;
-	Mon, 28 Jul 2025 22:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B55230981;
+	Mon, 28 Jul 2025 22:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0LTMk3mw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8pov55P"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9438E212B2F
-	for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 22:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FE62165E2;
+	Mon, 28 Jul 2025 22:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753742053; cv=none; b=JKYV8AT8tcMhAmAMGtaslrMaMIOy18iocjFsLNkSk12AyXu6RI1jlYbsKn+WSfSV1xfIHiuQlx9fiOS0xZkZhF8138HvxAvhEe3wCpdATywGWTDarGCbNjKOTJfKXQ3PvC9zYFZ5hHTFBrEmOBJSpMGlIdxIFbvXYp+1VD7tUJY=
+	t=1753742576; cv=none; b=jpfzDJIDoC3ZPWn1Gj/kYi4O2hFNxRZrC/w5RXrJz3tB+Jid83WZ7xC35n/7dpr8QsG/Dwt8t5xFS2JUXUFgoyXbIHlar8p/0OLIDbxk9rhmUXDIcSqdbvzGf6NXLBdbjJFdbRnn6OzRX63uSKcE1e4KcmNAOVpLiQRV0kwwF00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753742053; c=relaxed/simple;
-	bh=3UCrbmM4TUe5jNsd3OB7q3gxg7zx3lB2FyqhXts2q4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOKci+DpEM+6guS3sbNPx09pxxdoSpqvQ0PZYsybV/s24tmchUkQ/jp01UZm86o+DjjCNHschnjyu2MeLKrKoh0/pG4VMNbvp/2I9I9HOGn3ImgfVrj0SdbROqBDnALW1BFuJ6KRtKH35GAae1R3Xo+iMkSoOIyQDogjEWlKV5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0LTMk3mw; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23dd9ae5aacso30635ad.1
-        for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 15:34:11 -0700 (PDT)
+	s=arc-20240116; t=1753742576; c=relaxed/simple;
+	bh=T0m4RjxGmRcFCGY8Izzxhx+NyLjSIqOUl5woFA8I+xA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmniueKm0I5DcX0/jfDAOUC7IFYpXlMYMr65bctnr6tMBXf98kTgoqNao2aUmHlH4KRHScpYB/4N95t++FKG2Ace73RlE0j9z7BCjIFs/tyDN4pSh7gLElSxbV1OGFIj3IV/3yxy7FsNM8y/W/jLIc7qJFOyAkfVI6mEe7VFZMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8pov55P; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0d758c3a2so817015666b.2;
+        Mon, 28 Jul 2025 15:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753742051; x=1754346851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3UCrbmM4TUe5jNsd3OB7q3gxg7zx3lB2FyqhXts2q4A=;
-        b=0LTMk3mwc8OZ3txTRkz8FJYGIXPW1dDwnfr8XrGeIQ/IpYF+zQumoGK9aAsptY2Mgq
-         yNXM4I/AiN1G/iuAfFrFxHNZxC0rCM2UQ2me3FSeiOnceawmwud0h3d6z6n0F5OZt6CN
-         cqaBzKV4HfUcihFo1pXPYmHx0VzWfs4hON+LHLisIpz0Bz/4AZxO8h8Vcqwokc4q/mB+
-         DVBNi+rlxjhQAdUMNcJ5UMqmdS9U24/Rw1LxRFXMiY4RXKre0POtVmXyvt1niZkbh6E1
-         0mV5L1UbHGD463PX+sp/HTNurSrtS9PhHjvbrpjs/Wc9hplZKJIcdb3MnL5tt0DL9IZv
-         I6Fw==
+        d=gmail.com; s=20230601; t=1753742571; x=1754347371; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kNq1RCK00rRwSRJWj6lFJCddqvzpUCP6cBE32w5jDcw=;
+        b=d8pov55PrB4Mso7v+VE8s2lzhcUcXsL67155imTzYLtvMYEp+CUJ+NPkgEnCGHWFJH
+         YBJ01kK/gJd/TonkWnj7ekdu9SfH6tTbi+AVseTKnR/dDgEVQwpObc5++WIEBsr6DyxO
+         jkGIseiLjbINxj9Skx666TuNgtFe9Ln36EOmXW+1iR0SvBee9lBG96Xymki6Nxydbnjs
+         3V+wZHH7gAMBCjj0jZE762iuNteMyq+N2e4V12jqqk5+n6ztTDHXGO/0Y3fhlw8PXfpB
+         Z/Zl6o0bQzrKOYzFlfYBwnAXd/SXDgT3EABChoqBWkOUbGw+YfXdzFJxYnYfjRVRcd3Z
+         Uiuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753742051; x=1754346851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3UCrbmM4TUe5jNsd3OB7q3gxg7zx3lB2FyqhXts2q4A=;
-        b=ID0h8Am7Hj+swWaPtIIwKVu1Jn5fcL4S2IAfeopo/tHPlanmOTqo8XNIfCL4zFo+L1
-         YhhUZ9xbnmnTmv6ppzuBRIDOc08wQbrrnfqu3btZ3eNwvauck9T8BbgffQvPrRwzVPIh
-         32xHAzShpg+I7AdohYK9kxsv7fyKE872QbO/ykCe8IQswYXaTzxr6U4JNw/mFbZ2OAVx
-         Pnc+472cCXBDPHSHFuhdlHrdve32Vb1n1VLQeHi7fckubO8mLI0Q9s3KlZZo91RbzZQA
-         UHIS4bOSCKJA2VuONiF1ozQfAzXo6A0nQMwXiLio4ol+2EZiIu5TlAY22QGZkGWwPuPH
-         YZNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlOXty74mRX/bsIT855MNm0G88WUA0jnoZBvgRo4PiePpvNKN/bYTeaI9oKIqg2ZrNjL95gxOMZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBvFn95Q6C2VyM427B9P+Urij+b5aW/7gm/f+Dcpy13FcHxFyI
-	4Pokeuw+d546TRPDpsTxdAnDwZHsfnxePDPtJpF6COB5uDb64pDyEchEWhOHodZ9FNKph74XytJ
-	RhE9UyqhvemglCt0yw6/OlD5wYazuLl/HCD2OTkQg
-X-Gm-Gg: ASbGncsHj2nMBSQDCXAR2SxB4paft917ex2PY2i0T3kgZ0397NgaP6HbOjZ+3TXehIN
-	j0qs9dlVwL0wfntpbpZw15TuNR0FFJ9/gu0bXRg3WPRqnc/rQBeHe3fafCX4DChP9R2nOH3pCYK
-	4cRG3Deuj5nrEZMLIx2KkN2zGU1ConvTUFS74doYV8smR0KM0b7mjvZv0i0qecPpbNgTcLMwS9z
-	ZBklhbx3KN+T4cNp0ziFEdnU0AFGFd6qQbRRA==
-X-Google-Smtp-Source: AGHT+IEAXAUwoTkzWcguXCPpeCJknoeSxf6WSVJcrpemivAZuZn2dLYX+Id7YooQkRji8cvKSzxfT2H6Go7mECX9ow4=
-X-Received: by 2002:a17:902:e890:b0:240:3c64:8638 with SMTP id
- d9443c01a7336-2406789b433mr1218905ad.6.1753742050476; Mon, 28 Jul 2025
- 15:34:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753742571; x=1754347371;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNq1RCK00rRwSRJWj6lFJCddqvzpUCP6cBE32w5jDcw=;
+        b=fKwN0eqe+4So1/JAxQH2j9GBsEXhtFIgOW+/5LqfWz17kPz0buW1bIuEbewGMhBF+T
+         3OpfCIv4jbwWeCJLk6jN29CC4nzhVfr31wx8AY2LEnXVZjAAg5zI/h6FuZ8XRbWDEZzN
+         LmXNzjMwNqtRbzbfoIMh2jNMEs2B5kbyiRNko3BQ2bLaLR4SACIFKu7ZI76vGIC+1c5E
+         09UGL8gP8h4SW+r6Km7XNEzzZyQ57V4io8r0ZNMAZ3boUSdKYvV1RCH7h9XuaQaEPcUP
+         zE2V2w37qFTnUpnyq+HQEWzX95LQcCIbAiaddDBeRBkJOoJ1KC/m4faj80fvb6jF3SlQ
+         /v8g==
+X-Forwarded-Encrypted: i=1; AJvYcCULbgywZenTj54uhwdsX5HtiytfQeFrANptzXAsqBzySYg+cthqccF/R3VKbgAjtAQ9pyewYrmK5A==@vger.kernel.org, AJvYcCUXhs8LsoiPrUWPYhYVc+5j5dXWaZ5IyPKxsxnEbYI2C13y9q6crjQdmd0OFWTFTK3ZjNeFQyKU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrAkxr4jPg9it2DEANP8N2XlHYqdV+nQ5hatin5+CCQJwHqGpU
+	i0D8+TmNnkwUi/wQtrr+rT0REwud7wr0WFxdDLzOr71P6eIHldZzS0zY
+X-Gm-Gg: ASbGncs5RqAH+MQFcr6ImOfz4p/W++vF+BCqKZAqa/vhsCV+XXhqMsMbCQ9oBzrURur
+	Bc3ecuIM+5JZO4S/iFjBFT2pAFGewdgP07XJl4VKQhiotxB0TCWVu5T4lukPt0+e037EBTKkIuX
+	RRlx1nPRPt6B14yoZw/mXtVNABPSEUw01zhVtXG3mZzlwTlTTqGq3gikLvu2ueO+ovUsSh81ADx
+	QsoBlOFZt+UcNc0bIAs+T37NCUi/quSQ3Egy9lF/d1tUr0bZDEozG2FOmDsqam8/d8/2DYtTDyu
+	Vn2gaQZhl/Pv9gm6/zi86TCYz9QhMRi+MnT8Yp3p3z67MQ3JNZJXJwUgDxLtAEaYUN8FlIPrrJF
+	bCIC/rA2NytiAH5ZzE8LCjhu20YXJhjA=
+X-Google-Smtp-Source: AGHT+IE8tPcwTBp77mPrq1aCmXHLDbhx61oWPmjW3wgxxCuZpUYKcMUsA7Vh7dmh56bO13trpuukow==
+X-Received: by 2002:a17:907:961b:b0:ae0:d019:dac7 with SMTP id a640c23a62f3a-af61750935cmr1498862666b.23.1753742571097;
+        Mon, 28 Jul 2025 15:42:51 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.164])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a62b09sm479103066b.75.2025.07.28.15.42.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 15:42:50 -0700 (PDT)
+Message-ID: <52597d29-6de4-4292-b3f0-743266a8dcff@gmail.com>
+Date: Mon, 28 Jul 2025 23:44:11 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753694913.git.asml.silence@gmail.com> <be233e78a68e67e5dac6124788e1738eae692407.1753694914.git.asml.silence@gmail.com>
-In-Reply-To: <be233e78a68e67e5dac6124788e1738eae692407.1753694914.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 28 Jul 2025 15:33:55 -0700
-X-Gm-Features: Ac12FXytRXnslMV_ruTnL6but-O-GUrAFJf66XeC7Rn8cCz4NROrnnjw16MuHEc
-Message-ID: <CAHS8izPZE752dfZVD6OzGJ7z_tmh2n2tvJK_0yd5mP51FCSKmw@mail.gmail.com>
-Subject: Re: [RFC v1 15/22] eth: bnxt: store the rx buf size per queue
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, io-uring@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1 00/22] Large rx buffer support for zcrx
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+ io-uring@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Willem de Bruijn <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com
+References: <cover.1753694913.git.asml.silence@gmail.com>
+ <aIevvoYj7BcURD3F@mini-arch> <df74d6e8-41cc-4840-8aca-ad7e57d387ce@gmail.com>
+ <aIfb1Zd3CSAM14nX@mini-arch> <0dbb74c0-fcd6-498f-8e1e-3a222985d443@gmail.com>
+ <aIf0bXkt4bvA-0lC@mini-arch>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aIf0bXkt4bvA-0lC@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 4:03=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> From: Jakub Kicinski <kuba@kernel.org>
->
-> In normal operation only a subset of queues is configured for
-> zero-copy. Since zero-copy is the main use for larger buffer
-> sizes we need to configure the sizes per queue.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+On 7/28/25 23:06, Stanislav Fomichev wrote:
+> On 07/28, Pavel Begunkov wrote:
+>> On 7/28/25 21:21, Stanislav Fomichev wrote:
+>>> On 07/28, Pavel Begunkov wrote:
+>>>> On 7/28/25 18:13, Stanislav Fomichev wrote:
+>> ...>>> Supporting big buffers is the right direction, but I have the same
+>>>>> feedback:
+>>>>
+>>>> Let me actually check the feedback for the queue config RFC...
+>>>>
+>>>> it would be nice to fit a cohesive story for the devmem as well.
+>>>>
+>>>> Only the last patch is zcrx specific, the rest is agnostic,
+>>>> devmem can absolutely reuse that. I don't think there are any
+>>>> issues wiring up devmem?
+>>>
+>>> Right, but the patch number 2 exposes per-queue rx-buf-len which
+>>> I'm not sure is the right fit for devmem, see below. If all you
+>>
+>> I guess you're talking about uapi setting it, because as an
+>> internal per queue parameter IMHO it does make sense for devmem.
+>>
+>>> care is exposing it via io_uring, maybe don't expose it from netlink for
+>>
+>> Sure, I can remove the set operation.
+>>
+>>> now? Although I'm not sure I understand why you're also passing
+>>> this per-queue value via io_uring. Can you not inherit it from the
+>>> queue config?
+>>
+>> It's not a great option. It complicates user space with netlink.
+>> And there are convenience configuration features in the future
+>> that requires io_uring to parse memory first. E.g. instead of
+>> user specifying a particular size, it can say "choose the largest
+>> length under 32K that the backing memory allows".
+> 
+> Don't you already need a bunch of netlink to setup rss and flow
 
-I wonder if this is necessary for some reason, or is it better to
-expect the driver to refer to the netdev->qcfgs directly?
+Could be needed, but there are cases where configuration and
+virtual queue selection is done outside the program. I'll need
+to ask which option we currently use.
 
-By my count the configs can now live in 4 places: the core netdev
-config, the core per-queue config, the driver netdev config, and the
-driver per-queue config.
+> steering? And if we end up adding queue api, you'll have to call that
+> one over netlink also.
 
-I honestly I'm not sure about duplicating settings between the netdev
-configs and the per-queue configs in the first place (seems like
-configs should be either driver wide or per-queue to me, and not
-both), and I'm less sure about again duplicating the settings between
-core structs and in-driver structs. Seems like the same information
-duplicated in many places and a nightmare to keep it all in sync.
---=20
-Thanks,
-Mina
+There is already a queue api, even though it's cropped IIUC.
+What kind of extra setup you have in mind?
+
+>>>
+>>> If we assume that at some point niov can be backed up by chunks larger
+>>> than PAGE_SIZE, the assumed workflow for devemem is:
+>>> 1. change rx-buf-len to 32K
+>>>     - this is needed only for devmem, but not for CPU RAM, but we'll have
+>>>       to refill the queues from the main memory anyway
+>>
+>> Urgh, that's another reason why I prefer to just pass it through
+>> zcrx and not netlink. So maybe you can just pass the len to devmem
+>> on creation, and internally it sets up its queues with it.
+> 
+> But you still need to solve MAX_PAGE_ORDER/PAGE_ALLOC_COSTLY_ORDER I
+> think? We don't want the drivers to do PAGE_ALLOC_COSTLY_ORDER costly
+> allocation presumably?
+
+#define PAGE_ALLOC_COSTLY_ORDER 3
+
+It's "costly" for the page allocator and not a custom specially
+cooked memory providers. Nobody should care as long as the length
+applies to the given provider only. MAX_PAGE_ORDER also seems to
+be a page allocator thing.
+
+-- 
+Pavel Begunkov
+
 

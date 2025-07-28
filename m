@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-8831-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8832-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4B9B1399B
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E94AB139A6
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165853BE71E
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 11:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8446B189DFF3
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 11:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932DC255F5C;
-	Mon, 28 Jul 2025 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592742652BD;
+	Mon, 28 Jul 2025 11:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRGsoSPF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvP/c8+I"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5202264638;
-	Mon, 28 Jul 2025 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DE1246BA5;
+	Mon, 28 Jul 2025 11:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700625; cv=none; b=JXJzd0VOSzswimx/Zj6avUqru2+FivDGT9n3Lv00+pJPFPd9i7Xnsu7y8MFeDcaI9lIkTRYgjYHx/HZPSnOzOPKO7G0D/8VsmzgEQnDNNZ5Mf6S89P8z26O3pRgHUc8G14kskWmFninTThygvnTWOz5ViAz5wxqZTT6WWOF/ryE=
+	t=1753700627; cv=none; b=YD6mEs3CEqzL/jzsgfF6vCxmy5lI+UkUHhq2xTAcn/Kh2dOAWegcTD6E4QNRAQ19ldIzBNSwjl1lKDX90euHVdJoUWnjlZrJllcUqrrurHAbh0nyTdD9m6AebMfVeeiN2Xt8Tbb8yErVp/ZSsGVoSrmp6XVv8glcnX7oN/nRGqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700625; c=relaxed/simple;
-	bh=FEdheWXb5F9Nq/IjgejTsKYNllrzR9JaziuBslWivhI=;
+	s=arc-20240116; t=1753700627; c=relaxed/simple;
+	bh=2ZmmWhyxV2Xy5ZDPcNbqfoH6WF+knYxUATYyF45hSWc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ITZt+G1gteBvMA1DOL6QTeLzuw/f6PW7ZMRWpdlvh6k8yQ5Mu5SMxUx2rN8gWWiNpUjve1X1X7arzr2Y7ZFNhOOxaOch8i5MVyo4tZdAHSYgpvhO61k3mbyoObnnZJDNbfE7VpVzcZ/TK3O6bWcug8yaGnGgOYGwBNUNNFs15OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRGsoSPF; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=e6IT5KCjRljd9Ox55aioegC85rFCW5h7Zt2MJwrToC9KKkgVEmfasBAnr9qiTR9IBdzIxsSPPqtUzG1pxkosADjAPGQ8phUtK9krlL3rG7k/ExmK9JLva2oh/QjOuI4zD/2ebV+o3gprOfvXlBw7DtW5CjWsEtdRNvDHCYHKY1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvP/c8+I; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4561ca74829so45586895e9.0;
-        Mon, 28 Jul 2025 04:03:43 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b782cca9a0so1040641f8f.1;
+        Mon, 28 Jul 2025 04:03:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753700622; x=1754305422; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753700624; x=1754305424; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=haXT2XWtKDi8P4ng1er3yz9HPA21iNN79GCxNp3aw0M=;
-        b=jRGsoSPFxvM6oDpdqkXYvmaqW3VcnDtdquXLUkZncixikSXGW4tXYYQoW573Mj3EyQ
-         m2u2nSIbRZ/58MGWWnMr/konMUdgGY6KvAKn2J77XJCKpWdZXpAdAXblvO81kQk1WZVj
-         eHOf+kOY1rxbe9ZbRfdKP1mCuGuE0+OuUAOzEMqExyCm/B1LWJ3Dt1fMx4PwVGw1fWoH
-         cdAhrpy4sGctgIikQesPA/JAsgCzUtkFD9HpoXhkHaLBi+nl1Ws0JPe4MbrmrL0KvjVH
-         OWEPGBr3mAOyvh9U//xqM6LC0OIHgJLyL+K6m5VnGFDbnCDBNZjCtZv5lxsorD/Qj6Yy
-         tvYA==
+        bh=4Y+o/wT2besHkW28d0LfyCbVOhyMrKYx3whk232pX7A=;
+        b=gvP/c8+IldUG3U+6AngN+/YI81lKHbanUDhxsfvBqgNT4PONyEKNkZirpSwcZFNcDJ
+         opRfNUO5HEu2pBFyoDx4/RaIFg0xZq/FO2nh+Zy3tBKQhRnfAYYD6ylHcO5EZZ/5kgzT
+         JNxf7IdxZru69uOTihxesEuFbZfsVwrJWNzpWY9Y73oyAoyrPaGY9t+c8a9kSrLlrVEx
+         sK0ji/Vr4eG98EfgA9fEPFyUtJQwUYWJPvFchGBxO9Lcv/zWib3az6s8dJaXXkXnPHVO
+         xVIeet8t6JHE60n5pcIXTHaRmFDgHE64wVydToZZIlizNiCAFHFaEM5N2KbBYqXc18EA
+         VgxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700622; x=1754305422;
+        d=1e100.net; s=20230601; t=1753700624; x=1754305424;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=haXT2XWtKDi8P4ng1er3yz9HPA21iNN79GCxNp3aw0M=;
-        b=N3OwJ0kEBQ/8IUrUEkS9kcpjahu3HKfXnhEFetm+B2t1Y6YRUpeCKa91hSH4+sjpkc
-         10xTrMBlyB34TRmVgqqblsNz+pyprGeQicLP1bKLADR0JctHR7ymymY76DmCYyyQ/nE4
-         zTQKb/8ZBQf/Hj7d+ID1pqu1QINv+Yqv5abKsT5+u3LOLiJoD7RFTaf9cwNkKbYxmQvt
-         tyfAyjKm96cAN4GE4p+JxLgUbEq8F9aR1GOyfoZRJDURLWrtu9R19MhaTQm8zuKMlkV5
-         NJOemTd+VohVSrm5akmNOWqTLDmj2lJC7NaOIowgh6feezhfJ7NHcXEPhFfHxzInVbDY
-         C+jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcWYP26Qyi0qTE6Ol/kxXwwv3jawU8t/nwYnQwJrXkrWZe/jJy9rx2FKFxxSd4YXOVIcLy6Qyk@vger.kernel.org, AJvYcCV4bkYsRLlT1e2rCEMsEiW7gyEpOWfttP73oPQQTfxNuYvupgOVxBOdXeNTO9EkLUDoid3Ijda9Ag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBRUkYciEckY/RN826tV7pCCFFX74OWP2f+mf+N2doegJQlV7n
-	fTNzm38C3Lr1O9Ztg5qhPEYcEupl6E1hDlVZfoam4wNVXomX85TUKMGGt92QZw==
-X-Gm-Gg: ASbGnctu4dBUgYtSbaEs/4G9dyDq3qXfelP9kZSRHL6lECD18KDKC7229TLpPXhue+R
-	jkPO+3Bm+crWg/3P/PeoPN5R9uqjAfweuxh5OvHsZ/IEbFdV0GFTaqXdcpqr2ELnmxVFK+W0JZs
-	5OzlMcJW41/up/vmAAJSiik8c8N3O1QtCvRyabadQnDUkAg1ZMNkqORgMw96Z+W9g5m70o/kpy5
-	8VXAAFp6KIicyJS67HdG07TzgUgHn4dVNAtUSiHA0ajOZXKGVutjLtep6qP9HmfQaOtWSdlIIAu
-	LEYiQJuWMpyrL5xMH4ATICpKYXeIRWrwzvoCGRfF0sYm0kYUSy/giutx+KjG7crN08eqBvEzjVv
-	QsZMZK80ib/Co9g==
-X-Google-Smtp-Source: AGHT+IGum3+QoeVIzz9H5lbCrHBl0db70mEHZMSVP0l3gwyOLa6Pr9iCNdYRhL3A+1Ugn5R/KseIOg==
-X-Received: by 2002:a05:600c:8b66:b0:43c:fcbc:9680 with SMTP id 5b1f17b1804b1-45876652621mr84215905e9.25.1753700621675;
-        Mon, 28 Jul 2025 04:03:41 -0700 (PDT)
+        bh=4Y+o/wT2besHkW28d0LfyCbVOhyMrKYx3whk232pX7A=;
+        b=Ms372fvmsRXmATn7u72NoVp1iytrzVWVsErreVdVXjUC02RRSDQv+nyOCJciVQE0sJ
+         3C9Wd1LFgOpZgw6SLeNzsKTx+u/8m5/KemENmA4E7YqaWiAzUE7E4jciKTd9/TcqtENZ
+         pzy3VYbtzAVwEcsjJDUWDuFSDLDSMd8SN1O+ROJkkqMcWLEBUSpdCC4EL/cAqJ+/kPQF
+         5voeNKjVZ3njXN8HXycSUt4Yx9+nwt0Pw3uKg8BSxI6G9CblI/rsUIUXuokpT2Suozl+
+         Uwx35HEjNUfMj+1Ae7UMACQsQeW92oHuS8bD/M97MGMdM1sdZv72Ch0XPs07V0PVAGhk
+         5q/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUe+uAD95X9JAR0QOfE8GP8YSxFrR30kz9wd6wl97q2Z+wLVO/ABobOfMzmEe2l3lNjqy8vr5wjqg==@vger.kernel.org, AJvYcCVFt9bUk5fwm7uiyiQh8dTTW7y1bFwdyYuXnmVNFPpJLfTuE2eOVtm+/UEcTA3e3Trcx5Cfq0Te@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLt1y5GkSxCQT7NfOudX9/a2jKNiB3CC3G8viBsl+1cpJTCogC
+	vWOpr+8k5+X44zywt1IOU7ujeSQBnkj2QRjNOdZ72ITqt6TyhKfNCqBw
+X-Gm-Gg: ASbGncuD/kago0LbeYlfTyMd5R4NSwLrq10PBVXq0W2W1LRfvuM68NtGP5pZDp0uTWf
+	2C5nZ+7h12s+pgCD94KMV9mxUivB5USvtUOl+y1EEnjyOuqqU/Zx0P8fTu/raAZCoFfbnF6KzCM
+	6B1kdCKkHL0ZJu8RAtCkHTRfST680ZT+hC0R0288qdMr0ozht5gTYoKz+pu1of5Y6ftZiLuPFKH
+	qqQa5bFrlFaYGlUA0o36JiTwQBi1CI/5wONx/mV4XaBnpbvHsbzFYhFCcOJfzYClZ2oYmqx2kx/
+	W3hWBzL8z7BAaArCHDQuJ13aLV8mK0cJAoVzXRcWMs0hohFa0JbmLpmY3vOQ4d0+6bgmEVS+xKo
+	jOp60gfgkfOrznQ==
+X-Google-Smtp-Source: AGHT+IG6qmTQvyjl072/BWHKZ22s4OpG2ZUt5jWgUWEivx3IGW0nkZYpaFLampJ1mtD4CMxFLsLRxw==
+X-Received: by 2002:a05:6000:3111:b0:3a4:f6ba:51da with SMTP id ffacd0b85a97d-3b7765eda40mr7169043f8f.15.1753700623509;
+        Mon, 28 Jul 2025 04:03:43 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm157410235e9.28.2025.07.28.04.03.40
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm157410235e9.28.2025.07.28.04.03.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 04:03:40 -0700 (PDT)
+        Mon, 28 Jul 2025 04:03:42 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jakub Kicinski <kuba@kernel.org>,
 	netdev@vger.kernel.org
@@ -90,9 +90,9 @@ Cc: asml.silence@gmail.com,
 	michael.chan@broadcom.com,
 	dtatulea@nvidia.com,
 	ap420073@gmail.com
-Subject: [RFC v1 20/22] eth: bnxt: support per queue configuration of rx-buf-len
-Date: Mon, 28 Jul 2025 12:04:24 +0100
-Message-ID: <d9228d871dd4429e4bb0b829222229f47b024195.1753694914.git.asml.silence@gmail.com>
+Subject: [RFC v1 21/22] net: parametrise mp open with a queue config
+Date: Mon, 28 Jul 2025 12:04:25 +0100
+Message-ID: <ca874424e226417fa174ac015ee62cc0e3092400.1753694914.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1753694913.git.asml.silence@gmail.com>
 References: <cover.1753694913.git.asml.silence@gmail.com>
@@ -104,66 +104,180 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jakub Kicinski <kuba@kernel.org>
+This patch allows memory providers to pass a queue config when opening a
+queue. It'll be used in the next patch to pass a custom rx buffer length
+from zcrx. As there are many users of netdev_rx_queue_restart(), it's
+allowed to pass a NULL qcfg, in which case the function will use the
+default configuration.
 
-Now that the rx_buf_len is stored and validated per queue allow
-it being set differently for different queues. Instead of copying
-the device setting for each queue ask the core for the config
-via netdev_queue_config().
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/net/page_pool/memory_provider.h |  4 +-
+ io_uring/zcrx.c                         |  2 +-
+ net/core/netdev_rx_queue.c              | 50 +++++++++++++++++--------
+ 3 files changed, 39 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 5788518fe407..8d2cae59c4d5 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -4284,6 +4284,7 @@ static void bnxt_init_ring_struct(struct bnxt *bp)
+diff --git a/include/net/page_pool/memory_provider.h b/include/net/page_pool/memory_provider.h
+index ada4f968960a..c08ba208f67d 100644
+--- a/include/net/page_pool/memory_provider.h
++++ b/include/net/page_pool/memory_provider.h
+@@ -5,6 +5,7 @@
+ #include <net/netmem.h>
+ #include <net/page_pool/types.h>
  
- 	for (i = 0; i < bp->cp_nr_rings; i++) {
- 		struct bnxt_napi *bnapi = bp->bnapi[i];
-+		struct netdev_queue_config qcfg;
- 		struct bnxt_ring_mem_info *rmem;
- 		struct bnxt_cp_ring_info *cpr;
- 		struct bnxt_rx_ring_info *rxr;
-@@ -4306,7 +4307,8 @@ static void bnxt_init_ring_struct(struct bnxt *bp)
- 		if (!rxr)
- 			goto skip_rx;
++struct netdev_queue_config;
+ struct netdev_rx_queue;
+ struct netlink_ext_ack;
+ struct sk_buff;
+@@ -24,7 +25,8 @@ void net_mp_niov_set_page_pool(struct page_pool *pool, struct net_iov *niov);
+ void net_mp_niov_clear_page_pool(struct net_iov *niov);
  
--		rxr->rx_page_size = bp->rx_page_size;
-+		netdev_queue_config(bp->dev, i,	&qcfg);
-+		rxr->rx_page_size = qcfg.rx_buf_len;
+ int net_mp_open_rxq(struct net_device *dev, unsigned ifq_idx,
+-		    struct pp_memory_provider_params *p);
++		    struct pp_memory_provider_params *p,
++		    struct netdev_queue_config *qcfg);
+ int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+ 		      const struct pp_memory_provider_params *p,
+ 		      struct netlink_ext_ack *extack);
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 985c7386e24b..a00243e10164 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -595,7 +595,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
  
- 		ring = &rxr->rx_ring_struct;
- 		rmem = &ring->ring_mem;
-@@ -15863,6 +15865,7 @@ static int bnxt_queue_mem_alloc(struct net_device *dev,
- 	clone->rx_agg_prod = 0;
- 	clone->rx_sw_agg_prod = 0;
- 	clone->rx_next_cons = 0;
-+	clone->rx_page_size = qcfg->rx_buf_len;
- 	clone->need_head_pool = false;
+ 	mp_param.mp_ops = &io_uring_pp_zc_ops;
+ 	mp_param.mp_priv = ifq;
+-	ret = net_mp_open_rxq(ifq->netdev, reg.if_rxq, &mp_param);
++	ret = net_mp_open_rxq(ifq->netdev, reg.if_rxq, &mp_param, NULL);
+ 	if (ret)
+ 		goto err;
+ 	ifq->if_rxq = reg.if_rxq;
+diff --git a/net/core/netdev_rx_queue.c b/net/core/netdev_rx_queue.c
+index 7c691eb1a48b..0dbfdb5f5b91 100644
+--- a/net/core/netdev_rx_queue.c
++++ b/net/core/netdev_rx_queue.c
+@@ -10,12 +10,14 @@
+ #include "dev.h"
+ #include "page_pool_priv.h"
  
- 	rc = bnxt_alloc_rx_page_pool(bp, clone, rxr->page_pool->p.nid);
-@@ -15969,6 +15972,8 @@ static void bnxt_copy_rx_ring(struct bnxt *bp,
- 	src_ring = &src->rx_ring_struct;
- 	src_rmem = &src_ring->ring_mem;
+-int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+-			    struct netlink_ext_ack *extack)
++static int netdev_rx_queue_restart_cfg(struct net_device *dev,
++				unsigned int rxq_idx,
++				struct netlink_ext_ack *extack,
++				struct netdev_queue_config *qcfg)
+ {
+ 	struct netdev_rx_queue *rxq = __netif_get_rx_queue(dev, rxq_idx);
+ 	const struct netdev_queue_mgmt_ops *qops = dev->queue_mgmt_ops;
+-	struct netdev_queue_config qcfg;
++	struct netdev_queue_config tmp_qcfg;
+ 	void *new_mem, *old_mem;
+ 	int err;
  
-+	dst->rx_page_size = src->rx_page_size;
+@@ -35,15 +37,18 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ 		goto err_free_new_mem;
+ 	}
+ 
+-	netdev_queue_config(dev, rxq_idx, &qcfg);
++	if (!qcfg) {
++		qcfg = &tmp_qcfg;
++		netdev_queue_config(dev, rxq_idx, qcfg);
++	}
+ 
+ 	if (qops->ndo_queue_cfg_validate) {
+-		err = qops->ndo_queue_cfg_validate(dev, rxq_idx, &qcfg, extack);
++		err = qops->ndo_queue_cfg_validate(dev, rxq_idx, qcfg, extack);
+ 		if (err)
+ 			goto err_free_old_mem;
+ 	}
+ 
+-	err = qops->ndo_queue_mem_alloc(dev, &qcfg, new_mem, rxq_idx);
++	err = qops->ndo_queue_mem_alloc(dev, qcfg, new_mem, rxq_idx);
+ 	if (err)
+ 		goto err_free_old_mem;
+ 
+@@ -56,7 +61,7 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ 		if (err)
+ 			goto err_free_new_queue_mem;
+ 
+-		err = qops->ndo_queue_start(dev, &qcfg, new_mem, rxq_idx);
++		err = qops->ndo_queue_start(dev, qcfg, new_mem, rxq_idx);
+ 		if (err)
+ 			goto err_start_queue;
+ 	} else {
+@@ -71,7 +76,7 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ 	return 0;
+ 
+ err_start_queue:
+-	__netdev_queue_config(dev, rxq_idx, &qcfg, false);
++	__netdev_queue_config(dev, rxq_idx, qcfg, false);
+ 	/* Restarting the queue with old_mem should be successful as we haven't
+ 	 * changed any of the queue configuration, and there is not much we can
+ 	 * do to recover from a failure here.
+@@ -79,7 +84,7 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ 	 * WARN if we fail to recover the old rx queue, and at least free
+ 	 * old_mem so we don't also leak that.
+ 	 */
+-	if (qops->ndo_queue_start(dev, &qcfg, old_mem, rxq_idx)) {
++	if (qops->ndo_queue_start(dev, qcfg, old_mem, rxq_idx)) {
+ 		WARN(1,
+ 		     "Failed to restart old queue in error path. RX queue %d may be unhealthy.",
+ 		     rxq_idx);
+@@ -97,11 +102,18 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ 
+ 	return err;
+ }
 +
- 	WARN_ON(dst_rmem->nr_pages != src_rmem->nr_pages);
- 	WARN_ON(dst_rmem->page_size != src_rmem->page_size);
- 	WARN_ON(dst_rmem->flags != src_rmem->flags);
-@@ -16175,6 +16180,7 @@ bnxt_queue_cfg_defaults(struct net_device *dev, int idx,
++int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
++			    struct netlink_ext_ack *extack)
++{
++	return netdev_rx_queue_restart_cfg(dev, rxq_idx, extack, NULL);
++}
+ EXPORT_SYMBOL_NS_GPL(netdev_rx_queue_restart, "NETDEV_INTERNAL");
+ 
+-int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+-		      const struct pp_memory_provider_params *p,
+-		      struct netlink_ext_ack *extack)
++static int __net_mp_open_rxq_cfg(struct net_device *dev, unsigned int rxq_idx,
++				const struct pp_memory_provider_params *p,
++				struct netlink_ext_ack *extack,
++				struct netdev_queue_config *qcfg)
+ {
+ 	struct netdev_rx_queue *rxq;
+ 	int ret;
+@@ -143,7 +155,7 @@ int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+ #endif
+ 
+ 	rxq->mp_params = *p;
+-	ret = netdev_rx_queue_restart(dev, rxq_idx, extack);
++	ret = netdev_rx_queue_restart_cfg(dev, rxq_idx, extack, qcfg);
+ 	if (ret) {
+ 		rxq->mp_params.mp_ops = NULL;
+ 		rxq->mp_params.mp_priv = NULL;
+@@ -151,13 +163,21 @@ int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+ 	return ret;
  }
  
- static const struct netdev_queue_mgmt_ops bnxt_queue_mgmt_ops = {
-+	.supported_ring_params	= ETHTOOL_RING_USE_RX_BUF_LEN,
- 	.ndo_queue_mem_size	= sizeof(struct bnxt_rx_ring_info),
++int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
++		      const struct pp_memory_provider_params *p,
++		      struct netlink_ext_ack *extack)
++{
++	return __net_mp_open_rxq_cfg(dev, rxq_idx, p, extack, NULL);
++}
++
+ int net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+-		    struct pp_memory_provider_params *p)
++		    struct pp_memory_provider_params *p,
++		    struct netdev_queue_config *qcfg)
+ {
+ 	int ret;
  
- 	.ndo_queue_cfg_defaults	= bnxt_queue_cfg_defaults,
+ 	netdev_lock(dev);
+-	ret = __net_mp_open_rxq(dev, rxq_idx, p, NULL);
++	ret = __net_mp_open_rxq_cfg(dev, rxq_idx, p, NULL, qcfg);
+ 	netdev_unlock(dev);
+ 	return ret;
+ }
 -- 
 2.49.0
 

@@ -1,183 +1,155 @@
-Return-Path: <io-uring+bounces-8835-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8836-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924C1B1410A
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 19:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF71B141C0
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 20:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78B518C25C9
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 17:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A713A6BD9
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 18:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D38274B52;
-	Mon, 28 Jul 2025 17:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A2521E08D;
+	Mon, 28 Jul 2025 18:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGIfXFZ1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ks/LWNRP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D1C862C;
-	Mon, 28 Jul 2025 17:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C4FBA45
+	for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 18:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753722819; cv=none; b=OAzlXK3K6fln2Y2eXvJDpC7FnQ0+762lKLBZHGNBnWQZH3pF+80/nT/Q8xN8LQFGQ2Uc+d2cMcsNps1fsDuWH3rg/VsJuhsLD7x7yQWxVRQ3+oIsayydqIPpXDArraPy9kGxTFQLtbC8DVmFIHASi6HHMpnS7eWnrlwzZLZ0owQ=
+	t=1753726317; cv=none; b=McmVPKkS3uT+Dkc6O9g9QqfJcr0MqzSAbZsGvogeUkD+WgwLW3P0owBe3J/gA6XevxHOuqXFoRNrpi0f2QvIczC2js/7RtoqZQjxCpnkGPpqvor+RAKGhkHecrzreTy3W9D6Uzz6Kfejyh38ITTXbqXTvfK1pw3ExTmyK05eG04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753722819; c=relaxed/simple;
-	bh=HzRZ99e/VSa2+YLlUnamobTr1FOy7JSafnoQ80kiM9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrO78XvdlTbN0wGVevTb58GGKE3cB9+L7hQzgAmfChjzJfkrLmVkRfa5Oa/cLJySBOdj4rpODukYKO81owsm5s2iFuz6eHxGXTZxeiqHATZBh8YEukwXI/XDSoe92tCrO4aGiCMzGEm9mBnW4YtiK5b2Xahq18lfeUKnl4fIpuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGIfXFZ1; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24009eeb2a7so12330165ad.0;
-        Mon, 28 Jul 2025 10:13:37 -0700 (PDT)
+	s=arc-20240116; t=1753726317; c=relaxed/simple;
+	bh=E0aZ5ltePXU2tr39eM4OyimHIPNcEOkRmRYfDURu1Nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XfGzC2/qL9Fu8h7UItwEGMPqbHAO5T2S715fufXmu8MxvMoayVB97ev9zMgfofDtn/KFtfckqY/cR+b/NQnuaL1/KT+hcDvDRGmfenxUqW/1jFcbcv+404pnSM3sIq2PrZQzYMVdqtR2usbXZcQd+860hrAQUN3pWOC6knwxIwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ks/LWNRP; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23dd9ae5aacso21135ad.1
+        for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 11:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753722817; x=1754327617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThRqSvHlUQ3qm8Em1xYonul0QAneRzrIjlr+qcVP/5g=;
-        b=kGIfXFZ18Udw6qxEFCy2E8hbrLVvppJRqT2s41soGcLocsYcO++sk8vs7k2yTz6Wm0
-         yIUsM+gpIF5JEK1s/g8KxTkGkrnZbKiMpHxHYSkmcq6fFQ/QDFJjMxiL/IVu91ENtuax
-         6gVwbcj51VqpGiVpCPwaJydSysNWmL4sV5jCZLQTY7EK909fDEFihfghx/lspbbZZE5w
-         H8fMHEKIGwrEcVpJMx0Fo9n4QW+UxWgkcs9EEVijvTzxFdP++n0XBMs1O01v3L48ykVZ
-         5dMQqTt+OjK/BKjmXVXAZoxt0Irl03Y97LGbM13WFuwdzGtZgJgRFVOb0j1OYTTdiQh+
-         ZLHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753722817; x=1754327617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1753726315; x=1754331115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ThRqSvHlUQ3qm8Em1xYonul0QAneRzrIjlr+qcVP/5g=;
-        b=vlzj9B+asdYGhwUjRql5VkszCa2xqnqmimMqRONWrrqy8kwVg4NMn2MUmyaq1DO1km
-         Ju5/KHWE+3G7ko1JYLwJLQE4jFJXiH87HW8tstBa7mueG6EQQ1DRvAc7e8ZBxLt5/D7n
-         QvqEvvFQgeGT+y2MJFG7ou2hstW7Rf4qGLyiIxwcK0iXQTaMNNARxhToZ8tlLsGJNYdP
-         CDqxJZnXQwaWvo3+1vYkXJ+J32oQMkWjItOwMdi5OzAu/zsNOaBHePB2hNRmNpYScQ3N
-         basVipP1RQqceKh1/NxiCBdzT6qdaKgMVbhEsFc/WAF3XKtYQNJvAfd08zx7LQLaareK
-         a/fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTzhhEiR0rOPtx+7Fl/ic1NUtnGiS4i3c3U2nzdYMMZlZt2aNjsgIh+QkVRd5RY38CnHEvq//nFw==@vger.kernel.org, AJvYcCWmkfqXzruBuTeDuLUSoijwulT/xzE9OBmRegQDRNesATQbaHNAwCJF1Dt4t+v5Kwhcp8Z/S0Ho@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyYMgaZgz3haG1WNLhRrBuUMEfWK88cp2GXZ1Rrj0VV1lnmlv7
-	ijFdBQQeLWX7nkvmyKCKJEMKto9DdglqJx15yOqQT2VaKI4LuJzXwWMGy7J6
-X-Gm-Gg: ASbGncupS45HTyNy63wOwOpiTckia5zVTnzX2NjeshjUvMa5z+5bUIROVzYv7iN1Fur
-	1AwjGhm5CPM6nQWm41bn9j3ZhLmGcxqvzLj7zF2LSIcv+XAvY4B+UCL+xsHzEXjlanh/Rgh0Ae1
-	Yb5XUyYoumwe6mlmve9Nn8ROBa+eb4hW4ln7ehYiAhzXcElFIPGILvqtfn5z2iOzGVVSPvlmk6d
-	CbbvZIp3bN6do9tzq9h6ek1bjiuiqiF8iKwFhua/XQYNCW4PgP27pAgb3tzAErERuzk4ubnwrV0
-	Yl9YKjsGW4r9RcpN0aCjvhNKHmr2Up/ueSh1+RuhBqgH+AE3/VQS/Kkr/YKW8TwA3nq+hbCavNF
-	fXknd6wF0l6tMAsKaU4s8Ua+InjtWL0OXGVp0P6UIY2DCddIeeRX5sYvHGag=
-X-Google-Smtp-Source: AGHT+IFtQnfd1vJPyKxBUTqEU7Mo3iNydraXDK83XiWYjG4gUBn9YG8lRYV4srXBcsburlx2TIRUHA==
-X-Received: by 2002:a17:903:1c5:b0:234:986c:66bf with SMTP id d9443c01a7336-23fb2fef327mr162387805ad.11.1753722816510;
-        Mon, 28 Jul 2025 10:13:36 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-240355c4152sm22747485ad.114.2025.07.28.10.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 10:13:35 -0700 (PDT)
-Date: Mon, 28 Jul 2025 10:13:34 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	io-uring@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch,
-	horms@kernel.org, davem@davemloft.net, sdf@fomichev.me,
-	almasrymina@google.com, dw@davidwei.uk, michael.chan@broadcom.com,
-	dtatulea@nvidia.com, ap420073@gmail.com
-Subject: Re: [RFC v1 00/22] Large rx buffer support for zcrx
-Message-ID: <aIevvoYj7BcURD3F@mini-arch>
-References: <cover.1753694913.git.asml.silence@gmail.com>
+        bh=AWrTGKCGEGfsZ4s2TOJbLUNCxakJMocxAgR9drUPZeQ=;
+        b=ks/LWNRPLsZmDBzViHD6mXGaSWHc3pDG2oHf6TZut176LCmlFEKQ6Ki0TgQfHcFsUF
+         JskzyT7e7jytCF1TEbcvi6PXer0esj5Y+nNQD2sKk9zSu4KeODGaAaDw/t2OHkH12bAw
+         U8NTv1st4OPUDfFa55Hh6JmkPcEFlfFH4RKm0Fb4EN3Bgb3uJ5MYnKk1dCCjS9q+l/d8
+         2ql3Y1+frATAaFeZnR/+PsFvGQKvwz33ss9BRStcq7lp6mRO5mpyqz+9mF8VLu0eyVaV
+         RdpqBCMizeEqk0abIarwCD73PV0p8KXRwjNaClxPVABKyjLCOc4S0CRZtDYhzXglv7UX
+         NngA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753726315; x=1754331115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AWrTGKCGEGfsZ4s2TOJbLUNCxakJMocxAgR9drUPZeQ=;
+        b=mLldiBUa/rbb6pd8elq9SDxP+E1ktZIP9YASYN+ntz3YTlfOaAvnxtXRIajkfmcaAb
+         XbgVfkN5bcAEWQXaXJ0LampZ73uVxz9u6c+iA+i84C5iFSXhtEyoLOjfy2IKlZ242qBV
+         pFDBcLoxKC7evsK5dX8SbHCQjE987k7zLrUBq2ReNaoN5pWo8L79QGKtyJBulwQ0c/8e
+         GHwVi9pvVjm3+OIOY7AwA2J9vhfiZ2wMxNpon916sVRsKy8/IbispiJmabonIyAmtwNC
+         mVgb2jMcB3PGxG/NkPJeWSS/P3S+EtJZfiYmF/oQ07gBZ8T/ZLz4CXw/eiNgajkZWkqw
+         E1cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPncKWLXwrFuA0DRi++RR+wDOkyLG86gkWC9KZ0CZiik7e4bgGgQ7p3Fj2ulWSrwnpY3k5tma/Tw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGCVFzXiZLbC7W4T5q+q5vsY1pFI6MlZB4ED3dFmsMIrIdQR6a
+	QB3biTIpCujpDeLOEnAEsDfpUyA8k3+aZEaaDc+M+lbTvT3fb2JnNDxAzzv/igH5knnYwswfj1X
+	8MVfenUaJWchBBWoncq119yoPsamXZDZeXqwAxWJe
+X-Gm-Gg: ASbGncsxRjOyyJXuUgqSQmNGTMOBvYOQldWOMC7/CjO9c6X6UBYIm1H5vG4TQW2ifYz
+	FC8VJZs1OKy7wvMos3+pusIon9GEj986jIKaoYDs1+SlAcfI1J9LNA+AvtOopADI7fz3aLoPFW6
+	I13JCxYzfzR2FKmShWw17QpKGfsxke/0sFu5E2nljQ8Jaq8vg5QZgnFI3PqHBdGjahxfyPSnEol
+	xHeAad3MGRn0DdaTo/T8GOFP08Equ8zD31qdQ==
+X-Google-Smtp-Source: AGHT+IEbF6oW+7FfHRssAd7lvdEZmBJqJX7xc2FzdGeBBdXR/cp8CUttG7vSZuTX1Aoawhbozd8z21A/66I2sgi7yDQ=
+X-Received: by 2002:a17:902:e890:b0:240:3c64:8638 with SMTP id
+ d9443c01a7336-2406789b433mr265765ad.6.1753726315246; Mon, 28 Jul 2025
+ 11:11:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1753694913.git.asml.silence@gmail.com>
+References: <cover.1753694913.git.asml.silence@gmail.com> <e131c00d9d0a8cf191c8dbcef41287cbea5ff365.1753694913.git.asml.silence@gmail.com>
+In-Reply-To: <e131c00d9d0a8cf191c8dbcef41287cbea5ff365.1753694913.git.asml.silence@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 28 Jul 2025 11:11:42 -0700
+X-Gm-Features: Ac12FXw5Q6EZZJ_i95sjCdIxpCkEiHb1OpsZvkKkuTR8Kp9jbXcTTEN4sj2bIT8
+Message-ID: <CAHS8izO-TyoKd8qu05H3BKrD=eYST3ZKKd3rtdrYZQwuVQ58dA@mail.gmail.com>
+Subject: Re: [RFC v1 01/22] docs: ethtool: document that rx_buf_len must
+ control payload lengths
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, io-uring@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
+	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
+	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/28, Pavel Begunkov wrote:
-> This series implements large rx buffer support for io_uring/zcrx on
-> top of Jakub's queue configuration changes, but it can also be used
-> by other memory providers. Large rx buffers can be drastically
-> beneficial with high-end hw-gro enabled cards that can coalesce traffic
-> into larger pages, reducing the number of frags traversing the network
-> stack and resuling in larger contiguous chunks of data for the
-> userspace. Benchamrks showed up to ~30% improvement in CPU util.
-> 
-> For example, for 200Gbit broadcom NIC, 4K vs 32K buffers, and napi and
-> userspace pinned to the same CPU:
-> 
-> packets=23987040 (MB=2745098), rps=199559 (MB/s=22837)
-> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
->   0    1.53    0.00   27.78    2.72    1.31   66.45    0.22
-> packets=24078368 (MB=2755550), rps=200319 (MB/s=22924)
-> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
->   0    0.69    0.00    8.26   31.65    1.83   57.00    0.57
-> 
-> And for napi and userspace on different CPUs:
-> 
-> packets=10725082 (MB=1227388), rps=198285 (MB/s=22692)
-> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
->   0    0.10    0.00    0.50    0.00    0.50   74.50    24.40
->   1    4.51    0.00   44.33   47.22    2.08    1.85    0.00
-> packets=14026235 (MB=1605175), rps=198388 (MB/s=22703)
-> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
->   0    0.10    0.00    0.70    0.00    1.00   43.78   54.42
->   1    1.09    0.00   31.95   62.91    1.42    2.63    0.00
-> 
-> Patch 19 allows to pass queue config from a memory provider. The
-> zcrx changes are contained in a single patch as I already queued
-> most of work making it size agnostic into my zcrx branch. The
-> uAPI is simple and imperative, it'll use the exact value (if)
-> specified by the user. In the future we might extend it to
-> "choose the best size in a given range".
-> 
-> The rest (first 20) patches are from Jakub's series implementing
-> per queue configuration. Quoting Jakub:
-> 
-> "... The direct motivation for the series is that zero-copy Rx queues would
-> like to use larger Rx buffers. Most modern high-speed NICs support HW-GRO,
-> and can coalesce payloads into pages much larger than than the MTU.
-> Enabling larger buffers globally is a bit precarious as it exposes us
-> to potentially very inefficient memory use. Also allocating large
-> buffers may not be easy or cheap under load. Zero-copy queues service
-> only select traffic and have pre-allocated memory so the concerns don't
-> apply as much.
-> 
-> The per-queue config has to address 3 problems:
-> - user API
-> - driver API
-> - memory provider API
-> 
-> For user API the main question is whether we expose the config via
-> ethtool or netdev nl. I picked the latter - via queue GET/SET, rather
-> than extending the ethtool RINGS_GET API. I worry slightly that queue
-> GET/SET will turn in a monster like SETLINK. OTOH the only per-queue
-> settings we have in ethtool which are not going via RINGS_SET is
-> IRQ coalescing.
-> 
-> My goal for the driver API was to avoid complexity in the drivers.
-> The queue management API has gained two ops, responsible for preparing
-> configuration for a given queue, and validating whether the config
-> is supported. The validating is used both for NIC-wide and per-queue
-> changes. Queue alloc/start ops have a new "config" argument which
-> contains the current config for a given queue (we use queue restart
-> to apply per-queue settings). Outside of queue reset paths drivers
-> can call netdev_queue_config() which returns the config for an arbitrary
-> queue. Long story short I anticipate it to be used during ndo_open.
-> 
-> In the core I extended struct netdev_config with per queue settings.
-> All in all this isn't too far from what was there in my "queue API
-> prototype" a few years ago ..."
+On Mon, Jul 28, 2025 at 4:03=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> From: Jakub Kicinski <kuba@kernel.org>
+>
+> Document the semantics of the rx_buf_len ethtool ring param.
+> Clarify its meaning in case of HDS, where driver may have
+> two separate buffer pools.
+>
+> The various zero-copy TCP Rx schemes we have suffer from memory
+> management overhead. Specifically applications aren't too impressed
+> with the number of 4kB buffers they have to juggle. Zero-copy
+> TCP makes most sense with larger memory transfers so using
+> 16kB or 32kB buffers (with the help of HW-GRO) feels more
+> natural.
+>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  Documentation/networking/ethtool-netlink.rst | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation=
+/networking/ethtool-netlink.rst
+> index b6e9af4d0f1b..eaa9c17a3cb1 100644
+> --- a/Documentation/networking/ethtool-netlink.rst
+> +++ b/Documentation/networking/ethtool-netlink.rst
+> @@ -957,7 +957,6 @@ Kernel checks that requested ring sizes do not exceed=
+ limits reported by
+>  driver. Driver may impose additional constraints and may not support all
+>  attributes.
+>
+> -
+>  ``ETHTOOL_A_RINGS_CQE_SIZE`` specifies the completion queue event size.
+>  Completion queue events (CQE) are the events posted by NIC to indicate t=
+he
+>  completion status of a packet when the packet is sent (like send success=
+ or
+> @@ -971,6 +970,11 @@ completion queue size can be adjusted in the driver =
+if CQE size is modified.
+>  header / data split feature. If a received packet size is larger than th=
+is
+>  threshold value, header and data will be split.
+>
+> +``ETHTOOL_A_RINGS_RX_BUF_LEN`` controls the size of the buffer chunks dr=
+iver
+> +uses to receive packets. If the device uses different memory polls for h=
+eaders
 
-Supporting big buffers is the right direction, but I have the same
-feedback: it would be nice to fit a cohesive story for the devmem as well.
-We should also aim for another use-case where we allocate page pool
-chunks from the huge page(s), this should push the perf even more.
+pools, not polls.
 
-We need some way to express these things from the UAPI point of view.
-Flipping the rx-buf-len value seems too fragile - there needs to be
-something to request 32K chunks only for devmem case, not for the (default)
-CPU memory. And the queues should go back to default 4K pages when the dmabuf
-is detached from the queue.
+> +and payload this setting may control the size of the header buffers but =
+must
+> +control the size of the payload buffers.
+> +
+
+
+--=20
+Thanks,
+Mina
 

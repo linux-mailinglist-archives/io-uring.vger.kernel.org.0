@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-8846-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8847-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B800B143FF
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 23:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6931DB1440D
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 23:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4575542378
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 21:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BE93ADEE5
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 21:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CAA275AE4;
-	Mon, 28 Jul 2025 21:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2595A1F7580;
+	Mon, 28 Jul 2025 21:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lRlsCRH+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y04/f2HX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF575227E83
-	for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 21:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23711A23AC
+	for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 21:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753739074; cv=none; b=jUJTRMlnsygWd9URgL7BLsnK2RFJhgVLrqsr6bNRg87u3UL0ldkiS5xx/6rfY9IBmKENFH+u/cSk7M8XwMq/TxAvG59DFlWHe0CTT4qD0zPU272SE0UMAzdT4VjClMJQ1De4Jqh0peEdpdnqn9ZFA7ZLerNjEgSRQME1HdOHAxw=
+	t=1753739427; cv=none; b=jj1srT+P2LTkmL5kKtY2t5iTYIo3NKEdA24O3DW2xbwu4EOt8WEdTj5jqL+iijVL1JG4sCCeDPgOHGcvk7Td5/8kCp5oqAm/txVGbP1FynnGyt30ZPihzhfxKhHU1OmgQOYlYkt9Up1XPsgY8dOyWmjB1k4MgTVLQXpLQkmWWwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753739074; c=relaxed/simple;
-	bh=w4sz6hukx39VWGmuP3imtGw+JZjGSgr0C5Wb5CwNUl0=;
+	s=arc-20240116; t=1753739427; c=relaxed/simple;
+	bh=za+fouNncsRFtwL3eqirO4Uvip0olpsZCva4ijfUiGM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gBxyCq4mRUZqKGpGa3ne87qDhEZW3nPRz5exqPr6TWeHjXfsADy6qdJ4qMI8HGfT4+9erb5iygdt1GcDNoBmbCOKnrAdmQV035wb/0hA8QGJZ4z/WA3955Tjuwj1sWU6OifG3Trp1i98xjeqxUkm1zNH3gEbcIQnz52zb1OBnuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lRlsCRH+; arc=none smtp.client-ip=209.85.214.179
+	 To:Cc:Content-Type; b=mnvwH/H4DT9j2s3gj8GMTNNm4N5SogNDCSth7TomivU++y7XGkqcih6htzNEMgBHGKExXPfcnv1B7PPM7O4ZEIBwSqYv+ORzYs2eNQt+zw7iJ01h6xg7ALbA8ZzLC7w01Mge3kwU4MpS40rF2Rj9BitA4kToKdFMJgyf00Y4U8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y04/f2HX; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-237f18108d2so66275ad.0
-        for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 14:44:32 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23dd9ae5aacso24815ad.1
+        for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 14:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753739072; x=1754343872; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753739425; x=1754344225; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b5AX6jbpFgdSrCGPijdLxpXampkoJ36wfItC/35EtyM=;
-        b=lRlsCRH+1CWLy2JzdV6wZ+V/yvI5JXwf6Zrw1fuqATsGKAW6pZy/oMDlC2XDxgUSea
-         6+2H/utgKEIO1gGsM5g3k0ocOx5ZiHEqjF70xIwAwB2SeMF82wXtU0ATVpKTjUDA7bXu
-         Q3Tf/jsyXgsyaZgx3Z7ccQwHYpERELeODhZWUb7OlbBOamiTLY5idGKGGsPDrW0F2nFY
-         NtaUFmjGLhlu967R1zA1V83LmSbLyfM2EpIB+Dak0iDa4oQlfB0E4HDaykoyOgnw88n0
-         ugINLWHaOqg/78aQOZptpcofNjs6KGU4k0hoYWbNVxQh7P2uWNTSnxSysqhbUeaWppVR
-         Cnfw==
+        bh=Kdp2ddqK80/pBKPJs62APptyPvd+Kj6ul7N6/XRncls=;
+        b=Y04/f2HXCXASBncQW0iBmWUK64INmBsCxtJRvzkQabI404aPYFKWsP2E78WDR9c5ow
+         XmCk4SOaGyb2KSZKymFuE5VK7oqJC+MnyveEd6eAP43ZVg5U6UUSseO2l8oNBl7m6HIa
+         sj+CMRkqnI4xSxJvNulZMbX3Fs0ZdLEU3PAqZ4nxl8AV9ouY+88k+jZfA5msRJpqnXWa
+         hgYPeh6UMzUYJ4gLV+phUEp4rcnF0mehjO0TQMDukxbVGZ2ehBrxSA9PAczEAZB4ly2Z
+         G4e7skVeCC7wf8LeqKlzIpCczrFejVRXplMoEgNqkKcOndQDLdxdFG0C/QmpC9g2DMIW
+         tOjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753739072; x=1754343872;
+        d=1e100.net; s=20230601; t=1753739425; x=1754344225;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b5AX6jbpFgdSrCGPijdLxpXampkoJ36wfItC/35EtyM=;
-        b=CB4+L1pR6YlqRKZWvZry8SpLYFpd0S0kNejhXne0XP/gPNq5/v2qbfA071EfNAAr4/
-         UA90Me3XSJx+7jQ5lRl//TU2miBcO9LwelAdldpVZUIjhUqRYqzc0hWb9MdWpTJbi1xV
-         WlUlvyJJcbKQZZYVybXjbLGpIcb+8NQvdCwlqj8DiAm+nm7AOWl5pwV1BmsHTmoGAzAH
-         0UKhVwRmmMyJ41gx5Robj1WNDufRhBswbRDDGp+xDINpjQEPtKJ/Hne7dZvN6PvYn+t/
-         E5PxS3XNYpyfEXI/HtmVDCllBWIm0JCFoM5180ye7/D2321ZX0pRQfI4p4qppioePsh/
-         GeWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3jO7eoWPIe10gemUog0iC/mYlEf7QBLl48mtv2SgHErNYd8+NC7YYYyZ9/Z0EWVqjOu/XxDPOHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWAPnBP07wnlB3cv7Iv43iAZOSmq+YfxbS1xhRNkW75QGkYu5F
-	xTfcfHBD3Sf4xm+F95bUGW34GW8iAZVlxCBKX00jJFLqTTHaPauu0/5vxmbp0AdGcJOUaHBey/G
-	c5ODcJcWPOOabJbuZEW7UTjdNrw1xRuCBR4oyenG9F0T2DHFRdNfx54eJ
-X-Gm-Gg: ASbGnctZy0rdMV/xnOiId+PQNeW5tY4Y2E7N9VT1xzUBM17YQuTzadjk9PeIDZooaRh
-	ndPljblcZKjLxJZ24iAfLQq+4DsfQfVer9/tSMYZhYWRZwXqBbc3Deyb6L5NyVULtK7w13g4qwI
-	KgCTENXOlzUx9EbCV4P9nzXWvYFqXAwdSxnc1fyagIAf42nG48lSRLG1XlhNVCiXxvZa9C2Um0U
-	RZjf71RmuEgjNiqTO29ByKDPzlqgR11W6s8XA==
-X-Google-Smtp-Source: AGHT+IFJpwta+wwoWzEy+vIV3DB1GRiqMFThaO5jO43VoC78NFg0WtFAfxgGrnZp+7Lje/EEFcMgVSD6KcGgtAsFGB4=
-X-Received: by 2002:a17:903:948:b0:231:eedd:de3a with SMTP id
- d9443c01a7336-2406e9a0f15mr343595ad.25.1753739071634; Mon, 28 Jul 2025
- 14:44:31 -0700 (PDT)
+        bh=Kdp2ddqK80/pBKPJs62APptyPvd+Kj6ul7N6/XRncls=;
+        b=YtgvX9nzzkQZ8zgRXDwnxUhBAqWIfmrzu1BIGMNZNgQN/YlEV2MMhiuaEVEn00R86V
+         yqFNmqoe0pqdPKh2OEI3Y1c/i7szJZXQc2kew66cBnxYTI7byiU6t5F6CIvjBVVFst6E
+         1j755cX+DHmN3BNDlmUIRGAdC9896NviJ//XW3KH5LXFzJ7jK+MIfS3yeXczQPDePzer
+         yJPw/FqXt56AaIk9vLa0rW2Nn45CVQqI7r2XHECz1ZFPHgK8X5ThjTRt7sgOg3BYh/fC
+         +QkRLeYI3u1i+Omccwp5m6q/Ec0CJpBBRpr7Pb5Huo+68fiweHXHuZ69FdWs+1uIzDqC
+         wTGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbP16KVgWBapqo/+Ah8kFRRhXn9RooU//VHStuL2IddzVtonyTPzkafIaSSktdGi6vfeGo6lhcFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsgPLLS9IOw6rRwPf31MLSTt/wUTRMy5IpbQ3sp6JSc+shjAO+
+	NN2bx9FOfKWL7quvEsXkXcFocoS8eM9vwRcXkuquyaZltUTrEycNFTesY0zT07nNKthZC4HqnAy
+	MXK/1HyQAFey1kDIpbWgPiq2uK96OKGGXlDwTdyKf
+X-Gm-Gg: ASbGncshBg0eZTwj9XgVL3QShyCkZBnh39dDWIt38Q29aF81/3hJjvOveOOUAgZTrnz
+	wH2S9+adp9FN5hke0O+u6OxvA3ukvmN1o06roaxNlbZLTE+YKa35azUujdwpDXQxedvB10m4iPJ
+	DC+PZH1SLIyTqXxTZbdjvvuSm9sTZgaisiRwAlPwrCWfgYlPHXAv0GpHB925PvVJqEnI965HsWQ
+	mlEmV7IQZYQnsYeRhSkKhEWIAak+pTokLYV1Q==
+X-Google-Smtp-Source: AGHT+IHk9ze23ZqnnsOrfKU+c2WBYOckJrdIC3cvTOhckFRi9TjshDyNt9hxfNSa80OsSwkI8FdrHRPnmpFYfdyqx44=
+X-Received: by 2002:a17:902:c949:b0:240:4464:d48b with SMTP id
+ d9443c01a7336-240679824d0mr1073915ad.16.1753739424526; Mon, 28 Jul 2025
+ 14:50:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753694913.git.asml.silence@gmail.com> <d8409af4cfe922f663a2f8a7de5fc4881b7fa576.1753694913.git.asml.silence@gmail.com>
-In-Reply-To: <d8409af4cfe922f663a2f8a7de5fc4881b7fa576.1753694913.git.asml.silence@gmail.com>
+References: <cover.1753694913.git.asml.silence@gmail.com> <261d0d566d3005a3f2a3657c40bf3b3f7a9fdc98.1753694913.git.asml.silence@gmail.com>
+In-Reply-To: <261d0d566d3005a3f2a3657c40bf3b3f7a9fdc98.1753694913.git.asml.silence@gmail.com>
 From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 28 Jul 2025 14:44:19 -0700
-X-Gm-Features: Ac12FXwlu7sLqEGZjXVbKsY5cuCOfi7Gvi25bNgo6LZTErdChYFNFBD0pKpyBu8
-Message-ID: <CAHS8izMAc+fTADD9Uzj-XssdSiUYt81U59+hYkB5b=4W9sGz8Q@mail.gmail.com>
-Subject: Re: [RFC v1 04/22] net: clarify the meaning of netdev_config members
+Date: Mon, 28 Jul 2025 14:50:12 -0700
+X-Gm-Features: Ac12FXwdZrCstap-bKplw1sJf9I1lQ3NOyHUm_mMRyRnNmLhtOfmdeGtwKEwrDw
+Message-ID: <CAHS8izOx5p2hw7OxhKZNUUmC5uJaM0PKw_4UdELe8LQ1QkuLyw@mail.gmail.com>
+Subject: Re: [RFC v1 05/22] net: add rx_buf_len to netdev config
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, io-uring@vger.kernel.org, 
 	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
@@ -96,62 +96,61 @@ com> wrote:
 >
 > From: Jakub Kicinski <kuba@kernel.org>
 >
-> hds_thresh and hds_config are both inside struct netdev_config
-> but have quite different semantics. hds_config is the user config
-> with ternary semantics (on/off/unset). hds_thresh is a straight
-> up value, populated by the driver at init and only modified by
-> user space. We don't expect the drivers to have to pick a special
-> hds_thresh value based on other configuration.
+> Add rx_buf_len to configuration maintained by the core.
+> Use "three-state" semantics where 0 means "driver default".
 >
-> The two approaches have different advantages and downsides.
-> hds_thresh ("direct value") gives core easy access to current
-> device settings, but there's no way to express whether the value
-> comes from the user. It also requires the initialization by
-> the driver.
->
-> hds_config ("user config values") tells us what user wanted, but
-> doesn't give us the current value in the core.
->
-> Try to explain this a bit in the comments, so at we make a conscious
-> choice for new values which semantics we expect.
->
-> Move the init inside ethtool_ringparam_get_cfg() to reflect the semantics=
-.
-> Commit 216a61d33c07 ("net: ethtool: fix ethtool_ringparam_get_cfg()
-> returns a hds_thresh value always as 0.") added the setting for the
-> benefit of netdevsim which doesn't touch the value at all on get.
-> Again, this is just to clarify the intention, shouldn't cause any
-> functional change.
->
+
+What are three states in the semantics here?
+
+- 0 =3D driver default.
+- non-zero means value set by userspace
+
+What is the 3rd state here?
+
 > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > ---
->  include/net/netdev_queues.h | 19 +++++++++++++++++--
->  net/ethtool/common.c        |  3 ++-
->  2 files changed, 19 insertions(+), 3 deletions(-)
+>  include/net/netdev_queues.h | 4 ++++
+>  net/ethtool/common.c        | 1 +
+>  net/ethtool/rings.c         | 2 ++
+>  3 files changed, 7 insertions(+)
 >
 > diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-> index ba2eaf39089b..81df0794d84c 100644
+> index 81df0794d84c..eb3a5ac823e6 100644
 > --- a/include/net/netdev_queues.h
 > +++ b/include/net/netdev_queues.h
-> @@ -6,11 +6,26 @@
->
->  /**
->   * struct netdev_config - queue-related configuration for a netdev
-> - * @hds_thresh:                HDS Threshold value.
-> - * @hds_config:                HDS value from userspace.
->   */
->  struct netdev_config {
-> +       /* Direct value
-> +        *
-> +        * Driver default is expected to be fixed, and set in this struct
-> +        * at init. From that point on user may change the value. There i=
-s
-> +        * no explicit way to "unset" / restore driver default.
+> @@ -24,6 +24,10 @@ struct netdev_config {
+>          * If "unset" driver is free to decide, and may change its choice
+>          * as other parameters change.
+>          */
+> +       /** @rx_buf_len: Size of buffers on the Rx ring
+> +        *               (ETHTOOL_A_RINGS_RX_BUF_LEN).
 > +        */
+> +       u32     rx_buf_len;
+>         /** @hds_config: HDS enabled (ETHTOOL_A_RINGS_TCP_DATA_SPLIT).
+>          */
+>         u8      hds_config;
+> diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+> index a87298f659f5..8fdffc77e981 100644
+> --- a/net/ethtool/common.c
+> +++ b/net/ethtool/common.c
+> @@ -832,6 +832,7 @@ void ethtool_ringparam_get_cfg(struct net_device *dev=
+,
+>
+>         /* Driver gives us current state, we want to return current confi=
+g */
+>         kparam->tcp_data_split =3D dev->cfg->hds_config;
+> +       kparam->rx_buf_len =3D dev->cfg->rx_buf_len;
 
-Does the user setting hds_thres imply turning hds_config to "on"? Or
-is hds_thres only used when hds_config is actually on?
+I'm confused that struct netdev_config is defined in netdev_queues.h,
+and is documented to be a queue-related configuration, but doesn't
+seem to be actually per queue? This line is grabbing the current
+config for this queue from dev->cfg which looks like a shared value.
+
+I don't think rx_buf_len should be a shared value between all the
+queues. I strongly think it should a per-queue value. The
+devmem/io_uring queues will probably want large rx_buf_len, but normal
+queues will want 0 buf len, me thinks.
 
 --=20
 Thanks,

@@ -1,245 +1,239 @@
-Return-Path: <io-uring+bounces-8833-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8834-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E1B1399F
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD2B13AF4
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 15:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B921A17D6FA
-	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 11:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9489C1894F4C
+	for <lists+io-uring@lfdr.de>; Mon, 28 Jul 2025 13:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6D5264638;
-	Mon, 28 Jul 2025 11:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759491A0BD0;
+	Mon, 28 Jul 2025 13:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmszjQfw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kTLNAuur"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FA5265CC8;
-	Mon, 28 Jul 2025 11:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C743147
+	for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 13:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700628; cv=none; b=jdvA8VF6ex4MVp3jS4Jr1A4yoX6iUt9RGz/VZ/gDQmOetvdpaFzesYU6jdG8flIp9sjhm7EI3ld/o3+F7bnaqmm4kL6AedGc38TFml8BG9tWJke472tRIQx43Z9IB97hH9nd3uKCBkNLg8eyRhfpyoUMlzYyGT3M31EbToQlpu8=
+	t=1753707796; cv=none; b=tHp1dia6ie1Xzy3GMvQzb8ATqfSswfSSH0mwXmySYbbFzPHfJ1l0UrpQ3Z14ZyIEXY2rObg+JbUV408HCREe3kZF1a2xcaFuUsQDjEAfAZxfd5TSW8RjfUXqquHkFxAQ3k8++rZyMN1aT7FPz0mDDrzEBA65s5TVpkFhO7KpGV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700628; c=relaxed/simple;
-	bh=t3AiHcnf9UbGvXBnY7A6WX7EUYHNVlEjDxCmrXiD+0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mv0nU1O3jKTozqUtZkUiJHXrilCxNYhIkoxejFkBOYrpR+mvE8Xon+ObqWx7lT7vaL2175FC3ZZy2h6TIxBqwRRHb3fY5YbIDdWAFGynbYLywqhphkp6CSZCi89u5iP2kihl0KfzrGe4VwDQWInV7/6FdEYuDYp82ZXd2AfDmNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmszjQfw; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so48253235e9.1;
-        Mon, 28 Jul 2025 04:03:46 -0700 (PDT)
+	s=arc-20240116; t=1753707796; c=relaxed/simple;
+	bh=zKN4Na6K9OBNMJZ8HPaOaBi8yBlSn7DzhoRI4PMaw6s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=SFBGhkz7ExAYefpm/wi+DhZDHu7ATMxdpD3RMo6I5nE+tUV/we4+25Fpidn9ovJvIp94lMJi0Clp3YGLyFYKO9pCM25HNCQCwgKGYISISuiHbJsviE3+CuFABKlUkTAlHHASXvo475Mm4vAdH9P4doyqBbbt5AZNmWGHyTvxPN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kTLNAuur; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-875acfc133dso167378739f.1
+        for <io-uring@vger.kernel.org>; Mon, 28 Jul 2025 06:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753700625; x=1754305425; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753707791; x=1754312591; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xCfTsWWTa7wdeH4U61LV0QVujn0Rr5yA6peexPuxYv4=;
-        b=dmszjQfwlLGScX6Rrlqm82H8UxS1LxwgNHl2Z/2+fHAAKlJyxk/aS+wOjRbwnnpGzG
-         AvHAmawQBBbnDyYpZuXbygZbqJNYjCaSPNZCqjYTAQ3ow1c6Qi1qIgNTjtpjExt0e+Yi
-         bdUBSsiMRk3nJ2PVDvGn3EuWbbl4vVW7Ncbgt5svFQaA17HVxwcxsSz//yg4rhz1XnC4
-         PAAHbPJmCDBFQArDxy+dALwhMkCc0XyK+NdCOojq4HdaFpItvUy893qRLGsGC7dNjAOV
-         VJdFf1sBp+5Z/W8yD3ohDB6cD34kTGVw0GKnQ+UI16I/SaFO1cft4A+jiFut0pufcfBs
-         lp5g==
+        bh=tZN/mWby+6pmWFafZWmigaSXf+xWDt07YdQlOiyALsI=;
+        b=kTLNAuurRSLI9tIBrjUfAc9AT77/zhS5PoDTZqdh8jBFBvY+BJ6qcjvUgR2HZ96PcX
+         EyIAmyf1WGrupE26RagpXATm7sl12IbhqeLNvBkoAauQ7tdRun1jUAb0vwg+QzpbbY3D
+         EIopFvSwi8MOz0MaD2A9O7ImD154N4nIEC8VA8IrWxiAal2iesv314PsCTlaNlGNW5e7
+         Te7/NKkoOUYguZ/nUWB6+WKN2Hm6Fj0sz6Jv/+v7oZKP/AcLZ1OfDW+d7rRnaia3pOwS
+         MsSSjx1P2LckpJUgnAZ6+qpLVib8bFuvWIfuvq5A0s6QFgOXeMCP9LreG20DBJifrz5E
+         SYlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700625; x=1754305425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xCfTsWWTa7wdeH4U61LV0QVujn0Rr5yA6peexPuxYv4=;
-        b=ljod6wDiRPJ7GWsl5cj0Kc0egvTS1+Kky6+c2BtipuBhhCb5o8Ac4XwVUf/q9mk6n1
-         X1sPkYN3CCdLG4ENbH+oD+Sn229XVq6T/Yah+AT14VvyDKxfa0d3vqaIA9gXdCMPpsSW
-         IwkpspZAWbz8wq2cs6nd9UtxWpnAof3QB+cWwxquekggTzJPspZZYJMbX3hfVRksxWqM
-         7EdW03Mu9vfBJEmX14M7KD+JCMiyjbHJVo/AHlqg8IbrWc6J1va6sS6PUOm4LKizo0T8
-         QMIhv13Yu5g30D7hjvyBW45chRhbNXUPXI3lqcpjh07gxhuIM/YB3krTXdUa/kEYar3d
-         H78A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIccihMY+OFiy+0TPRfq7rsryTN6k9YB9BuBeCEw9M0wHYpqMcUHpOIJEJ/olAmXjFPS4BvNuo4g==@vger.kernel.org, AJvYcCVEkf58tTYnz5xbAdo7Rp7btd3Z/IMEzhqZmEjydcKGL9qYN+gBawVZALWGRSKu+mMmfVTIYYDc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/lQKmAFWOUdDSX4ZYaOj/p/rJXTKGq7FcOWdjHu3xV+4e9Ysr
-	VooXP9idNFAeCXUTkEiZBJqjeai7EA1T/XeRzKjjpmBt1wsV5fj5G/dy
-X-Gm-Gg: ASbGncu9AppHee+SVWiXZLZ6rXRzjqMwM3OIfWftQoKFlwpGmiLWcryd6knQoCCUGVa
-	ptZmKujYW8a0h/HL6Fuh8oxZHtrG+smAIIcc4xEC8qE174r7CaP/u16uFFdEkV3Y7MOA2lG/VIi
-	GG13SC258q1JURQ83xuEZbZWXKhOMCryFFTLmHNsUxxIOrR3r5lh8zuTOjKAxPgsdLmypbFV6ph
-	yNvnhM44Ojo1zAoeWtDHa2R1BjoFYdl88cEj8MFfYy3Xi5TiAG9744cv/UVHAES2SrRLgPGKOgz
-	Bm+rFI0ChwzvbfFzE+jJBq063Bm6rS1uJn4Z7TENNGVME2MMgXaLFuJ74UDoMxWvgOFUn/6qw6l
-	H7oI=
-X-Google-Smtp-Source: AGHT+IGgyPMOcv8M+bhV3mrP0uIyvmsPwxWYZJ1xn2f8mb0xDTXip8JQuZBdFu0kFSIz0TzLD7WX5Q==
-X-Received: by 2002:a05:600c:a012:b0:456:11cc:360d with SMTP id 5b1f17b1804b1-4587630f640mr104788175e9.9.1753700624962;
-        Mon, 28 Jul 2025 04:03:44 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm157410235e9.28.2025.07.28.04.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 04:03:44 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	io-uring@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	davem@davemloft.net,
-	sdf@fomichev.me,
-	almasrymina@google.com,
-	dw@davidwei.uk,
-	michael.chan@broadcom.com,
-	dtatulea@nvidia.com,
-	ap420073@gmail.com
-Subject: [RFC v1 22/22] io_uring/zcrx: implement large rx buffer support
-Date: Mon, 28 Jul 2025 12:04:26 +0100
-Message-ID: <f6d352a8eb9f0297196fdaf0eccc6d9e2a44a357.1753694914.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1753694913.git.asml.silence@gmail.com>
-References: <cover.1753694913.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1753707791; x=1754312591;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tZN/mWby+6pmWFafZWmigaSXf+xWDt07YdQlOiyALsI=;
+        b=Y5eYNCqwEA/OYTsJMxivJOxbG11MkNxUamCyEi4GwRCBf81DwM1Ry8/QzK7T6l5UXO
+         b8qcLH4qSXMFyEKneiv8bf9nw024pk3w9PlyfztNizCigm2tJCXX77WS6PW3WmjQjcUT
+         5IQ6x3CyVZ1kRfhUS30hre7cFSyvr4pLBSqruGHbCEwS+fPI6rsHuBaiPZBJy1CVF+XA
+         VtSIl923Pv6SJtIyreUAtNOz/BN8vlqzKg8xq1AbWh7tRLXjqeV7ZbPbgPXkspqfqxR5
+         8Tr4hF4llh4yU8zHMCRa4y0a0pOTUTvlXxiywYv1AYPzO7mA/r7kf1SUK7/qa3PAmbhY
+         iDrg==
+X-Gm-Message-State: AOJu0YzzXNkYPwFm0av4GgiW4hOFhgk98NoYGULTRGtMG9UBIFE0f+SL
+	+3EqBtMxyuMJq/Rt+iRp+HBmtcijDveYnqiTKz0YBIr0jgFQqbSxcJ7Nqe50f+cBDVeuGCvrR9q
+	/cbim
+X-Gm-Gg: ASbGnct2PIr3gcs+dlvaeEhPrtphAm1n+YnQsNtu3bvWhOgAqPlaSjOCF/La2luzDnp
+	SjJ4EWeurNzYrhKHYuAdUOSICwyjfzz5TVctAawIqMk4qf75AVgpP7RIcEMRNflq9U+ec/6xHQO
+	Wo6hMDyQLOud+O6QeAaoMYI8UJRbmT7Uq73cI2vAqakebOTfILINqIi9VY5TF9J0sa8lupyAAOo
+	ykmfI2OzTdE0SeBUIsEJqQOUoJzKl9v+T5VcEzIthxYVXacSsrChGYhvd8xUe7NodpopbwDQj1k
+	SzIpuF3cDPYuiA7p24uq+4OQie1iCdAalfMpATusJ3DRo1dq9DVl8qWdzpXnolG8zbGqRIlo9bu
+	GVBiSUjKCH+43qjvMIbc=
+X-Google-Smtp-Source: AGHT+IGW0kT+YnRywMTiAW2Q7Onq7Kw4cryRW7vU3+OaGtM14sweKgSK+8x5dFPHJs4nNuxeDmDAFg==
+X-Received: by 2002:a05:6602:158b:b0:879:4b42:1f3a with SMTP id ca18e2360f4ac-8800f0b5620mr1881436639f.5.1753707780322;
+        Mon, 28 Jul 2025 06:03:00 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-880f7a296b9sm142938739f.22.2025.07.28.06.02.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 06:02:59 -0700 (PDT)
+Message-ID: <1219f4d0-7014-43cc-8fae-26918089795f@kernel.dk>
+Date: Mon, 28 Jul 2025 07:02:58 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring updates for 6.17-rc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There are network cards that support receive buffers larger than 4K, and
-that can be vastly beneficial for performance, and benchmarks for this
-patch showed up to 30% CPU util improvement for 32K vs 4K buffers.
+Hi Linus,
 
-Allows zcrx users to specify the size in struct
-io_uring_zcrx_ifq_reg::rx_buf_len. If set to zero, zcrx will use a
-default value. zcrx will check and fail if the memory backing the area
-can't be split into physically contiguous chunks of the required size.
-It's more restrictive as it only needs dma addresses to be contig, but
-that's beyond this series.
+Pretty quiet round this time around. This pull request contains:
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/uapi/linux/io_uring.h |  2 +-
- io_uring/zcrx.c               | 39 +++++++++++++++++++++++++++++------
- 2 files changed, 34 insertions(+), 7 deletions(-)
+- Optimization to avoid reference counts on non-cloned registered
+  buffers. This is how these buffers were handled prior to having
+  cloning support, and we can still use that approach as long as the
+  buffers haven't been cloned to another ring.
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 9d306eb5251c..8e3a342a4ad8 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -1041,7 +1041,7 @@ struct io_uring_zcrx_ifq_reg {
- 
- 	struct io_uring_zcrx_offsets offsets;
- 	__u32	zcrx_id;
--	__u32	__resv2;
-+	__u32	rx_buf_len;
- 	__u64	__resv[3];
- };
- 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index a00243e10164..3caa3f472af1 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -13,6 +13,7 @@
- #include <net/page_pool/memory_provider.h>
- #include <net/netlink.h>
- #include <net/netdev_rx_queue.h>
-+#include <net/netdev_queues.h>
- #include <net/tcp.h>
- #include <net/rps.h>
- 
-@@ -53,6 +54,18 @@ static inline struct page *io_zcrx_iov_page(const struct net_iov *niov)
- 	return area->mem.pages[net_iov_idx(niov) << niov_pages_shift];
- }
- 
-+static int io_area_max_shift(struct io_zcrx_mem *mem)
-+{
-+	struct sg_table *sgt = mem->sgt;
-+	struct scatterlist *sg;
-+	unsigned order = -1U;
-+	unsigned i;
-+
-+	for_each_sgtable_dma_sg(sgt, sg, i)
-+		order = min(order, __ffs(sg->length));
-+	return order;
-+}
-+
- static int io_populate_area_dma(struct io_zcrx_ifq *ifq,
- 				struct io_zcrx_area *area)
- {
-@@ -384,8 +397,10 @@ static int io_zcrx_append_area(struct io_zcrx_ifq *ifq,
- }
- 
- static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
--			       struct io_uring_zcrx_area_reg *area_reg)
-+			       struct io_uring_zcrx_area_reg *area_reg,
-+			       struct io_uring_zcrx_ifq_reg *reg)
- {
-+	int buf_size_shift = PAGE_SHIFT;
- 	struct io_zcrx_area *area;
- 	unsigned nr_iovs;
- 	int i, ret;
-@@ -400,7 +415,16 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
- 	if (ret)
- 		goto err;
- 
--	ifq->niov_shift = PAGE_SHIFT;
-+	if (reg->rx_buf_len) {
-+		if (!is_power_of_2(reg->rx_buf_len) ||
-+		     reg->rx_buf_len < PAGE_SIZE)
-+			return -EINVAL;
-+		buf_size_shift = ilog2(reg->rx_buf_len);
-+	}
-+	if (buf_size_shift > io_area_max_shift(&area->mem))
-+		return -EINVAL;
-+
-+	ifq->niov_shift = buf_size_shift;
- 	nr_iovs = area->mem.size >> ifq->niov_shift;
- 	area->nia.num_niovs = nr_iovs;
- 
-@@ -522,6 +546,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 			  struct io_uring_zcrx_ifq_reg __user *arg)
- {
- 	struct pp_memory_provider_params mp_param = {};
-+	struct netdev_queue_config qcfg = {};
- 	struct io_uring_zcrx_area_reg area;
- 	struct io_uring_zcrx_ifq_reg reg;
- 	struct io_uring_region_desc rd;
-@@ -544,8 +569,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 		return -EFAULT;
- 	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
- 		return -EFAULT;
--	if (!mem_is_zero(&reg.__resv, sizeof(reg.__resv)) ||
--	    reg.__resv2 || reg.zcrx_id)
-+	if (!mem_is_zero(&reg.__resv, sizeof(reg.__resv)) || reg.zcrx_id)
- 		return -EINVAL;
- 	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
- 		return -EINVAL;
-@@ -589,13 +613,14 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	}
- 	get_device(ifq->dev);
- 
--	ret = io_zcrx_create_area(ifq, &area);
-+	ret = io_zcrx_create_area(ifq, &area, &reg);
- 	if (ret)
- 		goto err;
- 
- 	mp_param.mp_ops = &io_uring_pp_zc_ops;
- 	mp_param.mp_priv = ifq;
--	ret = net_mp_open_rxq(ifq->netdev, reg.if_rxq, &mp_param, NULL);
-+	qcfg.rx_buf_len = 1U << ifq->niov_shift;
-+	ret = net_mp_open_rxq(ifq->netdev, reg.if_rxq, &mp_param, &qcfg);
- 	if (ret)
- 		goto err;
- 	ifq->if_rxq = reg.if_rxq;
-@@ -612,6 +637,8 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 			goto err;
- 	}
- 
-+	reg.rx_buf_len = 1U << ifq->niov_shift;
-+
- 	if (copy_to_user(arg, &reg, sizeof(reg)) ||
- 	    copy_to_user(u64_to_user_ptr(reg.region_ptr), &rd, sizeof(rd)) ||
- 	    copy_to_user(u64_to_user_ptr(reg.area_ptr), &area, sizeof(area))) {
+- Cleanup and improvement for uring_cmd, where btrfs was the only user
+  of storing allocated data for the lifetime of the uring_cmd. Clean
+  that up so we can get rid of the need to do that.
+
+- Avoid unnecessary memory copies in uring_cmd usage. This is
+  particularly important as a lot of uring_cmd usage necessitates the
+  use of 128b SQEs.
+
+- A few updates for recv multishot, where it's now possible to add
+  fairness limits for limiting how much is transferred for each retry
+  loop. Additionally, recv multishot now supports an overall cap as
+  well, where once reached the multishot recv will terminate. The latter
+  is useful for buffer management and juggling many recv streams at the
+  same time.
+
+- Add support for returning the TX timestamps via a new socket command.
+  This feature can work in either singleshot or multishot mode, where
+  the latter triggers a completion whenever new timestamps are
+  available. This is an alternative to using the existing error queue.
+
+- Add support for an io_uring "mock" file, which is the start of being
+  able to do 100% targeted testing in terms of exercising io_uring
+  request handling. The idea is to have a file type that can be anything
+  the tester would like, and behave exactly how you want it to behave in
+  terms of hitting the code paths you want.
+
+- Improve zcrx by using sgtables to de-duplicate and improve dma address
+  handling.
+
+- Prep work for supporting larger pages for zcrx.
+
+- Various little improvements and fixes.
+
+Please pull!
+
+
+The following changes since commit 6f11adcc6f36ffd8f33dbdf5f5ce073368975bc3:
+
+  io_uring: gate REQ_F_ISREG on !S_ANON_INODE as well (2025-06-29 16:52:34 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.17/io_uring-20250728
+
+for you to fetch changes up to d9f595b9a65e9c9eb03e21f3db98fde158d128db:
+
+  io_uring/zcrx: fix leaking pages on sg init fail (2025-07-21 06:47:45 -0600)
+
+----------------------------------------------------------------
+for-6.17/io_uring-20250728
+
+----------------------------------------------------------------
+Caleb Sander Mateos (4):
+      io_uring/rsrc: skip atomic refcount for uncloned buffers
+      io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
+      btrfs/ioctl: store btrfs_uring_encoded_data in io_btrfs_cmd
+      io_uring/cmd: remove struct io_uring_cmd_data
+
+Jens Axboe (15):
+      io_uring: add IO_URING_F_INLINE issue flag
+      io_uring: add struct io_cold_def->sqe_copy() method
+      io_uring/uring_cmd: get rid of io_uring_cmd_prep_setup()
+      io_uring/uring_cmd: implement ->sqe_copy() to avoid unnecessary copies
+      io_uring/nop: add IORING_NOP_TW completion flag
+      Merge branch 'timestamp-for-jens' of https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next into for-6.17/io_uring
+      io_uring: remove errant ';' from IORING_CQE_F_TSTAMP_HW definition
+      Merge branch 'io_uring-6.16' into for-6.17/io_uring
+      io_uring/rw: cast rw->flags assignment to rwf_t
+      io_uring/net: use passed in 'len' in io_recv_buf_select()
+      io_uring/net: move io_sr_msg->retry_flags to io_sr_msg->flags
+      io_uring/net: allow multishot receive per-invocation cap
+      io_uring/poll: cleanup apoll freeing
+      io_uring/net: cast min_not_zero() type
+      io_uring: deduplicate wakeup handling
+
+Norman Maurer (1):
+      io_uring/net: Support multishot receive len cap
+
+Pavel Begunkov (23):
+      net: timestamp: add helper returning skb's tx tstamp
+      io_uring/poll: introduce io_arm_apoll()
+      io_uring/cmd: allow multishot polled commands
+      io_uring: add mshot helper for posting CQE32
+      io_uring/netcmd: add tx timestamping cmd support
+      io_uring/mock: add basic infra for test mock files
+      io_uring/mock: add cmd using vectored regbufs
+      io_uring/mock: add sync read/write
+      io_uring/mock: allow to choose FMODE_NOWAIT
+      io_uring/mock: support for async read/write
+      io_uring/mock: add trivial poll handler
+      io_uring: don't use int for ABI
+      io_uring/zcrx: always pass page to io_zcrx_copy_chunk
+      io_uring/zcrx: return error from io_zcrx_map_area_*
+      io_uring/zcrx: introduce io_populate_area_dma
+      io_uring/zcrx: allocate sgtable for umem areas
+      io_uring/zcrx: assert area type in io_zcrx_iov_page
+      io_uring/zcrx: prepare fallback for larger pages
+      io_uring: export io_[un]account_mem
+      io_uring/zcrx: account area memory
+      io_uring/zcrx: fix null ifq on area destruction
+      io_uring/zcrx: don't leak pages on account failure
+      io_uring/zcrx: fix leaking pages on sg init fail
+
+Randy Dunlap (1):
+      io_uring: fix breakage in EXPERT menu
+
+ MAINTAINERS                             |   1 +
+ fs/btrfs/ioctl.c                        |  38 +++-
+ include/linux/io_uring/cmd.h            |  11 +-
+ include/linux/io_uring_types.h          |   5 +
+ include/net/sock.h                      |   4 +
+ include/uapi/linux/io_uring.h           |  19 +-
+ include/uapi/linux/io_uring/mock_file.h |  47 +++++
+ init/Kconfig                            |  13 +-
+ io_uring/Makefile                       |   1 +
+ io_uring/cmd_net.c                      |  82 ++++++++
+ io_uring/io_uring.c                     |  90 ++++++--
+ io_uring/io_uring.h                     |  28 ++-
+ io_uring/mock_file.c                    | 363 ++++++++++++++++++++++++++++++++
+ io_uring/net.c                          |  79 +++++--
+ io_uring/nop.c                          |   8 +-
+ io_uring/opdef.c                        |   1 +
+ io_uring/opdef.h                        |   1 +
+ io_uring/poll.c                         |  44 ++--
+ io_uring/poll.h                         |   1 +
+ io_uring/rsrc.c                         |  10 +-
+ io_uring/rsrc.h                         |   2 +
+ io_uring/rw.c                           |   2 +-
+ io_uring/uring_cmd.c                    |  93 +++++---
+ io_uring/uring_cmd.h                    |   9 +-
+ io_uring/zcrx.c                         | 267 +++++++++++++----------
+ io_uring/zcrx.h                         |   2 +
+ net/socket.c                            |  46 ++++
+ 27 files changed, 1029 insertions(+), 238 deletions(-)
+
 -- 
-2.49.0
+Jens Axboe
 
 

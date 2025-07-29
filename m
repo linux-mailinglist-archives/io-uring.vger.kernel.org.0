@@ -1,173 +1,167 @@
-Return-Path: <io-uring+bounces-8856-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8857-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C941FB14764
-	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 07:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F2FB148DF
+	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 09:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4094163277
-	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 05:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58DA018870DD
+	for <lists+io-uring@lfdr.de>; Tue, 29 Jul 2025 07:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F646227599;
-	Tue, 29 Jul 2025 05:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7260229B15;
+	Tue, 29 Jul 2025 07:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jLLk+LP8"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TI4nHTFN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F33FB31;
-	Tue, 29 Jul 2025 05:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AD22472AE
+	for <io-uring@vger.kernel.org>; Tue, 29 Jul 2025 07:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765445; cv=none; b=fP60EsPf3aYfRM2oB55oyMt9YoYQlSCPNSVFjYo+M3z3rR0C2MDi87fW7xRR4docxcxq91uDKbE2OoHms6/7AmfpzHk4GSMDy2xbgArDIznWdbk5RU50k8Le+EXlDecIPcBevTjZJMyZpzN5IFsHLh+W/d+72qfOzqhcpg/qaiQ=
+	t=1753772494; cv=none; b=UheVM2e3M5jmTadl8HicMgNvwcMJB4TvdvxAHUF2bNHW5W5DFaytiox8cfhrUgh41Ch6yGUW7qWcK2vz6TDgSDMPfutm4O4viRcZD4yCRJsrD1ORynxj9a56Ot92e1kINHWNoXaLJ95exl0T3S521a5mwX4uYugsYQ5Sk0h7R68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765445; c=relaxed/simple;
-	bh=aAlq7ihJCEA3qiheIxFAyXlvMjhrisWvr0Wkq0KiNl4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXrsYThufuE7MI/VXhKt6wP9nW7jqkND3nObWT8Dl1Jm4Hb8bvy4Jrf60Gv21CY6lMrtuCdI4CyEevyfhgcwvhF/BLI/3aV6iIzfvx1XIqlv4290nRVAkIEb8YDblZZQOU+CEDGRrWyKx3FAQr1LndetVm7bP339cNPNB0UOF08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jLLk+LP8; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SNSZxo029017;
-	Mon, 28 Jul 2025 22:03:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=9quu2HCmg6fALkrlXkolXeDD5
-	kJNmWKNtY6RXFtm+HU=; b=jLLk+LP85s3t6ABL1HsgGn07Qcq22p2bz5HiPA488
-	7RY6/FZkH7t0AII/x1vIEnKJx6/Nq4wwbD7gPT5gSv4f9DYqnH3NsogyMmjf8W6v
-	HptU3lenswS6wfF0RqH0JSZoZfwRjOd4qgltt0NPNyFoaD5szZ9awjrpc5JTQjEu
-	IkU3vUBuTKu4/sUD51YvjJ5NwZ4gNp30qvtGF+vxACsodwGgIXcrIz0vXHFSSI4b
-	47ep7F0bWaaPpdTmAo3Av8y2BzjtF9mqtGa3mbxUJDQs99rxZlHXLG/JtHJa6chE
-	jaq84CC9AhZ7WklV8WxbaWMSAQS4A5bURGlqwFDE42IEw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 486jwp8haa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 22:03:50 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 28 Jul 2025 22:03:50 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 28 Jul 2025 22:03:50 -0700
-Received: from opensource (unknown [10.29.20.14])
-	by maili.marvell.com (Postfix) with SMTP id E9F943F7059;
-	Mon, 28 Jul 2025 22:03:42 -0700 (PDT)
-Date: Tue, 29 Jul 2025 05:03:41 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-CC: Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <io-uring@vger.kernel.org>, Eric Dumazet <edumazet@google.com>,
-        Willem de
- Bruijn <willemb@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-        <horms@kernel.org>, <davem@davemloft.net>, <sdf@fomichev.me>,
-        <almasrymina@google.com>, <dw@davidwei.uk>,
-        <michael.chan@broadcom.com>, <dtatulea@nvidia.com>,
-        <ap420073@gmail.com>
-Subject: Re: [RFC v1 03/22] net: use zero value to restore rx_buf_len to
- default
-Message-ID: <aIhWLcnu884VkNDO@opensource>
-References: <cover.1753694913.git.asml.silence@gmail.com>
- <12b155ca79e838e2c141d9411f0b8b3aa15e508e.1753694913.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1753772494; c=relaxed/simple;
+	bh=7w0JM8YdDohEz3UFVl0i7fDeflk7eJj2M3P5XFtcVxo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIoeXq+Oc8kLUIW6kMaLGUhL/LSg6L912fiQ5nvVGaJjZU0kUeqlE9XjHB7PoLTS9tI6aescI4W0VYCtm3AlS7ocnDsQpVzcrv6qV4ZBF3nTLNi0t55TLXEny45FjjssT9xNqqXTwyttMoEWzt9J3rjHN4mDIFw0kcvuyzCPdqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=TI4nHTFN; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-748f5a4a423so3597164b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 29 Jul 2025 00:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1753772492; x=1754377292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hci2iY4+55q8LpoQddoBoltpGuIUKQGF+ptgR76rhs0=;
+        b=TI4nHTFNlhhUxfTO2NvifKU7fFLt8uFjYLHj9GYxdNA6FMblpdXLYgHmAXHkdjIXwH
+         uJSRMeN8LvftPnjXHojRb5U1Qy0ndpeNJuq5S+L/sg2qex1OXiRnv3FjMKeAHn2l+Rqf
+         aje2fUUxtEjVMmr1d/HSbLt0g3OKb/OQ+cbIlzKRjnEhtGCeJrbVkGqkETj0gynMw892
+         wTL0z5eLoj2Z6BOx7/t4afKE8UkIKeS0iPiMM1YV95Nrpim6RJ8OcFFvjCYDI216ZyDB
+         xqLviDt9UToc9u5+Mo6dJ+DUWw5ZZNnRnpP/AgSyHk9nQCE7GbfkAUj8thFXtn6rIxQk
+         Sknw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753772492; x=1754377292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hci2iY4+55q8LpoQddoBoltpGuIUKQGF+ptgR76rhs0=;
+        b=bJcBJW/B47J82VLlYVM4gey4SWNcoo7BJ2vIH0EkCVXXgNFrkZs/jK8NcK//D7oHmQ
+         +riBmh2jazCN3yxQQW5Wn0dfFASHrOlDJdr47y182Nu6mtV5x/4acywCl4Hs8nPIryXW
+         SYK2QI/x1HoGctFIgold0cPmevT7e4XW6hy56bg81Mo2Knb6tCvmiVQbuOrD6XJupQBU
+         Ar4CPFssazQMB/l+7jonu6kP4/imcinTPnXUPIAfyyk126y4vBTpuEvFnXpyYjY78wUk
+         kudqHrRSG8lLYkbS2BNbOg37s2zaahD2zWZ+tn1QF4oep28P9R+35xuz2ViiBgBQ/xEo
+         8tPw==
+X-Gm-Message-State: AOJu0Yx7+vTvjKJz1+SH+5I6hNX6PU2qyr+1jnkLaeeW8HkfBnB4QOGd
+	vKYQgHFICdl0u7RZEUJlCmj1b8Zunw672XN7NlXDMfvqrja/2KO61h8hL8IzXf8b
+X-Gm-Gg: ASbGncvWoyycbDnZJj6KSSuotn8aQrakf2txZYL6Lz95SduK7VDjYsNTAqt/7t3xtIy
+	BZSqVcD1AzzhJsoNHPRUAmhWfyYWvbzmzaVyY2x+KmBUqGQO9o9k/8TZkD1FjJ3dAmsI4JxxLxd
+	R61c+xDyTmJWkinjGZ9QFwjQniajVrpvk/aIXjjAYYBX2LpvgXlUNOYocAV0LuTSw2ZUKiu2Jw0
+	0Zi8H7h7cTIDmc7fv8XVKc0MPsNNKk+vFozmw3FgKh9uDlOoNNj8U9oYoR7edzKCqkFPC/WX4do
+	uBebGjVGJLehNXCOttjYaV+fDKhZ0BaBzEoyTzUhFKmG7diunhvoemzZlVZ5PAbo4GwXeX7xcYI
+	IKLKAsvIYfwBKMJtGWMXzONL5xYpqJtX/7olhECO7YedmFcSPiMmKaExUBTZTh3CyVMOx6hertG
+	daCTUI4pdoe6qFTDw=
+X-Google-Smtp-Source: AGHT+IEIQnOCGVQXdObamoH4w95QsnoLtgUno+Ffdis1WHbOK2MJDT7zLTaDFJEQ+Q+nacjsL9FwDQ==
+X-Received: by 2002:a05:6a20:5491:b0:235:e7b6:6a04 with SMTP id adf61e73a8af0-23d70172a05mr24722484637.24.1753772492216;
+        Tue, 29 Jul 2025 00:01:32 -0700 (PDT)
+Received: from localhost.localdomain (syn-072-130-199-032.res.spectrum.com. [72.130.199.32])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f569d24sm6350664a12.1.2025.07.29.00.01.31
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 29 Jul 2025 00:01:31 -0700 (PDT)
+From: norman.maurer@googlemail.com
+X-Google-Original-From: norman_maurer@apple.com
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk,
+	Norman Maurer <norman_maurer@apple.com>
+Subject: [PATCH v3] io_uring/net: Allow to do vectorized send
+Date: Mon, 28 Jul 2025 20:59:53 -1000
+Message-Id: <20250729065952.26646-1-norman_maurer@apple.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <12b155ca79e838e2c141d9411f0b8b3aa15e508e.1753694913.git.asml.silence@gmail.com>
-X-Proofpoint-ORIG-GUID: wVP-HRUzD_O-trXJczz33wBs9LMc7Rql
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAzNSBTYWx0ZWRfX8Aikyld9DEnf lgC5zS1zqP6iTPapuX8Eik5J8gNiZhFj7MMmAXDFGSGZGwNYRKwH5mcgJwoL8Z9PX19yetJXRwn axavDRDhBgARYVnjMmDokPxHuVRp7ge9RBHvDx5ObpnOyMo7zWowTI32cWB5AiRtZmkkWHYcdnp
- 61F0FPWCXhifb/hfsMIO7koa8L5CK95T+K7AgFjK3kclvHTFokHciq72PrNGAlu5TcRcK1B/3gF ovqmcFkzdR/6vArHOVdBWvRKWH+GWY4uoAk4/Ih2uGgQAZbEy61OYlkHw5wAz2v1nGVVyxZl8g/ 1Dv2/ThJpERmsjOc4LYb6t6LLIuaO+R9r50QV9tRIavNe4A9RnrzqvF256KSwvYy69ZHEb2Iaar
- pB6hRYdbTDussd5oo1OZq92kaj8S/utXhBW6VmOkwnKUAQLj1mUQ//HxyxmDiSANsSaDDonY
-X-Authority-Analysis: v=2.4 cv=bNgWIO+Z c=1 sm=1 tr=0 ts=68885636 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=B6grpBvjW_3kyTz4DecA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: wVP-HRUzD_O-trXJczz33wBs9LMc7Rql
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_01,2025-07-28_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
-LGTM.
+From: Norman Maurer <norman_maurer@apple.com>
 
-Thanks,
-Sundeep
+At the moment you have to use sendmsg for vectorized send.
+While this works it's suboptimal as it also means you need to
+allocate a struct msghdr that needs to be kept alive until a
+submission happens. We can remove this limitation by just
+allowing to use send directly.
 
-On 2025-07-28 at 11:04:07, Pavel Begunkov (asml.silence@gmail.com) wrote:
-> From: Jakub Kicinski <kuba@kernel.org>
-> 
-> Distinguish between rx_buf_len being driver default vs user config.
-> Use 0 as a special value meaning "unset" or "restore driver default".
-> This will be necessary later on to configure it per-queue, but
-> the ability to restore defaults may be useful in itself.
-> 
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  Documentation/networking/ethtool-netlink.rst              | 2 +-
->  drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c | 3 +++
->  include/linux/ethtool.h                                   | 1 +
->  net/ethtool/rings.c                                       | 2 +-
->  4 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-> index b7a99dfdffa9..723f8e1a33a7 100644
-> --- a/Documentation/networking/ethtool-netlink.rst
-> +++ b/Documentation/networking/ethtool-netlink.rst
-> @@ -974,7 +974,7 @@ threshold value, header and data will be split.
->  ``ETHTOOL_A_RINGS_RX_BUF_LEN`` controls the size of the buffer chunks driver
->  uses to receive packets. If the device uses different memory polls for headers
->  and payload this setting may control the size of the header buffers but must
-> -control the size of the payload buffers.
-> +control the size of the payload buffers. Setting to 0 restores driver default.
->  
->  CHANNELS_GET
->  ============
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> index 7bdef64926c8..1a74a7b81ac1 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> @@ -396,6 +396,9 @@ static int otx2_set_ringparam(struct net_device *netdev,
->  	if (ring->rx_mini_pending || ring->rx_jumbo_pending)
->  		return -EINVAL;
->  
-> +	if (!rx_buf_len)
-> +		rx_buf_len = OTX2_DEFAULT_RBUF_LEN;
-> +
->  	/* Hardware supports max size of 32k for a receive buffer
->  	 * and 1536 is typical ethernet frame size.
->  	 */
-> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
-> index dd9f253a56ae..bbc5c485bfbf 100644
-> --- a/include/linux/ethtool.h
-> +++ b/include/linux/ethtool.h
-> @@ -77,6 +77,7 @@ enum {
->  /**
->   * struct kernel_ethtool_ringparam - RX/TX ring configuration
->   * @rx_buf_len: Current length of buffers on the rx ring.
-> + *		Setting to 0 means reset to driver default.
->   * @rx_buf_len_max: Max length of buffers on the rx ring.
->   * @tcp_data_split: Scatter packet headers and data to separate buffers
->   * @tx_push: The flag of tx push mode
-> diff --git a/net/ethtool/rings.c b/net/ethtool/rings.c
-> index 5e872ceab5dd..628546a1827b 100644
-> --- a/net/ethtool/rings.c
-> +++ b/net/ethtool/rings.c
-> @@ -139,7 +139,7 @@ const struct nla_policy ethnl_rings_set_policy[] = {
->  	[ETHTOOL_A_RINGS_RX_MINI]		= { .type = NLA_U32 },
->  	[ETHTOOL_A_RINGS_RX_JUMBO]		= { .type = NLA_U32 },
->  	[ETHTOOL_A_RINGS_TX]			= { .type = NLA_U32 },
-> -	[ETHTOOL_A_RINGS_RX_BUF_LEN]            = NLA_POLICY_MIN(NLA_U32, 1),
-> +	[ETHTOOL_A_RINGS_RX_BUF_LEN]            = { .type = NLA_U32 },
->  	[ETHTOOL_A_RINGS_TCP_DATA_SPLIT]	=
->  		NLA_POLICY_MAX(NLA_U8, ETHTOOL_TCP_DATA_SPLIT_ENABLED),
->  	[ETHTOOL_A_RINGS_CQE_SIZE]		= NLA_POLICY_MIN(NLA_U32, 1),
-> -- 
-> 2.49.0
-> 
+Signed-off-by: Norman Maurer <norman_maurer@apple.com>
+---
+Changes since v1: Simplify flag check and fix line length of commit message
+Changes since v2: Adjust SENDMSG_FLAGS  
+
+---
+ include/uapi/linux/io_uring.h | 4 ++++
+ io_uring/net.c                | 9 ++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index b8a0e70ee2fd..6957dc539d83 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -392,12 +392,16 @@ enum io_uring_op {
+  *				the starting buffer ID in cqe->flags as per
+  *				usual for provided buffer usage. The buffers
+  *				will be	contiguous from the starting buffer ID.
++ *
++ * IORING_SEND_VECTORIZED	If set, SEND[_ZC] will take a pointer to a io_vec
++ * 				to allow vectorized send operations.
+  */
+ #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+ #define IORING_RECV_MULTISHOT		(1U << 1)
+ #define IORING_RECVSEND_FIXED_BUF	(1U << 2)
+ #define IORING_SEND_ZC_REPORT_USAGE	(1U << 3)
+ #define IORING_RECVSEND_BUNDLE		(1U << 4)
++#define IORING_SEND_VECTORIZED		(1U << 5)
+ 
+ /*
+  * cqe.res for IORING_CQE_F_NOTIF if
+diff --git a/io_uring/net.c b/io_uring/net.c
+index ba2d0abea349..3ce5478438f0 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -382,6 +382,10 @@ static int io_send_setup(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	}
+ 	if (req->flags & REQ_F_BUFFER_SELECT)
+ 		return 0;
++
++	if (sr->flags & IORING_SEND_VECTORIZED)
++               return io_net_import_vec(req, kmsg, sr->buf, sr->len, ITER_SOURCE);
++
+ 	return import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
+ }
+ 
+@@ -409,7 +413,7 @@ static int io_sendmsg_setup(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	return io_net_import_vec(req, kmsg, msg.msg_iov, msg.msg_iovlen, ITER_SOURCE);
+ }
+ 
+-#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_BUNDLE)
++#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_BUNDLE | IORING_SEND_VECTORIZED)
+ 
+ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+@@ -420,6 +424,9 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	sr->flags = READ_ONCE(sqe->ioprio);
+ 	if (sr->flags & ~SENDMSG_FLAGS)
+ 		return -EINVAL;
++	if (req->opcode == IORING_OP_SENDMSG && sr->flags & IORING_SEND_VECTORIZED)
++		return -EINVAL;
++
+ 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
+ 	if (sr->msg_flags & MSG_DONTWAIT)
+ 		req->flags |= REQ_F_NOWAIT;
+-- 
+2.39.5 (Apple Git-154)
+
 

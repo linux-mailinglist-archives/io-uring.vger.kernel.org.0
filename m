@@ -1,133 +1,98 @@
-Return-Path: <io-uring+bounces-8884-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8885-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDCFB1B3F5
-	for <lists+io-uring@lfdr.de>; Tue,  5 Aug 2025 15:02:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB580B1BCC2
+	for <lists+io-uring@lfdr.de>; Wed,  6 Aug 2025 00:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECF3F16DAA2
-	for <lists+io-uring@lfdr.de>; Tue,  5 Aug 2025 13:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F13016B028
+	for <lists+io-uring@lfdr.de>; Tue,  5 Aug 2025 22:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCE9245014;
-	Tue,  5 Aug 2025 13:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A921DF759;
+	Tue,  5 Aug 2025 22:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kbgsaQO1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSsfpxLx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0313A1F19A;
-	Tue,  5 Aug 2025 13:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754398973; cv=pass; b=qi/yXabmZ4AqrpKpH/Q+e4kJOoexfMbT5PfJSMSMkMSU3omgSVkQn0al7J0f+U4CWoh6+J5V31gcsROWLT9i8R1ofvkiF9/DKOTEe3n//oo4Q2P8qP+PO5ZYXhkVDYUr8kQu0nsZJ6pS6rWoMDq31ne8cq1+Qg+ocu+vu/JY9Js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754398973; c=relaxed/simple;
-	bh=n2Sb20dV+591KKOtNEv4uJy6Vhzl2VnY9PrLgehYi1Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rB2Oe+hjAVXSiJuAD33OkJzoJuSTnASNDD82E2/c1PrdlWmN5yVeo/c+frl+SPdUIZu3Y+/XNYSdNUWOF2YiX2VIZSwTKLpSdr/46L9xNVmttvn5Ciosqbw9q6N4mx8Ww77RwcOnZtO9naK/lMH6Z/rKTy/kkw8JdyhuLynajaw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kbgsaQO1; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754398956; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KL0l75xCB6MJlQDlqSvyu2DtVauw3dgDEfuUEmLj4dq4pPkUT2iffloKgOtOuB4R5Oob2hwnx2umAFNqiRnntwbu1Vbmy71Uy9kDtODe9q3n/bBhpowzROAnjRdDj6v+C626+VgafXqvsU99VWUGepc8Ga1cXGrJD4Em/smG2lE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754398956; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=n2Sb20dV+591KKOtNEv4uJy6Vhzl2VnY9PrLgehYi1Q=; 
-	b=kVEeT0q7ZSDMRcYddYTOGmq2Va8BJ38dBsP50qQQIWKzL6IjSrniaKI8FFzfli+rARZ/eD+sLNV4Ny8mS+KyObZus0AZgY9pbsxk9GxC7YzZOcaw1Hi70/BHQEfUweDtxUdHLHIRDXQbGWsCyDPt+PlScrBT4BhDnHKn0RS34/c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754398956;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=n2Sb20dV+591KKOtNEv4uJy6Vhzl2VnY9PrLgehYi1Q=;
-	b=kbgsaQO1x5F+cFGW1EcXtI9I7iLDmjXvGJBTY6PD95Wqoqu52S1X5wQ1HKpjQqi+
-	+k4ZdndZJAoAyL3dWovPhffrorjHLthBewC5lJY7pxIftem9zwb9n2pHIRMthUMGt2G
-	pbf8iUI8IiLD6J/cYUhEMfY4AQXs0fJm3Aik+a2c=
-Received: by mx.zohomail.com with SMTPS id 1754398953004767.270068394596;
-	Tue, 5 Aug 2025 06:02:33 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70618173;
+	Tue,  5 Aug 2025 22:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754433837; cv=none; b=DNn9J3/JGZCTEXP/Cf2BFEBtVa8OWSMZCRPfNqVuZtc5uwOPlTVnkj4IOXUfWR+WwrCHymA+DWhabcFGNB9iVcuRqzedT77SrMoSmV5ttgZro6BWGkj54MTkCBagHtKz7+q2o1/rKDzP9HoqTQuDLIbMq2gz7/hggoor8HK7+ms=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754433837; c=relaxed/simple;
+	bh=zp9mF9AxbmQANyGSCRsB0NBkIIX7UT18b/iQ51kQp9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aCPqqqVcbH2pCzERwNu2oFCaUucwYPdxGZtSf/xNhOhKQRGuqfYlBWP4tMey5OecYyESjzVh6u5c2QISRMoUGLChkr1f9lf6oZOw8X7FoB8O9/z8gG/8nj8VDQaVd9rxFATG+b5SDyn4DSWtm5Vu2XQn821TlGTO07WhFpo+3eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSsfpxLx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB35C4CEF0;
+	Tue,  5 Aug 2025 22:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754433837;
+	bh=zp9mF9AxbmQANyGSCRsB0NBkIIX7UT18b/iQ51kQp9U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YSsfpxLxNs4nnQfy21Om9Ai9bSC+GAWaCowC9vlJhg/mdlyEhn8NE9KOXA+U3jcUD
+	 bmEwver1g7MoD13qC+0B0bN3SoUE4W9moSFbtHyyg0nPfg/69r4PG03za2IKnje5ZJ
+	 tO9y1qdK+kQxlRfFeobwjBxsqbiTvKUlyN0Gn2wdyu8GJaoeBiYCmq2RN3mJNq0iH2
+	 VZ58jBswDOjvyNLdnY61Blo1dh4L3beTMicMof3CwmJGj+7dG8IZ4Z9pPK5/ZEuSsR
+	 xfsL2qK0emixyBXQmNL0WvSrtUcV0L2M4faA7xQRY8XEVYj9Xi9PBnfKGdtJTFlkAh
+	 k1Di2z0LS3VNQ==
+Date: Tue, 5 Aug 2025 15:43:55 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, io-uring@vger.kernel.org, Eric Dumazet
+ <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
+ davem@davemloft.net, sdf@fomichev.me, almasrymina@google.com,
+ dw@davidwei.uk, michael.chan@broadcom.com, dtatulea@nvidia.com,
+ ap420073@gmail.com
+Subject: Re: [RFC v1 21/22] net: parametrise mp open with a queue config
+Message-ID: <20250805154355.3fc1b57a@kernel.org>
+In-Reply-To: <11caecf8-5b81-49c7-8b73-847033151d51@gmail.com>
+References: <cover.1753694913.git.asml.silence@gmail.com>
+	<ca874424e226417fa174ac015ee62cc0e3092400.1753694914.git.asml.silence@gmail.com>
+	<20250801171009.6789bf74@kernel.org>
+	<11caecf8-5b81-49c7-8b73-847033151d51@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aJF9B0sV__t2oG20@sidongui-MacBookPro.local>
-Date: Tue, 5 Aug 2025 10:02:18 -0300
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
- Benno Lossin <lossin@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A317BB0-750B-4B68-9C62-2732DA3986F8@collabora.com>
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <aJF9B0sV__t2oG20@sidongui-MacBookPro.local>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sidon,
+On Mon, 4 Aug 2025 13:50:08 +0100 Pavel Begunkov wrote:
+> > Since we don't allow MP to be replaced atomically today, we don't
+> > actually have to place the mp overrides in the config struct and
+> > involve the whole netdev_reconfig_start() _swap() _free() machinery.
+> > We can just stash the config in the queue state, and "logically"
+> > do what I described above.  
+> 
+> I was thinking stashing it in struct pp_memory_provider_params and
+> applying in netdev_rx_queue_restart(). Let me try to move it
+> into __netdev_queue_config. Any preference between keeping just
+> the size vs a qcfg pointer in pp_memory_provider_params?
+> 
+> struct struct pp_memory_provider_params {
+> 	const struct memory_provider_ops *mp_ops;
+> 	u32 rx_buf_len;
+> };
+> 
+> vs
+> 
+> struct struct pp_memory_provider_params {
+> 	const struct memory_provider_ops *mp_ops;
+> 	// providers will need to allocate and keep the qcfg
+> 	// until it's completely detached from the queues.
+> 	struct netdev_queue_config *qcfg;
+> };
+> 
+> The former one would be simpler for now.
 
-> On 5 Aug 2025, at 00:39, Sidong Yang <sidong.yang@furiosa.ai> wrote:
->=20
-> On Fri, Aug 01, 2025 at 10:48:40AM -0300, Daniel Almeida wrote:
->=20
-> Hi Daniel,
->=20
->> Hi Sidong,
->>=20
->>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> =
-wrote:
->>>=20
->>> This patch introduces rust abstraction for io-uring sqe, cmd. =
-IoUringSqe
->>> abstracts io_uring_sqe and it has cmd_data(). and IoUringCmd is
->>> abstraction for io_uring_cmd. =46rom this, user can get cmd_op, =
-flags,
->>> pdu and also sqe.
->>=20
->> IMHO you need to expand this substantially.
->>=20
->> Instead of a very brief discussion of *what* you're doing, you need =
-to explain
->> *why* you're doing this and how this patch fits with the overall plan =
-that you
->> have in mind.
->=20
-> It seems that it's hard to explain *why* deeply. But I'll try it.
-
-Just to be clear, you don=E2=80=99t need to go deep enough in the sense =
-that
-you=E2=80=99re basically rewriting the documentation that is already =
-available in
-C, but you do need to provide an overview of how things fit together, =
-otherwise
-we're left to connect the dots.
-
-Have a look at the I2C series [0]. That is all you need to do IMHO.
-
-I=E2=80=99d use that as an example.
-=20
-[0]: =
-https://lore.kernel.org/rust-for-linux/2D1DE1BC-13FB-4563-BE11-232C755B511=
-7@collabora.com/T/#t
-
-=E2=80=94 Daniel=
++1, I'd stick to the former. We can adjust later if need be.
 

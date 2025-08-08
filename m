@@ -1,134 +1,142 @@
-Return-Path: <io-uring+bounces-8917-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8918-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4BAB1ED9A
-	for <lists+io-uring@lfdr.de>; Fri,  8 Aug 2025 19:04:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA2CB1EDA7
+	for <lists+io-uring@lfdr.de>; Fri,  8 Aug 2025 19:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78BF3A8015
-	for <lists+io-uring@lfdr.de>; Fri,  8 Aug 2025 17:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2998F6264F5
+	for <lists+io-uring@lfdr.de>; Fri,  8 Aug 2025 17:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18A049641;
-	Fri,  8 Aug 2025 17:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C79F286D6F;
+	Fri,  8 Aug 2025 17:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pO5//WqZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cFh9rzLw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D3F182D3
-	for <io-uring@vger.kernel.org>; Fri,  8 Aug 2025 17:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A54B23AB8A
+	for <io-uring@vger.kernel.org>; Fri,  8 Aug 2025 17:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754672639; cv=none; b=LZuQLK+r8Nvz+N+HfERsVxLcVXS5PcwK7ke84L4H66Wk5jDThkYi530hJxthsLgoHn5tcGYgbnZ6tTiMZ/f9Lh0r5hlCPoAx7JlsR8B+69ExQ8BeY/8r3pTKX5B96mb4HeRHOy4R9jvFy2JSvfPdrsf8U/Sz6vz7jeU30zOQmaU=
+	t=1754673231; cv=none; b=Udnwl1TV1fowXWiM/BPzFgZ8yFiv0JVqzUPTxIZLX1hr4pxWeezvIumndJqCcQHt3+AGGF8Jt2GdTf4MM/QfuyfYzNoQ3rjIVZg3D7oGz5dE9LXmrFEAPOikXbJnNwMvha1/tnGZMGuOCZgl9ZobGSDBj1GtPGSLR5pklRs+P/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754672639; c=relaxed/simple;
-	bh=fWKgL6VoaSyFUMidal+T+j/25nnV3b7zKYZx2WTuao8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WxnGEUrSd47kOpVQjzIXHqGxRSqNTUkTYGosKjPoaJ7aP3+S7gjCdz7qxhRcfUlVROGDr2y1jNIOHPsX+JlVndMmFFTYltVZIItvLRaSSkudIm2EIcm+oAuh1RkjbVL4ps9UMHpRMyqvCsVwiL7sF2OhK4/hyrI0fQ8VyelqARY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pO5//WqZ; arc=none smtp.client-ip=209.85.166.51
+	s=arc-20240116; t=1754673231; c=relaxed/simple;
+	bh=R0o1UWO5feGAR508nFaUjzQUYJoY6KZu6SCMBKX0Sbk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=raLClMxxXwCSBdxAq6RPQfQKfjNAnhufbIZ2wB79xO0nYJBtc1SK45rV44CeHn26It5D7eLvtY+ShHnpt++uieANdYuYm69mJKopqgVw5vG09mncb8FGi/xJjqTxG9sdol9asc/V69++9DfEJHhL2BjYZ8lkl0/KI4ppDwy48kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cFh9rzLw; arc=none smtp.client-ip=209.85.166.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-87c0166df31so135453039f.3
-        for <io-uring@vger.kernel.org>; Fri, 08 Aug 2025 10:03:58 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-880f82dfc7fso154064439f.2
+        for <io-uring@vger.kernel.org>; Fri, 08 Aug 2025 10:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754672637; x=1755277437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754673227; x=1755278027; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KFPWpzG1AUv8OCk64kABjKhF1scMWkPhH3E9mkWcvq4=;
-        b=pO5//WqZhsWV44mH4U4LE4O6u6T/fGmpyrdAPG/CuxRTOD3votXE74U2vSq1TF6Y64
-         NVqzghq8kkYAkFnTj+9t0M1feGg32+mrBm3yZRAwujyl27xJr6YBi9lCjAl39hV6dR5q
-         HtCDakQxezmB/4Qp69JQZ88rwkJxOlItJaGl3Q14MqnG8H9aWhTBx0mMD58+ech8qjyx
-         fUnUMx+i4mVJUiOwZ9WEcxMSmdOUzcHrU02Ilab7vuSOo85RlRHDTWWMV9DegF8u/tg4
-         05sHDaOR6YgJsCYSFIVGZjSTWYz05PYx86XXzG9CWm789FtedYl6gwEISm4QTPlbTvzP
-         T7fw==
+        bh=1CL0bKnm+2YB4kSwKyB+L8cThARYOk9lV/gaeBBbgz4=;
+        b=cFh9rzLwaXWaYYDDz8sET29vWGC8Gpz9M0ZuL6uqI+qAvz5e5hM+XAcExRiup78srk
+         G1Xs1NQvjWSjDwO4SvulY690oevhoNTycNEaXCb3sxE9YuFH+kKtjLFDWFULsp9XIRwn
+         kBenEvhme7/sJQn4OoN4Md7shC7ZNwcqPXuqW+N/7eNhZRM3PmnNvVoLZ4eWmQYjDQQv
+         jB0qaIWynz8XJMdCLsGw9tU5iRnSoClv1CP14GUkGcF9KrmQp0+btIvDh88DYw00ppOU
+         GWhJ/uiy+iNIMW9UqbLuiz3+3k3JRN4XCm908dfVZ9WzFkQSpWSR+cSQIgeA8JJlpdul
+         EOyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754672637; x=1755277437;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KFPWpzG1AUv8OCk64kABjKhF1scMWkPhH3E9mkWcvq4=;
-        b=C2YOHTGVxn2KpTZ7fnwf4Xo0KkZOxzJ+mv264iUwxTyvLkJBC+lWGYkksmRmtpP5KR
-         bafZZ0pHs2Lw+flCah5llko9we0UrtrHGvSV7smNYAk+7EJt/n2odolM8ocZ+UZa29oD
-         7NXm9gAqy+QCVVHgaafH9AH9ZnuqmhjLsaoZE1RHN1Bh21sT4GEb9u51F0KUOTYR2C5T
-         60RG/SVl35LRI7XydgUtOZC0Ig4exUhahVSXuts3xWFzJAhX9x9967VRv7Zlm7gCo9BT
-         gpmvaFsh/gv+KWYltciQOgWyCYp6u4FIlZb8v83PQgetHPaPDYFipdsheUbh4VaNdagp
-         N7gg==
-X-Gm-Message-State: AOJu0YwhTgOR+IWfchtTpt+L82odeBRIe2ijNfLxo/ydTx3AkoTTVfp+
-	tietw8/l9fpJJ9glR2dE8/74y0j/t3DV7vnOVHN/L/LENfbUgHWkPJqlcbizUEyMnneH9g9a0tR
-	lENxJ
-X-Gm-Gg: ASbGncvB+u2IIZpAMRWLWK99GJyROvxuRmHGe7Rn98wdKaPOBl04jjkwBranJ9M9i+Z
-	hjLHWX6G4una8DqVlZtXpitIz4HU2z330uJ9nGGWRqEyZ3OyEAycoK+Z5eeTxcmZNMiw6q8g8b6
-	pNlmDtMFNOVxCctI/n/T9Wg9OV7NX38jAeM7jLiG324VxiKIzy/ipqeWA4yRHiIGzqiNRPKkrf4
-	zCCM7BxOYQdEZz6uMBbvPuPuGTL+Vx9FIkmWCOF/I6bKcA5S602EBw2byUL02IB64lrRwoNp9qA
-	m+DnWBHWD8DxFIDoVHZ37a8jh+OJgXVTNecXG2TFV1JavoZpkWumfC5b0DWrLRzXk+F23+XE/6x
-	U471IOA==
-X-Google-Smtp-Source: AGHT+IH2djPjlBW+iQCFI7WX4luDaGg7PAo0zqaze7buBjxW3obb2koW97Ke3ldjR0zRbbKeGpX/AQ==
-X-Received: by 2002:a05:6602:3425:b0:876:b8a0:6a16 with SMTP id ca18e2360f4ac-883f126997cmr704335339f.13.1754672637215;
-        Fri, 08 Aug 2025 10:03:57 -0700 (PDT)
-Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-883f198d65esm68203439f.20.2025.08.08.10.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 10:03:56 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 8/8] io_uring/zcrx: add support for IORING_SETUP_CQE_MIXED
-Date: Fri,  8 Aug 2025 11:03:08 -0600
-Message-ID: <20250808170339.610340-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250808170339.610340-1-axboe@kernel.dk>
-References: <20250808170339.610340-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1754673227; x=1755278027;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1CL0bKnm+2YB4kSwKyB+L8cThARYOk9lV/gaeBBbgz4=;
+        b=vhA6ivG9ngSf6pJWnNYIZBEu0Wns7t12C/Ew1O/4A/EqvYRDKvLSsQUij2203olLC2
+         mhj8vxXk6jZcx+Z6I/qjybtMcaEg7tO+VF7PnIVbLVwwPQN+BYx1vhyo+EMHZqxrDtwO
+         sumcqzSh+AYWLfuR+txe6PYNvIDXAsQcAI4hDkKGwtmHMuW6UqUJgGugin59T3RuuZBd
+         d5x2FdQJLvS65Oi7kfqGDN238ssiC5HdSgFD2DaHYDaHdn+JV3OftUDM+knuEsVC0ZwM
+         0O7ChMxymNPOzw081WYg1zLnmx9bX9elfkgpCDy7esUYrJatylPVRX2IxGXkqxpni13C
+         0Bag==
+X-Gm-Message-State: AOJu0Yx9ZqJBoy289uxaKAu0LB3hwzYzyFvTLz6pjIOWv1XXONZ9cGSB
+	MJbihV/aW1DhCxCD1mIKSd81nDvcmiEgB96Eu3dmvs56ii2Mu+WLPTwbzV8KBPLynwb7++lSJDC
+	EumO7
+X-Gm-Gg: ASbGncsjXUxCcZtEGyftsOBQoIwkTVC0ykoRJqAIipfu8bKDk5UeW+IeYqtx6GK1uEQ
+	L38ng/FknXCRQqbN5kSgsHWexuYqGEddSc2MzhIcW1778f+Ez4YvS5F5s+7l1gberB/PvsEWG9Y
+	EfcfoGr4v8AYNpbvqXm7/DjOIol01R/+1IB3IWjyOJzGLJwWeo88sGdKTmfPZm+tU6YF0v4rkZV
+	aAnws/7r0dlk3y0/zUYpGrsNSxU48ZYwS7WSp5DPxRZtV3QDYF1HljYFYNKEbTXIVn8ND7B9Fdh
+	FWhwnbP1jPPLka3j9PfIZl9x1Nl7h9sRhC4HSMKhfdMd9dJ5TLeAaZ/I3HVMLLt6fGYReMU0gGx
+	ij6ajI+FD5AlUD1C7aKw=
+X-Google-Smtp-Source: AGHT+IEqyiPALEYagGsV5DgiBCpudSx+KrSPRWp1ohJxWSNrrYnDluLc0wXTcrPysy0CP6pRqdpoMw==
+X-Received: by 2002:a05:6602:1485:b0:87c:3d17:6608 with SMTP id ca18e2360f4ac-883f10e0b75mr676898839f.0.1754673227509;
+        Fri, 08 Aug 2025 10:13:47 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-883f18b982csm70162239f.1.2025.08.08.10.13.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 10:13:46 -0700 (PDT)
+Message-ID: <5ae36e4a-8839-4bb4-bd66-24367f161683@kernel.dk>
+Date: Fri, 8 Aug 2025 11:13:46 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.17-rc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-zcrx currently requires the ring to be set up with fixed 32b CQEs,
-allow it to use IORING_SETUP_CQE_MIXED as well.
+Hi Linus,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- Documentation/networking/iou-zcrx.rst | 2 +-
- io_uring/zcrx.c                       | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+Just two minor changes that should go into the 6.17-rc1 kernel release.
+This pull request contains:
 
-diff --git a/Documentation/networking/iou-zcrx.rst b/Documentation/networking/iou-zcrx.rst
-index 0127319b30bb..54a72e172bdc 100644
---- a/Documentation/networking/iou-zcrx.rst
-+++ b/Documentation/networking/iou-zcrx.rst
-@@ -75,7 +75,7 @@ Create an io_uring instance with the following required setup flags::
- 
-   IORING_SETUP_SINGLE_ISSUER
-   IORING_SETUP_DEFER_TASKRUN
--  IORING_SETUP_CQE32
-+  IORING_SETUP_CQE32 or IORING_SETUP_CQE_MIXED
- 
- Create memory area
- ------------------
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index e5ff49f3425e..f1da852c496b 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -554,8 +554,9 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 		return -EPERM;
- 
- 	/* mandatory io_uring features for zc rx */
--	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
--	      ctx->flags & IORING_SETUP_CQE32))
-+	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-+		return -EINVAL;
-+	if (!(ctx->flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)))
- 		return -EINVAL;
- 	if (copy_from_user(&reg, arg, sizeof(reg)))
- 		return -EFAULT;
+- Allow vectorized payloads for send/send-zc - like sendmsg, but without
+  the hassle of a msghdr.
+
+- Fix for an integer wrap that should go to stable, spotted by syzbot.
+  Nothing alarming here, as you need to be root to hit this.
+  Nevertheless, it should get fixed. FWIW, kudos to the syzbot crew for
+  having much nicer reproducers now, and with nicely annotated source
+  code as well. This is particularly useful as syzbot uses the raw
+  interface rather than liburing, historically it's been difficult to
+  turn a syzbot reproducer into a meaningful test case. With the recent
+  changes, not true anymore!
+
+Please pull!
+
+
+The following changes since commit 4b290aae788e06561754b28c6842e4080957d3f7:
+
+  Merge tag 'sysctl-6.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl (2025-07-29 21:43:08 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.17-20250808
+
+for you to fetch changes up to 33503c083fda048c77903460ac0429e1e2c0e341:
+
+  io_uring/memmap: cast nr_pages to size_t before shifting (2025-08-08 06:35:14 -0600)
+
+----------------------------------------------------------------
+io_uring-6.17-20250808
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring/memmap: cast nr_pages to size_t before shifting
+
+Norman Maurer (1):
+      io_uring/net: Allow to do vectorized send
+
+ include/uapi/linux/io_uring.h | 4 ++++
+ io_uring/memmap.c             | 2 +-
+ io_uring/net.c                | 9 +++++++--
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
 -- 
-2.50.1
+Jens Axboe
 
 

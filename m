@@ -1,111 +1,145 @@
-Return-Path: <io-uring+bounces-8924-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8925-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BADB1F629
-	for <lists+io-uring@lfdr.de>; Sat,  9 Aug 2025 22:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658B0B1F648
+	for <lists+io-uring@lfdr.de>; Sat,  9 Aug 2025 23:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458CC189D9C1
-	for <lists+io-uring@lfdr.de>; Sat,  9 Aug 2025 20:22:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D8117F26F
+	for <lists+io-uring@lfdr.de>; Sat,  9 Aug 2025 21:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8722D224AF9;
-	Sat,  9 Aug 2025 20:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C69323F417;
+	Sat,  9 Aug 2025 21:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/1LjE54"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EBFrWwR3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-20.consmr.mail.sg3.yahoo.com (sonic313-20.consmr.mail.sg3.yahoo.com [106.10.240.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4312E36F1;
-	Sat,  9 Aug 2025 20:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1AA238176
+	for <io-uring@vger.kernel.org>; Sat,  9 Aug 2025 21:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754770930; cv=none; b=VjLlsNwqwGaz09CX7iz+4PWMLcIsJkW8ruAShjliHll+/JDito/G26tF5VVPmlos96jV/jW+E4gNnzCNUzh/itFK/ZuzvGxz+jTuLpBpnbA1rIX7TH4MX/P91ndARiTuwfqqaSHi2YvEnXV8EjpJVrPE0GVLQAmBP+uSLyOyp2E=
+	t=1754774095; cv=none; b=JUu6TvNJEAGoNTDZGTOK1k3xFuztLVXyu1pImZhMvsh1fBjZHNFdbNeKBRBqiXxey1z5kjmjvvuO7Rs2Hed/v5jOXDHPHgK1/UpY8h048yqVx3i+8/35nNt8okMBIDLPjTuWRYBREip/++xenXDEANj/yd85fbs4OXA/iWx6ZIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754770930; c=relaxed/simple;
-	bh=BjLJCqEd7VeVy0KqVbhTunrlhwq6ZptffnF9gyr2yPk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=oa0RU/WKRX8fqD5Shk662DkQEnR7NEnAe1mhUYJh0PaK5Nv4Nqb22fpL2YL76ceT4n3IQ31EGvufrLtOyJIuSO/hIucHLF+UXgrSQ9drqltaTc3R2pjjOfkgeqTRj8JL89JOUyGAxBGlCZuC0XQ3rzdDMZ4xnK6igt0DYlLB7Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/1LjE54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F5CC4CEE7;
-	Sat,  9 Aug 2025 20:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754770929;
-	bh=BjLJCqEd7VeVy0KqVbhTunrlhwq6ZptffnF9gyr2yPk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=D/1LjE54khs3k1dxPdkfwM+QSFd8Utx13CvoVehajnhjigIRpypfuSPvANeZY/3+S
-	 L3tGPbz3mq0l8hnYKFBfFFsh3qb37sqgNivvpNR/by/Swc6pl5I5bcadT1NPhcimb3
-	 kS1E7ue7LLwyQI9pdDWvumVddJhIm5SIhUFD0rKkoPbibtbqrpsL3nwlSX4IgQntRs
-	 yeI+Zc9jIgIV9A179t2hdTl9UMXOJ97EA/3kPeRTIfTX/hD5/6zIk9+oHAKoCUqfWa
-	 YIywFvPa3IRbYbfDVORNCoaBpFxJBWhmNhsLxy24wYeDBCpOH3XLQCAX3kAmya3Yos
-	 fE9+bXvTMK8OA==
+	s=arc-20240116; t=1754774095; c=relaxed/simple;
+	bh=d0Yjtt3IzlqKcHROs78kHofsMlGTuJ7ll+LtvZtLsjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=urov9yXgkKlkm9UTk+M+HObqHCUbfumjRxUfvT8AS1/rYA6w4lCM82romjFMKAo66E4glPcAyAG2NrQzcSvRltqLhlhe3T2bHjD0kvtNzy928qHy2nN+sbNlPnWbkikKgpSmr3Lwft4PZjDhwCiVDDxdefB8kUPTJOniU44FEGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EBFrWwR3; arc=none smtp.client-ip=106.10.240.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754774085; bh=+ykyPREPuo21LV5KP7vBGJIecoZNQK65w4laRFBAxUo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=EBFrWwR3eFJKcCMVuxYic1P7jbOpSiIdNOK5+KdLyAN7U64Qj6n/MadFYNrDA1DxLsm43xxaOt8GMi0tCpIsMBReCg18WPN+fGWz9ibJyBGBzIBOX59H55a7U2EoYC3Yg6xvGL5iuO83gV5QnZeZfoRIjc7XnAUEOFN+kCmB9OahBffuxvGCnLhkxqashm9bygnC+KXuvRCw0TU6+XdTN1fVYueAvYgO2ku/0ykDBDICcjGjcCtF6NoghgkKstXwmlcmWL/402DZwQysc11Hu9zapS1ywf5iw8ZgAidLXjW2h+UIVitATztCo38ZUKLKqDaztiUBuMzdaTmGPPBZxQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754774085; bh=Xp6TUaWNIRXe1b2PyGGeDJBwBciovrzamPlRZ3VbFcI=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=lSVelbyHgiSBMazUE8RkNErvfKi4QPrQOaNm2tdAYRx5uEWB2Fwf3v8T6FYMisu8BrMjfcRxA5f6DVWO3SHUhjg6P6J9oboMxAhFVrxPeOyuvS9t9Z56ICM/2zzFH6khx1DAAD5YeonkFeRi4WxI5i6YzClJTcY1KZwRZSHKGldcxGmkC2GYTBvTr/ut+lZ62gJ0+7Ls9AANHIuplnbp+ClaCpWsnKIKDcRNLp7VjdNDLLZi6el41/bmzeZ4GnagV7E3JEh5nVoKxuOBrOmC/+kbJnIh5RYB3NivUZubrFnW5YbraQR7uFXkJbNP+fgvo/FV68AXq5G/+BYqnoBqYw==
+X-YMail-OSG: .zwCfjgVM1mDn5NwRxL.9Geo041SjG.__aX.GjsF37GhlpoTanX6ltexlztkJtq
+ XBYNvaqTp31Xqo4PqIoU9N0GLhr87k1qDOKlP94ULYs322_7N4CFcMYMPllbP1M3TjkHtg9piuFP
+ v1LaqzexHlhHnngUmRDTy8X8SQEm_VRpEgIchawlevlyhmVeg5i0GGTWuV3eG7KrVEFEOsV8mTuy
+ FwdRV1U7D.jHeWIXmJjzAxPkwEnOHUUM0zKrP8.MhXkwJBZRDcgC5mPHgHHbRci1sTcvLklW7neE
+ gcsKhmujIE1z0KEt.oAseFux6xceP3gQH9aGQDgceJBCZ0m0r4q9u_n9cLgZAJhh6uQyzwrpEftf
+ Edwu47ikKAGeW1uVIvi1JIwT4syjvG3YRBmMuO59n2OvOJSZq9aNBnVrCIRq2LY9pxI9aYB0B.n7
+ Jh9doPGkmaN5n31rZNMtQ8GivPCFT2I1zOUgVAgVozRr0A205RKGKdw3tS3ReZF3rfM6TAuULTyj
+ R5OvuwS7KBAxMscKF72qhF3LCbTDsa4nhMZZKS9rOxSIlcqAIpH0yls_FjW_kghsa.VB6aomtKtS
+ chxgKlYlDxnZ4.bmRupiovD6SRruOod6PIQdBEuW47vlA3l6HgieXjKpCLAdpbSa0x1XcvbXKrkp
+ vrNm1AF3IluKSppDKZ9SIi0ukMExD.6ybyvSR6dKrxEwEwrb7Uy3lqZ7NUM2h1u3VPz8H4aPmMsY
+ 2jDGuUvEXTRyMQSq2I125MgUFGDWGujiLrbunkSo72sXXvFx8uaG9W53N_DFO50WVxeqKZ4q9NZV
+ z3cWzggSyAs2K8MOfaxyz2srarqsa0ijW7ViytBJa.gjRtVQD3kNytxJy7IRwBg1jkizPaO9Ir_F
+ Gi3bqvoUrwpOEaj27_dC.uxt24lTB_RWtWTzYWwnxHbCZwo2d7O3PaSpdRT24ugFTwX6wbQWKgZ0
+ n85d8X2Jq5KIs13J0J1DUuYueiXPBxwNwbgd_TvZinUY1GRtRTciDovqzirbADUt5QQyNDn5Bu8l
+ _awokpjRaBSTxnxpzOCO0ApAw4XoLBHH24nfsvaKQ7lH5i_I.Zcz6fI3ry7R94EgBcIfnd10Um08
+ vtj6h1eK7M8h4XpqdpdGQqiQyGsX7whxqWWv4dHWa2jeq0SZEThyb5oe_6n2pp.75Pdb4hMLJq97
+ Gq5_E6qhk1jhxHoFGR4DJN9o28CTMHfV4aepUk8cpaz_jGg5sC4a9rsbNctKEImk.sgR8q5WWHZq
+ 848GOjpcd0FXEuxEzRIwB70KH83rYepJueW_4K32hkaCceh9Dsi5_X5DSE_59QmLbOT2y_EPOx.E
+ Jw36O9cMd8a594DSxUQv8ONKzkuLVxxpM.rgEZz4ArKLE2U5L3t4jT8i8m6WYhF5Z359bR9SLlFP
+ 7u_K5WEzpkyZtUgp.CsZPTE7Gsmv59LL.e2oMO9aCNwPXLbnzp0gY3JGFAMAXgEtjJcSBnx2sChu
+ L3pIHjRgHXi1ZtALZSH5VqlsoOOShGGL8c3rc4P22SSWMmpOuL7wikrsu5jlYOfOv_x93qfH5zQH
+ pGKVvkmIVFvF4nw9dvXHi3n0gtqcFGU4OH0RQrGp.ru1v1WSVIbSZtK2a7b6F45jKv2irNI.9Hzy
+ 7ncJuvC_zCTvaxBLXDABOu0zKJJE2kenMVDZutPP3r2OarD795WSIquLYXAf2dQGjb7a7u1YXJ8H
+ L08T2CBogJCY.1HJYAv4lxDscxYwb7Q0UYJiMTPkl5LB9WaTWDiU2hQU47uRNovkJiaRoKsWe7FK
+ Hx8DVKBrngQ29_E63bwjpnVZyt41e_RWCW.NNl2IeNqISsxo2MhdlEOCUaZYv5kRO0mRp0DzQh8h
+ 04diF_T1adXMJtxzhM9x_CgsO1oIZCwzNc9VVBjbw1d2tjCumIkCBfIC2nIUGMPrdDzRKnNvzaAq
+ UMqJmRYJfGBMGKSeGQUsn4_61dtq4Hl_FfKxPS3o6mM9h4EsSCT1veB9iL27ugMuZjWGPo1svtjA
+ RHQgdMwSzwO1xOt28bv4.ZmJvsfbvusbzglAeesgWAKyUNaHu2a1sjnGmjmlixaWMHfJGGW6Y9WJ
+ lMK668PiYVGaoxtE.gIzTmMcnv4s8ubop959ureaqFnTI53nSLmFpS80rPA9E10uPbz2Jiy1eseE
+ aALM1Xwq93uIeq3DIuDQ7PsupFBcAirwMtYP4CXRRqMnI_B2AaY1PuZDhFBotvRznx7c0PNGO3UN
+ OvTdV6lMucAKkCalUnYiKsZ8eJV10SUYurxtkL_wBvhsMigST0_jMocFU3ozU6taVV4h4Lqo6fgL
+ bBrAjSsQL1h9pM_risZoSynbOWK8JRxAP_k1Tlw--
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: a3d1a8a2-68b3-4579-8586-96106a1df016
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.sg3.yahoo.com with HTTP; Sat, 9 Aug 2025 21:14:45 +0000
+Received: by hermes--production-ne1-9495dc4d7-psbrp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ad8551e2f6b02f307823b0a83dc795a2;
+          Sat, 09 Aug 2025 20:54:25 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com,
+	lkp@intel.com
+Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	oe-kbuild-all@lists.linux.dev,
+	John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v2 6.6] io_uring/rw: ensure reissue path is correctly handled for IOPOLL
+Date: Sat,  9 Aug 2025 15:54:18 -0500
+Message-ID: <20250809205420.214099-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aJeVj4yXt4F01nPb@f5c43a121a53>
+References: <aJeVj4yXt4F01nPb@f5c43a121a53>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 09 Aug 2025 22:22:06 +0200
-Message-Id: <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Jens Axboe"
- <axboe@kernel.dk>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Sidong Yang" <sidong.yang@furiosa.ai>, "Caleb Sander Mateos"
- <csander@purestorage.com>
-X-Mailer: aerc 0.20.1
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
- <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
- <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
- <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
- <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
- <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
- <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
- <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
-In-Reply-To: <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat Aug 9, 2025 at 2:51 PM CEST, Sidong Yang wrote:
-> On Sat, Aug 09, 2025 at 12:18:49PM +0200, Benno Lossin wrote:
->> We'd need to ensure that `borrow_pdu` can only be called if `store_pdu`
->> has been called before. Is there any way we can just ensure that pdu is
->> always initialized? Like a callback that's called once, before the value
->> is used at all?
->
-> I've thought about this. As Celab said, returning `&mut MaybeUninit<[u8;3=
-2]> is
-> simple and best. Only driver knows it's initialized. There is no way to
-> check whether it's initialized with reading the pdu. The best way is to r=
-eturn
-> `&mut MaybeUninit<[u8;32]>` and driver initializes it in first time. Afte=
-r=20
-> init, driver knows it's guranteed that it's initialized so it could call=
-=20
-> `assume_init_mut()`. And casting to other struct is another problem. The =
-driver
-> is responsible for determining how to interpret the PDU, whether by using=
- it
-> directly as a byte array or by performing an unsafe cast to another struc=
-t.
+commit bcb0fda3c2da9fe4721d3e73d80e778c038e7d27 upstream.
 
-But then drivers will have to use `unsafe` & possibly cast the slice to
-a struct? I think that's bad design since we try to avoid unsafe code in
-drivers as much as possible. Couldn't we try to ensure from the
-abstraction side that any time you create such an object, the driver
-needs to provide the pdu data? Or we could make it implement `Default`
-and then set it to that before handing it to the driver.
+The IOPOLL path posts CQEs when the io_kiocb is marked as completed,
+so it cannot rely on the usual retry that non-IOPOLL requests do for
+read/write requests.
+
+If -EAGAIN is received and the request should be retried, go through
+the normal completion path and let the normal flush logic catch it and
+reissue it, like what is done for !IOPOLL reads or writes.
+
+Fixes: d803d123948f ("io_uring/rw: handle -EAGAIN retry at IO completion time")
+Reported-by: John Garry <john.g.garry@oracle.com>
+Link: https://lore.kernel.org/io-uring/2b43ccfa-644d-4a09-8f8f-39ad71810f41@oracle.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+---
+Changes in v2:
+- Removed the extra space before commit-id in message, No codes changes
+- Link to v1:https://lore.kernel.org/all/20250809182636.209767-1-sumanth.gavini@yahoo.com/
 
 ---
-Cheers,
-Benno
+ io_uring/rw.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 4ff3442ac2ee..6a84c4a39ce9 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -326,11 +326,10 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
+ 	if (kiocb->ki_flags & IOCB_WRITE)
+ 		io_req_end_write(req);
+ 	if (unlikely(res != req->cqe.res)) {
+-		if (res == -EAGAIN && io_rw_should_reissue(req)) {
++		if (res == -EAGAIN && io_rw_should_reissue(req))
+ 			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
+-			return;
+-		}
+-		req->cqe.res = res;
++		else
++			req->cqe.res = res;
+ 	}
+ 
+ 	/* order with io_iopoll_complete() checking ->iopoll_completed */
+-- 
+2.43.0
+
 

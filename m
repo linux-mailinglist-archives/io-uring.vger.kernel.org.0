@@ -1,278 +1,153 @@
-Return-Path: <io-uring+bounces-8926-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8927-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191F6B1F830
-	for <lists+io-uring@lfdr.de>; Sun, 10 Aug 2025 04:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C69B1FA49
+	for <lists+io-uring@lfdr.de>; Sun, 10 Aug 2025 15:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BF5189C03E
-	for <lists+io-uring@lfdr.de>; Sun, 10 Aug 2025 02:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67FDD189471D
+	for <lists+io-uring@lfdr.de>; Sun, 10 Aug 2025 13:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B131414A0B7;
-	Sun, 10 Aug 2025 02:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E647224886F;
+	Sun, 10 Aug 2025 13:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d6q5K9Sz"
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="U6melqi+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B8E13790B
-	for <io-uring@vger.kernel.org>; Sun, 10 Aug 2025 02:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B5A8F54
+	for <io-uring@vger.kernel.org>; Sun, 10 Aug 2025 13:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754794243; cv=none; b=sPw3EWeThUvagAzZalUVllvAonR+tGY3b1ocBEbUpwtSazU71Hx4dXHz50RQwmm4M4uxXv9ZU6rQQajWG1ulkXVDDApkEeOngG9xESOJYPrC7cbwmmHEiMDxpVuBnNG5ipNEDsvJ+pj5H4yXdZaTPvtQTl7dQwbxEzJ2JD74cdU=
+	t=1754833827; cv=none; b=rVvXU2z+zDR/g2mXvuFWonyv/2Pudv988vET9A8FhWfO2wpYf9aFy1QVhx6woNZ/ynHOrNuJIzrQWhnbPz4w2BzbLauNz1vaav3CLqOsYLO0kv9b6cTE2MJndjvvkDcQbc0EGgB3iX/sebo21gLShN08B9wNSDCBPT8TwDbNZFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754794243; c=relaxed/simple;
-	bh=YWoFIyWQCIQAm3IaIxxVMnckuuoGjj2kVzgq9lbmpJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RvEYCiWSXMXLbKKZHm0r6g10RmKLXoScyE6sttseCxwmSp+eOMb2xA2Hq9hlB4D/8zoJJLsfv4HFJJTyfs8/JaBoIabZ4Oqk9YOcHB/Z26Ga1ih4cx8+KogVDPnMizv7zW1xCSfsB0+G/vjkxjlbvBLeFUeEtGQO6vVmJCTp/oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d6q5K9Sz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754794240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=WPKqE9FBnpWConhDDghumCg5m7Qopbu/Dy962uNMD40=;
-	b=d6q5K9SzvigtUT0foQz1MMqMbE7v2RsrJKTGMCmRKa9vnMFzKVkybubs2+MqBUp7kK5S11
-	KxsdpaLL7+uTCfb40KlfVyeG43cjfQiNzmp/ACbNUGMVHAm8LMm9b3NxwiwQzKeAsSy7MH
-	4GvUsddc1b190Ms9cT1WISORFglBr/M=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-264-xM8CYnJ3MUe8_wNgQQ3rBA-1; Sat,
- 09 Aug 2025 22:50:36 -0400
-X-MC-Unique: xM8CYnJ3MUe8_wNgQQ3rBA-1
-X-Mimecast-MFC-AGG-ID: xM8CYnJ3MUe8_wNgQQ3rBA_1754794235
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DDB119560B2;
-	Sun, 10 Aug 2025 02:50:35 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.24])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 187C43001455;
-	Sun, 10 Aug 2025 02:50:33 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>
+	s=arc-20240116; t=1754833827; c=relaxed/simple;
+	bh=p7BsbrGAmeMQfqoDvx2nZTX6wg9kIycv6VZ0kixKOJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuQs1IKCRWnTCwklIdrZTSNQn3B1yCY0EIAi2V1OhwImiZvDgyDlsbyxTyu6r+blHL5LFEDYF9Vw10w1FJuq2fCAjrIbvgsYJsiFhASvXqS8I+RQs611mTQNcIx/bDli+YWD9F0SfB/u6NFVykN++cB2Gt03ecnBSW1H/JnlLOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=U6melqi+; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-240418cbb8bso22205385ad.2
+        for <io-uring@vger.kernel.org>; Sun, 10 Aug 2025 06:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1754833826; x=1755438626; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uEJoriNDa5rnMjLc9ZXlpdYdb6v5lPl2Mbkc+ZGNcbk=;
+        b=U6melqi+MzSUKfUE9ovqN5bJ23rejO1JDxIecibUEd3O8cx6TTnvxd+61g97jj6DSq
+         a9VT8lm5r2EmVgvFUDggjsKY6iIoqGU753Sm25+LDER5n0rahvDWu5j/E1m/OLg4BgeM
+         +EXpm+hArXaHO2TP7dvmu2FQDEn9nJYlUWUJo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754833826; x=1755438626;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uEJoriNDa5rnMjLc9ZXlpdYdb6v5lPl2Mbkc+ZGNcbk=;
+        b=q41X4a9pvZ4ZePghxqU/KtN2rmBIBXl9Pq5lmjxBlrIdZFntaB4tgGup3zC91Ql4bU
+         TFBk3opYFFZE7WoVwmCFIC5LhoLAvrF1fOyf1nYGAch/KIwWXIlpbXW+MWL43vPkYJLw
+         92yiDrbUKMwotMQ2jmA0Oq0FQHvpCMuCHLLGI5jIinIAlB3X0Qs5NMQzVNsQq+hj1gvA
+         36MOK13uuJNY97sW19n1ZsbjIVmtiYw6Ql8J0uoO2BWo3icgc+wxmI/M1iVSj9Og9AQT
+         3EX6W01D9mGgEHjXJkoCRSRwuCOXEUAQH5z7/KIpVImcC5YLP3MRAraywNyAG0HZuGgw
+         I5Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnOfpXobTA14VAQF2JwnhJSNAgQrq+oPDnS/dmeOrRin5m9fOMVVsLe9Tp9teRo0kAyBtlbbe2sg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU7/5DrK1I7/6MNhMaQaVJSyvNO1FXDqA2uneEsYNmFp5EKgbu
+	1tVmxjmgbym7wFzHNeEGVj0qlsltu/jgvv8XMy0/F3XG+85Xtvhw9ZfZ56HrjmytQBg=
+X-Gm-Gg: ASbGncvvF2KWfixnuDTJnJ8u03Y2a8AKSNj5sq6Ip6g75aHHXzet8JqxNhbtNtbf+5w
+	GNYifNz6i9YTpjTi8MiGNXiwsNeEd3SrKnVv4xLgPvWmN1hZcFjS0p9yS1Ht/7fEkMZGUwCTkr5
+	1EPuvxp2nispj88AlqO9HvZCQMLsS3midnppeMZgHdw7J2dVg1UmAB3zHfSvE0is4SxKXt2ck31
+	JnNgk5byp0dBLCDhuZoBZqa6V1k74o/ME/U7Ct/k0hZhqXyHBKs/LsTANRpMJ8BjsuqUfM13wn8
+	Bp5YJYFza4Jf1uCtE3clXIOHLRdnaVBAzBZ96LWWnMvXBYGByWF/JGWN1S+xspmP7TE0jf/iQ/H
+	xr3h8A3m/anc7qnBUECq1KS0vEqnvAdE25EMqkGvmws6C4JTb9uwS/BDQ
+X-Google-Smtp-Source: AGHT+IENp31HkWj826CiJ1+k4dxYMOt11EipK3CH7vyGbmZkeyW3/TjnLaKgr24R7x7nzGfXFeZ0iQ==
+X-Received: by 2002:a17:902:d486:b0:240:a21c:89a6 with SMTP id d9443c01a7336-242c2003830mr150469815ad.12.1754833825790;
+        Sun, 10 Aug 2025 06:50:25 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef7557sm249307295ad.19.2025.08.10.06.50.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 06:50:25 -0700 (PDT)
+Date: Sun, 10 Aug 2025 22:50:07 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Benno Lossin <lossin@kernel.org>
 Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH] io_uring: uring_cmd: add multishot support without poll
-Date: Sun, 10 Aug 2025 10:50:24 +0800
-Message-ID: <20250810025024.1659190-1-ming.lei@redhat.com>
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+Message-ID: <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
+References: <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
+ <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
+ <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
+ <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
+ <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
+ <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
+ <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
+ <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
+ <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
+ <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
 
-Add UAPI flag IORING_URING_CMD_MULTISHOT for supporting naive multishot
-uring_cmd:
+On Sat, Aug 09, 2025 at 10:22:06PM +0200, Benno Lossin wrote:
+> On Sat Aug 9, 2025 at 2:51 PM CEST, Sidong Yang wrote:
+> > On Sat, Aug 09, 2025 at 12:18:49PM +0200, Benno Lossin wrote:
+> >> We'd need to ensure that `borrow_pdu` can only be called if `store_pdu`
+> >> has been called before. Is there any way we can just ensure that pdu is
+> >> always initialized? Like a callback that's called once, before the value
+> >> is used at all?
+> >
+> > I've thought about this. As Celab said, returning `&mut MaybeUninit<[u8;32]> is
+> > simple and best. Only driver knows it's initialized. There is no way to
+> > check whether it's initialized with reading the pdu. The best way is to return
+> > `&mut MaybeUninit<[u8;32]>` and driver initializes it in first time. After 
+> > init, driver knows it's guranteed that it's initialized so it could call 
+> > `assume_init_mut()`. And casting to other struct is another problem. The driver
+> > is responsible for determining how to interpret the PDU, whether by using it
+> > directly as a byte array or by performing an unsafe cast to another struct.
+> 
+> But then drivers will have to use `unsafe` & possibly cast the slice to
+> a struct? I think that's bad design since we try to avoid unsafe code in
+> drivers as much as possible. Couldn't we try to ensure from the
+> abstraction side that any time you create such an object, the driver
+> needs to provide the pdu data? Or we could make it implement `Default`
+> and then set it to that before handing it to the driver.
 
-- for notifying userspace to handle event, typical use case is to notify
-userspace for handle device interrupt event, really generic use case
+pdu data is [u8; 32] memory space that driver can borrow. this has two kind of
+issues. The one is that the array is not initialized and another one is it's
+array type that driver should cast it to private data structure unsafely.
+The first one could be resolved with returning `&mut MaybeUninit<>`. And the
+second one, casting issue, is remaining. 
 
-- needn't device to support poll() because the event may be originated
-from multiple source in device wide, such as multi queues
+It seems that we need new unsafe trait like below:
 
-- add two APIs, io_uring_cmd_select_buffer() is for getting the provided
-group buffer, io_uring_mshot_cmd_post_cqe() is for post CQE after event
-data is pushed to the provided buffer
+/// Pdu should be... repr C or transparent, sizeof <= 20
+unsafe trait Pdu: Sized {}
 
-Follows one ublk use case:
+/// Returning to casted Pdu type T
+pub fn pdu<T: Pdu>(&mut self) -> &mut MaybeUninit<T>
 
-https://github.com/ming1/linux/commits/ublk-devel/
+I think it is like bytemuck::Pod trait. Pod meaning plain old data.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- include/linux/io_uring/cmd.h  | 27 +++++++++++++++
- include/uapi/linux/io_uring.h |  9 ++++-
- io_uring/opdef.c              |  1 +
- io_uring/uring_cmd.c          | 64 ++++++++++++++++++++++++++++++++++-
- 4 files changed, 99 insertions(+), 2 deletions(-)
+Thanks,
+Sidong
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index cfa6d0c0c322..5a72399bfa77 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -70,6 +70,22 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- /* Execute the request from a blocking context */
- void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd);
- 
-+/*
-+ * Select a buffer from the provided buffer group for multishot uring_cmd.
-+ * Returns the selected buffer address and size.
-+ */
-+int io_uring_cmd_select_buffer(struct io_uring_cmd *ioucmd,
-+			       unsigned buf_group,
-+			       void **buf, size_t *len,
-+			       unsigned int issue_flags);
-+
-+/*
-+ * Complete a multishot uring_cmd event. This will post a CQE to the completion
-+ * queue and update the provided buffer.
-+ */
-+bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
-+				 ssize_t ret, unsigned int issue_flags);
-+
- #else
- static inline int
- io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-@@ -102,6 +118,17 @@ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- static inline void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
- {
- }
-+static inline int io_uring_cmd_select_buffer(struct io_uring_cmd *ioucmd,
-+				unsigned buf_group,
-+				void **buf, size_t *len,
-+				unsigned int issue_flags)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline void io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
-+				ssize_t ret, unsigned int issue_flags)
-+{
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 6957dc539d83..e8afb4f5b56a 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -297,10 +297,17 @@ enum io_uring_op {
- /*
-  * sqe->uring_cmd_flags		top 8bits aren't available for userspace
-  * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
-+ *				along with setting sqe->buf_index,
-+ *				IORING_URING_CMD_MULTISHOT can't be set
-+ *				at the same time
-+ * IORING_URING_CMD_MULTISHOT	use buffer select; pass this flag
-  *				along with setting sqe->buf_index.
-+ *				IORING_URING_CMD_FIXED can't be set
-+ *				at the same time
-  */
- #define IORING_URING_CMD_FIXED	(1U << 0)
--#define IORING_URING_CMD_MASK	IORING_URING_CMD_FIXED
-+#define IORING_URING_CMD_MULTISHOT	(1U << 1)
-+#define IORING_URING_CMD_MASK	(IORING_URING_CMD_FIXED | IORING_URING_CMD_MULTISHOT)
- 
- 
- /*
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 9568785810d9..932319633eac 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -413,6 +413,7 @@ const struct io_issue_def io_issue_defs[] = {
- #endif
- 	},
- 	[IORING_OP_URING_CMD] = {
-+		.buffer_select		= 1,
- 		.needs_file		= 1,
- 		.plug			= 1,
- 		.iopoll			= 1,
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 053bac89b6c0..f0539e73f9d7 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -11,6 +11,7 @@
- #include "io_uring.h"
- #include "alloc_cache.h"
- #include "rsrc.h"
-+#include "kbuf.h"
- #include "uring_cmd.h"
- #include "poll.h"
- 
-@@ -194,8 +195,20 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (ioucmd->flags & ~IORING_URING_CMD_MASK)
- 		return -EINVAL;
- 
--	if (ioucmd->flags & IORING_URING_CMD_FIXED)
-+	if ((ioucmd->flags & IORING_URING_CMD_FIXED) && (ioucmd->flags &
-+				IORING_URING_CMD_MULTISHOT))
-+		return -EINVAL;
-+
-+	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
-+		if (req->flags & REQ_F_BUFFER_SELECT)
-+			return -EINVAL;
- 		req->buf_index = READ_ONCE(sqe->buf_index);
-+	}
-+
-+	if (ioucmd->flags & IORING_URING_CMD_MULTISHOT) {
-+		if (!(req->flags & REQ_F_BUFFER_SELECT))
-+			return -EINVAL;
-+	}
- 
- 	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
- 
-@@ -251,6 +264,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 
- 	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
-+	if (ioucmd->flags & IORING_URING_CMD_MULTISHOT) {
-+		if (ret >= 0)
-+			return IOU_ISSUE_SKIP_COMPLETE;
-+		io_kbuf_recycle(req, issue_flags);
-+	}
- 	if (ret == -EAGAIN) {
- 		ioucmd->flags |= IORING_URING_CMD_REISSUE;
- 		return ret;
-@@ -333,3 +351,47 @@ bool io_uring_cmd_post_mshot_cqe32(struct io_uring_cmd *cmd,
- 		return false;
- 	return io_req_post_cqe32(req, cqe);
- }
-+
-+int io_uring_cmd_select_buffer(struct io_uring_cmd *ioucmd,
-+			       unsigned buf_group,
-+			       void __user **buf, size_t *len,
-+			       unsigned int issue_flags)
-+{
-+	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-+	void __user *ubuf;
-+
-+	if (!(req->flags & REQ_F_BUFFER_SELECT))
-+		return -EINVAL;
-+
-+	ubuf = io_buffer_select(req, len, buf_group, issue_flags);
-+	if (!ubuf)
-+		return -ENOBUFS;
-+
-+	*buf = ubuf;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_select_buffer);
-+
-+/*
-+ * Return true if this multishot uring_cmd needs to be completed, otherwise
-+ * the event CQE is posted successfully.
-+ *
-+ * Should only be used from a task_work
-+ *
-+ */
-+bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
-+				 ssize_t ret, unsigned int issue_flags)
-+{
-+	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-+	unsigned int cflags = 0;
-+
-+	if (ret > 0) {
-+		cflags = io_put_kbuf(req, ret, issue_flags);
-+		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE))
-+			return false;
-+	}
-+
-+	io_req_set_res(req, ret, cflags);
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(io_uring_mshot_cmd_post_cqe);
--- 
-2.47.1
 
+> 
+> ---
+> Cheers,
+> Benno
 

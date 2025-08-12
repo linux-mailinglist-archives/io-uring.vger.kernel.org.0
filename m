@@ -1,43 +1,43 @@
-Return-Path: <io-uring+bounces-8947-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8948-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8D3B233C4
-	for <lists+io-uring@lfdr.de>; Tue, 12 Aug 2025 20:32:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACFBB236D4
+	for <lists+io-uring@lfdr.de>; Tue, 12 Aug 2025 21:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B51D3BE9D4
-	for <lists+io-uring@lfdr.de>; Tue, 12 Aug 2025 18:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F7807BC405
+	for <lists+io-uring@lfdr.de>; Tue, 12 Aug 2025 19:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CCB27FB12;
-	Tue, 12 Aug 2025 18:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA53826FA77;
+	Tue, 12 Aug 2025 19:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U+yXMv2c"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o2b+zBsi"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7461FFE;
-	Tue, 12 Aug 2025 18:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823241A3029;
+	Tue, 12 Aug 2025 19:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755023273; cv=none; b=OOHhOQZCOPRhjPr8yBOjcdwhB3yzT05ZHv6WN+I7eeWIIHWB20MC4DYcjZ32UVHljlgYWt9Ol6JIcHUdrq1gK9i6Q8SFIj2o8YFAXc7kCuROlfZfHUtvKunZf+Sksbi+K6Vz8WPOHnTLqCCE8O4bTGH25i1o8Qc6KKXDggFZ3vc=
+	t=1755025391; cv=none; b=opS6lEv5EzUCmnxNK3gUzq4x4Vlt8K502g3pEsz9IIKxqkjYRurSNh9ZVhGLTR/QOQKqXeJo/z44iyBqdCUaQxEvhHR8RLAB2imGp2LaESBIqgqHHf6jfaa7MNfVUhBHW82KocsQVIc2z9c1uKmatLWcuu6lqBQposgDaRTTEpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755023273; c=relaxed/simple;
-	bh=PaIuis6KUP35l5ianooxwhJBS1qUyJpPN2ckE36NABg=;
+	s=arc-20240116; t=1755025391; c=relaxed/simple;
+	bh=wCWKVq3Q5pO1Hg0R7abTVg7Q7oId8lJF+8dUIt9mYnI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D1qYXBWgjQeGyQiHI5CxuRaq3tyjNN38GIqMJ5B5HAIc/q1Tip+/vK4Pv5NCPSxvt5ynfesHX3lKYD+dS+yCfRbmChPGTWoSlExsBbEUZxSVHRne9x+BU6z7N58ke/Om0cSI7q07SfS2HK3VNo96PMZwBvkA3hFDO/VngL3+VBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U+yXMv2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08DEDC4CEF0;
-	Tue, 12 Aug 2025 18:27:52 +0000 (UTC)
+	 MIME-Version; b=hKMaVbgcHHZRtiYqJC/f79sTbbvDIdeUcA6/4DryK3xvT4pEjIIZt/9CCm+fdDBD8HRqLLJqg6zu47SGpQVp5cimuufU1pVgxHcTkO/9/eCPKfmCLNZPbOnPAvwJEQYZppMBGXm9EaNja6IfAkUtVMP3pTirmbGFvVqJDfUFfp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o2b+zBsi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB122C4CEF0;
+	Tue, 12 Aug 2025 19:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755023273;
-	bh=PaIuis6KUP35l5ianooxwhJBS1qUyJpPN2ckE36NABg=;
+	s=korg; t=1755025391;
+	bh=wCWKVq3Q5pO1Hg0R7abTVg7Q7oId8lJF+8dUIt9mYnI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U+yXMv2c0sOBXXUlhHsXxNbDWOj+Ymf20jMq0Y5me7U/+sj1S7IY4bWB9KoqJBsCW
-	 HEOQrUOu8LMKpNuXPiklp00iXn71/PYbWcv/4ijcsyhrl1/6/kLN8kwZzSMp7XQ2gX
-	 sJ0GbeK6qfZckGK023ZUWnJ36z2vlKVK0PLz7xJc=
+	b=o2b+zBsikznCXLMPGCMzRAaj41Upum0LPsxT3J5OmG8hoI2E75wcw8/xSdtvfwR8q
+	 yGuO4sDPlMUmjpNz4oe3StloJtoqHds8hfksSjpT39knaPNSw2qmW3N/vMUGyNzEEq
+	 oHAT4cABTda/306U7vcaaN+Jv0Io5XNyGv71A0z8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	io-uring@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.16 024/627] io_uring: fix breakage in EXPERT menu
-Date: Tue, 12 Aug 2025 19:25:19 +0200
-Message-ID: <20250812173420.236334473@linuxfoundation.org>
+Subject: [PATCH 6.15 027/480] io_uring: fix breakage in EXPERT menu
+Date: Tue, 12 Aug 2025 19:43:55 +0200
+Message-ID: <20250812174358.449078324@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-References: <20250812173419.303046420@linuxfoundation.org>
+In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
+References: <20250812174357.281828096@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.16-stable review patch.  If anyone has any objections, please let me know.
+6.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -96,10 +96,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/init/Kconfig b/init/Kconfig
-index 666783eb50ab..2e15b4a8478e 100644
+index bf3a920064be..b2367239ac9d 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1794,7 +1794,7 @@ config IO_URING
+@@ -1761,7 +1761,7 @@ config IO_URING
  
  config GCOV_PROFILE_URING
  	bool "Enable GCOV profiling on the io_uring subsystem"

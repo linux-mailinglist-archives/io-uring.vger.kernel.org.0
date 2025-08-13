@@ -1,176 +1,147 @@
-Return-Path: <io-uring+bounces-8949-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8950-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673F6B23D5C
-	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 02:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18945B2491C
+	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 14:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C24685DA5
-	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 00:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4D67245F2
+	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 12:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ACA12FF69;
-	Wed, 13 Aug 2025 00:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851332D0C7B;
+	Wed, 13 Aug 2025 12:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="TNtK1W5T"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LmF30KRv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47341C72
-	for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 00:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E16120D4E9
+	for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 12:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755046490; cv=none; b=YxHlt4psW+RWwmpVQH4EyXt1PgXPjRj+DygsrlmF0z1sXFB6Cfu4nNqwTXuWhMOAnHl5mDsnJea1OhYpdoKQnjR44iA+TDW4zpzsNj6tbAekFWegGX4dSrj2OLbE/Xy1tKLM3o/+y1nke8KlQB/0TXw9hQyvJKJJaZ+qO6/Adgo=
+	t=1755086552; cv=none; b=jtlU/jXNHdokRdQwglINlpguZAsPoC0EWgdEgCkqVl+4cKOQKezerZOSXi7kCAi+fhkG9I5oYrj931WSSXCTKmhjIFhY9Z3sOsKowDDcqNR5J7lnm7Kz+olO2fnKOs246RutmTZK8vMu2BPGJTIkzBE/yLAA9sgZhYM8wOltzUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755046490; c=relaxed/simple;
-	bh=ZAK0iu2nam4TRzSPQ+RT8lQPoKAFlyGFpIFTAuhS/Js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCuYOlIanFPvaRUYVQe2iKbyAjleQgskyx5QMPFKl8dqpwRIcRQm0ntBXmlCV3lfJwOwMmESJ4jaCudNrp9kA3bm8KDKV/ZzepSjD4Gv69PVxxZUuPYneI+/IKoVKWBYFiSTwL00DkB9j/yAYuv/Fc46BMC7oGLfWYPtgZI1BMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=TNtK1W5T; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b421b70f986so4435648a12.1
-        for <io-uring@vger.kernel.org>; Tue, 12 Aug 2025 17:54:48 -0700 (PDT)
+	s=arc-20240116; t=1755086552; c=relaxed/simple;
+	bh=Y5ODJCve4cCycGhbA64XVIR9NzpaJXUpoWfB8nnryGM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GMCJvktPpTtJI/ZXL/fQDkPa3G/U8UMTDOlrP/rq/8x1M9RRDvYPWXoLc2puqoO6fWLjjgcs2d6NpLD3h0/tRW+cBbMvHMLx+gwMrqGSuXBRNebzWWfw3jyFGbyHdp2emcKP6ldNZ+6tf7X4wGO4ruCW3f8F7irCbBBDe/NS1P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LmF30KRv; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2407235722bso64175665ad.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 05:02:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1755046488; x=1755651288; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6NpFBcxoc04uyrK8/s01LPPrR4PakN3UQlJaijfjW20=;
-        b=TNtK1W5TlTn7jtoFNeZaElo4Vz8Q+ZqaQg/AAemruxmBgdGWDXrjHwSt76FvkKhih0
-         8Y5XMVf4aLsB9QMPr0PjaDPqpqV+TaazjZcDD8DE557XG1eWpNxLRRzVqggLit2oFT6p
-         tjuVhjWF8yVUicW76Zm9CWvvMQdXStPubPF+U=
+        d=bytedance.com; s=google; t=1755086550; x=1755691350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/a33gWoxGv6jtj2gUgSbJ0h6/gIpUnPSM4PrLUvScU=;
+        b=LmF30KRvSZ2xOmdqpgt8R6+BarCBUZFffhMw4R7VkFYaDYe4ZHTYjezS3RqpsFHsim
+         UJbg1+wOSTkLZq+7bZifLjwBXvEkZ7V0gaRIGV9sscZbaWYDVFt6b1iPo9lWNNE71tAs
+         EDX0p+89NtLGbjuiX/PI+mAuRhQ4U+GXnbX4oa33zSqjIuTQi+d3JN6aKVoUKAlswhUf
+         WB2ttVjRJM2imUr27txf69KPxNI/PPqjnMC7BETKsF9JL/ZcXMr3zCb4c158W9X/jXKF
+         GXz0vQNo+NlCRFb2EEy0QmzbRFTZP3vWuOd8ePPlNwJqWZzLxxCUOR6lALvX2OjWJFY5
+         3rAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755046488; x=1755651288;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6NpFBcxoc04uyrK8/s01LPPrR4PakN3UQlJaijfjW20=;
-        b=sZOfATQAhEA0jClBCtDCj6MWwMYe2y48HEE+6Q4h7qaLafwqoPqO/1FlhWs7/rB64g
-         lIHLTK9IyY1FK4Li9QsbZHFOKt8isPr7gZn8aU2QxFnhWuJ7KS03oF2R3Kqq1cEUsfDQ
-         55OfYm0i2BB3usnTv6T0gesdl+39xs0dI+rXhprnAW5nAN+bwc293S1FH7g7eEhEEbag
-         9K8/H+0g6iEuYzzBXLA9d02NQvmuM8n3II26RZLr3dL36pgIgY39pu4hCaHEZ2A8Pxqj
-         MPGrwT5AR70EhuwPBIkIaGh+91wxNsOrTLjaDLsGME1luEMJHzDYmDd3tpPU6n5cYeD4
-         cEwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvaG7xnPXK7c15waougnErvjecTiTYMLEfgg6CGCYn7nWZicDW3R5nLAbETXm9cT9gLetCdk/PMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJdlTCFCj3+EFZ7jZtiOcykCE6rZJm7OVmLFixV4jdwMghnUir
-	TuXCHcanhcqiCJ4u+dXuJV5DSrfhQn8fZFPrMIG9d95dIbRcFnK7TMJ0PyfiU0Hsnu4=
-X-Gm-Gg: ASbGncuxOEfj/fytV+IZraq18gOGtR/MBc0tqgfAMLHI6rUpOlTVLzARCAY86tGWTBX
-	QvrCk4BqsEPdAxPwKy1iPD8BuykTBz5u5u5iKbS/GRxtUDF9BtOXq64Czk7ls/1/Iz2BJwBypQP
-	BImI9bAUOKeZtEzgkTV+GVuY6BwnbHRTP086OTYQ0G6DdlQAz9lL4QfacMQnplvqxv5s30T438Z
-	q2v7Nemol6dxIt/I84++zApX1fh24WS7ROzEUKo9yjXOhpa6Tges0yVximVIvyXr0vi/UMa4JTX
-	xERimi0ASlMP2WOg/ZIIORXJeTn8C2cH7I2Zo9WflH49Vkli5iFh2sOAc8GxpzW9k2/+urpm4d7
-	jdC6MjNT/LSPChZw59fF9AIk4wrLP4TIS/UtAgOgyomG7fs1nod6zbnBYFAy8K8qx
-X-Google-Smtp-Source: AGHT+IHA/9Hoe2WUXGmM827/WBBWCmDTjLeBDQa+8tvMPHlD5EOr8tpNby6jVzEanoAxA3ONDgWNew==
-X-Received: by 2002:a17:902:c94b:b0:243:43a:fa2b with SMTP id d9443c01a7336-2430d299051mr17789945ad.56.1755046488174;
-        Tue, 12 Aug 2025 17:54:48 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24309cd3e2bsm15232115ad.62.2025.08.12.17.54.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 17:54:47 -0700 (PDT)
-Date: Wed, 13 Aug 2025 09:54:42 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Benno Lossin <lossin@kernel.org>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1755086550; x=1755691350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K/a33gWoxGv6jtj2gUgSbJ0h6/gIpUnPSM4PrLUvScU=;
+        b=HMBw9XF19BRVan8M1c/zDXrv5CnEvhMbpwBJW2OhtgyFseQ9oKjKuDZ78c0p9c95BC
+         zS0jx2EhU0sbuLnbQ2S8A1Fi+U3e8bN/AArO+qrsJi7J0Z5rKTiqRy17WANiqfmb+eO8
+         BXKtJj/8ByNOzqrWMtWpLaZx7tOSuB3rYFs6XKEVU07TeUGt0+6YZvdTdQrAUmdGbr6M
+         kAmTxn1ot3NiWW9A6ern08PKfrykDSOGtpo7BtfECmf/u8bvsmlk0QkUOECnm45+npwX
+         Ts6pN5wBXdhAUDT1Lgd5bK85EGyNl1U57XYKElthbOtnoLSbQGXLzjRkn61IkJfGrknN
+         IkcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAEj912AF98NSfXp6yqGwnwS4t2A2yQZA7Q7ymbNLqBc3srjpJEm/tsBMax6gS1RhlbUAb7pvUjQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo1yYmDbo3rcp5MGcoUYlAXhMYS3DBzKiuHejmsNfVFi427hpc
+	OCyPvOQVWXXo5P6NdosnDVgtqriX4yUrYCQ+3y0q65ji3H8Y1TtSO2gxyWongREvlzs=
+X-Gm-Gg: ASbGncuBoBgWnO5n6TyyUm7fkHEz8c0HFhDoUj27C14EU7PfE/L86H/Yf+7QaVtehE8
+	d4B8QJ7DvsiHP+Q5y2DJvMV0v7CtzkrP1b7Kelye3xGiaYcaINe8tVOjDX4Tb0C6p9NrinbZdwR
+	/6my82pkh+Dhh9ue0uKOcsI82FQRHBfvpcG5+MRRokLLguKqiGyXWCDsBVng2QfS70ojZoec4HI
+	4TB4YyWdpHUPZqOvI0Tqv3Fy6oO4n6v89LgIWEGjHYoh80QJzBx7YA8jBOIQB4pjh9tu56Pizzx
+	hLwDgciyYC5/YTmRwktRH7Wcki3YLo67tOMErkfklatvtUmAkOLuti7fLo3foqpcJQP/J8ytnUV
+	NAVbEqla6vxH+RschDOhHkgGoU6xqbcxROAGN2WmKSwmRwDWu2E8Qk0zSWGK+
+X-Google-Smtp-Source: AGHT+IEES5D0+mE56G4Ki/FgoBcVZQ4pkgwGRMo0AVRTZ1b2S+YjtR/3hGDvo7TUDVzsaJV7bdwj/A==
+X-Received: by 2002:a17:903:f8d:b0:240:99f7:6c35 with SMTP id d9443c01a7336-2430d21c5demr44559605ad.43.1755086549299;
+        Wed, 13 Aug 2025 05:02:29 -0700 (PDT)
+Received: from MacBookPro.bytedance.net ([139.177.225.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm298100165ad.16.2025.08.13.05.02.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 13 Aug 2025 05:02:28 -0700 (PDT)
+From: Fengnan Chang <changfengnan@bytedance.com>
+To: axboe@kernel.dk,
 	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-Message-ID: <aJviUiNhTwCsMbaX@sidongui-MacBookPro.local>
-References: <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
- <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
- <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
- <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
- <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
- <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
- <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
- <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
- <DC0B7TRVRFMY.29LDRJOU3WJY2@kernel.org>
- <06EA9E60-9BED-4275-9ED3-DA54CF3A8451@collabora.com>
+Cc: Fengnan Chang <changfengnan@bytedance.com>,
+	Diangang Li <lidiangang@bytedance.com>
+Subject: [PATCH] io_uring/io-wq: add check free worker before create new worker
+Date: Wed, 13 Aug 2025 20:02:14 +0800
+Message-Id: <20250813120214.18729-1-changfengnan@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <06EA9E60-9BED-4275-9ED3-DA54CF3A8451@collabora.com>
 
-On Tue, Aug 12, 2025 at 11:38:51AM -0300, Daniel Almeida wrote:
-> 
-> 
-> > On 12 Aug 2025, at 05:34, Benno Lossin <lossin@kernel.org> wrote:
-> > 
-> > On Mon Aug 11, 2025 at 4:50 PM CEST, Sidong Yang wrote:
-> >> On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
-> >>>> There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut IoUringCmd>`
-> >>>> would be create in the callback function. But the callback function could be
-> >>>> called repeatedly with same `io_uring_cmd` instance as far as I know.
-> >>>> 
-> >>>> But in c side, there is initialization step `io_uring_cmd_prep()`.
-> >>>> How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign a byte
-> >>>> as flag in pdu for checking initialized also we should provide 31 bytes except
-> >>>> a byte for the flag.
-> >>>> 
-> >>> 
-> >>> That was a follow-up question of mine. Can´t we enforce zero-initialization
-> >>> in C to get rid of this MaybeUninit? Uninitialized data is just bad in general.
-> >>> 
-> >>> Hopefully this can be done as you've described above, but I don't want to over
-> >>> extend my opinion on something I know nothing about.
-> >> 
-> >> I need to add a commit that initialize pdu in prep step in next version. 
-> >> I'd like to get a comment from io_uring maintainer Jens. Thanks.
-> >> 
-> >> If we could initialize (filling zero) in prep step, How about casting issue?
-> >> Driver still needs to cast array to its private struct in unsafe?
-> > 
-> > We still would have the casting issue.
-> > 
-> > Can't we do the following:
-> > 
-> > * Add a new associated type to `MiscDevice` called `IoUringPdu` that
-> >  has to implement `Default` and have a size of at most 32 bytes.
-> > * make `IoUringCmd` generic
-> > * make `MiscDevice::uring_cmd` take `Pin<&mut IoUringCmd<Self::IoUringPdu>>`
-> > * initialize the private data to be `IoUringPdu::default()` when we
-> >  create the `IoUringCmd` object.
-> > * provide a `fn pdu(&mut self) -> &mut Pdu` on `IoUringPdu<Pdu>`.
-> > 
-> > Any thoughts? If we don't want to add a new associated type to
-> > `MiscDevice` (because not everyone has to declare the `IoUringCmd`
-> > data), I have a small trait dance that we can do to avoid that:
-> 
-> 
-> Benno,
-> 
-> IIUC, and note that I'm not proficient with io_uring in general:
-> 
-> I think we have to accept that we will need to parse types from and to byte
-> arrays, and that is inherently unsafe. It is no different from what is going on
-> in UserSliceReader/UserSliceWriter, and IMHO, we should copy that in as much as
-> it makes sense.
-> 
-> I think that the only difference is that all uAPI types de-facto satisfy all
-> the requirements for FromBytes/AsBytes, as we've discussed previously, whereas
-> here, drivers have to prove that their types can implement the trait.
-> 
-> 
-> By the way, Sidong, is this byte array shared with userspace? i.e.: is there
-> any copy_to/from_user() taking place here?
+After commit 0b2b066f8a85 ("io_uring/io-wq: only create a new worker
+if it can make progress"), in our produce environment, we still
+observe that part of io_worker threads keeps creating and destroying.
+After analysis, it was confirmed that this was due to a more complex
+scenario involving a large number of fsync operations, which can be
+abstracted as frequent write + fsync operations on multiple files in
+a single uring instance. Since write is a hash operation while fsync
+is not, and fsync is likely to be suspended during execution, the
+action of checking the hash value in
+io_wqe_dec_running cannot handle such scenarios.
+Similarly, if hash-based work and non-hash-based work are sent at the
+same time, similar issues are likely to occur.
+Returning to the starting point of the issue, when a new work
+arrives, io_wq_enqueue may wake up free worker A, while
+io_wq_dec_running may create worker B. Ultimately, only one of A and
+B can obtain and process the task, leaving the other in an idle
+state. In the end, the issue is caused by inconsistent logic in the
+checks performed by io_wq_enqueue and io_wq_dec_running.
+Therefore, the problem can be resolved by checking for available
+workers in io_wq_dec_running.
 
-No. pdu array allocated from kernel. I'll use `core::ptr::copy_nonoverlapping`.
+Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
+Reviewed-by: Diangang Li <lidiangang@bytedance.com>
+---
+ io_uring/io-wq.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,
-Sidong
-> 
-> -- Daniel
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index be91edf34f01..17dfaa0395c4 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -357,6 +357,13 @@ static void create_worker_cb(struct callback_head *cb)
+ 	worker = container_of(cb, struct io_worker, create_work);
+ 	wq = worker->wq;
+ 	acct = worker->acct;
++
++	rcu_read_lock();
++	do_create = !io_acct_activate_free_worker(acct);
++	rcu_read_unlock();
++	if (!do_create)
++		goto no_need_create;
++
+ 	raw_spin_lock(&acct->workers_lock);
+ 
+ 	if (acct->nr_workers < acct->max_workers) {
+@@ -367,6 +374,7 @@ static void create_worker_cb(struct callback_head *cb)
+ 	if (do_create) {
+ 		create_io_worker(wq, acct);
+ 	} else {
++no_need_create:
+ 		atomic_dec(&acct->nr_running);
+ 		io_worker_ref_put(wq);
+ 	}
+-- 
+2.20.1
+
 

@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-8952-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8953-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D597B24988
-	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 14:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EC4B2498F
+	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 14:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1520E72764C
-	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 12:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FAD3B24DA
+	for <lists+io-uring@lfdr.de>; Wed, 13 Aug 2025 12:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3500E39FF3;
-	Wed, 13 Aug 2025 12:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD7917F4F6;
+	Wed, 13 Aug 2025 12:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2RTbpkxo"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1qhKeLKr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA293C8FE
-	for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 12:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9067E39FF3
+	for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 12:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755088267; cv=none; b=okWOFDUj47AS+MVCw+7Q1NR408INuxw/0USK45bmUVCy5hZ2sXm+LQbrO0jKPgzlt5aB6y69gbp7l1+ZmQE7Y7CmDjCtpwmNXw3D/BIFsmjvPP7ZEQYAV1i1xJAQL5hlfHm8zHdfldN8BfcDj9Y0BepK+zZUHi+lX5QSj1r9ak8=
+	t=1755088331; cv=none; b=PpP+oM7fZLCpTDUn7jTrjhmnJs9I+8XYG2VzZpSSyLr9svhFObHNkNYOqJlIgcKAwePxryLCDFIW2/Sd/+eEP+fTOAEzDMmJ0I+WGzjhCxMM1Q4fvq30Vh0fWlxDlZFISP/m7YIh+qbKBOVFUMw2xKMFL/rLtOxSJAWME7Hjfno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755088267; c=relaxed/simple;
-	bh=TA+1dRl1SAfauvpeLC4KgPDduEfXimkEClavXfse24Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHTGg+DjoSmv+ZDHFToVw2myiwHfcU7xg08sdCc2r/LyEVGawwRmxuDnIPm6QLEfFA7R5SiF/qyvEjPI5/XRIipa5dXo/N4REEH1lFvCTqIt9eirmtLk8rN/R4mOrP2bXhQS+QCtGW5N/9SOof09Md8oNGyaO5IfrazbbyPy98I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2RTbpkxo; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1755088331; c=relaxed/simple;
+	bh=kCLF79S+Mb1JWtTQJUEzjwnCXMGeURP0ljdTXMIY0Uw=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=DW7t3jQVfa55TP6LRSgL6snqXPdlPOe7yewb79ryNbYHKuhbzg818ZQhHYJRAN7lrFYJ9rB+ueW2HQ8kwd0hCt47AJ6EIEAphUTzDcTY3C9Yn3EsiAkv1CNJaL40i5COJdcNxzezfF08I3PW+Pl2yHEo6eMY+ErG/BS235g3bp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1qhKeLKr; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32128c5fc44so821547a91.1
-        for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 05:31:03 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bc55f6612so934015b3a.0
+        for <io-uring@vger.kernel.org>; Wed, 13 Aug 2025 05:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755088263; x=1755693063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I1+AIgcDFfPuuvATTLTciJysna71lICKFsTUicf0vvQ=;
-        b=2RTbpkxoPVfpgQudqR4xirLOEMSS17LV7ZTEo/QtUF0OA3RZxUxyntdWrRtfFo7Yl0
-         mB+t6NysW0C1uJEs6UvzJ/Yka3kFHBeqtlcFYI8xm1he6VaHz6lateU7oNcP0QrmXtKU
-         mmnNDp9D5k1MHQJC2804xlhylD7MnUJhgUeIcYJ/R+rhgRCtb7t+cH0467jjY+f4frJs
-         N6LopIJgQ031kAHnwYBNsVNKCwPd9kJE3IvEAWTprYMbdrEGF3E1beOoTwpW/0Kt4fBu
-         w8GMYXyBFXZSnl1s+P7ruZEICKvucUHq8bkdDsbsS/gJcWSS7Pf74x9yKIIR1RYutCOh
-         ERyQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755088327; x=1755693127; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BGZSqFydtVB2Q6IiOGQndK2n2nD5qmZcbK0ywXyAOuE=;
+        b=1qhKeLKroAWoXccopGZ32rZS1n5TISrvPTjzhUKeefPeqpXPlLNa0oCSTFX2Orw4OY
+         uwDrqYjc99WpmLrVV7yUIax61jexk3FJYSQKjx8aiIZ2l9sL3xI7NmZQkizDP4Qrdxmy
+         5s0amw1oNgEVVvaiEQHBNhoosoXpzAfcBDuPchizhjaHDu3731j+ZnkW4hgQPVeNixvO
+         WY8rcNvTPS5MIOh05T62SQmdQgddzLoV3aAlteYy9f9gH5wfB3INmRz/zqaBGltbqHKS
+         Cv29C/koJXGYpvOvIL/moSMCBamI3qeoRlXl8Yfmhn9OID4JYtuYY9zjwozVj+IxRnE9
+         t0gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755088263; x=1755693063;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1+AIgcDFfPuuvATTLTciJysna71lICKFsTUicf0vvQ=;
-        b=nrslBEB2y/Sn36RxiQS2XXzUAoMncZWKmNBDA0EHumNE3RTpVhVYX2jYhJNrO7bJKq
-         R00zMRDrU3ilsim2/ccMZqvXQ2+8uY3Vemk81RIe/ZbogWydaXnVvPrWD2/1zL+IUTO6
-         dp3sd2SrlAP4B89TTjCWJa+cpST9vWrQC47h3k4D42LcJKJMwYABsCwb1PT49e8qK+Nv
-         IIf+uUnQBTC+VfzG3KoQaQQMX9mHybR9c+45LIhw8UKOg0TSsXCxfLyoI2cjBaGoGhCp
-         xZV+v0dKoUN+lBRBld/lXzPC30yLvZpNhZs3XMKlZn/wKS6BOh/QI9FKU7dDIWbapb9a
-         SH0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRsXmY/gYfU/7mpRE7TnWUienL/6bdUS/4jiJD5cxV4ChgwoF8+s0Bif2kBDVzxgfYtg00Nsjiiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgnnC8uH0iRDzo7SaZ/tiGjas0977cB7MkwPAoBCsov0HdtWBl
-	2t3SJ/M6EPMypcz6ldc+AOBUSU7gFToPSi2iVGJkBuRXgntP/6uNzY0EyjoJVn9W7MQ=
-X-Gm-Gg: ASbGncvxZvUX1F/D+8t/x/hIzIy7zPwOVtzNzIEtizX0cM1jWmcxbhqxibRXE+p+l30
-	m7zwl8kQysdoyvO2OguyxNxW5q/p7Aqi8h5AB18jsN4w7neQzBI2XmPAg0OqlA3+6wQ6xm4rMkY
-	AiRn2t4augRIPq1J46MDo0FM4q5w4oj936Sl82/O9TTbpt/x5VhBOd3UzmYheJcKGFAsph3hmbE
-	DStvE2nkWfdpqw2Fsi4DxCks4BP8EM1idVJietgBWUMUXfhSfXrfjbLmzdcxlkoRrS2WMZvhJu6
-	ifpBT/AYY38kirvV8XoN0y9OMnA/O7gWkkRx3kI5TTazjxyftkIyGqzf5gV9o/p6bEjyaSiVHmW
-	5ZaM3SqPNTmOrl4FdlVm0
-X-Google-Smtp-Source: AGHT+IHhp9YuB6oUY4YLAWMOIqauRh+2xkOAzlHHldEAnAZM5AwK9vl3D3HQsk1hbgdIMZNxPRjRcg==
-X-Received: by 2002:a17:90b:51ca:b0:321:c56e:7569 with SMTP id 98e67ed59e1d1-321d28b1c13mr3738135a91.10.1755088262575;
-        Wed, 13 Aug 2025 05:31:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755088327; x=1755693127;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BGZSqFydtVB2Q6IiOGQndK2n2nD5qmZcbK0ywXyAOuE=;
+        b=lPtAVBEbAHjZyZ5Ku4d5XHkA03MRWzHbqCChYBjYh0jxfnDTpmeudqBZMFdJlVJF3A
+         8y8Ajsc7n/IKK8XYDHDl8lxE6J0VQ92WrWc63zxqXj+aCsdmhB59d3KSLG52Wgqc9yR8
+         JUHO6lvg2xmFtiozAfZ/suMdojm8Xhe0Z1BY58V+NQe7QsHzUVCgyrPkGrQdmGHMdW1W
+         xUysAAphSFM9qQtejlKU+I0ZQrPMoBw02n6jxCQyxUgRrSH2lyRFKD9OT97WNKA9D5ur
+         Xo6ZaVmVcnDpIqBFFTEWWfcA2jg9FYiuWZMdWPzmKsA9lYZ8tQY0Y/TGP6zd1ca1PhiY
+         k0gw==
+X-Gm-Message-State: AOJu0YxqVsY4/Fj09JE/YHevMI4HhlkyaHwY57VdsKLeN+B7eRbb1+VG
+	t9DbGiCO4Ca7XjizgMQZSuR4kOtuszHkXIwmoiKXfywd0DqD56Tld2h+Ie7OEv3QY6NEUB1KNIN
+	Qyzpr
+X-Gm-Gg: ASbGncsTylvds9+369zjqGDLxAJTHyzvk1VWnrt0AIECC3oRx5DR3LhnuOEbVzprmAy
+	dEwArxnxVUsauBHD+0HaTDcq5obI5GG86TDXCKt0TI1BS7vwtIg/cLK/tG6VmzVY3XrklY0okRm
+	5rNuLcQavID/iB40VpDMC5OFbtX8G8bmdXG302I5jr4XG0zRALpC3B4SSElnO/UPNVsCc6ZGRZ7
+	YSXFhIX9sPTBTveCua/nrLHHFaE76/HrSwaXt9oYbwCF/o37TMEUtBzhOsxtvFLGhd5JJcA75ZV
+	WdbVWZVV7UacB6ffN1ee84W+YKKQnCwo/zw8T6N24DOkXAFKvn4utlKKXgXaSmUqpk3d9+DVoR8
+	+N9vnCI7NOaPFWAjdvaklCoeRv7DAhc4=
+X-Google-Smtp-Source: AGHT+IHGK0nmPU/xT5sWzsNvewYSWQUCF18qkvucSDtR6Ihru6yqSRlQWSFPhWSXPvBfEDmlYAOjzA==
+X-Received: by 2002:a05:6a21:3391:b0:1f3:31fe:c1da with SMTP id adf61e73a8af0-240ab3a240emr3845281637.11.1755088327073;
+        Wed, 13 Aug 2025 05:32:07 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32325763516sm73275a91.10.2025.08.13.05.31.01
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcceab592sm32005200b3a.58.2025.08.13.05.32.06
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 05:31:01 -0700 (PDT)
-Message-ID: <4b843462-f8be-456d-875d-51ce1e6dd3fa@kernel.dk>
-Date: Wed, 13 Aug 2025 06:31:01 -0600
+        Wed, 13 Aug 2025 05:32:06 -0700 (PDT)
+Message-ID: <6efa6355-3ad0-4041-adb0-f6ea3840b824@kernel.dk>
+Date: Wed, 13 Aug 2025 06:32:05 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,40 +82,118 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/io-wq: add check free worker before create new
- worker
-To: Fengnan Chang <changfengnan@bytedance.com>, io-uring@vger.kernel.org
-Cc: Diangang Li <lidiangang@bytedance.com>
-References: <20250813120214.18729-1-changfengnan@bytedance.com>
 Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250813120214.18729-1-changfengnan@bytedance.com>
+Subject: [PATCH] io_uring/net: commit partial buffers on retry
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/13/25 6:02 AM, Fengnan Chang wrote:
-> After commit 0b2b066f8a85 ("io_uring/io-wq: only create a new worker
-> if it can make progress"), in our produce environment, we still
-> observe that part of io_worker threads keeps creating and destroying.
-> After analysis, it was confirmed that this was due to a more complex
-> scenario involving a large number of fsync operations, which can be
-> abstracted as frequent write + fsync operations on multiple files in
-> a single uring instance. Since write is a hash operation while fsync
-> is not, and fsync is likely to be suspended during execution, the
-> action of checking the hash value in
-> io_wqe_dec_running cannot handle such scenarios.
-> Similarly, if hash-based work and non-hash-based work are sent at the
-> same time, similar issues are likely to occur.
-> Returning to the starting point of the issue, when a new work
-> arrives, io_wq_enqueue may wake up free worker A, while
-> io_wq_dec_running may create worker B. Ultimately, only one of A and
-> B can obtain and process the task, leaving the other in an idle
-> state. In the end, the issue is caused by inconsistent logic in the
-> checks performed by io_wq_enqueue and io_wq_dec_running.
-> Therefore, the problem can be resolved by checking for available
-> workers in io_wq_dec_running.
+Ring provided buffers are potentially only valid within the single
+execution context in which they were acquired. io_uring deals with this
+and invalidates them on retry. But on the networking side, if
+MSG_WAITALL is set, or if the socket is of the streaming type and too
+little was processed, then it will hang on to the buffer rather than
+recycle or commit it. This is problematic for two reasons:
 
-Good catch, and thanks for sending a test case as well!
+1) If someone unregisters the provided buffer ring before a later retry,
+   then the req->buf_list will no longer be valid.
+
+2) If multiple sockers are using the same buffer group, then multiple
+   receives can consume the same memory. This can cause data corruption
+   in the application, as either receive could land in the same
+   userspace buffer.
+
+Fix this by disallowing partial retries from pinning a provided buffer
+across multiple executions, if ring provided buffers are used.
+
+Cc: stable@vger.kernel.org
+Reported-by: pt x <superman.xpt@gmail.com>
+Fixes: c56e022c0a27 ("io_uring: add support for user mapped provided buffer ring")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/net.c b/io_uring/net.c
+index dd96e355982f..d69f2afa4f7a 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -494,6 +494,15 @@ static int io_bundle_nbufs(struct io_async_msghdr *kmsg, int ret)
+ 	return nbufs;
+ }
+ 
++static int io_net_kbuf_recyle(struct io_kiocb *req,
++			      struct io_async_msghdr *kmsg, int len)
++{
++	req->flags |= REQ_F_BL_NO_RECYCLE;
++	if (req->flags & REQ_F_BUFFERS_COMMIT)
++		io_kbuf_commit(req, req->buf_list, len, io_bundle_nbufs(kmsg, len));
++	return IOU_RETRY;
++}
++
+ static inline bool io_send_finish(struct io_kiocb *req, int *ret,
+ 				  struct io_async_msghdr *kmsg,
+ 				  unsigned issue_flags)
+@@ -562,8 +571,7 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 			kmsg->msg.msg_controllen = 0;
+ 			kmsg->msg.msg_control = NULL;
+ 			sr->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return -EAGAIN;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+@@ -674,8 +682,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 			sr->len -= ret;
+ 			sr->buf += ret;
+ 			sr->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return -EAGAIN;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+@@ -1071,8 +1078,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 		}
+ 		if (ret > 0 && io_net_retry(sock, flags)) {
+ 			sr->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return IOU_RETRY;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+@@ -1218,8 +1224,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 			sr->len -= ret;
+ 			sr->buf += ret;
+ 			sr->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return -EAGAIN;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+@@ -1500,8 +1505,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 			zc->len -= ret;
+ 			zc->buf += ret;
+ 			zc->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return -EAGAIN;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+@@ -1571,8 +1575,7 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 		if (ret > 0 && io_net_retry(sock, flags)) {
+ 			sr->done_io += ret;
+-			req->flags |= REQ_F_BL_NO_RECYCLE;
+-			return -EAGAIN;
++			return io_net_kbuf_recyle(req, kmsg, ret);
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
 
 -- 
 Jens Axboe

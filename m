@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-8961-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8962-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAACB27328
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 01:51:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDE9B27329
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 01:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 594F27A562A
-	for <lists+io-uring@lfdr.de>; Thu, 14 Aug 2025 23:50:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFF7A2020C
+	for <lists+io-uring@lfdr.de>; Thu, 14 Aug 2025 23:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684B523BCEE;
-	Thu, 14 Aug 2025 23:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF3228850E;
+	Thu, 14 Aug 2025 23:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlqE8CUp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EI1rBcCH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEDA1F582E;
-	Thu, 14 Aug 2025 23:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D12F1F582E;
+	Thu, 14 Aug 2025 23:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755215501; cv=none; b=YkDpMT9NkeEjGhHKQd9AJ8DNidQ8offx7bv0xheKx0RfJ7WGDdzHzdEGyCSwBpoHJzqbpyt3d6hzhjvuSN5TKzc3l9SUMpw0R4+ouGnXH67lKZiwtVk+dPyPAHCMGnFu8rPU7k8X5UX86nxGaCpChLWg39blwpN2L8H4Flg++YE=
+	t=1755215505; cv=none; b=EAcsOl04EAQMw4Pmio8WXk/7PtGl6KYMfEatGw4HmRDKEGacrQZMRxvwKdzlftt52rjrGh5AG74G8XaRZDoHJyoarptDCYH/rUWH/eJ7ZQDtFxpTaFKBx1D1qqWVyQT/HzqofnJREgY1Fl688DZR9JDbraJlUSRmVSADIvpO94s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755215501; c=relaxed/simple;
-	bh=2n94DsaYW8+z/Lopclv4vX5S4Y4wycOMolwIYeLNa34=;
+	s=arc-20240116; t=1755215505; c=relaxed/simple;
+	bh=asOTpRAypgyLlYTi0bpBylaBLW3+utCQmQ99IwkscyA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=brmPDtlzlMZpJmmDgdbjRWYM3r2r6v1VcA/pB0iNplwHYQoMtI1zCM6dDkxbD/x3YUSbOCTVj1kQapDYihq3e3M58eO/59ldSIpnrSRsLM4wohLdZ+tzfYbCe+bCcvL39AEXxlQ99koRiUyfEFhGCetCfcOBoxPkNeKPwYlt2IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlqE8CUp; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=nHdSTys/SuBMRYLJIG84Z4dK7Dzr5piY3tjIM1Yrr2wHErkjLb22hkr5tiHtf60g2QrPk7rO3LVF06lGwnSTPNgbxg97xwOxpiz4wUwbg/eav+LnsfF0aRLQv8OaqjvccjrZKOuKtyzE0YOKzrLQHBbvW/wbR6J5iHxr6brR5B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EI1rBcCH; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso1495415a91.3;
-        Thu, 14 Aug 2025 16:51:39 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b471738daabso1262751a12.1;
+        Thu, 14 Aug 2025 16:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755215499; x=1755820299; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755215503; x=1755820303; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E2VSupQXoP8YqYXsuIF2giuu4fjV7712IjHFWMUrrh4=;
-        b=AlqE8CUpxTKQiATz5F+Jc5nrcXPFg1a2C7adKnUYde191980DST5oggLYeCO5gYOsw
-         IhReKsRIbwgS9/mN6xz/GUvglsQd2gFr4n+bnpjXBDCV7PfSORtfbYvoqqpwj+BU/B0y
-         a0fUBMjC97AItL3YrAVcI/e8SqJ7MTqW5n/+TWtwwUMT6RePxYQMReXMDJCH1b6pLz01
-         40Ty6MVVubGxWiumTPOhwOdKDTsO7feuXVI4LHReeVmoADkioI68LXTRkIofs46Yp1Vr
-         5RO3slAKn2gjV1/RO4MWr851sD/W0a/aJMD18r3ADDvwtmYhu4sE79OpawVXn3TWeJ6C
-         DMMw==
+        bh=Jxup66pfr8/p9NkkM91B1cTk1IwvSqJa2cpo7xSf9BM=;
+        b=EI1rBcCHxJS/n7Pj5H/6siatMvrJ3PqO9G0RnEAo8/INkWbmavvphK36poxH/yKD4V
+         ORgelx6NAyqnDVzmMtc2moiD8rfIaLvTEAAzvgeJb1X+WG6Oq91KH2xU0hxM1TRrEtRn
+         ZN2k9fF8V9tdgpymUe/x7Jx4fARp17UopHg63EgERbYIJOPWfT7Q5h+21Jo2XL307ZPz
+         WHjfRYfn8KANlhUj0so/t2+MD96AIcL1gsfa1rX+tCjI8CCZFTqByEyhpUvr3Ss+Vmy8
+         SKqfUQM8npwTO5AghSDg8G8I6k8YyP07kvIyB3eto5uYBUcPLMe24AImAX6U/PA1nc4e
+         ZbAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755215499; x=1755820299;
+        d=1e100.net; s=20230601; t=1755215503; x=1755820303;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E2VSupQXoP8YqYXsuIF2giuu4fjV7712IjHFWMUrrh4=;
-        b=AxF7pqhzXQZuNbEbONgZKsV+/UIyEc0XfW8ptTge5RDSE2GWQdXgTOTtEOIJPi4stP
-         CcJvlTq18wSOZwrqIJS/dSLExiNjzbFTQaiY3QUvs3z/CB5fG6LdGtNGdk5yRUNWyFZn
-         u5o7GxNNzTweQknnSZNk91aygSH4zSYoKlwDVwlhJr42S739R+g9ld5hx5dEGqxFg5S5
-         P7xJ8hd5tEKKK/kuSvyuXWHbrzNNMIZSDoXq0clP8Jb2K4LMvSCmPukiUxO6qvWjA5g/
-         FyKhCMpcxFZnuYvNFcVaFEn7BwOgYWlHRNPgtcpHFeSq8J+h/3NpU9wnV7zCR1XEl9JZ
-         02Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAa4F5yfTqd6cp7Yt5UfYwD/pdc545KD4DZsePDXD+UtANaCpKa3QaFLOv6ODrnB/4Sj0+jggMfubw@vger.kernel.org, AJvYcCWXg9FZnDYkVps57a182DvzkwyoitekHlmcIugwQfdB9CMwuIQi+HErCIi3AAfhgvEok443j4UN/stSl9WP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5aBq9gReO/MAG3tjC7mvf4rX0BgOUTZv0ta8yLBIclZSFFNQK
-	5Se4ioW5rBKl59v9Q6bExgl07oNdxN00xxcWykLVjrcziAl5/QbbdQ37U4ZiG9TbnWI=
-X-Gm-Gg: ASbGncuvWJNkaEme1ZbmahT0vpW9dNrXmi9vsDzdcZIMC6CT4wo6JOLeyXlEUrBMlLR
-	JqhoHs3sq/a2jnNFBwQ2nq9x2aOTCjHbc+EulhP0gI7kGMmDMuDTYsSd1Klog1WGwvgcHtz/Wuz
-	6lXmyKy/IVHDH7GhtqeT5fLW4orLT+XfsdKj5FcHPWIogCIAgK9ANWA6MnqWGXliajkK/vC2Rie
-	vV/N6P1sz1cPGaLxFhSmaWheH2k0QYegaxcNv+mPszl0vGRtqMTH2OvnTCY7pdnfEfIAFB54a24
-	+Tq4p/7RUF5orOJSASN3OGrx7sQ4uFG/FKpk25MhnpYLC+wX0qyNCObU+E2VmZjOHLdvbRypkee
-	+o2AsmUp9JuHEwkEvSWqcInpm
-X-Google-Smtp-Source: AGHT+IGct/gy+4M646U4Q+PFW6aiVMNePO9JYxsr+oIfHdHu2uFRt2C6YSzNtY/qz1sTIejJa6cFxA==
-X-Received: by 2002:a17:90b:388c:b0:321:abd4:b108 with SMTP id 98e67ed59e1d1-32341ebf8cemr243444a91.12.1755215498757;
-        Thu, 14 Aug 2025 16:51:38 -0700 (PDT)
+        bh=Jxup66pfr8/p9NkkM91B1cTk1IwvSqJa2cpo7xSf9BM=;
+        b=PTK8tN2ZUcwJAvcBeZBwEoIg4ztA/w+3fa3QKx759xNmneT2ibasiN6QkfFQkZjtY1
+         XStNjFzdYAQBIX7/9vhEt+WqWYRoZ8Sqosjouv4tXUjWBw6FHfDCtF2U6ExI6CBLN2F2
+         tlrQxCUNgHBCLoDdA2FaR5jkRg0pHwYmbwnWFjYfSob4qZqpeG7fUr/c83b8cZYN7KNw
+         80OlxDA4obzqyWmbxF3t5l8fkN6n0iBojvailpKpvVhy2/V5V+1bt0z6wYS1x88ToVkZ
+         PhsIeS2CLds1DiHGSx4/0PMjEdW2ljB2QUXPSxnN0PeU7Pk/OzQFvsJt+tkRmaBRV62V
+         3xwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdgKyzXfCNgYYHQBEKEZIEDARYYiMgZX+Fs7NX9Vli3H8RM5jznzufmqVzZVsmdfik22rzUsC4I9U@vger.kernel.org, AJvYcCXhf+g1P1ZiBcOpJLpVC3DW3xFuetXMdZcDtjVCASodIrVxqufKD7AbqX5M68aXRsEE0bmYpI8MZdvzsk8u@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTkd58U8meOkpxD0GKB9E1afdirtNMmTI2LQYA4TiNcgM8qvu2
+	ahmcLoqLB1hqTY2hReVRfSDS4iIX8NI+Zhsten4Yy/dRJKB8q5Jf2edrsnp817ad3Tw=
+X-Gm-Gg: ASbGnct45Vy7cw7FDG3J0D3XUwYXuO+ol7ulEIEC5tOKUeYlzRA6bX1AWskDRKGYF8R
+	61ZesjgwiYm/KVEFEZXp8MD4FAgR60rHRi2GKvMi8mx4rB6xfjhRbJ35uF1V7segw1/TyIA455s
+	2f8wVLXOudw4JLmR9V5uT586LGq1Esg6MRuiM4wuGy8XFltOVh9qd9+BWRjAGE2suisikEQBVNB
+	/NSGHEZGVbURTtZo3PUhVZVyabwLQ8igEMxCVTYJx8VpDaEj3Bhig/BcZB/WaWoG7IjtkqOdW/H
+	MtJzy1njTRenbpLKEAbghpvoZ119FkhF/5qxX4aesWS8UpGlmlHyDQd0cumcHsCtQg6RejvnV8a
+	B1kenCnFd2WKWjKddhIXiulFk4zVkeJRn24I=
+X-Google-Smtp-Source: AGHT+IER5rL07BFeC/d7WXNfT5fr0k1TplZfTVlqw9vyPXSi3WMCYFQVTQVfje5UA0lzxjhVgbw/7Q==
+X-Received: by 2002:a17:90b:2683:b0:31f:59d1:85be with SMTP id 98e67ed59e1d1-3234215846bmr187614a91.24.1755215502635;
+        Thu, 14 Aug 2025 16:51:42 -0700 (PDT)
 Received: from jicarita ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233100c1d0sm2974721a91.17.2025.08.14.16.51.37
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233100c1d0sm2974721a91.17.2025.08.14.16.51.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 16:51:38 -0700 (PDT)
+        Thu, 14 Aug 2025 16:51:42 -0700 (PDT)
 From: Thomas Bertschinger <tahbertschinger@gmail.com>
 To: io-uring@vger.kernel.org,
 	axboe@kernel.dk,
@@ -81,9 +81,9 @@ To: io-uring@vger.kernel.org,
 	brauner@kernel.org,
 	linux-nfs@vger.kernel.org
 Cc: Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: [PATCH 1/6] fhandle: create helper for name_to_handle_at(2)
-Date: Thu, 14 Aug 2025 17:54:26 -0600
-Message-ID: <20250814235431.995876-2-tahbertschinger@gmail.com>
+Subject: [PATCH 2/6] io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
+Date: Thu, 14 Aug 2025 17:54:27 -0600
+Message-ID: <20250814235431.995876-3-tahbertschinger@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
 References: <20250814235431.995876-1-tahbertschinger@gmail.com>
@@ -95,138 +95,135 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Create a helper do_name_to_handle_at() that takes an additional argument,
-lookup_flags, beyond the syscall arguments.
+Add support for name_to_handle_at(2) to io_uring.
 
-Because name_to_handle_at(2) doesn't take any lookup flags, it always
-passes 0 for this argument.
+Like openat*(), this tries to do a non-blocking lookup first and resorts
+to async lookup when that fails.
 
-Future callers like io_uring may pass LOOKUP_CACHED in order to request
-a non-blocking lookup.
-
-This helper's name is confusingly similar to do_sys_name_to_handle()
-which takes care of returning the file handle, once the filename has
-been turned into a struct path. To distinguish the names more clearly,
-rename the latter to do_path_to_handle().
+This uses sqe->addr for the path, ->addr2 for the file handle which is
+filled in by the kernel, and ->addr3 for the mouint_id which is filled
+in by the kernel.
 
 Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 ---
- fs/fhandle.c  | 61 ++++++++++++++++++++++++++++-----------------------
- fs/internal.h |  7 ++++++
- 2 files changed, 41 insertions(+), 27 deletions(-)
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/opdef.c              |  7 ++++++
+ io_uring/openclose.c          | 43 +++++++++++++++++++++++++++++++++++
+ io_uring/openclose.h          |  3 +++
+ 4 files changed, 54 insertions(+)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 7c236f64cdea..57da648ca866 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -14,10 +14,10 @@
- #include "internal.h"
- #include "mount.h"
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 6957dc539d83..596bae788b48 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -289,6 +289,7 @@ enum io_uring_op {
+ 	IORING_OP_READV_FIXED,
+ 	IORING_OP_WRITEV_FIXED,
+ 	IORING_OP_PIPE,
++	IORING_OP_NAME_TO_HANDLE_AT,
  
--static long do_sys_name_to_handle(const struct path *path,
--				  struct file_handle __user *ufh,
--				  void __user *mnt_id, bool unique_mntid,
--				  int fh_flags)
-+static long do_path_to_handle(const struct path *path,
-+			      struct file_handle __user *ufh,
-+			      void __user *mnt_id, bool unique_mntid,
-+			      int fh_flags)
- {
- 	long retval;
- 	struct file_handle f_handle;
-@@ -111,27 +111,11 @@ static long do_sys_name_to_handle(const struct path *path,
- 	return retval;
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 9568785810d9..ff2672bbd583 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -574,6 +574,10 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_pipe_prep,
+ 		.issue			= io_pipe,
+ 	},
++	[IORING_OP_NAME_TO_HANDLE_AT] = {
++		.prep			= io_name_to_handle_at_prep,
++		.issue			= io_name_to_handle_at,
++	},
+ };
+ 
+ const struct io_cold_def io_cold_defs[] = {
+@@ -824,6 +828,9 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_PIPE] = {
+ 		.name			= "PIPE",
+ 	},
++	[IORING_OP_NAME_TO_HANDLE_AT] = {
++		.name			= "NAME_TO_HANDLE_AT",
++	},
+ };
+ 
+ const char *io_uring_get_opcode(u8 opcode)
+diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+index d70700e5cef8..f15a9307f811 100644
+--- a/io_uring/openclose.c
++++ b/io_uring/openclose.c
+@@ -27,6 +27,15 @@ struct io_open {
+ 	unsigned long			nofile;
+ };
+ 
++struct io_name_to_handle {
++	struct file			*file;
++	int				dfd;
++	int				open_flag;
++	struct file_handle __user	*ufh;
++	char __user			*path;
++	void __user			*mount_id;
++};
++
+ struct io_close {
+ 	struct file			*file;
+ 	int				fd;
+@@ -187,6 +196,40 @@ void io_open_cleanup(struct io_kiocb *req)
+ 		putname(open->filename);
  }
  
--/**
-- * sys_name_to_handle_at: convert name to handle
-- * @dfd: directory relative to which name is interpreted if not absolute
-- * @name: name that should be converted to handle.
-- * @handle: resulting file handle
-- * @mnt_id: mount id of the file system containing the file
-- *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
-- * @flag: flag value to indicate whether to follow symlink or not
-- *        and whether a decodable file handle is required.
-- *
-- * @handle->handle_size indicate the space available to store the
-- * variable part of the file handle in bytes. If there is not
-- * enough space, the field is updated to return the minimum
-- * value required.
-- */
--SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
--		struct file_handle __user *, handle, void __user *, mnt_id,
--		int, flag)
-+long do_name_to_handle_at(int dfd, const char __user *name,
-+			  struct file_handle __user *handle, void __user *mnt_id,
-+			  int flag, int lookup_flags)
- {
- 	struct path path;
--	int lookup_flags;
- 	int fh_flags = 0;
- 	int err;
- 
-@@ -155,19 +139,42 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	else if (flag & AT_HANDLE_CONNECTABLE)
- 		fh_flags |= EXPORT_FH_CONNECTABLE;
- 
--	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-+	if (flag & AT_SYMLINK_FOLLOW)
-+		lookup_flags |= LOOKUP_FOLLOW;
- 	if (flag & AT_EMPTY_PATH)
- 		lookup_flags |= LOOKUP_EMPTY;
- 	err = user_path_at(dfd, name, lookup_flags, &path);
- 	if (!err) {
--		err = do_sys_name_to_handle(&path, handle, mnt_id,
--					    flag & AT_HANDLE_MNT_ID_UNIQUE,
--					    fh_flags);
-+		err = do_path_to_handle(&path, handle, mnt_id,
-+					flag & AT_HANDLE_MNT_ID_UNIQUE,
-+					fh_flags);
- 		path_put(&path);
- 	}
- 	return err;
- }
- 
-+/**
-+ * sys_name_to_handle_at: convert name to handle
-+ * @dfd: directory relative to which name is interpreted if not absolute
-+ * @name: name that should be converted to handle.
-+ * @handle: resulting file handle
-+ * @mnt_id: mount id of the file system containing the file
-+ *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
-+ * @flag: flag value to indicate whether to follow symlink or not
-+ *        and whether a decodable file handle is required.
-+ *
-+ * @handle->handle_size indicate the space available to store the
-+ * variable part of the file handle in bytes. If there is not
-+ * enough space, the field is updated to return the minimum
-+ * value required.
-+ */
-+SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
-+		struct file_handle __user *, handle, void __user *, mnt_id,
-+		int, flag)
++int io_name_to_handle_at_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
 +{
-+	return do_name_to_handle_at(dfd, name, handle, mnt_id, flag, 0);
++	struct io_name_to_handle *nh = io_kiocb_to_cmd(req, struct io_name_to_handle);
++
++	nh->dfd = READ_ONCE(sqe->fd);
++	nh->open_flag = READ_ONCE(sqe->open_flags);
++	nh->path = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	nh->ufh = u64_to_user_ptr(READ_ONCE(sqe->addr2));
++	nh->mount_id = u64_to_user_ptr(READ_ONCE(sqe->addr3));
++
++	return 0;
 +}
 +
- static int get_path_anchor(int fd, struct path *root)
- {
- 	if (fd >= 0) {
-diff --git a/fs/internal.h b/fs/internal.h
-index 38e8aab27bbd..af7e0810a90d 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -355,3 +355,10 @@ int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
- int anon_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		       struct iattr *attr);
- void pidfs_get_root(struct path *path);
++int io_name_to_handle_at(struct io_kiocb *req, unsigned int issue_flags)
++{
++	struct io_name_to_handle *nh = io_kiocb_to_cmd(req, struct io_name_to_handle);
++	int lookup_flags = 0;
++	long ret;
 +
-+/*
-+ * fs/fhandle.c
-+ */
-+long do_name_to_handle_at(int dfd, const char __user *name,
-+			  struct file_handle __user *handle,
-+			  void __user *mnt_id, int flag, int lookup_flags);
++	if (issue_flags & IO_URING_F_NONBLOCK)
++		lookup_flags = LOOKUP_CACHED;
++
++	ret = do_name_to_handle_at(nh->dfd, nh->path, nh->ufh, nh->mount_id,
++				   nh->open_flag, lookup_flags);
++
++	if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
++		return -EAGAIN;
++
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_set_res(req, ret, 0);
++	return IOU_COMPLETE;
++}
++
+ int __io_close_fixed(struct io_ring_ctx *ctx, unsigned int issue_flags,
+ 		     unsigned int offset)
+ {
+diff --git a/io_uring/openclose.h b/io_uring/openclose.h
+index 4ca2a9935abc..3d1096abffac 100644
+--- a/io_uring/openclose.h
++++ b/io_uring/openclose.h
+@@ -10,6 +10,9 @@ void io_open_cleanup(struct io_kiocb *req);
+ int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_openat2(struct io_kiocb *req, unsigned int issue_flags);
+ 
++int io_name_to_handle_at_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_name_to_handle_at(struct io_kiocb *req, unsigned int issue_flags);
++
+ int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_close(struct io_kiocb *req, unsigned int issue_flags);
+ 
 -- 
 2.50.1
 

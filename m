@@ -1,133 +1,134 @@
-Return-Path: <io-uring+bounces-8977-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8978-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35C4B280E1
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 15:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750B5B28290
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 17:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0DC1CE73D0
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 13:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05F91888E9F
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 15:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9225527979A;
-	Fri, 15 Aug 2025 13:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38631E9B3D;
+	Fri, 15 Aug 2025 15:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQr4Yy0i"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bxzZBzV1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60E71B5EB5;
-	Fri, 15 Aug 2025 13:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF9A19DFAB
+	for <io-uring@vger.kernel.org>; Fri, 15 Aug 2025 15:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755265928; cv=none; b=sVtU8mFtqU3uVwvTMJh79Nn+hexW9BQsXc+o2yThA0FB0s44Gi0PYAK8Wo9Z6AtTUS92oD5tmEJ8HutjCojuo5DD8+SUMAYPPN/cw0YRZexnOZRNq3409jtrDv88SpL8fHp14i72/rNZOw3622BUUWsSSx+IXqcFMZHAU8lXe3E=
+	t=1755270106; cv=none; b=KUi0W952vARNWednEO1PIMbbIdcmt+2lg6UjL1lRC3rvTpzMEYu/oVFA1v8+bUVd5TzxGKJ+q+yEZ6jFUO0h7wloPuBdrLvQ7d2r8jYHQYZ6mZY5d34+7oWncPrILyDY8gII3yNoM4My7tAp0uvm3gb+QyJBys9zTzzpG9G7Fxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755265928; c=relaxed/simple;
-	bh=dVGzi4c4OVoWTrF1Pr7Q/JyDFc5S4I9xNjzuV38JcKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0kM1VShxPCpNIsTkcFCwIlEsTbeYho9Acq9zeosFocdRRYr2w/2AFOqxgmmEjBGOMI1Q1M9e9Jx4bf5aPqAY0DhVfFK50jJjJn1gP8lRUzkE+HNdpfw566hvne6xzBHHPtLY+QTvr96Gw/9L3DHKLj8fBYxkM4+vum8TKqvWyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQr4Yy0i; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so699380a12.2;
-        Fri, 15 Aug 2025 06:52:06 -0700 (PDT)
+	s=arc-20240116; t=1755270106; c=relaxed/simple;
+	bh=X3GcPSn7X371ROLmgR0KGSc+zfHhYVtGUHPS8bQV3Fw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=l8J9OPbMF1Mdw0ZdUN/fAOXAdJZ1Q5do7FRq60cvd2JVR7iC2+vsZIxWSNqoRgpbRLxSIufOc3aG6tnzT0muX3QTcXXsgQnDEmuainUT4TcQRz0JdZJBS8jsieK5+jHaAl4X3d8CN2H/my5FVzJSfS6zWjwMZ4dT25NxeHDy3sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bxzZBzV1; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326e5a623so1853481a91.3
+        for <io-uring@vger.kernel.org>; Fri, 15 Aug 2025 08:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755265925; x=1755870725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755270102; x=1755874902; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dVGzi4c4OVoWTrF1Pr7Q/JyDFc5S4I9xNjzuV38JcKc=;
-        b=ZQr4Yy0ij7qdmYcwhij1C8GKJJAOUaQqhvhTgz3jicqou049OePQ9e2TcjSJibonYa
-         So7R2Ob+ssP61mNLUv8kc23k2Shi6RevzLqSANgpbdjtx63ogicQly27ADSvC5NCZVU1
-         NxVm/h6YKsIiLIlCTnSoCvKzaosHpjggiYPs5IOPSSURV0gykOSe3RtGG9dDX6hzXXNG
-         Too1tEIssNjayU3e81z/g3j9LPzvGLI1WAW9nmaBsZ91FkMswkv7ZIWreiByZ1MgxNMv
-         GSQvNJmYdL4WjWehrRIzWfZOWYLa3ULQ2c1GyinV7Bni+U/UiYMaxct6Jnp8zxm/Jj2G
-         ivSA==
+        bh=+QgPP7rrng+sy4dcfBblvnjThKqdXt7Hn/5xhtB1OVM=;
+        b=bxzZBzV1Y4AM7nFOsNeK3ChDtVDJId8bjAWljSNyECM8GPUY0/uDjGkkuDpV9VmSeG
+         OtXAII9+RCkfAKdEy226c2h21Je3ELL4aS/snnpRbrtVxPobN1pb6+1lVRKGdt/wgMwq
+         0/pF6eyZBy+v7sH+0ghCRdXzZSUHKEBToCI22yDg05cFleGslkO31keeVM9DjZa1wrRh
+         eN4tkkpESpQ6r6Se7YlwoEMhqRoR8RzZ3YmJMsxuXVKHRT9mq9ORzRr7g1YcUm+GXAHn
+         8YEDY+GMC3SGip6kKIBCKAM6LNbj9i0i1ssq7BG3y9qg6lfcGMWkZn1J/wA2IeozqEXK
+         uOEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755265925; x=1755870725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dVGzi4c4OVoWTrF1Pr7Q/JyDFc5S4I9xNjzuV38JcKc=;
-        b=GYG+lie28YMFNPA1sLYOJk95cdgQn96bYHO1ID3dXhY6OJx9OPtGih3ztqcCGaXHnf
-         jIHqmfgFsVKgZWsUnSkEKIJvRHsLmmwqwmQ6ypquJGyG4MJr+PxlU8APD7wjF8hH8KU9
-         bMMWGC9r9zlVYcxDzeliGBqNHoqqxewqjAERSTPZPgg0uZPUiCKpVKnDSkkLdOsLa/8P
-         NWI2XJFAXhAwg5Z8YUdVUuUijYy0MSE1QaAHPqXN+xItTbZIlNAbBB7pJqszHcQN7HL0
-         5ffe/TR2Y9CcsbGqSD6BLSJ+73Hjokvsv6Qtnb2PpTD7pvUdKHdxsdbV/okvr6O7CmnC
-         ZIrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3fqcWZBk/qgDZmE8YGggsoHrgq6JhGxCWyjWKbTKaNSIlOxFSrNS80PNOIDUsv84j6BS5I67Y8+IX@vger.kernel.org, AJvYcCXzY42Qd1YuvHz8SJytPz1vADjdcNKrcvq84uiLVKzCnsGAoxdmnIRjbiIjT7bqFrnb5k2jzz1uKg==@vger.kernel.org, AJvYcCXzvY6TqtQbrv1BLtax4XU1BdI2zVq22+RnzN8BH2tTnl9ALpsd3UercqDJMc3EqpfdVZYCev2k70qAJHQSFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0g0bJlKvI1DCW16stnSeb77qraE9IYmfk8xTdCnmWavg8uolm
-	p8w1EmcNHlXB5k73LkKomOEjQwVPFBVbsN8v2WrJvp/2ReEf2lQXXpy70BUXE9ZLpkBoji9zvCt
-	VTYKjK9wIyTzGb/APWLrX7gEivmhglU0=
-X-Gm-Gg: ASbGncv/+yVXi/80RhwjnWmTBit1/kL/Q/SUuG1XTLKIaKkbRTqvQtgIxoj3mTgy/aK
-	GQXB12dayyxnp/+i5VfWXAu9h6sLLHS0xlrhN5dee8CcB+enO4u/WUlYdpMTjt911sFUzKwkfob
-	orG4FV+VumVWwhzHpJPVtPyk6NpJ4A+kxxrEhrW6hOiQRJ+4S1wxaWY8muMUWubVtCqa/4uTuFr
-	TyNGf8N/ygsd72h3w==
-X-Google-Smtp-Source: AGHT+IEtohHeYFXL04gnIB+eqg/0kHeWZ4aGAqbAUbGdpcEPHGxC0qI3MG7JkgB/t2/JklA2l8oWpKtZxxKug6zbnQ4=
-X-Received: by 2002:a05:6402:46dc:b0:618:3a9d:53ee with SMTP id
- 4fb4d7f45d1cf-618b055c7d2mr1934278a12.28.1755265925031; Fri, 15 Aug 2025
- 06:52:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755270102; x=1755874902;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+QgPP7rrng+sy4dcfBblvnjThKqdXt7Hn/5xhtB1OVM=;
+        b=VvCEo5PoaJI7LzKgjGMYlu0gNst9og7mCQCwI0HxEoNXHmVTh22tglT8ok2uhK7jmT
+         ErOmo2d4oyvwu5DbXzJwIvthutbiMkQ0FCKmH2r8tFRzgLOOga6ocu3pG4BITMW0VNQP
+         kUJlNLc688ZUXu7Ne3JjwvKHsbHaCcUXjb2GAb58FwN34yZwlC3zSW4a89TYMSboWcHu
+         a2VCT1R6pTjdUviPQxSf9QojQ5yUwLblJsNR2Cs9vvvijN5R9d+i7UeuZC9pDWHz3J/Y
+         OjYFMVlljzx8KTcgIWQgat3aj88JUzpmqVT5vSQTBYwRsnLO8rMwH2V+0//jKQ1xNJOA
+         k5Qw==
+X-Gm-Message-State: AOJu0YyiaxATO7fLk0zqXkhatzFREvk80MxvDIpq+GyTxPZ2q6hmpcOm
+	SP4hBAoDc+jyzk5Mg4a+FMGJW1I3NhfV1hZEyiW4yRerWQf+3/8AXRiWjy5l3g7YscwTwIoDnal
+	zaHQy
+X-Gm-Gg: ASbGncv5oBMxMwyAvh7JdqV9XYci1myTtwpF8uzhekExhsZSM0lZ6VC8D73qjXv0VmB
+	3TA8ghxMTHTzGOczmBS0nWcCkHKBbrj3SyJ1JrahkgMtyr1gSHrYqYfJ8Hwaa93eveNkFWXyhpT
+	+QDOjNYF6vgEzcJlIuKKrxvl0HMwj9JGEbcCZ3XVXYXyHEFTo8vQJywqfqgk9XjvvZHBfQGqR/a
+	ujk6KD13oEG8ohV5DLK+JwpFVF4UnWGHILA05lKP6fqSxWxr/5rC5CmIIhYhuVf1aE9ygbdpSWo
+	UiIjf6qRbxlINBNFvvVMN+0PGNzvuwdPDU35jATlXqQY0RMkhkyOqBcqoMrKR1LVeOJt7o7xA4N
+	VIUP1xPQjX4vRY2SyHXg=
+X-Google-Smtp-Source: AGHT+IFQm9VmP8byb3xb6vz7CRxKRqr+O5+CtZEGijMhZQE6eic2iKaDWrccXPQDSVgLgJSPIulGEA==
+X-Received: by 2002:a17:90b:540d:b0:312:f2ee:a895 with SMTP id 98e67ed59e1d1-32342103586mr3221445a91.31.1755270102244;
+        Fri, 15 Aug 2025 08:01:42 -0700 (PDT)
+Received: from [10.2.2.247] ([50.196.182.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d794a4fsm1485622a12.57.2025.08.15.08.01.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Aug 2025 08:01:41 -0700 (PDT)
+Message-ID: <dc23ce94-35bb-4224-8b9f-2d456f05a561@kernel.dk>
+Date: Fri, 15 Aug 2025 09:01:39 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
- <20250814235431.995876-4-tahbertschinger@gmail.com> <CAOQ4uxhhSRVyyfZuuPpbF7GpcTiPcxt3RAywbtNVVV_QDPkBRQ@mail.gmail.com>
- <20250815-raupen-erdgeschichte-f16f3bf454ea@brauner>
-In-Reply-To: <20250815-raupen-erdgeschichte-f16f3bf454ea@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 15:51:53 +0200
-X-Gm-Features: Ac12FXwHs77cA6iVE55I-ATj1tLTN8mqAHB8F3bMS6x9dNdEXtmz550_bNOcQ8w
-Message-ID: <CAOQ4uxgBXeE3N5Pq8p=3AgH_cFnkzOK=ipiZHwx6i_C6Oghc3w@mail.gmail.com>
-Subject: Re: [PATCH 3/6] fhandle: do_handle_open() should get FD with user flags
-To: Christian Brauner <brauner@kernel.org>
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.17-rc2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 3:46=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Fri, Aug 15, 2025 at 11:17:26AM +0200, Amir Goldstein wrote:
-> > On Fri, Aug 15, 2025 at 1:52=E2=80=AFAM Thomas Bertschinger
-> > <tahbertschinger@gmail.com> wrote:
-> > >
-> > > In f07c7cc4684a, do_handle_open() was switched to use the automatic
-> > > cleanup method for getting a FD. In that change it was also switched
-> > > to pass O_CLOEXEC unconditionally to get_unused_fd_flags() instead
-> > > of passing the user-specified flags.
-> > >
-> > > I don't see anything in that commit description that indicates this w=
-as
-> > > intentional, so I am assuming it was an oversight.
-> > >
-> > > With this fix, the FD will again be opened with, or without, O_CLOEXE=
-C
-> > > according to what the user requested.
-> > >
-> > > Fixes: f07c7cc4684a ("fhandle: simplify error handling")
-> > > Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
-> >
-> > This patch does not seem to be conflicting with earlier patches in the =
-series
-> > but it is still preferred to start the series with the backportable fix=
- patch.
-> >
-> > Fee free to add:
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->
-> I'm kinda tempted to last let it slide because I think that's how it
-> should actually be... But ofc, we'll fix.
+Hi Linus,
 
-You mean forcing O_CLOEXEC. right?
-Not ignoring the rest of O_ flags...
+Two fixes that should go into the 6.17 kernel release:
 
-Thanks,
-Amir.
+- Tweak for the fairly recent changes of minimizing io-wq worker
+  creations when it's pointless to create them.
+
+- Fix for an issue with ring provided buffers, which could cause issues
+  with reuse or corrupt application data.
+
+Please pull!
+
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.17-20250815
+
+for you to fetch changes up to 9d83e1f05c98bab5de350bef89177e2be8b34db0:
+
+  io_uring/io-wq: add check free worker before create new worker (2025-08-13 06:31:10 -0600)
+
+----------------------------------------------------------------
+io_uring-6.17-20250815
+
+----------------------------------------------------------------
+Fengnan Chang (1):
+      io_uring/io-wq: add check free worker before create new worker
+
+Jens Axboe (1):
+      io_uring/net: commit partial buffers on retry
+
+ io_uring/io-wq.c |  8 ++++++++
+ io_uring/net.c   | 27 +++++++++++++++------------
+ 2 files changed, 23 insertions(+), 12 deletions(-)
+
+-- 
+Jens Axboe
+
 

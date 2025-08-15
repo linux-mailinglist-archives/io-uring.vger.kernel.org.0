@@ -1,229 +1,251 @@
-Return-Path: <io-uring+bounces-8969-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8970-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63943B27D90
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 11:54:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA02CB27E1F
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 12:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4A43A8ED6
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 09:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D9658623F
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 10:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8A2FC86D;
-	Fri, 15 Aug 2025 09:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791B2FB981;
+	Fri, 15 Aug 2025 10:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN5wKq9r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgGUGj2Q"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D592E2F1E;
-	Fri, 15 Aug 2025 09:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DED92E266D;
+	Fri, 15 Aug 2025 10:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755251553; cv=none; b=sea620NXouhc03sn5yoUxcYA45dH9I+uWfPDz584ovmLph/ZeO1GGRmhciwfRDmT32fBC8lLsUejcHHqnBoupHXn6/B7Nn0R1r4rMU+RM5k/UvorYxN226eIPaXrMtgvfCtjUBA3UAR8J1IDArcU0smdxhr5Axurtt8HKIbVWZ4=
+	t=1755253324; cv=none; b=mSD/mDm9QZEpzO2YIUlL8h3mo4CO3ojXhaj0zSC8L7xSkG3EbmR58Y2OO8nHwXMk2zZSbIAC6Sv/OYW2TPRl1S3oiMbKyevDUyQBrLFzNtjHxn12cXis8CcJ3EzV/XaebPtM+lDtj/PHYQ53ZoFI3juSVxIrLZcjcjfHFXDk6fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755251553; c=relaxed/simple;
-	bh=rK0LrA4zSH9O3dZ4jH9jEs9yueXGcZLsdHBrnZIcYuU=;
+	s=arc-20240116; t=1755253324; c=relaxed/simple;
+	bh=w4aEl0lApqJYQI9NlKPFKNjOLq13vE6LRgzQNymqmMY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FDqiUorOb0kHoHR2C54RgsHPUdG+bffbsuXH4e9OhAkzoSep0Qce2oXSHuYpOh98CsxYNnc9wFnUKx9zHbXeTjotoGVa6/IRYl3X7qLjMicXtVW1DfUKBCWFNmqRMzINfAKVORtgw7rI7P9v3Tusft7WKhZ6NdWwVzVTy51nmxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN5wKq9r; arc=none smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=CRFa/m5AHarwpR3t0ISz3HHPe3GmASzJLRi7DnTFRoKwUPi1KB45cFotJC0WJHjppbcA76zF7wg2qju+Y1CT6o6/9zmft70z0I16FOc4Z8PZmVLceKnL2c+/WPwY2EH3jF4LE9z7XlXYFWS4hneKPpv7a2bBIIPT6D3SKcvlKZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgGUGj2Q; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618690a80e8so4161396a12.1;
-        Fri, 15 Aug 2025 02:52:31 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so2485881a12.0;
+        Fri, 15 Aug 2025 03:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755251550; x=1755856350; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755253321; x=1755858121; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
-        b=AN5wKq9r+NhixE6OTAk04unDPWlwVs5o6F6NewRNNC8Oji7ZVijlp+m1ZRAgcgvmw3
-         uvzeeDwOOVDnMoy5A85nUyERkHTudH1jUXRzDaC1lOVZNBB/7c/y05oQDi6lFLFnTVdA
-         jkDroWZUEr+xXJxQXK8+ljIQyBNtAiQpl8FOU+3+IqE4SAM9C+rLkoJxL4WTPfWP3Xj8
-         TKUARQbdru0ImxDOw81es1HcVDaWLsWsnrz4C4e/uLIXc988eoSDwiuOK/pMkCo2KnCI
-         zHR8bROR35vHQFqBW5dw2AqLbDuKdaoCdW0pxCp9uKS6UxDtSMs/R4UgH186Idh3KvZh
-         K+2g==
+        bh=1YIaHosLVSZwNA729fs3/zikOyAwrs7RZ03+ETubjXs=;
+        b=LgGUGj2QvUydQxFyX/sdDssSiySwQucA7frz6NSQ7RkJ+YtfXcI9fd5VuU1ez+1T5b
+         k5+mbUddqKytXWsljiMdyYkWD6nBt7XO3Qxa3C1uYcfnCG529O/1C9tQKW8SJiEdpDGX
+         MoJMs6aMbCg1l19c5deLzuf8KhxxPVyRhbMCE5ZflB8Yu2s7SF+M34mb7U5hfnd6OBz1
+         EiRT38F4UWD9JKUU3B/7bg91VV6H/6r+J5zYd0oqJRj1NkgrWI3YkSFS2tUgygPMXsg/
+         fzfoxEyb8RfwY4BWZQMFVAespQ7uwEsViqu38Ql2thjPYONnulY4BBSZlXFC0iFq5b3/
+         mIYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755251550; x=1755856350;
+        d=1e100.net; s=20230601; t=1755253321; x=1755858121;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AnpDR0b7uzGMP+NK7SOaQ07XY0U63GM3V7Y+bWzIhIs=;
-        b=GUW1oVKJDuC3cl0yFxOGEwu3foszRBiSu7I57/zwLOHg+v8IjHiRlQNTVyOd6UtXoH
-         +Nz+QzQz7Tcwp6hYinvr371EyC+FeocjwkSS/fyHsd/c7tiB3hr7JkrAUZjELOaDCaxm
-         TqPfHOiNKKCLMEev5jVbgKr3n11VeLa8J2T6VuySBn52ryvVOzrrrBf+6G505iouZAeX
-         YPzzangW8dm3yooLJGem+L+KNWk7438cBGINjgNOjCUQ7fNnlr4Z6ZbYcYyuyhcgOQPG
-         qexTCy7SQnjGGtiWqeWSkNbnZ0DdqGB5my6FZQFqhOzh8aADkt/KRaLok8vWot5kPQs9
-         aTyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5xmWQIgDMPQacg4SnDjLMUoswmQHWWgy25aVOun5lUsi8KuZL5exjbFrBPs3TxaQJdlI4kBrS0Dl@vger.kernel.org, AJvYcCXEtCJ9ynepsM6HFziNjPOT1krSApeGzk5MZsDUJKn+89Qb5CmYEty7mg0439lCPwBcEnull6AazH0P9do6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfHcLrALRdd3fF4FidFmbB+CMB8hEAWplZSsxQdDK17ey9bnr1
-	2IwdEvArqe3K+vpR92BEINz2GPUW3PGWdng1A0KgQvuTF0zvoP62fjPI0a/J24d7KkkzfFNqj+1
-	5P2fEl4Jq9DKKUABIVLBifzJ7wb7vYwY=
-X-Gm-Gg: ASbGncvd83oRSW+pu3ciQMkdcseRapzcJ4ixFQBAkppEJA+ASjVDKCcxCxEhpupNnhK
-	XhJ5esZk61NJkfjWf0yc9nFFL03wESMCl+zzq/F5lRN5qnJBDAgc9MoRfTrvKzMFdhnTDywzUll
-	GVuOojtq2xRrc9uDxk1uUA7b7+/FrEMxlIOHHadd1merXWKjVurGNkNL6rIKCCatj1SR9JemLOp
-	Jr21Xo=
-X-Google-Smtp-Source: AGHT+IExSbuXWYH0j7gS9fP+6TCMuhSbfMKdNcI/x10kAMTAzTZXZv4tZoCmn7/tNiOxDS9H61lK6BRFyy6hdMIBTYY=
-X-Received: by 2002:a05:6402:1941:b0:615:a5f0:2704 with SMTP id
- 4fb4d7f45d1cf-618aed27465mr1306756a12.17.1755251549937; Fri, 15 Aug 2025
- 02:52:29 -0700 (PDT)
+        bh=1YIaHosLVSZwNA729fs3/zikOyAwrs7RZ03+ETubjXs=;
+        b=D2LQ1qo/jBM1LZ3oUX481lNfRv4Dz+jZ2TfCBsG2DZ2+FcaNO0qYLNkdNZ23ad0yz9
+         f5SU8o0lFPyKUydu+cC7LLwSuii2daEAq1eYIrq+MfysFIejUIbl+3vH3l3ToXu/Qoov
+         Wi2r+TEo7/nUBFsgSDRyb3yJqX0iLqXpR5YwMtxr1VSeyAKim5eGF/ng9+9Zxot9jug1
+         bBmXPNpXJL4yRixq4jdGUnYjUiCegIy/ZCLqGEItu1UqNTfxHFkfmS0+7tjZplRWWNDR
+         RY3YElzBVobrAKv01qPtuFHnFy5tks4fEHSFCdGr3d4W4N9jBLA60w7KsmOPLCJOiVQD
+         VmvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWC/qScCa/Q2TbVrnD2iPVVOQxr9K9cYGdYFHqhR174OmijAhqHY6FhGmn4xwHOIcBtJdkBejy4XyfR@vger.kernel.org, AJvYcCXlMpW30pCRSpDtj6V92nPwv8YSsyliIx7DhL2HPurv7lJpV1KfrtBO8JiHANZeDpAen6eKHxCHjZR8U8kM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/95mVjEZqjRwjIITzUZag4xrgECJ1QFpCjLMqQrK18NtClq7Y
+	bjMxocwYX6Xn55V2ULhgR5nb3O6uS0j2jiMzWXDUHlt00ZU0Tg8oTuvGVsu7yTKYqwXoiIoNQFW
+	Q7Qo0+ajrpwaltq/roEBV1NpOE8CqI08=
+X-Gm-Gg: ASbGncu8rGVh3qwvMLvdqAUqmF51I3KAHBESN3u7W6zj+v4Nk0ShENLyysFcB7ek0yC
+	DC3LDLI+2a/av+H84kEfu3mT7ks1lyCQW+pMwgiU3DSAIOXo2C3KLCHd9/abAgIuQhCV9MNDsOu
+	s3tZa9poxRHia3Lj8HFfyqVHhptzoc6Icw25Gh3ZfzyOScteN3czfspzrcSRgc21W8a36nbCXmy
+	P+KF7I=
+X-Google-Smtp-Source: AGHT+IGscOv5sQgzgyYDsGNTWkOBbRIPLNfyQPtvtUsJytBjnXvgWh8SR3/OEKkxjyhtcvHE1TKDfU0MdfrPJBM5kqo=
+X-Received: by 2002:a05:6402:3482:b0:615:a3c2:2e5d with SMTP id
+ 4fb4d7f45d1cf-618b055041cmr1180244a12.19.1755253320568; Fri, 15 Aug 2025
+ 03:22:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
-In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
+References: <20250814235431.995876-1-tahbertschinger@gmail.com> <20250814235431.995876-2-tahbertschinger@gmail.com>
+In-Reply-To: <20250814235431.995876-2-tahbertschinger@gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Aug 2025 11:52:18 +0200
-X-Gm-Features: Ac12FXzLUFABMGMXFMpZDhNVxn8oRYBasH8TVJRvOD796bRN0oySsL2R8qX35As
-Message-ID: <CAOQ4uxij17qNiTq6Gjy0Q_aOv8-k9ggsZ3vFA1Uz-tw-gS7xxQ@mail.gmail.com>
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
- to io_uring
+Date: Fri, 15 Aug 2025 12:21:49 +0200
+X-Gm-Features: Ac12FXzjRZLT_kVCvvhHv19BzsOjHIxX7-ETgbnsJ2xsqrKbqFuRH4Nte-RMLNc
+Message-ID: <CAOQ4uxhPMOoJEK_nVn-fyBX+TzE_EJBb8wmXPg2ZCWfyEA+utQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] fhandle: create helper for name_to_handle_at(2)
 To: Thomas Bertschinger <tahbertschinger@gmail.com>
 Cc: io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
 	viro@zeniv.linux.org.uk, brauner@kernel.org, linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 1:50=E2=80=AFAM Thomas Bertschinger
+On Fri, Aug 15, 2025 at 1:51=E2=80=AFAM Thomas Bertschinger
 <tahbertschinger@gmail.com> wrote:
 >
-> This series adds support for name_to_handle_at() and open_by_handle_at()
-> to io_uring. The idea is for these opcodes to be useful for userspace
-> NFS servers that want to use io_uring.
+> Create a helper do_name_to_handle_at() that takes an additional argument,
+> lookup_flags, beyond the syscall arguments.
 >
-> name_to_handle_at()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Because name_to_handle_at(2) doesn't take any lookup flags, it always
+> passes 0 for this argument.
 >
-> Support for name_to_handle_at() is added in patches 1 and 2.
+> Future callers like io_uring may pass LOOKUP_CACHED in order to request
+> a non-blocking lookup.
 >
-> In order to do a non-blocking name_to_handle_at(), a new helper
-> do_name_to_handle_at() is created that takes a lookup_flags argument.
+> This helper's name is confusingly similar to do_sys_name_to_handle()
+> which takes care of returning the file handle, once the filename has
+> been turned into a struct path. To distinguish the names more clearly,
+> rename the latter to do_path_to_handle().
 >
-> This is to support non-blocking lookup when called with
-> IO_URING_F_NONBLOCK--user_path_at() will be called with LOOKUP_CACHED
-> in that case.
+> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+> ---
+>  fs/fhandle.c  | 61 ++++++++++++++++++++++++++++-----------------------
+>  fs/internal.h |  7 ++++++
+>  2 files changed, 41 insertions(+), 27 deletions(-)
 >
-> Aside from the lookup, I don't think there is anything else that
-> do_name_to_handle_at() does that would be a problem in the non-blocking
-> case. There is a GFP_KERNEL allocation:
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 7c236f64cdea..57da648ca866 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -14,10 +14,10 @@
+>  #include "internal.h"
+>  #include "mount.h"
 >
-> do_name_to_handle_at()
->   -> do_path_to_handle()
->     -> kzalloc(..., GFP_KERNEL)
+> -static long do_sys_name_to_handle(const struct path *path,
+> -                                 struct file_handle __user *ufh,
+> -                                 void __user *mnt_id, bool unique_mntid,
+> -                                 int fh_flags)
+> +static long do_path_to_handle(const struct path *path,
+> +                             struct file_handle __user *ufh,
+> +                             void __user *mnt_id, bool unique_mntid,
+> +                             int fh_flags)
+>  {
+>         long retval;
+>         struct file_handle f_handle;
+> @@ -111,27 +111,11 @@ static long do_sys_name_to_handle(const struct path=
+ *path,
+>         return retval;
+>  }
 >
-> But I think that's OK? Let me know if there's anything else I'm
-> missing...
+> -/**
+> - * sys_name_to_handle_at: convert name to handle
+> - * @dfd: directory relative to which name is interpreted if not absolute
+> - * @name: name that should be converted to handle.
+> - * @handle: resulting file handle
+> - * @mnt_id: mount id of the file system containing the file
+> - *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+> - * @flag: flag value to indicate whether to follow symlink or not
+> - *        and whether a decodable file handle is required.
+> - *
+> - * @handle->handle_size indicate the space available to store the
+> - * variable part of the file handle in bytes. If there is not
+> - * enough space, the field is updated to return the minimum
+> - * value required.
+> - */
+> -SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> -               struct file_handle __user *, handle, void __user *, mnt_i=
+d,
+> -               int, flag)
+> +long do_name_to_handle_at(int dfd, const char __user *name,
+> +                         struct file_handle __user *handle, void __user =
+*mnt_id,
+> +                         int flag, int lookup_flags)
+>  {
+>         struct path path;
+> -       int lookup_flags;
+>         int fh_flags =3D 0;
+>         int err;
 >
-> open_by_handle_at()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> @@ -155,19 +139,42 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
+char __user *, name,
+>         else if (flag & AT_HANDLE_CONNECTABLE)
+>                 fh_flags |=3D EXPORT_FH_CONNECTABLE;
 >
-> Patch 3 is a fixup to fhandle.c:do_handle_open() that (I believe) fixes
-> a bug and can exist independently of this series, but it fits in with
-> these changes so I'm including it here.
+> -       lookup_flags =3D (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+> +       if (flag & AT_SYMLINK_FOLLOW)
+> +               lookup_flags |=3D LOOKUP_FOLLOW;
+>         if (flag & AT_EMPTY_PATH)
+>                 lookup_flags |=3D LOOKUP_EMPTY;
+>         err =3D user_path_at(dfd, name, lookup_flags, &path);
+>         if (!err) {
+> -               err =3D do_sys_name_to_handle(&path, handle, mnt_id,
+> -                                           flag & AT_HANDLE_MNT_ID_UNIQU=
+E,
+> -                                           fh_flags);
+> +               err =3D do_path_to_handle(&path, handle, mnt_id,
+> +                                       flag & AT_HANDLE_MNT_ID_UNIQUE,
+> +                                       fh_flags);
+>                 path_put(&path);
+>         }
+>         return err;
+>  }
 >
-> Support for open_by_handle_at() is added in patches 4 - 6.
->
-> A helper __do_handle_open() is created that does the file open without
-> installing a file descriptor for it. This is needed because io_uring
-> needs to decide between using a file descriptor or a fixed file.
->
-> No attempt is made to support a non-blocking open_by_handle_at()--the
-> attempt is always immediately returned with -EAGAIN if
-> IO_URING_F_NONBLOCK is set.
->
-> This isn't ideal and it would be nice to add support for non-blocking
-> open by handle in the future. This would presumably require updates to
-> the ->encode_fh() implementation for filesystems that want to
-> support this.
+> +/**
+> + * sys_name_to_handle_at: convert name to handle
+> + * @dfd: directory relative to which name is interpreted if not absolute
+> + * @name: name that should be converted to handle.
+> + * @handle: resulting file handle
+> + * @mnt_id: mount id of the file system containing the file
+> + *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+> + * @flag: flag value to indicate whether to follow symlink or not
+> + *        and whether a decodable file handle is required.
+> + *
+> + * @handle->handle_size indicate the space available to store the
+> + * variable part of the file handle in bytes. If there is not
+> + * enough space, the field is updated to return the minimum
+> + * value required.
+> + */
+> +SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> +               struct file_handle __user *, handle, void __user *, mnt_i=
+d,
+> +               int, flag)
+> +{
+> +       return do_name_to_handle_at(dfd, name, handle, mnt_id, flag, 0);
+> +}
+> +
+>  static int get_path_anchor(int fd, struct path *root)
+>  {
+>         if (fd >=3D 0) {
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 38e8aab27bbd..af7e0810a90d 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -355,3 +355,10 @@ int anon_inode_getattr(struct mnt_idmap *idmap, cons=
+t struct path *path,
+>  int anon_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>                        struct iattr *attr);
+>  void pidfs_get_root(struct path *path);
+> +
+> +/*
+> + * fs/fhandle.c
+> + */
+> +long do_name_to_handle_at(int dfd, const char __user *name,
+> +                         struct file_handle __user *handle,
+> +                         void __user *mnt_id, int flag, int lookup_flags=
+);
 
-Correction: ->encode_fh() is for name_to_handle()
-You want to say that ->fh_to_dentry() need to support cached lookup,
-but FWIW, the blocking code is more likely to come from the
-lookup in exportfs_decode_fh_raw() =3D> ... reconnect_one()
-not from the filesystem code.
+I really dislike do_XXX() helpers because we use them interchangeably
+sometimes to wrap vfs_XXX() helpers and sometimes the other way around,
+so exporting them in the vfs internal interface is a very bad pattern IMO.
 
-The fs would "only" need to be taught to return an alias to a
-cached inode and generic code would "only" need to be taught
-to give up on a disconnected dir dentry.
+io_uring has a common pattern that requires a helper with all the syscall
+args and for that purpose, it uses do_renameat2(), do_unlinkat(), ...
 
-Doesn't sound too hard (famous last words).
+I would much rather that we stop this pattern and start with following
+the do_sys_XXX() pattern as in the do_sys_ftruncate() helper.
+
+Lucky for us, you just renamed the confusing helper named
+do_sys_name_to_handle(), so you are free to reuse this name
+(+ _at) in a non confusing placement.
 
 Thanks,
 Amir.
-
->
-> I see that lack of support for non-blocking operation was a dealbreaker
-> for adding getdents to io_uring previously:
->
-> https://lore.kernel.org/io-uring/20230428050640.GA1969623@dread.disaster.=
-area/
->
-> On the other hand, AFAICT, support for openat() was originally added in
-> 15b71abe7b52 (io_uring: add support for IORING_OP_OPENAT) without a non-
-> blocking lookup, and the possibility of non-blocking lookup later added
-> in 3a81fd02045c (io_uring: enable LOOKUP_CACHED path resolution for
-> filename lookups).
->
-> (To be honest I'm a little confused by the history here. The commit
-> message of 15b71abe7b52 says
->
-> > For the normal case of a non-blocking path lookup this will complete
-> > inline. If we have to do IO to perform the open, it'll be done from
-> > async context.
->
-> but from the commit contents this would NOT appear to be the case:
->
-> > +       if (force_nonblock) {
-> > +               req->work.flags |=3D IO_WQ_WORK_NEEDS_FILES;
-> > +               return -EAGAIN;
-> > +       }
->
-> until the support is really added in the later commit. Am I confused or
-> is the commit message wrong?)
->
-> In any event, based on my reading of the history, it would appear to be
-> OK to add open_by_handle_at() initially without support for inline
-> completion, and then later add that when the filesystem implementations
-> can be updated to support this.
->
-> Please let me know if I am wrong on my interpretation of the history or
-> if anyone disagrees with the conclusion.
->
-> Testing
-> =3D=3D=3D=3D=3D=3D=3D
->
-> A liburing branch that includes support for the new opcodes, as well as
-> a test, is available at:
->
-> https://github.com/bertschingert/liburing/tree/open_by_handle_at
->
-> To run the test:
->
-> $ ./test/open_by_handle_at.t
->
-> Thomas Bertschinger (6):
->   fhandle: create helper for name_to_handle_at(2)
->   io_uring: add support for IORING_OP_NAME_TO_HANDLE_AT
->   fhandle: do_handle_open() should get FD with user flags
->   fhandle: create __do_handle_open() helper
->   io_uring: add __io_open_prep() helper
->   io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
->
->  fs/fhandle.c                  |  85 ++++++++++++---------
->  fs/internal.h                 |   9 +++
->  include/uapi/linux/io_uring.h |   2 +
->  io_uring/opdef.c              |  14 ++++
->  io_uring/openclose.c          | 137 +++++++++++++++++++++++++++++++---
->  io_uring/openclose.h          |   5 ++
->  6 files changed, 209 insertions(+), 43 deletions(-)
->
-> --
-> 2.50.1
->
->
 

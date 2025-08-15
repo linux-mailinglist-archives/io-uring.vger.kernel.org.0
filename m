@@ -1,246 +1,180 @@
-Return-Path: <io-uring+bounces-8966-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8967-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756A8B27339
-	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 01:52:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EACB27A79
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 09:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F253C5E83ED
-	for <lists+io-uring@lfdr.de>; Thu, 14 Aug 2025 23:52:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82BF37ACF92
+	for <lists+io-uring@lfdr.de>; Fri, 15 Aug 2025 07:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F63288510;
-	Thu, 14 Aug 2025 23:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF65829AAEA;
+	Fri, 15 Aug 2025 07:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jum9qaPv"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="XBzoh2G3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013055.outbound.protection.outlook.com [52.101.127.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E5A28937D;
-	Thu, 14 Aug 2025 23:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755215514; cv=none; b=JZn1FSO2jZF4EFdz1nKFKsqlbnRrVssM9DGtoSOGrlvFWGO0BqDdV4rppPXS6DkW2E/paz85QGu9hShvAG4hPYAKgYQbM40/pUdk6+T6ILa2rK3o0zgopF4Bn4pKoCXG1KoVOytaq2yLBaMiqhGsoCZbmoSbGFR04HK6iK8/1vI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755215514; c=relaxed/simple;
-	bh=VZVKNFxEnLweOafgl0TbIkx6Kr3Ygs7abNi0A0rT6AA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s7686r5iFC7cy3SEbu9qSeXbJz0mj9fT9dDN+2tBO+xKOgt6vLPuHWhIBm7cstzKB7N8THfib0dljH7Zk5RGphPFdjHYY9QqfBYCxwAodgklpjyQKd+UYtQ6cNeXc3itDDmbMSXLfENvvijz7ZitGmlbbAUHPs8AZp7ZsY9sEdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jum9qaPv; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32326e67c95so2019923a91.3;
-        Thu, 14 Aug 2025 16:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755215512; x=1755820312; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWEAphj4m/uzejg39gNHA2RWkzZcuFUCit1TiH9ELm0=;
-        b=jum9qaPv0NmunVZJ+bKIn0fRJQLkpRxQ+imsb6W4ICCPuHsCjOCKdA7gm/Awexam+Q
-         18PKLKeLZF5IFpSafsGDd/ln6IMpbt4jGg1BdT8T8Hd8IMpKzJB71mOYmYQE3PAMMhZu
-         l3U3oatoTAncjqOwC5gyR0EJM+seQzRYoes3OzBkANd9lVmfYFKIGT0V187HktW5hZli
-         bzRRagE/+mOWwDOtNmHzUesfL0dpkYUdcwNhNZ8dqRXwxKIrDBzamRnFfSwo7XLejHEF
-         Q/NXkaIzwL8fiX8RBIPgia/5BbGN2VEOT1feJyhvtPOswPW9k4xW7/masalS8fHPcrpZ
-         w+gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755215512; x=1755820312;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWEAphj4m/uzejg39gNHA2RWkzZcuFUCit1TiH9ELm0=;
-        b=lPrfSGFUAlElp77vJHBM+PyQd7Ng36FHw5XL+LgNDzsZ3brFs7gegHuA1SB2SDaAwZ
-         ocPbe052tLZZ+zSgHfr5KdPg6917fohIH2CwC5/XNTZJ/7iBKkPWizbVlOSxOtzB0xLz
-         9JfUn2zosedtBJmlTURl/aF8l0IICnvd4Ze9sH2dz8he8G8TsCA7wBhdrihI1JmzQQiG
-         Pm2l7I5YzgNQfYMA/h2FyazlJETsvYJvURCflFMfhuJYHYG4lVwBu0YAwt4nioC2v79O
-         HsaELcwgDfcDM3qRw68JQoLc24mygtdno9KTI8svaaJs+6IdQJfIWLo1JsIy0ahmEPGG
-         ojRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXnff0Yco0qtxudxjxnXSNirCIrZirvG6KquJ1TRirUJxLKabzsUhgDQjXI27ZyzntiObmGKR3UWkq@vger.kernel.org, AJvYcCXh4lidyQrNB2sd7jltlLfb3Xv3EJjkphyjU0qHYuvs9shVsk3hFHHNFT9QC9ae37juD/7IwtdWO5UdZN6Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5BYsDEzDnQJMfdmJHcGOfe8B8wQDlDEZJW+oT08jzKULPA3Cu
-	sPYv0+IbNg5rO9Bb5iJjrMntTLptZELlnBlaPWQsazhV5eEpzo7sHXfU2AhhFxtDe6o=
-X-Gm-Gg: ASbGncstK7697mR4+i19hdZvSu/8UeEVYhYqsFahWrZDHj0Z+dQ15kYaW4yHlcGb9Fh
-	PIIwZ6k1z+dn83L32sligdSOR6ujWm4AzxQ6DoatoD8Me1Hv0X/NoY6wnH84K1DNDtXCiEztmvl
-	hQ6ZbiAOE9wGTI0q9KBEdyo9LQEWzmUCE2gNJzT/svVTnvrIldyCjtQE5Y8k6gC5BWfXmd6k4zG
-	RJVXvpsTuaAEyo7IXxqwlb9WoUmU0HTi1ljQRbq6Npf87N/XXdlKsRNyWebsKdBsX434MysJNNY
-	r8w8/C2JTme1b/r3IQ7eHw433sfON+L/iwqWjik0XB6lfWyl0YZ685YwIkap9B9OVU4wG5IMIVz
-	CU3xXyggiavJdSwKj75Jyrd6M
-X-Google-Smtp-Source: AGHT+IGAH2BfgBfw7vvtObihS4KTIKjz40J3ccIYBwu2pqgeegIP/7mgDHHjGJdmmuA4bGd2c1q2oQ==
-X-Received: by 2002:a17:90a:c10e:b0:31f:485f:fab6 with SMTP id 98e67ed59e1d1-32341df8efamr245772a91.4.1755215512102;
-        Thu, 14 Aug 2025 16:51:52 -0700 (PDT)
-Received: from jicarita ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233100c1d0sm2974721a91.17.2025.08.14.16.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 16:51:51 -0700 (PDT)
-From: Thomas Bertschinger <tahbertschinger@gmail.com>
-To: io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-nfs@vger.kernel.org
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: [PATCH 6/6] io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
-Date: Thu, 14 Aug 2025 17:54:31 -0600
-Message-ID: <20250814235431.995876-7-tahbertschinger@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814235431.995876-1-tahbertschinger@gmail.com>
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CE729AAF5;
+	Fri, 15 Aug 2025 07:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755244706; cv=fail; b=tlaZFfxMc12xkUXxlSRKqFlcu0ZwASnhYqpdnxZLGs2nxtbtPNZl7vCkTwZKBtNB765z2xf4XPDoNGtwbWSeMe/3HcU0FI0POY+8fLpRkYoNlN89NiCqLw+J7FbsDnzoh6v3qcOmoOqWjTFlLXC75GVpurxn/wsFU2Pn+VO8tRw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755244706; c=relaxed/simple;
+	bh=YJD5up83XCz2jpye1LwP+URbY/MKFGL9PY3kv5KjeNk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bgB9fGJjMxnsXbY2aRq5WqAJvdMVc/r40eXYZud7mscjsvqAdQnyJzb9ryORfLqNPTtWp6ew2rxuDvML+IJOhxgZITtetrbq/OMXnwERFo49+/zmlCnD0JPYn8TtHZAOJpNS+6fpwO/6t8Qbxhuqx1VKLuQVxKV7lL8zdYJITcc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=XBzoh2G3; arc=fail smtp.client-ip=52.101.127.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TsvD08mwkCHCgb/jiykpd1/a7+LGfKnM9Ip4lss8B96kGCDKzAK3IsrpVye9cpIy2YQNJCjfHxGt04xALoEZDB6K16j6XNmGe5HyWL2MoOjDWBk5s82gkPOuiRcMbnwRGtDC9KooXUoH6/pzkRV40nQgFXS9YtXKDIYol+3JC+aps9G7mhdK62YInNrzZjioMqvGDLuwYu6oJzZ7+aoiMRnvYPnRxiWvAhf2NCbzBHLSu/jJthcJQ4EgGd5fZy45eoOPuTJBHlxO0Mor8Imxbwnu304ytLPkpjGQ4K2TdqM7IaNMs5BpdVEbpnnmAQiL5r7yzSy/cJDQGD5+WLzfWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUhy+rGzztwrWsK/PV/FLn3yZaqpz4h2ypM7fJKt2/U=;
+ b=qI1784rvZA18cD7Hid6Zo4g3k5TPWrAJSAdi4Xn1WARd8C6DN0JVGTuwYbA1DzOkF6wABkwezqVFGsw6x7cVyMYA0yD2qxv3c3+PYt4CD6KcfelYrs/GX/wmZj0eropLtXu53sfpvFkseauiTLkjHQSa1Zjlvg9buzY6iIlpHpaoOHDGS66MwnW/5je7Bw7FX3FpAWLRgT0/BK+YbGqxRGmUBP9lBQawPC3mS456YzoGRfkT3Co1ocAS4kiRzATktPy7YTmTa5GbLqVDtISqsjlqry8ksDnpQoxddcWyuhkCCH6wIVK4TI296oc1qGTt2izJODaE4Mj/oOaRpaDpJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUhy+rGzztwrWsK/PV/FLn3yZaqpz4h2ypM7fJKt2/U=;
+ b=XBzoh2G3eQeJZzVAibCO1hPb3q61SpMhhnHjxVR9KOM6VRwvr2LaHDDaTLLHWgNYaTuJA+SEeJrm5EXyVh3zPEXoAs+zu6irsTk2i0VwwEKQVH4vuAcGyc2i0Sq6phcfypXTCXmuv9k9YMpeg1GbwPDXGDdusyC/Rx6NDqigX0mHdsVsYKf9n8gJMbCeBHQARZ58of594f1zVFivf4orvvCqe6MtIWmjltjqM6EEAImJH40PugL9xHeUDHUNtCv3rUHAuIwN9gle68UMcC4jMZQf5RF4bbpp47+UenfvJFsJEOsxzENq/0iP+393CLqe8RkzsUkT/mThYutNhUjKQw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by JH0PR06MB6966.apcprd06.prod.outlook.com (2603:1096:990:68::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Fri, 15 Aug
+ 2025 07:58:20 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.014; Fri, 15 Aug 2025
+ 07:58:20 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] io_uring: Remove unnecessary conditional statement
+Date: Fri, 15 Aug 2025 15:58:05 +0800
+Message-Id: <20250815075805.580465-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYXPR01CA0044.jpnprd01.prod.outlook.com
+ (2603:1096:403:a::14) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|JH0PR06MB6966:EE_
+X-MS-Office365-Filtering-Correlation-Id: 628b4bb7-ffc2-4302-a5a6-08dddbd18037
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VC1TJDagyRmcKopqBBrEB2L9m1uHj439Syo7+sLv6X8tZ5+iCimazw60Qx6O?=
+ =?us-ascii?Q?05Bwg5gAeP1rtUyiWLw3EeLO4W7C76xejtQDryiCopVC/3e0TxuJT95S1ZN9?=
+ =?us-ascii?Q?jMDsmFWwNooh7eVNpA+/TW0okWk5+lfy8tfSP8+IjV4H5MrQqBIGNPDE0mLe?=
+ =?us-ascii?Q?SZovW9+MBpSjeWIpFKfNBuLcQl7sFheDJcQg+l5C8kZwDH1tYGJYk8CIYhrG?=
+ =?us-ascii?Q?XYzLItdiFPMHSGap6mLsZ7t81yRUGrsloEk08c9HHtJQGEkaOACLbemmgtTy?=
+ =?us-ascii?Q?QqiPHfspgRfEpwoK+Fym2JS5qWnUrK0xWp6CAQ4JzXtnieG8LGZJQBL9nqLp?=
+ =?us-ascii?Q?MFPhbLdyvwDJlSgg5+8dWA1barsAD2aJY0c+QICE2n1RTtUM7pvJL4HpTuFW?=
+ =?us-ascii?Q?lqb5VuN82R23ok5MtBBx8Xrka9KqyPOeYBxHXAN5F+NiAUH9+qWW4+YAqW/l?=
+ =?us-ascii?Q?5dK3BrCU8RIZC8lj2ohN68P4PgQuvWRZDNsIyqw11ZLXrVP/wcMSd91T7y0I?=
+ =?us-ascii?Q?m8+MgMPWA2tCVoviANFekGjqwOyn1WMHINGUGlio8CcgipOVZ6AtZTF8l2c7?=
+ =?us-ascii?Q?+H//ORez6PMhGMC9+6ZTQ0OKl021fIk2WyRX2CuN9Nn/OV3Jf+iDKdHWPcAQ?=
+ =?us-ascii?Q?87voyPkGV7L5DsZnOBv47LCu/OPNDjrW015/AAuKjAOa3SbKl6wH429Fnzon?=
+ =?us-ascii?Q?qClh58jaKLpqT+PlxEQSIAcBLHcwP1Zmy/1tUMnICAxFpG5JQLT10F1/B22e?=
+ =?us-ascii?Q?ySSb5HRatmIuCTETjIG/RNzhovXBO8JUQAgsiG1bNYlt8rgI4D4WKaP00YHd?=
+ =?us-ascii?Q?akKBzw9f6F3SCfzU+CIZMsJKgNFCG/0XPooxxAhVpLbW2oo21pZCYVxmG59q?=
+ =?us-ascii?Q?G8Ur09fk51MKSdjzMN6YEBGhDC1YZ/O/7Vydr2lKG059i61O2duWPELFkPmL?=
+ =?us-ascii?Q?+jLjgmi5Imq5RgRK8g42+DxzPEqrVM8fTNe6WdgC5dC4OC7mP2zMxVTqNs9u?=
+ =?us-ascii?Q?V7+k5Hu2e3kj8c3oO+kDK/yk9jRAwkgn/f+Ojy1ZGCzeRMyGk4Pj952IDBfN?=
+ =?us-ascii?Q?xZ+OjHwH9vrWICy+I1s21tpdbP76Rw71oPJr/QPe1jdUmiEj7mI1HZQ+YEnX?=
+ =?us-ascii?Q?xAMOx5OV+ksJYGKEIZH1PZwx0SZsZcS2n/MVr31SgKPBGjcfobhxXeBnNaJo?=
+ =?us-ascii?Q?njnu0O5D30UAfNFNM1h2ZwJ6/2UVnaApJR4yKPpITJp63s/f5BiprWw5FnvP?=
+ =?us-ascii?Q?DEHlSOkR9cTRAvicDUWXSh/gmCuLVQYGhaFR1Gz7YbtC7AHI0N1QdcI3tAzq?=
+ =?us-ascii?Q?lETcDRXmAeIwYsH/f3m2mXtHZx0WVcNJDtemz/ZITEdCnifpm4HcsjXtX82I?=
+ =?us-ascii?Q?PkX9+m0asoFFKX0/MRFEqA4ullRFsB5+PXOxPoQ1ghr7M+8JhteHBPFvqmVI?=
+ =?us-ascii?Q?lpPNwwypHAOM3FmJZLzTDlRoQx9rFHPshn5+oQFYtbodgU1hw9VzJSLYTLW4?=
+ =?us-ascii?Q?66QUPqcd+19IgYs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Dh3ZgW91KoezGtZg+X0dh3oLlwFYzGOUkAkltu4gAb3/Hn+G75/mREAToPhT?=
+ =?us-ascii?Q?p3YKXZ7pjmHTJjRvUgzDQ2i7FJOagSCloT+P4hD/nvMTTleJ4nEgtujnPDEV?=
+ =?us-ascii?Q?KRQISHE8/v0rwmAq01Y/gp8Bj34g5qemCG2Q3we9QX5szim0J2fidpJbGA2r?=
+ =?us-ascii?Q?EmQCHGt+MVUIRJygzOY5MWTyUo4CSOb87VzUCN+BF391lZ+oywhEY5OzPVPU?=
+ =?us-ascii?Q?QL1XxmAjlIuKCsxpIZfItwMQh343p/kBrse3U9UF6Qo8A+8jEoam1Ly/PgdH?=
+ =?us-ascii?Q?QiPEVtF8rJLaT5jJ+wWQzUCW8ktOC0fguQvrxXnJGkmnzBFbz1yMIr8KJk9x?=
+ =?us-ascii?Q?Fk409EpWy9PravwKbQ0PRkQfbbsadEtXXN7ux+MgBsRVVlayJIFCDcnrTGc7?=
+ =?us-ascii?Q?moigMqyAJ45WB8l51ggSeA5Gppiyz/EcOO/9g/G+96OQdXlZV+BtBBaiVZud?=
+ =?us-ascii?Q?/Skvl1oPvjrBreBkfTLjTR6u2VOCrwmNclHezW5oRTevfjCRGFkH015LW4q/?=
+ =?us-ascii?Q?CJ412w5+Zu42N9PS31emClpq6OqZzW73ODwc6bHxhMBkPJ9Bgr6tdmUb2e8L?=
+ =?us-ascii?Q?UU5Q1F7nxyCAOZv2YfkMp+W/7CaqEmjE6oqfC/v8u+/xBLdcBjyZP32FwvDq?=
+ =?us-ascii?Q?lXgkSMoJhs/r/U7+e/b43DiOM2HRIE8VPDE/z6iC6nQMMCBXSF9Y+wzuFl0Z?=
+ =?us-ascii?Q?6ACs9v9BVNUPs21VUi3wpEYz/foBpARq2VkuCxonn7A4EC7uhaN18plYKfm9?=
+ =?us-ascii?Q?PN7oGQIr4lf/Si4iY9cdNFB1PckMJ0hOzpQekUVMqBhoBmSJVVH+iwV2BIQC?=
+ =?us-ascii?Q?WrivWbMLpuneVMhVlSH1IrfW1rhHNEygJNRAplJBz7HOzcrLSRC/gL39kbhJ?=
+ =?us-ascii?Q?u1a8mzyzZqFEvpEK+U+vLt+9jk7dIQvrbeDZHVsABwb0reHX9X4ZxwtNTwI9?=
+ =?us-ascii?Q?S1nEg0gYTuNNUHgURbkNIX5xzr6oyUX8RgqwrehUmoe/em8AUvyvUQqhsHOz?=
+ =?us-ascii?Q?iCrfQzbwqfO4e+/Ab47YwK9xiSi+UyaulOkSiY3uyRfiJdUP91ff2Io2nhL8?=
+ =?us-ascii?Q?7q7cgpouF197s1kiEL1b6Pg5SAzbPGsz6CtY2xU89OqDrT3lTeVqC8uoiJfs?=
+ =?us-ascii?Q?UHPc/oP4FDe1j6KeXBcdh+18GO2K4NSlVIh6MuFS6kmae7HKs1A8yLQBpbmi?=
+ =?us-ascii?Q?pjM+IQ6r/Q3jtszZSjhB7vfzYOxJH0ZFJmB4PKyzIaMs8kfGOFwZsUlzVwH1?=
+ =?us-ascii?Q?D2fAkX5bKV6bjYy1gvWab4WdFYDEDFv3ZKOPGivo72QnbrC9oXrIP/RzfhlJ?=
+ =?us-ascii?Q?aWrFnqhwTQXSFga7aLgtow80Z48ERycj16yZodQyF1f0wMHcA2LvXdu+WKUd?=
+ =?us-ascii?Q?UVB0c4LbvzcbB33ICPFGvvX8RlFmtSNJQz52Dz9e+FFCQtEEdKBsfAUtpYLQ?=
+ =?us-ascii?Q?MRmjhbt8EntyUvCR9nfr4aZi1msP6d6lQzqq/3q6F2vi1MINHYgnhOnWBOTL?=
+ =?us-ascii?Q?zLQqQj5CxjogHG97r3L/AEz8nY+3bUCn6dnHWfxGXwLMqz8yiWaMPggA0SYc?=
+ =?us-ascii?Q?s70kKDvfpWMtyMyfbS35XWIn9UsWPTgJ8CxKd426?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 628b4bb7-ffc2-4302-a5a6-08dddbd18037
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2025 07:58:20.4454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fddzvsDfeDGwRYh8bBYbAJVkFO1M+Nsg+EJK4MIo1k0HJ2Qjxka7pXRhyIwTPxckOGeoQwWKKfGouanAgOS8ow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6966
 
-This adds support for open_by_handle_at(2) to io_uring.
+In the kfree() function, the passed argument is checked. Therefore,
+the conditional statement in io_free_batch_list() can be removed.
 
-Non-blocking open by handle is not yet supported, so this always runs in
-async context.
-
-Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- include/uapi/linux/io_uring.h |  1 +
- io_uring/opdef.c              |  7 ++++
- io_uring/openclose.c          | 64 ++++++++++++++++++++++++++++++++++-
- io_uring/openclose.h          |  2 ++
- 4 files changed, 73 insertions(+), 1 deletion(-)
+ io_uring/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 596bae788b48..946da13e1454 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -290,6 +290,7 @@ enum io_uring_op {
- 	IORING_OP_WRITEV_FIXED,
- 	IORING_OP_PIPE,
- 	IORING_OP_NAME_TO_HANDLE_AT,
-+	IORING_OP_OPEN_BY_HANDLE_AT,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 4ef69dd58734..7a9106066653 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1469,8 +1469,7 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
+ 			if ((req->flags & REQ_F_POLLED) && req->apoll) {
+ 				struct async_poll *apoll = req->apoll;
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index ff2672bbd583..e2e0f4ed0d9d 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -578,6 +578,10 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_name_to_handle_at_prep,
- 		.issue			= io_name_to_handle_at,
- 	},
-+	[IORING_OP_OPEN_BY_HANDLE_AT] = {
-+		.prep			= io_open_by_handle_at_prep,
-+		.issue			= io_open_by_handle_at,
-+	},
- };
- 
- const struct io_cold_def io_cold_defs[] = {
-@@ -831,6 +835,9 @@ const struct io_cold_def io_cold_defs[] = {
- 	[IORING_OP_NAME_TO_HANDLE_AT] = {
- 		.name			= "NAME_TO_HANDLE_AT",
- 	},
-+	[IORING_OP_OPEN_BY_HANDLE_AT] = {
-+		.name			= "OPEN_BY_HANDLE_AT",
-+	}
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index 8be061783207..5be17d7a46e0 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -22,7 +22,13 @@ struct io_open {
- 	struct file			*file;
- 	int				dfd;
- 	u32				file_slot;
--	struct filename			*filename;
-+	union {
-+		/* For openat(), openat2() */
-+		struct filename		*filename;
-+
-+		/* For open_by_handle_at() */
-+		struct file_handle __user *ufh;
-+	};
- 	struct open_how			how;
- 	unsigned long			nofile;
- };
-@@ -244,6 +250,62 @@ int io_name_to_handle_at(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_COMPLETE;
- }
- 
-+int io_open_by_handle_at_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
-+	u64 flags;
-+
-+	flags = READ_ONCE(sqe->open_flags);
-+	open->how = build_open_how(flags, 0);
-+	open->ufh = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+
-+	__io_open_prep(req, sqe);
-+
-+	return 0;
-+}
-+
-+int io_open_by_handle_at(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
-+	struct file *file;
-+	bool fixed = !!open->file_slot;
-+	int ret;
-+
-+	/*
-+	 * Always try again if we aren't supposed to block, because there is no
-+	 * way of preventing the FS implementation from blocking.
-+	 */
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	if (!fixed) {
-+		ret = __get_unused_fd_flags(open->how.flags, open->nofile);
-+		if (ret < 0)
-+			goto err;
-+	}
-+
-+	file = __do_handle_open(open->dfd, open->ufh, open->how.flags);
-+
-+	if (IS_ERR(file)) {
-+		if (!fixed)
-+			put_unused_fd(ret);
-+		ret = PTR_ERR(file);
-+		goto err;
-+	}
-+
-+	if (!fixed)
-+		fd_install(ret, file);
-+	else
-+		ret = io_fixed_fd_install(req, issue_flags, file,
-+					  open->file_slot);
-+
-+err:
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_set_res(req, ret, 0);
-+	return IOU_COMPLETE;
-+}
-+
- int __io_close_fixed(struct io_ring_ctx *ctx, unsigned int issue_flags,
- 		     unsigned int offset)
- {
-diff --git a/io_uring/openclose.h b/io_uring/openclose.h
-index 3d1096abffac..a6304fa856bf 100644
---- a/io_uring/openclose.h
-+++ b/io_uring/openclose.h
-@@ -12,6 +12,8 @@ int io_openat2(struct io_kiocb *req, unsigned int issue_flags);
- 
- int io_name_to_handle_at_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_name_to_handle_at(struct io_kiocb *req, unsigned int issue_flags);
-+int io_open_by_handle_at_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_open_by_handle_at(struct io_kiocb *req, unsigned int issue_flags);
- 
- int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_close(struct io_kiocb *req, unsigned int issue_flags);
+-				if (apoll->double_poll)
+-					kfree(apoll->double_poll);
++				kfree(apoll->double_poll);
+ 				io_cache_free(&ctx->apoll_cache, apoll);
+ 				req->flags &= ~REQ_F_POLLED;
+ 			}
 -- 
-2.50.1
+2.34.1
 
 

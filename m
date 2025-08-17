@@ -1,166 +1,113 @@
-Return-Path: <io-uring+bounces-8986-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-8987-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D0FB28CB1
-	for <lists+io-uring@lfdr.de>; Sat, 16 Aug 2025 12:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE68AB29553
+	for <lists+io-uring@lfdr.de>; Mon, 18 Aug 2025 00:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E031CC632A
-	for <lists+io-uring@lfdr.de>; Sat, 16 Aug 2025 10:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A317BF4D
+	for <lists+io-uring@lfdr.de>; Sun, 17 Aug 2025 22:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79D28CF7A;
-	Sat, 16 Aug 2025 10:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03D421A437;
+	Sun, 17 Aug 2025 22:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T79D3kzH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEC7d9VH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E728CF5C;
-	Sat, 16 Aug 2025 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076CE41C63
+	for <io-uring@vger.kernel.org>; Sun, 17 Aug 2025 22:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755339064; cv=none; b=PDpr7gIMBoICsl4kqVpt603ZPIV0Iz0UI76hcOWcrO2aNjS/BnJtb7wfnzTgitZsu+rZdk2YxvBo8Zp7JHL3Y1KD74jeOjrMrNVn5Y6iqbKR2qzHk/WFm64hRFNcNBzBnCbwwKaf9bzGyhc9xJ9QRB8MZ0BmD+c3NcMMupTLc+g=
+	t=1755468442; cv=none; b=mT2NfsRcj3oPIdz73GvI5NhO24E6PgsbpPCV/m9Wmwl8zvLYJtwrUj2+qDiXIjSuw72AUBcUEaM/08BZw3o2i+D40A2wk6MLlfXZah57/q82d5UExu97Uww/dLyqsyCkCD3dwu2k4BlDN+PrU6KjXN8HmyCunY19nKMRqP4o0Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755339064; c=relaxed/simple;
-	bh=axqTjNFlmphNfFORcQmFtJ3vQU2+7Fg2Z26+WcSA7r0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4GOnxBFIXN9BkSLj88H10aujClfqrQ5s4nsZxroX9b10747BROhunLEPibtScbrqOTSnv+0+x9P9l2qFtW6LhbUKx6D9ebRQHyhNMIYOm2oxrPWyRjJeuIedB/Zs07IH/59fFOtnpyIzKhPeljN2LYnOLGh+0A/OoH1efgYthA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T79D3kzH; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755339062; x=1786875062;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=axqTjNFlmphNfFORcQmFtJ3vQU2+7Fg2Z26+WcSA7r0=;
-  b=T79D3kzH+sTdIZFCORWXnle2/olgx1WJG6mdbeyrR52kWJmXIb1Ke4Li
-   8349VcXxqfSh4HnLBttKqqKwczm13AhUndNPvuTINqjpKMvGi6OCdNtSG
-   SZL4Ini/19mFPK4tnoHZHxLKkVPdA0MHUGXTvvOgCRcrCiGhNHxTaIj0J
-   NAnKzCNf4lPn+NNsgbgJNMM8xIEG+485gjuPe0qJgokT+hJY5p2JxaCum
-   ZWAkVFSMa8ex+AGDHge3gfLSduT/9NbRNCU+gRZ5H/xJE8wY7HIiIw9vT
-   CWQhbI+jZ1reHkCuXmzm2NuDpqBHg/dezvC4JyVaw8TRrRl3BgLoPeXgT
-   w==;
-X-CSE-ConnectionGUID: X+DJaioYT0K8YQcyluUfXg==
-X-CSE-MsgGUID: 3SALENQ9TtaaaspQUEFVog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11523"; a="61274085"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="61274085"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2025 03:11:02 -0700
-X-CSE-ConnectionGUID: wf4JgEWbQZ+I66zReqgvtg==
-X-CSE-MsgGUID: 6b3a/uRcR8iSvvHTBhGd8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="198044644"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 16 Aug 2025 03:10:59 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1unDro-000Cnw-2d;
-	Sat, 16 Aug 2025 10:10:39 +0000
-Date: Sat, 16 Aug 2025 18:10:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Bertschinger <tahbertschinger@gmail.com>,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-nfs@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: Re: [PATCH 6/6] io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
-Message-ID: <202508161702.2Ey3J7m9-lkp@intel.com>
-References: <20250814235431.995876-7-tahbertschinger@gmail.com>
+	s=arc-20240116; t=1755468442; c=relaxed/simple;
+	bh=OZFpk1sAprio5MD5YibK4LuxYV4cuBbHgxDa9Gldct8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYVLOHSxEeL/78UHE6O5H0C1Hegcv6YH3rL3IIQtWslt2io7F93t5dlPVPgH7juh7Fpt1XXsYVvEG1EZqH1P4ft9e4fY9gbSoiNBh5/rz+fV/jPw26CpcGODKYeSliN23xGFBxi37MDN6q5bzRaGsluY1dY/rSDpcC17/yoyBYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEC7d9VH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a25ce7978so5601155e9.3
+        for <io-uring@vger.kernel.org>; Sun, 17 Aug 2025 15:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755468439; x=1756073239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+4TW3KyyMehJGEqo7XJGATzLA+dXwwdrg+uaHD6xWZo=;
+        b=LEC7d9VHuMSLZ85qUDuCUgNnGaH7cFpEF3Stv1KI+FPYLjrIUtRfSd+bYXsHvLBYq9
+         03ArDpTWQyOrBouxb02viXYbVG0xwOtC1HNlXvUskDU3qAZy/RoUgH+cLZOmCQ/QTwuH
+         HsY2+2YpDurxxE34r6A0d2cBUZ2qhGxVbsoHswQ5XwLxiRZrcLZfpRsF1kW+8P5YEJuO
+         iRo54K0TC1ljCzZpU6KdmWrqfzsN8T5UZP3k1oRrVgDqVH1OIY1DZPeHaigK8m1JE/jH
+         tNjJK/DQdx37vzrIB38IU636BCq8H9YBWI044h7JBJeho/Dan3mXhufKtrpu1H0pzLoC
+         mvCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755468439; x=1756073239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4TW3KyyMehJGEqo7XJGATzLA+dXwwdrg+uaHD6xWZo=;
+        b=cilf3K05hNCy8tT8wHL2133OiI5YeTbtZq8UVGf+gwTX3qXIJryXTFIBWEdXqpgPPe
+         VnKfw+MObUHLT2cRT/lLhLd3o3f3/eYw5aiB0IQHu0LZ5wIx+/5h5yCrHxP39SIMYsZm
+         lVGjcbntKy0fN70QiWlFCx0x92gpIl3CoamAmvgumYkergOcUZmzcUfBodNRZTuJpKkU
+         Ryb/YPjZ7pFKzy3//xcjhylO1bsdU799sp1lKfTT0Qpos0xB7xf0mu6V4D4zSm4ox6O8
+         3vMs3ObeGGnu9vKuT6zWjI7W4wTOR1xSwe62lq5156cpiOc2gcskIy30WHZWXLc8/aU8
+         r7Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCX9k9ddwIcyOF3IAB3HeIZ9XHvYvlqIrFvhOovDNnLGvS5lOfIaHcIzTJ0vQ/ydUjXT423rd7cd+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3oK+endPvRS/A6b5wK1xbvB1leFGtUfUvz39KQT0VSXuUa9Qm
+	tXk/1P2cfC179Hcs6N/Q5oGoOVu6ICZFqK0R0FkVViwMgS+sJiAqL2LUuMHCSw==
+X-Gm-Gg: ASbGnctFhT4kH+JweZcX7k1vIIYVnBqVJrqtTAmFDhK7PmA5mtyZ0cfokRYZjOMO86c
+	rWkZgOoGA7xpM/1eXfyZXFYeH/btS9tDlqOzolDfeNKuMj4EGkRyVAIdDNPK+M/U2331eam0hkB
+	+Jp0JGGe/CqwXyJxnFCuAnUXOJbhaXDMHYUrr+rPNIKWC7OBHfVfLz+6TGEbuyH51Xtn0XFOoVk
+	o8Q9z5oeCWfJ3oJ3B/nSE1Acc56ib5xTrKyNwR2fjbSg38Ghr4CNS6V3/Bkfa18YdLAOHzMe8GG
+	LDfZYombrDPpnbh2Q+ftu9LsuSniyrjXtRTf6q7to99tff+wQ/LewtWqb73gpiIRDUABIc0oAlx
+	z6h94d4x0Pvnpu5RLuv+nN5HPhpgkN0H43hfHdSfz
+X-Google-Smtp-Source: AGHT+IEWNfmhEOrUkMkj8FGnjLO4mUdcinlE7BpsjISMw+YOANRnlZOQHiSFZ3raxtH54WrLxcuVNw==
+X-Received: by 2002:a05:6000:2c04:b0:3b8:d0bb:7554 with SMTP id ffacd0b85a97d-3bb6617ea0amr6420068f8f.7.1755468439097;
+        Sun, 17 Aug 2025 15:07:19 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b26a3dcsm80185505e9.2.2025.08.17.15.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 15:07:18 -0700 (PDT)
+Message-ID: <873ab36d-65aa-481a-b056-8f475a56b5e7@gmail.com>
+Date: Sun, 17 Aug 2025 23:08:30 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814235431.995876-7-tahbertschinger@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot ci] Re: io_uring: add request poisoning
+To: syzbot ci <syzbot+ci13e386d4235544e2@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <68a03392.050a0220.e29e5.0041.GAE@google.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <68a03392.050a0220.e29e5.0041.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On 8/16/25 08:30, syzbot ci wrote:
+> syzbot ci has tested the following series
+> 
+> [v1] io_uring: add request poisoning
+> https://lore.kernel.org/all/b98edbb8ec4495b053dfb11cb3588f17f5253b6e.1755182071.git.asml.silence@gmail.com
+> * [PATCH 1/1] io_uring: add request poisoning
+> 
+> and found the following issue:
+> general protection fault in __io_queue_proc
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.17-rc1 next-20250815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Bertschinger/fhandle-create-helper-for-name_to_handle_at-2/20250815-075417
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250814235431.995876-7-tahbertschinger%40gmail.com
-patch subject: [PATCH 6/6] io_uring: add support for IORING_OP_OPEN_BY_HANDLE_AT
-config: parisc-randconfig-r132-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161702.2Ey3J7m9-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250816/202508161702.2Ey3J7m9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508161702.2Ey3J7m9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   hppa-linux-ld: io_uring/openclose.o: in function `io_name_to_handle_at':
-   io_uring/openclose.c:241:(.text+0x870): undefined reference to `do_name_to_handle_at'
-   hppa-linux-ld: io_uring/openclose.o: in function `io_open_by_handle_at':
->> io_uring/openclose.c:287:(.text+0x990): undefined reference to `__do_handle_open'
-
-
-vim +287 io_uring/openclose.c
-
-   266	
-   267	int io_open_by_handle_at(struct io_kiocb *req, unsigned int issue_flags)
-   268	{
-   269		struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
-   270		struct file *file;
-   271		bool fixed = !!open->file_slot;
-   272		int ret;
-   273	
-   274		/*
-   275		 * Always try again if we aren't supposed to block, because there is no
-   276		 * way of preventing the FS implementation from blocking.
-   277		 */
-   278		if (issue_flags & IO_URING_F_NONBLOCK)
-   279			return -EAGAIN;
-   280	
-   281		if (!fixed) {
-   282			ret = __get_unused_fd_flags(open->how.flags, open->nofile);
-   283			if (ret < 0)
-   284				goto err;
-   285		}
-   286	
- > 287		file = __do_handle_open(open->dfd, open->ufh, open->how.flags);
-   288	
-   289		if (IS_ERR(file)) {
-   290			if (!fixed)
-   291				put_unused_fd(ret);
-   292			ret = PTR_ERR(file);
-   293			goto err;
-   294		}
-   295	
-   296		if (!fixed)
-   297			fd_install(ret, file);
-   298		else
-   299			ret = io_fixed_fd_install(req, issue_flags, file,
-   300						  open->file_slot);
-   301	
-   302	err:
-   303		if (ret < 0)
-   304			req_set_fail(req);
-   305		io_req_set_res(req, ret, 0);
-   306		return IOU_COMPLETE;
-   307	}
-   308	
+It dug up a hack poll_add does to initialise ->async_data. Not a
+pre-existent bug, but definitely one of the things the patch is
+supposed to uncover. I'll update it.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Pavel Begunkov
+
 

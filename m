@@ -1,206 +1,274 @@
-Return-Path: <io-uring+bounces-9014-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9015-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E47B29B9C
-	for <lists+io-uring@lfdr.de>; Mon, 18 Aug 2025 10:06:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CC3B2A880
+	for <lists+io-uring@lfdr.de>; Mon, 18 Aug 2025 16:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DA23A6F51
-	for <lists+io-uring@lfdr.de>; Mon, 18 Aug 2025 08:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80761BA51A9
+	for <lists+io-uring@lfdr.de>; Mon, 18 Aug 2025 13:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A8C2D8382;
-	Mon, 18 Aug 2025 08:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138932C235C;
+	Mon, 18 Aug 2025 13:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBpkvh3U"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D07E28032D
-	for <io-uring@vger.kernel.org>; Mon, 18 Aug 2025 08:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1146C21CC55;
+	Mon, 18 Aug 2025 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504335; cv=none; b=kfXnQqbhN2QU3PlfDrT2581RTXLnCPbkEgPOnjhXcyrzb8wpYCnUyS5vqx2f4nOhSewsaT+f1vxhEksN7bt/lkWGq6NWTfJ4T5i4uPhYM1EBL9jyLufAZ7ZNLWL4xtlAgE4cq5qRasYMDasXSCNncu8TW+3QAXfnXOhpM1OhJs4=
+	t=1755525394; cv=none; b=u65g64sS6UvzsWepd9dzgJbwJ0w1kQPlVk0TD3h/NecywOnNewdjSlTwxjHh7OAk/Nogjt2K+XF1et+i5Iz4Y4A3NEK9g19+TmaGBFlm7YsYRIxOQjXK6e4rXmI7TKYj+wsCFAgRDjK+hR9z0vGTMVm+3CG2wTqbCPvS6wjkhVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504335; c=relaxed/simple;
-	bh=ig1lCVGIZW1cFY1+bZjuV0LDV6UrnwQRVMUc7Eyi3Ls=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gy5XYD9GjU/cYJK6Tl4/5hzZ8aV+0JHuw0gQHxFd6yN1QA2awg6dbNuHYWWvqCvEZs6aZXBxgi2P478q7J/kkdzQVeb7N+T46c/ST8p1WJ42N2tI78uGZQsJcjzfaO/QkoKVgbWN0WvmHWERMunwMuDQxkgds9C+BTR0sEM2d1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88432e1c782so490822739f.2
-        for <io-uring@vger.kernel.org>; Mon, 18 Aug 2025 01:05:33 -0700 (PDT)
+	s=arc-20240116; t=1755525394; c=relaxed/simple;
+	bh=WhJVNeSStiv+lvOcXcU3zfjW9jbIie7z1H0GF6hbESg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=otH3cU3aUQWcX51dEnSD4Osn3G9jvwSiG5pSiW1ytYrNU0B01ogcQIsLZQRxCKjLb1sApIBKnnaZRuWLUX0Mtirdh3ufie8xuq96Hm5BX52MoNCDxJrV5gRWd310g+T+0/on3GE6dxet2W1H6sajOMDCfVvsJ99NFbQHdiqtNRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBpkvh3U; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so3288880f8f.2;
+        Mon, 18 Aug 2025 06:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755525390; x=1756130190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HIjGtIzogKi0vJY5xlfW/RJoJSvH8HUexozUhmGaN+Q=;
+        b=LBpkvh3U0atrnqg6BW2fG6GwWtU+TnVG0Nd0HTcf+hUJbGsw+Da+CTbfCuKNe3GxTa
+         Qr12Cbddg6q67SXYfuXSHJ5A+bDyYUwCFFHvGgER2vQcFjRYOnVyJmHt6wse4Ejd/t3O
+         FU9Uuul+ctA9+SCDhz8hUmKVI/GWI772Lxdx6Kwnc3yE8Ap5iS6OabScLlc4KDxOUq1W
+         aKjUNVU5Dx1P0qlCzCBaQlQLX4HdBR0jwTpL/N+MgYZSDuCXYuRbNFG2Us2DV8YNI9PE
+         2aiKxAPTA0dXKqlDF9/O+fFTimvpIiSQPEJcK7dvqpUsgt8m3E4fmA83osDzZGSujvcR
+         SFRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755504333; x=1756109133;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eLczjwMaa4aMfcBnpjLNtOtfQ1qI5i1YqFLRTX73HpU=;
-        b=ub7+XXfRdVs0GGFgWNWSkKJP39dWeHu7pygg3XzbcRQtTIYtiQAMfty3dsy/swo0LZ
-         wlWdSXRH5II5FkzX3ZZYH3CGNKYoILVnx9WV8wnR9IOX3SPl7PF8bPhrrS0Gnu71nwhd
-         b4H8TbHc8H8m9iIe3OAHa479mhSbens/W+f8b532FbiMkdy3AbpVXe6OvwxoJ1znz+R5
-         XeW6XODOUvv+wh3I3Q4cI/zCivX4uYE4dVvY90q0g7xgNR8+SXS4RXkSl+zUEzhZg9Ic
-         ICkC40eK8h5zQ43CcfMjE3oDF7W1h2lA6IlrgvYKa7gsk92aB6tkWC1RgDY48qUSBCBP
-         BXXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVFMjFlca14OoPRI/46QSsAhNvR/2lhNN4/smD1SmddIVddiuSEmjM+bzuuqze4Vk4Y8SkdAdHIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfH6Jkxeyf8B9Mawj6G7Z0Cul1SLxWaX8wep46vIoH0CZIXgwn
-	zGGRAw/+AcR/cJbEP5s+Z8hrUNevxbrxhO5S8yOf+37HmmoXYIBFuGtW0T+g8bGYQUEA5x9Tlkv
-	LRO5X8ae95ndoAbA78ar8DnF9szvkamPwkvNUSe0dzEbTYCvmqbCBcX+sJbQ=
-X-Google-Smtp-Source: AGHT+IGcAxrYZiXsSOxEzX+IqZscj8Oik174LGo7xM9Q4tyTaDiBl0Q67NqA3VJ7GHDkfFkgsD+fj78I+9j99SqNubVtd9DA6112
+        d=1e100.net; s=20230601; t=1755525390; x=1756130190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HIjGtIzogKi0vJY5xlfW/RJoJSvH8HUexozUhmGaN+Q=;
+        b=MfxKqMi/ZJzH1dycZtjk9O8CP2/PmzgFU2UEengwOPq/nFDw2nu9DYjR6/epMp8rN+
+         MJ48GfMkl+Zq4Z3xO9YqoMrERlzJTfjPWwwfaa8uMewdvJ2YA0ns9l7r/TCyB+VY8Ii4
+         Hl9AsEmTUaGTh35Z3Ex5iKDgpGgmz16FbHNSxBINF9f30ZOnskQfsFA0VpeKQD3S8X0m
+         Nn96Ht6+BPEpHCeiEWZLyOiku4cp7osvBns9AFVW9+Fisc6rPbMoMpJfQzXJaK5enjE6
+         2KPXf92T1utWzEwsVJbaO5tdciZQKueSHXjgoimPolq4kzM9rNofrX2xNyIgB+RWWXAD
+         TUmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEXbfgE79FSfH0oDNnZ6Z1WIa9NNlzTeX23JnTjYH9qrvbNxTdK8VUzgKhjVGc4zSrMUvq/kNCKA==@vger.kernel.org, AJvYcCWn53sd5Y76Ixf7VxyKnC6Q9ZlQeQ/EaZAnDsKjs9EEypZM6uXWpuz9RvWLu4q16zzI9268S6Aicv1qefaZ@vger.kernel.org, AJvYcCWrgYoCd1NRCaVyYECO2RjnXjFqPlwNf3uxdTfhup1mCo4ECXkf8/r5KUd0XxBcI6+tFUVqfRNe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9jCU0psrZ5IoDwj1O9efLPe0cFhYohjRS8iWqKbr27wszezr8
+	W8H1uZny8mzXrI1bQ//rmHjol/RsMD78vjckp49ohpt1zH3cIk0q0hIl
+X-Gm-Gg: ASbGncuNBOjphkbA4Fudvp9YSIa8RAFc2/KrHam174p1Cw9IJe4nJ6JlnZFvSN9dBOc
+	4BsprSXDh67wTZweKl4VFW3YK3BG27JMMyLaGGgvpYvOK1PCjoDRK2nTo3s6X292eLbstX3hH3O
+	gsKjo0wnNE9J/fjvYvP0UYn+mjaZID2t8JZKxfLuVvIRn3b4pvu6ZRV8CzpLcNkjse51k/0UMSX
+	LUXnTipB9XMOPnjBALzltJd4Pao9Gx1hYKkK/dUO2AvSIIEAYtIvBwjUq83lfAlZW8yQPgc772t
+	lkt46XHGsuBzxIuXNKFZKTaeSYsOCn+tTC4uViZ9AxP97DyYgTZmrux63M/0xOA4OTAN0EjRkMY
+	qa/1+wmx1q7bNGCqt5Kh6UgK1u66NN3pfog==
+X-Google-Smtp-Source: AGHT+IFITBu4xmm3trvkM7QeONfVwuLd61rclbo1mHoQfU27oRMWWeC93+mJ/tL09P7hnZHPJhojFA==
+X-Received: by 2002:a05:6000:1a8c:b0:3b9:13e4:9693 with SMTP id ffacd0b85a97d-3bc6a74837bmr7035633f8f.52.1755525390079;
+        Mon, 18 Aug 2025 06:56:30 -0700 (PDT)
+Received: from 127.0.0.1localhost ([185.69.144.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b899338sm91187345e9.7.2025.08.18.06.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 06:56:29 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	davem@davemloft.net,
+	sdf@fomichev.me,
+	almasrymina@google.com,
+	dw@davidwei.uk,
+	michael.chan@broadcom.com,
+	dtatulea@nvidia.com,
+	ap420073@gmail.com,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: [PATCH net-next v3 00/23][pull request] Queue configs and large buffer providers
+Date: Mon, 18 Aug 2025 14:57:16 +0100
+Message-ID: <cover.1755499375.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6c10:b0:881:8a58:3bc2 with SMTP id
- ca18e2360f4ac-8843e3d77e5mr2018618339f.6.1755504332825; Mon, 18 Aug 2025
- 01:05:32 -0700 (PDT)
-Date: Mon, 18 Aug 2025 01:05:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2decc.050a0220.e29e5.0099.GAE@google.com>
-Subject: [syzbot] [io-uring?] INFO: task hung in io_wq_put_and_exit (6)
-From: syzbot <syzbot+4eb282331cab6d5b6588@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, axboe@kernel.dk, frederic@kernel.org, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Pull request with netdev only patches that add support for per queue
+configuration and large rx buffers for memory providers. The zcrx
+patch using it is separately and can be found at [2].
 
-syzbot found the following issue on:
+Large buffers yielded significant benefits during testing, e.g.
+a setup with 32KB buffers was using 30% less CPU than with 4K,
+see [3] for more details.
 
-HEAD commit:    931e46dcbc7e Add linux-next specific files for 20250814
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16d26ba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a286bd75352e92fa
-dashboard link: https://syzkaller.appspot.com/bug?extid=4eb282331cab6d5b6588
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d206f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e993a2580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fb896162d550/disk-931e46dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45f6f857b82c/vmlinux-931e46dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0f16e70143e1/bzImage-931e46dc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4eb282331cab6d5b6588@syzkaller.appspotmail.com
-
-INFO: task syz-executor369:6499 blocked for more than 143 seconds.
-      Not tainted 6.17.0-rc1-next-20250814-syzkaller #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor369 state:D stack:27984 pid:6499  tgid:6498  ppid:5865   task_flags:0x400548 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common kernel/sched/completion.c:121 [inline]
- wait_for_common kernel/sched/completion.c:132 [inline]
- wait_for_completion+0x2bf/0x5d0 kernel/sched/completion.c:153
- io_wq_exit_workers io_uring/io-wq.c:1327 [inline]
- io_wq_put_and_exit+0x316/0x650 io_uring/io-wq.c:1355
- io_uring_clean_tctx+0x11f/0x1a0 io_uring/tctx.c:203
- io_uring_cancel_generic+0x6ca/0x7d0 io_uring/io_uring.c:3272
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x345/0x2300 kernel/exit.c:907
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1102
- get_signal+0x1286/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fec3779c659
-RSP: 002b:00007fec37752218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007fec37823328 RCX: 00007fec3779c659
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fec37823328
-RBP: 00007fec37823320 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fec377f0270
-R13: 0000000000000000 R14: 0000200000000200 R15: 00007ffd3af7b848
- </TASK>
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.17.0-rc1-next-20250814-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
- watchdog+0xf60/0xfa0 kernel/hung_task.c:495
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6811 Comm: iou-wrk-6807 Not tainted 6.17.0-rc1-next-20250814-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:native_read_msr_safe arch/x86/include/asm/msr.h:121 [inline]
-RIP: 0010:__rdmsr_safe_on_cpu+0x3c/0x130 arch/x86/lib/msr-smp.c:156
-Code: bd 00 00 00 00 00 fc ff df e8 10 d2 bd fc 48 89 d8 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 82 00 00 00 44 8b 23 44 89 e1 0f 32 <31> ed 49 89 c7 49 89 d6 0f 1f 44 00 00 e8 e2 d1 bd fc 49 c1 e6 20
-RSP: 0018:ffffc90004e17428 EFLAGS: 00000046
-RAX: 0000000000000000 RBX: ffffc90004e17600 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8be34be0 RDI: ffffc90004e17600
-RBP: ffffc90004e17538 R08: ffffffff8fa3b137 R09: 1ffffffff1f47626
-R10: dffffc0000000000 R11: ffffffff8501d3e0 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffffffff8501d3e0 R15: 1ffff920009c2eb9
-FS:  00007fec377526c0(0000) GS:ffff888125c0f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000a89000 CR3: 0000000026df2000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- csd_do_func kernel/smp.c:136 [inline]
- generic_exec_single+0x237/0x500 kernel/smp.c:439
- smp_call_function_single_async+0x79/0x110 kernel/smp.c:732
- rdmsr_safe_on_cpu+0x127/0x230 arch/x86/lib/msr-smp.c:179
- msr_read+0x14d/0x250 arch/x86/kernel/msr.c:66
- loop_rw_iter+0x425/0x660 include/linux/uio.h:-1
- io_iter_do_read io_uring/rw.c:830 [inline]
- __io_read+0x1326/0x14f0 io_uring/rw.c:941
- io_read+0x1c/0x60 io_uring/rw.c:1020
- __io_issue_sqe+0x17e/0x4b0 io_uring/io_uring.c:1773
- io_issue_sqe+0x165/0xfd0 io_uring/io_uring.c:1796
- io_wq_submit_work+0x6e9/0xb90 io_uring/io_uring.c:1908
- io_worker_handle_work+0x7cd/0x1180 io_uring/io-wq.c:650
- io_wq_worker+0x42f/0xeb0 io_uring/io-wq.c:704
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
+Per queue configuration series:
+[1] https://lore.kernel.org/all/20250421222827.283737-1-kuba@kernel.org/
+Branch with the zcrx patch
+[2] https://github.com/isilence/linux.git zcrx/large-buffers-v3
+v2 of the series
+[3] https://lore.kernel.org/all/cover.1754657711.git.asml.silence@gmail.com/
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v3: - rebased, excluded zcrx specific patches
+    - set agg_size_fac to 1 on warning
+v2: - Add MAX_PAGE_ORDER check on pp init (Patch 1)
+    - Applied comments rewording (Patch 2)
+    - Adjust pp.max_len based on order (Patch 8)
+    - Patch up mlx5 queue callbacks after rebase (Patch 12)
+    - Minor ->queue_mgmt_ops refactoring (Patch 15)
+    - Rebased to account for both fill level and agg_size_fac (Patch 17)
+    - Pass providers buf length in struct pp_memory_provider_params and
+      apply it in __netdev_queue_confi(). (Patch 22)
+    - Use ->supported_ring_params to validate drivers support of set
+      qcfg parameters. (Patch 23)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+are available in the Git repository at:
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+  https://github.com/isilence/linux.git tags/net-for-6.18-queue-rx-buf-len
 
-If you want to undo deduplication, reply with:
-#syz undup
+for you to fetch changes up to 417cf28f3bf129d1a0d1b231220aa045abac3263:
+
+  net: validate driver supports passed qcfg params (2025-08-18 07:39:50 +0100)
+
+Jakub Kicinski (20):
+      docs: ethtool: document that rx_buf_len must control payload lengths
+      net: ethtool: report max value for rx-buf-len
+      net: use zero value to restore rx_buf_len to default
+      net: clarify the meaning of netdev_config members
+      net: add rx_buf_len to netdev config
+      eth: bnxt: read the page size from the adapter struct
+      eth: bnxt: set page pool page order based on rx_page_size
+      eth: bnxt: support setting size of agg buffers via ethtool
+      net: move netdev_config manipulation to dedicated helpers
+      net: reduce indent of struct netdev_queue_mgmt_ops members
+      net: allocate per-queue config structs and pass them thru the queue API
+      net: pass extack to netdev_rx_queue_restart()
+      net: add queue config validation callback
+      eth: bnxt: always set the queue mgmt ops
+      eth: bnxt: store the rx buf size per queue
+      eth: bnxt: adjust the fill level of agg queues with larger buffers
+      netdev: add support for setting rx-buf-len per queue
+      net: wipe the setting of deactived queues
+      eth: bnxt: use queue op config validate
+      eth: bnxt: support per queue configuration of rx-buf-len
+
+Pavel Begunkov (3):
+      net: page_pool: sanitise allocation order
+      net: let pp memory provider to specify rx buf len
+      net: validate driver supports passed qcfg params
+
+ Documentation/netlink/specs/ethtool.yaml           |   4 +
+ Documentation/netlink/specs/netdev.yaml            |  15 ++
+ Documentation/networking/ethtool-netlink.rst       |   7 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 143 ++++++++++++----
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h          |   5 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |   9 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c      |   6 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h      |   2 +-
+ drivers/net/ethernet/google/gve/gve_main.c         |   9 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c  |   6 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   9 +-
+ drivers/net/netdevsim/netdev.c                     |   8 +-
+ include/linux/ethtool.h                            |   3 +
+ include/net/netdev_queues.h                        |  84 ++++++++--
+ include/net/netdev_rx_queue.h                      |   3 +-
+ include/net/netlink.h                              |  19 +++
+ include/net/page_pool/types.h                      |   1 +
+ include/uapi/linux/ethtool_netlink_generated.h     |   1 +
+ include/uapi/linux/netdev.h                        |   2 +
+ net/core/Makefile                                  |   2 +-
+ net/core/dev.c                                     |  12 +-
+ net/core/dev.h                                     |  15 ++
+ net/core/netdev-genl-gen.c                         |  15 ++
+ net/core/netdev-genl-gen.h                         |   1 +
+ net/core/netdev-genl.c                             |  92 +++++++++++
+ net/core/netdev_config.c                           | 183 +++++++++++++++++++++
+ net/core/netdev_rx_queue.c                         |  22 ++-
+ net/core/page_pool.c                               |   3 +
+ net/ethtool/common.c                               |   4 +-
+ net/ethtool/netlink.c                              |  14 +-
+ net/ethtool/rings.c                                |  14 +-
+ tools/include/uapi/linux/netdev.h                  |   2 +
+ 32 files changed, 631 insertions(+), 84 deletions(-)
+ create mode 100644 net/core/netdev_config.c
+
+Jakub Kicinski (20):
+  docs: ethtool: document that rx_buf_len must control payload lengths
+  net: ethtool: report max value for rx-buf-len
+  net: use zero value to restore rx_buf_len to default
+  net: clarify the meaning of netdev_config members
+  net: add rx_buf_len to netdev config
+  eth: bnxt: read the page size from the adapter struct
+  eth: bnxt: set page pool page order based on rx_page_size
+  eth: bnxt: support setting size of agg buffers via ethtool
+  net: move netdev_config manipulation to dedicated helpers
+  net: reduce indent of struct netdev_queue_mgmt_ops members
+  net: allocate per-queue config structs and pass them thru the queue
+    API
+  net: pass extack to netdev_rx_queue_restart()
+  net: add queue config validation callback
+  eth: bnxt: always set the queue mgmt ops
+  eth: bnxt: store the rx buf size per queue
+  eth: bnxt: adjust the fill level of agg queues with larger buffers
+  netdev: add support for setting rx-buf-len per queue
+  net: wipe the setting of deactived queues
+  eth: bnxt: use queue op config validate
+  eth: bnxt: support per queue configuration of rx-buf-len
+
+Pavel Begunkov (3):
+  net: page_pool: sanitise allocation order
+  net: let pp memory provider to specify rx buf len
+  net: validate driver supports passed qcfg params
+
+ Documentation/netlink/specs/ethtool.yaml      |   4 +
+ Documentation/netlink/specs/netdev.yaml       |  15 ++
+ Documentation/networking/ethtool-netlink.rst  |   7 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 143 +++++++++++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |   5 +-
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |   9 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c |   6 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h |   2 +-
+ drivers/net/ethernet/google/gve/gve_main.c    |   9 +-
+ .../marvell/octeontx2/nic/otx2_ethtool.c      |   6 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |   9 +-
+ drivers/net/netdevsim/netdev.c                |   8 +-
+ include/linux/ethtool.h                       |   3 +
+ include/net/netdev_queues.h                   |  84 ++++++--
+ include/net/netdev_rx_queue.h                 |   3 +-
+ include/net/netlink.h                         |  19 ++
+ include/net/page_pool/types.h                 |   1 +
+ .../uapi/linux/ethtool_netlink_generated.h    |   1 +
+ include/uapi/linux/netdev.h                   |   2 +
+ net/core/Makefile                             |   2 +-
+ net/core/dev.c                                |  12 +-
+ net/core/dev.h                                |  15 ++
+ net/core/netdev-genl-gen.c                    |  15 ++
+ net/core/netdev-genl-gen.h                    |   1 +
+ net/core/netdev-genl.c                        |  92 +++++++++
+ net/core/netdev_config.c                      | 183 ++++++++++++++++++
+ net/core/netdev_rx_queue.c                    |  22 ++-
+ net/core/page_pool.c                          |   3 +
+ net/ethtool/common.c                          |   4 +-
+ net/ethtool/netlink.c                         |  14 +-
+ net/ethtool/rings.c                           |  14 +-
+ tools/include/uapi/linux/netdev.h             |   2 +
+ 32 files changed, 631 insertions(+), 84 deletions(-)
+ create mode 100644 net/core/netdev_config.c
+
+-- 
+2.49.0
+
 

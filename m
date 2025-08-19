@@ -1,69 +1,106 @@
-Return-Path: <io-uring+bounces-9054-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9055-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FC0B2BD39
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 11:26:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10666B2BDC0
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 11:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0D93BFFEC
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 09:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA451884D59
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 09:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC57311962;
-	Tue, 19 Aug 2025 09:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B9731A05B;
+	Tue, 19 Aug 2025 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJGMW5S3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79E131AF26;
-	Tue, 19 Aug 2025 09:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6824A31A048;
+	Tue, 19 Aug 2025 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595348; cv=none; b=ASgTweRT7hx5qT34gsgH3QMxY7Sy76RrJt5X91x9KpT9UuUXnfFs54OCzZHcBu5ttZujBpm9GaBRrYHOmn8IILn0x3S+gKVH1w3FsuOfo5JOypYJxFaO/8vIm7eTooEpr6M4W2EdmTnB0E+a55vAnPNuJ3pk2DQqOx8qSJOmaRQ=
+	t=1755596609; cv=none; b=YLntwHb9pSRWrnvNzOY8KUfgYLdkwRjffruwbhN2KSMDfTgZ2X9u4PI6C1NrxF88jmpBVSFlAaAqd2tPqZzWaKuMiZUmToFwTvvd6M1QS17L2Hui0bwQa01JES/I8LTcAf97nN2T31AgcK5KsEEPSQ1b9FrHzvj6bYSJTS4lEHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595348; c=relaxed/simple;
-	bh=VCqMc3TXp0iFDecZLOI6OI90KnUXXPHTpDdlAmnlyWY=;
+	s=arc-20240116; t=1755596609; c=relaxed/simple;
+	bh=tdTkeisceSQV+wOrvcB1lSQqOqyddwQ9F5klGtSfUXA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cyx5AoZfsEg+/xZRp2xlmo0IRmSwgRGNN2AYgB56vrMCL4ZxzhbowpstiRUaHCqmZufvPN1kkVGikvB7AzgBbz07ZXyW7U1virw1W3XhMPVx1lEKr/HEdzWZwCm58jdgp9vG99O9if449bO9LYs3xFfIC1GmhIs1S6ae6PWGBLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6CCF7227A88; Tue, 19 Aug 2025 11:22:20 +0200 (CEST)
-Date: Tue, 19 Aug 2025 11:22:19 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate
- IOCB_HAS_METADATA availability
-Message-ID: <20250819092219.GA6234@lst.de>
-References: <20250819082517.2038819-1-hch@lst.de> <20250819082517.2038819-2-hch@lst.de> <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLuOGRc+fcy+w5NpsII3+ksIaCG+qBbfdIFdtUPSWRiaPqs61obI/NNXElfSKQotWkqTbHR/gB3gNXwkPbBWNp/+2SEpUOENg3R0wCrnnQ6WGdc25kxuOEEGTDpbCekvlSC70poAvmJ/djhPihDRIpOVeD0vHj7e1lQHC3tPDdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJGMW5S3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3B2C4CEF1;
+	Tue, 19 Aug 2025 09:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755596608;
+	bh=tdTkeisceSQV+wOrvcB1lSQqOqyddwQ9F5klGtSfUXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJGMW5S37jKqU+1+bgbURyL096oJ30LdcqjT4u22TMsUwrn6Aif82gIU7884w8kJJ
+	 MljlaIpAIdt5VkekmX23efVQLQDyqOKRcOHp2Xkzmfr7FB5BwIOXMuvAPeBeDp0PFZ
+	 FdgDjpmp1srFE7HV2X3vnBsSk+cMT2anVsVtea5GUNyO14Mbe+kkFOFLvQS1+oqxcy
+	 5TirnPTdOjJX8it8lOvGK2NS6zb+lwWkZDSU3UXZpy/9KpahrPbvPFkCIzur8f3p/6
+	 lsB/9REytYv8PszfD2vEpOH9SFepps8lNvLB2mPxkMc7XyE/ZIZoGUOQbcvg5bFKhh
+	 sbWy/5vcu0geA==
+Date: Tue, 19 Aug 2025 11:43:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, 
+	io-uring@vger.kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 3/6] fhandle: do_handle_open() should get FD with user
+ flags
+Message-ID: <20250819-gezeugt-umeinander-e354e377c266@brauner>
+References: <20250814235431.995876-1-tahbertschinger@gmail.com>
+ <20250814235431.995876-4-tahbertschinger@gmail.com>
+ <CAOQ4uxhhSRVyyfZuuPpbF7GpcTiPcxt3RAywbtNVVV_QDPkBRQ@mail.gmail.com>
+ <20250815-raupen-erdgeschichte-f16f3bf454ea@brauner>
+ <CAOQ4uxgBXeE3N5Pq8p=3AgH_cFnkzOK=ipiZHwx6i_C6Oghc3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgBXeE3N5Pq8p=3AgH_cFnkzOK=ipiZHwx6i_C6Oghc3w@mail.gmail.com>
 
-On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
-> It kind of feels like that f_iocb_flags should be changed so that
-> subsystems like block can just raise some internal flags directly
-> instead of grabbing a f_mode flag everytime they need to make some
-> IOCB_* flag conditional on the file. That would mean changing the
-> unconditional assigment to file->f_iocb_flags to a |= to not mask flags
-> raised by the kernel itself.
+On Fri, Aug 15, 2025 at 03:51:53PM +0200, Amir Goldstein wrote:
+> On Fri, Aug 15, 2025 at 3:46 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Aug 15, 2025 at 11:17:26AM +0200, Amir Goldstein wrote:
+> > > On Fri, Aug 15, 2025 at 1:52 AM Thomas Bertschinger
+> > > <tahbertschinger@gmail.com> wrote:
+> > > >
+> > > > In f07c7cc4684a, do_handle_open() was switched to use the automatic
+> > > > cleanup method for getting a FD. In that change it was also switched
+> > > > to pass O_CLOEXEC unconditionally to get_unused_fd_flags() instead
+> > > > of passing the user-specified flags.
+> > > >
+> > > > I don't see anything in that commit description that indicates this was
+> > > > intentional, so I am assuming it was an oversight.
+> > > >
+> > > > With this fix, the FD will again be opened with, or without, O_CLOEXEC
+> > > > according to what the user requested.
+> > > >
+> > > > Fixes: f07c7cc4684a ("fhandle: simplify error handling")
+> > > > Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
+> > >
+> > > This patch does not seem to be conflicting with earlier patches in the series
+> > > but it is still preferred to start the series with the backportable fix patch.
+> > >
+> > > Fee free to add:
+> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > I'm kinda tempted to last let it slide because I think that's how it
+> > should actually be... But ofc, we'll fix.
+> 
+> You mean forcing O_CLOEXEC. right?
 
-This isn't about block.  I will be setting this for a file system
-operation as well and use the same io_uring code for that.  That's
-how I ran into the issue.
+Yes, of course. :)
 
+> Not ignoring the rest of O_ flags...
+
+No, I think that would be unwise. :)
 

@@ -1,80 +1,79 @@
-Return-Path: <io-uring+bounces-9066-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9067-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60865B2C75F
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 16:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A16BB2C766
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 16:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D5E1BC62E1
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 14:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3DE19655DF
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8C12AE66;
-	Tue, 19 Aug 2025 14:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7577B27511E;
+	Tue, 19 Aug 2025 14:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FKoByIIg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q7faqE6Q"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BE279DAD
-	for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 14:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29234262FCD
+	for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614643; cv=none; b=ZYMZkWFWExAhorchlq4WqvPc3vjAWpn44/LAgXxSwMOmGe6b40dHpB8JaI/dJ9ChnSdCp3Wx56XSE0JrVH4pRYvh6lGDXQGp0T2uXLE2NhzFMVmQPUqw0qF2K2Z++AraBEZBpdrJMoDWhcipAtdkBlW4kBPaXbsUCnI1PmQaZWI=
+	t=1755614692; cv=none; b=RebVPuewYG7PKZOAk0dYC9o54attTINT6P1JWetU9VQv7tCKWBPExDFvlmuRBCPiNp3L5F1MNX4FU4wEmSekxM4bzYDUyBYE2lDSo2X+UFOLD5TDecp7UpquPzh9kyimr/yUTmjFRA11slLe3QWnFOQuBw22uipw9DgNKpTVe4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614643; c=relaxed/simple;
-	bh=Y/IWvrQWJA4v/iTdiazNBY9qwT1kxSJ/xW4FiQxACVM=;
+	s=arc-20240116; t=1755614692; c=relaxed/simple;
+	bh=V8tPAHv7NGOFQz9IAhlOokTiF7/KRhJObmk/rM5XIeI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWVBAmq8tHdAkrzhrocB6kLhkYEFRpcQLhlhHfMr1xTbWX9bMNcX8v4r22ti59eJ692j4EUFTqR+1VT5PDbFt8zlepnzbn1B0BngHiULILnjeC3uqLhrt6u8ZUD3s01z0pIZ1YVlKL8A0q30U/TAC0SG2thL8Iv4nBR4r7MR38g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FKoByIIg; arc=none smtp.client-ip=209.85.166.170
+	 In-Reply-To:Content-Type; b=Ik9US76R89OZE9/2mZ5qPfUz5IEjCQ9sqwP+VmHQbohG+ypCl9/hb0hOw5CtFJ4xIlGPt5LL5XFQcV1qH8Roqwgxisrqt3qK0frbwz8LmTpt0W+AQdTjS7kiXwCtKlNnInnOVV/HrX7VUrTV27e8wh4mPNstlximpkGKkMEM2Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q7faqE6Q; arc=none smtp.client-ip=209.85.166.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e57002bc23so27251085ab.3
-        for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 07:44:00 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-88432e31bdbso386601639f.2
+        for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 07:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755614639; x=1756219439; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755614689; x=1756219489; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=G/tTUZJcHeIMZJ6EhkI/Q1eGxtR8aUTpatZeMcHNJu8=;
-        b=FKoByIIgozA8pLdJCuvO2Gdnrhh5ctuwlCkdgPEupGz66fkttstZzSn43XoK6U5YuN
-         wDTHHgB7LQI9P6CpnybeD0+twQl18zKXee3wg7l+OOR+COlsNcy0eZhzioQ5lWzdxMU1
-         eCf4UISDQm1e0rKq7gFm/OXGhX3Mmh7Oz/YhbD8vHJ5TtqPTnPDZYNRI9g5e88/2az44
-         IJ9VgiVEvRWL/IBuM7tEMkQ+dLXIPJR0GqXReTIouG+66EplHzHAlHwo+C7JK1oKoyMs
-         GIsf8LV/57slDK9J3YIu22WrxZXd0jG60jic/+Sr5pDPFUaUOYt8un0eFD/4XJopftPk
-         XoJQ==
+        bh=nhf50ikNzvmA+q7GfNoYfkdo9uzvXqOdl8fr2Wi2Y9s=;
+        b=Q7faqE6Q7ti4gxvQ61+XY7dgnBu7iMkFt9to1eUB49LCk3wH4xFYSQq5D/uVdnFcry
+         ynumZrIzbnhJ8dUnJx4mjTicbXtDuSaZpZyXnxzsQMErJd4n3u885aoRI3w9Qf4yOdme
+         ulWzjFSJe+VmYxil0jh6wXsKehwHLcxeA0AU+dRs7cpJpX7zR4j40BgOl67oYUfp+247
+         BAXYSGGg9dGvKmYYcKwFmXI3nbbJhSN32ZRXS2HPDYSA6jHE8xoT/tnTPyGR5xjVED0o
+         NZi9ouDBdQjO5VHnk6uvzpFWr2y7Cf+HS3wKlWIHJ/o6hIa1hikodNEgCrUp6W94Yx+M
+         zKnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755614639; x=1756219439;
+        d=1e100.net; s=20230601; t=1755614689; x=1756219489;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/tTUZJcHeIMZJ6EhkI/Q1eGxtR8aUTpatZeMcHNJu8=;
-        b=bPPIfepYimLkUR3CvRaY7GuOGkxnUGHmO2aRdDn/vEo+zslBtPSL9bPGKvtW0qZqfF
-         CcjiCAgD7NXV+z7hHl3p7MFd39gATL5pGmUV90pvM6fianyrF7xFQ7s/SokqnobM7/z6
-         uc7ROjHHmS2sESViZ8/1lj9qWc4HBIXpldG4zUTj6uLRSPwmZT43y8FYjoEz0wzR0fU9
-         JbENIVCuqb+gX6zfMLgVCMplfpEnlouSUpUuunUSsW8bSNwusnUFN+gvmsM5QZLptswN
-         MJoiXw39KWGc0AE0ZFO7ikLbsho5h+ikMJ9vKAFpUxD3ESJwXRE/JxhssfhCd2btmWHG
-         CPRQ==
-X-Gm-Message-State: AOJu0YzMAkQP4b4wtagE9M69Llmx8ifSFwt7MN64jvLIh+THE4m4Nfq/
-	XAmTlmpQrp7/bZfnMX10j4xuYk2Vpwbf0YgI3Qs3VFxTvKZQhEjwe8KIFZAXGPFe6cNYa1TdfQN
-	Gq1M6
-X-Gm-Gg: ASbGncvZkMMIIg9HoE+VMclbNuTG69AGBmq+NaX5ecreqr6kHyKbDAh18yyJXMieZO+
-	tq1GM4ltAJ5JRQvn1/Fbm/dKqIBwxuG3EYMDorgAsxaofRdKG3gp4rk63qsiC8cl+hIMlSD1y9C
-	JI5yOczIEmC9VFZCdlvxu8dQkJaZO75lmD3shxveOrZDcaRainyHiQjizkJ3nD1AyzeEtu86kcj
-	x2yzwdCHlaap0MwvhKW0pZpS+VlCLI8qImMmi3hLHbRxM7RHyQaIxNhn37LcXCvSPGbI6+0KijG
-	bX4wY7TLihUHNRdc3uOP3fxNSlTOjNE8EZBqQ4/nwR+cWxOcwHPoFICmT9uyZ9RfI/vzSRvg+5c
-	bYR4w8LtnGur13cvZaXv7gRLaiqlioA==
-X-Google-Smtp-Source: AGHT+IH2FtSB4mvYtsfVJOcSTVVsYrxKacmsoDYUe20NUlgsX1YjdCktRxIsAcxWyqTCBIP66W4gQA==
-X-Received: by 2002:a05:6e02:1748:b0:3e5:469e:b105 with SMTP id e9e14a558f8ab-3e676639ceamr50831665ab.18.1755614639183;
-        Tue, 19 Aug 2025 07:43:59 -0700 (PDT)
+        bh=nhf50ikNzvmA+q7GfNoYfkdo9uzvXqOdl8fr2Wi2Y9s=;
+        b=uPf3kycxPolqCUrGIWIMQafHaraRvK/huzQd4FcgshT+OtXErJ15sx+KZBDtpKUetg
+         8tLtiKLpVZhLUDo0bwMmDnBTzmfQ43wyo/AKlP4yGIGlz38PFw06eAfFFJwPeZvCFY3z
+         W78BvFXhkjHWRwV8cO8LYFgOXowrX+B3ZXqtw53gyESlnP+2uXG8pwUS361omZU/0/8X
+         QtCzO+W9m2X+0nt8g8NhHv+2Nr0ccyMfNACEaSW96nSj8n3836dNgfZtkTAC9c+6d3Ry
+         eHmFkr6yPaId/liyDftGSXd8CQuopP7wUG5gwKxsu4k11fdWNicVY8GnNe6oQSckOudb
+         gouw==
+X-Gm-Message-State: AOJu0YzQnXYC6FctCg9dwS16x1n0bGVupSAz6OQFeaIBv+BCP7B2RJDK
+	2qoEzpVuo5bRXWbS1p3h1NMArQ1euKsqUNasBSHyESSZozCeDK3fs/nQ96SKUESQpzE=
+X-Gm-Gg: ASbGncs7cZV4sp4U7ofBBhSERBpOeTJqNkjZhnqYaGReWFsV3/R+iddo629qHd8977M
+	8cfVL4T+AQOzfQM5WZ2/Ow5lBPg0r1xUN/leYyERWJqVWLGYUVF7zRIK6FlP8Kb/gpGhA/Z9ho7
+	bOpVnvbdNcqysK6GLyw6guAxKU+iqmAk9TJ1tFBCACE8VdOC/nQ+tAoN+augrYUJR9CghiMxpuO
+	fk0mXn1bC7FaXc5mkOwD/ja2+2NRhS63blL2+mfOOuY6pHFd6UmDuXvDOCqAaEnstgKSFbMTeqb
+	uh/ZMkCtz41wZqmRwcmx3/kNs//ISbfS3+CjRQXZbTn/z3praCtICP50BMP4DjzfakviycsA6mD
+	hdIO3TQpBB08Koo0GMBBttRn0Ohxv2A==
+X-Google-Smtp-Source: AGHT+IFVGSDs7d44KayFUWza2HUJxaGC6fgs6e/ZQvTF8Ldc5fUpQhaxJ5zBGsEWpunwgPMBYCKHiQ==
+X-Received: by 2002:a05:6602:608b:b0:881:9412:c917 with SMTP id ca18e2360f4ac-88467dc220fmr474328839f.0.1755614689086;
+        Tue, 19 Aug 2025 07:44:49 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94998c07sm3489939173.49.2025.08.19.07.43.58
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8843f89b611sm422851039f.15.2025.08.19.07.44.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 07:43:58 -0700 (PDT)
-Message-ID: <06bd405d-c5dd-4f20-af90-775278686f5c@kernel.dk>
-Date: Tue, 19 Aug 2025 08:43:58 -0600
+        Tue, 19 Aug 2025 07:44:48 -0700 (PDT)
+Message-ID: <9b8c9a80-4ab9-4d06-b357-228ac5beca8c@kernel.dk>
+Date: Tue, 19 Aug 2025 08:44:47 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,71 +81,37 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: uring_cmd: add multishot support without poll
+Subject: Re: [PATCH V2] io_uring: uring_cmd: add multishot support
 To: Ming Lei <ming.lei@redhat.com>
 Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
  Caleb Sander Mateos <csander@purestorage.com>
-References: <20250810025024.1659190-1-ming.lei@redhat.com>
- <393638fa-566a-4210-9f7e-79061de43bb4@kernel.dk> <aKRd05_pzVwhPfxI@fedora>
- <91bc3fdf-880d-4b71-94b3-ac72ca0f3640@kernel.dk> <aKSJ8yg7GRh6UzTr@fedora>
- <628449dc-45e7-4cdf-ad65-7c97e6b2bb6b@kernel.dk> <aKSM6uz72puzoqlO@fedora>
+References: <20250819114532.959011-1-ming.lei@redhat.com>
+ <9290b8d7-d982-4356-ac7f-e9fd0caea042@kernel.dk> <aKSLjwcqr1Mq3AES@fedora>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aKSM6uz72puzoqlO@fedora>
+In-Reply-To: <aKSLjwcqr1Mq3AES@fedora>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/19/25 8:40 AM, Ming Lei wrote:
-> On Tue, Aug 19, 2025 at 08:31:32AM -0600, Jens Axboe wrote:
->> On 8/19/25 8:28 AM, Ming Lei wrote:
->>> On Tue, Aug 19, 2025 at 08:01:18AM -0600, Jens Axboe wrote:
->>>> On 8/19/25 5:19 AM, Ming Lei wrote:
->>>>>>> @@ -251,6 +264,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->>>>>>>  	}
->>>>>>>  
->>>>>>>  	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
->>>>>>> +	if (ioucmd->flags & IORING_URING_CMD_MULTISHOT) {
->>>>>>> +		if (ret >= 0)
->>>>>>> +			return IOU_ISSUE_SKIP_COMPLETE;
->>>>>>> +		io_kbuf_recycle(req, issue_flags);
->>>>>>> +	}
->>>>>>>  	if (ret == -EAGAIN) {
->>>>>>>  		ioucmd->flags |= IORING_URING_CMD_REISSUE;
->>>>>>>  		return ret;
->>>>>>
->>>>>> Missing recycle for -EAGAIN?
->>>>>
->>>>> io_kbuf_recycle() is done above if `ret < 0`
->>>>
->>>> Inside the multishot case. I don't see anywhere where it's forbidden to
->>>> use IOSQE_BUFFER_SELECT without having multishot set? Either that needs
->>>
->>> REQ_F_BUFFER_SELECT is supposed to be allowed for IORING_URING_CMD_MULTISHOT
->>> only, and it is checked in io_uring_cmd_prep().
->>>
->>>> to be explicit for now, or the recycling should happen generically.
->>>> Probably the former I would suspect.
->>>
->>> Yes, the former is exactly what the patch is doing.
->>
->> Is it? Because looking at v2, you check if IORING_URING_CMD_FIXED is
->> set, and you fail for that case if REQ_F_BUFFER_SELECT is set. Then you
->> have a IORING_URING_CMD_MULTISHOT where the opposite is true, which
->> obviously makes sense.
->>
->> But no checks if neither is set?
+On 8/19/25 8:34 AM, Ming Lei wrote:
+> On Tue, Aug 19, 2025 at 08:11:23AM -0600, Jens Axboe wrote:
+>> Added a comment on v1, but outside of that, do where's the ublk patch
+>> utilizing this? Would be nice to see that, too.
 > 
-> Indeed, thanks for the catch, and the REQ_F_BUFFER_SELECT check in IORING_URING_CMD_FIXED
-> branch can be moved to the branch of !IORING_URING_CMD_MULTISHOT.
+> It is one big patchset, which depends on this single io-uring patch only,
+> so I don't post them out together.
 > 
->>
->> You could add that in io_uring_cmd_select_buffer(), eg fail if
->> IORING_URING_CMD_MULTISHOT isn't set. Which if done, then the prep side
->> checking could probably just go away.
+> Here is the whole patchset:
 > 
-> Looks this way is good too.
+> https://github.com/ming1/linux/commits/ublk-devel/
+> 
+> Basically any ublk IO request comes from /dev/ublkbN, its tag is filled
+> to the multishot command's provided buffer, then we can avoid per-IO
+> uring_cmd. Communication cost is reduced a lot, also helps much for
+> killing ublk server pthread context binding with driver.
 
-Want to spin a v3 for this?
+Sounds reasonable. We'll have a slight dependency with that for 6.18,
+but that's not a big deal.
 
 -- 
 Jens Axboe

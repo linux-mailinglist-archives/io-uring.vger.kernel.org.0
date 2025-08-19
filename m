@@ -1,88 +1,88 @@
-Return-Path: <io-uring+bounces-9078-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9079-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72068B2CD11
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 21:38:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924C7B2CD24
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 21:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3861BC389A
-	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 19:38:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA802A322F
+	for <lists+io-uring@lfdr.de>; Tue, 19 Aug 2025 19:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB28338F20;
-	Tue, 19 Aug 2025 19:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F974340D85;
+	Tue, 19 Aug 2025 19:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BxeatVFY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lmMWyOV0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDBB32C335
-	for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 19:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8FD33EB02
+	for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 19:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755632294; cv=none; b=hAzVsq3/GnFTNZXqrumJ3go2m8TgRPZkMgz02rS100B9snjow/Oale3dM9pXTjYsoms0avOsLSWeJOA0ad8O1pr1qsOwbKDW942AxneAHp/bVEXPwg1IXMSYtliZuOxL9aAuaDNy5gVpUb/yTkiQJ6FY591IHfJZtLP1wftl/dA=
+	t=1755632642; cv=none; b=IUdOZ99AKx5LGmm3O/h8/x4jsk+XYPwjRcPEKtbzaXzejQCqZmNzlegCCLmLOMHmhJD0/Jg9o5qXeoEtS9Qt7CRHG2P+Bo4ECij6hcdtYNFC7VtDeUIhbW0q9OokSfd3VVA9IHIX2a7+iYkcnLTK2T0EAfKFxP+Gu2ldPbdIApo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755632294; c=relaxed/simple;
-	bh=KyBUNB2sq09QvdnxFRddWehNMcaYqyV73YsWqTqEkSQ=;
+	s=arc-20240116; t=1755632642; c=relaxed/simple;
+	bh=zat7NJlmUUgoU/fA5UVQBv+E1bcTWYWMLkGLrDLXRWs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j8aXYA6QCiX5zwPpoVF8KU8JQrcOM3jxrnQE0LUmJne+/uYZ/D400gqMfPjvS/aJ6cB30Y5NqBDJtgCskPy/P2yvk0JZMY4giytdHHiVIPSav0ZG51gLR7GnhYa/4TVrPBkxxKDE2Qi3cnU5ctLKro4GMGYAnu+spmch6tbysTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BxeatVFY; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=Be2jICS2eiHbSJJgubN0pizZkQOeIzYCMUY6y1lzXuLR3JP6gRZYIvtOqi0HpSqVRU3xjt7RpDbc198HtNWrrso7Yuoss+Pa9nRmAb9X1SrUOFgZwf1nwJNRH0pQDf4whh1MGsjiBzbgZ9nDwcfwWER18M8XyJkLzkWeKnzAgQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lmMWyOV0; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b0bd88ab8fso47391cf.0
-        for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 12:38:12 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b0bf04716aso94631cf.1
+        for <io-uring@vger.kernel.org>; Tue, 19 Aug 2025 12:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755632291; x=1756237091; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755632639; x=1756237439; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KyBUNB2sq09QvdnxFRddWehNMcaYqyV73YsWqTqEkSQ=;
-        b=BxeatVFYwJ0DeTiGmhhmBYqyBFhikIt81fy2+Ff1GvRp79lzzGu1mbPpGJo61+VkFC
-         ZdvMQpRJesWHpwqk+RroPOrAeIT31K1mmGO0cyA0Co/Fu7qGImHHd0KDJHBwc4gbQPKN
-         9mxiWdJIV3MWZGoj+2pHUXagAIFE210LOSz4dVYSYkdJSIdHlEFCAWgW5MciycAmvdwJ
-         BM84s7S8Y4cvEnc5whvRBWbuRIxoHWl8Au41Tae5d3Mpfz9pSE6yPqmS1/ESeUFIw0ia
-         vli+xZB6Gp9t92RJO8J1FZrEMMkAjeWqspmpt47m+6wS8eaB3I/JixMp6BXQuxXMeBBf
-         4IfQ==
+        bh=sbRKg2jA2OAQ/GBAnIjxqbjjLFTiafS/NzVrNjbA9ac=;
+        b=lmMWyOV0zjPpHYfAsJDNe/t/tNnkHKl0I7KceXdBHEuIyKvDNPdeynikZQ8+gueufX
+         bBNWkVRHgUByt32ASbJanra0T0cqZT5YlAT5ZoK05HLXkTxqJ8QU0cOUnPbonB7x8OAw
+         2rHncC2T1YxUK6QFt2llPEYesOW5cWig1XqeCzKgXWEjmN3GSgzlOidTCZcVStOoA+RM
+         OtJGRJQ2yxxB71QGj6Bio9gBcw6tNuz36V/g0MvfH29EYC6e7VeZh8UN4wr7zHvtymI2
+         uEj1VQ+t8atczvgZMSpGi4eJ01MV4JmJC+kcdzxCTOQjOAwvBsGWr+K63uKzjm/Mee7I
+         rqoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755632291; x=1756237091;
+        d=1e100.net; s=20230601; t=1755632639; x=1756237439;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KyBUNB2sq09QvdnxFRddWehNMcaYqyV73YsWqTqEkSQ=;
-        b=iUdkMiJgC17fzFqARURfhtCGjtwYFj9UZX6aiRL/o84XmCJ+8sNkFqFSwDq2EZCGFi
-         HiM/25ywS+/MGsO48GpaV08eu0tXmqOmc3bP2R6wCyyezp9KwB9s96QD1+9iBPBVQOQN
-         R8JQ07nt5vHltbMwNHwnSIm/j8csvHVKp9Dmf/VbQrMYIDRJQP9GmuRWVJYwE9lybH/o
-         2a3WMIJ+masoomdoFcr/TFkZUZDOLIa7Wjoa7gEvE8RHZ3su0bJRJ2ITjfR1NyYPmxs9
-         YudNbSLnoAj+0pbheIZoUz65s7fXh00wk6C6Pq9POub8UQfcNt839THs6d4Fq8tiBg+6
-         W1GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtXJl3igfRj6JYBb+1NUsaWDCG7xk5f2Hc8I/8RqVF6arXQxI2wpNw5MPxQqA/fHI8ujtWgbASwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1MqJe7cOZPOWqasoIOt9thF/WQqubR17G3UUsqt4bOXbaxzN3
-	D3WJ/qgVjwu2J7LxRIGA7HBxPKZZ3OzJRnNpYB4P4gUV2AIYVdD7sR75ZkrrNoiM0JKWQNRgN6t
-	ytjS53DxazpDHPfd7cT0qUm4QaH23VuS+wg95nLZK
-X-Gm-Gg: ASbGncsiVCJwRmgjOxXUDgIMkCkvLssUm3fGw6eqVcgZvkfrzeMTMWtj7YutgCD+9dx
-	tm78k/dF48QrzuGVdpmWnZyP28txDG0oiYGk0DCpY83CittfC1eWfF6QdUkKolhRRNaueLPs0f5
-	RHHoo5E3cjcOXjMKlBX9zwRQma3CCrC/URE7ZSxf8YGf/0sczyjrLQeqwBuns17/TsofVtBpyTL
-	+3NkDCjNmPOuq+st+thSOyECugQBxK4cUXKlN6BHDSwr3tq+DJvWghYBl7rMvOfWw==
-X-Google-Smtp-Source: AGHT+IFR2/iMkStKZ0a8zzBrBpy7PAaXOuE6GtKGvb6nOuL663qM4JQSRroZMOV/Sebi5i5ZULUxa18gYqkX5fMTTAE=
-X-Received: by 2002:ac8:5fd3:0:b0:476:f1a6:d8e8 with SMTP id
- d75a77b69052e-4b291b9c1efmr693801cf.11.1755632291072; Tue, 19 Aug 2025
- 12:38:11 -0700 (PDT)
+        bh=sbRKg2jA2OAQ/GBAnIjxqbjjLFTiafS/NzVrNjbA9ac=;
+        b=iNnRbf5Fhrip6pREhjFNKuLXkmt0BZomqeIa88pSfaOn2Js7XDoqTp9PWrP7js7JzY
+         C8DA3JiwHuzg14ShF7ZtNOtL5cwDeJi2RuhS5KMEmjWIpBZt3ZIw0/VfbD5T58iOgX52
+         F9fhrIbSjNEPDR+CT3uKbb4xRytX6gTSWQxmyPhDfhtcMxULtp/P5n2q1ALIdvWFnnHz
+         OxZoWqK50LHONqHRQVNXjuT1YrcJAdrrZaAECleahu2V+iSSwC+mW1yMaYpqrr6dXi8i
+         iheAayaVjbpELTVMLRmwpFmMMwetx6SyIuLdyAIXfQDExAh0eWRPnlLpn7wsUF50r3e7
+         OGXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjX7UTRzeTtqalgVGbVmQkOX7dd7mXATpqqONBxVAos4VkWGLs0lJPjosjqZKztaAI7DZwy3+/kA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQExEAgQIJqzt6+RUPK0zRhlm8DP8tgkXHdnUwVOVGoaAiEa7i
+	WDAycbhz5W0+SGOm9bbrq2I+0qfWiufKB2cdBY4PMRxqYr7KzZPnbGdgj85lNKX5D8TB9j48XzK
+	YAHYuwLjk/rNyaJHtCYZ8qQ0Nxs5dMkNDdwrdA2F3
+X-Gm-Gg: ASbGnculO6PtnwL+uMvbIKI475hIJ0PenAKhfAIRzKA7ABOi0nzhr9Sim7YF5IVQESv
+	6XbZt72MhpEBVCJ9a/stQq3ftOOghoZ2WYsKiwVJC0CQPa42sakF/ABZmAfkmzxB2LrB6qC/N8y
+	FyQJMhnfxvMRMMq3ltCBQ2f0COQ9wJrLYKiB48P0UyFZZp2OPw+Iz1QcC7eTQi6bMW76w9XEjLa
+	Ma9vpjzQWNsBxS4pJ2EAn/j3qfM9v4shMGdO16ppZl5/6OXzJFQdyjP7O2i2s7QaQ==
+X-Google-Smtp-Source: AGHT+IFzbmgTMllsQwidG6Y92/6CAaMpD7aJeIN5NSqfB7vUGkLJw6cipWLEHY8Trox0LsgRl4K4iCsM6CobCLztYvE=
+X-Received: by 2002:a05:622a:114:b0:4a9:e17a:6288 with SMTP id
+ d75a77b69052e-4b291b3f5ebmr783351cf.13.1755632639143; Tue, 19 Aug 2025
+ 12:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <43a256bdc70e9a0201f25e60305516aed6b1e97c.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <43a256bdc70e9a0201f25e60305516aed6b1e97c.1755499376.git.asml.silence@gmail.com>
+References: <cover.1755499375.git.asml.silence@gmail.com> <51c3dd0a3a8aab6175e2915d94f7f7aece8e74d3.1755499376.git.asml.silence@gmail.com>
+In-Reply-To: <51c3dd0a3a8aab6175e2915d94f7f7aece8e74d3.1755499376.git.asml.silence@gmail.com>
 From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 19 Aug 2025 12:37:57 -0700
-X-Gm-Features: Ac12FXzh-xPyuuuSr3t5QlnJu8i5ZGtJ2KSJsIVV1_FY-w1P3-CyOqXsgUqFpw4
-Message-ID: <CAHS8izNq8wKXwiZs8SeuYhsknR=wAwWPEnBOxUgcMhCoObQ=xA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 07/23] eth: bnxt: read the page size from the
- adapter struct
+Date: Tue, 19 Aug 2025 12:43:43 -0700
+X-Gm-Features: Ac12FXy7pxgC5oceITb1cGTDtOFx_puzv-LutwCFhZgB_W6rHbLPop9FaZfQ_sU
+Message-ID: <CAHS8izOs_m9nzeqC5yXiW9c1etDug4NUoGowPzzPRbB4UFL_bQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 08/23] eth: bnxt: set page pool page order
+ based on rx_page_size
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
 	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
@@ -98,25 +98,44 @@ com> wrote:
 >
 > From: Jakub Kicinski <kuba@kernel.org>
 >
-> Switch from using a constant to storing the BNXT_RX_PAGE_SIZE
-> inside struct bnxt. This will allow configuring the page size
-> at runtime in subsequent patches.
->
-> The MSS size calculation for older chip continues to use the constant.
-> I'm intending to support the configuration only on more recent HW,
-> looks like on older chips setting this per queue won't work,
-> and that's the ultimate goal.
->
-> This patch should not change the current behavior as value
-> read from the struct will always be BNXT_RX_PAGE_SIZE at this stage.
+> If user decides to increase the buffer size for agg ring
+> we need to ask the page pool for higher order pages.
+> There is no need to use larger pages for header frags,
+> if user increase the size of agg ring buffers switch
+> to separate header page automatically.
 >
 > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [pavel: calculate adjust max_len]
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethe=
+rnet/broadcom/bnxt/bnxt.c
+> index 5307b33ea1c7..d3d9b72ef313 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -3824,11 +3824,13 @@ static int bnxt_alloc_rx_page_pool(struct bnxt *b=
+p,
+>         pp.pool_size =3D bp->rx_agg_ring_size / agg_size_fac;
+>         if (BNXT_RX_PAGE_MODE(bp))
+>                 pp.pool_size +=3D bp->rx_ring_size / rx_size_fac;
+> +
+> +       pp.order =3D get_order(bp->rx_page_size);
+>         pp.nid =3D numa_node;
+>         pp.netdev =3D bp->dev;
+>         pp.dev =3D &bp->pdev->dev;
+>         pp.dma_dir =3D bp->rx_dir;
+> -       pp.max_len =3D PAGE_SIZE;
+> +       pp.max_len =3D PAGE_SIZE << pp.order;
+
+nit: I assume this could be `pp.max_len =3D bp->rx_ring_size;` if you
+wanted, since bnxt is not actually using the full compound page in the
+case that bp->rx_ring_size is not a power of 2. Though doesn't matter
+much, either way:
 
 Reviewed-by: Mina Almasry <almasrymina@google.com>
-
-nit: AFAIU BNXT_RX_PAGE_SIZE should be unused after this? You could
-delete the definition in bnxt.h if so.
 
 --=20
 Thanks,

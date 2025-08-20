@@ -1,134 +1,148 @@
-Return-Path: <io-uring+bounces-9104-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9105-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B97AB2E08D
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 17:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A71B2E166
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 17:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498D8188845B
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 15:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F48D3A332D
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 15:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C6349231;
-	Wed, 20 Aug 2025 15:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315D32C11EE;
+	Wed, 20 Aug 2025 15:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0fitD2+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YlLf3CCZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B20F34924E;
-	Wed, 20 Aug 2025 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E332BE655
+	for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 15:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702027; cv=none; b=FL0AttlrczAxvsKDx7YsV68Gw/mauENWDf64TpKdFUUBhyrztJZ70hjOhxs+97kKQb5NQcAYby40x3eZrw+LkUJGimpEKgWDn3598ujyNuBHMyfnwGN5A4dzU0ziQnsH0NRqVfyu1Ekd689V4cuZZqeWttn6Xk4UOp3r8H29rq4=
+	t=1755704367; cv=none; b=Al6a2eg2lI8Oi51ctRaKAs9Kw6tE5af5ZCmZlrF3Iv7pmTxCq4aTyLskoGMjD82RcJvSw+RaK09wynBmP2ZHCfVeZVaJb8tUahwz1EGaMrCJQVTkZzQnBoxQxHaZPhcha30LlSTc/hCKP0FxbU6R2J1EJxRY0QrHkTFuJBxiQns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702027; c=relaxed/simple;
-	bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=XIj883l6oU48qCNWsZgS0Rz/bac+9gdZ2Hvjest74bjslIHGQW5hwYwmHuWWfZEwNC5Sl1Vr8q/qX0er2v0+7q2jSw7TLvXahrzptSjOmtJr4fNNNXyObq+KqUQrFE3OF1zfauxGV8fR5knD8lA36haluwuOgj/LwP7yGOaNcwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0fitD2+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b476cfc2670so401796a12.3;
-        Wed, 20 Aug 2025 08:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755702025; x=1756306825; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-        b=F0fitD2+4pC2lxTxhuWYNswlcIYKo2pQOMNHk7A44OfKweCRNX5leDabR42wq9GHZr
-         gWC/0NNoMxIMti2KM+QSzhJtGXnreEEKXdtDIsDYtYlqMgP0dhQWY4PwN4vlUdcMMld7
-         O9IkUB/aN0jdG3zWOqZLFjfUXp4hNT7l+c+017VxLCcu2uu1K5IM1fTCDMaLAi12rfgH
-         Rp1Jt5ZAlvXTIPG7RhmS6duBqsX4UN6pOzZVI9eFRCdCC6c2dc2yOUWxoOd5ew9lJmMK
-         5QEJY+9NuUYjQWRqHZmO94gXTTj/NONIzdsEoH2Jap3GJCSzkreT9Bv+GAHgyWWYKLTm
-         nWyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755702025; x=1756306825;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HcUocu8ykYcNQNL7uxc8gkzCEymZ97/xUCXbX2OkNnk=;
-        b=pq7/6n1/bzwo9nKC//2CNQ7aYVBd5SV9SwErdTkzl8QpyPu3WeKb4YRa2eave7RVpM
-         Y/ckYhiihjTY/F+9OiR6QKg9E5CrqVL7TikBEZScYsq0nnqLB254dKXW0BuqScrl1GhP
-         mh8Dt4QiZilggOtwjLYLb8mtIoxyCKlD2NhlRXbNVH899I6uG26YsNbZrKXThH2x8IAa
-         JB8s9uCX9PV4P8+y65gIDNHcE/HOK7xNXakj6FZWRkvprSJazK79rgW3EPnZ82tF9iu8
-         qnV/SQ3V4847l1w5Y+KUD64aBvF8aL/H6eNVbobPXo1EwLSOZ+oJMYtr41l557g42Chx
-         hQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSgHOBzvnikGIhEvY6WXE5BOn3JMD6Mivb/UiCk2bO3SWqF5S95ApXa5qZfsiiSQgYEDwnitXwd3/h@vger.kernel.org, AJvYcCWo6/wRWZdA2BAi7nUCA5A+qxLMjMkqq/ebqbHuL8xUTXleIZcb6mQNOrReN4G30S0je89PeJaVfg==@vger.kernel.org, AJvYcCXg58IP8hToUFV4u/8Jh0Wxecz0tkYCFKFTdbOpKbUv0fO353QuXON4GHmea6iZIzfxhFDz3rrmDyvbbfjCXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCzGhNt6VUiQ4UdWxxMgvwuHBfPpQ01rV+l7QjnSBdJSqtM6CH
-	Upja8uakv/3Ih8oRbaIyLARNy+Mg/3afDJUtuaSysM0z6ViqZXX7qwqt
-X-Gm-Gg: ASbGncsQRWxgIaKdjorqQxT1mAtaXWRmFVmV5+G+ojdwmvxGpjSOCaPn2Skjod2+DpI
-	D5/AhferN+WwbH3FW6CKYgthIrncL/z58z1psybNitJ0RECoCMAfQEFK2OgFfQZ1JRTWKX9oZ4M
-	giLbln05l0y4nVda1OeJ5mPFOJDncR7mItHjwXuMWSKHaXjZ8hL7gwDpFxLgFFv6LAq3JcDhVgU
-	3cT+XPqk8Ve5Y+VEh6kRqjplTpAnGLBat6YsBm1YD+x3oj3/QGZrNcLvOUxWNG4IuXwBEeJS1Pj
-	5qTCRUs9MK9txOoB4Q32mIuPc+VkOZu1/TTi9JVo2d8macFQpYfoDG/t53FA17J3TdOpQvxzptZ
-	YIilwfjB5fXRzv+kVV08rjjsgpAs=
-X-Google-Smtp-Source: AGHT+IF+xR/A0UKdUrdig4MsgN3farISyyfZyVO405kQD0hK/nbh996Heg9FE8bJhKV3B3WmVAwkUA==
-X-Received: by 2002:a17:902:f691:b0:23f:f68b:fa0b with SMTP id d9443c01a7336-245ef22dc84mr33747695ad.37.1755702025126;
-        Wed, 20 Aug 2025 08:00:25 -0700 (PDT)
-Received: from localhost ([65.144.169.45])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e254e59esm2579224a91.17.2025.08.20.08.00.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 08:00:23 -0700 (PDT)
+	s=arc-20240116; t=1755704367; c=relaxed/simple;
+	bh=R3TnhCDAAbnKT6t2gm5bSFJdc1pjdVoK5PVJ6xqvJM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImQS7TQq2cPOGItieM/SiK+46Z5oN3ie60LcV6HQ5IqvszxUCyfBZtaHFJ2G0UUYoJqqA6RMi5P1pcqMntQr1RHVlp/HXEuJFyqItjSIIubjZkTiaeq8u9Ib6lEAbdAUMe8HjWxoaCCduCkDZ7CPYA4hEqS1r/7JP38zv5ASm8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YlLf3CCZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755704364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9oAbsVcBTxAoG3afdRCsnhfH8iAs2qh/nX3NvQ2mP4I=;
+	b=YlLf3CCZt+M4zGuM7BEQmYZjGqxZBLPw9lwkicfs2bAIumqvwTWbrSUaXbRw6b/KRNXaDc
+	bVM/1JJ2qIuRyb6pYtp/DeLBZdwioA6L6/1kz7Hg4hGWCj9UwafQHhfeSoRh2wC1uPY1iZ
+	9orhTtfpyRc9C0GP920CeqHucqOf/E8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-Nq5rwr9HOC2_ylTZbXzH3w-1; Wed,
+ 20 Aug 2025 11:39:19 -0400
+X-MC-Unique: Nq5rwr9HOC2_ylTZbXzH3w-1
+X-Mimecast-MFC-AGG-ID: Nq5rwr9HOC2_ylTZbXzH3w_1755704358
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 66B5D19774FB;
+	Wed, 20 Aug 2025 15:39:18 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.9])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 92DAD180035C;
+	Wed, 20 Aug 2025 15:39:13 +0000 (UTC)
+Date: Wed, 20 Aug 2025 23:39:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: Re: [PATCH V3] io_uring: uring_cmd: add multishot support
+Message-ID: <aKXsHNDK83QCv3rm@fedora>
+References: <20250819150040.980875-1-ming.lei@redhat.com>
+ <1155b8b0-d5d0-4634-984b-71d246932af7@kernel.dk>
+ <aKWssZvQT-Wb-AJA@fedora>
+ <8150569b-146e-4d16-86b9-5d53fa6b7e92@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 09:05:07 -0600
-Message-Id: <DC7CIXI2T3FD.1I8C9PE5V0TRI@gmail.com>
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to,
- open_by_handle_at(2) to io_uring
-From: "Thomas Bertschinger" <tahbertschinger@gmail.com>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Jens Axboe" <axboe@kernel.dk>, <io-uring@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
- <brauner@kernel.org>, <linux-nfs@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
- <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
- <DC6X58YNOC3F.BPB6J0245QTL@gmail.com>
- <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8150569b-146e-4d16-86b9-5d53fa6b7e92@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed Aug 20, 2025 at 2:34 AM MDT, Amir Goldstein wrote:
-> On Wed, Aug 20, 2025 at 4:57=E2=80=AFAM Thomas Bertschinger
-> <tahbertschinger@gmail.com> wrote:
->> Any thoughts on that? This seemed to me like there wasn't an obvious
->> easy solution, hence why I just didn't attempt it at all in v1.
->> Maybe I'm missing something, though.
->>
->
-> Since FILEID_IS_CONNECTABLE, we started using the high 16 bits of
-> fh_type for FILEID_USER_FLAGS, since fs is not likely expecting a fh_type
-> beyond 0xff (Documentation/filesystems/nfs/exporting.rst):
-> "A filehandle fragment consists of an array of 1 or more 4byte words,
-> together with a one byte "type"."
->
-> The name FILEID_USER_FLAGS may be a bit misleading - it was
-> never the intention for users to manipulate those flags, although they
-> certainly can and there is no real harm in that.
->
-> These flags are used in the syscall interface only, but
-> ->fh_to_{dentry,parent}() function signature also take an int fh_flags
-> argument, so we can use that to express the non-blocking request.
->
-> Untested patch follows (easier than explaining):
+On Wed, Aug 20, 2025 at 07:11:52AM -0600, Jens Axboe wrote:
+> On 8/20/25 5:08 AM, Ming Lei wrote:
+> > On Tue, Aug 19, 2025 at 10:00:36AM -0600, Jens Axboe wrote:
+> >> On 8/19/25 9:00 AM, Ming Lei wrote:
+> >>> @@ -251,6 +265,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+> >>>  	}
+> >>>  
+> >>>  	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
+> >>> +	if (ioucmd->flags & IORING_URING_CMD_MULTISHOT) {
+> >>> +		if (ret >= 0)
+> >>> +			return IOU_ISSUE_SKIP_COMPLETE;
+> >>> +		io_kbuf_recycle(req, issue_flags);
+> >>> +	}
+> >>>  	if (ret == -EAGAIN) {
+> >>>  		ioucmd->flags |= IORING_URING_CMD_REISSUE;
+> >>>  		return ret;
+> >>
+> >> Final comment on this part... uring_cmd is unique in the sense that it'd
+> >> be the first potentially pollable file type that supports buffer
+> >> selection AND can return -EIOCBQUEUED. For non-pollable, the buffer
+> >> would get committed upfront. For pollable, we'd either finish and put it
+> >> within this same execution context, or we'd drop it entirely when
+> >> returning -EAGAIN.
+> >>
+> >> So what happens if we get -EIOCBQUEUED with a selected buffer from
+> >> provided buffer ring, and someome malicious unregisters and frees the
+> >> buffer ring before that request completes?
+> > 
+> > Looks one real trouble for IORING_URING_CMD_MULTISHOT.
+> > 
+> > For pollable multishot, ->issue() is run in submitter tw context, and done
+> > in `sync` style, so ctx->uring_lock protects the buffer list, and
+> > unregister can't happen. That should be one reason why polled multishot
+> > can't be run in io-wq context.
+> > 
+> > But now -EIOCBQUEUED is returned from ->issue(), we lose ->uring_lock's
+> > protection for req->buf_list, one idea could be adding referenced buffer
+> > list for failing unregister in case of any active consumer.
+> > 
+> > Do you have suggestions for this problem?
+> 
+> Just commit the buffer upfront, rather than grab it at issue time and
+> commit when you get the completion callback? Yes that will pin the
+> buffer for the duration of the IO, but that should not be an issue,
+> nobody else can use it anyway. Avoiding the pin for pollable files with
+> potentially infinite IO times (eg pipe that never gets written to, or
+> socket that never gets data) is a key concept for those kinds of
+> workloads, but for finite completion times or single use cases like
+> yours here, that doesn't really matter.
 
-Ah, that makes sense and makes this seem feasible. Thanks for pointing
-that out!
+OK, I will send V4 with documenting "commit the buffer upfront" usage.
 
-It also seems that each FS could opt in to this with a new EXPORT_OP
-flag so that the FSes that want to support this can be updated
-individually. Then, updating most or every exportable FS isn't a
-requirement for this.
+> 
+> I've got a bit of a side project making the provided buffer selection a
+> bit more foolproof in the sense that it makes it explicit that the scope
+> of it is the issue context, but across executions. One current problem
+> is req->buf_list, which for provided buffer rings really is local scope,
+> yet it's in the io_kiocb. I'll be moving that somewhere else and out of
+> io_kiocb. Just a side note, because it's currently easy to get this
+> wrong even if you know what you are doing, as per your patch.
 
-Do you have an opinion on that, versus expecting every ->fh_to_dentry()
-implementation to respect the new flag?
+Thanks for the clarification!
+
+
+Thanks,
+Ming
+
 

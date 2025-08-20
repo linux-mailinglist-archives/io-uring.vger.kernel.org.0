@@ -1,104 +1,201 @@
-Return-Path: <io-uring+bounces-9094-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9095-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61F4B2D81B
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 11:26:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF328B2D92B
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 11:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3953A1C45372
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 09:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7295C5C746E
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 09:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C582DBF45;
-	Wed, 20 Aug 2025 09:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414EB2E2DDD;
+	Wed, 20 Aug 2025 09:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqBf5Gcc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTFXohb7"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EBA2877D2;
-	Wed, 20 Aug 2025 09:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E2E29B233;
+	Wed, 20 Aug 2025 09:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681220; cv=none; b=Y6hoHMEPe979PYXLhEydNWS2qd5pkbFV/pOBmvCrZ/P8WnXIcVRlrvWYcJ2uVql8s8BDRrDhGwzP32Hm42B+EnrAP2mYoXYR2Ead5CpoN3hYOlT34Cu3j7F0R5e9730rreKlpNtdSh/F1XH66KzJTADG3ISM49dox8ul8yl7CE8=
+	t=1755682842; cv=none; b=EsqIfIwy06KLyiGZVv0oW0k67HsWk2T8LlD4JxwRdTC08b8b4MOM+M11G5m+8zCcjCY2OxSQwm2QyiD/rA/srncKTJtwbqqrSiBy2G3EchwYiOTUF/32cPAucO5YZR5YYwyBkuhISysqwbtb2PMfif6a/YhN98ahffa/SRNZmNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681220; c=relaxed/simple;
-	bh=NA0WgRqw3iK6aEhn4hX4CjVc7Q0L3hsGDYQKznndRWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YW8Vf1wvchGMJhLEm/qsYrPY9GPvEsz6XkECr8NDrXw7QuA4Y8p/C6vWIvQXR2GTZj0pi+3Tyn1t5keD3MYkWhTYc9ZrRx/RB15RhCC2ELh7m+a7VM95WHh3B14Q+bWT3f0sMS4mV2AKIMpkTbuKQBG0J4lPXCalIgAf2ftLI2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqBf5Gcc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C17CEC4CEEB;
-	Wed, 20 Aug 2025 09:13:37 +0000 (UTC)
+	s=arc-20240116; t=1755682842; c=relaxed/simple;
+	bh=ltG/L6we3mCVlQzjBWr+in9Aol+egLkobfWb0flWf74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MDBktybvo6YwOTJTG7pWtK268mlNzSzBta+4VSzIkJr6MYvU1/b1/sH7P1MAO9y+t+l0EpG3vJxQz6YQ/OhJ58lUEd6HiGXBy6w8joINYvz/oY4peumArDsDQQQDl4Ms2PnkyBRf2y8tW4WjUn0RY73JZSCHuQxWwh/8zqwpuDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTFXohb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845AAC4CEEB;
+	Wed, 20 Aug 2025 09:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755681220;
-	bh=NA0WgRqw3iK6aEhn4hX4CjVc7Q0L3hsGDYQKznndRWY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EqBf5GccR7n65Mz4at6CBnL+CuX79mlimTW8KDfVDImioCe9WIpry36Nh3E/oB6ad
-	 1eNnAx43HTGFnQbuES5FXVacpipmjoXoSyJJXCkAq3iv/LYO6rKirj39oKs/2SFa/B
-	 hbgFRJgJCLhNopxNb6fOqQnvCrfiN3K8YCNoVh+OzDdRwdqbpGeYHY0OBgO9U1NbYJ
-	 qdOqsMmIcjJLp56gKvu7Eoscj13cFo3zV4oIy5vLLTk+yWASWHDYT6VHPE/TVZTp3l
-	 GhONlh9Or7tQyqm0mmz1zmgMN6SZPmT3HjSzm7S+wNjFc+7DbXogxK3j31gWeULEpb
-	 HjX7qqQx5mvvA==
+	s=k20201202; t=1755682841;
+	bh=ltG/L6we3mCVlQzjBWr+in9Aol+egLkobfWb0flWf74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTFXohb7iMZisDMnBL0h+PyNNbKRQd1kkI+7a+nvA7m1iv+MltZfTCc+5h0JBf1TV
+	 L8vr7awj0WZ0GaOUc5k51Ro3AciFBaUg44IqoJKE7tg2D/wrLtXo+065AGUnctxbOj
+	 FN1gWHzU1GB7XayukPAZmdgkaITOjFZFePsDywcQypZcqMEq8NiLV2uI8KWFRzr+KN
+	 ThmcFIaHdIl2Fdq+N4S/2swgD9+YvbXsswRsGJCgloQHJfl42e4oUPBW1MnxxnVedy
+	 Yuqz4yMJnjKjC1PGrxRrmHuG8afYqch944YRE6dtVKd2GyuWftVdv/j40UpO0g6ULw
+	 ZnfpNRHQGwIZQ==
+Date: Wed, 20 Aug 2025 11:40:36 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: io_uring / dio metadata fixes
-Date: Wed, 20 Aug 2025 11:13:28 +0200
-Message-ID: <20250820-beckenrand-anbringen-b821987f39be@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250819082517.2038819-1-hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Anuj Gupta <anuj20.g@samsung.com>, 
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA
+ availability
+Message-ID: <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
 References: <20250819082517.2038819-1-hch@lst.de>
+ <20250819082517.2038819-2-hch@lst.de>
+ <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
+ <20250819092219.GA6234@lst.de>
+ <20250819-verrichten-bagger-d139351bb033@brauner>
+ <20250819133447.GA16775@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1341; i=brauner@kernel.org; h=from:subject:message-id; bh=NA0WgRqw3iK6aEhn4hX4CjVc7Q0L3hsGDYQKznndRWY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsnbjv+PPWLUIvnt5WlJ7z25JDJTVQusykuFbs8tS61 y31zD/VOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCE8Lwz8Au1DGmv/nP3/1W OkeSnlj7vw38Wu7Qcvf71HkRPU4X3zIybPRdOHn5wydq19hWzH8veXpGQtelipaQXUznm+6dD6g NYgIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250819133447.GA16775@lst.de>
 
-On Tue, 19 Aug 2025 10:24:59 +0200, Christoph Hellwig wrote:
-> while trying to add XFS support for passing through metadata I ran
-> into a few issues with how that support is wire up for the current
-> block device use cases, and this fixes it.
+On Tue, Aug 19, 2025 at 03:34:47PM +0200, Christoph Hellwig wrote:
+> On Tue, Aug 19, 2025 at 12:14:26PM +0200, Christian Brauner wrote:
+> > On Tue, Aug 19, 2025 at 11:22:19AM +0200, Christoph Hellwig wrote:
+> > > On Tue, Aug 19, 2025 at 11:14:41AM +0200, Christian Brauner wrote:
+> > > > It kind of feels like that f_iocb_flags should be changed so that
+> > > > subsystems like block can just raise some internal flags directly
+> > > > instead of grabbing a f_mode flag everytime they need to make some
+> > > > IOCB_* flag conditional on the file. That would mean changing the
+> > > > unconditional assigment to file->f_iocb_flags to a |= to not mask flags
+> > > > raised by the kernel itself.
+> > > 
+> > > This isn't about block.  I will be setting this for a file system
+> > > operation as well and use the same io_uring code for that.  That's
+> > > how I ran into the issue.
+> > 
+> > Yes, I get that. That's not what this is about. If IOCB_* flags keep
+> > getting added that then need an additional opt-out via an FMODE_* flag
+> > it's very annoying because you keep taking FMODE_* bits.
 > 
-> Diffstat:
->  block/fops.c       |   13 ++++++++-----
->  include/linux/fs.h |    3 ++-
->  io_uring/rw.c      |    3 +++
->  3 files changed, 13 insertions(+), 6 deletions(-)
+> Agreed.
 > 
-> [...]
+> > The thing is
+> > that it should be possible to keep that information completely contained
+> > to f_iocb_flags without polluting f_mode.
+> 
+> I don't really understand how that would work.  The basic problem is that
+> we add optional features/flags to read and write, and we need a way to
+> check that they are supported and reject them without each time having
+> to update all instances.  For that VFS-level code needs some way to do
+> a per-instance check of available features.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+I meant something like this which should effectively be the same thing
+just that we move the burden of having to use two bits completely into
+file->f_iocb_flags instead of wasting a file->f_mode bit:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/block/fops.c b/block/fops.c
+index ddbc69c0922b..a90f1127d035 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -689,7 +689,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+        if (bdev_can_atomic_write(bdev))
+                filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
+        if (blk_get_integrity(bdev->bd_disk))
+-               filp->f_mode |= FMODE_HAS_METADATA;
++               filp->f_iocb_flags |= IOCB_MAY_USE_METADATA;
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+        ret = bdev_open(bdev, mode, filp->private_data, NULL, filp);
+        if (ret)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 601d036a6c78..a40a1bf7bad5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -149,9 +149,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* Expect random access pattern */
+ #define FMODE_RANDOM           ((__force fmode_t)(1 << 12))
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+-/* Supports IOCB_HAS_METADATA */
+-#define FMODE_HAS_METADATA     ((__force fmode_t)(1 << 13))
+-
+ /* File is opened with O_PATH; almost nothing can be done with it */
+ #define FMODE_PATH             ((__force fmode_t)(1 << 14))
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+@@ -384,25 +381,27 @@ struct readahead_control;
+ /* kiocb is a read or write operation submitted by fs/aio.c. */
+ #define IOCB_AIO_RW            (1 << 23)
+ #define IOCB_HAS_METADATA      (1 << 24)
++#define IOCB_MAY_USE_METADATA  (1 << 25)
 
-[1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA availability
-      https://git.kernel.org/vfs/vfs/c/d072148a8631
-[2/2] block: don't silently ignore metadata for sync read/write
-      https://git.kernel.org/vfs/vfs/c/2729a60bbfb9
+ /* for use in trace events */
+ #define TRACE_IOCB_STRINGS \
+-       { IOCB_HIPRI,           "HIPRI" }, \
+-       { IOCB_DSYNC,           "DSYNC" }, \
+-       { IOCB_SYNC,            "SYNC" }, \
+-       { IOCB_NOWAIT,          "NOWAIT" }, \
+-       { IOCB_APPEND,          "APPEND" }, \
+-       { IOCB_ATOMIC,          "ATOMIC" }, \
+-       { IOCB_DONTCACHE,       "DONTCACHE" }, \
+-       { IOCB_EVENTFD,         "EVENTFD"}, \
+-       { IOCB_DIRECT,          "DIRECT" }, \
+-       { IOCB_WRITE,           "WRITE" }, \
+-       { IOCB_WAITQ,           "WAITQ" }, \
+-       { IOCB_NOIO,            "NOIO" }, \
+-       { IOCB_ALLOC_CACHE,     "ALLOC_CACHE" }, \
+-       { IOCB_DIO_CALLER_COMP, "CALLER_COMP" }, \
+-       { IOCB_AIO_RW,          "AIO_RW" }, \
+-       { IOCB_HAS_METADATA,    "AIO_HAS_METADATA" }
++       { IOCB_HIPRI,                   "HIPRI" }, \
++       { IOCB_DSYNC,                   "DSYNC" }, \
++       { IOCB_SYNC,                    "SYNC" }, \
++       { IOCB_NOWAIT,                  "NOWAIT" }, \
++       { IOCB_APPEND,                  "APPEND" }, \
++       { IOCB_ATOMIC,                  "ATOMIC" }, \
++       { IOCB_DONTCACHE,               "DONTCACHE" }, \
++       { IOCB_EVENTFD,                 "EVENTFD"}, \
++       { IOCB_DIRECT,                  "DIRECT" }, \
++       { IOCB_WRITE,                   "WRITE" }, \
++       { IOCB_WAITQ,                   "WAITQ" }, \
++       { IOCB_NOIO,                    "NOIO" }, \
++       { IOCB_ALLOC_CACHE,             "ALLOC_CACHE" }, \
++       { IOCB_DIO_CALLER_COMP,         "CALLER_COMP" }, \
++       { IOCB_AIO_RW,                  "AIO_RW" }, \
++       { IOCB_HAS_METADATA,            "AIO_HAS_METADATA" }, \
++       { IOCB_MAY_USE_METADATA,        "AIO_MAY_USE_METADATA" }
+
+ struct kiocb {
+        struct file             *ki_filp;
+@@ -3786,6 +3785,10 @@ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
+ static inline int iocb_flags(struct file *file)
+ {
+        int res = 0;
++
++       /* Retain flags that the kernel raises internally. */
++       res |= (file->f_iocb_flags & (IOCB_HAS_METADATA | IOCB_MAY_USE_METADATA));
++
+        if (file->f_flags & O_APPEND)
+                res |= IOCB_APPEND;
+        if (file->f_flags & O_DIRECT)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index af5a54b5db12..23e9103c62d4 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -886,7 +886,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+        if (req->flags & REQ_F_HAS_METADATA) {
+                struct io_async_rw *io = req->async_data;
+
+-               if (!(file->f_mode & FMODE_HAS_METADATA))
++               if (!(file->f_iocb_flags & IOCB_MAY_USE_METADATA))
+                        return -EINVAL;
+
+                /*
+
 

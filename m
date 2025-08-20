@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-9116-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9117-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D70B2E4DF
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 20:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B22B2E4E1
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 20:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5E65E2A18
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 18:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B84F5E34AF
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 18:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC2F2765E1;
-	Wed, 20 Aug 2025 18:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEFE279DC0;
+	Wed, 20 Aug 2025 18:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZGQklMBm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nP7x55ll"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0842279794
-	for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 18:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEF72797B5
+	for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 18:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755714372; cv=none; b=eGAi9WSy1xN0WLtgVnIXxRUS99ihxTmvEO16/bnEf78OpDiOG2wRqJL7/D5id8sgZt1xNJOH9YI57sG5W7MtrwA5FlW7tW+IoBF+gIaw+weJvAugqwFyJLUNVqSf08dsZgC+6qKuqybpVvGn7QnZnd6aYBLUTXYdVvQboVgE+3A=
+	t=1755714374; cv=none; b=LyioGTs/CfzuYaWPB4g+4avCwk+dk91kA8L0Hwy8bdjmtqCu3QVS0W6lfIngBQgQtPGQ5CRI+XmjAXrXUqJl1vAU++KpOY6B5kHP5gfqPJJLz+DuO7morjv6ogyoOa6tiVXcL2zyiycJ/N3pI69sQXY6wNXgaYXIYsHhigSu1fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755714372; c=relaxed/simple;
-	bh=U7SmDrJrPH03qM/wwGgKIO62L/XXIbBRHTf9kEP6+Co=;
+	s=arc-20240116; t=1755714374; c=relaxed/simple;
+	bh=hbWUdhEQpzBWuVBY5yLwP4swdEhLIzN/JCSyuhMe0L8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eMP3DkLAGkgGJnYrA7U66tkTMxiwZG6XeR6wsRi9tC3+O1zerN2+6WKgQEalx0V2vBVIA+bgrqkQsDT1XIW4h9fSFopOiC433vfKBfzux+yb6d5VmdPSSbghZBVVGl41caUonAB6LlM7d2kQn0vgaToiV/v+JlXY0AJg3IL5VbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZGQklMBm; arc=none smtp.client-ip=209.85.166.49
+	 MIME-Version; b=rt+70Lc6uDAxrrvi3PXrjIfw2z9l5yEK+Pv15hfvsPHp/kfohzEb0kxuZylXW4MVrDxvaw6n8NhHl16b0yz4bl23fy9mxFwwCNz0c0YnVhE8r1qmWGDetSmB2q8A9JdMzRVhMd67QwVC0Lq9ElIikQsFlGmlNAbkbQjlPgQDUbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nP7x55ll; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-88432e2975cso3865139f.2
-        for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 11:26:10 -0700 (PDT)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e56ff1c11eso800465ab.0
+        for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 11:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755714369; x=1756319169; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755714372; x=1756319172; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LrT3kc/LETmQoRWlJbXxXbxG3ovzmdMtwMWztk2TN2E=;
-        b=ZGQklMBmzMnYxvoOsv/6p7Szfp33dXFSOU0thc6w6LnaoZ+LFUddqL3udmVlJgXGDD
-         rpM9z7E3jJfTR/LZxY5AvD0C6xecF0kPEcrPqihfFBmtlZ/fi/LIDFGJ92ypy2a3/Vu3
-         2cdgvqxubwWBpaS4rEOdODvOLW3PSRFRwfqSZTQsr64pU86MCAdGZrtXoNuoUTmt0AHG
-         Hu2mvStOxpphaYRtolChBYCfDeDfFQlQ/vOA7MbhFQJdOPtgDq32hEE7yYhlJk4oJOnD
-         D0QD3Q7dLvBy2SIUIWtCgFL9OsBTkkjfDVPYn4npMbNzZtkwqVPSfxEtEXweZ6sv/TOV
-         ylHg==
+        bh=M/3tWjRAyU4r4MaWhkEpo7nUtSydRUbqJr0aFdhMNxE=;
+        b=nP7x55llhd4UZjfVi7ylTJIv2qah/+dRg58la2iLeg659FooYxCrdzXjcWl7n332AE
+         PDqBA9jR4TDumLCmaUd3+Hbj2vXfEguLGlMmWvowKEJ1Fk1mLsFYYR9gwHDUsUTQlNoC
+         J0cY8Fjd0xgCXhoOTzQlNS5HLZBMNoFq7LEasRoQz+dz533avLhnV6azLBbtbp5Cnzi6
+         mozqFrYjXcwcnC0FSeNvC8KL8gSdORzBIeZPSaVftaF8yWGTyivaCF1S/0hsFKtYbdSe
+         h6IIboiEUQ0ePXfdqsMiAJ4WzR/gVcFslFwwYs9GQMCDwj5xMdbYZGnQp99n8xafQxjk
+         W95g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755714369; x=1756319169;
+        d=1e100.net; s=20230601; t=1755714372; x=1756319172;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LrT3kc/LETmQoRWlJbXxXbxG3ovzmdMtwMWztk2TN2E=;
-        b=bJVsZ/SAhdUJSN5fvfkPrR+coGnK/En/6ycEL+LTKx24bGPfcSudNMVDFxWTQ4Bc/K
-         RmQY+jYGutK0hxchtRgOCkHEx0/fGfvKFG7FfDiyOtYx2c43Vp5tpWzrNY169Nv2PbFA
-         qNdvN6qmeH1qpXL8FOFzFZ4Z71giCxggm8Jp/UjiamcjGa7ZGxTsHUXTi7SpiCL8dJak
-         r4jlnoliFRejuxYXvpFLC2RQjK1r9xhtsf06lBlxeTFdXT4xdWdk0UPVhyjzB12F+jR0
-         gQikTD+1NvDaqOpC2YWC3A7bdEOP7EPBRRQ0FCizT828ufsAG4q4eKUCC+UdhP02ayrt
-         cbKA==
-X-Gm-Message-State: AOJu0YygzLIQcYpDm69Poc2k2g6+fsth2jN7pk29RUnBeFAIG/y+z1Md
-	MWpkjVY/cTzaO6Wy4zoJsXTVuxWpFSWaAXI61hCJkpH7mCaaAZJkvmd2MoarqdGROC1TppHMIvl
-	KUAp+
-X-Gm-Gg: ASbGncuETMRpVSJ0t69nzkrwZ3YvJ3kZ8KhoTaF1cOwPBUFW79IXhE+YNA3cn7hXbmD
-	Pi5wiy5jsc9bMVF1iqu1DLDm48YzEh3VNTg/VnRjzHOhOXf0JS9fpFXl+BoT5hhi267/rvlnhgR
-	hvLJOXk5Dcc1ip8WY3+1tQDCPzmTTeX414wM+hFJnWNzRmWdRP+zN7bgnCl8Xxd7ZOwsgTBLQCV
-	Ii68D7tZNTZSheGeRfoTNvp/NMpYycujFlzLvKDpJPzFPklfVjVy/h4fRO5sXu+xf+ZvTn94ZHo
-	miEjkFE2sKQlmLA4yu1tTRFVjHGsUYT6gkR/6No1lxeULRcEQQtT4YBdlA0iHUHhOXP5PWGvcnG
-	Iy7x+R3676+GTilfG
-X-Google-Smtp-Source: AGHT+IFqHDaXDxDrG7aFHl8SO6XgAJzTr7V+5h9dcSkwySwkjqpgeILD7mj7i6R5Hou822PB1Dy8Uw==
-X-Received: by 2002:a05:6e02:3e04:b0:3e6:6487:9a9f with SMTP id e9e14a558f8ab-3e67c9edaf2mr60020305ab.5.1755714369426;
-        Wed, 20 Aug 2025 11:26:09 -0700 (PDT)
+        bh=M/3tWjRAyU4r4MaWhkEpo7nUtSydRUbqJr0aFdhMNxE=;
+        b=SU7jC2hfz8MnAlQp0RuTynw4CQ6GGBjuuqhrTHvIlN6KGRmJEwBDtFx9taT6K1+Um6
+         vodKr07Q3K+rmGZ2smF/UmFXNNhOop4r818h7hG0W6yrzaJg8BxQy5Rvg4xH6VEe0IAE
+         relf929c2g/2V5I+rBEYKbQTXFj/QrXH7tLU0C2kyZbwPqygFp1bzmEtJDrhyU9bPYG9
+         BUQYhe+JmEKLAYH8lRLn+Lh+Lc1SiwtqrTNpEXwWfgmN91k6vWX2XLMoODPu0BMEjDct
+         egdtRv02JykOVrV0R6Mfo2RhfozyhrEcpJY57oFO+PU9ZeqyiRiCXaRO807B7YHEI77X
+         wheA==
+X-Gm-Message-State: AOJu0Yzputtr4hVFZv+injqNB8Es6ex74I/SUpfhPyUzivvBqYKQyfcr
+	xnnjku6ivC3ONSJKF54CbnMuZYpR+fxA1c0E8vRN7Tn/jf/PMGVzf/sCCLJ26tSUhaTSb2jghOX
+	TAGIQ
+X-Gm-Gg: ASbGncu1D9XiREs9nbN3FBfTwN3aIKNk0cDQnTxqhaSim3A8sR+je7r3wz6PqeQAF6G
+	m2uCJ5g31zOsSFLI8KAeThFQKNn8+w/iIhitCZFb4js3JowQEA9jc8gssagVSyI0/MZBTEP5oXS
+	s5MIY68UaH3BzVGt5rUNkaGsE3Zs7OQ4DjiVIiWZho333ZL7p4i8+VTBtnZlh/JpmJbNryf/dN8
+	EB5EbLc1oKrk1j1QQmSCUgDDL/5ZXns8ZIA593gsIAPl/zA/CS+JpLdqC1IYq5gUPwzet2HrAn1
+	Mq8KLzEcHFUBHbPSahA+OVApNQmUQtYGzTXYH0YgtE+bqxNrXoiR6on0r3CdissRnvqgIGXCs67
+	X43D/RVmt58P9/cQn
+X-Google-Smtp-Source: AGHT+IEe96hOVVdfvvyRmYAacvHhnOVDAwDdUcENMv2X9wYHfIqP4qDQ2Bzr+NjLEMFAkjp4wFs4+w==
+X-Received: by 2002:a05:6e02:17cd:b0:3e5:6882:6604 with SMTP id e9e14a558f8ab-3e67cab609cmr72426605ab.15.1755714371494;
+        Wed, 20 Aug 2025 11:26:11 -0700 (PDT)
 Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947b3666sm4217951173.24.2025.08.20.11.26.07
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947b3666sm4217951173.24.2025.08.20.11.26.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 11:26:07 -0700 (PDT)
+        Wed, 20 Aug 2025 11:26:09 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/9] io_uring/kbuf: pass in struct io_buffer_list to commit/recycle helpers
-Date: Wed, 20 Aug 2025 12:22:49 -0600
-Message-ID: <20250820182601.442933-4-axboe@kernel.dk>
+Subject: [PATCH 4/9] io_uring/kbuf: introduce struct io_br_sel
+Date: Wed, 20 Aug 2025 12:22:50 -0600
+Message-ID: <20250820182601.442933-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250820182601.442933-1-axboe@kernel.dk>
 References: <20250820182601.442933-1-axboe@kernel.dk>
@@ -90,359 +90,282 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than have this implied being in the io_kiocb, pass it in directly
-so it's immediately obvious where these users of ->buf_list are coming
-from.
+Rather than return addresses directly from buffer selection, add a
+struct around it. No functional changes in this patch, it's in
+preparation for storing more buffer related information locally, rather
+than in struct io_kiocb.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c |  6 +++---
- io_uring/kbuf.c     |  9 +++++----
- io_uring/kbuf.h     | 21 +++++++++++++--------
- io_uring/net.c      | 28 ++++++++++++++--------------
- io_uring/poll.c     |  6 +++---
- io_uring/rw.c       | 14 +++++++-------
- 6 files changed, 45 insertions(+), 39 deletions(-)
+ io_uring/kbuf.c | 26 +++++++++++++-------------
+ io_uring/kbuf.h | 19 +++++++++++++++++--
+ io_uring/net.c  | 18 +++++++++---------
+ io_uring/rw.c   | 34 ++++++++++++++++++++--------------
+ 4 files changed, 59 insertions(+), 38 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 402363725a66..53dcdd13fbf6 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1007,7 +1007,7 @@ void io_req_defer_failed(struct io_kiocb *req, s32 res)
- 	lockdep_assert_held(&req->ctx->uring_lock);
- 
- 	req_set_fail(req);
--	io_req_set_res(req, res, io_put_kbuf(req, res, IO_URING_F_UNLOCKED));
-+	io_req_set_res(req, res, io_put_kbuf(req, res, req->buf_list, IO_URING_F_UNLOCKED));
- 	if (def->fail)
- 		def->fail(req);
- 	io_req_complete_defer(req);
-@@ -2025,11 +2025,11 @@ static void io_queue_async(struct io_kiocb *req, unsigned int issue_flags, int r
- 
- 	switch (io_arm_poll_handler(req, 0)) {
- 	case IO_APOLL_READY:
--		io_kbuf_recycle(req, 0);
-+		io_kbuf_recycle(req, req->buf_list, 0);
- 		io_req_task_queue(req);
- 		break;
- 	case IO_APOLL_ABORTED:
--		io_kbuf_recycle(req, 0);
-+		io_kbuf_recycle(req, req->buf_list, 0);
- 		io_queue_iowq(req);
- 		break;
- 	case IO_APOLL_OK:
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index f2d2cc319faa..b8b2f6dee754 100644
+index b8b2f6dee754..61d9a8d439ba 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -354,9 +354,9 @@ int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg)
- 	return io_provided_buffers_select(req, &arg->max_len, bl, arg->iovs);
+@@ -151,18 +151,18 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
+ 	return 1;
  }
  
--static inline bool __io_put_kbuf_ring(struct io_kiocb *req, int len, int nr)
-+static inline bool __io_put_kbuf_ring(struct io_kiocb *req,
-+				      struct io_buffer_list *bl, int len, int nr)
+-static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+-					  struct io_buffer_list *bl,
+-					  unsigned int issue_flags)
++static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
++					      struct io_buffer_list *bl,
++					      unsigned int issue_flags)
  {
--	struct io_buffer_list *bl = req->buf_list;
- 	bool ret = true;
+ 	struct io_uring_buf_ring *br = bl->buf_ring;
+ 	__u16 tail, head = bl->head;
++	struct io_br_sel sel = { };
+ 	struct io_uring_buf *buf;
+-	void __user *ret;
  
- 	if (bl)
-@@ -366,7 +366,8 @@ static inline bool __io_put_kbuf_ring(struct io_kiocb *req, int len, int nr)
- 	return ret;
- }
+ 	tail = smp_load_acquire(&br->tail);
+ 	if (unlikely(tail == head))
+-		return NULL;
++		return sel;
  
--unsigned int __io_put_kbufs(struct io_kiocb *req, int len, int nbufs)
-+unsigned int __io_put_kbufs(struct io_kiocb *req, struct io_buffer_list *bl,
-+			    int len, int nbufs)
- {
- 	unsigned int ret;
+ 	if (head + 1 == tail)
+ 		req->flags |= REQ_F_BL_EMPTY;
+@@ -173,7 +173,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+ 	req->buf_list = bl;
+ 	req->buf_index = buf->bid;
+-	ret = u64_to_user_ptr(buf->addr);
++	sel.addr = u64_to_user_ptr(buf->addr);
  
-@@ -377,7 +378,7 @@ unsigned int __io_put_kbufs(struct io_kiocb *req, int len, int nbufs)
- 		return ret;
+ 	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
+ 		/*
+@@ -189,27 +189,27 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 		io_kbuf_commit(req, bl, *len, 1);
+ 		req->buf_list = NULL;
  	}
- 
--	if (!__io_put_kbuf_ring(req, len, nbufs))
-+	if (!__io_put_kbuf_ring(req, bl, len, nbufs))
- 		ret |= IORING_CQE_F_BUF_MORE;
- 	return ret;
+-	return ret;
++	return sel;
  }
+ 
+-void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+-			      unsigned buf_group, unsigned int issue_flags)
++struct io_br_sel io_buffer_select(struct io_kiocb *req, size_t *len,
++				  unsigned buf_group, unsigned int issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	struct io_br_sel sel = { };
+ 	struct io_buffer_list *bl;
+-	void __user *ret = NULL;
+ 
+ 	io_ring_submit_lock(req->ctx, issue_flags);
+ 
+ 	bl = io_buffer_get_list(ctx, buf_group);
+ 	if (likely(bl)) {
+ 		if (bl->flags & IOBL_BUF_RING)
+-			ret = io_ring_buffer_select(req, len, bl, issue_flags);
++			sel = io_ring_buffer_select(req, len, bl, issue_flags);
+ 		else
+-			ret = io_provided_buffer_select(req, len, bl);
++			sel.addr = io_provided_buffer_select(req, len, bl);
+ 	}
+ 	io_ring_submit_unlock(req->ctx, issue_flags);
+-	return ret;
++	return sel;
+ }
+ 
+ /* cap it at a reasonable 256, will be one page even for 4K */
 diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 723d0361898e..20ad4fe716e6 100644
+index 20ad4fe716e6..8f97b033bd73 100644
 --- a/io_uring/kbuf.h
 +++ b/io_uring/kbuf.h
-@@ -80,14 +80,16 @@ int io_register_pbuf_status(struct io_ring_ctx *ctx, void __user *arg);
- bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
- void io_kbuf_drop_legacy(struct io_kiocb *req);
+@@ -62,8 +62,23 @@ struct buf_sel_arg {
+ 	unsigned short partial_map;
+ };
  
--unsigned int __io_put_kbufs(struct io_kiocb *req, int len, int nbufs);
-+unsigned int __io_put_kbufs(struct io_kiocb *req, struct io_buffer_list *bl,
-+			    int len, int nbufs);
- bool io_kbuf_commit(struct io_kiocb *req,
- 		    struct io_buffer_list *bl, int len, int nr);
- 
- struct io_mapped_region *io_pbuf_get_region(struct io_ring_ctx *ctx,
- 					    unsigned int bgid);
- 
--static inline bool io_kbuf_recycle_ring(struct io_kiocb *req)
-+static inline bool io_kbuf_recycle_ring(struct io_kiocb *req,
-+					struct io_buffer_list *bl)
- {
- 	/*
- 	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
-@@ -96,7 +98,7 @@ static inline bool io_kbuf_recycle_ring(struct io_kiocb *req)
- 	 * The exception is partial io, that case we should increment bl->head
- 	 * to monopolize the buffer.
- 	 */
--	if (req->buf_list) {
-+	if (bl) {
- 		req->flags &= ~(REQ_F_BUFFER_RING|REQ_F_BUFFERS_COMMIT);
- 		return true;
- 	}
-@@ -110,30 +112,33 @@ static inline bool io_do_buffer_select(struct io_kiocb *req)
- 	return !(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING));
- }
- 
--static inline bool io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
-+static inline bool io_kbuf_recycle(struct io_kiocb *req, struct io_buffer_list *bl,
-+				   unsigned issue_flags)
- {
- 	if (req->flags & REQ_F_BL_NO_RECYCLE)
- 		return false;
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		return io_kbuf_recycle_legacy(req, issue_flags);
- 	if (req->flags & REQ_F_BUFFER_RING)
--		return io_kbuf_recycle_ring(req);
-+		return io_kbuf_recycle_ring(req, bl);
- 	return false;
- }
- 
- static inline unsigned int io_put_kbuf(struct io_kiocb *req, int len,
-+				       struct io_buffer_list *bl,
- 				       unsigned issue_flags)
- {
- 	if (!(req->flags & (REQ_F_BUFFER_RING | REQ_F_BUFFER_SELECTED)))
- 		return 0;
--	return __io_put_kbufs(req, len, 1);
-+	return __io_put_kbufs(req, bl, len, 1);
- }
- 
- static inline unsigned int io_put_kbufs(struct io_kiocb *req, int len,
--					int nbufs, unsigned issue_flags)
-+					int nbufs, struct io_buffer_list *bl,
-+					unsigned issue_flags)
- {
- 	if (!(req->flags & (REQ_F_BUFFER_RING | REQ_F_BUFFER_SELECTED)))
- 		return 0;
--	return __io_put_kbufs(req, len, nbufs);
-+	return __io_put_kbufs(req, bl, len, nbufs);
- }
- #endif
+-void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+-			      unsigned buf_group, unsigned int issue_flags);
++/*
++ * Return value from io_buffer_list selection. Just returns the error or
++ * user address for now, will be extended to return the buffer list in the
++ * future.
++ */
++struct io_br_sel {
++	/*
++	 * Some selection parts return the user address, others return an error.
++	 */
++	union {
++		void __user *addr;
++		ssize_t val;
++	};
++};
++
++struct io_br_sel io_buffer_select(struct io_kiocb *req, size_t *len,
++				  unsigned buf_group, unsigned int issue_flags);
+ int io_buffers_select(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 		      unsigned int issue_flags);
+ int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg);
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 73281f31c856..5ce0f5470d17 100644
+index 5ce0f5470d17..8efa207f8125 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -494,12 +494,12 @@ static int io_bundle_nbufs(struct io_async_msghdr *kmsg, int ret)
- 	return nbufs;
- }
+@@ -1037,22 +1037,22 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
  
--static int io_net_kbuf_recyle(struct io_kiocb *req,
-+static int io_net_kbuf_recyle(struct io_kiocb *req, struct io_buffer_list *bl,
- 			      struct io_async_msghdr *kmsg, int len)
- {
- 	req->flags |= REQ_F_BL_NO_RECYCLE;
- 	if (req->flags & REQ_F_BUFFERS_COMMIT)
--		io_kbuf_commit(req, req->buf_list, len, io_bundle_nbufs(kmsg, len));
-+		io_kbuf_commit(req, bl, len, io_bundle_nbufs(kmsg, len));
- 	return IOU_RETRY;
- }
+ retry_multishot:
+ 	if (io_do_buffer_select(req)) {
+-		void __user *buf;
++		struct io_br_sel sel;
+ 		size_t len = sr->len;
  
-@@ -512,11 +512,11 @@ static inline bool io_send_finish(struct io_kiocb *req, int *ret,
- 	unsigned int cflags;
+-		buf = io_buffer_select(req, &len, sr->buf_group, issue_flags);
+-		if (!buf)
++		sel = io_buffer_select(req, &len, sr->buf_group, issue_flags);
++		if (!sel.addr)
+ 			return -ENOBUFS;
  
- 	if (!(sr->flags & IORING_RECVSEND_BUNDLE)) {
--		cflags = io_put_kbuf(req, *ret, issue_flags);
-+		cflags = io_put_kbuf(req, *ret, req->buf_list, issue_flags);
- 		goto finish;
- 	}
- 
--	cflags = io_put_kbufs(req, *ret, io_bundle_nbufs(kmsg, *ret), issue_flags);
-+	cflags = io_put_kbufs(req, *ret, io_bundle_nbufs(kmsg, *ret), req->buf_list, issue_flags);
- 
- 	if (bundle_finished || req->flags & REQ_F_BL_EMPTY)
- 		goto finish;
-@@ -682,7 +682,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 			sr->len -= ret;
- 			sr->buf += ret;
- 			sr->done_io += ret;
--			return io_net_kbuf_recyle(req, kmsg, ret);
-+			return io_net_kbuf_recyle(req, req->buf_list, kmsg, ret);
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-@@ -873,7 +873,7 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 		size_t this_ret = *ret - sr->done_io;
- 
- 		cflags |= io_put_kbufs(req, this_ret, io_bundle_nbufs(kmsg, this_ret),
--				      issue_flags);
-+				      req->buf_list, issue_flags);
- 		if (sr->flags & IORING_RECV_RETRY)
- 			cflags = req->cqe.flags | (cflags & CQE_F_MASK);
- 		if (sr->mshot_len && *ret >= sr->mshot_len)
-@@ -895,7 +895,7 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 			return false;
- 		}
- 	} else {
--		cflags |= io_put_kbuf(req, *ret, issue_flags);
-+		cflags |= io_put_kbuf(req, *ret, req->buf_list, issue_flags);
- 	}
- 
- 	/*
-@@ -1047,7 +1047,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
  		if (req->flags & REQ_F_APOLL_MULTISHOT) {
- 			ret = io_recvmsg_prep_multishot(kmsg, sr, &buf, &len);
+-			ret = io_recvmsg_prep_multishot(kmsg, sr, &buf, &len);
++			ret = io_recvmsg_prep_multishot(kmsg, sr, &sel.addr, &len);
  			if (ret) {
--				io_kbuf_recycle(req, issue_flags);
-+				io_kbuf_recycle(req, req->buf_list, issue_flags);
+ 				io_kbuf_recycle(req, req->buf_list, issue_flags);
  				return ret;
  			}
  		}
-@@ -1072,13 +1072,13 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	if (ret < min_ret) {
- 		if (ret == -EAGAIN && force_nonblock) {
- 			if (issue_flags & IO_URING_F_MULTISHOT)
--				io_kbuf_recycle(req, issue_flags);
-+				io_kbuf_recycle(req, req->buf_list, issue_flags);
  
- 			return IOU_RETRY;
- 		}
- 		if (ret > 0 && io_net_retry(sock, flags)) {
- 			sr->done_io += ret;
--			return io_net_kbuf_recyle(req, kmsg, ret);
-+			return io_net_kbuf_recyle(req, req->buf_list, kmsg, ret);
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-@@ -1092,7 +1092,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	else if (sr->done_io)
- 		ret = sr->done_io;
- 	else
--		io_kbuf_recycle(req, issue_flags);
-+		io_kbuf_recycle(req, req->buf_list, issue_flags);
- 
- 	if (!io_recv_finish(req, &ret, kmsg, mshot_finished, issue_flags))
- 		goto retry_multishot;
-@@ -1216,7 +1216,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	if (ret < min_ret) {
- 		if (ret == -EAGAIN && force_nonblock) {
- 			if (issue_flags & IO_URING_F_MULTISHOT)
--				io_kbuf_recycle(req, issue_flags);
-+				io_kbuf_recycle(req, req->buf_list, issue_flags);
- 
- 			return IOU_RETRY;
- 		}
-@@ -1224,7 +1224,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 			sr->len -= ret;
- 			sr->buf += ret;
- 			sr->done_io += ret;
--			return io_net_kbuf_recyle(req, kmsg, ret);
-+			return io_net_kbuf_recyle(req, req->buf_list, kmsg, ret);
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-@@ -1240,7 +1240,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	else if (sr->done_io)
- 		ret = sr->done_io;
- 	else
--		io_kbuf_recycle(req, issue_flags);
-+		io_kbuf_recycle(req, req->buf_list, issue_flags);
- 
- 	if (!io_recv_finish(req, &ret, kmsg, mshot_finished, issue_flags))
- 		goto retry_multishot;
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index c786e587563b..07ab22380c78 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -316,10 +316,10 @@ void io_poll_task_func(struct io_kiocb *req, io_tw_token_t tw)
- 
- 	ret = io_poll_check_events(req, tw);
- 	if (ret == IOU_POLL_NO_ACTION) {
--		io_kbuf_recycle(req, 0);
-+		io_kbuf_recycle(req, req->buf_list, 0);
- 		return;
- 	} else if (ret == IOU_POLL_REQUEUE) {
--		io_kbuf_recycle(req, 0);
-+		io_kbuf_recycle(req, req->buf_list, 0);
- 		__io_poll_execute(req, 0);
- 		return;
+-		iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_DEST, buf, len);
++		iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_DEST, sel.addr, len);
  	}
-@@ -686,7 +686,7 @@ int io_arm_apoll(struct io_kiocb *req, unsigned issue_flags, __poll_t mask)
- 	req->flags |= REQ_F_POLLED;
- 	ipt.pt._qproc = io_async_queue_proc;
  
--	io_kbuf_recycle(req, issue_flags);
-+	io_kbuf_recycle(req, req->buf_list, issue_flags);
+ 	kmsg->msg.msg_get_inq = 1;
+@@ -1155,13 +1155,13 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
+ 		iov_iter_init(&kmsg->msg.msg_iter, ITER_DEST, arg.iovs, ret,
+ 				arg.out_len);
+ 	} else {
+-		void __user *buf;
++		struct io_br_sel sel;
  
- 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask, issue_flags);
- 	if (ret)
+ 		*len = sr->len;
+-		buf = io_buffer_select(req, len, sr->buf_group, issue_flags);
+-		if (!buf)
++		sel = io_buffer_select(req, len, sr->buf_group, issue_flags);
++		if (!sel.addr)
+ 			return -ENOBUFS;
+-		sr->buf = buf;
++		sr->buf = sel.addr;
+ 		sr->len = *len;
+ map_ubuf:
+ 		ret = import_ubuf(ITER_DEST, sr->buf, sr->len,
 diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 52a5b950b2e5..7ad0f77abd54 100644
+index 7ad0f77abd54..db5d4e86f458 100644
 --- a/io_uring/rw.c
 +++ b/io_uring/rw.c
-@@ -576,7 +576,7 @@ void io_req_rw_complete(struct io_kiocb *req, io_tw_token_t tw)
- 	io_req_io_end(req);
+@@ -107,34 +107,35 @@ static int io_import_vec(int ddir, struct io_kiocb *req,
+ }
  
- 	if (req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING))
--		req->cqe.flags |= io_put_kbuf(req, req->cqe.res, 0);
-+		req->cqe.flags |= io_put_kbuf(req, req->cqe.res, req->buf_list, 0);
+ static int __io_import_rw_buffer(int ddir, struct io_kiocb *req,
+-			     struct io_async_rw *io,
+-			     unsigned int issue_flags)
++				 struct io_async_rw *io, struct io_br_sel *sel,
++				 unsigned int issue_flags)
+ {
+ 	const struct io_issue_def *def = &io_issue_defs[req->opcode];
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+-	void __user *buf = u64_to_user_ptr(rw->addr);
+ 	size_t sqe_len = rw->len;
  
- 	io_req_rw_cleanup(req, 0);
- 	io_req_task_complete(req, tw);
-@@ -659,7 +659,7 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
- 		 * from the submission path.
- 		 */
- 		io_req_io_end(req);
--		io_req_set_res(req, final_ret, io_put_kbuf(req, ret, issue_flags));
-+		io_req_set_res(req, final_ret, io_put_kbuf(req, ret, req->buf_list, issue_flags));
- 		io_req_rw_cleanup(req, issue_flags);
- 		return IOU_COMPLETE;
- 	} else {
-@@ -1049,15 +1049,15 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		 * Reset rw->len to 0 again to avoid clamping future mshot
- 		 * reads, in case the buffer size varies.
- 		 */
--		if (io_kbuf_recycle(req, issue_flags))
-+		if (io_kbuf_recycle(req, req->buf_list, issue_flags))
- 			rw->len = 0;
- 		return IOU_RETRY;
- 	} else if (ret <= 0) {
--		io_kbuf_recycle(req, issue_flags);
-+		io_kbuf_recycle(req, req->buf_list, issue_flags);
- 		if (ret < 0)
- 			req_set_fail(req);
- 	} else if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
--		cflags = io_put_kbuf(req, ret, issue_flags);
-+		cflags = io_put_kbuf(req, ret, req->buf_list, issue_flags);
- 	} else {
- 		/*
- 		 * Any successful return value will keep the multishot read
-@@ -1065,7 +1065,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		 * we fail to post a CQE, or multishot is no longer set, then
- 		 * jump to the termination path. This request is then done.
- 		 */
--		cflags = io_put_kbuf(req, ret, issue_flags);
-+		cflags = io_put_kbuf(req, ret, req->buf_list, issue_flags);
- 		rw->len = 0; /* similarly to above, reset len to 0 */
++	sel->addr = u64_to_user_ptr(rw->addr);
+ 	if (def->vectored && !(req->flags & REQ_F_BUFFER_SELECT))
+-		return io_import_vec(ddir, req, io, buf, sqe_len);
++		return io_import_vec(ddir, req, io, sel->addr, sqe_len);
  
- 		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
-@@ -1362,7 +1362,7 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 		if (!smp_load_acquire(&req->iopoll_completed))
- 			break;
- 		nr_events++;
--		req->cqe.flags = io_put_kbuf(req, req->cqe.res, 0);
-+		req->cqe.flags = io_put_kbuf(req, req->cqe.res, req->buf_list, 0);
- 		if (req->opcode != IORING_OP_URING_CMD)
- 			io_req_rw_cleanup(req, 0);
+ 	if (io_do_buffer_select(req)) {
+-		buf = io_buffer_select(req, &sqe_len, io->buf_group, issue_flags);
+-		if (!buf)
++		*sel = io_buffer_select(req, &sqe_len, io->buf_group, issue_flags);
++		if (!sel->addr)
+ 			return -ENOBUFS;
+-		rw->addr = (unsigned long) buf;
++		rw->addr = (unsigned long) sel->addr;
+ 		rw->len = sqe_len;
  	}
+-	return import_ubuf(ddir, buf, sqe_len, &io->iter);
++	return import_ubuf(ddir, sel->addr, sqe_len, &io->iter);
+ }
+ 
+ static inline int io_import_rw_buffer(int rw, struct io_kiocb *req,
+ 				      struct io_async_rw *io,
++				      struct io_br_sel *sel,
+ 				      unsigned int issue_flags)
+ {
+ 	int ret;
+ 
+-	ret = __io_import_rw_buffer(rw, req, io, issue_flags);
++	ret = __io_import_rw_buffer(rw, req, io, sel, issue_flags);
+ 	if (unlikely(ret < 0))
+ 		return ret;
+ 
+@@ -306,10 +307,12 @@ static int __io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 
+ static int io_rw_do_import(struct io_kiocb *req, int ddir)
+ {
++	struct io_br_sel sel = { };
++
+ 	if (io_do_buffer_select(req))
+ 		return 0;
+ 
+-	return io_import_rw_buffer(ddir, req, req->async_data, 0);
++	return io_import_rw_buffer(ddir, req, req->async_data, &sel, 0);
+ }
+ 
+ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -899,7 +902,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 	return 0;
+ }
+ 
+-static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
++static int __io_read(struct io_kiocb *req, struct io_br_sel *sel,
++		     unsigned int issue_flags)
+ {
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -913,7 +917,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (unlikely(ret))
+ 			return ret;
+ 	} else if (io_do_buffer_select(req)) {
+-		ret = io_import_rw_buffer(ITER_DEST, req, io, issue_flags);
++		ret = io_import_rw_buffer(ITER_DEST, req, io, sel, issue_flags);
+ 		if (unlikely(ret < 0))
+ 			return ret;
+ 	}
+@@ -1015,9 +1019,10 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ {
++	struct io_br_sel sel = { };
+ 	int ret;
+ 
+-	ret = __io_read(req, issue_flags);
++	ret = __io_read(req, &sel, issue_flags);
+ 	if (ret >= 0)
+ 		return kiocb_done(req, ret, issue_flags);
+ 
+@@ -1027,6 +1032,7 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++	struct io_br_sel sel = { };
+ 	unsigned int cflags = 0;
+ 	int ret;
+ 
+@@ -1038,7 +1044,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	/* make it sync, multishot doesn't support async execution */
+ 	rw->kiocb.ki_complete = NULL;
+-	ret = __io_read(req, issue_flags);
++	ret = __io_read(req, &sel, issue_flags);
+ 
+ 	/*
+ 	 * If we get -EAGAIN, recycle our buffer and just let normal poll
 -- 
 2.50.1
 

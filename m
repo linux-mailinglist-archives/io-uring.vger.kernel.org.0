@@ -1,80 +1,79 @@
-Return-Path: <io-uring+bounces-9098-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9099-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D692CB2DBF7
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 14:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224A7B2DD73
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 15:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65AE11C23280
-	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 12:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480455C4F80
+	for <lists+io-uring@lfdr.de>; Wed, 20 Aug 2025 13:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45B92D6E4C;
-	Wed, 20 Aug 2025 12:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75F531A05B;
+	Wed, 20 Aug 2025 13:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjWCACoP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mHPyHmcv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E899A183CC3;
-	Wed, 20 Aug 2025 12:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20FE2BEC5C
+	for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 13:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755691414; cv=none; b=MjLPPAYqEoooqHCUQm8UFJE7Oude/d9vFLQjgpjyd3pfJUmmwzhw8Il+pwzCOC2Qs32FgmAWTDhZD/esibOjUIIvbVeTJk5G7Z+e6XQwTwbE8vjeHRs9msbNZDgAcF5umepomA/3PGptLgRlF1VB16+VY2p8Cic0Hc0HEciY0/s=
+	t=1755695519; cv=none; b=NCUs7g18h4Pf40OC9aSE6YHJbBLK23cDGuywXgnIslJJsLJ6xONeaU2u3EMGgjFc4eO3CqBagav4IihmHtKMmcZnrZG4ssYeUSAT46C+rQkDgXWQveeiMgU1/hvG148q6nNL2yPRKY19pA2qZPfIzzU21+JhoifizAg9YUXgRPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755691414; c=relaxed/simple;
-	bh=eHKn8iJucqxAbzpJgDpV7nmtzEYpKn6TT9ECvMVGXLY=;
+	s=arc-20240116; t=1755695519; c=relaxed/simple;
+	bh=I+jEAjzB57TGjDqL8pTXsSELSYWcZMLy1UOW8P9FAeY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZ1MpysMPL2iuxeZVl1OHmkXqa3Yzjy94RTxh0Y5IiwxWeR2Cg0Xl8g51p1wDfcKzF8RokwJa6i+i5bucMXvOaT7nf2RBxD+tI+MLcZzofszSPvQJhmHOFWDm/FwJ65M4+qNz7mpuzreJpWNBfI7jh6bbwrFYpvgTXfHAA3klYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjWCACoP; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a28ff47a0so19179595e9.0;
-        Wed, 20 Aug 2025 05:03:31 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=riQXFxewacO2aQq9l9+hu0DPd8Y0JYfW3Qy7pyTTPszuKKXOk3HHsYBElziTViaEWfAUleqdTTq4iN2UV4WROz9BODncAwuXLNUmM86CUDCtJgONJoKWlrEmR4Wr0vVSjaX/yCTmBGBKIHUrCTVNuOz/I0x9DW4TvZAcwc7BrEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mHPyHmcv; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-435de820cd3so4009282b6e.3
+        for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 06:11:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755691410; x=1756296210; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755695514; x=1756300314; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XXaBuqHwa15yy/eu+VvjkdKQuH18mHpFGGi+XGcVeWI=;
-        b=hjWCACoPnoVX+m3eaCW7wFjEyv6RNDZVf9YF8wb6ijWbnmxQK/tWL65rKo9YpT3zuO
-         e18T+7qeg0xULyq7D9CoFPccg/70quBpeHut1k4bSKX446V3AO8tgwCTNxFPAYvVPp5M
-         utRnnKW0gdyOTg9S+Tej8ot44dGZTFRdetIV9cQZhxDan8XN99HnAwQy6OQk81ist2kk
-         NRXcrd1yONR8XJ660Kmxg/i3oMxft37KDcykseyuqusuyCo0RQ0aYEV8SSSWs3i0d1xo
-         5Cjla3ZautvG+4NznKs04Ik49HioI3YrEtKmY686/VjhUrpVVadA6DQFPNN5vUuN8lYu
-         F2+Q==
+        bh=3xw/il1hYPcFJoO4WOdVukdiFy9qUME33435e0+SzPo=;
+        b=mHPyHmcvolasUVCW0mOgTg8S+iDoHDFDEV1ysyO0DBQvrwNRpXDnZNXcOpWhiLSI67
+         bItH04xRwQlqAXUE1w7xBMGurWiqRGlhOXNbU32krUGWqKWjZjnq5OUz5ArB3/HPOP9U
+         pCPlRzEtzzB9RX7Xc0IGkjaxwDKBuEpb0Ma/xHoGVvdkGJR9+P87Y7ux2ifDdRvdal31
+         zEEHqAQDxzsP2g03BxdlOvlX2soc2t0f4QhgRHWjPs39A1EMyT8z46nHWUXcjiNjE4QA
+         VYcXiMNmB+X/TtRa3eexurSZu17poBf69F7DCYAkIioN15247GDC/Pumxwv2K27AYGp/
+         pkjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755691410; x=1756296210;
+        d=1e100.net; s=20230601; t=1755695514; x=1756300314;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XXaBuqHwa15yy/eu+VvjkdKQuH18mHpFGGi+XGcVeWI=;
-        b=SRuPULcVSVBe81L5RngBUbO1/QlPfMcbUJVupFCncAiEzc3X2etKgcRGGm7oyZayKb
-         ljnihYdM1/ExFDvLfULNPkPSPE0GAKnizaP6kBqsqW8LT66U11TQ49J1NMOXCW/GU9Ux
-         IBFCeVVNH05tIavoq+XsrOXKSBw6Z+tlj8n/i4I1b9kQt3Pui+zx9FMq7vuYUEQOBPa4
-         kqJl5nbtQk1UwgYgUISa/xgHpCi3CS0lxO+ZvsFj70v1XchEc7PEt51QxUjMUedXPXfA
-         7mgRWTTi0z68NLyEhnB7TOnMLHV6t94fz41wy7A8YOtvu9cABBPSmCX7C0pW90TuKG4r
-         R5PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVODFH6e37MSLlCq6crMqPe9CIUuJmil+9eTA+/0xfo9HHePIf6LBB2EFaRPPFDfe5UVyhLBZ6kX8b5iEgC@vger.kernel.org, AJvYcCVveJcWc0M4onUIAoIXPJ1c7z4OE5Q8MhzakBiJzOd8wTZ9N3Ql2Q0f3b/qUMUPn1iZOFg5TSyVjg==@vger.kernel.org, AJvYcCXyrU3QlycofZeC3660IUBp01Svgcpy+daih4XcoTqa+0vD6UTX6bO8GuJRZcg8j1si2sdktPvh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQNE6bJ/xGYnqCYtEXcQRUluUvG6xD7m6GF320n+3S97VJ749K
-	olPfmlocVAy0kELkZQf7b2M82tP2s9GshEgFaK7piEIv/5YzawG1VEpW
-X-Gm-Gg: ASbGncthDAJNndgFuDc+WRCqd8QLp5PN4Sclj68dEYfoct+w/eaHUABtX+tcZeaIoR8
-	jaYfrwuY9xn52xGNlSp+H2QzmoRyAmMQMOBn5ahgryifJQ2uy3LksmIlSdAsci06sv1adeO7k8j
-	dBB/BWrVIOn/dzXRB9319aL9Uxp9Awnyzgdy8+lkRLZ3lbMgRMvGYRCahCZxFfYYh/PqZlDr0LW
-	e/r6r0nBs4USRM6hVD4fALvNUHVG8fn8Faz7IIFPzxUkzk7hN2eLc5aF/92C4TQOaBx+2/BzkVs
-	XStr7zn4/wizvUWFyVBQMRB2Ls34tT0YzEYFeUY42BRhm9LpjAlyQxhlDtbiL9pMB/MtPabTjyX
-	TtFRoJFXD61rUzPqW78mLFFTa6Aoa3Rk2qDhWhJHe+5fBtKKD2WfgNtI=
-X-Google-Smtp-Source: AGHT+IFTqtLUCF0kRl8LCEKNbCKLBDF/eqiXvH/D0EJIMMk9eWA4xaRr/DXUkSzDP9Cz88lsFbLCqg==
-X-Received: by 2002:a05:600c:1906:b0:459:da89:b06 with SMTP id 5b1f17b1804b1-45b479e2772mr28957305e9.16.1755691409965;
-        Wed, 20 Aug 2025 05:03:29 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5f7e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07487978bsm7339533f8f.7.2025.08.20.05.03.28
+        bh=3xw/il1hYPcFJoO4WOdVukdiFy9qUME33435e0+SzPo=;
+        b=taJYCON52/PQHr41IRD20Ygyg0DGAh2p0/T92Nfht5jSThJzI6KJAM3K0phjtVWuyE
+         NYggIqCDZQYDm9wVZIFzSW2yVvmiCgL3F08GQCXOauoZxjQuN+PPtjPpm/Xl8tSMqHJR
+         aHUJJNcazoXofRU4aHTtqTI7P8zSwFOraC5cjfG76AefMUKgql+a1aTMobWNNrWPRb/r
+         jwdlgLetouY1iMlO9rHS/rC0mEI/vs5+gaPumzELwSosm9SEjUw1xRqoF2m2m/Iz/d2V
+         QviEy915FDiFHmMs8jMuKddDPd7SwCjJDXd2A8+OaPWnSzK6w8Cn30bBl1Dko5vzT128
+         GStg==
+X-Gm-Message-State: AOJu0Yzhv9vpQHZs0EaLDMt8stoAEsnBlSDma8SCS1DgKyn39Ln0N6uk
+	01ihH2IM9xpq6DCts5LX0lVxg8n87O1UThbho544+qHoBVxGHHa/QCfFWQE8ieNcV+Y=
+X-Gm-Gg: ASbGncsWTZ4uOzgQB1/FC02cUvE1ykyyxzVcH6PQDaGZUf5/VtHTjrG/xi1nyH4UtWx
+	CZPd5iTn7/pzW5AjwxvagUWTLoU74MOgxYXfJuvqWxlpdZq9wcm606+uXVzZb2rl7qvHtzYPoJz
+	N0CotlcKb/los/6FZE/WpNtRpoUOOPgEy4CWZO8d2yKCRKt2quOdZPZ2HjshkzMRH6jxc4hry43
+	xJLRXdKdAhYmFULWbB5oz3r99ILI32LB4ZECoJOT8GpwOP/xNHM6sgfsiJ/3zhZ61Jtn7wwQ4Jf
+	pzxeC72G+kYgqdUDLogCG9pQZB/dxA2JdHNywsQccLId6jX1T55lA5heA7nMIGQY2B/3sxjqWq9
+	ddkRei1hbAWzE/wbmXsoUXtWNlH+2gK3aQV8W8VNY
+X-Google-Smtp-Source: AGHT+IFN4rYOdljWDvbYLK5bSa4Asam9l4mTJgttXr5luPRCpIo6iaYqg7riuBCA7YijvE3srJlUBg==
+X-Received: by 2002:a05:6808:1b06:b0:435:72d8:5e8f with SMTP id 5614622812f47-43771f2139dmr1467504b6e.0.1755695513839;
+        Wed, 20 Aug 2025 06:11:53 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947d4976sm4231155173.36.2025.08.20.06.11.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 05:03:29 -0700 (PDT)
-Message-ID: <d55e4a81-e4da-47c5-95ab-03132c1c5553@gmail.com>
-Date: Wed, 20 Aug 2025 13:04:40 +0100
+        Wed, 20 Aug 2025 06:11:53 -0700 (PDT)
+Message-ID: <8150569b-146e-4d16-86b9-5d53fa6b7e92@kernel.dk>
+Date: Wed, 20 Aug 2025 07:11:52 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,72 +81,75 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 05/23] net: clarify the meaning of
- netdev_config members
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
- Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
- davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
- <8669b80579316a12d5b1eb652edb475db2f535e7.1755499376.git.asml.silence@gmail.com>
- <CAHS8izMO=6oHN4w9XiL0yw7x86LF8iw-LhMA4qZe2rXOu0Cmbg@mail.gmail.com>
+Subject: Re: [PATCH V3] io_uring: uring_cmd: add multishot support
+To: Ming Lei <ming.lei@redhat.com>
+Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+ Caleb Sander Mateos <csander@purestorage.com>
+References: <20250819150040.980875-1-ming.lei@redhat.com>
+ <1155b8b0-d5d0-4634-984b-71d246932af7@kernel.dk> <aKWssZvQT-Wb-AJA@fedora>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izMO=6oHN4w9XiL0yw7x86LF8iw-LhMA4qZe2rXOu0Cmbg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <aKWssZvQT-Wb-AJA@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/19/25 02:46, Mina Almasry wrote:
-> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+On 8/20/25 5:08 AM, Ming Lei wrote:
+> On Tue, Aug 19, 2025 at 10:00:36AM -0600, Jens Axboe wrote:
+>> On 8/19/25 9:00 AM, Ming Lei wrote:
+>>> @@ -251,6 +265,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+>>>  	}
+>>>  
+>>>  	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
+>>> +	if (ioucmd->flags & IORING_URING_CMD_MULTISHOT) {
+>>> +		if (ret >= 0)
+>>> +			return IOU_ISSUE_SKIP_COMPLETE;
+>>> +		io_kbuf_recycle(req, issue_flags);
+>>> +	}
+>>>  	if (ret == -EAGAIN) {
+>>>  		ioucmd->flags |= IORING_URING_CMD_REISSUE;
+>>>  		return ret;
 >>
->> From: Jakub Kicinski <kuba@kernel.org>
+>> Final comment on this part... uring_cmd is unique in the sense that it'd
+>> be the first potentially pollable file type that supports buffer
+>> selection AND can return -EIOCBQUEUED. For non-pollable, the buffer
+>> would get committed upfront. For pollable, we'd either finish and put it
+>> within this same execution context, or we'd drop it entirely when
+>> returning -EAGAIN.
 >>
->> hds_thresh and hds_config are both inside struct netdev_config
->> but have quite different semantics. hds_config is the user config
->> with ternary semantics (on/off/unset). hds_thresh is a straight
->> up value, populated by the driver at init and only modified by
->> user space. We don't expect the drivers to have to pick a special
->> hds_thresh value based on other configuration.
->>
->> The two approaches have different advantages and downsides.
->> hds_thresh ("direct value") gives core easy access to current
->> device settings, but there's no way to express whether the value
->> comes from the user. It also requires the initialization by
->> the driver.
->>
->> hds_config ("user config values") tells us what user wanted, but
->> doesn't give us the current value in the core.
->>
->> Try to explain this a bit in the comments, so at we make a conscious
->> choice for new values which semantics we expect.
->>
->> Move the init inside ethtool_ringparam_get_cfg() to reflect the semantics.
->> Commit 216a61d33c07 ("net: ethtool: fix ethtool_ringparam_get_cfg()
->> returns a hds_thresh value always as 0.") added the setting for the
->> benefit of netdevsim which doesn't touch the value at all on get.
->> Again, this is just to clarify the intention, shouldn't cause any
->> functional change.
->>
+>> So what happens if we get -EIOCBQUEUED with a selected buffer from
+>> provided buffer ring, and someome malicious unregisters and frees the
+>> buffer ring before that request completes?
 > 
-> TBH I can't say that moving the init to before
-> dev->ethtool_ops->get_ringparam(dev, param, kparam, extack) made me
-> understand semantics better. 
+> Looks one real trouble for IORING_URING_CMD_MULTISHOT.
+> 
+> For pollable multishot, ->issue() is run in submitter tw context, and done
+> in `sync` style, so ctx->uring_lock protects the buffer list, and
+> unregister can't happen. That should be one reason why polled multishot
+> can't be run in io-wq context.
+> 
+> But now -EIOCBQUEUED is returned from ->issue(), we lose ->uring_lock's
+> protection for req->buf_list, one idea could be adding referenced buffer
+> list for failing unregister in case of any active consumer.
+> 
+> Do you have suggestions for this problem?
 
-I agree, it didn't do it for me either ...
+Just commit the buffer upfront, rather than grab it at issue time and
+commit when you get the completion callback? Yes that will pin the
+buffer for the duration of the IO, but that should not be an issue,
+nobody else can use it anyway. Avoiding the pin for pollable files with
+potentially infinite IO times (eg pipe that never gets written to, or
+socket that never gets data) is a key concept for those kinds of
+workloads, but for finite completion times or single use cases like
+yours here, that doesn't really matter.
 
-> If you do a respin, maybe a comment above
-> the kparam->hds_thresh to say what you mean would help the next reader
-> understand.
-
-... and since the move doesn't have a strong semantical meaning, I
-can't think of a good comment to put on top of the assignment.
-hds_thresh is already described in struct netdev_config and it
-seems like a better place for such stuff. Thoughts?
+I've got a bit of a side project making the provided buffer selection a
+bit more foolproof in the sense that it makes it explicit that the scope
+of it is the issue context, but across executions. One current problem
+is req->buf_list, which for provided buffer rings really is local scope,
+yet it's in the io_kiocb. I'll be moving that somewhere else and out of
+io_kiocb. Just a side note, because it's currently easy to get this
+wrong even if you know what you are doing, as per your patch.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

@@ -1,171 +1,149 @@
-Return-Path: <io-uring+bounces-9177-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9178-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FC5B300AD
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 19:02:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68680B300C6
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 19:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9884F7A4E36
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 17:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D620680CD8
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 17:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3F026FDA6;
-	Thu, 21 Aug 2025 17:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DED2FB627;
+	Thu, 21 Aug 2025 17:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Kcoa8Fpt"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kR3vSTed"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCCA2FB625
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 17:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DDB2FB62C
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 17:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755795751; cv=none; b=S7Pt90etd1dXQrIIH5WScIBkCJ09kimvMBIIeNjT96oru1PvL8RtykgK/W7MfMJ8qWjRapmlaIcjTDhYJr0OSwVk3ZggyQMEGiPzM8FaguRSge0vVYoBMQFg1kPlqxv38jSa5Jmggy8XwCK2qDHHU+Sldz1KvpSUBNJHG/A+b/k=
+	t=1755796352; cv=none; b=UmoD7uZHRggAoxU7Z1vUont6LqlqAWQwhZ48E8dbayZPQNu1Z4lU9WRBZmWDiQ5cgP1Ix1pdkbg7MC//RYc380JzQO0ZOhCy8jQAN1ANzviRvEi65f3olkwDS0H/ZehR4CdqW5Js+3bmnDU57oaHdq8XspiyYu6aS9ewLZ7cUqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755795751; c=relaxed/simple;
-	bh=MJFOXzkjtZLb7O8vPIDVjGkppH7We5ykolR8obeN8jE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=szW5F6y+CPeSLFQF9OKWxkawayGFENruQx/iC3twIOAPSdjm3FK00qN8YVtOORCeTh4a5WscYK0M+PiBcw6f26bWtXNDLpVWyEGvSJFBtjP4s6/JHYY0V3egfPAF0SbUeluVt3qS9KZgI27nKO524kGo8iUj9uMyo1dE9G4i9WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Kcoa8Fpt; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24616371160so1263395ad.1
-        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 10:02:29 -0700 (PDT)
+	s=arc-20240116; t=1755796352; c=relaxed/simple;
+	bh=POr/EsYoawwub2e0fCwcx3MvS+Lb/CZeoadbhVCr6zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G+ppxEaVL3sX5ahlDJwY6+u0iXxxDlnpm812xlspjJakAqZShEv8psoOfUrHPE1MWlkNWbSriMxuh4zt12gDX84g9XWb7zTmQesZBW6ilqkckVbjsIrR4SIcgVAIHHrVp7XHhqxSM8VLdkeAH0GgKLxTIACKkt06L8Ye23VTqM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kR3vSTed; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e57376f655so10394145ab.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 10:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1755795749; x=1756400549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GOfHRGgdepZUoxPJh+Rvt4PGAAWpuGYGcJF+hpILaz0=;
-        b=Kcoa8FptLVPCqDeeZAxzbR2ojXFAGCRillT+Nd51ox/NHIB+GeTMl1bkQSpVE/SiKB
-         Qcb1syNroO4ePQP5xvA1eySt5Ba2cT0NodyNZsqvR8KrBZjYWXFDrbDtjirA9ZrjGkB0
-         Y6WnsOCbnLUCGRZjRt5iCWWnlsXsaKa59RwYYuul1ETaamnSyh4iOvlDeKyIBWOybh/T
-         U1Ndvs7NdoCdjGRDJFxSjtZwMAalYucKwjxmtnrJmwVt3elJFGlGZ7nD7lH4KNOiibMH
-         iRKqsfuyCbLXrELXVbQ6vUPRtX1jSPNN2ndnO6Q4l8TLb+KvzJIqxNsZCa1D4bls+gjC
-         PgyQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755796349; x=1756401149; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BZxIMj1LWErRv8eLbMMO5TET6h711e61T0npzJkrsTc=;
+        b=kR3vSTedyOPT4Bgg4XU+EisTxkV7xMUu0+OW/2rNujhkj66GR8zWAsmbZkkBTL7j7g
+         qGjJT4hEmA+I6/2U4HpeOM+rsGKNl4pfWvRoh13Kbh4/CW1ISyaOKKbWJsgFXMwNZnTB
+         9q+WFcIYS/MxhVNuJa1pWcJmlkOeElpB5fVs5CmKhTHFgCPd1SKGm2LqMCPeXk2oKw/c
+         VZ2HmTQ7i0FBwOc6kIYbnKyo57csfOkHOG0LI1Kz/qBZCEHmkqT82V2MKHsvTUOluXcz
+         wFSpSCDxkYP2CT/udejkBNpx40XoN4kSUjBJ1cL3QvModfw2hpqRC63y6GVEpbiEGER7
+         bjkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755795749; x=1756400549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GOfHRGgdepZUoxPJh+Rvt4PGAAWpuGYGcJF+hpILaz0=;
-        b=vQsK6dHtdOrtz6rmfa4FIJDreHl92a1b8IR1KbLjd0DQqO834i4m7rc2i4dGI0eTzD
-         peI5+e8VRmDpbz62GQPb70Pqd+iQUrIRbwK6fN7fiTuBqtc7i58HLvDYhfE4nD4NTawQ
-         2KlP4+9w7VUONhYIuXvTAX3nbmvsM626QdzFe74znNddx/nZx/hTLR7JG/A3Rs4rqWU2
-         vrxAmm241qTGHb/EikIWFkEw1BjoQ1ka7H0SWq/zBNIAzqCpjVlUVMpobYTOPBlaYeGl
-         YhszGcjkOvHW0iugadOwzM0r0gVTSqSiVa33qAwu+iWsnyhx8euIJD57Vvh14Uf/9Xg7
-         ok4g==
-X-Gm-Message-State: AOJu0Yx/obX5APsIh1MCF1kIp4onKvKHGzpcWrCb4muTj9FVoMZhk4VK
-	p1sJSNQMBDfKEBw4IQj6xTj/kVrOXPi9I/ZEyS6ckuhg1GgrDzjWnGAKCtmOIi55jXvJUq/VNrv
-	ymonkSKGdtvW3qzuVhAqUn7ilwvvidfMqvrJyiqhHfA==
-X-Gm-Gg: ASbGncsAVG4kLlOSBPjjpvql0ueqAkZDeRZuQSCq6LAguIOMHn7ZpwI+aI1lM7q9k/j
-	uHSzFs/dNjRFqDMbElql8aHoH10+vFk2LAoH8/PGFFVLNuf1TMmMX9x/C5AgHWvo8kjLuGXTXkH
-	tFJKhQ3c/BnQElmJpbc4417ung5/YLpNpxfEjlCHCpO5sm0GjI9tykgTausszwJ6AG4eJbJxFBF
-	o7hYs4dmZnwQGzG5Xw=
-X-Google-Smtp-Source: AGHT+IF7GBBQherP54ExqpJrH/hYFvtYwLpjy/DUXx8UspfapVmzGmqU+srgLgjYrVCz28kiBD0zP1MrcslKgjLg6l8=
-X-Received: by 2002:a17:902:e888:b0:240:8717:e393 with SMTP id
- d9443c01a7336-2462ee8e35dmr696785ad.5.1755795748392; Thu, 21 Aug 2025
- 10:02:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755796349; x=1756401149;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BZxIMj1LWErRv8eLbMMO5TET6h711e61T0npzJkrsTc=;
+        b=fjXsupHe5swh7pBFCmRD3UdCQWclq5ItOd1jbB9JliNfXh116L/w2UDhlqEP84pq46
+         b6g0ujZeaiQreO40mcYvbi2X+ueBl0CNVdCaSjZ3fgUotA6erpR5JhjkkgLBdWpap6GX
+         jtP2PGunDANYmXx+AFw/02rvAy9p44bj9SP3GpbuP3gP45+4sQeioNA5mE1umeVtczv1
+         NZkhLgSenfsrIp+02bUQCsdEuEl+LEIr8snfQViBr3GQCyek5E4y7AI0/0JDQM5YJcfx
+         RaPeh4Voywlc2KOhzo5x5KstzLHMtVdmhdfr4fLbQViq57/t+8W2OF5BUlSRUIY0Jcqe
+         rYYw==
+X-Gm-Message-State: AOJu0YzOynELmbRKM8+8SdjCc7hIIG3+9l6kbsztj0gokzP1SBqlQK+s
+	PVG8N2BaL0xGA6Lj97xji0sedqZvm4BaZyrRO2Bhcyercu04H3xt4BwBcv5gVoY1cKw=
+X-Gm-Gg: ASbGncsRNTQRShesKcXtdUR8g0t+NDZW2jDPAydwjxi619Jt9z2YdxzYFRjJwIivcUU
+	zG9FWt3a2kxn5LoTSEtR2qyfWHfL3qKQLGkAvZhsm5/T5pE3Avuj0gT5Bse0CCsjtaUavB6wiCj
+	b44Gg/m8ofXxv3vS6PMxbpPYXQCpSp8uwC8alsbxOrmFN+2jaxNaHdkh8XGlE9bzUchvyp83US8
+	XnNVdYPbZQSq6sToNEnJDaKcqfTz1O+mQcxMzOWI39+wj+KwWYa7jmgmwnVBxRlhQMJZqDT/myL
+	qvRW6IHcgcCw0fuUfJsUbVE2hnNh26J5E7IJNOoMbJraUUUOYpf33EOs3qmqvUjDLNjJJhyUz5v
+	7fmZittWlNyNbyrtdLgA7+RnwRXfR8g==
+X-Google-Smtp-Source: AGHT+IHAGR22k2b9Y8Y7vSOSSbcA14areLWHDVJRFbT2ArXHijf1l3J/kPXMkMKAjvmNLS9p4aWMBA==
+X-Received: by 2002:a05:6e02:1987:b0:3e5:5937:e555 with SMTP id e9e14a558f8ab-3e9201f3da9mr2999665ab.6.1755796349419;
+        Thu, 21 Aug 2025 10:12:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e6836fb3bbsm16588505ab.50.2025.08.21.10.12.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 10:12:28 -0700 (PDT)
+Message-ID: <6145c373-d764-480b-a887-57ad60f872e7@kernel.dk>
+Date: Thu, 21 Aug 2025 11:12:28 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821141957.680570-1-axboe@kernel.dk>
-In-Reply-To: <20250821141957.680570-1-axboe@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 21 Aug 2025 10:02:16 -0700
-X-Gm-Features: Ac12FXyHHuMzkNeuakIIpn1EeOT7UT6WF0qwFGQphZ0Pi2K-vCirXOp30gdfZ3U
-Message-ID: <CADUfDZragMLiHkkw0Y+HAeEWZX8vBpPpWjgwdai8SjCuiLw0gQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCHSET v2 0/8] Add support for mixed sized CQEs
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+References: <20250821141957.680570-1-axboe@kernel.dk>
+ <CADUfDZragMLiHkkw0Y+HAeEWZX8vBpPpWjgwdai8SjCuiLw0gQ@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZragMLiHkkw0Y+HAeEWZX8vBpPpWjgwdai8SjCuiLw0gQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 7:28=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Hi,
->
-> Currently io_uring supports two modes for CQEs:
->
-> 1) The standard mode, where 16b CQEs are used
-> 2) Setting IORING_SETUP_CQE32, which makes all CQEs posted 32b
->
-> Certain features need to pass more information back than just a single
-> 32-bit res field, and hence mandate the use of CQE32 to be able to work.
-> Examples of that include passthrough or other uses of ->uring_cmd() like
-> socket option getting and setting, including timestamps.
->
-> This patchset adds support for IORING_SETUP_CQE_MIXED, which allows
-> posting both 16b and 32b CQEs on the same CQ ring. The idea here is that
-> we need not waste twice the space for CQ rings, or use twice the space
-> per CQE posted, if only some of the CQEs posted require the use of 32b
-> CQEs. On a ring setup in CQE mixed mode, 32b posted CQEs will have
-> IORING_CQE_F_32 set in cqe->flags to tell the application (or liburing)
-> about this fact.
+On 8/21/25 11:02 AM, Caleb Sander Mateos wrote:
+> On Thu, Aug 21, 2025 at 7:28?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Hi,
+>>
+>> Currently io_uring supports two modes for CQEs:
+>>
+>> 1) The standard mode, where 16b CQEs are used
+>> 2) Setting IORING_SETUP_CQE32, which makes all CQEs posted 32b
+>>
+>> Certain features need to pass more information back than just a single
+>> 32-bit res field, and hence mandate the use of CQE32 to be able to work.
+>> Examples of that include passthrough or other uses of ->uring_cmd() like
+>> socket option getting and setting, including timestamps.
+>>
+>> This patchset adds support for IORING_SETUP_CQE_MIXED, which allows
+>> posting both 16b and 32b CQEs on the same CQ ring. The idea here is that
+>> we need not waste twice the space for CQ rings, or use twice the space
+>> per CQE posted, if only some of the CQEs posted require the use of 32b
+>> CQEs. On a ring setup in CQE mixed mode, 32b posted CQEs will have
+>> IORING_CQE_F_32 set in cqe->flags to tell the application (or liburing)
+>> about this fact.
+> 
+> This makes a lot of sense. Have you considered something analogous for
+> SQEs? Requiring all SQEs to be 128 bytes when an io_uring is used for
+> a mix of 64-byte and 128-byte SQEs also wastes memory, probably even
+> more since SQEs are 4x larger than CQEs.
 
-This makes a lot of sense. Have you considered something analogous for
-SQEs? Requiring all SQEs to be 128 bytes when an io_uring is used for
-a mix of 64-byte and 128-byte SQEs also wastes memory, probably even
-more since SQEs are 4x larger than CQEs.
+Adding Keith, as he and I literally just talked about that. My answer
+was that the case is a bit different in that 32b CQEs can be useful in
+cases that are predominately 16b in the first place. For example,
+networking workload doing send/recv/etc and the occassional
+get/setsockopt kind of thing. Or maybe a mix of normal recv and zero
+copy rx.
 
-Best,
-Caleb
+For the SQE case, I think it's a bit different. At least the cases I
+know of, it's mostly 100% 64b SQEs or 128b SQEs. I'm certainly willing
+to be told otherwise! Because that is kind of the key question that
+needs answering before even thinking about doing that kind of work.
 
->
-> This is mostly trivial to support, with the corner case being attempting
-> to post a 32b CQE when the ring is a single 16b CQE away from wrapping.
-> As CQEs must be contigious in memory, that's simply not possible. The
-> solution taken by this patchset is to add a special CQE type, which has
-> IORING_CQE_F_SKIP set. This is a pad/nop CQE, which should simply be
-> ignored, as it carries no information and serves no other purpose than
-> to re-align the posted CQEs for ring wrap.
->
-> If used with liburing, then both the 32b vs 16b postings and the skip
-> are transparent.
->
-> liburing support and a few basic test cases can be found here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/liburing.git/log/?h=
-=3Dcqe-mixed
->
-> including man page updates for the newly added setup and CQE flags, and
-> the patches posted here can also be found at:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log=
-/?h=3Dio_uring-cqe-mix
->
-> Patch 1 is just a prep patch, and patch 2 adds the cqe flags so that the
-> core can be adapted before support is actually there. Patches 3 and 4
-> are exactly that, and patch 5 finally adds support for the mixed mode.
-> Patch 6 adds support for NOP testing of this, and patches 7/8 allow
-> IORING_SETUP_CQE_MIXED for uring_cmd/zcrx which previously required
-> IORING_SETUP_CQE32 to work.
->
->  Documentation/networking/iou-zcrx.rst |  2 +-
->  include/linux/io_uring_types.h        |  6 ---
->  include/trace/events/io_uring.h       |  4 +-
->  include/uapi/linux/io_uring.h         | 17 ++++++
->  io_uring/cmd_net.c                    |  3 +-
->  io_uring/fdinfo.c                     | 22 ++++----
->  io_uring/io_uring.c                   | 78 +++++++++++++++++++++------
->  io_uring/io_uring.h                   | 49 ++++++++++++-----
->  io_uring/nop.c                        | 17 +++++-
->  io_uring/register.c                   |  3 +-
->  io_uring/uring_cmd.c                  |  2 +-
->  io_uring/zcrx.c                       |  5 +-
->  12 files changed, 152 insertions(+), 56 deletions(-)
->
-> Changes since v1:
-> - Various little cleanups
-> - Rebase on for-6.18/io_uring
->
-> --
-> Jens Axboe
->
->
+But yes, it could be supported, and Keith (kind of) signed himself up to
+do that. One oddity I see on that side is that while with CQE32 the
+kernel can manage the potential wrap-around gap, for SQEs that's
+obviously on the application to do. That could just be a NOP or
+something like that, but you do need something to fill/skip that space.
+I guess that could be as simple as having an opcode that is simply "skip
+me", so on the kernel side it'd be easy as it'd just drop it on the
+floor. You still need to app side to fill one, however, and then deal
+with "oops SQ ring is now full" too.
+
+Probably won't be too bad at all, however.
+
+-- 
+Jens Axboe
 

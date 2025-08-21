@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-9159-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9160-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B522B2FC74
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 16:28:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC593B2FC65
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 16:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592106262C2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98F84A005DD
 	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 14:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8F4280328;
-	Thu, 21 Aug 2025 14:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070EE28134C;
+	Thu, 21 Aug 2025 14:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="f4jYsPd2"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YPbBnAPT"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237C726B75F
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 14:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDF724DCF6
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 14:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786005; cv=none; b=Jbi3I9SfUp7BknVEPWov2WUi9W7XP1SQtVz2ScyCNrSg1atkgORsaHjkXebAa9xzUuobNiFWEERRbQNx5PdCZLxe424Ra3DCHRSSOhTgKHswIqkqqAX9X7NlFNaOqQr5/FOX/MjVupIsX6awnfgnDZFFXxqq6FuSX+JuDJZ3KaM=
+	t=1755786005; cv=none; b=kNhOLyicoQnOuNvlOrwthZCAU/WUUzMmddYprBvhWN5cTL+H0tEH8I7HMBIE2tZf2P1U6URPFeiBQ0ssysaDepOlqBF3Gn2fMgfN0dZRbTloT0Vmy66SIyg1BkGt+D7js5XGms+8YzvxhaqVvZ3TammLsHv+cgo3sYyxJWXZZ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755786005; c=relaxed/simple;
-	bh=WHshCWPAP/+LfJsAM2Ld5LwvSnuEhjATDFIQXIy4Lv0=;
+	bh=FJnk3uTROHPTmKkA08/RhvDrtZdwecJd7881kB/Io2w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bLMirMzPwYIaRW7bFBsONjMJUGCs6n+d6G0TjeZe3tT55vXHg8kVJztZ39bLpTp0FCiAD2dMn4uFsqEQAMeTNa15bUbWRcaE+6Tsfj495RqFWUjuXvzn1gCKWTP8b8T2t+GA00B2b3zhpNdvnzlyBnFCV1mR1QuoPRrqodi8ctI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=f4jYsPd2; arc=none smtp.client-ip=209.85.166.173
+	 MIME-Version; b=IuDosKmRySM1IhIEF7Gh+HJsK+uz5fPLFJMa50NAIXfx0pL0Mnxpv+sGdIEuVRN4Pe1tRwSoezVgssPx4cniJEQJ9+K8vja0/GOP/Ur9jBkd7JZ0uxx0zm24oSzTKOqoy3h3pcjZ0Bzxc2HIGSSRuRxZ/02xU4lE/I8kly1hIbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YPbBnAPT; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e67d83ed72so9106345ab.0
-        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 07:20:02 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e57010bc95so7632725ab.3
+        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 07:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755786001; x=1756390801; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755786002; x=1756390802; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hkt9A0h7rWMoq7WemR8DNACFxXqFilbl88yZXjx4qPk=;
-        b=f4jYsPd2EQTFD5ZD39KIm7SAhBTu/NtZSSJsLMhQyUQ2OCMOJ7enO1fCWuaDhmgP/7
-         4hkBzLXvQYwPGmfXA//otap26gg7lT3MYhVYJGIzDMH+L0Wk0qcQ/m0T6jYcwFcSXscT
-         6jvHel/1EX11k/6o9jZQLYMffMunmiTCvjCkITS/+uCoH2GA74BjtB0WQ1vZaK9PvU17
-         DWC39R/XFVjtMp94N1rtat0O+YkfR0KEPFgBAAd+nUqMbYYroq7jdWsyJd20Fg6pCQk6
-         /dDzwbjywT6cbEsi+mPq/V8cjh4Tc5CX1TPsT4VgG2XbvOg5VZPGHFK4WkqQ+ucJ+r+b
-         XJPg==
+        bh=XmKTd6DChalHxJNKAsFEuKPqsFnH55iED9kA3/7w4WE=;
+        b=YPbBnAPT5MMp+CrfKYWbldC/AxWzTPXSiq49jo60QHInpO30ukgSuX8IXuVP3zlmyi
+         +GegL5oJt48kGXbOwejPamknheD4bBUslRZGcf5lJJa0YxIP2g4VT0zrOgRSt/fGBqQv
+         tz/bLucNcCuZelTztlfqPT0fq0cUSGHgrGfIAGAN92wjgPOTIxGrPmbaP/wODgzkBJBm
+         UIo5OY9E3d3k+GFDqmZecdenNwrEKk8GQG7YHPzK5wh8aE2mzjnHm8SvvpMKZa/MuXOh
+         rsVAatqCKDsZ7LMUexGXSgZt9w+N6oPpYkhJurZV8agYcQ4KHaADYgRUea1DKk7Adn7J
+         Mv8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755786001; x=1756390801;
+        d=1e100.net; s=20230601; t=1755786002; x=1756390802;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hkt9A0h7rWMoq7WemR8DNACFxXqFilbl88yZXjx4qPk=;
-        b=YZA/Vl6hIQIfwgUtKPxugbZWu/cLHdeGJpv3b4D+8E+2vBhVSA62JLm3mGIaAJ5QTL
-         Gt3KYZjpEPi2Na0b0AkRMDHHr8eTnxiJQCsp0xkvhP9xsUuKBYl9m/gFTFg/Voaszy8v
-         91iJXoIruT+0OBhDzZNewX8ZZlA31j/0kYrfpQYZhTrp4HvA2TY6dp/cNf1YnWmrecWQ
-         uYma8zu6++9KPbU7kX8YJROJAAKParkJ/dRhdfPZvna69OcEF6HH8AtOM2fkqm2DzmON
-         /g8XQmLj8G6NfUeEi6cGjYdYpvlopY6z0jbPJHJdsprwBOpYVBXeHQD4HbW7GTk7Wv3S
-         nDwA==
-X-Gm-Message-State: AOJu0YwaMS02mpODNyMQMNkSPjpLsSB0lMFYoyJFJMkZaNZ1a4XKXb9j
-	3lXu/f6kpud2lpIkrliezl5eHrlTsGNgeu0f9mPhvUYd6wGjBXRhDsy3lkuO1vpG7ZA+E6f4QZY
-	k7veL
-X-Gm-Gg: ASbGncsKzLPtw/j8v/fQ351YQyXugcEn/U7dE0giiRJBru5QE9D7evp7Tmi9GPeYEtq
-	AkF+NUr+p75/p6KvpL9pJXHQqulP2Vk6TeyQZJiujwo7QY1IyKqYpbggOPwBMmTVY9FirLOFmQT
-	3llDbTgYVJPshg0pofHRBCMTeQ60pBfP/w95j7dVz9ohLOd8sv+MIclA7DzOOAVhR88LxBkYpxr
-	mEKxZROSP/G4MZ0vt/iq5+9pbQnh7jQTmajDaobdgMAKQRXcHX9ubyvvmI5rnHm8n+++2bSTqdd
-	52D2nO5T2ENrPkjwL4UZAW7MUmWu4AYF5nKGQ4p6mn+zujI2MTCcf70NZELIuEquVx/6m0c9ExN
-	jeN2b3sZoVmRZDugG
-X-Google-Smtp-Source: AGHT+IEwsymoVMA3Ojkk4Okjy+BUJC0k4/enzM90zwHZKtEzW0+jOa3s3tLRDRaZQi21n/TTYS8rSw==
-X-Received: by 2002:a05:6e02:4806:b0:3e5:4da2:93ad with SMTP id e9e14a558f8ab-3e6d7477306mr33768745ab.11.1755786000831;
-        Thu, 21 Aug 2025 07:20:00 -0700 (PDT)
+        bh=XmKTd6DChalHxJNKAsFEuKPqsFnH55iED9kA3/7w4WE=;
+        b=VTzkoUeeTnr5DRC87yjmHbvikeS4y4Qc0n1orh+eLYEwwiJwFNfnq8zdZvMjAOUiS0
+         RTToXpNs3T/SGy/uv7+aZR5UXaUjd1Ie7MpUo97H+1LMTRd0u9isLxSxCiyo9pQ7MvdM
+         JK8xRPtuidD/ScZNJNqb839IATrLFGvrI2kG9SJejsm2xbU8ZrUbBDwH6XAiWPAMr/PJ
+         xtlhfZT7dDHL/41ZtB+T9tHOCYMcXUNbQzuhVoZV+QEQF3SVkouvFXpSU1swQ4l6Nn0q
+         4JJTt1R168ZBAJdndaFRW2xwz5T8lErkyna8X3VgCsrEaHsWJ85dIrWl2drrECw1+lNx
+         uPKw==
+X-Gm-Message-State: AOJu0YysUcQATLkCnDANf2gZA7l73rMQnNo0bbgy14+JLmfKbKNLYbRq
+	IoEZ2q3s2BNU0zsjVokFibdX/eV6b9B3lQBuCddOz51AOZ2AWs7/7N1Hcwv7xnKJyN16odKMSOj
+	vUXHI
+X-Gm-Gg: ASbGncsj/MlMk5hBY6TL+DacwOiCfv/SI6AyZGigyz7bKKsvKZWZDLgmWF87NYo06Ss
+	EmxTB+mROwIFYzjeWG/EBI7QXbtiw4EpypM2Um+TQCYpJGDJqGi9uMwMZf9hr3cCuaWRbNV2gZW
+	IIkJ1q5HHpNFfk8tNcVGvk/R5BfO5PrE8Nb8GIfFfPR9RsDpvmofA1cnM4WItqRj6DuWVZb5MUN
+	tl3mOHA6yzbXBSJOkvBdUq3pI1sBImbnv/okCgwsENCZqmB9jn2B/HU/I4kqxNZuxMpPqfKNZZq
+	LKmOIJJTk5jfL4dlQaM8dL+fRK5gl8DXyJDjEiRmSvQJK5mRnQmFJMnIBiKXm9zTfsN9KR9XPKA
+	AQN5GxQ==
+X-Google-Smtp-Source: AGHT+IEP4FA1db8T7fwUC0yaixaf0rKws5McODtgshcsePcf9PhduNOfHYGi3ky/aYGBX02T5gAhvQ==
+X-Received: by 2002:a05:6e02:3e04:b0:3e6:ab3a:f9e with SMTP id e9e14a558f8ab-3e6d84ea743mr38031225ab.24.1755786002247;
+        Thu, 21 Aug 2025 07:20:02 -0700 (PDT)
 Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e58c1basm73196595ab.5.2025.08.21.07.20.00
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e58c1basm73196595ab.5.2025.08.21.07.20.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 07:20:00 -0700 (PDT)
+        Thu, 21 Aug 2025 07:20:01 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/8] io_uring: remove io_ctx_cqe32() helper
-Date: Thu, 21 Aug 2025 08:18:01 -0600
-Message-ID: <20250821141957.680570-2-axboe@kernel.dk>
+Subject: [PATCH 2/8] io_uring: add UAPI definitions for mixed CQE postings
+Date: Thu, 21 Aug 2025 08:18:02 -0600
+Message-ID: <20250821141957.680570-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250821141957.680570-1-axboe@kernel.dk>
 References: <20250821141957.680570-1-axboe@kernel.dk>
@@ -90,45 +90,43 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It's pretty pointless and only used for the tracing helper, get rid
-of it.
+This adds the CQE flags related to supporting a mixed CQ ring mode, where
+both normal (16b) and big (32b) CQEs may be posted.
+
+No functional changes in this patch.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/io_uring_types.h  | 6 ------
- include/trace/events/io_uring.h | 4 ++--
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ include/uapi/linux/io_uring.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 9c6c548f43f5..d1e25f3fe0b3 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -740,10 +740,4 @@ struct io_overflow_cqe {
- 	struct list_head list;
- 	struct io_uring_cqe cqe;
- };
--
--static inline bool io_ctx_cqe32(struct io_ring_ctx *ctx)
--{
--	return ctx->flags & IORING_SETUP_CQE32;
--}
--
- #endif
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
-index 178ab6f611be..6a970625a3ea 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -340,8 +340,8 @@ TP_PROTO(struct io_ring_ctx *ctx, void *req, struct io_uring_cqe *cqe),
- 		__entry->user_data	= cqe->user_data;
- 		__entry->res		= cqe->res;
- 		__entry->cflags		= cqe->flags;
--		__entry->extra1		= io_ctx_cqe32(ctx) ? cqe->big_cqe[0] : 0;
--		__entry->extra2		= io_ctx_cqe32(ctx) ? cqe->big_cqe[1] : 0;
-+		__entry->extra1		= ctx->flags & IORING_SETUP_CQE32 ? cqe->big_cqe[0] : 0;
-+		__entry->extra2		= ctx->flags & IORING_SETUP_CQE32 ? cqe->big_cqe[1] : 0;
- 	),
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 1e935f8901c5..7af8d10b3aba 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -491,12 +491,22 @@ struct io_uring_cqe {
+  *			other provided buffer type, all completions with a
+  *			buffer passed back is automatically returned to the
+  *			application.
++ * IORING_CQE_F_SKIP	If set, then the application/liburing must ignore this
++ *			CQE. It's only purpose is to fill a gap in the ring,
++ *			if a large CQE is attempted posted when the ring has
++ *			just a single small CQE worth of space left before
++ *			wrapping.
++ * IORING_CQE_F_32	If set, this is a 32b/big-cqe posting. Use with rings
++ *			setup in a mixed CQE mode, where both 16b and 32b
++ *			CQEs may be posted to the CQ ring.
+  */
+ #define IORING_CQE_F_BUFFER		(1U << 0)
+ #define IORING_CQE_F_MORE		(1U << 1)
+ #define IORING_CQE_F_SOCK_NONEMPTY	(1U << 2)
+ #define IORING_CQE_F_NOTIF		(1U << 3)
+ #define IORING_CQE_F_BUF_MORE		(1U << 4)
++#define IORING_CQE_F_SKIP		(1U << 5)
++#define IORING_CQE_F_32			(1U << 15)
  
- 	TP_printk("ring %p, req %p, user_data 0x%llx, result %d, cflags 0x%x "
+ #define IORING_CQE_BUFFER_SHIFT		16
+ 
 -- 
 2.50.1
 

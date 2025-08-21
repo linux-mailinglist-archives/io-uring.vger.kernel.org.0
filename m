@@ -1,128 +1,67 @@
-Return-Path: <io-uring+bounces-9154-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9155-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57334B2F00B
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 09:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A096B2F2B3
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 10:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2625116DB30
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 07:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C2816B98F
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 08:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70E2741C9;
-	Thu, 21 Aug 2025 07:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RilZfr5U"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C533F2EAB7A;
+	Thu, 21 Aug 2025 08:42:18 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CF19F135;
-	Thu, 21 Aug 2025 07:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D62EA73B;
+	Thu, 21 Aug 2025 08:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762466; cv=none; b=fIS5h3DcFVb7ZRQBSMYg/ehGXfb62tWJMjD3qmo6skFjEILeovRmQylhDX7vaVsutqKc77aVUZQa4AfkznNrfCPQMNFFgfrMX3gbYpZhMrrxrlnyojc5tsFYaryXRzuedUVKLw3G07Cch9Kk4efqD+3DlZoqyA4ZXCZz35EJ+Pk=
+	t=1755765738; cv=none; b=ULYuFZvPYHky6vClgwEOLtbBOc3VYfK5cgc07SrtNzJRMVZ7FoNdgJ25KDQx712jnfe3om2dJCnxKP0nwuG8XeCA/JIeJGv7880ui3mVQFRGqvJGhtJFA29S247qG2OuvYONVuLq2PA35PgbaxjPhSUQiJzTmocQnzrPvVfzyBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762466; c=relaxed/simple;
-	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
+	s=arc-20240116; t=1755765738; c=relaxed/simple;
+	bh=DbZjJsYD/eZ++hES+BocHpYYahV+KWymDG6KUyPWuF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f88abJLM203a+vR+XHj1FQhUO5TsqXvvz6KP6qxHh8ocE+VbbKRc3BHt3zPwdZ7c1gV7cjXE+q5eTy0CJDhQFHSKHRPYyDyBDsPyIpNsOL4JkOlsQtkFDsiq2UDvd2qfA7NXb72E4YrQPTAHK9VFGtAXpCCOK5zSSvwUQxXgURs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RilZfr5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9B2C19421;
-	Thu, 21 Aug 2025 07:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755762465;
-	bh=eEvFGmHk4o/xiRTP7rYXNelXLR+78ohx+6Uf3/9nIYk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RilZfr5UKaSKIoAFq/Q157n2pcqvRnrUDTnYbKIu9RjOm7/SlxZ3dO2UgCSb9ECGM
-	 pKBmVy8XWH6MggyREIF02kmb88faATfH0pVt8dWztV++pjuWxViirYSwJqwMAJFQ47
-	 wfZkJ08cwLrT67YgeJUkjHOnTv4KZWg6XRSUdl/oSPgFTi8qfnZ4hSrWzMet5qQacX
-	 HkAN1wRxypLP4OrU7Rroc3tvV9Dz0FMyWhs51vl7YVV21GSbstBHSXAOZUEnVw7wnd
-	 kKGq5La0JjnUuKPlJ0x6DMknEwhdYAd6TEMdqn98M/uOWSgZG6v2cdSCrbAdT6UCyz
-	 x/h7h1YLieLqg==
-Date: Thu, 21 Aug 2025 09:47:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, 
-	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org
-Subject: Re: [PATCHSET RFC 0/6] add support for name_to, open_by_handle_at(2)
- to io_uring
-Message-ID: <20250821-putzig-bockig-ad93ba46e12e@brauner>
-References: <20250814235431.995876-1-tahbertschinger@gmail.com>
- <e914d653-a1b6-477d-8afa-0680a703d68f@kernel.dk>
- <DC6X58YNOC3F.BPB6J0245QTL@gmail.com>
- <CAOQ4uxj=XOFqHBmYY1aBFAnJtSkxzSyPu5G3xP1rx=ZfPfe-kg@mail.gmail.com>
- <DC7CIXI2T3FD.1I8C9PE5V0TRI@gmail.com>
- <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vh6YV80093HYTAPvo01XYXbIHtm12P/DQFz6gUofz1gaXrejadi+j1iSSXzrzAbK9dFKCriDcJwQc1bH64+JSpscg2OTjREXi+kfItEq7sXNkj6PlNMDahqNaSN4nDusF9l8hryA6irI6s5OMFzOL4bI/Vhrk0g/uapzZhIkXDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 33D69227A88; Thu, 21 Aug 2025 10:42:13 +0200 (CEST)
+Date: Thu, 21 Aug 2025 10:42:13 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate
+ IOCB_HAS_METADATA availability
+Message-ID: <20250821084213.GA29944@lst.de>
+References: <20250819082517.2038819-1-hch@lst.de> <20250819082517.2038819-2-hch@lst.de> <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner> <20250819092219.GA6234@lst.de> <20250819-verrichten-bagger-d139351bb033@brauner> <20250819133447.GA16775@lst.de> <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uximiUryMV=z_3TrEN1KCSA-2YdCt0t7v1M1gRZpnWec=Q@mail.gmail.com>
+In-Reply-To: <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Aug 20, 2025 at 09:58:15PM +0200, Amir Goldstein wrote:
-> On Wed, Aug 20, 2025 at 5:00 PM Thomas Bertschinger
-> <tahbertschinger@gmail.com> wrote:
-> >
-> > On Wed Aug 20, 2025 at 2:34 AM MDT, Amir Goldstein wrote:
-> > > On Wed, Aug 20, 2025 at 4:57 AM Thomas Bertschinger
-> > > <tahbertschinger@gmail.com> wrote:
-> > >> Any thoughts on that? This seemed to me like there wasn't an obvious
-> > >> easy solution, hence why I just didn't attempt it at all in v1.
-> > >> Maybe I'm missing something, though.
-> > >>
-> > >
-> > > Since FILEID_IS_CONNECTABLE, we started using the high 16 bits of
-> > > fh_type for FILEID_USER_FLAGS, since fs is not likely expecting a fh_type
-> > > beyond 0xff (Documentation/filesystems/nfs/exporting.rst):
-> > > "A filehandle fragment consists of an array of 1 or more 4byte words,
-> > > together with a one byte "type"."
-> > >
-> > > The name FILEID_USER_FLAGS may be a bit misleading - it was
-> > > never the intention for users to manipulate those flags, although they
-> > > certainly can and there is no real harm in that.
-> > >
-> > > These flags are used in the syscall interface only, but
-> > > ->fh_to_{dentry,parent}() function signature also take an int fh_flags
-> > > argument, so we can use that to express the non-blocking request.
-> > >
-> > > Untested patch follows (easier than explaining):
-> >
-> > Ah, that makes sense and makes this seem feasible. Thanks for pointing
-> > that out!
-> >
-> > It also seems that each FS could opt in to this with a new EXPORT_OP
-> > flag so that the FSes that want to support this can be updated
-> > individually. Then, updating most or every exportable FS isn't a
-> > requirement for this.
-> 
-> Makes a lot of sense. yes.
-> 
-> >
-> > Do you have an opinion on that, versus expecting every ->fh_to_dentry()
-> > implementation to respect the new flag?
-> 
-> Technically, you do not need every fs to respect this flag, you only need them
-> to not ignore it.
-> 
-> Generally, if you pass (fileid_type | EXPORT_FH_CACHED) as the type
-> argument, most filesystems will not accept this value anyway and return
-> NULL or PTR_ERR(-ESTALE), so not ignoring.
-> 
-> But I think it is much preferred to check the opt-in EXPORT_OP
-> flag and return EAGAIN from generic code in the case that fs does
-> not support non-blocking decode.
-> 
-> And fs that do opt in should probably return PTR_ERR(-EAGAIN)
-> when the file type is correct but non-blocking decode is not possible.
+On Wed, Aug 20, 2025 at 11:40:36AM +0200, Christian Brauner wrote:
+> I meant something like this which should effectively be the same thing
+> just that we move the burden of having to use two bits completely into
+> file->f_iocb_flags instead of wasting a file->f_mode bit:
 
-I like your idea as it's in line with other extensions we've done
-recently to open_by_handle_at().
+Yeah, that could work.  But I think the double use of f_iocb_flags is
+a bit confusing.  Another option at least for this case would be to
+have a FOP_ flag, and then check inside the operation if it is supported
+for this particular instance.
+
 

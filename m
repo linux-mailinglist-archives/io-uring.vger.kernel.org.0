@@ -1,112 +1,131 @@
-Return-Path: <io-uring+bounces-9134-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9135-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5EFB2EAC3
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 03:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8C4B2EB14
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 04:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0930684F18
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 01:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F24BA24861
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 02:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DB7242D62;
-	Thu, 21 Aug 2025 01:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67012D8DB9;
+	Thu, 21 Aug 2025 02:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S112F9kW"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mzzcPk3L"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B924167A;
-	Thu, 21 Aug 2025 01:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0FE194124
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 02:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755740233; cv=none; b=G3qXyZf1d5q10/PAhwzwpey7yX9vFZEOeqbPyYiuPS6kPFpXygFfGWXaI8IHjcMZU1ZL6IZsC03EiNA11szsIsp5evV46dX0KDz8HhJNTqR2R4b9Rw6vlqroUI0pqz8xazZyLSLptUgJixRXnAdngHogQ6WwNAcQWQ3U5/hY4p8=
+	t=1755742113; cv=none; b=rirquX0E1kJ9YXbxa+pSxrkHgoSVnQwWNKd85c3VEbs45kndkUSCse/VjUO+PHQr2H7DfKkhi/A3ZkkPGgO4S215ChZnnjssCcQadYajPWuydJD6SyvJevrDk0IL9RCMixfM8RRJTb+EVArAoTmQRMXokwE3OpSQ8U2LCJskt8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755740233; c=relaxed/simple;
-	bh=N0XCA6eoElM2GHMVUFBlv8c3qmMMno3R+pQmAkikF+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aeq7Af4F68eZjUfgvquLsksbd7rwguuMwjJ30WRx3zqIojPqt+jvmQ76Js0eTWMR4GWdy5rngeEaDbiiTtJ8c3hVX1ZkS/hjIacGfInnubX6IzoYlU/P4r7HNrVZlSVBBG5+ohX6DN1IdYAnNCfiet2JfJYTpUFevG2so4tziSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S112F9kW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83FC5C4CEE7;
-	Thu, 21 Aug 2025 01:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755740233;
-	bh=N0XCA6eoElM2GHMVUFBlv8c3qmMMno3R+pQmAkikF+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S112F9kWmHQjxzdAGtwDE/fZztkPFSeFLm1rc7m/vWoyfx0BeZRY8iFX/f3k5AA4r
-	 kDtWmqtoVZs7yyvBi+qvmaKcqqgXBCiRJespZJwQexiU+Tllp7NTUB6D1s8Xahp4Gt
-	 J4vM6TG6xeQMCKXWgHq+DFP1CpmeQ36+e3HCdXMUsEHI3ovALMFWZ2LiN360TtDZxs
-	 LIrBfycDQLW7OGoMhWBkePdPNcSDudGDIrylahQuFqxU5KMM3is2mvA1niFJMwVyR1
-	 2HRUvhkiOjz88HUFDrqtScrUWmF4DC4JOSeXdlARpe01kbV6gfInZcPIcvoI7MoHtD
-	 uleXau7kG14OQ==
-Date: Wed, 20 Aug 2025 18:37:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Willem de
- Bruijn <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
- andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
- sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
- buffer providers
-Message-ID: <20250820183711.6586c1c6@kernel.org>
-In-Reply-To: <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
-References: <cover.1755499375.git.asml.silence@gmail.com>
-	<20250819193126.2a4af62b@kernel.org>
-	<fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+	s=arc-20240116; t=1755742113; c=relaxed/simple;
+	bh=1jvBkpcvQ9LHRviFzo/mtU7Ig8JHppdWPHWQIJme6co=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ReGI+rw8Hdc6zJBgbHn9jfep6N0ORzPCdg07ESE43ofK+/WrIvA2hPoNH4sICCr9v1P/QI+2bKVay+Ik4rej1KacC+g7RvKlUnUvsyjloomETfCQxCMB8vzCNRloGht2WuyyDD/hDwaoHFuDxcvbyPxUs6kqj3NoF+fW2JY+Yik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mzzcPk3L; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-324e6daaa39so493371a91.0
+        for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 19:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755742108; x=1756346908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeWZOcbQ7LJMC9K3nsHEVfvwuWASpnnTA47Xpnny9Co=;
+        b=mzzcPk3LPTyAt6+Gnd3h1P4L6ydbp51CAIukXbLlJNrtfW+m60h4aEDiB5w99yIM/K
+         BXBKhDzjEavNPa1uMjDLisADUdHZT89q3OdrMF/A2Qqr9GAGaMHeAp+moBIETQXnDJCU
+         2dTaEp0kiaM39oou62V6vuCJpFumDGtReQmrv33CVrtelktZocPH/wlFo9dpdjezSesI
+         9A2zLQCfQifsFdF6YmxzYfKGb9vcssWPxlvf3Ti7JFLG/Bo3m1KUArf+gpabMlVRiKoH
+         i0wKna5t00xPWAriuPunjiS9FBlcj5UoGY3UAAgsQh24Ubo4jGIJarV2UKD0fPH24ANu
+         rVvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755742108; x=1756346908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeWZOcbQ7LJMC9K3nsHEVfvwuWASpnnTA47Xpnny9Co=;
+        b=HofPakd8H/epSwNqq5Jo5B3vxdh46+uzLx0ZJes3QV1PJeXC9pFQC1H7HahdIy9v3G
+         TovMBtkUiYO2RI5pgZsPLGtL8BvIIeITJEFJLTFOoLFrz2UyOF27IglADQYzlBZ4kYSf
+         KJ+0EpEUpKiYrr93ZxOzyXNpZuvvOCqrCIu4rxgMf542fZjoWupHbEvE42VA7Kh+LJv/
+         PtQRyCsfPmB1Cyr1q+70OLQyGcz+Xq33AXg5MJdPNeq+MfAOyNqFrWOoEDR9Bhj87ZRr
+         mAEO2C70nRb6vKYzmGnO1HwvKdJ/w5M8k/E8PbfdxsICAqUuB/cuLEPUR42+iB4Pp4pC
+         yUyg==
+X-Gm-Message-State: AOJu0YwodKXuuRJfAMNfT5vnxItUdhnTmNwwglh7Phs+Q3jdIIsQ6r8J
+	k1cuIphgdTpxNCEYT1iCdhXNL2MNO8MqyODWDFkUxaGN0iyGgFVQLcolDFxCvldWwQOXxbftWdt
+	UxizM
+X-Gm-Gg: ASbGncue9j9ySo5ai7qMS7nbI/KtspcQVRCxaN7QQ7CAMtZ0fALpTSGEvGFtse6V+tv
+	Mh5P+dpi2K8PJmXvDUjgYzNjKYfw3i0K/5UP5ztqho0eKAuFPmFK/miFmNku10rA2gGlO2rPbMD
+	N03L0uSJApnDIdJioFNwo6d1Yh+GEo/EzCU18xUg4ViWToJlj3q8W0RUrX1fYekV/0JYGF/bSUA
+	hEo1G/xpxlNqzCpHbxXAA2wjznfbp911Q77+7vkGnzh1tIRJkatCZQhULg0wshceF2XXOv/tfp6
+	8Eoxj5H+d0fkNH0OhORMggs7b3RnuYHnqJin6r3TELsJDrYZ0FtCwBQzJRYmGw1qHgnVX4426a5
+	fWR7xkS4=
+X-Google-Smtp-Source: AGHT+IG/UHAlCc2dvVeqN3eoJBu4YdSxkQDmAvdFnsNeiXT/3YSNnDVGoVH7Iza70LBcqUGyH/guLg==
+X-Received: by 2002:a17:90b:4c4d:b0:321:2b89:957c with SMTP id 98e67ed59e1d1-324ed13c975mr1133099a91.27.1755742107739;
+        Wed, 20 Aug 2025 19:08:27 -0700 (PDT)
+Received: from m2max ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f381812asm104827a91.0.2025.08.20.19.08.26
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 19:08:27 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET v2 0/12] Move io_buffer_list out of struct io_kiocb
+Date: Wed, 20 Aug 2025 20:03:29 -0600
+Message-ID: <20250821020750.598432-2-axboe@kernel.dk>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Aug 2025 14:39:51 +0100 Pavel Begunkov wrote:
-> On 8/20/25 03:31, Jakub Kicinski wrote:
-> > On Mon, 18 Aug 2025 14:57:16 +0100 Pavel Begunkov wrote:  
-> >> Jakub Kicinski (20):  
-> > 
-> > I think we need to revisit how we operate.
-> > When we started the ZC work w/ io-uring I suggested a permanent shared
-> > branch. That's perhaps an overkill. What I did not expect is that you
-> > will not even CC netdev@ on changes to io_uring/zcrx.*
-> > 
-> > I don't mean to assert any sort of ownership of that code, but you're
-> > not meeting basic collaboration standards for the kernel. This needs
-> > to change first.  
-> 
-> You're throwing quite allegations. Basic collaboration standards don't
-> include spamming people with unrelated changes via an already busy list.
-> I cc'ed netdev on patches that meaningfully change how it interacts
-> (incl indirectly) with netdev and/or might be of interest, which is
-> beyond of the usual standard expected of a project using infrastructure
-> provided by a subsystem.
+Hi,
 
-To me iouring is a fancy syscall layer. It's good at its job, sure,
-but saying that netdev provides infrastructure to a syscall layer is
-laughable.
+One thing that has annoyed me is that struct io_buffer_list is inside
+struct io_kiocb, as they have potentially drastically different
+lifetimes. This makes it easy to screw up, even if you think you know
+what you are doing, as you need to understand the intricacies of
+provided buffer ring lifetimes.
 
-> There are pieces that don't touch netdev, like
-> how io_uring pins pages, accounts memory, sets up rings, etc. In the
-> very same way generic io_uring patches are not normally posted to
-> netdev, and netdev patches are not redirected to mm because there
-> are kmalloc calls, even though, it's not even the standard used here.
+This patchset adds a struct io_br_sel, which is used for buffer
+selection, and which also then stores the io_buffer_list whenever it
+is safe to do so. io_br_sel resides on the stack of the user, and
+hence cannot leak outside of that scope.
 
-I'm asking you to CC netdev, and people who work on ZC like Mina.
-Normal reaction to someone asking to be CCed on patches is "Sure."
-I don't understand what you're afraid of.
+With this, we can also cleanup some of the random recycle points we
+have in the code base in general.
 
-> If you have some way you want to work, I'd appreciate a clear
-> indication of that, because that message you mentioned was answered
-> and I've never heard any objection, or anything else really.
+Should not have any functional changes, unless I screwed up of course.
+Passes full liburing tests as well.
 
-It honestly didn't cross my mind that you'd only CC netdev on patches
-which touch code under net/. I'd have let you know sooner but it's hard
-to reply to messages one doesn't see. I found out that there's whole
-bunch of ZC work that landed in iouring from talking to David Wei.
+Can also be found here:
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-buf-list
+
+ include/linux/io_uring_types.h |   6 --
+ io_uring/io_uring.c            |   4 +-
+ io_uring/kbuf.c                |  67 ++++++++-------
+ io_uring/kbuf.h                |  57 +++++++-----
+ io_uring/net.c                 | 153 ++++++++++++++++-----------------
+ io_uring/poll.c                |   4 -
+ io_uring/rw.c                  |  56 ++++++------
+ 7 files changed, 177 insertions(+), 170 deletions(-)
+
+Since v1:
+- Drop 'issue_flags' from both io_put_kbuf() and io_put_kbufs(),
+  unused in both.
+- Add patch folding 'ret' in io_send_finish() with io_br_sel, just
+  like was previously done on the receive side.
+- Add patch checking for REQ_F_BUFFER_RING first in recycling.
+- Rebase on current for-6.18/io_uring branch.
+
+-- 
+Jens Axboe
+
 

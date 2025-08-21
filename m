@@ -1,36 +1,36 @@
-Return-Path: <io-uring+bounces-9223-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9224-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B196B30747
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 22:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ED9B30759
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 22:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9889E644A23
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 20:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBB7645E9E
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 20:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51202C028D;
-	Thu, 21 Aug 2025 20:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8B931281B;
+	Thu, 21 Aug 2025 20:32:44 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AE126B77A;
-	Thu, 21 Aug 2025 20:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52C2E8E0A;
+	Thu, 21 Aug 2025 20:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755808195; cv=none; b=IAaXr0JOt46yMNLZ4Jwrr9hf9WsHYEdJcIP1sGULn8z2tZagyhWvFGAFe4TQpYtWueZOWvDWHOeSZ6O/0Vk/X4uAjfNXGcfc73ZW0zYFILZhrxWwuVi2UqSC+SBQO4zD1HZ8TKQcv+5XzDFKEVnp/iksgHupVbmPQNXexk98SPc=
+	t=1755808363; cv=none; b=Kc3x4ftSZfV4+1zwio8Ow2h6WT9eYLsdbQll543lGl/yRgEekPQIWaMTCNB993KmY7kOq2hVvo9pZ8GNcYASDjs6vW6KibPHDbvmTqhgJtEdy13Pqbrs4iilJ6LjS2qw9OgOB+BtkefqLm+a/dHo9aV/zqsnqHT/P5RTsxtOWUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755808195; c=relaxed/simple;
-	bh=61LixQWCwy6olh/mPt46dzEhZSsohrL+rNSx741GklY=;
+	s=arc-20240116; t=1755808363; c=relaxed/simple;
+	bh=pvtWQ03TwDOEdObcjB53hyiitmlczfhtwZ/btJBnINE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FshzCPhgswrEI+uQRoUYcHeZQmNs9UhoV9E/Dg/MoSpAh4Iuwa8O6YlX04Isvut0cXZJ3mdyOhZASW2qJnKphEE5LExr77wkG5bto179rU+7nLzV3O92qq4xNZXqwguafaV1rZxg3AjzGNlf91HJlSXr9mTVmCu4OEeUQ4T+YYA=
+	 In-Reply-To:Content-Type; b=JLugl209byveYT7utwOQmKELute+uSgTYXskuEg6gChk1gkzP1dW8asjNpN1Wdqr6e5k3gESvbSnSNuDzfODJWFS9lxWM7m60dIAP7kGYkAfkUQhXv64o3s2OKwKJExq2n15kF0kuNHuK34tPYkO2SRssvUuTn96L75wkT/kFuw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC82C4CEF4;
-	Thu, 21 Aug 2025 20:29:43 +0000 (UTC)
-Message-ID: <2926d7d9-b44e-40c0-b05d-8c42e99c511d@redhat.com>
-Date: Thu, 21 Aug 2025 22:29:41 +0200
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9632BC4CEEB;
+	Thu, 21 Aug 2025 20:32:31 +0000 (UTC)
+Message-ID: <1a13a5cb-4312-4c01-827b-fa8a029df0f1@redhat.com>
+Date: Thu, 21 Aug 2025 22:32:29 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -38,36 +38,33 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 31/35] crypto: remove nth_page() usage within SG entry
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+Subject: Re: [PATCH RFC 33/35] kfence: drop nth_page() usage
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Brendan Jackman <jackmanb@google.com>,
+ Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
  dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
  iommu@lists.linux.dev, io-uring@vger.kernel.org,
  Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
  Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
  kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-arm-kernel@axis.com,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
  linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
  linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
  linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
  linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
- Zi Yan <ziy@nvidia.com>
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
 References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-32-david@redhat.com>
- <CAHk-=wjGzyGPgqKDNXM6_2Puf7OJ+DQAXMg5NgtSASN8De1roQ@mail.gmail.com>
+ <20250821200701.1329277-34-david@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -114,47 +111,30 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <CAHk-=wjGzyGPgqKDNXM6_2Puf7OJ+DQAXMg5NgtSASN8De1roQ@mail.gmail.com>
+In-Reply-To: <20250821200701.1329277-34-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21.08.25 22:24, Linus Torvalds wrote:
-> On Thu, 21 Aug 2025 at 16:08, David Hildenbrand <david@redhat.com> wrote:
->>
->> -       page = nth_page(page, offset >> PAGE_SHIFT);
->> +       page += offset / PAGE_SIZE;
+On 21.08.25 22:06, David Hildenbrand wrote:
+> We want to get rid of nth_page(), and kfence init code is the last user.
 > 
-> Please keep the " >> PAGE_SHIFT" form.
-
-No strong opinion.
-
-I was primarily doing it to get rid of (in other cases) the parentheses.
-
-Like in patch #29
-
--	/* Assumption: contiguous pages can be accessed as "page + i" */
--	page = nth_page(sg_page(sg), (*offset >> PAGE_SHIFT));
-+	page = sg_page(sg) + *offset / PAGE_SIZE;
-
+> Unfortunately, we might actually walk a PFN range where the pages are
+> not contiguous, because we might be allocating an area from memblock
+> that could span memory sections in problematic kernel configs (SPARSEMEM
+> without SPARSEMEM_VMEMMAP).
 > 
-> Is "offset" unsigned? Yes it is, But I had to look at the source code
-> to make sure, because it wasn't locally obvious from the patch. And
-> I'd rather we keep a pattern that is "safe", in that it doesn't
-> generate strange code if the value might be a 's64' (eg loff_t) on
-> 32-bit architectures.
+> We could check whether the page range is contiguous
+> using page_range_contiguous() and failing kfence init, or making kfence
+> incompatible these problemtic kernel configs.
 > 
-> Because doing a 64-bit shift on x86-32 is like three cycles. Doing a
-> 64-bit signed division by a simple constant is something like ten
-> strange instructions even if the end result is only 32-bit.
-
-I would have thought that the compiler is smart enough to optimize that? 
-PAGE_SIZE is a constant.
-
+> Let's keep it simple and simply use pfn_to_page() by iterating PFNs.
 > 
-> And again - not the case *here*, but just a general "let's keep to one
-> pattern", and the shift pattern is simply the better choice.
 
-It's a wild mixture, but I can keep doing what we already do in these cases.
+Fortunately this series is RFC due to lack of detailed testing :P
+
+Something gives me a NULL-pointer pointer here (maybe the virt_to_phys()).
+
+Will look into that tomorrow.
 
 -- 
 Cheers

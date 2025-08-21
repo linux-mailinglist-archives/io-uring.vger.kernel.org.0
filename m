@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-9168-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9169-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18D0B2FFFC
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 18:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD7EB30016
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 18:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359CC5C0806
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 16:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C181169F5D
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 16:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73FB27602A;
-	Thu, 21 Aug 2025 16:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73132D8362;
+	Thu, 21 Aug 2025 16:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ZCERKOxb"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="dy0Q1563"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC7726FA77
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 16:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4B22DE6E2
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 16:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755793411; cv=none; b=tlv67ZesA5/VVeCvqgAq4TjBerzZpk6YbadMXG+j6+mYQk8emkCC3XuCNDbtadmuq7PHcj5HcnYW5gYOcAEQGgfXuS/LO+MArbimAjfeislFFlPz0RSYHywcLYsvsKiO2wK9zR++i4bCkDJf6JH659dBvrvV1oYYDbvIQijKr0g=
+	t=1755793779; cv=none; b=WeVPOLEV065j1z2cmhdKkzftYZuoEM0uWiIEbEFRbYCOnOQ8Ge+dZSNK49JYfQSiiqz5V7qVy+eAGijmxR7vhTPoql09zdxJ4+w24JsC1mluBvlaPO6Dy/vU/qErvKUlt1uVgJBqnzbjcBWB7X9VlQl+pt2N1xw3bIZdJmruzy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755793411; c=relaxed/simple;
-	bh=0OI728n1HNaxI2nsckfhxI5RrqrS3OEr9MASdVEFHfs=;
+	s=arc-20240116; t=1755793779; c=relaxed/simple;
+	bh=7fC/Ul+oyqJpg+iMn0w1nZupmPMhW/mZHUe00+OqajE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g3TDWX2faKePq1CZcYlOIi1j787AuXbFwgIZ/zu9iNmBG3tVIb2/56MovFoS+SK2iG5Y3bTAbE9s9jT8PALd0mdvApODkgeX+ssVAUCOyRDKofgseY6Big0cQMVTYjA4tOQYl5RUkTfn1lcFF2nfj9qd569pj6iBnvmn0m3m4nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ZCERKOxb; arc=none smtp.client-ip=209.85.214.177
+	 To:Cc:Content-Type; b=PRrUiRTUu6WVAVMaOPTHkYkrlTaE4FryYUwPtW8lViIsR7lSmyo6jLi7iqFVGME5pElh8dEVNd6U7qPwrUoT+2Ttej51pnsZTJTIMwAveVXnAxSSWLtlBu7Q0gliuWqfTBRgU6AoJBawb/Dw7K3Z74z+YI93DLQvtxCkcRzwV3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=dy0Q1563; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2445813f6d1so2007645ad.2
-        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 09:23:29 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-244580692f3so1875865ad.1
+        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 09:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1755793409; x=1756398209; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1755793777; x=1756398577; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bAtbdYijXSmt7cy2UTmkEkvEYPPwCb9wghGcJcsLsIM=;
-        b=ZCERKOxbjgg7GQSMnE0ITVv7cXSJ766ms8R20/SOibyjxZsfMJfjDE/ekLwjZqkNmc
-         quATYQKfDjj7T341uhRdB14iL/HL+ETfcrnVH05+XnOmw15rNqKvu8gFGy/FFgyEfF2O
-         3X2NE9cUnx4Dr72t486lbi0Su0aLcOBoQFLX17z4YXlgXlRuZY5BckHioREoDNw+nHpy
-         cL1z+aiAAkc4KaWTkJNmrZ9u6anUpmBuWGhOIlYlH47UvEP2eGdyyGN/m9bajmK2CaU8
-         7Or2ift+DDdrAsL/WCzqwZSyILY4scZyYXqaeO8Nl2NcI24f6+2Xm1RnnVWh03xoyi6t
-         KTDw==
+        bh=sixseC9H3QrAKUngbwiw/bJ89/j1sj9zl6efI2dmsTY=;
+        b=dy0Q1563wK6I1shV5sxY9lOtvHlDC4vdpwbVL1gGP/2U+VSvtBpvY2K0zbZdQQVsZQ
+         QtHVXoD7L16GeC2jd3TM6ALyV2QF2TDvGnzSI8vQgSbNkjhSmmYgWbKXEiT5VilxPBgA
+         9P1L/Uox3hSq/Hb58GZ5AFAGzWM6+P3W/DlLD0oxnZa1lkvtVeIPuaqDWhaGUAf7XlrQ
+         jlYdR3Uw0YqVakFcaD3twMRJk+9QMXQfpBcS7vdcQMj6Jxj1KVzjXrXReMHqNfXUGkL+
+         o/7F02+azMLVm8t9oopsymrHZcjaHZyKZ54G7j+Ux1oVFoQMeYG5YmbuNSbaB8niA/zE
+         9h1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755793409; x=1756398209;
+        d=1e100.net; s=20230601; t=1755793777; x=1756398577;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bAtbdYijXSmt7cy2UTmkEkvEYPPwCb9wghGcJcsLsIM=;
-        b=S5McJ4vaRslVDqvcjcIE18ucEuX8GFobwnMHuQgyCZ/CeVNEptWfV1FQlOjIvN+OV6
-         DCwj0eTFPdfmI52wvZlv/ktcEknbsSpH43zSK9aS0PqlkMBmC1SrbPC4Kqbm0vL7gdaL
-         GAMinHV2n0ojxku/7uqShhANJdU34c+qOOF0UbiIFqfgIriUTUzESRdCV+PdT9xD1nKq
-         4BTg6zGEbwbJUus48wSqMFnCq1Xjs2mTrhdrzM6BiBlUhHRmpAV4GR+FnI6Hn7vuJiEa
-         TXJLzV4FVQzxHKUKkNaY+rogKTPbdwyjDzLT8lVSFLicW4wzh3aE2PcmQS9F8WQgkYiU
-         Dv2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXkbu6lrrIwhNg159LgDaDzfEX3K8o5iFYdv2V9/LPXT/DanTQwVxjjypuR/bkde67hZsx9DBCg5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0E0MEcr4m5h2yML9xTBfidRbZN6S6F5lH0pXVauO+zL5ywTQc
-	ixBP+tc86iaoAVLLfPZhytXN4eDPsXVPhImDh7JzgmLODnu3yP1JehIdm4aVZ0bspWQsQk6yfYV
-	0uSA7IN7S2KSRiGRxxEnWGi4iaXjOWt9qDO8mUB9D3g==
-X-Gm-Gg: ASbGncuueT+7YI3MZz+2YDpu7KQIunJIEUEO63YP9NWxWizljDxXXF5mf8xuLiPhFMC
-	ApHehlw9C29uJyKMiC8n1leBka3K9HTTp92B3XjXEpKcu8GKV/1Hre7a89RdOZXPJK/sfkC66nL
-	B13JkGeajsEUtYmdqKS/w1dMIafnbUpii22O4WaTKiahIFeMvpfAEB1TAeG2rbETpufsUMlNwNz
-	cU6zN8hVNGAN+eL0EEhUxcFx5S4mg==
-X-Google-Smtp-Source: AGHT+IERt/HHYHcCLECD8PKxjCbQgIqrXV5ZHvoXruwHugk0jiZ2SFBmRXAl5Pa30XKQKuRLxzFB6Fkr2agB6dZwavI=
-X-Received: by 2002:a17:903:22cb:b0:240:bd35:c4ec with SMTP id
- d9443c01a7336-245feda2417mr26099895ad.6.1755793408699; Thu, 21 Aug 2025
- 09:23:28 -0700 (PDT)
+        bh=sixseC9H3QrAKUngbwiw/bJ89/j1sj9zl6efI2dmsTY=;
+        b=XhhuAoqcST3KDxVKpoulX7yQvzQ9gCaBLW1Ct8FdQ4b0kriUPpirVojLFZjq52Ie4n
+         CQOA30Uz32Bp1i4fp5TvHIwp0K/goJya6fXhNmodUWZhWDYGQUHdGOCMVKyzAW0lX06Q
+         rN/Q2K6bBGxpwJ0PHQPBWlUCLfBRrDcbygTgNsaKyewpvqDtmRVpXiOZDnh73c0L9qqZ
+         7fyzv84GRnxhCnkEwhNQIiCZzJQJgLbmwhRwdr41iLJJDnnWv/Er6SBdVJ1eWRgwYlxg
+         QsJdYVINN6Is0pi+4T4g9iGtWVkLeG1JVjaWwrRvqKGlWuayqMryDDevFHg2DnuTa7/W
+         1qig==
+X-Forwarded-Encrypted: i=1; AJvYcCXJcGRj28mULlOCvDLuPA6licR8uRWNNp9mx/wiK3EnJrn1w89xib7hb1oHLDmPoLJqa+H6MD7Ebw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtRHQBwwmh+eFX0iz08X69901ZuzVwGIvb7fzJxFHaEM8e5bGm
+	peD8PTs/sNQWKLVpu6yCIusXQ27f+bQBmKt7e7zBxoOkmcr9QVe2UzpNPikeR2j7fnKe2PF9YSv
+	86S3q+8kFQdKGj6sBMPeJg6KGnVypfOxJ5fZtzm4yFA==
+X-Gm-Gg: ASbGncsk0LZSZqJNS9eergpqZmABz+E+hy/uEaf4ufy5xeqMkR/8823L54j6DzsOGL0
+	XwA7L9gSiuIO/ukNHvVdR31ueai9OgKEgtvPzWVwYGUId6ohQI8f9iyh5isfeXI8i2q3o8AOgQy
+	r4gIIysbSaQ6v2mMNzgW9gbRY+DPE0jbpy1Psur9VxPNjzEARe0PeeoptRy9kfbaQwRTDcWGf1b
+	fTNEre5gpw0mS6RbhieuDSNlf9Sy4I4RNXqLOk+U9aHIpKu+iPR
+X-Google-Smtp-Source: AGHT+IEKoc5A5Wm1XhS0+PW3oJCzNqHuDVnLM4p5+o7kmKsky/KEvHxiC7mIDpMpXcAOnLfFJuwmmyZaAr5ozHWCWTg=
+X-Received: by 2002:a17:902:e74d:b0:240:52d7:e8a4 with SMTP id
+ d9443c01a7336-245ff8a6df5mr23038965ad.7.1755793776868; Thu, 21 Aug 2025
+ 09:29:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -78,9 +78,9 @@ MIME-Version: 1.0
 References: <20250821040210.1152145-1-ming.lei@redhat.com> <20250821040210.1152145-3-ming.lei@redhat.com>
 In-Reply-To: <20250821040210.1152145-3-ming.lei@redhat.com>
 From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 21 Aug 2025 09:23:16 -0700
-X-Gm-Features: Ac12FXzD3FFamx6ArRg9vM0c_0aRxQd24zeX0HZFOzH0PUvq5LMqLPRstOc3k6U
-Message-ID: <CADUfDZruvf+RTVRdH16X0xfUO-FmgLZAx6zvwHN3s0LoCcUAQA@mail.gmail.com>
+Date: Thu, 21 Aug 2025 09:29:25 -0700
+X-Gm-Features: Ac12FXztgWprbpzMWesxk3HlOqZZAmpPK3Is4ZOSPmBgzLVABKDKis84AiNB3dE
+Message-ID: <CADUfDZrUUZzhMw4z=Q0U7PAzp+0Aj_=NNyY6kJH21uQL36B-Fw@mail.gmail.com>
 Subject: Re: [PATCH V5 2/2] io_uring: uring_cmd: add multishot support
 To: Ming Lei <ming.lei@redhat.com>
 Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
@@ -117,11 +117,6 @@ es)
 >         https://github.com/ming1/linux/commits/ublk-devel/
 >
 > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-
-Sorry I was out for a while and didn't get a chance to look at this
-earlier. It generally looks reasonable. I noticed a couple of small
-things which I'll send out patches for.
-
 > ---
 >  include/linux/io_uring/cmd.h  | 27 +++++++++++++
 >  include/uapi/linux/io_uring.h |  6 ++-
@@ -203,6 +198,15 @@ er
 > +#define IORING_URING_CMD_MULTISHOT     (1U << 1)
 > +#define IORING_URING_CMD_MASK  (IORING_URING_CMD_FIXED | IORING_URING_CM=
 D_MULTISHOT)
+
+One other question: what is the purpose of this additional flag?
+io_uring_cmd_prep() checks that it matches IOSQE_BUFFER_SELECT, so
+could we just check that flag instead and drop the check that
+IORING_URING_CMD_MULTISHOT matches REQ_F_BUFFER_SELECT?
+
+Best,
+Caleb
+
 >
 >
 >  /*
@@ -285,10 +289,6 @@ en,
 > +
 > +       if (!(ioucmd->flags & IORING_URING_CMD_MULTISHOT))
 > +               return (struct io_br_sel) { .val =3D -EINVAL };
-
-Would this condition make more sense as a WARN_ON()? When would this
-be called for a non-IORING_URING_CMD_MULTISHOT io_uring_cmd?
-
 > +
 > +       if (WARN_ON_ONCE(!io_do_buffer_select(req)))
 > +               return (struct io_br_sel) { .val =3D -EINVAL };
@@ -315,12 +315,6 @@ e_flags)
 > +
 > +       if (!(ioucmd->flags & IORING_URING_CMD_MULTISHOT))
 > +               return true;
-
-Same here, a WARN_ON() seems like it would make more sense.
-
-Best,
-Caleb
-
 > +
 > +       if (sel->val > 0) {
 > +               cflags =3D io_put_kbuf(req, sel->val, sel->buf_list);

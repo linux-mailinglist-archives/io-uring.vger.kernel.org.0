@@ -1,153 +1,121 @@
-Return-Path: <io-uring+bounces-9149-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9150-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D79BB2EB80
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 04:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA92B2EC8A
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 06:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241217278D0
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 02:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16F87BF512
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 04:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE502D3ED7;
-	Thu, 21 Aug 2025 02:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FF3469D;
+	Thu, 21 Aug 2025 04:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LYXHujI8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQIjiUfK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3EA1D435F
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 02:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC33336CE1A
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 04:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755744996; cv=none; b=NJ0AbEERDZpupkk0Zy1LpsIV91euCtu2sBHSRwa761fj71nLOQy/GqTbo2pmImO318XcvnAB7+uLuuwhtzbLjOjQhVKXaIBcSZ1R1gA/pK2cCF+bwucGi7u3pwOdqKHSELBnEICl8xxI3GIs+uCpYIvUzYNa7sTGjmNx/qdn7Q4=
+	t=1755748946; cv=none; b=XjJ7aUeDlCrGrf8dSR/86ww3gPlQIAQOEY9AgKSbJ8a+gJNLaXHh1G6sZ95hsGJLOcY7DG9S67xM6ZM+ge+PECxRDxuIGF0mE50mws5FpNBt2JFt0is2oxK5O5piejDi7hM99ZVgJVym9v6DRK/c8vwTAtkeTNbUeDyXSTgl0AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755744996; c=relaxed/simple;
-	bh=balfMEORisG0GrrKqsodEt+jiqQAngx3v2OR69BFcPY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gcT8VRywGrQLXqWejtcvcjXV85HH+G/SN5TEbVYuYsGpBOPQ1bdjx4Je/dcHi0/UAXbbzXDO19o4icvTWxMt932qK2te86TZL9xqPhtR1GygRGh8pEVUKx/hMGbgUm9b5/4z1NW2dXUWPrdSn4s0BD1OLYunSlr7jULjOhuGajE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LYXHujI8; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581ce13aso12698685ad.2
-        for <io-uring@vger.kernel.org>; Wed, 20 Aug 2025 19:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755744994; x=1756349794; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XBaK+uDkb1FKWMnsKSy6ZhbJaoQabX0cbuYGiNdtzlM=;
-        b=LYXHujI87+IlJ7ShNwMEIaWA0S5GM6sbWmOZVMdNLwdd69wHTCNTDYaUfcZoYfG/+I
-         4NuAdvw1U7ajbcrTPlFmLJP++Vr5RSbJAxc1jE7sYLhEjy0ZrJW5eqysbKXCmmFbBFku
-         T3Xw6ZSgoyZeWIMONesdFamrUimkHv//Xy0agQSaEQWw5Dsr/BdV0C6DxJp/SABnQx7y
-         LMOJBS4Sppav0lP+BVhWsBXy6a2QX04B6DvN1Rp6r86Z322MCqbs2VynjtxFHaN2fdW5
-         BLAXDBzQmm8GHhx3GozwGQH7Mbzu4Ss3HidfYi2MM9RvFHcdsiYisTSt+W3kFSdN5hip
-         YYZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755744994; x=1756349794;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XBaK+uDkb1FKWMnsKSy6ZhbJaoQabX0cbuYGiNdtzlM=;
-        b=q8Y0kA1029mEL8iq8DEjHsjC5T/Go2tHHMxkCQ5vla7WTAE+rw3mY1MimbQKCMy7gF
-         u9l3GtIb5682d0chM77fopJVuXqDh4zE9rdqohlkphvhI6Evcr4H6sy4PLrfWDU4yYOQ
-         LKP0KUlyEGvPUWvyfo3/sVR8gx7mCLuCwwk+4QoRBTBacnKpPB8FKr6xYhbRAYMBjgwb
-         9u/1jHj9s8goXynP+DsNcWOdpob3ay1YM6ELZeunERjeFH0Zb1vgTXcWSXcFiXZ5e3aB
-         H6Ma6UBFwXJXCcIyUaPSCZDLcRoqAIZ5NIAtjsUMuY15tjkRQ6w+pOpi8icX/ZlixrDR
-         srIA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7jwJ2z70Rq5s5lMJxGUFwFhbgi7nZ7u/4a93YhS3hfbkhs0UwMBmRzAmZx+61dhFNM8atfFIWQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGHVrqAYNmzN4ou1eTr5QgNAmErACOqZO7qULNTKdKaA8j+GBe
-	tFQhx9kmuB1NTPC4BaG+Ddypef5hlB9yTwfOGcR1znx7ECjH++g9XDn7tGOGKR3tHDkrK2nfkr9
-	lPsXDzmN1KYJKpeOQTGarlNgMeg==
-X-Google-Smtp-Source: AGHT+IHOUOftlFA6gwO5touzHJxQk7/q1lypr8Q4vbHBqJ26hjGPhbxSN2SE73bXv0muunHuQFwlQukp1KrVN5ncmw==
-X-Received: from plbkx11.prod.google.com ([2002:a17:902:f94b:b0:240:3ec9:aa82])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2f85:b0:242:cf0b:66cd with SMTP id d9443c01a7336-245fed69268mr14788835ad.34.1755744994361;
- Wed, 20 Aug 2025 19:56:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 02:56:16 +0000
+	s=arc-20240116; t=1755748946; c=relaxed/simple;
+	bh=Sxph0ZDJKRB9zatt2QlRMnt5+tq1Csn2MeFaIHw+mfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nR28OyHN8LWvV84cwLx62FJaNDV3/NL9sTb+lU3M4PivnOuxA+3l7AzOhvi3Q5sTi34mSZ74iszirCy1vruUGGPiWbDMR3yuPh6/N36vUmjDUokLFkKgOTrsqBjbYfZsLqd6qpAM4URCvdEQwak+RHXum83WCDompsTG2oiSxyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQIjiUfK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755748943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4CrE0XtC5JhIhxWtZ2es4ZWYf9RK8YkGNdhtWmExmcg=;
+	b=bQIjiUfKOpRM8M5YGuDOG5T74VW5JSed9x5PJoa2LwIe9X9Oij5gkqNqb1YcVF2Eev0Qvp
+	eMTUkOcFTBqGP5XhrMS7M/XijU4w9yu0Uh7X63xM49wGxsgEoWcA/TgfIKs22F/qFdVNq9
+	CL1+hxzOy85Oo2lSZ4MmVkvEIyntTlM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-xipIs3h1OrOF5d8F2GbiKw-1; Thu,
+ 21 Aug 2025 00:02:21 -0400
+X-MC-Unique: xipIs3h1OrOF5d8F2GbiKw-1
+X-Mimecast-MFC-AGG-ID: xipIs3h1OrOF5d8F2GbiKw_1755748940
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9C121800345;
+	Thu, 21 Aug 2025 04:02:19 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.104])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C4891180047F;
+	Thu, 21 Aug 2025 04:02:18 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V5 0/2] io_uring: uring_cmd: add multishot support with provided buffer
+Date: Thu, 21 Aug 2025 12:02:05 +0800
+Message-ID: <20250821040210.1152145-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250821025620.552728-1-almasrymina@google.com>
-Subject: [PATCH RFC net-next v1] net: Add maintainer entry for netmem & friends
-From: Mina Almasry <almasrymina@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, kuba@kernel.org, asml.silence@gmail.com, 
-	sdf@fomichev.me, byungchul@sk.com, io-uring@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-There is some needless friction with regards to whether netmem_ref,
-net_iov, and memory provider patches being CC'd to netdev or not. Add
-clear policy and put it in the MAINTAINERS file so get_maintainer.pl
-does the right thing by default.
+Hi Jens,
 
-All changes to current and future memory providers should be CC'd to
-netdev. The devmem memory provider happens to be under net so is
-covered by 'NETWORKING [GENERAL]' as-is. The io_uring memory provider
-happens to be outside of net/ though, so add an explicit file entry
-for that.
+This patchset adds multishot support with provided buffer, see details in
+commit log of patch 2.
 
-Note that the memory provider changes need _not_ be merged through net
-or net-next, but the changes should be CC'd to netdev. Target the
-appropriate tree using the [PATCH ...] prefix.
+Thanks,
+Ming
 
-All changes using or modifying netmem_ref or struct net_iov should also
-be sent to netdev, so add a content regex for that. Patches modifying
-the netmem_ref or net_iov infra should also target net or net-next
-([PATCH net] or [PATCH net-next]). This is already the convention.
 
-Note that no maintainers or reviewers are dedicated to this entry.
-We don't presume to overburden existing maintainers or add new ones; let
-the maintainers nominate folks whenever they feel appropriate. But make
-sure changes are sent to the correct lists.
+V5:
+- rebase on block/io_uring-buf-list and use 'struct io_br_sel' to build the two APIs
+- add patch 1 for moving `struct io_br_sel` to `linux/io_uring_types.h`
 
-Tested by creating a couple of trivial changes in io_uring/zcrx.[h|c]
-and adding netmem_ref and net_iov in other subsystems, and looking at
-the get_maintainer.pl results.
+V4:
+- add io_do_buffer_select() check in io_uring_cmd_select_buffer(()
+- comments that the two APIs should work together for committing buffer
+  upfront(Jens)
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+V3:
+- enhance buffer select check(Jens)
 
----
+V2:
+- Fixed static inline return type
+- Updated UAPI comments: Clarified that IORING_URING_CMD_MULTISHOT must be used with buffer select
+- Refactored validation checks: Moved the mutual exclusion checks into the individual flag validation
+sections for better code organization
+- Added missing req_set_fail(): Added the missing failure handling in io_uring_mshot_cmd_post_cqe
+- Improved commit message: Rewrote the commit message to be clearer, more technical, and better explain
+the use cases and API changes
 
-Cc: kuba@kernel.org
-Cc: asml.silence@gmail.com
-Cc: sdf@fomichev.me
-Cc: byungchul@sk.com
-Cc: io-uring@vger.kernel.org
-Cc: netdev@vger.kernel.org
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Ming Lei (2):
+  io-uring: move `struct io_br_sel` into io_uring_types.h
+  io_uring: uring_cmd: add multishot support
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4dcce7a5894b..22c50aeefaa5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17853,6 +17853,17 @@ F:	include/uapi/linux/unix_diag.h
- F:	net/unix/
- F:	tools/testing/selftests/net/af_unix/
- 
-+NETWORKING [NETMEM, NET_IOV & MEMORY PROVIDERS]
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+Q:	https://patchwork.kernel.org/project/netdevbpf/list/
-+B:	mailto:netdev@vger.kernel.org
-+P:	Documentation/process/maintainer-netdev.rst
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-+F:	io_uring/zcrx.*
-+K:	\bnet(mem_ref|_iov)\b
-+
- NETXEN (1/10) GbE SUPPORT
- M:	Manish Chopra <manishc@marvell.com>
- M:	Rahul Verma <rahulv@marvell.com>
+ include/linux/io_uring/cmd.h   | 27 +++++++++++++
+ include/linux/io_uring_types.h | 19 +++++++++
+ include/uapi/linux/io_uring.h  |  6 ++-
+ io_uring/kbuf.h                | 18 ---------
+ io_uring/opdef.c               |  1 +
+ io_uring/uring_cmd.c           | 71 +++++++++++++++++++++++++++++++++-
+ 6 files changed, 122 insertions(+), 20 deletions(-)
 
-base-commit: 62a2b3502573091dc5de3f9acd9e47f4b5aac9a1
 -- 
-2.51.0.rc1.193.gad69d77794-goog
+2.47.0
 
 

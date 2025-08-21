@@ -1,253 +1,212 @@
-Return-Path: <io-uring+bounces-9233-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9234-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CD8B307F9
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 23:08:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767FEB30875
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 23:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D766B020B7
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 21:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FF71D000FB
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 21:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0F02BD001;
-	Thu, 21 Aug 2025 21:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hgwm17af"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1D82C11CA;
+	Thu, 21 Aug 2025 21:37:17 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0372C0264
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 21:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA8B2C0261
+	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 21:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755810051; cv=none; b=KW0WaVk6QpJlz/JCC//wvl2xEdmBEbfUncgnlEXlkO7oO/YL8rVftVtkAMMAjp9o10GnvUmr8Nu92W75XXynu5cNq49CgaLHFJuBZwwGKbJ8W9oxTIemcKrMZovObzkawX/kBXSp7/wO+z+hyq9ZQ0LbusIIPnPQn+6c117hQW0=
+	t=1755812236; cv=none; b=LNovXRcdtmh9wbKatVxNCYh3L718nPOEojHOndgxaOY/TyTHkBYrHgTP3vP4w0jdMpjLNEseuK5scsLnzJbR4VPqTp3ZtwADw+sNoBMgqrji9zn1q5IUiZU5HmS1fx5WS4XZkDbtN/X/TIUmPcXtvggvtw+wFNmmisJRIZ9j7LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755810051; c=relaxed/simple;
-	bh=YHqdaFs44MkX9xejnDLPb5jqQiahm5Uq2LcWXm1xRfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kRMYtat+QW6SKNknl69MtTPBMD2B/nEppb7eKUY1U7ITgLvFJio5meILvZZeDmOQqm3+aKQKz1Rs+AAaHOnAus5FJShKbqvny0Vvl0ms8l77X6CVTVTFmgdm4S8QzOptxGdTVNRKr5Q9nz+7PG2fS16oJBVM4hzTY+l7cezMTtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hgwm17af; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755810047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cp1mFCWwcTWQzzsUUmh88+YFkDBcq7Y5lQlba0VlHo0=;
-	b=hgwm17afif2H66kmOBZawWpdZSaILBIYskvmAefYnQv1qhbiGx8tHx0c+W0ou5ex49GnOU
-	8T6W0vSn6kVJ+nMoPfOzlg54kWsFuDFWrNMEm0ELoypMRVbfM5ijKOMRn18tCik6xECAnE
-	8KO3fDDq+H3PQoTENylzHcJhciV9BZY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-o-NxmVN6Ot6h01U-GvwMlA-1; Thu, 21 Aug 2025 17:00:45 -0400
-X-MC-Unique: o-NxmVN6Ot6h01U-GvwMlA-1
-X-Mimecast-MFC-AGG-ID: o-NxmVN6Ot6h01U-GvwMlA_1755810041
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b9d41bd50aso1014199f8f.0
-        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 14:00:42 -0700 (PDT)
+	s=arc-20240116; t=1755812236; c=relaxed/simple;
+	bh=D7mG/7eHvAByRVz7e7xhMg1OUUyaclPfbPriELhFlwc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=UI24Lbg626WTNP/+7se1rAbqCzA8cQ/CgNt6HyK/oTVG47NUC/7r8x30M90oUE+RCdk5jGdlJKOQah9V3CQiFeGaJXKkRLjPc7C8Hu6UBJPB/KT4fJSlvVcpG9FSJSzTAnuBcU8TC3lmABdV+PrGI1O4ueKRoeE3fkzCInrdMy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e67df0ed87so42689865ab.2
+        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 14:37:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755810041; x=1756414841;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cp1mFCWwcTWQzzsUUmh88+YFkDBcq7Y5lQlba0VlHo0=;
-        b=V9ZpH84XptWsAdkNrCkpnGHlUhBloWiQEb3D2XGL2k+TT7kwGY67cZRWsDJmVztp//
-         nx0BlBTfoZ+4DuvQZ2FcZp1qpn8mHW9lJNfk+xQcPvk/fmeV1c3HgQgWLfEPgo1RVljh
-         7iFquTqyc/qLzh8BqcKc0LGUi1c467T5PIgzVYcE2I7acNI0mCQiYBptFu7LhXV8Zie7
-         nojW/L0avjbfmYz2IpkNlRurSPYUS3TAyOgy0zSmQt/KMi4/D8qm50mEo+s4Lu0kSFLi
-         BKwZ23ofTNxIMPyxkTZlBulKu/I++vyzEJiwOv6TRQhPGKhsllx3lxmMtKjFHJE67YO7
-         /VtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/L6OtfDlmksCf/gZoS+UPL9YWKdcZq1uyvXCCVKJuHkAgn5GbP+63CuP0Ib0qacHjEWbTsVC/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa48uaaUR0b/GyAWPlkr3+BmCdvxHuLBzVZzE23/79qeevxCX/
-	QXf442nl0OX6IYlzA5nkdJkAbX9chhP9xI5/tRUORzVJnlAaSz6to8C90F3UqbNfSVx8vIX3pbN
-	v0vY7Fv8fJij/CklErizi2tg9cBohgfKEiHdXgeEiYCVx55Qj769fiw3ekIBj
-X-Gm-Gg: ASbGnctf63WGcXsdnvpPpqUbQZLHTeFiphiT2kGd4dHmgIn9ihoUoL+yUTFy3DXOk+x
-	YooDeRavzTiNBR1hsLg9r4rMMutaRS/8L84InRukj9T4eM3uau9e78gAxPj38xxk5OduwQTlvx1
-	j/iI1WfZU15DIjipEfNXVRGH/7GaoCiPvI7cISDev1MWKEXrm9s51UoRDZs8YzkNwJTLkkAqdj3
-	WrJbLZXXwRM4vWqTsXOgBDXeYkrUUgTxX9YcW1sAvOSkyhyURTd1CaBXFaQVH+0eL3n69KISFMA
-	u3hOhDl1+Ds4WzAdnbsyHFwM/yctRgVmCosVOaUcz3XmckPubo7Bp4Xdr5Rf28H98R/l2KJx57h
-	1gc/f1HaSX2xfneOf6vTVi8u/e2aK9LeSAxp5SDTE2vDDPT1OTDIN4qDMo//jZA==
-X-Received: by 2002:a05:6000:200d:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3c5daa27e6amr265191f8f.7.1755810041290;
-        Thu, 21 Aug 2025 14:00:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7vpqV63aDfbj4LuprqMLqq42InG6u1nR+Dt/+ZPeyx1uRJcEanVY8H02OCG3yOg5OQPh6rw==
-X-Received: by 2002:a05:6000:200d:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3c5daa27e6amr265173f8f.7.1755810040805;
-        Thu, 21 Aug 2025 14:00:40 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f26:ba00:803:6ec5:9918:6fd? (p200300d82f26ba0008036ec5991806fd.dip0.t-ipconnect.de. [2003:d8:2f26:ba00:803:6ec5:9918:6fd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4ccbf04fasm3476159f8f.7.2025.08.21.14.00.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 14:00:40 -0700 (PDT)
-Message-ID: <23c6e511-19b2-4662-acfc-18692c899a6c@redhat.com>
-Date: Thu, 21 Aug 2025 23:00:37 +0200
+        d=1e100.net; s=20230601; t=1755812234; x=1756417034;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4cr6QMqKu3ZXE5LbmZFl5rCj+PzGQQulyaw1Vp4aNc=;
+        b=LA7T5gIDIfMoeSzDTTpM/ZGjE1EJJytnKWIlpNJQ3A+wx2totvRdkANyXr/WAC2PgO
+         D/VkiA6kYC8l220KDXjV0myxWaDZRiW70MQb4YFfQWhxkolanCaf5xp4mjXdzVzCnf0j
+         +N0JteR3uFQ/hCp15VG2ZJY7CC7XS10vJQX33bXFoBTtZwb1jeHbuBw/+h32QhJRoBdT
+         Djyz2ecwbU4NUGjhffOizaMBKatdtTfnOPfwpz2egcXilHh8dhBpm/CoQrOZwQps5rOB
+         s/vJ8xg6tqbslTRKnt5hdBNyYh2iENG/pQsY2sweewfoIeZuuxsBT2hlECanFYiInxVh
+         Mt9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUVhow41gjUz4wuyswnsXmVC4rhX1rf/BxjQXyjY7ILaj63fJd/fPYAmnXcPKyLlUkTTSmusiTBcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxklr5B4IVWHmSpPcwBm9xgC/OiacDJe3w9uU64IobAQHrJaI2l
+	riCYyB+kmjR6hzsTpBSUnPTqvP0IL7zGClSDVHiQLkBOPT9TajTIr47ZpYXksQ1h0JFFnAiKlCQ
+	3G90n9BEa0CSy+JMJ9FSQPZC2+SmLkVK7IOihZu+Y8jiOYGz4ccxnrgUCJpM=
+X-Google-Smtp-Source: AGHT+IF7KMX4PQ9MbhjzaZS9KH1hsBks7Ag/V1kb+FvUzHNpAJ+XwFEszukCkWQQAtI/yieVASDRCVnTSkaGoVJY87X1Pd3k81yl
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 13/35] mm: simplify folio_page() and folio_page_idx()
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-14-david@redhat.com>
- <E1AA1AC8-06E4-4896-B62B-F3EA0AE3E09C@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <E1AA1AC8-06E4-4896-B62B-F3EA0AE3E09C@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:19c6:b0:3e6:6c55:643 with SMTP id
+ e9e14a558f8ab-3e9201f3d92mr16380665ab.7.1755812233632; Thu, 21 Aug 2025
+ 14:37:13 -0700 (PDT)
+Date: Thu, 21 Aug 2025 14:37:13 -0700
+In-Reply-To: <20250821200701.1329277-1-david@redhat.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a79189.050a0220.cb3d1.0004.GAE@google.com>
+Subject: [syzbot ci] Re: mm: remove nth_page()
+From: syzbot ci <syzbot+ci0b43493baa45553d@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, airlied@gmail.com, akpm@linux-foundation.org, 
+	alex.williamson@redhat.com, alex@ghiti.fr, andreas@gaisler.com, 
+	aou@eecs.berkeley.edu, axboe@kernel.dk, borntraeger@linux.ibm.com, 
+	bp@alien8.de, brett.creeley@amd.com, cassel@kernel.org, 
+	catalin.marinas@arm.com, chenhuacai@kernel.org, christophe.leroy@csgroup.eu, 
+	cl@gentwo.org, dave.hansen@linux.intel.com, davem@davemloft.net, 
+	david@redhat.com, dennis@kernel.org, dgilbert@interlog.com, 
+	dlemoal@kernel.org, dri-devel@lists.freedesktop.org, dvyukov@google.com, 
+	elver@google.com, glider@google.com, gor@linux.ibm.com, hannes@cmpxchg.org, 
+	hca@linux.ibm.com, herbert@gondor.apana.org.au, 
+	intel-gfx@lists.freedesktop.org, io-uring@vger.kernel.org, 
+	iommu@lists.linux.dev, jackmanb@google.com, 
+	james.bottomley@hansenpartnership.com, jani.nikula@linux.intel.com, 
+	jason@zx2c4.com, jesper.nilsson@axis.com, jgg@nvidia.com, jgg@ziepe.ca, 
+	jhubbard@nvidia.com, joonas.lahtinen@linux.intel.com, 
+	kasan-dev@googlegroups.com, kernel@xen0n.name, kevin.tian@intel.com, 
+	kvm@vger.kernel.org, lars.persson@axis.com, liam.howlett@oracle.com, 
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, linux-mmc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, lorenzo.stoakes@oracle.com, 
+	m.szyprowski@samsung.com, maddy@linux.ibm.com, martin.petersen@oracle.com, 
+	maximlevitsky@gmail.com, mhocko@suse.com, mingo@redhat.com, 
+	mpe@ellerman.id.au, muchun.song@linux.dev, netdev@vger.kernel.org, 
+	npiggin@gmail.com, oakad@yahoo.com, osalvador@suse.de, palmer@dabbelt.com, 
+	paul.walmsley@sifive.com, peterx@redhat.com, robin.murphy@arm.com, 
+	rodrigo.vivi@intel.com, rppt@kernel.org, shameerali.kolothum.thodi@huawei.com, 
+	shuah@kernel.org, simona@ffwll.ch, surenb@google.com, svens@linux.ibm.com, 
+	tglx@linutronix.de, tj@kernel.org, torvalds@linux-foundation.org, 
+	tsbogend@alpha.franken.de, tursulin@ursulin.net, ulf.hansson@linaro.org, 
+	vbabka@suse.cz, virtualization@lists.linux.dev, will@kernel.org, 
+	wireguard@lists.zx2c4.com, x86@kernel.org, ziy@nvidia.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 21.08.25 22:55, Zi Yan wrote:
-> On 21 Aug 2025, at 16:06, David Hildenbrand wrote:
-> 
->> Now that a single folio/compound page can no longer span memory sections
->> in problematic kernel configurations, we can stop using nth_page().
->>
->> While at it, turn both macros into static inline functions and add
->> kernel doc for folio_page_idx().
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   include/linux/mm.h         | 16 ++++++++++++++--
->>   include/linux/page-flags.h |  5 ++++-
->>   2 files changed, 18 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 48a985e17ef4e..ef360b72cb05c 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -210,10 +210,8 @@ extern unsigned long sysctl_admin_reserve_kbytes;
->>
->>   #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
->>   #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
->> -#define folio_page_idx(folio, p)	(page_to_pfn(p) - folio_pfn(folio))
->>   #else
->>   #define nth_page(page,n) ((page) + (n))
->> -#define folio_page_idx(folio, p)	((p) - &(folio)->page)
->>   #endif
->>
->>   /* to align the pointer to the (next) page boundary */
->> @@ -225,6 +223,20 @@ extern unsigned long sysctl_admin_reserve_kbytes;
->>   /* test whether an address (unsigned long or pointer) is aligned to PAGE_SIZE */
->>   #define PAGE_ALIGNED(addr)	IS_ALIGNED((unsigned long)(addr), PAGE_SIZE)
->>
->> +/**
->> + * folio_page_idx - Return the number of a page in a folio.
->> + * @folio: The folio.
->> + * @page: The folio page.
->> + *
->> + * This function expects that the page is actually part of the folio.
->> + * The returned number is relative to the start of the folio.
->> + */
->> +static inline unsigned long folio_page_idx(const struct folio *folio,
->> +		const struct page *page)
->> +{
->> +	return page - &folio->page;
->> +}
->> +
->>   static inline struct folio *lru_to_folio(struct list_head *head)
->>   {
->>   	return list_entry((head)->prev, struct folio, lru);
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index d53a86e68c89b..080ad10c0defc 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -316,7 +316,10 @@ static __always_inline unsigned long _compound_head(const struct page *page)
->>    * check that the page number lies within @folio; the caller is presumed
->>    * to have a reference to the page.
->>    */
->> -#define folio_page(folio, n)	nth_page(&(folio)->page, n)
->> +static inline struct page *folio_page(struct folio *folio, unsigned long nr)
->> +{
->> +	return &folio->page + nr;
->> +}
-> 
-> Maybe s/nr/n/ or s/nr/nth/, since it returns the nth page within a folio.
+syzbot ci has tested the following series
 
-Yeah, it's even called "n" in the kernel docs ...
+[v1] mm: remove nth_page()
+https://lore.kernel.org/all/20250821200701.1329277-1-david@redhat.com
+* [PATCH RFC 01/35] mm: stop making SPARSEMEM_VMEMMAP user-selectable
+* [PATCH RFC 02/35] arm64: Kconfig: drop superfluous "select SPARSEMEM_VMEMMAP"
+* [PATCH RFC 03/35] s390/Kconfig: drop superfluous "select SPARSEMEM_VMEMMAP"
+* [PATCH RFC 04/35] x86/Kconfig: drop superfluous "select SPARSEMEM_VMEMMAP"
+* [PATCH RFC 05/35] wireguard: selftests: remove CONFIG_SPARSEMEM_VMEMMAP=y from qemu kernel config
+* [PATCH RFC 06/35] mm/page_alloc: reject unreasonable folio/compound page sizes in alloc_contig_range_noprof()
+* [PATCH RFC 07/35] mm/memremap: reject unreasonable folio/compound page sizes in memremap_pages()
+* [PATCH RFC 08/35] mm/hugetlb: check for unreasonable folio sizes when registering hstate
+* [PATCH RFC 09/35] mm/mm_init: make memmap_init_compound() look more like prep_compound_page()
+* [PATCH RFC 10/35] mm/hugetlb: cleanup hugetlb_folio_init_tail_vmemmap()
+* [PATCH RFC 11/35] mm: sanity-check maximum folio size in folio_set_order()
+* [PATCH RFC 12/35] mm: limit folio/compound page sizes in problematic kernel configs
+* [PATCH RFC 13/35] mm: simplify folio_page() and folio_page_idx()
+* [PATCH RFC 14/35] mm/mm/percpu-km: drop nth_page() usage within single allocation
+* [PATCH RFC 15/35] fs: hugetlbfs: remove nth_page() usage within folio in adjust_range_hwpoison()
+* [PATCH RFC 16/35] mm/pagewalk: drop nth_page() usage within folio in folio_walk_start()
+* [PATCH RFC 17/35] mm/gup: drop nth_page() usage within folio when recording subpages
+* [PATCH RFC 18/35] io_uring/zcrx: remove "struct io_copy_cache" and one nth_page() usage
+* [PATCH RFC 19/35] io_uring/zcrx: remove nth_page() usage within folio
+* [PATCH RFC 20/35] mips: mm: convert __flush_dcache_pages() to __flush_dcache_folio_pages()
+* [PATCH RFC 21/35] mm/cma: refuse handing out non-contiguous page ranges
+* [PATCH RFC 22/35] dma-remap: drop nth_page() in dma_common_contiguous_remap()
+* [PATCH RFC 23/35] scatterlist: disallow non-contigous page ranges in a single SG entry
+* [PATCH RFC 24/35] ata: libata-eh: drop nth_page() usage within SG entry
+* [PATCH RFC 25/35] drm/i915/gem: drop nth_page() usage within SG entry
+* [PATCH RFC 26/35] mspro_block: drop nth_page() usage within SG entry
+* [PATCH RFC 27/35] memstick: drop nth_page() usage within SG entry
+* [PATCH RFC 28/35] mmc: drop nth_page() usage within SG entry
+* [PATCH RFC 29/35] scsi: core: drop nth_page() usage within SG entry
+* [PATCH RFC 30/35] vfio/pci: drop nth_page() usage within SG entry
+* [PATCH RFC 31/35] crypto: remove nth_page() usage within SG entry
+* [PATCH RFC 32/35] mm/gup: drop nth_page() usage in unpin_user_page_range_dirty_lock()
+* [PATCH RFC 33/35] kfence: drop nth_page() usage
+* [PATCH RFC 34/35] block: update comment of "struct bio_vec" regarding nth_page()
+* [PATCH RFC 35/35] mm: remove nth_page()
 
-> 
-> Since you have added kernel doc for folio_page_idx(), it does not hurt
-> to have something similar for folio_page(). :)
+and found the following issue:
+general protection fault in kfence_guarded_alloc
 
-... which we already have! (see above the macro) :)
+Full report is available here:
+https://ci.syzbot.org/series/f6f0aea1-9616-4675-8c80-f9b59ba3211c
 
-Thanks!
+***
 
--- 
-Cheers
+general protection fault in kfence_guarded_alloc
 
-David / dhildenb
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      da114122b83149d1f1db0586b1d67947b651aa20
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/705b7862-eb10-40bd-a4cf-4820b4912466/config
 
+smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.80GHz (family: 0x6, model: 0x55, stepping: 0x7)
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:kfence_guarded_alloc+0x643/0xc70
+Code: 41 c1 e5 18 bf 00 00 00 f5 44 89 ee e8 a6 67 9c ff 45 31 f6 41 81 fd 00 00 00 f5 4c 0f 44 f3 49 8d 7e 08 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 05 e8 f1 cb ff ff 4c 8b 6c 24 18 4d 89 6e 08 49
+RSP: 0000:ffffc90000047740 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: ffffea0004d90080 RCX: 0000000000000000
+RDX: ffff88801c2e8000 RSI: 00000000ff000000 RDI: 0000000000000008
+RBP: ffffc90000047850 R08: ffffffff99b2201b R09: 1ffffffff3364403
+R10: dffffc0000000000 R11: fffffbfff3364404 R12: dffffc0000000000
+R13: 00000000ff000000 R14: 0000000000000000 R15: ffff88813fec7068
+FS:  0000000000000000(0000) GS:ffff8880b861c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88813ffff000 CR3: 000000000df36000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __kfence_alloc+0x385/0x3b0
+ __kmalloc_noprof+0x440/0x4f0
+ __alloc_workqueue+0x103/0x1b70
+ alloc_workqueue_noprof+0xd4/0x210
+ init_mm_internals+0x17/0x140
+ kernel_init_freeable+0x307/0x4b0
+ kernel_init+0x1d/0x1d0
+ ret_from_fork+0x3f9/0x770
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:kfence_guarded_alloc+0x643/0xc70
+Code: 41 c1 e5 18 bf 00 00 00 f5 44 89 ee e8 a6 67 9c ff 45 31 f6 41 81 fd 00 00 00 f5 4c 0f 44 f3 49 8d 7e 08 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 05 e8 f1 cb ff ff 4c 8b 6c 24 18 4d 89 6e 08 49
+RSP: 0000:ffffc90000047740 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: ffffea0004d90080 RCX: 0000000000000000
+RDX: ffff88801c2e8000 RSI: 00000000ff000000 RDI: 0000000000000008
+RBP: ffffc90000047850 R08: ffffffff99b2201b R09: 1ffffffff3364403
+R10: dffffc0000000000 R11: fffffbfff3364404 R12: dffffc0000000000
+R13: 00000000ff000000 R14: 0000000000000000 R15: ffff88813fec7068
+FS:  0000000000000000(0000) GS:ffff8880b861c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88813ffff000 CR3: 000000000df36000 CR4: 0000000000350ef0
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 

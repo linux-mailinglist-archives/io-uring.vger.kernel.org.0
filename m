@@ -1,134 +1,173 @@
-Return-Path: <io-uring+bounces-9166-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9167-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEF8B2FC85
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 16:28:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89691B2FDE5
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 17:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BDA1D218E9
-	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 14:21:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33FB17B4FF
+	for <lists+io-uring@lfdr.de>; Thu, 21 Aug 2025 15:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B04B214A97;
-	Thu, 21 Aug 2025 14:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831A0219313;
+	Thu, 21 Aug 2025 15:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kNtXqonV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRx8+zWo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC411279DB6
-	for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 14:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E0224B04;
+	Thu, 21 Aug 2025 15:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786017; cv=none; b=d6wyTcXk2yvxqPLSy8bBE/33a9wd7pA8mOjBcpX9osoG/G5kRclmH6HzZutFV89viIzZlLK3k/RQHN9XLwKOjgrhKK76rzkDCPZiVGxvxPFLpB5rwdJGcWol8sUy+PFYaiDPSrPViXZ0s5rq62XgGk6CMD32S4PgycSgArvKf+s=
+	t=1755788597; cv=none; b=hJM9YLpyifMg9dZW4yiso1ZKvi5Sx8AvlM64ZQwQcE4Iy9dyr3Y7IwElOYXLKxTAHS8is8/Sjhgrd5uGD+mqAF1ff8OVuLLl95La8em3eFbwNMKBMzc4mQq4J7/JKT2O6mC48h21s9foTq+oWvBJINQ9fYuZRcAdgjxHupCjiIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786017; c=relaxed/simple;
-	bh=fWKgL6VoaSyFUMidal+T+j/25nnV3b7zKYZx2WTuao8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N9/llw228ngVih7cI8z+oXeiyWRyFWumTqIsdHTB5E1To4yQ6QDoqM/f5+O8IgdF2tr7lpyIhW+loQ6/FPnk+xB29uIEQcztK/jSA7412C8DY31xYucHE6NWemKItbx5AihDg/3250o66qX0a8I+z/FHi8aVqBZHKCHyJqrQypU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kNtXqonV; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e721083e99so2755725ab.3
-        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 07:20:15 -0700 (PDT)
+	s=arc-20240116; t=1755788597; c=relaxed/simple;
+	bh=eG8tMdZ6ez6OY79lh4rWCVb57KYN1p1yvtLR6obd3Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A6SzfFdEOFNmRKcUM+iPIRaH3Ok4HCJSguAWCGVZOL7kdN5hqnaGgmMh15ocTBW7FhPB60pncgzbbxaCsWfR0G6PTDtjG52TfENYszON9h54yAmutKOQHVjuGpvnzun4lvKD2Y5uMDx4dOkghGz69rOyAxZiQIBYMl4VjMeTtc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRx8+zWo; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7347e09so189150466b.0;
+        Thu, 21 Aug 2025 08:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755786014; x=1756390814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KFPWpzG1AUv8OCk64kABjKhF1scMWkPhH3E9mkWcvq4=;
-        b=kNtXqonVI2CueCiQNGXcXg7MY1DbfVGOmj1mRUHMpHYXmVVYBxFTij+VXErlbNAcT/
-         8eXrX0vhHen4IP5jIj3yrjruLUbi4UMlQiMOQwF/sMlQNGksQbfeFscEcMoUhuZ1bRLd
-         46D17eJcxjbD73mtO5/VCub4McZT9I2F40c5iO3z/cBUdxetmf5MtU5FWfD1X5/ZJI3f
-         GLirTV3Izq2iiTnLF/GB3YkFuMn9Tduegrq/+s/dBgGzFINJ6F4Q/AoDCYtcR8MnYm29
-         TfNg3DQ/mPYlUmBMNnjkTwyRLZk3BtK52h1/iLwgbZFwyFv1Ztg5PupfqEcXwEFYjDNr
-         ZGZw==
+        d=gmail.com; s=20230601; t=1755788594; x=1756393394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NlYkbxi7DFW6oY2NRpdpDsqyhyO6hkcK+DM6dtjAz2U=;
+        b=GRx8+zWoxb9FZHfWOAFlJe4QYmjgAXXvEwE6iGxn0KXWeq4MNw//fEvili1V36mVgV
+         iymMPbUu1TPHi7wnhSzmgweMtdM6a/UvR1uI7f0KK5+2UodoVQ9YfGZprrRgTYbtZT3S
+         puvBhIbJCim8zzNwYXl7Oe7CY9tkjlzpIlqmhKN6HRl3RCjwuQUn48tN7Iu0181EoZdN
+         QIAFD9Lapq6NNZgkcNwObriOE9VWviMnUlrTq2vOTY7HGUjgu0pZLYEIa6mIefZjq5KM
+         ShTjX41flqr0+QxY6eGn3VPErhpFYo0/fQRJ04CsiQCvRyjW4ikA085Ff/mlFx4GDapJ
+         /YrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755786014; x=1756390814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KFPWpzG1AUv8OCk64kABjKhF1scMWkPhH3E9mkWcvq4=;
-        b=KBfu6KkgGte0PWKgJmJUAGulEME/wuPoQR+q712z5bmQ3Pg0ssNc3BEM8dReJ5uCK2
-         K89elKU2yHQzqq5nfIMxJ3+Qbdn24ZnzLC+GUHIPa2OFF9Orf2Q2XIpZ1RUWhKpPL0GI
-         b/CHs/srUiTPIL1kBKdcm5cIJLxxUu7DIuOu48Wv/nI25Kj7dHVp+9IDLjcOrFUpZU9y
-         RRMkKbFgHI5TBYxu3loYPAduDz2LYQ01gx/9lAisgUNfkoWoc/obAdo1u3bPdqgWe64O
-         84PUtFrmvk7fRTCObnupleRxCMBa7+236748AIfjYr6M0E15f2opU2qQWWONzlc0uGFx
-         CypQ==
-X-Gm-Message-State: AOJu0YzUG63zpUASMeLj2dGEcXNlMDQImmgWkAx4cTRG2D8WrJ5PNR8Q
-	Ji2EypkkCC+MjzpoESckof0Y3SemrWjZFo4G+OkDdmin5SOKulGstRZsq4lyxnGUWMMgH/9PCKn
-	YAmmV
-X-Gm-Gg: ASbGncsdw8b/LpLBL9qhtCXeKj+karqlr2orUqCIDUumsvB342wad5B+vK7fY02jV+F
-	sIQ6gmRXc5mH8brHa5umvLnVnLSORbJR/L0XSmm1rplGyiltvF6VWtxiTy/grnNMAaACKsuaAmg
-	afdJLXjT/QxxaI6KpMlLpP3tOvvxwBe3OS6wkt2I37eQGWICfVLcugl+tJODWMzgujxWEbgY93Z
-	8rDW3gq+0xkkrzh9QNnJg/5UWP832694b8l+FRU1/64xCv7hu6WBKBEsaLw+X791Rspdz8RFWnJ
-	zqUM0sDJgugKRWq9+zEBFQ48cGaYa+D1njXmK+goAhdJam2Lrgl27bBsLULkwvQbWUNHhvl9XLR
-	qCI5o/m1JpKNw8VHn
-X-Google-Smtp-Source: AGHT+IF/Tn7qsT/1Jxe49adJo96DalDTdOWc8B3fEyNHpfqKbFemI5JWXWrrjJ0t7rZTxka02zfetg==
-X-Received: by 2002:a05:6e02:1aa9:b0:3e5:66a6:a46a with SMTP id e9e14a558f8ab-3e6d7571f81mr36270865ab.17.1755786014322;
-        Thu, 21 Aug 2025 07:20:14 -0700 (PDT)
-Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e58c1basm73196595ab.5.2025.08.21.07.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 07:20:11 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 8/8] io_uring/zcrx: add support for IORING_SETUP_CQE_MIXED
-Date: Thu, 21 Aug 2025 08:18:08 -0600
-Message-ID: <20250821141957.680570-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821141957.680570-1-axboe@kernel.dk>
-References: <20250821141957.680570-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1755788594; x=1756393394;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NlYkbxi7DFW6oY2NRpdpDsqyhyO6hkcK+DM6dtjAz2U=;
+        b=TA0EP9SefNFOxYAaCbb2WujeFPBRZybBHEHlytEtQYLMPXcVCTft6trPhq4hfstJPV
+         3i57qNA2nsJ6/knwa3Iam5ER+r7kXoKI+E25BTIzKyd7jrgD4EHE5XnUHkLI0Sb2lxkT
+         /s3wmJdZhercWbeflblF2FvfXICI0G4Dvw1zsgZUCI5Owq5qGoeINL4xH8Qwc/QlXa3e
+         62txXXj1sdMhUU8lAtUMF34s8aAO4hCtOnm8UuCfmG85+jA4KM4uV6TDxZjSUFL70YKJ
+         XCxiYbLdoes/WXwcEgAU1ZANBglOFrbs2dA4bfC3REBqCG52WpmFtNZQ+yRpysZi7bJn
+         FJWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpRZGOappg9ZuqrCHjrD5/8M2LM9pNV56Vv6IPwNvDvLeLmknfHtWTu/RNTvr703NLIPh2mS79Lg==@vger.kernel.org, AJvYcCW6NWVogKqQL/2BTdXkdBvyATisg+g9aWcWTeFlyDZInIOZOBnd1wjp5ms6Y1EFgcThb6TAu3dG4Y6HQMxp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBtDonyRk7ZHlAVy7WxtE+rVLfqB/WmHWDFheqBHliukHBWce0
+	67Z0KgYRzlOEVm0DDXznPmd+feKvLhSkWCvarP79ukQmL6sMjtnZ5FHq
+X-Gm-Gg: ASbGncue6CBYxfmDtrcSdzAcahYgxtt29qBbJqrjMNjUv20k+sCwANhkNKrtkgp77dP
+	x1vcTrDX82wjkjRPH6reFQ+WasXS3UdSbP9w8ytSCECMyiR+XB7RgIzjl7G7uREFlsctNnD8Z85
+	wzUa9q3CFm1iwLjGbktNsL0Bvb8D5sGNw0B0maqk0cVsYmZ77mkVu75DB+sgDNsJt2J8zoN327x
+	1XNeAHBGQIVCAtBxOJIcAqDuff8mCk/AK6qzlhJHIVytrqv68Bgzq6gO0IWqMRIWIbq0/w4x/Qb
+	eJh9CD7PShxnXtvH2oIZR5BgZCEU7rRR0TPf3n0kZ4sr4JVQWrR48ot6FlW9yNWhuiGlxKQe/ih
+	m1VUA5xCzlca9r4cWB/eR2icjI//IgzmW
+X-Google-Smtp-Source: AGHT+IFDyzgm5SmuBDn9kus3exbU+SN8MuIf0hWHhWlqlJvBcwpLtZS48R/L1NwfWLBBp8JbB/tm1Q==
+X-Received: by 2002:a17:906:4794:b0:af9:c31c:eeca with SMTP id a640c23a62f3a-afe07c232f0mr252067766b.48.1755788593498;
+        Thu, 21 Aug 2025 08:03:13 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.133.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded307138sm406142966b.45.2025.08.21.08.03.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 08:03:12 -0700 (PDT)
+Message-ID: <52a6f5d6-ce59-45a8-9271-5c6248d5b90d@gmail.com>
+Date: Thu, 21 Aug 2025 16:04:21 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
+ buffer providers
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Willem de Bruijn <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <cover.1755499375.git.asml.silence@gmail.com>
+ <20250819193126.2a4af62b@kernel.org>
+ <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+ <20250820183711.6586c1c6@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250820183711.6586c1c6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-zcrx currently requires the ring to be set up with fixed 32b CQEs,
-allow it to use IORING_SETUP_CQE_MIXED as well.
+On 8/21/25 02:37, Jakub Kicinski wrote:
+> On Wed, 20 Aug 2025 14:39:51 +0100 Pavel Begunkov wrote:
+>> On 8/20/25 03:31, Jakub Kicinski wrote:
+>>> On Mon, 18 Aug 2025 14:57:16 +0100 Pavel Begunkov wrote:
+>>>> Jakub Kicinski (20):
+>>>
+>>> I think we need to revisit how we operate.
+>>> When we started the ZC work w/ io-uring I suggested a permanent shared
+>>> branch. That's perhaps an overkill. What I did not expect is that you
+>>> will not even CC netdev@ on changes to io_uring/zcrx.*
+>>>
+>>> I don't mean to assert any sort of ownership of that code, but you're
+>>> not meeting basic collaboration standards for the kernel. This needs
+>>> to change first.
+>>
+>> You're throwing quite allegations. Basic collaboration standards don't
+>> include spamming people with unrelated changes via an already busy list.
+>> I cc'ed netdev on patches that meaningfully change how it interacts
+>> (incl indirectly) with netdev and/or might be of interest, which is
+>> beyond of the usual standard expected of a project using infrastructure
+>> provided by a subsystem.
+> 
+> To me iouring is a fancy syscall layer. It's good at its job, sure,
+> but saying that netdev provides infrastructure to a syscall layer is
+> laughable.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- Documentation/networking/iou-zcrx.rst | 2 +-
- io_uring/zcrx.c                       | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+?
 
-diff --git a/Documentation/networking/iou-zcrx.rst b/Documentation/networking/iou-zcrx.rst
-index 0127319b30bb..54a72e172bdc 100644
---- a/Documentation/networking/iou-zcrx.rst
-+++ b/Documentation/networking/iou-zcrx.rst
-@@ -75,7 +75,7 @@ Create an io_uring instance with the following required setup flags::
- 
-   IORING_SETUP_SINGLE_ISSUER
-   IORING_SETUP_DEFER_TASKRUN
--  IORING_SETUP_CQE32
-+  IORING_SETUP_CQE32 or IORING_SETUP_CQE_MIXED
- 
- Create memory area
- ------------------
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index e5ff49f3425e..f1da852c496b 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -554,8 +554,9 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 		return -EPERM;
- 
- 	/* mandatory io_uring features for zc rx */
--	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
--	      ctx->flags & IORING_SETUP_CQE32))
-+	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-+		return -EINVAL;
-+	if (!(ctx->flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)))
- 		return -EINVAL;
- 	if (copy_from_user(&reg, arg, sizeof(reg)))
- 		return -EFAULT;
+>> There are pieces that don't touch netdev, like
+>> how io_uring pins pages, accounts memory, sets up rings, etc. In the
+>> very same way generic io_uring patches are not normally posted to
+>> netdev, and netdev patches are not redirected to mm because there
+>> are kmalloc calls, even though, it's not even the standard used here.
+> 
+> I'm asking you to CC netdev, and people who work on ZC like Mina.
+> Normal reaction to someone asking to be CCed on patches is "Sure."
+> I don't understand what you're afraid of.
+
+Normal reaction is to ask to CC and not attempt to slander as you
+just did. That's not appreciated. All that cherry topped with a
+signal that you're not going to take my work until I learn how to
+read your mind.
+
+https://lore.kernel.org/all/bcf5a9e8-5014-44cc-85a0-2974e3039cb6@gmail.com/
+
+When you brought this topic before, I fully outlined what I believe
+would be a good workflow, and since there was no answer, I've been
+sticking to it. And let me note, you didn't directly and clearly
+ask to CC netdev. And I'm pretty sure, ignoring messages and
+smearing is not in the spirit of the "basic collaboration standards",
+whatever those are.
+
+>> If you have some way you want to work, I'd appreciate a clear
+>> indication of that, because that message you mentioned was answered
+>> and I've never heard any objection, or anything else really.
+> 
+> It honestly didn't cross my mind that you'd only CC netdev on patches
+> which touch code under net/. I'd have let you know sooner but it's hard
+
+If you refer to the directory, that's clearly not true.
+
+> to reply to messages one doesn't see. I found out that there's whole
+> bunch of ZC work that landed in iouring from talking to David Wei.
+
+The linked thread above indicates the opposite. 	
+
 -- 
-2.50.1
+Pavel Begunkov
 
 

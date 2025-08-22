@@ -1,142 +1,120 @@
-Return-Path: <io-uring+bounces-9240-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9241-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A1DB30B86
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 04:07:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52280B30B90
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 04:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC9D188A501
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 02:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E8A188F2C8
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 02:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D0D1E47B7;
-	Fri, 22 Aug 2025 01:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5960233E1;
+	Fri, 22 Aug 2025 01:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwCb0/jz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yBXnzYec"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99ED1B4156;
-	Fri, 22 Aug 2025 01:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B231B0437
+	for <io-uring@vger.kernel.org>; Fri, 22 Aug 2025 01:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755827965; cv=none; b=gOloCEIf5slDyB0nq4UiZBmIR+SZtKD80AVFfc1aKwVXZuk7Nc25/rcT0EehgxZUmLFslDIDK/Fv1swc6kXvDDQM+cQCnDSaDv5zLa3eCcV29bhiUT86c8tjzjvB5mwEg2X7/bJ9PYv6hcnDLE6nkkWfbe9ALgBCDME2OdF16ZA=
+	t=1755827966; cv=none; b=o0DCafBqt6Zkp4KBqW8+X9yF/hQ3BtyjSTv+vC8o/afZ+F1J3FtHeYRQ2oTczX/MK/nUAHvvz2+BvZZM/qZJXflvuxN0lBbDv0M43KS+2HDFKqSjP6P2Ce74uc43F8TyhZiPl/ot0g1NqfdlU51NKgKXPFg2GRPOTzBGU1dYrnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755827965; c=relaxed/simple;
-	bh=hEGBgFk9rer7lwQXMpzjj4FPsIa17LEhE/UyLSIHv80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c7mw/MYtK8gw5msnfyOehRtMPC8qkxC4SG+uYmQUopL000ai/rTcVLEmSODQeFN+lzRAqUQxzGUaBKqxxBtj7dN1aAQzBAV+oFg9ztcBhF07G7wniQa9/o+coSt3qaBTjwTL8UkoAgoOgDbUq9sSObT3yf35UiEDZC76BEsJlS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwCb0/jz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0940C4CEEB;
-	Fri, 22 Aug 2025 01:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755827964;
-	bh=hEGBgFk9rer7lwQXMpzjj4FPsIa17LEhE/UyLSIHv80=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fwCb0/jzIQkNPwEVBU6dtHyOVey66bf/HcR/iNP6aS0AhxrgrvMe34HD6vjnkGUZf
-	 z1O8tLkMNZpr+UzcBZV9dLBbBCwOaf+NQwl5ntySvGabL1KCpUaRFv+wfDydW+poVi
-	 X5XvF2zmqSX16ZKS+hqRP+DFJCxEdKcM7wYo6L7tOqHJI3XrYsnweALvOp8+KSqJnD
-	 2bWhxr7953gGHvjXyBJUoUfk/Lgb2omKSw1C8cEO/Qv3yAqSEKl2XaKQVhYluUWO/h
-	 UsLkNxPauxpS9RjmwleNolFzOVx4bdRBpqA+ZD7ACyej3l0Oe7T142W2dhwsBnQaC9
-	 DSd2Q1+ARL+Zw==
-Message-ID: <3812ed9e-2a47-4c1c-bd69-f37768e62ad3@kernel.org>
-Date: Fri, 22 Aug 2025 10:59:15 +0900
+	s=arc-20240116; t=1755827966; c=relaxed/simple;
+	bh=ZhJAlxN/zK2CTtWQrzyMCAXtn2zrVhFB9PSH+2r7W0g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jVCDHMcOtC4tM2ubpkQE2fdqb8cWT8e6NvCLiBCqD09KRuliXWbyeJlNm8m4LOQ4KdipOJajOWfVKSqMbVDcsLXrEPbfVFlSZJ2m8CLc3Wukdt1QdqU7TkVRKS8FjV9AtLnlbVLsIOiNhkg8murgY48O5JFet+MFQDoA6A0W1Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yBXnzYec; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b47173749dbso1133130a12.1
+        for <io-uring@vger.kernel.org>; Thu, 21 Aug 2025 18:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755827962; x=1756432762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W3ExG9+05vu/oFJsYb9+SXD6pfJ3edq8ts3LpfwXibE=;
+        b=yBXnzYecCbsD9qVbl0JT8IPbMCYMTRpya8MkujPnWWUgoLwWJxj2Nx/zmcNoJnXZ39
+         GDSD61GNPU7CnPIqZYeVsOR3d720nLObZPlYMuVRlNJ/xGBti4dEbi7xAe4t+SFn+CCI
+         cPE+5P6ZDIdooV8pZ9O0/027GejGDOMxeOOQz6ynQ9FtYCT5RPjMvprEWfxUFvLyRaTw
+         wb2zxdP7j5eD6XUvBK735nnRmf6QqSqSF1BPhaGqCDmyc09m6Ui805mr7S/Ef8kB35zS
+         WBk7ihLFRafdaSVcvP9p9XswPxTjEffxETNhtH9lux04bjAHwB5RIyMlwD78cUaz2hC3
+         o9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755827962; x=1756432762;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W3ExG9+05vu/oFJsYb9+SXD6pfJ3edq8ts3LpfwXibE=;
+        b=KbmHK3xJg4A7jN44lh8xvb9ke9SYcYx4XLTRWbynfCWOOFxMjMCuYP+VtKpSvd2QrT
+         AqUfdAMPHpYXBCkLV/QqASOm/RGlQrnIzp3thWnbTZCWzJmkqIONPHxeakhzyZZelBj3
+         D4A8m6Uyteg7P4Ral+Rj0PG1tn3P2xlhCDMLpe18i1C3vS66BbAUIKdnYO6tUmBnhyNv
+         4wMO7Q/4uFVcVQFB3KfBng6KHQ07XJ1p4eRRooMaVPt8z7qUAwGcNI0TEX1ZOEYoDgZQ
+         z13ogSZa+wTi/Jps8fg/EvhCVsSDTxRmaEUqWsrQUjrjtJCwZ3jUp/z9sin2VHsHzThj
+         qZFQ==
+X-Gm-Message-State: AOJu0YydXJzqE7fFCwVk28DPNz9sQWxz+V7LqPj10X/Lwh9xl0+0nKKL
+	Pw8fM5jtp79piNIfCm2prz5P0K31LoXaBv71LHLOq88naRrw5QLSiHjlxEakBbM6AbEBLLYQHVG
+	F6M6d
+X-Gm-Gg: ASbGncsCQuDzYQ543bW/0wEN8wRYtZ7XaC1k5PkRufbhFvocMTYVSIAT7xSQUIDZdHZ
+	23C9lNBnFdtgWC7DvGrkMy6bvkqOlAn1bmQLXBPWPLm+DSk/7s1pBFKOGvI/OqW2slzaEhNYO2i
+	rnCU+xUfbzc3LFotnDKRid7MDYKg0ZPiM8xo0CPGY9ajS/SBYKFPYNQQyFwRtvAmWGhVmOtG5vg
+	ex2GQgIMOa7AXnp4aTwY7gghQ4sS0pKEqhE0Irh6k+p8CgaUxHNmoWEoN6d3mHgDj435aHY2+kS
+	sdy5sx0u8aCr76NiF4YdlEFOOkX8y7hTQWwSFATwsWm5bsTZb6eDGKQqNzSwaCaLEX0mIIm0XaJ
+	yhQmWSxqX1jeYg50=
+X-Google-Smtp-Source: AGHT+IFfJ758VzziKxo1LH6p348AzxFpggFcNVv3XX6Qyrvk52t3xmcSP2GFRO9m8yLtkzlCdqomIA==
+X-Received: by 2002:a17:903:38cd:b0:240:3c0e:e8c3 with SMTP id d9443c01a7336-2462ef8580emr16804435ad.51.1755827962242;
+        Thu, 21 Aug 2025 18:59:22 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4e979csm67568145ad.103.2025.08.21.18.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 18:59:21 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Ming Lei <ming.lei@redhat.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org
+In-Reply-To: <20250821163308.977915-1-csander@purestorage.com>
+References: <20250821163308.977915-1-csander@purestorage.com>
+Subject: Re: (subset) [PATCH 0/3] IORING_URING_CMD_MULTISHOT fixups
+Message-Id: <175582796116.874791.3708590590013164582.b4-ty@kernel.dk>
+Date: Thu, 21 Aug 2025 19:59:21 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 24/35] ata: libata-eh: drop nth_page() usage within SG
- entry
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Niklas Cassel <cassel@kernel.org>, Alexander Potapenko
- <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
- Zi Yan <ziy@nvidia.com>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-25-david@redhat.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250821200701.1329277-25-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On 8/22/25 05:06, David Hildenbrand wrote:
-> It's no longer required to use nth_page() when iterating pages within a
-> single SG entry, so let's drop the nth_page() usage.
+
+On Thu, 21 Aug 2025 10:33:05 -0600, Caleb Sander Mateos wrote:
+> One compile fix and a couple code simplifications for the recent series
+> adding support for multishot uring_cmd buffer selection.
 > 
-> Cc: Damien Le Moal <dlemoal@kernel.org>
-> Cc: Niklas Cassel <cassel@kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/ata/libata-sff.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Caleb Sander Mateos (3):
+>   io_uring/cmd: fix io_uring_mshot_cmd_post_cqe() for !CONFIG_IO_URING
+>   io_uring/cmd: deduplicate uring_cmd_flags checks
+>   io_uring/cmd: consolidate REQ_F_BUFFER_SELECT checks
 > 
-> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-> index 7fc407255eb46..9f5d0f9f6d686 100644
-> --- a/drivers/ata/libata-sff.c
-> +++ b/drivers/ata/libata-sff.c
-> @@ -614,7 +614,7 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
->  	offset = qc->cursg->offset + qc->cursg_ofs;
->  
->  	/* get the current page and offset */
-> -	page = nth_page(page, (offset >> PAGE_SHIFT));
-> +	page += offset / PAGE_SHIFT;
+> [...]
 
-Shouldn't this be "offset >> PAGE_SHIFT" ?
+Applied, thanks!
 
->  	offset %= PAGE_SIZE;
->  
->  	/* don't overrun current sg */
-> @@ -631,7 +631,7 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
->  		unsigned int split_len = PAGE_SIZE - offset;
->  
->  		ata_pio_xfer(qc, page, offset, split_len);
-> -		ata_pio_xfer(qc, nth_page(page, 1), 0, count - split_len);
-> +		ata_pio_xfer(qc, page + 1, 0, count - split_len);
->  	} else {
->  		ata_pio_xfer(qc, page, offset, count);
->  	}
-> @@ -751,7 +751,7 @@ static int __atapi_pio_bytes(struct ata_queued_cmd *qc, unsigned int bytes)
->  	offset = sg->offset + qc->cursg_ofs;
->  
->  	/* get the current page and offset */
-> -	page = nth_page(page, (offset >> PAGE_SHIFT));
-> +	page += offset / PAGE_SIZE;
+[2/3] io_uring/cmd: deduplicate uring_cmd_flags checks
+      commit: a9a2fe50a46df5a494811dd3840ceaa652e79c9e
+[3/3] io_uring/cmd: consolidate REQ_F_BUFFER_SELECT checks
+      commit: ae6b528ace2fa1d0ed3daebbb39f76b9c7133861
 
-Same here, though this seems correct too.
-
->  	offset %= PAGE_SIZE;
->  
->  	/* don't overrun current sg */
-
-
+Best regards,
 -- 
-Damien Le Moal
-Western Digital Research
+Jens Axboe
+
+
+
 

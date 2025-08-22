@@ -1,62 +1,50 @@
-Return-Path: <io-uring+bounces-9267-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9268-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3FDB320FB
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 19:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFADB32109
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 19:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9109DAC7333
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 17:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5264A1D60824
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 17:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE66285074;
-	Fri, 22 Aug 2025 17:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49933128D2;
+	Fri, 22 Aug 2025 17:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/RxlEh5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSplAPAb"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBBCC2D1;
-	Fri, 22 Aug 2025 17:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444CC312802;
+	Fri, 22 Aug 2025 17:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755882140; cv=none; b=Qziv/BNaOnwcfj0KWV7sr6xHjMqXjN6olVdrWEWwir0DivwV/48rtgGCJX38obJ51eMv1yiR27JRIwFnm7L9QKptV1k16Fup9r6Lx8AMN2IVbImn1zxIS3v9nd8ZwoeDa6s6DSUPrBRaO22ie3hqzPkXbqLS40CzJtb2LhtCCSc=
+	t=1755882469; cv=none; b=oK1zHiIzrhSOspR+0B4eMECAi/HhhMR7O0QGF8c4crZur6t6uo93t0VpvKOQSQ6tqp3vD+ecBoJ9rK2eWYjMNF6kPGqd1zGepZ4cQWICVMGefR7FCpNkYiZYXXR7Tlb1NTRGExsMxyjsABqc1/97N6V0MBA82ivCWaG10qsf2z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755882140; c=relaxed/simple;
-	bh=N43GnKy17u3pJmuxA0B+CvRzCGT4IjO9pWdh50KAxp8=;
+	s=arc-20240116; t=1755882469; c=relaxed/simple;
+	bh=vZLAjgh0rHfPoMdjN4T/8EdoC5/y95Yj/31fEqm5lgA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o+JK/CO8sbSnwmCSSoH1tDbcvxkQFBA2qk2wuQCgulwaFkcrAAmkdkpGSqJGlAlMowfI4a1bXL1+XKcV/o1umi84tY5HokDDyUJhfbqqrzsazQKkJAf/2kLI4EM8WKBO5J36Jsj4Jy4TYMf7Otn/MbEUTPA9YI7Wy4p0ty/t7Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/RxlEh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EA9C4CEED;
-	Fri, 22 Aug 2025 17:02:19 +0000 (UTC)
+	 MIME-Version; b=Z3fHJU6pTKNk6CdzkHGzCZr1c6A28Lx5XDeC1JTKxJQEybE92VdunBr/b6c0ZgJ28l7d3QVDhI7Ltb0bIEyj4YYNhKFHFhwLrEbz0mOQ2eB0VoAjA9JyMg+lNjzaWww1FlYU31Xpz+7qSRxznNhFRJd/w+MjzUJnC3n2ki2hzTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSplAPAb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD1D1C4CEF4;
+	Fri, 22 Aug 2025 17:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755882140;
-	bh=N43GnKy17u3pJmuxA0B+CvRzCGT4IjO9pWdh50KAxp8=;
+	s=k20201202; t=1755882468;
+	bh=vZLAjgh0rHfPoMdjN4T/8EdoC5/y95Yj/31fEqm5lgA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X/RxlEh56SJyKzLLReKVy9zMR7Rn10sDZ2qGXdgaqLeUy++5vRLbAaO8F1sq4dW3A
-	 FVPFAm1E1KDu+9/CVB8PArKdY0HRrXTU0L7mEy3QGm8oDmYlvLcPGrEnt/PdkJ5xtS
-	 WPwGxZiqHYuwlyrYRxRwfpMchkAzSUix0wgYLGwYkH8uFDFTTyuMLp6fHc+1uXHfs8
-	 s+X5+H1F8hdQ3OyIBGTgvD5OcC7RDayM3+Gr4vyGqAtfAsaEK49eudKcHbm56kC8gk
-	 8jVNP2cdHpsMgjezsa0xbQw1c8LogFjCAJQgvfQ9Um93+KYDxx0kQzjtsDqYPIARCs
-	 dvKAxgTXqd2AA==
+	b=fSplAPAbcqCwXrc73KaBOQNzaayHHHryXHEfz/QvCIP5+OLUcuUqhayGQU30an1Hx
+	 YGDC2ch0190J8ZS7lR1jUdP6OQwlEiLMILXs/CkC/SlPI/9/wAF5EXwIZ0nb0Uecnj
+	 UA9Ha7hLdu3BvCtDoUnTti40P6RP3bVkvwZuA5UDhaj8Dob3g32dp2vkLL6LUz2Uga
+	 JrNca6OOm6CtiYGSnyjbJHFyuYTMa9sirnIIEndUMU2kE26IZfHRAqBcN1+HEuWJKI
+	 iH1nd0618aV38WN9VJmQt9ibmxV/jw/X7xirOs3F2GwN8kBuIL5KMKravrNObUYubi
+	 MyQ+vWsMpUjxQ==
 From: SeongJae Park <sj@kernel.org>
 To: David Hildenbrand <david@redhat.com>
 Cc: SeongJae Park <sj@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
 	Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
@@ -103,11 +91,11 @@ Cc: SeongJae Park <sj@kernel.org>,
 	wireguard@lists.zx2c4.com,
 	x86@kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 01/35] mm: stop making SPARSEMEM_VMEMMAP user-selectable
-Date: Fri, 22 Aug 2025 10:02:17 -0700
-Message-Id: <20250822170217.53169-1-sj@kernel.org>
+Subject: Re: [PATCH RFC 06/35] mm/page_alloc: reject unreasonable folio/compound page sizes in alloc_contig_range_noprof()
+Date: Fri, 22 Aug 2025 10:07:46 -0700
+Message-Id: <20250822170746.53309-1-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821200701.1329277-2-david@redhat.com>
+In-Reply-To: <20250821200701.1329277-7-david@redhat.com>
 References: 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -117,45 +105,18 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Aug 2025 22:06:27 +0200 David Hildenbrand <david@redhat.com> wrote:
+On Thu, 21 Aug 2025 22:06:32 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-> In an ideal world, we wouldn't have to deal with SPARSEMEM without
-> SPARSEMEM_VMEMMAP, but in particular for 32bit SPARSEMEM_VMEMMAP is
-> considered too costly and consequently not supported.
+> Let's reject them early,
+
+I like early failures. :)
+
+> which in turn makes folio_alloc_gigantic() reject
+> them properly.
 > 
-> However, if an architecture does support SPARSEMEM with
-> SPARSEMEM_VMEMMAP, let's forbid the user to disable VMEMMAP: just
-> like we already do for arm64, s390 and x86.
+> To avoid converting from order to nr_pages, let's just add MAX_FOLIO_ORDER
+> and calculate MAX_FOLIO_NR_PAGES based on that.
 > 
-> So if SPARSEMEM_VMEMMAP is supported, don't allow to use SPARSEMEM without
-> SPARSEMEM_VMEMMAP.
-> 
-> This implies that the option to not use SPARSEMEM_VMEMMAP will now be
-> gone for loongarch, powerpc, riscv and sparc. All architectures only
-> enable SPARSEMEM_VMEMMAP with 64bit support, so there should not really
-> be a big downside to using the VMEMMAP (quite the contrary).
-> 
-> This is a preparation for not supporting
-> 
-> (1) folio sizes that exceed a single memory section
-> (2) CMA allocations of non-contiguous page ranges
-> 
-> in SPARSEMEM without SPARSEMEM_VMEMMAP configs, whereby we
-> want to limit possible impact as much as possible (e.g., gigantic hugetlb
-> page allocations suddenly fails).
-> 
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Alexandre Ghiti <alex@ghiti.fr>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Andreas Larsson <andreas@gaisler.com>
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
 Acked-by: SeongJae Park <sj@kernel.org>

@@ -1,51 +1,54 @@
-Return-Path: <io-uring+bounces-9262-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9263-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7ACEB31E3E
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 17:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DCFB31E08
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 17:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D9EB40D8F
-	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 15:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A60D564328D
+	for <lists+io-uring@lfdr.de>; Fri, 22 Aug 2025 15:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CFB1DF99C;
-	Fri, 22 Aug 2025 15:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8408B1E2853;
+	Fri, 22 Aug 2025 15:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfKWAMlW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRecik1R"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83861DEFE6;
-	Fri, 22 Aug 2025 15:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E2C199223;
+	Fri, 22 Aug 2025 15:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875443; cv=none; b=eYzWTXRpgeqbfKLfOguIE0YzRbCgjW7rXJhAa/6AED2wUe0lZnXmDBGEIhNdDWRNfys8QVQaJdUhzDTh86Uhew6hYlMZraPmMcKbRstxjRSmdwGt/B5w5muVABCHG+sr0fM/zYAuUfxkBmImDSuNAiXDGwLeZm045uAQVDvqaE0=
+	t=1755875495; cv=none; b=QUwrP2qUQcdgY+sznQsS3EKgBcPZc02ROX3mXGxorgcdgf5mq8IZy1mrJ7RNM2tDVBe/YTbtKkZtry521/nByAn+jKU3QARfT2rjTwDOlvJ1o+jeXRzffu/S7l7tkJUU4E66g08+4WfuuEl2UHdA5IXVeBysqYb9CHSnEGKO2Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875443; c=relaxed/simple;
-	bh=CAY5DlsOHyGeAuJSXFXVAByj59QIAOw2AekVjj0R+b4=;
+	s=arc-20240116; t=1755875495; c=relaxed/simple;
+	bh=rc5zcs7H/rwUO91qIX5/bnlTkYSpGUvTxw3AvvnVpgg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igpl4qwFxCCvB9JAWu67+HRh2kHPLpmIEQs1M+WvcoC9phHOVSYipMqQ8vD0SSPXF64hYeH2NYcumn+mphsL4Yp3njjQ6fl/QbIoWZwEq+wREopxUtXQfpZqzjrBy/Y50ReJPQFsXbA5tFeLLf+92Ljs7M+dt5iiBNZIJBvNaiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfKWAMlW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA78EC4CEED;
-	Fri, 22 Aug 2025 15:10:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmSeR55d0/KhBMK2QLkbThobynqHoba5eZnK1JcnDvLMRRQVtCw2ScRbuRRu7XGBFHttRjQrfPphtZtFqwgHL4fGAANG/WegMdWs4haCw3YqtoqpEGHdhlaO4gIX7/K3xa1Dqsju9NBPCkzHgvA6YVK/N13QD2obaauqER6X0c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRecik1R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F592C4CEED;
+	Fri, 22 Aug 2025 15:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755875442;
-	bh=CAY5DlsOHyGeAuJSXFXVAByj59QIAOw2AekVjj0R+b4=;
+	s=k20201202; t=1755875495;
+	bh=rc5zcs7H/rwUO91qIX5/bnlTkYSpGUvTxw3AvvnVpgg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MfKWAMlWZSLolf5Er8IdYEE5zQV86o5SRIWNfuGwAevHaro0KNr+O0AUudzUFXmc3
-	 fsRmTkuzMKyOWmo+8Ib/4pg6uAO607N85i/ZR6XdaP13USRH/bc4QgbG247YDVGntr
-	 dIuimCsUgCJa1CldCgolX2CMa2bqt+CMes53Pgq69q6mqbsJBHuaoP74dMUUlUNsww
-	 SqsEK32SbicopH2MuZVGLxcSstv41b7vIfL/1490jZeCkzm9ukqxF1GXRENu39XO4p
-	 GF/7+asbsxkyC7LQAOGokPKRMO8cxy0hNc1JtEMo2NFHS86o6qSj3ySEtrOWX+tEVg
-	 yHfXvZ0oyq//A==
-Date: Fri, 22 Aug 2025 18:10:24 +0300
+	b=bRecik1RzOUe7VdTvcc0EcLADz/mKysoydFvtTn4cfOEbzFak66IoD8RswcXIl++W
+	 0JrxrhU6r8rw3Rel5dqU8nYGlVw/2R4GMYdlnsDBOb0uCL2XHxwEJUUyalZseg+HbP
+	 ojxZNI9JDYfBXowD+zk2cDjkd/X2gLPj2YAMAFQrqAiVt67gixZc2zUWEIs1PEFEnh
+	 u/54dc2/F5+HgoL/3u8WAtJfXS1fic7KNsc1oDRVsP0U8C+smARqERYGhyzCH9Dh7c
+	 YOJX+I+90OjDlMTGi/6ZeV8dheyMuNVGakKdZ62M1XRu7XMwWJbBU4054PZh/HiG9z
+	 LoqbRJKMrdvRw==
+Date: Fri, 22 Aug 2025 18:11:15 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
+Cc: linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
 	Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
@@ -72,11 +75,11 @@ Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
 	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
 	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
 	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 02/35] arm64: Kconfig: drop superfluous "select
+Subject: Re: [PATCH RFC 03/35] s390/Kconfig: drop superfluous "select
  SPARSEMEM_VMEMMAP"
-Message-ID: <aKiIYJoshnWwrJQ3@kernel.org>
+Message-ID: <aKiIkwzNoJudCNLz@kernel.org>
 References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-3-david@redhat.com>
+ <20250821200701.1329277-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,36 +88,40 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821200701.1329277-3-david@redhat.com>
+In-Reply-To: <20250821200701.1329277-4-david@redhat.com>
 
-On Thu, Aug 21, 2025 at 10:06:28PM +0200, David Hildenbrand wrote:
+On Thu, Aug 21, 2025 at 10:06:29PM +0200, David Hildenbrand wrote:
 > Now handled by the core automatically once SPARSEMEM_VMEMMAP_ENABLE
 > is selected.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  arch/arm64/Kconfig | 1 -
+>  arch/s390/Kconfig | 1 -
 >  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index e9bbfacc35a64..b1d1f2ff2493b 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1570,7 +1570,6 @@ source "kernel/Kconfig.hz"
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index bf680c26a33cf..145ca23c2fff6 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -710,7 +710,6 @@ menu "Memory setup"
 >  config ARCH_SPARSEMEM_ENABLE
 >  	def_bool y
 >  	select SPARSEMEM_VMEMMAP_ENABLE
 > -	select SPARSEMEM_VMEMMAP
 >  
->  config HW_PERF_EVENTS
+>  config ARCH_SPARSEMEM_DEFAULT
 >  	def_bool y
 > -- 
 > 2.50.1
+> 
 > 
 
 -- 

@@ -1,52 +1,50 @@
-Return-Path: <io-uring+bounces-9273-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9274-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982C1B327D6
-	for <lists+io-uring@lfdr.de>; Sat, 23 Aug 2025 11:01:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DA2B33011
+	for <lists+io-uring@lfdr.de>; Sun, 24 Aug 2025 15:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8866F1897B1E
-	for <lists+io-uring@lfdr.de>; Sat, 23 Aug 2025 09:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD921B22976
+	for <lists+io-uring@lfdr.de>; Sun, 24 Aug 2025 13:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D334123D7E1;
-	Sat, 23 Aug 2025 09:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA2E2D7387;
+	Sun, 24 Aug 2025 13:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOGkWtsU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SquWihWK"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E76D23D7DB;
-	Sat, 23 Aug 2025 09:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3D2393DE3;
+	Sun, 24 Aug 2025 13:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755939608; cv=none; b=dXrcrm8x496Q3BhRjfrSmPxOp10jyaAinCDl3BOpaKl4l+/KIdn03FlNPqs4ilQwhpbkb1umSvHME8OQCqxgTBWu6J9I6ZNqPiOMmDX8eAlzyh0aihrJAqHvO4mdNnbvAhsTDi8I3jWTrPbOxPZH6geh1gylc1FrKylxVqK3u/M=
+	t=1756041880; cv=none; b=VP4If5ozBuciAvANxGkykqsy5cYI2s6CmQASw/YAAqldG3NPH1K2d8y3nT03z1xK/Wn/MdvkrTaq9qUZlXEUCoD/40poqJi68er6jh1Yub3tFG09ifLIjjzfKO3xKSDjiNqtrp20Ba01qgIiuANRSB3rkS3y4AFOqGTT5lYPJG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755939608; c=relaxed/simple;
-	bh=aU4s6rL8qphUf3ASSPtkvFhSbnF7KQL/5p/AkB6ZkD0=;
+	s=arc-20240116; t=1756041880; c=relaxed/simple;
+	bh=ULWSWvx5qOQocuXhhEVwmUdZJ/jQrpo8zzXV1kr+XYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUiIZIYSWxXBZ5vRjGUYEEVuNZoE907Mj7xmlK0WI1X4JtxeY1DqQqbAdzGyW4/Z7FamBh1rsXSz4dWNDT3q2Kr3UKbvUHrj1Iy0hTwIUfXEXhZ3TQ/mFBTJvm62+sgrlBm20EoYf5Qy3vfRayfDYY7ra+nyEcnfmQZeCMVMYks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOGkWtsU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35E6C113D0;
-	Sat, 23 Aug 2025 08:59:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ull+/HlBVmEZZhKNv/0sF3Fn0DS7SlawRmd45WFjUcqhk6vXZn+ZJRH0gdfvL+szbq3qH/vrNmxBQiRIDrUmnj5odiEMPyrVd8IVLdTS1jYwx3VQgA/2P1BdSidVqMXbvEYDwQ5VAJulrtq5kSIboWrVEqZwW0XH9JdD3c5I0ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SquWihWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4638C4CEEB;
+	Sun, 24 Aug 2025 13:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755939608;
-	bh=aU4s6rL8qphUf3ASSPtkvFhSbnF7KQL/5p/AkB6ZkD0=;
+	s=k20201202; t=1756041880;
+	bh=ULWSWvx5qOQocuXhhEVwmUdZJ/jQrpo8zzXV1kr+XYk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOGkWtsURQmqeVJWZZ8QU1TwZHK57H1RHXwc/i48rhECw+oAVRa4mF0zfqNM3aJ7b
-	 K4ufsfNlCAWHsLgknGRRJAM8fAg49ifByU7aHcJpd60KD5n2ftLsVEjekOSHSO2hKf
-	 TyNgVi/IP/sZ+Zv1HQC39pwpdaVXtYVat6Ea2uqdZXF6QBRAllDzvBMajMv+E6mXfL
-	 wV6BxOvsD2NYhNSk4hF0URYans98VMn0JY+kTDajsHLCy41MHKhsR0ynwpYDfvi23F
-	 uDIHwC7s5hdPOSqfKNvqn2djgrkhoLcYMLwZ0RX2xL3FelT1nsv2lD+CEaDl2f3oOX
-	 wFjm0sW7YW4bQ==
-Date: Sat, 23 Aug 2025 11:59:50 +0300
+	b=SquWihWK3f+VpRPVHREvb/KU1Ip2U18TP7N1MuJITOAx4rQrPZH3cvqtkOP5SvK7q
+	 i6NO1TPVUbZk8RWkAk3LTCsFqBTBZ14HIKev8nasvhFuIsLkIUiO3cKzio2Q51II/F
+	 wyed5FtAlddWEWPif7U0YGP0VU7Jz0WnTx8oiBRZXCVwF7SJXztCvl7h61L8oudm/m
+	 ZzJcPQiQ6a3vkdslZGaL+map5bzuxrOH69hNlp4a8gDkADVHKqlXnjP6H9fUKUPAle
+	 G5RP+5YSDJFPCZAOfsIK30ngRx5fl+uNMhMZuFtvohYRU68gjsyw/nUrRlnisE/5CR
+	 1GDLoGVBUCvXA==
+Date: Sun, 24 Aug 2025 16:24:23 +0300
 From: Mike Rapoport <rppt@kernel.org>
 To: David Hildenbrand <david@redhat.com>
-Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
 	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
@@ -72,90 +70,85 @@ Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
 	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
 	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
 	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
- hugetlb_folio_init_tail_vmemmap()
-Message-ID: <aKmDBobyvEX7ZUWL@kernel.org>
+Subject: Re: [PATCH RFC 12/35] mm: limit folio/compound page sizes in
+ problematic kernel configs
+Message-ID: <aKsSh0OEjf4GLmIG@kernel.org>
 References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-11-david@redhat.com>
- <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
- <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+ <20250821200701.1329277-13-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+In-Reply-To: <20250821200701.1329277-13-david@redhat.com>
 
-On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
-> On 22.08.25 06:09, Mika Penttilä wrote:
-> > 
-> > On 8/21/25 23:06, David Hildenbrand wrote:
-> > 
-> > > All pages were already initialized and set to PageReserved() with a
-> > > refcount of 1 by MM init code.
-> > 
-> > Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
-> > initialize struct pages?
+On Thu, Aug 21, 2025 at 10:06:38PM +0200, David Hildenbrand wrote:
+> Let's limit the maximum folio size in problematic kernel config where
+> the memmap is allocated per memory section (SPARSEMEM without
+> SPARSEMEM_VMEMMAP) to a single memory section.
 > 
-> Excellent point, I did not know about that one.
+> Currently, only a single architectures supports ARCH_HAS_GIGANTIC_PAGE
+> but not SPARSEMEM_VMEMMAP: sh.
 > 
-> Spotting that we don't do the same for the head page made me assume that
-> it's just a misuse of __init_single_page().
+> Fortunately, the biggest hugetlb size sh supports is 64 MiB
+> (HUGETLB_PAGE_SIZE_64MB) and the section size is at least 64 MiB
+> (SECTION_SIZE_BITS == 26), so their use case is not degraded.
 > 
-> But the nasty thing is that we use memblock_reserved_mark_noinit() to only
-> mark the tail pages ...
+> As folios and memory sections are naturally aligned to their order-2 size
+> in memory, consequently a single folio can no longer span multiple memory
+> sections on these problematic kernel configs.
+> 
+> nth_page() is no longer required when operating within a single compound
+> page / folio.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
-disabled struct pages are initialized regardless of
-memblock_reserved_mark_noinit().
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-I think this patch should go in before your updates:
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 753f99b4c718..1c51788339a5 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3230,6 +3230,22 @@ int __alloc_bootmem_huge_page(struct hstate *h, int nid)
- 	return 1;
- }
- 
-+/*
-+ * Tail pages in a huge folio allocated from memblock are marked as 'noinit',
-+ * which means that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled their
-+ * struct page won't be initialized
-+ */
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+static void __init hugetlb_init_tail_page(struct page *page, unsigned long pfn,
-+					enum zone_type zone, int nid)
-+{
-+	__init_single_page(page, pfn, zone, nid);
-+}
-+#else
-+static inline void hugetlb_init_tail_page(struct page *page, unsigned long pfn,
-+					enum zone_type zone, int nid) {}
-+#endif
-+
- /* Initialize [start_page:end_page_number] tail struct pages of a hugepage */
- static void __init hugetlb_folio_init_tail_vmemmap(struct folio *folio,
- 					unsigned long start_page_number,
-@@ -3244,7 +3260,7 @@ static void __init hugetlb_folio_init_tail_vmemmap(struct folio *folio,
- 	for (pfn = head_pfn + start_page_number; pfn < end_pfn; pfn++) {
- 		struct page *page = pfn_to_page(pfn);
- 
--		__init_single_page(page, pfn, zone, nid);
-+		hugetlb_init_tail_page(page, pfn, zone, nid);
- 		prep_compound_tail((struct page *)folio, pfn - head_pfn);
- 		ret = page_ref_freeze(page, 1);
- 		VM_BUG_ON(!ret);
- 
-> Let me revert back to __init_single_page() and add a big fat comment why
-> this is required.
+> ---
+>  include/linux/mm.h | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
 > 
-> Thanks!
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 77737cbf2216a..48a985e17ef4e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2053,11 +2053,25 @@ static inline long folio_nr_pages(const struct folio *folio)
+>  	return folio_large_nr_pages(folio);
+>  }
+>  
+> -/* Only hugetlbfs can allocate folios larger than MAX_ORDER */
+> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+> -#define MAX_FOLIO_ORDER		PUD_ORDER
+> -#else
+> +#if !defined(CONFIG_ARCH_HAS_GIGANTIC_PAGE)
+> +/*
+> + * We don't expect any folios that exceed buddy sizes (and consequently
+> + * memory sections).
+> + */
+>  #define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+> +#elif defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+> +/*
+> + * Only pages within a single memory section are guaranteed to be
+> + * contiguous. By limiting folios to a single memory section, all folio
+> + * pages are guaranteed to be contiguous.
+> + */
+> +#define MAX_FOLIO_ORDER		PFN_SECTION_SHIFT
+> +#else
+> +/*
+> + * There is no real limit on the folio size. We limit them to the maximum we
+> + * currently expect.
+> + */
+> +#define MAX_FOLIO_ORDER		PUD_ORDER
+>  #endif
+>  
+>  #define MAX_FOLIO_NR_PAGES	(1UL << MAX_FOLIO_ORDER)
+> -- 
+> 2.50.1
+> 
 
 -- 
 Sincerely yours,

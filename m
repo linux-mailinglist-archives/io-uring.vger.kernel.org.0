@@ -1,85 +1,212 @@
-Return-Path: <io-uring+bounces-9279-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9280-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA73B33E92
-	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 14:01:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB60B33FE8
+	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 14:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CCE1666CD
-	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 12:01:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98F064E0325
+	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 12:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D935726E71C;
-	Mon, 25 Aug 2025 12:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7886F1EA7C9;
+	Mon, 25 Aug 2025 12:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4ftXcAQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HV1nSTp7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1FC22A4E5;
-	Mon, 25 Aug 2025 12:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53F1DE2A5
+	for <io-uring@vger.kernel.org>; Mon, 25 Aug 2025 12:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123273; cv=none; b=Z9kl+ToG4Fovgoq+pdYGIV0HcjWJeTwUCme0RBu1FxQ5UWW/QX6hXKuigpOIQfRUuWz6xGefIYzqSmif1TT/9PdoIAI4a4sY9ysacOgNHqPz8wbZi+fDvPFskjiIH6yl9EpyTn7MCe6jVA1gZOEnTAC/irOgs/dZBhE3+act1nQ=
+	t=1756126147; cv=none; b=bu+G2VsmLhcQfVKydVDfXUBUMoDvVuWOR4CPHI9VeXJNtwmSKrNDjkTPrRc4EGlq5Le1QIy9Baup8nTY6gseSmyp//OKnH3fn+dJBxdqbkIcxFgem7yitb1o9+5eUBmdo/yTNgCEe9b1Dps89kUc1VmKZxCDKeWzpIfKoTga+tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123273; c=relaxed/simple;
-	bh=coPKTGDhD+vmF6gBi7FlpvcCk8kMW+tsVWXxq4ug5/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drG2adxa+G5WeAVKYEybwjJeKorKIRxbuKmS9khK667YVfUl+Pf27Rlfn/QXaenehmJqA1OZdnW9l0n/5rsF/AvqCidVEVHDiTFyC2YxH78g5lNH5FL7kplDYgDcH+2hy/jzFm0GqOdFUpe4ov/L2tiCeRVdCjz1btamaJrnMww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4ftXcAQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB09EC116D0;
-	Mon, 25 Aug 2025 12:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123271;
-	bh=coPKTGDhD+vmF6gBi7FlpvcCk8kMW+tsVWXxq4ug5/0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4ftXcAQj9nVXAhf53Q4/KaXLmbbkd7sTsZiuId2nskg7EGyKX5EeZxBxu04q9ZnP
-	 x49RdbEsxMoEPmYOF/41EXhjo52rgow5IFG/wHk1V+OzXvHRfzzRdlvMR/AAABddfr
-	 qRNJp25k9eH/szL9bTKY8NbzYAH8fsfcdMF48jq8Y/cy8KIhGHpsylEm6JKimrcIB7
-	 iOMTeLx94sBDeMRInCJHOCQA/9MXcjS6mWoAVVTDah/yuzN4QDcvAQL1SIHqDrkqeQ
-	 AExoalx0xkabeQ39PpoG1gahqDN/vWYKnxC6oewQndNk31SCFRmAVb2xnhQ8PMr1aM
-	 9cPLcBOMv7nmQ==
-Date: Mon, 25 Aug 2025 14:01:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate IOCB_HAS_METADATA
- availability
-Message-ID: <20250825-randbemerkung-machbar-ae3dde406069@brauner>
-References: <20250819082517.2038819-1-hch@lst.de>
- <20250819082517.2038819-2-hch@lst.de>
- <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner>
- <20250819092219.GA6234@lst.de>
- <20250819-verrichten-bagger-d139351bb033@brauner>
- <20250819133447.GA16775@lst.de>
- <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner>
- <20250821084213.GA29944@lst.de>
+	s=arc-20240116; t=1756126147; c=relaxed/simple;
+	bh=b7RwYEqsXqhvAIjVimo18yn+qIgGQwvJw8/CODbmjC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czEnRoh7ul2GxdMVdqidpC1eWXPt2xmtyK1c708+p6BISypI73WN4n4rciQCyoxHYYtfEEftTcx6jBXcMeq1/rf7dcvUmGp/qGjiHZj1wc2R8FTLx0muYUf6lCvz1qSpRzWMLGVl3HNoQWuXob92W6QP2ZGQyWrQDz/LZ4+i8LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HV1nSTp7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756126144;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3vXE/JZQfiOFAY8LityNc5lKOCwFML9m2hfnchuxSjw=;
+	b=HV1nSTp7Q1GCYDLMq+4QqifxDxb7uYS4woQOiYC5rfSiucsVc4NcdRRzILeC5aQoVz5gJ1
+	VSYwyFt/6kpVm+Via2f8IpHsZqabREVOTk60SlKbsQICe0pSG1jDTpnt5HFTSNVgTipQaT
+	vz7KDhXANuJ5abMoEjjmje7XP3A+SOc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-V58fNptoPCyoIvIEEbqoJg-1; Mon, 25 Aug 2025 08:49:03 -0400
+X-MC-Unique: V58fNptoPCyoIvIEEbqoJg-1
+X-Mimecast-MFC-AGG-ID: V58fNptoPCyoIvIEEbqoJg_1756126142
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1b0060bfso28682495e9.0
+        for <io-uring@vger.kernel.org>; Mon, 25 Aug 2025 05:49:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126142; x=1756730942;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3vXE/JZQfiOFAY8LityNc5lKOCwFML9m2hfnchuxSjw=;
+        b=rONGGPsIAkGFYk/XEvk+ntIdhsLPmEu+rOk0rc0xqQNOkhASHeJmUAM7iPbK/g5dUV
+         n9BdNbDKTA+5+4a1xoiNECY+M7DURa/aMXHUlDSCL6RR4D7r5w0N+ZghMn0xmvh5Jyh8
+         G6Igmv1+TWrz3Z2XxBD9ktRpkNU/8nooEzSl5XgvDgwFsExDHLnq6Y4mSTm3slPwsXTA
+         M1i79/Et3LGHzqgDYMddjyyOTyd89//6i1SZI6vP2luK9Vsj/PMSeDvFky8ppaKAoCc3
+         qSxR4acn9yoyIBRZm39Fl8CDFEkYkztxENl4u3kY98cSiImzYU72SNZ/jY9zht9tr0DR
+         Kgrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJwztZvvIOUuMQkk5ufyyBxhdX7YgJjyHfFIM+XZcpCZOGLIyXECXg24vuTmNPUCgo00dU/soT/g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx39MjCmBBYZLCur6qo0mghzl8Xh5vq/9/LNcSnhWunj7zKrmb8
+	TvOgMXViKn2SF4GmmI5TLFYEEKGWbfAOve4upMpz7quH90+1UwtTmwHDZwxc9iTOnkekM7gqWgT
+	2J14XuSYm3awJr9dOc39NjVMUoPCEl29MhkHhRRNJtwibnjiz4ifV0wfeMCt0
+X-Gm-Gg: ASbGncvj/JQAFdcRk+dGhZt3mNcgRHHK5bzLCauPeYHUcVciyQSwAGWhPFjgGj/4BJg
+	M4zq9Llly1QH9qV5qsLiD2AvsOAwq98/d1iUyEjJsg1uN9H/zEXbTLUbxLbGIREnTRJJXYXzm/D
+	C5Mz7R5Hbdd0Jo6AYv30EzapnPb0+EA2rk+r7D0nXsF+xYj99BAD6D2pNgB7ikMaose/2PZwA4s
+	hSj/5gUsodCJ55LePPjV0SCLI1pBuhluXsSVKtPreLu1Fq0PRz28yf3n6blJWp/Z81vgHNtn7Yj
+	KiqpjjLhSsdI77yRtGSg4FCZfb4X63vXYeV1v3XgCaRVid6I1spKIyBbckRlTn8sWnLIi5LPRZt
+	rQZhBUR013rorFTQYZvVhtIEtDJEQhXIfGlJTYrWSEngRQuuoxwCr6wtUfiHvDhDRUGc=
+X-Received: by 2002:a05:600c:3b0f:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-45b517d4d50mr117581955e9.30.1756126141737;
+        Mon, 25 Aug 2025 05:49:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXxc8CWovMYNQS1+MbZ/J1HLlRjFi84VTIxSAk5gdBYVSg2EOk3SSNbd5GU03jnCMkyvwvPg==
+X-Received: by 2002:a05:600c:3b0f:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-45b517d4d50mr117581475e9.30.1756126141263;
+        Mon, 25 Aug 2025 05:49:01 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76? (p200300d82f4f130042f198e5ddf83a76.dip0.t-ipconnect.de. [2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70ea81d38sm11742640f8f.17.2025.08.25.05.48.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 05:49:00 -0700 (PDT)
+Message-ID: <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
+Date: Mon, 25 Aug 2025 14:48:58 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821084213.GA29944@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
+ hugetlb_folio_init_tail_vmemmap()
+To: Mike Rapoport <rppt@kernel.org>
+Cc: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-11-david@redhat.com>
+ <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
+ <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+ <aKmDBobyvEX7ZUWL@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <aKmDBobyvEX7ZUWL@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 10:42:13AM +0200, Christoph Hellwig wrote:
-> On Wed, Aug 20, 2025 at 11:40:36AM +0200, Christian Brauner wrote:
-> > I meant something like this which should effectively be the same thing
-> > just that we move the burden of having to use two bits completely into
-> > file->f_iocb_flags instead of wasting a file->f_mode bit:
+On 23.08.25 10:59, Mike Rapoport wrote:
+> On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
+>> On 22.08.25 06:09, Mika Penttilä wrote:
+>>>
+>>> On 8/21/25 23:06, David Hildenbrand wrote:
+>>>
+>>>> All pages were already initialized and set to PageReserved() with a
+>>>> refcount of 1 by MM init code.
+>>>
+>>> Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
+>>> initialize struct pages?
+>>
+>> Excellent point, I did not know about that one.
+>>
+>> Spotting that we don't do the same for the head page made me assume that
+>> it's just a misuse of __init_single_page().
+>>
+>> But the nasty thing is that we use memblock_reserved_mark_noinit() to only
+>> mark the tail pages ...
 > 
-> Yeah, that could work.  But I think the double use of f_iocb_flags is
-> a bit confusing.  Another option at least for this case would be to
-> have a FOP_ flag, and then check inside the operation if it is supported
-> for this particular instance.
+> And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
+> disabled struct pages are initialized regardless of
+> memblock_reserved_mark_noinit().
+> 
+> I think this patch should go in before your updates:
 
-Do you want to try something like that? Maybe we can do this for other
-FMODE_*-based IOCB_* opt{in,outs}?
+Shouldn't we fix this in memblock code?
+
+Hacking around that in the memblock_reserved_mark_noinit() user sound 
+wrong -- and nothing in the doc of memblock_reserved_mark_noinit() 
+spells that behavior out.
+
+-- 
+Cheers
+
+David / dhildenb
+
 

@@ -1,75 +1,144 @@
-Return-Path: <io-uring+bounces-9281-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9282-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7112CB340D7
-	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 15:35:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC887B34408
+	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 16:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BAF17C165
-	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 13:35:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D93E7B1E7F
+	for <lists+io-uring@lfdr.de>; Mon, 25 Aug 2025 14:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934D026F46E;
-	Mon, 25 Aug 2025 13:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3C92FF143;
+	Mon, 25 Aug 2025 14:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7YZsnMU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D85E203710;
-	Mon, 25 Aug 2025 13:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05212FE581;
+	Mon, 25 Aug 2025 14:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128925; cv=none; b=a8X6Qzr1GL/gDc6l5BInLuJvwCO+RBVr19DOVHyn8eQkHpG/P/9v/hVfSbTybOGT9sEv6zYupPR8irZa7Dq48sQXe8aWoB2bzr6FDnhC75bryjDrFxF+KI7DJlc1TKS3UJq8E33Z5k8zCEdOQB3RIkB/Cj7HLPdpo3OO0tUeU0I=
+	t=1756132362; cv=none; b=rvaKFmxPUXNMBH2MAesz5Qlpp/xkFerUU/SKfTXcIoOtlqi/YtFO9qUgSjde1sEIck4M0f9LjgFbLzGFxb5rEvRBuXjB6DUdWyWUBhPQ8m85JpvwgUQojiBmfA/49tA3flosM8W6RLpXW2O3I2NrUXZNy4Z0HyIncL44H02QLBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128925; c=relaxed/simple;
-	bh=PafOStk5pWlzxjq3x9uYJdtDYco4pBPROdxx/w9ALC4=;
+	s=arc-20240116; t=1756132362; c=relaxed/simple;
+	bh=DU+1S4Dtf6BzIA9TMfJpqm5TRVwGVofXB+Dj9RHsm1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=leHoay03i2lHSBNTWcgVbAck4Sw8lF+jv+qiYrJ20Zn/4KvoedRqbtI4x8q2+fGErYFEGPzw4O6Gbm0LhxU/RCqMkJ3b5tQty3Z2wILguy9CTfRsPMpSnyKpQHMKh2EYEEvrJHC1DVocJMf72A0sOX5QxQCLy1PkMphP17Kojh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5E83068B05; Mon, 25 Aug 2025 15:35:17 +0200 (CEST)
-Date: Mon, 25 Aug 2025 15:35:16 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: add a FMODE_ flag to indicate
- IOCB_HAS_METADATA availability
-Message-ID: <20250825133516.GA14412@lst.de>
-References: <20250819082517.2038819-1-hch@lst.de> <20250819082517.2038819-2-hch@lst.de> <20250819-erwirbt-freischaffend-e3d3c1e8967a@brauner> <20250819092219.GA6234@lst.de> <20250819-verrichten-bagger-d139351bb033@brauner> <20250819133447.GA16775@lst.de> <20250820-voruntersuchung-fehlzeiten-4dcf7e45c29f@brauner> <20250821084213.GA29944@lst.de> <20250825-randbemerkung-machbar-ae3dde406069@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5U2W8teEHwEHSAEReWUSuboArGJz/KcccWbLgRYbbEqsTqBX7LtXHdcNag1oRJzbwFhEryM52hhe0TnA5ZWLQyqFZVJgJ3hsiVibG+jzAkGTNAQkhNYKhjeeNexmu3cbMcSiMUUWrzRocKGYTpXeRxqMADeLqRxW5OjwxAsRf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7YZsnMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28395C4CEED;
+	Mon, 25 Aug 2025 14:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756132360;
+	bh=DU+1S4Dtf6BzIA9TMfJpqm5TRVwGVofXB+Dj9RHsm1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n7YZsnMUaPKieR6Aen8NXplrqXq649ng2cWds08Paw0ZE1V9/s04MYuzfMJunBPPM
+	 e9q5l/4IYbHR+zLW6tZ3Ain+SM/EPsptEidQNiwcBG+gIXbD0MDb3NpuMIodH9q/bK
+	 gfUkw7ZqtLUllteesZei9c9/9Nob4tERnp37xBWgOfA8ssretvfGAj7ddnS1nJ/eSw
+	 gYK9m1P9+EEv6DvwLeTd0I1ynl3rIVfEsEIPpMbPhXNcaQgQQCdndA/xeV7DIotpxx
+	 J60e7ZU1ZivKd3L40DdBa/CHbHS/SOS0E/lE/sJu2Rz1DevUCKw6IvTf/zpKfAvZXV
+	 BIxp/l6R3haNQ==
+Date: Mon, 25 Aug 2025 17:32:20 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
+	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
+	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
+	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Marco Elver <elver@google.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
+ hugetlb_folio_init_tail_vmemmap()
+Message-ID: <aKxz9HLQTflFNYEu@kernel.org>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-11-david@redhat.com>
+ <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
+ <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
+ <aKmDBobyvEX7ZUWL@kernel.org>
+ <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250825-randbemerkung-machbar-ae3dde406069@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
 
-On Mon, Aug 25, 2025 at 02:01:07PM +0200, Christian Brauner wrote:
-> On Thu, Aug 21, 2025 at 10:42:13AM +0200, Christoph Hellwig wrote:
-> > On Wed, Aug 20, 2025 at 11:40:36AM +0200, Christian Brauner wrote:
-> > > I meant something like this which should effectively be the same thing
-> > > just that we move the burden of having to use two bits completely into
-> > > file->f_iocb_flags instead of wasting a file->f_mode bit:
+On Mon, Aug 25, 2025 at 02:48:58PM +0200, David Hildenbrand wrote:
+> On 23.08.25 10:59, Mike Rapoport wrote:
+> > On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
+> > > On 22.08.25 06:09, Mika Penttilä wrote:
+> > > > 
+> > > > On 8/21/25 23:06, David Hildenbrand wrote:
+> > > > 
+> > > > > All pages were already initialized and set to PageReserved() with a
+> > > > > refcount of 1 by MM init code.
+> > > > 
+> > > > Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
+> > > > initialize struct pages?
+> > > 
+> > > Excellent point, I did not know about that one.
+> > > 
+> > > Spotting that we don't do the same for the head page made me assume that
+> > > it's just a misuse of __init_single_page().
+> > > 
+> > > But the nasty thing is that we use memblock_reserved_mark_noinit() to only
+> > > mark the tail pages ...
 > > 
-> > Yeah, that could work.  But I think the double use of f_iocb_flags is
-> > a bit confusing.  Another option at least for this case would be to
-> > have a FOP_ flag, and then check inside the operation if it is supported
-> > for this particular instance.
+> > And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
+> > disabled struct pages are initialized regardless of
+> > memblock_reserved_mark_noinit().
+> > 
+> > I think this patch should go in before your updates:
 > 
-> Do you want to try something like that? Maybe we can do this for other
-> FMODE_*-based IOCB_* opt{in,outs}?
+> Shouldn't we fix this in memblock code?
+> 
+> Hacking around that in the memblock_reserved_mark_noinit() user sound wrong
+> -- and nothing in the doc of memblock_reserved_mark_noinit() spells that
+> behavior out.
 
-Yes, I also need to move on of the FOP_ flags to a scheme like that.
-However I'm pretty busy at the momen, so I'm unlikely to get to it
-before mid-September.
+We can surely update the docs, but unfortunately I don't see how to avoid
+hacking around it in hugetlb. 
+Since it's used to optimise HVO even further to the point hugetlb open
+codes memmap initialization, I think it's fair that it should deal with all
+possible configurations.
+ 
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 

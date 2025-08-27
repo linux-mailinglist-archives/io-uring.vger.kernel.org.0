@@ -1,167 +1,758 @@
-Return-Path: <io-uring+bounces-9314-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9315-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084C7B38A68
-	for <lists+io-uring@lfdr.de>; Wed, 27 Aug 2025 21:44:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04163B38B10
+	for <lists+io-uring@lfdr.de>; Wed, 27 Aug 2025 22:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C979C7A24E2
-	for <lists+io-uring@lfdr.de>; Wed, 27 Aug 2025 19:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDF8173447
+	for <lists+io-uring@lfdr.de>; Wed, 27 Aug 2025 20:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60A61C84A6;
-	Wed, 27 Aug 2025 19:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8482A2F3638;
+	Wed, 27 Aug 2025 20:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2kCDRZk"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UfEyxg4D"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF973F4F1
-	for <io-uring@vger.kernel.org>; Wed, 27 Aug 2025 19:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323881; cv=none; b=RIqT2kzyQsbxWrTdoZXog2rvQGQI071Xseqqlz3elbO17rwTQ9B1Xy73f8S9okJ5zoyfFGGr9lYsrHAuJdSf2z0wAhK/cM+k1CHgSDAEDEvT5CJoJedXt9QWUaU9NjIYPlcXLiVs32wH5ar09V+EIpOvnY2s7mRpu7x4f0wx0DM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756323881; c=relaxed/simple;
-	bh=dZ/ooAeBg4368q5V9LDm/TkmMF2K+gVUaObDptXGi2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2X+f6w63oNn0j5UzWTivgZY3Edw+I1EZ00DizyIwCTaxJB9gdDGpCfBNiQOip877LFR55ikNKgpSi1cCN8HJfrIxlvcz9uB7fH02h8UQnxXz0efUJp9FkRwGKQeYlZCuQhy5JZBfqt1LFH6J1eCyuZii26xd4h+VfQLx80epr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2kCDRZk; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so22219766b.3
-        for <io-uring@vger.kernel.org>; Wed, 27 Aug 2025 12:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756323878; x=1756928678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X3K0SNltlAolTA2974QXNsNLCacycVtsGF/A3nwOgNw=;
-        b=F2kCDRZkSi75akSfwRDImT6SCBBstuYVtbdISBkOEcog5fHQaw+5iyGK/eMmxSlf9X
-         MR1Qrut2KMQR+T6HYRH4HcvxXZ2bBEZNm0vujdVzvfcNfiAFu76/mhe2ykiOCcuAgnen
-         mkvjBgjbq+TyjWZ44X5Z+6g9EjSPUHQgqNDPw12CeWogG/g5lOk0EsoMQX4SkZBUnubO
-         1T+jDZTRmhRkcd0xBmiYTDTC37Gqug9E413ZCmk6nby66JoG6ScVdVsP9BWoPdBRscpu
-         mDrCDwPCzrEIPQS65sineSc1+84cyvFBV/X0jtEmyNP+y+IqnskkBtkPuGw0ET1aOY53
-         X6pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756323878; x=1756928678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X3K0SNltlAolTA2974QXNsNLCacycVtsGF/A3nwOgNw=;
-        b=b3x1pl8NVFn7pTkqDWiIrf2fZvai4fUcywNoxqZejRN1E3bHGcQGbusIC8GNwTRZGe
-         i51aJFS7sWO39stlp1Y51quCCT1MGGmXjqBFafOQui/TTyJnyvFbqKrPW1QUXCcLkZzl
-         rFksQ5wR3nQnnr2XjMV1GMVY0jOjAHof2nJBvUm0kH+oFmFBzS/brSX8iiNWbtuXxGF0
-         BV5QtsW0m8cdyuP0U1+05nIbTffBwyK2sQ4nEYKCloVmizE4U0YStjc7mXTCIvtdCvmI
-         Z132HllGDGNmMDIYUX6HomrnTKuK8ZjDtINvB+SXaz9/0WhYSw6q7L2MuViUVTmjljnf
-         YUJg==
-X-Gm-Message-State: AOJu0YyoSyYKu4UtL79fvMR7UjIe+jxkiTQ5BRusoNGNILS9ozq1fUHn
-	cPOuqR8qTKzfDEjMdHmRa1aHZtFKLZc5DdSFdcsP6G0O8eCXbWCQsqKqk5AW3A==
-X-Gm-Gg: ASbGncuOl0FdN51t+TUl1PMtSSWcJ1oZsgloIzE9B30VXXhZ8aJh/AC050cgWPbfg97
-	SltD7MflRadw0SyAzaZRNXJSTtItkenMFcOPUb5levIOTkPb5MhgLxuQKPgqklEQgiOkIcf3fSA
-	gDEMzGmgoElwBzLEvZ3xW5xeIIDxQhM8/Nj0rvhVpd7uYh9xBjg0ljhNbQ8SVozYxe1TU2D9K5H
-	TO/m+qLvP3F8KIYKo4v5uhaCZtj4lEpbbLP+dGc+ILKYrbLVwvME9/h7iycg/ztF5Iu+Wg2Xkh/
-	E8IIZdIT+YC5OgUSQgDn+R0BwRPMZNOVyexUsYwD3IX1oe6jnWjN/BzAgliPdq1pJqheQL/LS6R
-	QN9n9Pwd0xgD/wJVVjKqnSI9BSw8iugZzb/IYHx/tID7iKA7C/USi
-X-Google-Smtp-Source: AGHT+IGczvfbAwwsD62pJxBDhKgXjC1OcDhuFbX0ZXuPbr5wnxF9zmPaw/lGLmGi+Pz1br+vfBR4og==
-X-Received: by 2002:a17:906:d118:b0:afe:92ad:a014 with SMTP id a640c23a62f3a-afe92ada87dmr753203466b.48.1756323878045;
-        Wed, 27 Aug 2025 12:44:38 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.140.97])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe78918178sm776367766b.103.2025.08.27.12.44.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 12:44:37 -0700 (PDT)
-Message-ID: <1a94d436-aa3d-4f15-8b98-6addee8d8595@gmail.com>
-Date: Wed, 27 Aug 2025 20:45:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82EB1DE4CA;
+	Wed, 27 Aug 2025 20:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756327312; cv=pass; b=dI+WANQNtIu15lN6liwNKwSGTP/2u0Nd5fwBms9lGFL8aj12tR17bW0PjnPwEVafe9Q9C/ejy5WnBFvPVqt3SbEcpnL7V/pbbb/0r8TjzxqOHZJUpdw+W8gQhzAlGmQ0pntwr6EDPuYADBXKqcnwcNdixhFBs/gswXppZBM4Eng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756327312; c=relaxed/simple;
+	bh=AAbWlI+fVcNf245EchlXIdUhWf3zE9NOC3Rv4By1WiE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Cs9yX9kBm5uYIoUpwYhUVgQ90cUBzCSOcfAQvS2S9L7s2CCTP6I5GtmidMLhMiOPScih9VBf71kjk0UEDpHWN3+qCIfj2ZhReF70jYFODzVcRyUecSx5AT08+bZK1igEGB7/toG6GsY13Sa0GjB1532SgsDG7XW3JEvlb9JrU5I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UfEyxg4D; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756327294; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JTHWYYS9oIbP0QhXcNxXBj5jk2dy0D/6YCrTJUNIcp0HiZrsieosK9UkFBONgPwl1/q2ZZBa+mXnqKT12s9IhTJtWffPvApX2qVyVgLBYg4sohTagyWqVFaCV/244Z3wd04DlASxR4wOXasrhQH6KUt+a9smqrdXykaf0EPBc+M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756327294; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eOYQVW7gHFiStIKVWbs6rHPJJ18hdXIIhJXvCnzDhh8=; 
+	b=lLMFReCT1mfTXXZOVYD5BHc73epFgvnLu2hKJSI10nGq1RF2TS0+AIbV3xviFyh1CJg4iiyR/WCBOJZHx5laPLFnkygM++DpggGs54iAc2msRdZAjSEC7don5rbdH7G6G6RMA1ywLQkFL2zKKZJsXIxJw2fjeOhj36eiH7o0tnY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756327294;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=eOYQVW7gHFiStIKVWbs6rHPJJ18hdXIIhJXvCnzDhh8=;
+	b=UfEyxg4DI7IqRWhw8uVCFiaYlGTmbaussrWAOdwohNDBnB5DUsMiLFISGJJoIyMa
+	8b5b9vIVxTeSKDUKWXYlWcaI8TvTpEFBdcd4IM40Q7kxtaH1CCh6W9VZ+09DWeHhKUz
+	nvJAuyWLvQcAg+40HrLXtxdYAzAfIuyVr7tmZYDc=
+Received: by mx.zohomail.com with SMTPS id 1756327291209106.7581479016601;
+	Wed, 27 Aug 2025 13:41:31 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 3/3] io_uring: introduce io_uring querying
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <cover.1756300192.git.asml.silence@gmail.com>
- <6adf4bd06950d999f127595fe4d24d048ce03f5f.1756300192.git.asml.silence@gmail.com>
- <87sehc1w0i.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <87sehc1w0i.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822125555.8620-4-sidong.yang@furiosa.ai>
+Date: Wed, 27 Aug 2025 17:41:15 -0300
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <713667D6-8001-408D-819D-E9326FC3AFD5@collabora.com>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-4-sidong.yang@furiosa.ai>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 8/27/25 19:04, Gabriel Krisman Bertazi wrote:
-> Pavel Begunkov <asml.silence@gmail.com> writes:
-> 
->> There are many characteristics of a ring or the io_uring subsystem the
->> user wants to query. Sometimes it's needed to be done before there is a
->> created ring, and sometimes it's needed at runtime in a slow path.
->> Introduce a querying interface to achieve that.
->>
->> It was written with several requirements in mind:
->> - Can be used with or without an io_uring instance.
->> - Can query multiple attributes in one syscall.
->> - Backward and forward compatible.
->> - Should be reasobably easy to use.
->> - Reduce the kernel code size for introducing new query types.
-> 
-> Hello, Pavel.
-> 
-> Correct me if I'm wrong, or if I completely missed the point, but this
-> is mostly about returning static information about what the kernel
+Hi Sidong,
 
-It's primarily about configuring rings from within the application
-at different steps, and it's always a huge mess when that requires
-reading and parsing a text file. It's not all static either, my
-main agenda here (not included) involves calculations.
+> On 22 Aug 2025, at 09:55, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+>=20
+> Implment the io-uring abstractions needed for miscdevicecs and other
+> char devices that have io-uring command interface.
 
-> supports, which can all be calculated at compile-time.
-I assume you mean kernel compilation, I can't rely on app
-recompilation every time kernel changes.
+Can you expand on this last part?
 
-> It seems it should be laid out as a procfs/sysfs /sys/kernel/io_uring
-> subtree instead, making it quickly parseable with the usual coreutils
-> command line tools, and then abstracted by some liburing APIs.  I don't
-> see the advantage of creating a custom way for fetching kernel features
-> information that only works for io_uring.
-> 
-> Sure, parsing sysfs is slow, but it doesn't need to be fast.  It is
-> annoying, but it can be abstracted in userspace by liburing.  It is more
+>=20
+> * `io_uring::IoUringCmd` : Rust abstraction for `io_uring_cmd` which
+>  will be used as arg for `MiscDevice::uring_cmd()`. And driver can get
+>  `cmd_op` sent from userspace. Also it has `flags` which includes =
+option
+>  that is reissued.
+>=20
 
-FWIW, I see usefulness in it not being painstakingly slow as it
-might easily become with files. E.g. it can be reused to return
-stats the app needs at runtime.
+This is a bit hard to parse.
 
-Funnily, it'd would create a dependency where you can't create
-a ring without having another downgraded ring or using read/write
-etc. syscall.
+> * `io_uring::IoUringSqe` : Rust abstraction for `io_uring_sqe` which
+>  could be get from `IoUringCmd::sqe()` and driver could get `cmd_data`
+>  from userspace. Also `IoUringSqe` has more data like opcode could be =
+used in
+>  driver.
 
-And that also won't work with fd-less ring, aka
-IORING_SETUP_REGISTERED_FD_ONLY. Not sure why those are a thing,
-but it wouldn't hurt to support it.
+Same here.
 
-> consistent with the rest of the kernel and, for me, when tracking
-> customer issues, I can trust the newly introduce files will show up in
-> their supportconfig/sosreport without any extra change to these
-> applications.
-> 
-> Then there is the part about probing a specific ring for something, and
-> we have fdinfo. What information do we want to probe of a
-> particular ring that is missing?  Perhaps this feature should be split from the
-> general "is this feature supported" part.
+>=20
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+> rust/kernel/io_uring.rs | 306 ++++++++++++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs      |   1 +
+> 2 files changed, 307 insertions(+)
+> create mode 100644 rust/kernel/io_uring.rs
+>=20
+> diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
+> new file mode 100644
+> index 000000000000..61e88bdf4e42
+> --- /dev/null
+> +++ b/rust/kernel/io_uring.rs
+> @@ -0,0 +1,306 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-FileCopyrightText: (C) 2025 Furiosa AI
+> +
+> +//! Abstractions for io-uring.
+> +//!
+> +//! This module provides types for implements io-uring interface for =
+char device.
 
-The existing io_uring fdinfo is a huge mess. The format is not
-great and it prints too much garbage, parsing it will be a misery.
-It's not better implementation wise either, evident by the amount
-of bugs it had and reversed lock nesting with trylocks.
+This is also hard to parse.
 
-And some queries are going to be parameterised, and there is no
-good way to pass that to a file read.
+> +//!
+> +//!
+> +//! C headers: =
+[`include/linux/io_uring/cmd.h`](srctree/include/linux/io_uring/cmd.h) =
+and
+> +//! =
+[`include/linux/io_uring/io_uring.h`](srctree/include/linux/io_uring/io_ur=
+ing.h)
+> +
+> +use core::{mem::MaybeUninit, pin::Pin};
+> +
+> +use crate::error::from_result;
+> +use crate::transmute::{AsBytes, FromBytes};
+> +use crate::{fs::File, types::Opaque};
+> +
+> +use crate::prelude::*;
+> +
+> +/// io-uring opcode
 
--- 
-Pavel Begunkov
+/// `IoUring` opcodes.
+
+Notice:
+
+a) The capitalization,
+b) The use of backticks,
+c) The period in the end.
+
+This is an ongoing effort to keep the docs tidy :)
+
+> +pub mod opcode {
+> +    /// opcode for uring cmd
+> +    pub const URING_CMD: u32 =3D =
+bindings::io_uring_op_IORING_OP_URING_CMD;
+> +}
+
+Should this be its own type? This way we can use the type system to =
+enforce
+that only valid opcodes are used where an opcode is expected.
+
+> +
+> +/// A Rust abstraction for the Linux kernel's `io_uring_cmd` =
+structure.
+
+/// A Rust abstraction for `io_uring_cmd`.
+
+> +///
+> +/// This structure is a safe, opaque wrapper around the raw C =
+`io_uring_cmd`
+> +/// binding from the Linux kernel. It represents a command structure =
+used
+> +/// in io_uring operations within the kernel.
+
+This code will also be part of the kernel, so mentioning =E2=80=9Cthe =
+Linux kernel=E2=80=9D is superfluous.
+
+> +/// This type is used internally by the io_uring subsystem to manage
+> +/// asynchronous I/O commands.
+> +///
+> +/// This type should not be constructed or manipulated directly by
+> +/// kernel module developers.
+
+=E2=80=9C=E2=80=A6by drivers=E2=80=9D.
+
+> +///
+> +/// # INVARIANT
+
+/// # Invariants
+
+> +/// - `self.inner` always points to a valid, live =
+`bindings::io_uring_cmd`.
+
+Blank here
+
+> +#[repr(transparent)]
+> +pub struct IoUringCmd {
+> +    /// An opaque wrapper containing the actual `io_uring_cmd` data.
+> +    inner: Opaque<bindings::io_uring_cmd>,
+> +}
+> +
+> +impl IoUringCmd {
+> +    /// Returns the cmd_op with associated with the `io_uring_cmd`.
+
+This sentence does not parse very well.
+
+> +    #[inline]
+> +    pub fn cmd_op(&self) -> u32 {
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        unsafe { (*self.inner.get()).cmd_op }
+
+Perhaps add an as_raw() method so this becomes:
+
+unsafe {*self.as_raw()}.cmd_op
+
+> +    }
+> +
+> +    /// Returns the flags with associated with the `io_uring_cmd`.
+
+With the command, or something like that. The user doesn=E2=80=99t see =
+the raw
+bindings::io_uring_cmd so we shouldn=E2=80=99t be mentioning it if we =
+can help it.
+
+> +    #[inline]
+> +    pub fn flags(&self) -> u32 {
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        unsafe { (*self.inner.get()).flags }
+> +    }
+> +
+> +    /// Reads protocol data unit as `T` that impl `FromBytes` from =
+uring cmd
+
+This sentence does not parse very well.
+
+> +    ///
+> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+
+/// # Errors
+
+> +    #[inline]
+> +    pub fn read_pdu<T: FromBytes>(&self) -> Result<T> {
+
+This takes &self,
+
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        let inner =3D unsafe { &mut *self.inner.get() };
+
+But this creates a &mut to self.inner using unsafe code. Avoid doing =
+this in
+general. All of a sudden your type is not thread-safe anymore.
+
+If you need to mutate &self here, then take &mut self as an argument.
+
+> +
+> +        let len =3D size_of::<T>();
+> +        if len > inner.pdu.len() {
+> +            return Err(EFAULT);
+
+EFAULT? How about EINVAL?
+
+> +        }
+> +
+> +        let mut out: MaybeUninit<T> =3D MaybeUninit::uninit();
+> +        let ptr =3D &raw mut inner.pdu as *const c_void;
+> +
+> +        // SAFETY:
+> +        // * The `ptr` is valid pointer from `self.inner` that is =
+guaranteed by type invariant.
+> +        // * The `out` is valid pointer that points `T` which impls =
+`FromBytes` and checked
+> +        //   size of `T` is smaller than pdu size.
+> +        unsafe {
+> +            core::ptr::copy_nonoverlapping(ptr, =
+out.as_mut_ptr().cast::<c_void>(), len);
+
+I don=E2=80=99t think you need to manually specify c_void here.
+
+Benno, can=E2=80=99t we use core::mem::zeroed() or something like that =
+to avoid this unsafe?
+
+The input was zeroed in prep() and the output can just be a zeroed T on =
+the
+stack, unless I missed something?
+
+> +        }
+> +
+> +        // SAFETY: The read above has initialized all bytes in `out`, =
+and since `T` implements
+> +        // `FromBytes`, any bit-pattern is a valid value for this =
+type.
+> +        Ok(unsafe { out.assume_init() })
+> +    }
+> +
+> +    /// Writes the provided `value` to `pdu` in uring_cmd `self`
+
+Writes the provided `value` to `pdu`.
+
+> +    ///
+
+/// # Errors
+///
+
+> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+
+> +    #[inline]
+> +    pub fn write_pdu<T: AsBytes>(&mut self, value: &T) -> Result<()> =
+{
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        let inner =3D unsafe { &mut *self.inner.get() };
+> +
+> +        let len =3D size_of::<T>();
+> +        if len > inner.pdu.len() {
+> +            return Err(EFAULT);
+> +        }
+> +
+> +        let src =3D (value as *const T).cast::<c_void>();
+
+as_ptr().cast()
+
+> +        let dst =3D &raw mut inner.pdu as *mut c_void;
+
+(&raw mut inner.pdu).cast()
+
+> +
+> +        // SAFETY:
+> +        // * The `src` is points valid memory that is guaranteed by =
+`T` impls `AsBytes`
+> +        // * The `dst` is valid. It's from `self.inner` that is =
+guaranteed by type invariant.
+> +        // * It's safe to copy because size of `T` is no more than =
+len of pdu.
+> +        unsafe {
+> +            core::ptr::copy_nonoverlapping(src, dst, len);
+> +        }
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Constructs a new [`IoUringCmd`] from a raw `io_uring_cmd`
+
+Missing period.
+
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must guarantee that:
+> +    /// - `ptr` is non-null, properly aligned, and points to a valid
+> +    ///   `bindings::io_uring_cmd`.
+
+Blanks for every bullet point, please.
+
+> +    /// - The pointed-to memory remains initialized and valid for the =
+entire
+> +    ///   lifetime `'a` of the returned reference.
+> +    /// - While the returned `Pin<&'a mut IoUringCmd>` is alive, the =
+underlying
+> +    ///   object is **not moved** (pinning requirement).
+
+They can=E2=80=99t move an !Unpin type in safe code.
+
+> +    /// - **Aliasing rules:** the returned `&mut` has **exclusive** =
+access to the same
+> +    ///   object for its entire lifetime:
+
+You really don=E2=80=99t need to emphasize these.
+
+> +    ///   - No other `&mut` **or** `&` references to the same =
+`io_uring_cmd` may be
+> +    ///     alive at the same time.
+
+This and the point above are identical.
+
+> +    ///   - There must be no concurrent reads/writes through raw =
+pointers, FFI, or
+> +    ///     other kernel paths to the same object during this =
+lifetime.
+
+This and the first point say the same thing.
+
+> +    ///   - If the object can be touched from other contexts (e.g. =
+IRQ/another CPU),
+> +    ///     the caller must provide synchronization to uphold this =
+exclusivity.
+
+I am not sure what you mean.
+> +    /// - This function relies on `IoUringCmd` being =
+`repr(transparent)` over
+> +    ///   `bindings::io_uring_cmd` so the cast preserves layout.
+
+This is not a safety requirement.
+
+Just adapt the requirements from other instances of from_raw(), they all
+convert a *mut T to a &T so the safety requirements are similar.
+
+> +    #[inline]
+> +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> =
+Pin<&'a mut IoUringCmd> {
+
+Why is this pub? Sounds like a massive footgun? This should be private =
+or at
+best pub(crate).
+
+
+> +        // SAFETY:
+> +        // * The caller guarantees that the pointer is not dangling =
+and stays
+> +        //   valid for the duration of 'a.
+> +        // * The cast is okay because `IoUringCmd` is =
+`repr(transparent)` and
+> +        //   has the same memory layout as `bindings::io_uring_cmd`.
+> +        // * The returned `Pin` ensures that the object cannot be =
+moved, which
+> +        //   is required because the kernel may hold pointers to this =
+memory
+> +        //   location and moving it would invalidate those pointers.
+
+> +        unsafe { Pin::new_unchecked(&mut *ptr.cast()) }
+> +    }
+> +
+> +    /// Returns the file that referenced by uring cmd self.
+> +    #[inline]
+> +    pub fn file(&self) -> &File {
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        let file =3D unsafe { (*self.inner.get()).file };
+> +
+> +        // SAFETY:
+> +        // * The `file` points valid file.
+
+Why?
+
+> +        // * refcount is positive after submission queue entry =
+issued.
+> +        // * There is no active fdget_pos region on the file on this =
+thread.
+> +        unsafe { File::from_raw_file(file) }
+> +    }
+> +
+> +    /// Returns an reference to the [`IoUringSqe`] associated with =
+this command.
+
+s/an/a
+
+> +    #[inline]
+> +    pub fn sqe(&self) -> &IoUringSqe {
+> +        // SAFETY: `self.inner` is guaranteed by the type invariant =
+to point
+> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> +        let sqe =3D unsafe { (*self.inner.get()).sqe };
+> +        // SAFETY: The call guarantees that the `sqe` points valid =
+io_uring_sqe.
+
+What do you mean by =E2=80=9Cthe call guarantees=E2=80=9D ?
+
+> +        unsafe { IoUringSqe::from_raw(sqe) }
+> +    }
+> +
+> +    /// Completes an this [`IoUringCmd`] request that was previously =
+queued.
+
+This sentence does not parse very well.
+
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// - This function must be called **only** for a command whose =
+`uring_cmd`
+
+Please no emphasis.
+
+> +    ///   handler previously returned **`-EIOCBQUEUED`** to io_uring.
+
+To what? Are you referring to a Rust type, or to the C part of the =
+kernel?
+
+> +    ///
+> +    /// # Parameters
+> +    ///
+> +    /// - `ret`: Result to return to userspace.
+> +    /// - `res2`: Extra for big completion queue entry =
+`IORING_SETUP_CQE32`.
+
+This sentence does not parse very well. Also, can you rename this?
+
+> +    /// - `issue_flags`: Flags associated with this request, =
+typically the same
+> +    ///   as those passed to the `uring_cmd` handler.
+> +    #[inline]
+> +    pub fn done(self: Pin<&mut IoUringCmd>, ret: Result<i32>, res2: =
+u64, issue_flags: u32) {
+> +        let ret =3D from_result(|| ret) as isize;
+
+What does this do?
+
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+
+What do you mean =E2=80=9Cthe call=E2=80=9D ?
+
+> +        unsafe {
+> +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, =
+issue_flags);
+> +        }
+> +    }
+> +}
+> +
+> +/// A Rust abstraction for the Linux kernel's `io_uring_sqe` =
+structure.
+
+Please don=E2=80=99t mention the words =E2=80=9CLinux kernel=E2=80=9D =
+here either.
+
+> +///
+> +/// This structure is a safe, opaque wrapper around the raw C =
+[`io_uring_sqe`](srctree/include/uapi/linux/io_uring.h)
+
+This line needs to be wrapped.
+
+> +/// binding from the Linux kernel. It represents a Submission Queue =
+Entry
+
+Can you link somewhere here? Perhaps there=E2=80=99s docs for =
+=E2=80=9CSubmission Queue
+Entry=E2=80=9D.
+
+> +/// used in io_uring operations within the kernel.
+> +///
+> +/// # Type Safety
+> +///
+> +/// The `#[repr(transparent)]` attribute ensures that this wrapper =
+has
+> +/// the same memory layout as the underlying `io_uring_sqe` =
+structure,
+> +/// allowing it to be safely transmuted between the two =
+representations.
+
+This is an invariant, please move it there.
+
+> +///
+> +/// # Fields
+> +///
+> +/// * `inner` - An opaque wrapper containing the actual =
+`io_uring_sqe` data.
+> +///             The `Opaque` type prevents direct access to the =
+internal
+> +///             structure fields, ensuring memory safety and =
+encapsulation.
+
+Inline docs please.
+
+> +///
+> +/// # Usage
+
+I don=E2=80=99t think we specifically need to mention =E2=80=9C# =
+Usage=E2=80=9D.
+
+> +///
+> +/// This type represents a submission queue entry that describes an =
+I/O
+
+You can start with =E2=80=9CRepresents a=E2=80=A6=E2=80=9D. No need to =
+say =E2=80=9Cthis type=E2=80=9D here.
+
+> +/// operation to be executed by the io_uring subsystem. It contains
+> +/// information such as the operation type, file descriptor, buffer
+> +/// pointers, and other operation-specific data.
+> +///
+> +/// Users can obtain this type from [`IoUringCmd::sqe()`] method, =
+which
+> +/// extracts the submission queue entry associated with a command.
+> +///
+> +/// This type should not be constructed or manipulated directly by
+> +/// kernel module developers.
+
+By drivers.
+
+> +///
+> +/// # INVARIANT
+
+/// # Invariants
+
+> +/// - `self.inner` always points to a valid, live =
+`bindings::io_uring_sqe`.
+> +#[repr(transparent)]
+> +pub struct IoUringSqe {
+> +    inner: Opaque<bindings::io_uring_sqe>,
+> +}
+> +
+> +impl IoUringSqe {
+> +    /// Reads and interprets the `cmd` field of an =
+`bindings::io_uring_sqe` as a value of type `T`.
+> +    ///
+> +    /// # Safety & Invariants
+
+Safety section for a safe function.
+
+> +    /// - Construction of `T` is delegated to `FromBytes`, which =
+guarantees that `T` has no
+> +    ///   invalid bit patterns and can be safely reconstructed from =
+raw bytes.
+> +    /// - **Limitation:** This implementation does not support =
+`IORING_SETUP_SQE128` (larger SQE entries).
+
+Please no emphasis.
+
+
+> +    ///   Only the standard `io_uring_sqe` layout is handled here.
+> +    ///
+> +    /// # Errors
+
+Blank here.
+
+> +    /// * Returns `EINVAL` if the `self` does not hold a =
+`opcode::URING_CMD`.
+> +    /// * Returns `EFAULT` if the command buffer is smaller than the =
+requested type `T`.
+> +    ///
+> +    /// # Returns
+
+I don=E2=80=99t think we need a specific section for this. Just write =
+this in
+normal prose please.
+
+
+> +    /// * On success, returns a `T` deserialized from the `cmd`.
+> +    /// * On failure, returns an appropriate error as described =
+above.
+> +    pub fn cmd_data<T: FromBytes>(&self) -> Result<T> {
+> +        // SAFETY: `self.inner` guaranteed by the type invariant to =
+point
+> +        // to a live `io_uring_sqe`, so dereferencing is safe.
+> +        let sqe =3D unsafe { &*self.inner.get() };
+> +
+> +        if u32::from(sqe.opcode) !=3D opcode::URING_CMD {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // SAFETY: Accessing the `sqe.cmd` union field is safe =
+because we've
+> +        // verified that `sqe.opcode =3D=3D IORING_OP_URING_CMD`, =
+which guarantees
+> +        // that this union variant is initialized and valid.
+> +        let cmd =3D unsafe { sqe.__bindgen_anon_6.cmd.as_ref() };
+> +        let cmd_len =3D =
+size_of_val(&sqe.__bindgen_anon_6.bindgen_union_field);
+> +
+> +        if cmd_len < size_of::<T>() {
+> +            return Err(EFAULT);
+
+EINVAL
+
+> +        }
+> +
+> +        let cmd_ptr =3D cmd.as_ptr() as *mut T;
+
+cast()
+
+> +
+> +        // SAFETY: `cmd_ptr` is valid from `self.inner` which is =
+guaranteed by
+> +        // type variant. And also it points to initialized `T` from =
+userspace.
+
+=E2=80=9CInvariant=E2=80=9D.
+
+=E2=80=9C[=E2=80=A6] an initialized T=E2=80=9D.
+
+
+> +        let ret =3D unsafe { core::ptr::read_unaligned(cmd_ptr) };
+> +
+> +        Ok(ret)
+> +    }
+> +
+> +    /// Constructs a new `IoUringSqe` from a raw `io_uring_sqe`.
+
+[`IoUringSqe`].
+
+Please build the docs and make sure all your docs look nice.
+
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must guarantee that:
+> +    /// - `ptr` is non-null, properly aligned, and points to a valid =
+initialized
+> +    ///   `bindings::io_uring_sqe`.
+> +    /// - The pointed-to memory remains valid (not freed or =
+repurposed) for the
+> +    ///   entire lifetime `'a` of the returned reference.
+> +    /// - **Aliasing rules (for `&T`):** while the returned `&'a =
+IoUringSqe` is
+> +    ///   alive, there must be **no mutable access** to the same =
+object through any
+> +    ///   path (no `&mut`, no raw-pointer writes, no =
+FFI/IRQ/other-CPU writers).
+> +    ///   Multiple `&` is fine **only if all of them are read-only** =
+for the entire
+> +    ///   overlapping lifetime.
+> +    /// - This relies on `IoUringSqe` being `repr(transparent)` over
+> +    ///   `bindings::io_uring_sqe`, so the cast preserves layout.
+
+Please rewrite this entire section given the feedback I gave higher up =
+in this
+patch.
+
+> +    #[inline]
+> +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_sqe) -> =
+&'a IoUringSqe {
+
+Private or pub(crate) at best.
+
+> +        // SAFETY: The caller guarantees that the pointer is not =
+dangling and stays valid for the
+> +        // duration of 'a. The cast is okay because `IoUringSqe` is =
+`repr(transparent)` and has the
+> +        // same memory layout as `bindings::io_uring_sqe`.
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index ed53169e795c..d38cf7137401 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -91,6 +91,7 @@
+> pub mod fs;
+> pub mod init;
+> pub mod io;
+> +pub mod io_uring;
+> pub mod ioctl;
+> pub mod jump_label;
+> #[cfg(CONFIG_KUNIT)]
+> --=20
+> 2.43.0
+>=20
 
 

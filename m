@@ -1,97 +1,102 @@
-Return-Path: <io-uring+bounces-9368-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9369-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B504FB3923B
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 05:33:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA2EB39287
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 06:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662767C2D4A
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 03:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1251BA7FEF
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 04:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5D917A2E1;
-	Thu, 28 Aug 2025 03:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D5D209F5A;
+	Thu, 28 Aug 2025 04:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QYKK6lNc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDOpy7Q7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF313D503;
-	Thu, 28 Aug 2025 03:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A6830CD97;
+	Thu, 28 Aug 2025 04:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756352023; cv=none; b=FCgAhOMowK7tKve/wTINqi9Mh0VHRDI0qwQHHKYd2ek+oGgHupdMZ09l7makJxx4ZZPRS/nsVwow2giQecCUSJ+teLrUzI469+H3Zql72tLExoYGg4ms3X5AOvxmVhehBv4gTBpjtVv5508FUa+2tZN4+U2wSapZ81L905Hf6qU=
+	t=1756355265; cv=none; b=r2UIBl3fzj8XOTo2LGZrcrtlQ5xoTTX7n40oXyt42m/Zre12gLcN2OxXDNg11r+Y0obdizIwa7c9u9+4SQ9FXexUpr9XRdZGx6WpdXThBMzhcHJv4LFnIDAfueEeW2sR3hJT+KYvNGuP4KzVUqnWV0n2HJtFT86pabw6Aq8El+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756352023; c=relaxed/simple;
-	bh=BMAGjRMk4Z3TjouD68EjoYToYs9haeFZiFaVppJm+XA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mREpUQCO8Nz/qb7wOCCD38iYs4PDnmJz2cbXm9bR+XveiOznf0QwsgJFHz0Yp2npLXzjIWMLr7r8ewlrxkeYHBCoR5ZzXxUBpJFB1W5Y7AqSZB4GzuR/VgiUwhcYXtl2btliifhjqh1Rb+EQU9AmPQQZ8DVSGuitu1Ioq9JRAEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QYKK6lNc; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756352017; bh=u1zhF4oSCXVG+6LusvOKKNkPof3RJVhGMntnsj+s+1o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QYKK6lNcfUyMS2DXomL8yP06dzLwoMuRlzqhJHe9mI6vP2jxnBlX1/mcJkWqJ7eWq
-	 Pt7a0D3PeDyfjlmxgvIpZlFBR4Re19a5896eB0ILIt6DjIrFxJUumSfo5EqKUaC/+H
-	 airj3n993krKMbycXifpRciD/GSRC7rInO9HilmE=
-Received: from nebula-bj.localdomain ([223.104.40.195])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 6E0888BA; Thu, 28 Aug 2025 11:27:32 +0800
-X-QQ-mid: xmsmtpt1756351652ta9x299eo
-Message-ID: <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
-X-QQ-XMAILINFO: NGZp1yYNf7Y+9GzPxqsNlS6AYhGbwwFB5CviZmlZJVmcbrpS9/OK+Dw/zgqzHX
-	 6+5nr9SgFDCxH0x+PRGPCBF4pkycXVY9nYdwiUue6ACSsAYjv1g/uN/ZLUeyfajQEg7zoZ8BlVXb
-	 HBZ0UMpM5/94LQTBgdrAy6jurk2p0cjr7iSwwpJDhhIU4Egc9StM9mCxpKZUOHELk79zsM5zJzSd
-	 lX3aPYRIfbMRSAwbXf0vNPqfMXtvyux72R4QShSoSV5WsrJKUy0UJon3ofzq0xw/E2bvjBSKLhxw
-	 bq9Z1aEhbcIiWf/rpyT6ENccAoCcJE0GhkpzYrvL4mAnz1ei6ots4Og0C0JK2KORfu+3lCdGnbI+
-	 FGPc3F66xS7flDuTrZwxa9zGMXx1lUWOH2MPeX33+0virMr/cNpu42HfH1frcu9yUD9atRkFghlX
-	 rL5kyPwFc0sb176V5SYw63D7H+onYvuNdI8CtCKvGRf1QpdMoy5+4AekM1a/yFrZvS6j71znv+ke
-	 jebWJHiMz2Q6Pk58pCEzfsHNYhHL56TI3SqYtheZZzG2xeMd7rrOuyv9t6nhUPblrj8xRDlRFHuX
-	 ZMo0lNwr+9XOpfyY235BDjMz0z5Ksw6kesXk6jyaIeirY0Z22knSdK8XFAitHdRY/l6MH3nc0ClL
-	 oU3BLyv6BJ2g+ZsjTMZ2wQg4+tcHtkXaEWSH0cQcX5RZxYsrGj8w3KsIjusWlH7o5xBg8p1xKPzq
-	 e52KCW2QqlazO8RJaY6B0lMoNHeYEpzX1eMV2YH5IwRFpAatar6/ZY5VreNa/x9PfFH36RaA2pAg
-	 8r6e5wdQjZ4vRu35TurUWt9Hy0UlkcjqbugirVI4FnuZrHj5be8XS51AwEXcDnEBinKXV2zqsU1i
-	 yUUb7sDnDcDL9Hb5m1Osai6Pfq7YP5uRFeouSc1uyaD9iNix5asUABFBAVGiH8r1yM1JV9o6X1f0
-	 /RXGmsWtABMkMgxATYoMxZy3Mk+j8ZoDiEKrhGYysWih5fuhOElMwbtsXuXA5F5+aK3teg67Fn2x
-	 2wVjiKinU6uMjrkndvIQa8czMTCPBfZRe/fivscMRKg9SHjI/I490KCFFPWA54re4ELUmy8YpfsG
-	 4AgF+DCf/2TOsClQYKRcGPIQzmPg==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Qingyue Zhang <chunzhennn@qq.com>
-To: axboe@kernel.dk
-Cc: aftern00n@qq.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
-Date: Thu, 28 Aug 2025 11:27:32 +0800
-X-OQ-MSGID: <20250828032732.101494-1-chunzhennn@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
-References: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
+	s=arc-20240116; t=1756355265; c=relaxed/simple;
+	bh=hUnNfjGCPEWmiNNGGLZKDOsScYWj511icwVWbnrMbSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gE86G8YGZBmkIG9k7GPXf1bScrcjGn4WEPmcPw/M1D9uGUWwf3Ghr3OEmcgTmCtyC0BhnkTHq05Wiou0SvFFyZLlbkdajwARCMNLB9eqW+I76kO7xduMb1y64kHuctDWVi/bnJ63PN+jjUz85QjUFYtwE37hqwKAmHR8nU0AS4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDOpy7Q7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33984C4CEEB;
+	Thu, 28 Aug 2025 04:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756355264;
+	bh=hUnNfjGCPEWmiNNGGLZKDOsScYWj511icwVWbnrMbSE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MDOpy7Q7+PtjV9ZnI/+71mkZCJrWQwTtFvdW0afXONz8h7wR9ImGTrV4WCC7mXn2B
+	 7EbOn3HGpIWLqjjSjwF8rGcKZhPtc4Gfky+zbxOUAt8Kl+cAXdXSfuUaya8Zvy1ya1
+	 F1mYHsgG9WcnDg0zKq2bACZzcl/UPORrd7FsCsy3qdsnuRy8wAbqlzxL98joSNwLF6
+	 w9WMn87Hpnp8f8IF6pk5vnsO7wQiX+Ib8XV+pManWrp62VQ4CdQPenZjvMUQSDERoQ
+	 eOJ33fQuGDSZ49Qcix6/vKNOIhOhF/f6epJTEq5OJkbiyKYIE1xM/FteX3oGbk+Ymp
+	 Up7jZQPpsB0CA==
+Message-ID: <c39104cf-f066-45d8-a13c-cad558312b6e@kernel.org>
+Date: Thu, 28 Aug 2025 13:24:45 +0900
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 24/36] ata: libata-eh: drop nth_page() usage within SG
+ entry
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Niklas Cassel <cassel@kernel.org>, Alexander Potapenko
+ <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-25-david@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250827220141.262669-25-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thanks for taking care of this report!
+On 8/28/25 7:01 AM, David Hildenbrand wrote:
+> It's no longer required to use nth_page() when iterating pages within a
+> single SG entry, so let's drop the nth_page() usage.
+> 
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Regarding tags, it would be nice to add a 
-'Reported-by: Suoxing Zhang <aftern00n@qq.com>'
-tag too, as this report and reproducer are
-developed by both of us.
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
-And absolutely, please feel free to use our 
-reproducer for a test case! I'm glad it can 
-be useful. Your version with idiomatic 
-liburing looks great.
-
-This is my first contribution to the Linux 
-Kernel, and I really appreciate your patience 
-and quick responses throughout this process!
-
+-- 
+Damien Le Moal
+Western Digital Research
 

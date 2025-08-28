@@ -1,84 +1,83 @@
-Return-Path: <io-uring+bounces-9377-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9378-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45865B39595
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 09:41:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C35FB395B9
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 09:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF337C28B5
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 07:40:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6820188B78C
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 07:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7D92E03F2;
-	Thu, 28 Aug 2025 07:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3F22D6418;
+	Thu, 28 Aug 2025 07:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxmgKBFb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOUjOG6o"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEF72DEA7B;
-	Thu, 28 Aug 2025 07:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D77929D28B;
+	Thu, 28 Aug 2025 07:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756366680; cv=none; b=gvjZHxSC/eIodf4bXPWCDL3HR/rjHRl9VQMg/YWulSEWsRxDh2NPvzV/jktAVWDBsqgyB4Yi6IYfBT13v+fOPiiDeyk9x602vvr6XYoTi0H1WUHtgMfblCTMv0Vx70o9Xm9KGmcndA6O1qvnx57BRhbjTa15M5vhQZuC/OTolDU=
+	t=1756367040; cv=none; b=ERXc+xrQAkd66wmMTdO90ZD7P1owLtQ6FYxSC3t+LzliOMnA2z03oYJLx4JTRW4lmSoMu+tAVI3dLYJTdq8SjcWhIceBM7fnbtK3TVCBwHFYAENOa/P3/U0PI42ZM2b063nst3IyViwUQjmyyIY4GlPOTKetV9U86WHJQNbs1zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756366680; c=relaxed/simple;
-	bh=Evx+qHc0PZj/WJzWjKhVcHVcvE7nkS3TygD2JsAVLCE=;
+	s=arc-20240116; t=1756367040; c=relaxed/simple;
+	bh=XDFRc6QlXzcNT8Ow6MyYcXfogrHGk9sBXxgLao67Ms0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnKX7GTeApjwqNIyVHJnSYf8q9NWNqmX/h+aMZyS0PBlXOpplg43Z4frUnKcKdUJ9yvNq3vAQn+h1tKWjZGy43gH9/CQ8JvcS2GPCDNhy8mxNra+wwgf94r2J5ftI48NpNir/iDGAYG+et05bms89nDp39e7Co6FyjPlSepoopU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxmgKBFb; arc=none smtp.client-ip=209.85.208.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pv68KaKVnG0aD8w2YZTjAkIGpbEc/7kHPsq3eX6DJpm8iywKBsa/NjNodEvQRcs5125gWdCZOALgsFEY+spNZ2CDxoQjIgZlxONG1+JSR7fWK9jZfBqgeG4W88LI17MJqjsMpK9oaoRgoLPR9DeMiXX3hWyv1q2YKCiDE/chQ88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOUjOG6o; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61cb9f6dbe7so1131548a12.0;
-        Thu, 28 Aug 2025 00:37:58 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afeee20b7c0so26982266b.3;
+        Thu, 28 Aug 2025 00:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756366677; x=1756971477; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756367037; x=1756971837; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TVrt2ctwbXgHbo+Hn2TZ0gCxiv/sLljbJFjbqAY/TQU=;
-        b=TxmgKBFb3qxDi71Fwfir8qC2NoATnSBLuhH8SWGnYPOeg7duHU2JwIkArwAFRoI3bP
-         1UabzhGWlZwCf/RsTaKhzAsm4ZFba4pNr9Z8NpDm0GkPzztUadkKblvlAgudTeqWiJ41
-         TDtInE1meUgFCh7DHbDYz9NmYRD7IFZoQLRAnNV3AQBSAf0XTEdFtX+KOY6wOo8PcmT8
-         Sjs+i8zwl++amwg5cwK+gJhH23X+AzADqygs33KEDHtQgOnJ/IWfCM9RUuBYMp2iGgru
-         +7QRt2cOgQn35J6JJOfFQiCEWWaEZBU83leSm7E3HB20ChRtWa6Zs4RMywzLDmv1MrUY
-         2p8Q==
+        bh=uCyWFKVmsqDpuka3mORfqvZ6ED5815cQsuT83UfJ0fY=;
+        b=GOUjOG6od5zIKCSc6TFz+3QQANGLqQbNGtzlbxVU1BVGLcRUuc52zTa+kc+ocfXH7H
+         EhxYzQzjmKsWU0BnDlnYXwF7BNtIQ5mL0VpB7yhaD4mXXGXMAtyvq7sKaB9Pnbxsp0+a
+         JTEF6/KWVMJhgV3dk1LLTIzivtmVz1TeUxbPHJwqYg9jT/px0xS8C+f74Jk94hHBv/NI
+         c0saUE34Pq7YAv1EyW3J9L17BAnals5J5+kmaqr+WpMfWJeDhI+Od9Ls8Pb9CzPCP+Z2
+         /ePzL05XUO6H3yBjUryjOG/4SKB9WXsvb2aYE+ZLvXSLQpKMhipnQyuCjFU/wCeqhYGq
+         nnCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756366677; x=1756971477;
+        d=1e100.net; s=20230601; t=1756367037; x=1756971837;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TVrt2ctwbXgHbo+Hn2TZ0gCxiv/sLljbJFjbqAY/TQU=;
-        b=It98vGtiP9GToZHqC9/yImB+mjxQpKuYUIKW99JYChP3nTpFKHhM36ctVYBOuszzKc
-         pV9BV26qXcokV8XUWh+roMeObhLjDA+Swv/7/UCF4rDwAnfLQJZ2ds/kRL3UiZJTkJ6x
-         mps2rXVtatIsawknLYS5iwSIkw0YITv17MmYpVY0gMwmR8YDgR+L3AFy0MU7AiaBv6Ud
-         IKYdVNtG0FTUQesusNZNduI4luUqRuBP2Pg0oMLvrzgdTNEtXQVvleoOTIcUjh6K+KLq
-         QSry3OaIJiyHKIle6exZrw57i68+gTzC0bzjVmMbysROqwEFKyVNpbbtSeN+kFDW/4Do
-         vxRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyvRsRjrcz2hzzNGL16dbxDF/oT2ERo6841HlLJYpiAYrazdmYZ9shyMjSsJJa9DFHBUhMDV0EaFj1ow==@vger.kernel.org, AJvYcCVD21Z5jK6QIxbxn7E4J8HcvcaT08u6vAmSN1kn8s2WxlWaFE8lLvOkyR1epAmVjRpKrn9Wh30bz4tJ@vger.kernel.org, AJvYcCVWd4POk1Nhd4qH9aO2VW9gjbiBlVubAygkSaoIs164i+Yz3tycLANwIBONwHVHoDPLDQMGoHDt@vger.kernel.org, AJvYcCVuzN2Ik14gnPBXS5F7HVBoXTDSqhra5WyGlGY9KDJX+d+lyJTL3ny1yp2I2oPzfiAXiIhAbVEbXw==@vger.kernel.org, AJvYcCW6Z/dRm+AhpT2AyGkKtnj+F84m4ksGDZia8xoI+l2caaWQ5LqXbxUp9nkYRp8WoBxfUG+NYTsoeWPotw==@vger.kernel.org, AJvYcCWg2znyOtVyxEyKGdc5CY1SQESXxeorFPDLaCJZyuNVAiz9epnP7bUPjnGQ0A8p4Xr+2YjzQcbqhKwBeQ==@vger.kernel.org, AJvYcCWlsJXmrC83UjiWPdw8oFGhs8eVXDkYmfIRhKmn1WEPTdv9gTqKWuuln8t3JlrfiIPuKWeR5Uk+EAGQacvr@vger.kernel.org, AJvYcCX5XVxqz0RnE8IHUNPnjOTwYZ+miOSvXFQW5MpO/b1DMe8q5f90ZuDVQKudRt8RSEbNETXTWVg4zTUT@vger.kernel.org, AJvYcCXKlgXpl6grbzlDYMbg1JmEqMofGRkyrP7ABPAh1qxAKK4ETL75YBj0Q4V5tklaYTifeAuL5ydes7kw9VPSOa/v@vger.kernel.org, AJvYcCXM7bO9uRd+eOZil5A1s1YzqLeE
- zcv5wuoME2IQAD5Nkrx/Fw8eX7mGfPFbZ39Mdn7+h6DJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGxUCCkO6POPsL8jIYWDGHpwmVERE0uID6TCgomq8xGfP5GGS8
-	mv6GnzHSu5iFSgtqP77oFv66pq/nA4WYc+Nf811mmDqKW+ZUnEwdpfp/
-X-Gm-Gg: ASbGncurm8o+M71u9hkm0FNIVG92SdhVC4gRveZm8LZv8tj5gtzCAlA0ioiqz0D4f5r
-	rfFYTQHF2e+ICJXQc3r+HHcOGWZJpSBN/NV6WpAQL2yPdLcid9ltZ8pFlRnClyABrhNw5gmAPLN
-	GSNs2+eQW8hGoLen8CSNHjpSkEXki6H4nhb2Ofdn3FqtRDegMukRdcd1GlaIMHnZQqb3U6pTM8w
-	gjnI1owNQCLuUcK0QoXF8qiA/5hr0yZOB/ZE5oT+cYfO0Ys14Z+frSUMtCOrGw8ZooN5qmCVeIN
-	HCQwF3y/EgcJVCJbjtlzJhw4JrTM3GmxAYN4O0ouY/7vhjdBJisRtqvfu7xlegFJHisdsyiJJlN
-	U9DjvITKAvV8gpJkjQNxmsUABoGe7Q4L+xFqnPPmRdn0EXIQ=
-X-Google-Smtp-Source: AGHT+IHzpXzU7IRYTRL9u8s1GDWZ3U5CYmUtBakw/pIBZX/rgdseIwaMMauanPlQhlJ9DDnzYy2q2w==
-X-Received: by 2002:a05:6402:52c4:b0:607:28c9:c3c9 with SMTP id 4fb4d7f45d1cf-61c1b453182mr20154119a12.6.1756366676733;
-        Thu, 28 Aug 2025 00:37:56 -0700 (PDT)
+        bh=uCyWFKVmsqDpuka3mORfqvZ6ED5815cQsuT83UfJ0fY=;
+        b=bR0Hw8Y02X7ilNZBrRsTPQ8mWISpHaTH56Zvx9Jztq8cghhePYlUY2MCilKKOxfis+
+         SJM1V6qPUF8cWWgDNRpaZoLHwGJp8pKGv56f6i/zQr4dNhwRtYxXaficvemJYImGNTCl
+         q6np1GWy4WWQFJCnB53hQinSpwDfwKPg04bIAvKDAavywkuROhPijmvklanKgzFcF01A
+         cMDqi1oOuV8XPnTxxKwQE12U+anU3Xhj8A3qoSv+FArCG9dcrccDdw2CD7sPqs9S2ZAt
+         6wZ9L1PWJDybo9RWpiJ7PygMaLszB3Nhxtoakl7JQGAHpJbRWPWNfm7RG47cvkUKK/2i
+         4Pbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ytH4nPNU8gDsNp9hv7/k+iEgJHL6e9cNVA/BHv+c9A6glYAg4wJKIAQK5ir+aouL9L7/DtXWgLvp@vger.kernel.org, AJvYcCURJdwWbgfDOAKkPhRyKIvRawMA7IxEnVTsPyV2h6COIPaRG9DkUJN/TB0RUEtQl4jGVr5jkT1C@vger.kernel.org, AJvYcCUgvO/hv6fCmw5IErOhvWGJxwBk11H0OIaLPhjHaV3iAeLJWAx00zJvjwXYcQuuATA5Zwk8Wu85teKrEnB8@vger.kernel.org, AJvYcCUywvRDHJbOOgWEGr96Ps74+5FxC8eOc+lGVltiosjIqBOWR0fyoQrB+v9Wi/O48Rt6EWoAvuT2eQ==@vger.kernel.org, AJvYcCVzrnEO5kYma31gdhyFWSdiZjurtLu4DpIr+FRu7ePvZsKvTjSc35s3NdZ0iFoaii44TcUDLPPh3Xb4Sg==@vger.kernel.org, AJvYcCWGcy/robXvOfb7GccxOX7jJvf2GWNxTRCVtlWbEt9Cc0wb3svWdzEwCc6H6V3LQz/nAq2eBMbg1H8GQQ==@vger.kernel.org, AJvYcCWHE2gdDXczEmeWlWydQg5Gi1IaJHPpOOQgcedDNFlsR5qLLGe9E13o4xTdN7fjPCJLFF3K@vger.kernel.org, AJvYcCXFm4I79CxL/Ik5zQSfrVqY6k73PYHpV6OGQgEy0WYdy/AQXatm/T9duGX8xTdyeOuSbuT5KAogUk2y@vger.kernel.org, AJvYcCXQOXo2yPL76XItWI885UCKwDvlsea734wmWSN+jVNuJl0tbMINm2Dy8IsTz2n0QeaCtpkqVgbzQmzk4HGJ7S/l@vger.kernel.org, AJvYcCXhr//1nsWN/clbvroNjWydXfjcNr/+9spwxr4t
+ /yYpIN12adbqG5FvcTuWczxWp/k4E1tet19XfXRk4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaETqZkGzPYI8rY83k/xvAG4sDE5egP+hhWZCCdUMIxPD0Zy9c
+	E98oVMTnAugEnYcLoprl5BECba5kRDW3SkH/cSb80ovgzqkzzTO8Y7h/
+X-Gm-Gg: ASbGncteuM+tGzCdZk8NQqXNei6vUqn5D++muVG4qeC2b9Hq+s9F/5vVbbc7ATZbNuh
+	thKwKCDgFsWu/zAyf/vYpAwVh8DzNcJIbODn8iF3nocGQT7R+eCblMWTNlwkRM+JM3FWJSCgHof
+	IXI8w9DEurHrM1Vyy1/DmHdNB5KXZOsTprZ5n5mAT4dfySA5GcZ+lYxkNOgqDfMqquXfYkzt/i/
+	urg2CMH2r8SsxR4aU2jgUMYz3xSb75Be58Xy3ASbmFIr67Pj0mPsbHFcLNEKNoBXnP1952h6sPp
+	bSblIBJ5/QUtRC5VSaj/kqW9poT6BmaPKqpbonlU3f6pfR1g8gOAI3oURDM3z5aHOh5tf5YJp2L
+	W9Bgi0oFJE+ZCdudxqyskPir2JDzW45o+T2sYEKzetQpj1LE=
+X-Google-Smtp-Source: AGHT+IFCWGCB9w3JZkSqlrk4a0OYpaWYnOsewLh1z3k9Jb7NB4buZSqln74MwC7LX4UWbpbQGZTMJw==
+X-Received: by 2002:a17:906:3717:b0:afe:764d:6b31 with SMTP id a640c23a62f3a-afe764d736dmr1280383766b.4.1756367036783;
+        Thu, 28 Aug 2025 00:43:56 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cdb00baf9sm715248a12.33.2025.08.28.00.37.56
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe48fae316sm1165798866b.28.2025.08.28.00.43.56
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Aug 2025 00:37:56 -0700 (PDT)
-Date: Thu, 28 Aug 2025 07:37:56 +0000
+        Thu, 28 Aug 2025 00:43:56 -0700 (PDT)
+Date: Thu, 28 Aug 2025 07:43:56 +0000
 From: Wei Yang <richard.weiyang@gmail.com>
 To: David Hildenbrand <david@redhat.com>
 Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
 	Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
@@ -99,18 +98,18 @@ Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	Marco Elver <elver@google.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
 	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
 	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
 	wireguard@lists.zx2c4.com, x86@kernel.org
-Subject: Re: [PATCH v1 11/36] mm: limit folio/compound page sizes in
- problematic kernel configs
-Message-ID: <20250828073755.gyq5cyafrxb7lnw2@master>
+Subject: Re: [PATCH v1 12/36] mm: simplify folio_page() and folio_page_idx()
+Message-ID: <20250828074356.3xiuqugokg36yuxw@master>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-12-david@redhat.com>
+ <20250827220141.262669-13-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -119,33 +118,86 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827220141.262669-12-david@redhat.com>
+In-Reply-To: <20250827220141.262669-13-david@redhat.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Aug 28, 2025 at 12:01:15AM +0200, David Hildenbrand wrote:
->Let's limit the maximum folio size in problematic kernel config where
->the memmap is allocated per memory section (SPARSEMEM without
->SPARSEMEM_VMEMMAP) to a single memory section.
+On Thu, Aug 28, 2025 at 12:01:16AM +0200, David Hildenbrand wrote:
+>Now that a single folio/compound page can no longer span memory sections
+>in problematic kernel configurations, we can stop using nth_page().
 >
->Currently, only a single architectures supports ARCH_HAS_GIGANTIC_PAGE
->but not SPARSEMEM_VMEMMAP: sh.
->
->Fortunately, the biggest hugetlb size sh supports is 64 MiB
->(HUGETLB_PAGE_SIZE_64MB) and the section size is at least 64 MiB
->(SECTION_SIZE_BITS == 26), so their use case is not degraded.
->
->As folios and memory sections are naturally aligned to their order-2 size
->in memory, consequently a single folio can no longer span multiple memory
->sections on these problematic kernel configs.
->
->nth_page() is no longer required when operating within a single compound
->page / folio.
+>While at it, turn both macros into static inline functions and add
+>kernel doc for folio_page_idx().
 >
 >Reviewed-by: Zi Yan <ziy@nvidia.com>
->Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 >Signed-off-by: David Hildenbrand <david@redhat.com>
 
 Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+
+The code looks good, while one nit below.
+
+>---
+> include/linux/mm.h         | 16 ++++++++++++++--
+> include/linux/page-flags.h |  5 ++++-
+> 2 files changed, 18 insertions(+), 3 deletions(-)
+>
+>diff --git a/include/linux/mm.h b/include/linux/mm.h
+>index 2dee79fa2efcf..f6880e3225c5c 100644
+>--- a/include/linux/mm.h
+>+++ b/include/linux/mm.h
+>@@ -210,10 +210,8 @@ extern unsigned long sysctl_admin_reserve_kbytes;
+> 
+> #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+> #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
+>-#define folio_page_idx(folio, p)	(page_to_pfn(p) - folio_pfn(folio))
+> #else
+> #define nth_page(page,n) ((page) + (n))
+>-#define folio_page_idx(folio, p)	((p) - &(folio)->page)
+> #endif
+> 
+> /* to align the pointer to the (next) page boundary */
+>@@ -225,6 +223,20 @@ extern unsigned long sysctl_admin_reserve_kbytes;
+> /* test whether an address (unsigned long or pointer) is aligned to PAGE_SIZE */
+> #define PAGE_ALIGNED(addr)	IS_ALIGNED((unsigned long)(addr), PAGE_SIZE)
+> 
+>+/**
+>+ * folio_page_idx - Return the number of a page in a folio.
+>+ * @folio: The folio.
+>+ * @page: The folio page.
+>+ *
+>+ * This function expects that the page is actually part of the folio.
+>+ * The returned number is relative to the start of the folio.
+>+ */
+>+static inline unsigned long folio_page_idx(const struct folio *folio,
+>+		const struct page *page)
+>+{
+>+	return page - &folio->page;
+>+}
+>+
+> static inline struct folio *lru_to_folio(struct list_head *head)
+> {
+> 	return list_entry((head)->prev, struct folio, lru);
+>diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>index 5ee6ffbdbf831..faf17ca211b4f 100644
+>--- a/include/linux/page-flags.h
+>+++ b/include/linux/page-flags.h
+>@@ -316,7 +316,10 @@ static __always_inline unsigned long _compound_head(const struct page *page)
+>  * check that the page number lies within @folio; the caller is presumed
+>  * to have a reference to the page.
+>  */
+>-#define folio_page(folio, n)	nth_page(&(folio)->page, n)
+>+static inline struct page *folio_page(struct folio *folio, unsigned long n)
+>+{
+>+	return &folio->page + n;
+>+}
+> 
+
+Curious about why it is in page-flags.h. It seems not related to page-flags.
+
+> static __always_inline int PageTail(const struct page *page)
+> {
+>-- 
+>2.50.1
+>
 
 -- 
 Wei Yang

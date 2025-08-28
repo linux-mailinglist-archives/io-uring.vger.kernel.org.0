@@ -1,89 +1,122 @@
-Return-Path: <io-uring+bounces-9391-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9392-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72F5B39A81
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 12:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442FEB39BF7
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 13:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7559216DBB4
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 10:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47641893FE4
+	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 11:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CF230BB9F;
-	Thu, 28 Aug 2025 10:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3467330EF9F;
+	Thu, 28 Aug 2025 11:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PkWx0Cdo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039212F39DD;
-	Thu, 28 Aug 2025 10:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA77930EF89
+	for <io-uring@vger.kernel.org>; Thu, 28 Aug 2025 11:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377827; cv=none; b=FsTyjdP/z1UaTEgDkGMiOCFC3+lPyZtXWDWI+5/ktuCvmeHwQP4M2mBA3HiU13BbaDV5NQ0h+2zxaTkMabEnuw3t+sgxsByziICAU4stVrmIuyKHjvt2CgXxzJoZzIiXl1d2XvqOu3Q8v2h4y1DJm81mcYYhPya6JIIftkEqhsQ=
+	t=1756381807; cv=none; b=i5xrz7adFQo30IlZ1n0GmVlPviooims+dRMsrgGu4lY01ekyDSxbIMDTCuOIPTWrVGHS6RNBCEVVrTNEviUX7znpZz3Lh7CD6wJjpNSnYYilfOPsACfUqn28jALQra/fptIj0TGaGpBbsgCfwsvRGcQVzlPAzE6UkW8MuD8P/mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377827; c=relaxed/simple;
-	bh=M+qaOTR7l/7Db+24ZSXKfcL7Cs6yzi/ZCKCoZpm9Jjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcwiKuNCXkHb9IERzHlMvyr6VUd/AMDrd1XOV+bRSWR4vcdSbvkTJVQm3loBVP5HKRua2dmdWtnZFM5GxIHGdQZux3k6XtAU1qzCWFg5C5UKc7CcKEDRBA5UZtMxZ5ZXv4fIZPOJLuh7Py6AQ80yKFsHba0OrZy6TFejiSGdits=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E7A7C4CEEB;
-	Thu, 28 Aug 2025 10:43:39 +0000 (UTC)
-Date: Thu, 28 Aug 2025 11:43:36 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 02/36] arm64: Kconfig: drop superfluous "select
- SPARSEMEM_VMEMMAP"
-Message-ID: <aLAy2GJ9YuNgvxCd@arm.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-3-david@redhat.com>
+	s=arc-20240116; t=1756381807; c=relaxed/simple;
+	bh=/wf8U5IKj+z3YPZwIzpnehBZFZealmv3pS9JcwfsdIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIkeRbhm5iXYAtKNcH468RUg9EkIDoAb32yJhzroM6qOOi8JCbyofifyaD6uQkdA8mvEY9V/aPvlX1QE2xDfsYvuY5R2rLZOIRHsYO7r5T6UpsIFts6cggqKhEim07ct7arcemne6pFabcUsHXN0k//dH0p12RJ2CgRW82rO4Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PkWx0Cdo; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-771fa65b0e1so461053b3a.0
+        for <io-uring@vger.kernel.org>; Thu, 28 Aug 2025 04:50:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756381803; x=1756986603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HjwNXVfVIbch6ui2Lije+o4C0nxjdug1cxVSvsXhRV8=;
+        b=PkWx0CdoSUkpozQkkN6b92dwJk6kGsB1oNuweji4vy5hAxK2eDby7hQUzqD6kA25zx
+         HHu2rvl6eWPo4+rguJVqtQIIyKwqoccph2UKkCaaV4Fjem9AOkS9XjZByqYm14DwLB9z
+         8KArWmMz1rIyOyK5AxJ+SqQBMSMqhbm87s7h758FUzwl3BqKaPrdo+nsa+lFeoxt2jU9
+         ZueFOpD8pdaMj6YTzpoNqHI8yAQ8HW4uJcgYG8du1kv9VhwTXufMlA8yn5cFAbdU5ZX9
+         899uRtUgKnfTP5nmrXNJkxkKw69tbYK5CJSbpuUyZXe6OUWczHQFScQkQQADPY0VJ4+Y
+         v1Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756381803; x=1756986603;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HjwNXVfVIbch6ui2Lije+o4C0nxjdug1cxVSvsXhRV8=;
+        b=ipxUhrvGciGS0qxKW+rYVxBe4RE7RA4aHBTNS3G7yRqbp+Kjq/K2e3KJsfxnPhCiX7
+         of9AGmhqipW9CLP/OY8X16BrZeL6nZruKiFbp8RO3TiyFZY41PHrOFFElfP1LndYnBtM
+         J88mzbUP2OAoo8XVuoaJttu7k/eJT2tGrEmOS8/BdhZ1Qupxfq4iMrQS4IDhZ1wmxloo
+         fSxlUsnv+fYR/UnfRr1Rr5l1JpTC4WWLCtjujP8n9zdI2tSygj4FVicZOujqjeFImbM3
+         W17yNZBq1g+X7FnPZ0bQbo2iusv/0I/v32d010KZQVJRLjXvvwvdgY8cDiIWgTnLd++F
+         EcdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVRU13GhgsZu3WWeMZx6iV6Wf0UsfTIm/UePlK+cVBfmwLGE/ZmtE0BIthep0s+JoGJ04ngJM9Jg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7a5oEYGAqZ698roD+WHyCUb/mxdw6MvJBthff/8xrawSJYyJ+
+	MURq0nZ7EJ+IN73y09zh2gB4bSdNNffemnMt+XK4ks/iIBiJ6j47i+aN4LYV9Ft/hUI=
+X-Gm-Gg: ASbGncu50pIlYkEMnJvQxHPIw6Iv09rY3EFljN+4E/s/GoQOqB951QmePUXNz5QqFMx
+	a2ZXbEhLxG2KnLxpkV/zNkU2uGpTOunfjysJUsBCR194Z9Oqkt5JDdsNEd3S9eOO5Uc2BR2SdbA
+	QM+a8BTLqWd5g1pGGUvsyXHN5tvf1D55jZ1ECuPREXLFVb9cibjHahNYP5OWSL5mpE/1qNz/eEe
+	Y+AxWWOb76OTMJTrTFiz73Uqa90RXiOZI+3BCY8/MfJe/Glcf5hihiVLWc3PHKwE6ncXGnoR1pb
+	vI4kkqThWdE/v9kBaXHxGX4SuO0katsqHDdEUxX18fK4BgTGoQvZSdgFbtT7W2iIG8B7Pq88Xc7
+	kezldAV0Lfbxqwyx/P89q
+X-Google-Smtp-Source: AGHT+IGezOevIvE7/Nrz9LwifFeXlERPcAuSJuc4DRgcIe+ZiJiG+BpjvRh20H6Ivk7bP2zeqoIoMA==
+X-Received: by 2002:a05:6a00:4b55:b0:76b:fab4:6456 with SMTP id d2e1a72fcca58-7702fadbb34mr29937177b3a.21.1756381802961;
+        Thu, 28 Aug 2025 04:50:02 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771fb852dedsm7163605b3a.88.2025.08.28.04.50.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 04:50:02 -0700 (PDT)
+Message-ID: <3aba1ff4-4e8b-4f34-b300-5e7aeb18ec15@kernel.dk>
+Date: Thu, 28 Aug 2025 05:50:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827220141.262669-3-david@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in
+ io_kbuf_inc_commit()
+To: Qingyue Zhang <chunzhennn@qq.com>
+Cc: aftern00n@qq.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
+ <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 12:01:06AM +0200, David Hildenbrand wrote:
-> Now handled by the core automatically once SPARSEMEM_VMEMMAP_ENABLE
-> is selected.
+On 8/27/25 9:27 PM, Qingyue Zhang wrote:
+> Thanks for taking care of this report!
 > 
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Regarding tags, it would be nice to add a 
+> 'Reported-by: Suoxing Zhang <aftern00n@qq.com>'
+> tag too, as this report and reproducer are
+> developed by both of us.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Done!
+
+> And absolutely, please feel free to use our 
+> reproducer for a test case! I'm glad it can 
+> be useful. Your version with idiomatic 
+> liburing looks great.
+
+Perfect, will do.
+
+> This is my first contribution to the Linux 
+> Kernel, and I really appreciate your patience 
+> and quick responses throughout this process!
+
+Let's hope it's the first of many!
+
+-- 
+Jens Axboe
 

@@ -1,365 +1,809 @@
-Return-Path: <io-uring+bounces-9475-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9476-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6299AB3BF12
-	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 17:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE76B3BFB9
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 17:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F9216D350
-	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 15:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F11891925
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 15:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CCB322C63;
-	Fri, 29 Aug 2025 15:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24991321F52;
+	Fri, 29 Aug 2025 15:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kDcHY6VP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="l6gg32ah"
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="emrsUv2Z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B896C314B82;
-	Fri, 29 Aug 2025 15:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480875; cv=fail; b=vF0RvhrcMSFRNRIzrZsVUuIZKhURuEIi9tIebssaYLrtrolVjNxZS4ScZKINP2e1VcIICGL+V0WR9l9f1L/LuhHfUe0nsGYXKBmDNAucgl40MMQHX8kBb191hJATdFWaZZSEHG/3NfN0vuaqpcBK0wOjEktwi1sCcKSM3moBPt0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480875; c=relaxed/simple;
-	bh=RchDma/6ZXQ93oR9FwEd1N30TfO3J5r6ZikZT/Z6c3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YJyShau1Y3j5SpK4YvJnNh45Ip155cFq85HJMF1/ZnBbzey6SP4XYPZ0VQ2WlD8JPmLa3oNdz2EzNzlGJd1s9unnmQqtnLUn4ZXiA2ztV3UUgmUlNfTancYEsc6AGtRGRC4YCm1hgf9gV20HqGYcextyYNRY6CWNYpZ5dNC1JKo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kDcHY6VP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=l6gg32ah; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TEu3ud025034;
-	Fri, 29 Aug 2025 15:20:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=/8Wdl+tIRENNwPyvXp
-	ggQVYfdKbMAHKO4ptq2zrin1M=; b=kDcHY6VPsU4XZKf7pQfqw2pMqEU2+Lyxpy
-	5OMzO1S+Mm80V4I7Jdoy2CjhzvU2KmeKFBuPoYb3zm2yDD0jm9MTDBOxw/JM3ATA
-	dJPTbMuGLyT0RL/Oot8/HDX4Y3rafWGseztC8/C9A9Xy/IWdsUbK5RVyU7eYuNZW
-	7ml5zePfABuuUZrVLlU3g/dKt78kBl+D32E0pG/ovP28sJIMrlrV2xRHPx2wA2FZ
-	dAXUYwv4lq7q6ZYGIMNHVsoy3vxdgjq6FbcwHiNwfn2pEYJY4oAUWUuiLgeb7zFj
-	OQzOs9O3EorIM3+XjercTDDb/wyTUq+WLmaCFfqzJeKkbBRFkxsQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q5ptawfu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 15:20:01 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57TDaSoA027035;
-	Fri, 29 Aug 2025 15:20:00 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q43d44pg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 15:20:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ceWDDGaxLoKTat1IldSxboVs84hlCrCqRZcu6Jz1oIgL3Scc8A6pPer8BFasl5r/HsVl6CQG0ryRjKOsv00k4yK85yQuho6uDfAVmEnfYyyXIaubTlbhFhXQsluA+FZTIQ81J/A6HKqwegMfjZlzrejlct6TM57sACrNuARQJxl/RQjSUo/EXOVXlDHXV8ti+IgfSMhH6A1RjFrXXGI5tbEp/Gq0xTBU7aBhIZXAVjOAjzEb27a4YL2A68MCNAs08WFZlUXwePTA4AxnxiQKEgb7wJMhxHO7Xjun87B2AdpeqgVfiV+lLMArA4HiMD3CWoRZVNKnOP3J1I1kRiwMmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/8Wdl+tIRENNwPyvXpggQVYfdKbMAHKO4ptq2zrin1M=;
- b=hIbPF+q/HdN9rQQAkb/LPGTy2Mnxa2sK8MFS1sOizNoPVvFRK4dv9PQc5f7c2bHl6AAWhO+CgXAfVckcHO4/1b7xWLPWWWsu4czbF6b1sPfzgFIDQthxw5gmqHRD9JAvD/uBqK9yHkd4/wUpfSHPYmfrUQ/CsE9HFTuk6/bgObNfbOlTLdZbY9gTnXhYJA5/+VAE7u09ZHVZtyLK5xVw7jsFVkR9TBA+mxtnV5zlwbSvgIgr3VjeTnFDYzg1QIXEv07RNpO6bLIhTtj/3iKY81xOL6UE30JekgLZvbzrl0HbjQxnu8p7lAKIfAOGQJ6u3VQw5VpZ/Ocx0NbAYBDxrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30A01E51EA
+	for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 15:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756482258; cv=none; b=iDmCv+HkFCs12YURVip+z8vyL2ijh+wRzyMSGyGh5COsE/eB6Y+Fc2kAfUC2cUVCuVw7lEPdfJRAc4ffRZaIOnHrly6ZPvbGO8yeME2U1oOrKGLVhg0uGE0pGMqyT3HvIu0stqerB6l7epbZEYcCr+HApbeI1D3QqATk63VodFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756482258; c=relaxed/simple;
+	bh=dzUCZV7EfvG6O5WqSP1LF2/kmG1ldMeG1vNhlS8dvBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCZHTrKv01BaXPClh4XioSLvxrN/XY2jFQddpJd2qNw4YUtFcqIBikapAjObhpraXutcLMf9gHyZyd7nHqN0YiWsNg+W8o45WnfSST5DFDQutVVrkmWZtyUr9+fkJs1o2XF/vu8+H0QA5wjSyZbeBJ0YuH/uALEr8OoFG+taWoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=emrsUv2Z; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7720f23123dso2212192b3a.2
+        for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 08:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/8Wdl+tIRENNwPyvXpggQVYfdKbMAHKO4ptq2zrin1M=;
- b=l6gg32ahgLXBhxF1xEUzEdWR1rFm1xMXSsi68BlxME/llIoUFziVrmudMBcz11ewWPtvvqKbJb6cNpzeDJJ2U4HCePw1ziNpEmItMlxR4gyFbWkSEiZpVIM/PBIGbo8PYP+wOJE21OEPveGSSgDPFPFGyET50ATNWCGNMxrQoJo=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CY8PR10MB6609.namprd10.prod.outlook.com (2603:10b6:930:57::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Fri, 29 Aug
- 2025 15:19:52 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
- 15:19:52 +0000
-Date: Fri, 29 Aug 2025 16:19:49 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-        io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-        Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-        John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-        kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-        virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-        wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 18/36] mm/gup: drop nth_page() usage within folio when
- recording subpages
-Message-ID: <8a26ae97-9a78-4db5-be98-9c1f6e4fb403@lucifer.local>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-19-david@redhat.com>
- <c0dadc4f-6415-4818-a319-e3e15ff47a24@lucifer.local>
- <632fea32-28aa-4993-9eff-99fc291c64f2@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <632fea32-28aa-4993-9eff-99fc291c64f2@redhat.com>
-X-ClientProxiedBy: LO3P123CA0012.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::17) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=furiosa.ai; s=google; t=1756482255; x=1757087055; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IGgCLabLukJXDx5jPLPH/OkDjgmbhWChjc+3HfEzLxo=;
+        b=emrsUv2Zk10o9fR9J4J1IUe3GMr9IKDqB47OJ1KtLzpLRidZnzfIbXOodE56CBjZbB
+         RtufVJU7vmpTTlIlMorS+Rakft8sIJ5+Vl/7iHO5qEpvODz5wHCsCBjg9Fg0UG5eSxie
+         Kgxo51oCzQYfc2lD/gIt0bTUzMJFudd9JE0yk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756482255; x=1757087055;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IGgCLabLukJXDx5jPLPH/OkDjgmbhWChjc+3HfEzLxo=;
+        b=fozaOsj+nJVXlgS3MOv7jgZS572+EsC3nSPCg5A1cIVep1d+TeeYZVFRqYv2YR4yMU
+         Vrge7XTCQt2tYUtwAhKRCPd96mPlPwtipW1Lxwt4k0TbI9lUcj9QSXYHowxvyXa6fEnT
+         oQ8c3Icu2XrS9fv0yoOz/Lzt3hZ9/IyjwV1NA17137KZGcxiUBf/QOWruXQjQ/eaYx99
+         UUYTh7+3StqKEe2MVUmNxxHewpKTlUDKDu+axcxtumjJHb/sMObmAWIngyz/QSN0QXKj
+         0RbeRSklWZSrIn5pwR+WxcixpEgJS9mCfGwD9/6lwP5kWhTkIxDWPV2bJtYUAteEbVI/
+         DOeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeSivtEIf08eT2UcShh/5tOk11Q6uan+nnMNAu/fuRi/6+yolyCKsdW4jxEDD2fmWBH9fw2EzFwg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5dNz5K9rzqhf+JuZeMEd9RMJ+L6ub95Vs0eBj76ZZutJFrTiT
+	cKT/nac/WuQ/YKffyC2EyFH7fIy7YtA8BnEd6epbuQKx6tQ5BJI/rwFO/w5fo8YW2lA=
+X-Gm-Gg: ASbGncsVmsmKxjX67YsUxnlqrNXoYM9w0y2cnJdhUHftBPgkxyVVAFrCbSTuyhy34fq
+	d0XScXKytI03JaD6K/wVtcTq2jHKU35dvBTn5ptoAynmiVYE/PA2ox3HbrKNsF6c5fRbqEsPYb8
+	XSrdi8CRI/hbQ0eAawS3IIQp8/7XaqcgEvTD8IIwnn9gXHvNGqHqleNjBiximHcJd9SjiYusc6e
+	gTuxu3nm7h/YB/sxBCXiD2qOtXFkjFz5xM9QexwcBUe/hK3U1tkubLiyYWugdZ+Ajn08ldPtOpP
+	iWagq/ydhKTpjr8lIAHwm4xhF5xEpnBwZHWdPi+lo8jwWId4TG1vext6SXzIui+dGmiYh6A78Gc
+	rgwgi/yNOsUKTmv1T9B430nZGQMtr8UqKxVnyHmVoajVWNQqYmpFcpg==
+X-Google-Smtp-Source: AGHT+IGaq6k4lNErHErQqWD+mWP7WxXWvWnbaRafxAC530vNF00FhKoZR4PvVdmxZbYzQpYp8hF5UQ==
+X-Received: by 2002:a17:903:19e4:b0:248:d674:2b5 with SMTP id d9443c01a7336-248d674035cmr106623825ad.18.1756482254689;
+        Fri, 29 Aug 2025 08:44:14 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249144837fcsm19800355ad.15.2025.08.29.08.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 08:44:14 -0700 (PDT)
+Date: Sat, 30 Aug 2025 00:43:58 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+Message-ID: <aLHKvjBZYJk2Ci34@sidongui-MacBookPro.local>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-4-sidong.yang@furiosa.ai>
+ <713667D6-8001-408D-819D-E9326FC3AFD5@collabora.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CY8PR10MB6609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1581d4ba-4cbe-47b6-2739-08dde70f809e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r/UFyrKH1pOjSoj447o4N4TxZ20Yt77+wuSknVeL06NYG7I6lWuvau+WIYnH?=
- =?us-ascii?Q?XTTsalHmTv5t8kdgANb5Xk3tS2fOZboThLFofA59X3C+Hza4FRiebB2p8nQa?=
- =?us-ascii?Q?kTaUbnfMWmGGcy2pS8ckYdGqGmkufCQ7w4TEnPpUXRbkfWJ3KpWmoR09yw8Z?=
- =?us-ascii?Q?OXZP09Sr+OzbQH3o3V+bHVpUYw3pDvDtwBsSlyRD/tEG3REmAXC2FJAW9PVV?=
- =?us-ascii?Q?2bHDmZ/omglENDFSitf2lvztYZTfx7SGesz2MVQeX5nu7ccz+qZbhwRQ9zN7?=
- =?us-ascii?Q?fC2800gp8rt722J5JweUCOrcPla81O7uyBdJBdYqYXV5eswkkEizW1YpbxkU?=
- =?us-ascii?Q?JXdjOUsmtDniHC8pjSU4Pd6GChmhRK2vfH4w0dgBp39oLn3QWCm6n5oZxaN3?=
- =?us-ascii?Q?DOZTz0bGDC5X9sN7GfesYG6M4JjoFoQ4x95zg0xZ3/TF03f8e7YnunLP7SA1?=
- =?us-ascii?Q?s8eczcEG2z7gGHDBfcSHnO1SKw6+KPBylTGof9cuJtqNjuwB1Q8BPIcRD/8t?=
- =?us-ascii?Q?DoeJFGxF5XXXNdEs0xJT90r483pdcQS0Q195XX+bSonnMbFFSD/ckUHuHXkz?=
- =?us-ascii?Q?jihZcB02OtXPWDen8tqruroWHdGCgTeD+pB0cmik+/3/kIB9pNXxvesbGvYT?=
- =?us-ascii?Q?f/HU2NSmNIH2xhgLR/qQ9rah8uQIzalHN6S5zFWi4HKD6cFVuGaVlmNLc06B?=
- =?us-ascii?Q?dU0CXab+WeUfDQlz6hDSTZnpy/QHxjR7DfsoT+9gWYwqcQ4WEjRTkiDECvb2?=
- =?us-ascii?Q?CtnCRIgC6Vd0qaORj8K8LWWqDx1tnm6VDmIHaKrgAouY6lxmmfAiSv62jezq?=
- =?us-ascii?Q?e0nmEcRlYz+qZEPojLBNsa6tWnXmW7vqdkMKQgyUIa/Ez5w6f4ON9Q6QgEo0?=
- =?us-ascii?Q?WAhC/irgTrNYirdu5d+MMa/LAWWoHXhpdtIJextLXy9wxGDnBkAmuui94XFG?=
- =?us-ascii?Q?8u+D7VGtuoZedq9skuqY7I6G1Wee+axADtZhI6vMZUkUDsGeHEI5EwQYoE4L?=
- =?us-ascii?Q?zX155SKklnS5A9iHXpbmH5vOAeUlRI4M+9XdviFzjkmxt6dX6gxqjUncyroL?=
- =?us-ascii?Q?NqZr8QjktKth+E0R0s7WGOIo9b5O4weuEpSLiwY5SLvDIqi4Xd3vmB91DtkQ?=
- =?us-ascii?Q?+aMf3m10+B3rc398Ub7Bxhgov6y2SRK98t16cuynDq/N71AN/0orX/m+W9rl?=
- =?us-ascii?Q?z3BSYjwepHN7LxJchaLW4EY7aX/Qvl9KeiTmUrXI9VPirjpY2p63DzRGhq02?=
- =?us-ascii?Q?7YHKm54uCrqhWaeKurPF8kduG8fd4S6SnKNls+9YK67wo8ZEZg0hmWZ8UOwc?=
- =?us-ascii?Q?ZATI1QRZSfiSJaVzqAKMOD3TqFPsCozgiRu79OzF2GKZADAW1gARSqmH24sk?=
- =?us-ascii?Q?NXBBy3MpboF2rCymLWZbFV1su7P5PYBvRO1eqMmVL/SSdDBF4Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yMeEvCaehRDdlFr2in2MUkFMAy4CC0xvtpIan5eEp9Jy/wRJ2qGo5pIAsL8a?=
- =?us-ascii?Q?9kFFEMjX6OLc1Jg8eM/ADyuC3WX61gtEy4aFXTahMB7sec/3xpCERb6Ocb6C?=
- =?us-ascii?Q?mabP/2e3vZ5wT4C1clxjmNbjFjDXGOFWBYOCMWGYtCKrIGgq9LnPz+AwOD/j?=
- =?us-ascii?Q?C9qSZR6YFc243AgK6UG3B33jaOpmSf855lK7s5xDF6Vvyt7bM35Hx0dHSCvE?=
- =?us-ascii?Q?rFRYh8hMI+0winIFwguJEsWt3kWxEEmQXQly61OobzLxIqYi4g0xvs1JD9G/?=
- =?us-ascii?Q?3v7fE/nfufdQWjxYqrfSAfCTiqL7uwEPxID9vkuZMjq5m07KxH+JmcHn7qFW?=
- =?us-ascii?Q?Xmym2SDuQfwozG+3Y21pbNZ+cR4Ce/7hI3qXLxd3K3F4ihCgPCRAOENa2WL/?=
- =?us-ascii?Q?bCz7PIg4LwRendU8W3dA8fjQjscKX2DrPK2lCxJwQvhyGUm11tQURdnGagYg?=
- =?us-ascii?Q?AfHDXvKnX+w0qYzcCyCh6dz4+RlQDLv7BnuAw2BD2CM8QWQAKgzW/4mgIMl0?=
- =?us-ascii?Q?ttzsuKUsxRdhyTevs2Rutbd/R42auwzhWvU2BVuouuivyyp4hAOQ1mr7Mmyp?=
- =?us-ascii?Q?9dxyrX9TT3ENAjWBVQpWhrA9AC6mBUDY4m/Dn9l09m2epl6c8y0NqwRxWrIJ?=
- =?us-ascii?Q?9CddN/k0MKm6lB8deLi8FpW2jVqXJgq0tkBMCuWX7f+HuwjB5AbiftyhEeEo?=
- =?us-ascii?Q?GT3lLXsJFotHjUvykpX4JD2CIYT5BkvKRJ29WBe3TGgOwOHZik9djTJv5XXZ?=
- =?us-ascii?Q?/ak9fh5fF+y6l9fqPno+cB/6dn+/fb0YTOY/3QMKLVXh1DZSYfhHaXtDHFhw?=
- =?us-ascii?Q?edUqWcSCokhwylyCsWMHcRfl7r0FgjK8gDl8u4KZptZdWgWWFHuZQGnahbak?=
- =?us-ascii?Q?pF9VqXtTP/coDMmGgoh/Pc7AHYLtrIX6rbapcobaubdee5MKFOs9M5Xepsj8?=
- =?us-ascii?Q?gvY5HrQAAXLRoQ9Zp9JgEGdKafduDBp0D7gQI68oHQJ/5CJLq4TGdFeDCZRw?=
- =?us-ascii?Q?mIHA8qpFQxSRAd4icZPVyjRhZFQcaYhvqeIfAP+FNsDzbTMOO+jOgJy7pLXJ?=
- =?us-ascii?Q?GxRiUD8vf9HHpwoysbnITBNIOUC14IvqmK3U+GcNWMbanqZ8w9GP0Ardw5FD?=
- =?us-ascii?Q?9+FKs5Pufl8A+maVHqSTV+9rhvrtfrbxJmnFdCQtaFXw0IVpvUZQJ87XYOn3?=
- =?us-ascii?Q?h1OkrdIvjckQ4Oy6slEgfYEbU8OhbP4bOBvC6AMWala8Z2ZsCXBQR1lEYHbk?=
- =?us-ascii?Q?u2MFhEHJqfkYe1JGfS72pMcS8LCF0yJ15CdPx9BCyNGKmSilT60iO1g5gQgC?=
- =?us-ascii?Q?Q/lgAU2rkH1LhZrmRdrmRIxkJ4tYZgA0HrPt0uB1P3nvIoDJkRgeYCz+jZdC?=
- =?us-ascii?Q?5x1Ojoqwnj4RCOP7l+pyRDYPp18cJxrQfZxfAHQLZVOUMPirroSNGp1yJu8j?=
- =?us-ascii?Q?KekVpzfd9PQuVVFCESTeH/SEEkOtwiF4U6yyyPYqYzyF173Xn0HU4Ae/HC0l?=
- =?us-ascii?Q?/2Fr7jEznh0ujc1NFnq4LH/cFQ4LhjKxWUIkgS9esLmqnOtdoJ58LRjXrkfC?=
- =?us-ascii?Q?QL6KDKOpKVgidRKPrd1hu470syaTfoTYbA90Sr41qgpW2zrKxPel6rXB3sRl?=
- =?us-ascii?Q?jw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	6caG3aH7lVEHtGeLn9kTAgsWWRPtEorvhnJ9CWvETCeQteSA2eH5kuKEdbHubtmPUzHAEKigfGnE2iRa8HhiMnQvDfG2lOQpV7lpfhzF3jg64Kuj3TmCpYCz/cdnwHLelG/SGMhTBKcEzzT3hTidrcFP1e1Yoa5arYdqB8CNwDbIYzlNx1lZKL8sFza0rc8oELBKjMJFXz2qTQ4boZC1vyNJrwqIwMbCWCn6a1h0nWQSKmUL4i9qS2BQf3tULdveMxBDoJAkRFsFQo4C0Fj/ChwcQgBpYNGGPZjtn5QYrcbmiyrcElV7Wx6BvAQjJRyZefC1mtVYkq7SsdQlUk5ZlDWGLuSl81nb7qBJxye5vTXQEGJyBLql3fLsXlmE7aVBOcu3W7KjCaL6ts648vmZKsIehDGlhgrffUAomkrYrLv6PwzxR+etTroRAjnZkJFDAmeG7kSKm63NIc97uRXywp9U9IpOByjnB7s8bDmXm8wGvSI7ImHghlBLtyKOyZxqt10EV3jmTBpsDcx6qyCXNlsG5MEiBYNxj41wEop0+owbOWF8BRieIEe5LIvTXq99JiX55BimSkRdI9eEwQv/UbDi27ZSxzFY0VbaiUISN8E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1581d4ba-4cbe-47b6-2739-08dde70f809e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 15:19:52.5499
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JKY8HW/+eGEWXwEvmEMbiIoaYqvIEJFmP/0AMUrI0rlLe6rMq3Wiae6qoLT6OBVHmpIwvtV3nu38GcsAKLA51kkgTeRHyI5q1EVYkVD5LvU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6609
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508290131
-X-Proofpoint-ORIG-GUID: 9mqwbTOysmSj1PF-Vt1qH8pzf05R0pme
-X-Proofpoint-GUID: 9mqwbTOysmSj1PF-Vt1qH8pzf05R0pme
-X-Authority-Analysis: v=2.4 cv=EcXIQOmC c=1 sm=1 tr=0 ts=68b1c522 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8
- a=DlHhZv4coUNNdZr_9G8A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMCBTYWx0ZWRfX1NpIuEdXDIxu
- pT1ey33FJpUg5uQJRSkqKMPS3wfv8nMB42ZsL8BMvDbgcUdRcDKHSwKK0hQYjUJGa3ove4qkKtn
- JTOq9ffTS1o0dDwA9Swt4lkz3eVZ1yTVuWOdViId7dAtvOT2llk6t/HnnULDOUjooCYe86BjYdT
- WpR6w+g3O9cenMfUa9F7FxhVNeqNMv4xNvFS6q6tf/lmoi3eArY++TYeIN51gtCEiafPMUEd2ZT
- JLKK7khEZVnPjUGsF/F6A3wDsX+1Q4bFSRf0HwuStXd3/tAywaIkfSwMCNSrcmVMeJhNq4um17f
- 3A6yh8AM1YCyfjK6stJHQzaDrr7h5uoO6wl7WOgUp7z6rv0o4KgGa7aSA+DgC9Q6VLSrHv93VUw
- lZG0e13J
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <713667D6-8001-408D-819D-E9326FC3AFD5@collabora.com>
 
-On Fri, Aug 29, 2025 at 03:41:40PM +0200, David Hildenbrand wrote:
-> On 28.08.25 18:37, Lorenzo Stoakes wrote:
-> > On Thu, Aug 28, 2025 at 12:01:22AM +0200, David Hildenbrand wrote:
-> > > nth_page() is no longer required when iterating over pages within a
-> > > single folio, so let's just drop it when recording subpages.
-> > >
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> >
-> > This looks correct to me, so notwithtsanding suggestion below, LGTM and:
-> >
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
-> > > ---
-> > >   mm/gup.c | 7 +++----
-> > >   1 file changed, 3 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/mm/gup.c b/mm/gup.c
-> > > index b2a78f0291273..89ca0813791ab 100644
-> > > --- a/mm/gup.c
-> > > +++ b/mm/gup.c
-> > > @@ -488,12 +488,11 @@ static int record_subpages(struct page *page, unsigned long sz,
-> > >   			   unsigned long addr, unsigned long end,
-> > >   			   struct page **pages)
-> > >   {
-> > > -	struct page *start_page;
-> > >   	int nr;
-> > >
-> > > -	start_page = nth_page(page, (addr & (sz - 1)) >> PAGE_SHIFT);
-> > > +	page += (addr & (sz - 1)) >> PAGE_SHIFT;
-> > >   	for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
-> > > -		pages[nr] = nth_page(start_page, nr);
-> > > +		pages[nr] = page++;
-> >
-> >
-> > This is really nice, but I wonder if (while we're here) we can't be even
-> > more clear as to what's going on here, e.g.:
-> >
-> > static int record_subpages(struct page *page, unsigned long sz,
-> > 			   unsigned long addr, unsigned long end,
-> > 			   struct page **pages)
-> > {
-> > 	size_t offset_in_folio = (addr & (sz - 1)) >> PAGE_SHIFT;
-> > 	struct page *subpage = page + offset_in_folio;
-> >
-> > 	for (; addr != end; addr += PAGE_SIZE)
-> > 		*pages++ = subpage++;
-> >
-> > 	return nr;
-> > }
-> >
-> > Or some variant of that with the masking stuff self-documented.
->
-> What about the following cleanup on top:
->
->
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 89ca0813791ab..5a72a135ec70b 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -484,19 +484,6 @@ static inline void mm_set_has_pinned_flag(struct mm_struct *mm)
->  #ifdef CONFIG_MMU
->  #ifdef CONFIG_HAVE_GUP_FAST
-> -static int record_subpages(struct page *page, unsigned long sz,
-> -                          unsigned long addr, unsigned long end,
-> -                          struct page **pages)
-> -{
-> -       int nr;
-> -
-> -       page += (addr & (sz - 1)) >> PAGE_SHIFT;
-> -       for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
-> -               pages[nr] = page++;
-> -
-> -       return nr;
-> -}
-> -
->  /**
->   * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
->   * @page:  pointer to page to be grabbed
-> @@ -2963,8 +2950,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->         if (pmd_special(orig))
->                 return 0;
-> -       page = pmd_page(orig);
-> -       refs = record_subpages(page, PMD_SIZE, addr, end, pages + *nr);
-> +       refs = (end - addr) >> PAGE_SHIFT;
-> +       page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+On Wed, Aug 27, 2025 at 05:41:15PM -0300, Daniel Almeida wrote:
 
-Ah I see we use page_folio() in try_grab_folio_fast() so this being within PMD is ok.
+Hi Daniel,
 
->         folio = try_grab_folio_fast(page, refs, flags);
->         if (!folio)
-> @@ -2985,6 +2972,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->         }
->         *nr += refs;
-> +       for (; refs; refs--)
-> +               *(pages++) = page++;
->         folio_set_referenced(folio);
->         return 1;
->  }
-> @@ -3003,8 +2992,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
->         if (pud_special(orig))
->                 return 0;
-> -       page = pud_page(orig);
-> -       refs = record_subpages(page, PUD_SIZE, addr, end, pages + *nr);
-> +       refs = (end - addr) >> PAGE_SHIFT;
-> +       page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
->         folio = try_grab_folio_fast(page, refs, flags);
->         if (!folio)
-> @@ -3026,6 +3015,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
->         }
->         *nr += refs;
-> +       for (; refs; refs--)
-> +               *(pages++) = page++;
->         folio_set_referenced(folio);
->         return 1;
->  }
->
->
-> The nice thing is that we only record pages in the array if they actually passed our tests.
+> Hi Sidong,
+> 
+> > On 22 Aug 2025, at 09:55, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > 
+> > Implment the io-uring abstractions needed for miscdevicecs and other
+> > char devices that have io-uring command interface.
+> 
+> Can you expand on this last part?
 
-Yeah that's nice actually.
+Sure. 
+> 
+> > 
+> > * `io_uring::IoUringCmd` : Rust abstraction for `io_uring_cmd` which
+> >  will be used as arg for `MiscDevice::uring_cmd()`. And driver can get
+> >  `cmd_op` sent from userspace. Also it has `flags` which includes option
+> >  that is reissued.
+> > 
+> 
+> This is a bit hard to parse.
 
-This is fine (not the meme :P)
+I'll fix this.
+> 
+> > * `io_uring::IoUringSqe` : Rust abstraction for `io_uring_sqe` which
+> >  could be get from `IoUringCmd::sqe()` and driver could get `cmd_data`
+> >  from userspace. Also `IoUringSqe` has more data like opcode could be used in
+> >  driver.
+> 
+> Same here.
 
-So yes let's do this!
+Same here.
+> 
+> > 
+> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > ---
+> > rust/kernel/io_uring.rs | 306 ++++++++++++++++++++++++++++++++++++++++
+> > rust/kernel/lib.rs      |   1 +
+> > 2 files changed, 307 insertions(+)
+> > create mode 100644 rust/kernel/io_uring.rs
+> > 
+> > diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
+> > new file mode 100644
+> > index 000000000000..61e88bdf4e42
+> > --- /dev/null
+> > +++ b/rust/kernel/io_uring.rs
+> > @@ -0,0 +1,306 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// SPDX-FileCopyrightText: (C) 2025 Furiosa AI
+> > +
+> > +//! Abstractions for io-uring.
+> > +//!
+> > +//! This module provides types for implements io-uring interface for char device.
+> 
+> This is also hard to parse.
 
->
->
-> --
-> Cheers
->
-> David / dhildenb
->
+I'll fix this.
+> 
+> > +//!
+> > +//!
+> > +//! C headers: [`include/linux/io_uring/cmd.h`](srctree/include/linux/io_uring/cmd.h) and
+> > +//! [`include/linux/io_uring/io_uring.h`](srctree/include/linux/io_uring/io_uring.h)
+> > +
+> > +use core::{mem::MaybeUninit, pin::Pin};
+> > +
+> > +use crate::error::from_result;
+> > +use crate::transmute::{AsBytes, FromBytes};
+> > +use crate::{fs::File, types::Opaque};
+> > +
+> > +use crate::prelude::*;
+> > +
+> > +/// io-uring opcode
+> 
+> /// `IoUring` opcodes.
+> 
+> Notice:
+> 
+> a) The capitalization,
+> b) The use of backticks,
+> c) The period in the end.
+> 
+> This is an ongoing effort to keep the docs tidy :)
 
-Cheers, Lorenzo
+Thanks :)
+> 
+> > +pub mod opcode {
+> > +    /// opcode for uring cmd
+> > +    pub const URING_CMD: u32 = bindings::io_uring_op_IORING_OP_URING_CMD;
+> > +}
+> 
+> Should this be its own type? This way we can use the type system to enforce
+> that only valid opcodes are used where an opcode is expected.
+
+Sure. How about a transparent struct like below.
+
+#[repr(transparent)]
+pub struct Opcode(u32);
+
+impl Opcode {
+    pub const URING_CMD: Self =
+        Self(bindings::io_uring_op_IORING_OP_URING_CMD as u32);
+}
+
+> 
+> > +
+> > +/// A Rust abstraction for the Linux kernel's `io_uring_cmd` structure.
+> 
+> /// A Rust abstraction for `io_uring_cmd`.
+
+Okay, I'll fixed all comments mentioning "Linux kernel".
+> 
+> > +///
+> > +/// This structure is a safe, opaque wrapper around the raw C `io_uring_cmd`
+> > +/// binding from the Linux kernel. It represents a command structure used
+> > +/// in io_uring operations within the kernel.
+> 
+> This code will also be part of the kernel, so mentioning "the Linux kernel" is superfluous.
+
+Thanks.
+> 
+> > +/// This type is used internally by the io_uring subsystem to manage
+> > +/// asynchronous I/O commands.
+> > +///
+> > +/// This type should not be constructed or manipulated directly by
+> > +/// kernel module developers.
+> 
+> "...by drivers".
+
+Thanks.
+> 
+> > +///
+> > +/// # INVARIANT
+> 
+> /// # Invariants
+
+Thanks.
+> 
+> > +/// - `self.inner` always points to a valid, live `bindings::io_uring_cmd`.
+> 
+> Blank here
+
+Thanks.
+> 
+> > +#[repr(transparent)]
+> > +pub struct IoUringCmd {
+> > +    /// An opaque wrapper containing the actual `io_uring_cmd` data.
+> > +    inner: Opaque<bindings::io_uring_cmd>,
+> > +}
+> > +
+> > +impl IoUringCmd {
+> > +    /// Returns the cmd_op with associated with the `io_uring_cmd`.
+> 
+> This sentence does not parse very well.
+
+I'll fix this. Like you said, it's better to not to mention the c structure.
+> 
+> > +    #[inline]
+> > +    pub fn cmd_op(&self) -> u32 {
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        unsafe { (*self.inner.get()).cmd_op }
+> 
+> Perhaps add an as_raw() method so this becomes:
+> 
+> unsafe {*self.as_raw()}.cmd_op
+
+Agreed. Also it would return the Opcode type than u32.
+> 
+> > +    }
+> > +
+> > +    /// Returns the flags with associated with the `io_uring_cmd`.
+> 
+> With the command, or something like that. The user doesn´t see the raw
+> bindings::io_uring_cmd so we shouldn´t be mentioning it if we can help it.
+
+Agreed. I'll try to fix this without mentioning the io_uring_cmd.
+> 
+> > +    #[inline]
+> > +    pub fn flags(&self) -> u32 {
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        unsafe { (*self.inner.get()).flags }
+> > +    }
+> > +
+> > +    /// Reads protocol data unit as `T` that impl `FromBytes` from uring cmd
+> 
+> This sentence does not parse very well.
+
+I'll fix this.
+> 
+> > +    ///
+> > +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+> 
+> /// # Errors
+
+Thanks.
+> 
+> > +    #[inline]
+> > +    pub fn read_pdu<T: FromBytes>(&self) -> Result<T> {
+> 
+> This takes &self,
+> 
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        let inner = unsafe { &mut *self.inner.get() };
+> 
+> But this creates a &mut to self.inner using unsafe code. Avoid doing this in
+> general. All of a sudden your type is not thread-safe anymore.
+> 
+> If you need to mutate &self here, then take &mut self as an argument.
+> 
+> > +
+> > +        let len = size_of::<T>();
+> > +        if len > inner.pdu.len() {
+> > +            return Err(EFAULT);
+> 
+> EFAULT? How about EINVAL?
+
+Good.
+> 
+> > +        }
+> > +
+> > +        let mut out: MaybeUninit<T> = MaybeUninit::uninit();
+> > +        let ptr = &raw mut inner.pdu as *const c_void;
+> > +
+> > +        // SAFETY:
+> > +        // * The `ptr` is valid pointer from `self.inner` that is guaranteed by type invariant.
+> > +        // * The `out` is valid pointer that points `T` which impls `FromBytes` and checked
+> > +        //   size of `T` is smaller than pdu size.
+> > +        unsafe {
+> > +            core::ptr::copy_nonoverlapping(ptr, out.as_mut_ptr().cast::<c_void>(), len);
+> 
+> I don´t think you need to manually specify c_void here.
+> 
+> Benno, can´t we use core::mem::zeroed() or something like that to avoid this unsafe?
+> 
+> The input was zeroed in prep() and the output can just be a zeroed T on the
+> stack, unless I missed something?
+> 
+> > +        }
+> > +
+> > +        // SAFETY: The read above has initialized all bytes in `out`, and since `T` implements
+> > +        // `FromBytes`, any bit-pattern is a valid value for this type.
+> > +        Ok(unsafe { out.assume_init() })
+> > +    }
+> > +
+> > +    /// Writes the provided `value` to `pdu` in uring_cmd `self`
+> 
+> Writes the provided `value` to `pdu`.
+
+Thanks.
+> 
+> > +    ///
+> 
+> /// # Errors
+> ///
+
+Thanks.
+> 
+> > +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+> 
+> > +    #[inline]
+> > +    pub fn write_pdu<T: AsBytes>(&mut self, value: &T) -> Result<()> {
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        let inner = unsafe { &mut *self.inner.get() };
+> > +
+> > +        let len = size_of::<T>();
+> > +        if len > inner.pdu.len() {
+> > +            return Err(EFAULT);
+> > +        }
+> > +
+> > +        let src = (value as *const T).cast::<c_void>();
+> 
+> as_ptr().cast()
+> 
+> > +        let dst = &raw mut inner.pdu as *mut c_void;
+> 
+> (&raw mut inner.pdu).cast()
+> 
+
+Thanks.
+> > +
+> > +        // SAFETY:
+> > +        // * The `src` is points valid memory that is guaranteed by `T` impls `AsBytes`
+> > +        // * The `dst` is valid. It's from `self.inner` that is guaranteed by type invariant.
+> > +        // * It's safe to copy because size of `T` is no more than len of pdu.
+> > +        unsafe {
+> > +            core::ptr::copy_nonoverlapping(src, dst, len);
+> > +        }
+> > +
+> > +        Ok(())
+> > +    }
+> > +
+> > +    /// Constructs a new [`IoUringCmd`] from a raw `io_uring_cmd`
+> 
+> Missing period.
+
+Thanks.
+> 
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must guarantee that:
+> > +    /// - `ptr` is non-null, properly aligned, and points to a valid
+> > +    ///   `bindings::io_uring_cmd`.
+> 
+> Blanks for every bullet point, please.
+
+Thanks.
+> 
+> > +    /// - The pointed-to memory remains initialized and valid for the entire
+> > +    ///   lifetime `'a` of the returned reference.
+> > +    /// - While the returned `Pin<&'a mut IoUringCmd>` is alive, the underlying
+> > +    ///   object is **not moved** (pinning requirement).
+> 
+> They can´t move an !Unpin type in safe code.
+
+Okay, this could be removed.
+> 
+> > +    /// - **Aliasing rules:** the returned `&mut` has **exclusive** access to the same
+> > +    ///   object for its entire lifetime:
+> 
+> You really don´t need to emphasize these.
+
+Okay.
+> 
+> > +    ///   - No other `&mut` **or** `&` references to the same `io_uring_cmd` may be
+> > +    ///     alive at the same time.
+> 
+> This and the point above are identical.
+
+It would be removed.
+> 
+> > +    ///   - There must be no concurrent reads/writes through raw pointers, FFI, or
+> > +    ///     other kernel paths to the same object during this lifetime.
+> 
+> This and the first point say the same thing.
+> 
+> > +    ///   - If the object can be touched from other contexts (e.g. IRQ/another CPU),
+> > +    ///     the caller must provide synchronization to uphold this exclusivity.
+> 
+> I am not sure what you mean.
+> > +    /// - This function relies on `IoUringCmd` being `repr(transparent)` over
+> > +    ///   `bindings::io_uring_cmd` so the cast preserves layout.
+> 
+> This is not a safety requirement.
+> 
+> Just adapt the requirements from other instances of from_raw(), they all
+> convert a *mut T to a &T so the safety requirements are similar.
+> 
+
+Okay, This safety comments are too redundant. I'll rewrite this. Thanks.
+> > +    #[inline]
+> > +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> Pin<&'a mut IoUringCmd> {
+> 
+> Why is this pub? Sounds like a massive footgun? This should be private or at
+> best pub(crate).
+
+Because from_raw() would be used in miscdevice. pub(crate) will be okay.
+> 
+> 
+> > +        // SAFETY:
+> > +        // * The caller guarantees that the pointer is not dangling and stays
+> > +        //   valid for the duration of 'a.
+> > +        // * The cast is okay because `IoUringCmd` is `repr(transparent)` and
+> > +        //   has the same memory layout as `bindings::io_uring_cmd`.
+> > +        // * The returned `Pin` ensures that the object cannot be moved, which
+> > +        //   is required because the kernel may hold pointers to this memory
+> > +        //   location and moving it would invalidate those pointers.
+> 
+> > +        unsafe { Pin::new_unchecked(&mut *ptr.cast()) }
+> > +    }
+> > +
+> > +    /// Returns the file that referenced by uring cmd self.
+> > +    #[inline]
+> > +    pub fn file(&self) -> &File {
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        let file = unsafe { (*self.inner.get()).file };
+> > +
+> > +        // SAFETY:
+> > +        // * The `file` points valid file.
+> 
+> Why?
+
+`file` is from `self.inner` which is guranteed by the type invariant. I missed the
+comment.
+> 
+> > +        // * refcount is positive after submission queue entry issued.
+> > +        // * There is no active fdget_pos region on the file on this thread.
+> > +        unsafe { File::from_raw_file(file) }
+> > +    }
+> > +
+> > +    /// Returns an reference to the [`IoUringSqe`] associated with this command.
+> 
+> s/an/a
+
+Thanks.
+
+> 
+> > +    #[inline]
+> > +    pub fn sqe(&self) -> &IoUringSqe {
+> > +        // SAFETY: `self.inner` is guaranteed by the type invariant to point
+> > +        // to a live `io_uring_cmd`, so dereferencing is safe.
+> > +        let sqe = unsafe { (*self.inner.get()).sqe };
+> > +        // SAFETY: The call guarantees that the `sqe` points valid io_uring_sqe.
+> 
+> What do you mean by "the call guarantees" ?
+
+It's just miss. This should be "This call is guaranteed to be safe because...". 
+> 
+> > +        unsafe { IoUringSqe::from_raw(sqe) }
+> > +    }
+> > +
+> > +    /// Completes an this [`IoUringCmd`] request that was previously queued.
+> 
+> This sentence does not parse very well.
+
+I'll fix this. Thanks.
+> 
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// - This function must be called **only** for a command whose `uring_cmd`
+> 
+> Please no emphasis.
+
+Thanks.
+> 
+> > +    ///   handler previously returned **`-EIOCBQUEUED`** to io_uring.
+> 
+> To what? Are you referring to a Rust type, or to the C part of the kernel?
+
+I referred C type but it's better to use Rust return type.
+> 
+> > +    ///
+> > +    /// # Parameters
+> > +    ///
+> > +    /// - `ret`: Result to return to userspace.
+> > +    /// - `res2`: Extra for big completion queue entry `IORING_SETUP_CQE32`.
+> 
+> This sentence does not parse very well. Also, can you rename this?
+
+Okay.
+> 
+> > +    /// - `issue_flags`: Flags associated with this request, typically the same
+> > +    ///   as those passed to the `uring_cmd` handler.
+> > +    #[inline]
+> > +    pub fn done(self: Pin<&mut IoUringCmd>, ret: Result<i32>, res2: u64, issue_flags: u32) {
+> > +        let ret = from_result(|| ret) as isize;
+> 
+> What does this do?
+
+It casts Result<i32> to isize. `bindings::io_uring_cmd_done` receives `isize`.
+I wanted that `ret` would be `Result` than just i32. `ret` should be just isize?
+
+> 
+> > +        // SAFETY: The call guarantees that `self.inner` is not dangling and stays valid
+> 
+> What do you mean "the call" ?
+
+Sorry, "This call is guruanteed to be safe ..."
+> 
+> > +        unsafe {
+> > +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, issue_flags);
+> > +        }
+> > +    }
+> > +}
+> > +
+> > +/// A Rust abstraction for the Linux kernel's `io_uring_sqe` structure.
+> 
+> Please don´t mention the words "Linux kernel" here either.
+
+Yes.
+> 
+> > +///
+> > +/// This structure is a safe, opaque wrapper around the raw C [`io_uring_sqe`](srctree/include/uapi/linux/io_uring.h)
+> 
+> This line needs to be wrapped.
+
+Okay.
+> 
+> > +/// binding from the Linux kernel. It represents a Submission Queue Entry
+> 
+> Can you link somewhere here? Perhaps there´s docs for "Submission Queue
+> Entry".
+
+Okay I'll find it.
+> 
+> > +/// used in io_uring operations within the kernel.
+> > +///
+> > +/// # Type Safety
+> > +///
+> > +/// The `#[repr(transparent)]` attribute ensures that this wrapper has
+> > +/// the same memory layout as the underlying `io_uring_sqe` structure,
+> > +/// allowing it to be safely transmuted between the two representations.
+> 
+> This is an invariant, please move it there.
+
+Thanks.
+> 
+> > +///
+> > +/// # Fields
+> > +///
+> > +/// * `inner` - An opaque wrapper containing the actual `io_uring_sqe` data.
+> > +///             The `Opaque` type prevents direct access to the internal
+> > +///             structure fields, ensuring memory safety and encapsulation.
+> 
+> Inline docs please.
+
+Okay.
+> 
+> > +///
+> > +/// # Usage
+> 
+> I don´t think we specifically need to mention "# Usage".
+
+Okay it would be deleted.
+> 
+> > +///
+> > +/// This type represents a submission queue entry that describes an I/O
+> 
+> You can start with "Represents a...". No need to say "this type" here.
+
+Thanks.
+> 
+> > +/// operation to be executed by the io_uring subsystem. It contains
+> > +/// information such as the operation type, file descriptor, buffer
+> > +/// pointers, and other operation-specific data.
+> > +///
+> > +/// Users can obtain this type from [`IoUringCmd::sqe()`] method, which
+> > +/// extracts the submission queue entry associated with a command.
+> > +///
+> > +/// This type should not be constructed or manipulated directly by
+> > +/// kernel module developers.
+> 
+> By drivers.
+
+Thanks.
+
+> 
+> > +///
+> > +/// # INVARIANT
+> 
+> /// # Invariants
+
+Thanks.
+> 
+> > +/// - `self.inner` always points to a valid, live `bindings::io_uring_sqe`.
+> > +#[repr(transparent)]
+> > +pub struct IoUringSqe {
+> > +    inner: Opaque<bindings::io_uring_sqe>,
+> > +}
+> > +
+> > +impl IoUringSqe {
+> > +    /// Reads and interprets the `cmd` field of an `bindings::io_uring_sqe` as a value of type `T`.
+> > +    ///
+> > +    /// # Safety & Invariants
+> 
+> Safety section for a safe function.
+
+Thanks.
+> 
+> > +    /// - Construction of `T` is delegated to `FromBytes`, which guarantees that `T` has no
+> > +    ///   invalid bit patterns and can be safely reconstructed from raw bytes.
+> > +    /// - **Limitation:** This implementation does not support `IORING_SETUP_SQE128` (larger SQE entries).
+> 
+> Please no emphasis.
+
+Okay.
+> 
+> 
+> > +    ///   Only the standard `io_uring_sqe` layout is handled here.
+> > +    ///
+> > +    /// # Errors
+> 
+> Blank here.
+
+Thanks.
+> 
+> > +    /// * Returns `EINVAL` if the `self` does not hold a `opcode::URING_CMD`.
+> > +    /// * Returns `EFAULT` if the command buffer is smaller than the requested type `T`.
+> > +    ///
+> > +    /// # Returns
+> 
+> I don´t think we need a specific section for this. Just write this in
+> normal prose please.
+
+Okay.
+> 
+> 
+> > +    /// * On success, returns a `T` deserialized from the `cmd`.
+> > +    /// * On failure, returns an appropriate error as described above.
+> > +    pub fn cmd_data<T: FromBytes>(&self) -> Result<T> {
+> > +        // SAFETY: `self.inner` guaranteed by the type invariant to point
+> > +        // to a live `io_uring_sqe`, so dereferencing is safe.
+> > +        let sqe = unsafe { &*self.inner.get() };
+> > +
+> > +        if u32::from(sqe.opcode) != opcode::URING_CMD {
+> > +            return Err(EINVAL);
+> > +        }
+> > +
+> > +        // SAFETY: Accessing the `sqe.cmd` union field is safe because we've
+> > +        // verified that `sqe.opcode == IORING_OP_URING_CMD`, which guarantees
+> > +        // that this union variant is initialized and valid.
+> > +        let cmd = unsafe { sqe.__bindgen_anon_6.cmd.as_ref() };
+> > +        let cmd_len = size_of_val(&sqe.__bindgen_anon_6.bindgen_union_field);
+> > +
+> > +        if cmd_len < size_of::<T>() {
+> > +            return Err(EFAULT);
+> 
+> EINVAL
+
+Thanks.
+> 
+> > +        }
+> > +
+> > +        let cmd_ptr = cmd.as_ptr() as *mut T;
+> 
+> cast()
+
+Thanks.
+> 
+> > +
+> > +        // SAFETY: `cmd_ptr` is valid from `self.inner` which is guaranteed by
+> > +        // type variant. And also it points to initialized `T` from userspace.
+> 
+> "Invariant".
+
+Thanks!
+> 
+> "[...] an initialized T".
+
+Thanks.
+> 
+> 
+> > +        let ret = unsafe { core::ptr::read_unaligned(cmd_ptr) };
+> > +
+> > +        Ok(ret)
+> > +    }
+> > +
+> > +    /// Constructs a new `IoUringSqe` from a raw `io_uring_sqe`.
+> 
+> [`IoUringSqe`].
+> 
+> Please build the docs and make sure all your docs look nice.
+
+Okay, I'll review comments by docs.
+> 
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must guarantee that:
+> > +    /// - `ptr` is non-null, properly aligned, and points to a valid initialized
+> > +    ///   `bindings::io_uring_sqe`.
+> > +    /// - The pointed-to memory remains valid (not freed or repurposed) for the
+> > +    ///   entire lifetime `'a` of the returned reference.
+> > +    /// - **Aliasing rules (for `&T`):** while the returned `&'a IoUringSqe` is
+> > +    ///   alive, there must be **no mutable access** to the same object through any
+> > +    ///   path (no `&mut`, no raw-pointer writes, no FFI/IRQ/other-CPU writers).
+> > +    ///   Multiple `&` is fine **only if all of them are read-only** for the entire
+> > +    ///   overlapping lifetime.
+> > +    /// - This relies on `IoUringSqe` being `repr(transparent)` over
+> > +    ///   `bindings::io_uring_sqe`, so the cast preserves layout.
+> 
+> Please rewrite this entire section given the feedback I gave higher up in this
+> patch.
+
+Okay. I'll rewrite this.
+> 
+> > +    #[inline]
+> > +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_sqe) -> &'a IoUringSqe {
+> 
+> Private or pub(crate) at best.
+
+Okay. pub(crate)
+> 
+> > +        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
+> > +        // duration of 'a. The cast is okay because `IoUringSqe` is `repr(transparent)` and has the
+> > +        // same memory layout as `bindings::io_uring_sqe`.
+> > +        unsafe { &*ptr.cast() }
+> > +    }
+> > +}
+> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > index ed53169e795c..d38cf7137401 100644
+> > --- a/rust/kernel/lib.rs
+> > +++ b/rust/kernel/lib.rs
+> > @@ -91,6 +91,7 @@
+> > pub mod fs;
+> > pub mod init;
+> > pub mod io;
+> > +pub mod io_uring;
+> > pub mod ioctl;
+> > pub mod jump_label;
+> > #[cfg(CONFIG_KUNIT)]
+> > -- 
+> > 2.43.0
+> > 
+> 
+
+Thanks for detailed review!
+I'll revise the comments overall.
+Also there would be new type for opcode.
+
+Thanks,
+Sidong
 

@@ -1,88 +1,88 @@
-Return-Path: <io-uring+bounces-9459-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9460-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BCEB3BBFD
-	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 15:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC28AB3BC65
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 15:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D30758738D
-	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 13:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792423A3C44
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 13:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED282F0C4D;
-	Fri, 29 Aug 2025 13:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D8BEEDE;
+	Fri, 29 Aug 2025 13:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W77Nk43K"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UuLQ56t9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52DC201269
-	for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 13:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D52E3043D0
+	for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 13:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472994; cv=none; b=TNC19orE/cSjGV6J0iBNCLuEjEyUEg3xOu9D3831TCikaDpwJ0lsCFkP8l2ne8BM0LQBXoE4bxaq4x0vbEc91c/auXJscL+Ulb5S2dxfeTNQvb5QcJvSNExIILNj3Bt1r5TTBxNf/YsXqW5Me4YGj1BSRDn4Rmv16ZtNW4yl3RQ=
+	t=1756473731; cv=none; b=XIn6VXRCl3wtTKK0DYLkKccyxJrQJfjyE3tpe20fjhh5aSYWii0DZ2jjBbSydjJjv88McM1xbxoryRl2Mw7m8r1qIWjKYBfEWotq86WafDngXpfx+YwdFr1JaadZfTsuJvbq3w4m+tJUS1yEbG8kaLik77/XGiAqr8N4PNYHig0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472994; c=relaxed/simple;
-	bh=FHp1+ZSlsyZvFpLyoPCQZLe6PCr3uA+m/9iJFPC2eto=;
+	s=arc-20240116; t=1756473731; c=relaxed/simple;
+	bh=N+5WFIKkpSCBHcdEkYaqeEr5+8bOiQ8nFMzvcD9Vf3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnqxlXpczkKwbPcSXPW2g9WiZuXOPv7f0lwBEjsjkxbyOjAMnYgnw2shmO4rl3u9lrdQm6pzG1MDKI/Tzf5Nnyenbod/m3pIEl12gBrfCtpe0N6dbW13zK88tUrRQk/5wvKhYF64UZZn13di/RyWZn2kKH1vqnIg5+P3yJJdDwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W77Nk43K; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=evyNkx6p3rq+jZYo3njGibycwYtXiUZXeEL2sqgymh2/IAILFsWJnBIO8nzbHCgYfm41v7Ic57xymZXCa2TZeazstzCQbKZli9Lr8em6V9ghJmDYAQ/K+6aIwOFftIZP0axYbwlfKzCMrrdDtSicnS50K9PuJZXP5z0+pwRCD40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UuLQ56t9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756472991;
+	s=mimecast20190719; t=1756473728;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GMW9HLrWQaKZG+KlEEwhYfHDFt7S0jSgL0MHJQucZHQ=;
-	b=W77Nk43KwapZ/PN0ppI9OkDMdzLsFzdvdC/b/yuaZStPv6TCKRiXmhD2gEpACpEqlmSoKQ
-	fy9xiqvIe1vDK8ht/CfBha8BW6l+aSX7H/TeOc7MddY2QJvJrVVLKSezxtvsS8nnv4OHpT
-	nov6559jhkbkP27pl4yoFG8ggSJpcFc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=aggFKTWIoz3JmsTS53UGUQwfpKwPCT7EHzMCjR4W6Kc=;
+	b=UuLQ56t9K9ET2MmcIeYyIW1ZImATJoQ1k+kHzh2cIgfahSMGcQJjlkQ3xqVpnEUZ0FSx2b
+	nMhJA3udtBaLTI2Sl89GB/+7soNOGPCYd0PMY1h1kprbkvVlwP2+SUEjHdz65j9Rr9kMQp
+	xRwI+bEvrE7xl8Jqfcsf9SsX5eHNwKg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-ovnTeS6OPLugoGiGwJS_GA-1; Fri, 29 Aug 2025 09:09:50 -0400
-X-MC-Unique: ovnTeS6OPLugoGiGwJS_GA-1
-X-Mimecast-MFC-AGG-ID: ovnTeS6OPLugoGiGwJS_GA_1756472989
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3cc3765679fso770103f8f.2
-        for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 06:09:49 -0700 (PDT)
+ us-mta-278-KnzjlyZ7MfayR2RiFRF9Hg-1; Fri, 29 Aug 2025 09:22:06 -0400
+X-MC-Unique: KnzjlyZ7MfayR2RiFRF9Hg-1
+X-Mimecast-MFC-AGG-ID: KnzjlyZ7MfayR2RiFRF9Hg_1756473725
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3cf12498799so601741f8f.2
+        for <io-uring@vger.kernel.org>; Fri, 29 Aug 2025 06:22:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756472989; x=1757077789;
+        d=1e100.net; s=20230601; t=1756473725; x=1757078525;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GMW9HLrWQaKZG+KlEEwhYfHDFt7S0jSgL0MHJQucZHQ=;
-        b=i1lsBWidN1gib5LygG+GEbhjRwDneaC8hayJnyEOxG08SdjilLaTwGLJwCigxNKyKQ
-         jBfg/uTQNilDtjLSF2t8q2gpIpvHYt3Sdt6wzHVH38GGN+EqboQuQejLYJq7TOT1p5aE
-         jXCPItLhVko0Nx8KKQ7uqM9n3Hy/yJ0WKKo+O1cYmayTbZyPzOQJAnX0tON0D9mVnxpA
-         vecFPLGPHNY6+m8K7heXm1/N3/zS0iFu7hMAmY4MtdYJdxnjPaAJggw+cjklZShEDhSf
-         PKlrH+8SDQ8KEvwEpB1skOWe8o7r/FxsSVGcjEjZSD9vQLnSS1+3xvezYl7rEZrCxAYa
-         ihSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT485jPBLvYFwphD6M+3d/eZCn0JHwsoo+73+ffHKUzvxGUIH+xcNtMlAIYDv9EeB+YN3C+H9nLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQP1oWY3LfXR611sXEKvKRKTMo9akiXH9HnIS72SLBNZwVVhF2
-	93ldz3+gUOAL7ze7zwINsNGqqoNd68UpCaT026JLhPD2NUW+sT1W5NaQSsnxunRjXg37oCvFPlL
-	tZ1GupKV+VS/zRaUzSKCayEmdJXB9uJ79K251e2b+Eck4hmkXTUxEIeg7PmhW
-X-Gm-Gg: ASbGncvT3+HtWEaaiGzFTkO1eHKlqC0D2Rb5rZoMz/oCub3UPi3kc//DWEgYXph/EW7
-	SxO45BBNEyoAH7o4C7u1l9/llMP38qO52jpIWZKZZOhRaYq1qCGtyRexhff0rB4hnMt0g22iPoS
-	zgf84cwVvpxdlB17XX1+r0PKsaTGyBohqoowtIhD5unKLoEgS5w9XKWpgDp6U0/zbXrOW/CVVil
-	q7IXdFfjgVjCNZOchAhW3nd13AvIBvkXcVxNlX7DkhaArQEVwqIvYzRR1aIVUFwkkEh36NVlJEV
-	YzbhPwTarV1ujYZKJl+MFXhPHmuh3oXjVZALRPaG4esV37KfHn5Vye7Nzk0ETdO9lY1U7569Qhc
-	gO2D7IGIbDJ3nRRiZhUKtmG2gOBsuWoU3efL/f5FfYd5VottXyow/IPgUfWf16D3I
-X-Received: by 2002:a05:6000:4023:b0:3d0:d6e6:5d96 with SMTP id ffacd0b85a97d-3d0d6e6642emr1463742f8f.38.1756472988537;
-        Fri, 29 Aug 2025 06:09:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2EE1FdffCNgqV63lR4bEMYpCijk6Rt1WA7Ibu/9lrj3Iet7fHqrTgMv1xYGinJ39Wr3I/NQ==
-X-Received: by 2002:a05:6000:4023:b0:3d0:d6e6:5d96 with SMTP id ffacd0b85a97d-3d0d6e6642emr1463686f8f.38.1756472987991;
-        Fri, 29 Aug 2025 06:09:47 -0700 (PDT)
+        bh=aggFKTWIoz3JmsTS53UGUQwfpKwPCT7EHzMCjR4W6Kc=;
+        b=ULkAZ3UJkEzEUeVmNV7HA7okPCPIGqHDBQgPiYFAEwaUS5Z9Qy82PRLcrynb3FU6lm
+         dLfcaaVGKch23Lq2d/h/82A+5T0Xu74rq9I411i6QjVP1U17AHvD7aOgdsKvaYSYNYUv
+         EjtS1YcvBFVstdthyQ035tG+ibrAQUwwtRozEyTAcXPL7OEPmjZCfd0eDoYSmASpEcLY
+         ixfxjxxAuwqdrbTB73CoO/uPM7kk5b2+CwJzkdikT+OMNHDPE7BSzd5f8sjxhenRwTf5
+         TPRXs6HKOfEoxU8qIPNrPi9r2Ljrg2mh8v/FERUVtRxVeMsvXuZ/OicgoUJjFw2zi4nX
+         pF/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXa7Yv/QiqhImDoiXVTanYQqZLNpUlALK1AUevLhSs1IfxzGVmUp+bL1GrbXC/Y+h7XIndTFDF5pA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRYyorAkrAfClHkcG4hbh/UZ5PlhbMu0HaU2QHso4Lx6+SvBNW
+	s9pXZkAld2urhgNUFnScV57p/dcI5JPoyOi/3vJS30SOI7mI9JfQEa61XHDOo82cfRfTsZWGKkF
+	6tNuCzJrEayBYBtJaWuPJzXLwLyhaqufeHYL81fSPJiy+GcgCz+WzKwRTjVAtTnGzORF7
+X-Gm-Gg: ASbGncurSzZ+wTBISRtp34JPRJsf8vfMqEgcpDfwq5HTdgx0JMX6KaVTxWg6qlWvVlX
+	MSmUZEjBNVPOOyMGKCrxYgzXfE6NouxvHJExes/PSB2ctgKrlZlys9ZiYyIdJVLYdfDzmqBUxnj
+	aHCT7/UeaQguEm2zmPSEnj8737m+cYkrRU3o0FxnIg/0bCAojdjwaU81zDk/cRDlVQOTz747TiU
+	IV1K0FM3wpX9h47RhhYuaQ+tYOj1AiSUY20tfEEc/RxLbyQ6vX1246PU1ACpBLqj0vuCU2nf30+
+	1VgBaLt6pOLfr76/WM+H/A0SGvcRgs3TwbOuSane0A1BBGh7Hy2fb+y7oCXYxjvBz6kJM3+oP4v
+	yHJ6RUXqjLsPFCFtCpfD2jftb1sg0p2zeVOfiH4huj7qal/cVzs87SRCUOE/HJ8BN
+X-Received: by 2002:a05:6000:2c0f:b0:3ca:a190:c473 with SMTP id ffacd0b85a97d-3caa190c6ecmr9849827f8f.4.1756473725388;
+        Fri, 29 Aug 2025 06:22:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFfrTd/+15/bT4PGZswHLcvGvODyGQLUC+I3pIFqxdvqjEg2cDf44HeYcneQKTQcaMEr0KOA==
+X-Received: by 2002:a05:6000:2c0f:b0:3ca:a190:c473 with SMTP id ffacd0b85a97d-3caa190c6ecmr9849784f8f.4.1756473724881;
+        Fri, 29 Aug 2025 06:22:04 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d12c90a01bsm906716f8f.31.2025.08.29.06.09.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add483sm3368560f8f.37.2025.08.29.06.22.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 06:09:47 -0700 (PDT)
-Message-ID: <4f6e66a1-1747-402e-8f1a-f6b7783fc2e5@redhat.com>
-Date: Fri, 29 Aug 2025 15:09:45 +0200
+        Fri, 29 Aug 2025 06:22:04 -0700 (PDT)
+Message-ID: <f7f9f535-0bbe-413a-84e4-fcb17a502a40@redhat.com>
+Date: Fri, 29 Aug 2025 15:22:01 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -90,11 +90,10 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 06/36] mm/page_alloc: reject unreasonable
- folio/compound page sizes in alloc_contig_range_noprof()
+Subject: Re: [PATCH v1 16/36] fs: hugetlbfs: cleanup folio in
+ adjust_range_hwpoison()
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
- SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>,
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
  Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
@@ -116,12 +115,10 @@ Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
  Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
  Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
  virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
 References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-7-david@redhat.com>
- <f195300e-42e2-4eaa-84c8-c37501c3339c@lucifer.local>
- <547145e0-9b0e-40ca-8201-e94cc5d19356@redhat.com>
- <34edaa0d-0d5f-4041-9a3d-fb5b2dd584e8@lucifer.local>
+ <20250827220141.262669-17-david@redhat.com>
+ <71cf3600-d9cf-4d16-951c-44582b46c0fa@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -168,84 +165,106 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <34edaa0d-0d5f-4041-9a3d-fb5b2dd584e8@lucifer.local>
+In-Reply-To: <71cf3600-d9cf-4d16-951c-44582b46c0fa@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+
 > 
-> It seems a bit arbitrary, like we open-code this (at risk of making a mistake)
-> in some places but not others.
+> Lord above.
+> 
+> Also semantics of 'if bytes == 0, then check first page anyway' which you do
+> capture.
 
-[...]
+Yeah, I think bytes == 0 would not make any sense, though. Staring 
+briefly at the single caller, that seems to be the case (bytes != 0).
 
+> 
+> OK think I have convinced myself this is right, so hopefully no deeply subtle
+> off-by-one issues here :P
+> 
+> Anyway, LGTM, so:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+>> ---
+>>   fs/hugetlbfs/inode.c | 33 +++++++++++----------------------
+>>   1 file changed, 11 insertions(+), 22 deletions(-)
 >>
->> One could argue that maybe one would want a order_to_pages() helper (that
->> could use BIT() internally), but I am certainly not someone that would
->> suggest that at this point ...  :)
-> 
-> I mean maybe.
-> 
-> Anyway as I said none of this is massively important, the open-coding here is
-> correct, just seems silly.
-
-Maybe we really want a ORDER_PAGES() and PAGES_ORDER().
-
-But I mean, we also have PHYS_PFN() PFN_PHYS() and see how many "<< 
-PAGE_SIZE" etc we are using all over the place.
-
-> 
+>> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+>> index c5a46d10afaa0..6ca1f6b45c1e5 100644
+>> --- a/fs/hugetlbfs/inode.c
+>> +++ b/fs/hugetlbfs/inode.c
+>> @@ -198,31 +198,20 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+>>   static size_t adjust_range_hwpoison(struct folio *folio, size_t offset,
+>>   		size_t bytes)
+>>   {
+>> -	struct page *page;
+>> -	size_t n = 0;
+>> -	size_t res = 0;
+>> -
+>> -	/* First page to start the loop. */
+>> -	page = folio_page(folio, offset / PAGE_SIZE);
+>> -	offset %= PAGE_SIZE;
+>> -	while (1) {
+>> -		if (is_raw_hwpoison_page_in_hugepage(page))
+>> -			break;
+>> +	struct page *page = folio_page(folio, offset / PAGE_SIZE);
+>> +	size_t safe_bytes;
+>> +
+>> +	if (is_raw_hwpoison_page_in_hugepage(page))
+>> +		return 0;
+>> +	/* Safe to read the remaining bytes in this page. */
+>> +	safe_bytes = PAGE_SIZE - (offset % PAGE_SIZE);
+>> +	page++;
 >>
->>>
->>>> +
->>>>    /*
->>>>     * compound_nr() returns the number of pages in this potentially compound
->>>>     * page.  compound_nr() can be called on a tail page, and is defined to
->>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>> index baead29b3e67b..426bc404b80cc 100644
->>>> --- a/mm/page_alloc.c
->>>> +++ b/mm/page_alloc.c
->>>> @@ -6833,6 +6833,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
->>>>    int alloc_contig_range_noprof(unsigned long start, unsigned long end,
->>>>    			      acr_flags_t alloc_flags, gfp_t gfp_mask)
+>> -		/* Safe to read n bytes without touching HWPOISON subpage. */
+>> -		n = min(bytes, (size_t)PAGE_SIZE - offset);
+>> -		res += n;
+>> -		bytes -= n;
+>> -		if (!bytes || !n)
+>> +	for (; safe_bytes < bytes; safe_bytes += PAGE_SIZE, page++)
 > 
-> Funny btw th
+> OK this is quite subtle - so if safe_bytes == bytes, this means we've confirmed
+> that all requested bytes are safe.
 > 
->>>>    {
->>>> +	const unsigned int order = ilog2(end - start);
->>>>    	unsigned long outer_start, outer_end;
->>>>    	int ret = 0;
->>>>
->>>> @@ -6850,6 +6851,9 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
->>>>    					    PB_ISOLATE_MODE_CMA_ALLOC :
->>>>    					    PB_ISOLATE_MODE_OTHER;
->>>>
->>>> +	if (WARN_ON_ONCE((gfp_mask & __GFP_COMP) && order > MAX_FOLIO_ORDER))
->>>> +		return -EINVAL;
->>>
->>> Possibly not worth it for a one off, but be nice to have this as a helper function, like:
->>>
->>> static bool is_valid_order(gfp_t gfp_mask, unsigned int order)
->>> {
->>> 	return !(gfp_mask & __GFP_COMP) || order <= MAX_FOLIO_ORDER;
->>> }
->>>
->>> Then makes this:
->>>
->>> 	if (WARN_ON_ONCE(!is_valid_order(gfp_mask, order)))
->>> 		return -EINVAL;
->>>
->>> Kinda self-documenting!
->>
->> I don't like it -- especially forwarding __GFP_COMP.
->>
->> is_valid_folio_order() to wrap the order check? Also not sure.
+> So offset=0, bytes = 4096 would fail this (as safe_bytes == 4096).
 > 
-> OK, it's not a big deal.
+> Maybe worth putting something like:
 > 
-> Can we have a comment explaining this though? As people might be confused
-> as to why we check this here and not elsewhere.
+> 	/*
+> 	 * Now we check page-by-page in the folio to see if any bytes we don't
+> 	 * yet know to be safe are contained within posioned pages or not.
+> 	 */
+> 
+> Above the loop. Or something like this.
 
-I can add a comment.
+"Check each remaining page as long as we are not done yet."
+
+> 
+>> +		if (is_raw_hwpoison_page_in_hugepage(page))
+>>   			break;
+>> -		offset += n;
+>> -		if (offset == PAGE_SIZE) {
+>> -			page++;
+>> -			offset = 0;
+>> -		}
+>> -	}
+>>
+>> -	return res;
+>> +	return min(safe_bytes, bytes);
+> 
+> Yeah given above analysis this seems correct.
+> 
+> You must have torn your hair out over this :)
+
+I could resist the urge to clean that up, yes.
+
+I'll also drop the "The implementation borrows the iteration logic from 
+copy_page_to_iter*." part, because I suspect this comment no longer 
+makes sense.
+
+Thanks!
 
 -- 
 Cheers

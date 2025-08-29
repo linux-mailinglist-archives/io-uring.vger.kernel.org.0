@@ -1,112 +1,113 @@
-Return-Path: <io-uring+bounces-9432-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9433-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA431B3AE92
-	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 01:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C325AB3AF0B
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 02:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59FC98222D
-	for <lists+io-uring@lfdr.de>; Thu, 28 Aug 2025 23:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E26D1C27E8C
+	for <lists+io-uring@lfdr.de>; Fri, 29 Aug 2025 00:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5721276059;
-	Thu, 28 Aug 2025 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E6D137923;
+	Fri, 29 Aug 2025 00:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSThdl5s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/oWKLrG"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B59262FC0;
-	Thu, 28 Aug 2025 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AADEACD;
+	Fri, 29 Aug 2025 00:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756425009; cv=none; b=Sa24vp+pjCMZcGYkZ4WYT9tDx3/nJCnA6aFGzE6RX1KZubqfC8boWmQo/N5M7w4pBlNILzIKebyTtwTGU9XaOeHRLOK9hUsGmDiK6/2BLnoJLLQB5GQqlBGhwb9K1rh1OxZA0j8ER1FvRMVe2Qcr746o1nOHqYcgCa97HGqfvIc=
+	t=1756427133; cv=none; b=Y3OidowYLlk2UhQr4G3JgTclFGT2Uy/c7KsgdrIKNNctU8F1o8owmoPRKlswwhiPpu3qh4Y9Zf+468RWcRxH/zZ93srcEbcwIhyqGX84MEnOAAFcGpYQYU9XTao/NUx5Q/7oO9ozYg+hbr5xLMk3U8dRPZjxGs8G65AuyfSnXi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756425009; c=relaxed/simple;
-	bh=e17ImB2Y/pO+JEDTa5g4HLe3a+vtXCoIi5gWJqdD4HY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=o1muHGv2ZHSIs/QSQg5NqOC/D18LUUv6osN1ETThjqYkHOKPoDjTUrsHRaj/0UB9uZT8XIR9DNW1iIx3bAS4lXk1t/bkoBu+y3/B6P04r0DzZE98zkHJCumg1b34SAZyran8H56FkhIcflqxzzlf1edOACyPyenotLa6aJ21wa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSThdl5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497CFC4CEEB;
-	Thu, 28 Aug 2025 23:50:09 +0000 (UTC)
+	s=arc-20240116; t=1756427133; c=relaxed/simple;
+	bh=mcyLCjBm9bl4ZY6mSMuRJ2uZCphNIYGX7Xvto/pbXbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+FPksBdPDa7bFW3G9Qpj3IFIleRxE6UbFgngfVNN+KLFaiiRp3uL2NdJt0xRx7Mch7YuN7Kw2TCBvlGMs8j26+fY2OY2ITh2cPCgOl3TkAfYvba/XU40a0LwIQ/N2xiHNOr8edHTTwbCiWE58yDq7wcTrb+GlSc+OhR/vSHVaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/oWKLrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DD3C4CEEB;
+	Fri, 29 Aug 2025 00:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756425009;
-	bh=e17ImB2Y/pO+JEDTa5g4HLe3a+vtXCoIi5gWJqdD4HY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bSThdl5sMj8UJckeXo86O7E1G4tsHn1RRrQnDQfvnQ9CnFaTxC6W4RtHwV5ToKMrO
-	 w/Bf/FH1k3I9vXmNuM/l2bCgqbyl7ZPupkptUWjAL7yb+v3PcL/EUmVBSLWCZE9y+h
-	 pwHVAG+HUOQeHZgVFdokM7wXw34Toy/d/FWurC9QJywnCqCLpKRBmiBxL7BNI9tn5x
-	 kJMrbnQynmjPOZ77vt5XkhNt1DkUi3yJtjjwlgxalhQ7vNTrq6wCSX0yYpRT5K8mGY
-	 bdfOc9Ry8z802zpG3UKMwaHNZ79gILGAjNgNY0NulzOZLyqBwGL/usmgx3kZQymLfT
-	 Pq6H2o3jywtEg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D67383BF75;
-	Thu, 28 Aug 2025 23:50:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1756427131;
+	bh=mcyLCjBm9bl4ZY6mSMuRJ2uZCphNIYGX7Xvto/pbXbA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u/oWKLrG9w8tVTD1fZ8iHMCTnvOpAvWDeHA6QKVbOxI5z3EsWkKOYpx+/EqygyXxT
+	 JfsI9TgIRVHKumF8STASk0xFgWojfw7Ae2CzWwD/2Q2uuHXJXzQ2WP0cdMy2yD417H
+	 CsBjZQp1WYO2XyxCtl17k56mMmCMHv9CfhW9EaopZS9VGhmJpwlMecnpjR6PhtJ/fj
+	 GrN7kYbeVhnoRdeSLtAXW1b3kHoiS9DAKmAaknHskX5SZxQCo9ZS9tNyBpYomI4Vyl
+	 stc7Srggmoj/YULxsLdMf7tTageVur4W6TC/Wx9ff7SP+zxWQrvIoTZdLNEPK/uv1q
+	 9GQe8IoL25fMw==
+Message-ID: <423566a0-5967-488d-a62a-4f825ae6f227@kernel.org>
+Date: Fri, 29 Aug 2025 09:22:30 +0900
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v6 0/7] devmem/io_uring: allow more flexibility
- for
- ZC DMA devices
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175642501625.1650971.15574075096463666063.git-patchwork-notify@kernel.org>
-Date: Thu, 28 Aug 2025 23:50:16 +0000
-References: <20250827144017.1529208-2-dtatulea@nvidia.com>
-In-Reply-To: <20250827144017.1529208-2-dtatulea@nvidia.com>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: almasrymina@google.com, asml.silence@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- axboe@kernel.dk, saeedm@nvidia.com, tariqt@nvidia.com, mbloch@nvidia.com,
- leon@kernel.org, andrew+netdev@lunn.ch, cratiu@nvidia.com, parav@nvidia.com,
- netdev@vger.kernel.org, sdf@meta.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-rdma@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 24/36] ata: libata-eh: drop nth_page() usage within SG
+ entry
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Niklas Cassel <cassel@kernel.org>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-25-david@redhat.com>
+ <7612fdc2-97ff-4b89-a532-90c5de56acdc@lucifer.local>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <7612fdc2-97ff-4b89-a532-90c5de56acdc@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 27 Aug 2025 17:39:54 +0300 you wrote:
-> For TCP zerocopy rx (io_uring, devmem), there is an assumption that the
-> parent device can do DMA. However that is not always the case:
-> - Scalable Function netdevs [1] have the DMA device in the grandparent.
-> - For Multi-PF netdevs [2] queues can be associated to different DMA
->   devices.
+On 8/29/25 2:53 AM, Lorenzo Stoakes wrote:
+> On Thu, Aug 28, 2025 at 12:01:28AM +0200, David Hildenbrand wrote:
+>> It's no longer required to use nth_page() when iterating pages within a
+>> single SG entry, so let's drop the nth_page() usage.
+>>
+>> Cc: Damien Le Moal <dlemoal@kernel.org>
+>> Cc: Niklas Cassel <cassel@kernel.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
 > 
-> The series adds an API for getting the DMA device for a netdev queue.
-> Drivers that have special requirements can implement the newly added
-> queue management op. Otherwise the parent will still be used as before.
+> LGTM, so:
 > 
-> [...]
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Here is the summary with links:
-  - [net-next,v6,1/7] queue_api: add support for fetching per queue DMA dev
-    https://git.kernel.org/netdev/net-next/c/13d8e05adf9d
-  - [net-next,v6,2/7] io_uring/zcrx: add support for custom DMA devices
-    https://git.kernel.org/netdev/net-next/c/59b8b32ac8d4
-  - [net-next,v6,3/7] net: devmem: get netdev DMA device via new API
-    https://git.kernel.org/netdev/net-next/c/7c7e94603a76
-  - [net-next,v6,4/7] net/mlx5e: add op for getting netdev DMA device
-    https://git.kernel.org/netdev/net-next/c/f1debf1a2ef4
-  - [net-next,v6,5/7] net: devmem: pull out dma_dev out of net_devmem_bind_dmabuf
-    https://git.kernel.org/netdev/net-next/c/512c88fb0e88
-  - [net-next,v6,6/7] net: devmem: pre-read requested rx queues during bind
-    https://git.kernel.org/netdev/net-next/c/1b416902cd25
-  - [net-next,v6,7/7] net: devmem: allow binding on rx queues with same DMA devices
-    https://git.kernel.org/netdev/net-next/c/b8aab4bb9585
+Just noticed this:
 
-You are awesome, thank you!
+s/libata-eh/libata-sff
+
+in the commit title please.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Damien Le Moal
+Western Digital Research
 

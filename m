@@ -1,70 +1,70 @@
-Return-Path: <io-uring+bounces-9494-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9495-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268A0B3E8F9
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFF4B3E8F6
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4C2208120
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09CF1890423
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AE835AADB;
-	Mon,  1 Sep 2025 15:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5393335CEB3;
+	Mon,  1 Sep 2025 15:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c4qD9/UC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1ILILS3"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAA7343D64
-	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6A63128D6
+	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739173; cv=none; b=CCokEhmGYOx0VY76sJu4V4b0GMrXFqLnmkbKtfbEtxeQ95LUMxra/hIddcYmKldeBsmGpKuda6I2bHPHfEBnyS8bD+Pg1oN3PoUSbnwGUKadLdlfVLKPftfLlIMHtRfFxsTo6mnlAz1I030ICcKQ3/yPSjnE6UJf6VC86EtRSm4=
+	t=1756739192; cv=none; b=FduBudDcwCBtlSo1CCFqe4lvB8DafWS1SZUgzqJZxJyM8vndWCuZpxCxEi1ZbPHrCc3AKDUeEkiydpb9vKvFJwFhk78swwm5WXQsQ8gYU7dmJTED2DwF4ccETTT8BoSmuZlt1YZ9NMtgLsvmWAFA5CiNOVtFUcHbK67GKQcmp7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739173; c=relaxed/simple;
-	bh=S6QWeVQb30sBOUlT/iBJiP63QIoPcyhZbwSwcN4iyVo=;
+	s=arc-20240116; t=1756739192; c=relaxed/simple;
+	bh=a/HfV18Bh8e6MnxhtdRbUlFLMEOVZuUHfrTZJSinut4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KRB5TQBlFqPmh7hLl8AisYgR5q+M8oToj7/5Hz16YtrRWta2Eq8RLFUKIQMhlmuMZKMtUrTuBZjqWwM0/ppj8J9F7Yb1cBaXDXTHIbrnxHIMmWF8Xdmuh5Lx7hCU46s5X1DxX1n91uGTqAb8lFvl/Y7xS9jhIWhhqAQWPdHCC9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c4qD9/UC; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=KopYLVMUxf1KG1qdjpT+/v2XvgGNS629qwp2FP6DBnFQtY4jHq39oERjYHF8EffmGCBsFpMrG+9M788S/B6i095H9bEAxVe3yQuUPMC787dn63QOudFeOkudUTbqozjMfHOeAO4xVBULYk5Qzx7CisVHDcTJWoCBKaz/A4EcUGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1ILILS3; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756739169;
+	s=mimecast20190719; t=1756739188;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cLXaFnsvcEZ3Dj9TJuBmn3z/jlqr9HdUmmd8IA3Df2I=;
-	b=c4qD9/UCXNfPrw6EL11ynJ0d5Om6dRVyJik/visgVAlu6aEY95/czbbrLugRQNdnIdnLSI
-	rHLU7hWuQs2+R7Rbjtzq+iBzCskBS0lAyEa3JkKUgYOorP+WqFC0pACR1+YaPKkdFvcush
-	r6kygb9mFAV1oS/LXT9ypgL8WY+IBw8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=NTgr/pqX3UqVNNKIBPC5IiEd0D/dsfuHo0zqlHJEFcE=;
+	b=A1ILILS3c8mdxnC6khfcQKXx03fktrQ4mSGC5u5pFQgsFnCKw18Hs/i3s948fc1Mde9hij
+	IZKe+EeQ5Gs6Hcqgg6eW/HjTLsBojdLyxn+KiGTNS411XdU/naG1XDM2/rZuZ/viAfUJHH
+	0UBqxRwkIWvIAQIej4y20qfkLimHJgE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-643-vn9FlFaVPyW1oPG7gsT7bA-1; Mon,
- 01 Sep 2025 11:06:06 -0400
-X-MC-Unique: vn9FlFaVPyW1oPG7gsT7bA-1
-X-Mimecast-MFC-AGG-ID: vn9FlFaVPyW1oPG7gsT7bA_1756739161
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-LWOuJP0QNQig9xOBt6uhiw-1; Mon,
+ 01 Sep 2025 11:06:25 -0400
+X-MC-Unique: LWOuJP0QNQig9xOBt6uhiw-1
+X-Mimecast-MFC-AGG-ID: LWOuJP0QNQig9xOBt6uhiw_1756739180
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9823C19560B2;
-	Mon,  1 Sep 2025 15:06:01 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 330D5195608A;
+	Mon,  1 Sep 2025 15:06:17 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.22.88.45])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F13EE18003FC;
-	Mon,  1 Sep 2025 15:05:45 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 344B51800280;
+	Mon,  1 Sep 2025 15:06:01 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: David Hildenbrand <david@redhat.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	SeongJae Park <sj@kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Shuah Khan <shuah@kernel.org>,
 	Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
@@ -96,6 +96,7 @@ Cc: David Hildenbrand <david@redhat.com>,
 	Marco Elver <elver@google.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
 	Muchun Song <muchun.song@linux.dev>,
 	netdev@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>,
@@ -106,11 +107,10 @@ Cc: David Hildenbrand <david@redhat.com>,
 	virtualization@lists.linux.dev,
 	Vlastimil Babka <vbabka@suse.cz>,
 	wireguard@lists.zx2c4.com,
-	x86@kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v2 05/37] wireguard: selftests: remove CONFIG_SPARSEMEM_VMEMMAP=y from qemu kernel config
-Date: Mon,  1 Sep 2025 17:03:26 +0200
-Message-ID: <20250901150359.867252-6-david@redhat.com>
+	x86@kernel.org
+Subject: [PATCH v2 06/37] mm/page_alloc: reject unreasonable folio/compound page sizes in alloc_contig_range_noprof()
+Date: Mon,  1 Sep 2025 17:03:27 +0200
+Message-ID: <20250901150359.867252-7-david@redhat.com>
 In-Reply-To: <20250901150359.867252-1-david@redhat.com>
 References: <20250901150359.867252-1-david@redhat.com>
 Precedence: bulk
@@ -122,33 +122,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-It's no longer user-selectable (and the default was already "y"), so
-let's just drop it.
+Let's reject them early, which in turn makes folio_alloc_gigantic() reject
+them properly.
 
-It was never really relevant to the wireguard selftests either way.
+To avoid converting from order to nr_pages, let's just add MAX_FOLIO_ORDER
+and calculate MAX_FOLIO_NR_PAGES based on that.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+While at it, let's just make the order a "const unsigned order".
+
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Acked-by: SeongJae Park <sj@kernel.org>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- tools/testing/selftests/wireguard/qemu/kernel.config | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/mm.h |  6 ++++--
+ mm/page_alloc.c    | 10 +++++++++-
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
-index 0a5381717e9f4..1149289f4b30f 100644
---- a/tools/testing/selftests/wireguard/qemu/kernel.config
-+++ b/tools/testing/selftests/wireguard/qemu/kernel.config
-@@ -48,7 +48,6 @@ CONFIG_JUMP_LABEL=y
- CONFIG_FUTEX=y
- CONFIG_SHMEM=y
- CONFIG_SLUB=y
--CONFIG_SPARSEMEM_VMEMMAP=y
- CONFIG_SMP=y
- CONFIG_SCHED_SMT=y
- CONFIG_SCHED_MC=y
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 00c8a54127d37..77737cbf2216a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2055,11 +2055,13 @@ static inline long folio_nr_pages(const struct folio *folio)
+ 
+ /* Only hugetlbfs can allocate folios larger than MAX_ORDER */
+ #ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+-#define MAX_FOLIO_NR_PAGES	(1UL << PUD_ORDER)
++#define MAX_FOLIO_ORDER		PUD_ORDER
+ #else
+-#define MAX_FOLIO_NR_PAGES	MAX_ORDER_NR_PAGES
++#define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+ #endif
+ 
++#define MAX_FOLIO_NR_PAGES	(1UL << MAX_FOLIO_ORDER)
++
+ /*
+  * compound_nr() returns the number of pages in this potentially compound
+  * page.  compound_nr() can be called on a tail page, and is defined to
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 27ea4c7acd158..7e96c69a06ccb 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6841,6 +6841,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
+ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+ 			      acr_flags_t alloc_flags, gfp_t gfp_mask)
+ {
++	const unsigned int order = ilog2(end - start);
+ 	unsigned long outer_start, outer_end;
+ 	int ret = 0;
+ 
+@@ -6858,6 +6859,14 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+ 					    PB_ISOLATE_MODE_CMA_ALLOC :
+ 					    PB_ISOLATE_MODE_OTHER;
+ 
++	/*
++	 * In contrast to the buddy, we allow for orders here that exceed
++	 * MAX_PAGE_ORDER, so we must manually make sure that we are not
++	 * exceeding the maximum folio order.
++	 */
++	if (WARN_ON_ONCE((gfp_mask & __GFP_COMP) && order > MAX_FOLIO_ORDER))
++		return -EINVAL;
++
+ 	gfp_mask = current_gfp_context(gfp_mask);
+ 	if (__alloc_contig_verify_gfp_mask(gfp_mask, (gfp_t *)&cc.gfp_mask))
+ 		return -EINVAL;
+@@ -6955,7 +6964,6 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+ 			free_contig_range(end, outer_end - end);
+ 	} else if (start == outer_start && end == outer_end && is_power_of_2(end - start)) {
+ 		struct page *head = pfn_to_page(start);
+-		int order = ilog2(end - start);
+ 
+ 		check_new_pages(head, order);
+ 		prep_new_page(head, order, gfp_mask, 0);
 -- 
 2.50.1
 

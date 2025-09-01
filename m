@@ -1,68 +1,66 @@
-Return-Path: <io-uring+bounces-9495-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9496-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFF4B3E8F6
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:12:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60618B3E918
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09CF1890423
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468E43B8EC0
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5393335CEB3;
-	Mon,  1 Sep 2025 15:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4653235E4DF;
+	Mon,  1 Sep 2025 15:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1ILILS3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aOWrxl7I"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6A63128D6
-	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAE334575B
+	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739192; cv=none; b=FduBudDcwCBtlSo1CCFqe4lvB8DafWS1SZUgzqJZxJyM8vndWCuZpxCxEi1ZbPHrCc3AKDUeEkiydpb9vKvFJwFhk78swwm5WXQsQ8gYU7dmJTED2DwF4ccETTT8BoSmuZlt1YZ9NMtgLsvmWAFA5CiNOVtFUcHbK67GKQcmp7w=
+	t=1756739204; cv=none; b=C1fTEbvLIeKaij97HfWCUUyegszMRTZn1m5kES7m25BAHb8+C9zSuILxDtw0ecCUbbd1DVdk9NSMkmzqTkiGz4hMUpvn9Wf1jAcy0SWt6uNzdSltkX91XzF0jwjYF4Lh1XwHWhTl2SiH0HCIpwR2aop5x3N66y+Jtry5nASKc9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739192; c=relaxed/simple;
-	bh=a/HfV18Bh8e6MnxhtdRbUlFLMEOVZuUHfrTZJSinut4=;
+	s=arc-20240116; t=1756739204; c=relaxed/simple;
+	bh=fIHjwe8iDU4F3nB0vO5G8hRmV8J7PfLovD62oorovAM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KopYLVMUxf1KG1qdjpT+/v2XvgGNS629qwp2FP6DBnFQtY4jHq39oERjYHF8EffmGCBsFpMrG+9M788S/B6i095H9bEAxVe3yQuUPMC787dn63QOudFeOkudUTbqozjMfHOeAO4xVBULYk5Qzx7CisVHDcTJWoCBKaz/A4EcUGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1ILILS3; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=RhTYkIULfgbP3isS3vwp3P0/pc9idBaZngJe6bV83dUneSV3mbq3IFNxePcP/AIeqh+pMFE1IkzDR08JS6j6IFmzqoM5mT/KKZYX1vuvLfMJGHhW8Ah80t4mudYyI2TFM/b4dER0fHQS2dALNPMtKIaxve4SmiZ8U0I5+uu9dxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aOWrxl7I; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756739188;
+	s=mimecast20190719; t=1756739201;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NTgr/pqX3UqVNNKIBPC5IiEd0D/dsfuHo0zqlHJEFcE=;
-	b=A1ILILS3c8mdxnC6khfcQKXx03fktrQ4mSGC5u5pFQgsFnCKw18Hs/i3s948fc1Mde9hij
-	IZKe+EeQ5Gs6Hcqgg6eW/HjTLsBojdLyxn+KiGTNS411XdU/naG1XDM2/rZuZ/viAfUJHH
-	0UBqxRwkIWvIAQIej4y20qfkLimHJgE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=dzO5XeQXA+92El5MTIOjMpy0CzhO3womFwma0oFqoHc=;
+	b=aOWrxl7IZTAV2Fw97RDtLTAqx1/BmDQIAaunjs9zBTHTL6APYS9ZYMTXRTxnWR4gSu59qH
+	1Sori2oq0NUa0uLURpWSLedQK2hygPFI/GcRIwxmJS3u3Ax3iEskxEqGTeW6cWwVNqcJA8
+	yLn6VSuVBkMfTPB7EbG7qA88tKIkyhg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-LWOuJP0QNQig9xOBt6uhiw-1; Mon,
- 01 Sep 2025 11:06:25 -0400
-X-MC-Unique: LWOuJP0QNQig9xOBt6uhiw-1
-X-Mimecast-MFC-AGG-ID: LWOuJP0QNQig9xOBt6uhiw_1756739180
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-473-jaRusggRNe6QfB0GmQhKbw-1; Mon,
+ 01 Sep 2025 11:06:38 -0400
+X-MC-Unique: jaRusggRNe6QfB0GmQhKbw-1
+X-Mimecast-MFC-AGG-ID: jaRusggRNe6QfB0GmQhKbw_1756739193
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 330D5195608A;
-	Mon,  1 Sep 2025 15:06:17 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E34BB19560AA;
+	Mon,  1 Sep 2025 15:06:32 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.22.88.45])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 344B51800280;
-	Mon,  1 Sep 2025 15:06:01 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A8FF618003FC;
+	Mon,  1 Sep 2025 15:06:17 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
 	SeongJae Park <sj@kernel.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -107,10 +105,11 @@ Cc: David Hildenbrand <david@redhat.com>,
 	virtualization@lists.linux.dev,
 	Vlastimil Babka <vbabka@suse.cz>,
 	wireguard@lists.zx2c4.com,
-	x86@kernel.org
-Subject: [PATCH v2 06/37] mm/page_alloc: reject unreasonable folio/compound page sizes in alloc_contig_range_noprof()
-Date: Mon,  1 Sep 2025 17:03:27 +0200
-Message-ID: <20250901150359.867252-7-david@redhat.com>
+	x86@kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v2 07/37] mm/memremap: reject unreasonable folio/compound page sizes in memremap_pages()
+Date: Mon,  1 Sep 2025 17:03:28 +0200
+Message-ID: <20250901150359.867252-8-david@redhat.com>
 In-Reply-To: <20250901150359.867252-1-david@redhat.com>
 References: <20250901150359.867252-1-david@redhat.com>
 Precedence: bulk
@@ -122,80 +121,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Let's reject them early, which in turn makes folio_alloc_gigantic() reject
-them properly.
+Let's reject unreasonable folio sizes early, where we can still fail.
+We'll add sanity checks to prepare_compound_head/prepare_compound_page
+next.
 
-To avoid converting from order to nr_pages, let's just add MAX_FOLIO_ORDER
-and calculate MAX_FOLIO_NR_PAGES based on that.
+Is there a way to configure a system such that unreasonable folio sizes
+would be possible? It would already be rather questionable.
 
-While at it, let's just make the order a "const unsigned order".
+If so, we'd probably want to bail out earlier, where we can avoid a
+WARN and just report a proper error message that indicates where
+something went wrong such that we messed up.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
 Acked-by: SeongJae Park <sj@kernel.org>
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/mm.h |  6 ++++--
- mm/page_alloc.c    | 10 +++++++++-
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ mm/memremap.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 00c8a54127d37..77737cbf2216a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2055,11 +2055,13 @@ static inline long folio_nr_pages(const struct folio *folio)
+diff --git a/mm/memremap.c b/mm/memremap.c
+index b0ce0d8254bd8..a2d4bb88f64b6 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -275,6 +275,9 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
  
- /* Only hugetlbfs can allocate folios larger than MAX_ORDER */
- #ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
--#define MAX_FOLIO_NR_PAGES	(1UL << PUD_ORDER)
-+#define MAX_FOLIO_ORDER		PUD_ORDER
- #else
--#define MAX_FOLIO_NR_PAGES	MAX_ORDER_NR_PAGES
-+#define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
- #endif
+ 	if (WARN_ONCE(!nr_range, "nr_range must be specified\n"))
+ 		return ERR_PTR(-EINVAL);
++	if (WARN_ONCE(pgmap->vmemmap_shift > MAX_FOLIO_ORDER,
++		      "requested folio size unsupported\n"))
++		return ERR_PTR(-EINVAL);
  
-+#define MAX_FOLIO_NR_PAGES	(1UL << MAX_FOLIO_ORDER)
-+
- /*
-  * compound_nr() returns the number of pages in this potentially compound
-  * page.  compound_nr() can be called on a tail page, and is defined to
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 27ea4c7acd158..7e96c69a06ccb 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6841,6 +6841,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
- int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 			      acr_flags_t alloc_flags, gfp_t gfp_mask)
- {
-+	const unsigned int order = ilog2(end - start);
- 	unsigned long outer_start, outer_end;
- 	int ret = 0;
- 
-@@ -6858,6 +6859,14 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 					    PB_ISOLATE_MODE_CMA_ALLOC :
- 					    PB_ISOLATE_MODE_OTHER;
- 
-+	/*
-+	 * In contrast to the buddy, we allow for orders here that exceed
-+	 * MAX_PAGE_ORDER, so we must manually make sure that we are not
-+	 * exceeding the maximum folio order.
-+	 */
-+	if (WARN_ON_ONCE((gfp_mask & __GFP_COMP) && order > MAX_FOLIO_ORDER))
-+		return -EINVAL;
-+
- 	gfp_mask = current_gfp_context(gfp_mask);
- 	if (__alloc_contig_verify_gfp_mask(gfp_mask, (gfp_t *)&cc.gfp_mask))
- 		return -EINVAL;
-@@ -6955,7 +6964,6 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 			free_contig_range(end, outer_end - end);
- 	} else if (start == outer_start && end == outer_end && is_power_of_2(end - start)) {
- 		struct page *head = pfn_to_page(start);
--		int order = ilog2(end - start);
- 
- 		check_new_pages(head, order);
- 		prep_new_page(head, order, gfp_mask, 0);
+ 	switch (pgmap->type) {
+ 	case MEMORY_DEVICE_PRIVATE:
 -- 
 2.50.1
 

@@ -1,68 +1,67 @@
-Return-Path: <io-uring+bounces-9512-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9513-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C1AB3E9F3
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:25:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64727B3EA19
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 17:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340DD3AB85A
-	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3BF188A0F7
+	for <lists+io-uring@lfdr.de>; Mon,  1 Sep 2025 15:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7026B343D63;
-	Mon,  1 Sep 2025 15:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5323342C95;
+	Mon,  1 Sep 2025 15:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0Cnd6n8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HY0ijDSG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9338635CEB2
-	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A709345754
+	for <io-uring@vger.kernel.org>; Mon,  1 Sep 2025 15:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739443; cv=none; b=Tg90PzdPr4M4sqRpkcQ6rQNrf2CJfsIWt+c1ehodFUXPol6iwn7WlXIVzXmvnIfBkzcBcR4AmzryWtkBAaIfqTIA8yAbOIc14lBE99msi2anYe5VVor5iVrL5LrGc1uyGM1F5YC8ZrsOkx3JMmCLJHKK8XflVz4VI3GsUkEw/Po=
+	t=1756739459; cv=none; b=nnF7rJ0p9xDkvZnq7NT1+nA9/+tRzaMb3vvjuosDjkM85k0KcEG+JMX7od5Xly9ALUcxcK5ZqDQEmUzCa771hgrSAEC3xGjTPSWmQlAIVzS4HUqiFVTne/IxGAXV2ZnTSSt8sM8hwZH9tLEgahL54EMvyWhXSmo7wRYOVmp8Fi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739443; c=relaxed/simple;
-	bh=6gjpZOAI0cveJNUNM9Eig8c7XIa3/MpaRP2C2bTa5MU=;
+	s=arc-20240116; t=1756739459; c=relaxed/simple;
+	bh=nc3Yc0/qjWObLuq/Dnlh4/fE6/xzu4aI7QxeppqGJCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XLnjyNtjAFx9am1HgZEYn8onkgzgij8U5ZPN6Mhpig+56Q2ByNsi0aV3wfVxqJkDMH0g6RbI6+xS1MiojI/UXziFTHyI7fdJKSbWW5zunUQoPzPJ14dQDFadIuXARHFuZB25aZJPTFaKK8HifPFJNEkQpA6Koukq1QLQipGRtyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0Cnd6n8; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=iQ75dZhligHhhGmI/s30xGGX4yGPzrHDXX/0IUuEk0V+83aY4UWAoipTz8ez3eX0uWLI9kOcZrD8YZlBVu2Gi/w6dl6Shjg7YBji/aoLa7Dn43ocKQ5uV/0nPc1XwnuunqtQolmQJHCcO6UOFVo8dsj04V2xZe9qqvRCYl/D8Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HY0ijDSG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756739440;
+	s=mimecast20190719; t=1756739455;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fIzsdHZ3fBP51ER2numDMmmgvS6jLZjlCpLLEi+lFJs=;
-	b=Z0Cnd6n8RHKnCFMliX01L4KGR3vog8y2VNPmlEZRw6ZLvUXoktynoJvzOMXa7uWq5pNZ3m
-	fEV5QywU1Muge24LQGHpKd2mWrpZtbQ7+Vx3mNnITE83puAmRA+WeZ5NZKIy/NwGFWc3QE
-	nXjiGQnIGDuL/ryPcUu6ayvbPlcWTdI=
+	bh=i06htfFlQWUPNnzacoxmjdCfJTHM/jIyMh7+2RAfHF4=;
+	b=HY0ijDSG/zlBMG29SRF8EdQRG7pi0Mt1qVnmhr1/ypoeLxO2/27/FgHy/Qt27rXok+QwrN
+	ZqCNa4jW3LnoMuJkD+7WwDNH1WxPm0P6QDFY0TssBC9ccGOZ/5I3iXyloKSDWTslf4BHA+
+	NtxM8juOUAbhFPDyw+XcACcLEVQ0zlg=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-326-b49aMdn1OuiZpoH1EqfeVQ-1; Mon,
- 01 Sep 2025 11:10:36 -0400
-X-MC-Unique: b49aMdn1OuiZpoH1EqfeVQ-1
-X-Mimecast-MFC-AGG-ID: b49aMdn1OuiZpoH1EqfeVQ_1756739429
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-mPsifsa5O0-R1fp0Ep7F3g-1; Mon,
+ 01 Sep 2025 11:10:49 -0400
+X-MC-Unique: mPsifsa5O0-R1fp0Ep7F3g-1
+X-Mimecast-MFC-AGG-ID: mPsifsa5O0-R1fp0Ep7F3g_1756739444
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9D7819560BF;
-	Mon,  1 Sep 2025 15:10:28 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F20F19560B2;
+	Mon,  1 Sep 2025 15:10:44 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.22.88.45])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F426180028F;
-	Mon,  1 Sep 2025 15:10:14 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6AB8A1800280;
+	Mon,  1 Sep 2025 15:10:29 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: David Hildenbrand <david@redhat.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Robin Murphy <robin.murphy@arm.com>,
 	Alexander Potapenko <glider@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brendan Jackman <jackmanb@google.com>,
@@ -99,6 +98,7 @@ Cc: David Hildenbrand <david@redhat.com>,
 	netdev@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>,
 	Peter Xu <peterx@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
 	Suren Baghdasaryan <surenb@google.com>,
 	Tejun Heo <tj@kernel.org>,
 	virtualization@lists.linux.dev,
@@ -106,9 +106,9 @@ Cc: David Hildenbrand <david@redhat.com>,
 	wireguard@lists.zx2c4.com,
 	x86@kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v2 23/37] dma-remap: drop nth_page() in dma_common_contiguous_remap()
-Date: Mon,  1 Sep 2025 17:03:44 +0200
-Message-ID: <20250901150359.867252-24-david@redhat.com>
+Subject: [PATCH v2 24/37] scatterlist: disallow non-contigous page ranges in a single SG entry
+Date: Mon,  1 Sep 2025 17:03:45 +0200
+Message-ID: <20250901150359.867252-25-david@redhat.com>
 In-Reply-To: <20250901150359.867252-1-david@redhat.com>
 References: <20250901150359.867252-1-david@redhat.com>
 Precedence: bulk
@@ -120,34 +120,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-dma_common_contiguous_remap() is used to remap an "allocated contiguous
-region". Within a single allocation, there is no need to use nth_page()
-anymore.
+The expectation is that there is currently no user that would pass in
+non-contigous page ranges: no allocator, not even VMA, will hand these
+out.
 
-Neither the buddy, nor hugetlb, nor CMA will hand out problematic page
-ranges.
+The only problematic part would be if someone would provide a range
+obtained directly from memblock, or manually merge problematic ranges.
+If we find such cases, we should fix them to create separate
+SG entries.
+
+Let's check in sg_set_page() that this is really the case. No need to
+check in sg_set_folio(), as pages in a folio are guaranteed to be
+contiguous. As sg_set_page() gets inlined into modules, we have to
+export the page_range_contiguous() helper -- use EXPORT_SYMBOL, there is
+nothing special about this helper such that we would want to enforce
+GPL-only modules.
+
+We can now drop the nth_page() usage in sg_page_iter_page().
 
 Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- kernel/dma/remap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/scatterlist.h | 3 ++-
+ mm/util.c                   | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
-index 9e2afad1c6152..b7c1c0c92d0c8 100644
---- a/kernel/dma/remap.c
-+++ b/kernel/dma/remap.c
-@@ -49,7 +49,7 @@ void *dma_common_contiguous_remap(struct page *page, size_t size,
- 	if (!pages)
- 		return NULL;
- 	for (i = 0; i < count; i++)
--		pages[i] = nth_page(page, i);
-+		pages[i] = page++;
- 	vaddr = vmap(pages, count, VM_DMA_COHERENT, prot);
- 	kvfree(pages);
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 6f8a4965f9b98..29f6ceb98d74b 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -158,6 +158,7 @@ static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
+ static inline void sg_set_page(struct scatterlist *sg, struct page *page,
+ 			       unsigned int len, unsigned int offset)
+ {
++	VM_WARN_ON_ONCE(!page_range_contiguous(page, ALIGN(len + offset, PAGE_SIZE) / PAGE_SIZE));
+ 	sg_assign_page(sg, page);
+ 	sg->offset = offset;
+ 	sg->length = len;
+@@ -600,7 +601,7 @@ void __sg_page_iter_start(struct sg_page_iter *piter,
+  */
+ static inline struct page *sg_page_iter_page(struct sg_page_iter *piter)
+ {
+-	return nth_page(sg_page(piter->sg), piter->sg_pgoffset);
++	return sg_page(piter->sg) + piter->sg_pgoffset;
+ }
  
+ /**
+diff --git a/mm/util.c b/mm/util.c
+index fbdb73aaf35fe..bb4b47cd67091 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -1314,5 +1314,6 @@ bool page_range_contiguous(const struct page *page, unsigned long nr_pages)
+ 			return false;
+ 	return true;
+ }
++EXPORT_SYMBOL(page_range_contiguous);
+ #endif
+ #endif /* CONFIG_MMU */
 -- 
 2.50.1
 

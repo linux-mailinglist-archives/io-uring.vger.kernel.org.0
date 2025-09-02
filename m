@@ -1,54 +1,56 @@
-Return-Path: <io-uring+bounces-9541-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9542-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D4AB40C65
-	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 19:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C952B40CA9
+	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 20:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 887007A679A
-	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 17:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7684815CC
+	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 18:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C199D306D35;
-	Tue,  2 Sep 2025 17:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB7C2BE64D;
+	Tue,  2 Sep 2025 18:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1V5wIzU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZo29wCn"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960F832F761;
-	Tue,  2 Sep 2025 17:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC0C2877FC
+	for <io-uring@vger.kernel.org>; Tue,  2 Sep 2025 18:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835231; cv=none; b=RFOzqb0jMSTvSV2YPegKg7iqWd6BFhxrx33a9sos+LBYMtlndpLjrQZlWx1uP0+RSwgBqiD/dN674fw78Lo+SN+wBDHIrOdc6kZlEeapGn1CZ5Rz0ZPvYSHP+zwjTuUArWKx08FvYv7mfFpnVB66uZ1QymhAWQ25H5n5g8XAvRg=
+	t=1756836201; cv=none; b=IGqBZMWd4SEEoFsEfXstSXd28zJr7Fc2u1P/YIYtEMzbN30siRdhb844RTvVQh3JQFYF46wCWERvZpkaJPLjQemmeBWneGm3nTREFG1m4Xp2gHtkZ9LFfa4PgAsl2qEQypcPoeqEaWhBtaSJfX8F9OEO6KWyQ4yRm2U6mIt9oqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835231; c=relaxed/simple;
-	bh=nnhqZx29yhrl488m9IBdA4tgoUHb7PNLnLdLoyJ2Pfo=;
+	s=arc-20240116; t=1756836201; c=relaxed/simple;
+	bh=xNsiOXk7ubONXSG8Yu74j0J32WOEqAThcTqWHznmpe4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlnP5nh4VE+Y4IwS9aIMCV4mUN+Jcey610oTPbyYmAwCzWiUMHJ2B6CJTwlQEkTWPoqJqssmZs1xWjtF5N4Xr80SNfUlnAtODmeDD0xrxd8FxcQG9nW5c2t1WIICQ5hbhSKzGJjmbfZfjdI1yH5grJx2c03q1tggUk8LKHaGtCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1V5wIzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD3F0C4CEED;
-	Tue,  2 Sep 2025 17:47:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDX59MG6heJdi/UvJ61rJRxY6lmkkVwf+R0Fn8Ro4Viscf7AgwHwSJujnKIW5xb4Y8qw7wuvOXb3cDM7rz+E8QFHBpi3EqA/SQvBw3HyMblqAFiiovTHRn3y7MtZWbPoJP48lVtfPW5p64stte5yasPMXAXDJbqPBONMA8mIu+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZo29wCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 807CCC4CEED;
+	Tue,  2 Sep 2025 18:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756835229;
-	bh=nnhqZx29yhrl488m9IBdA4tgoUHb7PNLnLdLoyJ2Pfo=;
+	s=k20201202; t=1756836201;
+	bh=xNsiOXk7ubONXSG8Yu74j0J32WOEqAThcTqWHznmpe4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1V5wIzUiDhYRtEJnDXHzT/oytUu+kI4XZvO5Af62veEeWVBaXWlkaSWFzw9+bMlr
-	 cTe2/k5XJZN9fFT6FgdKNPvLlWC7ci3S7tAi0pQRCw1iTsSUjF6kE8UJZsWI2G5IsI
-	 AxlFJnrrdT+e+WypE3CkCu4oktRBaUpK3PjwM0INV7HJHDuYfbBZdeDxbDV/rrEIX/
-	 56BQHMnqI1ergAwEWnWu/GUuqwaqkSBaXhP39boZ1i2qskdc/7Dh6PtMvQpO+eaG2t
-	 +jAHxjVu+ACXBInEX5d9kTuQwSK3wTgtDnD9N5AhZQsEjYXtGNYA+IMj9oR9AIdK//
-	 hJylOxAfL5m/A==
-Date: Tue, 2 Sep 2025 11:46:57 -0600
+	b=TZo29wCnUQa6Ucjfhv/p4XZ5i/cYI90aCf9Q4j6xD7Bp7sj5I6ku7K8bAM6Q+lE7h
+	 BI4f9xkxru5s7hlI0ByhEO5ebBJz6mWpRYY+9Ftn7hASZjdO2O8w1RZuudxW2SFrm2
+	 gaY+rgMI55wWTvRMfyJstHvRuK4UwWCYQPng4CBYRiUXFHxX+JRRU6LvNQIRECkLqi
+	 1KRaj/saf9RdGbWXFyNFlLJsWskhCb+Zl36cgyN+yTOeKAGx2haWq2rHmoRaInUe97
+	 hQTNAnqJFrVBRo0h5yewtlAD2r8U2ZskfuM7XWV4q79qvgH0juCZEHWXZHP6mK5x1R
+	 56tU1favfgV+g==
+Date: Tue, 2 Sep 2025 12:03:19 -0600
 From: Keith Busch <kbusch@kernel.org>
 To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] io_uring/uring_cmd: add io_uring_cmd_tw_t type alias
-Message-ID: <aLctkaladNC2QfWY@kbusch-mbp>
-References: <20250902160657.1726828-1-csander@purestorage.com>
+Cc: Keith Busch <kbusch@meta.com>, axboe@kernel.dk,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] io_uring: add support for IORING_SETUP_SQE_MIXED
+Message-ID: <aLcxZ1mfG2pGDscF@kbusch-mbp>
+References: <20250829193935.1910175-1-kbusch@meta.com>
+ <20250829193935.1910175-3-kbusch@meta.com>
+ <CADUfDZqpTsEOROA0Tkrq1WprpBvmzvhMPiFXZwLT4WMTSmAXqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -57,15 +59,18 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250902160657.1726828-1-csander@purestorage.com>
+In-Reply-To: <CADUfDZqpTsEOROA0Tkrq1WprpBvmzvhMPiFXZwLT4WMTSmAXqQ@mail.gmail.com>
 
-On Tue, Sep 02, 2025 at 10:06:56AM -0600, Caleb Sander Mateos wrote:
-> Introduce a function pointer type alias io_uring_cmd_tw_t for the
-> uring_cmd task work callback. This avoids repeating the signature in
-> several places. Also name both arguments to the callback to clarify what
-> they represent.
+On Fri, Aug 29, 2025 at 02:29:39PM -0700, Caleb Sander Mateos wrote:
+> 
+> There are a few other users of IORING_SETUP_SQE128 that likely need to
+> be made aware of IOSQE_SQE_128B. For one, uring_sqe_size(), which is
+> used to determine how large the SQE payload is when copying it for a
+> uring_cmd that goes async. And the logic for setting IO_URING_F_SQE128
+> in io_uring_cmd() also needs to be adjusted.
 
-Looks good to me.
-
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Yeah, you're right. I did the liburing side first, and was a bit excited
+to see the nop test was working correctly so quickly that I didn't
+finish all the pieces. I'll get all that worked out on the next version.
+Thanks for the comments!
 

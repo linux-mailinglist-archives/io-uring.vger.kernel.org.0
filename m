@@ -1,183 +1,198 @@
-Return-Path: <io-uring+bounces-9539-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9540-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95489B409D1
-	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 17:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5663EB40A1F
+	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 18:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4211B63EDA
-	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 15:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113713A3C0C
+	for <lists+io-uring@lfdr.de>; Tue,  2 Sep 2025 16:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC4533438D;
-	Tue,  2 Sep 2025 15:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AC30AADA;
+	Tue,  2 Sep 2025 16:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bjzMHiUo"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ORBapOli"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-yb1-f226.google.com (mail-yb1-f226.google.com [209.85.219.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1515334386
-	for <io-uring@vger.kernel.org>; Tue,  2 Sep 2025 15:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067C52652A4
+	for <io-uring@vger.kernel.org>; Tue,  2 Sep 2025 16:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828447; cv=none; b=clHDV3Y34p3UY1tF3a1lPVUA/G38lZcKtQ1mZ9qu75n4y9byvY6tWIWeawaoiRwjDmB8I8WTy6UrMklu5LG3cEWApW7BQVpFiXWCge68p5MN9nAwuyWJ2mEMd7FETAz78kMS7FYSPlQRg2PXO4p+K2Y1HozGqrJtx7/wEey87d8=
+	t=1756829223; cv=none; b=FxKP3MVyXuRB2jOhMe0JRvlhH9UHXj9uUGCfN0if6JP5QW9JdbWgUqntnnIqlznOCMbTwsRFkrO3aW/yB4LfTXZgqNuwmGC9/5bEKi5yAkBYqnYZblouaXaSDvdNgbNqQbvrOYNTgGbLkWjit5bkWRrYWX0LDBYNJHOqRJd2rK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828447; c=relaxed/simple;
-	bh=Phpjjzej2saJsjDk6+uFFR4cadxcNKgzK4r1gcCZxMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=saHJtx0CgvGgZq3onJWqyeHgyEUXLiAHTeyS4Yt14xasM4AHkXeCz5CpQV1zSCt/Kpx84+kXspqh6jD1X+PNayvD7AIRaZpD+qhI2A8XBAA17OyyK/UGU8NDkheEBDG30K82m1jfZwVcW4ma5dus0rnpC64t0WGUqo2pfuXQbQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bjzMHiUo; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1756829223; c=relaxed/simple;
+	bh=oscotWeu2ofDRZ2I7B+ST50R3lMq/oklG8FOxuKuJzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fC2Rc7ooksNkqZtTIDNQAvQbqye4cBzNCCyZOiSNREWJrHDYfY8MMRG1hSI1mnAQtKiAtqqsoeHut8zarFMfa1VWQWBoKG0oB3M8xBc3LRaSJql1aRaPe8thoTTLPI0ZxoSQMT9RMcGAvQiWMisWsItHMrcqxNQbvhaiHQ0fQhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ORBapOli; arc=none smtp.client-ip=209.85.219.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b132bd90dso2073255ad.0
-        for <io-uring@vger.kernel.org>; Tue, 02 Sep 2025 08:54:05 -0700 (PDT)
+Received: by mail-yb1-f226.google.com with SMTP id 3f1490d57ef6-e96eb35e36cso888622276.0
+        for <io-uring@vger.kernel.org>; Tue, 02 Sep 2025 09:07:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756828445; x=1757433245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=glkrp5zHlTMARGO+3DOaDAvVK3fEgiovpkxY+a+HGYU=;
-        b=bjzMHiUobd/8Zu1CFso7fr/PJZaMxxifNPoqM2h9Cmp3JwGf5D1g5+Ud5ht5moxSY+
-         R5YzoG0S/M9ymqYshdEbnrbyTJsIsITccUk3DKBi16FUfRTGbdY4lQEZjm4nwYplkNe8
-         Kyx+5KrjqdUmr5LVznJ+mZ3l4dy07pHfFWwQBcLHPKvQR7zv7HDtqufaC8jxs/UtsUBE
-         erDv+P+CXEPxkzD2nulWV4z+EUHlFI03kIWx9Xv2NngeK8O05ZXY7+2Fm3Lj3EyhFp4N
-         U8XAVXT7Zb9Cl6D1lY3m5E1McAYSUJuZocyGXic8P/aO/xioLTphvTdKtQXdMt92pXPm
-         udTQ==
+        d=purestorage.com; s=google2022; t=1756829221; x=1757434021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RlJrQ5tmWGYzBhNWJHSwFwCHVK4G1iWt6SUsZakgOpw=;
+        b=ORBapOli6/6JhTr2x9gqyDu9E5YWMhdLqsDfJG8Z4QUMslowi/Ce2a5P0jRX1Jo2Sd
+         VESAeNi0/DKlSUM7eh9s8rO6cxuYN1sHAUOQBxq0NIvdZKhbKkjOKCxjEbrasRQDRCYA
+         vL88jlzinCMwYwmWTIx8cUJDz5fDZ3pfQz4CZ4QMMJfpH3HrX5fRErRZpUtm00hrNx0y
+         0oO6UeRsVQK1ewgzY8mmH2mTwaTbPIZvP2WUOnsEEsmqltqTZIAXZnqXq0yw8Yg7FZdd
+         WiF1/9iLu8Sl2sFEGu3k2jSW6yt7v86DpU1yePnvaIKN6tnBzkQRqrCbGmmCIGfAIPdn
+         YZsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756828445; x=1757433245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=glkrp5zHlTMARGO+3DOaDAvVK3fEgiovpkxY+a+HGYU=;
-        b=Cb6rXLBbZ8bmmj8xz6HnAqfBlptXvtpQI2R25/W7w7r9ZpWarr+NnK7EJrFxxXs4Wh
-         jq0oN9/zyw54bsB0t/qEWEk86hJnGV1mjMsk0BGMp/JXEyJfZlgmih978qc/7p/ceYYZ
-         NU2l4KyPtvxdKsCJhyjMld7bw4meL5+/6TMphooxG2+VACptFxjHPCINaycuWQ5CjEKq
-         XgEcMl5qPNYDDsP5x4ETFLt8oi1zAkH0NcmK3OifUV4GE1SCsf32FEEFhGjEBzTUlgQx
-         7C0SbIr9FytddOf2hlleLE/rmVpg3QpeZNMuOmh/4xHyM/bvmJ8bW+O8py/XpNsePnKy
-         TeRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgmCvs5fB+YvumjT5JNEMsCbg4XmzfTUlD7XTX7hrLCBP+nUWsFeyIkLXTVUc46gtc+78vXyR+9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtjXTWP3+00wIWoO7MVBAMr/uq0lccD1n6lnaztKbaJ9vClupV
-	5xRCuq8gLbmKrtZCEp6uz8rQvB/+aAuTrUHuQNzSfI9mT+4E0BXdTvyWO4SXngRgahA2DNB8NzG
-	+t5DHMC7n/OcQOwyGVwwtN3LBmFO9WW6hPp4K8OzdQg==
-X-Gm-Gg: ASbGncvzBEua/LnIdNeQoQWlCcxxT4vLr+64m7nrza+bvfvOoPlSz/qalA/pWpwhLmc
-	wY8MILogIJVGAsfl8g1xXL1Ye0KP8dII5ySmL+1TeREc7pFlHlUqdK5fGhdTo0Un0Bvs+mxHWrb
-	q8F41xaFbb8TsmOKr6F72sgcuCLfHNno6GTQ1oN/saD+t3/ZeP1NkJRVqoG0FVe+s0c1AGSlHEp
-	MYUnHF5xWAdw3Uhmok+v3E=
-X-Google-Smtp-Source: AGHT+IGo7hz0BxRWV5G1YH7hZvvr/9XeTFH7fJAa8NDYd3gLSzScxGKzPO2jMdun1EGK4NyLE1jjAIqh2/FqtYN8eps=
-X-Received: by 2002:a17:902:db0e:b0:24a:fbe2:b88e with SMTP id
- d9443c01a7336-24afbe2bb85mr35011445ad.1.1756828444780; Tue, 02 Sep 2025
- 08:54:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756829221; x=1757434021;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RlJrQ5tmWGYzBhNWJHSwFwCHVK4G1iWt6SUsZakgOpw=;
+        b=AR12OSl19rFH3ufeno1TZ1qSPZj7mW0qw1elCbENQ/qbEp57vd5mv5mStGhc6K8D1m
+         x1uuRTwcpVajAL7YpTeYWvTh5fAoi8Wdy41Ij0ZpnjBzG5lqjBPcUU9YNhCRatFeqbqj
+         b3koa0WE2/RG8gf2Ydk/0dqu18Z5afEjdWQFSN8K1jPKxQHRUktuk7EKF2qtVhRlwLEp
+         MHGpdXnJU5sWafbmR5jz16ZxD63m+YkQwNuGmgsdsVHTML/O/v9xC37IskFfaYmRJK5u
+         nfIvVJc63/zSKkjNL16IiRVXGbyi0Vt37lHOreQZV7JGknyGfJiS1JBBEQWnCo7PNzis
+         DFZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXef2tr2pxvE5wt3xZqCt9lkXXEj8PKp314rh8yOBvEzV6GNYtNuy3fXGxLAMGXZeZGR+oJrWp3rA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMEJBGnscDXIIzV9hucPHIv44zoBHQoweK+BpZ3ExhTD6/AXFN
+	Kl0vTotBIhuapY2rFbwKBM9f1Vq2Fg+V3hKrSEQOSC5IMAPrxQsbpvIXkQR5/3njtRl9BV7buiA
+	1/whq7N3kEYYPmgyJe1eo5zFiQ8daw2DbPpLd8hKKnf1mF0tH/LGF
+X-Gm-Gg: ASbGncslDgHKkADW5UpWggBNHlRIgPopJQzMVpG0aUb034pjJzDpSMYhCZmACjRxW2z
+	x8Px2a7zX1koaGV2HGhpkLIXXJ09UweQbrN6iIzEdyETqSmQ76ZvrpeJqk2bGGJDigFnUP3bkKK
+	lYApPZLiHxhdD/h8MGc9EqqSAfDm/m8WdGcXL91a17TOE4lFswA8+DbsiqqX9ggBENPg+KEnCAf
+	6qewICIQtgEN0YwOBXDvCXg6UAtrupNOmudwfKGX0AXzBGrfgZwWgr1C16d5yQnjbAz6jyR98Xd
+	BUixG8q+Neoa2PE3bBC/VwDBPV7naus+wWcXTfuljMculbpgbV3s3x9GNw==
+X-Google-Smtp-Source: AGHT+IGehGKy1s/4ECGVhm6Ytshrk21h/CKWiX53aH303nut6igUt+bsRoA2rH9L1NNTY357MPkA4BL/eq2s
+X-Received: by 2002:a05:6902:1148:b0:e97:604c:ce6f with SMTP id 3f1490d57ef6-e989be98834mr8924297276.1.1756829220457;
+        Tue, 02 Sep 2025 09:07:00 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e9bbe1a9f19sm171338276.17.2025.09.02.09.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 09:07:00 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id CD706340214;
+	Tue,  2 Sep 2025 10:06:58 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id C92A7E415E2; Tue,  2 Sep 2025 10:06:58 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/uring_cmd: add io_uring_cmd_tw_t type alias
+Date: Tue,  2 Sep 2025 10:06:56 -0600
+Message-ID: <20250902160657.1726828-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-5-sidong.yang@furiosa.ai>
- <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com> <aLbSi5-a67i78BHl@sidongui-MacBookPro.local>
-In-Reply-To: <aLbSi5-a67i78BHl@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 2 Sep 2025 08:53:53 -0700
-X-Gm-Features: Ac12FXyB8pbvzfSRoQFUjtPUW2OqS8AXMTk_z5NcDibqacuoXAPawZgi6AKUSj8
-Message-ID: <CADUfDZqwgT_dpObEcnhSymk=VX7c_=13yFByyxM6Wf-W3+Wg-w@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 4/5] rust: miscdevice: Add `uring_cmd` support
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 4:18=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
->
-> On Mon, Sep 01, 2025 at 06:12:44PM -0700, Caleb Sander Mateos wrote:
-> > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@furios=
-a.ai> wrote:
-> > >
-> > > This patch introduces support for `uring_cmd` to the `miscdevice`
-> > > framework. This is achieved by adding a new `uring_cmd` method to the
-> > > `MiscDevice` trait and wiring it up to the corresponding
-> > > `file_operations` entry.
-> > >
-> > > The `uring_cmd` function provides a mechanism for `io_uring` to issue
-> > > commands to a device driver.
-> > >
-> > > The new `uring_cmd` method takes the device, an `IoUringCmd` object,
-> > > and issue flags as arguments. The `IoUringCmd` object is a safe Rust
-> > > abstraction around the raw `io_uring_cmd` struct.
-> > >
-> > > To enable `uring_cmd` for a specific misc device, the `HAS_URING_CMD`
-> > > constant must be set to `true` in the `MiscDevice` implementation.
-> > >
-> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > ---
-> > >  rust/kernel/miscdevice.rs | 53 +++++++++++++++++++++++++++++++++++++=
-+-
-> > >  1 file changed, 52 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > > index 6373fe183b27..fcef579218ba 100644
-> > > --- a/rust/kernel/miscdevice.rs
-> > > +++ b/rust/kernel/miscdevice.rs
-> > > @@ -11,9 +11,10 @@
-> > >  use crate::{
-> > >      bindings,
-> > >      device::Device,
-> > > -    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> > > +    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ER=
-ROR},
-> > >      ffi::{c_int, c_long, c_uint, c_ulong},
-> > >      fs::File,
-> > > +    io_uring::IoUringCmd,
-> > >      mm::virt::VmaNew,
-> > >      prelude::*,
-> > >      seq_file::SeqFile,
-> > > @@ -180,6 +181,21 @@ fn show_fdinfo(
-> > >      ) {
-> > >          build_error!(VTABLE_DEFAULT_ERROR)
-> > >      }
-> > > +
-> > > +    /// Handler for uring_cmd.
-> > > +    ///
-> > > +    /// This function is invoked when userspace process submits an u=
-ring_cmd op
-> > > +    /// on io-uring submission queue. The `device` is borrowed insta=
-nce defined
-> > > +    /// by `Ptr`. The `io_uring_cmd` would be used for get arguments=
- cmd_op, sqe,
-> > > +    /// cmd_data. The `issue_flags` is the flags includes options fo=
-r uring_cmd.
-> > > +    /// The options are listed in `kernel::io_uring::cmd_flags`.
-> > > +    fn uring_cmd(
-> > > +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-> > > +        _io_uring_cmd: Pin<&mut IoUringCmd>,
-> >
-> > Passing the IoUringCmd by reference doesn't allow the uring_cmd()
-> > implementation to store it beyond the function return. That precludes
-> > any asynchronous uring_cmd() implementation, which is kind of the
-> > whole point of uring_cmd. I think uring_cmd() needs to transfer
-> > ownership of the IoUringCmd so the implementation can complete it
-> > asynchronously.
->
-> I didn't know that I can take IoUringCmd ownership and calling done().
-> In C implementation, is it safe to call `io_uring_cmd_done()` in any cont=
-ext?
+Introduce a function pointer type alias io_uring_cmd_tw_t for the
+uring_cmd task work callback. This avoids repeating the signature in
+several places. Also name both arguments to the callback to clarify what
+they represent.
 
-It depends on the issue_flags. If IO_URING_F_UNLOCKED is set, it can
-be called from any context. But if IO_URING_F_UNLOCKED is not set, it
-needs to be called with the io_ring_ctx's uring_lock held. That
-generally requires it to either be called during uring_cmd() or from a
-task work callback. In either case, issue_flags needs to match what
-was passed to uring_cmd() or the task work callback.
-You can look at NVMe passthru as an example. It calls
-io_uring_cmd_done() from nvme_uring_task_cb(), which is a task work
-callback scheduled with io_uring_cmd_do_in_task_lazy() in
-nvme_uring_cmd_end_io().
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/linux/io_uring/cmd.h | 13 ++++++++-----
+ io_uring/uring_cmd.c         |  2 +-
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-Best,
-Caleb
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 4bd3a7339243..7211157edfe9 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -9,15 +9,18 @@
+ /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
+ #define IORING_URING_CMD_CANCELABLE	(1U << 30)
+ /* io_uring_cmd is being issued again */
+ #define IORING_URING_CMD_REISSUE	(1U << 31)
+ 
++typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
++				  unsigned issue_flags);
++
+ struct io_uring_cmd {
+ 	struct file	*file;
+ 	const struct io_uring_sqe *sqe;
+ 	/* callback to defer completions to task context */
+-	void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
++	io_uring_cmd_tw_t task_work_cb;
+ 	u32		cmd_op;
+ 	u32		flags;
+ 	u8		pdu[32]; /* available inline for free use */
+ };
+ 
+@@ -55,11 +58,11 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+  */
+ void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, u64 res2,
+ 			unsigned issue_flags);
+ 
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			    io_uring_cmd_tw_t task_work_cb,
+ 			    unsigned flags);
+ 
+ /*
+  * Note: the caller should never hard code @issue_flags and only use the
+  * mask provided by the core io_uring code.
+@@ -104,11 +107,11 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
+ 		u64 ret2, unsigned issue_flags)
+ {
+ }
+ static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			    io_uring_tw_t task_work_cb,
+ 			    unsigned flags)
+ {
+ }
+ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+@@ -141,17 +144,17 @@ static inline void io_uring_cmd_iopoll_done(struct io_uring_cmd *ioucmd,
+ 	io_uring_cmd_done(ioucmd, ret, res2, 0);
+ }
+ 
+ /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
+ static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
++			io_uring_cmd_tw_t task_work_cb)
+ {
+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
+ }
+ 
+ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
++			io_uring_cmd_tw_t task_work_cb)
+ {
+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
+ }
+ 
+ static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index f5a2642bb407..d76d6d27765c 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -124,11 +124,11 @@ static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
+ 	/* task_work executor checks the deffered list completion */
+ 	ioucmd->task_work_cb(ioucmd, flags);
+ }
+ 
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			io_uring_cmd_tw_t task_work_cb,
+ 			unsigned flags)
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+ 
+ 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
+-- 
+2.45.2
+
 

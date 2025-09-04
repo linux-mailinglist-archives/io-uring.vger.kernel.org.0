@@ -1,65 +1,65 @@
-Return-Path: <io-uring+bounces-9573-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9572-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECECB4465B
-	for <lists+io-uring@lfdr.de>; Thu,  4 Sep 2025 21:27:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D9CB4465A
+	for <lists+io-uring@lfdr.de>; Thu,  4 Sep 2025 21:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FC75A32DE
-	for <lists+io-uring@lfdr.de>; Thu,  4 Sep 2025 19:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FA41CC1263
+	for <lists+io-uring@lfdr.de>; Thu,  4 Sep 2025 19:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694712727F0;
-	Thu,  4 Sep 2025 19:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7E271A94;
+	Thu,  4 Sep 2025 19:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="HwpEhhA7"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="udGwExCr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E4825B1D2
-	for <io-uring@vger.kernel.org>; Thu,  4 Sep 2025 19:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95525B1D2
+	for <io-uring@vger.kernel.org>; Thu,  4 Sep 2025 19:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014061; cv=none; b=c1RjBQYlFIDvT1nBeS71Dw1+kyL9HxApT7p4GKE75+ya4PwEj9J6FVlf/u/zrfLCkJURKZgBsD1+a8ckEce6q0OAD4BZeKKCUdFjJkdyUvSDqxpUtqWwM1rjiny9sysKYny2XqD1vryI2jaCFVzXPP+3PQ7UTiMBvuSg8DWO288=
+	t=1757014057; cv=none; b=q4uE4TbvjdeuQPlq8W2RmCUz7F3uk2v2nDkmJeXL/iI73hCy08WhWDO9RWNUkJHG5gCDflyZyGDNCz9PLbSHVzaCpZa1Hivc5/k3HIGrpw94sIcySV0WzzAeUJbxou0r8NFIELjaZ+xhQ9msJG+n90Q5UjYTKCFojcn9PIrWgjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014061; c=relaxed/simple;
-	bh=wYU2AvroVk6I3D/Glfi00r2Ex1WG97IuAAp3xlHdi60=;
+	s=arc-20240116; t=1757014057; c=relaxed/simple;
+	bh=djQwJPsRhVGlB5xAp6UwqI/d/I2+XdZdgwWLQw3BqBE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mo0zuFryJMf5lgNaUkJ9b6p2x8/aMHA+k6oPSK9eMUSVK+6eevtQbDdZM78asCOArDHEPup+SW6Cfm/yyGR6TBC/Hj5Pkx6q0k2IN2XBa6p0IydUIetEzfzYejkANJw78erc3HZnmjFNwjrGM88C0QkSsAe2JWflZg7my0qm3Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=HwpEhhA7; arc=none smtp.client-ip=67.231.145.42
+	 MIME-Version:Content-Type; b=V4Z0ZnyT+ocnNaj9o80dPZrDP2WQi0MKFjdX9bKwdR4MmN7rTUCPF2Urc5GK4VxVDbMtczgfURUwEaUxDdrghh7IVtdQ8ozwJDfhBy8GfPbtuUKChvrBaJluAqpbFaGBM3bYBhYlKEUreWWSa4QzRl8ekbR3mRvmRh3XCZBP71c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=udGwExCr; arc=none smtp.client-ip=67.231.153.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 584J82Dl2388241
-	for <io-uring@vger.kernel.org>; Thu, 4 Sep 2025 12:27:38 -0700
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 584J81wN2526811
+	for <io-uring@vger.kernel.org>; Thu, 4 Sep 2025 12:27:35 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=Vy6WHpGQma5XDH5eaFcSu2qJzF8BTscwk8ym+hevZLc=; b=HwpEhhA7Ff6E
-	Cp1EhoFuBhVKXAXiHYlsyrXeYOl/1uX/EHaYmrbEisaMl/45vjg32KwEWRcut5MZ
-	X4rQE+qOhMo3TOiELTow0ivrlh2cdK+KgXtXY3bRhdnnAbHVVMuImo6p2/nRyeoN
-	gTXUQH7Q6NJ9GQJHwpseNMPAl8bcSeuFm8WcC9zfA6b/kXyFDJ2QocgSenk4Zl04
-	Cd90XhwaUrgm2e1u+KDMw61pLNipdrt0e8okGh5j8rxJAGa9mfAwkfBlwy0qCPeL
-	H7j/R3ivwEfGJFUrkorFUxPTkWBUFcvX1IZUm665wLkWkHjJeLsJUDx7ieZCnNjI
-	RVPH/SpIwQ==
+	 bh=uSQQVeuncBPRtUKh4SVzAUX3Vk/zTBc2utsCKViaP1U=; b=udGwExCrGYcj
+	jN4CUzBlV/jgFfAHUN4W6hYoiR8QDlKOGgAvNOCbNSn59cUmqU37lC+2jveKktY7
+	ycbd/qiZIdf7/qtnLxO/y6D9PYJfCaojo9SHtIdPygJ2Wek41464nMVioc7FnFG+
+	621SAq/IFQQrNDNqprBlXsIut3QGFmcgmY7j2QJ8XomZFvWWZG1PsH/Alf4HUzWt
+	FpfarGgQ9979fznFI+nioS88k30cuQJOALLgBbMsTMUtRkOEAGLSJPTtAcUFWNph
+	ZIoLE2z2U5HZmI0Kw3KS9cH9h9xTbyr2hoesNxHRzG+66NaK+LnMJhhc+o6f5OFN
+	SSyAXtGJYw==
 Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48ye06a6fn-3
+	by m0001303.ppops.net (PPS) with ESMTPS id 48ydqcaacf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Thu, 04 Sep 2025 12:27:37 -0700 (PDT)
-Received: from twshared52133.15.frc2.facebook.com (2620:10d:c085:208::f) by
+	for <io-uring@vger.kernel.org>; Thu, 04 Sep 2025 12:27:34 -0700 (PDT)
+Received: from twshared71707.17.frc2.facebook.com (2620:10d:c085:108::150d) by
  mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Thu, 4 Sep 2025 19:27:36 +0000
+ 15.2.2562.20; Thu, 4 Sep 2025 19:27:31 +0000
 Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
-	id 94BEA1578786; Thu,  4 Sep 2025 12:27:22 -0700 (PDT)
+	id 9D68C1578788; Thu,  4 Sep 2025 12:27:22 -0700 (PDT)
 From: Keith Busch <kbusch@meta.com>
 To: <io-uring@vger.kernel.org>, <axboe@kernel.dk>, <csander@purestorage.com>
 CC: Keith Busch <kbusch@kernel.org>
-Subject: [RFC PATCHv2 1/1] io_uring: add support for IORING_SETUP_SQE_MIXED
-Date: Thu, 4 Sep 2025 12:27:14 -0700
-Message-ID: <20250904192716.3064736-3-kbusch@meta.com>
+Subject: [RFC PATCHv2 2/3] Add nop testing for IORING_SETUP_SQE_MIXED
+Date: Thu, 4 Sep 2025 12:27:15 -0700
+Message-ID: <20250904192716.3064736-4-kbusch@meta.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250904192716.3064736-1-kbusch@meta.com>
 References: <20250904192716.3064736-1-kbusch@meta.com>
@@ -72,271 +72,290 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 5DR6DPBQ6HcqEZywP--pcTg_loquLhwc
-X-Proofpoint-GUID: 5DR6DPBQ6HcqEZywP--pcTg_loquLhwc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE5MiBTYWx0ZWRfX01rCv0a2G89y
- +42wUVPC0pAcRws5AAA1RvBAeAEuTHC+AFY/lNE4UFGpsEyEHpxDKfgWjOjsPpQeGbTMeETNl1K
- +KuckjEhLeFxM8W+fN54lFR4fDvOJig/ZgMXs9YWSZwYQWLEFbrC2+iUscZ71Co6j1ZbK1LuESu
- FOYP3cJk/hB46VdvTKz7WtjCtkUj6pNk/BE5+w0G7KcQzHpaB37xMZ1PewlZE0cZxy0t36JAufK
- 0ybSqiOBo/G245WTsDfo879Y/ndTzHy2/wQN9DzHCHtjJqT4RGFlvk9sziXBNIsl1t5bdlAtQXb
- XTmYo3CW2S2eNSUjq0HBSoy8TePE1JwjIsJS2J5GO8NlehTggSDS2IcCSfmeKs=
-X-Authority-Analysis: v=2.4 cv=IY+HWXqa c=1 sm=1 tr=0 ts=68b9e829 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE5MiBTYWx0ZWRfX2Yd1DFhxzVLr
+ B7kowzAZhIHDPQQa1MHLzbsybNpDAP85rK9FEry8PCl/Cb8R1yeyHUYCMwGsAlpJWac2kIFyvmZ
+ AIWQ4NUQxa8wvY0DfuW9IML3fQoABOcNluEF6SvFqwejkQdK7/a09wjJHZxBNn1+JU2ikXl71rH
+ 5h4xYL17viRTj/+hlkyZKtjUBpFBzqMYYg9ERKVBZH830c8bBx0W6927jla3GcCYCsWg9z8mJyo
+ PuiX6JMdM22tUMFIbKZ7xANH+8jaFmXN1oXDAPZJWq2dEzOtBh2zZCPK36vBkpgOmFLojLnRg1Z
+ 8ePfl9rBw1ZmxT277obNzHfegujP7D+SG0C5eBERKCWZ+J9LsJe+QapH2H0TuE=
+X-Proofpoint-GUID: vmBpT43WDsDnVvgwLRKsabJb-rRrYarL
+X-Authority-Analysis: v=2.4 cv=HZMUTjE8 c=1 sm=1 tr=0 ts=68b9e826 cx=c_pps
  a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=uQKsgqzGusPw8CW6dI4A:9
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=cTxCplQNprFiquemU4IA:9
+X-Proofpoint-ORIG-GUID: vmBpT43WDsDnVvgwLRKsabJb-rRrYarL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-04_06,2025-09-04_01,2025-03-28_01
 
 From: Keith Busch <kbusch@kernel.org>
 
-Normal rings support 64b SQEs for posting submissions, while certain
-features require the ring to be configured with IORING_SETUP_SQE128, as
-they need to convey more information per submission. This, in turn,
-makes ALL the SQEs be 128b in size. This is somewhat wasteful and
-inefficient, particularly when only certain SQEs need to be of the
-bigger variant.
-
-This adds support for setting up a ring with mixed SQE sizes, using
-IORING_SETUP_SQE_MIXED. When setup in this mode, SQEs posted to the ring
-may be either 64b or 128b in size. If a SQE is 128b in size, then
-IOSQE_SQE_128B flag is set in the SQE flags to indicate that this is the
-case. If this flag isn't set, the SQE is the normal 64b variant.
-
-SQEs on these types of mixed rings may also utilize NOP with skip
-success set.  This can happen if the ring is one (small) SQE entry away
-from wrapping, and an attempt is made to post a 128b SQE. As SQEs must be
-contiguous in the SQ ring, a 128b SQE cannot wrap the ring. For this
-case, a single NOP SQE is posted with the SKIP flag set. The kernel
-should simply ignore those.
+Add NOP testing for mixed sized SQEs.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- include/linux/io_uring_types.h |  3 +++
- include/uapi/linux/io_uring.h  |  9 +++++++++
- io_uring/fdinfo.c              | 32 +++++++++++++++++++++++++-------
- io_uring/io_uring.c            | 20 +++++++++++++++++++-
- io_uring/register.c            |  2 +-
- io_uring/uring_cmd.c           |  4 +++-
- 6 files changed, 60 insertions(+), 10 deletions(-)
+ test/Makefile              |   2 +
+ test/sqe-mixed-bad-wrap.c  | 121 +++++++++++++++++++++++++++++++++++++
+ test/sqe-mixed-nop.c       | 104 +++++++++++++++++++++++++++++++
+ test/sqe-mixed-uring_cmd.c |   0
+ 4 files changed, 227 insertions(+)
+ create mode 100644 test/sqe-mixed-bad-wrap.c
+ create mode 100644 test/sqe-mixed-nop.c
+ create mode 100644 test/sqe-mixed-uring_cmd.c
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-index d1e25f3fe0b3a..d6e1c73400820 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -489,6 +489,7 @@ enum {
- 	REQ_F_FORCE_ASYNC_BIT	=3D IOSQE_ASYNC_BIT,
- 	REQ_F_BUFFER_SELECT_BIT	=3D IOSQE_BUFFER_SELECT_BIT,
- 	REQ_F_CQE_SKIP_BIT	=3D IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	REQ_F_SQE_128B_BIT	=3D IOSQE_SQE_128B_BIT,
-=20
- 	/* first byte is taken by user flags, shift it to not overlap */
- 	REQ_F_FAIL_BIT		=3D 8,
-@@ -547,6 +548,8 @@ enum {
- 	REQ_F_BUFFER_SELECT	=3D IO_REQ_FLAG(REQ_F_BUFFER_SELECT_BIT),
- 	/* IOSQE_CQE_SKIP_SUCCESS */
- 	REQ_F_CQE_SKIP		=3D IO_REQ_FLAG(REQ_F_CQE_SKIP_BIT),
-+	/* IOSQE_SQE_128B */
-+	REQ_F_SQE_128B		=3D IO_REQ_FLAG(REQ_F_SQE_128B_BIT),
-=20
- 	/* fail rest of links */
- 	REQ_F_FAIL		=3D IO_REQ_FLAG(REQ_F_FAIL_BIT),
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index 04ebff33d0e62..9cef9085f52ee 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -146,6 +146,7 @@ enum io_uring_sqe_flags_bit {
- 	IOSQE_ASYNC_BIT,
- 	IOSQE_BUFFER_SELECT_BIT,
- 	IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	IOSQE_SQE_128B_BIT,
- };
-=20
- /*
-@@ -165,6 +166,8 @@ enum io_uring_sqe_flags_bit {
- #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
- /* don't post CQE if request succeeded */
- #define IOSQE_CQE_SKIP_SUCCESS	(1U << IOSQE_CQE_SKIP_SUCCESS_BIT)
-+/* this is a 128b/big-sqe posting */
-+#define IOSQE_SQE_128B		(1U << IOSQE_SQE_128B_BIT)
-=20
- /*
-  * io_uring_setup() flags
-@@ -231,6 +234,12 @@ enum io_uring_sqe_flags_bit {
-  */
- #define IORING_SETUP_CQE_MIXED		(1U << 18)
-=20
+diff --git a/test/Makefile b/test/Makefile
+index 54251bf2..a36c70a4 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -232,6 +232,8 @@ test_srcs :=3D \
+ 	sq-poll-share.c \
+ 	sqpoll-sleep.c \
+ 	sq-space_left.c \
++	sqe-mixed-nop.c \
++	sqe-mixed-bad-wrap.c \
+ 	sqwait.c \
+ 	stdout.c \
+ 	submit-and-wait.c \
+diff --git a/test/sqe-mixed-bad-wrap.c b/test/sqe-mixed-bad-wrap.c
+new file mode 100644
+index 00000000..25764fff
+--- /dev/null
++++ b/test/sqe-mixed-bad-wrap.c
+@@ -0,0 +1,121 @@
++/* SPDX-License-Identifier: MIT */
 +/*
-+ * Allow both 64b and 128b SQEs. If a 128b SQE is posted, it will have
-+ * IOSQE_SQE_128B set in sqe->flags.
++ * Description: run various nop tests
++ *
 + */
-+#define IORING_SETUP_SQE_MIXED		(1U << 19)
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
 +
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 5c73398387690..ef0d17876a7b9 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -66,7 +66,6 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *=
-ctx, struct seq_file *m)
- 	unsigned int cq_head =3D READ_ONCE(r->cq.head);
- 	unsigned int cq_tail =3D READ_ONCE(r->cq.tail);
- 	unsigned int sq_shift =3D 0;
--	unsigned int sq_entries;
- 	int sq_pid =3D -1, sq_cpu =3D -1;
- 	u64 sq_total_time =3D 0, sq_work_time =3D 0;
- 	unsigned int i;
-@@ -89,26 +88,44 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx=
- *ctx, struct seq_file *m)
- 	seq_printf(m, "CqTail:\t%u\n", cq_tail);
- 	seq_printf(m, "CachedCqTail:\t%u\n", data_race(ctx->cached_cq_tail));
- 	seq_printf(m, "SQEs:\t%u\n", sq_tail - sq_head);
--	sq_entries =3D min(sq_tail - sq_head, ctx->sq_entries);
--	for (i =3D 0; i < sq_entries; i++) {
--		unsigned int entry =3D i + sq_head;
-+	while (sq_head < sq_tail) {
- 		struct io_uring_sqe *sqe;
- 		unsigned int sq_idx;
-+		bool sqe128 =3D false;
-+		u8 sqe_flags;
-=20
- 		if (ctx->flags & IORING_SETUP_NO_SQARRAY)
- 			break;
--		sq_idx =3D READ_ONCE(ctx->sq_array[entry & sq_mask]);
-+		sq_idx =3D READ_ONCE(ctx->sq_array[sq_head & sq_mask]);
- 		if (sq_idx > sq_mask)
- 			continue;
- 		sqe =3D &ctx->sq_sqes[sq_idx << sq_shift];
-+		sqe_flags =3D READ_ONCE(sqe->flags);
-+		if (sq_shift)
-+			sqe128 =3D true;
-+		else if (sqe_flags & IOSQE_SQE_128B) {
-+			if (!(ctx->flags & IORING_SETUP_SQE_MIXED)) {
-+				seq_printf(m,
-+					"%5u: invalid sqe, 128B entry on non-mixed sq\n",
-+					sq_idx);
-+				break;
-+			}
-+			if ((++sq_head & sq_mask) =3D=3D 0) {
-+				seq_printf(m,
-+					"%5u: corrupted sqe, wrapping 128B entry\n",
-+					sq_idx);
-+				break;
-+			}
-+			sqe128 =3D true;
++#include "liburing.h"
++#include "helpers.h"
++#include "test.h"
++
++static int seq;
++
++static int test_single_nop(struct io_uring *ring, unsigned req_flags,
++			   bool should_fail)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret;
++
++	sqe =3D io_uring_get_sqe(ring);
++	if (!sqe) {
++		fprintf(stderr, "get sqe failed\n");
++		goto err;
++	}
++
++	io_uring_prep_nop(sqe);
++	sqe->user_data =3D ++seq;
++	sqe->flags |=3D req_flags;
++
++	ret =3D io_uring_submit(ring);
++	if (ret <=3D 0) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		goto err;
++	}
++
++	ret =3D io_uring_wait_cqe(ring, &cqe);
++	if (ret < 0) {
++		fprintf(stderr, "wait completion %d\n", ret);
++		goto err;
++	}
++	if (should_fail && cqe->res =3D=3D 0) {
++		fprintf(stderr, "Unexpected success\n");
++		goto err;
++	}
++	if (!should_fail && cqe->res !=3D 0) {
++		fprintf(stderr, "Completion error:%d\n", cqe->res);
++		goto err;
++	}
++	if (cqe->res =3D=3D 0 && cqe->user_data !=3D seq) {
++		fprintf(stderr, "Unexpected user_data: %ld\n", (long) cqe->user_data);
++		goto err;
++	}
++	io_uring_cqe_seen(ring, cqe);
++
++	return T_EXIT_PASS;
++err:
++	return T_EXIT_FAIL;
++}
++
++static int test_ring(unsigned flags)
++{
++	struct io_uring_params p =3D { };
++	struct io_uring ring;
++	int ret, i;
++
++	p.flags =3D flags;
++	ret =3D io_uring_queue_init_params(8, &ring, &p);
++	if (ret) {
++		if (ret =3D=3D -EINVAL)
++			return T_EXIT_SKIP;
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	for (i =3D 0; i < 7; i++) {
++		ret =3D test_single_nop(&ring, 0, false);
++		if (ret)
++			goto err;
++	}
++
++	/* inserting a 128b sqe at the end should fail */
++	ret =3D test_single_nop(&ring, IOSQE_SQE_128B, true);
++	if (ret)
++		goto err;
++
++	/* proceeding from the bad wrap should succeed */
++	ret =3D test_single_nop(&ring, 0, false);
++	if (ret)
++		goto err;
++
++	io_uring_queue_exit(&ring);
++	return ret;
++err:
++	fprintf(stderr, "test_single_nop failed\n");
++	io_uring_queue_exit(&ring);
++	return ret;
++}
++
++int main(int argc, char *argv[])
++{
++	int ret;
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	ret =3D test_ring(IORING_SETUP_SQE_MIXED);
++	if (ret =3D=3D T_EXIT_SKIP) {
++		return T_EXIT_SKIP;
++	} else if (ret !=3D T_EXIT_PASS) {
++		fprintf(stderr, "Mixed ring test failed\n");
++		return ret;
++	}
++
++	return T_EXIT_PASS;
++}
+diff --git a/test/sqe-mixed-nop.c b/test/sqe-mixed-nop.c
+new file mode 100644
+index 00000000..91c1c795
+--- /dev/null
++++ b/test/sqe-mixed-nop.c
+@@ -0,0 +1,104 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: run various nop tests
++ *
++ */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++
++#include "liburing.h"
++#include "helpers.h"
++#include "test.h"
++
++static int seq;
++
++static int test_single_nop(struct io_uring *ring, unsigned req_flags, bo=
+ol sqe128)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret;
++
++	if (sqe128)
++		sqe =3D io_uring_get_sqe128_mixed(ring);
++	else
++		sqe =3D io_uring_get_sqe(ring);
++	if (!sqe) {
++		fprintf(stderr, "get sqe failed\n");
++		goto err;
++	}
++
++	io_uring_prep_nop(sqe);
++	sqe->user_data =3D ++seq;
++	sqe->flags |=3D req_flags;
++
++	ret =3D io_uring_submit(ring);
++	if (ret <=3D 0) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		goto err;
++	}
++
++	ret =3D io_uring_wait_cqe(ring, &cqe);
++	if (ret < 0) {
++		fprintf(stderr, "wait completion %d\n", ret);
++		goto err;
++	}
++	if (cqe->user_data !=3D seq) {
++		fprintf(stderr, "Unexpected user_data: %ld\n", (long) cqe->user_data);
++		goto err;
++	}
++	io_uring_cqe_seen(ring, cqe);
++	return T_EXIT_PASS;
++err:
++	return T_EXIT_FAIL;
++}
++
++static int test_ring(unsigned flags)
++{
++	struct io_uring_params p =3D { };
++	struct io_uring ring;
++	int ret, i;
++
++	p.flags =3D flags;
++	ret =3D io_uring_queue_init_params(8, &ring, &p);
++	if (ret) {
++		if (ret =3D=3D -EINVAL)
++			return T_EXIT_SKIP;
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	/* alternate big and little sqe's */
++	for (i =3D 0; i < 32; i++) {
++		ret =3D test_single_nop(&ring, 0, i & 2);
++		if (ret) {
++			printf("fail off %d\n", i);
++			fprintf(stderr, "test_single_nop failed\n");
++			goto err;
 +		}
- 		seq_printf(m, "%5u: opcode:%s, fd:%d, flags:%x, off:%llu, "
- 			      "addr:0x%llx, rw_flags:0x%x, buf_index:%d "
- 			      "user_data:%llu",
- 			   sq_idx, io_uring_get_opcode(sqe->opcode), sqe->fd,
--			   sqe->flags, (unsigned long long) sqe->off,
-+			   sqe_flags, (unsigned long long) sqe->off,
- 			   (unsigned long long) sqe->addr, sqe->rw_flags,
- 			   sqe->buf_index, sqe->user_data);
--		if (sq_shift) {
-+		if (sqe128) {
- 			u64 *sqeb =3D (void *) (sqe + 1);
- 			int size =3D sizeof(struct io_uring_sqe) / sizeof(u64);
- 			int j;
-@@ -120,6 +137,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx=
- *ctx, struct seq_file *m)
- 			}
- 		}
- 		seq_printf(m, "\n");
-+		sq_head++;
- 	}
- 	seq_printf(m, "CQEs:\t%u\n", cq_tail - cq_head);
- 	while (cq_head < cq_tail) {
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6c07efac977ce..78a81e882fce7 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2180,6 +2180,13 @@ static int io_init_req(struct io_ring_ctx *ctx, st=
-ruct io_kiocb *req,
- 	}
- 	opcode =3D array_index_nospec(opcode, IORING_OP_LAST);
-=20
-+	if (ctx->flags & IORING_SETUP_SQE_MIXED &&
-+	    req->flags & REQ_F_SQE_128B) {
-+		if ((ctx->cached_sq_head & (ctx->sq_entries - 1)) =3D=3D 0)
-+			return io_init_fail_req(req, -EINVAL);
-+		ctx->cached_sq_head++;
++	}
++err:
++	io_uring_queue_exit(&ring);
++	return ret;
++}
++
++int main(int argc, char *argv[])
++{
++	int ret;
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	ret =3D test_ring(IORING_SETUP_SQE_MIXED);
++	if (ret =3D=3D T_EXIT_SKIP) {
++		return T_EXIT_SKIP;
++	} else if (ret !=3D T_EXIT_PASS) {
++		fprintf(stderr, "Mixed ring test failed\n");
++		return ret;
 +	}
 +
- 	def =3D &io_issue_defs[opcode];
- 	if (unlikely(sqe_flags & ~SQE_COMMON_FLAGS)) {
- 		/* enforce forwards compatibility on users */
-@@ -2793,6 +2800,10 @@ unsigned long rings_size(unsigned int flags, unsig=
-ned int sq_entries,
- 		if (cq_entries < 2)
- 			return SIZE_MAX;
- 	}
-+	if (flags & IORING_SETUP_SQE_MIXED) {
-+		if (sq_entries < 2)
-+			return SIZE_MAX;
-+	}
-=20
- #ifdef CONFIG_SMP
- 	off =3D ALIGN(off, SMP_CACHE_BYTES);
-@@ -3724,6 +3735,13 @@ static int io_uring_sanitise_params(struct io_urin=
-g_params *p)
- 	if ((flags & (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED)) =3D=3D
- 	    (IORING_SETUP_CQE32|IORING_SETUP_CQE_MIXED))
- 		return -EINVAL;
-+	/*
-+	 * Nonsensical to ask for SQE128 and mixed SQE support, it's not
-+	 * supported to post 64b SQEs on a ring setup with SQE128.
-+	 */
-+	if ((flags & (IORING_SETUP_SQE128|IORING_SETUP_SQE_MIXED)) =3D=3D
-+	    (IORING_SETUP_SQE128|IORING_SETUP_SQE_MIXED))
-+		return -EINVAL;
-=20
- 	return 0;
- }
-@@ -3952,7 +3970,7 @@ static long io_uring_setup(u32 entries, struct io_u=
-ring_params __user *params)
- 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
- 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
- 			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HYBRID_IOPOLL |
--			IORING_SETUP_CQE_MIXED))
-+			IORING_SETUP_CQE_MIXED | IORING_SETUP_SQE_MIXED))
- 		return -EINVAL;
-=20
- 	return io_uring_create(entries, &p, params);
-diff --git a/io_uring/register.c b/io_uring/register.c
-index aa5f56ad83584..29aa7d3b4e820 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -397,7 +397,7 @@ static void io_register_free_rings(struct io_ring_ctx=
- *ctx,
- #define RESIZE_FLAGS	(IORING_SETUP_CQSIZE | IORING_SETUP_CLAMP)
- #define COPY_FLAGS	(IORING_SETUP_NO_SQARRAY | IORING_SETUP_SQE128 | \
- 			 IORING_SETUP_CQE32 | IORING_SETUP_NO_MMAP | \
--			 IORING_SETUP_CQE_MIXED)
-+			 IORING_SETUP_CQE_MIXED | IORING_SETUP_SQE_MIXED)
-=20
- static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user=
- *arg)
- {
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 5562e8491c5bd..8dd409774fd87 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -239,7 +239,9 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int i=
-ssue_flags)
- 	if (ret)
- 		return ret;
-=20
--	if (ctx->flags & IORING_SETUP_SQE128)
-+	if (ctx->flags & IORING_SETUP_SQE128 ||
-+	    (ctx->flags & IORING_SETUP_SQE_MIXED &&
-+	     req->flags & REQ_F_SQE_128B))
- 		issue_flags |=3D IO_URING_F_SQE128;
- 	if (ctx->flags & (IORING_SETUP_CQE32 | IORING_SETUP_CQE_MIXED))
- 		issue_flags |=3D IO_URING_F_CQE32;
++	return T_EXIT_PASS;
++}
+diff --git a/test/sqe-mixed-uring_cmd.c b/test/sqe-mixed-uring_cmd.c
+new file mode 100644
+index 00000000..e69de29b
 --=20
 2.47.3
 

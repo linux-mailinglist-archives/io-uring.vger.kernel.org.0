@@ -1,171 +1,159 @@
-Return-Path: <io-uring+bounces-9610-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9611-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58E2B464E8
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 22:47:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A79AB46501
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 22:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F9E16A5B6
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 20:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384021CC0547
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 20:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94878283FFB;
-	Fri,  5 Sep 2025 20:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EC02DAFBE;
+	Fri,  5 Sep 2025 20:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk2crzxX"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CSyvRoeK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74919343B;
-	Fri,  5 Sep 2025 20:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE3C285CB9
+	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 20:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757105251; cv=none; b=kcptwtu0aNXp03D/KFJryobkwocJJZZE36uSfCIfjvMpdcskx1YTMbmRoBx/vGQp5z8xHK6lgOOPW9ZklDciJX7BiUVCi114LNbLvXZLkH2O0noBmUtXXjZg5cRl8LAGEI9An22ICJl+C14SsKgZrjlQXYS+ObCpVa5SgunynwY=
+	t=1757105665; cv=none; b=SdzEtzhUiH/wtUlT9N/hh53FezVvmolZeZS0kZ8S4n3gsgy194bWWExAAVMyH5gt1OG38xBX13Gd20ci2PeksD77DdwNoA5B0D6PSK40Z3wNUQHRYgghl+Au8ktEtNwRg4pwFQG9HvPmMNeHTJ2aac7L11qHargLQykWMUg5Z/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757105251; c=relaxed/simple;
-	bh=X9QO4Gd/KqsySLQrKkXq9tZI7F0AC52LeY/MRkJxu6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6zqrKj6iF0h1uSFGjZjFTb+jYBtsPHqY4YWauL0dxwAyFrwWWDKbGjGHghHZGefULk1xxHthCqxr7wMJCPxTb+jFKFUXRYOZ0h6jT45TNWyhC8Rq2RCL3iiPThyc1eGqIim1yeQ2aC/gPEOsnTcGVBNJ/UetqvwjtCRoYeUPp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk2crzxX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF75C4CEF1;
-	Fri,  5 Sep 2025 20:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757105250;
-	bh=X9QO4Gd/KqsySLQrKkXq9tZI7F0AC52LeY/MRkJxu6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mk2crzxXJO6xwOHACqeatVuXJffjBBH0YwOsdPk8EVKc9VGKpHLyrX5M9pczlRGqO
-	 msM7QuzgaM39hz09UJCRs9KhT/6XMehjMS5e/SvT87cnQivh2kuZiRT0TwrDzKYEe/
-	 rdHkmXHIgQ7JlXtLctCX9pwWBcQEsfIDurmeDHfKg2yjlK+UoM41tn3td+WY3YeKJx
-	 0KqDmUX8ISTwyY/P+iRZpYfoycevNHnYXXlOnQFk5bzQyBhG8HCTdw9PgKkRLwMImO
-	 Rk7+lMJKctwGj4xLH/L0VGBT2A/Mq6C2UsX1if8FUYfv5w7FPSKx4xLRL+E7J2K4z0
-	 QbVvRqIkuLJ0A==
-Date: Fri, 5 Sep 2025 16:47:29 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-Message-ID: <aLtMYVY_jD_HrTgg@laps>
-References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
- <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
- <20250905-lovely-prehistoric-goldfish-04e1c3@lemur>
- <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
- <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+	s=arc-20240116; t=1757105665; c=relaxed/simple;
+	bh=MAf0SZO83um8RJakkKNX5oj2zVOPSjxCDK8t47hxPxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHIjgfuNvQaCbm2CisiYNzqhDZyUdDyAu8LbXvgrNuzURwgACP2D2iI+jy6kRmW8y5EyZ+K534ZY0c6TCMnCvZ8/WpnG+MXGFYpYaSiHBPx8kjzRFBsv08Xgh47ND3xde4LbmTjvSSe4lKxoS9J4TuqGm93w+YrOy4sxSC9KJlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CSyvRoeK; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62105d21293so2653348a12.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 13:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1757105661; x=1757710461; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xeI5uxqqoARD89BnQ0NTAo1OVhNWzuVOTNFshiJtoyM=;
+        b=CSyvRoeKcGOi7+3KpUQfH/ictYxQcL+PyLqV/Acol4OFBBumRK7PxpExKvzcA/1aYz
+         +mB29za1VucwdBrrYZ/6kpBDV1XGVXuSthc+YBt+qZIqC+1rU2lKxVMimwtjRvW1p6rc
+         /jolwbQvcNxyg7D2UoYEJpcb233U/DIlDbvNM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757105661; x=1757710461;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xeI5uxqqoARD89BnQ0NTAo1OVhNWzuVOTNFshiJtoyM=;
+        b=eUdpQ3Sxl2I/2HGfinV0kWPyPf7NpqVloZJCF5wP5Qh2ZbZrzmML3i/KOYWQ2ilSMG
+         UOSbZEw9Wwj79cLR9eCM+lv6vX3GbaakPd9NZ/09eT/7bjJClGLLtaPN8qv+yus6Q7KO
+         ijgdmXYcV7UxLY8zMROYgkgM5ZaZa5odi5/Ev0Nj1l6XPrbcnJub2eMuh6tLZysHa4zW
+         3zfrIhqmylADZXwsUHtdzFPdZF2aj3Ss/1/XzXmtxfZW0aDHn8Es05XpN1RoA3nTQ0e8
+         7Zs277p/eypzMDV71n7AZ4OXncEbMIpSaaN3PMuLhkmGcz6UTVkLPxj36aiJ5nBFlSAY
+         T1UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWszriEFIMC432qsz4EpyXlXM6cMifEyh2Pcllo+Eb9qIwFL6B4V1hEOC5ecMQnpBnayxuabd4t5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCqt3sKO3Hgee454QCPSr6AelFM6hOwgiDj+G5+1wXoMpcJ386
+	KhlFcrDn2BwaiuwAGiDwE0XXdL/Bxh+/Wvpbl2xMV2IVTLu6gmwMD/ZSVM6mA0OxZ/35CkFLtBO
+	pKrMSSF4=
+X-Gm-Gg: ASbGncusDFk4WNixmUawN8KhwOYyL2Tb/DhEUv9TEj4BMw/qtfv2N9zw7LuxIRuPUSW
+	Q06RI/n57GT3E0uj6Xvhc8bNxyAmZphffwv7XtVujqGdauaGk1mxGaEeArrTpDoxS2g1zDBfp91
+	m/FC0KxpYcpFtJ3wb1p97o0wOeZmKpEXASZw9CYZQi1yD2/NZd063NuQ0BbD/CXXkXvBvXE734d
+	YIPd0RjgunlN6I2SMtybecfetVdgH8s78SY525zgHRRnsr8trdqIIkGGOktZR9g9yyMCrDjfMTO
+	YyUuepTf16YAXkdqf2G2yVfM9/WZEfHUqrxKggA59oE7XbC0nknpm6T/Py9KpBFdd0kTbT8a+o8
+	Xfz2AaiyZrG4SKxbslisMga5ac/82Gp/RmqquwtjQoDDD7vAo0/aZ7KeGjQC66+30+tSZqlx1dr
+	k2Rr0RcVk=
+X-Google-Smtp-Source: AGHT+IE7yLQGj/tILYCRItBcVpvBvDeDoiyAJdHq+ttSZVQBd2GlmSR7f1FdjCxbIaSMiZ62dQz1nA==
+X-Received: by 2002:a05:6402:26cc:b0:620:1030:1385 with SMTP id 4fb4d7f45d1cf-6237845b164mr301835a12.32.1757105660823;
+        Fri, 05 Sep 2025 13:54:20 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5575dcsm17180395a12.49.2025.09.05.13.54.20
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 13:54:20 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b0472bd218bso454850866b.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 13:54:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuiuOzZ8birnO6Oi+m4g3F12VX8+l3KtUXSr7by7kM8SqqEXmeGVGVuSEpuxyh1x6+ZGYk2EMOfQ==@vger.kernel.org
+X-Received: by 2002:a17:907:1c10:b0:b04:1a80:35b9 with SMTP id
+ a640c23a62f3a-b04b13cd575mr12690666b.12.1757105659694; Fri, 05 Sep 2025
+ 13:54:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
+ <f0f31943-cfed-463d-8e03-9855ba027830@kernel.dk> <CAHk-=wgkgSoqMh3CQgj=tvKdEwJhFvr1gtDbK7Givr1bNRZ==w@mail.gmail.com>
+ <72fb5776-0c50-42b8-943d-940960714811@kernel.dk>
+In-Reply-To: <72fb5776-0c50-42b8-943d-940960714811@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Sep 2025 13:54:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgdOGyaZ3p=r8Zn8Su0DnSqhEAMXzME91ZD9=8DDurnUg@mail.gmail.com>
+X-Gm-Features: Ac12FXzEOlqgAVNuWTXpkSiFOW32U1HDNta-OqsyqUoOurQaAKrWT8aonma6-lc
+Message-ID: <CAHk-=wgdOGyaZ3p=r8Zn8Su0DnSqhEAMXzME91ZD9=8DDurnUg@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fix for 6.17-rc5
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>, io-uring <io-uring@vger.kernel.org>, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 03:33:14PM -0400, Konstantin Ryabitsev wrote:
->On Fri, Sep 05, 2025 at 11:06:01AM -0700, Linus Torvalds wrote:
->> Anyway, the "discourage mindless use" might be as simple as a big
->> warning message that the link may be just adding annoying overhead.
->>
->> In contrast, a "perfect" model might be to actually have some kind of
->> automation of "unless there was actual discussion about it".
->>
->> But I feel such a model might be much too complicated, unless somebody
->> *wants* to explore using AI because their job description says "Look
->> for actual useful AI uses". In today's tech world, I assume such job
->> descriptions do exist. Sigh.
+On Fri, 5 Sept 2025 at 12:30, Jens Axboe <axboe@kernel.dk> wrote:
 >
->So, I did work on this for a while before running out of credits, and there
->were the following stumbling blocks:
->
->- consuming large threads is expensive; a thread of 20 patches and a bunch of
->  follow-up discussions costs $1 of API credits just to process. I realize
->  it's peanuts for a lot of full-time maintainers who have corporate API
->  contracts, but it's an important consideration
->- the LLMs did get confused about who said what when consuming long threads,
->  at least with the models at the time. Maybe more modern models are better at
->  this than those I tried a year ago. Misattributing things can be *really*
->  bad in the context of decision making, so I found this the most troubling
->  aspect of "have AI analyze this series and tell me if everyone important is
->  okay with it."
+> Like I said, I think there more fruitful ways to get the point across
+> and this picked up and well known, because I don't believe it is right
+> now.
 
-Quick note on this: I observed the same thing, but found that using structured
-format (i.e. lei q --format json) really helps with this issue.
+So I've actually been complaining about the link tags for years: [1]
+[2] [3] [4].
 
->- the models I used were proprietary (ChatGPT, Claude, Gemini), because I
->  didn't have access to a good enough system to run ollama with a large enough
->  context window to analyze long email threads. Even ollama is questionably
->  "open source" -- but don't need to get into that aspect of it in this
->  thread.
->
->However, I feel that LLMs can be generally useful here, when handled with
->care and with a good understanding that they do and will get things wrong.
+In fact, that [4] from 2022 is about how people are then trying to
+distinguish the *useful* links (to bug reports) from the useless ones,
+by giving them a different name ("Buglink:"). Where I was telling
+people to instead fix this problem by just not adding the useless
+links in the first place!
 
-I'm facing a similar challange both for the AUTOSEL and the CVE work: there is
-very little historical context in most commits, and the Link: tag is almost
-always useless and just points to the final submission of a patch rather than a
-relevant discussion around that code.
+Anyway, I'm a bit frustrated, exactly because this _has_ been going on
+for years. It's not a new peeve.
 
-I ended up creating an AI agent that knows how to dig through both a local git
-repo as well as our mailing list using lei-q and knows to search related
-dashboards like kernelci, lkft, the syzbot dashboard, etc.
+And I don't think we have a good central place for that kind of "don't do this".
 
-I'm not sure if at it's current form it's useful to anyone else, but here's an
-example of what it generates on the patch in question:
+Yes, there's the maintainer summit, but that's a pretty limited set of people.
 
+I guess I could mention it in my release notes, but I don't know who
+actually reads those either..
 
-Mailing List History for commit 0f51a5c0a89921deca72e42583683e44ff742d06
-========================================================================
+So I end up just complaining when I see it.
 
-Author: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu Sep 4 19:25:34 2025 -0600
-Subject: io_uring/rsrc: initialize io_rsrc_data nodes array
+And yeah, I will take some of the blame for people doing the useless
+Link. Because going even further back, people were arguing for random
+"bug ID" numbers. Go search lkml, and you'll find discussions about
+having UUID's in the commits, and I said that no, we're not doing
+that, and that a "Link:" tag to something valid is a good alternative,
+and I even mentioned a link to the submission. So that could be seen
+as some kind of encouragement - but it was more of a "no, we're *NOT*
+doing random meaningless UUIDs".
 
-## Timeline of Events
+I did go back and look in the git archives. The oldest link we have in
+the kernel git tree is from 2011. Guess what? That email has had over
+fourteen years to get more information associated with it on the
+mailing list, but no.
 
-1. **October 25, 2024**: Jens Axboe commits major refactoring
-    - Commit: 7029acd8a950 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
-    - Major rewrite eliminating per-ring serialization of resource nodes
-    - Addressed resource reclaim stalls in networked workloads
+That link has _zero_ new information that would be relevant outside
+the commit that references it (f994d99cf140: "x86-32, fpu: Fix FPU
+exception handling on non-SSE systems").
 
-2. **April 4, 2025**: Pavel Begunkov fixes related issue
-    - Commit: ab6005f3912f ("io_uring: don't post tag CQEs on file/buffer registration failure")
-    - Also fixes issues introduced by commit 7029acd8a950
-    - Reference: https://lore.kernel.org/r/c514446a8dcb0197cddd5d4ba8f6511da081cf1f.1743777957.git.asml.silence@gmail.com
+            Linus
 
-3. **September 4, 2025, 19:25 MDT**: Caleb submits initialization fix
-    - Message-ID: 20250905012535.2806919-1-csander@purestorage.com
-    - Sent to: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-    - Direct submission to Jens Axboe
-
-4. **September 4, 2025, 19:50 MDT**: Jens applies the patch
-    - Applied within 25 minutes of submission
-    - No public review or discussion found
-
-5. **September 5, 2025, 05:14 MDT**: Jens sends acknowledgment
-    - Message-ID: 175707084146.356946.8866336484834458029.b4-ty@kernel.dk
-    - Simple "Applied, thanks!" with b4 tool
-    - Assigned commit: 0f51a5c0a89921deca72e42583683e44ff742d06
-
-## Key Findings from Mailing List Search
-
-### Minimal Public Discussion
-- **No pre-submission review**: No RFC or v1 versions found
-- **No public bug reports**: No KASAN, syzkaller, or user bug reports found that directly led to this fix
-- **No post-submission discussion**: Only Jens' acknowledgment found
-- **No testing tags**: No Tested-by or Reviewed-by tags
-
-### Related Activity
-- Pavel Begunkov's earlier fix (April 2025) shows the original refactoring had multiple issues
-- Both fixes target error paths in the resource registration code
-- Pattern suggests issues were found through code review rather than runtime failures
-
-
--- 
-Thanks,
-Sasha
+Link: https://lore.kernel.org/all/CAHk-=wgfX9nBGE0Ap9GjhOy7Mn=RSy=rx0MvqfYFFDx31KJXqQ@mail.gmail.com/
+[1]
+Link: https://lore.kernel.org/all/CAHk-=wiUS4r788i5XjTtSwvfvKRm9uH2H5=eLHbZVu3Wo-YHCA@mail.gmail.com/
+[2]
+Link: https://lore.kernel.org/all/CAHk-=whRBX0aQq1J5S5nHXE2GvXnQ5z+cqu=iTY9xU34kvYMzw@mail.gmail.com/
+[3]
+Link: https://lore.kernel.org/all/CAHk-=wgzRUT1fBpuz3xcN+YdsX0SxqOzHWRtj0ReHpUBb5TKbA@mail.gmail.com/
+[4]
+Link: [ .. too lazy to look up more .. ]
 

@@ -1,88 +1,87 @@
-Return-Path: <io-uring+bounces-9582-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9583-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CD1B44E14
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 08:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0C5B45020
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 09:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5C0A4314F
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 06:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F3816E16F
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 07:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23782C2ACE;
-	Fri,  5 Sep 2025 06:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3826B2A5;
+	Fri,  5 Sep 2025 07:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EpW1p9MM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="blraISC6"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F43D2C08D9
-	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 06:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F2325949A
+	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 07:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757054493; cv=none; b=SlDXOmZTwaq6JSubdPkqNluJdJgfy2J0wzefDpnGmh1PvE4eLNyE6fUVtQVfhfSF7xF1lRsxv8/bQWyANO353a3y8UMLN0q4n8znz+9sI5mLObseVu7cd1TXAV+2PsszXhAs2gqXr6zuETc0HkUedrOi4EFz4oFzmL8WZzrQFz8=
+	t=1757058184; cv=none; b=j6x35kC4IufV3pRvge49JP3mTe/ygyzMELFUMHDst0Kd5GDkDUm/N54tPQe+pKkT37ryRl0rwomiRqsoblBM65kkp9vlliab1qMjzYSiUk/w7DMWupwPsRuD8GuWSfEck7xWgwR+JDYs8Y6h1FDhMmEvw8gBVUFcQ1zWBhUH4s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757054493; c=relaxed/simple;
-	bh=5PP9Qy2JI0RylA8NM1X5jhoGp1Vq+k7r7Qo0XW9WsLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t1hxt39eYjUbcNyKQIlJKFMcDwAHncCQ3l3EV9fpNqQAUESomE5WT/tF2HR3+yLZEd16tI0Xn94yb5W++H1+84mf0wsrWOdW63ZyuTN4+ld9sMKRZ5dZE5I2mkyAPyyGdQozHJOHcTQlQ9yaypf/5/1ZiSboBXlmOFcxJKUSQ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EpW1p9MM; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1757058184; c=relaxed/simple;
+	bh=pVM5vIb/BptuM168eR1sfolL9rBvq9Vpfg6rZzCtIK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sixJEgc3cLG9g0KLxs+adCQQZfpNeNQofYNaOLEk+ax4Im6eSLJprjsttq54vPXnsRh2p8xDnhQIrudc4GmrYa5oVDMWSdRmuY5V/8tEbpldoWblETsZ78Twmp0/aCmbYE4kDl65qe+JTD+9j5B+ffOb7Rp8lnC7dSjLrB5Bn6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=blraISC6; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757054490;
+	s=mimecast20190719; t=1757058182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oF3HN1Q6ZNxZN3c5DymWi4LgFv8yUurotu5FuTflls4=;
-	b=EpW1p9MMbSDUi+SxAEcAL7HZbTLcxXjgKuaRcCee2TDI+3yZ8eGcUiDWKX1LvVr1KMVCwy
-	T7qi/fNDlIqPoU6ENhlQYJskkfhBCl2fSkz8yo+wadhzWXbqUY27ziyTlMA8I3rIjIU15r
-	IVbvW8HRUhpw8oXoa+xYLYjM4qDzqN4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=z6Cco/gArEI1B3IDLJ4230/RV/hI9+YhFOcMJyqZnI8=;
+	b=blraISC67iQxEHiwqAvIg5pbjdzp8PqnexSdRnRpJDaugZQl1d+vdq2VJTvSOXHfYu81bM
+	cJAIysKT4kRqGNOaFGWEEzEjLQJwDbK9zSxRZ6iJdLGL+MoHYJEjBIBef/0QAEU4Je5ffh
+	7XFBEolOXvQTPstuODsBXY3y1+8bX94=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-CzElpbwIM9qvedl9CLnRsA-1; Fri, 05 Sep 2025 02:41:29 -0400
-X-MC-Unique: CzElpbwIM9qvedl9CLnRsA-1
-X-Mimecast-MFC-AGG-ID: CzElpbwIM9qvedl9CLnRsA_1757054488
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b9a856d58so12845875e9.0
-        for <io-uring@vger.kernel.org>; Thu, 04 Sep 2025 23:41:29 -0700 (PDT)
+ us-mta-173-MAuwpLb7Ovu6xGkMQ-PXAA-1; Fri, 05 Sep 2025 03:42:58 -0400
+X-MC-Unique: MAuwpLb7Ovu6xGkMQ-PXAA-1
+X-Mimecast-MFC-AGG-ID: MAuwpLb7Ovu6xGkMQ-PXAA_1757058177
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3e26b5e3f41so479699f8f.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 00:42:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757054488; x=1757659288;
+        d=1e100.net; s=20230601; t=1757058177; x=1757662977;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oF3HN1Q6ZNxZN3c5DymWi4LgFv8yUurotu5FuTflls4=;
-        b=Ry9nJTWGBMgWJqZ+FHNjsi6e/ESrj8Ad1f5gyVRJI3xfQLOMY4vVJjSufceyluJ4G9
-         9nmSxNDds5i48LkGPZeievGtSrd+c0EAF3MTCzYa7w8y8ZtetdEuXgw+Mdu9JZ97VVMF
-         PmiR5iuJysw1OCsuDqMG9ZDZ6jWQU3vQOuwG5oqvddm/MyZCebh1QTJH9mIyIreCEZlt
-         EWhuwebdjGb29L07n903AztUgS9EsLrhBTlODcFt3HKiQTiW9UTIfg2i0hNpsxPp8zjH
-         UTDHYn53RyXBChdZXu7fxG7FnnhUrTbg8nI+p5RYYYgto84v52/oaISuVyQFQvLolwtQ
-         pGSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJDLtwWlZRq0Cck16FQ5017nT5hi20AWx0jR0qE2/Asfa1qww7mgRelJScfjYPeEr4X+f6yyJZ+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQJZiNZjrrYfmN33puN1Y9vMfEX3pzeRqpJuXB+kqOYgks/f8C
-	osQBMfA/A8iv8Y0i2h+LAtdxCzIKTrUCim6fLCn+CPpFnssRt+BwOKVlZdCKPZQwLZnA8GZFm0s
-	xFf+lAzDZ8YriRq/pRt7sSinJC5S+N2MZg4vWGl2OaVIxmtGT9mc59Q8j4qni
-X-Gm-Gg: ASbGncv8qDomyc0xp2x2u5BHG3TcanMJVV1+E3LWgErvfsX5dYbt+bwiRdn3aBsJi1V
-	pHpnjbNJt5iJ1pSInEVDbmvmbSql+zpYjqcrvxSGst4etSstNOT0dsVXWPLcetonq0Da9tp9BoY
-	+hY8tlXnRIJbDyuk08tejjHJJQOc9wslNUaPss4WPlzwaQ/uGdyJYozuvueN2n4uw9s9T2AN86w
-	7ZoqF8rEg6s+HROYgF1NJ/CPdcdSwGT98zYG1lQbwHQFN5OB6Q+Z1rqPJtvMp2J/dQXYFc0KxId
-	58lt9Nx0uyunQpbZI9AZSMiQCuw6mHu9iC63gHX72Hu23or2RbUyN2L+/lpy4FRNfcypZzokWSW
-	KbTpCGunFiaVhUdqXCrZLZ9Hgxiy3LcgKRIvABz7pN7AONJ4LPLBggKom
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr114233075e9.23.1757054487759;
-        Thu, 04 Sep 2025 23:41:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEj1Q4ueRZg61r58J+1sq7/RpmSeqvAcWabr/Sq37OcVKAf1elh8/EonCz3Jhepl0SBZP4Cg==
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr114232615e9.23.1757054487185;
-        Thu, 04 Sep 2025 23:41:27 -0700 (PDT)
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z6Cco/gArEI1B3IDLJ4230/RV/hI9+YhFOcMJyqZnI8=;
+        b=o3fV3SkKHRLj7TyzzAr9eyy7n0V+eGmoUE17N3dw8hduzh4e3HCBAzFWoauJ/Txluf
+         2GzML/NSa/GmHf1LPpdILfgLQeNjzb3JstOCJPVMhZi1vgmdlGKwGk8dlPbxigtOAF3M
+         it/+z6B9di2pJvge2wv07Fs91H41XDuMGBNuJYh3PyqT/i9K2h3i2wKhzgBnSxIszjIQ
+         TGT8Pqaknm+JQblRpu8EW4U50dHA5Mw/FBxnYG6ggrPutlspSmeXnHM49B7O9U8JeLPD
+         iPQoX+KzXu2g8lG8a/83Ihq9+s+KifEKGt0FvmLoi5DMay4tdBR0AKio0O72z2hSu9OB
+         WPcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbr59S8eDt/3nLWTINlVDpplc2sV6hpGwBBPNOLwaP4GqFnUt3eJM7iOR0ZkKhfN4tVsjS0mmsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw68CUY8fFPyxOF7QrSsBTcc4qTUqEVkDtnBw0Bd69gBgLDVZ0G
+	Xp5f1wFdv67kJJC7shitpH59h2EcvH1zA251K0OkZ8Kn6GZg8zApWc2kf/aK5l2beGsA42aBcDw
+	VDPr8yB8xCMGUT0tYXiUMwT9Un3fXF4mq6IC2KKrCC9LXle5xL09GA1+ER0wE
+X-Gm-Gg: ASbGncs6jsc+k7bSxAQmjWc+e/DoKGEtR3myMH0HSVrx/HPKAtDeuLBo/PDRVhC8oBS
+	q6AtHeqs2cI/CwJfsDgWAaLoTEEGuuVg5XwhVe3F+crsda5+Kj63kclLB9n8BI9D0OGmOzN2YW9
+	4+kCZeSr83O2JxeXLOXNaoor0Mvq33R+2geVlEuI3d6Ifqth81vjmxWflV1wrHkAxxT68yGYSQ7
+	lqlDkkrrjwLek6ab3OOSScYD04Y5FGmOf1DstFZ9KJ+0SVMg87Mx3/HKai6TxwHo5qRjAxUY+1U
+	nmwOe04pKxc4DSSGGzAL4006eNmJ3lCofZQXt8AixM7l8T/PUzszxIHp1IiBHxUnsNca+YyGN3J
+	iXH37bZID6OTIkitB6CsYUCkO4P57/fIHZfD/YMwQXX0PrrBjS+817+Ft
+X-Received: by 2002:a05:6000:2c09:b0:3d4:6abb:7e01 with SMTP id ffacd0b85a97d-3d46abb82d7mr14730338f8f.41.1757058177449;
+        Fri, 05 Sep 2025 00:42:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdkmonAdN8kZC7Auh4/5UvF8c34qVbrqn3f2dXFG6i4O0vhisGnRXPONU3jqW9KXcFWL0j8w==
+X-Received: by 2002:a05:6000:2c09:b0:3d4:6abb:7e01 with SMTP id ffacd0b85a97d-3d46abb82d7mr14730319f8f.41.1757058177001;
+        Fri, 05 Sep 2025 00:42:57 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm316420125e9.12.2025.09.04.23.41.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm30535206f8f.43.2025.09.05.00.42.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 23:41:26 -0700 (PDT)
-Message-ID: <5090355d-546a-4d06-99e1-064354d156b5@redhat.com>
-Date: Fri, 5 Sep 2025 08:41:23 +0200
+        Fri, 05 Sep 2025 00:42:56 -0700 (PDT)
+Message-ID: <cc7f03f8-da8b-407e-a03a-e8e5a9ec5462@redhat.com>
+Date: Fri, 5 Sep 2025 09:42:55 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -90,34 +89,14 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 19/37] mm/gup: remove record_subpages()
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
- Zi Yan <ziy@nvidia.com>, Jens Axboe <axboe@kernel.dk>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-20-david@redhat.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in
+ io_sqe_buffer_register
+To: Jens Axboe <axboe@kernel.dk>,
+ syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>
+References: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
+ <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -164,126 +143,115 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250901150359.867252-20-david@redhat.com>
+In-Reply-To: <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01.09.25 17:03, David Hildenbrand wrote:
-> We can just cleanup the code by calculating the #refs earlier,
-> so we can just inline what remains of record_subpages().
-> 
-> Calculate the number of references/pages ahead of times, and record them
-> only once all our tests passed.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->   mm/gup.c | 25 ++++++++-----------------
->   1 file changed, 8 insertions(+), 17 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index c10cd969c1a3b..f0f4d1a68e094 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -484,19 +484,6 @@ static inline void mm_set_has_pinned_flag(struct mm_struct *mm)
->   #ifdef CONFIG_MMU
->   
->   #ifdef CONFIG_HAVE_GUP_FAST
-> -static int record_subpages(struct page *page, unsigned long sz,
-> -			   unsigned long addr, unsigned long end,
-> -			   struct page **pages)
-> -{
-> -	int nr;
-> -
-> -	page += (addr & (sz - 1)) >> PAGE_SHIFT;
-> -	for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
-> -		pages[nr] = page++;
-> -
-> -	return nr;
-> -}
-> -
->   /**
->    * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
->    * @page:  pointer to page to be grabbed
-> @@ -2967,8 +2954,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->   	if (pmd_special(orig))
->   		return 0;
->   
-> -	page = pmd_page(orig);
-> -	refs = record_subpages(page, PMD_SIZE, addr, end, pages + *nr);
-> +	refs = (end - addr) >> PAGE_SHIFT;
-> +	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
->   
->   	folio = try_grab_folio_fast(page, refs, flags);
->   	if (!folio)
-> @@ -2989,6 +2976,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->   	}
->   
->   	*nr += refs;
-> +	for (; refs; refs--)
-> +		*(pages++) = page++;
->   	folio_set_referenced(folio);
->   	return 1;
->   }
-> @@ -3007,8 +2996,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
->   	if (pud_special(orig))
->   		return 0;
->   
-> -	page = pud_page(orig);
-> -	refs = record_subpages(page, PUD_SIZE, addr, end, pages + *nr);
-> +	refs = (end - addr) >> PAGE_SHIFT;
-> +	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
->   
->   	folio = try_grab_folio_fast(page, refs, flags);
->   	if (!folio)
-> @@ -3030,6 +3019,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
->   	}
->   
->   	*nr += refs;
-> +	for (; refs; refs--)
-> +		*(pages++) = page++;
->   	folio_set_referenced(folio);
->   	return 1;
->   }
+On 05.09.25 01:20, Jens Axboe wrote:
+> On 9/4/25 9:36 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1785fe62580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f23e62580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb6312580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
+>>
+>> ==================================================================
+>> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>> BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+>> BUG: KASAN: null-ptr-deref in PageCompound include/linux/page-flags.h:331 [inline]
+>> BUG: KASAN: null-ptr-deref in io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+>> BUG: KASAN: null-ptr-deref in io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+>> Read of size 8 at addr 0000000000000000 by task syz.0.17/6020
+>>
+>> CPU: 0 UID: 0 PID: 6020 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>>   kasan_report+0x118/0x150 mm/kasan/report.c:595
+>>   check_region_inline mm/kasan/generic.c:-1 [inline]
+>>   kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:200
+>>   instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>>   _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+>>   PageCompound include/linux/page-flags.h:331 [inline]
+>>   io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+>>   io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+>>   __io_sqe_buffers_update io_uring/rsrc.c:322 [inline]
+>>   __io_register_rsrc_update+0x55e/0x11b0 io_uring/rsrc.c:360
+>>   io_register_rsrc_update+0x196/0x1a0 io_uring/rsrc.c:391
+>>   __io_uring_register io_uring/register.c:736 [inline]
+>>   __do_sys_io_uring_register io_uring/register.c:926 [inline]
+>>   __se_sys_io_uring_register+0x795/0x11b0 io_uring/register.c:903
+>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>   do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f99b1f8ebe9
+>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007f99b2d88038 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+>> RAX: ffffffffffffffda RBX: 00007f99b21c5fa0 RCX: 00007f99b1f8ebe9
+>> RDX: 00002000000003c0 RSI: 0000000000000010 RDI: 0000000000000003
+>> RBP: 00007f99b2011e19 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 00007f99b21c6038 R14: 00007f99b21c5fa0 R15: 00007ffeadfa5958
+>>   </TASK>
+>> ==================================================================
 
-Okay, this code is nasty. We should rework this code to just return the nr and receive a the proper
-pages pointer, getting rid of the "*nr" parameter.
+#syz test
 
-For the time being, the following should do the trick:
+ From bfd07c995814354f6b66c5b6a72e96a7aa9fb73b Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Fri, 5 Sep 2025 08:38:43 +0200
+Subject: [PATCH] fixup: mm/gup: remove record_subpages()
 
-commit bfd07c995814354f6b66c5b6a72e96a7aa9fb73b (HEAD -> nth_page)
-Author: David Hildenbrand <david@redhat.com>
-Date:   Fri Sep 5 08:38:43 2025 +0200
+pages is not adjusted by the caller, but idnexed by existing *nr.
 
-     fixup: mm/gup: remove record_subpages()
-     
-     pages is not adjusted by the caller, but idnexed by existing *nr.
-     
-     Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  mm/gup.c | 2 ++
+  1 file changed, 2 insertions(+)
 
 diff --git a/mm/gup.c b/mm/gup.c
 index 010fe56f6e132..22420f2069ee1 100644
 --- a/mm/gup.c
 +++ b/mm/gup.c
-@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-                 return 0;
-         }
-  
-+       pages += *nr;
-         *nr += refs;
-         for (; refs; refs--)
-                 *(pages++) = page++;
-@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
-                 return 0;
-         }
-  
-+       pages += *nr;
-         *nr += refs;
-         for (; refs; refs--)
-                 *(pages++) = page++;
+@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t 
+*pmdp, unsigned long addr,
+  		return 0;
+  	}
+
++	pages += *nr;
+  	*nr += refs;
+  	for (; refs; refs--)
+  		*(pages++) = page++;
+@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t 
+*pudp, unsigned long addr,
+  		return 0;
+  	}
+
++	pages += *nr;
+  	*nr += refs;
+  	for (; refs; refs--)
+  		*(pages++) = page++;
+-- 
+2.50.1
 
 
 -- 
-
 Cheers
 
 David / dhildenb

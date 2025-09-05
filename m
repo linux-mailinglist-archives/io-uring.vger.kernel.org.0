@@ -1,125 +1,123 @@
-Return-Path: <io-uring+bounces-9592-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9593-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A28B45605
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 13:16:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1735DB4561F
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 13:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4BD5C5FA7
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 11:15:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B167ACF3F
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 11:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D06345730;
-	Fri,  5 Sep 2025 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC28F2EC543;
+	Fri,  5 Sep 2025 11:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oTQxL3O+"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jBR4rs3e"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC2D343D93
-	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BA926AAB7
+	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 11:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070846; cv=none; b=VIOY0MpABHDZbY1ob61qxWVUFLPl0pi3IfwgDdEmBQaOlYub6KDF9oskEpZVq7/aTbhQAZ0VWh5g2ojFdaEcbRT9wLW61+dYQjO+v59WiHWW3EhyUe+3VzDxDqlhj8p0nW+tR5MHsN4JYDrSt5J1Cg0FJj1+KLrPQnyEVlv4btI=
+	t=1757071120; cv=none; b=LGynU0BKMszyTJzmalXyMU7c4NFGcSPn8tlLjPMwbW15rRmHONfI9yechpBgj9kuyygQNYpafp25HnkoPbw2NQ0HTZjF81S0BMO7aAMIUQpsqPaQ6g0BgXP5sTMfayHtVjvKPxdWhUm9lAqiTKWUD05tv9mMvMQjgq5xExp8Hd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070846; c=relaxed/simple;
-	bh=A6YZY+2lgCDRWE7jZhtd0wPHGCzmsRLPirzvJ650XSA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MV1cXRehKHSv80frY2PDvJfcjAroX5xqIAG6B+P4ICkN3hdIQ7hi/jbpsrpumI7rhqF9iGtgtDbXsZ4esPxYn/g9TrVcF8soMWJnLdPAJehDQzuC46/0E28GCqPxkBPES+wbsAEPUatbPEWAt+oUwey+P6uugXaPJ6dkO4M8j48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oTQxL3O+; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1757071120; c=relaxed/simple;
+	bh=8uTORwb3D00xnrSpwfZOhy7bUURRiYs+eOuaQJofs2w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=J4LMYV6Vji67dhCUYr2+I729dyYbjE8FiAv1PLb2LR15uu0A8QWTPWOeRIn2Goe2VkuJfGPCQlL6gjYbaBiqisqyOwNDTKft0CPx0Mo69C5EgDeNmqYGiGBEv8d+UWbjFpT/3PW1t/Wi1ayUypwIO+Keyrr2/+k2g99PIVG3/jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jBR4rs3e; arc=none smtp.client-ip=209.85.128.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e96fbf400c0so2391335276.0
-        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 04:14:04 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d60501806so20057997b3.2
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 04:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757070843; x=1757675643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757071117; x=1757675917; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=smIFcZT6fRwTwOdoLCuotEOilxdiZ96AHCt5ydM2TdI=;
-        b=oTQxL3O+flcMzzH3qTc3DJJ676coZBx8GslfzSoL4kUeg2gHPqkSBjb/+PRhRABHTV
-         cfl5QGTEaCy3lST2Op+RDJ+qjZnWpFF3vC7vTGjUmyxQt85QH+N7P+bu2yaAUvSwSfLv
-         2k5cuMaYguWsNsfFoApHupr6QNs4elRzhA7O6jQII4/AoLbVGFOBLpfKpeDeCsz0gm5C
-         w30L/yPMqwDFXGv9aAUSqLM/LO7EkQvhALIO+crNIJ1cYSi7PI6O86lRpnx83lb6h4vS
-         8WfLvHewTGEIQHoh31bJn7gGNFvLxy/ww0/Op3q4+9Xo1Jn9vI9EJP86AjSZKC8zaQty
-         o7xQ==
+        bh=qYJcA7s0keMR6OUcQiR8GwwIpU35oJtw3RFv33PV/Xc=;
+        b=jBR4rs3e44+kHuBvgy8U6j9+9yq36nXXKEDyXG2M9Rr4L+HnOn435TcyHu1VAHGemf
+         SeL7Hch2gRmGJ6Q2mMdUz4AMBWP+qjpS5L6S9AH1Vt8H6IwmuYhpdrsGyKTtttaSTC31
+         M7sOeXVfiZyy/H2IYRAg+ymDqg8KIugFi/4eHnBky4qvxkBMxpYQlGCDmb+NkpXHaXit
+         QIjMAl2Izt7ZQ9nL53X5GEYZ8wv13N3OGc4HFhaLaiEwe3alVeWIkaCLJDfnKqoA3fqX
+         3V6UMO8Gm/WELA9s569dOXFK1jqnehader3UEjp49rPq39Vdrmf9kzrSQRaNoqKQ6L9e
+         83LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757070843; x=1757675643;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=smIFcZT6fRwTwOdoLCuotEOilxdiZ96AHCt5ydM2TdI=;
-        b=Fd4NV8IBG8sc4dGBo4xxwRbDP5lJcIPgihj7lWfxYtVs+jDl/aCTcoDMEjdWDCM72C
-         1gPLi/DbTzjSlZrQTIVC9jzK7vK1V8G7y4gw1VwYm8RoJAm6o8r+w703JNbIPcuB49/z
-         wJvNOj7GcqOj0tbi6BOZt68ojiDlQZCkJWb2ZrmTcXCtl6006eqzW/vgTdzLoSU8n8sF
-         yDuxxqPoCKZPkE4R/bVfUUm2hlCR8I9NraAACCBsF7lTjRXFQbJ09zklrBg/MPOuOau1
-         bM7oUC5NGJ65kY5aF3oSebQc6IS7k0xWrOZpRZ4v70RhyaVsdsMF1Mv/UjI4BxIIpxiz
-         qEfQ==
-X-Gm-Message-State: AOJu0Yy9ys4e4ocm5CJDXSwNrBQYC2vxRJO4uWTQlFD1OnLPoBJjY039
-	FAeNmpRU41On7uN+in8NNE3ORm92giQwdPoFwprB4zM9F3+clGwRnb981mdaeF2vIKoKBJUjAYX
-	TM1h6
-X-Gm-Gg: ASbGncs3A5w+2NykwUEanHTnaQ0I6KQ28O9HO5xDogCjEVAf8fYSvF4Z/S+HWed5miv
-	Fe1snwSBx66axsxkIGt5sTfkHz84gtXpznDXDLm9Hyxi1c84Wfc4udf8PFSXFaUvaG5xKwV3+O8
-	vNkO7ePGk8SYZI/xog74ZnBZ1N1DmaEY2V45R4lCD2HE8Lil4DFahMQ0xdoIpJn9UHL9s78AZ5Y
-	uJXkFnguMQgo/ECCoo9MMWlqdMoVNC+zeObsogWwNUidlSZCij7T8fUK5SQjqkZXJ/gCIZNh9Me
-	xS29v/pfeRR07bAXxB50tSfSlkT8Fql9vvXMeC+jMW9nn8Bvs1aKvfTkx2kidVKF4DFvf4fQT/e
-	MukyvkyyMZQ5Ysj2KZg==
-X-Google-Smtp-Source: AGHT+IH+J3QMzNBHejPE3u8sZJfVn0k75y2u6I63HrlNeAIS2gwpm3hKHIkQcZo1cU57jjmcfNQLEw==
-X-Received: by 2002:a25:6407:0:b0:e95:3010:1124 with SMTP id 3f1490d57ef6-e9db04d274amr2050532276.18.1757070843085;
-        Fri, 05 Sep 2025 04:14:03 -0700 (PDT)
-Received: from [127.0.0.1] ([50.227.229.138])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbdf57266sm2999999276.14.2025.09.05.04.14.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 04:14:01 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250905012535.2806919-1-csander@purestorage.com>
-References: <20250905012535.2806919-1-csander@purestorage.com>
-Subject: Re: [PATCH] io_uring/rsrc: initialize io_rsrc_data nodes array
-Message-Id: <175707084146.356946.8866336484834458029.b4-ty@kernel.dk>
-Date: Fri, 05 Sep 2025 05:14:01 -0600
+        d=1e100.net; s=20230601; t=1757071117; x=1757675917;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qYJcA7s0keMR6OUcQiR8GwwIpU35oJtw3RFv33PV/Xc=;
+        b=g4gcCy3iyKynHc9AiKES7r7PvQYtun3uCkOVxSzUjZ3yhwrQXuqSTw4yG9JcedbfTl
+         mBlXWgoUP9Vl7lDKjJF817xrYEVM6cK19Pegi7mHMsSiSNcVetPpoTDpc+cMeBW39oa0
+         q8UWQD8cTbgEze5gQXcLq3EJTOrB6hrVBmd2hLHQ7GlrUhdrzcAhV8Qy6HVL5Q7HpzVY
+         IVlM+hiYiIQvsfi/T3KbFWa/SXzyyYQm4ghUmgHZz1hPRFQed8n1SK4vgaGuIfMX+3hg
+         0b1f23lPVn5RC915EGDBjEmWzuliaOrMAjo3UbgeOpWTKdqeIG3xMpzav/pyB97jPzMu
+         zqBg==
+X-Gm-Message-State: AOJu0YyWR0GIRj9vBenuJwEKVpF2wnEpV3VcxYBU165n41/daz1k0L35
+	ABjDs9HFtSyIs23YHUVxvljYctc8htRtp4AdKzhLXBerfnBEhtELCh7Mgp7js4Kqg+V/pELbW9J
+	gZtBW
+X-Gm-Gg: ASbGnctk+hOTQc5vTuXbjXSaOi8ylq+Nrwpa4ErIEGRxuiKWny2IqYkFsDzY8VrJuaK
+	ylRYXOjVGg77p8VQwNaGKJbFccd3b9XWj+3dQMeUpDH7b5xm3N2m94nkBQlZCfNEsAkM0R1uMp/
+	NSXdCOjMNfaR67UmMueJNnCtA14Wfy+oa+ihXWlpgT6GTw3o0IasWF4zuxULqx/fVknY7neKUj3
+	JrgbpxBx6cABh+ojVE2QmDEJWtGsAFozf9QWsTmKIGI//zREpKhb59v/IEHaFTam0jG/c2kZFnG
+	nyrbN8p0HGL0e7gPBdSPIrJ4DaJMT+5PQYsDf2fToED6OklazYg9iblrAMF3L50yRtuKj+teTYu
+	aa4L6T10Y/ONI7wX6kV63JB+2/VJt
+X-Google-Smtp-Source: AGHT+IFz8nD9ftFet+N7MFnk8OJxw+yKQq90YTUZ7DpsUk8JBOuEDAq+zECDttqqtH8ffaXgGbYukw==
+X-Received: by 2002:a05:690c:630e:b0:71a:300c:d17e with SMTP id 00721157ae682-722763fa90bmr266792237b3.20.1757071117268;
+        Fri, 05 Sep 2025 04:18:37 -0700 (PDT)
+Received: from [10.0.3.24] ([50.227.229.138])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5ff8784525dsm2295744d50.3.2025.09.05.04.18.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 04:18:36 -0700 (PDT)
+Message-ID: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+Date: Fri, 5 Sep 2025 05:18:36 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 6.17-rc5
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+
+Hi Linus,
+
+Just a single fix for an issue with the resource node rewrite that
+happened a few releases ago. Please pull!
 
 
-On Thu, 04 Sep 2025 19:25:34 -0600, Caleb Sander Mateos wrote:
-> io_rsrc_data_alloc() allocates an array of io_rsrc_node pointers and
-> assigns it to io_rsrc_data's nodes field along with the size in the nr
-> field. However, it doesn't initialize the io_rsrc_node pointers in the
-> array. If an error in io_sqe_buffers_register(), io_alloc_file_tables(),
-> io_sqe_files_register(), or io_clone_buffers() causes them to exit
-> before all the io_rsrc_node pointers in the array have been assigned,
-> io_rsrc_data_free() will read the uninitialized elements, triggering
-> undefined behavior.
-> Additionally, if dst_off exceeds the current size of the destination
-> buffer table in io_clone_buffers(), the io_rsrc_node pointers in between
-> won't be initialized. Any access to those registered buffer indices will
-> result in undefined behavior.
-> Allocate the array with kvcalloc() instead of kvmalloc_array() to ensure
-> the io_rsrc_node pointers are initialized to NULL (indicating no
-> registered buffer/file node).
-> 
-> [...]
+The following changes since commit 98b6fa62c84f2e129161e976a5b9b3cb4ccd117b:
 
-Applied, thanks!
+  io_uring/kbuf: always use READ_ONCE() to read ring provided buffer lengths (2025-08-28 05:48:34 -0600)
 
-[1/1] io_uring/rsrc: initialize io_rsrc_data nodes array
-      commit: 0f51a5c0a89921deca72e42583683e44ff742d06
+are available in the Git repository at:
 
-Best regards,
+  git://git.kernel.dk/linux.git tags/io_uring-6.17-20250905
+
+for you to fetch changes up to 0f51a5c0a89921deca72e42583683e44ff742d06:
+
+  io_uring/rsrc: initialize io_rsrc_data nodes array (2025-09-04 19:50:33 -0600)
+
+----------------------------------------------------------------
+io_uring-6.17-20250905
+
+----------------------------------------------------------------
+Caleb Sander Mateos (1):
+      io_uring/rsrc: initialize io_rsrc_data nodes array
+
+ io_uring/rsrc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 -- 
 Jens Axboe
-
-
 
 

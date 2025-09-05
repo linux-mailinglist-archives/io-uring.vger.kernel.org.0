@@ -1,160 +1,163 @@
-Return-Path: <io-uring+bounces-9608-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9609-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86908B463B1
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 21:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC3CB46465
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 22:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BACE5C3768
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 19:34:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2B363B4860
+	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 20:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B0A29D297;
-	Fri,  5 Sep 2025 19:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA02868A9;
+	Fri,  5 Sep 2025 20:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0990vW6A"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XiA6swW2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DDD29BDAE;
-	Fri,  5 Sep 2025 19:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B6D2AF00
+	for <io-uring@vger.kernel.org>; Fri,  5 Sep 2025 20:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100796; cv=none; b=QYykhPrK7o11UrKu2ckEHEDI1RS2sEZvJ5CumIPJZZDxAxPTS8dcG12oMIINZFSXnwfDBiQYd66etoWMi+hXuH8zwbHti0afzP1Mk6AASqrfsuu7dgaifMWrVir3gsasunOPgdsDt2T6TRPGd1fglqh5ZckYV0oW2hG5gU5Q3W4=
+	t=1757103019; cv=none; b=IlAVTgLvhK2bNWZ4Qxp2cVNk2LLvlVhvqbLWlBnYy/rqx3xgYR/kdjIsI4mZK5WF4BEVbScin4DB1SZd15i7osLMvS14r34bX6RYqAPH2XuiefKVO3KsxdZrqKkHG0/wQfm+nm4+qcvINnEcocAamoUv4XcdqI5SiA21Yy1WVZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100796; c=relaxed/simple;
-	bh=cH92BEoAZ7B/hPjqgKWRCa6e6AzFGtNxEks4z2eYejQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiugYUxr50+tibkeRkXGmDAjODYqxKoIIveGv85UjBaW5ZvNXYWJp52WiRcz63zd8uE6RShEVYPxaUm71SY0NNGsnOw+rxXk/9z+J+WxwVsmOgtKW6NbSusuYjtxzS9nZfalsAdmHuHJI6J31ZS+REiHbeRUhqrCWNS2Wdibn1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0990vW6A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A934FC4CEF1;
-	Fri,  5 Sep 2025 19:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757100795;
-	bh=cH92BEoAZ7B/hPjqgKWRCa6e6AzFGtNxEks4z2eYejQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0990vW6AZ8yObjk3Nt2vyPzAf71gNlm952V4intenD/lR4UPGJg6sgGcBX6BXlVdl
-	 8MzL9V16oVs4MFmZvAQCl6MbBUw39LcPKmc2d4thKD9Hdsh1cE51VyA/NGnZq/tRBH
-	 YL+ZnyVus4aMmcgXpgsn7HYhGe+uTuB4Zpnd8XaQ=
-Date: Fri, 5 Sep 2025 15:33:14 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>, 
-	Caleb Sander Mateos <csander@purestorage.com>, io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-Subject: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-Message-ID: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
-References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
- <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
- <20250905-lovely-prehistoric-goldfish-04e1c3@lemur>
- <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
+	s=arc-20240116; t=1757103019; c=relaxed/simple;
+	bh=ihZ/KBvVTM2viHT4uIXRQE2vVg3YunnikfyRSjOyZD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5Vs3wyp9I3s6H2NVsaexdBoDj54+vndZ2anpjzwfMc1seuRv38iAhNK7ACLQQxNcQc6C2PwDH7vjL6TB9e4EsN35GSe8ieAYm8Di08ulmIrStJUs46iJgVLXeD6jCSMB3QXoz5M8nfj0JwKjABoqLaBkVCY8nJeKrFKECx/HYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XiA6swW2; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aff0775410eso488796566b.0
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 13:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1757103015; x=1757707815; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xddsR/Pe+eD7cGTppeQ6zoun06h85L7v8WnJ4cYLHhY=;
+        b=XiA6swW2YwGna0wpaiZQE6oStvn0paKdfaWmXPnedCWhxv3SUw9Z6ijTQ+68WNCM8I
+         bkHhlTLb1Kkia20OdS44HHuC+/4aXPAC/E5pI5BUal4q72/8TtljxMRY5xGjgLxcZdtu
+         USXIls/hFcVv8w/dd7pKgOsSjf1H63Q3yeMIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757103015; x=1757707815;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xddsR/Pe+eD7cGTppeQ6zoun06h85L7v8WnJ4cYLHhY=;
+        b=LoFmu6Y9yQL6tB8ZsqaqMozVMjYDPmSJeQsnre6Fx+Lp7kcwpfFeCVEGxS7FnkqhXh
+         FWWf79SRVCbweSvz0HbarC4T2xjzpAmMNhOZn1ftIGu1/4iC1NIneQO0yit+XoUexeWK
+         s6ACaPc+lLZnOwILXQH/DTZA4gFHSqaxRFrXRoPqR4IlPgiA+d1CEd6f2ukAG3/S2spg
+         dOMOyaSaNhV8CRuGG+lmMwEzcRhg2T+a1lKHrbwumuOcErPrH00aT6LA6QNWWcdCD8Rm
+         xwZqaNWMkNJvyFM4e3VLIJBZqedN9DbxpV9sIo5eZRgmKIXBeyd5Qm3d66Wa2a0qrsR2
+         5+kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg1OeaNe10ojg1NAX9kFtO/J3qbVMf7pKyu8Njk2hUzdcLoYs5PBJboCdXc/6KRyxKvzoVKW8ISQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrYqdMmdxOH5szSsp23KeJhM44D4+fyreQjWuOsi1uZftwQVxo
+	vELvn0hWW+K0JJnC8YuaetTMEzGQ8q/CmiUUkW8MBZNXhq3tIuxx2vwP2QHu+8sIsgkSxXw3Hx7
+	1AR20N4Q=
+X-Gm-Gg: ASbGncvekee1eBTyGRR5ZIn6Jx6gzWW0kdhSzqktbe0fkEXytHxaaNGyjw5OLK6BBfg
+	LqIsDhxlBS+pplIUhpE9DwjZUvFFvVRBO13b9GMRL3VobFEUxCR+68R4aZ5e3Xs3tI2lb4qCeJT
+	s+TP19ZDnb6BCfKGcv5j9X7/YrXnEUUagshKeiopy7iMF7zQdmZW2WLu+ZnHHGlJ9xBMyxNeIrE
+	v8eSsP/pykdOJDE/54t208CLqx5Jka0lmeIuJY23w/pUuA9c8ofy6yql6j8Oyzms7KglY2wAWez
+	avZfMT7mkRM86AYruYOwLNTfjjcfpC89hj0ADKyCmjAL1MhxJnytscy2ImVDKRglvjiVJudvCK3
+	yAX/YV8Z5yNrlVpHS0w6rsefbjVA7sYoXBj6rat0QTI2JcMZavI6zI9TLOqWCd293e6nasqxiTg
+	dkX5+qPp0=
+X-Google-Smtp-Source: AGHT+IExIGeRt8o9rQ9Z7oDI9yPpGaAiOokN7L/o1XFCem7rAEZeIBZF9OS3Yk3LJcrTM/3sJuiEZA==
+X-Received: by 2002:a17:907:3d91:b0:af9:70f0:62e3 with SMTP id a640c23a62f3a-b04931f4a7emr502249766b.15.1757103014783;
+        Fri, 05 Sep 2025 13:10:14 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm1619621566b.12.2025.09.05.13.10.14
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 13:10:14 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so6612239a12.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 13:10:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6uGXVTo3gh3VlPLF9Bfeec6iwwo/QqfW+48Epz/wxG8kmnyqLoWEdqV8kamH1O0YT46J3W2ckcQ==@vger.kernel.org
+X-Received: by 2002:a17:906:dc93:b0:b02:d867:b837 with SMTP id
+ a640c23a62f3a-b0493084d31mr511145266b.7.1757103013782; Fri, 05 Sep 2025
+ 13:10:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
+ <20250905-lovely-prehistoric-goldfish-04e1c3@lemur> <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
+ <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+In-Reply-To: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Sep 2025 13:09:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh7_K-8HxSuxvYAOiWy+1UkVyOs5qPLdZEj5bjn+-7PnQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyvC8KlB-60GW4lzH7j8EzgCz1sz-rbVM2idRV4lq9qeYgMZVtZcK0__N4
+Message-ID: <CAHk-=wh7_K-8HxSuxvYAOiWy+1UkVyOs5qPLdZEj5bjn+-7PnQ@mail.gmail.com>
+Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for 6.17-rc5)
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Caleb Sander Mateos <csander@purestorage.com>, 
+	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-(Changing the subject and aiming this at workflows.)
+On Fri, 5 Sept 2025 at 12:33, Konstantin Ryabitsev
+<konstantin@linuxfoundation.org> wrote:
+>
+> We do support this usage using `b4 shazam -M` -- it's the functional
+> equivalent of applying a pull request and will use the cover letter contents
+> as the initial source of the merge commit message. I do encourage people to
+> use this more than just a linear `git am` for series, for a number of reasons:
 
-On Fri, Sep 05, 2025 at 11:06:01AM -0700, Linus Torvalds wrote:
-> On Fri, 5 Sept 2025 at 10:45, Konstantin Ryabitsev
-> <konstantin@linuxfoundation.org> wrote:
-> >
-> > Do you just want this to become a no-op, or will it be better if it's used
-> > only with the patch.msgid.link domain namespace to clearly indicate that it's
-> > just a provenance link?
-> 
-> So I wish it at least had some way to discourage the normal mindless
-> use - and in a perfect world that there was some more useful model for
-> adding links automatically.
-> 
-> For example, I feel like for the cover letter of a multi-commit
-> series, the link to the patch series submission is potentially more
-> useful - and likely much less annoying - because it would go into the
-> merge message, not individual commits.
+I think that works well for more complex series, yes.
 
-We do support this usage using `b4 shazam -M` -- it's the functional
-equivalent of applying a pull request and will use the cover letter contents
-as the initial source of the merge commit message. I do encourage people to
-use this more than just a linear `git am` for series, for a number of reasons:
+> This does create a lot more non-linear history, though. Judging from some of
+> my discussions on the fediverse, some maintainers are not sure if that's okay
+> with you.
 
-- this clearly delineates the start and end of the series
-- this incorporates the contents cover letter that can give more info about
-  the series than just individual commits *without* the need to hit the lore
-  archive
-- this lets maintainers record any additional thoughts they may have in the
-  merge commit, alongside with the original cover letter
+I do *not* think it makes sense for random collections of patches, or
+some minor two-patch series, no.
 
-Obviously, we don't want to use the cover letter as-is, which is why b4 will
-open the configured editor to let the maintainer pulling in the series make
-any changes to the cover letter before it becomes the merge commit.
+But I do think it makes sense for patch series that (a) are more than
+a small handful of patches and (b) have some real "story" to them (ie
+a cover letter that actually explains some higher-level issues).
 
-Having the provenance link in the cover letter as opposed to individual
-commits makes perfect sense in this case, especially because it is now very
-obvious where the series starts and ends.
+Put another way: I would be unhappy if that model is used mindlessly.
+No "let's automatically encourage this", please. That was, I feel, the
+problem with "-l".
 
-This does create a lot more non-linear history, though. Judging from some of
-my discussions on the fediverse, some maintainers are not sure if that's okay
-with you. If that's actually your preferred way of seeing series being
-handled, then I'll work on updating maintainer docs to indicate that this is
-the workflow to follow.
+For example, just looking at things that happened today on lore, something like
 
-Question -- what would be the preferred approach for single-patch submissions?
-I expect having a merge commit for those would be more annoying?
+  https://lore.kernel.org/all/20250905191357.78298-1-ryncsn@gmail.com/T/#t
 
-> Anyway, the "discourage mindless use" might be as simple as a big
-> warning message that the link may be just adding annoying overhead.
-> 
-> In contrast, a "perfect" model might be to actually have some kind of
-> automation of "unless there was actual discussion about it".
-> 
-> But I feel such a model might be much too complicated, unless somebody
-> *wants* to explore using AI because their job description says "Look
-> for actual useful AI uses". In today's tech world, I assume such job
-> descriptions do exist. Sigh.
+looks like it could be handled very well with that actual merge model.
+Just look at that cover letter: it has relevant numbers for the
+series, exactly the kinds of things you do *not* want in individual
+commit messages, but that make sense as a merge message.
 
-So, I did work on this for a while before running out of credits, and there
-were the following stumbling blocks:
+That said, from what I've seen, these kinds of series are often MM,
+and I don't think it matches the flow that Andrew tends to use. We
+finally got Andrew to use git fairly recently, I'm not convinced
+getting him to have a fancy non-linear history is in the cards.
 
-- consuming large threads is expensive; a thread of 20 patches and a bunch of
-  follow-up discussions costs $1 of API credits just to process. I realize
-  it's peanuts for a lot of full-time maintainers who have corporate API
-  contracts, but it's an important consideration
-- the LLMs did get confused about who said what when consuming long threads,
-  at least with the models at the time. Maybe more modern models are better at
-  this than those I tried a year ago. Misattributing things can be *really*
-  bad in the context of decision making, so I found this the most troubling
-  aspect of "have AI analyze this series and tell me if everyone important is
-  okay with it."
-- the models I used were proprietary (ChatGPT, Claude, Gemini), because I
-  didn't have access to a good enough system to run ollama with a large enough
-  context window to analyze long email threads. Even ollama is questionably
-  "open source" -- but don't need to get into that aspect of it in this
-  thread.
+(That said, Andrew clearly deals with series internally, and his pull
+requests tend to actually describe things as such, so maybe he
+wouldn't be too annoyed by something less linear).
 
-However, I feel that LLMs can be generally useful here, when handled with
-care and with a good understanding that they do and will get things wrong.
+I would worry a bit that  people would use odd merge bases for this.
+Because one of the advantages of a linear history is that it's
+simpler, and in particular that you only mess up the beginning point
+of that linear history *once*. And yes, people do mess that up (we
+have a whole section about the whole "pick a good base" in the docs
+and people have gotten it wrong).
 
-> For example, since 'b4' ends up looking through the downstream thread
-> of a patch anyway in order to add acked-by lines etc, I do think that
-> in theory there could be some "there was lively discussion about this
-> particular patch, so a link is actually worth it" heuristic.
-> 
-> In theory.
+With non-linear history, there's just more complexity and getting
+things wrong is easier and can be even more confusing.
 
-Yeah, in practice we can't tell a simple "good job, here's a reviewed-by" from
-a "lively discussion," especially if the lively discussion was about something
-else that had nothing to do with the contents of the series (e.g. as this
-thread). The clever-er we try to be with b4, the quicker we run into corner
-cases where our cleverness is actually doing the wrong thing.
+So while I do think do that "b4 shazam -M" can be a very good thing, I
+also think it's something that *definitely* needs a fair amount of
+forethought.
 
-So, I'm generally on the side of "dumb but predictably so."
+It should not be some "default flow", in other words.
 
--K
+                 Linus
 

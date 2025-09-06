@@ -1,197 +1,173 @@
-Return-Path: <io-uring+bounces-9612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9613-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FF6B466E7
-	for <lists+io-uring@lfdr.de>; Sat,  6 Sep 2025 01:01:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E63AB46760
+	for <lists+io-uring@lfdr.de>; Sat,  6 Sep 2025 02:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1111C83961
-	for <lists+io-uring@lfdr.de>; Fri,  5 Sep 2025 23:01:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DFD65C08E2
+	for <lists+io-uring@lfdr.de>; Sat,  6 Sep 2025 00:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382CA27CB04;
-	Fri,  5 Sep 2025 23:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA273315D38;
+	Sat,  6 Sep 2025 00:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKhh4N0Y"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Hsy/kPXc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D534072639;
-	Fri,  5 Sep 2025 23:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEBE17E4
+	for <io-uring@vger.kernel.org>; Sat,  6 Sep 2025 00:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757113283; cv=none; b=STHTwbkIUVyVc7/Lt3KdXJswKeeXO6ub4oO/A4fn/hio24PmAXQ4j33bZlZeIH4/EKkF1ydvJyWKcoiZL/hsxI2S6XTK5sfeeH6rQSy+d/V0WUS52Dr+w4Ga30z3Ey9QMdboVM8/bPPo7tSb/lionQYM2sHQjvtVNXMwc+y1ZZ8=
+	t=1757116866; cv=none; b=pGPKQ+u0qcW1q0mVKM6SJAoQVJ6KsvLdfmf/blEkvNBEq1dpuYa090Sb2dCTnVcnM02ftMyA4T8jc7XmIyDcOFD+0mteJ/NpF4CmXdufdDKMe+vEsCwnAXs/l0l/7UiybbG3ECHEDYjoUIpZrUiWjSzFwNCuhTChPjjczvEqDxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757113283; c=relaxed/simple;
-	bh=+lhopyxIHPkimkHLqjBagKsowbxPduHdhl1alB5XIHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N75cZXP1uVrHhIJ9EPjB03JXuyOgr/DVmBetbhnxkc2jy5WGQHWzf3CfpoeeT+fOsJzUEx47wPpgyN43SxU3d62W5Po1LCgxkA2EyKIY3vTV+zpKEov7n98vGiJUbFohpyvKvli9clGo6PdRHczPUuzF/vel7BmS57mz0Q44AUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKhh4N0Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CEDC4CEF1;
-	Fri,  5 Sep 2025 23:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757113280;
-	bh=+lhopyxIHPkimkHLqjBagKsowbxPduHdhl1alB5XIHw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKhh4N0YC7rktiPdXEfXclWanEDKYne9TN6cdcuCjqPCtcq4Rn0r96yLuECJbiw+4
-	 LjwCnjQtLBAm0edveUnCZZYiNonj/7aqKLJr2wGtnUHH+scBK/7r7JUigttXLAScDm
-	 pXeFnpIPvL1/rZKX9LdznwwDYBYkDL4/X0Q74Dlpx/NmySnEYO46ImCPWzvWXVlUfn
-	 7nKQ1fERSefzbF0N9pUOtT2Ew99OpHStRZ+01KHKpecJw2kFIukduhp+K3hQulq8o0
-	 47VhyxuU+d72ralUlgkhIgcgxiZyD9aQX9YFUuu3Ep7hq8BTDKfbNp6DFssdME8qWg
-	 uTEId8/MJZDQg==
-Date: Fri, 5 Sep 2025 16:00:06 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v2 19/37] mm/gup: remove record_subpages()
-Message-ID: <20250905230006.GA1776@sol>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-20-david@redhat.com>
- <5090355d-546a-4d06-99e1-064354d156b5@redhat.com>
+	s=arc-20240116; t=1757116866; c=relaxed/simple;
+	bh=I745OuqVCT8PA+unjsPW/MIzIeXr2r5FQRf1y5CrGQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rS1qnJS3YLZq2ZDo3N4vy1UXbhKoArwa/jfnNLIf66kJoE9jpTrBg6VJ5FCM6jfHi4vBwm5hX6AFUBx1zvObNlnrSFICI9vZgc5xG6HPJpWo7qqFNiaHiaR0XtUsI2OTEU9bM6WRwC3OA+NXJzGySItj5xMIIFoERqJrMPJ33lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Hsy/kPXc; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d603cebd9so32115777b3.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Sep 2025 17:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757116862; x=1757721662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O7hhVmn7ApxXnBvxlYHbulBxdrRJDIkG54twuFLOHOY=;
+        b=Hsy/kPXcNfDk7rZkDa+1qz1HojYoC5IxIr3+/kpA/DXyzI92A6SHJXu//NQsd7kTTn
+         Pxkhem+wcQIJOv6o5I4Lan80B5uZke4S+mZGdNw5k5M6X+Rz9PkRHuu5rGmNXJ30vcAY
+         rAErdkpwLHQligSGDG5RIdMZC7zT1GlcetQQomWU3YkI2to8LsviEIBexI5orNx3TQ2c
+         zjJB28xHvAXHmkSZe0uygTgH/YnopBixQe6exK2IPFlNSvucNjdSQQ0iGCfb+0KNq9KR
+         DQQKlv4QrG81WGT3s/bS0kNIKCQ9rHt6g2/kr2u5p4iUilTY7yqkXfq6dAQJpj++hi38
+         HP5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757116862; x=1757721662;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7hhVmn7ApxXnBvxlYHbulBxdrRJDIkG54twuFLOHOY=;
+        b=LMy01bn5lkJmIIH/eIcxnch49ATBmBE/xFHlQcNlRtVCkguaD9HzM5bIw19EyKsNb6
+         Wjk/Nwp6jxRXcuJqHhlG1+J7VIYOT0T2NakadZMZZouWEHr8mAWqvaZImmS1Q5AX3clN
+         7ihMiMzBj0yhDyUDiPR5C4L5F76YyisPJ2wyeQUSWd0BInuExKlcQt/JmSZngCCc/zc5
+         z5VRdMWj9RSbUF9cSIfheDh3ScoHRRsUFzt9PeLrs9DdviO9uH3+Z7KaelILR+zChZ/l
+         UT7KpLuVc+W0xC84DpGGIjjndHHvYgGBuHTVWBcByQnXkr0Fi7iaga1ClfP3p+ZLxRx8
+         VJqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWFXL4h4isKk8kpyGLTI3JQnIyJ/3tAxEXiTLgRrYQRKPetY1G/1/IqZDjijaLW5CuljizBBl6sw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt+7E/xuLYpvBHUQzBeVXT8ZIJoZhTEKZ6FE5o6f/W/hRk3nBD
+	3UuziHZVXEemR9JYMbEoyPG6Xh0166bHfCB9ZB8TM1X/1gVx1jec5HaNUkFLZqrGcgo=
+X-Gm-Gg: ASbGncureOHPGf7NgWGAMvRbrZqaDv2aBrcmdJwRRpS1wQZwsfMyZo8S9kIv0Daz8N6
+	H2T8bcJtoEhN0H+/YEsoTqHDY4nrROxVkffe9TyYYkF6ileFQnctMeTpAgEEbkS7nH6xT8Cs/3O
+	zQv/uwpz6HNm/mznv2V5mySdK76pk8Fbw1b+PXblDLaG/NoAx4QpSVnny/97IZlCZ+83dpw1guA
+	2crONjj0xHj3Bgi6A0AwMMn1wzTGJzH3MCdi+bKhoJNnjAYEkLMZ784jJUXeRzxZkUpYk2d3Z5O
+	NGXjP5A8F5Be4zcLDsenRkvco+nkDpZGdiT6Fnnpd5tiwFChC/TxRP32R23nrc/Cp7GiVbLbx0X
+	WGwxsouFnmSRam+WAYiM9sg+XMEOLCA==
+X-Google-Smtp-Source: AGHT+IHgNVCwtMI0/9guEHCsfNnNR1Dy8aWTaz1hyNxfBEFoTst4l6lSZRKX9+Wq18nZ+vqcEy2n/Q==
+X-Received: by 2002:a05:690c:9a05:b0:722:8ee9:ad57 with SMTP id 00721157ae682-727f30ae187mr7545227b3.14.1757116862435;
+        Fri, 05 Sep 2025 17:01:02 -0700 (PDT)
+Received: from [172.17.0.109] ([50.168.186.2])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a85ae106sm32907267b3.70.2025.09.05.17.01.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 17:01:01 -0700 (PDT)
+Message-ID: <a65abd25-69bd-4f10-a8b8-90c348d89242@kernel.dk>
+Date: Fri, 5 Sep 2025 18:01:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5090355d-546a-4d06-99e1-064354d156b5@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] io_uring fix for 6.17-rc5
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ io-uring <io-uring@vger.kernel.org>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
+ <f0f31943-cfed-463d-8e03-9855ba027830@kernel.dk>
+ <CAHk-=wgkgSoqMh3CQgj=tvKdEwJhFvr1gtDbK7Givr1bNRZ==w@mail.gmail.com>
+ <72fb5776-0c50-42b8-943d-940960714811@kernel.dk>
+ <CAHk-=wgdOGyaZ3p=r8Zn8Su0DnSqhEAMXzME91ZD9=8DDurnUg@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wgdOGyaZ3p=r8Zn8Su0DnSqhEAMXzME91ZD9=8DDurnUg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 08:41:23AM +0200, David Hildenbrand wrote:
-> On 01.09.25 17:03, David Hildenbrand wrote:
-> > We can just cleanup the code by calculating the #refs earlier,
-> > so we can just inline what remains of record_subpages().
-> > 
-> > Calculate the number of references/pages ahead of times, and record them
-> > only once all our tests passed.
-> > 
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > ---
-> >   mm/gup.c | 25 ++++++++-----------------
-> >   1 file changed, 8 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index c10cd969c1a3b..f0f4d1a68e094 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -484,19 +484,6 @@ static inline void mm_set_has_pinned_flag(struct mm_struct *mm)
-> >   #ifdef CONFIG_MMU
-> >   #ifdef CONFIG_HAVE_GUP_FAST
-> > -static int record_subpages(struct page *page, unsigned long sz,
-> > -			   unsigned long addr, unsigned long end,
-> > -			   struct page **pages)
-> > -{
-> > -	int nr;
-> > -
-> > -	page += (addr & (sz - 1)) >> PAGE_SHIFT;
-> > -	for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
-> > -		pages[nr] = page++;
-> > -
-> > -	return nr;
-> > -}
-> > -
-> >   /**
-> >    * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
-> >    * @page:  pointer to page to be grabbed
-> > @@ -2967,8 +2954,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> >   	if (pmd_special(orig))
-> >   		return 0;
-> > -	page = pmd_page(orig);
-> > -	refs = record_subpages(page, PMD_SIZE, addr, end, pages + *nr);
-> > +	refs = (end - addr) >> PAGE_SHIFT;
-> > +	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> >   	folio = try_grab_folio_fast(page, refs, flags);
-> >   	if (!folio)
-> > @@ -2989,6 +2976,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> >   	}
-> >   	*nr += refs;
-> > +	for (; refs; refs--)
-> > +		*(pages++) = page++;
-> >   	folio_set_referenced(folio);
-> >   	return 1;
-> >   }
-> > @@ -3007,8 +2996,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
-> >   	if (pud_special(orig))
-> >   		return 0;
-> > -	page = pud_page(orig);
-> > -	refs = record_subpages(page, PUD_SIZE, addr, end, pages + *nr);
-> > +	refs = (end - addr) >> PAGE_SHIFT;
-> > +	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-> >   	folio = try_grab_folio_fast(page, refs, flags);
-> >   	if (!folio)
-> > @@ -3030,6 +3019,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
-> >   	}
-> >   	*nr += refs;
-> > +	for (; refs; refs--)
-> > +		*(pages++) = page++;
-> >   	folio_set_referenced(folio);
-> >   	return 1;
-> >   }
+On 9/5/25 2:54 PM, Linus Torvalds wrote:
+> On Fri, 5 Sept 2025 at 12:30, Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Like I said, I think there more fruitful ways to get the point across
+>> and this picked up and well known, because I don't believe it is right
+>> now.
 > 
-> Okay, this code is nasty. We should rework this code to just return the nr and receive a the proper
-> pages pointer, getting rid of the "*nr" parameter.
+> So I've actually been complaining about the link tags for years: [1]
+> [2] [3] [4].
 > 
-> For the time being, the following should do the trick:
+> In fact, that [4] from 2022 is about how people are then trying to
+> distinguish the *useful* links (to bug reports) from the useless ones,
+> by giving them a different name ("Buglink:"). Where I was telling
+> people to instead fix this problem by just not adding the useless
+> links in the first place!
 > 
-> commit bfd07c995814354f6b66c5b6a72e96a7aa9fb73b (HEAD -> nth_page)
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Fri Sep 5 08:38:43 2025 +0200
-> 
->     fixup: mm/gup: remove record_subpages()
->     pages is not adjusted by the caller, but idnexed by existing *nr.
->     Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 010fe56f6e132..22420f2069ee1 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->                 return 0;
->         }
-> +       pages += *nr;
->         *nr += refs;
->         for (; refs; refs--)
->                 *(pages++) = page++;
-> @@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
->                 return 0;
->         }
-> +       pages += *nr;
->         *nr += refs;
->         for (; refs; refs--)
->                 *(pages++) = page++;
+> Anyway, I'm a bit frustrated, exactly because this _has_ been going on
+> for years. It's not a new peeve.
 
-Can this get folded in soon?  This bug is causing crashes in AF_ALG too.
+What's that saying on doing the same thing over and over again and
+expecting different results...? :-)
 
-Thanks,
+> And I don't think we have a good central place for that kind of "don't do this".
+> 
+> Yes, there's the maintainer summit, but that's a pretty limited set of people.
 
-- Eric
+That'd be a great place to discuss it, however. One thing I've always
+wanted to bring up but have forgotten to, is how I'd _love_ for your PR
+merges to contain the link to the PR that you got for them. Yes I know
+that's now adding a link, but that's a useful one. Maybe not for you,
+but for me and I bet tons of other people. At least if there's
+discussion on it. But hey I'd be happy if it was just always there, but
+it seems we disagree on that part.
+
+What is clear, however, is that the rules on this aren't clear at all.
+
+> I guess I could mention it in my release notes, but I don't know who
+> actually reads those either..
+
+I actually think a LOT of people read those. I do every week, and it
+always goes on LWN too, for example.
+
+But it does not have to be in the release notes. Just a separate email
+with LWN/Jon CC'ed, and boom you have your story and people will see it.
+And it doesn't need yelling. Alternatively, we discuss at the
+maintainers summit, and come up with a set of rules that can get
+documented. And then hopefully end up on LWN too. Honestly I had to
+search in Documentation/ to see if we even have any kind of maintainer
+documentation. Looks like we do, but who looks in there...
+
+> So I end up just complaining when I see it.
+> 
+> And yeah, I will take some of the blame for people doing the useless
+> Link. Because going even further back, people were arguing for random
+> "bug ID" numbers. Go search lkml, and you'll find discussions about
+> having UUID's in the commits, and I said that no, we're not doing
+> that, and that a "Link:" tag to something valid is a good alternative,
+> and I even mentioned a link to the submission. So that could be seen
+> as some kind of encouragement - but it was more of a "no, we're *NOT*
+> doing random meaningless UUIDs".
+
+Maybe the problem is indeed in the name, it's very generic to call it a
+Link. If you see "Closes: " you know exactly what it is, it's for some
+bug tracker and you can click it and expect to see more info. Maybe
+"Bug: " would be useful, or "Report: " or whatever - naming is hard. But
+Link literally tells my brain, it's a link to the patch. Maybe there's
+discussion there, maybe there's not. Because like or not, I do think the
+generic nature of the name Link is part of the issue here.
+
+-- 
+Jens Axboe
 

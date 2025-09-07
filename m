@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-9633-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9634-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C95B4812A
-	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 01:02:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B139EB48129
+	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 01:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426197A81FC
-	for <lists+io-uring@lfdr.de>; Sun,  7 Sep 2025 23:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E80C175E2B
+	for <lists+io-uring@lfdr.de>; Sun,  7 Sep 2025 23:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246BB22333B;
-	Sun,  7 Sep 2025 23:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A8B190477;
+	Sun,  7 Sep 2025 23:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eH2rfzYG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvNNp6vc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454E01E1E1C
-	for <io-uring@vger.kernel.org>; Sun,  7 Sep 2025 23:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C020315D25
+	for <io-uring@vger.kernel.org>; Sun,  7 Sep 2025 23:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757286129; cv=none; b=KCnX52trayRRxRF0XudCHHgDRjUS96ZQJd66yaIAZzd0RDXQrc52I4zxg3wpajl9CBsfeQiszHzrpDViGA7Cjt42c9wtiwLThyQmmZA2XadF9N5nxIf1Or+mGCjnpJjtCHzqqnYkyhcbHDejjoszlvBpqmt7r6ZasIzApp91lQ0=
+	t=1757286131; cv=none; b=pXc3oy14USFOoTxad0SgAtxbL9TSiCIQgU/jjengGhwqS/w9cwDCSb3udJ3Wo+4T2+T/RAz2OI1VhcwiSqXHoGZUASRp1qJhQN6IyUfFW9PIeQ+jaKpYS4Hn8OZwUG+KM82jhN+WjV4ovAr+mCtYPbuHIIkUeTc/6grkE8CvkVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757286129; c=relaxed/simple;
-	bh=Z03TuR0ivOmNQ8EdUS4OzJG6XiG9c9x8EqogqDoVJHY=;
+	s=arc-20240116; t=1757286131; c=relaxed/simple;
+	bh=QwmjO9GA9ZmRLLeGLmY/HoT2EFtfHFOHt5ixJM9BqWI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UqW7u17ev6qDeg/OkW+yo1JmuDadSg1+JKVU2U8YL6wrJGbBMAyVJpUtlaKg8CiDEGe53SV5m78yN9hdFHjn4M5BPjJrz3+sKVwwNRb6QOg9qqUNHn9hb7/DkDO5DNHiANEc77pkBm0PNuqoIClRyAS2vH+A71+YUREYYeV1Z30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eH2rfzYG; arc=none smtp.client-ip=209.85.208.52
+	 MIME-Version; b=gXRpwVQbAQmc0krzfkGc/qHnvfB+t4T0BKedf1G6V/lapNBXaj7AnsH0FHC1/Qb5KA8VDflHIpiU3YPOS7Zbf9s6Pv9D0I6SXiUrwWxr3nv9pLYFl4Y+KjE72FBMWSqe7ricdjjhKwsUrUkqs1mGyzI4kr3Rj3t7SrKZPlyrPVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvNNp6vc; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso1226695a12.1
-        for <io-uring@vger.kernel.org>; Sun, 07 Sep 2025 16:02:06 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6237202020bso2223022a12.3
+        for <io-uring@vger.kernel.org>; Sun, 07 Sep 2025 16:02:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757286125; x=1757890925; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757286127; x=1757890927; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4eBkiuBlM+05YOlcPOqIbeDVOSqi0ykfxg44IZkV9r8=;
-        b=eH2rfzYGrfBhK95/DxheasqASrV4V4CkxUZGlQlapA4oq/G00+rtKJ0m5s9HxXfyJu
-         cxDrKrjsQ/wv5eKYtPYXxk7un3SGHKE7ht+HgFhcjFS6FOfsF0ZMJZEZ2elVtsbDzv8G
-         tUYZN5Cb3DD9YSlbejSsf5NwYPXKlZSvRCxZ/4u7NBsKUoZ6LmZQAb/UyyP0LZkzyf2W
-         +PNhW4z12rePczjG7NhuyUUphj7LvppyugxT0lxyHSHRpI9qhrlNRJ6ygHrylRdDtlL1
-         JtW0yGBwVEFueKS4UevPTzyJl0SWyYbmJklp1fKqxQa6BI68pnPa44pjMEodr6IbHqDv
-         6PZA==
+        bh=off6k0vyMUXLgGIElNc84I3uVJv8q2jz1JmlDI9xgv8=;
+        b=QvNNp6vcVjDoZ54Jz1MkSCXruaGZSQA2bT6VNxChP3kBSksVvJhFAGEjaEdOKvCEh+
+         FU7dMWEHrAtuKwpdSjPC6XW1izvcy4mIKtoJdK5GVNKaWDxvH0pntmX213m2bWM0NsY7
+         myh8iGymqPGVmrqU90BhV7hR6kDnMU5lWu0XRt9iQttd5ELWJlL2D1t3s23dkuglw4r4
+         Qrjk2NF0tMN0vYDbPvsT2FsvcGFsJWgkYyH2sunL+QvPn3DyCSDra9euCZug8Qcm28I8
+         CoTegbFsiHxA5PCB8sx/MnS1gVZ8YbI+wZWtpkO3iimHQIKa4uNR1KHfskhM34w1DTwf
+         6jSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757286125; x=1757890925;
+        d=1e100.net; s=20230601; t=1757286127; x=1757890927;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4eBkiuBlM+05YOlcPOqIbeDVOSqi0ykfxg44IZkV9r8=;
-        b=sLnrdB6z9U3hGj4+vBvNatJtTrnqGWQaj0RQLDAi2Y4q87h8X+tIHK2tgU1QMQpFf7
-         XYKrRz+lKCL832z9OL8sJfdMeTCKkRGLycLX+VsL58csJLI001UefJh9o5zfcncGA+uK
-         AwSIugZwaeXPnwJwEUjiG3WywFXVxMk5hB+zZchLqIsrf+JQKrnb6bGiPzuFnnCkDw5p
-         h88bqU7lpNlw2pWAkUkJVxbswk5iGSkXWf5G7m8r4Guf2bG0eXPRsQTIaQCS9Q0YUPVn
-         WIi1n8KWQXpEnHBYqbVs6ZXRRRgCejDbox26mQKF0K5e9NrwVjJuUmJkzfbAmO4DIQxB
-         K2Ig==
-X-Gm-Message-State: AOJu0Yy6+PuTSK9zF71+gOucDmWuV95YQGzoGAvqXdn5y9OIlz+QDMWC
-	TUT105tSmjFfo7vy/GuY3yBpWFlqu0Brx00MB1AZDR/YKv5EDWtNPLRP159TlA==
-X-Gm-Gg: ASbGncu+9gQA+BUgQbqZyRIscbLkvdByXVjNFohKr8vhZx7SPqyTQwD0gVfYhlzEkLA
-	C/fGbPVzBJLJAbir6yMLgE5mGHP5/W7wsW/8qj6AeOjxKEWulG+HJk4J3SJQv9yLIJg/rIAKUEk
-	+8W8DBHh4eSj4sO0ZAVtz/F5G6E8HEJZa/0EHAgcJqV09+uGXabmJaavQHlGW42Izz2RCPoj2Jd
-	eY30jMSa+eqFKE7bnNfrFdwALC59D33jUqF/xJ4+RgXKNGZuwQGC8y8BM71jEfdpJmjJPfcdQj0
-	Nmjg55bcTAESqMfrXz4hdBTYozmVBbRUAehrF0EGBAHaIS/npa/KSR6LC1UJA3TG2L1YRKM4arD
-	V/nq7cQ4lDilAWhG8QqTmCKXqHyXLkfiw32JSrAHviOkSP9E=
-X-Google-Smtp-Source: AGHT+IF9uhYEyNDc46N0hg1nA/ZSUQNXXxqU+mPiQT0I0KhLqZrbQTbcFPjxM3+x18tks2337aFyJw==
-X-Received: by 2002:a05:6402:1ec4:b0:61c:c086:8092 with SMTP id 4fb4d7f45d1cf-6237ebc9380mr6124358a12.23.1757286125110;
-        Sun, 07 Sep 2025 16:02:05 -0700 (PDT)
+        bh=off6k0vyMUXLgGIElNc84I3uVJv8q2jz1JmlDI9xgv8=;
+        b=K/ngdYC9qM4W8BPqN/FV9fPzDv4eRlcocaEH/UI3Fw0ZK8hakIVSvUUqJk6PpKJlo6
+         aS6MGd6t2U5j5N0mlJoD9ihWONePZDq4dQtUUWvgVQBXL+RLph97bPzbccHkoxMVJeSc
+         Khv45rCLECr0rk303mVreNu+sx2Nr9MnvEXG4ZXyH9Dy6QioYVqBgvwibou2lD0AH76U
+         hVb02MDgrAD4KfWVMeIK0G63MksqGgx1dioXmjtR/Iprr1Msg2l6SnxYv3V9nG3ONlYd
+         NxDES0DKXYEkt6PVsr0OoqjJWwzjBse3lDLaJypmsiy6rNYnH/9AU5bBsFWFpw04Gf+N
+         UlgQ==
+X-Gm-Message-State: AOJu0YwzBrt7J3hKoiRYna9R9jWyCBXxZCyPvH9dDDlXBy33e1mirb+C
+	+NqvxXsSbBjjsoPsxbqgwxq5F2YVpYnRvhL/a2HSOrFmLpjtQrJSYCWpgSJm9w==
+X-Gm-Gg: ASbGncvIxyfcKoEj/nycDGM126xvNsuCuPK96jZgYXRnnYVSxBPlFH6H9wgS/xhm9C9
+	faU+v42D8XMqz49sIfmQVOylVYJhfeS8EZhaW3An+13vFcQysG1oszut7EIKhFwW03wJUfo8mil
+	33zWYkEBl8hmV1Eno50IHnDclruSNOPAQiAN2/Jm0qi7Hv+zbufHTvfRr11XcqT4zCrNe1nogHt
+	WvzgDwxeR4NtB5UxXDIiJwk4dnHw3aIhS+14NTJHvA+LiRr4MVa9OTF7CF0SCzcHXuM/judZEHh
+	uXnIKcDto/c+8bcj3MU3PO1rjzWl7kox6/3QehP6r2KgK97Jkh2yaMkwoFzQ9HatIg1SvdvezyU
+	tWfnzU4KqA1ngLJ28yaXVzhLmEuXYIbXXzUvD
+X-Google-Smtp-Source: AGHT+IGTPZ/3HjROIOOixqBY0EcuCD2kAYTkFQHaoXLuWNexzoDjaX45jtGP/xO6R/84qZvjupA//A==
+X-Received: by 2002:a05:6402:2787:b0:629:8c4d:6a91 with SMTP id 4fb4d7f45d1cf-6298c4d6ce1mr91701a12.3.1757286126875;
+        Sun, 07 Sep 2025 16:02:06 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.147.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm3363570a12.1.2025.09.07.16.02.04
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm3363570a12.1.2025.09.07.16.02.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 16:02:04 -0700 (PDT)
+        Sun, 07 Sep 2025 16:02:05 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v3 2/3] io_uring: add macros for avaliable flags
-Date: Mon,  8 Sep 2025 00:02:59 +0100
-Message-ID: <7296219887ecd4d6ef961345c6bf55c24d9c63fc.1757286089.git.asml.silence@gmail.com>
+Subject: [PATCH v3 3/3] io_uring: introduce io_uring querying
+Date: Mon,  8 Sep 2025 00:03:00 +0100
+Message-ID: <fdfcfef946121c2bb16482866eb2379cc4b7e63e.1757286089.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1757286089.git.asml.silence@gmail.com>
 References: <cover.1757286089.git.asml.silence@gmail.com>
@@ -89,148 +89,284 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add constants for supported setup / request / feature flags as well as
-the feature mask. They'll be used in the next patch.
+There are many parameters users might want to query about io_uring like
+available request types or the ring sizes. This patch introduces an
+interface for such slow path queries.
 
+It was written with several requirements in mind:
+- Can be used with or without an io_uring instance. Asking for supported
+  setup flags before creating an instance as well as qeurying info about
+  an already created ring are valid use cases.
+- Should be moderately fast. For example, users might use it to
+  periodically retrieve ring attributes at runtime. As a consequence,
+  it should be able to query multiple attributes in a single syscall.
+- Backward and forward compatible.
+- Should be reasobably easy to use.
+- Reduce the kernel code size for introducing new query types.
+
+It's implemented as a new registration opcode IORING_REGISTER_QUERY.
+The user passes one or more query strutctures linked together, each
+represented by struct io_uring_query_hdr. The header stores common
+control fields needed for processing and points to query type specific
+information.
+
+The header contains
+- The query type
+- The result field, which on return contains the error code for the query
+- Pointer to the query type specific information
+- The size of the query structure. The kernel will only populate up to
+  the size, which helps with backward compatibility. The kernel can also
+  reduce the size, so if the current kernel is older than the inteface
+  the user tries to use, it'll get only the supported bits.
+- next_entry field is used to chain multiple queries.
+
+Apart from common registeration syscall failures, it can only immediately
+return an error code in case when the headers are incorrect or any
+other addresses and invalid. That usually mean that the userspace
+doesn't use the API right and should be corrected. All query type
+specific errors are returned in the header's result field.
+
+As an example, the patch adds a single query type for now, i.e.
+IO_URING_QUERY_OPCODES, which tells what register / request / etc.
+opcodes are supported, but there are particular plans to extend it.
+
+Note: there is a request probing interface via IORING_REGISTER_PROBE,
+but it's a mess. It requires the user to create a ring first, it only
+works for requests, and requires dynamic allocations.
+
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 32 +++----------------------
- io_uring/io_uring.h | 57 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+), 29 deletions(-)
+ include/uapi/linux/io_uring.h       |  3 +
+ include/uapi/linux/io_uring/query.h | 41 +++++++++++++
+ io_uring/Makefile                   |  2 +-
+ io_uring/query.c                    | 93 +++++++++++++++++++++++++++++
+ io_uring/query.h                    |  9 +++
+ io_uring/register.c                 |  6 ++
+ 6 files changed, 153 insertions(+), 1 deletion(-)
+ create mode 100644 include/uapi/linux/io_uring/query.h
+ create mode 100644 io_uring/query.c
+ create mode 100644 io_uring/query.h
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 20dfa5ef75dc..252a0021cd43 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -108,9 +108,6 @@
- #define SQE_COMMON_FLAGS (IOSQE_FIXED_FILE | IOSQE_IO_LINK | \
- 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 04ebff33d0e6..1ce17c535944 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -686,6 +686,9 @@ enum io_uring_register_op {
  
--#define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
--			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
--
- #define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
+ 	IORING_REGISTER_MEM_REGION		= 34,
  
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
-@@ -3462,12 +3459,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	struct file *file;
- 	long ret;
++	/* query various aspects of io_uring, see linux/io_uring/query.h */
++	IORING_REGISTER_QUERY			= 35,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
  
--	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
--			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
--			       IORING_ENTER_REGISTERED_RING |
--			       IORING_ENTER_ABS_TIMER |
--			       IORING_ENTER_EXT_ARG_REG |
--			       IORING_ENTER_NO_IOWAIT)))
-+	if (unlikely(flags & ~IORING_ENTER_FLAGS))
- 		return -EINVAL;
+diff --git a/include/uapi/linux/io_uring/query.h b/include/uapi/linux/io_uring/query.h
+new file mode 100644
+index 000000000000..5d754322a27c
+--- /dev/null
++++ b/include/uapi/linux/io_uring/query.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT */
++/*
++ * Header file for the io_uring query interface.
++ */
++#ifndef LINUX_IO_URING_QUERY_H
++#define LINUX_IO_URING_QUERY_H
++
++#include <linux/types.h>
++
++struct io_uring_query_hdr {
++	__u64 next_entry;
++	__u64 query_data;
++	__u32 query_op;
++	__u32 size;
++	__s32 result;
++	__u32 __resv[3];
++};
++
++enum {
++	IO_URING_QUERY_OPCODES			= 0,
++
++	__IO_URING_QUERY_MAX,
++};
++
++/* Doesn't require a ring */
++struct io_uring_query_opcode {
++	/* The number of supported IORING_OP_* opcodes */
++	__u32	nr_request_opcodes;
++	/* The number of supported IORING_[UN]REGISTER_* opcodes */
++	__u32	nr_register_opcodes;
++	/* Bitmask of all supported IORING_FEAT_* flags */
++	__u64	feature_flags;
++	/* Bitmask of all supported IORING_SETUP_* flags */
++	__u64	ring_setup_flags;
++	/* Bitmask of all supported IORING_ENTER_** flags */
++	__u64	enter_flags;
++	/* Bitmask of all supported IOSQE_* flags */
++	__u64	sqe_flags;
++};
++
++#endif
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index b3f1bd492804..bc4e4a3fa0a5 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -13,7 +13,7 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o opdef.o kbuf.o rsrc.o notif.o \
+ 					sync.o msg_ring.o advise.o openclose.o \
+ 					statx.o timeout.o cancel.o \
+ 					waitid.o register.o truncate.o \
+-					memmap.o alloc_cache.o
++					memmap.o alloc_cache.o query.o
+ obj-$(CONFIG_IO_URING_ZCRX)	+= zcrx.o
+ obj-$(CONFIG_IO_WQ)		+= io-wq.o
+ obj-$(CONFIG_FUTEX)		+= futex.o
+diff --git a/io_uring/query.c b/io_uring/query.c
+new file mode 100644
+index 000000000000..9eed0f371956
+--- /dev/null
++++ b/io_uring/query.c
+@@ -0,0 +1,93 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "linux/io_uring/query.h"
++
++#include "query.h"
++#include "io_uring.h"
++
++#define IO_MAX_QUERY_SIZE		(sizeof(struct io_uring_query_opcode))
++
++static ssize_t io_query_ops(void *data)
++{
++	struct io_uring_query_opcode *e = data;
++
++	BUILD_BUG_ON(sizeof(*e) > IO_MAX_QUERY_SIZE);
++
++	e->nr_request_opcodes = IORING_OP_LAST;
++	e->nr_register_opcodes = IORING_REGISTER_LAST;
++	e->feature_flags = IORING_FEAT_FLAGS;
++	e->ring_setup_flags = IORING_SETUP_FLAGS;
++	e->enter_flags = IORING_ENTER_FLAGS;
++	e->sqe_flags = SQE_VALID_FLAGS;
++	return sizeof(*e);
++}
++
++static int io_handle_query_entry(struct io_ring_ctx *ctx,
++				 void *data, void __user *uhdr,
++				 u64 *next_entry)
++{
++	struct io_uring_query_hdr hdr;
++	size_t usize, res_size = 0;
++	ssize_t ret = -EINVAL;
++	void __user *udata;
++
++	if (copy_from_user(&hdr, uhdr, sizeof(hdr)))
++		return -EFAULT;
++	usize = hdr.size;
++	hdr.size = min(hdr.size, IO_MAX_QUERY_SIZE);
++	udata = u64_to_user_ptr(hdr.query_data);
++
++	if (hdr.query_op >= __IO_URING_QUERY_MAX) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++	if (!mem_is_zero(hdr.__resv, sizeof(hdr.__resv)) || hdr.result || !hdr.size)
++		goto out;
++	if (copy_from_user(data, udata, hdr.size))
++		return -EFAULT;
++
++	switch (hdr.query_op) {
++	case IO_URING_QUERY_OPCODES:
++		ret = io_query_ops(data);
++		break;
++	}
++
++	if (ret >= 0) {
++		if (WARN_ON_ONCE(ret > IO_MAX_QUERY_SIZE))
++			return -EFAULT;
++		res_size = ret;
++		ret = 0;
++	}
++out:
++	hdr.result = ret;
++	hdr.size = min_t(size_t, usize, res_size);
++
++	if (copy_struct_to_user(udata, usize, data, hdr.size, NULL))
++		return -EFAULT;
++	if (copy_to_user(uhdr, &hdr, sizeof(hdr)))
++		return -EFAULT;
++	*next_entry = hdr.next_entry;
++	return 0;
++}
++
++int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
++{
++	char entry_buffer[IO_MAX_QUERY_SIZE];
++	void __user *uhdr = arg;
++	int ret;
++
++	memset(entry_buffer, 0, sizeof(entry_buffer));
++
++	if (nr_args)
++		return -EINVAL;
++
++	while (uhdr) {
++		u64 next_hdr;
++
++		ret = io_handle_query_entry(ctx, entry_buffer, uhdr, &next_hdr);
++		if (ret)
++			return ret;
++		uhdr = u64_to_user_ptr(next_hdr);
++	}
++	return 0;
++}
+diff --git a/io_uring/query.h b/io_uring/query.h
+new file mode 100644
+index 000000000000..171d47ccaaba
+--- /dev/null
++++ b/io_uring/query.h
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef IORING_QUERY_H
++#define IORING_QUERY_H
++
++#include <linux/io_uring_types.h>
++
++int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args);
++
++#endif
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 50ce87928be0..9c31a8afb83d 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -31,6 +31,7 @@
+ #include "msg_ring.h"
+ #include "memmap.h"
+ #include "zcrx.h"
++#include "query.h"
  
- 	/*
-@@ -3875,15 +3867,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
--	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
--			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
--			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
--			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED |
--			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
--			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
--			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
--			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_MIN_TIMEOUT |
--			IORING_FEAT_RW_ATTR | IORING_FEAT_NO_IOWAIT;
-+	p->features = IORING_FEAT_FLAGS;
- 
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
-@@ -3948,18 +3932,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			return -EINVAL;
+ #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
+ 				 IORING_REGISTER_LAST + IORING_OP_LAST)
+@@ -832,6 +833,9 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_register_mem_region(ctx, arg);
+ 		break;
++	case IORING_REGISTER_QUERY:
++		ret = io_query(ctx, arg, nr_args);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+@@ -901,6 +905,8 @@ static int io_uring_register_blind(unsigned int opcode, void __user *arg,
+ 	switch (opcode) {
+ 	case IORING_REGISTER_SEND_MSG_RING:
+ 		return io_uring_register_send_msg_ring(arg, nr_args);
++	case IORING_REGISTER_QUERY:
++		return io_query(NULL, arg, nr_args);
  	}
- 
--	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
--			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
--			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED | IORING_SETUP_SUBMIT_ALL |
--			IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
--			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
--			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
--			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
--			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HYBRID_IOPOLL |
--			IORING_SETUP_CQE_MIXED))
-+	if (p.flags & ~IORING_SETUP_FLAGS)
- 		return -EINVAL;
--
- 	return io_uring_create(entries, &p, params);
+ 	return -EINVAL;
  }
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index fa8a66b34d4e..a1d8d69411ff 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -18,6 +18,63 @@
- #include <trace/events/io_uring.h>
- #endif
- 
-+#define IORING_FEAT_FLAGS (IORING_FEAT_SINGLE_MMAP |\
-+			IORING_FEAT_NODROP |\
-+			IORING_FEAT_SUBMIT_STABLE |\
-+			IORING_FEAT_RW_CUR_POS |\
-+			IORING_FEAT_CUR_PERSONALITY |\
-+			IORING_FEAT_FAST_POLL |\
-+			IORING_FEAT_POLL_32BITS |\
-+			IORING_FEAT_SQPOLL_NONFIXED |\
-+			IORING_FEAT_EXT_ARG |\
-+			IORING_FEAT_NATIVE_WORKERS |\
-+			IORING_FEAT_RSRC_TAGS |\
-+			IORING_FEAT_CQE_SKIP |\
-+			IORING_FEAT_LINKED_FILE |\
-+			IORING_FEAT_REG_REG_RING |\
-+			IORING_FEAT_RECVSEND_BUNDLE |\
-+			IORING_FEAT_MIN_TIMEOUT |\
-+			IORING_FEAT_RW_ATTR |\
-+			IORING_FEAT_NO_IOWAIT)
-+
-+#define IORING_SETUP_FLAGS (IORING_SETUP_IOPOLL |\
-+			IORING_SETUP_SQPOLL |\
-+			IORING_SETUP_SQ_AFF |\
-+			IORING_SETUP_CQSIZE |\
-+			IORING_SETUP_CLAMP |\
-+			IORING_SETUP_ATTACH_WQ |\
-+			IORING_SETUP_R_DISABLED |\
-+			IORING_SETUP_SUBMIT_ALL |\
-+			IORING_SETUP_COOP_TASKRUN |\
-+			IORING_SETUP_TASKRUN_FLAG |\
-+			IORING_SETUP_SQE128 |\
-+			IORING_SETUP_CQE32 |\
-+			IORING_SETUP_SINGLE_ISSUER |\
-+			IORING_SETUP_DEFER_TASKRUN |\
-+			IORING_SETUP_NO_MMAP |\
-+			IORING_SETUP_REGISTERED_FD_ONLY |\
-+			IORING_SETUP_NO_SQARRAY |\
-+			IORING_SETUP_HYBRID_IOPOLL |\
-+			IORING_SETUP_CQE_MIXED)
-+
-+#define IORING_ENTER_FLAGS (IORING_ENTER_GETEVENTS |\
-+			IORING_ENTER_SQ_WAKEUP |\
-+			IORING_ENTER_SQ_WAIT |\
-+			IORING_ENTER_EXT_ARG |\
-+			IORING_ENTER_REGISTERED_RING |\
-+			IORING_ENTER_ABS_TIMER |\
-+			IORING_ENTER_EXT_ARG_REG |\
-+			IORING_ENTER_NO_IOWAIT)
-+
-+
-+#define SQE_VALID_FLAGS (IOSQE_FIXED_FILE |\
-+			IOSQE_IO_DRAIN |\
-+			IOSQE_IO_LINK |\
-+			IOSQE_IO_HARDLINK |\
-+			IOSQE_ASYNC |\
-+			IOSQE_BUFFER_SELECT |\
-+			IOSQE_CQE_SKIP_SUCCESS)
-+
- enum {
- 	IOU_COMPLETE		= 0,
- 
 -- 
 2.49.0
 

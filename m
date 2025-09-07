@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-9632-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9633-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C69B48128
-	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 01:02:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C95B4812A
+	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 01:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ECC44E14B3
-	for <lists+io-uring@lfdr.de>; Sun,  7 Sep 2025 23:02:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426197A81FC
+	for <lists+io-uring@lfdr.de>; Sun,  7 Sep 2025 23:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1661FBCA1;
-	Sun,  7 Sep 2025 23:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246BB22333B;
+	Sun,  7 Sep 2025 23:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwRcTtrF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eH2rfzYG"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC66315D25
-	for <io-uring@vger.kernel.org>; Sun,  7 Sep 2025 23:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454E01E1E1C
+	for <io-uring@vger.kernel.org>; Sun,  7 Sep 2025 23:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757286128; cv=none; b=AXVl4kGAgYuhW+ZWUD6zL9fUdpj+hqOtNm2Fm4uOR/025n9CjF4tPmXtraPA9+CGWQ/cjfYi9MTN7FGETif9Kt+gBzrd3OVmf67leq4L8vNRzpCE7+3guiYL1j8OkUJdvoEok6BDlptNaBrlR9d5l39X+bsTi0idBESFidLK7mw=
+	t=1757286129; cv=none; b=KCnX52trayRRxRF0XudCHHgDRjUS96ZQJd66yaIAZzd0RDXQrc52I4zxg3wpajl9CBsfeQiszHzrpDViGA7Cjt42c9wtiwLThyQmmZA2XadF9N5nxIf1Or+mGCjnpJjtCHzqqnYkyhcbHDejjoszlvBpqmt7r6ZasIzApp91lQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757286128; c=relaxed/simple;
-	bh=oBWRbEAowXvUcS3ZO4gLa0ESgJEpuW0yyru9knky6IE=;
+	s=arc-20240116; t=1757286129; c=relaxed/simple;
+	bh=Z03TuR0ivOmNQ8EdUS4OzJG6XiG9c9x8EqogqDoVJHY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HoI91GCqiZczsePPZSdYDB1VqUc6re4blG/1y8FAOcrcLarB5Hn/EIyEN22oO3DtA3YigJi7Aex1p+ww6EbEtv9eWqvPpW597ZAIRa2ilO+4LgHQ5Xuk87ulGKbbrhOFIo0RYs6H8P86O56qTpleGjjGSSkCZB1jfmGOE3KLsTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwRcTtrF; arc=none smtp.client-ip=209.85.208.52
+	 MIME-Version; b=UqW7u17ev6qDeg/OkW+yo1JmuDadSg1+JKVU2U8YL6wrJGbBMAyVJpUtlaKg8CiDEGe53SV5m78yN9hdFHjn4M5BPjJrz3+sKVwwNRb6QOg9qqUNHn9hb7/DkDO5DNHiANEc77pkBm0PNuqoIClRyAS2vH+A71+YUREYYeV1Z30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eH2rfzYG; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6228de28242so2942922a12.0
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso1226695a12.1
         for <io-uring@vger.kernel.org>; Sun, 07 Sep 2025 16:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757286124; x=1757890924; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757286125; x=1757890925; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SdlwnZgizto//lG+7lIBagL734XHJQ/s1YE0UmQNVZg=;
-        b=MwRcTtrF6OlSUakkswBpCckJ6rrJsavHufBhE/A957rgCj2Kmwcb7vXm+f2oeuLbP3
-         444wd+PAwTgl/IyhqYp5S1A8H1dZcTleGEAI0i/T0QL9XmCBRTYk7J7aO1IwKsebGzHv
-         Me96NSFAk3zdzz2rOuUetJXb3WwbhrI7ZzHvhqDqFpkwC5CkrNmntWMUibt2zxWXzfss
-         8RJw9xl1Db9R4twiVslM2ZNaIewv+X69iGD9XYYuKLstlw9zHJDojM9ROTy0jiHVUGvN
-         43bk9WNCaLYtFSi4oiPE7n9qWTBBvm0ol+i0mUV+kQgO6jBeDH2frw60QGKZowhVEr+k
-         WFng==
+        bh=4eBkiuBlM+05YOlcPOqIbeDVOSqi0ykfxg44IZkV9r8=;
+        b=eH2rfzYGrfBhK95/DxheasqASrV4V4CkxUZGlQlapA4oq/G00+rtKJ0m5s9HxXfyJu
+         cxDrKrjsQ/wv5eKYtPYXxk7un3SGHKE7ht+HgFhcjFS6FOfsF0ZMJZEZ2elVtsbDzv8G
+         tUYZN5Cb3DD9YSlbejSsf5NwYPXKlZSvRCxZ/4u7NBsKUoZ6LmZQAb/UyyP0LZkzyf2W
+         +PNhW4z12rePczjG7NhuyUUphj7LvppyugxT0lxyHSHRpI9qhrlNRJ6ygHrylRdDtlL1
+         JtW0yGBwVEFueKS4UevPTzyJl0SWyYbmJklp1fKqxQa6BI68pnPa44pjMEodr6IbHqDv
+         6PZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757286124; x=1757890924;
+        d=1e100.net; s=20230601; t=1757286125; x=1757890925;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SdlwnZgizto//lG+7lIBagL734XHJQ/s1YE0UmQNVZg=;
-        b=s1l79x/BOzBE+kqFhU2HEjyIMAKbOscjGMB+e0C6MRBB+5aEmRuRkPZPNCpZEXaZb9
-         NRscyrbDPWKcobv8f3Y/Gl0Mkib20q2iGi0nOt0EUohIBrbLcjDi4r/K2OJ/QH5zxyHi
-         X36YJvX9Xmd17k4fnSdlArI8c45aVKXnjWHoosHGwzu7FXzqhiMgXwV0Hqh86/ni7eBU
-         udvJmQrKpPa9ioj7CcysSqiNDr2d4P8SSugtt0nWKbvruH2N7p488RH91mra/mEnLPE6
-         gGO97rYhRGANzQ1uJu6xeApQsgLtp9fqke5ufXwGiYc9Sxb3WP+G3wzUHX9fhZUtuyGg
-         encw==
-X-Gm-Message-State: AOJu0YwHTyVPqEyR5d1ZQjJSf8iAebiQ1PEmSyBeJd6DhpoWM2bJdvWU
-	GPIN1eDU2ZUrZ+l6QVPbAXWvRimcEbQZfZ/CTlrTLXVSeZn1j3XzAloGKZ+JLg==
-X-Gm-Gg: ASbGncvaak9rHc74eb8KOIb8Hwf8qzeSzqzMBdjtiwGTu/YU68cMTfugVj3fphYz+JQ
-	O2C0y4PTVvHJJ4IC2tQKbAGqqlsJfZyjeVVyFawUwuEGxW2IkgrEkaKoBahs9SDwk3uuygv2AAI
-	xDX0Nr9w2M9csAxEaJKyO7H/m91AolUSr5X1BZlp4gKCQ+oO39PjikrSyMMJn/tme0ZlfVRideW
-	p9U8Fk3CaHMK7v1oPrRqzR51TSW5uQNYFXywrpXzASLIg6ARKxA3fgV9Um62GLmZITfTiy0/AcA
-	tsbiqoW6chyy4FPdb4JmRJXsSHEwrnUkfvZAP0X5WXU3QcILXl6oS99xDjaHnXUdle7U4GspAJB
-	LkZT7fY3jVKgKPFH2L2u5wohmfpAJMvYZBb9N
-X-Google-Smtp-Source: AGHT+IFfAST3ewlsx82llFbaSdTvytJMxsWvcTpV7jrqeiFP/dsBbZRfwDk5ALwNxpD098moofvEdA==
-X-Received: by 2002:a05:6402:238c:b0:61c:e287:7ad3 with SMTP id 4fb4d7f45d1cf-620f3e58fd0mr7021397a12.6.1757286123996;
-        Sun, 07 Sep 2025 16:02:03 -0700 (PDT)
+        bh=4eBkiuBlM+05YOlcPOqIbeDVOSqi0ykfxg44IZkV9r8=;
+        b=sLnrdB6z9U3hGj4+vBvNatJtTrnqGWQaj0RQLDAi2Y4q87h8X+tIHK2tgU1QMQpFf7
+         XYKrRz+lKCL832z9OL8sJfdMeTCKkRGLycLX+VsL58csJLI001UefJh9o5zfcncGA+uK
+         AwSIugZwaeXPnwJwEUjiG3WywFXVxMk5hB+zZchLqIsrf+JQKrnb6bGiPzuFnnCkDw5p
+         h88bqU7lpNlw2pWAkUkJVxbswk5iGSkXWf5G7m8r4Guf2bG0eXPRsQTIaQCS9Q0YUPVn
+         WIi1n8KWQXpEnHBYqbVs6ZXRRRgCejDbox26mQKF0K5e9NrwVjJuUmJkzfbAmO4DIQxB
+         K2Ig==
+X-Gm-Message-State: AOJu0Yy6+PuTSK9zF71+gOucDmWuV95YQGzoGAvqXdn5y9OIlz+QDMWC
+	TUT105tSmjFfo7vy/GuY3yBpWFlqu0Brx00MB1AZDR/YKv5EDWtNPLRP159TlA==
+X-Gm-Gg: ASbGncu+9gQA+BUgQbqZyRIscbLkvdByXVjNFohKr8vhZx7SPqyTQwD0gVfYhlzEkLA
+	C/fGbPVzBJLJAbir6yMLgE5mGHP5/W7wsW/8qj6AeOjxKEWulG+HJk4J3SJQv9yLIJg/rIAKUEk
+	+8W8DBHh4eSj4sO0ZAVtz/F5G6E8HEJZa/0EHAgcJqV09+uGXabmJaavQHlGW42Izz2RCPoj2Jd
+	eY30jMSa+eqFKE7bnNfrFdwALC59D33jUqF/xJ4+RgXKNGZuwQGC8y8BM71jEfdpJmjJPfcdQj0
+	Nmjg55bcTAESqMfrXz4hdBTYozmVBbRUAehrF0EGBAHaIS/npa/KSR6LC1UJA3TG2L1YRKM4arD
+	V/nq7cQ4lDilAWhG8QqTmCKXqHyXLkfiw32JSrAHviOkSP9E=
+X-Google-Smtp-Source: AGHT+IF9uhYEyNDc46N0hg1nA/ZSUQNXXxqU+mPiQT0I0KhLqZrbQTbcFPjxM3+x18tks2337aFyJw==
+X-Received: by 2002:a05:6402:1ec4:b0:61c:c086:8092 with SMTP id 4fb4d7f45d1cf-6237ebc9380mr6124358a12.23.1757286125110;
+        Sun, 07 Sep 2025 16:02:05 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.147.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm3363570a12.1.2025.09.07.16.02.00
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-625ef80347asm3363570a12.1.2025.09.07.16.02.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 16:02:02 -0700 (PDT)
+        Sun, 07 Sep 2025 16:02:04 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v3 1/3] io_uring: add helper for *REGISTER_SEND_MSG_RING
-Date: Mon,  8 Sep 2025 00:02:58 +0100
-Message-ID: <6a0ae8fcbaebdc3add648f27660efc5f58454761.1757286089.git.asml.silence@gmail.com>
+Subject: [PATCH v3 2/3] io_uring: add macros for avaliable flags
+Date: Mon,  8 Sep 2025 00:02:59 +0100
+Message-ID: <7296219887ecd4d6ef961345c6bf55c24d9c63fc.1757286089.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1757286089.git.asml.silence@gmail.com>
 References: <cover.1757286089.git.asml.silence@gmail.com>
@@ -89,65 +89,147 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move handling of IORING_REGISTER_SEND_MSG_RING into a separate function
-in preparation to growing io_uring_register_blind().
+Add constants for supported setup / request / feature flags as well as
+the feature mask. They'll be used in the next patch.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/register.c | 33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ io_uring/io_uring.c | 32 +++----------------------
+ io_uring/io_uring.h | 57 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 29 deletions(-)
 
-diff --git a/io_uring/register.c b/io_uring/register.c
-index aa5f56ad8358..50ce87928be0 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -874,6 +874,23 @@ struct file *io_uring_register_get_file(unsigned int fd, bool registered)
- 	return ERR_PTR(-EOPNOTSUPP);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 20dfa5ef75dc..252a0021cd43 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -108,9 +108,6 @@
+ #define SQE_COMMON_FLAGS (IOSQE_FIXED_FILE | IOSQE_IO_LINK | \
+ 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+ 
+-#define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
+-			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
+-
+ #define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
+ 
+ #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
+@@ -3462,12 +3459,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 	struct file *file;
+ 	long ret;
+ 
+-	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+-			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
+-			       IORING_ENTER_REGISTERED_RING |
+-			       IORING_ENTER_ABS_TIMER |
+-			       IORING_ENTER_EXT_ARG_REG |
+-			       IORING_ENTER_NO_IOWAIT)))
++	if (unlikely(flags & ~IORING_ENTER_FLAGS))
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -3875,15 +3867,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (ret)
+ 		goto err;
+ 
+-	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
+-			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+-			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
+-			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED |
+-			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
+-			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
+-			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
+-			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_MIN_TIMEOUT |
+-			IORING_FEAT_RW_ATTR | IORING_FEAT_NO_IOWAIT;
++	p->features = IORING_FEAT_FLAGS;
+ 
+ 	if (copy_to_user(params, p, sizeof(*p))) {
+ 		ret = -EFAULT;
+@@ -3948,18 +3932,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			return -EINVAL;
+ 	}
+ 
+-	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+-			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+-			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
+-			IORING_SETUP_R_DISABLED | IORING_SETUP_SUBMIT_ALL |
+-			IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
+-			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+-			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+-			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+-			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HYBRID_IOPOLL |
+-			IORING_SETUP_CQE_MIXED))
++	if (p.flags & ~IORING_SETUP_FLAGS)
+ 		return -EINVAL;
+-
+ 	return io_uring_create(entries, &p, params);
  }
  
-+static int io_uring_register_send_msg_ring(void __user *arg, unsigned int nr_args)
-+{
-+	struct io_uring_sqe sqe;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index fa8a66b34d4e..a1d8d69411ff 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -18,6 +18,63 @@
+ #include <trace/events/io_uring.h>
+ #endif
+ 
++#define IORING_FEAT_FLAGS (IORING_FEAT_SINGLE_MMAP |\
++			IORING_FEAT_NODROP |\
++			IORING_FEAT_SUBMIT_STABLE |\
++			IORING_FEAT_RW_CUR_POS |\
++			IORING_FEAT_CUR_PERSONALITY |\
++			IORING_FEAT_FAST_POLL |\
++			IORING_FEAT_POLL_32BITS |\
++			IORING_FEAT_SQPOLL_NONFIXED |\
++			IORING_FEAT_EXT_ARG |\
++			IORING_FEAT_NATIVE_WORKERS |\
++			IORING_FEAT_RSRC_TAGS |\
++			IORING_FEAT_CQE_SKIP |\
++			IORING_FEAT_LINKED_FILE |\
++			IORING_FEAT_REG_REG_RING |\
++			IORING_FEAT_RECVSEND_BUNDLE |\
++			IORING_FEAT_MIN_TIMEOUT |\
++			IORING_FEAT_RW_ATTR |\
++			IORING_FEAT_NO_IOWAIT)
 +
-+	if (!arg || nr_args != 1)
-+		return -EINVAL;
-+	if (copy_from_user(&sqe, arg, sizeof(sqe)))
-+		return -EFAULT;
-+	/* no flags supported */
-+	if (sqe.flags)
-+		return -EINVAL;
-+	if (sqe.opcode != IORING_OP_MSG_RING)
-+		return -EINVAL;
++#define IORING_SETUP_FLAGS (IORING_SETUP_IOPOLL |\
++			IORING_SETUP_SQPOLL |\
++			IORING_SETUP_SQ_AFF |\
++			IORING_SETUP_CQSIZE |\
++			IORING_SETUP_CLAMP |\
++			IORING_SETUP_ATTACH_WQ |\
++			IORING_SETUP_R_DISABLED |\
++			IORING_SETUP_SUBMIT_ALL |\
++			IORING_SETUP_COOP_TASKRUN |\
++			IORING_SETUP_TASKRUN_FLAG |\
++			IORING_SETUP_SQE128 |\
++			IORING_SETUP_CQE32 |\
++			IORING_SETUP_SINGLE_ISSUER |\
++			IORING_SETUP_DEFER_TASKRUN |\
++			IORING_SETUP_NO_MMAP |\
++			IORING_SETUP_REGISTERED_FD_ONLY |\
++			IORING_SETUP_NO_SQARRAY |\
++			IORING_SETUP_HYBRID_IOPOLL |\
++			IORING_SETUP_CQE_MIXED)
 +
-+	return io_uring_sync_msg_ring(&sqe);
-+}
++#define IORING_ENTER_FLAGS (IORING_ENTER_GETEVENTS |\
++			IORING_ENTER_SQ_WAKEUP |\
++			IORING_ENTER_SQ_WAIT |\
++			IORING_ENTER_EXT_ARG |\
++			IORING_ENTER_REGISTERED_RING |\
++			IORING_ENTER_ABS_TIMER |\
++			IORING_ENTER_EXT_ARG_REG |\
++			IORING_ENTER_NO_IOWAIT)
 +
- /*
-  * "blind" registration opcodes are ones where there's no ring given, and
-  * hence the source fd must be -1.
-@@ -882,21 +899,9 @@ static int io_uring_register_blind(unsigned int opcode, void __user *arg,
- 				   unsigned int nr_args)
- {
- 	switch (opcode) {
--	case IORING_REGISTER_SEND_MSG_RING: {
--		struct io_uring_sqe sqe;
--
--		if (!arg || nr_args != 1)
--			return -EINVAL;
--		if (copy_from_user(&sqe, arg, sizeof(sqe)))
--			return -EFAULT;
--		/* no flags supported */
--		if (sqe.flags)
--			return -EINVAL;
--		if (sqe.opcode == IORING_OP_MSG_RING)
--			return io_uring_sync_msg_ring(&sqe);
--		}
-+	case IORING_REGISTER_SEND_MSG_RING:
-+		return io_uring_register_send_msg_ring(arg, nr_args);
- 	}
--
- 	return -EINVAL;
- }
++
++#define SQE_VALID_FLAGS (IOSQE_FIXED_FILE |\
++			IOSQE_IO_DRAIN |\
++			IOSQE_IO_LINK |\
++			IOSQE_IO_HARDLINK |\
++			IOSQE_ASYNC |\
++			IOSQE_BUFFER_SELECT |\
++			IOSQE_CQE_SKIP_SUCCESS)
++
+ enum {
+ 	IOU_COMPLETE		= 0,
  
 -- 
 2.49.0

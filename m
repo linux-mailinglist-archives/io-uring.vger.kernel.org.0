@@ -1,211 +1,242 @@
-Return-Path: <io-uring+bounces-9656-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9657-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28571B49A48
-	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 21:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82AAB49AC0
+	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 22:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9037B3209
-	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 19:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A0D188EEF6
+	for <lists+io-uring@lfdr.de>; Mon,  8 Sep 2025 20:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5466F2D3728;
-	Mon,  8 Sep 2025 19:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303902D8365;
+	Mon,  8 Sep 2025 20:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Iyhhjxru"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHhHmtFZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3082D3231
-	for <io-uring@vger.kernel.org>; Mon,  8 Sep 2025 19:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757360775; cv=none; b=bTzug5uKIkr7ZNOrczU1BWcofFFvoZx70tmpe+R0ZhRimhq5mpKQIOZ00Xvvpr02jaOVhzpwFmCHj00arxlyEOw4Wafeo94j5crQE+oDo/x9MY2uLwiIlQ24ekBjmco+jpNM9QOWjfRAGGZ45gaUqdD3yBqRAQVStWL/ETnb7Uw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757360775; c=relaxed/simple;
-	bh=N69wDxrbi+fA5VqgbL8Sr7yDr1PhsL3cbCP913A1f0o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6yzDV/xvCU2XsmvnfpMEYtUE0jILjZamxb/QP9E4zPx7loiIqqoUXIf9efXpk5uHGyD6RN7wgL+YJOITJ+CUooCyq0KIpH6RTJZTA6ghrcww2m9wExKo0lhztUYcxCjA9um30/MU2gxTPB/kwReChiVibqK2Wto6+71P5imQJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Iyhhjxru; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24498e93b8fso9515125ad.3
-        for <io-uring@vger.kernel.org>; Mon, 08 Sep 2025 12:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757360772; x=1757965572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
-        b=IyhhjxruxKzJWbDDF1uPQYyOYpyBbRogMc7Xmaq/yzTx/IYvzwP10Fztit3G92ei6O
-         dMSBh6IUFlNR6giw8b46vpPvHP2V4DCr1UabeIECOSlYTxGoc4gFp0aFfwNjKDWY60EM
-         v+idKqwvOGVoSldGmyXUC2TTLl6/Soh4G/9bE4gJkfl6J3doYVmHjWxdVR0XuiDnk9N+
-         PXynUHPlkMhOmMSdsosunN35cDI63PtlrrFnJaFHSPgOQlMqL3vKyU/XZNd0bJYsFGrJ
-         LqpK72SZN60+wByjeYDn3tO7hhpD+kNBpD1uEX6WdqcY8ZfRUxXQqdgEGRpPWfGu6mFc
-         LOuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757360772; x=1757965572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I9driASAEmFmP3jFlHoCR+IRYlP6CAxxYklIzPlsusQ=;
-        b=CEtlEsREoK4evsSs48OGfZIe3DLtLXjtoAHzws08VW3Z4tjEWB5jRH3m+4g+pvlZyM
-         o0JvEWok16jphs1IBwxvUW4fvY8f5kShpqTjVvQ8HoQLXec7jEPrnOsteiD8UB6LNDtD
-         II9MuVeU9GiIlGmofNPkEi4AHRW4SC3cz6bghHNcQMSGS58ioTusuVLWwe3o/O/X68gY
-         i/BG77wsACznW/cqdOTQaxOQxk/4igRwggCl9R5AJ9/dXDpip0ATa6aSjATRYUb51tKp
-         orUJpog3HYay+/VlOpXTMKTmJHQnMmZiadoEpUQBRuK9mCCj3goyzF5mOQwPLob6Cf22
-         bDQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXO7ma/7sdMkAKdjsTIuhtP9Nbd0nfaaz5WYeMrW3/txNbysTZl/e40bhW9yW+VehPGjg7TpDf0wQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/qKZZQ6URSJIKpM0nGfVaKyx5c4WNzOHYT0VGCHcPtuxoDX1k
-	5s+X0mp2CKOujmIM/cfl8qF3wl9Q5pHONUIk+klBU2H1XH9vtl/9yKcUf2de++83CCXLqixbY+e
-	Sg2t1J4h/fMs9iP3LoDV4zqfYmksoV/D9v4c4J3mEZQ==
-X-Gm-Gg: ASbGncs90pAAs1rO3elBKF6x+/dzQl+VnQR5YxBSCaO0Ok/Bi5MNXLAq9xxA30AHe+P
-	hYepXzWOLViyKWovxLLycyLvTgtLdgI8O5fIa1fRX5Xv0lzHCIdPa+TIZNHXSXOaQs3zwcfGPsK
-	QgQtmZaHeX1ucyLZ63JFxMyD4iPAhRE6mXTFqk0PmTGKP2TPZVTIi57hy6wacUH7G38C50VeE5m
-	2OUU113
-X-Google-Smtp-Source: AGHT+IGThrKgpaZ2Jb+IxUr+u2cOUabVPTBAwo+RY7tux4h/Zk1WncO4NjXraMuphAlOZPqbrt4I+GCL5BfG+ELw2mM=
-X-Received: by 2002:a17:902:f54d:b0:24c:e213:ca4a with SMTP id
- d9443c01a7336-2516ed66d7amr73266655ad.2.1757360771804; Mon, 08 Sep 2025
- 12:46:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB62D7DE9;
+	Mon,  8 Sep 2025 20:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757362270; cv=fail; b=Tre57/DEVHTu2N7GkWlY46BZ3crH5HmesBuW/JE11KNHk6SdXPJwPv5jlEix+p/4ckXzQX9eSiO7PNzUUlJYjWj3/NoeOdxsCqweQOi+aS5nSph+rvuMSNsuIM3UU+ix6OskFISPzNApd8VA1huLx6NhT0B4fiZYuIjcXtU9GR4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757362270; c=relaxed/simple;
+	bh=iaq2i3MoYsErlJKfvaEUXZiR2BfdfrndM6PnOrtbcjE=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=egoLkAzUs5tIa7/IIAUvRAS6DAnn4sZXYu1KKKCdWE7GjrLneYunLm1aWgPhRc18Ewke+5Jk0dCmJwvAeOepAdqHZ6IBxFUwGkC362NLTQxwm2mr9C+1/ASCYoi8jhdp5f9QyYhtMK14ZW8+npiIPluFdxQBrXDG6u+Pz1hdErs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHhHmtFZ; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757362269; x=1788898269;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=iaq2i3MoYsErlJKfvaEUXZiR2BfdfrndM6PnOrtbcjE=;
+  b=NHhHmtFZUGrSSyDWr1RktUWUS/LOYxBvZ5ZGgaEdjSuI1MeyAE/39zNm
+   wXokgRu8poyefmbBJQDbeJViqD8qsVTXIweXVaRiSgsSE5WTXE3XcX9eD
+   WH9E2onmODuUCtmCSh6U7VNR0H1Qt2u+F7OLuX5iKSdGaLzDZlCn9rRK8
+   reP/CkKyhE0iGmTTtqmznsEGG62T6ma3rpqOo+yNQqQxrztmCldW+c22e
+   7VTAuRgCD4Hcqrzl0b0ZdgmasdvpYf12CsnApblLr4bgAtv3zXX+YPAys
+   z8Ab5+qXSdmWfEy4oVguhZ0hWHag6KyJ2+mlLlC9T3+ux1e5/5rGfiz4+
+   Q==;
+X-CSE-ConnectionGUID: XVwvyhGtSkGRsLpNQZr8oQ==
+X-CSE-MsgGUID: EjXarNhDTOyDWM7znTKA7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59583893"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59583893"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:11:08 -0700
+X-CSE-ConnectionGUID: 8Cn1lABGTYSmGFxykDf4gg==
+X-CSE-MsgGUID: RAumEZlKSyaICprsmyopZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
+   d="scan'208";a="172146817"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 13:11:08 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 13:11:07 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 8 Sep 2025 13:11:07 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.40)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 13:11:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NV4JsTTK5L6Nd5qhEcjM1Ncxaw0JoYM9P4jA8laK18MOw0uDMNe76Vf840RBU20I3H1m1haHz/UosqWt0v6YzCT37BqtWhVE27y1GFa4CuoWnm4SW/XDS5H1NzT9NF8UhJST5p5Ix9kWz0M8wVI9EUPGc8tp24CAzUe5KPPIjt1C7RvMHuz8kWso5sZT4I0e8WC+uw2kA/BHYoAlP2MOkM71icb+DuvTteS0lSGGHMDwrROPPqkml6OPjtTYTpILL0j7YXZKAocjCv5Yxqyw8ZBVH47k8yvm5G3uJh4nfrKPcDNTOG95xxIdte6mV3q5/KfkdWrA+U5HCD/OIAW81g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=guZE03T+pem0HKh0keWyPqsThox95SRtoRWE5I+nmPs=;
+ b=av6rzgmdg5hYqL9OOnxRiZ5pBEtlCmqxtUjwKPeLspvONRtzbYigYT2MIfQmkoKoYFyMyzY/pDMBafeHKwR96hyO1jEd84Ji1RyHGxne8NsRQhSG2USYsL83Rzvlcjd8Y43IOGOyRzrGnnvMM+YQGKrrf60ZslmOY0C613kTTDsLazulaZzjdk0ge/pfZRmP6UJvBWzvAceH6uPqy4kRirSN/HYq73Tojg/RJBo8cImopsDdQqkkH7fg2zGnDXGAIHyeROD/0lxDdX8LQ/ZuQVL6okji8HHcBKl1bGXZAfFf0YYuAVJwKUFHgYRLklTRJAicc2gdA68YmUHXtpayJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com (2603:10b6:806:2f1::13)
+ by DS0PR11MB7359.namprd11.prod.outlook.com (2603:10b6:8:134::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
+ 2025 20:11:04 +0000
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec]) by SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec%4]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 20:11:04 +0000
+From: <dan.j.williams@intel.com>
+Date: Mon, 8 Sep 2025 13:11:00 -0700
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+CC: Jens Axboe <axboe@kernel.dk>, Caleb Sander Mateos
+	<csander@purestorage.com>, io-uring <io-uring@vger.kernel.org>,
+	<workflows@vger.kernel.org>
+Message-ID: <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
+In-Reply-To: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
+ <20250905-lovely-prehistoric-goldfish-04e1c3@lemur>
+ <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
+ <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
+ 6.17-rc5)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0262.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::27) To SA3PR11MB8118.namprd11.prod.outlook.com
+ (2603:10b6:806:2f1::13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
-In-Reply-To: <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 8 Sep 2025 12:45:58 -0700
-X-Gm-Features: Ac12FXwNfDS_Qqj870v2sNtiyiKyRUxgf6ydh_1JzHPqlof9837yRmLCR8lKXvE
-Message-ID: <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR11MB8118:EE_|DS0PR11MB7359:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cbe5f91-20c5-4b61-df2d-08ddef13d678
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bXY2QUh3WVBrZDVYUWpZNFE5L3V2QndTTnpzeUZKZmN4S0ZLYnJ0WHJDUTNR?=
+ =?utf-8?B?SjlDU0l2dmJ3VmNoWFlpdjFLQnBjbGFoRzU4R0c4TWNmRUdFZjQrTkF0Zm4w?=
+ =?utf-8?B?VEdYY1FoaG80RS9yNmk2Nlk1V013MnU1NldEWXNuR3d6enlDOFFobDFrYkdl?=
+ =?utf-8?B?N3E3dkFIVVZDdzYyRzVKajVwL3V4SUhabHRRTldxVmR1T2xrVXB5ZWdkclF5?=
+ =?utf-8?B?REFlZEVOQ0lhaEFwSEFjYS9mQVlKUXMwYlNZQWowenBzQjdFMlphT0FtQXBV?=
+ =?utf-8?B?RjNpYWNVZ0Vta0VoWnE5V0lnY0xhT1BhZUE0MTlkdTc1RXZCTDRlMDM0YU9j?=
+ =?utf-8?B?OTFmWjkvck9BVk0wZ1Vzd04wdU5zSjg0elZmUFp3SFlqUjRjR0dVTXNhcUR3?=
+ =?utf-8?B?UWltMnpaeHBuLzdOanExVCtaT2pwd1pHTjI5aTBCOHlhdFh4MGZnd3RJLzZ0?=
+ =?utf-8?B?YjgzcjFHaEM4ZXQwd1Jpb2lZbjk2OTI1YjZaUnBLL0hiVjl5Q01EeFEvYUpE?=
+ =?utf-8?B?dEtTWWVPb2VVWTlYOUVFWHN4K2dhNGZheVhjRWN2UXVPaHdycDFpdk0yU2Zx?=
+ =?utf-8?B?aXViYWJkcW0yQXNHMyszT2xDM3dEWnZMbVhONHh0c1VXdHZ1ZHpwUm04R0la?=
+ =?utf-8?B?NnZGL1A2TkZ2M2VJMU9RK0R6VEl3V1V3eUxoNWl0eEJvak85d1JkQnVqamRJ?=
+ =?utf-8?B?SjZCeGUrNHlXN1Y3Vm5RcUwxbG9Gc2V0OHJnZThKd3ZKNHJqWS9uQkpaWU5J?=
+ =?utf-8?B?cDBpbElBZjNYQlg4R2Z4ZG0zT1VHL1laNnpFUXJkei9ILzFJdHg3MzI4aWgz?=
+ =?utf-8?B?L05LU0RldDdNaEhld2wyaFArRHRUeTl1RHBxeDFUbHFXbDV1L2dqaEV0UWpJ?=
+ =?utf-8?B?cDRKVkQrUFplVEtEbXdFVXJtSy9KK3N4YXNodGVNQ1ZlMXUyUndodml1WGl6?=
+ =?utf-8?B?UWdmbktDbTVDYW4xcjVIS0x4bE94MkNqakVCeGhrRTZQTUtPNEJKVlMzbThy?=
+ =?utf-8?B?TG9JUnJHY2lyRjVkL1Z5K2FsNmFQZXl5K0g3WG5VWjZ0YkkyU242WENRMEgy?=
+ =?utf-8?B?V0NsdFRwUFpnVmFQZElBcDdDMUxmWUx5ZWtHT1VMb2JPRmsvcXlhYnJxSFNv?=
+ =?utf-8?B?N05pTXZpVkVoT2lNZisvSnZwTVBGbFZaQjhkOEJjeDdKTFpCRkE1dmd0S01J?=
+ =?utf-8?B?ZElFemRQb0hsdnZrOFVoWCtlTUdweE1kSkJJSDU5WWpYb3M0TUN0d050UnpK?=
+ =?utf-8?B?ZkplUjVzS1VZZ2VrdGk3U1pEWjZZNVcwUkR6a1BJTmQxcWZGUmsyN2J5S1NH?=
+ =?utf-8?B?dHh5am8yd3dNQ3Z6VHA1MXJJenJ5bWRVTTlGelRMWlo0bUZDTWpPZ0x3V1RS?=
+ =?utf-8?B?bEZsTlJ5aWdmTG9rQi9TeFpkbjdSWlFmWlpweEtpNVMvODVmMHY1d3FFRXlo?=
+ =?utf-8?B?RzYxQTNOVkl2WDZVeUNHS0lQRlBqbG94MGZvNENHWUtSK01UTytncmJqVWk1?=
+ =?utf-8?B?aHNXR1lUeHVrMTZWdmRDRVdINmF1aE5kcWFpMWJyNDZCRXFWZXJWWk4zYkRX?=
+ =?utf-8?B?SVJMY2RvelpobEdmWUd1MFhYTWp4TlV2clU2K3h2NXJzeDBoMkRSVGk2aWdB?=
+ =?utf-8?B?U3VpY21DTjhSVmtJaXBWVTkzU0RMekZidXZxQ28yeU03UjA4VXc3R3BVUVk3?=
+ =?utf-8?B?RU0yWEtUT3UrWFFWSkFhZHVMWnQxeFZtOFE5cEU4bkRndnRpOGJRNThITjht?=
+ =?utf-8?B?OC9BZ3dxZnk2bG5GNVVCMmJsM2h6U3V0cndGMnBJd1hnTDRDaVhNMjhZdVhn?=
+ =?utf-8?B?OFN6QU5EejRnbktsTTVjV3Npc1M4UnZXQkw4clVjd2pOeWh5ajN5RS9haTg5?=
+ =?utf-8?B?QWZoMk1hUTNONE1uUittYzZnOHNLaWRRTllqd1lRYk96dVdEVEVNOW96bU9E?=
+ =?utf-8?Q?CXw7bTR9Xds=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8118.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OTVsKy8rMDVXRGNpMElhVHZ2YnhVTlZ2OXoxZW1VbFR0K0R3NG9ET3cydjlO?=
+ =?utf-8?B?dWk5U0lmenRndXN6MlI5WnQyTlFuN01wU1lDQ1NlOWxBbnN2THRVRnYwR1Mx?=
+ =?utf-8?B?VTY3MnNRQ0RaTlEzd2pnS3o3UnpCRnErUHhHNVU2MHFhSEFnMnBCcVUzUUM0?=
+ =?utf-8?B?ejk1SENrUHRKRHlycUNweVFNWCtsdnBkbTBsRFJ1RGVtN0l2OXh4MGFMQzVn?=
+ =?utf-8?B?a0FpQ0kzMWhSWGV4MmlCcWlaeUh5MENZcWhUOENObFRHMzMvanVadjVCWXpL?=
+ =?utf-8?B?QXFQWnR3MHZBdE5NTk9pRUZFWHRBRXp1QXd3bisxd0hpeEpaOG9MWXl6ZEpz?=
+ =?utf-8?B?ME9JSktjWEtxTXlPQVgybGswc3J5UVM1MHJmcTVkZDUxT3hXOTN0MXpHYXZs?=
+ =?utf-8?B?bU9vMWwvTVRxV0pxdlZ0RnJ0Rlp5L0huQU5CdmZIMU1tYnFnNktwakdzOExM?=
+ =?utf-8?B?MzZDMldDa25YRGpveWZ4RWdpRXdXWFpPNFNZRVNEMFZ2TmxCTTZVYWh5ck9M?=
+ =?utf-8?B?UXh4S2ZlVndmTUxxYTU4OWFOTUE4WWpXY2NFSjZ5VjlmZzlPU0trV21qaGpL?=
+ =?utf-8?B?bko5Y0lyd3FmRWNRWkpZVUN2eGVOakVObWYvczFRaUE0SEJTcC9nbnlsaWhB?=
+ =?utf-8?B?ZmYyTkJwbCtYVmlYbXpMYzlTeW9KT1l4SERyZUl3Q0xoTzRocXdHTElqNVRu?=
+ =?utf-8?B?empmcTFiM2dJdkQ0bUNnbGpQT3crbU9LUHRTS0NUNW1Vazg4MEx1MlFYa1c5?=
+ =?utf-8?B?YjBYMFFmUDV6Z3dkOThlbUhIcXRMRTdOZXhGaEhFb00ybjVDTGw2SEIxWWpS?=
+ =?utf-8?B?OFJ4Q0tPM2RveXBzOE9VVzVQVDVCZVBWZDM3VW82YW01TGJRZW9weW03RmZ1?=
+ =?utf-8?B?K1lxNjRZWWwvTEdkYmY3LzVmSDJZMHI3R2gvUmthNjlmQU1BUjVKN0lGcmV2?=
+ =?utf-8?B?aDZkVER3aWZxeVA3TStOVUpWa0dCcjMvYTQyaFBKb0hRdlBtVFgycGJJeExu?=
+ =?utf-8?B?QmtJYTBVL1BZVFBueGdmRDViWk9rR3VjYndvVzhGcWlCUVcvNkl4ZmlnOVdJ?=
+ =?utf-8?B?VFh3dWR3WVQ1d0JWOGEzbHFnd0ZxZlJwRFA3MWpHUmk2eldyMkZkR054TXdo?=
+ =?utf-8?B?VkdSNWFoQUdXWmk5dk90T0RrNTRpTm1EMzl3NzRoa3pxdTNTNUI2ZVlyTmtp?=
+ =?utf-8?B?clQyQXJXU0ZVZ0lsUHc4Ry9nMWFpa3dRK2RLeFNYbTdwMmJicUkzT2ZBTzNw?=
+ =?utf-8?B?RXUzRlZIdVVHOURoa1MzT3dkTkJQQTkrV1Yvb0JBMXRtb2JxamQ3UnJxN3kv?=
+ =?utf-8?B?Qk5oME9nb1U5dGJkOU5UbVQ0SXN4Mk14Qmt6YWhCVFRHTkhxN0tTdW9CcDBy?=
+ =?utf-8?B?TmRaay9ybzBscU1jcGpQYTl1bW5MRzdvbTlLUVdQMWh3NmFOU09ERFNTS1c0?=
+ =?utf-8?B?TjJEcHFnVzhwSktMS1FCUkhaK0ZRa1VRaG15MmQyL0dwN1FKakFqTTgzVlF5?=
+ =?utf-8?B?YUJEQWJoK1o1MVZVRWJGblhRN01obTdxTENwTWNkQnlRSEtNTHRZZGduYkgw?=
+ =?utf-8?B?Y2xDZnlWcUwwcDhFRTVSZkVxNEJ1VFJ3dGNkK3lFRWFoUU1laUVET3lNNVE1?=
+ =?utf-8?B?b2x5cTVDcjc3YmxKSjBnTFNDL2xWb2ZaQUh1d0liWnByRERqakZwTmQ0M2Iw?=
+ =?utf-8?B?UDNCdjB0L1F4dm9uV0JPQVl3cFkyNmxYTDMvWjA2L3FYcXJqY1ZZVHBoRTdF?=
+ =?utf-8?B?NHhQZGpNV0hoN1NHOXViU3pNbktSSldXUmpvNVJqb3lFWEYzUG1CY0p1b1Vx?=
+ =?utf-8?B?VXM5Z0JXVTJGWTlUT09UZHBLOEowODVPenVGVTNhKzZHOGFhUXRCNXUyWlhl?=
+ =?utf-8?B?MUhlenpVZHltUHdTUTBhSkhvL09YQklEUXRFcmxzanZBdGlpRE5ETmxGWHJZ?=
+ =?utf-8?B?YmtROStLQS9KeUlPSWsvek1yeEVqR1ZYa0p5VGpjL0lLYzRlSUxrOUFkQTFo?=
+ =?utf-8?B?OUpxS2ZrS3lHSFl5Z2E2TlhnZENJZ0Fqbm5GcUIxcFBUeGtXQUFXQWxFaGRQ?=
+ =?utf-8?B?M2l6SmNOZVZ0QUk2bEt2eXIvTmxzRmtlc1ZHay90S0FPL3VvM3ZvcXRRamRG?=
+ =?utf-8?B?SlExcEE3eG1iZzNqeG9GdXJIQnFrMGU0N3BaRDI5T3NaRHNTUzE3NVRMVEFr?=
+ =?utf-8?B?T1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cbe5f91-20c5-4b61-df2d-08ddef13d678
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8118.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 20:11:04.0257
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZqtTu97M9jQBSSx8xXFmymbRNSqmbVM6bFhn/wKf1BUNvnJ/vohGPVYHYBQRfPvZOakHfEXY+PEURLjcfWzODry9LcixVZkePjyHyc2SD/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7359
+X-OriginatorOrg: intel.com
 
-On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
->
-> On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa=
-.ai> wrote:
+Konstantin Ryabitsev wrote:
+> (Changing the subject and aiming this at workflows.)
+> 
+> On Fri, Sep 05, 2025 at 11:06:01AM -0700, Linus Torvalds wrote:
+> > On Fri, 5 Sept 2025 at 10:45, Konstantin Ryabitsev
+> > <konstantin@linuxfoundation.org> wrote:
 > > >
-> > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@fu=
-riosa.ai> wrote:
-> > > > >
-> > > > > The pdu field in io_uring_cmd may contain stale data when a reque=
-st
-> > > > > object is recycled from the slab cache. Accessing uninitialized o=
-r
-> > > > > garbage memory can lead to undefined behavior in users of the pdu=
-.
-> > > > >
-> > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so th=
-at
-> > > > > each command starts from a well-defined state. This avoids exposi=
-ng
-> > > > > uninitialized memory and prevents potential misinterpretation of =
-data
-> > > > > from previous requests.
-> > > > >
-> > > > > No functional change is intended other than guaranteeing that pdu=
- is
-> > > > > always zero-initialized before use.
-> > > > >
-> > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > ---
-> > > > >  io_uring/uring_cmd.c | 1 +
-> > > > >  1 file changed, 1 insertion(+)
-> > > > >
-> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > --- a/io_uring/uring_cmd.c
-> > > > > +++ b/io_uring/uring_cmd.c
-> > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, c=
-onst struct io_uring_sqe *sqe)
-> > > > >         if (!ac)
-> > > > >                 return -ENOMEM;
-> > > > >         ioucmd->sqe =3D sqe;
-> > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > >
-> > > > Adding this overhead to every existing uring_cmd() implementation i=
-s
-> > > > unfortunate. Could we instead track the initialized/uninitialized
-> > > > state by using different types on the Rust side? The io_uring_cmd
-> > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees =
-the
-> > > > PDU has been initialized.
-> > >
-> > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> > > the pdu. In uring_cmd callback, we can fill zero when it's not reissu=
-ed.
-> > > But I don't know that we could call T::default() in miscdevice. If we
-> > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> > >
-> > > How about assign a byte in pdu for checking initialized? In uring_cmd=
-(),
-> > > We could set a byte flag that it's not initialized. And we could retu=
-rn
-> > > error that it's not initialized in read_pdu().
-> >
-> > Could we do the zero-initialization (or T::default()) in
-> > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > performance penalty for the existing C uring_cmd() implementations.
-> > I'm not quite sure what you mean by "assign a byte in pdu for checking
-> > initialized".
->
-> Sure, we could fill zero when it's the first time uring_cmd called with
-> checking the flag. I would remove this commit for next version. I also
-> suggests that we would provide the method that read_pdu() and write_pdu()=
-.
-> In read_pdu() I want to check write_pdu() is called before. So along the
-> 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-> initialized?
+> > > Do you just want this to become a no-op, or will it be better if it's used
+> > > only with the patch.msgid.link domain namespace to clearly indicate that it's
+> > > just a provenance link?
+> > 
+> > So I wish it at least had some way to discourage the normal mindless
+> > use - and in a perfect world that there was some more useful model for
+> > adding links automatically.
+> > 
+> > For example, I feel like for the cover letter of a multi-commit
+> > series, the link to the patch series submission is potentially more
+> > useful - and likely much less annoying - because it would go into the
+> > merge message, not individual commits.
+> 
+> We do support this usage using `b4 shazam -M` -- it's the functional
+> equivalent of applying a pull request and will use the cover letter contents
+> as the initial source of the merge commit message. I do encourage people to
+> use this more than just a linear `git am` for series, for a number of reasons:
 
-Not sure what you mean about "20 bytes for pdu".
-It seems like it would be preferable to enforce that write_pdu() has
-been called before read_pdu() using the Rust type system instead of a
-runtime check. I was thinking a signature like fn write_pdu(cmd:
-IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-reason that wouldn't work and a runtime check would be necessary?
-
->
-> But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> an=
-d
-> issue_flags. How about some additional field for pdu is initialized like =
-below?
->
-> struct IoUringCmdArgs {
->   ioucmd: Pin<&mut IoUringCmd>,
->   issue_flags: u32,
->   pdu_initialized: bool,
-> }
-
-One other thing I realized is that issue_flags should come from the
-*current* context rather than the context the uring_cmd() callback was
-called in. For example, if io_uring_cmd_done() is called from task
-work context, issue_flags should match the issue_flags passed to the
-io_uring_cmd_tw_t callback, not the issue_flags originally passed to
-the uring_cmd() callback. So it probably makes more sense to decouple
-issue_flags from the (owned) IoUringCmd. I think you could pass it by
-reference (&IssueFlags) or with a phantom reference lifetime
-(IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-ensure it can't be used after those callbacks have returned.
-
-Best,
-Caleb
+For me, as a subsystem downstream person the 'mindless' patch.msgid.link
+saves me time when I need to report a regression, or validate which
+version of a patch was pulled from a list when curating a long-running
+topic in a staging tree. I do make sure to put actual discussion
+references outside the patch.msgid.link namespace and hope that others
+continue to use this helpful breadcrumb.
 

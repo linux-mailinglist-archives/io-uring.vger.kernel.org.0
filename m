@@ -1,259 +1,195 @@
-Return-Path: <io-uring+bounces-9677-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9678-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5F7B502B6
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 18:33:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3550B502DE
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 18:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33E544E0375
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 16:32:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE941C63347
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B642DCF4D;
-	Tue,  9 Sep 2025 16:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE35450F2;
+	Tue,  9 Sep 2025 16:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="TKbJWLwd"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GyeFSW18"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4C3272E7B
-	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9D225C804
+	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 16:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435573; cv=none; b=Db5i3pbDkeW/bmQMflJPFfDWgso6M2LKIJUZrVxcYSYrvpaIEgPgSkbqQlOmaBmQnMv8eFfl8/+t6LGbnDMaumiqoRQo76FnP0VNFhTSw4f+ojUVeSX0PVbJ8Jxkg6bJVr+2jE0i8j4ZxXWjxtC/e5YVYIEOi/Ac8+G9nbxFYdM=
+	t=1757436077; cv=none; b=jh17S6PqjFOW/r4zhT7PA16+Wxk64sBctriE2dbEdiesigDP3EUJHgK0ieghqk2HB8/GemkP5N71oIo0mj3sd8IlRzus5/3V/aMn6Es8fXO5iSj3e9Nux8KW7VazhUXNveyW2eMkfFkh6H8vid+0TiyPfxWKRNs03a9n9pANjSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435573; c=relaxed/simple;
-	bh=Xr5CK1P1XT9HWsAVQ36j0qp4IoJaLvfcdx8ETfqbHlU=;
+	s=arc-20240116; t=1757436077; c=relaxed/simple;
+	bh=b+eq1el9WWdjlwuvsxWxsndcwC4nSqXfdm4tqDwKyJA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ItLxfdCmLSBCl3CtxI77hjoBTr1qLnZFZJcaKrTSIud62dGYhTPiVlG1ebXVbxgifq0ImCr6TrDZjHOwEP/mwYhP/UStQuQ6++jke9XQl1v8O0Tp0Sa20qpKZKw51+tQQdohpA8ZB2SSR7dHfL5EtODPARQflUJh/LMILZV9waw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=TKbJWLwd; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77240e78306so443280b3a.0
-        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 09:32:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=DZoeyskiIpgnUaTAFprwdQ3C7AFUYAnk8pyeDF9bzbYEBSVCDpk5y/LebvHYLfiTV76UPuWPnLlNTGQunD56fIt3wysqNe863YqAVXQI4lXhd/KHPokTobO8ISxovm9/o7Dac6lxGr8bbLs5UVMI8WZpqE1HIeqH+vtQTTrXwVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GyeFSW18; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6228de280a4so6698596a12.2
+        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 09:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757435571; x=1758040371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQ1B1pGE+pkvFzuUpWI8zKRsZeCqGkc9CUgwCxkxLiw=;
-        b=TKbJWLwdnlPJdeZ203S9yixdFsuGDCG3jj+I6DcsZRWsxSZ76ymjEC80PrCXSURifh
-         nZctyuPSoQs6Y3sf2xaBA/kmbxFJKwwNsa1dwJVn/xw7ifNdhogM+eB1iHvB+z+SpQH/
-         DbYiyEc2rkUlMCrbtcnTGbRNmwn7cfaxGlkuZCxkhHMy+MfzOw9xIuOrPIaX+YzmZedF
-         T9QeKSShAwg7nmNGGNcgFEM6rkl0lOZDwCMtlOOjsdCvf7Y5680sx/WTKRMM3fnvPy93
-         qmMcTjDkktL+ZdyPOjBO1k5kQYFIKM2BlgeEE1YC1BXJLJHHI1X3ctUKhl8mbPW0oUh4
-         nkXw==
+        d=linux-foundation.org; s=google; t=1757436073; x=1758040873; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zm70ml8cPcpAi6TuvLhkX9BGgRrXTC7qJApIV2KSD8o=;
+        b=GyeFSW185PiM80xWagtorpThGojm4h67uZcI4Joi5SOWy9Nelp/9frPzWo9n7IyNzd
+         L7sWaQMPGAuBmf64bb9YtLRdt3tyyFCu8YAKwTUpTMMPTHjhjJrV/Aaprn0rZKPpfUbk
+         dAZqerwRB+ZO6eznNRiUy/gJ8EOKU4+lA7KG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757435571; x=1758040371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RQ1B1pGE+pkvFzuUpWI8zKRsZeCqGkc9CUgwCxkxLiw=;
-        b=KeHmslxtS9/NLIYQAARu/Vt8RRoJeLCkktNqkupI82k0oI0IXEAFeI/EF4eKXc44KK
-         Dk3zl/Fuf8meXNP6FuYERI5S6xTYFnr0kNJMJV4YUG5QFeXk03G+0/fZ9MvHv77K2N6C
-         3J1ilDi9i+Nks3djDQbLW+YjfCMxa+cFFraDY3lTQiL7h1PE7wlB2c70F5nM7tzLDTls
-         hpUYHP/lE3K3LdbnIxu3WTQjV76w987w+TsTkjt+ZwdIpKn/Cg7TG8O9Zbolcc+aRTGB
-         ItD94oK27Lc0rpcUT1xxgWhjO8q3xM5+uJ0YxEHV9Zv0ArJinwdJ59ZJkWiScDdgg9ir
-         kfIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTa4v3oN6agW2DZkLZ4rbUyTzSslCIC3x3rTCqRPMSLBB1Uy6YSHfsDo7fdTUX+PIOUE5TW1/GJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOFbnR/VUKoYb2GKGXNDKBZOTX8YZKPBij1m3BwDAUZKlHSGgj
-	AgVhTsaPsJ65+HsoO8cynnP20kb87jUqBySBwQdTK5rEvYyW00Iygxw2xyv/XsrvfzXliKDAd30
-	vZFpdf4q8T0SS2aYtEq4D3JC2o24Iz/A2N+3hAwa2hQ==
-X-Gm-Gg: ASbGncs15t7rI7B/1zcwkux3SGg6Ga9jwxOwQOtMywFEiXi22F2aBrBzs+YNnNwNKnV
-	GMK92vcIp7t9Go40MImzVur2kI8YELiRzSCczApu1RvTRRbwMf9GD2KUeu1eQge1hHED4yrLWWp
-	bLTn97F/fCgZb+2LfNpEW9WLsHARRiHebbTail5khk+D0vlz5nf5f/rhUe8gbI0LXHTIilIiNk6
-	XaynWHeiG7jnl4fz48=
-X-Google-Smtp-Source: AGHT+IFOHORFtmcadaEdXDJCDsNUJ5Id6tlwIgyVdiSH9C3Gd4752s8eNPUfJ8V45hIoag4PqOtmYWXrNrLFAMvFs9k=
-X-Received: by 2002:a17:903:184:b0:253:a668:b638 with SMTP id
- d9443c01a7336-253a668b76fmr80815055ad.2.1757435570778; Tue, 09 Sep 2025
- 09:32:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757436073; x=1758040873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zm70ml8cPcpAi6TuvLhkX9BGgRrXTC7qJApIV2KSD8o=;
+        b=ozD3HoaaP0simpoGdx4i2ywqftGzGuSSBCw1fEny8V17CY47K592fjIStUzH9wpbhw
+         s59bNKfV7xTlAk54CAOZpi1KBpVSte8YtIAfivXVXHSNH3wfzcFdkSk4TyDhkyEqhcjV
+         wEgADzZbyhNmZN2Wu4HEKovc9YjrLX/oG5VssWXjRpD7nTo8pG5TvQqtgM4/eSHwtjqK
+         SHrj+gqdcFLNGuXVC0eAX9v/G8Lj1DLZhzsNL69yh3HlOHg/FXkFaw14gLMFtyGGd291
+         QQbBoVa25wHiHJZKmRowlmYDFCYB5sSGA3wmy/w9rWcuWUxQ9p0cawH3+7ZHQXPFEwh+
+         HOmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxO5QoNcOtR5lT1JBvXLOC+8A/ALdGPD058/zHkUHGIwiBmZkVgn6wUCmFYmKVj9WvH54KfxYvaA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYXbdCHmm/dDxkGwnHkUexh6SP6qKkSzQHmVcyM8BonT3FGnI9
+	REMbcxmEwSL8Xgk+omsFhm0ApntITHdjdMf1yT1TtWV1P0U5/yaCSo8hj2xbSTQUfzXe1pUOkXf
+	GaEVoRSI=
+X-Gm-Gg: ASbGncuifMuqxgZ7DECRjCkmy3/XGnPcrnOAtLjIKX5lmANqGOzBylf1Tc6Z3uyarbl
+	tJV26eetJpYK5mNfYN4dT40RB0IeUF2fKbDjjJpjHq7FWu8WnUsVPp8fyTlBwJJn+JCG08+rUrA
+	MSmQZqJl9ttrOaiZxUo3AxWczenFU725z4zHW4qwhXO5Pxkb192wFFb6bjOnHgklMRxWLKHN25b
+	jkAMH7j/iq2EjHSxdaGdd9LRsJFn4Mxwua1r1L8cpJEIstmYO4f+mS3ME6+EHJyZmoJ44xljjh2
+	bFLIyjSSqSEeihkdTVFgvoqRs1o5ApBxaMYXUrourRMXRfifsMe8gXJ5YJRt6lg08vPqXuFspHN
+	sHUEJLalwcf3lxTwZrK/s5uM1yepEylUx7qskLPIHJhknUZ9ByOJO4frYIjqFvymMgNlzPPpP
+X-Google-Smtp-Source: AGHT+IEkcKz9iZkin3Q7bt8e/MC50ZSGz/GfSYOcSUL9s+ileCSjnGQJ5esnkxLbE3Q69bCYQxnlTQ==
+X-Received: by 2002:a05:6402:13cf:b0:626:3540:97d8 with SMTP id 4fb4d7f45d1cf-62635409923mr10570992a12.8.1757436072731;
+        Tue, 09 Sep 2025 09:41:12 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62bfef6752esm1535526a12.12.2025.09.09.09.41.11
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 09:41:12 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so6940484a12.0
+        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 09:41:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXTs/cJX2r00fruMPAPkAILN+sifoCQSyYbKCfP976XvSQkzrHoBV60d+ZZyftmTLPMOZKvWS00UQ==@vger.kernel.org
+X-Received: by 2002:a17:907:7fa7:b0:b04:7ef0:9dd6 with SMTP id
+ a640c23a62f3a-b04b17809fdmr1236710066b.55.1757436071516; Tue, 09 Sep 2025
+ 09:41:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local> <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
- <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
-In-Reply-To: <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 9 Sep 2025 09:32:37 -0700
-X-Gm-Features: Ac12FXzQvujRvBk7BrdPEq7wsRrBxTuBzt1uAroiqCSXJie2MYSfaQTK2iLj2rc
-Message-ID: <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <20250905-sparkling-stalwart-galago-8a87e0@lemur> <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
+ <5922560.DvuYhMxLoT@rafael.j.wysocki> <20250909071818.15507ee6@kernel.org>
+ <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk> <20250909-green-oriole-of-speed-85cd6d@lemur>
+ <497c9c10-3309-49b9-8d4f-ff0bc34df4e5@suse.cz> <be98399d-3886-496e-9cf4-5ec909124418@kernel.dk>
+In-Reply-To: <be98399d-3886-496e-9cf4-5ec909124418@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Sep 2025 09:40:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whP2zoFm+-EmgQ69-00cxM5jgoEGWyAYVQ8bQYFbb2j=Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxGb49o3C2-BXyn9vrQLDiODbjBGCOkSNDk7zLDI3tgl6nsApH54f3Udow
+Message-ID: <CAHk-=whP2zoFm+-EmgQ69-00cxM5jgoEGWyAYVQ8bQYFbb2j=Q@mail.gmail.com>
+Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for 6.17-rc5)
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
+	Jakub Kicinski <kuba@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, dan.j.williams@intel.com, 
+	Caleb Sander Mateos <csander@purestorage.com>, io-uring <io-uring@vger.kernel.org>, 
+	workflows@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 9, 2025 at 7:43=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
+On Tue, 9 Sept 2025 at 07:50, Jens Axboe <axboe@kernel.dk> wrote:
 >
-> On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
-> > On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang@furiosa=
-.ai> wrote:
-> > >
-> > > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> > > > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@fur=
-iosa.ai> wrote:
-> > > > >
-> > > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wro=
-te:
-> > > > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yan=
-g@furiosa.ai> wrote:
-> > > > > > >
-> > > > > > > The pdu field in io_uring_cmd may contain stale data when a r=
-equest
-> > > > > > > object is recycled from the slab cache. Accessing uninitializ=
-ed or
-> > > > > > > garbage memory can lead to undefined behavior in users of the=
- pdu.
-> > > > > > >
-> > > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() s=
-o that
-> > > > > > > each command starts from a well-defined state. This avoids ex=
-posing
-> > > > > > > uninitialized memory and prevents potential misinterpretation=
- of data
-> > > > > > > from previous requests.
-> > > > > > >
-> > > > > > > No functional change is intended other than guaranteeing that=
- pdu is
-> > > > > > > always zero-initialized before use.
-> > > > > > >
-> > > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > > > ---
-> > > > > > >  io_uring/uring_cmd.c | 1 +
-> > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > >
-> > > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > > > --- a/io_uring/uring_cmd.c
-> > > > > > > +++ b/io_uring/uring_cmd.c
-> > > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *re=
-q, const struct io_uring_sqe *sqe)
-> > > > > > >         if (!ac)
-> > > > > > >                 return -ENOMEM;
-> > > > > > >         ioucmd->sqe =3D sqe;
-> > > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > > > >
-> > > > > > Adding this overhead to every existing uring_cmd() implementati=
-on is
-> > > > > > unfortunate. Could we instead track the initialized/uninitializ=
-ed
-> > > > > > state by using different types on the Rust side? The io_uring_c=
-md
-> > > > > > could start as an IoUringCmd, where the PDU field is MaybeUnini=
-t,
-> > > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarant=
-ees the
-> > > > > > PDU has been initialized.
-> > > > >
-> > > > > I've found a flag IORING_URING_CMD_REISSUE that we could initiali=
-ze
-> > > > > the pdu. In uring_cmd callback, we can fill zero when it's not re=
-issued.
-> > > > > But I don't know that we could call T::default() in miscdevice. I=
-f we
-> > > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> > > > >
-> > > > > How about assign a byte in pdu for checking initialized? In uring=
-_cmd(),
-> > > > > We could set a byte flag that it's not initialized. And we could =
-return
-> > > > > error that it's not initialized in read_pdu().
-> > > >
-> > > > Could we do the zero-initialization (or T::default()) in
-> > > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> > > > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > > > performance penalty for the existing C uring_cmd() implementations.
-> > > > I'm not quite sure what you mean by "assign a byte in pdu for check=
-ing
-> > > > initialized".
-> > >
-> > > Sure, we could fill zero when it's the first time uring_cmd called wi=
-th
-> > > checking the flag. I would remove this commit for next version. I als=
-o
-> > > suggests that we would provide the method that read_pdu() and write_p=
-du().
-> > > In read_pdu() I want to check write_pdu() is called before. So along =
-the
-> > > 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-> > > initialized?
-> >
-> > Not sure what you mean about "20 bytes for pdu".
-> > It seems like it would be preferable to enforce that write_pdu() has
-> > been called before read_pdu() using the Rust type system instead of a
-> > runtime check. I was thinking a signature like fn write_pdu(cmd:
-> > IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-> > reason that wouldn't work and a runtime check would be necessary?
->
-> I didn't think about make write_pdu() to return IoUringCmdPdu<T> before.
-> I think it's good way to pdu is safe without adding a new generic param f=
-or
-> MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could call
-> IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
+> I think we all know the answer to that one - it would've been EXACTLY
+> the same outcome. Not to put words in Linus' mouth, but it's not the
+> name of the tag that he finds repulsive, it's the very fact that a link
+> is there and it isn't useful _to him_.
 
-Yes, that's what I was thinking.
+It's not that it isn't "useful to me". It's that it HURTS, and it's
+entirely redundant.
 
->
-> >
-> > >
-> > > But maybe I would introduce a new struct that has Pin<&mut IoUringCmd=
-> and
-> > > issue_flags. How about some additional field for pdu is initialized l=
-ike below?
-> > >
-> > > struct IoUringCmdArgs {
-> > >   ioucmd: Pin<&mut IoUringCmd>,
-> > >   issue_flags: u32,
-> > >   pdu_initialized: bool,
-> > > }
-> >
-> > One other thing I realized is that issue_flags should come from the
-> > *current* context rather than the context the uring_cmd() callback was
-> > called in. For example, if io_uring_cmd_done() is called from task
-> > work context, issue_flags should match the issue_flags passed to the
-> > io_uring_cmd_tw_t callback, not the issue_flags originally passed to
-> > the uring_cmd() callback. So it probably makes more sense to decouple
-> > issue_flags from the (owned) IoUringCmd. I think you could pass it by
-> > reference (&IssueFlags) or with a phantom reference lifetime
-> > (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-> > ensure it can't be used after those callbacks have returned.
->
-> I have had no idea about task work context. I agree with you that
-> it would be better to separate issue_flags from IoUringCmd. So,
-> IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
+It literally wastes my time. Yes, I have the option to ignore them,
+but then I ignore potentially *good* links.
 
-"Task work" is a mechanism io_uring uses to queue work to run on the
-thread that submitted an io_uring operation. It's basically a
-per-thread atomic queue of callbacks that the thread will process
-whenever it returns from the kernel to userspace (after a syscall or
-an interrupt). This is the context where asynchronous uring_cmd
-completions are generally processed (see
-io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy()). I
-can't speak to the history of why io_uring uses task work, but my
-guess would be that it provides a safe context to acquire the
-io_ring_ctx uring_lock mutex (e.g. nvme_uring_cmd_end_io() can be
-called from an interrupt handler, so it's not allowed to take a
-mutex). Processing all the task work at once also provides natural
-opportunities for batching.
-Yes, we probably don't need to bundle anything else with the
-IoUringCmd after all. As I mentioned earlier, I don't think Pin<&mut
-IoUringCmd> will work for uring_cmds that complete asynchronously, as
-they will need to outlive the uring_cmd() call. So uring_cmd() needs
-to transfer ownership of the struct io_uring_cmd.
+Rafael asked what the difference between "Fixes:" and "Cc: stable" is
+- it's exactly the fact that those do NOT waste human time, and they
+were NOT automated garbage.
 
-Best,
-Caleb
+The rules for those are that they have been added *thoughtfully*: you
+don't add 'stable' with automation without even thinking about it, do
+you?
+
+And if you did, THAT WOULD BE WRONG TOO.
+
+Wouldn't you agree?
+
+Dammit, is it really so hard to understand this issue? Automated noise
+is bad noise. And when it has a human cost, it needs to go away.
+
+I'm not saying that you can't link to the original email. But you need
+to STOP THE MINDLESS AUTOMATION WHEN IT HURTS.
+
+So add the link, by all means - but only add it when it is relevant
+and gives real information. And THINK about it, don't have it in some
+mindless script.
+
+Because if it's in a mindless script, then dammit, the lore "search"
+function is objectively better after-the-fact. Really. Using the lore
+search gives the original email *and* more.
+
+The same, btw, goes for my merge messages. No, I'm not going to add
+some idiotic "Link" to the original pull request email. Not only don't
+I fetch those from lore to begin with, you can literally search for
+them.
+
+Look here, for the latest merge I did of your tree: e9eaca6bf69d.
+
+Now do this:
+
+    firefox https://lore.kernel.org/all/?q=$(git rev-parse e9eaca6bf69d^2)
+
+and see how *USELESS* and completely redundant a link would have been?
+IT'S RIGHT THERE, FOR CHRISSAKE!
+
+That search is guaranteed to find the pull request if it was properly
+formatted, because the automation of git request-pull adds all the
+relevant data that is actually useful. Very much including that top
+commit that you asked me to pull.
+
+THAT information is useful in the email, not only at the time (I can -
+and often do - search for it with git ls-remote when people forget to
+push or point at the wrong repo, which happens quite regularly), but
+look - it is also useful after-the-fact exactly because now you have a
+record that you can look for.
+
+If somebody wants to script that one-liner and make it some kind of b4
+helper thing, by all means, go wild.
+
+You might want to improve it to use some non-fixed browser (use
+"gnome-open" if you're in gnome, or whatever).
+
+But if somebody claims that a link to a pull-request would be
+"useful", that somebnody is simply full of sh*t.
+
+It would be the opposite of useful - it's clearly redundant
+information that adds zero value, and would be a complete waste of
+time.
+
+Honestly people. Stop with the garbage already, and admit that your
+links were just worthless noise.
+
+And if you have some workflow that used them, maybe we can really add
+scripting for those kinds of one-liners.
+
+And maybe lore could even have particular indexing for the data you
+are interested in if that helps.
+
+In my experience, Konstantin has been very responsive when people have
+asked for those kinds of things (both b4 and lore).
+
+            Linus
 

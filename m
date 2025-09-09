@@ -1,211 +1,124 @@
-Return-Path: <io-uring+bounces-9668-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9669-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C04B4FFC1
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 16:43:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97725B4FFCF
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 16:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18D01C6005A
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 14:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BD21C6096A
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 14:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C035083D;
-	Tue,  9 Sep 2025 14:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69082352061;
+	Tue,  9 Sep 2025 14:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="VOwu0EWn"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q40uWBRS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AD334DCFD
-	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 14:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F92834F47E;
+	Tue,  9 Sep 2025 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428997; cv=none; b=NjdVeA8Xx+RZBND7OpLotc0d4UO9iIGoEkNoHfFrr3QfRrxNf1vxJPkxW6FqB+wCDrXoqk8+F2z/ytdgngu6xm1j21XZvnigCOzH49Q0NZiL1Wl89x+tq5u2TdtluG5M57C5u7Uvo11uin71JXy837lp9nlKRply+93pBCl4Vr4=
+	t=1757429081; cv=none; b=OG4AkdZ47KGGcb4ALsNf5ULwNTZW+pZP3M2lVOCzvzwMz618xrNenSY9aZOuj6BVI6Jeo+II9SGwNutcUrbuB3lUgJ5xQgCbrpj/eLFgjjfIA3Cm6sFKTSveZ3Q4fvhZRck5LxNxg+KXsuHNzKxGgA/nFHJwsaU2IAHvhgjuNj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428997; c=relaxed/simple;
-	bh=kZsPvc1qbpj/gMZ9DpWcp5bZPO/uvzGdQpRMrhizyWI=;
+	s=arc-20240116; t=1757429081; c=relaxed/simple;
+	bh=jTvQDaz2CulFQRyRJegugtxzCVwBwv8NYHmDN0oRc1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHOaY8+ysD5uz7CmC5Oi3FznY8XT+Q6QIQO44WTM450o/P4uGzezKw/jHUquYIeJosPFnyWmGBinSW9Efx4SFQ2rF1R4hi9mwLom9XRN8jtNbtyloeSoMfkzJUbU+ybfi5Uo+RLfd99HhDPmTKLOnH+gg5yTrH9iM/dXI/6v3NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=VOwu0EWn; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2445824dc27so57324225ad.3
-        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 07:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1757428995; x=1758033795; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ddrCOGQrTk4YnXFxSW8TsT6ATPKz9oABWw9Dn9DJNeo=;
-        b=VOwu0EWnuMlg0fUXxoawHwFWi1NRgr5ZyF6HulxJTQ1ZxCuTQZyDu6V3NcVguSx+sB
-         iYgOQpQbk4tw1AFM05L1zgYhlpYcGBV22AtXe+KRGo5hfFM02LPvH1mm9ZiWF5AXjvLJ
-         fJQxd8jGUeVCRavXE0YMs+tP8KMMqyAjnuazE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757428995; x=1758033795;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddrCOGQrTk4YnXFxSW8TsT6ATPKz9oABWw9Dn9DJNeo=;
-        b=GgbZ3qfd9K+XReUmOrYeLIQUa0DQ6ve0+6XZMwHjduopnSDk1z+R+MzVEw29xZ14eq
-         9uzF/CQpEmFkeyAlJHaIdkbEKgNP/CbDx4NJBolx8bTMsmwrtpROT+KC/LZ0yCopV08Q
-         MiRUt5EduPgUj9M7Q1hr37ziedME644cXZm5gN+XblgaoIdkdudC6qUncRq0wFweTnOs
-         FklMvLuz4Iry9JZsel7y+M7FsSmuFKK5lytZje5CoXWlcutvZjtqF+WZ4I+1PU0WrSIc
-         wSdcT7fWmMFeHnig/+UUN8BM7ap+DUojGG1YtlOuq1oJutOtuPT/zzWgIodDgq+l99ue
-         ypPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUx2U1AC4rgKLtU/Rf7rzHJTKDKLguTMdJ8fWw/hdfe+EIu8XugSekiVagDEbrAZucj112S8JUrhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpBDCW7xUS3MFajuJl4DabE+36lVIUA/ApYJLrfxzEuPTFO9+i
-	k7EFEsEYR4VPVx/T+8cePq9sFj/LYSoQwQNw0d9Tdh57zF0IcxCKNo+guFTZ1HES8Xo=
-X-Gm-Gg: ASbGncvPiQJo68hLmSZ71Z4jRs5pvHwcvyZj/nUEO+YapeKXPALN1Zazq0kLGr7vDKE
-	8vVBE1Bqo61iCAsi3t3Q6WzE750HTKzOYYYo2aIelHbsL8Z3uOp+UEtgjAotgb3nTxORNOa3+XQ
-	2wTfv1jKgwpL0AYFUA0mKURvFPNtv/mAqmX7DbWuBd3VaSLd5tbg2eB6p/l1/wUIRMM/2naOY46
-	xYQ6JzMv7H6x+nHf4AJq9Gh/7dtNqwU8wVXfk4LOghjIRWkzHvU/n2YUXHJ8ww9nPzqgRx2Qne3
-	lCTil8ozT4MHYAX67RKWnlY7vsnVb0ttZPkL7gvVfTw0nhvR7Pr84s1ccTVqjda2EsY/DbO5Dq3
-	zUj1TC/TR/7m3mAOaQlqkVMXL5lEOYMAkXm8sWWfzS3I8pwJ020sM4Q==
-X-Google-Smtp-Source: AGHT+IF0maZnaaLQLAz9HyDOMDlcVgeagw7Fn/NEgjbTn/SufuWhh4SmMvMtEn5ZIob4ZX3rKUzR3A==
-X-Received: by 2002:a17:903:b48:b0:258:dc72:9d76 with SMTP id d9443c01a7336-258dc729f05mr38100225ad.10.1757428994417;
-        Tue, 09 Sep 2025 07:43:14 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a281e5620sm313525ad.63.2025.09.09.07.43.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 07:43:13 -0700 (PDT)
-Date: Tue, 9 Sep 2025 23:43:08 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-Message-ID: <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
- <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
- <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
- <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGOax6NIr49A5tZT6/zWUNE20z9jLjDCsdchy6LZXzsVwUZqV5ToHAEpMWoiEda/y2pFeifZITjI7cLzg2uz+8yMPkAucThYpQdjgyNoS4WXLKolL9c+m47aVrlhlW0kzsN+VwTdopA/pdImnWaiaOdrOAbdHW2WugjJSawAgaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q40uWBRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA50C4CEFB;
+	Tue,  9 Sep 2025 14:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757429080;
+	bh=jTvQDaz2CulFQRyRJegugtxzCVwBwv8NYHmDN0oRc1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q40uWBRSC2FYSCiYQuiMBK8kUThiXaOjOVgR9FNFBBSzrSEIeDQgevPzVe+R+rvkq
+	 NvlfeIC0o7BXT/XYQKWmqGOpVSg5eoJUQWccPS9sgwsoT6POxQWIrILY94KISuW/Qc
+	 n6nZk1W6HKlMv6wTey9srVG9zrCuPGumeQ2bdkcA=
+Date: Tue, 9 Sep 2025 16:44:37 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, dan.j.williams@intel.com,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
+Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
+ 6.17-rc5)
+Message-ID: <2025090901-mangle-provable-6248@gregkh>
+References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
+ <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+ <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
+ <5922560.DvuYhMxLoT@rafael.j.wysocki>
+ <20250909071818.15507ee6@kernel.org>
+ <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
+In-Reply-To: <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk>
 
-On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
-> On Sat, Sep 6, 2025 at 7:28 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> > > On Tue, Sep 2, 2025 at 3:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > >
-> > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > > > > On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > > > >
-> > > > > > The pdu field in io_uring_cmd may contain stale data when a request
-> > > > > > object is recycled from the slab cache. Accessing uninitialized or
-> > > > > > garbage memory can lead to undefined behavior in users of the pdu.
-> > > > > >
-> > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
-> > > > > > each command starts from a well-defined state. This avoids exposing
-> > > > > > uninitialized memory and prevents potential misinterpretation of data
-> > > > > > from previous requests.
-> > > > > >
-> > > > > > No functional change is intended other than guaranteeing that pdu is
-> > > > > > always zero-initialized before use.
-> > > > > >
-> > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > > ---
-> > > > > >  io_uring/uring_cmd.c | 1 +
-> > > > > >  1 file changed, 1 insertion(+)
-> > > > > >
-> > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > > --- a/io_uring/uring_cmd.c
-> > > > > > +++ b/io_uring/uring_cmd.c
-> > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > > > >         if (!ac)
-> > > > > >                 return -ENOMEM;
-> > > > > >         ioucmd->sqe = sqe;
-> > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > > >
-> > > > > Adding this overhead to every existing uring_cmd() implementation is
-> > > > > unfortunate. Could we instead track the initialized/uninitialized
-> > > > > state by using different types on the Rust side? The io_uring_cmd
-> > > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
-> > > > > PDU has been initialized.
-> > > >
-> > > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> > > > the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
-> > > > But I don't know that we could call T::default() in miscdevice. If we
-> > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> > > >
-> > > > How about assign a byte in pdu for checking initialized? In uring_cmd(),
-> > > > We could set a byte flag that it's not initialized. And we could return
-> > > > error that it's not initialized in read_pdu().
-> > >
-> > > Could we do the zero-initialization (or T::default()) in
-> > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> > > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > > performance penalty for the existing C uring_cmd() implementations.
-> > > I'm not quite sure what you mean by "assign a byte in pdu for checking
-> > > initialized".
-> >
-> > Sure, we could fill zero when it's the first time uring_cmd called with
-> > checking the flag. I would remove this commit for next version. I also
-> > suggests that we would provide the method that read_pdu() and write_pdu().
-> > In read_pdu() I want to check write_pdu() is called before. So along the
-> > 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-> > initialized?
+On Tue, Sep 09, 2025 at 08:35:18AM -0600, Jens Axboe wrote:
+> On 9/9/25 8:18 AM, Jakub Kicinski wrote:
+> > On Tue, 09 Sep 2025 15:17:15 +0200 Rafael J. Wysocki wrote:
+> >>>> We do support this usage using `b4 shazam -M` -- it's the functional
+> >>>> equivalent of applying a pull request and will use the cover letter contents
+> >>>> as the initial source of the merge commit message. I do encourage people to
+> >>>> use this more than just a linear `git am` for series, for a number of reasons:  
+> >>>
+> >>> For me, as a subsystem downstream person the 'mindless' patch.msgid.link
+> >>> saves me time when I need to report a regression, or validate which
+> >>> version of a patch was pulled from a list when curating a long-running
+> >>> topic in a staging tree. I do make sure to put actual discussion
+> >>> references outside the patch.msgid.link namespace and hope that others
+> >>> continue to use this helpful breadcrumb.  
+> >>
+> >> Same here.
+> >>
+> >> Every time one needs to connect a git commit with a patch that it has come from,
+> >> the presence of patch.msgid.link saves a search of a mailing list archive (if
+> >> all goes well, or more searches otherwise).
+> >>
+> >> On a global scale, that's quite a number of saved mailing list archive searches.
+> > 
+> > +1 FWIW. I also started slapping the links on all patches in a series,
+> > even if we apply with a merge commit. I don't know of a good way with
+> > git to "get to the first parent merge" so scanning the history to find
+> > the link in the cover letter was annoying me :(
 > 
-> Not sure what you mean about "20 bytes for pdu".
-> It seems like it would be preferable to enforce that write_pdu() has
-> been called before read_pdu() using the Rust type system instead of a
-> runtime check. I was thinking a signature like fn write_pdu(cmd:
-> IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-> reason that wouldn't work and a runtime check would be necessary?
-
-I didn't think about make write_pdu() to return IoUringCmdPdu<T> before.
-I think it's good way to pdu is safe without adding a new generic param for
-MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could call
-IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
-
+> Like I've tried to argue, I find them useful too. But after this whole
+> mess of a thread, I killed -l from my scripts. I do think it's a mistake
+> and it seems like the only reason to remove them is that Linus expects
+> to find something at the end of the link rainbow and is often
+> disappointed, and that annoys him enough to rant about it.
 > 
-> >
-> > But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> and
-> > issue_flags. How about some additional field for pdu is initialized like below?
-> >
-> > struct IoUringCmdArgs {
-> >   ioucmd: Pin<&mut IoUringCmd>,
-> >   issue_flags: u32,
-> >   pdu_initialized: bool,
-> > }
+> I know some folks downstream of me on the io_uring side find them useful
+> too, because they've asked me several times to please remember to ensure
+> my own self-applied patches have the link as well. For those, I tend to
+> pick or add them locally rather than use b4 for it, which is why they've
+> never had links.
 > 
-> One other thing I realized is that issue_flags should come from the
-> *current* context rather than the context the uring_cmd() callback was
-> called in. For example, if io_uring_cmd_done() is called from task
-> work context, issue_flags should match the issue_flags passed to the
-> io_uring_cmd_tw_t callback, not the issue_flags originally passed to
-> the uring_cmd() callback. So it probably makes more sense to decouple
-> issue_flags from the (owned) IoUringCmd. I think you could pass it by
-> reference (&IssueFlags) or with a phantom reference lifetime
-> (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-> ensure it can't be used after those callbacks have returned.
-
-I have had no idea about task work context. I agree with you that
-it would be better to separate issue_flags from IoUringCmd. So, 
-IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
-
+> As far as I can tell, only two things have been established here:
 > 
-> Best,
-> Caleb
+> 1) Linus hates the Link tags, except if they have extra information
+> 2) Lots of other folks find them useful
+
+I too find them useful, especially when doing stable backport work as
+it's a link to the thread of multiple commits, so I can see what is, and
+is not, tagged for stable, and the proper ordering of the commits.
+
+So I'm going to want to keep leaving them on, they work well for those
+that have to spelunk into our git branches all the time.
+
+thanks,
+
+greg k-h
 

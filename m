@@ -1,61 +1,60 @@
-Return-Path: <io-uring+bounces-9661-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9662-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A499EB4ABFF
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 13:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE7EB4FC36
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 15:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAFF1B219E8
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 11:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827611BC205A
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99D320CD9;
-	Tue,  9 Sep 2025 11:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F9F2857DE;
+	Tue,  9 Sep 2025 13:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cak3ijy4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1L1RwJC"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5407531D741;
-	Tue,  9 Sep 2025 11:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA5A21B9F6;
+	Tue,  9 Sep 2025 13:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417356; cv=none; b=vAM9Q6rxTwMmSrjK/up4bwaVkt8fqqtrOi7GdeAtcu9wY0xB+v+2I7z2GxZAokQdIx4ET/dkWnDZPajXMj7EFqu0z9ZuRNeIl3MyqxmHfcHL5bKXIPjuSwZcp7epsm5N+LBi0/iqfnogcuRByJvRcZcz2dMKdFJCAgs994D5AXo=
+	t=1757423842; cv=none; b=sDh86awGtBctHFGGo2I/1nLRhOVMci1EOvOLtP9qozKsb1xQi2TmsoJ/Zj1ViJbSDOUG+lrEzUUcAcjNM7d/zX8RQwglcHJC6xPCf1h6Mt+lzeuHLWDnkYnO5YJ9Z07KXf/oOPOvW6eFhhhLXcfY8/EjtWGw2++eipI0Pr9tSCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417356; c=relaxed/simple;
-	bh=X0VC08lbTf4ADXXSPh4wvl08HHb0OF1/HAxWNsHKADk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5N5Z5PVfsZtkdRzngnPCG17NokzEmyjaBc5JtFAnzIUB3hRB2cNiYYxHOMSJm/5w1Kox7dsHu2/yd9nnbtNUq8g9D3DG+FguK5xnXzX3kpBSxnInUVDICfdj68wFjLaQTNXDHyLBO/wou8rlRta1NWOmyKK3lcQdRWByNZhkP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cak3ijy4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEF9C4CEF4;
-	Tue,  9 Sep 2025 11:29:14 +0000 (UTC)
+	s=arc-20240116; t=1757423842; c=relaxed/simple;
+	bh=hRxld0LQgbxPOlzudrdWuevDjVRV7o89tn8SOw9Mu7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k8aIpdmWjKuIu81Izu1H02RpfMkGq15TLeOr8pwMg//RzSDBbgACITsfMgtQe5MqKWoVJGXddkQhAt7sIpncNPv44ueSdZz8w1VPK9/kk0BdQfEHUYiJBKGk6K2nf5oPznjsd5vkA6jOZWGSUfNOspHV6lJXtEKtwgeDk+mv5dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1L1RwJC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF42C4CEF4;
+	Tue,  9 Sep 2025 13:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757417356;
-	bh=X0VC08lbTf4ADXXSPh4wvl08HHb0OF1/HAxWNsHKADk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cak3ijy4AfW3KPyos+wo6/CNjzjgeLFY2Rg/gU2LPtfkBhcqIWW5X9BG+Hl6+WBny
-	 DAsS91PRHPmvlzCjd4m50Dpj9AyXfA7la8fZVx9zNpFtIuKsqWu2UqwrBRg/BCFQ25
-	 l/MiCXpthM9NSgHowDApcmR/Q9b3uUjScp4Bc40HRS+mdc9TW26oKWFm98HLzfkeVm
-	 tY1AaO+7tL9TRHQbwQ71oV6TR6JT5DRyR2iSfmqj6aV3rGx+5kVk48bXIDORGUpJv3
-	 Qiqcv8vaJ92c/aJRiAVZLM2HC8eh5QcuGZsGIIjIqKhjU4OK4Yh3oHxeKrkv+nJxO4
-	 W+RKyaTRQucOQ==
-Date: Tue, 9 Sep 2025 12:29:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-Message-ID: <e448d26b-6514-400c-86ec-29f0f04634af@sirena.org.uk>
-References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
- <CAHk-=wjamixjqNwrr4+UEAwitMOd6Y8-_9p4oUZdcjrv7fsayQ@mail.gmail.com>
- <20250905-lovely-prehistoric-goldfish-04e1c3@lemur>
- <CAHk-=wg30HTF+zWrh7xP1yFRsRQW-ptiJ+U4+ABHpJORQw=Mug@mail.gmail.com>
+	s=k20201202; t=1757423840;
+	bh=hRxld0LQgbxPOlzudrdWuevDjVRV7o89tn8SOw9Mu7g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c1L1RwJCw9YLWyfXu0dgC8lxdvgHmQCMs0JewlmU3hj2DaLCUqN0q1FKoTI/bM2GQ
+	 TVWA+rmVdWFRCii+Ymul3fHAowoE+GgSD4owH759ghy4Ou8jfrcFTbBK4k+BZlhFMI
+	 r9XN9ODtSSM1Kp0v5A5I1wLtT4lOkC9HesOTe+3P6Yadi9W37rs5jzqACeZtS9sbYp
+	 a8mzd4KhMhuV3OcteN2gBIWySU+52UAPtrVeXfvca19eflqAN56c6XFVmPveH89M/J
+	 C9pd6RCQnKgsbzduwA+lXTOG0gvHSal494AjgRSehDDAcpz/VxuRCe7Dok+JDPdrmn
+	 6GkmwamawT+fQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, dan.j.williams@intel.com
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
+Subject:
+ Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for 6.17-rc5)
+Date: Tue, 09 Sep 2025 15:17:15 +0200
+Message-ID: <5922560.DvuYhMxLoT@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
+References:
+ <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
  <20250905-sparkling-stalwart-galago-8a87e0@lemur>
  <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
 Precedence: bulk
@@ -64,25 +63,35 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iKDciDXwQYc+Lf9P"
-Content-Disposition: inline
-In-Reply-To: <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
-X-Cookie: Ma Bell is a mean mother!
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-
---iKDciDXwQYc+Lf9P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Sep 08, 2025 at 01:11:00PM -0700, dan.j.williams@intel.com wrote:
+On Monday, September 8, 2025 10:11:00 PM CEST dan.j.williams@intel.com wrote:
 > Konstantin Ryabitsev wrote:
-
+> > (Changing the subject and aiming this at workflows.)
+> > 
+> > On Fri, Sep 05, 2025 at 11:06:01AM -0700, Linus Torvalds wrote:
+> > > On Fri, 5 Sept 2025 at 10:45, Konstantin Ryabitsev
+> > > <konstantin@linuxfoundation.org> wrote:
+> > > >
+> > > > Do you just want this to become a no-op, or will it be better if it's used
+> > > > only with the patch.msgid.link domain namespace to clearly indicate that it's
+> > > > just a provenance link?
+> > > 
+> > > So I wish it at least had some way to discourage the normal mindless
+> > > use - and in a perfect world that there was some more useful model for
+> > > adding links automatically.
+> > > 
+> > > For example, I feel like for the cover letter of a multi-commit
+> > > series, the link to the patch series submission is potentially more
+> > > useful - and likely much less annoying - because it would go into the
+> > > merge message, not individual commits.
+> > 
 > > We do support this usage using `b4 shazam -M` -- it's the functional
 > > equivalent of applying a pull request and will use the cover letter contents
 > > as the initial source of the merge commit message. I do encourage people to
 > > use this more than just a linear `git am` for series, for a number of reasons:
-
+> 
 > For me, as a subsystem downstream person the 'mindless' patch.msgid.link
 > saves me time when I need to report a regression, or validate which
 > version of a patch was pulled from a list when curating a long-running
@@ -90,25 +99,16 @@ On Mon, Sep 08, 2025 at 01:11:00PM -0700, dan.j.williams@intel.com wrote:
 > references outside the patch.msgid.link namespace and hope that others
 > continue to use this helpful breadcrumb.
 
-Yes, I use the links constantly too when reporting regressions - it's
-super helpful to just be able to pull the message and thread from the
-mailing list with b4.  You get an initial way into the discussion (and
-any reports someone else made) and a good list of people to CC.
+Same here.
 
---iKDciDXwQYc+Lf9P
-Content-Type: application/pgp-signature; name="signature.asc"
+Every time one needs to connect a git commit with a patch that it has come from,
+the presence of patch.msgid.link saves a search of a mailing list archive (if
+all goes well, or more searches otherwise).
 
------BEGIN PGP SIGNATURE-----
+On a global scale, that's quite a number of saved mailing list archive searches.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjAD4cACgkQJNaLcl1U
-h9D4Owf/QKLfJlZTYPlyLO7+UtV3jD9ccqM8crHbkfIvGdY2MoZJhellCXqHch1a
-UjcaHRSOKS9qafOufL8dwRvnofwafAk2oDq5QQc7gOCC47WrXGOlN8Ym3nOtGgUW
-mOwuWPSBo6Dncf/kizDH53Xv0UnRhYeXTIoFvwBPUZVTmeqNsBqLDbIh4X79KVVi
-CaiAwlfnFdBxdznKG/o7DygTRGbqsi/oV1/9qqnqSDjY69ilf8B9Eo+C2uefb61l
-PhJ1hAJcTgyZP/CS/w58xWl3eOao1cvpcoXr4MWEN7CqB4iokXd8AsUGlnqsNIjr
-wh504P9YBHYcfacAYAIqQevv3kx2NA==
-=14Or
------END PGP SIGNATURE-----
+Cheers, Rafael
 
---iKDciDXwQYc+Lf9P--
+
+
 

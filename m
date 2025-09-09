@@ -1,151 +1,125 @@
-Return-Path: <io-uring+bounces-9671-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9672-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2CBB50012
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 16:50:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054B9B500B4
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 17:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F645E523E
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 14:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CD61C61983
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 15:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9F32505AA;
-	Tue,  9 Sep 2025 14:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A2A350D77;
+	Tue,  9 Sep 2025 15:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LHEA4QTi"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="D+rjuMHT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D06F226D1D
-	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 14:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D53333EB14
+	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 15:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429438; cv=none; b=WxDU/9bbk4d1yYXWAvw0V0O6SxAYhAgkAuIUTyKGjqjCTtxibNq/vzguHyc55U2LPLTGu7bkL148NWvAwHFRxaOZ8YiVSU/ZEifeLG4rlnzMptYGc1Fqyw3/nl3+clTKV+yt+XRRZThtf8uce1Aj9uchhKNflyFtJf+Tilc2x/8=
+	t=1757430732; cv=none; b=CjFZU9Ms5evAXWoRFfTjfLZ2NHlEAb1H6NSCrscv4SK5QVgNbjRKy0jHxBd+iaq7F7dxpwXbbGH/m9/RILoR/JQSiAl7CpgF8+5Eg7It247kOJ/ORHvqttWpZBUCWMOWdVEqn1Nms+7E1ZVZbUG4IxhldoOveb0v7KRZws2m2Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429438; c=relaxed/simple;
-	bh=/HQ7eG2EU/1xoy+iu4MjOdCrQNrXHQmUwHmc2hEXyYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJDdRNcNNPPuvidFzeLyiKbuEpyUYIVXrvlS0yNPrXQ/jXwt5P2+3Y1IK6q50BDYGOjvZ83x8XmUo3Js5mRbEmqkWJtvcrtphjBpwzdf0N6oOxFzQcmN5PhpyRJIQewOIYW9NdPwXPyLzsnHiypG66jRi2gd1uUJCPDU2lHrAyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LHEA4QTi; arc=none smtp.client-ip=209.85.166.169
+	s=arc-20240116; t=1757430732; c=relaxed/simple;
+	bh=E668IyIeG+84R+hdpDgevawUv5gOsKsetEFExalbIMw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=W8Slc8EMUEDIinEwty+zk7hcVrfCNO1mRdYbbzRoWlzjKq8pP/Imc/XtXVu2RowW9Th7isnQdjDXwoS/JQk0dEslQ1kALMVjRUPLZzo/ZwKAVCHgeTBbJbEeUlyl1vRsi8tiNIeOyIpNP7N2OTGf6GjKrNU8qtVU9k1f2WhmlZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=D+rjuMHT; arc=none smtp.client-ip=209.85.166.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3f66ad3fcf4so58400455ab.3
-        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 07:50:36 -0700 (PDT)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-403a893fb4bso15216085ab.0
+        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 08:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757429435; x=1758034235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DXLblETDvxgJMHTAUnUTKUamNq1cz28z86qXHFq5Z8w=;
-        b=LHEA4QTiE+vwLKZNjoeSTBkGJHfDYSTSKX+jyMPNZUV3fwxalTzdLAHanXIHLDhgMN
-         yeFNq47bT/H0Pxit0/+K+3D6f7PQ2H0zsgiIuKOkuSz0gkot5FNmHB9FpDl1ndPC1tqb
-         9GXAthLMoNxxKqAhRTU76FjrhRjYtfVR9cWE2Bz5H5GIV2iFp+h0ZH9ImxEFbtXdfURu
-         35V0Bab76Uu1atpaNAtX99QHokC9kDhnZG82kn3AmXFcWAW6ZXuqOILW959qB/jE/uEB
-         cYZIak2VKIoulVzRYpSR8RR+6wf2oAzJQmXiO3GfoEjM6BQ1cI6+ZmN73TYy/k/MBqns
-         WwyA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757430730; x=1758035530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hGG5rQwVwfbUEFHBIHE6Jp/hJoWP5qSvz5i+EjjCumI=;
+        b=D+rjuMHTEcUjErDiHFiSkAsDzdFVw3mdV4h6zfq9+/JSeWdCTIyEHrLSLwDG0xcvcD
+         H8mvedcTeLAvFNDtDa9aBo2DS4JtPfm7BOc7ypp3fxbNfzFA59sE3zLPrqoZWaNhvwN+
+         Fab/SLTPxqhljJxzJulf31HKAuoZS6WpQinLgkjVYYNyjsanlO1nIsuoV/3/nRcVuZS7
+         90WgNfqJWdDixiLulpy0CPo9gFU9p93QvQBiuGYbU1sZrjqgYfF8Fc480wUXRcoVpQ2A
+         Cy3WGkcoHi8RDjgBP4ZLGQnEhmgHCcpzM9wSUTqpmQnDr+fuhVrRKx2JNGwfOVOauVsD
+         5uGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757429435; x=1758034235;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXLblETDvxgJMHTAUnUTKUamNq1cz28z86qXHFq5Z8w=;
-        b=L1ANLQMaa2WXQdXpiT5bb408kUmpG3+7bCr18J0YbygdT3gkt40YKcukr+NS3BJ4wt
-         pWQkgFxbdDijpvhjPmKR5cZy68/DYhTXOOs+Zrz4H09IBsF1U+A+eohBh/oz39smuDw/
-         ysV7efLe1yK7XtI2hkg9eoet+iC311a0EHC9IB/26BKhS9vLck8bvBoKCt7YdLGSpO1K
-         w5gvsazzSz3h/FH7U13GEGftQhrxByKh8/xUBLw3nrT3TiwjtQEVZ4poW9JqLf6kDJgj
-         /8wioRqj4LFuIcnrzRjzR34r/3Ihpp63CkSaKqfiWqPe0MyuUArkFi838iLB1BZfICp7
-         yjCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVED/KyNddnzPmEFzSUKxHNzcX82oG4ZsLoImw1Sm/vW4OT/0SSfiO6ikaGTdkgdq4kTjQqveccvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU7NWnwhh7e27Nb9WpPPGh+W+NKDUu9T43z9RlLbvHdCZU6wEW
-	YDFP7f5EhuSmxakS4yRTX+uv9IT3alkllUomfwR5KBsw8KZNooKQgsxOBJjyBqnDEHU=
-X-Gm-Gg: ASbGncvRgZ4AF2C69el+E+fzfWJY3h0boEkRYOUmkEwKvwwmTPFaAvd6xCiB3rJ0Pf/
-	dmKBQHfeQ6lkY0uPUnEifJx3XpwhfVCa4Ab7l1/OiKtfBIB+nmZ0NWszteoNnVuGiiT6vMwJEb5
-	ftL940USuH2bMOEa/LEWYOeg2H8jK49FGdptN7hNtR4trAo7PLMevTQkgC+V8GkmXab9JP8N/+2
-	lZN0ZAkSU3FJVGA24xh7UC85rvA6mFplWpztYrkuTP7nRnVKP/0JSYz4uqCSpuZTsr9SSitlYEF
-	XzVR9XsFwdXQI2Nq+kzfNFzt5BezvejAxOqa7r08Esby2WBaR6PN3s9qbY72EWyW8x3udQzp2cj
-	VIT5uWytTx3KIZtF8YIDoRwyFGsKqYw==
-X-Google-Smtp-Source: AGHT+IG8on+GnBlP4B7ZwsdBR6evH84/qt5pimUFsPIyK0o6XVGa9c2E1LFU0VJp+XvtVThhxs07Ow==
-X-Received: by 2002:a05:6e02:1c2e:b0:3f3:b6c4:7cce with SMTP id e9e14a558f8ab-3fd89bf009amr192865295ab.27.1757429435400;
-        Tue, 09 Sep 2025 07:50:35 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f3e136cc71sm121472625ab.46.2025.09.09.07.50.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 07:50:34 -0700 (PDT)
-Message-ID: <be98399d-3886-496e-9cf4-5ec909124418@kernel.dk>
-Date: Tue, 9 Sep 2025 08:50:34 -0600
+        d=1e100.net; s=20230601; t=1757430730; x=1758035530;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hGG5rQwVwfbUEFHBIHE6Jp/hJoWP5qSvz5i+EjjCumI=;
+        b=K0vEdt98351rhZCsV9VPUde82LHgkmyUgbPsq6j5T7quMqAniIuXxGew4Yavn1Ewag
+         p+yhC/XRLgqFED2YwcdPy87JufHJRe/+9rbx9ESVteFIQADwnsrNrY7mNrD4zk3SeTPP
+         4hf7Z+zM7LJoDtHiTNedGtgQgRQpKqYdCiy1/HEZ3OgRYZwLJDdQpqNsPx74AjuQAzwx
+         o2XmlfxtC0JJocZzMptq5pF/0sFIPjHiwTj7Drl6OgaF2AFpgNBA+cUX+dlj389GD9KO
+         ThX2uz9pLMQsHKXHzmBP/+XP+8lvZNoMSOdn6yaacqhJZSIbNnYJS7xufUua1FRlgO1X
+         ok0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXpe7ED86An9+i89xrZNeE9x8ICAPZkW7gx0R52Qf/KUAJuCASXIywZ9CrQpEgVORyJSHrWT0zY+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkmUWISATuFypjK6fbr1y+uYwbJ6el8IriWlLHuYGEgtEMKSLk
+	csXFe3KNKZEt6+bdDtnfMqy4yAEwralxm6M/yMZ/BD7Xh1uMHFhN2jQEzRroi6WFBaJedRiMQv2
+	aFiZf
+X-Gm-Gg: ASbGnctVVcUH6JfcNdb4mYv11NankEXCWK7JjNTWLheuq8sOTFsrNDVVjd0MOjylMh9
+	pGnH7gFQyGhc1wA06g09B5cuQrgUV1YhmC3h+C3K8tknDtnuUOAXFXnUoCgHKT28DEd2iTQkL2D
+	SJcoJGyzd+9kU1yLprosGjRuAXvetZvDDDxfqOJqjF32d9Ozekcbmg8U8+/aQr7SzYfJO7FCOfd
+	MqWrllhEo2tGqfBs6XEGhl2ePJLqk8wOAKf/vWIvMH+3aAz4yReseBoTI8x4B4AZto6x3CCOE/q
+	sY2n25GRXzjpmzOMrLIVQVjLDdsGtAEOIxWyDOfyWnMtGzumgTw78ZvOxtUXTOlThIUBqtw/YxO
+	nZ6y/kodnle5y6w==
+X-Google-Smtp-Source: AGHT+IE9u3vDQncMxxM8j9Ij46XNpe0a4PnRGD7u2h1ZJwct0QO39CLJSeGr/oy3OM0Hl4LRJhoZpQ==
+X-Received: by 2002:a92:ca0b:0:b0:40c:cf06:ea2a with SMTP id e9e14a558f8ab-40ccf06eaf4mr82148275ab.2.1757430730068;
+        Tue, 09 Sep 2025 08:12:10 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-51020b6d937sm7590679173.80.2025.09.09.08.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 08:12:09 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+ Marco Crivellari <marco.crivellari@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Michal Hocko <mhocko@suse.com>, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250905090240.102790-1-marco.crivellari@suse.com>
+References: <20250905090240.102790-1-marco.crivellari@suse.com>
+Subject: Re: [PATCH 0/2] io_uring: replace wq users and add WQ_PERCPU to
+ alloc_workqueue() users
+Message-Id: <175743072926.109608.13668500662715928702.b4-ty@kernel.dk>
+Date: Tue, 09 Sep 2025 09:12:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-To: Vlastimil Babka <vbabka@suse.cz>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Jakub Kicinski <kuba@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, dan.j.williams@intel.com,
- Caleb Sander Mateos <csander@purestorage.com>,
- io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-References: <9ef87524-d15c-4b2c-9f86-00417dad9c48@kernel.dk>
- <20250905-sparkling-stalwart-galago-8a87e0@lemur>
- <68bf3854f101b_4224d100d7@dwillia2-mobl4.notmuch>
- <5922560.DvuYhMxLoT@rafael.j.wysocki> <20250909071818.15507ee6@kernel.org>
- <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk>
- <20250909-green-oriole-of-speed-85cd6d@lemur>
- <497c9c10-3309-49b9-8d4f-ff0bc34df4e5@suse.cz>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <497c9c10-3309-49b9-8d4f-ff0bc34df4e5@suse.cz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On 9/9/25 8:48 AM, Vlastimil Babka wrote:
-> On 9/9/25 16:42, Konstantin Ryabitsev wrote:
->> On Tue, Sep 09, 2025 at 08:35:18AM -0600, Jens Axboe wrote:
->>>>> On a global scale, that's quite a number of saved mailing list archive searches.
->>>>
->>>> +1 FWIW. I also started slapping the links on all patches in a series,
->>>> even if we apply with a merge commit. I don't know of a good way with
->>>> git to "get to the first parent merge" so scanning the history to find
->>>> the link in the cover letter was annoying me :(
->>>
->>> Like I've tried to argue, I find them useful too. But after this whole
->>> mess of a thread, I killed -l from my scripts. I do think it's a mistake
->>> and it seems like the only reason to remove them is that Linus expects
->>> to find something at the end of the link rainbow and is often
->>> disappointed, and that annoys him enough to rant about it.
->>>
->>> I know some folks downstream of me on the io_uring side find them useful
->>> too, because they've asked me several times to please remember to ensure
->>> my own self-applied patches have the link as well. For those, I tend to
->>> pick or add them locally rather than use b4 for it, which is why they've
->>> never had links.
->>>
->>> As far as I can tell, only two things have been established here:
->>>
->>> 1) Linus hates the Link tags, except if they have extra information
->>> 2) Lots of other folks find them useful
->>>
->>> and hence we're at a solid deadlock here.
->>
->> I did suggest that provenance links use the patch.msgid.link subdomain. This
+
+On Fri, 05 Sep 2025 11:02:38 +0200, Marco Crivellari wrote:
+> Below is a summary of a discussion about the Workqueue API and cpu isolation
+> considerations. Details and more information are available here:
 > 
-> Yes, and the PR that started this thread had a normal lore link. Would it
-> have been different with a patch.msgid.link as perhaps Linus would not try
-> opening it and become disappointed?
-> You did kinda ask that early in the thread but then the conversation went in
-> different directions.
+>         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+>         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> 
+> === Current situation: problems ===
+> 
+> [...]
 
-I think we all know the answer to that one - it would've been EXACTLY
-the same outcome. Not to put words in Linus' mouth, but it's not the
-name of the tag that he finds repulsive, it's the very fact that a link
-is there and it isn't useful _to him_.
+Applied, thanks!
 
+[1/2] io_uring: replace use of system_wq with system_percpu_wq
+      commit: e92f5c03d32409c957864f9bc611872861f8157e
+[2/2] io_uring: replace use of system_unbound_wq with system_dfl_wq
+      commit: 59cfd1fa5a5b87969190c3178180d025ee9251a7
+
+Best regards,
 -- 
 Jens Axboe
+
+
+
 

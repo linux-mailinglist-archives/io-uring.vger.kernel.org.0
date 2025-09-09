@@ -1,128 +1,165 @@
-Return-Path: <io-uring+bounces-9694-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9695-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E191FB507A4
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 23:05:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFB3B507C5
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 23:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A28189C445
-	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 21:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E1B462D21
+	for <lists+io-uring@lfdr.de>; Tue,  9 Sep 2025 21:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C954C22173D;
-	Tue,  9 Sep 2025 21:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv2qxJX/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA25255240;
+	Tue,  9 Sep 2025 21:10:33 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8A1F3D58;
-	Tue,  9 Sep 2025 21:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1C2253951
+	for <io-uring@vger.kernel.org>; Tue,  9 Sep 2025 21:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757451923; cv=none; b=I4VcA80kDqLOBszDSjEv4saTnm/e1MYgH9WPl2wZtmPxQu1L93PF6tJ+D1g7EZR/CWmUtNHN6vKlFHI6j/D+0GqOMaF2jG1MW8MFAvv5D53yJzFglpp1Nhhi3yktiKpgRHCNm6eMkZ8eCwcU8dQPGbQGKUiBQaeT+kEvEB8c8rw=
+	t=1757452233; cv=none; b=KLKJ9LcDSj80QITn/r6Z9rGSGGBydODslBzhj1tsOVy4IyKZHirNL8eUvwGKcNRyqphXxYX3fDGn3TIlnbEoS/xdl2q9hesSS7FgHUKMEE3WbNvoIfx167kRGWXffoTCQfJnG1YI3p+8IsABhj7lB7jVnp5s2oHfOtgY2Oqru8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757451923; c=relaxed/simple;
-	bh=vNOMPUmnU6XssDomYnLdwerx9PFNqm9nVH8sSFHH1Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cR0WnOZGE4FAXiFh/s4wzydEF9JBl9A/wglR657wNITB3VX6M+fQYtvXHNM3xoEt0GayZ1dKhO9z5ImMgQa0JYAvJumDNAsmN2zp+pF1d/3tW877JV4PGaPDJKWxV/GO+0voB3iAzkEfKVGqhd3yDfWa0L/IqrNSZES0Yg9El4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv2qxJX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF1FC4CEF4;
-	Tue,  9 Sep 2025 21:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757451921;
-	bh=vNOMPUmnU6XssDomYnLdwerx9PFNqm9nVH8sSFHH1Yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nv2qxJX/1dQbXHEsvXmOzlC9z8pH3VcF3Xpm0SBdLLfallO+LfF/LhbhwtEnlut5n
-	 sgpGpzJOx9qodhlVZwY0VSyLrwyKrvE+u5gyHf4fgoe+6U0q2Kvh67lIr7AxW8e6Pc
-	 NRHfm0pBJjiO5HkJwSVeBVlVlXxq+earYOScStWqVVBdYK5h6R//l01huM41oWRL1l
-	 LuGkz6uWDi7rjuxu1KTRZNGQrWlH5AMDUQGqwopb6JrFXMZmVDhZNuzx7Yym7ZuSjD
-	 YO2rEd9TpGNqS+MMC+SZUqoaB00xrouaEzHU1xS3mkJ26SjiRHETmzWK5P/cfddU41
-	 hfqSIvxwSe/hQ==
-Date: Tue, 9 Sep 2025 22:05:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, dan.j.williams@intel.com,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-Message-ID: <22523fec-5745-40f9-8242-1c340bac843a@sirena.org.uk>
-References: <5922560.DvuYhMxLoT@rafael.j.wysocki>
- <20250909071818.15507ee6@kernel.org>
- <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk>
- <20250909-green-oriole-of-speed-85cd6d@lemur>
- <497c9c10-3309-49b9-8d4f-ff0bc34df4e5@suse.cz>
- <be98399d-3886-496e-9cf4-5ec909124418@kernel.dk>
- <CAHk-=whP2zoFm+-EmgQ69-00cxM5jgoEGWyAYVQ8bQYFbb2j=Q@mail.gmail.com>
- <e09555bc-4b0f-4f3a-82a3-914f38c3cde5@suse.cz>
- <CAHk-=wgfWG+MHXoFG2guu2GAoSBrmcdXU2apj+MJpgdCXxwbwA@mail.gmail.com>
- <ad587c82-cc9c-43ef-89c5-d208734a4c7f@suse.cz>
+	s=arc-20240116; t=1757452233; c=relaxed/simple;
+	bh=OzgSK9E87Ojka9/phKOHarFwumy+GWTeCy2ETYUOiNY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZrGUOppGpcFsLE1slVW5osGqpp1FIblsKJckMQqtJ7vjdMc1g23cjGeF3JHeocmeZyC5UoZFAFNz72v86NOW7MMKp0TtPUVDOingJS+xLvbC50pptJn91l9O5rX+d6MBBWVhY6h7IGOagC4unaakl2TlB8x+jS7kCBCCPIbOI5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-411db730dcaso34706015ab.0
+        for <io-uring@vger.kernel.org>; Tue, 09 Sep 2025 14:10:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757452230; x=1758057030;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QdCUk6/i806tq9cAoWlUqBA7Jf2cackfMam7zEwSTvI=;
+        b=aFh2gwsGoAoiz6gMmfTVtUFvmmVUyBvh9xXgxpz9jEWDLTKOJWG1P1Z/KPAflRUCKb
+         YmprufvIHQ9U09XmPojkTdlYCG24S8LzrgeUVEmir4XLM4BT3LQAWR01+D4x25zGsB9s
+         x7fvV+2HrgCKmliaMUdBotgtYrDCOdeKFBnCkTojNg+AQaiRd5w648+sof9terAh+vOh
+         X/AQ1F0Yj1xfls6vq9ARIPczg8u+SSwvlvBBmtbEwwe4Z+yM3DGMq/6zF7yKAgX1siDn
+         CQEyT67QOnsFjCrcTgd8MmTAs7e5oEZRO4JWegOcWYCyP1PoIfcdt5Kx4Tsj80iLrN5G
+         b0GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgnJRXCBD2oBznpDKeb3lDQExtBwxVhHYnghXM5YZZGD0mNCdD2S210N8wAgbm92nVoC7Y4pM8UA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAgHIfI1BhGMswjMAc9h3i4eCzkAKythYkLf9UvxCCUb7xJORT
+	2H0J5xX/4iag+t/YjnR6CtWMkAYTMJyWVfakrKpB+XUl3hZfFRJd/nZaDVi1zsAplYSlRdYx4ef
+	0+ywOVYk/hU8qX04kJQqp6hHOCgusb+gALowgnUKGhtypMvRqPn96Ho4zfwg=
+X-Google-Smtp-Source: AGHT+IHKMIXCfa3298eqbkMurUnvDMP+iByaLckTqP5ryvDUhOd3YSQWbpKmztxDjFKTQPVkMPqjCGmDHiGt8BMKFFB2xCZxIMJr
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mbJsZ2iIUchEgbGB"
-Content-Disposition: inline
-In-Reply-To: <ad587c82-cc9c-43ef-89c5-d208734a4c7f@suse.cz>
-X-Cookie: Ma Bell is a mean mother!
+X-Received: by 2002:a05:6e02:1aa1:b0:3f6:56a4:1e13 with SMTP id
+ e9e14a558f8ab-3fd806a3222mr186081115ab.1.1757452230440; Tue, 09 Sep 2025
+ 14:10:30 -0700 (PDT)
+Date: Tue, 09 Sep 2025 14:10:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c097c6.050a0220.3c6139.000c.GAE@google.com>
+Subject: [syzbot] [io-uring?] WARNING in __vmap_pages_range_noflush (2)
+From: syzbot <syzbot+42d478f812698fed9f41@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    be5d4872e528 Add linux-next specific files for 20250905
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1458a962580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=114fb6eb337a294b
+dashboard link: https://syzkaller.appspot.com/bug?extid=42d478f812698fed9f41
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1510d312580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1258a962580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fb814704342a/disk-be5d4872.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4f4366b3c12b/vmlinux-be5d4872.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7b2472ced6f9/bzImage-be5d4872.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+42d478f812698fed9f41@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: mm/vmalloc.c:538 at vmap_pages_pte_range mm/vmalloc.c:538 [inline], CPU#0: syz.0.17/6034
+WARNING: mm/vmalloc.c:538 at vmap_pages_pmd_range mm/vmalloc.c:569 [inline], CPU#0: syz.0.17/6034
+WARNING: mm/vmalloc.c:538 at vmap_pages_pud_range mm/vmalloc.c:587 [inline], CPU#0: syz.0.17/6034
+WARNING: mm/vmalloc.c:538 at vmap_pages_p4d_range mm/vmalloc.c:605 [inline], CPU#0: syz.0.17/6034
+WARNING: mm/vmalloc.c:538 at vmap_small_pages_range_noflush mm/vmalloc.c:627 [inline], CPU#0: syz.0.17/6034
+WARNING: mm/vmalloc.c:538 at __vmap_pages_range_noflush+0xdf1/0xf30 mm/vmalloc.c:656, CPU#0: syz.0.17/6034
+Modules linked in:
+CPU: 0 UID: 0 PID: 6034 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:vmap_pages_pte_range mm/vmalloc.c:538 [inline]
+RIP: 0010:vmap_pages_pmd_range mm/vmalloc.c:569 [inline]
+RIP: 0010:vmap_pages_pud_range mm/vmalloc.c:587 [inline]
+RIP: 0010:vmap_pages_p4d_range mm/vmalloc.c:605 [inline]
+RIP: 0010:vmap_small_pages_range_noflush mm/vmalloc.c:627 [inline]
+RIP: 0010:__vmap_pages_range_noflush+0xdf1/0xf30 mm/vmalloc.c:656
+Code: eb 7b e8 92 1e ad ff eb 2f e8 8b 1e ad ff eb 6d e8 84 1e ad ff 31 ed eb 64 e8 7b 1e ad ff 90 0f 0b 90 eb 14 e8 70 1e ad ff 90 <0f> 0b 90 eb 09 e8 65 1e ad ff 90 0f 0b 90 bd f4 ff ff ff 44 8b 74
+RSP: 0018:ffffc90003dff950 EFLAGS: 00010293
+RAX: ffffffff8213e750 RBX: dffffc0000000000 RCX: ffff888030da3c80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff8213e9c5
+R10: fffff520014d3800 R11: ffffed10170c7fa9 R12: ffff888028890828
+R13: ffff88802e700d08 R14: 0000000000000000 R15: 1ffff11005ce01a1
+FS:  0000555592944500(0000) GS:ffff8881257ba000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32163fff CR3: 0000000077ab6000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ vmap_pages_range_noflush mm/vmalloc.c:681 [inline]
+ vmap_pages_range mm/vmalloc.c:701 [inline]
+ vmap+0x1ca/0x310 mm/vmalloc.c:3515
+ io_region_init_ptr+0x24d/0x350 io_uring/memmap.c:125
+ io_create_region+0x3a4/0x480 io_uring/memmap.c:228
+ io_allocate_scq_urings+0x2b0/0x870 io_uring/io_uring.c:3626
+ io_uring_create+0x591/0xba0 io_uring/io_uring.c:3867
+ io_uring_setup io_uring/io_uring.c:3963 [inline]
+ __do_sys_io_uring_setup io_uring/io_uring.c:3997 [inline]
+ __se_sys_io_uring_setup+0x264/0x270 io_uring/io_uring.c:3988
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3093f8ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffcd7235a8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 00007f30941c5fa0 RCX: 00007f3093f8ebe9
+RDX: 0000000000000000 RSI: 0000200000000040 RDI: 0000000000007688
+RBP: 0000200000000040 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000007688 R15: 0000000000000000
+ </TASK>
 
 
---mbJsZ2iIUchEgbGB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Tue, Sep 09, 2025 at 08:22:05PM +0200, Vlastimil Babka wrote:
-> On 9/9/25 20:14, Linus Torvalds wrote:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> > But yes: please do continue to add links to the original email - IF
-> > you thought about it. That has always been my standpoint. Exactly like
-> > "Fixes", and exactly like EVERY SINGLE OTHER THING you add to a commit
-> > message.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> Fine, maybe b4 could help here by verifying if patch-id works on commits in
-> the maintainer's branch before sending a pr, and for those where it doesn't,
-> the maintainer can decide to add them. It sounds more useful to me than
-> adding anything "AI-powered" to it.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-I think ideally if there's tooling for this it should have both a
-verification feature like you mention and also be supported by b4 mbox
-so that you can say "b4 mbox ${COMMIT}" or whatever and have it download
-a mailbox like can currently be done with a message ID.  That'd keep the
-usability we currently have, the tool could look in the message for a
-link and use that if it needs it.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-What might be especially usable for applying/publishing would be
-something that can be used either in a hook or more likely in scripting
-that'll take the Message-Ids from git that people currently use to
-generate the Link: tags and discard them if whatever the tool usually
-uses to find mail archive links works without them, or rewrite them into
-Link: tags if not.  The tool could emit the warning you suggest when
-leaving the links in.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---mbJsZ2iIUchEgbGB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjAlosACgkQJNaLcl1U
-h9DYdwf/QGLJUhrIM3VlMAceJ2nDDxbEd/TpA0FpuOJMTcoFYsVjS54QrVWncdzf
-RgNZcdu3oC6bRv9bK5wczsSyJ0QCvDNzKBAdpanAD/jhiUKqLMVZeORCYhDmEjn7
-iMh5Wi6MMymjVq6MiK3a0IgIYpd+IAUIkKENdbMUlb6PU6njfgGfRfmS1ehM8XNS
-JFhB8SrK+yZOWbes9J6IZ3ZRnpKLpWY6jrcp0867SXBirPUHNUJXV5Iqd+utS4e/
-S3AhH8OeuVtYjrJN6ISOThWpT925V8VGV3jCl182GJU71BCLQQnJJVx1YxGT+s61
-Ta3InC4Yb6dhfVuAFQ+EImWFB/Pbxw==
-=Wkaj
------END PGP SIGNATURE-----
-
---mbJsZ2iIUchEgbGB--
+If you want to undo deduplication, reply with:
+#syz undup
 

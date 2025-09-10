@@ -1,168 +1,140 @@
-Return-Path: <io-uring+bounces-9706-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9707-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE50B518D7
-	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 16:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784E0B51BE0
+	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 17:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F6A188B4CD
-	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 14:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FDA5E4812
+	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 15:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8868E322A0E;
-	Wed, 10 Sep 2025 14:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1A42609C5;
+	Wed, 10 Sep 2025 15:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=donacou.ch header.i=@donacou.ch header.b="l9tlwE/C";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dMrrQkSs"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hkLAIciQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FDB26FA77;
-	Wed, 10 Sep 2025 14:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BEB322A3F
+	for <io-uring@vger.kernel.org>; Wed, 10 Sep 2025 15:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513051; cv=none; b=TiPGNG03qMw2cEC5oifsRQvAxzvri6NioKLiyMX2X4YVU28p2dPCjZjM7k0kpiPsKqK9R5uaHisE743UpqvxJceuAFgJ3ClPuE9kT8Ha1k7RnyTq76CP7hoxPs0cD90EVZQ6iLMLFZDdhpBSc36P3ptWt4IM4uC2CkQZcsPxKoI=
+	t=1757518592; cv=none; b=a6pUuSuMpZMjObY/3gYiAdbpClfHt0cWBtjEtEZ/ZtslWYdoPtjHmhKwY5/oNgz23h+KD+jcmKOFimW2MohNWW1xAqXLnQPeV3JN05rsrXzwBfmqkYTG13gnnAJ2unhcb/cuPKII0iuXB0Kd05VmnHDbIrqcbZf/v2a8wMgF+mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513051; c=relaxed/simple;
-	bh=uUFAoktO277xXwHHnswYPQKvbx+QmoiX+wDMEuUdm/g=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=s0W+Yyw1d/Q/SCwybxuv8nY3SKyq/rVN5DTuPopJMnjN0L0fI+ZU6tHne2AJsNripfjfTWxJp/CbOFJJDIxts3stV9baivUugeco3l3Chp45+pGpAy3jEN7iBDyLFDlWCvUvDe5ccKHA3OX/O4cIW5Lj1e3ToFlRHcTebdZ6v50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=donacou.ch; spf=pass smtp.mailfrom=donacou.ch; dkim=pass (2048-bit key) header.d=donacou.ch header.i=@donacou.ch header.b=l9tlwE/C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dMrrQkSs; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=donacou.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=donacou.ch
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id E660CEC044E;
-	Wed, 10 Sep 2025 10:04:07 -0400 (EDT)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-06.internal (MEProxy); Wed, 10 Sep 2025 10:04:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=donacou.ch; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757513047;
-	 x=1757599447; bh=3Nuaa+FoSrAxipH9n0l4tF6X+2obMMAQMJqsmRgL2c8=; b=
-	l9tlwE/C9WUogEbHgyOlQIf0QymIUkvJyMxRMPitRzg/FkZD9P29HGA/jBJJaT5Z
-	hIMQ8XX8s1/UKj109XkhUxpmTnkoMFpBr4OgCBgEYIaGbn/1Ixmt542YXlla65Gt
-	xEnGHwyQ7VRfLRcHHN1/xnuLZvPdq+n0gvmzE53rYXZCJO56vcIX1BWNodzVl94O
-	C5Lqr+T2eHOm7g6fBfdScHByTEo9qBrZf+KSv/w5vGo0EMDOZDWrPtG9pNduokSm
-	VqdXt/WrUN1uQ4+GKOfAfA/WM9+C1yXzTruyDT16lHh5R0Rl4r/RzZH/I6qdmf3I
-	msozoe4B0v/vQ6zLp3fjCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757513047; x=
-	1757599447; bh=3Nuaa+FoSrAxipH9n0l4tF6X+2obMMAQMJqsmRgL2c8=; b=d
-	MrrQkSsXutiVu49JEqI6vnAFpKvT8A6QNqvfM9kPFvVCVSSaaPAPYQnJclPCpGsp
-	SdjQuOvrJ/jb6SE3iGQ4qBkWgu4EbQbkkCrWXSsYvMMV8+Ko2YVylXT335au1vQI
-	craNWyKZOwCYjeGMqIdt1Y+A+ElKK+kazHb1c30gkDJMl9GOeFg325dDwXZxL6xJ
-	w1/xsTIY3pYom5hE5rWbqCNHtwko+lHJTGGVafRclV1f+jDlUvrhCnhXJH7S7xYh
-	YfUB02q3CTpJgGgX99GLroYIaP+zc8U+Ubkoc/zsThr4ISyBuk8WpVSAjGCGbXtf
-	sy+5NIajuS0UNRQ+AxDtg==
-X-ME-Sender: <xms:V4XBaG8fEFhl1flxgvC3qg_bRGSEPGU8e5cZuM8WiH3DJMUMLhJAmw>
-    <xme:V4XBaGs4ZX-O_x2EggLhVA-fohGgdBDE51IQviKCsOO3p13ZbVo5VXlIca3K7p6Uv
-    Uc4YqMNU0y0dah2>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetnhgurhgv
-    ficuffhonhgrqdevohhutghhfdcuoegrnhgurhgvfiesughonhgrtghouhdrtghhqeenuc
-    ggtffrrghtthgvrhhnpeejteduiedtfffhhfffgeevvdefheduheegjeduteffteduvdfh
-    jeegffduledvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpegrnhgurhgvfiesughonhgrtghouhdrtghhpdhnsggprhgtphhtthhopeekpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrth
-    esihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhn
-    vghlrdgukhdprhgtphhtthhopehsrghshhgrlheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopehkohhnshhtrghnthhinheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-    dprhgtphhtthhopegtshgrnhguvghrsehpuhhrvghsthhorhgrghgvrdgtohhmpdhrtghp
-    thhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epfihorhhkfhhlohifshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:V4XBaMJrumzWH892lXeHhEz1bgXykBCz7cc4cjp1iFta4-7ByKla3Q>
-    <xmx:V4XBaC5-y92JbCH0zV4XUAn-VIl5bgNzyHLGZddtUdQWP01TJRbP3g>
-    <xmx:V4XBaOftHaxM-2tiHzDrJju2TOWDpwHj-4TGhCXPGPbgVrBhJji-UA>
-    <xmx:V4XBaFGqjVZBWIpW557ZR195MEUdh9izNqns44KGWhDb_hPL2G2HzQ>
-    <xmx:V4XBaPQyIRrl_KVyuOwUGZpIDcjEIsafSbI9rSsAdoIjChsta8nMA8cz>
-Feedback-ID: i594043eb:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 41D8A78026F; Wed, 10 Sep 2025 10:04:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757518592; c=relaxed/simple;
+	bh=zkOizcnL3u2QyclsxwdhEzs6yCf0V1XIYt1ZjGU5oxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FiVh/JId+o+KINhna8Gd9otb3a4IH7Z5RXpqrhbaXFwMjbqvtx1KKxomnmv51rAAZ2+ofYF7xmaHVG0hJ9AhLtWcvoh8wnf7yMGk0V7wp5xgsxsB4b6aatktd6efgMcpEUeVIUWDS4NXA1b4LoREsycPJiRU6kYulfV2mxiALT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hkLAIciQ; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-88762f20125so541856839f.0
+        for <io-uring@vger.kernel.org>; Wed, 10 Sep 2025 08:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757518590; x=1758123390; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47rPTIRnkqkB3dhDRMh1IVTnxFun9DN1W/UXwl1XtH0=;
+        b=hkLAIciQPLCwlrEjCswDlUBHXrV3z5mhw9sE8gRPdzsE4dQEPMVfA7hm7E6uhJsIMy
+         PKinMck4HB6ipwrikjg7VmEElTXrIlvmefxYkZuux0ZHaec9Ss3qe2SovBlKnr4HaUr5
+         pu2t4g/kk/Mrl3MIGEpUIpx4MAjMp6O9eCAssaXu68y1kEHvC8pnH/DpMUud+xPWmx9Q
+         9yfCwBDmQjmS0GhJ2LKHYWhUIeNYrPldsIPnqGHp3POoRmjcK0g0FgivF6jFVE8MRofV
+         qTD3A5E2fO9Wc5NMDG3E/UINXG9aNh+9Hr91IniructPBGQ+VuUDFubDhSTa7ZXtSfaT
+         9mPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757518590; x=1758123390;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=47rPTIRnkqkB3dhDRMh1IVTnxFun9DN1W/UXwl1XtH0=;
+        b=bK66+qTmhjIuM61E91cejQPDgANcy0um8EsUGqxNid9zKHIfLrsVJvSt/pM+m8aUU6
+         eXB79hKS9hE35H9JVJ9YBVcY+Oz2EEqwd/DvxnWGD1xbKyiF35QCS+LKKOgyNsRH9xSG
+         /CBAI8lzec9pJM4T0le7Z0+taLfUoin8QYB++6RehCd9SO/1Mg90iksZDEyjGO211HMS
+         3NXAnGrYOroEOFrAccPTyNA5ZT534gb/oy15YqW6JeXMe/VEfSzwu8C5nwUKRMS//zvs
+         O0wq/JvvSb310xh0Tnzm0MSc4aKoLmmFrWqAVpA0ZOv/D202TRVUjfhrA4SRDJ+O0zS5
+         T+1w==
+X-Gm-Message-State: AOJu0Yy1bmNbcX+8FOPJ9iCZ+cpul8eI8zEeza54iAQUO2v/0uPzYYnN
+	GymPpcHNm/l8XBvLj0NevqGHpa3v6LhYsTTijgiTaaIbAz7+N4pCWlZ7RgJ6bxZywWI=
+X-Gm-Gg: ASbGncupmYNyKpBhXCiaQjh6XgrLdKCl30295lfu2FxyPUn7L5Wpz5DZp/x/wOSgHun
+	7CZzS9/wGocCxyS4R92qyeVZOkv8gji2hH5CGJ2LkDa7tCxB/IH2rx81scMSN9bWP4JhEqRVQdS
+	wUQK4vSxBnbsJIZ2ftL4Gsrj2b0peUQtfeJzw6/kk3ietkn60mX5gpMwfy6y7FrAeaMhgETrrTI
+	d2Yh9FVURYvpDaHwvzG1vARQCMHdrVLR65JOLb6NN4y8sb0sk/SKR4XHdaKNcdeDhAAvXsKhTsU
+	5gx9143zJZmbEmvMfMQ5leVRzlWBwiGQG+BOzR/67WVhHOyPN99mc56Eht9kfCTWlrZ0GNWOT6z
+	c+qv/l1lJevriiTiktE6E6pjinitTZA==
+X-Google-Smtp-Source: AGHT+IHPG8otLmKYXYss8TokH/egaHb8q0iZwY8WDEYZMQsQmIOSmU2tuP+1xUb4DCsi8EMkLLhLFQ==
+X-Received: by 2002:a05:6e02:2385:b0:415:fe45:3df9 with SMTP id e9e14a558f8ab-415fe453ebbmr62746975ab.17.1757518589448;
+        Wed, 10 Sep 2025 08:36:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f31c91asm10767260173.39.2025.09.10.08.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 08:36:29 -0700 (PDT)
+Message-ID: <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
+Date: Wed, 10 Sep 2025 09:36:28 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A6d2yW3kTJ_V
-Date: Wed, 10 Sep 2025 10:03:40 -0400
-From: "Andrew Dona-Couch" <andrew@donacou.ch>
-To: "Konstantin Ryabitsev" <konstantin@linuxfoundation.org>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
-Cc: "Sasha Levin" <sashal@kernel.org>, axboe@kernel.dk,
- csander@purestorage.com, "io_uring Mailing List" <io-uring@vger.kernel.org>,
- torvalds@linux-foundation.org, workflows@vger.kernel.org
-Message-Id: <ce7536b4-e83c-4a0f-a46a-0bb0c8eb3610@app.fastmail.com>
-In-Reply-To: <20250910-augmented-ludicrous-tortoise-0a53bd@lemur>
-References: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
- <20250909163214.3241191-1-sashal@kernel.org>
- <20250909172258.GH18349@pendragon.ideasonboard.com>
- <20250910-augmented-ludicrous-tortoise-0a53bd@lemur>
-Subject: Re: [RFC] b4 dig: Add AI-powered email relationship discovery command
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for
+ IORING_SETUP_SINGLE_ISSUER
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904170902.2624135-1-csander@purestorage.com>
+ <175742490970.76494.10067269818248850302.b4-ty@kernel.dk>
+ <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-What a remarkable discussion!  The arguments being made lay bare an important difference in perspective.
+On 9/10/25 5:57 AM, Pavel Begunkov wrote:
+> On 9/9/25 14:35, Jens Axboe wrote:
+>>
+>> On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
+>>> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creating
+>>> an io_uring doesn't actually enable any additional optimizations (aside
+>>> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
+>>> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
+>>> submits SQEs to skip taking the uring_lock mutex in the submission and
+>>> task work paths.
+>>>
+>>> [...]
+>>
+>> Applied, thanks!
+>>
+>> [1/5] io_uring: don't include filetable.h in io_uring.h
+>>        commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
+>> [2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
+>>        commit: 2f076a453f75de691a081c89bce31b530153d53b
+>> [3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
+>>        commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
+>> [4/5] io_uring: factor out uring_lock helpers
+>>        commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
+>> [5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+>>        commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
+> 
+> FWIW, from a glance that should be quite broken, there is a bunch of
+> bits protected from parallel use by the lock. I described this
+> optimisation few years back around when first introduced SINGLE_ISSUER
+> and the DEFER_TASKRUN locking model, but to this day think it's not
+> worth it as it'll be a major pain for any future changes. It would've
+> been more feasible if links wasn't a thing. Though, none of it is
+> my problem anymore, and I'm not insisting.
 
-> you're still choosing to attack because it's LLM based and you have something
-> personal against that.
-
-This argument seems an utter abrogation of an engineer's core responsibility to understand the tools they use.  The concerns raised against LLMs here were specific and technical, were they not?
-
-> I don't want to go too far down the "wasting resources path," because,
-> honestly, a kid playing videogames for a weekend will waste more power than a
-> maintainer submitting a couple of threads for analysis.
-
-Quite disingenuous to treat the marginal cost of a single search as if it accounted for the true cost to society of making the product available.
-
-I appreciate the careful consideration of maintainers here who work to keep the focus of development on real humans and a thoughtful and deliberative processes.
-
-Thanks,
-Andrew
-
-
-
+Hmm yes, was actually pondering this last night as well and was going
+to take a closer look today as I have a flight coming up. I'll leave
+them in there for now just to see if syzbot finds anything, and take
+that closer look and see if it's salvageable for now or if we just need
+a new revised take on this.
 
 -- 
-We all do better when we all do better.  -Paul Wellstone
-
-On Wed, Sep 10, 2025, at 09:38, Konstantin Ryabitsev wrote:
-> On Tue, Sep 09, 2025 at 08:22:58PM +0300, Laurent Pinchart wrote:
->> On Tue, Sep 09, 2025 at 12:32:14PM -0400, Sasha Levin wrote:
->> > Add a new 'b4 dig' subcommand that uses AI agents to discover related
->> > emails for a given message ID. This helps developers find all relevant
->> > context around patches including previous versions, bug reports, reviews,
->> > and related discussions.
->> 
->> That really sounds like "if all you have is a hammer, everything looks
->> like a nail". The community has been working for multiple years to
->> improve discovery of relationships between patches and commits, with
->> great tools such are lore, lei and b4, and usage of commit IDs, patch
->> IDs and message IDs to link everything together. Those provide exact
->> results in a deterministic way, and consume a fraction of power of what
->> this patch would do. It would be very sad if this would be the direction
->> we decide to take.
->
-> I don't want to go too far down the "wasting resources path," because,
-> honestly, a kid playing videogames for a weekend will waste more power than a
-> maintainer submitting a couple of threads for analysis.
->
-> I've already worked on plugging in LLMs into summarization, so I'm not alien
-> or opposed to this approach. I'd like to make this available to maintainers
-> who find it useful, and completely out of the way for those maintainers who
-> hate the whole idea. :)
->
-> Best wishes,
-> -K
+Jens Axboe
 

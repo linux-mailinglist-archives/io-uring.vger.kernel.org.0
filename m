@@ -1,131 +1,89 @@
-Return-Path: <io-uring+bounces-9704-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9705-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F88B516AC
-	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 14:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0117BB51809
+	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 15:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6563E189688F
-	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 12:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05E1175160
+	for <lists+io-uring@lfdr.de>; Wed, 10 Sep 2025 13:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E9331158E;
-	Wed, 10 Sep 2025 12:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B33306B33;
+	Wed, 10 Sep 2025 13:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1fwqZZb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qKsGywPG"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B75276051;
-	Wed, 10 Sep 2025 12:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0ED1494CC;
+	Wed, 10 Sep 2025 13:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506794; cv=none; b=ICSxg5fmdAeXIIjj7gXkAF2a0e7O+G73paiCYJMfRqs5Ry2rCVRzHmw0nOW6ClbDFI3gD7TdGcQ+50ek+aWagQlm9BN09HgE4Iwu890C5VGFBZAjjqZuFoVnfs1BnGMj6Wfh9twrRK359+nHj/JxtKrNgVwUYOMWoOhhdQo46HM=
+	t=1757511491; cv=none; b=LclHJiAAIVi4pdaUhXQ7uIcUkL9PzulumGUEkA853trsk0h1BchSaef5LnLGfCwJ6lYHLfZJ9KoikGk5SXZcndSbBzQezHH/i8VkZCxzhu9xMPeNNwROa9Xc9yO8TcD8STWQSkC2XfcjCLeZ0mdL9YdelO2gB+Jb8tqr4Q0rRPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506794; c=relaxed/simple;
-	bh=m2lIjYXiBT84ffpnStHjjrdVAEucnB8L201CVsqOcpQ=;
+	s=arc-20240116; t=1757511491; c=relaxed/simple;
+	bh=OLQSadqn5sk7Ywbb2Knr3epvYKMxJSzK4qTU8lUhQns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyizJ3DP5n4pt45wL61/PGnRJIjtzBpygAVkSTI2kwS3gc3nHHjBT6nftDXe3LCBl1cQf/P/aRQHwB3X4PnIIlUqUuOzYiIT+rAaVq88Cdvh19pnLTI7NyZVGeaaE1kOCy28blLAwko7r2GzgccHIUhehkTwA0fTN6Q0AJIDUag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1fwqZZb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A22EBC4CEF0;
-	Wed, 10 Sep 2025 12:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757506793;
-	bh=m2lIjYXiBT84ffpnStHjjrdVAEucnB8L201CVsqOcpQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=OfvxXjsFcKWWwriAn+Uecc8bXS+EL++FRC19PXlviMHscbhfUy6F+S+Qpzfnxuc7qbXF5Tj7+f0TEps6oFAg7kSlE1pKchbsvIsZuwMrzQXicIIm3pLBDX0/oRap1/Pmil6LE28snhAW3IaSLqZlfzokJi7IZYVNFjGCwW12bzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qKsGywPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1115DC4CEF0;
+	Wed, 10 Sep 2025 13:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757511491;
+	bh=OLQSadqn5sk7Ywbb2Knr3epvYKMxJSzK4qTU8lUhQns=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1fwqZZblkaa++z0wFf2WXhuT6pgQBQ22dAKJ2qpqVgL6AxKY9XofdpsYdjbhCQJW
-	 uTdSCDeKrlAyStGzYZNNwMB3PBPVpvW019gqa4t3tWw42ZaTtqTKxTYHYVYyLVs3OA
-	 euImLd9U2hXfdgSysMva40iyuZn5smrLakqk9XJW6TEY7/GwQKeIe6XgRUJBBuYTmI
-	 alazqy3BYePzNnpMRNsXstYllJVq6xUDvsO8dWQ1JYwIE/dF1MuslVqUFEve+fUEgn
-	 Ro1ku1TkY5izDiaMpr++NyIYizAtaJqUCkbFmhuBuMwA5If4hUyJ6RGWPFjMT69OW3
-	 cOZa5LQELDK3w==
-Date: Wed, 10 Sep 2025 13:19:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Vlastimil Babka <vbabka@suse.cz>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring <io-uring@vger.kernel.org>, workflows@vger.kernel.org
-Subject: Re: Link trailers revisited (was Re: [GIT PULL] io_uring fix for
- 6.17-rc5)
-Message-ID: <cc99e802-ffa1-4665-aed3-e3ee965a71b0@sirena.org.uk>
-References: <92dc8570-84a2-4015-9c7a-6e7da784869a@kernel.dk>
- <20250909-green-oriole-of-speed-85cd6d@lemur>
- <497c9c10-3309-49b9-8d4f-ff0bc34df4e5@suse.cz>
- <be98399d-3886-496e-9cf4-5ec909124418@kernel.dk>
- <CAHk-=whP2zoFm+-EmgQ69-00cxM5jgoEGWyAYVQ8bQYFbb2j=Q@mail.gmail.com>
- <af29e72b-ade6-4549-b264-af31a3128cf1@sirena.org.uk>
- <CAHk-=wiN+8EUoik4UeAJ-HPSU7hczQP+8+_uP3vtAy_=YfJ9PQ@mail.gmail.com>
- <CAHk-=wh2F5EPJWhiEeW=Ft0rx9HFcZj2cWnNGh_OuR0kdBm8UA@mail.gmail.com>
- <20250909-impetuous-swine-of-chaos-2aa9af@meerkat>
- <68c0d07372c8d_4224d100dc@dwillia2-mobl4.notmuch>
+	b=qKsGywPGCBoq7Z0SnP6tkDmpnlZkhXSTMKKH1ZAiPLFAXwMKe07C4m3RngBFq1t1M
+	 QDB70Q1Qim8E5IcBPUr7KZJFuyNTuO1At6m/aUst7wVSVvQTpJlxo3sqGLXFiYkcLx
+	 ECKJMgZJ2DpimqURtoGP3pGKins8aWGhAagolpmY=
+Date: Wed, 10 Sep 2025 09:38:09 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sasha Levin <sashal@kernel.org>, axboe@kernel.dk, 
+	csander@purestorage.com, io-uring@vger.kernel.org, torvalds@linux-foundation.org, 
+	workflows@vger.kernel.org
+Subject: Re: [RFC] b4 dig: Add AI-powered email relationship discovery command
+Message-ID: <20250910-augmented-ludicrous-tortoise-0a53bd@lemur>
+References: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
+ <20250909163214.3241191-1-sashal@kernel.org>
+ <20250909172258.GH18349@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3RrWNWWD4p39M8rR"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <68c0d07372c8d_4224d100dc@dwillia2-mobl4.notmuch>
-X-Cookie: I think my career is ruined!
+In-Reply-To: <20250909172258.GH18349@pendragon.ideasonboard.com>
 
+On Tue, Sep 09, 2025 at 08:22:58PM +0300, Laurent Pinchart wrote:
+> On Tue, Sep 09, 2025 at 12:32:14PM -0400, Sasha Levin wrote:
+> > Add a new 'b4 dig' subcommand that uses AI agents to discover related
+> > emails for a given message ID. This helps developers find all relevant
+> > context around patches including previous versions, bug reports, reviews,
+> > and related discussions.
+> 
+> That really sounds like "if all you have is a hammer, everything looks
+> like a nail". The community has been working for multiple years to
+> improve discovery of relationships between patches and commits, with
+> great tools such are lore, lei and b4, and usage of commit IDs, patch
+> IDs and message IDs to link everything together. Those provide exact
+> results in a deterministic way, and consume a fraction of power of what
+> this patch would do. It would be very sad if this would be the direction
+> we decide to take.
 
---3RrWNWWD4p39M8rR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don't want to go too far down the "wasting resources path," because,
+honestly, a kid playing videogames for a weekend will waste more power than a
+maintainer submitting a couple of threads for analysis.
 
-On Tue, Sep 09, 2025 at 06:12:19PM -0700, dan.j.williams@intel.com wrote:
-> Konstantin Ryabitsev wrote:
+I've already worked on plugging in LLMs into summarization, so I'm not alien
+or opposed to this approach. I'd like to make this available to maintainers
+who find it useful, and completely out of the way for those maintainers who
+hate the whole idea. :)
 
-> > We can't control how the patches are generated by submitters. If someone
-> > generates and sends them with --histogram, this won't work. Here's an example
-> > right from your tree:
-
-> Is this a matter of teach git send-email to generate a header, e.g.
-> "X-Patch-ID:", for a given stable diff format convention? That lets
-> submitters use any diff format they want, but the X-Patch-ID: is
-> constant. Then "git show $diff_opts_convention $commit" becomes more
-> reliable over time.
-
-We can't rely on people using git send-email at all, and they might be
-using an old version (eg, from their distro) even when thy do.
-
-> It still does not help the problem of maintainers massaging patches on
-> their way upstream, but patch.msgid.link does not help that either
-> because that Link: is not the patch that was merged. So if you care
-> about automated tooling being able to query lore for commits, the
-
-That's not really what people are using these links for - if you have
-the commit you don't need to go to the mailing list archive to get it.
-You're more likely to be using them to find the relevant discussion, see
-who was involved and possibly send some kind of followup (eg, to report
-a regression in my case).  A link tag, especially one with a well
-defined domain for the links, works fine in this sort of application
-since it's pointing at the last point the thing was on the list
-regardless of how poorly what's made it into git corresponds to what was
-posted.
-
---3RrWNWWD4p39M8rR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjBbOQACgkQJNaLcl1U
-h9Bm+gf9Etuh1V61zc0Tmm1qR4YKDzschf9Zc1N2x+BidviOFp64DuGJahcCrXqb
-CAhcMafY6ak0TK+EzQJtAgo6jKdS72i0lHiZ3KVFT2IofkOsTf3yxRc+qBZ6GjDb
-A56eICFOkJjYLJqnLlvjhlR+Hl/GFmUEUA6DIJ3UgUYNpqWoGb8bo9my7B7D8ALy
-BvPXA8CdbeQYZA85UJvg1Y3Dw8yCPragaEN9l5WRxWOgxMb0xhu/NgkJx/s6o0+R
-aat8vQloZDlNNEy40gLzdf7lLd5Nb0rmcv/5566ubFVdQfTD2xFW0/XlCJdMpSps
-YBH5va4rvmLCZpxzTlrammurHkHgxg==
-=rI70
------END PGP SIGNATURE-----
-
---3RrWNWWD4p39M8rR--
+Best wishes,
+-K
 

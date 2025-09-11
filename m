@@ -1,133 +1,107 @@
-Return-Path: <io-uring+bounces-9723-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9724-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB42EB524FB
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 02:28:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07424B52532
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 02:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80BCC4E0643
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 00:28:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AEE37BBB5C
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 00:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EBC156677;
-	Thu, 11 Sep 2025 00:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B671ACEDC;
+	Thu, 11 Sep 2025 00:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h4s9z8XN"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hrzQDUDs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8253828E3F
-	for <io-uring@vger.kernel.org>; Thu, 11 Sep 2025 00:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E79617D2;
+	Thu, 11 Sep 2025 00:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757550535; cv=none; b=oAz9lqcO7lWfFsqKBYIYFto9cfLYmt6mEBS5MpPNL6F+UWY3/EQW9kvP3rC3TBA7itxwe+Ci19u3VJY1mFoHKFLxUyOjl6aM3CKCj+dCZ1APzcmMJQ++YWQwaFrJwISKOATt/dXpTnUiPvt8gvPwmIOsxcP6YYZ6y4dMg1Q4K8U=
+	t=1757551998; cv=none; b=iG+mPcqO8ejceyfk+gLUUWYJ/DXMRSLbb+K/CSrf3a/ezSP3pSnsioq7qIcTKpktQmzFB62LeBsBpwpPR2ivwVSAy5uq6ngnTmE0g48F+kizlTfV2IY87ntnAWgBIqEuC2qCX4QywrAuSDgrPOV+lzyr+1ZJTUPaD58zgAiVWcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757550535; c=relaxed/simple;
-	bh=toL39ARlVr7ZlC9b2890K3sq1ZqfrV9Api3o7Gv+0Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m+YONC8Lb0RrQrvnCB6TjxWCeBj+7SHJuNr8BcFy0OS5lGAIASSwBrii149IsFz582jaGWHfPspTn1wHAZVmkv7zJHSk9KlxB4kwbC32dfVC0/eC28pvkEcL1sC4pSMJY4viQV2DSq0T4+s++znIFKQ/2b5cohNEeqhrvSmA+gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h4s9z8XN; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-4135366c20fso911165ab.0
-        for <io-uring@vger.kernel.org>; Wed, 10 Sep 2025 17:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757550532; x=1758155332; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9mNOaduwe8kMjUPYks8hgUHrKrqr8qKYtPsGRQpW+PY=;
-        b=h4s9z8XNrb2qRkR28mGP8nmyiMdKegN4o0c7iqgI7yprd0y0XjqI4isMcjSeP+WYtd
-         kS6wf11PDs63iv4AfwwHKCdf45vwW+pUpbA+QU68dWGi7WR/5m+TuQ3Tm3as4ThsMcXB
-         2OpzqzMg0ulkRhUMgSxO5WjPQXIXDu0tJiFqBSQIhvR78q1F1nPq/JKq4Z3zpiKkWVeG
-         IqUZV25Mkdr7Mhuj0hwnQUxBZJDPi7IigkQhv8welORgJPj7mJ6+M40RXC9eypeiOA/i
-         /k2U/7tUq0xPjSHv9gLCxm+JjmsSfy+jKlwEGhp+a3hrqvZ0zt23uNMNQrSxUJUP+XPs
-         bZ/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757550532; x=1758155332;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mNOaduwe8kMjUPYks8hgUHrKrqr8qKYtPsGRQpW+PY=;
-        b=ADt7YJhRtNbU8sofHlZ7gANW8YTB0+SqIf5JN4QAANGXA1L9Fts9BNLvOZUuaTygKR
-         TYvnyiEK6TVimdoC1JbQzqhb1Jhpe5uozZMEwByYi9rZ3nwwTgmbE6DnY+5GTGnwEAxC
-         2hInq83A4NHi6Uq8MINBefqE9rmmyFdMTVHae3g5Ky33IM0ZkbqYX6LdDgc584BnM10d
-         Diu6Kn24KpBL8I0rZo7cbO5zvXTKyz0AFstn+7YpDM+ZQBIuvoGQljFJ5ZTcua6hcjSR
-         KF1hZHDl9iKU43lH7i5dIH9NUDpoAc5LBoX1JRc2rhG/L5b6p8h4vEjZcQZ5b8zEsg+8
-         B6Aw==
-X-Gm-Message-State: AOJu0YztuvrHjOZtJHEDiwIZaQLsNMRdcvZul5X8U+xAhpiplRb3Sv1K
-	eLytKZPWaoXYXq9B3DegK0uXQ2hBcjau1Dcb+HV3IID7uBg/wxLcNhxamXZkF/2ORqY=
-X-Gm-Gg: ASbGncsVstLykDr4XVSAX2vlhcQbmg+sm0xKU4iRUeuG+vVtQMr4M5Twwx7zm1Eo7e+
-	qfr9kjspUO7mY7oTLY4983XBtvaujILPzzhiDpazLriEJA8aZtj5I6cJ2OLmZkGFIlbX1KG80IC
-	afc97yNJIH61QZCvHEbwh+dg1E4f/uJRzHJixCuDa5WQp/OfPnaO6pgCwJhJEJqrMvA1JfKKVmI
-	mmc7R6xo6X5Qav9l7lhKFkGfTehgDW+kQcEhx/M4ICMQY5a1BWGnnqrA4H4IkXvlBxkpU+ZxefA
-	XK4naBepO4OZx5YyBwiWIH0ShaMLeO2irDweUMy5qmifBb+HhUan9gOxp1np3B6tPw6m2ILeDx4
-	=
-X-Google-Smtp-Source: AGHT+IGUzix8HaokKnjoOUjNLf4BGHweWL5BczKw1YX7+VMAP2VERFCFAKDMvb7cDTu/esH8VNSXHQ==
-X-Received: by 2002:a05:6e02:3788:b0:419:52c5:eed8 with SMTP id e9e14a558f8ab-41952c5f2abmr49735605ab.16.1757550532515;
-        Wed, 10 Sep 2025 17:28:52 -0700 (PDT)
-Received: from [172.19.0.90] ([99.196.129.100])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41c96bb22c3sm3571275ab.38.2025.09.10.17.28.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 17:28:51 -0700 (PDT)
-Message-ID: <8cb8a77e-0b11-44ba-8207-05a53dbb8b9b@kernel.dk>
-Date: Wed, 10 Sep 2025 18:28:43 -0600
+	s=arc-20240116; t=1757551998; c=relaxed/simple;
+	bh=mtvQYI07gAg/rmtniXZgDwCf2BFWI6g9dA6zxM8CNtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgAXvzUavPhw3gy9TmGbxelhL3BcGdP10N+uLQlpXxRh4r8h4mBk63Wg354Yx6k7xLFIdDsocL8GlgWZ8moO6H9TI3kP0xCG7dVnbh87E1BeO7+hEXDYhbrNoqDfW3OqW21oa+AFP+j1816LQb/LbTek5WOEAH3qsP9LyizGeT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hrzQDUDs; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LxE88Yw29XtmMzQcqQYIxxuI/lwirl5m7cem0u7Gy20=; b=hrzQDUDs/KJ/qxdeZX4U0NXSHv
+	qjq2SzKpS1hcoxUm5gcgIT1fCfcNrEWS6FC1FHBPidVEXMJeTMU4Mb08Wh2yOge9yirYHppu8Ef8x
+	qbOpRUM6Tph10gPNJTVfqTsoV6AlL9QOwtcJ/4OLkoq2erdB7fwSC8yPjeUh9eRIl008ZTqUb7emE
+	SAtxmQHEP2s1BgVeTGMkWrVB+M3Xr8bgkU25DlbI0Jy6ftEYC/PWIXSl3aUpmk+LkUxZnRWoNBR+q
+	OO1wh8mW72b0fREUtBqf+mFBbYY8uHblRlxLWYo97cx5uEfFFNNdJ8RlLLVSht6d/mdAIqrsCvnvU
+	drtebSXg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uwVYm-0000000AGMx-0Rmi;
+	Thu, 11 Sep 2025 00:53:12 +0000
+Date: Thu, 11 Sep 2025 01:53:12 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Thomas Bertschinger <tahbertschinger@gmail.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 04/10] fhandle: create do_filp_path_open() helper
+Message-ID: <20250911005312.GU31600@ZenIV>
+References: <20250910214927.480316-1-tahbertschinger@gmail.com>
+ <20250910214927.480316-5-tahbertschinger@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCHv2 1/1] io_uring: add support for
- IORING_SETUP_SQE_MIXED
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Keith Busch <kbusch@meta.com>
-Cc: io-uring@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-References: <20250904192716.3064736-1-kbusch@meta.com>
- <20250904192716.3064736-3-kbusch@meta.com>
- <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910214927.480316-5-tahbertschinger@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 9/10/25 11:44 AM, Caleb Sander Mateos wrote:
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index 04ebff33d0e62..9cef9085f52ee 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -146,6 +146,7 @@ enum io_uring_sqe_flags_bit {
->>         IOSQE_ASYNC_BIT,
->>         IOSQE_BUFFER_SELECT_BIT,
->>         IOSQE_CQE_SKIP_SUCCESS_BIT,
->> +       IOSQE_SQE_128B_BIT,
+On Wed, Sep 10, 2025 at 03:49:21PM -0600, Thomas Bertschinger wrote:
+> This pulls the code for opening a file, after its handle has been
+> converted to a struct path, into a new helper function.
 > 
-> Have you given any thought to how we would handle the likely scenario
-> that we want to define more SQE flags in the future? Are there
-> existing unused bytes of the SQE where the new flags could go? If not,
-> we may need to repurpose some existing but rarely used field. And then
-> we'd likely want to reserve this last flag bit to specify whether the
-> SQE is using this "extended flags" field.
+> This function will be used by io_uring once io_uring supports
+> open_by_handle_at(2).
 
-Yep this is my main problem with this change. If you search the io_uring
-list on lore you can find discussions about this in relation to when
-Ming had his SQE grouping patches that also used this last bit. My
-suggestion then was indeed to have this last flag be "look at XX for
-IOSQE2_* flags". But it never quite got finalized. IIRC, my suggestion
-back then was to use the personality field, since it's a pretty
-specialized use case. Only issue with that is that you could then not
-use IOSQE2_* flags with personality.
+Not commenting on the rest of patchset, but...
 
-IOW, I think the IOSQE_SQE_128B flag is fine for prototyping and testing
-these patches, but we unfortunately do need to iron out how on earth
-we'll expose some more flags before this can go in.
+Consider the choice of name NAKed with extreme prejudice.  "filp"
+thing should die; please, do not introduce more instances.
 
-Suggestions welcome...
+It has crawled out of Minix guts, where AST had been tasteless enough
+to call a structure the represents an open file (which is called struct
+file on all Unices, Linux included) "struct filp" instead, the identifier
+standing for "file and position", nevermind that he did include more
+state than that - the damn thing (in OSD&I appendix) is
+struct filp {
+  mask_bits filp_mode;		/* RW bits, telling how file is opened */
+  int filp_count;		/* how many file descriptors share this slot? */
+  struct inode *filp_ino;	/* pointer to the inode */
+  file_pos filp_pos;		/* file position */
+}
 
--- 
-Jens Axboe
+
+Linus used "struct file" from the very beginning; unfortunately, if you
+grep for filp in 0.01 you'll see a plenty of those - in form of
+0.01:fs/file_dev.c:int file_write(struct m_inode * inode, struct file * filp, char * buf, int count)
+as well as
+0.01:fs/ioctl.c:        struct file * filp;
+0.01:fs/ioctl.c:        if (fd >= NR_OPEN || !(filp = current->filp[fd]))
+which was both inconsistent *and* resembling hungarian notation just
+enough to confuse (note that in the original that 'p' does *NOT* stand for
+"pointer" - it's "current IO position").  Unfortunately, it was confusing
+enough to stick around; at some point it even leaked into function names
+(filp_open(); that one is my fault - sorry for that brainfart).
+
+Let's not propagate that wart any further, please.  If you are opening a file,
+put "file" in the identifier.
 

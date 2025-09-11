@@ -1,78 +1,79 @@
-Return-Path: <io-uring+bounces-9722-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9723-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E4DB524EE
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 02:14:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB42EB524FB
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 02:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810E85821DE
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 00:14:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80BCC4E0643
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 00:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D231FB1;
-	Thu, 11 Sep 2025 00:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EBC156677;
+	Thu, 11 Sep 2025 00:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Z/bdisur"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h4s9z8XN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F6D17555
-	for <io-uring@vger.kernel.org>; Thu, 11 Sep 2025 00:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8253828E3F
+	for <io-uring@vger.kernel.org>; Thu, 11 Sep 2025 00:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757549642; cv=none; b=PrwiypA0vXmWiM7k1BiCykftzTj3v9PKOsEjAnzWHytwVOdzTUOQDnV9BQKTqgZxnxjqvB6I0D05nmNL5Y5JuO3P7sIEi21mQmqxagoQMj7NeWjHHoF01wBj8E5Y8aeLLMU3WhxXlsIe6uUm/GetYNLGUYOaCyieSVkij5TmoOw=
+	t=1757550535; cv=none; b=oAz9lqcO7lWfFsqKBYIYFto9cfLYmt6mEBS5MpPNL6F+UWY3/EQW9kvP3rC3TBA7itxwe+Ci19u3VJY1mFoHKFLxUyOjl6aM3CKCj+dCZ1APzcmMJQ++YWQwaFrJwISKOATt/dXpTnUiPvt8gvPwmIOsxcP6YYZ6y4dMg1Q4K8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757549642; c=relaxed/simple;
-	bh=IA3HAdn+Ef0LEnjrWZmYeiN5A6gbIzUYiWaTQC7zTNU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AlitWPtI8/x3y15bkOUgzpRNAr4p3hr1OMFNrdzTxudNoYQQrKCW2MEj8DFtM+8tGnvel2a67i+9FlQoxPlPLIu490RKNUx9b7AjsxOLqXmnn9nQxHRmmNgoeC9S/f6uSrVON8ZtCz0qHzEaVtXK+CO9cPbGevCNKwrjKhA6tSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Z/bdisur; arc=none smtp.client-ip=209.85.166.177
+	s=arc-20240116; t=1757550535; c=relaxed/simple;
+	bh=toL39ARlVr7ZlC9b2890K3sq1ZqfrV9Api3o7Gv+0Bk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m+YONC8Lb0RrQrvnCB6TjxWCeBj+7SHJuNr8BcFy0OS5lGAIASSwBrii149IsFz582jaGWHfPspTn1wHAZVmkv7zJHSk9KlxB4kwbC32dfVC0/eC28pvkEcL1sC4pSMJY4viQV2DSq0T4+s++znIFKQ/2b5cohNEeqhrvSmA+gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h4s9z8XN; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-411498d92deso2093695ab.1
-        for <io-uring@vger.kernel.org>; Wed, 10 Sep 2025 17:13:58 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-4135366c20fso911165ab.0
+        for <io-uring@vger.kernel.org>; Wed, 10 Sep 2025 17:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757549638; x=1758154438; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yyH3c8x1wH+glzanZ8imHfolHmW6Brc7SEtEw4Oh9as=;
-        b=Z/bdisurlGe1Y71+WzqX04ZtRKtU+MhIrZvQFcvyxGMmORiDglOeO4BPprV6Zoeqkz
-         3O+YBIdt0nUOgebkLLBMZdebQY1587aw9FyWweYnlLMpb5LKFdN9yv6NVw+fp6liEpM2
-         z2eFcLs76bznNI8RN5hW+of9kewCEfPkdv+cgqMVb1GiTTCRO1QuaGCXRQWhNg7xnKIs
-         cRG+YKymtnpGwxDI28QCVcuWSfWyFYkGx0tK8jsZ4sVXdiDzdcuZn5u1u4Kxlgcz9/TP
-         HqGe2EXcSDBa/nWZJrgoglhQWRc/vNcuBLjWCmucewddJi4/MFACj10+q3LC4Czxnpow
-         fASg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757550532; x=1758155332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9mNOaduwe8kMjUPYks8hgUHrKrqr8qKYtPsGRQpW+PY=;
+        b=h4s9z8XNrb2qRkR28mGP8nmyiMdKegN4o0c7iqgI7yprd0y0XjqI4isMcjSeP+WYtd
+         kS6wf11PDs63iv4AfwwHKCdf45vwW+pUpbA+QU68dWGi7WR/5m+TuQ3Tm3as4ThsMcXB
+         2OpzqzMg0ulkRhUMgSxO5WjPQXIXDu0tJiFqBSQIhvR78q1F1nPq/JKq4Z3zpiKkWVeG
+         IqUZV25Mkdr7Mhuj0hwnQUxBZJDPi7IigkQhv8welORgJPj7mJ6+M40RXC9eypeiOA/i
+         /k2U/7tUq0xPjSHv9gLCxm+JjmsSfy+jKlwEGhp+a3hrqvZ0zt23uNMNQrSxUJUP+XPs
+         bZ/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757549638; x=1758154438;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yyH3c8x1wH+glzanZ8imHfolHmW6Brc7SEtEw4Oh9as=;
-        b=Yp5zpywKxskY7MWDcyOaQRAR5LOsZg5OD8YYPSYfjPz8rN/ADexlcNp+iqOWXkYqsz
-         SaiI4fbB20xWssj5vI7akOniyog/9KGwfzw5FrK5GZxWL6A3YIhRweAjd7SZ8QXtkBXz
-         KC+pdYzWsWtdhzXz6AUozxLHwKcMcXkWipZkxYtCmGBfpBFSL4rju+CCqEHztYBd0Gsy
-         8eauZVH60YRID7qYssLkK2rn4Te2UAM9swa55zbMOd1WQzR/Vnj87vrxaxqOQZHxG4co
-         XchT/1cal7xluFKaBG9cFNFbdDUJW0I/qvs7RkzzG2skXzadz7SOifE2CMlPChL2gwg2
-         PzYQ==
-X-Gm-Message-State: AOJu0YzY2OrPG8nwhyA+nsKo9Jh5ca2BtqanleFOjvusyoxL4hq6zPGD
-	86ZWeCG9i/yGFSIj7i+ial+QbrUOOBFHhF8M1zH326WRv3S83cZISeZHqTevMzdwqYyygdnx1Vz
-	OMuPa
-X-Gm-Gg: ASbGncuXo3TL1/XazK3nGhIuhAG49Zi9lsoDH/lqoMVHSpL5HGVx/toahZ+CadoZkH5
-	wk4mhQIuyJ293fKxbt4VlOBFclvtdRDtDtMgW/sy7gpqGV8TmuGQdxfX6hvWXTfYLuzg/OBc562
-	tvuOt87xqur4bUmtQc3uuDKIRpZ9PH3kJl/QURgGUxUf8hVs4z+DNQqwQ2ZlXjsQACt3avd+sRr
-	6lb2iIyT8Jkv/tLy7PJziwl7a3qpBZUkgBiTVlnsDJTE4tkYfDUelHjQi+XCIovHUdIwK/6i0EY
-	h2bmugSd48midlM+tFtxKGqZuZAmPXQptviz/82zprMpvm9T486vWmo+KfO1ltxf
-X-Google-Smtp-Source: AGHT+IH4jMDSjdcV7vfDfmz0WqOqZ2iHu5YhTr63pgs9TKa/FUWUFvpPQPNwAUScLcZs48e2bnRg2Q==
-X-Received: by 2002:a05:6e02:18ca:b0:3f6:6c03:18bc with SMTP id e9e14a558f8ab-3fd8e98d085mr274804555ab.9.1757549637626;
-        Wed, 10 Sep 2025 17:13:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757550532; x=1758155332;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mNOaduwe8kMjUPYks8hgUHrKrqr8qKYtPsGRQpW+PY=;
+        b=ADt7YJhRtNbU8sofHlZ7gANW8YTB0+SqIf5JN4QAANGXA1L9Fts9BNLvOZUuaTygKR
+         TYvnyiEK6TVimdoC1JbQzqhb1Jhpe5uozZMEwByYi9rZ3nwwTgmbE6DnY+5GTGnwEAxC
+         2hInq83A4NHi6Uq8MINBefqE9rmmyFdMTVHae3g5Ky33IM0ZkbqYX6LdDgc584BnM10d
+         Diu6Kn24KpBL8I0rZo7cbO5zvXTKyz0AFstn+7YpDM+ZQBIuvoGQljFJ5ZTcua6hcjSR
+         KF1hZHDl9iKU43lH7i5dIH9NUDpoAc5LBoX1JRc2rhG/L5b6p8h4vEjZcQZ5b8zEsg+8
+         B6Aw==
+X-Gm-Message-State: AOJu0YztuvrHjOZtJHEDiwIZaQLsNMRdcvZul5X8U+xAhpiplRb3Sv1K
+	eLytKZPWaoXYXq9B3DegK0uXQ2hBcjau1Dcb+HV3IID7uBg/wxLcNhxamXZkF/2ORqY=
+X-Gm-Gg: ASbGncsVstLykDr4XVSAX2vlhcQbmg+sm0xKU4iRUeuG+vVtQMr4M5Twwx7zm1Eo7e+
+	qfr9kjspUO7mY7oTLY4983XBtvaujILPzzhiDpazLriEJA8aZtj5I6cJ2OLmZkGFIlbX1KG80IC
+	afc97yNJIH61QZCvHEbwh+dg1E4f/uJRzHJixCuDa5WQp/OfPnaO6pgCwJhJEJqrMvA1JfKKVmI
+	mmc7R6xo6X5Qav9l7lhKFkGfTehgDW+kQcEhx/M4ICMQY5a1BWGnnqrA4H4IkXvlBxkpU+ZxefA
+	XK4naBepO4OZx5YyBwiWIH0ShaMLeO2irDweUMy5qmifBb+HhUan9gOxp1np3B6tPw6m2ILeDx4
+	=
+X-Google-Smtp-Source: AGHT+IGUzix8HaokKnjoOUjNLf4BGHweWL5BczKw1YX7+VMAP2VERFCFAKDMvb7cDTu/esH8VNSXHQ==
+X-Received: by 2002:a05:6e02:3788:b0:419:52c5:eed8 with SMTP id e9e14a558f8ab-41952c5f2abmr49735605ab.16.1757550532515;
+        Wed, 10 Sep 2025 17:28:52 -0700 (PDT)
 Received: from [172.19.0.90] ([99.196.129.100])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41c952de21esm3637885ab.26.2025.09.10.17.13.54
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41c96bb22c3sm3571275ab.38.2025.09.10.17.28.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 17:13:57 -0700 (PDT)
-Message-ID: <2a4811de-1e35-428d-8784-a162c0e4ea8f@kernel.dk>
-Date: Wed, 10 Sep 2025 18:13:49 -0600
+        Wed, 10 Sep 2025 17:28:51 -0700 (PDT)
+Message-ID: <8cb8a77e-0b11-44ba-8207-05a53dbb8b9b@kernel.dk>
+Date: Wed, 10 Sep 2025 18:28:43 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,80 +81,53 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCHv2 1/1] io_uring: add support for
+ IORING_SETUP_SQE_MIXED
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Keith Busch <kbusch@meta.com>
+Cc: io-uring@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+References: <20250904192716.3064736-1-kbusch@meta.com>
+ <20250904192716.3064736-3-kbusch@meta.com>
+ <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH for-next] io_uring/query: check for loops in in_query()
+Content-Language: en-US
+In-Reply-To: <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-io_query() loops over query items that the application or liburing
-passes in. But it has no checking for a max number of items, or if a
-loop could be present. If someone were to do:
+On 9/10/25 11:44 AM, Caleb Sander Mateos wrote:
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index 04ebff33d0e62..9cef9085f52ee 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -146,6 +146,7 @@ enum io_uring_sqe_flags_bit {
+>>         IOSQE_ASYNC_BIT,
+>>         IOSQE_BUFFER_SELECT_BIT,
+>>         IOSQE_CQE_SKIP_SUCCESS_BIT,
+>> +       IOSQE_SQE_128B_BIT,
+> 
+> Have you given any thought to how we would handle the likely scenario
+> that we want to define more SQE flags in the future? Are there
+> existing unused bytes of the SQE where the new flags could go? If not,
+> we may need to repurpose some existing but rarely used field. And then
+> we'd likely want to reserve this last flag bit to specify whether the
+> SQE is using this "extended flags" field.
 
-        struct io_uring_query_hdr hdr1, hdr2, hdr3;
+Yep this is my main problem with this change. If you search the io_uring
+list on lore you can find discussions about this in relation to when
+Ming had his SQE grouping patches that also used this last bit. My
+suggestion then was indeed to have this last flag be "look at XX for
+IOSQE2_* flags". But it never quite got finalized. IIRC, my suggestion
+back then was to use the personality field, since it's a pretty
+specialized use case. Only issue with that is that you could then not
+use IOSQE2_* flags with personality.
 
-        hdr3.next_entry = &hdr1;
-        hdr2.next_entry = &hdr3;
-        hdr1.next_entry = &hdr2;
+IOW, I think the IOSQE_SQE_128B flag is fine for prototyping and testing
+these patches, but we unfortunately do need to iron out how on earth
+we'll expose some more flags before this can go in.
 
-        io_uring_register(fd, IORING_REGISTER_QUERY, &hdr1, 0);
-
-then it'll happily loop forever and process hdr1 -> hdr2 -> hdr3 and
-then loop back to hdr1.
-
-Add a max cap for these kinds of cases, which is arbitrarily set to
-1024 as well. Since there's now a cap, it seems that it would be saner
-to have this interface return the number of items processed. Eg 0..N
-for success, and < 0 for an error. Then if someone does need to query
-more than the supported number of items, they can do so iteratively.
-
-Fixes: c265ae75f900 ("io_uring: introduce io_uring querying")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-This would obviously need liburing changes too, but not a big deal
-since a) the changes aren't in liburing yet, and b) this is still
-unreleased code.
-
-diff --git a/io_uring/query.c b/io_uring/query.c
-index 9eed0f371956..99402e8e0a4a 100644
---- a/io_uring/query.c
-+++ b/io_uring/query.c
-@@ -70,11 +70,14 @@ static int io_handle_query_entry(struct io_ring_ctx *ctx,
- 	return 0;
- }
- 
-+/*
-+ * Returns number of items processed, or < 0 in case of error.
-+ */
- int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
- {
- 	char entry_buffer[IO_MAX_QUERY_SIZE];
- 	void __user *uhdr = arg;
--	int ret;
-+	int ret, nr = 0;
- 
- 	memset(entry_buffer, 0, sizeof(entry_buffer));
- 
-@@ -86,8 +89,11 @@ int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
- 
- 		ret = io_handle_query_entry(ctx, entry_buffer, uhdr, &next_hdr);
- 		if (ret)
--			return ret;
-+			break;
- 		uhdr = u64_to_user_ptr(next_hdr);
-+		/* Have some limit to avoid a potential loop */
-+		if (++nr >= 1024)
-+			break;
- 	}
--	return 0;
-+	return nr ?: ret;
- }
+Suggestions welcome...
 
 -- 
 Jens Axboe
-
 

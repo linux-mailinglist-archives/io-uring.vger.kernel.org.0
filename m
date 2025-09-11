@@ -1,117 +1,81 @@
-Return-Path: <io-uring+bounces-9746-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9747-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA245B5328C
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 14:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80823B5330B
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 15:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA413A58B1
-	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 12:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24B05A51B1
+	for <lists+io-uring@lfdr.de>; Thu, 11 Sep 2025 13:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678332252E;
-	Thu, 11 Sep 2025 12:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C83320CC7;
+	Thu, 11 Sep 2025 13:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2AqRJHr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srChlePY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6C931D362;
-	Thu, 11 Sep 2025 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16AC32142B
+	for <io-uring@vger.kernel.org>; Thu, 11 Sep 2025 13:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594384; cv=none; b=OAdVeOyeQWfOEmqBjEUjtuxnwMw2e1UJVi/ad0teEe7dqePzYEHcl4dAu5LWsw+4WfbGv5WMlz/JYIWAWnNsoUgJ2uSlyfONC8alGeIbRMJIX5ULbSQFvyXTVv/M0IfyTwCIJIP9taYsvQWacn8A4fyF6CR8jX5VaPdIHr9LKhQ=
+	t=1757595736; cv=none; b=sJCNlO6nZ/NDvyL0oBkJlznKd13tW79NJrVVOnGUbEXsSgVjuoUbpiyIdr6Qv2ni67pxhRMa1EigAAklaYGuUHMG0CLdcIv5n1Y+cYkwo5nku7mnxHz5nO9Jk2p4v9lIbw8W2Cxm9l19lARxvyFC9bJU+BwZIaOoGKKRPkUzbTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594384; c=relaxed/simple;
-	bh=6FtPYMUmXS4HX/u+H612CF2FyM2NkLQzePe7zVxOw2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UuqcTOvY4HjsHMepsPx4cJCxRtlKZZb7Sq/cHU3FnundODLNCIuVBeFJl1LEnIs6j7I9j/7FV79xGjKxugM9tUozXUgtzVVNVD95CsfDvYkxG55MyqgQRdlT2YCmRKSrB5CBJ+rFcpsz8aSRq6eXeuuCvj9+b6Eb+HGSZ3+gibQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2AqRJHr; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so937223a12.0;
-        Thu, 11 Sep 2025 05:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757594381; x=1758199181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsWzc+/Yzyp5wOv8cyBtS91v14RkQ3sT1U0aSspvdqI=;
-        b=Q2AqRJHrSNS8csDf7Q0gNKkLEWmVXHIZUP2gUr03UmEnYUE0RgLhP6X4DQqUYN4yMv
-         toF6f93x9aBhD4MDM4HkkIdnXCci0Hb9o7G7qyCm9d+qMJKTrNEamgfrMVzznYxWIMZK
-         uqcgPSX8npu9OUbw+QI8pUX/qzqZmpxwPzuxIOrY/6Vkn1BX89ALUriT3AWKT0u/KTDc
-         g7EAUhzLGao93PKPkSGyJaNoDFDjvg4ls61eAqoohwVK5oeeLEPvvshglWtE3excpPic
-         HRz/FfCZ0gtD12/NtGCY0IZ+vFpEKDzQc/VOi3ql+94eBmshjrLyyIyVvR46ePt7LjQ7
-         7xfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757594381; x=1758199181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bsWzc+/Yzyp5wOv8cyBtS91v14RkQ3sT1U0aSspvdqI=;
-        b=F0zbWIC90NEqfkFm2sFkil1zwdiqScqjN4SaTnn51tqQiWEw0tMYuCzDIu360zHB9Y
-         MT81rp/aCZo0Jq7+81KJsfAWyW108DssHtbP/nVE0XS8NCb5VNY2lJehn68nkneUlihu
-         gxGg4EdVTo5IIp+P70fN2MC8njONFPIBHwp2mee3/0F4rKTEyxCXfVHZRQtpXTl//LEG
-         3Rsq4A2xQP0R+njwEpXPLOGBlPVktgbqNjEZkpmuemr6EDUok149SpQdSWCMlE8arLzW
-         HgF+VNHPn1cCCKI4cmUBtcib1/pCcanL11TnRWcnR4rRH11zyHskZSTyWMa2h//uXz/T
-         dgDg==
-X-Forwarded-Encrypted: i=1; AJvYcCW29O7cbmuKZ1mXpvgOZFfACHXTzloTXkE3618/Zy8uEU/0x3LngRq/AYkL7E/rbEEnGwK+z6owona/zNqKQQ==@vger.kernel.org, AJvYcCWYoQMRw0/iGKlUcXQfgEA4uINVw8q423tUwN+fb7v9KPmxf0C2KOSXUPxV/cvfKGRaqdQWq9bO6w==@vger.kernel.org, AJvYcCXuIDlXJIO9hSRQE+Jw7oUe79Jf+uqdvgkwcI3zSOcJWs+MakTfEX4voTQfQwRjdQNteZ9/rITW02d9@vger.kernel.org, AJvYcCXxl1EzfNB+iCg+dRQJyfHdECxwd2bTr7PqMo82BwnKldNdJmVYY5pZZGoVsj3CQXFPxfaWYGvtUYac@vger.kernel.org
-X-Gm-Message-State: AOJu0YwumPEXCcx/uYYEWDYZ3MWC6gKe0M39WS93//5Tl/IIvLxri3n6
-	7XkHbvFIow+cHzLKsmy9926wMo3uCnFYg1ciSxr2r/DOghi3YijpymFC8Urd8S8t4vCzec+J6LT
-	lI3Wja6Af/MvPytREnf7AX0lnEn/b/WaeanQ9
-X-Gm-Gg: ASbGnctefDygFzUcARQi/D8/Vky6UqYk/qSfys1nkN+O/n1+QWxNAlKIB/msXS96cbQ
-	2wgOPgCeRqfhu128BTP9HX3ymzdlHuNAC4MC1e8aV7tOBormfcJ9xx/VZWqThrmIZ8yjflehANz
-	6Nt0w1tchQXFupcchYJBgTrmf9QV07vnG20NViTS0O37lBCBvZZlIMbTZgfPk4bRvfE542199lt
-	SyV+EA=
-X-Google-Smtp-Source: AGHT+IHj8kn3tYK5fFRS22d2FAno9LzWn2/rSyFfcihgDLJyq6rXSXoYRxKkaU3QCaUdE6DFVxlA54fTAAjDBJ4nUcc=
-X-Received: by 2002:a17:907:6088:b0:afe:78c2:4d4a with SMTP id
- a640c23a62f3a-b04b1542fbbmr1803288366b.34.1757594380949; Thu, 11 Sep 2025
- 05:39:40 -0700 (PDT)
+	s=arc-20240116; t=1757595736; c=relaxed/simple;
+	bh=1kooGra0E7aWJPPwjjd142TdftXEElYPipUhRSp10hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=utFMRDdGvwRg9lY2F1TqEOaSN0fghMbY7/zQvISZ42C/YJAA5dBSjQzZgx1zLA0i49txckxeIEX672R+TMCSyZCeO1hR1DVc7Gb9dRCK/cD1Ljxf4nrgo3oIsZ0AcFIQ11ETxKihnkxaRh3VKaFaml9HcLuDS5sqbtKq1EZlq9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srChlePY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C19C4CEF0;
+	Thu, 11 Sep 2025 13:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757595734;
+	bh=1kooGra0E7aWJPPwjjd142TdftXEElYPipUhRSp10hc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=srChlePYlYGsxx6GI/gJpBVEuuyz/lpQu5liz/M/fna/8HFsDTqS9gOAVvIxV6CSN
+	 q6nKUu2sV9jXl32bqoFLIUADjJq5p7melhriTmXJvXjLVzNFUV2TvIhwagv1XFV/IF
+	 IvE6O6dFpWA42ihLNAVlfjFFvh5/OSrlipjtA47XdbajiqG7MT2nTesc8Ebhj4zBwm
+	 58ZaCl3ToSbJMZm8ZK1nfpDH3YqfIDhEb4PXRDJywXTABQIw2k8/amONhF6VF8/fyv
+	 VLLysf9PTZJqPbvGdbxLeKaA8GVfZpzY0cPXE9bK9GT/DgTClhm/qcZIs3tQJdB0uB
+	 tF/WUW+d/yDFQ==
+Date: Thu, 11 Sep 2025 09:02:11 -0400
+From: Keith Busch <kbusch@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
+Subject: Re: [RFC PATCHv2 1/1] io_uring: add support for
+ IORING_SETUP_SQE_MIXED
+Message-ID: <aMLIU19CfgOAuo8i@kbusch-mbp>
+References: <20250904192716.3064736-1-kbusch@meta.com>
+ <20250904192716.3064736-3-kbusch@meta.com>
+ <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
+ <8cb8a77e-0b11-44ba-8207-05a53dbb8b9b@kernel.dk>
+ <aMIv4zFIJVj-dza5@fedora>
+ <aMIxmiGv5D0GvSro@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910214927.480316-1-tahbertschinger@gmail.com>
- <20250910214927.480316-11-tahbertschinger@gmail.com> <aMLAkwL42TGw0-n6@infradead.org>
-In-Reply-To: <aMLAkwL42TGw0-n6@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 11 Sep 2025 14:39:29 +0200
-X-Gm-Features: AS18NWAy6IN5toh_htKXiw5tLda19ct1lS2Emo_qxQapODBJEDYZPa0A2cfA5ZM
-Message-ID: <CAOQ4uxiKXq-YHfYy_LPt31KBVwWXc62+2CNqepBxhWrHcYxgnQ@mail.gmail.com>
-Subject: Re: [PATCH 10/10] xfs: add support for non-blocking fh_to_dentry()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Thomas Bertschinger <tahbertschinger@gmail.com>, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org, cem@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMIxmiGv5D0GvSro@fedora>
 
-On Thu, Sep 11, 2025 at 2:29=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Wed, Sep 10, 2025 at 03:49:27PM -0600, Thomas Bertschinger wrote:
-> > This is to support using open_by_handle_at(2) via io_uring. It is usefu=
-l
-> > for io_uring to request that opening a file via handle be completed
-> > using only cached data, or fail with -EAGAIN if that is not possible.
-> >
-> > The signature of xfs_nfs_get_inode() is extended with a new flags
-> > argument that allows callers to specify XFS_IGET_INCORE.
-> >
-> > That flag is set when the VFS passes the FILEID_CACHED flag via the
-> > fileid_type argument.
->
-> Please post the entire series to all list.  No one has any idea what your
-> magic new flag does without seeing all the patches.
->
+On Thu, Sep 11, 2025 at 10:19:06AM +0800, Ming Lei wrote:
+> On Thu, Sep 11, 2025 at 10:11:47AM +0800, Ming Lei wrote:
+> > SQE128 is used for uring_cmd only, so it could be one uring_cmd
+> > private flag. However, the implementation may be ugly and fragile.
+> 
+> Or in case of IORING_SETUP_SQE_MIXED, IORING_OP_URING_CMD is always interpreted
+> as plain 64bit SQE, also add IORING_OP_URING_CMD128 for SQE128 only.
 
-Might as well re-post your entire v2 patches with v2 subjects and
-cc xfs list.
-
-Thanks,
-Amir.
+Maybe that's good enough, but I was looking for more flexibility to have
+big SQEs for read/write too. Not that I have a strong use case for it
+now, but in hindsight, that's where "io_uring_attr_pi" should have been
+placed instead of outide the submission queue.
 

@@ -1,176 +1,92 @@
-Return-Path: <io-uring+bounces-9785-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9786-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5487B5610F
-	for <lists+io-uring@lfdr.de>; Sat, 13 Sep 2025 15:16:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC5EB5619C
+	for <lists+io-uring@lfdr.de>; Sat, 13 Sep 2025 16:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFCD3AF6BB
-	for <lists+io-uring@lfdr.de>; Sat, 13 Sep 2025 13:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40811562F82
+	for <lists+io-uring@lfdr.de>; Sat, 13 Sep 2025 14:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6538A268C73;
-	Sat, 13 Sep 2025 13:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0B82ECD39;
+	Sat, 13 Sep 2025 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="eqYU++Js"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ynkFk0Al"
 X-Original-To: io-uring@vger.kernel.org
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCED1145B27;
-	Sat, 13 Sep 2025 13:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E089454723;
+	Sat, 13 Sep 2025 14:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757769368; cv=none; b=n5yf9awCAnYKwpRjMC2YmmIkALMJlBnkqLgBxPj+yEvy23Id6u1aZ7GzOveoSMVrWsSY7/OK+njqx0LwmSjMg/EtJKWtKH/gNwgoUFAo6XZQhq6kvHrCRUK+Fme46aY6rX7DYaA6r1OremHKxzAEDVbEEMRRX+bVEDd1bGQNuDk=
+	t=1757774432; cv=none; b=FcpAiFoS5UNE9iFdETScog3KX9PuQK++kue6BxAf3K2oiBBOwMag93bZjVjkIRUUBb7wblaXraoXlI76FoZipBh+5QS7PQjXcP2obTDmHYJzIimifOsz8stP2SLxRXshfSPgLtrkgPusYB/Z8FqjEndWSUflhh3C4FaQWaob0dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757769368; c=relaxed/simple;
-	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QfN/d9i/Dgq+2cyZjTrhXuKynMlk+JgqocXSocm3btxw70mvpOuMkTJE7n+46EQqpzjX5ZyA/l1rU9rTcsSeATK7l1zC5CCE+pEZK+Nx/QKSPUrc8LDIXRWGGnDxWN1CrpAJp4uxutY/YwSft2uHOb6lYLUquxJvT1z65XdMqQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=eqYU++Js; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1757769356;
-	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=eqYU++JslmCu7DoyXBX6i5SPCggPQ4IXTmMJVoJbNGQRsVrsCQNcQigVW8zIE1XGN
-	 UjBIwUBdeLgG2L3SY1vvKr2OLXf14siWk9igYOxO6RErF+RHrsLh3GH0Jc/L37zNRa
-	 G2ArQMghy7iE3MNbkFqJIsLSKdAaiLLIztvPGMj0awnBFesdtjiFUr+pAbQJ7fJXtl
-	 gewXKajXgs6iBn81XVdAmgM4lYlyXI0+8K35aiIrN9FweD2/ip56fOqPXWPI3YEHHW
-	 K5Ixdw8GOhJO/Ch22Mji3fSXBF95quu95mYrJozGw1+l48dUByZUl1xJokxMCzdOML
-	 ejHjKrF/DdgPA==
-Received: from integral2.. (unknown [182.253.126.215])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 9ECEE3127994;
-	Sat, 13 Sep 2025 13:15:52 +0000 (UTC)
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	dr.xiaosa@gmail.com,
-	Bart Van Assche <bvanassche@acm.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: [PATCH liburing v1] barrier: Convert C++ barrier functions into macros
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Sat, 13 Sep 2025 20:15:47 +0700
-Message-Id: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757774432; c=relaxed/simple;
+	bh=bs1jj5XpzcErQhSmzXH6wOSW8ZsoNPCNXOynjLDDBJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K1wKTZCkpkdcFFpeqZ0mcWjlWO/+g2rMP7xZ03QJiQZhQcUW5jLBbLJBa758ISGmmjhYivvFEbhJVK8sZdrPctIYVtB+d+012MbwTJUOZuXPqbVtjEoqoYbStXNj5g9D1p8YepGJy9OGGW6ZWvkA91sPwUNcL1wgGFUeYH+2lQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ynkFk0Al; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cPDVM5zDfzltBDd;
+	Sat, 13 Sep 2025 14:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1757774426; x=1760366427; bh=RCpZ57OE6NjfFIJI3GSRMcqB
+	ZFGJIths38CZgXKjEq0=; b=ynkFk0Al98OyeHWDZfaFOzAimwhyftg82YaqDEB9
+	Oo2j/HtvOwxUBdyBOdJeIn1Jyc/yyJb/i8JVaNvhmylbX2z0MxpEXvQxVnsajbVG
+	tEEW55KyQQruhypOj+GdKG3c2D9Jm8NAvFT2Q6UxIO+7SnOX/+hOCFx46XJX3UAH
+	TxPajYa5iavB6Rx2jY0DxotE7AzeVT65j8XQqmQe0DCs13eSw6pBQXW5gb/Du4Aj
+	dKFPP3hwisDnzL7q946dpeLc0eZqSWEJGDZ0L/MdHd8a3Y7CWTAmgcwT14Gsau5m
+	hP2SoD0QbGW3BRhKuuukonyYbeDNS7gXfWRSTzPWeMbPOw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ppjM-XIk1y-W; Sat, 13 Sep 2025 14:40:26 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cPDVF42h2zlrvtM;
+	Sat, 13 Sep 2025 14:40:20 +0000 (UTC)
+Message-ID: <e0559c10-104d-4da8-9f7f-d2ffd73d8df3@acm.org>
+Date: Sat, 13 Sep 2025 07:40:17 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing v1] barrier: Convert C++ barrier functions into
+ macros
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ io-uring Mailing List <io-uring@vger.kernel.org>, dr.xiaosa@gmail.com,
+ Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+References: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The C++20 module export feature fails to operate correctly with the C++
-version's static inline barrier functions:
+On 9/13/25 6:15 AM, Ammar Faizi wrote:
+> Convert them into macros just like the C version to fix it.
 
-  In file included from src/work.cpp:3:
-  ./include/liburing.h:343:20: error: \
-    ‘void io_uring_cq_advance(io_uring*, unsigned int)’ \
-    exposes TU-local entity ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’
-    343 | IOURINGINLINE void io_uring_cq_advance(struct io_uring *ring, unsigned nr)
-        |                    ^~~~~~~~~~~~~~~~~~~
-  In file included from ./include/liburing.h:20:
-  ./include/liburing/barrier.h:42:20: note: \
-    ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’ is a \
-    specialization of TU-local template \
-    ‘template<class T> void io_uring_smp_store_release(T*, T)’
-    42 | static inline void io_uring_smp_store_release(T *p, T v)
-        |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-  ./include/liburing/barrier.h:42:20: note: \
-    ‘template<class T> void io_uring_smp_store_release(T*, T)’ declared with internal linkage
+Converting functions into macros is a step backwards. Please check
+whether removing the "static" keyword from the inline function 
+definitions in header files is sufficient to suppress the compiler
+warning about TU-local definitions.
 
-Convert them into macros just like the C version to fix it.
+Thanks,
 
-Closes: https://github.com/axboe/liburing/issues/1457
-Reported-by: @xiaosa-zhz # A GitHub user
-Fixes: 3d74c677c45e ("Make the liburing header files again compatible with C++")
-Cc: dr.xiaosa@gmail.com
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- src/include/liburing/barrier.h | 55 ++++++++++++----------------------
- 1 file changed, 19 insertions(+), 36 deletions(-)
-
-diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
-index 985569f496a8..9bf1eaf374a3 100644
---- a/src/include/liburing/barrier.h
-+++ b/src/include/liburing/barrier.h
-@@ -23,46 +23,29 @@ after the acquire operation executes. This is implemented using
- 
- #ifdef __cplusplus
- #include <atomic>
--#define LIBURING_NOEXCEPT noexcept
-+#define IO_URING_WRITE_ONCE(var, val) \
-+	std::atomic_store_explicit( \
-+		reinterpret_cast<std::atomic<__typeof__(var)> *>(&(var)), \
-+		(val), std::memory_order_relaxed)
- 
--template <typename T>
--static inline void IO_URING_WRITE_ONCE(T &var, T val)
--	LIBURING_NOEXCEPT
--{
--	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(&var),
--				   val, std::memory_order_relaxed);
--}
--template <typename T>
--static inline T IO_URING_READ_ONCE(const T &var)
--	LIBURING_NOEXCEPT
--{
--	return std::atomic_load_explicit(
--		reinterpret_cast<const std::atomic<T> *>(&var),
--		std::memory_order_relaxed);
--}
-+#define IO_URING_READ_ONCE(var) \
-+	std::atomic_load_explicit( \
-+		reinterpret_cast<const std::atomic<__typeof__(var)> *>(&(var)), \
-+		std::memory_order_relaxed)
- 
--template <typename T>
--static inline void io_uring_smp_store_release(T *p, T v)
--	LIBURING_NOEXCEPT
--{
--	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(p), v,
--				   std::memory_order_release);
--}
-+#define io_uring_smp_store_release(p, v) \
-+	std::atomic_store_explicit( \
-+		reinterpret_cast<std::atomic<__typeof__(*(p))> *>((p)), \
-+		(v), std::memory_order_release)
- 
--template <typename T>
--static inline T io_uring_smp_load_acquire(const T *p)
--	LIBURING_NOEXCEPT
--{
--	return std::atomic_load_explicit(
--		reinterpret_cast<const std::atomic<T> *>(p),
--		std::memory_order_acquire);
--}
-+#define io_uring_smp_load_acquire(p) \
-+	std::atomic_load_explicit( \
-+		reinterpret_cast<const std::atomic<__typeof__(*(p))> *>((p)), \
-+		std::memory_order_acquire)
-+
-+#define io_uring_smp_mb() \
-+	std::atomic_thread_fence(std::memory_order_seq_cst)
- 
--static inline void io_uring_smp_mb()
--	LIBURING_NOEXCEPT
--{
--	std::atomic_thread_fence(std::memory_order_seq_cst);
--}
- #else
- #include <stdatomic.h>
- 
--- 
-Ammar Faizi
-
+Bart.
 

@@ -1,109 +1,125 @@
-Return-Path: <io-uring+bounces-9791-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9792-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA57EB579CD
-	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 14:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D17B58028
+	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 17:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8498A201BF1
-	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 12:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636D6169AED
+	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 15:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D108A3019B8;
-	Mon, 15 Sep 2025 12:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FA531AF31;
+	Mon, 15 Sep 2025 15:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjK1TvwJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLGCf9TO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ED92FABEF;
-	Mon, 15 Sep 2025 12:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BC430E856
+	for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 15:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937830; cv=none; b=VuDu38qt/R6aFvmjqRcBaGTZbH0FV4V/WP408csjwu9Mk/LoCFN5ha/2Ipo/BDWj/dwpNHaLzo1NusNuWdZCKy/a8sQjSzp/RmnpMxxu9KryDgZtxGMe0x07Zp5pt+LDbizcoeaUbzudbgtp2HEvDatQptBEiy1Ho7tjHV2PSR0=
+	t=1757949177; cv=none; b=PuRBQ8kNZFQpt/c57reMlAJ3veVScxT6djHjQFN4ZR3l8d6x/2xLat5y+jxvj0AZ0frxnzFxHc8QPQQvXNg7b9U5gJQLfv8I38FICCNzChNsFyT+ydd9Y3hO6DifAhm3THnSnDmMF+rmpQU6f8x+Aap6Ae4fCqs8weE3Z0vc2Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937830; c=relaxed/simple;
-	bh=k++F5CAnc5g3Ke5opUQkU/3F3JLhh0WCAWPms5P8Om0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jP/fieGuOyaVpO0NXpBhQ85OUXumuf29BjqODTU6UtYTMasU3sRfzEAUh6YJcZt6O9DSH1jpifWvXorJa5QQQmu9r6IyyPSWwmqxtovtl3vLIyFdgMDxn9P/Hdsy4bvSckj3El9r5ylplq/5k9XN6CxPylXCQonWyKeye2A4abk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjK1TvwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEB5C4CEF5;
-	Mon, 15 Sep 2025 12:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757937830;
-	bh=k++F5CAnc5g3Ke5opUQkU/3F3JLhh0WCAWPms5P8Om0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjK1TvwJ+wyY58MvtUMxZD0VBOgaGRxi1P3W1hlacdyaHFtOSn/KFnTDbEI2MVAz4
-	 oI9MTguN+8VYq6LGtQP60F189sESCCZr4BF+7q0g/wvcklYiijaLT3JCnY3yj6uRCu
-	 NIq7Yc0eOKc6IJ4qnegf96OuWpVvk/ObRoNR5GxqIpoOk454VFTP0Gcqr3bwFnIFAS
-	 aALRSLVRAz8YvqmTtH58dXS50b5az+vfJU96UIHPvvFY/8CYoUUwsVxsRMkzYjNJNV
-	 VA8JV5YmDZH2qRwxy82BEe4ev9Gq4Fr6YHoCCaiMykJk3dU778rEGeAb0WZkX+99KA
-	 Lhs6oECiJw2hw==
-Date: Mon, 15 Sep 2025 13:03:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	konstantin@linuxfoundation.org, axboe@kernel.dk,
-	csander@purestorage.com, io-uring@vger.kernel.org,
-	torvalds@linux-foundation.org, workflows@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC] b4 dig: Add AI-powered email relationship discovery command
-Message-ID: <8250c70a-0cab-4549-ad1f-aca28e7a1342@sirena.org.uk>
-References: <20250905-sparkling-stalwart-galago-8a87e0@lemur>
- <4764751.e9J7NaK4W3@workhorse>
- <aMLlMz_ujgditm4c@laps>
- <4278380.jE0xQCEvom@workhorse>
- <aMMpqojURAZa7cPU@laps>
- <6e25b2e7-67a2-4a92-95d5-adb279e811a7@sirena.org.uk>
- <aMf9FaDxGY4nYI2f@laps>
+	s=arc-20240116; t=1757949177; c=relaxed/simple;
+	bh=JZsnQjbSavjo4iRyY0Jsfu5oNgRLIQnYQ6ozW8ZCMos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WBvtCDT1PU6Du7rZgd7h8h/d6/vG8XrKFkeEExqnMO/CseNtfwiH9IiNyho9+g2f+cZ42/psaNjP1Y3D7F0WMx1NQo/iGNnKZKi3lxmkhBrJlNxGtcysp+ZgMWJspk3Eo6U39IDsblZGwXsj4hluw7xDy/xyCilbHuWcsL1+BhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLGCf9TO; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e98c5adbbeso745813f8f.0
+        for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 08:12:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757949174; x=1758553974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gYASgt88NcGmMcWlF6HmYxlmhj+ofg/BJ5SXgUevRck=;
+        b=aLGCf9TOp8R/5uUHXdpUW61X18s/nfI/bKh/twz5g8Mv6LSoCLpvzjI4D22Aa2EUrr
+         uem2q3cO+g6w9xad+qaLMcSM4geJLGOTVTy5AlKPgacfQZT7yEgf80nf/8RCYqXzwVOp
+         oEMGCj6PA0IR7QUlFQgHamatSZqJKChk5/G025nPDUIkKiylDsazpwrpy/zFLHwM9b7y
+         bavij3zAm3l5hZr8NwbDjC3Mk6FyAO4F74rwr3vwUmCwPmslw+ByGTCTzHaUsEShLVTo
+         4KJnBkCduYhVzLbQsr1GqftSWr2BgnStAAFiP8jdtRsNaKST6Zm9/g11Ng9seoMqR0py
+         if/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757949174; x=1758553974;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gYASgt88NcGmMcWlF6HmYxlmhj+ofg/BJ5SXgUevRck=;
+        b=k7VXcCdXMr9wVN5qaFLuKs7qmAMOZPrCs3Qnx5+M76MPjAWu8NH6zXobusP/Z8EG5i
+         6gJO+kio817caDeQsNPlw0EugkJImjhMUsOHnFfEKIWIdL+t6r+k9yG6zzqb7xAVGZkv
+         ehf8B8JYbNz+T4vWaP4SnMgqMDEeqb6FWYpKlhoBXVeOuvLxqqgjxx9HPEIs/EMW5UQS
+         pTPdk6aLpjEO0IZWsWCaqRv2qj4h8Uwj4vvmgf3Fun1k4n9Q5D5KYbXmcrk0oLADi27Z
+         Nl27JHq8ozvfbjgWXjLBNd0LzeF1wYrb3C5xZyLGg9nh9eRjncEQd9B+KlvxGouRaqu/
+         62iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzp+MPTTrWN/OKZjSjJnuff5cy0ktg0pgyN/tAu5Zd3SyICV2RWW0zLbz49hAUhBmlShWySCmu+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTyaKDyslvDkzkG3zCzS/yYeEZmabkni6uEjS6Iw4HGBseW2N7
+	NX8e86BuoWCcUR0a8c1+06XeX7LhywjRtSr3kK/qQxlXkYW32ln9JSts
+X-Gm-Gg: ASbGncvgeSiOBQloA12zPu+6YXz/1YHPzxkoXA4fFoDdPzdArhQFlXueoWzArAAtcJO
+	XMp0p0U9/6FyR8KJZdMeZlRo8pBEUFMuEY7Ib6678fSTuYkuTFqmTf4u2621yOZv8GCOenqzOAH
+	s4kEF7iIQVOOe21DJDKpraMC+c50DpwBMYPaQQ3vktRZ/pFfvvxNJ3j4wMZxmDVAKi7RXuFNU1F
+	hEQCthe6g5ZeKydH1xM7WXXgLpxXaFi/LGXO81z5tDMtFm+rtIU7BB/XvIT7YHjiPv7KbsCnOdM
+	W1G1hJAk87plil1G7INmCiTY/5dqfNVte6F84n17Wv3HMT3UdKA1CKyPfXnnZjdpEbhT7h5Qtzp
+	rYu+8xjGa/cDHHOEy1Zjlj4pEgqqCtrIznNJsYvKwW2E=
+X-Google-Smtp-Source: AGHT+IFQ6qmP6lhN+miezSHUvoqgK6PL3UztubUPwCE/xaA47jcdO+kWsn2hah9mUl3xrLFUWQbU+A==
+X-Received: by 2002:a05:6000:420a:b0:3e7:63c5:9a9d with SMTP id ffacd0b85a97d-3e7655941c3mr10223551f8f.6.1757949173481;
+        Mon, 15 Sep 2025 08:12:53 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.145.229])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8c7375fb7sm10001858f8f.14.2025.09.15.08.12.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 08:12:52 -0700 (PDT)
+Message-ID: <d11d3f5d-ab0c-4028-a6e9-5cbf2f2aaec6@gmail.com>
+Date: Mon, 15 Sep 2025 16:14:25 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kiyxGJ+4hswg2nI0"
-Content-Disposition: inline
-In-Reply-To: <aMf9FaDxGY4nYI2f@laps>
-X-Cookie: Use a pun, go to jail.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] io_uring/zcrx: fix ifq->if_rxq is -1, get
+ dma_dev is NULL
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Feng zhou <zhoufeng.zf@bytedance.com>, axboe@kernel.dk,
+ almasrymina@google.com, dtatulea@nvidia.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangzhenze@bytedance.com,
+ wangdongdong.6@bytedance.com
+References: <20250912083930.16704-1-zhoufeng.zf@bytedance.com>
+ <58ca289c-749f-4540-be15-7376d926d507@gmail.com>
+ <20250912072232.5019e894@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250912072232.5019e894@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/12/25 15:22, Jakub Kicinski wrote:
+> On Fri, 12 Sep 2025 13:40:06 +0100 Pavel Begunkov wrote:
+>> On 9/12/25 09:39, Feng zhou wrote:
+>>> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>>>
+>>> ifq->if_rxq has not been assigned, is -1, the correct value is
+>>> in reg.if_rxq.
+>>
+>> Good catch. Note that the blamed patch was merged via the net tree
+>> this time around to avoid conflicts, and the io_uring tree doesn't
+>> have it yet. You can repost it adding netdev@vger.kernel.org and
+>> the net maintainers to be merged via the net tree. Otherwise it'll
+>> have to wait until 6.18-rc1 is out
+> 
+> If only we had a maintainers entry that makes people automatically
+> CC both lists, eh? :\
 
---kiyxGJ+4hswg2nI0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It's caused by a patch being taken not through the designated tree,
+which is fine, but CC wouldn't have prevented from the same
+dependency management.
 
-On Mon, Sep 15, 2025 at 07:48:37AM -0400, Sasha Levin wrote:
-> On Mon, Sep 15, 2025 at 12:26:41PM +0100, Mark Brown wrote:
+-- 
+Pavel Begunkov
 
-> > This seems like a great example of a situation where the suggestions
-> > from one of the other thread of asking people to clearly mark when patch
-> > submissions are using these tools would have helped - had the submission
-> > described the above then the Python level review would've gone a lot
-> > differently I think.  Realising during review is a totally different
-> > experience to being told up front.
-
-> Do you mean using the Assisted-by tags that were discussed in the other thread?
-
-Not just that, which you did have, but also a mention of how the tools
-have been used.
-
---kiyxGJ+4hswg2nI0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIAKAACgkQJNaLcl1U
-h9CGUwf+K1boklZhxyZRX+imuHacTwVekbiORc8Dxzu60q26HqKWVnc5UXRbvE2r
-BYokhuc54XTEkz0N/DquoqGrMEz3U5m430SMNcsk/Z9zCCpeuYBR1J3y4Nr7I20I
-qJZ7uW3Dl//9SfLPe5cxmILuTFG6902I5U9W4V6RGF1tF5OzrrioXzdAIiyDZHiL
-k3M5UUMgGun2mTVaQXbTlVB8+NBn2EHuS/XYamCHh+XAxbh8mQhgsyneVa3aENyn
-iT3+uzfplXy+icX1bbMunCAlHFhuHMxcJ5nmsyIDPOmVy3imsXV7YeZtCyxDOb2T
-TpJzxmPoawUmnrrt2d2RMGJdjvUuGA==
-=VKhj
------END PGP SIGNATURE-----
-
---kiyxGJ+4hswg2nI0--
 

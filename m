@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-9797-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9798-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B921DB58563
-	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 21:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6E7B585FA
+	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 22:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF6616F09D
-	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 19:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EE218876E0
+	for <lists+io-uring@lfdr.de>; Mon, 15 Sep 2025 20:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C742B281369;
-	Mon, 15 Sep 2025 19:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA111D618E;
+	Mon, 15 Sep 2025 20:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XwzDcp8p"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="J6FvTk+/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46710320F
-	for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 19:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6089275AE6
+	for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 20:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757964994; cv=none; b=RuaTXd4jIbDOPdUSqyEd+AyhT6ph5WwH7VvKDNNajm2p9VFskhezoG8umm6Cd1DhrgAhx8hS3kkYMzLg7b+y0ND2X6mTlL3TKINGflbF2cc9zjV5Os53YxxQ1wyJ2jwf60e0Myd6loMMRL9db7eGHxbV8RLIrPXOxrkEXVEieBA=
+	t=1757967614; cv=none; b=rpmM2F/IGwKi2w8o9RqB4YDEiB8YHHeRoems1ZYCbulQ2uqowmvq3VMM81e5IZZiTx0v528X1YhJkF/muIpzJwc5cNmrrYk1U/vV3F0RDON8LGLqF1vBW6cc4AdIpg6SRjprXC8J5TyYy3x/ULi3NoX6o7ULryWHOlNwhhPpZcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757964994; c=relaxed/simple;
-	bh=uEAC5p+AjUNa10foDlmnZ/iJXlzmcT/Zp18GyN1xzQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qxTju4B4amIqTgZoFxk5kGBw9Uv5+DUyDtcjqLVFKyQEMp3Ri0w5z1+bEaWv+/Io6DAK8unyVnaFpodK5AuwxZkA0VS3pI1f3LF9WufaYR1r01/3uvmucKpsA6g/G6xKpX7wz4UsDXaO8z3x0LY7k7uyip+7jhFR2dBNoYZ9cSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XwzDcp8p; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-4240d243340so6063815ab.2
-        for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 12:36:32 -0700 (PDT)
+	s=arc-20240116; t=1757967614; c=relaxed/simple;
+	bh=9XaKAnL421IV6jFM81UmTgIXNlNNk4aZ80DICN3l4+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AjOVu58dCZdaIQjgecpwLXJX7BR9LPPN0ci01CN8gf/dsmLpY6r0OxdAu0SrtxFGC4FLdq/9QO7FnB2SB0aFGMPTgBW9kAltklp/VTsNQ6oXAMTiKgeaQa+j5XQMsNdgX/leIh1RbggKTsLA+4qkvupEVFEBRXO2d5JS3y84rhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=J6FvTk+/; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32e2794c97eso1430299a91.1
+        for <io-uring@vger.kernel.org>; Mon, 15 Sep 2025 13:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757964991; x=1758569791; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1757967612; x=1758572412; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/QRhMXbwN6ZOtvgpddJaVy3QSoQt+zsOVvdVieAZwxg=;
-        b=XwzDcp8pXiwXK+G7p1rIal7nBp0ZsMVgd1uOBSdOo+IY7lhbwEHGgQvF/dvDAey8ed
-         l/fuzHlfd8iFFAME6wZ7xjIdaXZcZ8tih4BQ2e78fqT44a+70Cj/piU9xTxOqzMFpo/I
-         gW+RkI9Y/bMizSQvggvMnmtVVMCMNCDbXGsFXdJqHhaCE0+JrWTrtr/ZWbVvf8L77WL9
-         hnSZphFz8WcFyhFOUh8byfMZKLg8jRh1B9wqURvbzJM0mcc6ToXl69TvJgzRrosYqV8C
-         4feT7Mx/KuSEet/h1TTtSLQjP4JPGVEboyvZia26xjInOQ3/BtWyV5mtj8AqYIZaWjMp
-         0DPg==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Lo5sgspXubdQVaiRP1ULZqOXYwj15MVaePW9NOhc+NY=;
+        b=J6FvTk+/if5S1MK9j6f52VMI4x5ZlVRv9m9Up7d+J5XiECtn9VOnR0yBEV5/5rMzLl
+         4liLAMY5g6vc4QJs+M0q21euBpMeXWtMSTF4pJSLjVs7jvKNZTD3/bXgARWkcKsAdp8U
+         ITT9xzFAPp7nf4dg4a10s841PZAXTSzuMPWa27EGtpaCzElPfRyoNYvxvJKP9jBPWLJt
+         CHggwB+Nsp4UNwLVfFM8Buy37Q/lWyB+u0XYQ5h444mRDVFCa945+P/2HDxDHTNx4X1u
+         7YGuZvsrUQKx9ZRi4JFQxYWKlgVHMwUGrJAoTx7P6GsIB9n4dHItF+iVvTMDgcjUfphO
+         ywWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757964991; x=1758569791;
+        d=1e100.net; s=20230601; t=1757967612; x=1758572412;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/QRhMXbwN6ZOtvgpddJaVy3QSoQt+zsOVvdVieAZwxg=;
-        b=w5CeaqEOLV1h0CjYTVvdFmmknuci35+0o+oBIzkLPB5BKZtoLxHObOWqwjP2NfhoRS
-         ykYs6dvgPqTFhKzqA8vvBrfx3CjjHqRy1OHeAR7EzE8/H0k7gN6+oaSQtYqTxQlSdmCE
-         uzuonjq4ug1riXb9ZHI/ip/f62Wtq55Sz/DCawIrPuxpq+7HyyOrQb1Eu/iR45nHkxDf
-         hFOdZM2q6o8u5id9CUKbSmuFq5onCeuUVrebvFjT4NRzxPPBw5rur7SacCCSvFBoAxan
-         MXmgvC4v87trsxRQZbyi41dIjq3oexNazeJpIEfRsnt+fiqmhkEl4sNU2IRN/J6bkVzt
-         Xpdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2u802BJmliIopqcAy9m3cxPIAGRuZJBWsWgh2ACyEeycD8QVPawKGlL5WEblkJQtdR9di3b/ZlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVgUe/DubSVWgGKJnPZAEdylfzWjHjgApkjHXgz6+SAWyVrO97
-	LYCSOkrXSmr/dXLrlMZ7lqU5KgiXI5+aWk6GH2ajIBxfKCEgjVLebhaDwArKRwJyvmU=
-X-Gm-Gg: ASbGncsb0vgqTVEkq1hIiezyP7s5aTWVoAsyEbL5Kbnuq/KrLM3HxCg8ueOLLMBvgVz
-	Zni1UKIDxtSUuaEBmZTG0p0tOrH4QpjcHLUznEjVf7nTepgNmyi2qUY5JEldl7HqMNM2ZVo0/dE
-	5VsBssTWjR+3pVXJ5YKi0dnJsUdW3sZd32KQHXQknyM/mifLkh1EWoF+GKcleNgpu43oadnBMyD
-	iYRYCDtMXgOcwIpgjKY/5pkloTWYDVla6vBbjT1WBWHMIVf/AFH44FGRCF4MAiVuJWh0XS8ULWF
-	mGGPMuD8cbw9MTE85HXim2NdgJ3l2YZnDI9TlWN6K3Ye3/g+pn4tManlsqjM1Tl/5PEXZF/Z6zL
-	g68fBtTt3C6La4UiDtaBItfuOyq5T0Q==
-X-Google-Smtp-Source: AGHT+IFEYX/oPDGLIujkgUjpKHkd+AJzUSAlzQhNdyXjqsuLxj3O8GToO+/Ue90TwQzp6EYj8c6BCw==
-X-Received: by 2002:a05:6e02:18cd:b0:424:71:32e5 with SMTP id e9e14a558f8ab-42400713e12mr52694585ab.31.1757964991321;
-        Mon, 15 Sep 2025 12:36:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5191117917bsm1281543173.10.2025.09.15.12.36.30
+        bh=Lo5sgspXubdQVaiRP1ULZqOXYwj15MVaePW9NOhc+NY=;
+        b=pZRxHr7nWLRzYhbG/KcfhsAln5fpcgq01IgQPnpz6KAp1QoKX1A+x11aT7fpfDyRok
+         t/XKC8DYWL+yTyBWBzF0Lx0xcM0QelW2FwojYBp+g98jLpcQhafz7ARjUFqhsYsWVFAC
+         6e6fo/7e7ByQyakXQ4CDD1vsJr17fb6Y2AM9jOQcgBCBPzec4ryuDIyoy4eHs78DI32p
+         KbdcfoFduU992nYNC/3K92RqTKjPC36R+cqqN5HetGNKrom+Me/uczb6ZAXHTiLIpeaU
+         8j4pRoD6tD1lbRwcfSqpIKVAFuBCHCEMPRKpA6s1NNJtHCnnf8iYXggLKhf7AdAHindl
+         LSSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpcjGdWQSGUQcftTFNTGxvy02XtVFp8B618A9H0c1fxT2OvPSaMf176JYvWaIK1ofZWFBN9Lmz+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzztOSAqxUE+9u6PF9bJcm5FRKEioJm3ImlDw0d0ngWsflbgq+d
+	TejtZeBPOSQi6pciBgfcpgiR4+tqe06wcoyEsbtJ2tNbfFGL0JUadXAitMmTqM7gIwo=
+X-Gm-Gg: ASbGncu+bTLrdF3k3F9BSR/BWzdd2fVkvJSiVKba73WIaw3IfbNMwjO/YfX80xRmoD1
+	g/vm5MPOzyc/FpqQucXdAripPgtCvTyNMn+GzHMLBcIsNyYSeQuymvfhmbeMvinvNgjmsr2YX/A
+	Ldxxl+Ora9pCVFDVyxsR2IGYzUt/8M27R6142ldgq7cgP3uRpCDqgaWq4y5Jnj9Xydt2/K6vJAQ
+	m7OrU6P9VNUbDtkN+rMd/VneRYYQfNAxi5zLXr9gkToukC3j8Cx+tJXRNfScdCrNRWr0apNDgh4
+	+6pCAnwLfSq8nUbhqfWo411AwH8qmQ8vHnIjN/WFYW7ESJj4qPK4+OWUKiSkAW2lDFq4TVeZiBN
+	YUl4GKwkCVSHirBCMqQSLeMQ7TbCSjYK++QruklOz7sh5ApeJFWxGoMD0Ysk=
+X-Google-Smtp-Source: AGHT+IHq3WWJt0/uIxbBUVjUP/FwvGd8tZbjSK9RdlAN2IL+XhQaIstyzGJbFxcL2f1AJus8NxGnTw==
+X-Received: by 2002:a17:90b:5103:b0:329:e703:d00b with SMTP id 98e67ed59e1d1-32de50f8e8fmr16002531a91.19.1757967611955;
+        Mon, 15 Sep 2025 13:20:11 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1156:1:ce1:3e76:c55d:88cf? ([2620:10d:c090:500::4:3a40])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e346b842asm5721591a91.29.2025.09.15.13.20.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 12:36:30 -0700 (PDT)
-Message-ID: <a58fee04-db3d-4c53-ae27-2e39b53e5e84@kernel.dk>
-Date: Mon, 15 Sep 2025 13:36:29 -0600
+        Mon, 15 Sep 2025 13:20:11 -0700 (PDT)
+Message-ID: <a0782edd-0987-492d-90b1-547485276398@davidwei.uk>
+Date: Mon, 15 Sep 2025 13:20:10 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,32 +82,54 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] io_uring/zcrx: fix ifq->if_rxq is -1, get
- dma_dev is NULL
-To: Feng zhou <zhoufeng.zf@bytedance.com>, asml.silence@gmail.com,
- almasrymina@google.com, kuba@kernel.org, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com, tariqt@nvidia.co,
- mbloch@nvidia.com, leon@kernel.org, andrew+netdev@lunn.ch,
- dtatulea@nvidia.com
-Cc: netdev@vger.kernel.org, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangzhenze@bytedance.com,
- wangdongdong.6@bytedance.com
-References: <20250912140133.97741-1-zhoufeng.zf@bytedance.com>
+Subject: Re: How to use iouring zcrx with NIC teaming?
+To: Chao Shi <chao.shi@alibaba-inc.com>, io-uring <io-uring@vger.kernel.org>
+References: <efed6a43-6ba6-4093-adb8-d08e8e4d2352.chao.shi@alibaba-inc.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250912140133.97741-1-zhoufeng.zf@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <efed6a43-6ba6-4093-adb8-d08e8e4d2352.chao.shi@alibaba-inc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/12/25 8:01 AM, Feng zhou wrote:
-> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+On 2025-09-10 20:46, Chao Shi wrote:
+> Hello,
 > 
-> ifq->if_rxq has not been assigned, is -1, the correct value is
-> in reg.if_rxq.
+> I'm running into a issue when using iouring zcrx with NIC teaming.
+> I'm glad if anyone can help.
+> 
+> I wrote a program that uses iouring-zcrx to receive TCP packets. The
+> program works well when only a single net interface is up (by manually
+> `ifconfig down` the other interface). The server uses Broadcom P2100G
+> Dual-Port 100G NIC, and is configured link aggregation with teaming.
+> Teaming works at L2, i.e. TCP packets (of single or multiple
+> connections) may come from arbitrary port. I'm using kernel 6.16.4.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Hi Chao. I'm not familiar with NIC bonding. Can it be guaranteed that
+packets belonging to a single connection (as defined by its 5-tuple)
+always go to the same port?
 
--- 
-Jens Axboe
+> 
+> To illustrate this issue, consider the belowing example:
+> 
+> The server program registered **two** zcrx IFQs (2 data buffers and 2
+> refill rings), one for each NIC port. It accepts an incoming TCP
+> connection.  The server receives packets from that connection, by
+> submiting RECV_ZC sqes. Here comes the problem.  The field
+> `zcrx_ifq_idx` of sqe is used to specify which IFQ will be used.
+> However, which IFQ to use is not known before packets are received. If
+> `zcrx_ifq_idx` specifies the wrong IFQ, the kernel will fallback to
+> copying.  In a rare but possible situation, packets of a single TCP
+> connection may received from both ports.
 
+How can this be possible? Can this behaviour be disabled such that the
+same 5-tuple is always hashed to the same port, and then hashed to the
+same rx queue?
+
+This sounds similar to a single NIC but multiple ifqs, one per rx queue,
+in an RSS contxt. I use SO_INCOMING_NAPI_ID at connection accept time to
+determine which ifq to process the socket on to avoid copy fallback.
+
+> 
+> I'm looking forward if anyone can help.  I'm new here, so correct me
+> if I am wrong.
 

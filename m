@@ -1,80 +1,81 @@
-Return-Path: <io-uring+bounces-9821-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9822-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4BCB59B9F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Sep 2025 17:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB45B5A088
+	for <lists+io-uring@lfdr.de>; Tue, 16 Sep 2025 20:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DAA16BD6C
-	for <lists+io-uring@lfdr.de>; Tue, 16 Sep 2025 15:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694653B1411
+	for <lists+io-uring@lfdr.de>; Tue, 16 Sep 2025 18:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C669A259C98;
-	Tue, 16 Sep 2025 15:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C692822758F;
+	Tue, 16 Sep 2025 18:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyZNF4U2"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Pk6YK6uk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81D823D7C7
-	for <io-uring@vger.kernel.org>; Tue, 16 Sep 2025 15:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A1F143756
+	for <io-uring@vger.kernel.org>; Tue, 16 Sep 2025 18:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035068; cv=none; b=UM6QOLw8eReHkum/pcLxpmKTWHEOePb8CQEprhfTxXfpW9z3SxM7HkQhV0C/HYdYOTG9cBXe1CqXCja2c4lK7jcFZq22og9n4kAmtnzTc79Ff2tGYhsiMOXe98gv4yeDRPS9neOme7lJ2s4X56R5q7tXuYsdOfGzj1o9uc4eVww=
+	t=1758047596; cv=none; b=eg0lGL6OxADHS7HfJuRyDgJ4zMG9KHxoOKZ7lHY6Qg7L1k3TRI4Rz1duhboMsIQ/713LYYWSBWgk/38D3KV2GzEyxWLjnMLpgvZveYTmucIFA3CtrAX1SBkwc69lY1EOOEr/UctKJGKtpySLr1iPrc/UhEat3hhm7IjNsN6XJ9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035068; c=relaxed/simple;
-	bh=VRZQh5ZuG5GKFWMRdhZ6oE2jMrblGif1/SN/dyAG6bc=;
+	s=arc-20240116; t=1758047596; c=relaxed/simple;
+	bh=E+js8Mj/9PcwV7FMBMBKNAcVI1TfhdtugZP+viB2/E8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EGX9JFcenS+dBSVv4TxFXAdzJYysWRzaS9dPMilOxW8/6uj3KRkn8TVd3tzHraNRzgyOHzzhniOOxy8zNlFtfEr8I14XHnhQPFhthRczIRiQLtWqieT166AfGG0iowiWbC7e9nsJ5XA1tSgt3uLOsI4IDIVIoP+lBfdjE1M1cw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyZNF4U2; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ea7af25f8aso938842f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 16 Sep 2025 08:04:26 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Mnq9XPDEzlaWXyU3rNOpl2YkProFiPGWCxNQ+p+jJI/WEA9lzx5E8+lTf+Pb8aIgC0Stm/hBnvdRKcj5RD9AAOGQyrzPOH8K4zpBSvb8HoUiTzutF0J5mRQpHkQh/SxHJTjOeXI9kgJ5q/WK1l6XWIErJzRONaaVGQC92ZNaVjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Pk6YK6uk; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-887764c2834so370009939f.1
+        for <io-uring@vger.kernel.org>; Tue, 16 Sep 2025 11:33:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758035065; x=1758639865; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758047593; x=1758652393; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=b1Cff2z2XyXvt7/L7ov3d8DqtXcwSFEgXrdW1Gsky3s=;
-        b=hyZNF4U2CxPkyz191A2Vvab7WPzvAcwGQl+HwV+LD1Lf0yglzMryTPUKeUCe68Mwz4
-         a1KL9PW2yVSq02chGipMjzUscnBaiaWBmYasZ7G5H1i/0R5ckGEpIDpjQ52woX5M3RLN
-         RuugRuTGxN3qyfjZ2iOvEQ/q1web3fhpyS6W/sqjOI7wVhlKr8e6hrWa1NJEwFq02Ere
-         JTOpkUPq0oAb99wffPE77ONJxzRtJQJobLfKodsZ+kxpK+EnX6o49CrvCCbw0DSIdQo/
-         pzOpiE0aCLEo1W2yMXB1RUVRKgv5zJ6sIEt4mu4dctvBk2GBTkLu6f7T1f4tFmYd15W9
-         dQEA==
+        bh=3+FTu3ZmC968x/uN9Z0827TSUO9xT+nB98chg/725hg=;
+        b=Pk6YK6ukkzo6shMcXcHZn38HP4xZkdbMyPgPz61I4Js8z031Z9GqPfJTj9D7gEzWpP
+         ku6hBsyb9oYgfeo9cQFvlFFJ3GQh6x0KrV8hn+bUgJjbYCLSDhFepC76cFCd0zbM5Uxt
+         3QOC+JYbQRWVvwc6bKwYs1YVw3z58OB2ywaq4ZF8FNr+DcXP8ndvHr6fUyglajWABJDl
+         mLZeEI+5hyJJD5PiG40NKk+Mi8Y7OBRPeRa2F82qD/NUehmZcwSBxAMCqVKJJllzKwdf
+         j08kClliafo1MzLI3wCXcOzAIM8BrvPDjiU5pmEcbel14fYn0mPqHcRZNNtPeal7E6b0
+         6Irw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758035065; x=1758639865;
+        d=1e100.net; s=20230601; t=1758047593; x=1758652393;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b1Cff2z2XyXvt7/L7ov3d8DqtXcwSFEgXrdW1Gsky3s=;
-        b=I0zYIYS3tIC9iqTftA1jFpQfRdy22w5/mXLjXgBFryTFa1UBI0YW1e1lgYV9tduAzH
-         jPumOTVtpUlSZApXoW10mhoMcv/CrVIyuE3A7lo0iGyb7LiT/csVmbd2kC7hNWgvC2Hn
-         jTY8f23yd3Nf9ddmhUVLsszyvfCqPQjT+AftFpGi0Sw0i8PbliTMz95EgHSnfg3ysKlL
-         Bm5/FfPug5107dhxbvE9hgGaUAOnFnVcxB00mZeCb4ycivYpjd5FaUY0nkP8Ra/5xK17
-         P2vPD/C/RvDoJCGp9p+xXBgJIoxZZzOxs8rvpIKrPXmGUcnViWzPV/dX5onxoknxES+B
-         W4rw==
-X-Forwarded-Encrypted: i=1; AJvYcCW92OwG7NTkZ4XgXfU0+SthYwLBME/+IOVXdQCA11rA1g11arAp+z1JE9ror3yzOD2/3cumVOf8Aw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl039U4EN2fdzwQeYBA7vYsgZuYiDMwYf0nowWRbXTPNDMlD1c
-	3idkHVmv5rgWjV2wRUJbS5Lic959V1snqEjZEcwqcJT0u1RqtjOM0bY0
-X-Gm-Gg: ASbGnctNqko4f+OszOISIYkcCdCzbwnAWhohzj3k45SH8/JBryLm4yCmXQN8YhT2twG
-	ttnhQwybWcjNaIioyPAmASbAa6H/Mwq1gidYfY+jnlTBNjFeUUs6NRbeKKUxby83b+YwIi+QCVW
-	fcnyiTU+uMHJdO6UgqbKbKMRFWT4RGtmaGZWmxejNy9PhqGv0QFzac/PeRvs7IIhtHX69HNkgZ6
-	I080Uaju/rBJG2xJu0k9o67Am4PTy8A4qUalS0+ah6ue/G2VtKtiMajhFZif7NEMk+2TSV8vh0F
-	HC56ql2Wo2QGtCXu6hzYm6UrpkrhaQzCmORy0AcV2h7Z0gKeLRdf7Ci6KLvg6lEf0tUy2d2Vd0m
-	FZX6aQQ/ZQ9MlYFPMgZJEgMccPcyELfKNsfjcQiRubpP6jKfmRZWbSQnz+aR1nx5EVA==
-X-Google-Smtp-Source: AGHT+IEVIZct0UNk+G61igemd6DWjoJR7ZfppNNlwdmng5YX0rZfTe81l+sag+LSJn2DwtLfkN9CQA==
-X-Received: by 2002:a05:6000:2207:b0:3ec:dbc7:3c71 with SMTP id ffacd0b85a97d-3ecdbc73cb2mr1279952f8f.62.1758035064671;
-        Tue, 16 Sep 2025 08:04:24 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8149])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3eb35e4fbafsm7435049f8f.41.2025.09.16.08.04.23
+        bh=3+FTu3ZmC968x/uN9Z0827TSUO9xT+nB98chg/725hg=;
+        b=WRzlrMR5M1ZqZ4sU1g5yr+mUo0DlHNJeTRVnNge9Ihn6Yf19dLKaLuY/33Uk+4rNFW
+         zXFheqaoGEjFNoRPUjE6UrpRpxfuX5Jhx+GlyIJQnZ7HUOERDqqNPMrFK6xIqxoIjQ/J
+         KIwkbDR6+IghUwf4k2V5Y6WKTjWVWbicWUK4orbjQXJz8xhuOa2H71sKj3KY1zvnS2sD
+         mRZDrzRrl0e/8393H3QZc5s3H7PiE5zGIRFN7O757szD7EXKYjK8ELkS1mI9497tPqMv
+         U/s6Dlakr732qpE6lqn4JOzQRtLFX1+wxlYG544WvPbZKPkXftvMx15QZ/IQ9odSz7Ee
+         frGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWc7Yi03MgXSqgsJVjSJLPp3hrfoqST0vB5PhuNM2hMIokNtrq8U7QDfl192wsLLPHhXeDzY6id9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhc7g9add7nAUdGNJ81ZIP1h5WLobwBJtB09ZpB3284brJw8KF
+	wEKlXT5BCzSsIgXE0CeiRmzzdKCd3R4swDBsBAI6HChzOYsT7mmo8NzBIOH82RICeUZhpuhQa3i
+	X0vDJ
+X-Gm-Gg: ASbGncsGAx8s+rDsQb6vwdiz+qSzONfzCZXEJhWa3rZ3TJnljyDEYIFnmyTB7yF0ZjV
+	7JRUI1n6k5ysOgH8Qs2jqUzTIP72cisdQW7mSOSy3PPqTpHZyQlw8x5OmKndNETHVKAZ4DTPFxB
+	pogTy5z1Xbd8kCMZJU2zCfA3W2TjK7fweSj5BDWC72aHwgWe3aL3VXTYVgJTyy7MrfRno0I1Ef6
+	2IrnTC2Yow8iQO/Q5uO9AtI7dJwoThasVYXkmtt43nNRMJ3LpjmhYhSzBAbdSYnOcTiEVnFdAJW
+	xKzA2tZeOv+MrrenoW6DNcF8PwWuL5gxGYy4QPKkwtaic1ak3bdHN7VMsPSxm1i2rpwsB2KRuj8
+	H37nFirMBJNRCQp62EEyYRCo9L6kXvw==
+X-Google-Smtp-Source: AGHT+IHKh6ktpxlMQlwYYPn8/SjhVvjDHGCITqk1lu1IxhrqGs9p3wGvwUzsqwwdLWZ5q/emhy9XSg==
+X-Received: by 2002:a05:6e02:16c6:b0:424:30f:8e93 with SMTP id e9e14a558f8ab-424030f9143mr87767465ab.15.1758047593134;
+        Tue, 16 Sep 2025 11:33:13 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42414a03227sm5526495ab.20.2025.09.16.11.33.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 08:04:24 -0700 (PDT)
-Message-ID: <437ebe86-3183-470a-b5d3-1d5ff8557e01@gmail.com>
-Date: Tue, 16 Sep 2025 16:05:56 +0100
+        Tue, 16 Sep 2025 11:33:12 -0700 (PDT)
+Message-ID: <da6a8cb0-d726-48ea-8f10-2e5852e5acd3@kernel.dk>
+Date: Tue, 16 Sep 2025 12:33:12 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,116 +84,47 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH for-next] io_uring/query: check for loops in in_query()
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring <io-uring@vger.kernel.org>
 References: <2a4811de-1e35-428d-8784-a162c0e4ea8f@kernel.dk>
  <a686490e-03f0-4f21-a8d6-47451562682a@gmail.com>
  <6e347e14-9549-4025-bc99-d184f8244446@gmail.com>
  <3acf3cdc-8ace-42e6-a8a8-974442d98092@kernel.dk>
+ <437ebe86-3183-470a-b5d3-1d5ff8557e01@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <3acf3cdc-8ace-42e6-a8a8-974442d98092@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <437ebe86-3183-470a-b5d3-1d5ff8557e01@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/15/25 19:41, Jens Axboe wrote:
-> On 9/11/25 5:40 AM, Pavel Begunkov wrote:
->> On 9/11/25 10:02, Pavel Begunkov wrote:
->>> On 9/11/25 01:13, Jens Axboe wrote:
->>>> io_query() loops over query items that the application or liburing
->>>> passes in. But it has no checking for a max number of items, or if a
->>>> loop could be present. If someone were to do:
->>>>
->>>>           struct io_uring_query_hdr hdr1, hdr2, hdr3;
->>>>
->>>>           hdr3.next_entry = &hdr1;
->>>>           hdr2.next_entry = &hdr3;
->>>>           hdr1.next_entry = &hdr2;
->>>>
->>>>           io_uring_register(fd, IORING_REGISTER_QUERY, &hdr1, 0);
->>>>
->>>> then it'll happily loop forever and process hdr1 -> hdr2 -> hdr3 and
->>>> then loop back to hdr1.
->>>>
->>>> Add a max cap for these kinds of cases, which is arbitrarily set to
->>>> 1024 as well. Since there's now a cap, it seems that it would be saner
->>>> to have this interface return the number of items processed. Eg 0..N
->>>> for success, and < 0 for an error. Then if someone does need to query
->>>> more than the supported number of items, they can do so iteratively.
->>>
->>> That worsens usability. The user would have to know / count how
->>> many entries there was in the first place, retry, and do all
->>> handling. It'll be better to:
->>>
->>> if (nr > (1U << 20))
->>>       return -ERANGE;
->>> if (fatal_signal_pending())
->>>       return -EINTR;
->>> ...
->>> return 0;
->>>
->>>
->>> 1M should be high enough for future proofing and to protect from
->>> mildly insane users (and would still be fast enough). I also had
->>> cond_resched() in some version, but apparently it got lost as
->>> well.
->>
->> Tested the diff below, works well enough. 1M breaks out after a
->> second even in a very underpowered VM.
-> 
-> Honestly I'm not sure which of the two I dislike more, I think both are
-> not great in terms of API. In practice, nobody is going to ask for 1000
-> entries. In practice, people will do one at the time. At the same time,
-> I do like having the ability to process multiple in one syscall, even if
-> it doesn't _really_ matter. Normally for interfaces like that, returning
-> number of processed is the right approach. Eg when you get a signal or
-> run into an error, you know where that happened. At the same time, it's
+On 9/16/25 9:05 AM, Pavel Begunkov wrote:
+> I'd rather delay non fatal signals and even more so task work
+> processing, it can't ever be reliable in general case otherwise
+> and would always need to be executed in a loop. And the execution
+> should be brief, likely shorter than non-interruptible sections
+> of many syscalls. In this sense capping at 1000 can be a better
+> choice.
 
-In which case you lose the error code, which can be more important.
-In either case, the idea is that it should only fail if the app is
-buggy, in which case the user can do it one by one while debugging.
+Let's just cap it at 1000, at least that's a more reasonable number. I
+don't think there's a perfect way to solve this problem, outside of
+being able to detect loops, but at least 1000 can be documented as the
+max limit. Not that anyone would ever get anywhere near that...
 
-> also a pain in the butt to use for an application if it did to hundreds
-> of then. But let's be real, it will not. It'll do a a handful at most,
-> and then it's pretty clear where to continue. The only real error here
-> would be -EINTR, as anything would be the applications fault because
+> You was pretty convincing insisting that extra waiting on teardown is
+> not tolerable. In the same spirit there were discussions on how fast
+> you can create rings. I wouldn't care if it's one or two extra
+> syscalls, but I reasonably expect that it might grow to low double
+> digit queries at some point, and 10-15 syscalls doesn't sound that
+> comfortable while that can be easily avoided.
 
-I'd rather delay non fatal signals and even more so task work
-processing, it can't ever be reliable in general case otherwise
-and would always need to be executed in a loop. And the execution
-should be brief, likely shorter than non-interruptible sections
-of many syscalls. In this sense capping at 1000 can be a better
-choice.
-
-> it's dumb or malicious, hence the only thing it'd do is submit the whole
-> thing again. It's not like it's going to say "oh I got 2, which is less
-> than the 5, let me restart at 3". But it now might have to, because it
-> doesn't know what the error is.
-> 
-> Anyway, that's a long winded way of saying I kind of hate needing any
-> kind of limit, but at least with returning the number of entries
-> processed, we can make the limit low and meaningful rather than some
-> random high number "which is surely enough for everyone" with the sole
-> idea behind that being that we need to be able to detect loops. And even
-> if the interface is idempotent, it's still kind of silly to need to redo
-> everything in case of a potentially valid error like an -EINVAL.
-
-It's not a valid syscall return for a correct application (when
-querying is available). Query errors are returned individually.
-
-> Are we perhaps better off just killing this linking and just doing
-> single items at the time? That nicely avoids any issues related to this,
-> makes the 0/-ERROR interface sane, and makes the app interface simpler
-> too. The only downside is needing a few more syscalls at probe time,
-> which is not something worth optimizing for imho.
-
-You was pretty convincing insisting that extra waiting on teardown is
-not tolerable. In the same spirit there were discussions on how fast
-you can create rings. I wouldn't care if it's one or two extra
-syscalls, but I reasonably expect that it might grow to low double
-digit queries at some point, and 10-15 syscalls doesn't sound that
-comfortable while that can be easily avoided.
+Those are completely different matters. The teardown slowness caused
+100-150x slowdowns, doing 10-15 extra syscalls for setup is utter noise
+and nobody would ever notice that, let alone complain about it. But I'm
+willing to compromise on some sane lower limit, even if I think the
+better API is just doing single queries at the time because that is the
+sanest API when we don't need to care about squeezing out the last bit
+of efficiency.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

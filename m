@@ -1,79 +1,81 @@
-Return-Path: <io-uring+bounces-9847-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9848-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26B7B89BCF
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 15:52:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6DDB89CA2
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 16:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EDEC7B1D7C
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 13:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7E4568210
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 14:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8001E9B1A;
-	Fri, 19 Sep 2025 13:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D572505AF;
+	Fri, 19 Sep 2025 14:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SEmTVoHs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvO0N4uG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1110F1A9F91
-	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 13:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4025E254848
+	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758289933; cv=none; b=XxNl5ARR0X+XmNrgro7aqErJwUyzlvuFWq7zmKKQKnq9LVpc1AJ9qCDEgEoQR3OffeqV7TYuMLIctbx6G/oBUNUh51Mk6KzitmGsBBXN6BuK0RAh5ii9Q7oAMhOAURI/mY0O+fgxITz0nsXqZjuL1z1BJDHW7l3+M8VXQhctXqA=
+	t=1758290692; cv=none; b=UPVi2vPkgl6e8zVOg5bKL/HTkml8YPmSW36YVVzkpSdCPdzuJO9IGmwKADoWsMnkn/DFi7NJ+dd0Pxs2PCS9nb3m4N3K29xLk1uT4HWlXj4vxd/wk+QotjSktYTd5OpHbUhai99y62c+kg3PJu+oW9NvrIhaJSPRAFVFMBeguRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758289933; c=relaxed/simple;
-	bh=/lsf0wrjkUn/Z5SCVgSjE9C2uXdQdiaMCmnF8lURqMU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XB86BiieksXWfLVPlIPQC/7MfDkNdtmgW8eFferCuxsJh+1Qt1Q3zVA06XIJTBWJZoWZnnPfpmbF8qXaT/5dBSBvtICMnp4Wakxs25474fNFgl8mcYWTkxstbjgeSfpyyKXiz2D35h3psVmOsLkqd4ceV8Et7YNkQgQy8hx3gG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SEmTVoHs; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-889b846c314so59995439f.2
-        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 06:52:09 -0700 (PDT)
+	s=arc-20240116; t=1758290692; c=relaxed/simple;
+	bh=C8PZTGi/IL1oxDviavme/UhiUHa8/oRKQ63q4eQ2djo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=g9Vrh2l04GHLXQ1wwU/ga42gGJN7Yga5no7EOhWuJuhHbuk6s0/icn/suotm160uTV+itfGqeWa9f3YodYfqD+T6azuzHos1c80mrvR/uDSl1k66X2X7t5CuBYma+f18rCdIUlXMAF1dSACFCblI7QPMX24G7umxibPU73Lq2kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvO0N4uG; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4619eb182c8so20361375e9.1
+        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 07:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758289929; x=1758894729; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OMSTkIcsO+0RpWilWhJUSWU33BSmSD7P2le1N319Bws=;
-        b=SEmTVoHshdP2ZQnUj/mDakeetaKvc4MSV2r/CgWvNZxd/EO9aI7tmDnUzxXr6CmYBF
-         YJ7B1VByiDEWld1aueYzobhQV/V7Rx/oq7PCWqnqL+G2dRrYY6rWb7sRzCB1B1OwZi+J
-         FfEdQCzVTnqWjDqYgbIwYMhlQWyTJhEY5W/SqFdi3lkMPevgDVeWxyPYCzkb3X4h1O1I
-         cbc5tGG6xyLI4Qh3JIt3yR1yzpHCm6rtJRSQOXLgBy5IZd4pvUdnnL3TpcZUg/9pbUuK
-         kULifP1UoxPvMkWV8671UPVb1Tzk//9/aMKG9imo+LxquvkJo6Q7lSizOBS0FVZca7RU
-         qXrg==
+        d=gmail.com; s=20230601; t=1758290689; x=1758895489; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lpC8icc1PITWTIE8TYkvKZZVwSmAjSabiOcnJRDan+c=;
+        b=XvO0N4uGfUHI+CPv1qs6lFloG6TtlXeIpDUN9DUNDT3aX4lL+Y4PT+NAJC94it7YRZ
+         oAUeXRPeBWDuw0riEF5Y+9rmKZbGsP2/Wvbe1YxfdiYhL2mYl9Un7c8XT/CQ+EhG8dJH
+         C/3vQxbOFJfwwVJ6JLYhkx3gKaxgsAr5ExHlpwIW78PLTpofjDaTaP7bY2y0TL3XWMCX
+         takivMpWksEQwyYAHEKMDNaMAQcNmH2oZsQZ3Mdu+GV7ft2yXQ5+rtzduAQqIMkp++TJ
+         sh6ww2C2mOoJDgMegWzcntnqbXylixBpK2yQ5juGozm02SFzikFCYt7NnIGDHy91J84m
+         32ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758289929; x=1758894729;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OMSTkIcsO+0RpWilWhJUSWU33BSmSD7P2le1N319Bws=;
-        b=TZnmbVthof5fPFBl1i4YqXNjP35H8cMVW9YrepNwFCK1RGBl/t19T4X55NGOP0fF9E
-         CCmnPwRvDNHL3N1cQnpF2U/tb4nh0MXGceV+j1rKF3vSd+RYAaARh+hzB521t8d4nQ1l
-         kbUzE8jQIZ2xUZtL2bSaTVxv6Mbh7P3Tq7d9Pp8LF6jOp6X2lT46DVndzmowFfv/MKv9
-         f+qzeDf6e0zlOTfiTWjd+QYKl8j8Y87y8kaHe0K0vaRNO24bQk+lSR9s3I0kV5HPLQA+
-         sQGhUhbBZ4MTnxAr/FDcmAWSW9O13TM860x3Aiom2KpsijDwHrZK7BAdazy0rx1zuTPW
-         uIDw==
-X-Gm-Message-State: AOJu0YxGPZKu2Hnk3kI/yWCr3RdZNWww83JZYYEHuev8n0fNXIzOTGOh
-	cl4YHC6LO1Vb/7NlhSmoMDIujfJIz7jMEzfId0zpq4Jjzw01Ig5LhEh+s+uiy7yooM9pNCKwkds
-	BjoYr
-X-Gm-Gg: ASbGnctMOMNNti1GXg8ZrL9IDJINR8eEaX8PTXZR5J6MmXcs5L5YNmIAyTlp4izApbc
-	towuzMbptAi37aLq2wyc96CniGv9vaCOgq/aJOTbKxxpAzICuB9PFPBOBwIb/e5u9AU5G1oDZWZ
-	1xv3587Py0JVc0b/A9iuTwu/uSlW/WVQ4IeWrGbVvueJlqeAnTBVooeVaj6Bo9ZEJEsGo2CmuCw
-	As08T1r1BToy7WAwrl47uOyeSYazkvpmP2v07dxK1xBl2mrUz5odem+N+MV7g0arW2RsFz8I3l7
-	R2/Sep82oeyJ42FdzBcNBA/Lquo9dTO+q7iM8FR4PJbPHwspGWRd3Gkt4CuZhYkZLMgLkb7e9DA
-	60DhiW9EVy8Ow0jpTTajS4X5kHyqP7g==
-X-Google-Smtp-Source: AGHT+IE7ZDaysgQNN1wkN4G+qEF3YH7l4o4PaKNg12w3foaV35blmkvIWwIDWkHwaUi8rU1AVrNRGg==
-X-Received: by 2002:a05:6602:6003:b0:887:56b5:b502 with SMTP id ca18e2360f4ac-8ade016a376mr544038639f.10.1758289929048;
-        Fri, 19 Sep 2025 06:52:09 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a47d92185asm163228039f.14.2025.09.19.06.52.08
+        d=1e100.net; s=20230601; t=1758290689; x=1758895489;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lpC8icc1PITWTIE8TYkvKZZVwSmAjSabiOcnJRDan+c=;
+        b=MzcAkG/cRFpmDLPN7+1QRKHfG2z0cQnceglhkv54HVem0P10UbW1bpRcSQSabWOF/G
+         SrX2ab7phlrjO6L3cg5cuIE0/IOe2btIOTcO4wWrzBzlk3PSRycCnBtlgMhQ7MfnE+J6
+         MH197HJKhsAt1GWA/viFTHr67KoNkzOjWye+FGapage7nr6+oFFJghZA5SO3lcL0CgpI
+         +PLkNcn+V3sbqPjyBvkEF19akomSeo3jEGdlPNWMIkAoLLdMk3FS373gq4eA0rqJw5IN
+         /mYSwqVU5Z0VihyhGPiSV886dedL9mi2TR89HqVLnSTTrBXm6HVrjfNpaSrwFtcBk25+
+         8RSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/1kuSgfHBvDcvYqGlPUAkUivs8QOKwR+k9JybnbcDMlJ2u/3UHocfbK9Trq9C5zXKSDKKUGLemQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRWw2kikmvrWVFMBuqd8UQvqqlWiO65/xxWGtIIn3mtDyx3nJb
+	KjOPnP28bPT+yZQvB7sVb6mOW5RXEa2/6Jxd+FC92z5SqOo9bqEt1NzFna9VDA==
+X-Gm-Gg: ASbGncvBjQAoCumZk9ENhl3o8taRTZDj5+rmSMvXhjFi9vutxkJs+f6MdWDxP8P+Vnr
+	yJ90/Oa4h7kj62aQ0/8+7tEPLTDTLPsriGgs/6b8CwFatXQDANyLgad9kinMKOGKJqsFdRIo84M
+	uHHtq3fPyPhI8YQTDC99B1NM0d68kfIh/2MbPvWYxUpNGuhI0hL6lB/D5fEs35oxkIZj+qckO7t
+	h1qW1rfqpjLRWZjo8uhhdxWzrEtxHGniGhX5V/PkGCCJxiBT6xFuSh/jriDlKwssx04OdMpA5TE
+	MgCsjO1sUa+Kl0qIAC6M8sx5aaUR8vMVO40a+QfX7uFfw4H2xyJP8/Fpwliv+A19jK3iuKT8qSv
+	3q5ROJvjMbiZ/ouM9ylR2uBMMhOQ2PZfNUHeMXSD+cEilSIQtQWrFQExrxAwTdGxCwqZb12EWOA
+	==
+X-Google-Smtp-Source: AGHT+IG+Tj5W92NdWije3mPfpaVge0hAviYJMSyQA0pQOVoJiSSMBQoeNIdA2hBW3oJDw6dpEiuZkw==
+X-Received: by 2002:a05:600c:1991:b0:45d:e135:6bb2 with SMTP id 5b1f17b1804b1-467ea00464dmr27166615e9.21.1758290689313;
+        Fri, 19 Sep 2025 07:04:49 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613f3c69d5sm128189055e9.24.2025.09.19.07.04.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 06:52:08 -0700 (PDT)
-Message-ID: <7102d62a-bc57-4bd3-b74f-201a35c770c2@kernel.dk>
-Date: Fri, 19 Sep 2025 07:52:07 -0600
+        Fri, 19 Sep 2025 07:04:47 -0700 (PDT)
+Message-ID: <23a67fd6-0179-4578-82ef-cf796bea4346@gmail.com>
+Date: Fri, 19 Sep 2025 15:06:23 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,76 +83,34 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/msg_ring: kill alloc_cache for io_kiocb
+ allocations
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <0ee30a2f-4e36-4c0a-8e84-7da568da08d3@kernel.dk>
 Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.17-rc7
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <0ee30a2f-4e36-4c0a-8e84-7da568da08d3@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 9/18/25 21:04, Jens Axboe wrote:
+> A recent commit:
+> 
+> fc582cd26e88 ("io_uring/msg_ring: ensure io_kiocb freeing is deferred for RCU")
+> 
+> fixed an issue with not deferring freeing of io_kiocb structs that
 
-Set of fixes for io_uring that should go into the 6.17 kernel release.
-This pull request contains:
+I didn't care to mention before, but that patch was doing nothing
+meaningful, adding a second RCU grace period rarely solves anything.
+If you're curious what the problem most likely is, see
 
-- Fix for a regression introduced in the io-wq worker creation logic.
+commit 569f5308e54352a12181cc0185f848024c5443e8
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Wed Aug 9 13:22:16 2023 +0100
 
-- Remove the allocation cache for the msg_ring io_kiocb allocations. I
-  have a suspicion that there's a bug there, and since we just fixed one
-  in that area, let's just yank the use of that cache entirely. It's not
-  that important, and it kills some code.
-
-- Treat a closed ring like task exiting in that any requests that
-  trigger post that condition should just get canceled. Doesn't fix any
-  real issues, outside of having tasks being able to rely on that
-  guarantee.
-
-- Fix for a bug in the network zero-copy notification mechanism, where a
-  comparison for matching tctx/ctx for notifications was buggy in that
-  it didn't correctly compare with the previous notification.
-
-Please pull!
-
-
-The following changes since commit 98b6fa62c84f2e129161e976a5b9b3cb4ccd117b:
-
-  io_uring/kbuf: always use READ_ONCE() to read ring provided buffer lengths (2025-08-28 05:48:34 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.17-20250919
-
-for you to fetch changes up to 2c139a47eff8de24e3350dadb4c9d5e3426db826:
-
-  io_uring: fix incorrect io_kiocb reference in io_link_skb (2025-09-19 06:00:57 -0600)
-
-----------------------------------------------------------------
-io_uring-6.17-20250919
-
-----------------------------------------------------------------
-Jens Axboe (2):
-      io_uring: include dying ring in task_work "should cancel" state
-      io_uring/msg_ring: kill alloc_cache for io_kiocb allocations
-
-Max Kellermann (1):
-      io_uring/io-wq: fix `max_workers` breakage and `nr_workers` underflow
-
-Yang Xiuwei (1):
-      io_uring: fix incorrect io_kiocb reference in io_link_skb
-
- include/linux/io_uring_types.h |  3 ---
- io_uring/io-wq.c               |  6 +++---
- io_uring/io_uring.c            | 10 ++++------
- io_uring/io_uring.h            |  4 ++--
- io_uring/msg_ring.c            | 24 ++----------------------
- io_uring/notif.c               |  2 +-
- io_uring/poll.c                |  2 +-
- io_uring/timeout.c             |  2 +-
- io_uring/uring_cmd.c           |  2 +-
- 9 files changed, 15 insertions(+), 40 deletions(-)
+     io_uring: fix false positive KASAN warnings
 
 -- 
-Jens Axboe
+Pavel Begunkov
 
 

@@ -1,142 +1,91 @@
-Return-Path: <io-uring+bounces-9837-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9838-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72888B87643
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 01:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F80FB88818
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 11:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A4E2A2C23
-	for <lists+io-uring@lfdr.de>; Thu, 18 Sep 2025 23:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B4D5A062D
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 09:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D4E34BA4E;
-	Thu, 18 Sep 2025 23:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3281CEACB;
+	Fri, 19 Sep 2025 09:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RK+fPian"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LvIvj/2Y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638161B394F
-	for <io-uring@vger.kernel.org>; Thu, 18 Sep 2025 23:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847EB1C6FE5
+	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 09:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758238552; cv=none; b=EcnZ5K9C90Y8I9XvaIT4s9YaSXRl8kpiWnm55PZ0ApIi5ONebJ4sOqKRxYqAVkxmAvw28v2jcgJhiPvGoZq82KtLsQ0GtsQcdnkqdP+Rk4EswmousirKz0TYJ8yjEdwIEOzW0lz+ksuY9QoxB7XFvBOQggOuAKDa9yfCjjlCJDo=
+	t=1758272676; cv=none; b=nVengqYBHaWMzaWTEbpxtByDwnsO377UWw8GcXhcbEYuER2l1cfRw8MBUVPc06/LTf8/2hDtjLBmFBsvwKa68edOUrVkB4o8rsv3cTmuc8jcw5EIT/vQY50mg5hF2YmJY3+AcPnLXEnNW0sOHevErr9yALp01jK8gHi9rWu4SNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758238552; c=relaxed/simple;
-	bh=20u0B6xmGhNJ7bnzjnhWcAwVuOTNNS2Ihd+UFd7ZnRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQOJNysC1yiisyj55W8IbTIUuiVwz+rNJfJab4cRZRfekpq8FdxXJqmnv//eNtwuFpGVOE0f5WjoOfrY8lOe89kxL9czfeBYhMVHicWa6ifwbtiU9IYrgXCjoNawhtXHc81EBaN2jhKDqcy4H/TixmLzxRw7mINTARQyz7pedSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RK+fPian; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88432e60eebso41842139f.3
-        for <io-uring@vger.kernel.org>; Thu, 18 Sep 2025 16:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758238548; x=1758843348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oxT0O7JcOSehGWMpesCt13DoOvNrQRrZV4HAusoAxSk=;
-        b=RK+fPianB+L6cnGhdJx36c1lAJMW6X4od/IrF8FZNsFU8Zxs5JVa6CgFGh5QFwGqCZ
-         +11W0y3VN4vYfVsLZYdGPDOIbPGJZRbwOofrZsFpWitq2LOI/2x0yHVQoBX7alL1rtPV
-         2expNhfwKXvl4YpuTAb5K9gmNps3O2HhEFa/7gYzye80+1KaZtKxAYsxwSmB10rfUacp
-         1I0qLu3JpXUYqb9+BVaKAPcUxmHhq5mNc6EFPRRlKqD+5i+4XGn7Vtao4+YwwQp1xtsE
-         mt5agjQmPE2id+hRvmQnLlIMX7kubPIOLWvl41UdXYU+sDYLfHVGfd8QnYRQLJ1NzXfX
-         bnLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758238548; x=1758843348;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxT0O7JcOSehGWMpesCt13DoOvNrQRrZV4HAusoAxSk=;
-        b=NsMrGGsDLAahQFD/bfCtajU/lvD8GxXymEDgjNLthmEVqqxPhGEjag3xKjwn4TT4+8
-         PjZtb7aSc4JheC6ft7pPnni7xHNdNLjm0NN3/QokYHsX9JZWOlAQQajUOTI21TcAmbYg
-         yJjNvWc+dTU0ppOwn+6PSw6m8x7OIIlyzdvx1xgZb5+3zuhjp6gh6/uD4gdInMzqF2ZU
-         /kPs0Wgk7jGJeymgLBN28E4/TW41hQBKi/qzRT+cf18vwB7VpX9/9mTq1OmaLzH/tCKA
-         W3f66ADdEmSzZU2+eabWzkQ3hSVW4VVA4fTItoZP4nwYiyhk6sAhMxrmaLS2QZIAJOuc
-         Hi3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUh88Gjq+SZPfQeJZaHOjVlH6d8Lc/DJomJhhH5uclAv+VbcGNGivXV8vD5pH3SZD24KOyN+9Z6Tw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ3pDIaLVhlAZs14D1OPMCTUABT2CGe+hHQWYdcSOX7iYTV39F
-	4umUy1IQOI2aEJAk9TMuTbwDXyof/x6Z0ar88hhBkcEiSNdKxwF3Uo02b1N8Kg/RE9c=
-X-Gm-Gg: ASbGnct1lz4A3Six0FS6VXV/u/0IRzD2hwEl+SFscR7GsMjbv70G2pzMy3OlFYH2Ltq
-	/uRvxS5EMG2JSOLbKmMSFmyCpn/Eq+aiLOdX2tsa7zzwEr14VBBAah10hCcwK1bg+aNpjRmN4ND
-	YtV26H8DA5GVfxbRvyzn6c0dC3U0zgMi5VLmNAtzaDptPjEyhybz/zOWZ/LuRVjO+q1Oa3DsF7p
-	tzS9MvBdZn2tmIN5gBv4UGvTZzBSahtmKyZMt0Cdoc66Wt0S8gzx26MT61tmrN4FgFDd8AJiP5v
-	u4L9GqXI2A48bZCpuAY2rqfSg1K8uBybHKkoQ9gzJ00irGwJRU/riz4nV69AhzVByZv3Ov5MxYR
-	WuQH6Gg1I2aCzvraoeg//hTGl1tEHX1mT2IlFaHE=
-X-Google-Smtp-Source: AGHT+IHFhCkN2EgbvKlzJH99aavj3D3bSD1+gk9VDJTxY6BMSRGPTmRnlCGRyC3AP0p0iKYWktRE7A==
-X-Received: by 2002:a05:6602:2748:b0:887:1e15:85b4 with SMTP id ca18e2360f4ac-8ade6ee28bcmr188342039f.18.1758238548192;
-        Thu, 18 Sep 2025 16:35:48 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a46b2f3405sm125471139f.1.2025.09.18.16.35.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 16:35:47 -0700 (PDT)
-Message-ID: <9a4f5d50-b235-4621-a21d-be8ea0b2c9d1@kernel.dk>
-Date: Thu, 18 Sep 2025 17:35:46 -0600
+	s=arc-20240116; t=1758272676; c=relaxed/simple;
+	bh=p96dtqbhzi+9WsYHK6xa7P9QMa2meF8KJl7qjrM+TrY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fr9/E5YbLIqZtUpd+gu0XFppHliZY/HY6VFCMxRdYb84q9mjQMYUrhHoo6iXLdHNnjyACPJr5cBrC7tTmJxUqCH2pTpifLKx5o5T+MT2l0fbd8gVKLWE4b9/5UaQJ6igEsBNGxSPASsOWYawTUWAq/ICg1Lf5TeiEdxPiaq4yuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LvIvj/2Y; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=T2
+	C5IFN6zJFI3M+hAspZT1UMuIVbbCElh6aZubkUSzk=; b=LvIvj/2YfLQh9gMPNY
+	oVwzNsiK9utF5P64y2Jl9wE9cj/prR8FacKKgeyu+ooIneDiRNu/wbVuYh3XW2kn
+	IW7ir3mJTNI1qnBZa6hXaD5eRaALAUBJULZuej5mJOAcSVYTjVBmEQz1G+NlzOpY
+	0WCGNlXui53DyNP6LLBqpGyaE=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3Z5qEHM1oTvOQCQ--.7054S2;
+	Fri, 19 Sep 2025 17:04:04 +0800 (CST)
+From: Yang Xiuwei <yangxiuwei2025@163.com>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	Yang Xiuwei <yangxiuwei@kylinos.cn>
+Subject: [PATCH] io_uring: fix incorrect io_kiocb reference in io_link_skb
+Date: Fri, 19 Sep 2025 17:03:52 +0800
+Message-Id: <20250919090352.2725950-1-yangxiuwei2025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCHv2 1/1] io_uring: add support for
- IORING_SETUP_SQE_MIXED
-To: Keith Busch <kbusch@kernel.org>
-Cc: Ming Lei <ming.lei@redhat.com>,
- Caleb Sander Mateos <csander@purestorage.com>, Keith Busch
- <kbusch@meta.com>, io-uring@vger.kernel.org
-References: <20250904192716.3064736-1-kbusch@meta.com>
- <20250904192716.3064736-3-kbusch@meta.com>
- <CADUfDZrmuJyqkBx7-8qcqKCsCJDnKTUYMk4L7aCOTJGSeMzq6g@mail.gmail.com>
- <8cb8a77e-0b11-44ba-8207-05a53dbb8b9b@kernel.dk> <aMIv4zFIJVj-dza5@fedora>
- <aMIxmiGv5D0GvSro@fedora> <aMLIU19CfgOAuo8i@kbusch-mbp>
- <CAFj5m9Kbg_S_rES1BXRXpaGGnatiEmwEsN+-f4t6zGUH79LPCg@mail.gmail.com>
- <c68af2c8-4b2f-4676-8e0a-d3593e462986@kernel.dk>
- <aMx4AeMtiyUoC8-X@kbusch-mbp>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aMx4AeMtiyUoC8-X@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3Z5qEHM1oTvOQCQ--.7054S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF1DJF1fWF4xXF1rKrWktFb_yoWDGrcE9r
+	1UXrWkuF4agFWYvrZ5Cw4rZ34avw4j93yUuw4xZ3yDAF95AFs8XrWDZw4vyrsrX39rGrW5
+	Gan8Zr13tw1avjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjApnJUUUUU==
+X-CM-SenderInfo: p1dqw55lxzvxisqskqqrwthudrp/1tbiIBPNkGjNHC8ODAAAs6
 
-On 9/18/25 3:22 PM, Keith Busch wrote:
-> On Wed, Sep 17, 2025 at 08:44:13AM -0600, Jens Axboe wrote:
->> On 9/11/25 7:07 AM, Ming Lei wrote:
->>> On Thu, Sep 11, 2025 at 9:02?PM Keith Busch <kbusch@kernel.org> wrote:
->>>>
->>>> On Thu, Sep 11, 2025 at 10:19:06AM +0800, Ming Lei wrote:
->>>>> On Thu, Sep 11, 2025 at 10:11:47AM +0800, Ming Lei wrote:
->>>>>> SQE128 is used for uring_cmd only, so it could be one uring_cmd
->>>>>> private flag. However, the implementation may be ugly and fragile.
->>>>>
->>>>> Or in case of IORING_SETUP_SQE_MIXED, IORING_OP_URING_CMD is always interpreted
->>>>> as plain 64bit SQE, also add IORING_OP_URING_CMD128 for SQE128 only.
->>>>
->>>> Maybe that's good enough, but I was looking for more flexibility to have
->>>> big SQEs for read/write too. Not that I have a strong use case for it
->>>> now, but in hindsight, that's where "io_uring_attr_pi" should have been
->>>> placed instead of outide the submission queue.
->>>
->>> Then you can add READ128/WRITE128...
->>
->> Yeah, I do think this is the best approach - make it implied by the
->> opcode. Doesn't mean we have to bifurcate the whole opcode space,
->> as generally not a lot of opcodes will want/need an 128b SQE.
->>
->> And it also nicely solves the issue of needing to solve the flags space
->> issue.
->>
->> So maybe spin a v3 with that approach?
-> 
-> Yep, almost got it ready. I had to introduce NOP128 because that's a
-> very convenient op for testing. I hope that's okay.
+From: Yang Xiuwei <yangxiuwei@kylinos.cn>
 
-Yep that's fine, I'm assuming they'd basically use the same opcode
-handler anyway.
+In io_link_skb function, there is a bug where prev_notif is incorrectly
+assigned using 'nd' instead of 'prev_nd'. This causes the context
+validation check to compare the current notification with itself instead
+of comparing it with the previous notification.
 
+Fix by using the correct prev_nd parameter when obtaining prev_notif.
+
+Signed-off-by: Yang Xiuwei <yangxiuwei@kylinos.cn>
+
+diff --git a/io_uring/notif.c b/io_uring/notif.c
+index 9a6f6e92d742..ea9c0116cec2 100644
+--- a/io_uring/notif.c
++++ b/io_uring/notif.c
+@@ -85,7 +85,7 @@ static int io_link_skb(struct sk_buff *skb, struct ubuf_info *uarg)
+ 		return -EEXIST;
+ 
+ 	prev_nd = container_of(prev_uarg, struct io_notif_data, uarg);
+-	prev_notif = cmd_to_io_kiocb(nd);
++	prev_notif = cmd_to_io_kiocb(prev_nd);
+ 
+ 	/* make sure all noifications can be finished in the same task_work */
+ 	if (unlikely(notif->ctx != prev_notif->ctx ||
 -- 
-Jens Axboe
+2.25.1
+
 

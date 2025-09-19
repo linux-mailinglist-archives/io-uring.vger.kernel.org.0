@@ -1,167 +1,117 @@
-Return-Path: <io-uring+bounces-9843-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9845-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AE0B893FB
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 13:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D42BB899AC
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 15:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6383D1C25E36
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 11:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CFD1C88593
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 13:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1860730ACF5;
-	Fri, 19 Sep 2025 11:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D16930DECE;
+	Fri, 19 Sep 2025 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cP+hWh2v"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iNGQ47/d"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669B119D082
-	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 11:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A6430AD18
+	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 13:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758280950; cv=none; b=Svgf4mQshItQgum7T5Q08hqf4CTxYON6m7xzIfNrvIalhx4TP+OE9OSmIH0SZ1sIwCcQvKodoITuikxlYj4PEYfx7XuZqsWmo2BEvp81OGf8U92882LRGz3owi8PecYu59haQyi3OQfuOs28Q5v/isQacMmg4dCiOouLuIihiT4=
+	t=1758287226; cv=none; b=Dyplhc3PfIESCNTT+V9geU+YyG7p9YCf7SAhlDxWOiKufPEZmPdJFeIwbFjoh+Ebh4Wjh3mWQTJPiB+7SUUtJLUxRzGmAuJGciNthe4bhKavAkwbl9fT/kn/l0c5cBrJpKah26m+BttZ74QI4rGgLzfnAflCob8Ex4o2KOIZh/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758280950; c=relaxed/simple;
-	bh=xqfNcyFjMeQTlz04BLbT7AfC0WImpsJRY67rVwDfgIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWFOs/c0pzcJL1r1Wr0Or5FaeGia4mOhGZXhekG8s7ECUfs0fd6lqBIY4rfJbO3zXBe7m6RCH4D379aafB6bCNRveyGV2uwdAIpqCajxLIKIa+ivODtVHCXYPurj46DurqEK/AoSkD3WfUnjAhmJx43mWQjdjxPWDVU6fCByeHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cP+hWh2v; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cce8c3afaso1554097fac.1
-        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 04:22:28 -0700 (PDT)
+	s=arc-20240116; t=1758287226; c=relaxed/simple;
+	bh=BvozPfOu9cgVo3+z3oCLPmeDOWuZuMDmzhJ1aSO9F3g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=N6smed+AcG4vvm1lGyskgLkmEpcfYWlzF61g9qB0gQamBmjLaIPMGJgl6rFZTN1suP0c9dIA6jPQQop6bP//LM8DJQiSJT4FBwL4U98GkhSJTAB+SvK6KI2pMbVpYhKiNatPSk4ueUtLkJqyQ2LWP67dPr4S/4eMPAPZEL+lLjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iNGQ47/d; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-889b846c314so58144539f.2
+        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 06:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758280947; x=1758885747; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758287220; x=1758892020; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O2b6lkwHmzdEZ9rVa6idtxaJ42fUXXMbf3f4Nbvq/zU=;
-        b=cP+hWh2vpdpW4zuHTH3764Ks405IZur0ERYt1XlHhzK0lqyuShVOTIJVqIx/eb+lTM
-         1P0wlYMutaMZcG6TnLTcfxqgSOSqF/9utIJL9ONbV9p7VhsOhuy06wcTDNxVbYukecs8
-         Z6ZKJ5mexkU1181lLq1jK62E8g29SosqWFgJ5Cks82f/iPyZPY9q/MMOfp5PTp3/pHbv
-         gEPUfNWfLqNJJl9jDSlyxCLSetciwth7KSiDsaRPJ+p5EdHVphTA5RvTUsksYGPHX60e
-         q33CVx8FVQG5P5+6bUhdXxxcd3+p+plsCGqsMJA5GYfIb9tag/oqXplkpUXwUyhDiChM
-         LMrg==
+        bh=C6HNw9Ox+BfzVSqqzs28XGIZuqAsiis51k0WUWcPo0g=;
+        b=iNGQ47/dsqu5GOqlfbxHJx2XYMAIX3ccJ+i14RfU/QHcMKn7874Dv7iDM8/YpIZqbh
+         tIE4lzzf67kpfKHBBfv8KlrcrIDN3AmmHTEo4UMwyCmMwkIqmssAQsi0hCzq6Z+lGvKW
+         D9N8S+FXMoxnlXViXb9J24ebBMqgHiQFVgL/brF2Q/phE3dPMgjddM44wBLsV97AopWc
+         BvMqY35ta9M0Y7Nvf5MxRrSaetev+UZkgRE4Qlt1/xPT0Iiv+wRJp8OBOzDXUL1jw4md
+         RnrIYNF4FNd2hsldEB2iMqBCxJ02/MUn+/Hj9pybNeqrwGnz003Qi1Bs+I0SiMp/FzrY
+         giTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758280947; x=1758885747;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758287220; x=1758892020;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O2b6lkwHmzdEZ9rVa6idtxaJ42fUXXMbf3f4Nbvq/zU=;
-        b=ti1Aqh17T0ElUmpAX4b0s3XvpIo/b8Tmhniui/9nMY1DurRzf6BFQwnlPxlgVesfAM
-         0DIqN/d7PYbk+lC1vQQaDH1JWXRt7sOiUT5lHfOGGvdu65m8gjH0TlMfrP0GFXnbDwMY
-         FagzSD4fc6yIzTk0p5jiMM/GNSsnefQLgHtk1bIoqnskfDKXJv++gAJuEhJXsnz3ngRf
-         nxWlodsMmAKMb0Yyy5j9to0oyC2jdJnoAo5Wklb2dkP751CZbJx0QomoFRWdpj/inaxx
-         vbITb4vSgFSKLTu/+eFvRLWnjxh0ji+iK9xYDsylCfjonpy+lXYNT7h2crPyozmqTWPi
-         V4VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5vcgeddruUO+K2XIZ0iW6LN7iQSjdEpR1GPx3SYdQWoDkbLHtjWq+uqrsCpJynl6PV6vc3eJeAw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHoQmq2P6WnfXkKqIfOP42dahRnpicEPpcNFUPJmQwekWu3skt
-	eQNA401J4XCMA+IdcY7Jejz3ONZGLw7Z941YXxT+yuIdb2/M8QXY9x/5SQ30+Sfw97dV0ro+8tU
-	2oUmq+6NsLEClnCIq0ZoDe0kOlrcGKDw=
-X-Gm-Gg: ASbGncuWpFRYsDoxP23jZdJ+vsEshk/qx0HFlC3BSDanKj66VDY69iDpTVDOcDJFqG1
-	AIwt/bs52L+TJ+6PiOcTSzR53hGq9lMZRTXLrPSyCMGbVfjhDUN9FfjUN3RK7rpBojx91oo6dzA
-	2m4NzhhhnVzQV/4kvW33QKtt/b63PwcrtUUo4DDchcM0DJKzDlCcrkpO65u4br6s3bvb+YYmMXm
-	D4UMQ==
-X-Google-Smtp-Source: AGHT+IGGP6kWf1/9bBM/TrtpawTO/ddRT+BcKAbP1uWmz4yJ/oySIDGTyb9QCB5qXXzbi0psUzYnC/nljWLqNvMHuyM=
-X-Received: by 2002:a05:6871:4609:b0:321:80a7:a1ae with SMTP id
- 586e51a60fabf-33bb25e9cb4mr1637044fac.14.1758280947454; Fri, 19 Sep 2025
- 04:22:27 -0700 (PDT)
+        bh=C6HNw9Ox+BfzVSqqzs28XGIZuqAsiis51k0WUWcPo0g=;
+        b=ey3bbPcZ9LEJlYShOpucGTlOh4olvvDKTzcyAxbqdvKqg0ekxyldtmRpGmcO7/9Ph1
+         GZZ65Y9LtG1/NJwYB7WR/KsMgDD5exyMxD2ZWTbMgBXxk/6yWCeKzE7JZeW40YppRdu7
+         f/QN8qiFyLrNEnMe/MDhKtF+19ORgJteMUOUhvmSRxn3b2DmTqezxryJf9kPTjvRxOtx
+         5gTtGoyar+f4Yiw4Gtlw92JD3OLKaDpx2WSlCKNvg0k/B2uGcLNqTu2BOEPw4yVkAGLi
+         h/Fnu10F9tTGOX7GX8Mt3GPWWaqu9W78TDy8c3FhoHjXE7E2jUaBrTKfXinCofNYSliM
+         wkkA==
+X-Gm-Message-State: AOJu0YxBhugIaAPtRy4COW6q4xb9CnxQtsjKuTCOmlhX5tbqKae3vQ6w
+	NotxPEr4TKIYR+xUqqM4v9xZrvLII6p4ikPL4XVsY5JeHsgopWO/3X8fhBD/MPaMMn8XKHL4T8z
+	SB4tjtgI=
+X-Gm-Gg: ASbGncvphprk67kRjPlO7l8ja3Z/h2qsk2QeXebd7x9DpeCW4O4KvEi+ujcslfw/dVc
+	CnT52f7BJpDUHikFCnWCeYBg8AW+n2/Cvo1mQMaqAlgaPXWWyzk1EsiuT4ieC55jd5GDEGtyyf/
+	LhhOBBsI0V2ldHvGpwiJXerPWjjn1bHwqC/DjH5/V2ZtlSnPcwgGwAwPu6xWCDwUwRk0Bq4p2wq
+	XQBhjN6kXNo4V3R2lqZMcUQYKHhcUOTwp9qaKLqucOPzDTIWf0l2PBXg6J1pvRFCYdjI1bbSC9z
+	bKes3fxNdoWBHt7av8iWbCGaXYk3qal+yEg6EYRrkAuAznJKY0+mesic00vuwu4IuBooSCwbucX
+	Z3H4Y6Lir5XGUPg==
+X-Google-Smtp-Source: AGHT+IHUR5dtE+wDDyAW9o7MEnpXItQqVJao4gxgHJzoa5wzQFtBqvABSptIbbVGXLj0CqPWjOlZ4A==
+X-Received: by 2002:a05:6e02:2481:b0:424:8535:6521 with SMTP id e9e14a558f8ab-4248535660bmr25958025ab.25.1758287219729;
+        Fri, 19 Sep 2025 06:06:59 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244a682a59sm21582855ab.16.2025.09.19.06.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 06:06:59 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Yang Xiuwei <yangxiuwei2025@163.com>
+Cc: io-uring@vger.kernel.org, Yang Xiuwei <yangxiuwei@kylinos.cn>
+In-Reply-To: <20250919090352.2725950-1-yangxiuwei2025@163.com>
+References: <20250919090352.2725950-1-yangxiuwei2025@163.com>
+Subject: Re: [PATCH] io_uring: fix incorrect io_kiocb reference in
+ io_link_skb
+Message-Id: <175828721919.844104.4953119127361592887.b4-ty@kernel.dk>
+Date: Fri, 19 Sep 2025 07:06:59 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919090352.2725950-1-yangxiuwei2025@163.com>
- <152d553e-de56-4758-ab34-ba9b9cb08714@gmail.com> <CAAZOf24YaETroWiDjmTxu=2b2KVTxA1+rq_p5uxqtJqTVBfsJw@mail.gmail.com>
-In-Reply-To: <CAAZOf24YaETroWiDjmTxu=2b2KVTxA1+rq_p5uxqtJqTVBfsJw@mail.gmail.com>
-From: David Kahurani <k.kahurani@gmail.com>
-Date: Fri, 19 Sep 2025 14:25:16 +0300
-X-Gm-Features: AS18NWAKO0tCFV08N5BvozOdfl3-6-qo3npWVrYGM6yTrpAAhkAiUEgj3_pugaU
-Message-ID: <CAAZOf251fh-McW=7xdEQiWyQ-XfOC1tRTUnyTD4EHVaLG-2pvA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: fix incorrect io_kiocb reference in io_link_skb
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Yang Xiuwei <yangxiuwei2025@163.com>, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	Yang Xiuwei <yangxiuwei@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On Fri, Sep 19, 2025 at 2:23=E2=80=AFPM David Kahurani <k.kahurani@gmail.co=
-m> wrote:
->
-> This is something unrelated but just bringing it up because it is in the =
-same locality.
->
-> It doesn't seem like the references(uarg->refcnt) are well accounted for =
-io_notif_data. Any node that gets passed to 'io_tx_ubuf_complete' will gets=
- its refcnt decremented but assuming there's a list of nodes, some of the n=
-odes in the list will not get their reference count decremented and that wi=
-ll trigger the lockdep_assert in 'io_notif_tw_complete'
->
-> It doesn't look that this will have any consequences beyond triggering th=
-e lockderp_assert, though.
->
-> Maybe my analysis is wrong?
->
->
-> On Fri, Sep 19, 2025 at 2:16=E2=80=AFPM Pavel Begunkov <asml.silence@gmai=
-l.com> wrote:
->>
->> On 9/19/25 10:03, Yang Xiuwei wrote:
->> > From: Yang Xiuwei <yangxiuwei@kylinos.cn>
->> >
->> > In io_link_skb function, there is a bug where prev_notif is incorrectl=
-y
->> > assigned using 'nd' instead of 'prev_nd'. This causes the context
->> > validation check to compare the current notification with itself inste=
-ad
->> > of comparing it with the previous notification.
->> >
->> > Fix by using the correct prev_nd parameter when obtaining prev_notif.
->>
->> Good catch,
->>
->> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
->> Fixes: 6fe4220912d19 ("io_uring/notif: implement notification stacking")
->> Cc: stable@vger.kernel.org
->>
->>
->> > Signed-off-by: Yang Xiuwei <yangxiuwei@kylinos.cn>
->> >
->> > diff --git a/io_uring/notif.c b/io_uring/notif.c
->> > index 9a6f6e92d742..ea9c0116cec2 100644
->> > --- a/io_uring/notif.c
->> > +++ b/io_uring/notif.c
->> > @@ -85,7 +85,7 @@ static int io_link_skb(struct sk_buff *skb, struct u=
-buf_info *uarg)
->> >               return -EEXIST;
->> >
->> >       prev_nd =3D container_of(prev_uarg, struct io_notif_data, uarg);
->> > -     prev_notif =3D cmd_to_io_kiocb(nd);
->> > +     prev_notif =3D cmd_to_io_kiocb(prev_nd);
->> >
->> >       /* make sure all noifications can be finished in the same task_w=
-ork */
->> >       if (unlikely(notif->ctx !=3D prev_notif->ctx ||
->>
->> --
->> Pavel Begunkov
->>
->>
 
-This is something unrelated but just bringing it up because it is in
-the same locality.
+On Fri, 19 Sep 2025 17:03:52 +0800, Yang Xiuwei wrote:
+> In io_link_skb function, there is a bug where prev_notif is incorrectly
+> assigned using 'nd' instead of 'prev_nd'. This causes the context
+> validation check to compare the current notification with itself instead
+> of comparing it with the previous notification.
+> 
+> Fix by using the correct prev_nd parameter when obtaining prev_notif.
+> 
+> [...]
 
-It doesn't seem like the references(uarg->refcnt) are well accounted
-for io_notif_data. Any node that gets passed to 'io_tx_ubuf_complete'
-will gets it's refcnt decremented but assuming there's a list of
-nodes, some of the nodes in the list will not get their reference
-count decremented and that will trigger the lockdep_assert in
-'io_notif_tw_complete'
+Applied, thanks!
 
-It doesn't look that this will have any consequences beyond triggering
-the lockderp_assert, though.
+[1/1] io_uring: fix incorrect io_kiocb reference in io_link_skb
+      commit: 2c139a47eff8de24e3350dadb4c9d5e3426db826
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

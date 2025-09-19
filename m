@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-9848-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9849-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6DDB89CA2
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 16:04:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC170B89CE4
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 16:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7E4568210
-	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 14:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C7F87AAC2C
+	for <lists+io-uring@lfdr.de>; Fri, 19 Sep 2025 14:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D572505AF;
-	Fri, 19 Sep 2025 14:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FCC227EA8;
+	Fri, 19 Sep 2025 14:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvO0N4uG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmLj8tII"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4025E254848
-	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 14:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4E930EF92
+	for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 14:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758290692; cv=none; b=UPVi2vPkgl6e8zVOg5bKL/HTkml8YPmSW36YVVzkpSdCPdzuJO9IGmwKADoWsMnkn/DFi7NJ+dd0Pxs2PCS9nb3m4N3K29xLk1uT4HWlXj4vxd/wk+QotjSktYTd5OpHbUhai99y62c+kg3PJu+oW9NvrIhaJSPRAFVFMBeguRM=
+	t=1758290995; cv=none; b=CkroJ26qQc8wgRE0iiyE3Kkx5jMZmSjRa2yaD+Kl46VR761yRciR6pJTRStf7jUYigB/Shv5YouA6IpO0G2URseE4WNdBlA8TlpMhGj5EUjWBhhKRNrU/DuIWjJWPopfjJWyXouwNtHvYXuI7+rsCfxFPjjy/NdsRg72VCYCnXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758290692; c=relaxed/simple;
-	bh=C8PZTGi/IL1oxDviavme/UhiUHa8/oRKQ63q4eQ2djo=;
+	s=arc-20240116; t=1758290995; c=relaxed/simple;
+	bh=N/UOAT1AHa1u6tSAYxch6uVQMxuMRrViH/flQVI2qHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g9Vrh2l04GHLXQ1wwU/ga42gGJN7Yga5no7EOhWuJuhHbuk6s0/icn/suotm160uTV+itfGqeWa9f3YodYfqD+T6azuzHos1c80mrvR/uDSl1k66X2X7t5CuBYma+f18rCdIUlXMAF1dSACFCblI7QPMX24G7umxibPU73Lq2kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvO0N4uG; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=uDv8dCPOaXll/vF4cy6aiMKq1081D7CSj9B149ACpBn0Lwk/ezJqnIFOKrcqtjupjJBJ8rrEPYy948epdv6PvPuxgJkNeyCdSkoQm2kYwqJvTwRz8UtOZ266XYUTukfAwzjDBxB41THZ1EiIuAaF7kVCdsMqPbAox7RHAnuG4hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmLj8tII; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4619eb182c8so20361375e9.1
-        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 07:04:51 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so1437268f8f.3
+        for <io-uring@vger.kernel.org>; Fri, 19 Sep 2025 07:09:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758290689; x=1758895489; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758290992; x=1758895792; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=lpC8icc1PITWTIE8TYkvKZZVwSmAjSabiOcnJRDan+c=;
-        b=XvO0N4uGfUHI+CPv1qs6lFloG6TtlXeIpDUN9DUNDT3aX4lL+Y4PT+NAJC94it7YRZ
-         oAUeXRPeBWDuw0riEF5Y+9rmKZbGsP2/Wvbe1YxfdiYhL2mYl9Un7c8XT/CQ+EhG8dJH
-         C/3vQxbOFJfwwVJ6JLYhkx3gKaxgsAr5ExHlpwIW78PLTpofjDaTaP7bY2y0TL3XWMCX
-         takivMpWksEQwyYAHEKMDNaMAQcNmH2oZsQZ3Mdu+GV7ft2yXQ5+rtzduAQqIMkp++TJ
-         sh6ww2C2mOoJDgMegWzcntnqbXylixBpK2yQ5juGozm02SFzikFCYt7NnIGDHy91J84m
-         32ZA==
+        bh=mG5jSCP6/LGXM+3mpuJkYg8C76QLVXIzKcR+0FHNFeA=;
+        b=kmLj8tIIkeuS2IkErYYLOLMfy1wrwMg9C3W3dxOeV/FTpYG2tpQkC2ReT5eNuu44at
+         N0d3pxV/vOrJCdwECBZWsUXWCZ+RCxE1yKsngUwPYVsxuhlhK9DVKyLYd3iyPobQb0fN
+         5qiyDAICibH/nv+StpCnAbis5MhclH3Ln753e4VId+DGTPBVBLe8alsF/uptM1eGflJb
+         Jy1U8C1D7WoZ2//Mh2jX/ZhXk1aHJOi7RyFuBRjBi36F/c+x/PaDqnyHR6ia2CqNYula
+         0ctxK1ibK/OVwPhR482XcjPow+QC+a82PIrlbIIx+ycfEya8ECK/XCPDO3TK/Cn+hckJ
+         Wt/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758290689; x=1758895489;
+        d=1e100.net; s=20230601; t=1758290992; x=1758895792;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lpC8icc1PITWTIE8TYkvKZZVwSmAjSabiOcnJRDan+c=;
-        b=MzcAkG/cRFpmDLPN7+1QRKHfG2z0cQnceglhkv54HVem0P10UbW1bpRcSQSabWOF/G
-         SrX2ab7phlrjO6L3cg5cuIE0/IOe2btIOTcO4wWrzBzlk3PSRycCnBtlgMhQ7MfnE+J6
-         MH197HJKhsAt1GWA/viFTHr67KoNkzOjWye+FGapage7nr6+oFFJghZA5SO3lcL0CgpI
-         +PLkNcn+V3sbqPjyBvkEF19akomSeo3jEGdlPNWMIkAoLLdMk3FS373gq4eA0rqJw5IN
-         /mYSwqVU5Z0VihyhGPiSV886dedL9mi2TR89HqVLnSTTrBXm6HVrjfNpaSrwFtcBk25+
-         8RSA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/1kuSgfHBvDcvYqGlPUAkUivs8QOKwR+k9JybnbcDMlJ2u/3UHocfbK9Trq9C5zXKSDKKUGLemQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRWw2kikmvrWVFMBuqd8UQvqqlWiO65/xxWGtIIn3mtDyx3nJb
-	KjOPnP28bPT+yZQvB7sVb6mOW5RXEa2/6Jxd+FC92z5SqOo9bqEt1NzFna9VDA==
-X-Gm-Gg: ASbGncvBjQAoCumZk9ENhl3o8taRTZDj5+rmSMvXhjFi9vutxkJs+f6MdWDxP8P+Vnr
-	yJ90/Oa4h7kj62aQ0/8+7tEPLTDTLPsriGgs/6b8CwFatXQDANyLgad9kinMKOGKJqsFdRIo84M
-	uHHtq3fPyPhI8YQTDC99B1NM0d68kfIh/2MbPvWYxUpNGuhI0hL6lB/D5fEs35oxkIZj+qckO7t
-	h1qW1rfqpjLRWZjo8uhhdxWzrEtxHGniGhX5V/PkGCCJxiBT6xFuSh/jriDlKwssx04OdMpA5TE
-	MgCsjO1sUa+Kl0qIAC6M8sx5aaUR8vMVO40a+QfX7uFfw4H2xyJP8/Fpwliv+A19jK3iuKT8qSv
-	3q5ROJvjMbiZ/ouM9ylR2uBMMhOQ2PZfNUHeMXSD+cEilSIQtQWrFQExrxAwTdGxCwqZb12EWOA
+        bh=mG5jSCP6/LGXM+3mpuJkYg8C76QLVXIzKcR+0FHNFeA=;
+        b=T6I434wbGzs8x5ij9l60QsqKgLHQVpjcNPGpYh6lNt6zcKHCntYqn6QFbnn616Ba5W
+         s12K8iv6KX1yWUtpfabwJjDMC1XY3sNuW6LxJVN2fRB8HkV5n/XqXLtGr4UkMuFgh1nt
+         LDJ7Kca/zM1SLCfDgM9bgdT4LzLVYe3zlVODSDC15ZxxikxTOw956nOoiGOMjfrCYENj
+         ElvbLctfQXmWWXrfYS97UjIL/vGvtm6T5PXpQ/9RlRipmugi67wrKVsKw5WFBpYqMO9y
+         0hnk4gyuh/5R8Ig3EfV8qB4rPBbo47zO609H/g6W7KQ3EGBtPjYYt3oBNy3P7Kn4YVm1
+         Vsew==
+X-Gm-Message-State: AOJu0Yw16iqFFNOZnMEhFXUdn5JjOGLJ3tcGV0lXnDvSmbVw69rPOEo4
+	r7Gcq+KOqGyzjjwQ5Z6WIs+TIV+QoPFCTTjguTurZwHZa4sil85vTvss7TgItw==
+X-Gm-Gg: ASbGncswgiWgVCBIyxA9fczOYbInC4XXxZajeEV6wBlXog/5wgi1xW6Y9kBZ6nFcdgB
+	1F1NxfvUc2IZoH4xPlt1OGinCarMfTWBssK+6yeLy3zDxcpu7159RwJX7nTh8hrzhlBvkA4aKMf
+	7G5i0ZCvR+NJM1D3/WltwYVmkM1yRss8TjJ7MSNothtVKAq35Xh+tiaC/0BUmdkid8Kg66WVcQB
+	E5DhlPJu5NvBNH0RP7KaT31we1xHoWS9/PSSXYiEr8B4+dKsVdWiFWC3DgsPzAk9JU6eDC+9wRB
+	rLZIDBsJNW+Rt4acqfVpCvtFEuT/Fm9cLRomh0yLQpzP1YZBi2SbqjT2Rhru7ArkZ9ydwJN17QL
+	FbkfJ8zn5l1dDkD+kmwCrwGE9tIbvlAZtJJJOge7VM+PSKa/3Hypox0lcQ5pN0rqlcxCJ6K5m3w
 	==
-X-Google-Smtp-Source: AGHT+IG+Tj5W92NdWije3mPfpaVge0hAviYJMSyQA0pQOVoJiSSMBQoeNIdA2hBW3oJDw6dpEiuZkw==
-X-Received: by 2002:a05:600c:1991:b0:45d:e135:6bb2 with SMTP id 5b1f17b1804b1-467ea00464dmr27166615e9.21.1758290689313;
-        Fri, 19 Sep 2025 07:04:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGuBACJ6jF+qu/h2W4Te10aHWOFYsBG78dx4YZEJydBWlLuWzHjy+U8as6nvTRGR+BHEk0idQ==
+X-Received: by 2002:a05:6000:2c0e:b0:3e5:a68:bdd0 with SMTP id ffacd0b85a97d-3ee8585f7d1mr2979968f8f.52.1758290991799;
+        Fri, 19 Sep 2025 07:09:51 -0700 (PDT)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613f3c69d5sm128189055e9.24.2025.09.19.07.04.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07408258sm8166031f8f.19.2025.09.19.07.09.50
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 07:04:47 -0700 (PDT)
-Message-ID: <23a67fd6-0179-4578-82ef-cf796bea4346@gmail.com>
-Date: Fri, 19 Sep 2025 15:06:23 +0100
+        Fri, 19 Sep 2025 07:09:50 -0700 (PDT)
+Message-ID: <8fe7837b-e12d-47d6-93ac-3580b6ac1127@gmail.com>
+Date: Fri, 19 Sep 2025 15:11:26 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,32 +83,58 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/msg_ring: kill alloc_cache for io_kiocb
- allocations
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <0ee30a2f-4e36-4c0a-8e84-7da568da08d3@kernel.dk>
+Subject: Re: [PATCH liburing 1/6] tests: test the query interface
+To: io-uring <io-uring@vger.kernel.org>
+References: <cover.1757589613.git.asml.silence@gmail.com>
+ <71ff0fec25ae279ba6bdc1ce81e3ad86995340f1.1757589613.git.asml.silence@gmail.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0ee30a2f-4e36-4c0a-8e84-7da568da08d3@kernel.dk>
+In-Reply-To: <71ff0fec25ae279ba6bdc1ce81e3ad86995340f1.1757589613.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/18/25 21:04, Jens Axboe wrote:
-> A recent commit:
-> 
-> fc582cd26e88 ("io_uring/msg_ring: ensure io_kiocb freeing is deferred for RCU")
-> 
-> fixed an issue with not deferring freeing of io_kiocb structs that
+On 9/11/25 12:26, Pavel Begunkov wrote:
+> Add the header / definitions and tests for the query interface.
+...> +static int test_chain_loop(void)
+> +{
+> +	int ret;
+> +	struct io_uring_query_opcode op1, op2;
+> +	struct io_uring_query_hdr hdr2 = {
+> +		.query_op = IO_URING_QUERY_OPCODES,
+> +		.query_data = uring_ptr_to_u64(&op2),
+> +		.size = sizeof(struct io_uring_query_opcode),
+> +	};
+> +	struct io_uring_query_hdr hdr1 = {
+> +		.query_op = IO_URING_QUERY_OPCODES,
+> +		.query_data = uring_ptr_to_u64(&op1),
+> +		.size = sizeof(struct io_uring_query_opcode),
+> +	};
+> +	struct io_uring_query_hdr hdr_self_circular = {
+> +		.query_op = IO_URING_QUERY_OPCODES,
+> +		.query_data = uring_ptr_to_u64(&op1),
+> +		.size = sizeof(struct io_uring_query_opcode),
+> +		.next_entry = uring_ptr_to_u64(&hdr_self_circular),
+> +	};
+> +
+> +	hdr1.next_entry = uring_ptr_to_u64(&hdr2);
+> +	hdr2.next_entry = uring_ptr_to_u64(&hdr1);
+> +	ret = io_uring_query(NULL, &hdr1);
+> +	if (!ret) {
+> +		fprintf(stderr, "chain loop failed %i\n", ret);
+> +		return T_EXIT_FAIL;
+> +	}
+> +
+> +	ret = io_uring_query(NULL, &hdr_self_circular);
+> +	if (!ret) {
+> +		fprintf(stderr, "chain loop failed %i\n", ret);
+> +		return T_EXIT_FAIL;
+> +	}
+> +
+> +	return T_EXIT_PASS;
+> +}
 
-I didn't care to mention before, but that patch was doing nothing
-meaningful, adding a second RCU grace period rarely solves anything.
-If you're curious what the problem most likely is, see
-
-commit 569f5308e54352a12181cc0185f848024c5443e8
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed Aug 9 13:22:16 2023 +0100
-
-     io_uring: fix false positive KASAN warnings
+It might be a good idea not to test the capping and add
+a "cycle + SIGKILL" test instead. I'll do that later
 
 -- 
 Pavel Begunkov

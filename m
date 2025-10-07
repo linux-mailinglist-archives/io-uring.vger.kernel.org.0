@@ -1,125 +1,139 @@
-Return-Path: <io-uring+bounces-9909-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9910-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8C0BC11A4
-	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 13:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEBABC1542
+	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 14:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A6CA34DE1C
-	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 11:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9631F19A0D0D
+	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 12:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE612D9782;
-	Tue,  7 Oct 2025 11:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460D38BEC;
+	Tue,  7 Oct 2025 12:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfbOpB3J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSWSQlAW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A57F192D68
-	for <io-uring@vger.kernel.org>; Tue,  7 Oct 2025 11:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B4D213E6A
+	for <io-uring@vger.kernel.org>; Tue,  7 Oct 2025 12:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835533; cv=none; b=GWdH/Xero4chjbdFuYZ1ccScrNzxWcS1ZrN012eVrRUVhFeW+RPTsH4s3HvXTXJUHiNCwFcE/8yF4Era70qhvzBNTTd+8aZKZNtV07TX4vTv/E1LWycG98HzcZUwLrciDb0/lr7NV3vsYjQxjzoK5w0eQL8M2mz8i5VlEIRp59E=
+	t=1759839323; cv=none; b=NlSatKbUBFg7fTlAraPtT1on1Uujdm0IQjqIyfqhbzxp1NtJ4BJk1A/W5i8kpU3REky4MQu9IVRngq8epnLHtBRGGYRuYRseoQJ2QN9x435I4wieFDto+b4tmbfYHa3zEkm/bm9X8Q2LM8EUHKxGHcJgmERuu1h/Bl+Xrj2GlN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835533; c=relaxed/simple;
-	bh=0tRTQVIxs/q5Q+Hy3g5FmzBunJcJwAq3/m8TJlQzte4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfYIZLorz2ikSGUmSICBe8L7Q45IKQC1gyL/RIs9J9D6p6PRjVu3Hp2RWQ/8oQi9fbd0tKgCtdMTclwQxRceM4GXUctvUGkwSnpulwN88+vi5eBPkxEKQ+INoC7GsEojGgj6FJv4UYfFXiQw85yFAySBLbMo0UJG71NF1YpqxFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfbOpB3J; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso4865866f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 07 Oct 2025 04:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759835529; x=1760440329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ocYnZTYhvxaa0KoO8huddSXbdFmRkGMfcfmF/WCGuz0=;
-        b=RfbOpB3JGA4TYkT3UFFvRFQqZ1wThfcWIci7RLeJH9mYX0kZAd8YhC/CjhZwC60+92
-         SKmaKLO/+oncK6PbOh1pEZDEm99EmYFjUHhpLvYYrHFZtarJ8LwHeAG8gfOPNHDUG0fs
-         sngMzwmrUMPuza9pTF6gYK/N0pJam3M1DV17SxxvC5CIaWbtzEF8W4fT0tJbYaVYc4+g
-         Lho722Vugj4wxLGIkwjqESKR9Xkz4cU3P+cxe11Bf/YyK0EUfwPjjOERr5dy9BxeoX4m
-         dNFk44JksVxR8nDTpnIHnitAcxeg7SvRzAAkglJY7Ejs+r7xJN6UFvA938JJg4G3jlVD
-         NLNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759835529; x=1760440329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ocYnZTYhvxaa0KoO8huddSXbdFmRkGMfcfmF/WCGuz0=;
-        b=pLkCJx7XBq42ToLp+tpfBv4tJDKxU9WQS3KFIGv/A+y0VN2ZAfjLXpfQ3R4f008ejz
-         RbiciLfvpP5JPmKTjloAaWdrhrnTPx8D1dpT4V++E5KZAobivd4BZX/7CydIzdYsJ8N4
-         krfW0W6Favh3jZCQ3UW/x26RNJuyjTadJRecqg7/rufxXUnE6vxMrcz2MTSM8gz2osQ+
-         T9xDccNQQX226EBulZB5aYdo/BLOLyhwS3Gvqm04RQpZ5AkPDrv6pf9BzS06WVusnUS/
-         0uEWcVFGbZa2JPhlZjDYDiz0qT6t/6Bf6Q9ih6wTNv5aBuDovMI/eZLUT0m2A4St1/h9
-         tm9w==
-X-Gm-Message-State: AOJu0YzG/ZJVHvhk/YWV1Nyff5Fpy4/gtAroA3hjFoMPLhbD6C4ZuuuL
-	cJWbRc4ZgfRb1CKMJ7xNko3vEPeDeGdO8bVTefLr9uDtrADgHT8jibuh4VCZsg==
-X-Gm-Gg: ASbGncuigR8GwplBuTgECUSNqS9vLKhGoCbskaLG1KIUftYPveYWrziarmGjqVOK2p9
-	lCs7r5jE6BUO88LfVYH/ele4VNiWj6E7nuNAFzkywofWdwGFXukrOupAd6PAyztG4L+zg3IgvPA
-	p2KdY0rAgyu1me5u21tDq36GRng2crBdCuyTYxEr19C6GEqcQ6wxRIRAA2TfGUlYP8CznptEewj
-	dUxUhBunAYpLwXpK6bTcnQu9eJLCeaZPMv8HhAQ3Ak+rtbtW7pecx3JDBapfa//GlZGYQfk6/Nn
-	THatVgQRs8EOjvtRb8woCqruNtU3g0CpyHeqKpPrzr01IBJEEX9dHKID/hPJozE1w7fjQbau0it
-	Mg0nmoNOIOLla7Uk0l52IOM1jaIyVZ6q9nALxA+ksb8t3AXSxNbXzVfGuN/bxzEqBG/nbTrwTqN
-	LdPB5Nr6hHthPPF8etqXnpy0Pyn/WMQBwY
-X-Google-Smtp-Source: AGHT+IGN+cc5ZZpnHcEXI8f0KHWUoIw898vV1d9Wme0Eh5+yRRXXdczmyz6c9IhuGVi+7ydolzC3Ng==
-X-Received: by 2002:a5d:5005:0:b0:425:8334:9a9d with SMTP id ffacd0b85a97d-42583349adamr1261124f8f.1.1759835528500;
-        Tue, 07 Oct 2025 04:12:08 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6b40sm25122214f8f.2.2025.10.07.04.12.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 04:12:07 -0700 (PDT)
-Message-ID: <584d69ee-512a-4940-8348-d67f8b57fce1@gmail.com>
-Date: Tue, 7 Oct 2025 12:13:46 +0100
+	s=arc-20240116; t=1759839323; c=relaxed/simple;
+	bh=fo6pGF/05nRifFRGjSV3VXNDzv5Fx2eHt3ktwmRtiaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGj7pUOjWh+6g4z3o4aW9iX8zQSQMHf7ytKYxrfHyfP4bI/CR4XL73nSlQQftYURiMMYoLlQTrTgIsmOf/WApLYZNsFOsrA7CQtQEJvl1No8AfLvwcgVLXs0e60n+ZsfhD0ulI7pKFZe22jt2KCQg4lsVlENUsqTwas8ZkuSFPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSWSQlAW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759839320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5DnkYJLI8htZkMXuJF0q4DWlwEkO+3Xhphxedhtl6T4=;
+	b=MSWSQlAWMaIz3VloSbvd+853A+L83MkXQF/o/X/rAtpnGAWMgXm8NmTcYOnbrQcByLb0vk
+	TLxVktWUKOBZbqnl5Dvh5KqLQUguVQRRmfABROG3iP3h39QkTGhsS0UgYTw0/5w4/ShSOZ
+	3kzwaVqLsJSE2yKOzJSgfpmnEE+LeiY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-3TEzadJFMhC2jlxP1HdfDQ-1; Tue,
+ 07 Oct 2025 08:15:19 -0400
+X-MC-Unique: 3TEzadJFMhC2jlxP1HdfDQ-1
+X-Mimecast-MFC-AGG-ID: 3TEzadJFMhC2jlxP1HdfDQ_1759839318
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3360195608E;
+	Tue,  7 Oct 2025 12:15:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.2])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7583A30002CC;
+	Tue,  7 Oct 2025 12:15:10 +0000 (UTC)
+Date: Tue, 7 Oct 2025 20:15:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOUESdhW-joMHvyW@fedora>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
+ <aOS0LdM6nMVcLPv_@infradead.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/zcrx: use folio_nr_pages() instead of shift
- operation
-To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251004030733.49304-1-pedrodemargomes@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251004030733.49304-1-pedrodemargomes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOS0LdM6nMVcLPv_@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 10/4/25 04:07, Pedro Demarchi Gomes wrote:
-> folio_nr_pages() is a faster helper function to get the number of pages when
-> NR_PAGES_IN_LARGE_FOLIO is enabled.
-
-Looks straightforward, I'll take it into a branch.
-
-> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-> ---
->   io_uring/zcrx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Oct 06, 2025 at 11:33:17PM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 06, 2025 at 10:18:12PM +0800, Ming Lei wrote:
+> > On Fri, Oct 03, 2025 at 12:06:44AM -0700, Christoph Hellwig wrote:
+> > > On Sun, Sep 28, 2025 at 09:29:25PM +0800, Ming Lei wrote:
+> > > > - there isn't any queued blocking async WRITEs, because NOWAIT won't cause
+> > > > contention with blocking WRITE, which often implies exclusive lock
+> > > 
+> > > Isn't this a generic thing we should be doing in core code so that
+> > > it applies to io_uring I/O as well?
+> > 
+> > No.
+> > 
+> > It is just policy of using NOWAIT or not, so far:
+> > 
+> > - RWF_NOWAIT can be set from preadv/pwritev
+> > 
+> > - used for handling io_uring FS read/write
+> > 
+> > Even though loop's situation is similar with io-uring, however, both two are
+> > different subsystem, and there is nothing `core code` for both, more importantly
+> > it is just one policy: use it or not use it, each subsystem can make its
+> > own decision based on subsystem internal.
 > 
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index e5ff49f3425e..97fda3d65919 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> @@ -172,7 +172,7 @@ static unsigned long io_count_account_pages(struct page **pages, unsigned nr_pag
->   		if (folio == last_folio)
->   			continue;
->   		last_folio = folio;
-> -		res += 1UL << folio_order(folio);
-> +		res += folio_nr_pages(folio);
->   	}
->   	return res;
->   }
+> I fail to parse what you say here.  You are encoding special magic
+> about what underlying file systems do in an upper layer.  I'd much
 
--- 
-Pavel Begunkov
+NOWAIT is obviously interface provided by FS, here loop just wants to try
+NOWAIT first in block layer dispatch context for avoiding the extra wq
+schedule latency.
+
+But for write on sparse file, trying NOWAIT first may bring extra retry
+cost, that is why the hint is added. It is very coarse, but potential
+regression can be avoided.
+
+> rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+> limitation clear rather then opencoding it in the loop driver while
+
+What is the limitation?
+
+> leabing the primary user of RWF_NOWAIT out in the cold.
+
+FOP_DIO_PARALLEL_WRITE is one static FS feature, but here it is FS
+runtime behavior, such as if the write can be blocked because of space
+allocation, so it can't be done by one static flag.
+
+io-uring shares nothing with loop in this area, it is just one policy wrt.
+use NOWAIT or not. I don't understand why you insist on covering both
+from FS internal...
+
+
+
+Thanks,
+Ming
 
 

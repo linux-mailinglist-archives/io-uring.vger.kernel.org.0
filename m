@@ -1,50 +1,88 @@
-Return-Path: <io-uring+bounces-9906-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9907-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64243BC04F0
-	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 08:16:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37E4BC0503
+	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 08:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0FC3AD8C7
-	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 06:15:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0FAD4E45AC
+	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 06:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BCA208D0;
-	Tue,  7 Oct 2025 06:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C123521CC58;
+	Tue,  7 Oct 2025 06:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VWA8nezG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from vultr155 (pcfhrsolutions.pyu.ca [155.138.137.222])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39CB366
-	for <io-uring@vger.kernel.org>; Tue,  7 Oct 2025 06:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.138.137.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1813B58B;
+	Tue,  7 Oct 2025 06:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759817757; cv=none; b=K2EbbW944S1AGQHQDLJyUSyfpO6YGctUwfGRrnIppxJnuaFzTnubVhplAgtScMeqXRR0v8peL2CJfYdb/WV/brgBHnFe+3v6DEqdl9ru4l9kxE6s6Sqotq2b+c8IKlVor8x6ClLNtE/+Dr1g9uOrdyVQ+rHW2EaOHkVyDUlRPzc=
+	t=1759817934; cv=none; b=X+1IKQLXgcx5zZpIkg+hHeOb7g7XbC0c8wbuzDFbDOtdeNhqpAkSft5qUf7tS8YCBMMP8ytI27NamiMrB1TTDJLBCxhPEwapMEPfrimxQap9zdUg1FfQhSFCtbroGSKMhojRRANEjAeLc+AcepP7Mm53NEuXfGPi/+7Ph7IVjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759817757; c=relaxed/simple;
-	bh=Agf9r1kWjHbpwBTsHCPo5Yi6ik0Ln2WV7lnqYdhpWqw=;
-	h=From:To:Subject:Message-Id:Date; b=GVoJyL3A4zeFLUfk6zyFLPf1qC89L1hrengV1wbt9Gkajedh4BwIah4IJS9Em3FyoUZRNsbXkvJtUEYoWF5C/Nm3W76dAqugPjTS9NeriQS8iLZVsMYQ+Fnq727Q3ms14D6+b1LLU/dCncwDqVMqd+PNwKydUw6nQe+lMX06AHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=beta.pyu.ca; spf=pass smtp.mailfrom=beta.pyu.ca; arc=none smtp.client-ip=155.138.137.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=beta.pyu.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beta.pyu.ca
-Received: by vultr155 (Postfix, from userid 1001)
-	id 74792140672; Tue,  7 Oct 2025 02:15:54 -0400 (EDT)
-From: Jacob Thompson <jacobT@beta.pyu.ca>
-To: <io-uring@vger.kernel.org>
-Subject: statx can't used fixed file?
-X-Mailer: mail (GNU Mailutils 3.5)
-Message-Id: <20251007061554.74792140672@vultr155>
-Date: Tue,  7 Oct 2025 02:15:54 -0400 (EDT)
+	s=arc-20240116; t=1759817934; c=relaxed/simple;
+	bh=seyw/I17F3NVvscReTEfS4tLJ8c3ZmnsAv2aoY5/tN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JVPLSE2l9iYWBVS9Ib34rgEmGGfKK7PNqpyQjT9MbuzGmB6MLTXWEX5m3PgEd2dzOci4LpdAmHb8BpE08PLiNR2NZk7RaFlE3D7Gpvej8MEbG4wCs5uET5UQekc2f/LwLyVZ8hrO/QTLcInda38UPfsHGE1BoPm1iR9wBpwhleA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VWA8nezG; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=dp
+	vHzbnJMaIUMnFYl4EXcF6QPg+1q8Pn7eTmpFN/TSU=; b=VWA8nezG9ZPVlmWDU9
+	KczDGzmSanMAuCrkfni5m2npnu2j8vZRixMXqy+wDcrjSZVy7Yaoc1Ruy0m57Mgq
+	JlmR1Poamumy9nzAQGRW5U4C82Rz3WKs+3NPiA0819+NxCFmdVOWd5X5rnwMxGgq
+	wIFPBZn6Fi5SW6BfFZKlz9qCk=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgD3H+i6sORoucGGBQ--.20358S2;
+	Tue, 07 Oct 2025 14:18:34 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: io-uring@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v1] io_uring: use tab indentation for IORING_SEND_VECTORIZED comment
+Date: Tue,  7 Oct 2025 14:18:18 +0800
+Message-ID: <20251007061822.21220-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgD3H+i6sORoucGGBQ--.20358S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFyxXF45Aw18uFyUXF4rAFb_yoW3CrgE93
+	93Jr48Wr4SvF1Ivw4xAF1kXFyYgw1IkF109a4fJr1xZFnFvw4fG3s5GF9Fvrs8WF17Cryf
+	tFnYgw1Sqw13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_NBMPUUUUU==
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiER-fa2jkrZNI9AAAs0
 
-I'm having a hard time telling which opcodes can use a fixed file. I assume all would?
-I don't see 'read' explicitly saying it supports it, but it ran fine.
-I'm able to open a file (normal call) and use IORING_OP_STATX with AT_EMPTY_PATH to get the file size.
-When I try to use openat and use a fixed file it no longer works. Is this unsupported?
-I don't see "sqe->flags |= IOSQE_FIXED_FILE;" in the statx test, I'm assuming if I don't see a test for it, it's likely not supported?
+Be consistent with tab style of "liburing/src/include/liburing/io_uring.h".
+
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ include/uapi/linux/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index a0cc1cc0dd01..263bed13473e 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -404,7 +404,7 @@ enum io_uring_op {
+  *				will be	contiguous from the starting buffer ID.
+  *
+  * IORING_SEND_VECTORIZED	If set, SEND[_ZC] will take a pointer to a io_vec
+- * 				to allow vectorized send operations.
++ *				to allow vectorized send operations.
+  */
+ #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+ #define IORING_RECV_MULTISHOT		(1U << 1)
+-- 
+2.51.0
+
 

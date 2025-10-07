@@ -1,88 +1,100 @@
-Return-Path: <io-uring+bounces-9907-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9908-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37E4BC0503
-	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 08:19:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348F6BC0581
+	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 08:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0FAD4E45AC
-	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 06:18:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7E189CAF7
+	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 06:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C123521CC58;
-	Tue,  7 Oct 2025 06:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4712C1F936;
+	Tue,  7 Oct 2025 06:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VWA8nezG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlGBxVrO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1813B58B;
-	Tue,  7 Oct 2025 06:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39EC1D7E41;
+	Tue,  7 Oct 2025 06:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759817934; cv=none; b=X+1IKQLXgcx5zZpIkg+hHeOb7g7XbC0c8wbuzDFbDOtdeNhqpAkSft5qUf7tS8YCBMMP8ytI27NamiMrB1TTDJLBCxhPEwapMEPfrimxQap9zdUg1FfQhSFCtbroGSKMhojRRANEjAeLc+AcepP7Mm53NEuXfGPi/+7Ph7IVjWM=
+	t=1759818802; cv=none; b=lPiXWB7j6m0AdsrTvKJm5EYuYm/uxHoShYkpdtQI8+q0kaeLaANAHOdACvSrCZHQOE6MaV5kOdFweMKwFODqcdb68CH2JAVWBFXu4SAQ2/ts8s7ZR0F/fucVBLsZCs7aRmlJicClElcQrwGEee3iTXc9Dt5lDIlDjkA+b04ZPJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759817934; c=relaxed/simple;
-	bh=seyw/I17F3NVvscReTEfS4tLJ8c3ZmnsAv2aoY5/tN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JVPLSE2l9iYWBVS9Ib34rgEmGGfKK7PNqpyQjT9MbuzGmB6MLTXWEX5m3PgEd2dzOci4LpdAmHb8BpE08PLiNR2NZk7RaFlE3D7Gpvej8MEbG4wCs5uET5UQekc2f/LwLyVZ8hrO/QTLcInda38UPfsHGE1BoPm1iR9wBpwhleA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VWA8nezG; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=dp
-	vHzbnJMaIUMnFYl4EXcF6QPg+1q8Pn7eTmpFN/TSU=; b=VWA8nezG9ZPVlmWDU9
-	KczDGzmSanMAuCrkfni5m2npnu2j8vZRixMXqy+wDcrjSZVy7Yaoc1Ruy0m57Mgq
-	JlmR1Poamumy9nzAQGRW5U4C82Rz3WKs+3NPiA0819+NxCFmdVOWd5X5rnwMxGgq
-	wIFPBZn6Fi5SW6BfFZKlz9qCk=
-Received: from haiyue-pc.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgD3H+i6sORoucGGBQ--.20358S2;
-	Tue, 07 Oct 2025 14:18:34 +0800 (CST)
-From: Haiyue Wang <haiyuewa@163.com>
-To: io-uring@vger.kernel.org
-Cc: Haiyue Wang <haiyuewa@163.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1] io_uring: use tab indentation for IORING_SEND_VECTORIZED comment
-Date: Tue,  7 Oct 2025 14:18:18 +0800
-Message-ID: <20251007061822.21220-1-haiyuewa@163.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759818802; c=relaxed/simple;
+	bh=6WXeHyLqz/3hzI1qpD8zClbG7l4RzXiMFgiQMqQvHdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAea3eDzC6btOs/m3i8TwkJEeLPHxbWI01+C8ypcCrgVqm6cW+ptPYKYsSnOFkR8cZ/e8HqoT/jHsb92NUzyU9pU94+SlOPL9xfPo7f+gaS8/+UXE833ZppbiDL1kGJBZqT8PEWeOYNxs7qqy8TUbMOmO+0b0psz+QBcRaswu0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XlGBxVrO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8nHrEDFMgU2PWvCGKXkRqt0J6PV5fTZTmGr4X1Gx/wM=; b=XlGBxVrO/oeHup++rky/KRKst1
+	/QBvNwL9RcmvU7llfXtCT7s3vkglGimotL3mBCaNN2FMNPWvAZWJCSJ6EgIcXlzOZHrCGnHi/RICK
+	lCRC3Bd0BZnRM/NoK5AhmmoIOU54bbK/OkjLK2mWzW26FrV1e2mqbU10QLwoZ+ORXZ9+5M68JJ9vI
+	HIj17T6l+pvCPONdPSkeji+VoY2bmF2MJW3xmmfXp9wJ/IeKKfUNg1CQ0zu2ndT5ImO9tlTnaL1Hx
+	b6CblLMKCRIAoo9by1fzNUR8HjrdfOxNVFPFdT/4vNZD/5cw9ORRzHzcoIfRP9akerZu1hg/x/ADO
+	HnnGHfVw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v61G9-00000001N5L-3jLs;
+	Tue, 07 Oct 2025 06:33:17 +0000
+Date: Mon, 6 Oct 2025 23:33:17 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOS0LdM6nMVcLPv_@infradead.org>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgD3H+i6sORoucGGBQ--.20358S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruFyxXF45Aw18uFyUXF4rAFb_yoW3CrgE93
-	93Jr48Wr4SvF1Ivw4xAF1kXFyYgw1IkF109a4fJr1xZFnFvw4fG3s5GF9Fvrs8WF17Cryf
-	tFnYgw1Sqw13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_NBMPUUUUU==
-X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiER-fa2jkrZNI9AAAs0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOPPpEPnClM-4CSy@fedora>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Be consistent with tab style of "liburing/src/include/liburing/io_uring.h".
+On Mon, Oct 06, 2025 at 10:18:12PM +0800, Ming Lei wrote:
+> On Fri, Oct 03, 2025 at 12:06:44AM -0700, Christoph Hellwig wrote:
+> > On Sun, Sep 28, 2025 at 09:29:25PM +0800, Ming Lei wrote:
+> > > - there isn't any queued blocking async WRITEs, because NOWAIT won't cause
+> > > contention with blocking WRITE, which often implies exclusive lock
+> > 
+> > Isn't this a generic thing we should be doing in core code so that
+> > it applies to io_uring I/O as well?
+> 
+> No.
+> 
+> It is just policy of using NOWAIT or not, so far:
+> 
+> - RWF_NOWAIT can be set from preadv/pwritev
+> 
+> - used for handling io_uring FS read/write
+> 
+> Even though loop's situation is similar with io-uring, however, both two are
+> different subsystem, and there is nothing `core code` for both, more importantly
+> it is just one policy: use it or not use it, each subsystem can make its
+> own decision based on subsystem internal.
 
-Signed-off-by: Haiyue Wang <haiyuewa@163.com>
----
- include/uapi/linux/io_uring.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index a0cc1cc0dd01..263bed13473e 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -404,7 +404,7 @@ enum io_uring_op {
-  *				will be	contiguous from the starting buffer ID.
-  *
-  * IORING_SEND_VECTORIZED	If set, SEND[_ZC] will take a pointer to a io_vec
-- * 				to allow vectorized send operations.
-+ *				to allow vectorized send operations.
-  */
- #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
- #define IORING_RECV_MULTISHOT		(1U << 1)
--- 
-2.51.0
+I fail to parse what you say here.  You are encoding special magic
+about what underlying file systems do in an upper layer.  I'd much
+rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+limitation clear rather then opencoding it in the loop driver while
+leabing the primary user of RWF_NOWAIT out in the cold.
 
 

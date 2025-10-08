@@ -1,128 +1,128 @@
-Return-Path: <io-uring+bounces-9924-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9925-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE963BC23FA
-	for <lists+io-uring@lfdr.de>; Tue, 07 Oct 2025 19:27:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50376BC3673
+	for <lists+io-uring@lfdr.de>; Wed, 08 Oct 2025 07:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C2F189E0CA
-	for <lists+io-uring@lfdr.de>; Tue,  7 Oct 2025 17:27:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A2BE4E70C8
+	for <lists+io-uring@lfdr.de>; Wed,  8 Oct 2025 05:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A766D2E7F30;
-	Tue,  7 Oct 2025 17:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D32EA49E;
+	Wed,  8 Oct 2025 05:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wxKKh3XT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lmszr0oj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058612D9EF0
-	for <io-uring@vger.kernel.org>; Tue,  7 Oct 2025 17:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F33E14A09C;
+	Wed,  8 Oct 2025 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759858041; cv=none; b=StG+hSKc8Y7k54wCNDxZ85YoIoAJZ64LeInFN0i8/aFUIwW7B6uIH6Cjbe1+6B4SzXnnXlv8ebKUbxI96efAxxHLnRebSPkLAEcGbSCjUrxb09lrH8AmEPHYXD+EuGnjcZzEKQc0S2M4cyeY7WNI1HNm+lDB81Y36mAFjdbuNYY=
+	t=1759902972; cv=none; b=AbHUbSliu/YcxMOffBlHdEeQbBWI0koy9paHrvKiZ1TqjhfbdeR1vdoHCEhpn+ggGiGwXdSVxL1nuIrwpGorhaXn1brOySj+/hVFbVlLD8fAyxd7hB6Ptuhf2qrG/Cr2UmeH8OAKXXlQKCuFsr/jMFy46Hj4bdyK1HclPQQDZQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759858041; c=relaxed/simple;
-	bh=4boE1QySS7dUBhbnewS9thWHVN2+VNmVMuGmc20NrWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ak76OIEqBlhsVQkUF2qSXiVa/gYzhO/u7/bJNBOSkNOoJ4Mf4IsknJ30C5C12HwWB6hgRmHnUCsTRNn5sn9VRwR4ilOKnmAq+VjVXyfcqU7CqXl32wMw3B7zT4gL6Q2dXic1xKiJcbykYhqukuhrrjk1v1OW5cZHa2jrBgfxXf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wxKKh3XT; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-42f7b17f9f7so16229205ab.1
-        for <io-uring@vger.kernel.org>; Tue, 07 Oct 2025 10:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759858038; x=1760462838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JZs6QfA1xQ2jarGgN7Pc8xUu74ta+A8+eWsu2/uVDsY=;
-        b=wxKKh3XTOAIafnqvczSS/0uVyIaWzAW8BjFWE5gkBcAmu2AuuW8Z4py900YR+mGDG7
-         vGjnxiqR2jfTBZKYIW6kPsX23qVitZqOmupAYLkRzIJ3eZLctejgNTGbsZ0d2RxWsULu
-         epokI9W6RaJPnfLxUOgWdx/eZIBErlQMh2ryDi1h55gAY0RlPt9H4VMEEkFitzRFLUt2
-         KtDuipyN3fPjwG9IrR+GtW4TRHS4wpcsftz1QkPxMOXAoWrgk1WCpULycKquRJwwyVcM
-         AROhoI04e5oMfdlQ2cQDyS8p+g2s/50i2vsWZdOAVl62OPtnbBriAzFrvNAF1R02AeFM
-         LRvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759858038; x=1760462838;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZs6QfA1xQ2jarGgN7Pc8xUu74ta+A8+eWsu2/uVDsY=;
-        b=wbdK+vsu9h7M3Scskw/PX93VWMQBaLJVKPRByVyV9/exM5hUWmqqZCmD63Aahux8ye
-         slzvByxin1/fDm4mZskUWIk4M+DQSCcCZIwSJtBn4XOsEjAijctbchPELFLeujMQvYNP
-         +1i3a2JNi1ZMhepRM6+ATF58WGVtglVHMuCs1UQnRdqi6Zq22Ut2PcqBzWr1bKQJCEKp
-         Qr7BbhO78ie6q3BvU/eu8/c+7lMcFuYr+a4Y832FrkXW+SudFTuA5LUwJB6kHMy5uyBr
-         +GapSOmghQiCULzVEq68q8mgCMfBVXtVErLcYNOy9Cyg+VP5Jkbwto0CO56WS3rc/D6Y
-         NmPA==
-X-Gm-Message-State: AOJu0YyQPEHhZwJcr/lz7mx8tZSuHtLnkFzSeMHC6IVSOgNYm/itW7tB
-	F7wReqH/mHwlGJQttFBLcYRf0E+nmH7rzxlEEQK6IiMCv9M1VTDHUc6GXTFDAFXu/d6x/rBi1HJ
-	Taxty9zk=
-X-Gm-Gg: ASbGncsn/1s6KVsKgx1CRf4NUsA+his3Xmpi1g1kkrZ4+Ln/37/G19pUMjBsDPXDKcY
-	vsy4vUJ+Re88VZ+13N12ZD4rkoN62nmsubxwhz8Kb9hgUgkSwX75i77n+dW0qDAZRDvIc8T8/rl
-	Wt6Nzl0wT2vIgGJI9z00Eiupo6v34rhTOiuJPxkMgHpRf2sKkpor9++UvxBrislIKqRVmNp97jX
-	ZRcng7u0iOZ0bH4mPrhY2GWiBMjKVwEGnntfFKUNNeioU+4BwinNzEfv5PNzhbtLn+zx35/iDdJ
-	JCvyeufxp1ci0kg2ak62+N9/YvcR22yoe+aH6t4qK0M5LE304gVnYkWoDEH/Gp+/PEsBbhVAtpW
-	mGFzJ7Mx3d8p7An+4i5ZODRSau5dr6JTyVshU634nEzbsKyHEnuwtnd8=
-X-Google-Smtp-Source: AGHT+IFs+LIUotGR5eckp+7ViCNjBpas7WbwugfqfsfW2v5mzGKmII4S9PbLYy2RkfpE2uXpOMc2lw==
-X-Received: by 2002:a05:6e02:12e8:b0:42d:7dea:1e09 with SMTP id e9e14a558f8ab-42f873d23aemr1552605ab.21.1759858037872;
-        Tue, 07 Oct 2025 10:27:17 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5ea31e13sm6058157173.18.2025.10.07.10.27.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 10:27:17 -0700 (PDT)
-Message-ID: <f1e0ef09-572e-4345-b601-b4aea2de1052@kernel.dk>
-Date: Tue, 7 Oct 2025 11:27:16 -0600
+	s=arc-20240116; t=1759902972; c=relaxed/simple;
+	bh=F38Mt2goSKLUsaf0mqFqP8niI3l76+ZAo94FJ+L4YVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwgfq/TwtmVYcKE+ErLeNM+fKmwSBcmHE1I6AKVjBWcVv6k45R6tpk9sTMh3untlRwDgHxV8heLiu/w1nLgZ05ZatYHSreui1i/Xocifk2BBQWbcu2m5LoInVWac3dSFThjX2ePSuqI360O0FLvMQBs2lzSonGUMEeVZIkaT3Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lmszr0oj; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/X26947JAoSSaLr+voBnU4Dp3KYTt3aLBJ6Xsf1gpD0=; b=lmszr0ojI9mQdYgfTYqnyaoeHV
+	9ZDvvcG3tOTjG4m5X+YgY2l+cotTuwVfNFCSJ0oY3t4t6nuMw3e4jIUbAaw3+UFeDdb4vYLIY1w80
+	1NsL6VX0phUO20oqAkI3GLSsAEctWdqAz6Fzw17jbq1yyEhomCwDI18NSeD3QTjfX2bPO7kA/V6ZQ
+	vfHiHgIpY6hUSUxD5QWSGLRjPvP1h6pleDH5NuufJKKDU3pcr+n/7/E9ca4jaYM+bq67TktXyxzQV
+	g9A11TCh5ni3ICAnfs8oZ4I8GNg6QJfM4GvvV+I/d6WYARHXzXBuSoqAFu8fuOEBGm9a/2Sdmfx7r
+	qy8odKEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6N9d-00000003Ez0-18fd;
+	Wed, 08 Oct 2025 05:56:01 +0000
+Date: Tue, 7 Oct 2025 22:56:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOX88d7GrbhBkC51@infradead.org>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
+ <aOS0LdM6nMVcLPv_@infradead.org>
+ <aOUESdhW-joMHvyW@fedora>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: io_uring and crypto
-To: David Howells <dhowells@redhat.com>
-Cc: io-uring@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <4016104.1759857082@warthog.procyon.org.uk>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <4016104.1759857082@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOUESdhW-joMHvyW@fedora>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 10/7/25 11:11 AM, David Howells wrote:
-> Hi Jens,
+On Tue, Oct 07, 2025 at 08:15:05PM +0800, Ming Lei wrote:
+> NOWAIT is obviously interface provided by FS, here loop just wants to try
+> NOWAIT first in block layer dispatch context for avoiding the extra wq
+> schedule latency.
+
+Yes.
+
+> But for write on sparse file, trying NOWAIT first may bring extra retry
+> cost, that is why the hint is added. It is very coarse, but potential
+> regression can be avoided.
+
+And that is absolutely not a property of loop, and loop should not have
+to know about.  So this logic needs to be in common code, preferably
+triggered by a fs flag.  Note that this isn't about holes - it is about
+allocating blocks.  For most file systems filling holes or extending
+past i_size is what requires allocating blocks.  But for a out of place
+write file systems like btrfs, or zoned xfs we always need to allocate
+blocks for now.  But I have work that I need to finish off that allows
+for non-blocking block allocation in zoned XFS, at which point you
+don't need this.  I think some of this might be true for network file
+systems already.
+
 > 
-> I was wondering if it might be possible to adapt io_uring to make
-> crypto requests as io_uring primitives rather than just having
-> io_uring call sendmsg and recvmsg on an AF_ALG socket.
+> > rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+> > limitation clear rather then opencoding it in the loop driver while
 > 
-> The reason I think this might make sense is that for the certain
-> crypto ops we need to pass two buffers, one input and one output
-> (encrypt, decrypt, sign) or two input (verify) and this could directly
-> translate to an async crypto request.
+> What is the limitation?
+
+See above.
+
+> > leabing the primary user of RWF_NOWAIT out in the cold.
 > 
-> Or possibly we should have a sendrecv socket call (RPC sort of thing)
-> and have io_uring drive that.
+> FOP_DIO_PARALLEL_WRITE is one static FS feature,
 
-You could certainly wire it up via io_uring in either way. I don't know
-the crypto API, but ideally you need something where you the issue and
-completions ide split, rather than just a boring sync syscall type
-thing. For the latter, io_uring can't really help you outside of punting
-to a thread. Having a reliable way to do non-blocking issue and then
-poll for readiness if non-blocking failed would suffice, ideally you
-want a way to issue/start the operation and get a callback when it
-completes.
+It actually isn't :( I need to move it to be a bit more dynamic on a
+per-file basis.
 
-> The tricky bit is that it would require two buffers and io_uring seems
-> geared around one.
+> but here it is FS
+> runtime behavior, such as if the write can be blocked because of space
+> allocation, so it can't be done by one static flag.
 
-io_uring doesn't care, it's just a transport in that sense. You can
-define what the SQE looks like entirely for your opcode, and have 3
-buffers per operation if you like.
+Yes, that's why you want a flag to indicate that a file, or maybe file
+operations instance can do non-blocking fill of blocks.  But that's
+for the future, for now I just want your logic lifted to common code
+and shared with io_uring so that we don't have weird hardcoded
+assumptions about file system behavior inside the loop driver.
 
--- 
-Jens Axboe
+> io-uring shares nothing with loop in this area, it is just one policy wrt.
+> use NOWAIT or not. I don't understand why you insist on covering both
+> from FS internal...
+
+It's really about all IOCB_NOWAIT users, io_uring being the prime one,
+and the one that we can actually easily write tests for.
+
 

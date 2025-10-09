@@ -1,109 +1,156 @@
-Return-Path: <io-uring+bounces-9933-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9934-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26183BC713C
-	for <lists+io-uring@lfdr.de>; Thu, 09 Oct 2025 03:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB97BC71A4
+	for <lists+io-uring@lfdr.de>; Thu, 09 Oct 2025 03:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515D23E5267
-	for <lists+io-uring@lfdr.de>; Thu,  9 Oct 2025 01:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B863D3C532D
+	for <lists+io-uring@lfdr.de>; Thu,  9 Oct 2025 01:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67AE1F151C;
-	Thu,  9 Oct 2025 01:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D2778F39;
+	Thu,  9 Oct 2025 01:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIX5UnrQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cm415Qm7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2D155C82;
-	Thu,  9 Oct 2025 01:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBDB42AA6
+	for <io-uring@vger.kernel.org>; Thu,  9 Oct 2025 01:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759972042; cv=none; b=LNZAwBhNqjUC2gcQFKkdHAG2AGPMGiW1IaIIhcOZOJNC5FVFpxn1wKQocITFfucHzBFDTzLmxA0QHQwjQdXWeenoOpN1doDMNrqH0JYdkJTpr/6cW9K223PDXHImlEh0Zx579kUs5sU4E2gEMyu6f4k5nQxuDqZyNCucZfN/fW0=
+	t=1759973167; cv=none; b=Q3lE0VPwgtr9Y9D818AyN1nomYLblmrLb+FuO3xQPumYKEsO/ByQ/gy1umf+5yEUHJDuBT17MChSvl5my3Vd/1LNnW8zN6hxB7d4tIV6mzC7wvuomoQg6E+bqEEa/Bs6CXzrdrvoCYUzhWpfd7K4aUKRbV8lSi/XbpNI4ADlPmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759972042; c=relaxed/simple;
-	bh=gOZMzGofq4mPMi4a6FfMrSXrrYqWnEJSEe2U4H+HIxI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VNRVrwE8YDMhefRAzP72LLs9XrHatPRPhbae+zcBfVI1fXzjEkhr99sZpyHVwOIKOZCbN33K9xaeJwFDLu5bA9QsWxQQrnS9JdfHZvdUlZhFCznwgLQTIEtgdV7KBokaCrY71szTQKfcmCy8aAMGyIrySdBz7Bu6Ljn+GWqDVDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIX5UnrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFE9C4CEE7;
-	Thu,  9 Oct 2025 01:07:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759972041;
-	bh=gOZMzGofq4mPMi4a6FfMrSXrrYqWnEJSEe2U4H+HIxI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rIX5UnrQuVtPUja4Kq/zNxiwyTbf5s+hCzHT8aH9/VUdnNlKWh8D4mSKFL/eXwlaD
-	 7z8+SEmVkcAfo9fmiSSyJ11EAUKKRJcwMVTb9iuWDWBwheam1F4EfrpnDWIzUjmitV
-	 mpUbtUtSbqOH/UnhpYe9i14SkLmyq3I1gfKlnnkK+sqgEdkc4pLZ6mWhV/a0ryPI+M
-	 cnqFIsiLX5CDpbNJvCwTuxPNZCjZR+B1mOV2TKr1ssRJwK/PuLD12JWWzuO1dLp+oX
-	 6de792lhNHw6SaLSFK1kZpeE0QJJFPFLV/HILKfJuySwcXVffLr7XVkoyczsYsHHIo
-	 /dSAJt7cVsj/Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDA93A41017;
-	Thu,  9 Oct 2025 01:07:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759973167; c=relaxed/simple;
+	bh=04pKXYUEW22wmnqOJaOUGxvcsNNdckjnNeS+V/RVb1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYf9GVS0UelngOc83jj0eMoLRZUMS4W2QlspM7nFRops61Zk/3J+WXNA8tKtTVyLT9hPUopFGIw3XCLHaH6jruoCTSSiN1lLK6ue0NT3FxTL8K5CxarkGSI2J/Oz/M5CGBL1SpFI6rfjfxBnGhE015C8vWXchPoORmMCS8Rm3D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cm415Qm7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759973164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EvWzY/E22zcDn5kzwElN2TmHttFiMXzo5vH5EqPpajs=;
+	b=cm415Qm74T85QizhfkOSH8mi0/+GrF7jHkK0O5sPrWDnphM1iW/LyZDh/m44deIVJgmxQf
+	sAxQ1Ub8AqVwEvVBW2lsaeUornbA+AK38eIaXOIwbvLsXsqWMTgSvlgzKR2RkJul2tEmab
+	s5iUMx5P3iP/uKsDfYkRDCYtvjl6xOU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-RRMylnauMzSjSA39-fgRKQ-1; Wed,
+ 08 Oct 2025 21:26:00 -0400
+X-MC-Unique: RRMylnauMzSjSA39-fgRKQ-1
+X-Mimecast-MFC-AGG-ID: RRMylnauMzSjSA39-fgRKQ_1759973159
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 45BA81956096;
+	Thu,  9 Oct 2025 01:25:59 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.19])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 370C019560BA;
+	Thu,  9 Oct 2025 01:25:52 +0000 (UTC)
+Date: Thu, 9 Oct 2025 09:25:47 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOcPG2wHcc7Gfmt9@fedora>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
+ <aOS0LdM6nMVcLPv_@infradead.org>
+ <aOUESdhW-joMHvyW@fedora>
+ <aOX88d7GrbhBkC51@infradead.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: update kernel-doc for MEMBLOCK_RSRV_NOINIT (was: Re: [PATCH RFC
- 10/35] mm/hugetlb: cleanup hugetlb_folio_init_tail_vmemmap())
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <175997202925.3661959.5694356441030280085.git-patchwork-notify@kernel.org>
-Date: Thu, 09 Oct 2025 01:07:09 +0000
-References: <aKyWIriZ1bmnIrBW@kernel.org>
-In-Reply-To: <aKyWIriZ1bmnIrBW@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-riscv@lists.infradead.org, david@redhat.com, mpenttil@redhat.com,
- linux-kernel@vger.kernel.org, glider@google.com, akpm@linux-foundation.org,
- jackmanb@google.com, cl@gentwo.org, dennis@kernel.org, dvyukov@google.com,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org, jgg@nvidia.com,
- axboe@kernel.dk, hannes@cmpxchg.org, jhubbard@nvidia.com,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org, Liam.Howlett@oracle.com,
- torvalds@linux-foundation.org, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- lorenzo.stoakes@oracle.com, elver@google.com, m.szyprowski@samsung.com,
- mhocko@suse.com, muchun.song@linux.dev, netdev@vger.kernel.org,
- osalvador@suse.de, peterx@redhat.com, robin.murphy@arm.com,
- surenb@google.com, tj@kernel.org, virtualization@lists.linux.dev,
- vbabka@suse.cz, wireguard@lists.zx2c4.com, x86@kernel.org, ziy@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOX88d7GrbhBkC51@infradead.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hello:
-
-This patch was applied to riscv/linux.git (for-next)
-by Mike Rapoport (Microsoft) <rppt@kernel.org>:
-
-On Mon, 25 Aug 2025 19:58:10 +0300 you wrote:
-> On Mon, Aug 25, 2025 at 06:23:48PM +0200, David Hildenbrand wrote:
-> >
-> > I don't quite understand the interaction with PG_Reserved and why anybody
-> > using this function should care.
-> >
-> > So maybe you can rephrase in a way that is easier to digest, and rather
-> > focuses on what callers of this function are supposed to do vs. have the
-> > liberty of not doing?
+On Tue, Oct 07, 2025 at 10:56:01PM -0700, Christoph Hellwig wrote:
+> On Tue, Oct 07, 2025 at 08:15:05PM +0800, Ming Lei wrote:
+> > NOWAIT is obviously interface provided by FS, here loop just wants to try
+> > NOWAIT first in block layer dispatch context for avoiding the extra wq
+> > schedule latency.
 > 
-> [...]
+> Yes.
+> 
+> > But for write on sparse file, trying NOWAIT first may bring extra retry
+> > cost, that is why the hint is added. It is very coarse, but potential
+> > regression can be avoided.
+> 
+> And that is absolutely not a property of loop, and loop should not have
+> to know about.  So this logic needs to be in common code, preferably
+> triggered by a fs flag.  Note that this isn't about holes - it is about
+> allocating blocks.  For most file systems filling holes or extending
+> past i_size is what requires allocating blocks.  But for a out of place
+> write file systems like btrfs, or zoned xfs we always need to allocate
+> blocks for now.  But I have work that I need to finish off that allows
+> for non-blocking block allocation in zoned XFS, at which point you
+> don't need this.  I think some of this might be true for network file
+> systems already.
 
-Here is the summary with links:
-  - update kernel-doc for MEMBLOCK_RSRV_NOINIT (was: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup hugetlb_folio_init_tail_vmemmap())
-    https://git.kernel.org/riscv/c/b3dcc9d1d806
+Firstly this FS flag isn't available, if it is added, we may take it into
+account, and it is just one check, which shouldn't be blocker for this
+loop perf improvement.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Secondly it isn't enough to replace nowait decision from user side, one
+case is overwrite, which is a nice usecase for nowait.
 
+> 
+> > 
+> > > rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+> > > limitation clear rather then opencoding it in the loop driver while
+> > 
+> > What is the limitation?
+> 
+> See above.
+> 
+> > > leabing the primary user of RWF_NOWAIT out in the cold.
+> > 
+> > FOP_DIO_PARALLEL_WRITE is one static FS feature,
+> 
+> It actually isn't :( I need to move it to be a bit more dynamic on a
+> per-file basis.
+> 
+> > but here it is FS
+> > runtime behavior, such as if the write can be blocked because of space
+> > allocation, so it can't be done by one static flag.
+> 
+> Yes, that's why you want a flag to indicate that a file, or maybe file
+> operations instance can do non-blocking fill of blocks.  But that's
+> for the future, for now I just want your logic lifted to common code
+> and shared with io_uring so that we don't have weird hardcoded
+> assumptions about file system behavior inside the loop driver.
+
+As I mentioned the hint in this patch is very loop specific for avoiding
+potential write perf regression, which just works for loop's case.
+
+It can't be applied on io-uring, otherwise perf regression can be caused on
+overwrite from io-uring application.
+
+So I don't know what is the exact common code or logic for both loop and
+io-uring.
+
+
+Thanks,
+Ming
 
 

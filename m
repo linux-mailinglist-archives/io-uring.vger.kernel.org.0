@@ -1,54 +1,54 @@
-Return-Path: <io-uring+bounces-9939-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9941-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3921ABC7C7A
-	for <lists+io-uring@lfdr.de>; Thu, 09 Oct 2025 09:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 904C5BC8004
+	for <lists+io-uring@lfdr.de>; Thu, 09 Oct 2025 10:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638E7188FFB3
-	for <lists+io-uring@lfdr.de>; Thu,  9 Oct 2025 07:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9A41A60875
+	for <lists+io-uring@lfdr.de>; Thu,  9 Oct 2025 08:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5042D0C9C;
-	Thu,  9 Oct 2025 07:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC1827B335;
+	Thu,  9 Oct 2025 08:20:38 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C22DF68;
-	Thu,  9 Oct 2025 07:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3808626B97E;
+	Thu,  9 Oct 2025 08:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996237; cv=none; b=gx63CIBjARugO2VYGHrYQQZvNjEHg0JOXg3TgmKZ5rVxO+dkr3rITN3yJvZJPB49zYUxVF3cGrn5Waqq82MdSWTdqOOivjhIBVJ7NU6Cw1HhQhBR03ew2VeekhSE4y+GJqJ3pU0wQhmSGdPK4ygpu1gjCFqNWD9Dm9bY+CijA04=
+	t=1759998038; cv=none; b=cWmqDwSIO66TD1ZBMCMVgwKNRiWvloggY2coS4at9fXePtT8MOw51LxiJ3XQhX92RBO2kvrWeULSy1z11gjjqEX91CtHVp9hyl4m1xDT1NTmCwNYMEusO/TBwx94MyoKt/W2QGQylRwQ9Se7lj6O6UvccDXgDB4BWi7iECcMy7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996237; c=relaxed/simple;
-	bh=hSDqszayzc1URyLW0uaDx+454Q64tykY5sefroniNHg=;
+	s=arc-20240116; t=1759998038; c=relaxed/simple;
+	bh=r4j7KL3ZDY2ItBlX7tAcF4DYZ7j4P2ykR08zNx+Sdac=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9LRw9WhHTQmz0MEMWmP71RVBP0QjzGhomMoTencmXvH00+R64ikqeZfJMH5mqEIGQQ+p6G5Ru9caJzrzZfF6wruvtZxQtqfB994OzTGp7PD+NB6h2+VBQzs4MBencSSMiu3V9pPwPrdTzDMi+Tdco3htJr8+1e+MW8eFyt4GB4=
+	 In-Reply-To:Content-Type; b=pUAvLRyzDeAVWYHKe7DJyGMf6wyYuSYTyZSEMDvDgsCP1+IwyuQ9+Ssk/26PD+pRfNG8XC8eUSzEFd1W0/YGDQEecLLr6zS8P8rnaictPJvLiO1Z56HTtRRundgDFDYU9IMVfjP+mDDcMRos/Py0Xz21XRAFFzIZ+Z+zWmqiIAk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cj22T4GVLz9sSy;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4cj2Td0Mj6z9sSL;
+	Thu,  9 Oct 2025 10:04:37 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id e-hrpkSiMM5A; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+	with ESMTP id qQ36Dhni13kk; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj22T2bCVz9sSq;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj2Tc5kJ8z9sSC;
+	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E1858B768;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A8FDF8B770;
+	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id iEsvyTlwygx4; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+	with ESMTP id CnXkw3FAfnqR; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
 Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4940A8B767;
-	Thu,  9 Oct 2025 09:44:31 +0200 (CEST)
-Message-ID: <1fb2259f-65e1-4cd0-ae70-b355843970e4@csgroup.eu>
-Date: Thu, 9 Oct 2025 09:44:30 +0200
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id AE04F8B76D;
+	Thu,  9 Oct 2025 10:04:34 +0200 (CEST)
+Message-ID: <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
+Date: Thu, 9 Oct 2025 10:04:34 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -101,39 +101,56 @@ Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
 >> Hi David,
 >>
 >> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
->>> Let's check that no hstate that corresponds to an unreasonable folio 
->>> size
->>> is registered by an architecture. If we were to succeed registering, we
->>> could later try allocating an unsupported gigantic folio size.
->>>
->>> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
->>> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, 
->>> we have
->>> to use a BUILD_BUG_ON_INVALID() to make it compile.
->>>
->>> No existing kernel configuration should be able to trigger this check:
->>> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
->>> gigantic folios will not exceed a memory section (the case on sparse).
->>>
->>> Reviewed-by: Zi Yan <ziy@nvidia.com>
->>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> I get following warning on powerpc with linus tree, bisected to commit
->> 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when
->> registering hstate")
+>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>> index 1e777cc51ad04..d3542e92a712e 100644
+>>> --- a/mm/hugetlb.c
+>>> +++ b/mm/hugetlb.c
+>>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
+>>>        BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
+>>>                __NR_HPAGEFLAGS);
+>>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
+>>>        if (!hugepages_supported()) {
+>>>            if (hugetlb_max_hstate || default_hstate_max_huge_pages)
+>>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
+>>>        }
+>>>        BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>>        BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>>> +    WARN_ON(order > MAX_FOLIO_ORDER);
+>>>        h = &hstates[hugetlb_max_hstate++];
+>>>        __mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
+>>>        h->order = order;
 > 
-> Do you have the kernel config around? Is it 32bit?
+> We end up registering hugetlb folios that are bigger than 
+> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that 
+> (and if we have to support that).
 > 
-> That would be helpful.
 
-That's corenet64_smp_defconfig
+MAX_FOLIO_ORDER is defined as:
 
-Boot on QEMU with:
+#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+#define MAX_FOLIO_ORDER		PUD_ORDER
+#else
+#define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+#endif
 
-	qemu-system-ppc64 -smp 2 -nographic -M ppce500 -cpu e5500 -m 1G
+MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via 
+/sys/kernel/mm/hugepages/ but bigger pages can be created at boottime 
+with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
 
+   hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
+
+Gives:
+
+HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
+HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
+HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
+HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
 
 
 Christophe

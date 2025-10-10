@@ -1,79 +1,128 @@
-Return-Path: <io-uring+bounces-9962-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9963-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51572BCE378
-	for <lists+io-uring@lfdr.de>; Fri, 10 Oct 2025 20:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A468FBCE820
+	for <lists+io-uring@lfdr.de>; Fri, 10 Oct 2025 22:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A4819A778F
-	for <lists+io-uring@lfdr.de>; Fri, 10 Oct 2025 18:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBEB019A723C
+	for <lists+io-uring@lfdr.de>; Fri, 10 Oct 2025 20:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBD022B8D0;
-	Fri, 10 Oct 2025 18:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8C8258ECC;
+	Fri, 10 Oct 2025 20:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvZjvHRI"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YFENwmmz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666C221CC61
-	for <io-uring@vger.kernel.org>; Fri, 10 Oct 2025 18:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B517A310
+	for <io-uring@vger.kernel.org>; Fri, 10 Oct 2025 20:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120747; cv=none; b=oj/9OT6iWMhj3pbfMX4MscL7OHafoP7nTz58oyy3iGHb1scyfby7f801iLXEGWVVJsr3plf76SW9KypbJh2cx0ehFXvNPDU48aOXO5/PDuLkViP8ZVhXjwH5tbhAEDINm3Js9q0n3Uyonb9we7vox5xiM9D/jrYrJ6hTwPxTV+s=
+	t=1760129107; cv=none; b=q/FlwRKIBYrafPN4x1TvZ8mjbo2Y3yqw99bi7U6YX6ysyw7PG0fRVKKz/hL/HLLeSdB+cs1Pp5G9WyddDU/b+0L8io8OuuUsyxYrLJsStKDziYtgIeWFG+DSnANqjJkedzFuO5S5bo6IV7fgT/14MD/uNZT69/GdOUDStUfVP/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120747; c=relaxed/simple;
-	bh=vW/zUa6DNYeb7XPjrnRe4Q13e6y9iDF1hH6bXoLOvUQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Czqvw4EZM0SFtWDN3eCxMfyuui02TabK8wcppc0u9AlXq81xp2JQlkRjRPrNJcLYKkYEFkbKZsCIids+/Z0IDVAFWkhgULJyjtE16YpbHgX3y+kWr3mpkTDEz/yckonqwI8YaZYo92m8rRXmpxkQgodOvUY1ygClZC2TKkJ1TLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvZjvHRI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476DDC4CEF1;
-	Fri, 10 Oct 2025 18:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760120747;
-	bh=vW/zUa6DNYeb7XPjrnRe4Q13e6y9iDF1hH6bXoLOvUQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VvZjvHRIgeTnAyVc5m+VYjH48amUKoS2Qds3fMIiD+Cy45aaRp559eW1CquaBWUqF
-	 bemqIaqBVq+Iix5XwbkZdIdDjrLoWSlKxVcKiqvBzeDZr60E4pc99yR2/jvbghPiFd
-	 fLqbhofhX31MTfdhy2M8YEAtWixsr1uCZqV1uKgzfN/XWFCN91LoUw1tw+Dxhj1m64
-	 VLv46xqIIYPqiiZFM3BPGMpEHfSHbijdg4UOhDS5KUgyUBCJk7DVOhRjUeUYS0H6MS
-	 RCeab8xDZO8Hf0gFK9jU+/qTWzR5coMqAaxi7TxnTV8ubel1CGE+2Xi2+5B87QWPNX
-	 6Q/mnjoJLzGHQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAED43809A00;
-	Fri, 10 Oct 2025 18:25:35 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.18-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <503fa8c8-e123-4a08-9c01-7c60232798f4@kernel.dk>
-References: <503fa8c8-e123-4a08-9c01-7c60232798f4@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <503fa8c8-e123-4a08-9c01-7c60232798f4@kernel.dk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.18-20251009
-X-PR-Tracked-Commit-Id: e9a9dcb4ccb32446165800a9d83058e95c4833d2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: eba41c0173c8c27702b720730ed9d399088409f0
-Message-Id: <176012073459.1074429.15271923111626100929.pr-tracker-bot@kernel.org>
-Date: Fri, 10 Oct 2025 18:25:34 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1760129107; c=relaxed/simple;
+	bh=nuSFDI9H1z7wN/nVEdoVNNqk05aGbOj9gvqEoxFvYGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IPRW9nyW9qMfHTi1xl4Ucw1fL364NbFVctVaf9F3/YBjHk5fS0my3KP+XKKVXfx9cuRt4Dxh7mXigjBJuD0AW4yxVsBQdpgbuJ2KBV5GVhx9EPwnsS6HCSNCs7/y9FwTfco3TfL6K8a2xAe8L7PF8ymUybqlnFBv4GUvRk/8Eb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YFENwmmz; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-267fa729a63so4223945ad.3
+        for <io-uring@vger.kernel.org>; Fri, 10 Oct 2025 13:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1760129106; x=1760733906; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yIXfrhAguGMv/bX4xmEAomoaQfyhDk8/Zl8fqtomZqo=;
+        b=YFENwmmzRXvLjXuRA7KVx/unn0pvefhr3HCJabrKbnXLCNiwOSWk4DilROZnu0F5KM
+         2+2kgWIwVj4SvW4YNg9G8mIWOpU10D2JLx4smn6CvfcdJAZr/d4fqFSZo+3TViKdX9ff
+         No/xAJArfXgLEkpMvWktXoe4GmIwuuyJV7V+cmAAEP4RRlNKj9GvQ3EdQcs6sfMyV5Kp
+         KrwmbpSLPqGbkOn5lS5yn/PpQUP7kK6jlTQjyNy/+Sp+jg5uoqzys0Wy88g+mPuEmrmx
+         A3BketMXnYeJN0kPQJosVXXEks7af7AxsiUA3wLJ1+MXLwjfBiSWYZ51EyDPN9gNdWOF
+         mU5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760129106; x=1760733906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yIXfrhAguGMv/bX4xmEAomoaQfyhDk8/Zl8fqtomZqo=;
+        b=ICcRoYslhIFmOPjnhbUndgnHTxS7z6YPq7aqGVPUUix4oxsg68K25W7GofqMs/16iD
+         cuwqTmpuzs8pjO/tLEDE1LjZ3xxhH1CLagfprrzKxAIZ+CKG7ANjpQWnSZ82GVvunyKr
+         /rb83Olb/CK7qDC2kFsBRbb1zsBPuITEnM1Mq3tAb0l3QekrmA3GvOv5OWGvuxABnxxG
+         LMQe712TbM3/FRehSRsgxK3FUJSkRcSG+OGV8IFyAHeBpkG2AwNV5Jx/em95SpjlfEbT
+         WDEvHhDWwK/YXTUgonXps3cfd0s8NLrpxuvzdnYR4SWd03o52nrNFdQPrVgwBqqn80qF
+         serQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWskxJzEQG2FDVdyaM1boh94miJM3reAOxCUu61vDcl2HKtQMVV8or1fsIeDrBCQfRvgDoZHWkssw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH3oEVx5Acw51ZZt7bI1eEux0Sb9KEaWZ9I+/iNHfMDWPTWdx8
+	KPN4pb317LGG8Mqc4yvRAvRbUBjHmub03FcISh4M7AXDYzMTvo8M+M+JN6gaP3QFRUhqnKOCDvt
+	zIJReTzz/c7xxGWTT2VpE0jhIENMmfGhc+1nuWStieA==
+X-Gm-Gg: ASbGncvC5/SvliP1Dt3moX+tGD7XV2XwLpHHNvr965kEgodtX0a7+R2Fx9aD/KOy/oe
+	bfpzmoayolxJTpER6MZHb+M61pKWjp106V+1clA/6xnAqiFoMbviR/2QeJnvBih+LbY60Z7bnpM
+	kWeqRM+AQhYUPnJXUUxM+f3XMWiJ4nXSnokFmTlRa6AKX/18ASQt8r1IDfRRJCV+deOSjzNeurM
+	kyIbEb4260Rlj0T8VPQEparpg1h4pEkgKt3fOTZ1AcOz6ze+bxv2zryOyObXx8x9887gKQ=
+X-Google-Smtp-Source: AGHT+IGR3xF61Y1olOQgtoO6mAsjqi8GARXS1soZGepNoUVHDze5vbFgxUI9BjM5ZBJwEuO4wB1I1emRzI5N6XE1x14=
+X-Received: by 2002:a17:902:da92:b0:25c:9a33:95fb with SMTP id
+ d9443c01a7336-29027448385mr95222525ad.8.1760129105325; Fri, 10 Oct 2025
+ 13:45:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251009143645.2659663-1-kbusch@meta.com>
+In-Reply-To: <20251009143645.2659663-1-kbusch@meta.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 10 Oct 2025 13:44:52 -0700
+X-Gm-Features: AS18NWCxV-d7dcGQfj1n45-foaMrIH4ayEU6u2zN_tOpKYYVLwJIIAxkClxLqKs
+Message-ID: <CADUfDZoJkk6a6Kx4=MAnPbQHycA5AXe=MUrPkuWV8fmjb=H3HQ@mail.gmail.com>
+Subject: Re: [PATCHv4 0/1] io_uring: mixed submission queue entries sizes
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, Keith Busch <kbusch@kernel.org>, 
+	io-uring Mailing List <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Fri, 10 Oct 2025 07:27:16 -0600:
+FYI looks like you may have the wrong email address for the mailing
+list. Should be io-uring@ instead of io_uring@. CCing the correct
+address.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.18-20251009
+Best,
+Caleb
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/eba41c0173c8c27702b720730ed9d399088409f0
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On Thu, Oct 9, 2025 at 7:37=E2=80=AFAM Keith Busch <kbusch@meta.com> wrote:
+>
+> From: Keith Busch <kbusch@kernel.org>
+>
+> Changes from v3:
+>
+>  - Allowed 128b opcodes on both big and mixed SQ's
+>
+>  - Added additional comments for clarity
+>
+>  - Commit message fixups
+>
+>  - Moved the uring specific entry size fucntion to the uring code.
+>
+> Keith Busch (1):
+>   io_uring: add support for IORING_SETUP_SQE_MIXED
+>
+>  include/uapi/linux/io_uring.h |  8 ++++++++
+>  io_uring/fdinfo.c             | 34 +++++++++++++++++++++++++++-------
+>  io_uring/io_uring.c           | 35 +++++++++++++++++++++++++++++++----
+>  io_uring/io_uring.h           | 14 ++------------
+>  io_uring/opdef.c              | 26 ++++++++++++++++++++++++++
+>  io_uring/opdef.h              |  2 ++
+>  io_uring/register.c           |  2 +-
+>  io_uring/uring_cmd.c          | 17 +++++++++++++++--
+>  8 files changed, 112 insertions(+), 26 deletions(-)
+>
+> --
+> 2.47.3
+>
 

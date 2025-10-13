@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-9976-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9977-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2697BD335A
-	for <lists+io-uring@lfdr.de>; Mon, 13 Oct 2025 15:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8931DBD413B
+	for <lists+io-uring@lfdr.de>; Mon, 13 Oct 2025 17:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D419C4EB755
-	for <lists+io-uring@lfdr.de>; Mon, 13 Oct 2025 13:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9CB188218A
+	for <lists+io-uring@lfdr.de>; Mon, 13 Oct 2025 15:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323C2307AE0;
-	Mon, 13 Oct 2025 13:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1061330B52C;
+	Mon, 13 Oct 2025 15:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKRLzPXZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/+C7xs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525E2307AD2
-	for <io-uring@vger.kernel.org>; Mon, 13 Oct 2025 13:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B92430B51B
+	for <io-uring@vger.kernel.org>; Mon, 13 Oct 2025 15:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760362227; cv=none; b=lrPZPFYCYk9Q9XgI0mIaob6y09YgqDtvdLXRsqZjzPVseQgee1Zt5gwP5yZF2/MraYsjWZgVQnfhppvnt1m9wTo8mxRNaO22V5u8DAyleD/yjxKpvpaxvszs/aWC83S3PCsb2+mbnOCjvjVXgdE/ekCRF/4UxY/mNWCaYV2cYkc=
+	t=1760367749; cv=none; b=KCkpYDQNCHQ3UfnongUq57x6rQ/dFljLLA1EWCui6nilY/EuyLUbQvc1CM3eXz50YTX9xvDJT+se/ww4lxMjebDDmj3v2fMnldGxZfNEnn8Nud6NxCtyKwz4UdmOQzK1xWLKJWJYRIs0vp8JQ+l6r8mr/H6zGWyJ5Nh1fatdcMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760362227; c=relaxed/simple;
-	bh=pYKv/ZHAQal8b6v/icrawjp0xeugJB+Yhx7Gqtpqskc=;
+	s=arc-20240116; t=1760367749; c=relaxed/simple;
+	bh=XZ4lzHryEJQS9jgidvbUbN7osxHnfwhUvb5lDvX5gJM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXL3ADuaQgBKrsplrDOI5YcObF/si5doXNAstQNPqImUqV/VT2tb0Qk1g6y5604A3w/5joRxmcWsYa/DuUSwEhXTcmemzjhzcljjj4TwwcpjYIzo5Q1Uv82t5nTo7BNqXxvGeeZFje2OlO8wEOBLVfJ0p/0KxRd7M2HcmJ98eSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKRLzPXZ; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:Content-Type; b=sE9V3RmWDbBjbLohiJDaB1vOyW28huyciMgdiQjpw8Ui/8pwuZLk8itbFznAVvhhbH4KzLCTROFHH7qmNT2VBGNakFl8ijAtwo3pUMfrVTnvAf8V1j92XM0yYuLVgHpF2SbMuYiWWyNlV0q7ovhPi9R/2vkcipjqwInUxDttmxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/+C7xs; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so50936185e9.2
-        for <io-uring@vger.kernel.org>; Mon, 13 Oct 2025 06:30:25 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so2017058f8f.1
+        for <io-uring@vger.kernel.org>; Mon, 13 Oct 2025 08:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760362224; x=1760967024; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760367746; x=1760972546; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
-        b=nKRLzPXZnQf9ilLT2raNaKwPMG6B8Vee1uWqwMVCnAKqSukvQpx/qcvB400LvbTRYx
-         fDZe5SHGtw9N/OmQD1fp+c20mNiIoCa7S0RTxayO7va4bk0AYZIOyHwbOj4vNB4tb9lN
-         bDY5zZQosZZ3k6ApeKSFrEUwzob5gRGlEPeWCe+hfRjO2Q4+2xbXi8K5lIkkNpIQxvYy
-         V8OGvKAJ6FdFO0bcqmacw5NecjeQUrtEPOZoUl8g/Buiy3JLKQg1IuddCiXv65nA1IlB
-         jsEr6eXzXiqQ7TnC3MZw/sBS5/L3XBvLIZRHM2jk0DCOxNJHcyWKzuTSIlA8saTZEdtO
-         vVeg==
+        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
+        b=Km/+C7xsfZItqUK1cRI41oQudCJQXawtSlxm2Y90QzKe9b1CH9Lue/2I7UhiV9ElL/
+         QbsSPdkyMDOFYhdArM/WwUk4HrRd78V3RT1IKtSrA3tojPLDyJJgw1uFNjhsOatstdjf
+         awHA8HXlg+4SOEZ9oEI0WYufnhqiDxH7H1pDa2kElbVfVK/isv9w6THHMeFYOFdsTzrT
+         4XPM6rT28Dtw7BCO5UlxgNQd6gurCk9yoS6p4GVG3DiwKS/kZXmT1g4FH0o84SKujCvj
+         NNq3v1ken4Lh0yVIZ4HeRdWXMC3yki6pD6VwCI9gK9RKdT3vhvmYDl93+WFdT69sWhcP
+         DVaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760362224; x=1760967024;
+        d=1e100.net; s=20230601; t=1760367746; x=1760972546;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
-        b=uKyXjjlgcMIVXMLdDelio03oVbemiTuSjWWepeKvS0bH073GAyCkxhbWqi3vt3KXRb
-         ygfmWOCTdvCvCQjz1/aH3U9cXWmTZQi+4qQHyxpvp3FxQpyZQyaHGkNGTyNMf7QHr82X
-         Kl4y9MMyeWZyYv4qzJnaD7TEDR6RfsZNDI91AYFTGCS4fhxvlVrlbtACCKjZqqMArCsX
-         r/V/vH2liOszIX+uzdzlH+7Dyms4gCD4mUKTF06VIaQZXgjKB5JcsTf+eERkgAJqJCEW
-         bQkyi2BxJCFs84n9NhjXuqLh07G4kkMvHhLCXSlO0VeO81JmCbK0CRCfSN+kueR38Bap
-         SEKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU2LK5mjriweOxI/G3EB+gtpPGBXfFwnGkH67LTMRSAnpDvlCHmuuF+GlQRIWRr+FZ1e5tLMFNyw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZuPFqy0rAOLoA3PusHuloYx7uzToGhI0VmVVE1a9FcP5twoGz
-	bBx05nxQoUNqME5zC3w3eGEVzX4QMe00hB+IcNssxq3dqzIAUiMTdVQn
-X-Gm-Gg: ASbGncv9AR+RNikMkm1/FFNghJqWjP2GlnpC/KRHr0oAiBUdxVyq6uvEM7WX+VC65aB
-	lOufCYJuMb3HMP5mFdHsdLGyUJ9hilDogQ4Idrov5Ly8j7VY/RujnbxJgu1pl2wp996rpFQw+TG
-	4Ln98r1hAQ6JsgoF+LIk1x78xA1ILkdWIGTQMBbmc1jb6VtmRtygZRf5AP0Nr+/7TWRolXt4a9R
-	0xhJKhztR7uHNHtY+e+bjoxQZrnFB8pUQE/hi4iL+sVvX5TGa3detWL4WmHXnQcGd0Gv6GO74nq
-	44iwhMAi8HNYPjmI8J1CvLN6fN5K4dQ+ms0vDpeILJbLU8i1ae56noqaLbG9ZB+Lwn4HOQe/nXc
-	/QyBuqb+HGW3cgyzr5VEkWlexdsoiVSrO2LZNIjAURmovlZ+8q+M45lDeWsbwpJ0etRr4Ioxqei
-	DkqFLHhsnl
-X-Google-Smtp-Source: AGHT+IFb8vtBJitNnjBlDbVIUCm2gATTzzIuI7S2acOd2FoeBSuIxAzk1vmdrirRWyHwbC1aiC5zwg==
-X-Received: by 2002:a05:600c:6092:b0:45d:e28c:8741 with SMTP id 5b1f17b1804b1-46fa9b02e5amr148223315e9.29.1760362223296;
-        Mon, 13 Oct 2025 06:30:23 -0700 (PDT)
+        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
+        b=hEn2PDlG+y1WrUXuww8PrUpCQBo9f2O7h8U0Ll3Ls7qRZRneNEUqXWIwpNtv0ECP26
+         NQReU7hdQPYGw+f9PKQsj/MsCVTF1+CVSreBzD+fO01pbX8QCh1Rnj6DYQv4NuTpmmim
+         FkRbB10BHLdiQfEei2GM8hy5YfVaK6eKdiZVUHrzeT1jSeb5RveKYIC4TuTuS9cupy9N
+         XpbIWfGL03RNRrv3BG2h4Os/8D+472lpY0efQBrBTBmPiw1B/iiQkVuxFxeD7Gb1ymQ/
+         4u0d2VGjn6oVvAWVvcticCeOhfEvM8A9Ec+uTXhT6TyW9DhKKClziePaZJphHn/XeOx2
+         AbPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjnYpOeKElVKJ5MiEiiSZHu7SuyPWvCQxdB8s58pXULqM/5IujuTsVW2imTt6YIfUEphc0Zqn3BA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiiftzvw1z1mIihWZJER28x1FfTOQG74l9ev9x0wZcdM9Oc3wn
+	2ps/Zdwr1DgKdRItC7y9V+/nSbVzPs/kWqizCbS8HwzUf1mRnuupecTp
+X-Gm-Gg: ASbGncvblEQN9tQGdJ/VLYajXWQa9zkeFa721BLHrxgk11EdIZmqMbWVOGgckt/jVf2
+	yovKG/2RumINnzbjF3i+ZIP/4XJqpFn9Bi+x8rpVKmpzvcVxvjqOIGT25sZ4zIrJLp9zvRP4FTp
+	8s7bG5yUFUj5TYbj7WJPZg8AngubmQKw7Zw6WOCEzMt0GRCKYKQoZG/WONYESbn+h/UMNOPHAO1
+	/mmyGoVAhoPwB947ojvK05c5u6zLObKMQzLti+LtKTxIdIt4hB4knG0mt1kx5r/R4bZkhw+9cAu
+	XuEMvJ0Ub0RAaZghRs8Ioau4cGoIV996BNo4QJK+y1ZG3Jqyqjm/2myq0lStsUbYy/KuJ/I608q
+	JVIdLWA5yc3VaWrCvcMiybi50esJiAgaCWZ38X3HlDH5trWh9JuKDaTsZ3w0ECwKAAM6j/sbV3W
+	AWDiSi5Hlm
+X-Google-Smtp-Source: AGHT+IGNkJ4QbgL7tRzgvPN+I8L7UO5FdEYBSf53xVmGqianIIUKzVvqoD7JkSPO2wQpbIF5bLMK1Q==
+X-Received: by 2002:a05:6000:491e:b0:426:d549:5861 with SMTP id ffacd0b85a97d-426d5495947mr6222761f8f.42.1760367745998;
+        Mon, 13 Oct 2025 08:02:25 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49c3e49sm185108555e9.16.2025.10.13.06.30.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm18651180f8f.22.2025.10.13.08.02.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 06:30:22 -0700 (PDT)
-Message-ID: <d785cc8e-d8fd-4bee-950c-7f3f7d452efc@gmail.com>
-Date: Mon, 13 Oct 2025 14:31:32 +0100
+        Mon, 13 Oct 2025 08:02:24 -0700 (PDT)
+Message-ID: <f0e40a00-ab13-42dc-b9ca-010fd4b115b8@gmail.com>
+Date: Mon, 13 Oct 2025 16:03:40 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,98 +83,57 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] block: enable per-cpu bio cache by default
-To: Fengnan Chang <changfengnan@bytedance.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: fengnan chang <fengnanchang@gmail.com>, axboe@kernel.dk,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- willy@infradead.org, djwong@kernel.org, ritesh.list@gmail.com,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-References: <20251011013312.20698-1-changfengnan@bytedance.com>
- <aOxxBS8075_gMXgy@infradead.org>
- <CALWNXx8pDOvDdNvw+v0rEyi33W8TL+OZW1YiFbF6Gns3PeWOLA@mail.gmail.com>
- <aOyb-NyCopUKridK@infradead.org>
- <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
+ kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
+ Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
+ Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
+References: <cover.1760364551.git.asml.silence@gmail.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
+In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/13/25 13:58, Fengnan Chang wrote:
-> Christoph Hellwig <hch@infradead.org> 于2025年10月13日周一 14:28写道：
->>
->> On Mon, Oct 13, 2025 at 01:42:47PM +0800, fengnan chang wrote:
->>>> Just set the req flag in the branch instead of unconditionally setting
->>>> it and then clearing it.
->>>
->>> clearing this flag is necessary, because bio_alloc_clone will call this in
->>> boot stage, maybe the bs->cache of the new bio is not initialized yet.
->>
->> Given that we're using the flag by default and setting it here,
->> bio_alloc_clone should not inherit it.  In fact we should probably
->> figure out a way to remove it entirely, but if that is not possible
->> it should only be set when the cache was actually used.
-> 
-> For now bio_alloc_clone will inherit all flag of source bio, IMO if only not
-> inherit REQ_ALLOC_CACHE, it's a little strange.
-> The REQ_ALLOC_CACHE flag can not remove entirely.  maybe we can
-> modify like this:
-> 
-> if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
->      opf |= REQ_ALLOC_CACHE;
->      bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
->      gfp_mask, bs);
->      if (bio)
->          return bio;
->      /*
->       * No cached bio available, bio returned below marked with
->       * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
->      */
-> } else
->          opf &= ~REQ_ALLOC_CACHE;
-> 
->>
->>>>> +     /*
->>>>> +      * Even REQ_ALLOC_CACHE is enabled by default, we still need this to
->>>>> +      * mark bio is allocated by bio_alloc_bioset.
->>>>> +      */
->>>>>        if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
->>>>
->>>> I can't really parse the comment, can you explain what you mean?
->>>
->>> This is to tell others that REQ_ALLOC_CACHE can't be deleted here, and
->>> that this flag
->>> serves other purposes here.
->>
->> So what can't it be deleted?
-> 
-> blk_rq_map_bio_alloc use REQ_ALLOC_CACHE to tell whether to use
-> bio_alloc_bioset or bio_kmalloc, I considered removing the flag in
-> blk_rq_map_bio_alloc, but then there would have to be the introduction
-> of a new flag like  REQ_xx. So I keep this and comment.
+On 10/13/25 15:54, Pavel Begunkov wrote:
 
-That can likely be made unconditional as well. Regardless of that,
-it can't be removed without additional changes because it's used to
-avoid de-allocating into the pcpu cache requests that wasn't
-allocated for it. i.e.
+Forgot to CC io_uring
 
-if (bio->bi_opf & REQ_ALLOC_CACHE)
-	bio_put_percpu_cache(bio);
-else
-	bio_free(bio);
+> Add support for per-queue rx buffer length configuration based on [2]
+> and basic infrastructure for using it in memory providers like
+> io_uring/zcrx. Note, it only includes net/ patches and leaves out
+> zcrx to be merged separately. Large rx buffers can be beneficial with
+> hw-gro enabled cards that can coalesce traffic, which reduces the
+> number of frags traversing the network stack and resuling in larger
+> contiguous chunks of data given to the userspace.
 
-Without it under memory pressure you can end up in a situation
-where bios are put into pcpu caches of other CPUs and can't be
-reallocated by the current CPU, effectively loosing the mempool
-forward progress guarantees. See:
-
-commit 759aa12f19155fe4e4fb4740450b4aa4233b7d9f
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed Nov 2 15:18:20 2022 +0000
-
-     bio: don't rob starving biosets of bios
+Same note as the last time, not great that it's over the 15 patches,
+but I don't see a good way to shrink it considering that the original
+series [2] is 22 patches long, and I'll somehow need to pull it it
+into the io_uring tree after. Please let me know if there is a strong
+feeling about that, and/or what would the preferred way be.
 
 -- 
 Pavel Begunkov

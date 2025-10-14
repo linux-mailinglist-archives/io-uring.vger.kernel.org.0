@@ -1,172 +1,210 @@
-Return-Path: <io-uring+bounces-9993-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9994-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21639BD96EC
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 14:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131BCBD97F6
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 15:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1373A6E81
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 12:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF97192798A
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 13:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3AC288C13;
-	Tue, 14 Oct 2025 12:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F6B2116F4;
+	Tue, 14 Oct 2025 13:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIOhET1l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epqoEHI6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DC22EB85B
-	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 12:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823551E260C
+	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 13:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445945; cv=none; b=K3z+Suu1qvF+PJa9a+SCUuEcGzrNEmF/Mh7I/sO2FD9FWDFgtnWvas0TzsQLuNuG+0v8uW1+Lwo+yGWcAGNVMFqvb4BgSCt1BNJV3KnPyOZEJcCShvM2hjo6GmCk8ZIpcEuGJD9HW+4KBZVAkaAdT1rAkPcFpiu5cqZUKibZckc=
+	t=1760446832; cv=none; b=dg9JBafHU0RL8CQyDSRjbCzM7RmGW86572ogwCfPbiH1crCXAHWaBQsVyQXWesG3SlVRsiJP1pirinDRL8LzwPiDFgXmkvFmvNaKRc1na9wm8F3rKXnREWhU8I0mnGAYOkUazDkpo/7FDK///C3prg+nsvJdER0jjZyKyIXgMJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445945; c=relaxed/simple;
-	bh=4xAZty85ZHdvBE6Q6Ju6E8/SyfTuwcvhqmJQ6fWLs54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MML+WKkH9DF/h8FasccFhmzSIp5NwBwnK14GrampOYYbRhrFMLMBMN4hnnXbfstpzopAPQg4b2qQtHT1L3e/bfV1w030MmtEey+D0DrxBnrAWMzVCIRftYeshsGY3B4pUfPh2lKnWAoJcIjyzfD5bkv8AIoZWr8OB8eXCjuW9qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIOhET1l; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1760446832; c=relaxed/simple;
+	bh=yC16Cf9FMJscSBzx0tg70+ZAO1nULgzq46Rq7RWDwRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJqqJWHmk6+IR1zavmn96/JfNhuNbc/xmGUaf7ZgVr6lGTg3UlpZ1+kWLrMPyL2bYCU/wv5cDEhN+lRnLaN2M1XwD8uMEyqzpZdiYaa4iWumO2si6+MRGPPmkt/NP0i5jRzmAO98gij8Jhx02wkg5ODtWasMPLB0RpoSiu9Z058=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epqoEHI6; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e430494ccso30470395e9.1
-        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 05:45:43 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0308469a4so2906109f8f.0
+        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 06:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760445942; x=1761050742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
-        b=SIOhET1lP1CVEl97faPGO0VQp8rByWy78RyyTQJ62a5gycXaEFN4W95RDO+019HH7D
-         U9fSHg0ptn4JjIuGHDt23ae5jN9cs6Lf4wx02pqBFc1PEyn24REtWb36TUcLn4KLvq2X
-         ZCSuti7V+4r+5smtVUQHuN0GQLO46+F5ChOtFDmbXMkbT7VPE0X73lfqU3zN7rVsPOS2
-         JTMoQpeedNZkxx8ITPlZzzAOqv3vZS5No6nZsD6PpJ0/vwdIqyMYTB+dZvKgXvNa4KYE
-         54rfafm2j6aUCD/0SeLxGBXweMg3Wbq3nqEmP9cry2nfD9U4Rb7UAilPHO43+3utCJsz
-         mV7w==
+        d=gmail.com; s=20230601; t=1760446829; x=1761051629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=drtmDZAOmuCnQVy+ATNHRyErjp9xi9I5nuXjriiDL/I=;
+        b=epqoEHI6UasjISOjXZQ5jSX+wK5NAIYmDIcr8EBc1M4BHt4ZYNokrEpVkU1XrNBayS
+         PdsasiSjsXFQ1rv7m9urjGR+eAN9YCah8FJTySyNgyUQr/+3Q8A/qH372S00H2leXvX0
+         sllY2k9gE8Y73a+1RpJGW0UtpkY0/uo3Cl/gAxVGxoQYnd+6BzImW/OFeT4JkcatAIwa
+         IL97z2hCxTbHiJl/VBCVudgqBzK+F3+q3kMBwsYvDzgiuWtYPXylJ2V3TC4g3JQ48slv
+         6Hb/mK3Zk+FkEgTc/J7XO5Qo5IRM8sxCxZVnY0tleD1sVjOM58AkBewfMiM5gCYwJToE
+         OJlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760445942; x=1761050742;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
-        b=NqvrIc0WVYV3daEpjuT/yXqyZYDOGFQD3f9cuLFFp26h4Vzqd5eYLiU+oWnhFy4aAv
-         wtEC+PUqL/eKgxkD8sYuOy3XCnQYgHO+bor8eH+muMJnC9BLJJiLtmoi7NY+H6wcJWNY
-         LiWziOoNhYtfXCwnvgyPNwQCF6uAUorJdw4bRKOiPHJhlZ91/zVL3x/GWiukkJqBta0Q
-         buq3DLnxyu0+cOwD5hm4lfPym9zt/YZ/IHwRyo3YPAYkwSdI4hc4AzkkLr5+FHvoeI0L
-         CKjJ+ELOdCjTptd8AS+z78Ih8w4x0luUm8t9w+eqwt+8FdHL/7OPjaXujRsUwVR8a9DZ
-         VF+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRUMrGZXVKK+umvBpJzIbku67/FK6tg502MQh2ZFnro6RYmn194+INS3Lu9NUgf8Skg+FrBYhmMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh/V13++rY+Q6DCWjDAZAGnZ0EhaxFAr/pvU4CpsF+hk5tF81Q
-	dvz4r/kF64V16BZd7Kosx1jQojnDioREpJSBfBykEV8I6XrMcBSDc1WK
-X-Gm-Gg: ASbGnctNxlrG7CfY/ZXxaiFCuWAfpCPW+EiVfywan4+h5qWQblmwbwsF7A2rc2oyzgF
-	Y7qhJOE4br4B9wLzytdCt0khcaggs+kxhYdHN/R43Fd5iRN9Jvnm36CLnp7GzaeyEQLOs5XnB8s
-	dyIdDBOwVITuaxSW9LnOI1VKLhNSmbMj0nTwiTThw+RaQo92tC0SHo0+/j4dgi1MYD67CBOQuaL
-	q8GzKGTW7gkiCAE7MyUauea3X+c3/sqhrC/i3j78O1ZpGqzjj8UGe0Hn/KldKpfRJtqbpsrJ8aN
-	h/5RtYDHzgOMGJlRj392jrAthKn8WwMt/OBqo590ZYfU245LIHW1RX8/SOOLREo81KgBLTJk/e1
-	gBDiLIZyL+5i+db/f5wkS6DCu1++1p3Mm57TbjUPmEUOm0rflYw5G7DbH2rLdhzxPKkwH5kJVQw
-	v671+Zb7VQ
-X-Google-Smtp-Source: AGHT+IG37XYlLrmKRzsVTbT8x4wG0Ta4s90KjMR3qbRk2A+e9jHNkHgI8r+1AkdRhNxcKymiD3ZRzw==
-X-Received: by 2002:a05:600c:c162:b0:46e:47cc:a17e with SMTP id 5b1f17b1804b1-46fa9a8f4c8mr165749265e9.1.1760445941678;
-        Tue, 14 Oct 2025 05:45:41 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7ec0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb55ac08dsm232559785e9.13.2025.10.14.05.45.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 05:45:40 -0700 (PDT)
-Message-ID: <0ef2009e-2593-4b15-a96b-512c1dd30151@gmail.com>
-Date: Tue, 14 Oct 2025 13:46:56 +0100
+        d=1e100.net; s=20230601; t=1760446829; x=1761051629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=drtmDZAOmuCnQVy+ATNHRyErjp9xi9I5nuXjriiDL/I=;
+        b=QRzNw9xf3/irvGXgyIuGhn4RHqcNxVrjIFvXoEbh6ZX/ZdG3kQkmWea0VWlntEdKft
+         YzB/OuIyEX7RHqCO8C3Q0PjFy89Q5XbeYjsmlvWTifGq6x6ynBWrAE2VWCD66AQ7kj62
+         p4OKFym2WEzdG1CD//mAJs05UWLFXLOVoGhiDpUafogXnGKYwAfliS7HJ1c9jLXDR/Ew
+         ul+9q3xouK7Q3arhUDx71ANNCT5bBSBR1UZu44NTiLC6RKIlySLEMiH24rJCC4O3uPKh
+         fzYmm7lc0k3hYQujtVbxbt0Ql+F3siDiIzpxmDOJBYBqT51VnPfp1Nd7wTa+tCKDQDH3
+         /bXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVN7IqjBmuWWLl7QGeV7yVKF1uABM/l+xoiWtCroftE2vr2lW5fBEcFeBDbBaSvfvaICiTe6ksh2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBQbOEWDIbkQVd6tAkVBQ/57I3dgPzS0ozbOLaU+24n8cuhr3f
+	S2ExJ7+WJs/VwrkPubAbASR1Tm1qHiEdPB/TdN1xS9W3bKqQ11hcA6iS
+X-Gm-Gg: ASbGnct39jo6qlWdrgJpWr/IwxVNQHTsUXmR1iNcWH4xtzBWKWGwUoFxs2QvKZJG17O
+	Z7XHCUxW8SyowoK+At8wBD02dUBdq8vUmiBsblvMxiIn2WJPQ6TSBxQlqKXVYcFkFOCp+41e++r
+	NWSSTJ+aQ7/LK7Dx90Jl4E/PI0ZgPf82UEQApvfjEumxW0HW2zwfrFc7PVFTUkomKe9dgm78URw
+	C69Sjx56/BqbnCb7n/uwZnBmNnYJbQIQLOkQTbN43xwdomeLzK9ywR4PGKANo6Cbfyv+kwXoJk9
+	h0pivION0NPQpnqlIEqNwAf7jV8632Rf9RDbPB1hzl5sqBP290+G3kNf46g9Pzdid1ru1Vnge+1
+	vsFr2p5O/K398e5UcixqRzpHzWPEyJSLZZsg=
+X-Google-Smtp-Source: AGHT+IGQ0Gd56K7JwPfQZZ3tAk3u4pF1GdKS8UOWl4Tdgb55qv85ApxtPpM/O9AT16A2P/7TiGsfKw==
+X-Received: by 2002:a05:6000:26d0:b0:425:8bf9:557d with SMTP id ffacd0b85a97d-4266e8dd3c2mr17404314f8f.44.1760446823887;
+        Tue, 14 Oct 2025 06:00:23 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:7ec0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582b39sm23296494f8f.15.2025.10.14.06.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 06:00:22 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: netdev@vger.kernel.org,
+	io-uring@vger.kernel.org
+Cc: Michael Chan <michael.chan@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Simon Horman <horms@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	David Wei <dw@davidwei.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v5 00/24][pull request] Add support for providers with large rx buffer
+Date: Tue, 14 Oct 2025 14:01:20 +0100
+Message-ID: <cover.1760440268.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
- buffer providers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Donald Hunter <donald.hunter@gmail.com>,
- Michael Chan <michael.chan@broadcom.com>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
- <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
- Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
- Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
- <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
- Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
- kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
- Willem de Bruijn <willemb@google.com>, Mina Almasry
- <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
- Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
-References: <cover.1760364551.git.asml.silence@gmail.com>
- <20251013105446.3efcb1b3@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251013105446.3efcb1b3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/13/25 18:54, Jakub Kicinski wrote:
-> On Mon, 13 Oct 2025 15:54:02 +0100 Pavel Begunkov wrote:
->> Jakub Kicinski (20):
->>    docs: ethtool: document that rx_buf_len must control payload lengths
->>    net: ethtool: report max value for rx-buf-len
->>    net: use zero value to restore rx_buf_len to default
->>    net: clarify the meaning of netdev_config members
->>    net: add rx_buf_len to netdev config
->>    eth: bnxt: read the page size from the adapter struct
->>    eth: bnxt: set page pool page order based on rx_page_size
->>    eth: bnxt: support setting size of agg buffers via ethtool
->>    net: move netdev_config manipulation to dedicated helpers
->>    net: reduce indent of struct netdev_queue_mgmt_ops members
->>    net: allocate per-queue config structs and pass them thru the queue
->>      API
->>    net: pass extack to netdev_rx_queue_restart()
->>    net: add queue config validation callback
->>    eth: bnxt: always set the queue mgmt ops
->>    eth: bnxt: store the rx buf size per queue
->>    eth: bnxt: adjust the fill level of agg queues with larger buffers
->>    netdev: add support for setting rx-buf-len per queue
->>    net: wipe the setting of deactived queues
->>    eth: bnxt: use queue op config validate
->>    eth: bnxt: support per queue configuration of rx-buf-len
-> 
-> I'd like to rework these a little bit.
-> On reflection I don't like the single size control.
-> Please hold off.
+Many modern network cards support configurable rx buffer lengths larger
+than typically used PAGE_SIZE. When paired with hw-gro larger rx buffer
+sizes can drastically reduce the number of buffers traversing the stack
+and save a lot of processing time. Another benefit for memory providers
+like zcrx is that the userspace will be getting larger contiguous chunks
+as well.
 
-I think that would be quite unproductive considering that this series
-has been around for 3 months already with no forward progress, and the
-API was posted 6 months ago. I have a better idea, I'll shrink it down
-by removing all unnecessary parts, that makes it much much simpler and
-should detangle the effort from ethtool bits like Stan once suggested.
-I've also been bothered for some time by it growing to 24 patches, it'll
-help with that as well. And it'll be a good base to put all the netlink
-configuration bits on top if necessary.
+This series adds net infrastructure for memory providers configuring
+the size and implements it for bnxt. It'll be used by io_uring/zcrx,
+which is intentionally separated to simplify merging. You can find
+a branch that includes zcrx changes at [1] and an example liburing
+program at [3].
 
-> Also what's the resolution for the maintainers entry / cross posting?
+It's an opt-in feature for drivers, they should advertise support for
+the parameter in the qops and must check if the hardware supports
+the given size. It's limited to memory providers as it drastically
+simplifies the series comparing with previous revisions and detangles
+it from ethtool api discussions.
 
-I'm pretty much interested as well :) I've been CC'ing netdev as a
-gesture of goodwill, that's despite you blocking an unrelated series
-because of a rule you made up and retrospectively applied and belittling
-my work after. It doesn't seem that you content with it either,
-evidently from you blocking it again. I'm very curious what's that all
-about? And since you're unwilling to deal with the series, maybe you'll
-let other maintainers to handle it?
+The idea was first floated around by Saeed during netdev conf 2024.
+The series also borrows some patches from [2].
+
+Benchmarks with zcrx [3] show up to ~30% improvement in CPU util.
+E.g. comparison for 4K vs 32K buffers using a 200Gbit NIC, napi and
+userspace pinned to the same CPU:
+
+packets=23987040 (MB=2745098), rps=199559 (MB/s=22837)
+CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+  0    1.53    0.00   27.78    2.72    1.31   66.45    0.22
+packets=24078368 (MB=2755550), rps=200319 (MB/s=22924)
+CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+  0    0.69    0.00    8.26   31.65    1.83   57.00    0.57
+
+netdev + zcrx changes:
+[1] https://github.com/isilence/linux.git zcrx/large-buffers-v5
+Per queue configuration series:
+[2] https://lore.kernel.org/all/20250421222827.283737-1-kuba@kernel.org/
+Liburing example:
+[3] https://github.com/isilence/liburing.git zcrx/rx-buf-len
+
+---
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/isilence/linux.git tags/net-for-6.19-queue-rx-buf-len-v5
+
+for you to fetch changes up to f389276330412ec4305fb423944261e78490f06a:
+
+  eth: bnxt: allow providers to set rx buf size (2025-10-14 00:11:59 +0100)
+
+
+v5: Remove all unnecessary bits like configuration via netlink, and
+    multi-stage queue configuration.
+
+v4: https://lore.kernel.org/all/cover.1760364551.git.asml.silence@gmail.com/
+    - Update fbnic qops
+    - Propagate max buf len for hns3
+    - Use configured buf size in __bnxt_alloc_rx_netmem
+    - Minor stylistic changes
+v3: https://lore.kernel.org/all/cover.1755499375.git.asml.silence@gmail.com/
+    - Rebased, excluded zcrx specific patches
+    - Set agg_size_fac to 1 on warning
+v2: https://lore.kernel.org/all/cover.1754657711.git.asml.silence@gmail.com/
+    - Add MAX_PAGE_ORDER check on pp init
+    - Applied comments rewording
+    - Adjust pp.max_len based on order
+    - Patch up mlx5 queue callbacks after rebase
+    - Minor ->queue_mgmt_ops refactoring
+    - Rebased to account for both fill level and agg_size_fac
+    - Pass providers buf length in struct pp_memory_provider_params and
+      apply it in __netdev_queue_confi().
+    - Use ->supported_ring_params to validate drivers support of set
+      qcfg parameters.
+
+Jakub Kicinski (1):
+  eth: bnxt: adjust the fill level of agg queues with larger buffers
+
+Pavel Begunkov (5):
+  net: page_pool: sanitise allocation order
+  net: memzero mp params when closing a queue
+  net: let pp memory provider to specify rx buf len
+  eth: bnxt: store rx buffer size per queue
+  eth: bnxt: allow providers to set rx buf size
+
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 118 ++++++++++++++----
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |   2 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c |   6 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h |   2 +-
+ include/net/netdev_queues.h                   |   9 ++
+ include/net/page_pool/types.h                 |   1 +
+ net/core/netdev_rx_queue.c                    |  14 ++-
+ net/core/page_pool.c                          |   3 +
+ 8 files changed, 118 insertions(+), 37 deletions(-)
 
 -- 
-Pavel Begunkov
+2.49.0
 
 

@@ -1,183 +1,123 @@
-Return-Path: <io-uring+bounces-10005-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10006-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B36ABDA351
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 17:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDF2BDA432
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 17:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6F43AC19F
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 15:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C42C5805F0
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 15:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FCA2FFDD4;
-	Tue, 14 Oct 2025 15:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B238303A3D;
+	Tue, 14 Oct 2025 15:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDr4RLYn"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NLXyQw/s"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49586278772
-	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 15:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96476303A04
+	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 15:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760454111; cv=none; b=jGcp/WT3HrpT1fDz+UWvetLtuR2JmWTfq6U9V38B4v/r57pSgX9Zg5y2wuCEw3gNBA3hvcdMVEwHgXMjm5xk+eCxavyyHgViXjOdZFX3QSaLa1mI98oMOZFvSUfIq/MZhtTPiHIq4SfuNRw7aMbl8TK/skfu9PybESWVhdZMG0w=
+	t=1760454330; cv=none; b=LUrGzeK0u/aLnS+a3a5ly8DHzVShZMPfmRJhKPcpX1EQ/qTgVIefDAEccsZfalPiFbqjhgMqFv9KYWupdB57z4Do20p9ykzWLcyXNPioZUTr7nrXensYBMWCJk8wGUNk39qOen/w4TYG7vKP+FJ9mqHPw+rca7WDMyWBdTmj9XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760454111; c=relaxed/simple;
-	bh=8CBKQ+xkCR4hzJpn9s7KY4kzeYFCVYt0xrgXy9KSJBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UQb9k1A2bzTiZsfIiq+14wADiSyKyyiJ+yi2sCb1Ogrffn+4neCE9AVlxzjBxCGkUbh9Lu+4GLpQkJLcSv25IgA33KK6X8KMZKvIhWkdy4pIGvgKRCSI1FAexkIN8tB9SQX69kDL9YjIhRyKhwbqRIzqHgeD83wu5ImMlV5ZZyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDr4RLYn; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso40949625e9.3
-        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 08:01:49 -0700 (PDT)
+	s=arc-20240116; t=1760454330; c=relaxed/simple;
+	bh=Cpeh2PobhrlkWQq//Zg3oNUV4rDlQSMY0avy4PLRJP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=m7bdBnP/jMMLIcS5ToCHfouqwvjFOffVvvou8foFnxpcHYIZZvxNs6RLW0LIbk/ogvf7X08M/qXHsIuznNgLLK65s0xEINrpVJseuSj0Drxh18NvtJxV4jNwFoWTuXbHKxNl/47Z0RECWNuWCSE0jcsjqhndVoq6IwJFG4nvfHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NLXyQw/s; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-9335a918867so546963239f.2
+        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 08:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760454107; x=1761058907; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SrYu44JadHRt7GuwzjcxjZ0wn2Xq6CWmDu0PRz9ln7A=;
-        b=HDr4RLYnR07xujJ8fATRP1iYJvQJ9Ni6pYXvsufAnSUVyRooxbhcoRCheY8KFBWzCR
-         fnHT1B4LNLeMQ2RteY7Pob0sVQh0Ff1vyRGrqS0H/U/j5MO+taaeLCvDZJtsq0FxlX8c
-         4ZkW+uWS06hmt49Kegn1JHTuw1vdhklCNgGit6kCrp18nxf0C71+Rjd5Ei4T29NT9Ydi
-         TfmB7v+QCOit5OunPh79jGyYzgDZlUTbkApWpNiXiYXDWpfGfzQkdGq8KyWATr5XQgNB
-         ixgshF/oxVlaYi6CZ4Rx9aP+MoUNfnxwLGDMsWX3REkRmqpES4MUrUDsIlUCjVGPMa1i
-         JWuQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760454324; x=1761059124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=20H9qrzulYi7f8Nw/bG6Cq9N9HWvck32DkHEVmHisB0=;
+        b=NLXyQw/sRcBgDaR2n7w3WGCAf+eT/McBMOyXyWEmeO/paypIfJAZ9KtpMxGB9CPauE
+         oqfKDmx2kTDWP/8OAy+/l3AVW62lWg17YqGQMXbTFbmEecFK8bIUwQmqro4jR8CIj3f2
+         nN4Bp8nvu0kU29t9TuqiWb6A2LAXM7MRVptsSWCX+NMxnzb41HDMjA0Hl0Pe5bON5tRb
+         V1i0B4Sv0UL1hkmUEE7S9LH7k5E48uJrm89yriL/q6+pQRR3pDmIpODhNtIkNLuZza0B
+         S76Y17yJ3k5cCIROsYZsT7DdIn82AbStY6uIqYcDa/I3M3cNIhQOJGh1It/E5Fe+Jb16
+         YeUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760454107; x=1761058907;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SrYu44JadHRt7GuwzjcxjZ0wn2Xq6CWmDu0PRz9ln7A=;
-        b=C3+K+S9L+Lg6CSKBQNXR+LUJmN8CEz0m0E3sPTL1BN6ssPniDPotNzWy4czvb5DXfW
-         Lnq4lj6VznhN7eX5tohwqfkWNR8ZatFmIaYpf9EvV34IuluTMn+pURw6sXsY/L6A3OK1
-         P8EG7Vz1PKe1cWtVFW/ipt9n6Y4c+fjxPMP1xf2nfARoELTLv3agnLWANPEcfnb4WRm9
-         +HzFmX1ljzJt2uepSZQNuLdkxJICAkPio0izNPN8zhY4pXxDm6QA2pcxE/+YnOaSK55r
-         qJK5BG+NY+R5n1xp0m0gt/+mYVazB4JT3+9p5eYohSFdAjDxmpPTJDtz69VpyXs64XWx
-         J5Zw==
-X-Gm-Message-State: AOJu0Yz3GbupT3sMebtDgQwVv1SEdnbmMefOOkRkLpr8mSPg60DV9EAV
-	0KlXaOk3+ufJt5ddMgZQ60x4WHdnXet8G1ECSqYb8ZfqnggJfGg0xxPmuTG/ww==
-X-Gm-Gg: ASbGncv6I6Na6/I6p7XfXt3zOHqwTgDiIijcluvBQt2/bOHZM0tPz/CTz1IGQ7YZIgr
-	sWgSJy3+3BPxMxzYldJKTSEfazMOUvD62KJdUAXbBiZf2k9eRsVwYzfb+8zqoXf70K/4tnGn6gv
-	iV4iPpJq8oeDAbphoBi/wfYrNyc6atm/cSwwVnsPOSDLM9wHBeaojk4dMIRF4m61iSv3O4dXh38
-	4KAHqTtNIlVAAz0TIgM66UGlS822KGmRpszFtSDmXmlO1kDUZT/83eX4juCdKK9RATrPAqM3dM/
-	ifciW2hvJzcIPUy3Ri9bsuPlpSfR8gsFtUO0YIYhRr7FzJN4DaXZSFXqOPfbGIGi2h3WvhMDmi2
-	ddkyTi4+xjnK/jcyZNLBVOeFO
-X-Google-Smtp-Source: AGHT+IFiGfALc5TbjMFF0GxVv5cid486Iy+fX6Whxe9g52wanymbsg6UPF2zoFuZx8vQe5OyZvo7cw==
-X-Received: by 2002:a05:600c:a43:b0:46f:b32e:5094 with SMTP id 5b1f17b1804b1-46fb32e50fcmr168461215e9.32.1760454106746;
-        Tue, 14 Oct 2025 08:01:46 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:75fd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb4983053sm243910975e9.8.2025.10.14.08.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 08:01:45 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH liburing v4 3/3] test/query: signal query loop
-Date: Tue, 14 Oct 2025 16:02:57 +0100
-Message-ID: <d81ccb3c3e3114cedf9434033c0ad496c7186650.1760453798.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1760453798.git.asml.silence@gmail.com>
-References: <cover.1760453798.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1760454324; x=1761059124;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=20H9qrzulYi7f8Nw/bG6Cq9N9HWvck32DkHEVmHisB0=;
+        b=rfLb3ch0YtGY75CJPfolszKXgul/qP5j+yeEeSDdk1MIVtnIcpSjRyOENzvll4z3si
+         q04dSzQpAyzasz7YL/l0SEIoBKlgM9at42h1NuOlctyEDKhXMzZsCTmTaLKvzXZSuz/R
+         MMZ+7wr4zktdj2li/J5hbkaZ+pZAi4RAwIHmdL93+NwRhxJDwXwxXQPNSxUhgd5LbXij
+         XfhmOUcHP+2PEbw1Rqe0LHElNLwTqTLp4vCdikZHV0Fziji3uy8V2/isPvbuYn5pGMrK
+         v9vBFC6vg7gpMgnIuixxRj/6fwd3YLYqlSe3awpBEBramwmzgOAP8TgpYdR4u2M9UOi9
+         oTXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUq5pBunzKvTmi7fKvd5bz3osnCQJYu2euqp2PCNUwA0dbJHBTxYUUoSy6K3gOAMGnXKWSLdjXeKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJt1FJ5UCbpE4MNd2sXvKBAPhjp9X7lIJ7wL/6vCGvd0zFjKxe
+	QPSkBIpsHnreIgQG6nUKrOGt9B9eTFCJVg6yPAWHBq/QlYZSYTI/ZPzr/lYOF991hgrkul9Rx2u
+	1MSVpLsw=
+X-Gm-Gg: ASbGncsJGQGzGSqkVvFwiDioMWjsdJ0clhY2t16q8io8KE2/Fgl4lmAmYKvUXUPC7DI
+	g2OpLnz6cxywqYiPOzAxVfcSRJXylntysNW4q4+lnf/0Y18Jyn3ADiRl5wbCHKCebjsq6pR2xVO
+	WAj2iGLtXS1TfC4g+SE+hq5AfQ0FiD79iLh/ECyUrxLxUmkUnjchqRPkbk/S8RE9XcebpG+BXr4
+	5KjivLNMcCn1QKxwvtW1kd7q6ABGdYxUb62MQU5Plo4F1pt7kIGTRU9T6vU3ATHIueqr4Uxm2eQ
+	hooUjKpxQ1+iKsBnq3xY+yeQOzScCc+/9oBvqI/ODs2qS/b0vO55S1bvA24jcxptrZ05lGh+w3l
+	cpeuvqr7xPxDovr3lTOHq0jcXwL39mvc1H7FgOA==
+X-Google-Smtp-Source: AGHT+IEXZe7/ZtKjlG3ymnWPrRgo581ArGInbVmkv+iTSj5KsjTPv6YbeANLa6/uMtT7jTPiPynNQQ==
+X-Received: by 2002:a05:6602:160f:b0:913:34eb:5562 with SMTP id ca18e2360f4ac-93bd16fdf50mr3190001739f.0.1760454324509;
+        Tue, 14 Oct 2025 08:05:24 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a3f004sm498134439f.16.2025.10.14.08.05.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 08:05:22 -0700 (PDT)
+Message-ID: <845640f0-d8a7-4fc1-aaff-334491780063@kernel.dk>
+Date: Tue, 14 Oct 2025 09:05:21 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Introduce non circular SQ
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1760438982.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <cover.1760438982.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instead of relying on the kernel limiting the number of queries in a
-chain, send a signal. That must be able to abort the syscall.
+On 10/14/25 4:58 AM, Pavel Begunkov wrote:
+> Add a feature that makes the kernel to ignore SQ head/tail and
+> always start fetching SQ entries from index 0, which helps to
+> keep caches hot. See Patch 2 for more details.
+> 
+> liburing support:
+> https://github.com/isilence/liburing.git sq-rewind
+> 
+> Tested by forcing liburing to enable the flag for compatible setups.
+> 
+> Pavel Begunkov (2):
+>   io_uring: check for user passing 0 nr_submit
+>   io_uring: introduce non-circular SQ
+> 
+>  include/uapi/linux/io_uring.h |  6 ++++++
+>  io_uring/io_uring.c           | 34 +++++++++++++++++++++++++---------
+>  io_uring/io_uring.h           |  3 ++-
+>  3 files changed, 33 insertions(+), 10 deletions(-)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/ring-query.c | 41 ++++++++++++++++++++++++++---------------
- 1 file changed, 26 insertions(+), 15 deletions(-)
+I like the concept of this, makes a lot of sense. No need to keep
+churning through the entire SQ ring, when apps mostly submit a few
+requests at the time. Will help cut down on cacheline usage.
 
-diff --git a/test/ring-query.c b/test/ring-query.c
-index e266b4a9..4c335d64 100644
---- a/test/ring-query.c
-+++ b/test/ring-query.c
-@@ -5,11 +5,14 @@
- #include <stdlib.h>
- #include <string.h>
- #include <fcntl.h>
-+#include <pthread.h>
- 
- #include "liburing.h"
- #include "test.h"
- #include "helpers.h"
- 
-+pthread_barrier_t barrier;
-+
- struct io_uring_query_opcode_short {
- 	__u32	nr_request_opcodes;
- 	__u32	nr_register_opcodes;
-@@ -153,9 +156,8 @@ static int test_chain(void)
- 	return T_EXIT_PASS;
- }
- 
--static int test_chain_loop(void)
-+static void *chain_loop_thread(void *arg)
- {
--	int ret;
- 	struct io_uring_query_opcode op1 = {}, op2 = {};
- 	struct io_uring_query_hdr hdr2 = {
- 		.query_op = IO_URING_QUERY_OPCODES,
-@@ -167,27 +169,36 @@ static int test_chain_loop(void)
- 		.query_data = uring_ptr_to_u64(&op1),
- 		.size = sizeof(struct io_uring_query_opcode),
- 	};
--	struct io_uring_query_hdr hdr_self_circular = {
--		.query_op = IO_URING_QUERY_OPCODES,
--		.query_data = uring_ptr_to_u64(&op1),
--		.size = sizeof(struct io_uring_query_opcode),
--		.next_entry = uring_ptr_to_u64(&hdr_self_circular),
--	};
- 
- 	hdr1.next_entry = uring_ptr_to_u64(&hdr2);
- 	hdr2.next_entry = uring_ptr_to_u64(&hdr1);
--	ret = io_uring_query(NULL, &hdr1);
--	if (!ret) {
--		fprintf(stderr, "chain loop failed %i\n", ret);
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	(void)io_uring_query(NULL, &hdr1);
-+	return NULL;
-+}
-+
-+static int test_chain_loop(void)
-+{
-+	pthread_t thread;
-+	int ret;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	if (ret != 0) {
-+		fprintf(stderr, "pthread_barrier_init failed %i\n", ret);
- 		return T_EXIT_FAIL;
- 	}
--
--	ret = io_uring_query(NULL, &hdr_self_circular);
--	if (!ret) {
--		fprintf(stderr, "chain loop failed %i\n", ret);
-+	if (pthread_create(&thread, NULL, chain_loop_thread, NULL) != 0) {
-+		fprintf(stderr, "pthread_create failed %i\n", ret);
- 		return T_EXIT_FAIL;
- 	}
- 
-+	pthread_barrier_wait(&barrier);
-+	sleep(1);
-+	pthread_kill(thread, SIGKILL);
-+	pthread_join(thread, NULL);
-+	pthread_barrier_destroy(&barrier);
- 	return T_EXIT_PASS;
- }
- 
+Curious, do you have any numbers on this for any kind of workload?
+
 -- 
-2.49.0
+Jens Axboe
 
 

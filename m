@@ -1,212 +1,172 @@
-Return-Path: <io-uring+bounces-9991-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-9993-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F95BD8D62
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 12:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21639BD96EC
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 14:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F3E188A0A6
-	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 10:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1373A6E81
+	for <lists+io-uring@lfdr.de>; Tue, 14 Oct 2025 12:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F863BB40;
-	Tue, 14 Oct 2025 10:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3AC288C13;
+	Tue, 14 Oct 2025 12:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTvMyAE0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIOhET1l"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BE02FC02E
-	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 10:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DC22EB85B
+	for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 12:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439425; cv=none; b=jX9bZkxYW0oe8l5HYeY8cfp+nDXubXpAZW8ylHA+KsI6kYZZFIKzuBJ5N1Z0P/4s4qmLIHjhyhX0dJjnV00BuVeFmsMSYzkX9391Jj2d0Nis+Y7LyADjA8eXshR4hrfryPAI9EK9I/E9IsA/LGsnv1d5GB/yun87FRGb0F99xR8=
+	t=1760445945; cv=none; b=K3z+Suu1qvF+PJa9a+SCUuEcGzrNEmF/Mh7I/sO2FD9FWDFgtnWvas0TzsQLuNuG+0v8uW1+Lwo+yGWcAGNVMFqvb4BgSCt1BNJV3KnPyOZEJcCShvM2hjo6GmCk8ZIpcEuGJD9HW+4KBZVAkaAdT1rAkPcFpiu5cqZUKibZckc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439425; c=relaxed/simple;
-	bh=ksuFeBoP8a+tbzMB+yoXvyzK0UHb9PeD4xdjXE5PTRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MgVPpxE3BOdeDAnnDH2pYB90NCJdzIixD2N03R5HwaEVOyDsHhtgpeWHJjxsIOgNhkkz3taVMErWmwJxj98KundaCZMMfZKiQsmbdLaZVZ0RWDfgZv+Rfjifj60caPhH6QtHTHigOhWRwZdnhcgb4FC0lXSZwkrLauGFfrvftFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTvMyAE0; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1760445945; c=relaxed/simple;
+	bh=4xAZty85ZHdvBE6Q6Ju6E8/SyfTuwcvhqmJQ6fWLs54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MML+WKkH9DF/h8FasccFhmzSIp5NwBwnK14GrampOYYbRhrFMLMBMN4hnnXbfstpzopAPQg4b2qQtHT1L3e/bfV1w030MmtEey+D0DrxBnrAWMzVCIRftYeshsGY3B4pUfPh2lKnWAoJcIjyzfD5bkv8AIoZWr8OB8eXCjuW9qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIOhET1l; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e3af7889fso28252885e9.2
-        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 03:57:03 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e430494ccso30470395e9.1
+        for <io-uring@vger.kernel.org>; Tue, 14 Oct 2025 05:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760439422; x=1761044222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjgDXicB8S9JUms+F4Ot9xVd1QiQ0K4XC5uKmcY58GI=;
-        b=JTvMyAE04dqALahfKMySShAV3vPQesuqiBJ/vaSY1ZvjIHXj7nku/ds0sRfIni1bC3
-         lJb/7edRM+9It3vNBdEbVQrf/fMJA8YqfFb1I3aMG0660TzKUqlSDvCxo2gTcFgLnKaa
-         bN96s/rHsrOewyDLCaIYEmYwqkZYLPCqMgbtOVtkl4P7HvP5OQ9tveBcCGG6lt+hr/W8
-         KCZVBzcfjsgQe+hlivwTjgkiIs7qoO95wH8R7egAhx2FsVawI6/jdJXZ2CEeNRWP6pKs
-         md1ncTMYK2rl+yVskgifRiC+46S7565Bhe+Z0/lGHL42LfwG7/CyAqHlubTMA+3Ai9bI
-         42EA==
+        d=gmail.com; s=20230601; t=1760445942; x=1761050742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
+        b=SIOhET1lP1CVEl97faPGO0VQp8rByWy78RyyTQJ62a5gycXaEFN4W95RDO+019HH7D
+         U9fSHg0ptn4JjIuGHDt23ae5jN9cs6Lf4wx02pqBFc1PEyn24REtWb36TUcLn4KLvq2X
+         ZCSuti7V+4r+5smtVUQHuN0GQLO46+F5ChOtFDmbXMkbT7VPE0X73lfqU3zN7rVsPOS2
+         JTMoQpeedNZkxx8ITPlZzzAOqv3vZS5No6nZsD6PpJ0/vwdIqyMYTB+dZvKgXvNa4KYE
+         54rfafm2j6aUCD/0SeLxGBXweMg3Wbq3nqEmP9cry2nfD9U4Rb7UAilPHO43+3utCJsz
+         mV7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760439422; x=1761044222;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hjgDXicB8S9JUms+F4Ot9xVd1QiQ0K4XC5uKmcY58GI=;
-        b=Y9Gvd1JnU3O0kZE4xhPKEXBbM0o0Y+im9nxYRQq12Ez5rGdPKAiRXGr3pvGGfLkoQj
-         SCdU0Y8cbEi9EAS3hj87wHjEVrv+3aEE9vDieRBb2yuPc2k1iIr+lw1OgjIjylKdKi0b
-         72bY1sm9v3yRurtV9AWeylweHpL71nki+IpW8EBUbFgWGOC9PCj29zJE4+It0OmjiijV
-         y1K4oza25FEPKeRWSnNcxh5ll1nYgnQB5/l8BgomsL/IbULWdJbQy1Vytt9ghrWmuMK3
-         /QGj5kCRABZet/+LO/AP+5s9c3l/EOFC46rT7cP+ElbQQAJi0YYfUBEC75GbdyO0VsZT
-         gQ2A==
-X-Gm-Message-State: AOJu0Yx8UyKssBqadXb02c82qIJHX1QwxNWyX37bOX/UmOIvmZg5ahjm
-	9Q6UnfOw0/0voAZjrJno2KpJC8/kLmHu/D+2KICwPofRjRgCTTJ9d5BrZlFT4Q==
-X-Gm-Gg: ASbGncsRNUncf9ulyAfn6aZMLLdlWugS/zhgZ4lhydB9Rh9N4B1TRSai3KQJ0rZTs1m
-	K2jqABCZWDMo4INfrqaKDfrzwmXB03BKiUcPTfmV3cv+ZWvhRRKwokn66o74aCEVyTqPFiWJ/89
-	9oFAObh0bUTiVi9ZQKbsr7EpnQ4oaOKhfGIzT7JP/BLfVmEQIj/kvdSHcW0rOsIix27IT4xUaHQ
-	CA+LpGFM7gcLZNf3ynt2es1PrZCJ5BE5GOIONdz647PngGmFOTYUjGXR0g6TaH8yximKbygnthQ
-	GDSqjjU3hu5+eSFP4o83mKR2TEKefFIJkAHKZxvoGTlODAFzdSyIb7mjiy4o+B0mo1qA7+ITz3V
-	oZy334UotKyc7MTh4Za31JtF0
-X-Google-Smtp-Source: AGHT+IG9o3zVjPkanAUlEdv8YtjdTFFiQiQs91zJq3WKlmRVlAwHpvYxDSn12vDkD5qkhmnEhEF7wg==
-X-Received: by 2002:a05:600c:529a:b0:46e:4912:d02a with SMTP id 5b1f17b1804b1-46fa9aef4cbmr152317685e9.23.1760439421651;
-        Tue, 14 Oct 2025 03:57:01 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:7ec0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb497b8fcsm235694115e9.2.2025.10.14.03.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 03:57:01 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 2/2] io_uring: introduce non-circular SQ
-Date: Tue, 14 Oct 2025 11:58:10 +0100
-Message-ID: <d2cb4a123518196c2f33b9adfad8a8828969808c.1760438982.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1760438982.git.asml.silence@gmail.com>
-References: <cover.1760438982.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1760445942; x=1761050742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
+        b=NqvrIc0WVYV3daEpjuT/yXqyZYDOGFQD3f9cuLFFp26h4Vzqd5eYLiU+oWnhFy4aAv
+         wtEC+PUqL/eKgxkD8sYuOy3XCnQYgHO+bor8eH+muMJnC9BLJJiLtmoi7NY+H6wcJWNY
+         LiWziOoNhYtfXCwnvgyPNwQCF6uAUorJdw4bRKOiPHJhlZ91/zVL3x/GWiukkJqBta0Q
+         buq3DLnxyu0+cOwD5hm4lfPym9zt/YZ/IHwRyo3YPAYkwSdI4hc4AzkkLr5+FHvoeI0L
+         CKjJ+ELOdCjTptd8AS+z78Ih8w4x0luUm8t9w+eqwt+8FdHL/7OPjaXujRsUwVR8a9DZ
+         VF+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWRUMrGZXVKK+umvBpJzIbku67/FK6tg502MQh2ZFnro6RYmn194+INS3Lu9NUgf8Skg+FrBYhmMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh/V13++rY+Q6DCWjDAZAGnZ0EhaxFAr/pvU4CpsF+hk5tF81Q
+	dvz4r/kF64V16BZd7Kosx1jQojnDioREpJSBfBykEV8I6XrMcBSDc1WK
+X-Gm-Gg: ASbGnctNxlrG7CfY/ZXxaiFCuWAfpCPW+EiVfywan4+h5qWQblmwbwsF7A2rc2oyzgF
+	Y7qhJOE4br4B9wLzytdCt0khcaggs+kxhYdHN/R43Fd5iRN9Jvnm36CLnp7GzaeyEQLOs5XnB8s
+	dyIdDBOwVITuaxSW9LnOI1VKLhNSmbMj0nTwiTThw+RaQo92tC0SHo0+/j4dgi1MYD67CBOQuaL
+	q8GzKGTW7gkiCAE7MyUauea3X+c3/sqhrC/i3j78O1ZpGqzjj8UGe0Hn/KldKpfRJtqbpsrJ8aN
+	h/5RtYDHzgOMGJlRj392jrAthKn8WwMt/OBqo590ZYfU245LIHW1RX8/SOOLREo81KgBLTJk/e1
+	gBDiLIZyL+5i+db/f5wkS6DCu1++1p3Mm57TbjUPmEUOm0rflYw5G7DbH2rLdhzxPKkwH5kJVQw
+	v671+Zb7VQ
+X-Google-Smtp-Source: AGHT+IG37XYlLrmKRzsVTbT8x4wG0Ta4s90KjMR3qbRk2A+e9jHNkHgI8r+1AkdRhNxcKymiD3ZRzw==
+X-Received: by 2002:a05:600c:c162:b0:46e:47cc:a17e with SMTP id 5b1f17b1804b1-46fa9a8f4c8mr165749265e9.1.1760445941678;
+        Tue, 14 Oct 2025 05:45:41 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7ec0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb55ac08dsm232559785e9.13.2025.10.14.05.45.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 05:45:40 -0700 (PDT)
+Message-ID: <0ef2009e-2593-4b15-a96b-512c1dd30151@gmail.com>
+Date: Tue, 14 Oct 2025 13:46:56 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
+ kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
+ Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
+ Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
+References: <cover.1760364551.git.asml.silence@gmail.com>
+ <20251013105446.3efcb1b3@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251013105446.3efcb1b3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Outside of SQPOLL, normally SQ entries are consumed by the time the
-submission syscall returns. For those cases we don't need a circular
-buffer and the head/tail tracking, instead the kernel can assume that
-entries always start from the beginning of the SQ at index 0. This patch
-introduces a setup flag doing exactly that.
+On 10/13/25 18:54, Jakub Kicinski wrote:
+> On Mon, 13 Oct 2025 15:54:02 +0100 Pavel Begunkov wrote:
+>> Jakub Kicinski (20):
+>>    docs: ethtool: document that rx_buf_len must control payload lengths
+>>    net: ethtool: report max value for rx-buf-len
+>>    net: use zero value to restore rx_buf_len to default
+>>    net: clarify the meaning of netdev_config members
+>>    net: add rx_buf_len to netdev config
+>>    eth: bnxt: read the page size from the adapter struct
+>>    eth: bnxt: set page pool page order based on rx_page_size
+>>    eth: bnxt: support setting size of agg buffers via ethtool
+>>    net: move netdev_config manipulation to dedicated helpers
+>>    net: reduce indent of struct netdev_queue_mgmt_ops members
+>>    net: allocate per-queue config structs and pass them thru the queue
+>>      API
+>>    net: pass extack to netdev_rx_queue_restart()
+>>    net: add queue config validation callback
+>>    eth: bnxt: always set the queue mgmt ops
+>>    eth: bnxt: store the rx buf size per queue
+>>    eth: bnxt: adjust the fill level of agg queues with larger buffers
+>>    netdev: add support for setting rx-buf-len per queue
+>>    net: wipe the setting of deactived queues
+>>    eth: bnxt: use queue op config validate
+>>    eth: bnxt: support per queue configuration of rx-buf-len
+> 
+> I'd like to rework these a little bit.
+> On reflection I don't like the single size control.
+> Please hold off.
 
-This method is simpler in general, needs fewer operations, doesn't
-require looking up heads and tails, however, the main goal here is to
-keep caches hot. The userspace might overprovision SQ, and in the normal
-way we'd be touching all the cache lines, but with this feature it
-reuses first entries and keeps them hot. This simplicity will also be
-quite handy for bpf-io_uring.
+I think that would be quite unproductive considering that this series
+has been around for 3 months already with no forward progress, and the
+API was posted 6 months ago. I have a better idea, I'll shrink it down
+by removing all unnecessary parts, that makes it much much simpler and
+should detangle the effort from ethtool bits like Stan once suggested.
+I've also been bothered for some time by it growing to 24 patches, it'll
+help with that as well. And it'll be a good base to put all the netlink
+configuration bits on top if necessary.
 
-To use the feature the user should set the IORING_SETUP_SQ_REWIND flag,
-and have a compatible liburing/userspace. The flag is restricted to
-IORING_SETUP_NO_SQARRAY rings and is not compatible with
-IORING_SETUP_SQPOLL.
+> Also what's the resolution for the maintainers entry / cross posting?
 
-Note, it uses relaxed ring synchronisation as the userspace doing the
-syscall is naturally in sync, and setups that share a SQ should be
-rolling their own intra process/thread synchronisation.
+I'm pretty much interested as well :) I've been CC'ing netdev as a
+gesture of goodwill, that's despite you blocking an unrelated series
+because of a rule you made up and retrospectively applied and belittling
+my work after. It doesn't seem that you content with it either,
+evidently from you blocking it again. I'm very curious what's that all
+about? And since you're unwilling to deal with the series, maybe you'll
+let other maintainers to handle it?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/uapi/linux/io_uring.h |  6 ++++++
- io_uring/io_uring.c           | 29 ++++++++++++++++++++++-------
- io_uring/io_uring.h           |  3 ++-
- 3 files changed, 30 insertions(+), 8 deletions(-)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index a0cc1cc0dd01..d1c654a7fa9a 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -231,6 +231,12 @@ enum io_uring_sqe_flags_bit {
-  */
- #define IORING_SETUP_CQE_MIXED		(1U << 18)
- 
-+/*
-+ * SQEs always start at index 0 in the submission ring instead of using a
-+ * wrap around indexing.
-+ */
-+#define IORING_SETUP_SQ_REWIND		(1U << 19)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ee04ab9bf968..e8af963d3233 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2367,12 +2367,16 @@ static void io_commit_sqring(struct io_ring_ctx *ctx)
- {
- 	struct io_rings *rings = ctx->rings;
- 
--	/*
--	 * Ensure any loads from the SQEs are done at this point,
--	 * since once we write the new head, the application could
--	 * write new data to them.
--	 */
--	smp_store_release(&rings->sq.head, ctx->cached_sq_head);
-+	if (ctx->flags & IORING_SETUP_SQ_REWIND) {
-+		ctx->cached_sq_head = 0;
-+	} else {
-+		/*
-+		 * Ensure any loads from the SQEs are done at this point,
-+		 * since once we write the new head, the application could
-+		 * write new data to them.
-+		 */
-+		smp_store_release(&rings->sq.head, ctx->cached_sq_head);
-+	}
- }
- 
- /*
-@@ -2418,10 +2422,15 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 	__must_hold(&ctx->uring_lock)
- {
--	unsigned int entries = io_sqring_entries(ctx);
-+	unsigned int entries;
- 	unsigned int left;
- 	int ret;
- 
-+	if (ctx->flags & IORING_SETUP_SQ_REWIND)
-+		entries = ctx->sq_entries;
-+	else
-+		entries = io_sqring_entries(ctx);
-+
- 	entries = min(nr, entries);
- 	if (unlikely(!entries))
- 		return 0;
-@@ -3678,6 +3687,12 @@ static int io_uring_sanitise_params(struct io_uring_params *p)
- {
- 	unsigned flags = p->flags;
- 
-+	if (flags & IORING_SETUP_SQ_REWIND) {
-+		if ((flags & IORING_SETUP_SQPOLL) ||
-+		    !(flags & IORING_SETUP_NO_SQARRAY))
-+		return -EINVAL;
-+	}
-+
- 	/* There is no way to mmap rings without a real fd */
- 	if ((flags & IORING_SETUP_REGISTERED_FD_ONLY) &&
- 	    !(flags & IORING_SETUP_NO_MMAP))
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 46d9141d772a..b998ed57dd93 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -54,7 +54,8 @@
- 			IORING_SETUP_REGISTERED_FD_ONLY |\
- 			IORING_SETUP_NO_SQARRAY |\
- 			IORING_SETUP_HYBRID_IOPOLL |\
--			IORING_SETUP_CQE_MIXED)
-+			IORING_SETUP_CQE_MIXED |\
-+			IORING_SETUP_SQ_REWIND)
- 
- #define IORING_ENTER_FLAGS (IORING_ENTER_GETEVENTS |\
- 			IORING_ENTER_SQ_WAKEUP |\
 -- 
-2.49.0
+Pavel Begunkov
 
 

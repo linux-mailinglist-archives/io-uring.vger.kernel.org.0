@@ -1,169 +1,140 @@
-Return-Path: <io-uring+bounces-10021-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10022-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15C7BDFD6C
-	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 19:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DB1BE0831
+	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 21:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7604319C5E8F
-	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 17:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569853AE392
+	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 19:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6537B338F2F;
-	Wed, 15 Oct 2025 17:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C5F30C341;
+	Wed, 15 Oct 2025 19:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="PIR457Mw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QxeJ1mJl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-vs1-f97.google.com (mail-vs1-f97.google.com [209.85.217.97])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CF62D3755
-	for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 17:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A720221FBD
+	for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 19:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549162; cv=none; b=i7Az2pxoaavSwViv04uEeaPIPwhgYmA8hM3priN97hDevUl4WRdHMFA58zyk3F8c2iJiV9GZnFbYtpBw5GKn2RCFeaolAUXmrtRoEnlvctrnsIUlvXefhXEy5V1ZokwFaYcDN/DJUd0FLUwpZ8sG60gowgbG4I5WW7MpPYixZGA=
+	t=1760557452; cv=none; b=M7CueqbsKglWj/qAiCACdLu4xYkXmAk2WOB1g8P0HSr1M+dTb6Rgvma0bsSTij4QUgd6DOS+Z60ChD+i9CuUThBW461/iJfnR288MXIJJiICLZEGWzqmpliYoOLUaDRi00gS9UHOFpO5AwKsT/fl4m/c0u4Eq0S5BWWO3LGiD4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549162; c=relaxed/simple;
-	bh=JB5oFzqmNqnAnPByzKv3TD4SI4/gUXMe6Yt/XtVTZxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iG+txAkTDF/7eea9KEuLdNZiapFY+7lZSPEDGJplfUxBY1PlaL5O0xburj+TuuZ8cqEZlwEUfGZ/IPFTW42aRdBS/gxinytO0NoVPLe8pqkNAlZDmpJSqj9N2Rxrsz1AlwkQd0vSa/OOh2iGdp/XOdUmZpJGCeLLBI9MK9ow74E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=PIR457Mw; arc=none smtp.client-ip=209.85.217.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-vs1-f97.google.com with SMTP id ada2fe7eead31-57f496e96d6so451288137.0
-        for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 10:25:59 -0700 (PDT)
+	s=arc-20240116; t=1760557452; c=relaxed/simple;
+	bh=wjNue8Qr+w2WVc/mnfeoOAU2ur/Q7z5ODzJw8uE36Ps=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=OonhQgK/EQ7oVJPZx/nMtJyu/llBxoQyVvYLis5ueNU9wu7IrqXtg+gJvWLawxQldVD4Z7EHUucFHhugnjQcOOL+BTX3SJSpVw5mvtWyElKZSHe0Mm/Ky1RN6+g5dqldg2gy/o0iqCnsRfiSGlbUNSk+NBI/UlqtRiVvAR6al0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QxeJ1mJl; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-92aee734485so254171339f.1
+        for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 12:44:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1760549159; x=1761153959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8a0FBTWbRkzlovsTrElybeARL/kMTLRwEd+6K2uwZkE=;
-        b=PIR457MwBUzF9YGnn9XoWgp1FewRVHpdJFvQpOPbAOXOWIS5J8cyBezuLCfUc05kUN
-         0+BLS1xVgnkOrQAOqHRgZqjDW+5HzYNBcnk8aIkXrbcPesw/YBFp8vn0oat8DZiQuM8C
-         6knu0QmINxALoyiB5tCgQVCR4Zh+OLNdVM8vIsTo05sd0ZpJQOiVlE/arGsY0nCTHE7c
-         lg14OmuKDSQDEl0unTWOvMDLWhJgKuoJedejpLTQKD9AskcEiKGSTfjBi8cyf6dveRem
-         K3/oS0CgqKAE4X/BzozaDh4duoafrTcV5Rhuo49w5X4TgxkwtWYbIz73FKu4PFkDJbwT
-         sMKg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760557447; x=1761162247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dLwC6MPYnpkrf4ZaGxgZ773TPGvWmRhstTuVSLic0Go=;
+        b=QxeJ1mJl5Q4ejPA4hOeJWLmMkJzlkhEEruaMww+zdACyl/MpCK9sjXO5j6rwJwKWVf
+         facyXnIkLFTDdTKloNqAAvL7WfyJBpWhRMCPvMtTzn4dsbTVbUI04/ou+qs5FPXkmWGP
+         OMiy0y9cL+37y8itlhvhvBV/SdPdpsZn2JRsM1pNpMHAE4BjETfcMWnV8tKbhTperuUb
+         axdruJnMkJNUAKSDkU7BxqYTsrzLCcAybd2WzLGvBohAkq1sVqI2WahbwyW/tETTvDLc
+         eRzV+cC5lDcFWZMezacq2TeI8w1nZgyt/2DqV+s1RFAsromACgSJQ5qCSfWobHcEIyMz
+         qDKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760549159; x=1761153959;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8a0FBTWbRkzlovsTrElybeARL/kMTLRwEd+6K2uwZkE=;
-        b=VcGSutJbWNgMfn6+spQIxut+I6xQZ8MbiMlZRNzrUklkuLXwk4jxGM/6Jm7m2Um6hE
-         CR03iNd033uAwkz1SBN4UmbTEN8t8dwDdGVlnfGvU9PXoBidlGIYy4RFWC5fn6JZTK+W
-         4DAcYluenmrjNH7uQRUAgn2XXF2+DSYq6Lz9XFKgicqrzeGe5GVXfcnUkFp59u3KGfZZ
-         BP6PUcGdAzzjYrwvbfnZ0aG3biM/pMJYOBndGzfhO3VFYqlL9AYrxNuR7Rs8CtBS9sd5
-         TtoVvOxbzU45p7BzerWAsvgVypYLf53n72Z8abJwFpByZhBxGNQ90gDpqOn7LZFAWLyT
-         V0PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk4Gqw+jSQ+7HO4g51WXHSKXbxhw8HaZpd5odzxcocccSEaGU9yACKi/HApJFZQr7XBzHjCSairw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YylO3/paL3n3BmKjKnszYAQuj9g9JCYSn+N8qMwp4PHTZ+i+pN4
-	cCsArZj6Fl7lwy+L4ku8w307P50njy7hBbLxcGgbfENIelFzRiKlQGk46hqABVzbpnyp1vh2BKZ
-	ePSId4iHtObLqF5Bwtt0MTDiMRnKo2P4Es946
-X-Gm-Gg: ASbGnctj1mnmZR0TZrNt2+Jlq9Pmrdy97wlbXecwgtXGy9z6df2jQf2xb0gs1lXkfQl
-	fAB89ZUj9lkCDLorJ0PQ3EUSlM9E1IE8DlDNcyTJPEbKG/LiwU7iRiMNyl/jX13VzjguWT8NImj
-	EEOl55DTVixLBlnOCuwol7jCKIy/QYj4/kDepv2XMR3dyni2udQjioeFoiFaduZ96otB50Dl9hq
-	b8fbUPaC0sLBLuolef3oaVH2120olFzH2opVYtmjPR583yraB4cI47H9GvabXQuronaSQkdzCHD
-	FOx8Wc0Sd/sCSjfwclNvoFsvpaEYgMLUlnFVq2Z2x/qIKEUOus2vV26R+MLrPKEohevoSKpK
-X-Google-Smtp-Source: AGHT+IEyCGl9AhptKS4IDg6E1CU4cRmqkZiT6EIc5uRSVlidSgZPLElf0iGy34FDQOT0X6ZobQurYjmqAj3u
-X-Received: by 2002:a05:6102:3581:b0:55d:b35e:7a67 with SMTP id ada2fe7eead31-5d5e21f14famr5081188137.2.1760549158620;
-        Wed, 15 Oct 2025 10:25:58 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id ada2fe7eead31-5d5fc4d87cfsm2010256137.0.2025.10.15.10.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 10:25:58 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E7560340576;
-	Wed, 15 Oct 2025 11:25:57 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id E03A3E41EAD; Wed, 15 Oct 2025 11:25:57 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/memmap: return bool from io_mem_alloc_compound()
-Date: Wed, 15 Oct 2025 11:25:54 -0600
-Message-ID: <20251015172555.2797238-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1760557447; x=1761162247;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dLwC6MPYnpkrf4ZaGxgZ773TPGvWmRhstTuVSLic0Go=;
+        b=BHYhjyB5SP0KtN4nHn/72X0Hjv29lyFLqGOi2tcxzNBLJZFq4iAEQThjU1/DaNjMht
+         VVI9I1gtQi6kOlro9bJwtVyhd6zU6GZdG+Hqxs8DD5PcNGT+DgeidSAWZSGJHu9PuSgu
+         QhQIacR3wMCcAoySNWKmfniCrny82+AWfFeFLU635fRH1fFDHwboLKmVUzRlE8U6ZisM
+         c8gpcAttDbcktzM3ZGk7EkM6mt96FqwEf7eRCXdIwS2cXlJLabnvAmlyTZzBJ777Zo8H
+         u+lgQmGP84SOgXAUux5CqH57Z3a5jdYV2d2OGOSPGiMoIkOoHxxxSVfAsPtg+HKFXgSs
+         4jWw==
+X-Gm-Message-State: AOJu0Yxd2Af9suB6P5HiMaDOivl+Pq2ArHlsaPXPZ3IMjHGKm8zERJry
+	FJMxAixWSExhjKwRSbqBvPzpZhrnyK0fC39U7ZMJKCOpO0lGN1kSvuWuLQ1NJ1dHoe1tr9ihnRj
+	VxIrggU4=
+X-Gm-Gg: ASbGncsJjBhLznjLhHgGMcGB0C2MuNkWtNIlalRDLJpj5vNM5FJFQ3l0Wdmbvrh7vpY
+	KCnivugunvQ+HnXhIpuMxtz8CTs1CZeW3TuQgi8EucWMYesI6h6KlkgfiHot2SM6Ism9laO1/NX
+	Zofa16f4ZrAIS0/7dXYh+H9j8Wo6t09sH7G9DQVzY5ZR5tEYI007rZ7wBjVp/zh9dBQCJmAF/Zt
+	5Q54U1Vh4BZrvnCaeqjhBKk5HqpHIUOhbIUn7YkrB7ZsmHqR7FDLmpsJSbjeYIXN+vMXHKFmw4z
+	wFBKkImP84wIiRG9dWfN36cWdKBJcB2OLUZLumXVr0QGMHP8MtnqVq/wLfo0smxgqtGuop6W83v
+	u+eXFIElKALY5dwGioRWXIM/XnSJQ0H5KGTJDxGFk2J5FLxY5tMHX3GqqF8SN0sarvPeM01HqTy
+	BzmLk/3SU=
+X-Google-Smtp-Source: AGHT+IH+5e+i8IB4fTYrXotsvKFdmdO9umTVXDcFSUpLElu0Fwp/EzRywFaLIuufxt9FyZW0z0p9WQ==
+X-Received: by 2002:a05:6e02:156b:b0:42d:84b3:ac43 with SMTP id e9e14a558f8ab-42f873627a8mr334074985ab.2.1760557447389;
+        Wed, 15 Oct 2025 12:44:07 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f6c49b129sm5998402173.11.2025.10.15.12.44.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 12:44:06 -0700 (PDT)
+Message-ID: <b8891d74-400c-45b2-802b-b282bd8549c6@kernel.dk>
+Date: Wed, 15 Oct 2025 13:44:05 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rw: check for NULL io_br_sel when putting a buffer
+Cc: David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-io_mem_alloc_compound() returns either ERR_PTR(-ENOMEM) or a virtual
-address for the allocated memory, but its caller just checks whether the
-result is an error. Return a bool success value instead.
+Both the read and write side use kiocb_done() to finish a request, and
+kiocb_done() will call io_put_kbuf() in case a provided buffer was used
+for the request. Provided buffers are not supported for writes, hence
+NULL is being passed in. This normally works fine, as io_put_kbuf()
+won't actually use the value unless REQ_F_BUFFER_RING or
+REQ_F_BUFFER_SELECTED is set in the request flags. But depending on
+compiler (or whether or not CONFIG_CC_OPTIMIZE_FOR_SIZE is set), that
+may be done even though the value is never used. This will then cause a
+NULL pointer dereference.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Make it a bit more obvious and check for a NULL io_br_sel, and don't
+even bother calling io_put_kbuf() for that case.
+
+Fixes: 5fda51255439 ("io_uring/kbuf: switch to storing struct io_buffer_list locally")
+Reported-by: David Howells <dhowells@redhat.com>
+Tested-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
 ---
- io_uring/memmap.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 2e99dffddfc5..b53733a54074 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -13,30 +13,30 @@
- #include "memmap.h"
- #include "kbuf.h"
- #include "rsrc.h"
- #include "zcrx.h"
- 
--static void *io_mem_alloc_compound(struct page **pages, int nr_pages,
--				   size_t size, gfp_t gfp)
-+static bool io_mem_alloc_compound(struct page **pages, int nr_pages,
-+				  size_t size, gfp_t gfp)
- {
- 	struct page *page;
- 	int i, order;
- 
- 	order = get_order(size);
- 	if (order > MAX_PAGE_ORDER)
--		return ERR_PTR(-ENOMEM);
-+		return false;
- 	else if (order)
- 		gfp |= __GFP_COMP;
- 
- 	page = alloc_pages(gfp, order);
- 	if (!page)
--		return ERR_PTR(-ENOMEM);
-+		return false;
- 
- 	for (i = 0; i < nr_pages; i++)
- 		pages[i] = page + i;
- 
--	return page_address(page);
-+	return true;
- }
- 
- struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages)
- {
- 	unsigned long start, end, nr_pages;
-@@ -157,18 +157,16 @@ static int io_region_allocate_pages(struct io_ring_ctx *ctx,
- {
- 	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
- 	size_t size = (size_t) mr->nr_pages << PAGE_SHIFT;
- 	unsigned long nr_allocated;
- 	struct page **pages;
--	void *p;
- 
- 	pages = kvmalloc_array(mr->nr_pages, sizeof(*pages), gfp);
- 	if (!pages)
- 		return -ENOMEM;
- 
--	p = io_mem_alloc_compound(pages, mr->nr_pages, size, gfp);
--	if (!IS_ERR(p)) {
-+	if (io_mem_alloc_compound(pages, mr->nr_pages, size, gfp)) {
- 		mr->flags |= IO_REGION_F_SINGLE_REF;
- 		goto done;
- 	}
- 
- 	nr_allocated = alloc_pages_bulk_node(gfp, NUMA_NO_NODE,
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index a0f9d2021e3f..5b2241a5813c 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -655,13 +655,17 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
+ 	if (ret >= 0 && req->flags & REQ_F_CUR_POS)
+ 		req->file->f_pos = rw->kiocb.ki_pos;
+ 	if (ret >= 0 && !(req->ctx->flags & IORING_SETUP_IOPOLL)) {
++		u32 cflags = 0;
++
+ 		__io_complete_rw_common(req, ret);
+ 		/*
+ 		 * Safe to call io_end from here as we're inline
+ 		 * from the submission path.
+ 		 */
+ 		io_req_io_end(req);
+-		io_req_set_res(req, final_ret, io_put_kbuf(req, ret, sel->buf_list));
++		if (sel)
++			cflags = io_put_kbuf(req, ret, sel->buf_list);
++		io_req_set_res(req, final_ret, cflags);
+ 		io_req_rw_cleanup(req, issue_flags);
+ 		return IOU_COMPLETE;
+ 	} else {
+
 -- 
-2.45.2
+Jens Axboe
 
 

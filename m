@@ -1,159 +1,240 @@
-Return-Path: <io-uring+bounces-10028-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10029-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44141BE31BB
-	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 13:37:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EEDBE3239
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 13:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA1D04FEFA2
-	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 11:36:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C618357E3D
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 11:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B23C3164B0;
-	Thu, 16 Oct 2025 11:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD756215F6B;
+	Thu, 16 Oct 2025 11:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCfQ0M2J"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UTMHNbDn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB283009F5
-	for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 11:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B1B6F06B
+	for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 11:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760614606; cv=none; b=nCoQ7YfB6fxYi5Alj1sMkWBp14Jr+DV1eBgJvAL1i0Lby7nd+xjJqzCroUlVPCPmGI2Wsq3L1NZE+3KQll+K4iQYwe/NS3/SWtjhg2pUICa0J/K+bCSscGqdw8UTXQgGNdKATa9s+0ibUz6fcHe7UTE57grRjxAKASS+fOsXKLE=
+	t=1760615133; cv=none; b=ZNk5dTt09YK9+NRK+Yz4wrg9gXs+dzPOkbhSBV5Nq1Wywc2LX8QKfyAh2C3WOzVc3ZZIURR7EMEu852HD22pKRrW4x7zIEEqrhW8vXRoEJOVwGM9tKjJAfGJQ0p9w7zletOQXdT87oSmxq0yiXso2IcDoCozYahG39bbW//3+eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760614606; c=relaxed/simple;
-	bh=l6t2XhjvyRBv3SOHqWxkS6X2WXs5JXpclMhkdlVu8e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3Kk4hlKwg/XTvArkq9IRdOExgpVFBJ8qPCPiGfcrzkmnzfZVsVkFT+srf9LnMs6bYET84QGCmWrv0jPuEDhAj1efqQ4eXAN4IhVaFSJNz62Blhv9xNq+8hLpTTJaXtGfuGnZC7TJZxaUOvRTXKN1Qrx1w1o5N2lfLnKUGBXhdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kCfQ0M2J; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-421851bcb25so352462f8f.2
-        for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 04:36:44 -0700 (PDT)
+	s=arc-20240116; t=1760615133; c=relaxed/simple;
+	bh=ywaf8A/x7Nbf+M1/lao302zTHzVygKYK/vrc8LJ9Ar4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jQK7isHULcBRr9gBmGR+jFer3pjunl2jdJJSqhARCbqrTAizdxvxGZNcAGc2tVTiBTK/zOvrRODKj3MZIK9+IB6VGDQ4KZeysbruwSau8zVtppSEnWmhiMZrIk0D5xKQMM3hGqRpgucvegmiOoPHInIysrVhTKT5qzuEALRhqu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UTMHNbDn; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-330469eb750so866898a91.2
+        for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 04:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760614603; x=1761219403; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lYRkRnXDkkYqdruP/GrkMZEpfl3vrmW68SVwFQLiLL0=;
-        b=kCfQ0M2JRmOh/gc2LyFUdhTRhx3+ThLOIwGV8I+n/RGr2BIcqeveBeq6u02YTTh2ki
-         qgjmXPoBgTCeOo/sM3vgx7k1b10PIByz3nn24Qdutpg2Salzj7+ufLbSa+FSYYacTR79
-         Ol22Rh8WkD7Zxc340HyxQOx7yu6+gIUcT+JRnfEhCG6+dEFEkdlsGbgp7QvJIq7bTq48
-         DLnCWQoNcs/JAhMUO99RMtlg62Qg8+5UmMEAXgI06YbIKrY0slDoXWzDA7G+wvCULAPc
-         GvgeYkjjEMCspYn2uyZyBs3kLD5zB51aavvDvm8gvrQElLgfu6XIObMz3hK7PjXK1Nrk
-         2Q4w==
+        d=bytedance.com; s=google; t=1760615131; x=1761219931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQBARUEmqTrZUTIQJxj8ULDOw4rsQvi2TBKE8gNYFOs=;
+        b=UTMHNbDnF12FkwP01OhA5ymjdU2rDBOffoloyI1hv97cpWH+r1oaEzRKyoHnpgnRv/
+         W3kaJ6GzOaXKYxnHoG8R0sbU0xj28jSOfe39wGwaxha43iZkx3W8mNyEiVWJyhM3aFeL
+         BoJtwlAe+zNoSJ+8Y+7+DXUGkzKScfTJtF3uZh2DULkbtxr6o6a8l42eoxCjz24BbUDC
+         lbEO3465jy3kYYhFNJlRITLowg6rM9tJNljC5P1TDxf2PICSBCgd8ZsnGzkVso4baa79
+         MFRwkvZkJ0hoV8Iua9vxuEjp5i5mINSG8U8Nw3C2sgzAOsH4IEttpQGEUCQ3KZbqI2+B
+         mmRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760614603; x=1761219403;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYRkRnXDkkYqdruP/GrkMZEpfl3vrmW68SVwFQLiLL0=;
-        b=WPae1mE4BDawo0mN0HViAsf3NRRHsXX3xi8FHl5bK+pb4/9L5BBlRmZtoXSiqAdnAE
-         SiFS/vLQG0J49siBnMAHpgg0V8/xN9pK0dr5INZhqKwUgLXgRUxqfIbnnaqdOufI44uH
-         8a1FgKXfoAyT/Tqtxw6PDDsxEgkfD0SDP9NkP94oSjmAuzQ0+Bw4rPybAVymRR8mhaN2
-         N+Vk63PpUW1uLLA5+mBeq2Lsi3fy94qPT5BrJFlbNL3UYZ4JeHrVRfCU5ngutF9KMYnF
-         0C25yJIKrGNPKLbpirH+aS7rCb4+PcIvdDg4jernEKyi0WR4Yye+fPqJbplvWG40F4op
-         GwGg==
-X-Gm-Message-State: AOJu0Yxv9KBcqizMWHpyLAoNTnVblJNaop3m78zOxt3izPa5FePjdwrD
-	HR1ZeSWSnlHpYLjlLw6WSshu1+YB9zSXutadU03Q7DX1rmLHYgAjpqs5
-X-Gm-Gg: ASbGncuAYqf4d8NcqH9SAyl3hdVeRixyWcpJE+2VBWFMbhKhnVcFiE4HB7qcNzPXfXD
-	LrnaFvL+2hFodw9oVM9EgjCjFv25RvIcuRoof8Xv39aR7V1S3rorl51LHskIJX2cEf2d/rOU3xz
-	wy7bJLOjBSMlZ6w0yR+d0ZgVeraWldFrUbaoQxdVZg8DnwRIT2z0b5tbmsp/e7awEqdhLIuCK5M
-	Ug7QBFgvqA+XG70VHQZEiuETaYkjjtM3yLY1DSEvgbVqzeeWkak4UFX5smNo9qYajKcuOTKIJjS
-	FYXMPocFkKahrmi4al2PVZBf78muNc9R/OucoL50q4cHC0ZwdJNrh7vfBLbzGbNFuuQw0NGsUdF
-	2Dq1URrp+3fyrd+JUPnI4Y8NcruHR9D9dFAxukZtGWaMs3vqDgM2qRYwc8uDXmxpJN6CG7sW26f
-	f/B5JRQsbf0nllAtACKx9vy2sdaqD8WTj+
-X-Google-Smtp-Source: AGHT+IGN5Uc/nEadhLFmRtZ+KJ0VJa6FGEgeJ7hU79c6oWsc4kI7EZ+Cl8Tlhrzw4EH4n/VO/MjwZg==
-X-Received: by 2002:a05:6000:2c06:b0:426:f10e:77ca with SMTP id ffacd0b85a97d-426f10e7886mr6314973f8f.24.1760614602843;
-        Thu, 16 Oct 2025 04:36:42 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:2b54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cd11sm34628304f8f.5.2025.10.16.04.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 04:36:42 -0700 (PDT)
-Message-ID: <dd5ee82e-fb18-4126-a4a8-4fe19d2e1d65@gmail.com>
-Date: Thu, 16 Oct 2025 12:38:03 +0100
+        d=1e100.net; s=20230601; t=1760615131; x=1761219931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xQBARUEmqTrZUTIQJxj8ULDOw4rsQvi2TBKE8gNYFOs=;
+        b=qk/MQe8OHAUiBaGk1Bwx2WvOkhz9cH5iKkn9JUYIadBXLSK4ta6dakVyR3ZFrQQRQS
+         yci7txuPbTGAwhu41zVjIihVJrdMdMGo5Dr2Z5hUB2peS6+sRfzqoJ0fjf32oNGvnN9d
+         GeRI4CNqZiyb9Jg0zQS+Sn0TKxsCt0wv0UoV+Alex8e19rgI/Bu1Isx79XeI98kO3sbu
+         woeWQJN59jiZSJxZshS2RYGJ6x8XbmT1hqi5lSRD2MiKhkX0LwLcJ8gb0qhq5Z6vOWzO
+         yhETq1p7VxNVImNPKbtwthIs4dgGDqDxgdE/QuVEV4d/82I3sLGwz7mhkodL+E1rdtCo
+         lStg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIaJRsK3iviVfqEB5Nz/gIfSYRur9XyAy9uvJA6QYAwbZP4p7q+S4kmtP4rgqDfNTynHL0GZsPJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMT5Rl6EOG48it26r+geFGlXSXFvdyGXBfMn/5DaKBXKHAwDY0
+	vjA0vs1YcI8XFt+JH4F+odni0bkFKJaJ3LA9ixQPVbqu6UR58VhCiI8yafBtp62RQL+s4RjDd/x
+	xcvL3
+X-Gm-Gg: ASbGncsAGZVL3/MMyB8ijVe2aPKzOCyjtPJzBn7DNUNBdKPKzOLaQ1E+zS5FNSOI9os
+	kUSD5zgXvx5U8XylFxPRt6oba3phPPYjA2ybcxKZnhPMrZGZNq5MqiYN2omOjhnX2S5hON2YWXV
+	Xcx5hSM2C6C8eIfePHX+5uRtYuDN/i1Otl8IrfbhxkR4pgLXAlcFolZtdirRmq565B1IgcSFsvg
+	eTB25Egrsd7m8OxTivOfnvDB2OiT+zQKk1Q2ESaqArZDehVpmihjAfjP9ChebnJXQ0/2XQACgpx
+	5moGlYwFijnYJ5K8KyRp4ukNQYV0ZJqYOf+rYL5JcrW7jq8DIMj4+tCoPuN9J3X8gKZCjOFr7ca
+	4JSAg9+Q6y9GIw837OkrSb63WsDcE43GOt89gmCwtP4YPNt0OY9NOEWJYqv8OQ6KGdZi1EECXwx
+	jF/2PavVlJptc8tr6iY0GmSV7xJB/FEZJIcu0PceA=
+X-Google-Smtp-Source: AGHT+IFL9gVSjbsN/tjWEd0VOhMKK2bAN2AN91+u++PE9V0fiR0brtczbNxWDCYGnRnHnlgGldIZWg==
+X-Received: by 2002:a17:90b:1d0a:b0:332:50e7:9d00 with SMTP id 98e67ed59e1d1-33b51118f31mr47965976a91.11.1760615130760;
+        Thu, 16 Oct 2025 04:45:30 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.251])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a227765f7sm2660227a12.0.2025.10.16.04.45.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 16 Oct 2025 04:45:30 -0700 (PDT)
+From: Fengnan Chang <changfengnan@bytedance.com>
+To: axboe@kernel.dk,
+	xiaobing.li@samsung.com,
+	io-uring@vger.kernel.org
+Cc: Fengnan Chang <changfengnan@bytedance.com>,
+	Diangang Li <lidiangang@bytedance.com>
+Subject: [PATCH] io_uring: add IORING_SETUP_NO_SQTHREAD_STATS flag to disable sqthread stats collection
+Date: Thu, 16 Oct 2025 19:45:19 +0800
+Message-Id: <20251016114519.57780-1-changfengnan@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] io_uring: introduce non-circular SQ
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org
-References: <cover.1760438982.git.asml.silence@gmail.com>
- <d2cb4a123518196c2f33b9adfad8a8828969808c.1760438982.git.asml.silence@gmail.com>
- <CADUfDZqXmmG+_9ENc6tJ4RRQ5L4_UKhWxZd3O5YGQP7tNo2iHg@mail.gmail.com>
- <fdff4e0c-0d26-4e19-8671-1f98e1c526a6@gmail.com>
- <CADUfDZqVG6sd-VChW3CxM+dgY7t7MRg3mqth038P0aYjjCsycA@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CADUfDZqVG6sd-VChW3CxM+dgY7t7MRg3mqth038P0aYjjCsycA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/14/25 20:46, Caleb Sander Mateos wrote:
-> On Tue, Oct 14, 2025 at 12:25 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 10/14/25 19:37, Caleb Sander Mateos wrote:
->>> On Tue, Oct 14, 2025 at 3:57 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> ...>> + * SQEs always start at index 0 in the submission ring instead of using a
->>>> + * wrap around indexing.
->>>> + */
->>>> +#define IORING_SETUP_SQ_REWIND         (1U << 19)
->>>
->>> Keith's mixed-SQE-size patch series is already planning to use this
->>> flag: https://lore.kernel.org/io-uring/20251013180011.134131-3-kbusch@meta.com/
->>
->> I'll rebase it as ususual if that gets merged before.
->>>> -       /*
->>>> -        * Ensure any loads from the SQEs are done at this point,
->>>> -        * since once we write the new head, the application could
->>>> -        * write new data to them.
->>>> -        */
->>>> -       smp_store_release(&rings->sq.head, ctx->cached_sq_head);
->>>> +       if (ctx->flags & IORING_SETUP_SQ_REWIND) {
->>>> +               ctx->cached_sq_head = 0;
->>>
->>> The only awkward thing about this interface seems to be if
->>> io_submit_sqes() aborts early without submitting all the requested
->>> SQEs. Does userspace then need to memmove() the remaining SQEs to the
->>> start of the ring? It's certainly an unlikely case but something
->>> userspace has to handle because io_alloc_req() can fail for reasons
->>> outside its control. Seems like it might simplify the userspace side
->>> if cached_sq_head wasn't rewound if not all SQEs were consumed.
->> This kind of special rules is what usually makes interfaces a pain to
->> work with. What if you want to abort all un-submitted requests
->> instead? You can empty the queue, but then the next syscall will
->> still start from the middle. Or what if the application wants to
->> queue more requests before resubmitting previous ones? There are
->> reasons b/c the kernel will need to handle it in a less elegant way
->> than it potentially can otherwise. memmove sounds appropriate.
-> 
-> Maybe most convenient would be a way for userspace to pass both a head
-> and a nr/tail value to the syscall instead of assuming the head is
-> always 0. But it's probably difficult to modify the existing syscall
+introduces a new flag IORING_SETUP_NO_SQTHREAD_STATS that allows
+user to disable the collection of statistics in the sqthread.
+When this flag is set, the getrusage() calls in the sqthread are
+skipped, which can provide a small performance improvement in high
+IOPS workloads.
 
-It feels fine from the API perspective, but you still need head/tail
-fetching and care, additional index sanitisation (Spectre), and either
-handling wrap around or extra border checks. All minor points, but
-the index handling will likely be more annoying than just doing a
-memmove.
+./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 ./testfile
+IOPS base: 570K, patch: 590K
 
-> interface without an indirection to the head value, which seems to be
-> a main point of this series. So always resetting to 0 and requiring
-> userspace to memmove() the remaining SQEs in the rare case that
-> io_uring_enter() doesn't consume all of them seems like a reasonable
-> approach.
+./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 /dev/nvme1n1
+IOPS base: 826K, patch: 889K
 
-If that's what the user wants to do as there are other ways
-it could be handled.
+Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
+Reviewed-by: Diangang Li <lidiangang@bytedance.com>
+---
+ include/uapi/linux/io_uring.h |  5 +++++
+ io_uring/fdinfo.c             | 15 ++++++++++-----
+ io_uring/io_uring.h           |  3 ++-
+ io_uring/sqpoll.c             | 10 +++++++---
+ io_uring/sqpoll.h             |  1 +
+ 5 files changed, 25 insertions(+), 9 deletions(-)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 263bed13473e..57adae0d67e5 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -231,6 +231,11 @@ enum io_uring_sqe_flags_bit {
+  */
+ #define IORING_SETUP_CQE_MIXED		(1U << 18)
+ 
++/*
++ * Disable SQPOLL thread stats collection, skipping getrusage() calls
++ */
++#define IORING_SETUP_NO_SQTHREAD_STATS	(1U << 19)
++
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+ 	IORING_OP_READV,
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index ff3364531c77..055a505fa27c 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -154,13 +154,16 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 		if (tsk) {
+ 			get_task_struct(tsk);
+ 			rcu_read_unlock();
+-			getrusage(tsk, RUSAGE_SELF, &sq_usage);
++			if (sq->enable_work_time_stat)
++				getrusage(tsk, RUSAGE_SELF, &sq_usage);
+ 			put_task_struct(tsk);
+ 			sq_pid = sq->task_pid;
+ 			sq_cpu = sq->sq_cpu;
+-			sq_total_time = (sq_usage.ru_stime.tv_sec * 1000000
++			if (sq->enable_work_time_stat) {
++				sq_total_time = (sq_usage.ru_stime.tv_sec * 1000000
+ 					 + sq_usage.ru_stime.tv_usec);
+-			sq_work_time = sq->work_time;
++				sq_work_time = sq->work_time;
++			}
+ 		} else {
+ 			rcu_read_unlock();
+ 		}
+@@ -168,8 +171,10 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 
+ 	seq_printf(m, "SqThread:\t%d\n", sq_pid);
+ 	seq_printf(m, "SqThreadCpu:\t%d\n", sq_cpu);
+-	seq_printf(m, "SqTotalTime:\t%llu\n", sq_total_time);
+-	seq_printf(m, "SqWorkTime:\t%llu\n", sq_work_time);
++	if (!(ctx->flags & IORING_SETUP_NO_SQTHREAD_STATS)) {
++		seq_printf(m, "SqTotalTime:\t%llu\n", sq_total_time);
++		seq_printf(m, "SqWorkTime:\t%llu\n", sq_work_time);
++	}
+ 	seq_printf(m, "UserFiles:\t%u\n", ctx->file_table.data.nr);
+ 	for (i = 0; i < ctx->file_table.data.nr; i++) {
+ 		struct file *f = NULL;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 46d9141d772a..f3e72b447fca 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -54,7 +54,8 @@
+ 			IORING_SETUP_REGISTERED_FD_ONLY |\
+ 			IORING_SETUP_NO_SQARRAY |\
+ 			IORING_SETUP_HYBRID_IOPOLL |\
+-			IORING_SETUP_CQE_MIXED)
++			IORING_SETUP_CQE_MIXED |\
++			IORING_SETUP_NO_SQTHREAD_STATS)
+ 
+ #define IORING_ENTER_FLAGS (IORING_ENTER_GETEVENTS |\
+ 			IORING_ENTER_SQ_WAKEUP |\
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index a3f11349ce06..4169dd02833b 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -161,6 +161,7 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p,
+ 	mutex_init(&sqd->lock);
+ 	init_waitqueue_head(&sqd->wait);
+ 	init_completion(&sqd->exited);
++	sqd->enable_work_time_stat = true;
+ 	return sqd;
+ }
+ 
+@@ -317,7 +318,8 @@ static int io_sq_thread(void *data)
+ 		}
+ 
+ 		cap_entries = !list_is_singular(&sqd->ctx_list);
+-		getrusage(current, RUSAGE_SELF, &start);
++		if (sqd->enable_work_time_stat)
++			getrusage(current, RUSAGE_SELF, &start);
+ 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+ 			int ret = __io_sq_thread(ctx, cap_entries);
+ 
+@@ -333,7 +335,8 @@ static int io_sq_thread(void *data)
+ 
+ 		if (sqt_spin || !time_after(jiffies, timeout)) {
+ 			if (sqt_spin) {
+-				io_sq_update_worktime(sqd, &start);
++				if (sqd->enable_work_time_stat)
++					io_sq_update_worktime(sqd, &start);
+ 				timeout = jiffies + sqd->sq_thread_idle;
+ 			}
+ 			if (unlikely(need_resched())) {
+@@ -445,7 +448,8 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			ret = PTR_ERR(sqd);
+ 			goto err;
+ 		}
+-
++		if (ctx->flags & IORING_SETUP_NO_SQTHREAD_STATS)
++			sqd->enable_work_time_stat = false;
+ 		ctx->sq_creds = get_current_cred();
+ 		ctx->sq_data = sqd;
+ 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
+diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
+index b83dcdec9765..55f2e4d46d54 100644
+--- a/io_uring/sqpoll.h
++++ b/io_uring/sqpoll.h
+@@ -19,6 +19,7 @@ struct io_sq_data {
+ 	u64			work_time;
+ 	unsigned long		state;
+ 	struct completion	exited;
++	bool			enable_work_time_stat;
+ };
+ 
+ int io_sq_offload_create(struct io_ring_ctx *ctx, struct io_uring_params *p);
 -- 
-Pavel Begunkov
+2.20.1
 
 

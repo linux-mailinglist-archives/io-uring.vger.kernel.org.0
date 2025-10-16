@@ -1,201 +1,105 @@
-Return-Path: <io-uring+bounces-10039-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10040-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F179CBE3ABA
-	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 15:22:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF9EBE4FD6
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 20:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0483BB854
-	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 13:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6A21A67D13
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 18:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD922417D1;
-	Thu, 16 Oct 2025 13:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E718E223DD1;
+	Thu, 16 Oct 2025 18:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CR0W+avm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgaIXE+8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9151E1FDA82
-	for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 13:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D91223DC1
+	for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 18:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760620937; cv=none; b=jkiVv+jCxKyCEeOEOwEYgDuUcCznCN234AQ1jj+JOpxWdXjRAA8QzY7lokRkHLgMwjUnIC9kHRQJO9E9DpoZ9Wg5q+/qYOti1iZ1Iy8fhzQXx7sgU2CjGNTTvvy220FPg5QY9fnA5a93hjhcv+4HJyDCjeBP6CghrUxZXeG0l30=
+	t=1760638011; cv=none; b=tNRzJrykHf4gwMvsY2hJYct7do7MwCqnkimC0hEnHI4TGIald9L2ej4TJ8d7MpvbnDa56KGUMJFTgk1fzWpoboDtqBX99sf4baZNjCMeL3PPgosCyQuN/8dHF8n98GJyvchIAPozpFloMCsetMVrJBwXAqbXWJdlwJRb3NFCfAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760620937; c=relaxed/simple;
-	bh=k+0RSGIlge1rBX1fjwUzceAMVDiyoCaTau4ud4/+ot8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jhTMYEEKRp5xTMe+KV9LaT9k2Hh1UvYvZI5DXSW0U52NEKxCUte1ueIf1IbmlobWb7ipcNH79L2u8xke57F/zUFchFD3QSXR0fpNgG6BGMR1ks9ay4NtEk2elmaTv1pWTAcX4IHX2AOHRUKWLdnzEmar7h+AxAGM9o91dc8XdfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CR0W+avm; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47103b6058fso5522005e9.1
-        for <io-uring@vger.kernel.org>; Thu, 16 Oct 2025 06:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760620933; x=1761225733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v9h+4YJ9vTud1BMEp64YwrzYNz8R5Fy5uCsd7jRqnc0=;
-        b=CR0W+avmSR72nROUQAjMlo6z/dlzy7QNnOmq7YNBQ4vhIAMn6uGROWZINPFBz8LiXG
-         C0bLF7L9Skr97n35zpjHmV7RjO1RJrZLl8pKl6UK/tkwqgkPl5R56a5JI93dB2iI8SH2
-         FChmpD6JHGYX41ILrklt+Z5d0RiHsbip0K0l6Nw+hVEdhzmr/3/9lR5E+NB7x77AAyTM
-         6ipUCp0z7SHuuQMq9z9UvbaxGk+jJajSyylNUOF4E8ml+ItsGYWyiJ9IS0g00erPIgQQ
-         iH3mUkIxrLU2OkLL8tJJf8yt5dy3OGlzbw+EHzDW1A+1ZH0IqaEV17v6jzBRNGUaZ1Ss
-         Z/vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760620933; x=1761225733;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v9h+4YJ9vTud1BMEp64YwrzYNz8R5Fy5uCsd7jRqnc0=;
-        b=L47fwdv4eV5JWFmtQ8A6Lt0BmHsxfsOj9s9kfjKvjF0OGzUYm43EFRnFsS+Ou3Q81s
-         rMs5xSk23XeHI8hALpiBf1eU969cj3MWecibQiGQHH7FGUSiWIR1MrAZFW5n3cTTYrD2
-         kFg8aDAVPZ8J07uO9QsslERuxQoVF5JRaDP2kDQhqtg+wG2IUZqudvVdifHezAWeMhKp
-         TF14ftUaNSt9eMvUvyfACYefJyR+B/sgNtV6kcq90R355MCTvESlD6dUwI1L3OBmh2ma
-         WZcD86ig2lCQMwRv0EBoHOXjjInMTHk+8Bv0HXoKfZWlczIg5j5uelTutUA+wiui/aC1
-         rkEA==
-X-Gm-Message-State: AOJu0Yx/ergqz+E1vDDiz/28QPhfnwnnCyzvhUmcWWqmUB4Nz/gNTryK
-	owYLFyIGMXvChQjVt/g+zjWgfyxCJUmycLdGXS3idL2xotTevujIC4XE3oVD3g==
-X-Gm-Gg: ASbGncsU9MAbq8zVqfBEGXWCPPzSBCTw1k2G59thmsSitUPihucEUcrT4JWIAIcFUPE
-	1Oo0JVGsA75ZKHABpO6Cv9rIUBiZ8Ue3sza2eardSkoG2XVT5L4QhRtbFOBQIdlnt6IZYzkRroA
-	ACYyDmpwmaxS4SbBoZSPrxC9KQ9x1+qhbhG8FAvy2yIeGtIqIInwwPvNovE0LVrZlzjViUnzZ9/
-	CrYKDsssDCLGr5wMCSbrgbE91C3GtS1bGGxDIa2XzirhIzqyk3WHq4J0GXqWAeBtBI+J20kme0y
-	Dnr4MaLYQK7HF0YaL+wDZnqyy31teLCyNFWpiOkHICMHnS5kxPkgg5ekob/kZrn34cvsF5zEWtg
-	GxM5Zyk5Gdd57f5ZkkfZ5kukcPwv7KTGprt3rCs5rJm3ZeR3+s+kQ9k96wCB9EfIVQv38ASrDpg
-	JA5IyH
-X-Google-Smtp-Source: AGHT+IEv5mo1WQfKCCYPkLgQ8izPIzOlUa2WSR6zH7K8kdjNElr+681bUTVkeL6xR1wm3PfxUYdb+Q==
-X-Received: by 2002:a05:600c:3b23:b0:46d:1a9b:6d35 with SMTP id 5b1f17b1804b1-47117300e79mr1392285e9.14.1760620933352;
-        Thu, 16 Oct 2025 06:22:13 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:2b54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144239bdsm41834385e9.3.2025.10.16.06.22.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 06:22:12 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 7/7] io_uring: only publish fully handled mem region
-Date: Thu, 16 Oct 2025 14:23:23 +0100
-Message-ID: <b2409b3f4e628cd0c10f5d70be54cb0121917ae5.1760620698.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1760620698.git.asml.silence@gmail.com>
-References: <cover.1760620698.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1760638011; c=relaxed/simple;
+	bh=hQxU+9+ACC8h+5XcC7XLvEiZWPDTvgyHPKm/8PPTNJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfgPNbiVGuweJlWuMHyrBN3M0ZEjubCvUiG5nubJUYlpY/vMmodqFfimYkQMoVq0vcWXsIbxGdZsfAuytSw+1dZlrZnx0iOR9/BhwHOrST/2vbsDtAYMM1NKByc0ZFaRNXtpWshRs03mQgPTDVGXGfG7EPWGkrP3v06N8wJrrGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgaIXE+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE13C4CEF1;
+	Thu, 16 Oct 2025 18:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760638011;
+	bh=hQxU+9+ACC8h+5XcC7XLvEiZWPDTvgyHPKm/8PPTNJQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sgaIXE+8STT5pepcsS60Tt5hXRPemrcG0o1w6ymoHQT9IB5rGVQyUOA+X6N901IRK
+	 OkpegKOqOQeHL3JbR2vc+Z1eeF624UVgT2//4t+LwE/MV+FTiBiK5XWqAYrhUkKBpo
+	 +ycp+ZNuK8xSt9b8rq+JW47Qep1yYlHixkS+nJDwDFd/+8ywXHUx0u7qNMsKzd9M5c
+	 GWXepbIcpo5c4olbToWaqTGL5il9/l108PeEEm/ljOdA2CQFLKNYQYqoCmbfD3Cqpu
+	 dRzYBvQY8LNP0Xy2kGnpZotIjSJ+XMc2YruEl9GjiEOdk71sQYYTDBgh63iTFVEhFh
+	 Y401n5p16caVQ==
+Date: Thu, 16 Oct 2025 12:06:48 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
+	axboe@kernel.dk
+Subject: Re: [PATCHv5 1/1] io_uring: add support for IORING_SETUP_SQE_MIXED
+Message-ID: <aPE0OLRyzN9FuQni@kbusch-mbp>
+References: <20251013180011.134131-1-kbusch@meta.com>
+ <20251013180011.134131-3-kbusch@meta.com>
+ <CADUfDZqe7+M9dqxVxUmMo31S1EGVmOhwqfKGLJfR45Yb_BT+Fg@mail.gmail.com>
+ <aO8A_nGt9D0bVnPt@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aO8A_nGt9D0bVnPt@kbusch-mbp>
 
-io_register_mem_region() can try to remove a region right after
-publishing it. This non-atomicity is annoying. Do it in two steps
-similar to io_register_mem_region(), create memory first and publish it
-once the rest of the handling is done. Remove now unused
-io_create_region_mmap_safe(), which was assumed to be a temporary
-solution from day one.
+On Tue, Oct 14, 2025 at 08:03:42PM -0600, Keith Busch wrote:
+> On Tue, Oct 14, 2025 at 03:33:19PM -0700, Caleb Sander Mateos wrote:
+> > On Mon, Oct 13, 2025 at 11:00 AM Keith Busch <kbusch@meta.com> wrote:
+> > > +               /*
+> > > +                * A 128b op on a non-128b SQ requires mixed SQE support as
+> > > +                * well as 2 contiguous entries.
+> > > +                */
+> > > +               if (!(ctx->flags & IORING_SETUP_SQE_MIXED) || *left < 2 ||
+> > > +                   !(ctx->cached_sq_head & (ctx->sq_entries - 1)))
+> > > +                       return io_init_fail_req(req, -EINVAL);
+> > > +               /*
+> > > +                * A 128b operation on a mixed SQ uses two entries, so we have
+> > > +                * to increment the head and decrement what's left.
+> > > +                */
+> > > +               ctx->cached_sq_head++;
+> > > +               (*left)--;
+> > 
+> > Hmm, io_submit_sqes() calls io_get_task_refs() at the start to
+> > decrement cached_refs by the number of SQEs (counting 128-byte SQEs
+> > twice) but io_put_task() only increments it once for each completed
+> > request (counting 128-byte SQEs once). Does that mean there's a
+> > refcount leak? Perhaps io_submit_sqes() or this block needs to
+> > increment cached_refs to account for each 128-byte SQE?
+> 
+> It looks like you're right. I think the increment option is the easiest
+> way to deal with it, just adding this line into the above:
+> 
+> + 	current->io_uring->cached_refs++;
+> 
+> I'm going to take a moment to figure out a good way to test this because
+> I don't think I'm hitting any problem with the admittedly simple tests
+> I've offered to liburing, so I may be missing something.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/memmap.c   | 21 ---------------------
- io_uring/memmap.h   | 12 ++++++++++++
- io_uring/register.c | 11 ++++++-----
- 3 files changed, 18 insertions(+), 26 deletions(-)
-
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 2e99dffddfc5..aa388ecd4754 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -234,27 +234,6 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
- 	return ret;
- }
- 
--int io_create_region_mmap_safe(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
--				struct io_uring_region_desc *reg,
--				unsigned long mmap_offset)
--{
--	struct io_mapped_region tmp_mr;
--	int ret;
--
--	memcpy(&tmp_mr, mr, sizeof(tmp_mr));
--	ret = io_create_region(ctx, &tmp_mr, reg, mmap_offset);
--	if (ret)
--		return ret;
--
--	/*
--	 * Once published mmap can find it without holding only the ->mmap_lock
--	 * and not ->uring_lock.
--	 */
--	guard(mutex)(&ctx->mmap_lock);
--	memcpy(mr, &tmp_mr, sizeof(tmp_mr));
--	return 0;
--}
--
- static struct io_mapped_region *io_mmap_get_region(struct io_ring_ctx *ctx,
- 						   loff_t pgoff)
- {
-diff --git a/io_uring/memmap.h b/io_uring/memmap.h
-index 08419684e4bc..58002976e0c3 100644
---- a/io_uring/memmap.h
-+++ b/io_uring/memmap.h
-@@ -36,4 +36,16 @@ static inline bool io_region_is_set(struct io_mapped_region *mr)
- 	return !!mr->nr_pages;
- }
- 
-+static inline void io_region_publish(struct io_ring_ctx *ctx,
-+				     struct io_mapped_region *src_region,
-+				     struct io_mapped_region *dst_region)
-+{
-+	/*
-+	 * Once published mmap can find it without holding only the ->mmap_lock
-+	 * and not ->uring_lock.
-+	 */
-+	guard(mutex)(&ctx->mmap_lock);
-+	*dst_region = *src_region;
-+}
-+
- #endif
-diff --git a/io_uring/register.c b/io_uring/register.c
-index b11550ed940c..43eb02004824 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -576,6 +576,7 @@ static int io_register_mem_region(struct io_ring_ctx *ctx, void __user *uarg)
- 	struct io_uring_mem_region_reg reg;
- 	struct io_uring_region_desc __user *rd_uptr;
- 	struct io_uring_region_desc rd;
-+	struct io_mapped_region region = {};
- 	int ret;
- 
- 	if (io_region_is_set(&ctx->param_region))
-@@ -599,20 +600,20 @@ static int io_register_mem_region(struct io_ring_ctx *ctx, void __user *uarg)
- 	    !(ctx->flags & IORING_SETUP_R_DISABLED))
- 		return -EINVAL;
- 
--	ret = io_create_region_mmap_safe(ctx, &ctx->param_region, &rd,
--					 IORING_MAP_OFF_PARAM_REGION);
-+	ret = io_create_region(ctx, &region, &rd, IORING_MAP_OFF_PARAM_REGION);
- 	if (ret)
- 		return ret;
- 	if (copy_to_user(rd_uptr, &rd, sizeof(rd))) {
--		guard(mutex)(&ctx->mmap_lock);
--		io_free_region(ctx, &ctx->param_region);
-+		io_free_region(ctx, &region);
- 		return -EFAULT;
- 	}
- 
- 	if (reg.flags & IORING_MEM_REGION_REG_WAIT_ARG) {
--		ctx->cq_wait_arg = io_region_get_ptr(&ctx->param_region);
-+		ctx->cq_wait_arg = io_region_get_ptr(&region);
- 		ctx->cq_wait_size = rd.size;
- 	}
-+
-+	io_region_publish(ctx, &region, &ctx->param_region);
- 	return 0;
- }
- 
--- 
-2.49.0
-
+So the tests were in fact causing missing putting some usage references,
+but I'm not sure how to check for such leakage. Everything ends up
+clearing up once the ring closes, and there's no other visibility into
+the refcount from user space. I had to add some trace_printks just to
+verify it. The increment above gets everything back to normal, at least,
+so will send a new version with that in.
 

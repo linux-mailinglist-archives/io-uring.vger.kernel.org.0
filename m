@@ -1,140 +1,191 @@
-Return-Path: <io-uring+bounces-10022-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10023-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DB1BE0831
-	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 21:46:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98320BE1C47
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 08:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569853AE392
-	for <lists+io-uring@lfdr.de>; Wed, 15 Oct 2025 19:44:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D691E4E8A5F
+	for <lists+io-uring@lfdr.de>; Thu, 16 Oct 2025 06:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C5F30C341;
-	Wed, 15 Oct 2025 19:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QxeJ1mJl"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A302DEA8C;
+	Thu, 16 Oct 2025 06:37:16 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A720221FBD
-	for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 19:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829A2DE6F8;
+	Thu, 16 Oct 2025 06:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760557452; cv=none; b=M7CueqbsKglWj/qAiCACdLu4xYkXmAk2WOB1g8P0HSr1M+dTb6Rgvma0bsSTij4QUgd6DOS+Z60ChD+i9CuUThBW461/iJfnR288MXIJJiICLZEGWzqmpliYoOLUaDRi00gS9UHOFpO5AwKsT/fl4m/c0u4Eq0S5BWWO3LGiD4E=
+	t=1760596636; cv=none; b=KQd0dhFjfFtgiMhtT11SZN/0GjhSYiDRCugV+qej7v0lhgnNSw3tFhZuQfA3ncPdfabzw3Z38ucr9EH5a7/xXn05rZYTw4x0nDCvoWaAbmncjsKBsBUjGAPqljcHGA7GRI8k1ub7Ek9/xXp3Zw+r/xnAf70twzdjQeSZG/CNrTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760557452; c=relaxed/simple;
-	bh=wjNue8Qr+w2WVc/mnfeoOAU2ur/Q7z5ODzJw8uE36Ps=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=OonhQgK/EQ7oVJPZx/nMtJyu/llBxoQyVvYLis5ueNU9wu7IrqXtg+gJvWLawxQldVD4Z7EHUucFHhugnjQcOOL+BTX3SJSpVw5mvtWyElKZSHe0Mm/Ky1RN6+g5dqldg2gy/o0iqCnsRfiSGlbUNSk+NBI/UlqtRiVvAR6al0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QxeJ1mJl; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-92aee734485so254171339f.1
-        for <io-uring@vger.kernel.org>; Wed, 15 Oct 2025 12:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760557447; x=1761162247; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dLwC6MPYnpkrf4ZaGxgZ773TPGvWmRhstTuVSLic0Go=;
-        b=QxeJ1mJl5Q4ejPA4hOeJWLmMkJzlkhEEruaMww+zdACyl/MpCK9sjXO5j6rwJwKWVf
-         facyXnIkLFTDdTKloNqAAvL7WfyJBpWhRMCPvMtTzn4dsbTVbUI04/ou+qs5FPXkmWGP
-         OMiy0y9cL+37y8itlhvhvBV/SdPdpsZn2JRsM1pNpMHAE4BjETfcMWnV8tKbhTperuUb
-         axdruJnMkJNUAKSDkU7BxqYTsrzLCcAybd2WzLGvBohAkq1sVqI2WahbwyW/tETTvDLc
-         eRzV+cC5lDcFWZMezacq2TeI8w1nZgyt/2DqV+s1RFAsromACgSJQ5qCSfWobHcEIyMz
-         qDKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760557447; x=1761162247;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dLwC6MPYnpkrf4ZaGxgZ773TPGvWmRhstTuVSLic0Go=;
-        b=BHYhjyB5SP0KtN4nHn/72X0Hjv29lyFLqGOi2tcxzNBLJZFq4iAEQThjU1/DaNjMht
-         VVI9I1gtQi6kOlro9bJwtVyhd6zU6GZdG+Hqxs8DD5PcNGT+DgeidSAWZSGJHu9PuSgu
-         QhQIacR3wMCcAoySNWKmfniCrny82+AWfFeFLU635fRH1fFDHwboLKmVUzRlE8U6ZisM
-         c8gpcAttDbcktzM3ZGk7EkM6mt96FqwEf7eRCXdIwS2cXlJLabnvAmlyTZzBJ777Zo8H
-         u+lgQmGP84SOgXAUux5CqH57Z3a5jdYV2d2OGOSPGiMoIkOoHxxxSVfAsPtg+HKFXgSs
-         4jWw==
-X-Gm-Message-State: AOJu0Yxd2Af9suB6P5HiMaDOivl+Pq2ArHlsaPXPZ3IMjHGKm8zERJry
-	FJMxAixWSExhjKwRSbqBvPzpZhrnyK0fC39U7ZMJKCOpO0lGN1kSvuWuLQ1NJ1dHoe1tr9ihnRj
-	VxIrggU4=
-X-Gm-Gg: ASbGncsJjBhLznjLhHgGMcGB0C2MuNkWtNIlalRDLJpj5vNM5FJFQ3l0Wdmbvrh7vpY
-	KCnivugunvQ+HnXhIpuMxtz8CTs1CZeW3TuQgi8EucWMYesI6h6KlkgfiHot2SM6Ism9laO1/NX
-	Zofa16f4ZrAIS0/7dXYh+H9j8Wo6t09sH7G9DQVzY5ZR5tEYI007rZ7wBjVp/zh9dBQCJmAF/Zt
-	5Q54U1Vh4BZrvnCaeqjhBKk5HqpHIUOhbIUn7YkrB7ZsmHqR7FDLmpsJSbjeYIXN+vMXHKFmw4z
-	wFBKkImP84wIiRG9dWfN36cWdKBJcB2OLUZLumXVr0QGMHP8MtnqVq/wLfo0smxgqtGuop6W83v
-	u+eXFIElKALY5dwGioRWXIM/XnSJQ0H5KGTJDxGFk2J5FLxY5tMHX3GqqF8SN0sarvPeM01HqTy
-	BzmLk/3SU=
-X-Google-Smtp-Source: AGHT+IH+5e+i8IB4fTYrXotsvKFdmdO9umTVXDcFSUpLElu0Fwp/EzRywFaLIuufxt9FyZW0z0p9WQ==
-X-Received: by 2002:a05:6e02:156b:b0:42d:84b3:ac43 with SMTP id e9e14a558f8ab-42f873627a8mr334074985ab.2.1760557447389;
-        Wed, 15 Oct 2025 12:44:07 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f6c49b129sm5998402173.11.2025.10.15.12.44.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 12:44:06 -0700 (PDT)
-Message-ID: <b8891d74-400c-45b2-802b-b282bd8549c6@kernel.dk>
-Date: Wed, 15 Oct 2025 13:44:05 -0600
+	s=arc-20240116; t=1760596636; c=relaxed/simple;
+	bh=K34ehr8RNb8WkyEDgQ2XhDAjvJhbuEBHYZnegCjBiwo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ecJGTYEMhVy3qZ2tSbLE8fo3ghe37XMNNviKtoYIjj0oEmjHvwhx55swCk18egBXgk6VFuWpZY6V9WNIF2ct+WoLaieF+vkT1LRvqr6aq0YCu8dsMW6EfLCSilKgUxbpuG6OaDhz5PrChD1vaZNGZDppru6L5FNVcyQkB09rMrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-31-68f092937ca6
+From: Byungchul Park <byungchul@sk.com>
+To: axboe@kernel.dk,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	almasrymina@google.com,
+	asml.silence@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	hawk@kernel.org,
+	ilias.apalodimas@linaro.org,
+	sdf@fomichev.me,
+	dw@davidwei.uk,
+	ap420073@gmail.com,
+	dtatulea@nvidia.com,
+	byungchul@sk.com,
+	toke@redhat.com,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	kernel_team@skhynix.com,
+	max.byungchul.park@gmail.com
+Subject: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to confirm its usage as pp for net_iov
+Date: Thu, 16 Oct 2025 15:36:57 +0900
+Message-Id: <20251016063657.81064-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsXC9ZZnoe7kSR8yDDqfWlis/lFh8XPNcyaL
+	Oau2MVqsvtvPZjHnfAuLxc5dzxktXs1Yy2bx9Ngjdos97duZLR71n2Cz6G35zWzxrvUci8WF
+	bX2sFpd3zWGzuDCxl9Xi2AIxi2+n3zBaXJ25i8ni0uFHLA7CHltW3mTyuDZjIovHjX2nmDx2
+	zrrL7rFgU6nH5bOlHptWdbJ53Lm2h82jt/kdm8f7fVfZPD5vkgvgjuKySUnNySxLLdK3S+DK
+	6Hi/gaXglGzFjPdXGBsYl0l0MXJySAiYSMw81MQOY0/8eoEZxGYTUJe4ceMnmC0ikC9xaMdW
+	pi5GLg5mgX9MEnMX9LGCJIQFMiR2vmwDa2YRUJU4d+YRI4jNK2AqMf/tX2aIofISqzccYAZp
+	lhB4zybxZcZ/FoiEpMTBFTdYJjByL2BkWMUolJlXlpuYmWOil1GZl1mhl5yfu4kRGMzLav9E
+	72D8dCH4EKMAB6MSD++DFe8zhFgTy4orcw8xSnAwK4nwMhR8yBDiTUmsrEotyo8vKs1JLT7E
+	KM3BoiTOa/StPEVIID2xJDU7NbUgtQgmy8TBKdXAaJ+2PEhQ8WX/5lC597Ki8w+lszDfUi/2
+	ydioxmfwuPrukjT1dVME2A+zbWk++677d/5Dpn4fl9u3E17KlXz6c+wq86xtUnMPL86/3Cyz
+	VEymsmtTfHyO8hGGx2HJVXlrQxzi/Ngiq9tnSElcDDx9mGn2opLLa/Rvv5ji4j9lmvcOnyaN
+	LPZmJZbijERDLeai4kQAlyq2smICAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAwFSAq39CAMSvwMaCGludGVybmFsIgYKBApOO4Mtk5LwaDCpyys4q/h4OPms
+	5wI4nKq2ATir3Y8GOM6UmwY4nM+EBDi5uucBOOqYrQY45cbiBzi8h7cDOOKPyAY4jYT7Azju
+	hc4EOMOdyQU40LaOBTjTupwGONCRjQU4xqAWOPbL7AE41Zm6AjjSw+IEQBVItKnZAkjWmJEE
+	SNi+ygJIuZrdB0igsnVI0811SLKqiQZI3Na8BkiNg+4GSO++1QZI9ttISKPo8AJI87IeUA1a
+	CjxkZWxpdmVyLz5gCmiI77AEcModeJjv1AGAAaYYigEJCBgQNBiR9dADigEJCAYQJxjY2PkD
+	igEJCBQQbxjCuLUCigEKCAMQ/gIYnaCOBYoBCQgTEGgYuemGB4oBCQgEECUYzsziAYoBCQgN
+	EDUYn+39A4oBCQgYEB8Yq7DAA5ABCKABAKoBFGludm1haWw1LnNraHluaXguY29tsgEGCgSm
+	ffyRuAH000fCARAIASIMDeCo72gSBWF2c3ltwgEYCAMiFA0AcPBoEg1kYXl6ZXJvX3J1bGVz
+	wgEbCAQiFw1KV2VgEhBnYXRla2VlcGVyX3J1bGVzwgECCAkagAEcoB1FfvYRkChl5zqcwYZN
+	zHZD4qtyrTXlnd0IhKxlQwlmxl0dTsgDEJMgBUZoFoegYmLTfcizDeoELaPIelMI35Fe9c5/
+	CcUgcc+Hw9CgKzgoM8SGz8W7cZHptyuoSM1r+r9npqGbJzPLum90AhvFyLLNIDfyr8kdppRN
+	d4in5yIEc2hhMSoDcnNheM0lv1ICAAA=
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/rw: check for NULL io_br_sel when putting a buffer
-Cc: David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Both the read and write side use kiocb_done() to finish a request, and
-kiocb_done() will call io_put_kbuf() in case a provided buffer was used
-for the request. Provided buffers are not supported for writes, hence
-NULL is being passed in. This normally works fine, as io_put_kbuf()
-won't actually use the value unless REQ_F_BUFFER_RING or
-REQ_F_BUFFER_SELECTED is set in the request flags. But depending on
-compiler (or whether or not CONFIG_CC_OPTIMIZE_FOR_SIZE is set), that
-may be done even though the value is never used. This will then cause a
-NULL pointer dereference.
+->pp_magic field in struct page is current used to identify if a page
+belongs to a page pool.  However, ->pp_magic will be removed and page
+type bit in struct page e.g. PGTY_netpp should be used for that purpose.
 
-Make it a bit more obvious and check for a NULL io_br_sel, and don't
-even bother calling io_put_kbuf() for that case.
+As a preparation, the check for net_iov, that is not page-backed, should
+avoid using ->pp_magic since net_iov doens't have to do with page type.
+Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
+page pool, by making sure nmdesc->pp is NULL otherwise.
 
-Fixes: 5fda51255439 ("io_uring/kbuf: switch to storing struct io_buffer_list locally")
-Reported-by: David Howells <dhowells@redhat.com>
-Tested-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+For page-backed netmem, just leave unchanged as is, while for net_iov,
+make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
+check.
 
+Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
+ io_uring/zcrx.c        |  4 ++++
+ net/core/devmem.c      |  1 +
+ net/core/netmem_priv.h |  6 ++++++
+ net/core/page_pool.c   | 16 ++++++++++++++--
+ 4 files changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index a0f9d2021e3f..5b2241a5813c 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -655,13 +655,17 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
- 	if (ret >= 0 && req->flags & REQ_F_CUR_POS)
- 		req->file->f_pos = rw->kiocb.ki_pos;
- 	if (ret >= 0 && !(req->ctx->flags & IORING_SETUP_IOPOLL)) {
-+		u32 cflags = 0;
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 723e4266b91f..cf78227c0ca6 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -450,6 +450,10 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 		area->freelist[i] = i;
+ 		atomic_set(&area->user_refs[i], 0);
+ 		niov->type = NET_IOV_IOURING;
 +
- 		__io_complete_rw_common(req, ret);
- 		/*
- 		 * Safe to call io_end from here as we're inline
- 		 * from the submission path.
- 		 */
- 		io_req_io_end(req);
--		io_req_set_res(req, final_ret, io_put_kbuf(req, ret, sel->buf_list));
-+		if (sel)
-+			cflags = io_put_kbuf(req, ret, sel->buf_list);
-+		io_req_set_res(req, final_ret, cflags);
- 		io_req_rw_cleanup(req, issue_flags);
- 		return IOU_COMPLETE;
- 	} else {
++		/* niov->desc.pp is already initialized to NULL by
++		 * kvmalloc_array(__GFP_ZERO).
++		 */
+ 	}
+ 
+ 	area->free_count = nr_iovs;
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index d9de31a6cc7f..f81b700f1fd1 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -291,6 +291,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+ 			niov = &owner->area.niovs[i];
+ 			niov->type = NET_IOV_DMABUF;
+ 			niov->owner = &owner->area;
++			niov->desc.pp = NULL;
+ 			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
+ 						      net_devmem_get_dma_addr(niov));
+ 			if (direction == DMA_TO_DEVICE)
+diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+index 23175cb2bd86..fb21cc19176b 100644
+--- a/net/core/netmem_priv.h
++++ b/net/core/netmem_priv.h
+@@ -22,6 +22,12 @@ static inline void netmem_clear_pp_magic(netmem_ref netmem)
+ 
+ static inline bool netmem_is_pp(netmem_ref netmem)
+ {
++	/* Use ->pp for net_iov to identify if it's pp, which requires
++	 * that non-pp net_iov should have ->pp NULL'd.
++	 */
++	if (netmem_is_net_iov(netmem))
++		return !!netmem_to_nmdesc(netmem)->pp;
++
+ 	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
+ }
+ 
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 1a5edec485f1..2756b78754b0 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -699,7 +699,13 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
+ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ {
+ 	netmem_set_pp(netmem, pool);
+-	netmem_or_pp_magic(netmem, PP_SIGNATURE);
++
++	/* For page-backed, pp_magic is used to identify if it's pp.
++	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
++	 * and nmdesc->pp is NULL if it's not.
++	 */
++	if (!netmem_is_net_iov(netmem))
++		netmem_or_pp_magic(netmem, PP_SIGNATURE);
+ 
+ 	/* Ensuring all pages have been split into one fragment initially:
+ 	 * page_pool_set_pp_info() is only called once for every page when it
+@@ -714,7 +720,13 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ 
+ void page_pool_clear_pp_info(netmem_ref netmem)
+ {
+-	netmem_clear_pp_magic(netmem);
++	/* For page-backed, pp_magic is used to identify if it's pp.
++	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
++	 * and nmdesc->pp is NULL if it's not.
++	 */
++	if (!netmem_is_net_iov(netmem))
++		netmem_clear_pp_magic(netmem);
++
+ 	netmem_set_pp(netmem, NULL);
+ }
+ 
 
+base-commit: e1f5bb196f0b0eee197e06d361f8ac5f091c2963
 -- 
-Jens Axboe
+2.17.1
 
 

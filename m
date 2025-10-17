@@ -1,140 +1,79 @@
-Return-Path: <io-uring+bounces-10051-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10052-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD03EBEA029
-	for <lists+io-uring@lfdr.de>; Fri, 17 Oct 2025 17:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3CBBEA7D1
+	for <lists+io-uring@lfdr.de>; Fri, 17 Oct 2025 18:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58E715A1059
-	for <lists+io-uring@lfdr.de>; Fri, 17 Oct 2025 15:24:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CE465A4EE3
+	for <lists+io-uring@lfdr.de>; Fri, 17 Oct 2025 15:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49516332ED8;
-	Fri, 17 Oct 2025 15:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80D2330B0F;
+	Fri, 17 Oct 2025 15:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="CG9gAm+g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrkVpMzo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855A01D5CE0
-	for <io-uring@vger.kernel.org>; Fri, 17 Oct 2025 15:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39B2330B00
+	for <io-uring@vger.kernel.org>; Fri, 17 Oct 2025 15:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714557; cv=none; b=e6Ht/mFAf7wQfEKDGYJqPW80xBa9s/jBZBKPOOWxRzj4cFaNcOZLA66gUtQG2F1bzZof5Gcjh9bg6T0VXxrsMDW6GeKta2tWYQori+93xWj+LTWUV9IKP0JyHz6H9U8FvGdFW5XkUic9WBeOraWOGRMaJgJTO0E3/yWCPS8UrH0=
+	t=1760716522; cv=none; b=PvJayT0vc9zw2WjMDDm133opU58OC9XCJGGZoCT1dp/C2uhsM+fucPuiK238ltRNkhvI7KzFYzNCILJRUDTyTQI6Th/Qv3vBHXN/BZGRWkNS8yRMRkzDHfP7mW0FCFjYnULoVhIZ3Lu9kaLp0Fkn8RYz9thbmH5EPY6foNU98ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714557; c=relaxed/simple;
-	bh=BwJ12T3X4oAmkiiCPjoU+/e2dtybflTFYeARE8wxhj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j/Azk1TtIPaAPSBbHcEwsOTf7pwkhKisWDL59P7NuZyiRH13x5s4NUcLf16IeEfheVivvuA+3WKfgD1D+Z8YWxd+aIpl4jCS6U88n89UK2CkvXce/lWuFwkgebQ3Ry7Tg+XQua5faioC8k99gnedFbGzJzl4jpRCsIg/qI1vb9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=CG9gAm+g; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27eca7297a7so2961275ad.1
-        for <io-uring@vger.kernel.org>; Fri, 17 Oct 2025 08:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1760714555; x=1761319355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTjzQg6fME5Htnka1zGGW8fMUUb/C0+5xowaL8K/8eQ=;
-        b=CG9gAm+g2SK5cHlHqqJKpfdcvtuXUQ1x6hzKpzHSh3eu3kiWk/6AFfig9xTP6a1/d6
-         1/bMDYOfA7KhDMUo9Ygsdhtr8b5V+n1vAu3cmI89+bJZN7tufwJjAG6DTNLLvcCxaud3
-         k/6dXkC2rQq/M1hgJ445KEqFshK4mqMxgkUk/B0sLkG2kGxjsVvw+vqUjeA22XaVm17s
-         yZ2NhHDu5VLJETFpuKGvjX1PhUgwyiHccb6X1gr0k/vBDUlPHbEc6S/QbIWehlxNS4Hk
-         xmWYIVkUt9HI9V7QCFP+Wc75tlSIpdC8C2jSfwNFrXGRKQJQLs+8QdRdxO0yD3trf4fq
-         tH6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760714555; x=1761319355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LTjzQg6fME5Htnka1zGGW8fMUUb/C0+5xowaL8K/8eQ=;
-        b=YV4L2mRH+oAa+xgQUdlETnPZDe3uijjVR5Bwb/xhfXv3hjPWBLJxYyiD4Mfno3C3be
-         8xS6pS/7wf5Ln4QNw9kdynav99Bb8ubB3camcT7PHv1n7Xb+CX2/2G3y2Er5u+qvsKPW
-         DXO/5ZZJzH3w4cscDiIqQYj7I6JENV5adLWLw6xfy7zEZ764GDQrsergwFlPa+H0Y+Au
-         nk+tbzPULfnF+hbzY6AdR8POp0nmXYGCBFg+RuthEzBnMvASukSkfxU+myZjcbOWy7ek
-         LyyJ+MsIZ0vq+P9+9qdA2vwiTNLOHznlmsW/eHDoWzzHgKV2oNCkOCp9JbfFnQqKWYfo
-         3IDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA5mnQ+v2Irz9L/y7/DNyX1NiNUaT69eZjmVkes5s1WvIMsblYGfYvmHEwe+IUUCtYmLjVOfTNLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj/F/DkLhhL+EMZ831akdspwYPnio9hyMuTV4BT8DvBL7FpzLO
-	SprxzqQobeWX6vnDdbeWaF2/cILhONrSARG+pKAdZIw9ftOKBQpUF89U2WYieRj2X0lgT3U9RM0
-	x0f+zzpSinuRvwnQR9AX3XZlGepbC9ri52+5caqCweQ==
-X-Gm-Gg: ASbGncs3FtW0MmhNg2+7ZGJ/xC7pJz2mp0Qi//9wdNUxe/LkRaIln3LK82kdW9pmWYg
-	Vk4aiNcqb/DbHR0XtlcHd5murf9+6RIjcYR8fN7Bdrn/CuE6ddCVM0oweQ4t+Id03G8tAiJJSip
-	FF7OH7rMqr2XKa9JtAdSxjINtoAbyzF6CAUkJC3lU9imeQcwMFREobD2x9qo7S6ngGme2K+1DQY
-	+l4T37Pbr+RV2RKitCXsTntprJg6l0p2Sp7zSuOqlph1Va3sz5Ozvexy+hjiTcYxjq6j5WBNpNr
-	usJAHXHwIyNM1YaEWG9U/zvSXWNz
-X-Google-Smtp-Source: AGHT+IFiDehX314o1n6Oft238RHJONQp6EJYlI6AsjptA2zyEX5KGWqbID6Gp2Kt8NqcCpDjOl6xg+TonsSy8mg6E40=
-X-Received: by 2002:a17:902:ce0a:b0:27e:da7d:32d2 with SMTP id
- d9443c01a7336-290caf83194mr26000145ad.7.1760714554591; Fri, 17 Oct 2025
- 08:22:34 -0700 (PDT)
+	s=arc-20240116; t=1760716522; c=relaxed/simple;
+	bh=A/Xk3T8YMhmC27b22Ruog696NWI5H3GcE5DZ5+CPDg0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CJmVI9e1rzDU2kdJ5pVcSBdWa01rjfHPBCr3GlSe+ZRCQwgDDfhM8I2RJUOhUuyxSPVDfNB/4ZEBByLSy+p6G8/wkbCFSawUwuAtsls0d+Cu3/qiYp+nWhgyV60C4wG+dFBjtIJIHjGDOMuqRbM1XI3aLGFDfde0mVKIVMBS0Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrkVpMzo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B79C4CEFE;
+	Fri, 17 Oct 2025 15:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760716521;
+	bh=A/Xk3T8YMhmC27b22Ruog696NWI5H3GcE5DZ5+CPDg0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=YrkVpMzorwkda2jiqplVLyFF6L/2um+uT86vwrEGlGHPqvfZxUwmoAhc2TPfTB8t+
+	 AdXR/+pCOl/H25tIEpl3RphDZsOIkXFaJUXCq4rvfU2ec4a8giyxCO9r6GoBDc7y3k
+	 zu4X04E2jblO5/fsCqBIJFxscXnm0/BU2SKaFLI6sArLXtC4zrwMELsLm9IowcfiyS
+	 icGU6avaAGysJGUw7agG79pNUMEiZXqWtg1BiUd87y6592Lo2hGm94P5vzgcIJIoL7
+	 mMNeRInJyf+BjXra1mSX1QeHwvYu9gMN3vGIsu6vRWHkdaBHsAv/S9xNcGWBr6QV5H
+	 bKIswb2w8ceSg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DCF39EF97A;
+	Fri, 17 Oct 2025 15:55:06 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 6.18-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <24ba2aad-762e-4fa1-bbf8-2956999a65c5@kernel.dk>
+References: <24ba2aad-762e-4fa1-bbf8-2956999a65c5@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <24ba2aad-762e-4fa1-bbf8-2956999a65c5@kernel.dk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.18-20251016
+X-PR-Tracked-Commit-Id: 18d6b1743eafeb3fb1e0ea5a2b7fd0a773d525a8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6f3b6e91f7201e248d83232538db14d30100e9c7
+Message-Id: <176071650518.2681700.11354624076846666348.pr-tracker-bot@kernel.org>
+Date: Fri, 17 Oct 2025 15:55:05 +0000
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251017124117.1435973-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20251017124117.1435973-1-alok.a.tiwari@oracle.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 17 Oct 2025 08:22:22 -0700
-X-Gm-Features: AS18NWBrEidgc0ydWNCwnfB7QToQeY2Nzp_kQM7XjmGSGbBHsLxZcROuy0Gh0W8
-Message-ID: <CADUfDZruQ7baruoBhSMBt6HcP-E-KiM1MHV=L9hn6OxFgEaXcw@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: fix incorrect unlikely() usage in io_waitid_prep()
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 5:41=E2=80=AFAM Alok Tiwari <alok.a.tiwari@oracle.c=
-om> wrote:
->
-> The negation operator incorrectly places outside the unlikely() macro:
->
->     if (!unlikely(iwa))
->
-> This caused the compiler hint to be applied to the constant result
-> of the negation rather than the pointer check itself.
+The pull request you sent on Fri, 17 Oct 2025 04:26:14 -0600:
 
-Not sure what you mean by "constant". But yes, applying !unlikely(iwa)
-inverts the hint, saying iwa is unlikely to be non-NULL and therefore
-the if branch is likely. It certainly seems more likely that the whole
-if condition was meant to me marked unlikely.
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.18-20251016
 
-Best,
-Caleb
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6f3b6e91f7201e248d83232538db14d30100e9c7
 
->
-> Fix it by moving the negation inside unlikely(), matching the usual
-> kernel pattern:
->
->     if (unlikely(!iwa))
->
-> Fixes: 2b4fc4cd43f2 ("io_uring/waitid: setup async data in the prep handl=
-er")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->  io_uring/waitid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/waitid.c b/io_uring/waitid.c
-> index f25110fb1b12..53532ae6256c 100644
-> --- a/io_uring/waitid.c
-> +++ b/io_uring/waitid.c
-> @@ -250,7 +250,7 @@ int io_waitid_prep(struct io_kiocb *req, const struct=
- io_uring_sqe *sqe)
->                 return -EINVAL;
->
->         iwa =3D io_uring_alloc_async_data(NULL, req);
-> -       if (!unlikely(iwa))
-> +       if (unlikely(!iwa))
->                 return -ENOMEM;
->         iwa->req =3D req;
->
-> --
-> 2.50.1
->
->
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

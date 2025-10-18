@@ -1,152 +1,171 @@
-Return-Path: <io-uring+bounces-10055-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10056-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD9CBEC7C2
-	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 06:47:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C32BED1FD
+	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 17:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D331AA516A
-	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 04:47:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4B6B4E5C29
+	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 15:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C4A25C818;
-	Sat, 18 Oct 2025 04:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6781B4223;
+	Sat, 18 Oct 2025 15:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q6ME7jkG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5874D1F584C;
-	Sat, 18 Oct 2025 04:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F67450F2
+	for <io-uring@vger.kernel.org>; Sat, 18 Oct 2025 15:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760762828; cv=none; b=dJ9KOIChX/fkQdUrb1iqpXNgkhYZ1WexAGBbF0MfEjvoBXlVFvj0VXrPTySFO/MIfgz1Tn/DdYGe4gXmWQUp6V6YK38R9TFR+WRP49+5pSCZlkIsP88lidXsFlcHNZnOPUg0+8E6CeaR9szXpmvWMFv24aP/FN4ShJOMNm26cvY=
+	t=1760799967; cv=none; b=UP/Y+314LS8wUv0/s0mjbypxl2ulxxO3hqQFLIvUvhZ99pYotpBfwQTIXNsI+o/AMbfHEC5GHmLY8QWvQ5y2wMmxTOBPodoMOXfcsIEhVqT0pqA/PnyP6coltlZ3PmJ6vw4xyZ4zyaFx8dualVQJ3tsZNVMTMhX8B8pxjBcWjiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760762828; c=relaxed/simple;
-	bh=y2x9f3aQVzHRpfAEf9bRNga9mO3Bh7q0jzvdlTL+hA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSSebBlZqnF2JeMGVcpeJrkXRk/xy2PfGtOpGjYs08kxvTNtZUcDGeWnUZraRBm3PSWtMPDRt11XD+Ecb/lvBLV0BDRK6n6+/UsS7aKbzTmT20Kohp+rblxQ9SwseG+vl0wd06oVrvsIIdPcC0XaCiLtFCaUJvZDloPdIVPGt10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-11-68f31bc3fadd
-Date: Sat, 18 Oct 2025 13:46:53 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
-	kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net,
-	edumazet@google.com, horms@kernel.org, hawk@kernel.org,
-	ilias.apalodimas@linaro.org, sdf@fomichev.me, dw@davidwei.uk,
-	ap420073@gmail.com, dtatulea@nvidia.com, toke@redhat.com,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, kernel_team@skhynix.com,
-	max.byungchul.park@gmail.com
-Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
- confirm its usage as pp for net_iov
-Message-ID: <20251018044653.GA66683@system.software.com>
-References: <20251016063657.81064-1-byungchul@sk.com>
- <20251016072132.GA19434@system.software.com>
- <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
- <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
+	s=arc-20240116; t=1760799967; c=relaxed/simple;
+	bh=ZyvjCPO/DXVQM8YwuZEJD0JqI8HSEb46tVTufAtomWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fy83+0itLubxdQrl3V7YB0J7d0TVV6VNdHrJtBBceNrsq6JV37pCQiBQA9asGc8rclE6beeZCxI7fcOWd6npNb0rOmvnkyfWbqnuwz7Mvo5y9kvc8aQiCCcYERKAnfFDsrWL0zvQvogjmgdjeX6e6uRB9SZFtbd3GDqAQDUZ5mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q6ME7jkG; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-58b027beea6so2528e87.1
+        for <io-uring@vger.kernel.org>; Sat, 18 Oct 2025 08:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760799964; x=1761404764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OSPOiZ7jNcagXuc9lWkglLdnTNQHlNGICFG0e3VfcRw=;
+        b=Q6ME7jkGsm6mkgeROvptigGebUJofPQIBPkJZyGsxHgnTqfPuzCWoGOkOLpVWyhk+s
+         qDpRrX0CsfdOznkp45d5JQBBBbeelXxm76/ZjBYTQ2kdiDFmRApJ9eOtYkYaBzfVJnwT
+         qd2aoLatCZkf+GQO6/a5NZbTkXzgbZHE0pmWCGYoSABnl798V+xDMhLgxU8PnJFecFLj
+         q2XCuq9TmANzKzwo+daHXKsxpZXZaHrlcxGLTDUt20szV53Yy7UqSWJ6BbjzQ5Fe7l7J
+         fh4B2V8LA7EtMQ5g5L85MCzKmO9gruOZFa383QsMXfrwaAFgd42yAHhz51ue+LqbhvY9
+         nyDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760799964; x=1761404764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OSPOiZ7jNcagXuc9lWkglLdnTNQHlNGICFG0e3VfcRw=;
+        b=BajbLAle+xi8BhasbzKZBdEyGUY59ie030rITBi+Y64bempT9+RC9onCSHfutBN/oj
+         J+wM8gYbryZcxy9Ue/HP0OaZOFOIEnlSQJ/W2lwWVBf8WBaT1rtXv1KTsC3U45hHJ9nH
+         V3q2/BbG3O9uwl+oEJtR9K6MZsydksrYd0t0HQvdTnlND25ZyEvdMQazMbSzSL6MrT2M
+         jZNZTj3lC0+pcKIxNGqHEQ3heGNKtowF7mjsxddaiz+1/a9bFDeKh3qlBYOYozifYovv
+         C7vrlz6YxgnUBRv5Jpv31ZXxxQcxJCADUW8+DY9Xa/w953tQKtp5M+6KtI5Mz6fUYYXW
+         tNQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw3lc5YmQ2D/ClXqR8rp+jFGh5BD2RVKB03T9+J4mVPwB0zJ2YVnVGxSUuwwFGXpkgFwBYZ00Cqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyllK2o/62lGQxG9qsJiRs8qn89t/GdeFq4nvRStO/CcGpM6qHK
+	sgFqu514Z67PDres0ikHpZuaBzrZf4vR8VzzPC/aN39gMU+Mql6aiRzGuFJgIoURn/He9o8GoNF
+	FYwIlwbMLBJTnmemp7YMtJExSO3SAsSloVC8e9Uyd
+X-Gm-Gg: ASbGncuhLmyvVnRbK9veUrWINZCJxzG5bNw5qsMEGNUMZtUppgUBqpklwRRpX+Y6Re2
+	6IuAp84D8HLqfil2uKVyYS88vqIbky63ukbChOymlvQnJIVFcfuuX6ZqOrTyRy+lURd/FpvBaZG
+	JoBFjEshobVAlSFywcnAn5dG87zi2zuaDZipys7hm/pWs9IICryYIj9e6IKI1vRDpThRHWP6HSf
+	87bTB2Rsk/hWkzc/HALNdQjNpAnB0fVO40xfukMDpOJymLPeMm8KyKYgIYojQ==
+X-Google-Smtp-Source: AGHT+IFcaG2diqMxOqusH9IIiQ6tzpbrJgmvAJveAGN983bDcWLIVWyiyO0L7LLJDKrl11UqMQ6S9cxZtA1TVs4J73o=
+X-Received: by 2002:a05:6512:38ab:b0:591:d413:57fd with SMTP id
+ 2adb3069b0e04-591d4135be6mr718612e87.4.1760799963225; Sat, 18 Oct 2025
+ 08:06:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXC9ZZnke5h6c8ZBvMf81qs/lFh8XPNcyaL
-	Oau2MVqsvtvPZjHnfAuLxc5dzxktXs1Yy2bx9Ngjdos97duZLR71n2Cz6G35zWzxrvUci8WF
-	bX2sFpd3zWGzuDCxl9Xi2AIxi2+n3zBaXJ25i8ni0uFHLA7CHltW3mTyuDZjIovHjX2nmDx2
-	zrrL7rFgU6nH5bOlHptWdbJ53Lm2h82jt/kdm8f7fVfZPD5vkgvgjuKySUnNySxLLdK3S+DK
-	WPFcteCBaMXCK1PYGhhbBLsYOTgkBEwk3i5k72LkBDNffLnDChJmEVCVWHa1ECTMJqAucePG
-	T2YQW0RAU2LJvolAJVwczAK7mCX6rl1h7GJk5xAWyJN4ZgzSyStgIbHotSJIhZDAPUaJbzev
-	gbXyCghKnJz5hAXEZgYa+WfeJWaQemYBaYnl/zggwvISzVtng5VzCgRKrNg7hRHEFhVQljiw
-	7TgTyEwJgUPsEnvmL2SFuFhS4uCKGywTGAVnIVkxC8mKWQgrZiFZsYCRZRWjUGZeWW5iZo6J
-	XkZlXmaFXnJ+7iZGYLwuq/0TvYPx04XgQ4wCHIxKPLwWMz9lCLEmlhVX5h5ilOBgVhLhZSj4
-	kCHEm5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qBMfJns19/
-	8uRlB9pMfp5mSfsWJlWRFD3XUiHz1ffJ3JkWOQbNZ3Se+B3ewBzIsWXa4Qzp60e3Rhbt2Pqv
-	V6/ui3Zrg6Fa/FvrV8Hix1aUiUifebvg4J/dAmHdk541Op1n+bhLZ/KaGr+HvW//nYk4eceO
-	7/lu2QffHqY2B2+UXF+n+a310p97CUosxRmJhlrMRcWJAEKmOxrTAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsXC5WfdrHtI+nOGwcRrVharf1RY/FzznMli
-	zqptjBar7/azWcw538JisXPXc0aLVzPWslk8PfaI3WJP+3Zmi0f9J9gselt+M1u8az3HYnF4
-	7klWiwvb+lgtLu+aw2ZxYWIvq8WxBWIW306/YbS4OnMXk8Wlw49YHEQ8tqy8yeRxbcZEFo8b
-	+04xeeycdZfdY8GmUo/LZ0s9Nq3qZPO4c20Pm0dv8zs2j/f7rrJ5LH7xgcnj8ya5AJ4oLpuU
-	1JzMstQifbsErowVz1ULHohWLLwyha2BsUWwi5GTQ0LAROLFlzusXYwcHCwCqhLLrhaChNkE
-	1CVu3PjJDGKLCGhKLNk3EaiEi4NZYBezRN+1K4xdjOwcwgJ5Es+MQTp5BSwkFr1WBKkQErjH
-	KPHt5jWwVl4BQYmTM5+wgNjMQCP/zLvEDFLPLCAtsfwfB0RYXqJ562ywck6BQIkVe6cwgtii
-	AsoSB7YdZ5rAyDcLyaRZSCbNQpg0C8mkBYwsqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQLj
-	b1ntn4k7GL9cdj/EKMDBqMTDu0PjU4YQa2JZcWXuIUYJDmYlEV6Ggg8ZQrwpiZVVqUX58UWl
-	OanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYy3r75I3x514BHbf3GO/Zxx0V7J
-	//8fV22fVft3lRA714/vWt1yipfZdr/WrHCKXMuw4elL3X9z7k2/ccXi/L1rghcFgyVEJUxf
-	sx3mPTbzmbjX2Xmm329fC3r+qd/CuVXFi8kvd+PXrV/caydab1x2J+r31ZjgwB7RfPHya4Es
-	7Z45mRdmr96kxFKckWioxVxUnAgAhTkI7bsCAAA=
-X-CFilter-Loop: Reflected
+References: <20251016063657.81064-1-byungchul@sk.com> <20251016072132.GA19434@system.software.com>
+ <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com> <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
+ <20251018044653.GA66683@system.software.com>
+In-Reply-To: <20251018044653.GA66683@system.software.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Sat, 18 Oct 2025 10:05:51 -0500
+X-Gm-Features: AS18NWCdRnTpaOE-ua3r-9Us5t5kUAoflf6Cc1Wzwirr87rmZDAh12Y2B710qzk
+Message-ID: <CAHS8izPeFvTNPTAqmfkAxR9aKd00HW-G45r77Ex16QQSjfQibg@mail.gmail.com>
+Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
+ confirm its usage as pp for net_iov
+To: Byungchul Park <byungchul@sk.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk, kuba@kernel.org, 
+	pabeni@redhat.com, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	hawk@kernel.org, ilias.apalodimas@linaro.org, sdf@fomichev.me, dw@davidwei.uk, 
+	ap420073@gmail.com, dtatulea@nvidia.com, toke@redhat.com, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kernel_team@skhynix.com, max.byungchul.park@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 08:13:14AM -0700, Mina Almasry wrote:
-> On Fri, Oct 17, 2025 at 5:32 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >
-> > On 10/16/25 08:21, Byungchul Park wrote:
-> > > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
-> > >> ->pp_magic field in struct page is current used to identify if a page
-> > >> belongs to a page pool.  However, ->pp_magic will be removed and page
-> > >> type bit in struct page e.g. PGTY_netpp should be used for that purpose.
-> > >>
-> > >> As a preparation, the check for net_iov, that is not page-backed, should
-> > >> avoid using ->pp_magic since net_iov doens't have to do with page type.
-> > >> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
-> > >> page pool, by making sure nmdesc->pp is NULL otherwise.
-> > >>
-> > >> For page-backed netmem, just leave unchanged as is, while for net_iov,
-> > >> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
-> > >> check.
+On Fri, Oct 17, 2025 at 11:47=E2=80=AFPM Byungchul Park <byungchul@sk.com> =
+wrote:
+>
+> On Fri, Oct 17, 2025 at 08:13:14AM -0700, Mina Almasry wrote:
+> > On Fri, Oct 17, 2025 at 5:32=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
+ail.com> wrote:
 > > >
-> > > IIRC,
+> > > On 10/16/25 08:21, Byungchul Park wrote:
+> > > > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
+> > > >> ->pp_magic field in struct page is current used to identify if a p=
+age
+> > > >> belongs to a page pool.  However, ->pp_magic will be removed and p=
+age
+> > > >> type bit in struct page e.g. PGTY_netpp should be used for that pu=
+rpose.
+> > > >>
+> > > >> As a preparation, the check for net_iov, that is not page-backed, =
+should
+> > > >> avoid using ->pp_magic since net_iov doens't have to do with page =
+type.
+> > > >> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs=
+ to a
+> > > >> page pool, by making sure nmdesc->pp is NULL otherwise.
+> > > >>
+> > > >> For page-backed netmem, just leave unchanged as is, while for net_=
+iov,
+> > > >> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for=
+ the
+> > > >> check.
+> > > >
+> > > > IIRC,
+> > > >
+> > > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
 > > >
-> > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+> > > Pointing out a problem in a patch with a fix doesn't qualify to
+> > > me as "suggested-by", you don't need to worry about that.
+> > >
+> > > Did you get the PGTY bits merged? There is some uneasiness about
+> > > this patch as it does nothing good by itself, it'd be much better
+> > > to have it in a series finalising the page_pool conversion. And
+> > > I don't think it simplify merging anyhow, hmm?
+> > >
 > >
-> > Pointing out a problem in a patch with a fix doesn't qualify to
-> > me as "suggested-by", you don't need to worry about that.
+> > +1 honestly.
 > >
-> > Did you get the PGTY bits merged? There is some uneasiness about
-> > this patch as it does nothing good by itself, it'd be much better
-> > to have it in a series finalising the page_pool conversion. And
-> > I don't think it simplify merging anyhow, hmm?
-> >
-> 
-> +1 honestly.
-> 
-> If you want to 'extract the networking bits' into its own patch,  let
-> it be a patch series where this is a patch doing pre-work, and the
-> next patches in the series are adding the page_flag.
+> > If you want to 'extract the networking bits' into its own patch,  let
+> > it be a patch series where this is a patch doing pre-work, and the
+> > next patches in the series are adding the page_flag.
+>
+> Okay.  Then is it possible that one for mm tree and the other for
+> net-next in the same patch series?  I've never tried patches that way.
+>
+> > I don't want added netmem_is_net_iov checks unnecessarily tbh. These
+> > checks are bad and only used when absolutely necessary, so let the
+> > patch series that adds them also do something useful (i.e. add the
+> > page flag), if possible. But I honestly think this patch was almost
+> > good as-is:
+>
+> Hm.. but the following patch includes both networking changes and mm
+> changes.  Jakub thinks it should go to mm and I don't know how Andrew
+> thinks it should be.  It's not clear even to me.
+>
+> That's why I splitted it into two, and this is the networking part, and
+> I will post the mm part to mm folks later.  Any suggestions?
+>
 
-Okay.  Then is it possible that one for mm tree and the other for
-net-next in the same patch series?  I've never tried patches that way.
+I think 1 series with all the mm and networking changes targeting mm
+and Cc: netdev@ would work (and lets see if Andrew prefers something
+different). The networking changes are very small.
 
-> I don't want added netmem_is_net_iov checks unnecessarily tbh. These
-> checks are bad and only used when absolutely necessary, so let the
-> patch series that adds them also do something useful (i.e. add the
-> page flag), if possible. But I honestly think this patch was almost
-> good as-is:
-
-Hm.. but the following patch includes both networking changes and mm
-changes.  Jakub thinks it should go to mm and I don't know how Andrew
-thinks it should be.  It's not clear even to me.
-
-That's why I splitted it into two, and this is the networking part, and
-I will post the mm part to mm folks later.  Any suggestions?
-
-	Byungchul
-
-> https://lore.kernel.org/all/20250729110210.48313-1-byungchul@sk.com/
-> 
-> You just need to address Jakub's review comments and resubmit? Not
-> sure why we want to split, but if you want let it be a patch series
-> that does something useful.
-> 
-> --
-> Thanks,
-> Mina
+--=20
+Thanks,
+Mina
 

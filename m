@@ -1,171 +1,136 @@
-Return-Path: <io-uring+bounces-10056-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10057-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C32BED1FD
-	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 17:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8157BEDA8C
+	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 21:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4B6B4E5C29
-	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 15:06:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 805A24E68C2
+	for <lists+io-uring@lfdr.de>; Sat, 18 Oct 2025 19:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6781B4223;
-	Sat, 18 Oct 2025 15:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46CE2206AC;
+	Sat, 18 Oct 2025 19:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q6ME7jkG"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PQbm1RE/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F67450F2
-	for <io-uring@vger.kernel.org>; Sat, 18 Oct 2025 15:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4501D618C
+	for <io-uring@vger.kernel.org>; Sat, 18 Oct 2025 19:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760799967; cv=none; b=UP/Y+314LS8wUv0/s0mjbypxl2ulxxO3hqQFLIvUvhZ99pYotpBfwQTIXNsI+o/AMbfHEC5GHmLY8QWvQ5y2wMmxTOBPodoMOXfcsIEhVqT0pqA/PnyP6coltlZ3PmJ6vw4xyZ4zyaFx8dualVQJ3tsZNVMTMhX8B8pxjBcWjiI=
+	t=1760815989; cv=none; b=OxM7d0pH7ZuG9hXFWsw2mafVWW5TKsm+Dioyv2lYFAp1fLHYyVijGFPYN5m1r6fFqouHltEUt6jxdt/O1Ldru2uR4KOY/MSJiGjKQlzGW5aydodfvDjLCKis6p8wFXxugfCkRy5rQOPgoHLskhgma0aZuM1EjtFWq+CHVioGe8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760799967; c=relaxed/simple;
-	bh=ZyvjCPO/DXVQM8YwuZEJD0JqI8HSEb46tVTufAtomWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fy83+0itLubxdQrl3V7YB0J7d0TVV6VNdHrJtBBceNrsq6JV37pCQiBQA9asGc8rclE6beeZCxI7fcOWd6npNb0rOmvnkyfWbqnuwz7Mvo5y9kvc8aQiCCcYERKAnfFDsrWL0zvQvogjmgdjeX6e6uRB9SZFtbd3GDqAQDUZ5mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q6ME7jkG; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-58b027beea6so2528e87.1
-        for <io-uring@vger.kernel.org>; Sat, 18 Oct 2025 08:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760799964; x=1761404764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OSPOiZ7jNcagXuc9lWkglLdnTNQHlNGICFG0e3VfcRw=;
-        b=Q6ME7jkGsm6mkgeROvptigGebUJofPQIBPkJZyGsxHgnTqfPuzCWoGOkOLpVWyhk+s
-         qDpRrX0CsfdOznkp45d5JQBBBbeelXxm76/ZjBYTQ2kdiDFmRApJ9eOtYkYaBzfVJnwT
-         qd2aoLatCZkf+GQO6/a5NZbTkXzgbZHE0pmWCGYoSABnl798V+xDMhLgxU8PnJFecFLj
-         q2XCuq9TmANzKzwo+daHXKsxpZXZaHrlcxGLTDUt20szV53Yy7UqSWJ6BbjzQ5Fe7l7J
-         fh4B2V8LA7EtMQ5g5L85MCzKmO9gruOZFa383QsMXfrwaAFgd42yAHhz51ue+LqbhvY9
-         nyDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760799964; x=1761404764;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OSPOiZ7jNcagXuc9lWkglLdnTNQHlNGICFG0e3VfcRw=;
-        b=BajbLAle+xi8BhasbzKZBdEyGUY59ie030rITBi+Y64bempT9+RC9onCSHfutBN/oj
-         J+wM8gYbryZcxy9Ue/HP0OaZOFOIEnlSQJ/W2lwWVBf8WBaT1rtXv1KTsC3U45hHJ9nH
-         V3q2/BbG3O9uwl+oEJtR9K6MZsydksrYd0t0HQvdTnlND25ZyEvdMQazMbSzSL6MrT2M
-         jZNZTj3lC0+pcKIxNGqHEQ3heGNKtowF7mjsxddaiz+1/a9bFDeKh3qlBYOYozifYovv
-         C7vrlz6YxgnUBRv5Jpv31ZXxxQcxJCADUW8+DY9Xa/w953tQKtp5M+6KtI5Mz6fUYYXW
-         tNQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw3lc5YmQ2D/ClXqR8rp+jFGh5BD2RVKB03T9+J4mVPwB0zJ2YVnVGxSUuwwFGXpkgFwBYZ00Cqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyllK2o/62lGQxG9qsJiRs8qn89t/GdeFq4nvRStO/CcGpM6qHK
-	sgFqu514Z67PDres0ikHpZuaBzrZf4vR8VzzPC/aN39gMU+Mql6aiRzGuFJgIoURn/He9o8GoNF
-	FYwIlwbMLBJTnmemp7YMtJExSO3SAsSloVC8e9Uyd
-X-Gm-Gg: ASbGncuhLmyvVnRbK9veUrWINZCJxzG5bNw5qsMEGNUMZtUppgUBqpklwRRpX+Y6Re2
-	6IuAp84D8HLqfil2uKVyYS88vqIbky63ukbChOymlvQnJIVFcfuuX6ZqOrTyRy+lURd/FpvBaZG
-	JoBFjEshobVAlSFywcnAn5dG87zi2zuaDZipys7hm/pWs9IICryYIj9e6IKI1vRDpThRHWP6HSf
-	87bTB2Rsk/hWkzc/HALNdQjNpAnB0fVO40xfukMDpOJymLPeMm8KyKYgIYojQ==
-X-Google-Smtp-Source: AGHT+IFcaG2diqMxOqusH9IIiQ6tzpbrJgmvAJveAGN983bDcWLIVWyiyO0L7LLJDKrl11UqMQ6S9cxZtA1TVs4J73o=
-X-Received: by 2002:a05:6512:38ab:b0:591:d413:57fd with SMTP id
- 2adb3069b0e04-591d4135be6mr718612e87.4.1760799963225; Sat, 18 Oct 2025
- 08:06:03 -0700 (PDT)
+	s=arc-20240116; t=1760815989; c=relaxed/simple;
+	bh=mMRa86PQ7eAhksy5gfSVBHC2wU5nwP0hfFHWIt2kAxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JCavSmGHv8Q8Oom9j4OEpjVJfa+0BtHEJ9PXBFLUNUCzFiXzYkMUH5u1i+VeAwg9yT9iKgv/t9qBTilPoOTOvLES+yivZEtSLolVbnjLjvAN3yEb+gtjH7ka9J5E5PflWl6FMqzzMSSjdNipljqMmR0HSPfTLp+xnImCak5O264=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PQbm1RE/; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59II1fIR007494;
+	Sat, 18 Oct 2025 19:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=Afnpwd2ZKiqb9a/n7Ig/ycVsgQMW3
+	gs2RjKlOb8yJc0=; b=PQbm1RE/9fWpJgVv/7Hu9SQMca8p6o5GeR+LdC6RmEmp9
+	9+oqmMHg5Vt128SabiQOQXfdslK6GU3SGm5kRPFTrvM566stgd40e/vLzTZeor8P
+	ECXQYN6o0i1xD/pazL5xru9Z3WdpcV4b5N5NU4olYU9GKTjcmykd0WfR42Jz9GlN
+	DVRHL0OMc2ZNzb17lRHd43gIRmSOxQe2PiYL88ZESXYVji5JN82Ur91O82PKFMYC
+	hgVJ/tbsyPjWaEQTySTDngzrxbz8OyTAs/PKBEG4FviDSCVBRIMVscLcOU8XE52y
+	1nR6Lja7L69N0wSRB6t8m3HoQstxRl+qXbMMSndZg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v2vvrfw2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 18 Oct 2025 19:33:03 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59IDZ6IQ025383;
+	Sat, 18 Oct 2025 19:33:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49v1b9fte1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 18 Oct 2025 19:33:02 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59IJVfAs031342;
+	Sat, 18 Oct 2025 19:33:02 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 49v1b9ftdu-1;
+	Sat, 18 Oct 2025 19:33:02 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: csander@purestorage.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        alok.a.tiwari@oracle.com
+Cc: alok.a.tiwarilinux@gmail.com
+Subject: [PATCH v2] io_uring: fix incorrect unlikely() usage in io_waitid_prep()
+Date: Sat, 18 Oct 2025 12:32:54 -0700
+Message-ID: <20251018193300.1517312-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016063657.81064-1-byungchul@sk.com> <20251016072132.GA19434@system.software.com>
- <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com> <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
- <20251018044653.GA66683@system.software.com>
-In-Reply-To: <20251018044653.GA66683@system.software.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Sat, 18 Oct 2025 10:05:51 -0500
-X-Gm-Features: AS18NWCdRnTpaOE-ua3r-9Us5t5kUAoflf6Cc1Wzwirr87rmZDAh12Y2B710qzk
-Message-ID: <CAHS8izPeFvTNPTAqmfkAxR9aKd00HW-G45r77Ex16QQSjfQibg@mail.gmail.com>
-Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
- confirm its usage as pp for net_iov
-To: Byungchul Park <byungchul@sk.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk, kuba@kernel.org, 
-	pabeni@redhat.com, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	hawk@kernel.org, ilias.apalodimas@linaro.org, sdf@fomichev.me, dw@davidwei.uk, 
-	ap420073@gmail.com, dtatulea@nvidia.com, toke@redhat.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kernel_team@skhynix.com, max.byungchul.park@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-18_06,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510180141
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXxnrDiqY9fzvU
+ LXcQmd22vmW1rc9jPweBm/jTyYItQ22R5R2cb8I2peeppAlMOWscGmuq1mG0yvbx0VunncLv/H6
+ UX7o0J3dBe1m+kzzYFoGyO6Uf6L7z03+36EE0yB0slsF4J2+27H+VnLbQAmpWK06rpdQ+18+YbC
+ mMbEMOHlWSgvLMauJTjsTh1ZPjCIm2N9euINXdaXVUP4ixNGZgL5VhaRpIfVo4KFFhgaS8cVBRf
+ OiAx5Lo8VrPTzYNCDJBJZkzyPUUWAh+CMvL3+h7P+ywnFP2+4sPH/2e8zn7Vb7oUPFED/nMVKEH
+ tvZ9Vg+MkqckzRad3sXSACHbWoVSCZf/9OQEsjNRqLOiQUjOOhMXEsQroWwUn37Whtwb+n1VmAA
+ AkdcgSPFkiwqS4xcoEtkxdNdzR7Gxg==
+X-Proofpoint-ORIG-GUID: klHa_Hz1xKC6d7xmoU0YuLOrxDzcLcQT
+X-Proofpoint-GUID: klHa_Hz1xKC6d7xmoU0YuLOrxDzcLcQT
+X-Authority-Analysis: v=2.4 cv=FuwIPmrq c=1 sm=1 tr=0 ts=68f3eb70 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=qSk_1sJgm9nw_u2xY5wA:9
 
-On Fri, Oct 17, 2025 at 11:47=E2=80=AFPM Byungchul Park <byungchul@sk.com> =
-wrote:
->
-> On Fri, Oct 17, 2025 at 08:13:14AM -0700, Mina Almasry wrote:
-> > On Fri, Oct 17, 2025 at 5:32=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
-ail.com> wrote:
-> > >
-> > > On 10/16/25 08:21, Byungchul Park wrote:
-> > > > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
-> > > >> ->pp_magic field in struct page is current used to identify if a p=
-age
-> > > >> belongs to a page pool.  However, ->pp_magic will be removed and p=
-age
-> > > >> type bit in struct page e.g. PGTY_netpp should be used for that pu=
-rpose.
-> > > >>
-> > > >> As a preparation, the check for net_iov, that is not page-backed, =
-should
-> > > >> avoid using ->pp_magic since net_iov doens't have to do with page =
-type.
-> > > >> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs=
- to a
-> > > >> page pool, by making sure nmdesc->pp is NULL otherwise.
-> > > >>
-> > > >> For page-backed netmem, just leave unchanged as is, while for net_=
-iov,
-> > > >> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for=
- the
-> > > >> check.
-> > > >
-> > > > IIRC,
-> > > >
-> > > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> > >
-> > > Pointing out a problem in a patch with a fix doesn't qualify to
-> > > me as "suggested-by", you don't need to worry about that.
-> > >
-> > > Did you get the PGTY bits merged? There is some uneasiness about
-> > > this patch as it does nothing good by itself, it'd be much better
-> > > to have it in a series finalising the page_pool conversion. And
-> > > I don't think it simplify merging anyhow, hmm?
-> > >
-> >
-> > +1 honestly.
-> >
-> > If you want to 'extract the networking bits' into its own patch,  let
-> > it be a patch series where this is a patch doing pre-work, and the
-> > next patches in the series are adding the page_flag.
->
-> Okay.  Then is it possible that one for mm tree and the other for
-> net-next in the same patch series?  I've never tried patches that way.
->
-> > I don't want added netmem_is_net_iov checks unnecessarily tbh. These
-> > checks are bad and only used when absolutely necessary, so let the
-> > patch series that adds them also do something useful (i.e. add the
-> > page flag), if possible. But I honestly think this patch was almost
-> > good as-is:
->
-> Hm.. but the following patch includes both networking changes and mm
-> changes.  Jakub thinks it should go to mm and I don't know how Andrew
-> thinks it should be.  It's not clear even to me.
->
-> That's why I splitted it into two, and this is the networking part, and
-> I will post the mm part to mm folks later.  Any suggestions?
->
+The negation operator incorrectly places outside the unlikely() macro:
 
-I think 1 series with all the mm and networking changes targeting mm
-and Cc: netdev@ would work (and lets see if Andrew prefers something
-different). The networking changes are very small.
+    if (!unlikely(iwa))
 
---=20
-Thanks,
-Mina
+This inverted the compiler branch prediction hint, marking the NULL
+case as likely instead of unlikely. The intent is to indicate that
+allocation failures are rare, consistent with common kernel patterns.
+
+ Moving the negation inside unlikely():
+
+    if (unlikely(!iwa))
+
+Fixes: 2b4fc4cd43f2 ("io_uring/waitid: setup async data in the prep handler")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+v1 -> v2
+Remove misleading "constant result" wording and
+rephrase commit message
+--
+ io_uring/waitid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/waitid.c b/io_uring/waitid.c
+index f25110fb1b12..53532ae6256c 100644
+--- a/io_uring/waitid.c
++++ b/io_uring/waitid.c
+@@ -250,7 +250,7 @@ int io_waitid_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return -EINVAL;
+ 
+ 	iwa = io_uring_alloc_async_data(NULL, req);
+-	if (!unlikely(iwa))
++	if (unlikely(!iwa))
+ 		return -ENOMEM;
+ 	iwa->req = req;
+ 
+-- 
+2.50.1
+
 

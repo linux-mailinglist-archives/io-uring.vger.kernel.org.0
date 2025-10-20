@@ -1,154 +1,136 @@
-Return-Path: <io-uring+bounces-10067-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10068-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922DDBF25AA
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 18:16:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE3DBF27A9
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 18:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5473B8D06
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 16:15:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BD004F8786
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 16:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41FE27BF93;
-	Mon, 20 Oct 2025 16:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC853176F4;
+	Mon, 20 Oct 2025 16:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AZ7os7Xn"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="l1c9v8Gt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B762571DE
-	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 16:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FA02F83AE
+	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 16:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976906; cv=none; b=Ey5b4m5VtaMtyN8al04rGYgE+epDDwu3dAreAa77UyKez40fKDb5BBhsZyI0suJyjGotuW1v8Wldv9CfV75thZz87aGWzqoN6+9VP5OeB4UCEMuYFage5lDdb9wgfCTf+73EM5C6kQGoQvdvfLFQx7y6/By2glms7AOIAWCFctw=
+	t=1760978322; cv=none; b=KSgMmvlZJf2Fs4z7I64fMKQWMh184it6bMNBX2qiXacJb1i9/nuHI41m5AaGRS1HnKV9mCPAkBRWBg2/LeSd2Mo51lUwXA7lAbeIcZvtrsa+Ki9I3AyzWT/cdkYO0ODKqFjxttGtqEGr42n/mu48afbb/5sQm8WHspC37UU3wWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976906; c=relaxed/simple;
-	bh=8lL3IXeG+mgbAJ5epE3wz0kdWbYNQgQz2eN/UlKcfLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dKbxRPVbtH52nW68mj65hnJsLE8pGwM9t4Mb4ICjGNvJpNQmiZoFr4FnsqhMVrU4IPqHm1C7zmZFsCtobZ9RqytliWHkKweSHNcmsh0tk4etcjBkb4hn35mxD1u1MfOweX0R+z3MQhfeN0XhiKd9Hvkya373AVomMYbCjMfQN3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AZ7os7Xn; arc=none smtp.client-ip=209.85.166.171
+	s=arc-20240116; t=1760978322; c=relaxed/simple;
+	bh=CTDuOdRoTTDCj2wNldASjkqmJbodamVmcr+myRXeFqU=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VbD3jPDXw2L65GRyUEa5w1eSnuro1wriPpWPi1QqP87W2HZfUJNNQq5Cjl0/tIyzzjoLyseuzGtaJsaB3sTkg+JF3dCM3t0i+ogadG2lzs11iF8kcmmnNx8nvjgSseV+U5SIXZGf7lAIzWUkZfArEE8ooDVTSpwsP9zs+WtZq3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=l1c9v8Gt; arc=none smtp.client-ip=209.85.166.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-430ca4647c7so14702705ab.3
-        for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 09:15:03 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-940dbb1e343so43847339f.0
+        for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 09:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760976902; x=1761581702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GuT0JHbPcYTfEuqlH1OnDzBY4HhyngWZygNPiqiL6cU=;
-        b=AZ7os7XnqQkOedwYlHFlxyNlPkhLYm3b6dnV+qhrAiXQPM9RP13iDw3XL2dkEcuy/O
-         7O97D3s/iBFuSDS6Y+RFSFszghT4vLnmdlYnk2i+wZ32tAi/gR4bnv7zBc5SXQHa1N79
-         upBY06SV13Z/Vs1akoSiNMgKvblqGbSzXwNR6H4bgvHFYS6WPhi5h38jHZwXsyYwszfB
-         GShhyu1uDCgL9uETKRWI0A5G9h3uPxo/qT6wjZfgTjwPIFX6S7EAQwPGOmkyFCYyJi6T
-         HEtUaZNa7sm+jl857lfEv33hW7m/yu2OgbzDGNsSAae9+gGbuEktiljE/kGGlfUMPdX7
-         acdw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760978317; x=1761583117; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7sDKE/HxnQ8H0e5AkFg2hbWmhwYRf/lotLiH+0SN8Es=;
+        b=l1c9v8GtI2EBfGQ082XxLtt5sjdVwmB4viqeD+5r0oNHcTt4HHBy4kY/1b6w+kRrpI
+         IS2nCNKS1h34MQSKQIMU/1M/dtVIxA1az1LPz8vKiUkpzQuKpHhx0N6W12lMDteJtzIv
+         lNkr8kPsAaMzPSqAX0vx+gClUf4YPwLQaBviUSFsHkFLE2LlG9m4z0xZYqQrgTrHIxTG
+         7my3HwzzPMrWi4AgyXTKhTxNdEDusUbaUZJQtbPKPAY28WYVhLvs4+AfKrGS39aT4McK
+         VEEPpDP0vCWsYd9Io9gQ/FJt/t83y+2Yq4fd5SnMGxeolxtzmfv3MRDtm/3Z8Xy7toCX
+         UNLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976902; x=1761581702;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GuT0JHbPcYTfEuqlH1OnDzBY4HhyngWZygNPiqiL6cU=;
-        b=JVI1exV4mt3jiTfT08LkUCUHYbCG4B1Y3w0gn+3XhICsp/Jp+rEj+xTUOpIsOKgbVv
-         /KNetKRXYTAoDuxZ/cawD+RC0bE+RUThW+8WnX4cyNZucfs2pe2Z5lefljU4uveSsTaP
-         9qdafw7Lq6yYEjvn1rYDHyVkTqXR12dFDM1xZ+jD+ql9S/bfD8fG2zjqiIA7EiB8a/Ab
-         b5KWurmEze//Vd1qhyUjymF+OaXr7WFLIvyuK/XRouz+wDHUTYGkfB1w/fAmDlkQnJDW
-         +R0bdVAKJ9UjofpO1M6OEg7xkJeDYFxqmmX8yHEGlTc40bqFV/5DQ+p54OSEtkeErL+9
-         E+Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCU34dDKA1ZuutDF83OZWYgcY65g3POiTmw23SZm+mx20BCd28h6LMePLpH8cK9q3Wfl1duYdjq/QA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh4AKAWbql7AZeVXezA0wecbdV/l875v8iwtlJKASggjGvfK1P
-	ZBe2vOo/rvD78t/3S/ncsh3HveOpP1iaKoeEP/SLfvKWSc735RqMiVhlDJYekj5R1eE=
-X-Gm-Gg: ASbGnctY3gxeZEoGV4XzCdKqhJGrhEvhq3Xto5vjXy7XhxLg5PJQXc8CwN0qHiNGQEQ
-	QX6AqU01XGzhzYZc7s68R+14cPSUwF+UuGrrnN9Bo99u+K/UTBE6SXqASLc2GHU++AAfcBZ6nH1
-	Jcpp5oqE7fBlZ7utwljxdMPqkKCd8qQ723icQuIIecyQRmZkwDWu4l5bK73vLfZZMteHhvH6gpy
-	OnSp/FERlzXWridG2e25NTacXu5CEZx4FM4bWkMIBt5ZfxVRBe0EWU0cutOmY1h3G6JKy89ys5m
-	VbXRlHZryczVYe6uSUQe/KcUC5+9sCYfkQR/Z7YHczSqlyMTFvYEqskqs2iZ7CoEra5K4VbCXK9
-	SHus6OS3iI3ljP/n6fhLCZWUoK7oX6uXylZZs26aB40HWiDWcfjpOpwF9eqBNmQ8kUs2FxEp6il
-	1wkpVDgzQ=
-X-Google-Smtp-Source: AGHT+IEg7aNW+ZUCQvJhhIhNbQySu2xGeib3GggROeVAsMVhwuxESxCYxh/yLlXaS3BLij6x0H4Tcw==
-X-Received: by 2002:a05:6e02:451c:b0:430:ea1f:ff82 with SMTP id e9e14a558f8ab-430ea1fff96mr509775ab.23.1760976902458;
-        Mon, 20 Oct 2025 09:15:02 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9771eeesm3084320173.50.2025.10.20.09.15.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 09:15:01 -0700 (PDT)
-Message-ID: <1207928c-ad37-4ba0-b473-d38b9b2ce13c@kernel.dk>
-Date: Mon, 20 Oct 2025 10:15:00 -0600
+        d=1e100.net; s=20230601; t=1760978317; x=1761583117;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7sDKE/HxnQ8H0e5AkFg2hbWmhwYRf/lotLiH+0SN8Es=;
+        b=OBgtIE/NMPdNpr7A6MqqnMrVboj42nbddTVUMOd8oy106MkQRcTQ1wO3FErsepaBKx
+         /ZKtRL66Zswbr71eJ1aLpoIAs0ilhsC3/RHHRnFqBQi3UypD/41ZxYmL2jrEHg06OFgS
+         56eNXD5HPCzh2l/RKqRR2sZljjPi9ME/5CJbtwRW8rGYnnmDGX96D7BoJB1ZQ9HpbOQe
+         EcT/dhSpmDiR3Phore6cM00PChhl5NJ+HtyjWwVdWjGBXeGsRjQpRA/IWYkSpyHeQ43m
+         hnJNbON26jE2xuzOJjpToDpIvotecKyvjzhNhCfgvvZjcXVjVo5r+wp5OG1lnBVzZG24
+         Ujkw==
+X-Gm-Message-State: AOJu0Yz3w2DxQur3SgNrPixi7jlCv4qklzL3gspZJgNl2FBcyHN3IT+N
+	jz1M09OTfQGsdNyOxgniCf8n+O9dDOeXa6/vFVnsnY94K17y8ydJTWKjkymjWpbD1ZGKaSMP6+T
+	1wTUFrUY=
+X-Gm-Gg: ASbGncv2H7FIcUxcm7Hr4YKFgyLQJU36u1RWKlYEdPcUwvZtw8ie1duPSkxANH0iCNK
+	6ZpuxTk/O1ADTtMs5O9rFkp68AaseyoAxZ7jwkU66Tq/qZzziaiX6gJzVKo+edNhoXFmxy4obuZ
+	vnpB7b1MJ7NfkyVWzg3xB3OpJ1vsUjq/SC+YlfdosK+JbIQoZ5gi7xMAjEM0Ve0q44iDQl3A6ED
+	B1rEfvhiavCYSy72yd0gXwhI2dY6890FmdkNaQ5Cc+znh6UooCcI8Lxg8ZPcWQot+/9rai4k2Re
+	f8MeKWjuXvgDiGDteZyzZ6ajGshJc8BNuXLvGiOvBmWyQ47M+253072g/z7VZxngqknOuT6i0oV
+	M0ICmk91w4o2M0ShmJaqoMUcZUkaMWe+EPsmFPcDUV1S/2xU1grFbWUGjJ1sZSwLFyNHRrLc08K
+	srbg==
+X-Google-Smtp-Source: AGHT+IFwjAsF5c62mnQ6bLn+3VQ2TxUaSf5GMVLLXqj7FRggZ2zG9zFrIS7ryghfMoOexXYpLAidgg==
+X-Received: by 2002:a05:6e02:154a:b0:42f:a6b7:922b with SMTP id e9e14a558f8ab-430b42f1f24mr238365035ab.7.1760978317486;
+        Mon, 20 Oct 2025 09:38:37 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a97909edsm3088855173.57.2025.10.20.09.38.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 09:38:36 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1760620698.git.asml.silence@gmail.com>
+References: <cover.1760620698.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/7] random region / rings cleanups
+Message-Id: <176097831629.27956.10207214403028288484.b4-ty@kernel.dk>
+Date: Mon, 20 Oct 2025 10:38:36 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: fuse support zero copy.
-To: Xiaobing Li <xiaobing.li@samsung.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- bschubert@ddn.com, kbusch@kernel.org, amir73il@gmail.com,
- asml.silence@gmail.com, dw@davidwei.uk, josef@toxicpanda.com,
- joannelkoong@gmail.com, tom.leiming@gmail.com, joshi.k@samsung.com,
- kun.dou@samsung.com, peiwei.li@samsung.com, xue01.he@samsung.com
-References: <CGME20251020080512epcas5p4d3abbe6719fcb78fd65aea0524d85165@epcas5p4.samsung.com>
- <20251020080043.6638-1-xiaobing.li@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251020080043.6638-1-xiaobing.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 10/20/25 2:00 AM, Xiaobing Li wrote:
-> DDN has enabled Fuse to support the io-uring solution, allowing us 
-> to implement zero copy on this basis to further improve performance.
-> 
-> We have currently implemented zero copy using io-uring's fixed-buf 
-> feature, further improving Fuse read performance. The general idea is 
-> to first register a shared memory space through io_uring. 
-> Then, libfuse in user space directly stores the read data into 
-> the registered memory. The kernel then uses the io_uring_cmd_import_fixed 
-> interface to directly retrieve the read results from the 
-> shared memory, eliminating the need to copy data from user space to 
-> kernel space.
-> 
-> The test data is as follows:
-> 
-> 4K IO size                                                           gain
-> -------------------------------------------------------------------------
->                                |   no zero copy   |    zero copy  |  
-> rw         iodepth     numjobs |      IOPS        |      IOPS     |    
-> read          1           1    |      93K         |      97K      |  1.04
-> read          16          16   |      169K        |      172K     |  1.02
-> read          16          32   |      172K        |      173K     |  1.01
-> read          32          16   |      169K        |      171K     |  1.01
-> read          32          32   |      172K        |      173K     |  1.01
-> randread      1           1    |      116K        |      136K     |  1.17
-> randread      1           32   |      985K        |      994K     |  1.01
-> randread      64          1    |      234K        |      261K     |  1.12
-> randread      64          16   |      166K        |      168K     |  1.01
-> randread      64          32   |      168K        |      170K     |  1.01
-> 
-> 128K IO size                                                         gain
-> -------------------------------------------------------------------------
->                                |   no zero copy   |    zero copy  |
-> rw         iodepth     numjobs |      IOPS        |      IOPS     |  
-> read           1          1    |      24K         |      28K      |  1.17
-> read           16         1    |      17K         |      19K      |  1.12
-> read           64         1    |      17K         |      19K      |  1.12
-> read           64         16   |      51K         |      55K      |  1.08
-> read           64         32   |      54K         |      56K      |  1.04
-> randread       1          1    |      24K         |      25K      |  1.04
-> randread       16         1    |      17K         |      19K      |  1.12
-> randread       64         1    |      16K         |      19K      |  1.19
-> randread       64         16   |      50K         |      54K      |  1.08
-> randread       64         32   |      49K         |      55K      |  1.12
-> -------------------------------------------------------------------------
-> 
-> I will list the code after this solution is confirmed to be feasible.
 
-Can you post the patches? A bit hard to tell if something is feasible or
-the right direction without them :-)
+On Thu, 16 Oct 2025 14:23:16 +0100, Pavel Begunkov wrote:
+> Random stuff that will my future changes simpler but flushing it out
+> as it looks like a fine cleanup series. It also replaces
+> io_create_region_mmap_safe() calls with non-mmap version where
+> it's possible, and removes the helper in Patch 7 while handling
+> io_register_mem_region() a bit more gracefully.
+> 
+> Pavel Begunkov (7):
+>   io_uring: deduplicate array_size in io_allocate_scq_urings
+>   io_uring: sanity check sizes before attempting allocation
+>   io_uring: use no mmap safe region helpers on resizing
+>   io_uring: remove extra args from io_register_free_rings
+>   io_uring: don't free never created regions
+>   io_uring/kbuf: use io_create_region for kbuf creation
+>   io_uring: only publish fully handled mem region
+> 
+> [...]
 
+Applied, thanks!
+
+[1/7] io_uring: deduplicate array_size in io_allocate_scq_urings
+      commit: 12aced0a551e18f2162091e388c3a36ea75ccb13
+[2/7] io_uring: sanity check sizes before attempting allocation
+      commit: 284306f6e6045e3f7b932914d1368df90033e87e
+[3/7] io_uring: use no mmap safe region helpers on resizing
+      commit: 4c53e392a194f2bb37403a5b9bcf8e77401234cc
+[4/7] io_uring: remove extra args from io_register_free_rings
+      commit: 0c89dbbcadf126920e6f9ebfa64e2538af84fef3
+[5/7] io_uring: don't free never created regions
+      commit: 6e9752977caa47c200f88d7df1ff114955a03bad
+[6/7] io_uring/kbuf: use io_create_region for kbuf creation
+      commit: dec10a1ad1d5f9d46e7f6e7c8b414a805e00717c
+[7/7] io_uring: only publish fully handled mem region
+      commit: 5b6d8a032e807c48a843fb81d9e3d74391f731ea
+
+Best regards,
 -- 
 Jens Axboe
+
+
+
 

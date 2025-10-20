@@ -1,127 +1,119 @@
-Return-Path: <io-uring+bounces-10064-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10065-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80F3BF206B
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 17:13:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE768BF2117
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 17:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B2C40521C
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 15:12:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C586A4EF11D
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 15:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED82472A8;
-	Mon, 20 Oct 2025 15:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFBD258CFF;
+	Mon, 20 Oct 2025 15:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="v9y2Wxxc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="G2F/AEpS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0362923D7D4
-	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 15:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDE014B977
+	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 15:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973162; cv=none; b=JQG389CMseU4ex3NWJ0sUw5wQ4DukJXfxOKmatc0LPrkIdeI7ANITSq0R1WL665ddrffJmQ3O9NXUyaNHrD4qmHYxv02p3Ybi3P2ipZiw6Hhk8+0h72wtWcM87S7/w6/5V1whbAocpqi3oAr7nQq1XwkK0tRWV0Thx6Pqvrtyek=
+	t=1760973776; cv=none; b=DzG3E3GLXvtOImxjBHQ/fW7wj/7xrRcG49E2EreOJCI3mwv0uovX6yap720nOEN/DEzicMl78PDf/PgUJFYarNNEN3NasTXD7YGx+PgEYXSwWLxnG95G317T7gzkAsJwbvgr3OAqgbCB2pkSYYoryLts6QhfPeCWCKbcCYHASHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973162; c=relaxed/simple;
-	bh=o/WXo1AwVxAasCxfTqGZfee5TnP+SejYoVO/FHBNe7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TsR2BPXYvbV9rmM8qgFTP68ClceQhxUcB53iXx2hKDh2yUKKmC5CkviZltkfH/u5YZWPo+I+nXWw4NL+gmsrqFCZ7rYsQL3egjNMc48w6xVIqibcPf4kxuToX8aWk+wJx8JoiNzSbvUtfu3aDEA67fNwcRslgr1WSKi8JTzPPr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=v9y2Wxxc; arc=none smtp.client-ip=209.85.166.171
+	s=arc-20240116; t=1760973776; c=relaxed/simple;
+	bh=ODTE617mol+L2+MeQaIZe75wC10/6HIESwr+0dy1Jp4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=daUOAwC23DJyeHNxal/rCnxNzjwR9cjhUCicDUwbaRMb9F0Qrxnvrht1Du++jI+npctYHEBecsa9QxfIKdjTU+nKFTtdbNKVB39bGuXTlnPiGUjYGR1X5GzZHAe0V0OsRnnFXYIHIMjvvmjTJzNWDLTJk+N68rb12zrlmkNpLdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=G2F/AEpS; arc=none smtp.client-ip=209.85.166.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-430b45ba0e4so19905265ab.1
-        for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 08:12:38 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-430e1f19a1aso4624375ab.1
+        for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 08:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760973157; x=1761577957; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jb3EMCuGZdGviJFLLgQe3oeYSU3LFd1sZoiqv3u/0q8=;
-        b=v9y2WxxcgdPkWkcDNj9D22IgcVuXWUuBN2QshIDPQWj/3azuegdOgmxJVHwJYqOLK+
-         bhuRh4orYaSMWSi4YUdmMCgELipnyj8sO9nHT+6G/NDPVOgkxgbCTQSndYghq+yBIHSy
-         yiJGziD0AYpFLy49iJBvS7k9CL800RnDmPUFoLWNbVs6+kpCLyek3hrJEj/vsBQjIB1C
-         Hh4bV/5DI8WfWufs3IJuhtE9y1w0VRpnsijoNHBhdR9Y6lV2j3/SL4T37s1rI1TKngwf
-         ATgHZwmHyUesJbgq/zemTAaFBEPZfBrTiDBJ1n82Z9CsM/XsozaRysEUmyso+XdfCb0O
-         hlZw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760973772; x=1761578572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMlQSwmYkxDUW7fO1tZbtrfqwSMDSCCB1sEl91IVWPI=;
+        b=G2F/AEpS77haxqfN7E5CA7b/jYSBv01zUibCfWn4X5waV+7gNfg6TTzXSSVMAm3C3O
+         EEM9/VyhFIcr+h15IZbJxTZqzBXn9eSqKJgAtYvnmUexackwFjn35wrsuMCx554fpfvo
+         Yyk3vVObLWalzC7dAaGYrjTHAhhuO5+obH15HiS7MmYA2Xq8OAyCOabOO8rOKraEQxdZ
+         vfkZobGg5gVdtYlQGsAT5/xV3m7WaVOhRpCjxwWtry+EXJvPhw7hXhXAMvcR4Z5qiQIU
+         WpdOzzluTDNE86SdUyn9sv3ItvbZbgocxf3D1Ggnb0QowSs2aHa/isNM4QnXqymt+hV6
+         pqZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760973157; x=1761577957;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jb3EMCuGZdGviJFLLgQe3oeYSU3LFd1sZoiqv3u/0q8=;
-        b=Rnl2QfStjoL7dbWtQG7YnwrNEwGEZnHj/UuHVfH2TUu/g52v6nNhkdsZaRqN0ndCUx
-         IVQZ9bMX3XgHDiPAQoTj7Nbh+BM63OBl8ZLRTR5t3XDjpGFeY6KbCwj7TWqD8aUJ3ZRk
-         iMXKr4CxF+LUGi3e9tMD6DW45PDFA3YaQgsJC5QTUrwuq1os4PzfOT6erysFHw7cJYdD
-         Ix5pWhbwddKWCNQmp5HQBkNayizL1P2G9od564ahkCPtHIJCfXKSnd/SrfyZxomflONL
-         qfPpGdWUqoyWtHhnE9v35Y9bVnvNl7K8YkeoqnI1c2f0Z1+VdXm/6m+wfEs8T3rW8mfK
-         j65w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhZ8jmLV6683JJnbwxt8t80wAchNhSN4dk3V9FXvyzRfJ6uEEJYETOqzgzpvCVeXhalarLmMfxGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxqK6XlQnRI8s0Ku/3Hds8+feO6G7YlIrGH2lwYGpfYTK70w4B
-	tslbzByP20+BVoSiHOzIhUMNuYpy1Ds6NY0r67WYWKdvS6CMdcL5pqXxF33ODQ7eKN0=
-X-Gm-Gg: ASbGnct81VgHzbn73WgJpBTpZinmwMW7lkVAcxzsMwTbz/PZ9j/OoVqk4Ly+L0+wTZq
-	O5cVXN/pgNG5i7R3DXZmoK+MXwWsRWz/7Ju2WVj/rVfGQORdUAlSRTUV8h/tqfwW58DMgYjeegB
-	CIkaJdw8LAawV4HZUXDQGXFv55eU4yyncsfRT1+LX5Ag9RqKWxTm9OAUkJiuSw8HswBtvmHYXLT
-	HTv+4o9xteqjYt2Vhv+1p2lXYn0C3vq5wvdPzWvZTLpfCAjMbk40WvCaMbth8ndi+GGQnnawrmJ
-	i6A7tNm8dslR5gENOUJj+7fdDM1hF5O5640XU3Zj6bucvpkkZwZbilbvWx9EvbDZCdR7F49sSfk
-	Fl1UjK17L3tF1nVuHVFStbUE6WPNqc24j+SE9+mJoIt3mD8el78pyyoQLqCGgj33lDnM7uP1B
-X-Google-Smtp-Source: AGHT+IE22rNafzorZNPyruMi0QV8ZbbeCArb1xzhhCvTr8HHITqql03cttgZFQPpox5KUZcR/+05oQ==
-X-Received: by 2002:a05:6e02:2511:b0:42e:7a9d:f5ee with SMTP id e9e14a558f8ab-430c527d3f0mr202894955ab.15.1760973157412;
-        Mon, 20 Oct 2025 08:12:37 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9768b98sm3013871173.46.2025.10.20.08.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 08:12:36 -0700 (PDT)
-Message-ID: <8ac97b77-4423-41cf-a1f3-99d93ac65f9d@kernel.dk>
-Date: Mon, 20 Oct 2025 09:12:35 -0600
+        d=1e100.net; s=20230601; t=1760973772; x=1761578572;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wMlQSwmYkxDUW7fO1tZbtrfqwSMDSCCB1sEl91IVWPI=;
+        b=N7P5jmLHanTlzquu0LC+KmFUyzqTZTA02C0lQfqi5O/sIui3YCoKeY4NyOui9X9HtY
+         +w7WwNLyFywIrGjyx2eXYbKiAITPMarxX/EvULqTaT/er1Ae6qCL1QgKCiIBoOX92UA5
+         b3cZ3I0eVWpKa2Xg5j5FnC36VtyM6WL6YkkzN4dD924M+n2TYc7wZCb9Dv/40UhFpJEN
+         4/JGp+9JFGlzny7JlP/BZdbe19AP5waOK4DshIUgIZV/hdNZirRUXIVjafFRktKZuwGE
+         z8Qtp78R3kFGj9AmOLsQGM2Vr2FQO848daIXi5e4cZz2HYYZrSSTjkvOMRYzebfCtVlv
+         HFmg==
+X-Forwarded-Encrypted: i=1; AJvYcCULOiAKbief8TREBojH+PX0Xv1vHgC1IA5VzblCmy1gy31DejEflq/JPcIU1uGt3x8mOGHbdq0Z4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj55nHIoEAnXsHGIjLr/2NJOURF8vPUUiLjY5YrxPRPu7FWnGZ
+	gW80+VwvZvRAK2jbHMJvd07DOP4ojd1GxgNBAiY2EbZypi/buUlhOt8xuYWeiYUQxHY=
+X-Gm-Gg: ASbGncvlwSzhwWJksFJvUEk72ykLnf+JWjvbQ5sQtgJrrC80knj+o5ETNdwQxyyXXrQ
+	57NtXcZ7xd0rmIJaPSVNfehWyljs0TwNBjqZJKsf75VMqek1hd3H0EfbIPlnT5pu897lXk/GEdf
+	439WCOSMsL4iSxpzzGSGqWrFwnGeV479kLNpAKgdIUWV20XjEJUvGDX3qd91oHiR+2oOUUm4/q7
+	gBxurJVerNh0JjG+PD6SzNqfvf/lmEjJr/rA4tDWX5Wzlk+f7uh1KcLjaL42RFXxNJwf2BOn604
+	c8m5RK6H4qRJov+TlJpqr5DXn3s/EVSUmfIi3dXCWB2Iqzn5kOWZEPKaqk5QJe+uXM9azuxAobH
+	IywUO/Hj90etMvSg+bkyhTd6pRZ22kKkn0+6wlk268Gdpu0EP3EGmYK15SvkJOf9BllY=
+X-Google-Smtp-Source: AGHT+IEvTt7GWQlyQUwUBJ5OdF3T/ZOqnMoXiN2EjJBVwLnmZY38qIysjgdbxjs1Z+aEYbgl/Eimvw==
+X-Received: by 2002:a05:6e02:1d9c:b0:430:ab1a:6708 with SMTP id e9e14a558f8ab-430b3ff77f2mr226835195ab.1.1760973772511;
+        Mon, 20 Oct 2025 08:22:52 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e8661ec4csm304981039f.2.2025.10.20.08.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 08:22:51 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: csander@purestorage.com, io-uring@vger.kernel.org, 
+ Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: alok.a.tiwarilinux@gmail.com
+In-Reply-To: <20251018193300.1517312-1-alok.a.tiwari@oracle.com>
+References: <20251018193300.1517312-1-alok.a.tiwari@oracle.com>
+Subject: Re: [PATCH v2] io_uring: fix incorrect unlikely() usage in
+ io_waitid_prep()
+Message-Id: <176097377066.18128.4545746576618587852.b4-ty@kernel.dk>
+Date: Mon, 20 Oct 2025 09:22:50 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: add IORING_SETUP_SQTHREAD_STATS flag to
- enable sqthread stats collection
-To: Fengnan Chang <changfengnan@bytedance.com>, xiaobing.li@samsung.com,
- asml.silence@gmail.com, io-uring@vger.kernel.org
-Cc: Diangang Li <lidiangang@bytedance.com>
-References: <20251020113031.2135-1-changfengnan@bytedance.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251020113031.2135-1-changfengnan@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 10/20/25 5:30 AM, Fengnan Chang wrote:
-> In previous versions, getrusage was always called in sqrthread
-> to count work time, but this could incur some overhead.
-> This patch turn off stats by default, and introduces a new flag
-> IORING_SETUP_SQTHREAD_STATS that allows user to enable the
-> collection of statistics in the sqthread.
+
+On Sat, 18 Oct 2025 12:32:54 -0700, Alok Tiwari wrote:
+> The negation operator incorrectly places outside the unlikely() macro:
 > 
-> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 ./testfile
-> IOPS base: 570K, patch: 590K
+>     if (!unlikely(iwa))
 > 
-> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 /dev/nvme1n1
-> IOPS base: 826K, patch: 889K
+> This inverted the compiler branch prediction hint, marking the NULL
+> case as likely instead of unlikely. The intent is to indicate that
+> allocation failures are rare, consistent with common kernel patterns.
+> 
+> [...]
 
-That's a crazy amount of overhead indeed. I'm assuming this is
-because the task has lots of threads? And/or going through the retry
-a lot? Might make more sense to have a cheaper and more rough
-getrusage() instead? All we really use is ru_stime.{tv_sec,tv_nsec}.
-Should it be using RUSAGE_THREAD? Correct me if I'm wrong, but using
-PTHREAD_SELF actually seems wrong as-is.
+Applied, thanks!
 
-In any case, I don't think a setup flag is the right choice here. That
-space is fairly limited, and SQPOLL is also a bit of an esoteric
-feature. Hence not sure a setup flag is the right approach. Would
-probably make more sense to have a REGISTER opcode to get/set various
-features like this, I'm sure it's not the last thing like this we'll run
-into. But as mentioned, I do think just having a more light weight
-getrusage would perhaps be prudent.
+[1/1] io_uring: fix incorrect unlikely() usage in io_waitid_prep()
+      commit: 4ec703ec0c384a2199808c4eb2e9037236285a8d
 
+Best regards,
 -- 
 Jens Axboe
+
+
+
 

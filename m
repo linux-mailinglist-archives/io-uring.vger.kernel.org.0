@@ -1,163 +1,127 @@
-Return-Path: <io-uring+bounces-10063-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10064-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A2DBF1F6F
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 17:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80F3BF206B
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 17:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CB6C4F6AA9
-	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 15:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B2C40521C
+	for <lists+io-uring@lfdr.de>; Mon, 20 Oct 2025 15:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC0523E342;
-	Mon, 20 Oct 2025 15:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED82472A8;
+	Mon, 20 Oct 2025 15:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S4fFpxWT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XMQyAlEE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jl+/UGnV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cX8FpQkm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="v9y2Wxxc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549B723D7CA
-	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 15:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0362923D7D4
+	for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 15:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972415; cv=none; b=aAGvVhULRhCvsOYrN0PGIb5d4tSeTKx6sSiJ9MBRPdBrAkazo5OVAUVj4VIXw0RrjywQbiVdl49fPGLuef7rL4HTVPWqsUhoG98qBgB8cV8ppyy1Anmj6gzL6UfGFOqMP3KChnVnpH+r/QEwBZJ1E0kjkBJBOhAhdR+aoPxB5+s=
+	t=1760973162; cv=none; b=JQG389CMseU4ex3NWJ0sUw5wQ4DukJXfxOKmatc0LPrkIdeI7ANITSq0R1WL665ddrffJmQ3O9NXUyaNHrD4qmHYxv02p3Ybi3P2ipZiw6Hhk8+0h72wtWcM87S7/w6/5V1whbAocpqi3oAr7nQq1XwkK0tRWV0Thx6Pqvrtyek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972415; c=relaxed/simple;
-	bh=0fVHr2X4aDIF911o11vLZUtn8vmwaDh/Ss4KAK+I9c0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SwkBpZVkZbGR73uIrKgBPaXbIiycqF9z2GxL4iw8zbFwsZxm8MIBK3sDgypmjoJnBK3OaOi0PRnS4LyQpzIpjvoD9IqKmlSlMhpSRRK/Zub8wfV3SRCZkY1QDwN6k+5+ImLlMrXi4fa4wV+8ByRt7J7tEbTVCt8azyLc9HqkC8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S4fFpxWT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XMQyAlEE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jl+/UGnV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cX8FpQkm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F32F1F38D;
-	Mon, 20 Oct 2025 15:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760972407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sTQF5JivMo0EJptP2dNl8c7K8BGbtDjP43m9I72526Y=;
-	b=S4fFpxWT0WSrgH1COX6GNIuUVchp1PNGStUXhBw3ffT4zddvQXssaRzgCD3IFBa1nTQ9/T
-	iRXjifzOveyJe0KeBzfnQkDCctWU6gvqEn2gOyX77GzV/ua037Wl+BdkOU8u5Qstj1zT/h
-	vzxtTAZednSxr5qlgO590RfDalsm4jc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760972407;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sTQF5JivMo0EJptP2dNl8c7K8BGbtDjP43m9I72526Y=;
-	b=XMQyAlEERDp1Mz3gP8t97bpkH7v9nquyKTZCl7l2Huf57c7irGGHjfgllcU3bSXBWzfKad
-	5FJwem6QmQJt+kAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Jl+/UGnV";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cX8FpQkm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760972403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sTQF5JivMo0EJptP2dNl8c7K8BGbtDjP43m9I72526Y=;
-	b=Jl+/UGnVICmzcZXYAEmBWJvGt3PeC7IdmC97rYwnkjWXywrQX8Uza1lE1X+9fRVc+bVKuV
-	MCG6p3oITSq7zc+Gyjhrex0MPwyy9nn8lnxkDisbz8gockq41MZ3GgNAzeZQPv8adLlYwb
-	OZ4901wJtYg5F0dfLNIXLVJ3zyGH2oo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760972403;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sTQF5JivMo0EJptP2dNl8c7K8BGbtDjP43m9I72526Y=;
-	b=cX8FpQkmtPuaxCVmbtY8rCkgNM9sBsEWD0WDFNPsN2u/wHMjM2o2J+s61fnMeDHPjgOs43
-	rONlVNJCptey3fDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEB4313A8E;
-	Mon, 20 Oct 2025 15:00:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hSzAKHJO9miNQQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 20 Oct 2025 15:00:02 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: csander@purestorage.com,  axboe@kernel.dk,  io-uring@vger.kernel.org,
-  alok.a.tiwarilinux@gmail.com
-Subject: Re: [PATCH v2] io_uring: fix incorrect unlikely() usage in
- io_waitid_prep()
-In-Reply-To: <20251018193300.1517312-1-alok.a.tiwari@oracle.com> (Alok
-	Tiwari's message of "Sat, 18 Oct 2025 12:32:54 -0700")
-References: <20251018193300.1517312-1-alok.a.tiwari@oracle.com>
-Date: Mon, 20 Oct 2025 11:00:01 -0400
-Message-ID: <87h5vt39fy.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760973162; c=relaxed/simple;
+	bh=o/WXo1AwVxAasCxfTqGZfee5TnP+SejYoVO/FHBNe7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TsR2BPXYvbV9rmM8qgFTP68ClceQhxUcB53iXx2hKDh2yUKKmC5CkviZltkfH/u5YZWPo+I+nXWw4NL+gmsrqFCZ7rYsQL3egjNMc48w6xVIqibcPf4kxuToX8aWk+wJx8JoiNzSbvUtfu3aDEA67fNwcRslgr1WSKi8JTzPPr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=v9y2Wxxc; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-430b45ba0e4so19905265ab.1
+        for <io-uring@vger.kernel.org>; Mon, 20 Oct 2025 08:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760973157; x=1761577957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jb3EMCuGZdGviJFLLgQe3oeYSU3LFd1sZoiqv3u/0q8=;
+        b=v9y2WxxcgdPkWkcDNj9D22IgcVuXWUuBN2QshIDPQWj/3azuegdOgmxJVHwJYqOLK+
+         bhuRh4orYaSMWSi4YUdmMCgELipnyj8sO9nHT+6G/NDPVOgkxgbCTQSndYghq+yBIHSy
+         yiJGziD0AYpFLy49iJBvS7k9CL800RnDmPUFoLWNbVs6+kpCLyek3hrJEj/vsBQjIB1C
+         Hh4bV/5DI8WfWufs3IJuhtE9y1w0VRpnsijoNHBhdR9Y6lV2j3/SL4T37s1rI1TKngwf
+         ATgHZwmHyUesJbgq/zemTAaFBEPZfBrTiDBJ1n82Z9CsM/XsozaRysEUmyso+XdfCb0O
+         hlZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760973157; x=1761577957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jb3EMCuGZdGviJFLLgQe3oeYSU3LFd1sZoiqv3u/0q8=;
+        b=Rnl2QfStjoL7dbWtQG7YnwrNEwGEZnHj/UuHVfH2TUu/g52v6nNhkdsZaRqN0ndCUx
+         IVQZ9bMX3XgHDiPAQoTj7Nbh+BM63OBl8ZLRTR5t3XDjpGFeY6KbCwj7TWqD8aUJ3ZRk
+         iMXKr4CxF+LUGi3e9tMD6DW45PDFA3YaQgsJC5QTUrwuq1os4PzfOT6erysFHw7cJYdD
+         Ix5pWhbwddKWCNQmp5HQBkNayizL1P2G9od564ahkCPtHIJCfXKSnd/SrfyZxomflONL
+         qfPpGdWUqoyWtHhnE9v35Y9bVnvNl7K8YkeoqnI1c2f0Z1+VdXm/6m+wfEs8T3rW8mfK
+         j65w==
+X-Forwarded-Encrypted: i=1; AJvYcCXhZ8jmLV6683JJnbwxt8t80wAchNhSN4dk3V9FXvyzRfJ6uEEJYETOqzgzpvCVeXhalarLmMfxGg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxqK6XlQnRI8s0Ku/3Hds8+feO6G7YlIrGH2lwYGpfYTK70w4B
+	tslbzByP20+BVoSiHOzIhUMNuYpy1Ds6NY0r67WYWKdvS6CMdcL5pqXxF33ODQ7eKN0=
+X-Gm-Gg: ASbGnct81VgHzbn73WgJpBTpZinmwMW7lkVAcxzsMwTbz/PZ9j/OoVqk4Ly+L0+wTZq
+	O5cVXN/pgNG5i7R3DXZmoK+MXwWsRWz/7Ju2WVj/rVfGQORdUAlSRTUV8h/tqfwW58DMgYjeegB
+	CIkaJdw8LAawV4HZUXDQGXFv55eU4yyncsfRT1+LX5Ag9RqKWxTm9OAUkJiuSw8HswBtvmHYXLT
+	HTv+4o9xteqjYt2Vhv+1p2lXYn0C3vq5wvdPzWvZTLpfCAjMbk40WvCaMbth8ndi+GGQnnawrmJ
+	i6A7tNm8dslR5gENOUJj+7fdDM1hF5O5640XU3Zj6bucvpkkZwZbilbvWx9EvbDZCdR7F49sSfk
+	Fl1UjK17L3tF1nVuHVFStbUE6WPNqc24j+SE9+mJoIt3mD8el78pyyoQLqCGgj33lDnM7uP1B
+X-Google-Smtp-Source: AGHT+IE22rNafzorZNPyruMi0QV8ZbbeCArb1xzhhCvTr8HHITqql03cttgZFQPpox5KUZcR/+05oQ==
+X-Received: by 2002:a05:6e02:2511:b0:42e:7a9d:f5ee with SMTP id e9e14a558f8ab-430c527d3f0mr202894955ab.15.1760973157412;
+        Mon, 20 Oct 2025 08:12:37 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9768b98sm3013871173.46.2025.10.20.08.12.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 08:12:36 -0700 (PDT)
+Message-ID: <8ac97b77-4423-41cf-a1f3-99d93ac65f9d@kernel.dk>
+Date: Mon, 20 Oct 2025 09:12:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 2F32F1F38D
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[purestorage.com,kernel.dk,vger.kernel.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] io_uring: add IORING_SETUP_SQTHREAD_STATS flag to
+ enable sqthread stats collection
+To: Fengnan Chang <changfengnan@bytedance.com>, xiaobing.li@samsung.com,
+ asml.silence@gmail.com, io-uring@vger.kernel.org
+Cc: Diangang Li <lidiangang@bytedance.com>
+References: <20251020113031.2135-1-changfengnan@bytedance.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20251020113031.2135-1-changfengnan@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Alok Tiwari <alok.a.tiwari@oracle.com> writes:
+On 10/20/25 5:30 AM, Fengnan Chang wrote:
+> In previous versions, getrusage was always called in sqrthread
+> to count work time, but this could incur some overhead.
+> This patch turn off stats by default, and introduces a new flag
+> IORING_SETUP_SQTHREAD_STATS that allows user to enable the
+> collection of statistics in the sqthread.
+> 
+> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 ./testfile
+> IOPS base: 570K, patch: 590K
+> 
+> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 /dev/nvme1n1
+> IOPS base: 826K, patch: 889K
 
-> The negation operator incorrectly places outside the unlikely() macro:
->
->     if (!unlikely(iwa))
->
-> This inverted the compiler branch prediction hint, marking the NULL
-> case as likely instead of unlikely. The intent is to indicate that
-> allocation failures are rare, consistent with common kernel patterns.
->
->  Moving the negation inside unlikely():
->
->     if (unlikely(!iwa))
->
-> Fixes: 2b4fc4cd43f2 ("io_uring/waitid: setup async data in the prep handler")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+That's a crazy amount of overhead indeed. I'm assuming this is
+because the task has lots of threads? And/or going through the retry
+a lot? Might make more sense to have a cheaper and more rough
+getrusage() instead? All we really use is ru_stime.{tv_sec,tv_nsec}.
+Should it be using RUSAGE_THREAD? Correct me if I'm wrong, but using
+PTHREAD_SELF actually seems wrong as-is.
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
+In any case, I don't think a setup flag is the right choice here. That
+space is fairly limited, and SQPOLL is also a bit of an esoteric
+feature. Hence not sure a setup flag is the right approach. Would
+probably make more sense to have a REGISTER opcode to get/set various
+features like this, I'm sure it's not the last thing like this we'll run
+into. But as mentioned, I do think just having a more light weight
+getrusage would perhaps be prudent.
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
 

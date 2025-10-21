@@ -1,118 +1,160 @@
-Return-Path: <io-uring+bounces-10084-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10085-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C7BBF808E
-	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 20:22:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FECBBF8220
+	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 20:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EFD8D3573E7
-	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 18:22:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5807D4E4946
+	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 18:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839463502A2;
-	Tue, 21 Oct 2025 18:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DBC34D933;
+	Tue, 21 Oct 2025 18:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="upxYl89n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRr9KBp0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EB03451DF
-	for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 18:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7959D34D916
+	for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 18:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761070926; cv=none; b=XPGiipvvQhegP9aEMCNLmauo4ZFxXI/aQlaPom4i50oo68qyYgRBiazlXNdTDxTMZ4aBCFtybAKO+s1SI6KGTE/anHc7XJiPXmFsTNaLo4LSEHMEUTmeVDQAFbPPMw8btkpF03yTnjjKGTLg4CvYaEPqicnwR8MFhVFh3/FCPu0=
+	t=1761072242; cv=none; b=KXWyhI7o5fuF4DwjPqFV8N3Fgmjz3VHxwqKwDWgkSq9bY9I080SHwb+rC6Levn3qc4w2hxYPGtC/CMnQ24wqjbu/PdPVJAdqUcDjHlgQ0xbP86R8ktyTuIqhrQ5osfxS1KM4F00DmjDrb+Cbl9GlUm+221U4QFnAJ1gtJ2FhhvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761070926; c=relaxed/simple;
-	bh=79ji3lRxCDVH2zpvzp7RBs9o8422wf8mQPe676ijU8Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lZrLGlhOzluQ1uf8AabxB7AsTDfrnp5dZKLZNbsC+jJ27lnrFL51SipI+VGWjIgyldHlFTsZDcR5IxSdsmcr6Q7vyzQ+qSh42bJlOV3uOGqQukBKTtKy7xg//uAiRR6fmM1AzU9rTb593/Q9kKDkHN9uHAaRwUnTDBJkEnDnJTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=upxYl89n; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-424da17e309so62459615ab.2
-        for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 11:22:02 -0700 (PDT)
+	s=arc-20240116; t=1761072242; c=relaxed/simple;
+	bh=dMZ543gFRLhcsx2twBkuNEhLYQ0/xNV/1po2I47bkCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LyqhRbHsbmtkKrg/GP9S3KdijM/Uy5SsSVzXAj6fH6YhzAtP5DNFN3FdH982QBEMB5umSKNvYiQEupB9gtCLL68/Fyq7bOz3iI0vw4Kc5C5n1E7KnqkGcCs1Df0jzTzY12PmF7P51W0xm1aweL0M7znPc7FrVqJxXj1ywoeOHo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRr9KBp0; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46b303f7469so48112275e9.1
+        for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 11:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761070922; x=1761675722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hwb5AIrReUvMBmNj6v22zzS4g0svF5NEcsjcLOGLDJE=;
-        b=upxYl89nX7S3ZT4RtV1vgms/KWj5gS2hsHQGpfQLkxcw6RWrCZXdGv1AyzITSsffGz
-         wao/gn9BaDEVK1gb4SN96e7y24ndTldRbTUYtf7nnqBn/BbLLG2Qs8yft83dA8pl+0d8
-         IUTSycmJytvCwyaqO6BRSzRD/p9r0fByBJec9B27Dp2pWE0ZOF7+akUTgUs3OnIIxhO0
-         3vBCzalSH6iOEtW0MIywa/Nih5hg5j+oqQb+Et4/bGJv3KUlYq6tABwyv41mdf0/Ukg7
-         BAQbtxGDTt5pWxtOElzX+jClNHSwsZbU5D86FUAwWqZCiBRb1/Ptz2rtAt2OJ5OPWj8H
-         Toyg==
+        d=gmail.com; s=20230601; t=1761072238; x=1761677038; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kh/XMPdb04T4Y7WROE/G9lj01BJ7DWnUDuqhPKcmtX0=;
+        b=BRr9KBp0Fb4gZAbPdXol03bED1hQjbHCsy4TgQYvRiggCucstXwpCCOJ2efz+IS4K7
+         qMWcy6cBhrEQwu3eHxZUetHCDW9IX962yBxh2hzxdxWv6WMAUS5P+BiFR74lK5X92Pbg
+         ec1D2qeTJ0MHQJeehiFoaxNIvZCIa566i8Fgk40Zz1/quO3fx4vM8uM9BGjnWGxXEkXF
+         +Gxu1EYTkZrCJyRKHq0IJ6w4hTpISXo/jqPXBLiKb3VfnfPuCHGwIFQ3FKbM8x+WSVwI
+         wT837wDs3FxNR+sQyD5HkveOXkWwCxD8aj0w12qhuXdsO6EBfzNQv/ueT/VPzGYR8etA
+         ikOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761070922; x=1761675722;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hwb5AIrReUvMBmNj6v22zzS4g0svF5NEcsjcLOGLDJE=;
-        b=GsHfRxPupgPGAtx8z8PoqjfFp0sn8yeKINVifQhrU/LGVXBCtXj3RmsyfA+Ppz6Cjy
-         UY9UwoHzyDqYA+FMXDUKxc/E3TkT73MtvA1ojaKoAqhAmv4VYUoI+M7lPhVaGDvCrx3W
-         wv0HFrMdzqZn7oCKGkrLvwPYPwBrJRMBxWKBBk7dCM4ukPCrOiw1wAObp3sTvhD+Bh4R
-         9sqSC6MOhQ3bMce6wEUQCP270cvcpBSKDHMQUwedvHpEe+G1GijP36Oc7hgDLAN0eFuc
-         or29cSsgX4QIkvBqcHwusI2eN22PnIHdxSnIPCWswwh2xuHhXQgMsIYr75SJ1L8wn9sF
-         MqXg==
-X-Gm-Message-State: AOJu0Yx6mKTWJg6eKypbs9cgLmoX/GEhG9yTNZMsWdUcR5LvfoSYyMv0
-	P0Da7wGvCWn5BxKX/vwma6f7DTJkS3q0ENfEistXQ8P9ZejFg4ZoQ5AGF6bl0qK2IFk3UvqOiZE
-	JtNzSycg=
-X-Gm-Gg: ASbGncuQ+auPrsTIvPUk9j0MSxAxx51RMEWJfTgxJmENf83KZvNzTDW9YQXQ40e21Fe
-	LkFR0PSEIS9GrK2lTsjn3zeS0QIMIl8FBqEWDzkU69biHHj+/4D0jukZHE9C/o6A8HMpKuD6Zm7
-	4YiDP+y7F2gOX3XXoN/C69qK09ewgUIzBkVPXl3niCVJZmhjYtmGIsGGnfSqizLLzYFtv8ZDnY4
-	+fo4V47LPkRmObVUv98idbxqTD0s1+k1JJfVkECGRP0jUUo7knzkZFW4nDpO742jzKpTXyPbre0
-	2LYlvMjsEGU+SrVh1txMJwJ2y1LWffZcSs03r3+6Xrnbo476nRqBmIkv9A4fpRea3+zW9bB3ZzC
-	IPbr871sM6hCJqpDByymYhp0bSo3n4uzr6InsyJMC8kWoqeU5OT6ilSM5cWANmHH5czKTtJStE5
-	y51w==
-X-Google-Smtp-Source: AGHT+IFgvS4Hrtx9ZCCqnSX34c4rLtA7kZh40GCk23wzu2Dl6Bq3N1MD4Xw6Te/SetuH8H3DDeCNtg==
-X-Received: by 2002:a05:6e02:1c01:b0:430:a14f:314c with SMTP id e9e14a558f8ab-430c5205699mr254831015ab.7.1761070921883;
-        Tue, 21 Oct 2025 11:22:01 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9630a45sm4346361173.20.2025.10.21.11.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:22:01 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ranganath V N <vnranganath.20@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251021-fix_indentation-v1-1-efe8157bd862@gmail.com>
-References: <20251021-fix_indentation-v1-1-efe8157bd862@gmail.com>
-Subject: Re: [PATCH] io_uring: Fix code indentation error
-Message-Id: <176107092101.199360.7637020500608445837.b4-ty@kernel.dk>
-Date: Tue, 21 Oct 2025 12:22:01 -0600
+        d=1e100.net; s=20230601; t=1761072238; x=1761677038;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kh/XMPdb04T4Y7WROE/G9lj01BJ7DWnUDuqhPKcmtX0=;
+        b=qo7ejOVBj5MNhsO3i1zF6TQ2SARuRJyThnHfVgPZFcAIDnVBvqROX1p+tSryNl2uNq
+         JV4qCYMc2bHj6VxHyEjw43STAzuCO0vyTm8lHTnR8wzmL44tHH89NR9YwNAGtEKOW4c3
+         1gGOEO5sTfKeiaV0xOCGNfkxNAqbU75PSS10SSm2zJTFNTGJa+hn8qbLxJfim82mQTQi
+         recS6lTQHRyXXQDKw4p1rQLyo75ivPFipNDuOA70W3oEZ9A2lj2BOkZuIpnJqvwIoIQM
+         4sKFOLgQ6DtfoMPb4ziYkSODWhJbHbeoauy+66F8Yiv9ZUB/CNxfJlAD5+79q1GEEZja
+         KWGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhDwEPwI3CcTqaL1SxKGO3153iFQJIr0D/nstfI8NGFwQxH9u8fYCfqDH64Y/aaKD5V0GKOlxeDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3T0iFQ277hvleoV+Kov/1jVu4THHtXc8uwMH67qXkSRmfgp1Y
+	qAiMShyOBCU+zSASEedVDwauMkCr6pIPQA692J9MLnLdUx4ebW1ohbnR
+X-Gm-Gg: ASbGncuztxVI7X45rH9feDZFD0ltdAfj2uLy2E3i5/rPfYry0Uqg9k1XnJSo23LrK/D
+	E+d6A50XRN5CPDPL1DNGNu3iIPVQIxSbvr8MAEtAdY2TZ/kXkxdjksYgCfBkVLqI+4fmZuJYrxD
+	TauoaJ5+/6d3kI9ZDyV82b8+LezLVswAJ7WHPTM0CQlwHnMRVHwWy+c0Y97a+uC8qvCT6DVuFWs
+	flG952laJURn77tx8CyapkPKmP9mJ95s90RObtOP0cMWm2hxYX1Cncym2Md83B7KFCVglIuBnJE
+	uX6l1Bnq/Drpu59Qp6/p+HsA/E5/ZOZKZ/H1sQ2bgbttd4hrnHHEy2HTpSCLTHtxSW3pCD14RJ5
+	zABcGk54b6kY7ETjfxM/jtT6GXQQtWPcIqyM6eZYkVLbvf/S/vdlIlzn/HtP2RyskfMrayIwP8o
+	YEUHnY/RXAElYElFmyRjOhI6vemrtbUKgKezssBzSUM6U9p//5vrg=
+X-Google-Smtp-Source: AGHT+IGWelL5DwWwNY8vHNsoNzzlZ/TZLEsXApTIRHCLR84bM9cvhrxzkPAU3U7RrNKybWEn5qjLvA==
+X-Received: by 2002:a05:6000:1867:b0:427:5ed:296d with SMTP id ffacd0b85a97d-42705ed297cmr10708644f8f.28.1761072237628;
+        Tue, 21 Oct 2025 11:43:57 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9fa8sm21971823f8f.38.2025.10.21.11.43.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 11:43:56 -0700 (PDT)
+Message-ID: <88391433-98ba-47ae-85fd-b7bbe41402e6@gmail.com>
+Date: Tue, 21 Oct 2025 19:45:17 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring: move zcrx into a separate branch
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <989528e611b51d71fb712691ebfb76d2059ba561.1755461246.git.asml.silence@gmail.com>
+ <175571404643.442349.8062239826788948822.b4-ty@kernel.dk>
+ <64a4c560-1f81-49da-8421-7bf64bb367a0@gmail.com>
+ <7a8c84a4-5e8f-4f46-a8df-fbc8f8144990@kernel.dk>
+ <b10cb42e-0fb5-4616-bb44-db3e7172ccdc@gmail.com>
+ <12e1e244-4b85-4916-83ab-3358b83d8c3c@kernel.dk>
+ <57bf5caa-e25e-44e6-ba55-b26bb3930917@gmail.com>
+ <f49721ac-d8bb-45f5-ab4b-f75f7ac4c2cc@gmail.com>
+ <0cc942d8-20a4-43ff-82b6-88a6119662d8@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <0cc942d8-20a4-43ff-82b6-88a6119662d8@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
-
-On Tue, 21 Oct 2025 22:59:30 +0530, Ranganath V N wrote:
-> Fix the indentation to ensure consistent code style and improve
-> readability and to fix the errors:
-> ERROR: code indent should use tabs where possible
-> +               return io_net_import_vec(req, kmsg, sr->buf, sr->len, ITER_SOURCE);$
+On 10/21/25 16:42, Jens Axboe wrote:
+> On 10/21/25 7:44 AM, Pavel Begunkov wrote:
+>> On 10/20/25 19:34, Pavel Begunkov wrote:
+>>> On 10/20/25 19:01, Jens Axboe wrote:
+>>>> On 10/20/25 11:41 AM, Pavel Begunkov wrote:
+>>>>> On 10/20/25 18:07, Jens Axboe wrote:
+>>>>>> On 10/17/25 6:37 AM, Pavel Begunkov wrote:
+>>>>>>> On 8/20/25 19:20, Jens Axboe wrote:
+>>>>>>>>
+>>>>>>>> On Sun, 17 Aug 2025 23:43:14 +0100, Pavel Begunkov wrote:
+>>>>>>>>> Keep zcrx next changes in a separate branch. It was more productive this
+>>>>>>>>> way past month and will simplify the workflow for already lined up
+>>>>>>>>> changes requiring cross tree patches, specifically netdev. The current
+>>>>>>>>> changes can still target the generic io_uring tree as there are no
+>>>>>>>>> strong reasons to keep it separate. It'll also be using the io_uring
+>>>>>>>>> mailing list.
+>>>>>>>>>
+>>>>>>>>> [...]
+>>>>>>>>
+>>>>>>>> Applied, thanks!
+>>>>>>>
+>>>>>>> Did it get dropped in the end? For some reason I can't find it.
+>>>>>>
+>>>>>> A bit hazy, but I probably did with the discussions on the netdev side
+>>>>>> too as they were ongoing.
+>>>>>
+>>>>> The ones where my work is maliciously blocked with a good email
+>>>>> trace to prove that? How is that relevant though?
+>>>>
+>>>> I have no horse in that game so don't know which thread(s) that is (nor
+>>>> does it sound like I need to know), I just recall Mina and/or someone
+>>>> else having patches for this too. Hence I dropped it to get everyone
+>>>> come to an agreement on what the appropriate entry would be.
+>>>>
+>>>> FWIW, I don't think there's much point to listing a separate branch.
+>>>
+>>> I sent this patch because last cycle I was waiting for roughly a
+>>> month for zcrx to be merged, and hence I started managing a branch
+>>> anyway, which also turned out to be simpler and more convenient for
+>>> me than the usual workflow. Not blaming anyone, but that's how it went.
+>>> And there were a couple of (trivial) patches from folks.
+>>
+>> To get some clarity, are you going to pick it up?
 > 
-> ERROR: code indent should use tabs where possible
-> +^I^I^I           struct io_big_cqe *big_cqe)$
-> 
-> [...]
+> Wasn't planning on it, please work with Jakub/Mina/netdev crew for an
+> entry that everybody is happy with.
 
-Applied, thanks!
+Not really a crew, only Jakub has a problem. And I still don't see
+how it's relevant to the project written by me and David with zero
+contribution from Jakub apart from endless delays. But I can
+understand why you'd be standing for a fellow maintainer, even if
+he's abusing the maintainership, while screwing and impeding my
+work on zcrx.
 
-[1/1] io_uring: Fix code indentation error
-      commit: ea3ba56a6f0b66d3e6cc01692d5a83a6d96797bf
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Pavel Begunkov
 
 

@@ -1,131 +1,146 @@
-Return-Path: <io-uring+bounces-10075-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10076-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A950BF55E0
-	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 10:54:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3873BF6DAF
+	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 15:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DB6A03512CF
-	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 08:54:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EDBC506DD9
+	for <lists+io-uring@lfdr.de>; Tue, 21 Oct 2025 13:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352DB1A8F6D;
-	Tue, 21 Oct 2025 08:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03BC338587;
+	Tue, 21 Oct 2025 13:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CPLnjgYS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6S35WNq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70940FC1D
-	for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 08:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE6E337B8B
+	for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761036893; cv=none; b=Ggky69kLIT0ijagxgSepAfGwLEb4Ln787sGQ4zjx4C55cbXfWMnk+NgqYzhQjsj7Knfl7tbQf/nA9VLuntTRjFv/3lKri667JkILwhj7MHqgcOjxrq7LPEJ7lwmCBmZFImfvjMAAlMmiEUK1XBQTKq8jb0akr1PYPdmuTBhPQwU=
+	t=1761054205; cv=none; b=gzyPYEgupRRZwkBgtaxCIfg+LsCkdVPXFuEHh4I7xXOu3dpUV1ZXlCJofeAz5cGuuDKa3aibHJoiVVdG2N3Z2D1hw/++357UsdK6w01z+DZuSnBUEcNphBUjB6b3GlfjffMj879HFRebS+gXwmCvYdFX4DbQ6MgmTJE0cnnxi4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761036893; c=relaxed/simple;
-	bh=yajR3CAVE5v/3r8G48OHxaQyfip6h66KSQNaTIYV3N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GIVRyfBsdsGClXTD3bKsWsVYgwcfJvZcn+oTFkFD23mTwjcYo8+1vujBphda5pEF2vyQEJShqOfh7POjJrttCAs/sSf0Q/xwsAINrb5DmP3SC5DsnmoDllTbcXpTSY0/YStgAZgAP2qsiNnS6zrdN0GWHzWVyp1tuHh2arvZedY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CPLnjgYS; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-3c917ea655bso3556347fac.1
-        for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 01:54:51 -0700 (PDT)
+	s=arc-20240116; t=1761054205; c=relaxed/simple;
+	bh=bYFZsEYCAJcfkGhFoUaPudKwUJ+sHrxl1IMpnSpAtyE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=Hutgo+Nn8C/5RPT51rupep99dZsxdZ6gjRsmL3kVVrm8Ltrl9znV9xrgG4Kx7fsYqDkr/QTGzYLSyQw15PzO9m1IHPdj6ojfEh68vvl+OiuaKIpgLYNmjzU2BCj74aPURiSS3t2/ZZyD1hTIpvoSeQlO5vKzbxRD3hIA1dUNEmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6S35WNq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4710ff3ae81so20459695e9.0
+        for <io-uring@vger.kernel.org>; Tue, 21 Oct 2025 06:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761036890; x=1761641690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dIcC2isdvBxiWOXUafuPSvSlyX8KafXt7rSvP40lSno=;
-        b=CPLnjgYS3QDSFYAXpF7Qfvz6Nw+YJ6Erxp4wWsO2+4tzbtCSPWu56war+pkPsXcJ76
-         uRmP1GAL8IhOF6629lra1++CAlpCqwSUaX7srN8P4+aDmCwGPdtVotaXpZktDj2EH8by
-         zQs7MTkKFTybvOPYFkLuKJzCeEej+3gN3EuWgeysI3j/JJ16pvnVuGXRilaRrwPdcvt7
-         Eqtt1tOtab9DabVIenC2nFuLQx0s6xEWCTc7mrkhvmYoGIMIu+dLj5ZD3ZwOr3pkVAMI
-         0ZWA+ffxc9huP3Qqre9qa68zmHf3P5JIwZ1kDZnP+ah1kP3rddkKaDeZqQNOLLw4NfNa
-         Mjvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761036890; x=1761641690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=gmail.com; s=20230601; t=1761054202; x=1761659002; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dIcC2isdvBxiWOXUafuPSvSlyX8KafXt7rSvP40lSno=;
-        b=OJ/aR9G2SZXiVPLIh1IE6oylRaO/1TMNntO1GU8mWio99hIuV86UAkE/UTlh7molIn
-         oSDv0nouOgdF2WNEt6oz22qNncKQtrlXjGp5rqeXwKrNSE6cW3HAfP6xABFhyphCf7VR
-         kKyTTo8Z5I84o5tC2T36+utscD0a3/qafwyHPJz6EoFHcXpqYFRWu2KPY8FTcMIBvckq
-         /uPWM0Pgqb3t88U0gFFeC0I8y7gGnYWGAcswKrR4xnJ/1mjFUsNgjlYanCDcrIBqZ/mV
-         XuiicEHBxO4EshSDHDbXWMzvdqsw38MBF2pVxC2+xud6LZBXoQ+0DwZNuUdiZByMG02e
-         4nKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv72o/ELf+lEtqon0UPKkAZJnO6J2H5etWRcCsHScYsRYu26/YFTLc6yt4m4j1a3zSLLFsL41ixw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4YC53mwB3T6fW3MkvrzDhJ6c51Lp2fu4bFDayNx7+5G7AgyKY
-	50y7w2g+6zYP+h/gRd0R3en7s9BUWDysfgLQ//8sp9nORp/E5a5aayhkEm0m9kVqg9qNi1DzY/6
-	TB+5AppudUomUHqZDBvQnJ8vRaS9isVUkTUriMSxDHA==
-X-Gm-Gg: ASbGncuf8n1gpvicVqgW0sbMHa2NLeySvtSFzpPNsFen2OqqMqW2koYCc3uPbvCGbBR
-	PpyL06ELS+lm43AACZC+pHMGIIQ2Xz59BQHBWjwUl35pOAw3MREg6p+ONmrws7JyEiUlNcQ5o1y
-	Ilumyk/T6aEOBCa1LgK4SgR34zDtqGKmgM2uX2XoPF5k8JepUBU0+P0CfRJxUS1DFN4/VBIVteK
-	CBJISv9pF5oqSdRFfq73Bp6oLKXSSvFUmge3Pt+ps4flKCuL9JjRRThic115uHiBjngK7yi
-X-Google-Smtp-Source: AGHT+IHTQTZj4xn3cTy4j4Xymr2Kdri788hK6cadIw1GApdt6YHcHaaQw41pgtYSO2u+DBAO5+CHSSbmRkMA1oT0218=
-X-Received: by 2002:a05:6870:a995:b0:3c9:86d7:6d03 with SMTP id
- 586e51a60fabf-3c98d145ca5mr7443605fac.51.1761036890411; Tue, 21 Oct 2025
- 01:54:50 -0700 (PDT)
+        bh=4j1vqtLhPvEx8ulpIUh1Id/jJvXn/Kqv/QjnubvqzrM=;
+        b=V6S35WNqlqoVFqC8P5JJMbUjSf0UJsvywJUl5f15+BNmriQlUAHqwWTJFRMCSk8WJC
+         W5BdgL3kgRhsZ7Q7pup/dCHHm4YBiOqgZytiaLDJr1IoZAp4Fga9rrzZY4V/Kvu+t4YX
+         Lc3v9IBfLk92Kyaobfdp5ASZYVPbS/zu0b1h11/93NJtilTy3BfRKlT6SHEzaH42AMZi
+         z598YEHHDf9unNgt5GMYKoz1/Ht21tCGuFKkbxFT2XpD29wagEm1+EsZGw2kSzTF36Ed
+         //VRuH+raHEa7dlIBXoGsahtfqvKyxxQfBNCmXOJ32iNmcpQ6qTbkFtd2EK1HLXpq2nh
+         Ofrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761054202; x=1761659002;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4j1vqtLhPvEx8ulpIUh1Id/jJvXn/Kqv/QjnubvqzrM=;
+        b=gXCJs8PxAGq1lLIkfkHvXtYnNkaHa1ksPC19ZtXA969cmuJBr80MVTXD/OwqG6FDo9
+         Pe1FcHhMOMR4oZyxwllnH4G6WMOS3XYgAbN0RMVzvLvhna1U5LYA8QD9to6+i3MTJsBA
+         y4QjQCMhWzCKNXld4qkziL5I5DA13C9s4fHnyyzOJ2AWU61KibFK0tXlcFnzq7IYu3iX
+         QwtS0kjTYn1w0HbTUCnAOJcQMEMPMWTRaTETNeE0TibWQZbrOVR9tqKPRJ6IqcefPuj7
+         Ww6Tsu3JRQhXvtVCbpgM4edK733Co6pihvojxP2JzPIoxFcK0G6ylPmOzPfvCP1vT442
+         BBRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3eToclgH8N+n600jJQ4PWPtY4jfgSmt6bo/A57SnIQqBWY0gPxOQ48P3kWXKKWYtzWftXJQWfVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbrBC1LdUantGq17Kb5BEokNPUScdNwqcNmyxf1heCLOeVnv6w
+	A+wPcHgz8hSwj7iTFhoH+Y0vrXI5R1KovEbLXwePeDn/Joao3WJMe1nnO0su+Q==
+X-Gm-Gg: ASbGncsxFSu0ZlfbN+UJ0dZ59vqA1k6yFey/VjpX+DkeN9Zzx5YiuEKV/QJj6Z/qKp8
+	I9lLyt51nNO8kzgCZXV6j+wGowg69Cbrv5X4gTDoE0wGTb8gJOLltu6cZ7f2chJpW22oRmUCAA1
+	Gm9UwgNw0C2jUcVI3Sqg5Z9Qytb1o5T9mwJuzydBc3G6ywtcln5i7EkZV0khxhW3UpUiXUTPLC3
+	rstPmEskbthk0Gpu94dJ9iaiJ2mCLT/Cbk5fP/p4Xz30iVjhHglJ3DFpL0jpG7zrJEYeaD/+a2s
+	YK/3gRBUnv5/GfMk2ninfmeLUxLsNKrUe31hkGXIyKPW5Evl9L+TvyHbKhG03Ny85Gt8dHdLHSb
+	TeiuPRbMqlfC9+In5ujiatbRxzHpIeYvQxA562sXrB4tETfE49RMO0Y0YpwEopQtEcSU9oc6zDL
+	XS1FkUCG7GdwIspprXdUl8CigeuZLNAJIWJFNarK7x7mfuWR2HPJbp3uKH99NfFQ==
+X-Google-Smtp-Source: AGHT+IEsGzOiOfDPe5o4My+0UYHLbGgrmt06MvPDfTrcRl+pYQZaxfIqQAu1+TrFy7VO0AQEDP3zKg==
+X-Received: by 2002:a05:600c:3e07:b0:471:13fc:e356 with SMTP id 5b1f17b1804b1-471178760f8mr125221825e9.3.1761054201837;
+        Tue, 21 Oct 2025 06:43:21 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-474949f0312sm18717335e9.0.2025.10.21.06.43.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 06:43:21 -0700 (PDT)
+Message-ID: <f49721ac-d8bb-45f5-ab4b-f75f7ac4c2cc@gmail.com>
+Date: Tue, 21 Oct 2025 14:44:42 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020113031.2135-1-changfengnan@bytedance.com> <8ac97b77-4423-41cf-a1f3-99d93ac65f9d@kernel.dk>
-In-Reply-To: <8ac97b77-4423-41cf-a1f3-99d93ac65f9d@kernel.dk>
-From: Fengnan Chang <changfengnan@bytedance.com>
-Date: Tue, 21 Oct 2025 16:54:39 +0800
-X-Gm-Features: AS18NWA0y8q4bgqoOiOvN64ETvFslOgD1VJNr0lwdIT8P-8FZ-7SCz6wrNzD8xs
-Message-ID: <CAPFOzZswzJMSdtpZZTTWQ0b3SUgPg5g1cFLVQTQh+os_tVzSnw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2] io_uring: add IORING_SETUP_SQTHREAD_STATS
- flag to enable sqthread stats collection
-To: Jens Axboe <axboe@kernel.dk>
-Cc: xiaobing.li@samsung.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	Diangang Li <lidiangang@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring: move zcrx into a separate branch
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <989528e611b51d71fb712691ebfb76d2059ba561.1755461246.git.asml.silence@gmail.com>
+ <175571404643.442349.8062239826788948822.b4-ty@kernel.dk>
+ <64a4c560-1f81-49da-8421-7bf64bb367a0@gmail.com>
+ <7a8c84a4-5e8f-4f46-a8df-fbc8f8144990@kernel.dk>
+ <b10cb42e-0fb5-4616-bb44-db3e7172ccdc@gmail.com>
+ <12e1e244-4b85-4916-83ab-3358b83d8c3c@kernel.dk>
+ <57bf5caa-e25e-44e6-ba55-b26bb3930917@gmail.com>
+Content-Language: en-US
+In-Reply-To: <57bf5caa-e25e-44e6-ba55-b26bb3930917@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Jens Axboe <axboe@kernel.dk> =E4=BA=8E2025=E5=B9=B410=E6=9C=8820=E6=97=A5=
-=E5=91=A8=E4=B8=80 23:12=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 10/20/25 5:30 AM, Fengnan Chang wrote:
-> > In previous versions, getrusage was always called in sqrthread
-> > to count work time, but this could incur some overhead.
-> > This patch turn off stats by default, and introduces a new flag
-> > IORING_SETUP_SQTHREAD_STATS that allows user to enable the
-> > collection of statistics in the sqthread.
-> >
-> > ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 ./testfile
-> > IOPS base: 570K, patch: 590K
-> >
-> > ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 /dev/nvme1n1
-> > IOPS base: 826K, patch: 889K
->
-> That's a crazy amount of overhead indeed. I'm assuming this is
-> because the task has lots of threads? And/or going through the retry
-> a lot? Might make more sense to have a cheaper and more rough
-> getrusage() instead? All we really use is ru_stime.{tv_sec,tv_nsec}.
-> Should it be using RUSAGE_THREAD? Correct me if I'm wrong, but using
-> PTHREAD_SELF actually seems wrong as-is.
+On 10/20/25 19:34, Pavel Begunkov wrote:
+> On 10/20/25 19:01, Jens Axboe wrote:
+>> On 10/20/25 11:41 AM, Pavel Begunkov wrote:
+>>> On 10/20/25 18:07, Jens Axboe wrote:
+>>>> On 10/17/25 6:37 AM, Pavel Begunkov wrote:
+>>>>> On 8/20/25 19:20, Jens Axboe wrote:
+>>>>>>
+>>>>>> On Sun, 17 Aug 2025 23:43:14 +0100, Pavel Begunkov wrote:
+>>>>>>> Keep zcrx next changes in a separate branch. It was more productive this
+>>>>>>> way past month and will simplify the workflow for already lined up
+>>>>>>> changes requiring cross tree patches, specifically netdev. The current
+>>>>>>> changes can still target the generic io_uring tree as there are no
+>>>>>>> strong reasons to keep it separate. It'll also be using the io_uring
+>>>>>>> mailing list.
+>>>>>>>
+>>>>>>> [...]
+>>>>>>
+>>>>>> Applied, thanks!
+>>>>>
+>>>>> Did it get dropped in the end? For some reason I can't find it.
+>>>>
+>>>> A bit hazy, but I probably did with the discussions on the netdev side
+>>>> too as they were ongoing.
+>>>
+>>> The ones where my work is maliciously blocked with a good email
+>>> trace to prove that? How is that relevant though?
+>>
+>> I have no horse in that game so don't know which thread(s) that is (nor
+>> does it sound like I need to know), I just recall Mina and/or someone
+>> else having patches for this too. Hence I dropped it to get everyone
+>> come to an agreement on what the appropriate entry would be.
+>>
+>> FWIW, I don't think there's much point to listing a separate branch.
+> 
+> I sent this patch because last cycle I was waiting for roughly a
+> month for zcrx to be merged, and hence I started managing a branch
+> anyway, which also turned out to be simpler and more convenient for
+> me than the usual workflow. Not blaming anyone, but that's how it went.
+> And there were a couple of (trivial) patches from folks.
 
-Only one sqpoll thread, no retry.  Only enable sq_thread_poll by default in
- ./t/io_uring.c to test.
-Yeh, getrusage is not correct, I'll try to find a cheaper way.
+To get some clarity, are you going to pick it up?
 
->
-> In any case, I don't think a setup flag is the right choice here. That
-> space is fairly limited, and SQPOLL is also a bit of an esoteric
-> feature. Hence not sure a setup flag is the right approach. Would
-> probably make more sense to have a REGISTER opcode to get/set various
-> features like this, I'm sure it's not the last thing like this we'll run
-> into. But as mentioned, I do think just having a more light weight
-> getrusage would perhaps be prudent.
-Get your point,  I'll make it in REGISTER opcode.
->
-> --
-> Jens Axboe
+-- 
+Pavel Begunkov
+
 

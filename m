@@ -1,107 +1,120 @@
-Return-Path: <io-uring+bounces-10103-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10104-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BCABFC675
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 16:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA24DBFC6B9
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 16:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF3F628196
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 13:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B10625743
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 13:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A54C34B418;
-	Wed, 22 Oct 2025 13:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2F834A77C;
+	Wed, 22 Oct 2025 13:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hMrioFTT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ezxgrQdk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E32534B1AD
-	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 13:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B8234A776
+	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 13:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761140778; cv=none; b=sOEYq/qmHCpyx97HS5lLMhY4/U3am1AxhPj63wAbzkrXNtiHioyfNc7IZedy19LLQJvPqEhBaGCIwoA51W4jAp614EXrtfPd5fBQtbhJ+dADQN5PPpYuTkDtIuhC8aj5QWbX/QU+ZG2yTCVK+kP+/JeK4OaEdrT1PAl7LqVpyBM=
+	t=1761140981; cv=none; b=oLz2KPiOjEgJ9cFmgw0wzs0OSlZITRPSvaMCZTIzjGc4rHPrPiFg99iw2GubuvrR+c54DQs0K39R4gZBNQwdWtgY7UNNOIk8Q/wP76/GGYhlbmwjaTlFxLqBqNqD1EFzQASfR/KSE+ISo2wEr3K4AXW2iShdClbOsOx78r0CZLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761140778; c=relaxed/simple;
-	bh=yA2lWnYeOsGMIHc6VyQMkPT2YEEU6Yd6eVJPkXh8Tyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8vdwpcoY7C75Hd6LT3OFI4/KTmqo4wyxWK19HwhZyAeWPx/aleGRx/0/Saywx7isOHToGmEVkvs+uGbbLD2aVyulEZm99uMOIRJZOF9DuO19FwLConhXVfhugFzJ/5mCwLaqRdw9Qdo53+7KSBTSEnVyz/2q83QiOByzpa1O84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hMrioFTT; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-430abca3354so63596075ab.2
-        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 06:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761140774; x=1761745574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LMa8S3z385kl/4H9dQfYkDdJgEgDVCU2D6eCwoHGu/o=;
-        b=hMrioFTTW1Y0wTK7/XdqDASYG7XFxQFuc9MrjO1lsqw05EEb+wTV36ANpIqJlR4Aqo
-         YGo+TPR0Ly3GRSZYprFTvowj5MRQiBd23sAiOGYufjnNNyltzMFO0BkuX0Nvf/acZ6mo
-         snEfoQ0P8kb+qsy+NnhDyMlZvcR5eOkaXcVCnyBVeH4+Zc7OJskDWLePNVFjxRkbd6tP
-         YKKgToaITRQLfIoIbOii6Gkn25gFtWmpjzrskOShBTP0IzKU8KRCN3TiGgbPRYBbCGvh
-         AKlfOfZ180XdOrX90gF91PDrKC1KAzBojYRDQETneoGFS5ZxO4MlW5fi2jMuf3bPOIhs
-         29Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761140774; x=1761745574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LMa8S3z385kl/4H9dQfYkDdJgEgDVCU2D6eCwoHGu/o=;
-        b=XUBnwpx4wb/1uyeP3upu27z5k0TYejuTFppW9AcQ2mUieC5ZjyELsyhBtdDXTlSL9s
-         ORA4Ue3Mquxi9tWTWloTTbssKZh23yLTdjqGF0XXzbsJF3mkqXSwinR7eqjf1YUplabm
-         BiHU7bbhHEwYuvvCGZr0u/rvcQqWz30NEKEEFQ1Fh8nybE7V5C1Ehn1M2Fq2fmiycEuB
-         y/rupECtUTuei4fJgJoHYFg+ZMlYZ6Co2N8SdVYpjdikVCBi3gfASvrOtO/nwjnbz33n
-         gWJvSZCRkBYUVSbBXKy1yBT/Bkw/siFZ8uBWrI1A2NpRLormu59CsAQU27WWicUGQ9+j
-         GgBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8UrXM5KAlcuUIr+CAI9bMD6g9gVplIt+H05HmAjwDrcC3NSUPQqmY2RoSwyoMOBmsPDEXilnq+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcFIMBY28FPL7gPwCfJHdSIRyy00LaF72haH2tQxZQ67xTugQu
-	ta4E1PNeM5Q0gTgn8xQw9/Ah1sJPJf3TDVCUljWLUYtmaOJPbRi08Pxc7IM3yBKDvhs=
-X-Gm-Gg: ASbGncuCPoimPaU+wMxqypYUybDwQelx4OW7AHWKlTP06w6LeD/dU53IL10YV0ap36M
-	NCzg2oZ6UsW7crAWTcpxup/BrDncfl21XfPS5GlVQh/L9shVz6ezs7t3kscDHknmMp2ewSyuMEd
-	u6RPEgzxMYhTEtKY9/qkylvsejcMJEFq6WBJ4g7DYyUe6mWOLSaU3bX1edOpPQBZvNlO2mfRope
-	hkFvF5AnMwH6/sO7OTRpuuof4R5iQns5XQDwtt3rMXzInACITP3r8YA3tZKOzuVtyIbtyrGmDJ6
-	xM/veAhtK7nTgjgFFdXxEMuvveT117gKTSAoVHKlg55idkcjgkm+AgTePLvkusMzUTIDUQlQonG
-	6Vb39ojSM6JgyN9sXE5BZ3Y2abQw6wYwHuoRNxzrB7MB8s4uT9PvOAKUYP6O7dawYl5nRD2Iu
-X-Google-Smtp-Source: AGHT+IEfD6GtwrizjSnSJ/vma0lV9Pjo5jtl6uYqaNlzb2Hov9ADryiCCr909jA9XOYjXdKBJYINOw==
-X-Received: by 2002:a05:6e02:156c:b0:430:acb1:e785 with SMTP id e9e14a558f8ab-430c5208dacmr295440795ab.6.1761140773944;
-        Wed, 22 Oct 2025 06:46:13 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07a8220sm55488655ab.25.2025.10.22.06.46.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 06:46:13 -0700 (PDT)
-Message-ID: <e5f234a2-ef18-4a54-8436-f23f7490c9e4@kernel.dk>
-Date: Wed, 22 Oct 2025 07:46:12 -0600
+	s=arc-20240116; t=1761140981; c=relaxed/simple;
+	bh=XCfpv9OFiCU0En3vgVrJf9giCeEmsIj4oLn+T37u2Ss=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=GXzOjOceEHYfTEsxSwUaCBEIYB75hf9HudTYvWQ9Knt+//n9+brZXec28aAuWL9tIE58gWdMf8wJzZNIAU+7Z9azSt7/kHXjBUMZcvwP+soLIUILFcwywi5DjYKs8NbGkPf0wdbAZqhFcyaTNSVF9ollS+RPdC/RDhannN2bC6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ezxgrQdk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761140978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yPww/2csBO5h6LuKup4++TzQCeLFKsCQjw8Z3DdMJok=;
+	b=ezxgrQdkJ4BAuDqBKLgyG6Y8CO6PyZVRC7AWfcqk8Wurs4oVFmLxU26OlWOl/6meQ9pWZx
+	6uB084f+lEBwPG/iSYybtDj0Y+A1qnrEO9qFmCDdHk7Fo+qOGXXcKowFI1Q6wz3k9dgvAs
+	TvDD0YevVNS5BdHDuwhTvr+yaCyiTt8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-1zSSALbmOOGM6SJRxGd3SA-1; Wed,
+ 22 Oct 2025 09:49:34 -0400
+X-MC-Unique: 1zSSALbmOOGM6SJRxGd3SA-1
+X-Mimecast-MFC-AGG-ID: 1zSSALbmOOGM6SJRxGd3SA_1761140973
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FBE51956053;
+	Wed, 22 Oct 2025 13:49:33 +0000 (UTC)
+Received: from segfault.usersys.redhat.com (unknown [10.22.89.32])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 009D51800451;
+	Wed, 22 Oct 2025 13:49:32 +0000 (UTC)
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] io_uring: check for user passing 0 nr_submit
+References: <9f43c61b36bc5976e7629663b4558ce439bccc64.1760609826.git.asml.silence@gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date: Wed, 22 Oct 2025 09:49:31 -0400
+In-Reply-To: <9f43c61b36bc5976e7629663b4558ce439bccc64.1760609826.git.asml.silence@gmail.com>
+	(Pavel Begunkov's message of "Thu, 16 Oct 2025 12:20:31 +0100")
+Message-ID: <x49sefbyrkk.fsf@segfault.usersys.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] io_uring: Fix incorrect ordering of assinments of
- sqe and opcode
-To: Colin Ian King <coking@nvidia.com>, Keith Busch <kbusch@kernel.org>,
- io-uring@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251022134431.8220-1-coking@nvidia.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251022134431.8220-1-coking@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 10/22/25 7:44 AM, Colin Ian King wrote:
-> Currently opcode is being assigned to a dereferenced pointer sqe before
-> sqe is being assigned. It appears the order of these two assignments cs
-> the wrong way around. Fix this by swapping the order of the assignments.
+Pavel Begunkov <asml.silence@gmail.com> writes:
 
-Fix for this has already been folded in.
+> io_submit_sqes() shouldn't be stepping into its main loop when there is
+> nothing to submit, i.e. nr=0. Fix 0 submission queue entries checks,
+> which should follow after all user input truncations.
 
--- 
-Jens Axboe
+I see two callers of io_submit_sqes, and neither of them will pass 0 for
+nr.  What am I missing?
+
+-Jeff
+
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 6962980947e2b ("io_uring: restructure submit sqes to_submit checks")
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>
+> v2: split out of the series with extra tags, no functional changes
+>
+>  io_uring/io_uring.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 820ef0527666..ee04ab9bf968 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2422,10 +2422,11 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+>  	unsigned int left;
+>  	int ret;
+>  
+> +	entries = min(nr, entries);
+>  	if (unlikely(!entries))
+>  		return 0;
+> -	/* make sure SQ entry isn't read before tail */
+> -	ret = left = min(nr, entries);
+> +
+> +	ret = left = entries;
+>  	io_get_task_refs(left);
+>  	io_submit_state_start(&ctx->submit_state, left);
 
 

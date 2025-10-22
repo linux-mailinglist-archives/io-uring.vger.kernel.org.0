@@ -1,184 +1,113 @@
-Return-Path: <io-uring+bounces-10119-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10122-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46991BFD6CE
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 19:00:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B467FBFD7E8
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 19:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B609818923B8
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 17:00:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65F45563B9C
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 17:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CCD1F63D9;
-	Wed, 22 Oct 2025 17:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94861B7F4;
+	Wed, 22 Oct 2025 17:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGf/b6wu"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O0zjeIQ0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E34A269B1C
-	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 17:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529062749C4
+	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 17:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761152423; cv=none; b=JznqeGGgeHvHR4eRxyfGbFEEdHFue4EdlIhJYVGj7CKWLFTJdfqkLKHMomcThvM9cWDImVRAv9BqyPni4Af1dI2Iv3opusuSoK8SFMBXBPq9b7p6i0uHPp+kW3QFHvqBzW6mHFKwc2QWurOAY2zR/y7otvvR1I1Z8qvjMC+FTXQ=
+	t=1761152666; cv=none; b=e55CDolnaXJxQUaJjW7GEzy0AR9V5EoxjdZiU1rcMZ7Boil2NTEiK65cMTV8sYP2KxAVw6Nwmu2Z+iJuWqeNfusYo8H65bm2JbNLxHJ5jUdF4xkzCQKJM0bbocsXRMSxSTVrRRG6woKkLG7EH6XZRZ6KlEBdmdkrIY+QYN8+4mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761152423; c=relaxed/simple;
-	bh=jEIK/MnFGgvkU2jSoBVRXZVtORuZhZu66mF1C8+cc1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNBuAOkx1GHBXMO43ncJi5X2t4ELFmCvcmQRe7URFN1ULH6VgXDNmYnL8aOOt2AEG5TAs4D5DdVQp2CxhHg2eQXlVSbrsE7+AKz6yG8cLd/0Z5qUN+8qQSkxikN80zVF40dbMHa9cJxwudL7rZtJERm2+JmeXz1UFnkDTqU7hm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGf/b6wu; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso787137f8f.1
-        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 10:00:20 -0700 (PDT)
+	s=arc-20240116; t=1761152666; c=relaxed/simple;
+	bh=nrkRa93fSCg019oCWqu1On1c9RPlmFRHWuKDM/1dW7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q6MzRTIhuK8vSlor1Ump/cnegCzUxj8PIskKYEGAvagKwrYJFHWGmmqpfzamSl2nhC0f9wgj9PEQ/WB45V91fKVR8XED0tZZWKqaSdaGR9aFjzlzLljTQaubq9PNs2dtRCLa8a7YvV9mYN4i7Hxq98Li40vtUZ6+HZq4EL5KjFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O0zjeIQ0; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-9379a062ca8so306043139f.2
+        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 10:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761152419; x=1761757219; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DmMvg3UcZfyV6BSGB2AmIHcJ7yJomZZTxM0vi/9tarU=;
-        b=hGf/b6wuq1w0zN87xVcaPsBNJ8D7KrdU3L3ilTOFgFuBEVDt8jGhDSQNFu5d+CIBzP
-         8rLDuvcQp6FU2XjWpR3Jb9j48ClbfbSmwULdf/IrSEaUHO8ymLDC2MrBmmlP0NFrS5TO
-         sXGLNG/8LNJLxgXCN8ltU8MiU9NBDEfuCkUUj4hmkCfDHfdtO1ilvupOV5rnr5zEOwUI
-         Glcomfrc/7TvVr5uK9ictSS2UkEpsJ0Z4C3yUVgzKjLHlWMr7Bv81dgnzri72lrjKWTy
-         7uKVg3ujsfpiH+fuG5po5PN5jzWVYFnLncS7dtqZOAXJ7fM3tCXbDedgtmEwm2y1rO32
-         0sqA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761152664; x=1761757464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hl7SoL/Aj4d8pBeRGHrKsUFa0hwIa+5REjt6BwD/dCk=;
+        b=O0zjeIQ0dku81oh+ngsZflpUbvyGb6Rvf2eo7zbKUW2hoYG0QiwnxB1pzmFr8Hvgpr
+         zESo90FaBW44UBbs+lJe/YuyvzKFZoUltTY1p62fys8+YReR2O2gruqER7LXAxR/8XxA
+         MKMc6z2A1jkHLzWkEb4uo8njiDjFIJ/Dt+JsohtJaOBYLe8dnGGKSDJtlJMFiqUVQw8y
+         bRreAFuUwrZVxivTHe2JA4/v4+NB/1sk6HWtsuwhap3RJC1DM8lbT2mrJwZtMa7GWdLf
+         vGSV5DbiPAg5LdPE67yIttnMoFyDU4uVU3114J/WloZEq5+9bQNNqbWHxbGMMJJACEh6
+         YqZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761152419; x=1761757219;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DmMvg3UcZfyV6BSGB2AmIHcJ7yJomZZTxM0vi/9tarU=;
-        b=VfrLjjVgbvgoOKexmR3UkMjhJHi3HLqdfA2uny7yrs7H9RtNq9OeBZxSsYQPD5PNGP
-         +yPmn6Fbhy+HIJFmSfwoEFjQucn1U4Uj/JkT8Em804TC7eSB0i2H/v04QR6ppOnNjPm8
-         Gu+rYGWdaYZGJ4VIVVO9uOkTwHBf0ETypKKVA2hwysklCO1uBHE9bOrxap7B7oXu9s/4
-         nNqjH2yh78bvt7+JaMKk6d0d6WL59GUbOV7usbYFp0OwvCO90EwRD/71VQOCHOdMxwil
-         ISLm2NHu1/LS0gh4auGZfQ+Kw9znHMviq7dJTdXd1Q1DMvZowcQVmS1pQNkbCpE9zRk3
-         P6iw==
-X-Forwarded-Encrypted: i=1; AJvYcCX71PKeDlEQTvJBGFTtdfg9pRN7UfJmuASrMsICBgZmZvWIzxprrH0Yo5AuZDL1D4QGX9j7KBvq7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWygSSo/BYS1mUNdxLWQSB6VdGsB+332Mw+zzP+TOoH2f8KlT7
-	2sVFM3yuIhHmcvTa3ELtH3yx5Tf2pFdJ1LVH037oQOpKby4PCYczTBfp
-X-Gm-Gg: ASbGncv3hTZ1eweYeaKo4nyiLhSjmoBJV9wzgdYt/pTrhFKMPYRS3LPIWt75xjW1nr2
-	dnERS8MfQakArZKIACxZG+l6/X5wvOvbWi9S4qrVKHa8bGFH5WD9Wv4B3AhXzv8wmfPRv5BiJa1
-	PVDXCC3F/YS2nsS3Wk2O21BgE13evGLfxAStVEBF2xyR84WUVYFGNNY29NhFYuQj5diJnsy84qc
-	7WqwT0bKqJ1Y9zNwmrZ0z0bRq6kEyv3gP1NXUq0hKOXMyqKckEaDOEAM+rBc+JQcc0zNDAtDTU7
-	8Xx6QTn15wPwfI7waPzWDINLfmfrmqTD7cQMddTiJ4CXuSdH/V6O3ZxzL84Q0fMuyFY1dvV8d/N
-	HviHWLJMm5PVmToK+pKj67qfP34ZnW3s/r3a03NmyVf0ichJIrf+lOY9zeFBQpCmKOSaHP/zL08
-	U7k8iEhz6MJuUE2AROJ+DGFUS6zqEJT+tKQ08ysAFSwxE=
-X-Google-Smtp-Source: AGHT+IEMXPTtbN3fcgfvF2OXh/lo9HWBSKGGaPfgEOyBk8teyMLT7+VrOSifMFf/Ae1v5WbO89iFqw==
-X-Received: by 2002:a05:6000:22c5:b0:427:401:197e with SMTP id ffacd0b85a97d-42856a82823mr1703265f8f.25.1761152419203;
-        Wed, 22 Oct 2025 10:00:19 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:b576])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c438caeesm50619835e9.18.2025.10.22.10.00.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 10:00:17 -0700 (PDT)
-Message-ID: <20f8d441-914d-48b9-85d4-c1891f44d20f@gmail.com>
-Date: Wed, 22 Oct 2025 18:01:42 +0100
+        d=1e100.net; s=20230601; t=1761152664; x=1761757464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hl7SoL/Aj4d8pBeRGHrKsUFa0hwIa+5REjt6BwD/dCk=;
+        b=kYcurjQKvuyFiE7/WZB7a2S1RCRetg94IaCtz6fR1yifQWmTREGP6ZrrDHzg4119xF
+         6tzVvvGTWM0QQD6Sm7o6xxnnDjZ/6OZBvWL54XQwdeyYpVEk3NlWC5yWd4G71flPr9Mg
+         riyIE3A2ZC8jJGLLX0NzMst7f9GswXdEt0d64GtLeuozHx64LuIr/RZq8fiyDaR9CzDy
+         Mmo9b+oKXTsxp6om/Za4i3M1HFvkdkBzpTP3k1t8+Tt79OUkN7EG5rNY0ITabgvNEVhk
+         HdLKi75khqIj4ryNbhJQjrwDO/2KsWxQa5xik3MmUr0VaqeVX+YUgXIWn9y1J5f0F24d
+         5E+w==
+X-Gm-Message-State: AOJu0Yy3AsbqvbND6C/Rgg6+NbPAAr4HHoT3uiqCVtZALaVvPJEb6b1V
+	DPRg618kTfsaTDXYxbWM6WgQQGh2sl2tq9lclZBA33gqprgFnnqqRUt2XTENFXMPMvOcRI1ELMl
+	Xwf1XNx8=
+X-Gm-Gg: ASbGnctAEJAmVXVIZz4WsAaJ03LZkUFbNd2pDUc+PxeV6bIM3Yu4PCcbERtxpHWLy8H
+	9Xyl1JFg0TUiW35gPWtX7LLpfs6YnCr1DWeI//co82GGAO8wg+w7gsCGYCM4lEgzkw9j+bxBDpK
+	80KJsASruXNNCCReFG8ar4fXvU+iZKGHL99e639ohm+H1PiamjoCYT+MIkaj26sMyCzsSlhK7PK
+	Atqs53IHIIYwHnyVQ8mVWP92JjSuzP5I6FMtDFQGcKVWh/53yuTQaMBDyQcU4w5DRSqfutR486l
+	chSBMQkKH3eIDHlW1rPOd24CkUl9aa+HTYMbK3quQdaDqomLKHw4MpjYprFjWM8SJ5fzpfQiHgc
+	GwQo51OLb7DWkTHhiKXPr4R5K/aEJZlBuYkkl+dqvic0M3RRvj0+gTu0UOryCE+5KCqC5HyMjSN
+	y72nQ4
+X-Google-Smtp-Source: AGHT+IGXexC9VUoqUJzSIRPDbNx41BXxwmxwnGdsDXOSQTbzHu1nhQPD9WTY3RHzCcFTYLNiutmfLg==
+X-Received: by 2002:a05:6e02:148d:b0:42d:bb9d:5358 with SMTP id e9e14a558f8ab-430c527f7a5mr311765945ab.27.1761152659259;
+        Wed, 22 Oct 2025 10:04:19 -0700 (PDT)
+Received: from m2max ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a95fede6sm5352995173.12.2025.10.22.10.04.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 10:04:18 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: changfengnan@bytedance.com,
+	xiaobing.li@samsung.com,
+	lidiangang@bytedance.com,
+	krisman@suse.de
+Subject: [PATCHSET v2 0/2] Fix crazy CPU accounting usage for SQPOLL
+Date: Wed, 22 Oct 2025 11:02:46 -0600
+Message-ID: <20251022170416.116554-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring zcrx: add MAINTAINERS entry
-To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, Mina Almasry <almasrymina@google.com>
-References: <20251021202944.3877502-1-dw@davidwei.uk>
- <60d18b98-6a25-4db7-a4c6-0c86d6c4f787@gmail.com>
- <832b03de-6b59-4a07-b7ea-51492c4cca7e@kernel.dk>
- <3990f8ee-4194-4b06-820e-c0ecbcb08af1@gmail.com>
- <8486dc74-44a3-4972-9713-2e24cefced22@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <8486dc74-44a3-4972-9713-2e24cefced22@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/22/25 15:34, Jens Axboe wrote:
-> On 10/22/25 8:25 AM, Pavel Begunkov wrote:
->> On 10/22/25 14:17, Jens Axboe wrote:
->>> On 10/22/25 5:38 AM, Pavel Begunkov wrote:
->>>> On 10/21/25 21:29, David Wei wrote:
->>>>> Same as [1] but also with netdev@ as an additional mailing list.
->>>>> io_uring zero copy receive is of particular interest to netdev
->>>>> participants too, given its tight integration to netdev core.
->>>>
->>>> David, I can guess why you sent it, but it doesn't address the bigger
->>>> problem on the networking side. Specifically, why patches were blocked
->>>> due to a rule that had not been voiced before and remained blocked even
->>>> after pointing this out? And why accusations against me with the same
->>>> circumstances, which I equate to defamation, were left as is without
->>>> any retraction? To avoid miscommunication, those are questions to Jakub
->>>> and specifically about the v3 of the large buffer patchset without
->>>> starting a discussion here on later revisions.
->>>>
->>>> Without that cleared, considering that compliance with the new rule
->>>> was tried and lead to no results, this behaviour can only be accounted
->>>> to malice, and it's hard to see what cooperation is there to be had as
->>>> there is no indication Jakub is going to stop maliciously blocking
->>>> my work.
->>>
->>> The netdev side has been pretty explicit on wanting a MAINTAINERS entry
->>
->> Can you point out where that was requested dated before the series in
->> question? Because as far as I know, only CC'ing was mentioned and
->> only as a question, for which I proposed a fairly standard way of
->> dealing with it by introducing API and agreeing on any changes to that,
->> and got no reply. Even then, I was CC'ing netdev for changes that might
->> be interesting to netdev, that includes the blocked series.
-> 
-> Not interested in digging out those other discussions, but Mina had a
-> patch back in August, and there was the previous discussion on the big
+Hi,
 
-If August, I'm pretty sure you're referring to one of the
-replies / follow ups after the mentioned series.
+Fengnan Chang reports [1] excessive CPU usage from the SQPOLL work vs
+total time accounting, and that indeed does look like a problem. The
+issue seems to be just eager time querying, and using essentially the
+wrong interface. Patch 1 gets rid of getrusage() for this, and patch 2
+attempts to be a bit smarter in how often the time needs to get
+queried. Profile results in patch 2 as well.
 
-> patchset. At least I very much understood it as netdev wanting to be
-> CC'ed, and the straight forward way to always have that is to make it
-> explicit in MAINTAINERS.
-> 
->>> so that they see changes. I don't think it's unreasonable to have that,
->>> and it doesn't mean that they need to ack things that are specific to
->>> zcrx. Nobody looks at all the various random lists, giving them easier
->>> insight is a good thing imho. I think we all agree on that.
->>>
->>> Absent that change, it's also not unreasonable for that side to drag
->>> their feet a bit on further changes. Could the communication have been
->>> better on that side? Certainly yes. But it's hard to blame them too much
->>> on that front, as any response would have predictably yielded an
->>> accusatory reply back.
->>
->> Not really, solely depends on the reply.
-> 
-> Well, statistically based on recent and earlier replies in those
-> threads, if I was on that side, I'd say that would be a fair assumption.
-> 
->>> And honestly, nobody wants to deal with that, if
->>
->> Understandable, but you're making it sound like I started by
->> throwing accusations and not the other way around. But it's
->> true that I never wanted to deal with it.
-> 
-> Honestly I don't even know where this all started, but it hasn't been
-> going swimmingly the last few months would be my assessment.
-> 
-> My proposal is to put all of this behind us and move forward in a
-> productive manner. There's absolutely nothing to be gained from
-> continuing down the existing path of arguing about who did what and why,
-> and frankly I have zero inclination to participate in that. It should be
-> in everybody's best interest to move forward, productively. And if that
-> starts with a simple MAINTAINERS entry, that seems like a good place to
-> start. So _please_, can we do that?
+Since v1:
+- Store time in usec rather than convert between nsec and timespec64.
 
-I'm convinced it's not going to help with the work being
-blocked or the aforementioned issues, but ok, let's have it
-your way.
+ io_uring/fdinfo.c |  8 +++----
+ io_uring/sqpoll.c | 65 ++++++++++++++++++++++++++++++++++++++-----------------
+ io_uring/sqpoll.h |  1 +
+ 3 files changed, 50 insertions(+), 24 deletions(-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

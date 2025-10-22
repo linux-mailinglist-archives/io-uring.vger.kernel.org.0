@@ -1,112 +1,133 @@
-Return-Path: <io-uring+bounces-10146-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10148-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D70CBFE613
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 00:10:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DE6BFE7E0
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 01:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53AC189DD49
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 22:10:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0773A59D1
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 23:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD6B2737EB;
-	Wed, 22 Oct 2025 22:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F087F3081DA;
+	Wed, 22 Oct 2025 23:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="t/36PsjU"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="BZWmGKO9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-lf1-f98.google.com (mail-lf1-f98.google.com [209.85.167.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6732F8BCA
-	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 22:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFA3307AF7
+	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 23:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761171005; cv=none; b=O4NJMcaiZl9wKa3jl49xpJtIbUuC+ppLxRY/BO4aiO1Zb4lNPa7hrB1U5/kMVZOkWEhOwMd5pxJ2ivo05qo9LtvENFjNQlmFPA4NPgXJ5dMpTznwthx8HgQxjOBMxONhWEiuKZwfJc77is9JNArxtDv3Rf6de/a1U5/Sm9AQupU=
+	t=1761174824; cv=none; b=YeACm2M/6AMzxBHe6OLRlZJpCTRhY/U6S6WEPFiPut1X6zyBW5qSbV5LS1h12i2ajtZkfne/6vSS/wvULfjpNDiRrDUaV1e5mqcAg8CD6AXraLbrl92sTDKAynNEwm9Ahg8yeuLRgADxVoXEaQEKwCnD8tbrALYNejepwZtkbkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761171005; c=relaxed/simple;
-	bh=xmv8xuwGQ3nc0l67LUpUlDbuFdiUOjQwhJmCeLw3o4k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OfVGkFF3lluA/eLGhVF7Ma8OSdRF9g+5WXVtu89cJNRMmBX/iodLdhKQPZNZFCXb58R2Dk4+tJ3xnpP+0zNQN4rTVgJUW+Vaw4WRbJVPoc7EYHxd9SFxWhr1bwIIJuVqzC3bgZotx4RwRK37r79GyZ6B4nLQ9yITEdSDJ8+K8Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=t/36PsjU; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-430d08d56caso772985ab.2
-        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 15:10:02 -0700 (PDT)
+	s=arc-20240116; t=1761174824; c=relaxed/simple;
+	bh=+8TQGyg0ZV97+kPFYJBnRauC5Q+QxqG5BEUv/mu4y9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HhytjKNYw1FfTaD4deERxHe8Gi6rGHuFgC81rMZMgCLi7j7lCuFjm0kv+wVKTgNL0gw8nS6oh7FEyHwEaXMDE+NJ/NWwwS30D0jh0F+Eqs3IomaQJGK7yLaYWHv/5mOZ51TjmPUFmyya4pjgC1n8g4zmlbb4uUdKh0+FYpac5OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=BZWmGKO9; arc=none smtp.client-ip=209.85.167.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-lf1-f98.google.com with SMTP id 2adb3069b0e04-591b99cb0c4so18943e87.2
+        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 16:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761171002; x=1761775802; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YQ6htWzRflK+ICGK6X/bLRh49guoXzNTV+K0TWWiI5A=;
-        b=t/36PsjUsvcqExS6BZ4Iq+2OUNX1Ol11pB7WQ8Zoi1C+qAb2/LxdieRPGnEd9qF1T6
-         kctbz4QwDq4W6+Yt/v/VdNaY7+9AjIjTVZiCWaHjNKuHJUhWRDagzabeQWTQDN83ryc/
-         YQvuR2nikfiOkfwd7kut7m7kf4P1PtV4KtITGQlDLf11udvGxJLWOiZ9D3amv2QEGhzg
-         1R5k4uaIY3hHqzdCSBU6ccYZBCGAEYhGvuIDpNmey2DkZN6URcfnIx7l4O4ZKcP4fjtf
-         qyl6oq1Xve8JXOFSJYxtBcWE0xBQHdvFiSYM/8QVYJjFpulsrOaLIFB5d5vvOyaqkdWJ
-         qgwQ==
+        d=purestorage.com; s=google2022; t=1761174821; x=1761779621; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEb7Tz++jPbBE/mHfoATYrwfDk87qKz0eD7ACfLRyGs=;
+        b=BZWmGKO95mD2clfYM/PYqVpX7rGOPzXaBNdIxo6ldORmYIU9uBypqtCxh4clf8sg7p
+         bbPfaMsN7iLQ3zmHfVqgp0KZOJTmocZJh605cfVR6RZ4eyuZEiryrUz3UjN6sJcbRuLw
+         8B+Fd7EYoRGQnTx1q4yLgQoa/iMRapBsKvpc+cu8J5u96XjxcKdReTAR0i3usD+gUIre
+         5xBkmT5LrdNzzrK7Ea0M1dpI+W25Hwuhn1oeXWrTL6cRWN18YvIfFRWWY2/QkX2n22G1
+         iAWc4OQMve7TJLXWQbXzftDQIj1GtrxTS5Zw+8nVeEACw2dcTAO60Gd6UwnK9A8E7KtU
+         3Kyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761171002; x=1761775802;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YQ6htWzRflK+ICGK6X/bLRh49guoXzNTV+K0TWWiI5A=;
-        b=gr//j9lSg7C8iDua8x+MXXpXM8K6/jIrMVlsVmm1yecvPgvNmGuH2V3JizDh2TOkhc
-         DtOho51ScUsIFGrnjwR/k2bNdDk9EUfdPhq1BD5nxNUlZu7cqU9Ep5p9SJhdgRouIqYD
-         IX/vCFVsizk2VjMZraiX57o/uSnlgLmPupGlVM0jKmR7KhWwPsNLkoqJ7vJ4xZFvXueS
-         pZJq0yAi0lBEx3My3u4fjYGoJbGCRwNlCEs1lo7kQN6/HB3DNZVimJAZzYtduS5fgBk6
-         dssgWgF+3t0yp2cMQorb10MHqVDK/1UWQ395YQmPRa41WoqC6qMdnaBcpQMQ9SbXRJ3Z
-         mYEg==
-X-Gm-Message-State: AOJu0Yw1cXaAYa2lUGKk8oTA0mhsZ+5cpt1gNY+ljrzxCLcKry6Olwg7
-	HIg95/OVup4a+3B10f92VulJzsIGsaEf0XTZ6IwBEeqZAq5pk1NCf1k1jTcy+HCx1Rk=
-X-Gm-Gg: ASbGncuLAVDlfJo4ZWCWke6KdQ1Y5IY2Ors0ubgDo8/2VOyW6owC62zteIQS3CWXRBC
-	aruWc/tlsawy/DA9L9T4gdG5XPn3KGEKXLWhH03NwBq8H/A65JHGofDwW7tF8GFFR+cUJSkvW4w
-	HG5H20V8hpmVbfJllV34sJpmmu2C/z1N5KowfdfJdNWybBKVzC1Vh6N0Q88v/VaTDuZt46/GRlI
-	dbsfUhf3TS2i6lDYTEYkCmEo3j1pXdweuuqJA7Iu6I3YMXdUbrzZpkrboCWy9o6oI1CbmKjnqlu
-	DKcM4s6ubeaZCwyrdlWrAHjiQy0PU1FQBVUbPtflHtnSCSJ4Wkt2dpoI2eouuvZ7+pyJ0UcoR18
-	7HokPhomm0LjL3WrZOy+HVOfh8O2AbIqYw4OtpyzOTJ0oexv9B8qf13hptEpCbWCCNhK1
-X-Google-Smtp-Source: AGHT+IHDBQaVXxF3Iaxtt15PzMPCFh7Tv3Ywm2UUvakjMUJmiAznJVwTo2c7LbuOWoYaPTAFjxsipQ==
-X-Received: by 2002:a92:cda3:0:b0:430:c491:583b with SMTP id e9e14a558f8ab-430c52367d5mr310015715ab.14.1761171002115;
-        Wed, 22 Oct 2025 15:10:02 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb4d55efcsm126930173.11.2025.10.22.15.10.01
+        d=1e100.net; s=20230601; t=1761174821; x=1761779621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NEb7Tz++jPbBE/mHfoATYrwfDk87qKz0eD7ACfLRyGs=;
+        b=uVERqpw/vNy3d23wz88czakJrYSVBgLeNORmMVqSNsm3NEgIlUBIlWFO8TS1Dzoy1a
+         jLRy/oODcTg06vVPGNJ80lVU6yrziMMITWCLwtFldBnBPthxkkWDS5HIsRpmOfR2g0K1
+         ILQpvmj7gZltY9ccWxlO6RsmGDajNhvvk/3jwx5Ba53e+zvn8BR71xxXxI5mhYE9eBEB
+         BEtuYhc3MCUxwOkMePv9c2rQegizPvn8FHsrFfDc+w2f5WPrYwEGlXR/J3tvysCcWtG8
+         YS9cMl/pq8tiixC2JMQ7unaDN4RtsYmdk+2O9wJ6ip1t33NIRsBoDM/1eJrtPmB+ZVl9
+         +94A==
+X-Gm-Message-State: AOJu0Yy9IebnMdjYJlm/QxEFAe7TQswb47JAcp4pp/l+ZVk9veALyokQ
+	KlSmLBKD72d24ifpf2pDrve+VZh/MJfpfOAHT8Vaewnf8k1Ekcpn+bxgtJ4rTtiucZbe0l8HCUJ
+	qgr2gI5unZeoBaYMJPDem3KvvuUaseM83fv6Yiy03fvSc9Hh9nmPX
+X-Gm-Gg: ASbGnctlIPzDSNug+iEZMacEMzZtM2QfhtAskPGBZzmMwSkY6wvG0kJhJAEhsCUhrzu
+	jewHWSN4lkehqmgtDkKWORdhNUHWEpakmeYrSXQf817oBgfP0ng5HhRUnyL29cjs1xJrQsFd01R
+	doV44UTLzmeJ1uHcMYbv9QtXkmKXM4ukLDGQ7zoyNs4Jmcc+nc+uoOY0jzBaF+l7WFyasJyQc6P
+	tALPapDj8FjR2Paa8gs99X/OCcLxx4fPf4mFZ9472QZrvrpnl6SfZYSuLZNztfmZaJMY3cTCtBD
+	fDFcS4ssCBMyoWpgm+ouyD+ce3otAG+6kN+Ky/fhpT5ItEe3gm4G8hbS6RNwTiA6o/UidwXWTRt
+	gF3d+O/QwZprYp9Xd
+X-Google-Smtp-Source: AGHT+IE8YXW1bqh82Pv83CqBL++4EorD9wKI8kSNSxyaHaZobY7QUQj2BR1bXjAEiGky/6dYa+2+odrIWp7W
+X-Received: by 2002:a05:6512:131a:b0:57e:ed2d:190f with SMTP id 2adb3069b0e04-591d8598d06mr3612400e87.7.1761174820409;
+        Wed, 22 Oct 2025 16:13:40 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 2adb3069b0e04-592f4aa2259sm40463e87.0.2025.10.22.16.13.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 15:10:01 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Keith Busch <kbusch@meta.com>
-Cc: Keith Busch <kbusch@kernel.org>
-In-Reply-To: <20251022205607.4035359-1-kbusch@meta.com>
-References: <20251022205607.4035359-1-kbusch@meta.com>
-Subject: Re: [PATCH] io_uring/fdinfo: show SQEs for no array setup
-Message-Id: <176117100123.172292.11432176457482807538.b4-ty@kernel.dk>
-Date: Wed, 22 Oct 2025 16:10:01 -0600
+        Wed, 22 Oct 2025 16:13:40 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 86E1B340283;
+	Wed, 22 Oct 2025 17:13:37 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 7A5DAE4181C; Wed, 22 Oct 2025 17:13:37 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>
+Cc: io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH 0/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+Date: Wed, 22 Oct 2025 17:13:23 -0600
+Message-ID: <20251022231326.2527838-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+Define a io_req_tw_func_t wrapper function around each io_uring_cmd_tw_t
+function to avoid the additional indirect call and save 8 bytes in
+struct io_uring_cmd. Additionally avoid the io_should_terminate_tw()
+computation in uring_cmd task work callbacks that don't need it.
 
-On Wed, 22 Oct 2025 13:56:07 -0700, Keith Busch wrote:
-> The sq_head indicates the index directly in the submission queue when
-> the IORING_SETUP_NO_SQARRAY option is used, so use that instead of
-> skipping showing the entries.
-> 
-> 
+Caleb Sander Mateos (3):
+  io_uring: expose io_should_terminate_tw()
+  io_uring/uring_cmd: call io_should_terminate_tw() when needed
+  io_uring/uring_cmd: avoid double indirect call in task work dispatch
 
-Applied, thanks!
+ block/ioctl.c                  |  1 +
+ drivers/block/ublk_drv.c       |  3 +++
+ drivers/nvme/host/ioctl.c      |  1 +
+ fs/btrfs/ioctl.c               |  1 +
+ fs/fuse/dev_uring.c            |  3 ++-
+ include/linux/io_uring.h       | 14 +++++++++++
+ include/linux/io_uring/cmd.h   | 46 ++++++++++++++++++++++------------
+ include/linux/io_uring_types.h |  1 -
+ io_uring/io_uring.h            | 13 ----------
+ io_uring/uring_cmd.c           | 17 ++-----------
+ 10 files changed, 54 insertions(+), 46 deletions(-)
 
-[1/1] io_uring/fdinfo: show SQEs for no array setup
-      commit: 0ecf0e6748120842700efc5dbf22a18580f7efcf
-
-Best regards,
 -- 
-Jens Axboe
-
-
+2.45.2
 
 

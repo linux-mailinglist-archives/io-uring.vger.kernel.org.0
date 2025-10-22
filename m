@@ -1,81 +1,80 @@
-Return-Path: <io-uring+bounces-10115-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10116-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69F6BFD698
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 18:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9177ABFD65F
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 18:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58F3F4FFC26
-	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 16:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA8B18820BB
+	for <lists+io-uring@lfdr.de>; Wed, 22 Oct 2025 16:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6659535B156;
-	Wed, 22 Oct 2025 16:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC87F221FBF;
+	Wed, 22 Oct 2025 16:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="s3qodkyT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqZOb1D4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FB235B136
-	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 16:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD2035B13C
+	for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 16:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761151726; cv=none; b=AngiAvPrwY/LT64jmveCvmsjrAbBD7Aecc4xJa/F2yQzMM3NIpKKtdida1IZmCHc6/dzT7rEupsosiNW05HI5AIChOyQo/aIL6Em5In46q84h57iU1Z0gSvpKnyJCzyhPLnNnHBU08XTF50DClIKI6Ed6N84k84ksSrMVsUdJaI=
+	t=1761151912; cv=none; b=GR+jngDYPyBr6ZIkMed0NBYHIU/TzsrNxk1KtAgdKP+n/5A/tkRNGupBhG1+/2teuqA9yJ0U/JkeWwX9YfewnrlyfsriY93LieynpptVx5XQNLfhSe8gr/rSldptYM/SFtr+TyyLPcVNVZS1r5111QXsAcxNwqCSowmXZJmM/B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761151726; c=relaxed/simple;
-	bh=cXXlxOryLhpoil0xaDUUECoDJ8mGRDgrUJYRq3Usfw8=;
+	s=arc-20240116; t=1761151912; c=relaxed/simple;
+	bh=FHxQBxehiKd+2OJLErQhBAycF55sbrjXqKybW9Rkxv4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HeR6VG0R7iuYyJM9kdCvNNGeQ6MYtoe7tefYi2GLbFIqdLjyS3e4QFEJU7yZtDKzdaWqdSpAKcimN3ZahrShtWn22MwNeLTAzkwJQoqiMoo1DRl70x4yZjZWxxrL1Kkslw2s4hpjcwyL8kgZuJ8lbrbu/RWzz9eih7+uaEnNEJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=s3qodkyT; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-430e182727dso13745375ab.1
-        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 09:48:42 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=emRw0/hHFhDth2LjuH7tnCn591DyT82U8grSF0xs11UKd0vTp/qqrsDCRDlnBZCdm3CzntteIRnzz96yqNFAB2+obBrTbn//ZgbCqiNwo7Jpz2lzIZ1r9Hr6Gxjf7Vqk02JM66P7HL81AvfLQCyYhTx+xXMHNGpM/FDZaHO53X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqZOb1D4; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47118259fd8so45493295e9.3
+        for <io-uring@vger.kernel.org>; Wed, 22 Oct 2025 09:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761151721; x=1761756521; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1761151909; x=1761756709; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lwpd3rmy29H1ooJYC2gH6QQxli+wXCcDxKShQQGlixI=;
-        b=s3qodkyTkdBVX5VCQ4D8GW/vizTa/Gk+zIgJ5x7ZLOCy82gibra+rwIQrhU0SReUWi
-         WpLl0SQ2l1dyTmbvNvbzNIVrQoFhvJZGoXNPSyZWfhdCaUShWIvuO01SiZ7Dzp9HWqZn
-         tMRmWpws2/aywnGAM1l03fySIWiuyU27pdqv+TjUhipLyRU+x4EAN7I5RlbZ/kauHfjr
-         pFG8vpi6T40NiWnsf2qKO6Z6kpDgsKJ7p5GTsYPoS/j0MftbkFolncomajdH+IwDkyPs
-         1VGmbuhPE1VuNVD8Fru4ScYPugKTKX1FG3tJLJ76CZChCMwrL5Ku+qqmYQsFsHrZ4D/Y
-         Nzhw==
+        bh=8MoXXfOSKn6ep3VY2AlKDkKcGxJOplW/KlCkvyC4mvk=;
+        b=UqZOb1D4AFRYwCp9djHswQA/5Za7kV7FlTUi7DJGNhQ6cVVQE6WFp0uxW4dA0Mqu1f
+         /rAZGRZPeSJab8Jhx/LqN8R4nyrluInKcNsZHZCZAmgFE4obkb0rvEKwE5mNUWX+jt4U
+         Ji0WCzbxJ0u6bgvyCLbSbZWQxp6RARjt7dH4iZSIeesiw23AUB5zQMGE46ieoLQkZHi+
+         visEtVAWceXGxD3D7nTvnXLQWX6czZE/m8JSqPih7l0FRtnwTw+B1mOBCAekJU8W7QvB
+         Rz6WVgD9gv9V/3W9u6mvJZTru3pBEvt1tEWoDr93XhcUo18LaeRRBN5ncZ6JwosyWr7U
+         pZNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761151721; x=1761756521;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1761151909; x=1761756709;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lwpd3rmy29H1ooJYC2gH6QQxli+wXCcDxKShQQGlixI=;
-        b=qzqsEsXbT52NK02di/tRLiobLXrFkRvZ9Gh9Lr/NHBxG2D/uPU1j6xRTO6a+svyWXF
-         A1lLMyp/TsB9VYqk0uU9xf0TkNOYLEe5HZ+E5OLHJex+CLBnN8Ec2M6JiAJI001BtSeA
-         v+OW2T6xdlL9PbJBPGSCHckoCNs8S0KpIWcA7S6AcbTyZVfR5dMSsXFbExklS54ZArJ5
-         Z/YhYYPLUt0czOT1rfIKJTHLEqN5sYJd6xSl+xXigyPvdYx9RATZUxVClfLR6K+VicIH
-         5pODJUabSrMLY0Tk40LZKE9mewPrZ5pTKloS7PWjYyVg/SZJswane+8gxafa1yMF2gV0
-         Wb2Q==
-X-Gm-Message-State: AOJu0YzMmrFA254blS9SIQhetGloav0rqwf7tPiSi77mgemq4YJdRYaW
-	/eju+5Ic26My5jwEOhGY33L/6KX5qZRULDT6Tx8DwiBmYcPdByHfYZshs4zLL8rqgptopFUkx4S
-	hN/dy+fg=
-X-Gm-Gg: ASbGncuGkOaZLMFaDIE0epy9jSQAAEX58UdLhN0Zn3tJf05U6h1cyi4LXBK0huoMM0R
-	4vDo58lrsJLvVwAQjT8HQ6StYK60uctSR2y16WrfneeX4vh1dMJsvtSKDmFUVTrSM7lycBWnLOg
-	ST3WHV5p8nnHVKzWE5nuOx3+3N5F7ToSZyZne5WeUdyCeTWupXJNI9ZfBLzcahnkuIjrTbsCt2T
-	tz4sTvDGgYS2bh+2B2VSXEeNoLSoYnzeg7pYTZApgtC+aR2ZKiQPEFMWyF1kK2DItxt5S6XZ2fl
-	AME//1hIGeItqCBg0YtFneadATRRo+GvcLC5xOSn0U3ysYEmiBdPYZ6olD1ifYIzxnrhi+UoGRj
-	JXjq97S4hVMOS+r6yk3f03is5Rsg6qESmgpw2GzXjWzzoLx7OKWM9wmI2GUIYCA4oNFJGDfTZAl
-	95RSk04k4=
-X-Google-Smtp-Source: AGHT+IGbr9XnR2TUbKEnjg/86hT46+IWS1oykTlATWHGDSD8RC49VTaKnuN6LrFfvK2SIQeDITKEKw==
-X-Received: by 2002:a05:6e02:348f:b0:431:da5b:9ef3 with SMTP id e9e14a558f8ab-431da5ba0a2mr12818015ab.27.1761151721532;
-        Wed, 22 Oct 2025 09:48:41 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d0611b4csm57438185ab.0.2025.10.22.09.48.40
+        bh=8MoXXfOSKn6ep3VY2AlKDkKcGxJOplW/KlCkvyC4mvk=;
+        b=bHKdtlXVFoFl49CIVnVXghq5BBefNxq9L8Zws0FAkAEiDM7ZQuCtC9eA9EEU4baWUt
+         ozk+jKOMm6UKZLtTGmHCKFOZ6nGIErEpQcUzBRb31oV84fW9IEiaz1kSqSw9eYtOdzmQ
+         +k+ApphbUBubz//tpKwLJW2FZ68W64p7P4YwQMEU902JtgnDN0zbM1cP7SGYzFuXTn7u
+         Y4LwjURUima+7X3uZoNcpdZe5GkUj9lbGtPs4ZbJdbjKa0paoUB+Pt3sLtqDUWloFkXc
+         /di4Sm8vBnN/mG2tIAKch5jEl+XXGm4Ofjx1emZoGXewgzSJhGMo1KlLmh2/GUON/Zf9
+         tO2A==
+X-Gm-Message-State: AOJu0YwT9yQON1/i0+Y6UixdLz2AAYRKH2bT/7viJkRBpQYXnVdDxu+r
+	F0PB0WPafAnVf9t2FQesGlOK2SciJi8G/7jonqxmLJvl0nsxkxFaxdaU
+X-Gm-Gg: ASbGncv0e4MJNM6FSjRl3zfk6fsv9loPUK5YM/MgE9V8SSMOP8rJDO0Ypmyo6I86mTe
+	Qv3J6pd4Lwn14yb8mNREzUHS6mA2YibDdv3UMPYz480hMZFAqcw4EvrrZ7dzs0mM7TKlmj2BdgW
+	ZG5d1ZlQCKU3R+PU9h76PMym1depdxinwus7seLUNvjfEXc+bYgAlc/WyY98eLvdCabvJ71w2rx
+	KuXKlcZFC/37p8Pw2sm9+rmmWngro9ahdl1zoqVkUMb722hmGY0VC+GCsPaVMgP3RiISA5Uw0aO
+	d1yVZyAVQbXuqTBaRmGahB6dXHh51fggtrbHMC+qKyYHZy33ywBc/UXHlGe3VbiDhRxm19PbChZ
+	1fRejEsr0hUC1HH7779IJBIwC/7x2DrrIh3WsokTmzVgOA2YVYXhiFzJpdE6Jm2iq/mZoZqZLpc
+	pXcoUJZZhM9+Nvb6z8tFCjloTcIZR1kIfIANL9pcWb/U8=
+X-Google-Smtp-Source: AGHT+IH6qtsTqGpvmGd0m01ZFY2KHTEvilZtzSWjVBlHHl0BdpOAbCNdOeqMxYHD4Z5Bd7DNjq96rg==
+X-Received: by 2002:a05:600c:64cf:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-4711786d332mr181919645e9.2.1761151909023;
+        Wed, 22 Oct 2025 09:51:49 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:b576])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4281314sm51788185e9.4.2025.10.22.09.51.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 09:48:40 -0700 (PDT)
-Message-ID: <78c19746-132d-4e85-b4bf-9b251435cb77@kernel.dk>
-Date: Wed, 22 Oct 2025 10:48:40 -0600
+        Wed, 22 Oct 2025 09:51:48 -0700 (PDT)
+Message-ID: <355c371d-124d-4414-9af4-fd9247692db3@gmail.com>
+Date: Wed, 22 Oct 2025 17:53:13 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,114 +82,61 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] io_uring/sqpoll: switch away from getrusage() for CPU
- accounting
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org, changfengnan@bytedance.com,
- xiaobing.li@samsung.com, lidiangang@bytedance.com, stable@vger.kernel.org
-References: <20251021175840.194903-1-axboe@kernel.dk>
- <20251021175840.194903-2-axboe@kernel.dk>
- <87cy6f25h9.fsf@mailhost.krisman.be>
-From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v2] io_uring: check for user passing 0 nr_submit
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: io-uring@vger.kernel.org
+References: <9f43c61b36bc5976e7629663b4558ce439bccc64.1760609826.git.asml.silence@gmail.com>
+ <x49sefbyrkk.fsf@segfault.usersys.redhat.com>
 Content-Language: en-US
-In-Reply-To: <87cy6f25h9.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <x49sefbyrkk.fsf@segfault.usersys.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/21/25 5:35 PM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
+On 10/22/25 14:49, Jeff Moyer wrote:
+> Pavel Begunkov <asml.silence@gmail.com> writes:
 > 
->> getrusage() does a lot more than what the SQPOLL accounting needs, the
->> latter only cares about (and uses) the stime. Rather than do a full
->> RUSAGE_SELF summation, just query the used stime instead.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 3fcb9d17206e ("io_uring/sqpoll: statistics of the true utilization of sq threads")
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  io_uring/fdinfo.c |  9 +++++----
->>  io_uring/sqpoll.c | 34 ++++++++++++++++++++--------------
->>  io_uring/sqpoll.h |  1 +
->>  3 files changed, 26 insertions(+), 18 deletions(-)
->>
->> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
->> index ff3364531c77..966e06b078f6 100644
->> --- a/io_uring/fdinfo.c
->> +++ b/io_uring/fdinfo.c
->> @@ -59,7 +59,6 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
->>  {
->>  	struct io_overflow_cqe *ocqe;
->>  	struct io_rings *r = ctx->rings;
->> -	struct rusage sq_usage;
->>  	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
->>  	unsigned int sq_head = READ_ONCE(r->sq.head);
->>  	unsigned int sq_tail = READ_ONCE(r->sq.tail);
->> @@ -152,14 +151,16 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
->>  		 * thread termination.
->>  		 */
->>  		if (tsk) {
->> +			struct timespec64 ts;
->> +
->>  			get_task_struct(tsk);
->>  			rcu_read_unlock();
->> -			getrusage(tsk, RUSAGE_SELF, &sq_usage);
->> +			ts = io_sq_cpu_time(tsk);
->>  			put_task_struct(tsk);
->>  			sq_pid = sq->task_pid;
->>  			sq_cpu = sq->sq_cpu;
->> -			sq_total_time = (sq_usage.ru_stime.tv_sec * 1000000
->> -					 + sq_usage.ru_stime.tv_usec);
->> +			sq_total_time = (ts.tv_sec * 1000000
->> +					 + ts.tv_nsec / 1000);
->>  			sq_work_time = sq->work_time;
->>  		} else {
->>  			rcu_read_unlock();
->> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
->> index a3f11349ce06..8705b0aa82e0 100644
->> --- a/io_uring/sqpoll.c
->> +++ b/io_uring/sqpoll.c
->> @@ -11,6 +11,7 @@
->>  #include <linux/audit.h>
->>  #include <linux/security.h>
->>  #include <linux/cpuset.h>
->> +#include <linux/sched/cputime.h>
->>  #include <linux/io_uring.h>
->>  
->>  #include <uapi/linux/io_uring.h>
->> @@ -169,6 +170,22 @@ static inline bool io_sqd_events_pending(struct io_sq_data *sqd)
->>  	return READ_ONCE(sqd->state);
->>  }
->>  
->> +struct timespec64 io_sq_cpu_time(struct task_struct *tsk)
->> +{
->> +	u64 utime, stime;
->> +
->> +	task_cputime_adjusted(tsk, &utime, &stime);
->> +	return ns_to_timespec64(stime);
->> +}
->> +
->> +static void io_sq_update_worktime(struct io_sq_data *sqd, struct timespec64 start)
->> +{
->> +	struct timespec64 ts;
->> +
->> +	ts = timespec64_sub(io_sq_cpu_time(current), start);
->> +	sqd->work_time += ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
->> +}
+>> io_submit_sqes() shouldn't be stepping into its main loop when there is
+>> nothing to submit, i.e. nr=0. Fix 0 submission queue entries checks,
+>> which should follow after all user input truncations.
 > 
-> Hi Jens,
-> 
-> Patch looks good. I'd just mention you are converting ns to timespec64,
-> just to convert it back to ms when writing to sqd->work_time and
-> sq_total_time.  I think wraparound is not a concern for
-> task_cputime_adjusted since this is the actual system cputime of a
-> single thread inside a u64.  So io_sq_cpu_time could just return ms
-> directly and io_sq_update_worktime would be trivial:
-> 
->   sqd->work_time = io_sq_pu_time(current) - start.
+> I see two callers of io_submit_sqes, and neither of them will pass 0 for
+> nr.  What am I missing?
 
-That's a good point - I'll update both patches, folding and incremental
-like the below in. Thanks!
+You're right, we can drop the fixes/stable part. It's still
+good to have as it's handled not in the best way.
+
+
+>> Cc: stable@vger.kernel.org
+>> Fixes: 6962980947e2b ("io_uring: restructure submit sqes to_submit checks")
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>
+>> v2: split out of the series with extra tags, no functional changes
+>>
+>>   io_uring/io_uring.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index 820ef0527666..ee04ab9bf968 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -2422,10 +2422,11 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+>>   	unsigned int left;
+>>   	int ret;
+>>   
+>> +	entries = min(nr, entries);
+>>   	if (unlikely(!entries))
+>>   		return 0;
+>> -	/* make sure SQ entry isn't read before tail */
+>> -	ret = left = min(nr, entries);
+>> +
+>> +	ret = left = entries;
+>>   	io_get_task_refs(left);
+>>   	io_submit_state_start(&ctx->submit_state, left);
+> 
 
 -- 
-Jens Axboe
+Pavel Begunkov
+
 

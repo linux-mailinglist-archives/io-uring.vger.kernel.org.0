@@ -1,152 +1,161 @@
-Return-Path: <io-uring+bounces-10161-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10162-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C0DC02C54
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 19:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19580C03070
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 20:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5C8188FE89
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 17:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913543ACCFF
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 18:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D696C347BD7;
-	Thu, 23 Oct 2025 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EC626F2AC;
+	Thu, 23 Oct 2025 18:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SORH4oPG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zTJ7hVBd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43944347BBF
-	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 17:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21E52367CE
+	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 18:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241334; cv=none; b=QnK2t3U9/o8PRaQC6dqPTleq7c/+SLRmdnNe8Swtt5g9Lqxa9vpPLX1qYJd7mTJ78njf0t7yhKIEwHCXukvXWbBCk7icShLKDM9tpZCKnSfQXlspnWmiQ9MzxKsOI8JiCupcQkcJurjF0kaTtpMZAdym6U7nyje2jmyHC+PgtIw=
+	t=1761244677; cv=none; b=hfkkmokgQxIq0IUv6mGXpd5X5WuwO+206ekscz+lfPKOEiQr7YdgkAmq4/SpcZIJP8SSQl6AtgeSDPUknZrbRkn+EJCXq8UQ9Z6nxQimcJhspXvbzIYi9Yf2slT7pASJ5fXYep3ewbRxVjqx/Rg3yoizYzDC81+VyJ0DFSO8Amk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241334; c=relaxed/simple;
-	bh=PYcQKEYaNNgr4v4S9nNndeYvxlEoxFnd8ONcOz503ao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1wQoqgZqdm1DdugD4LE8/QzR91Rwof+60gB7HWSw7SztJSFomRezOULRGsBtkxnL0y9xfswbs2Rx9UjYfj6Mp4q2UqR3Iw8ncom64UXD9p8ZOmgQ445dK2CTUtwQt8ovJC7z9jk3EigP+FrpNpeKwX5Yk1OD5JrA8pMoFT55EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SORH4oPG; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4e88ed3a132so14729681cf.0
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 10:42:12 -0700 (PDT)
+	s=arc-20240116; t=1761244677; c=relaxed/simple;
+	bh=b+/M0hqKIDVy7BjSmgKLVDO9HXo9HHdSD6L0Znlz7Vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5Q9wxuit23DgEPSQ7Dw39kk2cb02nTrvOCPs3U4i052VV8U31T5PrIXGbZ3l2lRWsa35gnjLn/Hsz0CsJ7ydQBQQqKMyKy6kylVMATGBZgehnUQpLDEwHO4orvSAc8jXb+oUZFMg9wIeN3yJpwYAFM07MDx43PTTdxg7DTJvqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zTJ7hVBd; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-940d92d6962so44283639f.3
+        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 11:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761241331; x=1761846131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4seA+HI4M9DYT+ZaTto7qe0lK31pOsptA4eC1KcJc3Y=;
-        b=SORH4oPG22ZoX4HVwYEyktVOGheKE4NrJhxlPbk+7nyN98RRt0uVUgKa0bNvs395PG
-         1bGoVg8On5FZYbrjrmdnbGa/1mt7y+aiFWmpaY+qUiAQND+Z9EVS0oQqfNIPW05F2miX
-         4q9SDMtbrGNtx+gVGjyyZzuzg0V2jU4OZbF2J941i0jfabSR5WP6BGL27Xl1kuXo9k85
-         F7erBR4TZOTjcQk0KqkscebdOWqEcpyNWlZ+jdY0HDDE2xR9y+h6bEdcDHARR/VFO7+n
-         jcIPTr3d2+xZUMwheY8/zZ4xNNDmcfUt1X1r9MAHrsbRx14jydM9jkWENBYXReVz+1AJ
-         2Jhg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761244672; x=1761849472; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+gIUFgvmxXF65aZwN/tyCOa4UkQp8aWYHn445IWaoLM=;
+        b=zTJ7hVBdy7jEeplnZ9U9xe3tT2nIl6fj5yUOnw9fNFN/Kb1SKO3G057ZyRERUKaLhl
+         tDXG/6WLqvPf1eH9rcctwFo/Y50x2GXjQ7jX9h6sSzsrd/H4dMfxvum67drEYunKzUEf
+         K23bc1BcpYvrVr8mHmMvKEzmGmxgsDqvMn/fbz5WPfFER+TZJGRvTo+TMSZm2CYVUrVp
+         Is7s7V34wQnneri4SY1rDrCIa2Tb4DI4GhxzrXBj/gzEjn4qYpYigEK4tmDYVuvzzyFo
+         0dtW2CSL9fbkaBnQAUvaKmXioUuboDhjiCFLE7cvhDJ5OcxKp5x60/46QVJOhJ+nqIK9
+         i6kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761241331; x=1761846131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4seA+HI4M9DYT+ZaTto7qe0lK31pOsptA4eC1KcJc3Y=;
-        b=KrXtmDSZJ3y9JdIb99iqKEojQ8G/mXYhk5ThSicZa2wGEZ0/UEZDYOv6HWSPlWt84v
-         l9zZrnkA1cN0JCRvcQ4Auu36xF50Db9JMVzBBwY5MP1D+mmEUcjZohTdXyEybsoj4+G9
-         O0tw2mXRGHQxQAOeYO2RB9shZLhFGQVwzVLTC3CWJ3o3qdBv8u4R43qU8Ne0qPF1VnzU
-         jT69vh/9apPo9F0iJAcjBAukA/U6fazOvY0DNoUbExycXBqOGo4t+iJ8BXo0UDFe7Xa5
-         7jd04hnkKLjajakMVGk7zs4n9t4rYbjO0pIpN/mOSxpRvCSJ+JTx7X12r/Br90j56bnX
-         1j2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWUFz9eVbUComE0E9+OB2S3slgpzlmqC0vSBRRfOpBSgbDzMtew17AwmvMJgfQFr7HRHs6lT49nw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbbpyaPmf//KH9R/ASdcmoNGpn+CcWLdBOPIVxrSEhYaI1fiw9
-	iniS1g5amLXnQXYCnN12Oppk1iOqzTuSDCnxhbxIUlIidObYVc54WKMIlx0ZGpOgaxjnBaXw8ed
-	myVw5tb5qzGeAX+A7dPj3orm14D0vDpFomG3Nhok=
-X-Gm-Gg: ASbGnctIlqDUkmlPpzMKGVXiZ8bzkKgcrz3S81bBw0KeQh8XPkEQMWpvuuTl7d2ffua
-	G6+ObmaaPGTqHL+6EgbnP03id9jpEc1nCGnWNaUPzLhW6Ry8kUl4vwzbhdl9h2zWBK7PWeKsFIx
-	H2gU3hYcneBixeJGvW7ULJWtLluCtNDDvpNuNin7wntVaMiXgKTHP6yB66jp+dx4aeFLpqYhIVT
-	4dHb8JyzEyd3YS+cN3ttwkNVPN507PpCJAWqaTHtd5kJdO89T7srOIK3VTqE6DN1jtdCUdog2MX
-	QQ+BghsSZbxoJVE=
-X-Google-Smtp-Source: AGHT+IGYUuso1wFbBlLzlxrBDhKNZB5fvUBjAyfkvZne5zRw/oAvLVqArsWiIODnGqRp88IRvA204zsjZ+T3SghE1I4=
-X-Received: by 2002:a05:622a:1392:b0:4d6:c73f:de88 with SMTP id
- d75a77b69052e-4eb732d317emr110436861cf.3.1761241331136; Thu, 23 Oct 2025
- 10:42:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761244672; x=1761849472;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gIUFgvmxXF65aZwN/tyCOa4UkQp8aWYHn445IWaoLM=;
+        b=tmp+8R+O/QnxBA/Y3sKYT1/6J0UsN1ngQuQYOF59+aetVTMQifVZhxuCxNSISjO7WL
+         93phZ8zoPS5uwt9qVAmtQxcvtvt2YZ7qdCl2iiCoaw6+6C0EBXMBsrpKAQmEIS5SedNY
+         ytkj39aShn/ZLsCzIP83V2vRNC+X39gVb6+6+j0p5SVZTzWfgVD1zPF+FTAPg9d8TLaj
+         8hjo0C+PUP0Rp2PTs+OpcBazrWuzp8tdVIaatRdXIldp9MLYsuKQOR7Lz5w2t5hu0Idh
+         pxmSbXo3aZ2LcRLa3ZBbuqe4ymT8EblO2PvGf2Z4wVOag/uDmeS70Xsf31YlX/pU06XB
+         ghYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWmvEndnt4pC4xSvqU3CFd8KZ4pFydi1KTIJ9u6q5oisWcnzf6oxumrm2LV029TuoOtRQaZGbu/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz76aTldf206nnPeveyHNkSrLYJvc1fwTCx6S1m5dMWhvcamBUe
+	VLHqx0P7Z7qq+bFMzExTcktAlt2f2NhJsyO+gkibVdw1T8OdQ3qfCUUlcHl0oJK170E=
+X-Gm-Gg: ASbGncsO8Yz+iE1fsibW/W1DAoXqubLYT3TW+FGF7FKfnC/9w6CP6gFkOaSadGz1SUV
+	TMYoVck4USlXg0GZq8lBnOurhTG6RFmIiUs2kNUV35Z9IGUIW0rUikVI1apwsqSsCpdM5aRmybP
+	Tb2FEwyOCxcJVqpPzrUPgIMMnqfhYVJYNZuS50gPkoSjpde0z2KSxj+cJ81LlC1kWBzTc41rf7I
+	D61OmXISRjXiUCKGqt82o5ajSokQI/SB5+BPptkYnlEQiUaZWpUXkEbYpOpr/vqBjmwoHj7MQsn
+	uedbtIU91PxFQetifTEsQjGYIg/2Xf6axcQFbP2LaP8/bHVEOnOoLhkedytkszZo6mFYIDbKkRs
+	hQX1/KatpgblvwBtWpR/+oXxyJdAF0C4aX2aHQwlrmdM0PzhPwuFmjCFrIbR2agVlanDZwWylPg
+	2aNqKmk7A=
+X-Google-Smtp-Source: AGHT+IErOPEQNDbGjKe0jK3bG3J0edJN7PqLzZYZdug0+3IvdYcgUVkEMSEMW2hj4FTz1J7Q5clBPQ==
+X-Received: by 2002:a05:6602:2d90:b0:940:da3b:6ad4 with SMTP id ca18e2360f4ac-940da3b7674mr2430445139f.13.1761244671747;
+        Thu, 23 Oct 2025 11:37:51 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-94102dac064sm101644739f.6.2025.10.23.11.37.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 11:37:50 -0700 (PDT)
+Message-ID: <7de9ec55-0217-4c42-b43d-257bcaf11080@kernel.dk>
+Date: Thu, 23 Oct 2025 12:37:49 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022202021.3649586-3-joannelkoong@gmail.com> <202510232038.LOpSOOQa-lkp@intel.com>
-In-Reply-To: <202510232038.LOpSOOQa-lkp@intel.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 23 Oct 2025 10:42:00 -0700
-X-Gm-Features: AS18NWA9peuK7QugY6JLjKXBNkxaqO8WfrQsHaG3gveX1ZXIjyuXAfTMF8nltv0
-Message-ID: <CAJnrk1Z-FzeXhse762dV7NpSexCcP-xcUSQ+2uviG81HWFdjZQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] fuse: support io-uring registered buffers
-To: kernel test robot <lkp@intel.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	xiaobing.li@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: fix buffer auto-commit for multishot uring_cmd
+To: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org
+Cc: Caleb Sander Mateos <csander@purestorage.com>
+References: <20251023104350.2515079-1-ming.lei@redhat.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20251023104350.2515079-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 6:23=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Joanne,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on mszeredi-fuse/for-next]
-> [also build test ERROR on linus/master v6.18-rc2 next-20251023]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io-ur=
-ing-add-io_uring_cmd_get_buffer_info/20251023-042601
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git=
- for-next
-> patch link:    https://lore.kernel.org/r/20251022202021.3649586-3-joannel=
-koong%40gmail.com
-> patch subject: [PATCH v1 2/2] fuse: support io-uring registered buffers
-> config: i386-buildonly-randconfig-002-20251023 (https://download.01.org/0=
-day-ci/archive/20251023/202510232038.LOpSOOQa-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0=
-227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251023/202510232038.LOpSOOQa-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510232038.LOpSOOQa-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    In file included from fs/fuse/dev.c:9:
-> >> fs/fuse/dev_uring_i.h:51:20: error: field has incomplete type 'struct =
-iov_iter'
->       51 |                         struct iov_iter payload_iter;
->          |                                         ^
->    include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter=
-'
->       74 | struct iov_iter;
->          |        ^
->    In file included from fs/fuse/dev.c:9:
->    fs/fuse/dev_uring_i.h:52:20: error: field has incomplete type 'struct =
-iov_iter'
->       52 |                         struct iov_iter headers_iter;
+On 10/23/25 4:43 AM, Ming Lei wrote:
+> Commit 620a50c92700 ("io_uring: uring_cmd: add multishot support") added
+> multishot uring_cmd support with explicit buffer upfront commit via
+> io_uring_mshot_cmd_post_cqe(). However, the buffer selection path in
+> io_ring_buffer_select() was auto-committing buffers for non-pollable files,
+> which conflicts with uring_cmd's explicit upfront commit model.
+> 
+> This way consumes the whole selected buffer immediately, and causes
+> failure on the following buffer selection.
+> 
+> Fix this by adding io_commit_kbuf_upfront() to identify operations that
+> handle buffer commit explicitly (currently only IORING_OP_URING_CMD),
+> and skip auto-commit for these operations.
+> 
+> Cc: Caleb Sander Mateos <csander@purestorage.com>
+> Fixes: 620a50c92700 ("io_uring: uring_cmd: add multishot support")
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  io_uring/kbuf.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index aad655e38672..e3f3dec8b135 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -155,6 +155,12 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
+>  	return 1;
+>  }
+>  
+> +/* So far, uring_cmd commits kbuf upfront, no need to auto-commit */
+> +static bool io_commit_kbuf_upfront(const struct io_kiocb *req)
+> +{
+> +	return req->opcode == IORING_OP_URING_CMD;
+> +}
+> +
+>  static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+>  					      struct io_buffer_list *bl,
+>  					      unsigned int issue_flags)
+> @@ -181,7 +187,8 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+>  	sel.buf_list = bl;
+>  	sel.addr = u64_to_user_ptr(buf->addr);
+>  
+> -	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
+> +	if (issue_flags & IO_URING_F_UNLOCKED || (!io_file_can_poll(req) &&
+> +				!io_commit_kbuf_upfront(req))) {
+>  		/*
+>  		 * If we came in unlocked, we have no choice but to consume the
+>  		 * buffer here, otherwise nothing ensures that the buffer won't
 
-Ahh okay, I tried building with the linked config
-(i386-buildonly-randconfig-002-20251023) and it indeed fails :(
+Might be cleaner to put this logic in a helper instead, ala:
 
-It needs a "#include <linux/uio.h>" added to the dev_uring_i.h file.
-I'll add that in for v2.
+static bool io_should_commit(req, issue_flags)
+{
+	if (issue_flags & IO_URING_F_UNLOCKED)
+		return true;
+	if (!io_file_can_poll(req) && req->opcode == IORING_OP_URING_CMD)
+		return true;
+	return false;
+}
 
-Thanks,
-Joanne
+and just add the appropriate comments there, rather than add a new
+random helper.
+
+-- 
+Jens Axboe
 

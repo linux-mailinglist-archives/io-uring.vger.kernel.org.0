@@ -1,161 +1,129 @@
-Return-Path: <io-uring+bounces-10162-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10163-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19580C03070
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 20:38:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E5CC0325C
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 21:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913543ACCFF
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 18:38:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CD174EB41A
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 19:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EC626F2AC;
-	Thu, 23 Oct 2025 18:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46FE34C9AA;
+	Thu, 23 Oct 2025 19:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zTJ7hVBd"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fipiGJX8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21E52367CE
-	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 18:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BD134C99D
+	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 19:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244677; cv=none; b=hfkkmokgQxIq0IUv6mGXpd5X5WuwO+206ekscz+lfPKOEiQr7YdgkAmq4/SpcZIJP8SSQl6AtgeSDPUknZrbRkn+EJCXq8UQ9Z6nxQimcJhspXvbzIYi9Yf2slT7pASJ5fXYep3ewbRxVjqx/Rg3yoizYzDC81+VyJ0DFSO8Amk=
+	t=1761246740; cv=none; b=sMKIVvUF+sB90ROnjwKYok2FF3LzKJ7lrFp4E8x+vuBubix0qnpMmc+YdL2x9TAbGY9FRWQQiDZIxXHUCkYGUv/Vu7e5+wcT8TMxZZjelK0JbCHMRBCM2BZVW5wqqBQ1J8ESmIYAj0qBwWEGSyNLgJQfXOcUQcI0J5CJ04VlSZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244677; c=relaxed/simple;
-	bh=b+/M0hqKIDVy7BjSmgKLVDO9HXo9HHdSD6L0Znlz7Vw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5Q9wxuit23DgEPSQ7Dw39kk2cb02nTrvOCPs3U4i052VV8U31T5PrIXGbZ3l2lRWsa35gnjLn/Hsz0CsJ7ydQBQQqKMyKy6kylVMATGBZgehnUQpLDEwHO4orvSAc8jXb+oUZFMg9wIeN3yJpwYAFM07MDx43PTTdxg7DTJvqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zTJ7hVBd; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-940d92d6962so44283639f.3
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 11:37:52 -0700 (PDT)
+	s=arc-20240116; t=1761246740; c=relaxed/simple;
+	bh=WOIv/HQOmDXhlsKgWbV5uUKMg9vn4FI+7vFtMCzboUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lbDQWFY4XiDZRky7ztrj/8czk4YsyyUWgMLoZX9a4mu+AeXGAf+68hSMMl2MwjnssNAlzCgBwebpCilLOSVWEOaPpKdHoxyrXQXsunDwRcXVAXkWkjSSqy9nkE7uCk2TsdtimbQEPpI51E87wF3BPToEvh5WD0AEkR2pcwH5K2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fipiGJX8; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a270fa24acso102037b3a.1
+        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 12:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761244672; x=1761849472; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+gIUFgvmxXF65aZwN/tyCOa4UkQp8aWYHn445IWaoLM=;
-        b=zTJ7hVBdy7jEeplnZ9U9xe3tT2nIl6fj5yUOnw9fNFN/Kb1SKO3G057ZyRERUKaLhl
-         tDXG/6WLqvPf1eH9rcctwFo/Y50x2GXjQ7jX9h6sSzsrd/H4dMfxvum67drEYunKzUEf
-         K23bc1BcpYvrVr8mHmMvKEzmGmxgsDqvMn/fbz5WPfFER+TZJGRvTo+TMSZm2CYVUrVp
-         Is7s7V34wQnneri4SY1rDrCIa2Tb4DI4GhxzrXBj/gzEjn4qYpYigEK4tmDYVuvzzyFo
-         0dtW2CSL9fbkaBnQAUvaKmXioUuboDhjiCFLE7cvhDJ5OcxKp5x60/46QVJOhJ+nqIK9
-         i6kQ==
+        d=purestorage.com; s=google2022; t=1761246738; x=1761851538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7K/5org+RE12u94kWINaZqrKuzfu8gGu9fC3i1OMh3w=;
+        b=fipiGJX8dPxoMr2545eGq912NO7DB2OYnJgTbM0invCo9J/JSSdToACfCUizIbhfzg
+         EGOophPpdxyV59a0Bkk74RvE8hOtWTwcsgZA9tp7aAVuc0HcczUtuDdiY4tdu+mscJv6
+         99XUrKUD0KFiqM+1QgKHpN5F+0iCVhlFjDsm9AkgBGKVDjPMhWqpuX9esHA29lUFQAu/
+         wELHXKXH4ViBi4m0+LVET18WQUqQhlGnweij3ELLAvQfkSpmSCKI54o3nFkTqeK6oocZ
+         6BJHThUS3sU5sZvaIMImc3giZEeumrnXSC7ARARbJX/3fEaIQvbpXYnWY3Qo9wf0z7C9
+         23Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761244672; x=1761849472;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+gIUFgvmxXF65aZwN/tyCOa4UkQp8aWYHn445IWaoLM=;
-        b=tmp+8R+O/QnxBA/Y3sKYT1/6J0UsN1ngQuQYOF59+aetVTMQifVZhxuCxNSISjO7WL
-         93phZ8zoPS5uwt9qVAmtQxcvtvt2YZ7qdCl2iiCoaw6+6C0EBXMBsrpKAQmEIS5SedNY
-         ytkj39aShn/ZLsCzIP83V2vRNC+X39gVb6+6+j0p5SVZTzWfgVD1zPF+FTAPg9d8TLaj
-         8hjo0C+PUP0Rp2PTs+OpcBazrWuzp8tdVIaatRdXIldp9MLYsuKQOR7Lz5w2t5hu0Idh
-         pxmSbXo3aZ2LcRLa3ZBbuqe4ymT8EblO2PvGf2Z4wVOag/uDmeS70Xsf31YlX/pU06XB
-         ghYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWmvEndnt4pC4xSvqU3CFd8KZ4pFydi1KTIJ9u6q5oisWcnzf6oxumrm2LV029TuoOtRQaZGbu/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz76aTldf206nnPeveyHNkSrLYJvc1fwTCx6S1m5dMWhvcamBUe
-	VLHqx0P7Z7qq+bFMzExTcktAlt2f2NhJsyO+gkibVdw1T8OdQ3qfCUUlcHl0oJK170E=
-X-Gm-Gg: ASbGncsO8Yz+iE1fsibW/W1DAoXqubLYT3TW+FGF7FKfnC/9w6CP6gFkOaSadGz1SUV
-	TMYoVck4USlXg0GZq8lBnOurhTG6RFmIiUs2kNUV35Z9IGUIW0rUikVI1apwsqSsCpdM5aRmybP
-	Tb2FEwyOCxcJVqpPzrUPgIMMnqfhYVJYNZuS50gPkoSjpde0z2KSxj+cJ81LlC1kWBzTc41rf7I
-	D61OmXISRjXiUCKGqt82o5ajSokQI/SB5+BPptkYnlEQiUaZWpUXkEbYpOpr/vqBjmwoHj7MQsn
-	uedbtIU91PxFQetifTEsQjGYIg/2Xf6axcQFbP2LaP8/bHVEOnOoLhkedytkszZo6mFYIDbKkRs
-	hQX1/KatpgblvwBtWpR/+oXxyJdAF0C4aX2aHQwlrmdM0PzhPwuFmjCFrIbR2agVlanDZwWylPg
-	2aNqKmk7A=
-X-Google-Smtp-Source: AGHT+IErOPEQNDbGjKe0jK3bG3J0edJN7PqLzZYZdug0+3IvdYcgUVkEMSEMW2hj4FTz1J7Q5clBPQ==
-X-Received: by 2002:a05:6602:2d90:b0:940:da3b:6ad4 with SMTP id ca18e2360f4ac-940da3b7674mr2430445139f.13.1761244671747;
-        Thu, 23 Oct 2025 11:37:51 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-94102dac064sm101644739f.6.2025.10.23.11.37.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 11:37:50 -0700 (PDT)
-Message-ID: <7de9ec55-0217-4c42-b43d-257bcaf11080@kernel.dk>
-Date: Thu, 23 Oct 2025 12:37:49 -0600
+        d=1e100.net; s=20230601; t=1761246738; x=1761851538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7K/5org+RE12u94kWINaZqrKuzfu8gGu9fC3i1OMh3w=;
+        b=aodEbPQEoteV1elV1qqsvSo968H/8TNBnQRZCej+NaNy4tS+eHwLs0igc5jsOdrkPB
+         HmWR/1mNUFhugkc3X52XFts1uJkiQiVHCLQ0nyZGhKC/YjHBqmqSULiBkkFEmTfE3AK+
+         PiCgQTBafT1bS9F2LtHVCEGRj+kM4PILp9NMRH6eSJA4GOrS30uJ+5q7yJja5VbEfa5n
+         Nht/cNQhbLqYAOok0WfEHEEW6hVG/o38VNs/kSqVGWPznCoC7BatNWmYUxPhOBoCD/zh
+         MuISQNkZN9MO6iKd1sFZWlgIDdiAVjMkWl5mbSlw1cjlQLV5DpVVQvHERch3imeHVYWl
+         Mekg==
+X-Forwarded-Encrypted: i=1; AJvYcCURhYr/fDue5xU80Vbt+mVZCNZ8iYq5TT83IoLEGkU01lR8WLlxRHIKGFDqP9FyEaWG+9hi8tzFRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFtLYdYE+26N+au66lkUKQ/GLshqkpkxuaqX1Pf9GNdwAR2XAZ
+	WDZHKMvhMKDBV0kCGHJaPaiEBmgdKGug2BQzwCtPHiMqLtK3CdIOzF8Uzt75ooeF+UphMLVjOhP
+	6i6+QvmIh3fPGSgk0qzfhRhQTLCnR0PtE6bv91R7GVG4jm8pwvWiE741REA==
+X-Gm-Gg: ASbGnctCClvmqKvVXH6jCynvmSMRW6M+LnHIerv8rUEWLoQudQQt/exREokSha+P5vc
+	795A4STupL3yVTdcuv16/sqXmdVpfjUWFBTh+WtqWl1DN6GXBti+UvSubD1NmMXL+9CHUteGQER
+	/gXhOd/nTJMeKIz4tAqKYLBj+bmZFwDu47HQ8KDcK6owDTGMVYa2SxtQd0tPjJf8P1CYuwj48FL
+	TKIvc7OOovF+S9ynnAwZFueJSINpMEVCRvOMgBbMIKofdvPh5PDdVnLezzAqMiFOmcJy0raTo3D
+	zpJnojiOReKPNpq7giEncpJToNSoO9w3fi6w6Kvn
+X-Google-Smtp-Source: AGHT+IFS1hF1mKJs9xtEGggpEYx3hS9IactTEcTVuTqq3cz04fXfG2tDmrwqCzZgwa2XisCpo38KJZa1Jx+ld2uWSgM=
+X-Received: by 2002:a17:903:19e6:b0:27a:186f:53ec with SMTP id
+ d9443c01a7336-290cc2023d8mr183803265ad.9.1761246738317; Thu, 23 Oct 2025
+ 12:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: fix buffer auto-commit for multishot uring_cmd
-To: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org
-Cc: Caleb Sander Mateos <csander@purestorage.com>
-References: <20251023104350.2515079-1-ming.lei@redhat.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251023104350.2515079-1-ming.lei@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251022231326.2527838-1-csander@purestorage.com>
+ <20251022231326.2527838-4-csander@purestorage.com> <20251023134047.GA24570@lst.de>
+In-Reply-To: <20251023134047.GA24570@lst.de>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 23 Oct 2025 12:12:06 -0700
+X-Gm-Features: AS18NWCMPnrkTE6bRuzJFrSEBQu8dMm91LH9slk7_UilpxZ_vUHOFG7TTmSOab4
+Message-ID: <CADUfDZoMJ26nS9qzk1ACKX_MXkSpBy1kEEkekZoHyCrHtrGZRg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
+ task work dispatch
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Ming Lei <ming.lei@redhat.com>, 
+	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/23/25 4:43 AM, Ming Lei wrote:
-> Commit 620a50c92700 ("io_uring: uring_cmd: add multishot support") added
-> multishot uring_cmd support with explicit buffer upfront commit via
-> io_uring_mshot_cmd_post_cqe(). However, the buffer selection path in
-> io_ring_buffer_select() was auto-committing buffers for non-pollable files,
-> which conflicts with uring_cmd's explicit upfront commit model.
-> 
-> This way consumes the whole selected buffer immediately, and causes
-> failure on the following buffer selection.
-> 
-> Fix this by adding io_commit_kbuf_upfront() to identify operations that
-> handle buffer commit explicitly (currently only IORING_OP_URING_CMD),
-> and skip auto-commit for these operations.
-> 
-> Cc: Caleb Sander Mateos <csander@purestorage.com>
-> Fixes: 620a50c92700 ("io_uring: uring_cmd: add multishot support")
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  io_uring/kbuf.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index aad655e38672..e3f3dec8b135 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -155,6 +155,12 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
->  	return 1;
->  }
->  
-> +/* So far, uring_cmd commits kbuf upfront, no need to auto-commit */
-> +static bool io_commit_kbuf_upfront(const struct io_kiocb *req)
-> +{
-> +	return req->opcode == IORING_OP_URING_CMD;
-> +}
-> +
->  static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
->  					      struct io_buffer_list *bl,
->  					      unsigned int issue_flags)
-> @@ -181,7 +187,8 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
->  	sel.buf_list = bl;
->  	sel.addr = u64_to_user_ptr(buf->addr);
->  
-> -	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
-> +	if (issue_flags & IO_URING_F_UNLOCKED || (!io_file_can_poll(req) &&
-> +				!io_commit_kbuf_upfront(req))) {
->  		/*
->  		 * If we came in unlocked, we have no choice but to consume the
->  		 * buffer here, otherwise nothing ensures that the buffer won't
+On Thu, Oct 23, 2025 at 6:40=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Wed, Oct 22, 2025 at 05:13:26PM -0600, Caleb Sander Mateos wrote:
+> > io_uring task work dispatch makes an indirect call to struct io_kiocb's
+> > io_task_work.func field to allow running arbitrary task work functions.
+> > In the uring_cmd case, this calls io_uring_cmd_work(), which immediatel=
+y
+> > makes another indirect call to struct io_uring_cmd's task_work_cb field=
+.
+> > Introduce a macro DEFINE_IO_URING_CMD_TASK_WORK() to define a
+> > io_req_tw_func_t function wrapping an io_uring_cmd_tw_t. Convert the
+> > io_uring_cmd_tw_t function to the io_req_tw_func_t function in
+> > io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy().
+> > Use DEFINE_IO_URING_CMD_TASK_WORK() to define a io_req_tw_func_t
+> > function for each existing io_uring_cmd_tw_t function. Now uring_cmd
+> > task work dispatch makes a single indirect call to the io_req_tw_func_t
+> > wrapper function, which can inline the io_uring_cmd_tw_t function. This
+> > also allows removing the task_work_cb field from struct io_uring_cmd,
+> > freeing up some additional storage space.
+>
+> Please just open code the logic instead of the symbol-hiding multi-level
+> macro indirection.  Everyone who will have to touch the code in the
+> future will thank you.
 
-Might be cleaner to put this logic in a helper instead, ala:
+Sure, I can send out a v2 with that. My concern was that
+io_kiocb_to_cmd() isn't really meant to be used outside the io_uring
+internals. But I agree hiding the function definition in a macro is
+less than ideal.
 
-static bool io_should_commit(req, issue_flags)
-{
-	if (issue_flags & IO_URING_F_UNLOCKED)
-		return true;
-	if (!io_file_can_poll(req) && req->opcode == IORING_OP_URING_CMD)
-		return true;
-	return false;
-}
-
-and just add the appropriate comments there, rather than add a new
-random helper.
-
--- 
-Jens Axboe
+Thanks,
+Caleb
 

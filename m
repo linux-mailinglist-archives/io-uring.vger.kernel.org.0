@@ -1,258 +1,357 @@
-Return-Path: <io-uring+bounces-10172-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10173-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04577C038FA
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 23:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC3AC0390C
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 23:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 88E8E358D07
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 21:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF5E93B3C35
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 21:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A548F21D011;
-	Thu, 23 Oct 2025 21:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198BB245006;
+	Thu, 23 Oct 2025 21:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Xx41vVak"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C332BE7DD
-	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 21:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1DCEEB3
+	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 21:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255324; cv=none; b=ocsiRS5Qtw749EKkqoHwBo1qqjxNEF6fCIpWsWJ0v9EESlNMwx+3XyYQDi9p5okrvbx77Az9NXwKfarUuOcsEJa9ET1NOHhAve+ooGAK21afQtyyrORVpva8Q4oRZfoyPsk3Ymujc6Sbdlirx0TKPvXPWmYYmCRkwfUcwqHX8AE=
+	t=1761255574; cv=none; b=T0mC850Ph1GBRMmnxmDAoLc8nhn3RpxPCqCb4jS4TQgbV3076Noh4t6feuyL9doKPbqQvXg7ibC7hqmrlO9M1vg2g/9k6bvnjZKbSlzMUrFOpWFLqAfxCbENJd5Lnezay7XgKc4iXEAzsCUmjZWBPv8szJ3zezMjGYFbE7n5Mxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255324; c=relaxed/simple;
-	bh=OeqPto/PqG8I4DEhvUQT2BUN+VavuAa+M/8IJB9Px1g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=r69GwmES7ifjdqPWFrQWz0prvJ6gLnKqRZHQOq3XOJ/o/J8zq2yOEy0ONah630Ow5RT3kcLLH+UibbXaX8KDzTnzy2zbsEvQ1DAmnYzhBDIKIVRrXf9y37TS0eGHr95p7WYo4+3ss59fzVIVQkodzpMbj2lsqz2Xl8PSyL3tVsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430c8321bc1so19097355ab.0
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 14:35:21 -0700 (PDT)
+	s=arc-20240116; t=1761255574; c=relaxed/simple;
+	bh=vktg7TzNejM4HGzP62nJe3a3/sSTdo6B9txohbxks2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1LDcetxTEpgQ1apm18Yhm44VlYQPmlOLT9B1X70sBY+DSmnZUwvNEiO4nJcZPbKJt9mQf9Bg7jR9C1vnWhj5x0pASTRgXsxy55qR6SnG7Shrwk9MGhmAL32MeEp2ZloqvyxiqYjyZe7MTDKjGBhJ4+xYEqIUPncUdbmWhakFGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Xx41vVak; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7c2804d48caso1618791a34.1
+        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 14:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1761255571; x=1761860371; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RusTwYzmfQt1i/MMnUWOiMy7mTgUsaeXYk3E3ujdD8A=;
+        b=Xx41vVak7F9pjtkyhztRXXlCXV8F0atVK1j0zyh1EDOqkU+47gzLhfqdQrKU9mgH2u
+         y7Ghxf2AaWAAShzW+xGtuvubRz5nG3XM/jin3AN59cqJ6ljhVCPzhxPxd1XouupiiCaG
+         kpSSprNBX7DA0eLxSBYJ1SITglgGd7IA2/HktUBY/oqnLOrWjc21aBDicECowMWPkqZb
+         dpk+OoktumsIPoWSCLL4zGsMw3/GnCJQdK+R1i2VJpTaKpcan70DpiMLZ0SZIPCeur8/
+         zDcXPdOxcsD02xzTShlglXnmuZCVGfQc7Jv8dG6SyFOjmqQ8E43qWP0CLgQ7nMNenJoo
+         suig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761255321; x=1761860121;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3DqmrSSmXNkGEyB/eMX6XMGKI6otJ6Nc72Pa7Dlj1ZA=;
-        b=Q02HrJJRZQoZoq/LAT0yPqML0nN8iiq/33HWVhRpTq5RPMm+iSgsAlEBsIA2N/dPfu
-         0uizO9h24/p90RfawBf25k4+s/Zx1HBGB5CgJgPsQBtAL4Sib96j4lzRXlbe8w5fLrX4
-         sIYAGlviXTgP4mBysB5ioKBgszZy9o19yjvoXUDQXq1jvyX+pWNZe4ylJXBwqDPOs+78
-         oi/VQ1ENP/JyR+dP2vLQo0cJwFwsusifmADoomc2w4r3O2AdN3c9KSeyUApPUZ4DWGJ6
-         cSSp8NhDoJG0S/qQemkEcLGNcnwd4YpGPBumXBvhF7XZtEmqzieUVLfww+Y3mQJwLDoX
-         LZIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeSXEeSDzH+XMtKTEvMaxxkuQxCfPTS8KwdHMN0saw8uESX3mPoSY/yuVS+/USuyGwbjUlLkHBzw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSSu1N4pCniqsxe2ZFI7LNhPlqTfYW3vLNPYwlEijjq2xyYVd4
-	tbGhWxW6U8s02H4VDLhnXt4KYbUW3HXVqoXd9dOlq+bkR4Ku8tu+XoJpcMhyzH7pxws+GPKB/xO
-	qYq9OkC72SHlBEDYXTVRIbDGUAgQV9MnK5UgsKZlY4gbAyXskjOTDB4Ui538=
-X-Google-Smtp-Source: AGHT+IH/NVs3VmuZ6OmIUBPRaZzUvi5LYHALglZxA/vuAMpxsbK+PeC9FpCy33YuShAHdKYPS7q2cCiop2k2xzDXJZpeBwNp/Dhp
+        d=1e100.net; s=20230601; t=1761255571; x=1761860371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RusTwYzmfQt1i/MMnUWOiMy7mTgUsaeXYk3E3ujdD8A=;
+        b=Iu2jTqTUB/3mPU5ht9h566cxOm+mBqSffEFnVE5lgZ4zbyBdnVB11KserTZF/HWy7g
+         1fUzx8qjEHobRq0zBiquA0+cdp+9/WeEb7rs45cPDqsCt07jsJtBj+T5ZBCIUO5DngVX
+         Hosqy94gEKIxaHLiTuuFXmq5bkyvIIe5k8eiXXRvEENiiWOehBalQEMrABfHpX2m+zOK
+         vBJDZbX7nZ/ArM/NZUsjDPlgvADV0fQ/kafJBukY8b8qLyAu5y22nisQVxfoU+Z9X9Mm
+         KW1LUaWMjJPsutmJmYQfrK+YWFB8I8d6gIX1EJ6z3GZe9CBPz6+xLtSTOu174RkN4JWH
+         j3KQ==
+X-Gm-Message-State: AOJu0Yy23Cw3+d85wVNR4M3jvBACc7sWYJCvsjquMUI0W5JmOUdVb9V+
+	nskEkjxhC0es+P4pzd4JWJJFpgeMDQgQwk7tchQLQCEDvv2lIfi06jluObjR1ztd9Q9DdLeX1re
+	QHPLJ
+X-Gm-Gg: ASbGncvnf8SfQ7Nd3r24V8dDCVeZ4eArRLMJXcp8y15CRnrVr2QB0VnUPNT6EeY2gfW
+	o5jsqn5WQQDhr4AWwzMU51PiLFAkNPFQOAJwgh+huUfBpid7oeGbqi9lpc+lXxc6aPCF7BBbEGO
+	D+2KL49T+cs2Jz8652K0jkTyig6QrxBFI+jwG/wMfvJHj4XadHf9DRVBxIcizhi1/L+/ru97raL
+	F9rRfD3R7nq+FVbZxVOjhMc+q9GLc4ghoU3GMsroRlmfm+XZL9soNhjcMQTEjrvFrlIylqWsn/r
+	QZxM6fp0Zy4OuSJDYgTHi6uvdi76aldRirjM+v16l0LuG3fekP1eBB7ALksFlgWPQLPzTeZisrs
+	ORUYshY2+xeYsUpOHF0hwHDSVwvZeHUhyWQU5+jDcqgXy3NqL+1T99LfCoCvVZfppE5Y6eT1Jd8
+	macxEKRwuZdalRhgg=
+X-Google-Smtp-Source: AGHT+IGgUK5gvXJyPWAdvjPmbwbyrBbJXLLjTwwhrM34BooBIU9ikpp8WOZFSTBcvUor7L6A/kDRjQ==
+X-Received: by 2002:a05:6808:1984:b0:443:a3c0:893c with SMTP id 5614622812f47-44d918b6e6amr199835b6e.24.1761255571217;
+        Thu, 23 Oct 2025 14:39:31 -0700 (PDT)
+Received: from localhost ([2a03:2880:12ff::])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-44bd44c22ccsm739380b6e.20.2025.10.23.14.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 14:39:30 -0700 (PDT)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH v1] io_uring zcrx: allow sharing of ifqs with other instances
+Date: Thu, 23 Oct 2025 14:39:22 -0700
+Message-ID: <20251023213922.3451751-1-dw@davidwei.uk>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4d:0:b0:430:b05a:ecc3 with SMTP id
- e9e14a558f8ab-430c525f52amr164228225ab.9.1761255320927; Thu, 23 Oct 2025
- 14:35:20 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:35:20 -0700
-In-Reply-To: <CADUfDZpnsv1--j02NW+d9woX1VvR7q3Ed0W_hO-GZmkCVfSH7g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa9f98.050a0220.346f24.0083.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (4)
-From: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>
-To: csander@purestorage.com
-Cc: axboe@kernel.dk, csander@purestorage.com, io-uring@vger.kernel.org, 
-	kbusch@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> On Thu, Oct 23, 2025 at 2:34=E2=80=AFPM syzbot <
-> syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
->>
->> > On Thu, Oct 23, 2025 at 2:21=E2=80=AFPM syzbot
->> > <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
->> >>
->> >> Hello,
->> >>
->> >> syzbot found the following issue on:
->> >>
->> >> HEAD commit:    aaa9c3550b60 Add linux-next specific files for 202510=
-22
->> >> git tree:       linux-next
->> >> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D11880c92580000
->> >> kernel config:
-> https://syzkaller.appspot.com/x/.config?x=3Dc8b911aebadf6410
->> >> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3Da77f64386b3e1b2ebb51
->> >> compiler:       Debian clang version 20.1.8
-> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.=
-1.8
->> >> syz repro:
-> https://syzkaller.appspot.com/x/repro.syz?x=3D12e73734580000
->> >> C reproducer:
-> https://syzkaller.appspot.com/x/repro.c?x=3D102f43e2580000
->> >>
->> >> Downloadable assets:
->> >> disk image:
-> https://storage.googleapis.com/syzbot-assets/44f7af9b7ca1/disk-aaa9c355.r=
-aw.xz
->> >> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/9d09b0a9994d/vmlinux-aaa9c35=
-5.xz
->> >> kernel image:
-> https://storage.googleapis.com/syzbot-assets/ae729ccb2c5c/bzImage-aaa9c35=
-5.xz
->> >>
->> >> The issue was bisected to:
->> >>
->> >> commit 31dc41afdef21f264364288a30013b538c46152e
->> >> Author: Keith Busch <kbusch@kernel.org>
->> >> Date:   Thu Oct 16 18:09:38 2025 +0000
->> >>
->> >>     io_uring: add support for IORING_SETUP_SQE_MIXED
->> >>
->> >> bisection log:
-> https://syzkaller.appspot.com/x/bisect.txt?x=3D12eac614580000
->> >> final oops:
-> https://syzkaller.appspot.com/x/report.txt?x=3D11eac614580000
->> >> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D16eac614580000
->> >>
->> >> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
->> >> Reported-by: syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com
->> >> Fixes: 31dc41afdef2 ("io_uring: add support for
-> IORING_SETUP_SQE_MIXED")
->> >>
->> >> Oops: general protection fault, probably for non-canonical address
-> 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
->> >> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007=
-]
->> >> CPU: 0 UID: 0 PID: 6032 Comm: syz.0.17 Not tainted syzkaller #0
-> PREEMPT(full)
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 10/02/2025
->> >> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> >> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> >> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45
-> 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00
-> 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> >> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> >> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> >> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> >> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> >> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> >> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> >> FS:  000055556a027500(0000) GS:ffff888125f29000(0000)
-> knlGS:0000000000000000
->> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> >> Call Trace:
->> >>  <TASK>
->> >>  seq_show+0x5bc/0x730 fs/proc/fd.c:68
->> >>  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
->> >>  seq_read+0x369/0x480 fs/seq_file.c:162
->> >>  vfs_read+0x200/0xa30 fs/read_write.c:570
->> >>  ksys_read+0x145/0x250 fs/read_write.c:715
->> >>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->> >>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> >> RIP: 0033:0x7f198c78efc9
->> >> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
-> f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->> >> RSP: 002b:00007fffae1a3128 EFLAGS: 00000246 ORIG_RAX: 000000000000000=
-0
->> >> RAX: ffffffffffffffda RBX: 00007f198c9e5fa0 RCX: 00007f198c78efc9
->> >> RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
->> >> RBP: 00007f198c811f91 R08: 0000000000000000 R09: 0000000000000000
->> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> >> R13: 00007f198c9e5fa0 R14: 00007f198c9e5fa0 R15: 0000000000000003
->> >>  </TASK>
->> >> Modules linked in:
->> >> ---[ end trace 0000000000000000 ]---
->> >> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> >> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> >> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45
-> 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00
-> 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> >> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> >> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> >> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> >> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> >> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> >> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> >> FS:  000055556a027500(0000) GS:ffff888125f29000(0000)
-> knlGS:0000000000000000
->> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> >> ----------------
->> >> Code disassembly (best guess):
->> >>    0:   0f 85 29 04 00 00       jne    0x42f
->> >>    6:   45 8b 36                mov    (%r14),%r14d
->> >>    9:   44 89 f7                mov    %r14d,%edi
->> >>    c:   44 89 ee                mov    %r13d,%esi
->> >>    f:   e8 a5 ec 94 00          call   0x94ecb9
->> >>   14:   45 39 ee                cmp    %r13d,%r14d
->> >>   17:   76 11                   jbe    0x2a
->> >>   19:   e8 db ea 94 00          call   0x94eaf9
->> >>   1e:   45 89 fd                mov    %r15d,%r13d
->> >>   21:   4c 8b 3c 24             mov    (%rsp),%r15
->> >>   25:   e9 c9 03 00 00          jmp    0x3f3
->> >> * 2a:   80 3b 00                cmpb   $0x0,(%rbx) <-- trapping
-> instruction
->> >>   2d:   45 89 fd                mov    %r15d,%r13d
->> >>   30:   0f 85 17 04 00 00       jne    0x44d
->> >>   36:   0f b6 2c 25 00 00 00    movzbl 0x0,%ebp
->> >>   3d:   00
->> >>   3e:   48                      rex.W
->> >>   3f:   8b                      .byte 0x8b
->> >>
->> >>
->> >> ---
->> >> This report is generated by a bot. It may contain errors.
->> >> See https://goo.gl/tpsmEJ for more information about syzbot.
->> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> >>
->> >> syzbot will keep track of this issue. See:
->> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> >> For information about bisection process see:
-> https://goo.gl/tpsmEJ#bisection
->> >>
->> >> If the report is already addressed, let syzbot know by replying with:
->> >> #syz fix: exact-commit-title
->> >>
->> >> If you want syzbot to run the reproducer, reply with:
->> >> #syz test: git://repo/address.git branch-or-commit-hash
->> >> If you attach or paste a git patch, syzbot will apply it before
-> testing.
->> >>
->> >> If you want to overwrite report's subsystems, reply with:
->> >> #syz set subsystems: new-subsystem
->> >> (See the list of subsystem names on the web dashboard)
->> >>
->> >> If the report is a duplicate of another one, reply with:
->> >> #syz dup: exact-subject-of-another-report
->> >>
->> >> If you want to undo deduplication, reply with:
->> >> #syz undup
->> >
->> > #syz dup: [syzbot] [io-uring?] general protection fault in
->>
->> can't find the dup bug
->>
->> > io_uring_show_fdinfo (3)
->
-> #syz dup: [syzbot] [io-uring?] general protection fault in
+Each ifq is bound to a HW RX queue with no way to share this across
+multiple io_uring instances. It is possible that one io_uring instance
+will not be able to fully saturate an entire HW RX queue. To handle more
+work the only way is to add additional io_uring instances w/ ifqs, but
+HW RX queues are a limited resource on a system.
 
-can't find the dup bug
+From userspace it is possible to move work from this io_uring instance
+w/ an ifq to other threads, but this will incur context switch overhead.
+What I'd like to do is share an ifq (and hence a HW RX queue) across
+multiple rings.
 
-> io_uring_show_fdinfo (3)
+Add a way for io_uring instances to clone an ifq from another. This is
+done by passing a new flag IORING_ZCRX_IFQ_REG_CLONE in the registration
+struct io_uring_zcrx_ifq_reg, alongside the fd and ifq id of the ifq to
+be cloned.
+
+The cloned ifq holds two refs:
+  1. On the source io_ring_ctx percpu_ref
+  2. On the source ifq refcount_t
+
+This ensures that the source ifq and ring ctx remains valid while there
+are proxies.
+
+The only way to destroy an ifq today is to destroy the entire ring, so
+both the real ifq and the proxy ifq are freed together.
+
+At runtime, io_zcrx_recv_frag checks the ifq in the net_iov->priv field.
+This is expected to be the primary ifq that is bound to a HW RX queue,
+and is what prevents another ring from issuing io_recvzc on a zero copy
+socket. Once a secondary ring clones the ifq, this check will pass.
+
+It's expected for userspace to coordinate the sharing and
+synchronisation of the refill queue when returning buffers. The kernel
+is not involved at all.
+
+It's also expected userspace to distributed accepted sockets with
+connections steered to zero copy queues across multiple rings for load
+balancing.
+
+Signed-off-by: David Wei <dw@davidwei.uk>
+---
+ include/uapi/linux/io_uring.h |  4 ++
+ io_uring/net.c                |  2 +
+ io_uring/rsrc.c               |  2 +-
+ io_uring/rsrc.h               |  1 +
+ io_uring/zcrx.c               | 90 +++++++++++++++++++++++++++++++++--
+ io_uring/zcrx.h               |  3 ++
+ 6 files changed, 98 insertions(+), 4 deletions(-)
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 263bed13473e..8e4227a40d09 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -1055,6 +1055,10 @@ struct io_uring_zcrx_area_reg {
+ 	__u64	__resv2[2];
+ };
+ 
++enum io_uring_zcrx_ifq_reg_flags {
++	IORING_ZCRX_IFQ_REG_CLONE	= 1,
++};
++
+ /*
+  * Argument for IORING_REGISTER_ZCRX_IFQ
+  */
+diff --git a/io_uring/net.c b/io_uring/net.c
+index a95cc9ca2a4d..8eb6145e0f4d 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1250,6 +1250,8 @@ int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	zc->ifq = xa_load(&req->ctx->zcrx_ctxs, ifq_idx);
+ 	if (!zc->ifq)
+ 		return -EINVAL;
++	if (zc->ifq->proxy)
++		zc->ifq = zc->ifq->proxy;
+ 
+ 	zc->len = READ_ONCE(sqe->len);
+ 	zc->flags = READ_ONCE(sqe->ioprio);
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d787c16dc1c3..aae5f2acfcf1 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1148,7 +1148,7 @@ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ }
+ 
+ /* Lock two rings at once. The rings must be different! */
+-static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2)
++void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2)
+ {
+ 	if (ctx1 > ctx2)
+ 		swap(ctx1, ctx2);
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index a3ca6ba66596..3a9b9e398249 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -70,6 +70,7 @@ int io_import_reg_vec(int ddir, struct iov_iter *iter,
+ int io_prep_reg_iovec(struct io_kiocb *req, struct iou_vec *iv,
+ 			const struct iovec __user *uvec, size_t uvec_segs);
+ 
++void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2);
+ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg);
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index a816f5902091..753614820f8f 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -22,10 +22,10 @@
+ #include <uapi/linux/io_uring.h>
+ 
+ #include "io_uring.h"
+-#include "kbuf.h"
+ #include "memmap.h"
+ #include "zcrx.h"
+ #include "rsrc.h"
++#include "register.h"
+ 
+ #define IO_ZCRX_AREA_SUPPORTED_FLAGS	(IORING_ZCRX_AREA_DMABUF)
+ 
+@@ -519,6 +519,8 @@ static void io_close_queue(struct io_zcrx_ifq *ifq)
+ 
+ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
+ {
++	if (ifq->proxy)
++		goto free;
+ 	io_close_queue(ifq);
+ 
+ 	if (ifq->area)
+@@ -528,6 +530,7 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
+ 
+ 	io_free_rbuf_ring(ifq);
+ 	mutex_destroy(&ifq->pp_lock);
++free:
+ 	kfree(ifq);
+ }
+ 
+@@ -541,6 +544,73 @@ struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
+ 	return ifq ? &ifq->region : NULL;
+ }
+ 
++static int io_clone_zcrx_ifq(struct io_ring_ctx *ctx,
++			     struct io_uring_zcrx_ifq_reg __user *arg,
++			     struct io_uring_zcrx_ifq_reg *reg)
++{
++	struct io_zcrx_ifq *ifq, *src_ifq;
++	struct io_ring_ctx *src_ctx;
++	struct file *file;
++	int src_fd, ret;
++	u32 src_id, id;
++
++	src_fd = reg->if_idx;
++	src_id = reg->if_rxq;
++
++	file = io_uring_register_get_file(src_fd, false);
++	if (IS_ERR(file))
++		return PTR_ERR(file);
++
++	src_ctx = file->private_data;
++	if (src_ctx == ctx)
++		return -EBADFD;
++
++	mutex_unlock(&ctx->uring_lock);
++	lock_two_rings(ctx, src_ctx);
++
++	percpu_ref_get(&src_ctx->refs);
++	ret = -EINVAL;
++	src_ifq = xa_load(&src_ctx->zcrx_ctxs, src_id);
++	if (!src_ifq)
++		goto err_unlock;
++	refcount_inc(&src_ifq->refs);
++
++	ifq = kzalloc(sizeof(*ifq), GFP_KERNEL);
++	ifq->proxy = src_ifq;
++	ifq->ctx = ctx;
++	ifq->if_rxq = src_ifq->if_rxq;
++
++	scoped_guard(mutex, &ctx->mmap_lock) {
++		ret = xa_alloc(&ctx->zcrx_ctxs, &id, NULL, xa_limit_31b, GFP_KERNEL);
++		if (ret)
++			goto err_free;
++
++		ret = -ENOMEM;
++		if (xa_store(&ctx->zcrx_ctxs, id, ifq, GFP_KERNEL)) {
++			xa_erase(&ctx->zcrx_ctxs, id);
++			goto err_free;
++		}
++	}
++
++	reg->zcrx_id = id;
++	if (copy_to_user(arg, reg, sizeof(*reg))) {
++		ret = -EFAULT;
++		goto err;
++	}
++	mutex_unlock(&src_ctx->uring_lock);
++	fput(file);
++	return 0;
++err:
++	scoped_guard(mutex, &ctx->mmap_lock)
++		xa_erase(&ctx->zcrx_ctxs, id);
++err_free:
++	kfree(ifq);
++err_unlock:
++	mutex_unlock(&src_ctx->uring_lock);
++	fput(file);
++	return ret;
++}
++
+ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 			  struct io_uring_zcrx_ifq_reg __user *arg)
+ {
+@@ -566,6 +636,8 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 		return -EINVAL;
+ 	if (copy_from_user(&reg, arg, sizeof(reg)))
+ 		return -EFAULT;
++	if (reg.flags & IORING_ZCRX_IFQ_REG_CLONE)
++		return io_clone_zcrx_ifq(ctx, arg, &reg);
+ 	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
+ 		return -EFAULT;
+ 	if (!mem_is_zero(&reg.__resv, sizeof(reg.__resv)) ||
+@@ -587,6 +659,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 	if (!ifq)
+ 		return -ENOMEM;
+ 	ifq->rq_entries = reg.rq_entries;
++	refcount_set(&ifq->refs, 1);
+ 
+ 	scoped_guard(mutex, &ctx->mmap_lock) {
+ 		/* preallocate id */
+@@ -730,8 +803,19 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 
+ 	xa_for_each(&ctx->zcrx_ctxs, index, ifq) {
+-		io_zcrx_scrub(ifq);
+-		io_close_queue(ifq);
++		if (ifq->if_rxq == -1)
++			continue;
++
++		if (!ifq->proxy) {
++			if (refcount_read(&ifq->refs) > 1)
++				continue;
++			io_zcrx_scrub(ifq);
++			io_close_queue(ifq);
++		} else {
++			refcount_dec(&ifq->proxy->refs);
++			percpu_ref_put(&ifq->proxy->ctx->refs);
++			ifq->if_rxq = -1;
++		}
+ 	}
+ }
+ 
+diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
+index 33ef61503092..0df956cb9592 100644
+--- a/io_uring/zcrx.h
++++ b/io_uring/zcrx.h
+@@ -60,6 +60,9 @@ struct io_zcrx_ifq {
+ 	 */
+ 	struct mutex			pp_lock;
+ 	struct io_mapped_region		region;
++
++	refcount_t			refs;
++	struct io_zcrx_ifq		*proxy;
+ };
+ 
+ #if defined(CONFIG_IO_URING_ZCRX)
+-- 
+2.47.3
+
 

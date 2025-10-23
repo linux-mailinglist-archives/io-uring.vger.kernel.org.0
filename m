@@ -1,139 +1,125 @@
-Return-Path: <io-uring+bounces-10153-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10154-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0741DBFFEB0
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 10:28:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02614C008F4
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 12:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973E51887171
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 08:28:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8087C4FF402
+	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 10:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519DA2F7468;
-	Thu, 23 Oct 2025 08:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A013093C7;
+	Thu, 23 Oct 2025 10:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOOhwequ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA9E2BDC15;
-	Thu, 23 Oct 2025 08:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B96D3090D6
+	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 10:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761208084; cv=none; b=XNzYPoliIu4lrYEcAgWW3BMEYfxkKkwL+nrSMSh9XBPfC/sJNLgXfpybHvMonF+fDNWwReNUQ1bkBeUoTpB2fwzAo5KhEM/V/T9q+ZTQLYGusbjEh80UXX5i3RIA9z+j6t+7cqPueQNEEcERgLpAJtfUZ/BsLayia4FYgjs3LtI=
+	t=1761216249; cv=none; b=uEXtvJcotpQWexMsz4h9FsHhqnZ2qI0KG+GqUSp2F58/pJWAwJEHm9qMFHg19kOTNqubzL5bnoooFSXuJRlpt8OXaz0/6SYHTul9l/T/GXOSwkcIf5wQDPZ5BE8itPQpehHORzCyLFCG+DfXFRuOsdJV/ehNaDtackFbCJ0vDV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761208084; c=relaxed/simple;
-	bh=AUgJ3Jmn3m2RnEHWD18AOjigfIzZkqbCx9HFiI29QkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzFPdJjrNVqdPaPvncRvctHCDsklCtiYfY42tBDaMJFIt/bGdJWgY/3LhNNCxP199WjbgwqFTKSBF2MKk8OCp59IFYIfvQ3cP9hXUfsyi1+0MlJG+eKJ6ztqz3IsCI3HBarJU0PV4tchGz57tPJSf8MMxwpMcsn6juDum3liK88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-2b-68f9e70bae0f
-Date: Thu, 23 Oct 2025 17:27:50 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, kuba@kernel.org, pabeni@redhat.com,
-	almasrymina@google.com, davem@davemloft.net, edumazet@google.com,
-	horms@kernel.org, hawk@kernel.org, ilias.apalodimas@linaro.org,
-	sdf@fomichev.me, dw@davidwei.uk, ap420073@gmail.com,
-	dtatulea@nvidia.com, toke@redhat.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel_team@skhynix.com, max.byungchul.park@gmail.com
-Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
- confirm its usage as pp for net_iov
-Message-ID: <20251023082750.GA11851@system.software.com>
-References: <20251016063657.81064-1-byungchul@sk.com>
- <20251016072132.GA19434@system.software.com>
- <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
+	s=arc-20240116; t=1761216249; c=relaxed/simple;
+	bh=X80sO19OQq1AAeWyYw6VVJB/0XMC/w+rt34aJP2xI/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7RZRW5/6xKTlAlxIvNpHOa5jKveTmoJLU77k4oNXeUUx2qyQh9sTnOW1vJmAeY4MIhysZnGFnbtKj1UKWNYbrmuNSupl47vIKxTvnzej9adWCADKaV5SWQR1BmDGwyyT0i71wW+3lxOtOafzJVmwRMVxJ+pTh3kAayvJNkXIKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOOhwequ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761216245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AQdpr7tiqgHdbDQVg93+dG/eG3fbl9u/USI4T+1JorE=;
+	b=KOOhwequ5CS910jPOowIRAH0lbSigIaVejjC4/d/Gy/MF6zBHtVcnlB/Zrn69AF6CFcSKx
+	Cgj/0PKJ/6GIQ8ZsOA1hvUPcuC20zDv6PQTK15tRpKpChl+us9QdMcW58mJ5tLE8rh0pyk
+	wc8r2mKxkiY3d478wD5g+cQ73wFB9Dw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-486-PNDzfMH5O6aZaXItZu2qpw-1; Thu,
+ 23 Oct 2025 06:44:04 -0400
+X-MC-Unique: PNDzfMH5O6aZaXItZu2qpw-1
+X-Mimecast-MFC-AGG-ID: PNDzfMH5O6aZaXItZu2qpw_1761216243
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E7D31800741;
+	Thu, 23 Oct 2025 10:44:03 +0000 (UTC)
+Received: from localhost (unknown [10.72.120.30])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC9AD180057E;
+	Thu, 23 Oct 2025 10:44:01 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH] io_uring: fix buffer auto-commit for multishot uring_cmd
+Date: Thu, 23 Oct 2025 18:43:50 +0800
+Message-ID: <20251023104350.2515079-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsXC9ZZnoS73858ZBtv3KVus/lFh8XPNcyaL
-	Oau2MVqsvtvPZjHnfAuLxc5dzxktXs1Yy2bx9Ngjdos97duZLR71n2Cz6G35zWzxrvUci8WF
-	bX2sFpd3zWGzuDCxl9Xi2AIxi2+n3zBaXJ25i8ni0uFHLA7CHltW3mTyuDZjIovHjX2nmDx2
-	zrrL7rFgU6nH5bOlHptWdbJ53Lm2h82jt/kdm8f7fVfZPD5vkgvgjuKySUnNySxLLdK3S+DK
-	mNK+gblgvlDFon3T2BsYP/F2MXJySAiYSKzacZ4Rxr52YSpzFyMHB4uAqsSKZ+ogYTYBdYkb
-	N34yg9giAtoSr68fYu9i5OJgFljOLHHz4gugBDuHsECexDNjkBJeAQuJmW2TGUFKhASmM0pc
-	+T+dDSIhKHFy5hMWEJtZQEvixr+XTCCrmAWkJZb/4wAJcwrYSjzc+QWsRFRAWeLAtuNMIHMk
-	BDaxS5z9tZcF4kxJiYMrbrBMYBSYhWTsLCRjZyGMXcDIvIpRKDOvLDcxM8dEL6MyL7NCLzk/
-	dxMjMAqX1f6J3sH46ULwIUYBDkYlHl6H4z8yhFgTy4orcw8xSnAwK4nwlkUChXhTEiurUovy
-	44tKc1KLDzFKc7AoifMafStPERJITyxJzU5NLUgtgskycXBKNTAy3Aldv4v1g8GFrpd7+S4H
-	3zViOJi7NJXJN6fUabY0q4TKz/ln3ff+5U5M23e27cLVG45NUt+3//v8nn3n5NWZGy5aWta+
-	/OMqerZ4mrPGn8RG4TVaJ1a/mBLRIyCX4MGSe2SmjpairGHT6pTaQ5Gz52z02XKh6Urc88XP
-	rduK4g98ZFv3Lve6EktxRqKhFnNRcSIA5i0Vnr4CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsXC5WfdrMv9/GeGQecFIYvVPyosfq55zmQx
-	Z9U2RovVd/vZLOacb2Gx2LnrOaPFqxlr2SyeHnvEbrGnfTuzxaP+E2wWvS2/mS3etZ5jsTg8
-	9ySrxYVtfawWl3fNYbO4MLGX1eLYAjGLb6ffMFpcnbmLyeLS4UcsDiIeW1beZPK4NmMii8eN
-	faeYPHbOusvusWBTqcfls6Uem1Z1snncubaHzaO3+R2bx/t9V9k8Fr/4wOTxeZNcAE8Ul01K
-	ak5mWWqRvl0CV8aU9g3MBfOFKhbtm8bewPiJt4uRk0NCwETi2oWpzF2MHBwsAqoSK56pg4TZ
-	BNQlbtz4yQxiiwhoS7y+foi9i5GLg1lgObPEzYsvgBLsHMICeRLPjEFKeAUsJGa2TWYEKRES
-	mM4oceX/dDaIhKDEyZlPWEBsZgEtiRv/XjKBrGIWkJZY/o8DJMwpYCvxcOcXsBJRAWWJA9uO
-	M01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU5mVW6CXn525iBMbUsto/E3cwfrns
-	fohRgINRiYfX4fiPDCHWxLLiytxDjBIczEoivGWRQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8
-	XuGpCUIC6YklqdmpqQWpRTBZJg5OqQbGE648Hp+zDS6G+Z1WOejJX66rmit3WOBC9bWY06vu
-	VF53lrnyTVtnVsDSxjgdU5vbHg9yf8b1Xd+d/fVIbyFv2quZ96x6niluOnlMir0xdWrlnl/6
-	+t3xJXz77PJLt18LyVtxuTNwRpbmg7Jrf3K2rM9Xk46rtF05/153Vpf/LNXkpijjqUuVWIoz
-	Eg21mIuKEwH3xgZVpQIAAA==
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Oct 17, 2025 at 01:33:43PM +0100, Pavel Begunkov wrote:
-> On 10/16/25 08:21, Byungchul Park wrote:
-> > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
-> > > ->pp_magic field in struct page is current used to identify if a page
-> > > belongs to a page pool.  However, ->pp_magic will be removed and page
-> > > type bit in struct page e.g. PGTY_netpp should be used for that purpose.
-> > > 
-> > > As a preparation, the check for net_iov, that is not page-backed, should
-> > > avoid using ->pp_magic since net_iov doens't have to do with page type.
-> > > Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
-> > > page pool, by making sure nmdesc->pp is NULL otherwise.
-> > > 
-> > > For page-backed netmem, just leave unchanged as is, while for net_iov,
-> > > make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
-> > > check.
-> > 
-> > IIRC,
-> > 
-> > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> Pointing out a problem in a patch with a fix doesn't qualify to
-> me as "suggested-by", you don't need to worry about that.
-> 
-> Did you get the PGTY bits merged? There is some uneasiness about
-> this patch as it does nothing good by itself, it'd be much better
-> to have it in a series finalising the page_pool conversion. And
+Commit 620a50c92700 ("io_uring: uring_cmd: add multishot support") added
+multishot uring_cmd support with explicit buffer upfront commit via
+io_uring_mshot_cmd_post_cqe(). However, the buffer selection path in
+io_ring_buffer_select() was auto-committing buffers for non-pollable files,
+which conflicts with uring_cmd's explicit upfront commit model.
 
-I also considered that.  However, I think the finalizing e.i. removing
-pp fields in struct page, would better be done once every thing else has
-been ready, so that I can focus on examining more thoroughly if there
-aren't accesses through struct page and it can be fianlized safely :-)
+This way consumes the whole selected buffer immediately, and causes
+failure on the following buffer selection.
 
-	Byungchul
+Fix this by adding io_commit_kbuf_upfront() to identify operations that
+handle buffer commit explicitly (currently only IORING_OP_URING_CMD),
+and skip auto-commit for these operations.
 
-> I don't think it simplify merging anyhow, hmm?
-> 
-> ...>> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> > > index 723e4266b91f..cf78227c0ca6 100644
-> > > --- a/io_uring/zcrx.c
-> > > +++ b/io_uring/zcrx.c
-> > > @@ -450,6 +450,10 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
-> > >              area->freelist[i] = i;
-> > >              atomic_set(&area->user_refs[i], 0);
-> > >              niov->type = NET_IOV_IOURING;
-> > > +
-> > > +            /* niov->desc.pp is already initialized to NULL by
-> > > +             * kvmalloc_array(__GFP_ZERO).
-> > > +             */
-> 
-> Please drop this hunk if you'll be resubmitting, it's not
-> needed.
-> 
-> --
-> Pavel Begunkov
+Cc: Caleb Sander Mateos <csander@purestorage.com>
+Fixes: 620a50c92700 ("io_uring: uring_cmd: add multishot support")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ io_uring/kbuf.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index aad655e38672..e3f3dec8b135 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -155,6 +155,12 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
+ 	return 1;
+ }
+ 
++/* So far, uring_cmd commits kbuf upfront, no need to auto-commit */
++static bool io_commit_kbuf_upfront(const struct io_kiocb *req)
++{
++	return req->opcode == IORING_OP_URING_CMD;
++}
++
+ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 					      struct io_buffer_list *bl,
+ 					      unsigned int issue_flags)
+@@ -181,7 +187,8 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	sel.buf_list = bl;
+ 	sel.addr = u64_to_user_ptr(buf->addr);
+ 
+-	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
++	if (issue_flags & IO_URING_F_UNLOCKED || (!io_file_can_poll(req) &&
++				!io_commit_kbuf_upfront(req))) {
+ 		/*
+ 		 * If we came in unlocked, we have no choice but to consume the
+ 		 * buffer here, otherwise nothing ensures that the buffer won't
+-- 
+2.47.1
+
 

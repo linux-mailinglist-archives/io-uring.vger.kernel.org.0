@@ -1,103 +1,151 @@
-Return-Path: <io-uring+bounces-10178-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10179-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A360C03FA0
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 02:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 890C3C0405F
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 03:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EDD24EB527
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 00:49:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60BE84E25D7
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 01:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4913D503;
-	Fri, 24 Oct 2025 00:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE83912D1F1;
+	Fri, 24 Oct 2025 01:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rXCYDNrM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SQgrDEe/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D508635C
-	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 00:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684B2628D
+	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 01:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761266985; cv=none; b=Ln1tVAVfFsaErmDGgBOvBJwI2vsDXMlvvtYRqSGRw/ix5oVOcPSSLOhtCcABj5P8MSn3h3o6AWTJS6aX346HYkChpPRectzCGWy+8OU4tomne6b3oDAVe2eIRoTK9ljsT/gXyLN6WkLxbZQM36QXFUu7okF8qOMRd6E8/YsvIa8=
+	t=1761269714; cv=none; b=rhrU3+8bnX2qfR4w91h39oGNhP80MhD/tLvf28CNIsN8enHxF/xM+m/cAsKelWnH4xarwcWeOAQa++iNe7I08YJNWbc4Z6db4cIB5QNOXcvlyqXTHJr25czgPgbDuh6bEYhdh90+GP8mGnWY4Pg2MvNH1orW2g4dz9f72+qX3rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761266985; c=relaxed/simple;
-	bh=7u+IjDwO6+F7DI7uchGCYv5muBEp0ShcxZa0CbC1aiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Of0SA8iFWZo5CHbcNvC/XC3Ktn2wM/40d01l4TIcplbdQ+5Y54YaD3PuuF1OvLAU2phpU3Lm4Svysyy5jpPUq/jlwZIUuQ2N6ygGzijfpRqJuI60fWqvprxGN97JyQmWaBHHSsmIZ57N+9XFNM67KpR1en/GC0RwsAqv1rWmJo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rXCYDNrM; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-93e7ece3025so59978839f.1
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 17:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761266981; x=1761871781; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Ot+UoxjARjoK5fUaxnFU+2GwMHtgeInG0/YoXF7TxQ8=;
-        b=rXCYDNrMYFCw9u0WghcoDsLKCv/4E5b4qvWM/pFPeOaGu4IW0ZXFaJJO7ugBzUuqUO
-         k3HN3Wr57Vd8+55BiPXzXar8H++dPsA2NVyeik05IV0E9KLRTkN8noUjnq9i46JMbQSJ
-         Re+HTiGJHQPzHodwJOVh80fhCg8/bZMOstMvuIn+20uOINwJOIftsAOY4o0Xv0NnOnUQ
-         Xxj6fYu33ZuvyxTiLL5EhoPoCnn9cAxBpoFbjXkssU9W2AXI+mZHNLT3DhJdY7Go1sKf
-         yPCMIFlS3LtB4n0nS6Hart8bjVFLzuBP37B/zNX6U3sndRFQxn5q8JJSrfEk8xAfZBYz
-         LOSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761266981; x=1761871781;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ot+UoxjARjoK5fUaxnFU+2GwMHtgeInG0/YoXF7TxQ8=;
-        b=Lw5iU/VShLVDW3OrBwoMbyx8FPer7tuo6JXapbHwUXZsZP4IhCLGgaOPIjmd49ebCK
-         p60c9WU0eb44w/H29sBcSdZABPzY7eRuJjj+NIkznu5M8FpbyyEMKHK+3k3wb7QpFrIR
-         vTgoJCxn0qZUAr9YxUqHl22l1QVU3bh46r4Oh/y7Jw3jjobZ4Na/JHRnBZxzx3fLNUO3
-         EytWJe1J2A1nS7mbEndrV0GmExr7t8fKpfl3n5wYhQEsuve0whwJqpxCs3/S9VESYzTz
-         y16D0l8Q5TIeIxb6rhrtbZhc7HaXoOevy0OF/wPUKczQ7wdia2ZOgLO+TGm0XkHgpk26
-         kynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGKnicG3Onel4IT2h8J/ohr919aLYDy1kHJl+SAIZ6evzNzzjSQQocNhY+Bg1mnKmk/6nZ8B044w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiTyaH/oocUaGWN9QdiPd2bTAPfJn58RFJHVKzaLUQtAGbTS8l
-	JdxGI8CdU1ITcEjM7iR0ItvF/LhU2Q3JA/g53AQAJDbc9ABSjsVGMKdjOmquLg06jcI=
-X-Gm-Gg: ASbGncsYmCGkNOxuTX5q0ghtFe39JC2yGbNGeJ9z4HK6/pi2BbQG+p6q0euRMLw3LX0
-	tWWE53LxPF2DBffOs6Zj+OfbFBlHxXOTcDz6Rp8qFPe14E4Jo9EhGFmh8HaDjs6cgNVAMQQ2LQj
-	4B8g5ZhT4m35Ox2T4szBbpJRFVVfqlYphitbDlNGDA86qo0+Ic5e8xw9sJP6AixLwyGc4iA8jSl
-	UF9DcNn5yzpeGChlZNApUG6miidFi0z+4Wa4CpmtseHgURERTFUDKUoFJ4DUmYeDlUelUcTdztW
-	OEPo/4O9QJ0+DBk3y9XdIQkdcxs/RG2tDrmIpNuZ9lC1urr+xpHhnB8y4ySLgrvdqYMFadnVnrB
-	2X3w1gw5o46iaCF+9tk0v/rGD3+ut5bbiNRurHM5w7XAW0PYf4SIo87LQIGhWmeWm878QB8yuTu
-	+8QynjDDaW
-X-Google-Smtp-Source: AGHT+IGgigrSLGkxt4zqVhLYINQi5KhGC+zpYsJYbgrYE1F3EibqxIYRXytZsIarOnG4dRBIH9FH3w==
-X-Received: by 2002:a05:6e02:220f:b0:431:d685:a32a with SMTP id e9e14a558f8ab-431eb624025mr12439245ab.6.1761266981533;
-        Thu, 23 Oct 2025 17:49:41 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431dbc8540esm15916115ab.29.2025.10.23.17.49.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 17:49:40 -0700 (PDT)
-Message-ID: <3cc96d17-f77d-4163-a018-eeaff2e8ebd0@kernel.dk>
-Date: Thu, 23 Oct 2025 18:49:39 -0600
+	s=arc-20240116; t=1761269714; c=relaxed/simple;
+	bh=2Ooj+DzkPTJeTgmi30ZuvGFKJnVTwz10RI/rXHvjjdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kyE2uXLnSFQqdUoYl/W15NGAizq/l+phVpVa3IvUXQuFuMo5VwqHPChchkr5Ftp5SGeNq44fliLqSxqzbV01+j+sbYt+OG6U7ITbdD7PiA53GE0+gTuNobNKpYnql644YrbvaWOTWWWc11ErjB0oXaQFi13ey1pOorV4wc0gYyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SQgrDEe/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761269711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LFHrP3TO2c8KI8ufH3Dg9pNLx13w57eCYxZoEAFKwhg=;
+	b=SQgrDEe/eK8eyJVWsgUdQ6Qsn9XD/tRH3EIsAkE1/8ii6jH+amVw8ZR+LbViYEKIiUBVCp
+	MEqAsap2u+JDG/JT4rxYTfaZtsjjOzYJzEklPrCgbrcg2ZiFG+f0rKtTLufc665Ib/ZS/E
+	DmJRqfBWrNZQdwoy85sdKLRSFViyd6Q=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-220--Cb4QiNsOG2L62xKThJP-Q-1; Thu,
+ 23 Oct 2025 21:35:09 -0400
+X-MC-Unique: -Cb4QiNsOG2L62xKThJP-Q-1
+X-Mimecast-MFC-AGG-ID: -Cb4QiNsOG2L62xKThJP-Q_1761269708
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B859218001E7;
+	Fri, 24 Oct 2025 01:35:08 +0000 (UTC)
+Received: from localhost (unknown [10.72.120.13])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9E23830002D7;
+	Fri, 24 Oct 2025 01:35:07 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V2] io_uring: fix buffer auto-commit for multishot uring_cmd
+Date: Fri, 24 Oct 2025 09:34:59 +0800
+Message-ID: <20251024013459.2591830-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (4)
-To: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, kbusch@kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68fa9c5e.a70a0220.3bf6c6.00c9.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68fa9c5e.a70a0220.3bf6c6.00c9.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-#syz invalid
+Commit 620a50c92700 ("io_uring: uring_cmd: add multishot support") added
+multishot uring_cmd support with explicit buffer upfront commit via
+io_uring_mshot_cmd_post_cqe(). However, the buffer selection path in
+io_ring_buffer_select() was auto-committing buffers for non-pollable files,
+which conflicts with uring_cmd's explicit upfront commit model.
 
+This way consumes the whole selected buffer immediately, and causes
+failure on the following buffer selection.
+
+Fix this by checking uring_cmd to identify operations that handle buffer
+commit explicitly, and skip auto-commit for these operations.
+
+Cc: Caleb Sander Mateos <csander@purestorage.com>
+Fixes: 620a50c92700 ("io_uring: uring_cmd: add multishot support")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+V2:
+	- add helper io_should_commit() (Jens)
+
+ io_uring/kbuf.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index aad655e38672..a727e020fe03 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -155,6 +155,27 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
+ 	return 1;
+ }
+ 
++static bool io_should_commit(struct io_kiocb *req, unsigned int issue_flags)
++{
++	/*
++	* If we came in unlocked, we have no choice but to consume the
++	* buffer here, otherwise nothing ensures that the buffer won't
++	* get used by others. This does mean it'll be pinned until the
++	* IO completes, coming in unlocked means we're being called from
++	* io-wq context and there may be further retries in async hybrid
++	* mode. For the locked case, the caller must call commit when
++	* the transfer completes (or if we get -EAGAIN and must poll of
++	* retry).
++	*/
++	if (issue_flags & IO_URING_F_UNLOCKED)
++		return true;
++
++	/* uring_cmd commits kbuf upfront, no need to auto-commit */
++	if (!io_file_can_poll(req) && req->opcode != IORING_OP_URING_CMD)
++		return true;
++	return false;
++}
++
+ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 					      struct io_buffer_list *bl,
+ 					      unsigned int issue_flags)
+@@ -181,17 +202,7 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	sel.buf_list = bl;
+ 	sel.addr = u64_to_user_ptr(buf->addr);
+ 
+-	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
+-		/*
+-		 * If we came in unlocked, we have no choice but to consume the
+-		 * buffer here, otherwise nothing ensures that the buffer won't
+-		 * get used by others. This does mean it'll be pinned until the
+-		 * IO completes, coming in unlocked means we're being called from
+-		 * io-wq context and there may be further retries in async hybrid
+-		 * mode. For the locked case, the caller must call commit when
+-		 * the transfer completes (or if we get -EAGAIN and must poll of
+-		 * retry).
+-		 */
++	if (io_should_commit(req, issue_flags)) {
+ 		io_kbuf_commit(req, sel.buf_list, *len, 1);
+ 		sel.buf_list = NULL;
+ 	}
 -- 
-Jens Axboe
+2.47.1
 
 

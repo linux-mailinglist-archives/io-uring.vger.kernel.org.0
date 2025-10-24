@@ -1,130 +1,155 @@
-Return-Path: <io-uring+bounces-10176-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10177-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67324C03E01
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 01:44:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FBAC03EA7
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 02:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 177B94E6672
-	for <lists+io-uring@lfdr.de>; Thu, 23 Oct 2025 23:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E911AA117A
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 00:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297AC2D3204;
-	Thu, 23 Oct 2025 23:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21961E9B37;
+	Fri, 24 Oct 2025 00:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGkgBn+B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeytUpGs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472A214B06C
-	for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 23:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC072C031B
+	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 00:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761263080; cv=none; b=jdt1a2FODmgDFVZGkJqVLi8nVcCMgrRQ8sJ2dzXHX5m7lQDA9gZ+ETFHoOKdH86kAjlqMiFDQ7o2hBoA6TJvzlUWgIc4M8ZYEqmYlEM7rkrUpzlHCXIoYaIofbsT1zjB1EZzgQD5temaMTnXkGrpyDTudgwki5AHVg1NV1TADiM=
+	t=1761264015; cv=none; b=JMMcbGRO0rJ7OwGwzE8wd6rVxcH9pUaLnaKba/4JlReiZJsAin0Nu/SJZIAtNNSKYwA3/xe8KbCBEjKDgNf2b3hIywlAn7NsCoth09X2aAL3G8KfUbNdA6/gk+MLn2Hgvduwd9nm/c0S8q2NW06uADN4+c3tEzhHT/uUuhvO5zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761263080; c=relaxed/simple;
-	bh=+73TE0LUJk3EHBZtSrvfA2iuWg7yqVR6IZtWQcGL0sI=;
+	s=arc-20240116; t=1761264015; c=relaxed/simple;
+	bh=0IzC5y2SId6iPppGFHEwKe3OBHT3Twip0IZHWYCDQuc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R0093s4eQKN33u0FKR6MACNsvPXYOKIqb2kZ7Iy17Hs2loqWykgkSdbIoobDtbdjgK0vKUU9/2+lLe3BE7ZjLZPZvkPwxALMsytQHcTq5qgq+bEyoZdKTVermLHCulqMJznydbFV4eH2XqpS/KyaEVB5HgUOlO5Gly+aKlSQ4CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UGkgBn+B; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=iRkJKruLuv9RAzXPqAALs8ycb171dPmuUlFMXo4QSe+zON2XWyBgP8xVP8W7dlykvCWu+zzI1qOO5+6lRbfyVJQkkmatE9lnm6HT+X/EVV1u4kT4mKh2QF7hdj0MtKM8ulcxHNStVgJa9Kty+caktofmggWeZN+9Q9QX4Km4sBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeytUpGs; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e89d2eaca9so9195281cf.1
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 16:44:37 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-88f8e855b4eso96753285a.3
+        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 17:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761263076; x=1761867876; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UXqCBtIeIyeVeN+++avkFc9AmHHco/PM3jJYvlfy7IY=;
-        b=UGkgBn+BOgtP0aoMJ7v4elUL+o1mZIqqduaHtLNVltus8AoKgRbFBBlgxfinwICTgc
-         p/U8TZPt+KZfG8QCDnhIinoBdafU9qENVQi0i24NeqahgbdPLCBgNZ3n9/iMCH984yKW
-         LwAODBzsBT6R+r7sTyX2PskgppZ/b+m0t2zs1qHJ0AcsVMxuPVifrA9aNHGTn4KWupW8
-         HdV3XoUOcXNg7Vk88VKXBvhGUQISTLnfNhLgYJ1N3bWHhO9evr4zTRNMATo19qEy3lU/
-         06HsMToYE9Fn1ANXTCMtlomO4652coyOfXQs05NY4qIASN3wmo4XkOGv9VZJnS3r5Y9h
-         5UWw==
+        d=gmail.com; s=20230601; t=1761264013; x=1761868813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vuyE5hvy13CKVe6q8HkNS5JRzOQdk7AaqAJ0KTfxK3k=;
+        b=DeytUpGsRjGgtLce0rde8M0cmZYMVgZSf5fGXA1EObyu7dbVjA9UAEx/2sLcjTYd7i
+         UHokbVCWUxldr+Vn/lvRiQCRumFdtXLF2iYuAFSpMj3b24sY5KIiDzWUE7QgCgwXvCgy
+         UF3BdIToTqMVx0yDPSpKPoEuYk+KsJrwfdagfjD76+N6wlVsHFXGnrFU0Pqq4if/YnLx
+         RjxsXl90B4CdB+VKIhVP3mbr0aJDQeY6CxyPOQhv1GQcDc43J09RvDec0VJhqGTEOw6j
+         VcfN23MIyh/WaJ2aKwnH3BK/UvFvApYmZmyB8wqekeqVrtrmrUm/uKBMXrw7Rn67SGng
+         AVaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761263076; x=1761867876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UXqCBtIeIyeVeN+++avkFc9AmHHco/PM3jJYvlfy7IY=;
-        b=NiOzHQ7CjgxgQ6PvNoWYWzkpaVbph7jIrhIgrWHbpFO480VWXLAdBsRgCvebp4ZjDM
-         Vz+zP7txvlJwm2M2/TLdm3A4d2YLZV5o0LSmzwKJ4igpDvhi7XZQW6k6XC3aVAViTb5r
-         if8sPH7ewp2JAwWRUzy4ki+AWdtm/jtJbk7mDSNTFk2x2ELTbgQu7ej6ofUY3iMdC8vj
-         YwvQY4kRUyW/8ni4qvclfql0z3qsowEJb5+K1Edyyi9c29LF6Q+Cm9KnsQhBFsMEhUjd
-         dy8yT+hdAtTVvub2/OmYh1w83410mo4XwMQH96JU/163TO3nMUvDGpRuyMu5/NCVLbBd
-         zW/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX8h7xX5Ra3f5FOlXPa7kDdeHviHtKQMwG7o8MBJjFxRNn5UMFAOwudDzvIgmsKHf9mJ1zr99+lcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMvDwwjNif37hDmXo6ICdRYeByP7ZL8oQeqb1T87UCymZ4jIT5
-	te8UN8O04u53F4SSHuuGWn407GbEWtRMo8FrOQhYKzl/7WUp9j9RS8/zKMPEI87CzSRvBM/i7o7
-	YCthJ9Eii/2KerkvXYAvMtFhWMvU9m4A=
-X-Gm-Gg: ASbGncuOgNpigggNJvcKgmBA4p1Gv95tUyzSoekpp944Bx9J0R59G2kKZ77knTG4W7E
-	3zHL8HvkAUlVtHLCf1hGDWRLgTXzQfJMcetmAkvL7CyqNyEeOFOHTdJZ6snyVIDyPAxz+luF9ZS
-	amybLmvD6HHn+qBiD0KenC/1rw7aNpOh5yWqKHWUfW5ASvnI913KZp/GeQpqIQdvObyD93EBNl5
-	p1gOm8v0Rkjr7nActv7i2EKIzkahNDUJY4TSWNwAcTOmXf7UK7gsaRSRpKKkaxW5y2Tk/taiJl0
-	OZmDSqqcJ5MBhGoJSQvv/jWSuw==
-X-Google-Smtp-Source: AGHT+IFfKFcBw3GFrPn9bPh8oDexYFhT6MlUZOifmThWFzTuYEuhqR/yL3g28XjR2Rdspj+zz/eGO0LoM7bALqdbCfY=
-X-Received: by 2002:a05:622a:4cb:b0:4c3:7101:8861 with SMTP id
- d75a77b69052e-4e89d20d74fmr245657381cf.15.1761263075982; Thu, 23 Oct 2025
- 16:44:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761264013; x=1761868813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vuyE5hvy13CKVe6q8HkNS5JRzOQdk7AaqAJ0KTfxK3k=;
+        b=r2tBAVaVEoHrasrcNvXC/1mxKGZoIYWezJk/kD2uD8dOD4v79rAz2Gl4NVIrT8o5Gq
+         yEiIkgUzWQaianEGI+Z3WJ+yKdCiWxoCRAlPytIGsjg52U61tMmh43+/YE6RIA8LLR1l
+         GoaV3ERqRCEZcMVSp+7bIkp0w7A94Ypxy6s/R1k9wB5eo7dWtv6DxyIZh6hca4LiGtuN
+         PiHCav3Q4k8/uMIs+ZFT2J98o0QcGl4ygVIhlqg3ulMYvMPK1eyb9f+p29yYepzY5H1H
+         gc6FNIQhfEJHmvFr2qhO68RR0IQ3mbC6aBm3UhXDqaMG7Fj0pwxJ4r6j3ljOOxVjFJec
+         L5Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCW3h2k4N0KmIh8AnXAb0n6p39EYvm1djJV3lPAh7mg0Z6drtjG90vbztT699tzJzVx6y+gztEwYpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/54G/k8EThQr0cT7pnlB/emDAk1Z1gy1dOmAOmLbjOv3Y6ZGE
+	DynITjJd/qP7DkEoohJXjcRKs7NH9sUZqmqbLZYkf3mseeOJ8/75BpZW0Qz8SiPMA8lUrkfTgYo
+	ZuF8WPWk7m1eP1rincwbh4yd5Pg+wOmE=
+X-Gm-Gg: ASbGncv1aWQAmvYo9FT4rlH8ivR6zyrsjCv/biiS8j6czIGOjAMH36BrgQDf664TB+a
+	orF8ShQvnVTI1gdNx66xNqpscVg8Dw/MB5Y+UMOydMWoG1MVnhWdAs/SccqxGgHlwig/9JPu4hX
+	ApmKSs3FtXWs926qwcDd4z4o5brWLf9ozE0OvpfS8w+7oNFFvc07rUfyE9u4AA5GdKg/yxXmGHS
+	iQ3wtvLjoRBrU7VSanF7bf5RBMxstE4t0XBBEQy1wnYBfhWCkzPLO23HWknsmnuy1mv3GzKDub5
+	lIqFlcBoZIdyWxslpZ0rj9tDlA==
+X-Google-Smtp-Source: AGHT+IHc8Zg8xR/489kls1AGI4nQouWKVQJZ3IcQRrUMHze5+AHerK947JDwJs1jUmlAf3fvOdi08EIO+bJObK5EMtE=
+X-Received: by 2002:a05:620a:2a10:b0:849:d117:e86a with SMTP id
+ af79cd13be357-89070fc5496mr2922702185a.59.1761264012376; Thu, 23 Oct 2025
+ 17:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022202021.3649586-1-joannelkoong@gmail.com> <20251022202021.3649586-3-joannelkoong@gmail.com>
-In-Reply-To: <20251022202021.3649586-3-joannelkoong@gmail.com>
+References: <20251022202021.3649586-1-joannelkoong@gmail.com>
+ <20251022202021.3649586-2-joannelkoong@gmail.com> <CADUfDZoeyDg2F1aSOTqg_7wANxH_LUuSGjiA5=-Auf5TDdj8AQ@mail.gmail.com>
+ <CAJnrk1YT=raaSxSt7cE6w2YW6isn-HuJb7HtcXSUsKNjUpMffg@mail.gmail.com>
+In-Reply-To: <CAJnrk1YT=raaSxSt7cE6w2YW6isn-HuJb7HtcXSUsKNjUpMffg@mail.gmail.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 23 Oct 2025 16:44:25 -0700
-X-Gm-Features: AS18NWCUeOyyQYcs_PpyeP_rFldTQGSoTEysf2geuIz4a2-n3KFNW91U42vYFHw
-Message-ID: <CAJnrk1Y9KjhchEMqb7cb6gBBFKs-vcxp1LSAL9_jP+8WaJFnmw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] fuse: support io-uring registered buffers
-To: miklos@szeredi.hu, axboe@kernel.dk
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
-	io-uring@vger.kernel.org, xiaobing.li@samsung.com
+Date: Thu, 23 Oct 2025 17:00:01 -0700
+X-Gm-Features: AS18NWALvC90qZiX3Sv9QocGdqGUh0cyDsNHGnF9AvoRBeDTMgzrms9W0esY7H0
+Message-ID: <CAJnrk1Y0LaP2htgQUN=NpmTf-Y25hSYM5ZoxNk08jU6ObAeDHA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] io-uring: add io_uring_cmd_get_buffer_info()
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	xiaobing.li@samsung.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 51a563922ce1..748c87e325f5 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -38,9 +38,20 @@ enum fuse_ring_req_state {
+On Thu, Oct 23, 2025 at 3:20=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
->  /** A fuse ring entry, part of the ring queue */
->  struct fuse_ring_ent {
-> -       /* userspace buffer */
-> -       struct fuse_uring_req_header __user *headers;
-> -       void __user *payload;
-> +       /* True if daemon has registered its buffers ahead of time */
-> +       bool is_fixed_buffer;
-> +       union {
-> +               /* userspace buffer */
-> +               struct {
-> +                       struct fuse_uring_req_header __user *headers;
-> +                       void __user *payload;
-> +               } user;
-> +
-> +               struct {
-> +                       struct iov_iter payload_iter;
-> +                       struct iov_iter headers_iter;
-> +               } fixed_buffer;
-> +       };
+> On Wed, Oct 22, 2025 at 8:17=E2=80=AFPM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Wed, Oct 22, 2025 at 1:23=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cm=
+d.h
+> > > index 7509025b4071..a92e810f37f9 100644
+> > > --- a/io_uring/rsrc.c
+> > > +++ b/io_uring/rsrc.c
+> > > @@ -1569,3 +1569,24 @@ int io_prep_reg_iovec(struct io_kiocb *req, st=
+ruct iou_vec *iv,
+> > >         req->flags |=3D REQ_F_IMPORT_BUFFER;
+> > >         return 0;
+> > >  }
+> > > +
+> > > +int io_uring_cmd_get_buffer_info(struct io_uring_cmd *cmd, u64 *ubuf=
+,
+> > > +                                unsigned int *len)
+> > > +{
+> > > +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > > +       struct io_rsrc_data *data =3D &ctx->buf_table;
+> > > +       struct io_mapped_ubuf *imu;
+> > > +       unsigned int buf_index;
+> > > +
+> > > +       if (!data->nr)
+> > > +               return -EINVAL;
+> > > +
+> > > +       buf_index =3D cmd->sqe->buf_index;
+> >
+> > This is reading userspace-mapped memory, it should use READ_ONCE().
+> > But why not just use cmd_to_io_kiocb(cmd)->buf_index? That's already
+> > sampled from the SQE in io_uring_cmd_prep() if the
+> > IORING_URING_CMD_FIXED flag is set. And it seems like the fuse
+> > uring_cmd implementation requires that flag to be set.
+>
+> Thanks, I didn't realize the cmd->sqe is userspace-mapped. I'll look
+> at what io_uring_cmd_prep() does.
+>
+> For v2 I am going to drop this patch entirely and pass in the ubuf
+> address and len through the 80B sqe command area when the server
+> registers the ring.
 
-The iters need to be reconstructed instead of recycling the same one
-since the buffer could be unregistered by userspace even while the
-server is running, even if libfuse doesn't do that. I'll account for
-this in v2.
+Actually, after looking at this some more and realizing that we can't
+get away with recycling iters across requests, I like your
+io_uring_cmd_import_fixed_relative() helper idea. I think I'll just do
+it that way for v2 instead of having the libfuse server pass in the
+buffer address and length, since otherwise we would need to pass that
+info for every request (including commit/fetch, not just when
+registering) or have to stash it somewhere.
 
 Thanks,
 Joanne
 
 >
->         /* the ring queue that owns the request */
->         struct fuse_ring_queue *queue;
-> --
-> 2.47.3
->
+> Thanks,
+> Joanne
 

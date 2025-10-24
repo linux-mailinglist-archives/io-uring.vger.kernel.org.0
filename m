@@ -1,174 +1,157 @@
-Return-Path: <io-uring+bounces-10198-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10199-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABF9C073EB
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 18:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B879C0747B
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 18:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2063E1A679E6
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 16:17:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214063A3E4F
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 16:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB0226D4DD;
-	Fri, 24 Oct 2025 16:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F112566DF;
+	Fri, 24 Oct 2025 16:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="VRSyGVwO"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="L1CNAPOc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f99.google.com (mail-ed1-f99.google.com [209.85.208.99])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A86A1E5B60
-	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 16:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4EB219A79
+	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 16:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322608; cv=none; b=cDkNUutsEojh08rB8fFLLjpR/1tD+5Y9xIw8vV8EAt84qbSOE3ZguHpXrJNQFh6caKV/wchdAnhH44wNBZAOOdAJz5M2WdBXKiDGZQgiKEmCYUmvnREd/tDm6GixixZ9FuPS2ESVdool+N43sHZXJZllo/WMY2j43hlv4PXK9yg=
+	t=1761322938; cv=none; b=S5jwlz/ZEFBJAUMMYtZYev5w3nFqMrmMKsicHBMaVgpvReFbbjpZpv/lVgkmIGS3LybwEgVT5Le9FlsZkFM2975h7pZQLkyJy16eCiMsF/apAv1j1tDNH05KW4c1DvV7xY6UoClxvfS1J9lzb5GUj+89EwF6/nxU3EeIqI8i7YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322608; c=relaxed/simple;
-	bh=YomMeTWUJ6G46aIP1D0t9jfDvY9NgzXbyID3QyTXYtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jzELKUAjVtv4Knspd8dliq3MIhUZYB629k3mifQfKd0wFDg91pxxoYIm0OvKQK+tuPkf7pC7i5DvNwd/1Gg5/7z4elcJx8ZvBo0QSYI4rKG1ZmRH9UoTbur1nruWXb+w4vTn7Fb3sKi7jTE7TBmcdhU891JBkvg6Ns3G67tv/b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=VRSyGVwO; arc=none smtp.client-ip=209.85.208.99
+	s=arc-20240116; t=1761322938; c=relaxed/simple;
+	bh=YqIu1Y5bvwLvn0u8d007kqJbMWYQeMjJqPgfXDz6fPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f6kPKntS5X/hn1vpBXmdN/xIHZ1OdsWXC8/lhsDtFAxJdRmw7E2d7A/q0e7yciZI0aa6dS6soiCCpGsYjwhydAXs8itbcQmWJvqbcjxleN1YY2pRdmm+YZjgioiZdxNyU5mowM+b9Wyhpumhn+XBC0W6zLn85kG4JGpEzt7fpzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=L1CNAPOc; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-ed1-f99.google.com with SMTP id 4fb4d7f45d1cf-633b4861b79so399417a12.1
-        for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 09:16:45 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a275143acdso156108b3a.0
+        for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 09:22:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761322604; x=1761927404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uD5SEY+RcOlfAFX96OUUMkucvjgpoTTXRCwQAyCSH6M=;
-        b=VRSyGVwOpnQEQN7AHNBWcEZtQAH0MP65OkuG72+6lKx2rF3pCJRYDmsn+3+YWT9jbg
-         Cl/CodrbXnCoDh7Wf/inFicu4ygrqxzKvB54NOsn3U52jC/qxskCwWN5N7dEWHwCHbd0
-         IydUTay7CHqefwf3z1++aZ71Z0kDMw4ADphsJUlvBCEtN6wxqjoI2gCaqPHp+JlgIzeN
-         sK/Njg7ipZcznJpek94eZ0xNk8G/tRlYIilK8Ieyc5WrTE8AQ4bxvWRX21H0gxIb4GpK
-         vPEDgW2vN4ltiervCZziN3FTCMFgaNwL/FEmr7zc+j1E3POLamVAt1a4ezDiMSWcFAEI
-         sEiA==
+        d=purestorage.com; s=google2022; t=1761322936; x=1761927736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WRtgNQIpY+Sy5XZ8eBVtMo/ZDVVnMe0fC1zfSz2xam8=;
+        b=L1CNAPOcMWPxYgchxL4fW5xCT9H9Uc6LY2IBkAOl+UTC6Ii/uPyvCPIq7KS84Rovxe
+         /OOpuFUewjaluljFwdxKn9HE1agm8dOVBztRzihDL3GBvrU31Dc48nyFmb7bpgBT1d4q
+         ZtYOxf/sDcILpmr8e/LQ9d1xflNgBN0dbTgN9050ZxKf3HKEhITx9saSFwq0fnpcrLmX
+         3rZ0WBNrdx5N9J8qy7U7vdlEdUfuvh812i5PStC+KDbaeAyZhC3LtFNJrR6yLemOmG4w
+         ZGaSLVxshpW8otRy8K2L8Ih2hoEzVfSKvvLNWaFopWrF8Io6muUSoVG5lxhp7jf2fzXF
+         doDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761322604; x=1761927404;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uD5SEY+RcOlfAFX96OUUMkucvjgpoTTXRCwQAyCSH6M=;
-        b=Kp6iA1bJ/IWC9ruVBd0cnP6jrfR5IstUsM9r3601DTASxVeVKwOHnPjN4F2lBPboXe
-         6kyqGjRImhw9GuARg1otQsnlnHkMuYAYdm3gA2oOQFtPriWmi5kExnZRk4tZk7D0XGfx
-         chrgEKQw8YEpuEXevxax6v/L569ATjOeYH0her3zB0cCCpHNDVTVVBzHWIHQ/Ta7rlLm
-         89h8Jj3yIO8exaCcX1bgWPdRDZAB+1EFTtt7ykgwP/8LTDRvLYunJEY8/juNY1kaL/Fq
-         uypGvvB7gBx/SZzs5E4AP1+mz182WbO2rqK7CtiH9UhEcgOgOz37arFBDLp5P+dQgYJ5
-         vXSQ==
-X-Gm-Message-State: AOJu0Yx3pTX6Bk9aDcCswwQhrC1A4OF8HmaY4mH6GHbfnVGmNUrKRfiC
-	b4l0ByaCDwidsYqtdD2yEWkGN5nFdTb9EOSq/YV5o11BBFf0jRbRetHjWAR2bWAt/N4B1PMJVON
-	Bqa1ktdph/qDHczzbeYtGisInnkMc7xogqLPECmiQQjO+GaJZNTma
-X-Gm-Gg: ASbGncvueZGFBHleV+pXwU2Z+13G5dkSnzlJjRj6ms3JSgDYG8cMP+WoVNiXoUklHP4
-	uxMqTySsgKxuQznfKRJhuY/R6aJvHEuSpk3meV/g4gV7zJk6cntt0rFnH3kBw+0BhSCw2y9fBNT
-	syPOaRtSj8greFFUEAEBR7v4L1ElcIGKK1M3//Nr48bt2PZ3OAOI35Xuz2bES2Q6Qg65BSaE8Hj
-	AjY0IrrQEiOKyqLJR9K6vGV9EU/NB2iSn1eRMmTuzv09Q9F3quX85miqQHRxpHK6JBJGmxM/lAw
-	ASpAtI0gcYF1R7VCithocTnwl3/IagebGWRGg5A1IbWbikuRKAn3nByW1i+lCKcO+LcdwjY4/XI
-	ncg+U1Z/rSE+DyTvB
-X-Google-Smtp-Source: AGHT+IG8gFXuIVrlLTWGUD0g0EOZLXyjJX9chpxv4yvhTOB1IEBXXJTsiJvcaStjG4vwLEdZRXnJyJnr0kjt
-X-Received: by 2002:a05:6402:510f:b0:637:e361:f449 with SMTP id 4fb4d7f45d1cf-63c1f6213bamr15532654a12.1.1761322604347;
-        Fri, 24 Oct 2025 09:16:44 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 4fb4d7f45d1cf-63e3ebcd3e0sm400844a12.9.2025.10.24.09.16.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 09:16:44 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id EB517340150;
-	Fri, 24 Oct 2025 10:16:42 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id E1EE8E4066A; Fri, 24 Oct 2025 10:16:42 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH liburing] test: remove t_sqe_prep_cmd()
-Date: Fri, 24 Oct 2025 10:16:36 -0600
-Message-ID: <20251024161636.3544162-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1761322936; x=1761927736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WRtgNQIpY+Sy5XZ8eBVtMo/ZDVVnMe0fC1zfSz2xam8=;
+        b=wQzyysHfv5bwpWa7UBRwBkngZ0G2lIGvuWAWPit73OBeMNCT24kWnZbTMLmqQPP14P
+         DCaTfcuRMxrtL00M9mXckj00WurBjfCUNSHqUaDALTthcHKP9LQvpFLGbbriYdUEmBZ5
+         Jcb+I1wU2I/xMC+KH19zlseFcq2qfQvjVCsCUnUtQyDjSE/E64nMPfvzgQrYn1XESn58
+         9fuEIl+6mVJ1Chyr3UsxfxE4Y2e7RL3/FgVKgn4+qlMz58rQ1B0/AK4+7EiBo9I5Zg92
+         LKQfWDr9Lpl8D1Obzc1jBIxzrCqQu6ymwtdJHnNQRHcahP6C761PlHBO5SidN71tkKJW
+         QspQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgba98KSSNs2hPr4bHUDEeKU7qMpat7Z0GgF9UhUZw4yxnR8NFI3mAD+zVq8n4+zdiuk8b8MCCaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyweT83RbAYVZSLtLubuhsM94OFGOlzIbb0nVOIhTu6DY05vS0w
+	aFQConLB1sT3EuDX01ReUgjsCFteEhoY85Xxy/gOYM5GW+BCpl+82ZzpWAhPMTdnorP1xMUaRn0
+	WaVlW6ahUM5nA+v60/DnbORC9tRx//4kyxmswncyKmA==
+X-Gm-Gg: ASbGnctbeIxgt6F12MUa7q3aeGG8djcQTF2SWhGFgIkuyLK3b+GhOFVV8gMBKUkaR6f
+	hIpNmApCelxgdtfOqQ7V7bWb0ZjUOcwHpe/6+8AhXln2byizh4hnlc9EHLN9T+8dQHl0CfMPYZp
+	WGj2K3Hw29GIqlSaTZfaEYVs+0dew9XR7Zfhkq6EqlQAKshtuo5sJv4Rjz+mKMGqS/8OVqXB1oN
+	OMozUGw9Vbmeh9yKuoq7e/YNBC5wZU3XAKRNgwzQ3czBXWPuTLVNsL9LMWsYMS7AQcIbHhoiI6a
+	S6gSwPWor5bLVTkcpF+EjunGpdcc0A==
+X-Google-Smtp-Source: AGHT+IHEWyIOM2ae/6oPcMSQQ+jTRdgWbJrPgW4KNCdvATifDYinjecT9ZdfWmdWQfoYiNX/fIVC0FBxQkKEdJKooVU=
+X-Received: by 2002:a17:903:234d:b0:290:8d7b:4041 with SMTP id
+ d9443c01a7336-290cc7d4ac9mr179691585ad.10.1761322936188; Fri, 24 Oct 2025
+ 09:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251024155135.798465-1-krisman@suse.de> <20251024155135.798465-2-krisman@suse.de>
+In-Reply-To: <20251024155135.798465-2-krisman@suse.de>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 24 Oct 2025 09:22:04 -0700
+X-Gm-Features: AS18NWBysObsPcSgO1w_fiMUy_pvcl10G4LG6k9BBHU8pvspCsso1Xu2qmEsevg
+Message-ID: <CADUfDZpefFLDygAeAMruskenTL+e9-yT7uBNZkME4xjbmbE5Mw@mail.gmail.com>
+Subject: Re: [PATCH liburing 1/4] liburing: Introduce getsockname operation
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-t_sqe_prep_cmd() does the same thing as the recently added liburing
-function io_uring_prep_uring_cmd(). Switch to io_uring_prep_uring_cmd()
-to provide coverage of the real library function.
+On Fri, Oct 24, 2025 at 8:52=E2=80=AFAM Gabriel Krisman Bertazi <krisman@su=
+se.de> wrote:
+>
+> This implements the functionality of getsockname(2) and getpeername(2)
+> under a single operation.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> ---
+>  src/include/liburing.h          | 12 ++++++++++++
+>  src/include/liburing/io_uring.h |  1 +
+>  2 files changed, 13 insertions(+)
+>
+> diff --git a/src/include/liburing.h b/src/include/liburing.h
+> index 83819eb7..77b0a135 100644
+> --- a/src/include/liburing.h
+> +++ b/src/include/liburing.h
+> @@ -1572,6 +1572,18 @@ IOURINGINLINE void io_uring_prep_cmd_sock(struct i=
+o_uring_sqe *sqe,
+>         sqe->level =3D level;
+>  }
+>
+> +IOURINGINLINE void io_uring_prep_cmd_getsockname(struct io_uring_sqe *sq=
+e,
+> +                                                int fd, struct sockaddr =
+*sockaddr,
+> +                                                socklen_t *sockaddr_len,
+> +                                                int peer)
+> +       LIBURING_NOEXCEPT
+> +{
+> +       io_uring_prep_rw(IORING_OP_URING_CMD, sqe, fd, sockaddr, 0, 0);
+> +       sqe->cmd_op =3D SOCKET_URING_OP_GETSOCKNAME;
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- test/helpers.h   | 7 -------
- test/mock_file.c | 6 +++---
- 2 files changed, 3 insertions(+), 10 deletions(-)
+Can this use the recently implemented io_uring_prep_uring_cmd() helper
+instead? io_uring_prep_rw() assigns to the 8-byte field sqe->off and
+sqe->cmd_op later assigns to 4 of the bytes unioned with it. That
+leaves sqe->__pad1 initialized even though the kernel requires it to
+be 0, as Keith described in the patch adding
+io_uring_prep_uring_cmd().
 
-diff --git a/test/helpers.h b/test/helpers.h
-index cfada945..6317dcf2 100644
---- a/test/helpers.h
-+++ b/test/helpers.h
-@@ -127,17 +127,10 @@ int t_submit_and_wait_single(struct io_uring *ring, struct io_uring_cqe **cqe);
- size_t t_iovec_data_length(struct iovec *iov, unsigned iov_len);
- 
- unsigned long t_compare_data_iovec(struct iovec *iov_src, unsigned nr_src,
- 				   struct iovec *iov_dst, unsigned nr_dst);
- 
--static inline void t_sqe_prep_cmd(struct io_uring_sqe *sqe,
--				  int fd, unsigned cmd_op)
--{
--	io_uring_prep_rw(IORING_OP_URING_CMD, sqe, fd, NULL, 0, 0);
--	sqe->cmd_op = cmd_op;
--}
--
- #ifdef __cplusplus
- }
- #endif
- 
- #endif
-diff --git a/test/mock_file.c b/test/mock_file.c
-index 0614c09b..0f6460fc 100644
---- a/test/mock_file.c
-+++ b/test/mock_file.c
-@@ -44,11 +44,11 @@ static int setup_mgr(void)
- 		return T_EXIT_FAIL;
- 	}
- 
- 	memset(&mp, 0, sizeof(mp));
- 	sqe = io_uring_get_sqe(&mgr_ring);
--	t_sqe_prep_cmd(sqe, mgr_fd, IORING_MOCK_MGR_CMD_PROBE);
-+	io_uring_prep_uring_cmd(sqe, IORING_MOCK_MGR_CMD_PROBE, mgr_fd);
- 	sqe->addr  = (__u64)(unsigned long)&mp;
- 	sqe->len = sizeof(mp);
- 
- 	ret = t_submit_and_wait_single(&mgr_ring, &cqe);
- 	if (ret || cqe->res) {
-@@ -66,11 +66,11 @@ static int create_mock_file(struct io_uring_mock_create *mc)
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
- 	int ret;
- 
- 	sqe = io_uring_get_sqe(&mgr_ring);
--	t_sqe_prep_cmd(sqe, mgr_fd, IORING_MOCK_MGR_CMD_CREATE);
-+	io_uring_prep_uring_cmd(sqe, IORING_MOCK_MGR_CMD_CREATE, mgr_fd);
- 	sqe->addr  = (__u64)(unsigned long)mc;
- 	sqe->len = sizeof(*mc);
- 
- 	ret = t_submit_and_wait_single(&mgr_ring, &cqe);
- 	if (ret || cqe->res) {
-@@ -88,11 +88,11 @@ static int t_copy_regvec(struct io_uring *ring, int mock_fd,
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
- 	int ret;
- 
- 	sqe = io_uring_get_sqe(ring);
--	t_sqe_prep_cmd(sqe, mock_fd, IORING_MOCK_CMD_COPY_REGBUF);
-+	io_uring_prep_uring_cmd(sqe, IORING_MOCK_CMD_COPY_REGBUF, mock_fd);
- 	sqe->addr3 = (__u64)(unsigned long)buf;
- 	sqe->addr = (__u64)(unsigned long)iov;
- 	sqe->len = iov_len;
- 	if (from_iov)
- 		sqe->file_index = IORING_MOCK_COPY_FROM;
--- 
-2.45.2
+Best,
+Caleb
 
+> +       sqe->addr3 =3D (unsigned long) (uintptr_t) sockaddr_len;
+> +       sqe->optlen =3D peer;
+> +}
+> +
+>  IOURINGINLINE void io_uring_prep_waitid(struct io_uring_sqe *sqe,
+>                                         idtype_t idtype,
+>                                         id_t id,
+> diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_ur=
+ing.h
+> index 44ce8229..365f0584 100644
+> --- a/src/include/liburing/io_uring.h
+> +++ b/src/include/liburing/io_uring.h
+> @@ -950,6 +950,7 @@ enum io_uring_socket_op {
+>         SOCKET_URING_OP_GETSOCKOPT,
+>         SOCKET_URING_OP_SETSOCKOPT,
+>         SOCKET_URING_OP_TX_TIMESTAMP,
+> +       SOCKET_URING_OP_GETSOCKNAME,
+>  };
+>
+>  /*
+> --
+> 2.51.0
+>
+>
 

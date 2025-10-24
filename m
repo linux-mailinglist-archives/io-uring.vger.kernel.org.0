@@ -1,120 +1,97 @@
-Return-Path: <io-uring+bounces-10180-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10181-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0759C040CE
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 03:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D758C043DA
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 05:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7893B67F7
-	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 01:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CBD18C7CE9
+	for <lists+io-uring@lfdr.de>; Fri, 24 Oct 2025 03:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F551C3C18;
-	Fri, 24 Oct 2025 01:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7293126E701;
+	Fri, 24 Oct 2025 03:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F/d3TKAT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e/26v4C+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138A1B85F8
-	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 01:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB0226CE0A
+	for <io-uring@vger.kernel.org>; Fri, 24 Oct 2025 03:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270833; cv=none; b=oRxRMWCm8T7oYXHW2bFlFcNWQaGHFy6x9NWqimeSD1tJNv422IaxfDJM1VeA1PHmqCkEpWAo6eyxlQWH7V+rpTGuSDxzC05e/H/Xbg6m9ikTiU3EHIcdBqeN7avidOaVVNa5TURG/Nwqj46ocYNoZ/EJgSaEA+gvSQ42dlcdrSg=
+	t=1761276399; cv=none; b=eicr4v5UMEk6pi5I07pxGlPnZqqZmqphJLAecpylpYhxVX5seJnxYhBY8dBStc6wyClnfGgt6zp5ONZcGNiY5a2GaIV/l7Fyb/aqvLyfkk4ehAseqi6YHopwHH8H2uhiHCFGU2c4g6tkv1MGEMKqnQaZF3dHM8P9hpeg/CTE6p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270833; c=relaxed/simple;
-	bh=pG12fnPFVtOxeb7IxAMESfP8LT/cTjZFiCfx7wFgRJE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gEselbs+z+OmbAzHDkfb0lm6zI4WSVsFcyst/6PCcUkbYhj1c/is1JBI1sAr3DQEHWPLFTEnYwA2FzK/W+y4pCXwiS7frFGwjQkCSn8sPDcFASY2A1lQ/Sp6rcfb4hFiTijnzFROjAVR+2/OAkZJd60YTMiYGbTIcHVpn8FWPgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F/d3TKAT; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-88703c873d5so56359039f.3
-        for <io-uring@vger.kernel.org>; Thu, 23 Oct 2025 18:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761270829; x=1761875629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4pygDfrkaLzHxx3dX61woHTntyFFOYXY7PmH2lDVKrA=;
-        b=F/d3TKAT2r+fXJ60CSQ8r7drocK3IRFoczoyl8LhJ2MdsKYQ9Nz+uP4rRBw5LSNIbB
-         X3EF2ASnouIb4tTsiMQe7MEN6UTe7M8InmxQYxXCjOlYpJOFlDi7q7ArwrpUlsW3snvc
-         icHTfkHHqp0pTxTsaEAuUIHXD/mfno2jSBs5vJRVOyrZ1aMWvoqhfDl2iK/SbpeQlV5V
-         ByjYTrqMMpitfi6BkuTqIUzZDOuXXJmNPosUt0HHMf2LUjCkkyhV/FIIhPlEA5pZTSdY
-         juxQPkwkQBGLR2P/L2MOmu54KPF5XIE0BcecvjY3d4QROlSQmddkdsZ9qGIk9LxLuaDp
-         THBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761270829; x=1761875629;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4pygDfrkaLzHxx3dX61woHTntyFFOYXY7PmH2lDVKrA=;
-        b=B4Vd96YM5+X1URTrFHYb8615U1nxwUuDIEHtIN5tVOEq0BEpoBpjfarwkC4p9QShWF
-         +9+CN1zTUYLizVbXJ1BTjbSebVV70CkT4gAB/j5dvBeFMnkk5ACTnIc30YytxAmpCtzU
-         K+8q7mmj1nrJxgiuKwd12IJT9GJzox7KXKGoumYaQHZlg2X2lcYOMCrzLQcv+aWGvxii
-         U6V1kf6d+QRwypvcsxdPA1V6R+afBmwIlVRr0Kt0cjpURvEKRWdSsm2H6rNYeqhG5nzQ
-         m+Yw8eePa/DpJrd+mDGlrPRgPuvd7N5Cl7RoluCFZQJZXz2YeLDc8Nn4feUHOsODpNSt
-         moOQ==
-X-Gm-Message-State: AOJu0YzQ+n04DyJ2iFUT7/Bsf7NQE45WLYdSDzjWNOtIFHkLWuWlJk+b
-	rdfjg8P2X3OVYAMUm3avAkAsEnmGrfE/8KA++tV4jG4pm8XhtkSBw/F/HEjeMyvtf+IlRMj/0wa
-	OYn+cGVQ=
-X-Gm-Gg: ASbGncukaCUxl6hSOZtaKASS+EpppUtmg/pysqkLE61/YLqTkDWWPYqYzgzatOl98Qi
-	wVxkuokvH0YaRPxDMIcZv8CB6f3Jcm++LT6EWMM747fOYljNzOHBRH835rg2oFVV3BrSHuD3yZW
-	b9eCV4KC80q+5MymhS54z9BrbLN/zQYkT2AmM2/mAmj1DCdTcJYKf4FXZNGVvp3ikJAQXj+5ehC
-	yZZHKUZsrE3tKSoK/g1IuEjU92zwJLhDCL5Dx3IL7pLNLmlP3vGLPUghvxXlGZ1dys5JYwtgSH0
-	jOR0R7ncJZTf38L4O+OSE/fRez8t8JrNbPoNA/kzFk77azkqmwWXu5+CsbVj04ZejHcidxTnECE
-	xaljvKexBvjXNuobjNPOEc3TPvbKWlFFwpkLplVWbFS+WmrqRuN+H1JOyFt2hCF7wGDbVGXJ8aX
-	6P2O0=
-X-Google-Smtp-Source: AGHT+IEaXFc9QSCveOn5SJUMJmgWcfBmOP9kNuEVQK9BsOHXt/DISw1OAx0GFY7jZZpIBcYxv1wUtQ==
-X-Received: by 2002:a05:6e02:1d9d:b0:42e:7ab6:ec89 with SMTP id e9e14a558f8ab-430c52d7823mr360222215ab.32.1761270829110;
-        Thu, 23 Oct 2025 18:53:49 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb7fdb0a0sm1561648173.31.2025.10.23.18.53.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 18:53:48 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>
-In-Reply-To: <20251024013459.2591830-1-ming.lei@redhat.com>
-References: <20251024013459.2591830-1-ming.lei@redhat.com>
-Subject: Re: [PATCH V2] io_uring: fix buffer auto-commit for multishot
- uring_cmd
-Message-Id: <176127082821.7812.5952214714775561667.b4-ty@kernel.dk>
-Date: Thu, 23 Oct 2025 19:53:48 -0600
+	s=arc-20240116; t=1761276399; c=relaxed/simple;
+	bh=wOVQLucTqTR+3WTAqlI3dBKz9v+oStyfQUJR6YOtBWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmE3P8vq/nPaG+d0psJk3WcoOQXK5GDqDh9+aKo1PeMVcLkOovOYM0CSfsqTwP9Crzzopfcs7MhUqUdYXv9urXhguMhefxf9td0dOHC36+KpVx8DtTbKTx42S6Pmzx2TDwoHmTvALSjUEG5SZ9b0xgftYuT7J1DKNeSj2L793Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e/26v4C+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761276396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SBGpZ+b69w7Vm+EhedHcipsUWTvIk6iy1D0IPGn2dk8=;
+	b=e/26v4C+9bqPGqN5yv3iN2RMvSK+s8oamJegy5WrnKnfEv0Kdj04qPvja45n/iHwi0Z8hx
+	GstjK8PBx4XTR+7UlLklA6rDBHFWhvemlrKo4vNvh0KBfcOlL3mbYlXmOsS73g1lEe67Qh
+	ktJJPr2PIx0mDOnjaUyNbN1hDx/ul28=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-3XNFOwubM4iZvHWkmhe5wQ-1; Thu,
+ 23 Oct 2025 23:26:31 -0400
+X-MC-Unique: 3XNFOwubM4iZvHWkmhe5wQ-1
+X-Mimecast-MFC-AGG-ID: 3XNFOwubM4iZvHWkmhe5wQ_1761276388
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0420B1800378;
+	Fri, 24 Oct 2025 03:26:27 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.13])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5367F19540EB;
+	Fri, 24 Oct 2025 03:26:16 +0000 (UTC)
+Date: Fri, 24 Oct 2025 11:26:11 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] io_uring: expose io_should_terminate_tw()
+Message-ID: <aPrx05jWsnraLetW@fedora>
+References: <20251023201830.3109805-1-csander@purestorage.com>
+ <20251023201830.3109805-2-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023201830.3109805-2-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-
-On Fri, 24 Oct 2025 09:34:59 +0800, Ming Lei wrote:
-> Commit 620a50c92700 ("io_uring: uring_cmd: add multishot support") added
-> multishot uring_cmd support with explicit buffer upfront commit via
-> io_uring_mshot_cmd_post_cqe(). However, the buffer selection path in
-> io_ring_buffer_select() was auto-committing buffers for non-pollable files,
-> which conflicts with uring_cmd's explicit upfront commit model.
+On Thu, Oct 23, 2025 at 02:18:28PM -0600, Caleb Sander Mateos wrote:
+> A subsequent commit will call io_should_terminate_tw() from an inline
+> function in include/linux/io_uring/cmd.h, so move it from an io_uring
+> internal header to include/linux/io_uring.h. Callers outside io_uring
+> should not call it directly.
 > 
-> This way consumes the whole selected buffer immediately, and causes
-> failure on the following buffer selection.
-> 
-> [...]
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-Applied, thanks!
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-[1/1] io_uring: fix buffer auto-commit for multishot uring_cmd
-      (no commit info)
-
-Best regards,
--- 
-Jens Axboe
-
-
+Thanks,
+Ming
 
 

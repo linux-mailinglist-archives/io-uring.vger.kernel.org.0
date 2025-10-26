@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-10216-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10217-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE2EC0A251
-	for <lists+io-uring@lfdr.de>; Sun, 26 Oct 2025 05:10:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6A8C0A257
+	for <lists+io-uring@lfdr.de>; Sun, 26 Oct 2025 05:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E512D3AEF2B
-	for <lists+io-uring@lfdr.de>; Sun, 26 Oct 2025 04:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99F818A3F06
+	for <lists+io-uring@lfdr.de>; Sun, 26 Oct 2025 04:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF4F24C66F;
-	Sun, 26 Oct 2025 04:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B524C077;
+	Sun, 26 Oct 2025 04:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="DXkndTTu"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="FAaDj5JM"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC69145B3E
-	for <io-uring@vger.kernel.org>; Sun, 26 Oct 2025 04:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E05124A066
+	for <io-uring@vger.kernel.org>; Sun, 26 Oct 2025 04:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761451845; cv=none; b=WZhtdbNHjRjDwrXhTYetLDmstUyzCQwuiz2AtibiqQeZL3P3B+MR4BguA2al+Z0Qf13SL7SIFkzF+AElCW8kE3wZv9BLHYDmpgPNNK70KCGDSf8cHft6RCaGPj6W+24PVagc269rCg9NOEtcqkMXGNJdMoVk9Gv7HfkXCZT1axw=
+	t=1761451966; cv=none; b=gVg+TsKytnVrT2jlC+6kjmKRQUU2TomlJtppAZjwkd+hXuZ9X4TrWKSyIbjg0cAj2dPnKVi9NkQMfoVejkQFhEZqMt3Q3udjVj124wd9wHjuHY1zH7BH+sN/ujRTwquVIiDuzjok2G+SLha2xCqiJBuh4j1x5TFuER362evbUKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761451845; c=relaxed/simple;
-	bh=AgpxVYwn1pQ3rBUhZpRPVe6/W1kVz/lD1kFCSCUd3Rs=;
+	s=arc-20240116; t=1761451966; c=relaxed/simple;
+	bh=2/dZHmhJhlH4MffiFhm3aPFvIGWaDB0g96M31n6qWZo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fF2CFxg1VhtfLktFX/gFwXQp9hPsu18i73EWmqybx/STXxcwQktABIkDTOFB65hEBmkjyf8CbxcV0epyJFeBMdgWSs1oMNw/5o8KLt64INyvYMd1cqotnRVWSpAVb0eZ7XT1S5/H5aTZq3dZ2DQ8W8cwtFf9tXiWk83lae5JHYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=DXkndTTu; arc=none smtp.client-ip=209.85.214.169
+	 In-Reply-To:Content-Type; b=QgF5tIH12+WkFBEsp1fZ2tGUlDur99L14ImkKtebHEZ3grJu1rgTR3R7QbhBmffXK6yEgnDUXL9+7M4J2XbW7wx1/JmWahwo1MhQPUQfF88luiJn9b1/4v61eZgSb0jcgdeyAMXh6fRw3nT7sJcUTBXAG5sEYXIK1xFZGMuPm7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=FAaDj5JM; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-29488933a91so28548715ad.2
-        for <io-uring@vger.kernel.org>; Sat, 25 Oct 2025 21:10:42 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27eec33b737so50630955ad.1
+        for <io-uring@vger.kernel.org>; Sat, 25 Oct 2025 21:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1761451842; x=1762056642; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1761451964; x=1762056764; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6qgDvs7YmNxOVkc3/4Op0G6CwX5vejYhixYA4j+OPrU=;
-        b=DXkndTTumd/oI0Y8b9YR79j3miKapPtc3nz7SAZDITrjXEIG4D3ot4Xhy1YlrSmihq
-         sPAgrLn7PUUO6IFJFijfft8wc1jDr2T+wLFb6tnbM8wx742THZkj/B1uJ8+HfiX6pKuN
-         70144PCBXdMmbgVNinntXLGbHOnPPQkPpJg71Q/6DYggOjaJDH0HHozV/+G4qn0qbEOF
-         8aTYFouwnm6ak+imbTq8pC4DinWUsk8dLOgK+dZ9TNbRcUOPgsuOEsggpDgwKhPOrbIX
-         xbKukgQYImFFSvCh9c2LE03fzJ91xYxpyA9Q2KSlGloEHAnetOX5fpKrlkdQFuCxJzeP
-         /Rlw==
+        bh=UlWJak6gj08ZQP7zjfQtpMw/7X0ftaT95s6fHCzAXV0=;
+        b=FAaDj5JMHJPxqj4K726ngE18Piv37CoxqfHE+1gTzTtFZh0kmhImGCgLqa6vW0Ao7d
+         noIOqoCnpTDgs8z1za2uXzhMndTNsdaPBcpi9/TiaRLBkqKFsvfmUCjQTxWBJ0JOTjeD
+         X6U4gBcv2+hV5tnl1K/dwjGVWwED5UwtLkoehoC6TW8OcB4kTwKurOWOR9Vv2xHIcCkg
+         3HwLnbDVSVc2VE22gdgcUgMNq+fIK4LicfcmjHeekU5j16EDfa68bXcIgR7rmctelFsA
+         t3Kx6muIzari6wdN/KpLcQx5NS5kUpZpGrTU83weMJg6/ukYkZgK2Yfzef5qhQdMdI7Y
+         LHnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761451842; x=1762056642;
+        d=1e100.net; s=20230601; t=1761451964; x=1762056764;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qgDvs7YmNxOVkc3/4Op0G6CwX5vejYhixYA4j+OPrU=;
-        b=l2SZCcTITdBIEB9T4FqIyMvNf8ytrmJKK7Ip6eNN46NFX9wZ+UvAXszaJzuouL7LAb
-         3MDoYsBSMnTP7hnGnSxZ56AFF9zilAknEoSzCOUK2etw6/shusNts/BMhlH846KD9Ruq
-         /CV92MT+GcG510DyVjNbweIQsfg7UlZ8ytUYYyxkVz8KusuLzZlldosBGCZyKrW3KY1f
-         g6hBkSZNgaY7yx8WG24n622DCa1n07wcZ0U49Qav6w6UIB0MVWyokzHipVR0wY3EdMda
-         8Hmrtn1/eXjAbONVxaEsiSHMnQN7wlbE+/99gbcLrdfSw2+r+hQU35H2jDOxtYHeMORf
-         QJTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXKvPAKsJ1gmWuVx1dSs49bQe0kgG6xARa7tjMhjeLnukGske5kCyzUeBCr5mtNk955t/lAdd/cQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBhyDs/TKpV5g9LklfY0EobIa9o/mtd3neLZslO7tLQzq/1FB/
-	MVrp8ZJSPL5I1vsLRAnRejFceqMeVHNf2mNBabhq/PA/CX2Zfr46Ibw4LImuQchx7dk=
-X-Gm-Gg: ASbGncveWJakOCrEp9Eu1OOHTRuVGT0nA1Hu18Jxz8a0rERSo54jX7BMrAVpddCekqG
-	BqJh23kxKvL+imFXuuBQ5duWoaBJ75wZT3EH+ct6A3iTaIek7LNjpfZiT16htDC5cpXzbkEGmjk
-	rvsRMtQxrATal4qONISi2KIu/9pXEAktfYiO2VDQy0J7gsWcOhxG/x6393hKJNm98kDniJsMBk5
-	N53/eVkh4n80LoIimvdS0Eehy0BXnuj/2pJ3cV2GpFuLIawmtDbEdJYVxrGb2cXjLCczf/WR742
-	uTEVLlz+dzny3ZrABGZs+UvkQKlO3lg3yfir6xnT9dElIrCXodb2GbAtSS0tpwfTkSaLcnGujun
-	LM1uy7i03lyBTTgzs4IyH3+gYJ02FnFSu1W+hTrIiHXLrCswPn+jj42vMCG8poRMcSy6L4hBeKW
-	nZWFDXboEI65AlQTBHWQpY9wGZGrnJE9j0XXQpGIwHyUCzcXHNiA==
-X-Google-Smtp-Source: AGHT+IHT25KbYA8Cz1HCr276xOt3xPKUQTvV4NjXAGqAs5DDgHlwNumJfi/0NShjNtB8CFI5b8dCaA==
-X-Received: by 2002:a17:903:32ca:b0:290:b92d:907 with SMTP id d9443c01a7336-290cb376121mr466851585ad.53.1761451842227;
-        Sat, 25 Oct 2025 21:10:42 -0700 (PDT)
+        bh=UlWJak6gj08ZQP7zjfQtpMw/7X0ftaT95s6fHCzAXV0=;
+        b=dQQtnvA9U4PgJYn2S7tNJn6VW4mIG8WmqdsVUrVf9wUBoKe8wMIUGiZO6prD3MZJsV
+         se4oyCk41MH76rLxlGzzWQQTOd0pN6GUgyyREg6f3+RpVagi0PEh1PgkrwJ2CBnPb3hs
+         CVGY3cd5PRAfQZramPkptmcsPOQgMSLfb/pKgCRuK5RPWcgMlPsBKvE6vqqsLPJ6GmSf
+         HQH/rm17Cl1hx55l+0WiZtEiqW/Y9wAChMNmLP8GCOcmkA9yYjvr9k1fclQB224QYj6U
+         qMS6qJoiLYE7aBPN8X/qzg4v2+2Nhzcd9UIdWLGtJER9xXhjRbi98Iik+pXERXJ59rge
+         ix5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtm8RCZjufJXS+qZifFPVX4DLj6twnrniDj1GqLo9F90IwU0D/H7g797QatT84qLRIJ5cUmYnnfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsj+3AIHnEwIkZ/JJoEKWc+RImYz+qneCYN8KCOnzofB6NYJpR
+	/m237SRBtkrxblJTsB6MRzcYYyx2g78Xv3kTGxepCe7ZPKWTyU3mYN0Smq6+D0DxO3k=
+X-Gm-Gg: ASbGncvwLuQqMbvzJeEBXGPJPhzUc0v0Hr9iElnJMoLxZ6cifTUf+Nra5rXhB1+BH1l
+	yPLVKAEBzNIC54yfY4jRk8IichX2T6gXV7r4uQipvoQF8lOPm0st5P0ehMr/A8t+s23QagoXBGD
+	Hv+lfHveItcKrmnN8qIwoWEGtf1X+Hh5QFtio15L3jiQHJey1gBZwwlCfxnxGQ3zzOMwPnXdMem
+	3r3zisoKYmv5tSlRvUUV1442vhKs6SYJx8qd3iQF4L9JfwauWaH6PnRQebuYLh213bjZLZ4u98c
+	f1uC7K6yvjQTKj8CGixGmPp7srodH/dHFU31RhqblbbMbYotehhvtZpR7DhTmMQgS/fOE8THSuI
+	0xmMyfxHSKkrwqKFacyY8zdmqM/8MAf+k1rVvnv5qxiOkCni90hUrSHFChfNcVLKkqIK2ZqQevS
+	7dICdqU2BGtvgwTN5Hb/8oAr4Cbhj9XYeFB2dYp4MvE7VD8YIHuA==
+X-Google-Smtp-Source: AGHT+IGB7CshQnduUy0EMlQ3fnGIaKG+LbcCIrjXUUhwz4rAG/fY5wM474RGdgCo8RoqbOh85gVPbA==
+X-Received: by 2002:a17:902:fc4b:b0:267:b0e4:314e with SMTP id d9443c01a7336-290c9cbc851mr382015575ad.23.1761451964538;
+        Sat, 25 Oct 2025 21:12:44 -0700 (PDT)
 Received: from [192.168.86.109] ([136.27.45.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0a329sm38340405ad.36.2025.10.25.21.10.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d426e5sm39620705ad.79.2025.10.25.21.12.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Oct 2025 21:10:41 -0700 (PDT)
-Message-ID: <74ce4fb9-3654-4a1d-9b8b-abee8aba9ca9@davidwei.uk>
-Date: Sat, 25 Oct 2025 21:10:41 -0700
+        Sat, 25 Oct 2025 21:12:44 -0700 (PDT)
+Message-ID: <ffdd2619-15d5-4393-87db-7a893f6d1fbf@davidwei.uk>
+Date: Sat, 25 Oct 2025 21:12:43 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,48 +83,81 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] io_uring/zcrx: add refcount to struct io_zcrx_ifq
+Subject: Re: [PATCH v2 3/5] io_uring/zcrx: share an ifq between rings
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
  netdev@vger.kernel.org
 Cc: Pavel Begunkov <asml.silence@gmail.com>
 References: <20251025191504.3024224-1-dw@davidwei.uk>
- <20251025191504.3024224-3-dw@davidwei.uk>
- <0a9d9e34-a351-4168-bbdc-3ca3b6c3e17b@kernel.dk>
+ <20251025191504.3024224-4-dw@davidwei.uk>
+ <f1fa5543-c637-435d-a189-5d942b1c7ebc@kernel.dk>
 Content-Language: en-US
 From: David Wei <dw@davidwei.uk>
-In-Reply-To: <0a9d9e34-a351-4168-bbdc-3ca3b6c3e17b@kernel.dk>
+In-Reply-To: <f1fa5543-c637-435d-a189-5d942b1c7ebc@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2025-10-25 16:37, Jens Axboe wrote:
+On 2025-10-25 16:41, Jens Axboe wrote:
 > On 10/25/25 1:15 PM, David Wei wrote:
->> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
->> index a816f5902091..22d759307c16 100644
->> --- a/io_uring/zcrx.c
->> +++ b/io_uring/zcrx.c
->> @@ -730,6 +731,8 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
->>   	lockdep_assert_held(&ctx->uring_lock);
+>> @@ -541,6 +541,74 @@ struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
+>>   	return ifq ? &ifq->region : NULL;
+>>   }
 >>   
->>   	xa_for_each(&ctx->zcrx_ctxs, index, ifq) {
->> +		if (refcount_read(&ifq->refs) > 1)
->> +			continue;
+>> +static int io_proxy_zcrx_ifq(struct io_ring_ctx *ctx,
+>> +			     struct io_uring_zcrx_ifq_reg __user *arg,
+>> +			     struct io_uring_zcrx_ifq_reg *reg)
+>> +{
+>> +	struct io_zcrx_ifq *ifq, *src_ifq;
+>> +	struct io_ring_ctx *src_ctx;
+>> +	struct file *file;
+>> +	int src_fd, ret;
+>> +	u32 src_id, id;
+>> +
+>> +	src_fd = reg->if_idx;
+>> +	src_id = reg->if_rxq;
+>> +
+>> +	file = io_uring_register_get_file(src_fd, false);
+>> +	if (IS_ERR(file))
+>> +		return PTR_ERR(file);
+>> +
+>> +	src_ctx = file->private_data;
+>> +	if (src_ctx == ctx)
+>> +		return -EBADFD;
+>> +
+>> +	mutex_unlock(&ctx->uring_lock);
+>> +	io_lock_two_rings(ctx, src_ctx);
+>> +
+>> +	ret = -EINVAL;
+>> +	src_ifq = xa_load(&src_ctx->zcrx_ctxs, src_id);
+>> +	if (!src_ifq || src_ifq->proxy)
+>> +		goto err_unlock;
+>> +
+>> +	percpu_ref_get(&src_ctx->refs);
+>> +	refcount_inc(&src_ifq->refs);
+>> +
+>> +	ifq = kzalloc(sizeof(*ifq), GFP_KERNEL);
 > 
-> This is a bit odd, it's not an idiomatic way to use reference counts.
-> Why isn't this a refcount_dec_and_test()? Given that both the later grab
-> when sharing is enabled and the shutdown here are under the ->uring_lock
-> this may not matter, but it'd be a lot more obviously correct if it
-> looked ala:
+> This still needs a:
 > 
-> 		if (refcount_dec_and_test(&ifq->refs)) {
->    			io_zcrx_scrub(ifq);
->    			io_close_queue(ifq);
-> 		}
+> 	if (!ifq)
+> 		handle error
 > 
-> instead?
+> addition, like mentioned for v1. Would probably make sense to just
+> assume that everything is honky dory and allocate it upfront/early, and
+> just kill it in the error path. Would probably help remove one of the
+> goto labels.
+
+Sorry I missed this during the splitting. Will include in v3.
+
+> 
+>> +	ifq->proxy = src_ifq;
+> 
+> For this, since the ifq is shared and reference counted, why don't they
+> just point at the same memory here? Would avoid having this ->proxy
+> thing and just skipping to that in other spots where the actual
+> io_zcrx_ifq is required?
 > 
 
-Yeah, good idea. Your comments prompted me to try to find a better
-solution that gets rid of ifq->proxy. Turns out xarray has 3 bits per
-entry that can be 'marked'. With this I can get a cleaner solution. Will
-respin tomorrow.
+I wanted a way to separate src and dst rings, while also decrementing
+refcounts once and only once. I used separate ifq objects to do this,
+but having learnt about xarray marks, I think I can use that instead.
 

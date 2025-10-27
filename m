@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-10246-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10247-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B348C11B3F
-	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 23:30:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EADEEC11B51
+	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 23:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A1C54E03E6
-	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 22:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B6DC3A6FFD
+	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 22:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990EF32E140;
-	Mon, 27 Oct 2025 22:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3932E159;
+	Mon, 27 Oct 2025 22:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvuTGIjh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kssTMzm/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239D732E129
-	for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 22:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702F032C93B
+	for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 22:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604188; cv=none; b=FHGAvKoA+7yL9+buBWmQH3pnj6kyrzq/wxVdvvZaWWeOStQ4oMMupoi9uY4iQIQO9318zQi22zx/Wud7fwVRUScx7NviHdpB5h57TI/5WOneStvaZqMhkPNqGedxgc9nRRp1fZXYf/Xs8i4K1PiX6y/gncUhfVl2h4MJwEVbFPc=
+	t=1761604190; cv=none; b=Y+niiAwcRTiksxs4aW0q/zpXKilOKepJLhhoY8DXckQrexOtQ8j/Svmg2vIwDcq7Pyc4XRjFi4KmDq2Bk/7v69UhZM2VAkLLI3iy5u5raDs4MYTHxZFzjP8SIdKM9NBN2c9Va6d/FTlATuAziXTv1IcWvBz75QpHrCA6AS256VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604188; c=relaxed/simple;
-	bh=SrDZ+DLNBGOu3nimpXfUjnM4yJ1VEfalsKv638KNQyM=;
+	s=arc-20240116; t=1761604190; c=relaxed/simple;
+	bh=5trlzOSoRPBFJPoaGzJTtndg8Nr6g9bCoxITw82CJq0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KaIXZTRJtxip7WVNXNDFBwveqQPMPb4dnKCPYlUROn/8SLeiIwq4DpDccHe6ch+jXXC3miOz25zt+nZ/HUGO4DnEIIgdf+T5KiMcmr1n/tamWB/3mAj6zmwlTMxfBZ6bQWw3BFP4MIvGcSM4OvPrxfVFeg3OkBVffm+V4nsTy94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvuTGIjh; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=uycN0otWYdz63wbarREs812fRc9vaWAZbN8/+Sudgd4+jnzEC08ac18YeQXXnETPrHjTu+CH19gvg2W8BO/J8rRpp3QnLlRASjFjGpGuHyycdMcTDj0opO6EEXyu0mIkg1Pm1D08eTNuA3prqlcqRl/1iyoM2TiUqFT1i5F/3Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kssTMzm/; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-292322d10feso43837405ad.0
-        for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 15:29:46 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77f5d497692so6335207b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 15:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761604186; x=1762208986; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761604188; x=1762208988; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OgRF61PFPbChj1vp/o1QNZYukk3nxmzm0YChQApjqKc=;
-        b=dvuTGIjhlHCYjeKn38LgAgS3ieBOJzizc7GEroj7Wd4vI7TfdS4VIszioPjRujSx2x
-         pR8uN6H7Q78TJuLGtHf0+h7c+0feGuUJf9qf2H1JpR0jEw5N7iOzlFLJd4RfxaB8Xrmp
-         MOwfqCs5BiE1gknZYnbEAQWLOBrCtPENpnzlV9FlZfi3TE6R1i3MLb6zYaGT414hzG1b
-         zniA1aBpZrYmirFd0Mdj8r3lbEPTKu/dY/1b+z6S5sxwlP5fsGSR4CIN19RTmkAy+ejR
-         Pq3h5xBQxnXm3Nlad0gAQTMYZSO79kGHG8V84UPW9Zk/cSBOOjYIK9YUACLPZSqtQbZK
-         sHCA==
+        bh=QIHHD2cgpgFsPTROt8Cpq6Fz2TimP3yx8nTisLh/mlQ=;
+        b=kssTMzm/q/kimiBVq15ecfBPF8CuLRqD/WaJNaOnCIMQ/SZ65wdv1YuicBx4F1LROZ
+         +OTmfKewKxvbhrnO3tZ6BCCsdanf1MvByZs4MX50/9VZYSlGSRQZhZir5RkPpbLtj+K1
+         AOTAZLCXNtDynH9YQki/tEQKudNsvBA1/99okNcj69qy64OU6XIfon9hGiZnPb/8YrN/
+         FdY7G4bas2/h3oFdhBIif2hWOV7N02MDPN9HqP/ErBkIFqKbfy820hG493J3+BaEUGJW
+         ujZxn1/QAyln+TcBLG3OtKviLGMNlD+aQGEvMsASLTfawobZoOyg9Ml5GYPHcvfUb2k4
+         FDCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761604186; x=1762208986;
+        d=1e100.net; s=20230601; t=1761604188; x=1762208988;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OgRF61PFPbChj1vp/o1QNZYukk3nxmzm0YChQApjqKc=;
-        b=rm/PW3dg/536Tf3EUkjef3LrAMDtgpNDug3p/jm+yIclR1L+kqaANhMV4fo4F/VZRM
-         347Zp21k2BFcGkQCBOh0UKd1tGRxoN9vtvDZ3kSa2UByluqBPk4ru3Sw4CVoxts9HwwP
-         N2kvst+oRGyisFf2Oh8bRXI/4iaUQKRXd30TQlW4PBZ5iQ8Zaua87SQ2i0TZtpQdnO5A
-         dzFne1JVwxPU4jnnlHWkNfEsZyRE9S/nIhZN8ZsewNKdLBNADWMtzkDuWueWxEvW+C/g
-         4M9/dkjdnx5/oD4Q0zPoDyZuPhPY+vvg8AMTj3aLa6U2aE0XPfr38jzYnwolrt0t7eTW
-         rD3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXymXlaMkTtp+lPhDGxEu2FFxOgJyUiWwp9ZyZVISYiPpqcNfcqo0M81OnI34uh+IsIEvfN1CS6wg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww4OhhTnK1L8jX2e4yngc/hSZIucoQBlm4cUGrZMQfTMM+Sizi
-	fPuGhFFK5tDMneFeWzTSEbNlhcz0Gcb8xsjk17FbtZunkGbbqxrN8/0E
-X-Gm-Gg: ASbGncuCAC/Jz49Efd+2oaEGmoP03X9KO6OaOBk9r60YpJTMo49rq9jROnXNhQqLh1v
-	6r7VKs3UozpFKOqLPbgv0AhBiYF7m5enb8NvR4igbkqe61rfn57fZHGGosxKtuZz4UBLrywH57L
-	K4zGJ3qMiXWzDyuzae4J4evYIG9CE0rWhaA8OUTeiHz0T8OUGrFflXyR3eRfnbjCp7rV4HWRZBj
-	cEiTCm7I0QZ3V4lEMfrbPOuIkoJ0SPuzzHpUtknn6OC3Nz4gpZTxF/RsDkhX86EzpCbCC3KGMdh
-	zMgQ5m4pYgniOijXiF/7ZJjntWj0Zh5Avr6tY+1wL9xPdFoLEede81cKlg0JvcS61jja0kRhpuu
-	tFaZ/1rH5cWDfpwXeLxjNBGMl67myraozWK1e39O8bNRMG6RslP+HpFz4tNYhkYvJ/EBODrwEj3
-	5Xu/rRiW5RQhKTQWj16R3Zi8dQIjqvc3PePA==
-X-Google-Smtp-Source: AGHT+IFVeyUuVXwYqaVSQ8PyIlEt9z22Qp/hZ8ZdfQtCmyIhJN79YO7UOU6Zi1O1KfyCfbulX0B8IA==
-X-Received: by 2002:a17:902:e788:b0:290:b10f:9aec with SMTP id d9443c01a7336-294cc77a4b7mr10498995ad.26.1761604186312;
-        Mon, 27 Oct 2025 15:29:46 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3405sm95430175ad.2.2025.10.27.15.29.45
+        bh=QIHHD2cgpgFsPTROt8Cpq6Fz2TimP3yx8nTisLh/mlQ=;
+        b=TBny7paedfM63cE+mnlq28brVZvU1Ka561CG2foJfiai97EacTTWzDLbQmhHs/+1Ma
+         VHRNtIpplWIGSfKmEQloQZ3uh8ax61F2HpjKK+QPJH7Yg6YNneiz3RUWtnLcpcAJibBF
+         diOSFcUi/5EyiIGQ/nkQkSDIcpbyH2XZUOrTvnO8EIwHtOw1J8RP9PyaAHBtOh+7UD7N
+         VLM9Y7YghvvI98vyf3MMwkLUlzmjpB1irEC6ziDLb8dbXjZu1vHcY7jB4qSaM3qvfJ95
+         VAkrPEubq5QMms9LRd2DSLE6d6JBVRSCejoYwkBf4Y39i1TSrygXszOlxZCsFoB2AlqU
+         8WFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoR0r5DXcCp66DDL02L6OLUexhkobl6TvtZtlFdoKMXFDKgSrPCvYkHbs4QabQqfa8AVAHuTaIFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YweLe++MK0+PQbzXBM8iFbIt8O57nkcEEYsjHNlU/FIM01TZ7Rx
+	wlAIHG6J8umt+T35dwlg4JyV1YffS5rUjg/+Y6zPwFnFYLDDuw3E6DPS
+X-Gm-Gg: ASbGncvXHpqIeqENSCFoZleygm1iXdGyxJqb2i62cHN1120+nNu9quq503wQ7qvA6zD
+	r2rO0DXU1g6HvfF/R2u+6XtwDNCXTklX4CFHvpfvrecK+Mnmv0GapWXykkOheBIDUQUlnzENSc/
+	8/tFv9MVmdp/ZF3fIn7PRdz9XmqCPZ+ecPDTkb6f1Cmg/cjBi3KQ1T4/SlfRj5LczlQvCjiR3d4
+	wHwrg/xWqb9n6OejWwBsv1FepkGBKHPPDiMnKvO7hlE3wa03MzOG0eH9eMgnpIFLgSdmsmKUL19
+	dWo0l/kzatGRMqf47WdELyBE1QI2rRsDT8ivrmM3ZbpxmQ8746zCMsOIiGm65lE1PbntygWW/Tc
+	yKE/o/9mcv5oQd645BHBB5/Pt5bNGTF4VJLhpU5QRhT42Nc1uEftj/soWUD19FQxzZwhbjGeK7w
+	z9Ga8l4dzPk3n4EplJzwc9JsBPCt/OTPKJ4j3nNlzE3o86CMc=
+X-Google-Smtp-Source: AGHT+IGKmCGKGySNicqs4xJGk+i+s9kw/CHqN9iUzNLfPqlhccuKV5IcvEHMXa4//k4WJEgaY9FAEw==
+X-Received: by 2002:a05:6a00:391a:b0:7a2:78ec:4f48 with SMTP id d2e1a72fcca58-7a441c476ffmr1466362b3a.23.1761604187646;
+        Mon, 27 Oct 2025 15:29:47 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:7::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414068f0fsm9509337b3a.46.2025.10.27.15.29.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 15:29:45 -0700 (PDT)
+        Mon, 27 Oct 2025 15:29:47 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -84,9 +84,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	xiaobing.li@samsung.com,
 	csander@purestorage.com,
 	kernel-team@meta.com
-Subject: [PATCH v2 4/8] fuse: refactor io-uring header copying from ring
-Date: Mon, 27 Oct 2025 15:28:03 -0700
-Message-ID: <20251027222808.2332692-5-joannelkoong@gmail.com>
+Subject: [PATCH v2 5/8] fuse: use enum types for header copying
+Date: Mon, 27 Oct 2025 15:28:04 -0700
+Message-ID: <20251027222808.2332692-6-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
 References: <20251027222808.2332692-1-joannelkoong@gmail.com>
@@ -98,64 +98,132 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move header copying from ring logic into a new copy_header_from_ring()
-function. This consolidates error handling.
+Use enum types to identify which part of the header needs to be copied.
+This improves the interface and will simplify both kernel-space and
+user-space header addresses when fixed buffer support is added.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/dev_uring.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ fs/fuse/dev_uring.c | 55 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 10 deletions(-)
 
 diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index e94af90d4d46..faa7217e85c4 100644
+index faa7217e85c4..d96368e93e8d 100644
 --- a/fs/fuse/dev_uring.c
 +++ b/fs/fuse/dev_uring.c
-@@ -585,6 +585,17 @@ static int copy_header_to_ring(void __user *ring, const void *header,
+@@ -31,6 +31,12 @@ struct fuse_uring_pdu {
+ 
+ static const struct fuse_iqueue_ops fuse_io_uring_ops;
+ 
++enum fuse_uring_header_type {
++	FUSE_URING_HEADER_IN_OUT,
++	FUSE_URING_HEADER_OP,
++	FUSE_URING_HEADER_RING_ENT,
++};
++
+ static void uring_cmd_set_ring_ent(struct io_uring_cmd *cmd,
+ 				   struct fuse_ring_ent *ring_ent)
+ {
+@@ -574,9 +580,31 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
+ 	return err;
+ }
+ 
+-static int copy_header_to_ring(void __user *ring, const void *header,
+-			       size_t header_size)
++static void __user *get_user_ring_header(struct fuse_ring_ent *ent,
++					 enum fuse_uring_header_type type)
++{
++	switch (type) {
++	case FUSE_URING_HEADER_IN_OUT:
++		return &ent->headers->in_out;
++	case FUSE_URING_HEADER_OP:
++		return &ent->headers->op_in;
++	case FUSE_URING_HEADER_RING_ENT:
++		return &ent->headers->ring_ent_in_out;
++	}
++
++	WARN_ON_ONCE(1);
++	return NULL;
++}
++
++static int copy_header_to_ring(struct fuse_ring_ent *ent,
++			       enum fuse_uring_header_type type,
++			       const void *header, size_t header_size)
+ {
++	void __user *ring = get_user_ring_header(ent, type);
++
++	if (!ring)
++		return -EINVAL;
++
+ 	if (copy_to_user(ring, header, header_size)) {
+ 		pr_info_ratelimited("Copying header to ring failed.\n");
+ 		return -EFAULT;
+@@ -585,9 +613,15 @@ static int copy_header_to_ring(void __user *ring, const void *header,
  	return 0;
  }
  
-+static int copy_header_from_ring(void *header, const void __user *ring,
-+				 size_t header_size)
-+{
-+	if (copy_from_user(header, ring, header_size)) {
-+		pr_info_ratelimited("Copying header from ring failed.\n");
-+		return -EFAULT;
-+	}
+-static int copy_header_from_ring(void *header, const void __user *ring,
+-				 size_t header_size)
++static int copy_header_from_ring(struct fuse_ring_ent *ent,
++				 enum fuse_uring_header_type type,
++				 void *header, size_t header_size)
+ {
++	const void __user *ring = get_user_ring_header(ent, type);
 +
-+	return 0;
-+}
++	if (!ring)
++		return -EINVAL;
 +
- static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 				     struct fuse_req *req,
- 				     struct fuse_ring_ent *ent)
-@@ -595,10 +606,10 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+ 	if (copy_from_user(header, ring, header_size)) {
+ 		pr_info_ratelimited("Copying header from ring failed.\n");
+ 		return -EFAULT;
+@@ -606,8 +640,8 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
  	int err;
  	struct fuse_uring_ent_in_out ring_in_out;
  
--	err = copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_out,
--			     sizeof(ring_in_out));
-+	err = copy_header_from_ring(&ring_in_out, &ent->headers->ring_ent_in_out,
-+				    sizeof(ring_in_out));
+-	err = copy_header_from_ring(&ring_in_out, &ent->headers->ring_ent_in_out,
+-				    sizeof(ring_in_out));
++	err = copy_header_from_ring(ent, FUSE_URING_HEADER_RING_ENT,
++				    &ring_in_out, sizeof(ring_in_out));
  	if (err)
--		return -EFAULT;
-+		return err;
+ 		return err;
  
- 	err = import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
- 			  &iter);
-@@ -789,10 +800,10 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
+@@ -656,7 +690,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+ 		 * Some op code have that as zero size.
+ 		 */
+ 		if (args->in_args[0].size > 0) {
+-			err = copy_header_to_ring(&ent->headers->op_in,
++			err = copy_header_to_ring(ent, FUSE_URING_HEADER_OP,
+ 						  in_args->value,
+ 						  in_args->size);
+ 			if (err)
+@@ -675,7 +709,8 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+ 	}
+ 
+ 	ent_in_out.payload_sz = cs.ring.copied_sz;
+-	return copy_header_to_ring(&ent->headers->ring_ent_in_out, &ent_in_out,
++	return copy_header_to_ring(ent, FUSE_URING_HEADER_RING_ENT,
++				   &ent_in_out,
+ 				   sizeof(ent_in_out));
+ }
+ 
+@@ -705,7 +740,7 @@ static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
+ 	}
+ 
+ 	/* copy fuse_in_header */
+-	return copy_header_to_ring(&ent->headers->in_out, &req->in.h,
++	return copy_header_to_ring(ent, FUSE_URING_HEADER_IN_OUT, &req->in.h,
+ 				   sizeof(req->in.h));
+ }
+ 
+@@ -800,7 +835,7 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
  	struct fuse_conn *fc = ring->fc;
  	ssize_t err = 0;
  
--	err = copy_from_user(&req->out.h, &ent->headers->in_out,
--			     sizeof(req->out.h));
-+	err = copy_header_from_ring(&req->out.h, &ent->headers->in_out,
-+				    sizeof(req->out.h));
+-	err = copy_header_from_ring(&req->out.h, &ent->headers->in_out,
++	err = copy_header_from_ring(ent, FUSE_URING_HEADER_IN_OUT, &req->out.h,
+ 				    sizeof(req->out.h));
  	if (err) {
--		req->out.h.error = -EFAULT;
-+		req->out.h.error = err;
- 		goto out;
- 	}
- 
+ 		req->out.h.error = err;
 -- 
 2.47.3
 

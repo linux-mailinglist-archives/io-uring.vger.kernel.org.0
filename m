@@ -1,70 +1,129 @@
-Return-Path: <io-uring+bounces-10230-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10231-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E385DC0C32A
-	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 08:53:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D417C0CDF8
+	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 11:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 834F34F1615
-	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 07:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788E9188B456
+	for <lists+io-uring@lfdr.de>; Mon, 27 Oct 2025 10:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0B52E4278;
-	Mon, 27 Oct 2025 07:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474B13B280;
+	Mon, 27 Oct 2025 10:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3lBY4vU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0B2E4241;
-	Mon, 27 Oct 2025 07:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D461DE4E1
+	for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 10:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761551509; cv=none; b=LrQFjmJB2X94O0g01agl7Uy7g4SriW25Gf2iEXx7/Fuitdkte450KEsoKfDP4tOS9vG0spcIwuX3wFLH42rfKO20o2GgUSMLjtMxYD267awi7yB4DnL5jJoU1vBlgD/+S7c2qs4JuMIZA6gtfmCUeW1X80MbqAe7EpuFgEbVF1Q=
+	t=1761559454; cv=none; b=Sj2SlbDDBWk2lipySUqVcOtRSGag+bofcivc86DG9Hvo3HtMgTM9YnIRE0/n1Nubu0dfZNg6fpvFHALtw+a43sSa3TFrlt1fE/qEG8dLKXY5SUfIymNr6pjb4rwXjBx2X2SGqQp0MQnDdeYag5EcLzbWDdUSFqiDoX2ExEzOR+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761551509; c=relaxed/simple;
-	bh=f3iwptgJ39Cvn/1R/92zDLiiyDlPBo6yDS5IVREqL2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHvMWMqFFT/Wfp32mHhtxIZhl+se8OunbViA2tZTC7XZfgjFtPalP85qCumC8knVxzoZY4fj+OD1qs55TGPWx1C52imqQBw5EbMkoF8e930sjcz6TtxrdD2/I+jMUIGHKueVeDlFcup3hsLd709RKn8uHFmlMPxi7OH4AJeMCqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id ACB27227A87; Mon, 27 Oct 2025 08:51:42 +0100 (CET)
-Date: Mon, 27 Oct 2025 08:51:42 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] io_uring/uring_cmd: avoid double indirect call
- in task work dispatch
-Message-ID: <20251027075142.GA14661@lst.de>
-References: <20251027020302.822544-1-csander@purestorage.com> <20251027020302.822544-5-csander@purestorage.com>
+	s=arc-20240116; t=1761559454; c=relaxed/simple;
+	bh=9h3JF2Jsr0bLr+MYsKAm+lyyaTDNMUS6YLXcZVa+WHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mmg5nhs0apor3b+pUT05ci1/afMow/dZrS05oWHQF6+tKcj+g4T8ucbQ5CurzAKCTm0H23skRaLxaVAPRmlmisCUPE+ZPL1sXI3BuA7PtQvppGXENxul960nIdCvN0xNLdDK3yDZEbqdPPpHFSsjb2nqlTCET8pCmva9pdeAUfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3lBY4vU; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-4298b49f103so1398890f8f.2
+        for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 03:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761559451; x=1762164251; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KKJ1wg6u1UDCN2tuMgCmCoT9rKQEtjNwHunwEx8cPko=;
+        b=Y3lBY4vUt6Sdw6Ksc/GOP6j1dSuo168GcHkkUngf1EZVCWALNE7+agjIAZAjlQgv4G
+         pvzlxhX2BTc+37WTzefuDuSq207T633FQfsqQCBAfEgwZ17rTohzC3QP8TdnQ6F3Fh1k
+         VvdXg2rLbcotOsingqZimVnQRb7ubW4cpNVx4+O3nMPGmrDG+o3r020BLFe2JrK67eQV
+         i5iAMmCIDO46kjQ4JLz6IjEDIvTM+STSNbIC/ELzwEg8Daa2VM7SYsaDCGh+FO7cfk0Y
+         2sZj9AbRYVOKkvXpYrss5l74lWrEPBEOpoINtzu5wj3VlzlXRmuz2j67TJMG2nS+zYQl
+         m7Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761559451; x=1762164251;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKJ1wg6u1UDCN2tuMgCmCoT9rKQEtjNwHunwEx8cPko=;
+        b=Gzkr9ms+s212+np+RWglepA3EdMMEwZP1ftIVvY1Y1Tgwa7q57KOb35DOEfxfQLbNo
+         r8ISFzrzxTb49N3g2Cc7tXfATz8pMbMzW7JT7QTC5OnfBF1TnnwFEiBlvvuxgoFGXFFw
+         vOJAh14rttYZjSexUnURawvla8LpJv0ox2lcJm9OHq4miyGu6GByjxYIRUjKi9Nvj0Vw
+         xLhS+vUZxrDTHaWxVOVNpAbesOS6CTOe8l8ig/xXO+lXZSrioTLS7nDN1V9AR/SslSk8
+         1f3KQiN52SeyDA0w4LhoDmIsc5NemzS1dqKR4pNHGQpVUiNE/VVPq8jzGwu4veiDYQQb
+         0h4w==
+X-Forwarded-Encrypted: i=1; AJvYcCX828zz64BNRchmRjVUM5fXyvDXcMIBuTWHHD/j7sN2VE32obeSz6aR6EEKLbTCPMqdIjC+k+TCQA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxukj5rMA8h2h5Lr+7IGM3SDKeRXu2QJ8eS0w0M6W7l8lG6UlwT
+	1F4IlSsISytPQ9SRrz4rjoUHdWynz3DPyqM91q+4erm6KKeBeyU1aCaJ
+X-Gm-Gg: ASbGncuAo9upbppSgkGxl2vPvibX1mLrJiJnzfX2oetYcxauc1u0r4IRRuXdDbDYE/Q
+	ytsybNsPdDdTX0gvNeIgx7D4NvQ2H+xIno6utD0HI7JSXDowekZ8emKF1lJm1pbe+JO1ccGSTuW
+	+VA9rWljOCL+/fKHPMBaIHt1hKq3cY5bPtnupEUe9lhcGpk94jnNPDGynzaUt6o8Cx/ncwHIeJN
+	cWHfTTLIoR5umieRzFAoTb8mb9fWWvuZqJCQe87MNoebmEQXPAIZWANYHHx3VDgaVrIKIAHtYgN
+	syyJDQHVWZsnCexCDBs9tFeqIoam5HhKwKsrjfH8wwf+UZ71X2ch926m/E/borjrNr8Y0V+nVjr
+	vIOrYg6K7HxY4cCVa/79coBixCHGiA7uSgUkGKvLy2MfSZIG6JqVfKABt6tqVkwdTLmOJFaY6rv
+	N2igxZ2cEbZbdOZm1B+4V5GI3XaNGFfAQg
+X-Google-Smtp-Source: AGHT+IF4fsgQiwGl63VPBGIPyCwDHMyRRafneFK7MUW9p1IOLSi9/nVRRkViP/Dxx76BiIBnVUk/Gg==
+X-Received: by 2002:a05:6000:4b10:b0:427:6a3:e72f with SMTP id ffacd0b85a97d-42706a3e74bmr21755793f8f.34.1761559450855;
+        Mon, 27 Oct 2025 03:04:10 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8b1a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df62dsm14277603f8f.45.2025.10.27.03.04.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 03:04:10 -0700 (PDT)
+Message-ID: <c3a45eaa-0936-41a7-92cd-3332fd621f6a@gmail.com>
+Date: Mon, 27 Oct 2025 10:04:08 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027020302.822544-5-csander@purestorage.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] io_uring/rsrc: rename and export
+ io_lock_two_rings()
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
+References: <20251026173434.3669748-1-dw@davidwei.uk>
+ <20251026173434.3669748-2-dw@davidwei.uk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251026173434.3669748-2-dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> +static void blk_cmd_complete(struct io_tw_req tw_req, io_tw_token_t tw)
->  {
-> +	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
+On 10/26/25 17:34, David Wei wrote:
+> Rename lock_two_rings() to io_lock_two_rings() and export. This will be
+> used when sharing a src ifq owned by one ring with another ring. During
+> this process both rings need to be locked in a deterministic order,
+> similar to the current user io_clone_buffers().
 
-In most of these ioctl handlers issue_flags only has a single user,
-so you might as well pass it directly.
+unlock();
+double_lock();
 
-In fact asm most external callers of io_uring_cmd_done pass that, would
-a helper that just harcodes it make sense and then maybe switch the
-special cases to use __io_uring_cmd_done directly?
+It's quite a bad pattern just like any temporary unlocks in the
+registration path, it gives a lot of space for exploitation.
+
+Ideally, it'd be
+
+lock(ctx1);
+zcrx = grab_zcrx(ctx1, id); // with some refcounting inside
+unlock(ctx1);
+
+lock(ctx2);
+install(ctx2, zcrx);
+unlock(ctx2);
+
+And as discussed, we need to think about turning it into a temp
+file, bc of sync, and it's also hard to send an io_uring fd.
+Though, that'd need moving bits around to avoid refcounting
+cycles.
+
+-- 
+Pavel Begunkov
 
 

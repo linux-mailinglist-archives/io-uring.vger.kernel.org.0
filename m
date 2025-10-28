@@ -1,257 +1,140 @@
-Return-Path: <io-uring+bounces-10255-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10256-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9246C12386
-	for <lists+io-uring@lfdr.de>; Tue, 28 Oct 2025 01:43:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79459C127DA
+	for <lists+io-uring@lfdr.de>; Tue, 28 Oct 2025 02:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F88581B08
-	for <lists+io-uring@lfdr.de>; Tue, 28 Oct 2025 00:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990161A65F1E
+	for <lists+io-uring@lfdr.de>; Tue, 28 Oct 2025 01:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF7820E03F;
-	Tue, 28 Oct 2025 00:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981C41DF73C;
+	Tue, 28 Oct 2025 01:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjiEPEuc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YqWCnzOo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C650D1FFC48;
-	Tue, 28 Oct 2025 00:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5981C54AF
+	for <io-uring@vger.kernel.org>; Tue, 28 Oct 2025 01:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612009; cv=none; b=qjRRvwqL7USjpHo9WRgbvXPbd1nW4/Azss2nK4pMjG+uzPSQtCCz9TW1moOO73ldvIuGvIou6KK9FuW9XveITyxCScX6+Osl0ulJLjwCa5zFxeN4GaFrOaVVIM++WsQVLstPsGlHBPbDXo4ypZG7oSdoyp4WOHA4jPvPfwQMof0=
+	t=1761613754; cv=none; b=gGhEdBY4CMWi8SHmtj0a63A3OlXAvvwAED214k3q+ynGW5B/qhmPQnShhghYI5rB3ldUG8KS1S3Si7NsplMv0Qiug6sBpjgqnhurxeWNGX7UHQbf5bLmT8Ec1OyWEw1igz/+NMkeVD0Od48lXmC0eCtIHQhSntAdYOTPziLumYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612009; c=relaxed/simple;
-	bh=edUwAFdSyOAfW4FvJV/A4OL3kdaGpdecyDHhbeApj6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PZqrIL3j6ZTtbUQHrXSOOKwx7S61sQ8FIg2aJMBvhJAzYmeLfxJA0GMjg+61JXIoYF0ZNmaQbv2EWs3KwJyn2C0kt/vjZTAumLBg59h+c/fXMYSokjp7ibiZ5+e2vO+G/CmCd/QtGALjF+OAONBkbQSqb9JLGy00lxnmtTByeWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjiEPEuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEA1C4CEF1;
-	Tue, 28 Oct 2025 00:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761612009;
-	bh=edUwAFdSyOAfW4FvJV/A4OL3kdaGpdecyDHhbeApj6E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DjiEPEucq1PKsNb3Ndya6c7KxbGdoc4yyCA1R9G/UCE/2Eg4UG3vDNWAD/qOPpz0S
-	 iFIHVpC8s8hMfb1EYkgYoycm6X2Owa68knXx7k9tdpfR30sHIAQnJVn8GuAqKI/O1M
-	 XihI6NmbajC5UtShvsNPnNLpPRAI6kFvpJsckI781Euj/R5X5oq/g/EUjKkNxnuYH5
-	 P3Xof/+xGMD2jA0uyBjJQhWYyf74qDNcCyiW7d5UcUJHYfkXsX3dbbe4bXGwZukuD0
-	 t/+sgO8+LXbwoPLP5UlnfLF+vNjxCuwzp43f/ZbCzuD6czr2Epl4sDtMZyhFbCwKbM
-	 L0BHz6WtGg7hg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] io_uring: fix unexpected placement on same size resizing
-Date: Mon, 27 Oct 2025 20:38:57 -0400
-Message-ID: <20251028003940.884625-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251028003940.884625-1-sashal@kernel.org>
-References: <20251028003940.884625-1-sashal@kernel.org>
+	s=arc-20240116; t=1761613754; c=relaxed/simple;
+	bh=pUm9xiCUI/xrjdBKVyej6cYWAqpapE1zoQBQ7lE+3zI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOOdIFYTTwTeTBPL8h1RU+v/hOAuA6O4smCTLfo+zJiCcZg11OdIc4KmEod8qMpa3FzHXjqLoV3ZyfVW6vnMJjQaLFMkx+a2dK3Pgydd3jSwWHmzsfNGQrAoTe7CtHZ6Ax8EUQq5HkG+PTfssZ4szxvuxNq9uOSmW/OQGG0z1/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YqWCnzOo; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-93e8834d80aso220470339f.1
+        for <io-uring@vger.kernel.org>; Mon, 27 Oct 2025 18:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1761613751; x=1762218551; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rciq0fMfQg5ykRHdo5BOaqx85Gr9r9nCGAwh1wrJfPw=;
+        b=YqWCnzOoSWXBeN5aZRIbxHyK2QZ54P8+XL1Zg2rM/42Fte3WoPWAbkSRmaJ5nBwApk
+         hDq3Xtz9q0oPWXwzvz4VuRi1uADRz2bOTyMLLEnmk0KLPhIbjiatHVjLgzuTEwQr65iJ
+         taDfDehFEBkkiPVb8OYlKsL0NMhF+vNnOWUJ8cCDzBAUQbJKPDc/DLfHXsj4ITQcXmFm
+         5uKQH00hYHfVMseTtqvVJq3qfbBL+6NKWx0ggvbqqONglO0IjukJtBZhW/wq09Ryy3/J
+         td5rdp/k0yPfwLeaYeLXl4nHgg8X6iBuupBk0mv3vpbkI0dX2EixcqhNH8K1zhBxEM+B
+         06Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761613751; x=1762218551;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rciq0fMfQg5ykRHdo5BOaqx85Gr9r9nCGAwh1wrJfPw=;
+        b=o79wYsaREnAw0R0djNL3xuG/Obd1VL11DXZ145LXYXMkRwDZjpcYqcv2w3FE6w3BUs
+         T4Q3hET+B+VW9iSdIx4Xz3ssgKysrotWA4/Cn1BQOrrDk88jp0nZ7IIZ4k5+dfIKGWpN
+         X30+clAzbtTFQkfY5IzkU3hA81BNq5/TQTVkaRzOm7RtJSUjo9KXpjl5Z4KAqlHCHVkq
+         NttZGPDDZhAGIoqvJRGlExSpi/BUxXINpI2cRQ51aj4coIjMkCZ8d87zysJJhHpi8TcX
+         sTCxiI9UmkeIXqUi/yegn3Y+20upG9ZXPDwvoFeQwHhxG6BWp51LVfKpfxYFlToY0CEJ
+         9FDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHeaDRsOPFCEAkwdV1nEs1XtpvC2TyT9AY2oYPYOMs5tK+XrVJvaAf21DBPd28uDkORneFqbnkTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyiz1NH7gj/MDpqqhAF78fGh+Kj30+JZhD6RWAAX/v+hwOhzlEn
+	YTaUXXIFMLg9F5FZc5RZFN///Q2GhAvJSKYc0T7Cy6I8tgINgsU9flgQb0qimo87euI=
+X-Gm-Gg: ASbGncueMWeFxlcz48UxgCCMy6bOZQhSSbZqNtK3X6oItl6JqWHj6yX4rRP/vp6HwMz
+	jURuUeBe3n6U24A1F1et4kpDzoczglRQCyXt980fQBCp1MFitAFY9rGFTBit/v8hb7uVEn/YebD
+	x/4oSb0iy0XklHZTcplmDYhY+Y3Er0UZgBfqrTCtzWoA/gzRC1OhczDSiIlYkiEX9Ly9qds6Csa
+	j1omW7dWlVKoNDXRTFyBySAzpDh3kRpOCt/u4iPPoXam1C22ylP4ZIiuP0cHdV37PE29c4GPLLs
+	ke0q89TWBZtbRha8sRCWLa1XgGZGOJOrO1Pb7GzX+nODsnK2wn+tTRPk5tk6S57APRvAyQ0Bdk3
+	JXLhr3MVNEScgdZKp+lp09pr6Ae+MKSi4Z8UTTTjDXzwG+GDBwkixUNHIK8scehnDpi3+aH1Ppy
+	VOZyz682Ls
+X-Google-Smtp-Source: AGHT+IExH+ONq/sk2GCxVifXwkAd99wGTqxfx3DWF0CigPBYDCbVkbrMUCkN0RF51BrZL9SAPmmQaA==
+X-Received: by 2002:a05:6e02:1848:b0:42f:9847:15bd with SMTP id e9e14a558f8ab-4320f860164mr25853825ab.26.1761613751385;
+        Mon, 27 Oct 2025 18:09:11 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f67ea857sm36647365ab.10.2025.10.27.18.09.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 18:09:10 -0700 (PDT)
+Message-ID: <d53a726a-6e77-45ed-a170-6e1463927440@kernel.dk>
+Date: Mon, 27 Oct 2025 19:09:08 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node
+ (5)
+To: Keith Busch <kbusch@kernel.org>
+Cc: syzbot <syzbot+10a9b495f54a17b607a6@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68ffdf18.050a0220.3344a1.039e.GAE@google.com>
+ <d0cd8a65-b565-4275-b87d-51d10e88069f@kernel.dk>
+ <aP_48DOFFdm4kB7Q@kbusch-mbp>
+ <e6fd5269-d6c0-4925-912a-7967313d991c@kernel.dk>
+ <aQAIR9DQwiySzEj-@kbusch-mbp>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <aQAIR9DQwiySzEj-@kbusch-mbp>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On 10/27/25 6:03 PM, Keith Busch wrote:
+> On Mon, Oct 27, 2025 at 05:15:56PM -0600, Jens Axboe wrote:
+>>>> leaves fdinfo open up to being broken. Before, we had:
+>>>>
+>>>> sq_entries = min(sq_tail - sq_head, ctx->sq_entries);
+>>>>
+>>>> as a cap for the loop, now you just have:
+>>>>
+>>>> while (sq_head < sq_tail) {
+>>>>
+>>>> which seems like a bad idea. It's also missing an sq_head increment if
+>>>> we hit this condition:
+>>>
+>>> This would have to mean the application did an invalid head ring-wrap,
+>>> right?
+>>
+>> Right, it's a malicious use case. But you always have to be able to deal
+>> with those, it's not like broken hardware in that sense.
+>>
+>>> Regardless, I messed up and the wrong thing will happen here in
+>>> that case as well as the one you mentioned.
+>>
+>> Yep I think so too, was more interested in your opinion on the patch :-)
+> 
+> Yeah, patch looks good.
 
-[ Upstream commit 437c23357d897f5b5b7d297c477da44b56654d46 ]
+Thanks for checking! I'll send it out.
 
-There might be many reasons why a user is resizing a ring, e.g. moving
-to huge pages or for some memory compaction using IORING_SETUP_NO_MMAP.
-Don't bypass resizing, the user will definitely be surprised seeing 0
-while the rings weren't actually moved to a new place.
+> I plowed through this thinking the mixed CQE
+> showed the way, but didn't appreciate the subtle differences on the
+> submission side.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+Ah right, yes on the CQ side the kernel controls it as the producer. No
+such risk there.
 
-LLM Generated explanations, may be completely bogus:
-
-## BACKPORT RECOMMENDATION: **YES**
-
-### DETAILED ANALYSIS
-
-#### 1. Semantic Code Analysis Performed
-
-**Tools Used:**
-- `mcp__semcode__find_function`: Located `io_register_resize_rings`
-  function definition in `io_uring/register.c:401-585`
-- `mcp__semcode__find_callers`: Identified that the function is called
-  by `__io_uring_register`
-- Git analysis: Traced the syscall path from user-space →
-  `sys_io_uring_register` → `__io_uring_register` →
-  `io_register_resize_rings`
-- Historical analysis: Determined the resize feature was introduced in
-  kernel v6.13 (October 2024)
-
-**Call Graph Analysis:**
-```
-user-space (io_uring_register syscall with IORING_REGISTER_RESIZE_RINGS
-opcode)
-  └→ sys_io_uring_register (SYSCALL_DEFINE4)
-      └→ __io_uring_register
-          └→ io_register_resize_rings  [BUG HERE]
-```
-
-#### 2. Nature of the Bug
-
-**What Changed:**
-The commit removes 7 lines of code (io_uring/register.c:421-427) that
-implemented an optimization:
-```c
-/* nothing to do, but copy params back */
-if (p.sq_entries == ctx->sq_entries && p.cq_entries == ctx->cq_entries)
-{
-    if (copy_to_user(arg, &p, sizeof(p)))
-        return -EFAULT;
-    return 0;  // Returns success WITHOUT actually resizing
-}
-```
-
-**Why It's a Bug:**
-This optimization incorrectly assumes that if the ring size parameters
-match, there's nothing to do. However, users have legitimate reasons to
-resize with the same dimensions:
-
-1. **Memory relocation to huge pages**: Using `IORING_SETUP_NO_MMAP`
-   flag to move rings to huge page-backed memory for better TLB
-   performance
-2. **Memory compaction**: Consolidating memory allocations
-3. **Memory region changes**: Moving rings to different physical memory
-   locations
-
-The kernel returns success (0) but silently doesn't perform the
-requested operation, breaking the user-space API contract.
-
-#### 3. Impact Assessment
-
-**Severity: Medium**
-
-**Who is affected:**
-- Applications using `IORING_REGISTER_RESIZE_RINGS` (added in v6.13)
-- Specific scenario: Resizing to same dimensions for memory management
-  purposes
-- Use cases: Performance-critical applications optimizing memory layout
-  via huge pages
-
-**User-space exposure:**
-- **Directly exposed via syscall**: Yes, through `io_uring_register(fd,
-  IORING_REGISTER_RESIZE_RINGS, ...)`
-- **Exploitability**: Not a security issue, but causes silent functional
-  failure
-- **Data corruption risk**: None, but causes application logic bugs when
-  applications expect memory to be reallocated
-
-#### 4. Backport Suitability Analysis
-
-**Positive Indicators:**
-1. ✅ **Bug fix, not a feature**: Removes broken optimization
-2. ✅ **Small, contained change**: Only 7 lines removed, no new code
-   added
-3. ✅ **No architectural changes**: Doesn't modify data structures or
-   APIs
-4. ✅ **Low regression risk**: Removes code rather than adding complex
-   logic
-5. ✅ **Clear functional issue**: Kernel claims success but doesn't
-   perform requested operation
-6. ✅ **Affects real use cases**: Huge page optimization is documented in
-   commit message as legitimate use case
-
-**Context:**
-- Feature introduced: v6.13 (October 2024)
-- Bug exists: v6.13 through v6.17
-- Fix landed: v6.18-rc2
-- No explicit `Fixes:` or `Cc: stable` tags in the commit (oversight by
-  author)
-
-**Stable Tree Compliance:**
-- Bug fixes: ✅ YES
-- New features: ✅ NO
-- Security fixes: ✅ NO (but functional correctness issue)
-- Performance optimizations: ⚠️ Removes a broken optimization
-- Architectural changes: ✅ NO
-
-#### 5. Dependencies and Prerequisites
-
-The fix requires:
-- `IORING_REGISTER_RESIZE_RINGS` support (present in v6.13+)
-- No other dependencies identified
-
-**Version compatibility:** This should be backported to stable kernels
-v6.13+
-
-#### 6. Risk Assessment
-
-**Regression risk: VERY LOW**
-
-The change **removes** code rather than adding it:
-- The removed code was an optimization that caused incorrect behavior
-- Removing it makes the function always perform the full resize
-  operation
-- All existing code paths after the removed check remain unchanged
-- The function already handles the case where source and destination
-  sizes match (it copies entries correctly)
-
-**Testing considerations:**
-- Test case: Call `IORING_REGISTER_RESIZE_RINGS` with same size +
-  `IORING_SETUP_NO_MMAP` flag
-- Expected: Memory should be reallocated to new location
-- Current broken behavior: Returns 0 but doesn't reallocate
-
-### CONCLUSION
-
-**BACKPORT: YES to stable v6.13+ kernels**
-
-This is a clear functional bug in a newly added feature. While it lacks
-explicit stable tree tags, it meets all criteria for backporting:
-- Fixes incorrect behavior exposed to user-space
-- Small, contained, low-risk change
-- Affects legitimate use cases (huge page optimization)
-- No dependencies or architectural complexity
-- Removes broken code rather than adding risky new logic
-
-The absence of `Fixes:` or `Cc: stable` tags appears to be an oversight,
-not an indication that backporting is inappropriate. The commit message
-explicitly describes the bug and its user-space impact, making this a
-suitable candidate for stable tree inclusion.
-
- io_uring/register.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/io_uring/register.c b/io_uring/register.c
-index b1772a470bf6e..dacbe8596b5c2 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -426,13 +426,6 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	if (unlikely(ret))
- 		return ret;
- 
--	/* nothing to do, but copy params back */
--	if (p.sq_entries == ctx->sq_entries && p.cq_entries == ctx->cq_entries) {
--		if (copy_to_user(arg, &p, sizeof(p)))
--			return -EFAULT;
--		return 0;
--	}
--
- 	size = rings_size(p.flags, p.sq_entries, p.cq_entries,
- 				&sq_array_offset);
- 	if (size == SIZE_MAX)
 -- 
-2.51.0
-
+Jens Axboe
 

@@ -1,91 +1,53 @@
-Return-Path: <io-uring+bounces-10289-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10290-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130B6C1DD59
-	for <lists+io-uring@lfdr.de>; Thu, 30 Oct 2025 00:56:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803B6C1DEE3
+	for <lists+io-uring@lfdr.de>; Thu, 30 Oct 2025 01:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8223AD3F5
-	for <lists+io-uring@lfdr.de>; Wed, 29 Oct 2025 23:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16601892D18
+	for <lists+io-uring@lfdr.de>; Thu, 30 Oct 2025 00:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF68A32143C;
-	Wed, 29 Oct 2025 23:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcMA9IIN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842481E7C34;
+	Thu, 30 Oct 2025 00:39:46 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bolinlang.com (unknown [155.138.147.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C333203B2;
-	Wed, 29 Oct 2025 23:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E35517C77
+	for <io-uring@vger.kernel.org>; Thu, 30 Oct 2025 00:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.138.147.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761782098; cv=none; b=DK6j1wkOixImxr/F4xVj5Jh3WRRbl+azFPVPav2IPEm22p0jpS5IhBmRwl3IAc152NAQn8MTnt4P4MTpu5VNpbjWobOSdRhX3Z9Cx581U0ei32iNUeCRkG7+iqg4g473IDj1ysC2gaVJ5inyR93p8sqBQzbXhCKUztj6Xv+GpmA=
+	t=1761784786; cv=none; b=VuJpw1l5aeGeYYUhltYbIi787zLpQfkwEy7gR8A+Vr215t976bdQnIZDBaWIpuxFvyRSJK1wRXqAiAIampEDZPhZ6SY/zy8rBKxemp1Qg0a+qqawCvE/Po1q576zmwQHvCnKjrNOqMNUYcfrljNuUfySrRNpNTp8bn5JN1/d5dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761782098; c=relaxed/simple;
-	bh=742GIbTdsDbx0L0rpTnF8hXu0JvNPDPjbBgRoioZqnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PXez6z1TNSIBsiGBBQh6CLcHOKAPPkeiHwiNckC4gni+LjTc3/Xd0Fj9WsxyFDIcqcdFJ+IMpdgZFhDF2QUYsMIPzTyq+/YxuMw5sQ2XggNeZBCe4Cwyv2NwNz8TJv5F3c9wg3Dw1ugY4ZL6uLLrRk5eutu7szjJLrDSxt8H/aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcMA9IIN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57DFC4CEF7;
-	Wed, 29 Oct 2025 23:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761782098;
-	bh=742GIbTdsDbx0L0rpTnF8hXu0JvNPDPjbBgRoioZqnE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NcMA9IINoPWQvikkKTw2tu6laETU394Zad5MzQwvQpzKBC3ol5fkAnd7qM+I9akkm
-	 nuz1VnZYi3DPn/D/EPgO8cfxgv8RgY8wo97nVwfQlwG9ygj8/vg8CtyGf8sdiP8YvD
-	 xan28uH+axbBf+GZZX++Moq8RmLxHQHsC7ZtF60Alep396W76SVrylhX/EBra5/fMB
-	 Vo6YKR0Fr0SY/AYh9OzPWmccseDB3HOY58u1lej6z7wavyhp47rKzRU+i4NyrtMnUr
-	 VFTJ9W4EqbSfck/JDmRLVKS7akzhvyFtsOfeBA7w6enOHrq07W+3JHDQfhDbfSG+Wq
-	 SPQkyOjJONd1A==
-Date: Wed, 29 Oct 2025 16:54:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
- <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH v2 2/2] net: io_uring/zcrx: call
- netdev_queue_get_dma_dev() under instance lock
-Message-ID: <20251029165457.557f8f7d@kernel.org>
-In-Reply-To: <20251029231654.1156874-3-dw@davidwei.uk>
-References: <20251029231654.1156874-1-dw@davidwei.uk>
-	<20251029231654.1156874-3-dw@davidwei.uk>
+	s=arc-20240116; t=1761784786; c=relaxed/simple;
+	bh=+0TG/WYyC44yH3Lrvjsw0Q4tqoXF6FEJEpAKRlyG/go=;
+	h=From:To:Subject:Date:Message-Id; b=WMdwMWuHAJq9sg29tO+q+AbezhUClob0QO9vG0NTeV3E89a75U0cPlvp+Rox8KoBtQ1+at+cTCPq5jd6IySg+XZuGzTgbEUP/7U+tV9yaKRBhUV7G/lF/NkIFgbDJ94XLhUIO1sp4p7a0vLNwGCVLtZE4wSyC5Kh1wPbj3EdrdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bolinlang.com; spf=pass smtp.mailfrom=bolinlang.com; arc=none smtp.client-ip=155.138.147.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bolinlang.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bolinlang.com
+Received: by bolinlang.com (Postfix, from userid 1001)
+	id 88F8D17C155; Thu, 30 Oct 2025 00:32:36 +0000 (UTC)
+From: Levo D <levoplusplusio@bolinlang.com>
+To: <io-uring@vger.kernel.org>
+Subject: Does io_uring_enter have anti-deadlock magic?
+User-Agent: mail (GNU Mailutils 3.19)
+Date: Thu, 30 Oct 2025 00:32:36 +0000
+Message-Id: <20251030003236.88F8D17C155@bolinlang.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 29 Oct 2025 16:16:54 -0700 David Wei wrote:
-> +	ifq->netdev = netdev_get_by_index_lock(current->nsproxy->net_ns, reg.if_idx);
->  	if (!ifq->netdev) {
->  		ret = -ENODEV;
-> -		goto err;
-> +		goto netdev_unlock;
->  	}
->  
->  	ifq->dev = netdev_queue_get_dma_dev(ifq->netdev, reg.if_rxq);
->  	if (!ifq->dev) {
->  		ret = -EOPNOTSUPP;
-> -		goto err;
-> +		goto netdev_unlock;
->  	}
-> +	netdev_hold(ifq->netdev, &ifq->netdev_tracker, GFP_KERNEL);
->  	get_device(ifq->dev);
->  
->  	ret = io_zcrx_create_area(ifq, &area);
->  	if (ret)
-> -		goto err;
-> +		goto netdev_unlock;
+I'm using io-uring through system calls (I am *not* using liburing)
 
-Without looking at larger context this looks sus.
-You're jumping to the same label before and after you took the ref on
-the netdev..
+I tried to deadlock my code intentionally, but it's not allowing me, which makes me think I'm blocking incorrectly. I submitted a few commands (open, stat, reads on files, a read on a pipe), and on purpose I didn't write to the pipe. 
+
+I called 'io_uring_enter(fd, 0, 1, IORING_ENTER_SQ_WAIT, 0);' in a loop, and my logging says my submission head and tail are at 13, and my consume head and tail are at 12. Then I call enter, why is it returning without processing anything? I understand there's nothing to do because I didn't write to the pipe, but shouldn't this block? 
+
+I called io_uring_setup with 'IORING_SETUP_SQPOLL | IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_NO_SQARRAY'
+I'm not sure what else people may want to know, but how do I block until there's work to be consumed? Removing the IORING_SETUP_SINGLE_ISSUER doesn't help.
 

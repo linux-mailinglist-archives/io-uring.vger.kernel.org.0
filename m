@@ -1,254 +1,741 @@
-Return-Path: <io-uring+bounces-10337-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10338-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1883C2DD06
-	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 20:13:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3831C2DF56
+	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 21:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA60E3AA3E5
-	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 19:13:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 461AA1893165
+	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 20:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34754208961;
-	Mon,  3 Nov 2025 19:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF469205E3B;
+	Mon,  3 Nov 2025 20:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZaZe9yBm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HDtGljkL"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FOCQLmBr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D3B347C3
-	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 19:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197229; cv=fail; b=X82pYoG7bmvbS9jr/z+HI6mYHlN9HEteTZbB2oU6IICSwIoxkZkFxgb/imP4qmdJHJwZgbFkNqj7ul4KcF4983pKWy+ylsc+WwJwzKLE51t5Gz6c35TZ5SkU92id7TKrio0rmZQIYZ/SaEwkN0fL7xQjye1vYl2nCt0P95oLAzk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197229; c=relaxed/simple;
-	bh=5/e2Nx0RaClUhdcXjpSIgbdh9m45S77qxd2Q/2ERER4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=P0FWRD/NG4zmb4j/GEvPAx8iIHLdzsOhHwuEIAlLueoNqFlgvYvJVJ7rcBPKQ7kY6S5xqF3ct11tzMFDK43+W7eq5ERC7pob1z9O03KtwjZOyh5EMEm1JRKDuN8RoiX4Kc0d0/g/ylAqgCryT84V2lrVB/Go6XnrOS9t/u/EAXQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZaZe9yBm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HDtGljkL; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3JAA8h004164;
-	Mon, 3 Nov 2025 19:13:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=rV3J9OVtC7Tm+TIYiSp8vsyfAPUwNbGK6sTzb46IUPk=; b=
-	ZaZe9yBmZkHTsZQlCCDxuFCi3TK/rP/A8laLmnpozlMLq6y8HwlF4aM6ooKQxVEX
-	LE2XQrWM0uda7kFEBl6FUGQ8e8ob/Yyq0ew3PotRowieT35Yiwl+K1xlzEM+kcel
-	gZaJZ7FEYX2XJnujqbx9caYPss8sfbxubchu4uu+bPHbtBPG+N/Zr1I7q6Swkgru
-	4QwiAWHJAIlDH4q1knmLddo+I0S+SjJfPGesQrJY4rbt8jMtwOK60ADR8P55jGHa
-	uqjju9O+YWyTAtyJTlSiWpEFQUhUE/Ex/iMaI35hxyaizRmycGXsJRoIgZKZNkYz
-	PlkNPsyLz6bFPp513PVSJw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a72a680a2-13
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Nov 2025 19:13:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3Ihs08015645;
-	Mon, 3 Nov 2025 19:04:20 GMT
-Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010065.outbound.protection.outlook.com [40.93.198.65])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58n8asg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Nov 2025 19:04:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A1RCAcUWuIS98m4mZwzk6bjBJvTaSzzZCYUJjP/w49Wd8CeDiuWZWHNnkEmxerFVe2TPVbbkAUYXa8dz1ulcOJOSwn/Wqrp0skXlzBHMciw694376fJ3LdsdaWqPAci+t44xDSR/ZlmbcuQoZcDrdU6Q1rJ1ujABgjQpIqQ3uGdsdEOZ2waZvwvu1btoE5TCm4fiNOkeREMyavQv88yMIVspcCSTmCt+9H2yvMnMEzQiOl9YvSn5bxodYsKjo0MrPpfULKoFy3H0rOcLK9uCJt3t89Sd1020FHG/ZdLP0WTn49lLNB+w0zcCLFlbxaUBOgSlB55yRh759/EXxHbK5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rV3J9OVtC7Tm+TIYiSp8vsyfAPUwNbGK6sTzb46IUPk=;
- b=P8N0k5/jLm1GaEDi+HFLti+cN4e4boiSALUqvkf8Vy5KR+yoG9tZitMCEIYJiOMYjj7bndpn58u2pDBTXiEfp+1YeJX1t4v5VDJUjcGtbUcAg/Al4b7b1oQ48qkflS2ro0EuY6T9bIlHaLMnUHso84zqi74ds6rpEpvh//41pmfaH1xJ7iRx4SY2wVdjkuj3oNplrPpm6BUszCsz9LEwcke7UT0Ul4RU5/bCYwa6x1Mt5pPXcfEHqTR09aRHjneKNceEAVhAB/a0Zk8AkHJseqgeP4ZYoQPHXtW7CsJsgTWmgr8hNMy1U2ODfiXu6Y5rhXWq2xxToszFPUtAFOnG5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37C821ABD7
+	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 20:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762200091; cv=none; b=csp1kRbdqIai8PKuDQt9S/njtZzYToxEqtsW89Hf07glEDMzYmDLRXk/VvV60m4t4QzOhpfOHzyn4NxfHKK2CsSbyoIeUMUd1mlZXZCeAMjMaZL8OP/NDLpjz7qpWJjOk0+OZR5lk6D3h6vCyI/He2GFMmnXiqII8qUoEQe+Nv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762200091; c=relaxed/simple;
+	bh=qzldxMMkVoEE2VqY+Ynx7lupxOMCYeivocIeeRnDwvw=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=aCJXQLmZF7nEHYcTKhTlmoZ/LGu1MoyRPzw4tK95vK6RUZQIrtnNzOG62tUaGGM/YJafILRqh67XUcySGwtQni3WNIzgkV1Nqkk2zk3hJRaTlpLjtyhRJ6+PxjUfPjoCT46FukVhKU+W1f983jCI/RVDSmRLj7oic5RxiwzvgBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FOCQLmBr; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-4332381ba9bso26998335ab.1
+        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 12:01:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rV3J9OVtC7Tm+TIYiSp8vsyfAPUwNbGK6sTzb46IUPk=;
- b=HDtGljkLWsNNnaw9mgKK67uuqRt60Z+ImHKRoVSJ7EyAWRaJiOB1y0Sopqgzxxf7ukRNpXyZJ3cCrPXI29G9xAgkiXgDBo95Vf5hsTi0iZqn+wrauIH8LUZcI2ar0gjL1+MdgTxUE3YgwOWFEknctKPHYMyA7zbUL1C+ld5pXkg=
-Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
- by IA3PR10MB8321.namprd10.prod.outlook.com (2603:10b6:208:575::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
- 2025 19:04:13 +0000
-Received: from DS7PR10MB5328.namprd10.prod.outlook.com
- ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
- ([fe80::ea13:c6c1:9956:b29c%6]) with mapi id 15.20.9253.017; Mon, 3 Nov 2025
- 19:04:13 +0000
-Message-ID: <89be5d2f-abf0-4943-9799-7347b60ee2d7@oracle.com>
-Date: Tue, 4 Nov 2025 00:34:09 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : Re: [PATCH] io_uring: fix typos and comment wording
-To: Jens Axboe <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Cc: "alok.a.tiwarilinux@gmail.com" <alok.a.tiwarilinux@gmail.com>
-References: <20251103181924.476422-1-alok.a.tiwari@oracle.com>
- <a3a7f07a-50f5-4a07-9b14-4d9e41a82586@kernel.dk>
-Content-Language: en-US
-From: ALOK TIWARI <alok.a.tiwari@oracle.com>
-In-Reply-To: <a3a7f07a-50f5-4a07-9b14-4d9e41a82586@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0418.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18b::9) To DS7PR10MB5328.namprd10.prod.outlook.com
- (2603:10b6:5:3a6::12)
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762200086; x=1762804886; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N6sqLqs5Tsr9slv9lcK7zA2RSfqsnH5pZFd0NGQUfuQ=;
+        b=FOCQLmBrAzKNN2+bYbAnsBcqMSj7mJlZQc5FtgH8NjWr6bTIFJREp5rtpFXuPPy0i8
+         62NYD7wMAsqIJ+ie6SM6lYuUunlbbtfrNuzWt3G9G/hedwm6CC9Qg6Fw/iDcg2fan8Wl
+         InMOx/doFYVBJyiWqsi5/A+VkfCyr3TQlAUzw+xE/5E3gYgRncARHbtQJRUyD6QQ3qMo
+         UfESF+wVXaW8L9u/NFsxJVtUZ6qI/WGsIrkf3YOHM4o8rl/gmNfQSqzQWyPU+Jq8pj2C
+         I/R6pto+94hRzbaejIq9IHMfu1mUVP/+kcQDuuzWst79sMQ6WgkX1xvOQmGdU2Y9YeWE
+         Jn6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762200086; x=1762804886;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=N6sqLqs5Tsr9slv9lcK7zA2RSfqsnH5pZFd0NGQUfuQ=;
+        b=TePBcn5TOJNy4qKzZTSEonzd3IlMDkzgk7N4DB7dh0JWtylzKW5HoD7l8e43BB4ITb
+         g3/KLJkOhuMiIfK3grz+31YxN1y9amXOzwbHpiecsc2JALT0fGIu5muGlKyZc/ZfecRJ
+         HQz7Q/YoV78eLVH224ZURmaepDR5VEi8dIuuKgXfQDIt/Z9XpYNu8uhjY6xWRqYbIXVM
+         cpd+A+T8mv5JzxlKI9qcGdSHN5GetjgO28p/oNAm8zYHgWkFS/TXj2jp5z0Uj8HYTOFw
+         meYQl6fLFRapoqgT3+/Xg6zUSmAapbqBAgYGRJlA/1sMvjR8LsknOIyIulvBTtSxayzj
+         /FEw==
+X-Gm-Message-State: AOJu0Yyop1+LEMwKsrr5xg92RQORXag+o7xVZ84ytom+e/GiIbcEq8gp
+	fdjcRQkwpVBDsjfi+7K/UtHjv5l1GZzIx3dijSlQIX+KhqIqQE0fSA/79bQPQnCsHlUNIzmgct5
+	Uv8Cq
+X-Gm-Gg: ASbGncuK6yy43IqQkvA2ct/o/XO2FYkh2tI12aIkV0nMQPaIXO6LEJQG88jVRT6gWDH
+	I42Xu9Kb2GE1Vwqee7mqYZQlzxsZqXN7xhMYkUSsgiv1r/BczkHrpX/C/IBwSU/4IvtJgRnTn1K
+	qcJzu5rjjAVRAUgr3tqm6cqVWsD8pkmVL41hw/FPbU2Rbkd5WU0isXeopht5KFaD216GYpsk4Og
+	TD1BIjB5tPf8AJd+5u4rAGfnFZEyyEQgcZiA/8/eymIZv/cvPtrHPJyUB3kfGOXqBBgQXE/FV99
+	s5iLwhLv1vst0lpcV7G5LgJS4QlulJTfSlI3k+I1ppkWgxED8zE7UNjewp5SUfiwYK5i4STUM3i
+	nuyZbSO1xtLfwYv49JY6SvpUGMXpYAnBwBl4TPnmNgt6b1fNvjs7ObMSktQJ+nQTkMSN28QjVwV
+	ayvsKSo5k=
+X-Google-Smtp-Source: AGHT+IFwQJqmJqUa6N5SscvoNWpUUUPiVI28Yd7ua3Pj5fMaMI9pUsrHFvt4fC/InWu8e7jKpJzMdg==
+X-Received: by 2002:a05:6e02:160c:b0:433:30d4:389e with SMTP id e9e14a558f8ab-43330d43958mr56215035ab.3.1762200086104;
+        Mon, 03 Nov 2025 12:01:26 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335b5ab8dsm5138955ab.30.2025.11.03.12.01.24
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 12:01:25 -0800 (PST)
+Message-ID: <cf58b2cf-7846-4411-a876-db4e14f785b7@kernel.dk>
+Date: Mon, 3 Nov 2025 13:01:23 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|IA3PR10MB8321:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cff7e66-5325-41ca-e185-08de1b0bc706
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?azkxM0pDTTgyY3FIbFIySGh0akZXSGpIZXM0T3h0UW5pWkVBa2xyTnZFWVdE?=
- =?utf-8?B?dGdIS0FQQ2xDakhXQ0pVODFyV0NhQzFaWG4yd3d6ajdiUTFzUy9jQlRGaVNo?=
- =?utf-8?B?WEE2SWRtNTlMeHlaVzFQVnpNejFEenN1SjdoeEhDVDZEbkZHa29NQjRhWUcw?=
- =?utf-8?B?YzM1U05jeC9UbEQzNmdXbEczUTVwMzNPeDgvcFVjdWFqUWN5Z29BYnFlQXVL?=
- =?utf-8?B?dWRkcS9GUmZpSDlCUWQzeXpNZ1g5MFlqYTRUYVo1aXVOV3JXektIV3BkL2Fw?=
- =?utf-8?B?N1ZVbGIyZnNKN0xzclRkRDNrYjN5TnRhYUZ1Z0o0c2lEY0R4SGJaTXpBOWFv?=
- =?utf-8?B?TmJzbm9NSEhqRFdTaGtzdG1BNWZ5V2tzQkxDRmFWR0FKYkltZllIRDdYcmsw?=
- =?utf-8?B?aW1jTzJWZFdlVnRqYVNmWUF2MWNLdzZMaXVSMGRtL3JMdC9PcUE3SUYvL3hy?=
- =?utf-8?B?ZlFJM2lLdWZPYjcrRzBJa0JvVTVlaDNZTWxKWDVwbUw4ZVdqNmNJaWsyb1g3?=
- =?utf-8?B?TEt4bk00SG01NjdUaDNuQzM5QkRjS0hoZEl1Z2lMOUNETDltQnJuYkZRUXVh?=
- =?utf-8?B?UlkyVjB2Z1JlTG8yL2JHMWR0VVR3RUtVUDhlNy9jamRnSUowZFFodHgva3pG?=
- =?utf-8?B?OWhHWWlvNHFpTXBiYytYRkJKYU5FSENaZzF5cUgxbnNvdGhSTmlCaTA2UEta?=
- =?utf-8?B?Ymx1VFVUUkR4Q2pJTFFySnlSY1p4QWhCV3NJMXNWMWl1RG5WM25vZTJ1UW5O?=
- =?utf-8?B?enVNeTV1alVIRkVQTElzTFJFUUNwbHFDV05RVVdYeVMweDZqU1hUc1pYbktR?=
- =?utf-8?B?cWF2UUhqSW8raG5JMno1MnRqMlNhQlc1aWpwT3A4UTlHcnMrdlNPZkhXTWNR?=
- =?utf-8?B?d3AyVWtETzRZOWVXN3VxNHRxb1VaWmxmOWYyaUpaWTF2U1ZDVGpLTlFyd25O?=
- =?utf-8?B?L2ZRVWt2Y3c1UlNNOUdPVEtKYm04TktTOVMzSDNDdkdvNTdzVEozbXR1ZEI4?=
- =?utf-8?B?c0tQL1JuY2d5Y2JOUC9QelJsMTFScXJFcjUxTnRsOXNhekZJMlFsbFVXS3h4?=
- =?utf-8?B?ZGZZUFNkMG1QRDRIM2hTSEdaVzEvcVpMQjlXcm1UTWxIaWtvMlpmUVJycytN?=
- =?utf-8?B?MHJrT1l6RWx4d01NRngwVUhzT0trc0d5TlhBYTRTWWdGM3FYRG9GRnRPMFA1?=
- =?utf-8?B?RU1GeW9OaXpmQmcxbXA4TldOenhDTnhiS2pQMGYrRDF5YUJqaUgwcDVLUllC?=
- =?utf-8?B?SUVTU1FCT29pWjY0MkhaY3g3Qkl6ZFZzSUtXUHAvY1pDWkMyTFZxSzQxdHow?=
- =?utf-8?B?Y1owdThxYkkxMDdmSHo1ZWgyZnptWFFXVktpUU9LZU81Tk9mQ04xNjNXRVR0?=
- =?utf-8?B?YjRmSS9WK1BJdXByNkg2ODg0UjJhSHNNYUl0bnJyMW0xM0tSZHhocHZWdk02?=
- =?utf-8?B?b3dLNVVIdHhWQ2pjWU5vQm5DSnN4UHVHMEpPRmRHdFFYbUxHaGVpMFU2Rjhh?=
- =?utf-8?B?amI1MVhwRWl1bkNTWk1XVFJaL1Eyb0NtNWhsWmVkWDluNmNyNUlGbll3QUZq?=
- =?utf-8?B?RjgycVY1Y0lPMGNpdWt3VkpscEpUTk0rSEVzWmYwWHJncWZNb0krVjdWbUEw?=
- =?utf-8?B?ZXdsQ0tZRHg1Smp5M1RUMnBDODlTa2c0bHNLWnd3NC9RV21WaVdja2pxaWpW?=
- =?utf-8?B?VU5leU1rb2orS2VoMWtqOXgxcXRUTDFqL2F5RUlCOG9WZlNueURDUUxwdnFn?=
- =?utf-8?B?ZytnRll6dWd1R1NhZ2FkYnZUNjFFS250V1o0dS9QY2IyL0J1bmdKck9XTzVr?=
- =?utf-8?B?K09uTFZNTlFkWXVTVUlpSWEvdGhtcGR6NmVrQXRXeDRMbS9RUWtuZElhTDky?=
- =?utf-8?B?QnBFSEx6cVFrSG9ReXRXNDVrV3dreHNiOEVydW9UZExzU3dVY1BxanFtdlMw?=
- =?utf-8?Q?7AK4Wjo5y578ySgb+fuw+2QSCUpQjhse?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZS93NFRmSTBPaExtazh5YXd1K0ZXaGt6cktUYWw0SUYwWU1xV1grellzTVgr?=
- =?utf-8?B?STRHY0RvUmlGbDI2S1hwRGUwdlBvdnE4ZGxkNzR0QlEyRHBOeTlhMkJ0d29T?=
- =?utf-8?B?SXkrMit6R1ExWXZYQjE2YytsWmZOTEJUTThyZm84cEN6a28xVWVKTnU1cmxk?=
- =?utf-8?B?RjZweDJuK2hISWpKb3NrMkVwMVJvODl6OWNSdndWTUk0QU5hcmVpeFlCTUUv?=
- =?utf-8?B?SjcrbUR4RVlwd1haSEl5ZmZGU210NmVqTHhOU1g4bjVsMTJLamZvVVNxejhk?=
- =?utf-8?B?TndxT3pMbS9tNmRlRWpidVJpdjlEbnhLL1BiQ01mbm5lMVNvNUc1SFZYcmx6?=
- =?utf-8?B?U0QyOFNiUWZFVmNtVHVmQnMxeURSOHVUTDR4MW9JcnB6K3BoZE9SZXl5UlNO?=
- =?utf-8?B?RUhXUjV1Yk1MT0tTVTFqbHdIYUVEUm5hUERMcEJGREJGd2pVdWg4MzN5eXJs?=
- =?utf-8?B?VzlKa1M5eUdJNFZra0xOUkhkUnQ1QUdyQTBYV3UxTUtjdDFrVmkwKzBJRzQr?=
- =?utf-8?B?UmVpSEp5Q242WGYyRXBIOWZGNk4zdmhYcjl4dFlHdllDWFhGZmhQcitVdGw5?=
- =?utf-8?B?b0Y0WnVlaXRSdkdQRHZYRWZZTzQydnRiTHBlTWV4RzlvM1ZtY3paTmxHVWMr?=
- =?utf-8?B?cmFEWFF5ZzZjRHE1ODhKM2V1Nnh4dnZpWnByQStLdEJNVnh4cnNTQmpBMGdT?=
- =?utf-8?B?aUxaRDVGYVV5ODZkQWZEMjl3YXBNaFlFS0haUGM1cndqUU01ZFpHUnZjYWZC?=
- =?utf-8?B?VWc5MUxtMlNtRUpCWDdCOS9IL2habVVzdWFiTUh4dG0zbktScWptdG11Nndy?=
- =?utf-8?B?dEFQSXFGcXdpWml3L2hzVllDWnd2cXFvWnNrbXVEbU9Pd2NOL0NsSElwOXl4?=
- =?utf-8?B?Mkd6d0pXSmFnb29QMnd0SG9SMC81MmRWdGdLSnZsTlZyOTJaVEU2YUQxZEZn?=
- =?utf-8?B?bERsenZtbnZIanNqZVVTcVl4TDZma3FYQWhLaXFtSGZTMytDd1gvcndSNTli?=
- =?utf-8?B?TkNKelcyVFYydnR2citFRWJxdjNIbXZiRmlETDBxTFViZE5JQzB2eXByQTR5?=
- =?utf-8?B?RVA3MnBCY3hndDhSTWl4cTUrVmJhb0xGK1k1bWtuNkVLN0g4UU9OT2EvZHcy?=
- =?utf-8?B?OUtkSlZEbWV0K0sydklTem1oWU1Ea292dVNVVUhpaEtqTWJ5TU4zNUdVMGJR?=
- =?utf-8?B?bWtoSndpZUw2SDlHbGdTclFBWWdxNS9oZkNZTjQySTJnVE9FWG4zL1NZV0NZ?=
- =?utf-8?B?SS9pZ0dUM1o1MlR2UjZNa2U4aG1hdTZ0NFlUWW5ERUV5OUQxOUhyUVJLZlhn?=
- =?utf-8?B?SzBrQXlHNmN5SVh1UCt0aWkrNDRObVVEUjVkREpoUDBYMERwNEQ3TnZ5UGcr?=
- =?utf-8?B?eW9rTGtGY21iT3oyN1lmVVU1czAvQlNJTHVtcmJFQTJJVU1MbjkwMklaR21i?=
- =?utf-8?B?Y2tVUW5VNFVGLzlDSHhES1VUcU1jL3pobk05UzR0TTllRFJMMXkwb3dGVzU0?=
- =?utf-8?B?Si8yYVdkcDdCYnpLTlVIT1E3WUpLdlZKVEtyc2ZKQWtkb2xMMDJNemFpU0Rs?=
- =?utf-8?B?WC9SQW9MMkFaQzdYcmIxTTZEQXVuNllHclZCdGNlQkUzeTNDK3l4ODdldURM?=
- =?utf-8?B?cjdlWWU2a1l0NnRDMDlIWkplRnd5SGN6eTF1UkI4a20zemFaVFhDTUt4M1ZZ?=
- =?utf-8?B?QjhRQldYOUhxRWNZQzlSblN2YXF5QllhTmF6eXNQL293QXZDdnZyeVNMeEZt?=
- =?utf-8?B?WHFmK2VzR3htT3pGRW9hOHVIbTIvQmgzQVQxdGpVcFpZZ2VoSTh1TVVwZ0Uw?=
- =?utf-8?B?NFJkQXlzV1ZnbS91Skl5Mnp4L1U2cm52dGRnUnkyQW5sZFFkRTEzdjNsc1Zi?=
- =?utf-8?B?cTRlTWdCcXVxWlZvbzdvcS9Ib0RkdEJDS2wwV2x3SzgyV3lsa2o0elhOYWQw?=
- =?utf-8?B?bGYwVloxZFpwWEJrMUh5bXdYRzRqOUIxOHlabUg2S3RwaTFYN21pQjh6cUdL?=
- =?utf-8?B?SmdOV1RBQnM1OEtUUlhLU2RGUC9YbS9aOWt5cTNYTklpMHBtVyt0Q05lMndE?=
- =?utf-8?B?bGNZQy9GdXh5SUFFZFZLaHgraTViR3lSOFpvSUxid3V1RWtaTU1OWVhLOHhj?=
- =?utf-8?B?TVVOZlk2R2xEUEtUNU5rM00xd2QzY3JIUDVsQmVWRlZIN0hZRGlYMlptNXpk?=
- =?utf-8?B?WUE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	FMEIuq7b+VAfJgTIrQ2aeLbMlM0TwUzCkdqTQr7HxL/m4rKSrm8HP19gdJO/FFK9rK7AKNOAXryC0KaePhPqUIRBv1Ktmh72jRLA6kKpLonMEfViJu+UQfqoXIU6PPUNuI9H8zBMLDU3+l77/BKZq21od0kEFT5vuZNPgQlxsNG+m6C4G7JDqUDvURjybNbJ2OehHSNYxIt9ihDLj7o2f/sYuIYo3Luq2XUPDpD3ABHU/wXZ00uHKgCC20t0PVKOQciImYzKwB0xATR0IMbzj2DjROwkHkdoFxSl19sbrX2dlAUkcA3W2A44cV0H5sPw1EprKFpEqjlTJu2FJkGxHjshV/PM6WDBDgU7AH32vFP9em9HGGOsGXD9wV53H2qIIIiQ41xvFy9alryHShLO31IFFx43DDxYLibdukpRmA6WyesOXVVIYxatd3OtCGAUXiIkzVppKtH28VGtnjzV1KCA/+1eH0KLbEaTFpw+0Zl/ZueKuELvXWFwHRmNra6oT8YxsZ2yB3AtVkrJyOiWBeGt/4taQ8qkrSA53u/ITzpfPYZ6OfpTdGp5iz9e/MIW0u2GVQuF/Xe4dS2Kghhe7wZc5RGVKKAj0ahAeL9qJ4M=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cff7e66-5325-41ca-e185-08de1b0bc706
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 19:04:13.2985
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PcuOKEOSrM1BKjgs3f9HdY96ERFrWA2niOKp5p+ZnfTOB2+UawBhL8gIMmb7l/B3ecd/Es90jFYUzbVhhmde+LOuIvhsfHFIIVPxIj308yc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8321
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_04,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511030171
-X-Proofpoint-ORIG-GUID: taZMOmoPayyTKUL_dIrUhpxHnbnVw3d3
-X-Proofpoint-GUID: taZMOmoPayyTKUL_dIrUhpxHnbnVw3d3
-X-Authority-Analysis: v=2.4 cv=Sq6dKfO0 c=1 sm=1 tr=0 ts=6908fee9 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=uddo75JQK6evQ6O1LjgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDE3MiBTYWx0ZWRfX1VK2xj7B7DG8
- yD2QdRuVZJ9hQxw4g3SZaWuGWXDbuMUojTEbRshzWvnbljvECBRbNkmlUw4td2M6AkeBlgdogM9
- 38ybo6EsSC/lH5zjC4TDK+VWINc9Gm1f85fsb6IGMEjVfA0YKv+yJJ3QjjUl0m5jK/EGH90keUt
- vTACNY8eCgFFuGWk/tllzcPoEBYfjMSeYMHzWFzGYsFaT+y7oGo0T/ERxENrv9+EBdjN49TW6ce
- P6dmXkkaWblq0wPQ18i3aZLn3yw7mmpkZlkLcIMXy6CvPAyQ/xoovW1PqeJ+1AX4ayPX77znZXW
- Opl8RSFwIp2XSKN/GxrE3GEElDvg20kxB5geZzf3JRzX4MDYraiZCkQKleeyTTO9p68uRSGqom5
- To+NKWNXfkGEtBNaRhA2gpyNsHocIQ==
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/cancel: move cancelation code from io_uring.c to
+ cancel.c
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+There's a bunch of code strictly dealing with cancelations, and that
+code really belongs in cancel.c rather than in the core io_uring.c file.
+Move the code there. Mostly mechanical, only real oddity here is that
+struct io_defer_entry now needs to be visible across both io_uring.c
+and cancel.c.
 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-On 11/4/2025 12:22 AM, Jens Axboe wrote:
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 296667ba712c..59062db89ad6 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -915,7 +915,7 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
->>   }
->>   
->>   /*
->> - * Must be called from inline task_work so we now a flush will happen later,
->> + * Must be called from inline task_work so we know a flush will happen later,
->>    * and obviously with ctx->uring_lock held (tw always has that).
->>    */
->>   void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
->> @@ -1246,7 +1246,7 @@ static void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
->>   	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
->>   
->>   	/*
->> -	 * We don't know how many reuqests is there in the link and whether
->> +	 * We don't know how many requests is there in the link and whether
->>   	 * they can even be queued lazily, fall back to non-lazy.
-> Should probably fix the incorrect grammar there too, if we're making
-> changes.
+---
 
-Thanks Jens, I'll correct the grammar as well.
+On top of this series:
 
-Thanks,
-Alok
+https://lore.kernel.org/io-uring/20251103184937.61634-1-axboe@kernel.dk/
+
+and also no functional changes in this patch, just shuffling some
+code around, placing it where it makes more sense to have it.
+
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index 3ba82a1bfe80..ca12ac10c0ae 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -14,6 +14,8 @@
+ #include "filetable.h"
+ #include "io_uring.h"
+ #include "tctx.h"
++#include "sqpoll.h"
++#include "uring_cmd.h"
+ #include "poll.h"
+ #include "timeout.h"
+ #include "waitid.h"
+@@ -428,3 +430,227 @@ void __io_uring_cancel(bool cancel_all)
+ 	io_uring_unreg_ringfd();
+ 	io_uring_cancel_generic(cancel_all, NULL);
+ }
++
++struct io_task_cancel {
++	struct io_uring_task *tctx;
++	bool all;
++};
++
++static bool io_cancel_task_cb(struct io_wq_work *work, void *data)
++{
++	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
++	struct io_task_cancel *cancel = data;
++
++	return io_match_task_safe(req, cancel->tctx, cancel->all);
++}
++
++static __cold bool io_cancel_defer_files(struct io_ring_ctx *ctx,
++					 struct io_uring_task *tctx,
++					 bool cancel_all)
++{
++	struct io_defer_entry *de;
++	LIST_HEAD(list);
++
++	list_for_each_entry_reverse(de, &ctx->defer_list, list) {
++		if (io_match_task_safe(de->req, tctx, cancel_all)) {
++			list_cut_position(&list, &ctx->defer_list, &de->list);
++			break;
++		}
++	}
++	if (list_empty(&list))
++		return false;
++
++	while (!list_empty(&list)) {
++		de = list_first_entry(&list, struct io_defer_entry, list);
++		list_del_init(&de->list);
++		ctx->nr_drained -= io_linked_nr(de->req);
++		io_req_task_queue_fail(de->req, -ECANCELED);
++		kfree(de);
++	}
++	return true;
++}
++
++__cold bool io_cancel_ctx_cb(struct io_wq_work *work, void *data)
++{
++	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
++
++	return req->ctx == data;
++}
++
++static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
++{
++	struct io_tctx_node *node;
++	enum io_wq_cancel cret;
++	bool ret = false;
++
++	mutex_lock(&ctx->uring_lock);
++	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
++		struct io_uring_task *tctx = node->task->io_uring;
++
++		/*
++		 * io_wq will stay alive while we hold uring_lock, because it's
++		 * killed after ctx nodes, which requires to take the lock.
++		 */
++		if (!tctx || !tctx->io_wq)
++			continue;
++		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_ctx_cb, ctx, true);
++		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
++	}
++	mutex_unlock(&ctx->uring_lock);
++
++	return ret;
++}
++
++__cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
++					 struct io_uring_task *tctx,
++					 bool cancel_all, bool is_sqpoll_thread)
++{
++	struct io_task_cancel cancel = { .tctx = tctx, .all = cancel_all, };
++	enum io_wq_cancel cret;
++	bool ret = false;
++
++	/* set it so io_req_local_work_add() would wake us up */
++	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
++		atomic_set(&ctx->cq_wait_nr, 1);
++		smp_mb();
++	}
++
++	/* failed during ring init, it couldn't have issued any requests */
++	if (!ctx->rings)
++		return false;
++
++	if (!tctx) {
++		ret |= io_uring_try_cancel_iowq(ctx);
++	} else if (tctx->io_wq) {
++		/*
++		 * Cancels requests of all rings, not only @ctx, but
++		 * it's fine as the task is in exit/exec.
++		 */
++		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
++				       &cancel, true);
++		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
++	}
++
++	/* SQPOLL thread does its own polling */
++	if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
++	    is_sqpoll_thread) {
++		while (!wq_list_empty(&ctx->iopoll_list)) {
++			io_iopoll_try_reap_events(ctx);
++			ret = true;
++			cond_resched();
++		}
++	}
++
++	if ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
++	    io_allowed_defer_tw_run(ctx))
++		ret |= io_run_local_work(ctx, INT_MAX, INT_MAX) > 0;
++	mutex_lock(&ctx->uring_lock);
++	ret |= io_cancel_defer_files(ctx, tctx, cancel_all);
++	ret |= io_poll_remove_all(ctx, tctx, cancel_all);
++	ret |= io_waitid_remove_all(ctx, tctx, cancel_all);
++	ret |= io_futex_remove_all(ctx, tctx, cancel_all);
++	ret |= io_uring_try_cancel_uring_cmd(ctx, tctx, cancel_all);
++	mutex_unlock(&ctx->uring_lock);
++	ret |= io_kill_timeouts(ctx, tctx, cancel_all);
++	if (tctx)
++		ret |= io_run_task_work() > 0;
++	else
++		ret |= flush_delayed_work(&ctx->fallback_work);
++	return ret;
++}
++
++static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
++{
++	if (tracked)
++		return atomic_read(&tctx->inflight_tracked);
++	return percpu_counter_sum(&tctx->inflight);
++}
++
++/*
++ * Find any io_uring ctx that this task has registered or done IO on, and cancel
++ * requests. @sqd should be not-null IFF it's an SQPOLL thread cancellation.
++ */
++__cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
++{
++	struct io_uring_task *tctx = current->io_uring;
++	struct io_ring_ctx *ctx;
++	struct io_tctx_node *node;
++	unsigned long index;
++	s64 inflight;
++	DEFINE_WAIT(wait);
++
++	WARN_ON_ONCE(sqd && sqpoll_task_locked(sqd) != current);
++
++	if (!current->io_uring)
++		return;
++	if (tctx->io_wq)
++		io_wq_exit_start(tctx->io_wq);
++
++	atomic_inc(&tctx->in_cancel);
++	do {
++		bool loop = false;
++
++		io_uring_drop_tctx_refs(current);
++		if (!tctx_inflight(tctx, !cancel_all))
++			break;
++
++		/* read completions before cancelations */
++		inflight = tctx_inflight(tctx, false);
++		if (!inflight)
++			break;
++
++		if (!sqd) {
++			xa_for_each(&tctx->xa, index, node) {
++				/* sqpoll task will cancel all its requests */
++				if (node->ctx->sq_data)
++					continue;
++				loop |= io_uring_try_cancel_requests(node->ctx,
++							current->io_uring,
++							cancel_all,
++							false);
++			}
++		} else {
++			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
++				loop |= io_uring_try_cancel_requests(ctx,
++								     current->io_uring,
++								     cancel_all,
++								     true);
++		}
++
++		if (loop) {
++			cond_resched();
++			continue;
++		}
++
++		prepare_to_wait(&tctx->wait, &wait, TASK_INTERRUPTIBLE);
++		io_run_task_work();
++		io_uring_drop_tctx_refs(current);
++		xa_for_each(&tctx->xa, index, node) {
++			if (io_local_work_pending(node->ctx)) {
++				WARN_ON_ONCE(node->ctx->submitter_task &&
++					     node->ctx->submitter_task != current);
++				goto end_wait;
++			}
++		}
++		/*
++		 * If we've seen completions, retry without waiting. This
++		 * avoids a race where a completion comes in before we did
++		 * prepare_to_wait().
++		 */
++		if (inflight == tctx_inflight(tctx, !cancel_all))
++			schedule();
++end_wait:
++		finish_wait(&tctx->wait, &wait);
++	} while (1);
++
++	io_uring_clean_tctx(tctx);
++	if (cancel_all) {
++		/*
++		 * We shouldn't run task_works after cancel, so just leave
++		 * ->in_cancel set for normal exit.
++		 */
++		atomic_dec(&tctx->in_cancel);
++		/* for exec all current's requests should be gone, kill tctx */
++		__io_uring_free(current);
++	}
++}
+diff --git a/io_uring/cancel.h b/io_uring/cancel.h
+index 6d5208e9d7a6..6783961ede1b 100644
+--- a/io_uring/cancel.h
++++ b/io_uring/cancel.h
+@@ -29,10 +29,14 @@ bool io_match_task_safe(struct io_kiocb *head, struct io_uring_task *tctx,
+ bool io_cancel_remove_all(struct io_ring_ctx *ctx, struct io_uring_task *tctx,
+ 			  struct hlist_head *list, bool cancel_all,
+ 			  bool (*cancel)(struct io_kiocb *));
+-
+ int io_cancel_remove(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
+ 		     unsigned int issue_flags, struct hlist_head *list,
+ 		     bool (*cancel)(struct io_kiocb *));
++__cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
++					 struct io_uring_task *tctx,
++					 bool cancel_all, bool is_sqpoll_thread);
++__cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
++__cold bool io_cancel_ctx_cb(struct io_wq_work *work, void *data);
+ 
+ static inline bool io_cancel_match_sequence(struct io_kiocb *req, int sequence)
+ {
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index b3be305b99be..3f0489261d11 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -124,11 +124,6 @@
+ #define IO_REQ_ALLOC_BATCH		8
+ #define IO_LOCAL_TW_DEFAULT_MAX		20
+ 
+-struct io_defer_entry {
+-	struct list_head	list;
+-	struct io_kiocb		*req;
+-};
+-
+ /* requests with any of those set should undergo io_disarm_next() */
+ #define IO_DISARM_MASK (REQ_F_ARM_LTIMEOUT | REQ_F_LINK_TIMEOUT | REQ_F_FAIL)
+ 
+@@ -140,11 +135,6 @@ struct io_defer_entry {
+ /* Forced wake up if there is a waiter regardless of ->cq_wait_nr */
+ #define IO_CQ_WAKE_FORCE	(IO_CQ_WAKE_INIT >> 1)
+ 
+-static bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+-					 struct io_uring_task *tctx,
+-					 bool cancel_all,
+-					 bool is_sqpoll_thread);
+-
+ static void io_queue_sqe(struct io_kiocb *req, unsigned int extra_flags);
+ static void __io_req_caches_free(struct io_ring_ctx *ctx);
+ 
+@@ -512,7 +502,7 @@ void io_req_queue_iowq(struct io_kiocb *req)
+ 	io_req_task_work_add(req);
+ }
+ 
+-static unsigned io_linked_nr(struct io_kiocb *req)
++unsigned io_linked_nr(struct io_kiocb *req)
+ {
+ 	struct io_kiocb *tmp;
+ 	unsigned nr = 0;
+@@ -681,7 +671,7 @@ void io_task_refs_refill(struct io_uring_task *tctx)
+ 	tctx->cached_refs += refill;
+ }
+ 
+-static __cold void io_uring_drop_tctx_refs(struct task_struct *task)
++__cold void io_uring_drop_tctx_refs(struct task_struct *task)
+ {
+ 	struct io_uring_task *tctx = task->io_uring;
+ 	unsigned int refs = tctx->cached_refs;
+@@ -1409,8 +1399,7 @@ static inline int io_run_local_work_locked(struct io_ring_ctx *ctx,
+ 					max(IO_LOCAL_TW_DEFAULT_MAX, min_events));
+ }
+ 
+-static int io_run_local_work(struct io_ring_ctx *ctx, int min_events,
+-			     int max_events)
++int io_run_local_work(struct io_ring_ctx *ctx, int min_events, int max_events)
+ {
+ 	struct io_tw_state ts = {};
+ 	int ret;
+@@ -1564,7 +1553,7 @@ static unsigned io_cqring_events(struct io_ring_ctx *ctx)
+  * We can't just wait for polled events to come to us, we have to actively
+  * find and complete them.
+  */
+-static __cold void io_iopoll_try_reap_events(struct io_ring_ctx *ctx)
++__cold void io_iopoll_try_reap_events(struct io_ring_ctx *ctx)
+ {
+ 	if (!(ctx->flags & IORING_SETUP_IOPOLL))
+ 		return;
+@@ -2978,13 +2967,6 @@ static __cold void io_tctx_exit_cb(struct callback_head *cb)
+ 	complete(&work->completion);
+ }
+ 
+-static __cold bool io_cancel_ctx_cb(struct io_wq_work *work, void *data)
+-{
+-	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
+-
+-	return req->ctx == data;
+-}
+-
+ static __cold void io_ring_exit_work(struct work_struct *work)
+ {
+ 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx, exit_work);
+@@ -3118,224 +3100,6 @@ static int io_uring_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-struct io_task_cancel {
+-	struct io_uring_task *tctx;
+-	bool all;
+-};
+-
+-static bool io_cancel_task_cb(struct io_wq_work *work, void *data)
+-{
+-	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
+-	struct io_task_cancel *cancel = data;
+-
+-	return io_match_task_safe(req, cancel->tctx, cancel->all);
+-}
+-
+-static __cold bool io_cancel_defer_files(struct io_ring_ctx *ctx,
+-					 struct io_uring_task *tctx,
+-					 bool cancel_all)
+-{
+-	struct io_defer_entry *de;
+-	LIST_HEAD(list);
+-
+-	list_for_each_entry_reverse(de, &ctx->defer_list, list) {
+-		if (io_match_task_safe(de->req, tctx, cancel_all)) {
+-			list_cut_position(&list, &ctx->defer_list, &de->list);
+-			break;
+-		}
+-	}
+-	if (list_empty(&list))
+-		return false;
+-
+-	while (!list_empty(&list)) {
+-		de = list_first_entry(&list, struct io_defer_entry, list);
+-		list_del_init(&de->list);
+-		ctx->nr_drained -= io_linked_nr(de->req);
+-		io_req_task_queue_fail(de->req, -ECANCELED);
+-		kfree(de);
+-	}
+-	return true;
+-}
+-
+-static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
+-{
+-	struct io_tctx_node *node;
+-	enum io_wq_cancel cret;
+-	bool ret = false;
+-
+-	mutex_lock(&ctx->uring_lock);
+-	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
+-		struct io_uring_task *tctx = node->task->io_uring;
+-
+-		/*
+-		 * io_wq will stay alive while we hold uring_lock, because it's
+-		 * killed after ctx nodes, which requires to take the lock.
+-		 */
+-		if (!tctx || !tctx->io_wq)
+-			continue;
+-		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_ctx_cb, ctx, true);
+-		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
+-	}
+-	mutex_unlock(&ctx->uring_lock);
+-
+-	return ret;
+-}
+-
+-static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+-						struct io_uring_task *tctx,
+-						bool cancel_all,
+-						bool is_sqpoll_thread)
+-{
+-	struct io_task_cancel cancel = { .tctx = tctx, .all = cancel_all, };
+-	enum io_wq_cancel cret;
+-	bool ret = false;
+-
+-	/* set it so io_req_local_work_add() would wake us up */
+-	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+-		atomic_set(&ctx->cq_wait_nr, 1);
+-		smp_mb();
+-	}
+-
+-	/* failed during ring init, it couldn't have issued any requests */
+-	if (!ctx->rings)
+-		return false;
+-
+-	if (!tctx) {
+-		ret |= io_uring_try_cancel_iowq(ctx);
+-	} else if (tctx->io_wq) {
+-		/*
+-		 * Cancels requests of all rings, not only @ctx, but
+-		 * it's fine as the task is in exit/exec.
+-		 */
+-		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
+-				       &cancel, true);
+-		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
+-	}
+-
+-	/* SQPOLL thread does its own polling */
+-	if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
+-	    is_sqpoll_thread) {
+-		while (!wq_list_empty(&ctx->iopoll_list)) {
+-			io_iopoll_try_reap_events(ctx);
+-			ret = true;
+-			cond_resched();
+-		}
+-	}
+-
+-	if ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
+-	    io_allowed_defer_tw_run(ctx))
+-		ret |= io_run_local_work(ctx, INT_MAX, INT_MAX) > 0;
+-	mutex_lock(&ctx->uring_lock);
+-	ret |= io_cancel_defer_files(ctx, tctx, cancel_all);
+-	ret |= io_poll_remove_all(ctx, tctx, cancel_all);
+-	ret |= io_waitid_remove_all(ctx, tctx, cancel_all);
+-	ret |= io_futex_remove_all(ctx, tctx, cancel_all);
+-	ret |= io_uring_try_cancel_uring_cmd(ctx, tctx, cancel_all);
+-	mutex_unlock(&ctx->uring_lock);
+-	ret |= io_kill_timeouts(ctx, tctx, cancel_all);
+-	if (tctx)
+-		ret |= io_run_task_work() > 0;
+-	else
+-		ret |= flush_delayed_work(&ctx->fallback_work);
+-	return ret;
+-}
+-
+-static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+-{
+-	if (tracked)
+-		return atomic_read(&tctx->inflight_tracked);
+-	return percpu_counter_sum(&tctx->inflight);
+-}
+-
+-/*
+- * Find any io_uring ctx that this task has registered or done IO on, and cancel
+- * requests. @sqd should be not-null IFF it's an SQPOLL thread cancellation.
+- */
+-__cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+-{
+-	struct io_uring_task *tctx = current->io_uring;
+-	struct io_ring_ctx *ctx;
+-	struct io_tctx_node *node;
+-	unsigned long index;
+-	s64 inflight;
+-	DEFINE_WAIT(wait);
+-
+-	WARN_ON_ONCE(sqd && sqpoll_task_locked(sqd) != current);
+-
+-	if (!current->io_uring)
+-		return;
+-	if (tctx->io_wq)
+-		io_wq_exit_start(tctx->io_wq);
+-
+-	atomic_inc(&tctx->in_cancel);
+-	do {
+-		bool loop = false;
+-
+-		io_uring_drop_tctx_refs(current);
+-		if (!tctx_inflight(tctx, !cancel_all))
+-			break;
+-
+-		/* read completions before cancelations */
+-		inflight = tctx_inflight(tctx, false);
+-		if (!inflight)
+-			break;
+-
+-		if (!sqd) {
+-			xa_for_each(&tctx->xa, index, node) {
+-				/* sqpoll task will cancel all its requests */
+-				if (node->ctx->sq_data)
+-					continue;
+-				loop |= io_uring_try_cancel_requests(node->ctx,
+-							current->io_uring,
+-							cancel_all,
+-							false);
+-			}
+-		} else {
+-			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+-				loop |= io_uring_try_cancel_requests(ctx,
+-								     current->io_uring,
+-								     cancel_all,
+-								     true);
+-		}
+-
+-		if (loop) {
+-			cond_resched();
+-			continue;
+-		}
+-
+-		prepare_to_wait(&tctx->wait, &wait, TASK_INTERRUPTIBLE);
+-		io_run_task_work();
+-		io_uring_drop_tctx_refs(current);
+-		xa_for_each(&tctx->xa, index, node) {
+-			if (io_local_work_pending(node->ctx)) {
+-				WARN_ON_ONCE(node->ctx->submitter_task &&
+-					     node->ctx->submitter_task != current);
+-				goto end_wait;
+-			}
+-		}
+-		/*
+-		 * If we've seen completions, retry without waiting. This
+-		 * avoids a race where a completion comes in before we did
+-		 * prepare_to_wait().
+-		 */
+-		if (inflight == tctx_inflight(tctx, !cancel_all))
+-			schedule();
+-end_wait:
+-		finish_wait(&tctx->wait, &wait);
+-	} while (1);
+-
+-	io_uring_clean_tctx(tctx);
+-	if (cancel_all) {
+-		/*
+-		 * We shouldn't run task_works after cancel, so just leave
+-		 * ->in_cancel set for normal exit.
+-		 */
+-		atomic_dec(&tctx->in_cancel);
+-		/* for exec all current's requests should be gone, kill tctx */
+-		__io_uring_free(current);
+-	}
+-}
+-
+ static struct io_uring_reg_wait *io_get_ext_arg_reg(struct io_ring_ctx *ctx,
+ 			const struct io_uring_getevents_arg __user *uarg)
+ {
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 2f4d43e69648..23c268ab1c8f 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -96,6 +96,11 @@ enum {
+ 	IOU_REQUEUE		= -3072,
+ };
+ 
++struct io_defer_entry {
++	struct list_head	list;
++	struct io_kiocb		*req;
++};
++
+ struct io_wait_queue {
+ 	struct wait_queue_entry wq;
+ 	struct io_ring_ctx *ctx;
+@@ -134,6 +139,7 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
+ int io_uring_fill_params(unsigned entries, struct io_uring_params *p);
+ bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32);
+ int io_run_task_work_sig(struct io_ring_ctx *ctx);
++int io_run_local_work(struct io_ring_ctx *ctx, int min_events, int max_events);
+ void io_req_defer_failed(struct io_kiocb *req, s32 res);
+ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
+ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
+@@ -141,6 +147,7 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
+ bool io_req_post_cqe32(struct io_kiocb *req, struct io_uring_cqe src_cqe[2]);
+ void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
+ 
++unsigned io_linked_nr(struct io_kiocb *req);
+ void io_req_track_inflight(struct io_kiocb *req);
+ struct file *io_file_get_normal(struct io_kiocb *req, int fd);
+ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+@@ -155,7 +162,7 @@ void io_req_task_submit(struct io_tw_req tw_req, io_tw_token_t tw);
+ struct llist_node *io_handle_tw_list(struct llist_node *node, unsigned int *count, unsigned int max_entries);
+ struct llist_node *tctx_task_work_run(struct io_uring_task *tctx, unsigned int max_entries, unsigned int *count);
+ void tctx_task_work(struct callback_head *cb);
+-__cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
++__cold void io_uring_drop_tctx_refs(struct task_struct *task);
+ 
+ int io_ring_add_registered_file(struct io_uring_task *tctx, struct file *file,
+ 				     int start, int end);
+@@ -164,6 +171,7 @@ void io_req_queue_iowq(struct io_kiocb *req);
+ int io_poll_issue(struct io_kiocb *req, io_tw_token_t tw);
+ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr);
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin);
++__cold void io_iopoll_try_reap_events(struct io_ring_ctx *ctx);
+ void __io_submit_flush_completions(struct io_ring_ctx *ctx);
+ 
+ struct io_wq_work *io_wq_free_work(struct io_wq_work *work);
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index a3f11349ce06..e82997d26ebb 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -18,6 +18,7 @@
+ #include "io_uring.h"
+ #include "tctx.h"
+ #include "napi.h"
++#include "cancel.h"
+ #include "sqpoll.h"
+ 
+ #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
+
+-- 
+Jens Axboe
+
 

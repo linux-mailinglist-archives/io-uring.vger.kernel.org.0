@@ -1,85 +1,84 @@
-Return-Path: <io-uring+bounces-10330-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10331-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C34CC2DBB4
-	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 19:51:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0000C2DBD3
+	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 19:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F73B18986BF
-	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 18:51:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DB9A4F0D7F
+	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 18:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B83325488;
-	Mon,  3 Nov 2025 18:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC783254B6;
+	Mon,  3 Nov 2025 18:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="R1m7uq4D"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JUrOIIdU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DACC325487
-	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 18:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C3A325497
+	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 18:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762195785; cv=none; b=J6reJnREiGHyG7B/aemEBkCYVsd19qS5W73qGImwMNEcZk0SH4U61R9lH7abPyGaAoKvho0zrgdW5chE8KATreW5TPopQRfLeXwL2xNBd6JcBAjaALd1v2so7I465Jkw7sX+Srks3dOZmrXpNrAKJ45x9eeyaNpBOqRLdvbbHRE=
+	t=1762195786; cv=none; b=DdcAhjnhVmPOiqYJG5TJQ/fRiPfpuZXvte2rUpePOFkOGVHzLqbz0MPvevgf/7CpF3BC9hnHtlUdarM/sm+LhjOnRNwBTkf7nrC6jTiwKXamIC65SoPls2093GNp089gd1TteIDPs0KiyWTbjE1AW3u+Vf3CsB/E/aCvvIDkC8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762195785; c=relaxed/simple;
-	bh=vzKSDaw1zFclyAigJv6xxo3jc8EAoTvjteYEoLWG5eg=;
+	s=arc-20240116; t=1762195786; c=relaxed/simple;
+	bh=lYhE3DwBK7BiAwaOWMOnfSVuzuF3/kzNqFvVKPjuWrA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nK7NAlP0k67n8NuQdL0vdR5YgwLbVJItz7dNJmdjhmvrMoWosPpKBX7i6WoynwaqxwAAIpoU16SZr53UfFUq0GQwtUtVl1humTKYKnlMnZ0CLOESJ94mx9Qm850HeBDN9a/ExFrqinCnaAWLhLBUhhXJy1FJt3dNqavvcT4Aogs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=R1m7uq4D; arc=none smtp.client-ip=209.85.166.51
+	 MIME-Version; b=ibXRNFCbjXsi5YNbY6HzH5fVB4IG71mf0S2BElZmDrJ6XpEYMMc96rvZzusAbHA2LvzJpw19let8JSCnzoeVCyrjCsDwDeIZ0/k+Nz3tp43SNkX6HQawDldtPX0225+W96c1jtQdRQb3PIpnmrAC0yC1QA2yxyog0HA9PGKmK1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JUrOIIdU; arc=none smtp.client-ip=209.85.166.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-9484c29576bso99281639f.2
-        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 10:49:43 -0800 (PST)
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-4332381ba9bso26357415ab.1
+        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 10:49:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762195782; x=1762800582; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762195783; x=1762800583; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7oDaLu7YVCQ1A6oaAVrgvU0sld2Y62Gz6PvoBNuDm/s=;
-        b=R1m7uq4DO7DZtbEjOLZ7KWCr+rW7OpFzVJmdIUEzi8zH4KExd1UEBXvbtJIpvouzBh
-         O5pn2hcXFFWVaeICHs6sFVJM2d4wdD4JrRuiyPVknj59qDoUSnZfuRJMVjs4473/GCJy
-         gILSDCnH4FqxaXVV1UJpsRbnCI2BvpzugqPVgR/hBuSz98qtGc9bs9V2jWrjQ56K9nzJ
-         chG8xZwCZ3ALd/ccIaFNO8mwmL1zxyYUoDSsiHIkmf2keHd0mpbtgbmd951tEfcnBqsq
-         wlBE0eTUSYrFCA2aMFRDbJ65nB3db0mQ2PK+UExcdRf3YWrnsfJFDTujLDOtrgWQe5pv
-         RmAA==
+        bh=QzM9ihltmPaewSfHUKeA+wV2tknYcYzl+72JUfBSunk=;
+        b=JUrOIIdU1T5Q8og5h8eTQyJfpZwAMIrhEo1ohhOI9MuVskzOSnEoxzQhwwy+V/54W/
+         bIgEqjIGOubHs5ktSIdmmFJRbsXNwv3hnGVlKLUIU68NW/EysLrkk4Vo4DbePcFJe3Y3
+         Y633yp/UEX1Mc+RLjH5qsNfM707IN81U5cyFi2aaRLNuvSi/8C65BaqBc1PLt1JAW9gD
+         fJP8Uy1UL+wutBJFOrZ/n1F0ePfdmHqmjflqWsNgdd0EJaJabmvN6dJAQn1D1jri4NGc
+         MKwUu8qvPmnVGfEL7PfdFF63SmLM+hMZyfvemArrqGZMYnpiw7+JPRhEZw8a5+w00FLz
+         x8mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762195782; x=1762800582;
+        d=1e100.net; s=20230601; t=1762195783; x=1762800583;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7oDaLu7YVCQ1A6oaAVrgvU0sld2Y62Gz6PvoBNuDm/s=;
-        b=uVBsXimczirNRzrAtsxIXuCKPO2+DBDSYdFy0bUL3qFzPXsaypATQm+HaRBdsSDHQ9
-         inwnJSOfgbatraNE/+7b3LSBOrX7hbI82vkAaeuFzJkoSq0eZnmdegZBRNNSHTQ/gDeH
-         11YwIqQcVHEvB832be79l8f4NQNRHIGu6CkPyJdiAPwWQO0LFMH4PtFRaQdyy5D26XyN
-         KqHAiaa4sz2SQ7Usb+5+Y2Vel6L0lcEOlWfQJcGRRK0aTFKM2sFEDE98s1cCyr4oaxGx
-         gxaeYrHJSyLv1szkOluWP26ub0mR8dggp9at8JnMa4rDKt5kU3eOFxj8AObaHtZLxCn4
-         lCMQ==
-X-Gm-Message-State: AOJu0YyhJvO0kguORjgG+3j9a7b9bmz9uczf4cvz18um3fgbfOZzc0H0
-	U/DpfaYKi3lB5tI4YOi4ziLPua216iYHcXf+A5nNp1SslvZsv6618j9HwvhjlJNKuPpVFvxRq1o
-	9U9/2
-X-Gm-Gg: ASbGncv1TUCd+jJ8cGOtsOwt/v948lMGEev1PNTQ365ZrcDqgojZBNdBfLytfPOCFXg
-	mblidHgoxfwc/S8ULn2jNJAuPqHUvxMvRGtWURz3rZEAfBZ7QmmbTlRu1f9fTrdck5hsa51ELkK
-	GnJOxVV/tbOtms/iI9P680bq9iKoab0+80HE4Afz+rviocr4Y9x+MroWSEtuYRVvf3NKEBpnwfp
-	vsYLeaPf5gimmjk5UAu6l6vUbc6tFtmCziZN4Q/TJmmLWMJroIZrs5c7ZKrzaAghZSbe3DDi4P7
-	yjpGPPJ8xWkJNLzRwP0Pb/OO17TOgh3LO32ebyReHXEUHSoMCYBu8GIShzKGfK980SufYyjzA9m
-	17kcE8QR9/l6+bqKuX6QWwC5z7JCsES6nXrEIt/ePp1mqnzZw7HWrf6wQtcCbyaF8TbntcQAv29
-	qjNVT6
-X-Google-Smtp-Source: AGHT+IHl5A0kMiFr7xvAMfgKHK2iu9eUI/aTyAi4W0Aux7iqBxviX88HPt+6GjTI8cPAC+lzmkRFMA==
-X-Received: by 2002:a05:6e02:490e:b0:433:1cd2:2fea with SMTP id e9e14a558f8ab-4331cd23186mr133697115ab.6.1762195781945;
-        Mon, 03 Nov 2025 10:49:41 -0800 (PST)
+        bh=QzM9ihltmPaewSfHUKeA+wV2tknYcYzl+72JUfBSunk=;
+        b=BIJj/VmNO5QsQKXWKktVnXo0J3aaRDptMj047FosmWJG3odQym08OMxWomLVo565NB
+         g628pI7AVC+q6u56ciDA9q/w+ZT1T1la+xE/PHD5j2GJiTB3lkwFlbpMLZtr8E5HGx/3
+         QohSnp0lNmkS5MR2F4hVk3hmOVIcDcK6cPzhtSiz8TtF1T5J1LmKHtRi3G5GGzsqqwZf
+         5GRpROW4Ti5HEVuJUtGflZSjt+A/+UQN7/w9Dh82aJSIHBMavAtCkw1EWbyeiSyVDiGK
+         ahL1vNQXoZx6ga9pSrLGF7moiSgfRioGPLHObfFGhRkk43OeLiOo1ZWhg7bAQGZAhX/E
+         0FxQ==
+X-Gm-Message-State: AOJu0YznJC1EVfZvSfXh9osGWLKqRciMs89eu1Dx/1QBVwx3ERlEg1Je
+	6DS1VMVlH4Ap7qP/v9gxB0/eWhtd/Vz+CYIMO5f0sZ7pdDPFMpaOVKPz+qWvajK7UwmOjbiXL+n
+	blPuG
+X-Gm-Gg: ASbGncusmM5l8SALrsRAbxXaRYeB7kpV3KHVxXiXAUMVARt7y6dhOrXII1xyoKTsZtt
+	3GSS8a9xMVVrjk6hkXfSggxiC40WEx0SLifNOg5o/e7qxlRIawUuUdR52fdQ2vmtGXZw0oN9xeF
+	eaIChtKshyoxMGHtcWzipRTSQCfOkInzrSPXDvItNUXHKZH7auMP1QNmof9jnMyfHBwAHPywjjO
+	9fzyBAVk5LdVcaGwLP5RtpVrkaGptqlhDcscGkJpPvRrOUmw8IBiT+Gpb0rZVxnfvp9D/9zk1YL
+	PUwxTmuJbqKURpkHh0VWTorvHZG30fCmcVk/fxnRgtNdgBOBMBSskbGp//LEpNpxrpS8oVTdf9q
+	ze80LsG98rck4cdK6zpOatLqqxXUch8jEwXFU2IellWvM1Fh5eSg1gxlmkinyifmWCPNX8w==
+X-Google-Smtp-Source: AGHT+IHD/x3u/SLzcT0wEpiv4LYPmLgoCvgNoZuqHpvXmgUd32e0uXlOfT4zBfu0m7o7SGMl/IA9yg==
+X-Received: by 2002:a05:6e02:160c:b0:433:30d4:389e with SMTP id e9e14a558f8ab-43330d43958mr52992395ab.3.1762195783336;
+        Mon, 03 Nov 2025 10:49:43 -0800 (PST)
 Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335a2224bsm4572985ab.0.2025.11.03.10.49.40
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335a2224bsm4572985ab.0.2025.11.03.10.49.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 10:49:41 -0800 (PST)
+        Mon, 03 Nov 2025 10:49:42 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/6] io_uring/slist: remove unused wq list splice helpers
-Date: Mon,  3 Nov 2025 11:47:58 -0700
-Message-ID: <20251103184937.61634-2-axboe@kernel.dk>
+Subject: [PATCH 2/6] io_uring/rsrc: use get/put_user() for integer copy
+Date: Mon,  3 Nov 2025 11:47:59 -0700
+Message-ID: <20251103184937.61634-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103184937.61634-1-axboe@kernel.dk>
 References: <20251103184937.61634-1-axboe@kernel.dk>
@@ -91,42 +90,37 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Nobody is using those helpers anymore, get rid of them.
+It's just getting an integer from userspace, installing a file, then
+copying the output direct descriptor back. No need to use the full
+copy_to/from_user() for that.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/slist.h | 18 ------------------
- 1 file changed, 18 deletions(-)
+ io_uring/rsrc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/slist.h b/io_uring/slist.h
-index 0eb194817242..7ef747442754 100644
---- a/io_uring/slist.h
-+++ b/io_uring/slist.h
-@@ -67,24 +67,6 @@ static inline void wq_list_cut(struct io_wq_work_list *list,
- 	last->next = NULL;
- }
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d787c16dc1c3..4cc38eb56758 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -454,7 +454,7 @@ static int io_files_update_with_index_alloc(struct io_kiocb *req,
+ 		return -ENXIO;
  
--static inline void __wq_list_splice(struct io_wq_work_list *list,
--				    struct io_wq_work_node *to)
--{
--	list->last->next = to->next;
--	to->next = list->first;
--	INIT_WQ_LIST(list);
--}
--
--static inline bool wq_list_splice(struct io_wq_work_list *list,
--				  struct io_wq_work_node *to)
--{
--	if (!wq_list_empty(list)) {
--		__wq_list_splice(list, to);
--		return true;
--	}
--	return false;
--}
--
- static inline void wq_stack_add_head(struct io_wq_work_node *node,
- 				     struct io_wq_work_node *stack)
- {
+ 	for (done = 0; done < up->nr_args; done++) {
+-		if (copy_from_user(&fd, &fds[done], sizeof(fd))) {
++		if (get_user(fd, &fds[done])) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+@@ -468,7 +468,7 @@ static int io_files_update_with_index_alloc(struct io_kiocb *req,
+ 					  IORING_FILE_INDEX_ALLOC);
+ 		if (ret < 0)
+ 			break;
+-		if (copy_to_user(&fds[done], &ret, sizeof(ret))) {
++		if (put_user(ret, &fds[done])) {
+ 			__io_close_fixed(req->ctx, issue_flags, ret);
+ 			ret = -EFAULT;
+ 			break;
 -- 
 2.51.0
 

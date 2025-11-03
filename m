@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-10351-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10352-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B5BC2E74C
-	for <lists+io-uring@lfdr.de>; Tue, 04 Nov 2025 00:44:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA39BC2E725
+	for <lists+io-uring@lfdr.de>; Tue, 04 Nov 2025 00:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A3B3BE497
-	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 23:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD70189B1F8
+	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 23:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3473191B2;
-	Mon,  3 Nov 2025 23:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ACA31B80C;
+	Mon,  3 Nov 2025 23:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="r1Cv1Ge2"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="RQbQZPQZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C499131815E
-	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 23:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC2E319872
+	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 23:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213291; cv=none; b=iJeZ04eWpNCeWjLMsUwkTWqyO9W4vxBriSwq8DjpoxwXYGg3wxp3jVxZUKr7NCQpYZ2CbOg7CgCBqQE1Bwn6Rzdomfrorpnq6XBzAz6HkRb6k8SHq6g6efi8UvfLzS3sAEkfsz+HRm3FbF0TLsoPntETXp29Up5rF0E845erKlM=
+	t=1762213292; cv=none; b=h2KsDv0osOqdRLmG3sQ7t4cz4ZnB0zwO7dgIjSLolAacJdTyqD6Pbq6QgSEsZ1bfUyBHvZBQcDcDuFVNr/NGZvHwekizuOt2cZz7cWvWIJKZ+avgCyZ1YiWjyqJ06BoM5zJ7WqtjJdT5I5u05CFsb2UuisPZhOTM8edAnJ7wO+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213291; c=relaxed/simple;
-	bh=U0ZYXEHXEsTrFhhXuREKpn8yvcDcxKISIDWF4BsAVmU=;
+	s=arc-20240116; t=1762213292; c=relaxed/simple;
+	bh=1OLS/0yvwaf5d+sHAX8W0GDbPIQ9bnPvBEe4g9Sc5QY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ndv/YMUn1Yopk1iJVEDo5agf5cvGizS42KStbgR1BUXC265M+RF5/g7MWJpWkvg/AbnnSutVOilWsYsnu43PIWAKpOti1D/BuPjmaxlGhMJJXv9C0rFkT77SRcxPo7MU9dOEF+uc+vefOHfo2uq5MHWAVV7USk4Ketk6Ofj5f4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=r1Cv1Ge2; arc=none smtp.client-ip=209.85.160.44
+	 MIME-Version; b=gy+9XM7ImT35ycJkYZJUfAfdBSOSqFTqhauEMKoExOE/+bUAGUi+LsH3Z9bJAybMbQj3VjDcORz/QCTmjIgKsKJVa0Zp5q+C4W+yP6sMRp5AokRbdm9K09Ji6kl/Rh3Pd9uNsvqAFdKB2cBKYa6r5RNZdZtqdXz3mPNf/g4TOYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=RQbQZPQZ; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-3d3b1042e72so3420089fac.2
-        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 15:41:29 -0800 (PST)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3d238ab4d9fso3934650fac.1
+        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 15:41:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1762213289; x=1762818089; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1762213290; x=1762818090; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xTmA5rsVRDDOULatDfSTXyOcAevzV0wASZvMyMVykzE=;
-        b=r1Cv1Ge2bk7IY1J32layCDI8AOsV6JuLFDY84r91zroseYgLM+Qnq5D/ZtUg1f/8db
-         F7RHM5hb2pEMnYLTqpVsF0EkaetrZToIpCrr4CAeSFA2rNOfA27Vk1xuxnWCV/e6/NYU
-         PPN7NfLAKVOSkrcaUXduUL2xGFWxhAYGHp2hKU2aJ3xc1QEF1lHMjI+o40gUph2YLpLX
-         k5p2I86psr9Gqv51LxUsWoYV+Wbte4UOUbaZVMcCWjdAiadAkikW6lbIlnaF8vrU5iAB
-         qW66w6+TR05dsSIyV7w4EiPjIx+2YFYgSKrENFWL0KeLO/u/IKh20jSbCmelOs9QNixi
-         mhDQ==
+        bh=KYugGlUm1QG3RSCIiMKw62nFrw0/PRs6ahB4+c7pzJ4=;
+        b=RQbQZPQZoZPsDHX1T8tixfwZIjELeUhrws0Un+J2C2RwObO2XiTiXJoW3idbZuaVPR
+         nuBlBoOWRTbEc+J9p7OB0NU/bWhLvkYnEOjrIY+PWsv3EF0QvyOC5X6QWW3GHBegV8mu
+         iBooffiqyvw15n2Sv5IcxuNBartVP/6YkHjqMQPxhXnOWLcfDqlFOZioSGeazWY64Z0s
+         d8Tgi4CEGlptgc/eZlx867Z5qv7SOy0qmJVXjNDMKILe5M76zc5TpVzrhEM2WMobgOWe
+         kLG1lKkL3F2m6ThU4A+V5mBOJW/LMxAObDOrxLVbaNR1zKtnLdoUnKvYn0U5Zer81QKC
+         W1cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762213289; x=1762818089;
+        d=1e100.net; s=20230601; t=1762213290; x=1762818090;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xTmA5rsVRDDOULatDfSTXyOcAevzV0wASZvMyMVykzE=;
-        b=Zn2eYwdUpdNjmR2DgCq1sFAEml+clzzwuMxtrV40msu9OxH6VKukuTKMpfFWUDxPKh
-         PpG1CK61HBQNbDZTbad0blNpEIQC+IaGYuP1SwSugZoY/90U4ToPqLAT2JoYwZjB5fKj
-         BKuw231OoDjhcXrdAf4WefcYi2Y8O99zaPYMsErNhrHL70p+q0jWcU0bNveQz1NOkBAN
-         LV2Mmne1QLIAwV8yvv4fhvPB2U/2gWpDkz1qPLIyjDuzHd0PGwMh8ai2xqlZJGy3HIge
-         vv54ZvqemtDgJPgrFJTqTtQUADuxv4S5ThLBbzNmzMdg/9rRYtDNpZpNyq+WlH36GvSH
-         9soA==
-X-Gm-Message-State: AOJu0YzqHUnklb1y0bxS5xs1jXEpwCkJIuOCpihmqBRnSts+FmfFQyTV
-	DD8QWhT4T8eqrLJr+sfLz8KYqdriKMGnZA0RRJMBFHypNYG2ChWiMTWESCgr80GtBR6UM5HioNm
-	bhkcM
-X-Gm-Gg: ASbGncuTXqQk5FFKN/5mg9pjfeGXCc1oN5hkTIMHf+ZQaYPADcf44vWKrt/k9WfL6Qs
-	FrUvmdYiAmMYp83tvy3cr5ENReAaRq2ZS1XnGTHsTSCqFKw8S91ficnZs2NEuTfbX7+d4ZbZiVP
-	ilRuZH6KzEEG1iL63VgEGkPrdzmdB3+UpfM1HFNn+CifioO37S20yoyIciknVP8L+/WwW9/8ubi
-	ufUfH5CK17ZNIuI9BjjY/VEiIfa1W8RRH+p9FTUdtOutIP/a75bsWZ1ePbGBSLCThQNVt89yrpj
-	XZbTldY0sTVt48xcLkohsjZXtiaIuhYGNEMXd946kOiODLu9y3fh8a7os8E99EPZ8bccNeTKpQF
-	oTz7iMn0q4l+jldhDRbvQnQ9E3bdUG7BHGdWaPzpVLrJH0lOzeKcxzX1R4N2jaonjRlCs6bAgHK
-	nXa9S7E4mfNeXqd9URyz8v1hL/dEb5
-X-Google-Smtp-Source: AGHT+IEZmEv9zbPEz/npMP5dJmCkfcJ7WhnZZqdXqwCw3LP++yZGNkqR0P8i7IURJvU2QZ0BTB2WkA==
-X-Received: by 2002:a05:6870:cc84:b0:344:a994:2ad4 with SMTP id 586e51a60fabf-3dacd10ca2dmr6075029fac.20.1762213288786;
-        Mon, 03 Nov 2025 15:41:28 -0800 (PST)
-Received: from localhost ([2a03:2880:12ff:5::])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3dff521394esm519107fac.9.2025.11.03.15.41.28
+        bh=KYugGlUm1QG3RSCIiMKw62nFrw0/PRs6ahB4+c7pzJ4=;
+        b=XoBDVJsSGSOw23HD7tcJ4u1XpComoGa9ZtUVqdZRgZVHKlAnyTXBygkYwxD1vNdJVH
+         Bso2FYdpOzfMNQqRDtk8hEJYpMygghegxHcJkUXdOR+PjsJVZjUJCym+RBUaq7YQxGAE
+         tcbpG3D5zkZ9bIyEMUIuQLhiWUvhiaj32QbmGxOcqYkl5fidGlwaeOI1Vezg2/3d7hJo
+         ckdukLgNPUtU+OVpGIvy0GxQVAvO7Xqco2bp9Yk9oex3QQIzG0PHziwBFgdLpoPeiK29
+         URXEsZpRDsPfyelnNW5C0msUH36eByIgX+W/m6xd96uRcqOL2UogthJpEtk8KyeufYi7
+         qgxQ==
+X-Gm-Message-State: AOJu0Yz4IghA6gvhux5NZU+wbKux+DjqgoVpIeJzzjEHczW/qElY1AWa
+	smywlrU3BYuWEGOpwqSv882JI93sdKPzeRv8pBk9B4gXvO+zeqpDMSWrccnKbi3yxYXeb9XteiR
+	VoGzh
+X-Gm-Gg: ASbGncvYFiQBNNj+N5EhbVl7z0fRuXvEkW3PnlFLSxUeon1IckXW10i8+IB9oKMCVSd
+	eOSJPVZJVp3OvHHCwUBQFtQedlh/6NGuty5+2h/4BpuEQWquQ1UDKc2U+cvrcBrmlEbkyH4vs+F
+	SiJwUd4uoEeFbho8LtwQgOSM4lvU63KDlEnJE7yWG4lj1tCAUlQqxx7xhGld8oTulCqObCdQ2vH
+	D6rru/3+MBKyOCzW1Bgr9A4Wd8a0gO5Nddv6KwcsTMSxH1pH3s0CzZHkxUTbbb21wjPeJAA6p3h
+	Fd2LQoY2IksCQxzsVF6p0NM1iKUhvtq1k6NwSqcn9Lr9hxS5cRgcmT7r0xj8dRwA/uk5mkvJ5fy
+	bZq2X1YMGCrFcVA6JgB0CsxmijfJjOUb25JiWGJtgyciAeOxy2a/fBPruUkg3u8j4WXNc/kG9pD
+	CSqvjiB9C0U5SE5NRFBMGHrTbm5r1U
+X-Google-Smtp-Source: AGHT+IEW3k8jc4pLNnI2/FbgrhuOA/EQYwUPg8LnkTE9oSPdA1nn/Rt+yO/8D/ZQQiWlwM406NUciw==
+X-Received: by 2002:a05:6870:3411:b0:3d1:a15c:f06a with SMTP id 586e51a60fabf-3e037344ea7mr592868fac.0.1762213290284;
+        Mon, 03 Nov 2025 15:41:30 -0800 (PST)
+Received: from localhost ([2a03:2880:12ff:7::])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3dff5213959sm542166fac.10.2025.11.03.15.41.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 15:41:28 -0800 (PST)
+        Mon, 03 Nov 2025 15:41:29 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v4 08/12] io_uring/zcrx: move io_unregister_zcrx_ifqs() down
-Date: Mon,  3 Nov 2025 15:41:06 -0800
-Message-ID: <20251103234110.127790-9-dw@davidwei.uk>
+Subject: [PATCH v4 09/12] io_uring/zcrx: reverse ifq refcount
+Date: Mon,  3 Nov 2025 15:41:07 -0800
+Message-ID: <20251103234110.127790-10-dw@davidwei.uk>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251103234110.127790-1-dw@davidwei.uk>
 References: <20251103234110.127790-1-dw@davidwei.uk>
@@ -93,77 +93,183 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for removing the ref on ctx->refs held by an ifq and
-removing io_shutdown_zcrx_ifqs(), move io_unregister_zcrx_ifqs() down
-such that it can call io_zcrx_scrub().
+Add two refcounts to struct io_zcrx_ifq to reverse the refcounting
+relationship i.e. rings now reference ifqs instead. As a result of this,
+remove ctx->refs that an ifq holds on a ring via the page pool memory
+provider.
+
+The first ref is ifq->refs, held by internal users of an ifq, namely
+rings and the page pool memory provider associated with an ifq. This is
+needed to keep the ifq around until the page pool is destroyed.
+
+The second ref is ifq->user_refs, held by userspace facing users like
+rings. For now, only the ring that created the ifq will have a ref, but
+with ifq sharing added, this will include multiple rings.
+
+ifq->refs will be 1 larger than ifq->user_refs, with the extra ref held
+by the page pool. Once ifq->user_refs falls to 0, the ifq is cleaned up
+including destroying the page pool. Once the page pool is destroyed,
+ifq->refs will fall to 0 and free the ifq.
+
+Since ifqs now no longer hold refs to ring ctx, there isn't a need to
+split the cleanup of ifqs into two: io_shutdown_zcrx_ifqs() in
+io_ring_exit_work() while waiting for ctx->refs to drop to 0, and
+io_unregister_zcrx_ifqs() after. Remove io_shutdown_zcrx_ifqs().
 
 Signed-off-by: David Wei <dw@davidwei.uk>
+Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/zcrx.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ io_uring/io_uring.c |  5 -----
+ io_uring/zcrx.c     | 36 +++++++++++++++++-------------------
+ io_uring/zcrx.h     |  8 +++-----
+ 3 files changed, 20 insertions(+), 29 deletions(-)
 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 7d42748774f8..8af5efda9c11 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3042,11 +3042,6 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 			io_cqring_overflow_kill(ctx);
+ 			mutex_unlock(&ctx->uring_lock);
+ 		}
+-		if (!xa_empty(&ctx->zcrx_ctxs)) {
+-			mutex_lock(&ctx->uring_lock);
+-			io_shutdown_zcrx_ifqs(ctx);
+-			mutex_unlock(&ctx->uring_lock);
+-		}
+ 
+ 		if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+ 			io_move_task_work_from_local(ctx);
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index dcf5297c0330..bb5cc6ec5b9b 100644
+index bb5cc6ec5b9b..00498e3dcbd3 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -681,28 +681,6 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	return ret;
+@@ -479,9 +479,10 @@ static struct io_zcrx_ifq *io_zcrx_ifq_alloc(struct io_ring_ctx *ctx)
+ 		return NULL;
+ 
+ 	ifq->if_rxq = -1;
+-	ifq->ctx = ctx;
+ 	spin_lock_init(&ifq->rq_lock);
+ 	mutex_init(&ifq->pp_lock);
++	refcount_set(&ifq->refs, 1);
++	refcount_set(&ifq->user_refs, 1);
+ 	return ifq;
  }
  
--void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
--{
--	struct io_zcrx_ifq *ifq;
--
--	lockdep_assert_held(&ctx->uring_lock);
--
--	while (1) {
--		scoped_guard(mutex, &ctx->mmap_lock) {
--			unsigned long id = 0;
--
--			ifq = xa_find(&ctx->zcrx_ctxs, &id, ULONG_MAX, XA_PRESENT);
--			if (ifq)
--				xa_erase(&ctx->zcrx_ctxs, id);
--		}
--		if (!ifq)
--			break;
--		io_zcrx_ifq_free(ifq);
--	}
--
--	xa_destroy(&ctx->zcrx_ctxs);
--}
--
- static struct net_iov *__io_zcrx_get_free_niov(struct io_zcrx_area *area)
+@@ -537,6 +538,12 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
+ 	kfree(ifq);
+ }
+ 
++static void io_put_zcrx_ifq(struct io_zcrx_ifq *ifq)
++{
++	if (refcount_dec_and_test(&ifq->refs))
++		io_zcrx_ifq_free(ifq);
++}
++
+ struct io_mapped_region *io_zcrx_get_region(struct io_ring_ctx *ctx,
+ 					    unsigned int id)
  {
- 	unsigned niov_idx;
-@@ -768,6 +746,28 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
+@@ -611,6 +618,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 	ifq = io_zcrx_ifq_alloc(ctx);
+ 	if (!ifq)
+ 		return -ENOMEM;
++
+ 	if (ctx->user) {
+ 		get_uid(ctx->user);
+ 		ifq->user = ctx->user;
+@@ -733,19 +741,6 @@ static void io_zcrx_scrub(struct io_zcrx_ifq *ifq)
  	}
  }
  
-+void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
-+{
-+	struct io_zcrx_ifq *ifq;
-+
-+	lockdep_assert_held(&ctx->uring_lock);
-+
-+	while (1) {
-+		scoped_guard(mutex, &ctx->mmap_lock) {
-+			unsigned long id = 0;
-+
-+			ifq = xa_find(&ctx->zcrx_ctxs, &id, ULONG_MAX, XA_PRESENT);
-+			if (ifq)
-+				xa_erase(&ctx->zcrx_ctxs, id);
-+		}
-+		if (!ifq)
-+			break;
-+		io_zcrx_ifq_free(ifq);
-+	}
-+
-+	xa_destroy(&ctx->zcrx_ctxs);
-+}
-+
- static inline u32 io_zcrx_rqring_entries(struct io_zcrx_ifq *ifq)
+-void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
+-{
+-	struct io_zcrx_ifq *ifq;
+-	unsigned long index;
+-
+-	lockdep_assert_held(&ctx->uring_lock);
+-
+-	xa_for_each(&ctx->zcrx_ctxs, index, ifq) {
+-		io_zcrx_scrub(ifq);
+-		io_close_queue(ifq);
+-	}
+-}
+-
+ void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
  {
- 	u32 entries;
+ 	struct io_zcrx_ifq *ifq;
+@@ -762,7 +757,12 @@ void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
+ 		}
+ 		if (!ifq)
+ 			break;
+-		io_zcrx_ifq_free(ifq);
++
++		if (refcount_dec_and_test(&ifq->user_refs)) {
++			io_close_queue(ifq);
++			io_zcrx_scrub(ifq);
++		}
++		io_put_zcrx_ifq(ifq);
+ 	}
+ 
+ 	xa_destroy(&ctx->zcrx_ctxs);
+@@ -913,15 +913,13 @@ static int io_pp_zc_init(struct page_pool *pp)
+ 	if (ret)
+ 		return ret;
+ 
+-	percpu_ref_get(&ifq->ctx->refs);
++	refcount_inc(&ifq->refs);
+ 	return 0;
+ }
+ 
+ static void io_pp_zc_destroy(struct page_pool *pp)
+ {
+-	struct io_zcrx_ifq *ifq = io_pp_to_ifq(pp);
+-
+-	percpu_ref_put(&ifq->ctx->refs);
++	io_put_zcrx_ifq(io_pp_to_ifq(pp));
+ }
+ 
+ static int io_pp_nl_fill(void *mp_priv, struct sk_buff *rsp,
+diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
+index 2396436643e5..9014a1fd0f61 100644
+--- a/io_uring/zcrx.h
++++ b/io_uring/zcrx.h
+@@ -39,7 +39,6 @@ struct io_zcrx_area {
+ };
+ 
+ struct io_zcrx_ifq {
+-	struct io_ring_ctx		*ctx;
+ 	struct io_zcrx_area		*area;
+ 	unsigned			niov_shift;
+ 	struct user_struct		*user;
+@@ -55,6 +54,9 @@ struct io_zcrx_ifq {
+ 	struct device			*dev;
+ 	struct net_device		*netdev;
+ 	netdevice_tracker		netdev_tracker;
++	refcount_t			refs;
++	/* counts userspace facing users like io_uring */
++	refcount_t			user_refs;
+ 
+ 	/*
+ 	 * Page pool and net configuration lock, can be taken deeper in the
+@@ -69,7 +71,6 @@ int io_zcrx_ctrl(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_arg);
+ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ 			 struct io_uring_zcrx_ifq_reg __user *arg);
+ void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx);
+-void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx);
+ int io_zcrx_recv(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+ 		 struct socket *sock, unsigned int flags,
+ 		 unsigned issue_flags, unsigned int *len);
+@@ -84,9 +85,6 @@ static inline int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+ static inline void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
+ {
+ }
+-static inline void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
+-{
+-}
+ static inline int io_zcrx_recv(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
+ 			       struct socket *sock, unsigned int flags,
+ 			       unsigned issue_flags, unsigned int *len)
 -- 
 2.47.3
 

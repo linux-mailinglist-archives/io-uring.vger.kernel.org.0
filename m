@@ -1,138 +1,111 @@
-Return-Path: <io-uring+bounces-10328-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10329-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C065C2DAD4
-	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 19:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B0AC2DBD0
+	for <lists+io-uring@lfdr.de>; Mon, 03 Nov 2025 19:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C7A94E0EF5
-	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 18:29:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD4194E3601
+	for <lists+io-uring@lfdr.de>; Mon,  3 Nov 2025 18:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8E6310625;
-	Mon,  3 Nov 2025 18:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2606E31D741;
+	Mon,  3 Nov 2025 18:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="ukNjzSjM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NvFGwvi8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D257328CF42
-	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 18:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20575324B26
+	for <io-uring@vger.kernel.org>; Mon,  3 Nov 2025 18:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194575; cv=none; b=Z2cabu41IiR1XfntrOJ9SGaT/9UE6WFSNjMhU+U2J/HvZP5UfIEuHR1N9kZwvKU9nQFvyAMWF1NaV6+CKzb5o79ITb/cDJi6HFyw55wY9RJJukZeAo3Q1mozN31ldakYFBlyNRkukx0e+5U3CGAsyfTXdr/QEp1ENVXJ2b06h+g=
+	t=1762195785; cv=none; b=Y5m8hakhTL/LwDLW1viaZkcMMfppc9KJFJROeWR/CyNl0EmfcVAx+sxOf3jRCq0dq4aF7EAYAk2sEXStIBvqBcXyWCHfUqv02lgdIC4yzS9HyqcpoQ9a38IgcrN3io3HoHJPMEvBQRSG9RPB77O29EgA4toPUqWNI37kyzrGXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194575; c=relaxed/simple;
-	bh=wmAoFKWLR75h67tOzpzFWAsENGf3eJMEMC/hDrfVXjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mzleMIJ+KkTQqpNlDDlbvd0YXnN/nSyBYvpkswVtZxBHyfdmr8VGCpzpio6ei9AgD8VoaynLkHnILBnS7hDQon059yVVgeEE0kYCWam4IRvUzztANFimgbTTpD8FVbrdFMqIySolWt1jqA0tkc9F01rk8d0JTsrv7UgwVdCvipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=ukNjzSjM; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b6cf07258e3so3046073a12.0
-        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 10:29:33 -0800 (PST)
+	s=arc-20240116; t=1762195785; c=relaxed/simple;
+	bh=2IDWo6Y1McKJ1swbFBFhNUZEI4m/UAB8Wd/B4bpY1B8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=sjmQKLi4KDoJg8RR7T3rSue14pL9/LEM/uYV6oe+IDdeFEoay9hFFELreOljEKiWqS6oSGhB3ZA9PCTlPYgqcR+qPGj+SSwf1zMisFJa/zUc/xs2Lvo9LMGAfKcKwOGk/jrB+tzeccF6NfUkn1rg2Mc6KDFY2/8Lah29BrVXMZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NvFGwvi8; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-93e7c7c3d0bso477975939f.2
+        for <io-uring@vger.kernel.org>; Mon, 03 Nov 2025 10:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1762194573; x=1762799373; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PitSUlDm1go9vcuGwrxc/qigK0RG9QByQoNdiaE+6vo=;
-        b=ukNjzSjMp8FXrdxXksyuuuTwyVobQBLBdIuqVY4PVD8hRIiSVhxXtfN/rGbg5mPauc
-         9+QgzcYCiScNDOeciF5E10LcP9P6z5lluX3sNpf7cpWE3ev+JQHMSwgRPOEU0hHejdvX
-         MpaQoLYHZwJFtGldxlQRPCI798l9eL1n6tarvNCTsV5S+r2qx75ay5OWHQ3L5IZ0fKPr
-         B2jJKUi/4ii6lDq0m3IaPAmcE7Jtjeg/RZTK1TOghh6Js0bolulbvcRCnxyYUUUR7Bvj
-         3kvFM7HiIaikqcmr8FeG822uDwNnIqM7PD4lwC/4nR15qxTKt/eSaMDStw+4iEut4K7T
-         YicQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762195781; x=1762800581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ax/0vjum0RbG7U1BSS8HnhO7dk16wYriUAUnnZe5UQg=;
+        b=NvFGwvi86Wag8zUB0IzbLHW2g2K8sDdH4+reTOJ74i7wFJwpGrcNAHR6cRCoZQ59Q8
+         ZQe/RRqzVvGUnXbAjlOpdu6q5WAzSDNbyRyoT1+LH/J81VfNERNCFGrtouLe46eWLN4R
+         zRRd9bGhQWX9myxcG+xO3xtDRQgPRmycR3bS2vSlgYIrHFb40NTViZGP/DFKzVS6tHzL
+         0eefy+96w9R1y9lqvsWeBTk0a2UZLyM9viVv9fsjVjINX7PRnKJR/rCi3MC5fUTftcOG
+         QiRz09+//xg0cRf9u9tIS+d6nk5RsIRRm89aukqCOQ61UjqbITYRhXwnqcMfHotyz9lc
+         MJgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762194573; x=1762799373;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PitSUlDm1go9vcuGwrxc/qigK0RG9QByQoNdiaE+6vo=;
-        b=QJSSG+uxH0+LejTqJFYqFh537DyOhzoQtryrtqX4Xdp2TV+o+iXFVU20q6HRhNRR4b
-         rEVwh2cFQyM9CZzwh7KdsRdx4NFuaFYoxeErX4ue3Wx55fJ0A5kHKh0vYdvjz42Z2aGk
-         bcEkq1q65VmYYSoXxbgsHXczPw7ZvGKPZ+yXHrXwR02LUibO9qeYVr7CzjTI6MTYLVFk
-         hIXg44ACf/4aWNYz9/wPPL7Pi/Z5y+SVadTBa8qiuBbJpaqUeGVcsHoDRIjiy8/6plR4
-         5k4fWK2s4JwFWnhImMEFi5Zq1DZXOF1LgosglNQDXw6aDYzN6aXkK2rBKF/vCIk0fSzX
-         /hYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAgV4P5nujErlQpglsaScg6+R5eeUqX3TnYRILInBYcKwj47l0ipogrLmbV1M6TSKU4gb2B4ZBvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMxzz4VW5pwnP439N6LD8kOHrwazDszbCksC39TBbhNoh/GzVb
-	71PBpk7tRFITsUwTxvN4JjJ/1rAPcpJF7Rna7fl2p1uM7HliEs7hyOCN91fQO/k4Gtk=
-X-Gm-Gg: ASbGncvlRwApPX8tDqC87Xg58JgrpjB7frq0caCdV8Zb6HtW8hDTqekh3ujytnUvWGq
-	y+lLNOuO/aX/9wpr0p9RTFWIBdhqBP0pgek71A7FBbO9TzX7zTyByaye6kZ0mD6nNxJfLWOp6pg
-	e9Z3MhDrDGbkhcVRcoLqoJGlUMBw0eWtpaxIZIeGw7wH8OQVewN1vDjY3dLTVAksMOG19LKX5/1
-	DO54ULHnE5sTO3SLHOTlPA6rc0bamz4ZhgUoNJvuM/C7y0PeXHLCqgj2BuM2sOtp2LNwNpdTMXD
-	FACAX83W10lx6EaWQrMUHFmbPfUM3iZx5Ba3KWY7eMbYOW8hofOveQoQWNvU96TbEUQcEg4ssro
-	TtKN/d6T8tT7Xqh9LjYgA13jlKNgeJpioT4dsbFOGqE2va0CS3Foyp7nBq1KL+MDnqqd7cRQiyS
-	VpX5s8PsqoKWxkoAQg8nK4x0Aj8rXhAqMGTlW0Jxba99ppmqW0fw==
-X-Google-Smtp-Source: AGHT+IGW2nkRcJ3o/X5DXan+YDTZlhzqN1S6emKnORTiA21dPoo0N/2D2LoJeQBefEjC3aZZYzoH/g==
-X-Received: by 2002:a17:902:c40f:b0:295:a1a5:baee with SMTP id d9443c01a7336-295a1a5c06cmr51543855ad.4.1762194572902;
-        Mon, 03 Nov 2025 10:29:32 -0800 (PST)
-Received: from [192.168.86.109] ([136.27.45.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c9dbsm130124765ad.84.2025.11.03.10.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 10:29:32 -0800 (PST)
-Message-ID: <1f708620-303f-4466-b248-3490a8e9e424@davidwei.uk>
-Date: Mon, 3 Nov 2025 10:29:31 -0800
+        d=1e100.net; s=20230601; t=1762195781; x=1762800581;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ax/0vjum0RbG7U1BSS8HnhO7dk16wYriUAUnnZe5UQg=;
+        b=s52VnrSkevwIrD35Pjyl968WxAafjXB50EgAgNOONk4j/lI/AK9kv49dZ5sJKL+psA
+         r1IaXUfvu1SRsyytS/+9BtlVXghtkX1HdFFulKZxg7DROh611qkEV1OoPCgaJS9fetWK
+         taWDmtQpiYan4MN5XFAs5BqbW9E/OylVpurJ2ldBoIcavH0IngX/ypAb7N5nF00cihdG
+         SJ7E62xsll1keQEt03YnRzpj2yjYSb8D1OqKcjbz2RL85A/zyRFGzofyIHf8YC83DOrY
+         Md9LQ4vs7h9bn3VfawZYNEcA1fvFP0fu6ooXGcEMO21efBjUvsivvbpRji8ZiqrNzfhW
+         a+WA==
+X-Gm-Message-State: AOJu0YxH4WVWNMUkZDDSxlaQ8pEmChtvW61HsFLToeZB9BuYzut375nV
+	Zolj/nT2CClqYELAntY8YajlGodoy+c8w7tSi2qX3I/7ljY/3zjgAZpAAj9G/3jdKdqtWEaEdwN
+	pzzl4
+X-Gm-Gg: ASbGncsjaaf5DAWPCgAoPiO7u4pEOVQoxajNUxUZL73NNwAdpd8/UHSe2K1d5YLhvmZ
+	iLHvouPeMLhzOyaczJ2ewPWvwcO6D6b3GZgVY7kQ6pvVtGuIXk0XPCl7rhj5wk6lwkCQdTiudip
+	U+LrGWpF+bJvG9HsyFAg4atwt8Hv4bsXCiplxeVhdsfm0Hz28vBdASFg5BRL5vihW6Z2ddVvC14
+	jwm9s+xVSUTZv1kn6GooDY7iiQ6uDaCALL+NhL6pk1b3MgWX6pL3IV+uTsCvQe+tXL/enc94w3E
+	mNgMGe3CEtAmRJeGV3YuS4SOSldtJvRTkg2LPn/NbjTWw0ImPYpAlZYIX1O3NzLbaEuPFVMhqyi
+	Rgx/j51SzodmeWnTzh0bllujFF5rwxetj4/JFQb1zby2cC4AFqSJ9GKf7KWA68JyktCKwvw==
+X-Google-Smtp-Source: AGHT+IEW1Zb3TBUW8iSv3H8oMMTBxzGHmV9jpfd+nF4BdE8ga3o0/EI9aayfIyJ5DWUDxqbMAouSEg==
+X-Received: by 2002:a05:6e02:270a:b0:433:2aad:9873 with SMTP id e9e14a558f8ab-4332aad9b89mr72061815ab.29.1762195780685;
+        Mon, 03 Nov 2025 10:49:40 -0800 (PST)
+Received: from m2max ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335a2224bsm4572985ab.0.2025.11.03.10.49.39
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 10:49:39 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/6] Various minor cleanups
+Date: Mon,  3 Nov 2025 11:47:57 -0700
+Message-ID: <20251103184937.61634-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] net: io_uring/zcrx: call
- netdev_queue_get_dma_dev() under instance lock
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20251101022449.1112313-1-dw@davidwei.uk>
- <20251101022449.1112313-3-dw@davidwei.uk>
- <c374df85-23ec-4324-b966-9f2b3a74489a@gmail.com>
- <c8d945a3-4b12-4c04-9c68-4c5ad6173af5@davidwei.uk>
- <7805c473-448a-430c-a53b-a42e8d2c24bf@gmail.com>
-Content-Language: en-US
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <7805c473-448a-430c-a53b-a42e8d2c24bf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-11-03 10:21, Pavel Begunkov wrote:
-> On 11/3/25 17:47, David Wei wrote:
->> On 2025-11-03 05:51, Pavel Begunkov wrote:
->>> On 11/1/25 02:24, David Wei wrote:
->>>> netdev ops must be called under instance lock or rtnl_lock, but
->>>> io_register_zcrx_ifq() isn't doing this for netdev_queue_get_dma_dev().
->>>> Fix this by taking the instance lock using netdev_get_by_index_lock().
->>>>
->>>> Extended the instance lock section to include attaching a memory
->>>> provider. Could not move io_zcrx_create_area() outside, since the dmabuf
->>>> codepath IORING_ZCRX_AREA_DMABUF requires ifq->dev.
->>>
->>> It's probably fine for now, but this nested waiting feels
->>> uncomfortable considering that it could be waiting for other
->>> devices to finish IO via dmabuf fences.
->>>
->>
->> Only the dmabuf path requires ifq->dev in io_zcrx_create_area(); I could
->> split this into two and then unlock netdev instance lock between holding
->> a ref and calling net_mp_open_rxq().
->>
->> So the new ordering would be:
->>
->>    1. io_zcrx_create_area() for !IORING_ZCRX_AREA_DMABUF
->>    2. netdev_get_by_index_lock(), hold netdev ref, unlock netdev
->>    3. io_zcrx_create_area() for IORING_ZCRX_AREA_DMABUF
->>    4. net_mp_open_rxq()
-> 
-> To avoid dragging it on, can you do it as a follow up please? And
-> it's better to avoid splitting on IORING_ZCRX_AREA_DMABUF, either it
-> works for both or it doesn't at all.
-> 
+Hi,
 
-Of course, follow ups are always my preference.
+No particular theme to this "series", it's mostly just moving code
+around a bit to more appropriate spots, and removing dead declarations
+that are entirely unneeded. Mostly in preparation for moving more of
+the cancel code into cancel.c and out of io_uring.c.
+
+No functional changes in this series.
+
+ io_uring/cancel.c   | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ io_uring/cancel.h   |  2 ++
+ io_uring/io_uring.c | 44 --------------------------------------------
+ io_uring/io_uring.h |  3 ---
+ io_uring/memmap.h   |  5 -----
+ io_uring/net.c      | 14 +++++++++++---
+ io_uring/notif.h    |  8 --------
+ io_uring/rsrc.c     |  4 ++--
+ io_uring/slist.h    | 18 ------------------
+ 9 files changed, 59 insertions(+), 83 deletions(-)
+
+-- 
+Jens Axboe
+
 

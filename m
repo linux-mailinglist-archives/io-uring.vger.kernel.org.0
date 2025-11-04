@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-10359-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10360-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE0FC3135F
-	for <lists+io-uring@lfdr.de>; Tue, 04 Nov 2025 14:24:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E434BC31442
+	for <lists+io-uring@lfdr.de>; Tue, 04 Nov 2025 14:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7E744F73D4
-	for <lists+io-uring@lfdr.de>; Tue,  4 Nov 2025 13:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0D23B2F23
+	for <lists+io-uring@lfdr.de>; Tue,  4 Nov 2025 13:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AEA3203AA;
-	Tue,  4 Nov 2025 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A8A2BE62E;
+	Tue,  4 Nov 2025 13:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLs1+YSm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDKE3zMT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979DE2D29AC
-	for <io-uring@vger.kernel.org>; Tue,  4 Nov 2025 13:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C061C2F90C4
+	for <io-uring@vger.kernel.org>; Tue,  4 Nov 2025 13:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262383; cv=none; b=TGu83I55y+zl69XfNHuM9jZvThGfIaTLu9DHtbEvYiyrKzdVkTiCJmDkTR8yF151BkFnVbhd+JfSaiBq6w8d/WvLgEFE98TezhdOQsx8UN7Z7PGO+J4LlDoJDTqO4Wt3brfLdZVRnrRB1CGfO2GtboJfpEurI5B/xCz+5y/kbtE=
+	t=1762263487; cv=none; b=oeJc89hMRCW1PO3a6rpGBXS7220KNDYNZLPnPicFssA6YQ+Dy3CLJVpp12vfTtFpPiaPPTqh4UT0um+LvLcZ9LLgAFAoYLqizqsuJNXqduR5InlPmhDkYZ14LM9eWZQQUKw71QEN5YbC2Ti5H3h7UydbcYm6mIlKSyhiVSJQBpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262383; c=relaxed/simple;
-	bh=h9hk75rxVl7d0Zh2++Rd24Sz7+AJRBhDgJpdTCPn/9A=;
+	s=arc-20240116; t=1762263487; c=relaxed/simple;
+	bh=b+4MFJ1P4fD0WLQwYtySbmNZfeOBeQMdgCxN60MzNfY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNZMVn5wed7EzplYU3dDYzcQLifaruP3/TtFEGpKoyIaWKijNeEejSaOb6EzUTnUFmYRgHlPepg48zvjZSQ0BPiRIOP2JxTXvXkWI4luCZifCPCF05PpUWpZALQB0UJ9S0tcUyHB/hh7U5ANV5e8ckBuThzcosDU2Mx86KAQRC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLs1+YSm; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=fZAoGRHf/LwHJ5iNbfSzXuOA4cyQlk2IQVKgOvuF0RDwcYMsPfj/6IN++OdKn/dU5wyWXd/ELN+0xA0hCjXgoZ++xsWxbQm1bxGkFdfxoKKF5hcgEnsf3r/Yv0nc11itjZd88p6xXn1auM2ERapFlsa4gMcxMTzkn7aUTmMwoDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDKE3zMT; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775638d819so3227275e9.1
-        for <io-uring@vger.kernel.org>; Tue, 04 Nov 2025 05:19:41 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477563e28a3so5160925e9.1
+        for <io-uring@vger.kernel.org>; Tue, 04 Nov 2025 05:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762262380; x=1762867180; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762263484; x=1762868284; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cWOHovOvm9zqFX95kWhz8f8ZSaWj90AXODW0xg1GYJo=;
-        b=iLs1+YSmBqcvgTkLGGPA/F2VB/0aYTAJDGykD/kQgjSOxOgDSHQPQYycZuDiiTyydV
-         QWsv1N3rhJXUDF67wAOBLc45m0tmUuCoIyCpIA0aeQtXfAlQhZRqkS3ejXTYQUbGEheJ
-         9a4V+RVrkF05Joe4uUSbXV1BSSC47Iz81IlWqyTTWmYHHXpKZltH0Y6DtOZFSHpjHlmy
-         qN7OtS29XgWHttdd3w+wTAB9fLin+tT9jouf9ku6vAbPcYL0BFZt+dz8mzoaH2E27V9H
-         5lI8fWl108Qa2jgVvbja1ZOwwkKG6Ho95UEmeZFKoEE1VvXTBjW12EMuwf6TzUb+ElJV
-         hohA==
+        bh=716JUp54HLtiXbrW2pmciFc8haFAbjAYRpxOJ1zhcr0=;
+        b=QDKE3zMTLH9+fhrItuC/xGBYWZf/l7BRYt7AmqMwZtcGOydZPu9ZGOHOd0hzSnuikn
+         0umotZByJQ61oElBEus13qYKEInjW+NOuf2d8moa23sO7WLjxh/pmWSBIGcPqhNwoGmD
+         1F3XlC/kbV8g/fGq7spGelkb9N20p0rwS/0eSqqzG16WnSMZviHVop5BxUoKdvAPXOp1
+         hfyIiC7FSIz8PmfhjLobIMy86cQMfGLdyWRfJKebz7DcKF7tc0lgWFCFSCJFRXX1HauH
+         73twDbuQR2DQgbhu7r9dl/xbvPGTaN07l7iVzhjvxag0pJ15vu/Mk3TRXc/0MiL8HyI8
+         8R3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762262380; x=1762867180;
+        d=1e100.net; s=20230601; t=1762263484; x=1762868284;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWOHovOvm9zqFX95kWhz8f8ZSaWj90AXODW0xg1GYJo=;
-        b=GwVpYPXSa0LNeHRt0KxWCOTHZrNV37XcCdnYPodqb1Ezc7BmMcnnnfsGh7RJxH7smy
-         JGTM6qtJm9wdurYkbeFxjpUi4jp+1itAt0+x2ZLdAdNk5QqKjG1o1HfkZ8cnjz2+aI8A
-         xkQ0aMuXGh6Mwf/6PQG6UzlQLwye1eIgrgxTBeNCZc8wprP32tIZmVkFZqgIXz/75OnS
-         apavJPJNxg/l9gyuMI6u7jHKif+nl2xFVlQoqWVs9xlJZ4s2GJNovr3HCiZm9d5bDxaP
-         nc/a8xHlwRAb+3+b6Leb0joDIsg93f+DECGrwyGkRg3uYZMuY3nPbp/pLuRi+lQKY+bm
-         migw==
-X-Forwarded-Encrypted: i=1; AJvYcCXY3XuNLk2V4fzocEf/38s+pT9eAtpG/cAek5Lpn1RjPBwHFZ6n/Ln5c96KVGT9xlJ2rk1rC0VmAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVFBh5R4QzNc5D9S4PEjRHuQZ4jtAN+/ssK8ALAIZx5tKXiJXH
-	AJ7dFc26qHY9yR70CsML/5sGKftSKF8esNj4skoRJbn07EVXw8Zm7Nar
-X-Gm-Gg: ASbGncu+r8hRmYK1tY44TmgSb6GcO4iB5WtqF9fc7k2Cm2gjBNM1MsieJQhGjMUfLaK
-	p71RXJxLYt/4ZwpK7gW3chYRRy/Sha7MtkTXsFfSRtF1j5wbioJCh/OmtCVPsjQBt1CPGbTbw0s
-	4Wm/tSNzGBreIcXFiaPtpnuu/KgL4z0Cb0lO1NTd2hQKvgnxVknbPPLWmRNP+j+rxdcybjYtl97
-	2paHEiEUvijJlYcL4MRQfuW0rX0YQknlWZMWfrZhdoPkmn3czKkTnmzcJ4gzxRwq6tkBAeLFpUG
-	OkZbSriU64r1aOahh4jFVo623tJ4CnjqVgzX3fOQo3RNT2q7+pBbTag7N6nkV1IwkXr4RliR2L2
-	CAJVRRANM6z+zxeh/RGdz8pa2ylz/dr2CHn+a3pco4ocAixPao7sMIqLMqFEnIITw+eqJsV8Jxj
-	K4cP09rh7VGcB37H2k4GykB4nx9A7T1Igi3KqrfEVIRaBMTp2BZ7k=
-X-Google-Smtp-Source: AGHT+IHY8BjfLUPxtJgLBAwz+rsEl/G+IGO6c30HiqIKn2EWKt9/FnBvS1WTFD1OB0TOWNUZhf4QTg==
-X-Received: by 2002:a05:600c:1d9d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-477308cb9e0mr139708735e9.40.1762262379521;
-        Tue, 04 Nov 2025 05:19:39 -0800 (PST)
+        bh=716JUp54HLtiXbrW2pmciFc8haFAbjAYRpxOJ1zhcr0=;
+        b=dbaaO8KnK3EtUAFVhmPrMfLhslkLvz5JOngGFo3cCATf0sdMptZUleit8ksK9pP2D0
+         aDbgTRv/WuuamFabgqfN/4ppKkPPJMjPO5O4XMzOcTYjKmlqstK2ltOOQnbYWIVT5X5+
+         IxvO9s7ooYL43v1gJGTbhZzzgrWHzbFnyDSrUkj7OKLcRPg1GaUu35xlGYfZKHvchNN/
+         4MrH9dFpFN/tuYwtVXg2Ypp3QR6gZHDZGVyLPXIQEIk+fejktd6wLRjXWGVH4+efa8Nv
+         wLIV14U46QKE+LA0y9D6ZoFVKAd14ZLGRJlRTCq58cAF7qRL33NHMtbaw/tU9sIohdaq
+         AfCA==
+X-Forwarded-Encrypted: i=1; AJvYcCX78AIs98REh0WC+QyWX01+L9HxkfSWqIBvaQRsev9FyCHgFHFOYx+esyR6SJ3PybvrVXa6k33/fQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7I8QI8l5xZhfhzCIm0LaU92a5yCzamwnGclwbQv3z6vc+pcbz
+	STppAZguvfpOYVlj15pHnenvhM27uOuMB+yvZSHS4TNPcvo51L9t3Wi9
+X-Gm-Gg: ASbGncs4COMPjqtpF1+A7ljKFKxYYgmxBVPN6UYs5jTCcktLVfvB+16PEiKHj2l1uAd
+	egD4+7O0c32pkOTLFjtnGNPmuiYBMpMsp2eWMgiH/Q/hgz0lwDvIQQSK99/bgaP7+e8nDeTSRQ2
+	VhzuzrMCg+s1JFCDl9it5q0XgOFlcJHnPTW+heVvDs4hlRdQV42wLH5M1cN8OlBm+m1rI7/mzmG
+	BCONj72gBVWi0YQIYICHUJBFptlspTuzIVAzAaht5y9l/Jt+1yUpBiU2NtcuvnGOS1J/UNNHguW
+	cSUha6jspr1NAoyYfYY3/aQZssZi7K04USkc5FH4mqiOvAPkWofKzJaiTlOGMEB97tH+VhcW1/s
+	U/BPpEU5WAjWnZyvrY7prREA07U7kGoJO9gaAag7LQiP0yxYKjOGf39Kjrk1wxTaXLav4r2CyKk
+	GGP0Xir1Yt10abX0UPeFFRQzdsPNkzUUMIKo626pelhlIW5qE9gpY=
+X-Google-Smtp-Source: AGHT+IGIdycrxy71HgH6Af4ITn325431vaJhiq25nsAZXoIWw1PHU3PRJFe7+cWlwbxB69ZNS54Gfg==
+X-Received: by 2002:a05:600c:282:b0:471:793:e795 with SMTP id 5b1f17b1804b1-47754b897e3mr20588295e9.0.1762263483818;
+        Tue, 04 Nov 2025 05:38:03 -0800 (PST)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c2ff714sm212287655e9.8.2025.11.04.05.19.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1fdae2sm4837075f8f.41.2025.11.04.05.38.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 05:19:38 -0800 (PST)
-Message-ID: <bec690dd-8163-487a-8db5-0252bccde635@gmail.com>
-Date: Tue, 4 Nov 2025 13:19:36 +0000
+        Tue, 04 Nov 2025 05:38:03 -0800 (PST)
+Message-ID: <e92c80f7-de26-4a06-a100-5947e6ccc739@gmail.com>
+Date: Tue, 4 Nov 2025 13:38:00 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,32 +83,48 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] io_uring/zcrx: remove sync refill uapi
+Subject: Re: [PATCH v4 09/12] io_uring/zcrx: reverse ifq refcount
 To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
  netdev@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
 References: <20251103234110.127790-1-dw@davidwei.uk>
- <20251103234110.127790-2-dw@davidwei.uk>
+ <20251103234110.127790-10-dw@davidwei.uk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251103234110.127790-2-dw@davidwei.uk>
+In-Reply-To: <20251103234110.127790-10-dw@davidwei.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/3/25 23:40, David Wei wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
+On 11/3/25 23:41, David Wei wrote:
+> Add two refcounts to struct io_zcrx_ifq to reverse the refcounting
+> relationship i.e. rings now reference ifqs instead. As a result of this,
+
+Note, you don't need the 2nd refcount in this patch as there is
+only one io_uring using it. I hope not, but there is a chance
+we might need to backport it, which is why it's midly preferably
+to be kept separate.
+
+> remove ctx->refs that an ifq holds on a ring via the page pool memory
+> provider.
+
+Nice!
+
+> The first ref is ifq->refs, held by internal users of an ifq, namely
+> rings and the page pool memory provider associated with an ifq. This is
+> needed to keep the ifq around until the page pool is destroyed.
 > 
-> There is a better way to handle the problem IORING_REGISTER_ZCRX_REFILL
-> solves. Disable it for now and remove relevant uapi, it'll be reworked
-> for next release.
+> The second ref is ifq->user_refs, held by userspace facing users like
+> rings. For now, only the ring that created the ifq will have a ref, but
+> with ifq sharing added, this will include multiple rings.
+> 
+> ifq->refs will be 1 larger than ifq->user_refs, with the extra ref held
 
-You don't need to carry the first two patches. I sent it out properly,
-and once it's propagated to for-6.19, this set would need to be
-rebased on top.
+Can be larger than +1 as there might be multiple page pools
+referring to it.
 
-In the meantime, can you send 3-9 separately? They solve a real
-problem, and it'll be easier to merge the rest after as well.
-
+> by the page pool. Once ifq->user_refs falls to 0, the ifq is cleaned up
+> including destroying the page pool. Once the page pool is destroyed,
+> ifq->refs will fall to 0 and free the ifq.
 -- 
 Pavel Begunkov
 

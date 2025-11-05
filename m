@@ -1,155 +1,124 @@
-Return-Path: <io-uring+bounces-10382-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10383-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33412C368F7
-	for <lists+io-uring@lfdr.de>; Wed, 05 Nov 2025 17:06:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A969AC375DA
+	for <lists+io-uring@lfdr.de>; Wed, 05 Nov 2025 19:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69A174F6057
-	for <lists+io-uring@lfdr.de>; Wed,  5 Nov 2025 15:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350FA1A2171A
+	for <lists+io-uring@lfdr.de>; Wed,  5 Nov 2025 18:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECED9334C0A;
-	Wed,  5 Nov 2025 15:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CFC29992A;
+	Wed,  5 Nov 2025 18:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOMhKiwJ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RSp//kx2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD5B33344E
-	for <io-uring@vger.kernel.org>; Wed,  5 Nov 2025 15:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135622157B
+	for <io-uring@vger.kernel.org>; Wed,  5 Nov 2025 18:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358284; cv=none; b=VZJWQyUF323bybdBZQiW94i141L9D7VVF4HKEppfItAMt+fKSAT99sAjNs7I7Oz0CNasKp5O1oLL7AeJBW+WcEDNoVqNrW0z9E32U9/w+ikmPesrYcvhs7qc/LErXI0s8FAZ+M2zWMkLJMAvHhbOz30t1zO85fDuGIhrX1VEZI8=
+	t=1762368302; cv=none; b=jeC6IE3l93i8W42oBMGLS6djXOaDdEwOEo9F7PBfy3xlXzIoU7Z9lTkp4lyXeTqYyOr+hlvNtJHAIYDE3HGM+hlqWZrW6MphhNVscOWWZP1+RG6CKLNmOOv3N0mkRWc3luTyH/i322xi1XBbV9PEe5MSZxgRhRuGClXoAiPg41o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358284; c=relaxed/simple;
-	bh=Id3U/QMgYsA7txZIIsqU3kVa+6SpJ3CR97XEhVc/l74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gl1AEu0RqquSYNQwDxM1deZ4jf6FbDsR2RqVVG15s8VouX4VRaBN4RKqRzDkMHor//fRoQP2j9T1mZPychlGjg4hYQaq/9+xN7ZddxiaUVRD3Tv8BpekVTEhn9lvo3tmvYiFA7EVHszxvBnZ2c01pl6vYJNjvzJGOuzoMmMpVtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOMhKiwJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762358281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lu8ps8Aict3vmkNspVvPaOoX1BVGPxhk2L02diSQBEE=;
-	b=jOMhKiwJREuZJFNbvSUl6r/YLR/1Ca8El+IMlkfc74OhaicPwn3QMsS2Sqj2Z+tch7egKb
-	tLdp+FsBjpgC1KuOte9kBIsMkyxWGCebMfBVpLKNb7FW9VkZeBwbtM3OWXBkyAfsIXB7od
-	0nYDxb9RXMSrDIcg1rPHAkKKftIE4W0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-343-R8eNirXANVeN_TZH54-hEw-1; Wed,
- 05 Nov 2025 10:57:58 -0500
-X-MC-Unique: R8eNirXANVeN_TZH54-hEw-1
-X-Mimecast-MFC-AGG-ID: R8eNirXANVeN_TZH54-hEw_1762358277
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9B0C1954B00;
-	Wed,  5 Nov 2025 15:57:56 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.36])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71C703000198;
-	Wed,  5 Nov 2025 15:57:50 +0000 (UTC)
-Date: Wed, 5 Nov 2025 23:57:45 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Akilesh Kailash <akailash@google.com>, bpf@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH 0/5] io_uring: add IORING_OP_BPF for extending io_uring
-Message-ID: <aQtz-dw7t7jtqALc@fedora>
-References: <20251104162123.1086035-1-ming.lei@redhat.com>
- <891f4413-9556-4f0d-87e2-6b452b08a83f@gmail.com>
+	s=arc-20240116; t=1762368302; c=relaxed/simple;
+	bh=40J3nQIy/DPXOemDa1Y6vSXXhvMjKwx6NdE39WL6jek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LU/l+DsIbphUc9Vtzw8WdXUR8EvMA92yRWeycJc9Cp5mEjDXzx2Za0wu1cMYdd8hJe9PpjdZx9pNTvAbIjKcBgoiUFnyRrzyomfFRZMsrJ/svHNg0JW4bEaayuMzGO0BYuijMU2cU/nXzoH9xlbNUcdSttsf1D+NBEBasNrZ5GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RSp//kx2; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-9486b567baaso7244439f.0
+        for <io-uring@vger.kernel.org>; Wed, 05 Nov 2025 10:44:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762368297; x=1762973097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MRKL5zkx6MIavWTflj2AbVOp8JfmKeoTjbY3LPmhsZs=;
+        b=RSp//kx2PE4evv0lyXMQcbEYhe43PtbTe25Bjjordtj73alq6J3jvloBmCPPrZoCB8
+         TDtGplNTs+vSZjJuuCpXJqozKtxtLwCjeFinZ2Nrskn1Ven4EWCbOfI2PggCSnUFwlAZ
+         F+mSbKwVjmyLcr9aTBaPZxCeM6ORNrjjfQ6oJQ4/Ny+nHJjU8ZkNi4Zio9YXFYVPxTXp
+         yHJMiLtmRPeNmFuC/LJu7C6lF7TFKm9HXQpZEsU7aK+5/3aoQ9ZlD3MuUZnEkiBnLIrP
+         CCSJAEqkPrNURm6jwY7L2pajQs/QdleAmaNNq2vzY7C5ahMfTGILgcl6Cy9xkMvAZsLy
+         tSFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762368297; x=1762973097;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MRKL5zkx6MIavWTflj2AbVOp8JfmKeoTjbY3LPmhsZs=;
+        b=sSz94IQbDSzAORvDaQW8h1kGhfzHltCMjAO72iS8EXSLKzZ9Mm51tJ60UPOv5Kdwi0
+         p9BKfTeMeOjMr4tQaMz4f81cs/iE+DUndCQFe2C40C+WoQ9Tn6DUVFnVcsjDc6NLTZef
+         c8VqT4P9oV0r7wJs0JEv6YcmCGjlR9dsqpc+BvcJaS+Q7/qi7+5C6oqEM1NZK6EDUvVS
+         FnxZU7mSLg9vhAuYLr+b7KdVLec2FVern/tQgWLdsKy3iAohDYpC+8Nisn85DTdcOfnh
+         amuttP1nnp3myLG69uexmPLowmCkedV65FAhr7UoXjpHg3d73OSm3jemqcTIALctsqbY
+         /vew==
+X-Forwarded-Encrypted: i=1; AJvYcCUwYf0xhrWZ6S/WNMiQZxr9KsyVZnt7YJijXER5Y5gI2LETMXXzoqSGK7mWnaQcdTgqVowDw8xYMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwParLQdn4cY8NVPp2IN5GKtWjULI4lXQD/OU/hAHfMhNX4zNe/
+	Zq2ja/Ers6uFVgTVrFBjVKXK8XxhqBsf6oqo0I9PEdzjCNU3Q4RZeLU9m2k+YSzaAUOYZYKJ4KH
+	yWwm8
+X-Gm-Gg: ASbGncubuP0NzMgAE5fYF/NNyJ3vsBBBLo1P52vrpFjzTncjdnqVg6e8aRoJEPwYeOE
+	egNILo+lyOHcGvxfFrV042aWTfvSDDu8SAhzm6UG0PeP3UU3K/Ebo1lnvIbxjjiSp6fNPUitkV1
+	lBl6By1s3YKsi5f/OTYJfAjUcob3UbJ47j/BzGdvN8VtXp5MUz5bBdhfWjFR1uxo8UlPz7SMwVJ
+	PZmkCem5W6RRXF8BW9NhK2V18XaLgGrdZmiBlx6/HCab09nILpP7TG0vkk+B2Nqq8J10Q0vKsuC
+	7n8DhhwxxuupZIRFYumJUqUKy7FY3f8T80wRvguJazc2sb+HSwUqnC1br+GjrEI/5J4n8kY8ABd
+	o5J6Mpwy5XLX6PBo5nokaB92wDoRaFTrEu20ZHY6rpbSzYJuVmwQs
+X-Google-Smtp-Source: AGHT+IEYfY2qcmbVm5ZT7BE+xyVGA9QobbZwSuM8xKq74tObCVultckbZxpXIwdoGlsBIhIG9RaBdg==
+X-Received: by 2002:a05:6e02:1609:b0:430:bf89:f7f7 with SMTP id e9e14a558f8ab-433407a3dabmr73712105ab.13.1762368297434;
+        Wed, 05 Nov 2025 10:44:57 -0800 (PST)
+Received: from [172.19.0.90] ([99.196.133.153])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b745c445e9sm46381173.49.2025.11.05.10.44.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 10:44:56 -0800 (PST)
+Message-ID: <43429045-4443-4e5c-a892-4265de2cd026@kernel.dk>
+Date: Wed, 5 Nov 2025 11:44:45 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <891f4413-9556-4f0d-87e2-6b452b08a83f@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH io_uring-6.18 1/1] io_uring: fix types for region size
+ calulation
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <f883c8cca557438e70423b4831d2e8d17a4eeaf4.1762357551.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f883c8cca557438e70423b4831d2e8d17a4eeaf4.1762357551.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 05, 2025 at 12:47:58PM +0000, Pavel Begunkov wrote:
-> On 11/4/25 16:21, Ming Lei wrote:
-> > Hello,
-> > 
-> > Add IORING_OP_BPF for extending io_uring operations, follows typical cases:
+On 11/5/25 8:47 AM, Pavel Begunkov wrote:
+> ->nr_pages is int, it needs type extension before calculating the region
+> size.
 > 
-> BPF requests were tried long time ago and it wasn't great. Performance
-
-Care to share the link so I can learn from the lesson? Maybe things have
-changed now...
-
-> for short BPF programs is not great because of io_uring request handling
-> overhead. And flexibility was severely lacking, so even simple use cases
-
-What is the overhead? In this patch, OP's prep() and issue() are defined in
-bpf prog, but in typical use case, the code size is pretty small, and bpf
-prog code is supposed to run in fast path.
-
-> were looking pretty ugly, internally, and for BPF writers as well.
-
-I am not sure what `simple use cases` you are talking about.
-
+> Fixes: a90558b36ccee ("io_uring/memmap: helper for pinning region pages")
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  io_uring/memmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I'm not so sure about your criteria, but my requirement was to at least
-> being able to reuse all io_uring IO handling, i.e. submitting requests,
-> and to wait/process completions, otherwise a lot of opportunities are
-> wasted. My approach from a few months back [1] controlling requests from
+> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+> index 2e99dffddfc5..fab79c7b3157 100644
+> --- a/io_uring/memmap.c
+> +++ b/io_uring/memmap.c
+> @@ -135,7 +135,7 @@ static int io_region_pin_pages(struct io_ring_ctx *ctx,
+>  				struct io_mapped_region *mr,
+>  				struct io_uring_region_desc *reg)
+>  {
+> -	unsigned long size = mr->nr_pages << PAGE_SHIFT;
+> +	unsigned long size = (size_t)mr->nr_pages << PAGE_SHIFT;
+>  	struct page **pages;
+>  	int nr_pages;
 
-Please read the patchset.
+Should probably consistently use a size_t, everywhere else does. Doesn't
+matter here as io_pin_pages() does the right thing anyway.
 
-This patchset defines new IORING_BPF_OP code, which's ->prep(), ->issue(), ...,
-are hooked with struct_ops prog, so all io_uring core code is used, just the
-exact IORING_BPF_OP behavior is defined by struct_ops prog.
-
-> the outside was looking much better. At least it covered a bunch of needs
-> without extra changes. I was just wiring up io_uring changes I wanted
-> to make BPF writer lifes easier. Let me resend the bpf series with it.
-> 
-> It makes me wonder if they are complementary, but I'm not sure what
-
-I think the two are orthogonal in function, and they can co-exist.
-
-> your use cases are and what capabilities it might need.
-
-The main use cases are described in cover letter and the 3rd patch, please
-find the details there.
-
-So far the main case is to access the registered (kernel)buffer
-from issue() callback of struct_ops, because the buffer doesn't have
-userspace mapping. The last two patches adds support to provide two
-buffers(fixed, plain) for IORING_BPF_OP, and in future vectored buffer
-will be added too, so IORING_BPF_OP can handle buffer flexibly, such as:
-
-- use exported compress kfunc to compress data from kernel buffer
-into another buffer or inplace, then the following linked SQE can be submitted
-to write the built compressed data into storage
-
-- in raid use case, calculate IO data parity from kernel buffer, and store
-the parity data to another plain user buffer, then the following linked SQE
-can be submitted to write the built parity data to storage
-
-Even for userspace buffer, the BPF_OP can support similar handling for saving
-one extra io_uring_enter() syscall.
-
-> 
-> [1] https://lore.kernel.org/io-uring/cover.1749214572.git.asml.silence@gmail.com/
-
-I looked at your patches, in which SQE is generated in bpf prog(kernel),
-and it can't be used in my case.
-
-
-Thanks,
-Ming
-
+-- 
+Jens Axboe
 

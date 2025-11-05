@@ -1,82 +1,87 @@
-Return-Path: <io-uring+bounces-10385-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10386-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5BCC37831
-	for <lists+io-uring@lfdr.de>; Wed, 05 Nov 2025 20:38:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E543C37819
+	for <lists+io-uring@lfdr.de>; Wed, 05 Nov 2025 20:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE2F3A4C56
-	for <lists+io-uring@lfdr.de>; Wed,  5 Nov 2025 19:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 371CC18C7F34
+	for <lists+io-uring@lfdr.de>; Wed,  5 Nov 2025 19:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23810263F30;
-	Wed,  5 Nov 2025 19:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E09263F30;
+	Wed,  5 Nov 2025 19:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hWrjzCLB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="omCV9i5v"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEF6221703
-	for <io-uring@vger.kernel.org>; Wed,  5 Nov 2025 19:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C41D33F8C1
+	for <io-uring@vger.kernel.org>; Wed,  5 Nov 2025 19:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762371416; cv=none; b=bLp4Rr8z7t5CY1Mh185M0/eLzpXjvgytvdCtPEF0wKfOg60Jq50t/ocPCES/gQVmXURsnPS/Yve248IYRB6nNO3IvK96TQcI+ojeYz/wvN24Mo94S4ptYDtEFENzDBrYi7b9EW6+4iOaf2jHtg8FUkHR8mCIuhX/ZqA78mowmxE=
+	t=1762371420; cv=none; b=c6W3+I4ANll+/h2z+UodMMh0KHa8IzU0ILPZlpZZmPdVCaQabiJxlFyg0VwULCIAYFpYbtzd4t6HHELg0CWjDzxdGQxzO8B/v5Yj8mDOp1EZgEX1YRv6bEUnPaihjbHNWbw+7Fzr22z5UY0IJ5LQjyc9TYQ404XxhSzuVDSgNUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762371416; c=relaxed/simple;
-	bh=Oz3JQdqOS6JBnPxbzF1YOi1DUlZeoEAsX3qtnL5fyRk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=FJ6y+5ir9v+RvB8lNfs3IM5xYVvQQaw1nLTHPhm9uMLleMkjuIKQ7FVp3nH9jnLod3yXmAUQN+lWjoI8O1XBQLk4x6ThTGvnlUJkC3msbkiwHFKDwWh1ukOJ1AcIaeLIVj9vSQI4iF77wP9x/UKritXoPagxXFfL3lDMAlnpDCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hWrjzCLB; arc=none smtp.client-ip=209.85.166.176
+	s=arc-20240116; t=1762371420; c=relaxed/simple;
+	bh=gbvx5wE3fd3J3RR1D83FPZkPKZ117GCieCxLhI/ItgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=okpSooWs+v2L7iRlD2xM0zfhR7XsIOLSVHF/6cv9bru1UdN7N1SLmiN4W0G3i3liGx1iDDihemJRHNR5sDEQA+ymKrWGgpXBi7+biSnex1t6ezRDUrM1eB4zQQjj0NrwgBFfV57DVKHtL7Fc7zPzLqOnIZI326e25oRmiqT8UBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=omCV9i5v; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-4332674b921so680425ab.0
-        for <io-uring@vger.kernel.org>; Wed, 05 Nov 2025 11:36:53 -0800 (PST)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-948733e7810so7215939f.0
+        for <io-uring@vger.kernel.org>; Wed, 05 Nov 2025 11:36:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762371412; x=1762976212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgPQ4GbV9Zrgudj1XSSRkS89x4TBkS0VjUeLIt8r1bg=;
-        b=hWrjzCLB6nFsUlSkdRdsFXHCjDQjQNbHGTXiKc6q3cIDFYUfEw89K0fvIGNue2/Po3
-         5c4X+SKHl2EmyAbNtZQunhLkce9qECAmurqB0oIDBchrLBs+uCQ8DRyFPRUE9s3jJmYq
-         PU6jtrILgPMI2pPGwKeQan6lLiZ4zVE8j/VtJ6eY4gCQFcg87a7TJ8Z4mVUMcBFi5GLH
-         uQSf7hhZyKjlYwuPi08Y/N24vzzKbO+Kpm68uV/gFP+pNQaLYL+gnXfipIGsjU1UDCVG
-         mhfE4pIFMVYh6LYV1431M4sfQSnVyFqinJyVO0rRGbECHxN9JHLYCKXXk4Q/fZsauuwU
-         qmVA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762371417; x=1762976217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZV0TlBKqi1D/LW+ranC8T4AiAm92JIMdB1Gls+4XWEc=;
+        b=omCV9i5vjmDY+KX0mvroEUPrjeRqlE1nyfZgc6Jmnof8mgd7FK9nP0unLtt7QSAPRf
+         28EwVBJWNuko/lvz6uJX8aToCG9Zt3fiT2hFFQJDdzX1cydaUGsMXKecDwbU+tdadIWi
+         0m9oxv7KHZ6Th1XOBRnQ9oVsePP1MPTITy0GqoN05bP+UBeHr2YRnKFtcNvKgNo2SKLi
+         YAtqZkvJYATQp02s2iTjxpTAl+gIXf7PwNvT7EOBWLm8sPRj/7dshtDieYBs5GbEPIvc
+         8RZC3UpHISNVz0LP05oMiWgP/IplzFGawu/X/WyjXOis/+y9rMids3zisP3NOGfw715c
+         W25w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762371412; x=1762976212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgPQ4GbV9Zrgudj1XSSRkS89x4TBkS0VjUeLIt8r1bg=;
-        b=OMpsR9lqxc+Hhm9shMHX77wzjqgra1baSiCAe+NmFCF+RT14ojXDqM6odutDSL2fka
-         e3wU0aE0ifW+BmS/UkTGmtZqcJdUxnDM6WL5XkEOLUbOC70fL/rWti78G6V9dGKVMxZT
-         8j/FD1LNePOF2ZCbcP/CeMLxaUF8tjrLJZx6667h0Eo01Sma1ivqJ53F3Yg7w5NWsVN6
-         g99BcXXl1VVXQZd9RMcqEwMBkCQnzRAhPthLIRhR34m3OX/r1rlspX3zuEuOCshdWOM2
-         lw8HIomcsrny2dONkb8vXl5cW2ehwyGNK1oMNVoLEm2MZXHBCKh5Zg5eY0EI6A1mR83h
-         nMFw==
-X-Gm-Message-State: AOJu0Yw9ORXy7rwQsfVkzJtpDMYX8PtV+QCMyRPCV0TQHEUgsNkPJmyC
-	Q7ST1x2rcqpkgiIBXoz8bIbJMQoh+4QTRPpDWfWN0YtH2EyoIelEs8fQ/51+sEFj6ascIsW2MbG
-	EYSvc
-X-Gm-Gg: ASbGncsooaiUoEEBrCP6//TpVVr4VRo//FUhIAJRNb8FibFIvCyWZ9+J15O5xET8HwB
-	IoSeGIzcg7g8RaAXgbRbIIpVw6DblE2TIKzSh0cP4fUlwxVLtn/cNLTM5sQf92IPN26ZujmPHwT
-	CmoJbhg085ZueKJ6KFzInlvfW14rKrZ6Fs108+l11hNc8QD8evKQmMn7NmvCh5TiRTKugprGP/D
-	qFPxlAxaN9BWFS6LjGX6U6XBNIW2q0Q8b9ffIHshekVKGwV2lBe//uHIzwLnq/GRRZvFClTavsz
-	1GULp7yaZMaB8qThOj2dsYsfd1ImQvumLGh8eCibUjeFRWxpY12y9EGsdfJ/Wm7oFOxyMBHpxeN
-	tdacsszcjEfe5e7LECPjO44Wz2KKVNRyCeWryZTF59ZC5R8y14gE=
-X-Google-Smtp-Source: AGHT+IEIF8GKDk3qXCt4uwpAb0K0+wyiuDAFW5iuS+BDXOUkc9p8ZayYE58MtziuAdPWY5tMUI6FZA==
-X-Received: by 2002:a05:6e02:330e:b0:433:30e0:6f68 with SMTP id e9e14a558f8ab-433407f57fdmr60819565ab.24.1762371411800;
-        Wed, 05 Nov 2025 11:36:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762371417; x=1762976217;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZV0TlBKqi1D/LW+ranC8T4AiAm92JIMdB1Gls+4XWEc=;
+        b=ormZYGadKxTGb1177zVEcrUN09B1f6JI1cIn1OGcqRl/CpDbNM0QQoM+P2nq5Pk/YX
+         vsT9oEaEJDdGaR4BRr6gCPfhI/5qoC6ucC3mQFgTxJcmY83kB3VFceBg+Ja3nCQaxkHc
+         wV4PSTMk++Mt9S74SMFzzl7i4pvrgFZrezwk/aySaWX0dbKPEgmYq6zoGakgw18+q578
+         e/ciOrjuGp50l2ixfGxPZtriFVeKrga5WIyM5pQEgrWKX+Sk2xXnyDig6/aNsmi8lQBp
+         RnWnOlXOq18RfuAJ7YIRcLtkvjZZuXDM5au1EWm5KIywg1PFCFg5plRIedUZxDINkW4y
+         5Rqw==
+X-Gm-Message-State: AOJu0YyLVBsDYKM9Zswk5c5vBGCYsNkrT5CJX7f5bDWcaKwva4WHBTnv
+	J+YAgA34TKUS1jylrUQxoQS0+Pwx1XoOUP7tWrMSz+xOMc0henGjVmrNB9ifWrxPAVNOQwwNHKl
+	ej+LG
+X-Gm-Gg: ASbGncu7oRJuqRiD8N9d5XePLMUa0lzb7HixhqARpD6Igl5mAkBYzjdB6WtUO4Lu1r2
+	fkIQ4b2vblDiehhgfMW6lzWGjn5OrYDUu4JEU/mY0s1xoD8YD5nZCgoqSMePzQdD/LLUME7QvjP
+	2XGEUznwuHKjwgGyr9frFsBCVEf+hk6rLdvxmep/MdpTLa9L+dMGBVJAk6wAaXLyvKb3zAh5Svp
+	Kkcr4lS7Fa3h7oq+ke3bNrwolvKvMCs1g+hs1jiHfeAV5I98h0DTfo+R/AHx+1bKC33AEUIpt+o
+	58vyrjQLmY7IbfwemePvrK8bWNhEb3l+1etNB+Xjg8pPdpCLgw+9s4yhrYSHWH5lDN23NyJafhS
+	RqLX0LsB+onqJZKPjkD/NaGZ6b83xagCRSykZ6EGxMcf1s/j5Zgc=
+X-Google-Smtp-Source: AGHT+IGgBGOHfMfXmMRhy8Q2n8id7s+IxU/DStD8Vwax6ruyj5/Rda/odhd0JIXPLENQ6Z98FKL1Yg==
+X-Received: by 2002:a05:6e02:12cc:b0:433:306e:2c83 with SMTP id e9e14a558f8ab-433407f590emr54973465ab.28.1762371417184;
+        Wed, 05 Nov 2025 11:36:57 -0800 (PST)
 Received: from m2max.wifi.delta.com ([99.196.133.153])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7467d43cdsm39467173.13.2025.11.05.11.36.48
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7467d43cdsm39467173.13.2025.11.05.11.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 11:36:51 -0800 (PST)
+        Wed, 05 Nov 2025 11:36:56 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
-Subject: [PATCHSET 0/2] Add support for IORING_CQE_F_SOCK_FULL
-Date: Wed,  5 Nov 2025 12:30:57 -0700
-Message-ID: <20251105193639.235441-1-axboe@kernel.dk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/2] io_uring/poll: flag request with REQ_F_POLL_TRIGGERED if it went through poll
+Date: Wed,  5 Nov 2025 12:30:58 -0700
+Message-ID: <20251105193639.235441-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251105193639.235441-1-axboe@kernel.dk>
+References: <20251105193639.235441-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,27 +90,54 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+If a request targeting a pollable file cannot get executed without
+needing to wait for a POLLIN/POLLOUT trigger, then flag it with
+REQ_F_POLL_TRIGGERED. Only supported for non-multishot requests, as it's
+fully expected that multishot will always end up going through poll.
 
-It can be useful for userspace to know if a send request had to go
-through poll to complete, as that generally means that the socket was
-out of space. On the send side, this is pretty trivial to support - we
-just need to check if the request needed to go through poll to complete.
+No functional changes in this patch, just in preparation for using this
+information elsewhere.
 
-This reuses the IORING_CQE_F_SOCK_NONEMPTY flag value, which is only
-valid for recv operations. As IORING_CQE_F_SOCK_FULL only applies on
-sends, there's no need for separate values for this flag.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ include/linux/io_uring_types.h | 3 +++
+ io_uring/poll.c                | 1 +
+ 2 files changed, 4 insertions(+)
 
-Based on an earlier patchset, which utilized REQ_F_POLL_ARMED instead
-and handled patch 1 a bit differently.
-
- include/linux/io_uring_types.h |  3 +++
- include/uapi/linux/io_uring.h  |  4 ++++
- io_uring/net.c                 | 19 +++++++++++++------
- io_uring/poll.c                |  1 +
- 4 files changed, 21 insertions(+), 6 deletions(-)
-
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 92780764d5fa..ef1af730193a 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -521,6 +521,7 @@ enum {
+ 	REQ_F_HAS_METADATA_BIT,
+ 	REQ_F_IMPORT_BUFFER_BIT,
+ 	REQ_F_SQE_COPIED_BIT,
++	REQ_F_POLL_TRIGGERED_BIT,
+ 
+ 	/* not a real bit, just to check we're not overflowing the space */
+ 	__REQ_F_LAST_BIT,
+@@ -612,6 +613,8 @@ enum {
+ 	REQ_F_IMPORT_BUFFER	= IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
+ 	/* ->sqe_copy() has been called, if necessary */
+ 	REQ_F_SQE_COPIED	= IO_REQ_FLAG(REQ_F_SQE_COPIED_BIT),
++	/* poll was triggered at least once for this request */
++	REQ_F_POLL_TRIGGERED	= IO_REQ_FLAG(REQ_F_POLL_TRIGGERED_BIT),
+ };
+ 
+ struct io_tw_req {
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 8aa4e3a31e73..d6f7cddf36d0 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -419,6 +419,7 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 				req->flags &= ~REQ_F_DOUBLE_POLL;
+ 			else
+ 				req->flags &= ~REQ_F_SINGLE_POLL;
++			req->flags |= REQ_F_POLL_TRIGGERED;
+ 		}
+ 		__io_poll_execute(req, mask);
+ 	}
 -- 
-Jens Axboe
+2.51.0
 
 

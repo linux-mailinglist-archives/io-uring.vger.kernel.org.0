@@ -1,280 +1,121 @@
-Return-Path: <io-uring+bounces-10428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BCDC3DBC0
-	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 00:10:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C784FC3DCE7
+	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 00:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D892C4E0120
-	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 23:10:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5EE7D34C645
+	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 23:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7A7350D74;
-	Thu,  6 Nov 2025 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF29357A2E;
+	Thu,  6 Nov 2025 23:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wb+5BokU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3G1DDF1J"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE5306B1A
-	for <io-uring@vger.kernel.org>; Thu,  6 Nov 2025 23:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC9F35773E
+	for <io-uring@vger.kernel.org>; Thu,  6 Nov 2025 23:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470602; cv=none; b=IEfBhieOJAw33FDdjdSriixsW/4++AC2skwRYxhu9JvyJqsU64cfZ5xucIns1FNCT7QNKbr052wX9OdDE6V29cmzv+gxRssme9Wr5FMlGx5QJrX/nxiIc7j0DYFgUc/w8bVrzGPY74bGtplK4q1dwUMerhY7bB1gunGcT4MSNRY=
+	t=1762471295; cv=none; b=LTLWlWLGAxpvb4yN+uc40ydz1ryebCrY8QY3dzrLe0H68alVA6KI5oyboKhMzclidg+jHCdXtMkMMe3tqOgMpv5tHOg0RczRJ0778BJCmzdb2XCiEvVwIZc4szpalcNuy88JJQSczGm54e38DUkxtNRG8W+42Bz0LfmwlFIepAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470602; c=relaxed/simple;
-	bh=n7JqdJN3gpe7HNJnotoXOgVUcOWeuEm30bSwulUPMkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F1fHq7QZaRBMpDHKVAZUjt3L2VbztKe7ecZTXADLbxHBNrhoq5G/CI1rLxSTYPu6bPhwRGVglCn/P9DWHLDhT2L1wqupWGPndVcSFuOf76OKjFOxe/mxCKTTydGHX3+R7L/57jOYyLOe7oEfpYmNCZvxqRTfdo25o/fFxlZ4uAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wb+5BokU; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e89de04d62so1385961cf.0
-        for <io-uring@vger.kernel.org>; Thu, 06 Nov 2025 15:10:00 -0800 (PST)
+	s=arc-20240116; t=1762471295; c=relaxed/simple;
+	bh=Bssuky49KgzsBbl93nxGJPM72qehHS0AHF2yOa7tEJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=vFFRaE/kLrYsocxCnlVJwoLNROdbb5Skc6oCFaAw+v4VR0ksYU42jKPKhMY03n2sBlTBq6phTaovSEZGCGjkoP0AtdBdrrmxb9Hbn5r8J/lGZh+yGZlDrh9xoCa4FZSbWMWW2zFQEUSjUbVtjL5A2HLczQe0QzuQtHPb38cnJtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3G1DDF1J; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ed7024c8c5so1247351cf.3
+        for <io-uring@vger.kernel.org>; Thu, 06 Nov 2025 15:21:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762470599; x=1763075399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AHczQmclgS/+tkZTXLYiv1vB4NjNd67X8R6/+BUyaqQ=;
-        b=Wb+5BokU3cegusvs/AjtTnvQQwb7JzJfDRCisXAIGof/8Ed6sA7SY5Jsqyoq/C9Eto
-         zyaP3kzSlaJrQM2UxHHUd0HzibgNvMe5Pry6Xycxj8TddPZojpw4qfo7YsKnbI+PPuav
-         yiECbQg/LsQ3URXlidFatG0q5iDfoRfvCbE+x2Thcb4bMFUKJkDAbyk4ga+h9U7zg60Y
-         TYzd/Zi/x6kP9SB2xUOPcZpnLe3qYjfMTUeMJqqRFQB3UB1/V9KOvoQh923uSHeQZlD5
-         BbsOhlOLRzwHIMDJYSqM0m/Z6Vn/mGhTe3MV5FEurpGkVxb5DRMN72ESA0HqZwKj5Nh0
-         Pu1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470599; x=1763075399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762471291; x=1763076091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AHczQmclgS/+tkZTXLYiv1vB4NjNd67X8R6/+BUyaqQ=;
-        b=EcTnT2My2ljE/ETa08YUYc9HF01TuKNJXFMevvHOXmsV+q03N1oBOZSakXvC3Q4/s7
-         Ej70t+QerDQmcDt8J5i/vSOs7fatzeWuRYPcLIHHhYiKNJHJMckaJ+II5uZHIXqFRPh6
-         dR8a1bn7dYkN+0aCljrhSF7FGFvAzxc+8QdiBEbHB3O00e0ooGUlXpYALbCcqWssKbzY
-         jvQt4j7LotpmOssu13XlfheHAdSrMi8pqWakpt4Lnk0vv9fLzgu1H2Pq9aaQkPMFGRCN
-         rYjFVs9XqC6fYZCN0MXPnvRRM4LN15e9ONQxAM/UqRoA172mmN8r/d0ytDdgZXF3hSeW
-         jpBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsGNdvlDPKdkcy2C4r+3yzrnZsIWBqrbR3N4xsMyxvZbdyPLPP/9yW39p88EDY0okg1EgEwvDDow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YykZmnV2kCBvoItzi5Xt6eA+THTStqRo0n4yTzqPnnU0ElmhtJR
-	DfJTzPQiKucgk18wf9ni4rQY4c8ZI7z3OhdTEMZu5L0s3n6zFecQHYdSGG3PwXwa4qW8TJElmgb
-	qSs+UBJS7kSxgr6hjtHKE89u3EcanuBc=
-X-Gm-Gg: ASbGncsgFxtamNuQLbrTPNG9OqEayxSkv9InNXAT0wfEjNqs+gfmAeS4LECxM6ak2ni
-	4aQoBP6pO+0Ib23/aW+R5TzuXyctkPa+jNgOmQTQO5h8DvFidI0xbBx/q0fjbjwRoReXv/HhwJp
-	8vxZvhcWUMTrpDkDWCGYpUNBTDjIHRd1TRYPM54DKQOnpTOm1Gd2JAdZcF09EcCBcnxEit8+vCs
-	vgZ6bw3WmCkwO99uWtNF2rlVyiQ+x+h+wGOZ2JCFn5Ubx4NbMnYUeKK6ig7g4OQBN4S15UaCwEi
-	HHo24ExYjnmyRTjHk6LyAavzfQ==
-X-Google-Smtp-Source: AGHT+IE7zx/lNOuzvh+WJIIb+A5DylQyCNxvT3Ad2RYJg7b7gKruXyyfSGF0E2baUuCazA7mQ2JAgrOcXJZEE3/AN8o=
-X-Received: by 2002:a05:622a:58a:b0:4ed:6cac:d1b9 with SMTP id
- d75a77b69052e-4ed94a66c44mr13867571cf.63.1762470599221; Thu, 06 Nov 2025
- 15:09:59 -0800 (PST)
+        bh=jgqQMv8vC1wnvm8jLlkIn4alZVszPP8l8LlzETRj8QA=;
+        b=3G1DDF1JFmZfPkbOQeJ8B96axX0JFB/PgZsEhVJ6kEVsVq9Pux5msW2qh79rORZhwq
+         NkVo2fiUmLhZEk2C5FOe1qB4a9l8JkQIMxL5gx2HEoLgD3IW7WrkluhnDdFhC659EW3K
+         ZnTJzsXzc0ZUT75fyqtWOkVmVZWq8YxED3XRH0D/wi5ivOCu4cHI9xLHeDC4VJGALncy
+         Bq2MRqXA7A9GEjafBmSjRe7lVNmjDJqKXM9WYY9dKvTI5+9B0m7StRN/2vLE83bmE4LG
+         1fqcwoWXczip1F3eKYr6NWC/rKipoCRbBgOQKeub7cyosIqyC66Z1WRG5DBMV++BIetg
+         fFpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762471291; x=1763076091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jgqQMv8vC1wnvm8jLlkIn4alZVszPP8l8LlzETRj8QA=;
+        b=JeegKXL/ZIciPlc2JrUNX5a5gN4PLlAlTNtWY+9hqa43tUstJ3bxJd0GQpP5NvkMkO
+         QS2PxxsiOXdT3BB7De4qI4DIqBUxJd3Jogea9fJcGxd2ItJNV11o7eQVaMVovqZFdY5I
+         zMuuw5UZNj609IILdUKHtLYr/MVIIYIGi+0F9RRnhfF3neMSeSbN6UAOaZdsHkdHpglj
+         i6X9QFTco1+B8iV/XirdpRtVcrnc3wVf+FPOSgxDiAinbNiYoYoyM81L1+zv5ISeh7Cs
+         ODWsbDqHdH8WSsYmRERBrCx35ORffbam+FCz9MsJMwlm2yt4552d8x2/f2df2n85A/TE
+         dTuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2qVhFEMPNAgX4OUR1xUZ0SOqp5rK2K154B5Wy7eySYT+rYB05sFaRdWpi5Me94YOYotdT7/E24A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiInvD0tRGkTC98OMaJmkgsdRePKdHwzO/0vqWnOxAn5PUNrOv
+	zxefWjP0SA36eMFOyAOqvOdHNWCVqjER5SNWnssodtbl1BCdUVbLxUtYgtI/i7qIp4P922bADEx
+	JwvP9
+X-Gm-Gg: ASbGncvPDjOoZvz0WVmOE9h+pq+sg5ohqqCH4Qqd1DixI3elipXJcdEPUPHhb+Plhdh
+	3ybFjIuuOtrBCCoVzmN3tewYunRZStGo44HnwsDHhI+OuKcotvBfz/BgFDXotDkaNXhXDJ9VOp/
+	mEjZLea8/vaMR+UGBmS7cHTR7dbs8UKx0VHxVr8FI6Qvp7T5AULxfUXbmqU4nt/EkLWM0W08OQQ
+	HXw+YixTzW3QTkXrQZO/RV573S1pYI3YXAwKFdLG3li3w4BTBFdRK8YIGqhMSI6pkEP+u4EhMFg
+	2bJTSGz6pXyhfkKxRxJmwyygBYFc4eQRQTwkFTTwag52aJ4NdVRVpyDxKN9FC0C7pdreefVPVms
+	3tSfrxq7A1j5JD1nR0CT6pBrUesOKIHWr8me414HlwEPSuzCus9cOsRI9ehdSbLtdanKLr4qD
+X-Google-Smtp-Source: AGHT+IFs8nv2iSTBNiLQbQjkP0+tXreSWwWDjWUWICeAfSmO4PhPgvjHoBW7ZL7oOwk5O9rhFRsK0g==
+X-Received: by 2002:a05:622a:2d5:b0:4e8:ae80:3e68 with SMTP id d75a77b69052e-4ed9496461fmr14560731cf.22.1762471290999;
+        Thu, 06 Nov 2025 15:21:30 -0800 (PST)
+Received: from [10.0.0.167] ([216.235.231.34])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed813f7333sm27047761cf.36.2025.11.06.15.21.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 15:21:30 -0800 (PST)
+Message-ID: <c39297cf-daab-43e0-82c7-3210d570e427@kernel.dk>
+Date: Thu, 6 Nov 2025 16:21:29 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
- <20251027222808.2332692-9-joannelkoong@gmail.com> <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
-In-Reply-To: <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 6 Nov 2025 15:09:48 -0800
-X-Gm-Features: AWmQ_bke2NRXNF9swgCVLPdBnODqUTELjGRMQZZGgEqm5ZtMMRcDBkK5Ad4ePls
-Message-ID: <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] fuse: support io-uring registered buffers
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	xiaobing.li@samsung.com, csander@purestorage.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/7] reverse ifq refcount
+To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org
+References: <20251104224458.1683606-1-dw@davidwei.uk>
+ <358f1bb5-d0c2-491e-ad56-4c2f512debfa@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <358f1bb5-d0c2-491e-ad56-4c2f512debfa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 6, 2025 at 11:48=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
-> On 10/27/25 23:28, Joanne Koong wrote:
-> > Add support for io-uring registered buffers for fuse daemons
-> > communicating through the io-uring interface. Daemons may register
-> > buffers ahead of time, which will eliminate the overhead of
-> > pinning/unpinning user pages and translating virtual addresses for ever=
-y
-> > server-kernel interaction.
-> >
-> > To support page-aligned payloads, the buffer is structured such that th=
-e
-> > payload is at the front of the buffer and the fuse_uring_req_header is
-> > offset from the end of the buffer.
-> >
-> > To be backwards compatible, fuse uring still needs to support non-regis=
-tered
-> > buffers as well.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  fs/fuse/dev_uring.c   | 200 +++++++++++++++++++++++++++++++++---------
-> >  fs/fuse/dev_uring_i.h |  27 +++++-
-> >  2 files changed, 183 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> > index c6b22b14b354..f501bc81f331 100644
-> > --- a/fs/fuse/dev_uring.c
-> > +++ b/fs/fuse/dev_uring.c
-> >
-> > +/*
-> > + * Prepare fixed buffer for access. Sets up the payload iter and kmaps=
- the
-> > + * header.
-> > + *
-> > + * Callers must call fuse_uring_unmap_buffer() in the same scope to re=
-lease the
-> > + * header mapping.
-> > + *
-> > + * For non-fixed buffers, this is a no-op.
-> > + */
-> > +static int fuse_uring_map_buffer(struct fuse_ring_ent *ent)
-> > +{
-> > +     size_t header_size =3D sizeof(struct fuse_uring_req_header);
-> > +     struct iov_iter iter;
-> > +     struct page *header_page;
-> > +     size_t count, start;
-> > +     ssize_t copied;
-> > +     int err;
-> > +
-> > +     if (!ent->fixed_buffer)
-> > +             return 0;
-> > +
-> > +     err =3D io_uring_cmd_import_fixed_full(ITER_DEST, &iter, ent->cmd=
-, 0);
->
-> This seems to be a rather expensive call, especially as it gets
-> called twice (during submit and fetch).
-> Wouldn't be there be a possibility to check if the user buffer changed
-> and then keep the existing iter? I think Caleb had a similar idea
-> in patch 1/8.
+On 11/6/25 9:10 AM, Pavel Begunkov wrote:
+> On 11/4/25 22:44, David Wei wrote:
+>> Reverse the refcount relationship between ifq and rings i.e. ring ctxs
+>> and page pool memory providers hold refs on an ifq instead of the other
+>> way around. This makes ifqs an independently refcounted object separate
+>> to rings.
+>>
+>> This is split out from a larger patchset [1] that adds ifq sharing. It
+>> will be needed for both ifq export and import/sharing later. Split it
+>> out as to make dependency management easier.
+>>
+>> [1]: https://lore.kernel.org/io-uring/20251103234110.127790-1-dw@davidwei.uk/
+> 
+> FWIW, if 1-3 are merged I can take the rest to the mix with
+> dependencies for David's work, but it should also be fine if
+> all 7 go into io_uring-6.19 there shouldn't be any conflicts.
 
-I think the best approach is to get rid of the call entirely by
-returning -EBUSY to the server if it tries unregistering the buffers
-while a connection is still alive. Then we would just have to set this
-up once at registration time, and use that for the lifetime of the
-connection. The discussion about this with Pavel is in [1] - I'm
-planning to do this as a separate follow-up.
+Let's just stuff them into for-6.19/io_uring and avoid the extra
+roundtrip.
 
-[1] https://lore.kernel.org/linux-fsdevel/9f0debb1-ce0e-4085-a3fe-0da7a8fd7=
-6a6@gmail.com/
+-- 
+Jens Axboe
 
->
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     count =3D iov_iter_count(&iter);
-> > +     if (count < header_size || count & (PAGE_SIZE - 1))
-> > +             return -EINVAL;
->
-> || !PAGE_ALIGNED(count)) ?
-
-Nice, I didn't realize this macro existed. Thanks.
-
->
-> > +
-> > +     /* Adjust the payload iter to protect the header from any overwri=
-tes */
-> > +     ent->payload_iter =3D iter;
-> > +     iov_iter_truncate(&ent->payload_iter, count - header_size);
-> > +
-> > +     /* Set up the headers */
-> > +     iov_iter_advance(&iter, count - header_size);
-> > +     copied =3D iov_iter_get_pages2(&iter, &header_page, header_size, =
-1, &start);
->
-> The iter is later used for the payload, but I miss a reset? iov_iter_reve=
-rt()?
-
-This iter is separate from the payload iter and doesn't affect the
-payload iter's values because the "ent->payload_iter =3D iter;"
-assignment above shallow copies that out first.
-
->
-> > +     if (copied < header_size)
-> > +             return -EFAULT;
-> > +     ent->headers =3D kmap_local_page(header_page) + start;
->
-> My plan for the alternative pinning patch (with io-uring) was to let the
-> header be shared by multiple entries. Current libfuse master handles
-> a fixed page size buffer for the payload (prepared page pinning - I
-> didn't expect I was blocked for 9 months on other work), missing is to
-> share it between ring entries.
-> I think this wouldn't work with registered buffer approach - it
-> always needs one full page?
-
-I've been working on the patches for zero-copy and that has required
-the design for registered buffers in this patch to change, namely that
-the payload and the headers must be separated out. For v3, I have them
-separate now.
->
-> I would also like to discuss dynamic multiple payload sizes per queue.
-> For example to have something like
->
-> 256 x 4K
-> 8 x 128K
-> 4 x 1M
-
-I think zero-copy might obviate the need for this. The way I have it
-right now, it uses sparse buffers for payloads, which prevents the
-server from needing to allocate the 1M buffer per ent. I'm hoping to
-send out the patches for this as part of v3 at the end of next week or
-next next week.
-
-Thanks,
-joanne
-
->
-> I think there are currently two ways to do that
->
-> 1) Sort entries into pools
-> 2) Sort buffers into pools and let entries use these. Here the header
-> would be fixed and payload would come from a pool.
->
-> With the appraoch to have payload and header in one buffer we couldn't
-> use 2). Using 1) should be fine, though.
->
-> >
-> >  /*
-> > @@ -1249,20 +1358,29 @@ static void fuse_uring_send_in_task(struct io_u=
-ring_cmd *cmd,
-> >  {
-> >       struct fuse_ring_ent *ent =3D uring_cmd_to_ring_ent(cmd);
-> >       struct fuse_ring_queue *queue =3D ent->queue;
-> > +     bool send_ent =3D true;
-> >       int err;
-> >
-> > -     if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
-> > -             err =3D fuse_uring_prepare_send(ent, ent->fuse_req);
-> > -             if (err) {
-> > -                     if (!fuse_uring_get_next_fuse_req(ent, queue))
-> > -                             return;
-> > -                     err =3D 0;
-> > -             }
-> > -     } else {
-> > -             err =3D -ECANCELED;
-> > +     if (issue_flags & IO_URING_F_TASK_DEAD) {
-> > +             fuse_uring_send(ent, cmd, -ECANCELED, issue_flags);
-> > +             return;
-> > +     }
-> > +
-> > +     err =3D fuse_uring_map_buffer(ent);
-> > +     if (err) {
-> > +             fuse_uring_req_end(ent, ent->fuse_req, err);
-> > +             return;
->
-> I think this needs to abort the connection now. There could be multiple
-> commands on the queue and they would be stuck now and there is no
-> notification to fuse server either.
-
-This approach makes sense to me and makes things a bit simpler. I'll
-add this to v3.
-
-Thanks,
-Joanne
 

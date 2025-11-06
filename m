@@ -1,133 +1,205 @@
-Return-Path: <io-uring+bounces-10403-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10404-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD99C3B20D
-	for <lists+io-uring@lfdr.de>; Thu, 06 Nov 2025 14:14:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CD6C3B551
+	for <lists+io-uring@lfdr.de>; Thu, 06 Nov 2025 14:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977CB1B21AD4
-	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 13:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548A01A42212
+	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 13:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092321DF27D;
-	Thu,  6 Nov 2025 12:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AA2D6E53;
+	Thu,  6 Nov 2025 13:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1dKOEQb"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Dc9W/0qp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lPKLOs5t"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD26329C6B
-	for <io-uring@vger.kernel.org>; Thu,  6 Nov 2025 12:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1C833CEA3;
+	Thu,  6 Nov 2025 13:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433908; cv=none; b=B58sEuht1PlmRevQ+JEJ3kDfVaK2UuvmMnqfNj+TB/opbjhalkKlvykvDu2aJFVULa8c5kCSNERleqF+pnylF2KRjXOC+bEHUCBF1R7jnplIMR0sHdgIFLKpVrxAgQjjqek2245QujdN2/C8OaKp9Eqqb/okdgOiCesobHCaEQ4=
+	t=1762436171; cv=none; b=j6UpkOQWGp0cm6ERhrWNWoUzLZxGxMtVZyrS1RuHJ+RHEqhyT2mQPH+kRwW2PLEbo1uKLW1CpQsuER4UNyJ2LgxhhfRPSlVi+Pn8rnj2zoz/VE5OUAgVCUuECLrySij+IcUh6JaFiYmyl6m5Uubs7OSPlIsDD5zBAqEh7q2nNZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433908; c=relaxed/simple;
-	bh=8Y4iTPPZHPB2g1cVrWTzZ8Irl7Gq1qY0f3Elt/KJLr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7BiBni/2YP0bgAssGbaw/+Qz1ey5Ob83LBzbt0CTC0dPq48F2LQPNa3y98Gt4ykSLFjH4K/3ylVsQ5h4A1oWvXomG/A9GWQPFCtk46i9CuoShnE9UiDjCZnLbb8BU2brB/8uoFXZctlbPARYO4a30uJOUJgDbMb+9QtZuiFVH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1dKOEQb; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429bcddad32so707271f8f.3
-        for <io-uring@vger.kernel.org>; Thu, 06 Nov 2025 04:58:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762433905; x=1763038705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqDSavrnoocFN08EKJXS6ikrQLOdk++AvsYJHHfqKM4=;
-        b=V1dKOEQbb9vLCN/q2tO05Fe3y9rP2/UBzFud3pLlahd20F19Rtk3zZ+V53uL8bnV6a
-         44Xj9oycKO2fEegPunzty+D0iQMLpUS3W5IOg3M5uKAxgVISBBcWFG7hAWVSDRggIXza
-         zafziVU+kjNTyYTvQnk5PqMtcvWC9Up1mJcNmzu7p0u/Qiqbyw8UftuAZN1kJFYnwNgu
-         jtMM95Gx7EzPYGEcnAXbNTLcW6DNdWpxZT6Uz8e28dC5o0pQ8aSwk/KWj7lQgJd2PXDN
-         +qsgjn12gr26kBeZHGIZ3RzEc90i5lzLbaA8BbMwA9q+UBP2896kNC9nScYLqKER/DFp
-         O67A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762433905; x=1763038705;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqDSavrnoocFN08EKJXS6ikrQLOdk++AvsYJHHfqKM4=;
-        b=iiuk5YquazpO5VpwySJu1q7Oh4A7tHrW1Da2Pqgo7vvuuWEof6eKRr1/kMky690tP2
-         LGSdOW/onpLJIfjvq0ekNGDvbueEMHW5gkokKakq+lAzaaBLgxOQ/UEBrXnwVlNoMSFH
-         mm+Zr6mR3DeIuBxVi4Bk96iG82vWwri/8O8rSaTUkklUdg2KX/2MVygYnEKPT7hskDHx
-         kJKAGHAmY/Hm8Vb7lBQoYzDDsGtVc+GpnSxZ7w4E6v1WUp0PYT/+mBzi6izbLZepC2tN
-         6AiaJXO4itWe1DQSW25FC/UkQPlpJIwpph6X+s9nYiWNbe8vX8rQRoWrV0DIqcRWpU4v
-         J7Zw==
-X-Gm-Message-State: AOJu0Yw9Uh0Acc68L0PaLGwhU/7fnRelyWF+v4XYISRHq0Ri2aE6oE35
-	tfhgZ6o7++cTme/53NXbKOmlnaZMpFpmhbLwIEGOQqbfL2DWyRQigOJKa5eAhw==
-X-Gm-Gg: ASbGncudR0MPEp/qFc6D1AkaX2AXUa0Tj33X86XYZmB2ZSmlXuyxoTNmmlqd3T0c0gF
-	fg24GdUL5zUwMlpWT0IgpxVlXrdcoEOpaBE6Ee5ZKJFdedEMXsv3eXTfc5PhtYV874qKiZDoGdr
-	oQpH0DIjVBbMJQ5r6UB2r9qU0Cb0D9ET4CJXuW5MhpnOdq0IMM7G0phbzH0wcOy+RSo54RhK62s
-	NHlHLeKW146KnjN85buLFqhcbQiSMhqFUDVsERaPGeEtmKkzHWuBqgKQP0ju7N9bPxvhOVkiDDe
-	boVw/ML0l3s7s4Ob7/ePzByOLRRrIYnfzT2nx0Cn5q9LP8h9dI57xWDOZRMZqkJh6Lt2/Zc9pvq
-	O388t009hq36fl+lRJLHuKAX+3vvDEBlr08lVm1IP3b5O6SNL4mMMqmWfOChKJfvQ1taTJeZUHu
-	sh+hU=
-X-Google-Smtp-Source: AGHT+IF6YvuK9bPMCXLiCLW+qw11HoHtaX3L14HGG28NyL8yoYPXg/kk8a5od5hxCJLcy1l5CmZiYg==
-X-Received: by 2002:a05:6000:2dca:b0:425:75c6:7125 with SMTP id ffacd0b85a97d-429e32e36eamr6255830f8f.16.1762433905202;
-        Thu, 06 Nov 2025 04:58:25 -0800 (PST)
-Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb410fe5sm5010392f8f.18.2025.11.06.04.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 04:58:24 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH for-next] io_uring: use WRITE_ONCE for user shared memory
-Date: Thu,  6 Nov 2025 12:58:19 +0000
-Message-ID: <5b7c8fabbb00cd37be00f828c48c2a238f06e60e.1762433792.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1762436171; c=relaxed/simple;
+	bh=TGnuswuX1qFy4EIvdysH+G2sliMJ1me6qdRXsMPTL1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WaJ2If4EcPWHQbFiVlpc0hHcZBfFeyLdlQNNlWrfO4H1yhKxi9258BWnVQZufVW8iYTrQLWCsmXA8z8QJaZqpnUYm0kCkv/UwqMJIhrgLU0bPVmwLvT/D64L2IhT4hD8Ez9AeMIS7mqWVPbpNGixkLFnunsTRN/E72uYgW15W/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Dc9W/0qp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lPKLOs5t; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 075E5EC044B;
+	Thu,  6 Nov 2025 08:35:46 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Thu, 06 Nov 2025 08:35:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1762436146;
+	 x=1762522546; bh=fhgW2n6LPDjnPj2ytaQC56zi51DsWXbj6fvM73wiMg0=; b=
+	Dc9W/0qpI6hVZo9MHkwfY+23bxwl2oSykQ6vMN8TYmLElrXVZEEn3khQ+LnAEe+O
+	K/ZGruqmYq2UN4wS1tFItK89LukEtygTjd2eiMk/nINweMslrYgQa/ZAR28GubSz
+	FhYKp6OTQ/imoGqqz6P7PgHvbbqXn44r5Yt7m1hZUZV+FrdkG/uxggjvFNcrXMNB
+	LNt8WY+V3FOJPLBZ9CYM05XvL4RHn3sJP0VUMIrF5BXXpUgo3RFM8BAu7seLsENS
+	Cj6RGJog0K7KnAzHF/60YJdSPFd3tKIM8vamMy6Av8PfGaR4/9B8wVP9aga3fFCF
+	lQ991W5tggrBFnqN41uFgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762436146; x=
+	1762522546; bh=fhgW2n6LPDjnPj2ytaQC56zi51DsWXbj6fvM73wiMg0=; b=l
+	PKLOs5t1iIdHgEK9HP/nRUSlaEd5EDAlzRMJGNlfHkSE7MwetQwTgQPML/xfN6eM
+	evYyRuEdnq72N05qf0mB3ZAEUwX3K0InVE2VT2q+bWj2qJKUpBuHyl/+U+r5D5m3
+	C7K2KAlEFjbYgCx2PN4BrJ99PafqZ6qmrTCzjIM2nUQfNryLAchftTQPwmmNAz1k
+	OrPoHjYFm67oY97j/z1lIr9A0yAyYZUCOBYD0zKAd6BnZjUhMD6xEj4+Sn5DWaDe
+	8Xh8Jvqde/p29QPBg1BN/v3XpI0E416uG+RAwXn74Tq4DZrFpP9jvjA9IBK61o4/
+	dpHB7ZZzgAfX4w3mNrtFA==
+X-ME-Sender: <xms:MaQMaR-kxbEiPVFHrZkjDuT0bUWBo7Vp-DI33UJ8Ddpn0TmFA1QDGQ>
+    <xme:MaQMaYy8o6EC5w8nYNIYVAuG7m3c4xdAZALcUuF5jOp8OAkcCXYD_GacHdcwyuaO2
+    dq9hmYLhQESvEAF5eMkejnMFDH5-aYku5xBsOy3oVkZ-8V3Jas>
+X-ME-Received: <xmr:MaQMaZrnSoNxLkbSlkCuDQoQ0pmhQGSLy_5ARzTCp_6Ge3pcTP53AbGKkkwjTkm95xF6UaQS3UIxjOdTKK3tlHs4z-r-wln0CWfWUzRBzXGKWjlBJsD7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeiledvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthho
+    pegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsshgthhhusggvrhht
+    seguughnrdgtohhmpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepgihirghosghinhhgrdhlihesshgrmhhsuhhnghdrtghomhdprhgtph
+    htthhopegtshgrnhguvghrsehpuhhrvghsthhorhgrghgvrdgtohhm
+X-ME-Proxy: <xmx:MaQMaRpw8xmEopzMC_aq-sODsCObRnKjFg1FihMZk8qPsaavAEGuJQ>
+    <xmx:MaQMaRCAFjuz240k7d6OfHSR6ywTyfUhunLaEN1Y58clFPDD0ws52g>
+    <xmx:MaQMaXv31BC0nTbZmBHsE-P4p0-_yZUAMtW301-PMgOnAzel1DCBpw>
+    <xmx:MaQMaYKj5NnPY4CUNEQBkFp4Kn2e1MskcJ7kBtjypWudWgmBO4A34Q>
+    <xmx:MaQMaT0PzXNhqd6phNf0Tq4s9lwJBn0_b0gpvaaCEd1eSqHh5AYI2Ba7>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 08:35:43 -0500 (EST)
+Message-ID: <6255493e-f1eb-4f17-a312-7adb6c62cc8a@bsbernd.com>
+Date: Thu, 6 Nov 2025 14:35:42 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/8] fuse: add user_ prefix to userspace headers and
+ payload fields
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com,
+ io-uring@vger.kernel.org, xiaobing.li@samsung.com, csander@purestorage.com,
+ kernel-team@meta.com
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+ <20251027222808.2332692-7-joannelkoong@gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20251027222808.2332692-7-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-IORING_SETUP_NO_MMAP rings remain user accessible even before the ctx
-setup is finalised, so use WRITE_ONCE consistently when initialising
-rings.
 
-Fixes: 03d89a2de25bb ("io_uring: support for user allocated memory for rings/sqes")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
 
-Mild, and no sane user should be affected, hence tareting for-next
+On 10/27/25 23:28, Joanne Koong wrote:
+> Rename the headers and payload fields to user_headers and user_payload.
+> This makes it explicit that these pointers reference userspace addresses
+> and prepares for upcoming fixed buffer support, where there will be
+> separate fields for kernel-space pointers to the payload and headers.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/dev_uring.c   | 17 ++++++++---------
+>  fs/fuse/dev_uring_i.h |  4 ++--
+>  2 files changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index d96368e93e8d..c814b571494f 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -585,11 +585,11 @@ static void __user *get_user_ring_header(struct fuse_ring_ent *ent,
+>  {
+>  	switch (type) {
+>  	case FUSE_URING_HEADER_IN_OUT:
+> -		return &ent->headers->in_out;
+> +		return &ent->user_headers->in_out;
+>  	case FUSE_URING_HEADER_OP:
+> -		return &ent->headers->op_in;
+> +		return &ent->user_headers->op_in;
+>  	case FUSE_URING_HEADER_RING_ENT:
+> -		return &ent->headers->ring_ent_in_out;
+> +		return &ent->user_headers->ring_ent_in_out;
+>  	}
+>  
+>  	WARN_ON_ONCE(1);
+> @@ -645,7 +645,7 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+>  	if (err)
+>  		return err;
+>  
+> -	err = import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
+> +	err = import_ubuf(ITER_SOURCE, ent->user_payload, ring->max_payload_sz,
+>  			  &iter);
+>  	if (err)
+>  		return err;
+> @@ -674,7 +674,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+>  		.commit_id = req->in.h.unique,
+>  	};
+>  
+> -	err = import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz, &iter);
+> +	err = import_ubuf(ITER_DEST, ent->user_payload, ring->max_payload_sz, &iter);
+>  	if (err) {
+>  		pr_info_ratelimited("fuse: Import of user buffer failed\n");
+>  		return err;
+> @@ -710,8 +710,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+>  
+>  	ent_in_out.payload_sz = cs.ring.copied_sz;
+>  	return copy_header_to_ring(ent, FUSE_URING_HEADER_RING_ENT,
+> -				   &ent_in_out,
+> -				   sizeof(ent_in_out));
+> +				   &ent_in_out, sizeof(ent_in_out));
+>  }
+>  
+>  static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
+> @@ -1104,8 +1103,8 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+>  	INIT_LIST_HEAD(&ent->list);
+>  
+>  	ent->queue = queue;
+> -	ent->headers = iov[0].iov_base;
+> -	ent->payload = iov[1].iov_base;
+> +	ent->user_headers = iov[0].iov_base;
+> +	ent->user_payload = iov[1].iov_base;
+>  
+>  	atomic_inc(&ring->queue_refs);
+>  	return ent;
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> index 51a563922ce1..381fd0b8156a 100644
+> --- a/fs/fuse/dev_uring_i.h
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -39,8 +39,8 @@ enum fuse_ring_req_state {
+>  /** A fuse ring entry, part of the ring queue */
+>  struct fuse_ring_ent {
+>  	/* userspace buffer */
+> -	struct fuse_uring_req_header __user *headers;
+> -	void __user *payload;
+> +	struct fuse_uring_req_header __user *user_headers;
+> +	void __user *user_payload;
+>  
+>  	/* the ring queue that owns the request */
+>  	struct fuse_ring_queue *queue;
 
- io_uring/io_uring.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3f0489261d11..f9f8ffcdad07 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3386,10 +3386,6 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
- 		ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
--	rings->sq_ring_mask = p->sq_entries - 1;
--	rings->cq_ring_mask = p->cq_entries - 1;
--	rings->sq_ring_entries = p->sq_entries;
--	rings->cq_ring_entries = p->cq_entries;
- 
- 	memset(&rd, 0, sizeof(rd));
- 	rd.size = PAGE_ALIGN(sq_size);
-@@ -3403,6 +3399,12 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 		return ret;
- 	}
- 	ctx->sq_sqes = io_region_get_ptr(&ctx->sq_region);
-+
-+	memset(rings, 0, sizeof(*rings));
-+	WRITE_ONCE(rings->sq_ring_mask, ctx->sq_entries - 1);
-+	WRITE_ONCE(rings->cq_ring_mask, ctx->cq_entries - 1);
-+	WRITE_ONCE(rings->sq_ring_entries, ctx->sq_entries);
-+	WRITE_ONCE(rings->cq_ring_entries, ctx->cq_entries);
- 	return 0;
- }
- 
--- 
-2.49.0
+Reviwed-by: Bernd Schubert <bschubert@ddn.com>
 
 

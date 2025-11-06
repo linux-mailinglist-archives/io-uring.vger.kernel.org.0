@@ -1,118 +1,160 @@
-Return-Path: <io-uring+bounces-10401-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10402-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25975C3ADC3
-	for <lists+io-uring@lfdr.de>; Thu, 06 Nov 2025 13:19:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969B7C3AE66
+	for <lists+io-uring@lfdr.de>; Thu, 06 Nov 2025 13:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ADAFB3426E9
-	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 12:19:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CFEB44E1701
+	for <lists+io-uring@lfdr.de>; Thu,  6 Nov 2025 12:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D503329373;
-	Thu,  6 Nov 2025 12:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83264309EF4;
+	Thu,  6 Nov 2025 12:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TaIxjHv2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmmn02Rs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C992D9ED9
-	for <io-uring@vger.kernel.org>; Thu,  6 Nov 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A0430EF62
+	for <io-uring@vger.kernel.org>; Thu,  6 Nov 2025 12:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431581; cv=none; b=KsCfFvfXihaVHObTPBUv6xPZP0A5vQDl/MVXrTffQFosndBilaysOMUEBXmng4eQPG0ZJM1dRtase5k9jMw22NKgeZ1w/KPeLZxDcGfsRpkwKDkDhWwmm4VK6ygSUD+Mr4ynR+SP+mbHkP+a+IvLV54qfsSUK2cwqX7dbMPzszQ=
+	t=1762432323; cv=none; b=eUrA0P1IdeRSkX+KGoL1hCjLTWIUnEp6+vqQioCda5xjGXq15fpI+n1sUImSPGPRAW2w5GU4GWNuNOG0c9c7SMVBRqEu7OT8GIR30daHKuK8+/wKhzD5orLIGNvC16I1ekqbeQ6nkuhhSvx5J+7dPA0yG69WQ47Mu+DlMoB4XvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431581; c=relaxed/simple;
-	bh=AdxdgEJ/c3YnrMVU+JQwGArbVzZQR7fBlKdBaBlw0xU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BFZ72yyonDiavFKxJEU8txesHFTgVj4NUCY9AcMT6L+rxlVwq1swUNRFKmvz16Pv4Pbdxiy27/uIxz+wkUAix1AQtH1lrFFrmaFUOQnuLs1GOE5JCm8Hf5de6yTn8EkdJE9LlCVeHh0J6AgWS49drdWinHjL7DHa7+UfgaoP4UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TaIxjHv2; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1762432323; c=relaxed/simple;
+	bh=3GDTE9cqdeSgsNUJ0uJuzgsh+fAVgM8MV+7RAdDPHSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XImpp86SbpKX35owfQ2BeIosohsAssbauBp3iovvFeSWRqD7yGmBxPL1oZEWFxX5IRzeOb4AfPXjemsqJq+IflM750RsutOzbx91MvKlRx7qvQtuoHe7jX1/h9kp5csGxv6rondcSizWxJRnQFF0FIy2tbxGA7TMuGf1y1fpN7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmmn02Rs; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47758595eecso4709475e9.0
-        for <io-uring@vger.kernel.org>; Thu, 06 Nov 2025 04:19:38 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4240675e9.2
+        for <io-uring@vger.kernel.org>; Thu, 06 Nov 2025 04:32:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762431577; x=1763036377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+UF4XjDbwyokRpg/QB69b+dDKTBg+af+82xcWz8pJFE=;
-        b=TaIxjHv2zS2XPQoAxzGP/Pa7pjHLqY1kO0ybeiDlUPHGKQfcAX+N59CZaC8RhwucPO
-         WTYOGcTg9OtNNH7Uo/4PEHr9UBQ6L1HEUwxzMimZfxQBmfLzVh3X45Od5bmnKaU6H+tb
-         q5zP7KblkQr72Ljx2zjRyomgeR1f395LUj4Y6Lo4ukunKG0pjJZdbZ5K69r2dMI8yNCT
-         +tywt6HHQhfwfosN7N7k3QR577gmn5gUCzfI9Zyg4rLN4irMCe0iTLnkZjtrTBRTu0n1
-         Utp936Y+Wqhf5JKyik+qDFgR5Yx1ApsP/Tp2u1LeI45g238xtnXa6j1SRglp0RyP0wDs
-         REhw==
+        d=gmail.com; s=20230601; t=1762432320; x=1763037120; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ryrJTyV3BiBNpc/Xqof1daYP9wnmws9NKZ1gFhM+lqE=;
+        b=dmmn02Rs4f19kBwiiIlB8YJuAYiIwFUCoA3ESQN5QgXokL0Sq4Xt2B3Hl5Z6457bRg
+         wItwQS5VrY5jBTX+1Ih9YWzG54i1b+h9ztNEsP8D8/zCO8voT3d+51IsFEV571AoXUnb
+         2GVwCWQsCx6C/Q60crZSpoCXafqYT1H2GqBcJP6/y8rvhH+htg35s8RaYP0aAyv+wjZ/
+         Jyy3w6J/c7efcSceguUdYG7LHm140U7p4OFFxPEpiLcevr1zbfedLCAJBHkJalv5AurE
+         TS7tisYtnHQ+rivbTcNRJHtcz7rrb1IHrEe6U5pQ9XFYtT9103AbwOCF3BoXtSdG8Lyt
+         gTDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762431577; x=1763036377;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+UF4XjDbwyokRpg/QB69b+dDKTBg+af+82xcWz8pJFE=;
-        b=iDj8uFLg6wCUV/HMklp2hhBLv4r04PyruWO50QmRJxNEzVCySB79prZ45qNTBZjVI5
-         XpUYRlpYyoSYL39eYRLzcrwo9R4WGk0BY6L7lAwmVkV6mpC8DIgh+vZWu6aiDP7AbeZM
-         QvtRcC6Os3DfMr96MQOycUvjjGUqUYnQOdUGa8Wo1Aglhprk8dTXE/inGc4fwmsGOBz3
-         hO4Ya+Jlv6J+S8jhjd1PSeP5xIAR1rgVZncSbpIIQ5DEpIYRL7kNnBPalVKcfeTmV4gL
-         osJDdUsCPa63up8jOITyG9odIIVpfbjgCApkLQq3b14Bk0wCjoR4RePQ0bxCIrg4b77K
-         UHzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPxsPCp19pyq/84t6lVbDF2ROMKeapsiZt84drfEtmJgHTwOeYMO25qafL6G7Ylb62OtYgJpBubw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ3m0JnR8VelUIXY8V6sPjzJ6xbjL+gXYGlBtNO8JJqUkPBu/k
-	k7f7DGNGHlSEj3CSbE3PBnoEcpcguV/weMX5Xd+dJhGqP8DLqXZPhW3D/0hrUw==
-X-Gm-Gg: ASbGnctvRaPRkjULigEQcdxu49hc3BmTRkzSo+BZ0C871l2QhTeVl/Z0RURHZ61YylW
-	8O5bKaq5vUfHK0HolRxPbApJbc44UMPODleC/vz18tiNRinFmeKLeFYY1r7H2CPlUuQ9cVEENj+
-	CwxmLpZpCNTxtN15PW4I9TA3pxVChL3WZv2iSotbA1LH2U0d638Rdo3BK+0RRw/NtVdVDTBNY+1
-	gUufJ66UJ0+L5lIplbDKtgSS4kTmidn56UA7igNtu3YUbPKHY8zFNypdOQ79CCsRy6pw2GG8bpQ
-	Ck98E6abYzdGkChhmDTE0LQO2GdvNdE8vMTkFA8yNZbU9ueY+vjCOp8EuGI5JD7JoexN/KeA9wl
-	XV+B880xl7IKD9BABvst9Un0nAmwzaT41zfeXI3+0O+vzCmdPP6b0e20Qg+qo/PpYINqk66LbWu
-	ua6yykLj6ITxxzaZO7103IaI73M8lBWRyleJHK6eCsdpe1QVy+sN0=
-X-Google-Smtp-Source: AGHT+IE/6cFEVxKImiTauS9+n+mYaqYQAQZsON20YMDfg6FCNYIM44J2QyAssrse9U8sC/C6F3inmg==
-X-Received: by 2002:a05:600c:821b:b0:477:bb0:751b with SMTP id 5b1f17b1804b1-4775cdf259amr58177985e9.27.1762431577464;
-        Thu, 06 Nov 2025 04:19:37 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625c2f4fsm47710035e9.11.2025.11.06.04.19.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 04:19:36 -0800 (PST)
-Message-ID: <c5390f95-22f6-4b21-b1b1-bad44d5fc1e5@gmail.com>
-Date: Thu, 6 Nov 2025 12:19:35 +0000
+        d=1e100.net; s=20230601; t=1762432320; x=1763037120;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ryrJTyV3BiBNpc/Xqof1daYP9wnmws9NKZ1gFhM+lqE=;
+        b=cmDKr/cSUBXlMwVxalcFUh7fh9Hw72bPpSfIStyQeYt97I8DChaFlZCQhNuYJ1sjde
+         utVVZI8cIPtUaTxoVhJnN+3QdvQwPOiUnLSNZjJ2sjPGS+iCUfQD3UPN5uVYd8S/lZZ1
+         Z2g046c3NhkhOFfuTgC+HQV2CGa1SwP2linQI5/mpOn1fFt/AyJNfwrJcC4jPns6TjwA
+         SoggPBqz3GlMuswSZkdxKh6k8SFtF89WhFcMvLaXAqAaiFAEXkfD4Nx/8s4nPwwuWZQ2
+         Yx7CUVqXFy8uq+jg/rXQd1lu/HHE9aOsDcCkM6Cc1iH8nDb9wDiOpHyHA9hZXWk/P1EN
+         OPFw==
+X-Gm-Message-State: AOJu0YwK45qa7oaUQx1bz8sFJF98oZx/0ZvadD3t2Gh7hVTpNLgyk1+T
+	r1skQYt5YxAL1TwTqwGC/ed08D4BEr3xPeZTkj0dqnfGaOgV2RqDojUF1cnNyg==
+X-Gm-Gg: ASbGncsWNzfBZf+6/2kOjpkq3fNJfpzF5oJyWVMMQaaLqfmOwJxY6sFQF58zKAu4zMb
+	T3mOHIyY8e3bq6/M0dJxTd8CrlCsVfJlrFBhuGu6D0sZhNogfuiDCAW8vx/5cAVvbeGeXomUmiE
+	TAA4W0RGNGVl8r62SX+WJKHZkGZuiO0WIDTLuiaW62jbgVHtb3duL8VVjnfqW86GJkRHY/TP6at
+	qSKOp6WOhJB6jGUW3XM1RSP5aYM/jOeQI/YrONxrEEoWZwK4JB9WqME5kVzVCC/8r3OJuFiSLAd
+	2ku6cVtZJX0xL7ESJ8Hf6/yW/gU7pvN4B5xhOJcqM0pxSudyG+PYWwi2+0TWrpabQrXNrCjGU7x
+	xpNbnoGPpaDbN01UplkKhWgPiBp8jgfxSzueVHQ0yKzKbohagtvCiNtshb68867TSeeIZXAUb94
+	e6fyY=
+X-Google-Smtp-Source: AGHT+IE2+VleCRVhXHr0nmL/dOJZR6bMWZ+JBMEchwEb7F+d9UFbcYLCkxHbljYyV2HthucHnhjn5g==
+X-Received: by 2002:a05:600c:1e1d:b0:477:a9e:859a with SMTP id 5b1f17b1804b1-4775cdf54e7mr61710355e9.22.1762432319456;
+        Thu, 06 Nov 2025 04:31:59 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763dd53ecsm16502345e9.1.2025.11.06.04.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 04:31:58 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring/query: buffer size calculations with a union
+Date: Thu,  6 Nov 2025 12:31:56 +0000
+Message-ID: <669d1e9701194fe86c69d12bb629b21242adaec7.1762432299.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET 0/2] Add support for IORING_CQE_F_SOCK_FULL
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20251105193639.235441-1-axboe@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251105193639.235441-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/5/25 19:30, Jens Axboe wrote:
-> Hi,
-> 
-> It can be useful for userspace to know if a send request had to go
-> through poll to complete, as that generally means that the socket was
-> out of space. On the send side, this is pretty trivial to support - we
-> just need to check if the request needed to go through poll to complete.
-> 
-> This reuses the IORING_CQE_F_SOCK_NONEMPTY flag value, which is only
-> valid for recv operations. As IORING_CQE_F_SOCK_FULL only applies on
-> sends, there's no need for separate values for this flag.
-> 
-> Based on an earlier patchset, which utilized REQ_F_POLL_ARMED instead
-> and handled patch 1 a bit differently.
+Instead of having an array of a calculated size as a buffer, put all
+query uapi structures into a union and pass that around. That way
+everything is well typed, and the compiler will prevent opcode handling
+using a structure not accounted into the buffer size.
 
-FWIW, same comments as last time. REQ_F_POLL_TRIGGERED is set not
-in the right place. And, with how tcp manages wait queues, you won't
-be able to use it well for any throttling, as the user will get the
-flagged CQE long time after, when the queue is already half empty.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/query.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
+diff --git a/io_uring/query.c b/io_uring/query.c
+index 645301bd2c82..6cf732936b3d 100644
+--- a/io_uring/query.c
++++ b/io_uring/query.c
+@@ -5,14 +5,16 @@
+ #include "query.h"
+ #include "io_uring.h"
+ 
+-#define IO_MAX_QUERY_SIZE		(sizeof(struct io_uring_query_opcode))
++union io_query_data {
++	struct io_uring_query_opcode opcodes;
++};
++
++#define IO_MAX_QUERY_SIZE		sizeof(union io_query_data)
+ #define IO_MAX_QUERY_ENTRIES		1000
+ 
+-static ssize_t io_query_ops(void *data)
++static ssize_t io_query_ops(union io_query_data *data)
+ {
+-	struct io_uring_query_opcode *e = data;
+-
+-	BUILD_BUG_ON(sizeof(*e) > IO_MAX_QUERY_SIZE);
++	struct io_uring_query_opcode *e = &data->opcodes;
+ 
+ 	e->nr_request_opcodes = IORING_OP_LAST;
+ 	e->nr_register_opcodes = IORING_REGISTER_LAST;
+@@ -24,7 +26,7 @@ static ssize_t io_query_ops(void *data)
+ }
+ 
+ static int io_handle_query_entry(struct io_ring_ctx *ctx,
+-				 void *data, void __user *uhdr,
++				 union io_query_data *data, void __user *uhdr,
+ 				 u64 *next_entry)
+ {
+ 	struct io_uring_query_hdr hdr;
+@@ -73,11 +75,11 @@ static int io_handle_query_entry(struct io_ring_ctx *ctx,
+ 
+ int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
+ {
+-	char entry_buffer[IO_MAX_QUERY_SIZE];
++	union io_query_data entry_buffer;
+ 	void __user *uhdr = arg;
+ 	int ret, nr = 0;
+ 
+-	memset(entry_buffer, 0, sizeof(entry_buffer));
++	memset(&entry_buffer, 0, sizeof(entry_buffer));
+ 
+ 	if (nr_args)
+ 		return -EINVAL;
+@@ -85,7 +87,7 @@ int io_query(struct io_ring_ctx *ctx, void __user *arg, unsigned nr_args)
+ 	while (uhdr) {
+ 		u64 next_hdr;
+ 
+-		ret = io_handle_query_entry(ctx, entry_buffer, uhdr, &next_hdr);
++		ret = io_handle_query_entry(ctx, &entry_buffer, uhdr, &next_hdr);
+ 		if (ret)
+ 			return ret;
+ 		uhdr = u64_to_user_ptr(next_hdr);
 -- 
-Pavel Begunkov
+2.49.0
 
 

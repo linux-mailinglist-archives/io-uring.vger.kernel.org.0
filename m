@@ -1,113 +1,246 @@
-Return-Path: <io-uring+bounces-10444-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10445-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B43C41510
-	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 19:43:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0523C41576
+	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 19:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291EB1896C30
-	for <lists+io-uring@lfdr.de>; Fri,  7 Nov 2025 18:44:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99DD24E417A
+	for <lists+io-uring@lfdr.de>; Fri,  7 Nov 2025 18:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1412E040D;
-	Fri,  7 Nov 2025 18:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F3E33B6E8;
+	Fri,  7 Nov 2025 18:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdnVATAF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqTCA9zT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C11336ECC
-	for <io-uring@vger.kernel.org>; Fri,  7 Nov 2025 18:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E273433B6DE;
+	Fri,  7 Nov 2025 18:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762541014; cv=none; b=XKBZhPvUhs9ddqbY5mwRXWmRT7pwo/hF8vP/QDKPUoAO4/qYpQB8vU12BULy9jUmEiAHaymToJk5h1NFYO/qVIr1XOqOZb4ipKLhjHURTGi1wzOMb/T2JJ3BWa4yctcsm/Y3gpawfzHWgCXLhZ3m+CLz9Jffnv8MLg2omAWFGL0=
+	t=1762541535; cv=none; b=Sex+JA5L4xoMip9kh/57a/62iFLvCQoL8wkj5zSYDkXaMuYz/F8wiJr/GvoeW+A2IMNdUw3xA1noQdpj4/17VJn5+U1m5OlISQr25ngmTMcsSytbuv6qvs/NkwLEDiGPeHuVieVlbs46GSR4E5qHlJzSMAv7shaENWyXwQaoqaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762541014; c=relaxed/simple;
-	bh=nQqsQbW8sLt9vzJIoWuSmQFusnTlWSbBn+vx1kiyri8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IBqj82UE27Xa3vmrx8kSgn14jrIkUp6/diyYJaaG5czZmcVzE/T43Lqv+GMdtO22EPSf2ee5nFlmbxol3nhRogJQKkPeObrF05NQjn2fjwisTWz2EIIEBbBHL9U4wQ0WUZ3IS/7qC1l+KO4gV7Ar9eqR4De7RLuumP0NQ4WZJ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdnVATAF; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429c7e438a8so996229f8f.2
-        for <io-uring@vger.kernel.org>; Fri, 07 Nov 2025 10:43:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762541011; x=1763145811; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9RVwz3sMbg+clsZmLZQo1Cmw25WzG+27GQr3DeSsuTk=;
-        b=WdnVATAFASgS57Z1jJthIudXFvJ6+PYZlRMlk6yqV5CeNuqXna8X9rf6fagiTZFLe4
-         FfyRpN/R7dsiGvlpmhCpkaf30sBmx1APAw80S+PUauqjsfSwssUaC0GRKLetDLqxaOJ2
-         XXOaoVFltgYnuL8GESTSPu2mcx3ig4VzjGrla16mGnV92500Xu5vVfgAc21XUMd/sUm2
-         5q1f2wFT45SN9y5NFTGJVsQ2q8OO4juJqeDT9YNWCJ5KfVCdl11kTnHMroU7SSoFdJqm
-         E24rAq3sWNctSsht1NPN/tAWu/MA5ew/81voCQqnNktfT9dEgoRM58frVULvbwlgDhE4
-         LM6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762541011; x=1763145811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9RVwz3sMbg+clsZmLZQo1Cmw25WzG+27GQr3DeSsuTk=;
-        b=b4K9bPm4iVGD5Af5rHyHv6nomTnsu+RCJjQw2ef/6VwGUfpa32FIOxi6XMSgl+Tar6
-         YfZBukL+qasORYt0C6RC5fewjtFpGcZEluJdXT9K5MM3J6S87Li5YaOyPId0f5OP+PNf
-         TU/eCKekSPavf3NzFR0Ut+QEjkE8za83S0nDZiv/F3XqTVfJUBnN+Y/kVsTVR3crRNhW
-         m/PwUGBXjGdQMEXQ5zWzCR779r3rDHhsnW8Mx979hcnCqXfTfIBHLOy9jvE5yAfvb5X7
-         m2JnJGlnsc7SyjbVr1zeZ31fiuAZN3pDwHWL5fQ4oMWl1vxZCmEt2suBAzD1DO17e7MI
-         v/aQ==
-X-Gm-Message-State: AOJu0YwIq56PvX41jhtgnujE1gTSDxglmRlo/REVLNYE8ZuwzAB5RgYl
-	gf45h5rwjFrx5SGh3dOHkl6YgoONHVPi4E96k2KPelSV4UbNGoKkyclquoQY0w==
-X-Gm-Gg: ASbGncuPJyGFg1iuZhqiRIFINcdfuXa7RwYD2pYpfG9z19ArJCZod4aTtU5kfHRWtW5
-	jqL8Hk/5bg+PmPbip5gBg/DzyviqsjSbArvrfeg92goGUmtD0sTchPv2UMX1J5Z/TbK+F1YRvqY
-	1NgCFpDaAgrx6RkOQkJaewfYq4s6PpO1yTt269X1id8mRDrmVZanSp/OGiqzXYDU+yD6SQdc8+i
-	E3hAa0hxSzMX8dv4zvbDghdIEThpC6U8TU3Z7A+qhFcTHZeYDhR7cPixEG2+asqun9u3RYKKh9v
-	qz5W2aRaz/svoIbVo67DEwRoGiM0C0aQESdayTWU7ldj/p/HecXZVxTq+BtK8J2AAVF0BARCgFE
-	aPFb9aCFCxc7DoJmA5tjb8yo9eqhdPaiaJRJWleYXJFDFWPiRjcKwkA5vzKUrR6aOyphoDbO6TU
-	3W9OOCGhkr7OoxjUV8mx7L3f8V0VUqKveMhtdtQPzDBFK+VE01Y8o=
-X-Google-Smtp-Source: AGHT+IF1AHZXFN9Y1MfzvdpIxKrXqhPZ2v/vOFB0yL8t5f1MfQS0cppsiElePtxpKlpxlanF1UfCDA==
-X-Received: by 2002:a05:6000:21c1:b0:42b:2c61:86f1 with SMTP id ffacd0b85a97d-42b2c6189d3mr345342f8f.35.1762541010947;
-        Fri, 07 Nov 2025 10:43:30 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675ca3csm6878761f8f.23.2025.11.07.10.43.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 10:43:30 -0800 (PST)
-Message-ID: <3338436a-bd36-4acd-a6f5-afb3d741b2a3@gmail.com>
-Date: Fri, 7 Nov 2025 18:43:28 +0000
+	s=arc-20240116; t=1762541535; c=relaxed/simple;
+	bh=xf4LmEs/vCzWiaf2kAF7AgpX2/Ou3FIf/waiEhnB5/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHyJNYmHWrBsEA4F64O+OZaLZpVkz8pDg4iAzYE5o5rRK86I8h8Z2/fAX6KyrfGLnDuPI0sZTSRebRsfSkCbYs0JHNdlQ90+zFjc6kE2DMYxD3mLY2EOSztu0/qmuQNvWkV9yNXZ6wgKUGuNAgCyduRn0XmwUdFNDRWmtBxA0Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqTCA9zT; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762541533; x=1794077533;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xf4LmEs/vCzWiaf2kAF7AgpX2/Ou3FIf/waiEhnB5/s=;
+  b=IqTCA9zT7EXpZda6QzumWMTbj/1RaB1p5kAhuhBo0cvCAzuq1Pr4gD1c
+   ZBhz69MBEBKzFbdJpcgtrVidaCDUyy6Dm4aRAIfG0kHotHIwcGlEYfY4y
+   l8N3eNS+Fg5XspPgMzBjzpwIujgL9D/YFaSwZA90+lbSHwIoFblx+2nmY
+   WvR5jxi2B2+wqDpuI5QwmVmcvbHxvLXlS1CBqJoCQkUj8yukuo3GYgSDM
+   UlhvykSswM3AXHgDQrlRuKqGzojO8V4l5Mc+wKc1xBpXDsmGaT83rQL4B
+   ejb2UlLogT2fEHiF1nnS0RLX9Ml9TOJQtWrFWYwb9E98rhtLtD524ZdFM
+   g==;
+X-CSE-ConnectionGUID: zXxFlq6+S9ONDE1WxZYzhQ==
+X-CSE-MsgGUID: ZRp8qJ2BQrOeywolZpG9Qg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="82096504"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="82096504"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:52:12 -0800
+X-CSE-ConnectionGUID: NX74ZQfORwatomIShBOKWA==
+X-CSE-MsgGUID: 6hrU/4eyQliBX8lemlmwqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="192463422"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 07 Nov 2025 10:52:10 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHRZ9-0000G3-2T;
+	Fri, 07 Nov 2025 18:52:07 +0000
+Date: Sat, 8 Nov 2025 02:51:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>, bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>, Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH 5/5] io_uring: bpf: add io_uring_bpf_req_memcpy() kfunc
+Message-ID: <202511080255.v8F8GrXF-lkp@intel.com>
+References: <20251104162123.1086035-6-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring: regbuf vector size truncation
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
- Google Big Sleep <big-sleep-vuln-reports+bigsleep-458654612@google.com>
-References: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104162123.1086035-6-ming.lei@redhat.com>
 
-On 11/7/25 18:41, Pavel Begunkov wrote:
+Hi Ming,
 
-Should be "_fix_ regbuf vector size truncation" in the subject,
-but I guess it doesn't matter.
+kernel test robot noticed the following build warnings:
 
-> There is a report of io_estimate_bvec_size() truncating the calculated
-> number of segments that leads to corruption issues. Check it doesn't
-> overflow "int"s used later. Rough but simple, can be improved on top.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 9ef4cbbcb4ac3 ("io_uring: add infra for importing vectored reg buffers")
-> Reported-by: Google Big Sleep <big-sleep-vuln-reports+bigsleep-458654612@google.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+[auto build test WARNING on next-20251104]
+[cannot apply to bpf-next/net bpf-next/master bpf/master linus/master v6.18-rc4 v6.18-rc3 v6.18-rc2 v6.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-prepare-for-extending-io_uring-with-bpf/20251105-002757
+base:   next-20251104
+patch link:    https://lore.kernel.org/r/20251104162123.1086035-6-ming.lei%40redhat.com
+patch subject: [PATCH 5/5] io_uring: bpf: add io_uring_bpf_req_memcpy() kfunc
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20251108/202511080255.v8F8GrXF-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511080255.v8F8GrXF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511080255.v8F8GrXF-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   io_uring/bpf.c: In function 'io_bpf_import_buffer':
+>> io_uring/bpf.c:423:47: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     423 |                 return import_ubuf(direction, (void __user *)(addr + offset),
+         |                                               ^
+   In file included from include/linux/bpf_verifier.h:7,
+                    from io_uring/bpf.c:9:
+   io_uring/bpf.c: In function 'io_bpf_init':
+   include/linux/bpf.h:2044:50: warning: statement with no effect [-Wunused-value]
+    2044 | #define register_bpf_struct_ops(st_ops, type) ({ (void *)(st_ops); 0; })
+         |                                                  ^~~~~~~~~~~~~~~~
+   io_uring/bpf.c:551:15: note: in expansion of macro 'register_bpf_struct_ops'
+     551 |         err = register_bpf_struct_ops(&bpf_uring_bpf_ops, uring_bpf_ops);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from <command-line>:
+   In function 'io_kiocb_cmd_sz_check',
+       inlined from 'io_uring_bpf_prep' at io_uring/bpf.c:93:32:
+   include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_598' declared with attribute error: BUILD_BUG_ON failed: cmd_sz > sizeof(struct io_cmd_data)
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:584:25: note: in definition of macro '__compiletime_assert'
+     584 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:603:9: note: in expansion of macro '_compiletime_assert'
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/io_uring_types.h:655:9: note: in expansion of macro 'BUILD_BUG_ON'
+     655 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+         |         ^~~~~~~~~~~~
+   In function 'io_kiocb_cmd_sz_check',
+       inlined from 'io_uring_bpf_issue' at io_uring/bpf.c:131:32:
+   include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_598' declared with attribute error: BUILD_BUG_ON failed: cmd_sz > sizeof(struct io_cmd_data)
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:584:25: note: in definition of macro '__compiletime_assert'
+     584 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:603:9: note: in expansion of macro '_compiletime_assert'
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/io_uring_types.h:655:9: note: in expansion of macro 'BUILD_BUG_ON'
+     655 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+         |         ^~~~~~~~~~~~
+   In function 'io_kiocb_cmd_sz_check',
+       inlined from 'io_uring_bpf_fail' at io_uring/bpf.c:148:32:
+   include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_598' declared with attribute error: BUILD_BUG_ON failed: cmd_sz > sizeof(struct io_cmd_data)
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:584:25: note: in definition of macro '__compiletime_assert'
+     584 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:603:9: note: in expansion of macro '_compiletime_assert'
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/io_uring_types.h:655:9: note: in expansion of macro 'BUILD_BUG_ON'
+     655 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+         |         ^~~~~~~~~~~~
+   In function 'io_kiocb_cmd_sz_check',
+       inlined from 'io_uring_bpf_cleanup' at io_uring/bpf.c:159:32:
+   include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_598' declared with attribute error: BUILD_BUG_ON failed: cmd_sz > sizeof(struct io_cmd_data)
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:584:25: note: in definition of macro '__compiletime_assert'
+     584 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:603:9: note: in expansion of macro '_compiletime_assert'
+     603 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/io_uring_types.h:655:9: note: in expansion of macro 'BUILD_BUG_ON'
+     655 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+         |         ^~~~~~~~~~~~
+
+
+vim +423 io_uring/bpf.c
+
+   401	
+   402	/*
+   403	 * Helper to import a buffer into an iov_iter for BPF memcpy operations.
+   404	 * Handles both plain user buffers and fixed/registered buffers.
+   405	 *
+   406	 * @req: io_kiocb request
+   407	 * @iter: output iterator
+   408	 * @buf_type: buffer type (plain or fixed)
+   409	 * @addr: buffer address
+   410	 * @offset: offset into buffer
+   411	 * @len: length from offset
+   412	 * @direction: ITER_SOURCE for source buffer, ITER_DEST for destination
+   413	 * @issue_flags: io_uring issue flags
+   414	 *
+   415	 * Returns 0 on success, negative error code on failure.
+   416	 */
+   417	static int io_bpf_import_buffer(struct io_kiocb *req, struct iov_iter *iter,
+   418					u8 buf_type, u64 addr, unsigned int offset,
+   419					u32 len, int direction, unsigned int issue_flags)
+   420	{
+   421		if (buf_type == IORING_BPF_BUF_TYPE_PLAIN) {
+   422			/* Plain user buffer */
+ > 423			return import_ubuf(direction, (void __user *)(addr + offset),
+   424					   len - offset, iter);
+   425		} else if (buf_type == IORING_BPF_BUF_TYPE_FIXED) {
+   426			/* Fixed buffer */
+   427			return io_import_reg_buf(req, iter, addr + offset,
+   428						 len - offset, direction, issue_flags);
+   429		}
+   430	
+   431		return -EINVAL;
+   432	}
+   433	
+
 -- 
-Pavel Begunkov
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

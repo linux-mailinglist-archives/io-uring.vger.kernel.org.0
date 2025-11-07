@@ -1,151 +1,183 @@
-Return-Path: <io-uring+bounces-10447-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10448-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B93EC41C0C
-	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 22:15:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DCFC41CC4
+	for <lists+io-uring@lfdr.de>; Fri, 07 Nov 2025 23:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06261882B46
-	for <lists+io-uring@lfdr.de>; Fri,  7 Nov 2025 21:15:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92773340EEA
+	for <lists+io-uring@lfdr.de>; Fri,  7 Nov 2025 22:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A5A30216D;
-	Fri,  7 Nov 2025 21:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5B92FFDCB;
+	Fri,  7 Nov 2025 22:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qMK5LSPu"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="JEddRjL2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yGslYY8I"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA30238178
-	for <io-uring@vger.kernel.org>; Fri,  7 Nov 2025 21:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE6C23D28F;
+	Fri,  7 Nov 2025 22:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762550101; cv=none; b=rVW7fsYTdT/M8DI4k8T423Ff7nY8RaZKvwLazj0Yr4+HtYlHGVrlTBc5o3BF9eGm9xOsu6A+bhScxqOPWrkaNW0zyf/Ln8MTWRFEiEw4Zf+9AwWR3KwsPAO1Cdgox6oujBz1UC6Zcvhmh4alN865y8kevE8w+B0d3iMY3fE8ieI=
+	t=1762553522; cv=none; b=qynwhO4yOwP3U0tlAG4oKUwPh1+kYRlyo+hb76Advk6lU5gcVxPWW1eO4FU6QkDzL/8Rhi9BsKNIm9kdPsCoT6HlU57ZeTA+WIoPGy/W6vPLKesFFkJmr0lEXUKGY7VdhJBaypWor8fTrlDg0athzTUxq3e7DSJJZHt0L+SvrD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762550101; c=relaxed/simple;
-	bh=vOZpNpSXrd1W0ShviGZhNuhesScEZTYlyLT7Keoqf9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cN4oa+LOQeTwzKrFb5orvwxrAy9Ip/3cFQuAVqEVwqSBQ4KyRF9NZ6qDQYextlIjm4Lb7V+JHXBcrB2pWMnR9DoYgmXTpNdc/tmxbQnwc1AeahbHc4J0dyxjoXhlxhWXKSDqgrUU9ESxj1Qdyd6nWusii4HklbaDLrNKZAuDmpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qMK5LSPu; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42557c5cedcso732130f8f.0
-        for <io-uring@vger.kernel.org>; Fri, 07 Nov 2025 13:14:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762550098; x=1763154898; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dM0QYndz87BxaRfoLJCupInuSN4RI3ZsebdVyhoIEkk=;
-        b=qMK5LSPuW1FintCTTbSUqflG4eMdb+6elKSNCoFeOBxVh3dkNofEWUKEWV/Mq3UvT6
-         fIjOR8JEu9L5ZGjDXfj2IhiUuJUV86h8VW6FXV1mls5FXxmD63bJzyJJWtUXRQaHCfKt
-         TTW/IGLdA+BIKFeshCZsmu+kaPF77TF/PnFsl3AKPRaOACy46zHEGalvgQOODc3ZUeXy
-         tHMy1T7O2k4TU+9R0wfhPCisLHDKFeRsgVQupSNvDWzFSZ/MD91BWdKiB8ClbQE1ad8f
-         2r8mk5vKa7KnXM5MpC+MJ9FuYTtmt51qQKpj51gxvfa+4J+G0IwzbuH3S3jDT0jl9FMZ
-         qjPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762550098; x=1763154898;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dM0QYndz87BxaRfoLJCupInuSN4RI3ZsebdVyhoIEkk=;
-        b=MK0y4zNQKSmhu4OA8obNQDUlbJ7zaV2t1SLlGcmjtDKzRKzupzOMWv4prqO6HEXUoJ
-         Y6hTUZBCnXdE++nU4dh4etbd4iD38evq2G20GZalCG3XzIwkl5BL+AVvlXWx7H9CiRg8
-         tvxrwaf2sGjaecrDrzXtLit1WK7lhuevCiUfA7ZWPM7whOVithaKTD3GFBGhaHx9eUwc
-         ru6IbiB6T9C6BKkj8WzHshdMsRGb6ET9LWywI1IymuKQEgbBRzVuVn1iStQ2dUvS/Hgw
-         p0fA1o29hlWVY4FrcGEGlf8wxwsg/bg/x/3mWE1Is99oMClLhJKNxhcvhI7W/fVmjUiC
-         mG4g==
-X-Gm-Message-State: AOJu0YyGGkY7PS6RVgW9KCOKn1KZfDOXnGUy6G4AihmGeTQ7yRvFue89
-	TMWXJp869s4ZGXkH2e/qfE40AGOYsUaga0ju2w9ArwBg/xCEEud+QnWEJ5CPQwBRNA==
-X-Gm-Gg: ASbGncvuddwagMtfCSvsgfhM11x45xHK9BagDK+l+wEhaRN06W1VbR3XS9v3/YD2iDc
-	E7nfn0n7YxLXWLTgVY2FFQ5x9UqjF9YPkU773QyKYxUAaShBvqZfY8NeXcZnRhysh7f3sFNVln9
-	L/CFqClZJ8TsaUhNHlsDIz/j3F8YyWYgAsIVzKE+lse2FhD7ctnI6R7kY82MqBWyAI86SxZL4Ml
-	Oh0JStQMF+d5JFcJaRKpIwToe/jlOK0pcByu2S4d4F2U1llSEffXMw4heRHfm4Q4P3a6g9n9CjC
-	MTgFCt/KNAYV6TlYKoABVvVgDGXDmJR7Ils4CDF41nvXngZF2JiS24sJN0Xl05M4iKTjeJnLClP
-	9GQUsZ3gqAF413bTppBtOPhwSDYtbV66ClXTLmwnBFyh6ScNENTqzYnAAU5BD9qw0w6nOk17uYc
-	SULaekD/WCEr1KVTa8r/dvQS2Eq8kiCA==
-X-Google-Smtp-Source: AGHT+IFuXAg0N0zdkFyStzsnAj9kyv3rUY+PZ7FHx/geMtCnoeaTftasE33y/muB32zWiPBQzUag7w==
-X-Received: by 2002:a05:6000:2681:b0:429:cc5f:689d with SMTP id ffacd0b85a97d-42b2dc6d0e0mr279838f8f.61.1762550097706;
-        Fri, 07 Nov 2025 13:14:57 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:8753:845b:f85d:5b1e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe64fd90sm7236979f8f.21.2025.11.07.13.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 13:14:57 -0800 (PST)
-Date: Fri, 7 Nov 2025 22:14:52 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
-	Google Big Sleep <big-sleep-vuln-reports+bigsleep-458654612@google.com>
-Subject: Re: [PATCH 1/1] io_uring: regbuf vector size truncation
-Message-ID: <aQ5hTIBM0euPZGnD@google.com>
-References: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1762553522; c=relaxed/simple;
+	bh=U8vifoR1nbgkidZhcbE0BnuEbKuLIxpGrMHsQWcxnRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CFsWZ+e97DecsLLTQX4E+uID7WTVWrWETBGGH7Nll8WSfYbhWg70ouyHr64V3IVh5TpyrR2dPJQITPJgvmnj1tmpSEUtdLcacAIkx0/GYdXlsgi+deS+2cSr1BFqfCNQXTp+c1uOK8wyLEon44UrNSvaZY/T1Q/R0DIwmAuTheo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=JEddRjL2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yGslYY8I; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id EB50BEC01E5;
+	Fri,  7 Nov 2025 17:11:58 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 07 Nov 2025 17:11:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762553518;
+	 x=1762639918; bh=skl5UA2/vsrRvlpIP4OCZ5whgX7odV1djdqv3Yfoz1s=; b=
+	JEddRjL2Rbhk8hvSZaCeX3dBT47LmrpWTB4KkJdJz5YYuG8oDellJ4y8tvkzokoB
+	Qa5MBxpKJrs8bsOclEelYLaUXZI0mBVzpe1iLyEXkndHIKkfUbMhAlZDu+xa3xwd
+	WyACX6vbh02MEKvkNQU5HmhCX2LzDJ5o69/k8KKtWbHL3lo9e8F46jblONpR9o3m
+	d5gp/IVOX3N3xCE8F4FJFRuBZX/YB0b0XuNMPBLFEiUnMrQLiMd8AHc5Fng3C0q9
+	c3NM1YDtsn5m7f4nyMU9tpv2t8yCnPiPu7WF1+DUXkP/w5iHWSyVxCicyCzUIu1Q
+	aGOeh7gKNB7i+jP5y0WKag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762553518; x=
+	1762639918; bh=skl5UA2/vsrRvlpIP4OCZ5whgX7odV1djdqv3Yfoz1s=; b=y
+	GslYY8IQu4Xq0cyONwAtXaD+oCQL6lD/f48CTj3/QbTFt3Xx9uPh05Ukg1cmNz+C
+	wxvUwpa6c1ALR2YaP6U6PBblWA+redDrzmqynn414+5133JoDPJwh7XsGcSA/1bf
+	ifC7vTpYiQnChenqUY4wGo6Yfe0fXK4SQoZr1rtxS3EYt3x12k3bRvXICK34Ryso
+	0PbF5irCO+otZtLQwvQ7NWG+JteV8l0VEB5eOUUvbdFXO+CIk+Aw0ddnzKdJO83z
+	X1ymdBRzvfAXC5wwm7mUmmubYzC35bqziEYfzPCAKUW5RddDzxSL+d+sxiw7YwjA
+	4KMWgeL4lUcHSc9MbC+AQ==
+X-ME-Sender: <xms:rW4OaXU1K7t_9fS2_dk_-NXfsezD-1Q6Z-TvW9P5OU8cN4b-orpINA>
+    <xme:rW4OaSrivXHGwbb46xzGEKtLdozh6AV3IeJTpS9G6IrC-t3IuLa75SJN97Y4QoBWd
+    NvYHkgSt4iSKJ_ovqZVOgES_oMzDtjTZOO_Yc0aGpqTvO6j_AlSSA>
+X-ME-Received: <xmr:rW4OaeDf4E3W-rp_LrCYNJbX_thzM4c1mSh4bj5pa5EPyGb_iRwbi7eXDgeZsMFm55iwUi0hkll551xdBuzKVpsicnQRSLoXDk3jNXW_t0NORoUg-NxO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledtkeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeefgeegfeffkeduudelfeehleelhefgffehudejvdfgteevvddtfeeiheef
+    lefgvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthho
+    pegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsshgthhhusggvrhht
+    seguughnrdgtohhmpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepgihirghosghinhhgrdhlihesshgrmhhsuhhnghdrtghomhdprhgtph
+    htthhopegtshgrnhguvghrsehpuhhrvghsthhorhgrghgvrdgtohhm
+X-ME-Proxy: <xmx:rW4OaegJZa1rnaRJbCUecxsJDImw13QZOtFKibP_KcluD18x-Jwr4w>
+    <xmx:rW4OacYQjID7o4pmKoJngJBqq3c8Raktf8nSQE6VkR9IEPIMtCnuQA>
+    <xmx:rW4OafkYr3_YJuovZPE2oK-oElKoq6H49zaJFfZAzi4Gka5dq36HlQ>
+    <xmx:rW4OaSgaBCsg0eDXkad1sD9G3zuPKJ_kW3v_p9pcahhE9N9ugAK54Q>
+    <xmx:rm4OacP-znN9LJQSaGg8ixgVbVymcmRywXTa4BOBFymC8knyLUEiP7Dd>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Nov 2025 17:11:56 -0500 (EST)
+Message-ID: <505ab86f-bf13-41b9-8ccc-6e5cb83ef1b8@bsbernd.com>
+Date: Fri, 7 Nov 2025 23:11:55 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] fuse: use enum types for header copying
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+ bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org,
+ xiaobing.li@samsung.com, csander@purestorage.com, kernel-team@meta.com
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+ <20251027222808.2332692-6-joannelkoong@gmail.com>
+ <f74e1f05-5d66-4723-a689-338ee61d9b43@bsbernd.com>
+ <CAJnrk1apBiPMrDZDyVfLeFKLPdPiB=4e1d7D3QHsX5_6ZtFccA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1apBiPMrDZDyVfLeFKLPdPiB=4e1d7D3QHsX5_6ZtFccA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
 
-On Fri, Nov 07, 2025 at 06:41:26PM +0000, Pavel Begunkov wrote:
-> There is a report of io_estimate_bvec_size() truncating the calculated
-> number of segments that leads to corruption issues. Check it doesn't
-> overflow "int"s used later. Rough but simple, can be improved on top.
+
+
+On 11/6/25 22:59, Joanne Koong wrote:
+> On Wed, Nov 5, 2025 at 3:01 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>
+>> On 10/27/25 23:28, Joanne Koong wrote:
+>>> Use enum types to identify which part of the header needs to be copied.
+>>> This improves the interface and will simplify both kernel-space and
+>>> user-space header addresses when fixed buffer support is added.
+>>>
+>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>> ---
+>>>  fs/fuse/dev_uring.c | 55 ++++++++++++++++++++++++++++++++++++---------
+>>>  1 file changed, 45 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>>> index faa7217e85c4..d96368e93e8d 100644
+>>> --- a/fs/fuse/dev_uring.c
+>>> +++ b/fs/fuse/dev_uring.c
+>>> @@ -31,6 +31,12 @@ struct fuse_uring_pdu {
+>>>
+>>>  static const struct fuse_iqueue_ops fuse_io_uring_ops;
+>>>
+>>> +enum fuse_uring_header_type {
+>>> +     FUSE_URING_HEADER_IN_OUT,
+>>
+>> In post review of my own names, headers->in_out is rather hard to
+>> understand, I would have probably chosen "msg_in_out" now.
+>> With that _maybe_ FUSE_URING_HEADER_MSG_IN_OUT?
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 9ef4cbbcb4ac3 ("io_uring: add infra for importing vectored reg buffers")
-> Reported-by: Google Big Sleep <big-sleep-vuln-reports+bigsleep-458654612@google.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  io_uring/rsrc.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> Ahh I personally find "msg" a bit more confusing because "message"
+> makes me think it refers just to the payload since the whole thing is
+> usually called the request. So if we had to rename it, maybe
+> FUSE_URING_HEADER_REQ_IN_OUT? Though I do like your original naming of
+> it, FUSE_URING_HEADER_IN_OUT since FUSE_URING_FUSE_HEADER_IN_OUT
+> sounds a little redundant.
+
+FUSE_URING_HEADER_REQ_IN_OUT sounds nice to me. Renaming was just a
+suggestion. Let's keep the current name if you prefer that.
+
 > 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 4053d104bf4c..a49dcbae11f0 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1405,8 +1405,11 @@ static int io_estimate_bvec_size(struct iovec *iov, unsigned nr_iovs,
->  	size_t max_segs = 0;
->  	unsigned i;
->  
-> -	for (i = 0; i < nr_iovs; i++)
-> +	for (i = 0; i < nr_iovs; i++) {
->  		max_segs += (iov[i].iov_len >> shift) + 2;
-> +		if (max_segs > INT_MAX)
-> +			return -EOVERFLOW;
-> +	}
->  	return max_segs;
->  }
->  
-> @@ -1512,7 +1515,11 @@ int io_import_reg_vec(int ddir, struct iov_iter *iter,
->  		if (unlikely(ret))
->  			return ret;
->  	} else {
-> -		nr_segs = io_estimate_bvec_size(iov, nr_iovs, imu);
-> +		int ret = io_estimate_bvec_size(iov, nr_iovs, imu);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +		nr_segs = ret;
->  	}
->  
->  	if (sizeof(struct bio_vec) > sizeof(struct iovec)) {
-> -- 
-> 2.49.0
+> I'll add some comments on top of this too, eg "/*struct fuse_in_header
+> / struct_fuse_out_header */, to clarify.
+
+Comments are always helpful :)
+
+> 
+>>
+>>> +     FUSE_URING_HEADER_OP,
+>>> +     FUSE_URING_HEADER_RING_ENT,
+>>> +};
+>>> @@ -800,7 +835,7 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
+>>>       struct fuse_conn *fc = ring->fc;
+>>>       ssize_t err = 0;
+>>>
+>>> -     err = copy_header_from_ring(&req->out.h, &ent->headers->in_out,
+>>> +     err = copy_header_from_ring(ent, FUSE_URING_HEADER_IN_OUT, &req->out.h,
+>>>                                   sizeof(req->out.h));
+>>>       if (err) {
+>>>               req->out.h.error = err;
+>>
+>>
+>> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> 
+> Thanks for reviewing the patches!
 > 
 
-I reviewed the logic and the check looks correct,
-and I tested that it works as expected.
-
-(Minor remark: You might want to annotate the conditions as unlikely()?)
-
-Reviewed-by: Günther Noack <gnoack@google.com>
-Tested-by: Günther Noack <gnoack@google.com>
-
-—Günther
 

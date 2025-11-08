@@ -1,276 +1,223 @@
-Return-Path: <io-uring+bounces-10452-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10453-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E22C42211
-	for <lists+io-uring@lfdr.de>; Sat, 08 Nov 2025 01:27:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886C9C423A1
+	for <lists+io-uring@lfdr.de>; Sat, 08 Nov 2025 02:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A09A18988CD
-	for <lists+io-uring@lfdr.de>; Sat,  8 Nov 2025 00:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04481888ED8
+	for <lists+io-uring@lfdr.de>; Sat,  8 Nov 2025 01:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E363620C490;
-	Sat,  8 Nov 2025 00:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31878502BE;
+	Sat,  8 Nov 2025 01:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0+8BrtkM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XRRklK0a"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5524420A5E5
-	for <io-uring@vger.kernel.org>; Sat,  8 Nov 2025 00:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958F45C0B;
+	Sat,  8 Nov 2025 01:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762561654; cv=none; b=eDIq/z8oVAqXc9q4vgGvyf+BjUPTZLNH7sxCv4MqtUumMVxi/WtvAOmI8rpUJKq/TPPabXdIagTB/7h2nTPdyJp6sIdJUA2B2bdLJ9wxWlorfhRF+QEmf8RrB/AUSFkYbRscCZwVUEHcCCxxxpCcWKhXXYCzhJ3Th1GyiBT15go=
+	t=1762564617; cv=none; b=B1h67evaYY+8mK/BAn5FrIH/ciJxPUajLxZ8pdyfj7+Or1oTnoBhUizeYactg+xfk6taOsNlnl4gCYIzRNOBLfY771KqxW8fbQzT6cgWGPoVutUgoxcMhqdpCjSJBzSvWZPxfZrMcmD+v7FmTEY5QbZoq/ZRF2e5JH5aErp2oL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762561654; c=relaxed/simple;
-	bh=rHCHWwzqzjD8rtUG/YpSaHpsP3JYyPZwIhvrQrJqxfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YM0FFpTyz2nCSQ97xuCfh7xwK+g+ZcCv8nhm/NnwDyTvkGeOLn44NdRHKeJBe+DRjwAmBqbDbIC5EpfKsXdFQXcGiTyRtnw9ARa1hOouPTFdBDFxQZ9VesycqaJQcusquCT5ZgRv0yklmMWeova7Mt+UT9YxRoc7Wr7lDQvodZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0+8BrtkM; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-89ed2ee35bbso171397885a.3
-        for <io-uring@vger.kernel.org>; Fri, 07 Nov 2025 16:27:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762561651; x=1763166451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pgriBR7EAEnHHgfHkgYfq8T8fPXYixpB1khtdTRZamE=;
-        b=0+8BrtkMNwkzLHuJPBoi0TRcULpMre1PmQ2L3Y8dleC2z/UEgKL5CsH8BeY4muP+8Y
-         PEzLYnLDNnom0Bfby2nWXdyp88TVl5MhezOlYSD9qXqieXYg/Ym3Id+Ri019E2kqXsgU
-         uP2Yr5vjz3vi9lXjib66kud0gZsmmyIiL+jWUue7t+GmHESt3thyHn3JaUbhfGeLtO/d
-         Kr1MMjSCmjtCI+fsQeUsZKyNLp7FLTNgXsGjJUk99E1XJ8m8f8i+zpeQpmlRgr9fQF8P
-         UtVIxOakDwkpWw66pdszcR/2VFlqNyLG8SyrC44v2lotWGtb1xE8H1Yj0uNTWAOBZrND
-         3/AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762561651; x=1763166451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pgriBR7EAEnHHgfHkgYfq8T8fPXYixpB1khtdTRZamE=;
-        b=rvs188dzX3PNpFYgF6UUluJjgMgMnkDkB90QV8GPS3iG7JI/rU9Q138pMLah9Ms+J1
-         ElO+/y0BZRy45BQbj+IsHmfPhWir3bO2hjGqyq2LMbMOp+oQF9982D9r9BF0TNqxVp4u
-         EyUINIOAgRfy0QjtUc05R1HdipthPN/07kAT4Yz7outEy6W2VPv+aXMz9qBnaIIjt60A
-         rGQ3sHCwx6IZw/wvH16iFsxn2kRFIDoTgaQgYQy49kWcN00krE0e8yZYErzTfnw+lVLU
-         lqVMZveq8EhNWZI5R6gMttJIV32fqFeOC3pC+19Bn0r1+t9sbH58OdEm6i9yL/EsvoeC
-         cuiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMZBc0KbuMAPx2O8q/46q1jE0hGvfkVzKW15pCID7j4H34SXWjpgvU5tCTKHEzwrv1DcWesrfEIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjTQwSCn8JIFDdvBDy5bWvcfRHE1Cho9hKEQ2Z7p/Tk+BZFpCK
-	eOfwOjoPZJuqNCVE5A6LktdvDO+KlyziBEp6masF6JHlPtVqGHKAyFKe2fW09NFRytFRGdIxuNo
-	K55r0
-X-Gm-Gg: ASbGncs4ZDqFOFURmWvxcj6UIdGLaI/fZ8uwSaQeq5PH/B2vUq3mPcaBU9cY+vCfKDN
-	nCFiUSjMq4Tf0PdpVXx8SuRp5DOVso5Nw6EMGwhnCweD289im+Od/zeUO2P2FzEe6BaycUbI+OX
-	imcjNH/YWShHUaX5C5o/4wK92dcT4AC0V1hx+hmZfWQPMDtSoNTb00OSEOy9PLAswN5OzEOQAl3
-	uwgx+XoIWDRNWR9Bf7S/U5/9F7If3ObF6+mj+sM2sU2z3qbOtJ76yuYLm+hVPHRcc4moc6lIxlU
-	V/wkXpTdwo9oc87W712oZa9Y72iAPigagho49zA568HmTW+XV00+igAlQNma8qZm6BCWQiIMQ3y
-	fbsSEnOqD5+TerLbgsM+rcmBvbCF6STM6cjSaBeqtxJ/OUWnocjKmBwn2ISZ9UEgS4XtuoUVrDA
-	65o2NSNc4=
-X-Google-Smtp-Source: AGHT+IHIsKYdZdM3t7CvV/gxvRFv3QbidpHQTp+SrodUK06lsS4rlwofvdklkMBOD0ytxvjC//NPQQ==
-X-Received: by 2002:a05:620a:17a3:b0:8a2:e35f:90 with SMTP id af79cd13be357-8b257ef5b97mr186170785a.30.1762561650959;
-        Fri, 07 Nov 2025 16:27:30 -0800 (PST)
-Received: from [10.0.0.167] ([216.235.231.34])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355c206fsm511249485a.5.2025.11.07.16.27.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 16:27:28 -0800 (PST)
-Message-ID: <bffc5ed3-6b17-4119-af4c-1fdb51ea1b97@kernel.dk>
-Date: Fri, 7 Nov 2025 17:27:27 -0700
+	s=arc-20240116; t=1762564617; c=relaxed/simple;
+	bh=Z2R2Y+Y7iYLIBfc+xrkSR2Yr7K6yCTnIgBnYqJBs2Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oflWeDaAGl9HygF6dDJihmcJredAgxzDRnDL3Y7M7qKRBqzu+OiEjv+DUwosYsq0Y44TiLegQdhH5K0y3/qPWthdEU2rEWb77fdGDviMmO0A02sPUDlH8mmLgs8X6o7vhKdG4wkKk/jGKQPsezl9SGEcqRllrGnAPwsCgaCczt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XRRklK0a; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762564615; x=1794100615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z2R2Y+Y7iYLIBfc+xrkSR2Yr7K6yCTnIgBnYqJBs2Pw=;
+  b=XRRklK0aRYzf862/TSqViFFVhbciSUJEMFR39kWWffSrQiPZ+rQgTMGS
+   OIdSsJRVZJ+u9xK1+kMJ4S79mY7mKmgcl39zDFIbbEro3FrEd6b+/XCSz
+   BcvMQs+mskgqKo7rOy+OaYppw+acVEG795h+zx8aMsq72C7AAg1hbicLi
+   fYc0Xhl+HPTPvE2k3eFG9TK6HhtxxF4f81HOIxg/alHpOVeD7JWJiYIOb
+   +esKCQHmrXKcIg9ES8F/slbsmRd1ZlCXCMNqTgUXAwS6QjMDrA1567++j
+   8LY0xJDSpk3mCuuF+QW/A1bbdkmkz7cPBJY5e0s/13LcMK7qVscE9RZMm
+   A==;
+X-CSE-ConnectionGUID: xtQJUMJRTI+yd4qoPcq5Fw==
+X-CSE-MsgGUID: nj0f87SuQHeDJFFtlpVo8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="75328244"
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="75328244"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:16:55 -0800
+X-CSE-ConnectionGUID: JxjCYdpvSpqW/a7GIPacDA==
+X-CSE-MsgGUID: 8XFmiRmJTaC5TUgp0Bwudg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="193209633"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Nov 2025 17:16:50 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHXZQ-0000ZL-1W;
+	Sat, 08 Nov 2025 01:16:48 +0000
+Date: Sat, 8 Nov 2025 09:15:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fengnan Chang <changfengnan@bytedance.com>, axboe@kernel.dk,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	asml.silence@gmail.com, willy@infradead.org, djwong@kernel.org,
+	hch@infradead.org, ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, ming.lei@redhat.com,
+	linux-nvme@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Fengnan Chang <changfengnan@bytedance.com>
+Subject: Re: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by
+ default
+Message-ID: <202511080837.qd2MmgFS-lkp@intel.com>
+References: <20251107020557.10097-2-changfengnan@bytedance.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] liburing: add test for metadata
-To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>
-References: <20251107042953.3393507-1-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251107042953.3393507-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107020557.10097-2-changfengnan@bytedance.com>
 
-On 11/6/25 9:29 PM, Keith Busch wrote:
-> +int main(int argc, char *argv[])
-> +{
-> +	int fd, ret, offset, intervals, metabuffer_size, metabuffer_tx_size;
-> +	void *orig_data_buf, *orig_pi_buf, *data_buf;
-> +	struct io_uring_sqe *sqe;
-> +	struct io_uring_cqe *cqe;
-> +	struct io_uring ring;
-> +
-> +	if (argc < 2) {
-> +		fprintf(stderr, "Usage: %s <dev>\n", argv[0]);
-> +		return T_EXIT_FAIL;
-> +	}
+Hi Fengnan,
 
-This should be a T_EXIT_SKIP.
+kernel test robot noticed the following build warnings:
 
-> +	fd = open(argv[1], O_RDWR | O_DIRECT);
-> +	if (fd < 0) {
-> +		perror("Failed to open device with O_DIRECT");
-> +		return T_EXIT_FAIL;
-> +	}
-> +
-> +	ret = init_capabilities(fd);
-> +	if (ret < 0)
-> +		return T_EXIT_FAIL;
-> +	if (lba_size == 0 || metadata_size == 0)
-> +		return T_EXIT_SKIP;
-> +
-> +	intervals = DATA_SIZE / lba_size;
-> +	metabuffer_tx_size = intervals * metadata_size;
-> +	metabuffer_size = metabuffer_tx_size * 2;
-> +
-> +	if (posix_memalign(&orig_data_buf, pagesize, DATA_SIZE)) {
-> +		perror("posix_memalign failed for data buffer");
-> +		ret = T_EXIT_FAIL;
-> +		goto close;
-> +	}
-> +
-> +	if (posix_memalign(&orig_pi_buf, pagesize, metabuffer_size)) {
-> +		perror("posix_memalign failed for metadata buffer");
-> +		ret = T_EXIT_FAIL;
-> +		goto free;
-> +	}
-> +
-> +	ret = io_uring_queue_init(8, &ring, 0);
-> +	if (ret < 0) {
-> +		perror("io_uring_queue_init failed");
-> +		goto cleanup;
-> +	}
-> +
-> +	data_buf = orig_data_buf;
-> +	for (offset = 0; offset < 512; offset++) {
-> +		void *pi_buf = (char *)orig_pi_buf + offset * 4;
-> +		struct io_uring_attr_pi pi_attr = {
-> +			.addr = (__u64)pi_buf,
-> +			.seed = offset,
-> +			.len = metabuffer_tx_size,
-> +		};
-> +
-> +		if (reftag_enabled)
-> +			pi_attr.flags = IO_INTEGRITY_CHK_REFTAG;
-> +
-> +		init_data(data_buf, offset);
-> +		init_metadata(pi_buf, intervals, offset);
-> +
-> +		sqe = io_uring_get_sqe(&ring);
-> +		if (!sqe) {
-> +			fprintf(stderr, "Failed to get SQE\n");
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, offset * lba_size * 8);
-> +		io_uring_sqe_set_data(sqe, (void *)1L);
-> +
-> +		sqe->attr_type_mask = IORING_RW_ATTR_FLAG_PI;
-> +		sqe->attr_ptr = (__u64)&pi_attr;
-> +
-> +		ret = io_uring_submit(&ring);
-> +		if (ret < 1) {
-> +			perror("io_uring_submit failed (WRITE)");
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		ret = io_uring_wait_cqe(&ring, &cqe);
-> +		if (ret < 0) {
-> +			perror("io_uring_wait_cqe failed (WRITE)");
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		if (cqe->res < 0) {
-> +			fprintf(stderr, "write failed at offset %d: %s\n",
-> +				offset, strerror(-cqe->res));
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		io_uring_cqe_seen(&ring, cqe);
-> +
-> +		memset(data_buf, 0, DATA_SIZE);
-> +		memset(pi_buf, 0, metabuffer_tx_size);
-> +
-> +		sqe = io_uring_get_sqe(&ring);
-> +		if (!sqe) {
-> +			fprintf(stderr, "failed to get SQE\n");
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		io_uring_prep_read(sqe, fd, data_buf, DATA_SIZE, offset * lba_size * 8);
-> +		io_uring_sqe_set_data(sqe, (void *)2L);
-> +
-> +		sqe->attr_type_mask = IORING_RW_ATTR_FLAG_PI;
-> +		sqe->attr_ptr = (__u64)&pi_attr;
-> +
-> +		ret = io_uring_submit(&ring);
-> +		if (ret < 1) {
-> +			perror("io_uring_submit failed (read)");
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		ret = io_uring_wait_cqe(&ring, &cqe);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "io_uring_wait_cqe failed (read): %s\n", strerror(-ret));
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		if (cqe->res < 0) {
-> +			fprintf(stderr, "read failed at offset %d: %s\n",
-> +				offset, strerror(-cqe->res));
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		ret = check_data(data_buf, offset);
-> +		if (ret) {
-> +			fprintf(stderr, "data corruption at offset %d\n",
-> +				offset);
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		ret = check_metadata(pi_buf, intervals, offset);
-> +		if (ret) {
-> +			fprintf(stderr, "metadata corruption at offset %d\n",
-> +				offset);
-> +			ret = T_EXIT_FAIL;
-> +			goto ring_exit;
-> +		}
-> +
-> +		io_uring_cqe_seen(&ring, cqe);
-> +	}
-> +
-> +	memset(data_buf, 0, DATA_SIZE);
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, 0);
-> +	io_uring_sqe_set_data(sqe, (void *)1L);
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, DATA_SIZE);
-> +	io_uring_sqe_set_data(sqe, (void *)2L);
-> +
-> +	io_uring_submit(&ring);
-> +
-> +	io_uring_wait_cqe(&ring, &cqe);
-> +	io_uring_cqe_seen(&ring, cqe);
-> +	io_uring_wait_cqe(&ring, &cqe);
-> +	io_uring_cqe_seen(&ring, cqe);
+[auto build test WARNING on 4a0c9b3391999818e2c5b93719699b255be1f682]
 
-This looks a bit odd - no error checking?
+url:    https://github.com/intel-lab-lkp/linux/commits/Fengnan-Chang/block-use-bio_alloc_bioset-for-passthru-IO-by-default/20251107-100851
+base:   4a0c9b3391999818e2c5b93719699b255be1f682
+patch link:    https://lore.kernel.org/r/20251107020557.10097-2-changfengnan%40bytedance.com
+patch subject: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by default
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251108/202511080837.qd2MmgFS-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511080837.qd2MmgFS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511080837.qd2MmgFS-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/nvme/host/ioctl.c:500:3: warning: variable 'rq_flags' is uninitialized when used here [-Wuninitialized]
+     500 |                 rq_flags |= REQ_NOWAIT;
+         |                 ^~~~~~~~
+   drivers/nvme/host/ioctl.c:449:20: note: initialize the variable 'rq_flags' to silence this warning
+     449 |         blk_opf_t rq_flags;
+         |                           ^
+         |                            = 0
+   1 warning generated.
+
+
+vim +/rq_flags +500 drivers/nvme/host/ioctl.c
+
+c0a7ba77e81b84 Jens Axboe          2022-09-21  437  
+456cba386e94f2 Kanchan Joshi       2022-05-11  438  static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+f569add47119fa Anuj Gupta          2022-05-11  439  		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
+456cba386e94f2 Kanchan Joshi       2022-05-11  440  {
+456cba386e94f2 Kanchan Joshi       2022-05-11  441  	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+fd9b8547bc5c34 Breno Leitao        2023-05-04  442  	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
+456cba386e94f2 Kanchan Joshi       2022-05-11  443  	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
+456cba386e94f2 Kanchan Joshi       2022-05-11  444  	struct nvme_uring_data d;
+456cba386e94f2 Kanchan Joshi       2022-05-11  445  	struct nvme_command c;
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  446  	struct iov_iter iter;
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  447  	struct iov_iter *map_iter = NULL;
+456cba386e94f2 Kanchan Joshi       2022-05-11  448  	struct request *req;
+070157fe67aee9 Fengnan Chang       2025-11-07  449  	blk_opf_t rq_flags;
+456cba386e94f2 Kanchan Joshi       2022-05-11  450  	blk_mq_req_flags_t blk_flags = 0;
+470e900c8036ff Kanchan Joshi       2022-09-30  451  	int ret;
+456cba386e94f2 Kanchan Joshi       2022-05-11  452  
+456cba386e94f2 Kanchan Joshi       2022-05-11  453  	c.common.opcode = READ_ONCE(cmd->opcode);
+456cba386e94f2 Kanchan Joshi       2022-05-11  454  	c.common.flags = READ_ONCE(cmd->flags);
+456cba386e94f2 Kanchan Joshi       2022-05-11  455  	if (c.common.flags)
+456cba386e94f2 Kanchan Joshi       2022-05-11  456  		return -EINVAL;
+456cba386e94f2 Kanchan Joshi       2022-05-11  457  
+456cba386e94f2 Kanchan Joshi       2022-05-11  458  	c.common.command_id = 0;
+456cba386e94f2 Kanchan Joshi       2022-05-11  459  	c.common.nsid = cpu_to_le32(cmd->nsid);
+456cba386e94f2 Kanchan Joshi       2022-05-11  460  	if (!nvme_validate_passthru_nsid(ctrl, ns, le32_to_cpu(c.common.nsid)))
+456cba386e94f2 Kanchan Joshi       2022-05-11  461  		return -EINVAL;
+456cba386e94f2 Kanchan Joshi       2022-05-11  462  
+456cba386e94f2 Kanchan Joshi       2022-05-11  463  	c.common.cdw2[0] = cpu_to_le32(READ_ONCE(cmd->cdw2));
+456cba386e94f2 Kanchan Joshi       2022-05-11  464  	c.common.cdw2[1] = cpu_to_le32(READ_ONCE(cmd->cdw3));
+456cba386e94f2 Kanchan Joshi       2022-05-11  465  	c.common.metadata = 0;
+456cba386e94f2 Kanchan Joshi       2022-05-11  466  	c.common.dptr.prp1 = c.common.dptr.prp2 = 0;
+456cba386e94f2 Kanchan Joshi       2022-05-11  467  	c.common.cdw10 = cpu_to_le32(READ_ONCE(cmd->cdw10));
+456cba386e94f2 Kanchan Joshi       2022-05-11  468  	c.common.cdw11 = cpu_to_le32(READ_ONCE(cmd->cdw11));
+456cba386e94f2 Kanchan Joshi       2022-05-11  469  	c.common.cdw12 = cpu_to_le32(READ_ONCE(cmd->cdw12));
+456cba386e94f2 Kanchan Joshi       2022-05-11  470  	c.common.cdw13 = cpu_to_le32(READ_ONCE(cmd->cdw13));
+456cba386e94f2 Kanchan Joshi       2022-05-11  471  	c.common.cdw14 = cpu_to_le32(READ_ONCE(cmd->cdw14));
+456cba386e94f2 Kanchan Joshi       2022-05-11  472  	c.common.cdw15 = cpu_to_le32(READ_ONCE(cmd->cdw15));
+456cba386e94f2 Kanchan Joshi       2022-05-11  473  
+7d9d7d59d44b7e Christoph Hellwig   2023-06-08  474  	if (!nvme_cmd_allowed(ns, &c, 0, ioucmd->file->f_mode & FMODE_WRITE))
+855b7717f44b13 Kanchan Joshi       2022-10-31  475  		return -EACCES;
+855b7717f44b13 Kanchan Joshi       2022-10-31  476  
+456cba386e94f2 Kanchan Joshi       2022-05-11  477  	d.metadata = READ_ONCE(cmd->metadata);
+456cba386e94f2 Kanchan Joshi       2022-05-11  478  	d.addr = READ_ONCE(cmd->addr);
+456cba386e94f2 Kanchan Joshi       2022-05-11  479  	d.data_len = READ_ONCE(cmd->data_len);
+456cba386e94f2 Kanchan Joshi       2022-05-11  480  	d.metadata_len = READ_ONCE(cmd->metadata_len);
+456cba386e94f2 Kanchan Joshi       2022-05-11  481  	d.timeout_ms = READ_ONCE(cmd->timeout_ms);
+456cba386e94f2 Kanchan Joshi       2022-05-11  482  
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  483  	if (d.data_len && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+3c12a8939e0474 Pavel Begunkov      2025-05-20  484  		int ddir = nvme_is_write(&c) ? WRITE : READ;
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  485  
+3c12a8939e0474 Pavel Begunkov      2025-05-20  486  		if (vec)
+3c12a8939e0474 Pavel Begunkov      2025-05-20  487  			ret = io_uring_cmd_import_fixed_vec(ioucmd,
+3c12a8939e0474 Pavel Begunkov      2025-05-20  488  					u64_to_user_ptr(d.addr), d.data_len,
+3c12a8939e0474 Pavel Begunkov      2025-05-20  489  					ddir, &iter, issue_flags);
+3c12a8939e0474 Pavel Begunkov      2025-05-20  490  		else
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  491  			ret = io_uring_cmd_import_fixed(d.addr, d.data_len,
+3c12a8939e0474 Pavel Begunkov      2025-05-20  492  					ddir, &iter, ioucmd, issue_flags);
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  493  		if (ret < 0)
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  494  			return ret;
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  495  
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  496  		map_iter = &iter;
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  497  	}
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  498  
+456cba386e94f2 Kanchan Joshi       2022-05-11  499  	if (issue_flags & IO_URING_F_NONBLOCK) {
+888545cb43d763 Anuj Gupta          2023-01-17 @500  		rq_flags |= REQ_NOWAIT;
+456cba386e94f2 Kanchan Joshi       2022-05-11  501  		blk_flags = BLK_MQ_REQ_NOWAIT;
+456cba386e94f2 Kanchan Joshi       2022-05-11  502  	}
+585079b6e42538 Kanchan Joshi       2022-08-23  503  	if (issue_flags & IO_URING_F_IOPOLL)
+585079b6e42538 Kanchan Joshi       2022-08-23  504  		rq_flags |= REQ_POLLED;
+456cba386e94f2 Kanchan Joshi       2022-05-11  505  
+470e900c8036ff Kanchan Joshi       2022-09-30  506  	req = nvme_alloc_user_request(q, &c, rq_flags, blk_flags);
+456cba386e94f2 Kanchan Joshi       2022-05-11  507  	if (IS_ERR(req))
+456cba386e94f2 Kanchan Joshi       2022-05-11  508  		return PTR_ERR(req);
+470e900c8036ff Kanchan Joshi       2022-09-30  509  	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
+470e900c8036ff Kanchan Joshi       2022-09-30  510  
+99fde895ff56ac Xinyu Zhang         2025-02-27  511  	if (d.data_len) {
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  512  		ret = nvme_map_user_request(req, d.addr, d.data_len,
+38808af53c6e72 Caleb Sander Mateos 2025-03-28  513  			nvme_to_user_ptr(d.metadata), d.metadata_len,
+c4b680ac286382 Pavel Begunkov      2025-05-20  514  			map_iter, vec ? NVME_IOCTL_VEC : 0);
+470e900c8036ff Kanchan Joshi       2022-09-30  515  		if (ret)
+cd683de63e1d7c Caleb Sander Mateos 2025-03-28  516  			goto out_free_req;
+470e900c8036ff Kanchan Joshi       2022-09-30  517  	}
+456cba386e94f2 Kanchan Joshi       2022-05-11  518  
+456cba386e94f2 Kanchan Joshi       2022-05-11  519  	/* to free bio on completion, as req->bio will be null at that time */
+456cba386e94f2 Kanchan Joshi       2022-05-11  520  	pdu->bio = req->bio;
+d6aacee9255e7f Keith Busch         2023-11-30  521  	pdu->req = req;
+c0a7ba77e81b84 Jens Axboe          2022-09-21  522  	req->end_io_data = ioucmd;
+c0a7ba77e81b84 Jens Axboe          2022-09-21  523  	req->end_io = nvme_uring_cmd_end_io;
+e2e530867245d0 Christoph Hellwig   2022-05-24  524  	blk_execute_rq_nowait(req, false);
+456cba386e94f2 Kanchan Joshi       2022-05-11  525  	return -EIOCBQUEUED;
+cd683de63e1d7c Caleb Sander Mateos 2025-03-28  526  
+cd683de63e1d7c Caleb Sander Mateos 2025-03-28  527  out_free_req:
+cd683de63e1d7c Caleb Sander Mateos 2025-03-28  528  	blk_mq_free_request(req);
+cd683de63e1d7c Caleb Sander Mateos 2025-03-28  529  	return ret;
+456cba386e94f2 Kanchan Joshi       2022-05-11  530  }
+456cba386e94f2 Kanchan Joshi       2022-05-11  531  
 
 -- 
-Jens Axboe
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

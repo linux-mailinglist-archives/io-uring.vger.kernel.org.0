@@ -1,113 +1,276 @@
-Return-Path: <io-uring+bounces-10451-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10452-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E24C421DB
-	for <lists+io-uring@lfdr.de>; Sat, 08 Nov 2025 01:18:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E22C42211
+	for <lists+io-uring@lfdr.de>; Sat, 08 Nov 2025 01:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862EE189397D
-	for <lists+io-uring@lfdr.de>; Sat,  8 Nov 2025 00:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A09A18988CD
+	for <lists+io-uring@lfdr.de>; Sat,  8 Nov 2025 00:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7B1C861D;
-	Sat,  8 Nov 2025 00:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E363620C490;
+	Sat,  8 Nov 2025 00:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xPRwT2ba"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0+8BrtkM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C948119F137
-	for <io-uring@vger.kernel.org>; Sat,  8 Nov 2025 00:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5524420A5E5
+	for <io-uring@vger.kernel.org>; Sat,  8 Nov 2025 00:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762561074; cv=none; b=ajdu2h8iTlDOnrg8cFpD5ennQ9XJ9+SwPE1NE47YrzKjxQuv3PWD2IWdMI8P+BBpizpRQ0+KzeVn8bXMeCTqWxp0pVM3rIvp+NG0P6ujVoKFqP+scohmbR62n2bbiLyCPFrrE4wdm+G0CypPsZgU5w1BDh3O3H2MFygHPO6Ab9c=
+	t=1762561654; cv=none; b=eDIq/z8oVAqXc9q4vgGvyf+BjUPTZLNH7sxCv4MqtUumMVxi/WtvAOmI8rpUJKq/TPPabXdIagTB/7h2nTPdyJp6sIdJUA2B2bdLJ9wxWlorfhRF+QEmf8RrB/AUSFkYbRscCZwVUEHcCCxxxpCcWKhXXYCzhJ3Th1GyiBT15go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762561074; c=relaxed/simple;
-	bh=BoGNMYByoUWFxY2vGbaeZ8uIyLwelreTZLwjTfGBZzY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sIwP87SudyE3Uuo7CssWTunl9M54dCZKxohtnZulu/LecLZQSbh1osxLLfTqKLcCE/kkVlgfu7ANQbUxG5twfSIY4KZ/IaiSHvEbTdqrTH6xPclYYmZHxHC2V9yt+mJUFt94Jmcm1/G1VTEbG2qHg0lsOskPAR/zSXdTnkU8o/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xPRwT2ba; arc=none smtp.client-ip=209.85.219.50
+	s=arc-20240116; t=1762561654; c=relaxed/simple;
+	bh=rHCHWwzqzjD8rtUG/YpSaHpsP3JYyPZwIhvrQrJqxfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YM0FFpTyz2nCSQ97xuCfh7xwK+g+ZcCv8nhm/NnwDyTvkGeOLn44NdRHKeJBe+DRjwAmBqbDbIC5EpfKsXdFQXcGiTyRtnw9ARa1hOouPTFdBDFxQZ9VesycqaJQcusquCT5ZgRv0yklmMWeova7Mt+UT9YxRoc7Wr7lDQvodZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0+8BrtkM; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88044caaa3eso13478606d6.3
-        for <io-uring@vger.kernel.org>; Fri, 07 Nov 2025 16:17:49 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-89ed2ee35bbso171397885a.3
+        for <io-uring@vger.kernel.org>; Fri, 07 Nov 2025 16:27:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762561068; x=1763165868; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02QbLJm9M2Ty8aVORegjYUuxZZCgXfElqF6yPxRbJCk=;
-        b=xPRwT2baM450eudzaMUK3HGKn6a65tiUpIp8jZj+3wB+zukTMf5XaGGpMdM+OI5SLw
-         rr/yo12d3tZd0pnezB/7OTsZ8Qd81eZwZc9l+s4WWDOX02VG2ulpyl/2sMdPjdORByuW
-         zOJO9PFp3kfl7yTIxo6jzKcLpJW87VG/7ESyWUO9BiahiDN+AuX837058Qmi3LWQWKYS
-         u8DxEm0YvFqDUWmaulx8Tkn2ZgxY6v/k5Sbbp8gR0clXKGuNklYk+o2OPJsZzs68Fo7k
-         YJ7TLZM0fwE15ndwcOSwwM8/BksucPpNqsQmUtC4DYIdj4mrf83Uz+4xBYipTtEfgELo
-         EF0g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762561651; x=1763166451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pgriBR7EAEnHHgfHkgYfq8T8fPXYixpB1khtdTRZamE=;
+        b=0+8BrtkMNwkzLHuJPBoi0TRcULpMre1PmQ2L3Y8dleC2z/UEgKL5CsH8BeY4muP+8Y
+         PEzLYnLDNnom0Bfby2nWXdyp88TVl5MhezOlYSD9qXqieXYg/Ym3Id+Ri019E2kqXsgU
+         uP2Yr5vjz3vi9lXjib66kud0gZsmmyIiL+jWUue7t+GmHESt3thyHn3JaUbhfGeLtO/d
+         Kr1MMjSCmjtCI+fsQeUsZKyNLp7FLTNgXsGjJUk99E1XJ8m8f8i+zpeQpmlRgr9fQF8P
+         UtVIxOakDwkpWw66pdszcR/2VFlqNyLG8SyrC44v2lotWGtb1xE8H1Yj0uNTWAOBZrND
+         3/AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762561068; x=1763165868;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=02QbLJm9M2Ty8aVORegjYUuxZZCgXfElqF6yPxRbJCk=;
-        b=hPWAYxdvoxKHQRyDFPpou8POoPJj58Mv9ydt6pdcErwJIEVvaqCUIk0kq9kECIDoh5
-         jTvblY1nfMWtq1oUzph5Yn+k1/B9KPWuhNhrnALEv0apAEl11nS8353vn8EL/4B7NXDh
-         xdR+OJDMqGiN98CdH2iS+gW2k84UFwfHaJ+IbwUDYrA68Bgd0i6xQ8eLQJcGcYkXVIMD
-         qoCuevh88QjvFMK0kMV0FTvszJMbxqiACbzsWI2S2uuSbDMZgMgKnQ4sA20JlMpicMAC
-         z9DKRm0b7t6aPCIt4FGEVvOa4nItLabVLInx7g10pkwVgnRkCI9AzNtKr7ji1mKjnHde
-         GqbA==
-X-Gm-Message-State: AOJu0YztBcOOc2t4DCVR52nnliPxY7u3BCcnqr5ctAOsifjQLlu40CPK
-	uSWk/JEW9WC4o/arxm54jJUJB26xUGBZV+0ZxdelmWl+gEM2i/AanwNKosL/m2W9skEd0nSRf5F
-	yAS/O
-X-Gm-Gg: ASbGncvoXBVR5rC97SF2zazbIzBiRmdI1ySAwGrX4bjtWaWUCw6sltPkyodhLnLcNSG
-	fg1Tnr4GiiSARtl32rZ3OUYlUFV+gN0vnorOxFLjdI0ZBWUOUdae3xgCo+PAJoeQczY0x+SeQqh
-	sZhl8HfhZRgSjXBQofkliAtEg9lhPTDsjBeSDTOUeaPmXCjbOrwXHGbNQqsHMMAmqu93F+HBiLR
-	7aD5FYsB3ZCfQYtpfqwoCempwBMsVLIi8k7AiJmrSRhnaF0YxIaIQq+yphpupGdOOStFm9HlzEr
-	EVpw4SnILE+AFfkehmy1nbqeAIOlwE4i68gF4H3seOIer5f+9/T0VT0AiqXcr/4afFuTByMi0cV
-	ma0seJZ+5JPjgPTvhR2v76Kg8XtvxdAEDJFWNBfhHG58fsroJRRN4C3laHzbtz+YrWcmpvd0=
-X-Google-Smtp-Source: AGHT+IG2AHaDccwTL1Mc1awJq/itZhnIQdiukqr+6SEcB5BoelyTiVrd63ooy33akGd3uqzR2MbPaQ==
-X-Received: by 2002:ad4:5ba2:0:b0:87c:1ec5:8428 with SMTP id 6a1803df08f44-8823871ae60mr13512346d6.46.1762561067818;
-        Fri, 07 Nov 2025 16:17:47 -0800 (PST)
-Received: from [127.0.0.1] ([216.235.231.34])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882389a857bsm5870136d6.24.2025.11.07.16.17.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 16:17:47 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Google Big Sleep <big-sleep-vuln-reports+bigsleep-458654612@google.com>
-In-Reply-To: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
-References: <11fbc25aecfd5dcb722a757dfe5d3f676391c955.1762540764.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: regbuf vector size truncation
-Message-Id: <176256106677.25337.10211644340240412795.b4-ty@kernel.dk>
-Date: Fri, 07 Nov 2025 17:17:46 -0700
+        d=1e100.net; s=20230601; t=1762561651; x=1763166451;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pgriBR7EAEnHHgfHkgYfq8T8fPXYixpB1khtdTRZamE=;
+        b=rvs188dzX3PNpFYgF6UUluJjgMgMnkDkB90QV8GPS3iG7JI/rU9Q138pMLah9Ms+J1
+         ElO+/y0BZRy45BQbj+IsHmfPhWir3bO2hjGqyq2LMbMOp+oQF9982D9r9BF0TNqxVp4u
+         EyUINIOAgRfy0QjtUc05R1HdipthPN/07kAT4Yz7outEy6W2VPv+aXMz9qBnaIIjt60A
+         rGQ3sHCwx6IZw/wvH16iFsxn2kRFIDoTgaQgYQy49kWcN00krE0e8yZYErzTfnw+lVLU
+         lqVMZveq8EhNWZI5R6gMttJIV32fqFeOC3pC+19Bn0r1+t9sbH58OdEm6i9yL/EsvoeC
+         cuiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMZBc0KbuMAPx2O8q/46q1jE0hGvfkVzKW15pCID7j4H34SXWjpgvU5tCTKHEzwrv1DcWesrfEIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjTQwSCn8JIFDdvBDy5bWvcfRHE1Cho9hKEQ2Z7p/Tk+BZFpCK
+	eOfwOjoPZJuqNCVE5A6LktdvDO+KlyziBEp6masF6JHlPtVqGHKAyFKe2fW09NFRytFRGdIxuNo
+	K55r0
+X-Gm-Gg: ASbGncs4ZDqFOFURmWvxcj6UIdGLaI/fZ8uwSaQeq5PH/B2vUq3mPcaBU9cY+vCfKDN
+	nCFiUSjMq4Tf0PdpVXx8SuRp5DOVso5Nw6EMGwhnCweD289im+Od/zeUO2P2FzEe6BaycUbI+OX
+	imcjNH/YWShHUaX5C5o/4wK92dcT4AC0V1hx+hmZfWQPMDtSoNTb00OSEOy9PLAswN5OzEOQAl3
+	uwgx+XoIWDRNWR9Bf7S/U5/9F7If3ObF6+mj+sM2sU2z3qbOtJ76yuYLm+hVPHRcc4moc6lIxlU
+	V/wkXpTdwo9oc87W712oZa9Y72iAPigagho49zA568HmTW+XV00+igAlQNma8qZm6BCWQiIMQ3y
+	fbsSEnOqD5+TerLbgsM+rcmBvbCF6STM6cjSaBeqtxJ/OUWnocjKmBwn2ISZ9UEgS4XtuoUVrDA
+	65o2NSNc4=
+X-Google-Smtp-Source: AGHT+IHIsKYdZdM3t7CvV/gxvRFv3QbidpHQTp+SrodUK06lsS4rlwofvdklkMBOD0ytxvjC//NPQQ==
+X-Received: by 2002:a05:620a:17a3:b0:8a2:e35f:90 with SMTP id af79cd13be357-8b257ef5b97mr186170785a.30.1762561650959;
+        Fri, 07 Nov 2025 16:27:30 -0800 (PST)
+Received: from [10.0.0.167] ([216.235.231.34])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355c206fsm511249485a.5.2025.11.07.16.27.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 16:27:28 -0800 (PST)
+Message-ID: <bffc5ed3-6b17-4119-af4c-1fdb51ea1b97@kernel.dk>
+Date: Fri, 7 Nov 2025 17:27:27 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] liburing: add test for metadata
+To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>
+References: <20251107042953.3393507-1-kbusch@meta.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20251107042953.3393507-1-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
+On 11/6/25 9:29 PM, Keith Busch wrote:
+> +int main(int argc, char *argv[])
+> +{
+> +	int fd, ret, offset, intervals, metabuffer_size, metabuffer_tx_size;
+> +	void *orig_data_buf, *orig_pi_buf, *data_buf;
+> +	struct io_uring_sqe *sqe;
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring ring;
+> +
+> +	if (argc < 2) {
+> +		fprintf(stderr, "Usage: %s <dev>\n", argv[0]);
+> +		return T_EXIT_FAIL;
+> +	}
 
-On Fri, 07 Nov 2025 18:41:26 +0000, Pavel Begunkov wrote:
-> There is a report of io_estimate_bvec_size() truncating the calculated
-> number of segments that leads to corruption issues. Check it doesn't
-> overflow "int"s used later. Rough but simple, can be improved on top.
-> 
-> 
+This should be a T_EXIT_SKIP.
 
-Applied, thanks!
+> +	fd = open(argv[1], O_RDWR | O_DIRECT);
+> +	if (fd < 0) {
+> +		perror("Failed to open device with O_DIRECT");
+> +		return T_EXIT_FAIL;
+> +	}
+> +
+> +	ret = init_capabilities(fd);
+> +	if (ret < 0)
+> +		return T_EXIT_FAIL;
+> +	if (lba_size == 0 || metadata_size == 0)
+> +		return T_EXIT_SKIP;
+> +
+> +	intervals = DATA_SIZE / lba_size;
+> +	metabuffer_tx_size = intervals * metadata_size;
+> +	metabuffer_size = metabuffer_tx_size * 2;
+> +
+> +	if (posix_memalign(&orig_data_buf, pagesize, DATA_SIZE)) {
+> +		perror("posix_memalign failed for data buffer");
+> +		ret = T_EXIT_FAIL;
+> +		goto close;
+> +	}
+> +
+> +	if (posix_memalign(&orig_pi_buf, pagesize, metabuffer_size)) {
+> +		perror("posix_memalign failed for metadata buffer");
+> +		ret = T_EXIT_FAIL;
+> +		goto free;
+> +	}
+> +
+> +	ret = io_uring_queue_init(8, &ring, 0);
+> +	if (ret < 0) {
+> +		perror("io_uring_queue_init failed");
+> +		goto cleanup;
+> +	}
+> +
+> +	data_buf = orig_data_buf;
+> +	for (offset = 0; offset < 512; offset++) {
+> +		void *pi_buf = (char *)orig_pi_buf + offset * 4;
+> +		struct io_uring_attr_pi pi_attr = {
+> +			.addr = (__u64)pi_buf,
+> +			.seed = offset,
+> +			.len = metabuffer_tx_size,
+> +		};
+> +
+> +		if (reftag_enabled)
+> +			pi_attr.flags = IO_INTEGRITY_CHK_REFTAG;
+> +
+> +		init_data(data_buf, offset);
+> +		init_metadata(pi_buf, intervals, offset);
+> +
+> +		sqe = io_uring_get_sqe(&ring);
+> +		if (!sqe) {
+> +			fprintf(stderr, "Failed to get SQE\n");
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, offset * lba_size * 8);
+> +		io_uring_sqe_set_data(sqe, (void *)1L);
+> +
+> +		sqe->attr_type_mask = IORING_RW_ATTR_FLAG_PI;
+> +		sqe->attr_ptr = (__u64)&pi_attr;
+> +
+> +		ret = io_uring_submit(&ring);
+> +		if (ret < 1) {
+> +			perror("io_uring_submit failed (WRITE)");
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		ret = io_uring_wait_cqe(&ring, &cqe);
+> +		if (ret < 0) {
+> +			perror("io_uring_wait_cqe failed (WRITE)");
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		if (cqe->res < 0) {
+> +			fprintf(stderr, "write failed at offset %d: %s\n",
+> +				offset, strerror(-cqe->res));
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		io_uring_cqe_seen(&ring, cqe);
+> +
+> +		memset(data_buf, 0, DATA_SIZE);
+> +		memset(pi_buf, 0, metabuffer_tx_size);
+> +
+> +		sqe = io_uring_get_sqe(&ring);
+> +		if (!sqe) {
+> +			fprintf(stderr, "failed to get SQE\n");
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		io_uring_prep_read(sqe, fd, data_buf, DATA_SIZE, offset * lba_size * 8);
+> +		io_uring_sqe_set_data(sqe, (void *)2L);
+> +
+> +		sqe->attr_type_mask = IORING_RW_ATTR_FLAG_PI;
+> +		sqe->attr_ptr = (__u64)&pi_attr;
+> +
+> +		ret = io_uring_submit(&ring);
+> +		if (ret < 1) {
+> +			perror("io_uring_submit failed (read)");
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		ret = io_uring_wait_cqe(&ring, &cqe);
+> +		if (ret < 0) {
+> +			fprintf(stderr, "io_uring_wait_cqe failed (read): %s\n", strerror(-ret));
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		if (cqe->res < 0) {
+> +			fprintf(stderr, "read failed at offset %d: %s\n",
+> +				offset, strerror(-cqe->res));
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		ret = check_data(data_buf, offset);
+> +		if (ret) {
+> +			fprintf(stderr, "data corruption at offset %d\n",
+> +				offset);
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		ret = check_metadata(pi_buf, intervals, offset);
+> +		if (ret) {
+> +			fprintf(stderr, "metadata corruption at offset %d\n",
+> +				offset);
+> +			ret = T_EXIT_FAIL;
+> +			goto ring_exit;
+> +		}
+> +
+> +		io_uring_cqe_seen(&ring, cqe);
+> +	}
+> +
+> +	memset(data_buf, 0, DATA_SIZE);
+> +
+> +	sqe = io_uring_get_sqe(&ring);
+> +	io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, 0);
+> +	io_uring_sqe_set_data(sqe, (void *)1L);
+> +
+> +	sqe = io_uring_get_sqe(&ring);
+> +	io_uring_prep_write(sqe, fd, data_buf, DATA_SIZE, DATA_SIZE);
+> +	io_uring_sqe_set_data(sqe, (void *)2L);
+> +
+> +	io_uring_submit(&ring);
+> +
+> +	io_uring_wait_cqe(&ring, &cqe);
+> +	io_uring_cqe_seen(&ring, cqe);
+> +	io_uring_wait_cqe(&ring, &cqe);
+> +	io_uring_cqe_seen(&ring, cqe);
 
-[1/1] io_uring: regbuf vector size truncation
-      (no commit info)
+This looks a bit odd - no error checking?
 
-Best regards,
 -- 
 Jens Axboe
-
-
-
 

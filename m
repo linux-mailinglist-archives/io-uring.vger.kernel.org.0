@@ -1,75 +1,83 @@
-Return-Path: <io-uring+bounces-10480-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10481-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F45C44683
-	for <lists+io-uring@lfdr.de>; Sun, 09 Nov 2025 20:56:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E2CC446B7
+	for <lists+io-uring@lfdr.de>; Sun, 09 Nov 2025 21:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23F23AC771
-	for <lists+io-uring@lfdr.de>; Sun,  9 Nov 2025 19:56:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3587345FB6
+	for <lists+io-uring@lfdr.de>; Sun,  9 Nov 2025 20:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E5324A049;
-	Sun,  9 Nov 2025 19:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64C7223DFF;
+	Sun,  9 Nov 2025 20:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3xv8v/B"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="euAEvstC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F178720A5E5
-	for <io-uring@vger.kernel.org>; Sun,  9 Nov 2025 19:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9121D5146
+	for <io-uring@vger.kernel.org>; Sun,  9 Nov 2025 20:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762718156; cv=none; b=t7QX2e8bXmL7xYbQACI3ydl5+4GUvDqBhyTrpy7ALpUcBAFP0vxknXGq2W4AU9E2ScHGZ1uuzbwoKTViI10AGnlPNslkIF6hwSo42WhmAX794bmaAPQ0woiNwa36gxJlRnPLmGABvsQ4cxOJzgRL8o83bAvke94h9DCCBxTSQc4=
+	t=1762719753; cv=none; b=GzGuu/lynI7JY0yFrNETOsKJSYw4L+Uys0Eu4IsOdf+uDu9iClDIHv5YL10j+S5Qo2a2/nkT3MKQAWDQaULd7Z9jRS9tGP0BntJo5EPVYbIl1onHOmevGXIaeVYYu9yvVvGBELg5pskmlvfZlhUx5KEPEJOrA1IsUqshAxsFPQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762718156; c=relaxed/simple;
-	bh=Ji6DwMlMN8CaxkUNYoWO0yeIXZAwhuvFRKjf56mogUA=;
+	s=arc-20240116; t=1762719753; c=relaxed/simple;
+	bh=gMM3i9EQws9r0erlhwqEHGf1p4xwZQaG6fRH9k5nI/s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EECwfngjEMpaQxdUgGpyaQnkPo2URLYDmHQ6jbgvyjbikMcQp4xxnPN+1XkKFcmy2UrBYQeWyVO4CJf+q20IPw8otFJcznN/KIepMM+J56PRUvECqLtsopEwGJqOi8dey4NnKsvyGkg18l1/rUYm9qpSdj/adwEmT7vo0Jvguic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3xv8v/B; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b72134a5125so337103366b.0
-        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 11:55:54 -0800 (PST)
+	 To:Cc:Content-Type; b=kWut79ZMsnIid2zymauHjyQx0N2boQKJBpEoYvtEGH8OgJiBzMbiwM3/xGdnpIT1DcXaXxlWjwJGvl5N8+vr0ERngqKXltF/BrftjdfPe7Y0ydhiM2BfMC4uD0UuTBmuOTKKSzo3F38ZHlbmYTY2zghCYOixYqATtX/Ttmcm+Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=euAEvstC; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b7277324204so398161066b.0
+        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 12:22:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762718153; x=1763322953; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcyRvQ5BWmuhxa99TkWLL6vqD6kswgiu0T8eLECURAo=;
-        b=h3xv8v/BAeisJeh4XxXkOR45HsuscxT/YlpsLIyj4jSXGA0xZlWY5qLfUYb8+K31tL
-         LjDs+pFpiRIR2hPrrFZeXGKd5A5XBzgHDom/Po5KjNbCPEK7E8dNL2eBh0bPvyHXEbxt
-         +jexPIhXiDNgtN1Hs8DuIFRwLkPP9aW+sfK9hApf2BIs8wvlvp1zhM6gBlY++e8I5rPh
-         qNxmX3huDRJum0c4rQBwRKpzMqtETmuKWHlrJKf5kHZoJ88PNl1WRkVB2/stkRT/c4/l
-         DlX4rVYMPwL4YX8tbkxpA2h3P7nw5SWiZNrwD9NfMPxC3XaynVdyWBRlEWpQ3RkDXfd4
-         mI1Q==
+        d=linux-foundation.org; s=google; t=1762719750; x=1763324550; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cb0PYNykYCL7Bou9jPgLMIeh7nnGaWAzoWBWhkWIpmo=;
+        b=euAEvstCThowZ5cg7UPyK9sDwn11PFtcX5ZBQTpizq2KoKuI0/7Rxc3+oHLJR7DLQH
+         YH/PZpFlGI3CGtKEn1/kXNWvW0eCr5BmYV7HTV+S/ri2boLdRdJCPCkwYBqcHZ+Lv6cm
+         ylJ1yi1NQ8Yyv7kQv7Vz1P1in+bQGOWl8caLg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762718153; x=1763322953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HcyRvQ5BWmuhxa99TkWLL6vqD6kswgiu0T8eLECURAo=;
-        b=QkiKmYr/L0903DySgjO3nG9bnjXcAWWclAxQrXaky4iyz7m+EeXw3hYFP5jZTuqzl3
-         fjnzlJ5EowDAZG91GZ92RJ2+ZDUYpSxYkW4BtQHyDAWCM4yrZ83htauimoMyPUX2SEXi
-         9wRMGUHBgpJB+G+2esKTP+fY3UbK0IcdNkzvnmRl7VN8cbqJmCyXRPL5XrWBd1Oa06UP
-         90mKi18k2TMRspRlJcuEkKXGGH3RGx6wzZy6U0jHAzTepHIVuHASZ1xtcuS/KDf0z4IF
-         Mej+w6nJh7uL8i44CcmSdUnPYjceHxav4q6qluSZph5r1aew3upIBovmH0veQXPSAVBN
-         AZ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCFMnxvzalmOb9j/f7Uz/DvKddA9Ffyk7xNwUpkx/MpKf22By0Yj9PdQkLHt91S/RdiRJEfLDcQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIuQ816bUSFJFPgeeNefnJveI/DGNb3bgMrKEL5ZWUa57ahDSz
-	TUajOGbM6Za6gBcSsgqRDjsXtMg14Nr4vWUIjz5mPvy8biCjjnEpi1F7IhGKr1NTRpLRKeLXrM2
-	lcIpAv1Q1KAgf+/MWbMvCeU0OVGTapSw=
-X-Gm-Gg: ASbGncvfIomGi26ttM3De1VD7EYIVuc4AA1O2TgG7oVE/BLLSrJbu2Ll/xvF9EXkhOc
-	S1gA4txIKMRG8w74HO2eL2dCtTfnla0LOUBtmr4vgm0to5grgLAQmnv+hfCpRvciFfRDBd0fQcn
-	BFkd6bcXJ8ZICGv4pAa/Dg38MKaELs82CtJqQK9pwh5z49dKduVxUzu3fE7tFRxzmbaD6ExTuCv
-	59DEaynN6EPMd96q9xw/HMhnLjnZidJ6/sDh47J1DEz91D8A8vuEmZYKovLjG2K+Dz6vRfkhArl
-	DFQu0k21e2y07Uut6zGgYGd6cw==
-X-Google-Smtp-Source: AGHT+IEJCgiSucxtulit9BfgtiUFhXxGXU3X/Af+a3d5W7s6ZwCxLSq9hCronQnPafiuMWNaswfyJjDhfpl/FqcUENI=
-X-Received: by 2002:a17:907:94d1:b0:b72:1b8b:cc3 with SMTP id
- a640c23a62f3a-b72e05626c9mr673442466b.33.1762718153194; Sun, 09 Nov 2025
- 11:55:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762719750; x=1763324550;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cb0PYNykYCL7Bou9jPgLMIeh7nnGaWAzoWBWhkWIpmo=;
+        b=OpK3OkdPv+3LnQSxiQ7LNz24q0nmsgNz3IYdY+4SVU9e+jM/A5fcfcKdCmh2DyzNlW
+         yi46cy1jGNUaDy8e+0N7wri+IlAL2lDIv2dcZ5VpQujpiHToFpME08IpiQJBA+gWjz5m
+         9Ug/laWSkmZbXN4nlfjByCOrzRIGHMHigYgBD6WcDrNxWGxquf7UhUS/fw0G8OUQIQ7q
+         czfjY2hhBpEgb5FzwKwpF7/w2k0ceHEwKTsNGzOhORSv4/Zx4RvjnXjX4HXFjYPWFEzZ
+         997UYWsqHhTaS8vv2fQjzDUVti543r/SnLvGocShv5MK5f091cS+LsAdAXyt0zY3toyA
+         JhDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUi6I9AfNdo/Y6imGiO6uUXAhdS3ESEIlmPcNfHKCXUoi++lYIwfpd91DZmT11+OmEl1gyIdFWP+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/eIPuDLk+uJFogf182zD3SgUAeHABuxN3jlQVAFThRbMvT1Hk
+	LeOAYP8YC0NPGYmz8k0L0cnwO2vkxyo5yo4a9f0gCykKpWW2fiNqJH+pBORCjgt88YWDTzCQc+E
+	bH656JH8=
+X-Gm-Gg: ASbGncsIaRAQjiR5u3A9AHC9U2w4OYih3mZ15icsKQT1wlHCgChBjcNsPWSnT00qUEZ
+	/T47v9eQv93CiUowQVWz1Zz77FTQTVL3pkadOXalYbbbQK9UpVRZUSbOVMUtGmSW3JIQFW9ffKS
+	6/nOOoKGi67ybZETgwg5EjaGEAktxL2GqWYjfPKu9V1vscV4RdCut8JQwm7Ws5kxqNz0bS79vQH
+	qkdsxUs9JI5zaW8wmpHi9KK+jR3AhlARuYxmsXskPuO2Zyu99iUB9Nth4/+X9FjbWdh5NoMQRaZ
+	hj/fSUI+UI72XS6k/G4JXVPrPIplJQaWkjm16s3lUgRq1orkSscJ2awQVI8dg5Y6UP9E3/rwXm3
+	tXcGOXwfx90SC2blvxmDRBGxFnesV6gh5BOxffb1bOWPX4XX2uk1gZUfU39h/TQJii3XNghRXPq
+	/qnfZDy7XSK5tI118gXSklFM4yzgX/4AjemUJAO1uBLEwBA2GSewq65wkvaO6Q
+X-Google-Smtp-Source: AGHT+IH2plSIRDRGUkV3BnPiHtbuLVdK7uh9dZDYxFXWdZglUalGbESxDDpMz4lQDcpIYMOSX0Pdcw==
+X-Received: by 2002:a17:907:1c21:b0:b70:a9fd:1170 with SMTP id a640c23a62f3a-b72e05725a4mr517783366b.65.1762719749699;
+        Sun, 09 Nov 2025 12:22:29 -0800 (PST)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm907564366b.39.2025.11.09.12.22.28
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 12:22:28 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7277324204so398159966b.0
+        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 12:22:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVLnPveLeeeSKUoA1Be05c5PQL8cIssb4rxr6mDihkNMgq3i4A+M/bL4O9hGrwFg7bq0dLsY/p5yA==@vger.kernel.org
+X-Received: by 2002:a17:907:60cf:b0:b6d:51f1:beee with SMTP id
+ a640c23a62f3a-b72e001b360mr489809966b.0.1762719748467; Sun, 09 Nov 2025
+ 12:22:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -78,67 +86,51 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sun, 9 Nov 2025 20:55:41 +0100
-X-Gm-Features: AWmQ_bliPSq7XXfs20U05pA0IPp_kEb85lD9jJkcNmzDbC2EW1Ybr__mANNaRXU
-Message-ID: <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+ <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+In-Reply-To: <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 9 Nov 2025 12:22:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkC_Y91-ng6JwGWrLQYnTWxwwp_oTGnNI2FkdTnLtXofrxPbxBR3HUVCm8
+Message-ID: <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
 Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
 	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
 	audit@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 8:18=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sun, 9 Nov 2025 at 11:55, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> On Sat, 8 Nov 2025 at 22:38, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > These days we have very few places that import filename more than once
-> > (9 functions total) and it's easy to massage them so we get rid of all
-> > re-imports.  With that done, we don't need audit_reusename() anymore.
-> > There's no need to memorize userland pointer either.
->
-> Lovely. Ack on the whole series.
->
-> I do wonder if we could go one step further, and try to make the
-> "struct filename" allocation rather much smaller, so that we could fit
-> it on the stack,m and avoid the whole __getname() call *entirely* for
-> shorter pathnames.
->
-> That __getname() allocation is fairly costly, and 99% of the time we
-> really don't need it because audit doesn't even get a ref to it so
-> it's all entirely thread-local.
->
+> I looked into this in the past, 64 definitely does not cut it.
 
-I looked into this in the past, 64 definitely does not cut it. For
-example take a look at these paths from gcc:
-/usr/lib/gcc/x86_64-linux-gnu/12/../../../../x86_64-linux-gnu/lib/x86_64-li=
-nux-gnu/Scrt1.o
-/usr/lib/gcc/x86_64-linux-gnu/12/../../../../x86_64-linux-gnu/lib/../lib/Sc=
-rt1.o
-/usr/lib/gcc/x86_64-linux-gnu/12/../../../x86_64-linux-gnu/12/Scrt1.o
-/usr/lib/gcc/x86_64-linux-gnu/12/../../../x86_64-linux-gnu/Scrt1.o
+We could easily make it be 128 bytes, I just picked 64 at random.
 
-Anyhow, given that the intent is to damage-control allocation cost, I
-have to point out there is a patchset to replace the current kmem
-alloc/free code with sheaves for everyone which promises better
-performance:
-https://lore.kernel.org/linux-mm/20251023-sheaves-for-all-v1-0-6ffa2c9941c0=
-@suse.cz/
+> Anyhow, given that the intent is to damage-control allocation cost, I
+> have to point out there is a patchset to replace the current kmem
+> alloc/free code with sheaves for everyone which promises better
+> performance:
 
-I tried it and there is some improvement, but the allocator still
-remains as a problem. Best case scenario sheaves code just gets better
-and everyone benefits.
+Oh, I'm sure sheaves will improve on the allocation path, but it's not
+going to be even remotely near what a simple stack allocation will be.
+Not just from an allocation cost standpoint, but just from D$ density.
 
-However, so happens I was looking at this very issue recently and I
-suspect the way forward is to handroll a small per-cpu cache from
-kmalloced memory. Items would be put there and removed protected by
-preemption only, so it should be rather cheap without any of the
-allocator boiler-plate. The bufs could be -- say -- 512 bytes in size
-and would still be perfectly legal to hand off to audit as they come.
-The question is how many paths need to be cached to avoid going to the
-real allocator in practice -- too many would invalidate the idea.
+But numbers talk, BS walks.
+
+That said, I partly like my patch just because the current code in
+getname_flags() is simply disgusting for all those historical reasons.
+So even if we kept the allocation big - and didn't put it on the stack
+- I think actually using a proper 'struct filename' allocation would
+be a good change.
+
+(That patch also avoids the double strncpy_from_user() for the long
+path case, because once you don't play those odd allocation games with
+"sometimes it's a 'struct filename', sometimes it's just the path
+string", it's just simpler to do a fixed-size memcpy followed by a
+"copy the rest of the filename from user space". Admittedly you can do
+that with an overlapping 'memmove()' even with the current code, but
+the code is just conceptually unnecessarily complicated for those
+legacy reasons).
+
+           Linus
 

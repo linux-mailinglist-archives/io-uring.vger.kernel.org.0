@@ -1,75 +1,83 @@
-Return-Path: <io-uring+bounces-10483-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10484-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655A6C448EE
-	for <lists+io-uring@lfdr.de>; Sun, 09 Nov 2025 23:18:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26D0C4490D
+	for <lists+io-uring@lfdr.de>; Sun, 09 Nov 2025 23:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E81C7345EFB
-	for <lists+io-uring@lfdr.de>; Sun,  9 Nov 2025 22:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF073AB76C
+	for <lists+io-uring@lfdr.de>; Sun,  9 Nov 2025 22:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D971C84DE;
-	Sun,  9 Nov 2025 22:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE2E26C3BE;
+	Sun,  9 Nov 2025 22:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZTc4/BD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Tzn7/aj3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05C23C4E9
-	for <io-uring@vger.kernel.org>; Sun,  9 Nov 2025 22:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF182594B9
+	for <io-uring@vger.kernel.org>; Sun,  9 Nov 2025 22:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762726729; cv=none; b=NfJibyVYew7wkHw8bf9I5ECKX71wrZIc2kNkQ4kcqFRoXI+3v0KhqAYmSdadFN7S/O3WQ1+o7Rn56lHf4KajvGXNQuv4/2nCaA/B/X7ZaUoheoCketC/AaT9KeyF67P2inpTguVoMdDZHifFMxAJqg9W1tt1rD3UODH81OWbHaA=
+	t=1762727368; cv=none; b=WZzWSxNhtL2FXuiyjed6nw3nKwxLp/fHUR8j7ZjiPje4faEwARzxcTjfydB5McRULU6rLiHvYZk62Oj7IDZCn3hZNQF2C6cjE0T1/hkEjy+y7vMsOajGAbjxyW709GSyILoxrp8M2la8lN76ubIrNN+x4uA0sfyjq8EmwGrhDvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762726729; c=relaxed/simple;
-	bh=slULiQ1LSn8YdkuFl/xC8oqHmgXF0LLOx5h8vaRWxRg=;
+	s=arc-20240116; t=1762727368; c=relaxed/simple;
+	bh=XyKRq+klY1XpCUw5LERZ+VW2+vF/uljQ+cnRU4sIHJE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H3P6GyUW/6kmTYCzz/hvu8Fpt78Mm8WYyApoqyxE/6OIp6wbT2tCihs8FPgmHf2HFeMO5KDog9lPJfyGevaZPis6toSFghMJvv3UJGlGPEhIfVUZlE+sQT66x+QirIilAHQLAp25USb7ALDmCit5RXEWkO9057q+4NNhsyeK9rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZTc4/BD; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7260435287so360386266b.3
-        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 14:18:47 -0800 (PST)
+	 To:Cc:Content-Type; b=m/mRNhM2/nJv2CSg9POzDZl1CHtA35GZA5gs0MxUCV4EbYh5QIjxXT+UhOUDrud7kIjqYW1z5xDd+B87ik0tU1TbWiqjnNeyjnub/iqtRQn/vGpPlAuQfn5siE8MtJ4MuXCge0pfUn7b4C4JRAzx7DB604JVBqnxjdCizDo9fkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Tzn7/aj3; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640f4b6836bso4359245a12.3
+        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 14:29:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762726726; x=1763331526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9yqoMpO/6oIYxh6F8d/nAhX/lmSSgeTXQGQsqpmEKQ=;
-        b=CZTc4/BDF4EvwReUH8D2bdsv7NGLWE+fDuxrCZO5PqmF3NW0qe5eelDUkptzi0hohc
-         lb3FsenPhLD3TyhZkXO0RVtBidEn/lBft3Kp2bFiQykRp4geYi/Us4mEutRrF6Wxdbqr
-         qkvFccNFonPYvlZ2srQuNXG3wdGfNk4nyfpb0/mwuKlp9shaieJ3S+5XiSNAo8hcs/yP
-         jmHQvpGD8i78AFAUlQ26ct64TkG0frpKDNYkX+Gyk9sqalF/0lbu81CHdVyFc+KMCXh9
-         HPJhAm6R2xUiPq+K32r0kKSM3gz/k7X3fiL8PIk9qm4v7EMY/0f00MrA5q8/AmOG4rn2
-         DO2A==
+        d=linux-foundation.org; s=google; t=1762727365; x=1763332165; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPZie8eb8w8Uk6fiaOTQBcY1xriqA9OV/bgfwL+5Tjg=;
+        b=Tzn7/aj3BhDW9ohDP+rt6zmoyCzqbgjkzH+fxWFfrejkvYO5qFvVZ69jpTQxRwQVXz
+         I2Qexmn5H2/P2Fq6MFbcUq8vy+keVZz/5GrhDExX5NSAlpP3bywfKvWfo/mwn/PL7fm4
+         kMdxNeNAOhGqAWc+ZrqPW9LDLJeMxoWh6L0yY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762726726; x=1763331526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+9yqoMpO/6oIYxh6F8d/nAhX/lmSSgeTXQGQsqpmEKQ=;
-        b=ZUqPgEqPNmlG+KBMk1uWhJlEOXQBE0YVo1JhA6tq3eKz9GUpRH4aWMqhqUudijbVP8
-         HXN/EZQ1f5s1F/1a7gwgOf2S7veJk0c2jAxzITECZHerKOi5YTLOvDRYuCh1ivehap8g
-         bgDfxbUvOb4sKVWr3o1MZzpUUhnzddn5+/mOzNCQQp/S0XU2gPVTJa6d025+ZxjhIVgK
-         oiXlUATBbPuvqjOIy46EJNSNjrJv9YtIHEKXh51LdzaggJ/82XXQmTvlX8mU+rliNE/6
-         9yxTAeLv1n8tUgalA3ONEm25VCCL6Lrz4N8Vs/mqEAkz9fsgxw3fri9Nu89uCcYDNYT4
-         ugVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgUnsvQmyYGnNCNSCEsDBjmJvaxQ1GjDo6JEU1KvTvzYVolwBOidf+5xkO7t55/SmshDYplZJo+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK9Cd09MU3sbJjFu1qVaP5JcKom70C14a51hHCs/bbRDrLt2c
-	HbPzq1BqJTVCgC0eaWIegR07uqVGeNvsgEwMEmgrrN6HqWs8aQK+zMWaQSNDqEPAETpCkNod3Su
-	bgMisnT7Jg3pgFy6TKZz96DtCqvkLpeM=
-X-Gm-Gg: ASbGncslKKOgqrpnNfiYDF0fcfhE0yoZxVhiWXa0Y3Ndb46uL1POmWeEIqDftdz5DBW
-	JSYvkqmrZzk86UR/sNhPyZiyASR7XInBqiZeYpEcjcztlHH/h+i74l86UUc8HS/VZuE9QfkrnJz
-	smylCwmlzbsSUpNwPrhAz1wmxZ2tkjy9MpXLzidG12d+ac0AW2BFA3sfq49KYC3IUl8lKVCwpIm
-	H+nIuIlCrw9JKdOYS2gu8PLKALD+yGDnh9JkQQqu/zSysv18Tk6r+hBdBnfdrs7KadTwid6Vjrp
-	F8hYKE+ewWsH16g=
-X-Google-Smtp-Source: AGHT+IFf1ZtqJyrB5MOuTg4/YWN68+L2rXBSEutsf5O57w31PlNv4KIPNyR1/rt/eMA363AAdWzsVunYcgFyWawwQQ8=
-X-Received: by 2002:a17:907:3f9b:b0:b72:62b2:26a1 with SMTP id
- a640c23a62f3a-b72e0337345mr479536666b.19.1762726725731; Sun, 09 Nov 2025
- 14:18:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762727365; x=1763332165;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FPZie8eb8w8Uk6fiaOTQBcY1xriqA9OV/bgfwL+5Tjg=;
+        b=sp76XJt4drmJ79Gtr70uhYoDwgVbPeC6XZSL33vqebXofyP1PQf3IXf/S780iulTox
+         8xXCl+CMy/L9BiWfFmlIOW3nTht0cVPs/q3ZLDLi2EzuyWcRqAwD6wZW3LjgxxUK+7Ri
+         mO37uKdCBPjmpHmX6h4DRFOwi6QJ13S0iJb4zMLpnM9eJITLlM48e5VPQZ9XDEZNd6/V
+         xjWuki3iFbXItszUn3d2eRcUg1lsMj19kkG9NDL9GDn+G63VvgWsrvIG8fPBqldpt9lE
+         fHglJ0Q/oo5bTmv2lNl069ssG1qswmCz4QT9LHiStO35fSW3amz/HgZFOzNdse5OSw0A
+         SFYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Vr2apVEfpC04VwTQCsQZOl12ewAn+DBYaziPOqXwfDWjrSfvq0GC3E8ezqG/GpJMx9Z/n0b0uA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdnJkaxklwUkPimsnEMn0TbsMHi/t0f4p2Cq/VFkbNc2WrP6lL
+	L9ruH+oRGtj2bUEwbhvJVQMoAzzpJUjEUbqXC2ghOpOvD3/w/rnXKWDvfDL76Td6Q6GLqhrRaup
+	E5wB+IhU=
+X-Gm-Gg: ASbGnctxjkpg6s9MliEr/uPnK9yfwag2LFwjtw/zaH6OzMhxkGW6IuWjFnAhJroN1bJ
+	dz6Ho4UryFVIYcehioJ5vPOS7hGghOeTxlCtbDVz4Ljg3wMMLZLFn3R3VCne/zzUHGBzs+Jvbwv
+	vBkpsEgeGw+mrqipKWhP9kF0RDEkePYhD6t2+eC8t63qhjkuDuEgPsajbONJplmkWliAi/FnJ+H
+	Ae1nbYTS2xzavo45weAc8ZuRbej+A+JRHnUEE2aVcaeQIHr/zf86k9cyMFBNc3vYpV77PrZ12xV
+	2P7N1SrwdxJCsWbNA/prSNJQxM6KsqjgZeBqKRvqhuxLEAe8Sy+tLHj1JYZ2YPGO4AbVWWvwR9Y
+	hLEyQUJ9HLUE3upyTEfxzNtWyIHYk5XJE9CkCx5VhIiGePDZzS+8AiBX5rK0knxLXOXk1Akh2V1
+	GxOb3jr5nPxA1dIObYVLkaBrSwKIDtsv7YmotYjNwRx4o4Cq44Lw==
+X-Google-Smtp-Source: AGHT+IEfoemrB+bR8SnD+0tip9pyKoX7lSiQ18dnbG+yC46efHvvJSu1lUyceKeTAJX6zEAegHGKHA==
+X-Received: by 2002:a05:6402:35d1:b0:640:b99c:de83 with SMTP id 4fb4d7f45d1cf-6415e6fe664mr5213786a12.17.1762727364975;
+        Sun, 09 Nov 2025 14:29:24 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f857839sm10027683a12.21.2025.11.09.14.29.22
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 14:29:24 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b72dc0c15abso279136566b.1
+        for <io-uring@vger.kernel.org>; Sun, 09 Nov 2025 14:29:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWxAaLqagKqe2ljd7kOYNT4cI56ceCk7kaCZMNeGJzG36KCbhaTLaiyoaPgQbFzicbAeFMLmeb2jQ==@vger.kernel.org
+X-Received: by 2002:a17:907:7e91:b0:b6d:9576:3890 with SMTP id
+ a640c23a62f3a-b72e04ca2a7mr646520366b.45.1762727361843; Sun, 09 Nov 2025
+ 14:29:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -78,105 +86,37 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
- <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com> <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sun, 9 Nov 2025 23:18:33 +0100
-X-Gm-Features: AWmQ_bldKLq5SKxMLtJgZsZW6GApk3TIsKpzw-Bqk5FLnfMtaX5q0jqoDirdRGQ
-Message-ID: <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+ <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+ <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com> <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+In-Reply-To: <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 9 Nov 2025 14:29:05 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com>
+X-Gm-Features: AWmQ_blmodcy0umvH9FZdE7IOt16sLGm5PW6HtUqYPgjmzsWiwn8iRr6Hrq0I0s
+Message-ID: <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com>
 Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
 	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
 	audit@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 9:22=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sun, 9 Nov 2025 at 14:18, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> On Sun, 9 Nov 2025 at 11:55, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > I looked into this in the past, 64 definitely does not cut it.
->
-> We could easily make it be 128 bytes, I just picked 64 at random.
->
+> You would need 256 bytes to cover almost all of this.
 
-I see I neglected to mention, the lengths I had seen were untenable
-for a stack-based allocation. Going with a smaller on-stack buf means
-having to retry with an extra SMAP trip which probably makes it a
-no-go.
+Why would you care to cover all of that?
 
-While I can't easily redo the survey on Linux, here is a taste from 10
-minutes of package building on FreeBSD. A histogram of lengths with a
-step of 8, rounded down.
+Your very numbers show that 128 bytes covers 97+% of all cases (and
+160 bytes is at 99.8%)
 
-You would need 256 bytes to cover almost all of this. Maybe 192-ish is
-a bare minimum where the idea is likely a win? But even then the
-people who want 8K stacks probably wont be able to use the feature to
-begin with.
+The other cases need to be *correct*, of course, but not necessarily
+optimized for.
 
-dtrace -n 'vfs:namei:lookup:entry { @ =3D
-lquantize(strlen(stringof(arg1)), 0, 384, 8); }'
+If we can do 97% of all filenames with a simple on-stack allocation,
+that would be a huge win.
 
- value  ------------- Distribution ------------- count
-             < 0 |                                         0
-               0 |@@@@@@@@                                 18105105
-               8 |@@@@@@@                                  16360012
-              16 |@@@@@@@@@                                21313430
-              24 |@@@@@@                                   15000426
-              32 |@@@                                      6450202
-              40 |@@                                       4209166
-              48 |@                                        2533298
-              56 |@                                        1611506
-              64 |@                                        1203825
-              72 |                                         1068207
-              80 |                                         877158
-              88 |                                         592192
-              96 |                                         489958
-             104 |                                         709757
-             112 |                                         925775
-             120 |                                         1041627
-             128 |@                                        1315123
-             136 |                                         664687
-             144 |                                         276673
-             152 |                                         150870
-             160 |                                         82661
-             168 |                                         40630
-             176 |                                         26693
-             184 |                                         15112
-             192 |                                         7276
-             200 |                                         5773
-             208 |                                         2462
-             216 |                                         1679
-             224 |                                         1150
-             232 |                                         1301
-             240 |                                         1652
-             248 |                                         659
-             256 |                                         464
-             264 |                                         0
+(In fact, 64 bytes covers 90% of the cases according to your numbers).
 
-
-> > Anyhow, given that the intent is to damage-control allocation cost, I
-> > have to point out there is a patchset to replace the current kmem
-> > alloc/free code with sheaves for everyone which promises better
-> > performance:
->
-> Oh, I'm sure sheaves will improve on the allocation path, but it's not
-> going to be even remotely near what a simple stack allocation will be.
-> Not just from an allocation cost standpoint, but just from D$ density.
->
-
-I completely agree, but per the above the sizes look unwieldy for the
-stack. This is something I tried to do years back and backed off due
-to that reason.
-
-> That said, I partly like my patch just because the current code in
-> getname_flags() is simply disgusting for all those historical reasons.
-> So even if we kept the allocation big - and didn't put it on the stack
-> - I think actually using a proper 'struct filename' allocation would
-> be a good change.
->
-
-I don't know of anyone is fond of the current code. ;)
+              Linus
 

@@ -1,127 +1,88 @@
-Return-Path: <io-uring+bounces-10508-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10509-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE68EC496E2
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 22:37:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6C3C4974E
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 22:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C46C3A10D1
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 21:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A641887F39
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 21:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B163A1A9F91;
-	Mon, 10 Nov 2025 21:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Y/iIGgAI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD202F6582;
+	Mon, 10 Nov 2025 21:55:05 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1299532D0C4
-	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 21:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50A92E7F03
+	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 21:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762810646; cv=none; b=KKGxxIqBmKVwqd4iHLtdCQ2LDg+06CREsyCQbxs/6MU9gnLbhipkTBgeMsxAH39/tamF++aQe+qwmdgDOPx+uc6L/E8NZP0rZk812/HrOt82/vuaEp5YZ8x3KGaqeKYyn4YZ5Xz8mVdRT652KqLw5F+lu3VXuHHK0/HzsbSMZJU=
+	t=1762811705; cv=none; b=bG+4Bbyt6JbRpMbupo5m7SvvLYiuMENT8Kwv7B5Qqpj/yxp399xS9an1rT47LJRhFo4afOHTzBbTQ+o2fakTILEqQtnVIvp323vabFvGNcGB1FD+hIni1iNS1tVQz0y4bxM+KkAGvIZVpnoI/XK+3LrLHTJC20vAbQnCMlCjbFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762810646; c=relaxed/simple;
-	bh=uykky/uKBB88vCLPIGvRKuK4PKrmrY0/6UriifhVbWM=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=t29vUptfml4CuG16R43jmVCiEJ6Xr0gnmDHsCTDQFWvnIn7ub2kDGzd5GB8WAEencUaUz2mWIJYR1bxp8Nu43ja4roPJCVvYIkU9dv/7joKV+WyAWNNCFIVGDQgpw+WgIpV5LVR4s7w+qwW/+4WJgz1a0XXy7BwFMrPqAr/CDls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Y/iIGgAI; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-93e7e87c21bso186416339f.3
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 13:37:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762810641; x=1763415441; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5t86lbKFmPTN8AZBvJXeG/ljoL5ltEPP3yaeU4g2Lg=;
-        b=Y/iIGgAIHW7i6X+Ri1YshHZIskbRd3apdB6k6ilNkTNrYJ17AJCkyAp4VbncUTxPx2
-         IbqgML+Je+iG+MMDwgjDjHhdkVPk77jEijnUxtxkTo+W147VTh8vvqhxCwYl9b1k8Hmz
-         OPpCtugR2Epf70Qigdc0s6arNOmg9LpLFRXonwfSyIHd2It2U+4A+3GCRGyCQs9UsjMI
-         nTKjKYyZXSNzcPGNy/sahbcssUx8sUu2v3X20YvbUYhlpH4khjzYWQe3HOgJIoqMQq2g
-         T4l9x13dEKgdJiglh2cCWoxnFqbdI28Sf4OJLMwhA4nLDB5VzX2ri6CVB9FYZg+LzgDd
-         4+6w==
+	s=arc-20240116; t=1762811705; c=relaxed/simple;
+	bh=vU0TO8BD+idNrc28jXRVI8wWAlZ+X0qdYCZvmkn0T6Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UIy7Gpjy47CrDL+1tivEpPz//UWcxw/hRHo/zRwWpK1nZqY6ciyhl6P/jfk+w9nzkKZOyMc4uD2p/XQYt7pVAaM7bG/soAq/S1VLaMLMTfNc/+8UBsD55DZFAEoQCT0oTUvqNYpHfeVNXHgcNwYiDoPQ4ZfUfVDmx7DUfE0n44M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so449994739f.1
+        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 13:55:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762810641; x=1763415441;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M5t86lbKFmPTN8AZBvJXeG/ljoL5ltEPP3yaeU4g2Lg=;
-        b=DKIA8Qz9ghcdxrPSih8TEfwQSvjoEp8d/Wn/H731DTetsS9bKg7lSMgv1OumxifXiN
-         eM4paTlCQAprwrWiDFgbmOlTuzs+AEMR7ihv8RlBOnl5h0o8zz1u63Eimna/ODzhhIWF
-         6ohs4fFQ/Yy1LwKryuOyubzsSINXfijfv059x2nRO30LsBG1pwaGfC0brHa1x6iotjcZ
-         R4atCVBOZ/7znVPCE6U1/Ev/gwAbFdsAODrWWwK/75lRRFaF+jfPcGl+FLCp+lA9lv53
-         jw3ZkFQXxVbnh7TB7qOPUUvFlUk/h7OeKk8JqgXk0/WHTnmO2N4TukcdvNgKOVw5L2pk
-         Va5g==
-X-Gm-Message-State: AOJu0Yz8WBJW9s3an3eXQShfyzSXkqwweA/XMDzuxDAvRftX9cX09YDU
-	w5pDUtMEV5Gma1UcJVIIFkDjZsGgOH7YcXVG9qzfAXoHprtrQeqUylAxynZlGgPoezNNveaz5ZD
-	clV1L
-X-Gm-Gg: ASbGncuM/4upK2xB6xYQguIaDqldOuaGW/WBhRcJVeiUFHK3UHPViqtWt0Ev3GwfeO8
-	iN+skBJmguf3Qk/iU0lbu+QS3KYIyLEKRQeSImIkWpV7L6cO7oQyXX92rmfJErSxmBkT6nD8Q+e
-	PvOqp2pwL0txl3T4yxr7x9a0RL4iUEkT1TxBPKoKAw8iSKkjJrR6x3uj02IMD0xFqW8KIdcOggY
-	buFox32R6Yx6Rf3U3r7DkMXth+a7oy90hT3u5I/27CbAMjKXSQXlqgj/R6Sp27KALpXEh+KD8Q3
-	LHBeCIL6s8AtqwMQwUbIHSRlBucNE2ne/4ibLJeNQ5QfsOPE9jFXstBpEOzO/OOMt4HUq0eZgXb
-	kZtgCMf6Tu+nFmr3bNf/BNzRIHeHiGc8E9c6dSs0jdqD9Vaw7VbwGswCg7hLkbncAcQ3gBI6Qid
-	wUqttSyF4=
-X-Google-Smtp-Source: AGHT+IF/qUP5EuoSqb5a9GjP8gfDD1N+3DNUZ5YnNGLY8Mc2tLFjsGCaLlHbpRvfwTs8VUX0LGWsqw==
-X-Received: by 2002:a05:6602:3f8e:b0:93e:8c1e:cc5d with SMTP id ca18e2360f4ac-94895fcd9a2mr1364657139f.5.1762810641640;
-        Mon, 10 Nov 2025 13:37:21 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7467d4900sm5461472173.5.2025.11.10.13.37.19
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 13:37:19 -0800 (PST)
-Message-ID: <ebc2ae15-ef88-4f21-b027-dfe86a5db555@kernel.dk>
-Date: Mon, 10 Nov 2025 14:37:19 -0700
+        d=1e100.net; s=20230601; t=1762811703; x=1763416503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ie2/PeJ0jgx5E8HiVBVNYjG7K8kqqreSpRHnsimU148=;
+        b=bkhLXjKXcIhuvQiT6pz1Alc4rQfjtdydaZQxcf9BFQHcMTTxF45omS56rttT20DFce
+         A1pnbRYd7UrQHQMxKgGJvbhzJaXgKO/coFSVpPsRiMf5mYwwOFOaxzOG639ojDM++j9d
+         MAEBUZwPDOAqCbea7yBj0CT60McxgquBsYH80ig7xdpWKZ5QlNdVcuhKkARxQjw42Z+z
+         pxJNV1C3EmupphueNPNSCFCJCgxxICy8PjWh2dQvmGvDOUdV3tUuWuWJhc4X9teo8s00
+         3gHFDZEgz0fWz2d9ecjapjzExqgVkuBcL4QMHV5620d7ecWt3E3ZmMesWoKvIAug2sO/
+         YNQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/g4kcfu5H3PdmW2rU5B9o4Y5rITmXJ8p3B5+8cT02LKIyw3in+BTwoXo4Fha4xXJU8YQy44Ogw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqo8TRIMyHTD86AO8+330xgNzLWXRfRIkk6lI1sI0sfQnz1lod
+	TkJvrJDptgjJPNh0yu+PAdUfU8Bn1UnQzj9EPtbbuoMWaMFQT5nyQmPsKUm/gyOHAXTB01ySt74
+	O9HZJ5XzT3SEwGvl390silUY7O2lFhXMDTxaaTKrmIfm58c/PzHKUytgqsyI=
+X-Google-Smtp-Source: AGHT+IFUrp0LeNJfpbbEEybABNZcxFBbxPlCJBUWD2fXo9BWxHePezzLCfZ2+zOMd0I93Borf/de7KfAOoL7fCFMbpQmMLnNo9Xv
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/rw: ensure allocated iovec gets cleared for early
- failure
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a81:b0:433:773d:adc0 with SMTP id
+ e9e14a558f8ab-433773db12amr116490455ab.17.1762811702828; Mon, 10 Nov 2025
+ 13:55:02 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:55:02 -0800
+In-Reply-To: <d9753537-b2d6-450e-bd7f-7bd86dfbb7fe@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69125f36.a70a0220.22f260.010e.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] memory leak in iovec_from_user (2)
+From: syzbot <syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-A previous commit reused the recyling infrastructure for early cleanup,
-but this is not enough for the case where our internal caches have
-overflowed. If this happens, then the allocated iovec can get leaked if
-the request is also aborted early.
+Hello,
 
-Reinstate the previous forced free of the iovec for that situation.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Cc: stable@vger.kernel.org
 Reported-by: syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com
-Fixes: 9ac273ae3dc2 ("io_uring/rw: use io_rw_recycle() from cleanup path")
-Link: https://lore.kernel.org/io-uring/69122a59.a70a0220.22f260.00fd.GAE@google.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Tested-by: syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com
 
----
+Tested on:
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 5b2241a5813c..abe68ba9c9dc 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -463,7 +463,10 @@ int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- void io_readv_writev_cleanup(struct io_kiocb *req)
- {
-+	struct io_async_rw *rw = req->async_data;
-+
- 	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_vec_free(&rw->vec);
- 	io_rw_recycle(req, 0);
- }
- 
--- 
-Jens Axboe
+commit:         4ff33a31 io_uring/rw: ensure allocated iovec gets clea..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git io_uring-6.18
+console output: https://syzkaller.appspot.com/x/log.txt?x=174a317c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa4513d3a243489e
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c93637d7648c24e1fd0
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 

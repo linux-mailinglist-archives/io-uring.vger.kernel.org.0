@@ -1,83 +1,87 @@
-Return-Path: <io-uring+bounces-10495-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10496-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4111AC46C1D
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 14:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A902EC46C20
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 14:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24A8E4E6254
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05CB3B7041
 	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 13:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FD21CAA79;
-	Mon, 10 Nov 2025 13:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1EA1F63F9;
+	Mon, 10 Nov 2025 13:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8GRk3qT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpzFDTFT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811FF1AF4D5
-	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1DA1A704B
+	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 13:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779900; cv=none; b=NL79/J5MhzmHClRY9LC/BSA63biE0ydnM0SNsCItnuak4F/aLUa81ZQgCLNLHMks4cNZliIxUIVKu8ZSjPplf//tpeMp+Y6dfmGPrtaw/e8f50qbrr9nupBceAke2mhV7ms9Y0mOuphyxGSTLGyAszPUql5mUQdqOuHn3LIHpI0=
+	t=1762779901; cv=none; b=OL4PNO1uK58rTx2T85jMIr5MILFaM9CCEltCYuDraiUkVg9kn97coPfnyLPs7m26P3L1mLO0gEWZPghT5TJl3BgrYg29dSYrvdGFzNJBfo7mOETkKafdicFxWQZ0PPmc1te8GWBpdsaaogCbBLslyLUtiPjbDeeELRvk5NjXt7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779900; c=relaxed/simple;
-	bh=59jzTpQVBQQ2OGTy9qVEs4hY8juc05G2KTcWe+MqVxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WA1gq35+tEe1i2iLtej2BccVxgp7IJEsaZ1rYAEzyZJEjCSwmy/tNnjo/DsJqftHA3yNc9RnEdxR/pNGElvjDTwj81McF1hKnPSwgLnWCugZiV7/S/4KghSz/Mzlq5hf3Rd4ZDmeYglCYOamB3neFjGDywvA66qQmLWbK8dPF3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8GRk3qT; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1762779901; c=relaxed/simple;
+	bh=USdl8wx0OZ4NcLMSQrwBr/01iPmWFWLcUQUM7Ojt5Vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aHTbbx7b7jlSFUqnCacvsjmaRiVxrKwcmEpqytOA+/coU7tT9A/wAj2viLO31tfCIwlYYYFWf1kXyVcf3cfhv0Ygf4HRo/NJh4d1nqnTeHQY1pa7KlVmXHrz2kKIzE9BORhmJmksUwhboG8e+HbIAYw2Yob8FlSINH8+l2vw+IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpzFDTFT; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b3c965ca9so352739f8f.1
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 05:04:58 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b3d7c1321so414521f8f.3
+        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 05:04:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762779896; x=1763384696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TaZl7YQgZksDcQXzykQK4V6lCm1G6CXnME/tuSFMlzA=;
-        b=Y8GRk3qTaBl2HBYzmbpSX0Df26/5pxZyyPjANCRFXX/KBgZPuam8o3POJS/yRdgiiL
-         kao+kBMyJ280p3WBgjJe3ZU56xtGAk1xYAF+CD34thPXAvkpdQBD+mL+qfWHQBeyGjte
-         NATLY7OOWBe5ZIunJwZo8n6oi0Lnxx0WeRmXP7AHiZJD0BW+pIxjJphymRq6b7WPkyrX
-         y02AF/eXs0wiMygUORPz0kf8hH7Z26fzdAsM+rFSKwrIveO/f4TmNMHJ97STsoWmDHOu
-         X2puhZPYMKwezufmXCxqnOzfy7sToOARQxT75Quux/urbZXTt7AzSuIRTazZNTVb+fmX
-         LlMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779896; x=1763384696;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762779898; x=1763384698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TaZl7YQgZksDcQXzykQK4V6lCm1G6CXnME/tuSFMlzA=;
-        b=LlYPnfVKbtJYmkYoozMvGxWXpDwB5HBRpmoD98ix2aBM8011N+qf7rKjplf7C1rMO3
-         I2R7A/7SjPVY8MPMXrQaxFodOKw0CqL5p8udNoLtzKLHTKzNrOEPtsA8/dayeRS68yly
-         5TZWVxqpb/pObnPrDHMveQR/GR6hQbbZMeQhHPT0RoQCdLYL8xlZf8q1hV5/GPg5hH6Y
-         Y5s1NDOhB26ANS0bFe3OLcT0UPn66cp49STtVlWclFLNC0Q6DQx3H0ymszaswRSc89Dw
-         wZUKrTeHZHWkZp09/yfddf7EL2KUWZgYDIZcBNumhR3x2Zm4l70/doOH7SE5Rbww4udh
-         BHaQ==
-X-Gm-Message-State: AOJu0YxRi6ACnO51hvHt1c44YKZdfsOci81ai8oQ27o4VRyqmt6j3eKE
-	gRgiPZ8WCkwxg0uXcNC/itlJDi9l4Z6UqKYyOqqHyQYtgd+l8Ze4koDkpjwtNg==
-X-Gm-Gg: ASbGncvmc19EyHNV5HxqiYvGytL5um5EBdABqSsZgwt7nQkb8L1RsBZk5fquFyXLvUS
-	xrMARtLKvCSwKNUiFzF8iLle5tbRzKmQhZ0U2WO78bRITLUx80SvORlCsvMlLZ1GGeckLCC/Fb/
-	K4ietFHcy1dRmBmMAOd8B8nLJyq8I5RJ91/XUijPA2bSfPVbEGrOgVhATdvHHxh4Gm+86w2CcOk
-	FIx9G9MeqoeTk+qr+z9hft602JxPeZSV/cGK8iozb8SFqokFUBuMU36cVq1JK7+RaFwqJ3s91vM
-	oxVts1+R70PihpwTMHBYA1N3wwVsFtfqbA+p1jx6eeJXBykArLyC9+L7+9BdCo/Ed/UFAm+AbVp
-	72vrkliisvfYfANTFnVPon40XqwVp/sehIKXUW0OCKTNs4r+chglHe1OEughS0prwQoCKazXffl
-	iX8n8=
-X-Google-Smtp-Source: AGHT+IGbB2r0d76RMK2hNrjG6c4vTrB+day2uPLn5ye/9VIDwl1EWU7W6oJyxEVy+92QmMF/7oCtGw==
-X-Received: by 2002:a05:6000:310a:b0:42b:3afa:5e1d with SMTP id ffacd0b85a97d-42b3afa602bmr2934903f8f.20.1762779896312;
-        Mon, 10 Nov 2025 05:04:56 -0800 (PST)
+        bh=ixkmHxQuOosCuA7buSKgbZx7USj4ijnqk/+8sNsuHfQ=;
+        b=CpzFDTFTeTDN7qoNFlqjM4mx9E1ydbmPiOw5nwfy2/Qz3jxj0KGUcla3nSSF4RnjOt
+         ux2XHDqACTparMN+grs3tH7V1u2mZNNkD/lX+TFUxSINXSrsP36GC5E6XZANvJwf8N2l
+         faSD1GzSgwqtZH+/v0X5Lva4oCewBlq5NSidm2WxgjEJApUomr9eJYaSYQ5SHCW3OsE/
+         Pnabj2OnsjSeyP5FAm/56FaYwHjK+pR43Z7q4z0GgV5qYUi2IPEoaNeoyAMYjGH0GOri
+         w9ZFsaQ4hpbpBczfFkjpkrJsp4fMhcGkuwBkpSe1ddJH9b687xF3Qc1GDzKLn88rCfmN
+         sUFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762779898; x=1763384698;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ixkmHxQuOosCuA7buSKgbZx7USj4ijnqk/+8sNsuHfQ=;
+        b=wreyOJk14mPyeRpLwx1f2QV3IKUHvGN6voizenurpd+m43KFubEXySmgtffT2HPNP7
+         YM7noSkQevvqq6QRDVt9HKw/FC1WL0JmEpVZkiO5tGgOlQ0YhudSgdhSwfTa8e49W1t4
+         l6j16V5CJP0arEaZqXqAqDQmTYqDRsIU2rtR06/X8WxCRzRUDh61l7bRR1Lv1byHuh1k
+         GgGEXan7w57czdKj0PHGZeokpE9NmB938HxMMYgaod+oVkHB/qdmFDSmYODT6KW+zo/f
+         vBA30pvYUhglm+0PDkGNzscZeU2kdW35E20D/bk1I8bjrKFiPc2S6KOJy8Fy3md7sc3W
+         fWTA==
+X-Gm-Message-State: AOJu0YxOkeCUr/aaxRRdJg28PZpvepEoq069WzSKiQBp1qcNufVBCE8Q
+	zVwrzioOSw7o4OLBTTx5PJfHwPA2wW8wGqu0oNamAnTKvhNzQhjaZSR8kGSesQ==
+X-Gm-Gg: ASbGnct7LAglCt7jcVMEPZw8dEuUnzlt9zXdKt4RkZtry/5wyPnSDAo9xyArYBgKAci
+	ZBNrC+yKa7RKQ+UBWfOeQgpACIBgr+HVVvJP0DX8jVBYU7b3p49m8nHxf1wwg5jSwZJufJPvwZF
+	pq/5AyweI33RVxBX6Nfoy/tDLKzK5j+pLcFSSx1RyVOy+29IzA50NRSNohtjSs2sJGbEnYfkI5q
+	kc6bRZ3JLhs5guRmTPwyBMvPU6yauueHrZl5xaaw4jSKpHKMfJ6oNyslSvBIL6CaLuNevZhPc0a
+	rLKo9shwsKkCTtFFgkWPvAqQTU+KisPXRvNiep+p5XhlzJdwt1uhcJHaJyspgMOXC5vI1NuiqPF
+	80irC/VBqusdXo1HQ3RRjgge/x1bkgOIgv2SaMzeuMI13rwazzJeb6n8nV+mmMYsyrH1NPyThmU
+	wYrYZavvnYR/WN7A==
+X-Google-Smtp-Source: AGHT+IETNmL1lVmr7+cxQvVOw/i1u7Q5fZl6FByhbKMG6yfRUtx3ip6JbmX+B4qRwvzR2hjW8zXSIg==
+X-Received: by 2002:a05:6000:26d1:b0:42b:3302:f7d4 with SMTP id ffacd0b85a97d-42b3302fd6cmr4553909f8f.22.1762779897487;
+        Mon, 10 Nov 2025 05:04:57 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b330f6899sm10584648f8f.21.2025.11.10.05.04.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b330f6899sm10584648f8f.21.2025.11.10.05.04.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 05:04:55 -0800 (PST)
+        Mon, 10 Nov 2025 05:04:56 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 0/4] random setup cleanups
-Date: Mon, 10 Nov 2025 13:04:48 +0000
-Message-ID: <cover.1762701490.git.asml.silence@gmail.com>
+Subject: [PATCH 1/4] io_uring: add helper calculating region byte size
+Date: Mon, 10 Nov 2025 13:04:49 +0000
+Message-ID: <e42e7f3fa3b43a8b8af896f7edc251b113ad7b77.1762701490.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1762701490.git.asml.silence@gmail.com>
+References: <cover.1762701490.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,23 +90,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simple cleanups extracted from another series. Nothing noteworthy
-apart from that I needed Patch 1 in a couple of places already,
-but it's still a good follow up to recent fixes.
+There has been type related issues with region size calculation, add an
+utility helper function that returns the size and handles type
+conversions right.
 
-Pavel Begunkov (4):
-  io_uring: add helper calculating region byte size
-  io_uring: pass sq entires in the params struct
-  io_uring: use mem_is_zero to check ring params
-  io_uring: move flags check to io_uring_sanitise_params
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/memmap.c | 4 ++--
+ io_uring/memmap.h | 5 +++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
- io_uring/io_uring.c | 22 ++++++++++++----------
- io_uring/io_uring.h |  2 +-
- io_uring/memmap.c   |  4 ++--
- io_uring/memmap.h   |  5 +++++
- io_uring/register.c |  2 +-
- 5 files changed, 21 insertions(+), 14 deletions(-)
-
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 24da17a5f08f..dc4bfc5b6fb8 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -134,7 +134,7 @@ static int io_region_init_ptr(struct io_mapped_region *mr)
+ static int io_region_pin_pages(struct io_mapped_region *mr,
+ 			       struct io_uring_region_desc *reg)
+ {
+-	unsigned long size = mr->nr_pages << PAGE_SHIFT;
++	size_t size = io_region_size(mr);
+ 	struct page **pages;
+ 	int nr_pages;
+ 
+@@ -154,7 +154,7 @@ static int io_region_allocate_pages(struct io_mapped_region *mr,
+ 				    unsigned long mmap_offset)
+ {
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
+-	size_t size = (size_t) mr->nr_pages << PAGE_SHIFT;
++	size_t size = io_region_size(mr);
+ 	unsigned long nr_allocated;
+ 	struct page **pages;
+ 
+diff --git a/io_uring/memmap.h b/io_uring/memmap.h
+index a6c63ca2c6f1..d2a940682d19 100644
+--- a/io_uring/memmap.h
++++ b/io_uring/memmap.h
+@@ -43,4 +43,9 @@ static inline void io_region_publish(struct io_ring_ctx *ctx,
+ 	*dst_region = *src_region;
+ }
+ 
++static inline size_t io_region_size(struct io_mapped_region *mr)
++{
++	return (size_t)mr->nr_pages << PAGE_SHIFT;
++}
++
+ #endif
 -- 
 2.49.0
 

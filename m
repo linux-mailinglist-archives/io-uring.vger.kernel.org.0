@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-10501-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10500-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85411C4822B
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 17:54:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A479C48344
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 18:07:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 31E1934A91B
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 16:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919F642575E
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 16:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F5E31A069;
-	Mon, 10 Nov 2025 16:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B5131DDBC;
+	Mon, 10 Nov 2025 16:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U0eiQAtz"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LUKuim1N"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8D82877E6
-	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 16:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8631D748
+	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 16:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762793433; cv=none; b=mEUYhWdguuLxYWJSYDpc22QpUbARSqXsg11/Ladm5xY4/GW0Iw3oSZGzIEpE/BQeSk7p7Vyz45F3GKYyzHPXu2WB+/jq6+QsrEWqbO4nLTt2PlxxxGv7ZtJ4T2WYw0d3RVP3nXYCPDP/owZ4cfcfMuseRq3MbtvMohKn6Wr4Qvc=
+	t=1762792927; cv=none; b=Ik+GEA99dTCVbQL/Mh2XMbs4rTYfWh/Xf3ese+XS5Y1EvO1FJhHVx8iz7ObrSC80hn0ug4txTw1x8oeLWmOG4OehX0cGxjioCIqwhQB6xcAvX4CXZm6+4MGTg04QjzVUK3bOefvKN0kZdY1Og6IWwbdfRMZjq7qbL3SjmG0Qqg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762793433; c=relaxed/simple;
-	bh=XltYOg7k6APNYxmEk9YbYTSDtH+b3EpjGO8HEYY9tKY=;
+	s=arc-20240116; t=1762792927; c=relaxed/simple;
+	bh=GKjNPhJUmE3ffBWuGrURvcOJiiT4jJnfaIvMg2ZBr5E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5M1NeeihfZ2TNCMmc0k/hll0clguIfahxci/c/LEHNMYGJ7G++2RIKlncA6dgCacLwsEsC7lcJoe0h6oAgmiGVVAyhG1lW1VAdlNTz+EWFNgMW8NceNKYjpVTMcwv8DuYOvVQ9VSoUkN3tHr0JgN2mihGODEsBDcLJMvlzTefE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U0eiQAtz; arc=none smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=TPaNj7HFZXf/hGqfaDyVHz8Xe4XOpMfXxKLnkP9BnrjyDoYRjJZNhr7HeqaiRbYTQ/QNxbvC3x06vwYegv1LdCk/Z0+0VKhZNuAm7n3FHqD1rSV1vrZAZaY+TFy7I+WXOs+Y+VKEgvRf5NoVTdba9NK2f/sbm5WXylC7+jcbmyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LUKuim1N; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-641677916b5so3105398a12.0
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:50:30 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b7277324054so473029766b.0
+        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:42:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1762793429; x=1763398229; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1762792923; x=1763397723; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkZN9c+POTwUaLOiQGKa5zH5Hbhc5P5pBlVymH+hWeM=;
-        b=U0eiQAtzfgyVzzeGYX7dXlwKhAieJvyB5T6egjx0ez+8Uk1373vvuxlO8Ftpa6dasV
-         aq4eSqea2YUMqbDwOHphQdRmHzWCB4GYVuIhc3h24KgHZ0ej4BisXfCQnIMLtdTEpStf
-         QEO1C+p08cnvyH67ShKcHep/RvSDMFY+wmomQ=
+        bh=oEQJCmiS2IMzNjbxI9qhqVkNRGDbuejNOKBcwtqGw/c=;
+        b=LUKuim1N0j3S16p1DLfN7+deJD/PIxRM9qwe+h2dwcZTnOoIRp4XfI9OAXWyIuP2yE
+         qkfv3z07mbQXqV3bvSYeE70A6pDRsCxTvvHpGJIXKw4BjumgVJ8JO0p3IiIae6ult9Qx
+         d+cSuFf+aJNcM/T8HZ/7EvgEhNyP11q0ADFx4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762793429; x=1763398229;
+        d=1e100.net; s=20230601; t=1762792923; x=1763397723;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DkZN9c+POTwUaLOiQGKa5zH5Hbhc5P5pBlVymH+hWeM=;
-        b=GaJnzy8Z4pHAqS6cEgc13SPGzMvctTonAi9zOSdEm08dhSGyhCYtdjXf51bDcNg80b
-         VhHFt185wHdL+PBNY3ekPcEdNHNRzVzzwQ2i83iRzoVJEw5pWg+cbg6/OaHbS4ec6yji
-         O52WPRdqS5OkBvL70ubfCSHBcH5kOGkQdFSa5JOKHVIHcpvBaDJtVFKS7lIQdztMmu7U
-         sBoxAZG0p5HlCKvI2/9oF98wLoSWS3d7szzhS/j0h1oPXM9QIiw/AlpfgtJRuRGKmW6K
-         hu8/1Z+DG/jdmDmAxxX+v2TgFoo/Os+M6WtZ5c549r1xB81c5fcWJlTuWJZAWNRkNnFn
-         VPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6JgxMYCM9UtrRhOIfGz9QG6SFHudATW0USyslC/GWMIZrzuu05B8uRHF2ANG4MwDhXctYwm6klQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR2ka/7wV2PL6fx0wMqMHKpE/4WCN8lSPWabBkOefAGU0fp3Jn
-	FtsCqBNYqieKTbq7g6s8woMUlMrGBvNuJZHSxLJWwa+XgreC9Kv1EvRPXnHdoWhtq+BnXoFxdbe
-	O4EoYjJg=
-X-Gm-Gg: ASbGncumSTZLTEO2VjjnjQERD5TLgPZK1Hjq3z5Akzx/VrhoorrAi/2hFuZb+KhGfVG
-	u1oLRAM4WFCTQSVpGypPuZjNk+3ngg3bq2ro1zoLoSy3nWrfbvzF6hq2UdfHqRADBu3TH3mre6V
-	YXU5NregqyWrjggMvnltldztUvrSyzZLAtiHoLy90QgxGTNQs+2KHYDMbgPHu2HjUQPotw8PM/h
-	BmeO5ti+SJfub7FPvY7HTYr5YWLwQRUSVJj0vfbbWREefvBFKWYBq/H/37nOBfeqm70YNDnOHDx
-	JTrEPHqy6/I9TqDWYB4hAvyGIinMK8GkZ2Ekt/RKlS8lgdtnybBPdDwow8xe2+/w1j10XaONlVB
-	glNZKAeKN81bVII7NwfVhKAAhKP6BOuDKJ9QmLO5fjYIdPV8Uw27ZhxaDhI/DqWhs0G87lcSgTx
-	QkzFQPngcVHjUKngKabbmIT+twuqIMAXEUUql3g+vf4bWrT8F5lQ==
-X-Google-Smtp-Source: AGHT+IFpx6JOT7ujzgkLlw9jC0h6YbJx0tuQZX7+ZTjKc9Eqi3aFBlUyHxDRTaDAAjJwMhXk7IlC/w==
-X-Received: by 2002:a05:6402:51d3:b0:641:72a8:c91c with SMTP id 4fb4d7f45d1cf-64172a8cfb4mr5615036a12.27.1762793429385;
-        Mon, 10 Nov 2025 08:50:29 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64166d0653esm6142441a12.29.2025.11.10.08.50.29
+        bh=oEQJCmiS2IMzNjbxI9qhqVkNRGDbuejNOKBcwtqGw/c=;
+        b=NkURY07xgfszhWOAhLJkLDM87jrxYXUZW0Yrv1HlPG2bvbnAG4TNOhMBMDOZgdWdUk
+         0KOG3KnFXSmIUv8Rizp7YZOwt5LrDHowjLcBhJVjfrn91zF3DzQ7rGXzFtRJlK/AK8AM
+         KuMU3buaeHFBox+tC7huEX0dQfpwSmilU/4CxQvrn7CSgDOVJnxP/vRtWvfpaR9VRyNY
+         164meyNtqU/dHTIZqbGpkFVR4j4y333UoWdudYdPxpcLXApGx7JXC6uebquY8N41+ovX
+         NE2pNQwdW6u7yZgPccSBtrgJuazC+pYdCe8chC9EWCR7fUPXnGdBxhhUqjo6Rl51+njY
+         714A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZsDTyHC3klvIRdxpRIDZfVVxC7snheHMgHX34120g29ygD3RAt+mh2cDXvF2m45z12IgPxwNriA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmEqhFJzcieQe3lP8Cos/nCpD33H00VPSJKIJpzWKjQ47h9Swy
+	OCJEm2r3txGjr4kVLO99M1/1B3Gjv97fvlKdpNKZ78bT6iRHidTwhauYFAkmarT0J4t4b6TOJgH
+	K/pGFz+Y=
+X-Gm-Gg: ASbGnctlNosUgaY9zRnu+sZlF9iBlhfyzGLzocgwN1EsAK4nRq9tgfFH4WABJ4MUUbG
+	1arayGZI64odUClFzZSjrB6wah3LhROUvi46eeOwHeo8Wr+QCDa5FmZLva3rekUYrLc3IL9ZE3x
+	Ch8Db78/rlV/1a2WmsHbJBQUjjqUaQeq/R4WkX8aQ5f2JGfz8OCakx1dcnH2QlZLrsQQ5iNvT2+
+	bmHokJE2FfrJXWHjbqABFh7e/ZxGXuVVOmSba2txCXttGbXMtpFmBgJWiFP0XDSjHrk45WP+2JN
+	wvABUM7mB6O2Epxgxt5ofmpMF7o5FA45mVI1oYBEbOLWq3fathdTfkNKj/mq+yIdUwF0AZyQX7w
+	vgYXOHURm/WqU0C898eT+yROE+pa6gOCBgc6FuEG7PtHW6vRaYDBpfn4cWSPr+kNHngBGzhVaiN
+	X8AjLk7wm64kog4vqQ1GSJBeBzKy2qlX108y5QwLQXOCzV1ETBloX14Pfoves8
+X-Google-Smtp-Source: AGHT+IGfTQ+dvYdG1sBBtvgS+dJiE28s3g4dLHp9HVGHwXqH+5tNIEKiCPGh8tAlVs3alc0YzgsPKQ==
+X-Received: by 2002:a17:907:1c9f:b0:b5c:753a:a4d8 with SMTP id a640c23a62f3a-b72e05bce7emr850596066b.62.1762792923350;
+        Mon, 10 Nov 2025 08:42:03 -0800 (PST)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862bd0sm11856745a12.26.2025.11.10.08.42.02
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:50:29 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b7291af7190so473559566b.3
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:50:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWVhJwQ+qt5yBJGVKUnx17DP9YPMH7Pi5H52FHSgVgqmcX9S+9CgVCYUtBax+dyQBVPjVu9f42rGQ==@vger.kernel.org
-X-Received: by 2002:a17:907:da3:b0:b72:a899:168a with SMTP id
- a640c23a62f3a-b72e031d007mr811932266b.28.1762793427368; Mon, 10 Nov 2025
- 08:50:27 -0800 (PST)
+        Mon, 10 Nov 2025 08:42:02 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b5a8184144dso422244166b.1
+        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:42:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXvWKRzqJmKIedsfE/tS9nUcWnktMrh9Efb9piOcTMFbvtCd/Tmn3WGKZkY4lU3Nqkk/6IFkIquPA==@vger.kernel.org
+X-Received: by 2002:a17:907:7ea4:b0:b72:d9ee:db89 with SMTP id
+ a640c23a62f3a-b72e056d064mr770836966b.47.1762792922013; Mon, 10 Nov 2025
+ 08:42:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,13 +86,13 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
- <CAHk-=wjA=iXRyu1-ABST43vdT60Md9zpQDJ4Kg14V3f_2Bf+BA@mail.gmail.com> <20251110063658.GL2441659@ZenIV>
-In-Reply-To: <20251110063658.GL2441659@ZenIV>
+ <CAHk-=wjA=iXRyu1-ABST43vdT60Md9zpQDJ4Kg14V3f_2Bf+BA@mail.gmail.com> <20251110051748.GJ2441659@ZenIV>
+In-Reply-To: <20251110051748.GJ2441659@ZenIV>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Nov 2025 08:50:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whxqWfNmPuE59P56Q-U29he2x3BO9C0Q4bUPphBtNdQpg@mail.gmail.com>
-X-Gm-Features: AWmQ_bne3SudUbW59AJIrZv5w1KqgWCmrYPp42xrhe0AZmxb-UOp-XffXDbOnBM
-Message-ID: <CAHk-=whxqWfNmPuE59P56Q-U29he2x3BO9C0Q4bUPphBtNdQpg@mail.gmail.com>
+Date: Mon, 10 Nov 2025 08:41:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgBewVovNTK4=O=HNbCZSQZgQMsFjBTq6bNFW2FZJcxnQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bmrAqXZ2m4pzkboWqVgXqNR03LoZBcEW296TEL_nMeJgv27T0QqUNlPZ1A
+Message-ID: <CAHk-=wgBewVovNTK4=O=HNbCZSQZgQMsFjBTq6bNFW2FZJcxnQ@mail.gmail.com>
 Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
@@ -100,33 +100,54 @@ Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
 	audit@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 9 Nov 2025 at 22:37, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Sun, 9 Nov 2025 at 21:17, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> > @@ -258,13 +264,13 @@ struct filename *getname_kernel(const char * filename)
-> >
-> >               tmp = kmalloc(size, GFP_KERNEL);
-> >               if (unlikely(!tmp)) {
-> > -                     __putname(result);
-> > +                     free_filename(result);
-> >                       return ERR_PTR(-ENOMEM);
-> >               }
-> >               tmp->name = (char *)result;
-> >               result = tmp;
+> That's more about weird callers of getname(), but...
 >
-> That's wrong - putname() will choke on that (free_filename() on result of
-> kmalloc()).
+> #ifdef CONFIG_SYSFS_SYSCALL
+> static int fs_index(const char __user * __name)
+> {
+>         struct file_system_type * tmp;
+>         struct filename *name;
+>         int err, index;
+>
+>         name = getname(__name);
 
-Yeah, that's me not doing the right conversion from the old crazy
-"turn allocations around".
+Yeah, ok, this is certainly a somewhat unusual pattern in that "name"
+here is not a pathname, but at the same time I can't fault this code
+for using a convenient function for "allocate and copy a string from
+user space".
 
-It should just do
+> Yes, really - echo $((`sed -ne "/.\<$1$/=" </proc/filesystems` - 1))
+> apparently does deserve a syscall.  Multiplexor, as well (other
+> subfunctions are about as hard to implement in userland)...
 
-                char *tmp = kmalloc(len, GFP_KERNEL);
-                .... NULL check ..
-                result->name = tmp;
+I think those are all "crazy legacy from back in the dark ages when we
+thought iBCS2 was a goal".
 
-without any odd games with types. And yeah, that code could be
-re-organized to be clearer.
+I doubt anybody uses that 'sysfs()' system call, and it's behind the
+SYSFS_SYSCALL config variable that was finally made "default n" this
+year, but has actually had a help-message that called it obsolete
+since at least 2014.
+
+The code predates not just git, but the bitkeeper history too - and
+we've long since removed all the actual iBCS2 code (see for example
+commit 612a95b4e053: "x86: remove iBCS support", which removed some
+binfmt left-overs - back in 2008).
+
+> IMO things like "xfs" or "ceph" don't look like pathnames - if
+> anything, we ought to use copy_mount_string() for consistency with
+> mount(2)...
+
+Oh, absolutely not.
+
+But that code certainly could just do strndup_user(). That's the
+normal thing for "get a string from user space" these days, but it
+didn't historically exist..
+
+That said, I think that code will  just get removed, so it's not even
+worth worrying about. I don't think anybody even *noticed* that we
+made it "default n" after all these years.
 
              Linus
 

@@ -1,153 +1,308 @@
-Return-Path: <io-uring+bounces-10500-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10502-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A479C48344
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 18:07:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B535C487DA
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 19:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919F642575E
-	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 16:51:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DF2B4EDE59
+	for <lists+io-uring@lfdr.de>; Mon, 10 Nov 2025 18:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B5131DDBC;
-	Mon, 10 Nov 2025 16:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LUKuim1N"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73A63128C8;
+	Mon, 10 Nov 2025 18:09:32 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8631D748
-	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 16:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD613314B80
+	for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792927; cv=none; b=Ik+GEA99dTCVbQL/Mh2XMbs4rTYfWh/Xf3ese+XS5Y1EvO1FJhHVx8iz7ObrSC80hn0ug4txTw1x8oeLWmOG4OehX0cGxjioCIqwhQB6xcAvX4CXZm6+4MGTg04QjzVUK3bOefvKN0kZdY1Og6IWwbdfRMZjq7qbL3SjmG0Qqg8=
+	t=1762798172; cv=none; b=Bya7seFvxs5n79bSUAhkWdVIprDB0g8n8dvf+2CdMrmVxeCoSJPKL1jrSeGCjNtUMPV2Xh6nVABF+XVACilbSbDXEvDpUBnZKIhAjM+r9czCYmEObTnnIM9ZQGzwU5QcfOPrvN2KluccXBEr21oVIS55VJvLkI80bErlbp+KyO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792927; c=relaxed/simple;
-	bh=GKjNPhJUmE3ffBWuGrURvcOJiiT4jJnfaIvMg2ZBr5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TPaNj7HFZXf/hGqfaDyVHz8Xe4XOpMfXxKLnkP9BnrjyDoYRjJZNhr7HeqaiRbYTQ/QNxbvC3x06vwYegv1LdCk/Z0+0VKhZNuAm7n3FHqD1rSV1vrZAZaY+TFy7I+WXOs+Y+VKEgvRf5NoVTdba9NK2f/sbm5WXylC7+jcbmyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LUKuim1N; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b7277324054so473029766b.0
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:42:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1762792923; x=1763397723; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oEQJCmiS2IMzNjbxI9qhqVkNRGDbuejNOKBcwtqGw/c=;
-        b=LUKuim1N0j3S16p1DLfN7+deJD/PIxRM9qwe+h2dwcZTnOoIRp4XfI9OAXWyIuP2yE
-         qkfv3z07mbQXqV3bvSYeE70A6pDRsCxTvvHpGJIXKw4BjumgVJ8JO0p3IiIae6ult9Qx
-         d+cSuFf+aJNcM/T8HZ/7EvgEhNyP11q0ADFx4=
+	s=arc-20240116; t=1762798172; c=relaxed/simple;
+	bh=BX+nAeNIF1g3TkXSjB13OGmoZFqYiahZuRo5NBB2WaM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NqulD0dcTvlDbFhwVRjhS3J04YS+jehsDl8eFcqhQFiYjuX8wXT6c2drR0ePstTmZjECnhscwS3Y6yil5pcKKPtAuQiMdMPfuQNqjpc0RQEaaj8DcAC3M1ZzHSweRU2vE9SvkRUXb9xCgCEFZwVL1QeHztds69SYzwkOv5/piRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9489c73d908so173526739f.2
+        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 10:09:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792923; x=1763397723;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oEQJCmiS2IMzNjbxI9qhqVkNRGDbuejNOKBcwtqGw/c=;
-        b=NkURY07xgfszhWOAhLJkLDM87jrxYXUZW0Yrv1HlPG2bvbnAG4TNOhMBMDOZgdWdUk
-         0KOG3KnFXSmIUv8Rizp7YZOwt5LrDHowjLcBhJVjfrn91zF3DzQ7rGXzFtRJlK/AK8AM
-         KuMU3buaeHFBox+tC7huEX0dQfpwSmilU/4CxQvrn7CSgDOVJnxP/vRtWvfpaR9VRyNY
-         164meyNtqU/dHTIZqbGpkFVR4j4y333UoWdudYdPxpcLXApGx7JXC6uebquY8N41+ovX
-         NE2pNQwdW6u7yZgPccSBtrgJuazC+pYdCe8chC9EWCR7fUPXnGdBxhhUqjo6Rl51+njY
-         714A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZsDTyHC3klvIRdxpRIDZfVVxC7snheHMgHX34120g29ygD3RAt+mh2cDXvF2m45z12IgPxwNriA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmEqhFJzcieQe3lP8Cos/nCpD33H00VPSJKIJpzWKjQ47h9Swy
-	OCJEm2r3txGjr4kVLO99M1/1B3Gjv97fvlKdpNKZ78bT6iRHidTwhauYFAkmarT0J4t4b6TOJgH
-	K/pGFz+Y=
-X-Gm-Gg: ASbGnctlNosUgaY9zRnu+sZlF9iBlhfyzGLzocgwN1EsAK4nRq9tgfFH4WABJ4MUUbG
-	1arayGZI64odUClFzZSjrB6wah3LhROUvi46eeOwHeo8Wr+QCDa5FmZLva3rekUYrLc3IL9ZE3x
-	Ch8Db78/rlV/1a2WmsHbJBQUjjqUaQeq/R4WkX8aQ5f2JGfz8OCakx1dcnH2QlZLrsQQ5iNvT2+
-	bmHokJE2FfrJXWHjbqABFh7e/ZxGXuVVOmSba2txCXttGbXMtpFmBgJWiFP0XDSjHrk45WP+2JN
-	wvABUM7mB6O2Epxgxt5ofmpMF7o5FA45mVI1oYBEbOLWq3fathdTfkNKj/mq+yIdUwF0AZyQX7w
-	vgYXOHURm/WqU0C898eT+yROE+pa6gOCBgc6FuEG7PtHW6vRaYDBpfn4cWSPr+kNHngBGzhVaiN
-	X8AjLk7wm64kog4vqQ1GSJBeBzKy2qlX108y5QwLQXOCzV1ETBloX14Pfoves8
-X-Google-Smtp-Source: AGHT+IGfTQ+dvYdG1sBBtvgS+dJiE28s3g4dLHp9HVGHwXqH+5tNIEKiCPGh8tAlVs3alc0YzgsPKQ==
-X-Received: by 2002:a17:907:1c9f:b0:b5c:753a:a4d8 with SMTP id a640c23a62f3a-b72e05bce7emr850596066b.62.1762792923350;
-        Mon, 10 Nov 2025 08:42:03 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862bd0sm11856745a12.26.2025.11.10.08.42.02
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:42:02 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b5a8184144dso422244166b.1
-        for <io-uring@vger.kernel.org>; Mon, 10 Nov 2025 08:42:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXvWKRzqJmKIedsfE/tS9nUcWnktMrh9Efb9piOcTMFbvtCd/Tmn3WGKZkY4lU3Nqkk/6IFkIquPA==@vger.kernel.org
-X-Received: by 2002:a17:907:7ea4:b0:b72:d9ee:db89 with SMTP id
- a640c23a62f3a-b72e056d064mr770836966b.47.1762792922013; Mon, 10 Nov 2025
- 08:42:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762798170; x=1763402970;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ksrKuOU5FPJxqYEVZzmca7yyxRXUq9NtK9oQxoK79g=;
+        b=Geeium/FCQb0NNPXp+AD62SNU9u5gPzXdzUsa4Hii7sUf8kl5iYqw/uKh+oAT0qpyu
+         S+Np3N4x2gADTy/widoRwrP7+3E30k7ZoiuzvxS1Nz9bmhAvhLLClpzY8F7KvlRPXDEm
+         rZAl/z3kw/Sp6zoKG7hsG2/wDN7OcPwVItHBJ2++pd/oW54wUHuCuWaETyCpnrk1gIsz
+         QrE6xKxX7yhNN9u7JICUgV03bEIgd2zGGDle0UInzoYX0vrcM1PPTj2BtbUCohIElYLW
+         HXrvPGjDsSxuoc6FwmLCWSfmG/a4UKfqsRUbp75BQy7QCniAbNfUE+uTNEalOmBc1WPI
+         5vBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8LMyqg9PafZRXUybCS0okT16rFtBsQInX2ZWFncx4Gxf9l/zsJ8W0sLXDS2DU2bnyKnxofyD5fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9hfLFJ1kEuDR44AgvHg8+Fsv0+TLLThXLc9ArGvrzewpH59Qi
+	bVfmp08J4zLexwYcNyLK0hEfrj+bmEy8VU0UVyZod3z+th3BlXmazE/E6dFTa3ro7ZNr6sIuYLB
+	oG9S80vYEK7wB0Tdnk8qPoabQ5fifEXLgoDasK0esFQbJ+3KZ0AobfsznLg4=
+X-Google-Smtp-Source: AGHT+IFDAoztbnvC9n21uInqFfDm51VC2VSaReCQ3ut32Mn+MW31DvE+zso0ifMwNhvWq9U8Fzv5vQPmG2XZgs5LeBvcFUDXrRVw
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
- <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
- <CAHk-=wjA=iXRyu1-ABST43vdT60Md9zpQDJ4Kg14V3f_2Bf+BA@mail.gmail.com> <20251110051748.GJ2441659@ZenIV>
-In-Reply-To: <20251110051748.GJ2441659@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Nov 2025 08:41:45 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgBewVovNTK4=O=HNbCZSQZgQMsFjBTq6bNFW2FZJcxnQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bmrAqXZ2m4pzkboWqVgXqNR03LoZBcEW296TEL_nMeJgv27T0QqUNlPZ1A
-Message-ID: <CAHk-=wgBewVovNTK4=O=HNbCZSQZgQMsFjBTq6bNFW2FZJcxnQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
-	mjguzik@gmail.com, paul@paul-moore.com, axboe@kernel.dk, 
-	audit@vger.kernel.org, io-uring@vger.kernel.org
+X-Received: by 2002:a05:6e02:1a82:b0:433:7673:1d with SMTP id
+ e9e14a558f8ab-43376730369mr95532205ab.31.1762798169947; Mon, 10 Nov 2025
+ 10:09:29 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:09:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69122a59.a70a0220.22f260.00fd.GAE@google.com>
+Subject: [syzbot] [io-uring?] memory leak in iovec_from_user (2)
+From: syzbot <syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 9 Nov 2025 at 21:17, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> That's more about weird callers of getname(), but...
->
-> #ifdef CONFIG_SYSFS_SYSCALL
-> static int fs_index(const char __user * __name)
-> {
->         struct file_system_type * tmp;
->         struct filename *name;
->         int err, index;
->
->         name = getname(__name);
+Hello,
 
-Yeah, ok, this is certainly a somewhat unusual pattern in that "name"
-here is not a pathname, but at the same time I can't fault this code
-for using a convenient function for "allocate and copy a string from
-user space".
+syzbot found the following issue on:
 
-> Yes, really - echo $((`sed -ne "/.\<$1$/=" </proc/filesystems` - 1))
-> apparently does deserve a syscall.  Multiplexor, as well (other
-> subfunctions are about as hard to implement in userland)...
+HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12af5342580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c93637d7648c24e1fd0
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16af5342580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13664412580000
 
-I think those are all "crazy legacy from back in the dark ages when we
-thought iBCS2 was a goal".
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bfd02a09ef4d/disk-4a0c9b33.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ed9a1334f973/vmlinux-4a0c9b33.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e503329437ee/bzImage-4a0c9b33.xz
 
-I doubt anybody uses that 'sysfs()' system call, and it's behind the
-SYSFS_SYSCALL config variable that was finally made "default n" this
-year, but has actually had a help-message that called it obsolete
-since at least 2014.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com
 
-The code predates not just git, but the bitkeeper history too - and
-we've long since removed all the actual iBCS2 code (see for example
-commit 612a95b4e053: "x86: remove iBCS support", which removed some
-binfmt left-overs - back in 2008).
+BUG: memory leak
+unreferenced object 0xffff88812638cc20 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> IMO things like "xfs" or "ceph" don't look like pathnames - if
-> anything, we ought to use copy_mount_string() for consistency with
-> mount(2)...
+BUG: memory leak
+unreferenced object 0xffff88812638cc40 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Oh, absolutely not.
+BUG: memory leak
+unreferenced object 0xffff88812638cc60 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-But that code certainly could just do strndup_user(). That's the
-normal thing for "get a string from user space" these days, but it
-didn't historically exist..
+BUG: memory leak
+unreferenced object 0xffff88812638cc80 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-That said, I think that code will  just get removed, so it's not even
-worth worrying about. I don't think anybody even *noticed* that we
-made it "default n" after all these years.
+BUG: memory leak
+unreferenced object 0xffff88812638cca0 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-             Linus
+BUG: memory leak
+unreferenced object 0xffff88812638ccc0 (size 32):
+  comm "syz.0.17", pid 6104, jiffies 4294942640
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __do_kmalloc_node mm/slub.c:5641 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1309 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:314 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+    io_prep_rwv io_uring/rw.c:344 [inline]
+    io_prep_readv+0x20/0x80 io_uring/rw.c:359
+    io_init_req io_uring/io_uring.c:2248 [inline]
+    io_submit_sqe io_uring/io_uring.c:2295 [inline]
+    io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

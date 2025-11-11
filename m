@@ -1,134 +1,182 @@
-Return-Path: <io-uring+bounces-10519-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10520-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3466EC4F416
-	for <lists+io-uring@lfdr.de>; Tue, 11 Nov 2025 18:35:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714ABC4F920
+	for <lists+io-uring@lfdr.de>; Tue, 11 Nov 2025 20:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D97F34E6FD3
-	for <lists+io-uring@lfdr.de>; Tue, 11 Nov 2025 17:35:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A065D4F3323
+	for <lists+io-uring@lfdr.de>; Tue, 11 Nov 2025 19:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A0C3AA1BB;
-	Tue, 11 Nov 2025 17:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D490261B8D;
+	Tue, 11 Nov 2025 19:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="iLsp+OB0"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="LxZp6mtX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-ej1-f99.google.com (mail-ej1-f99.google.com [209.85.218.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C31365A13
-	for <io-uring@vger.kernel.org>; Tue, 11 Nov 2025 17:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA8C3246E8
+	for <io-uring@vger.kernel.org>; Tue, 11 Nov 2025 19:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882511; cv=none; b=B1Rv2r0te8vtnSwrC4fdBF9Ol2q8U/w0/3bG7OUoqziE8q3IL7uWw+Wihadm+1lP2i7B15ZNQ0+7s2o4qbs6Gx9xTXeAEbPGNd1gCf1mc7oLfjMmN0qGy7OQC1IbwwXUADYkJi9GCuXeVSqxIVoObbjV9EYpH++0hsbgq9mzZXM=
+	t=1762888611; cv=none; b=mHWdmHLMKshrCXH7LOJvjVIeLQKEODTcVbHb6V4u8P6tfQTBqlYiChDjPzUopGY4jiDcBZ+XlEGTW0XMh6sLL78uEJGlkDS+4OK8XQLLZdQvyoaStQlq9YIyOlUE15U6659wNaSQCWl5cSrmsxs9TD5HXGKY/v7psQzzUBR8zlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882511; c=relaxed/simple;
-	bh=EE+WvBsWH1KNgw2W8XtWypIxgQcREqPyb1uWJ2mPK4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fd9VZFQaf4QSvBabUIaa9nsz/l7/t7/HQABRLbrPAeXDRKs9DdxIKVDUqzETvciI67tD48OeMK3UdMiPgvuJvAA124k+1lYL0dkeXBMwl9LKLos7vjadlfaUX20xeKvzvmMOXo5/eGSqqNXxPQyD9js9efpyV9LK81FUFiXvr5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=iLsp+OB0; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7b72bfcbb26so466627b3a.0
-        for <io-uring@vger.kernel.org>; Tue, 11 Nov 2025 09:35:09 -0800 (PST)
+	s=arc-20240116; t=1762888611; c=relaxed/simple;
+	bh=D+BAn20i2/h8zTJGQCbUN6IaOPL16Ku7UQB3Umu6Q5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X/T/CGRJFqnLtXOQB6Xsgh1bhr4+zyvWw8nWgINOD1zVvo8sILpn08r4Xsz/erpek2gU0b1o86nddi/YmKRlxGrjBup/EkCCNlCHPm6YaBHxKCW4p5LjHZPGSHWy1I+xZUM0ysFXE8fQYswO/jDt0CMmcyCwmZNu5vhTHkZWsZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=LxZp6mtX; arc=none smtp.client-ip=209.85.218.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ej1-f99.google.com with SMTP id a640c23a62f3a-b72e7205953so1862266b.0
+        for <io-uring@vger.kernel.org>; Tue, 11 Nov 2025 11:16:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1762882509; x=1763487309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fn7wodOlLmLsT5jl+y7mwvvOyNWafbKyZT24/lhSKsU=;
-        b=iLsp+OB028yaFvcgC1JvtYs5K3+FA7KMpMnCPeqJ8I4B5f7HQeHllb/9dBCMMe7bpw
-         GfhucaD6wvy851iS/b8d22UI+lm54YCIbLPvrw9DaKRuMa43l/IjojTZOXZnCpdlWiXc
-         OajUZPoPmh0EmEIqexG7b2H4IUspfqpJsDpGKJAnq7AT6zp66gNtECU96TVjcE3oZYQv
-         ceVyLXjWcKtJQjhc+HMrUsbVbt9RKP0rpIRLb1grK+Jn8IZ4abPNdaPcMoo/8yuwZHVd
-         KKNQT+icGsXhOaAn7nIfD35L8ZUxlHTgx7hvxiRkyKX0itPOkPqCraaKbWdfqHCboMZv
-         3zrQ==
+        d=purestorage.com; s=google2022; t=1762888607; x=1763493407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePhqIVmUrD4gb+YCmSt8wJnO+7LTI5Hos8JeLjUX4TI=;
+        b=LxZp6mtXlr6pTNxPMW/C2ufF7IFjqCGXaZ5HmWamagI91Z/vccYOYSFPWR+lqJNGfX
+         TT7eUzEqA0jBRk1b59rqTMnreOjhl59NVl+2rZdPZ9oAufqQza7lLjt/pahBDXwFnMVa
+         5yN3kOBoT4x1Cfwli0t+O37IZctyokDylWpfGDuWX6AxaQNpy+fWkfx9Kwk5Q7/02lyj
+         I47rKLbpjwHOI2fZWxPwXHup+NAoKwdHRI4eccNlrCHUTsEmfuypgRBI0NWvu+7XtnwM
+         R/hd5KdmMbFrXnDB137u2bvrnll2qxMTdem+ijC7sLQSF24cyBJL0VfWyuAy8js7oEXr
+         yXQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762882509; x=1763487309;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fn7wodOlLmLsT5jl+y7mwvvOyNWafbKyZT24/lhSKsU=;
-        b=LqUr1wdbbqVJZst5wli4Q87CTUeazOL3mnf+xXQXaq6D2H/WdyXHLgnza3xJhAMdOq
-         HBlZsd0TtodPqfXZFsOwq7i1qxLI99mlx669tnyS4BcCaAhTWbR8dt+YIZBOyCAcrRFd
-         z5ouBLI2ONJibuXdAuT+V1bMRcnVGUfdf8OB/Szimq1gUS6p4DEWU79Lf9SNi9G4Km29
-         9m0qBM3FfNiIg4VNle7OTKUc7bxB85yIXmloK4wn6GE2mbW307COUOh0GUvXIAUyE25k
-         S7t4SqA7QLNhXAmtc/9Pcu6ISobYao/7WT698EFNS77zEOxPHbAS6fie7MgG7nthk3mD
-         FNkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUYGOBENfAl28dTtqEZxMnsmeva/kOwRyyocrHD+ixecj7wZopRO8hIZYYgAGa+ndj0Zuzc/YqDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq5jI+zd2ol7RpVCoRM58Aa/Mpt+YTu5c2a7P5Cqh/5F48qWns
-	kziHJNTZqWW70IAtwuR8skZMExzaKDROcexLkMjzTwnClbQh6GGRKWvJbUTOySgl354=
-X-Gm-Gg: ASbGncvQwYnHjPgLBVSuQu9xM/3L2gTEJiWKVa9Dw1jQcJXUW8wotL6IuJcgWzPVZmq
-	n7og4T9GiD2T6KBN6++X2tlOWwiDRfqqZbCw+6wDLGL7zH/uQws4BWDyA6Ld/DU0pZnl/ojeWiC
-	iGTU0asrR5ds21cSi1Ksr1+kwlbnt29nwmcxQEoLg+mxbqw6NFkSkXiu0uI62idWpVJ0OyTlBfU
-	eH7ixc00VLyh7eXeM3LqLyle4rgtQtVlqizu44HuOEsc43kVWO4/OnanWS7Mn2pGvp7pzq+y0Zb
-	Fn6Fos4Wjj0KGG0SoA+5bhylrvi5WPCd1aT7SjDPplWt0JbRd0MKgoOcn9nLE5y/iF3TygIac2+
-	rSPijsqqZLIuakMEWtx7Mm9voiAgaLhYQTFhpLaZNVticp400VsF/KfA+XZBTHBlS6yufQPgPft
-	0o+9dzuX3G1MMsI4gvJjzqI+GohPTLqKM3BNvvtidVPgAkfZ3CENiijNW09pl+Nxr/UyEs
-X-Google-Smtp-Source: AGHT+IEz0LrvTesjoq9sqvJhE7WDXqU+vmtvWV1dJIaEtss7fo1N4X5gKRr8bhaxc3JVEmkbc6B2QQ==
-X-Received: by 2002:a05:6a00:a0e:b0:7ab:995a:46af with SMTP id d2e1a72fcca58-7b225ac9db4mr16166106b3a.4.1762882509376;
-        Tue, 11 Nov 2025 09:35:09 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1156:1:c8f:b917:4342:fa09? ([2620:10d:c090:500::7:7ef1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b783087c08sm131191b3a.3.2025.11.11.09.35.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 09:35:09 -0800 (PST)
-Message-ID: <17aaebdb-aee4-4a00-926b-847943aea14c@davidwei.uk>
-Date: Tue, 11 Nov 2025 09:35:07 -0800
+        d=1e100.net; s=20230601; t=1762888607; x=1763493407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePhqIVmUrD4gb+YCmSt8wJnO+7LTI5Hos8JeLjUX4TI=;
+        b=NqkAwrzxD1Pm+2Iz6Ktl+t5IscwRlxDDUtoilvQ/RthS0j57jsGQBdvYeo6VjfdgG+
+         4KiI3IQmQ6CeN9mPr+E0cm0oR4/sMrhAv8iDRzTq7pyybXl09eQizeUlKHw7kVoZF0uq
+         Ynwt+CChlPmumfPFYH5ZECiXb091hzNcn+dui4mjxO9sYOBcU038sPYp26dPU4SyUDkU
+         ZLHiZNNDJIkKElYMXWKp55PJkKcdqQbGVCwVeImQG2XP+E3t9KFwasABFUADpMABu7/c
+         JB3hF3Komwv57/rrx0ujYl1rcUazXeb41Z83BxMwQPtBNAJjcL5hyrbtg3U2rtjWxU2I
+         cB2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUoBc+GetwQ1X/V7SHJuPjEDIJAM8f1oBBT2QXwThxbxyEf3Zrc1wk8iZSGnThirsQdDAZ71kdBHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtcye4jZG2dcaIigxcYM7LHUzXnnKQXiRPNCYVRAwKk+tJGeP+
+	/jyVUae3S26FpM7V1NUVRSJT2wNC7b5xS66S/3RGqyr4QDnAjux18OCl0roQCa+JLMuQqdeEv8E
+	g3xEEVF8y+rJCtAhF0nsrY5J/daRiDelVSscSVVSFBj7IutQwqK4W
+X-Gm-Gg: ASbGncseil9DuOvYl9ETxrnJYg/OWdnXcsYGae3VuPXTe7Rl0MNcN7BKuCWEjtwnfnZ
+	aGUXg3nNrJzs0KWmkVVb0u25ojAGjgPEiQZanfVXqs/LqsYRCVppLISS5OT4WNWKDxliUAOSS0H
+	5/b29MORspJ/VwWp0DLPHQjEDa0ZEGyuYMHa6xQVFaIZr77GFlGyk01tZyQr6FnDewehpgqemvw
+	f/Fd/Ms/zpQDzTgMVdSGmB7xlPwPNHBBzPzwiYPpx+PFaqge7DjJEvd1GHBDRZcFfPjLcPRUp4g
+	/kjyjqPpBo6PEH+O1W8CsB/yqQSaF5iMs2CmmD6agGir8PDHDs/mdisPEmgNg5oh16k1VSzEpB2
+	ZnI5SyRp8AFONj9gd
+X-Google-Smtp-Source: AGHT+IEVdngswTujL30inxykVCIhXuWpdXDEL86ygWMGu+v/iUTsFZsJ36SVBDXSb2nwMd4IOzHmoK/NBtUj
+X-Received: by 2002:a17:907:7254:b0:b72:5d4a:45d4 with SMTP id a640c23a62f3a-b73319922demr9522666b.3.1762888606677;
+        Tue, 11 Nov 2025 11:16:46 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id a640c23a62f3a-b72bf93b18esm232935066b.94.2025.11.11.11.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 11:16:46 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 546A134027F;
+	Tue, 11 Nov 2025 12:16:45 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 3F1E9E40669; Tue, 11 Nov 2025 12:16:45 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as number of bvecs
+Date: Tue, 11 Nov 2025 12:15:29 -0700
+Message-ID: <20251111191530.1268875-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/5] io_uring zcrx ifq sharing
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-References: <20251108181423.3518005-1-dw@davidwei.uk>
- <f933fe15-6bd5-4acc-94ce-d5ce498ecf79@gmail.com>
-Content-Language: en-US
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <f933fe15-6bd5-4acc-94ce-d5ce498ecf79@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-11-11 06:40, Pavel Begunkov wrote:
-> On 11/8/25 18:14, David Wei wrote:
->> Each ifq is bound to a HW RX queue with no way to share this across
->> multiple rings. It is possible that one ring will not be able to fully
->> saturate an entire HW RX queue due to userspace work. There are two ways
->> to handle more work:
->>
->>    1. Move work to other threads, but have to pay context switch overhead
->>       and cold caches.
->>    2. Add more rings with ifqs, but HW RX queues are a limited resource.
->>
->> This patchset add a way for multiple rings to share the same underlying
->> src ifq that is bound to a HW RX queue. Rings with shared ifqs can issue
->> io_recvzc on zero copy sockets, just like the src ring.
->>
->> Userspace are expected to create rings in separate threads and not
->> processes, such that all rings share the same address space. This is
->> because the sharing and synchronisation of refill rings is purely done
->> in userspace with no kernel involvement e.g. dst rings do not mmap the
->> refill ring. Also, userspace must distribute zero copy sockets steered
->> into the same HW RX queue across rings sharing the ifq.
-> 
-> I agree it's the simplest way to use it, but cross process sharing
-> is a valid use case. I'm sure you can mmap it by guessing offset
-> and you can place it into some shared memory otherwise.
-> 
-> The implementation lgtm. I need to give it a run, but let me
-> queue it up with other dependencies.
-> 
+io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
+the number of bvecs in the request. However, bvecs may be split into
+multiple segments depending on the queue limits. Thus, the number of
+segments may overestimate the number of bvecs. For ublk devices, the
+only current users of io_buffer_register_bvec(), virt_boundary_mask,
+seg_boundary_mask, max_segments, and max_segment_size can all be set
+arbitrarily by the ublk server process.
+Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
+loop actually yields. However, continue using blk_rq_nr_phys_segments()
+as an upper bound on the number of bvecs when allocating imu to avoid
+needing to iterate the bvecs a second time.
 
-Yeah there's no reason why shm + mmap wouldn't work cross process with
-the right offsets, but I do suspect that it'll be niche with most users
-running iou across threads in the same process.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
+---
+ io_uring/rsrc.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-We can add cross process support in the future.
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d787c16dc1c3..301c6899d240 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -941,12 +941,12 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+ 	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
+ 	struct io_rsrc_data *data = &ctx->buf_table;
+ 	struct req_iterator rq_iter;
+ 	struct io_mapped_ubuf *imu;
+ 	struct io_rsrc_node *node;
+-	struct bio_vec bv, *bvec;
+-	u16 nr_bvecs;
++	struct bio_vec bv;
++	unsigned int nr_bvecs = 0;
+ 	int ret = 0;
+ 
+ 	io_ring_submit_lock(ctx, issue_flags);
+ 	if (index >= data->nr) {
+ 		ret = -EINVAL;
+@@ -963,32 +963,34 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+ 	if (!node) {
+ 		ret = -ENOMEM;
+ 		goto unlock;
+ 	}
+ 
+-	nr_bvecs = blk_rq_nr_phys_segments(rq);
+-	imu = io_alloc_imu(ctx, nr_bvecs);
++	/*
++	 * blk_rq_nr_phys_segments() may overestimate the number of bvecs
++	 * but avoids needing to iterate over the bvecs
++	 */
++	imu = io_alloc_imu(ctx, blk_rq_nr_phys_segments(rq));
+ 	if (!imu) {
+ 		kfree(node);
+ 		ret = -ENOMEM;
+ 		goto unlock;
+ 	}
+ 
+ 	imu->ubuf = 0;
+ 	imu->len = blk_rq_bytes(rq);
+ 	imu->acct_pages = 0;
+ 	imu->folio_shift = PAGE_SHIFT;
+-	imu->nr_bvecs = nr_bvecs;
+ 	refcount_set(&imu->refs, 1);
+ 	imu->release = release;
+ 	imu->priv = rq;
+ 	imu->is_kbuf = true;
+ 	imu->dir = 1 << rq_data_dir(rq);
+ 
+-	bvec = imu->bvec;
+ 	rq_for_each_bvec(bv, rq, rq_iter)
+-		*bvec++ = bv;
++		imu->bvec[nr_bvecs++] = bv;
++	imu->nr_bvecs = nr_bvecs;
+ 
+ 	node->buf = imu;
+ 	data->nodes[index] = node;
+ unlock:
+ 	io_ring_submit_unlock(ctx, issue_flags);
+-- 
+2.45.2
+
 

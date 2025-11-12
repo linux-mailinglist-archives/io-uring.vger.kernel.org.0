@@ -1,62 +1,82 @@
-Return-Path: <io-uring+bounces-10535-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10536-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDB4C520A9
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:43:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C9AC524E6
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 13:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE1A3A9EB0
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 11:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75283189EC96
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E242F311951;
-	Wed, 12 Nov 2025 11:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C522D32BF31;
+	Wed, 12 Nov 2025 12:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b="X8F6rha8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChbOL6ls"
 X-Original-To: io-uring@vger.kernel.org
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBB7299AB5;
-	Wed, 12 Nov 2025 11:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB6B3203BE
+	for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 12:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947473; cv=none; b=KiTpSXLy+jqEy9zdc/9aHAdff3PMc1msO0ZwdQb+ArG690nwzoY0NvaL8iJSgzxggBEuzYCM5XD9ecSoBjfKENwyjWl4oLkwxDd1K8VXbd1+mIYRQqRsqLgMR1QE+8GfxgLijV7sM9JodG45kkAHl+/CUMkQMj2IDsQLoJxWBzk=
+	t=1762951577; cv=none; b=EOQH30/yJkpFQAS67rfyYGjhihLucNScn5rzux7JOewwN7Oxt4u0Drk7sH1yVjQtB2iDFT6Q1XvPXt+oLEF/+rGSXzYjlVz15QUyvT1PdF9OQVX0iFyLzQIy5ItJz1M0dANIDeuW3E5QvZWjvnfcW7FV7lyVBGh7oTavOhwQvrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947473; c=relaxed/simple;
-	bh=Nqgas7GiliM6f4hdPxwETZq0KRMgTU9NytxRsquiSrY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rg0re9Yay5vzwFggdaSzMU8XQlRmUA1q1ZtrMKfVVFMWoVH8iajmUFCHbIHOqtBTrm19o3TgAh614laN8/Jcppf4SrrZ60vGibhGkCHw25mjhSY7NVKCILiCA170FoB0MLemArbqCc6tTlTTcqRCV1GwpLzQmLRTC3l1PCvSi7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru; spf=pass smtp.mailfrom=tssltd.ru; dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b=X8F6rha8; arc=none smtp.client-ip=178.154.239.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tssltd.ru
-Received: from mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:8583:0:640:4841:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 27261C0197;
-	Wed, 12 Nov 2025 14:37:41 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 8bNmXh1LSmI0-DzCqPhFU;
-	Wed, 12 Nov 2025 14:37:40 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tssltd.ru; s=mail;
-	t=1762947460; bh=SYA/S7aWl0ErpoDeBicsv0aZyCAPuChwqx/jUn5emuw=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=X8F6rha8hVsY1Sp7aX37uungA7fmgpe2WPwJSbeH/b8rx+3znMvaE7lSJIxmMJq66
-	 tGBpnAcIK/NCZkTNsZaJ3PgOTMoNihsaWtraRLHvLsd5dUkZZ0+2g07zJtDEBYhZig
-	 jRstBJHmZ6OnoveL+ns1HxirZw5V4kSgzFf0RSag=
-Authentication-Results: mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net; dkim=pass header.i=@tssltd.ru
-From: Stepan Artuhov <s.artuhov@tssltd.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Olivier Langlois <olivier@trillion01.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Stepan Artuhov <s.artuhov@tssltd.ru>
-Subject: [PATCH 6.12] io_uring/napi: fix io_napi_entry RCU accesses
-Date: Wed, 12 Nov 2025 14:37:06 +0300
-Message-Id: <20251112113706.533309-1-s.artuhov@tssltd.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1762951577; c=relaxed/simple;
+	bh=kpQ1pDeLfa+JOTFpxxJlaoKeowBX2W4zQ6POz1oguqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RUYe6qCpcAygxps0few1XGXiYR3dbUcX4ro/LGeYwe5LQ3Hu2Lh5+mip+EZzl1FudU8ZB1NFJiE0a9pFsFSnBkp556kepZCdhYjBiUhKA3A3z3RwXJ2e6AwKx9z5gWofiFEJkFfN8ShJmVzoDYDTbtBczffXGEoSaaxhjrUsGIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChbOL6ls; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775ae77516so8258885e9.1
+        for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 04:46:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762951574; x=1763556374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LM+MHNNKUeBTdIvaqNtF++kHoQZr9vCjj363HZqaYKg=;
+        b=ChbOL6lsPxnI72TWe8f+GGkLWjtJy5bahImWPQ6xPXLNjv+22ji/xSw96saMPqewW8
+         a436vhvYHlyHjW1h/DylaZvBYglYAyz1J0ysChK4YbyaVk39+r6wN5Uv0QaXZnIAcZ5i
+         83x7fQaSYTnEYlG3Vft4c6J+sjj/MElGu2LCeyDtgG79z+0KTez4A3TNyu0u0Jq15rQW
+         rJdfC2rrBwgESg0d5r4wY02tAcM6IxXAFm949pRyPD8TFqd980oYCpyYd9oKUoJiDlm3
+         cn9CwQnDTEIBaG8U71pV+JD/ReMA6f8Fgj5cXAgIdWLRaZothF7ZSRLTBiN/G3XlJ9Dw
+         lcjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762951574; x=1763556374;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LM+MHNNKUeBTdIvaqNtF++kHoQZr9vCjj363HZqaYKg=;
+        b=US+qAJb0QUsAgHwWDaWU8+dKji1YALESiwwUam6G39aQynkU9lr0mqyNDL6tD4cxMS
+         uHSNddmTf43QwtFIjddRuv7iRVpxAeFY/sV6dzOKjz4qFlFBUAnLdLmx3/NMGCA8Wtt0
+         IjxlWlN23Bx07/qzlHdfh3ImcTkKBv2LhmeLzi9zljRAIcMhe59nLBADkC3oqRehcqc6
+         yMOIyzaryLshnmwrc0Q3FyBbM1S80q7e95rkAQKZmCymG1sUyqX0tYcp+SAiGReBUQRU
+         f4AuViz4d/sT2KErf/cuZMOnwrMlBCQV7VpIoCURuh3aVx1/ghUOPCjsJ5iDWS6+XRph
+         t5qA==
+X-Gm-Message-State: AOJu0YxC4s45Pr2AW4u2KvH90Lartyzqu7BiFMh1ZfzhH8goag0wyyys
+	+o8TnEGwNaJTDPAssqqFba/SFdPpEWtCjE4HHgX6KH8ShdLO0MZnpurdrSRKmA==
+X-Gm-Gg: ASbGncuilDD7J/BFo0DSL486lQrsOkuE/ViQaJeSliL4qVB6inqiKR3aHMPgJM53UUf
+	o37hTTTcq7bwf8O8ISb0NQEMgRo834OkAJhBYPpwNuqatrJ7HVsJ8p5b1F0xs/qfh/lBkd9q9X4
+	S4XFaNQ0nID/4334bfkJQhb58C7sR83Qva7suF/rMEz8dXbSQc55PT6dkgbpjMNIqRmYQAQn6AM
+	XEXCgCq9aLYNspkk62yM5rJV9nqFlFM75/FDbkTdEOKX6IQJ4WVt5q5HxoREPbKdLyaUhQSbI8Y
+	scW//w7hxtQdxIa1FSvx4e3xd9d1alJ48X8CH+BwMYVxackTpS6WsAxqkDgvpcENiiFNj9Z9LQh
+	seKnwY20IYtBhyWJMk9v53cWj1i+QTFODjD11bu3sCgXvEtFodivosGXk0JE=
+X-Google-Smtp-Source: AGHT+IHUoC6sfbG2jjhen7ng/1j96RFavv7CufSjf63+gOKHffjtc5nq368pEO6ZpvqqNBz8FC2yag==
+X-Received: by 2002:a05:600c:4455:b0:46f:b42e:e39e with SMTP id 5b1f17b1804b1-477870bedccmr25857165e9.39.1762951573613;
+        Wed, 12 Nov 2025 04:46:13 -0800 (PST)
+Received: from 127.com ([2620:10d:c092:600::1:2601])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e58501sm33846795e9.10.2025.11.12.04.46.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 04:46:13 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH 0/7] further ring init cleanups
+Date: Wed, 12 Nov 2025 12:45:52 +0000
+Message-ID: <cover.1762947814.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,78 +85,27 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Olivier Langlois <olivier@trillion01.com>
+There are several goals for this patch set. It deduplicates ring size and
+offset calculations between ring setup and resizing. It moves most of
+verification earlier before any allocations, which usually means simpler
+error handling. And it keeps the logic localised instead of spreading it
+across the file.
 
-[Upstream commit 45b3941d09d13b3503309be1f023b83deaf69b4d ]
+Pavel Begunkov (7):
+  io_uring: refactor rings_size nosqarray handling
+  io_uring: use size_add helpers for ring offsets
+  io_uring: convert params to pointer in ring reisze
+  io_uring: introduce struct io_ctx_config
+  io_uring: keep ring laoyut in a structure
+  io_uring: pre-calculate scq layout
+  io_uring: move cq/sq user offset init around
 
-correct 3 RCU structures modifications that were not using the RCU
-functions to make their update.
+ io_uring/io_uring.c | 137 ++++++++++++++++++++++++--------------------
+ io_uring/io_uring.h |  19 +++++-
+ io_uring/register.c |  65 +++++++++------------
+ 3 files changed, 119 insertions(+), 102 deletions(-)
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: lvc-project@linuxtesting.org
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
-Link: https://lore.kernel.org/r/9f53b5169afa8c7bf3665a0b19dc2f7061173530.1728828877.git.olivier@trillion01.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[Stepan Artuhov: cherry-picked a commit]
-Signed-off-by: Stepan Artuhov <s.artuhov@tssltd.ru>
----
- io_uring/napi.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/io_uring/napi.c b/io_uring/napi.c
-index d0cf694d0172..fa959fd32042 100644
---- a/io_uring/napi.c
-+++ b/io_uring/napi.c
-@@ -81,19 +81,24 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
- 	}
- 
- 	hlist_add_tail_rcu(&e->node, hash_list);
--	list_add_tail(&e->list, &ctx->napi_list);
-+	list_add_tail_rcu(&e->list, &ctx->napi_list);
- 	spin_unlock(&ctx->napi_lock);
- }
- 
- static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
- {
- 	struct io_napi_entry *e;
--	unsigned int i;
- 
- 	spin_lock(&ctx->napi_lock);
--	hash_for_each(ctx->napi_ht, i, e, node) {
--		if (time_after(jiffies, e->timeout)) {
--			list_del(&e->list);
-+	/*
-+	 * list_for_each_entry_safe() is not required as long as:
-+	 * 1. list_del_rcu() does not reset the deleted node next pointer
-+	 * 2. kfree_rcu() delays the memory freeing until the next quiescent
-+	 *    state
-+	 */
-+	list_for_each_entry(e, &ctx->napi_list, list) {
-+		if (time_after(jiffies, READ_ONCE(e->timeout))) {
-+			list_del_rcu(&e->list);
- 			hash_del_rcu(&e->node);
- 			kfree_rcu(e, rcu);
- 		}
-@@ -204,13 +209,13 @@ void io_napi_init(struct io_ring_ctx *ctx)
- void io_napi_free(struct io_ring_ctx *ctx)
- {
- 	struct io_napi_entry *e;
--	unsigned int i;
- 
- 	spin_lock(&ctx->napi_lock);
--	hash_for_each(ctx->napi_ht, i, e, node) {
-+	list_for_each_entry(e, &ctx->napi_list, list) {
- 		hash_del_rcu(&e->node);
- 		kfree_rcu(e, rcu);
- 	}
-+	INIT_LIST_HEAD_RCU(&ctx->napi_list);
- 	spin_unlock(&ctx->napi_lock);
- }
- 
 -- 
-2.39.5
+2.49.0
 
 

@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-10541-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10542-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D39C52537
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 13:51:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162B0C52549
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 13:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D01344F7C7C
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4763ABEF1
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897AE31326C;
-	Wed, 12 Nov 2025 12:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3CA32BF31;
+	Wed, 12 Nov 2025 12:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPGCJjb5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJTt9O8/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17BB32BF31
-	for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 12:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D47330B3A
+	for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 12:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951582; cv=none; b=oELIvIPWh4XvEQfQ5guI/J69oCaD6aMGKlv2h3UtmZ9+dtIHG1aFZFmkG6nR4g71+z8K41FF9mk477ObFTD+T3z49jiAFsDVx4Xo4KrwBKXOI6Pj2Jm8o+xYwBnO6JreEJ5pgp2673a0l/YKZBzygxehwRvYcjvWxL1YCCaWQ4w=
+	t=1762951583; cv=none; b=BGVE6fOUXPDcvnbPIwec1P0t5AgbnS7vLR2sIKqAUuwsBySWfwYmx3OL2rC1XRXDJDeryfEeYZ3FSBDLjiB2BV1a5rbydC3JJ5/Fe50Iexe+P+AN1rLTKC2NOK4bA6PzuIgnXV6v7JYJ6jjKvtWwHiaFEt96iVmNSVUGTmKi77c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951582; c=relaxed/simple;
-	bh=VYT4pyHeC320qi7kTSzX9+pOEgvo5Fjyjq8D5jTw3EA=;
+	s=arc-20240116; t=1762951583; c=relaxed/simple;
+	bh=1GjY/O/cU1i0SxhapXCY3DHO5N9kt/UosAP3IeJeslE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eS3UXCEqhTEZmZzQ6+C0CqzgqNVbrOCAeYzCL+wKsUbA8V2oGCvA0CXQDXIR/aps4G1uRLFpfbI7a+WFt+J3YQlt4KNS5U7d/zJ4CeMqxD0zjHbMq5mkmJ487mzHcPEyX8X5Ri4BnK7pIBglQrCXVuydGse9meFnV06e1UlmJiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPGCJjb5; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=sj0HwyhDraZP68bLtyqRxoSPaYJIVC6mMzEaeYj0xzkcpd7ealwzSJF+IJZfhXWtDnP49t7PikHeCsxXU+BRojB52ZH3NBBjf1Jt8/gZyji50N/uOZbeG6bDzFAFYDODh4DofYj3Ypr3sXoY+aJidCALzP8vcFQxiqFPgWdxRuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJTt9O8/; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47777000dadso5576895e9.1
-        for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 04:46:20 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4447025e9.2
+        for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 04:46:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1762951579; x=1763556379; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0UjxzCssV7DuTNViezWRx7rcS3+eTs3EVxwlL7So8dU=;
-        b=ZPGCJjb5oEPGgUvPV25pGjYkep84Q6oBd/TgMBDt5MttX/aHDtt9FfIoYQYk+/Q+aN
-         oy036lvUiMAS3iA+qKN7X4y4pHWmTWk60CjUSdSfx2NvmTHPBSW1dA7kQmkvzqj8Rd0b
-         WVf7Qf9A9p63mm7gKyhr6UAre3zu5lX1GMQnJwSjYMuKqSrf8CN7ibkTYM7z3eo4mCIZ
-         RIQi9mK276mJiWBuSXzOKgL1zze8wCbIuWqEv5ptPTPR2DY8O0HRRG40dve9JJpJYyrh
-         qhe7L5ys9LqQPlbSwNlCL2agfVfQPxz15l/cr4elE3I615nuDjVU+KvLh/PjMlAyS1X6
-         E+qQ==
+        bh=nyfc19tp/B3BkckABBi9ANMajlpIrgmdKZKgjEVepOU=;
+        b=mJTt9O8/Hs4mf8eCS+1tTfgu7afft9fSicqCkkZwlpdkBqXbUa62YhaLuPMt7eN382
+         2RGfNzvZgyUD41GprDH79Q+TVbdUHDBpE6xoWseejKNl8pikdM5WiAz9JsM34unDk0fg
+         Cb1F379x/qFTIVFUozXru9lyoPwJPb0542ilEz4K74sC3rS+zj9Wts/Jzde+Zto7kjvY
+         pl0j304h0nEd++z/ofSS5pQiWLVc0/p/Bcp9tx3O2doh9MZ1xS2zNUYktXglIEFRiOil
+         J/AOV2ReCEm+0UnrdIgERAwBz4aRCi0OlKX7dsyvME+AICACyJq4Ri4qJWWxWH4ezSp0
+         eeQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762951579; x=1763556379;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0UjxzCssV7DuTNViezWRx7rcS3+eTs3EVxwlL7So8dU=;
-        b=f31oEqJEJHCCW6MhsNoNQmfsP0qWmRiQaHTFNNB9mcp0iAbglMJqlhHH1a+PMmY61V
-         IRqZvT2DayWJhN23ksivf9q5y7ir6MGawmxlG1V2R4chhk+uwIKqEvD+PVG8AupK4wSY
-         F1Lg2C5Tnly8OKENYELSieKOMAa54MBHYhC3LoaytSb1Zs1qS7BH34Ruc1gkgVv5Rl6M
-         SCVIf5ZipVpZDbl3Os7CJGZX7YMIia7LP+oRie2mK3RAJEWe1jLdBW1Mfao+HzynBiJH
-         l+VAFaujiEek8pj/lqFXj/iwcwSu1ojVOgXkoqMmlHFH3Mdceztbly0KT020a1JKPyEq
-         ib2g==
-X-Gm-Message-State: AOJu0Yy6GOP5ifEj1zy2kPLiLI/+wXus/+GcBl3ALYhwu73Ic23Zubn3
-	vbM3YzEypOtguqqOgs+drDe4RmbyPXSUxthO6buwqhST8yEW+GHh/mTnzG/O6A==
-X-Gm-Gg: ASbGnctrM9AkJOIIIamaDQhiFrRMPRTejJOmjVKWah0dZ/6wXeRBOTtLbHizimRi2Pz
-	aIJz1sxwS6ZzrB5JNWFDTKU3OBfVLcgWVOLOOA2T5kZXn6aRZyHVwjb0sDBj7jF9s0/xHmLTABV
-	QwKrUOxcSYLrboZBRVYCaUC7W2H5ORYEDgSl1KbtWN0OKV9ohgMwXk4RDhrBa9Hhx58CNptBLWd
-	U+M8XDUv8sCSZ+gpClvFHL7eWUev9WTgMTgUcLgIXlXLvTpMPh36eNGPeUEHOQFOQK7IFotwAFM
-	F33i7nVlu86436dWF3vryljhzadkcg8q92bbVsI2Z4wcDA5ifHJ/tumnJ5nrZeYpE0J5JCCZoUm
-	zf7UPRl2xiKcCmr+mz0LxlSU/0QupfBxbIxEAxHnZQhIrKXHrWxe122nwWT0=
-X-Google-Smtp-Source: AGHT+IG4OvlE88BiqvXUKAY50p1yLhmQck/l8VF9DLnnn7eVAvpOl88sGkDZf3QF95pch9CVl6NCFQ==
-X-Received: by 2002:a05:600c:4753:b0:477:f1f:5c65 with SMTP id 5b1f17b1804b1-477870862d5mr23344215e9.23.1762951578297;
-        Wed, 12 Nov 2025 04:46:18 -0800 (PST)
+        bh=nyfc19tp/B3BkckABBi9ANMajlpIrgmdKZKgjEVepOU=;
+        b=Cip0Mhpp3wl5km5PRtEtfb134Hu08iZdECAf8KukEBE4CODZ1Rf9YZPi+kC1fjv0Rq
+         TtcjTPLKsuFaXBwYLAuq64hRq5hRzAL5xnUIox7Bs2qvD6xvCH4/Cf8reWsWCqTyGUb6
+         lLZIR5JffvUPN8pxFl4JqjVkHBpQZKAEd8mFGZyS50CDTZ5YO0sKrw2N5MCdUP/E1rsE
+         GFMg8455XTB4tKOUILka5RmzWmdSyNFNexmrz3xhlaTiQIMWLxKgCKjCcLC0SASi4YoE
+         RgrEE9Iav8UXrn2Wo00CwsPXdiUWItwiy3dMlnpshW2Rk/jKucWZXE8q5hXCRVkJX639
+         SfvQ==
+X-Gm-Message-State: AOJu0YyiH/tdPJvBQq31FsgA8JppWwhkocnAlQpZstgBkWMGmy17gvSa
+	fBEeyEk4ng6xk7TrvV3+jjlz/4l92BcVrkYo113bV0gtxOHL2ND57zhrEPwuGQ==
+X-Gm-Gg: ASbGncudb/BWQcA57k40tWWrEsp57t5DAde66vW6uEzmegf/UG1KL7rxJbdPAYvuuUv
+	8lW/Fh7O0InAcPMzKAZfo6dFDj/OjGuUe5maxaVislXJ+dChtJv8GY9yRu62uDtmCVac7KepJzF
+	X7KpjB4JrTc03KViiOfaKE4Q6l7xpi3lV/jQdTwMlNkTzvTdwAAJJptZS3qjy5BtL/AMWIspjl8
+	ztYHLIR+GZGYs0I3kCDeflMvQO3oARCiiTuHlm1q4H0/seIxzHZapsYibQD2iILcn++bYiK5Vo8
+	kgfDvmA0INCsAJusvjiAAp44H/mAg30t3nM0DW7P9DEISb1p28ns0KZhbGdffBnkfey/5xEPzBp
+	7jM5+UQdfUCCNUNXrgu1PsI56h6uulR1ovs5KDACL/1A3xJfxqw4SuvX9owA=
+X-Google-Smtp-Source: AGHT+IHKu3ZgadUyzW/TBmbeG1kEzQQlkiKcoWkKBhYzOyOtmcoDrDehkbRCnPqw+x5bqdPgNUiHOg==
+X-Received: by 2002:a05:600c:3b0d:b0:477:7479:f081 with SMTP id 5b1f17b1804b1-4778707b6b9mr25751905e9.12.1762951579185;
+        Wed, 12 Nov 2025 04:46:19 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:2601])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e58501sm33846795e9.10.2025.11.12.04.46.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e58501sm33846795e9.10.2025.11.12.04.46.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 04:46:17 -0800 (PST)
+        Wed, 12 Nov 2025 04:46:18 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 5/7] io_uring: keep ring laoyut in a structure
-Date: Wed, 12 Nov 2025 12:45:57 +0000
-Message-ID: <9033e77c3fc31f2c82efdf1fbf57b7549ea2b934.1762947814.git.asml.silence@gmail.com>
+Subject: [PATCH 6/7] io_uring: pre-calculate scq layout
+Date: Wed, 12 Nov 2025 12:45:58 +0000
+Message-ID: <c4163a72841f4e6e768aebea2e55eeffa7873f16.1762947814.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1762947814.git.asml.silence@gmail.com>
 References: <cover.1762947814.git.asml.silence@gmail.com>
@@ -89,227 +89,134 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a structure keeping SQ/CQ sizes and offsets. For now it only records
-data previously returned from rings_size and the SQ size.
+Move ring layouts calculations into io_prepare_config(), so that more
+misconfiguration checking can be done earlier before creating a ctx.
+It also deduplicates some code with ring resizing. And as a bonus, now
+it initialises params->sq_off.array, which is closer to all other user
+offset init, and also applies it to ring resizing, which was previously
+missing it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 54 +++++++++++++++++++++++----------------------
- io_uring/io_uring.h | 12 ++++++++--
- io_uring/register.c | 24 ++++++--------------
- 3 files changed, 45 insertions(+), 45 deletions(-)
+ io_uring/io_uring.c | 27 ++++++++++++++-------------
+ io_uring/io_uring.h |  3 +--
+ io_uring/register.c |  4 ----
+ 3 files changed, 15 insertions(+), 19 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f039e293582a..1dfd0a8a7270 100644
+index 1dfd0a8a7270..d286118dcd9d 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2757,47 +2757,57 @@ static void io_rings_free(struct io_ring_ctx *ctx)
+@@ -2757,8 +2757,8 @@ static void io_rings_free(struct io_ring_ctx *ctx)
  	ctx->sq_sqes = NULL;
  }
  
--unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
--			 unsigned int cq_entries, size_t *sq_offset)
-+int rings_size(unsigned int flags, unsigned int sq_entries,
-+		unsigned int cq_entries, struct io_rings_layout *rl)
+-int rings_size(unsigned int flags, unsigned int sq_entries,
+-		unsigned int cq_entries, struct io_rings_layout *rl)
++static int rings_size(unsigned int flags, unsigned int sq_entries,
++		      unsigned int cq_entries, struct io_rings_layout *rl)
  {
  	struct io_rings *rings;
-+	size_t sqe_size;
- 	size_t off;
- 
--	*sq_offset = SIZE_MAX;
--
- 	if (flags & IORING_SETUP_CQE_MIXED) {
- 		if (cq_entries < 2)
--			return SIZE_MAX;
-+			return -EOVERFLOW;
- 	}
- 	if (flags & IORING_SETUP_SQE_MIXED) {
- 		if (sq_entries < 2)
--			return SIZE_MAX;
-+			return -EOVERFLOW;
- 	}
- 
-+	rl->sq_array_offset = SIZE_MAX;
-+
-+	sqe_size = sizeof(struct io_uring_sqe);
-+	if (flags & IORING_SETUP_SQE128)
-+		sqe_size *= 2;
-+
-+	rl->sq_size = array_size(sqe_size, sq_entries);
-+	if (rl->sq_size == SIZE_MAX)
-+		return -EOVERFLOW;
-+
- 	off = struct_size(rings, cqes, cq_entries);
- 	if (flags & IORING_SETUP_CQE32)
- 		off = size_mul(off, 2);
- 	if (off == SIZE_MAX)
--		return SIZE_MAX;
-+		return -EOVERFLOW;
- 
- #ifdef CONFIG_SMP
- 	off = ALIGN(off, SMP_CACHE_BYTES);
- 	if (off == 0)
--		return SIZE_MAX;
-+		return -EOVERFLOW;
- #endif
- 
- 	if (!(flags & IORING_SETUP_NO_SQARRAY)) {
- 		size_t sq_array_size;
- 
--		*sq_offset = off;
-+		rl->sq_array_offset = off;
- 
- 		sq_array_size = array_size(sizeof(u32), sq_entries);
- 		off = size_add(off, sq_array_size);
- 		if (off == SIZE_MAX)
--			return SIZE_MAX;
-+			return -EOVERFLOW;
- 	}
- 
--	return off;
-+	rl->rings_size = off;
-+	return 0;
+ 	size_t sqe_size;
+@@ -3353,10 +3353,11 @@ bool io_is_uring_fops(struct file *file)
  }
  
- static __cold void __io_req_caches_free(struct io_ring_ctx *ctx)
-@@ -3346,28 +3356,20 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 					 struct io_uring_params *p)
+ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+-					 struct io_uring_params *p)
++					 struct io_ctx_config *config)
  {
++	struct io_uring_params *p = &config->p;
++	struct io_rings_layout *rl = &config->layout;
  	struct io_uring_region_desc rd;
-+	struct io_rings_layout __rl, *rl = &__rl;
+-	struct io_rings_layout __rl, *rl = &__rl;
  	struct io_rings *rings;
--	size_t sq_array_offset;
--	size_t sq_size, cq_size, sqe_size;
  	int ret;
  
- 	/* make sure these are sane, as we already accounted them */
+@@ -3364,10 +3365,6 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
  	ctx->sq_entries = p->sq_entries;
  	ctx->cq_entries = p->cq_entries;
  
--	sqe_size = sizeof(struct io_uring_sqe);
--	if (p->flags & IORING_SETUP_SQE128)
--		sqe_size *= 2;
--	sq_size = array_size(sqe_size, p->sq_entries);
--	if (sq_size == SIZE_MAX)
--		return -EOVERFLOW;
--	cq_size = rings_size(ctx->flags, p->sq_entries, p->cq_entries,
--			  &sq_array_offset);
--	if (cq_size == SIZE_MAX)
--		return -EOVERFLOW;
-+	ret = rings_size(ctx->flags, p->sq_entries, p->cq_entries, rl);
+-	ret = rings_size(ctx->flags, p->sq_entries, p->cq_entries, rl);
+-	if (ret)
+-		return ret;
+-
+ 	memset(&rd, 0, sizeof(rd));
+ 	rd.size = PAGE_ALIGN(rl->rings_size);
+ 	if (ctx->flags & IORING_SETUP_NO_MMAP) {
+@@ -3378,7 +3375,6 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ 	if (ret)
+ 		return ret;
+ 	ctx->rings = rings = io_region_get_ptr(&ctx->ring_region);
+-
+ 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
+ 		ctx->sq_array = (u32 *)((char *)rings + rl->sq_array_offset);
+ 
+@@ -3560,6 +3556,14 @@ int io_prepare_config(struct io_ctx_config *config)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = rings_size(p->flags, p->sq_entries, p->cq_entries,
++			 &config->layout);
 +	if (ret)
 +		return ret;
++
++	if (!(p->flags & IORING_SETUP_NO_SQARRAY))
++		p->sq_off.array = config->layout.sq_array_offset;
++
+ 	return 0;
+ }
  
- 	memset(&rd, 0, sizeof(rd));
--	rd.size = PAGE_ALIGN(cq_size);
-+	rd.size = PAGE_ALIGN(rl->rings_size);
- 	if (ctx->flags & IORING_SETUP_NO_MMAP) {
- 		rd.user_addr = p->cq_off.user_addr;
- 		rd.flags |= IORING_MEM_REGION_TYPE_USER;
-@@ -3378,10 +3380,10 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	ctx->rings = rings = io_region_get_ptr(&ctx->ring_region);
+@@ -3632,13 +3636,10 @@ static __cold int io_uring_create(struct io_ctx_config *config)
+ 	mmgrab(current->mm);
+ 	ctx->mm_account = current->mm;
  
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
-+		ctx->sq_array = (u32 *)((char *)rings + rl->sq_array_offset);
+-	ret = io_allocate_scq_urings(ctx, p);
++	ret = io_allocate_scq_urings(ctx, config);
+ 	if (ret)
+ 		goto err;
  
- 	memset(&rd, 0, sizeof(rd));
--	rd.size = PAGE_ALIGN(sq_size);
-+	rd.size = PAGE_ALIGN(rl->sq_size);
- 	if (ctx->flags & IORING_SETUP_NO_MMAP) {
- 		rd.user_addr = p->sq_off.user_addr;
- 		rd.flags |= IORING_MEM_REGION_TYPE_USER;
+-	if (!(p->flags & IORING_SETUP_NO_SQARRAY))
+-		p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
+-
+ 	ret = io_sq_offload_create(ctx, p);
+ 	if (ret)
+ 		goto err;
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index d8bc44acb9fa..5e544c2d27c8 100644
+index 5e544c2d27c8..a790c16854d3 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -17,6 +17,14 @@
- #include <trace/events/io_uring.h>
- #endif
+@@ -27,6 +27,7 @@ struct io_rings_layout {
  
-+struct io_rings_layout {
-+	/* size of CQ + headers + SQ offset array */
-+	size_t rings_size;
-+	size_t sq_size;
-+
-+	size_t sq_array_offset;
-+};
-+
  struct io_ctx_config {
  	struct io_uring_params p;
++	struct io_rings_layout layout;
  	struct io_uring_params __user *uptr;
-@@ -139,8 +147,8 @@ static inline bool io_should_wake(struct io_wait_queue *iowq)
+ };
+ 
+@@ -147,8 +148,6 @@ static inline bool io_should_wake(struct io_wait_queue *iowq)
  #define IORING_MAX_ENTRIES	32768
  #define IORING_MAX_CQ_ENTRIES	(2 * IORING_MAX_ENTRIES)
  
--unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
--			 unsigned int cq_entries, size_t *sq_offset);
-+int rings_size(unsigned int flags, unsigned int sq_entries,
-+		unsigned int cq_entries, struct io_rings_layout *rl);
+-int rings_size(unsigned int flags, unsigned int sq_entries,
+-		unsigned int cq_entries, struct io_rings_layout *rl);
  int io_prepare_config(struct io_ctx_config *config);
  
  bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32);
 diff --git a/io_uring/register.c b/io_uring/register.c
-index 13385ac0f85a..98693021edbe 100644
+index 98693021edbe..110e978b872d 100644
 --- a/io_uring/register.c
 +++ b/io_uring/register.c
-@@ -401,9 +401,9 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	struct io_ctx_config config;
- 	struct io_uring_region_desc rd;
- 	struct io_ring_ctx_rings o = { }, n = { }, *to_free = NULL;
--	size_t size, sq_array_offset;
- 	unsigned i, tail, old_head;
- 	struct io_uring_params *p = &config.p;
-+	struct io_rings_layout __rl, *rl = &__rl;
- 	int ret;
- 
- 	memset(&config, 0, sizeof(config));
-@@ -423,13 +423,12 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+@@ -423,10 +423,6 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
  	if (unlikely(ret))
  		return ret;
  
--	size = rings_size(p->flags, p->sq_entries, p->cq_entries,
--				&sq_array_offset);
--	if (size == SIZE_MAX)
--		return -EOVERFLOW;
-+	ret = rings_size(p->flags, p->sq_entries, p->cq_entries, rl);
-+	if (ret)
-+		return ret;
- 
- 	memset(&rd, 0, sizeof(rd));
--	rd.size = PAGE_ALIGN(size);
-+	rd.size = PAGE_ALIGN(rl->rings_size);
- 	if (p->flags & IORING_SETUP_NO_MMAP) {
- 		rd.user_addr = p->cq_off.user_addr;
- 		rd.flags |= IORING_MEM_REGION_TYPE_USER;
-@@ -458,17 +457,8 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 		return -EFAULT;
- 	}
- 
--	if (p->flags & IORING_SETUP_SQE128)
--		size = array_size(2 * sizeof(struct io_uring_sqe), p->sq_entries);
--	else
--		size = array_size(sizeof(struct io_uring_sqe), p->sq_entries);
--	if (size == SIZE_MAX) {
--		io_register_free_rings(ctx, &n);
--		return -EOVERFLOW;
--	}
+-	ret = rings_size(p->flags, p->sq_entries, p->cq_entries, rl);
+-	if (ret)
+-		return ret;
 -
  	memset(&rd, 0, sizeof(rd));
--	rd.size = PAGE_ALIGN(size);
-+	rd.size = PAGE_ALIGN(rl->sq_size);
+ 	rd.size = PAGE_ALIGN(rl->rings_size);
  	if (p->flags & IORING_SETUP_NO_MMAP) {
- 		rd.user_addr = p->sq_off.user_addr;
- 		rd.flags |= IORING_MEM_REGION_TYPE_USER;
-@@ -551,7 +541,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 
- 	/* all done, store old pointers and assign new ones */
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		ctx->sq_array = (u32 *)((char *)n.rings + sq_array_offset);
-+		ctx->sq_array = (u32 *)((char *)n.rings + rl->sq_array_offset);
- 
- 	ctx->sq_entries = p->sq_entries;
- 	ctx->cq_entries = p->cq_entries;
 -- 
 2.49.0
 

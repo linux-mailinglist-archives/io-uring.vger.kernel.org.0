@@ -1,50 +1,50 @@
-Return-Path: <io-uring+bounces-10527-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10528-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF019C50EC9
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 08:26:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CD1C50E90
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 08:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0A13AD7AD
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 07:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BB11897A7C
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 07:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D422C15BB;
-	Wed, 12 Nov 2025 07:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58F22C324F;
+	Wed, 12 Nov 2025 07:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Td54X2J8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZlBYqBSr"
 X-Original-To: io-uring@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E4E2C08D1;
-	Wed, 12 Nov 2025 07:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3AC2C21D8;
+	Wed, 12 Nov 2025 07:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932155; cv=none; b=NqPajnc+l0lNR+cdn0s/DdG6IYNCb0TKIqEgYNCU5rEwyMNNYG1PPuiL9outs8qLHOPGplfybJvEdcs8ypq9xkoFwzcFb5ITe6u/FK3VNdYPBuZbyTxua5gZUgYSVqEVIZFX5fXxV43WRVFaVGyzHconLOydd/UrPl9J3/Z1P9c=
+	t=1762932159; cv=none; b=ILOgaY0a/FrHl9AJvCl6t6CChoXdCydtnLxHecNJA4iDZRi9pLu4qO7puqAuyk83PaXwmsnPCL+9M30oZbI+m1PMhpsNqFl9pL/ibwQ2vCT/0bYiQO2Yvrcyugx+qY4vovuS2swLvsc4k9PEZljpgwd5RMyMYNXLsP/qe3Oi1Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932155; c=relaxed/simple;
-	bh=MXZ7E3TaeeFFg4DOQi1odXMx6mD2cdh6NK2RJ7ROVAw=;
+	s=arc-20240116; t=1762932159; c=relaxed/simple;
+	bh=CYlvlOgRInF79J6UMI5yyZnpfEosbWfM1f6pk63ZyYE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UjxINjYx0AizhsjC1buoIS3m6GA114k/dxhdtZUJR2b/zx7ytDS805LREM+E5Hxtwac16sBWzjbIAnMYuK/8xPzeEnCIUN9VRLVmmTrKSO2hXkhrLixL+fwZCWb3AHLNtqxBGfG1VkPwHEv4WhxhMaiPb7bXPennK+8TKzpuGsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Td54X2J8; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=p5Ok7ACsTWaqTR3QvVp/Kf2xDwcicuHkWX1wvVTMF7My/qTqH9zx6tvUENmnhpRpzrckABrwfXG0tOXAR2EqZCESO9jT/Cxszi03+rwcIpWFbi92biHGkUXRhqQ51R6G4Tqp5ZUIZPkDMG/5aMtugrRzpknDErNAlIMwfSOa3vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZlBYqBSr; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=rFYjyazSOhXAfpT/GW8ABdV+NmLLNHcTCEUF8V+KFMg=; b=Td54X2J8SrKQ3b0i3WA0U6drSq
-	KNJ2w1/UValoVEED/a5uZOchZTsPdH8WOF2ttDZSWCfsWoAy0evcwI1SgYC6PkunnCawwxvHCSqa/
-	cToQpZL9I/rorOtlckFJPbQFCiOC92fDdS10dSlbW7AD2menxxhcUtHu38wDzEajeWXsTlUuZ7qhI
-	dKgzb5cDj5EhdPilUn2Lgb/zmVpZnT9yB7WqPq7vHV/kgPkim2GMVYnZAL9e5maCDCXKLKEzDJqC6
-	s+cY8rS8VjGx/zyqHaJ01Xs9Yicu63EGtqo4mlRbPGfUfdAVJPUkB7ih0SuLIPU+bZxi8DR429lXH
-	94Znn0YA==;
+	bh=D5IRbijpBA5bWvCFFBMsnOXdYiBOGPsVa5vYBmjcbtg=; b=ZlBYqBSrwRIFAgQXLfrDBS+W/I
+	sbgchZoAeZnckbZDpLwJZ1XEvU2aS6WAFUdmu+tj8zgWWPs5m7uKDPMR+DvczBf2DUpnRd3rgsds5
+	B117emcPl+9eYtK6RzpRCdLULMJb1X5VN1oQJstYB7SYtt3FakfX4qE8uzCcQ6dXzV96puxAAsaZq
+	fdlMbAffJJOIi1BR7IFiJcG+5ebTeKdPWFP3mGFx/KjzyQQZ/VnqMLpaXeXUcRiyA74091UEToUr8
+	aVy+w797UIt9a2gy7Gwr+x235g4JaWihF89H7IzxzZNr7F6vbl8Stz647df8nxq72z2rACsHMGoTZ
+	8w1GIP5w==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJ5BY-00000008GkP-0CJ3;
-	Wed, 12 Nov 2025 07:22:32 +0000
+	id 1vJ5Bc-00000008Gl0-1Lrv;
+	Wed, 12 Nov 2025 07:22:36 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -58,9 +58,9 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	io-uring@vger.kernel.org
-Subject: [PATCH 2/5] iomap: always run error completions in user context
-Date: Wed, 12 Nov 2025 08:21:26 +0100
-Message-ID: <20251112072214.844816-3-hch@lst.de>
+Subject: [PATCH 3/5] iomap: rework REQ_FUA selection
+Date: Wed, 12 Nov 2025 08:21:27 +0100
+Message-ID: <20251112072214.844816-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251112072214.844816-1-hch@lst.de>
 References: <20251112072214.844816-1-hch@lst.de>
@@ -73,40 +73,79 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-At least zonefs expects error completions to be able to sleep.  Because
-error completions aren't performance critical, just defer them to workqueue
-context unconditionally.
+The way how iomap_dio_can_use_fua and the caller is structured is
+a bit confusing, as the main guarding condition is hidden in the
+helper, and the secondary conditions are split between caller and
+callee.
 
-Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
+Refactor the code, so that there is a main IOMAP_DIO_WRITE_THROUGH
+guard in iomap_dio_bio_iter, which is directly tied to clearing it
+when not supported, and a helper that just checks if the I/O is a
+pure overwrite.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/direct-io.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/iomap/direct-io.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
 diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 7659db85083a..765ab6dd6637 100644
+index 765ab6dd6637..c4a883fa8ea5 100644
 --- a/fs/iomap/direct-io.c
 +++ b/fs/iomap/direct-io.c
-@@ -173,7 +173,18 @@ static void iomap_dio_done(struct iomap_dio *dio)
+@@ -288,20 +288,14 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ }
  
- 		WRITE_ONCE(dio->submit.waiter, NULL);
- 		blk_wake_io_task(waiter);
--	} else if (dio->flags & IOMAP_DIO_INLINE_COMP) {
-+		return;
-+	}
-+
-+	/*
-+	 * Always run error completions in user context.  These are not
-+	 * performance critical and some code relies on taking sleeping locks
-+	 * for error handling.
-+	 */
-+	if (dio->error)
-+		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-+
-+	if (dio->flags & IOMAP_DIO_INLINE_COMP) {
- 		WRITE_ONCE(iocb->private, NULL);
- 		iomap_dio_complete_work(&dio->aio.work);
+ /*
+- * Use a FUA write if we need datasync semantics and this is a pure data I/O
+- * that doesn't require any metadata updates (including after I/O completion
+- * such as unwritten extent conversion) and the underlying device either
+- * doesn't have a volatile write cache or supports FUA.
+- * This allows us to avoid cache flushes on I/O completion.
++ * Check if this mapping is a pure overwrite that does not need metadata updates
++ * at I/O completion time.
+  */
+-static inline bool iomap_dio_can_use_fua(const struct iomap *iomap,
+-		struct iomap_dio *dio)
++static inline bool iomap_dio_is_overwrite(const struct iomap *iomap)
+ {
+-	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_DIRTY))
++	if (iomap->type != IOMAP_MAPPED)
+ 		return false;
+-	if (!(dio->flags & IOMAP_DIO_WRITE_THROUGH))
+-		return false;
+-	return !bdev_write_cache(iomap->bdev) || bdev_fua(iomap->bdev);
++	return !(iomap->flags & (IOMAP_F_NEW | IOMAP_F_SHARED));
+ }
+ 
+ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+@@ -355,12 +349,22 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 
+ 		if (iomap->flags & IOMAP_F_NEW)
+ 			need_zeroout = true;
+-		else if (iomap->type == IOMAP_MAPPED &&
+-			 iomap_dio_can_use_fua(iomap, dio))
+-			bio_opf |= REQ_FUA;
+ 
+-		if (!(bio_opf & REQ_FUA))
+-			dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
++		/*
++		 * Use a FUA write if we need datasync semantics and this is a
++		 * pure overwrite that doesn't require any metadata updates.
++		 *
++		 * This allows us to avoid cache flushes on I/O completion.
++		 */
++		if (dio->flags & IOMAP_DIO_WRITE_THROUGH) {
++			if (iomap_dio_is_overwrite(iomap) &&
++			    !(iomap->flags & IOMAP_F_DIRTY) &&
++			    (!bdev_write_cache(iomap->bdev) ||
++			     bdev_fua(iomap->bdev)))
++				bio_opf |= REQ_FUA;
++			else
++				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
++		}
  	} else {
+ 		bio_opf |= REQ_OP_READ;
+ 	}
 -- 
 2.47.3
 

@@ -1,83 +1,83 @@
-Return-Path: <io-uring+bounces-10537-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10538-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55315C524E9
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 13:46:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DA5C524EF
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 13:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F8189EE5A
-	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE688189EC77
+	for <lists+io-uring@lfdr.de>; Wed, 12 Nov 2025 12:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA34328262;
-	Wed, 12 Nov 2025 12:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B2E335078;
+	Wed, 12 Nov 2025 12:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pkk6MigY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gae5H7Yv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CC6329E7D
-	for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 12:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6366231326C
+	for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 12:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951578; cv=none; b=fW4GG48H+8+A3R2BvUsxXnirUsHRfr+aBqUpPDZw2qha/5NVVlF3X8ir7pwHsi028k2Pb5O6RjU4SEMihvzG9+35Ur9JqAwlMfFZLyNEiC2t41RlCnggWvVVUqG63elB2SdDKJ3OPqZTyfMa+zh4X6GsehufVjs+5xfOnqvRKgU=
+	t=1762951579; cv=none; b=HpRKL8Kz0rotFvYZLvOc7vMLxtnymxlAtd32+4NypqSYAeJRWFfEI7PGZIffgg7WULRz/+KF0qRsZdBoKwNmBiCjswdfMo4oa5GDewUsBe2fbS1h3fWIsgB7Yum5qf7eujMIQVIRUANjORc/U2QP5Km805WWA14Qu0Ar2U4b8Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951578; c=relaxed/simple;
-	bh=XT9NRFwIU31uQNlDM0OHidhk4yrB4zicNTH2U9y9fdo=;
+	s=arc-20240116; t=1762951579; c=relaxed/simple;
+	bh=aIXkAb35TkTrh3w5l4gq36CrEw3dlt96tFecJcsysNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tdm3Rt8TsOftopszCvuZsTsnHp8p6x03UrEcW92aj7FnFygQNCYsJGb7tQjx6b5xnNaoy65d3kf3HbafX7s4tUwKfanbjMhwTEjBCGI5aXxPLDTn3nw36JZ2t045UbtB8AODDfcNQsG6fjf7Y/DigMjVRU7FHVWfB16yii78Ewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pkk6MigY; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=eqThFtOnH8SuWavUVyNRyhrPjiNN8DtiUFtPdkEd3ZpabRSmRHgUm39NGRQhfthJWDD+zCgWYJDLT1IbY6Du6YUDCs7OcS13mgUhRDWr3JDhG7oFYGqnjNBk/ItzKYWY70MFegmcUlXVHW69o0Vf3tQ52znjTLCBC9PL51j+LP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gae5H7Yv; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477442b1de0so5614485e9.1
-        for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 04:46:16 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4446565e9.2
+        for <io-uring@vger.kernel.org>; Wed, 12 Nov 2025 04:46:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1762951575; x=1763556375; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AEdNL1wRMeR9f+kbr2ahQzyEcFOSkWXdGrGD5yNcI98=;
-        b=Pkk6MigYD67sJYmtAYx2Y85ZvHvjd+8G6lvumk+ZbUwPOgBtUrBurimfQL9ChiLPiN
-         erV5MfGy1Jv9OCGMxqnaw1o8bcSFSqUxxh+JR/gv9AuEWrBYYDUTDdIGBDVkdg1F6YQo
-         TM+MPTj6ke66tnJKHx9JBrmic0Bq9x9ocBaW34Vzhhyb7coW+UUOQ9pYCp5z7WApCL/y
-         9sNrGOs44JoYdXtTIWXshW/in8iVWKCMZwsIFY4XUZKvZeUMz5FjmQjHYVPzs5OdbSk8
-         gOOZ+5vKZdbOJWk96aCYMkMvk1WqWzQET0BFdP5KEk92zBi052kqqjziG/P6LBGpoa23
-         mfkA==
+        bh=t7rt0Svbn62cTgrsUxA6zmqdwrpScybagqQx4Rbnggw=;
+        b=Gae5H7Yv5G207RHMhXKLNG+VMP+Td/z/hqgNZg9tgEkg4TQinLyFsUdtvPRI/Awozn
+         Y+Rkc5IYDgwlaZbIvqEdlpisvIZ85ODz1rE7W/vDJGqYcHkoggzbibcHKWe/ePrCkUA4
+         BwOqz2wZwWlOlbo7kkKhEoWqoI3B+Quojll+H2haEFTe8SiyacJxNoWgRY9p4Mzy9wcj
+         BarBZP+5h37y0D0ULlH3GqWR5q2MB8ifgNhE5tDYHys42Im0xHRizGAtEkP6gOhIkYK1
+         Mzlfq/Eul5mCwO8Q6YEEzRGZn7qUj7KKCaz3XnHpbW3TWqvDBXKTCoEjCC+ILeYjclZj
+         WAGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762951575; x=1763556375;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AEdNL1wRMeR9f+kbr2ahQzyEcFOSkWXdGrGD5yNcI98=;
-        b=fpLmA84b5Z32CAtYt+tsE4ACvwRer7U8bDD6Z1yzTMnAzlhRJgKjypbAA6sbG/rAQX
-         LDgZLS4jKmecD/VizgzmvODSyeJpNTaIwT9gDEa225O2uB4pFBxKIBCWvlKBx7aweRUA
-         K3GWrjhXtJy1CjCK8dnmVMBbE5d4MlnBMkCzndjqImx0MHAlWf6vR3QUCmEykBRAzmfX
-         A8LfnFjP5Xm0jigQzYiFaf4RXLrcmH+lnYfXE9AaeFm+nWrS3eNVTcUCwuaDP+in6sGU
-         MdZurq3RpUYn43T4UbsCDG/4M/snXChGePTDSuViYUN3T8YE1Zn4PqMDPcsV7MDEexTt
-         gsLQ==
-X-Gm-Message-State: AOJu0YzWuX1rP/Ka8r3HvF5bVCDOKewyyfjb54NrOX7H8ELP8HQivCW3
-	i6h7KxfVQgdKxtGcUUEuoUOb54+4OY0EgKg4+jLHRcZUCazY+kj+A/r/tP/xug==
-X-Gm-Gg: ASbGncud6fhAwOtd9O5t7THI/XlRW3VoqXuBhcumVHluZUB78Lyu9apSLt/fBYcQ6uz
-	F6vpx4PQ2Jt0d2RX8wREy+qbRE/0ru/qH0oFdfRbYetB2lSliX009hV6mA5emUruW6l6IuGUjqi
-	xUMI5MHLBJuqu2InV3hj6/UY7cjZMrQFcBBCZv2GlHX5EbzMkx7nXYan1o82P7G1618jOCls4P+
-	nszpxouCpB+N8XfHuZZAZwTYIozUIcczq1xW7D8e2ogebLltx4ObeznfeKSGiWbfGvPAqOEjyM3
-	7X0/xX2JqYxRQq6fCu9tznS29PtzLw6w8ZjITAJBZyc6NwfRdRtCtXx+44XaHyndM5hf9we8iuJ
-	Ek0PAh2njoVS79mfblr0xCPuf0gWWWpHAK0PhYmHuQbBjZHppkjY/wqn23LM=
-X-Google-Smtp-Source: AGHT+IHJnNctZmYXDLhuZZxOFPe+FHCmV7dsJClseANjNyo4lrbDPMc7dVglpnYoSBYWMWxr9srO1A==
-X-Received: by 2002:a7b:cb95:0:b0:477:8985:4036 with SMTP id 5b1f17b1804b1-477898540c2mr10358105e9.1.1762951574523;
-        Wed, 12 Nov 2025 04:46:14 -0800 (PST)
+        bh=t7rt0Svbn62cTgrsUxA6zmqdwrpScybagqQx4Rbnggw=;
+        b=IR87Dknpn82j12KGOLCSa9FD2GT53zy/fC7jPFZE35y1A/iCaWSLXCwMYHDzJNY3ff
+         je4EKlybDc88c3tbu/OUQj4ibBdN1L4rtCMMAKfpuE8Vpa/TNGQ56QV49SQee3TUL/Fe
+         U3DOVmMJkawmVO2Z4d8e7Lv0gg1rny8wWNQYidtH5k//R/wUt81MdxTHh8EhLg7nFDe5
+         pyDpTy8R5lcBnOC7M3DtZQlDsq619mmAI6Hcn7+2Qy8fdFa8d0sxyk/8QZ/X9Lw4j+Bn
+         dEgvaPd/AzMiPecKi3MkhrGhx73vYwyhk9h0V35CGE/DI33j0+mlrkY3sSlyZhsbGiUI
+         MsRg==
+X-Gm-Message-State: AOJu0Yyk+cvGRXhM3Zd0NYaPmvhamcbCYBZJxpS8YV8ndFXcDQN/zq+i
+	3WkyJr1MBLO8re8ZAaqup/8ScDMpFVK6l5Lod6r0qG1vv9Y5+97wGBEiQV+85A==
+X-Gm-Gg: ASbGncvP+7dOMyUPK70R+eF2Ke3iZdUNGWc2bQR6L7+CeATeRE7lePbK6tsvAa6F3is
+	CgEMTX9bp88EPk+9CEsygBblQigcp4Ito02PkJGoqj12tp9r08sfMFBo80uwz2eDCCQLRaeCvwJ
+	TJZjpmM0ppailsMEbC8womrYefVMgzq49EW6VNkELUuEzqCV7nTJbrZ2tSeSX6Z6HhVrGvEHmm9
+	kJTATJhWU4lgkO+22s3+olWZX0cf6eZBWrCSC7yZQTH7+RqWg9w0lJ2Phs1wMOhoJi+W95iFpqy
+	UNxAQMEUxXiQyDSGkpCssEO+vt5Zxn4AEnlK3WxWv+QwbD6WaorIr+CRhdQad9NRqB19AKily5H
+	Znl612ypCYpc2FAut5sIArTsfOkbFA+EHlqmKS5EBst7232xlIkoDeDtN540=
+X-Google-Smtp-Source: AGHT+IFkmIQODRKUsG2jAEiID6auYxoF+/gGd67iZwP+6vqpV7IZI1afgFEP6WHsa2+QzYTFMzl0Ww==
+X-Received: by 2002:a05:600c:1c02:b0:46e:4e6d:79f4 with SMTP id 5b1f17b1804b1-47787085b43mr30335615e9.15.1762951575305;
+        Wed, 12 Nov 2025 04:46:15 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:2601])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e58501sm33846795e9.10.2025.11.12.04.46.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e58501sm33846795e9.10.2025.11.12.04.46.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 12 Nov 2025 04:46:14 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/7] io_uring: refactor rings_size nosqarray handling
-Date: Wed, 12 Nov 2025 12:45:53 +0000
-Message-ID: <71bf483aa99d49a33981cbf4b0488f62f37f4ee3.1762947814.git.asml.silence@gmail.com>
+Subject: [PATCH 2/7] io_uring: use size_add helpers for ring offsets
+Date: Wed, 12 Nov 2025 12:45:54 +0000
+Message-ID: <fb0ed7f3a2fea660a69b5d0ff26b3b089e20f7e6.1762947814.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1762947814.git.asml.silence@gmail.com>
 References: <cover.1762947814.git.asml.silence@gmail.com>
@@ -89,59 +89,58 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A preparation patch inversing the IORING_SETUP_NO_SQARRAY check, this
-way there is only one successful return path from the function, which
-will be helpful later.
+Use size_add / size_mul set of functions for rings_size() calculations.
+It's more consistent with struct_size(), and errors are preserved across
+a series of calculations, so intermediate result checks can be omitted.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ io_uring/io_uring.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 7e069d56b8a1..b37beb1cfefe 100644
+index b37beb1cfefe..57ebba8ba46c 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2761,7 +2761,9 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
- 			 unsigned int cq_entries, size_t *sq_offset)
- {
- 	struct io_rings *rings;
--	size_t off, sq_array_size;
-+	size_t off;
-+
-+	*sq_offset = SIZE_MAX;
+@@ -2765,13 +2765,6 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
  
- 	off = struct_size(rings, cqes, cq_entries);
- 	if (off == SIZE_MAX)
-@@ -2785,19 +2787,17 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
- 		return SIZE_MAX;
- #endif
+ 	*sq_offset = SIZE_MAX;
  
--	if (flags & IORING_SETUP_NO_SQARRAY) {
--		*sq_offset = SIZE_MAX;
--		return off;
+-	off = struct_size(rings, cqes, cq_entries);
+-	if (off == SIZE_MAX)
+-		return SIZE_MAX;
+-	if (flags & IORING_SETUP_CQE32) {
+-		if (check_shl_overflow(off, 1, &off))
+-			return SIZE_MAX;
 -	}
--
--	*sq_offset = off;
-+	if (!(flags & IORING_SETUP_NO_SQARRAY)) {
-+		size_t sq_array_size;
+ 	if (flags & IORING_SETUP_CQE_MIXED) {
+ 		if (cq_entries < 2)
+ 			return SIZE_MAX;
+@@ -2781,6 +2774,12 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
+ 			return SIZE_MAX;
+ 	}
  
--	sq_array_size = array_size(sizeof(u32), sq_entries);
--	if (sq_array_size == SIZE_MAX)
--		return SIZE_MAX;
-+		*sq_offset = off;
++	off = struct_size(rings, cqes, cq_entries);
++	if (flags & IORING_SETUP_CQE32)
++		off = size_mul(off, 2);
++	if (off == SIZE_MAX)
++		return SIZE_MAX;
++
+ #ifdef CONFIG_SMP
+ 	off = ALIGN(off, SMP_CACHE_BYTES);
+ 	if (off == 0)
+@@ -2793,9 +2792,8 @@ unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
+ 		*sq_offset = off;
  
--	if (check_add_overflow(off, sq_array_size, &off))
--		return SIZE_MAX;
-+		sq_array_size = array_size(sizeof(u32), sq_entries);
-+		if (sq_array_size == SIZE_MAX)
-+			return SIZE_MAX;
-+		if (check_add_overflow(off, sq_array_size, &off))
-+			return SIZE_MAX;
-+	}
+ 		sq_array_size = array_size(sizeof(u32), sq_entries);
+-		if (sq_array_size == SIZE_MAX)
+-			return SIZE_MAX;
+-		if (check_add_overflow(off, sq_array_size, &off))
++		off = size_add(off, sq_array_size);
++		if (off == SIZE_MAX)
+ 			return SIZE_MAX;
+ 	}
  
- 	return off;
- }
 -- 
 2.49.0
 

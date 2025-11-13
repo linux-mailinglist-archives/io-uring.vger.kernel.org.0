@@ -1,110 +1,104 @@
-Return-Path: <io-uring+bounces-10601-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10602-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F0EC57549
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 13:06:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C73C57576
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 13:12:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F253A7B8D
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 12:06:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9EDA534430E
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 12:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3793338F54;
-	Thu, 13 Nov 2025 12:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EC834CFCE;
+	Thu, 13 Nov 2025 12:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hrHHQWEp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nkXakMXt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hrHHQWEp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nkXakMXt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KivncAE3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+jy3llA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KivncAE3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+jy3llA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6180934D395
-	for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B3234AB09
+	for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 12:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035601; cv=none; b=WOzSJYsDXpKzt2nEXuXFJkiKp3cqDnDBu8ApBM+Vox+LZC35cZ1zsyTA1SLcBKyVb8ZMedrfF8FFQqAizWNcxDVK4CdJJ4nTptGi2fZgMiDTdjuu45AaxEGe6T2XEWkf42vlii1up25DH+DKhKciFfvxbmjVWN8n2lsRuozRJPo=
+	t=1763035793; cv=none; b=UprGkRbK6i0o/BGkXg6ibS9rskexjQQmum9MQdlzFOa6jTYRM+ME4RmkpDC8xwHalwmCUNrymG0NQKSM0Dg9IgWZ5dLVYw+2q4sskFxNGxmdzt2DEpiaQLWiO+2wCsbVV185IvhwnIs+FafAlZd7DBVtTk77uXy61OY2STcdGP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035601; c=relaxed/simple;
-	bh=yrvDiDKzpFYSwwEOjEa2jRDwy5YUGiYDzkG7yPgzIBI=;
+	s=arc-20240116; t=1763035793; c=relaxed/simple;
+	bh=vnS5alNDilSOTFfRwEDdWzskFA9OhfS3UnnUAzOExcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqAvXjZsWCgUEHFaIJF5GarYu/M/21rQxE8WR8TB3FSuKqLNQCgnSPxBs9agdQkQw026HoVZ78c1d79noF1H09zFJMePsAIRvIpdE93fUj9Q28nJvSnMqRW39n9gQy4aSWMPKyiSTKRh3BgABNl7oR0f1DQIyvsFr+Ym9RpT4kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hrHHQWEp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nkXakMXt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hrHHQWEp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nkXakMXt; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJcEQwegeOyeux+AV0Hk2ofHIH1PugPOC7fgguTMH8yJlsarALEQUQIc8tuDjXkbkwNXATGQ7ssFmrY5Bh1AtoLeTj1v5whYcMWBZwhLgtmBBmwaFrGgjRDJc0t1KZmvKOe1eHv7KEljero4e1uO2VY2T2UQ9ztIrwwnd5jeW8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KivncAE3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+jy3llA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KivncAE3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+jy3llA; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8C53F1F791;
-	Thu, 13 Nov 2025 12:06:38 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9936221244;
+	Thu, 13 Nov 2025 12:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763035598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1763035789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XxtGqNT9dhEtTqLxGydDggWgePLuKL0ln40czHWmrDY=;
-	b=hrHHQWEpVmvsUN5Li7eb2fPV7DCyf9GIDv0ZgTSU9f2fcUVb7PwYjAsEpHI24bOF7czucT
-	oVw6ybzIwTfJVNKwQ34Lu2HmpbEM6zaIsDa9+asf3kRSubBpLoWR5kZsnRq2C8VG8BZxDA
-	WuG4SeWjHhe/6xnttyCwBk565+ZvpZU=
+	bh=ZHCpZkXa/VrMhpscylYUFvAzZJtXIi3fc6XVT5dMQS0=;
+	b=KivncAE3Xxr9+7gllKkyAiDIJRo57GrL2NqKFe0W32Y4iTcW6PSWNOtaycehYCTCJnE865
+	cJnMoA4I/8auGwQ4Y9eMOKEVOS+Jkt7cYTp4E8S/P0cIs/elqFCPokx87KRcfnBT9otCoq
+	rg6LbpbB3JUarFvDTkkkJz3E0TxANaI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763035598;
+	s=susede2_ed25519; t=1763035789;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XxtGqNT9dhEtTqLxGydDggWgePLuKL0ln40czHWmrDY=;
-	b=nkXakMXtMygpkBjVfjmVjRtyIf1c6+FPT0l1K6EPikR4sxe5YzLEsO+cSI7M9l7xyllbwj
-	1fF+eDwPpIPbK1Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hrHHQWEp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nkXakMXt
+	bh=ZHCpZkXa/VrMhpscylYUFvAzZJtXIi3fc6XVT5dMQS0=;
+	b=C+jy3llADAkW5T+86cUfebzyyQj+96HwcFEahTr3pBVKCn743IytNj4CMmJx3s2PHV0Gsz
+	aInE2QRiXneAugDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763035598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1763035789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XxtGqNT9dhEtTqLxGydDggWgePLuKL0ln40czHWmrDY=;
-	b=hrHHQWEpVmvsUN5Li7eb2fPV7DCyf9GIDv0ZgTSU9f2fcUVb7PwYjAsEpHI24bOF7czucT
-	oVw6ybzIwTfJVNKwQ34Lu2HmpbEM6zaIsDa9+asf3kRSubBpLoWR5kZsnRq2C8VG8BZxDA
-	WuG4SeWjHhe/6xnttyCwBk565+ZvpZU=
+	bh=ZHCpZkXa/VrMhpscylYUFvAzZJtXIi3fc6XVT5dMQS0=;
+	b=KivncAE3Xxr9+7gllKkyAiDIJRo57GrL2NqKFe0W32Y4iTcW6PSWNOtaycehYCTCJnE865
+	cJnMoA4I/8auGwQ4Y9eMOKEVOS+Jkt7cYTp4E8S/P0cIs/elqFCPokx87KRcfnBT9otCoq
+	rg6LbpbB3JUarFvDTkkkJz3E0TxANaI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763035598;
+	s=susede2_ed25519; t=1763035789;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XxtGqNT9dhEtTqLxGydDggWgePLuKL0ln40czHWmrDY=;
-	b=nkXakMXtMygpkBjVfjmVjRtyIf1c6+FPT0l1K6EPikR4sxe5YzLEsO+cSI7M9l7xyllbwj
-	1fF+eDwPpIPbK1Bw==
+	bh=ZHCpZkXa/VrMhpscylYUFvAzZJtXIi3fc6XVT5dMQS0=;
+	b=C+jy3llADAkW5T+86cUfebzyyQj+96HwcFEahTr3pBVKCn743IytNj4CMmJx3s2PHV0Gsz
+	aInE2QRiXneAugDg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B25A3EA61;
-	Thu, 13 Nov 2025 12:06:38 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BB873EA61;
+	Thu, 13 Nov 2025 12:09:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PkIMHs7JFWkyFAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 12:06:38 +0000
+	id lA0aIo3KFWmwFwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 12:09:49 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3643AA0976; Thu, 13 Nov 2025 13:06:34 +0100 (CET)
-Date: Thu, 13 Nov 2025 13:06:34 +0100
+	id 43BFAA0976; Thu, 13 Nov 2025 13:09:45 +0100 (CET)
+Date: Thu, 13 Nov 2025 13:09:45 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, 
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
 	Jens Axboe <axboe@kernel.dk>, Avi Kivity <avi@scylladb.com>, 
 	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
 	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/5] iomap: support write completions from interrupt
- context
-Message-ID: <ewzcc5tots6ughnbqlqmvje4ex2eb5tug2mapzvcf4zstb7fxn@qruu4xs4nblt>
+Subject: Re: [PATCH 5/5] iomap: invert the polarity of IOMAP_DIO_INLINE_COMP
+Message-ID: <twqkem75v5gotkt4jidhjvgrm7332chuwxh2zfh27obb2tqhmx@h4fqfffxdxg2>
 References: <20251112072214.844816-1-hch@lst.de>
- <20251112072214.844816-5-hch@lst.de>
- <nujtqnweb7jfbyk4ov3a7z5tdtl24xljntzbpecgv6l7aoeytd@nkxsilt6w7d3>
- <20251113065055.GA29641@lst.de>
- <x76swsaqkkyko6oyjch2imsbqh3q3dx3uqqofjnktzbzfdkbhe@jog777bckvu6>
- <20251113100630.GB10056@lst.de>
+ <20251112072214.844816-6-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -113,78 +107,166 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251113100630.GB10056@lst.de>
+In-Reply-To: <20251112072214.844816-6-hch@lst.de>
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8C53F1F791
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Spam-Score: -4.01
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Thu 13-11-25 11:06:30, Christoph Hellwig wrote:
-> On Thu, Nov 13, 2025 at 10:54:46AM +0100, Jan Kara wrote:
-> > > You mean drop the common helper?  How would that be better and less
-> > > fragile?   Note that I care strongly, but I don't really see the point.
-> > 
-> > Sorry I was a bit terse. What I meant is that the two users of
-> > iomap_dio_is_overwrite() actually care about different things and that
-> > results in that function having a bit odd semantics IMHO. The first user
-> > wants to figure out whether calling generic_write_sync() is needed upon io
-> > completion to make data persistent (crash safe).
+On Wed 12-11-25 08:21:29, Christoph Hellwig wrote:
+> Replace IOMAP_DIO_INLINE_COMP with a flag to indicate that the
+> completion should be offloaded.  This removes a tiny bit of boilerplate
+> code, but more importantly just makes the code easier to follow as this
+> new flag gets set most of the time and only cleared in one place, while
+> it was the inverse for the old version.
 > 
-> Yes.
-> 
-> > The second user cares
-> > whether we need to do metadata modifications upon io completion to make data
-> > visible at all.
-> 
-> Not quite.  It cares if either generic_write_sync needs be called,
-> or we need a metadata modification, because both require the workqueue.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I agree but generic_write_sync() calling is handled by 
-
-+       else if (dio->flags & IOMAP_DIO_NEED_SYNC)
-+               dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-
-in your patch. So I assumed (maybe wrongly) that the second call to
-iomap_dio_is_overwrite() in iomap_dio_bio_iter() is only about detecting a
-need of metadata modification. And my argument is that the patch could use
-IOMAP_DIO_UNWRITTEN | IOMAP_DIO_COW the same way as it uses
-IOMAP_DIO_NEED_SYNC instead of calling iomap_dio_is_overwrite().
-
-But if you don't like that I don't think it makes a huge difference and the
-code is correct as is so feel free to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/iomap/direct-io.c | 33 ++++++++++++++-------------------
+>  1 file changed, 14 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index df313232f422..80ec3ff4e5dd 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -17,7 +17,7 @@
+>   * iomap.h:
+>   */
+>  #define IOMAP_DIO_NO_INVALIDATE	(1U << 26)
+> -#define IOMAP_DIO_INLINE_COMP	(1U << 27)
+> +#define IOMAP_DIO_COMP_WORK	(1U << 27)
+>  #define IOMAP_DIO_WRITE_THROUGH	(1U << 28)
+>  #define IOMAP_DIO_NEED_SYNC	(1U << 29)
+>  #define IOMAP_DIO_WRITE		(1U << 30)
+> @@ -182,7 +182,7 @@ static void iomap_dio_done(struct iomap_dio *dio)
+>  	 * for error handling.
+>  	 */
+>  	if (dio->error)
+> -		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> +		dio->flags |= IOMAP_DIO_COMP_WORK;
+>  
+>  	/*
+>  	 * Never invalidate pages from this context to avoid deadlocks with
+> @@ -192,17 +192,14 @@ static void iomap_dio_done(struct iomap_dio *dio)
+>  	 * right between this check and the actual completion.
+>  	 */
+>  	if ((dio->flags & IOMAP_DIO_WRITE) &&
+> -	    (dio->flags & IOMAP_DIO_INLINE_COMP)) {
+> +	    !(dio->flags & IOMAP_DIO_COMP_WORK)) {
+>  		if (dio->iocb->ki_filp->f_mapping->nrpages)
+> -			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> +			dio->flags |= IOMAP_DIO_COMP_WORK;
+>  		else
+>  			dio->flags |= IOMAP_DIO_NO_INVALIDATE;
+>  	}
+>  
+> -	if (dio->flags & IOMAP_DIO_INLINE_COMP) {
+> -		WRITE_ONCE(iocb->private, NULL);
+> -		iomap_dio_complete_work(&dio->aio.work);
+> -	} else {
+> +	if (dio->flags & IOMAP_DIO_COMP_WORK) {
+>  		struct inode *inode = file_inode(iocb->ki_filp);
+>  
+>  		/*
+> @@ -213,7 +210,11 @@ static void iomap_dio_done(struct iomap_dio *dio)
+>  		 */
+>  		INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
+>  		queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
+> +		return;
+>  	}
+> +
+> +	WRITE_ONCE(iocb->private, NULL);
+> +	iomap_dio_complete_work(&dio->aio.work);
+>  }
+>  
+>  void iomap_dio_bio_end_io(struct bio *bio)
+> @@ -251,7 +252,7 @@ u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend)
+>  		 * that we are already called from the ioend completion
+>  		 * workqueue.
+>  		 */
+> -		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> +		dio->flags &= ~IOMAP_DIO_COMP_WORK;
+>  		iomap_dio_done(dio);
+>  	}
+>  
+> @@ -383,7 +384,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		 * or extend the file size.
+>  		 */
+>  		if (!iomap_dio_is_overwrite(iomap))
+> -			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> +			dio->flags |= IOMAP_DIO_COMP_WORK;
+>  	} else {
+>  		bio_opf |= REQ_OP_READ;
+>  	}
+> @@ -404,7 +405,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	 * ones we set for inline and deferred completions. If none of those
+>  	 * are available for this IO, clear the polled flag.
+>  	 */
+> -	if (!(dio->flags & IOMAP_DIO_INLINE_COMP))
+> +	if (dio->flags & IOMAP_DIO_COMP_WORK)
+>  		dio->iocb->ki_flags &= ~IOCB_HIPRI;
+>  
+>  	if (need_zeroout) {
+> @@ -643,12 +644,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
+>  		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
+>  
+> -	/*
+> -	 * Try to complete inline if we can.  For reads this is always possible,
+> -	 * but for writes we'll end up clearing this more often than not.
+> -	 */
+> -	dio->flags |= IOMAP_DIO_INLINE_COMP;
+> -
+>  	if (iov_iter_rw(iter) == READ) {
+>  		if (iomi.pos >= dio->i_size)
+>  			goto out_free_dio;
+> @@ -695,7 +690,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		 * Inode size updates must to happen from process context.
+>  		 */
+>  		if (iomi.pos + iomi.len > dio->i_size)
+> -			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> +			dio->flags |= IOMAP_DIO_COMP_WORK;
+>  
+>  		/*
+>  		 * Try to invalidate cache pages for the range we are writing.
+> @@ -776,7 +771,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (dio->flags & IOMAP_DIO_WRITE_THROUGH)
+>  		dio->flags &= ~IOMAP_DIO_NEED_SYNC;
+>  	else if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> -		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> +		dio->flags |= IOMAP_DIO_COMP_WORK;
+>  
+>  	/*
+>  	 * We are about to drop our additional submission reference, which
+> -- 
+> 2.47.3
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR

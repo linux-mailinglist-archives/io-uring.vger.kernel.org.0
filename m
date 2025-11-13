@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-10593-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10594-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894FBC574E3
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 13:00:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0EAC574FE
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 13:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DE1C4E5654
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 12:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08853B7835
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A823396E4;
-	Thu, 13 Nov 2025 12:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C3F34EF0A;
+	Thu, 13 Nov 2025 12:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHykL+dr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QS16h5oz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4059634DCEC
-	for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 12:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00BA34A790
+	for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 12:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035206; cv=none; b=oIP47K/BOrqEtzuATHOHHhPT8dL95TWJ0ocYcQSn+sQ63qPD6Pl5oivjOCKB1BcLX/Pc9Ly1AFdQX7KKai/y3hf5QbU6bJ3b+bo95TMy29cmdDhF0dQ0jnpIKsgLo59eswllqEqtehVGzp3yrnHXlvzMWbUWWLECTT/ddxeK9Uo=
+	t=1763035210; cv=none; b=QYTTXuTqho3nxb+SQcfpyAht6pj+nDqGIze7BgmSy6MWHcbjj1Ujh/cU5sWAkgShVfpxDCkXh06WEIIQ6Tq6BSSkScjE8/3TfV7RMF4I20+IxRIkSlSEE7lQGe0xt8d5VPlGCoDov7MZMcaQCpC+unKYqZOMea/oA4wujKdpbzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035206; c=relaxed/simple;
-	bh=pIveeSzj6i0AGp1kNzA0NDr1gOHhtDQMZMyw6zynZQY=;
+	s=arc-20240116; t=1763035210; c=relaxed/simple;
+	bh=LClQ4VKSgGqRmpKA8muL2DWk6OhWvtI5zTQeCjFWmQI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EtMh4ysqrjf7xBY/BcEPfOSF3shYxgt8vPN4qu43wc1AJwOuC0cm0ukoWOtKk/I/V5+NnNlBS/5iiKfRGG0iaiUZty7PIqt/Sd64p2OzuH6OOCVmIHFzrGBalirvSoCHDsPDLwbe8+wy2ux+Ohod4BI4f2ZOY8nBvddryDK5ZHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHykL+dr; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=B51ZIREKIzzZFB+vI1/dmFYYlDvvzEfeuBxVGT8QqY5fed9fagD/mBfpwaG2chOMUZFBZKVW7skhcdr2hgogBYGIV4Zvp/axqfhwc64pitCL7Moacn3+5+owu11Ndj6BmNwWs+djqpdoMtvsQDjPg2hADO3w9Ny3hXAMWYtC0Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QS16h5oz; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4327925e9.2
-        for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 04:00:04 -0800 (PST)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42b2e9ac45aso495827f8f.0
+        for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 04:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763035203; x=1763640003; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763035204; x=1763640004; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Aua+W08t/byOMJPjPNanlN6jE5TAgPSaiLXUlwOzmHk=;
-        b=dHykL+drxj3NXG9NW7XfZOiPGQlXPomF2KId708Zy6vNtYcXGBM0zoBEu9eYSLMP7F
-         T4CRG/0rQKi64z3JgbW6Y0erNMV0MTGv/tRsAaLmmctfkmLwmTKkPQwGDcu++M0P8q5e
-         vU9/alQjpJ0iHFSZ944WraI4mtfjfw/51Inl29bXfH3/Y8CdEUWvF5WHwKz+a3iXaHof
-         BXnLXC/YuNyeaHwN7LOOkT0McIHrmIqqf2hooC7T7nm67ItOomfXt/eJEuLPkoaZtks9
-         wrGg6AIr34VvhLu9EdASc4Ghak0NS+yg6IazdnDWFlAtoWOKu6Kaq5QJyLGH4d87wVA/
-         cBUw==
+        bh=h3KZQy0f9Z9laK13Rj/5BsEUG3RefPiUTImKCIeRBME=;
+        b=QS16h5ozTuCt0h2/yQ7uuKDCc1Gb4op3O1viobgHjfdFl7c1JKdNCb2IH2OMYtxIV6
+         yfhj1CwOXhgHiA1gTzaU2OEIDp80bdj7/3eg1cWmQ6PBem3SZjxXcoK3civNDqUrfMLH
+         oQsXsvzHn19CFug/VwGdFJSZHyIbM1LEva4AHNu3rQAG3or8XLrOezCO4w/fHv5OjY+w
+         cVGT3G2u3sOdw0njQsjTX+YJXF8kCEi/09c3EwzjzxaPvVhFtlDTR8nPaE5NT6Ua4bcN
+         oh/XqE7QYjhd2eDu0gn4YmtlTBOCB9euy8z1xyTwsi0Hpsag2zrp5FLmO+QM41683YmW
+         rpKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763035203; x=1763640003;
+        d=1e100.net; s=20230601; t=1763035204; x=1763640004;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Aua+W08t/byOMJPjPNanlN6jE5TAgPSaiLXUlwOzmHk=;
-        b=rp3ZeuuOYAWELc04rYacVeJRZq/4oFfROXhVoAa4qyWkObclK+1gy8p5s/7XyOD2o3
-         Jo58KianONCE6LLWd/Gia/sVgUr2MhspCHVx7dXglQPuAqVx6CPy9aM8f3T71XVNikM1
-         1WcZBU+UQkhA5ZFtJGbobP98tVJR8e44j3H/5xISUUNfCfB20LDPl0ERgQLkGyY7qrgG
-         c3LhQXSokzDdXS6Bi0rPFeBugi9j4gELn0E4ZztcQA732zuleciCzwN1W1kmuyZskHo4
-         ZGszThZ/4aUntkRWdhJ2NXBlfwteTBhFpmQDEmxNuGgN6ykY2xhiJpiJJ+LKlCyhy2Pm
-         3rsQ==
-X-Gm-Message-State: AOJu0YzGD+Aa4J61E85DAnObqpyVAbfsWDzjRlJ8JN2dELXuQVsxKg8i
-	30/cLbPF/x9ugqrWA7a0UcnsCbfIpBNbe3dn5lBb0j67P8PQUqau/8Qhd+C3Bw==
-X-Gm-Gg: ASbGnctuIJ2iSVhkzMkG+OcH5DSoXmCz8a370OhpC7iG/mr6kDzJ2oMApGK6ciAdOnN
-	9XjBjq6pws6YCIoapasY8R42VmjOkSh+kVKnNk9tX9Ipcu0RmwzoW2gczAii3mj+CnxXdAh+NFu
-	3+/Fiksx9dd40ObtaupgAk9WAZkmN4xTSIBKcGGNuaQQQpXiSMPBDYMhYQOqiOPFeb4n43fxozP
-	PvmRhRxrDczrHVw5sh6rYNVKd6tbFG7vkVuGnjESAK1r7woUFmvWbbFqAn1K4ow9iI3Ev/Sy3iO
-	qGUAzonDzpjNMXsTvKgk1gp66K/yMMXTNFpOh9IvKCwzQCHwQs9Qskwnax2ITM89sHtfS7/FWup
-	hbLj1Xzjlp4iWvdf5Ql0CdKls8rS5EJDGlAhzrvnx+pGe1Oz5W3NMqjmUKuO6K2yFF1x6Pg==
-X-Google-Smtp-Source: AGHT+IHnh450rSZrRsHtm+2fGnvU4l+JfvHOq1cwC49twD59D87wME0J4R2fbl9kNoVWl4OD2i/BYQ==
-X-Received: by 2002:a05:600c:45d4:b0:46f:d682:3c3d with SMTP id 5b1f17b1804b1-4778707cabdmr53188235e9.13.1763035203021;
-        Thu, 13 Nov 2025 04:00:03 -0800 (PST)
+        bh=h3KZQy0f9Z9laK13Rj/5BsEUG3RefPiUTImKCIeRBME=;
+        b=IZvvXtibrlGCe2kO/9LfdAymCKBx05n+lPvfx/yKTMyCFDys8+k3QZ1L1aO0MtP5Zp
+         n80ipRzrSl8AZs+7jIqwjJcQd6XEHd5WmnFMXx00QOu9z6W8SQyGjJzrwb1mrV8NLu7O
+         ol3RRra29yUEgtCZL8Sd2veA2NjYCPASB8FdJ6yWF+37zLxQ6UAFhw7Ypkab5aCw/b95
+         CbzGI6/ds3ZERPlzYSbqLTJ29vjbIxU4tCLP+3IdJpa9TVsGoJThujL+HRc/DB2yCk6q
+         ZqJ3EjfPsYOJzW9qDN6nslpzGH9tu889j6q+29cbAmTyM663S0kyN5FKmStjtVOsY3Ls
+         O+DA==
+X-Gm-Message-State: AOJu0YzZpMbAsd2rwwMEYmXcinOjk9yQmTEHfS2raX4/fsL8eJFOl4h0
+	nRxYveF5VuH1CRralxJytowJ7rcjBvlJqBwUaSHe/JBWQl5uvQp/+7KvhiBQNg==
+X-Gm-Gg: ASbGncs9SBv4ajJsX38wuWkHw/mSFCCFDvZogiMGuUgRFJ0pOxTiZZ2k4IAu4xAwgkE
+	399SOFYDCb19CQHlH2KB3/3D24jjIv/7tMmiaPPWo8iD2uBd6IpkXhUStH0FPcb1KMxtiznkwur
+	5lJyx8GCTF6RAD/tO9B1L0N4iodlmMvnSYAfyJlOKHmBA7mTSOe77XsgtSLEjfSMCks03Ove0Yd
+	KjoIY1WCJ0bIniVfN5OQvB+rb03eOMOsjfm8AMMrvA4a3PgtEjl+iJUWetCHz/2t8aZGTYCenLm
+	OSWmUwtwpV0Gog5z1Rgibq+guj7k47xE/FfFhcFCahalOUgDsj9ANGxNfozJWVBm6efEQtsY6V+
+	6FiuSuNiKlWcFMcB+1TAq2qGzoljeKy4At8YOtojNg1CPruhFyJ/J50LEEfHdtf8Gh29ggQ==
+X-Google-Smtp-Source: AGHT+IFbeftWCviGXNIemZTF2DmXPVZfg2TdG3b62DkOa2qU3mmvsfwD7ETwzpKo0Zpbud+N7iiXQw==
+X-Received: by 2002:a5d:5d12:0:b0:42b:3083:5588 with SMTP id ffacd0b85a97d-42b4bdb0570mr6602052f8f.39.1763035204238;
+        Thu, 13 Nov 2025 04:00:04 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:6794])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e85e6fsm3686816f8f.18.2025.11.13.04.00.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e85e6fsm3686816f8f.18.2025.11.13.04.00.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 04:00:02 -0800 (PST)
+        Thu, 13 Nov 2025 04:00:03 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
@@ -81,9 +81,9 @@ Cc: asml.silence@gmail.com,
 	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
 	Andrii Nakryiko <andrii@kernel.org>,
 	ming.lei@redhat.com
-Subject: [PATCH v3 03/10] io_uring: export __io_run_local_work
-Date: Thu, 13 Nov 2025 11:59:40 +0000
-Message-ID: <d8eac55be0091ab4b0bc786e17199706de272aa3.1763031077.git.asml.silence@gmail.com>
+Subject: [PATCH v3 04/10] io_uring: extract waiting parameters into a struct
+Date: Thu, 13 Nov 2025 11:59:41 +0000
+Message-ID: <5343b1306ad898181477470e0ce467bcca329262.1763031077.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1763031077.git.asml.silence@gmail.com>
 References: <cover.1763031077.git.asml.silence@gmail.com>
@@ -95,42 +95,147 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__io_run_local_work() will be used later by bpf code, export it.
+Add a structure that keeps arguments needed for the current round of
+waiting. Namely, the number of CQEs to wait for in a form of CQ tail
+index and timeout.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 4 ++--
- io_uring/io_uring.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 22 ++++++++++++----------
+ io_uring/io_uring.h | 14 +++++++++++---
+ io_uring/napi.c     |  4 ++--
+ 3 files changed, 25 insertions(+), 15 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index b26c2a0a0295..4139cfc84221 100644
+index 4139cfc84221..29f34fbcbb01 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1350,8 +1350,8 @@ static int __io_run_local_work_loop(struct llist_node **node,
- 	return ret;
- }
+@@ -2508,8 +2508,8 @@ static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+ 	struct io_ring_ctx *ctx = iowq->ctx;
  
--static int __io_run_local_work(struct io_ring_ctx *ctx, io_tw_token_t tw,
--			       int min_events, int max_events)
-+int __io_run_local_work(struct io_ring_ctx *ctx, io_tw_token_t tw,
-+			int min_events, int max_events)
- {
- 	struct llist_node *node;
- 	unsigned int loops = 0;
+ 	/* no general timeout, or shorter (or equal), we are done */
+-	if (iowq->timeout == KTIME_MAX ||
+-	    ktime_compare(iowq->min_timeout, iowq->timeout) >= 0)
++	if (iowq->ls.timeout == KTIME_MAX ||
++	    ktime_compare(iowq->min_timeout, iowq->ls.timeout) >= 0)
+ 		goto out_wake;
+ 	/* work we may need to run, wake function will see if we need to wake */
+ 	if (io_has_work(ctx))
+@@ -2535,7 +2535,7 @@ static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+ 	}
+ 
+ 	hrtimer_update_function(&iowq->t, io_cqring_timer_wakeup);
+-	hrtimer_set_expires(timer, iowq->timeout);
++	hrtimer_set_expires(timer, iowq->ls.timeout);
+ 	return HRTIMER_RESTART;
+ out_wake:
+ 	return io_cqring_timer_wakeup(timer);
+@@ -2551,7 +2551,7 @@ static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
+ 		hrtimer_setup_on_stack(&iowq->t, io_cqring_min_timer_wakeup, clock_id,
+ 				       HRTIMER_MODE_ABS);
+ 	} else {
+-		timeout = iowq->timeout;
++		timeout = iowq->ls.timeout;
+ 		hrtimer_setup_on_stack(&iowq->t, io_cqring_timer_wakeup, clock_id,
+ 				       HRTIMER_MODE_ABS);
+ 	}
+@@ -2592,7 +2592,7 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	 */
+ 	if (ext_arg->iowait && current_pending_io())
+ 		current->in_iowait = 1;
+-	if (iowq->timeout != KTIME_MAX || iowq->min_timeout)
++	if (iowq->ls.timeout != KTIME_MAX || iowq->min_timeout)
+ 		ret = io_cqring_schedule_timeout(iowq, ctx->clockid, start_time);
+ 	else
+ 		schedule();
+@@ -2650,18 +2650,20 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 	iowq.wqe.private = current;
+ 	INIT_LIST_HEAD(&iowq.wqe.entry);
+ 	iowq.ctx = ctx;
+-	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
++	iowq.ls.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
+ 	iowq.cq_min_tail = READ_ONCE(ctx->rings->cq.tail);
+ 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
+ 	iowq.hit_timeout = 0;
+ 	iowq.min_timeout = ext_arg->min_time;
+-	iowq.timeout = KTIME_MAX;
++	iowq.ls.timeout = KTIME_MAX;
+ 	start_time = io_get_time(ctx);
+ 
+ 	if (ext_arg->ts_set) {
+-		iowq.timeout = timespec64_to_ktime(ext_arg->ts);
++		ktime_t timeout = timespec64_to_ktime(ext_arg->ts);
++
+ 		if (!(flags & IORING_ENTER_ABS_TIMER))
+-			iowq.timeout = ktime_add(iowq.timeout, start_time);
++			timeout = ktime_add(timeout, start_time);
++		iowq.ls.timeout = timeout;
+ 	}
+ 
+ 	if (ext_arg->sig) {
+@@ -2686,7 +2688,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 
+ 		/* if min timeout has been hit, don't reset wait count */
+ 		if (!iowq.hit_timeout)
+-			nr_wait = (int) iowq.cq_tail -
++			nr_wait = (int) iowq.ls.cq_tail -
+ 					READ_ONCE(ctx->rings->cq.tail);
+ 		else
+ 			nr_wait = 1;
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 53bc3ef14f9e..a4474eec8a13 100644
+index a4474eec8a13..caff186bc377 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -140,6 +140,8 @@ int io_uring_fill_params(unsigned entries, struct io_uring_params *p);
- bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32);
- int io_run_task_work_sig(struct io_ring_ctx *ctx);
- int io_run_local_work(struct io_ring_ctx *ctx, int min_events, int max_events);
-+int __io_run_local_work(struct io_ring_ctx *ctx, io_tw_token_t tw,
-+			int min_events, int max_events);
- void io_req_defer_failed(struct io_kiocb *req, s32 res);
- bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
- void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
+@@ -101,15 +101,23 @@ struct io_defer_entry {
+ 	struct io_kiocb		*req;
+ };
+ 
++struct iou_loop_state {
++	/*
++	 * The CQE index to wait for. Only serves as a hint and can still be
++	 * woken up earlier.
++	 */
++	__u32		cq_tail;
++	ktime_t		timeout;
++};
++
+ struct io_wait_queue {
++	struct iou_loop_state ls;
+ 	struct wait_queue_entry wqe;
+ 	struct io_ring_ctx *ctx;
+-	unsigned cq_tail;
+ 	unsigned cq_min_tail;
+ 	unsigned nr_timeouts;
+ 	int hit_timeout;
+ 	ktime_t min_timeout;
+-	ktime_t timeout;
+ 	struct hrtimer t;
+ 
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+@@ -121,7 +129,7 @@ struct io_wait_queue {
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
+ {
+ 	struct io_ring_ctx *ctx = iowq->ctx;
+-	int dist = READ_ONCE(ctx->rings->cq.tail) - (int) iowq->cq_tail;
++	int dist = READ_ONCE(ctx->rings->cq.tail) - (int) iowq->ls.cq_tail;
+ 
+ 	/*
+ 	 * Wake up if we have enough events, or if a timeout occurred since we
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 4a10de03e426..b804f8fdd883 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -360,8 +360,8 @@ void __io_napi_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq)
+ 		return;
+ 
+ 	iowq->napi_busy_poll_dt = READ_ONCE(ctx->napi_busy_poll_dt);
+-	if (iowq->timeout != KTIME_MAX) {
+-		ktime_t dt = ktime_sub(iowq->timeout, io_get_time(ctx));
++	if (iowq->ls.timeout != KTIME_MAX) {
++		ktime_t dt = ktime_sub(iowq->ls.timeout, io_get_time(ctx));
+ 
+ 		iowq->napi_busy_poll_dt = min_t(u64, iowq->napi_busy_poll_dt, dt);
+ 	}
 -- 
 2.49.0
 

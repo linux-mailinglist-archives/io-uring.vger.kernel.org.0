@@ -1,53 +1,53 @@
-Return-Path: <io-uring+bounces-10569-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10570-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE12C56E29
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 11:36:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB486C56F64
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 11:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E6073549B2
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 10:33:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA7B73429F7
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 10:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC4932ED31;
-	Thu, 13 Nov 2025 10:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE516330D24;
+	Thu, 13 Nov 2025 10:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="dS0ybgZm"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="CqVnzDbL"
 X-Original-To: io-uring@vger.kernel.org
 Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C849C2EA174;
-	Thu, 13 Nov 2025 10:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DC233372B;
+	Thu, 13 Nov 2025 10:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763029988; cv=none; b=TVlC5ZRQ6lidXeGYxxLRs/38jUU9ITAzwCRb3g5tyqX3zcLhlG0TFDSYrxyGUYW7GHrcb4qDARYldE0urzATrvqj+7SImJ8y9P4Pt+Wa8b4l0SqPOLHycOPoQ5VA4WUlbpn0BnVPy3kVNS5skNTnKCLmuGHSxz/IWNo9iOrrVW0=
+	t=1763030578; cv=none; b=ZH4yWrLOQ35Giu+DqxjLOEvoS1K5Uu1Es0sLotsMrwWnj0g8ilkVjHM0xLCHXMFOJkqLs2snZj5y+CinJxOUyYwesq3RnwKKgCbsdgX46S8sSIQzRs9ymBzZlCSgOP600pbc/loeS3wA+xTUAmkmCjsHZB0us6a2vdJo7EQQyzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763029988; c=relaxed/simple;
-	bh=EUq5b0ceA384HoAYJcqr3tX9lyN6QpMFb8Oj5B5T+ho=;
+	s=arc-20240116; t=1763030578; c=relaxed/simple;
+	bh=whj3n/T6PmORVK4JkoSl9VDuMOzvpKT7dQnUXWT4W6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u3A+eiVUqS6lPsbbP9Xg4S+9muYETNjvPQiNuTEvUm/zzGMzWIORSopHrbMRTkxHLi0daW02VJaCQViaTBWd+Gu7G2Mxa2Cl4krV5YklhaZJWXBKqqaXeMG7SnA5fjct5t4T72eyAthnmiw71XT+jhwKdGLWKe9xbuBS/BcFTVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=dS0ybgZm; arc=none smtp.client-ip=144.76.82.148
+	 In-Reply-To:Content-Type; b=La5H5mwSL6f6o+EVTZKf3WCbANlDzn88QXDBu3JjReB95OHTIYu6GOkwia8t9Ovf0528mZrOfDGabnfp04Ef0ZCWPrmGaXNpHNg3yv/qMcXeePIAfQx9VDCda0K6+VXgeH7AV+/J2PvOq1X2qT+ZHpPl4y7+JKEW0m2zWuj6idQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=CqVnzDbL; arc=none smtp.client-ip=144.76.82.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
 	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=kHQcfq9vg4tvLXnucSzKVW15QIbwB3IQmGxst8gx5PQ=; b=dS0ybgZm1rTRKJIYj6rQPJ3avt
-	dDFzH1IGQ1TlJJbfWLmGNQQRjulTLDtahuEpfOOf8pxQDOLnkHQMNZr9SkONFaZHorvH5ntbeXh2o
-	AC7TQwns+CFUfta/BMUJGjHfF6hXwftfKmBIDur7PI4UYw9SbQpnjuHxnPDkURg0DpLVUTKu6m/Hg
-	loVbQiE988UupfL7weh3YgCmgNjFpNdDtzUUwfXWmD6wo91vvOMx0HyscRNnDqbzz1gIXrjmmFspy
-	ZyXElWEpQzjgyq3G2kj0HxJmDzjro6sQzb/UXXWvDEsJF5NZGS8SbQsqbdDxdWg+YPsk7ANwnghcG
-	nGV23DK3cZNcLOvWsKqmk7TkA1rR9j5uw43uHkIMrwb9uuyz5U3QI0x4ex7EpxxhaFXe3SXC++stl
-	Q/D1I+Ia+ysdrkBjKaHH/srNfP/zJGoBH5qgxDVWFmYvxqQ5KjF037PXzENi6N8FBRMyn5Duqsq3R
-	4yNRTs3Bgko9s0oL4QZmTD17;
+	bh=f9OxqO8l4QrhVxX8ILnh3s0jiplaB1n16XfpK4pLU4Q=; b=CqVnzDbLyEUvbB/oQl8ruP/pmC
+	D4m0lRwx4V6Xv6YMuUHJHGxjXgl03q2OJ9M5Kx46giMn7P2FPkks9fQdUyjtOXDJfBF91pwszyrHh
+	asLDYHKTgnKfiJ4p6TupJmGT2qd8HqeeKOcLYmFXGueIcCcgAmWph1sTpnPBoC5t14RCAqR4LiKAy
+	6kmOPH+mjW6JdczOT/+YCNROJMAd2fJrZh6UdksUwEQbZ6OswZj9UzUpeJQwvJFw1vZM5hNa5aADM
+	NfKJMUm/oYtdOk+HS7fBuTSy8bOy9g45Z5Nhb14qgsD/I1dDtxEZipE6ztUruTHnUh/41ouVt8w3Y
+	xJmfO490mWavSz8iF0Sf/9EZZRdNyI/jiKDYAZCFLQbVMJAMi3EqNk3v6gUCmIPmYhPY65JkYhUxj
+	KAI+113ijOEs1wJ/6gjHInn4GFbZqwzYtibpc0sLgH8NlqU8rf09IWJylYbGgjl2RB+nZn6Uf/qGk
+	k7n0VhiPsjpvTVv+zf9eDth0;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
 	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
 	(Exim)
-	id 1vJUdM-00DtHE-2k;
-	Thu, 13 Nov 2025 10:32:56 +0000
-Message-ID: <94f94f0e-7086-4f44-a658-9cb3b5496faf@samba.org>
-Date: Thu, 13 Nov 2025 11:32:56 +0100
+	id 1vJUmz-00DtLT-2N;
+	Thu, 13 Nov 2025 10:42:53 +0000
+Message-ID: <944b9487-059f-4c9b-b383-3ae4e359e01b@samba.org>
+Date: Thu, 13 Nov 2025 11:42:53 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -55,128 +55,257 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] io_uring: bpf: extend io_uring with bpf struct_ops
+Subject: Re: [PATCH 4/5] io_uring: bpf: add buffer support for IORING_OP_BPF
 To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
  io-uring@vger.kernel.org
 Cc: Caleb Sander Mateos <csander@purestorage.com>,
  Akilesh Kailash <akailash@google.com>, bpf@vger.kernel.org,
  Alexei Starovoitov <ast@kernel.org>
 References: <20251104162123.1086035-1-ming.lei@redhat.com>
- <20251104162123.1086035-4-ming.lei@redhat.com>
+ <20251104162123.1086035-5-ming.lei@redhat.com>
 Content-Language: en-US
 From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20251104162123.1086035-4-ming.lei@redhat.com>
+In-Reply-To: <20251104162123.1086035-5-ming.lei@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Ming,
-
-> io_uring can be extended with bpf struct_ops in the following ways:
+Am 04.11.25 um 17:21 schrieb Ming Lei:
+> Add support for passing 0-2 buffers to BPF operations through
+> IORING_OP_BPF. Buffer types are encoded in sqe->bpf_op_flags
+> using dedicated 3-bit fields for each buffer.
 > 
-> 1) add new io_uring operation from application
-> - one typical use case is for operating device zero-copy buffer, which
-> belongs to kernel, and not visible or too expensive to export to
-> userspace, such as supporting copy data from this buffer to userspace,
-> decompressing data to zero-copy buffer in Android case[1][2], or
-> checksum/decrypting.
+> Buffer 1 can be:
+> - None (no buffer)
+> - Plain user buffer (addr=sqe->addr, len=sqe->len)
+> - Fixed/registered buffer (index=sqe->buf_index, offset=sqe->addr,
+>    len=sqe->len)
 > 
-> [1] https://lpc.events/event/18/contributions/1710/attachments/1440/3070/LPC2024_ublk_zero_copy.pdf
+> Buffer 2 can be:
+> - None (no buffer)
+> - Plain user buffer (addr=sqe->addr3, len=sqe->optlen)
 > 
-> 2) extend 64 byte SQE, since bpf map can be used to store IO data
->     conveniently
+> The sqe->bpf_op_flags layout (32 bits):
+>    Bits 31-24: BPF operation ID (8 bits)
+>    Bits 23-21: Buffer 1 type (3 bits)
+>    Bits 20-18: Buffer 2 type (3 bits)
+>    Bits 17-0:  Custom BPF flags (18 bits)
 > 
-> 3) communicate in IO chain, since bpf map can be shared among IOs,
-> when one bpf IO is completed, data can be written to IO chain wide
-> bpf map, then the following bpf IO can retrieve the data from this bpf
-> map, this way is more flexible than io_uring built-in buffer
+> Using 3-bit encoding for each buffer type allows for future
+> expansion to 8 types (0-7). Currently types 0-2 are defined
+> (none/plain/fixed) and 3-7 are reserved for future use.
 > 
-> 4) pretty handy to inject error for test purpose
+> Buffer 2 currently only supports none/plain types because the
+> io_uring framework can only handle one fixed buffer per request
+> (via req->buf_index). The 3-bit encoding provides room for
+> future enhancements.
 > 
-> bpf struct_ops is one very handy way to attach bpf prog with kernel, and
-> this patch simply wires existed io_uring operation callbacks with added
-> uring bpf struct_ops, so application can define its own uring bpf
-> operations.
-
-This sounds useful to me.
-
+> Buffer metadata (addresses, lengths) is stored in the extended
+> uring_bpf_data structure and is accessible to BPF programs with
+> readonly permissions. Buffer types can be extracted from the opf
+> field using IORING_BPF_BUF1_TYPE() and IORING_BPF_BUF2_TYPE()
+> macros.
+> 
+> Valid buffer combinations:
+> - 0 buffers
+> - 1 plain buffer
+> - 1 fixed buffer
+> - 2 plain buffers
+> - 1 fixed buffer + 1 plain buffer
+> 
 > Signed-off-by: Ming Lei <ming.lei@redhat.com>
 > ---
->   include/uapi/linux/io_uring.h |   9 ++
->   io_uring/bpf.c                | 271 +++++++++++++++++++++++++++++++++-
->   io_uring/io_uring.c           |   1 +
->   io_uring/io_uring.h           |   3 +-
->   io_uring/uring_bpf.h          |  30 ++++
->   5 files changed, 311 insertions(+), 3 deletions(-)
+>   include/uapi/linux/io_uring.h | 45 +++++++++++++++++++++++--
+>   io_uring/bpf.c                | 63 ++++++++++++++++++++++++++++++++++-
+>   io_uring/uring_bpf.h          | 12 ++++++-
+>   3 files changed, 116 insertions(+), 4 deletions(-)
 > 
 > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index b8c49813b4e5..94d2050131ac 100644
+> index 94d2050131ac..950f4cfbbf86 100644
 > --- a/include/uapi/linux/io_uring.h
 > +++ b/include/uapi/linux/io_uring.h
-> @@ -74,6 +74,7 @@ struct io_uring_sqe {
->   		__u32		install_fd_flags;
->   		__u32		nop_flags;
->   		__u32		pipe_flags;
-> +		__u32		bpf_op_flags;
->   	};
->   	__u64	user_data;	/* data to be passed back at completion time */
->   	/* pack this to avoid bogus arm OABI complaints */
-> @@ -427,6 +428,13 @@ enum io_uring_op {
->   #define IORING_RECVSEND_BUNDLE		(1U << 4)
+> @@ -429,12 +429,53 @@ enum io_uring_op {
 >   #define IORING_SEND_VECTORIZED		(1U << 5)
 >   
-> +/*
-> + * sqe->bpf_op_flags		top 8bits is for storing bpf op
-> + *				The other 24bits are used for bpf prog
-> + */
-> +#define IORING_BPF_OP_BITS	(8)
-> +#define IORING_BPF_OP_SHIFT	(24)
+>   /*
+> - * sqe->bpf_op_flags		top 8bits is for storing bpf op
+> - *				The other 24bits are used for bpf prog
+> + * sqe->bpf_op_flags layout (32 bits total):
+> + *   Bits 31-24: BPF operation ID (8 bits, 256 possible operations)
+> + *   Bits 23-21: Buffer 1 type (3 bits: none/plain/fixed/reserved)
+> + *   Bits 20-18: Buffer 2 type (3 bits: none/plain/reserved)
+> + *   Bits 17-0:  Custom BPF flags (18 bits, available for BPF programs)
+> + *
+> + * For IORING_OP_BPF, buffers are specified as follows:
+> + *   Buffer 1 (plain):  addr=sqe->addr, len=sqe->len
+> + *   Buffer 1 (fixed):  index=sqe->buf_index, offset=sqe->addr, len=sqe->len
+> + *   Buffer 2 (plain):  addr=sqe->addr3, len=sqe->optlen
+> + *
+> + * Note: Buffer 1 can be none/plain/fixed. Buffer 2 can only be none/plain.
+> + *       3-bit encoding for each buffer allows for future expansion to 8 types (0-7).
+> + *       Currently only one fixed buffer per request is supported (buffer 1).
+> + *       Valid combinations: 0 buffers, 1 plain, 1 fixed, 2 plain, 1 fixed + 1 plain.
+>    */
+>   #define IORING_BPF_OP_BITS	(8)
+>   #define IORING_BPF_OP_SHIFT	(24)
+>   
+> +/* Buffer type encoding in sqe->bpf_op_flags */
+> +#define IORING_BPF_BUF1_TYPE_SHIFT	(21)
+> +#define IORING_BPF_BUF2_TYPE_SHIFT	(18)
+> +#define IORING_BPF_BUF_TYPE_NONE	(0)	/* No buffer */
+> +#define IORING_BPF_BUF_TYPE_PLAIN	(1)	/* Plain user buffer */
+> +#define IORING_BPF_BUF_TYPE_FIXED	(2)	/* Fixed/registered buffer */
+> +#define IORING_BPF_BUF_TYPE_MASK	(7)	/* 3-bit mask */
+> +
+> +/* Helper macros to encode/decode buffer types */
+> +#define IORING_BPF_BUF1_TYPE(flags) \
+> +	(((flags) >> IORING_BPF_BUF1_TYPE_SHIFT) & IORING_BPF_BUF_TYPE_MASK)
+> +#define IORING_BPF_BUF2_TYPE(flags) \
+> +	(((flags) >> IORING_BPF_BUF2_TYPE_SHIFT) & IORING_BPF_BUF_TYPE_MASK)
+> +#define IORING_BPF_SET_BUF1_TYPE(type) \
+> +	(((type) & IORING_BPF_BUF_TYPE_MASK) << IORING_BPF_BUF1_TYPE_SHIFT)
+> +#define IORING_BPF_SET_BUF2_TYPE(type) \
+> +	(((type) & IORING_BPF_BUF_TYPE_MASK) << IORING_BPF_BUF2_TYPE_SHIFT)
+> +
+> +/* Custom BPF flags mask (18 bits available, bits 17-0) */
+> +#define IORING_BPF_CUSTOM_FLAGS_MASK	((1U << 18) - 1)
+> +
+> +/* Encode all components into sqe->bpf_op_flags */
+> +#define IORING_BPF_OP_FLAGS(op, buf1_type, buf2_type, flags) \
+> +	(((op) << IORING_BPF_OP_SHIFT) | \
+> +	 IORING_BPF_SET_BUF1_TYPE(buf1_type) | \
+> +	 IORING_BPF_SET_BUF2_TYPE(buf2_type) | \
+> +	 ((flags) & IORING_BPF_CUSTOM_FLAGS_MASK))
 > +
 >   /*
 >    * cqe.res for IORING_CQE_F_NOTIF if
 >    * IORING_SEND_ZC_REPORT_USAGE was requested
-> @@ -631,6 +639,7 @@ struct io_uring_params {
->   #define IORING_FEAT_MIN_TIMEOUT		(1U << 15)
->   #define IORING_FEAT_RW_ATTR		(1U << 16)
->   #define IORING_FEAT_NO_IOWAIT		(1U << 17)
-> +#define IORING_FEAT_BPF			(1U << 18)
->   
->   /*
->    * io_uring_register(2) opcodes and arguments
 > diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-> index bb1e37d1e804..8227be6d5a10 100644
+> index 8227be6d5a10..e837c3d57b96 100644
 > --- a/io_uring/bpf.c
 > +++ b/io_uring/bpf.c
-> @@ -4,28 +4,95 @@
->   #include <linux/kernel.h>
->   #include <linux/errno.h>
->   #include <uapi/linux/io_uring.h>
-> +#include <linux/init.h>
-> +#include <linux/types.h>
-> +#include <linux/bpf_verifier.h>
-> +#include <linux/bpf.h>
-> +#include <linux/btf.h>
-> +#include <linux/btf_ids.h>
-> +#include <linux/filter.h>
+> @@ -11,8 +11,10 @@
+>   #include <linux/btf.h>
+>   #include <linux/btf_ids.h>
+>   #include <linux/filter.h>
+> +#include <linux/uio.h>
 >   #include "io_uring.h"
 >   #include "uring_bpf.h"
+> +#include "rsrc.h"
 >   
-> +#define MAX_BPF_OPS_COUNT	(1 << IORING_BPF_OP_BITS)
+>   #define MAX_BPF_OPS_COUNT	(1 << IORING_BPF_OP_BITS)
+>   
+> @@ -28,7 +30,7 @@ static inline unsigned char uring_bpf_get_op(unsigned int op_flags)
+>   
+>   static inline unsigned int uring_bpf_get_flags(unsigned int op_flags)
+>   {
+> -	return op_flags & ((1U << IORING_BPF_OP_SHIFT) - 1);
+> +	return op_flags & IORING_BPF_CUSTOM_FLAGS_MASK;
+>   }
+>   
+>   static inline struct uring_bpf_ops *uring_bpf_get_ops(struct uring_bpf_data *data)
+> @@ -36,18 +38,77 @@ static inline struct uring_bpf_ops *uring_bpf_get_ops(struct uring_bpf_data *dat
+>   	return &bpf_ops[uring_bpf_get_op(data->opf)];
+>   }
+>   
+> +static int io_bpf_prep_buffers(struct io_kiocb *req,
+> +			       const struct io_uring_sqe *sqe,
+> +			       struct uring_bpf_data *data,
+> +			       unsigned int op_flags)
+> +{
+> +	u8 buf1_type, buf2_type;
 > +
->   static DEFINE_MUTEX(uring_bpf_ctx_lock);
->   static LIST_HEAD(uring_bpf_ctx_list);
-> +DEFINE_STATIC_SRCU(uring_bpf_srcu);
-> +static struct uring_bpf_ops bpf_ops[MAX_BPF_OPS_COUNT];
+> +	/* Extract buffer configuration from bpf_op_flags */
+> +	buf1_type = IORING_BPF_BUF1_TYPE(op_flags);
+> +	buf2_type = IORING_BPF_BUF2_TYPE(op_flags);
+> +
+> +	/* Prepare buffer 1 */
+> +	if (buf1_type == IORING_BPF_BUF_TYPE_PLAIN) {
+> +		/* Plain user buffer: addr=sqe->addr, len=sqe->len */
+> +		data->buf1_addr = READ_ONCE(sqe->addr);
+> +		data->buf1_len = READ_ONCE(sqe->len);
+> +	} else if (buf1_type == IORING_BPF_BUF_TYPE_FIXED) {
+> +		/* Fixed buffer: index=sqe->buf_index, offset=sqe->addr, len=sqe->len */
+> +		req->buf_index = READ_ONCE(sqe->buf_index);
+> +		data->buf1_addr = READ_ONCE(sqe->addr);  /* offset within fixed buffer */
+> +		data->buf1_len = READ_ONCE(sqe->len);
+> +
+> +		/* Validate buffer index */
+> +		if (unlikely(!req->ctx->buf_table.nr))
+> +			return -EFAULT;
+> +		if (unlikely(req->buf_index >= req->ctx->buf_table.nr))
+> +			return -EINVAL;
+> +	} else if (buf1_type == IORING_BPF_BUF_TYPE_NONE) {
+> +		data->buf1_addr = 0;
+> +		data->buf1_len = 0;
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Prepare buffer 2 (plain only - io_uring only supports one fixed buffer) */
+> +	if (buf2_type == IORING_BPF_BUF_TYPE_PLAIN) {
+> +		/* Plain user buffer: addr=sqe->addr3, len=sqe->optlen */
+> +		data->buf2_addr = READ_ONCE(sqe->addr3);
+> +		data->buf2_len = READ_ONCE(sqe->optlen);
+> +	} else if (buf2_type == IORING_BPF_BUF_TYPE_NONE) {
+> +		data->buf2_addr = 0;
+> +		data->buf2_len = 0;
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +
+>   int io_uring_bpf_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>   {
+>   	struct uring_bpf_data *data = io_kiocb_to_cmd(req, struct uring_bpf_data);
+>   	unsigned int op_flags = READ_ONCE(sqe->bpf_op_flags);
+>   	struct uring_bpf_ops *ops;
+> +	int ret;
+>   
+>   	if (!(req->ctx->flags & IORING_SETUP_BPF))
+>   		return -EACCES;
+>   
+> +	if (uring_bpf_get_flags(op_flags))
+> +		return -EINVAL;
+> +
+>   	data->opf = op_flags;
+>   	ops = &bpf_ops[uring_bpf_get_op(data->opf)];
+>   
+> +	/* Prepare buffers based on buffer type flags */
+> +	ret = io_bpf_prep_buffers(req, sqe, data, op_flags);
+> +	if (ret)
+> +		return ret;
+> +
+>   	if (ops->prep_fn)
+>   		return ops->prep_fn(data, sqe);
+>   	return -EOPNOTSUPP;
+> diff --git a/io_uring/uring_bpf.h b/io_uring/uring_bpf.h
+> index c76eba887d22..c919931cb4b0 100644
+> --- a/io_uring/uring_bpf.h
+> +++ b/io_uring/uring_bpf.h
+> @@ -7,8 +7,18 @@ struct uring_bpf_data {
+>   	struct file     *file;
+>   	u32		opf;
+>   
+> +	/* Buffer 1 metadata - readable for bpf prog */
+> +	u32		buf1_len;		/* buffer 1 length, bytes 12-15 */
+> +	u64		buf1_addr;		/* buffer 1 address or offset, bytes 16-23 */
+> +
+> +	/* Buffer 2 metadata - readable for bpf prog (plain only) */
+> +	u64		buf2_addr;		/* buffer 2 address, bytes 24-31 */
+> +	u32		buf2_len;		/* buffer 2 length, bytes 32-35 */
+> +	u32		__pad;			/* padding, bytes 36-39 */
 
-This indicates to me that the whole system with all applications in all namespaces
-need to coordinate in order to use these 256 ops?
+I'm wondering if this should be in the generic struct uring_bpf_data
+at all. For io_uring_cmd we have helper functions like
+io_uring_cmd_import_fixed[_vec] which can be used by the implementation,
+but the layout on top of io_uring_cmd->pdu is up to the
+specific operation.
 
-I think in order to have something useful, this should be per
-struct io_ring_ctx and each application should be able to load
-its own bpf programs.
-
-Something that uses bpf_prog_get_type() based on a bpf_fd
-like SIOCKCMATTACH in net/kcm/kcmsock.c.
+Thinking about it, I'm wondering if the bpf operations
+could be implemented on top of io_uring_cmd.
 
 metze
-
 

@@ -1,195 +1,324 @@
-Return-Path: <io-uring+bounces-10551-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10552-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EC3C54DEE
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 01:02:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA25C55A20
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 05:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EA6F4E0462
-	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 00:02:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5786B3B0645
+	for <lists+io-uring@lfdr.de>; Thu, 13 Nov 2025 04:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89E1C141;
-	Thu, 13 Nov 2025 00:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1453C2741C0;
+	Thu, 13 Nov 2025 04:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KEd9i8Yb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ExHZIi7p"
 X-Original-To: io-uring@vger.kernel.org
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012047.outbound.protection.outlook.com [52.101.48.47])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0D563CF;
-	Thu, 13 Nov 2025 00:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762992143; cv=fail; b=YbaNASeqy8CASZzJdFp8ZtHzR+CapSqCxuMEHt/pu0EPeMG+ChIVf9sL8Bm+dxzZS8KwMUTwy3SFml5ern59bKoPVp6nIXA6r5RsoCCc/sjzgO6S9Guqgcjh3szwIQE7MhwIcqOdwC3l5fuEf0a2CMRTDv1eS4KNbMgBNkYVx3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762992143; c=relaxed/simple;
-	bh=53C4CiJ8zTGH11R8rtwxhuHUoHGlVb2JCX+K5wSk8lw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c6hDXJddHM7jMD4GCZELZR78tApQ4uNvYMmNlHdnStnvSxxyEjlTuNnyMZfEu1e8kGs6NinX8cLO/QCSFQ8o7Ofjz/i+6/ck3oRZNDDogrzvqdoIWM7HYnDYtkw5foEJ+t9xwamH1PzD+rzJACseTh4aTDl1DgDnAxo73LXFA3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KEd9i8Yb; arc=fail smtp.client-ip=52.101.48.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VrSM6JyN9Je2abNv1K/587Xk0Vov9rsvZ1gFjVxAnMSbcFJPV9od6PkmZWfAR/Tm0+lbRFhn8q++VliAvIv6V0SScYXmm9ZA787y2NvaPs5bQvKDKcmaDuPZ2EyTMdRV+XpSouPmNlnlC0152SHuc+nNs4AlbONIqzVRMaAyq1n1BB8Ww596VOAkdh8hYL1Tl4yjmx9qwrFhw7uO9HH3b2cyL8TpJgrvzJ3NLlh4nd5S6sJpeumaN9mfA99XXrZp/o135350Iq0C9XP46d56xaOgIP3xTTguiwNja8DRg2WAVEHV64XmbAMGBkAGaW9Z9IOOtDKzD7k4V8VfiuMkbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=53C4CiJ8zTGH11R8rtwxhuHUoHGlVb2JCX+K5wSk8lw=;
- b=avLN49inRk6QRkLw1khxoOSYuyHTZgGxkvsPbB2nHNyAMff++jJv+Ad1l7N0woQIYcc6o6eW7urgPE31ikS8jw9tFIeh3X0mGz3hCVmOjF3U05Kqg7Z5P/3JmrGMXWVdmsery+wHNGcaKxrX4DboPm+WUKJf1OO2usptqTuzPHNcfmqlrbe7A+Aj8HLABpKzn2tFyH0mzbXj1gMY/sddJ1GuhM2xSTkix8DfnCpfdG4PbonF43CJX3M+HF1jjF4XwhrMb1FzLEiQCZXn9ayKu/4Tghq+2YUPmHIh3EpC0OEHER9xNHNY0F5V1EZau3LMtYEtvsFKVHodVhsf5TvVcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=53C4CiJ8zTGH11R8rtwxhuHUoHGlVb2JCX+K5wSk8lw=;
- b=KEd9i8YbUhrbLBxFn8gyv0U24j9AAq9GcGyDzCWdSEYi6O7RBeKQs0GtvoREkytAquAUyhhFPxVKlYW9hg4lCjG+9mS6UrrUNuG1J1uWu58g/Lt9pMbu5hUQzHIrrV+ry8iRGApgMzCYcxHwT5HF6+rLO3Ctrp1ZLcm7R6F+AjafbVlhCnVn4SX142aSZvKawsucOygqrLsGYsx+KtsfMCVnAcMIMJvdjIoOeYllBAReaWw9bSUDNuiFYWPmA+HpAk02WIhy5m4Ss0vE+XrGVjCV2d/TOCGcA2rJcuOpyh7sx4BQksTPzSUJDYxIU9zzmgC/rS/7tc7KVDBwGcNYXA==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by LV3PR12MB9185.namprd12.prod.outlook.com (2603:10b6:408:199::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 00:02:18 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Thu, 13 Nov 2025
- 00:02:17 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong"
-	<djwong@kernel.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-	Avi Kivity <avi@scylladb.com>, Damien Le Moal <dlemoal@kernel.org>, Naohiro
- Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 2/5] iomap: always run error completions in user context
-Thread-Topic: [PATCH 2/5] iomap: always run error completions in user context
-Thread-Index: AQHcU6Uq8BLZ12LmdEOoQymlgtgGlLTvukAA
-Date: Thu, 13 Nov 2025 00:02:17 +0000
-Message-ID: <82ea5d47-1270-4657-bb61-d2aa62df15fc@nvidia.com>
-References: <20251112072214.844816-1-hch@lst.de>
- <20251112072214.844816-3-hch@lst.de>
-In-Reply-To: <20251112072214.844816-3-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|LV3PR12MB9185:EE_
-x-ms-office365-filtering-correlation-id: 8ecc13f0-cb87-444a-7042-08de2247e87b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|10070799003|7416014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Szh1djhRNGtqTmM2dW0zdnVrQWpJdVl4ak5vZjE5b2lIUG5Sb0Z6UlJscTBi?=
- =?utf-8?B?OWd4UVNZTW5EcGdOUDJhWVRUSzBYTzZHZUVLMUdwaCtZaHMrNFllb1cyVHF0?=
- =?utf-8?B?ZnFKbkkzZW1VWVQ2ejUxQnpNaEJVR0dubS9jZjFjd0xDRm1SSCszaHdlSmRw?=
- =?utf-8?B?R1FWYlIvK0g3b2lpNmtPSmhwZURwSGdUMkxHd3BXYnpiSjJPdTIyY1dQQVgr?=
- =?utf-8?B?eHVhUGE3VkMzREJQME5vREdlZEF3eVZCZWdzT09oTUVVR3dPQTJCOC8xN0xi?=
- =?utf-8?B?Nm11OFhhcWtDQnZqdzdnM1pINE9WZUwwelV3d3lnSmFicFJYUlE3cjZqdWMz?=
- =?utf-8?B?Mm9scS8zMTlzc1M2RHpaRkFqL2VkNUdBRGtvdHZaSEZWN1gxTlBvSFNVYkUx?=
- =?utf-8?B?UzZoVmpPOVorVitZNzIvUFUyY2FQY21mRmJTc1l1QmxiRmJtUitBUDRDQlhB?=
- =?utf-8?B?UkdPdlZwcERzZkN4Q2pDQnlDVmNLUE44b21XdWx4UVg3aG5jb3U4OWVySFR0?=
- =?utf-8?B?MjFJQldDUHlzQXdmOXlQc3JqWlgvYS9sRENCaEFrcnFyd1V2QlI4NVFhcTZW?=
- =?utf-8?B?Y3VjVThnOEJDUkVuNGpsS1JoNWNHY1pRV0ZXVVRJaFBtdHAreGhJSUdnU3FF?=
- =?utf-8?B?WG5aMHRGdXhVRUEzSW9wYlh6SmNPRGduT2tjTTNFRjM2Y1NoWFpkbUJWLzBo?=
- =?utf-8?B?WHV3Nk9CUkcrbk5vckdoMlV5RE9SZ21pWGlzR21mcmFNNGc2RmhMVG5sOHRO?=
- =?utf-8?B?VHVuNXF1MGFpdlhUQUplWmRvY2h2Y1dnamV0aUNiZVNzTGRIdmZsREZ1OXA4?=
- =?utf-8?B?Mi81SFV2bVFGOHEvMVpMK3ZHNXFWVlJYREVkRXZLZGJ4VVVXb0JrWFM3MGZ5?=
- =?utf-8?B?U2V6b2VVbFZ4RnZIRThGUUVJZUNaVGpwclFwQlY3TVBPZm1ZMUVpbGFwSERo?=
- =?utf-8?B?ZU8wMjIrdzJiL3RZN1dISGI5KzFZU0tiZEtOdVo1Snl2NnAyUkZST3gwSHZY?=
- =?utf-8?B?UDNsUlRNYloyVjJ1VUlTVkhEcHArYlNjaXBWekhiOCtWdjBVQWJnTmlJUjZE?=
- =?utf-8?B?MEZDczVSYU00djEyaG1YKzNKTCtiTlo2S0o0TFRNN2JNM1JENVMzUnAxYWNn?=
- =?utf-8?B?VXYwVmwxZDlSSzRSZ3NMcE9RRk43NWl2aER0ZmxCR1FOSzlLYzJoa05PUXpv?=
- =?utf-8?B?VFpSVU1GSTN6Vkg5Tzk1S29Ia2pxMDlOQlZLMkt4MzFuUm9XMnNicUZLRkkz?=
- =?utf-8?B?WHN3dG9odUFsblg1Y3BTWFIvYW1hQmU4ZFN3dHBwaCtOUXRHZzZTeFVhR2JD?=
- =?utf-8?B?TnlTSktQWmhITjFpS1JWYUJVWmFXMlFVT1lJUlB2SWpVaTU2UDhOam1VNUQr?=
- =?utf-8?B?QkRQdXhMT0hKT0o4aG1HSHk4ODRZNzdhR1g3UXp5R0VQSWorbDc4Qy9uTG02?=
- =?utf-8?B?R2NuelZ6Snk2NjJkNzRtMitmbmoxYmhvN3NsNm5nYXI4TkcwQTlnYVl5bXY0?=
- =?utf-8?B?Q2h0Y3Faa1NUYW1vNjdTSkJtVXdiUlBvdVdvWlRSZjNLK2NweWRIdjJnUWJG?=
- =?utf-8?B?RUtmeGM4Ni9WWDhFLy9NY0JvaFM0MTkxTFVVcllyS3VjVkpWT3BLcDV0aVZ4?=
- =?utf-8?B?RktLOFB1OFRzdXJ4MGFwc1JTSFovcHYxdjRvdG9ET2hlUUpXelUvUHJINVIr?=
- =?utf-8?B?QUJGY0tiamM1RHl1UXNsbHlXR3hiU2tIQ3krUGVrcDNIdEV5cks1RUpsMmtr?=
- =?utf-8?B?YVJ3dFM0ZnlrRGRnY3Nqa0tnM3JGbnFyR2dtbnEwcXBmbStGUlpIb2NoeWNX?=
- =?utf-8?B?bktOVVBScTJNRWRreVM3RmZoSEkzbGJMZS9jelJKTkM1ZGQwR25Hckw4SS9L?=
- =?utf-8?B?S3BReDlKY2UvNm1OL3J3N3pIMHdhd3pjVHI3Kzh2Zm1DSHJDSWIvdk5rNVUv?=
- =?utf-8?B?QXBFYTFkb2crNzAvNDdVc0FKMWxFbFhHL2dLK0lXZGM0ZHZtckNVdHUzSUVE?=
- =?utf-8?B?enIxSlVOaVpGOGpDVXFuenRoa00zWEpEMG55NVpqdkhaY1JkMml6QjhYRWl3?=
- =?utf-8?Q?U1lTCF?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MUVrSmVmYTJ5QU9TYlFDblpPVW5hQ0ZzemM3eFZFV2ZlUHc5OW11MUJvNnha?=
- =?utf-8?B?akwyVXVGM1hSdVZzaVY5S1U2UGFicnQyVnJFRzhRdW9yWWxBaEV3OVA1dWtD?=
- =?utf-8?B?cmNpUmtRYzhrcy9rRHJyWXVDV0FETGViWm14cWR0bU10S3pJZXhRSzhtSmQ1?=
- =?utf-8?B?UklGN3EveHJVWVcyb3plSXNJNEZ3ZFlNdng2WEhxR2lPOFA4Ykoza1BSSTd1?=
- =?utf-8?B?WFptSWhMYXhuRjREU204NFNPY0kvRUw1NXVzTFVDWTlqNHliYVU0QVh1WnI1?=
- =?utf-8?B?OUwvMmN0czFDQjlVY3dTWkI1eWxySkJwZStLbHhQdmhjS3RjQU9EeEhxNUtT?=
- =?utf-8?B?Mnhnd0RlMUpvR1BlQVY2NUJVQ3krSEcySjlLRWRkNkcrY0RjMit1Uit6c0NK?=
- =?utf-8?B?UWNGd2FqMDYveWdiYTI1OXo5bVJ4TzFLZEU5MXJ6ZlplemxLWDBGWnVWY0oz?=
- =?utf-8?B?WDh1SHkyMGFwZVdhcFVwdTV3R1JVc3lzMEJ5TEV0bmcwenIwV2VuMStodEJU?=
- =?utf-8?B?ZnJ5Y0YvWU9EYURDREtYc2JNS0pTc1g5RFcxeGxRbENIYUdSeTI0NG9WRTh0?=
- =?utf-8?B?RCtpZTZJbVdKeW1xRG5HeW1sdDlRSWVQT1pORzZSMUxURlgzd2lIZU1yT01Y?=
- =?utf-8?B?UHFPK2h1WWpqUjAvdG5ka1pJU245RVZEY0FsMXJuM08rSk5CRW10Y20wcUV5?=
- =?utf-8?B?NGFpQlRVRUt1RmxVN3lOTmxVQkNYWStsVW9XY2pZcVE1U1MxbU9Dc2c5ekdq?=
- =?utf-8?B?aDlFRzVmWmRHYzJobFJvbTIwZi9BSWtVQ1JFczZvWDV3U0l2dWUwTXhQY2Vo?=
- =?utf-8?B?aHpTSVR3UTZHZTNiZmtvYjRaODVtVGpvRVJkOGEvQVIxQzA4azlZWGFtUktv?=
- =?utf-8?B?ZUtyMTBMMGR0bFQyUlNuWHBkTUdobksxUTQ0ejUybmNCV3RDdXlXaVN2anVz?=
- =?utf-8?B?V29hOTJRNWpsa05GT1d2cldUNUZDSEtSUDEyQjQ3TnNFdmtuYVI4NCtmZ05h?=
- =?utf-8?B?ZzlYNWJFeVRvMllabFNDZCtXR0U4YkxzVU5KU2ZicE41dkxhbGg5V2dFenBO?=
- =?utf-8?B?TmdKeFluL200aFpPM3BJNld0ZjRQZjR6Z3FqUVRDRlhtbVZML1lwaElkSzBH?=
- =?utf-8?B?NmZ4SzFIMEFzcFhtOFpSeVVxckFDcHV5d1g4Y2Z5OWlhQVpGdEdIZytXa3BI?=
- =?utf-8?B?ekEwb2xETXlYQXJuNmZLQkdyNjlHNkV3QkNEaTZ5bVE2U3kxNS9ybjJ3L3Fy?=
- =?utf-8?B?WGlISFJFb1RmLzR6bklYNkZxSktKVjcrYWhjSXp2MGZZVCttYVhqbFhQYjFM?=
- =?utf-8?B?K2xDc1J5K2YrcXhmL2UvMi94emhNN3RHeEMwM2FkZm9WTXozZ2x2L1R4NVU1?=
- =?utf-8?B?QVBPRG9PMTJPRVlFVkNzK0hTdWRza2pPU1EvbXg5M2lxckpib2lCNnpINmli?=
- =?utf-8?B?MnV3czh4TGtaZHNjb3hZR2YvbkJncno0QzM1U2xrMktDK2pKY1hxTlhYMmtn?=
- =?utf-8?B?YlhveFk2WEpkZnpjMjM3R1djT3FHTE5uMzdyVzZCQnRIVUFqM1o5ZTVKdk1P?=
- =?utf-8?B?b0x6V1ErL2Q5elk4ZVZEeGdyYmhVTzRMMEpEcE9aZ1ZiUzRmemFONWNZTUNG?=
- =?utf-8?B?b3RCSTZSM2RSTTkybVhvVzhFQzdDNjRLR2ZkVDdUVi8xY2h6ZnRsY21kMWtk?=
- =?utf-8?B?czhGL1IxY2lpRE9BbnpKS2V0S3kyTFBGOHNhQUg3V0hqb2xQVmFVVVkraTlm?=
- =?utf-8?B?VzBOb2RTdUJaeWxndG0wajRpOVJaM0s3TWZHUCtlSjh2bDVsam9JZHZLRk5n?=
- =?utf-8?B?YXlUYmFQMjBlMHM5OFZvcXJZUFJTMkN5Yjc0Q29aZ1JmV2ZVY3BZcWROSHg4?=
- =?utf-8?B?UnZPMmZXQU8yWDNqMjdla2RVdUN5L2NKV1l3TVU2dFJ2OWFXU256ajYyaTJG?=
- =?utf-8?B?SXV3Z2MyYmo3enk0eGpWUTYrVHQvZ0NQMnladEhxbEU2UHlzU1BhVURUOXZV?=
- =?utf-8?B?TVk3VTJjSVFHbzZJRzNxdXBZTHBYRGc4UnRTYm1TWlN3a0lKamo4WUl6QVFZ?=
- =?utf-8?B?S25YeGNja1NZSEdhWWNyNWZhSlRtQi8xQUtEMEIwRlpOeXdxYXZ0U0VLZTJ6?=
- =?utf-8?B?Und5TXlNcnUrT1grZC9xWjE5UERPWFpsRE4rbEY0bVdDR01NVjdaYmZZVGFh?=
- =?utf-8?Q?zejMfQKdwQargt8rew6SXEpjlF9MX7eYHdxwnVXEC5RE?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F72AE22FA32F7D4F8145FDA02733A869@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E472725A321
+	for <io-uring@vger.kernel.org>; Thu, 13 Nov 2025 04:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763007505; cv=none; b=Z1s8RiQEKro49NyHxHz4Usf+1CIcjncQYedZHZ6/kDyCsugpeFBf1N3LSsuNeDBqpOSDGs5/V+akyNpXMkQg+Vu+fFH2MYw2FvDdQCi/1ZyD/8CRgiK8Ug/64VYiP2dma9sbF0emvHVQmHr7xnW/jmD1zKIRgAhvRDJS1mxwOA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763007505; c=relaxed/simple;
+	bh=sLROp/YkDbpN/w32RtOpHtpMpzX7u9dDrpVr3kzbi+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1467FUOCU4V+JNUXuGSGW9GLwDvMHO7sKupA+MUqT3pkw9s0hUvZGPUMFQT6GNe4D85CSt0efwmdfDPNNbrffjMYJWfeQEqyQ3dBAD2518rNToz1a/FqVhRhJzCWUHDPfx7T8fZ8hFBRK7LOtmlO7cfnO6AAo3C28Z1m49sO58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ExHZIi7p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763007503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=drC7S4phDKiP+TILDj00BjqZygv8s7Qb+MZ6MbtuVmM=;
+	b=ExHZIi7pUSTczmz0TyTfA/X5jkThhB2g+9baIehxCuLUtq6O2ja1jXN1JPbIu4iRenNMeo
+	Zwrlmomhe5yAfxDhRA98qwmSlELdWV0SwlND8MV/FENCfZZDUVfJa+jdLzcLY3dp69AIJ0
+	XlRPxJyoKqEY9G0CKuw8G8PvF9GryN8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-139-WvQOQ56rMTS-TpDJYdkH8A-1; Wed,
+ 12 Nov 2025 23:18:19 -0500
+X-MC-Unique: WvQOQ56rMTS-TpDJYdkH8A-1
+X-Mimecast-MFC-AGG-ID: WvQOQ56rMTS-TpDJYdkH8A_1763007498
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E2E51956096;
+	Thu, 13 Nov 2025 04:18:18 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.134])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD36119560A2;
+	Thu, 13 Nov 2025 04:18:13 +0000 (UTC)
+Date: Thu, 13 Nov 2025 12:18:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>, bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH 0/5] io_uring: add IORING_OP_BPF for extending io_uring
+Message-ID: <aRVcAFOsb7X3kxB9@fedora>
+References: <20251104162123.1086035-1-ming.lei@redhat.com>
+ <891f4413-9556-4f0d-87e2-6b452b08a83f@gmail.com>
+ <aQtz-dw7t7jtqALc@fedora>
+ <58c0e697-2f6a-4b06-bf04-c011057cd6c7@gmail.com>
+ <aQ4WTLX9ieL5J7ot@fedora>
+ <9b59b165-1f57-4cb6-ae62-403d922ad4da@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ecc13f0-cb87-444a-7042-08de2247e87b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 00:02:17.1192
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GTPBrHgTPuifetWoOPm6HmLeHZ2zzac8yMjDRW4e3LBDtgXpGAvBUopOmS54DGrMxR/x0eKba91j3azfFDyckg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9185
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b59b165-1f57-4cb6-ae62-403d922ad4da@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-T24gMTEvMTEvMjUgMjM6MjEsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBBdCBsZWFzdCB6
-b25lZnMgZXhwZWN0cyBlcnJvciBjb21wbGV0aW9ucyB0byBiZSBhYmxlIHRvIHNsZWVwLiAgQmVj
-YXVzZQ0KPiBlcnJvciBjb21wbGV0aW9ucyBhcmVuJ3QgcGVyZm9ybWFuY2UgY3JpdGljYWwsIGp1
-c3QgZGVmZXIgdGhlbSB0byB3b3JrcXVldWUNCj4gY29udGV4dCB1bmNvbmRpdGlvbmFsbHkuDQo+
-DQo+IEZpeGVzOiA4ZGNjMWE5ZDkwYzEgKCJmczogTmV3IHpvbmVmcyBmaWxlIHN5c3RlbSIpDQo+
-IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPg0KPiAtLS0NCj4g
-ICANCg0KTG9va3MgZ29vZC4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2No
-QG52aWRpYS5jb20+DQoNCi1jaw0KDQoNCg==
+On Tue, Nov 11, 2025 at 02:07:47PM +0000, Pavel Begunkov wrote:
+> On 11/7/25 15:54, Ming Lei wrote:
+> > On Thu, Nov 06, 2025 at 04:03:29PM +0000, Pavel Begunkov wrote:
+> > > On 11/5/25 15:57, Ming Lei wrote:
+> > > > On Wed, Nov 05, 2025 at 12:47:58PM +0000, Pavel Begunkov wrote:
+> > > > > On 11/4/25 16:21, Ming Lei wrote:
+> > > > > > Hello,
+> > > > > > 
+> > > > > > Add IORING_OP_BPF for extending io_uring operations, follows typical cases:
+> > > > > 
+> > > > > BPF requests were tried long time ago and it wasn't great. Performance
+> > > > 
+> > > > Care to share the link so I can learn from the lesson? Maybe things have
+> > > > changed now...
+> > > 
+> > > https://lore.kernel.org/io-uring/a83f147b-ea9d-e693-a2e9-c6ce16659749@gmail.com/T/#m31d0a2ac6e2213f912a200f5e8d88bd74f81406b
+> > > 
+> > > There were some extra features and testing from folks, but I don't
+> > > think it was ever posted to the list.
+> > 
+> > Thanks for sharing the link:
+> > 
+> > ```
+> > The main problem solved is feeding completion information of other
+> > requests in a form of CQEs back into BPF. I decided to wire up support
+> > for multiple completion queues (aka CQs) and give BPF programs access to
+> > them, so leaving userspace in control over synchronisation that should
+> > be much more flexible that the link-based approach.
+> > ```
+> 
+> FWIW, and those extensions were the sign telling that the approach
+> wasn't flexible enough.
+> 
+> > Looks it is totally different with my patch in motivation and policy.
+> > 
+> > I do _not_ want to move application logic into kernel by building SQE from
+> > kernel prog. With IORING_OP_BPF, the whole io_uring application is
+> > built & maintained completely in userspace, so I needn't to do cumbersome
+> > kernel/user communication just for setting up one SQE in prog, not mention
+> > maintaining SQE's relation with userspace side's.
+> 
+> It's built and maintained in userspace in either case, and in
+
+No.
+
+BPF prog is not userspace, it is definitely kernel stuff, but it belongs to
+application scope.
+
+> both cases you have bpf implementing some logic that was previously
+> done in userspace. To emphasize, you can do the desired parts of
+> handling in BPF, and I'm not suggesting moving the entirety of
+> request processing in there.
+
+The problem with your patch is that SQE is built in bpf prog(kernel), then
+inevitable application logic is moved to bpf prog, which isn't good at
+handling complicated logic.
+
+Then people have to run kernel<->user communication for setting up the SQE.
+
+And the SQE in bpf prog may need to be linked with previous and following SQEs in
+usersapce, which basically partitions application logic into two parts: one
+is in userspace, another is in bpf prog(kernel).
+
+The patch I am suggesting doesn't have this problem, all SQEs are built in
+userspace, and just the minimized part(standalone and well defined function) is
+done in bpf prog.
+
+> 
+> > > > > for short BPF programs is not great because of io_uring request handling
+> > > > > overhead. And flexibility was severely lacking, so even simple use cases
+> > > > 
+> > > > What is the overhead? In this patch, OP's prep() and issue() are defined in
+> > > 
+> > > The overhead of creating, freeing and executing a request. If you use
+> > > it with links, it's also overhead of that. That prototype could also
+> > > optionally wait for completions, and it wasn't free either.
+> > 
+> > IORING_OP_BPF is same with existing normal io_uring request and link, wrt
+> > all above you mentioned.
+> 
+> It is, but it's an extra request, and in previous testing overhead
+> for that extra request was affecting total performance, that's why
+> linking or not is also important.
+
+Yes, but does the extra request matters for whole performance?
+
+I did have such test:
+
+1) in tools/testing/selftests/ublk/null.c
+
+- for zero copy test, one extra nop is submitted
+
+2) rublk test
+
+- for zero copy test, it simply returns without submitting nop
+
+The IOPS gap is pretty small.
+
+Also in your approach, without allocating one new SQE in bpf, how to
+provide generic interface for bpf prog to work on different functions, such
+as, memory copy or raid5 parity or compression ..., all require flexible
+handling, such as, variable parameters, buffer could be plain user memory
+, fixed, vectored or fixed vectored,..., so one SQE or new operation is the
+easiest way for providing the abstraction and generic bpf prog interface.
+
+> 
+> > IORING_OP_BPF's motivation is for being io_uring's supplementary or extention
+> > in function, not for improving performance.
+> > 
+> > > 
+> > > > bpf prog, but in typical use case, the code size is pretty small, and bpf
+> > > > prog code is supposed to run in fast path.>
+> > > > > were looking pretty ugly, internally, and for BPF writers as well.
+> > > > 
+> > > > I am not sure what `simple use cases` you are talking about.
+> > > 
+> > > As an example, creating a loop reading a file:
+> > > read N bytes; wait for completion; repeat
+> > 
+> > IORING_OP_BPF isn't supposed to implement FS operation in bpf prog.
+> > 
+> > It doesn't mean IORING_OP_BPF can't support async issuing:
+> > 
+> > - issue_wait() can be added for offload in io-wq context
+> > 
+> > OR
+> > 
+> > - for typical FS AIO, in theory it can be supported too, just the struct_ops need
+> > to define one completion callback, and the callback can be called from
+> > ->ki_complete().
+> 
+> There is more to IO than read/write, and I'm afraid each new type of
+> operation would need some extra kfunc glue. And even then there is
+> enough of handling for rw requests in io_uring than just calling the
+> callback. It's nicer to be able to reuse all io_uring request
+> handling, which wouldn't even need extra kfuncs.
+
+Looks you are trying to propose generic bpf io_uring request, which is
+ambitious goal, :-)
+
+But that isn't my patchset's motivation, which just serves as supplement or
+extention of existing io_uring.
+
+Another big case could be network IO, which could be covered -EAGAIN,
+or other main cases?
+
+> 
+> ...
+> > > > and it can't be used in my case.
+> > > Hmm, how so? Let's say ublk registers a buffer and posts a
+> > > completion. Then BPF runs, it sees the completion and does the
+> > > necessary processing, probably using some kfuncs like the ones
+> > 
+> > It is easy to say, how can the BPF prog know the next completion is
+> > exactly waiting for? You have to rely on bpf map to communicate with userspace
+> 
+> By taking a peek at and maybe dereferencing cqe->user_data.
+
+Yes, but you have to pass the interested ->user_data to bpf prog first.
+
+There could be many inflight interested IOs, how to query them efficiently?
+
+Scan each one after every CQE is posted? But ebpf just support bound loops,
+the complexity may be run out of easily[1].
+
+https://docs.ebpf.io/linux/concepts/loops/
+
+> 
+> > to understanding what completion is what you are interested in, also
+> > need all information from userpace for preparing the SQE for submission
+> > from bpf prog. Tons of userspace and kernel communication.
+> 
+> You can setup a BPF arena, and all that comm will be working with
+> a block of shared memory. Or same but via io_uring parameter region.
+> That sounds pretty simple.
+
+But application logic has to splitted into two parts, both two have to
+rely on the shared memory to communicate.
+
+The exiting io_uring application has been complicated enough, adding one
+extra shared memory communication for holding application logic just makes
+things worse. Even in userspace programming, it is horrible to model logic
+into data, that is why state machine pattern is usually not readable.
+
+Think about writing high performance raid5 application based on ublk zero
+copy & io_uring, for example, handling one simple write:
+
+- one ublk write command comes for raid5
+
+- suppose the command just writes data to one single stripe exactly
+
+- submitting each write to N - 1 disks
+
+- When all N writes are done, the new SQE needs to work:
+
+	- calculate parity by reading buffers from the N request kernel buffer
+	  and writing resulted XOR parity to one user specified buffer
+
+- then new FS IO need to be submitted to write the parity data to one calculated
+disk(N)
+
+So the involved things for bpf prog SQE:
+
+	- monitoring N - 1 writes
+	- do the parity calculation job, which has to define one kfunc
+	- mark parity is ready & notify userspace for writing parity(how to
+	  notify?)
+
+Now there can be variable(many) such WRITEs to handle concurrently, and the
+bpf prog has to cover them all.
+
+The above just the simplest case, the write command may not align with
+stripe, so parity calculation may need to read data from other stripes.
+
+If you think it is `pretty simple`, care to provide one example to show your
+approach is workable?
+
+> 
+> > > you introduced. After it can optionally queue up requests
+> > > writing it to the storage or anything else.
+> > 
+> > Again, I do not want to move userspace logic into bpf prog(kernel), what
+> > IORING_BPF_OP provides is to define one operation, then userspace
+> > can use it just like in-kernel operations.
+> 
+> Right, but that's rather limited. I want to cover all those
+> use cases with one implementation instead of fragmenting users,
+> if that can be achieved.
+
+I don't know when your ambitious plan can land or be doable.
+
+I am going to write V2 with the approach of IORING_BPF_OP which is at least
+workable for some cases, and much easier to take in userspace. Also it
+doesn't conflict with your approach.
+
+
+Thanks,
+Ming
+
 

@@ -1,48 +1,48 @@
-Return-Path: <io-uring+bounces-10636-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10637-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17A6C5D7C8
-	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 15:10:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9013FC5D817
+	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 15:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92E274E422B
-	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 14:05:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D05A35377A
+	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 14:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644D5246BCD;
-	Fri, 14 Nov 2025 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1389A274FFD;
+	Fri, 14 Nov 2025 14:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imd5Szlx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh1kytMG"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237C723908B;
-	Fri, 14 Nov 2025 14:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB111B87EB;
+	Fri, 14 Nov 2025 14:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763129102; cv=none; b=GDmqDT3zm/lhhbRptBWKG6NOX6TD8C5terFQIkjWyq9mTkMv6HNjh94gY6BF0Bdw3J6hwhtbb/kOj9TTVCQeyffUWoejCnq3fcwJNrTFbrgAG8QnzJrR0n4CmDpXe7eTWwTRjtXMXNN9mVQu+N95olbSDCIMcLFQrgiOim8uEB8=
+	t=1763129196; cv=none; b=FwXtgXMyEDxTbhYzpXcYRylrgj1kMlIy5i+Q/CrJF9hnFlnm3OQG2SiYVSjoZ2T7Iyei4CjoO/2sUH3zHrk8iIPN3kiV0TPO2QS2ugauqVZkmUpA9E2BKBmUe/pIqAUjS3mANB4xNJoKkWAh6qzb9C9MWH9fEi7h14cFiWo09sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763129102; c=relaxed/simple;
-	bh=qBagfT6KUYlyRbtMMbYHwsZqeSY2dB8e3MH2A2nSEjg=;
+	s=arc-20240116; t=1763129196; c=relaxed/simple;
+	bh=C92F0tAjCKW9Rf4zUTTPeU3TgqfeEnOGVq0K5kNBZ2M=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LsNpKfLNIAfx0I+iBMkM0KeS7D+XQ4K3QhCY6lJrWFP9dBabDx0F7bj1+6C5/2oP8HdYO0QTG3OuXWIHNek4BjZU+9wmBcdWGHIttuF55JBKI+8VScx94imXyfcgrCIZKCqNqdi5LIRi8PNQOl0Pc1+mrWMNPK3Y/d0z3vEjZNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imd5Szlx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AAAC4CEF1;
-	Fri, 14 Nov 2025 14:04:59 +0000 (UTC)
+	 Content-Type:MIME-Version; b=gHh6iWvGT8CKg7nriCfKm99a3IRSUqm77M2XibEXFXwRglHC7SoCrjkUnOi2c9OtpWhnbqt7Y3g7X2jLbFE/A5rCnRXvE9A40tyNekdHBztsRuh7/vJkksN662ksukE3D+cc0UMTkEhOrmGAW+rE66uDZl0PIyK0DJEaWtCnf5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh1kytMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B19FC4CEFB;
+	Fri, 14 Nov 2025 14:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763129101;
-	bh=qBagfT6KUYlyRbtMMbYHwsZqeSY2dB8e3MH2A2nSEjg=;
+	s=k20201202; t=1763129195;
+	bh=C92F0tAjCKW9Rf4zUTTPeU3TgqfeEnOGVq0K5kNBZ2M=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=imd5SzlxTnaqrWpaf+ZkkISorjK2X4szbYW0BsMvyDSFrrTlTyfdIl631CTJ+U747
-	 OKWzMKxVjtX9U1sG+jbCY2/T5lQe6mlfksGJ2lEGPJMrmNreDesQNvmQA9WF/9+jp5
-	 DgqQj9E+IdyckU2ZlOpluZP4yufRC62EkN4NDbV4EThZsNYraUD0Qe5Au9EGlI4mgQ
-	 hG96pQYfYtdoOqaLkfoWSVgD9UagjaSHcFgqgPOYaiBjRfNZd2IiUvxzx9GTBqjmBM
-	 bQl5NcvDpg9BLb0VzzG4kUBaL01xbs/Tx3VZh0aIuoNMXWs3qMwJbnVKCdDbu07/7z
-	 0SkhVbdtpuBQA==
-Message-ID: <b7e8d5e3a0ce8da103f4591afc1f4a9c683ef3c7.camel@kernel.org>
-Subject: Re: re-enable IOCB_NOWAIT writes to files
+	b=Kh1kytMG/KYWCCKufCrsevd6utt/soEMrfWuNKO44iNHwqQwRP0sVGKSBeYGeunmb
+	 JPY3z5I4FKqQNmk/S0hR6DYCU8pw5sjXRCkdO+ueNqYfrjmL0wePQRMN499EJg3PDt
+	 MxME1jsXJ0LjMBd1yhJ5iX7iYvfnJJ/rhZhWbvMS2Hx2nRQ//pXQmlEBLraBm9W42M
+	 G3tQUAVX9izXNDZoc8lmv3CuvLNl9siyrVrn5w9pOxHYejgKJpxoKTghXA1+VhiVjY
+	 HsLnchRJpuq9gBRcA+bHoNGmQBIeqECSIw1N8u2V9MdaTixx01QyNcCgp8iWrj3U18
+	 e259J/FgwVAhg==
+Message-ID: <4990df3273eb868aa21dde745c1ae2636af4cdd8.camel@kernel.org>
+Subject: Re: [PATCH 06/14] organgefs: use inode_update_timestamps directly
 From: Jeff Layton <jlayton@kernel.org>
 To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
@@ -53,9 +53,10 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
  io-uring@vger.kernel.org, devel@lists.orangefs.org, 
 	linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
 	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org
-Date: Fri, 14 Nov 2025 09:04:58 -0500
-In-Reply-To: <20251114062642.1524837-1-hch@lst.de>
+Date: Fri, 14 Nov 2025 09:06:33 -0500
+In-Reply-To: <20251114062642.1524837-7-hch@lst.de>
 References: <20251114062642.1524837-1-hch@lst.de>
+	 <20251114062642.1524837-7-hch@lst.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,60 +141,37 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
+Please do fix the spelling of orangefs in the subject line. It'll be
+hard to grep for otherwise...
+
 On Fri, 2025-11-14 at 07:26 +0100, Christoph Hellwig wrote:
-> Hi all,
+> Orangefs has no i_version handling and __orangefs_setattr already
+> explicitly marks the inode dirty.  So instead of the using
+> the flags return value from generic_update_time, just call the
+> lower level inode_update_timestamps helper directly.
 >=20
-> commit 66fa3cedf16a ("fs: Add async write file modification handling.")
-> effectively disabled IOCB_NOWAIT writes as timestamp updates currently
-> always require blocking, and the modern timestamp resolution means we
-> always update timestamps.  This leads to a lot of context switches from
-> applications using io_uring to submit file writes, making it often worse
-> than using the legacy aio code that is not using IOCB_NOWAIT.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/orangefs/inode.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >=20
-> This series allows non-blocking updates for lazytime if the file system
-> supports it, and adds that support for XFS.
->=20
-> It also fixes the layering bypass in btrfs when updating timestamps on
-> device files for devices removed from btrfs usage, and FMODE_NOCMTIME
-> handling in the VFS now that nfsd started using it.  Note that I'm still
-> not sure that nfsd usage is fully correct for all file systems, as only
-> XFS explicitly supports FMODE_NOCMTIME, but at least the generic code
-> does the right thing now.
->=20
-> Diffstat:
->  Documentation/filesystems/locking.rst |    2=20
->  Documentation/filesystems/vfs.rst     |    6 ++
->  fs/btrfs/inode.c                      |    3 +
->  fs/btrfs/volumes.c                    |   11 +--
->  fs/fat/misc.c                         |    3 +
->  fs/fs-writeback.c                     |   53 ++++++++++++++----
->  fs/gfs2/inode.c                       |    6 +-
->  fs/inode.c                            |  100 +++++++++++----------------=
--------
->  fs/internal.h                         |    3 -
->  fs/orangefs/inode.c                   |    7 ++
->  fs/overlayfs/inode.c                  |    3 +
->  fs/sync.c                             |    4 -
->  fs/ubifs/file.c                       |    9 +--
->  fs/utimes.c                           |    1=20
->  fs/xfs/xfs_iops.c                     |   29 ++++++++-
->  fs/xfs/xfs_super.c                    |   29 ---------
->  include/linux/fs.h                    |   17 +++--
->  include/trace/events/writeback.h      |    6 --
->  18 files changed, 152 insertions(+), 140 deletions(-)
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index a01400cd41fd..55f6c8026812 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -878,7 +878,9 @@ int orangefs_update_time(struct inode *inode, int fla=
+gs)
+> =20
+>  	gossip_debug(GOSSIP_INODE_DEBUG, "orangefs_update_time: %pU\n",
+>  	    get_khandle_from_ino(inode));
+> -	flags =3D generic_update_time(inode, flags);
+> +
+> +	flags =3D inode_update_timestamps(inode, flags);
+> +
+>  	memset(&iattr, 0, sizeof iattr);
+>          if (flags & S_ATIME)
+>  		iattr.ia_valid |=3D ATTR_ATIME;
 
-This all looks pretty reasonable to me. There are a few changelog and
-subject line typos, but the code changes look fine. You can add:
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-As far as nfsd's usage of FMODE_NOCMTIME, it looks OK to me. That's
-implemented today by the check in file_modified_flags(), which is
-generic and should work across filesystems.
-
-The main exception is xfs_exchange_range() which has some special
-handling for it, but nfsd doesn't use that functionality so that
-shouldn't be an issue.
-
-Am I missing some subtlety?
+--=20
+Jeff Layton <jlayton@kernel.org>
 

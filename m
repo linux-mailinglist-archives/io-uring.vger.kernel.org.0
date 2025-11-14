@@ -1,377 +1,199 @@
-Return-Path: <io-uring+bounces-10635-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10636-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566D2C5D489
-	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 14:15:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17A6C5D7C8
+	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 15:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8535235DB92
-	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 13:09:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92E274E422B
+	for <lists+io-uring@lfdr.de>; Fri, 14 Nov 2025 14:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA9E245012;
-	Fri, 14 Nov 2025 13:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644D5246BCD;
+	Fri, 14 Nov 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SIrUVwtL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imd5Szlx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ABE27990C
-	for <io-uring@vger.kernel.org>; Fri, 14 Nov 2025 13:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237C723908B;
+	Fri, 14 Nov 2025 14:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763125760; cv=none; b=P2iPw7DMEe+7GcW2vCTPc2WsLFVyjGUDJ62fodN6xELRll4eGFzfgZajHYxg81GmSZNzC2FaJv2ZvNwvT6iPCUpvBiwpgYvPM+OCwjLuUcfHXmQLxwFUUrCIHP8fkH6hM1KtfSzffjTVr6i+95QsHpwz9LdZ5PdOtzl6knx1hqs=
+	t=1763129102; cv=none; b=GDmqDT3zm/lhhbRptBWKG6NOX6TD8C5terFQIkjWyq9mTkMv6HNjh94gY6BF0Bdw3J6hwhtbb/kOj9TTVCQeyffUWoejCnq3fcwJNrTFbrgAG8QnzJrR0n4CmDpXe7eTWwTRjtXMXNN9mVQu+N95olbSDCIMcLFQrgiOim8uEB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763125760; c=relaxed/simple;
-	bh=vtfSQuOSZCSP/HysdkmZSuiURW9C5FdabXdwoe42lnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jkHtruPRnquUUMHiZxIoWociRm1Nagq37qp4SyHSqZM/hiIsf3ieIcndH5m4imGueSwtd3RgsHUt6a7V1giDFb8Tjoaf+UmnEfDt6054VwQmbTv6C79gfMpccGyc1CX/n/ZfySqx+pdU4ZaufPSWAf2XT1lz0Tzk4JxjL4e6szk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SIrUVwtL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763125757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pH2adpZ1ttv0IwuN13dvpzSOC4f84gcUvWc/uXacs3w=;
-	b=SIrUVwtLNT0Cin7m9aERp5lCMjdcUfsOfLZ4VvsnJTQMD8w0ETZJUzLpq8tXssDuBc39JM
-	PvyKU6bSOrq4LSWDZHXN9T3Bfjs39PmrWK0LGET4iZPJglMkz5IakPPZZh7Qk06wB7qb5I
-	HOqLSPI7HEfn0C9FesAKYQM4ypjo4Xc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-rLVIhnt9NBOeuiT2msJO_w-1; Fri,
- 14 Nov 2025 08:09:14 -0500
-X-MC-Unique: rLVIhnt9NBOeuiT2msJO_w-1
-X-Mimecast-MFC-AGG-ID: rLVIhnt9NBOeuiT2msJO_w_1763125753
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9961019560B0;
-	Fri, 14 Nov 2025 13:09:12 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.81])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B7126180049F;
-	Fri, 14 Nov 2025 13:09:03 +0000 (UTC)
-Date: Fri, 14 Nov 2025 21:08:52 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH v3 10/10] selftests/io_uring: add bpf io_uring selftests
-Message-ID: <aRcp5Gi41i-g64ov@fedora>
-References: <cover.1763031077.git.asml.silence@gmail.com>
- <6143e4393c645c539fc34dc37eeb6d682ad073b9.1763031077.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1763129102; c=relaxed/simple;
+	bh=qBagfT6KUYlyRbtMMbYHwsZqeSY2dB8e3MH2A2nSEjg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LsNpKfLNIAfx0I+iBMkM0KeS7D+XQ4K3QhCY6lJrWFP9dBabDx0F7bj1+6C5/2oP8HdYO0QTG3OuXWIHNek4BjZU+9wmBcdWGHIttuF55JBKI+8VScx94imXyfcgrCIZKCqNqdi5LIRi8PNQOl0Pc1+mrWMNPK3Y/d0z3vEjZNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imd5Szlx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AAAC4CEF1;
+	Fri, 14 Nov 2025 14:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763129101;
+	bh=qBagfT6KUYlyRbtMMbYHwsZqeSY2dB8e3MH2A2nSEjg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=imd5SzlxTnaqrWpaf+ZkkISorjK2X4szbYW0BsMvyDSFrrTlTyfdIl631CTJ+U747
+	 OKWzMKxVjtX9U1sG+jbCY2/T5lQe6mlfksGJ2lEGPJMrmNreDesQNvmQA9WF/9+jp5
+	 DgqQj9E+IdyckU2ZlOpluZP4yufRC62EkN4NDbV4EThZsNYraUD0Qe5Au9EGlI4mgQ
+	 hG96pQYfYtdoOqaLkfoWSVgD9UagjaSHcFgqgPOYaiBjRfNZd2IiUvxzx9GTBqjmBM
+	 bQl5NcvDpg9BLb0VzzG4kUBaL01xbs/Tx3VZh0aIuoNMXWs3qMwJbnVKCdDbu07/7z
+	 0SkhVbdtpuBQA==
+Message-ID: <b7e8d5e3a0ce8da103f4591afc1f4a9c683ef3c7.camel@kernel.org>
+Subject: Re: re-enable IOCB_NOWAIT writes to files
+From: Jeff Layton <jlayton@kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
+ Kara <jack@suse.cz>, Mike Marshall <hubcap@omnibond.com>, Martin
+ Brandenburg	 <martin@omnibond.com>, Carlos Maiolino <cem@kernel.org>,
+ Stefan Roesch	 <shr@fb.com>, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, 	gfs2@lists.linux.dev,
+ io-uring@vger.kernel.org, devel@lists.orangefs.org, 
+	linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Fri, 14 Nov 2025 09:04:58 -0500
+In-Reply-To: <20251114062642.1524837-1-hch@lst.de>
+References: <20251114062642.1524837-1-hch@lst.de>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6143e4393c645c539fc34dc37eeb6d682ad073b9.1763031077.git.asml.silence@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Nov 13, 2025 at 11:59:47AM +0000, Pavel Begunkov wrote:
-> Add a io_uring bpf selftest/example. runner.c sets up a ring and BPF and
-> calls io_uring_enter syscall to run the BPF program. All the execution
-> logic is in basic.bpf.c, which creates a request, waits for its
-> completion and repeats it N=10 times, after which it terminates. The
-> makefile is borrowed from sched_ext.
-> 
-> Note, it doesn't need to be all in BPF and can be intermingled with
-> userspace code. This needs a separate example.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  tools/testing/selftests/Makefile             |   3 +-
->  tools/testing/selftests/io_uring/Makefile    | 164 +++++++++++++++++++
->  tools/testing/selftests/io_uring/basic.bpf.c |  81 +++++++++
->  tools/testing/selftests/io_uring/common.h    |   2 +
->  tools/testing/selftests/io_uring/runner.c    |  80 +++++++++
->  tools/testing/selftests/io_uring/types.bpf.h | 136 +++++++++++++++
->  6 files changed, 465 insertions(+), 1 deletion(-)
->  create mode 100644 tools/testing/selftests/io_uring/Makefile
->  create mode 100644 tools/testing/selftests/io_uring/basic.bpf.c
->  create mode 100644 tools/testing/selftests/io_uring/common.h
->  create mode 100644 tools/testing/selftests/io_uring/runner.c
->  create mode 100644 tools/testing/selftests/io_uring/types.bpf.h
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index c46ebdb9b8ef..31dd369a7154 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -129,6 +129,7 @@ TARGETS += vfio
->  TARGETS += x86
->  TARGETS += x86/bugs
->  TARGETS += zram
-> +TARGETS += io_uring
->  #Please keep the TARGETS list alphabetically sorted
->  # Run "make quicktest=1 run_tests" or
->  # "make quicktest=1 kselftest" from top level Makefile
-> @@ -146,7 +147,7 @@ endif
->  # User can optionally provide a TARGETS skiplist. By default we skip
->  # targets using BPF since it has cutting edge build time dependencies
->  # which require more effort to install.
-> -SKIP_TARGETS ?= bpf sched_ext
-> +SKIP_TARGETS ?= bpf sched_ext io_uring
->  ifneq ($(SKIP_TARGETS),)
->  	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
->  	override TARGETS := $(TMP)
-> diff --git a/tools/testing/selftests/io_uring/Makefile b/tools/testing/selftests/io_uring/Makefile
-> new file mode 100644
-> index 000000000000..7dfba422e5a6
-> --- /dev/null
-> +++ b/tools/testing/selftests/io_uring/Makefile
-> @@ -0,0 +1,164 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +include ../../../build/Build.include
-> +include ../../../scripts/Makefile.arch
-> +include ../../../scripts/Makefile.include
-> +
-> +TEST_GEN_PROGS := runner
-> +
-> +# override lib.mk's default rules
-> +OVERRIDE_TARGETS := 1
-> +include ../lib.mk
-> +
-> +CURDIR := $(abspath .)
-> +REPOROOT := $(abspath ../../../..)
-> +TOOLSDIR := $(REPOROOT)/tools
-> +LIBDIR := $(TOOLSDIR)/lib
-> +BPFDIR := $(LIBDIR)/bpf
-> +TOOLSINCDIR := $(TOOLSDIR)/include
-> +BPFTOOLDIR := $(TOOLSDIR)/bpf/bpftool
-> +APIDIR := $(TOOLSINCDIR)/uapi
-> +GENDIR := $(REPOROOT)/include/generated
-> +GENHDR := $(GENDIR)/autoconf.h
-> +
-> +OUTPUT_DIR := $(OUTPUT)/build
-> +OBJ_DIR := $(OUTPUT_DIR)/obj
-> +INCLUDE_DIR := $(OUTPUT_DIR)/include
-> +BPFOBJ_DIR := $(OBJ_DIR)/libbpf
-> +IOUOBJ_DIR := $(OBJ_DIR)/io_uring
-> +LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
-> +BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
-> +
-> +DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
-> +HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
-> +HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
-> +HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
-> +HOST_DESTDIR := $(OUTPUT_DIR)/host/
-> +
-> +VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
-> +		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
-> +		     ../../../../vmlinux					\
-> +		     /sys/kernel/btf/vmlinux					\
-> +		     /boot/vmlinux-$(shell uname -r)
-> +VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
-> +ifeq ($(VMLINUX_BTF),)
-> +$(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
-> +endif
-> +
-> +BPFTOOL ?= $(DEFAULT_BPFTOOL)
-> +
-> +ifneq ($(wildcard $(GENHDR)),)
-> +  GENFLAGS := -DHAVE_GENHDR
-> +endif
-> +
-> +CFLAGS += -g -O2 -rdynamic -pthread -Wall -Werror $(GENFLAGS)			\
-> +	  -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)				\
-> +	  -I$(TOOLSINCDIR) -I$(APIDIR) -I$(CURDIR)/include
-> +
-> +# Silence some warnings when compiled with clang
-> +ifneq ($(LLVM),)
-> +CFLAGS += -Wno-unused-command-line-argument
-> +endif
-> +
-> +LDFLAGS = -lelf -lz -lpthread -lzstd
-> +
-> +IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
-> +			grep 'define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__')
-> +
-> +# Get Clang's default includes on this system, as opposed to those seen by
-> +# '-target bpf'. This fixes "missing" files on some architectures/distros,
-> +# such as asm/byteorder.h, asm/socket.h, asm/sockios.h, sys/cdefs.h etc.
-> +#
-> +# Use '-idirafter': Don't interfere with include mechanics except where the
-> +# build would have failed anyways.
-> +define get_sys_includes
-> +$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
-> +	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
-> +$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
-> +endef
-> +
-> +ifneq ($(CROSS_COMPILE),)
-> +CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
-> +endif
-> +
-> +CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
-> +
-> +BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
-> +	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
-> +	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
-> +	     -I$(INCLUDE_DIR) -I$(APIDIR) 	\
-> +	     -I$(REPOROOT)/include						\
-> +	     $(CLANG_SYS_INCLUDES) 						\
-> +	     -Wall -Wno-compare-distinct-pointer-types				\
-> +	     -Wno-incompatible-function-pointer-types				\
-> +	     -O2 -mcpu=v3
-> +
-> +# sort removes libbpf duplicates when not cross-building
-> +MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
-> +	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
-> +	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(IOUOBJ_DIR))
-> +
-> +$(MAKE_DIRS):
-> +	$(call msg,MKDIR,,$@)
-> +	$(Q)mkdir -p $@
-> +
-> +$(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
-> +	   $(APIDIR)/linux/bpf.h						\
-> +	   | $(OBJ_DIR)/libbpf
-> +	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/	\
-> +		    ARCH=$(ARCH) CC="$(CC)" CROSS_COMPILE=$(CROSS_COMPILE)	\
-> +		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
-> +		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
-> +
-> +$(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
-> +		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
-> +	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
-> +		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
-> +		    EXTRA_CFLAGS='-g -O0'					\
-> +		    OUTPUT=$(HOST_OBJ_DIR)/					\
-> +		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
-> +		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
-> +		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
-> +
-> +$(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
-> +ifeq ($(VMLINUX_H),)
-> +	$(call msg,GEN,,$@)
-> +	$(Q)$(BPFTOOL) btf dump file $(VMLINUX_BTF) format c > $@
-> +else
-> +	$(call msg,CP,,$@)
-> +	$(Q)cp "$(VMLINUX_H)" $@
-> +endif
-> +
-> +$(IOUOBJ_DIR)/%.bpf.o: %.bpf.c $(INCLUDE_DIR)/vmlinux.h	| $(BPFOBJ) $(IOUOBJ_DIR)
-> +	$(call msg,CLNG-BPF,,$(notdir $@))
-> +	$(Q)$(CLANG) $(BPF_CFLAGS) -target bpf -c $< -o $@
-> +
-> +$(INCLUDE_DIR)/%.bpf.skel.h: $(IOUOBJ_DIR)/%.bpf.o $(INCLUDE_DIR)/vmlinux.h $(BPFTOOL) | $(INCLUDE_DIR)
-> +	$(eval sched=$(notdir $@))
-> +	$(call msg,GEN-SKEL,,$(sched))
-> +	$(Q)$(BPFTOOL) gen object $(<:.o=.linked1.o) $<
-> +	$(Q)$(BPFTOOL) gen object $(<:.o=.linked2.o) $(<:.o=.linked1.o)
-> +	$(Q)$(BPFTOOL) gen object $(<:.o=.linked3.o) $(<:.o=.linked2.o)
-> +	$(Q)diff $(<:.o=.linked2.o) $(<:.o=.linked3.o)
-> +	$(Q)$(BPFTOOL) gen skeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $@
-> +	$(Q)$(BPFTOOL) gen subskeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $(@:.skel.h=.subskel.h)
-> +
-> +override define CLEAN
-> +	rm -rf $(OUTPUT_DIR)
-> +	rm -f $(TEST_GEN_PROGS)
-> +endef
-> +
-> +all_test_bpfprogs := $(foreach prog,$(wildcard *.bpf.c),$(INCLUDE_DIR)/$(patsubst %.c,%.skel.h,$(prog)))
-> +
-> +$(IOUOBJ_DIR)/runner.o: runner.c $(all_test_bpfprogs) | $(IOUOBJ_DIR) $(BPFOBJ)
-> +	$(CC) $(CFLAGS) -c $< -o $@
-> +
-> +$(OUTPUT)/runner: $(IOUOBJ_DIR)/runner.o $(BPFOBJ)
-> +	@echo "$(testcase-targets)"
-> +	echo 111
-> +	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-> +
-> +.DEFAULT_GOAL := all
-> +
-> +.DELETE_ON_ERROR:
-> +
-> +.SECONDARY:
-> diff --git a/tools/testing/selftests/io_uring/basic.bpf.c b/tools/testing/selftests/io_uring/basic.bpf.c
-> new file mode 100644
-> index 000000000000..c7954146ae4d
-> --- /dev/null
-> +++ b/tools/testing/selftests/io_uring/basic.bpf.c
-> @@ -0,0 +1,81 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <linux/types.h>
-> +#include <linux/stddef.h>
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/bpf_tracing.h>
-> +#include "types.bpf.h"
-> +#include "common.h"
-> +
-> +extern int bpf_io_uring_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr) __ksym;
-> +extern __u8 *bpf_io_uring_get_region(struct io_ring_ctx *ctx, __u32 region_id,
-> +				     const __u64 rdwr_buf_size) __ksym;
-> +
-> +static inline void io_bpf_wait_nr(struct io_ring_ctx *ring,
-> +				  struct iou_loop_state *ls, int nr)
-> +{
-> +	ls->cq_tail = ring->rings->cq.head + nr;
-> +}
-> +
-> +enum {
-> +	RINGS_REGION_ID		= 0,
-> +	SQ_REGION_ID		= 1,
-> +};
-> +
-> +char LICENSE[] SEC("license") = "Dual BSD/GPL";
-> +int reqs_to_run;
-> +
-> +SEC("struct_ops.s/link_loop")
-> +int BPF_PROG(link_loop, struct io_ring_ctx *ring, struct iou_loop_state *ls)
-> +{
-> +	struct ring_hdr *sq_hdr, *cq_hdr;
-> +	struct io_uring_cqe *cqe, *cqes;
-> +	struct io_uring_sqe *sqes, *sqe;
-> +	void *rings;
-> +	int ret;
-> +
-> +	sqes = (void *)bpf_io_uring_get_region(ring, SQ_REGION_ID,
-> +				SQ_ENTRIES * sizeof(struct io_uring_sqe));
-> +	rings = (void *)bpf_io_uring_get_region(ring, RINGS_REGION_ID,
-> +				64 + CQ_ENTRIES * sizeof(struct io_uring_cqe));
-> +	if (!rings || !sqes) {
-> +		bpf_printk("error: can't get regions");
-> +		return IOU_LOOP_STOP;
-> +	}
-> +
-> +	sq_hdr = rings;
-> +	cq_hdr = sq_hdr + 1;
-> +	cqes = rings + 64;
-> +
-> +	if (cq_hdr->tail != cq_hdr->head) {
-> +		unsigned cq_mask = CQ_ENTRIES - 1;
-> +
-> +		cqe = &cqes[cq_hdr->head++ & cq_mask];
-> +		bpf_printk("found cqe: data %lu res %i",
-> +			   (unsigned long)cqe->user_data, (int)cqe->res);
-> +
-> +		int left = --reqs_to_run;
-> +		if (left <= 0) {
-> +			bpf_printk("finished");
-> +			return IOU_LOOP_STOP;
-> +		}
-> +	}
-> +
-> +	bpf_printk("queue nop request, data %lu\n", (unsigned long)reqs_to_run);
-> +	sqe = &sqes[sq_hdr->tail & (SQ_ENTRIES - 1)];
-> +	sqe->user_data = reqs_to_run;
-> +	sq_hdr->tail++;
+On Fri, 2025-11-14 at 07:26 +0100, Christoph Hellwig wrote:
+> Hi all,
+>=20
+> commit 66fa3cedf16a ("fs: Add async write file modification handling.")
+> effectively disabled IOCB_NOWAIT writes as timestamp updates currently
+> always require blocking, and the modern timestamp resolution means we
+> always update timestamps.  This leads to a lot of context switches from
+> applications using io_uring to submit file writes, making it often worse
+> than using the legacy aio code that is not using IOCB_NOWAIT.
+>=20
+> This series allows non-blocking updates for lazytime if the file system
+> supports it, and adds that support for XFS.
+>=20
+> It also fixes the layering bypass in btrfs when updating timestamps on
+> device files for devices removed from btrfs usage, and FMODE_NOCMTIME
+> handling in the VFS now that nfsd started using it.  Note that I'm still
+> not sure that nfsd usage is fully correct for all file systems, as only
+> XFS explicitly supports FMODE_NOCMTIME, but at least the generic code
+> does the right thing now.
+>=20
+> Diffstat:
+>  Documentation/filesystems/locking.rst |    2=20
+>  Documentation/filesystems/vfs.rst     |    6 ++
+>  fs/btrfs/inode.c                      |    3 +
+>  fs/btrfs/volumes.c                    |   11 +--
+>  fs/fat/misc.c                         |    3 +
+>  fs/fs-writeback.c                     |   53 ++++++++++++++----
+>  fs/gfs2/inode.c                       |    6 +-
+>  fs/inode.c                            |  100 +++++++++++----------------=
+-------
+>  fs/internal.h                         |    3 -
+>  fs/orangefs/inode.c                   |    7 ++
+>  fs/overlayfs/inode.c                  |    3 +
+>  fs/sync.c                             |    4 -
+>  fs/ubifs/file.c                       |    9 +--
+>  fs/utimes.c                           |    1=20
+>  fs/xfs/xfs_iops.c                     |   29 ++++++++-
+>  fs/xfs/xfs_super.c                    |   29 ---------
+>  include/linux/fs.h                    |   17 +++--
+>  include/trace/events/writeback.h      |    6 --
+>  18 files changed, 152 insertions(+), 140 deletions(-)
 
-Looks this way turns io_uring_enter() into pthread-unsafe, does it need to
-be documented?
+This all looks pretty reasonable to me. There are a few changelog and
+subject line typos, but the code changes look fine. You can add:
 
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-Thanks, 
-Ming
+As far as nfsd's usage of FMODE_NOCMTIME, it looks OK to me. That's
+implemented today by the check in file_modified_flags(), which is
+generic and should work across filesystems.
 
+The main exception is xfs_exchange_range() which has some special
+handling for it, but nfsd doesn't use that functionality so that
+shouldn't be an issue.
+
+Am I missing some subtlety?
 

@@ -1,189 +1,152 @@
-Return-Path: <io-uring+bounces-10645-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10646-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9E1C5FA53
-	for <lists+io-uring@lfdr.de>; Sat, 15 Nov 2025 01:00:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DD4C611B8
+	for <lists+io-uring@lfdr.de>; Sun, 16 Nov 2025 09:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2420A4E2AD4
-	for <lists+io-uring@lfdr.de>; Sat, 15 Nov 2025 00:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6319F3B61FD
+	for <lists+io-uring@lfdr.de>; Sun, 16 Nov 2025 08:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC530F81A;
-	Sat, 15 Nov 2025 00:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443C5285072;
+	Sun, 16 Nov 2025 08:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhrVLHzT"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="LAFpYxoi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5BE30F53F
-	for <io-uring@vger.kernel.org>; Sat, 15 Nov 2025 00:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD492248A0
+	for <io-uring@vger.kernel.org>; Sun, 16 Nov 2025 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763164808; cv=none; b=VoVCQ610ZGQst2NlGa43uabEwOdcwcKbNL3G+7YzyRFKpage+4K5OjbY55NGwEzosTEXUuduKtxMm9cfA4lQt+ZiFDrVmb/azulV/JCeHOYxjTEr4+OAJ3mwGZtsTwLcx9cgrrXCj357CycQTKlKM1YJ1F9na9i8NMN+D7lwQcg=
+	t=1763281397; cv=none; b=A257ipd36bm6StNo9M9TJrHwmHALUAHzBKmq/vuZg5GVBRL4b01bpzkecVKFjZCdKCLPdeQxJEc0yTPU5J4Cml2TmHSEB+GQOs1qswPH1xxwW61RTL3p2J3fsde3S7Ex+R8facOkWHWxAly6Dvq0ua56zPFMhm6NxfM6PgDgYoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763164808; c=relaxed/simple;
-	bh=eUj6MJne0yoSVBbdK6TfheRVbwmwWQqzr8OkId+ZdLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b2yXYOa8X7FB5S6qrJMY79wWujhczGTT04dAOKDqclPZBOQPBNG6FzWfOEFuPnHimOOcoyb9hU6ecN5iizuiOpvDg/EhY5U4uyznX3PXM+VodGikUX5VAq0w59XITbXt5CNgB8AnSI1vHax0kr9m/ZGd5lS1Zmq1Ofp4tS7VmZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhrVLHzT; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4e88ed3a132so27584711cf.0
-        for <io-uring@vger.kernel.org>; Fri, 14 Nov 2025 16:00:04 -0800 (PST)
+	s=arc-20240116; t=1763281397; c=relaxed/simple;
+	bh=C+JcvFRwZHyavGe7kxRswHzD35IQVhdGIfMoOL9ybQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M80tEjPWyAzLDfKD87TY/VrdUrIegBdl9i++rWvH0qkKAwBmalxW6dSl9dzCWU7z+qvSip6iOyb6YVZy27Xn6mSHOvs3lyaIYNhRHaxYF5sZJbYgiUDmdJJU9uZFBYFoUMOVM5yyLAezvtMaCw8U0EbzpjFwsl/B5rUbyN9QmhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=LAFpYxoi; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2956d816c10so35204055ad.1
+        for <io-uring@vger.kernel.org>; Sun, 16 Nov 2025 00:23:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763164803; x=1763769603; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
-        b=HhrVLHzTt9Jf6lADk1vcuCzOWct7rT/ge5XE9kC5fo1d8lYduzG9U1lwjU1E8zrBkY
-         /myPxKAbZIPW3NBX5ompSQnOMHSbTH/Uw7Vrp5hVq1FEX7lPp6bNhEBo8rH57/WT5tkm
-         +GacyqG5TwS6uIJzD+Rt3XZFqfQ1YtcT0FY3yM6d2EWxChr9zqSt89UdQVGy+6GcvxUu
-         McYZ5r15p1utyFw6zVBALELzve3+M2PlH2sBqaYojySaqfdg8V3dRT64GI27RWqrw5t+
-         TsbftT1r0rHAY1Men+4k6fNjBm3sbi2O3/z4sj6R5J5S8i69WMXAJ2siLhHpJQWQX34N
-         vxWw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1763281395; x=1763886195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4MaMBAoduJmljAfpOLsOwZXGopJOVWqjmgthPn26W4=;
+        b=LAFpYxoiJGcYCTAW2kOg1UFBq9oMMmEaBg4IvoS0x3oCTo4DCvJt3kTJIKB0DB5SL7
+         NJDSdSfhSUy6img3FIkk9DZo93wSfy/IQfxyXAy6nDow269dr8fz2JWVYR2FIsFXjAQ0
+         6SHD9N2jFT5ezuoq/DJaH6tv4TwQfB25O47G/5O+HEeM/r7mF4AIebekDNxdrWcmQ39u
+         NVZ9AS0QiPWLnpgRmkIicMuRk263e5xdrNFcBbAuXJO5c1Qv8Kr2mRr+4x0u/bfpWq65
+         Td07/17O4ZU71mQrPJ/qJtNKqi/9DqB5XVUZhh78859hNaw+PP8r8dqXyw4pnhkA0gvB
+         IvEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763164803; x=1763769603;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
-        b=P9ELbmraOlnzbF7d7nWZX3rVVPShFtZ/Z8zbdyvcxTOJpSGT3jTa0HEISicMM3SbXb
-         qxJR8FtZPCzWc1htCi440/JWzMHKqqIPqG8bWJcPbx8DGRjt4U+GqRoq4ZBx0nzbIUSX
-         vroICaOdDgwvlVlkIdPjXq23npKiq1DHS71tIA74imSwPB8YS2DLTQU52f9Wa3/LLBOP
-         mEQo0FRK+iUak4xnsUQ6CqwKfNVNbYiBrCR0jYy2NqmL52sxmfzQlxOs720PtDu0nUA+
-         D26ZPql070rF5TS88dP5C7ZR9JFpXtDkBJIqUNEq/JNaykOOmzgRoqilw66ogx6BK44W
-         7yKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjc6VCI/keb/kjS+bWyiYNJPK+YrwkhsH3XMKEd4QpKWny9D8Fh2OdWSK02+hozWpbbnbThkvupQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7jz2bJuzdMUoTl3th/1jNucwOtcABJwujrgQIaTAWs9vMLG56
-	kyNQ+iRZqeHxU5pfVGFHhZWuXGlQLpZoh1x3MWqIg3mS22YL/+uZJbXR8+YZG2faQqerAwF3BWV
-	DWr4p8IISzpPYZ+/Xm6EwBeEYQco9iT8=
-X-Gm-Gg: ASbGncupL4noDeBC2mUwVioFZABxDU7yqJ9yAaHH6U18isxyAT48i+s94IJXRxy646F
-	LnoNcsbMrzXAmBU8fSL/eXgkjoZNi2YJp3LDq5wCLPf3/tPumaCbdups73IM/T3abm5AfD975Ej
-	8w7TMONau60NaugC7mmqPXj2jlGk2Vd6lqrej23yWlwHpRygAlnLZx+KGO4FjUjDVZwunsVq1Zl
-	KUhcsq/1UC6ibFf7hVOdTsfjTqCwUGgAMdEk9DX+Hx8QcPb2Q0hOq9cYIU=
-X-Google-Smtp-Source: AGHT+IFuXiTIheMG3+4gmC1q+oV5Yb6/nZ5Dj/15NZpvhB9K3y74K4FlHz1GdbdRouCeDasOvS1IpwzwFM/b3I71HzM=
-X-Received: by 2002:a05:622a:1818:b0:4b7:ad20:9393 with SMTP id
- d75a77b69052e-4edf206c3d3mr76294551cf.4.1763164802938; Fri, 14 Nov 2025
- 16:00:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763281395; x=1763886195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M4MaMBAoduJmljAfpOLsOwZXGopJOVWqjmgthPn26W4=;
+        b=J7QYrnJZUvf24Sqx/m8q/KBpQTMukjjRPKxssCbfrEATymhCjGaNTserFyGnBj+Giz
+         SF8YDrw/8X9HXBW7EX4OAVDwRYR3YkGld1tfph2WTdusabDCR0gNG9rNGsgaMgDpT8Fa
+         QjcCggGWC/SOJagwSDNOT5A1fg0q5p9hmqqxx6j6P9Ww0Aubb7xk+Foe8hIwBzaTe3IL
+         DeDFGY/VEhicn858UHqU7Hs0stRozwph3TOf/hcFqcbxXrNCCwpzIMcFo/wG7w5RG3Zg
+         sGhakGydv1XVNJN23pbZ59sODK7H5IMiI6cSoOv9oVm+rkH8QT7OFlIsUFnv5HLx1rCj
+         JYQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOZFZ4ww34rE3jubJjbhc7ytg04A4LrmdUP5RRh1XPsnfhuy0Uien9lhI97nmmLoyoNUJP7H5F2Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZDxFJQ/8wqm1KY3T/fWdWWW6dYVvaqR6tj5mUlKCN24t35+Ld
+	Z/Snpk+k0aCqNXYO7SX/wnV2SoeBi2y5UfHbdEAnLs0HVLqejP454z26GsWz5ZKnpNk=
+X-Gm-Gg: ASbGnctZ3dQND0xFK2uLYWEvw6J6fr8WAEqShAMseEBqssM5hvXBnfYRrIVJ6i/RPcG
+	2qPuEPLpwVCapn/Gy4g/7Y2kxdNb0t4yrBrPt86jfGhgl/WTyshCvajj7JNNdz81RuC93tWdCvx
+	+OhYpRW96tOl5iug9Gu7wtKeMULYd5fWLowEFcDx3/eu2w/deFMsIRt7xoszZn8OYfp9aodSjCE
+	olvAqlXbBK8WFMH9ZtE7tO0BECeqPlTzP04bWFGmXnI7Po4tekKwgj5pbRBzsoPSKNMUogsy/RO
+	FYzgyRDdg1lgdc17WHgrzp8nc9N3hqY+MOXtocGYEFTsyXX6+GHDXwtnEaD13eJlES5ozlQ+4Ij
+	cUKpABg0DUWo2F/6tBzS3PMaFTmkRzUpA9/fUF0qodBZs6QmsuzpAT4dIsd+hrtGtmPgpIZpiFy
+	/LbfbxkeWMOduJXFW+nHPVwYXsb/jNB1IGym9OqgXecW5fKry5AuU6sNMwus+eNw==
+X-Google-Smtp-Source: AGHT+IE2kISBEpmbZV/bnZzdrwmOacrEejG6ljtHkn9ZRcGe++TC5tzXGzGVsKaVV/gcvGARY/ZhHw==
+X-Received: by 2002:a17:903:41ca:b0:294:ec7d:969c with SMTP id d9443c01a7336-2986a769988mr112616935ad.49.1763281394800;
+        Sun, 16 Nov 2025 00:23:14 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29864b00fc9sm79958015ad.40.2025.11.16.00.23.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Nov 2025 00:23:14 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vKY2R-0000000BUhZ-3a27;
+	Sun, 16 Nov 2025 19:23:11 +1100
+Date: Sun, 16 Nov 2025 19:23:11 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
+	Jan Kara <jack@suse.cz>, Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>,
+	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
+	io-uring@vger.kernel.org, devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 14/14] xfs: enable non-blocking timestamp updates
+Message-ID: <aRmJ728evgFnBLhn@dread.disaster.area>
+References: <20251114062642.1524837-1-hch@lst.de>
+ <20251114062642.1524837-15-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
-In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 14 Nov 2025 15:59:52 -0800
-X-Gm-Features: AWmQ_bmRlXebUAoVOMZ3KYImfI2XMgqsAutH5pwXFp2qmwPO8Oe22i50fOp_O8A
-Message-ID: <CAJnrk1bG7fAX8MfwJL_D2jzMNv5Rj9=1cgQvVpqC1=mGaeAwOg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] fuse: support io-uring registered buffers
-To: miklos@szeredi.hu, axboe@kernel.dk
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
-	io-uring@vger.kernel.org, xiaobing.li@samsung.com, csander@purestorage.com, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251114062642.1524837-15-hch@lst.de>
 
-On Mon, Oct 27, 2025 at 3:29=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> This patchset adds fuse support for io-uring registered buffers.
-> Daemons may register buffers ahead of time, which will eliminate the over=
-head
-> of pinning/unpinning user pages and translating virtual addresses for eve=
-ry
-> server-kernel interaction.
+On Fri, Nov 14, 2025 at 07:26:17AM +0100, Christoph Hellwig wrote:
+> The lazytime path using generic_update_time can never block in XFS
+> because there is no ->dirty_inode method that could block.  Allow
+> non-blocking timestamp updates for this case.
+> 
+> Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_iops.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index bd0b7e81f6ab..3d7b89ffacde 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1195,9 +1195,6 @@ xfs_vn_update_time(
+>  
+>  	trace_xfs_update_time(ip);
+>  
+> -	if (flags & S_NOWAIT)
+> -		return -EAGAIN;
+> -
+>  	if (inode->i_sb->s_flags & SB_LAZYTIME) {
+>  		if (!((flags & S_VERSION) &&
+>  		      inode_maybe_inc_iversion(inode, false)))
+> @@ -1207,6 +1204,9 @@ xfs_vn_update_time(
+>  		log_flags |= XFS_ILOG_CORE;
+>  	}
+>  
+> +	if (flags & S_NOWAIT)
+> +		return -EAGAIN;
+> +
+>  	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
+>  	if (error)
+>  		return error;
 
-Registered buffers helps with the I/O overhead, but there's still
-significant memory waste within each buffer. Each entry in a queue
-allocates a dedicated buffer of at least 1 MB (for some performant
-servers like passthrough_hp, each entry's buffer is 4 MB, which adds
-up (eg with the libfuse default queue depth of 8 on a 64-core machine,
-that's 2 GB of buffers per fuse connection)) but most of this space
-goes unused. In practice, entries on a queue will rarely consume their
-full buffer capacity simultaneously.
+Not sure this is correct - this can now bump iversion and then
+return -EAGAIN. That means S_VERSION likely won't be set on the
+retry, and we'll go straight through the non-blocking path to
+generic_update_time() and skip logging the iversion update....
 
-Instead of using registered buffers, I think it's better if we go with
-a kernel managed ring buffer. It'll have the same advantages in
-reducing I/O overhead as registered buffers but also give us
-optionality later on to support IORING_CQE_F_BUF_MORE for incremental
-buffer consumption or add multiple different-sized ring buffer pools
-(eg for large payloads vs small payloads, which is also something we
-have to differentiate between for zero-copy), whereas we would have no
-way of supporting that with registered buffers.
-
-For v3, I'm going to go this direction.
-
-Thanks,
-Joanne
-
->
-> The main logic for fuse registered buffers is in the last patch (patch 8/=
-8).
-> Patch 1/8 adds an io_uring api for fetching the registered buffer and pat=
-ches
-> (2-7)/8 refactors the fuse io_uring code, which additionally will make ad=
-ding
-> in the logic for registered buffers neater.
->
-> The libfuse changes can be found in this branch:
-> https://github.com/joannekoong/libfuse/tree/registered_buffers. The libfu=
-se
-> implementation first tries registered buffers during registration and if =
-this
-> fails, will retry with non-registered buffers. This prevents having to ad=
-d a
-> new init flag (but does have the downside of printing dmesg errors for th=
-e
-> failed registrations when trying the registered buffers). If using regist=
-ered
-> buffers and the daemon for whatever reason unregisters the buffers midway
-> through, then this will sever server-kernel communication. Libfuse will n=
-ever
-> do this. Libfuse will only unregister the buffers when the entire session=
- is
-> being destroyed.
->
-> Benchmarks will be run and posted.
->
-> Thanks,
-> Joanne
->
-> v1: https://lore.kernel.org/linux-fsdevel/20251022202021.3649586-1-joanne=
-lkoong@gmail.com/
-> v1 -> v2:
-> * Add io_uring_cmd_import_fixed_full() patch
-> * Construct iter using io_uring_cmd_import_fixed_full() per cmd instead o=
-f recyling
->   iters.
-> * Kmap the header instead of using bvec iter for iterating/copying. This =
-makes
->   the code easier to read.
->
-> Joanne Koong (8):
->   io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
->   fuse: refactor io-uring logic for getting next fuse request
->   fuse: refactor io-uring header copying to ring
->   fuse: refactor io-uring header copying from ring
->   fuse: use enum types for header copying
->   fuse: add user_ prefix to userspace headers and payload fields
->   fuse: refactor setting up copy state for payload copying
->   fuse: support io-uring registered buffers
->
->  fs/fuse/dev_uring.c          | 366 +++++++++++++++++++++++++----------
->  fs/fuse/dev_uring_i.h        |  27 ++-
->  include/linux/io_uring/cmd.h |   3 +
->  io_uring/rsrc.c              |  14 ++
->  io_uring/rsrc.h              |   2 +
->  io_uring/uring_cmd.c         |  13 ++
->  6 files changed, 316 insertions(+), 109 deletions(-)
->
-> --
-> 2.47.3
->
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 

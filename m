@@ -1,50 +1,50 @@
-Return-Path: <io-uring+bounces-10655-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10656-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB50C6C371
-	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 02:12:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE954C6C386
+	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 02:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C6F64EA4FC
-	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 01:12:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6A004E1B4A
+	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 01:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FE1226D17;
-	Wed, 19 Nov 2025 01:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4966224AE8;
+	Wed, 19 Nov 2025 01:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Nd5xbeJu"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XahLDQ/m"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFB122FDEA;
-	Wed, 19 Nov 2025 01:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7423822154B;
+	Wed, 19 Nov 2025 01:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763514748; cv=none; b=KaWI1zOX8QJCDuWRhh1B+3TEur3BJ06W7hL4vHKMmTre/s39TkOR4spdaeQ5VG4CqJXFyi9SyHQjXODozu+fcMUmZsfVhQGFIeGHSxPX1LlI4XXsyvZpqzQzaZTBJzPSfVc2aeDj+iZE9EY1x4Kc+MhVzkQcnwsQZqLz4EpUfoU=
+	t=1763514891; cv=none; b=N1GeDBxicen6cquyQGQgJYAKHz/ahtMU9KgsEwclg3dzkRL4YUr+f4+ZGMHaizVK90M3NclwbnuY8q589cEmmqfLJoqBxpdiP31HzYXGJLexN9DjZxyabjtv9HPVJIQ0Pd5kzhIjeH9FeXZwGoQFn9/+XUUdzhgt4+EVQwdSDJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763514748; c=relaxed/simple;
-	bh=2Rx8XCdzHjJIlTspDM1ljFO+dt4sCkDup0S9W+r6mCI=;
+	s=arc-20240116; t=1763514891; c=relaxed/simple;
+	bh=Wu7LjLAOBb0+e+MQ/Py5o+8QQLdZuMlq15GHQwj4YeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0TMaH59igp+UuCp3E+3zf6psDmudYdeWIrow9aLD8EC1QdAlWxvwdm7Th5iBHsYMd3mlw0Tr2SCnpSydVYATY4WXs8MHKFigP1+YOanIpE3T8iiTCAJZOn08S0WL5udx2OsJgVcfBTqupMmXzk7bfE5sLm2NBgJP3vMLQuoV80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Nd5xbeJu; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/WcI+ppamKGHc0QPEstCxM2iLygJtkbAyYYpqenKcjxN5qfXmUfxxX3Y5rFOCgD0fEqZNHaqUuECvp81YTZHSviUQwt74ekfcpOTLBLCN8XTao/f8BBLw8+gVHVj9IAa0xGAuH90Y5+aDXY96wPdHusO7gvVXtZSzKAlQZveQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XahLDQ/m; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ez5hPH+ChtRiWvVs9RI2L5Gbgi4SNbK/1ae/jYD9A5g=; b=Nd5xbeJuKkYDpaKp+IP1rUny1z
-	wJ3MSgpyz4YFNZZYgcPyQR0qn4aCFpyCVXNCtaejweH2XTamRV1OQzCyQNr09jFZPu5QttWM9P3Zf
-	59ULI/tBiLPmBgUMBpqhc5DZBkj81we4bRzSr8SrCm73sK1CIo7FliRcEo+LZSM/BtwKwIretN45W
-	BALGh86YpN7CeRDkerYfnyjMoV7iKT6+XaysEieGM0RivNpC++PF1KgcF8E5n2vXPnch86eqQmR09
-	5I/fxmzjJ/APmjrBdp5Kjem1sy1b+Mbd4KtPXNAaj+gqy76vpns+gK7CDh/prKcb9wgsXiqA88vEI
-	4XKzMkCA==;
+	bh=kRUa2+eEEst0Qe7yL2Pj2TauMzIwNCDek+dlaGZLtqY=; b=XahLDQ/mnKV7z4FMalMSxSBhh9
+	7bkDhrG1p2tqEOMkPLkxl5kr7Nc9VtceSrFcJgqAPNJouYnHJO/C0D1CJsQvz4Y5zCJJkXt7iw61C
+	qvEkUEvsL/YhyVTtxAe6mxmssV8SPP4/+d61o0V5BYqOLWfzYtVGE+wKLBVZKAEPY7lwa3mpj+m9x
+	/XDsyZQAWhDdSyyfg8LvcvWZ6JIDtSF4R83QJa3SUqhH5bcuTBoUrV00kI3giXitxOAgfcXgHD0g9
+	JJD7F1hSNDn2rQZZlovMY2g4jFEAq24lDMD82LWC0ogtA09NHT2W3CDqTAjdvij8RGD2SzSeRUXio
+	b9enR0Zg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLWkB-000000047t2-1Zr9;
-	Wed, 19 Nov 2025 01:12:23 +0000
-Date: Wed, 19 Nov 2025 01:12:23 +0000
+	id 1vLWmV-00000004AzB-3MnT;
+	Wed, 19 Nov 2025 01:14:47 +0000
+Date: Wed, 19 Nov 2025 01:14:47 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
@@ -52,10 +52,11 @@ Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
 	paul@paul-moore.com, audit@vger.kernel.org,
 	io-uring@vger.kernel.org
 Subject: Re: [RFC][PATCH 11/13] allow incomplete imports of filenames
-Message-ID: <20251119011223.GL2441659@ZenIV>
+Message-ID: <20251119011447.GM2441659@ZenIV>
 References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <20251109063745.2089578-12-viro@zeniv.linux.org.uk>
  <257804ed-438e-4085-a8c2-ac107fe4c73d@kernel.dk>
+ <20251119011223.GL2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -64,62 +65,37 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <257804ed-438e-4085-a8c2-ac107fe4c73d@kernel.dk>
+In-Reply-To: <20251119011223.GL2441659@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Nov 11, 2025 at 07:41:24AM -0700, Jens Axboe wrote:
+On Wed, Nov 19, 2025 at 01:12:23AM +0000, Al Viro wrote:
 
-> > diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> > index bfeb91b31bba..6bc14f626923 100644
-> > --- a/io_uring/openclose.c
-> > +++ b/io_uring/openclose.c
-> > @@ -121,6 +118,7 @@ int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
-> >  	struct file *file;
-> >  	bool resolve_nonblock, nonblock_set;
-> >  	bool fixed = !!open->file_slot;
-> > +	struct filename *name __free(putname) = complete_getname(&open->filename);
-> >  	int ret;
-> >  
-> >  	ret = build_open_flags(&open->how, &op);
+> int putname_to_incomplete(struct incomplete_name *v, struct filename *name)
+> {
+> 	if (likely(name->refcnt == 1)) {
+> 		v->__incomplete_filename = name;
+> 		return 0;
+> 	}
+> 	v->__incomplete_filename = <duplicate name>;
+> 	putname(name);
+> 	if (unlikely(!v->__incomplete_filename))
+> 		return -ENOMEM;
+> 	return 0;
+> }
 > 
-> I don't think this will work as-is - the prep has been done on the
-> request, but we could be retrying io_openat2(). That will happen if this
-> function returns -EAGAIN. That will then end up with a cleared out
-> filename for the second (blocking) invocation.
+> and have
+>                 if (ret == -EAGAIN &&
+> 		    (!resolve_nonblock && (issue_flags & IO_URING_F_NONBLOCK))) {
+> 			ret = putname_to_incomplete(&open->filename,
+> 						    no_free_ptr(name));
+> 			if (unlikely(ret))
+> 				goto err;
+> 			return -EAGAIN;
+> 		}
+> 
+> in io_openat2() (in addition to what's already done in 11/13).  Workable or
+> too disgusting?
 
-If retry happens in a different thread, we do have a problem ;-/
-This -EAGAIN might've come from ->open() itself (io_openat2() sets
-O_NONBLOCK on the same calls), and by that point we have already
-shoved that filename in direction of audit...
-
-IMO the first 10 commits (up to and including audit_reusename() removal)
-are useful on their own, but io_openat2() part does look broken.
-
-Hmm...  FWIW, we could do a primitive like
-
-int putname_to_incomplete(struct incomplete_name *v, struct filename *name)
-{
-	if (likely(name->refcnt == 1)) {
-		v->__incomplete_filename = name;
-		return 0;
-	}
-	v->__incomplete_filename = <duplicate name>;
-	putname(name);
-	if (unlikely(!v->__incomplete_filename))
-		return -ENOMEM;
-	return 0;
-}
-
-and have
-                if (ret == -EAGAIN &&
-		    (!resolve_nonblock && (issue_flags & IO_URING_F_NONBLOCK))) {
-			ret = putname_to_incomplete(&open->filename,
-						    no_free_ptr(name));
-			if (unlikely(ret))
-				goto err;
-			return -EAGAIN;
-		}
-
-in io_openat2() (in addition to what's already done in 11/13).  Workable or
-too disgusting?
+Note that copying would happen only if extra references had been grabbed
+and are still held; that's already a slow path.
 

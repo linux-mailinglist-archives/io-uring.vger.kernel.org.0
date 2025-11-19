@@ -1,101 +1,147 @@
-Return-Path: <io-uring+bounces-10656-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10657-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE954C6C386
-	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 02:14:56 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99B5C6C67D
+	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 03:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6A004E1B4A
-	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 01:14:55 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 6C1D9295DC
+	for <lists+io-uring@lfdr.de>; Wed, 19 Nov 2025 02:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4966224AE8;
-	Wed, 19 Nov 2025 01:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DB928850E;
+	Wed, 19 Nov 2025 02:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XahLDQ/m"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cW3kC/S0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7423822154B;
-	Wed, 19 Nov 2025 01:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4463288C39
+	for <io-uring@vger.kernel.org>; Wed, 19 Nov 2025 02:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763514891; cv=none; b=N1GeDBxicen6cquyQGQgJYAKHz/ahtMU9KgsEwclg3dzkRL4YUr+f4+ZGMHaizVK90M3NclwbnuY8q589cEmmqfLJoqBxpdiP31HzYXGJLexN9DjZxyabjtv9HPVJIQ0Pd5kzhIjeH9FeXZwGoQFn9/+XUUdzhgt4+EVQwdSDJc=
+	t=1763519796; cv=none; b=MG7Hel7b2xIhkVh13TAmtuhvqTuY1KTOFlGEeytdJIFjOVCsVv/8x0zIfSzrjerZtBbvt4Wa/KwRQA44Ljlw+Y/zx5GUAe3iRiMj9Mk92dfDZqX0NTv4iisWGntXODFzgULwLsxK0LfwUXv3f55KZYZTrlf9J9QFevePw8aqkhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763514891; c=relaxed/simple;
-	bh=Wu7LjLAOBb0+e+MQ/Py5o+8QQLdZuMlq15GHQwj4YeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/WcI+ppamKGHc0QPEstCxM2iLygJtkbAyYYpqenKcjxN5qfXmUfxxX3Y5rFOCgD0fEqZNHaqUuECvp81YTZHSviUQwt74ekfcpOTLBLCN8XTao/f8BBLw8+gVHVj9IAa0xGAuH90Y5+aDXY96wPdHusO7gvVXtZSzKAlQZveQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XahLDQ/m; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kRUa2+eEEst0Qe7yL2Pj2TauMzIwNCDek+dlaGZLtqY=; b=XahLDQ/mnKV7z4FMalMSxSBhh9
-	7bkDhrG1p2tqEOMkPLkxl5kr7Nc9VtceSrFcJgqAPNJouYnHJO/C0D1CJsQvz4Y5zCJJkXt7iw61C
-	qvEkUEvsL/YhyVTtxAe6mxmssV8SPP4/+d61o0V5BYqOLWfzYtVGE+wKLBVZKAEPY7lwa3mpj+m9x
-	/XDsyZQAWhDdSyyfg8LvcvWZ6JIDtSF4R83QJa3SUqhH5bcuTBoUrV00kI3giXitxOAgfcXgHD0g9
-	JJD7F1hSNDn2rQZZlovMY2g4jFEAq24lDMD82LWC0ogtA09NHT2W3CDqTAjdvij8RGD2SzSeRUXio
-	b9enR0Zg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLWmV-00000004AzB-3MnT;
-	Wed, 19 Nov 2025 01:14:47 +0000
-Date: Wed, 19 Nov 2025 01:14:47 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
-	paul@paul-moore.com, audit@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC][PATCH 11/13] allow incomplete imports of filenames
-Message-ID: <20251119011447.GM2441659@ZenIV>
-References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
- <20251109063745.2089578-12-viro@zeniv.linux.org.uk>
- <257804ed-438e-4085-a8c2-ac107fe4c73d@kernel.dk>
- <20251119011223.GL2441659@ZenIV>
+	s=arc-20240116; t=1763519796; c=relaxed/simple;
+	bh=9VP/fc7/MSmvFXbL/uMJ4xdIkwibrd9NyuUDtov76S0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=r4grvaqFSsOPFJS8UfmEgLt7/vZQWqOarKiaVAAxzw4LBkbOTxY1jOcNvGvIapZOfOcdnzUywZF7xOCDmLxSPGpnH/oFth5coWzrHGWrOS/fnwQ041Gj1TTeZ7BPIB1PB30t+OoFUQ1rCMinlupuHNUBLT3yjo0ifcMnAFrK84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cW3kC/S0; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-4331709968fso23711305ab.2
+        for <io-uring@vger.kernel.org>; Tue, 18 Nov 2025 18:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763519790; x=1764124590; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KyHf2GC6e+BVj/TrmBEhI1EpGBIwPz1R0vNU3t16RxY=;
+        b=cW3kC/S0vt6p0ErNrlIg4Hkc7U1r78m8f1+B5kd3G3XBOBn7OkbpuI6az6t07o5K5c
+         AkJ8ShNGqOmwv6TKkt3T0Ja5+D2lFsz36AdsbYJIBB7jhYqhQWzRtxOTOuww82S+Nh4L
+         1NpPbRjeKexMU5LlJsghKIGRo/vasnqNB+iDYP6Pdtmdgz/ZL1/l2L2YG1H1IJJEDdVF
+         322AjgOtHY3MT+phMsqaMe7KngoAWLZwe9nnamRq5uQaR8KCLpG6RD0wzX/sz5qugok9
+         yzMwl7kQQpXKVwbhpmLUwDgNod7Ko17nJBanatx8GqUHfC1I0vDT/cXLuOThG/NaskFr
+         GhIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763519790; x=1764124590;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KyHf2GC6e+BVj/TrmBEhI1EpGBIwPz1R0vNU3t16RxY=;
+        b=XyNFhVgD9Erike5TpDEMcbMg7BHszW/k/hC2b50DQSEzeFVmBbvkxxmJ2+Tn5yeDim
+         0kyawXX5wpgbG5daESFW4EkdCkpSeEzQZvaK7x8bWoIjJXZ5oZ29VojBMhZYssvcuEGR
+         DPs2E4ZdGYze3bc52zYk1DnmVnlceeU6a05wyiOrEx0Tua+A96TLr9RrkeHpKC3AyeRU
+         7rS+Or+0It46ZvMoIclOvH03sz6GyJTd1ceQABF3AWp15ZWSHKHxnrucmUftWV9Fdv0e
+         hYzJMHWTF4ASNu9BMIJLvfNeCCT0UdOtboGNn+m/z23krR5yHGz+YKR6T+gVRNYl82RT
+         ZG5w==
+X-Gm-Message-State: AOJu0YzK/VpCZFrF9zmOT0mBIpwIGAV2GLETkceOwMyoImbidqDt19HP
+	4tjQRRyUOj7yL8XH1DnCfpSQNS/7/CM4GhhZmrjXr3uLIsviW9OvnffErUQPeG+VqRgIWPkdgDi
+	W6/6v
+X-Gm-Gg: ASbGncsqmVEsvHz621mCFEuWyNcRb3I75RYCScMC5ExqQ0prQGp3VBDnsrwU9EURuPi
+	oKsZA8tRxeiyq2JtuLFCHS80TanaysIZZJi6lv8qKvMlUHs1jGwh+Ahb5LtEh/3Uq9NCdw0LXC0
+	XeYzoVYplbid/Q/l9HXaVBSWsXkHWj/M235vljNEKIZLlbXYvuhx5Yl/sB/NBiYtWjQIHoTjv66
+	0eUYprng26568ERJtdau1F6M7O3hlsOCJJajhffowqh5BRv9UkTZew9RPS+mQ3tvsEkFFC/Mn0Y
+	BruR6NOVuyzh6ybvl5e0E5iJouzipdpKl1wL0co9SgMpM19lvnT/faGYZheL0/KIE+Q+D33UgY6
+	Io0VOI4NAkUQluh198JiSjvCaGL/cdomcARb4eGLwCcw8P7MqIa56PlBbLWTlhngCfjUtEg59Q5
+	NPavfOHgQCwzXaYnFtpgNMNdiL0yhEXw==
+X-Google-Smtp-Source: AGHT+IERUna0M9r1pXKpa6dZpvGgGWnaocpkx9sSSvvJZBfMQFa/QtYqS4ODhe+tKpAVi7xpSdnLsg==
+X-Received: by 2002:a05:6e02:1a6c:b0:433:46fa:6a7a with SMTP id e9e14a558f8ab-4359fe88747mr9715735ab.25.1763519790627;
+        Tue, 18 Nov 2025 18:36:30 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7bd33093bsm6871284173.42.2025.11.18.18.36.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Nov 2025 18:36:30 -0800 (PST)
+Message-ID: <64459921-de76-4e5c-8f2b-52e63461d3d4@kernel.dk>
+Date: Tue, 18 Nov 2025 19:36:29 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119011223.GL2441659@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>,
+ Pavel Begunkov <asml.silence@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/register: use correct location for io_rings_layout
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 19, 2025 at 01:12:23AM +0000, Al Viro wrote:
+A previous consolidated the ring size etc calculations into
+io_prepare_config(), but missed updating io_register_resize_rings()
+correctly to use the calculated values. As a result, it ended up using
+on-stack uninitialized values, and hence either failed validating the
+size correctly, or just failed resizing because the sizes were random.
 
-> int putname_to_incomplete(struct incomplete_name *v, struct filename *name)
-> {
-> 	if (likely(name->refcnt == 1)) {
-> 		v->__incomplete_filename = name;
-> 		return 0;
-> 	}
-> 	v->__incomplete_filename = <duplicate name>;
-> 	putname(name);
-> 	if (unlikely(!v->__incomplete_filename))
-> 		return -ENOMEM;
-> 	return 0;
-> }
-> 
-> and have
->                 if (ret == -EAGAIN &&
-> 		    (!resolve_nonblock && (issue_flags & IO_URING_F_NONBLOCK))) {
-> 			ret = putname_to_incomplete(&open->filename,
-> 						    no_free_ptr(name));
-> 			if (unlikely(ret))
-> 				goto err;
-> 			return -EAGAIN;
-> 		}
-> 
-> in io_openat2() (in addition to what's already done in 11/13).  Workable or
-> too disgusting?
+This caused failures in the liburing regression tests:
 
-Note that copying would happen only if extra references had been grabbed
-and are still held; that's already a slow path.
+[...]
+Running test resize-rings.t
+resize=-7
+test_basic 3000 failed
+Test resize-rings.t failed with ret 1
+Running test resize-rings.t /dev/sda
+resize=-7
+test_basic 3000 failed
+Test resize-rings.t failed with ret 1
+Running test resize-rings.t /dev/nvme1n1
+resize=-7
+test_basic 3000 failed
+Test resize-rings.t failed with ret 1
+Running test resize-rings.t /dev/dm-0
+resize=-7
+test_basic 3000 failed
+Test resize-rings.t failed with ret 1
+
+because io_create_region() would return -E2BIG because of unintialized
+reg->size values.
+
+Adjust the struct io_rings_layout rl pointer to point to the correct
+location, and remove the (now dead) __rl on stack struct.
+
+Fixes: eb76ff6a6829 ("io_uring: pre-calculate scq layout")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/register.c b/io_uring/register.c
+index fc66a5364483..db42f98562c4 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -403,7 +403,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	struct io_ring_ctx_rings o = { }, n = { }, *to_free = NULL;
+ 	unsigned i, tail, old_head;
+ 	struct io_uring_params *p = &config.p;
+-	struct io_rings_layout __rl, *rl = &__rl;
++	struct io_rings_layout *rl = &config.layout;
+ 	int ret;
+ 
+ 	memset(&config, 0, sizeof(config));
+
+-- 
+Jens Axboe
+
 

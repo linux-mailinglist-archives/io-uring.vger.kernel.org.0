@@ -1,49 +1,49 @@
-Return-Path: <io-uring+bounces-10693-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10694-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8DBC74490
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 14:38:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83916C7471B
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id B6EE73262C
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 13:33:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39AC135A970
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 14:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BC933B6F5;
-	Thu, 20 Nov 2025 13:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E56345738;
+	Thu, 20 Nov 2025 14:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AOuwkqTj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeB442TM"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F133E2FF645;
-	Thu, 20 Nov 2025 13:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD823D7DE;
+	Thu, 20 Nov 2025 14:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763645556; cv=none; b=nb16iZaSVHGTgLO65fNNCbRoPAbxgqvYKgmd3/SR5zno1TwBsRZ0ujlcB4yISG2jXg6Uadcpir0ec8kJDClMrvCX3tB1YBUV2GAJu3ymfXhnzxcuCc4UWbgarLHOqPh+2TuG+yG9aOTMX9ZaqZVO7n9/mpFKlSv854W//FwQy8I=
+	t=1763647268; cv=none; b=T2843nxUWri6lIlHZ+YI0BJpRa/f0Crq2WI4E95VD87CsrZ79ReYvjEkJU2kfU9UWubk9ZXfv7y96zC723PnJyyucEU9lF6CEYqxIE20j8NVnfibjTpygzlSCU7hTXRHtuAQG+VEVFtFIugOJu9tWsnzlviE3BjZDyf/Z+3mV10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763645556; c=relaxed/simple;
-	bh=qW5PCmBODlPZRDyUopfvE40TvtcE132BUVZxjCJW8Xk=;
+	s=arc-20240116; t=1763647268; c=relaxed/simple;
+	bh=LGL3c/0trXJvukWiU5mtnDb5w2Ym3+Ggca6buKrL5eQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AzpjyBmlT8xtHvNL4aoc9Ymm7vCtUhQt5EY7umXivRjLkBVY8VuXtjWvFF7PgtOHzV/BL3ryxbzkCUHXbt+LXgzr0Hv0NjSPxvl7LpTvojvnCjkYRifcVuDjmdOdwDIUM7wK/th/DT2iUvd/x4QYqFTba4tMkUMo56x6FRjFlLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AOuwkqTj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BD7EC116D0;
-	Thu, 20 Nov 2025 13:32:34 +0000 (UTC)
+	 Content-Type:MIME-Version; b=j6W0Q0YUQn/X8t4IJphbb6NcNWy8Rdvq7fKuBiVQpLd1GQP1pwYLIXASyRcFyu/61ipIg7K8bmDxfSAD0ROBseXugxibQOmYyqvVu/F6t+bL2iSkqkFX+9kpNv2tN+GKs1iZCUMIbapb5Cv+p6BNf3ijBWIe2ZlxkLwn9r8MK9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeB442TM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36BD3C4CEF1;
+	Thu, 20 Nov 2025 14:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763645555;
-	bh=qW5PCmBODlPZRDyUopfvE40TvtcE132BUVZxjCJW8Xk=;
+	s=k20201202; t=1763647266;
+	bh=LGL3c/0trXJvukWiU5mtnDb5w2Ym3+Ggca6buKrL5eQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=AOuwkqTjf9Ni+H2ZFZYDIGxzZSpEJ5/w0vZYFOkMVKnysk0ipudTb5MMiTNASiNA1
-	 pgPUz3Ffnz/O1eQ18M1cGpQmwAxUODA7mQhCTWnfmJxQ9lO7fehC7I7IbLzvKBnzPk
-	 TXXt6H3G6NV320yz8pmlYzgSUboVw66roF2S2/brQgc7BaqhiWRU3xsgZW5lXvxcof
-	 r4abHvfszdOZxAT6ECBMg1bElpuF+o36Fa+ypEzt+o8uxh7nIMN3cI5PBuYTJcYLSH
-	 hnZNqkGFG2TCNMJgds9pUFEoZy5sNyxQd4mZqdk49MsGepIItJe9xPS1W2QGIs3syK
-	 N866258cO04Fw==
-Message-ID: <3933f47761845a016dcb6c851a99fdcedffc65d0.camel@kernel.org>
-Subject: Re: [PATCH 09/16] fs: exit early in generic_update_time when there
- is no work
+	b=aeB442TMUksqWUC0eCqkygM8lyIPWIrbwd92eimxcndaSjZdk64oGzfKnaylrVq4s
+	 D8oO0wWkf3J/s1xjz2LcJmHM3woUp1XCla4G9jlWs6GgOMFvwZ+g4Byf3pRH5nMZd9
+	 JIbk6rsodzpV9VFmKFEqoRR4N1IQ+7uvxd8ogliGV0sV8L38Zxpvq10lNhhEYYCozj
+	 7r+Tu5ccTCfbMXk0ocG3RK9Z0o0M0OefgZCfm6dwlo7QFMmrk0JmNTHuTNQRc2ldGH
+	 +UJ86cI1YNNbOJYXD3R7Rlhm4u5QO5tDHoHS3+v7zxfJXoGjfGvRWKq5nq1j9MjYeZ
+	 lXr+ELZ1fGHeA==
+Message-ID: <e0fd3629d738483c174d51aed0a80b7ee95ed34b.camel@kernel.org>
+Subject: Re: [PATCH 11/16] fs: allow error returns from
+ inode_update_timestamps
 From: Jeff Layton <jlayton@kernel.org>
 To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
@@ -54,10 +54,10 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
  gfs2@lists.linux.dev, io-uring@vger.kernel.org, 	devel@lists.orangefs.org,
  linux-unionfs@vger.kernel.org, 	linux-mtd@lists.infradead.org,
  linux-xfs@vger.kernel.org, 	linux-nfs@vger.kernel.org
-Date: Thu, 20 Nov 2025 08:32:33 -0500
-In-Reply-To: <20251120064859.2911749-10-hch@lst.de>
+Date: Thu, 20 Nov 2025 09:01:03 -0500
+In-Reply-To: <20251120064859.2911749-12-hch@lst.de>
 References: <20251120064859.2911749-1-hch@lst.de>
-	 <20251120064859.2911749-10-hch@lst.de>
+	 <20251120064859.2911749-12-hch@lst.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -143,31 +143,20 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Thu, 2025-11-20 at 07:47 +0100, Christoph Hellwig wrote:
-> Exit early if not attributes are to be updated, to avoid a spurious call
-> to __mark_inode_dirty which can turn into a fairly expensive no-op due to
-> the extra checks and locking.
+> Change flags to a by reference argument so that it can be updated so that
+> the return value can be used for error returns.  This will be used to
+> implement non-blocking timestamp updates.
 >=20
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/btrfs/inode.c    |  8 +++++---
+>  fs/inode.c          | 24 ++++++++++++++++--------
+>  fs/nfs/inode.c      |  4 ++--
+>  fs/orangefs/inode.c |  5 ++++-
+>  fs/ubifs/file.c     |  2 +-
+>  include/linux/fs.h  |  2 +-
+>  6 files changed, 29 insertions(+), 16 deletions(-)
 >=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 15a8b2cf78ef..cda78f76e1dd 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2110,6 +2110,9 @@ int generic_update_time(struct inode *inode, int fl=
-ags)
->  	int updated =3D inode_update_timestamps(inode, flags);
->  	int dirty_flags =3D 0;
-> =20
-> +	if (!updated)
-> +		return 0;
-> +
->  	if (updated & (S_ATIME|S_MTIME|S_CTIME))
->  		dirty_flags =3D inode->i_sb->s_flags & SB_LAZYTIME ? I_DIRTY_TIME : I_=
-DIRTY_SYNC;
->  	if (updated & S_VERSION)
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 

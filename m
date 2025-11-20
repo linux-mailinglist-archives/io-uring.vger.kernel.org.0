@@ -1,124 +1,196 @@
-Return-Path: <io-uring+bounces-10704-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10705-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE734C76319
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 21:24:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC072C76719
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 22:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06D254E1CAF
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 20:24:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8899B3478CD
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 21:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDC041C63;
-	Thu, 20 Nov 2025 20:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CE02FB96A;
+	Thu, 20 Nov 2025 21:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vpgHedWq"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2N7a1rDb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6soJmkDk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MEhP/zIs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="biY9a4HK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33314272E6D
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 20:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C1E2E11C5
+	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 21:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763670264; cv=none; b=LjK/OWYTcA7THv1WV3hK/uIcqG/FXQ8VQV0bG0m7K9ieSy/7bdgwVBnnHGP1dJCHhiB/1RHkTVlopJJbROc8kgRvDWN7uVOQj/VAWK1vH2HSr9N+vSiur2i6werFdZwI7WV/cUiaS8htN1Ea6tHLzOccd5WcqbTyqx2DzoPVt8E=
+	t=1763675909; cv=none; b=nNWSrAteDUIb6Mf5dOxxgKMMJWAB2xZ0xmy83zeOSKLgGBXzErKemujsl00QJyp20HWqGzZW868VmYMMNqdGEfIrqUJHQaKnnw1CG3B+SLid/sRS/QwD4xwEuVEVV8F/88ytKTQOrY2iLPhI0FsL4N3TdX2qkR9pp/OL30tQ7Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763670264; c=relaxed/simple;
-	bh=hWnhQd65Fkhjy/cyw/Jgcm8E9o/Xhpgm8kiBcXDFQ5E=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=It2QipG/FG+q6ajbyS9//0eTCj6qTTdcJjXjfoDbRbSdSKu0FPL15fxdB2Hrk04h9mHm5Mw3nVAdSI2ppxfZAJ5GPZAoZ6La4RkCqyaSCPTbJS/9B87cCaTAOVBnRdsNYtVbwUSqwPq/4Qmh46tAOVbJdu9XK/8IEzJ3W9UCqcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vpgHedWq; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-948733e7810so52357039f.0
-        for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 12:24:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763670256; x=1764275056; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pEZkF8ip6lH0j5KseH7h2l8XIkv/9hdw7WQ/882yat0=;
-        b=vpgHedWq4145aoFZJxfb3KCAjjnDbuz3pdjZpXMOQNBpb0xb2rhgFObbxWnvKIoI+Q
-         Mb/TbiaG6MaJiHLnKz1+EvSD94KEwcGo2yLqHKqhiquboBfAaEcOQARx9uywo25w1oOx
-         nx4UuxsWAgEl5nV3/3wyUHtWtNl337M1aVeqn4CP3h1N1GWHGYj1S1Xwa36L08IZJWIj
-         QK7gMWdUo9CwQC9+uQDPfUuMgl6tDZoa6M78FH+PMyGoE2KWh1JgrSU/ZN1WEEvjztv+
-         79QGd90cdH1ZHCp+Hold+2TGUGwOPA0MeAkfbWbJGaH+jZ249vlYi1JiyWRPQoL7WaWZ
-         3PRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763670256; x=1764275056;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pEZkF8ip6lH0j5KseH7h2l8XIkv/9hdw7WQ/882yat0=;
-        b=NSnR2xKC7KbE5YDQXWrrSlKzJbOTVbNkSxA0qvngddnlJPTgL2FBFTHXsuhWHMQLsB
-         58h7Kx6cdpUDauyGK793a4Qo3J+PJ3hZpwLGuNUBw5EAImX+pY5Iaxgn17I6leHsMQAP
-         uguu06EGNjw8TGYDoaAdPODlPTaCO8La6mcZPHqKNK6vCzpnOAxIRrsZ2ufyZrgHFAbL
-         4UWQkW6HbMx+Oufr1ha29BWZ50yPcu/0SRXhPkQu7qvm4S7pz3CV4hdc392Vtx2Xnfmb
-         kG+u1gqEnd0vpnNU7ZmhJ5oy4qaM6ukmd8YQuJ/J9h8exVzHHyLgOdllXgtL56idigI+
-         iWrg==
-X-Gm-Message-State: AOJu0YzfLfZIZ9JXOWmTLIq5DXa9CdJR3h7TjLxy3GJS+qvgpNYCbRjd
-	EeYBDTvcNlGcrevEv7JhD951DFlDmKiN9DeGKF2jvH8uB8m0sEj0AyZAnEYRxU/Rnl3uRYl96yc
-	mlD+z
-X-Gm-Gg: ASbGncu/uPjyXEJSArKfNeKjR1G5WTEAQ6ZOEVS+mK8PORyLUWNQ2tVM3R/FlZ7qc10
-	V/WROMz/td7Ra9G5hMNv99Yhz4ogLQOhbCxzJzSq7rOzM7PqDxclIu/dnhM6dWKCsgbl0aD5kgQ
-	1A8h+rme0WyCYxBxWX/f4IAwGP5TuCZkYdhjrXCLu9iyxuKJjoiDmrRIuFXijWaJY3oqYxv7vyN
-	OGagH7piKcD5wDx9SmFDdL1Rm/GnlHDCyCV6RMIw0skIQvUXgtCi/Ye4rvrarF7TCpAdRQMZUwP
-	OGuxHmE5MqV2L5Rh2I/IHUfgXNq1J0SI/5b9yY+gKP4vKOmZZU+xnJUJSmfmFdYsjlP/oyQfs0l
-	7grDPQoB/+a0o7HH+0NQGWscUWfJ+/mrvrcgHB/xXEU0HrYS6vMuDiOhU/usatOFank7pLS3X+j
-	+K6FOc0aQpX1gxv0qB
-X-Google-Smtp-Source: AGHT+IHvNBWG7ZOKSQ47vCrgMO7GkY8OyuNjJM5T4c64JrkhZw8DmIZE8mFpGukGbwy2ZfM3xXgcJA==
-X-Received: by 2002:a05:6638:e8c:b0:579:7cf9:417d with SMTP id 8926c6da1cb9f-5b962c67389mr714315173.6.1763670256175;
-        Thu, 20 Nov 2025 12:24:16 -0800 (PST)
-Received: from [192.168.1.96] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-9493850caf7sm125067739f.0.2025.11.20.12.24.15
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Nov 2025 12:24:15 -0800 (PST)
-Message-ID: <2b6dacfa-5e44-49da-b81f-51710e2584cf@kernel.dk>
-Date: Thu, 20 Nov 2025 13:24:14 -0700
+	s=arc-20240116; t=1763675909; c=relaxed/simple;
+	bh=HO1p6FtdKwe0IlOoxU7Ezn7FtqxZ1TXfgnQymRcHnyA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yvhu3tyKQjG+uIs1eBNuMAQ+Um+NBTQqupdQKoGudNPEB4CEMN6dCD6jpCb6gLwxCFemmOl2UfPkf+ywMEfr+67S9IjTJAM8AtF9Su5brHi+DrgJhs4MrOiiaz5xgz7mzWzYcIfBY++UuWEshrw3KGn8RfTcZ/GesRFv7tqtuSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2N7a1rDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6soJmkDk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MEhP/zIs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=biY9a4HK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9B67F2127E;
+	Thu, 20 Nov 2025 21:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763675904; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MRYbEybroCbmAHAM8NWYzW79+xjF1sGXPMEHm83mnVo=;
+	b=2N7a1rDbtaFe+xfeUBYlyYhLmva4wv92dFOy9AiMbNNHCUZ06G3tqKYy59KtuHtiyiF6ia
+	BRDqAwZBQletyislwnErVNTxpRcBeFh5JHD6IKjKltL8CcpflZ767Te4z4dUNxJFcWnHTn
+	MvQIXVq2MLLBe+J7txQAAR+LjWTaSgA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763675904;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MRYbEybroCbmAHAM8NWYzW79+xjF1sGXPMEHm83mnVo=;
+	b=6soJmkDkFsk4D+ux5sOoz1kkSHv2bzlhjkXCtMpH+dTQFgO512ZTun249Xws4gJoO/boap
+	klxeUAftMzwdI+AA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="MEhP/zIs";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=biY9a4HK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763675903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MRYbEybroCbmAHAM8NWYzW79+xjF1sGXPMEHm83mnVo=;
+	b=MEhP/zIs0RWad/r2WaTXQRzps/oi5E9pUoVnfmMO3EStheoyvuJyzTsd2LzRY7ruLpKHgS
+	mzcGJwCGkhJcCbHksqtWvq2kp7GlVTOHtvHXRs6i20HLJOuKyrSz54dHo1phV9Qkw3zSLI
+	vmwzw0Vcu+5hfufin9Ys/c6vVLtKJh8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763675903;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MRYbEybroCbmAHAM8NWYzW79+xjF1sGXPMEHm83mnVo=;
+	b=biY9a4HKVZsGA7RaJlR30v94GSy2PnsoQ80ks36j4QcldQF6jOm0MyXCRZGjfvObnh/VFC
+	CUZVL0OC+zu4xBAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48A813EA61;
+	Thu, 20 Nov 2025 21:58:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ieQpC/+OH2nGdQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 20 Nov 2025 21:58:23 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: 
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
+	netdev@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH v2 0/3] Introduce getsockname io_uring_cmd
+Date: Thu, 20 Nov 2025 16:58:11 -0500
+Message-ID: <20251120215816.3787271-1-krisman@suse.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/cmd_net: fix wrong argument types for
- skb_queue_splice()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 9B67F2127E
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,discord.com:url,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,davemloft.net:email]
+X-Spam-Score: -3.01
 
-If timestamp retriving needs to be retried and the local list of
-SKB's already has entries, then it's spliced back into the socket
-queue. However, the arguments for the splice helper are transposed,
-causing exactly the wrong direction of splicing into the on-stack
-list. Fix that up.
+Since V1:
+  - minor style fixes
+  - Resend with (more) maintainers cc'ed
+  - rebased to axboe/for-next.
+--
 
-Cc: stable@vger.kernel.org
-Reported-by: Google Big Sleep <big-sleep-vuln-reports+bigsleep-462435176@google.com>
-Fixes: 9e4ed359b8ef ("io_uring/netcmd: add tx timestamping cmd support")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This feature has been requested a few times in the liburing repository
+and Discord channels, such as in [1,2].  If anything, it also helps
+solve a long standing issue in the bind-listen test that results in
+occasional test failures.
+
+The patchset is divided in three parts: Patch 1 merges the getpeername
+and getsockname implementation in the network layer, making further
+patches easier; Patch 2 splits out a helper used by io_uring, like done
+for other network commands; Finally, patch 3 plumbs the new command in
+io_uring.
+
+The syscall path was tested by booting a Linux distro, which does all
+sorts of getsockname/getpeername syscalls.  The io_uring side was tested
+with a couple of new liburing subtests available at:
+
+   https://github.com/krisman/liburing.git -b socket
+
+Based on top of Jens' for-next.
+
+[1] https://github.com/axboe/liburing/issues/1356
+[2] https://discord.com/channels/1241076672589991966/1241076672589991970/1429975797912830074
 
 ---
+To: Jens Axboe <axboe@kernel.dk>
+CC: netdev@vger.kernel.org
+CC: io-uring@vger.kernel.org
+CC: Jakub Kicinski <kuba@kernel.org>
+CC: David S. Miller <davem@davemloft.net>
+CC: Eric Dumazet <edumazet@google.com>
+CC: Kuniyuki Iwashima <kuniyu@google.com>
+CC: Paolo Abeni <pabeni@redhat.com>
+CC: Willem de Bruijn <willemb@google.com>
+CC: Simon Horman <horms@kernel.org>
+Base: axboe/for-next
 
-diff --git a/io_uring/cmd_net.c b/io_uring/cmd_net.c
-index 27a09aa4c9d0..3b75931bd569 100644
---- a/io_uring/cmd_net.c
-+++ b/io_uring/cmd_net.c
-@@ -127,7 +127,7 @@ static int io_uring_cmd_timestamp(struct socket *sock,
- 
- 	if (!unlikely(skb_queue_empty(&list))) {
- 		scoped_guard(spinlock_irqsave, &q->lock)
--			skb_queue_splice(q, &list);
-+			skb_queue_splice(&list, q);
- 	}
- 	return -EAGAIN;
- }
+Gabriel Krisman Bertazi (3):
+  socket: Unify getsockname and getpeername implementation
+  socket: Split out a getsockname helper for io_uring
+  io_uring: Introduce getsockname io_uring cmd
+
+ include/linux/socket.h        |  6 +--
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/cmd_net.c            | 23 ++++++++++++
+ net/compat.c                  |  4 +-
+ net/socket.c                  | 69 +++++++++++------------------------
+ 5 files changed, 51 insertions(+), 52 deletions(-)
 
 -- 
-Jens Axboe
+2.51.0
 
 

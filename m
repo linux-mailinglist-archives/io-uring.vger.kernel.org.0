@@ -1,49 +1,48 @@
-Return-Path: <io-uring+bounces-10694-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10695-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83916C7471B
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:08:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D514C748A5
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39AC135A970
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 14:01:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F8FC4EFC30
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 14:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E56345738;
-	Thu, 20 Nov 2025 14:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0281534844B;
+	Thu, 20 Nov 2025 14:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeB442TM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PV/N2yd2"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD823D7DE;
-	Thu, 20 Nov 2025 14:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27CF347BBA;
+	Thu, 20 Nov 2025 14:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763647268; cv=none; b=T2843nxUWri6lIlHZ+YI0BJpRa/f0Crq2WI4E95VD87CsrZ79ReYvjEkJU2kfU9UWubk9ZXfv7y96zC723PnJyyucEU9lF6CEYqxIE20j8NVnfibjTpygzlSCU7hTXRHtuAQG+VEVFtFIugOJu9tWsnzlviE3BjZDyf/Z+3mV10=
+	t=1763648191; cv=none; b=NGwTJutNEvoSp0WZI6FuIuHoOYLPwmGPiFtBEHrODln+JK1rqLU45rF/W2dYMWYRssB1u6E/NV9PJ6sAB1rBtwuwD1gZCHVeUazzd7TuA4jk77bjdOJJdCJK0ynQpXuKdvwOrgapzUm+BMtIXFGMZKG22s49eaRcPnNABZS0gkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763647268; c=relaxed/simple;
-	bh=LGL3c/0trXJvukWiU5mtnDb5w2Ym3+Ggca6buKrL5eQ=;
+	s=arc-20240116; t=1763648191; c=relaxed/simple;
+	bh=v0VO9dYEhA+UGnORRHe7yF+Q+1hgT5u+mOf1/mZRcL4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j6W0Q0YUQn/X8t4IJphbb6NcNWy8Rdvq7fKuBiVQpLd1GQP1pwYLIXASyRcFyu/61ipIg7K8bmDxfSAD0ROBseXugxibQOmYyqvVu/F6t+bL2iSkqkFX+9kpNv2tN+GKs1iZCUMIbapb5Cv+p6BNf3ijBWIe2ZlxkLwn9r8MK9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeB442TM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36BD3C4CEF1;
-	Thu, 20 Nov 2025 14:01:05 +0000 (UTC)
+	 Content-Type:MIME-Version; b=oXaLs30aB2eZC5+JjDHh8N0Yn4909l8y4wBtlibInq2wKeCv+Je1lieREV3LgnRwHYvK7jinglk8x/PJtQ0SxXKJLCwSqo4jN/eNkRns3TFw6xzBpxzDshZef4NMIhka5u7Awo10tFQXv7E0cfS4hqvfeC9oyMNbYOjvN/ylcFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PV/N2yd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A4EC4CEF1;
+	Thu, 20 Nov 2025 14:16:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763647266;
-	bh=LGL3c/0trXJvukWiU5mtnDb5w2Ym3+Ggca6buKrL5eQ=;
+	s=k20201202; t=1763648191;
+	bh=v0VO9dYEhA+UGnORRHe7yF+Q+1hgT5u+mOf1/mZRcL4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=aeB442TMUksqWUC0eCqkygM8lyIPWIrbwd92eimxcndaSjZdk64oGzfKnaylrVq4s
-	 D8oO0wWkf3J/s1xjz2LcJmHM3woUp1XCla4G9jlWs6GgOMFvwZ+g4Byf3pRH5nMZd9
-	 JIbk6rsodzpV9VFmKFEqoRR4N1IQ+7uvxd8ogliGV0sV8L38Zxpvq10lNhhEYYCozj
-	 7r+Tu5ccTCfbMXk0ocG3RK9Z0o0M0OefgZCfm6dwlo7QFMmrk0JmNTHuTNQRc2ldGH
-	 +UJ86cI1YNNbOJYXD3R7Rlhm4u5QO5tDHoHS3+v7zxfJXoGjfGvRWKq5nq1j9MjYeZ
-	 lXr+ELZ1fGHeA==
-Message-ID: <e0fd3629d738483c174d51aed0a80b7ee95ed34b.camel@kernel.org>
-Subject: Re: [PATCH 11/16] fs: allow error returns from
- inode_update_timestamps
+	b=PV/N2yd2XfJSJl+7Hh4F74QYukpzxhX2fQG/h/ZWGRu5+SvD7KAvmaUYchLSt4Q+J
+	 4VtbD37LTitMazVTqtUrz4PleJthMVs3K2mfDJgiL2OxJ5atdIOjjhULpAZsa3c6t4
+	 eiaVBD8MQo6yukCQPBjFT3UgiMsAVE2pcImZaLJwgU3IkRuGdd+NjTnc3ZKzI/RRqg
+	 heH0qek7ZSxkSoXEbzPQi1gehSB1E9SgGFCgi4c/TjkE3+JQSBzQ/VMqNbbFHXuOzO
+	 rUWdzUqAmbGyIlw9zk3Qa2hToiecME+JmML7/hWNPs+6c6z++CnsONHAWRRKqOvZiJ
+	 9uU/x0Zg6pN8g==
+Message-ID: <ca04c19da203d0fab27a13db9b55b22cef91dc70.camel@kernel.org>
+Subject: Re: [PATCH 16/16] xfs: enable non-blocking timestamp updates
 From: Jeff Layton <jlayton@kernel.org>
 To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
@@ -54,10 +53,10 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
  gfs2@lists.linux.dev, io-uring@vger.kernel.org, 	devel@lists.orangefs.org,
  linux-unionfs@vger.kernel.org, 	linux-mtd@lists.infradead.org,
  linux-xfs@vger.kernel.org, 	linux-nfs@vger.kernel.org
-Date: Thu, 20 Nov 2025 09:01:03 -0500
-In-Reply-To: <20251120064859.2911749-12-hch@lst.de>
+Date: Thu, 20 Nov 2025 09:16:28 -0500
+In-Reply-To: <20251120064859.2911749-17-hch@lst.de>
 References: <20251120064859.2911749-1-hch@lst.de>
-	 <20251120064859.2911749-12-hch@lst.de>
+	 <20251120064859.2911749-17-hch@lst.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -143,20 +142,57 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Thu, 2025-11-20 at 07:47 +0100, Christoph Hellwig wrote:
-> Change flags to a by reference argument so that it can be updated so that
-> the return value can be used for error returns.  This will be used to
-> implement non-blocking timestamp updates.
+> The lazytime path using the generic helpers can never block in XFS
+> because there is no ->dirty_inode method that could block.  Allow
+> non-blocking timestamp updates for this case by replacing
+> generic_update_times with the open coded version without the S_NOWAIT
+> check.
 >=20
+> Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/btrfs/inode.c    |  8 +++++---
->  fs/inode.c          | 24 ++++++++++++++++--------
->  fs/nfs/inode.c      |  4 ++--
->  fs/orangefs/inode.c |  5 ++++-
->  fs/ubifs/file.c     |  2 +-
->  include/linux/fs.h  |  2 +-
->  6 files changed, 29 insertions(+), 16 deletions(-)
+>  fs/xfs/xfs_iops.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 >=20
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index bd0b7e81f6ab..57ff05be5700 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1195,16 +1195,24 @@ xfs_vn_update_time(
+> =20
+>  	trace_xfs_update_time(ip);
+> =20
+> -	if (flags & S_NOWAIT)
+> -		return -EAGAIN;
+> -
+>  	if (inode->i_sb->s_flags & SB_LAZYTIME) {
+> -		if (!((flags & S_VERSION) &&
+> -		      inode_maybe_inc_iversion(inode, false)))
+> -			return generic_update_time(inode, flags);
+
+I especially like getting this inode_maybe_inc_iversion() out of this
+function.
+
+> +		int updated =3D flags;
+> +
+> +		error =3D inode_update_timestamps(inode, &updated);
+> +		if (error)
+> +			return error;
+> +
+> +		if (!(updated & S_VERSION)) {
+> +			if (updated)
+> +				mark_inode_dirty_time(inode, updated);
+> +			return 0;
+> +		}
+> =20
+>  		/* Capture the iversion update that just occurred */
+>  		log_flags |=3D XFS_ILOG_CORE;
+> +	} else {
+> +		if (flags & S_NOWAIT)
+> +			return -EAGAIN;
+>  	}
+> =20
+>  	error =3D xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 

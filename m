@@ -1,112 +1,147 @@
-Return-Path: <io-uring+bounces-10699-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10700-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43351C75195
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 16:47:28 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8CFC751F5
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 16:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 747194F0760
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:35:53 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id F05322BA9E
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D67F2F0C69;
-	Thu, 20 Nov 2025 15:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E435F8A8;
+	Thu, 20 Nov 2025 15:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1cchHl4z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajwgUQyZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A0278F4F
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 15:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2535B274FDF
+	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 15:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763652431; cv=none; b=o2JBNTf68KRWP5YK1fwXfW8ymzEV5OjeOeZFG0yeQl5KprPcRknW/ckqoiwrlZvw9ym/sHCrBnafboVrSx03OwT4gwzUA+lQeWtIbiCTCiQbXEiVgxGjqeKoSSrZYju/Kqx72BHTZEpHQjoNV9EBLzuZfz2tSI5dQYcZSbbXkgM=
+	t=1763653703; cv=none; b=QyNHdADlsjDyUPmG+Px4xc9tZaCZKeowmajkcehSCV7L7dHJnNdPgSt6549MRvfZfEmBHzvSQ7/NohCU/cjJBxmL/HYcNXZFyEqqoWnIShVRB8N9cCCq40p4LAlw2HRA493wInrLX5M5W+C6WzWhovqZ2HZk7KpZaOnWAdkWD7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763652431; c=relaxed/simple;
-	bh=vO8S7CAM4NW3TUCn+2+2RPutoWVDqXZYWN2xNp5LpLg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nmj3GbhdfDKwV5yj3e0r1c9+aLvv8KECC/c5ZqKclA9z7kCBKQ3e160HNPynKEVlZRrDLwj/22nWrWXn76ZXRa7nKGAGJNMAfxNQOsi+1Awh/8wAWYK3Ih8R1gMBxklQKcANCrN8l0Cs0EZwyzwwlkG3yQyw8ObheJGz3V5oQ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1cchHl4z; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-94903ea3766so36955639f.3
-        for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 07:27:08 -0800 (PST)
+	s=arc-20240116; t=1763653703; c=relaxed/simple;
+	bh=aCn9gZaQVzumD6IQjqIbMMJUqGd/yGdawIRwj+FUhxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gR9XjzdwhinCRe7kLl4RpcDwNiXjXDQkIBDpkQ5nlkru98ee1TgMa0ZHFMYKoS8rqH13zXi8GmA27Lnhrv3XgKjeDXXH9p3zp1jbDbWY3SXOR7hxxchw1OqiqQu4AFbdpFlGLW8lcy3j57V1xxz/aywpllwoK1n3ORNl4/Urw8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajwgUQyZ; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b32a5494dso618083f8f.2
+        for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 07:48:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763652427; x=1764257227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1763653699; x=1764258499; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ObN5c0ihie3J51JMKIXx0Z/Dq9nMiHVoUXgShWnvgnQ=;
-        b=1cchHl4zhwIRTO0V26MWn/ey39pmN0f+9pokd7ZJJQNkdWCM+GS+4ObyFWCzPL7JIz
-         GgbEApjq5a5vRsk+5JfM/M0kSokz1lMSGU8w3KZrwoUMyYA0SJppv6LAU0l+np+LNAxE
-         zdOnBmWFtt3H5nSkHCtM1sK6TxZjq7tzENb+OWnrAw9cwXC4oLs5VhDemildGtxNuWpc
-         AvkXlNfJartLWWMgiO/FYi4iKaWMx7LvL5TLTYXY0HLPPgmE9KHMhHWRit/guqfZTnE8
-         6o4xW+wnO51bUeGR8uUwtDGo+kF9HDo6U5NrLw74wfV6nh/9gJ2iyIc1bcNJTVA3akBP
-         +nAA==
+        bh=ZTQT/Ft65l/vtNgvHrqGRcFmZM/IEadU1h3kwzC8RRs=;
+        b=ajwgUQyZXyNUzjuN/nDCMF22LJehqHMCrS+lpk7JB7ML4LPfhQAhg/jU5fMNajJVDV
+         6rvg+XoYepKwQ7gJ20B8VX0xMkae1NbD0cT/GycXZ3sQi1aQQuzd1fjzY11o2k6bKe/Z
+         fJokNilaAoni/1UoNpLwaGoG8pnab5Z2cO2UyLw7/d4hQ4RL65MGWXP3C1pX9zM8fhGl
+         lq2D5N+JtMeVDNqdOWdqQGMCmrtiHMpBYZp6kk6sApnTBAJtN6z2VRpk22Wjhox+GE2V
+         pK3a97Tv1C3AKQgcOENv8KoYDxsSdSIhnvtEN2GhUVDKL1Y4Fn0RREWxkMiS4DU/SYDC
+         ZTlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763652427; x=1764257227;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1763653699; x=1764258499;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ObN5c0ihie3J51JMKIXx0Z/Dq9nMiHVoUXgShWnvgnQ=;
-        b=kdwv6USkHmyyyFBysQdVW7VAs5Tlr8c06O4naaUXJ97az0iH63xGgv+G8bzP7fnVsL
-         mUySz3N2qJV3Xk2eOVtCn18mLTLiZP6++mjl8gS9NFlWKbtlYrkiCa3+nEyJDIQJMncJ
-         pplwTaTUqe/n9Mi6FXk+El2SUS3yvLIVKGvoS5s8Jf8t5BabB1YVSqebnWNRLpjjptzS
-         xQqjCWg5JqOkE8WK6PUT/1FalCI0Fks0LyTicFS1DKJDUqjXKlWtzv6bwsYnrYCTVrQF
-         aDu8XnhZ2w+kbzqfIo2qXd6gScs5JpWdhKJ9tw7L3s53SBBG9/MYt9nXNIjMDiGhWQ4S
-         Piew==
-X-Gm-Message-State: AOJu0Ywbsts8wpgIFGbvFoLtdfaCS+gl2dimVUcqRXVbl4lPvmv8bx3f
-	V+45AC5UcBTFZma+1ZM2h84+g4llVElR2OnQawmBdi0wu7jw16eZxSlfwCrElxMWuGbruLmth1i
-	n4j7s
-X-Gm-Gg: ASbGnctApoBtM3uvATvMg/6AW5uFR/UwcTcGyZGIW/MBXkTlnuokvlm5zNPny/2vkVp
-	G7JmjrR5Jbvg9J8Emigg6dils2yqbIIKjIMPPggZCiHdEr+poNnUI8tG4ilroci7VByQMK5/8Py
-	aUsxvYu9L1lBKbE6xTzYLbNLnLG6purD0sPk8zKR4lecQmpCdYKva4k+x1yA8E4y64fj834eumZ
-	vi0GE7yrH+9kv8Qy8fYCOtc/btQnOV524AIGGkXckoco/5/6ElIRYG9yFz80xEBxtwX/hW6m5ka
-	8lts5gHc3NWLp4Bgct8cqax1HxzGF4BXq3+GVplScfIEWsvDvDjtXAJkKOdCiXrAxid/KUjPmah
-	+6IT9Fh3KG9DTYXyZPz0AgutfOs6hROG20bg3LInmdZkQqTRcmYCu9e2YwXaRmLxRwQPH6srPz/
-	mDvw==
-X-Google-Smtp-Source: AGHT+IECd2IeVGQbkw4RhzM4aH53Oe7IwwmZLNNGfAY/20LRkz205gIQn4/XR/oZS+iLPfn8Sh3eoA==
-X-Received: by 2002:a05:6638:29a9:b0:5b7:d710:6619 with SMTP id 8926c6da1cb9f-5b9541a7569mr2754370173.20.1763652427515;
-        Thu, 20 Nov 2025 07:27:07 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b954a0de5esm1044983173.6.2025.11.20.07.27.04
+        bh=ZTQT/Ft65l/vtNgvHrqGRcFmZM/IEadU1h3kwzC8RRs=;
+        b=rA2bYQohKvbcsjpnih66e+1VnjKwIToklnAbiMbqtprgX52VICpyX8DPpl9zLa/GNo
+         ddXESrcyPG4AmTjXd/Um+GNpzIlFBtIf0n5hBEos0aFUdr7/ofiYE95qfUXbHb8CeUmB
+         INK6vYgz9wXrEkPOwPmRnFoALxz+D0zfz0yvEIrqKAalSsHMqc+/URCCFqV07bbwBGz7
+         5jlZYJACv0ndmIPZKLkvP0vxuGz5DHyyGG9tzX7eN4W8K/PtVh7fyBHVc/RNpmRrvUlT
+         Br2sLke+JFBxgoc1O8kknJKEzQIajBqRDqmMPAnrXvzy+Le9kv0hNfdnTo2IuYFmqtGI
+         Ps4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFH4q1PoFJDPDyK5JnLs78xbAe+EXuIvoxe+T5rSN6DS7cxFJsGEeAFOtLoD5d7NnJ1d/jHs9SWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFanUJjHoNt27PhRDUcc1BE5XheKIeRvkDPvCo5sBq++ezTYAq
+	HflH5t1/3uTKzQsu4Sh0fNSsWfggj0MfJctFEiuk1114D+7CUjtQe//C
+X-Gm-Gg: ASbGncsFDL+CZUeOOHVcKVmHbgEuT1hkPCEHuQJ4yjT3HuQBYwzsn+/4fu7Ojsw7may
+	i3aAAakOflqjwYh1i0bs3wqDyVa08Y9RmUpJe6DH2Dt7r/US5rKPapfKEloIDCg+WwwZDAJada/
+	hO7F2K6ER2VwYktoTAqZyfyEAuvzUyVIF87xSbhRAqB5ZQUWe2X3wn9yoPUA6SzkNF6iM3srQb5
+	BdIRotl38SctIg39Y7BhfVwZM/wry5RK1c5B3RMRHfjkfJRi0wr0LACL8qaLnQ7QzVriRs7Vt4a
+	JfBo8/TBuDSvg5YjJ2tTjOv6XQPHuocYdsw3MOVq/4Ae01ldxXC2cYdKnwDIiIp51HEZ120U8+p
+	CLrCvCJvv5/qYtKn2AsBaZhVDjwtT2Y7Wq2EULUDQFMc8uhyAU3H2NqqVftMfuqmr/zrexedzhW
+	EfwzbJPvuTLLaWBRF2ZAIw99/weP9mICFjxTQrjBdrxaeA2W8T4H0/
+X-Google-Smtp-Source: AGHT+IG130IcFcxfmIIxu3a8dkYSnRNnzVoOyx2r/mxKGHgE1JL1U38dzXHLcqVCEptCGKDtv+9lCg==
+X-Received: by 2002:a05:6000:26d1:b0:42b:3978:158e with SMTP id ffacd0b85a97d-42cbb2a4303mr2783685f8f.30.1763653699224;
+        Thu, 20 Nov 2025 07:48:19 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb9022sm6072019f8f.36.2025.11.20.07.48.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 07:27:04 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Keith Busch <kbusch@meta.com>
-Cc: Keith Busch <kbusch@kernel.org>
-In-Reply-To: <20251120152427.452869-1-kbusch@meta.com>
-References: <20251120152427.452869-1-kbusch@meta.com>
-Subject: Re: [PATCH] liburing: sync pi attributes with kernel uapi
-Message-Id: <176365242447.574437.9626064058250918903.b4-ty@kernel.dk>
-Date: Thu, 20 Nov 2025 08:27:04 -0700
+        Thu, 20 Nov 2025 07:48:18 -0800 (PST)
+Date: Thu, 20 Nov 2025 15:48:17 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 04/44] io_uring/net: Change some dubious min_t()
+Message-ID: <20251120154817.0160eeac@pumpkin>
+In-Reply-To: <3202c47d-532d-4c74-aff9-992ec1d9cbeb@kernel.dk>
+References: <20251119224140.8616-1-david.laight.linux@gmail.com>
+	<20251119224140.8616-5-david.laight.linux@gmail.com>
+	<3202c47d-532d-4c74-aff9-992ec1d9cbeb@kernel.dk>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
+On Thu, 20 Nov 2025 07:48:58 -0700
+Jens Axboe <axboe@kernel.dk> wrote:
 
-On Thu, 20 Nov 2025 07:24:27 -0800, Keith Busch wrote:
-> These were introduced in kernel release 6.13.
+> On 11/19/25 3:41 PM, david.laight.linux@gmail.com wrote:
+> > From: David Laight <david.laight.linux@gmail.com>
+> > 
+> > Since iov_len is 'unsigned long' it is possible that the cast
+> > to 'int' will change the value of min_t(int, iov[nbufs].iov_len, ret).
+> > Use a plain min() and change the loop bottom to while (ret > 0) so that
+> > the compiler knows 'ret' is always positive.
+> > 
+> > Also change min_t(int, sel->val, sr->mshot_total_len) to a simple min()
+> > since sel->val is also long and subject to possible trunctation.
+> > 
+> > It might be that other checks stop these being problems, but they are
+> > picked up by some compile-time tests for min_t() truncating values.  
 > 
+> Fails with clang-21:
 > 
+> io_uring/net.c:855:26: error: call to '__compiletime_assert_2006' declared with 'error' attribute: min(sel->val, sr->mshot_total_len) signedness error
+>   855 |                 sr->mshot_total_len -= min(sel->val, sr->mshot_total_len);
 
-Applied, thanks!
+I'll take a look, I normally use gcc but there must be something subtle going on.
+Actually which architecture?
+I only tested x86-64.
 
-[1/1] liburing: sync pi attributes with kernel uapi
-      commit: 679b42227999633f67cf0e6183f939495025e95c
+	David
 
-Best regards,
--- 
-Jens Axboe
-
-
+>       |                                        ^
+> ./include/linux/minmax.h:105:19: note: expanded from macro 'min'
+>   105 | #define min(x, y)       __careful_cmp(min, x, y)
+>       |                         ^
+> ./include/linux/minmax.h:98:2: note: expanded from macro '__careful_cmp'
+>    98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+>       |         ^
+> ./include/linux/minmax.h:93:2: note: expanded from macro '__careful_cmp_once'
+>    93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
+>       |         ^
+> note: (skipping 2 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+> ././include/linux/compiler_types.h:590:2: note: expanded from macro '_compiletime_assert'
+>   590 |         __compiletime_assert(condition, msg, prefix, suffix)
+>       |         ^
+> ././include/linux/compiler_types.h:583:4: note: expanded from macro '__compiletime_assert'
+>   583 |                         prefix ## suffix();                             \
+>       |                         ^
+> <scratch space>:319:1: note: expanded from here
+>   319 | __compiletime_assert_2006
+>       | ^
+> 
 
 

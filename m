@@ -1,74 +1,73 @@
-Return-Path: <io-uring+bounces-10671-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10672-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82948C71B30
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 02:41:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4571C71B6F
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 02:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id 621CB28F0A
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 01:41:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1741A4E4009
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 01:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6E25D209;
-	Thu, 20 Nov 2025 01:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122DD3BB4A;
+	Thu, 20 Nov 2025 01:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BE19eEk7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RvHvsIfv"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA652571AD
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 01:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BDF372AA7
+	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 01:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763602903; cv=none; b=D2JBh6JYuoFUbhKgQcGlnzO2B+Kbl3oSgj7AydLDkI7LPsYZVqzbCAUjHBwTYWK7LeLrUsbLP4xubCxK1gTLticr2sGGT54yM0T/Kk1RwS2gTtoAFXYuYvRusqrbdAGp/zKzNxNTbZfhg5j2PiIo0auMie2nJ24fv4PmY59Qg14=
+	t=1763603184; cv=none; b=HJp0IRl41hB3HIsZVGhC9WKEZGHqZxTTSN/s1UEF4BvXaeSJV9MItu9isDVzYx1Xtrpd4N9y3xDkmVYbDqz2cbNKrFDrTzjUk0PJY3ioS1dIN7bTRMVPgWOUsNxsz6Hsgqd777BpAkuKiv10cC6lTXjmjfbRHTJAKOMQsaGPnHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763602903; c=relaxed/simple;
-	bh=YkQtjIdTNJSYgaCKJI3D1I0j7sgJJFkSidJzXBG1ibU=;
+	s=arc-20240116; t=1763603184; c=relaxed/simple;
+	bh=VYpFdsw544nsFgirUueNVSz87tIpYdjGsqQKyJDDoBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmusyuWq+lqJQ8T0kVie2nh/iql5UGYpGbDwejZeAM+6CVnuBMNccecm9Txm7Fn3G5AW3KAefSml4LouQrpayvM7f9OQnDuo3/EX7n6M8jFFHRt0+E7d/Rtizmij5VEl92WgiX4WEmuV6bcGARfzxCHinIK7N7Lr/1FlSoXbh9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BE19eEk7; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnRkTTz4Xa3Xo5M4idS27PaH7tpFWSuGs2ghy9ZYm9KmPQesLF7AKS7a+ab739bceOlP7PuNPUfbvZNb4FxxjXJDCbQy7F3ao6RHvfENzvW2NTSU3I529ymrLUHwRVT4HsVslVk+HexkK8z4OXzpRqZ6IgQGY42tKlIlUfVL2go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RvHvsIfv; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763602900;
+	s=mimecast20190719; t=1763603181;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wuZcH/jpD+V8vNTE4HZRdGth/pGF2BCO/c+oNT+1MhA=;
-	b=BE19eEk76jUiKPLNmoWI9UOIhWp34bewICTJdVsJTzoGYqiMtKQJXVVnAmGl4l7vuZYY6a
-	FM2LuODkot3DutBQTzR4vNiaL7ajK3uAAYhfb5Aagg0JsNgKwtjCvDcFZ9KekZkXENIs3U
-	oINUHG5hQwsbXkaQoBNKHzx+mJZ6hdQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=SPmouy/mUggh3bYO/U1+zlHvx4uL1t93jF9904YUwGY=;
+	b=RvHvsIfvS/415lzYY5ULx+E6PAhZGpHjjJJQo7im4k0IzVakuLLQXvB0Moh5xH//2QzlR4
+	JvOv4IRYHjCsn34pzvJrV4a/LzUSzmtvAn/LyycjstG1BhH/vGwuG9/Wheal+HMp7JTc+P
+	tfImMCRw0dOsasKBcdozs4mWhiPYM4k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-sEfeRA_hMIiCAVyEWvt8OA-1; Wed,
- 19 Nov 2025 20:41:36 -0500
-X-MC-Unique: sEfeRA_hMIiCAVyEWvt8OA-1
-X-Mimecast-MFC-AGG-ID: sEfeRA_hMIiCAVyEWvt8OA_1763602895
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-399-SlLhSGgJPgukd1MbAEuFPA-1; Wed,
+ 19 Nov 2025 20:46:17 -0500
+X-MC-Unique: SlLhSGgJPgukd1MbAEuFPA-1
+X-Mimecast-MFC-AGG-ID: SlLhSGgJPgukd1MbAEuFPA_1763603176
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 964731956096;
-	Thu, 20 Nov 2025 01:41:34 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC273180049F;
+	Thu, 20 Nov 2025 01:46:15 +0000 (UTC)
 Received: from fedora (unknown [10.72.116.74])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D3E5F19560B0;
-	Thu, 20 Nov 2025 01:41:29 +0000 (UTC)
-Date: Thu, 20 Nov 2025 09:41:24 +0800
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D9AC19540E7;
+	Thu, 20 Nov 2025 01:46:10 +0000 (UTC)
+Date: Thu, 20 Nov 2025 09:46:06 +0800
 From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH v3 10/10] selftests/io_uring: add bpf io_uring selftests
-Message-ID: <aR5xxLu-3Ylrl2os@fedora>
-References: <cover.1763031077.git.asml.silence@gmail.com>
- <6143e4393c645c539fc34dc37eeb6d682ad073b9.1763031077.git.asml.silence@gmail.com>
- <aRcp5Gi41i-g64ov@fedora>
- <82fe6ace-2cfe-4351-b7b4-895e9c29cced@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>, bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH 3/5] io_uring: bpf: extend io_uring with bpf struct_ops
+Message-ID: <aR5y3pFTgDDNptdx@fedora>
+References: <20251104162123.1086035-1-ming.lei@redhat.com>
+ <20251104162123.1086035-4-ming.lei@redhat.com>
+ <87346a2ijz.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,56 +76,56 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82fe6ace-2cfe-4351-b7b4-895e9c29cced@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <87346a2ijz.fsf@trenco.lwn.net>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Nov 19, 2025 at 07:00:41PM +0000, Pavel Begunkov wrote:
-> On 11/14/25 13:08, Ming Lei wrote:
-> > On Thu, Nov 13, 2025 at 11:59:47AM +0000, Pavel Begunkov wrote:
-> ...
-> > > +	bpf_printk("queue nop request, data %lu\n", (unsigned long)reqs_to_run);
-> > > +	sqe = &sqes[sq_hdr->tail & (SQ_ENTRIES - 1)];
-> > > +	sqe->user_data = reqs_to_run;
-> > > +	sq_hdr->tail++;
-> > 
-> > Looks this way turns io_uring_enter() into pthread-unsafe, does it need to
-> > be documented?
+On Wed, Nov 19, 2025 at 07:39:12AM -0700, Jonathan Corbet wrote:
+> Ming Lei <ming.lei@redhat.com> writes:
 > 
-> Assuming you mean parallel io_uring_enter() calls modifying the SQ,
-> it's not different from how it currently is. If you're sharing an
-> io_uring, threads need to sync the use of SQ/CQ.
+> > io_uring can be extended with bpf struct_ops in the following ways:
+> 
+> So I have a probably dumb question I ran into as I tried to figure this
+> stuff out.  You define this maximum here...
+> 
+> > +#define MAX_BPF_OPS_COUNT	(1 << IORING_BPF_OP_BITS)
+> 
+> ...which sizes the bpf_ops array:
+> 
+> > +static struct uring_bpf_ops bpf_ops[MAX_BPF_OPS_COUNT];
+> 
+> Later, you do registration here:
+> 
+> > +static int io_bpf_reg_unreg(struct uring_bpf_ops *ops, bool reg)
+> > +{
+> > +	struct io_ring_ctx *ctx;
+> > +	int ret = 0;
+> > +
+> > +	guard(mutex)(&uring_bpf_ctx_lock);
+> > +	list_for_each_entry(ctx, &uring_bpf_ctx_list, bpf_node)
+> > +		mutex_lock(&ctx->uring_lock);
+> > +
+> > +	if (reg) {
+> > +		if (bpf_ops[ops->id].issue_fn)
+> > +			ret = -EBUSY;
+> > +		else
+> > +			bpf_ops[ops->id] = *ops;
+> > +	} else {
+> > +		bpf_ops[ops->id] = (struct uring_bpf_ops) {0};
+> > +	}
+> > +
+> > +	synchronize_srcu(&uring_bpf_srcu);
+> > +
+> > +	list_for_each_entry(ctx, &uring_bpf_ctx_list, bpf_node)
+> > +		mutex_unlock(&ctx->uring_lock);
+> > +
+> > +	return ret;
+> > +}
+> 
+> Nowhere do I find a test ensuring that ops->id is within range;
+> MAX_BPF_OPS_COUNT never appears in a test.  What am I missing?
 
-Please see the example:
-
-thread_fn(struct io_uring *ring)
-{
-	while (true) {
-		pthread_mutex_lock(sqe_mutex);
-		sqe = io_uring_get_sqe(ring);
-		io_uring_prep_op(sqe);
-		pthread_mutex_unlock(sqe_mutex);
-
-		io_uring_enter(ring);
-
-		pthread_mutex_lock(cqe_mutex);
-		io_uring_wait_cqe(ring, &cqe);
-		io_uring_cqe_seen(ring, cqe);
-		pthread_mutex_unlock(cqe_mutex);
-	}
-}
-
-`thread_fn` is supposed to work concurrently from >1 pthreads:
-
-1) io_uring_enter() is claimed as pthread safe
-
-2) because of userspace lock protection, there is single code path for
-producing sqe for SQ at same time, and single code path for consuming sqe
-from io_uring_enter().
-
-With bpf controlled io_uring patches, sqe can be produced from io_uring_enter(),
-and cqe can be consumed in io_uring_enter() too, there will be race between
-bpf prog(producing sqe, or consuming cqe) and userspace lock-protected
-code block.
+bits of `ops->id` is limited by IORING_BPF_OP_BITS and it is stored in top
+8bits of ->bpf_flags, so ops->id is within the range naturally.
 
 
 Thanks,

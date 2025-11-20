@@ -1,136 +1,112 @@
-Return-Path: <io-uring+bounces-10698-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10699-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC15EC750AB
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 16:39:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43351C75195
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 16:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3808C363A68
-	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:31:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 747194F0760
+	for <lists+io-uring@lfdr.de>; Thu, 20 Nov 2025 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFF66A8D2;
-	Thu, 20 Nov 2025 15:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D67F2F0C69;
+	Thu, 20 Nov 2025 15:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Nt8cLLCm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1cchHl4z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4942F9C3D
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 15:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A0278F4F
+	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 15:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763652279; cv=none; b=FYqGhU14lGvg7OM55vqtEDRWCq/WmDsRIEfOJQBdE29JwYujhia9KOlBSFdWNQMk0R+fo9FHdB/WnzYkYVHXg7ESqZARL2SSbDJjmooMo+fojdbi1UqhHfnLNt9RI3HrkXNjkga97RKDXSqUFnm/V9WMal/Iz1v9zdQthSgtDrY=
+	t=1763652431; cv=none; b=o2JBNTf68KRWP5YK1fwXfW8ymzEV5OjeOeZFG0yeQl5KprPcRknW/ckqoiwrlZvw9ym/sHCrBnafboVrSx03OwT4gwzUA+lQeWtIbiCTCiQbXEiVgxGjqeKoSSrZYju/Kqx72BHTZEpHQjoNV9EBLzuZfz2tSI5dQYcZSbbXkgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763652279; c=relaxed/simple;
-	bh=zSxOYKVfA/vPGolnd1JCb6YSBnstubyRe9yppRD54M8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gebiX52re4OUDfWCK76c1iBraHa26ny54pEWtUq6/9OQ7ITHyEov5my3D1QMkVvh9ySt9ddgiLqYiisx/LgC0KSbu3+I5KphUqmCmnzLNmgvsKYZYVgZ/hG51xCtSP59j8Ro2AEXb55CigtktLL3i4KyGMwHLII+Q9GIJFqtkbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Nt8cLLCm; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 5AK4ZvoP550900
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 07:24:37 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2025-q2; bh=Y/2J6O9gzuX2CvjQOX
-	eU75bJPKcqKD94IE4ngw7VxbU=; b=Nt8cLLCmU8tYisbwbYqvohZ2IpSriXk5PD
-	Wrbg3UF8wos0wf7+oBsanLjDvXk0ayuq6hIlmhPNRyxD859GmvJjk8OsLdqBJzr8
-	O0p2hLsI8u3f+e6y8k6chKD0m8ecs0O0+whTxgLhDjaOqY36dSsDpDDPoBdlFW3i
-	rTIsW5oxDerEhPHil6U3K2l/PC/xy3BMzxlZRuF8sLvfKTPfRrr+xrglqP3y9hzA
-	YWEmFPs7W0qgGNJHRtaiB7hsC8g4wuKeTy4rAit1hn4wiEnL6vugYMu40GPSHACW
-	3sro5ncFkHZOZVOeCNUosG5ldFEcduw8pib4CMSErF0WCXOW7lrQ==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by m0089730.ppops.net (PPS) with ESMTPS id 4ahv3tkua6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 07:24:36 -0800 (PST)
-Received: from twshared22076.03.snb1.facebook.com (2620:10d:c0a8:fe::f072) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 20 Nov 2025 15:24:36 +0000
-Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
-	id 0D5373FA6DA6; Thu, 20 Nov 2025 07:24:35 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <io-uring@vger.kernel.org>, <axboe@kernel.dk>
-CC: Keith Busch <kbusch@kernel.org>
-Subject: [PATCH] liburing: sync pi attributes with kernel uapi
-Date: Thu, 20 Nov 2025 07:24:27 -0800
-Message-ID: <20251120152427.452869-1-kbusch@meta.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1763652431; c=relaxed/simple;
+	bh=vO8S7CAM4NW3TUCn+2+2RPutoWVDqXZYWN2xNp5LpLg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nmj3GbhdfDKwV5yj3e0r1c9+aLvv8KECC/c5ZqKclA9z7kCBKQ3e160HNPynKEVlZRrDLwj/22nWrWXn76ZXRa7nKGAGJNMAfxNQOsi+1Awh/8wAWYK3Ih8R1gMBxklQKcANCrN8l0Cs0EZwyzwwlkG3yQyw8ObheJGz3V5oQ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1cchHl4z; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-94903ea3766so36955639f.3
+        for <io-uring@vger.kernel.org>; Thu, 20 Nov 2025 07:27:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763652427; x=1764257227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ObN5c0ihie3J51JMKIXx0Z/Dq9nMiHVoUXgShWnvgnQ=;
+        b=1cchHl4zhwIRTO0V26MWn/ey39pmN0f+9pokd7ZJJQNkdWCM+GS+4ObyFWCzPL7JIz
+         GgbEApjq5a5vRsk+5JfM/M0kSokz1lMSGU8w3KZrwoUMyYA0SJppv6LAU0l+np+LNAxE
+         zdOnBmWFtt3H5nSkHCtM1sK6TxZjq7tzENb+OWnrAw9cwXC4oLs5VhDemildGtxNuWpc
+         AvkXlNfJartLWWMgiO/FYi4iKaWMx7LvL5TLTYXY0HLPPgmE9KHMhHWRit/guqfZTnE8
+         6o4xW+wnO51bUeGR8uUwtDGo+kF9HDo6U5NrLw74wfV6nh/9gJ2iyIc1bcNJTVA3akBP
+         +nAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763652427; x=1764257227;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ObN5c0ihie3J51JMKIXx0Z/Dq9nMiHVoUXgShWnvgnQ=;
+        b=kdwv6USkHmyyyFBysQdVW7VAs5Tlr8c06O4naaUXJ97az0iH63xGgv+G8bzP7fnVsL
+         mUySz3N2qJV3Xk2eOVtCn18mLTLiZP6++mjl8gS9NFlWKbtlYrkiCa3+nEyJDIQJMncJ
+         pplwTaTUqe/n9Mi6FXk+El2SUS3yvLIVKGvoS5s8Jf8t5BabB1YVSqebnWNRLpjjptzS
+         xQqjCWg5JqOkE8WK6PUT/1FalCI0Fks0LyTicFS1DKJDUqjXKlWtzv6bwsYnrYCTVrQF
+         aDu8XnhZ2w+kbzqfIo2qXd6gScs5JpWdhKJ9tw7L3s53SBBG9/MYt9nXNIjMDiGhWQ4S
+         Piew==
+X-Gm-Message-State: AOJu0Ywbsts8wpgIFGbvFoLtdfaCS+gl2dimVUcqRXVbl4lPvmv8bx3f
+	V+45AC5UcBTFZma+1ZM2h84+g4llVElR2OnQawmBdi0wu7jw16eZxSlfwCrElxMWuGbruLmth1i
+	n4j7s
+X-Gm-Gg: ASbGnctApoBtM3uvATvMg/6AW5uFR/UwcTcGyZGIW/MBXkTlnuokvlm5zNPny/2vkVp
+	G7JmjrR5Jbvg9J8Emigg6dils2yqbIIKjIMPPggZCiHdEr+poNnUI8tG4ilroci7VByQMK5/8Py
+	aUsxvYu9L1lBKbE6xTzYLbNLnLG6purD0sPk8zKR4lecQmpCdYKva4k+x1yA8E4y64fj834eumZ
+	vi0GE7yrH+9kv8Qy8fYCOtc/btQnOV524AIGGkXckoco/5/6ElIRYG9yFz80xEBxtwX/hW6m5ka
+	8lts5gHc3NWLp4Bgct8cqax1HxzGF4BXq3+GVplScfIEWsvDvDjtXAJkKOdCiXrAxid/KUjPmah
+	+6IT9Fh3KG9DTYXyZPz0AgutfOs6hROG20bg3LInmdZkQqTRcmYCu9e2YwXaRmLxRwQPH6srPz/
+	mDvw==
+X-Google-Smtp-Source: AGHT+IECd2IeVGQbkw4RhzM4aH53Oe7IwwmZLNNGfAY/20LRkz205gIQn4/XR/oZS+iLPfn8Sh3eoA==
+X-Received: by 2002:a05:6638:29a9:b0:5b7:d710:6619 with SMTP id 8926c6da1cb9f-5b9541a7569mr2754370173.20.1763652427515;
+        Thu, 20 Nov 2025 07:27:07 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b954a0de5esm1044983173.6.2025.11.20.07.27.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Nov 2025 07:27:04 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Keith Busch <kbusch@meta.com>
+Cc: Keith Busch <kbusch@kernel.org>
+In-Reply-To: <20251120152427.452869-1-kbusch@meta.com>
+References: <20251120152427.452869-1-kbusch@meta.com>
+Subject: Re: [PATCH] liburing: sync pi attributes with kernel uapi
+Message-Id: <176365242447.574437.9626064058250918903.b4-ty@kernel.dk>
+Date: Thu, 20 Nov 2025 08:27:04 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIwMDEwMSBTYWx0ZWRfX/mGvhJ+qZul2
- rsxmYrjN0FwgczV+wvHi5cARxzoj3eJDh3pevWrgq9k+zy5OTDJ5+NFVxeUrZYZyoHHahOuGJPv
- Z1I9SzdjIG5o3VZrN3XPdhV9D7tE6NUxpwLh7HeCqera67lMqqEwrHgBq0Cd2C3gfsMK50t0NAn
- u4qtBDaZ2GlCbTzS8Ttrvk7R3lPjWBYlXzMeBuRBPH4kvaCC/bD6PWn6wW1X2daYOSHS7fh4TOx
- R4d+SG10HGudBuGgZG+YIegHQHb2Is+xHXlJbXKk7MlKy/Fu2VXQB5wAJFRjgfRyPQhM87ikUiP
- L//ysS0SFTT5fu/ABbxeO+g6S4ALA0QcrRbCCG9Sy93Ot038OlvEWcGU2VrgNNqCgd+ShJfSPpZ
- m4OcAKTqb7GUlNDRytIqeptcVa5GWg==
-X-Proofpoint-ORIG-GUID: m4FD3VpUi1I11P030IyzTojafde3GxKf
-X-Proofpoint-GUID: m4FD3VpUi1I11P030IyzTojafde3GxKf
-X-Authority-Analysis: v=2.4 cv=YIWSCBGx c=1 sm=1 tr=0 ts=691f32b5 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8
- a=8iLFYBD6hOO-n47D1RwA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-20_05,2025-11-20_01,2025-10-01_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-From: Keith Busch <kbusch@kernel.org>
 
-These were introduced in kernel release 6.13.
+On Thu, 20 Nov 2025 07:24:27 -0800, Keith Busch wrote:
+> These were introduced in kernel release 6.13.
+> 
+> 
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- src/include/liburing/io_uring.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Applied, thanks!
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_ur=
-ing.h
-index 44ce8229..a54e5b42 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -100,6 +100,10 @@ struct io_uring_sqe {
- 			__u64	addr3;
- 			__u64	__pad2[1];
- 		};
-+		struct {
-+			__u64   attr_ptr; /* pointer to attribute information */
-+			__u64   attr_type_mask; /* bit mask of attributes */
-+                };
- 		__u64	optval;
- 		/*
- 		 * If the ring is initialized with IORING_SETUP_SQE128, then
-@@ -109,6 +113,18 @@ struct io_uring_sqe {
- 	};
- };
-=20
-+/* sqe->attr_type_mask flags */
-+#define IORING_RW_ATTR_FLAG_PI  (1U << 0)
-+/* PI attribute information */
-+struct io_uring_attr_pi {
-+		__u16	flags;
-+		__u16	app_tag;
-+		__u32	len;
-+		__u64	addr;
-+		__u64	seed;
-+		__u64	rsvd;
-+};
-+
- /*
-  * If sqe->file_index is set to this for opcodes that instantiate a new
-  * direct descriptor (like openat/openat2/accept), then io_uring will al=
-locate
---=20
-2.47.3
+[1/1] liburing: sync pi attributes with kernel uapi
+      commit: 679b42227999633f67cf0e6183f939495025e95c
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 

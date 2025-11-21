@@ -1,32 +1,32 @@
-Return-Path: <io-uring+bounces-10714-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10716-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681A4C7733F
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 05:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BDDC77351
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 05:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2A784E45E2
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 04:01:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 387524E4009
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 04:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669123C4E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2CC2BE646;
 	Fri, 21 Nov 2025 04:01:10 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347DB248F68;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3477423F417;
 	Fri, 21 Nov 2025 04:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763697670; cv=none; b=ID0xututA0Htz29S3H+JgHjl1gMKESg+LGcF6SV/e9azbu1BiG6GPBmwjIWArvo43szrXObWFub+PPunjwGrjjbSsQb+5uE28HXlvS+F3o9Ffa6zFKd5IVF47638n/dKrEbt/8omKA+pnVs5Ig9QKdKqvhqYR+hsUz0RYmgti/A=
+	t=1763697670; cv=none; b=sWDQhNXB88wqkguUzgXkQm+1SYClI31O4ogr/3pqTRtnasbuYUP8tYNpXt6w93V1tDkeDcIfrz0NUwzGbvig5PY+Zc92JDGHZAen1ESvnoJUlQJESiVa2HObdAEqows3P92mT7T+HDjB6B5LYi/H/PEhW5aY5ey384nKVxQHySw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763697670; c=relaxed/simple;
-	bh=6qIHlhM+MCUdvVq4j3wN5PWzi4h0LIZ0znmf+vGPkR8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kFi6bs7+MXtdtMFiv1IZWacQmEv//fp8INYbXSnGhyD0TCMMvfZsCit1+6F1ICXZoMoxnyTGInRtvCQQGyf+x+oxl782BFrumoPxtmD8Al3sz9ee7Tpn/1ExZSiwu4kMYBynK+ATpF5BkKuAkJBkl5gcUYxjpz525PT94zyyMn0=
+	bh=R3w+Pxmy1NbEoyA0pE26djjrNB06U5hNWKTrXIFjXBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=AZsEkozHj2Mo8dw4YmJICSO6A9dX1IgCWDuCsdYR3ri+/EnJdxIcN4Z3yD/reDCCDewFDxm7AoMF1LR0vY3RFISkveKAd2+qQeFz6IEMDi+C7TbudNbmDLdeDMaJ9iS1MPsP72N3sJHiYoL6EBxmDhvND36VsH4hFclesOmzzX4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-6d-691fe3faf41f
+X-AuditID: a67dfc5b-c2dff70000001609-76-691fe3fa2e4d
 From: Byungchul Park <byungchul@sk.com>
 To: netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -59,36 +59,39 @@ Cc: linux-kernel@vger.kernel.org,
 	dtatulea@nvidia.com,
 	shivajikant@google.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH net-next 1/3] netmem, io_uring/zcrx: access pp fields through @desc in net_iov
-Date: Fri, 21 Nov 2025 13:00:45 +0900
-Message-Id: <20251121040047.71921-1-byungchul@sk.com>
+Subject: [PATCH net-next 2/3] netmem, devmem, tcp: access pp fields through @desc in net_iov
+Date: Fri, 21 Nov 2025 13:00:46 +0900
+Message-Id: <20251121040047.71921-2-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsXC9ZZnke6vx/KZBku28lus/lFhsfzBDlaL
-	n2ueM1nMWbWN0WL13X42iznnW1gsvq7/xWyxblcrk8XOXc8ZLV7NWMtm8fTYI3aL+8uesVjs
-	ad/ObPGo/wSbxbvWcywWF7b1sVqcO7ySzWJ7wwN2i8u75rBZ3Fvzn9Xi5KyVLBYdd/ayWBxb
-	IGbx7fQbRourM3cxWSy8E29x6fAjFovZjX2MFr9/ANXPPnqP3UHOY8vKm0we12ZMZPG4se8U
-	k8fOWXfZPRZsKvXYvELL4/LZUo9NqzrZPDZ9msTusXPHZyaP3uZ3bB4fn95i8Xi/7yqbx5kF
-	R9g9Pm+SC+CP4rJJSc3JLEst0rdL4MpoXvKDreALT0XP7ZNMDYynuboYOTkkBEwkVi5/wAhj
-	f2tsZAex2QTUJW7c+MkMYosISEl83LEdKM7FwSywhlVi+YytYA3CAnESD38sAGtgEVCVWL92
-	MRuIzStgKtGxZznUUHmJ1RsOMIM0SwgcY5d4+vMPG0RCUuLgihssExi5FzAyrGIUyswry03M
-	zDHRy6jMy6zQS87P3cQIjK9ltX+idzB+uhB8iFGAg1GJh/cEp3ymEGtiWXFl7iFGCQ5mJRFe
-	VUeZTCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNTUwtSi2CyTBycUg2MVpsu
-	mxzp2FScyusT47rj7h/Jt9XWX17XSL5c+7j15fLtK1IiLjDMl6gXf+/YtTnnwISotbOcnslx
-	bjywIe38p6+714bZn92puMN8S+K+Az17XwufMLLdpxGvspnPqaYrceVTBc3uzQGXeLt/qKTp
-	XjSX13BcLrd/yxb2ks7y5eVdH8R/aq+3U2Ipzkg01GIuKk4EAKkE5lqrAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAAwGRAm79CAMS/gMaCGludGVybmFsIgYKBApOO4Mt+uMfaTCOOjir+Hg4p+C4
-	BTj5rOcCOJyqtgE4q92PBjicz4QEOPWv+gM4rrqFAji5uucBOOqYrQY45cbiBzjfpuYEOLyH
-	twM44o/IBjjuhc4EOMOdyQU40LaOBTjOw6kGOLeA4Ac407qcBjjerP8FOMmaqQQ4iNy9BDjG
-	oBY49svsATjVmboCOKHcXzjSw+IEOJuBjgE4+/icBjibxd4HQB9ItKnZAkjWmJEESNi+ygJI
-	uZrdB0igsnVIs6gqSNPNdUiyqokGSLLykgdIubjzAkiNg+4GSPHl2gRI777VBkij6PACSMyg
-	xAdI87IeUBBaCjxkZWxpdmVyLz5gCmiDpPgGcPQMeIzbyQKAAcsKigEJCBgQNBj2gYEHigEJ
-	CAYQJxjY2PkDigEJCBQQGhjxuLcHigEKCAMQrAUYp5i1AYoBCQgTEF4Y4figB4oBCQgEECUY
-	r62jBooBCQgNEDUYiLynAYoBCQgYEB8Yq7DAA5ABCKABAKoBFGludm1haWw1LnNraHluaXgu
-	Y29tsgEGCgSmffyRuAH000fCARAIASIMDcgJH2kSBWF2c3ltwgEYCAMiFA0lQRxpEg1kYXl6
-	ZXJvX3J1bGVzwgEbCAQiFw1KV2VgEhBnYXRla2VlcGVyX3J1bGVzwgECCAkagAEAuSxiYklG
-	aIusnnStzTc8+QxM5e5ncem5ZVHeb2HzY8QvfOiwsiQCnYkGWFDtu8S2Ar5WHICr0h8eVG2M
-	n0ylQba81grQiQi1FX7kvPun43q8VverMW7mqYosZAjnp9DMwqkK7//qyr366Oew1XhNs8kw
-	HOSkVpsXN2KzXzeuHyIEc2hhMSoDcnNhp4l8S5ECAAA=
+In-Reply-To: <20251121040047.71921-1-byungchul@sk.com>
+References: <20251121040047.71921-1-byungchul@sk.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRW0hTcRzH+29nZ2djw8NJ6rhMYWSBmGVp/QkRFcrTW1AvXUBHO7nRNtfm
+	ZWbRpMQLpNZLzu1h68E5nU7mZRdK8pJpXlqZOs2ZztQoL6glXgrblN6+/L7f74cffDEm0YgI
+	MKkim1YpRDIhykW4SzzTye3ZSOnpv3oC1m9qoHnayYJb1gUGNNS1AVjvq0Ch4cMTBP62bTNh
+	o7uIAV3uBQB/VDWgcK7Hz4Zfa+YR+KrYwYT+il4ULhcNIdDTVs6CQ10WFDq002w47DagcMq6
+	y4J91RYElky+RmCP8RDc6F8EcETnZkDTZDr81OVHoL6wHMCdzUBe/3aKnRxBtVjGGdRo1TOE
+	8ra/Z1Cuah+bMtpzqObaaGp4MIey15WilH3tOZtyOdcZ1NPHyyi1OjeBUCvtIyg1YOxmU+v2
+	iCshN7iJYlomzaVVp5IyuJJ3gR+U2hDN56IxVAtMvDLAwUg8nhxp3UHLALantb/Q4BnFT5Be
+	7xYzqENxAbnqdLDLABdj4lYWaa5qBUHjIH6LHN+dQYIawaPIWe0ACHL4eAJZ+VGzj48k65ve
+	7HE4+Dmy3a/bqxKBiLV0mhFkkrifTZqbtcz9QhjZUetFKgHfCA7UAUKqyJWLpLL4WEm+QqqJ
+	vZ0lt4PAijUP/9x0gjXP1U6AY0DI4/dyIqUES5Srzpd3AhJjCkP5USnhUoIvFuXfp1VZ6aoc
+	Ga3uBEcwRHiYf2YjT0zgmaJs+i5NK2nVf5eBcQRaoLvsUX5hKQ0CbP38Hd6o7VteU1zj1AOB
+	pz8z1TFqI0pM+PHw4hnXC5+q0JbBuZRyzx9mXhoci+/zXVxJBup5CxrDn0/sFl+T7GY/GpaH
+	t7oMPy8kvNTVfs+cSLMSachOqnmyQHRMspKUOBaz1aK3HHWcvc5pW2yI7RgfKhAiaokoLpqp
+	Uov+AbuWMSnBAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsXC5WfdrPvrsXymwe4HzBarf1RYLH+wg9Xi
+	55rnTBZzVm1jtFh9t5/NYs75FhaLr+t/MVus29XKZLFz13NGi1cz1rJZPD32iN3i/rJnLBZ7
+	2rczWzzqP8Fm8a71HIvF4bknWS0ubOtjtTh3eCWbxfaGB+wWl3fNYbO4t+Y/q8XJWStZLDru
+	7GWxOLZAzOLb6TeMFldn7mKyWHgn3uLS4UcsFrMb+xgtfv8Aqp999B67g7zHlpU3mTyuzZjI
+	4nFj3ykmj52z7rJ7LNhU6rF5hZbH5bOlHptWdbJ5bPo0id1j547PTB69ze/YPD4+vcXi8X7f
+	VTaPxS8+MHmcWXCE3ePzJrkAgSgum5TUnMyy1CJ9uwSujONAhxQ08Fdcab3O1sC4kKeLkYND
+	QsBEouELWxcjJwebgLrEjRs/mUFsEQEpiY87trN3MXJxMAusYZVYPmMrI0hCWCBG4ub/hywg
+	NouAqsTjhjOMIHN4BUwlJlysAAlLCMhLrN5wAGwOp4CZxL5HM8FahYBK1nQ+YJrAyLWAkWEV
+	o0hmXlluYmaOqV5xdkZlXmaFXnJ+7iZGYGQtq/0zcQfjl8vuhxgFOBiVeHhPcMpnCrEmlhVX
+	5h5ilOBgVhLhVXWUyRTiTUmsrEotyo8vKs1JLT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgST
+	ZeLglGpg1Pz+cZWWZO0ppof14eWv5oTK61TP2N6cYiKUWrx7Z/avBRz7PNQKmVaqZBZXa1x+
+	f2KZ2+1V9zIO/5PpPcCosNPIZxJT7ny3OJVP3y4fa2LV6vtYfSlL1mZ573b3p6x9h71n7Xhi
+	vmrKC+tASz2xy0c6r4m2WSdraZhF94jZBt2NcDN/mhSsxFKckWioxVxUnAgAthD0vqgCAAA=
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -101,48 +104,56 @@ to access them through @desc in net_iov.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- io_uring/zcrx.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/linux/skbuff.h | 4 ++--
+ net/core/devmem.c      | 6 +++---
+ net/ipv4/tcp.c         | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index b1b723222cdb..f3ba04ce97ab 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -693,12 +693,12 @@ static void io_zcrx_return_niov(struct net_iov *niov)
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index ff90281ddf90..86737076101d 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3778,8 +3778,8 @@ static inline dma_addr_t __skb_frag_dma_map(struct device *dev,
+ 					    enum dma_data_direction dir)
  {
- 	netmem_ref netmem = net_iov_to_netmem(niov);
- 
--	if (!niov->pp) {
-+	if (!niov->desc.pp) {
- 		/* copy fallback allocated niovs */
- 		io_zcrx_return_niov_freelist(niov);
- 		return;
+ 	if (skb_frag_is_net_iov(frag)) {
+-		return netmem_to_net_iov(frag->netmem)->dma_addr + offset +
+-		       frag->offset;
++		return netmem_to_net_iov(frag->netmem)->desc.dma_addr +
++		       offset + frag->offset;
  	}
--	page_pool_put_unrefed_netmem(niov->pp, netmem, -1, false);
-+	page_pool_put_unrefed_netmem(niov->desc.pp, netmem, -1, false);
+ 	return dma_map_page(dev, skb_frag_page(frag),
+ 			    skb_frag_off(frag) + offset, size, dir);
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index 1d04754bc756..ec4217d6c0b4 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -97,9 +97,9 @@ net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding)
+ 	index = offset / PAGE_SIZE;
+ 	niov = &owner->area.niovs[index];
+ 
+-	niov->pp_magic = 0;
+-	niov->pp = NULL;
+-	atomic_long_set(&niov->pp_ref_count, 0);
++	niov->desc.pp_magic = 0;
++	niov->desc.pp = NULL;
++	atomic_long_set(&niov->desc.pp_ref_count, 0);
+ 
+ 	return niov;
  }
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index dee578aad690..f035440c475a 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2587,7 +2587,7 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+ 				if (err)
+ 					goto out;
  
- static void io_zcrx_scrub(struct io_zcrx_ifq *ifq)
-@@ -800,7 +800,7 @@ static void io_zcrx_ring_refill(struct page_pool *pp,
- 		if (!page_pool_unref_and_test(netmem))
- 			continue;
+-				atomic_long_inc(&niov->pp_ref_count);
++				atomic_long_inc(&niov->desc.pp_ref_count);
+ 				tcp_xa_pool.netmems[tcp_xa_pool.idx++] = skb_frag_netmem(frag);
  
--		if (unlikely(niov->pp != pp)) {
-+		if (unlikely(niov->desc.pp != pp)) {
- 			io_zcrx_return_niov(niov);
- 			continue;
- 		}
-@@ -1074,8 +1074,8 @@ static int io_zcrx_recv_frag(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 		return io_zcrx_copy_frag(req, ifq, frag, off, len);
- 
- 	niov = netmem_to_net_iov(frag->netmem);
--	if (!niov->pp || niov->pp->mp_ops != &io_uring_pp_zc_ops ||
--	    io_pp_to_ifq(niov->pp) != ifq)
-+	if (!niov->desc.pp || niov->desc.pp->mp_ops != &io_uring_pp_zc_ops ||
-+	    io_pp_to_ifq(niov->desc.pp) != ifq)
- 		return -EFAULT;
- 
- 	if (!io_zcrx_queue_cqe(req, niov, ifq, off + skb_frag_off(frag), len))
+ 				sent += copy;
 -- 
 2.17.1
 

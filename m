@@ -1,132 +1,116 @@
-Return-Path: <io-uring+bounces-10717-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10718-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB70EC78014
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 09:54:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6A5C791F7
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 14:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 841D54E81A8
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 08:54:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9BBF363AC2
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 13:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C97F33CEA1;
-	Fri, 21 Nov 2025 08:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E439B346784;
+	Fri, 21 Nov 2025 13:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4s6vex3y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/QMZl9S"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2002733D6C2
-	for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 08:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10E934403C
+	for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 13:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763715250; cv=none; b=r35GBdi19OwynVi8H8zLwR35Ls0i0gz4RMKhMDg7IhQhkCWuTLKqBe8IZq80Z5e0nbk7LV9Sg8gq4TW5y/jN5hw5C2XYtRZXG5EUDuCsew4/RybyNaxYLfmYGnGD9/47FIVrpSg3/Wq6fsXHiI8pMZktHAxXOLi3Ftzum0kuyKs=
+	t=1763730174; cv=none; b=VnZoyZGPa/RvbI4mwu44M/y0Xdoioy1AkJlffQ6Jvq7gi3dwL0U+2kldR+5Qcnua4RM6vWzsvH1Vr46aGewS9yZ8D84HVdMyUVitYmRnrAOQP9fvSuhX2l9Z1fbqWdqaXIbcoJtaJh+yZOqTAmcFvTDwS4fOIPCth2bNWTOG8lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763715250; c=relaxed/simple;
-	bh=u/Xnrcvu7raz4zGpEQjS/K8p4RasVPBF3ZOLpuJkQA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiRyGu1sj4hVUBsvJQDZGzHZiHE38FvMa53eNorczYuKgoILwCVmKbJ3y0NQJ8qYFaWldN4YCiIYX6KAaVGNHPArDgW4jzKoWpaP85Wp8uU1NUh8tZtPayal+q1gNTUSdHgS/UEqH7fv1sMUHgFtlQ1XQ8H5pngRQu0Xvhkf2d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4s6vex3y; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4779a637712so11496535e9.1
-        for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 00:54:07 -0800 (PST)
+	s=arc-20240116; t=1763730174; c=relaxed/simple;
+	bh=J1sxZerVx4LRZu0MxMnZWpDHNosS86+OSOr1kLRBwM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TXf9CiTF7d43x7JJ/3tynlqLw+ly2YnxmXkSaYAGawBtXW8KyUe8NmzE4RAOPZ5por/SM+u6uJ5lUtJDbt1lz0rLpUvTwt7QM/h33I5mGe3f+xDnJOrXCCwwB3wdPHqLoNqkWsuPCHlyiTU56ERwAmhDx4EBRwJzAHEOHK3un7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/QMZl9S; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47789cd2083so12314055e9.2
+        for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 05:02:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763715246; x=1764320046; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WkxFF7Y/C3Uyt6cbFd74k4ikA5f+omWOtrl9H5+zqwk=;
-        b=4s6vex3yQm8X/jx5C486YFULn+zZIIfv6KGFv4uJhgSGIgJOj6Lu5ZDczWdko5Myae
-         3XL5xWmt90q0ImiFqzzF2nig827GeUVNJ8Lov64iqO04xtmRZuq8OAs9ykLo9XT/tNAL
-         CvlWA+zgc5HC4r7zqrOiry76zBdA5Voy4zKa8bXcTMHw9YCv4ve4WGRWWrKjhe6zYmzz
-         8vF1Ui9K8hTWG1FcYKsjbbI9PL7vDMXmnkYkWzcuu/aw8w6jfaGr6AdZfye/KelcOUsQ
-         Csh4W8f15JuYxey0PMc/5tsLLP4xyp6Kdj+0KbC+8yBGs8bUVE6Eoki3hyJNfQ8h259x
-         pjLw==
+        d=gmail.com; s=20230601; t=1763730167; x=1764334967; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+karDUIwaluMCQfDCqIqXlR93Ss9N56UP9ZbbJblk6I=;
+        b=b/QMZl9SE326qcHee6Oe+yDe/0hEzLuxg0NHt0ZwFIL4lvgD0Zc5GhMXn23hJJfekL
+         QcLkv6y7hdAolxzBBSUGaY42RtW8W5sqRdIrnxqLiN46/xrjT38Ji68d3RcnxfsCdEX6
+         cM1txrMc7jybwEWQgYu2IgR+DdGamkg6xXpyqyijOHcIP5Q1FzjHHiizvDmKuxNKaYqe
+         drcE0AERfMpOHUlpRqywY5W0McD2KkL/LtZ+2JNtI7Pd9cPmVaIwHMkL5N2OHycWGNRw
+         jtgVmxZkDyYmIEESB5b1tvkZTczWYq6x8wUukyqvRkHf9BuqsX+6L/X10vFrqVrmmY73
+         uTDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763715246; x=1764320046;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WkxFF7Y/C3Uyt6cbFd74k4ikA5f+omWOtrl9H5+zqwk=;
-        b=GuNgd1locUL5ptWpQUDbR3nkdp+epu6qdq1UnaflH+BDbxj0R7kK53311ZBMBfa6XL
-         jwFQ9tjOz+YeV/sqWLKxBp81pvlWkjCmvHYvAbvuFdeQ4GlINgsRZqBQnukVglz1251D
-         Nky6I3S3BZ1RPk+clW44rWYQ9gvmWeF3u9VuCE8ZQoNoqMGNNGsX/wWrWOL11ZAYvT7/
-         lbSQPub5M+nHZTaZ479MaUr7XjMYrUJ6/Pxtb9wbDxYAAZ9QM3P5P6S44FGAjekJL9ER
-         1RMcD1/mcYTKzEiNTn+ps90eUaKZVbVOg9kzz6Hu7m5pvy+hRvBXPqK4M/HMQ1ChARoA
-         8HWw==
-X-Gm-Message-State: AOJu0YynBEdfv5/NblMGzVaHwefHe8+zYa/Z//bvz4dpVX9Xxbs1fi7R
-	OW+3EK32O1YQ8pQFr6DdtZ9ORmbphlYwsbecXVz2RMMh9QVvfh3V67g8VznKT8pqIDmf/2Y40Ox
-	OBYlCU+37
-X-Gm-Gg: ASbGncuwCX3Szu6DlI0pMndI6ON2rxXouFpdaKayh9zfNr7HV/SOFWhIrXyLdlJUVgy
-	N7ZK/2led4hU97FgULrppO1f/llyNeYhu6hV8avWIh3OzNt/zT20jVjztmOPXvFq+TQbkM1vcIK
-	0MB6WzpJr7IGFMf5KwJ3B/qZHLcJsbXi0GXxbxd5tdFB/PSgW8YjvJ0KCYPe0MOsjS7bI35kwPS
-	wfMABAIva5NSJAkSkAc0RKVC/b5fEWr8LNml0cwvD2ir+aKDrob2D9uSCGJE9Bd8yJ+6gvIjNLa
-	SV3UEZP90d4dnri7j5bOMohRU8NfjLY318aFs16efqtgBLKw5bZyvkYn6ut+v4eb45zEausNWPJ
-	4yXWnn7R9e6HtWRcsP39z6zGjDrPlSTRFOwY8buREVc8ZIeQP38JjDVpNd8GdGOf1I63V7/EAbC
-	WRWy1f61NAnNIBQLGZoLuhFL2ujFIeVbrLmbvMVgUPlw==
-X-Google-Smtp-Source: AGHT+IGJqq3tUuZcU6vMFeb3X4CjpUNy1it4nIH32hp21zhEJLrYSmEZz3dUfkj0dhfu4o1iu4JcjQ==
-X-Received: by 2002:a05:600c:1c88:b0:477:9cdb:e337 with SMTP id 5b1f17b1804b1-477c0165badmr17698595e9.7.1763715245969;
-        Fri, 21 Nov 2025 00:54:05 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:9025:43ee:a754:64f9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a974cdc8sm85901055e9.2.2025.11.21.00.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 00:54:05 -0800 (PST)
-Date: Fri, 21 Nov 2025 09:53:59 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH] io_uring/cmd_net: fix wrong argument types for
- skb_queue_splice()
-Message-ID: <aSAop5CDhDmh_0I-@google.com>
-References: <2b6dacfa-5e44-49da-b81f-51710e2584cf@kernel.dk>
+        d=1e100.net; s=20230601; t=1763730167; x=1764334967;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+karDUIwaluMCQfDCqIqXlR93Ss9N56UP9ZbbJblk6I=;
+        b=xT9zf/Xu9Hu8pOWhgs2GmTYVYQeXz+5+3Jh4k4UhlNOrjsqKdlkJWJKGFEA1T8BYOd
+         SEX5gHO0depLcQp3MOcGkUBIMVOevnRlNWbUnL9jm8uOXttDAuUOL/lirNylTpp3M7Um
+         PJGCO0MEVv+nyyiGFb6VD0G5MKjOCgP/ye11NBZkPlfuGFwz8ERTqD0yndNyWx1gFks9
+         agjP+qJiiiECyvBuTVWR7VUTkcxxQ6BdPoiNXiNpdAnd03CpyfcBBbDUejGpPv5ybLxK
+         7v0sYzh7mHXOfD7UcGomJ5CycnCwFxZGo3aj1XxSFBSQW9plJLNqCkafTSDe73YyO9Kf
+         cdTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjR1AJN5Jin+tlm7ilHMe5cRvMSJF3j4F4yRCUaqyi5pPR5CYADRLyiTxqYSGkaQZ3zDT9GHGttA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz94Mf9+dWPTmqbMbM8uuCjsj5NbswPkXANzWKAMmSn6phafnmf
+	CK/X88o//ugYNrbzunjSKfqXF6pISvP1v92dY6W8uSLGVJj1BxkwyaY4
+X-Gm-Gg: ASbGncvO5CSNbXjMNIaf6Anj7mCg4lm/TQsTxBDKM+USBDld0qkJFzrJWD8heWhOaVf
+	vUCccZNqYe6t3u43SPNtoyhP+d8CASxInC5TmHPxGoH462NEspsGQH3+01+lzvZvTNNDP6nOP8u
+	psEN9cqG1e0crp5tl0Tu3a73YyVjeX2dErYEOmcre6SuF/ciN8tGwoqz/JKP4Oa+IVui9casod7
+	JIlzu/a93SA7pNA+JcDvG2wsKhL0wwa5y8a+uNQSva7zNq5ghxUHemVps55otQERwK2uLZ7E9JS
+	fI6Tpf+9xsQp8ZSpCOIJo9jXynbru5SCRtAApmPdYtmSrTa2xh3FIgTpY/FXQH7mjaxmNgelSRB
+	FBfO4cCJV1Zt4FJwuNB1GwRrODpfdfKkTmdoxkuxXR9MyAFwG1E6qInqk1XFMoP0Q4wvORprisS
+	OPAJabtPCDbtimiXDe2Dpf4NdIyOcnjQEpQ5agjigwGa8=
+X-Google-Smtp-Source: AGHT+IG0dHMzWmFJj/rAQgcaWfg4AOgSKobtzdJcmRQ7G8ZljQW4t5jDW4Xt3mXuEOEmi28tMC7DZA==
+X-Received: by 2002:a05:600c:a07:b0:477:a3d1:aafb with SMTP id 5b1f17b1804b1-477c115c657mr22920655e9.29.1763730166896;
+        Fri, 21 Nov 2025 05:02:46 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:813d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477bf36d1fasm41153185e9.7.2025.11.21.05.02.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Nov 2025 05:02:46 -0800 (PST)
+Message-ID: <72e3ecdf-343e-4d1b-9886-67d48372a06e@gmail.com>
+Date: Fri, 21 Nov 2025 13:02:44 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b6dacfa-5e44-49da-b81f-51710e2584cf@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/3] netmem, io_uring/zcrx: access pp fields
+ through @desc in net_iov
+To: Byungchul Park <byungchul@sk.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, harry.yoo@oracle.com, hawk@kernel.org,
+ andrew+netdev@lunn.ch, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, ziy@nvidia.com,
+ willy@infradead.org, toke@redhat.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ axboe@kernel.dk, ncardwell@google.com, kuniyu@google.com,
+ dsahern@kernel.org, almasrymina@google.com, sdf@fomichev.me, dw@davidwei.uk,
+ ap420073@gmail.com, dtatulea@nvidia.com, shivajikant@google.com,
+ io-uring@vger.kernel.org
+References: <20251121040047.71921-1-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251121040047.71921-1-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 20, 2025 at 01:24:14PM -0700, Jens Axboe wrote:
-> If timestamp retriving needs to be retried and the local list of
-> SKB's already has entries, then it's spliced back into the socket
-> queue. However, the arguments for the splice helper are transposed,
-> causing exactly the wrong direction of splicing into the on-stack
-> list. Fix that up.
-> 
-> Cc: stable@vger.kernel.org
-> Reported-by: Google Big Sleep <big-sleep-vuln-reports+bigsleep-462435176@google.com>
-> Fixes: 9e4ed359b8ef ("io_uring/netcmd: add tx timestamping cmd support")
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/io_uring/cmd_net.c b/io_uring/cmd_net.c
-> index 27a09aa4c9d0..3b75931bd569 100644
-> --- a/io_uring/cmd_net.c
-> +++ b/io_uring/cmd_net.c
-> @@ -127,7 +127,7 @@ static int io_uring_cmd_timestamp(struct socket *sock,
->  
->  	if (!unlikely(skb_queue_empty(&list))) {
->  		scoped_guard(spinlock_irqsave, &q->lock)
-> -			skb_queue_splice(q, &list);
-> +			skb_queue_splice(&list, q);
->  	}
->  	return -EAGAIN;
->  }
-> 
-> -- 
+On 11/21/25 04:00, Byungchul Park wrote:
+> Convert all the legacy code directly accessing the pp fields in net_iov
+> to access them through @desc in net_iov.
 
-Thanks for the quick patch!
+Byungchul, that was already converted in the appropriate tree.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
-Tested-by: Günther Noack <gnoack@google.com>
+-- 
+Pavel Begunkov
 
-—Günther
 

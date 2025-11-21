@@ -1,82 +1,83 @@
-Return-Path: <io-uring+bounces-10721-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10722-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B29AC79FE4
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 15:09:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08FCC7A168
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 15:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id D010137277
-	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 13:53:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77F424F1A8F
+	for <lists+io-uring@lfdr.de>; Fri, 21 Nov 2025 14:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EBC34D93C;
-	Fri, 21 Nov 2025 13:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C0F348865;
+	Fri, 21 Nov 2025 13:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBgxJisk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="W/HjXEkd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AC634F486
-	for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 13:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2448314D31
+	for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 13:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763732985; cv=none; b=DulxTGzA8w3Js9/lQj4q9KzOl2P5WxSGM/6jnjmTXZVT/DhbrpeZIc9aHRfVA9dJximBBzWfjMPFaeY49yXQ/KTFvWJanvcLX2bIkVN48BIXb+5SNsqtq/6TU9IIM6P3lxULSfdM7RoerGaHWo0oMqdE/LdpFlOAJknTqQO7kHE=
+	t=1763733587; cv=none; b=Crcb8KEU4h/0p632hTY28peoJNNUwaoWPfvlNuTNXdTgG2z5oDph8aCT4U/L1glOxGUalVf5Hr1LGDjYIXRr05xVnEmGufJO0zcqYu4bN7gxWIXKAUw7WxDXLZ5FXO/3sDj31BcOMfBycPXT6qNwWVdRYkzv78brmo9BXJ36PnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763732985; c=relaxed/simple;
-	bh=6sRa7VggFeA8T0uGV93BKpXvc/NYCQwYHGUdPf3ZIAg=;
+	s=arc-20240116; t=1763733587; c=relaxed/simple;
+	bh=k9O/n6KiB6IuqNPJ+w4D24wu7X0pxrXXixl4hRmZKr0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P2bPX/3U57RrP/0Xa1+yJ+syyA9XbDoNfBjR9OgLnNUbMVRrxtzGiGbqwKRah9OANDC2NeCwdoOWxMJLwW1LAjqLf4cUzmd016gqmYJoDCynIhicfFlGkqCPbwzm7wO4n9mO3h93aZklIevsRB0qUQZQIbu28dkr3ngnJZu1/wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBgxJisk; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47775fb6cb4so14399105e9.0
-        for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 05:49:43 -0800 (PST)
+	 In-Reply-To:Content-Type; b=tTQViAf0Q2Z5hlpd1Ig/dTiwLCNeeI6xZLbK1hOrOWtchXSckrf3nO1p/zhVnBIOs5jHmIEB5AW4+cG9ApqgTWfh0fSM5iIt32puIH5S8PuwWlOP23ZJFhfPPNQCO0TCmG1BnFrCudsuO+gMey8ISSB6icBGUud+rWoQzNHN+qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=W/HjXEkd; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-9491571438cso87686739f.0
+        for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 05:59:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763732981; x=1764337781; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763733580; x=1764338380; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=/uaEEYNAZfJo5DNZYfSYfwbbbOpcsvBMVWsay/jmxPE=;
-        b=cBgxJiskmQOVZ5TqwJ+3IDUbqjZjq8TOl/y2jZuSa8gw4BFD2JH7f+Mh5uiZu3azIp
-         7WrEjGlamt0qmxDg2eHXWyp4aUFF7EJ20sCl/gMT2JkuUBVW4SvYPPggH3e3MJ+D6OQY
-         i2wvlzyazoqt5xVvMOMiZQkbjgFqxeyEXkoMUGi/uQTPBv/5lA8PS+q45DIkuz5cIK86
-         5CYqxPdYqpfvPce+L/eTUAPo5ftWSOSn0xUneTqa+ih8g2WnXWSJ+TmgXSK4c8TSFQRP
-         OoojzD9CuNXRcyqOyyT2UxkL958/oqIFvDF/eKZ0eygbD2yXny31ALa0Po6J7IxT3hC8
-         5LTg==
+        bh=LaN6U+hdfKSmLffkO2SeZ23OBfSypde4pzEWpJTI/60=;
+        b=W/HjXEkd+hjzrb5ircOS8xYUu0zNYPSyP3ix+sUaz5zEsB67OQx0U4O5/DB54t/PqS
+         nGfD4Yw1mZphW51BYb32L/N6+aBFOKoQPbiTTlGo2cEuXxFlf8PaLakSygjkJUqe5vab
+         XkQN1fhXc80mZcoEmUTQ4X9jTTNcX2peHDMxB7qVI8j7U5CE/56v+BkDiwWGl5SO0aQz
+         shNA2NErIYnyzh9wRRU1jAXSAyYxxm1bWWiPBL8KCzziPP2HqYsVyiC6H+joThSEKCLm
+         Sp8E+3tX2jERWWDKgWOw4X/3z2PELXQxV7IpICyoKOP8WKWi0BWX8T6ZHDZSgpaEpSA5
+         WF4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763732981; x=1764337781;
+        d=1e100.net; s=20230601; t=1763733580; x=1764338380;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/uaEEYNAZfJo5DNZYfSYfwbbbOpcsvBMVWsay/jmxPE=;
-        b=CEVmFHLba5Uac4FC3RP/7otzEtOtscS5VX/qBZG18hWtpLRtMN3OyQXueylOqky7Ca
-         7l8ra6o6mZYc+ru2yA7zg3uLumbBS3o3jq2EzIYmUZg8Ab2+c7QdrSWQKBmyJGocnlqo
-         TY05O/+21UYs06QgelOGSrNKAUwDSliGEhjZxbllx62Khr2vPRhLRgVNPd+//d3xCil+
-         Dqa2TKtGFBS2g9OT/SkjmlnYq4vbfbgDg5nMNBcfv9VvcJ/5sPjry3tMMeOBqMJqDAr6
-         ZtkN9+wqish2D8Vc/L4wQE54pmrCxXCgL7EqYXDskKSH5esIJKw7FB57rIz8SL6B6hBw
-         Btsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcTJXKlp8rxZH8fhh/pxd0SBha05sdRy5ncAcTHzX7n9NYeOrxXlwzvEgDij9naQb/FFuipsoBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxStmfANjejykn+EycRhaJx8gIk6lAiFUfpnxDK20jJSVbl/5cj
-	CZ6BkZHmoWdStydfIbjn/30I7YtACOL9j4uvvCFN2ta+ZtEmM+FcHqZ/
-X-Gm-Gg: ASbGncsReiNiMquR+uWnnj7bBZQN6fKW7eK2NsD1fhpGm81kyQEFJF02aSVWCa7m6qV
-	j+PGhAaLqwQudyMB2ejTT7YegFAHoXBUPvSLBZdixQwss2zw37lY8t41WTmyOZkVaSlWpCKnIug
-	UG+dDwasClD3YPAKKRDPN4Tz2A1RFsaUeLOvAX0yWx5aAgrXWCKZjj6AAOsDT3OD/MeDHdxFzVu
-	Q/g8QVjnIwqasci0amBymli2f5bFoU3feIF6IU1FVyXEUbr5Rc8OxG0hD4pIP3dJgkY8Fl+q4L3
-	DJSR+QZdQjdfGi53gc65PM0otKITefdbYv4EmLLa3C2Kl14BxPhDX1kKdw5gB/RIHT0tEqAkR4n
-	FX6TjqEh2dM3oHPoyJEIzk9Lh033lrx4Hd3t0UqRNBL+FDyuid1MIoUaNczhV42FkeD6Mzdb1nD
-	s9gyn0Mqg/ovYF3SRRQak5uvjs96bk0IWgA/TMRxGnYDw=
-X-Google-Smtp-Source: AGHT+IGpyXzn+GOP3c8ZJGjzVqIxPZ8wx7gMLxfBhsZssKivAUDi6/RPsu1LpaULN8JflTkLbCQPYg==
-X-Received: by 2002:a05:600c:529a:b0:477:8a2a:123e with SMTP id 5b1f17b1804b1-477c1133932mr21944935e9.33.1763732981360;
-        Fri, 21 Nov 2025 05:49:41 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:813d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fd8d97sm10715143f8f.42.2025.11.21.05.49.40
+        bh=LaN6U+hdfKSmLffkO2SeZ23OBfSypde4pzEWpJTI/60=;
+        b=med7AGxDu/0RAmWzno8k+XcHJcH1U6grFf66dL34Il7TWgM45DFu/MTuyYVBcdcrlD
+         UVG6Njpzvmfrnl0iyBL/hMgejn2XlhyzsmgOpALq8CE2UHvvj8e2MOpmPsBBkcy6aLRv
+         hNU3K29msrbHby7bH7P7wlB1V5g006PEaSUSk7QyMKCXuAsk6scKqzt0T7H7inmehtiF
+         NVCguKmZaaU4HEALi8iAkz9+yczjQqFDPIGetlNok3eTXO2l7+riMNqr0bCpkzjge90l
+         DsHakT3hspsKMSXV5SJmDdoJTyF3o0Im0ETiTgUGHMWHVdM/ygTjN9imaOwbccK5nDru
+         YBaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZdSmcoBeNjDFUFLdGT++yEiLTR6Pd1dh3OFvzXHIxAEhHVA1GwfdNm+7w5+lR48XPN8yeSrK7xQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1u1dpo/flw7LeWwzl0fA7qTyH+Z0spQ5kfGmo1U9jbeg2NbKM
+	ZOBS9iRTlPKu41/UuQCpRye0+sWw3NQjtjmwY0MDgcMKjIvYYGq9iyhe1eJbebOL7WnPr1hJrM5
+	KhMvl
+X-Gm-Gg: ASbGncus0b+EaHqrJJIMgws4Z+WdM1Sm1fmEx9jB55kCrH4DL8j0IYsg/8rlPziAYrK
+	4wmlKB9XAnfXvhxxjAKoQtUhLBvWV5cCl4bzow7+H1wphf/4M5T6CL1sqkjEdZuRs72Y5+oPCYQ
+	PwQG+CXqMduV1BCKx/9g5L2nc8y0R3Hz4ZsjtBSv0zAafnqGeJIBeNa46hdoF88BfkR2PVBtE5x
+	Bs/OhhWPChE9C1cYq4rfSyKHRKNTlTwAlYDO1LFsxYVC56X0CjYqDqM8uv9fYztZ6jkj7Es1wpX
+	cqK3UtxdZH6b2yZwUwFZZ0cODTaKBuf/2qxbGB67fmopedgjzTk/q6H76XnlPPPSZCFMT7dzwh5
+	Xi4y8EALd5F/zfhYYsjJs8lxeGrdmGYsqDqpvPiKdt3qkipAb6yD01vhGAAY447Qw/UbkbNHA8/
+	txSes+yTOm
+X-Google-Smtp-Source: AGHT+IHNGqDbsVPTxIZQxXMdTnYz8j9yMg2/XOqgov8n6jpoxDnP4/d0H08lOhePFRFMmzFnSJe4QA==
+X-Received: by 2002:a05:6602:6d0e:b0:949:a0c:59d9 with SMTP id ca18e2360f4ac-949488f7c9dmr181984039f.5.1763733580342;
+        Fri, 21 Nov 2025 05:59:40 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-949385ada00sm198712239f.3.2025.11.21.05.59.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Nov 2025 05:49:40 -0800 (PST)
-Message-ID: <fa3ab544-e9fd-4746-993c-a4d446a4c19a@gmail.com>
-Date: Fri, 21 Nov 2025 13:49:33 +0000
+        Fri, 21 Nov 2025 05:59:39 -0800 (PST)
+Message-ID: <50ea34b3-580d-48d9-a806-256ab6135a02@kernel.dk>
+Date: Fri, 21 Nov 2025 06:59:38 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,71 +87,91 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] io_uring/register: use correct location for
  io_rings_layout
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring <io-uring@vger.kernel.org>
 References: <64459921-de76-4e5c-8f2b-52e63461d3d4@kernel.dk>
  <7febd726-8744-4d3a-a282-86215d34892f@gmail.com>
  <335af53b-034e-4403-b5e9-5dab46064a1e@kernel.dk>
+ <fa3ab544-e9fd-4746-993c-a4d446a4c19a@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <335af53b-034e-4403-b5e9-5dab46064a1e@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <fa3ab544-e9fd-4746-993c-a4d446a4c19a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/19/25 20:22, Jens Axboe wrote:
-> On 11/19/25 10:18 AM, Pavel Begunkov wrote:
->> On 11/19/25 02:36, Jens Axboe wrote:
->>> A previous consolidated the ring size etc calculations into
->>> io_prepare_config(), but missed updating io_register_resize_rings()
->>> correctly to use the calculated values. As a result, it ended up using
->>> on-stack uninitialized values, and hence either failed validating the
->>> size correctly, or just failed resizing because the sizes were random.
+On 11/21/25 6:49 AM, Pavel Begunkov wrote:
+> On 11/19/25 20:22, Jens Axboe wrote:
+>> On 11/19/25 10:18 AM, Pavel Begunkov wrote:
+>>> On 11/19/25 02:36, Jens Axboe wrote:
+>>>> A previous consolidated the ring size etc calculations into
+>>>> io_prepare_config(), but missed updating io_register_resize_rings()
+>>>> correctly to use the calculated values. As a result, it ended up using
+>>>> on-stack uninitialized values, and hence either failed validating the
+>>>> size correctly, or just failed resizing because the sizes were random.
+>>>>
+>>>> This caused failures in the liburing regression tests:
 >>>
->>> This caused failures in the liburing regression tests:
+>>> That made me wonder how it could possibly pass tests for me. I even
+>>> made sure it was reaching the final return. Turns out the layout was
+>>> 0 initialised, region creation fails with -EINVAL, and then the
+>>> resizing test just silently skips sub-cases. It'd be great to have
+>>> a "not supported, skip" message.
 >>
->> That made me wonder how it could possibly pass tests for me. I even
->> made sure it was reaching the final return. Turns out the layout was
->> 0 initialised, region creation fails with -EINVAL, and then the
->> resizing test just silently skips sub-cases. It'd be great to have
->> a "not supported, skip" message.
+>> Looks like the test runs into -EINVAL, then tries the DEFER case,
+>> and then doesn't check for SKIP for that. And then it returns
+>> success. I've added a commit for that now, so it'll return 77/SKIP
+>> if it does skip.
+>>
+>> I try to avoid having tests be verbose, unless they fail. Otherwise
+>> it's easy to lose information you actually want in the noise. But
+>> it certainly should return T_EXIT_SKIP, when it skips!
 > 
-> Looks like the test runs into -EINVAL, then tries the DEFER case,
-> and then doesn't check for SKIP for that. And then it returns
-> success. I've added a commit for that now, so it'll return 77/SKIP
-> if it does skip.
+> Printing when tests are skipped was pretty useful because I
+> expect a latest kernel (+configured for testing setup) to be
+> to run all tests, and I'd find "test skipped" suspicious by
+> default. Certainly a test infra problem, but at least it
+> worked.
+
+Depends on why they are skipped - lots of tests skip because they are
+given an argument, and they don't support using an argument. When I run
+tests I use a bunch of different files/devices, and then you get a lot
+of:
+
+Running test pipe.t                                                 0 sec [0]
+Running test pipe.t /dev/sda                                        Skipped
+Running test pipe.t /dev/nvme1n1                                    Skipped
+Running test pipe.t /dev/dm-0                                       Skipped
+[...]
+
+for example. And those skips are not interesting at all. The ones that
+skip because the kernel doesn't support them, those would be interesting
+to dump at the bottom for a better overview.
+
+> At some point it might be great to distinguish when it skips
+> because of unsupported io_uring features from when some
+> resources are not available.
 > 
-> I try to avoid having tests be verbose, unless they fail. Otherwise
-> it's easy to lose information you actually want in the noise. But
-> it certainly should return T_EXIT_SKIP, when it skips!
+> On the topic, I've found this in the runner:
+> 
+> elif [ "${#SKIPPED[*]}" -ne 0 ] && [ -n "$TEST_GNU_EXITCODE" ]; then
+>     exit 77
+> else
+>     echo "All tests passed"
+>     exit 0
+> fi
+> 
+> But not sure who would even define TEST_GNU_EXITCODE. It should
+> be more helpful to always print skipped tests:
+> 
+> else
+>     echo "Tests: skipped $SKIPPED"
+>     echo "All tests passed"
+>     exit 0
+> fi
 
-Printing when tests are skipped was pretty useful because I
-expect a latest kernel (+configured for testing setup) to be
-to run all tests, and I'd find "test skipped" suspicious by
-default. Certainly a test infra problem, but at least it
-worked.
-
-At some point it might be great to distinguish when it skips
-because of unsupported io_uring features from when some
-resources are not available.
-
-On the topic, I've found this in the runner:
-
-elif [ "${#SKIPPED[*]}" -ne 0 ] && [ -n "$TEST_GNU_EXITCODE" ]; then
-	exit 77
-else
-	echo "All tests passed"
-	exit 0
-fi
-
-But not sure who would even define TEST_GNU_EXITCODE. It should
-be more helpful to always print skipped tests:
-
-else
-	echo "Tests: skipped $SKIPPED"
-	echo "All tests passed"
-	exit 0
-fi
+Yeah no idea who uses TEST_GNU_EXITCODE... I strongly suspect no one,
+and we can just assume 77.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

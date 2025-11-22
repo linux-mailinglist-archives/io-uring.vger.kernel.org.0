@@ -1,199 +1,150 @@
-Return-Path: <io-uring+bounces-10734-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10735-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92007C7C2A7
-	for <lists+io-uring@lfdr.de>; Sat, 22 Nov 2025 03:16:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046C6C7CE5E
+	for <lists+io-uring@lfdr.de>; Sat, 22 Nov 2025 12:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4252134B997
-	for <lists+io-uring@lfdr.de>; Sat, 22 Nov 2025 02:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAB83A7FF1
+	for <lists+io-uring@lfdr.de>; Sat, 22 Nov 2025 11:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65D02C21ED;
-	Sat, 22 Nov 2025 02:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8794B2F28F0;
+	Sat, 22 Nov 2025 11:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qJEh+XZw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WR8bKuAq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA1B212F98
-	for <io-uring@vger.kernel.org>; Sat, 22 Nov 2025 02:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94A529E10C
+	for <io-uring@vger.kernel.org>; Sat, 22 Nov 2025 11:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763777764; cv=none; b=frWnJPszDVE6qw8jBqvC5tGgqhM2xdsmhRiK/cWrdaRvwX8j8dBivkfUuCdHPg9rGxEeLfAMNosrNI8KQfrkSBt6pGHNjZ4X5I6B82pG8G6hAtcLMPcDaoA2u30LtBbQuSJQXfNKhn6SR2+tgE7llWXqi7VGdISxTevAk0+uIWo=
+	t=1763811106; cv=none; b=uPTt29YqYmbz74s1fZflsSWHSBKIccl5REiT5uO5lTVJ46utJbksG8+6sN4rlWQATdZ/sgmwCxF5HoE4nzMv04cfTR2czygEO1ryDh77Ew4/OcUIlQAoP+YGyEyUCcqK+0Ico5NRbADXKDVibLad5tp7jBHt/vRgmDchk2oNAi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763777764; c=relaxed/simple;
-	bh=BHFJkb65NF6jyvP92hQZHaZ7yu+Ipv4m4/djl5gPcR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SvpXvM8syuZ4GeEMiC+pMk7jOqaKODfhlkALXgeVuVzzii6umPDcLrJXwBo5HotpQmjbE0vMNNFzCJwwrfe3BdjZcvW8I83wkTPDbfHgI5FS0UrJXWrNDF7VUYsdAWCbJgkttN8/tZFb14qwEi48cXpw8KB7p1NmQIP47mOAKI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qJEh+XZw; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7b7828bf7bcso3168576b3a.2
-        for <io-uring@vger.kernel.org>; Fri, 21 Nov 2025 18:16:01 -0800 (PST)
+	s=arc-20240116; t=1763811106; c=relaxed/simple;
+	bh=wmHp3rXeDWSQjkdzV0nTtmDYw4f+v+13WJTVYz8EFDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mleuraNx8O1XCsmm32iGBgV6ynL9QCFS5/GoX9tJkz26MWobDj09jN0k9hl26eBofzJCm12Of2xykw9YnFSwHfDJRsfRn/tvyAslftJuhdbMO335mD0HBGQaUz9ljA2gMRsIZL43imck4NoZowYnWjZ1yOPD7i3fxrqUlokwwhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WR8bKuAq; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42bb288c1bfso1722548f8f.2
+        for <io-uring@vger.kernel.org>; Sat, 22 Nov 2025 03:31:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763777761; x=1764382561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1763811102; x=1764415902; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MwZHqk6D7/ztotFEOHDmupQkGYG2hAiZI4I+YGJ0Cng=;
-        b=qJEh+XZwr2LDy3eFEKJtiZ8jGVMHXLfLVrkQMBDfZ8oX7HnrBHSwQGJOw+SjPgXplv
-         3N++gIwLRnR3rIzlTaeKvjT0yr2sbsigq2pueJSYyTQvxiEpfrcDWkn8jLlpQBwO+eDm
-         mVe4k65Cea4iOUJjT4wvun43hejgdCUUTtotvFTLwBLYSi9ukPkXjSOBVCbbKlDwXF+g
-         +6erRFK0LDLthlNcBGUuabOIxIQ2Fv6hF7TW7NMPCj7JEDT9zrufTbN6ln5rTraCdOts
-         YRg5jO2hD+pcF3sJqhTnY0IXchpkslGSaexT9o+fhsyP+lLOWrGI2mBBvBFqeKUFGbsn
-         Mrrw==
+        bh=dQ8THncOfm+J1kMHGeGBG0fceSI7AZuIrbUhZUaPBEc=;
+        b=WR8bKuAqV1smPC01N24PRZiiY2M+cyrQxey5A/Hpjg9W1uxgvQpoBH0K8sW4dd43Tc
+         /9ZITM8etgLZdhdNBZFaxxnI1bU4oFgMGRu9iFjyso46RKDGwyNH8h+DRJRrBwcgda0K
+         Ua5Hma/2dXfGUDxsZhIkFHXJkWDHARb3X4hORgs24JgHlMw7NNwX4XgCcX5oJvJ1+9j5
+         nhmnOt2Ao2g19cYqqAAC/Cm66eldrMa9hQUpRoNoQXmJjz3zNocnxYMdEDaVO37d6XJh
+         8fZTr1XOdMyKBJBAV/cb1PQ75Oas33YP5+GYDHawg8mfoC7U7blAuKEBW0W58SvgQ5Cn
+         Lifg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763777761; x=1764382561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1763811102; x=1764415902;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=MwZHqk6D7/ztotFEOHDmupQkGYG2hAiZI4I+YGJ0Cng=;
-        b=XA627nrpXUINFqHAleul1OItMv3XLyg2hRR65IpP2Fm7hN7bJYuPvBDYlgl7AAyIWK
-         Xv5ssUixWZmHC8qkpTwQXSG2HZk8uPdqzKEZo1gUUj+mU1s+BYqYRDDpJARC+Qon77lV
-         l2rsIGsrSpLkkNXsXQUP3Jixmu3hEY9DT0iF9QOHfGu71sfwTP3l8B+b1dgBWREHmErE
-         FUSbOB2RWqxL27PaH57ZopEbrXxab6K50uuNg4P/3GWd/pKyLIdhc50Mmw9Em2drN9QI
-         JC1dcfCW2W6yrbrFWQ9tiIeCsd7jKXw+ABfDXjr8Uid3kkAnkzjDNujw/P1IDtIQjjwf
-         9o+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/eafu+vEIRcszI+ZeZLxHYqs/ZOIdqy34gTn3PDMCuGyPr6e3x4pz0JDEoxx2wPM+vX+rxCgrLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKjkLDBdTiQNuv/YsuyUpcsgIFKNMigZk3BFpsIXC8sbKDgzlU
-	kKuAZMDuvUvC5n0BWu1UKn4If0h3mzXlysCZ98KwKEhZ3+gVoMuc+VFb5aBsDurGD5CJmeDeSlO
-	Txqf3TW6HtmBxQUhoH7euIz8OCfZPeVftDqHm4rqR
-X-Gm-Gg: ASbGncv45IohFtKoGTOGSNV2REJetRvKlxyEybhhSrwCqbmLp8MwR+FR2Us3bRTB5Qs
-	IQ+FNl4mGURzt5jSF3xxk3ZHjs835Vif5ZBLdky8iJc78wENESy3BShnWoxE8CNhvWSNnZvTsy9
-	eRTGixxFxYPrby1u0QD3wspIIQmuGFNvS81KBg351CUjb0hHlZpWXa4Y/LpG969vOBSC2VrD4lH
-	Pmo2DIsyJgnS+uLLLak2eSNZ0jQMe3eo4iwI44ASK7pbMBbJQ5oUTLIEJdYLHF36IL8N9tYheba
-	dAu3BhX+hOU0BTjN9bvVNL0Zr+Iv
-X-Google-Smtp-Source: AGHT+IFUCKrwrkIcJ5jIciiCusYue03VCH60BWqW2feFIKgRses9GzdMsYNos9kodqTwN4Qd4PyVYtvrtAC+VnfymC4=
-X-Received: by 2002:a05:7022:6610:b0:11b:9386:825e with SMTP id
- a92af1059eb24-11c9d8720a1mr1680122c88.43.1763777761039; Fri, 21 Nov 2025
- 18:16:01 -0800 (PST)
+        bh=dQ8THncOfm+J1kMHGeGBG0fceSI7AZuIrbUhZUaPBEc=;
+        b=A3BDj8wSgPe1IrryEUg9iCaluVkDnPMfb/nD1MJBkhvgn2HFJ/Su4ELtRVRsacFb3i
+         FJEAfY+jjMRw0cJIjMFBSxm0ByRrwePXt+nXnODpi3dHGVBSa40OkP2g8td7CoQVfRl9
+         EIaH/MisbBfQnPlKFkou3sJ/QllsYzHQPj6ulfpLOBPcLzDgswrpkFmI3B6tpb7ew6kz
+         hAqzz5TQC3FPmpYqyieBNT2kUrkkxiKlpoD8Zdc7lZuysNTiFreIR/2aHby0WAktUUmd
+         /VXGLziCL074ktnHHddwWbT/ZoLnFwrxX3yHw7MJIJ/I0b2YG0T4qUM1VQvB6hTJ4D/r
+         cPSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEZiBxYcigud/9llERblJXF10bbSAXY/80RmYDqyWoPDy6d3xzP7awr82o7cZS/qH9gh+zEEtRXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp23qzYINrA7q0vKfASRdjvMBUYxp7eOZHFeTSAGR1chIYeMNJ
+	/t9lXkOsf8Cjlc+YmVc9ANNHVXUbmcS4ByQXx6TFK+klpzfvs9JtRtaH
+X-Gm-Gg: ASbGnct3l7trVNAJmyBzb8vd6ZOq+daRPOrnZTFc7jfLRHK8SBgWtY1KMVXi+R6BCC/
+	V7vJaK5mv7AtA7Eo0N7/jx5OVC3dFG0Ri83Eh1Hn7hNCTytmBP5wfUo1Nvs6SN00XJF7S09btKo
+	h+9I34QEQg/+9XJZt5cl/41EwcqPVUHqksGXX6he0S/TpmMXFAJjWqqiFuZeFlIpe56rriK9jLh
+	7KWfw9Hgu1ny0zdlDJaNcmnuEg9YCvLiXeg/MhtVgA7xCyBUq9P/+VcaRgtfmCkX7wcqsgUuQ4r
+	S55ib5UuQDAl/YIc1CutKLBZKXCZwRpjhL3Kjhuohi+OGHpGXZ0Qizuykm0xVV16T3ARdYZvR4A
+	Iwd+zUItljbu5SV4zycIeaKVahjiftPkmT0bgDoOf1IKY+s88UOb8Xxcu3qyrxFDro8U1NG9759
+	DaFl7U3UK/YIUszEE1B0sDrlay97SAHWXnv8jzAIKg5VLUgJTiwFv1
+X-Google-Smtp-Source: AGHT+IFpCNXvQJkuktd1+yH95amqCaFEYwq+Vi2X0F3ZwM1FqHxYpEmefVT0W67mZUstfw2O7XRJng==
+X-Received: by 2002:a05:6000:1789:b0:42b:40b5:e64c with SMTP id ffacd0b85a97d-42cc1d0c3bdmr5811020f8f.30.1763811101605;
+        Sat, 22 Nov 2025 03:31:41 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fd9b45sm16124281f8f.43.2025.11.22.03.31.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Nov 2025 03:31:41 -0800 (PST)
+Date: Sat, 22 Nov 2025 11:31:39 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 04/44] io_uring/net: Change some dubious min_t()
+Message-ID: <20251122113139.2462035d@pumpkin>
+In-Reply-To: <312fe285-3915-4108-bc49-3357977d644d@kernel.dk>
+References: <20251119224140.8616-1-david.laight.linux@gmail.com>
+	<20251119224140.8616-5-david.laight.linux@gmail.com>
+	<3202c47d-532d-4c74-aff9-992ec1d9cbeb@kernel.dk>
+	<20251120154817.0160eeac@pumpkin>
+	<312fe285-3915-4108-bc49-3357977d644d@kernel.dk>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251121160954.88038-1-krisman@suse.de> <20251121160954.88038-3-krisman@suse.de>
-In-Reply-To: <20251121160954.88038-3-krisman@suse.de>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Fri, 21 Nov 2025 18:15:50 -0800
-X-Gm-Features: AWmQ_bkwrD2nvWkLk9hhcPJr_JfmdYMmx4MR6B5cjS0XjdSIov_5qt_nublNG5s
-Message-ID: <CAAVpQUAPrmDH6-ZiEioJ_sohbQ-kBu1MFBssPVzY34FRnsnz0w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] socket: Split out a getsockname helper for io_uring
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, netdev@vger.kernel.org, io-uring@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 21, 2025 at 8:10=E2=80=AFAM Gabriel Krisman Bertazi <krisman@su=
-se.de> wrote:
->
-> Similar to getsockopt, split out a helper to check security and issue
-> the operation from the main handler that can be used by io_uring.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
-> ---
->  include/linux/socket.h |  2 ++
->  net/socket.c           | 34 +++++++++++++++++++---------------
->  2 files changed, 21 insertions(+), 15 deletions(-)
->
-> diff --git a/include/linux/socket.h b/include/linux/socket.h
-> index 937fe331ff1e..5afb5ef2990c 100644
-> --- a/include/linux/socket.h
-> +++ b/include/linux/socket.h
-> @@ -453,6 +453,8 @@ extern int __sys_connect(int fd, struct sockaddr __us=
-er *uservaddr,
->                          int addrlen);
->  extern int __sys_listen(int fd, int backlog);
->  extern int __sys_listen_socket(struct socket *sock, int backlog);
-> +extern int do_getsockname(struct socket *sock, struct sockaddr_storage *=
-address,
-> +                         int peer, struct sockaddr __user *usockaddr, in=
-t __user *usockaddr_len);
->  extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
->                              int __user *usockaddr_len, int peer);
->  extern int __sys_socketpair(int family, int type, int protocol,
-> diff --git a/net/socket.c b/net/socket.c
-> index ee438b9425da..9c110b529cdd 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -2127,6 +2127,24 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr =
-__user *, uservaddr,
->         return __sys_connect(fd, uservaddr, addrlen);
->  }
->
-> +int do_getsockname(struct socket *sock, struct sockaddr_storage *address=
-, int peer,
-> +                  struct sockaddr __user *usockaddr, int __user *usockad=
-dr_len)
-> +{
-> +       int err;
-> +
-> +       if (peer)
-> +               err =3D security_socket_getpeername(sock);
-> +       else
-> +               err =3D security_socket_getsockname(sock);
-> +       if (err)
-> +               return err;
-> +       err =3D READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)ad=
-dress, peer);
-> +       if (err < 0)
-> +               return err;
-> +       /* "err" is actually length in this case */
-> +       return move_addr_to_user(address, err, usockaddr, usockaddr_len);
-> +}
-> +
->  /*
->   *     Get the address (remote or local ('name')) of a socket object. Mo=
-ve the
->   *     obtained name to user space.
-> @@ -2137,27 +2155,13 @@ int __sys_getsockname(int fd, struct sockaddr __u=
-ser *usockaddr,
->         struct socket *sock;
->         struct sockaddr_storage address;
+On Thu, 20 Nov 2025 08:53:56 -0700
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Could you move this to do_getsockname() ?
+> On 11/20/25 8:48 AM, David Laight wrote:
+> > On Thu, 20 Nov 2025 07:48:58 -0700
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> >   
+> >> On 11/19/25 3:41 PM, david.laight.linux@gmail.com wrote:  
+> >>> From: David Laight <david.laight.linux@gmail.com>
+> >>>
+> >>> Since iov_len is 'unsigned long' it is possible that the cast
+> >>> to 'int' will change the value of min_t(int, iov[nbufs].iov_len, ret).
+> >>> Use a plain min() and change the loop bottom to while (ret > 0) so that
+> >>> the compiler knows 'ret' is always positive.
+> >>>
+> >>> Also change min_t(int, sel->val, sr->mshot_total_len) to a simple min()
+> >>> since sel->val is also long and subject to possible trunctation.
+> >>>
+> >>> It might be that other checks stop these being problems, but they are
+> >>> picked up by some compile-time tests for min_t() truncating values.    
+> >>
+> >> Fails with clang-21:
+> >>
+> >> io_uring/net.c:855:26: error: call to '__compiletime_assert_2006' declared with 'error' attribute: min(sel->val, sr->mshot_total_len) signedness error
+> >>   855 |                 sr->mshot_total_len -= min(sel->val, sr->mshot_total_len);  
+> > 
+> > I'll take a look, I normally use gcc but there must be something
+> > subtle going on. Actually which architecture? I only tested x86-64.  
+> 
+> This is x86-64.
+> 
 
-The patch 3 also does not need to define it.
+It is related to the test a few lines higher:
+	if (sel->val > 0 && sr->flags & IORING_RECV_MSHOT_LIM) {
+'sel->val' is ssize_t, gcc is tracking that test so statically_true(sel->val >= 0)
+is 'true' and the signed variable can be compared against the 'unsigned'
+'sr->mshot_total_len'.
 
+It seems clang isn't as clever.
+Perhaps it reloads sel->val from memory - so loses the result of the comparison.
+Even swapping the order of the two tests might fix it.
+As might caching sel->val in a local (even a signed one).
 
->         CLASS(fd, f)(fd);
-> -       int err;
->
->         if (fd_empty(f))
->                 return -EBADF;
->         sock =3D sock_from_file(fd_file(f));
->         if (unlikely(!sock))
->                 return -ENOTSOCK;
-> -
-> -       if (peer)
-> -               err =3D security_socket_getpeername(sock);
-> -       else
-> -               err =3D security_socket_getsockname(sock);
-> -       if (err)
-> -               return err;
-> -
-> -       err =3D READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&a=
-ddress, peer);
-> -       if (err < 0)
-> -               return err;
-> -
-> -       /* "err" is actually length in this case */
-> -       return move_addr_to_user(&address, err, usockaddr, usockaddr_len)=
-;
-> +       return do_getsockname(sock, &address, peer, usockaddr, usockaddr_=
-len);
->  }
->
->  SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockadd=
-r,
-> --
-> 2.51.0
->
+The comment in the header file for io_br_sel.val doesn't seem to include
+the case where 'val' is a length!
+
+The simple fix is to use umin() since all the values are clearly non-negative.
+
+	David
+
+ 
 

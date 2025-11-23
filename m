@@ -1,376 +1,191 @@
-Return-Path: <io-uring+bounces-10736-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10737-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E00C7E703
-	for <lists+io-uring@lfdr.de>; Sun, 23 Nov 2025 21:13:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B26C7E845
+	for <lists+io-uring@lfdr.de>; Sun, 23 Nov 2025 23:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7588A343D58
-	for <lists+io-uring@lfdr.de>; Sun, 23 Nov 2025 20:13:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 635A63446C4
+	for <lists+io-uring@lfdr.de>; Sun, 23 Nov 2025 22:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4813D23770A;
-	Sun, 23 Nov 2025 20:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2900274B2E;
+	Sun, 23 Nov 2025 22:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="c7jMId0L";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BJBXReGs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6BKAYFq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063CB1A2C25;
-	Sun, 23 Nov 2025 20:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4B219DF8D
+	for <io-uring@vger.kernel.org>; Sun, 23 Nov 2025 22:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763928776; cv=none; b=Qw5qT5rKh8SzmeK+9PsHz/F4vSrCeGrl0GwrPUF+Dws+Z2bHXhTi2c2WUtOwbD+eK/+UztO1+IbNBkrE+28voqnHyGHKvv68nFpwbDFJ3cmscUtRRzeI+uQy8tDWfr4HCRq8/z2HY3Lm5pEPF/cA+DwQmG4Taa/eZBmWv/vLboI=
+	t=1763938301; cv=none; b=K50Kw8Mn4rgX2vXTWPT29U9GQOUj9SK0OoBWZajnwfNRmpICd9hcL9+tpI783cBYWTQZG3YizdgSdsCxd0EKQcoYtr4RokqKB59fsuS4Izp4/MjHzLkypEhmzjr91OwldcE/lKZ3zsJ3cK7StY+DHcOWisvvjyhHter2nwj7yXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763928776; c=relaxed/simple;
-	bh=v8j9TanWkx75Jzk5WFMP7TF4vRiHmpj6ExzteIBFqmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OoVHoryaUuZZqhbH+JbIm5QYDcdH1grOV3tsaVX6qwMDNRVcOWxQDGTaiYqM1tER0Su/ttZD3qDDBLPpX+GWtZGqPaMSdhmsAHvj3P++EuqFhXaTnc7LYop9rMaKePsgzJkLEyIhJJdgxiAp3qQj07Fmb+fCsFEdxaxHD7aaGqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=c7jMId0L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BJBXReGs; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D5D25140014D;
-	Sun, 23 Nov 2025 15:12:51 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sun, 23 Nov 2025 15:12:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1763928771;
-	 x=1764015171; bh=5OdHDmj6V1CR4LdeD/Tbwg5FSoEN7mx8OrJ2I1TPPqQ=; b=
-	c7jMId0LzU9u5wtewhb0jOgkeZ/nFFY8NqofsBhBXBjyC+a78E3xG2PWyKSbG4T/
-	JoVfQZdsFEiZSRFWZNJRtFwrgZKGg4bEu+kIiOFXSTGc5h69XVagldPDnoRXAQW/
-	lvMz5Mt+Teuend7ubm8Z0ifuRyfzJUYGMf2QDjV3KpkmhRsP6t7P7nJRrFY06YUE
-	0H62I/3gcIH4AjmeOrLA1JOR+Quj/I32YgCl3zyxBtYnPObF/l/G2iwmJn0BgrkY
-	c8uCWFK/TVm5UjlHQv5LfrTF4CycaWZ3Hvpz3E0H7Zecq60Zrt76lemFgwSqJnf0
-	F1Om4QGntLadpAMd6NxvLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763928771; x=
-	1764015171; bh=5OdHDmj6V1CR4LdeD/Tbwg5FSoEN7mx8OrJ2I1TPPqQ=; b=B
-	JBXReGsNdJnBUL0ErKQEA/xJjS4BkA/t6gpkFTorHiqJRq1AVUAuUt9y2T3LtSCM
-	4SmJybqzFwhI0vY/UEGz2CTqeXjWqxCiVpSs5IReq1YaEBZ7fWENjFxfHuAkkjPm
-	nMF1OlpOQmlNR0N+GwRZ1O7/n1WQZt4biceDqHRnSI7e9CzZiVXQy3tE5DqtJxZE
-	EeAVzQQFS5Oouwqg/a/+dS8z21TWgaTIv2L2OuqnX7ThgA/XaHVSLkSgVUrnMEPh
-	0ifnc01dRoa62Y8GLJ3l9xPRTlkI9nhO7IYPf7QLtPopCgmqG1jm0yS5SWDeS22O
-	+/lVP2tDyE3Nme/2g6Z5w==
-X-ME-Sender: <xms:wmojab5jfjmsK9HugV_nexZY1doq6EFqw-DxkkrSFDNXhXjTVqH0sQ>
-    <xme:wmojaT8tCvC-0ltlKi_9THH0NKVAIXvtIVPA3WP4iH4sMjvV2-cybAAfk0gAoP3pA
-    BHtGIh8-ynH7gYlgU1tuT94Hle7VcxFkPJ94VHLB5k6HSF1GzlM>
-X-ME-Received: <xmr:wmojadG1LQ0zWWXeFagk6gG5HvjtIKJOxXxwsqBZpQuFg_ZjXYMGJKY1OjJ3J755LAECyrD53Swq-SMMtmMV7LZZb60zgcgZ3i82NQn3PEQ088AMvTmY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeiieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpedtuedvueduledtudekhfeuleduudeijedvveevveetuddvfeeuvdekffej
-    leeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhho
-    shesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukh
-    dprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhope
-    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehiohdquhhr
-    ihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeigihgrohgsihhngh
-    drlhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptghsrghnuggvrhesphhurhgv
-    shhtohhrrghgvgdrtghomh
-X-ME-Proxy: <xmx:wmojaYWnfmHdWLK7PoKbOaJjgWsjulhqHDlMlWpveKbbI8FrAJeynw>
-    <xmx:wmojaZ86y6X0n5pCAl9d8us15Perdg5ztLKJY_rgQoiCVgCPm6gTaw>
-    <xmx:wmojaV7gON1K8-3LdaLRhZjmiJXRiZbPmGC3sKKu_FAsEaVjCU6j5A>
-    <xmx:wmojaSm-7i6Y4kimrOJTBT8Ib9qlShCtoJ58JI9oFf1bUDMvUl7pbA>
-    <xmx:w2ojaZSW5cnvWQiE6HPtafMZStaqDMGnljwpvfrtU8RN09-E5B862EcU>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Nov 2025 15:12:48 -0500 (EST)
-Message-ID: <941f06eb-2429-4752-bf56-fbc413da436f@bsbernd.com>
-Date: Sun, 23 Nov 2025 21:12:47 +0100
+	s=arc-20240116; t=1763938301; c=relaxed/simple;
+	bh=8PyEGRkcRN3H3Qg+AG9OmNSVW+xgeo66cxYJL94BR4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fxLUD2Id9WTRaFHFWGB4UgYkZY4cQOKQg+XOcvynwHFF0utoDPz6aDduASneEvnq4xzNsXL6vGUeQuE0YuFtF3mM2HNeEHaKjALsgpDxnDnXhg00NwhnMEzb7zYiFgnypgZOkMZL+z6Ifbxstha0zYbJ/3GTUFKWrPgIPFozlJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6BKAYFq; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775895d69cso15117675e9.0
+        for <io-uring@vger.kernel.org>; Sun, 23 Nov 2025 14:51:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763938298; x=1764543098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QZk9sSNTwOxRpwZ/DRrF1dwGfvdtNtexBNm/jAu7ryY=;
+        b=l6BKAYFqN+Det8YbgstB6eqhQCK+zE1qvXHle/mj0weBCTEnef8YgpixLJdZkJ65iP
+         9p/BSabegsCDKPdS36tISi4H26MiJgGXG9BxBkcTAJVBkrQAUmRtN69eUYZuhsv/D+2k
+         lpaPaDH+pTtEkI22e9fcCXPanrMsNzqr5114pkBfSmljaf/xtvFsVwz7m8CiqnhQ8dTm
+         WNZX4acCn3nIqfBdbSN+gqRUilyE8ob+Fqf9zjTs9MIHLJlbzND6tThoX9/vlgLLyo0Z
+         GiGxpfryUVqJ/5b7Z5UI1Fe9cjAzcSNdiSFnufibnxHCVr32cQ2wTVpJKz7SPSYhxFGK
+         7TNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763938298; x=1764543098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZk9sSNTwOxRpwZ/DRrF1dwGfvdtNtexBNm/jAu7ryY=;
+        b=Id5GftR9/OkQv+Xhb66XaYJokCVm3YQJMeiFE1xKXwEBESTBuLK34tmkgyFvVK/b+o
+         AKYLQ1EQPzbeJ80yTt2MTZzRCUjzaYuGVSexT+NJjEdUqJv+Jr/s8Zy+81bmlxC+EqM2
+         FS6uZunyEEs4nvvcznvOKhQP3MeHLWIt0A5qtSc0o22hmJssh4hY37raabTmTiJ1CIrd
+         rIWQ26lBOmhKiSphKX8yG7cbkWsW1zDrbIRWYUHKrGXD6TndaXaXVMS3UnvvPkwl135T
+         TVLC1V7wPjGaRpGsNk9GTb/fGRfzwGLdXFIK3xQ7cD8qPKQN5vSOZZKORH9SEuSSze3/
+         w5zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsRVOYNDcUzzXmHqDgc0vD+fqo10FoYO7rq++9iw07XpdKA1n6XdSRmK2TT3vE00TIy5e2kjmN/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUBkeXEwCK/uYkN+77lKJUuBh8AUpYHs+e7ca5pYlHT5eeFbuI
+	wi3Q3VH8bWNAuo1rJasLRXkUVP44dOPNrXr1+GYSYcyjC5aus6Px28zI
+X-Gm-Gg: ASbGnctPTgzYYhQzXhjly+B9ybk+uARfYj4HPqiIPKKpuYppOuDmydVH1NZTg1KKQin
+	U2dp1RS8hNE7SYP5VMo8q+V7agsXWiQVn8BIB/f/4yFdHM1XezSsBL/psJc46f+wH6VI5tXDwfi
+	6GUFki4OQQFIlUD7vKxKgOyJik2A1k2wbLBUtLuCxgyt9FyKyJAI9q6cVerruDeRJGTslfh6WHt
+	OaM2J/drB4mrenafpDrleWEviLZeoYdvocoIs6Zkm66+NX6JouNmKDh0e7KvL6eGzPI/I8mg1pl
+	uZmw6GSTfqQs8p1lYAhVhb0+FUpqTb4aHWmpUjNd9ORH4EGfTIugH7Ysk6LS5UbtH/B3AmZPAB/
+	KliRJfhzzPlLWFepxA1Htby2dyOoIvKI/topZpVp+8MdiDJcfql3ngch3Qrd1v4A7XzIQmMLr6L
+	i6BMvSFU/k36lc6Q==
+X-Google-Smtp-Source: AGHT+IEIzt6XAqBENWHKeltpmV3b1E5pfBhghZPeIUxjN0aB1YgGqF8Sp/+lNyxIs5uZ/0aP6PM4yA==
+X-Received: by 2002:a05:600c:5491:b0:477:fcb:226b with SMTP id 5b1f17b1804b1-477c016e60cmr94038575e9.2.1763938298240;
+        Sun, 23 Nov 2025 14:51:38 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb9190sm24849064f8f.33.2025.11.23.14.51.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Nov 2025 14:51:36 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org
+Cc: Vishal Verma <vishal1.verma@intel.com>,
+	tushar.gohad@intel.com,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [RFC v2 00/11] Add dmabuf read/write via io_uring
+Date: Sun, 23 Nov 2025 22:51:20 +0000
+Message-ID: <cover.1763725387.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] fuse: support io-uring registered buffers
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
- bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org,
- xiaobing.li@samsung.com, csander@purestorage.com, kernel-team@meta.com
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
- <20251027222808.2332692-9-joannelkoong@gmail.com>
- <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
- <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Picking up the work on supporting dmabuf in the read/write path. There
+are two main changes. First, it doesn't pass a dma addresss directly by
+rather wraps it into an opaque structure, which is extended and
+understood by the target driver.
 
+The second big change is support for dynamic attachments, which added a
+good part of complexity (see Patch 5). I kept the main machinery in nvme
+at first, but move_notify can ask to kill the dma mapping asynchronously,
+and any new IO would need to wait during submission, thus it was moved
+to blk-mq. That also introduced an extra callback layer b/w driver and
+blk-mq.
 
-On 11/7/25 00:09, Joanne Koong wrote:
-> On Thu, Nov 6, 2025 at 11:48 AM Bernd Schubert <bernd@bsbernd.com> wrote:
->>
->> On 10/27/25 23:28, Joanne Koong wrote:
->>> Add support for io-uring registered buffers for fuse daemons
->>> communicating through the io-uring interface. Daemons may register
->>> buffers ahead of time, which will eliminate the overhead of
->>> pinning/unpinning user pages and translating virtual addresses for every
->>> server-kernel interaction.
->>>
->>> To support page-aligned payloads, the buffer is structured such that the
->>> payload is at the front of the buffer and the fuse_uring_req_header is
->>> offset from the end of the buffer.
->>>
->>> To be backwards compatible, fuse uring still needs to support non-registered
->>> buffers as well.
->>>
->>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>> ---
->>>  fs/fuse/dev_uring.c   | 200 +++++++++++++++++++++++++++++++++---------
->>>  fs/fuse/dev_uring_i.h |  27 +++++-
->>>  2 files changed, 183 insertions(+), 44 deletions(-)
->>>
->>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->>> index c6b22b14b354..f501bc81f331 100644
->>> --- a/fs/fuse/dev_uring.c
->>> +++ b/fs/fuse/dev_uring.c
->>>
->>> +/*
->>> + * Prepare fixed buffer for access. Sets up the payload iter and kmaps the
->>> + * header.
->>> + *
->>> + * Callers must call fuse_uring_unmap_buffer() in the same scope to release the
->>> + * header mapping.
->>> + *
->>> + * For non-fixed buffers, this is a no-op.
->>> + */
->>> +static int fuse_uring_map_buffer(struct fuse_ring_ent *ent)
->>> +{
->>> +     size_t header_size = sizeof(struct fuse_uring_req_header);
->>> +     struct iov_iter iter;
->>> +     struct page *header_page;
->>> +     size_t count, start;
->>> +     ssize_t copied;
->>> +     int err;
->>> +
->>> +     if (!ent->fixed_buffer)
->>> +             return 0;
->>> +
->>> +     err = io_uring_cmd_import_fixed_full(ITER_DEST, &iter, ent->cmd, 0);
->>
->> This seems to be a rather expensive call, especially as it gets
->> called twice (during submit and fetch).
->> Wouldn't be there be a possibility to check if the user buffer changed
->> and then keep the existing iter? I think Caleb had a similar idea
->> in patch 1/8.
-> 
-> I think the best approach is to get rid of the call entirely by
-> returning -EBUSY to the server if it tries unregistering the buffers
-> while a connection is still alive. Then we would just have to set this
-> up once at registration time, and use that for the lifetime of the
-> connection. The discussion about this with Pavel is in [1] - I'm
-> planning to do this as a separate follow-up.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/9f0debb1-ce0e-4085-a3fe-0da7a8fd76a6@gmail.com/
-> 
->>
->>> +     if (err)
->>> +             return err;
->>> +
->>> +     count = iov_iter_count(&iter);
->>> +     if (count < header_size || count & (PAGE_SIZE - 1))
->>> +             return -EINVAL;
->>
->> || !PAGE_ALIGNED(count)) ?
-> 
-> Nice, I didn't realize this macro existed. Thanks.
-> 
->>
->>> +
->>> +     /* Adjust the payload iter to protect the header from any overwrites */
->>> +     ent->payload_iter = iter;
->>> +     iov_iter_truncate(&ent->payload_iter, count - header_size);
->>> +
->>> +     /* Set up the headers */
->>> +     iov_iter_advance(&iter, count - header_size);
->>> +     copied = iov_iter_get_pages2(&iter, &header_page, header_size, 1, &start);
->>
->> The iter is later used for the payload, but I miss a reset? iov_iter_revert()?
-> 
-> This iter is separate from the payload iter and doesn't affect the
-> payload iter's values because the "ent->payload_iter = iter;"
-> assignment above shallow copies that out first.
-> 
->>
->>> +     if (copied < header_size)
->>> +             return -EFAULT;
->>> +     ent->headers = kmap_local_page(header_page) + start;
->>
->> My plan for the alternative pinning patch (with io-uring) was to let the
->> header be shared by multiple entries. Current libfuse master handles
->> a fixed page size buffer for the payload (prepared page pinning - I
->> didn't expect I was blocked for 9 months on other work), missing is to
->> share it between ring entries.
->> I think this wouldn't work with registered buffer approach - it
->> always needs one full page?
-> 
-> I've been working on the patches for zero-copy and that has required
-> the design for registered buffers in this patch to change, namely that
-> the payload and the headers must be separated out. For v3, I have them
-> separate now.
->>
->> I would also like to discuss dynamic multiple payload sizes per queue.
->> For example to have something like
->>
->> 256 x 4K
->> 8 x 128K
->> 4 x 1M
-> 
-> I think zero-copy might obviate the need for this. The way I have it
-> right now, it uses sparse buffers for payloads, which prevents the
-> server from needing to allocate the 1M buffer per ent. I'm hoping to
-> send out the patches for this as part of v3 at the end of next week or
-> next next week.
-> 
-> Thanks,
-> joanne
-> 
->>
->> I think there are currently two ways to do that
->>
->> 1) Sort entries into pools
->> 2) Sort buffers into pools and let entries use these. Here the header
->> would be fixed and payload would come from a pool.
->>
->> With the appraoch to have payload and header in one buffer we couldn't
->> use 2). Using 1) should be fine, though.
->>
->>>
->>>  /*
->>> @@ -1249,20 +1358,29 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
->>>  {
->>>       struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
->>>       struct fuse_ring_queue *queue = ent->queue;
->>> +     bool send_ent = true;
->>>       int err;
->>>
->>> -     if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
->>> -             err = fuse_uring_prepare_send(ent, ent->fuse_req);
->>> -             if (err) {
->>> -                     if (!fuse_uring_get_next_fuse_req(ent, queue))
->>> -                             return;
->>> -                     err = 0;
->>> -             }
->>> -     } else {
->>> -             err = -ECANCELED;
->>> +     if (issue_flags & IO_URING_F_TASK_DEAD) {
->>> +             fuse_uring_send(ent, cmd, -ECANCELED, issue_flags);
->>> +             return;
->>> +     }
->>> +
->>> +     err = fuse_uring_map_buffer(ent);
->>> +     if (err) {
->>> +             fuse_uring_req_end(ent, ent->fuse_req, err);
->>> +             return;
->>
->> I think this needs to abort the connection now. There could be multiple
->> commands on the queue and they would be stuck now and there is no
->> notification to fuse server either.
-> 
-> This approach makes sense to me and makes things a bit simpler. I'll
-> add this to v3.
+There are some rough corners, and I'm not perfectly happy about the
+complexity and layering. For v3 I'll try to move the waiting up in the
+stack to io_uring wrapped into library helpers.
 
-This is a just heads up, while I'm testing sync FUSE_INIT I'm running
-in several issues. Part of it needs to be a re-send on -EGAIN and -EINTR
-in libfuse - had slipped through so far, but another is related to our
-page pinning. I just thought I can easy abort the connection when
-that fails, but that results in a double lock, because so far we 
-assumed IO_URING_F_UNLOCKED in teardown context. 
-I'm going to submit a patch to teardown in uring task context, so that
-we are sure about the flags.
+For now, I'm interested what is the best way to test move_notify? And
+how dma_resv_reserve_fences() errors should be handled in move_notify?
 
-I.e. I think my suggestion to abort here would run into the same
-issue as below.
+The uapi didn't change, after registration it looks like a normal
+io_uring registered buffer and can be used as such. Only non-vectored
+fixed reads/writes are allowed. Pseudo code:
 
+// registration
+reg_buf_idx = 0;
+io_uring_update_buffer(ring, reg_buf_idx, { dma_buf_fd, file_fd });
 
-[10375.669761] fuse: FUSE_IO_URING_CMD_REGISTER returned -4
-[10375.670632] fuse: FUSE_IO_URING_CMD_REGISTER failed err=-4
+// request creation
+io_uring_prep_read_fixed(sqe, file_fd, buffer_offset,
+                         buffer_size, file_offset, reg_buf_idx);
 
-[10375.671922] ============================================
-[10375.672754] WARNING: possible recursive locking detected
-[10375.673577] 6.8.12+ #6 Tainted: G        W  O      
-[10375.674377] --------------------------------------------
-[10375.675208] fuse-ring-0/7658 is trying to acquire lock:
-[10375.676022] ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_cmd_done+0x14f/0x210
-[10375.677335] 
-               but task is already holding lock:
-[10375.678292] ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: __x64_sys_io_uring_enter+0x68a/0xbf0
-[10375.679678] 
-               other info that might help us debug this:
-[10375.680722]  Possible unsafe locking scenario:
+And as previously, a good bunch of code was taken from Keith's series [1].
 
-[10375.681692]        CPU0
-[10375.682156]        ----
-[10375.682633]   lock(&ctx->uring_lock);
-[10375.683260]   lock(&ctx->uring_lock);
-[10375.683879] 
-                *** DEADLOCK ***
+liburing based example:
 
-[10375.684916]  May be due to missing lock nesting notation
+git: https://github.com/isilence/liburing.git dmabuf-rw
+link: https://github.com/isilence/liburing/tree/dmabuf-rw
 
-[10375.685994] 1 lock held by fuse-ring-0/7658:
-[10375.686699]  #0: ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: __x64_sys_io_uring_enter+0x68a/0xbf0
-[10375.688141] 
-               stack backtrace:
-[10375.688923] CPU: 0 PID: 7658 Comm: fuse-ring-0 Tainted: G        W  O       6.8.12+ #6
-[10375.690150] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[10375.691534] Call Trace:
-[10375.692019]  <TASK>
-[10375.692445]  dump_stack_lvl+0x66/0x90
-[10375.695219]  __lock_acquire+0x13b8/0x25c0
-[10375.695901]  lock_acquire+0xb7/0x290
-[10375.696507]  ? io_uring_cmd_done+0x14f/0x210
-[10375.697226]  ? __lock_acquire+0x459/0x25c0
-[10375.697913]  __mutex_lock+0x7d/0xae0
-[10375.698530]  ? io_uring_cmd_done+0x14f/0x210
-[10375.699251]  ? io_uring_cmd_done+0x14f/0x210
-[10375.699967]  ? lock_acquire+0xb7/0x290
-[10375.700606]  ? fuse_uring_stop_list_entries+0x1c2/0x280 [fuse]
-[10375.701508]  ? io_uring_cmd_done+0x14f/0x210
-[10375.702210]  ? lock_release+0x24b/0x390
-[10375.702862]  io_uring_cmd_done+0x14f/0x210
-[10375.703546]  fuse_uring_stop_list_entries+0x24f/0x280 [fuse]
-[10375.704439]  fuse_uring_stop_queues+0xf7/0x240 [fuse]
-[10375.705251]  fuse_abort_conn+0x3e6/0x3f0 [fuse]
-[10375.705998]  fuse_uring_cmd+0x8de/0xf40 [fuse]
-[10375.706742]  ? lock_acquired+0xb1/0x320
-[10375.707415]  io_uring_cmd+0x6b/0x170
-[10375.708080]  io_issue_sqe+0x4e/0x460
-[10375.708705]  io_submit_sqes+0x22e/0x710
-[10375.709356]  __x64_sys_io_uring_enter+0x696/0xbf0
-[10375.710109]  do_syscall_64+0x6a/0x130
-[10375.710743]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[10375.711541] RIP: 0033:0x7f31a073db95
-[10375.712160] Code: 00 00 00 44 89 d0 41 b9 08 00 00 00 83 c8 10 f6 87 d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45 31 c0 b8 aa 01 00 00 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2 02 74 c2 f0 48 83 0c 24
-[10375.714772] RSP: 002b:00007f319a4f4c88 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-[10375.715946] RAX: ffffffffffffffda RBX: 00007f31992f5060 RCX: 00007f31a073db95
-[10375.717000] RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000006
-[10375.718056] RBP: 00007f319a4f4d60 R08: 0000000000000000 R09: 0000000000000008
-[10375.719113] R10: 0000000000000001 R11: 0000000000000246 R12: 00007f31992f5000
-[10375.720162] R13: 00000fe63325ea00 R14: 0000000000000000 R15: 00007f319a4f4cd0
-[10375.721223]  </TASK>
+[1] https://lore.kernel.org/io-uring/20220805162444.3985535-1-kbusch@fb.com/
 
+Pavel Begunkov (11):
+  file: add callback for pre-mapping dmabuf
+  iov_iter: introduce iter type for pre-registered dma
+  block: move around bio flagging helpers
+  block: introduce dma token backed bio type
+  block: add infra to handle dmabuf tokens
+  nvme-pci: add support for dmabuf reggistration
+  nvme-pci: implement dma_token backed requests
+  io_uring/rsrc: add imu flags
+  io_uring/rsrc: extended reg buffer registration
+  io_uring/rsrc: add dmabuf-backed buffer registeration
+  io_uring/rsrc: implement dmabuf regbuf import
 
-Thanks,
-Bernd
+ block/Makefile                   |   1 +
+ block/bdev.c                     |  14 ++
+ block/bio.c                      |  21 +++
+ block/blk-merge.c                |  23 +++
+ block/blk-mq-dma-token.c         | 236 +++++++++++++++++++++++++++++++
+ block/blk-mq.c                   |  20 +++
+ block/blk.h                      |   3 +-
+ block/fops.c                     |   3 +
+ drivers/nvme/host/pci.c          | 217 ++++++++++++++++++++++++++++
+ include/linux/bio.h              |  49 ++++---
+ include/linux/blk-mq-dma-token.h |  60 ++++++++
+ include/linux/blk-mq.h           |  21 +++
+ include/linux/blk_types.h        |   8 +-
+ include/linux/blkdev.h           |   3 +
+ include/linux/dma_token.h        |  35 +++++
+ include/linux/fs.h               |   4 +
+ include/linux/uio.h              |  10 ++
+ include/uapi/linux/io_uring.h    |  13 +-
+ io_uring/rsrc.c                  | 201 +++++++++++++++++++++++---
+ io_uring/rsrc.h                  |  23 ++-
+ io_uring/rw.c                    |   7 +-
+ lib/iov_iter.c                   |  30 +++-
+ 22 files changed, 948 insertions(+), 54 deletions(-)
+ create mode 100644 block/blk-mq-dma-token.c
+ create mode 100644 include/linux/blk-mq-dma-token.h
+ create mode 100644 include/linux/dma_token.h
+
+-- 
+2.52.0
 
 

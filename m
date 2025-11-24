@@ -1,279 +1,139 @@
-Return-Path: <io-uring+bounces-10753-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10754-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B1DC80267
-	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 12:15:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5480C80355
+	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 12:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 256F53A8481
-	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 11:11:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4DE893413BC
+	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 11:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ED42FC861;
-	Mon, 24 Nov 2025 11:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A002FD7D6;
+	Mon, 24 Nov 2025 11:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BIgO8ybw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="59jy6zak";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UW7hmsQX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="046gpcSC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="il6R7Iw0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58DE2FC865
-	for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 11:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C892FC88B
+	for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 11:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763982703; cv=none; b=cz+z3ghDK+FI65A6mt4y0iVnF9hTugmJvbCPQfoGZ4ddbBc366aQP7JWdYTX/AZwLHkFjsykgpS3SNKywrX/Fmi5WFYDy8JbsM74XB/xkif7QXaQeRym3ppAbGcv54pBhOoZmEq98AIMquryRjs8D5dmBoy0x/57bj19MxX2w64=
+	t=1763983811; cv=none; b=oWnbmO0iawwKIjJkSqYMzTK2lxY0PApY4ho8VLPmPP+FqMT1sX0keohfaCO31nvNhTjW3Bi50WAuy/noqVly45GRkOE22LrpIGaY369L6jzA11YMHOa9NVHG3V0N6AvU/B2bZ7wUCCRHzc71pmwvUsj8zoVb46zi/G0xWX5T8TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763982703; c=relaxed/simple;
-	bh=nKhFYGjEe5LAxL6V7TZ6Vy3A70N4R3o7L+rDE+8a0Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eBEDtLpckGPFl/Troq7fh5MxbnXZQET4/7LyQtPvtY3AeZTMTy7kd1ce/1eIcE8BEVJuUq7UZiUgJ0WIku/8KHYpJO08nTXpqf5XDQl0OuPnDif7Tp6aO3rUNB60JyfuNHEghuO1PTXa32LXvjvvdhpIPSZxRuUmXkfgn3i6T/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BIgO8ybw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=59jy6zak; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UW7hmsQX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=046gpcSC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C344B5BD92;
-	Mon, 24 Nov 2025 11:11:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763982700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3LQ6Sj8MpIdewBBsiwImUBEp+Wwnp3+icgpFvuN6Qg=;
-	b=BIgO8ybwtcA88okQmCENSTS/43Mqo1bedUwiMf3DWmJMC3k+EHdWs7Z96qzaude7qIVCxj
-	jx3xk70LFT7Om8c1Bqo4AQ0Xknbd5mjSFcHai+WGczVNSp8vventPaSO8q5+ts5RZGu89u
-	0OSySfgdjpm7u2hXR6js7lvaJ5jOOvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763982700;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3LQ6Sj8MpIdewBBsiwImUBEp+Wwnp3+icgpFvuN6Qg=;
-	b=59jy6zakNcsYVF9UxTeM/01QAXIIitgV/yjWyKpBVMZbsUueyKubdkmdaEXJg2DKVzCq2+
-	G4zb7GvM4+QsUTDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763982699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3LQ6Sj8MpIdewBBsiwImUBEp+Wwnp3+icgpFvuN6Qg=;
-	b=UW7hmsQXp5NZn1YcPQI4nOJtEGC2UsH35+Nn3ioQb7bCmhV2x8F4jmJgKirYyU+kYyTN7R
-	o908jjADyt9rLpdMPQ4lpK0FmBXSFUW27zw3uObrkQFU7R8BAnsSJN4m/LDLGGVJzZ9XUL
-	bgBpgQo+6qquhC7JqUtzd0zGMfqs2DA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763982699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3LQ6Sj8MpIdewBBsiwImUBEp+Wwnp3+icgpFvuN6Qg=;
-	b=046gpcSCOGpqfUPRExjs0dixgG7PEbiLktSMHIyNbIvpQIgk1rsVCars9UZkZ4FVMMoa3I
-	7N6rEg3qheRcEeDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B61A03EA61;
-	Mon, 24 Nov 2025 11:11:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NBd0LGs9JGkLTwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 24 Nov 2025 11:11:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 59E5EA0A04; Mon, 24 Nov 2025 12:11:35 +0100 (CET)
-Date: Mon, 24 Nov 2025 12:11:35 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jens Axboe <axboe@kernel.dk>, Avi Kivity <avi@scylladb.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/5] iomap: support write completions from interrupt
- context
-Message-ID: <tzwbel3wcy674hh6e3gmcjqe3dipn34pwazftsme6atuhomh44@ckqgnxh4zrvk>
-References: <20251113170633.1453259-1-hch@lst.de>
- <20251113170633.1453259-5-hch@lst.de>
+	s=arc-20240116; t=1763983811; c=relaxed/simple;
+	bh=B6c4Rha0j7ElsnG2lldQikR/5+CIYYmoxpK8FQj5Yvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmqGZKEghMw9i23WlOKBDL4WGojTRPqo5zePmKwSwev49sYPaS9t10LhgSRm/dfyueAOQqpX6oe45JZP3ocOjPZo/Yc97hdnmhl9Ya91CxvguBVEO/FAjNB45gJem7eQBkKLooX93mrmA/10Hd7ftAhaigEEkxVMDNQGbZWpuPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=il6R7Iw0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477563e28a3so28322525e9.1
+        for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 03:30:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763983807; x=1764588607; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FIrNcMo3OIORc59oYq11M7V6LWyQ4cuR88/fqcwGDYI=;
+        b=il6R7Iw0Zo1ugXnoYsdVIa5PeY3EJutXCTy2qfnvp4Y7P2EQaxAPQNlUyCU0FyzPqe
+         qm1ddhlRIFGey1mqV/PAIwD9VD/1g5IEJJ2OY1y5Ed0DK1pDpmExF3t8Vn9fCCBycxe9
+         8ca3bOUEE6aoiCx9FqOnGExGunEML1XTgoh45CY63zrHfd5um4HOLxJOVeq18JLYPFoA
+         53MmubmKqyTHbsD/C9g0a1H3ddxQPmgfAxvPwj3s3UFGSJf89teXvj7IcKzYm4wPC/1K
+         DiT/AUWvhSB5yE0FY9Md+O2f0EUfipJgMj6Vp77foFQb9lizcNMx+S3hyanevFJg5kSb
+         uIeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763983807; x=1764588607;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FIrNcMo3OIORc59oYq11M7V6LWyQ4cuR88/fqcwGDYI=;
+        b=UbSdG5QraMIL9PyI3Hn0oui2Wj7+is/uHwU/hYpD7qUIONNxLe6oCBz/l7bN3mdkSZ
+         RI0nVC0AVKdSbKNNvnnUVOCZs6188XwCe5puwgx3Mbl4rqtjXn1dSy2EqlPVPuXKgL6K
+         0c8EQgkncozQW8d2NMkj+biaVd9pc6BM9nsMsjAdUodF4duxT4/MsEqdC2EwPTfFZ4x9
+         vuOooyHCARo9B17vtny1XoEO1HDD30hhgOZO9TXT9KGdlLrVHsSOdNVCji5Ri0gjEeSJ
+         MUirxRPDCtl5qosZmvQ97oLgt6vkCE6Mo0GFHfnzHPLJAY+7qO5Vp4JJSWseBdtqR/ES
+         y4iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmksi3i+FHur6MdfdJFdlHBact5lyDwCJknNpbZHzh65iaRf+DQwUQyMtHwOW2tuM0/10bSYBOVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8jSuuCvmxGB8ya91rHm9vLhFAME8ncEcklFyCRhqHSKjaRAC6
+	Zzl53tS9Kd5Z4OIisJHjbagxlxGeFMlJabiMxngBFhDyQZ+3Izvox3fl
+X-Gm-Gg: ASbGncuEi3zK4l+FbZUM3G/OA1j3IymDMv2U7x10LacFMBBSih2dlFlPHekP2YE7LX2
+	QIUFlKYJsk8OyO6SZBUN3G/bVJJjR19cKd2DddQBEQgB9ycn9aJq1OREocwsOONRbQJu7TaSQio
+	5RYnhoyIma+vdyY+v0+D0mjo7WQzwrvd9WEdLZTUnd3rwft/JdETVoGU5zXM9ATzmTth5OENn7y
+	I+vu1LR8i4Hj0q95izlLopfnZwV7BGDHlqUfTLUJAgE8vrQdJ+WDeQcgy4BkdqU7bJ/fpBIbzrD
+	GDPEZ48AdoyuHR4c7aNt7N8CeF2GbZWCcKAGhOAeUpjrhNLGr1XVhOQeL4euTX9eGuPva43yfrq
+	Wg1suAqMML0zcjMPM1DHSetxNVIcKWSliiXIzXfQRprAH8adb0r/NyPEHErS/yb1vnLNTeVakr/
+	B90ISIIkZQ64hEDzx4GMdZ/Nw4DiPnUvB9dgEAcnL8DdqScECcWdPa+HWoDVSLlrU+rzothpPp
+X-Google-Smtp-Source: AGHT+IH4rhfkRALzBtaC9gdxzf7gjncNKNUbJLJsQNk7iBQd1pjAZr0TQJP790c1nQt2gF0ktavqUA==
+X-Received: by 2002:a05:600c:1d14:b0:477:9d88:2da6 with SMTP id 5b1f17b1804b1-477c026ed62mr113061345e9.0.1763983807185;
+        Mon, 24 Nov 2025 03:30:07 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e432sm27351895f8f.9.2025.11.24.03.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 03:30:06 -0800 (PST)
+Message-ID: <905ff009-0e02-4a5b-aa8d-236bfc1a404e@gmail.com>
+Date: Mon, 24 Nov 2025 11:30:01 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113170633.1453259-5-hch@lst.de>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 00/11] Add dmabuf read/write via io_uring
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <cover.1763725387.git.asml.silence@gmail.com>
+ <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu 13-11-25 18:06:29, Christoph Hellwig wrote:
-> Completions for pure overwrites don't need to be deferred to a workqueue
-> as there is no work to be done, or at least no work that needs a user
-> context.  Set the IOMAP_DIO_INLINE_COMP by default for writes like we
-> already do for reads, and the clear it for all the cases that actually
-> do need a user context for completions to update the inode size or
-> record updates to the logical to physical mapping.
+On 11/24/25 10:33, Christian König wrote:
+> On 11/23/25 23:51, Pavel Begunkov wrote:
+>> Picking up the work on supporting dmabuf in the read/write path.
 > 
-> I've audited all users of the ->end_io callback, and they only require
-> user context for I/O that involves unwritten extents, COW, size
-> extensions, or error handling and all those are still run from workqueue
-> context.
+> IIRC that work was completely stopped because it violated core dma_fence and DMA-buf rules and after some private discussion was considered not doable in general.
 > 
-> This restores the behavior of the old pre-iomap direct I/O code.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Or am I mixing something up here?
 
-Looks good to me. Feel free to add:
+The time gap is purely due to me being busy. I wasn't CC'ed to those private
+discussions you mentioned, but the v1 feedback was to use dynamic attachments
+and avoid passing dma address arrays directly.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+https://lore.kernel.org/all/cover.1751035820.git.asml.silence@gmail.com/
 
-								Honza
+I'm lost on what part is not doable. Can you elaborate on the core
+dma-fence dma-buf rules?
 
-> ---
->  fs/iomap/direct-io.c | 59 +++++++++++++++++++++++++++++++++++---------
->  1 file changed, 48 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index fb2d83f640ef..60884c8cf8b7 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -184,6 +184,21 @@ static void iomap_dio_done(struct iomap_dio *dio)
->  	if (dio->error)
->  		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
->  
-> +	/*
-> +	 * Never invalidate pages from this context to avoid deadlocks with
-> +	 * buffered I/O completions when called from the ioend workqueue,
-> +	 * or avoid sleeping when called directly from ->bi_end_io.
-> +	 * Tough luck if you hit the tiny race with someone dirtying the range
-> +	 * right between this check and the actual completion.
-> +	 */
-> +	if ((dio->flags & IOMAP_DIO_WRITE) &&
-> +	    (dio->flags & IOMAP_DIO_INLINE_COMP)) {
-> +		if (dio->iocb->ki_filp->f_mapping->nrpages)
-> +			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-> +		else
-> +			dio->flags |= IOMAP_DIO_NO_INVALIDATE;
-> +	}
-> +
->  	if (dio->flags & IOMAP_DIO_INLINE_COMP) {
->  		WRITE_ONCE(iocb->private, NULL);
->  		iomap_dio_complete_work(&dio->aio.work);
-> @@ -234,15 +249,9 @@ u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend)
->  		/*
->  		 * Try to avoid another context switch for the completion given
->  		 * that we are already called from the ioend completion
-> -		 * workqueue, but never invalidate pages from this thread to
-> -		 * avoid deadlocks with buffered I/O completions.  Tough luck if
-> -		 * you hit the tiny race with someone dirtying the range now
-> -		 * between this check and the actual completion.
-> +		 * workqueue.
->  		 */
-> -		if (!dio->iocb->ki_filp->f_mapping->nrpages) {
-> -			dio->flags |= IOMAP_DIO_INLINE_COMP;
-> -			dio->flags |= IOMAP_DIO_NO_INVALIDATE;
-> -		}
-> +		dio->flags |= IOMAP_DIO_INLINE_COMP;
->  		iomap_dio_done(dio);
->  	}
->  
-> @@ -378,6 +387,20 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  			else
->  				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
->  		}
-> +
-> +		/*
-> +		 * We can only do inline completion for pure overwrites that
-> +		 * don't require additional I/O at completion time.
-> +		 *
-> +		 * This rules out writes that need zeroing or metdata updates to
-> +		 * convert unwritten or shared extents.
-> +		 *
-> +		 * Writes that extend i_size are also not supported, but this is
-> +		 * handled in __iomap_dio_rw().
-> +		 */
-> +		if (need_completion_work)
-> +			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-> +
->  		bio_opf |= REQ_OP_WRITE;
->  	} else {
->  		bio_opf |= REQ_OP_READ;
-> @@ -638,10 +661,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
->  		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
->  
-> -	if (iov_iter_rw(iter) == READ) {
-> -		/* reads can always complete inline */
-> -		dio->flags |= IOMAP_DIO_INLINE_COMP;
-> +	/*
-> +	 * Try to complete inline if we can.  For reads this is always possible,
-> +	 * but for writes we'll end up clearing this more often than not.
-> +	 */
-> +	dio->flags |= IOMAP_DIO_INLINE_COMP;
->  
-> +	if (iov_iter_rw(iter) == READ) {
->  		if (iomi.pos >= dio->i_size)
->  			goto out_free_dio;
->  
-> @@ -683,6 +709,12 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  				dio->flags |= IOMAP_DIO_WRITE_THROUGH;
->  		}
->  
-> +		/*
-> +		 * i_size updates must to happen from process context.
-> +		 */
-> +		if (iomi.pos + iomi.len > dio->i_size)
-> +			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-> +
->  		/*
->  		 * Try to invalidate cache pages for the range we are writing.
->  		 * If this invalidation fails, let the caller fall back to
-> @@ -755,9 +787,14 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	 * If all the writes we issued were already written through to the
->  	 * media, we don't need to flush the cache on IO completion. Clear the
->  	 * sync flag for this case.
-> +	 *
-> +	 * Otherwise clear the inline completion flag if any sync work is
-> +	 * needed, as that needs to be performed from process context.
->  	 */
->  	if (dio->flags & IOMAP_DIO_WRITE_THROUGH)
->  		dio->flags &= ~IOMAP_DIO_NEED_SYNC;
-> +	else if (dio->flags & IOMAP_DIO_NEED_SYNC)
-> +		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
->  
->  	/*
->  	 * We are about to drop our additional submission reference, which
-> -- 
-> 2.47.3
-> 
+> Since I don't see any dma_fence implementation at all that might actually be the case.
+
+See Patch 5, struct blk_mq_dma_fence. It's used in the move_notify
+callback and is signaled when all inflight IO using the current
+mapping are complete. All new IO requests will try to recreate the
+mapping, and hence potentially wait with dma_resv_wait_timeout().
+
+> On the other hand we have direct I/O from DMA-buf working for quite a while, just not upstream and without io_uring support.
+
+Have any reference?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
+
 

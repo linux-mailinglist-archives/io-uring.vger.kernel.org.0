@@ -1,187 +1,156 @@
-Return-Path: <io-uring+bounces-10762-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10763-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11081C80B0C
-	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 14:12:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48115C80B0F
+	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 14:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05EFC3A1667
-	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 13:11:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E6DD534481C
+	for <lists+io-uring@lfdr.de>; Mon, 24 Nov 2025 13:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E742EB86C;
-	Mon, 24 Nov 2025 13:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669FE2F9DA7;
+	Mon, 24 Nov 2025 13:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gPx+Dhom";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4haRJEW1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqzBLbAr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lJHobCq9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fao69M6k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD972F39DC
-	for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E31226F467
+	for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 13:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763989913; cv=none; b=ILfMA7x3wu/eIZIxazsMrc2k7QtZ/xFk0SsS0exNr0tNrBYuKR2dl0eVQ48JFRtDMstmlDfcfjd1DrSulg3+ShqHddoP6vjrecO2xv3yfFxbhZuH8aN4Slt6JHsropYkhoG/TMqJVVdp8sx1YKOnLbLmGLD1IArZiqELiZQxqZA=
+	t=1763989958; cv=none; b=Fq/roNV5OYmysFxlrKJwGM4d+YizgnjKZKq4bHkiOUD1C+b/33UEFOzwvZva5e6g+Hm9aSMf3XXDeertLHVsWOJQdu75QBW/K8eFM0XR0W16eNUEShdOI0yocTKWFM0FmgValvR90EIsKLsRLdKT+gWdpVqvJjXetAjs9qYvHLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763989913; c=relaxed/simple;
-	bh=1IMzQbr7PSADvtAu25row0+zbBJpg1mbKYEaPaO26jE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blWdd6XRz5XRb8LKgukKjSs9yFFwl4T/e9USajYETakd3PQ4Vf7N1cML1ryxpY2P3woKZPQPdFD5ofIuU98QWkHEnL5S7MGuxDZ9cY3DlcxsdrlR2CZdGRFrQvSpKN5os+O7xJf2ivOTVXClBJNejEfghZR9vQHvhPG2JA/T7Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gPx+Dhom; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4haRJEW1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqzBLbAr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lJHobCq9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E33CA222C7;
-	Mon, 24 Nov 2025 13:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763989910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0lsXEAdncHKC+iIvFZWpZzizDLjJ9+9d0rHHBMqqOXM=;
-	b=gPx+Dhom9+iDOEc/TSup2qzPx7cy/l17rb6LruIyeTd4EIY2Vv/C/do3MBWfDB3vkliBJ2
-	LgBcPf7CjxmVMX1Fyzwh9QaPcE/w2wokAT64byZ9JzAig//swPOThW868+3DED7he8oGoc
-	TmUkaSY6ldyeoUQcdNZ25Tnji396yhA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763989910;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0lsXEAdncHKC+iIvFZWpZzizDLjJ9+9d0rHHBMqqOXM=;
-	b=4haRJEW17Kyv8sAgkxnqEnDSrzjB5a9hf8+hPzzVfE+bwRZ3Z1mwlJRFavfwxm8xBy1Nxr
-	MCHgeGRmtIpW1PAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rqzBLbAr;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=lJHobCq9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763989909; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0lsXEAdncHKC+iIvFZWpZzizDLjJ9+9d0rHHBMqqOXM=;
-	b=rqzBLbArP5u6nTdRRT+u3I1rMQcFYJ+EWaoTTUBX/Js5toMb99Vf3jjP8WIqNOXzGmLocX
-	nl87VW3mmCZQuSyaTG1zUMCQLTdGW2B9RcgHmbdtYlDVaroXXnxC48TSNLfVRU9JZ6jzU9
-	qeNkETY3kbCN3SFJHBv0vMrAUOB8aX0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763989909;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0lsXEAdncHKC+iIvFZWpZzizDLjJ9+9d0rHHBMqqOXM=;
-	b=lJHobCq9ur5+oUO7lAdlCx/OuCP6bm35B5HwT0ctjaGHH3lCWUV/KHMv3M+kTyeCHJqoz+
-	7Q0aU6eA5dZmAiDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8ACE3EA61;
-	Mon, 24 Nov 2025 13:11:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A2fjNJVZJGk3RAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 24 Nov 2025 13:11:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8B407A0A04; Mon, 24 Nov 2025 14:11:49 +0100 (CET)
-Date: Mon, 24 Nov 2025 14:11:49 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>, Jeff Layton <jlayton@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev, 
-	io-uring@vger.kernel.org, devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 08/14] fs: exit early in generic_update_time when there
- is no work
-Message-ID: <znjzumoxtj77t5aaaogfzr6ypreal5djcjl4uf537i66ge6gss@si5pk32ogsx3>
-References: <20251114062642.1524837-1-hch@lst.de>
- <20251114062642.1524837-9-hch@lst.de>
+	s=arc-20240116; t=1763989958; c=relaxed/simple;
+	bh=LVOeGfX/hrncYVszLSmkoVX2bh+Fnz3uRx8/nohuEvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hv0WLxfs2IdnCOMAIdW+H5sEma8UowPw7PQV0XwrKmics+u5U5MXlftea2NuemiEU9Gj9YN/CGRrdanSKe9ktzuZPRvU7V5kdCGz+11TqGqz3FrBb6uwg4dbH/7jSx5XyWUlKGIyEV0K26Ok2Wopmat1qSSA2d6uWASkaBJuvKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fao69M6k; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42b3b0d76fcso2652784f8f.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Nov 2025 05:12:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763989955; x=1764594755; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K/jAyvXkLX8H+nuUsYcPgHdNHZqUW0ZlRkXZiy2I490=;
+        b=Fao69M6kOSKQRbPpkncvtBfJ76Bg/Yz2iNMbrijD5u/o8gE6CykzW/spmPBqf+3fIl
+         WPKsCMUwWAPECxB9UyD08pLzZxvbEkVKvZqsFjvUkH1POYCYuaVwwpZxvsCQiQK6STj+
+         gT78AMt981ObEoTw/SHxNnFRi3mtq1DYQ9FTzzHeiDk8ZQbCwVibhm1XRLf07XOfmwcV
+         gbGlCOg5w/VM7JqwqqL4YX1b2hR7onzcLBQIC5QfDGulH/wSK1BqJ1OZjeObrDMVUyit
+         7udmEf+wDEwsGowGGJm/ILk112294Amo64GEWdET5SfCPZcB5QKlLNCc8hmeMVIMQhAv
+         i4Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763989955; x=1764594755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K/jAyvXkLX8H+nuUsYcPgHdNHZqUW0ZlRkXZiy2I490=;
+        b=v4CA4V4I+Nm+lEbShaNG/4b7x1V4KbDBa4D8mNFSsngY/uvi66M7jjYnwSCXP9AK26
+         GzXB/WNgnVko7xsq0cKt0UP8uTBBqrub/lUVFvQ65qOo2a6TFbXHWcYhwGIiqhrYLotF
+         T6xDRd6uBVloEBFzUpqPt9haaawLIPtiZOj1OajyjQUmdwSHc0s7aqEBtLpeJZg98MbK
+         umXhd/A9ky6z+rQDvucerN2c5PEp/ZgqWAsjGzcXz4dz/enMDh5VnY0ISjCCKsyqmrou
+         VT5Cp92P0Q7HJKXZxA+pHvNKJ2Eg1ati/Xo8Rupkj8hyWyKdUm6sO4cCyi1HGY8ouf35
+         1Reg==
+X-Gm-Message-State: AOJu0YxBccjrsZKTBtKepROYVImd3qAdHWSIYqyuRNX0MuHpNOfXgmaF
+	An6PYtQaz6Z9r8Zb5S2pTTjhmgKqDz4kRdsquhT62FO/mF1bXytrL3CWD+D1UA==
+X-Gm-Gg: ASbGncug6PrefqQ4Ep8i3wAWMhOLoc1hExAbF0eMAdIT3sNnIKsZF47W40deK1E8yqc
+	l0kcKHIAY+DC7M6ZCX3um8++UkTycDv7k4/XJCzWOHMpYJ+tQ2HdnJcTIdicvHDMPIb4YF1/g7/
+	h8V+p1+MNXnD+wwyFo+bYQ0gOn1EuY3dcrhtLYtbN12M+CwTtkHF8cWAzme3QONEdxjjXtWHipf
+	KupYTMCdG6D34nfBQpJbFMOhT2M2sTk2PvcFrcb/k9RA3BRAh8IvOoZD8kvXLHtfDRVhOH5IknF
+	0A4cuH89HPBP+WS8P2ftHF+8qME3j0UOeY0YaIAdTk4t8/9lmC7gz67A7BpkYQYpxWvXiX6Hvkj
+	7Chp0dPPQ7K5p6WHRcSZLtpX1oqbs504UgvJoBaD++EHZc5E+cMsqOC0XPNaJvhUGMUSPo+ErcX
+	YYVYU/eHzDsXb3/a86d10Wn4ZtcU03mTEjSOAdAIszrumi8No/Cd829UCrklkHbQe4+jJlkdrD
+X-Google-Smtp-Source: AGHT+IFqiPToSF4N3e+veioRZSYuFb1cST6j6mPnAPjs/4jifICbawVLxJn6G5AnECO7vxqysuoJ7g==
+X-Received: by 2002:a05:6000:290f:b0:429:8bfe:d842 with SMTP id ffacd0b85a97d-42cc1cd8f9fmr13219439f8f.4.1763989954744;
+        Mon, 24 Nov 2025 05:12:34 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f49a7bsm27934717f8f.19.2025.11.24.05.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 05:12:34 -0800 (PST)
+Message-ID: <015ee1ee-e0a4-491f-833f-9cef8c5349cc@gmail.com>
+Date: Mon, 24 Nov 2025 13:12:29 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251114062642.1524837-9-hch@lst.de>
-X-Rspamd-Queue-Id: E33CA222C7
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/10] io_uring/bpf: implement struct_ops registration
+To: Ming Lei <ming.lei@redhat.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>
+References: <cover.1763031077.git.asml.silence@gmail.com>
+ <cce6ee02362fe62aefab81de6ec0d26f43c6c22d.1763031077.git.asml.silence@gmail.com>
+ <aSPUtMqilzaPui4f@fedora>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aSPUtMqilzaPui4f@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 14-11-25 07:26:11, Christoph Hellwig wrote:
-> Exit early if not attributes are to be updated, to avoid a spurious call
-		^^ no
-
-> to __mark_inode_dirty which can turn into a fairly expensive no-op due to
-> the extra checks and locking.
+On 11/24/25 03:44, Ming Lei wrote:
+> On Thu, Nov 13, 2025 at 11:59:44AM +0000, Pavel Begunkov wrote:
+>> Add ring_fd to the struct_ops and implement [un]registration.
+...
+>> +static int io_install_bpf(struct io_ring_ctx *ctx, struct io_uring_ops *ops)
+>> +{
+>> +	if (ctx->bpf_ops)
+>> +		return -EBUSY;
+>> +	ops->priv = ctx;
+>> +	ctx->bpf_ops = ops;
+>> +	ctx->bpf_installed = 1;
+>>   	return 0;
+>>   }
+>>   
+>>   static int bpf_io_reg(void *kdata, struct bpf_link *link)
+>>   {
+>> -	return -EOPNOTSUPP;
+>> +	struct io_uring_ops *ops = kdata;
+>> +	struct io_ring_ctx *ctx;
+>> +	struct file *file;
+>> +	int ret = -EBUSY;
+>> +
+>> +	file = io_uring_register_get_file(ops->ring_fd, false);
+>> +	if (IS_ERR(file))
+>> +		return PTR_ERR(file);
+>> +	ctx = file->private_data;
+>> +
+>> +	scoped_guard(mutex, &io_bpf_ctrl_mutex) {
+>> +		guard(mutex)(&ctx->uring_lock);
+>> +		ret = io_install_bpf(ctx, ops);
+>> +	}
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> I feel per-io-uring struct_ops is less useful, because it means the io_uring
+> application has to be capable of loading/registering struct_ops prog, which
+> often needs privilege.
 
-Looks good. Feel free to add:
+I gave it a thought before, there would need to be a way to pass a
+program from one (e.g. privileged) task to another, e.g. by putting
+it into a list on attachment from where it can be imported. That
+can be extended, and I needed to start somewhere.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Furthermore, it might even be nice to have a library of common
+programs, but it's early for that.
 
-								Honza
+> For example of IO link use case you mentioned, why does the application need
+> to get privilege for running IO link?
 
-> ---
->  fs/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 74e672dd90aa..57c458ee548d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2098,6 +2098,9 @@ int generic_update_time(struct inode *inode, int flags)
->  	int updated = inode_update_timestamps(inode, flags);
->  	int dirty_flags = 0;
->  
-> +	if (!updated)
-> +		return 0;
-> +
->  	if (updated & (S_ATIME|S_MTIME|S_CTIME))
->  		dirty_flags = inode->i_sb->s_flags & SB_LAZYTIME ? I_DIRTY_TIME : I_DIRTY_SYNC;
->  	if (updated & S_VERSION)
-> -- 
-> 2.47.3
-> 
+Links are there to compare with existing features. It's more interesting
+to allow arbitrary relations / result propagation between requests. Maybe
+some common patterns can be generalised, but otherwise nothing can be
+done with this without custom tailored bpf programs.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
+
 

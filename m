@@ -1,53 +1,81 @@
-Return-Path: <io-uring+bounces-10786-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10787-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241DDC84FC8
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 13:36:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A821C85035
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 13:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1AF134F453
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 12:36:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC79A34FF8D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 12:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E41A2D8363;
-	Tue, 25 Nov 2025 12:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBF41487F6;
+	Tue, 25 Nov 2025 12:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="nJ09j7ny"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhSvXsca"
 X-Original-To: io-uring@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F8318DB1E;
-	Tue, 25 Nov 2025 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA8D28E00
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 12:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764074192; cv=none; b=PoXLU7d97+QejXSmmj0kVTbr2QZ4wPwphJf8Ji96MskGIkA8eQIIIQOCirC49iylt2HxWtVeIZGUbhZ+CwCkBLJ9LKVm4JYaXLOv6dYvLYyE/Zag6T6v39J9KmPkZ6H/x0HApBQ3kaYsYaXIjIchxQwycH32hP8NZxSP56+mPx0=
+	t=1764074818; cv=none; b=F5lO6Am/pS9rOn/AcEnN5xQ+0FScw1zNKWB0ikhq8tg3QmYdxYRmsMr+ZbuwgkrljIX5o9+5lSKqrKnD6hQfk1qL0auTW/PVidQyPNr3NSr5xtAceQ1w2pyiTFzscaNTis1NMNOxl0gSVbLonWg7nlZLBgge0lMB/+Xzzd0MK3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764074192; c=relaxed/simple;
-	bh=7gLoF+A+jDDArR/hVGHdVTDI7TMiWOgOE+4BeLqXueo=;
+	s=arc-20240116; t=1764074818; c=relaxed/simple;
+	bh=bgV5yw7s+3MyA2i3oY/dwSW0/v9Wck/idd+mEop6rRE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIRHsoeXjIia/xYQiKjOAHLZ/8y7fXu8y4+4BkGYSjdIJ4j4n4IIIFaGRtAlrXtPncsx8bbZ14k0jjAzugTq5NZ+E8PSMBuXeZ7vh1IFDlY939afcjwIvupMX1XG6Sqx6+NcTkyPf1ZrswQxRmJpKbQDYZeY39JFFOU7F74sGZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=nJ09j7ny; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=xpjLh8Qb/oxGb6FZFlBQJFFoX8ai6q4B1YySZdjuixw=; b=nJ09j7nyXrP7hFm09Cv7Kendck
-	wA12tqxol9GwhfiyeZxbHoN1htQRn0P2NiCVNwWUCvyBr3u+ydH9RI4aq6wMI0xP+ujXmoUygYW/A
-	sUZC+PGpU4yxIczXIZAxGFVmshCkF7QRUkhekJNZi8oU7+xf/ycochzMQ+mBrMXcMylS3l6RRmUui
-	u8XHxyBvEyckO5IzlbY16Y8r/GZmavkQVcQoZJ1vKgFBVrjoxrwLDbjyrMSEJUBseFA1GTvBKgupz
-	2KSbEqI6GRvHVpbrvXdzskJHZLz+bOXOuYdJSX5KriTarQxrkK8lcItG2s36ia80tdEmwa0mhTchS
-	gKx3BmdlQivZZB8kAqKcld/BGy1SDTQ1l1gfrORWxxeBJhMZJLrGoLRWPy0RPk5tMa5/DifZxX/A/
-	wtvezD+MUmN1CdiCW0CVkEo4vzjXiLdi1zDbM/wezWl4xH60lGJ/pqzt0KgbU1RrYi9GSUPkaB/53
-	kAmK+++u++jKQh3ZwtmeKbFN;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1vNsHS-00Fa4I-2z;
-	Tue, 25 Nov 2025 12:36:26 +0000
-Message-ID: <dc97cb0e-628c-4a97-98ca-06ececf32e1e@samba.org>
-Date: Tue, 25 Nov 2025 13:36:26 +0100
+	 In-Reply-To:Content-Type; b=kPeju9iiDJHaKyeVTqRAT/cF8g4YyeeXUGQG7mhx7VdHv8uqbGqWDlVAYM6Mn87ORbVc90xOnF3g/eyWzasb2FRKem3/m6+WwMLFKXZArB9cwNjvi2U7Eo5RcYfoJ3leqgP68N71VBpPrs94XCVH8QrxmfybYuFG8Fh2QkuuhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhSvXsca; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b31c610fcso4684517f8f.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 04:46:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764074815; x=1764679615; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lCCLhoUNC39eu/n58aVUYS3QhS0sN807HiT2blG5Gag=;
+        b=OhSvXsca0fOuLKPK+vxdpYOtkE0EJFGgWQJp01u1i+hagzU3BfqK1KHu2U1duf9hOD
+         9f6T/t2Zp90LTJxNLy1005pBxTQggafMaZcw0cXuKo/5miFXvskV0UVtU0u+dHHOCplC
+         9UAfl5peWcqyVofYMi5Ws3mzbDDczXrhtyroDSIlQiQDQX352MHrZJQP5yYH3R933sMf
+         YdrILV1mIcnBOdG96R1LNqYHW5W5aDokgLOy9snWTZhmfcDUVWaDVk03jDfcnGLs/zkv
+         E87ug8F5DAATIdeKo/f+xDwdLEZaFl/iNFDdcArqi8w3q/Kk8PgCUaJH/wY5CApUsEt6
+         sMUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764074815; x=1764679615;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lCCLhoUNC39eu/n58aVUYS3QhS0sN807HiT2blG5Gag=;
+        b=VNQELG/nQ2BicaaIo64CbTpcF76oUAasojyy8v8N8F1vv+Hc6PQgu8DLXrfEkq+BzR
+         ECAt0vw7cbTB2UKnua2WeaI1Px2wJwnx2hbLPRNg/STjlCnLNNvZIgiQVFd7/PsjRpQl
+         IH++83NsOLAOS7r0iMscOXyGA8aOgLUZIyvMJ3IId3eHesqGvFnPSj/dpLEYmDoJOet0
+         MJ9OitVvfgeofZEfzT5ynQPoFY3bpHtHsLEOVdP9gUSjDkYYy0TMhgzbj3y8fefhAcQv
+         A/rL9+7lKl2BauNsUs9qBMW+AtWmMAUyhmxtUFFOnUrAl2mSY06797Br+2KAAsLgmr3N
+         h5eA==
+X-Gm-Message-State: AOJu0YynjIEvrd5t+EInuPxOG56WCXJgR2dRfBlXG8Yijhvwfvl+WDFo
+	1QoQ25HSljAdiw2CVkUmaDV3ZzM+LWY6v8KHTnrQvtdWpiUSagT3smnEaSRoyw==
+X-Gm-Gg: ASbGncscKZjcUvRrPMxGzBhMShzNR51rQPRZVqW4PPibHYEHHG7c6TFfyLwpTT36RCo
+	vruakpBx6cMumD9qzVDcYhJ8nNSBWuWe4rqBN6ay4wpgpMzugu82UNqfriUtk+KifUGaS/3/tdd
+	tZH6qbnhcmGdsp1ZAIrRyLwIFQiSvbBWs1ts/cUs54II507AGDKPmiQjdEuTyb9SXANb26RqSZl
+	XbNMMeoxcyeIOXZuSBpa9VM3mBHfE3lV8Q4YSihFvvjEVRb7T4fUp7rKkILU0xnlZWyGtkHs4w0
+	qKLPTt+UMRlQncq8bdoBIUWT1F01vaAWHF/XpQtrXsJFgF2M0muLrDCq/5sQEbG4geR1HcXT5J7
+	n1257AV1Yz+n27Sdt2gm1tT0JZR3S04933VYSAHu7stuuAeAugg4vVAiJD7zlizfx9fetUY81Q5
+	H9oFWDbOUwSP0SBOPQ9PoH2tVzBmtD+itzBfjNF4Ks0Ff4cx90ogcbLB8k/OGJzA==
+X-Google-Smtp-Source: AGHT+IH0sHJ8VIJg/RX0pA9kl5euwpPhRAtTw97zF5G+4fN3Yr3V95yt7IPXdy2ULmxCS1GBFMi/nQ==
+X-Received: by 2002:a5d:64c5:0:b0:3f2:b077:94bc with SMTP id ffacd0b85a97d-42e0f1fc074mr2665735f8f.4.1764074814632;
+        Tue, 25 Nov 2025 04:46:54 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f363e4sm34668235f8f.12.2025.11.25.04.46.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Nov 2025 04:46:54 -0800 (PST)
+Message-ID: <58126161-3451-414a-9ee4-83209bcba8fa@gmail.com>
+Date: Tue, 25 Nov 2025 12:46:52 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -55,43 +83,54 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] io_uring: Introduce getsockname io_uring cmd
-To: Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>
-Cc: netdev@vger.kernel.org, io-uring@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- Simon Horman <horms@kernel.org>
-References: <20251125002345.2130897-1-krisman@suse.de>
- <20251125002345.2130897-4-krisman@suse.de>
+Subject: Re: [PATCH v3 07/10] io_uring/bpf: implement struct_ops registration
+To: Ming Lei <ming.lei@redhat.com>
+Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>
+References: <cover.1763031077.git.asml.silence@gmail.com>
+ <cce6ee02362fe62aefab81de6ec0d26f43c6c22d.1763031077.git.asml.silence@gmail.com>
+ <aSPUtMqilzaPui4f@fedora> <015ee1ee-e0a4-491f-833f-9cef8c5349cc@gmail.com>
+ <aSRrundGeeIpaKmd@fedora>
 Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20251125002345.2130897-4-krisman@suse.de>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aSRrundGeeIpaKmd@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Gabriel,
+On 11/24/25 14:29, Ming Lei wrote:
+> On Mon, Nov 24, 2025 at 01:12:29PM +0000, Pavel Begunkov wrote:
+>> On 11/24/25 03:44, Ming Lei wrote:
+>>> On Thu, Nov 13, 2025 at 11:59:44AM +0000, Pavel Begunkov wrote:
+...
+>>> I feel per-io-uring struct_ops is less useful, because it means the io_uring
+>>> application has to be capable of loading/registering struct_ops prog, which
+>>> often needs privilege.
+>>
+>> I gave it a thought before, there would need to be a way to pass a
+>> program from one (e.g. privileged) task to another, e.g. by putting
+>> it into a list on attachment from where it can be imported. That
+>> can be extended, and I needed to start somewhere.
+> 
+> If any task can ask such privileged task to load bpf program for itself,
+> BPF_UNPRIV_DEFAULT_OFF becomes `N` actually for bpf controlled io_uring.
 
-> +static int io_uring_cmd_getsockname(struct socket *sock,
-> +				    struct io_uring_cmd *cmd,
-> +				    unsigned int issue_flags)
-> +{
-> +	const struct io_uring_sqe *sqe = cmd->sqe;
-> +	struct sockaddr __user *uaddr;
-> +	unsigned int peer;
-> +	int __user *ulen;
-> +
-> +	if (sqe->ioprio || sqe->__pad1 || sqe->len || sqe->rw_flags)
-> +		return -EINVAL;
-> +
-> +	uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	ulen = u64_to_user_ptr(sqe->addr3);
-> +	peer = READ_ONCE(sqe->optlen);
-> +	if (peer > 1)
-> +		return -EINVAL;
-> +	return do_getsockname(sock, 0, uaddr, ulen);
+That's not what I said. There are enough apps that can have a
+privileged component but caps are not extended to e.g. IO
+workers.
 
-I guess this should actually pass down 'peer' instead of '0'?
+>>> For example of IO link use case you mentioned, why does the application need
+>>> to get privilege for running IO link?
+>>
+>> Links are there to compare with existing features. It's more interesting
+>> to allow arbitrary relations / result propagation between requests. Maybe
+>> some common patterns can be generalised, but otherwise nothing can be
+>> done with this without custom tailored bpf programs.
+> 
+> I know the motivation, which is one thing covered in my IORING_OP_BPF patch
+> too.
+-- 
+Pavel Begunkov
 
-metze
 

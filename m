@@ -1,91 +1,95 @@
-Return-Path: <io-uring+bounces-10802-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10803-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4DAC877A5
-	for <lists+io-uring@lfdr.de>; Wed, 26 Nov 2025 00:40:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A2AC877A8
+	for <lists+io-uring@lfdr.de>; Wed, 26 Nov 2025 00:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 369FB3546C5
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 23:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331EB3B5029
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 23:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BEA2F261A;
-	Tue, 25 Nov 2025 23:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422FC2ED853;
+	Tue, 25 Nov 2025 23:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YZ3fvPAO"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HPoyD+Gj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f228.google.com (mail-pg1-f228.google.com [209.85.215.228])
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com [209.85.214.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5337F2F1FCB
-	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 23:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35AD2F25E1
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 23:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764113982; cv=none; b=VkMT9GBlggAXp4HfDx79zx/84ZMgQpLPv61iFVD+1eNsUWBzPZhHoy5WBpN8tvqCRABJi2mlZ6hmjWqZlfbFx4a499Scrup5a22atDHi5u9AlxWFqckXaLrrBZYUEuvxqKnLHwQ/rXLcSZOxQei90MDGBOya13Ni2AS9PQWq/PY=
+	t=1764113984; cv=none; b=DRu3i/eyFnbbGWztcfbwDtSyrwBj7XPrMLZJmol4KROsv1Rq0MiSJGPG4gTawLesOfl2Kl5ONRfyf2VFaBmMVJ71/312JcEj24A3GpBg3jEH/apW+iEUdDDey3KYyMxHD52MZYg92uQPH0eAZsd2PPy4J3xYN07jPe5Z1U/aEi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764113982; c=relaxed/simple;
-	bh=Zmv6adIPrhxTxZdGq2k/taaoHQDIlClAwvXAJdCB1rE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ice+DwuvJu2nahWgvM7GpWzE4PNOhA5oCl8w0eiOsMig3gyXUNCCbn+US+o8Rx/3ngulQT7Y52bJAnxbEdiyVnyuWouh+NhHDuDyZZrhB6OlLAX83bGSc9ZCwMT/+G8qj7QOSnqDPzzYWZoC/U6iyBAcG6H27sjj9yqy0/w8yJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YZ3fvPAO; arc=none smtp.client-ip=209.85.215.228
+	s=arc-20240116; t=1764113984; c=relaxed/simple;
+	bh=oPe4d1Dt/kF8ouGFjdvfRNnkBvKL4QPie4rpDGptmqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=f4hqfqLW+KCkw2Sg4nktX9ZTYs17cCCYEWH8MJV4mNuOw/QYf+T7FQm8NkdfoDBuGmrW0SHzAJ/PW3FxRXW38XdfqL5+9ZbRnoVyzVqJMnv12XQVJ8F3j0kYE4BOtQdZeVQwm5Bxck9sKmceiVZ00v149FGfB9RNjkTeuZdWYDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HPoyD+Gj; arc=none smtp.client-ip=209.85.214.227
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f228.google.com with SMTP id 41be03b00d2f7-b983fbc731bso684767a12.2
-        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 15:39:40 -0800 (PST)
+Received: by mail-pl1-f227.google.com with SMTP id d9443c01a7336-297f6ccc890so5888775ad.2
+        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 15:39:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764113979; x=1764718779; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXOFyBMI9vDu+epolmTOAoq+vMSQmowSeWfjwvlQsks=;
-        b=YZ3fvPAOTnI1gTQPZ5/ikJPIhkDHoYasUTnvuZ26aCd4jzV8R7WjLa5dm4fX9wkady
-         hpDFMjqe2LUq7M0klhmFqp2pme0XTK532OWy4gsrqevyJhIaCVLT67vkzWNzmda8UXud
-         MhDO7SELtPAw47wusu1DE7FCHAB5447vSSCw/nNadqouQ6b3xscLotAXemaZOqD5pTyF
-         se4YOTqdJJ+KUwxkxWWtCZGPDv9ZXveNbNgSofPqoSo7b4457oYmPRT4IDw+7UXeEvYb
-         gNCMlA1nI1PWnwf6KTIARV2BXsU1wP6wlCSbfAySdwxYaPq3NEjDT3JxyOjuDg/UwkU5
-         /KMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764113979; x=1764718779;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1764113981; x=1764718781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BXOFyBMI9vDu+epolmTOAoq+vMSQmowSeWfjwvlQsks=;
-        b=w4CVTHQ8XRr0v3ZWxmXm4d3rkFRpQthhSexdLEIwK8NxLwa+6sXXJm9pPdMbNodHd/
-         3M/53FWv7rIyuohfTFpl1XvaHRfMAVe1YhwYks4RQVHI7x70MCtP9rWJTQ7tuNVxdCQJ
-         lcDBpSjSb6VGFOVX2sHF/PQMSNCOJjZZDe/f8PTdbqEUtCILR2ir25MafsBU4aaR/UjW
-         e/TuRMszXbf1xoI9xUyJI1FUvusZ08EFPrIRSqVp6XH1qBqaXWH2jhDSN0HCQPxmR22k
-         vyOoIacb4QpyjtRaC3sVzMeF38el52D4scZRNcWBdGtO3tYBcVQSwx9plBtzPUh0V2GA
-         lhPg==
-X-Gm-Message-State: AOJu0YwJUn8jfNnTeKNLyBL86ReFjEDPUvDZMxLqJbW5KTxTKCUMxK9t
-	3sbXHbJwcl7V5MNYWASMX0FvjUKcdPu6txJ0/JetdkFH+c20tjX0vUODouGjN6NylLgVJ7eLafn
-	vJHKcjrSsT6IJnGeSffsG5eO5bPRqQ6PiYpkF
-X-Gm-Gg: ASbGncuyr5YWTB77qhuUGJBrrN7a4am3RjxUHRsImvIj5TIeUDNwpVWJuW9uhpx3egG
-	6/5CAE+8oVXgwBjiM6w0UaKtpErBKyZtBpTdZMueGlml6Vel0UYMk26dzVtNk7sw4KYlDy/SEYw
-	VvXjsWS4gaJwyNa4dl59kCTHmcAp9ryda1Q3NqOw870EqNmVa0J5If6Q7aPGGmApqVyFo5YYzu/
-	5zF6hmxBk0E8nkxqMtTEBB3HVxdwefGFy4E3syX3lcnKKtEBNNhGbUF9ThbPIXkdNKzgNAF3Adi
-	z4pHpdhmmGD/pwx4x67YOYRsMgDDYNtY709TIyr9m9sNHFdDyO4/JQLSuLGpFSTqwGDmYp4yCYk
-	k2335SZbMenpvdPd+erMiucm6SaBeAfk5mq/sziitrw==
-X-Google-Smtp-Source: AGHT+IEjqtiph+olPBliP3h0AsgaH3qy4zQi8HFaEbLOv/SAphKZtcCRWIzpJJ+J9ngKoDhttB8VAmdzZKmG
-X-Received: by 2002:a17:903:37ce:b0:297:fe30:3b94 with SMTP id d9443c01a7336-29b6bfb527fmr98592285ad.9.1764113979452;
-        Tue, 25 Nov 2025 15:39:39 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29b5b1365cdsm20923805ad.19.2025.11.25.15.39.39
+        bh=oVcZ1kjlWKJeBcL9Jbm6axJm3ukOLpidER5l9zdbGNM=;
+        b=HPoyD+Gj9Wx3+XeE+UvYoDA3BuWm7JFY6qqpMQEOfyzcfRanKgXpzDa5ShQHQJr8eP
+         vB8KpwWkvkA6M1eAJmoS7plC9o5xsVPFCIPILa+gpHvBI7seeIvRNIGONupu5/Y3nhEw
+         WuPhlQtIOBIWA7CI4HtThy7BTF+8jtSMwC0/b/3VGTdfH6O72FMZPZbMpT95Z0YmDlmR
+         jQlYjJpPfnv6+Bx5EiQZxxFs8Ez7agMlBOHLgdiLcBeP7qVqjS4eykUT0b4RJFwrPvD9
+         F136HTMrj8Wxtv490i+9OXiS4mpjfpMC0hskaQco1EEJnvprHMXOj9VVO4NFU+n17jEf
+         yKnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764113981; x=1764718781;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oVcZ1kjlWKJeBcL9Jbm6axJm3ukOLpidER5l9zdbGNM=;
+        b=kp3D36FqtM5fT6kLOkD12EBUYVPPWUVJzO4e4p5psq7rPcjVZ8/eVExYNjFUxDKALA
+         uudO5aOw7FK1vuEO+qh/ygdClUWBMDVPY86TYfqWk82GdH4Kak6E3GbxyjXPNDLFgD7Y
+         dhjz5qdP3HcdxtYzMbQqK9AoTJdiew3vjTSmHPdLO+/GT+8XJBC3+tprRJ20QX6Vu4GG
+         Gqe9qgPhzTvsXMl/UDbvVKKQnB0SDvcJZH+sr+NYXy2XJeTPoGsR2EW7SM+l5IDn7JmN
+         YkOIXmiEWasPK+3vj1toEB6EXhNfbxDLH1s7Utx45Y02zG7De/tJgkShH4zMhoxCy9bM
+         niPg==
+X-Gm-Message-State: AOJu0YyXR+x6QhHHmGNxsN1leijLRrafgMrkx/oDZKQjeBOoIXQWwTf5
+	gCqeISoQwwO4vyPL6LpCx8FOh1SvWLaxWxeo9zhhur5p5IkMXW/wVO50fo1qdj1ze/qEPEh7Wr7
+	JidTmAiFsYaKXvPfEAkYrXBAilvKizNHYEiEo
+X-Gm-Gg: ASbGncuQG9HFp/oPQQR40q0vYLZB6djBVVbLx7083xw0LK/Ng1LkLZpxCNDHuwCwdtY
+	XO3NYKfgrBzDFvQdchLnqY/mdpB5/MTjemvoSbJzv/sEsfwQ4EjhTdab869srKxxlhwEuJ0r/iC
+	ZSrwlgvzRchQ3LuvrCMAgW8eK98/D57VqAoLk2q3TC5CgkN2aLADClWscsZzHKRuA6ZqAvJCigl
+	IXskhflvzub8x258fevLiWm5vuMx3tb5ozeFinC0KXKTYXNx9DPTfWnno/XYo6wviDx9HbXUSF4
+	gEuUmemK8UTNr/Cl9q3URgWHDFMs/KSorkdUvW7Pz1FI9R6Ktxdm1evn04irhGYSsXy9lOrONBD
+	poy6b2Yf06g6ETPqv9cr1zoBW9h/p2SYs3D1bfoFp6w==
+X-Google-Smtp-Source: AGHT+IHC6KWWpHlL/oKY1CixtwVh6OZTqTPIxixKTx2gsuf5v2kwMO7SEEwbn2xVUTsk5aIP+iAbsXidd/38
+X-Received: by 2002:a17:903:388d:b0:299:db45:c5a9 with SMTP id d9443c01a7336-29b702764c5mr95171425ad.9.1764113980973;
+        Tue, 25 Nov 2025 15:39:40 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29b5b2420a7sm21392035ad.52.2025.11.25.15.39.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 15:39:39 -0800 (PST)
+        Tue, 25 Nov 2025 15:39:40 -0800 (PST)
 X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id F3BAA3404B9;
-	Tue, 25 Nov 2025 16:39:38 -0700 (MST)
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 7C3D33400B6;
+	Tue, 25 Nov 2025 16:39:40 -0700 (MST)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id E6875E41EF2; Tue, 25 Nov 2025 16:39:38 -0700 (MST)
+	id 74912E41EF2; Tue, 25 Nov 2025 16:39:39 -0700 (MST)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 0/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-Date: Tue, 25 Nov 2025 16:39:24 -0700
-Message-ID: <20251125233928.3962947-1-csander@purestorage.com>
+Subject: [PATCH v3 1/4] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
+Date: Tue, 25 Nov 2025 16:39:25 -0700
+Message-ID: <20251125233928.3962947-2-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20251125233928.3962947-1-csander@purestorage.com>
+References: <20251125233928.3962947-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -94,78 +98,45 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Setting IORING_SETUP_SINGLE_ISSUER when creating an io_uring doesn't
-actually enable any additional optimizations (aside from being a
-requirement for IORING_SETUP_DEFER_TASKRUN). This series leverages
-IORING_SETUP_SINGLE_ISSUER's guarantee that only one task submits SQEs
-to skip taking the uring_lock mutex for the issue and task work paths.
+IORING_SETUP_SINGLE_ISSUER doesn't currently enable any optimizations,
+but it will soon be used to avoid taking io_ring_ctx's uring_lock when
+submitting from the single issuer task. If the IORING_SETUP_SQPOLL flag
+is set, the SQ thread is the sole task issuing SQEs. However, other
+tasks may make io_uring_register() syscalls, which must be synchronized
+with SQE submission. So it wouldn't be safe to skip the uring_lock
+around the SQ thread's submission even if IORING_SETUP_SINGLE_ISSUER is
+set. Therefore, clear IORING_SETUP_SINGLE_ISSUER from the io_ring_ctx
+flags if IORING_SETUP_SQPOLL is set.
 
-First, we need to disable this optimization for IORING_SETUP_SQPOLL by
-clearing the IORING_SETUP_SINGLE_ISSUER flag. For IORING_SETUP_SQPOLL,
-the SQ thread is the one taking the uring_lock mutex in the issue path.
-Since concurrent io_uring_register() syscalls are allowed on the thread
-that created/enabled the io_uring, some additional synchronization
-method would be required to synchronize the two threads. This is
-possible in principle by having io_uring_register() schedule a task work
-item to suspend the SQ thread, but this seems very complex for a niche
-use case.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/io_uring.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Then we factor out helpers for interacting with uring_lock to centralize
-the logic.
-
-Finally, we implement the optimization for IORING_SETUP_SINGLE_ISSUER.
-If the io_ring_ctx is setup with IORING_SETUP_SINGLE_ISSUER, skip the
-uring_lock mutex_lock() and mutex_unlock() on the submitter_task. On
-other tasks acquiring the ctx uring lock, use a task work item to
-suspend the submitter_task for the critical section.
-In io_uring_register(), continue to always acquire the uring_lock mutex.
-io_uring_register() can be called on a disabled io_ring_ctx (indeed,
-it's required to enable it), when submitter_task isn't set yet. After
-submitter_task is set, io_uring_register() is only permitted on
-submitter_task, so uring_lock suffices to exclude all other users.
-
-v3:
-- Ensure mutual exclusion on threads other than submitter_task via a
-  task work item to suspend submitter_task
-- Drop patches already merged
-
-v2:
-- Don't enable these optimizations for IORING_SETUP_SQPOLL, as we still
-  need to synchronize SQ thread submission with io_uring_register()
-
-Caleb Sander Mateos (4):
-  io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
-  io_uring: use io_ring_submit_lock() in io_iopoll_req_issued()
-  io_uring: factor out uring_lock helpers
-  io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-
- include/linux/io_uring_types.h |  12 +-
- io_uring/cancel.c              |  36 +++---
- io_uring/eventfd.c             |   5 +-
- io_uring/fdinfo.c              |   6 +-
- io_uring/filetable.c           |   8 +-
- io_uring/futex.c               |  14 ++-
- io_uring/io_uring.c            | 205 ++++++++++++++++++++-------------
- io_uring/io_uring.h            | 204 +++++++++++++++++++++++++++++---
- io_uring/kbuf.c                |  38 +++---
- io_uring/memmap.h              |   2 +-
- io_uring/msg_ring.c            |  29 +++--
- io_uring/notif.c               |   5 +-
- io_uring/notif.h               |   3 +-
- io_uring/openclose.c           |  14 ++-
- io_uring/poll.c                |  21 ++--
- io_uring/register.c            |  34 +++---
- io_uring/rsrc.c                |  37 +++---
- io_uring/rsrc.h                |   3 +-
- io_uring/rw.c                  |   2 +-
- io_uring/splice.c              |   5 +-
- io_uring/sqpoll.c              |   5 +-
- io_uring/tctx.c                |  24 ++--
- io_uring/uring_cmd.c           |  13 ++-
- io_uring/waitid.c              |  13 ++-
- io_uring/zcrx.c                |   2 +-
- 25 files changed, 506 insertions(+), 234 deletions(-)
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1e58fc1d5667..05a1ac457581 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3473,10 +3473,19 @@ static int io_uring_sanitise_params(struct io_uring_params *p)
+ 	 */
+ 	if ((flags & (IORING_SETUP_SQE128|IORING_SETUP_SQE_MIXED)) ==
+ 	    (IORING_SETUP_SQE128|IORING_SETUP_SQE_MIXED))
+ 		return -EINVAL;
+ 
++	/*
++	 * If IORING_SETUP_SQPOLL is set, only the SQ thread issues SQEs,
++	 * but other threads may call io_uring_register() concurrently.
++	 * We still need uring_lock to synchronize these io_ring_ctx accesses,
++	 * so disable the single issuer optimizations.
++	 */
++	if (flags & IORING_SETUP_SQPOLL)
++		p->flags &= ~IORING_SETUP_SINGLE_ISSUER;
++
+ 	return 0;
+ }
+ 
+ static int io_uring_fill_params(struct io_uring_params *p)
+ {
 -- 
 2.45.2
 

@@ -1,93 +1,52 @@
-Return-Path: <io-uring+bounces-10794-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10795-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C92C8733B
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 22:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53307C87341
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 22:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA80C3497BC
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 21:18:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 95F4035077E
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 21:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F232FB972;
-	Tue, 25 Nov 2025 21:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zx5qTem2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nxQIP5M3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zx5qTem2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nxQIP5M3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA792FB0BA;
+	Tue, 25 Nov 2025 21:18:35 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CCF2F7AD6
-	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 21:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102152F7ADC
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 21:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764105508; cv=none; b=jwIHr+Z+AWxBGfGeild4XsjqzYbNLRMBwsy5ib6lwTlf/kvgTryU0yoLzxH1xMkTTP1JccWjcLQi2BfvHB8wOdcvk+pjh0OXCsbnRihFB5Yu5J4xQf171EU/eKKZUuaq06YUN73aWsGzrScpLyVcBCVLF7w8p77PyK54UHRvcsY=
+	t=1764105515; cv=none; b=ozZvNsTXVSjOFRGpVNYmDwDVZxyTglulUcU4eGVxZdM+PyjsHoXLnMreOazRrWSm+VphxTcudvuCUl8LwUSxJpnTtoXjn7La2aFKpers4VnA6DfGVZhM3DDkn2lzERlNyspCfeePvP5VPG55HwJCPSROXfkG5SOiGaxIxGESAdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764105508; c=relaxed/simple;
-	bh=ZwmencY2dlnVskYleAzIX9TCp9MRAZOD1rrw1GOpE5s=;
+	s=arc-20240116; t=1764105515; c=relaxed/simple;
+	bh=pBDuqWSUAV5CQXlD4a0gOcbODDo911yfJNfYTpSPgUs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dxR0Ho8YJ21EuHTiahx1GVIOgI7CjPDJte/yELTo8U+U/s39NKwqRqDazZnwbtKI8pthgCxkk0wC1kN+nPAgJaIZcELvVt54j1QUZFuWGyR6GVBU57sPqX/FUk52Kf1kb8RHW+z3FaIxQKqw1kMMdUgvwxxWixYpourv0Vq0QfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zx5qTem2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nxQIP5M3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zx5qTem2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nxQIP5M3; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=fsHR4hMKloUVk0qwQUJX6g7eupusbOM5uNuI5ON4rj+aTdk+dqnabh4Qu4iLBp5L5MqFcs8teKZYIQgD3h6VkfSwg9Ekvi6SvAZeDf4R/+aD9WAwb2mPnvScveDyOfEb5n7YkGO1dKIGD63UhAtWQbQ6mtt5spjSXn3XhUHS6/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C58F5BD6A;
-	Tue, 25 Nov 2025 21:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764105503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELzcXLBoxV2gyTNzeze4ZZZ6rO7/G+FtykrFjH6nfi8=;
-	b=zx5qTem2X1scIDCiPPofOJD6YZyaSKFi3fqCwrdx/xhovF1KGogVPKdixi3ezTTEuwfsXi
-	0vdhaXNz8ZQqhkE9Q6WeMVhT/QlznSJLR/TALUD3FDkaXDQZNjNQJ2iOILMX5xZ4U9yLCl
-	QkjqPfjeK1gX+pgHiVVHLj4CHMCEX1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764105503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELzcXLBoxV2gyTNzeze4ZZZ6rO7/G+FtykrFjH6nfi8=;
-	b=nxQIP5M3gQeGV4PIgjn82wdv/HAVNYMnA3jGQZDpM5/XerWIPo+uRGrrZcgsO043WHMxAG
-	22T+pcDiEA1YyXDA==
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 47E435BD61;
+	Tue, 25 Nov 2025 21:18:29 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764105503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELzcXLBoxV2gyTNzeze4ZZZ6rO7/G+FtykrFjH6nfi8=;
-	b=zx5qTem2X1scIDCiPPofOJD6YZyaSKFi3fqCwrdx/xhovF1KGogVPKdixi3ezTTEuwfsXi
-	0vdhaXNz8ZQqhkE9Q6WeMVhT/QlznSJLR/TALUD3FDkaXDQZNjNQJ2iOILMX5xZ4U9yLCl
-	QkjqPfjeK1gX+pgHiVVHLj4CHMCEX1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764105503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELzcXLBoxV2gyTNzeze4ZZZ6rO7/G+FtykrFjH6nfi8=;
-	b=nxQIP5M3gQeGV4PIgjn82wdv/HAVNYMnA3jGQZDpM5/XerWIPo+uRGrrZcgsO043WHMxAG
-	22T+pcDiEA1YyXDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FC073EA63;
-	Tue, 25 Nov 2025 21:18:23 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01F943EA63;
+	Tue, 25 Nov 2025 21:18:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1MI2BR8dJmlwbwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 25 Nov 2025 21:18:23 +0000
+	id F4SDNSQdJml7bwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 25 Nov 2025 21:18:28 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
@@ -100,9 +59,9 @@ Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
 	Paolo Abeni <pabeni@redhat.com>,
 	Willem de Bruijn <willemb@google.com>,
 	Simon Horman <horms@kernel.org>
-Subject: [PATCH v4 1/3] socket: Unify getsockname and getpeername implementation
-Date: Tue, 25 Nov 2025 16:17:59 -0500
-Message-ID: <20251125211806.2673912-2-krisman@suse.de>
+Subject: [PATCH v4 2/3] socket: Split out a getsockname helper for io_uring
+Date: Tue, 25 Nov 2025 16:18:00 -0500
+Message-ID: <20251125211806.2673912-3-krisman@suse.de>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251125211806.2673912-1-krisman@suse.de>
 References: <20251125211806.2673912-1-krisman@suse.de>
@@ -113,179 +72,111 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: 47E435BD61
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -6.80
+X-Spam-Score: -4.00
 X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
 
-They are already implemented by the same get_name hook in the protocol
-level.  Bring the unification one level up to reduce code duplication
-in preparation to supporting these as io_uring operations.
+Similar to getsockopt, split out a helper to check security and issue
+the operation from the main handler that can be used by io_uring.
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
 ---
-v2 to v3:
-- Adjust comment (Kuniyuki)
+v2 -> v3:
+- Move sockaddr_storage parameter into do_getsockname(Kuniyuki)
 ---
- include/linux/socket.h |  4 +--
- net/compat.c           |  4 +--
- net/socket.c           | 55 ++++++++++--------------------------------
- 3 files changed, 16 insertions(+), 47 deletions(-)
+ include/linux/socket.h |  2 ++
+ net/socket.c           | 36 ++++++++++++++++++++----------------
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
 diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 3b262487ec06..937fe331ff1e 100644
+index 937fe331ff1e..8d580074ddea 100644
 --- a/include/linux/socket.h
 +++ b/include/linux/socket.h
-@@ -454,9 +454,7 @@ extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
+@@ -453,6 +453,8 @@ extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
+ 			 int addrlen);
  extern int __sys_listen(int fd, int backlog);
  extern int __sys_listen_socket(struct socket *sock, int backlog);
++extern int do_getsockname(struct socket *sock, int peer,
++			  struct sockaddr __user *usockaddr, int __user *usockaddr_len);
  extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
--			     int __user *usockaddr_len);
--extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
--			     int __user *usockaddr_len);
-+			     int __user *usockaddr_len, int peer);
+ 			     int __user *usockaddr_len, int peer);
  extern int __sys_socketpair(int family, int type, int protocol,
- 			    int __user *usockvec);
- extern int __sys_shutdown_sock(struct socket *sock, int how);
-diff --git a/net/compat.c b/net/compat.c
-index 485db8ee9b28..2c9bd0edac99 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -460,10 +460,10 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_accept4(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
- 		break;
- 	case SYS_GETSOCKNAME:
--		ret = __sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]));
-+		ret = __sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]), 0);
- 		break;
- 	case SYS_GETPEERNAME:
--		ret = __sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
-+		ret = __sys_getsockname(a0, compat_ptr(a1), compat_ptr(a[2]), 1);
- 		break;
- 	case SYS_SOCKETPAIR:
- 		ret = __sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
 diff --git a/net/socket.c b/net/socket.c
-index e8892b218708..208d92ccf0fb 100644
+index 208d92ccf0fb..89bac0a17e5a 100644
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -2128,12 +2128,11 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
+@@ -2127,39 +2127,43 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
+ 	return __sys_connect(fd, uservaddr, addrlen);
  }
  
- /*
-- *	Get the local address ('name') of a socket object. Move the obtained
-- *	name to user space.
-+ *	Get the remote or local address ('name') of a socket object. Move the
-+ *	obtained name to user space.
-  */
--
- int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
--		      int __user *usockaddr_len)
-+		      int __user *usockaddr_len, int peer)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
-@@ -2146,11 +2145,14 @@ int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
- 
--	err = security_socket_getsockname(sock);
-+	if (peer)
-+		err = security_socket_getpeername(sock);
-+	else
-+		err = security_socket_getsockname(sock);
- 	if (err)
- 		return err;
- 
--	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 0);
-+	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, peer);
- 	if (err < 0)
- 		return err;
- 
-@@ -2161,44 +2163,13 @@ int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
- 		int __user *, usockaddr_len)
- {
--	return __sys_getsockname(fd, usockaddr, usockaddr_len);
--}
--
 -/*
-- *	Get the remote address ('name') of a socket object. Move the obtained
-- *	name to user space.
+- *	Get the remote or local address ('name') of a socket object. Move the
+- *	obtained name to user space.
 - */
--
--int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
--		      int __user *usockaddr_len)
--{
+-int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
+-		      int __user *usockaddr_len, int peer)
++int do_getsockname(struct socket *sock, int peer,
++		   struct sockaddr __user *usockaddr, int __user *usockaddr_len)
+ {
 -	struct socket *sock;
--	struct sockaddr_storage address;
+ 	struct sockaddr_storage address;
 -	CLASS(fd, f)(fd);
--	int err;
--
+ 	int err;
+ 
 -	if (fd_empty(f))
 -		return -EBADF;
 -	sock = sock_from_file(fd_file(f));
 -	if (unlikely(!sock))
 -		return -ENOTSOCK;
 -
--	err = security_socket_getpeername(sock);
--	if (err)
--		return err;
+ 	if (peer)
+ 		err = security_socket_getpeername(sock);
+ 	else
+ 		err = security_socket_getsockname(sock);
+ 	if (err)
+ 		return err;
 -
--	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 1);
--	if (err < 0)
--		return err;
+ 	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, peer);
+ 	if (err < 0)
+ 		return err;
 -
--	/* "err" is actually length in this case */
--	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
-+	return __sys_getsockname(fd, usockaddr, usockaddr_len, 0);
+ 	/* "err" is actually length in this case */
+ 	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
  }
  
- SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
++/*
++ *	Get the remote or local address ('name') of a socket object. Move the
++ *	obtained name to user space.
++ */
++int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
++		      int __user *usockaddr_len, int peer)
++{
++	struct socket *sock;
++	CLASS(fd, f)(fd);
++
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
++	return do_getsockname(sock, peer, usockaddr, usockaddr_len);
++}
++
+ SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
  		int __user *, usockaddr_len)
  {
--	return __sys_getpeername(fd, usockaddr, usockaddr_len);
-+	return __sys_getsockname(fd, usockaddr, usockaddr_len, 1);
- }
- 
- /*
-@@ -3162,12 +3133,12 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 	case SYS_GETSOCKNAME:
- 		err =
- 		    __sys_getsockname(a0, (struct sockaddr __user *)a1,
--				      (int __user *)a[2]);
-+				      (int __user *)a[2], 0);
- 		break;
- 	case SYS_GETPEERNAME:
- 		err =
--		    __sys_getpeername(a0, (struct sockaddr __user *)a1,
--				      (int __user *)a[2]);
-+		    __sys_getsockname(a0, (struct sockaddr __user *)a1,
-+				      (int __user *)a[2], 1);
- 		break;
- 	case SYS_SOCKETPAIR:
- 		err = __sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
 -- 
 2.51.0
 

@@ -1,101 +1,101 @@
-Return-Path: <io-uring+bounces-10798-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10799-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA99C8739C
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 22:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304F1C8739F
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 22:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 34B5234ECEA
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 21:27:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A5CF934E94D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 21:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA11231858;
-	Tue, 25 Nov 2025 21:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8742E0B6E;
+	Tue, 25 Nov 2025 21:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dj299DPN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uZ7nFE4+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dj299DPN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uZ7nFE4+"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z27m2c13";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ifoUVdEe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z27m2c13";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ifoUVdEe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815892264A9
-	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 21:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDD82264A9
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 21:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764106048; cv=none; b=RpKVgQgOLelShujVXjVyJr+IL0bd/XFIxqmQyZ9BUPTe2opAgeO/rqKqQzzyT9cs/5giWuFJQILP/UHS7dhvQ8iYdf8WvKL9EKWFmuTuhHiaXSTo8Fckpa3pGzj136YrZV1/14FIPfPy600XaZl7ulCwyFrHDBd6yIH0qrnWVAg=
+	t=1764106054; cv=none; b=AvqR2yEe87ncSGCmPjOslHv8PA5tbdWIyEOaF5weSU8hTsd8c+KKbZdS4kxetP4iqOwbmAOilyqr7CCYeMYe27g/ojXbKf83jk7Hu/rfRF+IOKS2HMWyg9/NBK/yUy3OdgWlvJPCk61eYjiTNE4OLQ/2JcVO9uKZzTcdFueArfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764106048; c=relaxed/simple;
-	bh=njscxX8Tt0E7kiZkORL8M0UW6fGCNfJsxoF6/X/uKKU=;
+	s=arc-20240116; t=1764106054; c=relaxed/simple;
+	bh=K4wWkhTRIZpgaI9jd9MMxoRj9WMh0VdTghzt7kCMFU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R7+UCTcs+EDsUXeLw7rKG5CyrqdH5UUZGfIvSa0Nc383QN5OLHFe/opq3IabGINkV3DpU2ABzvGWqM2sHE5QiIqdilnA2IjixeHV0c5+H4UB+utuWVcvqt+0IPdB8TaMNLhWWmoVHDAHNv4+SPHNBrapfTR2maHE0+//OyLWrcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dj299DPN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uZ7nFE4+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dj299DPN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uZ7nFE4+; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=Gbm4znh/OqPZ1j0oTqm3h2CL8TzAJkXIHg/GqraHvaxQI3u/YphO7INXFjoszSVZJBEFQtpevnBPE1yJ++VJL1mMMwTiAtnBrYqYrn2M1LAPi6e7JqSGGcfU2RBKTU+YF5QKmJQtcSyNuvnzXokyZJ6KH5dHl+hUXSyyZJJU4+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z27m2c13; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ifoUVdEe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z27m2c13; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ifoUVdEe; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C99695BD61;
-	Tue, 25 Nov 2025 21:27:24 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9FE4522965;
+	Tue, 25 Nov 2025 21:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764106044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764106050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IwjJydqw4fmOu2DnMwdqCv9RvphV39m7bpsVRwII5FQ=;
-	b=dj299DPNq2I7CKQLPK8Y/on6Gs9aaI+e0o2Y+5yUw/bTS+RzAGxqM7c1nZtpw5nrkLiz6D
-	2Melfa9Wh9I4GwSOfzShSRxObZtWtb2b1oHwV5FJX0pDCU3aDvaxVb+5iQHL33y3/U/1UP
-	Z6czh5OXeX/+q0FPDkfzQIBXnuejxcI=
+	bh=m7yHmj2ZMuwxjXFQWUY4qRE5/7DiJmPt5/jn00l13o0=;
+	b=z27m2c13GTzH+sjOkul8ZJArdZp6umWPRJn3nW5OV5kxZbPHvlpB1suVwjtrbZWnl8uo/4
+	h5fcMTJNc5ndaonCF9/j9HpRHwtFsURed6/j9tQHUAv0Ae5nrNYgphS8cMRKX0hK+JblW6
+	c1v1KyIkN5C4bgquOv138e+Dw0q4v1U=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764106044;
+	s=susede2_ed25519; t=1764106050;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IwjJydqw4fmOu2DnMwdqCv9RvphV39m7bpsVRwII5FQ=;
-	b=uZ7nFE4+Pj/tjOdry/dei/Inw4dm7mTGQHN1dXwXyejPPf1+KGVD+kqQFJqCPTIgIIoWLh
-	KwwA58M6gdHEfMBQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=m7yHmj2ZMuwxjXFQWUY4qRE5/7DiJmPt5/jn00l13o0=;
+	b=ifoUVdEeSW+cC5Y8eiv09JfOkTHffzchUn5GYlHS/NDRy2tao9lVPZS64KP6inpjjPBMsk
+	Nn7eOSC8anbN6yAg==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764106044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764106050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IwjJydqw4fmOu2DnMwdqCv9RvphV39m7bpsVRwII5FQ=;
-	b=dj299DPNq2I7CKQLPK8Y/on6Gs9aaI+e0o2Y+5yUw/bTS+RzAGxqM7c1nZtpw5nrkLiz6D
-	2Melfa9Wh9I4GwSOfzShSRxObZtWtb2b1oHwV5FJX0pDCU3aDvaxVb+5iQHL33y3/U/1UP
-	Z6czh5OXeX/+q0FPDkfzQIBXnuejxcI=
+	bh=m7yHmj2ZMuwxjXFQWUY4qRE5/7DiJmPt5/jn00l13o0=;
+	b=z27m2c13GTzH+sjOkul8ZJArdZp6umWPRJn3nW5OV5kxZbPHvlpB1suVwjtrbZWnl8uo/4
+	h5fcMTJNc5ndaonCF9/j9HpRHwtFsURed6/j9tQHUAv0Ae5nrNYgphS8cMRKX0hK+JblW6
+	c1v1KyIkN5C4bgquOv138e+Dw0q4v1U=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764106044;
+	s=susede2_ed25519; t=1764106050;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IwjJydqw4fmOu2DnMwdqCv9RvphV39m7bpsVRwII5FQ=;
-	b=uZ7nFE4+Pj/tjOdry/dei/Inw4dm7mTGQHN1dXwXyejPPf1+KGVD+kqQFJqCPTIgIIoWLh
-	KwwA58M6gdHEfMBQ==
+	bh=m7yHmj2ZMuwxjXFQWUY4qRE5/7DiJmPt5/jn00l13o0=;
+	b=ifoUVdEeSW+cC5Y8eiv09JfOkTHffzchUn5GYlHS/NDRy2tao9lVPZS64KP6inpjjPBMsk
+	Nn7eOSC8anbN6yAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CF3C3EA63;
-	Tue, 25 Nov 2025 21:27:24 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 635173EA63;
+	Tue, 25 Nov 2025 21:27:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2Z3NGzwfJmmadwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 25 Nov 2025 21:27:24 +0000
+	id bR+4EUIfJmmqdwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 25 Nov 2025 21:27:30 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: axboe@kernel.dk
 Cc: io-uring@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>,
 	csander@purestorage.com
-Subject: [PATCH liburing v2 1/4] liburing: Introduce getsockname operation
-Date: Tue, 25 Nov 2025 16:27:12 -0500
-Message-ID: <20251125212715.2679630-2-krisman@suse.de>
+Subject: [PATCH liburing v2 2/4] test/bind-listen.t: Use ephemeral port
+Date: Tue, 25 Nov 2025 16:27:13 -0500
+Message-ID: <20251125212715.2679630-3-krisman@suse.de>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251125212715.2679630-1-krisman@suse.de>
 References: <20251125212715.2679630-1-krisman@suse.de>
@@ -109,7 +109,7 @@ Content-Transfer-Encoding: 8bit
 X-Spam-Level: 
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
@@ -126,56 +126,104 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
 X-Spam-Score: -6.80
 
-This implements the functionality of getsockname(2) and getpeername(2)
-under a single operation.
+This test fails if port 8000 is already in use by something else.  Now
+that we have getsockname with direct file descriptors, use an ephemeral
+port instead.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- src/include/liburing.h          | 13 +++++++++++++
- src/include/liburing/io_uring.h |  1 +
- 2 files changed, 14 insertions(+)
+ test/bind-listen.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 83819eb7..1626f3bb 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -1572,6 +1572,19 @@ IOURINGINLINE void io_uring_prep_cmd_sock(struct io_uring_sqe *sqe,
- 	sqe->level = level;
+diff --git a/test/bind-listen.c b/test/bind-listen.c
+index 6f80f177..7c229a17 100644
+--- a/test/bind-listen.c
++++ b/test/bind-listen.c
+@@ -22,7 +22,6 @@ static void msec_to_ts(struct __kernel_timespec *ts, unsigned int msec)
  }
  
-+IOURINGINLINE void io_uring_prep_cmd_getsockname(struct io_uring_sqe *sqe,
-+						 int fd, struct sockaddr *sockaddr,
-+						 socklen_t *sockaddr_len,
-+						 int peer)
-+	LIBURING_NOEXCEPT
-+{
-+	io_uring_prep_uring_cmd(sqe, SOCKET_URING_OP_GETSOCKNAME, fd);
-+
-+	sqe->addr = (uintptr_t) sockaddr;
-+	sqe->addr3 = (unsigned long) (uintptr_t) sockaddr_len;
-+	sqe->optlen = peer;
-+}
-+
- IOURINGINLINE void io_uring_prep_waitid(struct io_uring_sqe *sqe,
- 					idtype_t idtype,
- 					id_t id,
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index a54e5b42..8e8b8e6a 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -966,6 +966,7 @@ enum io_uring_socket_op {
- 	SOCKET_URING_OP_GETSOCKOPT,
- 	SOCKET_URING_OP_SETSOCKOPT,
- 	SOCKET_URING_OP_TX_TIMESTAMP,
-+	SOCKET_URING_OP_GETSOCKNAME,
- };
+ static const char *magic = "Hello World!";
+-static int use_port = 8000;
  
- /*
+ enum {
+ 	SRV_INDEX = 0,
+@@ -74,18 +73,19 @@ static int connect_client(struct io_uring *ring, unsigned short peer_port)
+ 	return T_SETUP_OK;
+ }
+ 
+-static int setup_srv(struct io_uring *ring, struct sockaddr_in *server_addr)
++static int setup_srv(struct io_uring *ring)
+ {
++	struct sockaddr_in server_addr;
+ 	struct io_uring_sqe *sqe;
+ 	struct io_uring_cqe *cqe;
+ 	struct __kernel_timespec ts;
+ 	int ret, val, submitted;
+ 	unsigned head;
+ 
+-	memset(server_addr, 0, sizeof(struct sockaddr_in));
+-	server_addr->sin_family = AF_INET;
+-	server_addr->sin_port = htons(use_port++);
+-	server_addr->sin_addr.s_addr = htons(INADDR_ANY);
++	memset(&server_addr, 0, sizeof(struct sockaddr_in));
++	server_addr.sin_family = AF_INET;
++	server_addr.sin_port = htons(0);
++	server_addr.sin_addr.s_addr = htons(INADDR_ANY);
+ 
+ 	sqe = io_uring_get_sqe(ring);
+ 	io_uring_prep_socket_direct(sqe, AF_INET, SOCK_STREAM, 0, SRV_INDEX, 0);
+@@ -98,7 +98,7 @@ static int setup_srv(struct io_uring *ring, struct sockaddr_in *server_addr)
+ 	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
+ 
+ 	sqe = io_uring_get_sqe(ring);
+-	io_uring_prep_bind(sqe, SRV_INDEX, (struct sockaddr *) server_addr,
++	io_uring_prep_bind(sqe, SRV_INDEX, (struct sockaddr *) &server_addr,
+ 			   sizeof(struct sockaddr_in));
+ 	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
+ 
+@@ -132,7 +132,8 @@ static int setup_srv(struct io_uring *ring, struct sockaddr_in *server_addr)
+ 
+ static int test_good_server(unsigned int ring_flags)
+ {
+-	struct sockaddr_in server_addr;
++	struct sockaddr_in saddr = {};
++	socklen_t saddr_len = sizeof(saddr);
+ 	struct __kernel_timespec ts;
+ 	struct io_uring_sqe *sqe;
+ 	struct io_uring_cqe *cqe;
+@@ -155,13 +156,25 @@ static int test_good_server(unsigned int ring_flags)
+ 		return T_SETUP_SKIP;
+ 	}
+ 
+-	ret = setup_srv(&ring, &server_addr);
++	ret = setup_srv(&ring);
+ 	if (ret != T_SETUP_OK) {
+ 		fprintf(stderr, "srv startup failed.\n");
+ 		return T_EXIT_FAIL;
+ 	}
+ 
+-	if (connect_client(&ring, server_addr.sin_port) != T_SETUP_OK) {
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_cmd_getsockname(sqe, SRV_INDEX, (struct sockaddr*)&saddr,
++				      &saddr_len, 0);
++	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
++	io_uring_submit(&ring);
++	io_uring_wait_cqe(&ring, &cqe);
++	if (cqe->res < 0) {
++		fprintf(stderr, "getsockname server failed. %d\n", cqe->res);
++		return T_EXIT_FAIL;
++	}
++	io_uring_cqe_seen(&ring, cqe);
++
++	if (connect_client(&ring, saddr.sin_port) != T_SETUP_OK) {
+ 		fprintf(stderr, "cli startup failed.\n");
+ 		return T_SETUP_SKIP;
+ 	}
 -- 
 2.51.0
 

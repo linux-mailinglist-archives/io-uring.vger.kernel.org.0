@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-10787-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10788-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A821C85035
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 13:47:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1B8C8541B
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 14:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC79A34FF8D
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 12:47:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6404B4E576B
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 13:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBF41487F6;
-	Tue, 25 Nov 2025 12:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1A923B632;
+	Tue, 25 Nov 2025 13:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhSvXsca"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn23i8i/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA8D28E00
-	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 12:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A337238150
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 13:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764074818; cv=none; b=F5lO6Am/pS9rOn/AcEnN5xQ+0FScw1zNKWB0ikhq8tg3QmYdxYRmsMr+ZbuwgkrljIX5o9+5lSKqrKnD6hQfk1qL0auTW/PVidQyPNr3NSr5xtAceQ1w2pyiTFzscaNTis1NMNOxl0gSVbLonWg7nlZLBgge0lMB/+Xzzd0MK3A=
+	t=1764078745; cv=none; b=FBaSDtuUbHEO9kVRR70FEHjCCs6NUCT9XdEGqzK64cPzyBY138D2Gl9GzK+njpYkTX1a0oHp7gRwrO21y8kz9ymsT6+SZx0MW9xT+GdPY5BzLV5XxmM8bQQDGQ8NiOX2SusRpw3RNz4CvmdAIlJdRyFYhFziHM2qulHnH1Pa1rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764074818; c=relaxed/simple;
-	bh=bgV5yw7s+3MyA2i3oY/dwSW0/v9Wck/idd+mEop6rRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPeju9iiDJHaKyeVTqRAT/cF8g4YyeeXUGQG7mhx7VdHv8uqbGqWDlVAYM6Mn87ORbVc90xOnF3g/eyWzasb2FRKem3/m6+WwMLFKXZArB9cwNjvi2U7Eo5RcYfoJ3leqgP68N71VBpPrs94XCVH8QrxmfybYuFG8Fh2QkuuhGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhSvXsca; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1764078745; c=relaxed/simple;
+	bh=f14XKdRLbAIaCqZKzl7GBicWGlFYtiJZvAmLderW2+o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JmZCXT0FZAaF8/u4htti8coiP0OCyuj60DpzlFFPdkE/NRjEdINv+LrVAyun19moc33ZPBlztBB0XvcE8bXE7FSpCIzeWYAW2PFtZGd9VrYMzIIGNTyhitlII+gBZpwveX+6yHMwg6JWCBHq0YwR7efyzADoFgVF+OeX+Q8tldQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tn23i8i/; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b31c610fcso4684517f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 04:46:56 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso59522855e9.3
+        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 05:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764074815; x=1764679615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCCLhoUNC39eu/n58aVUYS3QhS0sN807HiT2blG5Gag=;
-        b=OhSvXsca0fOuLKPK+vxdpYOtkE0EJFGgWQJp01u1i+hagzU3BfqK1KHu2U1duf9hOD
-         9f6T/t2Zp90LTJxNLy1005pBxTQggafMaZcw0cXuKo/5miFXvskV0UVtU0u+dHHOCplC
-         9UAfl5peWcqyVofYMi5Ws3mzbDDczXrhtyroDSIlQiQDQX352MHrZJQP5yYH3R933sMf
-         YdrILV1mIcnBOdG96R1LNqYHW5W5aDokgLOy9snWTZhmfcDUVWaDVk03jDfcnGLs/zkv
-         E87ug8F5DAATIdeKo/f+xDwdLEZaFl/iNFDdcArqi8w3q/Kk8PgCUaJH/wY5CApUsEt6
-         sMUA==
+        d=gmail.com; s=20230601; t=1764078741; x=1764683541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
+        b=Tn23i8i/gAj7vqH1s1cK5d5zQm7b7yhVGSi/AE/Ivf2m+vkkXTZSCrGKTRHLTuQTa7
+         +KvNFkU/QqK+sEYwmwE2Yb0UignIKpNtSGsqpMHs/CPGxcYMG/N8qiBawIMySNh8OD9L
+         5CFkyX3nscW9U/c0Ixc1EDHO06SCrhsAKXgyg9EeZTPGrTiWs68K46R3tkvVE17xIQlY
+         0Zwxtkt7V4Jn7BDMVmlugZm3dJgJc/uiAABbZzW2rEcSjTHEnOrqyDjv+jCOU9L7FiMM
+         HA/ARVms1OdAi49sm7BTSYV6aRV0jfm40tamlOr9bgiYxozsxBCGcTL6bgfe+VIuWtOO
+         M3Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764074815; x=1764679615;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lCCLhoUNC39eu/n58aVUYS3QhS0sN807HiT2blG5Gag=;
-        b=VNQELG/nQ2BicaaIo64CbTpcF76oUAasojyy8v8N8F1vv+Hc6PQgu8DLXrfEkq+BzR
-         ECAt0vw7cbTB2UKnua2WeaI1Px2wJwnx2hbLPRNg/STjlCnLNNvZIgiQVFd7/PsjRpQl
-         IH++83NsOLAOS7r0iMscOXyGA8aOgLUZIyvMJ3IId3eHesqGvFnPSj/dpLEYmDoJOet0
-         MJ9OitVvfgeofZEfzT5ynQPoFY3bpHtHsLEOVdP9gUSjDkYYy0TMhgzbj3y8fefhAcQv
-         A/rL9+7lKl2BauNsUs9qBMW+AtWmMAUyhmxtUFFOnUrAl2mSY06797Br+2KAAsLgmr3N
-         h5eA==
-X-Gm-Message-State: AOJu0YynjIEvrd5t+EInuPxOG56WCXJgR2dRfBlXG8Yijhvwfvl+WDFo
-	1QoQ25HSljAdiw2CVkUmaDV3ZzM+LWY6v8KHTnrQvtdWpiUSagT3smnEaSRoyw==
-X-Gm-Gg: ASbGncscKZjcUvRrPMxGzBhMShzNR51rQPRZVqW4PPibHYEHHG7c6TFfyLwpTT36RCo
-	vruakpBx6cMumD9qzVDcYhJ8nNSBWuWe4rqBN6ay4wpgpMzugu82UNqfriUtk+KifUGaS/3/tdd
-	tZH6qbnhcmGdsp1ZAIrRyLwIFQiSvbBWs1ts/cUs54II507AGDKPmiQjdEuTyb9SXANb26RqSZl
-	XbNMMeoxcyeIOXZuSBpa9VM3mBHfE3lV8Q4YSihFvvjEVRb7T4fUp7rKkILU0xnlZWyGtkHs4w0
-	qKLPTt+UMRlQncq8bdoBIUWT1F01vaAWHF/XpQtrXsJFgF2M0muLrDCq/5sQEbG4geR1HcXT5J7
-	n1257AV1Yz+n27Sdt2gm1tT0JZR3S04933VYSAHu7stuuAeAugg4vVAiJD7zlizfx9fetUY81Q5
-	H9oFWDbOUwSP0SBOPQ9PoH2tVzBmtD+itzBfjNF4Ks0Ff4cx90ogcbLB8k/OGJzA==
-X-Google-Smtp-Source: AGHT+IH0sHJ8VIJg/RX0pA9kl5euwpPhRAtTw97zF5G+4fN3Yr3V95yt7IPXdy2ULmxCS1GBFMi/nQ==
-X-Received: by 2002:a5d:64c5:0:b0:3f2:b077:94bc with SMTP id ffacd0b85a97d-42e0f1fc074mr2665735f8f.4.1764074814632;
-        Tue, 25 Nov 2025 04:46:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764078741; x=1764683541;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
+        b=BN2zFvi0BWQqD+IDRVC6v3ONRd7q50IcjbrAUOBPa2vti8p3CkJbvX5vFOnoW8FnA6
+         J3FB15YyWalb2MbmXW/wWDc7FEpVQ5tpQSx6vM+3v1wyjLaZ+ESEnnh2fiyR4z64g0Ef
+         nW4247A5iJB1Mrxs/7hKJm816mNHt5LEf/6FHPc645Vp48UKySEEk0kRAE/KLNLPhDMO
+         Y7dROeald1WFmFlDIzR02EjMU4aH/pbuXIgpyGYcaWrmik+gCPHYf4X9ORlI+Py++e+D
+         JoNjX/PhL/JPDtHAQWtmp8hPKAY/YWp+0B8s/3g5G4a2CfULyBizDzw+ty8rl1sSMGq9
+         Cd8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUIAfRCOtZ9zzm9RbxSXOAn4YUsfEmgvoi0Tptjtnn8ENTOkDNoM6kAVSY4g2SFkgRqth+EcTNXWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPCWCAbGmunBO2VH7Ck5p1a4kpeQ7QcSEek0jPkl3aBABQ4cmk
+	PGK0/Ht1BJy7dkzFwM17n+Uig37rBmsOQOTdb5AVGX9Z9VHkEX2qaAY6
+X-Gm-Gg: ASbGnctXP+gR30bwp2iWxCNchzO+YkQEocFCWJh/0abya2ispTtF8cuZTk+H7+Q9RCd
+	QnXDy87FOv3JgP9O6gASCMJDGGUM0ekzcCGd9f11EWEsCVPyiI/cSrbSKbAV8nYWfEhz8GhGQee
+	cpl+lgEWIGlYkHmiMq5hKubMZAtqjLrG+hybTNI8RNFMFmSgR4j/Uf3mDAyfKb/v5/8cxwSyjJK
+	N1yjXEkpgAOKIBnOlypPgfScUJcCZmGfOMKlzL7kcg+1EOzjmOlmAQrRwVCOHQxmmYSVTMDKN3q
+	nUNc0SaxKOZvVAgafBNWrTgqMasu51w9/o13VgD6LA+DA/wYJwIETwwPJjlvzj/oVzzTS45zlDd
+	cQgSbZO3+SzG4tP4AZqGGyKLaFFEUXKT2BhVDE+Llg8fPKj3dnOhups6FzRilCyLMt5+gBdFibJ
+	xVzNLclGpgP6C609TWGFqEnUrnYCOYy5gqz82VM/c4CVkcfsqwXGEcaZ7kR7kVyfiRr8q6paPV
+X-Google-Smtp-Source: AGHT+IFKl0FSWbmMlOH9ZWfAZWRSmX8BD6ohJLnDHz1PIktPZZElxLDCt4b4SkoYMkjbJJn+KqrIYg==
+X-Received: by 2002:a5d:5d81:0:b0:42b:3ded:298d with SMTP id ffacd0b85a97d-42cc1d2d5ebmr16251211f8f.32.1764078741365;
+        Tue, 25 Nov 2025 05:52:21 -0800 (PST)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f363e4sm34668235f8f.12.2025.11.25.04.46.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fa3a81sm35280457f8f.26.2025.11.25.05.52.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Nov 2025 04:46:54 -0800 (PST)
-Message-ID: <58126161-3451-414a-9ee4-83209bcba8fa@gmail.com>
-Date: Tue, 25 Nov 2025 12:46:52 +0000
+        Tue, 25 Nov 2025 05:52:20 -0800 (PST)
+Message-ID: <a80a1e7d-e387-448f-8095-0aa22a07af17@gmail.com>
+Date: Tue, 25 Nov 2025 13:52:18 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,53 +83,95 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/10] io_uring/bpf: implement struct_ops registration
-To: Ming Lei <ming.lei@redhat.com>
-Cc: io-uring@vger.kernel.org, axboe@kernel.dk,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>
-References: <cover.1763031077.git.asml.silence@gmail.com>
- <cce6ee02362fe62aefab81de6ec0d26f43c6c22d.1763031077.git.asml.silence@gmail.com>
- <aSPUtMqilzaPui4f@fedora> <015ee1ee-e0a4-491f-833f-9cef8c5349cc@gmail.com>
- <aSRrundGeeIpaKmd@fedora>
-Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aSRrundGeeIpaKmd@fedora>
+Subject: Re: [RFC v2 00/11] Add dmabuf read/write via io_uring
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <cover.1763725387.git.asml.silence@gmail.com>
+ <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
+ <905ff009-0e02-4a5b-aa8d-236bfc1a404e@gmail.com>
+ <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
+Content-Language: en-US
+In-Reply-To: <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/24/25 14:29, Ming Lei wrote:
-> On Mon, Nov 24, 2025 at 01:12:29PM +0000, Pavel Begunkov wrote:
->> On 11/24/25 03:44, Ming Lei wrote:
->>> On Thu, Nov 13, 2025 at 11:59:44AM +0000, Pavel Begunkov wrote:
-...
->>> I feel per-io-uring struct_ops is less useful, because it means the io_uring
->>> application has to be capable of loading/registering struct_ops prog, which
->>> often needs privilege.
+On 11/24/25 14:17, Christian König wrote:
+> On 11/24/25 12:30, Pavel Begunkov wrote:
+>> On 11/24/25 10:33, Christian König wrote:
+>>> On 11/23/25 23:51, Pavel Begunkov wrote:
+>>>> Picking up the work on supporting dmabuf in the read/write path.
+>>>
+>>> IIRC that work was completely stopped because it violated core dma_fence and DMA-buf rules and after some private discussion was considered not doable in general.
+>>>
+>>> Or am I mixing something up here?
 >>
->> I gave it a thought before, there would need to be a way to pass a
->> program from one (e.g. privileged) task to another, e.g. by putting
->> it into a list on attachment from where it can be imported. That
->> can be extended, and I needed to start somewhere.
-> 
-> If any task can ask such privileged task to load bpf program for itself,
-> BPF_UNPRIV_DEFAULT_OFF becomes `N` actually for bpf controlled io_uring.
-
-That's not what I said. There are enough apps that can have a
-privileged component but caps are not extended to e.g. IO
-workers.
-
->>> For example of IO link use case you mentioned, why does the application need
->>> to get privilege for running IO link?
+>> The time gap is purely due to me being busy. I wasn't CC'ed to those private
+>> discussions you mentioned, but the v1 feedback was to use dynamic attachments
+>> and avoid passing dma address arrays directly.
 >>
->> Links are there to compare with existing features. It's more interesting
->> to allow arbitrary relations / result propagation between requests. Maybe
->> some common patterns can be generalised, but otherwise nothing can be
->> done with this without custom tailored bpf programs.
+>> https://lore.kernel.org/all/cover.1751035820.git.asml.silence@gmail.com/
+>>
+>> I'm lost on what part is not doable. Can you elaborate on the core
+>> dma-fence dma-buf rules?
 > 
-> I know the motivation, which is one thing covered in my IORING_OP_BPF patch
-> too.
+> I most likely mixed that up, in other words that was a different discussion.
+> 
+> When you use dma_fences to indicate async completion of events you need to be super duper careful that you only do this for in flight events, have the fence creation in the right order etc...
+
+I'm curious, what can happen if there is new IO using a
+move_notify()ed mapping, but let's say it's guaranteed to complete
+strictly before dma_buf_unmap_attachment() and the fence is signaled?
+Is there some loss of data or corruption that can happen?
+
+sg_table = map_attach()         |
+move_notify()                   |
+   -> add_fence(fence)           |
+                                 | issue_IO(sg_table)
+                                 | // IO completed
+unmap_attachment(sg_table)      |
+signal_fence(fence)             |
+
+> For example once the fence is created you can't make any memory allocations any more, that's why we have this dance of reserving fence slots, creating the fence and then adding it.
+
+Looks I have some terminology gap here. By "memory allocations" you
+don't mean kmalloc, right? I assume it's about new users of the
+mapping.
+
+>>> Since I don't see any dma_fence implementation at all that might actually be the case.
+>>
+>> See Patch 5, struct blk_mq_dma_fence. It's used in the move_notify
+>> callback and is signaled when all inflight IO using the current
+>> mapping are complete. All new IO requests will try to recreate the
+>> mapping, and hence potentially wait with dma_resv_wait_timeout().
+> 
+> Without looking at the code that approach sounds more or less correct to me.
+> 
+>>> On the other hand we have direct I/O from DMA-buf working for quite a while, just not upstream and without io_uring support.
+>>
+>> Have any reference?
+> 
+> There is a WIP feature in AMDs GPU driver package for ROCm.
+> 
+> But that can't be used as general purpose DMA-buf approach, because it makes use of internal knowledge about how the GPU driver is using the backing store.
+
+Got it
+
+> BTW when you use DMA addresses from DMA-buf always keep in mind that this memory can be written by others at the same time, e.g. you can't do things like compute a CRC first, then write to backing store and finally compare CRC.
+
+Right. The direct IO path also works with user pages, so the
+constraints are similar in this regard.
+
 -- 
 Pavel Begunkov
 

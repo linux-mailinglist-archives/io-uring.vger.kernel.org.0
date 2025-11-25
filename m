@@ -1,178 +1,118 @@
-Return-Path: <io-uring+bounces-10788-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10789-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1B8C8541B
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 14:52:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FD7C8550D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 15:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6404B4E576B
-	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 13:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77BCF3A408C
+	for <lists+io-uring@lfdr.de>; Tue, 25 Nov 2025 14:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1A923B632;
-	Tue, 25 Nov 2025 13:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376393770B;
+	Tue, 25 Nov 2025 14:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn23i8i/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1zelY84o"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A337238150
-	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 13:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3468631961E
+	for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 14:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764078745; cv=none; b=FBaSDtuUbHEO9kVRR70FEHjCCs6NUCT9XdEGqzK64cPzyBY138D2Gl9GzK+njpYkTX1a0oHp7gRwrO21y8kz9ymsT6+SZx0MW9xT+GdPY5BzLV5XxmM8bQQDGQ8NiOX2SusRpw3RNz4CvmdAIlJdRyFYhFziHM2qulHnH1Pa1rk=
+	t=1764079470; cv=none; b=ZaQdX29nkdGKJYzhR5R7g4UyZHmjC6D5rvBZFD74AX5oBt3Bt0rmTZlwBmEv58G2mUzaLLzLHbnpguMky5zZrh+Fv9RIt6rxEOkpeOkrSlvNFQKa/8Dxt57jaVL/44ymIigpBNPDg2gDTmAdXDqMKBQUXnZ1XJ51/9bzD2ijKyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764078745; c=relaxed/simple;
-	bh=f14XKdRLbAIaCqZKzl7GBicWGlFYtiJZvAmLderW2+o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JmZCXT0FZAaF8/u4htti8coiP0OCyuj60DpzlFFPdkE/NRjEdINv+LrVAyun19moc33ZPBlztBB0XvcE8bXE7FSpCIzeWYAW2PFtZGd9VrYMzIIGNTyhitlII+gBZpwveX+6yHMwg6JWCBHq0YwR7efyzADoFgVF+OeX+Q8tldQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tn23i8i/; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso59522855e9.3
-        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 05:52:23 -0800 (PST)
+	s=arc-20240116; t=1764079470; c=relaxed/simple;
+	bh=p4G9N5VL82+8fDGeh1yk50R0ZJsGQQ1EeTjvcfTcbuM=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=H8b3GtkCTExfWBfmIe1jcHOEBLFcCLSh/Me2Y4hAhTJ8yLuGchGFWbYgIzKBKXKngapOnQDR8nXgmR25p7ySyR9TtDYcxw+zIgPJfcy2xXMrgWt9JfD1Sk34/eQ/rh6iIpdoJ0M9hy1Ewz7aT9Qdr5gAKb4Vx6eG1lJyY41LCMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1zelY84o; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-4330ef18d8aso22304435ab.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Nov 2025 06:04:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764078741; x=1764683541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
-        b=Tn23i8i/gAj7vqH1s1cK5d5zQm7b7yhVGSi/AE/Ivf2m+vkkXTZSCrGKTRHLTuQTa7
-         +KvNFkU/QqK+sEYwmwE2Yb0UignIKpNtSGsqpMHs/CPGxcYMG/N8qiBawIMySNh8OD9L
-         5CFkyX3nscW9U/c0Ixc1EDHO06SCrhsAKXgyg9EeZTPGrTiWs68K46R3tkvVE17xIQlY
-         0Zwxtkt7V4Jn7BDMVmlugZm3dJgJc/uiAABbZzW2rEcSjTHEnOrqyDjv+jCOU9L7FiMM
-         HA/ARVms1OdAi49sm7BTSYV6aRV0jfm40tamlOr9bgiYxozsxBCGcTL6bgfe+VIuWtOO
-         M3Gg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764079465; x=1764684265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m2qZLKk0GKOWjR7LV0DnggaD4uD+pKx//l9UJMYeLCk=;
+        b=1zelY84owpTUd4HDgUfuX1ElvXgwrncfG+kf3WgZJxo4F/b5JKseeu/8aMiPTAZ10j
+         L63LgOMFnJBXbYlzO4koUxNpvso6nyttsavIgDcRkv/fqnkLHTIayn4tiyu3SwmAhAuk
+         YYHe1NsrW2Oj3ExilkhDbQMW3lb2+uEcsvK4CoJzME9rC86RF5kuIfpoZ/qBIPtsm9Uy
+         vuaIyRZmYLHXxBsV17X+g73iVbmZ2cf20Q719B/cNDSOXNP36yyQxxiu1XIiUf/pXkNO
+         6g21HKuzSEXX3m/pN2i4rvI4nHJZ9Y7E89gLrGxoZ9TGGWOSsQmXxfhEjZ+AuL3KOaaE
+         JG7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764078741; x=1764683541;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
-        b=BN2zFvi0BWQqD+IDRVC6v3ONRd7q50IcjbrAUOBPa2vti8p3CkJbvX5vFOnoW8FnA6
-         J3FB15YyWalb2MbmXW/wWDc7FEpVQ5tpQSx6vM+3v1wyjLaZ+ESEnnh2fiyR4z64g0Ef
-         nW4247A5iJB1Mrxs/7hKJm816mNHt5LEf/6FHPc645Vp48UKySEEk0kRAE/KLNLPhDMO
-         Y7dROeald1WFmFlDIzR02EjMU4aH/pbuXIgpyGYcaWrmik+gCPHYf4X9ORlI+Py++e+D
-         JoNjX/PhL/JPDtHAQWtmp8hPKAY/YWp+0B8s/3g5G4a2CfULyBizDzw+ty8rl1sSMGq9
-         Cd8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUIAfRCOtZ9zzm9RbxSXOAn4YUsfEmgvoi0Tptjtnn8ENTOkDNoM6kAVSY4g2SFkgRqth+EcTNXWQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPCWCAbGmunBO2VH7Ck5p1a4kpeQ7QcSEek0jPkl3aBABQ4cmk
-	PGK0/Ht1BJy7dkzFwM17n+Uig37rBmsOQOTdb5AVGX9Z9VHkEX2qaAY6
-X-Gm-Gg: ASbGnctXP+gR30bwp2iWxCNchzO+YkQEocFCWJh/0abya2ispTtF8cuZTk+H7+Q9RCd
-	QnXDy87FOv3JgP9O6gASCMJDGGUM0ekzcCGd9f11EWEsCVPyiI/cSrbSKbAV8nYWfEhz8GhGQee
-	cpl+lgEWIGlYkHmiMq5hKubMZAtqjLrG+hybTNI8RNFMFmSgR4j/Uf3mDAyfKb/v5/8cxwSyjJK
-	N1yjXEkpgAOKIBnOlypPgfScUJcCZmGfOMKlzL7kcg+1EOzjmOlmAQrRwVCOHQxmmYSVTMDKN3q
-	nUNc0SaxKOZvVAgafBNWrTgqMasu51w9/o13VgD6LA+DA/wYJwIETwwPJjlvzj/oVzzTS45zlDd
-	cQgSbZO3+SzG4tP4AZqGGyKLaFFEUXKT2BhVDE+Llg8fPKj3dnOhups6FzRilCyLMt5+gBdFibJ
-	xVzNLclGpgP6C609TWGFqEnUrnYCOYy5gqz82VM/c4CVkcfsqwXGEcaZ7kR7kVyfiRr8q6paPV
-X-Google-Smtp-Source: AGHT+IFKl0FSWbmMlOH9ZWfAZWRSmX8BD6ohJLnDHz1PIktPZZElxLDCt4b4SkoYMkjbJJn+KqrIYg==
-X-Received: by 2002:a5d:5d81:0:b0:42b:3ded:298d with SMTP id ffacd0b85a97d-42cc1d2d5ebmr16251211f8f.32.1764078741365;
-        Tue, 25 Nov 2025 05:52:21 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fa3a81sm35280457f8f.26.2025.11.25.05.52.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Nov 2025 05:52:20 -0800 (PST)
-Message-ID: <a80a1e7d-e387-448f-8095-0aa22a07af17@gmail.com>
-Date: Tue, 25 Nov 2025 13:52:18 +0000
+        d=1e100.net; s=20230601; t=1764079465; x=1764684265;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=m2qZLKk0GKOWjR7LV0DnggaD4uD+pKx//l9UJMYeLCk=;
+        b=iAl9h5Yi7eKq7RyP+6MX7L/FQ7DqgGjTI0rv+w31LHKzWSap5jmfrm8/BTmkgEW6HS
+         77OxVkCcVlWGwCBdFwczgjGsF9TO1jJ1wTTwIzGaWbAMwaekGs2IbydbkUiFamw7IBTS
+         M+/TE+XAAcQXXB66Uw4lfA7jCOSGy+lWqhkXSGQr8uyrWA5tyvusSJLZidrHiH061jfT
+         7AuugYp3uNNrguzJTzSq8lytgakVvS0LcSXcjANJ/qhTjYmpnaD9ApnOChVNrs0umagl
+         A2xWwqzoiQq8+Dc8h4ZjSGaJSeQs1c1c06KwICK7mrjjwsfHW4zuPJ5Q+l1Zs9C8UeWy
+         uZhA==
+X-Gm-Message-State: AOJu0YwqBSSzSMG8pXojQ6XBfeWa3xfd72/+zY6tCUU81LcSgTdme4by
+	SJHukOWC1AmSoHiVLdwXLdyNtWyOCuscTSiGPuWSKWbHJde9oJ1wIkvN42YntwqJkpe3IFb5mTO
+	DXMNo
+X-Gm-Gg: ASbGncsrKeQyvjQLVQqP0StE7NteJTnyuhqYHXHGqM6DGoP5f73w3LfAyWWq0AHfZwu
+	kWaStYGYRjXx1Q8C1pHFEWQgCSJbtz6xfi4M7groDk6Fs1OYLpDOux7NJq3zVrRLKnAOgWY3UKU
+	k/njWtitQX7MRgREAjhs0g+nApu5/StTzXwJwmJXQK5tVXjHBRHPz4rJRPKE4giLkuBNNvE7xIK
+	sS5ZExVswyrE3EimMS/qcvkq++dDKODxPHEtJXbWYi4J0f8uYfYJsFTx5I6IgGrKM94xn/OLOho
+	Hu6JsJuNaX1noc2sWMdp7jjCYQWZ2OGhqjud98GaQs0jTaT5e3WYmOv7Cyv1r8m4W39pyzIsCOK
+	a2rB6Zj6d25dyzS3XUHj60R4EfRFDzXrpHqfVnYXkvF9qCpdjChQHbsp+qmLlSAXEU7rfqUlFlw
+	o=
+X-Google-Smtp-Source: AGHT+IHFLeSw2MAi0ga09NsjQnGCwYSdgyJLqsckwE3Fy02SSe5uhwUM1fOZja2r4v7qV+vS+ewuvg==
+X-Received: by 2002:a05:6e02:218d:b0:435:a423:35db with SMTP id e9e14a558f8ab-435b8e9a97emr129715855ab.39.1764079464846;
+        Tue, 25 Nov 2025 06:04:24 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-435a90b6babsm73512675ab.20.2025.11.25.06.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Nov 2025 06:04:24 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <3f8137e8c7183817bd7830191764edbd3a59d7f9.1764073533.git.asml.silence@gmail.com>
+References: <3f8137e8c7183817bd7830191764edbd3a59d7f9.1764073533.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: fix mixed cqe overflow handling
+Message-Id: <176407946382.1069147.4213690256618739450.b4-ty@kernel.dk>
+Date: Tue, 25 Nov 2025 07:04:23 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC v2 00/11] Add dmabuf read/write via io_uring
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
- Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <cover.1763725387.git.asml.silence@gmail.com>
- <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
- <905ff009-0e02-4a5b-aa8d-236bfc1a404e@gmail.com>
- <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
-Content-Language: en-US
-In-Reply-To: <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 11/24/25 14:17, Christian König wrote:
-> On 11/24/25 12:30, Pavel Begunkov wrote:
->> On 11/24/25 10:33, Christian König wrote:
->>> On 11/23/25 23:51, Pavel Begunkov wrote:
->>>> Picking up the work on supporting dmabuf in the read/write path.
->>>
->>> IIRC that work was completely stopped because it violated core dma_fence and DMA-buf rules and after some private discussion was considered not doable in general.
->>>
->>> Or am I mixing something up here?
->>
->> The time gap is purely due to me being busy. I wasn't CC'ed to those private
->> discussions you mentioned, but the v1 feedback was to use dynamic attachments
->> and avoid passing dma address arrays directly.
->>
->> https://lore.kernel.org/all/cover.1751035820.git.asml.silence@gmail.com/
->>
->> I'm lost on what part is not doable. Can you elaborate on the core
->> dma-fence dma-buf rules?
+
+On Tue, 25 Nov 2025 12:33:06 +0000, Pavel Begunkov wrote:
+> I started to see zcrx data corruptions. That turned out to be due
+> to CQ tail pointing to a stale entry which happened to be from
+> a zcrx request. I.e. the tail is incremented without the CQE
+> memory being changed.
 > 
-> I most likely mixed that up, in other words that was a different discussion.
+> The culprit is __io_cqring_overflow_flush() passing "cqe32=true"
+> to io_get_cqe_overflow() for non-mixed CQE32 setups, which only
+> expects it to be set for mixed 32B CQEs and not for SETUP_CQE32.
 > 
-> When you use dma_fences to indicate async completion of events you need to be super duper careful that you only do this for in flight events, have the fence creation in the right order etc...
+> [...]
 
-I'm curious, what can happen if there is new IO using a
-move_notify()ed mapping, but let's say it's guaranteed to complete
-strictly before dma_buf_unmap_attachment() and the fence is signaled?
-Is there some loss of data or corruption that can happen?
+Applied, thanks!
 
-sg_table = map_attach()         |
-move_notify()                   |
-   -> add_fence(fence)           |
-                                 | issue_IO(sg_table)
-                                 | // IO completed
-unmap_attachment(sg_table)      |
-signal_fence(fence)             |
+[1/1] io_uring: fix mixed cqe overflow handling
+      commit: f6dc5a36195d3f5be769f60d6987150192dfb099
 
-> For example once the fence is created you can't make any memory allocations any more, that's why we have this dance of reserving fence slots, creating the fence and then adding it.
-
-Looks I have some terminology gap here. By "memory allocations" you
-don't mean kmalloc, right? I assume it's about new users of the
-mapping.
-
->>> Since I don't see any dma_fence implementation at all that might actually be the case.
->>
->> See Patch 5, struct blk_mq_dma_fence. It's used in the move_notify
->> callback and is signaled when all inflight IO using the current
->> mapping are complete. All new IO requests will try to recreate the
->> mapping, and hence potentially wait with dma_resv_wait_timeout().
-> 
-> Without looking at the code that approach sounds more or less correct to me.
-> 
->>> On the other hand we have direct I/O from DMA-buf working for quite a while, just not upstream and without io_uring support.
->>
->> Have any reference?
-> 
-> There is a WIP feature in AMDs GPU driver package for ROCm.
-> 
-> But that can't be used as general purpose DMA-buf approach, because it makes use of internal knowledge about how the GPU driver is using the backing store.
-
-Got it
-
-> BTW when you use DMA addresses from DMA-buf always keep in mind that this memory can be written by others at the same time, e.g. you can't do things like compute a CRC first, then write to backing store and finally compare CRC.
-
-Right. The direct IO path also works with user pages, so the
-constraints are similar in this regard.
-
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

@@ -1,47 +1,48 @@
-Return-Path: <io-uring+bounces-10840-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10843-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA67C94525
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 18:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51547C94537
+	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 18:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9343A865E
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 17:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 271B23A903A
+	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 17:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC8123EABC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A3230F930;
 	Sat, 29 Nov 2025 17:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Hr7uoRbh"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cnQ2DK3z"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3338622D4E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BE3217733;
 	Sat, 29 Nov 2025 17:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764435700; cv=none; b=VvVQ0J11T/jGArwiihm1UfxJuaDVBEH4dLC1KUSF4mbWu5jDTqVsbCAx3mhB/5GwIcnrlORX17d4Sfil7pJWDcpTCkOLWWxGbD/iugXlU0JC5vrnFJqKE95qigSBHE2EsbQiis+79/NiakGDU7geHUFekuTKgAhA34YVOAiVz+4=
+	t=1764435700; cv=none; b=KS7e0Q6ZWFd5b2QL1AwHarMiPUwScRfzYhkYdrK1/zdw1Q3GEMoxdIQ8tBbyuKAxRlEIKgEh/dx5Jdx2z8i3BtVQeMshOHsTCx15JDyk0GAtE4j/sKMLSVZ0TNZtRN/bVmRAgT5V+gbvlygHCyQm5v65YeG/AlMucs5I99sdaqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1764435700; c=relaxed/simple;
-	bh=/V+yneA/RN3f/AC/uyCI7S9UaPcmdyIblLcpjB7S4So=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OgpClcICbqcOwE2Y2p6dMMh7IenR9mNGnI7HcTdijC1C3AiVrWMe3dORN4Y78J9r4t1K/LYHKjmoNHtYlZo0S8UU/y6sby8U1YXNJR10qfNOQzadFLkecG5krdnd5l49lye5nsWjFB2KoWDIoczigBFYHGC7O/FjhuP06pmPWGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Hr7uoRbh; arc=none smtp.client-ip=62.89.141.173
+	bh=baMOPtk3nbJJvzRoLOvYH128FU/gcEoAgtiDd1Hx3fQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QeI2IEEcx4qvN/Jo/IlaI/u2cRNBcGeVk/CX2tbiXINaoTwUDerflKcyTQ0qvdBR6HnSKpwWSas7mutowENvLvIH60gNMPGWJD/uXNt25FH9VKaIQbbN361B3uY/zPBWYqBJSgttDYgyzJRtwAVAoKlj9DRqCHb+eSHXgjQ71z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cnQ2DK3z; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=28phI01yHrxIG5STEvcq2/P5S88Qkqz5fNogIl9Xn4A=; b=Hr7uoRbhNuBcVfky2ZyjO5mvpG
-	qOUU2VozQRAC/YnCl9C67y7oEFlKMLueNQS8pzsWUyertvCJOugRyVEv+PvWzge2wMhK44BNhE42w
-	t1rUaaWBzyehvulABbxKiRxIyOkR9FtQMs8EhzUyM3auPtEAHwCI8CjhfgfUtYjGwGT6R5DB7GsNF
-	sD+cP+qLmlDhJYWDh6DaaL4GMFbugLWPVvwb8tk4+sOEnxs3VyBeIk9LTmwiMTbwFmJ0EJMwFAZhM
-	28wQm8Bj/qcgAfqhnmwpwx3DJmt0+sT6bQvzUAdeAa0zYe2mqCKbVmaxau1RYOQ0YOdjPLBXPWAfn
-	nrigQYYQ==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=cKIa+FRKqhlosKFiCPklZ3Ftnw6IS15CGX1Ala1Uzf8=; b=cnQ2DK3zdQpC2/gSWhzGLWWvMy
+	QIAUP2rtjuzIFeTON/figVGc4uRXX1UU0qW+lxJszEXRceFxccdFBHQS//80Siyg2HKaxVWTQyR2z
+	1Mri7yFl3E006kWXuwmN47tio//R3L3MyKYcChb+6Wl3Uv0gRKIbxwYv1gCTV9iMyi/0A8LHfY6t3
+	UwoslDV5HORetLJQ91ZlXgxlmyrTISRJ16d/OaVvTqB13rU+21yjJLhRwW7s35fjesNF3prvIqhH9
+	egRUdznDvbL6m6E/BFp976c2NlmbeD8IDnN5muztWidyydd8Hlo/S/hWMHjeGdhzW3GEoGviIxvOq
+	rf73q9tA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPOKM-00000000dBr-11sC;
+	id 1vPOKM-00000000dC6-2Qbh;
 	Sat, 29 Nov 2025 17:01:42 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,10 +54,12 @@ Cc: torvalds@linux-foundation.org,
 	axboe@kernel.dk,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org
-Subject: [RFC PATCH v2 00/18] io_uring, struct filename and audit
-Date: Sat, 29 Nov 2025 17:01:24 +0000
-Message-ID: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH v2 01/18] do_faccessat(): import pathname only once
+Date: Sat, 29 Nov 2025 17:01:25 +0000
+Message-ID: <20251129170142.150639-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,58 +69,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Changes compared to v1:
-	* putname_to_delayed(): new primitive, hopefully solving the
-io_openat2() breakage spotted by Jens
-	* Linus' suggestion re saner allocation for struct filename
-implemented and carved up [##11--15]
+Convert the user_path_at() call inside a retry loop into getname_flags() +
+filename_lookup() + putname() and leave only filename_lookup() inside
+the loop.
 
-It's obviously doing to slip to the next cycle at this point - I'm not
-proposing to merge it in the coming window.
+Since we have the default logics for use of LOOKUP_EMPTY (passed iff
+AT_EMPTY_PATH is present in flags), just use getname_uflags() and
+don't bother with setting LOOKUP_EMPTY in lookup_flags - getname_uflags()
+will pass the right thing to getname_flags() and filename_lookup()
+doesn't care about LOOKUP_EMPTY at all.
 
-Please, review.  Branch in
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.filename-refcnt
-individual patches in followups.
+The things could be further simplified by use of cleanup.h stuff, but
+let's not clutter the patch with that.
 
-Al Viro (17):
-  do_faccessat(): import pathname only once
-  do_fchmodat(): import pathname only once
-  do_fchownat(): import pathname only once
-  do_utimes_path(): import pathname only once
-  chdir(2): import pathname only once
-  chroot(2): import pathname only once
-  user_statfs(): import pathname only once
-  do_sys_truncate(): import pathname only once
-  do_readlinkat(): import pathname only once
-  get rid of audit_reusename()
-  ntfs: ->d_compare() must not block
-  getname_flags() massage, part 1
-  getname_flags() massage, part 2
-  struct filename: use names_cachep only for getname() and friends
-  struct filename: saner handling of long names
-  allow incomplete imports of filenames
-  struct filename ->refcnt doesn't need to be atomic
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/open.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Mateusz Guzik (1):
-  fs: touch up predicts in putname()
-
- fs/dcache.c           |   8 +-
- fs/internal.h         |   2 +
- fs/namei.c            | 218 +++++++++++++++++++++++++++---------------
- fs/ntfs3/namei.c      |   8 +-
- fs/open.c             |  39 +++++---
- fs/stat.c             |   6 +-
- fs/statfs.c           |   4 +-
- fs/utimes.c           |  13 +--
- include/linux/audit.h |  11 ---
- include/linux/fs.h    |  28 +++---
- io_uring/fs.c         | 101 ++++++++++---------
- io_uring/openclose.c  |  26 ++---
- io_uring/statx.c      |  17 ++--
- io_uring/xattr.c      |  30 ++----
- kernel/auditsc.c      |  23 +----
- 15 files changed, 286 insertions(+), 248 deletions(-)
-
+diff --git a/fs/open.c b/fs/open.c
+index 3d64372ecc67..db8fe2b5463d 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -471,6 +471,7 @@ static int do_faccessat(int dfd, const char __user *filename, int mode, int flag
+ 	int res;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
+ 	const struct cred *old_cred = NULL;
++	struct filename *name;
+ 
+ 	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
+ 		return -EINVAL;
+@@ -480,8 +481,6 @@ static int do_faccessat(int dfd, const char __user *filename, int mode, int flag
+ 
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+ 		lookup_flags &= ~LOOKUP_FOLLOW;
+-	if (flags & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
+ 
+ 	if (access_need_override_creds(flags)) {
+ 		old_cred = access_override_creds();
+@@ -489,8 +488,9 @@ static int do_faccessat(int dfd, const char __user *filename, int mode, int flag
+ 			return -ENOMEM;
+ 	}
+ 
++	name = getname_uflags(filename, flags);
+ retry:
+-	res = user_path_at(dfd, filename, lookup_flags, &path);
++	res = filename_lookup(dfd, name, lookup_flags, &path, NULL);
+ 	if (res)
+ 		goto out;
+ 
+@@ -530,6 +530,7 @@ static int do_faccessat(int dfd, const char __user *filename, int mode, int flag
+ 		goto retry;
+ 	}
+ out:
++	putname(name);
+ 	if (old_cred)
+ 		put_cred(revert_creds(old_cred));
+ 
 -- 
 2.47.3
 

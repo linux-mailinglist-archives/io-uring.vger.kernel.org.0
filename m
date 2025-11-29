@@ -1,170 +1,139 @@
-Return-Path: <io-uring+bounces-10848-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10855-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCB3C944F8
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 18:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD40C945B9
+	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 18:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C3A44E41A5
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 17:02:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2B924E2A87
+	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 17:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265A331064B;
-	Sat, 29 Nov 2025 17:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6718C30FF3B;
+	Sat, 29 Nov 2025 17:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nORElcFX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBIQh5S2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB46323373D;
-	Sat, 29 Nov 2025 17:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F54E20F067
+	for <io-uring@vger.kernel.org>; Sat, 29 Nov 2025 17:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764435702; cv=none; b=OV7/0MPD8v4Fmk0RNZs+NiBUnncZnh/ZC5rlLQNsE4KHypYit7Zf6xriOf2qwdOJFeY7LCp2YoomG4U4pD+QEGth7pA0xc2Jzko2hGycIj1p4dXEjcYWpDDxEwEavtq/sK0udkTNLFk1IUwaUgA/G0T0k0fFJw43AIgsMa7HH+8=
+	t=1764437618; cv=none; b=Xmc/NGMGNVN8lJ9NUN/r4x8aPooW2KgWlVPAWf5ZoPgQ9W/zKUBBPNx8dUtsUgmIzBoOGDShvk9EcXLtwrf2ce3oLJf2h8nlvFlryI++B0sWMX0+EN1LEwpexF34sxblefxU3zBQaDmoPqvVWr1OGIRXUXfrFtICZ/IiyjtYB2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764435702; c=relaxed/simple;
-	bh=QPsA95FqkoqhZwspP+I0M8hqJMt14cqnl0F7hFCckZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GSs8k2PQdSru90BeFpL1Tts0L7L42Nia4BgTbpzNZJT01eJQTUutojRG6e21szmb7YYNIfOyQL5QtIhOTQXyQsZWcNpcZr+jkgV+JBPIrwwdv3HJqd7IkwFjFD5+Eiw3phHcteoztTpT1hip1WFnR6a8idQsiOc1UpSQl3wajDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nORElcFX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=dnuK+nfSVSM8EnnK0uwzWnmtu2jEW/yLVrHY/kiG4UY=; b=nORElcFXZIM+PZtx1nWH5bOkZt
-	VHIGK5a3y6Tv0bG/Ku5dhUwLqANlxxAZZcKTIzuFkS34gcK3Vd6WJjZ92s3w+qdFMwdc73XC75XG3
-	tOKIj+Q88sM8iZL6P6Rj3pW0dAjP0AgM1dKiG1++gCVcyVcfwHtdopNDq783wH+pNoUGwL/gSk94k
-	EnVm4EqVjhKoHQ5INCAgU/Lm9vg+/y9cer5BpYLhzwrt1I+0hRf50/lHKPAiU1M0kzCrNkUf1t66N
-	kZDj5Qn/CuYo67DxoZumbabb07B+OqvbbmdCEgScUoRUsZ2aiKi9LsBC7qQfxhR/wvO0d2PPc2US3
-	HkgHuUyA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPOKO-00000000dET-1ZhJ;
-	Sat, 29 Nov 2025 17:01:44 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [RFC PATCH v2 18/18] struct filename ->refcnt doesn't need to be atomic
-Date: Sat, 29 Nov 2025 17:01:42 +0000
-Message-ID: <20251129170142.150639-19-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
-References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1764437618; c=relaxed/simple;
+	bh=+lgN8J0IowAdNicv/d1NP7IzfMlJS8XCtDt0GRjHDXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DQNCPbIu7AX/Oo8/NVOHfQJiOXMhYVPShu13+7FeICud0Cxjpp7nKTdRjX6FWJ/2qbqmGDeQP2qX3xKfke6beW9uH/sBDFcuyajy20+Svve2GU1iUlMRbgm1EvEP8BWYcRGrYDthvc9c4yOPX53dnNZMqnwRO6EUeHlfF2ef2o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBIQh5S2; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b728a43e410so489527766b.1
+        for <io-uring@vger.kernel.org>; Sat, 29 Nov 2025 09:33:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764437615; x=1765042415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xqBHGbcsAsVVRiASRLwDbcSq7PIrgcMaytoi2qLw8ec=;
+        b=cBIQh5S22M8W7nQha18KSIsIWPzTRaCbRI5sSO/+y2bwDuwhWZtyqruSKCsYmjmRLJ
+         xfQKDzZZrOrZ6UsfwXxs29D5TS7Ob49q50+gUcBMVCuxirPP7vtZhSbOPjr8PdPchbAz
+         zQaSH2gLKwAlYhO3VjKuZMCRydvPQlSKEOx+L+bQd9+8ZlYe02yuSvbBxcorQKHuh3ly
+         HNHocYoXhoFSxsSSu8DsyggFt3SOTDCSkW5xsvzfiyu0GxIYIcBTKbu5o8gaVOvYUGFB
+         cEfv7vGw2Yh2imYaTWPqLTBQiaOHXhPo0k7be8eRTExYYiMQgX3GcQUG//3gsJ8hGKtC
+         3rTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764437615; x=1765042415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xqBHGbcsAsVVRiASRLwDbcSq7PIrgcMaytoi2qLw8ec=;
+        b=W10TU/ImbwoWBJhyK6cw5zUtTSdnV9uttq8ntcwDyQdznrFhnZqgIZ6/R/5vWxRQyf
+         wFJ8WqpB1frxgGOvFOJ3n6g/vJXbEmzKJETgIks9d8tXsUIMQVwUS6lAYexmHnrNhINc
+         4/7NPiT9BY8JZaCzinZiDwBYIeb7FPPP/P9bci0NzqM3TAi7GOu7TDUr2cXk9xl08D25
+         4VR9O+1ka+mITzMuIl+Y85zvFotHyFfKGTNJVUx3dyf8ixiyjOE4PTTkkabV5wMiHDSo
+         T2c+ZBr4P4WuMcHxrrZSpN+KbcDahB26WtlJrvr2E72nNNArHLz5KfBOXI8o2/vkukXE
+         OnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUchnXs4bMU2cTAvyQm9fgpV3J4EFBtH6KmEqD6CHovnfHS4Ae4prozft6vtFCV4Y9djnzEQ0w2vw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+noxYLDAxIPfzkD9pbidE9c6u7b823zOfnhXXw1ooIz+Togoh
+	q+1qIuk1Az/VeKDcaefT11vaxpcPGxSLaJR/stN7sj7dxJkO9RJ9LJnRdkK4yhSxiXtK2u1Zzw/
+	fSdpdFVE0/UrJo6fYDNt2pewAGIVrH6b3eA==
+X-Gm-Gg: ASbGncvu4oNZY5TQGUCMEV0zdy2dn5BUyoCFEueVUpK8f0/iCcw5palu2+T99a2eMGM
+	5VTUhmXWrgSvpbiD5f1xn5GoIfM8MZO93rlGMIVY9doZDpmJGomp6D+njoqV+WLrvA4de/AUgXO
+	WSlvtuSZZwA8Odcu60CULdvBJ+LJEHFnEyMEQRswzDsr5oZqu4tBxuzCPSSsx5e/3s6992rjdc/
+	BJdVc10jgBXriGx6qZxSc1iAPS2HvpRGmenVXVujJZAt/rJJOPwCKBRQVAIhI5qaO9xjQ3Cd1CS
+	hyPlSfTLXCulEXbKCXPV5jjSbw==
+X-Google-Smtp-Source: AGHT+IGCyw0hgpfwbdp3a3E31TdyZ9pXIJL/jdDuy8vbFKa1VPNcT6NEqn4DspaZQIjyW4rDdWr2eMhKOKbCgdYDBbM=
+X-Received: by 2002:a17:906:c14b:b0:b73:398c:c595 with SMTP id
+ a640c23a62f3a-b767156556amr3928338466b.19.1764437614344; Sat, 29 Nov 2025
+ 09:33:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20251129170142.150639-1-viro@zeniv.linux.org.uk> <20251129170142.150639-16-viro@zeniv.linux.org.uk>
+In-Reply-To: <20251129170142.150639-16-viro@zeniv.linux.org.uk>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 29 Nov 2025 18:33:22 +0100
+X-Gm-Features: AWmQ_blvi087-G2CtHlEiHh6F6ijMslc1kpUveo4D1zCzMmn1FqYhm25LkTHXDE
+Message-ID: <CAGudoHFjycOW1ROqsm1_8j47AGawjXC3kVctvWURFvSDvhq2jg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 15/18] struct filename: saner handling of long names
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-... or visible outside of audit, really.  Note that references
-held in delayed_filename always have refcount 1, and from the
-moment of complete_getname() or equivalent point in getname...()
-there won't be any references to struct filename instance left
-in places visible to other threads.
+On Sat, Nov 29, 2025 at 6:01=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>  void __init filename_init(void)
+>  {
+> -       names_cachep =3D kmem_cache_create_usercopy("names_cache", PATH_M=
+AX, 0,
+> -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL)=
+;
+> +       names_cachep =3D kmem_cache_create_usercopy("names_cache", sizeof=
+(struct filename), 0,
+> +                       SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct fi=
+lename, iname),
+> +                                               EMBEDDED_NAME_MAX, NULL);
+>  }
+>
+[snip]
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 59c5c67985ab..0b01adcfa425 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2833,11 +2833,13 @@ extern struct kobject *fs_kobj;
+>
+>  /* fs/open.c */
+>  struct audit_names;
+> +
+> +#define EMBEDDED_NAME_MAX      128
+>  struct filename {
+>         const char              *name;  /* pointer to actual string */
+>         atomic_t                refcnt;
+>         struct audit_names      *aname;
+> -       const char              iname[];
+> +       const char              iname[EMBEDDED_NAME_MAX];
+>  };
+>  static_assert(offsetof(struct filename, iname) % sizeof(long) =3D=3D 0);
+>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c         | 10 +++++-----
- include/linux/fs.h |  8 +-------
- kernel/auditsc.c   |  6 ++++++
- 3 files changed, 12 insertions(+), 12 deletions(-)
+This makes sizeof struct filename 152 bytes. At the same time because
+of the SLAB_HWCACHE_ALIGN flag, the obj is going to take 192 bytes.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 8530d75fb270..d6eac90084e1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -146,7 +146,7 @@ static inline void free_filename(struct filename *p)
- static inline void initname(struct filename *name)
- {
- 	name->aname = NULL;
--	atomic_set(&name->refcnt, 1);
-+	name->refcnt = 1;
- }
- 
- static int getname_long(struct filename *name, const char __user *filename)
-@@ -284,13 +284,13 @@ void putname(struct filename *name)
- 	if (IS_ERR_OR_NULL(name))
- 		return;
- 
--	refcnt = atomic_read(&name->refcnt);
-+	refcnt = name->refcnt;
- 	if (unlikely(refcnt != 1)) {
- 		if (WARN_ON_ONCE(!refcnt))
- 			return;
- 
--		if (!atomic_dec_and_test(&name->refcnt))
--			return;
-+		name->refcnt--;
-+		return;
- 	}
- 
- 	if (unlikely(name->name != name->iname))
-@@ -323,7 +323,7 @@ int putname_to_delayed(struct delayed_filename *v, struct filename *__name)
- 	struct filename *name __free(putname) = no_free_ptr(__name);
- 	struct filename *copy;
- 
--	if (likely(atomic_read(&name->refcnt) == 1)) {
-+	if (likely(name->refcnt == 1)) {
- 		v->__incomplete_filename = no_free_ptr(name);
- 		return 0;
- 	}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 52ee3bc1baa9..b21814b93dcd 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2837,7 +2837,7 @@ struct audit_names;
- #define EMBEDDED_NAME_MAX	128
- struct filename {
- 	const char		*name;	/* pointer to actual string */
--	atomic_t		refcnt;
-+	int			refcnt;
- 	struct audit_names	*aname;
- 	const char		iname[EMBEDDED_NAME_MAX];
- };
-@@ -2947,12 +2947,6 @@ void dismiss_delayed_filename(struct delayed_filename *);
- int putname_to_delayed(struct delayed_filename *, struct filename *);
- struct filename *complete_getname(struct delayed_filename *);
- 
--static inline struct filename *refname(struct filename *name)
--{
--	atomic_inc(&name->refcnt);
--	return name;
--}
--
- extern int finish_open(struct file *file, struct dentry *dentry,
- 			int (*open)(struct inode *, struct file *));
- extern int finish_no_open(struct file *file, struct dentry *dentry);
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index e59a094bb9f7..d71fc73455b2 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2169,6 +2169,12 @@ static struct audit_names *audit_alloc_name(struct audit_context *context,
- 	return aname;
- }
- 
-+static inline struct filename *refname(struct filename *name)
-+{
-+	name->refcnt++;
-+	return name;
-+}
-+
- /**
-  * __audit_getname - add a name to the list
-  * @name: name to add
--- 
-2.47.3
+I don't know what would be the nice way to handle this in Linux, but
+as is this is just failing to take advantage of memory which is going
+to get allocated anyway.
 
+Perhaps the macro could be bumped to 168 and the size checked with a
+static assert on 64 bit platforms? Or some magic based on reported
+cache line size.
 

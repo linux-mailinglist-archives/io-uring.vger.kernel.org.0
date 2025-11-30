@@ -1,197 +1,217 @@
-Return-Path: <io-uring+bounces-10858-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10859-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D98C94B78
-	for <lists+io-uring@lfdr.de>; Sun, 30 Nov 2025 05:38:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67067C9563F
+	for <lists+io-uring@lfdr.de>; Mon, 01 Dec 2025 00:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5E04344EEC
-	for <lists+io-uring@lfdr.de>; Sun, 30 Nov 2025 04:38:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 071A74E02EA
+	for <lists+io-uring@lfdr.de>; Sun, 30 Nov 2025 23:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A6B2264B8;
-	Sun, 30 Nov 2025 04:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD592E540D;
+	Sun, 30 Nov 2025 23:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0csajpk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4f8V7nv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5B21578D
-	for <io-uring@vger.kernel.org>; Sun, 30 Nov 2025 04:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2134A22576E
+	for <io-uring@vger.kernel.org>; Sun, 30 Nov 2025 23:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764477513; cv=none; b=mw4wv9CCfKQ4zor8PUYxviYAvm3Pwchf2aVZ90AwQLDxTbvFL1BiHXA3iZ6ciLgOvL2WEdJxhZFTuPDy8DN4bn/OP+Iohbm+BcW/vO4mRf4r+NQD+Zn/5QZ+47rExEQLpF2cKqa+XY24dz4s1Y0OsTOGifdB+kj1l3Jl1IdY1bg=
+	t=1764545733; cv=none; b=Uh7OtDd2EJ62xfqzns/vHe34tx/ZAvjJa8WcbvYk4sDmLLbrYDGm5UylBgmtlEiczoxZUluiY1nL4fUlF01BY26nBNdPNWTe9kTPtMvQ0YC0YDgJ6pckXdahjv1l0eh7Si9yhWp5PI1lhPrBOYfdwyXnBPeyg+xLy9Wkg+RPAdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764477513; c=relaxed/simple;
-	bh=WQ94DebAPuz3wOX1RNLK86K8LFdn0rFvCp8UOMGIZLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OuKyVWF2TmuBe6BwMFK0MkfaFtNLxY/Vs1N8N6CS5VXARBNrqOthEW19Wv695NfhHj1D2nAcf5YqNwtjSZ0E+VwPjKh9GdZlXJt4jQWGH8WXOZeuGD8ONbRxMpdVyYoera4CwiiVdNiavILm8AJJFZRZB9nve1szNbsid70jUvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0csajpk; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1764545733; c=relaxed/simple;
+	bh=avO1UeedN/STJoSnCOQ5Xr9OSRYW37NwH27coYDpseQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pwii+ufbryclHx5NNEc6Hj5QovOXwatQi0yjJyj7UBzMTgleehoROzLKhcIyfnaVMJn9n0ABBOlcdCMIFwNiqRvzREGwvqfOtYnBTZOoyGhakPxl3sP5QzUdaHGRjYoqeLIj+Q4x4a3cPchfUPukp390KJIoDV4UE42U0bzXFYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4f8V7nv; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b76b5afdf04so546483766b.1
-        for <io-uring@vger.kernel.org>; Sat, 29 Nov 2025 20:38:31 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47796a837c7so23594845e9.0
+        for <io-uring@vger.kernel.org>; Sun, 30 Nov 2025 15:35:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764477510; x=1765082310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wm2qs060enFDQ6DOh1yWGpw1oXM6AX8D1bOSCPnDDdI=;
-        b=h0csajpk1Xo7dlNkjPrjrTQkECKOAAMbOjM2eW7Un94pSngiL4FAIITuTXgGIXvFHX
-         hwfa8oCJkSpaLDLJmstitETOcxC8qaCpbo1zwYqYb+55fAnhTP6B8Hx5g6Nphi+2fjq/
-         9VG6U4qcJoqe8Gp2wZu1Dzvhr0tH5T/XoYLabAEMpMLl24bo8C9BbU7C+aJui4Pdw17w
-         ppTYg34CLnGY/mtWXy+NlqSbZ9+fNd8Oemd1FaQEuPVkih3fvB/4DROzpG9szFbRm2zd
-         DJZ5eLSzYXJi3DnGe8DO4VhbbejFtyuhevAKvq21q56h9wPAByDx0rOE2Sv8PExGCtlB
-         D4tg==
+        d=gmail.com; s=20230601; t=1764545730; x=1765150530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALyiArP9r0l0ZpA0zLf3NyzsTN9+4HjumhR11AEukHk=;
+        b=h4f8V7nvPWWoMVa68CRM2LO+qo+XByujMWOZ5O7binnC5OBl2uVh5CRq/ZxhwA4pOJ
+         sVBFdhnPUKGj/49+CrUa+p7MbZ2MVV2jHG6tZr7QZei1fe6iHaq8nqGdoIYItbAQ0Ht/
+         Gvy7nSwxZJWiC4kBX6IBd0swsU33v6O7We9GUk2bV60PJ/jCgeCKPb7VaCPYoJRYNmsC
+         SfeKrHsavZTmfhwxjfpJLXLM3eNE2JOQ2Yenhgyy7+52FQl7aRyNqatsSmqmDVuOZ6l+
+         IcAP0hxvk+nhGJDPI5NYBv19nBce+1ytyN/4KYgeNq+qmV0ttr8VpQ3YDIuGQDSi1aBz
+         wJRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764477510; x=1765082310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Wm2qs060enFDQ6DOh1yWGpw1oXM6AX8D1bOSCPnDDdI=;
-        b=eqn1evjs5w4UwMeeZDlZiGsV9O++MsTq/rth8DO6H6+yNGdi+fhChVZvU23Mu3SKrU
-         +nkD0NVeAIjwT1tMVUewK057ex3yfnD5ykEuIfF9sZ+opfZWVGGXhA3d/sirHxcaNVYi
-         OOa8xgVTfnm7Cua+3h6IZSpLboBpJ2OjaGC02klrF3X5Ddk8pJkKB+AXgs3OyzQI7w16
-         GEr15XLSfMWTszyVrL4otWetcCCijUikjmfenmGfxsgPqwWFXltC0Q3+eYVQdqTjUdLS
-         7C+2MuwEPR1NjC8Elq1qxQu7oRfQWClO2JFom7lybwPCo7s12KZnQE1VjFeRyjXLLQyg
-         JV8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpbq5sNyjOPbFwcEGjX43eWRTwvJsIwwKplwJeoIT0cNt1+MHhbe4m+VaqvzaOpO6k2dkBhABU+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsQVSCB3aCKWKy0/y1yTBZ151Kr82MiXkCH25Lq75DFIleGjTO
-	komu6g4Rr9T2kVnWHZKEftgyU0zV+aUevDRQYwOZ33Lx8x2MvbTiZG45IsHEDaeAefEkjKFccko
-	Yyg+sxloVGQfvxosop8ixAUB5oh9hFE8=
-X-Gm-Gg: ASbGncscHHz8jO20KlNQFfCF4QvxwaxZWUouBzlGcAzaFepYj0rhk5LEqswtrAUDXDC
-	p81phdPQ3Nu8AgSehqSjd/w5E7r4mn5MlBBuC2wEnh9hM8PYcp6aqPQVnn7UYwBGamkHE+/miMc
-	gugTLRaDC82Dh+ZY6Gk0yJlkcJ0Odko8ZjoooZixtNBHPwgeGuHEEf6657ci5T+6sx90pxQcVVH
-	ucr6tG66A4Q7KWYfZapD8VcpFDMNtkrHdb2wq4NNQDHhQ9MHvoBYHjIBTMDpCW+bUZDGVY873L8
-	lP0XR05xfpA6D5/HWtZTlGBe2A==
-X-Google-Smtp-Source: AGHT+IHbYJJh4P+1boLJ9Cb2u+xppWb2pzCo2jr/G5F8t7wwa3JYRi6C75RfispLRGk3OreB5sokjTdCHuJDPIxemp0=
-X-Received: by 2002:a17:907:2da8:b0:b72:d8da:7aac with SMTP id
- a640c23a62f3a-b7671a2a2f4mr3812556666b.56.1764477510024; Sat, 29 Nov 2025
- 20:38:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764545730; x=1765150530;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ALyiArP9r0l0ZpA0zLf3NyzsTN9+4HjumhR11AEukHk=;
+        b=Vs2ggrQq5IQkXmg2bmB7i+1iAHvq+ftSwH9/ImYRUIPT89bI+lmp3yAiuI+Yg7VGjQ
+         OQv0RUqREh5Ss3HqPuwgGnBKDu6tE1VFUwX3GUcHf6UybdOL32O9jDM0/DZ0cxloHYN0
+         AecGcSyEeHn+icWTrDJk4E/cuZrGISNWO4xpCpnyOwzKsXuuRRM7gcqv0z8SUaqPumGp
+         4CVx7v+IuIMMBqo/qF4AeJ2GpeaK0v00xTujsYH5hW+w+nXc7lgs6gA/ViKivLFldA04
+         XYIW5+sK1cEITtEFQ88S+qDccZLpAgWNQKM8tV3gtlG6x408++/pB5Qa/xaMmOG5f99h
+         Vk6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW4zO4xNDZoRT59WI7YgDDpuDSsdPyKA9bm4VHKmDNBFOPZ0EtrNnBh1abvBwksf8jP5sWw6t7ZNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtG/qaR97/71Ej2xM3q+EZgBwqidCtghQ7zyTgZcbiJWjVQMRi
+	90qzUXDeopRHMfGY5F+TnvdPUChdjlzIuoW+3nbmrGGUm3NIErJ4tEbT
+X-Gm-Gg: ASbGncup8S6Z5vAO+UYYRnQ05cmlYZBfj6mS1zXuw7cqaFVAx0ay3qZ+pNapVJK77Am
+	Jz21W9EfEobp2t4S/4zqDEEn9vu0QwfgdODRegw+DVJYFF3v+bVkPVGbitig/y1BM+UGOZEc4er
+	1gDOvov+4U0sHSG33RmuX0DS3jGZeTsATgF8/pOz52X71BO4iBqKyPbkvriEFYd5CSRBS8JTrYs
+	wjz89HdfuoWuxiqRTIpQuxzmbuCFZdcIIHJh++/QanKi++C9uc1nY66UeG8sbxXBn3IPZwJEPyY
+	Gfjyv007MxFWzOyBhybZaMlARrDPqem0EX8tbyheQgu/lwMcxanDcpSeDcOy9MJXeiWyW4UnE2A
+	r8DPqLIj45XKJNkFGrcNMpYnmSXeO14whXp/8Rbk+41zMUZNNK1NA1Ueza9G/645D7sXn5qKW9y
+	4QaIxwSJI+vp2LqaNM+OztFLDewhKMeyfkRsU+s4K2xIbeW6mszs3oBqL8vMc6DRu0VuItepHo4
+	Ono70IxnzMIl7i0
+X-Google-Smtp-Source: AGHT+IEsn3y7t81hF2sQhBQPO/kczdL3fkFMA/jNBZwT0LAhZBVzEYImw+yrGW7ekTwLlt8XRlDFBQ==
+X-Received: by 2002:a05:600c:1d0e:b0:477:89d5:fdb2 with SMTP id 5b1f17b1804b1-477c017d9damr362894825e9.14.1764545730116;
+        Sun, 30 Nov 2025 15:35:30 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-479040b3092sm142722075e9.1.2025.11.30.15.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Nov 2025 15:35:28 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	David Wei <dw@davidwei.uk>,
+	Haiyue Wang <haiyuewa@163.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Joe Damato <jdamato@fastly.com>,
+	Simon Horman <horms@kernel.org>,
+	Vishwanath Seshagiri <vishs@fb.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	dtatulea@nvidia.com
+Subject: [PATCH net-next v7 0/9] Add support for providers with large rx buffer
+Date: Sun, 30 Nov 2025 23:35:15 +0000
+Message-ID: <cover.1764542851.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
- <20251129170142.150639-16-viro@zeniv.linux.org.uk> <CAGudoHFjycOW1ROqsm1_8j47AGawjXC3kVctvWURFvSDvhq2jg@mail.gmail.com>
- <20251130040622.GO3538@ZenIV>
-In-Reply-To: <20251130040622.GO3538@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sun, 30 Nov 2025 05:38:18 +0100
-X-Gm-Features: AWmQ_blWc7hF27o9Yq5vPwV7AFjbnDQnKuyJsgBujIsM5G8K8ZPMeeXZ2v6eirg
-Message-ID: <CAGudoHEMjWCOLEp+TdKLjuguHEKn9+e+aZwfKyK_sYpTZY8HRg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 15/18] struct filename: saner handling of long names
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
-	audit@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 30, 2025 at 5:06=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Sat, Nov 29, 2025 at 06:33:22PM +0100, Mateusz Guzik wrote:
->
-> > This makes sizeof struct filename 152 bytes. At the same time because
-> > of the SLAB_HWCACHE_ALIGN flag, the obj is going to take 192 bytes.
-> >
-> > I don't know what would be the nice way to handle this in Linux, but
-> > as is this is just failing to take advantage of memory which is going
-> > to get allocated anyway.
-> >
-> > Perhaps the macro could be bumped to 168 and the size checked with a
-> > static assert on 64 bit platforms?
->
-> Could be done, even though I wonder how much would that really save.
->
+Note: it's net/ only bits and doesn't include changes, which shoulf be
+merged separately and are posted separately. The full branch for
+convenience is at [1], and the patch is here:
 
-By any chance are you angling for that idea to keep struct filename on
-the stack and that's why the size is 128?
+https://lore.kernel.org/io-uring/7486ab32e99be1f614b3ef8d0e9bc77015b173f7.1764265323.git.asml.silence@gmail.com
 
-With struct nameidata already on the stack and taking 240 bytes,
-adding the 152 bytes would result in 392 bytes in total. I would argue
-that's prohibitive, at the same time lowering the length to something
-like 64 already makes gcc not fit with some of its lookups.
+Many modern NICs support configurable receive buffer lengths, and zcrx and
+memory providers can use buffers larger than 4K/PAGE_SIZE on x86 to improve
+performance. When paired with hw-gro larger rx buffer sizes can drastically
+reduce the number of buffers traversing the stack and save a lot of processing
+time. It also allows to give to users larger contiguous chunks of data. The
+idea was first floated around by Saeed during netdev conf 2024 and was
+asked about by a few folks.
 
-Anyway, I did look into something like this way back and some programs
-really liked their *long* paths (way past 128).
+Single stream benchmarks showed up to ~30% CPU util improvement.
+E.g. comparison for 4K vs 32K buffers using a 200Gbit NIC:
 
-Some stats I recently collected on FreeBSD while building packages:
-dtrace -n 'vfs:namei:lookup:entry { @ =3D
-lquantize(strlen(stringof(arg1)), 0, 384, 8); }'
+packets=23987040 (MB=2745098), rps=199559 (MB/s=22837)
+CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+  0    1.53    0.00   27.78    2.72    1.31   66.45    0.22
+packets=24078368 (MB=2755550), rps=200319 (MB/s=22924)
+CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+  0    0.69    0.00    8.26   31.65    1.83   57.00    0.57
 
- value  ------------- Distribution ------------- count
-             < 0 |                                         0
-               0 |@@@@@@@@                                 18105105
-               8 |@@@@@@@                                  16360012
-              16 |@@@@@@@@@                                21313430
-              24 |@@@@@@                                   15000426
-              32 |@@@                                      6450202
-              40 |@@                                       4209166
-              48 |@                                        2533298
-              56 |@                                        1611506
-              64 |@                                        1203825
-              72 |                                         1068207
-              80 |                                         877158
-              88 |                                         592192
-              96 |                                         489958
-             104 |                                         709757
-             112 |                                         925775
-             120 |                                         1041627
-             128 |@                                        1315123
-             136 |                                         664687
-             144 |                                         276673
-             152 |                                         150870
-             160 |                                         82661
-             168 |                                         40630
-             176 |                                         26693
-             184 |                                         15112
-             192 |                                         7276
-             200 |                                         5773
-             208 |                                         2462
-             216 |                                         1679
-             224 |                                         1150
-             232 |                                         1301
-             240 |                                         1652
-             248 |                                         659
-             256 |                                         464
-             264 |                                         0
+This series adds net infrastructure for memory providers configuring
+the size and implements it for bnxt. It's an opt-in feature for drivers,
+they should advertise support for the parameter in the qops and must check
+if the hardware supports the given size. It's limited to memory providers
+as it drastically simplifies implementation. It doesn't affect the fast
+path zcrx uAPI, and the sizes is defined in zcrx terms, which allows it
+to be flexible and adjusted in the future, see Patch 8 for details.
 
-> > Or some magic based on reported
-> > cache line size.
->
-> No comments.  At least, none suitable for polite company.
->
-> BTW, one thing that might make sense is storing the name length in there.=
-..
+A liburing example can be found at [2]
 
-(gdb) ptype /o struct filename
-/* offset      |    size */  type =3D struct filename {
-/*      0      |       8 */    const char *name;
-/*      8      |       8 */    const char *uptr;
-/*     16      |       4 */    atomic_t refcnt;
-/* XXX  4-byte hole      */
-/*     24      |       8 */    struct audit_names *aname;
-/*     32      |       0 */    const char iname[];
+full branch:
+[1] https://github.com/isilence/linux.git zcrx/large-buffers-v7
+Liburing example:
+[2] https://github.com/isilence/liburing.git zcrx/rx-buf-len
 
-                               /* total size (bytes):   32 */
-                             }
+v7: - Add xa_destroy
+    - Rebase
 
-If the length start getting stored it can presumably go into the hole.
+v6: - Update docs and add a selftest
 
-Otherwise is there a reason to not rearrange this? The array could be
-only aligned to 4 bytes, on archs which are fine with misaligned
-access anyway. That's 4 extra bytes recovered.
+v5: https://lore.kernel.org/netdev/cover.1760440268.git.asml.silence@gmail.com/
+    - Remove all unnecessary bits like configuration via netlink, and
+      multi-stage queue configuration.
 
-All that said, now that I look at it, assuming struct filename will
-keep being allocated from slub, why not make it 256 bytes? This gives
-232 bytes for the name buffer (covering almost all of the looups I ran
-into anyway), archs with 128 byte cacheline are sorted out and one can
-trivially unconditionally static assert on the total size being 256
-bytes, all while not having space which is never going to be used.
+v4: https://lore.kernel.org/all/cover.1760364551.git.asml.silence@gmail.com/
+    - Update fbnic qops
+    - Propagate max buf len for hns3
+    - Use configured buf size in __bnxt_alloc_rx_netmem
+    - Minor stylistic changes
+v3: https://lore.kernel.org/all/cover.1755499375.git.asml.silence@gmail.com/
+    - Rebased, excluded zcrx specific patches
+    - Set agg_size_fac to 1 on warning
+v2: https://lore.kernel.org/all/cover.1754657711.git.asml.silence@gmail.com/
+    - Add MAX_PAGE_ORDER check on pp init
+    - Applied comments rewording
+    - Adjust pp.max_len based on order
+    - Patch up mlx5 queue callbacks after rebase
+    - Minor ->queue_mgmt_ops refactoring
+    - Rebased to account for both fill level and agg_size_fac
+    - Pass providers buf length in struct pp_memory_provider_params and
+      apply it in __netdev_queue_confi().
+    - Use ->supported_ring_params to validate drivers support of set
+      qcfg parameters.
+
+Jakub Kicinski (1):
+  eth: bnxt: adjust the fill level of agg queues with larger buffers
+
+Pavel Begunkov (8):
+  net: page pool: xa init with destroy on pp init
+  net: page_pool: sanitise allocation order
+  net: memzero mp params when closing a queue
+  net: let pp memory provider to specify rx buf len
+  eth: bnxt: store rx buffer size per queue
+  eth: bnxt: allow providers to set rx buf size
+  io_uring/zcrx: document area chunking parameter
+  selftests: iou-zcrx: test large chunk sizes
+
+ Documentation/networking/iou-zcrx.rst         |  20 +++
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 118 ++++++++++++++----
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |   2 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c |   6 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h |   2 +-
+ include/net/netdev_queues.h                   |   9 ++
+ include/net/page_pool/types.h                 |   1 +
+ net/core/netdev_rx_queue.c                    |  14 ++-
+ net/core/page_pool.c                          |   4 +
+ .../selftests/drivers/net/hw/iou-zcrx.c       |  72 +++++++++--
+ .../selftests/drivers/net/hw/iou-zcrx.py      |  37 ++++++
+ 11 files changed, 236 insertions(+), 49 deletions(-)
+
+-- 
+2.52.0
+
 

@@ -1,132 +1,90 @@
-Return-Path: <io-uring+bounces-10856-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10857-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF3DC945C8
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 18:34:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C83C94B43
+	for <lists+io-uring@lfdr.de>; Sun, 30 Nov 2025 05:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 87760347276
-	for <lists+io-uring@lfdr.de>; Sat, 29 Nov 2025 17:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67493A584E
+	for <lists+io-uring@lfdr.de>; Sun, 30 Nov 2025 04:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462C726738D;
-	Sat, 29 Nov 2025 17:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524F723507B;
+	Sun, 30 Nov 2025 04:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7GWnThM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="t3voSP2k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3C520F067
-	for <io-uring@vger.kernel.org>; Sat, 29 Nov 2025 17:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CF42264A3;
+	Sun, 30 Nov 2025 04:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764437670; cv=none; b=WOpp+fQ31Rf4DB6SjBB4kFBFg1QSGlnXgrPa8rTERVIF5nCNQX4Ye9E+iZBWaupLxJpBijPqGsNyqW/rg0UIlUReZdORdR9Y5kDG2QI7INldjT0mWjNyIohFG+xSnx/2WZN1sQEfdr6rdGRC8NnEWLOKnznaD9jD5C58T7tj63w=
+	t=1764475578; cv=none; b=QNAuXn6JP9ojRbozF/FLapU1TlS98sFwkKapkLICv9cBDRFBYlqiCai0VU8/zOabhLRMWvFDd8hA0q3yLNRuiu22mRbbfewi+KEK2VhyhOX7FT8xV+kUTiC/y5ZKUIczaYc5aWVAQlfL4iaqQRlktc0Y+p6WIUqz6X3tjGhcWy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764437670; c=relaxed/simple;
-	bh=FuHIwQlAP2udp8Fj5L14YtvfrFs0p8IftgEhMCUlArQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovuaksTfukhitvjwFKBPeEPAe7NTiRCSt5Ck961Nv0IOmMOfJIEv2HbgeHaM1pR+ZkHrYkCUZN+PLC4ojgZmusFFFxxdJksj/nBD/vX41npQFVOF8EMCRHLQlxy4IJhgoc6OBr3mxYEPVv26HYCN8P7MY1uU5GFk7xtXyBdoc80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7GWnThM; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7633027cb2so299952366b.1
-        for <io-uring@vger.kernel.org>; Sat, 29 Nov 2025 09:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764437667; x=1765042467; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=maDmEz6leEp8x7U+/M22lqhF5pJqnpo6KdJXDX8pL/c=;
-        b=f7GWnThMerd/210BpPKT/PTJz1Uk07X5X4RB3uqT6Ef+Ni40xKVDXIaVxvUyILd52K
-         h/WCWZuGQDWwWq4oJcrQX+6atPBJiu9k4RkqJbYpl4GWyMvqYbEqN6vsTLPo71pGUBRn
-         kZDY29UmpGagMC4e1bzyc3RWuFv39znzA/XcKzKnXcpt3aB8rhNQ5r9YszFDqVVi4nDE
-         qIgIRiM5W7kY64cZIjeN3GPkZRAXxR8T+2HLsllLiZAOPVsgfitfXFpxpdMTxxvAn8Z7
-         ERcVcxmiUQJAh2xLfzibkZHIsZuYIIrCBun44ON1/Fx7e2irVAR3BhVZKwykrRonw6R3
-         9XJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764437667; x=1765042467;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=maDmEz6leEp8x7U+/M22lqhF5pJqnpo6KdJXDX8pL/c=;
-        b=suw8sRmzq/fwPuGsIxWHx/Axpbh9OcVwehFupBFY6vKdhnlFr7cDNaJ+bsX+fwK8jv
-         vJSTF/P+Pe8ygTRwe6pPda/fNQ4jZitbGU01QhpXkCReRvxdlpyYcOCHbR6YrvKjHq63
-         jrxspOpZecY/zMew1jgO0VJ7LTAJBSxkPd7xbMSs617eBfiJAu4642WOlrkp2ToJAuSo
-         t92T25gFCZic0eqFKEAPB9guGkX3iYTH6tdLotzJklTIe20TtmvtSTyaFFyTLXZWzjg7
-         m2M0BQQttzH0Nn0aKrOC9lFf73GE3yEeH+Uz1k5+Bt7IuMWIH4eSIBkVPttQKgi5n4GT
-         PxyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqceRA2/VPirBDG7RasjVZqncDAj4LS9WdI2N6S25q+Ld9ukz/DGtTRhqP45tNhMZpX+atCSz+Ig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsE6iKiMY9C+WhXZ1GoIbBdmsPG6/ZHk6W3/OPW2fGPjLdtfxF
-	JZmDOxMvc70UdcF4zc1Peyunio/oFYC8nZKxBo/ubjDZs6gUCrYgPhLxLj1oyt5xC0TnuPLw0ki
-	HpyRAW31xNwp0rEHO7STeQ6QND0bGKL0=
-X-Gm-Gg: ASbGncsGqaiY6ZieZBo5rWwKeHhh8k4jS8L08E4G2QKDR6qzbKxAfRDSdkpIV0iTS/i
-	qpNg1SaEoBF6sWtUoyph82FxtM9a1jwWAkRZiDqoU3DP2UtaPjO3EqG+fKRJ+82KCwmUDjDnvxY
-	z2sSjs871uw6WnxRLizT3brlA7aILuLWIji8vAS1+6x1IV7kQPLFcHgBXC9ItczY4SCgNX7AmgS
-	Q1RxX+iUkJE85rcqX9FuvcuRRw9EBlU0QNDQMompAGg5j6yLrNbl8TcvQa79/6CgcNXUg1NqcKt
-	gY7H9QgvLEektEaohtZ2x0dvLwDZWfKcA1aj
-X-Google-Smtp-Source: AGHT+IEH5c/pRAcr4BaNTwk+9mX9y+JuA5kpYcYrpik7c+/rjbm2lZ4NulyqOyXcGRACGwaRbgIWFZkTSqKxtbn7HYE=
-X-Received: by 2002:a17:907:97c7:b0:b73:4e86:88ac with SMTP id
- a640c23a62f3a-b767153ee6amr3765863766b.12.1764437666585; Sat, 29 Nov 2025
- 09:34:26 -0800 (PST)
+	s=arc-20240116; t=1764475578; c=relaxed/simple;
+	bh=YNwIIfYqBO5+cdBdyu3c4hgHy4Nx4rxTPpQ67H5JgcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfVkVoECnLdJgxYdXuAXcrXyv+UglpiQgr3fdW5fLVtY6G6OGOXx1ZMnHjVYMk0M9/Nkww+tCm0crd76wSjmpGrAX9pK6COlWNVCfaFinc/O2UsAIYC8bTrUrlSiI/QJuA1qLbyAOFoLDno8qWEZlCpKeiAjb65QE1Rkm0+2+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=t3voSP2k; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nSdskNHmgV0YSm/A01QBV/qnJdvBNgWDr8yK34gImqQ=; b=t3voSP2kqv8pj6GI/GYGftb1VU
+	lRYTA2VNBKjMhwtyWHENBuqvIrEtu9amW4M0r1UOkUDaCoTVbXi7KoeOXCBv+ydiU2mopiZmY7Q3D
+	3JZE+iGEL87a//XpF2pFPdyl6u9m8e9VMn5hp4OrAhsYxTrNoNbyy3TKFVurw6cTb+hpaqXC6sTsI
+	1RrbpFi5WDk96Lw0lxqtK+f3aVk9yBK55INWdq2qb/8QxDNt80Hpvi3uGrTmr/4rhrXGgbxxfBSOC
+	VOXR0HLLbFs1htqGJ/S1cBUJ1Byp9k+6q9HLmlm/AbtaOunbUuNrxOtphlg5cD4HfizrbrZWAWYms
+	LBAHWk1Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vPYha-0000000Dcf2-1e0j;
+	Sun, 30 Nov 2025 04:06:22 +0000
+Date: Sun, 30 Nov 2025 04:06:22 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
+	axboe@kernel.dk, audit@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 15/18] struct filename: saner handling of long
+ names
+Message-ID: <20251130040622.GO3538@ZenIV>
+References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+ <20251129170142.150639-16-viro@zeniv.linux.org.uk>
+ <CAGudoHFjycOW1ROqsm1_8j47AGawjXC3kVctvWURFvSDvhq2jg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251129170142.150639-1-viro@zeniv.linux.org.uk> <20251129170142.150639-18-viro@zeniv.linux.org.uk>
-In-Reply-To: <20251129170142.150639-18-viro@zeniv.linux.org.uk>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 29 Nov 2025 18:34:14 +0100
-X-Gm-Features: AWmQ_bkYhg8ZsPoSvIKVjWFzG0z_YCpKLtzShxZuCW-4-gHoAXRd9J8KuVL5peY
-Message-ID: <CAGudoHENCNV87W_wngFsfC99xYohQUiXOjeB24VcYTTOQPv5VQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 17/18] fs: touch up predicts in putname()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
-	audit@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHFjycOW1ROqsm1_8j47AGawjXC3kVctvWURFvSDvhq2jg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-this was already included by Christian, although with both predicts. I
-don't know if the other one fell off by accident.
+On Sat, Nov 29, 2025 at 06:33:22PM +0100, Mateusz Guzik wrote:
 
-regardless, this patch needs to get dropped
+> This makes sizeof struct filename 152 bytes. At the same time because
+> of the SLAB_HWCACHE_ALIGN flag, the obj is going to take 192 bytes.
+> 
+> I don't know what would be the nice way to handle this in Linux, but
+> as is this is just failing to take advantage of memory which is going
+> to get allocated anyway.
+> 
+> Perhaps the macro could be bumped to 168 and the size checked with a
+> static assert on 64 bit platforms?
 
-On Sat, Nov 29, 2025 at 6:01=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> From: Mateusz Guzik <mjguzik@gmail.com>
->
-> 1. we already expect the refcount is 1.
-> 2. path creation predicts name =3D=3D iname
->
-> I verified this straightens out the asm, no functional changes.
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> Link: https://patch.msgid.link/20251029134952.658450-1-mjguzik@gmail.com
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/namei.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 37b13339f046..8530d75fb270 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -285,7 +285,7 @@ void putname(struct filename *name)
->                 return;
->
->         refcnt =3D atomic_read(&name->refcnt);
-> -       if (refcnt !=3D 1) {
-> +       if (unlikely(refcnt !=3D 1)) {
->                 if (WARN_ON_ONCE(!refcnt))
->                         return;
->
-> --
-> 2.47.3
->
+Could be done, even though I wonder how much would that really save.
+
+> Or some magic based on reported
+> cache line size.
+
+No comments.  At least, none suitable for polite company.
+
+BTW, one thing that might make sense is storing the name length in there...
 

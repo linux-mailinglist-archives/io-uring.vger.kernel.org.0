@@ -1,141 +1,179 @@
-Return-Path: <io-uring+bounces-10874-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10875-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35B6C99229
-	for <lists+io-uring@lfdr.de>; Mon, 01 Dec 2025 22:06:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB3AC99299
+	for <lists+io-uring@lfdr.de>; Mon, 01 Dec 2025 22:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B423A1C49
-	for <lists+io-uring@lfdr.de>; Mon,  1 Dec 2025 21:06:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 472284E24E0
+	for <lists+io-uring@lfdr.de>; Mon,  1 Dec 2025 21:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC4D2045AD;
-	Mon,  1 Dec 2025 21:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="E4pL5OYo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF81242D72;
+	Mon,  1 Dec 2025 21:24:10 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02367E110
-	for <io-uring@vger.kernel.org>; Mon,  1 Dec 2025 21:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF652184524
+	for <io-uring@vger.kernel.org>; Mon,  1 Dec 2025 21:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764623179; cv=none; b=F8sIGvMsR25yN5HzomtdCrnjLjQ+vY2GDyFzLB38j9hhaY0+vx0G2/kXGuAI/WN5tYKyt5HBwn0F/5Qz9+I1yHkXs9rRFmY/Q1M3nK5S6H0YewbhLqtBnMLeQ359czjo80klgT2pGzPTAZ7zzB1bxPVNgPg65pZ05yqAjEDaHqw=
+	t=1764624250; cv=none; b=XE+ujJS8FULCRLVO65OpsX/CrLXz7ajJrW9W99oYt2mNNVJO1P0yoK5/eVBwwzBOY1g2tnKCxBz2YyJrmKYJODMFwuQhyx2xbssanUDxSQ/NmNVJnscObpI4tClhvJ/pgU/VlLDjJgRnRkPt44BKjuVj4vUsVV/+JIMvyHQHJoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764623179; c=relaxed/simple;
-	bh=b6VTTy5g4PFC+6Z92IML1QpId46vDfaiGHdcUyz0Xlc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=S7oh9NqfoIrWVxkcEHQLqUq0O8ztSbKQ0ZlnZnoMlhJe+Z7a7NQApZVY5XjqqSbpcUr1+GHavIDjvo75wJRJHyRVYmot+DzYaeN6DlSAy2c/7ME7DzhXnNCvDF4P71+a34FeWHEbYEeYllxh2D4U4BGBoDtsYzTLcS3e8VufUFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=E4pL5OYo; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c6d3676455so1403090a34.2
-        for <io-uring@vger.kernel.org>; Mon, 01 Dec 2025 13:06:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764623174; x=1765227974; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbsbkzacxZp5zpLkb4zogXomfYuQldzc70GS6tLzP7o=;
-        b=E4pL5OYodoSns67S0uPMsREW2naxFdkYVxOswejXU2xzbyRvJcShvkGo0z/ALQgs3y
-         JO50D8kU9/WJyEEZG6RRFny7OQAHF1GY1hjUIMX8jwWYDogm9JUsHYs7vC2qJbLEliXf
-         t/WNclbXMPa4zfTcVt7uZjDmda0ZhYOPKUT5OivEVsamiAPdN82BvMO86svQq8/Hl1ki
-         4byCRwpHuVzSuOn4VD4OIzlkOt+tcwoIR3I09dwtUS9AlsQmDOW2ltZ8Vr46o+ErY0JH
-         LLsI5jrMnMGn1I0VUIZRjqECivvO/Bv3L0YQVvGucW6D2Mp14yMaibBT95w5N+3c06Xf
-         kNzA==
+	s=arc-20240116; t=1764624250; c=relaxed/simple;
+	bh=5896dyjBmsoORlZ8+zaUXOW+qgZgMQZDUrbrl/U2ew8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nvhK1gT0J+jbW932us0cE7bHbI05gDqA2Wq1j25VXHfrgmwMX7vA95cqqYKVjBRVZShn0dY8IepjSH3NBafqcrJrK0h+IFyU1k2qGRJBOgsPQ9WsosqATtq/yCXmzdeMAgOjGQxnZlYJygFY8+B9ir0SDoM2brqlGtcgjRpwTrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-656ceb0c967so1393810eaf.1
+        for <io-uring@vger.kernel.org>; Mon, 01 Dec 2025 13:24:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764623174; x=1765227974;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dbsbkzacxZp5zpLkb4zogXomfYuQldzc70GS6tLzP7o=;
-        b=Knmn9TMZX3jIAbu8wib315vO2T6ugMsBk/r8j/us48U8X8xIHvpdFkY6tlHaXmQzXU
-         58A2nCqX+0IzWKLi6/yu2EZrkRfc6p72bK7sNeOevDqbiL39OABDHKTGXE7NlQ7570iU
-         c8X3/ElGxO1PKb33JvBY+mUGpgd01FLanxOC8Ky54gInLqWnnDGTQhapIOBZtmICo3NO
-         GebjHax5nuFCfn1s0f8P3uVa1In0ItdVpIFJNIp2SVDh5+o3NSDb5qIrvCLUNTIE7w3c
-         XbE357zD8Kqvcl5mvPikKTJ46fgxncPGTns4IqS47HBoZYw+HV0xuHRYND0KbOW8FSE/
-         l4MQ==
-X-Gm-Message-State: AOJu0Yz+KxpSnDk/TB2e3zkl7mp7Max71lfBwbFWrtwSoK0scAZ3MsPf
-	qkp2HDGX/9FH/Nttu/FDBfxgANWVYZEyzjwbtDhSaH7NsRsQDrYhjLdI67EoiFM5bij9Qit+9bX
-	suHNnFbE=
-X-Gm-Gg: ASbGnctC3RJU9TAjWQElnbMAcgc5ZZgeVoI9OgKF7SzlvfAWKPEPsheAunEzYqAasCw
-	K2+T3zZ9+Lzdlw5LKH/NoWhL+F+wIR4EJodLn49AirvKkotJNrryxAu8IF37FQP0IMNEt0cDz7o
-	i9dX02Uf1epJ2b5jbLbqRzaC1s4xQetmEsEvw3FJQOXYVMBm4zkuS6Ysvp7cSaqlDaysCeeDljZ
-	E1PBawCr5fOzs8fazRM5bzx3e/mfqfmkQlL7GTMYMrZRH2KdKwoIPUAOioyUTLGh5fTmMqoDqpT
-	Imr/MsEMAN5TObVfASFa34Pc78VKJAxCvIqkp+bVcQ6yemUkJL6YUET4vKlpXTMUsh/VnrMf6cf
-	QCBOfnvjc6ZDuHaOTVMTS9HclkA+2qZ04AYEvr4EaU3S4FMZKeE6laZq/6LsdsIb7Uk2yLc5pKn
-	AeiVapvw==
-X-Google-Smtp-Source: AGHT+IG+vp9Vu2rI4VQeEz2Lrb6ZbC2i1o5KquLZDaj5f6lWxmhTUJY8MfBcxr0GWhoCc0MnM2PSSg==
-X-Received: by 2002:a05:6830:3491:b0:7ae:56f2:c2c5 with SMTP id 46e09a7af769-7c79908f7d5mr15137020a34.28.1764623173975;
-        Mon, 01 Dec 2025 13:06:13 -0800 (PST)
-Received: from [192.168.1.99] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c90f5fedbbsm5262147a34.10.2025.12.01.13.06.13
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Dec 2025 13:06:13 -0800 (PST)
-Message-ID: <586014ce-acd0-455b-bbaf-ba85183bbf25@kernel.dk>
-Date: Mon, 1 Dec 2025 14:06:12 -0700
+        d=1e100.net; s=20230601; t=1764624247; x=1765229047;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xgdxd3aQAsAPYJmDsdrOq5rlcDaAKcTvmOdb4NW7nJQ=;
+        b=Db2n2YbENqaR4RDszJbBwn7qMZuwqdRm/erj9bgf6lwd6F7psogbLk8NfCUsDtxU/o
+         /YaXazFdLmDH+tcT7EtoDot0WIt5jdd9IUh+1Za5S8D7jP2S+g0IgKMsv3mTL4Hj1g91
+         Xp0X9OWkuTWIU0a2D5QqUbl78bEBRdV4pFyt3cnqb4JMGw5AkTb06gk+Ex2w3eI1bNNN
+         nyqRcSvL2bRXnp7C+MlOGL1jItjDDXQeaI0HVX5gp5N8RNk99VObdUuGJradxntoH0ad
+         1UntA4LgH1WQetzUUIU/esX3+zx/+Dsxs9g0NZb5iuBqIV6fHB9JctW4DNFC5BXkzwi2
+         L1Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm3wtX/tiY5vTYFOH8KjEsY7afm8kEuCylG5UD/zC+eS7kXm+0nf8q9iRQohIxzOaQlqQ3cEiJdA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx42Y8aHYx0YRyCzhBQYNmMYLbjUFSe5Nbys7WtDCPCH/xPjOql
+	Hmub+jXSaSDdQr5pN2UNnlfsfun1MBxUtBcu/daOOQurqnlmCiLeSBzVKrEPVHzL5cHCkJb/f3u
+	zO5UEFiUvHj7IunIxb75JQea+eyRJqaLIuV8JSzUv+AHS5tDsUtvYRkiGi30=
+X-Google-Smtp-Source: AGHT+IGqdIf91MxoWxs0ZEh3cXn9YsGG/YvEf0PmEUiwNLIM0144qO7HLhYv6k/iRyLMITSwxdSMipt83rQwlvDI3MGsnvZn52fK
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/poll: correctly handle io_poll_add() return value on
- update
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a54:4617:0:b0:453:ee6:12b3 with SMTP id
+ 5614622812f47-4530ee620ccmr6351246b6e.58.1764624247072; Mon, 01 Dec 2025
+ 13:24:07 -0800 (PST)
+Date: Mon, 01 Dec 2025 13:24:07 -0800
+In-Reply-To: <d08c0c69-eafa-4768-906a-50a7e039e76d@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <692e0777.a70a0220.2ea503.00bc.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] memory leak in io_submit_sqes (5)
+From: syzbot <syzbot+641eec6b7af1f62f2b99@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ssranevjti@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When the core of io_uring was updated to handle completions
-consistently and with fixed return codes, the POLL_REMOVE opcode
-with updates got slightly broken. If a POLL_ADD is pending and
-then POLL_REMOVE is used to update the events of that request, if that
-update causes the POLL_ADD to now trigger, then that completion is lost
-and a CQE is never posted.
+Hello,
 
-Additionally, ensure that if an update does cause an existing POLL_ADD
-to complete, that the completion value isn't always overwritten with
--ECANCELED. For that case, whatever io_poll_add() set the value to
-should just be retained.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+memory leak in io_submit_sqes
 
-Cc: stable@vger.kernel.org
-Fixes: 97b388d70b53 ("io_uring: handle completions in the core")
-Reported-by: syzbot+641eec6b7af1f62f2b99@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+2025/12/01 21:23:33 executed programs: 5
+BUG: memory leak
+unreferenced object 0xffff888111254200 (size 248):
+  comm "syz.0.17", pid 6735, jiffies 4294946584
+  hex dump (first 32 bytes):
+    c0 e9 e3 09 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+    3c 20 00 c0 00 00 00 00 00 00 00 00 00 00 00 00  < ..............
+  backtrace (crc 2fa747c9):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4983 [inline]
+    kmem_cache_alloc_bulk_noprof+0x220/0x3e0 mm/slub.c:7497
+    __io_alloc_req_refill+0x54/0x1a0 io_uring/io_uring.c:1058
+    io_alloc_req io_uring/io_uring.h:543 [inline]
+    io_submit_sqes+0x584/0xe80 io_uring/io_uring.c:2438
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3516
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
----
+BUG: memory leak
+unreferenced object 0xffff888111262200 (size 248):
+  comm "syz.0.18", pid 6740, jiffies 4294946586
+  hex dump (first 32 bytes):
+    c0 e9 e3 09 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+    3c 20 00 c0 00 00 00 00 00 00 00 00 00 00 00 00  < ..............
+  backtrace (crc 95820259):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4983 [inline]
+    kmem_cache_alloc_bulk_noprof+0x220/0x3e0 mm/slub.c:7497
+    __io_alloc_req_refill+0x54/0x1a0 io_uring/io_uring.c:1058
+    io_alloc_req io_uring/io_uring.h:543 [inline]
+    io_submit_sqes+0x584/0xe80 io_uring/io_uring.c:2438
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3516
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index b9681d0f9f13..0d5bb90d4743 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -936,12 +936,17 @@ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags)
- 
- 		ret2 = io_poll_add(preq, issue_flags & ~IO_URING_F_UNLOCKED);
- 		/* successfully updated, don't complete poll request */
--		if (!ret2 || ret2 == -EIOCBQUEUED)
-+		if (ret2 == IOU_ISSUE_SKIP_COMPLETE)
- 			goto out;
-+		/* request completed as part of the update, complete it */
-+		else if (ret2 == IOU_COMPLETE)
-+			goto complete;
- 	}
- 
--	req_set_fail(preq);
- 	io_req_set_res(preq, -ECANCELED, 0);
-+complete:
-+	if (preq->cqe.res < 0)
-+		req_set_fail(preq);
- 	preq->io_task_work.func = io_req_task_complete;
- 	io_req_task_work_add(preq);
- out:
+BUG: memory leak
+unreferenced object 0xffff888125155300 (size 248):
+  comm "syz.0.19", pid 6744, jiffies 4294946588
+  hex dump (first 32 bytes):
+    c0 e9 e3 09 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+    3c 20 00 c0 00 00 00 00 00 00 00 00 00 00 00 00  < ..............
+  backtrace (crc 7f690aa4):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4983 [inline]
+    kmem_cache_alloc_bulk_noprof+0x220/0x3e0 mm/slub.c:7497
+    __io_alloc_req_refill+0x54/0x1a0 io_uring/io_uring.c:1058
+    io_alloc_req io_uring/io_uring.h:543 [inline]
+    io_submit_sqes+0x584/0xe80 io_uring/io_uring.c:2438
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3516
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--- 
-Jens Axboe
+BUG: memory leak
+unreferenced object 0xffff888122d56200 (size 248):
+  comm "syz.0.20", pid 6764, jiffies 4294947184
+  hex dump (first 32 bytes):
+    c0 e9 e3 09 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+    3c 20 00 c0 00 00 00 00 00 00 00 00 00 00 00 00  < ..............
+  backtrace (crc 1e329da4):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4983 [inline]
+    kmem_cache_alloc_bulk_noprof+0x220/0x3e0 mm/slub.c:7497
+    __io_alloc_req_refill+0x54/0x1a0 io_uring/io_uring.c:1058
+    io_alloc_req io_uring/io_uring.h:543 [inline]
+    io_submit_sqes+0x584/0xe80 io_uring/io_uring.c:2438
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3516
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888126b78d00 (size 248):
+  comm "syz.0.21", pid 6766, jiffies 4294947184
+  hex dump (first 32 bytes):
+    c0 e9 e3 09 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+    3c 20 00 c0 00 00 00 00 00 00 00 00 00 00 00 00  < ..............
+  backtrace (crc d8b7eea):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4983 [inline]
+    kmem_cache_alloc_bulk_noprof+0x220/0x3e0 mm/slub.c:7497
+    __io_alloc_req_refill+0x54/0x1a0 io_uring/io_uring.c:1058
+    io_alloc_req io_uring/io_uring.h:543 [inline]
+    io_submit_sqes+0x584/0xe80 io_uring/io_uring.c:2438
+    __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3516
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+Tested on:
+
+commit:         7d0a66e4 Linux 6.18
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=131aa512580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f30cc590c4f6da44
+dashboard link: https://syzkaller.appspot.com/bug?extid=641eec6b7af1f62f2b99
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14448512580000
 
 

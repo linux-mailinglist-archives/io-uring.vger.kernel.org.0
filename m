@@ -1,173 +1,130 @@
-Return-Path: <io-uring+bounces-10888-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10889-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14810C9C9CB
-	for <lists+io-uring@lfdr.de>; Tue, 02 Dec 2025 19:22:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D7C9CB24
+	for <lists+io-uring@lfdr.de>; Tue, 02 Dec 2025 19:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7564634A0D5
-	for <lists+io-uring@lfdr.de>; Tue,  2 Dec 2025 18:22:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54D954E46DA
+	for <lists+io-uring@lfdr.de>; Tue,  2 Dec 2025 18:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FEC2D29DB;
-	Tue,  2 Dec 2025 18:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714122D23B9;
+	Tue,  2 Dec 2025 18:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="C7DTXgoR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJB+81+t"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-vs1-f100.google.com (mail-vs1-f100.google.com [209.85.217.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2698287503
-	for <io-uring@vger.kernel.org>; Tue,  2 Dec 2025 18:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F9628C00C;
+	Tue,  2 Dec 2025 18:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764699700; cv=none; b=JCGbWtRGi9O9g2CZHvDtf85wf6A6lxhkOxapcMz+/KBjLrPvplc1dy0Kmtb9t/+OK0Xe1kNrc+gxymqzQe2VDFn/ysnYYXkSVNgRAiVlvsmlW4iLdLoQQR3/7G9OvwuoWrKM4Kn5HHiG27yz6LA1CXn3yURSOWduvNjt1m161lk=
+	t=1764701903; cv=none; b=posPPrT7AbVvWPvU5GAEd954Uj8YPs1vC/gUPV1sQzYBPLov1VdIsfnMoU+Ex5T+BfeFzPt9nLtWC+pUguCCI4vlspzafZP7fx6RQ28LnnkPYthkPw12pBoDp7swbb/XqH+quDjmAeZOwAcuXuVl1MN5mmAMcR89uxBjYexuA0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764699700; c=relaxed/simple;
-	bh=Q6nsMG+HImyaJULK738xtVp5TUb5J3iQjwpkt/Zf/8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=duSbiLwLyho3sPDukvNn0Z/BG/jqK7Cbz5mZqdrQ6dwlFmuPYoyq3kbYiVMSrhMP3ja81r70Ehorf7ahafg71gnhyqHqy1bqV9iQJ3WRx53khz75bJm/nUSnDSRhB4o3dZVzgWH6A5u/2FWehnF63Njo4Y7HXfNp0HTQqdyfl4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=C7DTXgoR; arc=none smtp.client-ip=209.85.217.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-vs1-f100.google.com with SMTP id ada2fe7eead31-5de89140141so279461137.3
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 10:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764699696; x=1765304496; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAKSM+YFIoffRWnIvZh2aZxrHWdwn+486YXWr5hu1CI=;
-        b=C7DTXgoRVthKNAUolj16NYqvLduLiTWS1bxQV/5989HlCLOreZ4dM3sapElbWtem+z
-         /2if+TAfMa/9TwJ5btrEeFgEOtKRMzWG7v2plXcd+YkzICcZC4F6b/+/Y5ezI6f4hbyS
-         MlG0SAJJVusuJ2AdGqbfsY5BZrp65PW7PZR4R74KeCO3KAw8cBbbRH9o4jUmG1fiuf/Y
-         yBIIsQHzHlLSoN8dlYW4SYUvWL3v5q35YZ+LrKGzF7EZmXUqj9aQzl/bh9p2npRMZbJs
-         3Zw+H1ui1XL/As2FA4zKdxR0AjrKQUAE541ODqXl6iWcTWQaoXbIMei+RK6su/yomokS
-         8YVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764699696; x=1765304496;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAKSM+YFIoffRWnIvZh2aZxrHWdwn+486YXWr5hu1CI=;
-        b=u2XHJugTysDbPKqyGwdfWW49BPqIDFyK4aPcXNTsOcCOAS4UmCBbT2fR108G6AKj5O
-         7o5pL3kaIrbGYi+maMbC1MnYuhEXHHPfKcPZzevBlUkhHKvYNo3Vwb6u5ROErK6ZfEHZ
-         DDmvGUROq9nCgk4NeEZHFfyNLyWexZ/HXt6TuXsNrXGoyFnHwsrokRoopMOT2+8iIz6S
-         HE5NMFsstTB6owX5pPBZm3IFSvRyNdZrq8vxfoPHiNSaOKtohtpkEpWKxAtSBxM9I1aD
-         +M0xXo6DI2c58m2NWJPgjxHcBVrkPXcSLekhvnkSytw3GX7aanVCysHhyxV+6YoMdKps
-         YW/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUOGeOqJtTfR7+eyl5ywY0B3FlXzZoi7WKtFcH11a5y0SRKqOQlTmuFoMaFXi7Te+V2o7OoXK7TyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxteQDohYxT6DNtrq8soY9gjQd5jajQaFuz+22/SYD6lksGP+CS
-	RfLfBWG6A5ij2Uz5c80fNmNMihWs1BwL0b/j43NvjqZJf6mMLr+gmbbD3nMPsj61jqJBMJ12zz9
-	QljFIr6syfkpa/OiODN8eTF9ZcunW4SfUBns5
-X-Gm-Gg: ASbGncuWXtIPIN2geJPw/vCKyuGkGv66VfSaC208BOXbDMtRse/K6m7o1dO0TH+zJDM
-	faUueg+AzkkUSOVf82Kx1QbgwDSs/enb0Hke6wS8vwDXQCZITVGTJ7CjBXfrGkBdsp/5H/eySIi
-	2J1EqU/Me56zRUE5zYzejVwBbigRdtDN10IGiqL4pW44r8mgh9ox4O47pFshsfYwtL3JEUneimt
-	0DuVBpm7Z3D7qK7be/kmx3uck5hsm2PERIYoA7an41hZG/gZ6EK/tfS6LVQgy9tZ1EJM3Bi3TLI
-	E3jWJTwbi1TmawkWYG1FbLELStyacx8J+qc21Iqjsy9C0YfoMs4EEFtV7gGRE5pUCP9OToGw8Lm
-	6SOx/JdAWNt0OvmKGaqIKmw78c5URfuZKGoXd9Dddyw==
-X-Google-Smtp-Source: AGHT+IESuDUtU77Vl0nma1WiRhfiGkS93Xa+aCOm+aieYgupGxGL2OnR6elfzfyHjGVzalPvSGEdXG5HuxeL
-X-Received: by 2002:a05:6102:374b:b0:5db:cc92:26f3 with SMTP id ada2fe7eead31-5e1e69fbcf2mr10232117137.3.1764699696634;
-        Tue, 02 Dec 2025 10:21:36 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id ada2fe7eead31-5e24dce43basm996090137.4.2025.12.02.10.21.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 10:21:36 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 7C01F3400C8;
-	Tue,  2 Dec 2025 11:21:35 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 76598E414BC; Tue,  2 Dec 2025 11:21:35 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/trace: rename io_uring_queue_async_work event "rw" field
-Date: Tue,  2 Dec 2025 11:21:31 -0700
-Message-ID: <20251202182132.3651026-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1764701903; c=relaxed/simple;
+	bh=r8xDi8SAoeRDBGnkpp+T5spKBIQJCPR09Cf48ybbrgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MPHgoSxrh4xNS3lfFezvB7z4MLKxiTjL183XPLFinHFjdTjhgCLQJq/2wUn9vmEtRYhNR9O2jkzYERawdyG0Phpb+Ffnr8DnwUE+jwwOnnMgcX5KGL68wvegN7g3Pl79CHUWn4X+uog1NoAALmhVoUGgBE14PNEy/BNTZWXPixY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJB+81+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72518C4CEF1;
+	Tue,  2 Dec 2025 18:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764701902;
+	bh=r8xDi8SAoeRDBGnkpp+T5spKBIQJCPR09Cf48ybbrgg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NJB+81+tZS5+9vuaVWKZY3o9keUY2xSiCU8+gNVYRwIyAtlGaQ5sPP1afhbG8uauy
+	 yMDp0BVxnW4DRGjl6JZKumEtq742R5M3cQA8M7hr/v8kpwt1AKt5o9i63vk6WneKuq
+	 ZY/vnYezYeMdySUh0yMr+2DARyzdoAbXpPlj7LGebK507ClEyN82T7Bst/BgwOBrPG
+	 aowwY2KBHqhompa2aJdbZ1PkQydj2r3PQec421O2xH53iPxV4HUw7sx/AsBOYt5pD+
+	 YMA73+sQrP1Q7QfcblIIR+JRJFYtys90Qmrxh1yqj6VbrrUR8Cc4fCyAfNvtwpzpzP
+	 uhNklhUEfSzLA==
+Date: Tue, 2 Dec 2025 10:58:20 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>, Pavan
+ Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>, Mina Almasry
+ <almasrymina@google.com>, Stanislav Fomichev <sdf@fomichev.me>, Yue Haibing
+ <yuehaibing@huawei.com>, David Wei <dw@davidwei.uk>, Haiyue Wang
+ <haiyuewa@163.com>, Jens Axboe <axboe@kernel.dk>, Joe Damato
+ <jdamato@fastly.com>, Simon Horman <horms@kernel.org>, Vishwanath Seshagiri
+ <vishs@fb.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ io-uring@vger.kernel.org, dtatulea@nvidia.com
+Subject: Re: [PATCH net-next v7 7/9] eth: bnxt: allow providers to set rx
+ buf size
+Message-ID: <20251202105820.14d6de99@kernel.org>
+In-Reply-To: <95566e5d1b75abcaefe3dca9a52015c2b5f04933.1764542851.git.asml.silence@gmail.com>
+References: <cover.1764542851.git.asml.silence@gmail.com>
+	<95566e5d1b75abcaefe3dca9a52015c2b5f04933.1764542851.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The io_uring_queue_async_work tracepoint event stores an int rw field
-that represents whether the work item is hashed. Rename it to "hashed"
-and change its type to bool to more accurately reflect its value.
+On Sun, 30 Nov 2025 23:35:22 +0000 Pavel Begunkov wrote:
+> +static ssize_t bnxt_get_rx_buf_size(struct bnxt *bp, int rxq_idx)
+> +{
+> +	struct netdev_rx_queue *rxq = __netif_get_rx_queue(bp->dev, rxq_idx);
+> +	size_t rx_buf_size;
+> +
+> +	rx_buf_size = rxq->mp_params.rx_buf_len;
+> +	if (!rx_buf_size)
+> +		return BNXT_RX_PAGE_SIZE;
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- include/trace/events/io_uring.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I'd like to retain my cfg objects in the queue API, if you don't mind.
+I guess we just need the way for drivers to fill in the defaults and
+then plumb them into the ops.
 
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
-index 45d15460b495..34b31a855ea4 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -131,28 +131,28 @@ TRACE_EVENT(io_uring_file_get,
- 
- /**
-  * io_uring_queue_async_work - called before submitting a new async work
-  *
-  * @req:	pointer to a submitted request
-- * @rw:		type of workqueue, hashed or normal
-+ * @hashed:	whether async work is hashed
-  *
-  * Allows to trace asynchronous work submission.
-  */
- TRACE_EVENT(io_uring_queue_async_work,
- 
--	TP_PROTO(struct io_kiocb *req, int rw),
-+	TP_PROTO(struct io_kiocb *req, bool hashed),
- 
--	TP_ARGS(req, rw),
-+	TP_ARGS(req, hashed),
- 
- 	TP_STRUCT__entry (
- 		__field(  void *,			ctx		)
- 		__field(  void *,			req		)
- 		__field(  u64,				user_data	)
- 		__field(  u8,				opcode		)
- 		__field(  unsigned long long,		flags		)
- 		__field(  struct io_wq_work *,		work		)
--		__field(  int,				rw		)
-+		__field(  bool,				hashed		)
- 
- 		__string( op_str, io_uring_get_opcode(req->opcode)	)
- 	),
- 
- 	TP_fast_assign(
-@@ -160,19 +160,19 @@ TRACE_EVENT(io_uring_queue_async_work,
- 		__entry->req		= req;
- 		__entry->user_data	= req->cqe.user_data;
- 		__entry->flags		= (__force unsigned long long) req->flags;
- 		__entry->opcode		= req->opcode;
- 		__entry->work		= &req->work;
--		__entry->rw		= rw;
-+		__entry->hashed		= hashed;
- 
- 		__assign_str(op_str);
- 	),
- 
- 	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s, flags 0x%llx, %s queue, work %p",
- 		__entry->ctx, __entry->req, __entry->user_data,
- 		__get_str(op_str), __entry->flags,
--		__entry->rw ? "hashed" : "normal", __entry->work)
-+		__entry->hashed ? "hashed" : "normal", __entry->work)
- );
- 
- /**
-  * io_uring_defer - called when an io_uring request is deferred
-  *
--- 
-2.45.2
+When drivers implement the logic to consolidate the configuration from
+different APIs into the effective one they inevitably diverge in their
+interpretations :/ We should keep it in the core from the start and
+present to the driver the final queue config.
 
+> +	/* Older chips need MSS calc so rx_buf_len is not supported,
+> +	 * but we don't set queue ops for them so we should never get here.
+> +	 */
+> +	if (!(bp->flags & BNXT_FLAG_CHIP_P5_PLUS))
+> +		return -EINVAL;
+> +
+> +	if (!is_power_of_2(rx_buf_size))
+> +		return -ERANGE;
+> +
+> +	if (rx_buf_size < BNXT_RX_PAGE_SIZE ||
+> +	    rx_buf_size > BNXT_MAX_RX_PAGE_SIZE)
+> +		return -ERANGE;
+> +
+> +	return rx_buf_size;
+> +}
+> +
+>  static int bnxt_queue_mem_alloc(struct net_device *dev, void *qmem, int idx)
+>  {
+>  	struct bnxt_rx_ring_info *rxr, *clone;
+>  	struct bnxt *bp = netdev_priv(dev);
+>  	struct bnxt_ring_struct *ring;
+> +	ssize_t rx_buf_size;
+>  	int rc;
+>  
+>  	if (!bp->rx_ring)
+>  		return -ENETDOWN;
+>  
+> +	rx_buf_size = bnxt_get_rx_buf_size(bp, idx);
+> +	if (rx_buf_size < 0)
+> +		return rx_buf_size;
+
+Does this survive full ring reconfig? IIRC the large changes to the NIC
+config (like changing ring sizes) free and reallocate all rings in bnxt,
+but due to "historic reasons?" they don't go thru the queue ops.
 

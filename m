@@ -1,147 +1,156 @@
-Return-Path: <io-uring+bounces-10893-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10894-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFAFC9CFC9
-	for <lists+io-uring@lfdr.de>; Tue, 02 Dec 2025 21:58:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54206C9D598
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 00:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1C664E3351
-	for <lists+io-uring@lfdr.de>; Tue,  2 Dec 2025 20:58:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 872D04E4959
+	for <lists+io-uring@lfdr.de>; Tue,  2 Dec 2025 23:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2662F744F;
-	Tue,  2 Dec 2025 20:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF732FC02D;
+	Tue,  2 Dec 2025 23:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="KICAI0kf"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VLS58nIA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AONODLIe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VLS58nIA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AONODLIe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3162F746C
-	for <io-uring@vger.kernel.org>; Tue,  2 Dec 2025 20:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D529221F0C
+	for <io-uring@vger.kernel.org>; Tue,  2 Dec 2025 23:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764709075; cv=none; b=qTrKcCqjy1d8zB3GyM4E28qZLo4l2r9mZYeM4GpStn0rAgFqflYD7/nxIzn+RaLF2OrFKty6tUiTFXDKEm2mvd+R9aiQtkVWPvY21RoQvg3bIJIKnMlQJji641tT3WOG1gvnG4IWmzlQa2g+fHsYpFu5fAKqetCXRkmDfZoeLg8=
+	t=1764718649; cv=none; b=dLbqJ3yKh4JmYVNeRZRK5PTixbd/7+erTW20TB6hYmt4mIp9UFWmEkzVE89Dz2atzE9TfkE/RVwx1E3iQLdC26iQrX43cSIH0Bknrxx9WKKtlP0MS+ogy4gJBlB2J1IbPA/qKmByBgfnKN3yFTHvFzCbAWiReHB1QwikZIiopgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764709075; c=relaxed/simple;
-	bh=sX0ww1/l52mEd0ETRBUj2OEXBY14nu/Cxss4GuQO1UY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QigoLSgHWDtl/NUbE5le/TRGze4YBR1wQIPfylCZwFsX0W5K7QuZeatlOCoKCyRaclXsyXZLF6FGb3h5pfMQ7zLOpX6by8ZVycOaM+3YmKWzzhT3Shru1oGM6HFk0c8d1hcUeAxlEg57cuyHGPywodR+zdKFcM5tXQoqC05FhcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=KICAI0kf; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-29800ac4ef3so14064595ad.1
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 12:57:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764709073; x=1765313873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCFY6ttRSuGdVF/JBzuDEsCiI5Xdw0CqLhG9NMpubKE=;
-        b=KICAI0kfoi/K+f726E1NcX4nZQLi3OONZSnnsZ3wGOIbmgRH8eM9F9LGOyvHAJy3j2
-         rN6TcOueXAqaL1KjHukS+YOP7dr0g04iEmHrumcFcvgIakJnSstUi4+xY94S/iAjEnCj
-         fAw5QtWDLLhklYaC8OqsNLZfP9lmL1ENahAbNfg4ihCTQw++dsIWRKyHEO0gJFPzmVFP
-         IFg0dmJpKE2DBeF5O5SjjsZbkt1iYbjLwFTPuYUXlqLIvWzfAljQX2qKSL9+9x1I1cBv
-         zhglnmVNXxb1bqOiwIfUh8pd3XyAgB5sCmAZH1od00XLlOsl59WrWqI9E0LpjW6PnYbi
-         mcjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764709073; x=1765313873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WCFY6ttRSuGdVF/JBzuDEsCiI5Xdw0CqLhG9NMpubKE=;
-        b=kHyWMxTC5mT4FF3YTR3UZz3N0130csHebEZMJsF7Co5LWlN1kEEaV90W4aMFLKhQBV
-         DZdl+5nxwbKLMo4Aq0XsL7f5K7GMQcmGYxu4HSUPBqsgKG2ImwCSf8g+QjB7Kh4g+4YA
-         NzRdJbwoQpRysJM2BWFcWcy+xEKuUPhSRb3FdHMJxM696wte8cKBIFgPwPJVHnC4640K
-         +KK4Ke/AJabzzAxsBIAqGVrZ+M3Kt6bV8/CNI28QPLbQuuLeA91bueAqW8KnBvvA1B98
-         b2p+qiPcSNu+mMN9I1fMhImXSzIuhQZxKokxlKe4xSvDmJj92u5lGIvDb7tlVFavWXjb
-         Trdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVI4HfRT7rRjRXoy9eKX1yLwdSCH7230CzTkaaNb69mlwevr4h5adHoq46rZD5tmQ4ecM337YEdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ2YuswCXnXBYQoBL4J1oZ+6bfux8i3qqgjcmVJnZ9nrkSVJ7g
-	EQCUAKTCzGCdSnlIRN2+CCgfKnhnmOB/iwucVVo8Dmgx3T3t8G46uIOGQh6rrJ1Rsxn9/b8UoEV
-	rfSljmD1wGHiisKqrXISAkN+VOvrq0S8oAA7OAy0haT2CJtALsXWd
-X-Gm-Gg: ASbGncsUU2uRoGnB1NOraPCh3OL1flHgM9BhD3eGDpZ1XeBETWp3Zk7wh68K8NrnT3y
-	0Efg7xFBRvLq0+3tL6ZEqwh7pit7Q25SrL2T1TJdApiaFv9AUEM/uLa/BigYmEOtx2tTjR1o0br
-	YKuFGDGdJMyJW4eMV3cqiEjJRHwLkn5SWy/mbDVW0RuXYmP1+mkQreIejnuWS/C1c97h03cjW7i
-	hIO82pDe4QH8mPJ79U5mvdOS+dj9eU6ZrFESUSIblV9KxW8E7TcESydOPBfxCQhX5fgujUcXolZ
-	0Bxg5ME0t/fpdsHuerhrPkiEiRs+vdLo8VotWpWNPAtNv3CCMIxPJw1YhR1Tp6jtuoagVDJomg5
-	h2iHIESIB6J/tvNUmf3KvdLK1zYI=
-X-Google-Smtp-Source: AGHT+IGxthmxn51MtajamGGrOy6wmhrHdngQ16dAA5HyliKSnwYsh2b9iAmV7GSW2/6+01Fcd/I9//wd9zgC
-X-Received: by 2002:a17:902:fc4f:b0:298:371:94f1 with SMTP id d9443c01a7336-29b6ff7b956mr275657085ad.1.1764709073003;
-        Tue, 02 Dec 2025 12:57:53 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29bce453e6fsm22538065ad.23.2025.12.02.12.57.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 12:57:52 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3F5233400C8;
-	Tue,  2 Dec 2025 13:57:52 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 46AF0E41C86; Tue,  2 Dec 2025 13:57:52 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
+	s=arc-20240116; t=1764718649; c=relaxed/simple;
+	bh=TS3CFCuzKmNgHw5Pw4jXbM/WFhXgvMlQM2v7bkQYgic=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OkZ2ZIotp80bW7J2gD7uk1p9p0dpHlrZ9e+caSakyflTf5/yYWh9yLfbQ2YoE8D0h+ZVvoKlwIFbUB4Wrmb/OLL7IQ4s2KudjyakVSHIZsKeimw3/fGl9r2lZWx9j4r8sxkyBsfCBwo6cM82GG1Tig2Pa3iv4IwO3vcLZbbZKYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VLS58nIA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AONODLIe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VLS58nIA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AONODLIe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 828935BCDD;
+	Tue,  2 Dec 2025 23:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1764718645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYDIaopWtnc3hzcQbMHysLUK6R90yL83/EPbCNuBPDM=;
+	b=VLS58nIAv5qv+6b/P/Toe2HtRP+4uE3tHNRWw5tiaB4HNhB/7qRz7dmW88Echn2wod2vnW
+	VY6ySX/NatPPrizSMBuyFIXuhyp2UXjlgl/mR6cp9/C83S8XQ0MGJ6fJSWJiYEZX/xzdND
+	8QWABOLDGNP4u6JeGR0g2Az6v7E+3uE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1764718645;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYDIaopWtnc3hzcQbMHysLUK6R90yL83/EPbCNuBPDM=;
+	b=AONODLIe55WvhJV2Od6YGGYMn7u8SVMWGYMFfKdJo4/0ZB0PFbWaXq1N71Y0BiTUN8d0+g
+	y4kRWjIbUqC0E8CQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VLS58nIA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AONODLIe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1764718645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYDIaopWtnc3hzcQbMHysLUK6R90yL83/EPbCNuBPDM=;
+	b=VLS58nIAv5qv+6b/P/Toe2HtRP+4uE3tHNRWw5tiaB4HNhB/7qRz7dmW88Echn2wod2vnW
+	VY6ySX/NatPPrizSMBuyFIXuhyp2UXjlgl/mR6cp9/C83S8XQ0MGJ6fJSWJiYEZX/xzdND
+	8QWABOLDGNP4u6JeGR0g2Az6v7E+3uE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1764718645;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYDIaopWtnc3hzcQbMHysLUK6R90yL83/EPbCNuBPDM=;
+	b=AONODLIe55WvhJV2Od6YGGYMn7u8SVMWGYMFfKdJo4/0ZB0PFbWaXq1N71Y0BiTUN8d0+g
+	y4kRWjIbUqC0E8CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 419843EA63;
+	Tue,  2 Dec 2025 23:37:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n80ZCTV4L2m1XQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 02 Dec 2025 23:37:25 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: Jens Axboe <axboe@kernel.dk>
-Cc: Uday Shankar <ushankar@purestorage.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/io-wq: always retry worker create on ERESTART*
-Date: Tue,  2 Dec 2025 13:57:44 -0700
-Message-ID: <20251202205745.3709469-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+Cc: io-uring@vger.kernel.org,  csander@purestorage.com
+Subject: Re: [PATCH liburing v2 2/4] test/bind-listen.t: Use ephemeral port
+In-Reply-To: <b8d9117f-7875-4b12-a747-5ee80eb5e1e3@kernel.dk> (Jens Axboe's
+	message of "Wed, 26 Nov 2025 13:49:47 -0700")
+References: <20251125212715.2679630-1-krisman@suse.de>
+	<20251125212715.2679630-3-krisman@suse.de>
+	<b8d9117f-7875-4b12-a747-5ee80eb5e1e3@kernel.dk>
+Date: Tue, 02 Dec 2025 18:37:22 -0500
+Message-ID: <87sedsh2vh.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mailhost.krisman.be:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,kernel.dk:email];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 828935BCDD
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
 
-If a task has a pending signal when create_io_thread() is called,
-copy_process() will return -ERESTARTNOINTR. io_should_retry_thread()
-will request a retry of create_io_thread() up to WORKER_INIT_LIMIT = 3
-times. If all retries fail, the io_uring request will fail with
-ECANCELED.
-Commit 3918315c5dc ("io-wq: backoff when retrying worker creation")
-added a linear backoff to allow the thread to handle its signal before
-the retry. However, a thread receiving frequent signals may get unlucky
-and have a signal pending at every retry. Since the userspace task
-doesn't control when it receives signals, there's no easy way for it to
-prevent the create_io_thread() failure due to pending signals. The task
-may also lack the information necessary to regenerate the canceled SQE.
-So always retry the create_io_thread() on the ERESTART* errors,
-analogous to what a fork() syscall would do. EAGAIN can occur due to
-various persistent conditions such as exceeding RLIMIT_NPROC, so respect
-the WORKER_INIT_LIMIT retry limit for EAGAIN errors.
+Jens Axboe <axboe@kernel.dk> writes:
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/io-wq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> On 11/25/25 2:27 PM, Gabriel Krisman Bertazi wrote:
+>> This test fails if port 8000 is already in use by something else.  Now
+>> that we have getsockname with direct file descriptors, use an ephemeral
+>> port instead.
+>
+> How is this going to work on older kernels? Probably retain the old
+> behavior, even if kind of shitty, on old kernels. Otherwise anything
+> pre 6.19 will now not run the bind-listen test at all.
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 1d03b2fc4b25..cd13d8aac3d2 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -803,15 +803,16 @@ static inline bool io_should_retry_thread(struct io_worker *worker, long err)
- 	 * Prevent perpetual task_work retry, if the task (or its group) is
- 	 * exiting.
- 	 */
- 	if (fatal_signal_pending(current))
- 		return false;
--	if (worker->init_retries++ >= WORKER_INIT_LIMIT)
--		return false;
- 
-+	worker->init_retries++;
- 	switch (err) {
- 	case -EAGAIN:
-+		return worker->init_retries <= WORKER_INIT_LIMIT;
-+	/* Analogous to a fork() syscall, always retry on a restartable error */
- 	case -ERESTARTSYS:
- 	case -ERESTARTNOINTR:
- 	case -ERESTARTNOHAND:
- 		return true;
- 	default:
+Do you have a suggestion on how to check getsockname without doing the
+whole socket setup just to probe, considering this is a uring_cmd?
+Perhaps checking a feature that was merged at the same time?
+
+If not, I'll come with something and send the v4 early tomorrow so you
+can cut the new version still this week.
+
 -- 
-2.45.2
-
+Gabriel Krisman Bertazi
 

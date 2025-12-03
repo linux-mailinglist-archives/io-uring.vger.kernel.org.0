@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-10903-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10904-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2663C9D697
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:37:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A19C9D6A3
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22EFA34AE21
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:37:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B6B94E4D84
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C175123770A;
-	Wed,  3 Dec 2025 00:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C948A23EA8C;
+	Wed,  3 Dec 2025 00:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECzkRAF/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGUXdJyi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2969A22E406
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9D1238D42
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764722203; cv=none; b=RBVRgLR5yIgdLLEikDfSIkwfx7XbaRd6hY/mU3K3OOrMv0YpbIGBl8Zev5/JShAj0tVsjEayLaVbmq9Y81BzyV4yFKKX+62zXZK5SjVZvsyU535jF7in6R56ll7uOqxDbyzziXQDcAiUTTRd225V+XTfSHQA1e0QmjyDeDMof6A=
+	t=1764722206; cv=none; b=li66H0RsoGPuRXl4MX3gTuEdfrdSoM5gm94BK0bFJDQ8fWOou302/vwrivyT+W4DdPvbKRu5lfbvfQE7/Rr85ICbj+6DsSRomkInBUjvvrsmMcKeU1Wlg7BuFnH5QpMd21255tHHQMo6EmEq/VZ2KPsoFAoKq0Izx8PVStvYW+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764722203; c=relaxed/simple;
-	bh=9RyemEm3xlDvo1zuttIsC6bydxv6sxwCp3aNwuaC0sI=;
+	s=arc-20240116; t=1764722206; c=relaxed/simple;
+	bh=l8OfGZ+ZuhyqJEg+pGHrAWYSbfp9jx2EVw3z0b+noWg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eOeQYPRmXF3tRr+6xGT0b20Gzavgo4JTSVAyfEOjZQMJOpsqDfpcHnPGP9K3/ZeaTPBT+BTYV+3hlwgjrZP+N+wJNc7qUPgEX7vKbSjeIcNltq6Mzsq0mT0NE88LWwl+r/dy2FQJgsTu8wgw5/O6NH4zf2tFu9ASqYMZecppGmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECzkRAF/; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=TwpOH0/OevyWG3I1t1l2mcY+xkDM4r8KHgHy/51PvY73gf5CdNURQK3bIbHmKOo9l6hmL2atGQPFia91ye1v0iwnfKi+qNsbye4n8zVRiHX5zsfbfHOooaCQkVdM8dXkmuRrU3OucwxJvRqNikTnJnTpzAvfgOx5zv6ZT6QQWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGUXdJyi; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2984dfae043so53047755ad.0
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:36:42 -0800 (PST)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7ba55660769so5220831b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764722202; x=1765327002; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764722203; x=1765327003; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XnYyEzTSEPVl4kDponzZw4cGyFS7cP/hmTM+WADvqAs=;
-        b=ECzkRAF/GTmg80KlsRHVO+Y1QtsT1Xj3E+3sKSRu9eKIs+BVc/4BpXlhQ3uEDv7Ct2
-         tJtpgS5HhoN/tjU1D7mFDTt8RqLyJqa7EoULR0pZZPmKW8L2GjZ8vDJpjUK2qcuBkTDO
-         0ISszCvMEZ3YwIJX64AO1BPt+FsaJCC26+wbT53kao/sIb5BVmeNg16OU5sky7A+K5C7
-         TaXT9g7baUHd+nNHkM+P1TzDCKZjq3FDGZS2U7wJgQIZgYVWNCQUrgss/LbKvfPFkTNh
-         ud6AoQdT/fOxI05/uzofSs9oMITrL6HsyZZMtYU4tHF0RcHAVh22JTUUSk/Pae5vnW4Q
-         02BQ==
+        bh=abgU8eXy2UGHu3I1rTvvJ2cLDoZHFsXc9Y3NuDMCzsQ=;
+        b=dGUXdJyiAVjy8pkKras47Vt4bmYC/knhSrwt8Ica+bcnbkJmUFnFuz7UNBmNEYKuDU
+         JRNsQwQXymPoUpXgn4eE4ELiifOVsaK6H9IIN3rdzJ8ntNaxm86OTCIgbQCMDZEdM/EX
+         mEZYIfBrRNUT2E1AANKgDa3FG5krVDyLBXRQVgg1Y+6qjN2cTW4Noj0iK9TZTR6KmODS
+         XdACee0iPOZT2A8OK8qUhokzG/Lp/ShVexjZp9JxPIsx7OEBPP3EFzuh9wJV4EMg0Tpb
+         XO29QrDYeXJ4T7OU94bAOLHIBI+ipMoJvKsdnAEJv2zqGjNGNqOx6Y23jIiJmHh4Bwc0
+         /Tzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764722202; x=1765327002;
+        d=1e100.net; s=20230601; t=1764722204; x=1765327004;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XnYyEzTSEPVl4kDponzZw4cGyFS7cP/hmTM+WADvqAs=;
-        b=LdWfdmAYxq0rSpVkBhUETRAEt6jT+LNyxSj4fNWOyWOwmRfXZOvf3ehwuuQCcjb446
-         2TUVOm0JX2fuqt/FPp2bXhQlNWme2NOTw+ZXI3AIhZQgFZtEx+HBiHpkJFPGYUYFU/mC
-         xIEiovhK0gEJYh9hZZoTpYnyWFK5lHQ7y5p8ONJ1Et5BpuYk5yxqDxqYUFObPydxf+ld
-         2iT8CZ+VcZjl8jieyXcmzaNHvJ7insB/6EZEUZKv+FsZrBAjLJEEUjXK3lZdh53h9a/p
-         L7WmRWL+wJf+D1Tylh4hXT+lny5r/p7tcLOykouex796wwpWE691mRCFBQYpY2kVRLE1
-         66oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3q8Mwz/gTr2IHVaisyfcQNB5RJOcA8woHhyVEW4A2gizl+xWYi9KSdVHaOcQkE5Eu7l7cKDlxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfKZGn0k/BM7S2UN5yZv//sVvMG6nXdvkLE8aN5/CzdmIerZ8r
-	/ZuDQt2qtWS45Vm1i7c0CEQRz/G4l+5IJv84l+WCdwv/tY4VPRVt9xR9
-X-Gm-Gg: ASbGnct/TwPRYRpZwcpK8wk86IM/D+Dfd7eH0w77PKe+hHWBhu/ndQScSPSYJZTACCU
-	uRPSNXWkEYy7fjnZ0G7taalrYXURX1itOVKvdV6hOjouFg0MSaUGkz5PvQPuihw09MZpP77VF7p
-	JRIbZHjkxceim/89ByQSJZwn/6gwlz7URbVXwFUk/g6M2rL2kt3CDuSsJ4d0BG4pTezyzcnBWPc
-	3mppT1jHEM7W8nkPOYU0fNfZob7prGGWeLZDWtZLeTk1xO+DFmRJF7vl4IVMKC6YrD1yT3wGkl0
-	MVPrnNnWZ7T1lgxHnCXju6ozlhPRFEHOkPZFIoBodi25x0pNtq8EdDAZBEuR86VEHh81P9Q8cep
-	HphHGaJbj1RjJFQNfRkj6Cy0fLa2nNFvvob21PuM3poTSXdDT1bOnSEZnXjLSB7LSYh/WEm66YX
-	2DdMzTHEQlfjhWeyj6
-X-Google-Smtp-Source: AGHT+IEYCenSCuDNaBs0yLpejZ7XuLQ+z5/+esIlGpOR9el8oQZ0YbzBwDMOmjrUoigOr4hSbRx31w==
-X-Received: by 2002:a17:903:1a30:b0:298:8a9:766a with SMTP id d9443c01a7336-29d683e6e7amr5342125ad.53.1764722201645;
-        Tue, 02 Dec 2025 16:36:41 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:f::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce40acbbsm169826115ad.11.2025.12.02.16.36.41
+        bh=abgU8eXy2UGHu3I1rTvvJ2cLDoZHFsXc9Y3NuDMCzsQ=;
+        b=JxdoLmfj60VZ+VevziRcFL9Yrx/T1UJPzGAsyxBpVjZDQ4DYl+56S2TfvjHDMH8slN
+         ctA0BPgzkkbJEKyOu4914ir+yBx+vnXEIaeQSIwrdEL+0fR4MAQUnrOD8bK+QAv5kyNx
+         8frbOjgN3LZ1M9nsogolvd4MMQkUDkHd2ST4O2grJ8kUB/ZCltMVJ1GKDeW45zL5gpNo
+         RQUX7kPHs4rizOduNxAp+HaYFJAfOLOq3ZBt9tiB0aEkaftlPVx/IInS7zLpV3yXLhOp
+         U5dWhYugd7Fem+PVL8LhBvvomvAdjo7edWbJifrp4EUiafD1CFvtOAlZeXH2Kws7KDzR
+         zqIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6YLqpZLj4LIniG6MWjjQhHjKN6wgMspjb4kvLXF54z7PbDFfmYZmZB1jwlgm+GEoGlRtTZg5slQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFggs+78HdnAHGeXm3LoJoul9yPOb6MsCXeZ4zd+LPyF5ShhX5
+	mmfsEbiOgvgxJYuGLOBcHi0GBIORlv1dp7hX0ydEd1YbDjIp+TTNX/1s
+X-Gm-Gg: ASbGncuPEFWTzZ9cQdvj5d1UT4JUTEQnvGWXpn9dI/+XAlMJPmyRFsxD5FJGgBV1VPf
+	orbunl1RUSlrlgc55CGHCp5JlpCL2HibT+/w3kx6Csy/dO/NDANcR+8gCGvbjWg8mf+JPzvHKyC
+	3DeZIZB9csFq+ZYHXPMyYuWWZdMiiP4gcm5bVJ4myfq5lVPerOLhDSRfsf7cEsQfN9fpzAVpZV6
+	HZzandABvBb+BDMc61V3WdwxquqixH8LR2H3VcMEEtQHDPZOCFlyPPFxCJa2GkDXZxKppPBep2c
+	co0zUdcY/qSWwZ25tOfprZp2wtnHR7r9nUjBEOogea7QOHHibIQKCTGKGGd4EYLaqdVrmQKoXTa
+	HqHSlggTXbBqoBRnQVRFDOPwqE6e6Odi/nvbT+301pcctSV+TxWpXyzkda7769VFOzUhQ3wQntE
+	sTNIjHLLK58mhSraSRfQ==
+X-Google-Smtp-Source: AGHT+IET1+7HqlrAt0XI+41UEiTuQnkd1mg2GkVbGorWDyZzRf32PjTJkSnkezsWod7FGGwyZ2PuSw==
+X-Received: by 2002:a17:903:458d:b0:295:6e0:7b0d with SMTP id d9443c01a7336-29d683e9b80mr4872945ad.56.1764722203596;
+        Tue, 02 Dec 2025 16:36:43 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:4f::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb40281sm164966475ad.70.2025.12.02.16.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 16:36:41 -0800 (PST)
+        Tue, 02 Dec 2025 16:36:43 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -83,9 +83,9 @@ Cc: bschubert@ddn.com,
 	csander@purestorage.com,
 	xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 08/30] io_uring/kbuf: add recycling for pinned kernel managed buffer rings
-Date: Tue,  2 Dec 2025 16:35:03 -0800
-Message-ID: <20251203003526.2889477-9-joannelkoong@gmail.com>
+Subject: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
+Date: Tue,  2 Dec 2025 16:35:04 -0800
+Message-ID: <20251203003526.2889477-10-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251203003526.2889477-1-joannelkoong@gmail.com>
 References: <20251203003526.2889477-1-joannelkoong@gmail.com>
@@ -97,92 +97,128 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add an interface for buffers to be recycled back into a pinned
-kernel-managed buffer ring. This requires the caller to synchronize
-recycling and selecting.
+Add a new helper, io_uring_cmd_import_fixed_index(). This takes in a
+buffer index. This requires the buffer table to have been pinned
+beforehand. The caller is responsible for ensuring it does not use the
+returned iter after the buffer table has been unpinned.
 
-This is a preparatory patch for fuse io-uring, which requires buffers to
-be recycled without contending for the uring mutex, as the buffer may
-need to be selected/recycled in an atomic context.
+This is a preparatory patch needed for fuse-over-io-uring support, as
+the metadata for fuse requests will be stored at the last index, which
+will be different from the sqe's buffer index.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- include/linux/io_uring/buf.h | 10 ++++++++++
- io_uring/kbuf.c              | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ include/linux/io_uring/cmd.h | 10 ++++++++++
+ io_uring/rsrc.c              | 31 +++++++++++++++++++++++++++++++
+ io_uring/rsrc.h              |  2 ++
+ io_uring/uring_cmd.c         | 11 +++++++++++
+ 4 files changed, 54 insertions(+)
 
-diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/buf.h
-index c997c01c24c4..839c5a0b3bf3 100644
---- a/include/linux/io_uring/buf.h
-+++ b/include/linux/io_uring/buf.h
-@@ -12,6 +12,10 @@ int io_uring_buf_ring_unpin(struct io_ring_ctx *ctx, unsigned buf_group,
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 375fd048c4cb..a4b5eae2e5d1 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -44,6 +44,9 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ 				  size_t uvec_segs,
+ 				  int ddir, struct iov_iter *iter,
+ 				  unsigned issue_flags);
++int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf_index,
++				    int ddir, struct iov_iter *iter,
++				    unsigned int issue_flags);
  
- int io_uring_buf_table_pin(struct io_ring_ctx *ctx, unsigned issue_flags);
- int io_uring_buf_table_unpin(struct io_ring_ctx *ctx, unsigned issue_flags);
-+
-+int io_uring_kmbuf_recycle_pinned(struct io_kiocb *req,
-+				  struct io_buffer_list *bl, u64 addr,
-+				  unsigned int len, unsigned int bid);
- #else
- static inline int io_uring_buf_ring_pin(struct io_ring_ctx *ctx,
- 					unsigned buf_group,
-@@ -36,6 +40,12 @@ static inline int io_uring_buf_table_unpin(struct io_ring_ctx *ctx,
+ /*
+  * Completes the request, i.e. posts an io_uring CQE and deallocates @ioucmd
+@@ -100,6 +103,13 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
  {
  	return -EOPNOTSUPP;
  }
-+int io_uring_kmbuf_recycle_pinned(struct io_kiocb *req,
-+				  struct io_buffer_list *bl, u64 addr,
-+				  unsigned int len, unsigned int bid)
++static inline int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd,
++						  u16 buf_index, int ddir,
++						  struct iov_iter *iter,
++						  unsigned int issue_flags)
 +{
 +	return -EOPNOTSUPP;
 +}
- #endif /* CONFIG_IO_URING */
- 
- #endif /* _LINUX_IO_URING_BUF_H */
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index ddda1338e652..82a4c550633d 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -102,6 +102,39 @@ void io_kbuf_drop_legacy(struct io_kiocb *req)
- 	req->kbuf = NULL;
+ static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret,
+ 		u64 ret2, unsigned issue_flags, bool is_cqe32)
+ {
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 67331cae0a5a..b6dd62118311 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 	return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
  }
  
-+/* The caller is responsible for synchronizing recycling and selection */
-+int io_uring_kmbuf_recycle_pinned(struct io_kiocb *req,
-+				  struct io_buffer_list *bl, u64 addr,
-+				  unsigned int len, unsigned int bid)
++int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
++			    u16 buf_index, int ddir, unsigned issue_flags)
 +{
-+	struct io_uring_buf *buf;
-+	struct io_uring_buf_ring *br;
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_rsrc_node *node;
++	struct io_mapped_ubuf *imu;
 +
-+	if (WARN_ON_ONCE(req->flags & REQ_F_BUFFERS_COMMIT) ||
-+	    WARN_ON_ONCE(!(bl->flags & IOBL_PINNED)) ||
-+	    WARN_ON_ONCE(!(bl->flags & IOBL_BUF_RING)) ||
-+	    WARN_ON_ONCE(!(bl->flags & IOBL_KERNEL_MANAGED)))
++	io_ring_submit_lock(ctx, issue_flags);
++
++	if (buf_index >= req->ctx->buf_table.nr ||
++	    !(ctx->buf_table.flags & IO_RSRC_DATA_PINNED)) {
++		io_ring_submit_unlock(ctx, issue_flags);
 +		return -EINVAL;
++	}
 +
-+	br = bl->buf_ring;
++	/*
++	 * We don't have to grab the reference on the node because the buffer
++	 * table is pinned. The caller is responsible for ensuring the iter
++	 * isn't used after the buffer table has been unpinned.
++	 */
++	node = io_rsrc_node_lookup(&ctx->buf_table, buf_index);
++	io_ring_submit_unlock(ctx, issue_flags);
 +
-+	if (WARN_ON_ONCE((br->tail - bl->head) >= bl->nr_entries))
-+		return -EINVAL;
++	if (!node || !node->buf)
++		return -EFAULT;
 +
-+	buf = &br->bufs[(br->tail) & bl->mask];
++	imu = node->buf;
 +
-+	buf->addr = addr;
-+	buf->len = len;
-+	buf->bid = bid;
-+
-+	req->flags &= ~REQ_F_BUFFER_RING;
-+
-+	br->tail++;
-+
-+	return 0;
++	return io_import_fixed(ddir, iter, imu, imu->ubuf, imu->len);
 +}
-+EXPORT_SYMBOL_GPL(io_uring_kmbuf_recycle_pinned);
 +
- bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ /* Lock two rings at once. The rings must be different! */
+ static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index d603f6a47f5e..658934f4d3ff 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -64,6 +64,8 @@ struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 			u64 buf_addr, size_t len, int ddir,
+ 			unsigned issue_flags);
++int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
++			    u16 buf_index, int ddir, unsigned issue_flags);
+ int io_import_reg_vec(int ddir, struct iov_iter *iter,
+ 			struct io_kiocb *req, struct iou_vec *vec,
+ 			unsigned nr_iovs, unsigned issue_flags);
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 197474911f04..e077eba00efe 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -314,6 +314,17 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_vec);
+ 
++int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf_index,
++				    int ddir, struct iov_iter *iter,
++				    unsigned int issue_flags)
++{
++	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
++
++	return io_import_reg_buf_index(req, iter, buf_index, ddir,
++				       issue_flags);
++}
++EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_index);
++
+ void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
 -- 
 2.47.3
 

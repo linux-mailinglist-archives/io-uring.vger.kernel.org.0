@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-10922-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10923-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E75C9D715
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:39:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFEEC9D70C
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2155C4E4D02
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7481E3A11FA
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E75C26980F;
-	Wed,  3 Dec 2025 00:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA1922DF9E;
+	Wed,  3 Dec 2025 00:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvszAPzg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IKLGFrck"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B422609C5
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075ED263C7F
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764722237; cv=none; b=APLr7JK52LQoYoVC5qmtNzOEm/tUDcMSHcVluew9SjqrAfb71Z27itKRhNcF9CkAGehgbrcS1CoDA2Bt9OQtg2q6YeXa4xKLfhU0oLwjRIaukQsTU6Xa1oNk7GyA+Em79SLZtqX+sWkabcLJzY5Dul3aG/vdINFkVW8vDfHa89M=
+	t=1764722238; cv=none; b=b6+zcw1+F0Y8oTygszUeCd1J3FEoOfXJb82VonFaUYqjYSzvbKHtenbTnqJpUIPPJ21JlxhNjmVwWpw0xSsOYaeyKxX6v2plexpFrzs9rqLWEUNjlgdv7uBkwttvLjPOcirfppZs9shQfxMPJTjcsFwGozaHB6/1uiv3q8TUoFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764722237; c=relaxed/simple;
-	bh=3fpkpiTJHdrZxc2y4ONX2+1WcazqUMMlvL1L1ouR/Bo=;
+	s=arc-20240116; t=1764722238; c=relaxed/simple;
+	bh=DGLsiI/Q1Hu5KRYnzIRyJt8xaZK2Chi+JAznO7fS7Jo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJbQP7LwyXUCJiGCTZ3qAEp+p8xLw2UppzLm5Tx9ssM2hle8WUum7D7raFISu866M+rniLGXY3HvrRfAuA7IBeKEC8TSpulxlBAOLKGObBeia0thPJSiKVx1doD37D2C75nrmPKR8SYoHikT+m9eVr7Czv+Ezl6FmbR1QnNRj5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvszAPzg; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=ItCFJGM4UODguuOCbBQGQWWckvlLgO80njPcJCOUFc/i3ZUHPWx00Jt2QgxQnjcf8/oosDr3gBfK5wCoJVxIUA9eTOob6osnwyZvv4lPn6kNnUblzj75Uf2e4mU3HTojezZf+TyZj2EsPNBEgC/an+2VtC45lt9suKS4bhhBS8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IKLGFrck; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2980d9b7df5so72246395ad.3
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:37:15 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-297dc3e299bso58420635ad.1
+        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:37:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764722235; x=1765327035; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764722236; x=1765327036; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AYXb2uAkh8VPDgfdTv5sNYyezVHslaxZWi/My/NXKY0=;
-        b=DvszAPzgmi5PVjIb6SQh/qY8TnWog+/rXujWqgvXj02h50c/TSYLjtSHjY1EkbEXLU
-         kt4EF/PkIevr1RkxBI7OIyYVrklPQmjm23BCbpWrMdfIYCSYV1K0NlgX5pdoqUvRrMrJ
-         DUljHmpIv4e5f3LrTv/GUz03K1kXU6BUNqDLRqANo1BI+9nY8HHNV0yw92CFOCuHIb7O
-         a64Jx8iRokq+POulncOTwbhEgCZ/6VVHs7sugtAty3i12fwgymLlfceDBi4HsFHCpzVF
-         +phdHINRkFXjaKimifkjNhdmO4iOHLuVjl6kyDBR0tJl3Y+Y1pdfUNreJeUeOBgpmhTE
-         iKQw==
+        bh=WsqpJrMs/ysg2fPHsSWUY+OyuCu+dlN13abeE7pc+o8=;
+        b=IKLGFrckU93IaZH3yTYDG5XFozqv7fMG5TccPby6b7mvhLymz08JUajd10K3ZNi0GG
+         EDUFXGYEuReTZP3IdwGt2NeN1ngMPtASXjw/Av8vvos09JC6h9awvrYqJjAS0V4OPUz3
+         kdxBUfWT+httIPSuIjlwhiUE6WyNCU3lf+iM6ZOdw8DyVO7xHpIbi24zD6fOHemde9aA
+         H9P9igBGd94WJfRxKXN4lHyHpv3Gb0lwapBeAAEJFdK4xq6Fm+1T6YhzT+RV+5b/EL/+
+         0M8HJB+DeXc0g7p8v+8FJMFeYFpG9CVbPGu8BafiyN3iuOeWrwyfslupkIMQSuUQ3eib
+         /S9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764722235; x=1765327035;
+        d=1e100.net; s=20230601; t=1764722236; x=1765327036;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AYXb2uAkh8VPDgfdTv5sNYyezVHslaxZWi/My/NXKY0=;
-        b=LdxUZytqHkfXiPfg9khre8IIjo/JJk/PcG4lSp9QYyoyFyttd8SX6TQG79gBoUh3RL
-         irfjXayEnoPF4Re/oo963PpEXpD9pVbrtqaNRl9Y/9B5zAo2UMzRwHJ1t1pHZ2PFaEdR
-         41t1oVvOj+4GX1HmnrOik/lNvGEA6gNgSojt/Z/0v8ToUTTs2sVxai/CdY5UZUilczcA
-         WnqLsvL3vxGCKk6OJ7/S7VDRp+vphNGAzMVo7CmVev8ZnEyGfg11kSx7d0rTJ6u1tj1j
-         4jsKMrE7Ax0SSCTj6LmR9I8iVTQ0ove7HVs6jAQ6h2FNEh8fTHntSipNy00TJi7SYpig
-         VYxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ16xtUgdIttxTr4vA+pokmv+BEh85LoKZvhkSNe0SeFhjTWZbgefwJhjqdUwmH+ZF2sdJw6jXUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQCXggHsua3YWUBwvaRuRkdC40Z5f//slFn/awqV4/SzF0bojn
-	x5iZEUmcMwfh+J/tSpzkOiJG8iXPJZxrPhrIylma1gh/M479t/Ofasdy
-X-Gm-Gg: ASbGnctLthVnev6t6bZbH0ONkCxecxpJYYVcIh2IiQbXoVADWx59LOIi9nulB2jtPgH
-	MTgF9BvBoJXjb4JCPMzbOjGddgF61IeuFHoz6PSW0kQnKQBxuhcCWSHyxDYSohYlkjewL35rhan
-	12oxd4LX7ZCzTokJVfUyS+Wg8DNVYOKzNx4fYu0Edgb2ZQDdv9u//FCZoFsGana+nFgZC2f3Fxu
-	KblHLQ2ppk/CN8Gb5TLZttrOSrSpeG7JP/g7iZhQUoftEGRnJ2bwUy9BnNkoxgFVD/n0fNo277Z
-	PGJSc2FoiGcvx8PNY3/RD5CHgL2KRS7tFkiF5qL3tjaIBzMlKOtghKt6E/7PL0S6/R15rL6RwtO
-	TsuGL8o5Is9xQzTATKq4ljYGcf8aDcPj/5zyaQM3zpB2lWz+jy+Bi551JLVaKy9Ysu5mSJh681v
-	WnqKhsV2NgAxGuymMzLQ==
-X-Google-Smtp-Source: AGHT+IFcqcCU0EY873imCcT0eRPEwTemwJq0y3Y5AQuWaomgOEuUsFFPp8UDaA7ip/0FsWHnSn6DjQ==
-X-Received: by 2002:a17:902:d482:b0:297:c0f0:42b3 with SMTP id d9443c01a7336-29d68312c47mr6481695ad.25.1764722234813;
-        Tue, 02 Dec 2025 16:37:14 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:53::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bd96307ebsm141191735ad.36.2025.12.02.16.37.14
+        bh=WsqpJrMs/ysg2fPHsSWUY+OyuCu+dlN13abeE7pc+o8=;
+        b=un1D/MaPGs70Rac0GshB8M0LY0Lb+eqrKmc13Q0BPt/jkrADpFc2O+vmOnzdVDgE4O
+         hjWz4l8foxNksvChZtJtqftzmD5BEtThBms5eUOJVNUCa2w8/qwQ54+0hozxXWZfEfaN
+         /fiP+K5MEtGXuC32p3yT/3m9lhrUMThww70ktRldh29TTFd8TzjkyL53JXNs3FdtqFqO
+         zxL/9HBdaCOBUWdeRXaLicIU5Tu7B9cd89+1oD8W+kcy0Xj/sPDw6MkrwEphIfyLQvf8
+         S7IGWrWN3H19hZghRkn4mFSujHZs9yrEKs4hSHYWJ1jRhgeydNLbicEvLVc+0lmGfXAo
+         2bKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWvMWDUe2fO9hkK2EBVxBi8kG2C0lUI6QvbIkIpAfhJ5HR0zoguOUKidoqM3P86MSIam7KTE3GzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhNGKhNPG+B/3YwLLAjcep7muEPYh/lnaQRwHCw0PDt65ysQZo
+	1gnlUc9p1IxEUXNXbkWVP6Ejap2FT15oBlQOhHzS7k0DzE4kjMMghLKx
+X-Gm-Gg: ASbGncuage15sfak88Pzy1clkf1LIMNHQOdCbsRvlL0TrPvmcAvg0/SZ/fQrvZ/VKro
+	ueByqzLa0UldSGdPOof7UYO88t4GelnbTJumxN7w6VBTuKXStuY/SATbpmXdsT1sHhLxdf8sl0Q
+	lCwwOfRLUP6F46KSZqLCBAyJTB6zwOlAuYEtqzwVqq3xB6/3zNWYg1Wh2HeoT/FY5IkuMa6JWau
+	mY4RfJJJZOUE0JgjOCNbF2nHiVwyYI4lvIxDBKZbRgMJHPMYtMh9YuY+govJWS7rs0XxORY38r6
+	AdwTa8bq569C6FWl/uV8cwDVmAy1tqP4Kl/0uSM8c90wWPro4B8AodHAEezavx0O0JuRS/vDLZs
+	aK+4Cn6O7n/1Vrf/8hDlpTfPsdSwKmXUj382hTFxZVGDyriWivhg61MoHDoofhVPEhfDlua5Bla
+	GnET1khp/XrGt9/Q/eFw==
+X-Google-Smtp-Source: AGHT+IFRuT/a8cMuL9O40GMAUyNMct99b729Oe6C4pg7eGK28S7kSEqBbWm3LtInLtgz/CcoM487iA==
+X-Received: by 2002:a17:902:f641:b0:297:d764:9874 with SMTP id d9443c01a7336-29d683026ddmr5417735ad.21.1764722236359;
+        Tue, 02 Dec 2025 16:37:16 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:5f::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb54449sm165126415ad.87.2025.12.02.16.37.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 16:37:14 -0800 (PST)
+        Tue, 02 Dec 2025 16:37:16 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -83,9 +83,9 @@ Cc: bschubert@ddn.com,
 	csander@purestorage.com,
 	xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 27/30] fuse: rename fuse_set_zero_arg0() to fuse_zero_in_arg0()
-Date: Tue,  2 Dec 2025 16:35:22 -0800
-Message-ID: <20251203003526.2889477-28-joannelkoong@gmail.com>
+Subject: [PATCH v1 28/30] fuse: enforce op header for every payload reply
+Date: Tue,  2 Dec 2025 16:35:23 -0800
+Message-ID: <20251203003526.2889477-29-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251203003526.2889477-1-joannelkoong@gmail.com>
 References: <20251203003526.2889477-1-joannelkoong@gmail.com>
@@ -97,115 +97,161 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The fuse_set_zero_arg0() function is used for setting a no-op header for
-in args but to support fuse io-uring zero-copy, the first parameter of
-outargs will also need to be set to a no-op header if the request
-contains payload but no out heeader.
+In order to support fuse io-uring zero-copy, the payload and the headers
+for a request/reply must reside in separate buffers since any
+zero-copied payload will be transparent to the daemon but the headers
+need to be accessible.
 
-Rename fuse_set_zero_arg0() to fuse_zero_in_arg0() to indicate this is
-for the in arg header. Later, fuse_zero_out_arg0() will be added.
+Currently, a fuse reply can be either:
+* arg[0] = op header, arg[1] = payload
+* arg[0] = payload
+* arg[0] = NULL
+
+Fuse io-uring needs to differentiate between the first two for copying
+to/from the ring.
+
+Enforce that all fuse replies that have a payload also have an op
+header. If there is is only a payload to send in the reply, then the
+header will be a zero-size no-op header.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/dax.c    | 2 +-
- fs/fuse/dev.c    | 2 +-
- fs/fuse/dir.c    | 8 ++++----
- fs/fuse/fuse_i.h | 2 +-
- fs/fuse/xattr.c  | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ fs/fuse/dir.c     |  5 +++--
+ fs/fuse/file.c    | 11 ++++++-----
+ fs/fuse/fuse_i.h  |  6 ++++++
+ fs/fuse/readdir.c |  2 +-
+ fs/fuse/xattr.c   | 16 ++++++++++------
+ 5 files changed, 26 insertions(+), 14 deletions(-)
 
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index ac6d4c1064cc..b4bf586d1fd1 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -240,7 +240,7 @@ static int fuse_send_removemapping(struct inode *inode,
- 	args.opcode = FUSE_REMOVEMAPPING;
- 	args.nodeid = fi->nodeid;
- 	args.in_numargs = 3;
--	fuse_set_zero_arg0(&args);
-+	fuse_zero_in_arg0(&args);
- 	args.in_args[1].size = sizeof(*inargp);
- 	args.in_args[1].value = inargp;
- 	args.in_args[2].size = inargp->count * sizeof(*remove_one);
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 820d02f01b47..7d39c80da554 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1943,7 +1943,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
- 	}
- 	ra->inarg.offset = outarg->offset;
- 	ra->inarg.size = total_len;
--	fuse_set_zero_arg0(args);
-+	fuse_zero_in_arg0(args);
- 	args->in_args[1].size = sizeof(ra->inarg);
- 	args->in_args[1].value = &ra->inarg;
- 	args->in_args[2].size = total_len;
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ecaec0fea3a1..b79be8bbbaf8 100644
+index b79be8bbbaf8..238fa1bab3c9 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -176,7 +176,7 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
- 	args->opcode = FUSE_LOOKUP;
- 	args->nodeid = nodeid;
- 	args->in_numargs = 3;
--	fuse_set_zero_arg0(args);
-+	fuse_zero_in_arg0(args);
- 	args->in_args[1].size = name->len;
- 	args->in_args[1].value = name->name;
- 	args->in_args[2].size = 1;
-@@ -943,7 +943,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -1630,8 +1630,9 @@ static int fuse_readlink_folio(struct inode *inode, struct folio *folio)
+ 	ap.args.out_pages = true;
+ 	ap.args.out_argvar = true;
+ 	ap.args.page_zeroing = true;
+-	ap.args.out_numargs = 1;
+-	ap.args.out_args[0].size = desc.length;
++	ap.args.out_numargs = 2;
++	fuse_zero_out_arg0(&ap.args);
++	ap.args.out_args[1].size = desc.length;
+ 	res = fuse_simple_request(fm, &ap.args);
  
- 	args.opcode = FUSE_SYMLINK;
- 	args.in_numargs = 3;
--	fuse_set_zero_arg0(&args);
-+	fuse_zero_in_arg0(&args);
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
- 	args.in_args[2].size = len;
-@@ -1008,7 +1008,7 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
- 	args.opcode = FUSE_UNLINK;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 2;
--	fuse_set_zero_arg0(&args);
-+	fuse_zero_in_arg0(&args);
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
- 	err = fuse_simple_request(fm, &args);
-@@ -1032,7 +1032,7 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
- 	args.opcode = FUSE_RMDIR;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 2;
--	fuse_set_zero_arg0(&args);
-+	fuse_zero_in_arg0(&args);
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
- 	err = fuse_simple_request(fm, &args);
+ 	fuse_invalidate_atime(inode);
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f1ef77a0be05..ff6c287bc4ed 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -581,8 +581,9 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
+ 	args->in_args[0].size = sizeof(ia->read.in);
+ 	args->in_args[0].value = &ia->read.in;
+ 	args->out_argvar = true;
+-	args->out_numargs = 1;
+-	args->out_args[0].size = count;
++	args->out_numargs = 2;
++	fuse_zero_out_arg0(args);
++	args->out_args[1].size = count;
+ }
+ 
+ static void fuse_release_user_pages(struct fuse_args_pages *ap, ssize_t nres,
+@@ -711,7 +712,7 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
+ 				      ia->write.out.size;
+ 		}
+ 	} else {
+-		u32 outsize = args->out_args[0].size;
++		u32 outsize = args->out_args[1].size;
+ 
+ 		nres = outsize;
+ 		if (ia->read.in.size != outsize)
+@@ -870,7 +871,7 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 	struct fuse_io_args *ia = container_of(args, typeof(*ia), ap.args);
+ 	struct fuse_args_pages *ap = &ia->ap;
+ 	size_t count = ia->read.in.size;
+-	size_t num_read = args->out_args[0].size;
++	size_t num_read = args->out_args[1].size;
+ 	struct address_space *mapping;
+ 	struct inode *inode;
+ 
+@@ -1506,7 +1507,7 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 			if (write)
+ 				ap->args.in_args[1].value = user_addr;
+ 			else
+-				ap->args.out_args[0].value = user_addr;
++				ap->args.out_args[1].value = user_addr;
+ 
+ 			iov_iter_advance(ii, frag_size);
+ 			*nbytesp = frag_size;
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index c2f2a48156d6..34541801d950 100644
+index 34541801d950..e45126d792a6 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1020,7 +1020,7 @@ struct fuse_mount {
-  */
- struct fuse_zero_header {};
- 
--static inline void fuse_set_zero_arg0(struct fuse_args *args)
-+static inline void fuse_zero_in_arg0(struct fuse_args *args)
- {
- 	args->in_args[0].size = sizeof(struct fuse_zero_header);
+@@ -1026,6 +1026,12 @@ static inline void fuse_zero_in_arg0(struct fuse_args *args)
  	args->in_args[0].value = NULL;
+ }
+ 
++static inline void fuse_zero_out_arg0(struct fuse_args *args)
++{
++	args->out_args[0].size = sizeof(struct fuse_zero_header);
++	args->out_args[0].value = NULL;
++}
++
+ static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
+ {
+ 	return sb->s_fs_info;
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index c2aae2eef086..d80cd2bedabe 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -349,7 +349,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	args->out_args[0].value = buf;
++	args->out_args[1].value = buf;
+ 
+ 	plus = fuse_use_readdirplus(inode, ctx);
+ 	if (plus) {
 diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-index 93dfb06b6cea..aa0881162287 100644
+index aa0881162287..4011a99abd52 100644
 --- a/fs/fuse/xattr.c
 +++ b/fs/fuse/xattr.c
-@@ -165,7 +165,7 @@ int fuse_removexattr(struct inode *inode, const char *name)
- 	args.opcode = FUSE_REMOVEXATTR;
- 	args.nodeid = get_node_id(inode);
- 	args.in_numargs = 2;
--	fuse_set_zero_arg0(&args);
-+	fuse_zero_in_arg0(&args);
+@@ -70,12 +70,14 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
  	args.in_args[1].size = strlen(name) + 1;
  	args.in_args[1].value = name;
- 	err = fuse_simple_request(fm, &args);
+ 	/* This is really two different operations rolled into one */
+-	args.out_numargs = 1;
+ 	if (size) {
+ 		args.out_argvar = true;
+-		args.out_args[0].size = size;
+-		args.out_args[0].value = value;
++		args.out_numargs = 2;
++		fuse_zero_out_arg0(&args);
++		args.out_args[1].size = size;
++		args.out_args[1].value = value;
+ 	} else {
++		args.out_numargs = 1;
+ 		args.out_args[0].size = sizeof(outarg);
+ 		args.out_args[0].value = &outarg;
+ 	}
+@@ -132,12 +134,14 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
+ 	args.in_args[0].size = sizeof(inarg);
+ 	args.in_args[0].value = &inarg;
+ 	/* This is really two different operations rolled into one */
+-	args.out_numargs = 1;
+ 	if (size) {
+ 		args.out_argvar = true;
+-		args.out_args[0].size = size;
+-		args.out_args[0].value = list;
++		args.out_numargs = 2;
++		fuse_zero_out_arg0(&args);
++		args.out_args[1].size = size;
++		args.out_args[1].value = list;
+ 	} else {
++		args.out_numargs = 1;
+ 		args.out_args[0].size = sizeof(outarg);
+ 		args.out_args[0].value = &outarg;
+ 	}
 -- 
 2.47.3
 

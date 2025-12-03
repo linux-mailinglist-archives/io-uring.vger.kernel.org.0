@@ -1,122 +1,258 @@
-Return-Path: <io-uring+bounces-10926-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10927-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6186C9D983
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 03:50:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFCAC9DBB6
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 05:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6AF3534A17E
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 02:50:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A25254E0359
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 04:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BD119F40A;
-	Wed,  3 Dec 2025 02:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F0526561E;
+	Wed,  3 Dec 2025 04:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TB9aVId7"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Jp1d7JwX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0A1F78E6
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 02:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E9E23D294
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 04:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764730197; cv=none; b=Hk62UhFiAi8yDMxXG050D4rvwe++gm+xcN8cU3JNmiQ8+Zm0I8ykQEPd2VdygpQelZV5cSqzjMXAM2x/xl5/MrTs0xNnRlZ8Ls++ZlOhvXf+DEWuQBFy3JAWtXjp2jtGVTdHUFwV7pCNbGLoFu/wJazwLrPSdj8l0S6RPjGKDd0=
+	t=1764735212; cv=none; b=tR2Ub/BqFBy6RwkPDN0fjqLmSbFmbs0f0dYhsXdC5iyD73wmkJXo76ax6mnTsuFc7VA/LzD0E5zA7CX6NnBbHxaWk74n854dp/K1xWPzsK/AZa+P+IW6alcOPswoGFLn5+rcV9fiAIIr3Rj45r9D+W9pE8RvYZcVizErXLiKIKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764730197; c=relaxed/simple;
-	bh=+SMUFTqSfSupSY315YkTU6knxzgNSVCGMK2J1YGklM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OadXmXPAex/dysPwBWYnMZeuoRzU7iRqHJzi+3XxsjBvuvEQqG9Iuc+THbwtxe8NkUu9iWYnzTq6liFOx7b6c+MkN7RSZjmCQ7PDLCTjD90n67QDxf5wvEbrhbiWx12R/Wz+/1NKRxzEYDoXLXNUYwY4ikHBDEoCLltTwEa5FWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TB9aVId7; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-65745a436f7so2766830eaf.3
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 18:49:53 -0800 (PST)
+	s=arc-20240116; t=1764735212; c=relaxed/simple;
+	bh=22hrq76GMqLwaIE0iua86BlDSKBm/9IiS84ASBsE3qA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QOqAwaofWkcV/qjteOO5Ciil+Nwy1CtFAPFtPBGApkjw28Ezk53qWcN46CBSi9kIoLaW2kp1ChpB8xE2p5vtwc/k/K9X+eSPvqjWpcxrhY1juOm/kgADMGJdBUU2pSyrdZZqFoyskOSiouFmrB6BiDozFkDJpoRfWkObxcJ1qjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Jp1d7JwX; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-29806bd4776so11338565ad.0
+        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 20:13:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764730193; x=1765334993; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zWurfHVhbSZHk9QLaaCbFGrEdLwAA2WH7JL/j4Pv9S4=;
-        b=TB9aVId7L/4ijw7DKyqtBaDkd7LAvNWI67Mc0+Pbgx6JE6RzqQD7223yB2TJ7GBZi9
-         jo7I18AlUgKDhDli/c4UjlSum/va1s46t70vaAk7gLrFdA7t/HNLWXwPQzcxG9i0Rxyi
-         ETyBwx9LQg1khlgCCqumR4XQiDxYDTKnz/xMiLlBf8mokkToP65aP+cCbfodwJaHsZCs
-         C4AVC6bUv5TJku3gOs6QZiNgehotiT4GlbkKlS73470pE2jeUf2fNoPYCh6iYN1pjAj9
-         /0WRJ4hK/LShQZO8ZlJ9Qj8LBAWNwcU6TVKUzDQRVkvzRatv0AphaEzq6lqWuG5dMbdL
-         U5fQ==
+        d=purestorage.com; s=google2022; t=1764735210; x=1765340010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q3/Sjao4Sals8cXe+ER5196tMY6uLigV67FJu5L8zqM=;
+        b=Jp1d7JwXaRArVOVwabIAn596zQNZKJjbZzwvM9wR9RyNRTVtXCWqBR668+UPC7hvps
+         j+fX1Xe1eJ/UU0Iob1ts+l8FvDqm5Zsg1FEPZJQmwZSKQlF3FlTjRwWlHICoPZcHwF7V
+         LXu33Yp6Kvx2wtGhztQDojRmEjqbkZFDINzH8Uf4yROmT59ZesxMahNPIi2tN9GR1NID
+         L5JJ26YBRPFIU0e1sgUoLWORGC8sSebKzOF8s4DK0PDO4Dm2/SnjGSxAcl9Tf5W1li2O
+         SR/rZfBshZriciZaFBGVgJnrymNiIL6E19LgIvoEcWlMC4DxE5WWJoBirEnwSBrWx7OB
+         VUlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764730193; x=1765334993;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zWurfHVhbSZHk9QLaaCbFGrEdLwAA2WH7JL/j4Pv9S4=;
-        b=WPy+Rb1Mcpqgdokwqf82vYLRQOey8BqUaCzbK65hmKz9H9txcK4DUHaH3bVG9VUsn2
-         ltbwWo44NtFrvUcvbuRrU5wEIfEPbGEsj924LU5BPc9a9rciWAeErLxLZo5FmuoE9o24
-         MExEnCsgKZuVGPunY2/uPW5EZ3LNVNs4Qzr1mTueSUgCdZc+IpA0OtBOIvm12eN7ZkIE
-         Fv7+NgePBj0kGjVj9IxP65faIl8G6HnZxu2LPH/hJYqAIRfpYW4FvGcsKvn0SCxhxbpW
-         HjQ5lvlTjOaQBuwPJLAlehsf8MjIGs9B0RNfBExaCsXxg11FKtoPXAGK+jYnFE5cHqc7
-         g4Kg==
-X-Gm-Message-State: AOJu0YzcZgFRGFx6tjudBuoMPIhkaSmA4Lez6wOeTtgqkd7x77hR6WBP
-	sAYkLM3TdqqzEzKQ7fC/9GWvb/TBd/qNaId8f1n6vCGrGWWCl5o48Y46Zg47+DIrphGrlUphGaA
-	md7SFNpk=
-X-Gm-Gg: ASbGnctJIKMihowdn/h8o2/JmQNPpkt1tPBUxezFIZjaBIFPZ7ZnDxDWZKYbW2Qa+wr
-	8vFxtrd7Kvi+m66o/hvxImUGHALczA9EqT5Awsu4w/+shPG4OQt69yay7gwmw+PKI/tWGtrGd5I
-	h2qoc3UBoYijxoIi32AhRLbYTplw+zwcsa99mbKK3h7oLvRYhDaxEhgFo1IRzsDwr0kJUqrMTvX
-	YG9XOMGcYVSdNCENYSSGbiAwiv15dk0YpC+fqaIOYrjo2MojQsNbX6iiV3qxQpmUjTieuLES4j5
-	apWHDboTrpMz0NwMMQhLD2g5fxFdZJIjeeYnnA8Fyo0rQhn8mnNEcXDVuYenMnNT0kB0h0Uk3v+
-	W3MUERlajqY95Fgu9QbYktHgjO0uJgCWsvB90eUF4hvMiWVunUQUCV+8wR58mqDYxQQ2ilY/hou
-	wCTrUqzTQF3V/ZniFkZ5I=
-X-Google-Smtp-Source: AGHT+IEOF3iWXSsUpf2Y/kZkaR8eGIQ0dAm1OHKoAGNsA2c+EBt7Ip09He2whZpRbsLABoVGhbLlmw==
-X-Received: by 2002:a05:6820:f016:b0:654:f77a:1a5c with SMTP id 006d021491bc7-65972713912mr525929eaf.3.1764730192835;
-        Tue, 02 Dec 2025 18:49:52 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-659332e0031sm5053211eaf.5.2025.12.02.18.49.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 18:49:52 -0800 (PST)
-Message-ID: <b774faf6-d6e2-4828-8b1e-2ae440cb1cf7@kernel.dk>
-Date: Tue, 2 Dec 2025 19:49:51 -0700
+        d=1e100.net; s=20230601; t=1764735210; x=1765340010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Q3/Sjao4Sals8cXe+ER5196tMY6uLigV67FJu5L8zqM=;
+        b=BUSIc3OeyHBaNMjlfb6JJIla4mMT855lTyrXofx+64rE61svUU3Z8ZMLpc1lvPk8vg
+         ihsCYdsOaQBEGFiyfQtKv9W9zOvbaySVOa+LGTIaOJfqeFNxdXPxCRGOvCjBw3/Z2vYI
+         mk9S6aHbxG1Z1OBXo/wrB9qUbAHlMratKRB5mkNOvr64PFGKB++GJUYqdLBrDJYGKP8k
+         G7aOiqd2LS9PjGQGgCz4jaR8xj8Gg5ArU4OsDuVwRnIScv+XB6GXDT2YKlIewFTU3obp
+         9MSrZzt8eCSS0OybiqgjWo/U0/EatpiUKINv2OanjUGi+BtfQNOEPPXR8qqbA2SY/NFG
+         +jqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSFLxhmqPJ/617S6B4SKqAc6QrSI/MFXvwxPsNJUHvy2W4WA1h6haR42Sa413GTvycsTPkor9p7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydBteBB+Z5nYWuwF8N+v/Yk7x/s5fsOUE1PSAPDTXsmBV9LYf9
+	at3aJTwpFwhCAdpIjtk+aqTETi0PsZaDH35Z9rvR5SMpigSxsz6RJqz2uJS0tAZ56qHg/6Ica2O
+	hdxQvw02Zs1PKC+i7v42dL46755K3lK/1FCMxP9XCHw==
+X-Gm-Gg: ASbGnctEQ+6cDcnrPdWSPJ9KyMQxAHM1uxRlQK3/jllSvJ9hVvTxRCwVwRz1pNtnrnk
+	00+7ESwXWeWiYohv6IRwGEKqtef9sMU6HzNL+AS8gn7ZCBx+C3R0zCAJ9E1rE1OgKWvUG7JK6Hs
+	Xq6wmc/4i1ycfnjeBVUypCgKmLNq3MV7n0qu/tRKjU/iJr9R65jvnGY8lPGV7U9XuLHD7DZfFVd
+	ccDjJDY1d2mJ5a7jDwwyz5cIj396njMbvEVQ8QJON7Q9Np/R1IXtxNOAIBQ9alJeUQVrd4l
+X-Google-Smtp-Source: AGHT+IGgAM5RM5y/tjjnQemI9ILGUJNZJ/v2TY7IwRod8OjHrqpwnHvdecIZ/q/FPBwrhYtMQ0NCSDmwteIiqUE1Sl4=
+X-Received: by 2002:a05:7022:f902:10b0:11b:65e:f33 with SMTP id
+ a92af1059eb24-11df25290acmr23031c88.1.1764735209716; Tue, 02 Dec 2025
+ 20:13:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v2 2/4] test/bind-listen.t: Use ephemeral port
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org, csander@purestorage.com
-References: <20251125212715.2679630-1-krisman@suse.de>
- <20251125212715.2679630-3-krisman@suse.de>
- <b8d9117f-7875-4b12-a747-5ee80eb5e1e3@kernel.dk>
- <87sedsh2vh.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87sedsh2vh.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-7-joannelkoong@gmail.com>
+In-Reply-To: <20251203003526.2889477-7-joannelkoong@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 2 Dec 2025 20:13:18 -0800
+X-Gm-Features: AWmQ_bnHkjTWNU-VMv9EOHDGCIEYZQubHrGGZhg_eVdoHpfqQ3t5K1M7nriexTY
+Message-ID: <CADUfDZqzpfnq8zfYNT7qQdauMmQQ=z6xi9Am-KyQc148oxwAxA@mail.gmail.com>
+Subject: Re: [PATCH v1 06/30] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/2/25 4:37 PM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 11/25/25 2:27 PM, Gabriel Krisman Bertazi wrote:
->>> This test fails if port 8000 is already in use by something else.  Now
->>> that we have getsockname with direct file descriptors, use an ephemeral
->>> port instead.
->>
->> How is this going to work on older kernels? Probably retain the old
->> behavior, even if kind of shitty, on old kernels. Otherwise anything
->> pre 6.19 will now not run the bind-listen test at all.
-> 
-> Do you have a suggestion on how to check getsockname without doing the
-> whole socket setup just to probe, considering this is a uring_cmd?
-> Perhaps checking a feature that was merged at the same time?
+On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> Add kernel APIs to pin and unpin buffer rings, preventing userspace from
+> unregistering a buffer ring while it is pinned by the kernel.
+>
+> This provides a mechanism for kernel subsystems to safely access buffer
+> ring contents while ensuring the buffer ring remains valid. A pinned
+> buffer ring cannot be unregistered until explicitly unpinned. On the
+> userspace side, trying to unregister a pinned buffer will return -EBUSY.
+> Pinning an already-pinned bufring is acceptable and returns 0.
+>
+> The API accepts a "struct io_ring_ctx *ctx" rather than a cmd pointer,
+> as the buffer ring may need to be unpinned in contexts where a cmd is
+> not readily available.
+>
+> This is a preparatory change for upcoming fuse usage of kernel-managed
+> buffer rings. It is necessary for fuse to pin the buffer ring because
+> fuse may need to select a buffer in atomic contexts, which it can only
+> do so by using the underlying buffer list pointer.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  include/linux/io_uring/buf.h | 28 +++++++++++++++++++++++
+>  io_uring/kbuf.c              | 43 ++++++++++++++++++++++++++++++++++++
+>  io_uring/kbuf.h              |  5 +++++
+>  3 files changed, 76 insertions(+)
+>  create mode 100644 include/linux/io_uring/buf.h
+>
+> diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/buf.h
+> new file mode 100644
+> index 000000000000..7a1cf197434d
+> --- /dev/null
+> +++ b/include/linux/io_uring/buf.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +#ifndef _LINUX_IO_URING_BUF_H
+> +#define _LINUX_IO_URING_BUF_H
+> +
+> +#include <linux/io_uring_types.h>
+> +
+> +#if defined(CONFIG_IO_URING)
+> +int io_uring_buf_ring_pin(struct io_ring_ctx *ctx, unsigned buf_group,
+> +                         unsigned issue_flags, struct io_buffer_list **b=
+l);
+> +int io_uring_buf_ring_unpin(struct io_ring_ctx *ctx, unsigned buf_group,
+> +                           unsigned issue_flags);
+> +#else
+> +static inline int io_uring_buf_ring_pin(struct io_ring_ctx *ctx,
+> +                                       unsigned buf_group,
+> +                                       unsigned issue_flags,
+> +                                       struct io_buffer_list **bl);
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +static inline int io_uring_buf_ring_unpin(struct io_ring_ctx *ctx,
+> +                                         unsigned buf_group,
+> +                                         unsigned issue_flags)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +#endif /* CONFIG_IO_URING */
+> +
+> +#endif /* _LINUX_IO_URING_BUF_H */
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 00ab17a034b5..ddda1338e652 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/poll.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/io_uring.h>
+> +#include <linux/io_uring/buf.h>
+>
+>  #include <uapi/linux/io_uring.h>
+>
+> @@ -237,6 +238,46 @@ struct io_br_sel io_buffer_select(struct io_kiocb *r=
+eq, size_t *len,
+>         return sel;
+>  }
+>
+> +int io_uring_buf_ring_pin(struct io_ring_ctx *ctx, unsigned buf_group,
+> +                         unsigned issue_flags, struct io_buffer_list **b=
+l)
+> +{
+> +       struct io_buffer_list *buffer_list;
+> +       int ret =3D -EINVAL;
+> +
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +
+> +       buffer_list =3D io_buffer_get_list(ctx, buf_group);
+> +       if (likely(buffer_list) && (buffer_list->flags & IOBL_BUF_RING)) =
+{
 
-I think just retain the old code - do the getsockname via io_uring, and
-if it fails, then fall back to the old code. Then it'll both exercise
-the new code, when available, yet still work on older kernels still.
+Since there's no reference-counting of pins, I think it might make
+more sense to fail io_uring_buf_ring_pin() if the buffer ring is
+already pinned. Otherwise, the buffer ring will be unpinned in the
+first call to io_uring_buf_ring_unpin(), when it might still be in use
+by another caller of io_uring_buf_ring_pin().
 
--- 
-Jens Axboe
+Best,
+Caleb
+
+> +               buffer_list->flags |=3D IOBL_PINNED;
+> +               ret =3D 0;
+> +               *bl =3D buffer_list;
+> +       }
+> +
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_buf_ring_pin);
+> +
+> +int io_uring_buf_ring_unpin(struct io_ring_ctx *ctx, unsigned buf_group,
+> +                           unsigned issue_flags)
+> +{
+> +       struct io_buffer_list *bl;
+> +       int ret =3D -EINVAL;
+> +
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +
+> +       bl =3D io_buffer_get_list(ctx, buf_group);
+> +       if (likely(bl) && (bl->flags & IOBL_BUF_RING) &&
+> +           (bl->flags & IOBL_PINNED)) {
+> +               bl->flags &=3D ~IOBL_PINNED;
+> +               ret =3D 0;
+> +       }
+> +
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_buf_ring_unpin);
+> +
+>  /* cap it at a reasonable 256, will be one page even for 4K */
+>  #define PEEK_MAX_IMPORT                256
+>
+> @@ -743,6 +784,8 @@ int io_unregister_buf_ring(struct io_ring_ctx *ctx, v=
+oid __user *arg)
+>                 return -ENOENT;
+>         if (!(bl->flags & IOBL_BUF_RING))
+>                 return -EINVAL;
+> +       if (bl->flags & IOBL_PINNED)
+> +               return -EBUSY;
+>
+>         scoped_guard(mutex, &ctx->mmap_lock)
+>                 xa_erase(&ctx->io_bl_xa, bl->bgid);
+> diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+> index 11d165888b8e..781630c2cc10 100644
+> --- a/io_uring/kbuf.h
+> +++ b/io_uring/kbuf.h
+> @@ -12,6 +12,11 @@ enum {
+>         IOBL_INC                =3D 2,
+>         /* buffers are kernel managed */
+>         IOBL_KERNEL_MANAGED     =3D 4,
+> +       /*
+> +        * buffer ring is pinned and cannot be unregistered by userspace =
+until
+> +        * it has been unpinned
+> +        */
+> +       IOBL_PINNED             =3D 8,
+>  };
+>
+>  struct io_buffer_list {
+> --
+> 2.47.3
+>
 

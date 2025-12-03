@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-10899-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10900-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97657C9D679
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6ECC9D67F
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 01:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1B2F334A263
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:36:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F893349399
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 00:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F681EFFB4;
-	Wed,  3 Dec 2025 00:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC64621773F;
+	Wed,  3 Dec 2025 00:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOz9APZb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSlyreMM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF021B425C
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E770221DB5
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 00:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764722197; cv=none; b=Omv1vbkYQYk4KdQ5LvumliShQ/kxdgDHYtJ9VviaL6BNcola5tghNpqU0Nz+H03jljE/BsJpwaGm/CMNGVemnDmy0SK0YcqM1Q3WqgjS7jPXGGFdPoCwglpS2I4H13VDECB6ERnbtXAl39imvRYMH0mzYGYlv9JoNZnpQVOE1O4=
+	t=1764722198; cv=none; b=tDH9tTuw9rQEl4QZBQ5nteCI0Mah0wgnS9ErN6qo8uptEYGciRKYIjsAnEuxy59/+E0YZ9ae436Xc/t7yedcOIhWoNw5yvdAQggK2i/bPjEQJUBKKnM855dqspc4ZhlpHKRxyoKoZKjDDGWp/zyOo4vE1W1+6dAS+7Vfh79B8xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764722197; c=relaxed/simple;
-	bh=H5pJXYdw73uQ5PTaZNSv/4cwVivoCphGDwNbQ2xew7w=;
+	s=arc-20240116; t=1764722198; c=relaxed/simple;
+	bh=95J19zdA0gFR5TQ9JtO/onNl+Rpz2nyDeix6qIuVJpM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NbpbmIDYlmQr2/VgRnioI0RbCgKb3jQzbnUkhPGOwOpHLF6BXA/VHvJj7gLlMf486Dso9hldwr0SlRcDfuDbalvVGXsigo4EqfZxAAXnJjMJrW7z8tuyBgdMfDP4jvw8ywCxt4odyC7y7Wocy/E0tycLPwGEfF7OD5FSz30nf+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOz9APZb; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=X3fH8aJ7Lt9j4FHj2EH94j7m4wuHWE29JTR56UypVvSbthp/sbkQtS0EVnflftaXIDQodkydWi3Ya29Nubqy1/GQHay21CxSrQ6F+8k3RSCp1ZNw6jDOc0KGVQvyPNgyFFwFaTrjRY6maMe/1FVk8ae1O7jUEgSgCZukCGeJmKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSlyreMM; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-343f35d0f99so4786505a91.0
-        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:36:35 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29ba9249e9dso68310905ad.3
+        for <io-uring@vger.kernel.org>; Tue, 02 Dec 2025 16:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764722195; x=1765326995; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764722196; x=1765326996; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Xvljb0o7dTuqJqMJUVJlAvbjlhXpEbahfBZkU4Ln8E=;
-        b=HOz9APZbg/pzqJaiRIYIvmlFY8yOZvlXZOGCFQhN4Zzv8iDYLzrauurpncRc2i4uhl
-         RtPJsMGm7jjojyuQB12zSpuE1xS3UD5f8/ZIvEPq2MGO2nkBgQs07auj4KeyT+ldP62H
-         ePnjhgXOJbV3wqtorYEfsTCQGh7RiL/NZnEe+LpcyUHa9lbSvXdFFinKtZQRw3uIkjUO
-         hEtNRqzBzcG0n8dSaouT5VoRerVlJSpLUYVFVtq0wro21IJkH6iW7G+dxJFZ/h0Bw/FU
-         z6UUtM0Sc7nEL1cSHji+Y6b1/HN7k3Z2BJ2CuIeN/suxJ+RAcwHgx/I/CRBr31U+j/s0
-         REnA==
+        bh=J/LVHiRdfY144qEpuet9OcoP6m8LjFCEGntwPIjqRxY=;
+        b=mSlyreMMWcf3Xlrsz5GBukX29icKW8/kFV/UeFtx7uASjbjE0lKohB+oMisnUD11be
+         iAc66Ig6bRF47XYg7cq6YcuceYGS9iDQ0LLkqOLVD3Pn4wkCu/jxbjK4rY3E2Cgtc5dI
+         djzxnPWP4iGCcFSkQ5TOdQXBlb6Xj+FiL1yiRBJCRmlehC1KyIzjHDuMxBGXo/NUC9FF
+         xe7eKHhTjhV2xOD5/HVZdtZfxkPhn80c/SQyesx1LSSwFoWxlDY2pW+bXpTVyUveVGmK
+         OHbHuKs6yQ+8iLPmBcx1GdTmwdxD6dBUii2AY+CfoetRiQ11ekDpFe5TplnV91F0QyHz
+         FsUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764722195; x=1765326995;
+        d=1e100.net; s=20230601; t=1764722196; x=1765326996;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7Xvljb0o7dTuqJqMJUVJlAvbjlhXpEbahfBZkU4Ln8E=;
-        b=R+y3MFjgkZhsHGS/P55SZ3MlBXBJ74lEOSonvZPkQ62nFCuv6/adDz+zg+KhBsq2yt
-         Xku33+DRqMSyW3xj03WVdOnIP5DVpcVmloMiOFTNYX/w6vpxehOCI533/N+gWlEZlHkI
-         JHsqFivUsXqudqKYY6o54lBOoOFgGT7Rr21/LsWOmGnXDlm+YAbKwJ9NvG53J7I8BgQE
-         NFwbDiihOGgm8R0ng5NsBJ9rb9gEcwh9KcuhdSll4ZRbc4cXVLImI6tJ8QHYOoCVKgHY
-         fu2GHj/gqclY1N8Er+BQ24/04F3bNWLKza2jAYeqofGLi14A3uno06Ferx9Xu4yNzWCa
-         zTIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdXDG1Qu8GwcyY9WrMurrRhgMghZ6ioH5ShSEAr2d1sa/MMqDT9KQh/FIdAyGW/1PsuLKxKcS3tQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR+egx8+J/geNbGQZ3zRVsAK9ap35D6br11abXEvCwRG5ZC3fm
-	qBCacVbcnZHIqKM/JMU0NZcp4nmUOOPwwB/jL6bX525IuSOwAGVvJQVV
-X-Gm-Gg: ASbGncvwqe6YNq1LBMwDxThbJOF+1eNxJsUi51WDps5YbiakG5Ujm0DyuTRW+7RQzoN
-	k19cA6hPcq8QkcXL2I5o46nGos7TfWTsJGLZriev7iPb0GrQYjFvUEnG6E8A133wOzLIbcyhSMM
-	9riou2vmJo4kCBM0zhUZS0bwYsBm7MoMCTALiluyPngkKzFwpkStDONAJacwnK37sTplQA7swG/
-	4k2/E0K8pA6poPFuc3ETMPsseiWnQI9Obz8s/vqi+63+A04my1mxBojNHBtQLD1QqPATjORJLcl
-	013kvbbZuyIBSTO06Mch4fd/1cO6ZuDUydVhfDZJsDz41xe0FNuMt7eM7pYcATTO2g+wf5fKad+
-	Lq4iZOx5Eq+qkvleB6DkUOiOIeIhpS/gscozzJbyYlEu/VHS+juhIofWLZ54jgk3yP8Fy6E9+ai
-	07nS40jybNQSQrHOARKw==
-X-Google-Smtp-Source: AGHT+IHWZ6Ck8karVZGDo6ybg1Y6osGDql86Shy79Jo+tQo6/F4ZJJCHFP6rE1gRu9c1Tire4Kk8Rg==
-X-Received: by 2002:a17:90b:28c8:b0:33e:2934:6e11 with SMTP id 98e67ed59e1d1-349125ffb46mr713689a91.11.1764722194762;
-        Tue, 02 Dec 2025 16:36:34 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:5c::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34912a0af01sm124596a91.6.2025.12.02.16.36.34
+        bh=J/LVHiRdfY144qEpuet9OcoP6m8LjFCEGntwPIjqRxY=;
+        b=ZojKbSN+fe9NRLHUZ+89+91oYT4HoymeH5LCXjY5iuusY2lHEbJ0EQJzY/RmFplprC
+         CODUeqyUx6/aM8jttFEpBiw8q/k7TuXM8AvLnt7cnQI+DLruuF1xE0ySHQMxl+CJ7o+U
+         kZkQszVv1gAFz5IK8HvB++3rFzwsbtpFip4cA1pnhaZNxUa3BJLoa0J3EdJ2+gSU2AkX
+         wq5YgKbq7C5330E8d+bcnNTWbttpFygEe1rPnpcjHp3Oxnvmbwb4AZbmXKcsKwnjJ9cT
+         7bEDBK5rb+6rIboL8a7Wb9bfbxl5D/7qwieBg8qKaz20h+Lb2wmcfDYRWfjPpwlfdy9L
+         f0FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIgwV5WzfC3oF2kFD0REj8eBBMm8psvXaVNh+HB5EVgjMeqjQLvarbCdkqsRSjI2dwhlH22dp63g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWtXducCzqmOVVBcgwdSQFZCCmgRjK04FWdYp3Ql3zoQ7N0au+
+	YyqoU8ZZMuXyE4of2JIMVGMXcGno6RCpkTNfXskv1J/WDDVh0wteYBf2
+X-Gm-Gg: ASbGncsF62rsJxEKcEu01JJzgNZVxUV+af3D3ZVnz8Wiha903d5dBRPjj9MOlCmT8YN
+	FMQKEVuBTM7uWYxplIaqujoFfsxcXeNIHT4YknuNFnyDE2iziVJNWQ1YARC3m/DkzB1sbmOSW6V
+	GxncxSJNANVWpLMLa67xgktVtFPz1kzczlEfVnvuVvbHKQkoIG4+7+CUHgxtdZ/S+QLiuH9nUxI
+	w9EIln+kukxfxTaRmRZJ4tarM1fbMU8K8WlRB5qdR57hCN80USp9J+uGakiUxf0MM0SPhNHxZdQ
+	sicZ6rwTYzK7TkMPTVv8DAq99zf8n8h1QdKAyrNLt5PQCV0Ssz+rf7HiTdySsRQtGbUgHKXDrQR
+	w3gNP3eplnIvL/CTzvydg+9KUxtZBl3Lx3uQUbHQSGs9PvP/WIA8LIXtQLnKC+mvHfSAEOeLIAF
+	bRxVdNfa8tryoxriq3wQ==
+X-Google-Smtp-Source: AGHT+IE+zujOuCxHYlrac2mQToPfmTEH/033p3LJotHccaXCVNMYsUR3N2EIIFaCxfgWhFH/eiptSQ==
+X-Received: by 2002:a17:902:cf4e:b0:295:560a:e474 with SMTP id d9443c01a7336-29d68400fabmr3500845ad.32.1764722196397;
+        Tue, 02 Dec 2025 16:36:36 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:54::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce40a5ffsm168764905ad.18.2025.12.02.16.36.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 16:36:34 -0800 (PST)
+        Tue, 02 Dec 2025 16:36:36 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -83,9 +83,9 @@ Cc: bschubert@ddn.com,
 	csander@purestorage.com,
 	xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 04/30] io_uring/kbuf: add mmap support for kernel-managed buffer rings
-Date: Tue,  2 Dec 2025 16:34:59 -0800
-Message-ID: <20251203003526.2889477-5-joannelkoong@gmail.com>
+Subject: [PATCH v1 05/30] io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+Date: Tue,  2 Dec 2025 16:35:00 -0800
+Message-ID: <20251203003526.2889477-6-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251203003526.2889477-1-joannelkoong@gmail.com>
 References: <20251203003526.2889477-1-joannelkoong@gmail.com>
@@ -97,107 +97,83 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for mmapping kernel-managed buffer rings (kmbuf) to
-userspace, allowing applications to access the kernel-allocated buffers.
+Allow kernel-managed buffers to be selected. This requires modifying the
+io_br_sel struct to separate the fields for address and val, since a
+kernel address cannot be distinguished from a negative val when error
+checking.
 
-Similar to application-provided buffer rings (pbuf), kmbuf rings use the
-buffer group ID encoded in the mmap offset to identify which buffer ring
-to map. The implementation follows the same pattern as pbuf rings.
-
-New mmap offset constants are introduced:
-  - IORING_OFF_KMBUF_RING (0x88000000): Base offset for kmbuf mappings
-  - IORING_OFF_KMBUF_SHIFT (16): Shift value to encode buffer group ID
-
-The mmap offset is calculated during registration, encoding the bgid
-shifted by IORING_OFF_KMBUF_SHIFT. The io_buf_get_region() helper
-retrieves the appropriate region.
-
-This allows userspace to mmap the kernel-allocated buffer region and
-access the buffers directly.
+Auto-commit any selected kernel-managed buffer.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- include/uapi/linux/io_uring.h |  2 ++
- io_uring/kbuf.c               | 11 +++++++++--
- io_uring/kbuf.h               |  5 +++--
- io_uring/memmap.c             |  5 ++++-
- 4 files changed, 18 insertions(+), 5 deletions(-)
+ include/linux/io_uring_types.h |  8 ++++----
+ io_uring/kbuf.c                | 16 ++++++++++++----
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 589755a4e2b4..96e936503ef6 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -533,6 +533,8 @@ struct io_uring_cqe {
- #define IORING_OFF_SQES			0x10000000ULL
- #define IORING_OFF_PBUF_RING		0x80000000ULL
- #define IORING_OFF_PBUF_SHIFT		16
-+#define IORING_OFF_KMBUF_RING		0x88000000ULL
-+#define IORING_OFF_KMBUF_SHIFT		16
- #define IORING_OFF_MMAP_MASK		0xf8000000ULL
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index e1adb0d20a0a..36fac08db636 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -93,13 +93,13 @@ struct io_mapped_region {
+  */
+ struct io_br_sel {
+ 	struct io_buffer_list *buf_list;
+-	/*
+-	 * Some selection parts return the user address, others return an error.
+-	 */
+ 	union {
++		/* for classic/ring provided buffers */
+ 		void __user *addr;
+-		ssize_t val;
++		/* for kernel-managed buffers */
++		void *kaddr;
+ 	};
++	ssize_t val;
+ };
  
- /*
+ 
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 1668718ac8fd..619bba43dda3 100644
+index 619bba43dda3..00ab17a034b5 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -766,16 +766,23 @@ int io_register_pbuf_status(struct io_ring_ctx *ctx, void __user *arg)
- 	return 0;
+@@ -155,7 +155,8 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
+ 	return 1;
  }
  
--struct io_mapped_region *io_pbuf_get_region(struct io_ring_ctx *ctx,
--					    unsigned int bgid)
-+struct io_mapped_region *io_buf_get_region(struct io_ring_ctx *ctx,
-+					   unsigned int bgid,
-+					   bool kernel_managed)
+-static bool io_should_commit(struct io_kiocb *req, unsigned int issue_flags)
++static bool io_should_commit(struct io_kiocb *req, struct io_buffer_list *bl,
++			     unsigned int issue_flags)
  {
- 	struct io_buffer_list *bl;
-+	bool is_kernel_managed;
+ 	/*
+ 	* If we came in unlocked, we have no choice but to consume the
+@@ -170,7 +171,11 @@ static bool io_should_commit(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (issue_flags & IO_URING_F_UNLOCKED)
+ 		return true;
  
- 	lockdep_assert_held(&ctx->mmap_lock);
- 
- 	bl = xa_load(&ctx->io_bl_xa, bgid);
- 	if (!bl || !(bl->flags & IOBL_BUF_RING))
- 		return NULL;
+-	/* uring_cmd commits kbuf upfront, no need to auto-commit */
++	/* kernel-managed buffers are auto-committed */
++	if (bl->flags & IOBL_KERNEL_MANAGED)
++		return true;
 +
-+	is_kernel_managed = !!(bl->flags & IOBL_KERNEL_MANAGED);
-+	if (is_kernel_managed != kernel_managed)
-+		return NULL;
-+
- 	return &bl->region;
- }
++	/* multishot uring_cmd commits kbuf upfront, no need to auto-commit */
+ 	if (!io_file_can_poll(req) && req->opcode != IORING_OP_URING_CMD)
+ 		return true;
+ 	return false;
+@@ -200,9 +205,12 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+ 	req->buf_index = buf->bid;
+ 	sel.buf_list = bl;
+-	sel.addr = u64_to_user_ptr(buf->addr);
++	if (bl->flags & IOBL_KERNEL_MANAGED)
++		sel.kaddr = (void *)buf->addr;
++	else
++		sel.addr = u64_to_user_ptr(buf->addr);
  
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 62c80a1ebf03..11d165888b8e 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -88,8 +88,9 @@ unsigned int __io_put_kbufs(struct io_kiocb *req, struct io_buffer_list *bl,
- bool io_kbuf_commit(struct io_kiocb *req,
- 		    struct io_buffer_list *bl, int len, int nr);
- 
--struct io_mapped_region *io_pbuf_get_region(struct io_ring_ctx *ctx,
--					    unsigned int bgid);
-+struct io_mapped_region *io_buf_get_region(struct io_ring_ctx *ctx,
-+					   unsigned int bgid,
-+					   bool kernel_managed);
- 
- static inline bool io_kbuf_recycle_ring(struct io_kiocb *req,
- 					struct io_buffer_list *bl)
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index a46b027882f8..1832ef923e99 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -357,7 +357,10 @@ static struct io_mapped_region *io_mmap_get_region(struct io_ring_ctx *ctx,
- 		return &ctx->sq_region;
- 	case IORING_OFF_PBUF_RING:
- 		id = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
--		return io_pbuf_get_region(ctx, id);
-+		return io_buf_get_region(ctx, id, false);
-+	case IORING_OFF_KMBUF_RING:
-+		id = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_KMBUF_SHIFT;
-+		return io_buf_get_region(ctx, id, true);
- 	case IORING_MAP_OFF_PARAM_REGION:
- 		return &ctx->param_region;
- 	case IORING_MAP_OFF_ZCRX_REGION:
+-	if (io_should_commit(req, issue_flags)) {
++	if (io_should_commit(req, bl, issue_flags)) {
+ 		io_kbuf_commit(req, sel.buf_list, *len, 1);
+ 		sel.buf_list = NULL;
+ 	}
 -- 
 2.47.3
 

@@ -1,85 +1,85 @@
-Return-Path: <io-uring+bounces-10940-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10941-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B91CA1C51
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 23:06:29 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD73CA1D0F
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 23:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B7270304D0F7
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 22:03:50 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1F52D3002480
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 22:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EB330BF52;
-	Wed,  3 Dec 2025 21:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B0B398FAA;
+	Wed,  3 Dec 2025 22:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Dcvz6tv7"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SUAImkyS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D663A2253EF
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 21:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45DF2DEA70
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 22:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764798850; cv=none; b=mWrhGJ4c+BwlBPMoEAgjPxc3LVUnsh2y6fQcx2nXg6wsk0I3v9Zrt4x25yFb4GYDys3AZeulQeHNWN6cptu02d388Zla06JTDEM60XbZEDF1dXdY+zONrI9F7oQp2xYrQMdRTJbbSHsflIt/gkTsZ0Lr0HTi6JjCzitMehibZYU=
+	t=1764800757; cv=none; b=bJtCSP2zWVBIyRoKDHsGh2F1keDS37QOLFoBdaX50XUmB7SQVjJEABUDdyZRFLfb+ksen3Qt7N5p0fshdwzG/MhBzr1v0750ij7brluibC0x80vQQVxCmn8RS3PXgnElb7f++wVHoaxwfiO8XR55LXrYsMnS8yj2DG5mXNlol/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764798850; c=relaxed/simple;
-	bh=qcJFPyaOH0oDmtQ8gBNn+OmZhs8yDCgNd35ZDEbGD0Y=;
+	s=arc-20240116; t=1764800757; c=relaxed/simple;
+	bh=YQXhVUe0L+tOA4fu/XHgr+fHu/T/dlj76fmdZd1du3Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bf1c0CunN0zoGYZ+FA/ZGqcOyVleETStd7bOB5UlnmlmG7LZ4kRFAooYhxIF73OYzDbG82Q9ZxTKSgzGhVQBmRhORi+A/Z86Y7QcLB4Z6AzrAxcBmXR4fLmP1BN6zt9pfnW0MUGii51UHuqWkVlogSETpCFaHGSsQwWfn/C4mRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Dcvz6tv7; arc=none smtp.client-ip=209.85.214.174
+	 To:Cc:Content-Type; b=V+Si6lMVTi4lvDIXFgkXHMcWE+Z9dxSDku+hoYzp3mVEyTEuawpKwpZ3ZHO2s9XMT0VLVNwgBpuLBNbcinWKxiFaC8KKn2sV4ammYgUCQsGgI0wkDlBIFhmPqHzfpJCJqVWkzFr0f25QM+Cwj+TYmeO7MjpkG0uvFUGWQvKx0bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SUAImkyS; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-299e43c1adbso366835ad.3
-        for <io-uring@vger.kernel.org>; Wed, 03 Dec 2025 13:54:06 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3436b2dbff6so22284a91.2
+        for <io-uring@vger.kernel.org>; Wed, 03 Dec 2025 14:25:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764798846; x=1765403646; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1764800755; x=1765405555; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cNqO1AOktfiC8ElyrsXdFe7FkjysK5RRpMpW3lmsUhg=;
-        b=Dcvz6tv76Qm6/lQYRLtBnJXB/UTVfLiQIez5SWJtgqtQtQApzwhQLXQaZTiSf24itg
-         uLZs1XaDtXoGgbKgLAhuukrJMVYyQr8i/EIwDwgkv2JZEkkP7S9ETP2lcikqvYB/MaQQ
-         YH4H1n78WqYZm9xf3t5jeDvOnznbJ5EshZVO8njFNAqPKngol2JtLw0R19P6bc/rMdq6
-         1S/XgeuU0pqZgOfKR+1yf+w9xYuQ/4+6qj+MqMOue3r5pd1Zs+NVeEVKKmi4i+ENruci
-         7z8SMUgKjFlDul+zfJiGcWClNQ43Mp8cdr9YvG4rY1HnhZ8WQ+klgPIcPWpPRmnhenuR
-         QHWw==
+        bh=kDH7My4rx/In3/xcnH/dcDsYWgPdffGLcWo5ws0ruf4=;
+        b=SUAImkySoXi+jOduWdlMH/JXyF+3+aauli459cvV4XM6/yKy+IXs1YRs3J6/k9puJk
+         K7rViy8R3wq6FdA//HVTWMSzXqAd1DaB7UUdOY/5x4DhRnK8hatd/dEyNeYvE3FDvxpC
+         zNWw3ov6AERiGhox7nzep0wYUgsmUVKc0T6gAk40z9VHsTKa6Kg3ia8OMNc9jDKA/+8h
+         /AGAUpwBdCR5+VHNMkHSNtRuFuQn6x0yOGjCzNPrNu7lRcrXhFBK0ibSha9UYZE1kN96
+         0i5i4BFLUxiIchdAfhPof+dUXOApj0cyF7PPs2Y1BuMVdQM84cfaD+7LY2N5Wl8vzVjV
+         07Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764798846; x=1765403646;
+        d=1e100.net; s=20230601; t=1764800755; x=1765405555;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cNqO1AOktfiC8ElyrsXdFe7FkjysK5RRpMpW3lmsUhg=;
-        b=VzF87AxXU6ABIWb8iX7Q3QIj5gn/YSHSejk4ahLc5tB03jA+8FZAOhaxcgDT8YcbSv
-         +ZtTscaa1iu7JMQWNk1nnlJCpxxWLnRv1o1CfcGFF88IU7ElmjgbsLW/UHgO8GRihBYR
-         tajM0TSeuxgOaaMweOCoFbAQEW81tcWkb1SS/pI8gDtjlVooz+ztn7zZ0T4s16aj4J3v
-         ToUYGSCjUzPK1piMLkBNK7Q7C/9cMgTGnFxSd/1Y6LepveO7Un/YbwJtNb2crmSgN5tj
-         +ElMQXNl7E5kdMuY7DqT8scjphPOFZpHoLWrDrtXoi7x9Rkle9zaFCwc0Q6CQgx4CGfS
-         BQIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNN3AyWeqE0QXEESgqFg51SFS0u8OoMbzIn+zQcl/KFSPos5DcWbfKAgGGldl3fY1SHwh8rJlx6w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7bOQJ52GQsmy1m8bie+Ba2Z2+sXI07s9z+0EkhxzmoWfmcnJI
-	i9CiwRvQ/YtzOf9U3XjmJVDcVc//6ltZyVRwWuh5P7KQhDpU7eJOij6rlQ5s6FFLDgBp2WUpbTE
-	zdXKha3KmQxpQgg70nA6OwEa0QYhb/qcfVBvQFF4I/Q==
-X-Gm-Gg: ASbGnct/jYIRW67dOzGV+ooXKzDBIRY1WJXIDNARAtzeI+WUx6d03AGhDHYkcgLuPHO
-	+hHEIFvjtNTk0TlZRsoqxhtfPG3ln7Cx9QatR3rcneHVuw3NlduH1iBSJYbBR+Hz/mjtWhI2Dvs
-	uMRCU5ZJWvXE1Vc1W1bz+pRRLyLfGtLcw7UNCJqpK4P2yh/KviRXVBuafz32WUllx3NhQ7gaEIV
-	90vOcnFOyryCcsliCFRM8umWotXOQ==
-X-Google-Smtp-Source: AGHT+IGo4rk2z3qITjUHjmzT74C8yUrNTvE4/mUjuUkdwPqjvYE0jxAXVSt1ovTOalvhiBDxbHC8Le18N48vfr9kgEQ=
-X-Received: by 2002:a05:7300:df4a:b0:2a4:3593:5fc6 with SMTP id
- 5a478bee46e88-2ab97895aeamr2241627eec.0.1764798845818; Wed, 03 Dec 2025
- 13:54:05 -0800 (PST)
+        bh=kDH7My4rx/In3/xcnH/dcDsYWgPdffGLcWo5ws0ruf4=;
+        b=s8aPIcvRgOGD+j5FS7XQ2xLhrIWhT9DPmVZBb0rlrQ5/6WqvBOYE5zrMnwO13vmuP9
+         41PHCGEdg96lLVhbeVGaN0OIIRknPipt6CC0TtqQT1qXezaBjwS0eJcG7VaAAWDqMo39
+         T2S2t3GDBxSHsRQDeOosYhWjwz9tR4PyNYWaQa5Fu2UkB6OeHBEEU9riFqmRC5h7eAAw
+         G5OjPTnZLXyoshNFRkVXz/WC9sxBoXkpvAFhAURgdf55c8v0U0kvoF7XXEOv2aAmrk3H
+         7NhjnxUp4ZYWoHWKWfe3GVNbzejkwQG1mujhB+5KBKueIHjHA1epqCAU4Uts6o58H5nY
+         1D+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIsB9w6XCBOmSapEmW9azwxfgKBLLQHZWRrSXRImbH2x3KIwtL9kHj8a1uxlEg311FG2OVIQ3dbw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjH0X7x9z7fIEgHp8EQxv9Tnd6jN7zxoeLqyN7CPjB+AfKadfg
+	lOtZ6g07C8LRrXNpaLQMIuwP6dIhxRZUOXUdptSUIiWxIDsivRukrFgFg5ZYJ5FMB5J03jCTyoa
+	Uos3jRTzZc/qUQbX9xrW3HYwaA6F2QpMOBnr6MFSG6g==
+X-Gm-Gg: ASbGncuDFC0jaZQj7h7hsFFXDoya4ZsNXm8q06CGNhhLN2hXZ2Thu7LdRRLMrQzSPRR
+	hfeiEokoiyitNZPZYdJUFxIT9DZ1sH7KT2aR2hur4xd/03TDye9WkXqA3jn4SlFQr0uZceCZjmB
+	TAxXziN7bFyeKWcxQhRospoUV6GOUbeEKKnxf1Uzai2o9l7QTCXJkGNIbZr9x5ENBaso5IGaPD3
+	Yro9U1aHBV97vLQZZs0reqRPKw1Dg==
+X-Google-Smtp-Source: AGHT+IFTZg7E037XkY4/Z59jB0U1cVulY8GObWp+OgzRutX1bjO2xkkoVYL9OHI6fkvcxe9nFGXyWWJksuEl3/6SHR0=
+X-Received: by 2002:a05:7022:405:b0:119:e56a:4fff with SMTP id
+ a92af1059eb24-11df25c1a60mr2166637c88.4.1764800754757; Wed, 03 Dec 2025
+ 14:25:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-12-joannelkoong@gmail.com>
-In-Reply-To: <20251203003526.2889477-12-joannelkoong@gmail.com>
+References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-15-joannelkoong@gmail.com>
+In-Reply-To: <20251203003526.2889477-15-joannelkoong@gmail.com>
 From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 3 Dec 2025 13:53:54 -0800
-X-Gm-Features: AWmQ_bnRKN2DJsYkd-18LskwFUzAFXKwgZ1sSlNV8ChDsShyP9GxhinWLmBTy_A
-Message-ID: <CADUfDZoHCf4qHE1i7S4-Ya9WgGY0q6SmN4NVRgeGu347oZ6zJA@mail.gmail.com>
-Subject: Re: [PATCH v1 11/30] io_uring/kbuf: return buffer id in buffer selection
+Date: Wed, 3 Dec 2025 14:25:43 -0800
+X-Gm-Features: AWmQ_bktfVnfFBluf136XJ2r6CNl6nOGDxx5_Pf26zEJoTMJf486lYme7ljRMAA
+Message-ID: <CADUfDZrtOdabnxd5x70gN5ZLWj=nQNhwezTfs_0XN9kuDAVsQg@mail.gmail.com>
+Subject: Re: [PATCH v1 14/30] io_uring: add release callback for ring death
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
 	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
@@ -90,95 +90,113 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
 > wrote:
 >
-> Return the id of the selected buffer in io_buffer_select(). This is
-> needed for kernel-managed buffer rings to later recycle the selected
-> buffer.
+> Allow registering a release callback on a ring context that will be
+> called when the ring is about to be destroyed.
+>
+> This is a preparatory patch for fuse. Fuse will be pinning buffers and
+> registering bvecs, which requires cleanup whenever a server
+> disconnects. It needs to know if the ring is alive when the server has
+> disconnected, to avoid double-freeing or accessing invalid memory.
 >
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  include/linux/io_uring/cmd.h   | 2 +-
->  include/linux/io_uring_types.h | 2 ++
->  io_uring/kbuf.c                | 7 +++++--
->  3 files changed, 8 insertions(+), 3 deletions(-)
+>  include/linux/io_uring.h       |  9 +++++++++
+>  include/linux/io_uring_types.h |  2 ++
+>  io_uring/io_uring.c            | 15 +++++++++++++++
+>  3 files changed, 26 insertions(+)
 >
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index a4b5eae2e5d1..795b846d1e11 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -74,7 +74,7 @@ void io_uring_cmd_issue_blocking(struct io_uring_cmd *i=
-oucmd);
+> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> index 85fe4e6b275c..327fd8ac6e42 100644
+> --- a/include/linux/io_uring.h
+> +++ b/include/linux/io_uring.h
+> @@ -2,6 +2,7 @@
+>  #ifndef _LINUX_IO_URING_H
+>  #define _LINUX_IO_URING_H
 >
->  /*
->   * Select a buffer from the provided buffer group for multishot uring_cm=
-d.
-> - * Returns the selected buffer address and size.
-> + * Returns the selected buffer address, size, and id.
->   */
->  struct io_br_sel io_uring_cmd_buffer_select(struct io_uring_cmd *ioucmd,
->                                             unsigned buf_group, size_t *l=
-en,
+> +#include <linux/io_uring_types.h>
+>  #include <linux/sched.h>
+>  #include <linux/xarray.h>
+>  #include <uapi/linux/io_uring.h>
+> @@ -28,6 +29,9 @@ static inline void io_uring_free(struct task_struct *ts=
+k)
+>         if (tsk->io_uring)
+>                 __io_uring_free(tsk);
+>  }
+> +void io_uring_set_release_callback(struct io_ring_ctx *ctx,
+> +                                  void (*release)(void *), void *priv,
+> +                                  unsigned int issue_flags);
+>  #else
+>  static inline void io_uring_task_cancel(void)
+>  {
+> @@ -46,6 +50,11 @@ static inline bool io_is_uring_fops(struct file *file)
+>  {
+>         return false;
+>  }
+> +static inline void
+> +io_uring_set_release_callback(struct io_ring_ctx *ctx, void (*release)(v=
+oid *),
+> +                             void *priv, unsigned int issue_flags)
+> +{
+> +}
+>  #endif
+>
+>  #endif
 > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
 s.h
-> index e1a75cfe57d9..dcc95e73f12f 100644
+> index dcc95e73f12f..67c66658e3ec 100644
 > --- a/include/linux/io_uring_types.h
 > +++ b/include/linux/io_uring_types.h
-> @@ -109,6 +109,8 @@ struct io_br_sel {
->                 void *kaddr;
->         };
->         ssize_t val;
-> +       /* id of the selected buffer */
-> +       unsigned buf_id;
-
-Looks like this could be unioned with val? I think val's size can be
-reduced to an int since only int values are assigned to it.
-
->  };
+> @@ -441,6 +441,8 @@ struct io_ring_ctx {
+>         struct work_struct              exit_work;
+>         struct list_head                tctx_list;
+>         struct completion               ref_comp;
+> +       void                            (*release)(void *);
+> +       void                            *priv;
 >
+>         /* io-wq management, e.g. thread count */
+>         u32                             iowq_limits[2];
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 1e58fc1d5667..04ffcfa6f2d6 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2952,6 +2952,19 @@ static __poll_t io_uring_poll(struct file *file, p=
+oll_table *wait)
+>         return mask;
+>  }
 >
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 8a94de6e530f..3ecb6494adea 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -239,6 +239,7 @@ static struct io_br_sel io_ring_buffer_select(struct =
-io_kiocb *req, size_t *len,
->         req->flags |=3D REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
->         req->buf_index =3D buf->bid;
->         sel.buf_list =3D bl;
-> +       sel.buf_id =3D buf->bid;
+> +void io_uring_set_release_callback(struct io_ring_ctx *ctx,
+> +                                  void (*release)(void *), void *priv,
+> +                                  unsigned int issue_flags)
+> +{
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +
+> +       ctx->release =3D release;
+> +       ctx->priv =3D priv;
 
-This is userspace mapped, so probably should be using READ_ONCE() and
-reusing the value between req->buf_index and buf->bid? Looks like an
-existing bug that the reads of buf->bid and buf->addr aren't using
-READ_ONCE().
-
->         if (bl->flags & IOBL_KERNEL_MANAGED)
->                 sel.kaddr =3D (void *)buf->addr;
->         else
-> @@ -262,10 +263,12 @@ struct io_br_sel io_buffer_select(struct io_kiocb *=
-req, size_t *len,
->
->         bl =3D io_buffer_get_list(ctx, buf_group);
->         if (likely(bl)) {
-> -               if (bl->flags & IOBL_BUF_RING)
-> +               if (bl->flags & IOBL_BUF_RING) {
->                         sel =3D io_ring_buffer_select(req, len, bl, issue=
-_flags);
-> -               else
-> +               } else {
->                         sel.addr =3D io_provided_buffer_select(req, len, =
-bl);
-> +                       sel.buf_id =3D req->buf_index;
-
-Could this cover both IOBL_BUF_RING and !IOBL_BUF_RING cases to avoid
-the additional logic in io_ring_buffer_select()?
+Looks like this doesn't support the registration of multiple release
+callbacks. Should there be a WARN_ON() to that effect?
 
 Best,
 Caleb
 
-> +               }
->         }
->         io_ring_submit_unlock(req->ctx, issue_flags);
->         return sel;
+> +
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_set_release_callback);
+> +
+>  struct io_tctx_exit {
+>         struct callback_head            task_work;
+>         struct completion               completion;
+> @@ -3099,6 +3112,8 @@ static int io_uring_release(struct inode *inode, st=
+ruct file *file)
+>         struct io_ring_ctx *ctx =3D file->private_data;
+>
+>         file->private_data =3D NULL;
+> +       if (ctx->release)
+> +               ctx->release(ctx->priv);
+>         io_ring_ctx_wait_and_kill(ctx);
+>         return 0;
+>  }
 > --
 > 2.47.3
 >

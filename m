@@ -1,178 +1,121 @@
-Return-Path: <io-uring+bounces-10937-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10938-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AF8CA17AA
-	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 20:52:57 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEE8CA18C2
+	for <lists+io-uring@lfdr.de>; Wed, 03 Dec 2025 21:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 62E5B3001E05
-	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 19:52:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 603A9300EA23
+	for <lists+io-uring@lfdr.de>; Wed,  3 Dec 2025 20:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AB32FFF90;
-	Wed,  3 Dec 2025 19:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D549B30E836;
+	Wed,  3 Dec 2025 20:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QhXFhp66"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3C72609C5
-	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 19:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9732253EF
+	for <io-uring@vger.kernel.org>; Wed,  3 Dec 2025 20:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764791576; cv=none; b=RASASEeIsendp6WMZtHm1cPf07dymK3mQJnPszjHcmvymDf5ubmeZCuv4WC39ps1Dbc/2mSRYGbu5NEuez6cMpPdgkxmE5+zK6ZqwY1c6PodAMyn+6MyfutQkAZJi+ptqSJo0Ss09OQNG1hjJDuoE0SYEcsRbN30MYK34+ecNfM=
+	t=1764793445; cv=none; b=bZsY9VNPwna97jiitYCMzFL5nW+vdVJFNXR8lazTTlgqUXjfgvayBbzSXhwa+bJjMQxxA16xoxA5gAKVeSnMynqeruuGcGKWyErio4FSYyGLMaJL8KWPRcLTwsLjkLaErW8X1NWdU1+5tBMKaSqZ9TiMG4Ggex30ZeoQMgIT5JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764791576; c=relaxed/simple;
-	bh=u2CafPEyHQgq652Wc18huDpftrDelI/KXHv100sS1vs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b9R3xvXfPvvkLcw/sPOIyk+JcaHyYadL9JDO5WihgcjecnTirytjzYISL3Snbky0IHTtJmPJGZyVyTR2XWof9etpzF5jTO4HuX9FXPiNofbSr6HVJ52NLrYaobeyDi728VxwYPfxGVGnEBfwx4uSssDsfd2WDtdyLZEcHjt2aT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8E80E5BDE3;
-	Wed,  3 Dec 2025 19:52:48 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 529693EA63;
-	Wed,  3 Dec 2025 19:52:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZhgACBCVMGljUAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 03 Dec 2025 19:52:48 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
-	io-uring@vger.kernel.org,
-	csander@purestorage.com
-Subject: [PATCH liburing v3 4/4] man/io_uring_prep_getsockname.3: Add man page
-Date: Wed,  3 Dec 2025 14:52:18 -0500
-Message-ID: <20251203195223.3578559-5-krisman@suse.de>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1764793445; c=relaxed/simple;
+	bh=9rG2eA+H2O+vAw7ZOkaexplVvEw1IB6tge8skuSRt50=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c2lor4YBzewXMqFPFSiZTtIRRltxH9/M4gckrgmpFNZVywBoBFZD7ls9vVonpxLkmbyde3kORJAJaw3acylqiHgKL473Bzr4aiEypGu2nkFRxtJlgjWWn+1pboLu6GBv2KTjAapToI+lTTdcOuFAkHruaSsH0YmpIALLIyWbdHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QhXFhp66; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7c52fa75cd3so145270a34.3
+        for <io-uring@vger.kernel.org>; Wed, 03 Dec 2025 12:23:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764793438; x=1765398238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qI/4vawysugcjmXO8uRAA5b9w6caFtOVp4sIZ4xGNnE=;
+        b=QhXFhp66uKWreazc3+I7FgNcynXy/P0E6pRAdAA8dwVHhtlaH25CmrwEUDcKGhQxwF
+         ob8VgZPntApO05numB9oKVqvs6u2++xuu4LbmAFYS5Xjqqsrbi6LYWc1+8Sp6+yf1+uy
+         S686e3+aHyRwFbvHFjxoVPdEVarkclmNxxmtiyfnNDtHSzgImszkc3fV4XctGXlfeK5I
+         noTH2PErEEpnPo7nACxj2bAlP+0ExHsfEw2enltRyfr2sUCL73WUkzEOBxAxS1mvR+tF
+         wp6VN+vFZO/JWFArbDp7Stn7ZrmLDTpHUGnfdmZ0fhggKeLktRBHhJy2wDn6qJfJVrSI
+         gYnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764793438; x=1765398238;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qI/4vawysugcjmXO8uRAA5b9w6caFtOVp4sIZ4xGNnE=;
+        b=Bpl/PzvRX39TK6eSlWCccTjRuY+XrdsRLb4mWU1w44Te1lplOXY1c7NG1QOA7rt1yF
+         HonGUMt+UBMEf5tubvt4lijbua2QuG41x5IIKEFl8CgOXtWSDNbOqVSlt/5WPeA8WRr8
+         S9AJhuc7ITsmmJvSv69Ccj97XPARdHqierePW5jZWsk/sxhsmXS/FnhjytUynO688+Xx
+         iCJ2C/OLHtPLmV4BUG8MPXIdtrsqMZSZLyStSSypCyfWnsRMQLKpslabPRKNyP18wjJN
+         UniaHvLP9R5pRi8m4eH348FrPQ/aRJ9U/kzYrLYlU1yAoypQxDKiH8mLeT8CyXQhT8rB
+         G7vA==
+X-Gm-Message-State: AOJu0YwogxZy7q5xE8ZwnfQrEF4oBB4lZqnx0MQU8tNlQ0vrOUOTgG97
+	hD0tGNFKVHoCHQ48m4rMtEhJTOOhQ5wexlJ+M2dTa7d187tkL+WY8r3YstihlLzxrL1s6ArQ89n
+	4zNbKLUE=
+X-Gm-Gg: ASbGnctVRvIV/5UwMvzTxpk/XUHT/M5N7OGMsJGKZZWq2Kwk5A+jJtnJcgW2n42pp+3
+	DWX2hEYpnDtHQBp2bsTafOxg8n6nPX7GFT+CJ4YRvwSMTwwiBT5u9BsH1UzkHbdp2gw1756mBI0
+	V7YMtXCxio+xmi2ImokpMO9Lgc9cx0IdoXzQmd9I7NTC3cspd9cqXHxufiZyUg+2G07ZONlmKjS
+	VRjudD3FGr2NBeX/Znfj5RCgxixTYtb6mkYGgaHKzqgUGdufuQgmjcgSyjf7woOQQZsVqldNdKS
+	pL1GmCim9hkhrrtS8V0kzypWCPX+paVQPbp3j6MmgB784Cbx0009430asQdQpBafsfKpArTOupN
+	dWvVJTl+Gv7g0pCug9guVmmt1j6xhdMXTlRXSCXXAygZNflMZvd8hmDIniH51WGZFlFEw1C3sL9
+	gwmw==
+X-Google-Smtp-Source: AGHT+IG9rww+1VI4PnOaRg/sVycwdTuAfON2j/xbcdOzLvF0q7WpOnLxXRSHuWWPvj+Fi3Bf7hVMqQ==
+X-Received: by 2002:a05:6830:448d:b0:7c7:6043:dd87 with SMTP id 46e09a7af769-7c94da8de4bmr2644878a34.6.1764793436058;
+        Wed, 03 Dec 2025 12:23:56 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c90fde21a5sm9353205a34.15.2025.12.03.12.23.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Dec 2025 12:23:55 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org, csander@purestorage.com
 In-Reply-To: <20251203195223.3578559-1-krisman@suse.de>
 References: <20251203195223.3578559-1-krisman@suse.de>
+Subject: Re: [PATCH liburing v3 0/4] liburing: getsockname support
+Message-Id: <176479343527.889438.3714060142202075784.b4-ty@kernel.dk>
+Date: Wed, 03 Dec 2025 13:23:55 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 8E80E5BDE3
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
----
-since v2:
-- Fix Jens comments
----
- man/io_uring_prep_getsockname.3 | 78 +++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
- create mode 100644 man/io_uring_prep_getsockname.3
+On Wed, 03 Dec 2025 14:52:14 -0500, Gabriel Krisman Bertazi wrote:
+> Changes since v2:
+> 
+> The main change from the previous iteration is ensuring the test won't
+> regress in older kernels.  This is done by installing the socket fd and
+> fallbacking to the syscall.  I avoided reverting to using a fixed port
+> because that is flaky and would also require recreating the socket.
+> 
+> [...]
 
-diff --git a/man/io_uring_prep_getsockname.3 b/man/io_uring_prep_getsockname.3
-new file mode 100644
-index 00000000..de78cb40
---- /dev/null
-+++ b/man/io_uring_prep_getsockname.3
-@@ -0,0 +1,78 @@
-+.\" Copyright (C) 2024 SUSE LLC.
-+.\"
-+.\" SPDX-License-Identifier: LGPL-2.0-or-later
-+.\"
-+.TH io_uring_prep_getsockname 3 "Dec 3, 2025" "liburing-2.13" "liburing Manual"
-+.SH NAME
-+io_uring_prep_getsockname \- prepare a getsockname or getpeername request
-+.SH SYNOPSIS
-+.nf
-+.B #include <sys/socket.h>
-+.B #include <liburing.h>
-+.PP
-+.BI "void io_uring_prep_getsockname(struct io_uring_sqe *" sqe ","
-+.BI "                               int " sockfd ","
-+.BI "                               struct sockaddr *" sockaddr ","
-+.BI "                               socklen_t *" sockaddr_len ","
-+.BI "                               int " peer ");"
-+.fi
-+.SH DESCRIPTION
-+The
-+.BR io_uring_prep_getsockname (3)
-+function prepares a getsockname/getpeername request.
-+The submission queue entry
-+.I sqe
-+is setup to fetch the locally bound address or peer address of the socket
-+file descriptor pointed by
-+.IR sockfd .
-+The parameter
-+.IR sockaddr
-+points to a region of size
-+.IR sockaddr_len
-+where the output is written.
-+.IR sockaddr_len
-+is modified by the kernel to indicate how many bytes were written.
-+The output address is the locally bound address if
-+.IR peer
-+is set to
-+.B 0
-+or the peer address if
-+.IR peer
-+is set to
-+.BR 1 .
-+
-+This function prepares an async
-+.BR getsockname (2)
-+or
-+.BR getpeername (2)
-+request. See those man pages for details.
-+
-+.SH RETURN VALUE
-+None
-+.SH ERRORS
-+The CQE
-+.I res
-+field will contain the result of the operation. See the related man page for
-+details on possible values. Note that where synchronous system calls will return
-+.B -1
-+on failure and set
-+.I errno
-+to the actual error value, io_uring never uses
-+.IR errno .
-+Instead it returns the negated
-+.I errno
-+directly in the CQE
-+.I res
-+field.
-+.BR
-+Differently from the equivalent system calls, if the user attempts to
-+use this operation on a non-socket file descriptor, the CQE error result
-+is
-+.IR -ENOTSUP
-+instead of
-+.IR ENOSOCK.
-+.SH SEE ALSO
-+.BR io_uring_get_sqe (3),
-+.BR io_uring_submit (3),
-+.BR io_uring_prep_getsockname (2)
-+.BR io_uring_prep_getpeername (2)
+Applied, thanks!
+
+[1/4] liburing: Introduce getsockname operation
+      commit: c1541b0421602ea26ce1c5bba9f3a9403224f971
+[2/4] test/bind-listen.t: Use ephemeral port
+      commit: 79ef754d7bff5c8216b57b4eed42448f28a4e88a
+[3/4] bind-listen.t: Add tests for getsockname
+      commit: a75b1b69e437311c7b3c9839a7d4510fb9be20a3
+[4/4] man/io_uring_prep_getsockname.3: Add man page
+      commit: 419c9ca5bf5d6dd942504213a68a4862e733392b
+
+Best regards,
 -- 
-2.52.0
+Jens Axboe
+
+
 
 

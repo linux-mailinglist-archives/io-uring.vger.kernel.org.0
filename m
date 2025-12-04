@@ -1,51 +1,39 @@
-Return-Path: <io-uring+bounces-10957-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10958-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3904DCA3B9E
-	for <lists+io-uring@lfdr.de>; Thu, 04 Dec 2025 14:10:17 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1414CCA3BA1
+	for <lists+io-uring@lfdr.de>; Thu, 04 Dec 2025 14:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 294CF3056569
-	for <lists+io-uring@lfdr.de>; Thu,  4 Dec 2025 13:08:19 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id A997C300FB3D
+	for <lists+io-uring@lfdr.de>; Thu,  4 Dec 2025 13:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0A23370F2;
-	Thu,  4 Dec 2025 13:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UySNlPfD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396AC33891F;
+	Thu,  4 Dec 2025 13:10:33 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222E2D8396;
-	Thu,  4 Dec 2025 13:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3D62F068A;
+	Thu,  4 Dec 2025 13:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764853698; cv=none; b=eoAKt44lWKLgxKDawHLbz0MMMrspmSd219XS6EofEElK7jF4FD2H9Pw/eN9QhXYtB2pSYOsPzpufXJEG467PRM7Fd0oGTxlsxsvR4cWXjXGFuC8NNWFPLwTZfYgfmSsCOLctzrPDYcuJuGxad635R8ZOpjTSV8g860f7Gf3Et50=
+	t=1764853833; cv=none; b=InKsTruC/Fy2e9cycdeufmbiWXvsg3mnCrMRomeu5qkiRwdGqrZ59O1s9lZoIpnjHjoE/Z/dxAkzydVGqprQYtGnqfiQIsrtLtA3yg7hbJGmUFoTxjQlxXGsMYkogOBAnSPVBvVuHokd1X+jxczSoemv78az2WiC7qUFy3QyKGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764853698; c=relaxed/simple;
-	bh=rB989h6MSh13pP4Vgs0B4WEV9BNVjy13/RE0/6oqLRw=;
+	s=arc-20240116; t=1764853833; c=relaxed/simple;
+	bh=3PFNtXJzJmTnsBX4Iry24FL0le+T0k6756nV5CJFj+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7Bu8e4zlm+NkdP4UYvK5MjmUV5CpcjX1uqbVATYmJ4q2PPBMvf2Cf7KtHvPvVj9fOb9Q2+dcTGls/Y8NHbX7BzfTrDrpUx632mhjO9GK/T4AMNwP5KbUIsp1fkxDdYOaLolPxohykmMpLVWBs9FIa/iBqb/rtHw/D+r5YiTHpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UySNlPfD; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ICX0PV1V3UJeK0rDn52UXwcxQDCvaMY3nHi8Ff8mBog=; b=UySNlPfDq60LjL7Gd30kmX3zfo
-	D9Mvj9L61LQ39plfzEugc8WP+km9S45AZrwoMVhamwxf1hlRzL20LakWR0HEiqVmo9+r3vhH6JuKd
-	N2oDOgUHW7L0ZMlFRTAIRriHGWARQyrOCF7sZdfKSSL+RROGRvypvrY6HDoEgBjsejmIxxTWh1dg9
-	q2oXSu9PouQNh1Lq3ge7LC8er938LZLU78t4KEKZgpdizChWkb0tEBHFUtdxfRMwUWY3qNs/la5Mb
-	IO9n2T1D7m8KRtyidkntyXZG+lZqefpztujrChtiC+YGlb59Hpc2Cc3UBFXOHMrAtufxtdBhp1zbx
-	LWXjrkmA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vR949-000000081QA-0jnN;
-	Thu, 04 Dec 2025 13:08:13 +0000
-Date: Thu, 4 Dec 2025 05:08:13 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYzNYQleTt1GpxTJSxU3WdBzA2v6XatnBO9EF11U0ETgvcfbpiJ14fggzM2iBTK/VXDfbubtGOmXFnqTuL3ZgznzD9py2gIpyGjE335hEx4nDIEF3jQm3ie+2jfLrrIwcCblrgXy7JTwFWF8jotLmKX9iKzi7L+ah1sgSb1Xz4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 0DDAC68D0D; Thu,  4 Dec 2025 14:10:26 +0100 (CET)
+Date: Thu, 4 Dec 2025 14:10:25 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Christoph Hellwig <hch@lst.de>, Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
 	Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
 	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
 	Sagi Grimberg <sagi@grimberg.me>,
@@ -53,32 +41,36 @@ Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
 	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
 	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [RFC v2 05/11] block: add infra to handle dmabuf tokens
-Message-ID: <aTGHvbj2wfs33jRp@infradead.org>
-References: <cover.1763725387.git.asml.silence@gmail.com>
- <51cddd97b31d80ec8842a88b9f3c9881419e8a7b.1763725387.git.asml.silence@gmail.com>
+Subject: Re: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
+Message-ID: <20251204131025.GA26860@lst.de>
+References: <cover.1763725387.git.asml.silence@gmail.com> <74d689540fa200fe37f1a930165357a92fe9e68c.1763725387.git.asml.silence@gmail.com> <7b2017f4-02a3-482a-a173-bb16b895c0cb@amd.com> <20251204110709.GA22971@lst.de> <0571ca61-7b17-4167-83eb-4269bd0459fe@amd.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <51cddd97b31d80ec8842a88b9f3c9881419e8a7b.1763725387.git.asml.silence@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0571ca61-7b17-4167-83eb-4269bd0459fe@amd.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sun, Nov 23, 2025 at 10:51:25PM +0000, Pavel Begunkov wrote:
-> +struct dma_token *blkdev_dma_map(struct file *file,
-> +				 struct dma_token_params *params)
+On Thu, Dec 04, 2025 at 12:09:46PM +0100, Christian König wrote:
+> > I find the naming pretty confusing a well.  But what this does is to
+> > tell the file system/driver that it should expect a future
+> > read_iter/write_iter operation that takes data from / puts data into
+> > the dmabuf passed to this operation.
+> 
+> That explanation makes much more sense.
+> 
+> The remaining question is why does the underlying file system / driver
+> needs to know that it will get addresses from a DMA-buf?
 
-Given that this is a direct file operation instance it should be
-in block/fops.c.  If we do want a generic helper below it, it
-should take a struct block_device instead.  But we can probably
-defer that until a user for that shows up.
+This eventually ends up calling dma_buf_dynamic_attach and provides
+a way to find the dma_buf_attachment later in the I/O path.
 
 

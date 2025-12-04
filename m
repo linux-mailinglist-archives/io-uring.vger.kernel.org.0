@@ -1,117 +1,97 @@
-Return-Path: <io-uring+bounces-10973-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10974-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF77CA5A52
-	for <lists+io-uring@lfdr.de>; Thu, 04 Dec 2025 23:47:21 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB78CA5AAE
+	for <lists+io-uring@lfdr.de>; Fri, 05 Dec 2025 00:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4B697312FE34
-	for <lists+io-uring@lfdr.de>; Thu,  4 Dec 2025 22:47:16 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2E306303DDE7
+	for <lists+io-uring@lfdr.de>; Thu,  4 Dec 2025 23:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABB8398FAC;
-	Thu,  4 Dec 2025 22:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zJJkFeTJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE5A260566;
+	Thu,  4 Dec 2025 23:05:36 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC8717A305
-	for <io-uring@vger.kernel.org>; Thu,  4 Dec 2025 22:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B88833DEFC
+	for <io-uring@vger.kernel.org>; Thu,  4 Dec 2025 23:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764888435; cv=none; b=Wq/uNrvCLbu/4VHroXKb4RKOlxjBQSqpOtnXaOSQDDp8QxBjaZqlSNbEwVN11sPw+dO3hx5oCEBfck5XzkEpg91F63hgnSa/+5BhOh2pHBNhFaz2R5j1VATOTQQsAplJ+PcxY+8tYsw9mvTBGjzij4K1DTF0EodFeHCt5o2TCts=
+	t=1764889536; cv=none; b=KwDDSfF994muV7v7o/ULl334zXpBYMIpQOYnp7vCPIvHKMH1LPryFPEj1CzjJPxApCK2B9x2e13m8Kke7/kQt6y2L/m50MM6T5fOThZhw9P/52tQrs5aJlPgJ6SLX8lEMrtH1zuX2lDhQw0rdF8EyM5gEks39ssXK7R7XSS4zb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764888435; c=relaxed/simple;
-	bh=wWKkp4pCxLDzzWacMAZ/wlAX5ZMyRTmslvUoB5o1fxg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lbNaQ5g9RPqKQyrBdpU9VPzE4y4OWpK+22XY3HeE3Pq7tICW9yITBvGTktm3LqMuXAOplf+krQQ6EcbAgIelMwhh4CXuPvKoLxzwyluTX2+KG0aAbpqFi4mw7IDeqTNj6T+OlsryG/DcOiaAuSUERWF/rG7vOGja5Gf7scVPyF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zJJkFeTJ; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6592e70b629so800353eaf.0
-        for <io-uring@vger.kernel.org>; Thu, 04 Dec 2025 14:47:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764888433; x=1765493233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yTiRMSVEt+rzTo152aZXZ1TGCe9Y5teNUF8eQchZNnY=;
-        b=zJJkFeTJHyVXKfIFH+jKmypLo/1xpyT7HOq0FZkhxjsCr/uOpJywnRY13SxwmiQs26
-         EM7jPfO1N47YvddPbOSr307MTUEWXWnqJMuvUd2pUAOJJ/st5aYneQ5axmf3T4tZ/m+f
-         y9AA2gkxg/zWML/MckH/fV6Dq9Hn2GCikOi0tWoHHZX6CH6sjy1v49lyeIHtu9l+KwZO
-         KFLU6T9tvwTNJ8/k2xYi/aN1crqVysIXwJFjH2etI3vvwl+zlNB8SE5Z9xWvJ8f27jFB
-         ugT1L8oyMH6GEFV9+TCFeNz7RDoATw2QxOFYmTMz9A0ZSUj2vhEoXEL0XtxGLJj7CmqK
-         2CXQ==
+	s=arc-20240116; t=1764889536; c=relaxed/simple;
+	bh=B6N7GPpf+2rjSuopOiNNLs+k8r2tKO8ldPdnfJrQTqI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gnksQJ0QpuXNJ6imvfArI0H14Zsy1aqIAit5Lel1wPLq9ZDP8//1oQrmoCAn9l/1atpTfXS88AnuprcNTuCRXwce7VAhX1DKEm9MuS7pYXApOupXP1jHv9iXsxUcL4Wk1JeIMNrkC79XAeoR2KiSfJKXSiNSCrTYAH4CImsIdUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-44fe931409aso810685b6e.3
+        for <io-uring@vger.kernel.org>; Thu, 04 Dec 2025 15:05:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764888433; x=1765493233;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yTiRMSVEt+rzTo152aZXZ1TGCe9Y5teNUF8eQchZNnY=;
-        b=HOg9DAZhBzpu3BAatnvZ+1v/L4EexqZHL/Ynj7u8PFVNwbhi55/Y7dfEZCk8J16zq9
-         +4tn9aaryOpABYQrwpIYRhpBoIQMn5RdtOt7fzsXyeWzNt1waUZ8IiZpxRm8A6PqH6hG
-         /8JVZG5hbWaPucvKu+67WYxmJuo17zoAuFjZCbRMSsKOAjThcesHOg+OYLlTfOk98l4r
-         vmBUkFevkk+QX5nDBKfXtbJ3FP6JuQuUngXh0W+QQ4Y7vFoT1JL3p1BYXj4rSTNpIP5z
-         dkg/MwnrQwgxspP5mmT6PY/TCFvd5GmE8zbhJWbxOA099XPedqW6mfkmR17e6jPqcV2U
-         gqZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXRiaKlcG3ssPujkQ5qJuFLst2SbmCrA0Vwu3YpMD7tTgklRgrGJWsmRrTD/8zMgCB+ipnyP+YkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbft+auPBU22yXgVoMPgwK6M1BEMVJEWV6qqY4cerAcdWCouYl
-	62pwpM5osjbj+5RMi5tIIYZDKqNHcmY8lmBe9ULeeaVDA8PQsxpi17QXXCoSKtpySUs=
-X-Gm-Gg: ASbGncsnzvhRXZp9eBL26QPLAICEPTqKDCsPz4O8/XU0V7uXgOauYCRyVkX0+s0TlNs
-	Fdtl3KBVZtDX5t28zpVjvJTxZHSnVPbPgD3XCXhHFxl9W5mlUUznNI+BkspDm/mzBeoRk78700j
-	1PX7N4FEKchCcvm3FuMKSJcBWXtcfh4UHj+0++uPk92s76FwlzNQBwzsQnoV7gHjyl7Z421HiAU
-	6s6c5+fcmS3BZnxhjJQM6aZvBGZvPlGWyfKYi1UMoSpGccn9XxTFCK7u2GQzyYF9UAJx3PlaVQA
-	MBnlxQN0nhWvoKmfgvVtSpGu87cWhWnYvN8cXWej7vOrFyyVbUuKCglNfXjiV2DiptGQY6QWHA3
-	FMn+sAfy9MPwcpi6nZEtFkQfqJpnqeIpRqnHrNF9XvUPvHqOBpjqnbU5JJgm5wz3cG4N3uLIRs9
-	THRoA=
-X-Google-Smtp-Source: AGHT+IHINhwJWBh7W1nVJOHFAz/NFoFactK1GPLNYZl1nsXMnmabx2iqUjxvXfuFUmNEF4Hffh4lVg==
-X-Received: by 2002:a05:6808:308e:b0:44d:c185:f816 with SMTP id 5614622812f47-4536e4f7ccfmr4633395b6e.34.1764888432636;
-        Thu, 04 Dec 2025 14:47:12 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-453800cc734sm1371757b6e.11.2025.12.04.14.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 14:47:11 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, io-uring@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251204224332.1181383-1-csander@purestorage.com>
-References: <20251204224332.1181383-1-csander@purestorage.com>
-Subject: Re: [PATCH] io_uring/kbuf: use READ_ONCE() for userspace-mapped
- memory
-Message-Id: <176488843155.1025927.15790018424964919710.b4-ty@kernel.dk>
-Date: Thu, 04 Dec 2025 15:47:11 -0700
+        d=1e100.net; s=20230601; t=1764889532; x=1765494332;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lLCQS7oLJmtgXpDYJT4/IPRj6VEJ6sFTUp9ljkYJ4Mo=;
+        b=WokTQUB1dz6PreLnPOfpwvWt8h2UbpEO1yqLXxzJpiu6PhfSiqZBdz4hJYdfFAMn0C
+         wMECapGWRd/Jb2c+52tp04niN7T9uHjIqMUz0jcXy/onW9zChRkmzmSKDnOFiP+sU3Nn
+         eGQwDuwvtTVTp6KlDbIwysbR3kQ0IUXbEQkbih2Uz9hfd9fxA4hW4/TdQdl5NKPLI3Uh
+         XVlbrcSKNVtsUJUnOjuFns1vxINL+Xk3WeGaD8kYrFAKNY4ZpcLQN+Y0z8t+zD4SbMvE
+         7OVhn3V9PmoQJRAhgsv1ET83fqTj4bqMD2i/7uq23cxefoa+N8CDSmW4ksZmOO/ENWus
+         8b7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWthLNJAJ5ZU4gAv3R3eTDd2Elz/UlypGlVsjPKl4W2kKvgMs8K6gqpmLjLUcCz2BEkDKz2xHRgvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEUAOrzm+VIQRUHYrwEququLoQx+fwLX9o1e2SID76QFxW9d5F
+	dOt+oN3TVZt4QztcUJTvO98mkGQR8CrBmOBa90VAEGA7MpCt0WWE/TEyKNjzgYsIqlkKzvrEr6+
+	OSEhEgJuLc9GEhBRJT8bE0EeVHLBO43bAa3ZJdWsKgYtSvIGLsYr55+9EiD0=
+X-Google-Smtp-Source: AGHT+IGdCMyeiv07AFC2EfRUA3AOJ5QLX27r9NTc6RDtnShFpSbqSwuAaRYVR9ooxhC3Z1Fbysw9w3KTy6Fk8G298s9j4TJdN7HR
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-Received: by 2002:a05:6808:6d8f:b0:453:f62:ddfe with SMTP id
+ 5614622812f47-4536e52e5b0mr3987675b6e.43.1764889532354; Thu, 04 Dec 2025
+ 15:05:32 -0800 (PST)
+Date: Thu, 04 Dec 2025 15:05:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <693213bc.a70a0220.2ea503.00ea.GAE@google.com>
+Subject: [syzbot] Monthly io-uring report (Dec 2025)
+From: syzbot <syzbot+list2f3a8c0dbf1ef5c21483@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello io-uring maintainers/developers,
 
-On Thu, 04 Dec 2025 15:43:31 -0700, Caleb Sander Mateos wrote:
-> The struct io_uring_buf elements in a buffer ring are in a memory region
-> accessible from userspace. A malicious/buggy userspace program could
-> therefore write to them at any time, so they should be accessed with
-> READ_ONCE() in the kernel. Commit 98b6fa62c84f ("io_uring/kbuf: always
-> use READ_ONCE() to read ring provided buffer lengths") already switched
-> the reads of the len field to READ_ONCE(). Do the same for bid and addr.
-> 
-> [...]
+This is a 31-day syzbot report for the io-uring subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/io-uring
 
-Applied, thanks!
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 3 issues are still open and 128 have already been fixed.
 
-[1/1] io_uring/kbuf: use READ_ONCE() for userspace-mapped memory
-      commit: 78385c7299f7514697d196b3233a91bd5e485591
+Some of the still happening issues:
 
-Best regards,
--- 
-Jens Axboe
+Ref Crashes Repro Title
+<1> 4212    No    WARNING in io_ring_exit_work (2)
+                  https://syzkaller.appspot.com/bug?extid=557a278955ff3a4d3938
+<2> 46      Yes   INFO: task hung in io_wq_put_and_exit (6)
+                  https://syzkaller.appspot.com/bug?extid=4eb282331cab6d5b6588
+<3> 1       No    KASAN: slab-use-after-free Read in io_poll_remove_entries (2)
+                  https://syzkaller.appspot.com/bug?extid=721cddf316143353975e
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 

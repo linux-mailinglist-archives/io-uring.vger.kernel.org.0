@@ -1,124 +1,160 @@
-Return-Path: <io-uring+bounces-10987-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10988-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86012CAB2CD
-	for <lists+io-uring@lfdr.de>; Sun, 07 Dec 2025 09:42:40 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599BDCAE2AF
+	for <lists+io-uring@lfdr.de>; Mon, 08 Dec 2025 21:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1F1AF30633A9
-	for <lists+io-uring@lfdr.de>; Sun,  7 Dec 2025 08:42:36 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id CD781300A216
+	for <lists+io-uring@lfdr.de>; Mon,  8 Dec 2025 20:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7453C2D2397;
-	Sun,  7 Dec 2025 08:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E151E6DC5;
+	Mon,  8 Dec 2025 20:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="LqiyTnsA"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mF+jBexX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA4B274B3C
-	for <io-uring@vger.kernel.org>; Sun,  7 Dec 2025 08:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAAF9C0
+	for <io-uring@vger.kernel.org>; Mon,  8 Dec 2025 20:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765096955; cv=none; b=ZAVXzfF+oKX2C1aj8dCXzNiTvIxj3kmlhyOU9+JCyb7xjMnFah/Ylr4LJVWUZeydT9lKVfn/R64KLn2nJ/cPhYvcG+yJWTFO/fJjysl0pUzHaOqTaFhpbXRxIMPP5vBX4lPIn97UQpe9uLFdeuZE4U5MJ8i+3yvRB1YzqxGEgn0=
+	t=1765225881; cv=none; b=aYYGheAxU8lpjL/WpIwbCINwuvHqxQizwUGrKwN8/ezVjXaslfX8iHehSQzKHEkCguzYJgP3ZP+nd9r1NMC/M+KBn5FucGhDw7zPHT3EzPouq1fiF2dWnoa4/XPk91PPMbvZJmFJYP7MXo54W7QH6wPsaZY6IXevDmlaPXHSKSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765096955; c=relaxed/simple;
-	bh=WfWLzH+QtHiPwejFZ4ESmAPfSKspUK2Iblm8w5YiNzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISJmoJLxiHGBNMnmn62qkPTGpQC8s8MYn8nnk2CI5NYNT8QK+uStVmXye5mQ5JDVKfBYIokE6Rv29RoYU3Ll7UaUErTXwZUG/nHwwCRbRJSGPWvGuldcFpEamI/0BcKLt0Hiz8GEM8EZa5MmakYze91gm2ipG+IJF6h5UzSp8rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=LqiyTnsA; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295351ad2f5so6485105ad.3
-        for <io-uring@vger.kernel.org>; Sun, 07 Dec 2025 00:42:33 -0800 (PST)
+	s=arc-20240116; t=1765225881; c=relaxed/simple;
+	bh=isRw9A9yBjkTerJM4nYjbbjPV8Uqm2TwTQ69+To6t90=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=dnlp6fJT2heBI37yaHZC6wW6FxxjLBpSVM82SgTDegeC6bMJR7n2PgHuC5wokxeLceSIH1qybU86fNjcQAlF3KBaSa75j71RnXznyCeX0I7XQm6abgsxm1q3Ih2ejMC1hlim+ZVUHmvSd06VFpuZYSGzmijquCnF5kBOHYzwLxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mF+jBexX; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3436d6ca17bso4857057a91.3
+        for <io-uring@vger.kernel.org>; Mon, 08 Dec 2025 12:31:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1765096953; x=1765701753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765225878; x=1765830678; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zn0TCrqxsSAmiJy2pjhuWlPB88FPESlPZveON9orP+Q=;
-        b=LqiyTnsAL0tDy2sdgewOCEL8+dsEXsIKOh+mO0lZ+etIv/UC2CJnzGKmSQVqmpwmIS
-         uszny5RUynqJZgxm+7GxaZNqS1mCCQTuH51N0aC295RJE3C1rstJMS/+dU3zRGQJ+ROC
-         Zspp0/b0bRtd0bXg7TxbBJOUdxJTLsZ056yTIszteOo5hXGJib8weGcFAqvEmjXQwe05
-         6Ce4O/rP3funjbdmzwAuGFl6sQQz3vfycKDhVvcgF+eCkDSiy6XXl08/AtFSyORG9pyZ
-         n82j0IHk8nFUPmQeZEfGz6oxVo2J84CaEPqeFTR8sZ0icnKLhP9FN1v9QJO/nnx3VP/a
-         FvQA==
+        bh=IYNOpCX0rZUepVhqdmLlwhtrU+SR0iv7Kr55ozRJ1xM=;
+        b=mF+jBexXvMWqFJOH8R796A21anhMVmbRW98+xwPPoyCYaRVXw3qP6gxRyrFy5S19Va
+         7a7We/JtwF76YoTPNHTbVICISFso/za2MNfsyF1qnhdrjT/jMhHhsdEbIY/pOPePcnjv
+         fTRs0LiyLVOuX3AACJkfHBYUEYSHvK+/Myu5qiewPYe3ESFbkAJZ15pGkmBSF15svT0c
+         +3Tph9Ul5lMupNNAtLjdHZZar46RQH5/Pf/4SR50uG6uMGtDPHimCgBK/KuNCa4/VEkB
+         1CH/uAagN3oPZBsmV3Go8Fz6X/LgLvkMo5ywhV0PJPlPKUssKk7wNGpa7SFfps2LCWYi
+         3mjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765096953; x=1765701753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zn0TCrqxsSAmiJy2pjhuWlPB88FPESlPZveON9orP+Q=;
-        b=vkdR2o8qYad105YodZINGJa1wewd3W4UZQRDNlwJHMQ7qzYDz11VvhB/ztnSAQXMX8
-         XapKxP05sve91F642DH8GgLyuBuDMiMZyIe/gKluYz4meG4AJK3WXrNb10aIcXu7sJou
-         xsZDujwZaABfInbzI8JvJ9heesUDDMpQBp7bmFGhEkAuhiyrzftvDS43kcXX78xbWX3t
-         pvQ4R9cIJr4a8htOQvxzOuhWjE8yY1nByvvFs/xmX0VIKEqM/0JTy7bK9JR9WdbASFcI
-         uaKdbCIq1MVCnNeBxUi3SdNKG9e44/g3NbUWisuuMq3wIZ8gmpPRt+xHFbvVScuFRL/f
-         Yb4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFhwqUvngECicSSTl8/VpFPhabzc4hSXFi9P8gLm6J+v4sAJPF0yg9lR5M7/RfjAsx/8c8GeUJlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB0kLA4baOY/ORPfsoFz/5uKkUfq7EPmUj0uFARtKp6OrLh+YG
-	k/iutgM0GHJhifsEPNsaTka/xJ8TWfbGNM9jTZ6gQtdpw/gbUTKxGIAKs88ErYjI/W29JLClBgr
-	BpjEQDCmP2wZoQyRzZPWiALj5SOXFoj+vMLjPHpJF8g==
-X-Gm-Gg: ASbGnctqGU320MoqEdgYZYYBFZQq2SWILAVfBT7lKO0VgYAPIw96SfBbXbVu/U8W4hX
-	4D6oNMOlA+Vus+E+QYyMwnTCDpZ5QlivvLaSeaaGpiykF7WTh3+UzVxCX96jeNaNTf2RvujSA67
-	Se/EOW+X6gIKgiS4gn0eN/wPa1y4R2ZEMRjPMNP5VHL2fcIDlqbFefC+LUUcS3CaHedC7Deaq9j
-	79r5gPKtzRZtOr1z8LPjlJLCFdRs2KXDhzvKewZpT+iNAQ3GazYmeI3o7EfrkzwNJGQXw34
-X-Google-Smtp-Source: AGHT+IHUT+y6UkGiP9rKvffnCpnc8EeoQi7nHIUcEb/aXf01i65WD400NIIsftq5ucQhbMakatsmyVJ8Hr4ePdfh0Ck=
-X-Received: by 2002:a05:7022:49f:b0:11e:3e9:3ea5 with SMTP id
- a92af1059eb24-11e03e9447cmr1848664c88.7.1765096953051; Sun, 07 Dec 2025
- 00:42:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765225878; x=1765830678;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IYNOpCX0rZUepVhqdmLlwhtrU+SR0iv7Kr55ozRJ1xM=;
+        b=Ivzijefz0I1M2SpGaIzQDE3T8M/BWcuTfiYq7PhOi5vgptR3hJ5zwgDe9yExO63y/w
+         e7e22/tgCDcZdtMAE56HGtNapCBlqp38gWY3lTZY0TSw6ne4+0cYRN2TVfN954gJYdLO
+         F/+IaWqbVhePzb8TvdKTiCdkhoxT64i5oMhU5jixUvYOI0vCun2W0VMGUhSLHVNmipoY
+         a6B5rqdBDcMLPYgbP3RJG/WAD/25nUV0TBnbtjVjF94pyOhAveMsE6WqMerH6s/3491V
+         dmhfkavXcj/vGPIi08vVzF/RYpoPWzPkx8mvszZ2ubkhdN7dI8WY/Gv8YPzxXe+T3Ldj
+         +7gQ==
+X-Gm-Message-State: AOJu0Yw2MDMo8Ix033/CB4ImNBx2LgG+Jp9AsvHpYv/733fB6qhp9FCm
+	06Nfc7jYoqxGq5ULBAKiuRUVIY3J7lSQAKB5nmZkX50hCD8B0mfqgfA+/2HIrUYC+5k=
+X-Gm-Gg: ASbGnctGh22mcFq4en/ncGve4D5bJrACD+Xz4C3wkAljVp9kC/gnA5yhqyFa7QtyppC
+	69tWHcplDr/aLpix4P18XYVgQ4IFeZ7YDavsaSFZ0KHZyTmqLTiXz8fMxNFJssvOsf50W96Ihbc
+	ytgFbIxo9wa8gsqWt8j0MRTIXXYc54F1xudDdS7JfAbpYGXr3mOybwh4V7gA8ww5dLZr/Z29cQL
+	MZo6qodP98VInD47XEb70CHaF/Tip0m7AhKjIeYWKnMFdaGLC3GZMN4+fa4hSNV+ZDQV0R0GSRS
+	rd12dZSk7rm21RvMOZ+oRi5ygTjGp0/oQARqvAw3lPadBjCWLE1vsnjqbI4JKa4ecFXxXIxMjEb
+	fceOBVTeDKdnbW7WAiS8YwKOrQvGWR17usNC2A8FCH0L128BNGkMYSBXjWPvwssaEYpUKE5OMHp
+	maoRyNGFZ8tLcY16YKBMl/1Ph4uK0ubDRHlHgD3JQTfHHleQ==
+X-Google-Smtp-Source: AGHT+IG9JZid3I73tSGnJkibDU6m7oIc4VKRQrzrpY1MtDlbI2e2YhkmPmhy4BSrtmTWNou7TwZfSA==
+X-Received: by 2002:a17:90b:564c:b0:340:776d:f4ca with SMTP id 98e67ed59e1d1-349a25e45fbmr6646426a91.26.1765225878320;
+        Mon, 08 Dec 2025 12:31:18 -0800 (PST)
+Received: from [172.19.130.138] ([164.86.9.138])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34a4a8aa876sm7086a91.9.2025.12.08.12.31.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Dec 2025 12:31:17 -0800 (PST)
+Message-ID: <fdab55a9-8a66-40e4-b824-b473b63c974b@kernel.dk>
+Date: Mon, 8 Dec 2025 13:31:06 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-25-joannelkoong@gmail.com>
-In-Reply-To: <20251203003526.2889477-25-joannelkoong@gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Sun, 7 Dec 2025 00:42:21 -0800
-X-Gm-Features: AQt7F2pc21BBeN2HWbX86e7phYaZSB8x1ZZ_Ee_93JIbwmjcqTTombdxWHZe-j8
-Message-ID: <CADUfDZorWUN+RHcMWqxi+9nOzcV1OrnYcZvVNHwZUpJ=ZcmV1A@mail.gmail.com>
-Subject: Re: [PATCH v1 24/30] io_uring/rsrc: Allow buffer release callback to
- be optional
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Followup io_uring fixes for 6.19-rc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 2, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> This is a preparatory patch for supporting kernel-populated buffers in
-> fuse io-uring, which does not need a release callback.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Hi Linus,
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+Followup set of fixes for io_uring for this merge window. These are
+either later fixes, or cleanups that don't make sense to defer. This
+pull request contains:
 
-> ---
->  io_uring/rsrc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 18abba6f6b86..a5605c35d857 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -149,7 +149,8 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, =
-struct io_mapped_ubuf *imu)
->
->         if (imu->acct_pages)
->                 io_unaccount_mem(ctx->user, ctx->mm_account, imu->acct_pa=
-ges);
-> -       imu->release(imu->priv);
-> +       if (imu->release)
-> +               imu->release(imu->priv);
->         io_free_imu(ctx, imu);
->  }
->
-> --
-> 2.47.3
->
+- Fix for a recent regression in io-wq worker creation.
+
+- Tracing cleanup
+
+- Use READ_ONCE/WRITE_ONCE consistently for ring mapped kbufs. Mostly
+  for documentation purposes, indicating that they are shared with
+  userspace.
+
+- Fix for POLL_ADD losing a completion, if the request is updated and
+  now is triggerable - eg, if POLLIN is set with the updated, and the
+  polled file is readable.
+
+- In conjunction with the above fix, also unify how poll wait queue
+  entries are deleted with the head update. We had 3 different spots
+  doing both the list deletion and head write, with one of them nicely
+  documented. Abstract that into a helper and use it consistently.
+
+- Small series from Joanne fixing an issue with buffer cloning, and
+  cleaning up the arg validation.
+
+Please pull!
+
+
+The following changes since commit 559e608c46553c107dbba19dae0854af7b219400:
+
+  Merge tag 'ntfs3_for_6.19' of https://github.com/Paragon-Software-Group/linux-ntfs3 (2025-12-03 20:45:43 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.19-20251208
+
+for you to fetch changes up to 55d57b3bcc7efcab812a8179e2dc17d781302997:
+
+  io_uring/poll: unify poll waitqueue entry and list removal (2025-12-05 10:23:28 -0700)
+
+----------------------------------------------------------------
+io_uring-6.19-20251208
+
+----------------------------------------------------------------
+Caleb Sander Mateos (3):
+      io_uring/io-wq: always retry worker create on ERESTART*
+      io_uring/trace: rename io_uring_queue_async_work event "rw" field
+      io_uring/kbuf: use READ_ONCE() for userspace-mapped memory
+
+Jens Axboe (2):
+      io_uring/poll: correctly handle io_poll_add() return value on update
+      io_uring/poll: unify poll waitqueue entry and list removal
+
+Joanne Koong (4):
+      io_uring/rsrc: clean up buffer cloning arg validation
+      io_uring/rsrc: rename misleading src_node variable in io_clone_buffers()
+      io_uring/rsrc: fix lost entries after cloned range
+      io_uring/kbuf: use WRITE_ONCE() for userspace-shared buffer ring fields
+
+ include/trace/events/io_uring.h | 12 +++++-----
+ io_uring/io-wq.c                |  5 ++--
+ io_uring/kbuf.c                 | 16 ++++++-------
+ io_uring/poll.c                 | 52 +++++++++++++++++++++++------------------
+ io_uring/rsrc.c                 | 47 +++++++++++++++++--------------------
+ 5 files changed, 67 insertions(+), 65 deletions(-)
+
+-- 
+Jens Axboe
+
 

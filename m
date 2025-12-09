@@ -1,264 +1,149 @@
-Return-Path: <io-uring+bounces-10991-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-10992-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F2ECAEC65
-	for <lists+io-uring@lfdr.de>; Tue, 09 Dec 2025 04:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE96CB106C
+	for <lists+io-uring@lfdr.de>; Tue, 09 Dec 2025 21:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 296EA30281BB
-	for <lists+io-uring@lfdr.de>; Tue,  9 Dec 2025 03:08:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BCA57309D947
+	for <lists+io-uring@lfdr.de>; Tue,  9 Dec 2025 20:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F72DD60E;
-	Tue,  9 Dec 2025 03:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C08230270;
+	Tue,  9 Dec 2025 20:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wf5rUkJF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d9MmPURg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8133B8D6A
-	for <io-uring@vger.kernel.org>; Tue,  9 Dec 2025 03:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA74DB640
+	for <io-uring@vger.kernel.org>; Tue,  9 Dec 2025 20:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765249734; cv=none; b=jpdW+3q2jA3EgzNAoJ16ASqA3gPOxIJUag5i1tWeLuPkJiVFE9CqGinXf2sCsWaUhUr/Gmvz1hhmGZp/f2qTBzzjnetsFuetdO6eoiKW1GDAtj9lR1BhAh1OHgzwzD7ZGIrMKCmzrHMlIHjc1p4130MVfslsEjYpcRASLrKd/Xo=
+	t=1765312393; cv=none; b=sxOYQVhqYItJ7kJOvRZNINsXx8hpZpXMMfkVg8J+P28N+w0ENhtZ51BhGVEaU4xVYqGkEsSKaDP7HympNy6uCz6rqDMnkCnvbYM2O/fxsi3usOwV+ZfTmwA/VyhivLFYnoO7g3THN6Y6UIwU7bln+pJdiQBdj8P+FJkdTM8/2zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765249734; c=relaxed/simple;
-	bh=sC6i1KJ1PNGNvyrOs04xpHhSDejYfgZbnn/h5pqJ1q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itrYFZvuvYl2ZeCC8pdn6JbyXsBCCZGx2AV3wMRWdwsxUJpJbs4pxqxWSZmq1d5j28PM5vaJme+zPOLe/5s9PufTHwXbnrb3t2D9aL+czg1NpfFNpxLuYvfPKayNy0idh6iMcK6gSOriUbZotVOhk69HKnM+PozEQl11LuVBUd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wf5rUkJF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765249731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kC4p4OA5IlaAoD+5KGx/pZrkzs7juElZ099W0/pls/M=;
-	b=Wf5rUkJFNvosHfTw/r5l2/Q1y21tNit0Ahi/IjS//Ex23ssnp7R2fz022lya22MCN75Iep
-	9BFXt1LSURBAzuPVHnK/WV8WuHFeh1ghTy1DVDxXfkcK2yqlRtA0dTI7Fh/V+QT+W1lxAq
-	A2j7Izh9FWiRoI6oCXyTN1JmjisEyOU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-lTtql0uANkafMM_OyT65qw-1; Mon,
- 08 Dec 2025 22:08:47 -0500
-X-MC-Unique: lTtql0uANkafMM_OyT65qw-1
-X-Mimecast-MFC-AGG-ID: lTtql0uANkafMM_OyT65qw_1765249726
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D49EC1800342;
-	Tue,  9 Dec 2025 03:08:45 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.98])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 201E61800451;
-	Tue,  9 Dec 2025 03:08:40 +0000 (UTC)
-Date: Tue, 9 Dec 2025 11:08:36 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org, Akilesh Kailash <akailash@google.com>,
-	bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH 3/5] io_uring: bpf: extend io_uring with bpf struct_ops
-Message-ID: <aTeStJ9_Tu0i5_wH@fedora>
-References: <20251104162123.1086035-1-ming.lei@redhat.com>
- <20251104162123.1086035-4-ming.lei@redhat.com>
- <94f94f0e-7086-4f44-a658-9cb3b5496faf@samba.org>
- <aRW6LfJi63X7wbPm@fedora>
- <05a37623-c78c-4a86-a9f3-c78ce133fa66@samba.org>
- <aRabTk29_v6p92mY@fedora>
- <CADUfDZqpTSihuYnTqUbtctrX4OGT7Szr-_wWb4xLgg11RcwYkA@mail.gmail.com>
+	s=arc-20240116; t=1765312393; c=relaxed/simple;
+	bh=9BPu7zGB3sx/ZaRHgDKaR/vSTqOXz5BH7+KOUHJ0u6Y=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=KJK+rm1oul9O2PqbRM39Bglc+IImB7Hoig8io83gR6JroE5lwbHHvolj9hNxawFwvo/LrhqqBk7vZLAHlvNyRPqpJwu9fYMVe2gLPUcl0NvzQHtXLONJfk/1l12s28g3m/iwyP00T/FY3Nel+ov17JMKKTlLtGHCaQDpqMUYhxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d9MmPURg; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7b9215e55e6so4029306b3a.2
+        for <io-uring@vger.kernel.org>; Tue, 09 Dec 2025 12:33:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765312388; x=1765917188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CGlwimed1HqkjsjjBj/RsduuK4zxzywWQIjyfxIl1XY=;
+        b=d9MmPURgJz7+oyT99xGqeIey5Yx1thqHDUwXP3fjEqhblhhD5nfvmo+83Z96D5majO
+         HRMD+EQjrsNqMv//h/Tyky8/Uic6QQnsJvVEe/2681FYCTJAiCHGvmQiGOa2P0biZg9o
+         lTEslK6ibRUXjjdNCh4zJFMaNGUFlObNvls5E9/KpaMes5oCD1/PSoMh4MTGh8cMxRGX
+         fQ3F9/hu/f7eVsg/WAK+zRuia9KaB87s94kbVriVG4WQM7E5ILHW1xqotFsg+fX9Mn46
+         fkL1jEMSL9aCbe4aDbqg9l3+wVFSk9wNS8VNnM12J81rEYejzb1JMe088NErzuvDXzDZ
+         8lSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765312388; x=1765917188;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CGlwimed1HqkjsjjBj/RsduuK4zxzywWQIjyfxIl1XY=;
+        b=qFVR2/M15vX9LWGhAsDysvRzR8j+Cgw3lNq+EAKCUgVi4uWz3nQcM25UZqH6VoJNhT
+         QSTSD1x07pq+bfZ/WYnl2HJCgIu1b79WJ2zPucgB0jVXTlBmlYCS6MgVaWEFHpxqbeA0
+         /r4eQuBuJVghbf1DNbfr6+cQawQvi/4toRY4mrKG9N9zzE2FgxtyubqLab+s5jNMClQN
+         GiNfvrJx/ByJbhtweVqWE53tdFj4Ed2ukM3ovq/uO7V3rh9ifm6+K+uPjf9sQqjp03bB
+         ANBHNKquqDs48wW25/ELPgWzgvYOhRExHwGCzHGMW3176nXzpVZCBobyfYbuNQKSHwgL
+         m9Qg==
+X-Gm-Message-State: AOJu0YxSR2dnIulhPLmLU7Fjs2C3E5NO7PMuTEaHyjlirURLgMIALdW1
+	LiBIHxUR5aKfy9c2zWrBqJ55xhqqmC2pfMcFRujtiE7v1jJLkQ3I9JZt53xrTY1zUIpb+e9Dr17
+	KFiVMxtKmDA==
+X-Gm-Gg: ASbGncsvLeNpslUna6TWKHR6OBUb5foV9qjI/V5I2YUyYri+p8BNNcH991rbUtRrcWq
+	S1wlTLRRqQpOaolI4+OWZCSoinj6zGZN7TfuO1+HxHg3iKMC9DtRhrlKPBWCrD5QI5tjazNdtHy
+	Msv+9CB2CsEJxdrchC+3m4GSiQ2ahkYbQIhvz4or00gvHrk1abX3uGxZff/JDBKb+ulepSgE23B
+	zRxWyVXFms6HCsJIAky/1zussknWQNc8rkZ86AD2xx0VCFI+vKXdD9HPxm/9Im6eC4M6Zdgncue
+	CPP4FKJ4HGcvkpV2WfPVwvoh9LEUreaLrXdwU5pV7eXqzFS6ZgolzI8elHcQD8KXKIayGpP3hFX
+	/LMyrCbTQqtWd7dJ9HS7nl4GxYzB50dtbliUsHuNvKnnl24aelkprUTuVCHQY89eyrADEa4iRp8
+	C8T380oY40RbGoEgjQyovd+AI/sIoD2CbGNhgZUivERHoO86Ypqw==
+X-Google-Smtp-Source: AGHT+IF0xJVuIJrwxg5nG3hf7TmED1khXdi2w5orldImcz6ab4esqFHPgb2zfXU7J0vwRpBqfcC5ww==
+X-Received: by 2002:a05:6a00:3c8c:b0:7ad:11c9:d643 with SMTP id d2e1a72fcca58-7f22ce239b7mr34908b3a.21.1765312387979;
+        Tue, 09 Dec 2025 12:33:07 -0800 (PST)
+Received: from [172.20.4.188] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7e29ff6b55fsm16951337b3a.17.2025.12.09.12.33.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Dec 2025 12:33:07 -0800 (PST)
+Message-ID: <183b0452-c538-40de-a33a-51db4a5dfa63@kernel.dk>
+Date: Tue, 9 Dec 2025 13:33:05 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZqpTSihuYnTqUbtctrX4OGT7Szr-_wWb4xLgg11RcwYkA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: fix min_wait wakeups for SQPOLL
+Cc: Tip ten Brink <tip@tenbrinkmeijs.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 08, 2025 at 02:45:35PM -0800, Caleb Sander Mateos wrote:
-> On Thu, Nov 13, 2025 at 7:00 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Thu, Nov 13, 2025 at 12:19:33PM +0100, Stefan Metzmacher wrote:
-> > > Am 13.11.25 um 11:59 schrieb Ming Lei:
-> > > > On Thu, Nov 13, 2025 at 11:32:56AM +0100, Stefan Metzmacher wrote:
-> > > > > Hi Ming,
-> > > > >
-> > > > > > io_uring can be extended with bpf struct_ops in the following ways:
-> > > > > >
-> > > > > > 1) add new io_uring operation from application
-> > > > > > - one typical use case is for operating device zero-copy buffer, which
-> > > > > > belongs to kernel, and not visible or too expensive to export to
-> > > > > > userspace, such as supporting copy data from this buffer to userspace,
-> > > > > > decompressing data to zero-copy buffer in Android case[1][2], or
-> > > > > > checksum/decrypting.
-> > > > > >
-> > > > > > [1] https://lpc.events/event/18/contributions/1710/attachments/1440/3070/LPC2024_ublk_zero_copy.pdf
-> > > > > >
-> > > > > > 2) extend 64 byte SQE, since bpf map can be used to store IO data
-> > > > > >      conveniently
-> > > > > >
-> > > > > > 3) communicate in IO chain, since bpf map can be shared among IOs,
-> > > > > > when one bpf IO is completed, data can be written to IO chain wide
-> > > > > > bpf map, then the following bpf IO can retrieve the data from this bpf
-> > > > > > map, this way is more flexible than io_uring built-in buffer
-> > > > > >
-> > > > > > 4) pretty handy to inject error for test purpose
-> > > > > >
-> > > > > > bpf struct_ops is one very handy way to attach bpf prog with kernel, and
-> > > > > > this patch simply wires existed io_uring operation callbacks with added
-> > > > > > uring bpf struct_ops, so application can define its own uring bpf
-> > > > > > operations.
-> > > > >
-> > > > > This sounds useful to me.
-> > > > >
-> > > > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > > > > > ---
-> > > > > >    include/uapi/linux/io_uring.h |   9 ++
-> > > > > >    io_uring/bpf.c                | 271 +++++++++++++++++++++++++++++++++-
-> > > > > >    io_uring/io_uring.c           |   1 +
-> > > > > >    io_uring/io_uring.h           |   3 +-
-> > > > > >    io_uring/uring_bpf.h          |  30 ++++
-> > > > > >    5 files changed, 311 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > > > > > index b8c49813b4e5..94d2050131ac 100644
-> > > > > > --- a/include/uapi/linux/io_uring.h
-> > > > > > +++ b/include/uapi/linux/io_uring.h
-> > > > > > @@ -74,6 +74,7 @@ struct io_uring_sqe {
-> > > > > >                 __u32           install_fd_flags;
-> > > > > >                 __u32           nop_flags;
-> > > > > >                 __u32           pipe_flags;
-> > > > > > +               __u32           bpf_op_flags;
-> > > > > >         };
-> > > > > >         __u64   user_data;      /* data to be passed back at completion time */
-> > > > > >         /* pack this to avoid bogus arm OABI complaints */
-> > > > > > @@ -427,6 +428,13 @@ enum io_uring_op {
-> > > > > >    #define IORING_RECVSEND_BUNDLE               (1U << 4)
-> > > > > >    #define IORING_SEND_VECTORIZED               (1U << 5)
-> > > > > > +/*
-> > > > > > + * sqe->bpf_op_flags           top 8bits is for storing bpf op
-> > > > > > + *                             The other 24bits are used for bpf prog
-> > > > > > + */
-> > > > > > +#define IORING_BPF_OP_BITS     (8)
-> > > > > > +#define IORING_BPF_OP_SHIFT    (24)
-> > > > > > +
-> > > > > >    /*
-> > > > > >     * cqe.res for IORING_CQE_F_NOTIF if
-> > > > > >     * IORING_SEND_ZC_REPORT_USAGE was requested
-> > > > > > @@ -631,6 +639,7 @@ struct io_uring_params {
-> > > > > >    #define IORING_FEAT_MIN_TIMEOUT              (1U << 15)
-> > > > > >    #define IORING_FEAT_RW_ATTR          (1U << 16)
-> > > > > >    #define IORING_FEAT_NO_IOWAIT                (1U << 17)
-> > > > > > +#define IORING_FEAT_BPF                        (1U << 18)
-> > > > > >    /*
-> > > > > >     * io_uring_register(2) opcodes and arguments
-> > > > > > diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-> > > > > > index bb1e37d1e804..8227be6d5a10 100644
-> > > > > > --- a/io_uring/bpf.c
-> > > > > > +++ b/io_uring/bpf.c
-> > > > > > @@ -4,28 +4,95 @@
-> > > > > >    #include <linux/kernel.h>
-> > > > > >    #include <linux/errno.h>
-> > > > > >    #include <uapi/linux/io_uring.h>
-> > > > > > +#include <linux/init.h>
-> > > > > > +#include <linux/types.h>
-> > > > > > +#include <linux/bpf_verifier.h>
-> > > > > > +#include <linux/bpf.h>
-> > > > > > +#include <linux/btf.h>
-> > > > > > +#include <linux/btf_ids.h>
-> > > > > > +#include <linux/filter.h>
-> > > > > >    #include "io_uring.h"
-> > > > > >    #include "uring_bpf.h"
-> > > > > > +#define MAX_BPF_OPS_COUNT      (1 << IORING_BPF_OP_BITS)
-> > > > > > +
-> > > > > >    static DEFINE_MUTEX(uring_bpf_ctx_lock);
-> > > > > >    static LIST_HEAD(uring_bpf_ctx_list);
-> > > > > > +DEFINE_STATIC_SRCU(uring_bpf_srcu);
-> > > > > > +static struct uring_bpf_ops bpf_ops[MAX_BPF_OPS_COUNT];
-> > > > >
-> > > > > This indicates to me that the whole system with all applications in all namespaces
-> > > > > need to coordinate in order to use these 256 ops?
-> > > >
-> > > > So far there is only 62 in-tree io_uring operation defined, I feel 256
-> > > > should be enough.
-> > > >
-> > > > > I think in order to have something useful, this should be per
-> > > > > struct io_ring_ctx and each application should be able to load
-> > > > > its own bpf programs.
-> > > >
-> > > > per-ctx requirement looks reasonable, and it shouldn't be hard to
-> > > > support.
-> > > >
-> > > > >
-> > > > > Something that uses bpf_prog_get_type() based on a bpf_fd
-> > > > > like SIOCKCMATTACH in net/kcm/kcmsock.c.
-> > > >
-> > > > I considered per-ctx prog before, one drawback is the prog can't be shared
-> > > > among io_ring_ctx, which could waste memory. In my ublk case, there can be
-> > > > lots of devices sharing same bpf prog.
-> > >
-> > > Can't the ublk instances coordinate and use the same bpf_fd?
-> > > new instances could request it via a unix socket and SCM_RIGHTS
-> > > from a long running loading process. On the other hand do they
-> > > really want to share?
-> >
-> > struct_ops is typically registered once, used everywhere, such as
-> > sched_ext and socket example.
-> >
-> > This patch follows this usage, so every io_uring application can access it like the
-> > in-kernel operations.
-> >
-> > I can understand the requirement for per-io-ring-ctx struct_ops, which
-> > won't cause conflict among different applications.
-> >
-> > For example, ublk/raid5, there are 100 such devices, each device is created in dedicated
-> > process and uses its own io-uring, so 100 same struct_ops prog are registered in memory.
-> > Given struct_ops prog is registered as per-io-ring-ctx, it may not be shared by `bpf_fd`, IMO.
-> 
-> I agree with Stefan that a global IORING_OP_BPF op to BPF program
-> mapping will be difficult to coordinate between processes. For
-> example, consider two different ublk server programs that each want to
-> use a different BPF program. Ideally, each should be an independent
-> program and not need to know the op ids used by the other.
+Using min_wait, two timeouts are given:
 
-Each processes can query free slots by checking `bpftool struc_ops`.
+1) The min_wait timeout, within which up to 'wait_nr' events are
+   waited for.
+2) The overall long timeout, which is entered if no events are generated
+   in the min_wait window.
 
-> On the other hand, a multithreaded process may have multiple
-> io_ring_ctxs and want to use the same IORING_OP_BPF ops with all of
-> them. So a process-level mapping seems to make the most sense. And
-> that's exactly the mapping level that we would get from using the BPF
-> program file descriptor to specify the IORING_OP_BPF op. Additionally,
-> as Stefan points out, the IORING_OP_BPF program could be shared with
-> another process by sending the file descriptor using SCM_RIGHTS. And
+If the min_wait has expired, any event being posted must wake the task.
+For SQPOLL, that isn't the case, as it won't trigger the io_has_work()
+condition, as it will have already processed the task_work that happened
+when an event was posted. This causes any event to trigger post the
+min_wait to not always cause the waiting application to wakeup, and
+instead it will wait until the overall timeout has expired. This can be
+shown in a test case that has a 1 second min_wait, with a 5 second
+overall wait, even if an event triggers after 1.5 seconds:
 
-io_uring FD doesn't support SCM_RIGHTS.
+axboe@m2max-kvm /d/iouring-mre (master)> zig-out/bin/iouring
+info: MIN_TIMEOUT supported: true, features: 0x3ffff
+info: Testing: min_wait=1000ms, timeout=5s, wait_nr=4
+info: 1 cqes in 5000.2ms
 
-If one privileged process sends bpf prog FD via SCM_RIGHTS, that means
-this privileged process may be allowed to register any IORING_OP_BPF program,
-sounds like `CONFIG_BPF_UNPRIV_DEFAULT_OFF == n`. Probably it is fine
-if we just expose 'struct uring_bpf_data' and not expose `struct io_kiocb`
-to bpf prog.
+where the expected result should be:
 
-Another ways is to register global struct_ops prog in the following way:
+axboe@m2max-kvm /d/iouring-mre (master)> zig-out/bin/iouring
+info: MIN_TIMEOUT supported: true, features: 0x3ffff
+info: Testing: min_wait=1000ms, timeout=5s, wait_nr=4
+info: 1 cqes in 1500.3ms
 
-- the 1st 256 progs are stored in plain array, which can be for really
-  global/generic progs
+When the min_wait timeout triggers, reset the number of completions
+needed to wake the task to the current number plus 1. This should ensure
+that any future events will wake the task, regardless of how many events
+it originally wanted to wait for.
 
-- the others(256 ~ 65535) progs are stored in xarray, processes can lookup
-  free slots and use them in dynamic allocation way.
+Reported-by: Tip ten Brink <tip@tenbrinkmeijs.com>
+Cc: stable@vger.kernel.org
+Fixes: 1100c4a2656d ("io_uring: add support for batch wait timeout")
+Link: https://github.com/axboe/liburing/issues/1477
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-I'd suggest to start with global register, which is easy to use, and extend
-to per-uring-ctx struct_ops in future.
+---
 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 5d130c578435..1a1fe05367d8 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2538,6 +2538,8 @@ static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+ 
+ 	hrtimer_update_function(&iowq->t, io_cqring_timer_wakeup);
+ 	hrtimer_set_expires(timer, iowq->timeout);
++	/* any generated CQE post now should wake us up */
++	iowq->cq_tail = READ_ONCE(ctx->rings->cq.head) + 1;
+ 	return HRTIMER_RESTART;
+ out_wake:
+ 	return io_cqring_timer_wakeup(timer);
 
-Thanks,
-Ming
+-- 
+Jens Axboe
 
 

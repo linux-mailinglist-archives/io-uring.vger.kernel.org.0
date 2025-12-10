@@ -1,140 +1,122 @@
-Return-Path: <io-uring+bounces-11000-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11001-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5390CCB2859
-	for <lists+io-uring@lfdr.de>; Wed, 10 Dec 2025 10:19:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2027CB29AC
+	for <lists+io-uring@lfdr.de>; Wed, 10 Dec 2025 10:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2EA9530050AC
-	for <lists+io-uring@lfdr.de>; Wed, 10 Dec 2025 09:19:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F00E13009955
+	for <lists+io-uring@lfdr.de>; Wed, 10 Dec 2025 09:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275F2E573;
-	Wed, 10 Dec 2025 09:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647812FE053;
+	Wed, 10 Dec 2025 09:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lJ1JrMDZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gIKkrCQI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-dl1-f68.google.com (mail-dl1-f68.google.com [74.125.82.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BB921D3CC
-	for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 09:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57772FE041
+	for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 09:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765358360; cv=none; b=hqSdPeJUpORbVXMaJkOytFRu8CPw59DRH5SnEv6qIP5Bi5gv0CeqO19NFSAbJxajRS/NA0SPW5doM1bGf7pP7RR/Rux+Zl3qtH6yFZBIRd/jQurRHPmqikGeu5lsdpjTW8ryXNyFJzj9bUcXQxGyvEA+s+zO6ibL3n7C/cNGj9U=
+	t=1765360399; cv=none; b=b5nF2zTD2Yv3ShBCTD7ARVMFZkhfrzLfYJBrEua0ldkq6iCyq5CL9WZnD3WhEveLulA6kSM4HW07NzekSBDkjCb29c5WzQekoOJRgPVwExJTgqrQ8hLv0Pxsqu6V1SnOUSwMuSuFJHL5Jk4oz5YBFcU8irV0GL9RG5XZ6svqb2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765358360; c=relaxed/simple;
-	bh=GpwHb+O7rgYfFuNpbx1gKS2FppVHYMwpEXvosYBUhQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJBzGA+YLw/PxwgQ4+wxWu36YrYMgtmoGPDA4ACn/eBOAsc1ZbFdkq1zQTQPt2ePittxvWD61hQ//g9z/RvRB5ODf9HRfk39r8b6E7dw99tgBwuxpAloUe3qCkJ+4AQ3NQk1MZVfgpDX1tLj5a4rJis4wU0mQhgEGzkXJM7L/YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lJ1JrMDZ; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1765360399; c=relaxed/simple;
+	bh=JlM9AqWd1RyWOJiRCCXE+NuXQ2q8EHsZh4wxYWos3Cc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JCPPvKYD8ikdNgUlAOo3lsFE0KzLpPyPR8NBSdVZ3AsMScyPXfV9C05tyBPdN+Ag5DUw9wasOdw1ZoNA9zP4cmm5i75G+ce3AvuUCHP3HjK8DRfo4p3H2PECaW8H+cELXo23o87UXhlljnUSijagwPNbIPdBPAjLNJwIqK6waM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gIKkrCQI; arc=none smtp.client-ip=74.125.82.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-bdb6f9561f9so6230953a12.3
-        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 01:19:16 -0800 (PST)
+Received: by mail-dl1-f68.google.com with SMTP id a92af1059eb24-11b6bc976d6so941805c88.0
+        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 01:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765358356; x=1765963156; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/hF8VWePrSemvntp8SrA2/CjZQVIj5VcYnub550tIE8=;
-        b=lJ1JrMDZZoDfczs1PR8J1n0mSgBIXzmZ+fPQoHlB4FVQ9QMdwWEQIJEamCamdjnFXC
-         OGUnLfY2vEieWgdzA7oBAnBPevs56xd1Qmph/02ra6I1GGBZnHt1zr88Ya9pHGdWKrcm
-         ag7IQhgnS1mqHTI+JAm99hJvJmyJQPpGmJX1yqXyW5nD+F69GT+UUbdKFc1YJraCAs//
-         DMDCur3PDS+kxwSbkonciN2q7mL7Y42IQGRGmw4sfnHWDIDpDk2EyxnBLd7QYOLuQHr2
-         OuIYv57Z2L0rzbwNUrX/iEuidu4Tp7mACJdSFNHOpq0rOK5aXItprLQPQhi1naSah47C
-         UK5w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765360394; x=1765965194; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iZ9EEX7gWWHH8n0IY8QrEGQfLIIl0O6mAljgho1luTg=;
+        b=gIKkrCQIPaHGVwBrgQ0cozP5/GSytKQTKIodPQu8N3hDjyA3oDNY5uCUjbkIAuHdDb
+         isJjFqw5MNsFrV4npmWhjOTA0EGaPflk1GyK1z4e900JlSggRiiFIf8JNt8L9wYWtPIr
+         fx5Tg+pKeW5Pxkk664GOgWKdocFQ3jd4ooOvZlYznFU0RxPchuGGBsNe4EcLraFsscg1
+         WHgZ/LAbBI66NlVmmEMTStLLUZAyC6ZBTaGd8gyj9oconNLi123fbvIqpsBAphlpvmR1
+         pxqDHiA7XTvSBuJOPGfrnSgHicvzcb5f1qVqZMiJdvyzjfVc8GsXKnYp45cF62ECq4xj
+         JiiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765358356; x=1765963156;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/hF8VWePrSemvntp8SrA2/CjZQVIj5VcYnub550tIE8=;
-        b=fWER0hsZd/6GirXR9u4/p/CcO7j6sv4+gZrbQgz5ucDyWUG9zC2t12NRp53my5PKzV
-         cgnfBCCtFGmTAMKRoWZs1bscyQ0StyqqHDvKooMvVkl1pZ3RPgH+WBbSkBxfwzIfVKhu
-         Ny5+QSfj1Ww4VC4sSvXV94kXRrE2c+0y3vGZk0EwJDcLN3uy1OLq1l+iwEd9fEOWLGQQ
-         JVzRzgyGWDXr9eOQ0clMIrE5GEwzTtYxLNvej1CzJa7QOi8HRJyoXTeeccqd/M9pRLno
-         lj5QFsRIVHGil7tbcK3YGzfmsP2FSxcJm+nfayzKJi6zLXVPBWKjjZkimOcJjzuhFpwM
-         2wyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/LSZTEOUqHrgiZSa9XLMt0SPqoHHw4cleIEt83n4hmU1hTS+GGPYiFHTQB1pVqR3ZpwIgtm9NGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5Fg0gAeNJHmrdIq8JpjxQJfoC2ibOHUWxMf9rFLvjljft1iRs
-	+naRAz5F9cztyKCf8zgj+JHqiihqYptf+4bvYch8BIRtgq/tLxINQBhXWLCYnVLl25k=
-X-Gm-Gg: AY/fxX6+Df3DtvlcKqDY2LkNdD3oA46bagbGZNN8/ksXGIu9EYRLK8WE5b12eMwTO0D
-	ixPjxws753DbWz2lSm3S9hOls7PsjtiDmjlw8LIqIDzYXm5+ZRza5t7evHeSx5A0+k/pJXjE2HE
-	O2mksYfYN7evUGuppxTH2nG26wJdBusuaHO3k1+2u6gWQMldNEjA106eyKHIufcJ9hYD5sbv9NJ
-	lEOa4XCFWNfYf/grucTVrrygOBY4ugobO3ssLLhZH8cP5oXwM7bX3kne91oFTVe8NZVnswT+cI9
-	f+RlnGiSl7z1R5B/LO12WG/6SMveuYRFwim/k9trBfc3jZpiKr5zK7Xr548O261WTKiq/I3xFmt
-	gCBQrgmuf3uIqKbGgw6GGFTplahFvj9JOvLrTG6URG3yHuGZYQ/NgJ4d/oH1T59D5wWcK4hC5ul
-	XtzUqhJYGbmwoDJtfYi9fVcY8GWftPWKbF8l34vnv6M2KHneD2bQ==
-X-Google-Smtp-Source: AGHT+IE2urvd+MJtlCsMUFyQ+NNnFsyTKRA7ERLKFjNYo3upbCHDC2h/CaFjMz2WRi0YIPfKGxuwug==
-X-Received: by 2002:a05:7301:9f0c:b0:2a4:3593:9692 with SMTP id 5a478bee46e88-2ac05451663mr1553067eec.15.1765358355872;
-        Wed, 10 Dec 2025 01:19:15 -0800 (PST)
-Received: from [172.20.4.188] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11df7552defsm78869697c88.2.2025.12.10.01.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Dec 2025 01:19:15 -0800 (PST)
-Message-ID: <f363a7f5-1355-4dde-85b5-a51024b2ad5b@kernel.dk>
-Date: Wed, 10 Dec 2025 02:19:13 -0700
+        d=1e100.net; s=20230601; t=1765360394; x=1765965194;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iZ9EEX7gWWHH8n0IY8QrEGQfLIIl0O6mAljgho1luTg=;
+        b=WtwPVFLx/dxSr3wuZmq4bi514oqS3NBLDYo2AYEPP/lWbHC6ptxCeY2bnpTUFZgL4i
+         aJKJE9EtviWKp5caxQnEUENu+okxdIl001Byjb4ZSN6/ts0pqn8WtdKJV87l6xv0kjQH
+         J9VYVeKKReJcFH3bljGltcVLRgKIWbqQbVlkGUbCuDw9AOtaQABX+yiCv6hLMZAJTx7s
+         nSAq1Krg8cDnfASt6BoMME98yGj8yI9VwORvpO3DSiok21+562ZqRQBj58Apih3rZKaA
+         ZXfHPoTFkmyclmOeH4jtnSN7dVF6Bz5ygkiGbAspPExRs4kMNzqsrYiJcoJW9qJd5ZR9
+         /BEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5QfEp/UJdkA5iTftKvdNLOTo6+DoqdjUAEa4A1UEN5Q0Jlk3nPJXvnQwYFX7dL1/ma9ypCMQDhg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfiDVHfqvyRykxaylMPIZ4yw167M84YCql/hBqkJiPb5a3sxIf
+	wGRJzRIwmv8X3uV7AG7q6OmV1ausd5psDVOOGh82K3GvpIgyPFMzARygpaXbgeuc0DU=
+X-Gm-Gg: ASbGnctvq+L2kH3hySTl2WTJFHcHEU6Zv/+CGcLwCEmtsCueDMIEC9jhiQJCpSLRFlL
+	yF//bpjDGjRBaJyOBS2deTOGYzzMHnlGrhS09D0zkVSnxcRIyGGeYQohbd5AjcJBXWTK52Zfv9R
+	jGawlKsiKsrWozqJbmrK0be9oxIk7e1rFle+DI+y+a9IOwWt89+xnYaA43QDlMy937gHjrBhaoY
+	gS1I1xpZe6jKo6kMlhz7frPg+pnUMZ9WfYkVFMk620XOIjWPGtI4zmRzwIXbwJ20g027/WRKn3+
+	6KwrdckO3SpM7Wm4wM/zg4YcEYIln0zij8fTfBpTRrkmyUQFW4kQm51haqCjWc0a44sAAuQBUN9
+	ZnjDvcQhxBMToQCdv0bXit+a7pSqt3tipp53xc+5HMRU/Fp/kXWxer8iY+JLPRb8U5KOx682i/s
+	zRDUkgFM1Tna/8u1WbXTBHwvQXOMiP5LlLNSJrKb/Ej8gbRQ==
+X-Google-Smtp-Source: AGHT+IHb7PFhBpV9M/is4IpdTv0jkLx1d3s483r56oIxRo6qeVoMfzipcDEXWj7q+KfJ8YyPdmKkWA==
+X-Received: by 2002:a05:7022:160a:b0:11e:3e9:3e95 with SMTP id a92af1059eb24-11f251eb96cmr3482629c88.26.1765360393771;
+        Wed, 10 Dec 2025 01:53:13 -0800 (PST)
+Received: from [127.0.0.1] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11f283d4733sm7250095c88.17.2025.12.10.01.53.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Dec 2025 01:53:13 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: asml.silence@gmail.com, io-uring@vger.kernel.org, 
+ Fengnan Chang <fengnanchang@gmail.com>
+Cc: Fengnan Chang <changfengnan@bytedance.com>
+In-Reply-To: <20251210085501.84261-1-changfengnan@bytedance.com>
+References: <20251210085501.84261-1-changfengnan@bytedance.com>
+Subject: Re: (subset) [RFC PATCH 0/2] io_uring: fix io may accumulation in
+ poll mode
+Message-Id: <176536039245.440710.12005422623407238580.b4-ty@kernel.dk>
+Date: Wed, 10 Dec 2025 02:53:12 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] blk-mq: delete task running check in
- blk_hctx_poll
-To: Fengnan Chang <fengnanchang@gmail.com>, asml.silence@gmail.com,
- io-uring@vger.kernel.org
-Cc: Fengnan Chang <changfengnan@bytedance.com>,
- Diangang Li <lidiangang@bytedance.com>
-References: <20251210085501.84261-1-changfengnan@bytedance.com>
- <20251210085501.84261-2-changfengnan@bytedance.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20251210085501.84261-2-changfengnan@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 12/10/25 1:55 AM, Fengnan Chang wrote:
-> In blk_hctx_poll, it always check task is running or not, and return 1
-> if task is running, it's not reasonable for current caller, especially
-> io_uring, which is always running and cause BLK_POLL_ONESHOT is set.
+
+On Wed, 10 Dec 2025 16:54:59 +0800, Fengnan Chang wrote:
+> In the io_do_iopoll function, when the poll loop of iopoll_list ends, it
+> is considered that the current req is the actual completed request.
+> This may be reasonable for multi-queue ctx, but is problematic for
+> single-queue ctx because the current request may not be done when the
+> poll gets to the result. In this case, the completed io needs to wait
+> for the first io on the chain to complete before notifying the user,
+> which may cause io accumulation in the list.
+> Our modification plan is as follows: change io_wq_work_list to normal
+> list so that the iopoll_list list in it can be removed and put into the
+> comp_reqs list when the request is completed. This way each io is
+> handled independently and all gets processed in time.
 > 
-> It looks like there has been this judgment for historical reasons, and
-> in very early versions of this function the user would set the process
-> state to TASK_UNINTERRUPTIBLE.
-> 
-> Signed-off-by: Diangang Li <lidiangang@bytedance.com>
-> Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
-> ---
->  block/blk-mq.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 0b8b72194003..b0eb90c50afb 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -5172,8 +5172,6 @@ static int blk_hctx_poll(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
->  
->  		if (signal_pending_state(state, current))
->  			__set_current_state(TASK_RUNNING);
-> -		if (task_is_running(current))
-> -			return 1;
->  
->  		if (ret < 0 || (flags & BLK_POLL_ONESHOT))
->  			break;
+> [...]
 
-Heh yes, this is completely a leftover part from when polled IO was
-purely synchronous and the completion would wake it. Similarly, the
-__set_current_state(TASK_RUNNING) a bit further down needs to die as
-well.
+Applied, thanks!
 
-I'll check your patch 2 tomorrow. Not loving the complete switch from
-the singly linked list to the double linked, that's going to slow down
-both addition and iteration of the req freelist. So I think something
-needs to change there, but haven't really gone deep with it yet.
+[1/2] blk-mq: delete task running check in blk_hctx_poll
+      (no commit info)
 
+Best regards,
 -- 
 Jens Axboe
+
+
+
 

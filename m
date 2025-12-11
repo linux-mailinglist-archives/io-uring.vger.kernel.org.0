@@ -1,81 +1,80 @@
-Return-Path: <io-uring+bounces-11005-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11006-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54D2CB4721
-	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 02:39:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FE1CB48D3
+	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 03:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5541A300118B
-	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 01:39:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DEF473024896
+	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 02:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6423717F;
-	Thu, 11 Dec 2025 01:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A002C028B;
+	Thu, 11 Dec 2025 02:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MihA49fl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2qfM6v1T"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644741F95C
-	for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 01:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C89F2BCF46
+	for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 02:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765417166; cv=none; b=Df77DMWGYtRbHuwt7RB48lc+PUAyH6FK1EdXadk99O5C81lYCgBTKwlay6s+NPSgbJyikaGCxHJ0+J27mEsnYioI/1MJgw7x3fzAeZa7ASq65lddI2PMLFe5Bz1ir9Txr7QVy0VfHVmKLcJodCAiOtVesKfF6YIuNhXHMw774wo=
+	t=1765419369; cv=none; b=DxdQXjQMgDBrIP53pIsjk0/gsB86suybDMxEyAvUxVGs0aJjhQEW4JHZx4GfXK1WBA/+pkhY1kJX43sDOGuvSmH5AgrlaOto3/q2DjvaVmU/kkGgnokBIWgiZwCHdVJGs/MHxvplH5270jvuLzrGaLjr1aVOWBOIBcP1G1rbkhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765417166; c=relaxed/simple;
-	bh=erA1n//FwJ/YQXinNTTcC2usXHzwpMJZDsBPQoI9z90=;
+	s=arc-20240116; t=1765419369; c=relaxed/simple;
+	bh=IITj8chV1fWqP5ABqf9ciU7vi4pLaCJdeDU26vaW6OA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpnEZesixsvPqCqezxXzZT+9JblfJEgomu1M9Pt+6V7T6qbDYVjPDD1knosqMmBha88S/mof+kmApGpiaPmk1IS54T62vnB2xUF5pt2eabDDjnWm5BohSlP5fDwefH9r+tZ+yoFakbUtI0VQ+bb3PK4jpiJ19t39FmKe1oURD+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MihA49fl; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-298250d7769so3782305ad.0
-        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 17:39:24 -0800 (PST)
+	 In-Reply-To:Content-Type; b=PG7bmP9KttWMTkKtYStVOIAML5I9K7v5tMa7vOvN4gujIIl+033177g1DkRSydJOcPOGZG94vshgUz4VVelUQlnp13+p7t655KHTciXiXR8ZYQci+gf25ycSswKBAXMIk+8eSjzXvb3xOxJcr8eyrXAg0MOLJrTTwWexkcrP2F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2qfM6v1T; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-29806bd47b5so3193515ad.3
+        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 18:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765417164; x=1766021964; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765419361; x=1766024161; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IPBrlzp2E8C4ePjFcmKaseg+JThcQtY0+QpZZyIeYQc=;
-        b=MihA49flq+R4MySAVx6PVn8LV9SHm9fmPVZDqyINdglAfg9noE/uNWlXJrbeNro3Mr
-         8JNaMzXARd/jqYr6q8x9eDSyT/9JuuO0OcpDDQTqPVwnDDL0bCiOEU8YFabLTAESyXn6
-         9jD3LSSn3HbmA+HXEkufAwCXzymhmiQq6QOzfyx7SxVoRI4Y/07LJbp2/f03thiaxoBA
-         rVx7gA/CpADHDTbjcwuNeCrgl1D3K/7dAbcKlC8vAMCdT+GiUDnV8qHqrmVnc++5ZbHf
-         k9z52FuPUyqUT3VilR8uVhTuLcPXor3EL2elBNK8kGpF3kj0ltS0UG1o0pM/QO7JGnOJ
-         /uzQ==
+        bh=Qtx9nimvwBLnbZg89OP0PtMlzJozkG4mIucdatA4lmo=;
+        b=2qfM6v1Tsj64HUNHhrC1PxB312WckD7kpvVSYAUeVtDpu0Gdrk/cmC3pxCaaJPu+bS
+         kTuQA2uFIx7ig+k8ot+w+Hr/qzXa7TZvcny9rS9lcdj2/BSGvLBrqaOI4Kvi2o9fHb8M
+         1kaTizcpYcKhJW/LCJ+01kJL14FJroSYSNqKqYu1CxN0hU+kfZOtfpaDgWqy1KTE0V6S
+         10WdHxBm6/l8xJkahMYm2c7fnyNW+GsIq5wSWPSX5fof0+9uaaCVxk7hUqIMqHGVK2hY
+         1z3lga73H5CvsF3KIzLR+gzGK0pBe91r8e5oDbJd+XzBtX3laHK0HJlc4k3aB1W5AKvF
+         6FEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765417164; x=1766021964;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1765419361; x=1766024161;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IPBrlzp2E8C4ePjFcmKaseg+JThcQtY0+QpZZyIeYQc=;
-        b=OSeuAFzNd5COAw2vNuTTAY94DmVoLDLnOCatsBk5YUl3Q1dzGV6hYb6ybQIT7R9eKn
-         FZj5DVqBt4cyjqjw9TOtoyuL/32eG4EyOPC5x0Idg4CmVznEiKmUBmOZn1yECZH/Exv4
-         bQfalikMBc/YD5240oX+H8gbky33Inektnb0SUmMeGDnBPXKKmMKbc9To34aHri1oA2L
-         MGrH2T/afJdTSbj/ZNOGO8qKfNyRoQcfH8tYxAiXS1YyxoIGfTeBwkhLwxiMc3t732oE
-         jSrHtgrab7f2+/hK1tO/sdw6b/osHCEQ/Vt4/BXGQ0wyCFkMnbvHkg7k5RzAE4gRI9GY
-         NaIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHocx/CtNNmniQqgiA82H+tRdw4zjtbD1b0sBmbGUdOFsAdKge+DtQxCbaM0w0FF9VoajZ5QFskQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmm9mXgya5/TXPDRZT4kRdDVj7mXoHJMLsVsAOzrOdnuVnUc81
-	lHEClNg0BUVACJex+cD1C26YzBbp9eV4CQI0rWSrW53zYi39N22r6h0p
-X-Gm-Gg: AY/fxX4RtA+icWKILEOUD8L5Ep2KV2+jhuIrDsp3LbzbPR6rnqFCvEIS4cdGWu5JPR9
-	YahUblfDGMvUnjbSKQFIpzrAb9yD/IT9uGRJ1Lo4QWudq5AP9rI6ZluUUgkQecxCxVfski8wNN3
-	O7HzPFU+UEda0C6qDvMgENs6V7FR2Nj4uGq4l8i3knLIM1n/8yAYSO/INHHSReKJwNveANKSQIz
-	1L4X4os+1xO7CTbL9nR1n23cXGrknVVgIrrZ3/J0eV9X7f51XFFub3O6H0yrcg16NLlEmJMl1hK
-	noDEPu+ocCOdjfeuudvaOuvCiWdQOeQOFmBy6J3JBsm6bA6Z7F7tHEEru3fUWR6yZkV8eNGhWge
-	S6ANIzvH0L1guJ0obvoZuqtiFJGpLZ+wIiRVRboOWCXj7lhe5jArRQxDVhMQT502bkqB15V1FUC
-	a+62AUX3iUQP6ujxqLv6ANA/mXK0mkxKJydzh3z0PW4jPl0ls9SVNbrkNFWRA2WerdU9fy+QoDL
-	ik0WHsjRIAnPrFNxrR1UrCLkmXlO2kd8CeJAuIGqeYs4lgdsdA8hgX8Ci9oZQ==
-X-Google-Smtp-Source: AGHT+IHMLbGR0SeszHCUe5dGxSuVdd58yhBKf6E+3phqHxJVDWFPPS1CN++3WroD7xAIWnKPrzG/Ow==
-X-Received: by 2002:a17:903:2311:b0:295:9cb5:ae07 with SMTP id d9443c01a7336-29ec25a7010mr41542155ad.38.1765417163663;
-        Wed, 10 Dec 2025 17:39:23 -0800 (PST)
-Received: from [10.200.8.97] (fs98a57d9d.tkyc007.ap.nuro.jp. [152.165.125.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29eea06dd9bsm5759535ad.99.2025.12.10.17.39.16
+        bh=Qtx9nimvwBLnbZg89OP0PtMlzJozkG4mIucdatA4lmo=;
+        b=VIOPErIOpStMU2HnneUF/SzPRxIXgvcDcTizxTB2Z/NV/mgYwaNuudkwDcjjOZ1fC+
+         LGPXhYdDMOZJo6fvsQh+FMX5V0KlOOC6hiFktSY0WE+dr1ChlKTPHYolORdtQU69TMck
+         qj5PIlvHg59YySwiOq1IrrCe47IxdzOz0NrVB9zfJqqOUs0Jy0n7BYGkSzKBxflyoSPZ
+         UCJNhlnoN5/yquZWjUtAje3NU3Vj4Ui3BYeXq+SajWXyvbrfg7Qq9V6Xfgjyzksjr+si
+         zBXNE4IDTMNG/MBBIFORwfOlfzW89SiPo6JO5KfQjZw+kHuogbfwgcl/ji01zHjYbEoS
+         wloQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0KHLgiyBN3OvoG6EIudnE2SYUToXF0U/c9BOjhy6vdBN3C1IT/SC47UzbccfhRXQYqKXzHmnTrQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHGayyJuNalWxFYBR9Elh2eZAaiys3MQRL5E1kFBl70sUvIGbx
+	Ed23sciZN1JuEtU9LpsNwlwVhVUQxq1uALkCuqMe1J+sqCqRlQJREP/xXzus3TWZV9Y=
+X-Gm-Gg: AY/fxX7ytcVVPm131+j6hZvUO6YOWjFUOIOLwr6LyeK/rDDnTUJepM28K7ukemHz8Hj
+	aN0pyL9yKboyqogE7tIWK9U1dVVZqDZQn8RydFXq4IowOITz+6YtE9xe+XuEECY8cdveENPDE10
+	+4qd6W4ccy+xC0RHveMaCCQwKtHQDK1zldHC4YJuD6xVDjuEtOJvZDr+w3CkWqFFcweJ/cSmlCD
+	oWan9jTLFksiSvyzQEss5n8Vv/ZKmbikTjGzeTKtMMlNdbDIsA0KV0X7/0e+zu1O+lLG1g4MhaR
+	s1m4QrZd46mjVdX6W35VRjnVvILg9i0StZOxUlu0RfThioEnRKz7ddRmp13D00nWBBfHdtj1vzl
+	QTYu+O33aqW1Bp3Gwno+9XZJ5rdvVm/4yP/ieevjlpnqEOR68N4LHor35mql1uTID43KyYybGRv
+	E6USqYRyaucXIFkD12Q22641ivNKDTI4UYKBNhBdfUnQ==
+X-Google-Smtp-Source: AGHT+IEzsJFla9AuhK68LtA+UI433tkpP9f0tzz3UjT68X7cgNinCxUoJppwPqmU36U5y8uzxhHmDg==
+X-Received: by 2002:a17:902:c40d:b0:295:94e1:91da with SMTP id d9443c01a7336-29ec2d3e7ecmr49139005ad.33.1765419361116;
+        Wed, 10 Dec 2025 18:16:01 -0800 (PST)
+Received: from [10.200.3.177] (fs98a57d9d.tkyc007.ap.nuro.jp. [152.165.125.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29eea043d21sm6123865ad.81.2025.12.10.18.15.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Dec 2025 17:39:23 -0800 (PST)
-Message-ID: <c97d2c95-31c5-4bf6-b58f-552e85314056@gmail.com>
-Date: Thu, 11 Dec 2025 01:39:25 +0000
+        Wed, 10 Dec 2025 18:16:00 -0800 (PST)
+Message-ID: <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk>
+Date: Wed, 10 Dec 2025 19:15:57 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,92 +82,73 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v7 7/9] eth: bnxt: allow providers to set rx buf
- size
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan
- <shuah@kernel.org>, Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Yue Haibing <yuehaibing@huawei.com>,
- David Wei <dw@davidwei.uk>, Haiyue Wang <haiyuewa@163.com>,
- Jens Axboe <axboe@kernel.dk>, Joe Damato <jdamato@fastly.com>,
- Simon Horman <horms@kernel.org>, Vishwanath Seshagiri <vishs@fb.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- io-uring@vger.kernel.org, dtatulea@nvidia.com
-References: <cover.1764542851.git.asml.silence@gmail.com>
- <95566e5d1b75abcaefe3dca9a52015c2b5f04933.1764542851.git.asml.silence@gmail.com>
- <20251202105820.14d6de99@kernel.org>
+Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
+To: Fengnan Chang <fengnanchang@gmail.com>, asml.silence@gmail.com,
+ io-uring@vger.kernel.org
+Cc: Fengnan Chang <changfengnan@bytedance.com>,
+ Diangang Li <lidiangang@bytedance.com>
+References: <20251210085501.84261-1-changfengnan@bytedance.com>
+ <20251210085501.84261-3-changfengnan@bytedance.com>
+From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251202105820.14d6de99@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20251210085501.84261-3-changfengnan@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/2/25 18:58, Jakub Kicinski wrote:
-> On Sun, 30 Nov 2025 23:35:22 +0000 Pavel Begunkov wrote:
->> +static ssize_t bnxt_get_rx_buf_size(struct bnxt *bp, int rxq_idx)
->> +{
->> +	struct netdev_rx_queue *rxq = __netif_get_rx_queue(bp->dev, rxq_idx);
->> +	size_t rx_buf_size;
->> +
->> +	rx_buf_size = rxq->mp_params.rx_buf_len;
->> +	if (!rx_buf_size)
->> +		return BNXT_RX_PAGE_SIZE;
+On 12/10/25 1:55 AM, Fengnan Chang wrote:
+> In the io_do_iopoll function, when the poll loop of iopoll_list ends, it
+> is considered that the current req is the actual completed request.
+> This may be reasonable for multi-queue ctx, but is problematic for
+> single-queue ctx because the current request may not be done when the
+> poll gets to the result. In this case, the completed io needs to wait
+> for the first io on the chain to complete before notifying the user,
+> which may cause io accumulation in the list.
+> Our modification plan is as follows: change io_wq_work_list to normal
+> list so that the iopoll_list list in it can be removed and put into the
+> comp_reqs list when the request is completed. This way each io is
+> handled independently and all gets processed in time.
 > 
-> I'd like to retain my cfg objects in the queue API, if you don't mind.
-> I guess we just need the way for drivers to fill in the defaults and
-> then plumb them into the ops.
-
-It was problematic, I wanted to split it into more digestible chunks.
-My main problem is that it was not really optional and could break
-drivers that don't even care about this qcfg len option but allow
-setting it device-wise via ethtool, and I won't even have a way to
-test them.
-
-Maybe there is a way to strip down qcfg and only apply it to marked
-queue api enabled drivers for now, and then extend the idea it in
-the future. E.g.
-
-set 1) optional and for qapi drivers only
-set 2) patch up all qapi drivers and make it mandatory
-set 3) convert all other drivers that set the length.
-
-I can take a look at implementing 1) in this series. It should help
-to keep complexity manageable.
-
-...
->>   static int bnxt_queue_mem_alloc(struct net_device *dev, void *qmem, int idx)
->>   {
->>   	struct bnxt_rx_ring_info *rxr, *clone;
->>   	struct bnxt *bp = netdev_priv(dev);
->>   	struct bnxt_ring_struct *ring;
->> +	ssize_t rx_buf_size;
->>   	int rc;
->>   
->>   	if (!bp->rx_ring)
->>   		return -ENETDOWN;
->>   
->> +	rx_buf_size = bnxt_get_rx_buf_size(bp, idx);
->> +	if (rx_buf_size < 0)
->> +		return rx_buf_size;
+> After modification,  test with:
 > 
-> Does this survive full ring reconfig? IIRC the large changes to the NIC
-> config (like changing ring sizes) free and reallocate all rings in bnxt,
-> but due to "historic reasons?" they don't go thru the queue ops.
+> ./t/io_uring -p1 -d128 -b4096 -s32 -c32 -F1 -B1 -R1 -X1 -n1 -P1
+> /dev/nvme6n1
+> 
+> base IOPS is 725K,  patch IOPS is 782K.
+> 
+> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 -P1
+> /dev/nvme6n1
+> 
+> Base IOPS is 880k, patch IOPS is 895K.
 
-I'll check when I'm back from lpc, but I was coming from an assumption
-that the qcfg series was doing it right, and I believe only the restart
-path was looking up the set len value. I'll double check.
+A few notes on this:
+
+1) Manipulating the list in io_complete_rw_iopoll() I don't think is
+   necessarily safe. Yes generally this is invoked from the
+   owning/polling task, but that's not guaranteed.
+
+2) The patch doesn't apply to the current tree, must be an older
+   version?
+
+3) When hand-applied, it still throws a compile warning about an unused
+   variable. Please don't send untested stuff...
+
+4) Don't just blatantly bloat the io_kiocb. When you change from a
+   singly to a doubly linked list, you're growing the io_kiocb size. You
+   should be able to use a union with struct io_task_work for example.
+   That's already 16b in size - win/win as you don't need to slow down
+   the cache management as that can keep using the linkage it currently
+   is using, and you're not bloating the io_kiocb.
+
+5) The already mentioned point about the cache free list now being
+   doubly linked. This is generally a _bad_ idea as removing and adding
+   entries now need to touch other entries too. That's not very cache
+   friendly.
+
+#1 is kind of the big one, as it means you'll need to re-think how you
+do this. I do agree that the current approach isn't necessarily ideal as
+we don't process completions as quickly as we could, so I think there's
+merrit in continuing this work.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

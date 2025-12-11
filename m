@@ -1,154 +1,181 @@
-Return-Path: <io-uring+bounces-11006-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11007-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FE1CB48D3
-	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 03:21:18 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AF7CB4950
+	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 03:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DEF473024896
-	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 02:16:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7903F301896F
+	for <lists+io-uring@lfdr.de>; Thu, 11 Dec 2025 02:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A002C028B;
-	Thu, 11 Dec 2025 02:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692429BDB0;
+	Thu, 11 Dec 2025 02:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2qfM6v1T"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="F1MMEZ9d"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C89F2BCF46
-	for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 02:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF29293C4E
+	for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 02:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765419369; cv=none; b=DxdQXjQMgDBrIP53pIsjk0/gsB86suybDMxEyAvUxVGs0aJjhQEW4JHZx4GfXK1WBA/+pkhY1kJX43sDOGuvSmH5AgrlaOto3/q2DjvaVmU/kkGgnokBIWgiZwCHdVJGs/MHxvplH5270jvuLzrGaLjr1aVOWBOIBcP1G1rbkhA=
+	t=1765421884; cv=none; b=Dr9xYQ8uRtDaHxDdOrPR+twcarqu1T3P6DGdLqNAwdjaIay8DbfWptMpTKtGbH8kNu6OQi/En1zefnpRb7FFBLQeNSTGcMkVQskKKU709c8k1caatImcxWFJ0g38o5bbAO/krnqbSZw8wr71WBSjLpq93rZpENNFP0TlRVKC4C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765419369; c=relaxed/simple;
-	bh=IITj8chV1fWqP5ABqf9ciU7vi4pLaCJdeDU26vaW6OA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PG7bmP9KttWMTkKtYStVOIAML5I9K7v5tMa7vOvN4gujIIl+033177g1DkRSydJOcPOGZG94vshgUz4VVelUQlnp13+p7t655KHTciXiXR8ZYQci+gf25ycSswKBAXMIk+8eSjzXvb3xOxJcr8eyrXAg0MOLJrTTwWexkcrP2F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2qfM6v1T; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-29806bd47b5so3193515ad.3
-        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 18:16:02 -0800 (PST)
+	s=arc-20240116; t=1765421884; c=relaxed/simple;
+	bh=Q2Tz54xcXfKNhOl1jEEl+EPX++hlD7Wr0xdYX70vtz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUmPZRf2/JWaaTFs22StdSbqG0lty8s+jZxTtsQh7Yp1xyb96/0HBatXtWCpNZRrqRZLnNlPZAAcLunst1NcP9f9xs6Q17PNC7mviKj5xKWaXVL50dqlqcqH7SU0YCNolHmb6GNG8409ISc6n8kgLUPANyDLtISmYxeR1nLdkew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=F1MMEZ9d; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7bb2fa942daso87203b3a.1
+        for <io-uring@vger.kernel.org>; Wed, 10 Dec 2025 18:58:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765419361; x=1766024161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qtx9nimvwBLnbZg89OP0PtMlzJozkG4mIucdatA4lmo=;
-        b=2qfM6v1Tsj64HUNHhrC1PxB312WckD7kpvVSYAUeVtDpu0Gdrk/cmC3pxCaaJPu+bS
-         kTuQA2uFIx7ig+k8ot+w+Hr/qzXa7TZvcny9rS9lcdj2/BSGvLBrqaOI4Kvi2o9fHb8M
-         1kaTizcpYcKhJW/LCJ+01kJL14FJroSYSNqKqYu1CxN0hU+kfZOtfpaDgWqy1KTE0V6S
-         10WdHxBm6/l8xJkahMYm2c7fnyNW+GsIq5wSWPSX5fof0+9uaaCVxk7hUqIMqHGVK2hY
-         1z3lga73H5CvsF3KIzLR+gzGK0pBe91r8e5oDbJd+XzBtX3laHK0HJlc4k3aB1W5AKvF
-         6FEA==
+        d=purestorage.com; s=google2022; t=1765421882; x=1766026682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
+        b=F1MMEZ9ds1exVBscUDzAqi8EXIS69XHe49MjfFeiqXtqROxFGJM5xcvPTldEswfAOd
+         4O6GlI9wiJAUrk+X8Tw4sXphDUkymtwSIb2Xsui2nvSlNaVxonyPyz1OpczB3l3TXhJ6
+         GnkoCmVTfbcDOBw0owQo+cjx6vkv+rZlppxjMUxqfPubuC2CnV4q3T0wyGhJLq5PmYpK
+         ti/k34ohIh/FYA6zUrNmz3m5g1Ob9uTZmuNiAKlWx4CmQKcUco1CUOGkkCi2HqxlebQo
+         0zqhUY2PKYPJymHcn06oR+6L4KVcqk738vsTClCdihhdZiTFkAL98retYMPPh/CmFndc
+         wGbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765419361; x=1766024161;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qtx9nimvwBLnbZg89OP0PtMlzJozkG4mIucdatA4lmo=;
-        b=VIOPErIOpStMU2HnneUF/SzPRxIXgvcDcTizxTB2Z/NV/mgYwaNuudkwDcjjOZ1fC+
-         LGPXhYdDMOZJo6fvsQh+FMX5V0KlOOC6hiFktSY0WE+dr1ChlKTPHYolORdtQU69TMck
-         qj5PIlvHg59YySwiOq1IrrCe47IxdzOz0NrVB9zfJqqOUs0Jy0n7BYGkSzKBxflyoSPZ
-         UCJNhlnoN5/yquZWjUtAje3NU3Vj4Ui3BYeXq+SajWXyvbrfg7Qq9V6Xfgjyzksjr+si
-         zBXNE4IDTMNG/MBBIFORwfOlfzW89SiPo6JO5KfQjZw+kHuogbfwgcl/ji01zHjYbEoS
-         wloQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0KHLgiyBN3OvoG6EIudnE2SYUToXF0U/c9BOjhy6vdBN3C1IT/SC47UzbccfhRXQYqKXzHmnTrQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHGayyJuNalWxFYBR9Elh2eZAaiys3MQRL5E1kFBl70sUvIGbx
-	Ed23sciZN1JuEtU9LpsNwlwVhVUQxq1uALkCuqMe1J+sqCqRlQJREP/xXzus3TWZV9Y=
-X-Gm-Gg: AY/fxX7ytcVVPm131+j6hZvUO6YOWjFUOIOLwr6LyeK/rDDnTUJepM28K7ukemHz8Hj
-	aN0pyL9yKboyqogE7tIWK9U1dVVZqDZQn8RydFXq4IowOITz+6YtE9xe+XuEECY8cdveENPDE10
-	+4qd6W4ccy+xC0RHveMaCCQwKtHQDK1zldHC4YJuD6xVDjuEtOJvZDr+w3CkWqFFcweJ/cSmlCD
-	oWan9jTLFksiSvyzQEss5n8Vv/ZKmbikTjGzeTKtMMlNdbDIsA0KV0X7/0e+zu1O+lLG1g4MhaR
-	s1m4QrZd46mjVdX6W35VRjnVvILg9i0StZOxUlu0RfThioEnRKz7ddRmp13D00nWBBfHdtj1vzl
-	QTYu+O33aqW1Bp3Gwno+9XZJ5rdvVm/4yP/ieevjlpnqEOR68N4LHor35mql1uTID43KyYybGRv
-	E6USqYRyaucXIFkD12Q22641ivNKDTI4UYKBNhBdfUnQ==
-X-Google-Smtp-Source: AGHT+IEzsJFla9AuhK68LtA+UI433tkpP9f0tzz3UjT68X7cgNinCxUoJppwPqmU36U5y8uzxhHmDg==
-X-Received: by 2002:a17:902:c40d:b0:295:94e1:91da with SMTP id d9443c01a7336-29ec2d3e7ecmr49139005ad.33.1765419361116;
-        Wed, 10 Dec 2025 18:16:01 -0800 (PST)
-Received: from [10.200.3.177] (fs98a57d9d.tkyc007.ap.nuro.jp. [152.165.125.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29eea043d21sm6123865ad.81.2025.12.10.18.15.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Dec 2025 18:16:00 -0800 (PST)
-Message-ID: <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk>
-Date: Wed, 10 Dec 2025 19:15:57 -0700
+        d=1e100.net; s=20230601; t=1765421882; x=1766026682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
+        b=vGFAu6SJB+beyOfDIlfTZYD5UhDfiBMCRggmrjbz7VZ64xUKFCMxuufC091Gj3YLo6
+         zUH+leIT8908E4Z6v1Op9maGnjm8GuXFsMAKOzatc8ssFR+/QhJez+jIW4+5eyE9W7yh
+         w5wFx0Mmm5kqiLd9HxO4XAZR/ftkIJre4KsVGZi45OHDeJEpecJQey6PzuGTSBdpuBs/
+         BqL81c/2W7n6c8chrLjFIJi5QTBuMin0140UdGtrT2ilGHwycNqWFgqGTF42Ij/sm6du
+         URRV6hkCN1Ub2eRiFkMNlMtufqgaLWKu8Yi6geqjbBW12gniDI8OMGLQ6V0BbudC90qx
+         Etww==
+X-Forwarded-Encrypted: i=1; AJvYcCWQxNSU4ZL4LMmpbDGO/EMrdEDBvxlDQxOkkSYu6KFYE64kaMG+goPSqTUmhbTvki1cCgXqktMODg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd40dGrqRn9fL37LVBvbQtT2Gp2icQngsPXqpT1FgIXriz7Lyw
+	lRGYIRvL1sW0juwyjWiWTiiqBa+3vBEou755GTDjrJtFvl2t9ovqwEeN94J63iMH9CYuaZrLaaB
+	rKAI/Tb/UxwLy90uBKF3INfWnYEx/ge9ygknPyvH95g==
+X-Gm-Gg: ASbGncsYrl5EineT8lV1FyddSEg26iYTxF8aeyQn0IMkrOaXqca+5GNmfpprfv1Ovi+
+	0YeD22Eba0TGkkwTO2mF5DBJ425CFGD4tU8YdaOP/B6t/RQyTyDqsfheQFnIUyjv/bSJuPO4JkD
+	95YezpfEzY8exZXRjuj5X3MckDQ1Js/BIZstYwUsewnl6devYdw1134yPPQdkzZjxujjuKZ/wuJ
+	FY7mSQltFr7WD8yZDkbbInqacXxKHBTxyJNfQpGO9CdAkgdjLPT+gMKhUAjfLz2KpDwuxCz
+X-Google-Smtp-Source: AGHT+IFrPM5oGw+4ASKhyJhC7y9kDQROUrxQf55/hzv5FGD1A9xVpzd3S/wT/Xk0jtl6dLdcU8Kuyn1pjkJowAhoKUk=
+X-Received: by 2002:a05:7022:aaa:b0:119:e56b:46b6 with SMTP id
+ a92af1059eb24-11f2e6abc15mr531934c88.0.1765421881924; Wed, 10 Dec 2025
+ 18:58:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
-To: Fengnan Chang <fengnanchang@gmail.com>, asml.silence@gmail.com,
- io-uring@vger.kernel.org
-Cc: Fengnan Chang <changfengnan@bytedance.com>,
- Diangang Li <lidiangang@bytedance.com>
-References: <20251210085501.84261-1-changfengnan@bytedance.com>
- <20251210085501.84261-3-changfengnan@bytedance.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20251210085501.84261-3-changfengnan@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-10-joannelkoong@gmail.com> <CADUfDZoUMRu=t3ELJ6yGt2FbcgW=WzHa_=xc4BNtEmPpA67VHw@mail.gmail.com>
+ <CAJnrk1a9oifzg+7gtzxux+A0smUE-Hi3sfWU-VpnXZgvKg1ymQ@mail.gmail.com>
+ <CADUfDZoMNiJMoHJpKzF2E_xZ7U-2jitSfQJd=SZD57AxqN6O_Q@mail.gmail.com> <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
+In-Reply-To: <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 10 Dec 2025 18:57:50 -0800
+X-Gm-Features: AQt7F2qoyJItnFWk8VYnalJqtP6lWmqWUhELRdmN5LRNLZCD4x91EDK1yGjlXbg
+Message-ID: <CADUfDZraQqEMZ=UAwbvSfPXZTF5hx7i7DLZ=UzQNA+YZOTxD7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/10/25 1:55 AM, Fengnan Chang wrote:
-> In the io_do_iopoll function, when the poll loop of iopoll_list ends, it
-> is considered that the current req is the actual completed request.
-> This may be reasonable for multi-queue ctx, but is problematic for
-> single-queue ctx because the current request may not be done when the
-> poll gets to the result. In this case, the completed io needs to wait
-> for the first io on the chain to complete before notifying the user,
-> which may cause io accumulation in the list.
-> Our modification plan is as follows: change io_wq_work_list to normal
-> list so that the iopoll_list list in it can be removed and put into the
-> comp_reqs list when the request is completed. This way each io is
-> handled independently and all gets processed in time.
-> 
-> After modification,  test with:
-> 
-> ./t/io_uring -p1 -d128 -b4096 -s32 -c32 -F1 -B1 -R1 -X1 -n1 -P1
-> /dev/nvme6n1
-> 
-> base IOPS is 725K,  patch IOPS is 782K.
-> 
-> ./t/io_uring -p1 -d128 -b4096 -s32 -c1 -F1 -B1 -R1 -X1 -n1 -P1
-> /dev/nvme6n1
-> 
-> Base IOPS is 880k, patch IOPS is 895K.
+On Fri, Dec 5, 2025 at 3:28=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> On Fri, Dec 5, 2025 at 8:56=E2=80=AFAM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Thu, Dec 4, 2025 at 10:56=E2=80=AFAM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > On Wed, Dec 3, 2025 at 1:44=E2=80=AFPM Caleb Sander Mateos
+> > > <csander@purestorage.com> wrote:
+> > > >
+> > > > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@g=
+mail.com> wrote:
+> > > > >
+> > > > > Add a new helper, io_uring_cmd_import_fixed_index(). This takes i=
+n a
+> > > > > buffer index. This requires the buffer table to have been pinned
+> > > > > beforehand. The caller is responsible for ensuring it does not us=
+e the
+> > > > > returned iter after the buffer table has been unpinned.
+> > > > >
+> > > > > This is a preparatory patch needed for fuse-over-io-uring support=
+, as
+> > > > > the metadata for fuse requests will be stored at the last index, =
+which
+> > > > > will be different from the sqe's buffer index.
+> > > > >
+> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > ---
+> > > > >  include/linux/io_uring/cmd.h | 10 ++++++++++
+> > > > >  io_uring/rsrc.c              | 31 ++++++++++++++++++++++++++++++=
++
+> > > > >  io_uring/rsrc.h              |  2 ++
+> > > > >  io_uring/uring_cmd.c         | 11 +++++++++++
+> > > > >  4 files changed, 54 insertions(+)
+> > > > >
+> > > > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > > > > index 67331cae0a5a..b6dd62118311 100644
+> > > > > --- a/io_uring/rsrc.c
+> > > > > +++ b/io_uring/rsrc.c
+> > > > > @@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req=
+, struct iov_iter *iter,
+> > > > >         return io_import_fixed(ddir, iter, node->buf, buf_addr, l=
+en);
+> > > > >  }
+> > > > >
+> > > > > +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_ite=
+r *iter,
+> > > > > +                           u16 buf_index, int ddir, unsigned iss=
+ue_flags)
+> > > > > +{
+> > > > > +       struct io_ring_ctx *ctx =3D req->ctx;
+> > > > > +       struct io_rsrc_node *node;
+> > > > > +       struct io_mapped_ubuf *imu;
+> > > > > +
+> > > > > +       io_ring_submit_lock(ctx, issue_flags);
+> > > > > +
+> > > > > +       if (buf_index >=3D req->ctx->buf_table.nr ||
+> > > >
+> > > > This condition is already checked in io_rsrc_node_lookup() below.
+> > >
+> > > I think we still need this check here to differentiate between -EINVA=
+L
+> > > if buf_index is out of bounds and -EFAULT if the buf index was not ou=
+t
+> > > of bounds but the lookup returned NULL.
+> >
+> > Is there a reason you prefer EINVAL over EFAULT? EFAULT seems
+> > consistent with the errors returned from registered buffer lookups in
+> > other cases.
+>
+> To me -EINVAL makes sense because the error stems from the user
+> passing in an invalid argument (eg a buffer index that exceeds the
+> number of buffers registered to the table). The comment in
+> errno-base.h for EINVAL is "Invalid argument". The EFAULT use for the
+> other cases (eg io_import_reg_buf) makes sense because it might be the
+> case that for whatever reason the req->buf_index isn't found in the
+> table but isn't attributable to having passed in an invalid index.
 
-A few notes on this:
+req->buf_index generally comes from the buf_index field of the
+io_uring SQE, so you could make the same argument about EINVAL making
+sense for other failed buffer lookups. I don't feel strongly either
+way, but it seems a bit more consistent (and less code) to just
+propagate EFAULT from io_rsrc_node_lookup().
 
-1) Manipulating the list in io_complete_rw_iopoll() I don't think is
-   necessarily safe. Yes generally this is invoked from the
-   owning/polling task, but that's not guaranteed.
-
-2) The patch doesn't apply to the current tree, must be an older
-   version?
-
-3) When hand-applied, it still throws a compile warning about an unused
-   variable. Please don't send untested stuff...
-
-4) Don't just blatantly bloat the io_kiocb. When you change from a
-   singly to a doubly linked list, you're growing the io_kiocb size. You
-   should be able to use a union with struct io_task_work for example.
-   That's already 16b in size - win/win as you don't need to slow down
-   the cache management as that can keep using the linkage it currently
-   is using, and you're not bloating the io_kiocb.
-
-5) The already mentioned point about the cache free list now being
-   doubly linked. This is generally a _bad_ idea as removing and adding
-   entries now need to touch other entries too. That's not very cache
-   friendly.
-
-#1 is kind of the big one, as it means you'll need to re-think how you
-do this. I do agree that the current approach isn't necessarily ideal as
-we don't process completions as quickly as we could, so I think there's
-merrit in continuing this work.
-
--- 
-Jens Axboe
+Best,
+Caleb
 

@@ -1,152 +1,130 @@
-Return-Path: <io-uring+bounces-11027-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11028-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEECCB95B8
-	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 17:51:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBD3CB9A50
+	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 20:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 5667C3014F6B
-	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 16:51:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F1990302BD0D
+	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 19:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044AA2C1595;
-	Fri, 12 Dec 2025 16:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F252EFDA2;
+	Fri, 12 Dec 2025 19:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ag17266z"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="c5m+1blG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F8D26CE33;
-	Fri, 12 Dec 2025 16:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563371F130B
+	for <io-uring@vger.kernel.org>; Fri, 12 Dec 2025 19:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765558278; cv=none; b=d10gnGPOIOdzIr6D3z59Hpvh+SVG3nhTm7TRoj/EBpSboM3cv4V7Tk+vCibZFelHON/sy7JUO/zNwv5WcwbM93/ieV6i96mypZVPmrFBWVlXMkeLlbJjFgHXFQGhG90iGCWXAOe/4NhAyaXpbmBbSikRAfeqdAIbaJiGiYkUM/A=
+	t=1765568278; cv=none; b=tYUWHN2sjSbiX/TArX/wGfnoojgsIGyuyI6noJ2tYnr8+YXrMqcuENekaRDtX100le/BNEvDEFzGX2OCBysmq4K0OwqOAtH3Dv6sWLoLT7FdXYn+m4uVikFNnVmETcTiw8vAvqQSmov2weYQTc59eQ5QcYF+CMv0gLv3vAUcwd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765558278; c=relaxed/simple;
-	bh=WoUBnN3FNLrieQtztiSM/G+ujxyyjWUBmik66D48fvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iU1RTpzX83T4RsK+gtjfydrF809t8jiNXI61U86UGgmwzmVHdcHrgzZbuS+iZA4oMa6lPuxGOIBfaqgwdU/sFZvZJNX7K9zMhMV2mAJ7EoHKnv24kaOUkNVHdEyVTRMEp9dGaaaS8uEh8a36drzKvyAsEaF5osL90Ocabjbvy7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ag17266z; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1765558276; x=1797094276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WoUBnN3FNLrieQtztiSM/G+ujxyyjWUBmik66D48fvs=;
-  b=Ag17266z+uLfSl3t3ufc/85dUvEhBa5Bkvi9Mbc5QmtLyoTzNqFkz8hj
-   yIkyha6V38pdDMAS/wXXJSxU3Inwamnv0RD0wRANu/occySTgWcGDHN1w
-   DMtbWvZq2W5BSKcmeXb3/jm6Cnq/5R7S5TaTAJR/PMlf1CvWJyQxvVo03
-   azgQQs/IdyYJH8w9GhSuIuHqC9+q/j02rMBx9tbc2rGzCcJKhAWf8GrDh
-   Q/flStowApvgCs7MdEw+xciiTdYTp1Gr8eX0vJeAiX+okWVSWuCiOLl/d
-   Lj8uFMHvE+2RqHGwYKylkT/KNOCLoMyka7w/WFNcoDR5ayirIZAek3oXq
-   w==;
-X-CSE-ConnectionGUID: 4BU0Kb+RRLCRTz5J6JVcPA==
-X-CSE-MsgGUID: aumw/ebTQLadfGZbydktJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11640"; a="67439900"
-X-IronPort-AV: E=Sophos;i="6.21,144,1763452800"; 
-   d="scan'208";a="67439900"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2025 08:51:14 -0800
-X-CSE-ConnectionGUID: X+zbKeBpQm6lUfzWLFWTjw==
-X-CSE-MsgGUID: A2jZJyX9RdW/W9RrZxeRsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,144,1763452800"; 
-   d="scan'208";a="197031500"
-Received: from lkp-server01.sh.intel.com (HELO d335e3c6db51) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 12 Dec 2025 08:51:10 -0800
-Received: from kbuild by d335e3c6db51 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vU6MF-000000006Jl-2vjm;
-	Fri, 12 Dec 2025 16:51:07 +0000
-Date: Sat, 13 Dec 2025 00:50:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiaobing Li <xiaobing.li@samsung.com>, miklos@szeredi.hu,
-	axboe@kernel.dk
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	bschubert@ddn.com, asml.silence@gmail.com, joannelkoong@gmail.com,
-	dw@davidwei.uk, josef@toxicpanda.com, kbusch@kernel.org,
-	peiwei.li@samsung.com, joshi.k@samsung.com,
-	Xiaobing Li <xiaobing.li@samsung.com>
-Subject: Re: [PATCH] fuse: add zero-copy to fuse-over-io_uring
-Message-ID: <202512130032.tLxDKB6B-lkp@intel.com>
-References: <20251204082536.17349-1-xiaobing.li@samsung.com>
+	s=arc-20240116; t=1765568278; c=relaxed/simple;
+	bh=VwPoKas3ILAATq/SFSU9txmC5xK1gqUaBfTmIdhRerY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iGeYa/vZibFIL9b5Fjyd5RrzXqiKM5Ux/tYpHPs8F1pSgYm06oEUsXfnbm0QY//lIXTPa99c/F1I2REZsD5RqK3IXMgdyUfFL0NPxjXYujycxsg+DY4A+Gsums90g1jMKwIoWlTEjmnmci+8jpUj0S29SohKWPnIcX5WovHAvM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=c5m+1blG; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7baf61be569so1961511b3a.3
+        for <io-uring@vger.kernel.org>; Fri, 12 Dec 2025 11:37:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765568276; x=1766173076; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=StTVbGf1mPsXgZZ3d28QJjsQQzKmymRGuXpSNQalBC0=;
+        b=c5m+1blG6ge3DTAI7nAHPhHVgc+BMSIozQa31FSf7ThS3uIGzs6iGbu5PHP5lZK4mk
+         /W08Ke2mOJQH4C40BdtfgEliG2aCkSUIchXVjP4aGDgkbo0NGKKk4v/sT/pqKhRGdy5o
+         LuZC4srxaPdLlCTyoaenvnA84F1454vR+yjfwWRRy3YKL10qgQesEYH9Rnv6iqwsVcxc
+         I5OR++zJ5pQK/GATzEEFb7QZSCaV9k210EYF57fpDIjshNzaQd1INI+hKc5YULhSkk8s
+         xRrNg//TV/wQ54QZ3F2hmQGV1pIb1fLNpoxJaPgjkMFuahd/64ye/4BaIkJPat3bdR6V
+         Onbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765568276; x=1766173076;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=StTVbGf1mPsXgZZ3d28QJjsQQzKmymRGuXpSNQalBC0=;
+        b=TZIu0+TtR4gjfzwdMzHEvhPOzjcvco48AoO9KgnjWp4+pQuJqo+egHKJPlAdbTNRXf
+         +mxc4r4hFlKJQO5R7ggaZmVtPtNUTMweV3mk6bFov5nWMk/BqqD2p59QqHwsQaNqY47G
+         YEdUNynPPcmELcGQHvC4+dJQZrvGEgiyyNUngGTHgUiipeJjlj1i8JANTN0fKTsbRUC4
+         gWJK2fyNr8YAiNmINnQJ/UiZQwLJp94OI6yQPKjFrlw/+9a2Z0IkrIHxUuTj0c2A6i9N
+         aIUJO7J92fJudZurkIe9IAmn+6ijzrtImoYYS4sVOelv3g5rEsZZuVEqDTjBDIOJiSLp
+         0C8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8SM+w0QQXuMbFJar689D7nml0qbk8YhJiEvwPAOf/q9ZUoHcsycUGXAKbmnQxDakxtF20BRIi4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+hrrDcHJlSvBsJCQEbJSrgHjV6U3hbDRaaHHlqV8vzKgyP9zX
+	fGM1o8wiTWq3F1sOFkIglOcMX7Jayfk5cs7BIxxPkM2shg9fCzD0Qf0xfaXmLhlWJrc=
+X-Gm-Gg: AY/fxX67xX7GEgnzQA1EKYaE6utR0iv6urnUVWbHZ/de+w+gIX7D871PS/b6hKKVrA/
+	RcUGEpY1OnEy3WPU7m2soDAoMNRBebla3YFygLXGEcsLMqHxKG0SajvWundeFzj5vbEP+oS/MYr
+	d544M5H6OtCOeJ2db0EE0Mx4z8ux6fEo/UT4IhrkLmh2kejM6Z+k6bs0cWVUBVo2sizILRStT8/
+	ebvfJqV1huo/EgxCFPh4q2V5OIRNql+LPEktnwqvEUR47eb2fb0gmbFcLFVVH8mttbrPfIept3q
+	lqAPfeeyvkted36NEcArrqf300jcHqw7r7rymYJqg4HkljB/448467TkV1roHCiwgEcz3F1JNBG
+	q/LmDmFjT2lHat8IgRaIHkzqwrCeil6sFarWKJ8/7uAOMjk8/jefWO5vqsezb+eANptaDmlM7nQ
+	kvlPzrHaxcks+vFFjLmVgZXodQ+8uUP6gxY2yBRzRaTOgouJe0GsmPD95P
+X-Google-Smtp-Source: AGHT+IGRg2Nd8ny+lEY1UTB7dhC5oApF/NmRzRo0kswvAor/xhBJns1Qxh+lICHO2/Y0nRHD/a4u7Q==
+X-Received: by 2002:a05:7022:e1c:b0:11e:354:32cb with SMTP id a92af1059eb24-11f34c39abemr3023356c88.49.1765568275584;
+        Fri, 12 Dec 2025 11:37:55 -0800 (PST)
+Received: from [127.0.0.1] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11f2e2b4867sm20294552c88.6.2025.12.12.11.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Dec 2025 11:37:54 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-block@vger.kernel.org, io-uring@vger.kernel.org, 
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+ linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+In-Reply-To: <cover.1763725387.git.asml.silence@gmail.com>
+References: <cover.1763725387.git.asml.silence@gmail.com>
+Subject: Re: (subset) [RFC v2 00/11] Add dmabuf read/write via io_uring
+Message-Id: <176556827123.851918.9976241171726294701.b4-ty@kernel.dk>
+Date: Fri, 12 Dec 2025 12:37:51 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251204082536.17349-1-xiaobing.li@samsung.com>
-
-Hi Xiaobing,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on mszeredi-fuse/for-next]
-[also build test ERROR on linus/master v6.18 next-20251212]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaobing-Li/fuse-add-zero-copy-to-fuse-over-io_uring/20251204-165924
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-patch link:    https://lore.kernel.org/r/20251204082536.17349-1-xiaobing.li%40samsung.com
-patch subject: [PATCH] fuse: add zero-copy to fuse-over-io_uring
-config: hexagon-randconfig-002-20251212 (https://download.01.org/0day-ci/archive/20251213/202512130032.tLxDKB6B-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1335a05ab8bc8339ce24be3a9da89d8c3f4e0571)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251213/202512130032.tLxDKB6B-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512130032.tLxDKB6B-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/fuse/trace.c:6:
->> fs/fuse/dev_uring_i.h:43:18: error: field has incomplete type 'struct iov_iter'
-      43 |         struct iov_iter payload_iter;
-         |                         ^
-   include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter'
-      74 | struct iov_iter;
-         |        ^
-   1 error generated.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
 
-vim +43 fs/fuse/dev_uring_i.h
+On Sun, 23 Nov 2025 22:51:20 +0000, Pavel Begunkov wrote:
+> Picking up the work on supporting dmabuf in the read/write path. There
+> are two main changes. First, it doesn't pass a dma addresss directly by
+> rather wraps it into an opaque structure, which is extended and
+> understood by the target driver.
+> 
+> The second big change is support for dynamic attachments, which added a
+> good part of complexity (see Patch 5). I kept the main machinery in nvme
+> at first, but move_notify can ask to kill the dma mapping asynchronously,
+> and any new IO would need to wait during submission, thus it was moved
+> to blk-mq. That also introduced an extra callback layer b/w driver and
+> blk-mq.
+> 
+> [...]
 
-    38	
-    39	/** A fuse ring entry, part of the ring queue */
-    40	struct fuse_ring_ent {
-    41		bool zero_copy;
-    42	
-  > 43		struct iov_iter payload_iter;
-    44	
-    45		/* userspace buffer */
-    46		struct fuse_uring_req_header __user *headers;
-    47		void __user *payload;
-    48	
-    49		/* the ring queue that owns the request */
-    50		struct fuse_ring_queue *queue;
-    51	
-    52		/* fields below are protected by queue->lock */
-    53	
-    54		struct io_uring_cmd *cmd;
-    55	
-    56		struct list_head list;
-    57	
-    58		enum fuse_ring_req_state state;
-    59	
-    60		struct fuse_req *fuse_req;
-    61	};
-    62	
+Applied, thanks!
 
+[03/11] block: move around bio flagging helpers
+        commit: d9f514d3e6ee48c34d70d637479b4c9384832d4f
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
+
+
 

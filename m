@@ -1,79 +1,80 @@
-Return-Path: <io-uring+bounces-11021-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11022-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD47CB7A52
-	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 03:12:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3878CB7E71
+	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 06:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EFB3930084D3
-	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 02:12:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DE84D30361C7
+	for <lists+io-uring@lfdr.de>; Fri, 12 Dec 2025 05:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE3D28C00C;
-	Fri, 12 Dec 2025 02:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30E2BD024;
+	Fri, 12 Dec 2025 05:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHEJ7Cfq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3GVzasYw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68687290DBB
-	for <io-uring@vger.kernel.org>; Fri, 12 Dec 2025 02:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0292C0F8E
+	for <io-uring@vger.kernel.org>; Fri, 12 Dec 2025 05:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765505542; cv=none; b=XfmhUzgZdbpaW3B4a8aQjUL0xlXs2sbina6j3wX8uFJpIurbSuZvgx3YBKh+qlGpWxT1uyykc8n7yv963OPdh/tHzovIsO4Assdkra9q+i0ZrwWHVFPiyUj7x4UfDW1By7F/+h2vzoa0R5GNC/lXlp1aO+h7waHOgbdPKwIMTpA=
+	t=1765516308; cv=none; b=TvzVlbiW2zZWDq111Et6+UiWrNnXiZlA+QSllYyjPXK1RaL4nNwu4bpKGcOXQIdS/WKRye4jSNQiq80mkcuV6uj3Z6SZZ9sUrhDDM6IRx94I6XpfZZuK2YeAlSMT2tzS9oZJ/kwL4G27tDz1UgQyymhZF6vFMMrupNOE8GklSt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765505542; c=relaxed/simple;
-	bh=Vxpx3eccWi0kCP1XPB9iXUTVgvvAg1Vda89sOV3uE90=;
+	s=arc-20240116; t=1765516308; c=relaxed/simple;
+	bh=BXi5Ft2NYuc6pxVPN/TB7dC8i9Js6B1r9EE5opjMwcs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iiL6q3Hbh63JxTSoF6ZnQBvU9unhjvzxrQ44/KOtrzlPGVuUiFSRTe8NwvH/us56HzPzdJfxUMa4m9nFxBA5nENsMZfwULFBWp2hBzPvmW6f4PZVksvkLiQd1HOVl25apIP7i9cnwjcNQcuA/K/L0ZyDyZAgxp5IOPv8VJk127o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHEJ7Cfq; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7bab7c997eeso869492b3a.0
-        for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 18:12:21 -0800 (PST)
+	 In-Reply-To:Content-Type; b=NqbkAvwqchGpKCpeZohiQzY4JoyB4uI5PmOpRIXncyxm1rTYNtMSu+wpbbWw1ku6jLC1mJkW9uqt+mUD8RqgfrbNXbwgD6Lyq4bmMqBZMBUfKC1Q2gOt11BXzSV9AycU+LcZ8UwtHYVfxzT0zIKblJZC1lk9HF4pndGoIdEmdAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3GVzasYw; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-29f0f875bc5so9701985ad.3
+        for <io-uring@vger.kernel.org>; Thu, 11 Dec 2025 21:11:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765505541; x=1766110341; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TGLnR8Di6TNxZG4VYNv1XF3XAKVisY08s0a5El0hQzQ=;
-        b=RHEJ7CfqlNMzj8lOK5ldqIU21O6He98oBkpP1e/00aOWauV1zIz/tu8vYHpAW8lnBj
-         kfNigXsw9XSJL5MZUmE3/FKlmrOnL5NRXx4bs/x7Xksvp93WrnyPLCc6jWagj9CJ4/3V
-         uFVf3lx60/3IVs6RsL+f8xT58UdcafcZck0m6u3jEb4qTUN8QDLV9RTgQegcsR7N2qjO
-         0MgKwE87j6eRMq8q6040abw0cBO+GiRAjSe0R7x2DLgPEFtgaVKSe5vv+v82VM+9sFUO
-         F6JWe+6P2PwC1/rZe8v1Yrjhofi4c0u13Ecvsct/9RLMhT+8YNvCEvwkqUcxh0eKF8vW
-         03gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765505541; x=1766110341;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765516303; x=1766121103; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TGLnR8Di6TNxZG4VYNv1XF3XAKVisY08s0a5El0hQzQ=;
-        b=cyuL5JjgEVN3wzBlcw9+QB+bAaSDixFrhoT6crpxrxCkjOkzDySCi3xP4n92Mp3STN
-         pvyoKBJoagtV4NxTP3rYhkZJIFmCFoa4AxZ/nCbce09KDBVuX++mlU+kkkpsv2uy1Vrr
-         n4gOIslMkhUwZHDRFT0yedRJV0oawHwwFWveoT/OHA+D92Bys4T85pfA7oqsTyW7SvCO
-         +eiczKyd9Poh9bSuFarqJOhTuimFVf4ZiWAdfi8i+f8EC6rADnVeU1d2He8QH48Y1HLr
-         Dw2RYm4rOEmPl6RccJIyOWLBdrH+4jwkZGII0B4EUX93YL0dhPHv+n/8tv2//tLb2pSy
-         2Jow==
-X-Forwarded-Encrypted: i=1; AJvYcCUkSA4W4wQ2ZdjQ+msnvnCRUhxe4au/fOZDxkzbghOV3axxy6iXQH+81ussuO41ziFhBwQPoCpMgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6+Rv+wgXyc4d73cR8DS7zjJ0tZXKAZgkce8EtgQQIPSBktwZO
-	wT2QCTV/iNJCZha7kYvCd4OkxAgdojds+aNjGWtF6y/IBZx13LuJsUQm
-X-Gm-Gg: AY/fxX5Gv6dQug+oco5z0L7MA5JyAlfytjyALokUuHR07PpBDnOvJRjMoDmxfj7mudq
-	QWmCmDQ0e8exdGl2F/f4K/kkhbc9nvy6iV/g0+flUTmr4JBSGBaBthIyTbpqW6iAMufPGNFA617
-	oElceEwbdlPAwy8B5siu0t8iVK7ux7ALFS/obi1rreNhHStW/2AnvIiKhMI0NyPHJVK/Sr6/ba/
-	8cvoY93r3axPDcr4O+DQ9U50cOA8Yxf9rfM2HLoFphh/1qUuffym+JXB4cq79jkwfuu4Ri9NCaK
-	e43JSnWvGu0A+hbI4SX/ZBY5RypAhErbKTAqkP+n2rlZQCW/hmqj8p+govCAovsvljhTEHWTMKv
-	4zh0Jvb1qj7v72yqKgoefkW5VX4YAt2r/4PCeazcaiEgfAeZsQmECuAJjma/ACFKNuo1GH1r9Cb
-	VnIK97Bi7KtOvfHD3qMPca8d0XmEajyQY=
-X-Google-Smtp-Source: AGHT+IEKJp+ey7pd/29n0PdL9jcJmNgLN0hs2QknJ2ZxR5AYGbEXBfO61dFQD19IASYa7Jk432JvLA==
-X-Received: by 2002:a05:6a00:419b:b0:7e1:7a1c:68b3 with SMTP id d2e1a72fcca58-7f66810b2d4mr536888b3a.30.1765505540774;
-        Thu, 11 Dec 2025 18:12:20 -0800 (PST)
-Received: from [100.82.101.13] ([203.208.167.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7f4c2d4c2eesm3668423b3a.29.2025.12.11.18.12.18
+        bh=spFsZediVt6oEaotwTX7hzMlHxWCEKtBQ8riK723KAA=;
+        b=3GVzasYwofWGgwg5oeAnJ795tY3iQn1qmH2h3zyFvC3nWFR0i086xv0TJ4HTVQa0rd
+         yDNReuWNx0JyN43zxAyPPVw0+Oht3wu7sYumpz755E/aW7O0BxeRXbohLs5Pk7jnkjuo
+         7RhUvUrh9Q58pQcHUgHyIzMdz/lEFDdO5vz1GPicfU3eZwDm34L0BYhNoWgQsnScj0ZT
+         /46xT97S5TOoSs5AEVzXE+1HTrognDy1lpQFQvBh0v5IQxdatdrrWZh0WcEo2Xmtzjl/
+         aCSn1D78FzWlonpuVieGPKs453kxMqPZj6hTSxquBTjIYSj9AvYntXMMPdJvbKcVhBAL
+         YstA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765516303; x=1766121103;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=spFsZediVt6oEaotwTX7hzMlHxWCEKtBQ8riK723KAA=;
+        b=Jijp8Kucdmvxx292sKwXglRBBU2CnxdIl/WYk5PyN79n/9eWtvWpLBmqruPejud5H0
+         g6SjUIbITisTixBIGXowqgDBRjUbBydeDUaYdfQEKGYeYM69h3B+FjOmxTEnKRRpgcux
+         kOJHS2eXo88Pp6gpHZBq23VDxmMIn3BqZNj6OJlUe6zzAzTvvz77XDBzrKwqFHhuexRy
+         KWhdUTL0d2/ioktpsg333yrdmAkMWmvVyZHk6PlxIU2uQwPatWGzVg3jcqJTXvaDqeUL
+         gJHjA2GUGol61ZKlHqFxBr8YFNHLFNE1QMmcuuPic71tVLQf9ZLoHo5Y1//5EGu77bfi
+         M5cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXT27oTY4j7n4UhTIDnuOeGINHGfhBVn+sFjFmPYHj3UeNC4C+hzKlTabFLjGAmFplXFavvrr/cVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk+CRU9qWz1D5raaM1Fs04wM7IjY3IVr9ZsXxUvz9wDuaEvJNc
+	q1gI/vobyhCxTTnj7HC8uhPGYxEoEJMe3GTDDeOugEEzDKwteb4tFIFxE0YsvxdsD/4=
+X-Gm-Gg: AY/fxX7G58sKdAhTGKmd5P5PJAIwLgzZOF8opl2KJob/EtA0SKRFcF3q2dQGdbeQeG0
+	atv3UYnTEuPq91xI9XCCudIrzZDRfIR0el2/AZsM9MU40fOeMxKdAeZ8LucNk8ukOoaaz0Byzp0
+	wkQP3AnKsrep/Vqxk9eVwClY/Ufh63/O+zz9twZFXZINsnU/+bVQr+OATm0c5dBsG1y5a00Rdo0
+	xnAwl3pZ1sgBdRb2hA94m8E7j5cWBtsSqScrJtr/GBZUgoxCvJ2Q9Ei3LBireQh62Fsr5yvUiRt
+	3fiEI84YjKn9chEC/WYpaJ5MQRlPfIdYXee9hyBtljE/NakbF6aIXBNZJs7njMqJRFZ0zMnIp+w
+	LQUO8jQ35RaJoht2WgtSCQVMaJhewxwknRv8Cg9LL9Oes2UydJYXYGUUxvg2MDSXdqD7cnu7J15
+	6QHcF2Zg/XltEW6A5WT/W90yKorErS5axtJpja3K7PG7eoRB/U2A==
+X-Google-Smtp-Source: AGHT+IHfMHsyEbA6UPbUXuEpQKK0aFwhCtclGdoYuTXAPlqyFO5EbTlsF/3so+MtN3fZjbZoihNj4A==
+X-Received: by 2002:a05:7022:7e01:b0:11a:3734:3db3 with SMTP id a92af1059eb24-11f34c4c926mr876504c88.32.1765516303286;
+        Thu, 11 Dec 2025 21:11:43 -0800 (PST)
+Received: from [172.20.4.188] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11f2e2b4867sm13979582c88.6.2025.12.11.21.11.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Dec 2025 18:12:20 -0800 (PST)
-Message-ID: <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com>
-Date: Fri, 12 Dec 2025 10:12:15 +0800
+        Thu, 11 Dec 2025 21:11:42 -0800 (PST)
+Message-ID: <f763dcd7-dcb3-4cc5-a567-f922cda91ca2@kernel.dk>
+Date: Thu, 11 Dec 2025 22:11:40 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
-To: Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+To: Fengnan Chang <fengnanchang@gmail.com>, asml.silence@gmail.com,
  io-uring@vger.kernel.org
 Cc: Fengnan Chang <changfengnan@bytedance.com>,
  Diangang Li <lidiangang@bytedance.com>
@@ -95,28 +96,213 @@ References: <20251210085501.84261-1-changfengnan@bytedance.com>
  <1acb251a-4c4a-479c-a51e-a8db9a6e0fa3@kernel.dk>
  <5ce7c227-3a03-4586-baa8-5bd6579500c7@gmail.com>
  <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk>
-From: Fengnan Chang <fengnanchang@gmail.com>
-In-Reply-To: <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/12/12 09:53, Jens Axboe 写道:
-> On 12/11/25 6:41 PM, Fengnan Chang wrote:
->> Oh, we can't add nr_events == iob.nr_reqs check, if
->> blk_mq_add_to_batch add failed, completed IO will not add into iob,
->> iob.nr_reqs will be 0, this may cause io hang.
-> Indeed, won't work as-is.
+On 12/11/25 7:12 PM, Fengnan Chang wrote:
+> 
+> 
+> ? 2025/12/12 09:53, Jens Axboe ??:
+>> On 12/11/25 6:41 PM, Fengnan Chang wrote:
+>>> Oh, we can't add nr_events == iob.nr_reqs check, if
+>>> blk_mq_add_to_batch add failed, completed IO will not add into iob,
+>>> iob.nr_reqs will be 0, this may cause io hang.
+>> Indeed, won't work as-is.
+>>
+>> I do think we're probably making a bigger deal out of the full loop than
+>> necessary. At least I'd be perfectly happy with just the current patch,
+>> performance should be better there than we currently have it. Ideally
+>> we'd have just one loop for polling and catching the completed items,
+>> but that's a bit tricky with the batch completions.
 >
-> I do think we're probably making a bigger deal out of the full loop than
-> necessary. At least I'd be perfectly happy with just the current patch,
-> performance should be better there than we currently have it. Ideally
-> we'd have just one loop for polling and catching the completed items,
-> but that's a bit tricky with the batch completions.
-Yes, ideally one loop would be enough, but given that there are also 
-multi_queue ctx, that
-doesn't seem to be possible.
->
+> Yes, ideally one loop would be enough, but given that there are also
+> multi_queue ctx, that doesn't seem to be possible.
 
+It's not removing the double loop, but the below could help _only_
+iterate completed requests at the end. Rather than move items between
+the current list at the completion callback, have a separate list just
+for completed requests. Then we can simply iterate that, knowing all of
+them have completed. Gets rid of the ->iopoll_completed as well, and
+then we can move the poll_refs. Not really related at all, obviously
+this patch should be split into multiple pieces.
+
+This uses a lockless list. But since the producer and consumer are
+generally the same task, that should not add any real overhead. On top
+of the previous one I sent. What do you think?
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 54fd30abf2b8..2d67d95a64ee 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -317,6 +317,7 @@ struct io_ring_ctx {
+ 		 */
+ 		bool			poll_multi_queue;
+ 		struct list_head	iopoll_list;
++		struct llist_head	iopoll_complete;
+ 
+ 		struct io_file_table	file_table;
+ 		struct io_rsrc_data	buf_table;
+@@ -672,8 +673,9 @@ struct io_kiocb {
+ 	};
+ 
+ 	u8				opcode;
+-	/* polled IO has completed */
+-	u8				iopoll_completed;
++
++	bool				cancel_seq_set;
++
+ 	/*
+ 	 * Can be either a fixed buffer index, or used with provided buffers.
+ 	 * For the latter, it points to the selected buffer ID.
+@@ -700,6 +702,7 @@ struct io_kiocb {
+ 	union {
+ 		/* used by request caches, completion batching and iopoll */
+ 		struct io_wq_work_node	comp_list;
++		struct llist_node	iopoll_done_list;
+ 		/* cache ->apoll->events */
+ 		__poll_t apoll_events;
+ 	};
+@@ -707,7 +710,7 @@ struct io_kiocb {
+ 	struct io_rsrc_node		*file_node;
+ 
+ 	atomic_t			refs;
+-	bool				cancel_seq_set;
++	atomic_t			poll_refs;
+ 
+ 	/*
+ 	 * IOPOLL doesn't use task_work, so use the ->iopoll_node list
+@@ -734,7 +737,6 @@ struct io_kiocb {
+ 	/* opcode allocated if it needs to store data for async defer */
+ 	void				*async_data;
+ 	/* linked requests, IFF REQ_F_HARDLINK or REQ_F_LINK are set */
+-	atomic_t			poll_refs;
+ 	struct io_kiocb			*link;
+ 	/* custom credentials, valid IFF REQ_F_CREDS is set */
+ 	const struct cred		*creds;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 05a660c97316..5e503a0bfcfc 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -335,6 +335,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	spin_lock_init(&ctx->completion_lock);
+ 	raw_spin_lock_init(&ctx->timeout_lock);
+ 	INIT_LIST_HEAD(&ctx->iopoll_list);
++	init_llist_head(&ctx->iopoll_complete);
+ 	INIT_LIST_HEAD(&ctx->defer_list);
+ 	INIT_LIST_HEAD(&ctx->timeout_list);
+ 	INIT_LIST_HEAD(&ctx->ltimeout_list);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 307f1f39d9f3..ad481ca74a46 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -604,8 +604,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
+ 			req->cqe.res = res;
+ 	}
+ 
+-	/* order with io_iopoll_complete() checking ->iopoll_completed */
+-	smp_store_release(&req->iopoll_completed, 1);
++	llist_add(&req->iopoll_done_list, &req->ctx->iopoll_complete);
+ }
+ 
+ static inline void io_rw_done(struct io_kiocb *req, ssize_t ret)
+@@ -870,7 +869,6 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 			return -EOPNOTSUPP;
+ 		kiocb->private = NULL;
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+-		req->iopoll_completed = 0;
+ 		if (ctx->flags & IORING_SETUP_HYBRID_IOPOLL) {
+ 			/* make sure every req only blocks once*/
+ 			req->flags &= ~REQ_F_IOPOLL_STATE;
+@@ -1317,7 +1315,8 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	unsigned int poll_flags = 0;
+ 	DEFINE_IO_COMP_BATCH(iob);
+-	struct io_kiocb *req, *tmp;
++	struct llist_node *node;
++	struct io_kiocb *req;
+ 	int nr_events = 0;
+ 
+ 	/*
+@@ -1327,17 +1326,12 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 	if (ctx->poll_multi_queue || force_nonspin)
+ 		poll_flags |= BLK_POLL_ONESHOT;
+ 
++	/*
++	 * Loop over uncompleted polled IO requests, and poll for them.
++	 */
+ 	list_for_each_entry(req, &ctx->iopoll_list, iopoll_node) {
+ 		int ret;
+ 
+-		/*
+-		 * Move completed and retryable entries to our local lists.
+-		 * If we find a request that requires polling, break out
+-		 * and complete those lists first, if we have entries there.
+-		 */
+-		if (READ_ONCE(req->iopoll_completed))
+-			break;
+-
+ 		if (ctx->flags & IORING_SETUP_HYBRID_IOPOLL)
+ 			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
+ 		else
+@@ -1349,24 +1343,25 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 			poll_flags |= BLK_POLL_ONESHOT;
+ 
+ 		/* iopoll may have completed current req */
+-		if (!rq_list_empty(&iob.req_list) ||
+-		    READ_ONCE(req->iopoll_completed))
++		if (!rq_list_empty(&iob.req_list))
+ 			break;
+ 	}
+ 
+ 	if (!rq_list_empty(&iob.req_list))
+ 		iob.complete(&iob);
+ 
+-	list_for_each_entry_safe(req, tmp, &ctx->iopoll_list, iopoll_node) {
+-		/* order with io_complete_rw_iopoll(), e.g. ->result updates */
+-		if (!smp_load_acquire(&req->iopoll_completed))
+-			continue;
++	node = llist_del_all(&ctx->iopoll_complete);
++	while (node) {
++		struct llist_node *next = node->next;
++
++		req = container_of(node, struct io_kiocb, iopoll_done_list);
+ 		list_del(&req->iopoll_node);
+ 		wq_list_add_tail(&req->comp_list, &ctx->submit_state.compl_reqs);
+ 		nr_events++;
+ 		req->cqe.flags = io_put_kbuf(req, req->cqe.res, NULL);
+ 		if (req->opcode != IORING_OP_URING_CMD)
+ 			io_req_rw_cleanup(req, 0);
++		node = next;
+ 	}
+ 	if (nr_events)
+ 		__io_submit_flush_completions(ctx);
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 197474911f04..0841fa541f5d 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -159,8 +159,7 @@ void __io_uring_cmd_done(struct io_uring_cmd *ioucmd, s32 ret, u64 res2,
+ 	}
+ 	io_req_uring_cleanup(req, issue_flags);
+ 	if (req->ctx->flags & IORING_SETUP_IOPOLL) {
+-		/* order with io_iopoll_req_issued() checking ->iopoll_complete */
+-		smp_store_release(&req->iopoll_completed, 1);
++		llist_add(&req->iopoll_done_list, &req->ctx->iopoll_complete);
+ 	} else if (issue_flags & IO_URING_F_COMPLETE_DEFER) {
+ 		if (WARN_ON_ONCE(issue_flags & IO_URING_F_UNLOCKED))
+ 			return;
+@@ -252,7 +251,6 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (!file->f_op->uring_cmd_iopoll)
+ 			return -EOPNOTSUPP;
+ 		issue_flags |= IO_URING_F_IOPOLL;
+-		req->iopoll_completed = 0;
+ 		if (ctx->flags & IORING_SETUP_HYBRID_IOPOLL) {
+ 			/* make sure every req only blocks once */
+ 			req->flags &= ~REQ_F_IOPOLL_STATE;
+
+-- 
+Jens Axboe
 

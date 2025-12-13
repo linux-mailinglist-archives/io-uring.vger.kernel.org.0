@@ -1,113 +1,138 @@
-Return-Path: <io-uring+bounces-11033-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11034-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A83CBA160
-	for <lists+io-uring@lfdr.de>; Sat, 13 Dec 2025 01:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87901CBA4FD
+	for <lists+io-uring@lfdr.de>; Sat, 13 Dec 2025 06:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AC69E30A6601
-	for <lists+io-uring@lfdr.de>; Sat, 13 Dec 2025 00:04:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3FF34307566E
+	for <lists+io-uring@lfdr.de>; Sat, 13 Dec 2025 05:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF10156CA;
-	Sat, 13 Dec 2025 00:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C980821CC64;
+	Sat, 13 Dec 2025 05:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOBfyOCi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkHSvc9O"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1745FDF6C;
-	Sat, 13 Dec 2025 00:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA241E22E9
+	for <io-uring@vger.kernel.org>; Sat, 13 Dec 2025 05:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765584255; cv=none; b=I9jKBrdUSKMWA/xDpsk7NuB+VAr1Dauevq8U70L3NIzAbI01GbgI7xS48KOoC40mWlgRyM7scTUFAT6wmtcC2pGZz5MtHUfBPmuyBbg4lSCBEfxLRbijm6mN0O1r0HZiR6vzed10L3lLlPpMXKNBt7Qi1sPZZvTCCxidrxMqrk0=
+	t=1765602680; cv=none; b=NZiv3kMIWNCGpIfW46GR4gPH/AGvE1qfjfPXwAiB+dIA0jOM+G/79ws0kdE9QYWjJCCwpI1cNCr5rIxkwNGzt5fKC8uxGKaaPotWwPJniHnsabZ8IVNCi7sIuixJC67+KN6F6l1FPL85nzcNGMTGpmPMV2Lo3ozUj1ksS7cEopc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765584255; c=relaxed/simple;
-	bh=9ON0BsqUdHPuKooEwOAYhec1H4nQqHimI1tGEkaJO24=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fT0Fn6ZBjhIX7ZwVXSF5TYQCdScGr2aO1wmr0J2AdQyaoYRoGxgKIhcSf7pp7Y202CdAc/JiMxEvHuvrvVwbU0ZMu33QDImwUs5cQMoTUWrKnEecXHjPx3rzYZCTdGglrb/qPvhKLAIZdRwjqOEVk3EYW6HAqdBZtg5jlLiy/lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOBfyOCi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E33BC4CEF1;
-	Sat, 13 Dec 2025 00:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765584254;
-	bh=9ON0BsqUdHPuKooEwOAYhec1H4nQqHimI1tGEkaJO24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bOBfyOCiVijuc8pYCEFzqgUszZYPT+BswDG6MX3gqzGPo2n1Lt28KE6rf4X7ORfZt
-	 6s9Kr8lsTdBadLvGSFAGPRGWUJGOZqnVrENL81iURcZvwucaE8C5w34HHZe6IAbLD+
-	 M7RNKJ9AL0E1v15XxZrKaQehEtHvbRDdkOEBUXr8qbntz/pu5mAo4AuId2LocjKBYT
-	 2+NTFSrdb0hSOexDJM08KB1GySrqXNOHdf+F1H8DpHzempFBSekxVn7LZoKZ12JbAn
-	 KqADfNiu5RqdcLkqAyR9DZ/OwyIPpjzb/+PG90FfbMrxxdnu+MTKD17DC/7ZED9X2u
-	 gaODwKaWfXPAg==
-Date: Sat, 13 Dec 2025 09:04:07 +0900
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
- Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>, Pavan
- Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>, Mina Almasry
- <almasrymina@google.com>, Stanislav Fomichev <sdf@fomichev.me>, Yue Haibing
- <yuehaibing@huawei.com>, David Wei <dw@davidwei.uk>, Haiyue Wang
- <haiyuewa@163.com>, Jens Axboe <axboe@kernel.dk>, Joe Damato
- <jdamato@fastly.com>, Simon Horman <horms@kernel.org>, Vishwanath Seshagiri
- <vishs@fb.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- io-uring@vger.kernel.org, dtatulea@nvidia.com
-Subject: Re: [PATCH net-next v7 7/9] eth: bnxt: allow providers to set rx
- buf size
-Message-ID: <20251213090407.3de8dd86@kernel.org>
-In-Reply-To: <c97d2c95-31c5-4bf6-b58f-552e85314056@gmail.com>
-References: <cover.1764542851.git.asml.silence@gmail.com>
-	<95566e5d1b75abcaefe3dca9a52015c2b5f04933.1764542851.git.asml.silence@gmail.com>
-	<20251202105820.14d6de99@kernel.org>
-	<c97d2c95-31c5-4bf6-b58f-552e85314056@gmail.com>
+	s=arc-20240116; t=1765602680; c=relaxed/simple;
+	bh=syEV0/FLiHAZC/PAiurnsJLsnmdLwzHGRNM7kYJ3f34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hOPL8GOhI+IRj9rFruHAyEGCbIgTk/rpNRnSCg0ek1A2gkrJQzQ311lRcPMmXsjcHgdDqLMSTsXpLMTNjalvZPg8Q6LCn4D/B9nprejRhYs1R9zS04m7NH0sgEdMdt4G1N/pg2ooiKCC2CEtgtngnHEFR2UvFziR1bbL0AUfgLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkHSvc9O; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ee0ce50b95so16455411cf.0
+        for <io-uring@vger.kernel.org>; Fri, 12 Dec 2025 21:11:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765602678; x=1766207478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5oO5mXc19/bkHG/OQGgSGSbA7Gcjm1z9eNxoGQZ9t+I=;
+        b=VkHSvc9Oi2JBzsRKuWS3MDfb7LqnsdaZmclzB9fjqVByXfOJgkStSzmJYSDSZD6+/u
+         LYBQYd29M47yB2ShQ9YW020Mb53yqp4Zeb/igqtGaY79tjTrLUpQuBBckkJRejT7Bk/Y
+         pDy/9CVKY7w5TCCXofXymafURT94wauKVBZefP/up2r0cf41O+RLJ8fmv7Q+Bcf4qgpZ
+         35HDKuDeTN0SOTbr7eUAQgdeF26qk/4u1smCeCLcx0a2eLKRdDRhLNoYugJAsW3ltIKw
+         0msLt6CIHsD2y//CMlJAvjx/tZ1x53pWQhpvkT/UX7JvuQtSc0hUylxaCcJjph2ctz/B
+         2OjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765602678; x=1766207478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5oO5mXc19/bkHG/OQGgSGSbA7Gcjm1z9eNxoGQZ9t+I=;
+        b=ConvrlMuQKSu/xHYVNgKuHIOgmkYJ6mfmXnjqxcrWzbm1rn9ehkcD7yc40LOScDJfP
+         utCgwNmG9MwOfYKnpVJDxpaGawZ+5BtS85+HFBnkUuo5I6MZMAy2VRJ+BbHV/IImZRYk
+         p3whuoyJY0j415qrHkQ3TGZ/x3oLF0lVM/OUmJisgxVMmhIYGgXZOh/pdQ6dpVZYIu1q
+         x6xJIFNen8qpN67INz8jx2iLFr/e/ePzdr/IK4vbRuiqnr5AOQk2ckn0hIVocYG3MawC
+         5xOHH2HmA6iIi+YdvDR0uKGelBWuGcfwWIejljH32144uDhvKjWlpSszAoIiS9k+OERO
+         xedA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdj0DuJutvkJeQKUQq043mN29zJU0hZAGA2h1K1qOtARptsDBUVgrot/8vrZy7FMY96arX3AAoJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA3ZAe4sI+1TLgf2ZwOEEvjI15JSmaKUfINChzvmqgXZfzlrjL
+	JBkOoFkAkdNqC6GxBSJQAyYVsnIxpRmbNCjwEEZ3WrvaIZt6gYb5JtJ08gIgEMm135DM8q1EVs5
+	EW1ZfArxSgi0nP3adLtX/5bVV+FPM4D4=
+X-Gm-Gg: AY/fxX5GQx8A9bz0/lm584ltaNV+Qqmh3/Ym7qXe3SAF62QshcvLVNIKo1uENo2Dbqe
+	hdV8u1oHPndmfajVFNqOw7Nso+DaRdqxfo9SUV59XtprASRqr5/qCI7TP72xze6h0uaCK+iN31r
+	zesrobeVwIfFp26ik+X4K+VTGbH7B/qck1Fa4brL2Hv5MtTao1TxlmwM5/XZiiCwmRmN2Fl8BQ7
+	AjDLH7SrVv6vgHOlDD+ptqzKaway6uNfQj0v8Xo+C38MKvSzNXp+Nm8qPQ8xvnDjJviKovX
+X-Google-Smtp-Source: AGHT+IFQfKyFwrVgAa+rr2QG+mOZUqAjIMt/0Uer3JkOvhELpjGEVT9Hh/oikQx7a29AZ7c+bGtB4lPzPQvpV4H6kb4=
+X-Received: by 2002:a05:622a:8cf:b0:4ed:2715:6130 with SMTP id
+ d75a77b69052e-4f1cf614407mr57782791cf.36.1765602678144; Fri, 12 Dec 2025
+ 21:11:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-23-joannelkoong@gmail.com> <CADUfDZp3NCnJ7-dAmFo2VbApez9ni+zR7Z-iGsudDrTN4qw1Xg@mail.gmail.com>
+In-Reply-To: <CADUfDZp3NCnJ7-dAmFo2VbApez9ni+zR7Z-iGsudDrTN4qw1Xg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Sat, 13 Dec 2025 14:11:07 +0900
+X-Gm-Features: AQt7F2rpMQBtSK4ORLC2iykOw4xczA77OTsnQlOWjzyhrCf2eU8E3aMFXaonYHo
+Message-ID: <CAJnrk1YO+xWWAQtEvk_xAsoBStRR=o0=t3audmmGrEpKpYGPpg@mail.gmail.com>
+Subject: Re: [PATCH v1 22/30] io_uring/rsrc: refactor io_buffer_register_bvec()/io_buffer_unregister_bvec()
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Dec 2025 01:39:25 +0000 Pavel Begunkov wrote:
-> On 12/2/25 18:58, Jakub Kicinski wrote:
-> > On Sun, 30 Nov 2025 23:35:22 +0000 Pavel Begunkov wrote:  
-> >> +static ssize_t bnxt_get_rx_buf_size(struct bnxt *bp, int rxq_idx)
-> >> +{
-> >> +	struct netdev_rx_queue *rxq = __netif_get_rx_queue(bp->dev, rxq_idx);
-> >> +	size_t rx_buf_size;
-> >> +
-> >> +	rx_buf_size = rxq->mp_params.rx_buf_len;
-> >> +	if (!rx_buf_size)
-> >> +		return BNXT_RX_PAGE_SIZE;  
-> > 
-> > I'd like to retain my cfg objects in the queue API, if you don't mind.
-> > I guess we just need the way for drivers to fill in the defaults and
-> > then plumb them into the ops.  
-> 
-> It was problematic, I wanted to split it into more digestible chunks.
-> My main problem is that it was not really optional and could break
-> drivers that don't even care about this qcfg len option but allow
-> setting it device-wise via ethtool, and I won't even have a way to
-> test them.
-> 
-> Maybe there is a way to strip down qcfg and only apply it to marked
-> queue api enabled drivers for now, and then extend the idea it in
-> the future. E.g.
+On Sun, Dec 7, 2025 at 5:33=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> On Tue, Dec 2, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+> >
+> > +int io_uring_cmd_buffer_unregister(struct io_uring_cmd *cmd, unsigned =
+int index,
+> > +                                  unsigned int issue_flags)
+> > +{
+> > +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > +
+> > +       return io_buffer_unregister(ctx, index, issue_flags);
+> > +}
+> > +EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_unregister);
+>
+> It would be nice to avoid these additional function calls that can't
+> be inlined. I guess we probably don't want to include the
+> io_uring-internal header io_uring/rsrc.h in the external header
+> linux/io_uring/cmd.h, which is probably why the functions were
+> declared in linux/io_uring/cmd.h but defined in io_uring/rsrc.c
+> previously. Maybe it would make sense to move the definitions of
+> io_uring_cmd_buffer_register_request() and
+> io_uring_cmd_buffer_unregister() to io_uring/rsrc.c so
+> io_buffer_register_request()/io_buffer_unregister() can be inlined
+> into them?
 
-Yes, I mean a stripped down version, since we're not shadowing the
-ethtool knob any more the full set of changes I had will be too much.
-Off the top of my head I think we'd need to retain:
- - the qcfg struct passed as an argument to the queue callbacks
-   (drivers other than bnxt won't use it which is okay since they don't
-   set .supported_params)
- - the ability to conjure the qcfg struct for any given queue by the
-   driver at any time (netdev_queue_config())
- - probably the callback to fill in the defaults so that the driver
-   doesn't have to check "is the value set by the user" explicitly
+imo I think having the code organized more logically outweighs the
+minimal improvement we would get from inlining (especially as
+io_buffer_register_request() is not a small function), but I'm happy
+to make this change if you feel strongly about it.
+
+Thanks,
+Joanne
+
+>
+> Best,
+> Caleb
+>
+> > +
+> >  /*
+> >   * Return true if this multishot uring_cmd needs to be completed, othe=
+rwise
+> >   * the event CQE is posted successfully.
+> > --
+> > 2.47.3
+> >
 

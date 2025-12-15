@@ -1,182 +1,129 @@
-Return-Path: <io-uring+bounces-11040-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11041-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC560CBC534
-	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 04:25:12 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D67CBC9F5
+	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 07:26:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 869FE3007666
-	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 03:25:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0104E300F89E
+	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 06:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9416431961F;
-	Mon, 15 Dec 2025 03:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73D02192FA;
+	Mon, 15 Dec 2025 06:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYuHwnlH"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hPE5PTzg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from sg-1-103.ptr.blmpb.com (sg-1-103.ptr.blmpb.com [118.26.132.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6886318140
-	for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 03:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0D15E97
+	for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 06:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765769106; cv=none; b=ZV7zNw/9aUM78Sp9alkjp5RfJRV1vcnPm1hpyD3XknYOuZx7EBuNYK+7jNlUQ605thcD70dYIT/0BW/hB2gCL5y3JD+/xvY7aRmTwpXhdDGYBIrw+68bGcRIrDhgxjnkGWl4fkilb1BFA3LNN+R9FywG/KE0ZjaRMXWqlDnNqsI=
+	t=1765779973; cv=none; b=uyhDsJ5S2VmLqe+6813H3TPOadCtAkFB2JlAt7l7oTm+MdCGUCEVVV+TcAuvnf3AaXXNSOoJ4VI+IFLq/c3rs+wQFUvb4peDc5S2CMG58WQAj/SnwBGelEggWgY45zec3c8njNN3N3vwf2M0Zhb0sYZZouG6WiaeTVHpD4GDcKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765769106; c=relaxed/simple;
-	bh=7JNvl31Kqw7/BtErdpYMC1Ckci85aKmIm6Yg3kUT0HA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AqAUYug2C4OCeYyZNuC7YNLFVl8/UxJMTXxokMplfNEMObQrSoEwj9sK8OXrKonYIOyJu+McMkxjuLYyOSkn3MixYmKXYDilFSys+Dh2aak9K5GHFYUUKBOBaIKGRVPiDcYEbk47+S/4Z1QmWgJ0/4PrvHJ/ICDQMip5nc3d8Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYuHwnlH; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ee1e18fb37so31683501cf.0
-        for <io-uring@vger.kernel.org>; Sun, 14 Dec 2025 19:25:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765769104; x=1766373904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JNvl31Kqw7/BtErdpYMC1Ckci85aKmIm6Yg3kUT0HA=;
-        b=kYuHwnlHkp0AjnN6NTnMKN1UEcsUnhBIL+i+iGWW+U4Uj3JjFwTzFHiF/P7bYS7t9c
-         v7sj3Nal97w1/4F0r3UFoXOuKfO4hqCI3JPTnsuuxi4EFdCOdfowVSMboptG5cDMpJTK
-         dzC0Z4OlN+YTlGnj8Rcnh6wBOR0HlNiK2ybT0jvBrf+4xtJN8OQGQfENAYcVtxOn5QFQ
-         xWncKJfuIn9RuW0p7BxsZDt3GqQDsNb9P6/PTKDXktxsilbgRwWNGeyBAypWc9TT9fKc
-         A3lqnCNpIpodWgi7NyXSilpaas05LL6Pe+fLs4gCUacYmcze1ImX1Pz4MIHfb4jOcC/d
-         rNFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765769104; x=1766373904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7JNvl31Kqw7/BtErdpYMC1Ckci85aKmIm6Yg3kUT0HA=;
-        b=Jrr0TT+F0w3v0w+TY2C98F5qySQoTW9bUWDTrVx5sYopnJvdZXYxkh5uFiKmxkL/lV
-         +TYut5dyxMDdxSiGBarINaSgjqdFy+Psht/kevFBW8MY1Hgaru8ZCIINoOpg81dpx2s4
-         Jzs6enXceC5eQzGDvhYkjngMnnHNZQYgPNNZuBeD0cSVWhQaGEli+Uf0IoUONgIdvIdO
-         RhWlk/FGjDppsyZUdFW8C5kEcA+a2YIokYHRioHUck1p6M2Ntp2AuB/fs3/LQ31ixHK6
-         42mZ/l1YkKIxayVRJN0IiVJTP94Efo1fmLklUISUSb72HSTN81C5Xplu7sznoOidWn8k
-         ckHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEMQaAjMMdL8uALsWmNBjHKhdf6MJsah3+OHJOXXOsK2ISBOj7pt2IFGDy22cKYV8/xduK2N+J/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQXnJbU+7QyVJ4Y0naOtt6nhstqWE1MemJsY1rBU6ZkdKJBPnX
-	J35vPRSlDZV3WCprUnYEEK/BijgLH10VagZQHAlq2PIVYC54mIAdYaOLGoapB1E5Aa4i5GvhrRw
-	ia+1mXQZOvAVNEAjd3JLE8izvMn+EYiE=
-X-Gm-Gg: AY/fxX4C4S99gRhr5vWeCcYEVy5UBxW6jFpKe78+gus8ds9wFw8EWlND5Wc2kHMxt4P
-	DneaaUgYMIfPtVzXXlVM9MZRD6WFMPJBX73HuA2QH75jTWC0m5y73q+YOeIyRfXyrAg7WXTgLed
-	XEfhbiUp2zx/8SOQ0EFv389TZsLwcQAFap7ex53IUZmv50x/IAbvhVgBEagHWCygqpa8lLuT2r1
-	uWs8NQJKC4lvE2/+6wPqqHh4oFI7PFuZnqYYKwQHC+3VMJOPhH8iXnj+t8gap09O29tvNxIH5Tw
-	LFYIVZIKDOeKS6As228nBQ==
-X-Google-Smtp-Source: AGHT+IHhSRvHw7Q243KfjNdvjk7Kij+G4+pbxqAeRpxPvtIb5smZb2O58dA8RbgalpKdwG5pU5FsF9ngvUUTWOeDbZI=
-X-Received: by 2002:a05:622a:4a84:b0:4ed:b012:9706 with SMTP id
- d75a77b69052e-4f1d05a9332mr125199271cf.43.1765769103743; Sun, 14 Dec 2025
- 19:25:03 -0800 (PST)
+	s=arc-20240116; t=1765779973; c=relaxed/simple;
+	bh=7wH+fa5DQSu9kNNYXzyR4uCQBuqvXzQ46EkqFn5zQoc=;
+	h=To:Cc:From:Subject:Content-Type:References:In-Reply-To:Date:
+	 Mime-Version:Message-Id; b=pE3dCPcf+qkkAAraa8D6e2/sIEUlmmVhhUWtRfL5z27kzbqZVcM1MkRbc8x3Z1/pVxxRGDaHaQfMROeXXfHb4hsh4AGn+KSwZPJt5dlWO9j8TrHsvKI+UAW39/g1aGIXXt73dm2fz8lOqYlMzAJCWtmc0dY9HhuRWUT6XVEy/4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hPE5PTzg; arc=none smtp.client-ip=118.26.132.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=2212171451; d=bytedance.com; t=1765779957; h=from:subject:
+ mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
+ mime-version:in-reply-to:message-id;
+ bh=2t9FrE6uqzjNLLvyAQ5DR2hG8fjnMOwX78vgU44pPoE=;
+ b=hPE5PTzg4tiRw7nFFISWEtVePjeCoLLf1bAh5GocyOOC5kBGTcmtcHh35kHqlqs5kZSm9i
+ 3hH6Xb5ysUAA9pSmF8CFo7tR3jAdJe8b+Yun7ChBse7CyYAYfxAd9uQP36rNpUvLhrsYl+
+ gJXIbTiggg3hFD/9zyYuKRMD4OQkd0tL9ciSogdpMAL1o8pgDWVlSj9ek5W2LoioT1NlH9
+ 3aan4nK0LmxQWigduPguuXae84GRxBZS9FVdMPnJW8HrwzWlpv0JMrVHWX3rRMCXfzeYaT
+ TcSUhsqwbj0nT51W7TRUx7ICCvL1ufWF5ffR1zxoZP6Bxwr2vqwk7tUPWlfpNw==
+User-Agent: Mozilla Thunderbird
+To: "Jens Axboe" <axboe@kernel.dk>, "Fengnan Chang" <fengnanchang@gmail.com>, 
+	<asml.silence@gmail.com>, <io-uring@vger.kernel.org>
+Cc: "Fengnan Chang" <changfengnan@bytedance.com>
+From: "Diangang Li" <lidiangang@bytedance.com>
+Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+References: <20251210085501.84261-1-changfengnan@bytedance.com> <20251210085501.84261-3-changfengnan@bytedance.com> <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk> <69f81ed8-2b4a-461f-90b8-0b9752140f8d@kernel.dk> <0661763c-4f56-4895-afd2-7346bb2452e4@gmail.com> <0654d130-665a-4b1a-b99b-bb80ca06353a@kernel.dk> <1acb251a-4c4a-479c-a51e-a8db9a6e0fa3@kernel.dk> <5ce7c227-3a03-4586-baa8-5bd6579500c7@gmail.com> <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk> <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com> <f763dcd7-dcb3-4cc5-a567-f922cda91ca2@kernel.dk> <b640d708-6270-4946-916d-350d323f1678@bytedance.com> <95358f2c-d739-4dc1-b423-6ac3cbd96225@kernel.dk>
+X-Lms-Return-Path: <lba+2693fa9f3+fe2e0d+vger.kernel.org+lidiangang@bytedance.com>
+In-Reply-To: <95358f2c-d739-4dc1-b423-6ac3cbd96225@kernel.dk>
+X-Original-From: Diangang Li <lidiangang@bytedance.com>
+Date: Mon, 15 Dec 2025 14:25:44 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251213091437.298874-1-safinaskar@gmail.com>
-In-Reply-To: <20251213091437.298874-1-safinaskar@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 15 Dec 2025 12:24:52 +0900
-X-Gm-Features: AQt7F2pUwASwzl_7FTb7HkIXXQb2v__ps0As7NY81fwHcb-4mHZnT_CnTJIplVk
-Message-ID: <CAJnrk1a6gtiWFZpExWvsoC+N0O2FTeprfrMdtfzX1hi5ahHFyw@mail.gmail.com>
-Subject: Re: [PATCH v1 00/30] fuse/io-uring: add kernel-managed buffer rings
- and zero-copy
-To: Askar Safin <safinaskar@gmail.com>
-Cc: asml.silence@gmail.com, axboe@kernel.dk, bschubert@ddn.com, 
-	csander@purestorage.com, io-uring@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, xiaobing.li@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <0ee133c7-d78d-45fc-afb2-0f398cb159ef@bytedance.com>
 
-On Sat, Dec 13, 2025 at 5:14=E2=80=AFPM Askar Safin <safinaskar@gmail.com> =
-wrote:
->
-> Joanne Koong <joannelkoong@gmail.com>:
-> > This series adds buffer ring and zero-copy capabilities to fuse over io=
--uring.
->
-> So this is superior modern io-uring-based zero-copy for fuse? I. e. moder=
-n alternative
-> to splice fuse hacks here:
-> https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/fuse/dev.c#L979
-> https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/fuse/dev.c#L2291
-> ?
->
-> If so, then may I remove that fuse splice special-casing?
->
-> I assume that splice for fuse is not that fast anyway despite that specia=
-l-casing
-> linked above. So code linked above introduce complexity to the kernel wit=
-hout
-> giving any actual benefits. As opposed to truly fast modern uring interfa=
-ces.
->
-> Fuse is the only user of "pipe_buf_confirm" outside of fs/pipe.c and fs/s=
-plice.c:
-> https://elixir.bootlin.com/linux/v6.18-rc6/C/ident/pipe_buf_confirm
->
-> It is the only user of "PIPE_BUF_FLAG_LRU" outside of fs/splice.c:
-> https://elixir.bootlin.com/linux/v6.18-rc6/C/ident/PIPE_BUF_FLAG_LRU .
->
-> It is the only user of "PIPE_BUF_FLAG_GIFT" outside of fs/splice.c:
-> https://elixir.bootlin.com/linux/v6.18-rc6/C/ident/PIPE_BUF_FLAG_GIFT .
->
-> It is one of the few users of "SPLICE_F_MOVE":
-> https://elixir.bootlin.com/linux/v6.18-rc6/C/ident/SPLICE_F_MOVE .
->
-> It is one of two callers of "pipe_buf_try_steal":
-> https://elixir.bootlin.com/linux/v6.18-rc6/C/ident/pipe_buf_try_steal
-> (the other is virtio-console).
->
-> (Side note: Linus on pipe_buf_try_steal/SPLICE_F_GIFT: "Now, I would
-> actually not disagree with removing that part. It's
-> scary. But I think we don't really have any users (ok, fuse and some
-> random console driver?)"
-> - https://lore.kernel.org/all/CAHk-=3DwhYWEUU69nY6k4j1_EQnQDNPy4TqAMvpf1U=
-A111UDdmYg@mail.gmail.com/
-> )
->
-> So, removing special handling of splice in fuse will lead to simplificati=
-ons
-> in core pipe/splice code. And I think that we need to do this, because
-> splice is not fast anyway, compared to uring.
->
-> Also from Linus:
-> > Side note: maybe I should clarify. I have grown to pretty much hate
-> > splice() over the years, just because it's been a constant source of
-> > sorrow in so many ways.
-> ...
-> > It's just that it was never as lovely and as useful as it promised to
-> > be. So I'd actually be more than happy to just say "let's decommission
-> > splice entirely, just keeping the interfaces alive for backwards
-> > compatibility"
-> ...
-> > I'd be willing to *simplify* splice() by just
-> > saying "it was all a mistake", and just turning it into wrappers
-> > around read/write. But those patches would have to be radical
-> > simplifications, not adding yet more crud on top of the pain that is
-> > splice().
-> >
-> > Because it will hurt performance. And I'm ok with that as long as it
-> > comes with huge simplifications. What I'm *not* ok with is "I mis-used
-> > splice, now I want splice to act differently, so let's make it even
-> > more complicated".
-> - https://lore.kernel.org/all/CAHk-=3DwgG_2cmHgZwKjydi7=3DiimyHyN8aessnbM=
-9XQ9ufbaUz9g@mail.gmail.com/
-> - https://lore.kernel.org/all/CAHk-=3DwjixHw6n_R5TQWW1r0a+GgFAPGw21KMj6ob=
-kzr3qXXbYA@mail.gmail.com/
->
-> For all these reasons, may I remove fuse splice special casing?
+On 2025/12/13 04:09, Jens Axboe wrote:
+> On 12/12/25 6:32 AM, Diangang Li wrote:
+>>> @@ -1327,17 +1326,12 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool =
+force_nonspin)
+>>>    	if (ctx->poll_multi_queue || force_nonspin)
+>>>    		poll_flags |=3D BLK_POLL_ONESHOT;
+>>>   =20
+>>> +	/*
+>>> +	 * Loop over uncompleted polled IO requests, and poll for them.
+>>> +	 */
+>>>    	list_for_each_entry(req, &ctx->iopoll_list, iopoll_node) {
+>>>    		int ret;
+>>>   =20
+>>> -		/*
+>>> -		 * Move completed and retryable entries to our local lists.
+>>> -		 * If we find a request that requires polling, break out
+>>> -		 * and complete those lists first, if we have entries there.
+>>> -		 */
+>>> -		if (READ_ONCE(req->iopoll_completed))
+>>> -			break;
+>>
+>> Suggest keeping iopoll_completed here to avoid unnecessary subsequent
+>> polling and to process IRQ-completed requests promptly.
+>=20
+> There should not be any IRQ completed requests in here. The block layer
+> used to allow that, but that should no longer be the case. If it's a
+> polled request, then it will by definition end up in a polled queue and
+> need iopoll completion. Or it'll sit for a while and be completed by a
+> timeout. If someone is still allowing polled IO with IRQ completions
+> then that should be fixed, and there's no reason why we should try and
+> catch those cases here. Will not happen with NVMe, for example.
+>=20
 
-fuse uring is opt-in, not the default. Removing the splice
-optimizations would regress performance for users who aren't using
-uring, which is currently most of them.
+Hi Jens,
 
-Thanks,
-Joanne
+Before commit 958148a6ac06 ("block: check BLK_FEAT_POLL under=20
+q_usage_count"), if IORING_SETUP_IOPOLL was set, IO would still proceed=20
+even with zero poll queue. It would be redirected to default queues and=20
+still linked to ctx->iopoll_list. After that commit, these cases return=20
+BLK_STS_NOTSUPP.
 
->
-> --
-> Askar Safin
+While tests show the split path still exits: a split clears REQ_POLLED=20
+and sends the child to the default queue, yet the IO remains on=20
+iopoll_list. Is this the situation you=E2=80=99re referring to previously i=
+n our=20
+original patch with doubly-linked lists, that it's not necessarily safe=20
+to manipulating the list in io_complete_rw_iopoll?
+
+> For the other point, there's no way for ->iopoll_completed to be set
+> before iob.complete(&iob) has been called to invoke the callback, which
+> in turn sets it. Hence there's no way for us to end up in this loop and
+> have ->iopoll_completed set.
+>=20
+
+Also, blk_mq_add_to_batch may return false for various reasons, so it's=20
+possible that the IO may complete earlier before we end up poll loop.
+
+> So no, I don't think we need it, and honestly it wasn't even really
+> needed the posted changes either.
+>=20
+
+
+
+Best,
+Diangang
 

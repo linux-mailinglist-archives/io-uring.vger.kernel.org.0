@@ -1,129 +1,198 @@
-Return-Path: <io-uring+bounces-11041-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11042-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D67CBC9F5
-	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 07:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69361CBD82C
+	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 12:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0104E300F89E
-	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 06:26:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 18EA33028F69
+	for <lists+io-uring@lfdr.de>; Mon, 15 Dec 2025 11:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73D02192FA;
-	Mon, 15 Dec 2025 06:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E71B32FA3F;
+	Mon, 15 Dec 2025 11:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hPE5PTzg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8pCe/yx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sg-1-103.ptr.blmpb.com (sg-1-103.ptr.blmpb.com [118.26.132.103])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0D15E97
-	for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 06:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAF72253B0
+	for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 11:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765779973; cv=none; b=uyhDsJ5S2VmLqe+6813H3TPOadCtAkFB2JlAt7l7oTm+MdCGUCEVVV+TcAuvnf3AaXXNSOoJ4VI+IFLq/c3rs+wQFUvb4peDc5S2CMG58WQAj/SnwBGelEggWgY45zec3c8njNN3N3vwf2M0Zhb0sYZZouG6WiaeTVHpD4GDcKU=
+	t=1765798314; cv=none; b=B+RhrxjHMAPGL516/VS+woa4T05thFf9y+ODu5Kc3Xpb5A2qWaAtbg/1CUmpd3RBE8S6bj8r3V2LpZGXWB+/HXkqXvuqTIVgDSeXeK2Ao/2OAF/jFVWL5lqCpIe0tDf+ioEWixhFnT991MhOX9IPZ1fS8bnWd8is4y/UNkBbOW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765779973; c=relaxed/simple;
-	bh=7wH+fa5DQSu9kNNYXzyR4uCQBuqvXzQ46EkqFn5zQoc=;
-	h=To:Cc:From:Subject:Content-Type:References:In-Reply-To:Date:
-	 Mime-Version:Message-Id; b=pE3dCPcf+qkkAAraa8D6e2/sIEUlmmVhhUWtRfL5z27kzbqZVcM1MkRbc8x3Z1/pVxxRGDaHaQfMROeXXfHb4hsh4AGn+KSwZPJt5dlWO9j8TrHsvKI+UAW39/g1aGIXXt73dm2fz8lOqYlMzAJCWtmc0dY9HhuRWUT6XVEy/4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hPE5PTzg; arc=none smtp.client-ip=118.26.132.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=2212171451; d=bytedance.com; t=1765779957; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=2t9FrE6uqzjNLLvyAQ5DR2hG8fjnMOwX78vgU44pPoE=;
- b=hPE5PTzg4tiRw7nFFISWEtVePjeCoLLf1bAh5GocyOOC5kBGTcmtcHh35kHqlqs5kZSm9i
- 3hH6Xb5ysUAA9pSmF8CFo7tR3jAdJe8b+Yun7ChBse7CyYAYfxAd9uQP36rNpUvLhrsYl+
- gJXIbTiggg3hFD/9zyYuKRMD4OQkd0tL9ciSogdpMAL1o8pgDWVlSj9ek5W2LoioT1NlH9
- 3aan4nK0LmxQWigduPguuXae84GRxBZS9FVdMPnJW8HrwzWlpv0JMrVHWX3rRMCXfzeYaT
- TcSUhsqwbj0nT51W7TRUx7ICCvL1ufWF5ffR1zxoZP6Bxwr2vqwk7tUPWlfpNw==
-User-Agent: Mozilla Thunderbird
-To: "Jens Axboe" <axboe@kernel.dk>, "Fengnan Chang" <fengnanchang@gmail.com>, 
-	<asml.silence@gmail.com>, <io-uring@vger.kernel.org>
-Cc: "Fengnan Chang" <changfengnan@bytedance.com>
-From: "Diangang Li" <lidiangang@bytedance.com>
-Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-References: <20251210085501.84261-1-changfengnan@bytedance.com> <20251210085501.84261-3-changfengnan@bytedance.com> <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk> <69f81ed8-2b4a-461f-90b8-0b9752140f8d@kernel.dk> <0661763c-4f56-4895-afd2-7346bb2452e4@gmail.com> <0654d130-665a-4b1a-b99b-bb80ca06353a@kernel.dk> <1acb251a-4c4a-479c-a51e-a8db9a6e0fa3@kernel.dk> <5ce7c227-3a03-4586-baa8-5bd6579500c7@gmail.com> <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk> <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com> <f763dcd7-dcb3-4cc5-a567-f922cda91ca2@kernel.dk> <b640d708-6270-4946-916d-350d323f1678@bytedance.com> <95358f2c-d739-4dc1-b423-6ac3cbd96225@kernel.dk>
-X-Lms-Return-Path: <lba+2693fa9f3+fe2e0d+vger.kernel.org+lidiangang@bytedance.com>
-In-Reply-To: <95358f2c-d739-4dc1-b423-6ac3cbd96225@kernel.dk>
-X-Original-From: Diangang Li <lidiangang@bytedance.com>
-Date: Mon, 15 Dec 2025 14:25:44 +0800
+	s=arc-20240116; t=1765798314; c=relaxed/simple;
+	bh=m08uhxIKpPE1m6+4nO3Kb3BKor+YBUyHe0FR26n7EME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DrJTXOtrjdC2w31EM7OJU0zCI7+MRqa31PJWNv++gHC/NagqdpXAXPxqIAVO+osKNg7XH2XOhTkMI5921Er+cEotQFifVXQmFM76EAxp1s2iHtFBZgIA3KeP/DF1rUdgK4iCzxpOhoP5yDgs6VAlB6V9JStMsdp/K6ErG8k/kZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8pCe/yx; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ed75832448so45652031cf.2
+        for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 03:31:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765798310; x=1766403110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JspIDcQtuSSpLRk0E3VCGq2yOtkR03IsjW1iJovlfKw=;
+        b=C8pCe/yxuAuoLkazufJfsjVU3tc62qYzfqvdz3IzCiBpOxI2+575ThlxvwIVMNa67x
+         jIYR5llyeqad81t1zRK9/eNvBoChYm18X5ZSdUnNHN62uhGZuqJsra/fIiyNzs6cdXd8
+         pmHJk0zTnl1Zqyg8l8j2szFaF8M/89lUoGOWh10vVHs7Dhl5R5SOJ0g0IbeSFl92dVUH
+         DlGJWbbJS1dFcxP+GXyKqPe6H6Hod1fWnrK/RV5O3ZYm6R/rC3CCf4IvEJ6XL9nt2idt
+         XPFf7FfX1mZ1dKRVQva8hAvpc4gbWcRLts8GmeVFZdfzg3YqYtsoUS27IAco5hTRXhW6
+         Wv3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765798310; x=1766403110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JspIDcQtuSSpLRk0E3VCGq2yOtkR03IsjW1iJovlfKw=;
+        b=HfxmB88W++LFFvJXyW+rFmhXU/sjahxdlKQ3Z8fGw3XT2mnpzxA4sm5IkcFKVy+fP3
+         YnW49KZmnB1P3DFv/PHkEeat7SnYlc849U4WE5yg3PJ/q5Rudvy1F2IZBw6ysrnLyJbk
+         0PPHjVo0baYaCUoTGz2TCjbFRqy6vK48jkfnI8QuTVThdO78McYUV2ry3FxXCvYTrFJO
+         IrR3CW8B2mIgs4ymdKBwovSwCWMtQIRH8ams4/qe3DMUH1N+XeDKZvkVB7AfBnAd7lLz
+         Z5xy7r9V8qMhCLxKIpLoY6+/VhkeofouQ+EL2VtDGDOoOVOpArje9bvu8qFlwSYOJJJX
+         VLLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWisV8NwcAQXWC5+RMIA7Ho+xMI5nRrm8MDi8tz6gJf7O6siD4StBu6m5/7HfExmlEUidnyn6tcSg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWLYSBcx3/7FGSjYukeD/164IyNuKa4q7cw2ehKZ1BBqZiLhgC
+	9USE5JTasBn7gCIJ+9d0mzdwhIsaErM58NnT+gHRq7GQd1Vg2xvGPwOljk8BJAYseOiBv6LckpT
+	ve3EnLzWyIMhe4+eBTNukmbM/fY0RJZs=
+X-Gm-Gg: AY/fxX4nDD2PgHEG7tqeaF0VrO/46nIhQ90fZ1ADx6Kf2pxuieS+IfR+P3GowD4lYVk
+	q3rMs2VwNMQoJxMbghzZT+e0uXqI2xxUSd1AoY+Pq5GHu/YN1VnOof0jyN+81pVNogtHNT1n4SO
+	7CGMc4Ibg3JVvTfPi6DfUU5ubzOEm4eZMrSyl3G+NdVm92zRwWPdc1WgwXWKCPOodhus8EGtffD
+	ULsJUaD0TD6uqYYFybCurcd3AfgvpGBMO8d0BxOAG9WW7XQ+knVaL+xlKD+FiRhuTxhYftMtmpK
+	/VSED4LbCyXqE4B90p+EJw==
+X-Google-Smtp-Source: AGHT+IGFMlqJbK58qieHdcBPLtcVOh+aNACR4dCEDfb1jR/NisGDerssU/IDT6Xl4i/dV+QvnodQA/7HszRvVAGSVLQ=
+X-Received: by 2002:ac8:5702:0:b0:4ee:2721:9ebf with SMTP id
+ d75a77b69052e-4f1d05dd175mr142152541cf.55.1765798310511; Mon, 15 Dec 2025
+ 03:31:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20251202164121.3612929-1-csander@purestorage.com> <20251202164121.3612929-2-csander@purestorage.com>
+In-Reply-To: <20251202164121.3612929-2-csander@purestorage.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 15 Dec 2025 19:31:39 +0800
+X-Gm-Features: AQt7F2oHUPGG8tifYk7n3XNtkifDBzUAktkR-Zm7nCd8aCUGKNkFvHEz15Om-3s
+Message-ID: <CAJnrk1ZGCKdM_jK9QEbd25ikEQT7sCviaoqA6Rv_m1JjOTuEOw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] io_uring: use release-acquire ordering for IORING_SETUP_R_DISABLED
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <0ee133c7-d78d-45fc-afb2-0f398cb159ef@bytedance.com>
 
-On 2025/12/13 04:09, Jens Axboe wrote:
-> On 12/12/25 6:32 AM, Diangang Li wrote:
->>> @@ -1327,17 +1326,12 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool =
-force_nonspin)
->>>    	if (ctx->poll_multi_queue || force_nonspin)
->>>    		poll_flags |=3D BLK_POLL_ONESHOT;
->>>   =20
->>> +	/*
->>> +	 * Loop over uncompleted polled IO requests, and poll for them.
->>> +	 */
->>>    	list_for_each_entry(req, &ctx->iopoll_list, iopoll_node) {
->>>    		int ret;
->>>   =20
->>> -		/*
->>> -		 * Move completed and retryable entries to our local lists.
->>> -		 * If we find a request that requires polling, break out
->>> -		 * and complete those lists first, if we have entries there.
->>> -		 */
->>> -		if (READ_ONCE(req->iopoll_completed))
->>> -			break;
->>
->> Suggest keeping iopoll_completed here to avoid unnecessary subsequent
->> polling and to process IRQ-completed requests promptly.
->=20
-> There should not be any IRQ completed requests in here. The block layer
-> used to allow that, but that should no longer be the case. If it's a
-> polled request, then it will by definition end up in a polled queue and
-> need iopoll completion. Or it'll sit for a while and be completed by a
-> timeout. If someone is still allowing polled IO with IRQ completions
-> then that should be fixed, and there's no reason why we should try and
-> catch those cases here. Will not happen with NVMe, for example.
->=20
+On Wed, Dec 3, 2025 at 12:41=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> io_uring_enter() and io_msg_ring() read ctx->flags and
+> ctx->submitter_task without holding the ctx's uring_lock. This means
+> they may race with the assignment to ctx->submitter_task and the
+> clearing of IORING_SETUP_R_DISABLED from ctx->flags in
+> io_register_enable_rings(). Ensure the correct ordering of the
+> ctx->flags and ctx->submitter_task memory accesses by storing to
+> ctx->flags using release ordering and loading it using acquire ordering.
+>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> Fixes: 7e84e1c7566a ("io_uring: allow disabling rings during the creation=
+")
 
-Hi Jens,
+This LGTM. But should the fixes be commit 7cae596bc31f ("io_uring:
+register single issuer task at creation")? AFAICT, that's the commit
+that introduces the ctx->submitter_task assignment in
+io_register_enable_rings() that causes the memory reordering issue
+with the unlocked read in io_uring_add_tctx_node(). I don't see this
+issue in 7e84e1c7566a.
 
-Before commit 958148a6ac06 ("block: check BLK_FEAT_POLL under=20
-q_usage_count"), if IORING_SETUP_IOPOLL was set, IO would still proceed=20
-even with zero poll queue. It would be redirected to default queues and=20
-still linked to ctx->iopoll_list. After that commit, these cases return=20
-BLK_STS_NOTSUPP.
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
-While tests show the split path still exits: a split clears REQ_POLLED=20
-and sends the child to the default queue, yet the IO remains on=20
-iopoll_list. Is this the situation you=E2=80=99re referring to previously i=
-n our=20
-original patch with doubly-linked lists, that it's not necessarily safe=20
-to manipulating the list in io_complete_rw_iopoll?
+Thanks,
+Joanne
 
-> For the other point, there's no way for ->iopoll_completed to be set
-> before iob.complete(&iob) has been called to invoke the callback, which
-> in turn sets it. Hence there's no way for us to end up in this loop and
-> have ->iopoll_completed set.
->=20
-
-Also, blk_mq_add_to_batch may return false for various reasons, so it's=20
-possible that the IO may complete earlier before we end up poll loop.
-
-> So no, I don't think we need it, and honestly it wasn't even really
-> needed the posted changes either.
->=20
-
-
-
-Best,
-Diangang
+> ---
+>  io_uring/io_uring.c | 2 +-
+>  io_uring/msg_ring.c | 4 ++--
+>  io_uring/register.c | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 1e58fc1d5667..e32eb63e3cf2 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3244,11 +3244,11 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd,=
+ u32, to_submit,
+>                         goto out;
+>         }
+>
+>         ctx =3D file->private_data;
+>         ret =3D -EBADFD;
+> -       if (unlikely(ctx->flags & IORING_SETUP_R_DISABLED))
+> +       if (unlikely(smp_load_acquire(&ctx->flags) & IORING_SETUP_R_DISAB=
+LED))
+>                 goto out;
+>
+>         /*
+>          * For SQ polling, the thread will do all submissions and complet=
+ions.
+>          * Just return the requested submit count, and wake the thread if
+> diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+> index 7063ea7964e7..c48588e06bfb 100644
+> --- a/io_uring/msg_ring.c
+> +++ b/io_uring/msg_ring.c
+> @@ -123,11 +123,11 @@ static int __io_msg_ring_data(struct io_ring_ctx *t=
+arget_ctx,
+>
+>         if (msg->src_fd || msg->flags & ~IORING_MSG_RING_FLAGS_PASS)
+>                 return -EINVAL;
+>         if (!(msg->flags & IORING_MSG_RING_FLAGS_PASS) && msg->dst_fd)
+>                 return -EINVAL;
+> -       if (target_ctx->flags & IORING_SETUP_R_DISABLED)
+> +       if (smp_load_acquire(&target_ctx->flags) & IORING_SETUP_R_DISABLE=
+D)
+>                 return -EBADFD;
+>
+>         if (io_msg_need_remote(target_ctx))
+>                 return io_msg_data_remote(target_ctx, msg);
+>
+> @@ -243,11 +243,11 @@ static int io_msg_send_fd(struct io_kiocb *req, uns=
+igned int issue_flags)
+>
+>         if (msg->len)
+>                 return -EINVAL;
+>         if (target_ctx =3D=3D ctx)
+>                 return -EINVAL;
+> -       if (target_ctx->flags & IORING_SETUP_R_DISABLED)
+> +       if (smp_load_acquire(&target_ctx->flags) & IORING_SETUP_R_DISABLE=
+D)
+>                 return -EBADFD;
+>         if (!msg->src_file) {
+>                 int ret =3D io_msg_grab_file(req, issue_flags);
+>                 if (unlikely(ret))
+>                         return ret;
+> diff --git a/io_uring/register.c b/io_uring/register.c
+> index 62d39b3ff317..9e473c244041 100644
+> --- a/io_uring/register.c
+> +++ b/io_uring/register.c
+> @@ -191,11 +191,11 @@ static int io_register_enable_rings(struct io_ring_=
+ctx *ctx)
+>         }
+>
+>         if (ctx->restrictions.registered)
+>                 ctx->restricted =3D 1;
+>
+> -       ctx->flags &=3D ~IORING_SETUP_R_DISABLED;
+> +       smp_store_release(&ctx->flags, ctx->flags & ~IORING_SETUP_R_DISAB=
+LED);
+>         if (ctx->sq_data && wq_has_sleeper(&ctx->sq_data->wait))
+>                 wake_up(&ctx->sq_data->wait);
+>         return 0;
+>  }
+>
+> --
+> 2.45.2
+>
 

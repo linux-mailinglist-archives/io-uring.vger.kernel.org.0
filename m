@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11075-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11063-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC90ECC0C6F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:56:07 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3E8CC0C24
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 013FD301DE1F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:55:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AFA513028FF0
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707E031A54A;
-	Tue, 16 Dec 2025 03:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296DE3128B6;
+	Tue, 16 Dec 2025 03:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RRO+yPrB"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UfOk6tag"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEA1311C38;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F673126AC;
 	Tue, 16 Dec 2025 03:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765857294; cv=none; b=aPtljl1KJtusWfKfD3nVs/88mCKrzZQ/E+07RI0RicgkwocnVlkcncR/kDDut8DdnZq2wQMseFgXxXEPFpu0LIi22id7gqPozgSFoqTkej5IpH5Tm09enC6qdCnMXFK9+TokQDBh2a3J70wHsjfLFYEqQLRwNLC3B2VHlfLTLIs=
+	t=1765857292; cv=none; b=bCst9SOL19rI+8zDgBN6/rhI78wqG//HdxVTt6WrOHA2oSsYWn9FZOKtaNG56YO+xJayoa672oN2OntCJ/XULVww5x/T8VnSyK1GuaADlyXP48vKieqO3tH5L2QOlZdRytFSOyPzS4SiCYFa1e+MDDlSXkIs5j/B/4bWJL9lOm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765857294; c=relaxed/simple;
-	bh=ChpWIeg+38MgGLjdG9lHbGmsXI4DwNrcC5qNS+HG7IM=;
+	s=arc-20240116; t=1765857292; c=relaxed/simple;
+	bh=ml4RNN/VCnYi1f5kE1GxmfC7TyVm/T5H+RGWeGZ6lPE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sIGTCEQ2JtjAQ4ZJa5yFevW/FUdjq2eT/M9TqwcYalspt9WHKyo++Was4PMbA81vIHsSNqwL+Jl4OidZuiTIKuLWQQt1RdkuNLnJ15XoDQjp5z+LgHcEgBEPgCEWTar4gDC5O8CXx0KQBiuydRApBMwXRJFsqd6ONu9pDALrCDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RRO+yPrB; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=q3qxddwBYxicGE3JZ/qS4finDVl1iWVQs0usjX3CnemOPkAJZYUAN/mSaM377PACrmMFwEghEqrvNKt9pLNyc7cHcpkhU4IIA50k+iO4nkXVocxRMmu//jevvi53lB26WsX0OnNYabKMz+qXKkiWDPHu78KhWbM4vE7ED8WSCy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UfOk6tag; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=7a2XMJ0nbM/r82AQZ5Xoc360TFgnxmE4ZD+qqJbM6eU=; b=RRO+yPrBA0OLZGzjUl7zd1tczc
-	dLLuOlkeDF0YI+BUOjq1jUkFvkXSd90KBhtHfKdd//PSBliS158ZS57Nz2fO64eBxlnlQaFi5LFIM
-	QN5H5MTWR+Y7Rk1RONfV0CmDIk06rQ7cz3LagYD+wfsd1LFbvgEdFnNiFsuSIUKwkFLnLomGqXObJ
-	sTX5kS/yIvp9fh8TmlL9SiLL95jW7b64xjY9WRHIaP81ieM3aVxESPifGjV+LKIcLIWFllVaNA7rx
-	JkbOvC6SAGheYTGYtwUPCBOOQt1hCFbL9yy8cBZZ3SeWVcOU5hIy3/i1Idb4+vxYh692OIb+y8Dka
-	P6My6AHQ==;
+	bh=8u3Dw0scZ1Xzc2uavtsf6xcpNT1HTgSA1P3hF8Kuknw=; b=UfOk6tagInO7YYNbNiepmAeijx
+	ZNvZcwI9OM7WMSUSAVVUZX6tO/3+xHMKnVkXbM/4q7Y2+rs5ykR0OC7JRMtgXxW0XlRrIU/ZXeacg
+	3aRMd0qp+MPZ5R2h7IFTTC7M8Y2MOw4gYJ2LifRBL+KyxkUTEpQMCdRc+ZnUCJIVvPUTpNizGar+J
+	71GTQZvfNp9BiCpH/RLIBDyhEvxakXkm/YFy6G65jsUQHMrOk0zdB+dIhnkAPtUl5y8ksugxiBu/E
+	gSxggMLmrDXJ/vMQ/djxB951wpXzLv2yQgRV4Mil8cLPXn9BVh+IloSFkao7oncuehGSQIvq0ozMr
+	TWcm9x6A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vVM9k-0000000GwNx-24q8;
+	id 1vVM9k-0000000GwO8-2LS9;
 	Tue, 16 Dec 2025 03:55:24 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 54/59] statx: switch to CLASS(filename_maybe_null)
-Date: Tue, 16 Dec 2025 03:55:13 +0000
-Message-ID: <20251216035518.4037331-55-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH v3 55/59] user_statfs(): switch to CLASS(filename)
+Date: Tue, 16 Dec 2025 03:55:14 +0000
+Message-ID: <20251216035518.4037331-56-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
 References: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
@@ -70,53 +70,30 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/stat.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ fs/statfs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index d18577f3688c..89909746bed1 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -365,17 +365,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- int vfs_fstatat(int dfd, const char __user *filename,
- 			      struct kstat *stat, int flags)
- {
--	int ret;
--	int statx_flags = flags | AT_NO_AUTOMOUNT;
--	struct filename *name = getname_maybe_null(filename, flags);
-+	CLASS(filename_maybe_null, name)(filename, flags);
- 
- 	if (!name && dfd >= 0)
- 		return vfs_fstat(dfd, stat);
- 
--	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
+diff --git a/fs/statfs.c b/fs/statfs.c
+index a5671bf6c7f0..377bcef7a561 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -99,7 +99,7 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT;
+-	struct filename *name = getname(pathname);
++	CLASS(filename, name)(pathname);
+ retry:
+ 	error = filename_lookup(AT_FDCWD, name, lookup_flags, &path, NULL);
+ 	if (!error) {
+@@ -110,7 +110,6 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
+ 			goto retry;
+ 		}
+ 	}
 -	putname(name);
--
--	return ret;
-+	return vfs_statx(dfd, name, flags | AT_NO_AUTOMOUNT,
-+			 stat, STATX_BASIC_STATS);
+ 	return error;
  }
  
- #ifdef __ARCH_WANT_OLD_STAT
-@@ -810,16 +806,12 @@ SYSCALL_DEFINE5(statx,
- 		unsigned int, mask,
- 		struct statx __user *, buffer)
- {
--	int ret;
--	struct filename *name = getname_maybe_null(filename, flags);
-+	CLASS(filename_maybe_null, name)(filename, flags);
- 
- 	if (!name && dfd >= 0)
- 		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
- 
--	ret = do_statx(dfd, name, flags, mask, buffer);
--	putname(name);
--
--	return ret;
-+	return do_statx(dfd, name, flags, mask, buffer);
- }
- 
- #if defined(CONFIG_COMPAT) && defined(__ARCH_WANT_COMPAT_STAT)
 -- 
 2.47.3
 

@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11088-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11108-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65447CC0CC3
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:57:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C12CC0D2C
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 05:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9DCCF3072AC6
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:55:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 791AF303EA34
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A71321F5E;
-	Tue, 16 Dec 2025 03:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8E532B9BC;
+	Tue, 16 Dec 2025 03:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sQhnbPnU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kg9UCy+h"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D7A3128A0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45AE31283F;
 	Tue, 16 Dec 2025 03:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765857296; cv=none; b=fCdQa6k1K+FRY7GP1OlfvQKBtrJ7wRjNIiYXt93p7zsI8eIJ6R7E8hFcY0YpULDeZJzELf4SqHHLtLfwmKxsybTMvd3ZHajIeH/31iZFJw0gCzXre9VbrovPmamFCnZsEy/e3yugt5HDaY4uAlWtkyQVGnbSndv4XCGmomvM6Vo=
+	t=1765857298; cv=none; b=Y9lVc9pVkfHGmWLUKorwZWSAyODP44rWyy/NTk6Sdoz7G4WKkKXEbTxVn4LfNCF1xu1NUqTgMRiXi3w7SMal4gEyb6Wvr+niNzb50GnczJpjCXon7Rrat+4QcOjze+pnEQw5ibvl/eKqOiBo86etNM6gJnzMHuBlui43weWP0s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765857296; c=relaxed/simple;
-	bh=cxQv9hkw8QvbbztEqUBdFUa0fr0GoUOWAGNW8N8F0vs=;
+	s=arc-20240116; t=1765857298; c=relaxed/simple;
+	bh=lUNdt9aHq9kzNNWp8Kylraqjc+Cf9GYejJrl9RAZwDw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oxKSHORVNsVBxHuqv96glWnAS+bFHVu8atJ4S2JbGGAvZdJVlOO7WcE2hvA+spHWkCZqxx8Mx2kXPVI5bn4m8vMDxO9HvEeEhs3fcobIyZlC6QxowCTMF3xOWRv9kg4dtqPmUq3or1etpPWDJ/KMk3XIw0NqG8U2IRhfvSf2oZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=sQhnbPnU; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=sBGDhAcD6gxihxRQuuRTVMATeHc6Hcq95DIyCwFfE9LA5UpbD+bMgqsBnJvbwUoz59uFnlTtfRLt7/2foGnecAAJe91xhycIUpMD+x+r6mdBhwFjjJSlPhM/v12sI3Y+hrYV4qUjoqejtyF2ll9XMwYD7Al6OGu0qq6w1WRebFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kg9UCy+h; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=WNzQneQlsedcwVuOQMGa7ReO8KdF8AB19IKu4tOS5i4=; b=sQhnbPnUJad/J8QJTzSOnQW6Y6
-	DKL5AaNxzJ8acDiFwgDX/4tXDppJUatZzTsFkLh+r1uuwgWCE9MjCmI/qqEE60Gj65zuzbk/YWCVt
-	OnVYUsVlI4fM6Pb3jA8/mAtHezwQz76lce67hkv2+ZiTcASvrNyHZTUkjkDLhVoFis0hm6mbeUATd
-	6xNTLoUCeSIuLbxQQ6cV+LReVocwEIy1Sma6Ut0E772dsH2CQWnujCsSmyHkvvSYpDH74MNx7ASS1
-	+3ij1meXN5IkhkXqjQ2TBfAGDEnzk4RuuGsUz6h15Y7/NJ4niO6fwDYiJkiS7yodjg2826wm2xCvX
-	EDPla1VQ==;
+	bh=ZIlG9KS8Rwh0aHQ/9boEXA29Zfm9oooDLZyOQ0XaJCE=; b=kg9UCy+hJmC9TF5h75L+KC/uQf
+	vA3ZCL/9NpnGCFUBOQEIpSTihFSVQjFN5DzZLTuFnkqnRS+PKzw8LXP9GwlGkUGccDjTULZOB+k1X
+	dBXkM623iRAaZH17GyDzzEFaCp7qlI1/qiV/udpEzwz8RNg/1spoh/xF5khUfMK5jNK4C/GbNEtXP
+	y47bkcEyOcfeEhCFvv4GJjsK+YQjIOqlZaoNQS4qb/X9HuLaJMlB0X1/TEpNGHOR3t+TRcv96Dr97
+	hvusTQeqWCyq9M8fk4T688oKUVRBqlf/DA2aXlfZwEvkgK3smwJ7/0MI+DZPJAupnW/4lg9g/rtEu
+	ArO56LKQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vVM9h-0000000GwL2-2ss5;
+	id 1vVM9h-0000000GwL7-3C1Z;
 	Tue, 16 Dec 2025 03:55:21 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 31/59] switch {alloc,free}_bprm() to CLASS()
-Date: Tue, 16 Dec 2025 03:54:50 +0000
-Message-ID: <20251216035518.4037331-32-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH v3 32/59] file_[gs]etattr(2): switch to CLASS(filename_maybe_null)
+Date: Tue, 16 Dec 2025 03:54:51 +0000
+Message-ID: <20251216035518.4037331-33-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
 References: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
@@ -68,188 +68,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-All linux_binprm instances come from alloc_bprm() and are unconditionally
-destroyed by free_bprm() in the end of the same scope.  IOW, CLASS()
-machinery is a decent fit for those.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exec.c | 68 +++++++++++++++++++++++--------------------------------
- 1 file changed, 28 insertions(+), 40 deletions(-)
+ fs/file_attr.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 1473e8c06a8c..68986dca9b9d 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1465,6 +1465,9 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
- 	return ERR_PTR(retval);
- }
- 
-+DEFINE_CLASS(bprm, struct linux_binprm *, if (!IS_ERR(_T)) free_bprm(_T),
-+	alloc_bprm(fd, name, flags), int fd, struct filename *name, int flags)
-+
- int bprm_change_interp(const char *interp, struct linux_binprm *bprm)
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 915e9a40cd42..b547161be742 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -372,7 +372,6 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 		unsigned int, at_flags)
  {
- 	/* If a binfmt changed the interp, free it first. */
-@@ -1774,12 +1777,12 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	return retval;
- }
- 
--static int do_execveat_common(int fd, struct filename *filename,
-+static int do_execveat_common(int fd, struct filename *__filename,
- 			      struct user_arg_ptr argv,
- 			      struct user_arg_ptr envp,
- 			      int flags)
- {
--	struct linux_binprm *bprm;
-+	CLASS(filename_consume, filename)(__filename);
- 	int retval;
- 
- 	/*
-@@ -1788,48 +1791,44 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	 * don't check setuid() return code.  Here we additionally recheck
- 	 * whether NPROC limit is still exceeded.
- 	 */
--	if ((current->flags & PF_NPROC_EXCEEDED) &&
--	    is_rlimit_overlimit(current_ucounts(), UCOUNT_RLIMIT_NPROC, rlimit(RLIMIT_NPROC))) {
--		retval = -EAGAIN;
--		goto out_ret;
--	}
-+	if (unlikely(current->flags & PF_NPROC_EXCEEDED) &&
-+	    is_rlimit_overlimit(current_ucounts(), UCOUNT_RLIMIT_NPROC, rlimit(RLIMIT_NPROC)))
-+		return -EAGAIN;
- 
- 	/* We're below the limit (still or again), so we don't want to make
- 	 * further execve() calls fail. */
- 	current->flags &= ~PF_NPROC_EXCEEDED;
- 
--	bprm = alloc_bprm(fd, filename, flags);
--	if (IS_ERR(bprm)) {
--		retval = PTR_ERR(bprm);
--		goto out_ret;
--	}
-+	CLASS(bprm, bprm)(fd, filename, flags);
-+	if (IS_ERR(bprm))
-+		return PTR_ERR(bprm);
- 
- 	retval = count(argv, MAX_ARG_STRINGS);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->argc = retval;
- 
- 	retval = count(envp, MAX_ARG_STRINGS);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->envc = retval;
- 
- 	retval = bprm_stack_limits(bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
- 	retval = copy_string_kernel(bprm->filename, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->exec = bprm->p;
- 
- 	retval = copy_strings(bprm->envc, envp, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
- 	retval = copy_strings(bprm->argc, argv, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
- 	/*
- 	 * When argv is empty, add an empty string ("") as argv[0] to
-@@ -1840,27 +1839,19 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	if (bprm->argc == 0) {
- 		retval = copy_string_kernel("", bprm);
- 		if (retval < 0)
--			goto out_free;
-+			return retval;
- 		bprm->argc = 1;
- 
- 		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
- 			     current->comm, bprm->filename);
- 	}
- 
--	retval = bprm_execve(bprm);
--out_free:
--	free_bprm(bprm);
--
--out_ret:
--	putname(filename);
--	return retval;
-+	return bprm_execve(bprm);
- }
- 
- int kernel_execve(const char *kernel_filename,
- 		  const char *const *argv, const char *const *envp)
- {
--	struct linux_binprm *bprm;
--	int fd = AT_FDCWD;
- 	int retval;
- 
- 	/* It is non-sense for kernel threads to call execve */
-@@ -1868,43 +1859,40 @@ int kernel_execve(const char *kernel_filename,
+ 	struct path filepath __free(path_put) = {};
+-	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+ 	struct file_kattr fa;
+@@ -393,7 +392,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 	if (usize < FILE_ATTR_SIZE_VER0)
  		return -EINVAL;
  
- 	CLASS(filename_kernel, filename)(kernel_filename);
--	bprm = alloc_bprm(fd, filename, 0);
-+	CLASS(bprm, bprm)(AT_FDCWD, filename, 0);
- 	if (IS_ERR(bprm))
- 		return PTR_ERR(bprm);
+-	name = getname_maybe_null(filename, at_flags);
++	CLASS(filename_maybe_null, name)(filename, at_flags);
+ 	if (!name && dfd >= 0) {
+ 		CLASS(fd, f)(dfd);
+ 		if (fd_empty(f))
+@@ -426,7 +425,6 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 		unsigned int, at_flags)
+ {
+ 	struct path filepath __free(path_put) = {};
+-	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+ 	struct file_kattr fa;
+@@ -456,7 +454,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 	if (error)
+ 		return error;
  
- 	retval = count_strings_kernel(argv);
- 	if (WARN_ON_ONCE(retval == 0))
--		retval = -EINVAL;
-+		return -EINVAL;
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->argc = retval;
- 
- 	retval = count_strings_kernel(envp);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->envc = retval;
- 
- 	retval = bprm_stack_limits(bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
- 	retval = copy_string_kernel(bprm->filename, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 	bprm->exec = bprm->p;
- 
- 	retval = copy_strings_kernel(bprm->envc, envp, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
- 	retval = copy_strings_kernel(bprm->argc, argv, bprm);
- 	if (retval < 0)
--		goto out_free;
-+		return retval;
- 
--	retval = bprm_execve(bprm);
--out_free:
--	free_bprm(bprm);
--	return retval;
-+	return bprm_execve(bprm);
- }
- 
- static int do_execve(struct filename *filename,
+-	name = getname_maybe_null(filename, at_flags);
++	CLASS(filename_maybe_null, name)(filename, at_flags);
+ 	if (!name && dfd >= 0) {
+ 		CLASS(fd, f)(dfd);
+ 		if (fd_empty(f))
 -- 
 2.47.3
 

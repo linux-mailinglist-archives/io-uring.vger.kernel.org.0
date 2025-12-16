@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-11070-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11098-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC46CC0C73
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:56:10 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF2BCC0CC9
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 754183033C9C
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:55:12 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2F92F305ADCB
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12274319608;
-	Tue, 16 Dec 2025 03:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06B831A56B;
+	Tue, 16 Dec 2025 03:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hKJ/Kt9g"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JxN75zzx"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53574311592;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB15311C0C;
 	Tue, 16 Dec 2025 03:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765857294; cv=none; b=nQ5+HfvqeWJwmMhywb6Hg2GwV7tnDRDmPahZFJECLbKVaH9RfnXLWgzjm+Sw8V+JccNZHixHF8Vlt9nEXlY0BKa4rkZAOyyhIKkMBoiyNR5E/X3p0cDd6NUvfEalZgdWFwuGTjY/R0dvxOCPZZiiSARlHJsfvx5z6GkwO/kj4zM=
+	t=1765857297; cv=none; b=QQJbzgJy46DQu1xMtRGxq/8bH0oSfjWxzlnl5Q2ZYvJYtAe7HzwK88zHhkV7FMKnNsW+BN3FEh6vyI2v9Z81U3eaRuRNyaJLFlcac3fjCsa1mpzWUID/IKRRblaXoOWLDWfP1krZcI1vx5qFEdr4TWPcp+du6Unnm/wUDVnRg7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765857294; c=relaxed/simple;
-	bh=l5FHgW47f+Yj1iy0m1MGYj33Um71tv4luVBFCT40jnU=;
+	s=arc-20240116; t=1765857297; c=relaxed/simple;
+	bh=VJR7OANqAnNeKsJcpMXd5sA1W1qzF/DrbRQlYMiYeY8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lq7Ul0XUXfQBG33ljoJ6d3q7WpPyurXFSqLSuoyjelxLv6YZGvjDo7H7w7xx5PJ8Q0tavkrX3A7EoPybh2edffdVyU8ioEYPV647O+MREhtMS8mlsVO4tll9uw1V1JwTfNC7sJWwDsIL0nXK2qsfAPtz8or4WNfH7tOqUM1IIHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hKJ/Kt9g; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=M/a7w5WozzMQtT0Dzqx/rzbYHqjzO0vFJcyphvj3i8u0qnIninMFrFye7vwD7HWDQi+VEqJ3evV4a5c0jKXq6uyLnuRg2xJZ+k2cyhpc6oS9dmSnZ2rPkKdaoTl9Ij4sccgDGE/C74BYWtefjeN4ywKLBmbhIMmcu4J2GEe/Dkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JxN75zzx; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ZTmwRYazdVffyBhN86itvLOlmBSFDHLQsgXip1U1wEw=; b=hKJ/Kt9gmJPoxmZGdQlBlB7d2j
-	tywDv/KGXWzhDrSBDE+TNB0zEIUgBZVHSIDsGqr8TzY+wXflpXt/pIcMdA2D9Wfj3zKe8YwmrQ9mU
-	UPtZ37v345lvdBQP56hAPxJEvIAcqdHMpPNZIN9UcDR/LNfV0IPYkmYutxn2d1nW7VtxOssqBVK6C
-	d2Ud4tNhbbcYDNUhpRfAca39CQpkpN0hXxujCCNbULOOCNurSxCBxZaZRw5NaRSZpL6jHSD9k2LP8
-	mFaSRY1ll23sNbAXFSbri9eqMwFh/qJMO2i1Pku7crqh3Rc3rP15mXaCNpfgjObqNCowq+tpEmzcl
-	8k0kYtgg==;
+	bh=nND/UTx2fHPWcfLy6K3U1k4zO8irk7L/OKSvicadqNs=; b=JxN75zzxsjkrCuGpmVZFPU11hv
+	LWmmatYFiZSsKOZUBQE9iC4ljQyp5ZacKLKTOJBV3ZJNlgbrynAyCE+roj0wrnVpHa56u6GkVR2e+
+	jn6j1nWHcpJvhlZY8LG5wprlsxutseIxVzs7vndvhg8hb20TjsNQNONgkDUYv37gnZ6WF+Dv1QbU5
+	jsc6jIzlZBdoiU33NyRCwTL/SyhYre5ieQFxfopEBEySm1StDOiTUhCy5mQOkK21QpQBr5uP+ctEK
+	9PYtpfBfmGHl/3bLWNLvxuzl14/ZX/F0Da5vS0AiaaaMKT3go/dMlwqUcbzkydbneS/JOexguX7VK
+	8ElOdavA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vVM9e-0000000GwIe-3CjU;
-	Tue, 16 Dec 2025 03:55:18 +0000
+	id 1vVM9e-0000000GwIj-3xdO;
+	Tue, 16 Dec 2025 03:55:19 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 02/59] do_fchmodat(): import pathname only once
-Date: Tue, 16 Dec 2025 03:54:21 +0000
-Message-ID: <20251216035518.4037331-3-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH v3 03/59] do_fchownat(): import pathname only once
+Date: Tue, 16 Dec 2025 03:54:22 +0000
+Message-ID: <20251216035518.4037331-4-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
 References: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
@@ -83,39 +83,40 @@ let's not clutter the patch with that.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/open.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/open.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/fs/open.c b/fs/open.c
-index f3bacc583ef0..82bfa06dbfa5 100644
+index 82bfa06dbfa5..a2d775bec8c1 100644
 --- a/fs/open.c
 +++ b/fs/open.c
-@@ -679,6 +679,7 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode,
- 		       unsigned int flags)
+@@ -801,17 +801,17 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		int flag)
  {
  	struct path path;
+-	int error = -EINVAL;
++	int error;
+ 	int lookup_flags;
 +	struct filename *name;
- 	int error;
- 	unsigned int lookup_flags;
  
-@@ -686,11 +687,9 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode,
- 		return -EINVAL;
+ 	if ((flag & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+-		goto out;
++		return -EINVAL;
  
- 	lookup_flags = (flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
--	if (flags & AT_EMPTY_PATH)
+ 	lookup_flags = (flag & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
+-	if (flag & AT_EMPTY_PATH)
 -		lookup_flags |= LOOKUP_EMPTY;
--
-+	name = getname_uflags(filename, flags);
++	name = getname_uflags(filename, flag);
  retry:
 -	error = user_path_at(dfd, filename, lookup_flags, &path);
 +	error = filename_lookup(dfd, name, lookup_flags, &path, NULL);
- 	if (!error) {
- 		error = chmod_common(&path, mode);
- 		path_put(&path);
-@@ -699,6 +698,7 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode,
- 			goto retry;
- 		}
+ 	if (error)
+ 		goto out;
+ 	error = mnt_want_write(path.mnt);
+@@ -826,6 +826,7 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		goto retry;
  	}
+ out:
 +	putname(name);
  	return error;
  }

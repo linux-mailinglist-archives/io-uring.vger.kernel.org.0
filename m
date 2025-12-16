@@ -1,73 +1,72 @@
-Return-Path: <io-uring+bounces-11125-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11126-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D33CC17E7
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 09:14:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019DDCC4155
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 16:57:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id ABEE43031246
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 08:14:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6F000310C88F
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 15:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4928F34CFCD;
-	Tue, 16 Dec 2025 08:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5E92D5C61;
+	Tue, 16 Dec 2025 15:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1M3wO0B"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RKjDnD4m"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8E234CFCE
-	for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 08:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C6929B200
+	for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 15:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765872887; cv=none; b=sHhTjlRj3DF6kdzRjs6B+p+LpD5w2bubsfJ8kGOh87Ptmmoc1QEjx8kSAH7l2XKs259lR6/1mwx+yHtiXWHPWbiH7i9UMdIEGBaJhMxMvtcKdFIUn3VBdqGAkinGHPZR4tn4G63vzMw/NvVI3JRzC9MM2Pbf2K7iUkMrL1kAxLA=
+	t=1765900190; cv=none; b=q51Ns35/J08x2dYQ8UxrKl8WNYFE3d1Ab5E+d6abmdaeR1w6+eO8+Kvw33UeXtkCTc55knV6DMgha8mkZ1Vufg+K9/M0MEq6K6mrIOpQg+0MTU38Ul20vNk4u4JIwPrNhF3Jk/FXU6NfyQe5UHtXHm0ELl6T002eTtLVFNuIAv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765872887; c=relaxed/simple;
-	bh=J4lqY4Z2tcVvD9LSajGGpuAMb1wEG/DuQOlPJ+d0frA=;
+	s=arc-20240116; t=1765900190; c=relaxed/simple;
+	bh=Cyp+CNr3Xlkfyks4HLZM+uAUAlcU0l5rmduEkQyJ4rU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOzPUamxI7FdWOFYVUV6+Zos2ijjhjEcaHtgeIpTerbWpmEyUbPQp9cCvkT644dMonP+DOEi7PPVDlcghWCOfJobmY6B96sjdkwjEf4WJC/dQy56nSxqgdBxyf8flmjWJYiD4MsEj06AHbt5reWoffDrCzbsLxtswrLw84kAIA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1M3wO0B; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8b2d32b9777so643806885a.2
-        for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 00:14:45 -0800 (PST)
+	 To:Cc:Content-Type; b=GgSqtP9YxyGgDpmTYavC7pKoTElnmhC/xsdT+TtUL0QZe5COjdbHJDrHYkl1T8KASRqCvorwI7baPDDLf2mfLMAri41N8LRFft02wMKU3dCFkIbW1bFLczbkHRBiCtDyFpHLFuQQSMQLpv15tV+7u7c5sM85UNVa6PgpereqdLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RKjDnD4m; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-bc0d28903c9so190531a12.1
+        for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 07:49:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765872884; x=1766477684; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1765900187; x=1766504987; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WdnNr/hrj7cM//9XRVgXbfL4x3L+2QEttDDQbyhzLTU=;
-        b=k1M3wO0B22Hgi5T8vyIEC81bndj6N1G1bhH4AsKJRFreeTAXX+auqE7EvqRdNEnLPj
-         cmYTSzfFMLE8JxjcNrWhlE0qSdH4S7AwXJFfbe6R9oQVSKRsJjvGAl6aZCMuM8Wxlxad
-         JgRpqA/IYeXxeBnNJbkNZnDt3n1owb0bVRlGXcixiJc/rFkpA/0CAWPtaY3QcmtCb7f2
-         cPCb+U4std21akg7Z8vzs9cG/NSnv3Z9nw+/eKyeiyqrD5xAIkkB3uYQlbrZ/wtwRUuE
-         /lvFS19XG4NDYumadEAsLQaczT4BNMQ4gTF0aULng0no1NSju9oty4rlBmFVmuqmWSXH
-         SNRw==
+        bh=szC6Jhas+jyxVZXU9ORkuFWqSp9Zh7eGvf/5vN3tpkI=;
+        b=RKjDnD4mXNoRaqCnfU2mwS9qrzx6UVr9rNMILVUhEjd2cCmRgSoT1vZztwNzbVXyoJ
+         iRLUd2VdrJfc8G5hX4zT3kKvlxVbKUGNlrHsYROUL11/GWY6WyRYUhWUIjdmhHSJnOzG
+         OLqeRxfb61FeU6zEmk1KlrT2x0cgNhSH/CUg4UgOtVQdppVvz/QrVmoUxG28jF4AV+RL
+         lVJckk8YGw75506SuGKUX/UkdU5yJRZymkQ9tOalYaZWLaoNXV7yVO/hEDvHPOxxJkWq
+         EaaOw1rRjEyLSxQodbpw7L08gT4Cb6BWtT2UGOZ33z7Q4gaC/Ewe2kIty7+CpPqvnD5R
+         Siuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765872884; x=1766477684;
+        d=1e100.net; s=20230601; t=1765900187; x=1766504987;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=WdnNr/hrj7cM//9XRVgXbfL4x3L+2QEttDDQbyhzLTU=;
-        b=soNxUKwPFd/j+xiak0G2YUwiVc5yKpE6UoxM39k4lXneN22KcSpkqr5gZdU8R3RvDN
-         HowzDUvoSY9nthMllbvxGDyyBxEJDL1jBSD75hmMD+oIfQ+L9brBsldKMNYlRWRtiEM4
-         F91H1xUOAew1C7P5TiE3TqEOqR6zXaKa8UJcAHAchVOWw3Q6VyupszmnhTUNEgclY5gF
-         29xYZEXK4Xw998twd2FoC1VbzxOnLTFfJaC65tLvE+h7lY3MlKPEzOhYzJzktKMesZJv
-         7lhy2TUWW9wmueekpkxzm5ePvXVVy81PtPrTX6FqJk8CRsl4mrK7b/2i9tqrwhGpl+kq
-         hcbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqiwkvOwRNAxQ3GQgBeGAQHMENvKdTdGr/sseDpJtdOPHPHXtx+thdKtCHolZ8E7X2sis8MmmTUg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMhGku8qyiIkmXIdZyITluBChNW2n/H3cRzNasTpcuQ5jH0/TW
-	NfgKuQCWaOYAaR735n/DX9r44iIT0nBGdLOlKKJyif486T2ydBy5Jx+nMoXygg8a15ZcoqQd3Oj
-	eiEZn7qv30nN5uHGcYRoDHGXYpxyHxtQ=
-X-Gm-Gg: AY/fxX4lGquN1htiB318SI0f7hUj/t3wAFIVDUfnd+bZe9qi/B4rtpZYUrkiIT7sGBm
-	5mta/OW3Bo9lj3/JaBddHU+Ejl1z4LX2xilSyMoHk+FjN4+5n4NL60eLTC/JBFGzrowMFyEtXz9
-	rq4xd9sH/2/ln8d4EOrchrEJo0yiupYIJP1+cHzdEf/q2CiToRX12SceGTn7EzVHCotxNSzxPDo
-	CkJbB3KQwN13mn/7GCYjZmNoY8fn8KPVDH1+6oKyVxoznm2qtFj8dnc/zOXr5n/tFdsOTUcEHQ7
-	VlJz6ylAhCw=
-X-Google-Smtp-Source: AGHT+IEbg6oPYV7wItb0ko8RC1BIA+1cxYxWmJ97+ix9eBksy2MBu2sJtpW8VjTSwa9NauHxakQa/JPFzy/bcsiFO8o=
-X-Received: by 2002:a05:622a:8c3:b0:4f0:2d9d:a3ba with SMTP id
- d75a77b69052e-4f1d062bc34mr200447341cf.77.1765872884249; Tue, 16 Dec 2025
- 00:14:44 -0800 (PST)
+        bh=szC6Jhas+jyxVZXU9ORkuFWqSp9Zh7eGvf/5vN3tpkI=;
+        b=g0aX+4b1ddrtz2mM7gBis9zvvKV47yiWXwxc2x9OVGV8oHYv8pH7c3etYry9rCvrNf
+         dFC3Hdk9eP+KzeenNonyEt6Sm7debpJsGXlYhTO50hygLIuRxjN5dmH2f/HkaYpLMLPh
+         wTsTdY4HXI+F8v1f1iU3BUaEvLOp6pDeO98OcgnSZI30Z2dmBwiJnD2od5Ly+JE9G+Q9
+         fG/E6y87bSce9SETWZ98XsCHOv/NmEOlaB/8BXxlmq4FA2zGMfsb1fQLe/Ten9bbjEbH
+         bGGRBra+kLiQxVR4KEN6clYq+MLcZBZmv0zxRZOGG5I+OxRciwpyXZamnH7ax92ilxhN
+         MpwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtDkUni3sB6naDCB0WQxvAhJ/ytwUkdr4ijZUOxFywUTA3j9qUYZXzMrcAfA0iT5n9u3c44GpWvg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpBTDTfbfUkoSa8G3n58g7unedAVd9YUnqUBEqzfsnDbg6key9
+	PxNaQ9iCPPRMLIwp5GY1EDDyQdjz2C6UEKQBmGvCTvufWNa2mH8XCpEoVWyzr87WQ6OTe4Me3lH
+	ZEgh8F97f8ZsIT/CpzO49bNhn8tQbEDP9HPFvLrKcvN0Bndq+hVPITyw=
+X-Gm-Gg: AY/fxX6TirhW/8oTeCsfmo/ApCQhFa7RzN84yrp5DAjFvlSbznInAWRROmndA8SjaFm
+	L/Vl11jAYR4p3v3khm1nfp82ubHZ4oSMz7qefEofVcjch8RG/5vsAzVMvfv78q265Ww7eQwRW7F
+	IczzyZjz1IhAibqA8RmhxQGLc2lTTDDHunqefEPs8YMS+8vOma2wdvL/lj+ow2Q0BsTuY2XXqXy
+	fP+vlWEwrm7TAD+w8WR0WN+Kabx0ry6+81STZeeD3GjyA2AOlEfI+48xhfN30475xqhhbY=
+X-Google-Smtp-Source: AGHT+IHsvZoO1ya/Ovow/Y6DWjX1g9izC6zLdkO8PAcaiNAQG4cy6wKuRB+Jz9WyuObZA+5qPSFIaSHVRiQHlNIeTgk=
+X-Received: by 2002:a05:7022:f503:b0:11b:98e8:624e with SMTP id
+ a92af1059eb24-11f34c4828cmr3166391c88.4.1765900186741; Tue, 16 Dec 2025
+ 07:49:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -78,19 +77,19 @@ References: <20251215200909.3505001-1-csander@purestorage.com>
  <20251215200909.3505001-7-csander@purestorage.com> <CAJnrk1Zhku-_ayXqCisYOCWnDf31YDyiWWEHJeMU=BDYoQR9mA@mail.gmail.com>
  <CADUfDZr_aTixiUQUN0yRj=AbuBLTrgk5SXXsjwao54ZmMajUOA@mail.gmail.com> <CAJnrk1bdkWVLDBrPKFVa7oPNqAw5BCbNo1N393ESp-zQOT0w5A@mail.gmail.com>
 In-Reply-To: <CAJnrk1bdkWVLDBrPKFVa7oPNqAw5BCbNo1N393ESp-zQOT0w5A@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 16 Dec 2025 16:14:32 +0800
-X-Gm-Features: AQt7F2oCTotSmaShQgVFWEBAAE51JDLkYNm5fLZeMmFLLfmyuTbtlITbZeVOMqA
-Message-ID: <CAJnrk1Z0so5okNnEERiamB=6C8GBQ9c1nzwnfG5u_7GUoWTNmw@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 16 Dec 2025 07:49:34 -0800
+X-Gm-Features: AQt7F2rIVLRwb4mmIeLpmFkZ0RGkDDokOlQuEOEZRYdDpVLQp92sEMT1lhrx7f8
+Message-ID: <CADUfDZqZce=8LGtjZquxyQDfciOYu4fgtPFqwfkirWS5f6ALow@mail.gmail.com>
 Subject: Re: [PATCH v5 6/6] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-To: Caleb Sander Mateos <csander@purestorage.com>
+To: Joanne Koong <joannelkoong@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzbot@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 16, 2025 at 3:47=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
+On Mon, Dec 15, 2025 at 11:47=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
 >
 > On Tue, Dec 16, 2025 at 2:24=E2=80=AFPM Caleb Sander Mateos
 > <csander@purestorage.com> wrote:
@@ -171,22 +170,19 @@ o
 > that the it will interrupt the targeted task and run the task_work,
 > regardless of whether the task is currently running in the kernel or
 > userspace" so i had assumed this preempts the kernel.
+
+Yeah, that documentation seems a bit misleading. Task work doesn't run
+in interrupt context, otherwise it wouldn't be safe to take mutexes
+like the uring lock. I think the comment is trying to say that
+TWA_SIGNAL immediately kicks the task into the kernel, interrupting
+any *userspace work*. But if the task is already in the kernel, it
+won't run task work until returning to userspace. Though I could also
+be misunderstanding how task work works.
+
+Best,
+Caleb
+
 >
-
-Hmm, thinking about this buffer cloning + IORING_SINGLE_ISSUER
-submitter task's buffer unregistration stuff some more though...
-doesn't this same race with the corrupted values exist if the cloning
-logic acquires the mutex before the submitter task formally runs and
-then the submitter task starts executing immediately right after with
-the buffer unregistration logic while the cloning logic is
-simultaneously executing the logic inside the mutex section? In the
-io_ring_ctx_lock_nested() logic, I'm not seeing where this checks
-whether the lock is currently acquired by other tasks or am I missing
-something here and this is already accounted for?
-
-Thanks,
-Joanne
-
 > Thanks,
 > Joanne
 >

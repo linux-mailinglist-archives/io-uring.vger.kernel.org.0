@@ -1,155 +1,243 @@
-Return-Path: <io-uring+bounces-11058-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11107-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD33CC0AEE
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 04:08:57 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C212DCC0D17
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 05:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C8725302C4C1
-	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:07:59 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 30710303D26A
+	for <lists+io-uring@lfdr.de>; Tue, 16 Dec 2025 03:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759B2C21F9;
-	Tue, 16 Dec 2025 03:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED59332ABD0;
+	Tue, 16 Dec 2025 03:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Lqp9yliZ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fzeqbQ7J"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DE52BE64A
-	for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 03:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9D4311955;
+	Tue, 16 Dec 2025 03:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765854478; cv=none; b=O/PJS4txGofqAxYspz1QRtZ/hhXvX1VOyuitK8Sc/ZkMfQdNrxjV4E2Bf3yC9Hujm6oZY3B8cq6FOpTODqg4+0cLXJGlkUUkZSg4uekLjBOUYEVdLKpPB7QTSac3DI7WfDeZhH16UufVUWBUY1ZAk0h5ixv5A9j1w4EMYRzUyjs=
+	t=1765857298; cv=none; b=tGHKMIGR/PYqKYdVBSOW36x0fWjBGI8/JF2oZ5hnrf/sinrszNPjF5fSFNFRFk/ZBRfeqfsA4+U9/qyRq1oFbv8KyJevk0i3o2M0djCbA5qILAshj4y7c2Gpd3oBHz7OSQp54lVf5GVuKzrmMgaVMfQ4yimz9+/Ov8f7OwNvWTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765854478; c=relaxed/simple;
-	bh=oNczs+Op/enBhLN5wk5s5RblT5qG1Ab4V5eXZu0DuZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAMtdj+kKGwrKc97OBicd9VezS/uwAtmsAyZ4BAZfl0tSbxw6futhIkD/3qu/TOeG+KFdE2I5c3SaVwJczNCDLFYwZNK7FJKye1m7vP+kirjKyOhaVNwNuL5iCM5CrMgxhk2oH/jgohzKoW5PA9tA+5iOwY/FRsSzAzEfc6A/18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Lqp9yliZ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-349e7fd4536so574237a91.3
-        for <io-uring@vger.kernel.org>; Mon, 15 Dec 2025 19:07:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1765854476; x=1766459276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i32kBNi0DJqYnn5gUYyWAtk6nPGBOqaLEFAY1AGj4T8=;
-        b=Lqp9yliZWgiLJc/ZH3jCfOEJf+dMq/iU2iKxvPWBtE7Ih8/6FqBbIlhb6+nFUfPvog
-         6zz7VCf7ONd6JG8sueftRvUdQGIxuoVW4eku2aajBCUGAnMpSUGgeyefPjTXAr1b3Xeu
-         2GIyvahmnEoOCjejEuVX3LDhISsdWOD956MzZ8J30zsd8Shp/nzYEVKtKW1bjgCoBtLB
-         vAbMeX5855Nxo1sMyTzhe42x6fqHxnRlNz+vJwheQKSMu5osyZaPMMUa/L2eJO1Q4Xg7
-         Z5bZX0Zd4iTvVopa6o7280krggaKEyr4OmWAMszRA1TnCxN+BHJDcX2FRtooSHPz+Opr
-         7kBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765854476; x=1766459276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i32kBNi0DJqYnn5gUYyWAtk6nPGBOqaLEFAY1AGj4T8=;
-        b=uWDwX8ENdnyCYl/I269pH7RZKZ5i1xe7E69Eeq0Tsd8nC6bntGoEF7B/mLYX9lNLbV
-         xSEKQwDsEfRs/vu7o87UaG7sdJeXcoi8RoW7BrkiKsfAen0yyUtlf7QLEZRJ+HsxUX2S
-         8IcCW8H+XUaYc3AfaJoyTh08tDIWWGkN795YZaSntsbLQK+E+Y9J0V6dvRMuz8Y+ZBdT
-         8LkRTEONEsZbXpIjX+3qhK6GS6BkMn+KsHeUVaEuCQAFHetC5p8uiwSW9sNwIUhkfyo2
-         LNuRQxAkEdQp1HJqxH2UJlvcGfoyRYwzVTW6FbzLNBi5gqp6LzgPtBPoG4zcJ7YTXi2P
-         /SIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMNejX6vzlv02CzNULk9QvB1NJ3awoRPY20xBmqamvlcv0krvAthxXK8fW71PMe8NwA5XyAXrV8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIaUymsViQWaZ4l9pWdemVXiVuPAKBMD0GysAAyAqI3GxUZDI+
-	kA6sTO9uIMxBFSnG4Zl91svDYRHS/z2qBC7RNi3pn9Gc31oezwYNUr43pP06AvdHPH5ywkaaAgk
-	rihMMrkIbOQ9CSeCMR0dWoU5+oi2uQRdu/PXtiz4mDw==
-X-Gm-Gg: AY/fxX41lT4mPvpgx8YZ7z1oOobSbOW1GyW/jMfgRNFx6L8WIq0qVPoRv88SUrVR7DP
-	LLA1XHs4x7dKCYFo2Qf/MCgMWuY+qbksz+A4M9/+lJ5vd3hWkiCyViRVuHjqLsMOmqf6lJEFDc/
-	ZbKwls3oztKy7bIH14LFJTinXehqhK08qmxal2TaxkdIOl/KN6GSTDnyh8WILqbSW4gw18uySne
-	e4R9W2Q/x246dpU6rhZWecdhm20l7FITFTUNq5bvhDu0KtxnVA0XDAVeOxCEGrgUyKULg+w
-X-Google-Smtp-Source: AGHT+IEkdAVOYyrzH2Vn0TCTeVw7DcwshVmz6ZS2XMprUMhrrm3CgypWJ2YPV/Vdl4267ZP4bVvWUx4X9lYhEbPlhIs=
-X-Received: by 2002:a05:7022:ec0b:b0:11b:1c6d:98ed with SMTP id
- a92af1059eb24-11f349a9d7emr5968016c88.2.1765854476034; Mon, 15 Dec 2025
- 19:07:56 -0800 (PST)
+	s=arc-20240116; t=1765857298; c=relaxed/simple;
+	bh=Jw+FsY0+YyKEuFj2ggSB57u9K4FdlAxgmcIIzmmXnSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dLML4KjIL9HWepyBAc3Anc9XZ5jJwt9awh8Rjt3xLbUlgAPx0limflM6uL3l8n7kLaNlR0VQCNbgM2XzzPgvvxtuIEMoU9IYOCoph204xG/enhpZq1Dlpghb1GALFHHPw8lvG3JrdxDbgEYbH+QzAf4CO8+1v7s3SR8bCl7dhUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fzeqbQ7J; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=V2GQveWCk6oazsaZDx3Fayxa7OvWoQ/wztA7ekVFvTc=; b=fzeqbQ7J/dBe+5hedSpXH7osht
+	6jPHsdhraZBm1KBdQilrDVganZbh1tBGkogMRTpjxC+eWtny65tRx7aAN1lFQbcim+Occme/KXVyB
+	R9kx9FCBSIHgGRaSV2YJCRgJsl+aKyPucbRSown4y2JAH2fmjD6aj8TxNS4Lq8mIZ6P2YyrGfcf97
+	ag1rA+ykZY8R3dUwueyfzQEKkzKvcv9sQWCLuelxpTC7dvn68wwYypDUCTT+gORjE+pGPxJpjUdD/
+	2GpUSvpDrCWUtp0rkyk2PrM4AcEi8Tv2g+hKm+8xTJtPrBnPAzjC7kI4GXZwsIEgCEBUHL1iCFIQT
+	tluder7Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vVM9e-0000000GwIU-26TC;
+	Tue, 16 Dec 2025 03:55:18 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	paul@paul-moore.com,
+	axboe@kernel.dk,
+	audit@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v3 00/59] struct filename work
+Date: Tue, 16 Dec 2025 03:54:19 +0000
+Message-ID: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com>
- <20251203003526.2889477-23-joannelkoong@gmail.com> <CADUfDZp3NCnJ7-dAmFo2VbApez9ni+zR7Z-iGsudDrTN4qw1Xg@mail.gmail.com>
- <CAJnrk1YO+xWWAQtEvk_xAsoBStRR=o0=t3audmmGrEpKpYGPpg@mail.gmail.com>
-In-Reply-To: <CAJnrk1YO+xWWAQtEvk_xAsoBStRR=o0=t3audmmGrEpKpYGPpg@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 15 Dec 2025 19:07:44 -0800
-X-Gm-Features: AQt7F2pCCnk4VD1YEf4p6JENbqY7Nml3f00KeaP3YXqjMXyifAnUo5W-x6D8z2c
-Message-ID: <CADUfDZp3_r2E5uhu88HgfWQhf5-QWdYL+JiicTeBMDFLrdvVCw@mail.gmail.com>
-Subject: Re: [PATCH v1 22/30] io_uring/rsrc: refactor io_buffer_register_bvec()/io_buffer_unregister_bvec()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Dec 12, 2025 at 9:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Sun, Dec 7, 2025 at 5:33=E2=80=AFPM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > On Tue, Dec 2, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail=
-.com> wrote:
-> > >
-> > > +int io_uring_cmd_buffer_unregister(struct io_uring_cmd *cmd, unsigne=
-d int index,
-> > > +                                  unsigned int issue_flags)
-> > > +{
-> > > +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
-> > > +
-> > > +       return io_buffer_unregister(ctx, index, issue_flags);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_unregister);
-> >
-> > It would be nice to avoid these additional function calls that can't
-> > be inlined. I guess we probably don't want to include the
-> > io_uring-internal header io_uring/rsrc.h in the external header
-> > linux/io_uring/cmd.h, which is probably why the functions were
-> > declared in linux/io_uring/cmd.h but defined in io_uring/rsrc.c
-> > previously. Maybe it would make sense to move the definitions of
-> > io_uring_cmd_buffer_register_request() and
-> > io_uring_cmd_buffer_unregister() to io_uring/rsrc.c so
-> > io_buffer_register_request()/io_buffer_unregister() can be inlined
-> > into them?
->
-> imo I think having the code organized more logically outweighs the
-> minimal improvement we would get from inlining (especially as
-> io_buffer_register_request() is not a small function), but I'm happy
-> to make this change if you feel strongly about it.
+[Considerably grown since the last time it had been posted - see
+https://lore.kernel.org/all/20251129170142.150639-1-viro@zeniv.linux.org.uk/
+for previous variant]
 
-Yes, io_buffer_register_request() is a large function, but this
-io_uring_cmd_buffer_unregister() wrapper is small. It would be nice to
-either inline it into its caller or have io_buffer_register_request()
-inlined into it. I don't feel that strongly, but this is in the ublk
-zero-copy I/O path. You make a good point that this organization is a
-cleaner abstraction. And I guess there are already plenty of thin
-wrapper functions in io_uring/uring_cmd.c. Let's hope LTO comes to the
-rescue!
+Changes compared to v2:
+	* rebased to v6.19-rc1, dropped mguzik's patch merged in mainline
+	* size of embedded name bumped up, so that sizeof(struct filename)
+ends up being 192 bytes (64-byte aligned and large enough to cover everything
+realistic).
+	* in #17 ("allow incomplete imports of filenames") don't open-code
+getname_kernel() in the "copy" case.
+	* taken out ntfs (ab)uses of names_cachep added this cycle
+	* add CLASS() machinery for struct filename; it fits most of the
+users.  Plenty of conversions later in the series...
+	* most of the pathwalk-related API does the right thing on ERR_PTR()
+passed as filename; the only exception is do_filp_open(), that needs to have
+that checked in its callers.  Moved the check into it, simplified the callers
+(and in some cases callers of callers, and...)
+	* renamed 'do_filp_open' to 'do_file_open' - should've been called
+that way from the very beginning.  My fault, back in 2.1.128, when cretinous
+filp_open() had been added ;-/
+	* alpha osf_mount() device name imports are done the same way as
+the regular mount() does - strndup_user()
+	* sysfs(2) (no relation to sysfs) used to abuse getname() for
+importing filesystem type name; no more.
 
-Thanks,
-Caleb
+The branch lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.filename
+now; individual patches in followups.
 
->
-> Thanks,
-> Joanne
->
-> >
-> > Best,
-> > Caleb
-> >
-> > > +
-> > >  /*
-> > >   * Return true if this multishot uring_cmd needs to be completed, ot=
-herwise
-> > >   * the event CQE is posted successfully.
-> > > --
-> > > 2.47.3
-> > >
+Review and testing would be very welcome; it seems to survive the local
+beating, but...
+
+Shortlog:
+
+Al Viro (58):
+  do_faccessat(): import pathname only once
+  do_fchmodat(): import pathname only once
+  do_fchownat(): import pathname only once
+  do_utimes_path(): import pathname only once
+  chdir(2): import pathname only once
+  chroot(2): import pathname only once
+  user_statfs(): import pathname only once
+  do_sys_truncate(): import pathname only once
+  do_readlinkat(): import pathname only once
+  get rid of audit_reusename()
+  ntfs: ->d_compare() must not block
+  getname_flags() massage, part 1
+  getname_flags() massage, part 2
+  struct filename: use names_cachep only for getname() and friends
+  struct filename: saner handling of long names
+  allow incomplete imports of filenames
+  struct filename ->refcnt doesn't need to be atomic
+  allow to use CLASS() for struct filename *
+  file_getattr(): filename_lookup() accepts ERR_PTR() as filename
+  file_setattr(): filename_lookup() accepts ERR_PTR() as filename
+  move_mount(): filename_lookup() accepts ERR_PTR() as filename
+  ksmbd_vfs_path_lookup(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+  ksmbd_vfs_rename(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+  do_filp_open(): DTRT when getting ERR_PTR() as pathname
+  rename do_filp_open() to do_file_open()
+  do_sys_openat2(): get rid of useless check, switch to CLASS(filename)
+  simplify the callers of file_open_name()
+  simplify the callers of do_open_execat()
+  simplify the callers of alloc_bprm()
+  switch {alloc,free}_bprm() to CLASS()
+  file_[gs]etattr(2): switch to CLASS(filename_maybe_null)
+  mount_setattr(2): don't mess with LOOKUP_EMPTY
+  do_open_execat(): don't care about LOOKUP_EMPTY
+  vfs_open_tree(): use CLASS(filename_uflags)
+  name_to_handle_at(): use CLASS(filename_uflags)
+  fspick(2): use CLASS(filename_flags)
+  do_fchownat(): unspaghettify a bit...
+  chdir(2): unspaghettify a bit...
+  do_utimes_path(): switch to CLASS(filename_uflags)
+  do_sys_truncate(): switch to CLASS(filename)
+  do_readlinkat(): switch to CLASS(filename_flags)
+  do_f{chmod,chown,access}at(): use CLASS(filename_uflags)
+  io_openat2(): use CLASS(filename_complete_delayed)
+  io_statx(): use CLASS(filename_complete_delayed)
+  do_{renameat2,linkat,symlinkat}(): use CLASS(filename_consume)
+  do_{mknodat,mkdirat,unlinkat,rmdir}(): use CLASS(filename_consume)
+  namei.c: convert getname_kernel() callers to CLASS(filename_kernel)
+  namei.c: switch user pathname imports to CLASS(filename{,_flags})
+  filename_...xattr(): don't consume filename reference
+  move_mount(2): switch to CLASS(filename_maybe_null)
+  chroot(2): switch to CLASS(filename)
+  quotactl_block(): switch to CLASS(filename)
+  statx: switch to CLASS(filename_maybe_null)
+  user_statfs(): switch to CLASS(filename)
+  mqueue: switch to CLASS(filename)
+  ksmbd: use CLASS(filename_kernel)
+  alpha: switch osf_mount() to strndup_user()
+  sysfs(2): fs_index() argument is _not_ a pathname
+
+Mateusz Guzik (1):
+  fs: hide names_cache behind runtime const machinery
+
+Diffstat:
+
+ arch/alpha/kernel/osf_sys.c       |  34 +--
+ fs/dcache.c                       |   8 +-
+ fs/exec.c                         |  99 +++-----
+ fs/fhandle.c                      |   5 +-
+ fs/file_attr.c                    |  12 +-
+ fs/filesystems.c                  |   9 +-
+ fs/fsopen.c                       |   6 +-
+ fs/internal.h                     |   4 +-
+ fs/namei.c                        | 359 ++++++++++++++++--------------
+ fs/namespace.c                    |  22 +-
+ fs/ntfs3/inode.c                  |   6 +-
+ fs/ntfs3/namei.c                  |   8 +-
+ fs/open.c                         | 119 ++++------
+ fs/quota/quota.c                  |   3 +-
+ fs/smb/server/vfs.c               |  15 +-
+ fs/stat.c                         |  28 +--
+ fs/statfs.c                       |   3 +-
+ fs/utimes.c                       |   8 +-
+ fs/xattr.c                        |  33 +--
+ include/asm-generic/vmlinux.lds.h |   3 +-
+ include/linux/audit.h             |  11 -
+ include/linux/fs.h                |  42 ++--
+ io_uring/fs.c                     | 101 +++++----
+ io_uring/openclose.c              |  26 +--
+ io_uring/statx.c                  |  17 +-
+ io_uring/xattr.c                  |  30 +--
+ ipc/mqueue.c                      |  11 +-
+ kernel/acct.c                     |   4 +-
+ kernel/auditsc.c                  |  23 +-
+ mm/huge_memory.c                  |  15 +-
+ mm/swapfile.c                     |  21 +-
+ 31 files changed, 459 insertions(+), 626 deletions(-)
+
+Rough overview:
+1--9:
+	moving pathname import out of retry loops
+10:
+	now we can get rid of "reuse the struct filename if
+we'd just imported it from the same address _and_ audit is
+enabled" logics.
+11:
+	get rid of names_cachep abuse in ntfs
+12--15:
+	embed reasonably short pathnames into struct filename,
+*always* get struct filename out names_cachep, take the long
+names into explicitly kmalloc'ed objects.
+NB: EMBEDDED_NAME_MAX is 128 at the moment; might make sense
+to increase it - the nearest kmalloc cache size is 192 bytes,
+so we are leaving gaps anyway.  40 bytes increase, at least?
+More on 32bit...
+16:
+	runtime_const machinery for names_cachep; there's
+a potentially better variant (statically allocated kmem_cache),
+but that's a separate series.
+17:
+	delayed_filename machinery, solves the audit vs. io_uring
+problems.
+18:
+	now we don't need filename->refcnt to be atomic.
+19:
+	infrastructure for CLASS(filename...)
+20--24:
+	simplify checks in callers of pathwalk primitives -
+	they (with exception of do_filp_open()) will do
+	the right thing if given ERR_PTR() for name.
+25--31:	... get rid of that one exception and simplify
+	more callers.
+32--57:
+	conversions to CLASS(filename...), cleanups
+58, 59:
+	... and these should not have been using getname().
+
+-- 
+2.47.3
+
 

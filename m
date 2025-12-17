@@ -1,74 +1,51 @@
-Return-Path: <io-uring+bounces-11143-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11144-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8609CC639D
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 07:22:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9183CC63E8
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 07:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8E63930BA4C7
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 06:18:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E3A8E300FA43
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 06:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BCF2E11DC;
-	Wed, 17 Dec 2025 06:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB5C2E62A6;
+	Wed, 17 Dec 2025 06:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fukiHv2S"
+	dkim=pass (1024-bit key) header.d=deepseek.com header.i=@deepseek.com header.b="BebRzdm9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mail-m49219.qiye.163.com (mail-m49219.qiye.163.com [45.254.49.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDCA2D7D59;
-	Wed, 17 Dec 2025 06:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615102E7166;
+	Wed, 17 Dec 2025 06:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765951906; cv=none; b=JqIupl4UAipgLq5sk9iz4skLjQwhhlVe5JQKryH48JwLXghDD2LtCApYWL2GofgXoug63v47d4ZtkzQd2Mme0iWkDev2qi5DBTEZzsUrCu687pxb1iZc4z9iRoF9ZsX0foybRpEa5SFB/EYHZv55byHomx3DgmA3VAvr6j6r8NQ=
+	t=1765952822; cv=none; b=pGiN4sWWK5Byve32NqqfzWrMnwGTtDJXlUmUZXCUzoRWaC+0pHCYqRGZr+gTBUPNFu+9lVl1SBPskx4A+DMvC9DL0Alv6HFr3yNTGq+kD3fX66/nK61Ap/ZnO+5CqNabKGtQxVESndnb54YailLOkOAcwv9h6CHSO0MP6LHgLy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765951906; c=relaxed/simple;
-	bh=SrA7qsD1ZHCG6NpygoKeYJhfW6+gPDS881cuKnQ9DtY=;
+	s=arc-20240116; t=1765952822; c=relaxed/simple;
+	bh=7BxlaxfER2x2pFe5eavxUlLUsqLl2xFS1HVu6XX+P98=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gugJ7gmGeVclnv+3eFYRtVu8J22OsaHtX+0bhqti7ibvUpnZExmA6BVRkPX7tWoItOgxGOsVlIIFpEZltnKe3/HE46HQ9dv75w1xQFNiTNVlxCyikbu9XPkumDJbRAxyBsVPjyFsERWFgEXZrl2/f8GhicJCm244Ts1u5NjqO1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fukiHv2S; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=k3MKL94CqBOtbHrV9HTrqEtgonR+Dmw6W5Z34uX7xSQ=; b=fukiHv2Sx7+LWvTgtx6FV6JF/L
-	lDw11PwhtR12JQZZn6hFFhedENF10/NlrWisUiJBbF2Ry2j7SVDWcmYgoSNgtfRYUdIkRpHHVLtOd
-	+9KsBGMXBVLMN7wOMD70KN2ZmoYfdi/k8Mdve6k0/RDxVpEVfKpEmqJgu+DwPs+G1YmHX2EJBZ3OY
-	zUi8RMoiMPEblNMX2k22DTa1oC1f6Hi/SprYgFZFCmIW9dj0f06gTvDdCVfzoNS0vUGYyvuWY3hQ/
-	DIamRgfunUBt3ovzB3etmj8CK9H50D8pTvpb8JBN1dQYGsP9pl44oj0XWLi55M0jFn0tSdWD5ZLbW
-	pH5C86kQ==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vVklD-00000006E7T-1Ptj;
-	Wed, 17 Dec 2025 06:11:43 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
+	 MIME-Version; b=scMICqOwzNPFEM1Pi7Tm+CTIXKuuVkNJ9WfEnqRBw3Jnx6yhv+y/DTQyG9hlaNVRF9qsBzV/UEMreE+7UM5XA7MsWzyuNA4f26SDNDlk+GwFhKoSMJetB5kpS8JUrHTRwTK1IVvBDc6oWR+DmPYpxwNtyRboNnO7atZkGGrAa58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deepseek.com; spf=pass smtp.mailfrom=deepseek.com; dkim=pass (1024-bit key) header.d=deepseek.com header.i=@deepseek.com header.b=BebRzdm9; arc=none smtp.client-ip=45.254.49.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deepseek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepseek.com
+Received: from localhost.localdomain (unknown [166.108.226.185])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2d8a364d5;
+	Wed, 17 Dec 2025 14:26:53 +0800 (GMT+08:00)
+From: huang-jl <huang-jl@deepseek.com>
+To: csander@purestorage.com
+Cc: axboe@kernel.dk,
+	huang-jl@deepseek.com,
 	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH 10/10] xfs: enable non-blocking timestamp updates
-Date: Wed, 17 Dec 2025 07:09:43 +0100
-Message-ID: <20251217061015.923954-11-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251217061015.923954-1-hch@lst.de>
-References: <20251217061015.923954-1-hch@lst.de>
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ming.lei@redhat.com
+Subject: [PATCH v2] io_uring: fix nr_segs calculation in io_import_kbuf
+Date: Wed, 17 Dec 2025 14:26:32 +0800
+Message-ID: <20251217062632.113983-1-huang-jl@deepseek.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CADUfDZo4Kbkodz3w-BRsSOEwTGeEQeb-yppmMNY5-ipG33B2qg@mail.gmail.com>
+References: <CADUfDZo4Kbkodz3w-BRsSOEwTGeEQeb-yppmMNY5-ipG33B2qg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,57 +53,87 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-HM-Tid: 0a9b2afd76a809d9kunm7763a7da5bff75
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZH0tOVkNDGRlKQkJCSEhMSFYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKTU1VSktDVUlJTVVKQ05ZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=BebRzdm949lKFG8EnAZSqbGzCyYBIhhq6jqON4c/kG0vSIckHACe3sUV4E0QXXXotgmuelZdOBPgEROYqmoYKbRvWLJHxlLwBsPSjJpirtY8olInYvLeYhitVzLVaHojqYntbtEVacxnYkNB891XBL1WszCm5adm6YXqbKccScE=; c=relaxed/relaxed; s=default; d=deepseek.com; v=1;
+	bh=YoEcSZ03rmcNHwq1IcA+cJrOspaCwqjoETaIC7FIqgQ=;
+	h=date:mime-version:subject:message-id:from;
 
-The lazytime path using the generic helpers can never block in XFS
-because there is no ->dirty_inode method that could block.  Allow
-non-blocking timestamp updates for this case by replacing
-generic_update_times with the open coded version without the S_NOWAIT
-check.
+io_import_kbuf() calculates nr_segs incorrectly when iov_offset is
+non-zero after iov_iter_advance(). It doesn't account for the partial
+consumption of the first bvec.
 
-Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+The problem comes when meet the following conditions:
+1. Use UBLK_F_AUTO_BUF_REG feature of ublk.
+2. The kernel will help to register the buffer, into the io uring.
+3. Later, the ublk server try to send IO request using the registered
+   buffer in the io uring, to read/write to fuse-based filesystem, with
+O_DIRECT.
+
+From a userspace perspective, the ublk server thread is blocked in the
+kernel, and will see "soft lockup" in the kernel dmesg.
+
+When ublk registers a buffer with mixed-size bvecs like [4K]*6 + [12K]
+and a request partially consumes a bvec, the next request's nr_segs
+calculation uses bvec->bv_len instead of (bv_len - iov_offset).
+
+This causes fuse_get_user_pages() to loop forever because nr_segs
+indicates fewer pages than actually needed.
+
+Specifically, the infinite loop happens at:
+fuse_get_user_pages()
+  -> iov_iter_extract_pages()
+    -> iov_iter_extract_bvec_pages()
+Since the nr_segs is miscalculated, the iov_iter_extract_bvec_pages
+returns when finding that i->nr_segs is zero. Then
+iov_iter_extract_pages returns zero. However, fuse_get_user_pages does
+still not get enough data/pages, causing infinite loop.
+
+Example:
+  - Bvecs: [4K, 4K, 4K, 4K, 4K, 4K, 12K, ...]
+  - Request 1: 32K at offset 0, uses 6*4K + 8K of the 12K bvec
+  - Request 2: 32K at offset 32K
+    - iov_offset = 8K (8K already consumed from 12K bvec)
+    - Bug: calculates using 12K, not (12K - 8K) = 4K
+    - Result: nr_segs too small, infinite loop in fuse_get_user_pages.
+
+Fix by accounting for iov_offset when calculating the first segment's
+available length.
+
+Fixes: b419bed4f0a6 ("io_uring/rsrc: ensure segments counts are correct on kbuf buffers")
+Signed-off-by: huang-jl <huang-jl@deepseek.com>
 ---
- fs/xfs/xfs_iops.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ v2: Optimize the logic to handle the iov_offset and add Fixes tag.
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index e12c6e6d313e..7b6aa438cebc 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1195,16 +1195,24 @@ xfs_vn_update_time(
+ > Please add a Fixes tag
  
- 	trace_xfs_update_time(ip);
+ Thanks for your notice, this is my first time to send patch to linux. I
+ have add the Fixes tag, but not sure if I am doing it correctly.
+
+ > Would a simpler fix be just to add a len += iter->iov_offset before the loop?
  
--	if (flags & S_NOWAIT)
--		return -EAGAIN;
--
- 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
--		if (!((flags & S_VERSION) &&
--		      inode_maybe_inc_iversion(inode, false)))
--			return generic_update_time(inode, flags);
-+		int updated = flags;
-+
-+		error = inode_update_timestamps(inode, &updated);
-+		if (error)
-+			return error;
-+
-+		if (!(updated & S_VERSION)) {
-+			if (updated)
-+				mark_inode_dirty_time(inode, updated);
-+			return 0;
-+		}
+ Great suggestion! I have tried it, and also fix the bug correctly.
+
+ io_uring/rsrc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index a63474b331bf..41c89f5c616d 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1059,6 +1059,7 @@ static int io_import_kbuf(int ddir, struct iov_iter *iter,
+ 	if (count < imu->len) {
+ 		const struct bio_vec *bvec = iter->bvec;
  
- 		/* Capture the iversion update that just occurred */
- 		log_flags |= XFS_ILOG_CORE;
-+	} else {
-+		if (flags & S_NOWAIT)
-+			return -EAGAIN;
- 	}
- 
- 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
++		len += iter->iov_offset;
+ 		while (len > bvec->bv_len) {
+ 			len -= bvec->bv_len;
+ 			bvec++;
 -- 
-2.47.3
+2.43.0
 
 

@@ -1,174 +1,197 @@
-Return-Path: <io-uring+bounces-11154-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11155-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7D2CC8C45
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 17:29:22 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF661CC9325
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 19:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 96B1C3031B7E
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 16:29:19 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 56B9D3034D4A
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 18:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402D634D4F0;
-	Wed, 17 Dec 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FC327465C;
+	Wed, 17 Dec 2025 18:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kjRhehD8"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DKxXI9t8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com [209.85.167.194])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309F134D930
-	for <io-uring@vger.kernel.org>; Wed, 17 Dec 2025 16:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765988765; cv=none; b=KhrrV7+iaOeXJScN0JjOGZXXuk2AmV4DNf+4mK0M/LvLg4uByiEKL3AT8YbH7sesoOYms6DT376W9VWQHT/LbbT+/Q05kGqkmy+PqjjdFUi8/wv5S4IOG+q4INvYvTDJkZ+skrcZfwX5bHbDyBKuLmZG9w9Q3kfO6IL3t9x3dKk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765988765; c=relaxed/simple;
-	bh=QpVb6dZ4gIZn7HvIi025+ZqIR20UX4OBHP1VIRnbcZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZCe+RD9P9kGL4xdtha8Q7h5Tzk1Wt0SKn1UasXt9l+YXKdueg3lCx7eoEPC2FM7cKvVi0o1ZdCeJvCxQ0jCS039Xk1nLhR54DL+9SHE5WXfOaiK6xq/zt55ZZxRehlnAJ7osv9FXBeBo2PpYTjtF4Wf5LtfFa8FQY8YKl7a3AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kjRhehD8; arc=none smtp.client-ip=209.85.167.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f194.google.com with SMTP id 5614622812f47-4511744b411so3047846b6e.3
-        for <io-uring@vger.kernel.org>; Wed, 17 Dec 2025 08:26:01 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6BB21638D
+	for <io-uring@vger.kernel.org>; Wed, 17 Dec 2025 18:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765994924; cv=pass; b=F5RkMqr0Xq/hJB+w5vi9qX+O2ZsPDixz36iah8RXKU7uvLaP2PZuB+kmhN0AgY1JE+AjOxVFX7ALmnDjOHlTw+orq+OKwSfMhk4wnwDXyROuGziRfAokkRdX2f0Z39VRqQUIjB+9LofLg/i/B3yM9Sv4JxZOac+52+FAEvVxuYE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765994924; c=relaxed/simple;
+	bh=+f6pLDVxKmDdrAafhiTaO1qCMRLoArlFFjmv+gfeZ3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E0dSg+wcTFUWB6rDrxBdC/TL5/FaXpMM0IWYIl5v1+tjd9UjgWYiPoxF3aFZRLHn5xW8u1zSSH6MopTOdsUQAvAlJL29a/czbTM079CGMNYUKXO1S0fQ0sp644Rbw/TZrrJmRKRWYx7YVnEVowptxIYtQQlRhlSyAQTNZKkMPiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DKxXI9t8; arc=pass smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c03ea3b9603so409942a12.2
+        for <io-uring@vger.kernel.org>; Wed, 17 Dec 2025 10:08:42 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1765994922; cv=none;
+        d=google.com; s=arc-20240605;
+        b=cladP/CXyTsDIHRI32G4cXuasCokB2nTRWxJJMBPQjTOJjah3X/P/jPtaxHpNpqn/l
+         ehb0kk4HPwdWSpNbNugxbcOP+A9zk6R/ACHpuSKNYS4H37ouUba3cYJ1Ps0iPHZmD3of
+         kY38VYYUrXR9aJgyVlM3zDxfiMSn05pIYwDW2kOr54xrACG1JxZqAk793vhg173r3IZW
+         XJq+Q9QpZT6lsPYgcYjCXz2N5x4kPRynm695dDBcS4WH2uUmq2UxfpZoUM4sI5sCU9Uy
+         sWlv3myU6X1EivpC6WXxwSlJL6o+rCqcFrrogaWENt+qI/yrwrG5pIdwBDiUwAYShKyX
+         K3Xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=sqXX5V0y/GmAHw/j5eBR5l0SkO/n2/9GJRWX/yrGrAk=;
+        fh=cpXamI8UV3Sa11107pY+zhFA5hUwtAJpII0ZOTEVBEo=;
+        b=lriWgfKGVBFAsRfkuZbjDzPDAqh4Qx4a01+M9CH4xpKa7kir9EXZxy90arHbeJvxqU
+         Uy3GkT7CB0x7O90WNwFvBcbV8HpSkvVf3oIT8y7xaTyd16fFWdRWcgtDbXFas3GwDl8r
+         8a98Dfgpxlr7iQ8aCmCCpFfdxYkgy/gmCsf1pESsisS/Zzbg9oWwi9lvadBc70s+xZ1v
+         EBn5IgNLTcmQFD48muICc1BFgwuPdmygRcsCU+fbal+uGglfvHVeb7LGgWgEZWU2wSTN
+         heOnBJRgqgVDXyxCB67IavTTansr3iCvwhGjcys8QbBWe0TyJvF1yN5mPZzgTbHbII9B
+         60/A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765988761; x=1766593561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=otpHvvceBIgaUYg2RTGFQXfdQlnmB5ZOpMfY+5dD12w=;
-        b=kjRhehD8fDmrEnR0tyOghjaDzO62x7MyP2DjP8+j4kGMJpq/vmsWoV6URgCnPCnSW+
-         olACEoSfJmQX/zMM56ZySTfrTOwYNX6Bd/lB4HXEeK39yvHDUwu81eWEE9XoawpR+JSm
-         HXDEKnYyBhVIdkQAZ1QRprJNYlFQPbpqYUxg+IaU7O5Zol58VG2el5C8xOlfk+h3T90K
-         YxXvpMnHLLATOlZFZR3/ZChiH9WZ+NX7dcMgDDxd4nmw/3z49uF2XZAO2YjmYmxKJBON
-         fwwyN8bJVl6EVRmOaISDdCD4CzE6UYkq6iO7f7zGr3vLI2F3oZn/fa4QS9+mATSdSKp9
-         2spw==
+        d=purestorage.com; s=google2022; t=1765994922; x=1766599722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sqXX5V0y/GmAHw/j5eBR5l0SkO/n2/9GJRWX/yrGrAk=;
+        b=DKxXI9t8XJzVRUS0167Ks7m79PfxN9v7pEOD69gN9gE57SrISqETFDvbvUWBw2vK6Y
+         kncb8UkkXDtIfj8I9c+aUjqH+1v95F+8mj3DNOlrWYJGuuszHPqs0OTlst2ZOTFvLmAF
+         3XhSxgVUFik4IwtKUuc8mWDLofYyWWH40z7jEefY3zbJ0/CRlaMxC3SCWAq+IniDRln/
+         Ghh1DLQfF/tARimFMI30tICquIXXd6nO1B76GdfDurO1s2O12eIFCjuPtutPqvXlwCCb
+         eox5qfkGbg2o26JEsC7l07nmE5H7YxcoRc6z+QjE7bacnPduCmLxcOoI3s2P+jMnC45k
+         b6jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765988761; x=1766593561;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=otpHvvceBIgaUYg2RTGFQXfdQlnmB5ZOpMfY+5dD12w=;
-        b=uHSrLks8O3HEqR2NEcJN4n8jCkZTu81i95F3UPFZJUMw6LYuNtDHm/ZUvRMzDbXs+4
-         +F+u/A0yy3uC2DM5wBHplgawHwqUdRi95vq0OD3QR/1TdgRagTf9m/2dHI5NFOroFtxR
-         oo5d8esvAwHRx1ZXDL2GQVSIZfIF1qo6OWXjHuJaflXwq8UTZKbMF5RV1BbUuhf1IJcH
-         1Rvf3oc+uWB8RMEB/mSfECauW6wmH6CUorFpFmFt8gccBh18DCVKClUxGDzpBBYHaeYE
-         ZUO0UAAS51wIGkK9v/kS7Jvs0dRGB3GPF9rB311mKwVp9UGZXPV8w0BDQqnrElF4DPi8
-         y+JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVs0lU3kTIPm/WryDjuhqGRstiRlg2Mmv+t8B6DMMvvTbjjTUicVrzJNvsQuTZgh1PD/K4TfrmhvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0rGqLD1jHqLwLzPBKWtyga4QzqKQzHUG1y6mVvtb2Fj7WeLDY
-	/A9uefNcfOGSDk0Py1vi2hFHQUDH130pqOu+AKhWy2baJmuTBB2INFEUPtiWHYCyBMs=
-X-Gm-Gg: AY/fxX7IdNTI4/fmbqcMwCFPnzNtnPgICpMLUF320d8oOkARge95Mo15kZywer5LTR8
-	44NMCGFzcgEcgHDph55t1n++AKtQ+x8quiGHCGP2y8zsnHNcpGti7JIp+gRCdz69uyol2O9wMW5
-	VPsyg/BmKnhHPJOpw9x2eTxI7+1ViGWNnuVrbBT/NPfJXkBTtZUhRwHfckxG6qGpD2zsffsIRnf
-	aSktzPDWOgaCQtDD3DYKtzU8c7vAtmu2V63rgNGC7lZm4ATZ53oTCHk9J8sjIaO262YLSKEkTWM
-	nx8ZHjgD7mCr531VMcAtp8lyRUJuJP7igRHj96Z9gioIRX2JDPDrX+5WlzsdLIW0nNMTooe0aUV
-	iSoPnZXaOq/CZ2TJwa3cp6zoxqqyFJyZ/skKxVDtZA8TLQfWC5fz1LIxHA5BnedCwhZLbs3UTre
-	bTjNq8YMw=
-X-Google-Smtp-Source: AGHT+IENQMcU6HhDqloZhOktPeqqzKv1O64BdfG00kyEAZ0dBQ+tTTSihdb4MowuI2rVdfHQBXjgQA==
-X-Received: by 2002:a05:6808:398c:b0:453:7a2a:6453 with SMTP id 5614622812f47-455ac989103mr9246492b6e.46.1765988761000;
-        Wed, 17 Dec 2025 08:26:01 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3f614e374ffsm8570875fac.16.2025.12.17.08.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Dec 2025 08:26:00 -0800 (PST)
-Message-ID: <9a8418d8-439f-4dd2-b3fe-33567129861e@kernel.dk>
-Date: Wed, 17 Dec 2025 09:25:59 -0700
+        d=1e100.net; s=20230601; t=1765994922; x=1766599722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sqXX5V0y/GmAHw/j5eBR5l0SkO/n2/9GJRWX/yrGrAk=;
+        b=vjMR3girq/KGcNiEZCYWhB824i0KAWaxXobewqNIQ4iFVJMfBJYK/hizehn4vwByxn
+         zNqefTu5vK8v+G0QUDPQ5MMtylndKoO8Bp7rPrdNDaEmGCL8IqVp1gvQi7WcUbfh9Ntx
+         kcGCr0YQJv1X+hqU2DvpRLhDuTVjIjnGfDeuP7zAlVEo8OD0goRCrKybWLX7Y5JZs93F
+         WOgbHJLWXc6hAFGdlTfVc/hqzBqIMpiGjTeFbR9OwMwAaarj34++3a+Hi9POzhmBTmgL
+         KyOBp6vhBarKyyoLV7Ftp9ucLZsoa8Vk5WzV3+oFjiX17l9GD4AkoNHewxMwHWU0zJrE
+         DGpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNCuspmS407YrKXoNeMBeLIOh5M6fCwLjaj0mUxV1kgehM39PfZqIIxnCSUrZXea9Rimh5QIrT1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8mrKwIFSvS3TzPXbAC3c2rZN2yUIWG+8KcsjLDcS2is5H1AQ3
+	gMauitutqlfU7tsHQiBBCX0rXiS3j8DmIKBMEn52eerXl07ceA2QMowYfDTlpZlW0MXBrxjCWqx
+	rXNPL7ovLh4OHaFwQfRxFTT3GepeIzyicgCbo6Umu8A==
+X-Gm-Gg: AY/fxX7xkjFc+u9z6pMJ9CRVfTivzXFwDWUg0JeJssJ07QPXDZmhrzCgbTFNP0tgEzA
+	yrUIadxkPagkipytbXw/u4FEZkthC7b78duXCI2vG1MTABWRfYPxsjDwmho9TrACGirufXa5dvx
+	b4smHYJMRMg6XtxtGpzpTMyQILTtD9xFSnQjQRI+hH1Br00kZfpKqfF/jI7dsFQq5246qwCzi0w
+	RyreuFh4HW8p7MYwMg3oE2Y5Tmo24X76781zglYjEyDE6o/e54EepbLBfZKoa7Bm1Zvjfwa
+X-Google-Smtp-Source: AGHT+IEfNta51hA9Bsp9+wHvIltb3Ow9dR8JiCSw1SA+Wjc4E2sA5J/3Z5FAvbHFP6CbaQhfWrshugEFb0ZeTze7pAw=
+X-Received: by 2002:a05:7022:7e84:b0:11e:3e9:3e98 with SMTP id
+ a92af1059eb24-11f34c4b85dmr7340619c88.7.1765994922256; Wed, 17 Dec 2025
+ 10:08:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
-To: Diangang Li <lidiangang@bytedance.com>,
- Fengnan Chang <fengnanchang@gmail.com>, asml.silence@gmail.com,
- io-uring@vger.kernel.org
-Cc: Fengnan Chang <changfengnan@bytedance.com>
-References: <20251210085501.84261-1-changfengnan@bytedance.com>
- <20251210085501.84261-3-changfengnan@bytedance.com>
- <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk>
- <69f81ed8-2b4a-461f-90b8-0b9752140f8d@kernel.dk>
- <0661763c-4f56-4895-afd2-7346bb2452e4@gmail.com>
- <0654d130-665a-4b1a-b99b-bb80ca06353a@kernel.dk>
- <1acb251a-4c4a-479c-a51e-a8db9a6e0fa3@kernel.dk>
- <5ce7c227-3a03-4586-baa8-5bd6579500c7@gmail.com>
- <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk>
- <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com>
- <f763dcd7-dcb3-4cc5-a567-f922cda91ca2@kernel.dk>
- <f2836fb8-9ad7-4277-948b-430dcd24d1b6@bytedance.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f2836fb8-9ad7-4277-948b-430dcd24d1b6@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CADUfDZo4Kbkodz3w-BRsSOEwTGeEQeb-yppmMNY5-ipG33B2qg@mail.gmail.com>
+ <20251217062632.113983-1-huang-jl@deepseek.com>
+In-Reply-To: <20251217062632.113983-1-huang-jl@deepseek.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 17 Dec 2025 10:08:30 -0800
+X-Gm-Features: AQt7F2rHioI0XR9ah-g8QyUNuTK0I0VZ798gZ0CP1QG-6M9_TEXfhBxzPdt27WQ
+Message-ID: <CADUfDZohpg7RUdHfWL2HPFcNwmvSDGz3jMahaT2jD6poCDE4Ug@mail.gmail.com>
+Subject: Re: [PATCH v2] io_uring: fix nr_segs calculation in io_import_kbuf
+To: huang-jl <huang-jl@deepseek.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ming.lei@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/17/25 5:34 AM, Diangang Li wrote:
-> Hi Jens,
-> 
-> We?ve identified one critical panic issue here.
-> 
-> [ 4504.422964] [  T63683] list_del corruption, ff2adc9b51d19a90->next is 
-> LIST_POISON1 (dead000000000100)
-> [ 4504.422994] [  T63683] ------------[ cut here ]------------
-> [ 4504.422995] [  T63683] kernel BUG at lib/list_debug.c:56!
-> [ 4504.423006] [  T63683] Oops: invalid opcode: 0000 [#1] SMP NOPTI
-> [ 4504.423017] [  T63683] CPU: 38 UID: 0 PID: 63683 Comm: io_uring 
-> Kdump: loaded Tainted: G S          E       6.19.0-rc1+ #1 
-> PREEMPT(voluntary)
-> [ 4504.423032] [  T63683] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-> [ 4504.423040] [  T63683] Hardware name: Inventec S520-A6/Nanping MLB, 
-> BIOS 01.01.01.06.03 03/03/2023
-> [ 4504.423050] [  T63683] RIP: 
-> 0010:__list_del_entry_valid_or_report+0x94/0x100
-> [ 4504.423064] [  T63683] Code: 89 fe 48 c7 c7 f0 78 87 b5 e8 38 07 ae 
-> ff 0f 0b 48 89 ef e8 6e 40 cd ff 48 89 ea 48 89 de 48 c7 c7 20 79 87 b5 
-> e8 1c 07 ae ff <0f> 0b 4c 89 e7 e8 52 40 cd ff 4c 89 e2 48 89 de 48 c7 
-> c7 58 79 87
-> [ 4504.423085] [  T63683] RSP: 0018:ff4efd9f3838fdb0 EFLAGS: 00010246
-> [ 4504.423093] [  T63683] RAX: 000000000000004e RBX: ff2adc9b51d19a90 
-> RCX: 0000000000000027
-> [ 4504.423103] [  T63683] RDX: 0000000000000000 RSI: 0000000000000001 
-> RDI: ff2add151cf99580
-> [ 4504.423112] [  T63683] RBP: dead000000000100 R08: 0000000000000000 
-> R09: 0000000000000003
-> [ 4504.423120] [  T63683] R10: ff4efd9f3838fc60 R11: ff2add151cdfffe8 
-> R12: dead000000000122
-> [ 4504.423130] [  T63683] R13: ff2adc9b51d19a00 R14: 0000000000000000 
-> R15: 0000000000000000
-> [ 4504.423139] [  T63683] FS:  00007fae4f7ff6c0(0000) 
-> GS:ff2add15665f5000(0000) knlGS:0000000000000000
-> [ 4504.423148] [  T63683] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 4504.423157] [  T63683] CR2: 000055aa8afe5000 CR3: 00000083037ee006 
-> CR4: 0000000000773ef0
-> [ 4504.423166] [  T63683] PKRU: 55555554
-> [ 4504.423171] [  T63683] Call Trace:
-> [ 4504.423178] [  T63683]  <TASK>
-> [ 4504.423184] [  T63683]  io_do_iopoll+0x298/0x330
-> [ 4504.423193] [  T63683]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
-> [ 4504.423204] [  T63683]  __do_sys_io_uring_enter+0x421/0x770
-> [ 4504.423214] [  T63683]  do_syscall_64+0x67/0xf00
-> [ 4504.423223] [  T63683]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 4504.423232] [  T63683] RIP: 0033:0x55aa707e99c3
-> 
-> It can be reproduced in three ways:
-> - Running iopoll tests while switching the block scheduler
-> - A split IO scenario in iopoll (e.g., bs=512k with max_sectors_kb=256k)
-> - Multi poll queues with multi threads
-> 
-> All cases appear related to IO completions occurring outside the 
-> io_do_iopoll() loop. The root cause remains unclear.
+On Tue, Dec 16, 2025 at 10:27=E2=80=AFPM huang-jl <huang-jl@deepseek.com> w=
+rote:
+>
+> io_import_kbuf() calculates nr_segs incorrectly when iov_offset is
+> non-zero after iov_iter_advance(). It doesn't account for the partial
+> consumption of the first bvec.
+>
+> The problem comes when meet the following conditions:
+> 1. Use UBLK_F_AUTO_BUF_REG feature of ublk.
+> 2. The kernel will help to register the buffer, into the io uring.
+> 3. Later, the ublk server try to send IO request using the registered
+>    buffer in the io uring, to read/write to fuse-based filesystem, with
+> O_DIRECT.
+>
+> From a userspace perspective, the ublk server thread is blocked in the
+> kernel, and will see "soft lockup" in the kernel dmesg.
+>
+> When ublk registers a buffer with mixed-size bvecs like [4K]*6 + [12K]
+> and a request partially consumes a bvec, the next request's nr_segs
+> calculation uses bvec->bv_len instead of (bv_len - iov_offset).
+>
+> This causes fuse_get_user_pages() to loop forever because nr_segs
+> indicates fewer pages than actually needed.
+>
+> Specifically, the infinite loop happens at:
+> fuse_get_user_pages()
+>   -> iov_iter_extract_pages()
+>     -> iov_iter_extract_bvec_pages()
+> Since the nr_segs is miscalculated, the iov_iter_extract_bvec_pages
+> returns when finding that i->nr_segs is zero. Then
+> iov_iter_extract_pages returns zero. However, fuse_get_user_pages does
+> still not get enough data/pages, causing infinite loop.
+>
+> Example:
+>   - Bvecs: [4K, 4K, 4K, 4K, 4K, 4K, 12K, ...]
+>   - Request 1: 32K at offset 0, uses 6*4K + 8K of the 12K bvec
+>   - Request 2: 32K at offset 32K
+>     - iov_offset =3D 8K (8K already consumed from 12K bvec)
+>     - Bug: calculates using 12K, not (12K - 8K) =3D 4K
+>     - Result: nr_segs too small, infinite loop in fuse_get_user_pages.
+>
+> Fix by accounting for iov_offset when calculating the first segment's
+> available length.
+>
+> Fixes: b419bed4f0a6 ("io_uring/rsrc: ensure segments counts are correct o=
+n kbuf buffers")
+> Signed-off-by: huang-jl <huang-jl@deepseek.com>
+> ---
+>  v2: Optimize the logic to handle the iov_offset and add Fixes tag.
+>
+>  > Please add a Fixes tag
+>
+>  Thanks for your notice, this is my first time to send patch to linux. I
+>  have add the Fixes tag, but not sure if I am doing it correctly.
 
-Ah I see what it is - we can get multiple completions on the iopoll
-side, if you have multiple bio's per request. This didn't matter before
-the patch that uses a lockless list to collect them, as it just marked
-the request completed by writing to ->iopoll_complete and letting the
-reaper find them. But it matters with the llist change, as then we're
-adding the request to the llist more than once.
+Yup, that looks great. That will help figure out which stable kernels
+the patch should be backported to.
 
+Thanks,
+Caleb
 
--- 
-Jens Axboe
+>
+>  > Would a simpler fix be just to add a len +=3D iter->iov_offset before =
+the loop?
+>
+>  Great suggestion! I have tried it, and also fix the bug correctly.
+>
+>  io_uring/rsrc.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index a63474b331bf..41c89f5c616d 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1059,6 +1059,7 @@ static int io_import_kbuf(int ddir, struct iov_iter=
+ *iter,
+>         if (count < imu->len) {
+>                 const struct bio_vec *bvec =3D iter->bvec;
+>
+> +               len +=3D iter->iov_offset;
+>                 while (len > bvec->bv_len) {
+>                         len -=3D bvec->bv_len;
+>                         bvec++;
+> --
+> 2.43.0
+>
 

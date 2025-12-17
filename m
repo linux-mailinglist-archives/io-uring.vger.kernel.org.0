@@ -1,48 +1,48 @@
-Return-Path: <io-uring+bounces-11139-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11140-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0E8CC6306
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 07:12:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D0BCC6376
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 07:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C72153004F00
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 06:12:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C209F31157FB
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 06:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9782D7DE8;
-	Wed, 17 Dec 2025 06:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2EF2D7DD9;
+	Wed, 17 Dec 2025 06:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3uMy43tu"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LmUvmlcM"
 X-Original-To: io-uring@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C172D595D;
-	Wed, 17 Dec 2025 06:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6FB2D77E5;
+	Wed, 17 Dec 2025 06:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765951874; cv=none; b=AmzcpUYbQeV12CtPCzrnwhw2b1ErB0iZaQwB+9pV2j4nfRbmzpaNFc4Mhwu62D3F4VFKYBEH+e+bgvvDFbUPNeekgjgo+2nu4ly68erW6RfWewuPYjEyiRKsqDsfQLqQealByWI10p95RU8BUnIcFAiON89ACLggZQvvedATlgU=
+	t=1765951884; cv=none; b=Zb8MopV4i/c5HLlXncrhxKzBndiFNWPqSw7+iBnQRfW/zidg7bEtlGb76F56gFJjh5EthBfsF75YN3XOsr00pqv2jE+yOwOwfTl6dqUTH0PhNfwiaGA8ss1X4ToaazsXoF4VnTJWovZwM056iooZutpIgU003mPibcJOdMUqWeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765951874; c=relaxed/simple;
-	bh=xNIMQ9oX6UZMvpqduP+chguZeIfSA2FmlH4DM9gf/Ls=;
+	s=arc-20240116; t=1765951884; c=relaxed/simple;
+	bh=RruMgZSxdfaggQ78oUqsYBrAaX0hyCyThWzu3AV5L5M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JWZGoigcNW7d7tkjCK4Pri78QHOUJ79B+OO2MDAlS6uA39XU4HxIKnjSrELJQjDuyVSijAHoF1rmcFuNVxViZms7U9g65iq/zcG8jiUiRr2mIs5vP+OxWzbKm+YB7ig+xuAQ3SoTuPo6oQOxs4oxxzxbsbXEENiiB0Wj1kQoCf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3uMy43tu; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=Wl0ILKjOh0YtaeK3oKMTg0yxlsjQNXg4N81mzVUTegRZxATTfZhZ/m0YbLnWRDll9YRA9/lxXF2xLnsUVjJAAb27qrMgwbJMUJyMTbXL1DcYI9i4eceHDuhP7qSezdz/xbu1nO03WIvXiBdDd7njtI4vzabUJtZHca6XiJjiHI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LmUvmlcM; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Dgb+Cs2DVHaKodOSHcSw7CqUBJciJYNtxOd9f3zqH4U=; b=3uMy43tu0JiMiA+Agk/5SyAu/k
-	tRIRvWkGHpsZ70fQteTUAJS8zbrOcUDTv45m9D8sQ5eKvfhLQSbbBYQ3aaQNPNWaEF7JyYkS6oCiV
-	M3gHjfcv4VLLi2Nb6yPYsb16eHAkH//wUg4MKR6JlQugJEyFbXC2N11qQ6Rn7M8bJVSFjKoMwZsIp
-	hPbVuEAuw0/9zcW/6UuMVz1h5zSSJ4ZwbCuwVZWTKcEmIXA+aBFn6zPjU2gdvc92YgFiP06+nw7qn
-	lUDPdA4DW+lfL3KVHd/t5je/QgKyM8bDs9HowVygClyd0dw0SrdX/Ndw93uYr0eDENuKo4S7rXdii
-	bs7OLZsg==;
+	bh=NJxCH4Cs09XHq379TlzGggdnfeW+Uk4V3DkiJV5EGqk=; b=LmUvmlcMeQnT+DW7R9+wD/l0lv
+	PrUeS+knoqMVDTztPdmda8tN4cj5d1m7k51KA3byc9oweRjQ+b7GhqMCaqbUiStJ7vlNZdbrlwhuS
+	s+VDLVFF6bAmhjeCaGO0g0XAipNYIS8QYZMAPfkB+fhlgmSWewVWhjszuc3LbTpZSqJ7SEIFvdylV
+	ntiPthftAluFdMygra5e6NXVjh0afektVXaTQxeB2UmWqdLWYeZt7uEs9VqheMFNXx3CEf3op7UT5
+	318TTiZ9dHXpGcUVY8AaKXHYyOlSkM88AdID3PycpcDCJOQpY3iDORIBFvXSV01/zrqwBOXIyS7cY
+	ctVIn6ug==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vVkkf-00000006DkC-32tL;
-	Wed, 17 Dec 2025 06:11:10 +0000
+	id 1vVkkp-00000006DpG-1aBb;
+	Wed, 17 Dec 2025 06:11:20 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -63,9 +63,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-mtd@lists.infradead.org,
 	linux-xfs@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: [PATCH 06/10] fs: factor out a sync_lazytime helper
-Date: Wed, 17 Dec 2025 07:09:39 +0100
-Message-ID: <20251217061015.923954-7-hch@lst.de>
+Subject: [PATCH 07/10] fs: add a ->sync_lazytime method
+Date: Wed, 17 Dec 2025 07:09:40 +0100
+Message-ID: <20251217061015.923954-8-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251217061015.923954-1-hch@lst.de>
 References: <20251217061015.923954-1-hch@lst.de>
@@ -78,126 +78,128 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Centralize how we synchronize a lazytime update into the actual on-disk
-timestamp into a single helper.
+Allow the file system to explicitly implement lazytime syncing instead
+of pigging back on generic inode dirtying.  This allows to simplify
+the XFS implementation and prepares for non-blocking lazytime timestamp
+updates.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fs-writeback.c                | 22 +++++++++++++++-------
- fs/inode.c                       |  5 +----
- fs/internal.h                    |  3 ++-
- fs/sync.c                        |  4 ++--
- include/trace/events/writeback.h |  6 ------
- 5 files changed, 20 insertions(+), 20 deletions(-)
+ Documentation/filesystems/locking.rst |  2 ++
+ Documentation/filesystems/vfs.rst     |  6 ++++++
+ fs/fs-writeback.c                     | 16 +++++++++++++---
+ include/linux/fs.h                    |  1 +
+ 4 files changed, 22 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 77704fde9845..9b2f14ada8cd 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -81,6 +81,7 @@ prototypes::
+ 	ssize_t (*listxattr) (struct dentry *, char *, size_t);
+ 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start, u64 len);
+ 	void (*update_time)(struct inode *, struct timespec *, int);
++	void (*sync_lazytime)(struct inode *inode);
+ 	int (*atomic_open)(struct inode *, struct dentry *,
+ 				struct file *, unsigned open_flag,
+ 				umode_t create_mode);
+@@ -117,6 +118,7 @@ getattr:	no
+ listxattr:	no
+ fiemap:		no
+ update_time:	no
++sync_lazytime:	no
+ atomic_open:	shared (exclusive if O_CREAT is set in open flags)
+ tmpfile:	no
+ fileattr_get:	no or exclusive
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 670ba66b60e4..4509655d12c6 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -486,6 +486,7 @@ As of kernel 2.6.22, the following members are defined:
+ 		int (*getattr) (struct mnt_idmap *, const struct path *, struct kstat *, u32, unsigned int);
+ 		ssize_t (*listxattr) (struct dentry *, char *, size_t);
+ 		void (*update_time)(struct inode *, struct timespec *, int);
++		void (*sync_lazytime)(struct inode *inode);
+ 		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
+ 				   unsigned open_flag, umode_t create_mode);
+ 		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
+@@ -642,6 +643,11 @@ otherwise noted.
+ 	an inode.  If this is not defined the VFS will update the inode
+ 	itself and call mark_inode_dirty_sync.
+ 
++``sync_lazytime``:
++	called by the writeback code to update the lazy time stamps to
++	regular time stamp updates that get syncing into the on-disk
++	inode.
++
+ ``atomic_open``
+ 	called on the last component of an open.  Using this optional
+ 	method the filesystem can look up, possibly create and open the
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 7870c158e4a2..fa555e10d8b9 100644
+index fa555e10d8b9..c2e08eaeadc8 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -1711,6 +1711,16 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
- 	}
+@@ -1717,7 +1717,10 @@ bool sync_lazytime(struct inode *inode)
+ 		return false;
+ 
+ 	trace_writeback_lazytime(inode);
+-	mark_inode_dirty_sync(inode);
++	if (inode->i_op->sync_lazytime)
++		inode->i_op->sync_lazytime(inode);
++	else
++		mark_inode_dirty_sync(inode);
+ 	return true;
  }
  
-+bool sync_lazytime(struct inode *inode)
-+{
-+	if (!(inode_state_read_once(inode) & I_DIRTY_TIME))
-+		return false;
+@@ -2569,16 +2572,20 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 	trace_writeback_mark_inode_dirty(inode, flags);
+ 
+ 	if (flags & I_DIRTY_INODE) {
++		bool was_dirty_time =
++			inode_state_read_once(inode) & I_DIRTY_TIME;
 +
-+	trace_writeback_lazytime(inode);
-+	mark_inode_dirty_sync(inode);
-+	return true;
-+}
-+
- /*
-  * Write out an inode and its dirty pages (or some of its dirty pages, depending
-  * on @wbc->nr_to_write), and clear the relevant dirty flags from i_state.
-@@ -1750,17 +1760,15 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 	}
+ 		/*
+ 		 * Inode timestamp update will piggback on this dirtying.
+ 		 * We tell ->dirty_inode callback that timestamps need to
+ 		 * be updated by setting I_DIRTY_TIME in flags.
+ 		 */
+-		if (inode_state_read_once(inode) & I_DIRTY_TIME) {
++		if (was_dirty_time) {
+ 			spin_lock(&inode->i_lock);
+ 			if (inode_state_read(inode) & I_DIRTY_TIME) {
+ 				inode_state_clear(inode, I_DIRTY_TIME);
+ 				flags |= I_DIRTY_TIME;
++				was_dirty_time = true;
+ 			}
+ 			spin_unlock(&inode->i_lock);
+ 		}
+@@ -2591,9 +2598,12 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 		 * for just I_DIRTY_PAGES or I_DIRTY_TIME.
+ 		 */
+ 		trace_writeback_dirty_inode_start(inode, flags);
+-		if (sb->s_op->dirty_inode)
++		if (sb->s_op->dirty_inode) {
+ 			sb->s_op->dirty_inode(inode,
+ 				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
++		} else if (was_dirty_time && inode->i_op->sync_lazytime) {
++			inode->i_op->sync_lazytime(inode);
++		}
+ 		trace_writeback_dirty_inode(inode, flags);
  
- 	/*
--	 * If the inode has dirty timestamps and we need to write them, call
--	 * mark_inode_dirty_sync() to notify the filesystem about it and to
--	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
-+	 * For data integrity writeback, or when the dirty interval expired,
-+	 * ask the file system to propagata lazy timestamp updates into real
-+	 * dirty state.
- 	 */
- 	if ((inode_state_read_once(inode) & I_DIRTY_TIME) &&
- 	    (wbc->sync_mode == WB_SYNC_ALL ||
- 	     time_after(jiffies, inode->dirtied_time_when +
--			dirtytime_expire_interval * HZ))) {
--		trace_writeback_lazytime(inode);
--		mark_inode_dirty_sync(inode);
--	}
-+			dirtytime_expire_interval * HZ)))
-+		sync_lazytime(inode);
- 
- 	/*
- 	 * Get and clear the dirty flags from i_state.  This needs to be done
-diff --git a/fs/inode.c b/fs/inode.c
-index 2c0d69f7fd01..f1c09fc0913d 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1979,11 +1979,8 @@ void iput(struct inode *inode)
- 	if (atomic_add_unless(&inode->i_count, -1, 1))
- 		return;
- 
--	if ((inode_state_read_once(inode) & I_DIRTY_TIME) && inode->i_nlink) {
--		trace_writeback_lazytime_iput(inode);
--		mark_inode_dirty_sync(inode);
-+	if (inode->i_nlink && sync_lazytime(inode))
- 		goto retry;
--	}
- 
- 	spin_lock(&inode->i_lock);
- 	if (unlikely((inode_state_read(inode) & I_DIRTY_TIME) && inode->i_nlink)) {
-diff --git a/fs/internal.h b/fs/internal.h
-index ab638d41ab81..18a062c1b5b0 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -214,7 +214,8 @@ bool in_group_or_capable(struct mnt_idmap *idmap,
- /*
-  * fs-writeback.c
-  */
--extern long get_nr_dirty_inodes(void);
-+long get_nr_dirty_inodes(void);
-+bool sync_lazytime(struct inode *inode);
- 
- /*
-  * dcache.c
-diff --git a/fs/sync.c b/fs/sync.c
-index 431fc5f5be06..4283af7119d1 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -183,8 +183,8 @@ int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
- 
- 	if (!file->f_op->fsync)
- 		return -EINVAL;
--	if (!datasync && (inode_state_read_once(inode) & I_DIRTY_TIME))
--		mark_inode_dirty_sync(inode);
-+	if (!datasync)
-+		sync_lazytime(inode);
- 	return file->f_op->fsync(file, start, end, datasync);
- }
- EXPORT_SYMBOL(vfs_fsync_range);
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 311a341e6fe4..7162d03e69a5 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -856,12 +856,6 @@ DEFINE_EVENT(writeback_inode_template, writeback_lazytime,
- 	TP_ARGS(inode)
- );
- 
--DEFINE_EVENT(writeback_inode_template, writeback_lazytime_iput,
--	TP_PROTO(struct inode *inode),
--
--	TP_ARGS(inode)
--);
--
- DEFINE_EVENT(writeback_inode_template, writeback_dirty_inode_enqueue,
- 
- 	TP_PROTO(struct inode *inode),
+ 		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 75d5f38b08c9..255eb3b42d1d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2011,6 +2011,7 @@ struct inode_operations {
+ 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
+ 		      u64 len);
+ 	int (*update_time)(struct inode *, int);
++	void (*sync_lazytime)(struct inode *inode);
+ 	int (*atomic_open)(struct inode *, struct dentry *,
+ 			   struct file *, unsigned open_flag,
+ 			   umode_t create_mode);
 -- 
 2.47.3
 

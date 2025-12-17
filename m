@@ -1,151 +1,131 @@
-Return-Path: <io-uring+bounces-11130-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11131-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389A8CC5CB5
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 03:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0788ECC5F05
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 05:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5566D30054A6
-	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 02:42:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B588C300B984
+	for <lists+io-uring@lfdr.de>; Wed, 17 Dec 2025 04:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43EE28003A;
-	Wed, 17 Dec 2025 02:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A6E17B506;
+	Wed, 17 Dec 2025 04:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dieqMWTW"
+	dkim=pass (1024-bit key) header.d=deepseek.com header.i=@deepseek.com header.b="Rvdlxv5u"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m32108.qiye.163.com (mail-m32108.qiye.163.com [220.197.32.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04C72749CB
-	for <io-uring@vger.kernel.org>; Wed, 17 Dec 2025 02:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2013A1E7D;
+	Wed, 17 Dec 2025 04:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765939324; cv=none; b=cKYUEMDCz/YbCt1iAmv/jyWZTPuXbXAB15iRhQbW8V4VSeEx/M5NR93l0HLKTSOJV0OxDw5guGR988dpB5YqD38obYFg0V0jb6sYhXfxWvQAU2fuX0jatpUd0T/Ln195qqjyIhI9+HntJHP4y7dP2T9bdkpeyIbnvX4mxS9FZ0o=
+	t=1765944153; cv=none; b=CwrY8RMv3CjnpPQufuFyQOUrAbTQkTazEPsDU2QnqwQQVp4NpOpCvlLrHHw2wp58Bw9mJwoQ/LA2nNC1G2/Vbx9Ej53hsr+XIUlFWqCbcA9yRwVF8oB5WHAC/Kpn3mqzgC5qhTeYgc6MJOMVVUQ0ExpYf427vHQBRVHru0KFAAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765939324; c=relaxed/simple;
-	bh=OxQColHWX4V5TFbL+PFCdxoTABwl9zclMt/do34CcTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fv878MAumuH9xT6PD+K8Z7iHvQDks/qeRWUvWjt8+imX2uSFjMf3RXgNiKwJ2s6PTT3vavx99JtDGi8LcnXO/eEr/AV6anw9lZE44Thz2tdCFvHCwD7CzasQ748ogsVv+1qdi+bLRN69kKBCj/4NfpvEA+2jiTO8qcEBxwx1S3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dieqMWTW; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b2ea5a44a9so570051685a.0
-        for <io-uring@vger.kernel.org>; Tue, 16 Dec 2025 18:42:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765939319; x=1766544119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OxQColHWX4V5TFbL+PFCdxoTABwl9zclMt/do34CcTk=;
-        b=dieqMWTWuAs0V52OvYrrECh0iZOAAozD2fkkCcwUcJwfMIbs3e/euqLJzQT8r4A3XB
-         X3lEVcMDahiaEM+tuPIFziz21zS/8FwUimfkYTCu+KXQossoWSu2R0HiAPWHSldYOmcz
-         xIqT414pMCzWJjUC9m6fj9xtwaBwNvrx+hzXik4KL348aGu45ZFhIse2GKhWSOsMvCxN
-         je8qu57ztTpAxUoiCQhIlMN4ESwwTuBsqQzNSDe+6V/mRY4jIMil/tLoDI39qg17fD6k
-         fhRdGR8+Sz2qyIboO597YBNS8k7jZBzewAvkoy81WCSugpO01RrbaImmNimtLhltwfpr
-         /tfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765939319; x=1766544119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OxQColHWX4V5TFbL+PFCdxoTABwl9zclMt/do34CcTk=;
-        b=ilrMTUl4OzyLcax56gN7rf5wf08QlaX+m1PIn8by5srArgGLTTbKQI91F0UHRHRbfP
-         2rBDGJ0/58rw0LP/fMYOrBJIPq9JaEvYXGkCMF1loJ5/0pdLzoLWL1zysVCJ0nEdHNBf
-         xZWDXHU/uGFXpGQVfDFfaqzXUjWfIz3AVvLrUjwRVW1a2O+V5k7oDPrC8pZ40Hw02ABS
-         CQBvACKxjTp6glgwsT2bnKtBA03fO8cj3exhUDeBmLaiO9QYZBSZ8zs92dqYOkP8jQQn
-         tnj1YZ9D7w0c2NmcFWi5ftZiEj7uvxAimvqqqbDQi01eF52xoLNFWK37alL46g3OVY7Z
-         YQBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvIRBCXnItSNkmPF3z8F46+7xIntdv4R11eaKKUu/SDrv+a/aA9G0E6gO+JMcye1VnG9xhz+RVfg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTvaNBq+mQg3CxrETWUu8R3PIe9pnqAZ/Ivvamg/6s4Yxi9PHd
-	soWVQGPqg0gVHrYPSYX+HaOKcmi08Zh8+nZNTlEFwPTNyE4hxI0XMu8iqGDSJCRs78R44xHUIMR
-	OLACCeN/h86R4fPMdBw15ZLDrRYb4P+o=
-X-Gm-Gg: AY/fxX7A5mXdAlDkoOiAhuMjR3IxKr3RD1vUSdYMH6QNZfPl/N0ViyNnvZ3qeRUKIMc
-	wTsR6DWwrqDeEu50Q/RK/0vD/BFWTkMGbT0+BSlGODZFfcRiIqDVRQ6NUhbI1x45SfyvJjFtPMV
-	xyRBAmbIyYWqPCiEd12vhcEthFhkcBY0pJuo30rNaAy/srqICoJSeDk5dh/2xv+5dx9iD09ghx/
-	uJbhYbu4clnZvt0ThtRBINp6jKvXa9IBv/x9W0cQV+E1DM5pCjv6wqYTbuxcHJ9aZmhiLXF+RE1
-	uuZOF5Y5uf8=
-X-Google-Smtp-Source: AGHT+IGgXEKvIvZl87EjWOSX+RCgpRrL07bBDB/sBjhGm1WPfeJ5ziBAiz+jZdONlrvxRzCarYlwfNik2eJ8MNA9Ymw=
-X-Received: by 2002:a05:622a:1e96:b0:4ee:12e0:f071 with SMTP id
- d75a77b69052e-4f1d04a585cmr261930251cf.20.1765939318596; Tue, 16 Dec 2025
- 18:41:58 -0800 (PST)
+	s=arc-20240116; t=1765944153; c=relaxed/simple;
+	bh=vzre6JxHrRIZk+8E8PU833QzBmMhEHDifh0h15w2tzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FB4akrIA5d1w9nKXfIqBAAmhPbwi6a5kH8pavd3sRpt47CpOi9Lg0agPLDPAO0l9KOyCcMV8W+1BNjfO80eBtTm7pekc/VJce+Im4gHg+ii3VRBIFY2Mz4f9ZyyOLZOWUaicPlqjQg3MGRNy/Oc8DRLq/cM+4qTgvuuOqBr/xGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deepseek.com; spf=pass smtp.mailfrom=deepseek.com; dkim=pass (1024-bit key) header.d=deepseek.com header.i=@deepseek.com header.b=Rvdlxv5u; arc=none smtp.client-ip=220.197.32.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deepseek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepseek.com
+Received: from localhost.localdomain (unknown [124.243.134.172])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2d83fae2e;
+	Wed, 17 Dec 2025 11:26:55 +0800 (GMT+08:00)
+From: huang-jl <huang-jl@deepseek.com>
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk,
+	ming.lei@redhat.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huang-jl <huang-jl@deepseek.com>
+Subject: [PATCH 01/01] io_uring: fix nr_segs calculation in io_import_kbuf
+Date: Wed, 17 Dec 2025 11:26:17 +0800
+Message-ID: <20251217032617.162914-1-huang-jl@deepseek.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215200909.3505001-1-csander@purestorage.com>
- <20251215200909.3505001-7-csander@purestorage.com> <CAJnrk1Zhku-_ayXqCisYOCWnDf31YDyiWWEHJeMU=BDYoQR9mA@mail.gmail.com>
- <CADUfDZr_aTixiUQUN0yRj=AbuBLTrgk5SXXsjwao54ZmMajUOA@mail.gmail.com>
- <CAJnrk1bdkWVLDBrPKFVa7oPNqAw5BCbNo1N393ESp-zQOT0w5A@mail.gmail.com>
- <CAJnrk1Z0so5okNnEERiamB=6C8GBQ9c1nzwnfG5u_7GUoWTNmw@mail.gmail.com> <CADUfDZrK-SQczz7cjjS+SFHUbQ-dpjvtaaNJic1s3nYzokoMEQ@mail.gmail.com>
-In-Reply-To: <CADUfDZrK-SQczz7cjjS+SFHUbQ-dpjvtaaNJic1s3nYzokoMEQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 17 Dec 2025 10:41:47 +0800
-X-Gm-Features: AQt7F2oWEnvAuoqPyFpC6tTtrjupdbYoSFvL5lYJxdFGgSYpEfKeNfxdqCdjsio
-Message-ID: <CAJnrk1ZmSYk09q2CLtBLeDA+hASka-S3K4x08B_+XXzxcOZ5-Q@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b2a58b54309d9kunm0e3fd72959e20d
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTE9CVk5DGUMdSUlDSkxMSVYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSU9VSU9IVUpIT1VKTElZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSk
+	tLVUtZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Rvdlxv5uQJiVRy0yM15u0Gim5iZasNYI+QBwuC4Hx5vtcHcGd/CBFmGjDVSFbBSba11mkHx4lb2jG07d8i6NGfMD4aQeGMVbdwg9OeFJXQ7yNsxR6RfNtPW0cbaqWfls5hAVzJI6QVRSWONkbQGxH/ma5TR2vmi3frZUaMIuPgQ=; c=relaxed/relaxed; s=default; d=deepseek.com; v=1;
+	bh=mhuq6ZuOdqSFVwozXZKr09+qLPZqF/hpqG6Or+TyGwE=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Dec 17, 2025 at 12:03=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> On Tue, Dec 16, 2025 at 12:14=E2=80=AFAM Joanne Koong <joannelkoong@gmail=
-.com> wrote:
-> >
-> > On Tue, Dec 16, 2025 at 3:47=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > On Tue, Dec 16, 2025 at 2:24=E2=80=AFPM Caleb Sander Mateos
-> > > <csander@purestorage.com> wrote:
-> > > >
-> > > > On Mon, Dec 15, 2025 at 8:46=E2=80=AFPM Joanne Koong <joannelkoong@=
-gmail.com> wrote:
-> >
-> > Hmm, thinking about this buffer cloning + IORING_SINGLE_ISSUER
-> > submitter task's buffer unregistration stuff some more though...
-> > doesn't this same race with the corrupted values exist if the cloning
-> > logic acquires the mutex before the submitter task formally runs and
->
-> What do you mean by "before the submitter task formally runs"? The
-> submitter task is running all the time, it's the one that created (or
-> enabled) the io_uring and will make all the io_uring_enter() and
-> io_uring_register() syscalls for the io_uring.
+io_import_kbuf() calculates nr_segs incorrectly when iov_offset is
+non-zero after iov_iter_advance(). It doesn't account for the partial
+consumption of the first bvec.
 
-Ok, that's the part I was missing. I was mistakenly thinking of the
-submitter task as something that gets scheduled in/out for io_uring
-work specifically, rather than being the persistent task that owns and
-operates the ring. That clears it up, thanks.
+The problem comes when meet the following conditions:
+1. Use UBLK_F_AUTO_BUF_REG feature of ublk.
+2. The kernel will help to register the buffer, into the io uring.
+3. Later, the ublk server try to send IO request using the registered
+   buffer in the io uring, to read/write to fuse-based filesystem, with
+O_DIRECT.
 
->
-> > then the submitter task starts executing immediately right after with
-> > the buffer unregistration logic while the cloning logic is
-> > simultaneously executing the logic inside the mutex section? In the
-> > io_ring_ctx_lock_nested() logic, I'm not seeing where this checks
-> > whether the lock is currently acquired by other tasks or am I missing
-> > something here and this is already accounted for?
->
-> In the IORING_SETUP_SINGLE_ISSUER case, which task holds the uring
-> lock is determined by which io_ring_suspend_work() task work item (if
-> any) is running on the submitter_task. If io_ring_suspend_work() isn't
-> running, then only submitter_task can acquire the uring lock. And it
-> can do so without any additional checks because no other task can
-> acquire the uring lock. (We assume the task doesn't already hold the
-> uring lock, otherwise this would be a deadlock.) If an
-> io_ring_suspend_work() task work item is running, then the uring lock
-> has been acquired by whichever task enqueued the task work. And
-> io_ring_suspend_work() won't return until that task releases the uring
-> lock. So mutual exclusion is guaranteed by the fact that at most one
-> task work item is executing on submitter_task at a time.
->
-> Best,
-> Caleb
->
-> >
-> > Thanks,
-> > Joanne
+From a userspace perspective, the ublk server thread is blocked in the
+kernel, and will see "soft lockup" in the kernel dmesg.
+
+When ublk registers a buffer with mixed-size bvecs like [4K]*6 + [12K]
+and a request partially consumes a bvec, the next request's nr_segs
+calculation uses bvec->bv_len instead of (bv_len - iov_offset).
+
+This causes fuse_get_user_pages() to loop forever because nr_segs
+indicates fewer pages than actually needed.
+
+Specifically, the infinite loop happens at:
+fuse_get_user_pages()
+  -> iov_iter_extract_pages()
+    -> iov_iter_extract_bvec_pages()
+Since the nr_segs is miscalculated, the iov_iter_extract_bvec_pages
+returns when finding that i->nr_segs is zero. Then
+iov_iter_extract_pages returns zero. However, fuse_get_user_pages does
+still not get enough data/pages, causing infinite loop.
+
+Example:
+  - Bvecs: [4K, 4K, 4K, 4K, 4K, 4K, 12K, ...]
+  - Request 1: 32K at offset 0, uses 6*4K + 8K of the 12K bvec
+  - Request 2: 32K at offset 32K
+    - iov_offset = 8K (8K already consumed from 12K bvec)
+    - Bug: calculates using 12K, not (12K - 8K) = 4K
+    - Result: nr_segs too small, infinite loop in fuse_get_user_pages.
+
+Fix by accounting for iov_offset when calculating the first segment's
+available length.
+
+Signed-off-by: huang-jl <huang-jl@deepseek.com>
+---
+ io_uring/rsrc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index a63474b33..4eca0c18c 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1058,6 +1058,14 @@ static int io_import_kbuf(int ddir, struct iov_iter *iter,
+ 
+ 	if (count < imu->len) {
+ 		const struct bio_vec *bvec = iter->bvec;
++		size_t first_seg_len = bvec->bv_len - iter->iov_offset;
++
++		if (len <= first_seg_len) {
++			iter->nr_segs = 1;
++			return 0;
++		}
++		len -= first_seg_len;
++		bvec++;
+ 
+ 		while (len > bvec->bv_len) {
+ 			len -= bvec->bv_len;
+-- 
+2.43.0
+
 

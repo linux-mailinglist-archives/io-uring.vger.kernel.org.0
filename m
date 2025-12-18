@@ -1,224 +1,177 @@
-Return-Path: <io-uring+bounces-11160-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11161-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EC7CC9E2F
-	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 01:33:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7627BCC9E89
+	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 01:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 2C80E30088E3
-	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 00:33:12 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 751C83016BAD
+	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 00:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD6115B0EC;
-	Thu, 18 Dec 2025 00:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB65F1F9F7A;
+	Thu, 18 Dec 2025 00:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaSAfCAE"
+	dkim=pass (2048-bit key) header.d=veygax.dev header.i=@veygax.dev header.b="GmOmmj78"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFB91514E4
-	for <io-uring@vger.kernel.org>; Thu, 18 Dec 2025 00:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D311C4A24
+	for <io-uring@vger.kernel.org>; Thu, 18 Dec 2025 00:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766017989; cv=none; b=kBBLZ3f/3EymMqXSMrP6Wvo3toiMHgbYNTbmeBJLVRxOrnMg5YagMhCWMERT8lubCvINMGleI3bMtl2jwbvRONjvzcw0koVXz3Abq5VWVemnlU7h1Owr4CMwlPIHUR5C9nTbjPAvdGffK67lbbuFCTdOM2+wQ34LtZ3EMM/pInc=
+	t=1766018283; cv=none; b=SGiDCFcAgRxCqICm6RIdL/f+K+9LQ3rcrwNoPBaRa7ODVS+CjzMHXcJBhtTFECAY0zCOAarMnQwfNGFYBmU/Nn8T/GyHqOu3ysS4Xop9ICObHumh/BvwNoHRC2SUXevwKdhtAn+j9P3KGIGcEBcjlLOnx09FXC6X2wrVrYwCBa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766017989; c=relaxed/simple;
-	bh=gKed0hLpEVPf6mLXBxmFnjYftNDjUy1iSyO4pVZAVzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUhQXfUzjAdIi/2OTdzAOiNdcnqGucPJ8p23O7CQKX2A8eZpTgCrlXhZIQSvRlprg52o6c0e/tGI52JhcY4XDtsKpEOxIoBn47576nEp1w9e+uU6QAwdeywKPfUIbniyYvrVFVXzMWSilrf6NkrfvEDIMOr8u0EqRreT93ftJaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaSAfCAE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766017986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y9DhaefjBg33wyFqsGGCcJJMfWtOrtMDQ2W3yoF80Zg=;
-	b=FaSAfCAEUeuqIG14jRqVhwlmXzyEgGpLkN1Qm4BkqmEyaadUW3df/60ig2iT9p18cukrxV
-	hB2PFtH7lnxWT7hZHNrTPEPbWEZ1/PGSBM9aQZ5u2VnCE7yOuHCJCtWc2uaD91CE1smfpm
-	sjLmjheHSoPFZoW4yzTcvVE2Q0ElYvY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-120-P5zOtKEQPnWFfq9gLi1Nrg-1; Wed,
- 17 Dec 2025 19:33:03 -0500
-X-MC-Unique: P5zOtKEQPnWFfq9gLi1Nrg-1
-X-Mimecast-MFC-AGG-ID: P5zOtKEQPnWFfq9gLi1Nrg_1766017981
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5EE781800451;
-	Thu, 18 Dec 2025 00:33:01 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.190])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99B5C19560B4;
-	Thu, 18 Dec 2025 00:32:57 +0000 (UTC)
-Date: Thu, 18 Dec 2025 08:32:51 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: veygax <veyga@veygax.dev>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] io_uring/rsrc: fix slab-out-of-bounds in
- io_buffer_register_bvec
-Message-ID: <aUNLs5g3Qed4tuYs@fedora>
-References: <20251217210316.188157-3-veyga@veygax.dev>
+	s=arc-20240116; t=1766018283; c=relaxed/simple;
+	bh=vaQ4o9aWNGv6resPJtyvNjwkTbDcdE/6PspO8fWoKE8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZlFPKqY4/5nI2g5NqWL0bZ+mz9v7qiqnKWxFwBMBH3q0CNWH1ScdD00bQ631dwqe5HFv5fC305mgSg6Eg2VcvuCAhjrUeXV0XnwRaMVCGUSx+DxMip9pI5847/Z/dquXWlUSNo06Euw8oJtKTcZEHUZRzhuyOefF7VTg77A49Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=veygax.dev; spf=pass smtp.mailfrom=veygax.dev; dkim=pass (2048-bit key) header.d=veygax.dev header.i=@veygax.dev header.b=GmOmmj78; arc=none smtp.client-ip=79.135.106.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=veygax.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=veygax.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veygax.dev;
+	s=protonmail; t=1766018272; x=1766277472;
+	bh=vaQ4o9aWNGv6resPJtyvNjwkTbDcdE/6PspO8fWoKE8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=GmOmmj783mgiHbD7SyBA8UepN6VDfEvDJo7RrWLxKhqA7nE9i73HpmLob+oY5ELMC
+	 gX07YZ+Y82tQ0ni9Di1XWzf17AFq5Rf6TN596jzW1vt2A++wWWcWdKZ67cNVzZ7lTD
+	 UX1osd0ZxSZCmFkEnDoU9Jyuav8PjqMveYp/pXEU2zn4KVaZrStOJr8lRfBrXdSnXj
+	 Qbt0+QskNoVgMywYO/ryeUBiFwLiIXS2xW5TfFLV7MAM54i3nryNw5IRLIGbx7XEqk
+	 ssL9zXTxUqRu5DkQ47fHpbL5h+jdfs46/iyimvildZ0ilbgdruZJGuQaNSX9tDjMaF
+	 R8HRfOUCvYLoQ==
+Date: Thu, 18 Dec 2025 00:37:47 +0000
+To: Ming Lei <ming.lei@redhat.com>
+From: veygax <veyga@veygax.dev>
+Cc: Jens Axboe <axboe@kernel.dk>, "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, Caleb Sander Mateos <csander@purestorage.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] io_uring/rsrc: fix slab-out-of-bounds in io_buffer_register_bvec
+Message-ID: <f1522c5d-febf-4e51-b534-c0ffa719d555@veygax.dev>
+In-Reply-To: <aUNLs5g3Qed4tuYs@fedora>
+References: <20251217210316.188157-3-veyga@veygax.dev> <aUNLs5g3Qed4tuYs@fedora>
+Feedback-ID: 160365411:user:proton
+X-Pm-Message-ID: 596fc13347f487cc72429606b1495fdeeda19ddf
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251217210316.188157-3-veyga@veygax.dev>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 17, 2025 at 09:04:01PM +0000, veygax wrote:
-> From: Evan Lambert <veyga@veygax.dev>
-> 
-> The function io_buffer_register_bvec() calculates the allocation size
-> for the io_mapped_ubuf based on blk_rq_nr_phys_segments(rq). This
-> function calculates the number of scatter-gather elements after megine
-> physically contiguous pages.
-> 
-> However, the subsequent loop uses rq_for_each_bvec() to populate the
-> array, which iterates over every individual bio_vec in the request,
-> regardless of physical contiguity.
-> 
-> If a request has multiple bio_vec entries that are physically
-> contiguous, blk_rq_nr_phys_segments() returns a value smaller than
-> the total number of bio_vecs. This leads to a slab-out-of-bounds write.
-> 
-> The path is reachable from userspace via the ublk driver when a server
-> issues a UBLK_IO_REGISTER_IO_BUF command. This requires the
-> UBLK_F_SUPPORT_ZERO_COPY flag which is protected by CAP_NET_ADMIN.
-> 
-> Fix this by calculating the total number of bio_vecs by iterating
-> over the request's bios and summing their bi_vcnt.
-> 
-> KASAN report:
-> 
-> [18:01:50] BUG: KASAN: slab-out-of-bounds in io_buffer_register_bvec+0x813/0xb80
-> [18:01:50] Write of size 8 at addr ffff88800223b238 by task kunit_try_catch/27
+On 18/12/2025 00:32, Ming Lei wrote:
+> Can you share the test case so that we can understand why page isn't merg=
+ed
+> to last bvec? Maybe there is chance to improve block layer(bio add page
+> related code)
 
-Can you share the test case so that we can understand why page isn't merged
-to last bvec? Maybe there is chance to improve block layer(bio add page
-related code)
+Sure, this is how i triggered it:
 
-> [18:01:50]
-> [18:01:50] CPU: 0 UID: 0 PID: 27 Comm: kunit_try_catch Tainted: G                 N  6.19.0-rc1-g346af1a0c65a-dirty #44 PREEMPT(none)
-> [18:01:50] Tainted: [N]=TEST
-> [18:01:50] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
-> [18:01:50] Call Trace:
-> [18:01:50]  <TASK>
-> [18:01:50]  dump_stack_lvl+0x4d/0x70
-> [18:01:50]  print_report+0x151/0x4c0
-> [18:01:50]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [18:01:50]  ? io_buffer_register_bvec+0x813/0xb80
-> [18:01:50]  kasan_report+0xec/0x120
-> [18:01:50]  ? io_buffer_register_bvec+0x813/0xb80
-> [18:01:50]  io_buffer_register_bvec+0x813/0xb80
-> [18:01:50]  io_buffer_register_bvec_overflow_test+0x4e6/0x9b0
-> [18:01:50]  ? __pfx_io_buffer_register_bvec_overflow_test+0x10/0x10
-> [18:01:50]  ? __pfx_pick_next_task_fair+0x10/0x10
-> [18:01:50]  ? _raw_spin_lock+0x7e/0xd0
-> [18:01:50]  ? finish_task_switch.isra.0+0x19a/0x650
-> [18:01:50]  ? __pfx_read_tsc+0x10/0x10
-> [18:01:50]  ? ktime_get_ts64+0x79/0x240
-> [18:01:50]  kunit_try_run_case+0x19b/0x2c0
-> [18:01:50]  ? __pfx_kunit_try_run_case+0x10/0x10
-> [18:01:50]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-> [18:01:50]  kunit_generic_run_threadfn_adapter+0x80/0xf0
-> [18:01:50]  kthread+0x323/0x670
-> [18:01:50]  ? __pfx_kthread+0x10/0x10
-> [18:01:50]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> [18:01:50]  ? __pfx_kthread+0x10/0x10
-> [18:01:50]  ret_from_fork+0x329/0x420
-> [18:01:50]  ? __pfx_ret_from_fork+0x10/0x10
-> [18:01:50]  ? __switch_to+0xa0f/0xd40
-> [18:01:50]  ? __pfx_kthread+0x10/0x10
-> [18:01:50]  ret_from_fork_asm+0x1a/0x30
-> [18:01:50]  </TASK>
-> [18:01:50]
-> [18:01:50] Allocated by task 27:
-> [18:01:50]  kasan_save_stack+0x30/0x50
-> [18:01:50]  kasan_save_track+0x14/0x30
-> [18:01:50]  __kasan_kmalloc+0x7f/0x90
-> [18:01:50]  io_cache_alloc_new+0x35/0xc0
-> [18:01:50]  io_buffer_register_bvec+0x196/0xb80
-> [18:01:50]  io_buffer_register_bvec_overflow_test+0x4e6/0x9b0
-> [18:01:50]  kunit_try_run_case+0x19b/0x2c0
-> [18:01:50]  kunit_generic_run_threadfn_adapter+0x80/0xf0
-> [18:01:50]  kthread+0x323/0x670
-> [18:01:50]  ret_from_fork+0x329/0x420
-> [18:01:50]  ret_from_fork_asm+0x1a/0x30
-> [18:01:50]
-> [18:01:50] The buggy address belongs to the object at ffff88800223b000
-> [18:01:50]  which belongs to the cache kmalloc-1k of size 1024
-> [18:01:50] The buggy address is located 0 bytes to the right of
-> [18:01:50]  allocated 568-byte region [ffff88800223b000, ffff88800223b238)
-> [18:01:50]
-> [18:01:50] The buggy address belongs to the physical page:
-> [18:01:50] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2238
-> [18:01:50] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> [18:01:50] flags: 0x4000000000000040(head|zone=1)
-> [18:01:50] page_type: f5(slab)
-> [18:01:50] raw: 4000000000000040 ffff888001041dc0 dead000000000122 0000000000000000
-> [18:01:50] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-> [18:01:50] head: 4000000000000040 ffff888001041dc0 dead000000000122 0000000000000000
-> [18:01:50] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-> [18:01:50] head: 4000000000000002 ffffea0000088e01 00000000ffffffff 00000000ffffffff
-> [18:01:50] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> [18:01:50] page dumped because: kasan: bad access detected
-> [18:01:50]
-> [18:01:50] Memory state around the buggy address:
-> [18:01:50]  ffff88800223b100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [18:01:50]  ffff88800223b180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [18:01:50] >ffff88800223b200: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
-> [18:01:50]                                         ^
-> [18:01:50]  ffff88800223b280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [18:01:50]  ffff88800223b300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [18:01:50] ==================================================================
-> [18:01:50] Disabling lock debugging due to kernel taint
-> 
-> Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
-> Signed-off-by: Evan Lambert <veyga@veygax.dev>
-> ---
->  io_uring/rsrc.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index a63474b331bf..7602b71543e0 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -946,6 +946,7 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  	struct io_mapped_ubuf *imu;
->  	struct io_rsrc_node *node;
->  	struct bio_vec bv;
-> +	struct bio *bio;
->  	unsigned int nr_bvecs = 0;
->  	int ret = 0;
->  
-> @@ -967,11 +968,10 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  		goto unlock;
->  	}
->  
-> -	/*
-> -	 * blk_rq_nr_phys_segments() may overestimate the number of bvecs
-> -	 * but avoids needing to iterate over the bvecs
-> -	 */
-> -	imu = io_alloc_imu(ctx, blk_rq_nr_phys_segments(rq));
-> +	__rq_for_each_bio(bio, rq)
-> +		nr_bvecs += bio->bi_vcnt;
+#include <kunit/test.h>
+#include <linux/io_uring.h>
+#include <linux/io_uring_types.h>
+#include <linux/io_uring/cmd.h>
+#include <linux/blk-mq.h>
+#include <linux/bio.h>
+#include <linux/bvec.h>
+#include <linux/mm.h>
+#include <linux/slab.h>
 
-This way is wrong, bio->bi_vcnt can't be trusted for this purpose, you may
-have to use rq_for_each_bvec() for calculating the real nr_bvecs.
+#include "io_uring.h"
+#include "rsrc.h"
+
+static void dummy_release(void *priv)
+{
+}
+
+static void io_buffer_register_bvec_overflow_test(struct kunit *test)
+{
+=09struct io_ring_ctx *ctx;
+=09struct io_uring_cmd *cmd;
+=09struct io_kiocb *req;
+=09struct request *rq;
+=09struct bio *bio;
+=09struct page *page;
+=09int i, ret;
+
+=09/*
+=09 * IO_CACHED_BVECS_SEGS is 32.
+=09 * We want more than 32 bvecs to trigger overflow if allocation uses 32.
+=09 */
+=09int num_bvecs =3D 40;
+=09
+=09ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+=09KUNIT_ASSERT_NOT_NULL(test, ctx);
+=09
+=09/* Initialize caches so io_alloc_imu works and knows the size */
+=09if (io_rsrc_cache_init(ctx))
+=09=09kunit_skip(test, "failed to init rsrc cache");
+
+=09/* Initialize buf_table so index check passes */
+=09ret =3D io_rsrc_data_alloc(&ctx->buf_table, 1);
+=09KUNIT_ASSERT_EQ(test, ret, 0);
+
+=09req =3D kunit_kzalloc(test, sizeof(*req), GFP_KERNEL);
+=09KUNIT_ASSERT_NOT_NULL(test, req);
+=09req->ctx =3D ctx;
+=09cmd =3D io_kiocb_to_cmd(req, struct io_uring_cmd);
+
+=09rq =3D kunit_kzalloc(test, sizeof(*rq), GFP_KERNEL);
+=09KUNIT_ASSERT_NOT_NULL(test, rq);
+=09
+=09/* Allocate bio with enough slots */
+=09bio =3D bio_kmalloc(num_bvecs, GFP_KERNEL);
+=09KUNIT_ASSERT_NOT_NULL(test, bio);
+=09bio_init(bio, NULL, bio_inline_vecs(bio), num_bvecs, REQ_OP_WRITE);
+=09rq->bio =3D bio;
+=09
+=09page =3D alloc_pages(GFP_KERNEL | __GFP_COMP | __GFP_ZERO, 6);
+=09KUNIT_ASSERT_NOT_NULL(test, page);
+=09
+=09/*
+=09 * Add pages to bio manually.
+=09 * We use physically contiguous pages to trick blk_rq_nr_phys_segments
+=09 * into returning 1 segment.
+=09 * We use multiple bvec entries to trick the loop in
+io_buffer_register_bvec
+=09 * into writing out of bounds.
+=09 */
+=09for (i =3D 0; i < num_bvecs; i++) {
+=09=09struct bio_vec *bv =3D &bio->bi_io_vec[i];
+=09=09bv->bv_page =3D page + i;
+=09=09bv->bv_len =3D PAGE_SIZE;
+=09=09bv->bv_offset =3D 0;
+=09=09bio->bi_vcnt++;
+=09=09bio->bi_iter.bi_size +=3D PAGE_SIZE;
+=09}
+=09
+=09/* Trigger */
+=09ret =3D io_buffer_register_bvec(cmd, rq, dummy_release, 0, 0);
+=09
+=09/* this should not be reachable */
+=09__free_pages(page, 6);
+=09kfree(bio);
+=09io_rsrc_data_free(ctx, &ctx->buf_table);
+=09io_rsrc_cache_free(ctx);
+}
+
+static struct kunit_case io_uring_rsrc_test_cases[] =3D {
+=09KUNIT_CASE(io_buffer_register_bvec_overflow_test),
+=09{}
+};
+
+static struct kunit_suite io_uring_rsrc_test_suite =3D {
+=09.name =3D "io_uring_rsrc_test",
+=09.test_cases =3D io_uring_rsrc_test_cases,
+};
+
+kunit_test_suite(io_uring_rsrc_test_suite);
+MODULE_LICENSE("GPL");
 
 
-Thanks, 
-Ming
+--=20
+- Evan Lambert / veygax
+
 
 

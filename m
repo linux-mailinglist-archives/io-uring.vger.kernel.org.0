@@ -1,120 +1,82 @@
-Return-Path: <io-uring+bounces-11209-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11210-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0BACCB2E1
-	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 10:32:34 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD79CCB33E
+	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 10:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id DD1AB3031EBF
-	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 09:32:33 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E6D1B300B923
+	for <lists+io-uring@lfdr.de>; Thu, 18 Dec 2025 09:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F653314D9;
-	Thu, 18 Dec 2025 09:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD73328E7;
+	Thu, 18 Dec 2025 09:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NvJUGy+0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gGj3xOQw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB232FF178
-	for <io-uring@vger.kernel.org>; Thu, 18 Dec 2025 09:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45E3321D1;
+	Thu, 18 Dec 2025 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766050346; cv=none; b=iqokpjHwDVlKS84t7sYTk5EeLSK6roSwa9mrHs2uEMRXERb9M6jTQT4iaQLQZG7w0VRj43gerTcdt5ddq7R+99ck/4bIEEqQuT3j9DPh7fdEBCI3l+j2mUGQe/86i7w4EqyqUbL5kU0mtE8TSdy5fZwoCwe/vY3tmwSdYJF7QAA=
+	t=1766050662; cv=none; b=FwkDWE0AkdmD+Gg62vHwKbsHlWeOrLTRs7cBoKbQ3GX61U08ktGJzYHZLQabvHoBxxyktg6ic6SiUY7WRTbpZpbGojxPymX1mHWp7yugdUmut70tU8k6sfRQzfMbBTy7QYG7rBVwQLnesOw498un9RvlNdjwP0PQoa7jy63tumg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766050346; c=relaxed/simple;
-	bh=g41ZRVsdo4l1JscDtGfKbU2nxcNj683tXxZAUCYMEf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rr3gojEiW6/b58BKLVn+sZu+8+Uktc4jGgcPc+EDfki+qnioNvFifCi3GrXbrW49MlJQuj9FYA0C41wkUg7Ef7XOt5qc5ePDK0WzlSI8h/hu/PGvpc3dqPVAAyCbAPrsUzu1M5NfUDUGPipBqykMVdF3fY9RHsrt+qxtKAPsgzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NvJUGy+0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766050343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oo9GDeM4DKKNu1JTi1OaeGMwC5vm+SZqtyFCDYZV+JE=;
-	b=NvJUGy+0wWJrb1Abq0aIjvOFofuOkn6Phe4hxkk3bOwbdW4cernPdbDyMW7DGd8f9GcZ1G
-	Ei4lxkt0ikpsPcfTg0Dv9cr0eBzbVanIi/CgIXHJVnx3ACAAyxgGBB6GBJ9eNbwgJT2ZrF
-	noWM4pPa6ppmW66WVBV2Kxp983ONE80=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-933RWCzLPv2sKXgWiZW0ig-1; Thu,
- 18 Dec 2025 04:32:20 -0500
-X-MC-Unique: 933RWCzLPv2sKXgWiZW0ig-1
-X-Mimecast-MFC-AGG-ID: 933RWCzLPv2sKXgWiZW0ig_1766050339
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9DC531801211;
-	Thu, 18 Dec 2025 09:32:18 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.190])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 763FC1800352;
-	Thu, 18 Dec 2025 09:32:17 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Cc: io-uring@vger.kernel.org,
+	s=arc-20240116; t=1766050662; c=relaxed/simple;
+	bh=vWJ4cdmrkvI4ieVrRawR1MELGR9c1Vn5pY4VhVW6VHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekfep9lAUp7b9M4PIG1sXlzbbRkxClUKuNalUGpe6fgvTibSrmOmxekDsWNRacgsnKtFtl4/yI7MsYnoQy2IcFtBlHzAaE2s8B+Q/2Xx3F4TTfCXApCOuyXrYemZCwjMc1e+RXLZbzKkWM2OEWeK5fQd7dclcKtStNu3tNgsPHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gGj3xOQw; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=418ItCLm0WIHrajf4kTh9NyZoEJJBs0Wd/JaxwLOaGs=; b=gGj3xOQwkoW028tJruEM5PBuPy
+	kizyDSTtj0E5RixCAa1w4GvWnYbehXkjc0k5pl/dDy0ksicUBzewL7eWzScDhZ1ZY5InAMXbhI+Vz
+	roexj5q1+83MGxoZhw9eaaqISnv8PkVuW+3FM6nrEKeYcDYsetGnjQc7J9mtP7CgyQOG3KJx0FlYO
+	gg4oP6xEbv8ae8sJz1KjrEz955itlWyfguAP48vvArMh+VXRi4cqYx2PMQ+vq9uUupy0citqNaeJL
+	uNI++xOSxC3gN0iOqoWakYGH7jUGJHlFf+7CGoyYgnVzLTmCIN95S+Aw/3oeoY0NwsBpENBn5Y2yH
+	1r2gnCaw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vWAS1-000000089zN-3szg;
+	Thu, 18 Dec 2025 09:37:37 +0000
+Date: Thu, 18 Dec 2025 01:37:37 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>,
 	huang-jl <huang-jl@deepseek.com>,
-	Nitesh Shetty <nj.shetty@samsung.com>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 3/3] io_uring: don't re-calculate iov_iter nr_segs in io_import_kbuf()
-Date: Thu, 18 Dec 2025 17:31:44 +0800
-Message-ID: <20251218093146.1218279-4-ming.lei@redhat.com>
-In-Reply-To: <20251218093146.1218279-1-ming.lei@redhat.com>
+	Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [PATCH 1/3] block: fix bio_may_need_split() by using bvec
+ iterator way
+Message-ID: <aUPLYcAx2dh-DvuP@infradead.org>
 References: <20251218093146.1218279-1-ming.lei@redhat.com>
+ <20251218093146.1218279-2-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251218093146.1218279-2-ming.lei@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-We have provide correct byte counts to iov_iter, and it is enough to
-cap the iteration, not necessary to re-calculate exact nr_segs.
+On Thu, Dec 18, 2025 at 05:31:42PM +0800, Ming Lei wrote:
+> ->bi_vcnt doesn't make sense for cloned bio, which is perfectly fine
+> passed to bio_may_need_split().
+> 
+> So fix bio_may_need_split() by not taking ->bi_vcnt directly, instead
+> checking with help from bio size and bvec->len.
+> 
+> Meantime retrieving the 1st bvec via __bvec_iter_bvec().
 
-Especially the previous two patches avoid to use bio->bi_vcnt as
-split hint, and don't use iov_iter->nr_segs to initialize bio->bi_vcnt.
-
-The iov_iter nr_segs re-calculation[1] is added for avoiding unnecessary
-bio split, which is fixed now by the previous two patches.
-
-[1] https://lkml.org/lkml/2025/4/16/351
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- io_uring/rsrc.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index a63474b331bf..ee6283676ba7 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1055,16 +1055,6 @@ static int io_import_kbuf(int ddir, struct iov_iter *iter,
- 
- 	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, count);
- 	iov_iter_advance(iter, offset);
--
--	if (count < imu->len) {
--		const struct bio_vec *bvec = iter->bvec;
--
--		while (len > bvec->bv_len) {
--			len -= bvec->bv_len;
--			bvec++;
--		}
--		iter->nr_segs = 1 + bvec - iter->bvec;
--	}
- 	return 0;
- }
- 
--- 
-2.47.0
+That totally misses the point.  The ->bi_vcnt is a fast and lose
+check to see if we need the fairly expensive iterators to do the
+real check.
 
 

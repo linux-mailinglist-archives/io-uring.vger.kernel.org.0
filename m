@@ -1,66 +1,66 @@
-Return-Path: <io-uring+bounces-11241-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11242-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49403CD39C4
-	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 03:29:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD12CD3FFF
+	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 13:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E0CBE300CB94
-	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 02:28:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 15E81300A34D
+	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 12:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C0F3B1B3;
-	Sun, 21 Dec 2025 02:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792BC125D0;
+	Sun, 21 Dec 2025 12:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M5k0SFts"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bmENUQ6i"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DB613FEE;
-	Sun, 21 Dec 2025 02:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AE8248B;
+	Sun, 21 Dec 2025 12:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766284138; cv=none; b=YXlg+win4Gmql/vpeAYIeymmUXQJQ2gdrIe+DNPXrwS+s+6h6YLtxBHPVfQKq8sf5+BqA4BBvxQ56I4hd7r54CkKi60oReBsfX3iC2TCmCWk7TyO6LsRsdF4UIB53g5QEnEYAEwJnLbVs/T0XJ4f7TUDk2GCPVqFCpyBUnGKzWM=
+	t=1766319861; cv=none; b=s8pLcaJKTBuLnLuKzODIMvRad6vIAjowWQY3ueZiPQzoBlBnmKyKYnuQcZ/ij3ptEToEXQAKdcY32jo3a69oPmhVN3+E0K8MN2H2VR7Ym/sY6b5DwtIJogrGcOLqUIkjM+iBL9KW5s1JLD4mRT6dSWrjnUOY04LQMPpu3BcZNwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766284138; c=relaxed/simple;
-	bh=zWyOdYOZRlqUbz38ByLXJzsPNEXfBPqSvhxivGTIwEo=;
+	s=arc-20240116; t=1766319861; c=relaxed/simple;
+	bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMwLgcqEMKC9tGJRSubBFk52DJm3zLEBLr6gZWQyylKS1g/Q6bifx48+m9oSV8wny1YAIVeDcQdsoZaIa1lp+fSp4Ema5mf7hBCakuuPAhyfQmJK8fb3RygBFzO6Q+N+KZpt3xfhweVxpKiE5gO4j/wF+iMIaQ0xDyWV/7Kt8nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M5k0SFts; arc=none smtp.client-ip=198.175.65.21
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtXD/c9g2wT4AZJyece+/7inW3T+EdjWxq/ooAuSy3qf+sAvEP0kOgTVyw99Nvrb4xccPqI7y8FO0Sc9vxOntCdYPK2nMCYfJh3O57KqGiguoBBM2qWVMLKXE32qb3YgnfsctdwaakiumYcQBy3lPzHpMXi14cVEWQhl4GSnCPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bmENUQ6i; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766284136; x=1797820136;
+  t=1766319858; x=1797855858;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=zWyOdYOZRlqUbz38ByLXJzsPNEXfBPqSvhxivGTIwEo=;
-  b=M5k0SFts1dZqYYG7zBK+vgEW+q27Lq1F0EUbNI7jOskXOwhkxJ51LEKP
-   +I55TejDZvvuYcdMOVnDvMD040T/GkgPL/kmf9LfpAkfiU/ehsKdbhJNE
-   hh4YxjY2feBSo9hfg9+dVCYBhs6k9R3gVxKF6W289LVscXoenquvnMGYj
-   PhDVMmNcCyPZ2Z6lh4euAU3jKZHiuN8QifPCXSGxYgehzIw7FBebJE45p
-   GOGzqHANBFSgt4aGRGtx8XyHSVhhi6FNDn4utF/RcQZWvj3kBBETFUq2u
-   soCNhoQnuI2m9rQyfXOYbFiEvVHqQ3x3W7UB6V/D83F8CuTf0VAcUoPOo
-   A==;
-X-CSE-ConnectionGUID: hvUoNfwQSZqjkqukg15kVQ==
-X-CSE-MsgGUID: ELEHYw3IS9GnDsJ5Ai8mWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="68128990"
-X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; 
-   d="scan'208";a="68128990"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 18:28:55 -0800
-X-CSE-ConnectionGUID: Lxp/T6RbTMyH3M7dsh0EBQ==
-X-CSE-MsgGUID: XQdHALwPQQ+4ydY6QC/i8A==
+  bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
+  b=bmENUQ6idBkqr8vj/HFb2l29135DrShlSUn2yVe3u+4jTuHymqvOV34u
+   moWn9c0bdRiRigWb2g2d119lJ0JVzIhZkgJwx049h452Lrk4RflDmpTYe
+   xfW7Kf9o9+y1vARH/uKzZz4T9JjMCfOXPZRk9rdhT94NSW5Ou2q7z1V5l
+   9oUSGBoRIsgEFd798id/9UWnRyzStC6H553ECgJhJipUns1a/4TEflE7C
+   j4koM0HwODSvrQw5aP33/WRaOlkGq5kYSMm1ZH7RQJUdjXcwFo5/jf4AN
+   y4Gvl4M/dlOaldV9HQIMsjD9jpoKXqUhOS1lRvdo66dikP4HESNWUughO
+   w==;
+X-CSE-ConnectionGUID: MrL2bqA4Tke5d3624LMkZw==
+X-CSE-MsgGUID: VfW9qEYzT4mLvFTiQ2neHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="67199236"
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="67199236"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2025 04:24:17 -0800
+X-CSE-ConnectionGUID: jvwbb3CURKqpeThAKD+q+Q==
+X-CSE-MsgGUID: 7Qmy7wJaQtSTB/iaeJERKQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="203727498"
-Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
-  by orviesa004.jf.intel.com with ESMTP; 20 Dec 2025 18:28:53 -0800
-Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
+   d="scan'208";a="199590146"
+Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Dec 2025 04:24:15 -0800
+Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1vX9Bi-000000004u0-3gxE;
-	Sun, 21 Dec 2025 02:28:50 +0000
-Date: Sun, 21 Dec 2025 03:28:25 +0100
+	id 1vXITs-000000005fB-3hXj;
+	Sun, 21 Dec 2025 12:24:12 +0000
+Date: Sun, 21 Dec 2025 20:24:05 +0800
 From: kernel test robot <lkp@intel.com>
 To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -68,10 +68,10 @@ Cc: oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
 	asml.silence@gmail.com, io-uring@vger.kernel.org,
 	csander@purestorage.com, xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 25/25] docs: fuse: add io-uring bufring and zero-copy
- documentation
-Message-ID: <202512210331.Yc46M5Rg-lkp@intel.com>
-References: <20251218083319.3485503-26-joannelkoong@gmail.com>
+Subject: Re: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+Message-ID: <202512212016.Nbc4ikuj-lkp@intel.com>
+References: <20251218083319.3485503-4-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251218083319.3485503-26-joannelkoong@gmail.com>
+In-Reply-To: <20251218083319.3485503-4-joannelkoong@gmail.com>
 
 Hi Joanne,
 
@@ -95,38 +95,69 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20251218-165107
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
-patch link:    https://lore.kernel.org/r/20251218083319.3485503-26-joannelkoong%40gmail.com
-patch subject: [PATCH v2 25/25] docs: fuse: add io-uring bufring and zero-copy documentation
-reproduce: (https://download.01.org/0day-ci/archive/20251221/202512210331.Yc46M5Rg-lkp@intel.com/reproduce)
+patch link:    https://lore.kernel.org/r/20251218083319.3485503-4-joannelkoong%40gmail.com
+patch subject: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed buffer rings
+config: nios2-allnoconfig (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512210331.Yc46M5Rg-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512212016.Nbc4ikuj-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   ERROR: Cannot find file ./include/linux/fscache.h
-   WARNING: No kernel-doc for file ./include/linux/fscache.h
-   ERROR: Cannot find file ./include/linux/fiemap.h
-   WARNING: No kernel-doc for file ./include/linux/fiemap.h
-   Documentation/filesystems/fuse/fuse-io-uring.rst:103: ERROR: Unexpected indentation. [docutils]
->> Documentation/filesystems/fuse/fuse-io-uring.rst:104: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:112: ERROR: Unexpected indentation. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:115: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:140: ERROR: Unexpected indentation. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:141: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   ERROR: Cannot find file ./include/linux/jbd2.h
+   io_uring/kbuf.c: In function 'io_setup_kmbuf_ring':
+>> io_uring/kbuf.c:810:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     810 |                 buf->addr = (u64)buf_region;
+         |                             ^
 
 
-vim +104 Documentation/filesystems/fuse/fuse-io-uring.rst
+vim +810 io_uring/kbuf.c
 
-   100	
-   101	Kernel-managed buffer rings have two main advantages:
-   102	* eliminates the overhead of pinning/unpinning user pages and translating
- > 103	  virtual addresses for every server-kernel interaction
- > 104	* reduces buffer memory allocation requirements
-   105	
+   781	
+   782	static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
+   783				       struct io_buffer_list *bl,
+   784				       struct io_uring_buf_reg *reg)
+   785	{
+   786		struct io_uring_buf_ring *ring;
+   787		unsigned long ring_size;
+   788		void *buf_region;
+   789		unsigned int i;
+   790		int ret;
+   791	
+   792		/* allocate pages for the ring structure */
+   793		ring_size = flex_array_size(ring, bufs, bl->nr_entries);
+   794		ring = kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
+   795		if (!ring)
+   796			return -ENOMEM;
+   797	
+   798		ret = io_create_region_multi_buf(ctx, &bl->region, bl->nr_entries,
+   799						 reg->buf_size);
+   800		if (ret) {
+   801			kfree(ring);
+   802			return ret;
+   803		}
+   804	
+   805		/* initialize ring buf entries to point to the buffers */
+   806		buf_region = bl->region.ptr;
+   807		for (i = 0; i < bl->nr_entries; i++) {
+   808			struct io_uring_buf *buf = &ring->bufs[i];
+   809	
+ > 810			buf->addr = (u64)buf_region;
+   811			buf->len = reg->buf_size;
+   812			buf->bid = i;
+   813	
+   814			buf_region += reg->buf_size;
+   815		}
+   816		ring->tail = bl->nr_entries;
+   817	
+   818		bl->buf_ring = ring;
+   819	
+   820		return 0;
+   821	}
+   822	
 
 -- 
 0-DAY CI Kernel Test Service

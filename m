@@ -1,66 +1,66 @@
-Return-Path: <io-uring+bounces-11242-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11243-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD12CD3FFF
-	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 13:24:23 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362E6CD40CE
+	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 14:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 15E81300A34D
-	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 12:24:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5C0EE3000B77
+	for <lists+io-uring@lfdr.de>; Sun, 21 Dec 2025 13:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792BC125D0;
-	Sun, 21 Dec 2025 12:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4118381ACA;
+	Sun, 21 Dec 2025 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bmENUQ6i"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ApAtOcdk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AE8248B;
-	Sun, 21 Dec 2025 12:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AE18CBE1;
+	Sun, 21 Dec 2025 13:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766319861; cv=none; b=s8pLcaJKTBuLnLuKzODIMvRad6vIAjowWQY3ueZiPQzoBlBnmKyKYnuQcZ/ij3ptEToEXQAKdcY32jo3a69oPmhVN3+E0K8MN2H2VR7Ym/sY6b5DwtIJogrGcOLqUIkjM+iBL9KW5s1JLD4mRT6dSWrjnUOY04LQMPpu3BcZNwU=
+	t=1766325024; cv=none; b=or79jmDcqQ9h7mvPXec0neC+RML9teVjQ2xB0sT+v06jcrJ82s/QVTFev0y+F0aRlWh7BfoCUCZ7xsOd6yp/V0fdpG3vFlPuFLU0Dj1gYo9USSMKq1wTOOgpkkvPxapvxB/5LZq05/7Hh3R5uqLSRxcn07CzhpkJUZMV0DSkNMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766319861; c=relaxed/simple;
-	bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
+	s=arc-20240116; t=1766325024; c=relaxed/simple;
+	bh=0UMBuPsh+npKSmTKDqiNdaBPkOMxU7iid/wS/f+fc2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtXD/c9g2wT4AZJyece+/7inW3T+EdjWxq/ooAuSy3qf+sAvEP0kOgTVyw99Nvrb4xccPqI7y8FO0Sc9vxOntCdYPK2nMCYfJh3O57KqGiguoBBM2qWVMLKXE32qb3YgnfsctdwaakiumYcQBy3lPzHpMXi14cVEWQhl4GSnCPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bmENUQ6i; arc=none smtp.client-ip=192.198.163.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=MaeDoioy/v4PkIDPlj5Zd8lWd0yqYpMf/LjAF3HmdY69Uv3cjxZXNOq3+TP+ASpFnMDNmWaWxBHNQh2RSiDy5uj45jgCLgOUixNUo/TunUnjyY6CkB62GdHl2d5acD8V1R+TD5ybFH16Vgwkmds7E5XCBqvic2frJw/cqiYyhWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ApAtOcdk; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766319858; x=1797855858;
+  t=1766325021; x=1797861021;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
-  b=bmENUQ6idBkqr8vj/HFb2l29135DrShlSUn2yVe3u+4jTuHymqvOV34u
-   moWn9c0bdRiRigWb2g2d119lJ0JVzIhZkgJwx049h452Lrk4RflDmpTYe
-   xfW7Kf9o9+y1vARH/uKzZz4T9JjMCfOXPZRk9rdhT94NSW5Ou2q7z1V5l
-   9oUSGBoRIsgEFd798id/9UWnRyzStC6H553ECgJhJipUns1a/4TEflE7C
-   j4koM0HwODSvrQw5aP33/WRaOlkGq5kYSMm1ZH7RQJUdjXcwFo5/jf4AN
-   y4Gvl4M/dlOaldV9HQIMsjD9jpoKXqUhOS1lRvdo66dikP4HESNWUughO
-   w==;
-X-CSE-ConnectionGUID: MrL2bqA4Tke5d3624LMkZw==
-X-CSE-MsgGUID: VfW9qEYzT4mLvFTiQ2neHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="67199236"
-X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="67199236"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2025 04:24:17 -0800
-X-CSE-ConnectionGUID: jvwbb3CURKqpeThAKD+q+Q==
-X-CSE-MsgGUID: 7Qmy7wJaQtSTB/iaeJERKQ==
+  bh=0UMBuPsh+npKSmTKDqiNdaBPkOMxU7iid/wS/f+fc2s=;
+  b=ApAtOcdkEfnviAGYoUH9Sax7l/k3iOzPrrINHY04Ik0z8GBvtgEOi2QG
+   ltHKVWkpeXhkTEbdw6EkTW209om3vudg4vCfLXbUlK1rfOZrs0dyqIEn6
+   Sz1TG7OQf9WjkLQ3Gs69zJ//mu2f9D2J85MEjn0Inh3UH9K+3umlZTxDp
+   vh1S3u9VyE5PlqNB4TA4d91ridvI4FO4i0ceCJTgFKAqNhBH7VRc4qWpu
+   Ttba52Yqhu2n3BYJFSm2W2U6BQtrOdYbnEUU2drJ/1hJflpirUtdMgqiC
+   dABUwZYsAiswWlCeH6X+Jc1n5JjUEva9I2ZyDxjbpy24UqcC0qlXGKy3T
+   Q==;
+X-CSE-ConnectionGUID: fESKx/G7Rbm+sqXMwnW+bw==
+X-CSE-MsgGUID: j97mZDFVQnmMIVZf5X2mUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11649"; a="72054962"
+X-IronPort-AV: E=Sophos;i="6.21,166,1763452800"; 
+   d="scan'208";a="72054962"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2025 05:50:21 -0800
+X-CSE-ConnectionGUID: sMHCfxaMSj+Pz+fEwrrffw==
+X-CSE-MsgGUID: AvmMsgCZTZ64tPXbAhnU8w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="199590146"
+X-IronPort-AV: E=Sophos;i="6.21,166,1763452800"; 
+   d="scan'208";a="204373396"
 Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 21 Dec 2025 04:24:15 -0800
+  by orviesa005.jf.intel.com with ESMTP; 21 Dec 2025 05:50:18 -0800
 Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1vXITs-000000005fB-3hXj;
-	Sun, 21 Dec 2025 12:24:12 +0000
-Date: Sun, 21 Dec 2025 20:24:05 +0800
+	id 1vXJpA-000000005iL-06JW;
+	Sun, 21 Dec 2025 13:50:16 +0000
+Date: Sun, 21 Dec 2025 21:49:19 +0800
 From: kernel test robot <lkp@intel.com>
 To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -68,10 +68,10 @@ Cc: oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
 	asml.silence@gmail.com, io-uring@vger.kernel.org,
 	csander@purestorage.com, xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed
- buffer rings
-Message-ID: <202512212016.Nbc4ikuj-lkp@intel.com>
-References: <20251218083319.3485503-4-joannelkoong@gmail.com>
+Subject: Re: [PATCH v2 05/25] io_uring/kbuf: support kernel-managed buffer
+ rings in buffer selection
+Message-ID: <202512212111.RWRN4N7A-lkp@intel.com>
+References: <20251218083319.3485503-6-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251218083319.3485503-4-joannelkoong@gmail.com>
+In-Reply-To: <20251218083319.3485503-6-joannelkoong@gmail.com>
 
 Hi Joanne,
 
@@ -95,69 +95,69 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20251218-165107
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
-patch link:    https://lore.kernel.org/r/20251218083319.3485503-4-joannelkoong%40gmail.com
-patch subject: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed buffer rings
-config: nios2-allnoconfig (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/config)
+patch link:    https://lore.kernel.org/r/20251218083319.3485503-6-joannelkoong%40gmail.com
+patch subject: [PATCH v2 05/25] io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+config: nios2-allnoconfig (https://download.01.org/0day-ci/archive/20251221/202512212111.RWRN4N7A-lkp@intel.com/config)
 compiler: nios2-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251221/202512212111.RWRN4N7A-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512212016.Nbc4ikuj-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512212111.RWRN4N7A-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
+   io_uring/kbuf.c: In function 'io_ring_buffer_select':
+>> io_uring/kbuf.c:210:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     210 |                 sel.kaddr = (void *)buf->addr;
+         |                             ^
    io_uring/kbuf.c: In function 'io_setup_kmbuf_ring':
->> io_uring/kbuf.c:810:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-     810 |                 buf->addr = (u64)buf_region;
+   io_uring/kbuf.c:826:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     826 |                 buf->addr = (u64)buf_region;
          |                             ^
 
 
-vim +810 io_uring/kbuf.c
+vim +210 io_uring/kbuf.c
 
-   781	
-   782	static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
-   783				       struct io_buffer_list *bl,
-   784				       struct io_uring_buf_reg *reg)
-   785	{
-   786		struct io_uring_buf_ring *ring;
-   787		unsigned long ring_size;
-   788		void *buf_region;
-   789		unsigned int i;
-   790		int ret;
-   791	
-   792		/* allocate pages for the ring structure */
-   793		ring_size = flex_array_size(ring, bufs, bl->nr_entries);
-   794		ring = kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
-   795		if (!ring)
-   796			return -ENOMEM;
-   797	
-   798		ret = io_create_region_multi_buf(ctx, &bl->region, bl->nr_entries,
-   799						 reg->buf_size);
-   800		if (ret) {
-   801			kfree(ring);
-   802			return ret;
-   803		}
-   804	
-   805		/* initialize ring buf entries to point to the buffers */
-   806		buf_region = bl->region.ptr;
-   807		for (i = 0; i < bl->nr_entries; i++) {
-   808			struct io_uring_buf *buf = &ring->bufs[i];
-   809	
- > 810			buf->addr = (u64)buf_region;
-   811			buf->len = reg->buf_size;
-   812			buf->bid = i;
-   813	
-   814			buf_region += reg->buf_size;
-   815		}
-   816		ring->tail = bl->nr_entries;
-   817	
-   818		bl->buf_ring = ring;
-   819	
-   820		return 0;
-   821	}
-   822	
+   183	
+   184	static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+   185						      struct io_buffer_list *bl,
+   186						      unsigned int issue_flags)
+   187	{
+   188		struct io_uring_buf_ring *br = bl->buf_ring;
+   189		__u16 tail, head = bl->head;
+   190		struct io_br_sel sel = { };
+   191		struct io_uring_buf *buf;
+   192		u32 buf_len;
+   193	
+   194		tail = smp_load_acquire(&br->tail);
+   195		if (unlikely(tail == head))
+   196			return sel;
+   197	
+   198		if (head + 1 == tail)
+   199			req->flags |= REQ_F_BL_EMPTY;
+   200	
+   201		buf = io_ring_head_to_buf(br, head, bl->mask);
+   202		buf_len = READ_ONCE(buf->len);
+   203		if (*len == 0 || *len > buf_len)
+   204			*len = buf_len;
+   205		req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+   206		req->buf_index = READ_ONCE(buf->bid);
+   207		sel.buf_list = bl;
+   208		sel.addr = u64_to_user_ptr(READ_ONCE(buf->addr));
+   209		if (bl->flags & IOBL_KERNEL_MANAGED)
+ > 210			sel.kaddr = (void *)buf->addr;
+   211		else
+   212			sel.addr = u64_to_user_ptr(READ_ONCE(buf->addr));
+   213	
+   214		if (io_should_commit(req, bl, issue_flags)) {
+   215			io_kbuf_commit(req, sel.buf_list, *len, 1);
+   216			sel.buf_list = NULL;
+   217		}
+   218		return sel;
+   219	}
+   220	
 
 -- 
 0-DAY CI Kernel Test Service

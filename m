@@ -1,131 +1,152 @@
-Return-Path: <io-uring+bounces-11288-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11289-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FF8CD7962
-	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 01:50:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FAECD7DE0
+	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 03:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 90976309A6DF
-	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 00:46:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BD75A300ACC3
+	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 02:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3232C11E9;
-	Tue, 23 Dec 2025 00:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0628214A64;
+	Tue, 23 Dec 2025 02:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oXZJEA/h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5tLS/e1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49A2BE02A;
-	Tue, 23 Dec 2025 00:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A853283FDD
+	for <io-uring@vger.kernel.org>; Tue, 23 Dec 2025 02:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766450346; cv=none; b=qK8tkF6yNjVFSf0Bwv/y31+fzUvkEATk74BUy1gkp7S6YBGVEO0PRVxtIa9siYicF999UR6NpX55kqjFSlOEMjh4Et3L1oCd1yLC8s/CBtytYArUh+TdIIa9cCpwkYFsEk+LKlvL+i4MIA9YPIQETeYYA27aP4upUqeUdqT+vbQ=
+	t=1766457023; cv=none; b=gcJ3bxLrFmVUPfglw3yR/rLrFDpF8Vgd765IOG7n9y5ZYfzpNmrucfhCiSnlW5t2IlFZ6rJZZBzXLLrbqA5CK6772EBtMP8k75dP7qH3YvyNmOTvihiOAY68TaAQzgWNbXO9JG/RD9kwrZiSd/2HYWKdxbLep1RDpyRmMtl4AHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766450346; c=relaxed/simple;
-	bh=IfaqT1FwkkPlvNK+9vGxPt7qaaBRmNYbdSrLiNl4lts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pa/lfHHeaNQsE4fOt7A5O5Ep6SkVC6NVRcRLKi+b15bjPCtLV0KH2+lxTsQDBsWIZ+3WA8WFYVNK9AlvFKF7FFqv5S/W1XtqYdl+SuOkBYGwRTAgEY3ac26x+8VXolsS9IlUl+uuc5w08WWGMnWZwgIgyHqfOgQmhBw2ClLAkaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oXZJEA/h; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Lz/gfojNOQEzMThjbhxxwMo5vvQbozdveVwLBNNNNnk=; b=oXZJEA/hdSIzf0iL/xwwzU2XeN
-	y6JNAEkZaTdObxRLRp8qxhRgWk0aodtccieMOE9EVHp3l0zdFfDYvY5aVaRFmvTtwk/xnjdFnt0Dr
-	zjpnn7bJ7AvJ+zwtZHUEOdLt24kYLHGabI/dgIwidLsTlkuX5yTFemkdjVxfVQTtoAoxbUyQim7vK
-	TddAydZ471UHgfhGtmKLX2iBlJfdlF9+/hORm53QKBi5hYBYCdxZxzLw3FBpFlS/ur7NcR65Aj1xU
-	EtzqFzaU91OeX+9ULM2Pn9lOE9IpAtNZZL/M4my9/GauNm+lzY79VeTweMsG++ZTZ8DmgCVwzKuYA
-	KnTHZB7w==;
-Received: from s58.ghokkaidofl2.vectant.ne.jp ([202.215.7.58] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vXqQY-0000000EJD0-2O8m;
-	Tue, 23 Dec 2025 00:39:02 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH 11/11] xfs: enable non-blocking timestamp updates
-Date: Tue, 23 Dec 2025 09:37:54 +0900
-Message-ID: <20251223003756.409543-12-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251223003756.409543-1-hch@lst.de>
-References: <20251223003756.409543-1-hch@lst.de>
+	s=arc-20240116; t=1766457023; c=relaxed/simple;
+	bh=R0SGx9qrxJdHodfUBNOyscjzoqf29IwkGwkpX8N9T98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p3GS0qIbSNHAOMBZgCJsXJUoPiHMrL4356aDqnHc5noxOR4mUAPrpHY0DBaRdAeGjFzI7PFQ89fvKRWXZZvg668KB+gJzb4HBO1l5xBQTGx7XHHvS4a1i/dDkJB5LUBThcGoht0IWiJSoX/Fj7LzL7I7m+fGfgPOXBxgHcYjOjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5tLS/e1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766457021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4RgElIhvwM5MM92vj4dyFVrE55d64gbTK1aAwrOpP0o=;
+	b=g5tLS/e1CYhmGJQ1NW/ZNBgLqOZ9K7eb6hlHQ3G5crYgmPKjswOLc7W640vNSFmrTxaf8X
+	b+ktzvCmQNXGTQ929PqsmuIjKqMonp5C6/xB1WzOJtb0+oIzbaHX9UObEM1OD/1cTeNqS2
+	34tvqQ76nBAx/YpmtOxPnrImeitFFhE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-wBxNqTcPOCmvS0y_hBgUaQ-1; Mon,
+ 22 Dec 2025 21:30:19 -0500
+X-MC-Unique: wBxNqTcPOCmvS0y_hBgUaQ-1
+X-Mimecast-MFC-AGG-ID: wBxNqTcPOCmvS0y_hBgUaQ_1766457018
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17C5E1800451;
+	Tue, 23 Dec 2025 02:30:18 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.97])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9B0C30001A8;
+	Tue, 23 Dec 2025 02:30:13 +0000 (UTC)
+Date: Tue, 23 Dec 2025 10:30:09 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: huang-jl <huang-jl@deepseek.com>, axboe@kernel.dk,
+	io-uring@vger.kernel.org, nj.shetty@samsung.com
+Subject: Re: [PATCH v6.20] io_uring/rsrc: refactor io_import_kbuf() to use
+ single loop
+Message-ID: <aUn-sSrlD2gwkFTO@fedora>
+References: <20251217123156.1100620-1-ming.lei@redhat.com>
+ <20251217151647.193815-1-huang-jl@deepseek.com>
+ <aUNcE48RnCy_rFQj@fedora>
+ <aUNmrSVkZEMk7xmF@fedora>
+ <CADUfDZr8vQ9AQSONNmQVyS-BwV1T_MxfGcAWWHwQ=Ci15gMYFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CADUfDZr8vQ9AQSONNmQVyS-BwV1T_MxfGcAWWHwQ=Ci15gMYFg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The lazytime path using the generic helpers can never block in XFS
-because there is no ->dirty_inode method that could block.  Allow
-non-blocking timestamp updates for this case by replacing
-generic_update_time with the open coded version without the S_NOWAIT
-check.
+On Mon, Dec 22, 2025 at 02:56:02PM -0500, Caleb Sander Mateos wrote:
+> On Wed, Dec 17, 2025 at 9:28 PM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > On Thu, Dec 18, 2025 at 09:42:43AM +0800, Ming Lei wrote:
+> > > On Wed, Dec 17, 2025 at 11:16:47PM +0800, huang-jl wrote:
+> > > > The code looks correct to me.
+> > > >
+> > > > > This simplifies the logic
+> > > >
+> > > > I'm not an expert in Linux development, but from my perspective, the
+> > > > original version seems simpler and more readable. The semantics of
+> > > > iov_iter_advance() are clear and well-understood.
+> > > >
+> > > > That said, I understand the appeal of merging them into a single loop.
+> > > >
+> > > > > and avoids the overhead of iov_iter_advance()
+> > > >
+> > > > Could you clarify what overhead you mean? If it's the function call
+> > > > overhead, I think the compiler would inline it anyway. The actual
+> > > > iteration work seems equivalent between both approaches.
+> > >
+> > > iov_iter_advance() is global function, and it can't be inline.
+> > >
+> > > Also single loop is more readable, cause ->iov_offset can be ignored easily.
+> > >
+> > > In theory, re-calculating nr_segs isn't necessary, it is just for avoiding
+> > > potential split, however not get idea how it is triggered. Nitesh didn't
+> > > mention the exact reason:
+> > >
+> > > https://lkml.org/lkml/2025/4/16/351
+> > >
+> > > I will look at the reason and see if it can be avoided.
+> >
+> > The reason is in both bio_iov_bvec_set() and bio_may_need_split().
+> 
+> nr_segs is not just a performance optimization, it's part of the
+> struct iov_iter API and used by iov_iter_extract_bvec_pages(), as
+> huang-jl pointed out. I don't think it's a good idea to assume that
+> nr_segs isn't going to be used and doesn't need to be calculated
+> correctly.
 
-Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
----
- fs/xfs/xfs_iops.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+It doesn't have to be exact if the bytes covered by `count` won't cross
+`nr_segs`.
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index e12c6e6d313e..1fba10281e54 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1195,16 +1195,23 @@ xfs_vn_update_time(
- 
- 	trace_xfs_update_time(ip);
- 
--	if (flags & S_NOWAIT)
--		return -EAGAIN;
--
- 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
--		if (!((flags & S_VERSION) &&
--		      inode_maybe_inc_iversion(inode, false)))
--			return generic_update_time(inode, flags);
-+		int dirty_flags;
-+
-+		error = inode_update_timestamps(inode,
-+				flags | S_CAN_NOWAIT_LAZYTIME, &dirty_flags);
-+		if (error)
-+			return error;
-+		if (dirty_flags == I_DIRTY_TIME) {
-+			__mark_inode_dirty(inode, I_DIRTY_TIME);
-+			return 0;
-+		}
- 
- 		/* Capture the iversion update that just occurred */
- 		log_flags |= XFS_ILOG_CORE;
-+	} else {
-+		if (flags & S_NOWAIT)
-+			return -EAGAIN;
- 	}
- 
- 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
--- 
-2.47.3
+The `nr_segs` re-calculation is added only for fixing performance regression
+in the following link:
+
+https://lkml.org/lkml/2025/4/16/351
+
+because bio_iov_bvec_set() takes iter->nr_segs for setting bio->bi_vcnt.
+
+> 
+> I think this patch is a definite improvement as it reduces the number
+> of assumptions about the internal structure of a bvec iov_iter. The
+> remaining assignment to iter->iov_offset is unfortunate, but I don't
+> see a great way around it.
+> 
+
+The re-calculation can be removed, please see the following patches:
+
+https://lore.kernel.org/linux-block/20251218093146.1218279-1-ming.lei@redhat.com/
+
+Nitesh has verified that it won't cause perf regression by replacing
+bio->bi_vcnt with __bvec_iter_bvec() in bio_may_need_split().
+
+
+Thanks,
+Ming
 
 

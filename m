@@ -1,184 +1,182 @@
-Return-Path: <io-uring+bounces-11297-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11298-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA915CDA192
-	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 18:27:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD57CDA6F1
+	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 20:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AB18B301C669
-	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 17:27:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0808F300942D
+	for <lists+io-uring@lfdr.de>; Tue, 23 Dec 2025 19:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A7F346A05;
-	Tue, 23 Dec 2025 17:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346812EB5A9;
+	Tue, 23 Dec 2025 19:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mRAmXBM9"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ZdHoOiz+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f65.google.com (mail-oa1-f65.google.com [209.85.160.65])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AED22D130C
-	for <io-uring@vger.kernel.org>; Tue, 23 Dec 2025 17:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583B8199EAD
+	for <io-uring@vger.kernel.org>; Tue, 23 Dec 2025 19:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766510834; cv=none; b=K7OjBZyMMFQiPxj/XF9sSo0ZBut60esnfDfcFYRz9hU56MOJtV4diATchbFWYni+RGTUn2jOD/2DPHEtF9qtdYbZ4tOfa/z5uOAKxjbLSgLJPONJpdL24v/mVz7kdYqenVpSlGjFIZwHA/1OonOhY2le37YvlPP5E0HYrH1kAZw=
+	t=1766519820; cv=none; b=gwkRlEUkTauyk9CCeNGADO+590cFw/VoprcX5kCQ4VGqYLJ+YkWPXPrQH5MXp7+h/MXWMw5xv/jzK050OEpsdooiZZVHLS0bgLoOyNbwH+k2otQ55z8D0G7hOdzNsORvKtGpGCnbJOfJfrVVgEXNPIzHPlZrc8fF1RkOSnl0Odk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766510834; c=relaxed/simple;
-	bh=yttDIrgg+02oIIr+PIUIZlbzSGuLr/Vu9z5IHJLAXSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bYOP7dVPcwgyCI2p+6yLNsVSIgV+9pFNZuq25SpadlzaZcCWBzz6/wrwpIUBPfv+VO0IziCssB40LYZYjUgoKynuAJR9wFgL42ho8xBDqj6ue+kZhLQfPvtJw96HQ39xjgakhE5aYlCPHT6NEnseTvFdm5RDOmFfaU2gfEYv1cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mRAmXBM9; arc=none smtp.client-ip=209.85.160.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f65.google.com with SMTP id 586e51a60fabf-3ed151e8fc3so3480701fac.2
-        for <io-uring@vger.kernel.org>; Tue, 23 Dec 2025 09:27:11 -0800 (PST)
+	s=arc-20240116; t=1766519820; c=relaxed/simple;
+	bh=q7wfyKzbRMbDvk9WjRLwEIppG3WoOQQQ54ixBfO4ics=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gNwvaN5+/WPRsKoWo3SYivQJ2nEnasdlw/+61N01jK3JTBKY7Q6eP9AeXoNqt1Q755PLtrY4K8h27LtLLQ8ylXzBTGxAZ2ME7JNGAexTaKNEdxaCPI+vjHnhEJ02hLa1AKDytMklt/0NteDfZ19K6H3VHLsLRJM3jnIBi2iGijE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ZdHoOiz+; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7ab689d3fa0so430881b3a.0
+        for <io-uring@vger.kernel.org>; Tue, 23 Dec 2025 11:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1766510830; x=1767115630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qFhafrsdejRa6EWjNRaHZBiKaCrmsHauuS+DXkLWytE=;
-        b=mRAmXBM9bDtkGbzLtE4G5p7HVyxcQcHv/venBPRot+r0SrJQHqGZiktY4irXxtPxZA
-         biQ1+eMyYAUg8y//l73HObMR1EKamJpnKZytUyUvxqLuC5Qt5W2NW2RoALNemFV3bdMx
-         hYDhIPyzUJRoFLFrTWfeWKAs3Fg5qJPXXLH5ZkNygWWhNx52gJHydNfHxsgsne5278rP
-         P+njVbCGKQOI0uY3GxJcXKnK5Xyv3nlHctnR+ve1EGB4cUecJujxo3SMoV5pLg6PJpz2
-         1a4z9ffRV9df9Vjjt2zuYQlYGrzBiex+mlB21fI4W5xd66Gp/FY0Jew+uHLzhNbO2Qjd
-         8Ptw==
+        d=purestorage.com; s=google2022; t=1766519818; x=1767124618; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q7wfyKzbRMbDvk9WjRLwEIppG3WoOQQQ54ixBfO4ics=;
+        b=ZdHoOiz+xC3u90ITpTqqjh8abf/Sun5VQNqH2Owcqlol+d53Lns/4rFHkzXbIZc1//
+         tnSktDOMjh0LrmS9ivTUSVCXJP6VxL0b9GR3kgEWqi0wNYysYrkSfVuQL5Usxw6M3w1k
+         WWvkuNoTxF0cj9M4ow5YBMrDihMdGG5LteOjrEt0BNxJPAgIBH3uwkri+3890NF9V6Tv
+         M4qLz3RvbnMmgntsrDSrufEn12aUtFMLJ2MgP4jtTA9Nzf/IK9pxhhiCgjigi8YWRBK9
+         IsbXmQw7Ia8UvFNWx3nPklDIgGBQ1rGITvKKeeiDTD9kwKoiR1/lyncBSRvXFL9PONy1
+         oepQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766510830; x=1767115630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qFhafrsdejRa6EWjNRaHZBiKaCrmsHauuS+DXkLWytE=;
-        b=sSmiI3OSJZx8/ldD1Rc2zN/sDldcXK6y1r/NdjB5Q2iDgzxGpFr/6RVTXdqPjl5gkO
-         FDT+hLVlpY2Czap94UTtksWp6uY4V+pPqf3raIG1KCJS4Af0zD+5theGKJtxfnkg1btD
-         S+u7b/UO4Yb1UanQu03g7TXjII5WecNtqkFDhwYck4TSb72qyEL3oY/iNIMpdIHyD8Ms
-         YixMvsRolZgdomvPeA4etHg3RZl5x/XU68oEPT8261Sa27FFVI/uGjq2PUPH59DMM++B
-         Ama6HVwGlDibzxSUM10v2V02kDoeN/uhC37L3mFH5Pn9ts5GO41RUp5nZd60WHZtrOi9
-         PuOg==
-X-Gm-Message-State: AOJu0Ywg7BqhgQuWJufFNpPGTbxU5pz1vLDx3XokGNcI6rfIC/9+YpQN
-	DCKQ3fdJtg6W1aqzkMvXzGrr2KpVVm028FF87DgA7pNQISRBxqA9SSkmuLO1IKgL7vc=
-X-Gm-Gg: AY/fxX76o8eC7oi6mC6X2Zxorr4k9ozq9/bRd6rN4lYnQrmZjUKuhhYkYuEKAaZMCEh
-	XatT6wZIo4/OaEL/OOui/SNSEJoBJV1Z4e+jk9GJcySpeS1y2dkl5NWUTun7ona8QJrdIR+aLHg
-	geaPZnpOTBsa7lElMcFfdhJ2gSJli0qh2qYfhmsVJq1kVr5KQJBf8vrmNYSJ3D5i29XssVXSULF
-	n4yYmdoopHHsk5eMeMTOo6gMopjse4QCta5t1Zq0WwMzS4o6WyweF61M0hRi/4Pyr2jh90LpzoW
-	6H95Xc/vq5h/ZWWd6npYdr/6Fbnpp+34HubYtFtaZjg3OhtXUNwtjNu3jzfocMQGsAxychmpr7h
-	P1wxVyPQNVHJXcKYj5F2J4nT+RZJfA5bpOhvv1+6ecLx4BpiE3Wi8YF1DxNbOD1BE/Pqq7BOth0
-	bVGSCJo2XZR3zRnptkTwE=
-X-Google-Smtp-Source: AGHT+IGnwcfEJJ1Py+8TXk7YYntExpDoFTFTndV/4+3eg1BLJyqo1sm/tza9QzEyR/isURmLTd7SHw==
-X-Received: by 2002:a05:6870:2422:b0:3d3:cac:30d1 with SMTP id 586e51a60fabf-3fda533b4dfmr7321345fac.0.1766510830251;
-        Tue, 23 Dec 2025 09:27:10 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3fdaab620b8sm8786754fac.14.2025.12.23.09.27.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Dec 2025 09:27:09 -0800 (PST)
-Message-ID: <0f83a7fb-0d1d-40d1-8281-2f6d53270895@kernel.dk>
-Date: Tue, 23 Dec 2025 10:27:08 -0700
+        d=1e100.net; s=20230601; t=1766519818; x=1767124618;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=q7wfyKzbRMbDvk9WjRLwEIppG3WoOQQQ54ixBfO4ics=;
+        b=SFXT32QNc22x3DLSywy0Mu3sGqZ7Wik10mv99h3CXK7TH0IgVP1t5rd6Y3OSOIa+aC
+         R9pgqSqUZHCAOVS3EFjilmKeEkVuR06oXxOWNgAfJYxYkJTo3n2T9/hooNBqxkgfIvd/
+         VkUKnkQAFniQzkPPpaiaQnMZxEAgjZPrCTxsQDuRtYQEJ6b33i8/RU1Rm/OViBkJaSOb
+         TW5qtwqrJPvJ0KS0HHwN9/uNLk5UMgpfCd3O+grQYPAsbmmRUv1msSVDxI8NrLK+q4cU
+         sBV4tKZuE92dy6iffe3EqrTu6NTXX4tolViGbmB83I6+CWZdtrQPhZh7m2HoLhOwCydU
+         DqaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWx4hc4MG5LHcjon3uazD7vwSkX/Vj2h3exloFFG5DB0BkE8a5TvbHaGcchSspcQn/0gC1othjsgA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvhuQieerA1GMKA4YHhA3ShQTjRvNlV6rRCkVj8SnSk5oYJhTK
+	edcKxN1aMAGGYvFr68MvzZQuBKFoA2smh+MFfWPKyP42u57NsE5FJayCvmbCH1VjSuuB5//phKb
+	1tm3Ns3h90VYHrzNTDJFFYGAJiWA1KWIdRcRyCwolMA==
+X-Gm-Gg: AY/fxX7DIkWN8dOgiFPFgxHHnmEpl1hygsJIN148SL0249fm8F1axFXdrjFRJvAVD8I
+	xkUGyvThJPMF1nvGlF2dGd26uLceUStldtNMm8b9Y1VeKlFFGH8A/TJ5UVEqGFTH5qPEFyrdm2j
+	A3blUa6mYvhMHD97hu5btA0IiaqU41vI0xAsILiSK3ozKlFmRzlK7ZQ0SlJLidVmASidjHTBkPO
+	ks7h8uru48mGki9m93fJQoy+vIW3IYOlLA8iBOFNvdrh3L2+RITurbBTfQBKTvnEfiFt0U=
+X-Google-Smtp-Source: AGHT+IHp3+aT9sVgn0YHJAKW+CipKjGD4eScKnLVzGcMEhDgYJfX9DzNlOVo/L+XGWKt6FV9RpYkRR2UIhN2YwyxRZE=
+X-Received: by 2002:a05:7022:e1c:b0:11b:acd7:4e48 with SMTP id
+ a92af1059eb24-121721ab805mr10762422c88.2.1766519817497; Tue, 23 Dec 2025
+ 11:56:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] af_unix: don't post cmsg for SO_INQ unless explicitly
- asked for
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev <netdev@vger.kernel.org>
-Cc: io-uring <io-uring@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Willem de Bruijn <willemb@google.com>, Kuniyuki Iwashima
- <kuniyu@google.com>, Julian Orth <ju.orth@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>
-References: <07adc0c2-2c3b-4d08-8af1-1c466a40b6a8@kernel.dk>
- <willemdebruijn.kernel.18e89ba05fbac@gmail.com>
- <fe9dbb70-c345-41b2-96d6-2788e2510886@kernel.dk>
- <willemdebruijn.kernel.1996d0172c2e@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <willemdebruijn.kernel.1996d0172c2e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251217123156.1100620-1-ming.lei@redhat.com> <20251217151647.193815-1-huang-jl@deepseek.com>
+ <aUNcE48RnCy_rFQj@fedora> <aUNmrSVkZEMk7xmF@fedora> <CADUfDZr8vQ9AQSONNmQVyS-BwV1T_MxfGcAWWHwQ=Ci15gMYFg@mail.gmail.com>
+ <aUn-sSrlD2gwkFTO@fedora>
+In-Reply-To: <aUn-sSrlD2gwkFTO@fedora>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 23 Dec 2025 14:56:45 -0500
+X-Gm-Features: AQt7F2r5G_L-q1XPV3Yi1bv4GSHVWUR1-3IablcxYEg3Q3F3MVxOitrfocrZ8YU
+Message-ID: <CADUfDZpXNcBuA0Z6+btpw1M+iiyQV2KK0xx6FvHAqoUEMxwO1g@mail.gmail.com>
+Subject: Re: [PATCH v6.20] io_uring/rsrc: refactor io_import_kbuf() to use
+ single loop
+To: Ming Lei <ming.lei@redhat.com>
+Cc: huang-jl <huang-jl@deepseek.com>, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	nj.shetty@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/19/25 1:08 PM, Willem de Bruijn wrote:
-> [PATCH net v2] assuming this is intended to go through the net tree.
-> 
-> Jens Axboe wrote:
->> On 12/19/25 12:02 PM, Willem de Bruijn wrote:
->>> Jens Axboe wrote:
->>>> A previous commit added SO_INQ support for AF_UNIX (SOCK_STREAM), but it
->>>> posts a SCM_INQ cmsg even if just msg->msg_get_inq is set. This is
->>>> incorrect, as ->msg_get_inq is just the caller asking for the remainder
->>>> to be passed back in msg->msg_inq, it has nothing to do with cmsg. The
->>>> original commit states that this is done to make sockets
->>>> io_uring-friendly", but it's actually incorrect as io_uring doesn't use
->>>> cmsg headers internally at all, and it's actively wrong as this means
->>>> that cmsg's are always posted if someone does recvmsg via io_uring.
->>>>
->>>> Fix that up by only posting a cmsg if u->recvmsg_inq is set.
->>>>
->>>> Additionally, mirror how TCP handles inquiry handling in that it should
->>>> only be done for a successful return. This makes the logic for the two
->>>> identical.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: df30285b3670 ("af_unix: Introduce SO_INQ.")
->>>> Reported-by: Julian Orth <ju.orth@gmail.com>
->>>> Link: https://github.com/axboe/liburing/issues/1509
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>
->>>> ---
->>>>
->>>> V2:
->>>> - Unify logic with tcp
->>>> - Squash the two patches into one
->>>>
->>>> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
->>>> index 55cdebfa0da0..a7ca74653d94 100644
->>>> --- a/net/unix/af_unix.c
->>>> +++ b/net/unix/af_unix.c
->>>> @@ -2904,6 +2904,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
->>>>  	unsigned int last_len;
->>>>  	struct unix_sock *u;
->>>>  	int copied = 0;
->>>> +	bool do_cmsg;
->>>>  	int err = 0;
->>>>  	long timeo;
->>>>  	int target;
->>>> @@ -2929,6 +2930,9 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
->>>>  
->>>>  	u = unix_sk(sk);
->>>>  
->>>> +	do_cmsg = READ_ONCE(u->recvmsg_inq);
->>>> +	if (do_cmsg)
->>>> +		msg->msg_get_inq = 1;
->>>
->>> I would avoid overwriting user written fields if it's easy to do so.
->>>
->>> In this case it probably is harmless. But we've learned the hard way
->>> that applications can even get confused by recvmsg setting msg_flags.
->>> I've seen multiple reports of applications failing to scrub that field
->>> inbetween calls.
->>>
->>> Also just more similar to tcp:
->>>
->>>        do_cmsg = READ_ONCE(u->recvmsg_inq);
->>>        if ((do_cmsg || msg->msg_get_inq) && (copied ?: err) >= 0) {
->>
->> I think you need to look closer, because this is actually what the tcp
->> path does:
->>
->> if (tp->recvmsg_inq) {
->> 	[...]
->> 	msg->msg_get_inq = 1;
->> }
-> 
-> I indeed missed that TCP does the same. Ack. Indeed consistency was what I asked for.
-> 
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
+On Mon, Dec 22, 2025 at 9:30=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
+>
+> On Mon, Dec 22, 2025 at 02:56:02PM -0500, Caleb Sander Mateos wrote:
+> > On Wed, Dec 17, 2025 at 9:28=E2=80=AFPM Ming Lei <ming.lei@redhat.com> =
+wrote:
+> > >
+> > > On Thu, Dec 18, 2025 at 09:42:43AM +0800, Ming Lei wrote:
+> > > > On Wed, Dec 17, 2025 at 11:16:47PM +0800, huang-jl wrote:
+> > > > > The code looks correct to me.
+> > > > >
+> > > > > > This simplifies the logic
+> > > > >
+> > > > > I'm not an expert in Linux development, but from my perspective, =
+the
+> > > > > original version seems simpler and more readable. The semantics o=
+f
+> > > > > iov_iter_advance() are clear and well-understood.
+> > > > >
+> > > > > That said, I understand the appeal of merging them into a single =
+loop.
+> > > > >
+> > > > > > and avoids the overhead of iov_iter_advance()
+> > > > >
+> > > > > Could you clarify what overhead you mean? If it's the function ca=
+ll
+> > > > > overhead, I think the compiler would inline it anyway. The actual
+> > > > > iteration work seems equivalent between both approaches.
+> > > >
+> > > > iov_iter_advance() is global function, and it can't be inline.
+> > > >
+> > > > Also single loop is more readable, cause ->iov_offset can be ignore=
+d easily.
+> > > >
+> > > > In theory, re-calculating nr_segs isn't necessary, it is just for a=
+voiding
+> > > > potential split, however not get idea how it is triggered. Nitesh d=
+idn't
+> > > > mention the exact reason:
+> > > >
+> > > > https://lkml.org/lkml/2025/4/16/351
+> > > >
+> > > > I will look at the reason and see if it can be avoided.
+> > >
+> > > The reason is in both bio_iov_bvec_set() and bio_may_need_split().
+> >
+> > nr_segs is not just a performance optimization, it's part of the
+> > struct iov_iter API and used by iov_iter_extract_bvec_pages(), as
+> > huang-jl pointed out. I don't think it's a good idea to assume that
+> > nr_segs isn't going to be used and doesn't need to be calculated
+> > correctly.
+>
+> It doesn't have to be exact if the bytes covered by `count` won't cross
+> `nr_segs`.
+>
+> The `nr_segs` re-calculation is added only for fixing performance regress=
+ion
+> in the following link:
+>
+> https://lkml.org/lkml/2025/4/16/351
+>
+> because bio_iov_bvec_set() takes iter->nr_segs for setting bio->bi_vcnt.
 
-Can someone get this applied, please?
+But iov_iter_extract_bvec_pages() appears to only use iter->nr_segs
+and not iter->count. I don't understand how it can get away with an
+overestimated iter->nr_segs.
 
--- 
-Jens Axboe
+Best,
+Caleb
 
+>
+> >
+> > I think this patch is a definite improvement as it reduces the number
+> > of assumptions about the internal structure of a bvec iov_iter. The
+> > remaining assignment to iter->iov_offset is unfortunate, but I don't
+> > see a great way around it.
+> >
+>
+> The re-calculation can be removed, please see the following patches:
+>
+> https://lore.kernel.org/linux-block/20251218093146.1218279-1-ming.lei@red=
+hat.com/
+>
+> Nitesh has verified that it won't cause perf regression by replacing
+> bio->bi_vcnt with __bvec_iter_bvec() in bio_may_need_split().
+>
+>
+> Thanks,
+> Ming
+>
 

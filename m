@@ -1,88 +1,155 @@
-Return-Path: <io-uring+bounces-11305-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11306-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A40DCDD642
-	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 08:03:13 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AA2CDD65D
+	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 08:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 752143019346
-	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 07:03:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EFAB53016348
+	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 07:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59B2238C36;
-	Thu, 25 Dec 2025 07:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3D92E2F14;
+	Thu, 25 Dec 2025 07:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bc28Fy4O"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7AB2727FC
-	for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 07:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618642E1C63
+	for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 07:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766646189; cv=none; b=OXQWBCXk2sL2wWlxqQ331/X8sLtlbADe5Y4Q/wimcjYWR5Hk7k/cKzDDz5K/rWZ72ZnjxyaHbSteF0dDqkCo45y8H0TKa+5stwHm0hL1mp3C56MVpHBduADj4k6c0xEwBpc6HFazv1ti8wW/5AUbgSzwy1+ZOAHL+1dYEtPsP0w=
+	t=1766646505; cv=none; b=EETbmhAa9rcM8o4XIHFOLYyr27CrNPqxBXaQB6nS+k3yP2VZlvTrdaQj00mw01u+P0vhQhVKtFjWbmqza3ZWmnL2prDJiHKKsXURx3pk2f4NC2a8HRNqCxA0+DvJW1LO9XqhWnaLorEwpy/xYACYRZpBPjT7kIfPsd44LfXEV3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766646189; c=relaxed/simple;
-	bh=wn96RWDl5N1hOdjrqeg17LgWUNfNi+PhXsw6RX5sOZU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n7775XPDLwirc26ovtzBtH+KTDR4LYebW9XxWv8O6V7mRkGmmoaBzxpb8LuxPFmNELkXpWdg+5dh2kBHRLO8TsU8Hp5WWH9OJU8fQyx/zPDzDnrtyeMd00gKkr+vdFk0y38as3lbR8MKyyPY/MqMjueTcynydXbQ5JLxbHQQ4g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-657486eb435so9507516eaf.1
-        for <io-uring@vger.kernel.org>; Wed, 24 Dec 2025 23:03:04 -0800 (PST)
+	s=arc-20240116; t=1766646505; c=relaxed/simple;
+	bh=CG/moFFtL/ZvcK2sU4KPzNBuRMark1gy0LiWEe6P/58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHtAQlGySe5/1T8tTzI4NbNJdDFxJTvJLDNxnMim+ZHeEx4wQo1IQyziuN+SsqjKmJfWeA+dX3t+6kRyakSkGWcuiLRHtVQehlg5bkewAnrAY0hHoXZWFIlTNABdDmBsorSmr3+hYbmdhaynucP6br7WFPrNsdnKcPUMygi07nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bc28Fy4O; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a09d981507so46211375ad.1
+        for <io-uring@vger.kernel.org>; Wed, 24 Dec 2025 23:08:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766646503; x=1767251303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2trtGlNXZKZVCUn7XC47iovlx+cgHeYtiSGP2VJpxo0=;
+        b=bc28Fy4OMFRs88KfIMpN8wemY+w1AVKjojemfWOPH3mB/dTFECX8bni64oj8m+7ayu
+         vehgyWFiKeCEw68RlfnEB/o+V1bdPVjA961cNxHnUsmqO5B9IOOH+DROHYNnmzyzcv2l
+         +f8eNgijpOolfosH4wU4qgaViX8SBwosdNdA+YsiZGjNY8J5z/szJsR+rHJI5AQQ2a2l
+         2vBzwKhcMsZVIvVs0jLQDLsRcanUGNUy5LV3iNpZPrZysp8aXMVeeeGiInQx6ObhHf7Y
+         6CD5YIrgvFx7Qjan1IJYdXORz28Fpinwx93zgRv6DSP17yHAJ03HiXgMD6axyahKjPNc
+         CjrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766646184; x=1767250984;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KZIgj2KabdePGNXiH8PxxTMu0sC8Sc0rYJeYx3aeTA=;
-        b=ASHcmqOJcQJU17YrU7LbYGrtdQso3G0Ytiobt1a1RnQdDoAItGFWYNg9ZcfgknjWVD
-         nA1C3pWeq2kZpPcb7Plzcppuk+fkRAHohKLTHKWQgldl5/lyt09vZ+MejeWDdLxntMmO
-         /tgnH6Lrpl61zl2iiHTxngS9ZgFgXsfnl2ssMnwN4GRSpdmZpH8S+SELJV4H8dNE+h2D
-         3Mo0QjRrkr1i49szemSfnTcv3LRizSuP1A3tnMhlLTVOfGaDeAYSLt+k0BT0aaeuTFHp
-         Jq+muTTrrgfmRcJ7J46XvOnMSEIyzy30NuuQiCaTRIEURAhW4SLIZ/u+bbqVxr7aQLLy
-         U3Og==
-X-Forwarded-Encrypted: i=1; AJvYcCW5t2l9R5IGzr3Qxinp4uk4fFzlV988Af35fTN8A08b3wGhPRNkC07tY/N72ERxVVnr5M5XdhRVDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq6ll7msr2B+bd5dzAgEtxo6dp1wVR8k3PsU+fNsLi3W2cEIxw
-	1OnmpgjBWkS6xHNnoOcrZO+uRdygnUZ6CRVkTFjqZ7v6UAPwFnyJtEADtp6mu7ekQMfmb24wl/h
-	0hZ0Xc3nMb0SArM7etCWb+NPOoFMf+kTYAIT9MK4VzMkNr4ttn13Vugfn7iQ=
-X-Google-Smtp-Source: AGHT+IHi94rnsICS/Ar5+vQ/0pN3IhewQdBMuKf5fC8S8WtfwHuHHXT+FBVN6Bpa1zZGiG33E+XO2qx6Yc7O5UmsyBDc9bR39Av9
+        d=1e100.net; s=20230601; t=1766646503; x=1767251303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2trtGlNXZKZVCUn7XC47iovlx+cgHeYtiSGP2VJpxo0=;
+        b=QWMfYkZ9lw9P5+tcTQOupt3AMVqiDOkqpbEcN5tF6c7xpXPRKE9XEqukYhY2thc6mi
+         hcaHKTVKAY845Wi9LMaBhvlnQPH62TDZQFjdoA42ymnWbxaLZmEmbL/KdDIhpE3/IxOI
+         rzwUYad5GkMF5xcyfrl7Z30ZYNn7BDIIh8JWRY14uS0KIhBCn783VGU9wAhXNQd32v7D
+         t/TKjG7WOe7ft8AQmsX/XtKzH3UIAzVJFpeh5MOlnw3FREjwyYWFUzmzm4P3Q3H30IDm
+         Vk8650L6HpjvbLgg3VQMYIXWboTyvg1M4UI+vFiwA2PlzvNnOaNrxkxO4h4Cd3ORLVG+
+         +OuQ==
+X-Gm-Message-State: AOJu0YwXwG9IDHzK+6Wug/pA8WT3vQ6z2HSVFoZQJuVn7XnEE1a9piG2
+	8nf/M+7lNsUoaPSOTJl12vWgs0SJpkNISb1lZy9uUPLi/ozr7bXwgsQ+
+X-Gm-Gg: AY/fxX6f4g8rlpvTv1cdxtLs+BgVF1tavz49G25JjWBD9s+K+u1NDOR3008XW96sSKd
+	Rs4fTHBcaaq1mnI+MC9608ihY44xFCFeHJ4Ns8cikuM4eO2O4vX9d+rxbT6eiQzBW7O4ylNbsWw
+	v3vm0Uy1VBnIcTRQjUw/sGQyMHOlWlLoQpztKdE1V3Pj4CT5rnoyp1dO7lj8VcPY3i9GByvMfd1
+	Jtss4SIqXdknNkLfvV88EFQijX7GgXr6LFKXlmovv634YdFQ4dGTjc++iwqomCgH8AlT8JRpf+n
+	Iukwl7z11rEFa9F0mw4nG10McDuWwZlVaa3HdMYfBOY6GVe/KPH3j30166lBfld9cFRwihgdV3D
+	ktaWQ5Q9Js5wrrHm4O7cZ7U7HwSTToBXCgs6JhPxdzLL7xBKtl39YzIxPhlrI1MgEDLUMMrIEGP
+	XLCIlQl5r5N80=
+X-Google-Smtp-Source: AGHT+IHj4b0UoCCHB7eZW9m4bhaWfyAyco74NqzkA7/3+8fypn8585Sl5u634QiMVlYAcwKXwYCnGA==
+X-Received: by 2002:a17:903:2307:b0:29f:2734:837d with SMTP id d9443c01a7336-2a2cab74c17mr267904165ad.28.1766646503484;
+        Wed, 24 Dec 2025 23:08:23 -0800 (PST)
+Received: from inspiron ([111.125.235.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d6d557sm169812195ad.84.2025.12.24.23.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Dec 2025 23:08:23 -0800 (PST)
+Date: Thu, 25 Dec 2025 12:38:15 +0530
+From: Prithvi <activprithvi@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] io_uring: fix filename leak in __io_openat_prep()
+Message-ID: <20251225070815.s5ahm4t7yfd6irjo@inspiron>
+References: <20251224164247.103336-1-activprithvi@gmail.com>
+ <dc51a709-e404-4515-8023-3597c376aff5@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:dc4e:0:b0:659:9a49:8f33 with SMTP id
- 006d021491bc7-65d0eae4877mr6631531eaf.68.1766646183915; Wed, 24 Dec 2025
- 23:03:03 -0800 (PST)
-Date: Wed, 24 Dec 2025 23:03:03 -0800
-In-Reply-To: <20251225063402.19684-1-activprithvi@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <694ce1a7.050a0220.35954c.0034.GAE@google.com>
-Subject: Re: [syzbot] [fs?] memory leak in getname_flags
-From: syzbot <syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com>
-To: activprithvi@gmail.com, axboe@kernel.dk, brauner@kernel.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc51a709-e404-4515-8023-3597c376aff5@kernel.dk>
 
-Hello,
+On Wed, Dec 24, 2025 at 11:01:55AM -0700, Jens Axboe wrote:
+> On 12/24/25 9:42 AM, Prithvi Tambewagh wrote:
+> > __io_openat_prep() allocates a struct filename using getname(), but
+> > it isn't freed in case the present file is installed in the fixed file
+> > table and simultaneously, it has the flag O_CLOEXEC set in the
+> > open->how.flags field.
+> > 
+> > This is an erroneous condition, since for a file installed in the fixed
+> > file table, it won't be installed in the normal file table, due to which
+> > the file cannot support close on exec. Earlier, the code just returned
+> > -EINVAL error code for this condition, however, the memory allocated for
+> > that struct filename wasn't freed, resulting in a memory leak.
+> > 
+> > Hence, the case of file being installed in the fixed file table as well
+> > as having O_CLOEXEC flag in open->how.flags set, is adressed by using
+> > putname() to release the memory allocated to the struct filename, then
+> > setting the field open->filename to NULL, and after that, returning
+> > -EINVAL.
+> > 
+> > Reported-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=00e61c43eb5e4740438f
+> > Tested-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
+> > ---
+> >  io_uring/openclose.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+> > index bfeb91b31bba..fc190a3d8112 100644
+> > --- a/io_uring/openclose.c
+> > +++ b/io_uring/openclose.c
+> > @@ -75,8 +75,11 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+> >  	}
+> >  
+> >  	open->file_slot = READ_ONCE(sqe->file_index);
+> > -	if (open->file_slot && (open->how.flags & O_CLOEXEC))
+> > +	if (open->file_slot && (open->how.flags & O_CLOEXEC)) {
+> > +		putname(open->filename);
+> > +		open->filename = NULL;
+> >  		return -EINVAL;
+> > +	}
+> >  
+> >  	open->nofile = rlimit(RLIMIT_NOFILE);
+> >  	req->flags |= REQ_F_NEED_CLEANUP;
+> 
+> You can probably fix it similarly by just having REQ_F_NEED_CLEANUP set
+> earlier in the process, then everything that needs undoing will get
+> undone as part of ending the request.
+> 
+> -- 
+> Jens Axboe
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Sure, I will send v2 patch incorporating this change. Thanks for the 
+feedback!
 
-Reported-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
-Tested-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         b9275466 Merge tag 'dma-mapping-6.19-2025-12-22' of gi..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17332bb4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d60836e327fd6756
-dashboard link: https://syzkaller.appspot.com/bug?extid=00e61c43eb5e4740438f
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1640c8fc580000
-
-Note: testing is done by a robot and is best-effort only.
+Best Regards, 
+Prithvi
 

@@ -1,119 +1,125 @@
-Return-Path: <io-uring+bounces-11309-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11310-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B2ECDDDF3
-	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 16:08:59 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7431BCDDE15
+	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 16:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E2B0F300EA06
-	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 15:08:57 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E33A43011FB2
+	for <lists+io-uring@lfdr.de>; Thu, 25 Dec 2025 15:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03E11F8755;
-	Thu, 25 Dec 2025 15:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4C032ABFA;
+	Thu, 25 Dec 2025 15:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y47mcnct"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cgCAOeS8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1DC189BB0
-	for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B70502BE
+	for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 15:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766675336; cv=none; b=YoZJYfAg02B6N+2u9mmYQPQdnxXMJF5JHn/O2jRhcqGMxx9NmGHPf+uMT9/OCJIvQWNTPe0LOKyG+Iru611mayTHTq+IhiitzqHSYsZsvP3hDSZW5gwJX38c/m7cBIepd+RJ4RuFgpSAlc683Lr7c4dkr7eUJcCx07tMbq59mNQ=
+	t=1766675899; cv=none; b=gH5sG8LgFt1EXuruwDVzovo24myUMR6LonO3Sth/++l/yH5lruFUUTLT5dgW5wM1+qVhfXnfrxb3RFsGYwOB8Shw19Je/E7EDUGVjX1f1WJlp+J4kQxjlIAfIF/UUpDhjRYH2zAAchuzHExL6MP/jhOOoDt4GVzmiurV9oofPWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766675336; c=relaxed/simple;
-	bh=1a8WVK/5R0u2R7uTPPcpwGnVq8+rcROVcLyIqeUBGAE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kwWLv+fK7b577EARcigw51RmIzQYMty/6aBljDoVCYmMlLRIXgiTzxBQHG9hw1L0rBEKW1LFFhXYqt7ZyPD0XNKEuHM65n4G9LJjrqWCWDMigDpZU/kOluUQ+p5450lZb53zKiX61lnmW7lW+H/DmIUBuYff34+JfQBIT0oGU38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y47mcnct; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-44fe6771b2dso1477357b6e.1
-        for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 07:08:54 -0800 (PST)
+	s=arc-20240116; t=1766675899; c=relaxed/simple;
+	bh=MbMBUpR7B2x4JyBu84ec/Nl4m/QIwV9QVVSShfb9dMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5N7RuAwlI+EcolK6rYDXAr0akPXI8zjy1PMHnkjbdDgBSp5wqreAIay1YAXh9xsvpuuV3BGx6P8rZuZMsU2/9haO+SQqe87kRBUECM4Eg5P5mei7wVBszeIE57JoLJdM4bP5muoVBL/m8eNC1o+iRjAX95HNAk+g77lSh7XaLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cgCAOeS8; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-34e90f7b49cso5030001a91.3
+        for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 07:18:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1766675334; x=1767280134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4enrxTcJXMNYO4nBPNY3Xlx1Fas4M0tOaGVZ1+UN1kM=;
-        b=y47mcncthDnI769p6rGhLZVqjvRvc+lOVw1hkhnC42UnzCu7Bb9iCYZLMZxbpdFSO9
-         jI/nlAsiPGZDvdY7g+cy+CJDn9g2mxe/ygo3QpYZwEsQAW7fUygMmJ5HFvqRINeEUThU
-         mUtOXHqHe/erbTMOdVbuQL+X3NHcMoYzH7uWd32jFWiMhc5PGomsc9wOySFTsqn6jHSr
-         M/UQbF6GDyiAPb0lEJ6iqYY/aGaTpGaqrM5BfRclKKgQBlO/ZAV+deKzQUbsoTAVMQbJ
-         MqrgW8UBPenQTFJazvsjrEr/6d5ssotX6MOTbSVS9aDVIBS2Nr1/sknzo9/cHOO5QkWj
-         9u+Q==
+        d=gmail.com; s=20230601; t=1766675897; x=1767280697; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qs6BJX7+RWUbYyZjj+cOPleo4iCRlFe1YsbACYZyhFI=;
+        b=cgCAOeS8Yvk+9LCKE/fHmRulgnlQzJIUyW0juEgc3OseKtBjGdBOSNyCXbkOC7COCt
+         Is33sTVt5+DDeP3u4VMRsm2qWaBgQAjIIusab5yL91HohBt4r9wTkAw4XJMQwRktM9jw
+         ukEeNSY/DqEsP50+iVRoWfWSb+1WfqlM+ogrLAar6LTqMICAjYXqsVxnNpN6EL/ljSTE
+         F0pm3q7kY6+xDulaoaeEx3rrJRtFh18F3eJfqTsLGVfmhfRRep8gp5ueYU5XUHCIpvp3
+         JIRn0z5/dCf3wMGoUaQlFbFsROQJNlhPpK6uILb+9ZWyevuqJSEpDVk8JU1wKmXhi06l
+         xO1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766675334; x=1767280134;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4enrxTcJXMNYO4nBPNY3Xlx1Fas4M0tOaGVZ1+UN1kM=;
-        b=dHgNiV3EN3vT/vJYpNJp9pvo3b9e/Hzl5VjOzvFZnfqZ5EUU7GxswWIU2m4Xer651X
-         iA+IjZ1lzp9cMCvtscxEQSRRc3pHCouuTIbryLLLivE64bq+kASakaJ3t1RVOV5mTc9s
-         kIW9p5+nI10PrVj39bao7faa05ssJUEtn4IzOdzOsR+hW4+qQeTbj1oqxitGQOslgMr9
-         cyNLXfJ3ml9feAwxdyhum8LQRL+FULbkDUDbwGEzPM9bbaT6w0REDJEhzHLQumv/60ZK
-         JSRRZQkQD+9UjbFnE6rq2JRLtz3F8lryip+DkJ5Cd3SqhqnvcuYa2wcX0wezIgS2SgeB
-         GMFA==
-X-Gm-Message-State: AOJu0YyEjVeRRI2s0Peh2Wf7Cb5ve71yg5xIlzCoHdrPawcSaifaiP1Y
-	uhbiUxzKQ3MOftFV8bO7tUbpH28oSiAela6/MN/auh2zXRZ43T1pMGQ/jXVPu5BDBxs=
-X-Gm-Gg: AY/fxX4b2gv4yV2Dsqdi9fQp/MRcjR5GgqlWi2DDMQ3YqF20WG76viD8pXMzeDE4V/S
-	vrGrgGty667f1K6hk1TZ26y50C7TjSpYUFOGGqa208tz8DbSWRsECQRaUvAMSSZKdeg+0JYmdGF
-	uld8bJ7K96vLgEp4B+jO7JoCNFlr5F1NGONEDsvf7t8j45vVfdyYuY32q0QXBXv+WMNCniu1YMO
-	eNArWFo+UCsNzLyJ4g+gJGEjQ1yKBnrv3MdCKZNUh+2vMbnCS/jsToyRIVevSpVwhyEZvCqUta9
-	ijs/I5yOH2obAe7dE2Uy2CDFouTp/mok8Yglqx35wC41T3LqurxcIoWff8UGDLZgdEEzvkp8Ubw
-	LNXwxZDrNJeKNFgVhWoXqzbCHYdY0fQBM9RSG/fRs+d+QptmW01niJqHANPyoXoVwxNKyLY3cZP
-	aw4L4=
-X-Google-Smtp-Source: AGHT+IHvysv98JjOtrG/XeetHHlKyurM7jKSGEnAoF86eGaByvTJgHoycWQr3WJoF84WobCqIy6E9Q==
-X-Received: by 2002:a05:6808:1b1e:b0:450:c9c3:a249 with SMTP id 5614622812f47-457b21cfc2amr10228559b6e.45.1766675333911;
-        Thu, 25 Dec 2025 07:08:53 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-457b3edb41fsm9481403b6e.18.2025.12.25.07.08.50
+        d=1e100.net; s=20230601; t=1766675897; x=1767280697;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qs6BJX7+RWUbYyZjj+cOPleo4iCRlFe1YsbACYZyhFI=;
+        b=v0Z/74qpiBLXd16XrCH7HUuv3DEg4EaaS7BaVZMYw/lb5silpiUk1qqecEUfrba8wP
+         7rPzLiMT+LPVthT4vWOVvg9gQOiHwuIs5DI4weC8rG6U3wD/1Q2rYPevPTplk3M+A6Qf
+         Ann0XJeMyExNI1eBGmDBomxE9LFS+9MzFjFI8iwi6Zp3IUK6Ye1HV0e9L1jgu/Um6BpW
+         qvGZ7t7TZg+ePZYNjr3uW6lEPGu1jc5asFmUN2j8wWMpbvvtS7g1L+8x0BMuJeTGFZ0S
+         S4RYA0FtNpqp6dzLdeasptJm3HirtPjt9WzDqONTZ2y0a8Y2k3CDyHUnxF33dQqalZeg
+         02IQ==
+X-Gm-Message-State: AOJu0YwBE4tTy/4o7xSCZyqF78Br2C70gPNwNf+hW8eoV1eizPCcegc+
+	64CETSNsb0V1OzUtK9aHXQ4ofYRqhJ+7nRkc6Tn9fIRIczePDqFwXnrd
+X-Gm-Gg: AY/fxX46N7ObCzgxtIYP2JWd/B/m9bw5+B5tqlVSyJ2xS3O2zhld+p3mEyIX9cuCKn/
+	nXSaTt1/cVBdTV5EkCYdHVCX4Kdm5pq6FgmtiAGdl4DmSUNMKwGi5RAJEWPCaPwf3QOF3OxpJnZ
+	f8yMBAcAecjaC/VTJH5BQN6HDx4D5upLstRv3mH/X96t+DohPEV8DCs1HHk/XSuxPodE9VoEUjY
+	xwJaJe6wVk6e71RUZ1wb6ZMR9CKf0tO7TeE8mVTso9EBFUFOCBvX2rteb4dSlcuY3cwzMRG9sAN
+	Jbr+ZSXzDXHmRH+kNBAwLg5yErJ4lfDrPQmqXVmk+XiDraWTqiJ7gkdvaZ0efrJGhcNTgr0EBHN
+	uWZpJY2EKsLeLwggYR9OhqrZQarssM9XPi7/J6TZ9XzYZikCpX/huY19IZP/N/6zloww6NGxsvZ
+	dnvjy2PNY7Qyw=
+X-Google-Smtp-Source: AGHT+IFyYhem34TIt5JkWzwnSB53xq94ui6A4MQrPDy5SuIyfwhYp7CBOvr+9/vlj+sQXcZsrKKlUw==
+X-Received: by 2002:a17:90a:c888:b0:340:be44:dd0b with SMTP id 98e67ed59e1d1-34e921f582amr15972331a91.34.1766675896814;
+        Thu, 25 Dec 2025 07:18:16 -0800 (PST)
+Received: from inspiron ([111.125.235.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e772ac06fsm9337558a91.11.2025.12.25.07.18.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Dec 2025 07:08:52 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Prithvi Tambewagh <activprithvi@gmail.com>
-Cc: io-uring@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
- viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
- syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com, 
- stable@vger.kernel.org
-In-Reply-To: <20251225072829.44646-1-activprithvi@gmail.com>
-References: <20251225072829.44646-1-activprithvi@gmail.com>
+        Thu, 25 Dec 2025 07:18:16 -0800 (PST)
+Date: Thu, 25 Dec 2025 20:48:08 +0530
+From: Prithvi <activprithvi@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
 Subject: Re: [PATCH v2] io_uring: fix filename leak in __io_openat_prep()
-Message-Id: <176667533028.68806.11770987520631890583.b4-ty@kernel.dk>
-Date: Thu, 25 Dec 2025 08:08:50 -0700
+Message-ID: <20251225151808.lvpfdwqvcej4vxgm@inspiron>
+References: <20251225072829.44646-1-activprithvi@gmail.com>
+ <176667533028.68806.11770987520631890583.b4-ty@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176667533028.68806.11770987520631890583.b4-ty@kernel.dk>
 
-
-On Thu, 25 Dec 2025 12:58:29 +0530, Prithvi Tambewagh wrote:
->  __io_openat_prep() allocates a struct filename using getname(). However,
-> for the condition of the file being installed in the fixed file table as
-> well as having O_CLOEXEC flag set, the function returns early. At that
-> point, the request doesn't have REQ_F_NEED_CLEANUP flag set. Due to this,
-> the memory for the newly allocated struct filename is not cleaned up,
-> causing a memory leak.
+On Thu, Dec 25, 2025 at 08:08:50AM -0700, Jens Axboe wrote:
 > 
-> [...]
+> On Thu, 25 Dec 2025 12:58:29 +0530, Prithvi Tambewagh wrote:
+> >  __io_openat_prep() allocates a struct filename using getname(). However,
+> > for the condition of the file being installed in the fixed file table as
+> > well as having O_CLOEXEC flag set, the function returns early. At that
+> > point, the request doesn't have REQ_F_NEED_CLEANUP flag set. Due to this,
+> > the memory for the newly allocated struct filename is not cleaned up,
+> > causing a memory leak.
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/1] io_uring: fix filename leak in __io_openat_prep()
+>       commit: b14fad555302a2104948feaff70503b64c80ac01
+> 
+> Best regards,
+> -- 
+> Jens Axboe
+> 
+> 
+> 
 
-Applied, thanks!
+Thank you!
 
-[1/1] io_uring: fix filename leak in __io_openat_prep()
-      commit: b14fad555302a2104948feaff70503b64c80ac01
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Best Regards,
+Prithvi
 

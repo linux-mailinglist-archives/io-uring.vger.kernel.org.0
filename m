@@ -1,154 +1,125 @@
-Return-Path: <io-uring+bounces-11311-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11312-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561D1CDE592
-	for <lists+io-uring@lfdr.de>; Fri, 26 Dec 2025 06:17:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D518CDECDB
+	for <lists+io-uring@lfdr.de>; Fri, 26 Dec 2025 16:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0CB043012BE2
-	for <lists+io-uring@lfdr.de>; Fri, 26 Dec 2025 05:17:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id EDF383002A7B
+	for <lists+io-uring@lfdr.de>; Fri, 26 Dec 2025 15:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41100265629;
-	Fri, 26 Dec 2025 05:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B5821CFF6;
+	Fri, 26 Dec 2025 15:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vj7vg8uv"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pS3p5zp2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD352609FD
-	for <io-uring@vger.kernel.org>; Fri, 26 Dec 2025 05:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C281D5141
+	for <io-uring@vger.kernel.org>; Fri, 26 Dec 2025 15:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766726235; cv=none; b=BLgQg2zQrFAGXmMTtejrGugJBnCTIxVAFsEIvRelzK5gXekUOO8C2ZgL86LHifpvALSGZ83u9YBFU0pPqw5SyuKegPs7c7C3xbz3C4avufB62pjG/PyHSA3rjPcaVJGvQdCZHmSv4GXBCsOZUKtMvejHZjRACSC5E0il5hCNTrE=
+	t=1766764310; cv=none; b=cjRvoMjOFVpgHdHpJ5RbNL1fWfQRHp3NOSE67AwHWySt7j24aIsD+dzEhSzJjwRabs06yytrmXoXdIbTMfvblmJqjLECYgfStfz+cmautWrMeBrUNwSnlgTKpiBFwwi/h7jC7D/CTa41VpedkBlAIq1D4CFqBrp1NvzGJ0dW8n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766726235; c=relaxed/simple;
-	bh=z6tN2koOVYt5xxAFCQCSSARH1+DI6PvUPVVhQVBJ6fM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZHAexlacEj/QEuIXXR5cPeKQo2LfEUmPwZrs6X+MM9EE0SP1260jjHlyXEDmvNZApQ5txGV4iLpYSNP++XPz0/CxyvCcQ0GTpL7VTchGXD7/cqHKv0Mxp5gqRZi/FKBpDx7WCD4iGtzlwYoWJASv/gX5I5s7DpsofRmZOB9W+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vj7vg8uv; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a07f8dd9cdso74081865ad.1
-        for <io-uring@vger.kernel.org>; Thu, 25 Dec 2025 21:17:13 -0800 (PST)
+	s=arc-20240116; t=1766764310; c=relaxed/simple;
+	bh=PfjWb790qtagjcKEYSicDCthr7KYiINvFTdKNwcq0uU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pMNQ4j6nywQ0UzhyOM+tvnHnPx48Lt++lj9G7WS2SUgsN+XbkMmOBgvCNfzQdzvsvCrDKek0RHU/r6NsCJ8nWsbq1M0CTGpMBW+z/2MGGwkALka9bSKOLLkJJxjkJHLXbuMgq0KSdCCUezfeGCjSYx1mePF/lVwsaYxNhe7plv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pS3p5zp2; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3e89d226c3aso5210226fac.2
+        for <io-uring@vger.kernel.org>; Fri, 26 Dec 2025 07:51:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766726233; x=1767331033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m9FIBnBIT8ZoZIIN6usk5vCof387U33RW9IfQgNu4dE=;
-        b=Vj7vg8uvSpW8pSSvOsaq4AgFRhgWEqRJyFSQNhScyIoCx9t91GoXkDbEpwqasNETYD
-         fdpajnE7fgaM4vooYyljW/p90FEd10ZKz3p5SeqHU5UlIQ+DvNgrjjCXQY8rxOLHT4fJ
-         Hpndhj9yVIdLuJDcGe6m/X9FyGjP93YMzABhL3Qkc4g/7nvgqyDhZosHJntcs95fLbbG
-         TJGNptDTCNOoJ2gWqK05gbTSHTeWXx3ZlMskyCfQynw127gL/ul3d34E1HtR0oUhrIKN
-         nqTo4bdyOPH8ibtYrFNmUgJm941XtYjMSdp40H8gu5kV+nJH6nQy+AqEGirnikaDChvN
-         an0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766726233; x=1767331033;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1766764305; x=1767369105; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m9FIBnBIT8ZoZIIN6usk5vCof387U33RW9IfQgNu4dE=;
-        b=kpQ3nkaSNVjoTUoUJk5f45bLEy/+CEye3AV8YZYFXVU+kBpHESTE3HGngtDOfQXMrj
-         0T+OCCvZsi7E4eKeDDIZf+BtTA2ih3xax03fv3XI7aq++0ALFHPHu/AgGiGJ+a4PQZb0
-         AsTfQJMOQSTGcStv0ul/lwm7YQY3NU+avjhcHV0OyAVvoOFf2pvRmUh4xWGm9gjCDvWj
-         x9rffR1fKjBg8q2XqmIBbZho9EyPZ6ky9lZ7eJBslj15ccDYOJTByz0viEG0x563FbbS
-         dTyHNPRGoNaNPtdDqBX66v3qeXhkTFhrOCnu911hs9My69QgsNrwhK3Hu/tUzzA5FAHN
-         WIJA==
-X-Gm-Message-State: AOJu0Ywoa7wWEtDdwHTbzWC/YGHIE3FPNg3NPVBhxf9jNuFUz4FyADOz
-	pTqT53hjYbIhuyURgptoLvV9uTQzOmSdsCqVy1oUwZ6BHQuBaO1YKLiZtyV4dA==
-X-Gm-Gg: AY/fxX4QiFVEkHv/PcU3PSg8a6X4D6RrrCaveWIYcm2loKuDRkdTrNOJiCvVbv+6qNm
-	1pnejGtWL37FH1RV36YgFxUkCm66GJ+DJkiw1sn+P+ui6pHqdnxj06a75thTf1DUvnxj3lh5MlD
-	Oms5BFYr7NQFEiSzGa5XwLPRlazzf7RlF6cXspQ7HOhc1iNSawwn4KBT3r40WEVdeT6oTY5ruge
-	4IMDByalE0lanXLrHJSQv9exdRMcsv0ZC8bamOwdeBhqeZhn6qsSFXM7Cb204AUGUGbNIr6D/Di
-	ykRYpwlNJ0WkJsZI8vPILmbWZq68SzHAsz9S0AlZZOOg0KsoeUHBia3tHIx9q0tEokL5K+FAvyP
-	HE1F6V8lLcwNtasa3qbXsiR9AwnaHHuy5iEEFw+voIaTovWN/M7M50gGewNqF4j0Uij7B6CZCZQ
-	NleeM6q/6IzbuOHpAmwVUHuTa8aRj22oPyEI1VJnK30SUWdhch4x4=
-X-Google-Smtp-Source: AGHT+IF+0jA+Wk/IxGkJejZoWaUDwFSIVKNCa82JxbexbFr7JdRi7N174T19loWbeLafMPokiOiILg==
-X-Received: by 2002:a17:902:d488:b0:2a0:7f9e:518c with SMTP id d9443c01a7336-2a2f222aed1mr218214765ad.16.1766726232867;
-        Thu, 25 Dec 2025 21:17:12 -0800 (PST)
-Received: from gourav-pc.lan (host-30-47.highlandsfibernetwork.com. [216.9.30.47])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c74490sm191467395ad.5.2025.12.25.21.17.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Dec 2025 21:17:12 -0800 (PST)
-From: Gourav Roy <gourav.bit@gmail.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gourav Roy <gourav.bit@gmail.com>
-Subject: [PATCH] io-uring: fixed an int type code style issue
-Date: Thu, 25 Dec 2025 21:16:16 -0800
-Message-ID: <20251226051616.124925-1-gourav.bit@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        bh=AM4V42ZoIToy8yE9bbtfGSpKts/x/HFTewSeTSQP/vs=;
+        b=pS3p5zp2B2vpUo5U9+2ngn9cDv+FNsaVhlhFT50t2sX/Tfid7yFaZkmZJ17wzjW2U3
+         1d4dA8rWXk8+D73gsQdA8J6HjyDtrUm/bmMFm21V9Qk3Z718nFzH3DCxnHmkMvobcp9l
+         Ap+XH+IQoFnRl9oWUZ7KdDdbrO0rJoaMNfmviUcM4KHe08H/64mD4m+wZhaXGTAkEcdY
+         uqHR4hyEtAzo1B4Qe6KMRq6FJdcwDRihcRXtoe0D+H/RKXAaW6gNQZVPhFOj8Lr0pdi5
+         wW5ZJv3i/N2zg2YKWCjKuwwb9VYrNmEKyAklGrnV2x2UCvQD5GepQ30Y069gELGjFDfY
+         SNVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766764305; x=1767369105;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AM4V42ZoIToy8yE9bbtfGSpKts/x/HFTewSeTSQP/vs=;
+        b=ajUdrM4xL89MDYk8oFbLQ1OUK5LEL9exSMjqasQ0Ni1iM3VESU4xIm7l1OruzknrPg
+         jnD9YpuuPMS0bh3ItON0NuzP+5RH+MCFGckcm07KY5E7tUY7Q5sYR1fUcq/LaQuluYjb
+         xHbfotWzh4Ofxpgp8UtXY2q8/EoHcm7qWbnp0F4NZRepCdH+egbbPhknNwD7KNRk4jrP
+         JWLJWSfevaWzGUXLi+ATN7o+pAHcrKIprKhxOW1p8Akz/5N10BSxiprned/ChY/Ep1KP
+         cyp79ebcn0WYluR6WYkmdOv41/VwVZMVlW2zj0sHzW3em45iGh+PxvZB3z6QaTdXqL8j
+         HZMg==
+X-Gm-Message-State: AOJu0Yys731H4UFYZRG6LKjqX01zxZfj6uk6lk8xYVbiULImbzwUOkGW
+	rMvi7AzpeUq9tw30OCEpxsLVhDPOhcJ7YXoFBYvWDSBx12vafq9xYN4UXCOEPVZxPK6T9ac5mR4
+	FqmfW
+X-Gm-Gg: AY/fxX4nqOpRvkye1pGVI2FMwboTW3EfeALmBSjsEtVHZqS6sbJzEZa3RQWGshPlDkz
+	U4JgAtLrnnqwDpN9wHOfXVNVZH9VEGgDsCH4a5vKupeKYKECETyzr1LuEW4aBhk0Fv77VWb/Ai5
+	GENcpiZmB6j1P+RUZN0LXdm/w7PwjbGIROmN5xvo1yQdAb/7Qd5jg3cM0Nqa50+ccfM0UbBf35q
+	fitV/vx55dX7Z4mAIfI76kJsqqyuuvECzktcbrhQyoQZvc+++iVMSbIqfpGGfrjVP2UtDng1FU0
+	BioYvTJGeUi6MldxTXXGqZBCztrs+xEmT+IB633QsIcj84ATfQbeHPby2EE8gQWIWJw74KnDw1o
+	UDY3jL9ZGRKzOXzTr39PHgZqW+R+WEu39WWzupn6s82eq7Dwyhu+chmpxOj87eMWepRbu7y66Wo
+	cuJrYA9TaxMakHFGl8idU=
+X-Google-Smtp-Source: AGHT+IG+oxV82HQbXi5TZU+oNX5g8vLe4oR51WbwAU5rRFI+Xi8yZmn7OBXL8va84t+yysb5GfOUhw==
+X-Received: by 2002:a05:6871:3326:b0:3ec:a336:f2c7 with SMTP id 586e51a60fabf-3fda5241ccfmr12971648fac.20.1766764305095;
+        Fri, 26 Dec 2025 07:51:45 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3fdaa931b0esm14526071fac.8.2025.12.26.07.51.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Dec 2025 07:51:43 -0800 (PST)
+Message-ID: <aba6a23d-6b91-4f51-86f9-cbe26597ab04@kernel.dk>
+Date: Fri, 26 Dec 2025 08:51:42 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 6.19-rc3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fixed a code style issue to prefer 'unsigned int' over bare use of 'unsigned'.
+Hi Linus,
 
-Signed-off-by: Gourav Roy <gourav.bit@gmail.com>
----
- io_uring/alloc_cache.c | 2 +-
- io_uring/alloc_cache.h | 2 +-
- io_uring/cancel.c      | 2 +-
- io_uring/eventfd.c     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Just a single fix for a bug that can cause a leak of the filename with
+IORING_OP_OPENAT, if direct descriptors are asked for and O_CLOEXEC has
+been set in the request flags.
 
-diff --git a/io_uring/alloc_cache.c b/io_uring/alloc_cache.c
-index 58423888b736..9aee9f944d2c 100644
---- a/io_uring/alloc_cache.c
-+++ b/io_uring/alloc_cache.c
-@@ -19,7 +19,7 @@ void io_alloc_cache_free(struct io_alloc_cache *cache,
- 
- /* returns false if the cache was initialized properly */
- bool io_alloc_cache_init(struct io_alloc_cache *cache,
--			 unsigned max_nr, unsigned int size,
-+			 unsigned int max_nr, unsigned int size,
- 			 unsigned int init_bytes)
- {
- 	cache->entries = kvmalloc_array(max_nr, sizeof(void *), GFP_KERNEL);
-diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
-index d33ce159ef33..8f70af6eb341 100644
---- a/io_uring/alloc_cache.h
-+++ b/io_uring/alloc_cache.h
-@@ -11,7 +11,7 @@
- void io_alloc_cache_free(struct io_alloc_cache *cache,
- 			 void (*free)(const void *));
- bool io_alloc_cache_init(struct io_alloc_cache *cache,
--			 unsigned max_nr, unsigned int size,
-+			 unsigned int max_nr, unsigned int size,
- 			 unsigned int init_bytes);
- 
- void *io_cache_alloc_new(struct io_alloc_cache *cache, gfp_t gfp);
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index ca12ac10c0ae..a9a674581871 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -104,7 +104,7 @@ static int io_async_cancel_one(struct io_uring_task *tctx,
- }
- 
- int io_try_cancel(struct io_uring_task *tctx, struct io_cancel_data *cd,
--		  unsigned issue_flags)
-+		  unsigned int issue_flags)
- {
- 	struct io_ring_ctx *ctx = cd->ctx;
- 	int ret;
-diff --git a/io_uring/eventfd.c b/io_uring/eventfd.c
-index 78f8ab7db104..ecf899a9c697 100644
---- a/io_uring/eventfd.c
-+++ b/io_uring/eventfd.c
-@@ -15,7 +15,7 @@ struct io_ev_fd {
- 	struct eventfd_ctx	*cq_ev_fd;
- 	unsigned int		eventfd_async;
- 	/* protected by ->completion_lock */
--	unsigned		last_cq_tail;
-+	unsigned int		last_cq_tail;
- 	refcount_t		refs;
- 	atomic_t		ops;
- 	struct rcu_head		rcu;
+Please pull!
+
+
+The following changes since commit 114ea9bbaf7681c4d363e13b7916e6fef6a4963a:
+
+  io_uring: fix nr_segs calculation in io_import_kbuf (2025-12-17 07:35:42 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.19-20251226
+
+for you to fetch changes up to b14fad555302a2104948feaff70503b64c80ac01:
+
+  io_uring: fix filename leak in __io_openat_prep() (2025-12-25 07:58:33 -0700)
+
+----------------------------------------------------------------
+io_uring-6.19-20251226
+
+----------------------------------------------------------------
+Prithvi Tambewagh (1):
+      io_uring: fix filename leak in __io_openat_prep()
+
+ io_uring/openclose.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 -- 
-2.51.0
+Jens Axboe
 
 

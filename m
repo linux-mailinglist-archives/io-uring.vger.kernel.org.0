@@ -1,164 +1,166 @@
-Return-Path: <io-uring+bounces-11351-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11352-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC1ECEC76F
-	for <lists+io-uring@lfdr.de>; Wed, 31 Dec 2025 19:19:17 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBBCCECEEF
+	for <lists+io-uring@lfdr.de>; Thu, 01 Jan 2026 10:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 59FCC300C5E7
-	for <lists+io-uring@lfdr.de>; Wed, 31 Dec 2025 18:19:13 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5D7EB30021CF
+	for <lists+io-uring@lfdr.de>; Thu,  1 Jan 2026 09:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F6B2FF675;
-	Wed, 31 Dec 2025 18:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MQrY2Tdg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8412868B5;
+	Thu,  1 Jan 2026 09:47:21 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f98.google.com (mail-ot1-f98.google.com [209.85.210.98])
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2152DC33F
-	for <io-uring@vger.kernel.org>; Wed, 31 Dec 2025 18:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855F0288C96
+	for <io-uring@vger.kernel.org>; Thu,  1 Jan 2026 09:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767205152; cv=none; b=lRSFgS3rQKDbSjoRGXGeM5rZaq5q6o41plx5zwx2s0ORZan7y0D3rlW3pesHVSWWXW0qB6de2TCPtZIy3jqnEjZaErh4RDWJVRYWpeZVZz/TWK1ZQDJsAF2gelEgXjjiiiWrdLNyotnQa49ZMmlsi2bBYCvLiKKlxfo/Ip1Tpp0=
+	t=1767260841; cv=none; b=AwPSA25IXl/PHJvzzzDwESGWYiGwYLl9SwscWZA460vxU7jHlwSZLUJo8ysFbkUjsLReWe2ABjGTqYAbKyLGV4U3JyupYXNcWAkkUb2E/sOW3+zsNBnlBmXrgOz4Wp/v8xUEMo1FpMDpxI1Xd4dVDBDwUOp73JNRWN8nVM9uaIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767205152; c=relaxed/simple;
-	bh=XA9VXp/t89uYbrNpEQYMB3yWH4jA9QVWu9zC3HDuBrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OvIIuqJV2GKnXSGXd+EkS/oG6Y5PQCxKBWhz5vi4ULLBBsIuVE9j1edC78pB6fzPHDgL2k1JqREm0vuFXfROGUW7utZpK2Q0+spzkMRkU0gEBDjM+gfwqGX+l4CjEGgXvHcDHvFGmlkE6gfBDne679tfpu3rojbX2bDVtIvBRns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MQrY2Tdg; arc=none smtp.client-ip=209.85.210.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-ot1-f98.google.com with SMTP id 46e09a7af769-7c7a32d6e7dso1307849a34.2
-        for <io-uring@vger.kernel.org>; Wed, 31 Dec 2025 10:19:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1767205150; x=1767809950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=spC8OXaVZBPTicR35S4WZ2Km38bffiKG3F7I2qMTJRs=;
-        b=MQrY2Tdg8HrL7DxLfz5UtMnwOTdo6xItUgiAhcPyfMGkTq4ryJ2LWy9lkNksBm6pn4
-         rAH8GUX4oYudnazboaAHFSjVSDOJ5NqLzpHPTfRTk/XtR8hpwln6rrC1beDpx0BUpfpK
-         XSY7dVOy6EMkhJbThaORMH8FlYsMPyEvdp0AHC4fJsbNu/RqojJzZUZU7q32eGXaU4hd
-         oQlo8WcEZhS4OUbUQE5TzVucezNQUNy2JJcKx/CUSRyYYTT+wtLxFX0FGcSRtsWb4iL8
-         +erThuHdqBhSejZBPQ+PnWvuLVJ2YFb9GKviY9S3NGH++zHIzD4XMgOHzPEMUI+NKET8
-         vZAg==
+	s=arc-20240116; t=1767260841; c=relaxed/simple;
+	bh=5OvyIsRW3Ulmc+6vCD1oRjKvrxh+0+meFQjoHPyGchg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=cGjwfysOAPKr5woz0a8ZLE4xqe0K7paUHCKMvjosv0LfBFVjt7j+riGT9gT6777IrRwOOwROhiuUESU3aaVUdBB4v9oNzIfDbsDfo2XpICLUSkdmC5LbpM673DZgze40H96cJDYrR+fv3RtxXg+mBSfpYnVXN+GmgTMHgJ/9LaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-65d0318e02eso21926694eaf.1
+        for <io-uring@vger.kernel.org>; Thu, 01 Jan 2026 01:47:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767205150; x=1767809950;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=spC8OXaVZBPTicR35S4WZ2Km38bffiKG3F7I2qMTJRs=;
-        b=OfedeDweU3d1Nx0XxZUcvvAgljK86XlwHDTAi8gHTEvo+jcXBoE/lu/xqlnUqVOrSv
-         JHMDZ5D/3I4CV2rdIIbVMaDe1BGGp+N14cqffKHBjIyx46RIeWgbbsDVhjRtLNoUmIiv
-         Cj9eji4RjnsJBaavA4ruAM4Nij8Plffw5ePNox0mkzFft2tuex1SPHO0br5E28NbEqsL
-         3O+EMQxGQvlNY4aYBxGanm9wcPrWetnC+Ycaeij/6Lv8OBo8ZcdiNnrtV00qaSM6mO9q
-         8ipWOqNuYchdYT/0MqJwgUIc+9nt5LZYgcTRU/Tl9Yrdpmddhtg6p/XD/I7m1lbhRLLm
-         pG/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXoZWQwSMgYSyO0zJg/YfqKi0M/zbHF8XPUtF5Z6LThr8kcKuv4RyotlDOjUUspycahs9CeavA+Dw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm903hEAhT31y5NnsiGIb9+q/ABiFVj4ajwBKeEIQdgPHeylU5
-	ehNgCVSvGjVmFB8aY4j7va8vywy3ndy6fkwo6mguo6vrY56qcGkv1YvaQT/XlpVndY54JvzzlW8
-	mocvWypBEytJBVsNoHbD2f3o9UsqPHVPVa6jxRviOMSfk3t3oWvG+
-X-Gm-Gg: AY/fxX4DQxq/GXmeQTPoF9PU07vTXMkA/UPouWDlpEGWwctPJ2EHkfkgpdPfH0B53Tv
-	slWmoGhQ4W5UOuD6njRX5jrEB0uy/IdCbOdrICUN14fI60QyFm2P0Aqilbq41HlZ4YKYK2r/ig1
-	Vewp3oalNEYz37JmEGtzybG0oEfBmN3n4tvLVvLTbmRit+tNQOP9omXBpisYtTvBj0dMpBZKUyx
-	pMje0PL0rS6beUfikCtKKQmZa2bE4axXf305zRtQZDBAbuxznnsQ1hqDIB0arNHEy/IHwUMAh+D
-	bPt/w79SbUjRfUZ8Ru0byEukr+LB2CnItXE5E4Zgye95AejqnrHjjr4TCk6Y9GctZQq41eMkXcn
-	1znzwucVIiACF7pMS86sQGjIGQPc=
-X-Google-Smtp-Source: AGHT+IEsh4Vj4HmS6tj5e84VPtTy7F4B8RMk5vvvlP0iGibByQou1oNK6h6QAvBB9cKNy9PWg6AZ/0crqpz9
-X-Received: by 2002:a05:6830:310e:b0:7c9:3d82:4235 with SMTP id 46e09a7af769-7cc66a550cbmr18379200a34.3.1767205149596;
-        Wed, 31 Dec 2025 10:19:09 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 46e09a7af769-7cc667d6b73sm4321855a34.5.2025.12.31.10.19.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Dec 2025 10:19:09 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.49.34.222])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id C6DCE340185;
-	Wed, 31 Dec 2025 11:19:08 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id BFE8BE41BE0; Wed, 31 Dec 2025 11:19:08 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/memmap: drop unused sz param in io_uring_validate_mmap_request()
-Date: Wed, 31 Dec 2025 11:19:06 -0700
-Message-ID: <20251231181908.4039028-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1767260836; x=1767865636;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UFeSGReuuC99NPOsoEX2+QXztArIvR8/yIB7wkkMASw=;
+        b=Xt6x5GCOYAgKq47MOkOu9uXNPMgivxPVpPuxT+FnKOh2ownj2bnf6st2OdGte491Ii
+         jI0oBYfjpVTjzah0AqAZgd9gSDftWK0rgTMq9hHXrTASt5JoF6p7hLLh/FCX05JOy85y
+         O1BTJ8wbEFZ5C3BhzMdt5q4ejIIe/sxKWMx6otsHpUjRBIrDZwHFg67t2mmh4a9T2K2k
+         Mqob4ezUwyO+mUpCCCFcmcG9raHLRZmucO9bTo/SZsfeB5amN9hboYw5mwvwUcs3SpQV
+         ZmDPN8RJ2bOqHyNem0atSbXKIzHMFZKeq9ayqcgGo+5c6XxTT3l+Dkc3tJ7BIguib33W
+         LQIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU50hJH8UgXNURKjp52h7sZm7JAUGwB3DAeJ6lG0Lxdw43Ghq6lTjqe17cdzC9g3m517FOTWSxSaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYgdi/Bhv5/H/yJFi63T4jHamtRK0Lwo01Ll9xCjuTxqRZULyy
+	1CuEnIfI3hXhftwG8QvH76Mmv610Oe/f7mr6qBEUsvQAWZUkgS5wjYShYi/fUCbA7zKmXfdSrgM
+	eFPQI7t3MuvYN2pO78pAJQWgbL9Uxl69a4gQiXQXaN78POZ1+GZEGq8ubGsY=
+X-Google-Smtp-Source: AGHT+IFefQWbkn3qb+2cAat4fpKXXQ3nGdww6ZW82q0l/Pt47CizRfPSvRgAv25U8wBb7F8XyQbfOrDe8MuHp1/iXNG6/Rcjf+Mu
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6820:1ca7:b0:65d:a5a:848c with SMTP id
+ 006d021491bc7-65d0eadd986mr18447073eaf.59.1767260836748; Thu, 01 Jan 2026
+ 01:47:16 -0800 (PST)
+Date: Thu, 01 Jan 2026 01:47:16 -0800
+In-Reply-To: <4cffd2b8-e7c9-48df-9207-0df6e3d5c6ce@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <695642a4.050a0220.a1b6.0338.GAE@google.com>
+Subject: [syzbot ci] Re: io_uring/tctx: add separate lock for list of tctx's
+ in ctx
+From: syzbot ci <syzbot+cice7613aaad21f97d@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-io_uring_validate_mmap_request() doesn't use its size_t sz argument, so
-remove it.
+syzbot ci has tested the following series
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+[v1] io_uring/tctx: add separate lock for list of tctx's in ctx
+https://lore.kernel.org/all/4cffd2b8-e7c9-48df-9207-0df6e3d5c6ce@kernel.dk
+* [PATCH] io_uring/tctx: add separate lock for list of tctx's in ctx
+
+and found the following issue:
+WARNING in __io_async_cancel
+
+Full report is available here:
+https://ci.syzbot.org/series/98951813-facd-4de5-8d20-609c804dc446
+
+***
+
+WARNING in __io_async_cancel
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da
+arch:      amd64
+compiler:  Debian clang version 21.1.8 (++20251202083448+f68f64eb8130-1~exp1~20251202083504.46), Debian LLD 21.1.8
+config:    https://ci.syzbot.org/builds/9e0d952e-d592-4cca-9208-4b87430b4e6f/config
+C repro:   https://ci.syzbot.org/findings/103d3164-79b9-4a03-bdf3-9bb057961994/c_repro
+syz repro: https://ci.syzbot.org/findings/103d3164-79b9-4a03-bdf3-9bb057961994/syz_repro
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff819c3a04>] prepare_to_wait+0x174/0x210 kernel/sched/wait.c:256
+WARNING: kernel/sched/core.c:8754 at __might_sleep+0x92/0xf0 kernel/sched/core.c:8750, CPU#1: syz.0.17/5989
+Modules linked in:
+CPU: 1 UID: 0 PID: 5989 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__might_sleep+0xac/0xf0 kernel/sched/core.c:8750
+Code: 00 00 48 89 3c 24 41 89 f5 4c 8d 35 6e 25 32 0e 43 80 3c 3c 00 74 08 48 89 df e8 0f 31 96 00 48 8b 0b 4c 89 f7 89 ee 48 89 ca <67> 48 0f b9 3a 44 89 ee 48 8b 3c 24 eb b5 44 89 f1 80 e1 07 80 c1
+RSP: 0018:ffffc90003c57960 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff888112e4ef78 RCX: ffffffff819c3a04
+RDX: ffffffff819c3a04 RSI: 0000000000000001 RDI: ffffffff8fc561c0
+RBP: 0000000000000001 R08: ffffc90003c57ac7 R09: 0000000000000000
+R10: ffffc90003c57aa0 R11: fffff5200078af59 R12: 1ffff110225c9def
+R13: 000000000000024f R14: ffffffff8fc561c0 R15: dffffc0000000000
+FS:  0000555558120500(0000) GS:ffff8882a9a0f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000001c0 CR3: 00000001165c4000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ __mutex_lock_common kernel/locking/mutex.c:591 [inline]
+ __mutex_lock+0x119/0x1340 kernel/locking/mutex.c:776
+ __io_async_cancel+0x183/0x490 io_uring/cancel.c:188
+ __io_sync_cancel io_uring/cancel.c:258 [inline]
+ io_sync_cancel+0x7d2/0x940 io_uring/cancel.c:322
+ __io_uring_register io_uring/register.c:761 [inline]
+ __do_sys_io_uring_register io_uring/register.c:921 [inline]
+ __se_sys_io_uring_register+0xe1b/0x12a0 io_uring/register.c:898
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc802f9acb9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe5ca81768 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00007fc803205fa0 RCX: 00007fc802f9acb9
+RDX: 00002000000001c0 RSI: 0000000000000018 RDI: 0000000000000003
+RBP: 00007fc803008bf7 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc803205fac R14: 00007fc803205fa0 R15: 00007fc803205fa0
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	48 89 3c 24          	mov    %rdi,(%rsp)
+   6:	41 89 f5             	mov    %esi,%r13d
+   9:	4c 8d 35 6e 25 32 0e 	lea    0xe32256e(%rip),%r14        # 0xe32257e
+  10:	43 80 3c 3c 00       	cmpb   $0x0,(%r12,%r15,1)
+  15:	74 08                	je     0x1f
+  17:	48 89 df             	mov    %rbx,%rdi
+  1a:	e8 0f 31 96 00       	call   0x96312e
+  1f:	48 8b 0b             	mov    (%rbx),%rcx
+  22:	4c 89 f7             	mov    %r14,%rdi
+  25:	89 ee                	mov    %ebp,%esi
+  27:	48 89 ca             	mov    %rcx,%rdx
+* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+  2f:	44 89 ee             	mov    %r13d,%esi
+  32:	48 8b 3c 24          	mov    (%rsp),%rdi
+  36:	eb b5                	jmp    0xffffffed
+  38:	44 89 f1             	mov    %r14d,%ecx
+  3b:	80 e1 07             	and    $0x7,%cl
+  3e:	80                   	.byte 0x80
+  3f:	c1                   	.byte 0xc1
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
 ---
- io_uring/memmap.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index dc4bfc5b6fb8..cb9dfc411c3b 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -266,12 +266,11 @@ static void *io_region_validate_mmap(struct io_ring_ctx *ctx,
- 		return ERR_PTR(-EINVAL);
- 
- 	return io_region_get_ptr(mr);
- }
- 
--static void *io_uring_validate_mmap_request(struct file *file, loff_t pgoff,
--					    size_t sz)
-+static void *io_uring_validate_mmap_request(struct file *file, loff_t pgoff)
- {
- 	struct io_ring_ctx *ctx = file->private_data;
- 	struct io_mapped_region *region;
- 
- 	region = io_mmap_get_region(ctx, pgoff);
-@@ -302,11 +301,11 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct io_mapped_region *region;
- 	void *ptr;
- 
- 	guard(mutex)(&ctx->mmap_lock);
- 
--	ptr = io_uring_validate_mmap_request(file, vma->vm_pgoff, sz);
-+	ptr = io_uring_validate_mmap_request(file, vma->vm_pgoff);
- 	if (IS_ERR(ptr))
- 		return PTR_ERR(ptr);
- 
- 	switch (offset & IORING_OFF_MMAP_MASK) {
- 	case IORING_OFF_SQ_RING:
-@@ -334,11 +333,11 @@ unsigned long io_uring_get_unmapped_area(struct file *filp, unsigned long addr,
- 	if (addr)
- 		return -EINVAL;
- 
- 	guard(mutex)(&ctx->mmap_lock);
- 
--	ptr = io_uring_validate_mmap_request(filp, pgoff, len);
-+	ptr = io_uring_validate_mmap_request(filp, pgoff);
- 	if (IS_ERR(ptr))
- 		return -ENOMEM;
- 
- 	/*
- 	 * Some architectures have strong cache aliasing requirements.
-@@ -384,11 +383,11 @@ unsigned long io_uring_get_unmapped_area(struct file *file, unsigned long addr,
- 	struct io_ring_ctx *ctx = file->private_data;
- 	void *ptr;
- 
- 	guard(mutex)(&ctx->mmap_lock);
- 
--	ptr = io_uring_validate_mmap_request(file, pgoff, len);
-+	ptr = io_uring_validate_mmap_request(file, pgoff);
- 	if (IS_ERR(ptr))
- 		return PTR_ERR(ptr);
- 
- 	return (unsigned long) ptr;
- }
--- 
-2.45.2
-
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 

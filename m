@@ -1,143 +1,165 @@
-Return-Path: <io-uring+bounces-11355-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11356-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513EECEEF1D
-	for <lists+io-uring@lfdr.de>; Fri, 02 Jan 2026 17:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDE1CEF1BD
+	for <lists+io-uring@lfdr.de>; Fri, 02 Jan 2026 18:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 84DF4300F315
-	for <lists+io-uring@lfdr.de>; Fri,  2 Jan 2026 16:09:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 047C33025166
+	for <lists+io-uring@lfdr.de>; Fri,  2 Jan 2026 17:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0342429E0F6;
-	Fri,  2 Jan 2026 16:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019AB2FA0C6;
+	Fri,  2 Jan 2026 17:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mbF+nEOQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gn0gvEYJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD7E2BCF7F
-	for <io-uring@vger.kernel.org>; Fri,  2 Jan 2026 16:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7572F9DBB
+	for <io-uring@vger.kernel.org>; Fri,  2 Jan 2026 17:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767370141; cv=none; b=evs78ohnoK2r7LR/OeCmo+IbbWZ6islFGNWModoGGoDA4JsCIG6oP+CsbhFxmJR4aQihhM4Z8AlbaIDeuNK9pJtw7m+H5UXnerbucjKdu3z/uf/R7zU78e3vabWPOf4rYGU3SgtOLdCD8B5cMTGnuF06wqpZZtA6z4QWAAhgjqw=
+	t=1767376643; cv=none; b=uNWsaiv0opficfxISssv8ju2TPN6hwdkSH18+VC6eatMtXKIJ4KhyS2yvJFOJSlFjqoAYasVlNBWD2bCueQFT/6lO5htqjGBRRzSMS1qQIlFc2xzmChE+DwuYrNanRF2WTjKmUZDYkDSGNZmXgxV8dKZ/5TXAPyL1Dl0W30nHdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767370141; c=relaxed/simple;
-	bh=d4Vs6L9tPEkB8hNEGD1LkzUzUFbkDy2DW2k/W5A//Kc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=s1ZhkqwNIsKuLOPTt2vVsa4+GqTwM/EzyQAMY8u+iL9hqBONRPOVsQFz9uNGfj0/u+EumGu5GtRIlLZI0hQ5BnUtxumks52oh/2EEc6fZZliHG1A/h0MCwtrKTlk/6L5tR+0l4+3jCy9/kidXfsnqZyvdsUgJ4Qh5m3BYjrnujU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mbF+nEOQ; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7c6e815310aso10188984a34.0
-        for <io-uring@vger.kernel.org>; Fri, 02 Jan 2026 08:08:56 -0800 (PST)
+	s=arc-20240116; t=1767376643; c=relaxed/simple;
+	bh=gyDb2jd+vefeb5derpsvq7OglruyF0nZkG8dY+zRgDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cJZ40SOy3PgGS0p8cAXHw7T9rDH8wnwtW8vIao/yQH9BHlI01QXblLlJbt1DJpQoavaxv81rqwh+qpsS5NOXbLpY0L0NKUFImuVIkWkXCUTu5+Dm2M1TEnvey+LsQxNFexZwIOqFLKKRlrpS2BQFkLgVMT2E50qJ/1JQ1p7Juj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gn0gvEYJ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4f822b2df7aso66055411cf.2
+        for <io-uring@vger.kernel.org>; Fri, 02 Jan 2026 09:57:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1767370136; x=1767974936; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1767376640; x=1767981440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tA89VQLMcB1XL+TyYzJPNzCYX3cg/SZ/zMn9TSGHSlE=;
-        b=mbF+nEOQsPoSQ8wl+fMszqFnpS7cPt0y2dsbEKjFksRUKOhNYCTVdHN5DVy5souzqM
-         bnbAnC1KyXCF6guTiONlkNT+A+PyLmFN0v2Eitm8hGZsVjJv5UC3sW5Cdel2v5GJ6mMK
-         Vxv+R3BhYDQDIQtvv71cqoyduj7o/z25gsvi9nrWdlCTbb2ZSAsgEiJ6gfLcXfgnTwjG
-         h8Lp6GcwwN4RSe6aZZ0eECcD7JXLo+POJXgEZee9Hfr64wov5Ru7cej6CHI2ZhL1inZ5
-         yVh2wpujA84KSqCOO8DK/7GqrllP+jVASR/93gdbHA3CASVHt+p8GlaXyPHfoGCbBDOP
-         j6lA==
+        bh=O18+3anvsQ996bavqCgxvMHI82KXbcuUs/EX7wR6K1s=;
+        b=Gn0gvEYJFLfskRJjbCCkxCVCpwz0AZIxMs7Vgx7s60tIMHZPTlHulYxDVfQPeKUet2
+         DdSrRR3ska24CIgGq0+hJc9H99xCc67HtXg609JXGsovNym4+/S74ANh6YrCicToSJGL
+         +0kjCF7JwN+exGmt42r5QBZ4ya45ZFZRxRBXViY84G2rF+QxRQVXEbShSj9M152X2xJD
+         dNy/6AVi+TkMz29mz8S4fdudT8E29cGGPLRemqC+6YM/EKijqZOraFbK4rE451U0qe9T
+         oCgZzkiuCiF+NiGFuW2D+QfuhvJu0w7ThUMKdUqlgZqIUuvti9U3zbfvVfg6pfteUrKk
+         l+iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767370136; x=1767974936;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tA89VQLMcB1XL+TyYzJPNzCYX3cg/SZ/zMn9TSGHSlE=;
-        b=KRJQqfrN6rGAql7eR36wbWwmX8xwgWIg5ot9ZSGLX4pkF2jgtv4YNETe/q/ky56TgF
-         Ho4Dy0EdAbnJS+vAT75gL/cQDYtMI0E3cof9t3DR3V2SK+IoEYjq9Rtae+eughNw6KFl
-         Ks4QIN9HSKSjK0hkv2VhjNXG7ZP3GnoAiBNSIV+MkNoX6LUFpOxPMCxcyLjwCiWGm6Ff
-         OFmtwQTLpZfkgghDHc3rciFGhChn46bnDYFhdDYS02NGzJPit/oq4PY71OqO5wq60okj
-         QGDGSIFJkiZeRDoq6Skvoi99ehXrMkpLKOZcdl44C+3Itx1+HyfRGb3BD5Xd18hOVakr
-         XfCw==
-X-Gm-Message-State: AOJu0YwM9oHxOsvXAkqjsutCPOK2/LGdKJ3FT5mBFEWcwfkd3ICBkNnY
-	BpyZvIQn5abXapws0tdL3kKxQhkavPPLaFJeyNHo491jXHwdzx6H6FDzuP7lbbYLQ2XkZTbI+w6
-	G5wX2
-X-Gm-Gg: AY/fxX5cx+shNgaPIPejzXAD4CuLkAstp4O2q/GfkDeypz/ny+fJnaCEU7QHBdxoHeB
-	6el2R8qr+K/Efcr8cKKs5zBt5xYUVeqELFGzKVoa6uosz5zkC8CgXRBdSIRU9FPzQse0vYjV5FF
-	f9vyUkG0gg7DScVyGxGknBIZhJgEV0/jTKV3Dbv88J8MHzpg9k/JB3lGv5bzZWsEZYp4A1wPnUn
-	xisS9qPYm8IJfKekbM+1SOeHYHFZRVhU/O34UJoxhS+IDanY2A77ggqLl4cl8RlvoqV2hfLPt9k
-	cpMSkC3hV7MaD2UIYMZZ57NrNV+0S1mWMmPw0jpgifOo+B56etuiS3hA949iIWguOM2Fxw5/n04
-	LNGxOWhaMGkywdsWSPQWE0xUFUH+FLR221Hy9D2NvOUCMpv6pRE6EqhaY7M5VgdHEapOjQGKXg9
-	1fBNChsm+J
-X-Google-Smtp-Source: AGHT+IElW4QvhKu4NjdT1lo2rCVr4faqrKZaFzW1qDds1us4dEtiQpGfdg1GyVTzIGSfIieU9vuOmA==
-X-Received: by 2002:a05:6820:1517:b0:65f:1038:130a with SMTP id 006d021491bc7-65f10381463mr3312877eaf.69.1767370135948;
-        Fri, 02 Jan 2026 08:08:55 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65d0f723ab6sm25882099eaf.17.2026.01.02.08.08.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jan 2026 08:08:55 -0800 (PST)
-Message-ID: <787b104b-ffe0-47c7-9f8d-513847bcf6d3@kernel.dk>
-Date: Fri, 2 Jan 2026 09:08:54 -0700
+        d=1e100.net; s=20230601; t=1767376640; x=1767981440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=O18+3anvsQ996bavqCgxvMHI82KXbcuUs/EX7wR6K1s=;
+        b=AQLNx/SZuUZ6lf1Am1Tvt7Xb/+Fof7e4ZCvUNKTDkgKwi0uuMAN9P1H+sijR6lADUu
+         UdDepVvkVmQv/DjYfJBFj5UzI7cBrrRJTOMdcKwQmz/rnAPlJ0eDoP+3HhHGueih+1qD
+         YEY0Qd4+kepfqm5iowUsDicCGLAG1LmiZ++a0UA6mT02wNsy0dVXi81TACiJxcWKQhJt
+         CGNziS/T8VrDcaehYmdAJaKVFLw4s/xhjuM7A4GxZ71+MOc5uA2eWuisxBJLIRPtk+mX
+         QNKD/OZeSFGeFebdjjxDsfenM/PfamFyyJL0hjO/SNu0qGULCsJFax+e4tHTI+uNxhro
+         KtvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOBMfK+tG3V7g0ApJDE1oAx4RVXFSH+3ng0jlvyPq3/TUcry5ypicwY1UIKFIBcNZp2xa5r+awuw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ4HKJ5yxzzQ6pLbCm0WFJLq1ipDUszbV/I0GQTktGNDNYynQ0
+	1PXnqkGGY2t7E7I4ERf1JRZ37ZfPV4tQnDzmAKBORIBcM7A4RowX/JYup5qSTKbTvA2h5+DbHdY
+	ZCiHlQQPf2qFEsvheyhdJGyvSI4wCo4c=
+X-Gm-Gg: AY/fxX7SG4DK1rs8hEv4VBSu+GNNS0N9aXvRYhxe35DAnhASWMNK2gUBf0hEdq9+Dr+
+	X4aOUYiLpZOLsZhYd7tBUOoKnnYE+M3hMhahRq/KuAY5n7puufyLMtGGZiWaGErjBZlNf1H/jqy
+	sXu1pJy1nIwkddR0IS8bSMNgONQNtEr3naEBivWKZrKx1z8kOkEvZcm8CiyDTCKOKU5TJ+8Ynhl
+	Zuh+2oNJVRThrWgQCmM5LuVWNLFEdsrL+2kAkOchuQnB8XmcS6ZvqbkSNJOan0Ct0jAfw==
+X-Google-Smtp-Source: AGHT+IGorKA3maAZSXofCUy+HCC+njczBAg7rvZDg6EpFyE7TD4+DSfCoFgZ2bxYOgmujaLYA/z+r/Sp602TQv0GSmw=
+X-Received: by 2002:a05:622a:6081:b0:4ed:b8d6:e0e8 with SMTP id
+ d75a77b69052e-4f4abcd2ac5mr601470401cf.22.1767376640426; Fri, 02 Jan 2026
+ 09:57:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.19-rc4
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-7-joannelkoong@gmail.com> <87y0mlyp31.fsf@mailhost.krisman.be>
+ <CAJnrk1a_qDe22E5WYN+yxJ3SrPCLp=uFKYQ6NU2WPf-wCiZOtg@mail.gmail.com> <87ikdnzwgo.fsf@mailhost.krisman.be>
+In-Reply-To: <87ikdnzwgo.fsf@mailhost.krisman.be>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 2 Jan 2026 09:57:09 -0800
+X-Gm-Features: AQt7F2rzrlK2P2sAM_OF9aPxCtuxCi-SzhqRwIpfqwqCRawDl8BmvdZb9N5jWa0
+Message-ID: <CAJnrk1aAJmsK6Z0=F3n65pr0idGzDXFLEXXZDHOocy9ktnDZWQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, csander@purestorage.com, 
+	xiaobing.li@samsung.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Tue, Dec 30, 2025 at 9:54=E2=80=AFAM Gabriel Krisman Bertazi <krisman@su=
+se.de> wrote:
+>
+> Joanne Koong <joannelkoong@gmail.com> writes:
+>
+> > On Mon, Dec 29, 2025 at 1:07=E2=80=AFPM Gabriel Krisman Bertazi <krisma=
+n@suse.de> wrote:
+> >
+> >>
+> >> Joanne Koong <joannelkoong@gmail.com> writes:
+> >>
+> >> > +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
+> >> > +                  unsigned issue_flags, struct io_buffer_list **bl)
+> >> > +{
+> >> > +     struct io_buffer_list *buffer_list;
+> >> > +     struct io_ring_ctx *ctx =3D req->ctx;
+> >> > +     int ret =3D -EINVAL;
+> >> > +
+> >> > +     io_ring_submit_lock(ctx, issue_flags);
+> >> > +
+> >> > +     buffer_list =3D io_buffer_get_list(ctx, buf_group);
+> >> > +     if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BU=
+F_RING)) {
+> >>
+> >> FWIW, the likely construct is unnecessary here. At least, it should
+> >> encompass the entire expression:
+> >>
+> >>     if (likely(buffer_list && buffer_list->flags & IOBL_BUF_RING))
+> >>
+> >> But you can just drop it.
+> >
+> > I see, thanks. Could you explain when likelys/unlikelys should be used
+> > vs not? It's unclear to me when they need to be included vs can be
+> > dropped. I see some other io-uring code use likely() for similar-ish
+> > logic, but is the idea that it's unnecessary because the compiler
+> > already infers it?
+>
+> likely/unlikely help the compiler decide whether it should reverse the
+> jump to optimize branch prediction and code spacial locality for icache.
+> The compiler is usually great in figuring it out by itself and, in
+> general, these should only be used after profilings shows the specific
+> jump is problematic, or when you know the jump will or will not be taken
+> almost every time.  The compiler decision depends on heuristics (which I
+> guess considers the leg size and favors the if leg), but it usually gets
+> it right.
+>
+> One obvious case where *unlikely* is useful is to handle error paths.
+> The logic behind it is that the error path is obviously not the
+> hot-path, so a branch misprediction or a cache miss in that path is
+> just fine.
+>
+> The usage of likely is more rare, and some usages are just cargo-cult.
+> Here you could use it, as the hot path is definitely the if leg.  But
+> if you look at the generated code, it most likely doesn't make any
+> difference, because gcc is smart enough to handle it.
+>
+> A problem arises when likely/unlikely are used improperly, or the code
+> changes and the frequency when each leg is taken changes.  Now the
+> likely/unlikely is introducing mispredictions the compiler could have
+> avoided and harming performance.
+>
+> I wasn't gonna comment in the review, since the likely() seems harmless
+> in your patch.  But what got my attention was that each separate
+> expression was under a single likely() expression.  I don't think that
+> makes much sense, since the hint is useful for the placement of the
+> if/else legs, it should encompass the whole condition.  That's how it is
+> used almost anywhere else in the kernel (there are a few occurrences
+> drivers/scsi/ that also look a bit fishy, IMO).
 
-Happy New Year! Here are a few fixes for io_uring that should go into
-the 6.19 kernel release. This pull request contains:
-
-- Removed dead argument length for io_uring_validate_mmap_request()
-
-- Use GFP_NOWAIT for overflow CQEs on legacy ring setups rather than
-  GFP_ATOMIC, which makes it play nicer with memcg limits.
-
-- Fix a potential circular locking issue with tctx node removal and
-  exec based cancelations.
-
-Please pull!
-
-
-The following changes since commit b14fad555302a2104948feaff70503b64c80ac01:
-
-  io_uring: fix filename leak in __io_openat_prep() (2025-12-25 07:58:33 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.19-20260102
-
-for you to fetch changes up to 70eafc743016b1df73e00fd726ffedd44ce1bdd3:
-
-  io_uring/memmap: drop unused sz param in io_uring_validate_mmap_request() (2026-01-01 08:16:48 -0700)
-
-----------------------------------------------------------------
-io_uring-6.19-20260102
-
-----------------------------------------------------------------
-Alexandre Negrel (1):
-      io_uring: use GFP_NOWAIT for overflow CQEs on legacy rings
-
-Caleb Sander Mateos (1):
-      io_uring/memmap: drop unused sz param in io_uring_validate_mmap_request()
-
-Jens Axboe (1):
-      io_uring/tctx: add separate lock for list of tctx's in ctx
-
- include/linux/io_uring_types.h | 8 +++++++-
- io_uring/cancel.c              | 5 +++++
- io_uring/io_uring.c            | 7 ++++++-
- io_uring/memmap.c              | 9 ++++-----
- io_uring/register.c            | 2 ++
- io_uring/tctx.c                | 8 ++++----
- 6 files changed, 28 insertions(+), 11 deletions(-)
-
--- 
-Jens Axboe
-
+That makes sense. Thanks for the elaboration.
+>
+> --
+> Gabriel Krisman Bertazi
 

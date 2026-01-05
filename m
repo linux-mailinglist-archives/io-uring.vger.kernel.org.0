@@ -1,114 +1,185 @@
-Return-Path: <io-uring+bounces-11365-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11366-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E9ECF5205
-	for <lists+io-uring@lfdr.de>; Mon, 05 Jan 2026 18:59:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F02ECF52EC
+	for <lists+io-uring@lfdr.de>; Mon, 05 Jan 2026 19:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 190AA3122E0B
-	for <lists+io-uring@lfdr.de>; Mon,  5 Jan 2026 17:54:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BB66031426C3
+	for <lists+io-uring@lfdr.de>; Mon,  5 Jan 2026 18:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA22930BB86;
-	Mon,  5 Jan 2026 17:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59340336ED4;
+	Mon,  5 Jan 2026 18:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH3dzfp3"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EM/zF6k1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c1NEwxwb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EM/zF6k1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c1NEwxwb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C202E65D
-	for <io-uring@vger.kernel.org>; Mon,  5 Jan 2026 17:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716613246E4
+	for <io-uring@vger.kernel.org>; Mon,  5 Jan 2026 18:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767635649; cv=none; b=D3PaoSXE28V/f22ZSTYcIv1IZeYRneNkS/wqF61NB/WCNVdobIvBJCUnpxw6BhCAhSYszHLnGYtUilrNyq61nNQx0YvokDk9F2NUv4c6oOk0MaZm1WTbjPk4NR+raeiF8ZO/c3XhXl6AEIswVA6cvVlrN+06POyBY3wNIRLSfEY=
+	t=1767636462; cv=none; b=F6FDLV7SP1xmc1nyjTPJwAsfErYRQLleCZMB7n723bez7aGAfuoMdlbVYU4REbsPnq1xltEhcl6pJdgohO3bXz0tQk4sc0PFF9fmiOmFEHkBYOkP/+7e6DEIv8+YDNoqJC0Tgz26rDAKaQrhHjOXaCOzvJoMsISOHjJ4xDBp5QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767635649; c=relaxed/simple;
-	bh=lnIwyu0MGK/s4uvDRLhmBYt/m+M5sex8Pl6trKfYk5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhcPXjNnqTRd6+kkqtlN4mPNtihzzPvQqqxY2XUH3ozAqVR4V+syfLOCrv+7pdbxj6oU9UHj+C8Aem/H328Ai0jwedylI8uunSCMxwbWGUuiPxIkn1+x/kqffhdb3BVUtWQfwi1bZo6fTp4CIe5MBcBTZ72h3MVNP8Cv+RwVk48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH3dzfp3; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-455dc1cf59aso128227b6e.0
-        for <io-uring@vger.kernel.org>; Mon, 05 Jan 2026 09:54:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767635645; x=1768240445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lnIwyu0MGK/s4uvDRLhmBYt/m+M5sex8Pl6trKfYk5k=;
-        b=PH3dzfp3z5bKHJZohxzX4ktBKuwYQ4wWPGIqxDm6g/JOIxs0sxNo7yTjm7MTPFilJT
-         8SD3akNdZC86nzUsKJ+0jmbvo68vG0dRKsByCudLv1kyPazkhcWracfBO9oJGyvtrkJw
-         h7yMl5FpmffA61xKxoF9moTOkpKsRIei0nRdcEGQYR2bE5cWxcPOA9L/axQvS+7kCOOS
-         dhO/wqZZ0+x2Z3NJeHzYCLXxq9LNCrAlikDkc/MUsUg0EqAhz00tnlZbp5VTzjQWNpED
-         NtaQIxgL0JzvOXL2iXYSaJqX4sWTEj4fIFDwAzk2R/xpkH5SrR5jQPTYPgh1uiwmLBTG
-         mXNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767635645; x=1768240445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lnIwyu0MGK/s4uvDRLhmBYt/m+M5sex8Pl6trKfYk5k=;
-        b=waQty8glTu6vZpWVYZw5iMX0avBDW+o9CpfeQRUrcMcaOWl1cisOaMy4CmUlKYnD0y
-         RF823FxXvYwDu1s1P8NIiaJF1peqhVvSRp/XHsJS4b0Wq97DbFmE50DtzVM8EHtrtw9N
-         ++c1Gt7f1LXuTuMpcdEprKQRb/7uRxLcALm2Ae7dwb/cD1pen/1TAR+uqeqMmD6wWCqG
-         WyFlFJ3ORtjAMMApSyvpc3gw1UZHtSuKJF004BnZ9KUuaIpNNSuk9SVKtGUGxAMBuvQ2
-         eiU+xbZfM5tW16+CKa6sNXQQMpnaSQ+LoSA6QgDhH9I1kxUiQNuL7EpSJijkKH9u5q4b
-         VttA==
-X-Gm-Message-State: AOJu0Yxdad0i3xAKuGGHr/1OTkk/rD1UBVZr1p8zEaYTr5MEQVaGHsBH
-	VvZK8nrSPOi4CAVqeTxTnrVDzW7gY5VLGGsZN7XIkRb05H7ML1d+k1gmvKQ8kuoYhRkdB3Uoq6k
-	lZWHWVTC3BEuuJ3auEnKCydWkknjNpH4=
-X-Gm-Gg: AY/fxX57Yv5juyQ9IbN4rx3q/g5X92sPtJIn0qRFEHJ/uOkrro7BZK8F6RK2lV9G5gr
-	38ETqiNEShNIlR987gI/lodp7CUj/HpQEocU52/Vu17U/rFSwMAymdL4lDoN6g8KaFTMaHtPhfQ
-	PD1iywH0ORRNoamnLhBo4BVB4aasMEaQGGcgQ9fHqVH8OYYEnYA+DfUXjmM0jkv6wah9FIkND9H
-	VZstreuXVeodvjAg7bl9N8pjo8sSu/CYapWQuqv5yYPBHYpQKuD7Tq4WnPhjLIvxKChCSE=
-X-Google-Smtp-Source: AGHT+IH9uLSBzCG1ZtZw56d0yhMQJONe0pg6LmyC4SVlewTWDP/4rBBF3d9E1FUpFnrO3DB9Ab4ewnQqCD+0+tt9MUI=
-X-Received: by 2002:a05:6808:1316:b0:453:7530:8adb with SMTP id
- 5614622812f47-45a5b027033mr257028b6e.20.1767635645051; Mon, 05 Jan 2026
- 09:54:05 -0800 (PST)
+	s=arc-20240116; t=1767636462; c=relaxed/simple;
+	bh=JrnFzWJd+pqa+/NCTUBDHcwWH4P1IT1/neVEm5S8YGQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e3E/VaoRk0kxkIcd/0Q9ZFoZkdEmv0k2lUsGPzVofuL0JL4ZIjz5uGcr4ekEDpgq557fgUzxjDZbb2cW85eN8IWU9hGBDQ0xoJEYgMZzZ628FOnPyHIRPv+Fwa6X9hpOryAc8WWENhJnTjos0yD5MQOGGJdlap3akhlGGEf03Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EM/zF6k1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c1NEwxwb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EM/zF6k1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c1NEwxwb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 62EA333740;
+	Mon,  5 Jan 2026 18:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767636458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgeTl7K8a4waXn1GMi3AHXtSKh3aqqy4XItxZCM1n8s=;
+	b=EM/zF6k1a0wYL92jP4XYSV6JPzDHW8o3woWHkOaiBgaRUOTzakG6A8ErzYmKrL2Ipm6hBr
+	lkD0YK72RgNdQjs2ud2qpzhrxvJZCSDTjLvwH1pfxeIXlCmVbaDphZgvL3EWt9Qn5PCPL/
+	aFgSRYGpNXjLr9gohc8Cn1+mIx/GZfc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767636458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgeTl7K8a4waXn1GMi3AHXtSKh3aqqy4XItxZCM1n8s=;
+	b=c1NEwxwb3GxO3loCXAduAbtfVmG2j6JyG5MyCY4eGNqkd//85WEoNy6bi1E6aG+AnAlnCM
+	P9o1FQqooarB5YBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="EM/zF6k1";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=c1NEwxwb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767636458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgeTl7K8a4waXn1GMi3AHXtSKh3aqqy4XItxZCM1n8s=;
+	b=EM/zF6k1a0wYL92jP4XYSV6JPzDHW8o3woWHkOaiBgaRUOTzakG6A8ErzYmKrL2Ipm6hBr
+	lkD0YK72RgNdQjs2ud2qpzhrxvJZCSDTjLvwH1pfxeIXlCmVbaDphZgvL3EWt9Qn5PCPL/
+	aFgSRYGpNXjLr9gohc8Cn1+mIx/GZfc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767636458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgeTl7K8a4waXn1GMi3AHXtSKh3aqqy4XItxZCM1n8s=;
+	b=c1NEwxwb3GxO3loCXAduAbtfVmG2j6JyG5MyCY4eGNqkd//85WEoNy6bi1E6aG+AnAlnCM
+	P9o1FQqooarB5YBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11EAB3EA63;
+	Mon,  5 Jan 2026 18:07:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nfDUM+n9W2lMMQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 05 Jan 2026 18:07:37 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>,  Max Kellermann
+ <max.kellermann@ionos.com>
+Subject: Re: [PATCH v2] io_uring/io-wq: fix incorrect
+ io_wq_for_each_worker() termination logic
+In-Reply-To: <f98f318f-0c3b-4b01-afb2-2b276f3fe6cd@kernel.dk> (Jens Axboe's
+	message of "Mon, 5 Jan 2026 09:57:43 -0700")
+References: <f98f318f-0c3b-4b01-afb2-2b276f3fe6cd@kernel.dk>
+Date: Mon, 05 Jan 2026 13:07:27 -0500
+Message-ID: <87y0mc6ihs.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <79dbdfd9-636d-426c-8299-7becb588b19b@kernel.dk>
- <01086100-4629-4037-b084-a9534d315d9c@kernel.dk> <CAAZOf259y2HOVrCaqMvvegowp9fFgZSx2hqeP=ZfHJ2D9GyUUg@mail.gmail.com>
- <621ecabe-9d60-482f-a02b-accfd3c48966@kernel.dk> <CAAZOf25R3eg0YzyWAyT0hhqe-mngcESKrweoyVcuR6n+7L1Usg@mail.gmail.com>
-In-Reply-To: <CAAZOf25R3eg0YzyWAyT0hhqe-mngcESKrweoyVcuR6n+7L1Usg@mail.gmail.com>
-From: David Kahurani <k.kahurani@gmail.com>
-Date: Mon, 5 Jan 2026 20:59:49 +0300
-X-Gm-Features: AQt7F2pee7glxa5GY2ffHvG3V2sD_8Nf6We7F8cLaZWn7HSMCTu3lKHjLIuo0Es
-Message-ID: <CAAZOf27yy0Zny-W5WeCGUsN6z3VEg+=Z1Vrx2KSbgT2wr4x3kQ@mail.gmail.com>
-Subject: Re: [PATCH] io_uring/io-wq: ensure workers are woken when io-wq
- context is exited
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring <io-uring@vger.kernel.org>, Max Kellermann <max.kellermann@ionos.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,suse.de:dkim,suse.de:email];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 62EA333740
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
 
-Wire that up!
+Jens Axboe <axboe@kernel.dk> writes:
 
-On Mon, Jan 5, 2026 at 8:52=E2=80=AFPM David Kahurani <k.kahurani@gmail.com=
-> wrote:
+> A previous commit added this helper, and had it terminate if false is
+> returned from the handler. However, that is completely opposite, it
+> should abort the loop if true is returned.
 >
-> In what case I will,....
+> Fix this up by having io_wq_for_each_worker() keep iterating as long
+> as false is returned, and only abort if true is returned.
+
+The fix is good, but the API is just weird.
+
+io_acct_for_each_worker returning true indicates an error that will
+abort the wq walk.  It is a non-issue, since all the two callers cannot
+fail and always return false for success :-)
+
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
+
+> Cc: stable@vger.kernel.org
+> Fixes: 751eedc4b4b7 ("io_uring/io-wq: move worker lists to struct io_wq_acct")
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 >
-> Assume a legal protocol.
+> ---
 >
-> On Mon, Jan 5, 2026 at 6:54=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
->>
->> On 1/5/26 8:55 AM, David Kahurani wrote:
->> >
->> > work-queue has a bug but I don't know who to report to.
->>
->> Ok that's enough of your random and useless emails. Welcome to
->> the block list. Though that just solves the problem for me,
->> please just go away and stop responding to list emails all
->> together or I'll get you blocked from lore as well.
->>
->> --
->> Jens Axboe
->>
+> v2: fix the actual bug, rather than work-around it for the exit
+>     condition only.
+>
+> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+> index cd13d8aac3d2..6c5ef629e59a 100644
+> --- a/io_uring/io-wq.c
+> +++ b/io_uring/io-wq.c
+> @@ -952,11 +952,11 @@ static bool io_wq_for_each_worker(struct io_wq *wq,
+>  				  void *data)
+>  {
+>  	for (int i = 0; i < IO_WQ_ACCT_NR; i++) {
+> -		if (!io_acct_for_each_worker(&wq->acct[i], func, data))
+> -			return false;
+> +		if (io_acct_for_each_worker(&wq->acct[i], func, data))
+> +			return true;
+>  	}
+>  
+> -	return true;
+> +	return false;
+>  }
+>  
+>  static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+
+-- 
+Gabriel Krisman Bertazi
 

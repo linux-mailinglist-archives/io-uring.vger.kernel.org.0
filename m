@@ -1,135 +1,181 @@
-Return-Path: <io-uring+bounces-11370-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11372-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9ACCF542E
-	for <lists+io-uring@lfdr.de>; Mon, 05 Jan 2026 19:45:57 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509E4CF5446
+	for <lists+io-uring@lfdr.de>; Mon, 05 Jan 2026 19:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6D65830AC761
-	for <lists+io-uring@lfdr.de>; Mon,  5 Jan 2026 18:45:56 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 47A18302B52C
+	for <lists+io-uring@lfdr.de>; Mon,  5 Jan 2026 18:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7751B4223;
-	Mon,  5 Jan 2026 18:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587C333EAEC;
+	Mon,  5 Jan 2026 18:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="u2/LsQFC"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JVUOZG0w";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mHdcbXk1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JVUOZG0w";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mHdcbXk1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8BE13FEE
-	for <io-uring@vger.kernel.org>; Mon,  5 Jan 2026 18:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB3629D26E
+	for <io-uring@vger.kernel.org>; Mon,  5 Jan 2026 18:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767638755; cv=none; b=rNpea/TMeXeuxObKDA4SKao7D78eHdlX/jsOKggIQP78zgYTsXZ7xDc0SDFbKp83R2RCuTr28nrUZqXRxoGmPED/NTAYrj+Xx7bU+RSUn9aLlIJxanWhiUdn/AN5Am26/Z/AbFCzn7XK6YWiMQ4BhQZ+1RqK7h5c0n9nlF58Luk=
+	t=1767638981; cv=none; b=qyO+S9HgLrC8RlDf+zsQNXPiMCXcYSKTbJyZm/SyOSflpTxEVagbAfxQel94rQwWgQDgjBb2yJg0Y2KMUElyupNnkb4k5lf27sH5wD0+mQptbXFTYnPz8yhiZ1R1ZPuKd3Dj46HqIgkIvXRPBAy61TZQiAXJ3SACVbT5VeijIWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767638755; c=relaxed/simple;
-	bh=Qot2MoHl6pUeeThNFIM55c16lm8atXupdzTfNiM8u2k=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=tIUSB1xO+qFZkWXWD1HRQ9tXmhb9c0txKaxi6/pjk6AlMLxfdERwn7SoompWecz/sAUCSc4NAH1MWsZllyEQdAb2HeEPqR09Lusep48mMCdfoyyJ/Ko14itMJL9TTzVmf4ZkDYCYKzuHVfl4fuvVGbRBsfdsHMxN6dqwbN76yNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=u2/LsQFC; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3e0f19a38d0so177931fac.0
-        for <io-uring@vger.kernel.org>; Mon, 05 Jan 2026 10:45:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1767638752; x=1768243552; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cs96TSTNXaDrcHqhE/HdChh6u+fGIFjI3uW5jKXN7+M=;
-        b=u2/LsQFCh06w+xgilKZdWwGX/kC/VI6gN3hZ+POvyYR/DbRHjygUgLMdYRbGN4dveO
-         9FxnblYgbP/EuvdabjAhPtfWeTC18+Sw6tcIjrZizG0ym/kviVp+V5O/zLQBuCGSDYjg
-         ubBwvImKQ7kLc0zQZYOepsR/F+GpRzU6OWcdhxx6lTa2p3cewy58QGQBVDkK+jwYnHFY
-         F1b0fSw+heX9mtF0G8BssKTylEjbke0fXKc0r5A64OxZO1SbZvnEprqre+TMcZjjFGJk
-         hOtyftX4QczgfVa+gQmLj0W2dy/4Kb4vGwW4lhAlXGcWwL+UN48EVxCREl8SrC1FATC3
-         3Ykg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767638752; x=1768243552;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cs96TSTNXaDrcHqhE/HdChh6u+fGIFjI3uW5jKXN7+M=;
-        b=EWq9uY1FCTjnRBl1CqcXj/nS/EQi0CfWtN/SmnZ0Px1S6/FUoe1Rz+sxuD74jZGOab
-         2MzcSClLZvXJy5aifJQeOKuLrDsPYlxAFPebIoCJDAbpspCgCv8XiaSQzQd3fr4bYEvr
-         nsvn2FIkCt41SKtoSp/lPAbp3npLzkLTqcV7sJjCgdmuK/dFVBQu9fYdmTKQbC/Wf7wh
-         wzJFwBd8RzyDpl0vC2X9/jbLCzn2Cw3ZI26pCwp1U+B0XQnnaL/vkCUJeSDXJS8cEiK2
-         piGLoe8jW5q1spTpvlNKTLIZPDToA7YzQwdk1/W0/xnaelLKZyTNv1GyaMWyuk6GHING
-         ed0g==
-X-Gm-Message-State: AOJu0Yz5RWOZtqeohuOLrla252gJHdLZJOMkTx/JV+zDhFNOyxYqqhXO
-	JbZ/xyksw1G9Bsy2tIVqHem5vqfX4yoW6j8vZphrP2lvgVgmIJAPeKlEoRHkhcnTttP51lKaGOU
-	/Xg45
-X-Gm-Gg: AY/fxX4KaWIAt/KR2dMYQUb1k2Ol1fHYJW79J6EZxrtgyAZKCoBfqVo2rlg4qrPd+kH
-	NBVvqcB+eo1U+ONEkss2ySvc/HqUcpls21X9gMGoyqafv6D8xmqjT3YrjZZvG77fOrQy3ns2++d
-	SJmXvzFARi9UeDjkNtcWxGkHB5TB7fnlGUgc/tX6LoU3x9M8vJivqv6TPhf8F/wCYoQvsL2D1/q
-	PaAKD+zPb08KLzP87jYMOSYRSMVV7wsfMD7mH0mDonffn+IFPUBGF9j+9vg4wCbf7WGWtyOsgOA
-	LDX6pChf+UxCIBFQ9NSgnT2tHSFofKyyc4nV/gd1FCb0tH1gZFbYO+arwFuD9Iz3XUPtPFfZsSe
-	fogrz8O1oMzrFyO+IdAHSBvbv3QoFfUwczCm5axTSKrjgRMPhmvpntWENRFCFF3accC8ZLfjG4Q
-	VWQ9Zd85oY
-X-Google-Smtp-Source: AGHT+IFyEUb8lZkTf8JYX66CoELfBxkgY0QTGjuWfyj/VrOaXlZYDZA7LnQ1e4nn8X8tWGsTwIuPxw==
-X-Received: by 2002:a05:6820:2202:b0:65c:f821:9dd0 with SMTP id 006d021491bc7-65f47a9772emr192374eaf.59.1767638751660;
-        Mon, 05 Jan 2026 10:45:51 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f4782ac2asm188185eaf.5.2026.01.05.10.45.50
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jan 2026 10:45:50 -0800 (PST)
-Message-ID: <708b2a6d-7c87-4f94-8d15-c450228c6b6b@kernel.dk>
-Date: Mon, 5 Jan 2026 11:45:50 -0700
+	s=arc-20240116; t=1767638981; c=relaxed/simple;
+	bh=rSGv+BlFMGxxakwLr1BkoKCuhfW0aUzX2Fd6UW2LkpQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PlapeJ9/uxSjivmeHYHlpd2mODVjJR9rUNRiRHWY4gMV/Qk9JawttM20PlOe7+WLvCHNKZRZxJtUjBRZgfdM2+CyKzOpQi5AZPtcBR76wmNgz3zeG49bXio3R/VUkdPALjH5NtiKAIklKbdST7UYzRHbJXVvtQfscwuzCGhmQB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JVUOZG0w; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mHdcbXk1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JVUOZG0w; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mHdcbXk1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 395C433750;
+	Mon,  5 Jan 2026 18:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767638977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=JVUOZG0wjKub8hg1ckvT7Uav4iP4X1lO88EF7wni5KHaha+AiXuo1ydzwjEl5pibd6xoZV
+	w/cMDOlIq7+S7T6bLi+/XuAzKkjX9Mi+NsJXhD1AaooC9GrzVBojHxV24Q4smazIcyCoNV
+	WZ5D37wpwA4xuMxFBHbcm6F2aguxmB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767638977;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=mHdcbXk1ksd6lrLxyWE3hdAg1ZF4z5UYpHFqKPHOo/mI2kCTSK1nkxmjmfaPAIgKQhv7Gj
+	WNaK8jy9ghklm6Bw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JVUOZG0w;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=mHdcbXk1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767638977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=JVUOZG0wjKub8hg1ckvT7Uav4iP4X1lO88EF7wni5KHaha+AiXuo1ydzwjEl5pibd6xoZV
+	w/cMDOlIq7+S7T6bLi+/XuAzKkjX9Mi+NsJXhD1AaooC9GrzVBojHxV24Q4smazIcyCoNV
+	WZ5D37wpwA4xuMxFBHbcm6F2aguxmB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767638977;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=mHdcbXk1ksd6lrLxyWE3hdAg1ZF4z5UYpHFqKPHOo/mI2kCTSK1nkxmjmfaPAIgKQhv7Gj
+	WNaK8jy9ghklm6Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EAD3A3EA63;
+	Mon,  5 Jan 2026 18:49:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z2yOMsAHXGnSNwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 05 Jan 2026 18:49:36 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu,  axboe@kernel.dk,  bschubert@ddn.com,
+  asml.silence@gmail.com,  io-uring@vger.kernel.org,
+  csander@purestorage.com,  xiaobing.li@samsung.com,
+  linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 07/25] io_uring/kbuf: add recycling for kernel
+ managed buffer rings
+In-Reply-To: <CAJnrk1YRZYdEBL=6K0-7oAq6s-TfL7AnuHwZsN2miPYy1vGCOg@mail.gmail.com>
+	(Joanne Koong's message of "Mon, 29 Dec 2025 17:15:42 -0800")
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+	<20251223003522.3055912-8-joannelkoong@gmail.com>
+	<87tsx9ymm9.fsf@mailhost.krisman.be>
+	<87ms31ylor.fsf@mailhost.krisman.be>
+	<CAJnrk1YRZYdEBL=6K0-7oAq6s-TfL7AnuHwZsN2miPYy1vGCOg@mail.gmail.com>
+Date: Mon, 05 Jan 2026 13:49:34 -0500
+Message-ID: <87pl7n7v41.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/io-wq: remove io_wq_for_each_worker() return value
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[szeredi.hu,kernel.dk,ddn.com,gmail.com,vger.kernel.org,purestorage.com,samsung.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,mailhost.krisman.be:mid]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 395C433750
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
 
-The only use of this helper is to iterate all of the workers, and
-hence all callers will pass in a func that always returns false to do
-that. As none of the callers use the return value, get rid of it.
+Joanne Koong <joannelkoong@gmail.com> writes:
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> But now I see this is never exposed to userspace as an io_uring_cmd
+>> command itself, it is only used internally by other fuse operations.
+>> Nevertheless, it's implemented as an io_uring_cmd by
+>> io_uring_cmd_kmbuffer_recycle.
+>>
+>> Is it eventually going to be exposed as operations to userspace? If not,
+>> I'd suggest to stay out of the io_uring_cmd namespace (perhaps call
+>> io_kmbuf_recycle directly from fs/fuse).  Do we need to have this
+>> io_uring_cmd abstraction for some reason I'm missing?
+>
+> Hi Gabriel,
+>
+> Thanks for taking a look at the patchset.
+>
+> This is not going to be exposed as an operation to userspace. Only the
+> kernel will be able to recycle kmbufs.
+>
+> I was under the impression the io_uring_cmd_* abstraction was
+> preferred as the API for interfacing with io_uring from another
+> subsystem.
 
----
+Hello,
 
-Followup to previous patch fixing an issue with the iteration, while
-at it let's clean up the io_wq_for_each_worker() helper to always
-just return void as no callers use the return value.
+I don't think that's the case, no. io_uring_cmd are used to expose
+backend-specific file operations to userspace, similar to an
+asynchronous ioctl.  Moreover, it would just add an extra layer, without
+bringing any benefits, IMO.
 
-This could potentially go one step further and ignore the
-io_acct_for_each_worker() return value as well, but let's keep it as-is
-in that regard, for the case where a new caller is added that does
-provide a func that may return true to terminate the iteration.
+> In that case then, I'll get rid of the io_uring_cmd layers
+> for the calls then, that will make things simpler.
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 6c5ef629e59a..9fd9f6ab722c 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -947,16 +947,13 @@ static bool io_acct_for_each_worker(struct io_wq_acct *acct,
- 	return ret;
- }
- 
--static bool io_wq_for_each_worker(struct io_wq *wq,
-+static void io_wq_for_each_worker(struct io_wq *wq,
- 				  bool (*func)(struct io_worker *, void *),
- 				  void *data)
- {
--	for (int i = 0; i < IO_WQ_ACCT_NR; i++) {
-+	for (int i = 0; i < IO_WQ_ACCT_NR; i++)
- 		if (io_acct_for_each_worker(&wq->acct[i], func, data))
--			return true;
--	}
--
--	return false;
-+			break;
- }
- 
- static bool io_wq_worker_wake(struct io_worker *worker, void *data)
 -- 
-Jens Axboe
-
+Gabriel Krisman Bertazi
 

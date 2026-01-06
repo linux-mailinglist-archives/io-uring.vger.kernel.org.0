@@ -1,60 +1,60 @@
-Return-Path: <io-uring+bounces-11403-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11404-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F7DCF7BAB
-	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 11:16:33 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA598CF7B18
+	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 11:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BF14E30D8FFF
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 10:12:03 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id EAE4C301C3B7
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 10:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED8E30FC2A;
-	Tue,  6 Jan 2026 10:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FA03112B3;
+	Tue,  6 Jan 2026 10:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTXVc4rr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eBIDztXT"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AFD30CDAE
-	for <io-uring@vger.kernel.org>; Tue,  6 Jan 2026 10:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257F81E515
+	for <io-uring@vger.kernel.org>; Tue,  6 Jan 2026 10:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767694320; cv=none; b=bRll0LRj3IhhlcKjZeyivuovYmvBziVC2GsIsTA6Wbs4VNFjJ7PyWE6eAT9C3Kj/vFQA/2CaCcHUFo5XDOZSKc/oKAQm20WFcorpRTHw/p4ro505sjyQi6eVVi86snEXw7+TOzGeiCVaB7/CjG8HPFA60Fw41A8Dt2T7vgcBePI=
+	t=1767694326; cv=none; b=Hgvf4MxbTb2UyNiJt4aM50ZqYKp7YS4ILa92THg+VE7bhfDxkZvVEM7IdAmHF7ohSWzsPR/fJANqYHcv3QUXlr15L2W5BoIL4ITq+uQ8Xe5O99IRcx6lIG2WxvZG0qvYXeDZqGeK/26a0XumQ3l4DZ5JcbLeqS21vxdCkR4YbHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767694320; c=relaxed/simple;
-	bh=cgzugxSDTmtzSR8exf7Hgm/DoYPK65rFz72w18Unhzk=;
+	s=arc-20240116; t=1767694326; c=relaxed/simple;
+	bh=++cqvz2Vb3u702yDXIRGsCRLzl7ckmWtyFnQ5jbEveg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J88CnsXEonqowYp34fbLhI4DkFDAOVUDf9HPt7sjMjexgr4dRJSu7bMNz/b7fsxTBVDG4SDOWESOf7J5tyXvGNyqH5VLwYeZXr14jyccoFCg2MWpiQNmJxWFTJSgWHAigHGgyYHnIohjVG00vX9wyC/KqsZ5Ja3p9XkMeoCrAMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTXVc4rr; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=n2qObv+gGMvlEssVO/4TBsH0Tp9sADrM9XTdDKb8B6N9oL74DoVorC2YJY7IUof56JeR3kw1InAUl3G3+9cBpInLmoxb/WVkuAsis5/JE6eteseht1D5nMYWaAQFwoYGv+E8WNWnKXKsck/XzMzKvMcCRDwftwyixNGOIcpLcy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eBIDztXT; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1767694315;
+	s=mimecast20190719; t=1767694320;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VSd/ppsQChIxDKrSyspdUTohvq+UtTFL+kJi7YUNAn8=;
-	b=eTXVc4rr3oIdZcurUeWUHV1+Js6bQSFgxq2+hwiqhQ2xcBo77c3VmYSCJE6fAHRaiJjx/R
-	95t8pPfsQWUyvGUhC6+BUL6o5lD5ornikPyOxXgWahSIvm6r5Rtq4cf1gPC9B1B19jBbqI
-	WfxxNa+66jRzoyUp3IthzXPFCWn6k5o=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=sfhHeJQE03Qt9ixdtQgqOAcwKkq9G5Gq2ipXD3h/86o=;
+	b=eBIDztXTX+Y0aLhr0tHvcR/32smNE5Dl6wos0dhid6FqWB7kob/+xG5VAeCQnXqVxUySpO
+	98UjDsuUr/ASDrgx912F88gpwg7yDK1RHY/mA9N+Ty8uIDfsiv7QZKsfTNB14F89xKoHog
+	leID6Cgnwd5xr/YvicXTfIBwdxqGAh8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-c6CV7GKqMkCQ6JYFJSbMIg-1; Tue,
- 06 Jan 2026 05:11:51 -0500
-X-MC-Unique: c6CV7GKqMkCQ6JYFJSbMIg-1
-X-Mimecast-MFC-AGG-ID: c6CV7GKqMkCQ6JYFJSbMIg_1767694310
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-173-wi5yGhE8M-aCpeCyJsb7cw-1; Tue,
+ 06 Jan 2026 05:11:55 -0500
+X-MC-Unique: wi5yGhE8M-aCpeCyJsb7cw-1
+X-Mimecast-MFC-AGG-ID: wi5yGhE8M-aCpeCyJsb7cw_1767694314
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9E2E1800654;
-	Tue,  6 Jan 2026 10:11:49 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA6A418002C1;
+	Tue,  6 Jan 2026 10:11:53 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.130])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28D1180044F;
-	Tue,  6 Jan 2026 10:11:48 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B8366180035A;
+	Tue,  6 Jan 2026 10:11:52 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc: io-uring@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>,
 	Stefan Metzmacher <metze@samba.org>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 03/13] io_uring: refactor io_import_reg_vec() for BPF kfunc use
-Date: Tue,  6 Jan 2026 18:11:12 +0800
-Message-ID: <20260106101126.4064990-4-ming.lei@redhat.com>
+Subject: [PATCH V2 04/13] io_uring: prepare for extending io_uring with bpf
+Date: Tue,  6 Jan 2026 18:11:13 +0800
+Message-ID: <20260106101126.4064990-5-ming.lei@redhat.com>
 In-Reply-To: <20260106101126.4064990-1-ming.lei@redhat.com>
 References: <20260106101126.4064990-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -74,105 +74,156 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Split io_import_reg_vec() into:
-- __io_import_reg_vec(): core logic taking io_mapped_ubuf directly
-- io_import_reg_vec(): inline wrapper handling buffer lookup and
-  request flags
-
-The core function takes 'imu' and 'need_clean' parameters instead of
-accessing req directly. This allows BPF kfuncs to import vectored
-buffers without request association, enabling support for multiple
-buffers per request.
+Add one bpf operation & related framework and prepare for extending io_uring
+with bpf.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- io_uring/rsrc.c | 18 +++++-------------
- io_uring/rsrc.h | 29 ++++++++++++++++++++++++++---
- 2 files changed, 31 insertions(+), 16 deletions(-)
+ include/uapi/linux/io_uring.h |  1 +
+ init/Kconfig                  |  7 +++++++
+ io_uring/Makefile             |  1 +
+ io_uring/bpf_op.c             | 26 ++++++++++++++++++++++++++
+ io_uring/bpf_op.h             | 15 +++++++++++++++
+ io_uring/opdef.c              | 16 ++++++++++++++++
+ 6 files changed, 66 insertions(+)
+ create mode 100644 io_uring/bpf_op.c
+ create mode 100644 io_uring/bpf_op.h
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index ec716e14d467..7eb2c70185e4 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1476,23 +1476,14 @@ static int io_kern_bvec_size(struct iovec *iov, unsigned nr_iovs,
- 	return 0;
- }
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index b5b23c0d5283..30406cfb2e21 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -303,6 +303,7 @@ enum io_uring_op {
+ 	IORING_OP_PIPE,
+ 	IORING_OP_NOP128,
+ 	IORING_OP_URING_CMD128,
++	IORING_OP_BPF,
  
--int io_import_reg_vec(int ddir, struct iov_iter *iter,
--			struct io_kiocb *req, struct iou_vec *vec,
--			unsigned nr_iovs, unsigned issue_flags)
-+int __io_import_reg_vec(int ddir, struct iov_iter *iter,
-+			struct io_mapped_ubuf *imu, struct iou_vec *vec,
-+			unsigned nr_iovs, bool *need_clean)
- {
--	struct io_rsrc_node *node;
--	struct io_mapped_ubuf *imu;
- 	unsigned iovec_off;
- 	struct iovec *iov;
- 	unsigned nr_segs;
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/init/Kconfig b/init/Kconfig
+index fa79feb8fe57..b2f2a5473538 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1868,6 +1868,13 @@ config IO_URING
+ 	  applications to submit and complete IO through submission and
+ 	  completion rings that are shared between the kernel and application.
  
--	node = io_find_buf_node(req, issue_flags);
--	if (!node)
--		return -EFAULT;
--	imu = node->buf;
--	if (!(imu->dir & (1 << ddir)))
--		return -EFAULT;
--
- 	iovec_off = vec->nr - nr_iovs;
- 	iov = vec->iovec + iovec_off;
- 
-@@ -1531,7 +1522,8 @@ int io_import_reg_vec(int ddir, struct iov_iter *iter,
- 
- 		*vec = tmp_vec;
- 		iov = vec->iovec + iovec_off;
--		req->flags |= REQ_F_NEED_CLEANUP;
-+		if (need_clean)
-+			*need_clean = true;
- 	}
- 
- 	if (imu->is_kbuf)
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 2a29da350727..3203277ac289 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -77,9 +77,32 @@ static inline int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
- 		return -EFAULT;
- 	return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
- }
--int io_import_reg_vec(int ddir, struct iov_iter *iter,
--			struct io_kiocb *req, struct iou_vec *vec,
--			unsigned nr_iovs, unsigned issue_flags);
-+int __io_import_reg_vec(int ddir, struct iov_iter *iter,
-+			struct io_mapped_ubuf *imu, struct iou_vec *vec,
-+			unsigned nr_iovs, bool *need_clean);
++config IO_URING_BPF_OP
++	bool "Enable IO uring bpf extension" if EXPERT
++	depends on IO_URING && BPF
++	help
++	  This option enables bpf extension for the io_uring interface, so
++	  application can define its own io_uring operation by bpf program.
 +
-+static inline int io_import_reg_vec(int ddir, struct iov_iter *iter,
-+				    struct io_kiocb *req, struct iou_vec *vec,
-+				    unsigned nr_iovs, unsigned issue_flags)
+ config GCOV_PROFILE_URING
+ 	bool "Enable GCOV profiling on the io_uring subsystem"
+ 	depends on IO_URING && GCOV_KERNEL
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index bc4e4a3fa0a5..b2db2b334cee 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -22,3 +22,4 @@ obj-$(CONFIG_NET_RX_BUSY_POLL)	+= napi.o
+ obj-$(CONFIG_NET) += net.o cmd_net.o
+ obj-$(CONFIG_PROC_FS) += fdinfo.o
+ obj-$(CONFIG_IO_URING_MOCK_FILE) += mock_file.o
++obj-$(CONFIG_IO_URING_BPF_OP)	+= bpf_op.o
+diff --git a/io_uring/bpf_op.c b/io_uring/bpf_op.c
+new file mode 100644
+index 000000000000..2ab6f93bbad8
+--- /dev/null
++++ b/io_uring/bpf_op.c
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Red Hat */
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <uapi/linux/io_uring.h>
++#include "io_uring.h"
++#include "bpf_op.h"
++
++int io_uring_bpf_issue(struct io_kiocb *req, unsigned int issue_flags)
 +{
-+	struct io_rsrc_node *node;
-+	struct io_mapped_ubuf *imu;
-+	bool need_clean = false;
-+	int ret;
-+
-+	node = io_find_buf_node(req, issue_flags);
-+	if (!node)
-+		return -EFAULT;
-+	imu = node->buf;
-+	if (!(imu->dir & (1 << ddir)))
-+		return -EFAULT;
-+
-+	ret = __io_import_reg_vec(ddir, iter, imu, vec, nr_iovs, &need_clean);
-+	if (need_clean)
-+		req->flags |= REQ_F_NEED_CLEANUP;
-+	return ret;
++	return -EOPNOTSUPP;
 +}
 +
- int __io_prep_reg_iovec(struct iou_vec *iv, const struct iovec __user *uvec,
- 			size_t uvec_segs, bool compat, bool *need_clean);
++int io_uring_bpf_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++void io_uring_bpf_fail(struct io_kiocb *req)
++{
++}
++
++void io_uring_bpf_cleanup(struct io_kiocb *req)
++{
++}
+diff --git a/io_uring/bpf_op.h b/io_uring/bpf_op.h
+new file mode 100644
+index 000000000000..7b61612c28c4
+--- /dev/null
++++ b/io_uring/bpf_op.h
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef IOU_BPF_OP_H
++#define IOU_BPF_OP_H
++
++struct io_kiocb;
++struct io_uring_sqe;
++
++#ifdef CONFIG_IO_URING_BPF_OP
++int io_uring_bpf_issue(struct io_kiocb *req, unsigned int issue_flags);
++int io_uring_bpf_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++void io_uring_bpf_fail(struct io_kiocb *req);
++void io_uring_bpf_cleanup(struct io_kiocb *req);
++#endif
++
++#endif
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index df52d760240e..289107f3c00a 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -38,6 +38,7 @@
+ #include "futex.h"
+ #include "truncate.h"
+ #include "zcrx.h"
++#include "bpf_op.h"
  
+ static int io_no_issue(struct io_kiocb *req, unsigned int issue_flags)
+ {
+@@ -593,6 +594,14 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_uring_cmd_prep,
+ 		.issue			= io_uring_cmd,
+ 	},
++	[IORING_OP_BPF] = {
++#if defined(CONFIG_IO_URING_BPF_OP)
++		.prep			= io_uring_bpf_prep,
++		.issue			= io_uring_bpf_issue,
++#else
++		.prep			= io_eopnotsupp_prep,
++#endif
++	},
+ };
+ 
+ const struct io_cold_def io_cold_defs[] = {
+@@ -851,6 +860,13 @@ const struct io_cold_def io_cold_defs[] = {
+ 		.sqe_copy		= io_uring_cmd_sqe_copy,
+ 		.cleanup		= io_uring_cmd_cleanup,
+ 	},
++	[IORING_OP_BPF] = {
++		.name			= "BPF",
++#if defined(CONFIG_IO_URING_BPF_OP)
++		.cleanup		= io_uring_bpf_cleanup,
++		.fail			= io_uring_bpf_fail,
++#endif
++	},
+ };
+ 
+ const char *io_uring_get_opcode(u8 opcode)
 -- 
 2.47.0
 

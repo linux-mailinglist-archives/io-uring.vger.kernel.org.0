@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11421-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11422-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADBBCF8479
-	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 13:20:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C344CF8436
+	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 13:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B16F330221B2
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 12:13:37 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5208F302ADEB
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 12:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEAC32ABC7;
-	Tue,  6 Jan 2026 12:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D580C311596;
+	Tue,  6 Jan 2026 12:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISayz5qp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+hWTwZz"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABFB31ED7F;
-	Tue,  6 Jan 2026 12:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DA840855;
+	Tue,  6 Jan 2026 12:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767701616; cv=none; b=DCRVNySuvsGWoYo9BGHQ8nQlB5Y0tfHLwCBnaczgfoQo0+ODrJ1yT4gasLEAEGHvg6F/6LljfJUUUGu4TxArmhqzgknv05h+JE9cq97mTgeUFeJ6h/227CdzGrSmUuLdZMxmYEjGiWad+plEL8UurA37MKasVFVpJLvCamJgvSw=
+	t=1767701709; cv=none; b=qenrB4lqAr1t2iDWEyCzWrk66sE/P4inlEIftaz34FFvsfrU3q5IhTxaGnF04FEZoWPlHB2Bp7Li+44Ft6hDeinzOVQVVeiPAtAGpMh30H15Xy8dKi+q6kzvrCw/1K2UIn0u/dSSQeRtVtwaLBObjz6ONdQtubpDdpv52a+/lRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767701616; c=relaxed/simple;
-	bh=UqgnvIfXwr0iVaGvUpJHI4QRwu/MgXsdbHwdbJgcxLs=;
+	s=arc-20240116; t=1767701709; c=relaxed/simple;
+	bh=QgwQtu+7iHBgGqGElEDElm2KoBeOrZqPOWk0Vk79mm8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PtsW74xcjtZVwbExr73hmY15lUG6ZmfnZzOFifKg0ewm3/nCbQ1mn5F4K8j1wRO1bhPmhwsYVFwq7JA91n8Ed8qpWv82GnxJL5NkDFpg/0qKpQRb8Vmmf3eFXMDwrfs+r4i1L6y3YyMduFbhuqrkXMuOGwzvsktB71dw4vwH/tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISayz5qp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D50C16AAE;
-	Tue,  6 Jan 2026 12:13:33 +0000 (UTC)
+	 Content-Type:MIME-Version; b=GuyMFI38ClRs+bkcKQj4cQW9/qYfr7vHi/kRnqlschVKzRzBHBzGKVAYKq3e3tik2teEfleQagEj7OUfckMdnxJ4kipOHMkNBciwOvrwD40wDio0QnmZ19NztAjs89QG8XZ8BbUtLKW5gQncWbtmNeyY2g+CBC0gHKMz9rjiAoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+hWTwZz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D91C116C6;
+	Tue,  6 Jan 2026 12:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767701616;
-	bh=UqgnvIfXwr0iVaGvUpJHI4QRwu/MgXsdbHwdbJgcxLs=;
+	s=k20201202; t=1767701705;
+	bh=QgwQtu+7iHBgGqGElEDElm2KoBeOrZqPOWk0Vk79mm8=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ISayz5qp5GBUmTBMXVUggD4KDsxbcBtoEsZgsJk0QoIPpz3iQ2xJfpLmyReJwRhiA
-	 qTJ8LCY7KVuKo0nVjoYcN2vpkfHvY3N9jpprnSPy1FdQBbUkqiNYDTXiZ1EQV8Eyqb
-	 eXLTodMo7L18bxbD6todOr+TQwk9IIJ4bIamPAaKdIOCyLyfegXboPRa2KMi5N33oA
-	 p3vMDMKHebNI+QwkgZ8mr8Y0T2QjzNeJoZ3CipUUFMxHGGL7GvLWBBKHq1+UTSoiER
-	 cniAG1rQ3KkNC8Xo8RArtyjEHyQgY7n/pkh4K9enivKhQBn7/wvdIatBak5qVdd7EI
-	 xSCQ9iDg+ASTw==
-Message-ID: <66a15379507f08da9d563416a86d1ad495466ec8.camel@kernel.org>
-Subject: Re: [PATCH 08/11] fs: add support for non-blocking timestamp updates
+	b=o+hWTwZzOHzPg+ACzpyvVs3891G83lw6vDVmkwazFkR/pF5AhkimrMWvmgbIuLi0R
+	 YPWdtAPCyz4Nwn/owqbkpNODN3srDrBZh3JvzY1w5vRo4o4/HN2/YYtC5KlQAkOD1S
+	 6Epnm9OeDxtBI1qeG6NpSAAvzWki3dWJy+KtWg83Exoh5ODy0D+xKmnC3y7hYXaI9n
+	 D0IIUHAxkfFV8BsOsIr1kN8fTQZFIOBaN/Ca0DEIORdLLGTDaG+KW86c2Wq6lViqVZ
+	 k72lI8ny8/JPiuvkgY8Uz5mPDpJk8TOoOAgaziOwAaRsC4wNhQBcDxGvrkMHnB9c8c
+	 5BSpTmqNhMgUw==
+Message-ID: <e33dbefe18eab49f394afb1989303aab57930adb.camel@kernel.org>
+Subject: Re: [PATCH 09/11] fs: refactor file_update_time_flags
 From: Jeff Layton <jlayton@kernel.org>
 To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
@@ -53,10 +53,10 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan
  io-uring@vger.kernel.org, 	devel@lists.orangefs.org,
  linux-unionfs@vger.kernel.org, 	linux-mtd@lists.infradead.org,
  linux-xfs@vger.kernel.org, 	linux-nfs@vger.kernel.org
-Date: Tue, 06 Jan 2026 07:13:32 -0500
-In-Reply-To: <20260106075008.1610195-9-hch@lst.de>
+Date: Tue, 06 Jan 2026 07:15:02 -0500
+In-Reply-To: <20260106075008.1610195-10-hch@lst.de>
 References: <20260106075008.1610195-1-hch@lst.de>
-	 <20260106075008.1610195-9-hch@lst.de>
+	 <20260106075008.1610195-10-hch@lst.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -142,26 +142,69 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Tue, 2026-01-06 at 08:50 +0100, Christoph Hellwig wrote:
-> Currently file_update_time_flags unconditionally returns -EAGAIN if any
-> timestamp needs to be updated and IOCB_NOWAIT is passed.  This makes
-> non-blocking direct writes impossible on file systems with granular
-> enough timestamps.
->=20
-> Pass IOCB_NOWAIT to ->update_time and return -EAGAIN if it could block.
+> Split all the inode timestamp flags into a helper.  This not only
+> makes the code a bit more readable, but also optimizes away the
+> further checks as soon as know we need an update.
 >=20
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/btrfs/inode.c     |  2 ++
->  fs/gfs2/inode.c      |  3 +++
->  fs/inode.c           | 45 +++++++++++++++++++++++++++++++++-----------
->  fs/orangefs/inode.c  |  3 +++
->  fs/overlayfs/inode.c |  2 ++
->  fs/ubifs/file.c      |  3 +++
->  fs/xfs/xfs_iops.c    |  3 +++
->  7 files changed, 50 insertions(+), 11 deletions(-)
+>  fs/inode.c | 31 +++++++++++++++----------------
+>  1 file changed, 15 insertions(+), 16 deletions(-)
 >=20
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 01e4f6b9b46e..d2bfe302e647 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2378,31 +2378,30 @@ struct timespec64 current_time(struct inode *inod=
+e)
+>  }
+>  EXPORT_SYMBOL(current_time);
+> =20
+> +static inline bool need_cmtime_update(struct inode *inode)
+> +{
+> +	struct timespec64 now =3D current_time(inode), ts;
+> +
+> +	ts =3D inode_get_mtime(inode);
+> +	if (!timespec64_equal(&ts, &now))
+> +		return true;
+> +	ts =3D inode_get_ctime(inode);
+> +	if (!timespec64_equal(&ts, &now))
+> +		return true;
+> +	return IS_I_VERSION(inode) && inode_iversion_need_inc(inode);
+> +}
+> +
+>  static int file_update_time_flags(struct file *file, unsigned int flags)
+>  {
+>  	struct inode *inode =3D file_inode(file);
+> -	struct timespec64 now, ts;
+> -	bool need_update =3D false;
+> -	int ret =3D 0;
+> +	int ret;
+> =20
+>  	/* First try to exhaust all avenues to not sync */
+>  	if (IS_NOCMTIME(inode))
+>  		return 0;
+>  	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+>  		return 0;
+> -
+> -	now =3D current_time(inode);
+> -
+> -	ts =3D inode_get_mtime(inode);
+> -	if (!timespec64_equal(&ts, &now))
+> -		need_update =3D true;
+> -	ts =3D inode_get_ctime(inode);
+> -	if (!timespec64_equal(&ts, &now))
+> -		need_update =3D true;
+> -	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+> -		need_update =3D true;
+> -
+> -	if (!need_update)
+> +	if (!need_cmtime_update(inode))
+>  		return 0;
+> =20
+>  	flags &=3D IOCB_NOWAIT;
 
-LGTM:
+Nice cleanup.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 

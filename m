@@ -1,48 +1,48 @@
-Return-Path: <io-uring+bounces-11395-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11396-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7D6CF737F
-	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 09:06:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154B7CF739D
+	for <lists+io-uring@lfdr.de>; Tue, 06 Jan 2026 09:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7BFCE3133068
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 08:01:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 93C303141C2B
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jan 2026 08:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B383148BF;
-	Tue,  6 Jan 2026 07:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E55315D28;
+	Tue,  6 Jan 2026 07:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G7fg1ANq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rEjd772H"
 X-Original-To: io-uring@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4ED30BF74;
-	Tue,  6 Jan 2026 07:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B20230C35D;
+	Tue,  6 Jan 2026 07:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767685894; cv=none; b=gL7wfs6wDNxbwquHPzXB74ykoBBKsobR5aDIvDY2T6ioQ0mfDw7eG/waNe61jdUbCInCtLX10ceuEOJVXtoGfOt4jBaBUDf09UworMNSdKC0E8shGw/2AogIHn6Wq+HcIw2cltzrM4RuBFMwgDf/I232kQ9OBwC4y4zwAReI2mI=
+	t=1767685896; cv=none; b=BPYlB708K+hfDW1XMnhrb7fdcgoqJY0kqdwpUwalweGKV4ldb/ke6E0jqnj4XWDDDXCXTpQ0D6WNUIdkpOxsPi7tXh6jBKwegMkVu1NYZh9lKpu/WMms8nvPnj4RYrZJnnxMd/Cz2EzVOdzXGHLIGIBO+dlnNtMb4x1yVe/ZzYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767685894; c=relaxed/simple;
-	bh=8xrkaS1aK/jG+/DP/cDuban2PMPGVKkua0234jW47Nc=;
+	s=arc-20240116; t=1767685896; c=relaxed/simple;
+	bh=EQt9QL3VEk68xKZzN1AqegifQfcO68LqNc1scbjpnFE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IMutykVjdjfoM7eTct/JrP+I+CleY9XW0ZEZmXQ5+sQZsjSGveshblScYeb0mLLMabVuZDulT0PSbfD6XBaAmHc4oDAwRLMuPgeqCSLT8pk3K0XmvXS1SHCP/hoQgfwN/DhZcLSnD8iQWl6O2DGJvJ8JOKxv9vonyN1sQ/XL9X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G7fg1ANq; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=qiHSvbg0sgSaeQrSeZZvyQppTLx006RYubBZFiE/Xfiqs5v5zGdK+/ciqbr+e+WZICDkYk1Ib7A2fsCYWVGLygijp6bDwVnJeu8PHTacxJwgqlLIBaSlii9ryNXodwyzY9vAI9DiY1RcmpM0TbghbyYGc1ITycntahTIOAzd1Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rEjd772H; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=7j3wp0xVD5un96yATFbpUxsto0Sx7Mjw4WJT9yeKPsY=; b=G7fg1ANq8xVdTkQAME7MHMKlR0
-	H0RYX4E66VzHtLQHYrmZXl4MTq2s6AvsGXIbj1wKOczZ3mUC5ciKXxhhiOPwqFAyT+kd7bTKjukO0
-	51JwXXuFVDHgLWzQTDQV3SjNfUk3RcvuKpsp/hQNvqtl2S8VgpAf40by0IgDVhqqk2LjZuQhRHZaE
-	krqn/DcpdGdgMDTsBwmuQ1USS0pXsxRAGML/RssX/iSfGuOQitA1WvSw5qhRXq+NGUb5KaGP5+Maz
-	+TuCGsa4pThqXQla7zql192yeta0Ahk0wH0ijcRrdaOwA37EztWF5XgA4AiZiV5VcPPkzhZPvz1hS
-	5RP9zJ+A==;
+	bh=r43mKSP3ZIwowd6KM3hrEay9XvhP30KhnhDuCR1AB4I=; b=rEjd772HRDV5L+IaBKvSsg8epd
+	euVapp5lNNryq3JSEQRH9cqb6SzRUFRg0jMLB3QUdXAvw8+yve+xdey5xUjRVKwJB6hV+FgT8x8FA
+	u2pqL01I/L1p7kgIhZuFAMorggtSBUiZi74gnQrCsD4mctyiaZfAGrX7ewRL8tY6rBYH4E+kvI9VT
+	dMMiSLpwXAhSLyK+anzW1rLTeYyUPC4fBJUtyJbV6F9RfIEM3t3Q2anl2IqBpHBtq729yYfC1/Q2O
+	Vk8TMkho+svzKSNqB6bxPR7fw8leY/CV9KSRA0Z59g4eaEWIaJa/UZINAMVzOqRV7/NRK/adPYIJy
+	g/qN4WAw==;
 Received: from [2001:4bb8:2af:87cb:5562:685f:c094:6513] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vd1qf-0000000CZ1G-0M0U;
-	Tue, 06 Jan 2026 07:51:25 +0000
+	id 1vd1ql-0000000CZ5u-3DNg;
+	Tue, 06 Jan 2026 07:51:32 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -66,9 +66,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-mtd@lists.infradead.org,
 	linux-xfs@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: [PATCH 08/11] fs: add support for non-blocking timestamp updates
-Date: Tue,  6 Jan 2026 08:50:02 +0100
-Message-ID: <20260106075008.1610195-9-hch@lst.de>
+Subject: [PATCH 09/11] fs: refactor file_update_time_flags
+Date: Tue,  6 Jan 2026 08:50:03 +0100
+Message-ID: <20260106075008.1610195-10-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260106075008.1610195-1-hch@lst.de>
 References: <20260106075008.1610195-1-hch@lst.de>
@@ -81,196 +81,66 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Currently file_update_time_flags unconditionally returns -EAGAIN if any
-timestamp needs to be updated and IOCB_NOWAIT is passed.  This makes
-non-blocking direct writes impossible on file systems with granular
-enough timestamps.
-
-Pass IOCB_NOWAIT to ->update_time and return -EAGAIN if it could block.
+Split all the inode timestamp flags into a helper.  This not only
+makes the code a bit more readable, but also optimizes away the
+further checks as soon as know we need an update.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c     |  2 ++
- fs/gfs2/inode.c      |  3 +++
- fs/inode.c           | 45 +++++++++++++++++++++++++++++++++-----------
- fs/orangefs/inode.c  |  3 +++
- fs/overlayfs/inode.c |  2 ++
- fs/ubifs/file.c      |  3 +++
- fs/xfs/xfs_iops.c    |  3 +++
- 7 files changed, 50 insertions(+), 11 deletions(-)
+ fs/inode.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 23fc38de9be5..241727459c0a 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6362,6 +6362,8 @@ static int btrfs_update_time(struct inode *inode, enum fs_update_time type,
- 
- 	if (btrfs_root_readonly(root))
- 		return -EROFS;
-+	if (flags & IOCB_NOWAIT)
-+		return -EAGAIN;
- 
- 	dirty = inode_update_time(inode, type, flags);
- 	if (dirty <= 0)
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 4ef39ff6889d..c02ebf0ca625 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -2250,6 +2250,9 @@ static int gfs2_update_time(struct inode *inode, enum fs_update_time type,
- 	struct gfs2_holder *gh;
- 	int error;
- 
-+	if (flags & IOCB_NOWAIT)
-+		return -EAGAIN;
-+
- 	gh = gfs2_glock_is_locked_by_me(gl);
- 	if (gh && gl->gl_state != LM_ST_EXCLUSIVE) {
- 		gfs2_glock_dq(gh);
 diff --git a/fs/inode.c b/fs/inode.c
-index c08682524a8d..01e4f6b9b46e 100644
+index 01e4f6b9b46e..d2bfe302e647 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2090,7 +2090,7 @@ static int inode_update_atime(struct inode *inode)
- 	return inode_time_dirty_flag(inode);
+@@ -2378,31 +2378,30 @@ struct timespec64 current_time(struct inode *inode)
  }
+ EXPORT_SYMBOL(current_time);
  
--static int inode_update_cmtime(struct inode *inode)
-+static int inode_update_cmtime(struct inode *inode, unsigned int flags)
- {
- 	struct timespec64 now = inode_set_ctime_current(inode);
- 	struct timespec64 ctime = inode_get_ctime(inode);
-@@ -2101,12 +2101,27 @@ static int inode_update_cmtime(struct inode *inode)
- 	mtime_changed = !timespec64_equal(&now, &mtime);
- 	if (mtime_changed || !timespec64_equal(&now, &ctime))
- 		dirty = inode_time_dirty_flag(inode);
--	if (mtime_changed)
--		inode_set_mtime_to_ts(inode, now);
- 
--	if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, !!dirty))
--		dirty |= I_DIRTY_SYNC;
-+	/*
-+	 * Pure timestamp updates can be recorded in the inode without blocking
-+	 * by not dirtying the inode.  But when the file system requires
-+	 * i_version updates, the update of i_version can still block.
-+	 * Error out if we'd actually have to update i_version or don't support
-+	 * lazytime.
-+	 */
-+	if (IS_I_VERSION(inode)) {
-+		if (flags & IOCB_NOWAIT) {
-+			if (!(inode->i_sb->s_flags & SB_LAZYTIME) ||
-+			    inode_iversion_need_inc(inode))
-+				return -EAGAIN;
-+		} else {
-+			if (inode_maybe_inc_iversion(inode, !!dirty))
-+				dirty |= I_DIRTY_SYNC;
-+		}
-+	}
- 
-+	if (mtime_changed)
-+		inode_set_mtime_to_ts(inode, now);
- 	return dirty;
- }
- 
-@@ -2131,7 +2146,7 @@ int inode_update_time(struct inode *inode, enum fs_update_time type,
- 	case FS_UPD_ATIME:
- 		return inode_update_atime(inode);
- 	case FS_UPD_CMTIME:
--		return inode_update_cmtime(inode);
-+		return inode_update_cmtime(inode, flags);
- 	default:
- 		WARN_ON_ONCE(1);
- 		return -EIO;
-@@ -2152,6 +2167,16 @@ int generic_update_time(struct inode *inode, enum fs_update_time type,
- {
- 	int dirty;
- 
-+	/*
-+	 * ->dirty_inode is what could make generic timestamp updates block.
-+	 * Don't support non-blocking timestamp updates here if it is set.
-+	 * File systems that implement ->dirty_inode but want to support
-+	 * non-blocking timestamp updates should call inode_update_time
-+	 * directly.
-+	 */
-+	if ((flags & IOCB_NOWAIT) && inode->i_sb->s_op->dirty_inode)
-+		return -EAGAIN;
++static inline bool need_cmtime_update(struct inode *inode)
++{
++	struct timespec64 now = current_time(inode), ts;
 +
- 	dirty = inode_update_time(inode, type, flags);
- 	if (dirty <= 0)
- 		return dirty;
-@@ -2380,15 +2405,13 @@ static int file_update_time_flags(struct file *file, unsigned int flags)
- 	if (!need_update)
- 		return 0;
++	ts = inode_get_mtime(inode);
++	if (!timespec64_equal(&ts, &now))
++		return true;
++	ts = inode_get_ctime(inode);
++	if (!timespec64_equal(&ts, &now))
++		return true;
++	return IS_I_VERSION(inode) && inode_iversion_need_inc(inode);
++}
++
+ static int file_update_time_flags(struct file *file, unsigned int flags)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct timespec64 now, ts;
+-	bool need_update = false;
+-	int ret = 0;
++	int ret;
  
--	if (flags & IOCB_NOWAIT)
--		return -EAGAIN;
+ 	/* First try to exhaust all avenues to not sync */
+ 	if (IS_NOCMTIME(inode))
+ 		return 0;
+ 	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+ 		return 0;
 -
-+	flags &= IOCB_NOWAIT;
- 	if (mnt_get_write_access_file(file))
+-	now = current_time(inode);
+-
+-	ts = inode_get_mtime(inode);
+-	if (!timespec64_equal(&ts, &now))
+-		need_update = true;
+-	ts = inode_get_ctime(inode);
+-	if (!timespec64_equal(&ts, &now))
+-		need_update = true;
+-	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+-		need_update = true;
+-
+-	if (!need_update)
++	if (!need_cmtime_update(inode))
  		return 0;
- 	if (inode->i_op->update_time)
--		ret = inode->i_op->update_time(inode, FS_UPD_CMTIME, 0);
-+		ret = inode->i_op->update_time(inode, FS_UPD_CMTIME, flags);
- 	else
--		ret = generic_update_time(inode, FS_UPD_CMTIME, 0);
-+		ret = generic_update_time(inode, FS_UPD_CMTIME, flags);
- 	mnt_put_write_access_file(file);
- 	return ret;
- }
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index eab16afb5b8a..f420f48fc069 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -878,6 +878,9 @@ int orangefs_update_time(struct inode *inode, enum fs_update_time type,
- 	struct iattr iattr = { };
- 	int dirty;
  
-+	if (flags & IOCB_NOWAIT)
-+		return -EAGAIN;
-+
- 	switch (type) {
- 	case FS_UPD_ATIME:
- 		iattr.ia_valid = ATTR_ATIME;
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index c0ce3519e4af..00c69707bda9 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -566,6 +566,8 @@ int ovl_update_time(struct inode *inode, enum fs_update_time type,
- 		};
- 
- 		if (upperpath.dentry) {
-+			if (flags & IOCB_NOWAIT)
-+				return -EAGAIN;
- 			touch_atime(&upperpath);
- 			inode_set_atime_to_ts(inode,
- 					      inode_get_atime(d_inode(upperpath.dentry)));
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 0cc44ad142de..3dc3ca1cd803 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1377,6 +1377,9 @@ int ubifs_update_time(struct inode *inode, enum fs_update_time type,
- 	if (!IS_ENABLED(CONFIG_UBIFS_ATIME_SUPPORT))
- 		return generic_update_time(inode, type, flags);
- 
-+	if (flags & IOCB_NOWAIT)
-+		return -EAGAIN;
-+
- 	err = ubifs_budget_space(c, &req);
- 	if (err)
- 		return err;
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index d9eae1af14a8..aef5b05c1b76 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1195,6 +1195,9 @@ xfs_vn_update_time(
- 
- 	trace_xfs_update_time(ip);
- 
-+	if (flags & IOCB_NOWAIT)
-+		return -EAGAIN;
-+
- 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
- 		if (type == FS_UPD_ATIME ||
- 		    !inode_maybe_inc_iversion(inode, false))
+ 	flags &= IOCB_NOWAIT;
 -- 
 2.47.3
 

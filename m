@@ -1,68 +1,53 @@
-Return-Path: <io-uring+bounces-11428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE4CCFBEBB
-	for <lists+io-uring@lfdr.de>; Wed, 07 Jan 2026 05:11:23 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6468CCFC2BC
+	for <lists+io-uring@lfdr.de>; Wed, 07 Jan 2026 07:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2C6C93019BFB
-	for <lists+io-uring@lfdr.de>; Wed,  7 Jan 2026 04:11:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7284130021E4
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jan 2026 06:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F5F188CC9;
-	Wed,  7 Jan 2026 04:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c5BpVbCR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF87813959D;
+	Wed,  7 Jan 2026 06:18:59 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86D285C4A
-	for <io-uring@vger.kernel.org>; Wed,  7 Jan 2026 04:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E93C2F;
+	Wed,  7 Jan 2026 06:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767759080; cv=none; b=XZGS+rFlLqOAKerUrolm+eFlJ2+pH2X7xpU7OL0L05e0X3mf0Hx3/mOmsHEOr28GADsbGIGFwlpl6Ufx+ZP6pIAJ2zQ44k+iGp5n9lrNOfCWM6uYiHBOmdcjG64WFoHk8sxSQpHeuW2gTY1c9vMJzAKgSWF4qAMcCni4Mwi0tYo=
+	t=1767766739; cv=none; b=BsrlUWmd6eVRmElOFuL1X45Ro0J8PyPJ9EZvBQFXwzVsKaCbfWuyWh6VILXi84JICVC7hDfgPXvuRMQQzsuL3SjBa2z16WmeyqJ9oP8WmW/LPlbPmxIQWF2tLW8oRoRSlnHMgk+AsowyaXfhQNxCZidDFbfFvntsL9j+977ZqGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767759080; c=relaxed/simple;
-	bh=HqcGPuE5HInpGjr9ZdqPOWL8+0D6iiKhxDT8E0/yTRw=;
+	s=arc-20240116; t=1767766739; c=relaxed/simple;
+	bh=K2HV4jj+W4Ahhy1KrtksAp7WwoV9zGOT+igW03S/DyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TABloKQqn0TFMyAx0vBueyFHW80d07yHgWKJFht7Qdc62VYEIWOicyCQfDCjLwA/auTKcKUTnlvCnVOQ3RRTUsBC1gIoAcGSIN4MXko2id/ke4AV16A0r96vRMX2pyc+SiqPZJhrac11S7EkmP5M8fkx8YznXvWdwuj/ETn8iIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c5BpVbCR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1767759077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jin/vEZZymCL/DVlcrCtAux5SXI8ULCxtzzAdOtrPIM=;
-	b=c5BpVbCRTKKKCAu+OYi8XXgRwK4tH1bFrMTYh1xvp5wFM6FMlL6m/Pw7fuugIybRasry0S
-	uO6NFOOJ8HSD2ThNeG3ZtgG+LQfiDRqrbjrlUlYBil+9hH8HdI4SWS4SkfpaEJkE+l1oZZ
-	hxnL+6nLJHg/X0q1DzxedjwEMkNzdgc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-440-LaAqKakxOKmbs_u_avyUkA-1; Tue,
- 06 Jan 2026 23:11:16 -0500
-X-MC-Unique: LaAqKakxOKmbs_u_avyUkA-1
-X-Mimecast-MFC-AGG-ID: LaAqKakxOKmbs_u_avyUkA_1767759075
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6F5B195608A;
-	Wed,  7 Jan 2026 04:11:14 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.130])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57B64180009E;
-	Wed,  7 Jan 2026 04:11:10 +0000 (UTC)
-Date: Wed, 7 Jan 2026 12:11:06 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: io-uring@vger.kernel.org, Caleb Sander Mateos <csander@purestorage.com>,
-	Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [PATCH V2 0/3] block: avoid to use bi_vcnt in
- bio_may_need_split()
-Message-ID: <aV3c2jrL-ykptXhf@fedora>
-References: <20251231030101.3093960-1-ming.lei@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxGxsiPBJKneSdhsF8HywTnT73GW8zREvw8qc0Jej2qd6/0pM0v+52UmnvRIRC2KH+xN9x9T71Kpzd46OYMwjM1tlkRLJgZ5mzpt2nMuJF4OG8xNv4SkaO7dd30jGWS1JQccRiCsmdoJNtavQ1Hicum0k/woKAuUHIt6eSXbnFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3B3B6227A87; Wed,  7 Jan 2026 07:18:52 +0100 (CET)
+Date: Wed, 7 Jan 2026 07:18:51 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
+Message-ID: <20260107061851.GA15324@lst.de>
+References: <cover.1763725387.git.asml.silence@gmail.com> <74d689540fa200fe37f1a930165357a92fe9e68c.1763725387.git.asml.silence@gmail.com> <7b2017f4-02a3-482a-a173-bb16b895c0cb@amd.com> <20251204110709.GA22971@lst.de> <0571ca61-7b17-4167-83eb-4269bd0459fe@amd.com> <20251204131025.GA26860@lst.de> <aVnFnzRYWC_Y5zHg@fedora> <a96e327d-3fef-4d08-87e9-c65866223967@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -71,46 +56,20 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251231030101.3093960-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <a96e327d-3fef-4d08-87e9-c65866223967@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Dec 31, 2025 at 11:00:54AM +0800, Ming Lei wrote:
-> This series cleans up bio handling to use bi_iter consistently for both
-> cloned and non-cloned bios, removing the reliance on bi_vcnt which is
-> only meaningful for non-cloned bios.
-> 
-> Currently, bio_may_need_split() uses bi_vcnt to check if a bio has a
-> single segment. While this works, it's inconsistent with how cloned bios
-> operate - they use bi_iter for iteration, not bi_vcnt. This inconsistency
-> led to io_uring needing to recalculate iov_iter.nr_segs to ensure bi_vcnt
-> gets a correct value when copied.
-> 
-> This series unifies the approach:
-> 
-> 1. Make bio_may_need_split() use bi_iter instead of bi_vcnt. This handles
->    both cloned and non-cloned bios in a consistent way. Also move bi_io_vec
->    adjacent to bi_iter in struct bio since they're commonly accessed
->    together.
-> 
-> 2. Stop copying iov_iter.nr_segs to bi_vcnt in bio_iov_bvec_set(), since
->    cloned bios should rely on bi_iter, not bi_vcnt.
-> 
-> 3. Remove the nr_segs recalculation in io_uring, which was only needed
->    to provide an accurate bi_vcnt value.
-> 
-> Nitesh verified no performance regression on NVMe 512-byte fio/t/io_uring
-> workloads.
-> 
-> V2:
-> 	- improve bio layout by putting bi_iter and bi_io_vec together
-> 	- improve commit log
+On Tue, Jan 06, 2026 at 07:51:12PM +0000, Pavel Begunkov wrote:
+>> But I am wondering why not make it as one subsystem interface, such as nvme
+>> ioctl, then the whole implementation can be simplified a lot. It is reasonable
+>> because subsystem is exactly the side for consuming/importing the dma-buf.
+>
+> It's not an nvme specific interface, and so a file op was much more
+> convenient.
 
-Hello Guys,
-
-Ping...
-
-
-Thanks,
-Ming
+It is the much better abstraction.  Also the nvme subsystems is not
+an actor, and registering things to the subsystems does not work.
+The nvme controller is the entity that does the dma mapping, and this
+interface works very well for that.
 
 

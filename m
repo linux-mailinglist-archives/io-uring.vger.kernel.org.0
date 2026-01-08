@@ -1,268 +1,207 @@
-Return-Path: <io-uring+bounces-11528-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11529-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4805D03F19
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 16:41:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AFED05B42
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 19:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 403A030090F2
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 15:41:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C25AC30B2C3B
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 18:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672821DF751;
-	Thu,  8 Jan 2026 15:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F414322B71;
+	Thu,  8 Jan 2026 18:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCYjElFa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2ChgALP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCYjElFa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2ChgALP"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MbKNLD40"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056BE27E07E
-	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 15:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F749322A13
+	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 18:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767885883; cv=none; b=kDXS87IekFIkF9CUq+Hhy8U9y5rH5Jsu6xH/piuTHBllJLAaU7B1ZoHZ1i0og/ltRDOaLrAKVPr79248+bLvcn/h7Ow6tumQpsZhMzU4QobcCgzVqKCV9/J2c9rC/qMwE4gRYmgWJll/vP/fVB5RPV9l2FhI4c6y2OIRYx3po5s=
+	t=1767897639; cv=none; b=l9RVhC94zJo/IfazHI9VEUOckStw56TrCS2rqYRWi7FgCRl4nOmZ3X/1ixOKj36SkbaspV1wLqfL5HnZq8SkZoljhGsp6x9r6ZbzHZNHVkDSqw6re+v8UL21rOS8w89oztim77w0dPD26PEnoQcSvMm47T3SOIHh+iw6iLOSz24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767885883; c=relaxed/simple;
-	bh=vXriC1hOUec5CiDeN7Kkxns/Y4aG+yALvZFE+zmwmLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlIyPD3FEyjKnOS8aXrQqRad5fyd9zmvhL5soxvvoi2CBLy3yP5C0IX4uHjAaL5kLsRWs27UPlcQ28PPOpVHaKVRpbVF2jlnt2oahmQ/y2sbBdntlc9Nqk2dP0x4Egx+zZ65QPE+E0njevpbF9okIHnvt8mKz1I3zRd49paSFrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCYjElFa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2ChgALP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCYjElFa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2ChgALP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A391F5C8BF;
-	Thu,  8 Jan 2026 15:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767885877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=JCYjElFavA1D+JD67g7P3npPC+qKEUU/TbXUobTNoT7l1cVaT7b4XmIGbh8npgaG+jLv/V
-	6AckBleiCx8a50E72AwF4VkGql2Dsd8QC+IUgJ2KIt0GlENPgQOJtkIyZ+IMt5mWrZpF6P
-	/r1aau7+l5M8SCkXKYQEUfSfYOfbnog=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767885877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=d2ChgALPnQVQKorF2BkYW7JgTwnMO5Lu5PPBlhswk0qAlUgGRqAbHwNO++BK2PotRdsuOn
-	EUNmEnGr6rkOyZAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767885877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=JCYjElFavA1D+JD67g7P3npPC+qKEUU/TbXUobTNoT7l1cVaT7b4XmIGbh8npgaG+jLv/V
-	6AckBleiCx8a50E72AwF4VkGql2Dsd8QC+IUgJ2KIt0GlENPgQOJtkIyZ+IMt5mWrZpF6P
-	/r1aau7+l5M8SCkXKYQEUfSfYOfbnog=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767885877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=d2ChgALPnQVQKorF2BkYW7JgTwnMO5Lu5PPBlhswk0qAlUgGRqAbHwNO++BK2PotRdsuOn
-	EUNmEnGr6rkOyZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 933BE3EA63;
-	Thu,  8 Jan 2026 15:24:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R8DvIzXMX2kSewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 15:24:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4D1D8A09CF; Thu,  8 Jan 2026 16:24:37 +0100 (CET)
-Date: Thu, 8 Jan 2026 16:24:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>, Jeff Layton <jlayton@kernel.org>, 
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, io-uring@vger.kernel.org, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH 07/11] fs: add a ->sync_lazytime method
-Message-ID: <w35hgsrv4xxwlq2ncsukzc5s6qwjq3qmnbpvyltj2ljmc357dh@4hcrqlekhxdh>
-References: <20260108141934.2052404-1-hch@lst.de>
- <20260108141934.2052404-8-hch@lst.de>
+	s=arc-20240116; t=1767897639; c=relaxed/simple;
+	bh=ooqLxmotW+G7tfKKh3TGgq3X/H5IySKMnqGMs0oJPbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciuvpNqKM3DGlGnPT8GHsEvr++9MlixwRt7mimiSpmAunVS3twVs9APJkq7RuSzI/asp0+4eVHDY3FGfdHGQOPKxfuuMaKcyT9VCGG2F9XIzAtfiI+DGQchKmkkTGDKsnpc2Gg9WLzbxYABCMyDQV4pb8zmonY7tRpqqtpH77rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MbKNLD40; arc=none smtp.client-ip=74.125.82.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-11bba84006dso325114c88.2
+        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 10:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1767897624; x=1768502424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0PGX+LMvYyhz3zylLZxMiON1h+i4VkAFL78U+9WSJLg=;
+        b=MbKNLD40iq31YVR5U2qNRmzq6qQqoxgpHejEIb5tgY+gM9q0fZQzfYvNZvsOGT3CDm
+         dP7B322zNS6pob8AjrYuHUavQVvhlvY3esFXl9ZComKUzIeK27x0JBnPWWxbIITxIeI2
+         M+2QWWw+udXbRMcxe3E/2sQWkNNsSwK3ByLDPByh3HbablZk+4HyrPncHzoTYkOrshmU
+         Di0YJecuZ2zYmItf8tEiZSOI8Jm49AMTwh0Y2GcpVHATT0veI+bM4D8xHNA7aQFdzEsS
+         8BmJYQ1eM5IjqZsulc/4jNOisFXtnR38QMRTzUAz23o6oJn4oltY92ltnJKEnkxN7Ahc
+         dkJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767897624; x=1768502424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0PGX+LMvYyhz3zylLZxMiON1h+i4VkAFL78U+9WSJLg=;
+        b=h5zyJ0eRIE8MNBs9WUrx8I55CC9bGLZeR3dX+PO5ncdAWb42xKeoOnpfPsfLIds1Th
+         wArBxsxinTqm7cmw+pMCqofI98wNG9xow6WwusibwhD8iE6uSigoIc3geiSfiHr1BPFk
+         P494Zmf1OdNwBt5mCn/U/uX7L8unWtyoULZKlirkIIkTPOMazJFg0YphcGKikrasjj63
+         nmYSa7brIgXir8pj2zBUtNEkozI43m6zYuWHyceQ6oTQSjhm7jzM1ZuDnpyAIVpKve8X
+         HgbapIMR5m+JmXUGwgE51pDOzV5z4nVahKGxOxzwUokMIQu6R6VFABv1KBlvF3zFP8CK
+         eaOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW2WfMhs8CKVajnmmFR59ZaOuCROYvzMsjq4SLT9mBCvFdajxCW0MxEpHULoWDgfdIpcZYHhjv6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynRhNNoYFSF5/dkFtrvDUDddmHunpJg3C2/SwYd5Y+EGxk5HCQ
+	794Ok7ZELS6NVt+VaSwWFt5YSrhXXaiWHIyUr+rnPJb5P7fuicShsukUrVYJKzDHyDOnwQmVHim
+	UFOyBVxCOAdoHq57KXhzSMZoMVeafwHuXHzz7Q1IGbw==
+X-Gm-Gg: AY/fxX5d7N8G+HKvj3UTS399VMgtwFeunGG5KZkfg2Hi131Kd902SbMmGRL/OneErzb
+	retEo6d4UkuVkWjDmrlDA6G+S2JIUhcbZOpXPcZCLTlpiXJGZ9ggEBQhrNaQseRu9aY8JkXyTSN
+	XA8d4putKh7JlV4GfPcb1ouG0aofJ1JyCdzMWH3S+Ebf2vZBCxRdUEz/5VHKUoPJmkALQWrLksi
+	Z1pEscyXWAtOT6KIbAZgPXy954NonHkhDsYDtPYruAJdOCWhvk1EM0pFSkyca+ihvAxz4Of
+X-Google-Smtp-Source: AGHT+IH2T58GqwNDj7fa77obaAt+xTIUdv2EKDBAD5wniWy+KkYgCi6YyRbxEKWAU5J3Rp+P1Ajt7uT+j3BdVyXtsTY=
+X-Received: by 2002:a05:7022:238b:b0:119:e56b:46ba with SMTP id
+ a92af1059eb24-121f8b45a84mr3493011c88.4.1767897624231; Thu, 08 Jan 2026
+ 10:40:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108141934.2052404-8-hch@lst.de>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,nvidia.com:email,imap1.dmz-prg2.suse.org:helo,lst.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-7-joannelkoong@gmail.com> <87y0mlyp31.fsf@mailhost.krisman.be>
+ <CAJnrk1a_qDe22E5WYN+yxJ3SrPCLp=uFKYQ6NU2WPf-wCiZOtg@mail.gmail.com> <87ikdnzwgo.fsf@mailhost.krisman.be>
+In-Reply-To: <87ikdnzwgo.fsf@mailhost.krisman.be>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 8 Jan 2026 10:40:13 -0800
+X-Gm-Features: AQt7F2oLCADJqW9nMFr4IyujBgodH4wp0tgVDEDonHOYfDgK480giva21DkFSZo
+Message-ID: <CADUfDZrqQVRsXPbPwNNxi-WqWO5xFiTQnnhhX+0LL7c=1O-R0A@mail.gmail.com>
+Subject: Re: [PATCH v3 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, axboe@kernel.dk, 
+	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	xiaobing.li@samsung.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 08-01-26 15:19:07, Christoph Hellwig wrote:
-> Allow the file system to explicitly implement lazytime syncing instead
-> of pigging back on generic inode dirtying.  This allows to simplify
-> the XFS implementation and prepares for non-blocking lazytime timestamp
-> updates.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Dec 30, 2025 at 9:54=E2=80=AFAM Gabriel Krisman Bertazi <krisman@su=
+se.de> wrote:
+>
+> Joanne Koong <joannelkoong@gmail.com> writes:
+>
+> > On Mon, Dec 29, 2025 at 1:07=E2=80=AFPM Gabriel Krisman Bertazi <krisma=
+n@suse.de> wrote:
+> >
+> >>
+> >> Joanne Koong <joannelkoong@gmail.com> writes:
+> >>
+> >> > +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
+> >> > +                  unsigned issue_flags, struct io_buffer_list **bl)
+> >> > +{
+> >> > +     struct io_buffer_list *buffer_list;
+> >> > +     struct io_ring_ctx *ctx =3D req->ctx;
+> >> > +     int ret =3D -EINVAL;
+> >> > +
+> >> > +     io_ring_submit_lock(ctx, issue_flags);
+> >> > +
+> >> > +     buffer_list =3D io_buffer_get_list(ctx, buf_group);
+> >> > +     if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BU=
+F_RING)) {
+> >>
+> >> FWIW, the likely construct is unnecessary here. At least, it should
+> >> encompass the entire expression:
+> >>
+> >>     if (likely(buffer_list && buffer_list->flags & IOBL_BUF_RING))
+> >>
+> >> But you can just drop it.
+> >
+> > I see, thanks. Could you explain when likelys/unlikelys should be used
+> > vs not? It's unclear to me when they need to be included vs can be
+> > dropped. I see some other io-uring code use likely() for similar-ish
+> > logic, but is the idea that it's unnecessary because the compiler
+> > already infers it?
+>
+> likely/unlikely help the compiler decide whether it should reverse the
+> jump to optimize branch prediction and code spacial locality for icache.
+> The compiler is usually great in figuring it out by itself and, in
+> general, these should only be used after profilings shows the specific
+> jump is problematic, or when you know the jump will or will not be taken
+> almost every time.  The compiler decision depends on heuristics (which I
+> guess considers the leg size and favors the if leg), but it usually gets
+> it right.
 
-Looks good. Feel free to add:
+Yeah, the compiler can make a guess at the likely branch direction,
+but it's not magic. Anecdotally, early return paths generally seem to
+be inferred to be unlikely and if branches seemed to be inferred as
+likely (and else branches therefore as unlikely). That's a good
+starting point, but a programmer may well have more context to know
+which direction branches are likely to go. Additionally, explicit
+likely()/unlikely() annotations seem to encourage compilers to
+optimize more aggressively for the likely path (e.g. splitting the
+unlikely path into a separate function). I guess compilers want to
+hedge their bets if they're relying on heuristics to predict the
+branch direction.
+The performance benefit of each likely()/unlikely() is generally
+small, so I tend to agree adding them is usually a premature
+optimization. But it can certainly be helpful to improve the code
+generation of a hot path. And it's used widely throughout io_uring due
+to the focus on maximizing performance.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> One obvious case where *unlikely* is useful is to handle error paths.
+> The logic behind it is that the error path is obviously not the
+> hot-path, so a branch misprediction or a cache miss in that path is
+> just fine.
 
-								Honza
+And that's the case here; the if condition is only false in the error
+case where buffer_group doesn't specify a valid kernel buf ring.
 
-> ---
->  Documentation/filesystems/locking.rst |  2 ++
->  Documentation/filesystems/vfs.rst     |  6 ++++++
->  fs/fs-writeback.c                     | 13 +++++++++++--
->  include/linux/fs.h                    |  1 +
->  4 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index 37a4a7fa8094..0312fba6d73b 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -82,6 +82,7 @@ prototypes::
->  	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start, u64 len);
->  	void (*update_time)(struct inode *inode, enum fs_update_time type,
->  			    int flags);
-> +	void (*sync_lazytime)(struct inode *inode);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  				struct file *, unsigned open_flag,
->  				umode_t create_mode);
-> @@ -118,6 +119,7 @@ getattr:	no
->  listxattr:	no
->  fiemap:		no
->  update_time:	no
-> +sync_lazytime:	no
->  atomic_open:	shared (exclusive if O_CREAT is set in open flags)
->  tmpfile:	no
->  fileattr_get:	no or exclusive
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 51aa9db64784..d8cb181f69f8 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -487,6 +487,7 @@ As of kernel 2.6.22, the following members are defined:
->  		ssize_t (*listxattr) (struct dentry *, char *, size_t);
->  		void (*update_time)(struct inode *inode, enum fs_update_time type,
->  				    int flags);
-> +		void (*sync_lazytime)(struct inode *inode);
->  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
->  				   unsigned open_flag, umode_t create_mode);
->  		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
-> @@ -643,6 +644,11 @@ otherwise noted.
->  	an inode.  If this is not defined the VFS will update the inode
->  	itself and call mark_inode_dirty_sync.
->  
-> +``sync_lazytime``:
-> +	called by the writeback code to update the lazy time stamps to
-> +	regular time stamp updates that get syncing into the on-disk
-> +	inode.
-> +
->  ``atomic_open``
->  	called on the last component of an open.  Using this optional
->  	method the filesystem can look up, possibly create and open the
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 3d68b757136c..62658be2578b 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1717,7 +1717,10 @@ bool sync_lazytime(struct inode *inode)
->  		return false;
->  
->  	trace_writeback_lazytime(inode);
-> -	mark_inode_dirty_sync(inode);
-> +	if (inode->i_op->sync_lazytime)
-> +		inode->i_op->sync_lazytime(inode);
-> +	else
-> +		mark_inode_dirty_sync(inode);
->  	return true;
->  }
->  
-> @@ -2569,6 +2572,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  	trace_writeback_mark_inode_dirty(inode, flags);
->  
->  	if (flags & I_DIRTY_INODE) {
-> +		bool was_dirty_time = false;
-> +
->  		/*
->  		 * Inode timestamp update will piggback on this dirtying.
->  		 * We tell ->dirty_inode callback that timestamps need to
-> @@ -2579,6 +2584,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  			if (inode_state_read(inode) & I_DIRTY_TIME) {
->  				inode_state_clear(inode, I_DIRTY_TIME);
->  				flags |= I_DIRTY_TIME;
-> +				was_dirty_time = true;
->  			}
->  			spin_unlock(&inode->i_lock);
->  		}
-> @@ -2591,9 +2597,12 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  		 * for just I_DIRTY_PAGES or I_DIRTY_TIME.
->  		 */
->  		trace_writeback_dirty_inode_start(inode, flags);
-> -		if (sb->s_op->dirty_inode)
-> +		if (sb->s_op->dirty_inode) {
->  			sb->s_op->dirty_inode(inode,
->  				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
-> +		} else if (was_dirty_time && inode->i_op->sync_lazytime) {
-> +			inode->i_op->sync_lazytime(inode);
-> +		}
->  		trace_writeback_dirty_inode(inode, flags);
->  
->  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 35b3e6c6b084..7837db1ba1d2 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2024,6 +2024,7 @@ struct inode_operations {
->  		      u64 len);
->  	int (*update_time)(struct inode *inode, enum fs_update_time type,
->  			   unsigned int flags);
-> +	void (*sync_lazytime)(struct inode *inode);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  			   struct file *, unsigned open_flag,
->  			   umode_t create_mode);
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> The usage of likely is more rare, and some usages are just cargo-cult.
+> Here you could use it, as the hot path is definitely the if leg.  But
+> if you look at the generated code, it most likely doesn't make any
+> difference, because gcc is smart enough to handle it.
+
+Not sure I agree about this distinction between likely() and
+unlikely() in general. For example, it can make sense to annotate an
+early return path with likely() to override the compiler's heuristic
+that early returns are unlikely.
+
+>
+> A problem arises when likely/unlikely are used improperly, or the code
+> changes and the frequency when each leg is taken changes.  Now the
+> likely/unlikely is introducing mispredictions the compiler could have
+> avoided and harming performance.
+
+Yes, this is probably the biggest pitfall of likely()/unlikely(). The
+additional macro call also makes the code a bit harder for a human to
+parse. Commit 4ec703ec0c38 ("io_uring: fix incorrect unlikely() usage
+in io_waitid_prep()") is a good example of both these problems.
+
+>
+> I wasn't gonna comment in the review, since the likely() seems harmless
+> in your patch.  But what got my attention was that each separate
+> expression was under a single likely() expression.  I don't think that
+> makes much sense, since the hint is useful for the placement of the
+> if/else legs, it should encompass the whole condition.  That's how it is
+> used almost anywhere else in the kernel (there are a few occurrences
+> drivers/scsi/ that also look a bit fishy, IMO).
+
+It can absolutely make sense to use likely()/unlikely() to annotate
+individual components of an && or || expression, not just a full
+if/while/for/ternary condition. Since && and || are short-circuiting
+operators, the compiler will often emit a branch after each boolean
+operand. (For example, absent optimizations, if (a && b) ... is
+translated into if (a) { if (b) ... }.)
+But you're totally correct that likely(A && B) implies likely(A) &&
+likely(B), so there's no need to separately annotate each of the
+operands to the &&s here.
+
+Best,
+Caleb
 

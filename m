@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11489-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11488-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC473D01B68
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 10:00:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCFED0177A
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 08:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DDACC334FE4E
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 08:48:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BF7AD302EA36
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E20343D78;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7F834403B;
 	Thu,  8 Jan 2026 07:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="r6eFesjx"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Y+cpbH2y"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EBE33345E;
-	Thu,  8 Jan 2026 07:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E42D33DEE9;
+	Thu,  8 Jan 2026 07:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857821; cv=none; b=ncR1yKsWtH/5hBmJrO91FyJivhd4GXRdQka4Oxkh0zwV87YiaqKJ+OkB5l2ogVXVzYabhhZ79fiLAgwDViGU0OyyVDjfdokSiyAULp7Yid9ZzSS2xVH0/0pMBYVFZF1ANLiQ8EbuOvq2bE9kXximw3p4M9HsxAeowNH8jsYU090=
+	t=1767857821; cv=none; b=G45zvcHmTwBYoIJIoLqr5B2qssK4L67ADb3941YNFmGos6JheDSuxourWnaUJKMp2AW/8bLxDmLnZnZbKvZk/gKa3Jp5qzG96t1468LtRDluFIMpQe2K1XQ6lFHvrh4sP1r9VnzI+tKT0Hz56ENZC16hvTREJGd5BPbYy2RFeFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767857821; c=relaxed/simple;
-	bh=1CZiS82AAJJXS45jvCbc+gzS87qKdtRZQd/MOUEsnqs=;
+	bh=RL/R/o810ZMmcjOAU4F/DFBw8sn97MkOpigt0uJ4rh4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E2hdqFznzswyQ+b8nBQGEGGXVxl8MrpG8/REH/4N9w/LuExLNsT774ihs7zVnywlafXTHNW/c/FAv1ouI/I7VdHHq+spUJa9atf192E6UbTkmTwiEehMnLkgtPADvR8aMvjt18TKCcarfVBERv9I5QoyDiUGaxqtWSqE7UtLI2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=r6eFesjx; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=kcVkNWPiW9RqPJhUSjB8PI4JWn21BJMojQ3zc9W8dYtoMTH+xnJ2xrdwC4JMq4orzz1XCPjDGdZc1LdRr/AMqUoHVRSXJJTBqkE5sjVaTNNPQSuQd2okt+nQQU3YZVwKyhqwcnvV1g98k0FGv/1vzf3mxt58faQah4qyDOeYpbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Y+cpbH2y; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=wPQk+O8gCXhfaPo4McPyrI7a2N9wWNcxUGToz4YmPIc=; b=r6eFesjx31MYemdCwQzeW8MTGl
-	p9u5KYy/8x4nQXo0x8gP8qmUX9TkcKyVSr2NpDg7rPT+JLsCZ580kUXPwEyGLxninygNvHxoSUEoB
-	ZGL9IjdKcPKzUaL5E3ZykMcJ1aOv2PI/cig34JGg3qiZA1RPMZ/RN6dpEzm0mWolOc4VFzh57Vu1P
-	6F3jFSAEbEq0Y5yI9B7MrR01jplrN1xmSk1J16CD182zoiWFQINPEzp7qXgQJDrOjvNcnnOcwpdVz
-	/H7i8O+bPAjXcSSHk/UAud1AQ4vI+7pDwY4wIwfNRRgV7G1ZC6l9WxnNUx9vZvfWoCJUbb0UL6Lqj
-	fHKvlTDA==;
+	bh=+C4CkgqhnHhwu2xYL6rgmPkMOKMGn4QaEm3wdQcVbl0=; b=Y+cpbH2yfYsz3vrcTLAvY6Aece
+	X9o8BZmb0lp9VCp3EVHQcl6GZ43sjPb2FTrjWY6Dn9frPJWAwCgYoFX6tt2QzwkirGYs4PusNgZRv
+	lFWhny5Jo/IO6PPqwpuitXgNfSH3gaAtfCPFsAVWuWjwTQkNU+7dMvt5zs/bNdAA7AeWbgmtl0ssT
+	bc4pXApCFSJjeRYg+ok40rBjh0Gl/zNPGne4AwLi+6VwD7hZe3Yn+eSN5n9VZ/BBXB9HulVG6kqAb
+	wQGH/igZDZRYflITaBPZmuy6lfrXbKNPMfdJfQBpK7fBUlneJxdcvP9rqWq9VJ2v9IcoSMW7hip3x
+	x9Ug7a8A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkay-00000001msf-4Axk;
+	id 1vdkaz-00000001mt5-13LH;
 	Thu, 08 Jan 2026 07:38:13 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 45/59] do_{renameat2,linkat,symlinkat}(): use CLASS(filename_consume)
-Date: Thu,  8 Jan 2026 07:37:49 +0000
-Message-ID: <20260108073803.425343-46-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 47/59] namei.c: convert getname_kernel() callers to CLASS(filename_kernel)
+Date: Thu,  8 Jan 2026 07:37:51 +0000
+Message-ID: <20260108073803.425343-48-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,156 +68,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-more explicit in what we do, lower odds of ending up with a leak,
-fewer gotos...
-
-... and if at some point in the future we decide to make some of those
-non-consuming, it would be less noisy.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 51 +++++++++++++++++++++------------------------------
- 1 file changed, 21 insertions(+), 30 deletions(-)
+ fs/namei.c | 36 ++++++++++--------------------------
+ 1 file changed, 10 insertions(+), 26 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 9beb667f0307..86e2467c5460 100644
+index 5acb071c92c4..325a69f2bfff 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -5572,23 +5572,22 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- }
- EXPORT_SYMBOL(vfs_symlink);
- 
--int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
-+int do_symlinkat(struct filename *__from, int newdfd, struct filename *__to)
+@@ -2993,7 +2993,7 @@ static struct dentry *__start_removing_path(int dfd, struct filename *name,
+ struct dentry *kern_path_parent(const char *name, struct path *path)
  {
-+	CLASS(filename_consume, from)(__from);
-+	CLASS(filename_consume, to)(__to);
- 	int error;
- 	struct dentry *dentry;
- 	struct path path;
- 	unsigned int lookup_flags = 0;
- 	struct delegated_inode delegated_inode = { };
+ 	struct path parent_path __free(path_put) = {};
+-	struct filename *filename __free(putname) = getname_kernel(name);
++	CLASS(filename_kernel, filename)(name);
+ 	struct dentry *d;
+ 	struct qstr last;
+ 	int type, error;
+@@ -3014,11 +3014,8 @@ struct dentry *kern_path_parent(const char *name, struct path *path)
  
--	if (IS_ERR(from)) {
--		error = PTR_ERR(from);
--		goto out_putnames;
--	}
-+	if (IS_ERR(from))
-+		return PTR_ERR(from);
- retry:
- 	dentry = filename_create(newdfd, to, &path, lookup_flags);
--	error = PTR_ERR(dentry);
- 	if (IS_ERR(dentry))
--		goto out_putnames;
-+		return PTR_ERR(dentry);
- 
- 	error = security_path_symlink(&path, dentry, from->name);
- 	if (!error)
-@@ -5604,9 +5603,6 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
--out_putnames:
--	putname(to);
--	putname(from);
- 	return error;
- }
- 
-@@ -5721,9 +5717,11 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--int do_linkat(int olddfd, struct filename *old, int newdfd,
--	      struct filename *new, int flags)
-+int do_linkat(int olddfd, struct filename *__old, int newdfd,
-+	      struct filename *__new, int flags)
+ struct dentry *start_removing_path(const char *name, struct path *path)
  {
-+	CLASS(filename_consume, old)(__old);
-+	CLASS(filename_consume, new)(__new);
- 	struct mnt_idmap *idmap;
- 	struct dentry *new_dentry;
- 	struct path old_path, new_path;
-@@ -5731,10 +5729,8 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	int how = 0;
- 	int error;
- 
--	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0) {
--		error = -EINVAL;
--		goto out_putnames;
--	}
-+	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
-+		return -EINVAL;
- 	/*
- 	 * To use null names we require CAP_DAC_READ_SEARCH or
- 	 * that the open-time creds of the dfd matches current.
-@@ -5749,7 +5745,7 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
- retry:
- 	error = filename_lookup(olddfd, old, how, &old_path, NULL);
- 	if (error)
--		goto out_putnames;
-+		return error;
- 
- 	new_dentry = filename_create(newdfd, new, &new_path,
- 					(how & LOOKUP_REVAL));
-@@ -5785,10 +5781,6 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	}
- out_putpath:
- 	path_put(&old_path);
--out_putnames:
--	putname(old);
--	putname(new);
+-	struct filename *filename = getname_kernel(name);
+-	struct dentry *res = __start_removing_path(AT_FDCWD, filename, path);
 -
- 	return error;
+-	putname(filename);
+-	return res;
++	CLASS(filename_kernel, filename)(name);
++	return __start_removing_path(AT_FDCWD, filename, path);
  }
  
-@@ -6019,9 +6011,11 @@ int vfs_rename(struct renamedata *rd)
- }
- EXPORT_SYMBOL(vfs_rename);
+ struct dentry *start_removing_user_path_at(int dfd,
+@@ -3035,12 +3032,8 @@ EXPORT_SYMBOL(start_removing_user_path_at);
  
--int do_renameat2(int olddfd, struct filename *from, int newdfd,
--		 struct filename *to, unsigned int flags)
-+int do_renameat2(int olddfd, struct filename *__from, int newdfd,
-+		 struct filename *__to, unsigned int flags)
+ int kern_path(const char *name, unsigned int flags, struct path *path)
  {
-+	CLASS(filename_consume, from)(__from);
-+	CLASS(filename_consume, to)(__to);
- 	struct renamedata rd;
- 	struct path old_path, new_path;
- 	struct qstr old_last, new_last;
-@@ -6029,20 +6023,20 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	struct delegated_inode delegated_inode = { };
- 	unsigned int lookup_flags = 0;
- 	bool should_retry = false;
--	int error = -EINVAL;
-+	int error;
- 
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
--		goto put_names;
-+		return -EINVAL;
- 
- 	if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
- 	    (flags & RENAME_EXCHANGE))
--		goto put_names;
-+		return -EINVAL;
- 
- retry:
- 	error = filename_parentat(olddfd, from, lookup_flags, &old_path,
- 				  &old_last, &old_type);
- 	if (error)
--		goto put_names;
-+		return error;
- 
- 	error = filename_parentat(newdfd, to, lookup_flags, &new_path, &new_last,
- 				  &new_type);
-@@ -6119,9 +6113,6 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
--put_names:
--	putname(from);
--	putname(to);
- 	return error;
+-	struct filename *filename = getname_kernel(name);
+-	int ret = filename_lookup(AT_FDCWD, filename, flags, path, NULL);
+-
+-	putname(filename);
+-	return ret;
+-
++	CLASS(filename_kernel, filename)(name);
++	return filename_lookup(AT_FDCWD, filename, flags, path, NULL);
  }
+ EXPORT_SYMBOL(kern_path);
+ 
+@@ -3074,15 +3067,11 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
+ 		    const char *name, unsigned int flags,
+ 		    struct path *path)
+ {
+-	struct filename *filename;
++	CLASS(filename_kernel, filename)(name);
+ 	struct path root = {.mnt = mnt, .dentry = dentry};
+-	int ret;
+ 
+-	filename = getname_kernel(name);
+ 	/* the first argument of filename_lookup() is ignored with root */
+-	ret = filename_lookup(AT_FDCWD, filename, flags, path, &root);
+-	putname(filename);
+-	return ret;
++	return filename_lookup(AT_FDCWD, filename, flags, path, &root);
+ }
+ EXPORT_SYMBOL(vfs_path_lookup);
+ 
+@@ -4879,13 +4868,12 @@ struct file *do_file_open_root(const struct path *root,
+ {
+ 	struct nameidata nd;
+ 	struct file *file;
+-	struct filename *filename;
+ 	int flags = op->lookup_flags;
+ 
+ 	if (d_is_symlink(root->dentry) && op->intent & LOOKUP_OPEN)
+ 		return ERR_PTR(-ELOOP);
+ 
+-	filename = getname_kernel(name);
++	CLASS(filename_kernel, filename)(name);
+ 	if (IS_ERR(filename))
+ 		return ERR_CAST(filename);
+ 
+@@ -4896,7 +4884,6 @@ struct file *do_file_open_root(const struct path *root,
+ 	if (unlikely(file == ERR_PTR(-ESTALE)))
+ 		file = path_openat(&nd, op, flags | LOOKUP_REVAL);
+ 	restore_nameidata();
+-	putname(filename);
+ 	return file;
+ }
+ 
+@@ -4952,11 +4939,8 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ struct dentry *start_creating_path(int dfd, const char *pathname,
+ 				   struct path *path, unsigned int lookup_flags)
+ {
+-	struct filename *filename = getname_kernel(pathname);
+-	struct dentry *res = filename_create(dfd, filename, path, lookup_flags);
+-
+-	putname(filename);
+-	return res;
++	CLASS(filename_kernel, filename)(pathname);
++	return filename_create(dfd, filename, path, lookup_flags);
+ }
+ EXPORT_SYMBOL(start_creating_path);
  
 -- 
 2.47.3

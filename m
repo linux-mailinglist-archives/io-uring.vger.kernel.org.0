@@ -1,259 +1,242 @@
-Return-Path: <io-uring+bounces-11444-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11458-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A31D0157A
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 08:07:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101DDD016E7
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 08:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F103D300889D
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:07:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 05A79305CCF3
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94F9239E80;
-	Thu,  8 Jan 2026 07:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAD233C514;
+	Thu,  8 Jan 2026 07:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Gc/hznHP"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="M/OMdZOe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1744B22097
-	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 07:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9830FF1E;
+	Thu,  8 Jan 2026 07:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767856025; cv=none; b=obxgFgoH12x1YmGPeWmDy+nhiIicbAsK807n2DecwQov6DWwbT3t45YX2wC8b3L14jkQ3c5y0UpktMyheI9qxcX0mVeOGlUYfXy2kTdQhfYkl9V1d2jFULJrLXQGGVUXcsQfsN+GXmHJeMkN3h/fXkzrS8wYRfgWV54/HLec4MA=
+	t=1767857815; cv=none; b=dho5KPtnEAm9/17uRFQRlj5Nxm0CXwWuAGCSrBkd86zHwvewoQWW0n6TnQrBHxF2lh+Bc2v1hy/jByuuJ7KcEqhsfcaNRvlJLAk2NUHMIzy+tYUETH4i2ziURK7KMXOJ4XVRpHiTMKGJu4tYBBCV4gJfwr2nZilxtBKx8/Co0Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767856025; c=relaxed/simple;
-	bh=iYhUwMe0Sk8rm8N8c9ec2+TXBN25qmKxc9tbIyK3ZyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jIbfRBb+LxuTHbOmTnk2Yw2AhOGPeVqaSIoTpRuRB6wv4WOY0b8b4ZZ9cXeoMMKeem+0K/vMf2Gs1raLmd4k3l/IYOJtQG+iGnW0ohJVzOW1hEKl0dwxFgQ9yRbDI4hjebAbwNu6TXktLL35KJZgBfwQh5BD/OKH59RYEYfStPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Gc/hznHP; arc=none smtp.client-ip=74.125.82.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-11bba84006dso249816c88.2
-        for <io-uring@vger.kernel.org>; Wed, 07 Jan 2026 23:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1767856022; x=1768460822; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfaBcy8tb5KfvL9qS1tptXYCuks8r8SRbJn5dBFC3zc=;
-        b=Gc/hznHP/t90XDrVG/7rtNC8+FFCF+LiXyNkFNMx/OAIlTF92QgHzLi89yeeSdPeMP
-         cXiQLUyzrEoSzimB85/Y2CtX7391AWmeK8RCShEkjrBMvF3I3HRNDW2/uUY8y6uZE0Q/
-         pc8qfrQ01tI00EpGvfyHwqkkCHnvk8LGLHTYHlIrT4KtWJ/G9kiDdAl0vt0+1PRz7yFZ
-         kF8hspiBmY6esOrTifQ6TyfbE+KxiSgP7Qc38nSaW0x7jkH/R4nhI8BlWizLypAjledV
-         HqNSsTU1Zupg1NDqd5xMAKOGQcQz2VvQ7XeFZiBUcNVCcRPCsivIOrXUrYJz8mArHi+t
-         4uLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767856022; x=1768460822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HfaBcy8tb5KfvL9qS1tptXYCuks8r8SRbJn5dBFC3zc=;
-        b=QJD5SUQqCbTwcmXdBKe8UgbSFJ9VoA2vegN1ZQkFGM9/5PzYlHBzfcGw6BV88gyx1x
-         FPB2kmDfTzaBL36KP1nASJpTpql4wiejpCZruodtOr1Lmyl/zbQJ7+ETYXyCX83TPW0t
-         Dml3pAxbBnH1bmUtTfWZF5/qhYSalHbS5bg9ybN44MwX5kUoomwJr+w01RyL5pU37yKB
-         XOiQly+IXPZIXvPMhfXHsjUz41q0I3NTfIAogagYByLlfx6XapBwgfShyYBRVj6I1lON
-         1Gfqpk64S6zOsg9w+iU+taCr7MSAzd50EmLaXIvIPrQPLz331QNKbrii5rkKRcJ36bYc
-         oVYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxsUII1w81I7trVP2XTuq5m2NTTZnfLq46AbFHeVvAku/OUVVeFY/4DN5Zrz2WUCTQgOE/aZ6v3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMAl2Isxus7Bqb77d1aohD79N9V4PgN/z1jAPoyFxeHKsdBC+z
-	l0IJwmc0JuIjGL1U7t14/qJIB53qJnVuDAU6UbsyYJTj8Yal4+RnMhAEedzBWfTMPaOe0fJdipD
-	NhLSq1YcwysJT/K4du+SVFbXp2MhptFbfP5mre2hOSfgZ8dzz6tFFR3s=
-X-Gm-Gg: AY/fxX79Ce/owmGjO8JnXo6pxwTYeo4Cruy8av7a4/nn7//aaS6yp58HRUFb1oUKXEq
-	TKxZ2XLN77nUZPwYyvnKtgN+PUhQHrJT2TZm1M6wkcVNJkq2MJpc5xETlNkG65nxOI/m1evTqmJ
-	AB0yAORW7JpH54riAMSdTCohxtmt93qoqhPTfTzSkbYeNKgYilVZFuJJ/GJ/gLaV0N3Z1NFupYx
-	fOL8PM7Gn20yN8iofwOcWduS8BT887dnzXVqG9N2DKMMMN2wXYERRN3bucdMz4ggHM4VfVh
-X-Google-Smtp-Source: AGHT+IEYasnyDaYZATTTmpxZBR2V8l9ev4wpn02pLGPoxQcsfHUWeNXhenE4Q+jmy13IuN2ycTn+Gez/3N7H1mlErHM=
-X-Received: by 2002:a05:7022:f415:b0:119:e56b:46b6 with SMTP id
- a92af1059eb24-121f8a30d8emr2507084c88.0.1767856021944; Wed, 07 Jan 2026
- 23:07:01 -0800 (PST)
+	s=arc-20240116; t=1767857815; c=relaxed/simple;
+	bh=3CwEx7g4XxzBUc0Q+bIGX7rkAAwNZQrWabi2+H1hf6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pafPl1bPGEzpJqa+A0jJ9P1rFB+IVkoU+bYGzrdqiDGkJRhreaA7ogO1QWRcZZMc2do1K1awbcVFYgnJzVshpFap0H2Nn8IH+3sBCNI2zGJo1TJ3yQUMIjHXJgoAlQ6zMthObSxZBm8JxtbicTdULr2/V64frlwyhoJIQRhW1x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=M/OMdZOe; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=hW78ad4/blxMqS8sR/BdPAXHAf9Mx4sVWDJCcUn/Rm4=; b=M/OMdZOerK7ZZ97QjzAv3mDicA
+	ZeQlbslxgxaMCaBmHUGWInXKo39jS3nfGgQiQu+A2xpy9vO0rESVhva8Oveu6iWZwG30MBZ9WrK2a
+	+j2eeMhznnlK4PVQONzgiyXqHfazsFpBYMLmusuq8HUJ5l/AXkEALouvs4T6H5R0WLl1iV09KIRfQ
+	SMRyFM/Sv9iwUAzjfHSPbPbYIyCEXxQgjQDdVMBkkeBf/FNISmWwfEMLAy6dUNMz9PyrTdu1qiyGz
+	D37y0Pq6vJi0YHM4qJUBhBx4IuPLaX1GIOPIuvW9C8c6eEJq6O/+Br2USL7oJLVoLXA0LGE+/Kv/Y
+	GhtRbJFg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vdkap-00000001mee-2yf9;
+	Thu, 08 Jan 2026 07:38:03 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	paul@paul-moore.com,
+	axboe@kernel.dk,
+	audit@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/59] struct filename series
+Date: Thu,  8 Jan 2026 07:37:04 +0000
+Message-ID: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105210543.3471082-1-csander@purestorage.com>
- <20260105210543.3471082-3-csander@purestorage.com> <CAJnrk1YBQdCgOHG2T_D6wV_94kLLftP_G6sLyocRf2wCLTsweg@mail.gmail.com>
-In-Reply-To: <CAJnrk1YBQdCgOHG2T_D6wV_94kLLftP_G6sLyocRf2wCLTsweg@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 7 Jan 2026 23:06:50 -0800
-X-Gm-Features: AQt7F2rjv1UO5kt6yQ38qsN73qFLG4Oyqa0CxL7aeS4Gqsz7ZNIv5SEz6dApqEU
-Message-ID: <CADUfDZqYRgMpRATciSzW+Gha_W-RJiX0RYF0K-RLoT_s3OX5qg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] io_uring/msg_ring: drop unnecessary submitter_task checks
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jan 7, 2026 at 8:25=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Mon, Jan 5, 2026 at 1:05=E2=80=AFPM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > __io_msg_ring_data() checks that the target_ctx isn't
-> > IORING_SETUP_R_DISABLED before calling io_msg_data_remote(), which call=
-s
-> > io_msg_remote_post(). So submitter_task can't be modified concurrently
-> > with the read in io_msg_remote_post(). Additionally, submitter_task mus=
-t
-> > exist, as io_msg_data_remote() is only called for io_msg_need_remote(),
-> > i.e. task_complete is set, which requires IORING_SETUP_DEFER_TASKRUN,
-> > which in turn requires IORING_SETUP_SINGLE_ISSUER. And submitter_task i=
-s
-> > assigned in io_uring_create() or io_register_enable_rings() before
-> > enabling any IORING_SETUP_SINGLE_ISSUER io_ring_ctx.
-> > Similarly, io_msg_send_fd() checks IORING_SETUP_R_DISABLED and
-> > io_msg_need_remote() before calling io_msg_fd_remote(). submitter_task
-> > therefore can't be modified concurrently with the read in
-> > io_msg_fd_remote() and must be non-null.
-> > io_register_enable_rings() can't run concurrently because it's called
-> > from io_uring_register() -> __io_uring_register() with uring_lock held.
-> > Thus, replace the READ_ONCE() and WRITE_ONCE() of submitter_task with
-> > plain loads and stores. And remove the NULL checks of submitter_task in
-> > io_msg_remote_post() and io_msg_fd_remote().
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > ---
-> >  io_uring/io_uring.c |  7 +------
-> >  io_uring/msg_ring.c | 18 +++++-------------
-> >  io_uring/register.c |  2 +-
-> >  3 files changed, 7 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > index ec27fafcb213..b31d88295297 100644
-> > --- a/io_uring/io_uring.c
-> > +++ b/io_uring/io_uring.c
-> > @@ -3663,17 +3663,12 @@ static __cold int io_uring_create(struct io_ctx=
-_config *config)
-> >                 ret =3D -EFAULT;
-> >                 goto err;
-> >         }
-> >
-> >         if (ctx->flags & IORING_SETUP_SINGLE_ISSUER
-> > -           && !(ctx->flags & IORING_SETUP_R_DISABLED)) {
-> > -               /*
-> > -                * Unlike io_register_enable_rings(), don't need WRITE_=
-ONCE()
-> > -                * since ctx isn't yet accessible from other tasks
-> > -                */
-> > +           && !(ctx->flags & IORING_SETUP_R_DISABLED))
-> >                 ctx->submitter_task =3D get_task_struct(current);
-> > -       }
-> >
-> >         file =3D io_uring_get_file(ctx);
-> >         if (IS_ERR(file)) {
-> >                 ret =3D PTR_ERR(file);
-> >                 goto err;
-> > diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-> > index 87b4d306cf1b..57ad0085869a 100644
-> > --- a/io_uring/msg_ring.c
-> > +++ b/io_uring/msg_ring.c
-> > @@ -78,26 +78,21 @@ static void io_msg_tw_complete(struct io_tw_req tw_=
-req, io_tw_token_t tw)
-> >         io_add_aux_cqe(ctx, req->cqe.user_data, req->cqe.res, req->cqe.=
-flags);
-> >         kfree_rcu(req, rcu_head);
-> >         percpu_ref_put(&ctx->refs);
-> >  }
-> >
-> > -static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb=
- *req,
-> > +static void io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kioc=
-b *req,
-> >                               int res, u32 cflags, u64 user_data)
-> >  {
-> > -       if (!READ_ONCE(ctx->submitter_task)) {
-> > -               kfree_rcu(req, rcu_head);
-> > -               return -EOWNERDEAD;
-> > -       }
-> >         req->opcode =3D IORING_OP_NOP;
-> >         req->cqe.user_data =3D user_data;
-> >         io_req_set_res(req, res, cflags);
-> >         percpu_ref_get(&ctx->refs);
-> >         req->ctx =3D ctx;
-> >         req->tctx =3D NULL;
-> >         req->io_task_work.func =3D io_msg_tw_complete;
-> >         io_req_task_work_add_remote(req, IOU_F_TWQ_LAZY_WAKE);
-> > -       return 0;
-> >  }
-> >
-> >  static int io_msg_data_remote(struct io_ring_ctx *target_ctx,
-> >                               struct io_msg *msg)
-> >  {
-> > @@ -109,12 +104,12 @@ static int io_msg_data_remote(struct io_ring_ctx =
-*target_ctx,
-> >                 return -ENOMEM;
-> >
-> >         if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
-> >                 flags =3D msg->cqe_flags;
-> >
-> > -       return io_msg_remote_post(target_ctx, target, msg->len, flags,
-> > -                                       msg->user_data);
-> > +       io_msg_remote_post(target_ctx, target, msg->len, flags, msg->us=
-er_data);
-> > +       return 0;
-> >  }
-> >
-> >  static int __io_msg_ring_data(struct io_ring_ctx *target_ctx,
-> >                               struct io_msg *msg, unsigned int issue_fl=
-ags)
-> >  {
-> > @@ -125,11 +120,11 @@ static int __io_msg_ring_data(struct io_ring_ctx =
-*target_ctx,
-> >                 return -EINVAL;
-> >         if (!(msg->flags & IORING_MSG_RING_FLAGS_PASS) && msg->dst_fd)
-> >                 return -EINVAL;
-> >         /*
-> >          * Keep IORING_SETUP_R_DISABLED check before submitter_task loa=
-d
-> > -        * in io_msg_data_remote() -> io_msg_remote_post()
-> > +        * in io_msg_data_remote() -> io_req_task_work_add_remote()
-> >          */
-> >         if (smp_load_acquire(&target_ctx->flags) & IORING_SETUP_R_DISAB=
-LED)
-> >                 return -EBADFD;
-> >
-> >         if (io_msg_need_remote(target_ctx))
-> > @@ -225,14 +220,11 @@ static void io_msg_tw_fd_complete(struct callback=
-_head *head)
-> >
-> >  static int io_msg_fd_remote(struct io_kiocb *req)
-> >  {
-> >         struct io_ring_ctx *ctx =3D req->file->private_data;
-> >         struct io_msg *msg =3D io_kiocb_to_cmd(req, struct io_msg);
-> > -       struct task_struct *task =3D READ_ONCE(ctx->submitter_task);
-> > -
-> > -       if (unlikely(!task))
-> > -               return -EOWNERDEAD;
-> > +       struct task_struct *task =3D ctx->submitter_task;
->
-> Is the if !task check here still needed? in the
-> io_register_enable_rings() logic I see
->
-> if (ctx->flags & IORING_SETUP_SINGLE_ISSUER && !ctx->submitter_task) {
->         ctx->submitter_task =3D get_task_struct(current);
->         ...
-> }
-> and then a few lines below
-> ctx->flags &=3D ~IORING_SETUP_R_DISABLED;
->
-> but I'm not seeing any memory barrier stuff that prevents these from
-> being reordered.
->
-> In io_msg_send_fd() I see that we check "if (target_ctx->flags &
-> IORING_SETUP_R_DISABLED) return -EBADFD;" before calling into
-> io_msg_fd_remote() here but if the ctx->submitter_task assignment and
-> IORING_SETUP_R_DISABLED flag clearing logic are reordered, then it
-> seems like this opens a race condition where there could be a null ptr
-> crash when task_work_add() gets called below?
+[See https://lore.kernel.org/all/20251216035518.4037331-1-viro@zeniv.linux.org.uk/
+for previous variant]
 
-Shouldn't patch 1's switch to use smp_store_release() for the clearing
-of IORING_SETUP_R_DISABLED and smp_load_acquire() for the check of
-IORING_SETUP_R_DISABLED in io_msg_send_fd() ensure the necessary
-ordering? Or am I missing something?
+Changes compared to v3:
+	* rebased to v6.19-rc4
+	* the size of embedded name is increased to the point where struct filename
+is 192 bytes long
+	* introduction of CLASS machinery moved up by several commits, so
+that "allow incomplete imports of filenames" could make use of it immediately;
+as the result, a couple of followups in io_uring/* fold into it.
+	* __getname_maybe_null() makes use of CLASS(filename_flags)
+	* calls of refname() (all 3 of them, all in kernel/auditsc.c) expanded.
+	* convert init_mkdir() et.al. to use of do_mkdirat() and friends, similar
+to how init_rmdir() and init_unlink() are done.
 
-Thanks,
-Caleb
+Practically all destructor calls are done via CLASS(filename...) now;
+only 3 explicit calls left (one in audit, dropping the references it has
+grabbed for itself, two in the vicinity of fsconfig - separate story).
+No uses of __free(putname) remain; I haven't removed DEFINE_FREE yet,
+but it's really tempting.
+
+I've got some continuations for that series (non-consuming variants of
+do_renameat2() and friends, now that it can be done with minimal PITA
+in the callers; with that added we get almost all constructors done via
+CLASS(...); the only exceptions are around fsconfig), but that's in
+a separate branch (#experimental.filename) on top of this one.
+
+The branch lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.filename
+now; individual patches in followups.
+
+Please, review; if nobody objects, I'm putting that in #for-next on Saturday.
+
+Rough overview:
+1--9:
+	moving pathname import out of retry loops
+10:
+	now we can get rid of "reuse the struct filename if
+we'd just imported it from the same address _and_ audit is
+enabled" logics.
+11:
+	get rid of names_cachep abuse in ntfs
+12--15:
+	embed reasonably short pathnames into struct filename,
+*always* get struct filename out names_cachep, take the long
+names into explicitly kmalloc'ed objects.
+16:
+	runtime_const machinery for names_cachep; there's
+a potentially better variant (statically allocated kmem_cache),
+but that's a separate series.
+17:
+	infrastructure for CLASS(filename...)
+18:
+	switch __getname_maybe_null() to that.
+19:
+	delayed_filename machinery, solves the audit vs. io_uring
+problems.
+20:
+	now we don't need filename->refcnt to be atomic.
+21--25:
+	simplify checks in callers of pathwalk primitives -
+	they (with exception of do_filp_open()) will do
+	the right thing if given ERR_PTR() for name.
+26--32:	... get rid of that one exception and simplify
+	more callers.
+33--56:
+	conversions to CLASS(filename...), cleanups
+57, 58:
+	... and these should not have been using getname().
+59:
+	trimming fs/init.c down - doing to init_mkdir() et.al. what's
+	already been done to init_rmdir() and init_unlink().
+
+Shortlog:
+Al Viro (58):
+      do_faccessat(): import pathname only once
+      do_fchmodat(): import pathname only once
+      do_fchownat(): import pathname only once
+      do_utimes_path(): import pathname only once
+      chdir(2): import pathname only once
+      chroot(2): import pathname only once
+      user_statfs(): import pathname only once
+      do_sys_truncate(): import pathname only once
+      do_readlinkat(): import pathname only once
+      get rid of audit_reusename()
+      ntfs: ->d_compare() must not block
+      getname_flags() massage, part 1
+      getname_flags() massage, part 2
+      struct filename: use names_cachep only for getname() and friends
+      struct filename: saner handling of long names
+      allow to use CLASS() for struct filename *
+      switch __getname_maybe_null() to CLASS(filename_flags)
+      allow incomplete imports of filenames
+      struct filename ->refcnt doesn't need to be atomic
+      file_getattr(): filename_lookup() accepts ERR_PTR() as filename
+      file_setattr(): filename_lookup() accepts ERR_PTR() as filename
+      move_mount(): filename_lookup() accepts ERR_PTR() as filename
+      ksmbd_vfs_path_lookup(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+      ksmbd_vfs_rename(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+      do_filp_open(): DTRT when getting ERR_PTR() as pathname
+      rename do_filp_open() to do_file_open()
+      do_sys_openat2(): get rid of useless check, switch to CLASS(filename)
+      simplify the callers of file_open_name()
+      simplify the callers of do_open_execat()
+      simplify the callers of alloc_bprm()
+      switch {alloc,free}_bprm() to CLASS()
+      file_[gs]etattr(2): switch to CLASS(filename_maybe_null)
+      mount_setattr(2): don't mess with LOOKUP_EMPTY
+      do_open_execat(): don't care about LOOKUP_EMPTY
+      vfs_open_tree(): use CLASS(filename_uflags)
+      name_to_handle_at(): use CLASS(filename_uflags)
+      fspick(2): use CLASS(filename_flags)
+      do_fchownat(): unspaghettify a bit...
+      chdir(2): unspaghettify a bit...
+      do_utimes_path(): switch to CLASS(filename_uflags)
+      do_sys_truncate(): switch to CLASS(filename)
+      do_readlinkat(): switch to CLASS(filename_flags)
+      do_f{chmod,chown,access}at(): use CLASS(filename_uflags)
+      do_{renameat2,linkat,symlinkat}(): use CLASS(filename_consume)
+      do_{mknodat,mkdirat,unlinkat,rmdir}(): use CLASS(filename_consume)
+      namei.c: convert getname_kernel() callers to CLASS(filename_kernel)
+      namei.c: switch user pathname imports to CLASS(filename{,_flags})
+      filename_...xattr(): don't consume filename reference
+      move_mount(2): switch to CLASS(filename_maybe_null)
+      chroot(2): switch to CLASS(filename)
+      quotactl_block(): switch to CLASS(filename)
+      statx: switch to CLASS(filename_maybe_null)
+      user_statfs(): switch to CLASS(filename)
+      mqueue: switch to CLASS(filename)
+      ksmbd: use CLASS(filename_kernel)
+      alpha: switch osf_mount() to strndup_user()
+      sysfs(2): fs_index() argument is _not_ a pathname
+      switch init_mkdir() to use of do_mkdirat(), etc.
+
+Mateusz Guzik (1):
+      fs: hide names_cache behind runtime const machinery
+
+Diffstat:
+ arch/alpha/kernel/osf_sys.c       |  34 ++--
+ fs/dcache.c                       |   8 +-
+ fs/exec.c                         |  99 ++++------
+ fs/fhandle.c                      |   5 +-
+ fs/file_attr.c                    |  12 +-
+ fs/filesystems.c                  |   9 +-
+ fs/fsopen.c                       |   6 +-
+ fs/init.c                         |  88 +--------
+ fs/internal.h                     |   5 +-
+ fs/namei.c                        | 370 ++++++++++++++++++++------------------
+ fs/namespace.c                    |  22 +--
+ fs/ntfs3/dir.c                    |   5 +-
+ fs/ntfs3/fsntfs.c                 |   4 +-
+ fs/ntfs3/inode.c                  |  13 +-
+ fs/ntfs3/namei.c                  |  17 +-
+ fs/ntfs3/xattr.c                  |   5 +-
+ fs/open.c                         | 119 +++++-------
+ fs/quota/quota.c                  |   3 +-
+ fs/smb/server/vfs.c               |  15 +-
+ fs/stat.c                         |  28 +--
+ fs/statfs.c                       |   3 +-
+ fs/utimes.c                       |   8 +-
+ fs/xattr.c                        |  33 +---
+ include/asm-generic/vmlinux.lds.h |   3 +-
+ include/linux/audit.h             |  11 --
+ include/linux/fs.h                |  42 +++--
+ io_uring/fs.c                     | 101 ++++++-----
+ io_uring/openclose.c              |  26 +--
+ io_uring/statx.c                  |  17 +-
+ io_uring/xattr.c                  |  30 ++--
+ ipc/mqueue.c                      |  11 +-
+ kernel/acct.c                     |   4 +-
+ kernel/auditsc.c                  |  29 +--
+ mm/huge_memory.c                  |  15 +-
+ mm/swapfile.c                     |  21 +--
+ 35 files changed, 483 insertions(+), 738 deletions(-)
 

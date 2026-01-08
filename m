@@ -1,64 +1,74 @@
-Return-Path: <io-uring+bounces-11504-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11515-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF9FD02888
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 13:07:48 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEE6D03536
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 15:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AA00A301FB40
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 11:53:45 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E3270302DD68
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 14:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2DD34B198;
-	Thu,  8 Jan 2026 07:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D84E90CF;
+	Thu,  8 Jan 2026 14:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ugi4x0Rs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HCkUV5Sg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF334105B;
-	Thu,  8 Jan 2026 07:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710EB4E819E;
+	Thu,  8 Jan 2026 14:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857826; cv=none; b=SDt8krdIJMUntDhed3DevXF8ZiGMJ/Inza65L17QkeOHNXkBx0H6jQKhRrHdUf8QBDBVHUTI6M4OTI9iZam5pmEiX5LQ3Fl9hd8yJjYWuTqxv8b3IZT4xsNoXsJxZlyOweREy0N7Mqb+vVyW3TQyQKMRgpCvybJhkuUvZ/op+xg=
+	t=1767881992; cv=none; b=l5H8rRNRi+njebvKGF7CKkaB+cve0IuIFc9xF7LIalOuvHI9FP3zVCeWKAz3d5eMlPm0YmT9qf+sZHUokGApyd92XecdwSd4WFM/676JEgTG016hYnbGfr2OxP3LiIfw3q50LVex3X9fTlqHBK+75IbDGXZhzjwARkppG05zBrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857826; c=relaxed/simple;
-	bh=AIif+faRQeRaAqpK3WJa8jVZgeyvF8kX2QVOTCmr1Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PCpAsmLNnXSXCpVWX0ylaF37UWbONu7l1a9HoRfM4bMOyEJrsUPWOiJW1jEg9iAcglJpdvnlY/dD6MH1XNfMTT3K4a/rcD11URq2q98psZNU+jZs/P2oWvOlTZbvWjeOFfmzIgTL5qodJtNsPRXIkddbM6c/PJTR9x+hrNsRByI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ugi4x0Rs; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1767881992; c=relaxed/simple;
+	bh=pgFo/tGly54ijlfTPPtxx0Ky8wb8MMinxNhrt4wuMLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cC4rPmZYLTBSvaaEzOfToN0yXD0xWt7jPEwERbQkDphYs6t5NgjD4mbBKltJ1Fe4Nis4dox3F619ugrna98wB66uf3WqsHFqy0C0SaEUi6BAlREAbXUr3kpLKDjXu6EERS+YRST0Hqu42FuFLUOcd3HAeMxdUySeUMPZhNserVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HCkUV5Sg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ZdeAiGVCfTu+ZLXJbm8zIQ/4MuEQJKR0dkiqqtUv5W8=; b=Ugi4x0Rs2waIV/VYW056LyfPwR
-	I4Rp3M4XHQ1R+8EoGhsUiPpCHgUP+eG+LIbsvaR9Z4TXA1HQiTO8+LVu5/Yd5HBkvo66rkdQYY4+M
-	UzpmeFjmCcIYhZUL6ySk5cKHIwnO0CzcMG2S2kF+dqiYrWds6E0epL95fZUEUgBS6n9lLcs4r7ol3
-	I+j/zBJCC9NpbtIhDunlr1it7ZN1QPwKU0dnjBWNu4rzXMhZ99XYN0/8wyCHotekdcgElYpZRFuSk
-	Z1j1RsqBAXwd5r4CydJJJBhiW9frXQJqlPiBil8fwjpyzVN7SMri2rnCwyo5uAWaY5hSwjOnQAODJ
-	ENBT29aw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkb0-00000001muh-1dZO;
-	Thu, 08 Jan 2026 07:38:14 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=47j3Vb5ECJCThNE4hZUuOAtfhlxTrOYUcu9LaYfkCP0=; b=HCkUV5Sg9RjiYn4vXDrQU9X8X2
+	QN7lpU67efTqRh1BaVJtEpKYMQAxG7T0N5995XKnZJk7w2W6cfF7OalQFG+1xpn4iCS1mLCF8LFZU
+	gI2xKmgSvoXaJnySBF9YEhWtKLaWW7n6Y8WsCHdLazXAFwFVgQFsrhIxgACJfaKplPExgcdHw01Kq
+	Ke4GwPEVve9HwaXeITYANFM+28/9dKysmfdekPnByN9rEJlzWGQfqqhw/sYk5H/myvcdC4/dP73NO
+	EnAdF+bwO9giTfj+kY8VlOmqBYEyM2N4eNeUEjVZQAm6jkNPHOIPZEmQEn0ZAp410vM3yx9JmCZ62
+	jjcnpyIg==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vdqrX-0000000HJ7f-3drf;
+	Thu, 08 Jan 2026 14:19:44 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	David Sterba <dsterba@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Stefan Roesch <shr@fb.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	gfs2@lists.linux.dev,
 	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 52/59] quotactl_block(): switch to CLASS(filename)
-Date: Thu,  8 Jan 2026 07:37:56 +0000
-Message-ID: <20260108073803.425343-53-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
-References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+	devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-xfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: re-enable IOCB_NOWAIT writes to files v6
+Date: Thu,  8 Jan 2026 15:19:00 +0100
+Message-ID: <20260108141934.2052404-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,35 +76,68 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/quota/quota.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi all,
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index 7c2b75a44485..ed906725e183 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -867,7 +867,7 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
- {
- #ifdef CONFIG_BLOCK
- 	struct super_block *sb;
--	struct filename *tmp = getname(special);
-+	CLASS(filename, tmp)(special);
- 	bool excl = false, thawed = false;
- 	int error;
- 	dev_t dev;
-@@ -875,7 +875,6 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
- 	if (IS_ERR(tmp))
- 		return ERR_CAST(tmp);
- 	error = lookup_bdev(tmp->name, &dev);
--	putname(tmp);
- 	if (error)
- 		return ERR_PTR(error);
- 
--- 
-2.47.3
+commit 66fa3cedf16a ("fs: Add async write file modification handling.")
+effectively disabled IOCB_NOWAIT writes as timestamp updates currently
+always require blocking, and the modern timestamp resolution means we
+always update timestamps.  This leads to a lot of context switches from
+applications using io_uring to submit file writes, making it often worse
+than using the legacy aio code that is not using IOCB_NOWAIT.
 
+This series allows non-blocking updates for lazytime if the file system
+supports it, and adds that support for XFS.
+
+Changes since v5:
+ - sample ctime before calling inode_set_ctime_current
+ - fix a mild bisection hazard in fat
+
+Changes since v4:
+ - replace the S_* flags with an enum indicating either access or
+   modification time updates to make the logic less fragile and to
+   fix a bug in the previous version
+
+Changes since v3:
+ - fix was_dirty_time handling in __mark_inode_dirty for the racy flag
+   update case
+ - refactor inode_update_timestamps to make the lazytime vs blocking
+   logical more clear
+ - allow non-blocking timestamp updates for fat
+
+Changes since v2:
+ - drop patches merged upstream
+ - adjust for the inode state accesors
+ - keep a check in __writeback_single_inode instead of exercising
+   potentially undefined behavior
+ - more spelling fixes
+
+Changes since v1:
+ - more regular numbering of the S_* flags
+ - fix XFS to actually not block
+ - don't ignore the generic_update_time return value in
+   file_update_time_flags
+ - fix the sync_lazytime return value
+ - fix an out of data comment in btrfs
+ - fix a race that would update i_version before returning -EAGAIN in XFS
+
+Diffstat:
+ Documentation/filesystems/locking.rst |    2 
+ Documentation/filesystems/vfs.rst     |    6 +
+ fs/btrfs/inode.c                      |    8 +-
+ fs/fs-writeback.c                     |   33 +++++++---
+ fs/gfs2/inode.c                       |    6 +
+ fs/inode.c                            |  111 +++++++++++++++++++++-------------
+ fs/internal.h                         |    3 
+ fs/nfs/inode.c                        |    4 -
+ fs/orangefs/inode.c                   |    5 +
+ fs/overlayfs/inode.c                  |    2 
+ fs/sync.c                             |    4 -
+ fs/ubifs/file.c                       |   13 ++-
+ fs/xfs/xfs_iops.c                     |   34 +++++++++-
+ fs/xfs/xfs_super.c                    |   29 --------
+ include/linux/fs.h                    |   27 ++++++--
+ include/trace/events/writeback.h      |    6 -
+ 16 files changed, 182 insertions(+), 111 deletions(-)
 

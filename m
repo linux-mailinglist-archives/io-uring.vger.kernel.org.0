@@ -1,215 +1,192 @@
-Return-Path: <io-uring+bounces-11534-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11535-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC40CD06170
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 21:31:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB778D061CC
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 21:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 761D33048EEB
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 20:29:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 917333032A8B
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 20:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E01315D50;
-	Thu,  8 Jan 2026 20:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E4A2F2905;
+	Thu,  8 Jan 2026 20:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QE29g7He"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="e6UNd7dQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF2D32BF5B
-	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 20:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A95328AAEB
+	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 20:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767904193; cv=none; b=Tpw5o8qC5NtDDFbSg/LujrFI7Vrhe4QdqusiBvC/IWbb5NzKECzniX5F2t9Nq0WMZqoApVWiiPntihRVNSt3mgYroSCnAFnaNxIIuEQ1Y+gjDKaU9yIpf+J3QXAkxM1Moe+9pQUZ+ErA1INJGOyVLEuJPfapx/if45daW00z7KU=
+	t=1767904493; cv=none; b=ahaHf5Uikx4hYQLbSBC2SX7oLW9W2VkbO3E0Wr6jpsFlm+YnybX1lYxQy4gLI6BMycN88CRa24ZSijc+9/UDOybZineceM1fe7geEK0E7ZjJwNOQU7NL0PgcYBy7bRwthg1lV2u4YqTmRoBCcMMEduChqdMwRfYNOXMRD1o9jJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767904193; c=relaxed/simple;
-	bh=P/CXvos6+iENln5RszKa8J1gBcAJtZ0CVoHIdmMCWo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=muqWwcJgvmGB/QMulKG/FtlnRLK3uQrQZLUEfOEtulXhT1fwDPbj9IElbcxqm5MiEAF9+v1laBA24Jo77TpJVVwIaH1JBSagtBU9mfeYg1dblaLF7zxYfAdfVO3chQUSatSrs4tnB83yUUZcUagkIx4PoX8UKgfx7D34C3pExS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QE29g7He; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7c7533dbd87so2643846a34.2
-        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 12:29:51 -0800 (PST)
+	s=arc-20240116; t=1767904493; c=relaxed/simple;
+	bh=CrKlDG2xbsxKf3a4y7GyC24tTUg87XGt74e27eJikzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=br87v4xsZCD8J3ysgZnwBLFIn7uN1y7sGe/1IXL58oykPyH//fUUd383dehiciHnG+CgJLlNI+PawNV1kqfpnEt3sJ5WfpTNHhuSVG3Y9kEPBrBfyglLzurN0RJ/QKV0KDEjUd9FO4g0eAAK1d5NjDgA7ypKACu4LLV1vAz2UWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=e6UNd7dQ; arc=none smtp.client-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-11bba84006dso338424c88.2
+        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 12:34:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1767904190; x=1768508990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1767904492; x=1768509292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S+zXmm51/t3kMvCrENo0wfAASBmqWcGKtcJRJqXjkvU=;
-        b=QE29g7He2qluo2UU/7qeI+9sqdLOlTKOO6h3JbMS1YY3bmvKBFRXaPXP63d2nNuh4U
-         Z1h/BEyWOSuYRwND44fwGv1T/2n83unmWdT3eDgoU0ad5DtsXKihmEngkS4VisN4hvjK
-         0V9ZH9njWz6Fov/RGcjyZINa6CwWZwQ1weZ0EAuHyEo+RjvxIqltxQNA4+ZFHBBAI5V4
-         QIwrGeprmUXg4XCu9qEi3smXagLEAmCMxEEzGuJBXEaqrKEcdrOcC40/bMvpRSXC93Hi
-         VAIn/04mZWdc5jc3Zvq2NQp5/sevYjvG/5QZCEGi2m6SaImJ9D122H4jX3A5bUwNsfsR
-         +qSQ==
+        bh=fnvW4WKmangsNuW7eKuI0hTk1XwSAzpyTyaGA3dt4So=;
+        b=e6UNd7dQ4sVfMFx9/m4PSz9aVlfNG0XjoaQjMlXexXQ2AyKS9ELMYpXC1py66uI993
+         9GutBCPPzJawlFWQqdHCI4Ozw0M9M841eK3MSuXwvTvBJGz17MLZ16x8FNOdvz3Q/LZk
+         JnrqW5bD6TOKj9FElfP0Ak4ukimYypCBeN4R3TjYjsIJOiTcE06jKEb60uvwZs39unHh
+         PJLTP/KGH59RY+ch6SyJ6nBDCKsvI7a2UBCEcN9wgN436Kx+JglkiO1H8H614+jrfyvJ
+         C1bOiPr/lUTarfgsZJQul2qoI87UztYterHji847DvEC/VMvTzHbWGvWi3dBacF9jpS6
+         h57g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767904190; x=1768508990;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1767904492; x=1768509292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=S+zXmm51/t3kMvCrENo0wfAASBmqWcGKtcJRJqXjkvU=;
-        b=VY4mOy/75JQPSpohVi6ctiYcu1Q1kc4f3w0yGOOCuOjfBhjIuHnUF3vDgywWB4mz8q
-         /JsJNFNK3Jdqb8V1HGXIUZRHG2Zdhanqf+B9xaqRvzQy9nuz8dwuk5id0K07+bKf3QCf
-         p5ffTU+VFCo0XhaOpt3a3nAoO1vygFA1gcF6nIw1dGF3CpBujHZjqzjX/zFE0UFjA60E
-         foesKRjjXfR18IuDcBKV0QFdxbCOULo4h1fWwu+m/NE+gJmE/Y7P3irbySeiAAa9xNED
-         /tkBORyn6kw99v8sI6ITVbn7ljWjIR0M9l9UIKqkYe6B7DaRdT43WKSUCmyIbLY3Tq1p
-         HQSA==
-X-Gm-Message-State: AOJu0YznLtHYSdmD/8JSwXkszr3MRYsl77hpbujtBexy3nRrM2U04mjg
-	XEPQnpY1r8VuhgqJysBGILiNmPJWtgJqQg9xJn9rH7xxpmARtQ52hWng+yLPqdVQOo5vwNtPFpf
-	KWWST
-X-Gm-Gg: AY/fxX5AIkmnXIuk22yK0A70+KyGJ+FZmCObbG7L+mqlWwRwjY1w4Jf8HN83mnoAmMf
-	jyfrxyJpVMCZlf1iaO+8kuoS8E5ma6/Noc/qtbmaiG/7rCTTZT/dJMv8eFvjAjT6HgxFiTyFQhi
-	IGeEqJfqM2TEKX37ny0J68EV4YuAli6fj0GHjqHU1yNAHdboUDkUngWcFX61cmYxl2piieydCXz
-	VAq5S3cPPLZFPIxF7e90c5uudlgKJac744JAyG5cWyzPFYtizukyWWdQO+p6B/a3kNO9kbog+jf
-	gkJBb8Cp2iT/wXa+tU/jLXnnnzV/rV6SXOQAxCulxo0SSUFDELilZ8VB0RagJ1MQJ2IlLE9/sN2
-	mmU+XlSuTPfbo5FVQ61FXONYFeEYYkDqGsmTBX4pUvby+DRxj3/urXNoqaGgEU/WI8h8xUoY=
-X-Google-Smtp-Source: AGHT+IFbN+7POUz9hcB8S+DhS/EsGM1QHYl4gp3ZQEK6jfOuVPtUxnMKZrF/wD0uSTJbAmhv9JHyXg==
-X-Received: by 2002:a05:6830:264a:b0:7c7:69c8:2cb with SMTP id 46e09a7af769-7ce50b8cdc1mr4649719a34.24.1767904190444;
-        Thu, 08 Jan 2026 12:29:50 -0800 (PST)
-Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce478ee883sm6225020a34.28.2026.01.08.12.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 12:29:49 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring/register: add support for inheriting task restrictions
-Date: Thu,  8 Jan 2026 13:17:25 -0700
-Message-ID: <20260108202944.288490-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260108202944.288490-1-axboe@kernel.dk>
-References: <20260108202944.288490-1-axboe@kernel.dk>
+        bh=fnvW4WKmangsNuW7eKuI0hTk1XwSAzpyTyaGA3dt4So=;
+        b=PxChEe5Sc+EtLgE7rOYqs+I0su4o9CbfViwvp1l0jnqN6CPtTQgUzi7iJ/Uq1jBZzE
+         uoM9yb7bdh2Db4G7evuIzJV5nOKl4Fu1VL2bfeKeLrfEU0wu+itQ5M0Wx57c/0InLyHE
+         B1nfGGUAlOW0Qtr9vzUIkw5thFePUAcCMqDWKQfnZmiNOpOrr/fm0/AC14S2lYcxsd3n
+         mPDJ4iS//wMhOh03PdeP6xxmjsUNbOtFyOyWbkF8ldGscXsSJZoq+van8LhG41/bLmqY
+         5kIpC6xXPx5YktiSgZjTyRNMiGzzgCiRhzmAyedgQgENsf6WR1xRChs+7ovLLhZl2Qrh
+         CJyg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5BAa6nBIwB+M6+Ws9tJyxyXtmUStd5CqEREJR7XVvNqlxga02jx9wx2Tm58tMT9QN6Wesd/uDrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4nePSFbXCJJ+oeG8QUQe3XYGrW6CufFR17HA32cDsr5eVt49a
+	31Fww1V2KAXH/7UBCSj5yFCsaH5SGFXQNG3OrLkcwhl2AnZ+euX1iZmb7t5ePfPI7aAxuYlMYKc
+	/rsFX2r1R+0j3aemegd/tVSw/Blx+RJsw/6JwdUHjhA==
+X-Gm-Gg: AY/fxX6Yk0ihrSfAf8blmRNn1tdBd/B04S7uGPPZmijOIBKoa9cTNApUxxedQIIRBwl
+	K6ADdFCuLazgq9gJ30vYshQOPsBfweWCHo0DCyEyZwF8I6gxwGxWWTpOLXJx9JH3+391lDkpAT3
+	zapKyzu0Etn2oIxJjh0T5sqHGROLNfvyy/pJ3KCewL3vXTFstWGbQUslFgFAYlBltc5k6iiCDiK
+	xGgcwxjw/n7++4Om78RizRjo9dzahGa1X28wOe3aYi18ql4OpAorl0IbgD1dgnDPWwTFO+D
+X-Google-Smtp-Source: AGHT+IE/LI4BedIHNVzwwnWv3XeKEAv4clZYkrvUqTaySrNctmMY+MTE2JmVrYjiviwxSSiLeLnGBHeMs9FaK31koHE=
+X-Received: by 2002:a05:7022:41a7:b0:11b:ad6a:6e39 with SMTP id
+ a92af1059eb24-121f8b6063cmr3542848c88.5.1767904491511; Thu, 08 Jan 2026
+ 12:34:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251223003522.3055912-1-joannelkoong@gmail.com> <20251223003522.3055912-11-joannelkoong@gmail.com>
+In-Reply-To: <20251223003522.3055912-11-joannelkoong@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 8 Jan 2026 12:34:39 -0800
+X-Gm-Features: AQt7F2p-Qcq3-Jkt49SWMqafpZtOjR1Z2rts-3pvXcHnzz1shnWSnfp0JcixX6U
+Message-ID: <CADUfDZqHhVi1RY71dvEFbWsHmrzLbTSgev5o8yRXxExV5=XY2g@mail.gmail.com>
+Subject: Re: [PATCH v3 10/25] io_uring/kbuf: export io_ring_buffer_select()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-By default, the registered task restrictions only apply to the task they
-were registered for. Any forked tasks or created threads will not
-inherit them.
+On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> Export io_ring_buffer_select() so that it may be used by callers who
+> pass in a pinned bufring without needing to grab the io_uring mutex.
+>
+> This is a preparatory patch that will be needed by fuse io-uring, which
+> will need to select a buffer from a kernel-managed bufring while the
+> uring mutex may already be held by in-progress commits, and may need to
+> select a buffer in atomic contexts.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  include/linux/io_uring/buf.h | 25 +++++++++++++++++++++++++
+>  io_uring/kbuf.c              |  8 +++++---
+>  2 files changed, 30 insertions(+), 3 deletions(-)
+>  create mode 100644 include/linux/io_uring/buf.h
+>
+> diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/buf.h
+> new file mode 100644
+> index 000000000000..3f7426ced3eb
+> --- /dev/null
+> +++ b/include/linux/io_uring/buf.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +#ifndef _LINUX_IO_URING_BUF_H
+> +#define _LINUX_IO_URING_BUF_H
+> +
+> +#include <linux/io_uring_types.h>
+> +
+> +#if defined(CONFIG_IO_URING)
+> +struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len=
+,
 
-However, if IORING_REG_RESTRICTIONS_INHERIT is set when registering the
-task restrictions, then they will be inherited across process fork or
-thread creation.
+I think struct io_kiocb isn't intended to be exposed outside of
+io_uring internal code. Is there a reason not to instead expose a
+wrapper function that takes struct io_uring_cmd * instead?
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h | 2 ++
- include/uapi/linux/io_uring.h  | 7 +++++++
- io_uring/register.c            | 5 ++++-
- io_uring/tctx.c                | 4 +++-
- kernel/fork.c                  | 7 ++++++-
- 5 files changed, 22 insertions(+), 3 deletions(-)
+Best,
+Caleb
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 54fd30abf2b8..b63b927d8718 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -222,9 +222,11 @@ struct io_rings {
- struct io_restriction {
- 	DECLARE_BITMAP(register_op, IORING_REGISTER_LAST);
- 	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
-+	refcount_t refs;
- 	u8 sqe_flags_allowed;
- 	u8 sqe_flags_required;
- 	bool registered;
-+	bool inherited;
- };
- 
- struct io_submit_link {
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 3ecf9c1bfa2d..8d671b5e33e3 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -807,6 +807,13 @@ struct io_uring_restriction {
- 	__u32 resv2[3];
- };
- 
-+enum {
-+	/*
-+	 * Registered restrictions are inherited for a fork.
-+	 */
-+	IORING_REG_RESTRICTIONS_INHERIT	= (1U << 0),
-+};
-+
- struct io_uring_task_restriction {
- 	__u16 flags;
- 	__u16 nr_res;
-diff --git a/io_uring/register.c b/io_uring/register.c
-index eac7a6da32b4..36573b362225 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -191,7 +191,7 @@ static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
- 	if (copy_from_user(&tres, arg, sizeof(tres)))
- 		return -EFAULT;
- 
--	if (tres.flags)
-+	if (tres.flags & ~IORING_REG_RESTRICTIONS_INHERIT)
- 		return -EINVAL;
- 	if (!mem_is_zero(tres.resv, sizeof(tres.resv)))
- 		return -EINVAL;
-@@ -205,6 +205,9 @@ static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
- 		kfree(res);
- 		return ret;
- 	}
-+	if (tres.flags & IORING_REG_RESTRICTIONS_INHERIT)
-+		res->inherited = true;
-+	refcount_set(&res->refs, 1);
- 	current->io_uring_restrict = res;
- 	return 0;
- }
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index c8ad735936dc..f9ad9cbee9be 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -66,7 +66,9 @@ void __io_uring_free(struct task_struct *tsk)
- 		kfree(tctx);
- 		tsk->io_uring = NULL;
- 	}
--	kfree(tsk->io_uring_restrict);
-+	if (tsk->io_uring_restrict &&
-+	    refcount_dec_and_test(&tsk->io_uring_restrict->refs))
-+		kfree(tsk->io_uring_restrict);
- }
- 
- __cold int io_uring_alloc_task_context(struct task_struct *task,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 6081e1c93e21..505f9397a645 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -97,6 +97,7 @@
- #include <linux/kasan.h>
- #include <linux/scs.h>
- #include <linux/io_uring.h>
-+#include <linux/io_uring_types.h>
- #include <linux/bpf.h>
- #include <linux/stackprotector.h>
- #include <linux/user_events.h>
-@@ -2129,7 +2130,10 @@ __latent_entropy struct task_struct *copy_process(
- 
- #ifdef CONFIG_IO_URING
- 	p->io_uring = NULL;
--	p->io_uring_restrict = NULL;
-+	if (p->io_uring_restrict && p->io_uring_restrict->inherited)
-+		refcount_inc(&p->io_uring_restrict->refs);
-+	else
-+		p->io_uring_restrict = NULL;
- #endif
- 
- 	p->default_timer_slack_ns = current->timer_slack_ns;
-@@ -2526,6 +2530,7 @@ __latent_entropy struct task_struct *copy_process(
- 	mpol_put(p->mempolicy);
- #endif
- bad_fork_cleanup_delayacct:
-+	io_uring_free(p);
- 	delayacct_tsk_free(p);
- bad_fork_cleanup_count:
- 	dec_rlimit_ucounts(task_ucounts(p), UCOUNT_RLIMIT_NPROC, 1);
--- 
-2.51.0
-
+> +                                      struct io_buffer_list *bl,
+> +                                      unsigned int issue_flags);
+> +#else
+> +static inline struct io_br_sel io_ring_buffer_select(struct io_kiocb *re=
+q,
+> +                                                    size_t *len,
+> +                                                    struct io_buffer_lis=
+t *bl,
+> +                                                    unsigned int issue_f=
+lags)
+> +{
+> +       struct io_br_sel sel =3D {
+> +               .val =3D -EOPNOTSUPP,
+> +       };
+> +
+> +       return sel;
+> +}
+> +#endif /* CONFIG_IO_URING */
+> +
+> +#endif /* _LINUX_IO_URING_BUF_H */
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 0524b22e60a5..3b9907f0a78e 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/poll.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/io_uring.h>
+> +#include <linux/io_uring/buf.h>
+>
+>  #include <uapi/linux/io_uring.h>
+>
+> @@ -223,9 +224,9 @@ static bool io_should_commit(struct io_kiocb *req, st=
+ruct io_buffer_list *bl,
+>         return false;
+>  }
+>
+> -static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size=
+_t *len,
+> -                                             struct io_buffer_list *bl,
+> -                                             unsigned int issue_flags)
+> +struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len=
+,
+> +                                      struct io_buffer_list *bl,
+> +                                      unsigned int issue_flags)
+>  {
+>         struct io_uring_buf_ring *br =3D bl->buf_ring;
+>         __u16 tail, head =3D bl->head;
+> @@ -259,6 +260,7 @@ static struct io_br_sel io_ring_buffer_select(struct =
+io_kiocb *req, size_t *len,
+>         }
+>         return sel;
+>  }
+> +EXPORT_SYMBOL_GPL(io_ring_buffer_select);
+>
+>  struct io_br_sel io_buffer_select(struct io_kiocb *req, size_t *len,
+>                                   unsigned buf_group, unsigned int issue_=
+flags)
+> --
+> 2.47.3
+>
 

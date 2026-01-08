@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-11457-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11445-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4A5D016B4
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 08:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AB6D01696
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 08:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2C4AB30141FD
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:37:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 870E73011F89
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0FE33C511;
-	Thu,  8 Jan 2026 07:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC98327BF6;
+	Thu,  8 Jan 2026 07:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wPOxKUNs"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="A+BMRwqt"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471A9318B9B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5DE318BAB;
 	Thu,  8 Jan 2026 07:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857813; cv=none; b=Ig8L7vJn3a0YXYUnexmor66F1cKJRZv3dGB2ymBpaM2ba2hlSGowjHxond8JEd26kzJFRfo5vXWSHQ4Vd0RXw+t3uPILzqPbyP5w2ErbZkH4ZFccZa+Kd65SPMukrB05v2HK9eeyTGGwIKJsVnuBbi/W/z8DyEU7dMPxUE+kRQ0=
+	t=1767857811; cv=none; b=FWF398sMjoKukhCdcXCyVhax6fk88sbZwbw2/FoXe846DRegwmxk+QQXpZL4R4EJfHEjs41zj4BQ/yyksGRWKZTgtNhrPyYjBEhvlmIWVM+d6p9ucy3yCGKqjEPWXh9vd7kz58M48BlPC1Zy7yh7IpQPTzNo75EOoWF3lP8kY2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857813; c=relaxed/simple;
-	bh=TP4bXazyeAFWsY9bPJQfnwJ5eTqrvE4ywPovrdBMTTY=;
+	s=arc-20240116; t=1767857811; c=relaxed/simple;
+	bh=IzrgXOT9z6vkgtrPDIdf13q7qyMmn+4ybA/ta0J+TBo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UDQfFJo97R+3GDlb/0XuJOC0o4dQAfp8KIS6dew5YbtUklhOx+lgaEuHDPGkZ6M/T5QNrdDkH6vT7tWN3Ijj7+c7RHBbQgUU/l7rDcsq2KYgbVJSdV7PJF2QvxnCM8JO4mwVrx9yfG2X+zladOishLMqyI+QorO4HGbKdBlhRtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wPOxKUNs; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=hDoJoaS4BjVcQzS2IOE5JF2RYHo5aoqAhgtBsTGuciRNUysqh0Rj9O0thbNeIdZN3LA+9e/DAfbYOBkGeq6ahC9/ZLHeiNDCKqSSmqeFQTAGRUn5C0oRPvm8P9lZz0LDbAVdpxkdLCky4PFl0CXInmh2YA41sIhECf0ur1SuTh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=A+BMRwqt; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=hhgbpYrJGOmEX7WzIV0zHzETCPqUVX3gsZjmkgHxe7s=; b=wPOxKUNsg/Iv9GX7Fv53XRvBS7
-	QazPfuJUyhVmLDv/Ig9pi9yezQq/WNfTL1O5xYUg8tTZxHXpjMtUaRvO9pijIEWmZVOgmp/IW7akD
-	DcApm5U/GTodxlKxs4HJ69+CNRaD6IYD0fY7Hzf/6JvGQquMNanWtA4DD3MiLdqD0T+KBBqAD8dEZ
-	pe9K2IZ0ZToWuyCqyTHTiB4fGuatIIfIVLfiscKmROVhQncT2tgR7CSViwywpCcXhgrD6oRiFBuAg
-	Zh4d0y7Xx7nE8W+T3HdNVUUTTpo7vlS72W7HxolHYa9LtlAO4Ke4dCpViSTsDGecgKSkoGHT1ot83
-	GiTWAhwg==;
+	bh=qlZnLmrphR+14Jm/ap5jKQC7QyDfASXXE6J1NbaMqlo=; b=A+BMRwqtnlJ73cmnN9eNs7RJ0o
+	AysIJ6pu/KcP3Hwl2pIUrHE4OaAdIoky/uO5JFZks18Zlgt9uXmEMyXNPwQp0167nKjF80z6g2SvD
+	XwLeaYoAQkUXpjZhpEZ3n4ECsG66QHqzq2ePwQ2ogJtzvDz+tj/rs3vTa91EBT6zm1HAuSxqzE1zi
+	31WRWJAcPqkFKqfXDzYRKM1QC+dFKjmzILgv1MxYhlN6xKC2ICv4pABUgMJzwy4UaOiSXA8ckIgb9
+	0XBwDVImyYdH60TqIrJLnmuh9ReqJGuNaXGNHRbzsWQVsQ+TTeAadpOdFZFKy6DmgUIJpk219jIuj
+	aeUm+mTA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkaq-00000001mgT-44EP;
-	Thu, 08 Jan 2026 07:38:04 +0000
+	id 1vdkar-00000001mgf-0JAP;
+	Thu, 08 Jan 2026 07:38:05 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/59] get rid of audit_reusename()
-Date: Thu,  8 Jan 2026 07:37:14 +0000
-Message-ID: <20260108073803.425343-11-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 11/59] ntfs: ->d_compare() must not block
+Date: Thu,  8 Jan 2026 07:37:15 +0000
+Message-ID: <20260108073803.425343-12-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,160 +68,228 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Originally we tried to avoid multiple insertions into audit names array
-during retry loop by a cute hack - memorize the userland pointer and
-if there already is a match, just grab an extra reference to it.
+... so don't use __getname() there.  Switch it (and ntfs_d_hash(), while
+we are at it) to kmalloc(PATH_MAX, GFP_NOWAIT).  Yes, ntfs_d_hash()
+almost certainly can do with smaller allocations, but let ntfs folks
+deal with that - keep the allocation size as-is for now.
 
-Cute as it had been, it had problems - two identical pointers had
-audit aux entries merged, two identical strings did not.  Having
-different behaviour for syscalls that differ only by addresses of
-otherwise identical string arguments is obviously wrong - if nothing
-else, compiler can decide to merge identical string literals.
+Stop abusing names_cachep in ntfs, period - various uses of that thing
+in there have nothing to do with pathnames; just use k[mz]alloc() and
+be done with that.  For now let's keep sizes as-in, but AFAICS none of
+the users actually want PATH_MAX.
 
-Besides, this hack does nothing for non-audited processes - they get
-a fresh copy for retry.  It's not time-critical, but having behaviour
-subtly differ that way is bogus.
-
-These days we have very few places that import filename more than once
-(9 functions total) and it's easy to massage them so we get rid of all
-re-imports.  With that done, we don't need audit_reusename() anymore.
-There's no need to memorize userland pointer either.
-
-Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c            | 11 +++--------
- include/linux/audit.h | 11 -----------
- include/linux/fs.h    |  1 -
- kernel/auditsc.c      | 23 -----------------------
- 4 files changed, 3 insertions(+), 43 deletions(-)
+ fs/ntfs3/dir.c    |  5 ++---
+ fs/ntfs3/fsntfs.c |  4 ++--
+ fs/ntfs3/inode.c  | 13 ++++++-------
+ fs/ntfs3/namei.c  | 17 ++++++++---------
+ fs/ntfs3/xattr.c  |  5 ++---
+ 5 files changed, 20 insertions(+), 24 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index bf0f66f0e9b9..f22cfdff72ab 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -125,9 +125,8 @@
+diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+index b98e95d6b4d9..cf038d713f50 100644
+--- a/fs/ntfs3/dir.c
++++ b/fs/ntfs3/dir.c
+@@ -423,8 +423,7 @@ static int ntfs_readdir(struct file *file, struct dir_context *ctx)
+ 	if (!dir_emit_dots(file, ctx))
+ 		return 0;
  
- #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+-	/* Allocate PATH_MAX bytes. */
+-	name = __getname();
++	name = kmalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!name)
+ 		return -ENOMEM;
  
--static inline void initname(struct filename *name, const char __user *uptr)
-+static inline void initname(struct filename *name)
- {
--	name->uptr = uptr;
- 	name->aname = NULL;
- 	atomic_set(&name->refcnt, 1);
+@@ -502,7 +501,7 @@ static int ntfs_readdir(struct file *file, struct dir_context *ctx)
+ 
+ out:
+ 
+-	__putname(name);
++	kfree(name);
+ 	put_indx_node(node);
+ 
+ 	if (err == 1) {
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 5f138f715835..bd67ba7b5015 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -2627,7 +2627,7 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 *label, int len)
+ 	u32 uni_bytes;
+ 	struct ntfs_inode *ni = sbi->volume.ni;
+ 	/* Allocate PATH_MAX bytes. */
+-	struct cpu_str *uni = __getname();
++	struct cpu_str *uni = kmalloc(PATH_MAX, GFP_KERNEL);
+ 
+ 	if (!uni)
+ 		return -ENOMEM;
+@@ -2671,6 +2671,6 @@ int ntfs_set_label(struct ntfs_sb_info *sbi, u8 *label, int len)
+ 		err = _ni_write_inode(&ni->vfs_inode, 0);
+ 
+ out:
+-	__putname(uni);
++	kfree(uni);
+ 	return err;
  }
-@@ -139,10 +138,6 @@ getname_flags(const char __user *filename, int flags)
- 	char *kname;
- 	int len;
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 0a9ac5efeb67..edfb973e4e82 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1281,7 +1281,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		fa |= FILE_ATTRIBUTE_READONLY;
  
--	result = audit_reusename(filename);
--	if (result)
--		return result;
--
- 	result = __getname();
- 	if (unlikely(!result))
- 		return ERR_PTR(-ENOMEM);
-@@ -210,7 +205,7 @@ getname_flags(const char __user *filename, int flags)
- 			return ERR_PTR(-ENAMETOOLONG);
+ 	/* Allocate PATH_MAX bytes. */
+-	new_de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
++	new_de = kzalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!new_de) {
+ 		err = -ENOMEM;
+ 		goto out1;
+@@ -1702,7 +1702,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 	ntfs_mark_rec_free(sbi, ino, false);
+ 
+ out2:
+-	__putname(new_de);
++	kfree(new_de);
+ 	kfree(rp);
+ 
+ out1:
+@@ -1723,7 +1723,7 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+ 	struct NTFS_DE *de;
+ 
+ 	/* Allocate PATH_MAX bytes. */
+-	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
++	de = kzalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+@@ -1737,7 +1737,7 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+ 
+ 	err = ni_add_name(ntfs_i(d_inode(dentry->d_parent)), ni, de);
+ out:
+-	__putname(de);
++	kfree(de);
+ 	return err;
+ }
+ 
+@@ -1760,8 +1760,7 @@ int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
+ 	if (ntfs_is_meta_file(sbi, ni->mi.rno))
+ 		return -EINVAL;
+ 
+-	/* Allocate PATH_MAX bytes. */
+-	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
++	de = kzalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+@@ -1797,7 +1796,7 @@ int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
+ 
+ out:
+ 	ni_unlock(ni);
+-	__putname(de);
++	kfree(de);
+ 	return err;
+ }
+ 
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 3b24ca02de61..b2af8f695e60 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -68,7 +68,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+ 				  u32 flags)
+ {
+ 	struct ntfs_inode *ni = ntfs_i(dir);
+-	struct cpu_str *uni = __getname();
++	struct cpu_str *uni = kmalloc(PATH_MAX, GFP_KERNEL);
+ 	struct inode *inode;
+ 	int err;
+ 
+@@ -85,7 +85,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+ 			inode = dir_search_u(dir, uni, NULL);
+ 			ni_unlock(ni);
  		}
+-		__putname(uni);
++		kfree(uni);
  	}
--	initname(result, filename);
-+	initname(result);
- 	audit_getname(result);
- 	return result;
- }
-@@ -268,7 +263,7 @@ struct filename *getname_kernel(const char * filename)
- 		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	/*
+@@ -303,8 +303,7 @@ static int ntfs_rename(struct mnt_idmap *idmap, struct inode *dir,
+ 			return err;
  	}
- 	memcpy((char *)result->name, filename, len);
--	initname(result, NULL);
-+	initname(result);
- 	audit_getname(result);
- 	return result;
- }
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 536f8ee8da81..d936a604d056 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -316,7 +316,6 @@ extern void __audit_uring_exit(int success, long code);
- extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
- 				  unsigned long a2, unsigned long a3);
- extern void __audit_syscall_exit(int ret_success, long ret_value);
--extern struct filename *__audit_reusename(const __user char *uptr);
- extern void __audit_getname(struct filename *name);
- extern void __audit_inode(struct filename *name, const struct dentry *dentry,
- 				unsigned int flags);
-@@ -380,12 +379,6 @@ static inline void audit_syscall_exit(void *pt_regs)
- 		__audit_syscall_exit(success, return_code);
- 	}
- }
--static inline struct filename *audit_reusename(const __user char *name)
--{
--	if (unlikely(!audit_dummy_context()))
--		return __audit_reusename(name);
--	return NULL;
--}
- static inline void audit_getname(struct filename *name)
- {
- 	if (unlikely(!audit_dummy_context()))
-@@ -624,10 +617,6 @@ static inline struct audit_context *audit_context(void)
- {
- 	return NULL;
- }
--static inline struct filename *audit_reusename(const __user char *name)
--{
--	return NULL;
--}
- static inline void audit_getname(struct filename *name)
- { }
- static inline void audit_inode(struct filename *name,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5c9cf28c4dc..2244c54d3bfa 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2411,7 +2411,6 @@ extern struct kobject *fs_kobj;
- struct audit_names;
- struct filename {
- 	const char		*name;	/* pointer to actual string */
--	const __user char	*uptr;	/* original userland pointer */
- 	atomic_t		refcnt;
- 	struct audit_names	*aname;
- 	const char		iname[];
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index dd0563a8e0be..67d8da927381 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2169,29 +2169,6 @@ static struct audit_names *audit_alloc_name(struct audit_context *context,
- 	return aname;
+ 
+-	/* Allocate PATH_MAX bytes. */
+-	de = __getname();
++	de = kmalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+@@ -349,7 +348,7 @@ static int ntfs_rename(struct mnt_idmap *idmap, struct inode *dir,
+ 	ni_unlock(ni);
+ 	ni_unlock(dir_ni);
+ out:
+-	__putname(de);
++	kfree(de);
+ 	return err;
  }
  
--/**
-- * __audit_reusename - fill out filename with info from existing entry
-- * @uptr: userland ptr to pathname
-- *
-- * Search the audit_names list for the current audit context. If there is an
-- * existing entry with a matching "uptr" then return the filename
-- * associated with that audit_name. If not, return NULL.
-- */
--struct filename *
--__audit_reusename(const __user char *uptr)
--{
--	struct audit_context *context = audit_context();
--	struct audit_names *n;
--
--	list_for_each_entry(n, &context->names_list, list) {
--		if (!n->name)
--			continue;
--		if (n->name->uptr == uptr)
--			return refname(n->name);
--	}
--	return NULL;
--}
--
- /**
-  * __audit_getname - add a name to the list
-  * @name: name to add
+@@ -407,7 +406,7 @@ static int ntfs_d_hash(const struct dentry *dentry, struct qstr *name)
+ 	/*
+ 	 * Try slow way with current upcase table
+ 	 */
+-	uni = kmem_cache_alloc(names_cachep, GFP_NOWAIT);
++	uni = kmalloc(PATH_MAX, GFP_NOWAIT);
+ 	if (!uni)
+ 		return -ENOMEM;
+ 
+@@ -429,7 +428,7 @@ static int ntfs_d_hash(const struct dentry *dentry, struct qstr *name)
+ 	err = 0;
+ 
+ out:
+-	kmem_cache_free(names_cachep, uni);
++	kfree(uni);
+ 	return err;
+ }
+ 
+@@ -468,7 +467,7 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
+ 	 * Try slow way with current upcase table
+ 	 */
+ 	sbi = dentry->d_sb->s_fs_info;
+-	uni1 = __getname();
++	uni1 = kmalloc(PATH_MAX, GFP_NOWAIT);
+ 	if (!uni1)
+ 		return -ENOMEM;
+ 
+@@ -498,7 +497,7 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
+ 	ret = !ntfs_cmp_names_cpu(uni1, uni2, sbi->upcase, false) ? 0 : 1;
+ 
+ out:
+-	__putname(uni1);
++	kfree(uni1);
+ 	return ret;
+ }
+ 
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index c93df55e98d0..f3bb2c41c000 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -556,8 +556,7 @@ struct posix_acl *ntfs_get_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	if (unlikely(is_bad_ni(ni)))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	/* Allocate PATH_MAX bytes. */
+-	buf = __getname();
++	buf = kmalloc(PATH_MAX, GFP_KERNEL);
+ 	if (!buf)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -588,7 +587,7 @@ struct posix_acl *ntfs_get_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	if (!IS_ERR(acl))
+ 		set_cached_acl(inode, type, acl);
+ 
+-	__putname(buf);
++	kfree(buf);
+ 
+ 	return acl;
+ }
 -- 
 2.47.3
 

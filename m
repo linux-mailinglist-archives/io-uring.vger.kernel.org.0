@@ -1,127 +1,161 @@
-Return-Path: <io-uring+bounces-11544-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11545-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1092FD06666
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 23:10:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADB0D06939
+	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 00:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 27F083012A75
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 22:10:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 73EF9301E167
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 23:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14B82F39B5;
-	Thu,  8 Jan 2026 22:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14738333451;
+	Thu,  8 Jan 2026 23:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGaRWH2e"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bRhBbdqE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7422D7810
-	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 22:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1C21A23A4
+	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 23:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767910239; cv=none; b=u2mMtUpvGzpThxF349gC7/v75zeVojFclxs9P0i8HNgy/Eby61d8z/jTEBlSpZUVA6FqQjZdDRP0zrrFp4OaH4kC1c7mdNueWchtOxcaBApqUHu5D8TaOTFNfhqQdtX1QQAtm78pBrYvdhsu29nQJwfGT8oXT+8CwmcFdgW+J9s=
+	t=1767916452; cv=none; b=eDJ8ZSnbMItK1x1LB1Fd5dOBQOw/9WcYF6tX486o4ycy9AM599YREKm88iTadPmBc0onZfdiBpBg9HT3Pe/4vRgRsdXeQHqE0rUKqEJpXvikE+Nl0oVke6ElK6ENlL+hf0EvTJuwsSC367gzVc7znkCGzspYvJoAvXcjz90hVoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767910239; c=relaxed/simple;
-	bh=b316XBdUU02Fj49yv5rtvVFny1bUFiev3rhHsguOJBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j4uq2zK8xJFxNpYD6Hpkc3Krs9JVA00/ZpsuEYCcTt5Rfg5ORJyWsC4kiDOFXTm72Tu4k2xCy0j8VYOEUGGh49bDyknn/5FjcdoEOyHnRsHrkq3VBOaWYcgEVx1qy1u+TlBUKi9LH6aYi0BxDIxIYBzJWR+wIRs6nGm2qG9rfSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGaRWH2e; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ee05b2b1beso35165471cf.2
-        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 14:10:38 -0800 (PST)
+	s=arc-20240116; t=1767916452; c=relaxed/simple;
+	bh=0sCldnrLx9ralD2X9Ueafr3kmU+xKLU4rTnRrHPhxBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efgKIJPCxphzTTEdD/U3mX5kkvPu+tik/Od8KfMgW8S8bvRYWBps0npPr4h3rtGRmpyPiy3LnQntND0PVqUBVDg20imdiVLLAYBPuuN6/XCQUhaq9TEmrtfFYssea9IqRc6TwdT22GRQ4Yk5g/B7Dsu29ryCU7/yHcBEcAftxus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bRhBbdqE; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c75178c05fso1500601a34.0
+        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 15:54:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767910237; x=1768515037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bxOWxzYxBLwJhC5XL586rxmsz/glktXfvjYFujmhZ3M=;
-        b=SGaRWH2ePhzDteR4/3tnxZeoIzxyjirqymjl54mUw3D06S37vp8QAqlDWgt91NL0JB
-         x70cnB14BO3w4L4gBfi5loncXsRUHoGvZHwqtzxaGAgwrYHfHUID1Ky8t66A2W5DnoA7
-         TEIjaujkGCN54ljvbCwfXs4UV88VlqTUE4Oox18xY/v4of9iEJjwvpdUrnLM+wu71DsN
-         H55tAp7q6veYxwJqTsk4VGKgw5ywYdealePyrGN3vjWAZjs37OoM/9UKwLLfUGMh9gPc
-         N6EUyKWDEjgjPGit5MDiQUXYmwz4ED7dfVqFhi3LPfMnOU9TOFwgbPd7WvyIxxMFd+2k
-         Ycaw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1767916448; x=1768521248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8guKUXJ16AY1UP0Z+aQkb3So1uzLZKqQ2GlZcS2dHA0=;
+        b=bRhBbdqEVqZKSPr/w7v8rNkTdz3LA/Nw8odUjvicjY0sk+L7LetioqdSiX/7pSXlVm
+         gnv9CHSrfvRbOY/B4IEzUd4QC2YRRy53h+mgf8Da56yPuu3xckkBEg+02W5JEOpBcNik
+         8SSz3HpB8cJuBUe6BGm319jq5qEnEmryeFO9jntHsoeJseXfgJpi7AMog1flb6VvlupA
+         TBZXI3KxaTQp7Ad7UPcPe4DbIIkVeZfRUaFZhASc8fP1mfCa/5/MW5NtMQeibzfEgPNH
+         gwL0BA1OUiHJFs+Be4EKCswDKhGqNzkXqjPghRDKtZUgDNbOExTkq6yy3TVmVF/JpiKj
+         xgxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767910237; x=1768515037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bxOWxzYxBLwJhC5XL586rxmsz/glktXfvjYFujmhZ3M=;
-        b=GDzfe2IlkR7MmNSFfERqoVCn9tdqW2enqeajUFMhpuOwH4uWBYP/gL8dsvbFQJ/nrX
-         ciE3BBVoKzwoKzf+THm796LD1kAR+FrlN+QmyExJiT3jgal4fFtnGhAWx7E1rvAytkvu
-         eApXokZfklP4/BauQRTqrclhlGzVR/NaSu5eVrbLFchgooRNq2Xkzmyb6P4B8w8NeL2B
-         rRB5kI2z/m/xbw+4ptWKUQcpA7ZzdOEzukk8nN7nnZEzscCUpgVUz8GUDQJfmqrGJmxV
-         PSqeXghDCHntLsjxsxGGyk/KaUhdSZ1o8ttVcHYNWJMlIfqFc2rnCZSrW1vXdqKwedDq
-         hB8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUA6rOQe433vYk1HroXrzPA+AHH9xvnjtrhU4SdlEMwJsMDn/WKBWYE+qunb5cveLLoXX14vvexGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjnt0DjkMHWh4NRweTd0Y/VyzPmyLE6KS+BN+VNeV8pHaIv+lt
-	KwSz5aCasefUQYm+6hO86PbGhLPMUWp0Yz8icBvLdJTO9JYMqOG5cOKhQPr5XOzjIMYczS72p6Y
-	/1gaX/1k7WAsFgrY3DPH+KMEtGn+goG5YPlal
-X-Gm-Gg: AY/fxX5rj6z/ZT4AmZmJyOsvN1Desb1pKqJ5tOcXGHeVkzqC/jcsrKZzBR+SnioDP6E
-	n6av66sqvgGBtn0o2bzDoIBdMfwVwCm5DlNw66mFM9YClN/qls8Er4XQuX7SetoL7BD9bLAJilo
-	1CFvKwehtURfAYlbXDQMBbEy4pDK1mK8wyRr2kh+ReARqYUA/E/APATTRT5bpmq3ehvgfienOSJ
-	VYFGm/tFT3DTYeOqi59zv6/xpRYbB1RWYoiy/fc8fUnqy7o5PGlytEeMnplcN1sp8rWJA==
-X-Google-Smtp-Source: AGHT+IEusL/+wTPRduVKy8K/Xo3QQPbVJ4QJ0UjyMxdFsYMyXMQ2/6H+6i1V0DUaDFmi2fQxFz/pKFqG/+E5JOFCG6M=
-X-Received: by 2002:a05:622a:48f:b0:4f1:e0fc:343e with SMTP id
- d75a77b69052e-4ffb499ad6amr109038791cf.37.1767910237420; Thu, 08 Jan 2026
- 14:10:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767916448; x=1768521248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8guKUXJ16AY1UP0Z+aQkb3So1uzLZKqQ2GlZcS2dHA0=;
+        b=nR6yDgShCVoxY9Ipw2r00C5HMaYY8zzZNK0H0lNSLQdKdUzSdhP7+zN20D7LCeHjP9
+         5tKsytKNnnfQSAT337G/RPExL44vtVHxW0Kd+OGM3EGqvbWqSkJwFkrCIBNF24o7pbEH
+         nwdRAyFtpgIlZsXC9Otxylv0SAMP4rUhKC4s1m5OIruY31dtFkF+E867OQuittDK2OK8
+         dv0RXre/EhW3I3yndxpChLRZoAjL5TMSz+ayF5O/gWM4/K0Y1NO9VIA/eJ9OpVYQg9tD
+         Z8ZVN1RchTltJZk9jaM+v6IHZMhPjcRv3rZfnA7LZwL9EI6pHI/oz/8xfx+L3P9CZhd5
+         XQIQ==
+X-Gm-Message-State: AOJu0Yw2fqO0r2KNQh/svSKjREBa/9xX4XdIkOxJepJyWD6Sho8TfI7N
+	u/HEHpMKGAESsKgtKDbZ2yxLFpit5wZ+WPB5Wt15br1TTe9DOZ53rYAX8MBQw+J6jh4=
+X-Gm-Gg: AY/fxX4S6PeyRAdg87YoLJEAPBQ9AJXRQKTbXd40JSDm5dhhYZ1KGibsxhj2MCKl6Co
+	2dc2YmytXzGqNLmo1TdgcqDwrMVk4XFWvSixyMWRD8wkKw5dGDH50Cu28/1UVVac3GLMYHJpxZ/
+	UTAwsUizFaSFTcV63lyZabiIdPUMxyM7sTyEwVkYM3cOrdPF2B3jO19aNzo9j4h7Lc0NyXyVyHU
+	C82GRmnjNdkcZXhsIuXtVE8xfdGFPBnJlsvXZef/0f+ngHA5K6X30+aL23kNgdfrM2uK5Pf1pdM
+	4p3qmWhwt/P04gj3SabMipgyQ/2CmGRAu8yqlsFm8CfU8iq+EkyZynJpyzaW/HYHhFjgLsC9nr/
+	W8PKpRqpUjpHOqq6hz73Rr79HgBurBWvNkO+UEVqOAtH9PtWMzsB+7yhxUwTwl6o76vYB9VOYbM
+	mF3kngItQK
+X-Google-Smtp-Source: AGHT+IEQIUfFcztZHMvz+Q+nCam63ilId45TFb/rxbKOEFyVcrLxzoS7ffO5aUNfEQCDKqV2xqGNjA==
+X-Received: by 2002:a05:6820:60a:b0:65f:668a:4d with SMTP id 006d021491bc7-65f668a03ecmr487004eaf.77.1767916448330;
+        Thu, 08 Jan 2026 15:54:08 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f48bbc0desm3882470eaf.2.2026.01.08.15.54.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jan 2026 15:54:07 -0800 (PST)
+Message-ID: <9f7e8b5f-e89b-4e7e-a520-ae97127b45f7@kernel.dk>
+Date: Thu, 8 Jan 2026 16:54:06 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105210543.3471082-1-csander@purestorage.com> <20260105210543.3471082-4-csander@purestorage.com>
-In-Reply-To: <20260105210543.3471082-4-csander@purestorage.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 8 Jan 2026 14:10:26 -0800
-X-Gm-Features: AQt7F2ruN_3jfPUmzQhKB32F0sKwCayQ0qzK1FDa2_g5C1vl0bFINgW8DkivY-M
-Message-ID: <CAJnrk1YTzFTxVEV9kBoj_dfXo1FmZ9jVhMi3sAdiuyWeoN-4PA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] io_uring/register: drop io_register_enable_rings()
- submitter_task check
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET RFC 0/2] Per-task io_uring opcode restrictions
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org
+References: <20260108202944.288490-1-axboe@kernel.dk>
+ <87pl7j4v8h.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87pl7j4v8h.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 5, 2026 at 1:05=E2=80=AFPM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> io_register_enable_rings() checks that the io_ring_ctx is
-> IORING_SETUP_R_DISABLED, which ensures submitter_task hasn't been
-> assigned by io_uring_create() or a previous io_register_enable_rings()
-> call. So drop the redundant check that submitter_task is NULL.
->
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  io_uring/register.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/register.c b/io_uring/register.c
-> index 8104728af294..78434869270c 100644
-> --- a/io_uring/register.c
-> +++ b/io_uring/register.c
-> @@ -178,11 +178,11 @@ static __cold int io_register_restrictions(struct i=
-o_ring_ctx *ctx,
->  static int io_register_enable_rings(struct io_ring_ctx *ctx)
->  {
->         if (!(ctx->flags & IORING_SETUP_R_DISABLED))
->                 return -EBADFD;
->
-> -       if (ctx->flags & IORING_SETUP_SINGLE_ISSUER && !ctx->submitter_ta=
-sk) {
-> +       if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
->                 ctx->submitter_task =3D get_task_struct(current);
->                 /*
->                  * Lazy activation attempts would fail if it was polled b=
-efore
->                  * submitter_task is set.
->                  */
-> --
-> 2.45.2
->
+On 1/8/26 3:04 PM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> Hi,
+>>
+>> One common complaint is that io_uring doesn't work with seccomp. Which
+>> is true, as seccomp is entirely designed around a classic sync syscall -
+>> if you can filter what you need based on a syscall number and the
+>> arguments, then it's fine. But for anything else, it doesn't really
+>> work. This means that solutions that rely on syscall filtering, eg
+>> docker, there's really not much you can do with seccomp outside of
+>> entirely disabling io_uring. That's not ideal.
+>>
+>> As I do think that's a gap we have that needs closing, here's an RFC
+>> attempt at that. Suggestions more than welcome! I want to arrive at
+>> something that works for the various use cases.
+>>
+>> io_uring already has a filtering mechanism for opcodes, however it needs
+>> to be done after a ring has been created. The ring is created in a
+>> disabled state, and then restrictions are applied, and finally the ring
+>> is enabled so it can get used. This is cumbersome and doesn't
+>> necessarily fit everybody's needs.
+>>
+>> This patch adds support for extending that same list of disallowed
+>> opcodes and register to something that can be applied to the task as a
+>> whole. Once applied, any ring created under that task will have these
+>> restrictions applied. Patch 1 adds the basic support for this, and patch
+>> 2 adds support for having the restrictions applied at fork or thread
+>> create time too, so any task or thread created under the current task
+>> will get the same restrictions.
+> 
+> Hi Jens,
+> 
+> Considering this is like to seccomp, a security mechanism, I don't see a
+> use case for running without IORING_REG_RESTRICTIONS_INHERIT.  Otherwise
+> there is a quick way around it by just execve'ing into itself.  IIRC,
+> seccomp also doesn't support disabling filters for the same reason.
+> So, unless someone has a use case, I'd suggest dropping the flag
+> and just making IORING_REG_RESTRICTIONS_INHERIT the default behavior.
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+Yes good point, and then I can fold these two patches as well. I do
+agree that having it be inherited on fork is probably the only way to
+go. Not posted with this series, but I did add support for unregistering
+a filter, IFF you were the original creator of it. You can either update
+it with a new set of restrictions, or simply pass NULL and get the
+current set removed.
+
+> Beyond that, adding more restrictions on an already restricted
+> application would be a useful use-case, so returning -EBUSY on
+> current->io_uring_restrict might not be doable long trem.  But feature
+> can be added later.
+
+We could certainly do something like that, where you can "OR" in more
+restrictions, you can't just "AND" them. I'll add that.
+
+> Finally, I suspect we will come quickly to the need of more complex
+> filtering of arguments, like seccomp.  Again, something that can be
+> added later but could be considered now for the interface.
+
+Quite possibly, as it's using the same mechanism we already have, it
+just supports filtering opcodes, register opcodes, and flags for either
+of those. We do have some vacant fields in io_uring_restriction right
+now which could cover more cases, at least.
+
+-- 
+Jens Axboe
 

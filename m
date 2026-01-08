@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11500-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11499-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225FCD017D1
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 09:00:33 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9549D01B71
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 10:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 190443024E79
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:56:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5BE9A35923EE
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 08:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA8A346ACC;
-	Thu,  8 Jan 2026 07:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9D346A1D;
+	Thu,  8 Jan 2026 07:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k4DADIi4"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="c4WaRlmR"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2B341ACC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89554342535;
 	Thu,  8 Jan 2026 07:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857823; cv=none; b=cnKSFO0KAasNQExRQxO4dAs0TumbWsnqaEe6IvVGbuIOeTaih2TvZDi7Wh62kCnWPFZQmjPeMYH9+Bun1uc9ycUeJz2WyVZ3aZ65O4nQ76c8smTefDN55NMhkGdjbWp6WHiJYYK3PiPu85N8xBMXqO8Oibfkw8MlKsGmehhI61w=
+	t=1767857823; cv=none; b=lImOEd7YLXDxIeqxp7fG3CtkhdRd2htyADcP1H+hgq7yOQZbGCr5lh3EDZvZqISlrJklASiYQzWW+aOQjpEEHdF4kpYUXXgHB9rVg+bGxviYOX/d4mrYsG6q5kO16H9ylYBzYIqNZTKqeS53lthD9jn3n6/gzvLJtOLr/QMmbLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767857823; c=relaxed/simple;
-	bh=JqqD6xeqUDj3nRwRtlOX37SQyfwoFYklo2JzhGSCFzA=;
+	bh=D/4Kpd2bYKbkRLQSN5eQLKG4OXd7jN3AcvumkEOaeMI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f7GG4Sm4ZZ39b+phezRyBnfk3PC3sIg1xPNl66UoNXVmjClSFtl8zJm+STctuyQ+V7UpVP9HiW5K0qQuxYcJ+ct7+p+XeH7Pq+tMQwaAO1Quuwj7aDya4+qOxuaa0o9b+KBLhgT3aV9u1EpBvpBk6sktk+ggI/5dR6tvevsjjF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=k4DADIi4; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=PAh5x6+9uGb/KVF72DwtwmWswe3xHZljjhbUcnSxzB4GD86rdHjAbwTra6ozZTPkIdvrWEXFHX5OzgNfuUxECZs4oPsU23FuWzsyWB2i/2DL1raDI+eSQCe5wi4FwBBe38/dYiwCbRGzHgmVcpv5hKKxfIGuLct0FiwMHe6oqZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=c4WaRlmR; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=KvYo9U9Xs4PTrMtECgI7ahcosY5DMnE4tqcTdGN6Z+w=; b=k4DADIi46xpKURBHPT2LJp4QHL
-	rV6AmOPsF0HHFLl3vWai/pFieZK9J0To3rELN1dtnZcjxkdWmuTEaVC6n5CcWKIWjAWfGjZZrDpN6
-	XbaeoHM28BeTmsj/RuIhC5HTi65bRR9Ht4OcNqjXkkWLQIQcfvbwCS+d5uCc9auKjZqWuGNcgbYod
-	GSJ4E/ytpG/CtdwOENF4L+1XMnpumFFgsDABXlHG7hFXPd/CVMTpF93owaxRefUTWLqbLzQKrAHkU
-	vC/QT9RUT9BTmzRpXH+rv6BfBxZfufpBhekGjxOnqVvz0r2WZ7bWsjvS4qQISDJCAVMzEODs9LLKN
-	1zHr0ouQ==;
+	bh=yl4N9qiPKC+robz7RIG19DtsqLRtLo4jXB61e6cJSfg=; b=c4WaRlmRFez+LyIO8ILViGLBfz
+	18fySqcGXGPRGIrZZ/QDidAJrVsUwrYmDIJEXTbtBZ7V9E0zx5z/ycWl3Z82rBrLM1ncEjoRZFhyy
+	Q9NBpv0UInSVc3ulZ70e969AVo5QCAalvIn+s1Y+ydBBjmSSqCHI4QCsIyuwU0fcUiorqedNWY6vK
+	bQXb6b9jBQAkLW7qhOvfUYAyXhl4/YWMJLkyG0t6D4mhB/0zYTs5Zfl0pqRFlbS/d9q+LicW4fFzC
+	2y5Zh6Qw+WI+HBrHCKxIejloIJ0ovBrW3QTNIwqzwQqIr0gakupTaX4KpS1U3KA14cXSZAA37r3cV
+	7+sX4oog==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkb1-00000001mvl-0Ei0;
+	id 1vdkb1-00000001mw9-1NOv;
 	Thu, 08 Jan 2026 07:38:15 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 55/59] mqueue: switch to CLASS(filename)
-Date: Thu,  8 Jan 2026 07:37:59 +0000
-Message-ID: <20260108073803.425343-56-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 56/59] ksmbd: use CLASS(filename_kernel)
+Date: Thu,  8 Jan 2026 07:38:00 +0000
+Message-ID: <20260108073803.425343-57-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -70,61 +70,55 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- ipc/mqueue.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ fs/smb/server/vfs.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index c4f6d65596cf..53a58f9ba01f 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -912,13 +912,12 @@ static struct file *mqueue_file_open(struct filename *name,
- static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
- 		      struct mq_attr *attr)
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 30b65b667b96..523bc7f942ad 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -54,7 +54,6 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
+ 				 struct path *path, bool for_remove)
  {
--	struct filename *name __free(putname) = NULL;;
- 	struct vfsmount *mnt = current->nsproxy->ipc_ns->mq_mnt;
- 	int fd, ro;
+ 	struct qstr last;
+-	struct filename *filename __free(putname) = NULL;
+ 	const struct path *root_share_path = &share_conf->vfs_path;
+ 	int err, type;
+ 	struct dentry *d;
+@@ -66,7 +65,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
+ 		flags |= LOOKUP_BENEATH;
+ 	}
  
- 	audit_mq_open(oflag, mode, attr);
+-	filename = getname_kernel(pathname);
++	CLASS(filename_kernel, filename)(pathname);
+ 	err = vfs_path_parent_lookup(filename, flags,
+ 				     path, &last, &type,
+ 				     root_share_path);
+@@ -664,7 +663,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 	struct path new_path;
+ 	struct qstr new_last;
+ 	struct renamedata rd;
+-	struct filename *to;
+ 	struct ksmbd_share_config *share_conf = work->tcon->share_conf;
+ 	struct ksmbd_file *parent_fp;
+ 	int new_type;
+@@ -673,7 +671,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 	if (ksmbd_override_fsids(work))
+ 		return -ENOMEM;
  
--	name = getname(u_name);
-+	CLASS(filename, name)(u_name);
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
+-	to = getname_kernel(newname);
++	CLASS(filename_kernel, to)(newname);
  
-@@ -942,20 +941,19 @@ SYSCALL_DEFINE4(mq_open, const char __user *, u_name, int, oflag, umode_t, mode,
- SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
- {
- 	int err;
--	struct filename *name;
- 	struct dentry *dentry;
- 	struct inode *inode;
- 	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
- 	struct vfsmount *mnt = ipc_ns->mq_mnt;
-+	CLASS(filename, name)(u_name);
- 
--	name = getname(u_name);
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
- 
- 	audit_inode_parent_hidden(name, mnt->mnt_root);
- 	err = mnt_want_write(mnt);
- 	if (err)
--		goto out_name;
-+		return err;
- 	dentry = start_removing_noperm(mnt->mnt_root, &QSTR(name->name));
- 	if (IS_ERR(dentry)) {
- 		err = PTR_ERR(dentry);
-@@ -971,9 +969,6 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
- 
- out_drop_write:
- 	mnt_drop_write(mnt);
--out_name:
--	putname(name);
--
+ retry:
+ 	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
+@@ -732,7 +730,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 		goto retry;
+ 	}
+ out1:
+-	putname(to);
+ 	ksmbd_revert_fsids(work);
  	return err;
  }
- 
 -- 
 2.47.3
 

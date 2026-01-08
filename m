@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11501-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11503-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6CD017DA
-	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 09:00:49 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB2FD018AF
+	for <lists+io-uring@lfdr.de>; Thu, 08 Jan 2026 09:16:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 3D09F3026A44
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 07:56:45 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 07C4030EC231
+	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 08:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E973346AD5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79834346E64;
 	Thu,  8 Jan 2026 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aNKdbbg8"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vJHMTA3x"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16E434252D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656D8342160;
 	Thu,  8 Jan 2026 07:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857823; cv=none; b=KoVFUwY67UXJw3ZRuD3jgV2XeZ/KJnWfKUaZ2YvkZcui3EIe3QudmhSKStP4wFsQp1QiKkgg6vWkTMqC9xfFseTkItoHvijp0uxdjZokcCF7b3luTs/Ba2Rf0Whwb2s5uv3svIqAORmGSh0TC++eUD4OfLlmJ/pakvhqZMwgoeY=
+	t=1767857824; cv=none; b=iateVH/2DLUoX+fcEeEWouH2DGrtWf6PN/SYnS+AzwkzEQND/dB1OBNXb1TZB5BKuC1IsCz8B3L96/rwyYJnEQEDwcTpopNnpQ7ScAmVHg9XInthjZaALVEkElgu5FeEX40eyX9Fcnud/D8+mOJ/pPVoJsFsFdZRdSjGz6Pwylg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857823; c=relaxed/simple;
-	bh=RZMRszjUY/fIM2JLm9jks2g6cg0EVOixOwmn11+9ZsU=;
+	s=arc-20240116; t=1767857824; c=relaxed/simple;
+	bh=ed4inkFbKg5gXwGxXVyNFfqCJTe0MbLbW/j1/GoDH1w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pQkC6bLUY3iR6K6aNDV8x/VXErswGzRHCdT4VA2FmZaGDxiiCz3wzP1TTZRh2NwU1mB6ge1IEWS5EEtEf3wgux9f+GPBu+krivdkJc62ySfAivAyOh/FI43PqHKilYLu5sr2qbY7UOKLXrnaryP/IxqklK3wzxmo3jVKtuhzLBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aNKdbbg8; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=W6x/R/yjUFSGSh8B+HcOgiihFtBGZ1ubDrpua5ikbQqyb+48w8wTNgz8IVL7yzk1/TdMFml65viZciYNFbu31X1SNeWOJIbUB+djbDwzB7h5XsTVpLxuIVoOViTeQYYFR1Y4A2rEK4BuRky0Xb51rQOWIppYA1VAsu+etmRstj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vJHMTA3x; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=2HkCXtuYG81yDH2ptlOKycPDQQLzNXbW/SGw7cqaL7M=; b=aNKdbbg8F69mg+KVqWmYxsUMii
-	OGUdUuFdxW+gfU9rBY40iGTrbghF66bOZnpU57JHPYE3+NsODfVEWCDJbYvEWznEyNVhMghAeLnXb
-	lltqo9DcbD00xcQf6vC/7h+2RmTqmLMkaJtO+AQNx0W6nUsfxDVn9wwBHk0m7b3LzLuS4ozEgEt0n
-	5Dk8sYO/UDe5A4ZJAv4Ys92N/SqANBXb7SyU77RpzsMsKlsaSrN32ZnSM3Esnj3+p6+WxCf196hDm
-	RSQ5tV3t0E9czwAVYL2kbda2E1aVtAjLmZHANVX6L0Gu+Cvd7VXl03qGltUxNbr+h5gDy47egWmUf
-	3lofgYsA==;
+	bh=sz/9K14xSZCaQltDnYlKvdLrLATpRcUYc8VoMWgUXMw=; b=vJHMTA3xnsNuazDLc/DOHAAF3j
+	Ta+HXaPsDQ/4x+U/mxZZa5YnCv5+4I1kvMHHZaYXGqHGL/1J5NOFNwg/858K2Dz6Vt0Yp1eV+KAuk
+	GXNuIyi/7RLioMk82m90OG3DI2MM2EnKqhL5vw0P+BGd6lxWhmFrEFHOigGhicdG3gpDw4Z4lKL0r
+	QReD531Otx/gEbfEPX/evjOSkTiVmEnRJFgpo+LumXsdmz9BWPoCliBTr4RMOpSTISkhkXntsisZ6
+	hl/kqJ+l8jGMi9dZG7n08058HMWG9YYSIumMbiIFBik5zffIJELl7y75nQXqyBFJA3sA7Ww4B9Gxj
+	MsmwKAuw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkb1-00000001mwQ-2RQS;
+	id 1vdkb1-00000001mwp-3Ehr;
 	Thu, 08 Jan 2026 07:38:15 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 57/59] alpha: switch osf_mount() to strndup_user()
-Date: Thu,  8 Jan 2026 07:38:01 +0000
-Message-ID: <20260108073803.425343-58-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 58/59] sysfs(2): fs_index() argument is _not_ a pathname
+Date: Thu,  8 Jan 2026 07:38:02 +0000
+Message-ID: <20260108073803.425343-59-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,74 +68,45 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... same as native mount(2) is doing for devname argument.  While we
-are at it, fix misspelling ufs_args as cdfs_args in osf_ufs_mount() -
-layouts are identical, so it doesn't change anything, but the current
-variant is confusing for no reason.
+... it's a filesystem type name.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/alpha/kernel/osf_sys.c | 34 +++++++++++-----------------------
- 1 file changed, 11 insertions(+), 23 deletions(-)
+ fs/filesystems.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index a08e8edef1a4..7b6543d2cca3 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -454,42 +454,30 @@ static int
- osf_ufs_mount(const char __user *dirname,
- 	      struct ufs_args __user *args, int flags)
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 95e5256821a5..0c7d2b7ac26c 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -132,24 +132,21 @@ EXPORT_SYMBOL(unregister_filesystem);
+ static int fs_index(const char __user * __name)
  {
--	int retval;
--	struct cdfs_args tmp;
--	struct filename *devname;
-+	struct ufs_args tmp;
-+	char *devname __free(kfree) = NULL;
+ 	struct file_system_type * tmp;
+-	struct filename *name;
++	char *name __free(kfree) = strndup_user(__name, PATH_MAX);
+ 	int err, index;
  
--	retval = -EFAULT;
- 	if (copy_from_user(&tmp, args, sizeof(tmp)))
--		goto out;
--	devname = getname(tmp.devname);
--	retval = PTR_ERR(devname);
-+		return -EFAULT;
-+	devname = strndup_user(tmp.devname, PATH_MAX);
- 	if (IS_ERR(devname))
--		goto out;
--	retval = do_mount(devname->name, dirname, "ext2", flags, NULL);
--	putname(devname);
-- out:
--	return retval;
-+		return PTR_ERR(devname);
-+	return do_mount(devname, dirname, "ext2", flags, NULL);
+-	name = getname(__name);
+-	err = PTR_ERR(name);
+ 	if (IS_ERR(name))
+-		return err;
++		return PTR_ERR(name);
+ 
+ 	err = -EINVAL;
+ 	read_lock(&file_systems_lock);
+ 	for (tmp=file_systems, index=0 ; tmp ; tmp=tmp->next, index++) {
+-		if (strcmp(tmp->name, name->name) == 0) {
++		if (strcmp(tmp->name, name) == 0) {
+ 			err = index;
+ 			break;
+ 		}
+ 	}
+ 	read_unlock(&file_systems_lock);
+-	putname(name);
+ 	return err;
  }
  
- static int
- osf_cdfs_mount(const char __user *dirname,
- 	       struct cdfs_args __user *args, int flags)
- {
--	int retval;
- 	struct cdfs_args tmp;
--	struct filename *devname;
-+	char *devname __free(kfree) = NULL;
- 
--	retval = -EFAULT;
- 	if (copy_from_user(&tmp, args, sizeof(tmp)))
--		goto out;
--	devname = getname(tmp.devname);
--	retval = PTR_ERR(devname);
-+		return -EFAULT;
-+	devname = strndup_user(tmp.devname, PATH_MAX);
- 	if (IS_ERR(devname))
--		goto out;
--	retval = do_mount(devname->name, dirname, "iso9660", flags, NULL);
--	putname(devname);
-- out:
--	return retval;
-+		return PTR_ERR(devname);
-+	return do_mount(devname, dirname, "iso9660", flags, NULL);
- }
- 
- static int
 -- 
 2.47.3
 

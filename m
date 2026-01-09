@@ -1,291 +1,182 @@
-Return-Path: <io-uring+bounces-11559-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11560-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314B7D07E2C
-	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 09:41:50 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C16D08E16
+	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 12:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 2B110300092B
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jan 2026 08:41:04 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6AC8F3010E6C
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jan 2026 11:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3120D33769F;
-	Fri,  9 Jan 2026 08:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09120358D22;
+	Fri,  9 Jan 2026 11:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Gm5+hv2f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/ZG7m4w"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sg-1-100.ptr.blmpb.com (sg-1-100.ptr.blmpb.com [118.26.132.100])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD94B23C4F3
-	for <io-uring@vger.kernel.org>; Fri,  9 Jan 2026 08:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FC931ED6D
+	for <io-uring@vger.kernel.org>; Fri,  9 Jan 2026 11:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767948062; cv=none; b=gVAAj2Fv3m8Tqmp9hNIeXblG685FkeNWe+JSlT2rXpRfSKOylwgkHTKfExznHEl0wT10W7dRoazVfM5xeP/T2N1rQz3nahc7q31BD2Aw696YPqTBwdb5EQSN4weoMnG9/ej5s76b5CQvfFyep9SmoDOs6xMMozE5oVbhC+tt0as=
+	t=1767958141; cv=none; b=op2SFWVOAq1sTox4XsGOpf9XHm57UjHd7VmXHr0yeytTHvxXm9gitWRWg8aBXD5yJTnGN5ru4GIXWRhQBQg7n2iQCPIiBSrI2XbIVc9XapT08auyR6CXkV8hl5ZhCvqPYZKMxn/8Ki/M12HdrKKV9ZL8hKtkuGJ/GVosbS15Wno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767948062; c=relaxed/simple;
-	bh=cifsJHj/rjmmIWQcRmEGKMM0bGQWHN+dIX6IjfKZVoY=;
-	h=Content-Type:Message-Id:In-Reply-To:To:Date:From:Mime-Version:
-	 References:Cc:Subject; b=axBj8LOCJwDLZ1pXonsYCcOzzILZ5rsWJ1tu1WTqJq7hQL722i4WT+h/BnwTmjYFOuoBlv9bxctCiMvBCY65jOAkelHuIUZsktDNEazYwlNom+ibV8F8lMTV7luWdkZdvqSjV9I2l5Zm0MJ4xB4ZIDbtWuB5xUK0xnHZdRzcyeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Gm5+hv2f; arc=none smtp.client-ip=118.26.132.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=2212171451; d=bytedance.com; t=1767948052; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=9Xj78Gyipd/VvH+bxg51uwZJ9CfiRb1eF3XE2SCIotI=;
- b=Gm5+hv2fm30xQ7Eb/KV2dQEfNpDpCw+23jWmsXIchlemAwcYyyPj88JT9Fz1tyvoPc4vn0
- 3vUpFfEajHgG2F9SHKt8Y4SzeucKkE+3kSq5kDrumwmFDmafYtmIodzluEIk9fQjt+TVn/
- Rj6IIVGdKq+BwZsZj8J4q8MQ1uhkKJ8cY6NROuQ1qewkyICiFVv6Uxl6i4eEHFQB6Yh9Ki
- YzfiNidD3zfVtxUvCe9kJSX/RkClPWjTmYveMWC74UW7+mJwugB1e+nEyxOfk4eksDPHVp
- /SOcpENeVbKcs7hgsIpWHa+1b0tFAVbdPEABVZPXsXNVx0B29s3RiLZqPTYZRQ==
-Content-Type: text/plain; charset=UTF-8
-Message-Id: <c360b8bc-fcf9-4a36-8208-9451aaeb9f41@bytedance.com>
-In-Reply-To: <e0dfa76c-c28a-4684-81b4-6ce784ee9a3c@bytedance.com>
-X-Original-From: Diangang Li <lidiangang@bytedance.com>
-X-Lms-Return-Path: <lba+26960bf13+13819b+vger.kernel.org+lidiangang@bytedance.com>
-To: "Jens Axboe" <axboe@kernel.dk>, "Fengnan Chang" <fengnanchang@gmail.com>, 
-	<asml.silence@gmail.com>, <io-uring@vger.kernel.org>
-Date: Fri, 9 Jan 2026 16:35:18 +0800
-User-Agent: Mozilla Thunderbird
-Content-Transfer-Encoding: quoted-printable
-From: "Diangang Li" <lidiangang@bytedance.com>
+	s=arc-20240116; t=1767958141; c=relaxed/simple;
+	bh=LSh5hLuiJCxDRwJ+BQ+Xc7tCZE16QA/b770rYhc+vp8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aB13l3SPNJT0cSh4hGHcKcYW81S5nhD9SD2c760DpdPFgDj9I1Mdur/JB9FpjRo7M67lkkIIMXKYaGNrM8dG+TikISPWZpZWsIwvYkybMyyMXyNnz2OiZt6W4UDRHafg3sSCZC2U0E2zEtLAXFwucK5pm/gcsgfxCn5lk+LpN+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/ZG7m4w; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42fb03c3cf2so2219484f8f.1
+        for <io-uring@vger.kernel.org>; Fri, 09 Jan 2026 03:28:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767958136; x=1768562936; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BopLoWIhKj7xpDJExutQghL/d96/x+rVfP3p1ohtywE=;
+        b=b/ZG7m4wKVzkwXfuLm6QGnOAJp/HgaQTkKoDf4PPERpRrW/xfPh/U86HYEqTVWFaAG
+         g2ZzP0xHeWS/pnMNnNON5RAq/fUxI0a+XKI8/U/MRV7sY/5X834K0gd3oCw3qkjULuVk
+         zbg+ctPuua5VxpGTkqH/YoBA+YIjplcnWshRHz0iUllOQ/X9O5k22kzUU2zJQtShydIU
+         mYFw3/HG9Rqu5xERUCHnvYY18SouLf5BPujcesnOYA8lX1gDF5I65J6qayMEbAQ0GvL1
+         1zXiO/qOJFWNfcQS8VLSgL6nKXibWjKJq+OG6dGZBG2AfAP763X1NOgvjYBmNjMevPAR
+         7Ieg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767958136; x=1768562936;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BopLoWIhKj7xpDJExutQghL/d96/x+rVfP3p1ohtywE=;
+        b=kCh/7ICaBQleoCPOLvpxaCtwAxCrfwbLHX6UwZc3heEZ/XEAuoGGRmwZRNVhMagXeg
+         5ajO3rwDkrZmK7JWUPEnW7zO0L5Heo9kOB8W5I37Po8jmH82fr5iNDnLhal601yAirXP
+         PXd5qtlEwqTqy00hZ66IPAtztq7D7YKpaxNeu/X7vHEaLo3zkr0OcCRVWWd1tN1Hn0u7
+         XLLsf5YMipskahqJRmubPr4mvFyNn0wUs/sUYlDdfuvmds1+vIttZvFtaUQeHoZr68C4
+         VEIo7DLaQ72A1d4kXdWYk8rMRCjNW4r6pLQGQh7ZU0d4vp9x31cUQY0rAZhRXixU4d9Q
+         Fenw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIb4i933V6DrR82m70XZDiYD/HINTLN1dgmoScP+LPkndbhguhBACulTbjbV2ectLFEgl9JXjqmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz2jyvDNoAB0BRgzFPD35FUz/PUtJngX1v1Ey5TrFVPZUF0rJA
+	1eIlmfRiOaWYQ9L1t46aun1SjBpqXeydkIj1ObITFsRLW1RlO+/3ALaX
+X-Gm-Gg: AY/fxX5F4f0d6lni/hm0pYkV2O4llmadkBGBsUrn79/gsEORhNhkNa6D8caPaEuHd+X
+	4mVOuZEFFVJrfgxjhMCXvpHSCMav6luNfPm4zGgNSk+TD9zc2vUp/WnjlK2N1FzDASvqb+TaKPR
+	qE/POOYWwsaISs2cn4II/naQgExs47Esa338hjZ+NTz324qdnuz/GnYGXNFHLMaUdo7qohz7zvr
+	b8MF9F8rR1mqK7dx4+aJG6GznJaopoKgLwVtqdAqUOLMv7rpGVPLtAbFkqXGY3JDXyTIWgmEy8g
+	PnXqlCVEnDxRPpnf9oMXVfm6aMHLZZaf5/kX8tB2e/C/45jMAckr7QGV83V+qivQ3sZT8P+IiGr
+	OBP6uKd+l8BrLIqsKF9CwX+Aqk1Xe6atCRXQ/pu/Ggu5FyUNaIXdtHAvja2Kz5dj82mx3uFWcFa
+	gti5+vXZUABPPG0d2iIVwevlHFyTQete5tO4WZtfQkMmwuaLXl3mGXafr87rZaaFY9Rind+A==
+X-Google-Smtp-Source: AGHT+IEDJTcPs3tUFs8ntvCdNub/oE0byZocsnwzSH3zb12a+mdPTDeqfaJ1kCUtNpxFLR0tZ3foXw==
+X-Received: by 2002:a05:600c:620c:b0:46e:33b2:c8da with SMTP id 5b1f17b1804b1-47d84b3be47mr99997755e9.32.1767958135835;
+        Fri, 09 Jan 2026 03:28:55 -0800 (PST)
+Received: from 127.com ([2620:10d:c092:600::1:69b5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d8636c610sm60056985e9.0.2026.01.09.03.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jan 2026 03:28:55 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Joshua Washington <joshwash@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Ankit Garg <nktgrg@google.com>,
+	Tim Hostetler <thostet@google.com>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Ziwei Xiao <ziweixiao@google.com>,
+	John Fraker <jfraker@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Joe Damato <joe@dama.to>,
+	Mina Almasry <almasrymina@google.com>,
+	Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Samiullah Khawaja <skhawaja@google.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	David Wei <dw@davidwei.uk>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Haiyue Wang <haiyuewa@163.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Simon Horman <horms@kernel.org>,
+	Vishwanath Seshagiri <vishs@fb.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	dtatulea@nvidia.com,
+	io-uring@vger.kernel.org
+Subject: [PATCH net-next v8 1/9] net: memzero mp params when closing a queue
+Date: Fri,  9 Jan 2026 11:28:40 +0000
+Message-ID: <1414450be1abf13a812cbcfc3747beb6b6f767a4.1767819709.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1767819709.git.asml.silence@gmail.com>
+References: <cover.1767819709.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251210085501.84261-1-changfengnan@bytedance.com> <20251210085501.84261-3-changfengnan@bytedance.com> <ca81eb74-2ded-44dd-8d6b-42a131c89550@kernel.dk> <69f81ed8-2b4a-461f-90b8-0b9752140f8d@kernel.dk> <0661763c-4f56-4895-afd2-7346bb2452e4@gmail.com> <0654d130-665a-4b1a-b99b-bb80ca06353a@kernel.dk> <1acb251a-4c4a-479c-a51e-a8db9a6e0fa3@kernel.dk> <5ce7c227-3a03-4586-baa8-5bd6579500c7@gmail.com> <1d8a4c67-0c30-449e-a4e3-24363de0fcfa@kernel.dk> <f987df2c-f9a7-4656-b725-7a30651b4d86@gmail.com> <f763dcd7-dcb3-4cc5-a567-f922cda91ca2@kernel.dk> <f2836fb8-9ad7-4277-948b-430dcd24d1b6@bytedance.com> <9a8418d8-439f-4dd2-b3fe-33567129861e@kernel.dk> <e0dfa76c-c28a-4684-81b4-6ce784ee9a3c@bytedance.com>
-Content-Language: en-US
-Cc: "Fengnan Chang" <changfengnan@bytedance.com>
-Subject: Re: [RFC PATCH 2/2] io_uring: fix io may accumulation in poll mode
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 2025/12/19 13:43, Diangang Li wrote:
->=20
->=20
-> On 2025/12/18 00:25, Jens Axboe wrote:
->> On 12/17/25 5:34 AM, Diangang Li wrote:
->>> Hi Jens,
->>>
->>> We?ve identified one critical panic issue here.
->>>
->>> [ 4504.422964] [=C2=A0 T63683] list_del corruption, ff2adc9b51d19a90->n=
-ext is
->>> LIST_POISON1 (dead000000000100)
->>> [ 4504.422994] [=C2=A0 T63683] ------------[ cut here ]------------
->>> [ 4504.422995] [=C2=A0 T63683] kernel BUG at lib/list_debug.c:56!
->>> [ 4504.423006] [=C2=A0 T63683] Oops: invalid opcode: 0000 [#1] SMP NOPT=
-I
->>> [ 4504.423017] [=C2=A0 T63683] CPU: 38 UID: 0 PID: 63683 Comm: io_uring
->>> Kdump: loaded Tainted: G S=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 E=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6.19.0-rc1+ #1
->>> PREEMPT(voluntary)
->>> [ 4504.423032] [=C2=A0 T63683] Tainted: [S]=3DCPU_OUT_OF_SPEC,=20
->>> [E]=3DUNSIGNED_MODULE
->>> [ 4504.423040] [=C2=A0 T63683] Hardware name: Inventec S520-A6/Nanping =
-MLB,
->>> BIOS 01.01.01.06.03 03/03/2023
->>> [ 4504.423050] [=C2=A0 T63683] RIP:
->>> 0010:__list_del_entry_valid_or_report+0x94/0x100
->>> [ 4504.423064] [=C2=A0 T63683] Code: 89 fe 48 c7 c7 f0 78 87 b5 e8 38 0=
-7 ae
->>> ff 0f 0b 48 89 ef e8 6e 40 cd ff 48 89 ea 48 89 de 48 c7 c7 20 79 87 b5
->>> e8 1c 07 ae ff <0f> 0b 4c 89 e7 e8 52 40 cd ff 4c 89 e2 48 89 de 48 c7
->>> c7 58 79 87
->>> [ 4504.423085] [=C2=A0 T63683] RSP: 0018:ff4efd9f3838fdb0 EFLAGS: 00010=
-246
->>> [ 4504.423093] [=C2=A0 T63683] RAX: 000000000000004e RBX: ff2adc9b51d19=
-a90
->>> RCX: 0000000000000027
->>> [ 4504.423103] [=C2=A0 T63683] RDX: 0000000000000000 RSI: 0000000000000=
-001
->>> RDI: ff2add151cf99580
->>> [ 4504.423112] [=C2=A0 T63683] RBP: dead000000000100 R08: 0000000000000=
-000
->>> R09: 0000000000000003
->>> [ 4504.423120] [=C2=A0 T63683] R10: ff4efd9f3838fc60 R11: ff2add151cdff=
-fe8
->>> R12: dead000000000122
->>> [ 4504.423130] [=C2=A0 T63683] R13: ff2adc9b51d19a00 R14: 0000000000000=
-000
->>> R15: 0000000000000000
->>> [ 4504.423139] [=C2=A0 T63683] FS:=C2=A0 00007fae4f7ff6c0(0000)
->>> GS:ff2add15665f5000(0000) knlGS:0000000000000000
->>> [ 4504.423148] [=C2=A0 T63683] CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0:=20
->>> 0000000080050033
->>> [ 4504.423157] [=C2=A0 T63683] CR2: 000055aa8afe5000 CR3: 00000083037ee=
-006
->>> CR4: 0000000000773ef0
->>> [ 4504.423166] [=C2=A0 T63683] PKRU: 55555554
->>> [ 4504.423171] [=C2=A0 T63683] Call Trace:
->>> [ 4504.423178] [=C2=A0 T63683]=C2=A0 <TASK>
->>> [ 4504.423184] [=C2=A0 T63683]=C2=A0 io_do_iopoll+0x298/0x330
->>> [ 4504.423193] [=C2=A0 T63683]=C2=A0 ? asm_sysvec_apic_timer_interrupt+=
-0x1a/0x20
->>> [ 4504.423204] [=C2=A0 T63683]=C2=A0 __do_sys_io_uring_enter+0x421/0x77=
-0
->>> [ 4504.423214] [=C2=A0 T63683]=C2=A0 do_syscall_64+0x67/0xf00
->>> [ 4504.423223] [=C2=A0 T63683]=C2=A0 entry_SYSCALL_64_after_hwframe+0x7=
-6/0x7e
->>> [ 4504.423232] [=C2=A0 T63683] RIP: 0033:0x55aa707e99c3
->>>
->>> It can be reproduced in three ways:
->>> - Running iopoll tests while switching the block scheduler
->>> - A split IO scenario in iopoll (e.g., bs=3D512k with max_sectors_kb=3D=
-256k)
->>> - Multi poll queues with multi threads
->>>
->>> All cases appear related to IO completions occurring outside the
->>> io_do_iopoll() loop. The root cause remains unclear.
->>
->> Ah I see what it is - we can get multiple completions on the iopoll
->> side, if you have multiple bio's per request. This didn't matter before
->> the patch that uses a lockless list to collect them, as it just marked
->> the request completed by writing to ->iopoll_complete and letting the
->> reaper find them. But it matters with the llist change, as then we're
->> adding the request to the llist more than once.
->>
->>
->=20
->  From e2f749299e3c76ef92d3edfd9f8f7fc9a029129a Mon Sep 17 00:00:00 2001
-> From: Diangang Li <lidiangang@bytedance.com>
-> Date: Fri, 19 Dec 2025 10:14:33 +0800
-> Subject: [PATCH] io_uring: fix race between adding to ctx->iopoll_list=20
-> and ctx->iopoll_complete
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->=20
-> Since commit 316693eb8aed ("io_uring: be smarter about handling IOPOLL
-> completions") introduced ctx->iopoll_complete to cache polled=20
-> completions, a request can be enqueued to ctx->iopoll_complete as part=20
-> of a batched poll while it is still in the issuing path.
->=20
-> If the IO was submitted via io_wq_submit_work(), it may still be stuck=20
-> in io_iopoll_req_issued() waiting for ctx->uring_lock, which is held by
-> io_do_iopoll(). In this state, io_do_iopoll() may attempt to delete the
-> request from ctx->iopoll_list before it has ever been linked, leading to=
-=20
-> a list_del() corruption.
->=20
-> Fix this by introducing an iopoll_state flag to mark whether the request
-> has been inserted into ctx->iopoll_list. When io_do_iopoll() tries to
-> unlink a request and the flag indicates it hasn=E2=80=99t been linked yet=
-, skip
-> the list_del() and just requeue the completion to ctx->iopoll_complete=20
-> for later reap.
->=20
-> Signed-off-by: Diangang Li <lidiangang@bytedance.com>
-> Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
-> ---
->  =C2=A0include/linux/io_uring_types.h | 1 +
->  =C2=A0io_uring/io_uring.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 1 +
->  =C2=A0io_uring/rw.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 7 +++++++
->  =C2=A0io_uring/uring_cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 1 +
->  =C2=A04 files changed, 10 insertions(+)
->=20
-> diff --git a/include/linux/io_uring_types.h b/include/linux/=20
-> io_uring_types.h
-> index 0f619c37dce4..aaf26911badb 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -677,6 +677,7 @@ struct io_kiocb {
->  =C2=A0=C2=A0=C2=A0=C2=A0 };
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0 u8=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 opcode;
-> +=C2=A0=C2=A0=C2=A0 u8=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iopoll_state;
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0 bool=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cancel_seq_set;
->=20
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 5e503a0bfcfc..4eb206359d05 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1692,6 +1692,7 @@ static void io_iopoll_req_issued(struct io_kiocb=20
-> *req, unsigned int issue_flags)
->  =C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0 list_add_tail(&req->iopoll_node, &ctx->iopoll_l=
-ist);
-> +=C2=A0=C2=A0=C2=A0 smp_store_release(&req->iopoll_state, 1);
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0 if (unlikely(needs_lock)) {
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index ad481ca74a46..d1397739c58b 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -869,6 +869,7 @@ static int io_rw_init_file(struct io_kiocb *req,=20
-> fmode_t mode, int rw_type)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- return -EOPNOTSUPP;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kiocb->private =3D NULL=
-;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kiocb->ki_flags |=3D IO=
-CB_HIPRI;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->iopoll_state =3D 0;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ctx->flags & IORING=
-_SETUP_HYBRID_IOPOLL) {
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- /* make sure every req only blocks once*/
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- req->flags &=3D ~REQ_F_IOPOLL_STATE;
-> @@ -1355,6 +1356,12 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool=20
-> force_nonspin)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct llist_node *next=
- =3D node->next;
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req =3D container_of(no=
-de, struct io_kiocb, iopoll_done_list);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!READ_ONCE(req->iopoll_st=
-ate)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node-=
->next =3D NULL;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 llist=
-_add(&req->iopoll_done_list, &ctx->iopoll_complete);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node =
-=3D next;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 conti=
-nue;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_del(&req->iopoll_n=
-ode);
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wq_list_add_tail(&req->=
-comp_list, &ctx->submit_state.compl_reqs);
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nr_events++;
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 0841fa541f5d..cf2eacea5be8 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -251,6 +251,7 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int=
-=20
-> issue_flags)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!file->f_op->uring_=
-cmd_iopoll)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- return -EOPNOTSUPP;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 issue_flags |=3D IO_URI=
-NG_F_IOPOLL;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->iopoll_state =3D 0;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ctx->flags & IORING=
-_SETUP_HYBRID_IOPOLL) {
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- /* make sure every req only blocks once */
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- req->flags &=3D ~REQ_F_IOPOLL_STATE;
+Instead of resetting memory provider parameters one by one in
+__net_mp_{open,close}_rxq, memzero the entire structure. It'll be used
+to extend the structure.
 
-Hi Jens,
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ net/core/netdev_rx_queue.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Regarding the analysis of this list_del corruption issue and the fix=20
-patch, do you have any other comments?
+diff --git a/net/core/netdev_rx_queue.c b/net/core/netdev_rx_queue.c
+index c7d9341b7630..a0083f176a9c 100644
+--- a/net/core/netdev_rx_queue.c
++++ b/net/core/netdev_rx_queue.c
+@@ -139,10 +139,9 @@ int __net_mp_open_rxq(struct net_device *dev, unsigned int rxq_idx,
+ 
+ 	rxq->mp_params = *p;
+ 	ret = netdev_rx_queue_restart(dev, rxq_idx);
+-	if (ret) {
+-		rxq->mp_params.mp_ops = NULL;
+-		rxq->mp_params.mp_priv = NULL;
+-	}
++	if (ret)
++		memset(&rxq->mp_params, 0, sizeof(rxq->mp_params));
++
+ 	return ret;
+ }
+ 
+@@ -179,8 +178,7 @@ void __net_mp_close_rxq(struct net_device *dev, unsigned int ifq_idx,
+ 			 rxq->mp_params.mp_priv != old_p->mp_priv))
+ 		return;
+ 
+-	rxq->mp_params.mp_ops = NULL;
+-	rxq->mp_params.mp_priv = NULL;
++	memset(&rxq->mp_params, 0, sizeof(rxq->mp_params));
+ 	err = netdev_rx_queue_restart(dev, ifq_idx);
+ 	WARN_ON(err && err != -ENETDOWN);
+ }
+-- 
+2.52.0
 
-Best regards,
-Diangang Li
 

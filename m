@@ -1,161 +1,203 @@
-Return-Path: <io-uring+bounces-11545-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11546-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADB0D06939
-	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 00:54:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B0ED06972
+	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 01:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 73EF9301E167
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jan 2026 23:54:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 56733302A94B
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jan 2026 00:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14738333451;
-	Thu,  8 Jan 2026 23:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FE2946A;
+	Fri,  9 Jan 2026 00:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bRhBbdqE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OScpBk39"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1C21A23A4
-	for <io-uring@vger.kernel.org>; Thu,  8 Jan 2026 23:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53475500945
+	for <io-uring@vger.kernel.org>; Fri,  9 Jan 2026 00:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767916452; cv=none; b=eDJ8ZSnbMItK1x1LB1Fd5dOBQOw/9WcYF6tX486o4ycy9AM599YREKm88iTadPmBc0onZfdiBpBg9HT3Pe/4vRgRsdXeQHqE0rUKqEJpXvikE+Nl0oVke6ElK6ENlL+hf0EvTJuwsSC367gzVc7znkCGzspYvJoAvXcjz90hVoE=
+	t=1767917252; cv=none; b=mlSu1/oGQnQg/T7a2gQoE/0SLamMbwiSVspnDp4KzNjuLxPGFIjh0dX5iVJCdkTJDtzd73//lEudyoi8no7NrG5c59FxZG3DP524wRPccVdionQ6r+SsLUc8qjxM5BSJvfW7VGtwytY+tfQ3veZFw/jHc/vb1OSsaKrZTE73gYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767916452; c=relaxed/simple;
-	bh=0sCldnrLx9ralD2X9Ueafr3kmU+xKLU4rTnRrHPhxBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efgKIJPCxphzTTEdD/U3mX5kkvPu+tik/Od8KfMgW8S8bvRYWBps0npPr4h3rtGRmpyPiy3LnQntND0PVqUBVDg20imdiVLLAYBPuuN6/XCQUhaq9TEmrtfFYssea9IqRc6TwdT22GRQ4Yk5g/B7Dsu29ryCU7/yHcBEcAftxus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bRhBbdqE; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c75178c05fso1500601a34.0
-        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 15:54:09 -0800 (PST)
+	s=arc-20240116; t=1767917252; c=relaxed/simple;
+	bh=At+ejiUVooGrDxCu7H9tDtKCxVkgAhpAMSZ/XVnNRH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dIYhxts6D/g+rj5Ln+KR3hKGq049b+rabmnkfSfBb4NZhBgS+BoCK1B3YKMoQiCbXWy6ZwPdIaxnFJPOutW+6cA7BenNRwykX4ZIQtEEmfhPGYW/YTIgwPB4trSQjz56el45MUysAltDPGZ6nSs7uZ0sC8wtNuXrmKoZWiafa+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OScpBk39; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4f4a88e75a5so35870081cf.0
+        for <io-uring@vger.kernel.org>; Thu, 08 Jan 2026 16:07:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1767916448; x=1768521248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8guKUXJ16AY1UP0Z+aQkb3So1uzLZKqQ2GlZcS2dHA0=;
-        b=bRhBbdqEVqZKSPr/w7v8rNkTdz3LA/Nw8odUjvicjY0sk+L7LetioqdSiX/7pSXlVm
-         gnv9CHSrfvRbOY/B4IEzUd4QC2YRRy53h+mgf8Da56yPuu3xckkBEg+02W5JEOpBcNik
-         8SSz3HpB8cJuBUe6BGm319jq5qEnEmryeFO9jntHsoeJseXfgJpi7AMog1flb6VvlupA
-         TBZXI3KxaTQp7Ad7UPcPe4DbIIkVeZfRUaFZhASc8fP1mfCa/5/MW5NtMQeibzfEgPNH
-         gwL0BA1OUiHJFs+Be4EKCswDKhGqNzkXqjPghRDKtZUgDNbOExTkq6yy3TVmVF/JpiKj
-         xgxQ==
+        d=gmail.com; s=20230601; t=1767917248; x=1768522048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mwcHH9y0yBhD7jk8OUEheUU1VNvpy74uQAsTiO0wLZw=;
+        b=OScpBk39KtESYlUHQSkkwzMaG+U06j7sJn3qtB565ezxRtcXvYK/SizKE6ft+Z4sui
+         Jp/yyJmgR4bJHSgga8wce2VRrSzJjvEjBOm7j/OJ8eoRc8hbo/GtCX/qY6IejlKg4aKT
+         q6cHMXvkW8MgGxXBsxxIgNQ9Q1v5z7lt/yLLJQWY9Yc13WkAIkKo3XXsLMPHYnLUo3YH
+         ioNL0o75T7/iaYwqc5FUalvK8kdhDSscGkzwZyPWlMvi8yImNmDRclUFc9HQgylLuVG/
+         n8Fij3I+gDAvBEQQZQ6eES76+q7YGUsAoCDnQXh98xTL2ljkzTzFqeA8frvbET1oQjJ7
+         A0Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767916448; x=1768521248;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8guKUXJ16AY1UP0Z+aQkb3So1uzLZKqQ2GlZcS2dHA0=;
-        b=nR6yDgShCVoxY9Ipw2r00C5HMaYY8zzZNK0H0lNSLQdKdUzSdhP7+zN20D7LCeHjP9
-         5tKsytKNnnfQSAT337G/RPExL44vtVHxW0Kd+OGM3EGqvbWqSkJwFkrCIBNF24o7pbEH
-         nwdRAyFtpgIlZsXC9Otxylv0SAMP4rUhKC4s1m5OIruY31dtFkF+E867OQuittDK2OK8
-         dv0RXre/EhW3I3yndxpChLRZoAjL5TMSz+ayF5O/gWM4/K0Y1NO9VIA/eJ9OpVYQg9tD
-         Z8ZVN1RchTltJZk9jaM+v6IHZMhPjcRv3rZfnA7LZwL9EI6pHI/oz/8xfx+L3P9CZhd5
-         XQIQ==
-X-Gm-Message-State: AOJu0Yw2fqO0r2KNQh/svSKjREBa/9xX4XdIkOxJepJyWD6Sho8TfI7N
-	u/HEHpMKGAESsKgtKDbZ2yxLFpit5wZ+WPB5Wt15br1TTe9DOZ53rYAX8MBQw+J6jh4=
-X-Gm-Gg: AY/fxX4S6PeyRAdg87YoLJEAPBQ9AJXRQKTbXd40JSDm5dhhYZ1KGibsxhj2MCKl6Co
-	2dc2YmytXzGqNLmo1TdgcqDwrMVk4XFWvSixyMWRD8wkKw5dGDH50Cu28/1UVVac3GLMYHJpxZ/
-	UTAwsUizFaSFTcV63lyZabiIdPUMxyM7sTyEwVkYM3cOrdPF2B3jO19aNzo9j4h7Lc0NyXyVyHU
-	C82GRmnjNdkcZXhsIuXtVE8xfdGFPBnJlsvXZef/0f+ngHA5K6X30+aL23kNgdfrM2uK5Pf1pdM
-	4p3qmWhwt/P04gj3SabMipgyQ/2CmGRAu8yqlsFm8CfU8iq+EkyZynJpyzaW/HYHhFjgLsC9nr/
-	W8PKpRqpUjpHOqq6hz73Rr79HgBurBWvNkO+UEVqOAtH9PtWMzsB+7yhxUwTwl6o76vYB9VOYbM
-	mF3kngItQK
-X-Google-Smtp-Source: AGHT+IEQIUfFcztZHMvz+Q+nCam63ilId45TFb/rxbKOEFyVcrLxzoS7ffO5aUNfEQCDKqV2xqGNjA==
-X-Received: by 2002:a05:6820:60a:b0:65f:668a:4d with SMTP id 006d021491bc7-65f668a03ecmr487004eaf.77.1767916448330;
-        Thu, 08 Jan 2026 15:54:08 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f48bbc0desm3882470eaf.2.2026.01.08.15.54.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 15:54:07 -0800 (PST)
-Message-ID: <9f7e8b5f-e89b-4e7e-a520-ae97127b45f7@kernel.dk>
-Date: Thu, 8 Jan 2026 16:54:06 -0700
+        d=1e100.net; s=20230601; t=1767917248; x=1768522048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mwcHH9y0yBhD7jk8OUEheUU1VNvpy74uQAsTiO0wLZw=;
+        b=Oc/Lon5ABvwNQluj6WS++6b7DJXmyXv5SSqTXvZp0eLUdF85VxHYnW6Jo5qCcJWFw+
+         G/CQZOv2eJJqfNArGry0kr8ijyJyhZx4chYcHWU1zR3Qtbsry/oUi5uSTnZ/z5lMY6ED
+         859sr9Nnlb8Nv1EzmsrRC7+zrRvnPSSSCjMA6c+AZeQWk2pyITBbgYdwN94YxSdQ6DMk
+         LRnWLZsiMup7s0+C34JhvEe8tgoaa5f3Z3mz3nzA9DwqScwQo3zb6mXbZAkM2yt4bn/9
+         fMN4gt29tXmZ9HuzVVoDRnJENQ9kZSQmW3gfdmjxKDJ/Ir6NYB56bXzE+VFYX+q4HMjj
+         KqzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfgY8r5PA29rk+vUdgAxgOONc/GLAuqfMyEdtN8FH3iAmF+upsEPbjaSik5YSMVD7rcJC3UBWXtw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0eSp9yyA3/bUGa1OEA0NryNseMPSYTQsSCDfXa1+3X9fdcq0s
+	+IsS0yNLfAinziqT0tqjUsNwmsHkxxp9HQsFKUnD7dROG+KbQPwx2MJxYuLOrf+PnDVcZbukwRv
+	TzclcyuMlEVZlVH49cAklRfpE6EPUeEI=
+X-Gm-Gg: AY/fxX4dCcItJKc1vyiZEa0SGVFTrEv5FjmxnaW9KgiGGkyxvPTw7+aCWjAgj8seOjP
+	s8YEQexPSaPbdChtuZSsbbKRGPmaOBRgUs/XedL6S7b/ydhCtM170kYHpBVscMeOLuePMw3ZJSv
+	bNp9pNPdg8iO8brdSN3cIMyt7qfukHHe0rzDmWJIS52Dz3+CjaeBfgJhDJg60qlyHUUIz+QhhBF
+	WiHec6nXH2GX/ZnryAj/LH6rhXzfN52OahFxVC/fG5wM4HCBfd8JgYrzwpCERH7wMU1eA==
+X-Google-Smtp-Source: AGHT+IFTYUm8TBceK9AEALjEwyZjb5Ut5LIBeavM//pAxXT9DFybKze1RR/noQoH4SgtuTVmLdr2SsdEJwT6JgLYpKk=
+X-Received: by 2002:a05:622a:4ccd:b0:4ee:4a3a:bd00 with SMTP id
+ d75a77b69052e-4ffb4a26f43mr112332621cf.71.1767917247775; Thu, 08 Jan 2026
+ 16:07:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET RFC 0/2] Per-task io_uring opcode restrictions
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <20260108202944.288490-1-axboe@kernel.dk>
- <87pl7j4v8h.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87pl7j4v8h.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-25-joannelkoong@gmail.com> <CADUfDZpbNHtT7pvnj8E-A+5_phNnCMieu4RghdVzM93d-6_vxg@mail.gmail.com>
+In-Reply-To: <CADUfDZpbNHtT7pvnj8E-A+5_phNnCMieu4RghdVzM93d-6_vxg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 8 Jan 2026 16:07:15 -0800
+X-Gm-Features: AQt7F2qjPAgCG3Ln_ZTHShPRrioe3v7M09o9oZXMt6pLnMdHbfEXRGtKcs3LrCY
+Message-ID: <CAJnrk1aC=mOexGtv=K2DenWCiBJnAbMfKxQGA-TY32YfxnMbXw@mail.gmail.com>
+Subject: Re: [PATCH v3 24/25] fuse: add zero-copy over io-uring
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/8/26 3:04 PM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> Hi,
->>
->> One common complaint is that io_uring doesn't work with seccomp. Which
->> is true, as seccomp is entirely designed around a classic sync syscall -
->> if you can filter what you need based on a syscall number and the
->> arguments, then it's fine. But for anything else, it doesn't really
->> work. This means that solutions that rely on syscall filtering, eg
->> docker, there's really not much you can do with seccomp outside of
->> entirely disabling io_uring. That's not ideal.
->>
->> As I do think that's a gap we have that needs closing, here's an RFC
->> attempt at that. Suggestions more than welcome! I want to arrive at
->> something that works for the various use cases.
->>
->> io_uring already has a filtering mechanism for opcodes, however it needs
->> to be done after a ring has been created. The ring is created in a
->> disabled state, and then restrictions are applied, and finally the ring
->> is enabled so it can get used. This is cumbersome and doesn't
->> necessarily fit everybody's needs.
->>
->> This patch adds support for extending that same list of disallowed
->> opcodes and register to something that can be applied to the task as a
->> whole. Once applied, any ring created under that task will have these
->> restrictions applied. Patch 1 adds the basic support for this, and patch
->> 2 adds support for having the restrictions applied at fork or thread
->> create time too, so any task or thread created under the current task
->> will get the same restrictions.
-> 
-> Hi Jens,
-> 
-> Considering this is like to seccomp, a security mechanism, I don't see a
-> use case for running without IORING_REG_RESTRICTIONS_INHERIT.  Otherwise
-> there is a quick way around it by just execve'ing into itself.  IIRC,
-> seccomp also doesn't support disabling filters for the same reason.
-> So, unless someone has a use case, I'd suggest dropping the flag
-> and just making IORING_REG_RESTRICTIONS_INHERIT the default behavior.
+On Thu, Jan 8, 2026 at 1:15=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> On Mon, Dec 22, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > Implement zero-copy data transfer for fuse over io-uring, eliminating
+> > memory copies between kernel and userspace for read/write operations.
+> >
+> > This is only allowed on privileged servers and requires the server to
+> > preregister the following:
+> > a) a sparse buffer corresponding to the queue depth
+> > b) a fixed buffer at index queue_depth (the tail of the buffers)
+> > c) a kernel-managed buffer ring
+> >
+> > The sparse buffer is where the client's pages reside. The fixed buffer
+> > at the tail is where the headers (struct fuse_uring_req_header) are
+> > placed. The kernel-managed buffer ring is where any non-zero-copied arg=
+s
+> > reside (eg out headers).
+> >
+> > Benchmarks with bs=3D1M showed approximately the following differences =
+in
+> > throughput:
+> > direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+> > buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+> > direct randwrites: no difference (~750 MB/s)
+> > buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
+> >
+> > The benchmark was run using fio on the passthrough_hp server:
+> > fio --name=3Dtest_run --ioengine=3Dsync --rw=3Drand{read,write} --bs=3D=
+1M
+> > --size=3D1G --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev.c             |   7 +-
+> >  fs/fuse/dev_uring.c       | 176 +++++++++++++++++++++++++++++++-------
+> >  fs/fuse/dev_uring_i.h     |  11 +++
+> >  fs/fuse/fuse_dev_i.h      |   1 +
+> >  include/uapi/linux/fuse.h |   6 +-
+> >  5 files changed, 164 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index ceb5d6a553c0..0f7f2d8b3951 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -1229,8 +1229,11 @@ int fuse_copy_args(struct fuse_copy_state *cs, u=
+nsigned numargs,
+> >
+> >         for (i =3D 0; !err && i < numargs; i++)  {
+> >                 struct fuse_arg *arg =3D &args[i];
+> > -               if (i =3D=3D numargs - 1 && argpages)
+> > -                       err =3D fuse_copy_folios(cs, arg->size, zeroing=
+);
+> > +               if (i =3D=3D numargs - 1 && argpages) {
+> > +                       if (cs->skip_folio_copy)
+> > +                               return 0;
+> > +                       return fuse_copy_folios(cs, arg->size, zeroing)=
+;
+> > +               }
+> >                 else
+> >                         err =3D fuse_copy_one(cs, arg->value, arg->size=
+);
+> >         }
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index e9905f09c3ad..d13fce2750e1 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -89,8 +89,14 @@ static void fuse_uring_flush_bg(struct fuse_ring_que=
+ue *queue)
+> >         }
+> >  }
+> >
+> > +static bool can_zero_copy_req(struct fuse_ring_ent *ent, struct fuse_r=
+eq *req)
+> > +{
+> > +       return ent->queue->use_zero_copy &&
+> > +               (req->args->in_pages || req->args->out_pages);
+> > +}
+> > +
+> >  static void fuse_uring_req_end(struct fuse_ring_ent *ent, struct fuse_=
+req *req,
+> > -                              int error)
+> > +                              int error, unsigned issue_flags)
+> >  {
+> >         struct fuse_ring_queue *queue =3D ent->queue;
+> >         struct fuse_ring *ring =3D queue->ring;
+> > @@ -109,6 +115,12 @@ static void fuse_uring_req_end(struct fuse_ring_en=
+t *ent, struct fuse_req *req,
+> >
+> >         spin_unlock(&queue->lock);
+> >
+> > +       if (ent->zero_copied) {
+> > +               WARN_ON_ONCE(io_buffer_unregister(ent->cmd, ent->fixed_=
+buf_id,
+>
+> io_buffer_unregister() can fail if the registered buffer index has
+> been unregistered or updated with a userspace buffer since the call to
+> io_buffer_register_bvec(). So this WARN_ON_ONCE() can be triggered
+> from userspace. I think it would be preferable to ignore the error or
+> report it to the fuse server.
 
-Yes good point, and then I can fold these two patches as well. I do
-agree that having it be inherited on fork is probably the only way to
-go. Not posted with this series, but I did add support for unregistering
-a filter, IFF you were the original creator of it. You can either update
-it with a new set of restrictions, or simply pass NULL and get the
-current set removed.
+Sounds good, this was a remnant from when registered buffers had been
+pinned. I'll remove this WARN_ON in v4.
 
-> Beyond that, adding more restrictions on an already restricted
-> application would be a useful use-case, so returning -EBUSY on
-> current->io_uring_restrict might not be doable long trem.  But feature
-> can be added later.
-
-We could certainly do something like that, where you can "OR" in more
-restrictions, you can't just "AND" them. I'll add that.
-
-> Finally, I suspect we will come quickly to the need of more complex
-> filtering of arguments, like seccomp.  Again, something that can be
-> added later but could be considered now for the interface.
-
-Quite possibly, as it's using the same mechanism we already have, it
-just supports filtering opcodes, register opcodes, and flags for either
-of those. We do have some vacant fields in io_uring_restriction right
-now which could cover more cases, at least.
-
--- 
-Jens Axboe
+Thanks,
+Joanne
+>
+> Best,
+> Caleb
+>
 

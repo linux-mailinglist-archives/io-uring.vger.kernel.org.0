@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-11564-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11565-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD5FD08E58
-	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 12:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AAFD08E5B
+	for <lists+io-uring@lfdr.de>; Fri, 09 Jan 2026 12:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1D89A304F645
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jan 2026 11:29:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A52CD3059AA8
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jan 2026 11:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118D635B143;
-	Fri,  9 Jan 2026 11:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3B735A94D;
+	Fri,  9 Jan 2026 11:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVLwpLVH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwHKJmqx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89C735A927
-	for <io-uring@vger.kernel.org>; Fri,  9 Jan 2026 11:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E9C359F8B
+	for <io-uring@vger.kernel.org>; Fri,  9 Jan 2026 11:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767958155; cv=none; b=k1ZJ6SJ9233VwYd3yCWtIffk1mpW8J5KJ/efjycm1yNIpKWjYU2Z0R9rVdzExZOR0+oCJiq8cJ38V2CGuIlHV0Nv/0v6cYbVpJBMHvR9YLXS70Pu/DViczko5m6cyjX4cA6Uc3nINRdFfxVfejuiIGlligG+kqPxKO/cZ7e3ieQ=
+	t=1767958157; cv=none; b=KjLE+obNBo0dC9zMkVHRhOysxVTgCpC3tbQHz6gCCuU+JMNm7tzoml/8+3wukRwdtCmDiWRS3oiffT1YZUdWV4sYFlgPR0MXkognUeoLTS5p6XDUFRyztCAQiqaYn0esmYlm+2zYib3TA9HZTelqyIUDIJtO4x5PZnwDyppwm+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767958155; c=relaxed/simple;
-	bh=QZXEA2+NYMD7lIXsZ2nJV6uQaLTc157QE8KSkpAr83g=;
+	s=arc-20240116; t=1767958157; c=relaxed/simple;
+	bh=5qbU+cqkCY7Oy7htHErBAKE7+dTnE/mhpdnkukFkSXk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EOY5VknJz5A5rOHi3oJn/coQ/daYG/zRKVUQVXkDbgHjE2xMVBuUUVB/dXaCEt95XSOwI5b7xOamH5cxdeZ31wDTSUqIBbGwHy400xCBET2QVaaMm+MvokLaHrvA9X2Rp5X0CASdotF1LN8DYpNw5lmKGaLwVLAXLHpgO6sDMAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVLwpLVH; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=NV7HiU5l0PpR3ryGNRRGQe3eFriTlJfH+qdmF81SJQDXGf9QdTzh+fAFb1hAH7tPhiuoPYlYo1nuhNXIxmLlcW9nUjnkw7XC5TkUZEfsDKQI5ZXeb2BHWyig+Dt+gIF3azQC4KSSy6wc2ZR8WGlClKKB+gaBGuny/Khsmc+J/5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwHKJmqx; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47d59da3d81so14008135e9.0
-        for <io-uring@vger.kernel.org>; Fri, 09 Jan 2026 03:29:10 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47bdbc90dcaso30522595e9.1
+        for <io-uring@vger.kernel.org>; Fri, 09 Jan 2026 03:29:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767958148; x=1768562948; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767958150; x=1768562950; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nZD5Wx1jyZXUWe5yKYezCw7KRgK+3rTGuK1KYHQq5VM=;
-        b=JVLwpLVHuBi7ybwLaq1H6ZGCcHvwRcgM4c5hYLnGZpLo/cWv7bx/eAYBv12z5zP1fP
-         WoScqF4zYl6NcNET1aCkG0hmoCNF+ab4SGGJodg1ixCmdq84tOkWwjCCHsyNBQM8IPu0
-         w8czIfufXohhSd3FQ2pQ7TDfZZG+VZ2hD9qg0LHriluIcaO4vPcAZ2T+Dt2tJCRdYyxA
-         gK/+DTf4odgXJRqadja4+iPhhbvjlbwZIpQxDP39e2RGW6/r8qpb6vFptYx3GIa+DajR
-         Jl1Qf6b/mCJVnLhvzEray0QA/OcOD+20NFTJtAvBEVLZ4AQ2cQPZRNkdHbkWxmeUXWDR
-         m1pg==
+        bh=3VL6yChlTp3dYpMCzBhFC2VDB7at7kYV7rRkhbUdhFI=;
+        b=hwHKJmqxpH5w6iezA9snAeS/GLYfoExNv4gBKN9yxT/nDeYIHHuwMvAxdv6K15Pxit
+         niT4NRbLo01etqSDQfSgfq2DYE8e4mjoPxd4fMi4Wv8RibRAlH9MdhdKPjmqYgqgI0VR
+         JeL1VI0bSvL95e9j0035mOBpDqmXiruk/QjjTVAwFrXphkcYN+dzdzCdJGa3PRlPps5e
+         q7OO7AmlTU1MOTuVnrN38SG63erPKbLNLAfPextQL2H6K7If8PxYvkGCffnLvJNcGAGg
+         lJEIXfar3z9eui7C7ipzvK5iSpIHwzgY2p00ziAWbgkeJh7hYTA+mB2JBke/jH1FpXMw
+         0hZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767958148; x=1768562948;
+        d=1e100.net; s=20230601; t=1767958150; x=1768562950;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=nZD5Wx1jyZXUWe5yKYezCw7KRgK+3rTGuK1KYHQq5VM=;
-        b=NjTGcA7iCQfT7Mimz4a7v5sogLSe+B3/O+HQobpcAz5H2FQ8t+Jpzgxnq0ZJYTG9Sk
-         Ay7J7pRE6JoAhncLR/T8cn4w4pViBDA4t38nOqvTzXrZwtwYfAvJ5+4ipo6e+FaRORm3
-         oHLCqBlJybtJlEagbuYU4rxDFHoaVsZvw4qyyKHJjR/KUXrgqvzgYP9obHIXx99lbrvu
-         E0AydugDCZnjuHs3PizF7YdhgstIxGYU91UEZV9Q5beOUCF8fQKNYmefLGixxhm8EZb7
-         erAhOp1dfIdNBT6J8J4XvHerFmlDQBCbub13DLHHiou3V3GGhYDgaB11ieS8nNWofnWK
-         xGzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0iNOjnSoAPm5Ikdm+ySxsgEFAoENQhc0CHOkJvXVlFr+VORjotKbXe/BzREXBC4uDP4/HnqrjeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUIaXiChFNBF3mC7zBzVqYPxRb4ObQoyKMGqwlLSbr4MEIv5Hm
-	VhkfLxUS3mGEfbN0moD1DrHkOWlKC8RF7KVkZEtthkrKjFRuFS75/boL
-X-Gm-Gg: AY/fxX7Tjeu+ZSSotH/a3HDpkPlLlJgMrWom4Et5aDGZCONFy6ZtNtlU5aR7iAhzMnJ
-	yEeHcqz9pagyHd3fU7XmNgSkDFyqF/HbX66BUe16ozHS2RrqtQ/5eJX7Esp07hu6+TAMt3rJq7c
-	0Y6SxUn/mR1IbQlXwCSb6UysSacDztSAv7YXGJeh++L9aC0pPUjq9+eD60vIG+MCl4v1h22KrJN
-	8xMarp/J+ne/VwXvH4FBYcUEvLTirxq8OzSjh8ctI9dCl8UCFRfUqYp/t99UkWj2K9dvFbyDwWD
-	3XWXbTKbwzJohV5vZgvUGi/i7H20emfhE4MGaUj7peVsZx6DLCOjiA19PI9iMbY/fNdDLEV233y
-	Qlu4JlIivQxMt+M4C3hcxpM26xAMM5OU3gg1FyAWNhPmItg/vW3WjEp/+6Ab8MwKRF1uJ4/uwsU
-	7N8El7+JHdHjMdOE+TH7Dw+RvOMEo2TOJ9HBdZv9mA/C8+Mhy0bqSaEJf4li/VkQ4KRlgBwQ==
-X-Google-Smtp-Source: AGHT+IFCZxx8Wr/pDbni51TxgkC0jyiIt2gDlEMICKp850CkohI8JdFYYguYo7ByEs5Bde0EWv+Mdw==
-X-Received: by 2002:a05:600c:8b37:b0:47d:333d:99c with SMTP id 5b1f17b1804b1-47d84881c77mr97821025e9.18.1767958147570;
-        Fri, 09 Jan 2026 03:29:07 -0800 (PST)
+        bh=3VL6yChlTp3dYpMCzBhFC2VDB7at7kYV7rRkhbUdhFI=;
+        b=OB25M7xdz+SOMsLgOViTaW47u74/JXhR4Boee89peNmcoPaPSwIuLTVDYIrvdRR9ll
+         3NZLCNNDHyAzLMGm75j1u+Ii9dN2hFkjtMxZcPtklm5KdcUSCrpKjet+CtZD7UwMs8QG
+         lnl17Uy9rhdkTsxhdTs2cInj23mOmtk0sNhUZD4+DEpzoK+gOlKq0iKzk3ACJkQU6x5r
+         biF0dEjegkF+NSWUKUhkvaZBX9u9yhepLs3i+0sT4Ysr8leZ1VsEa9bUEF3VAnW+BbSe
+         cGySqMVWOqw18Hst+23h232GPhKW6zY45jevi0wELK2YwhWnnBlhzrbued7XJBwO+SZn
+         7yBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs5WrFzFdF+BB7grXH3klE7PtjFJbMYFINGV/arPslR44RZ6m3msgoArEXNwKUh8TjLlCcGorLTg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNQvYkGarvJXhiOZryNRvDIPdAIp2deb1kiD85nxeK//OUFDxa
+	FW6TV3uvOdjQmCsmtoZVdP8daHyuDAWN659cvalPl2L1014ZvFg+nln0
+X-Gm-Gg: AY/fxX4XBttqyZBQKD4AfYwL0shiwUJC+HbQB24P3LVf7zBCXT9MePlAoXeNVi0uyGN
+	BgMUOPw06NN7zB59wWDwXIffm7s/f+fX451gx/3N3YfSOi173hNQwP1MOjKOTtwNXw0wgJiAl49
+	OvES5AGc8jXV+r2oYdG8iyizD4obYVH75teZGVtWel93yUcuexQRjox/uobsYQOxtzbhGJyFQ8A
+	JFHcBpWXR/92UbIEM1XlJqwVfTT2UPWlFO7kxg1pe8h26l5R/hlRwNdPvcLIB79LOnV451jGRy4
+	nmLImeLiUGI3NiLrHsUe7nKFg3qtmEZA+IqVf6x7TRstySrxJXBR9xn4EOyNTn0sz/sqNXQwNEG
+	vEbSlnOwRO9YFKeFly+D4dh0Xbag/AVfiyE1rxmByPDeGCQHq+HHmQKeG2pGhganhjtL3V7Pqy/
+	A4gb1PIpHDwEDjm3o2jafIVeUm+FddikNlhZCNvu/CD6ydMp0LiJn2dbJMce6facArWZ0dHQ==
+X-Google-Smtp-Source: AGHT+IHy01qrbGB2/3dvCGWwtdhHYeGIDdQ2qK319mi7ENth+laC+xngVDxYXJWlkGJRgxWOxr0qDg==
+X-Received: by 2002:a05:600c:1c28:b0:477:632c:5b91 with SMTP id 5b1f17b1804b1-47d84b1a2e7mr124151565e9.16.1767958149641;
+        Fri, 09 Jan 2026 03:29:09 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:69b5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d8636c610sm60056985e9.0.2026.01.09.03.29.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d8636c610sm60056985e9.0.2026.01.09.03.29.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 03:29:06 -0800 (PST)
+        Fri, 09 Jan 2026 03:29:08 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: netdev@vger.kernel.org
 Cc: "David S . Miller" <davem@davemloft.net>,
@@ -125,9 +125,9 @@ Cc: "David S . Miller" <davem@davemloft.net>,
 	linux-kselftest@vger.kernel.org,
 	dtatulea@nvidia.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH net-next v8 5/9] eth: bnxt: store rx buffer size per queue
-Date: Fri,  9 Jan 2026 11:28:44 +0000
-Message-ID: <e01023029e10a8ff72b5d85cb15e7863b3613ff4.1767819709.git.asml.silence@gmail.com>
+Subject: [PATCH net-next v8 6/9] eth: bnxt: adjust the fill level of agg queues with larger buffers
+Date: Fri,  9 Jan 2026 11:28:45 +0000
+Message-ID: <8b6486d8a498875c4157f28171b5b0d26593c3d8.1767819709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1767819709.git.asml.silence@gmail.com>
 References: <cover.1767819709.git.asml.silence@gmail.com>
@@ -139,302 +139,82 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of using a constant buffer length, allow configuring the size
-for each queue separately. There is no way to change the length yet, and
-it'll be passed from memory providers in a later patch.
+From: Jakub Kicinski <kuba@kernel.org>
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
+The driver tries to provision more agg buffers than header buffers
+since multiple agg segments can reuse the same header. The calculation
+/ heuristic tries to provide enough pages for 65k of data for each header
+(or 4 frags per header if the result is too big). This calculation is
+currently global to the adapter. If we increase the buffer sizes 8x
+we don't want 8x the amount of memory sitting on the rings.
+Luckily we don't have to fill the rings completely, adjust
+the fill level dynamically in case particular queue has buffers
+larger than the global size.
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+[pavel: rebase on top of agg_size_fac, assert agg_size_fac]
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 56 +++++++++++--------
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c |  6 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h |  2 +-
- 4 files changed, 38 insertions(+), 27 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 28 +++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 73f954da39b9..8f42885a7c86 100644
+index 8f42885a7c86..137e348d2b9c 100644
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -905,7 +905,7 @@ static void bnxt_tx_int(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
- 
- static bool bnxt_separate_head_pool(struct bnxt_rx_ring_info *rxr)
- {
--	return rxr->need_head_pool || PAGE_SIZE > BNXT_RX_PAGE_SIZE;
-+	return rxr->need_head_pool || rxr->rx_page_size < PAGE_SIZE;
+@@ -3816,16 +3816,34 @@ static void bnxt_free_rx_rings(struct bnxt *bp)
+ 	}
  }
  
- static struct page *__bnxt_alloc_rx_page(struct bnxt *bp, dma_addr_t *mapping,
-@@ -915,9 +915,9 @@ static struct page *__bnxt_alloc_rx_page(struct bnxt *bp, dma_addr_t *mapping,
++static int bnxt_rx_agg_ring_fill_level(struct bnxt *bp,
++				       struct bnxt_rx_ring_info *rxr)
++{
++	/* User may have chosen larger than default rx_page_size,
++	 * we keep the ring sizes uniform and also want uniform amount
++	 * of bytes consumed per ring, so cap how much of the rings we fill.
++	 */
++	int fill_level = bp->rx_agg_ring_size;
++
++	if (rxr->rx_page_size > BNXT_RX_PAGE_SIZE)
++		fill_level /= rxr->rx_page_size / BNXT_RX_PAGE_SIZE;
++
++	return fill_level;
++}
++
+ static int bnxt_alloc_rx_page_pool(struct bnxt *bp,
+ 				   struct bnxt_rx_ring_info *rxr,
+ 				   int numa_node)
  {
- 	struct page *page;
+-	const unsigned int agg_size_fac = PAGE_SIZE / BNXT_RX_PAGE_SIZE;
++	unsigned int agg_size_fac = rxr->rx_page_size / BNXT_RX_PAGE_SIZE;
+ 	const unsigned int rx_size_fac = PAGE_SIZE / SZ_4K;
+ 	struct page_pool_params pp = { 0 };
+ 	struct page_pool *pool;
  
--	if (PAGE_SIZE > BNXT_RX_PAGE_SIZE) {
-+	if (rxr->rx_page_size < PAGE_SIZE) {
- 		page = page_pool_dev_alloc_frag(rxr->page_pool, offset,
--						BNXT_RX_PAGE_SIZE);
-+						rxr->rx_page_size);
- 	} else {
- 		page = page_pool_dev_alloc_pages(rxr->page_pool);
- 		*offset = 0;
-@@ -936,8 +936,9 @@ static netmem_ref __bnxt_alloc_rx_netmem(struct bnxt *bp, dma_addr_t *mapping,
- {
- 	netmem_ref netmem;
- 
--	if (PAGE_SIZE > BNXT_RX_PAGE_SIZE) {
--		netmem = page_pool_alloc_frag_netmem(rxr->page_pool, offset, BNXT_RX_PAGE_SIZE, gfp);
-+	if (rxr->rx_page_size < PAGE_SIZE) {
-+		netmem = page_pool_alloc_frag_netmem(rxr->page_pool, offset,
-+						     rxr->rx_page_size, gfp);
- 	} else {
- 		netmem = page_pool_alloc_netmems(rxr->page_pool, gfp);
- 		*offset = 0;
-@@ -1155,9 +1156,9 @@ static struct sk_buff *bnxt_rx_multi_page_skb(struct bnxt *bp,
- 		return NULL;
- 	}
- 	dma_addr -= bp->rx_dma_offset;
--	dma_sync_single_for_cpu(&bp->pdev->dev, dma_addr, BNXT_RX_PAGE_SIZE,
-+	dma_sync_single_for_cpu(&bp->pdev->dev, dma_addr, rxr->rx_page_size,
- 				bp->rx_dir);
--	skb = napi_build_skb(data_ptr - bp->rx_offset, BNXT_RX_PAGE_SIZE);
-+	skb = napi_build_skb(data_ptr - bp->rx_offset, rxr->rx_page_size);
- 	if (!skb) {
- 		page_pool_recycle_direct(rxr->page_pool, page);
- 		return NULL;
-@@ -1189,7 +1190,7 @@ static struct sk_buff *bnxt_rx_page_skb(struct bnxt *bp,
- 		return NULL;
- 	}
- 	dma_addr -= bp->rx_dma_offset;
--	dma_sync_single_for_cpu(&bp->pdev->dev, dma_addr, BNXT_RX_PAGE_SIZE,
-+	dma_sync_single_for_cpu(&bp->pdev->dev, dma_addr, rxr->rx_page_size,
- 				bp->rx_dir);
- 
- 	if (unlikely(!payload))
-@@ -1203,7 +1204,7 @@ static struct sk_buff *bnxt_rx_page_skb(struct bnxt *bp,
- 
- 	skb_mark_for_recycle(skb);
- 	off = (void *)data_ptr - page_address(page);
--	skb_add_rx_frag(skb, 0, page, off, len, BNXT_RX_PAGE_SIZE);
-+	skb_add_rx_frag(skb, 0, page, off, len, rxr->rx_page_size);
- 	memcpy(skb->data - NET_IP_ALIGN, data_ptr - NET_IP_ALIGN,
- 	       payload + NET_IP_ALIGN);
- 
-@@ -1288,7 +1289,7 @@ static u32 __bnxt_rx_agg_netmems(struct bnxt *bp,
- 		if (skb) {
- 			skb_add_rx_frag_netmem(skb, i, cons_rx_buf->netmem,
- 					       cons_rx_buf->offset,
--					       frag_len, BNXT_RX_PAGE_SIZE);
-+					       frag_len, rxr->rx_page_size);
- 		} else {
- 			skb_frag_t *frag = &shinfo->frags[i];
- 
-@@ -1313,7 +1314,7 @@ static u32 __bnxt_rx_agg_netmems(struct bnxt *bp,
- 			if (skb) {
- 				skb->len -= frag_len;
- 				skb->data_len -= frag_len;
--				skb->truesize -= BNXT_RX_PAGE_SIZE;
-+				skb->truesize -= rxr->rx_page_size;
- 			}
- 
- 			--shinfo->nr_frags;
-@@ -1328,7 +1329,7 @@ static u32 __bnxt_rx_agg_netmems(struct bnxt *bp,
- 		}
- 
- 		page_pool_dma_sync_netmem_for_cpu(rxr->page_pool, netmem, 0,
--						  BNXT_RX_PAGE_SIZE);
-+						  rxr->rx_page_size);
- 
- 		total_frag_len += frag_len;
- 		prod = NEXT_RX_AGG(prod);
-@@ -2281,8 +2282,7 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_cp_ring_info *cpr,
- 			if (!skb)
- 				goto oom_next_rx;
- 		} else {
--			skb = bnxt_xdp_build_skb(bp, skb, agg_bufs,
--						 rxr->page_pool, &xdp);
-+			skb = bnxt_xdp_build_skb(bp, skb, agg_bufs, rxr, &xdp);
- 			if (!skb) {
- 				/* we should be able to free the old skb here */
- 				bnxt_xdp_buff_frags_free(rxr, &xdp);
-@@ -3828,11 +3828,13 @@ static int bnxt_alloc_rx_page_pool(struct bnxt *bp,
- 	pp.pool_size = bp->rx_agg_ring_size / agg_size_fac;
+-	pp.pool_size = bp->rx_agg_ring_size / agg_size_fac;
++	if (WARN_ON_ONCE(agg_size_fac == 0))
++		agg_size_fac = 1;
++
++	pp.pool_size = bnxt_rx_agg_ring_fill_level(bp, rxr) / agg_size_fac;
  	if (BNXT_RX_PAGE_MODE(bp))
  		pp.pool_size += bp->rx_ring_size / rx_size_fac;
+ 
+@@ -4403,11 +4421,13 @@ static void bnxt_alloc_one_rx_ring_netmem(struct bnxt *bp,
+ 					  struct bnxt_rx_ring_info *rxr,
+ 					  int ring_nr)
+ {
++	int fill_level, i;
+ 	u32 prod;
+-	int i;
 +
-+	pp.order = get_order(rxr->rx_page_size);
- 	pp.nid = numa_node;
- 	pp.netdev = bp->dev;
- 	pp.dev = &bp->pdev->dev;
- 	pp.dma_dir = bp->rx_dir;
--	pp.max_len = PAGE_SIZE;
-+	pp.max_len = PAGE_SIZE << pp.order;
- 	pp.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV |
- 		   PP_FLAG_ALLOW_UNREADABLE_NETMEM;
- 	pp.queue_idx = rxr->bnapi->index;
-@@ -3843,7 +3845,10 @@ static int bnxt_alloc_rx_page_pool(struct bnxt *bp,
- 	rxr->page_pool = pool;
++	fill_level = bnxt_rx_agg_ring_fill_level(bp, rxr);
  
- 	rxr->need_head_pool = page_pool_is_unreadable(pool);
-+	rxr->need_head_pool |= !!pp.order;
- 	if (bnxt_separate_head_pool(rxr)) {
-+		pp.order = 0;
-+		pp.max_len = PAGE_SIZE;
- 		pp.pool_size = min(bp->rx_ring_size / rx_size_fac, 1024);
- 		pp.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
- 		pool = page_pool_create(&pp);
-@@ -4319,6 +4324,8 @@ static void bnxt_init_ring_struct(struct bnxt *bp)
- 		if (!rxr)
- 			goto skip_rx;
- 
-+		rxr->rx_page_size = BNXT_RX_PAGE_SIZE;
-+
- 		ring = &rxr->rx_ring_struct;
- 		rmem = &ring->ring_mem;
- 		rmem->nr_pages = bp->rx_nr_pages;
-@@ -4478,7 +4485,7 @@ static void bnxt_init_one_rx_agg_ring_rxbd(struct bnxt *bp,
- 	ring = &rxr->rx_agg_ring_struct;
- 	ring->fw_ring_id = INVALID_HW_RING_ID;
- 	if ((bp->flags & BNXT_FLAG_AGG_RINGS)) {
--		type = ((u32)BNXT_RX_PAGE_SIZE << RX_BD_LEN_SHIFT) |
-+		type = ((u32)(u32)rxr->rx_page_size << RX_BD_LEN_SHIFT) |
- 			RX_BD_TYPE_RX_AGG_BD;
- 
- 		/* On P7, setting EOP will cause the chip to disable
-@@ -7056,6 +7063,7 @@ static void bnxt_hwrm_ring_grp_free(struct bnxt *bp)
- 
- static void bnxt_set_rx_ring_params_p5(struct bnxt *bp, u32 ring_type,
- 				       struct hwrm_ring_alloc_input *req,
-+				       struct bnxt_rx_ring_info *rxr,
- 				       struct bnxt_ring_struct *ring)
- {
- 	struct bnxt_ring_grp_info *grp_info = &bp->grp_info[ring->grp_idx];
-@@ -7065,7 +7073,7 @@ static void bnxt_set_rx_ring_params_p5(struct bnxt *bp, u32 ring_type,
- 	if (ring_type == HWRM_RING_ALLOC_AGG) {
- 		req->ring_type = RING_ALLOC_REQ_RING_TYPE_RX_AGG;
- 		req->rx_ring_id = cpu_to_le16(grp_info->rx_fw_ring_id);
--		req->rx_buf_size = cpu_to_le16(BNXT_RX_PAGE_SIZE);
-+		req->rx_buf_size = cpu_to_le16(rxr->rx_page_size);
- 		enables |= RING_ALLOC_REQ_ENABLES_RX_RING_ID_VALID;
- 	} else {
- 		req->rx_buf_size = cpu_to_le16(bp->rx_buf_use_size);
-@@ -7079,6 +7087,7 @@ static void bnxt_set_rx_ring_params_p5(struct bnxt *bp, u32 ring_type,
- }
- 
- static int hwrm_ring_alloc_send_msg(struct bnxt *bp,
-+				    struct bnxt_rx_ring_info *rxr,
- 				    struct bnxt_ring_struct *ring,
- 				    u32 ring_type, u32 map_index)
- {
-@@ -7135,7 +7144,8 @@ static int hwrm_ring_alloc_send_msg(struct bnxt *bp,
- 			      cpu_to_le32(bp->rx_ring_mask + 1) :
- 			      cpu_to_le32(bp->rx_agg_ring_mask + 1);
- 		if (bp->flags & BNXT_FLAG_CHIP_P5_PLUS)
--			bnxt_set_rx_ring_params_p5(bp, ring_type, req, ring);
-+			bnxt_set_rx_ring_params_p5(bp, ring_type, req,
-+						   rxr, ring);
- 		break;
- 	case HWRM_RING_ALLOC_CMPL:
- 		req->ring_type = RING_ALLOC_REQ_RING_TYPE_L2_CMPL;
-@@ -7283,7 +7293,7 @@ static int bnxt_hwrm_rx_ring_alloc(struct bnxt *bp,
- 	u32 map_idx = bnapi->index;
- 	int rc;
- 
--	rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
-+	rc = hwrm_ring_alloc_send_msg(bp, rxr, ring, type, map_idx);
- 	if (rc)
- 		return rc;
- 
-@@ -7303,7 +7313,7 @@ static int bnxt_hwrm_rx_agg_ring_alloc(struct bnxt *bp,
- 	int rc;
- 
- 	map_idx = grp_idx + bp->rx_nr_rings;
--	rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
-+	rc = hwrm_ring_alloc_send_msg(bp, rxr, ring, type, map_idx);
- 	if (rc)
- 		return rc;
- 
-@@ -7327,7 +7337,7 @@ static int bnxt_hwrm_cp_ring_alloc_p5(struct bnxt *bp,
- 
- 	ring = &cpr->cp_ring_struct;
- 	ring->handle = BNXT_SET_NQ_HDL(cpr);
--	rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
-+	rc = hwrm_ring_alloc_send_msg(bp, NULL, ring, type, map_idx);
- 	if (rc)
- 		return rc;
- 	bnxt_set_db(bp, &cpr->cp_db, type, map_idx, ring->fw_ring_id);
-@@ -7342,7 +7352,7 @@ static int bnxt_hwrm_tx_ring_alloc(struct bnxt *bp,
- 	const u32 type = HWRM_RING_ALLOC_TX;
- 	int rc;
- 
--	rc = hwrm_ring_alloc_send_msg(bp, ring, type, tx_idx);
-+	rc = hwrm_ring_alloc_send_msg(bp, NULL, ring, type, tx_idx);
- 	if (rc)
- 		return rc;
- 	bnxt_set_db(bp, &txr->tx_db, type, tx_idx, ring->fw_ring_id);
-@@ -7368,7 +7378,7 @@ static int bnxt_hwrm_ring_alloc(struct bnxt *bp)
- 
- 		vector = bp->irq_tbl[map_idx].vector;
- 		disable_irq_nosync(vector);
--		rc = hwrm_ring_alloc_send_msg(bp, ring, type, map_idx);
-+		rc = hwrm_ring_alloc_send_msg(bp, NULL, ring, type, map_idx);
- 		if (rc) {
- 			enable_irq(vector);
- 			goto err_out;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index f5f07a7e6b29..4c880a9fba92 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1107,6 +1107,7 @@ struct bnxt_rx_ring_info {
- 
- 	unsigned long		*rx_agg_bmap;
- 	u16			rx_agg_bmap_size;
-+	u16			rx_page_size;
- 	bool                    need_head_pool;
- 
- 	dma_addr_t		rx_desc_mapping[MAX_RX_PAGES];
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c
-index c94a391b1ba5..85cbeb35681c 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c
-@@ -183,7 +183,7 @@ void bnxt_xdp_buff_init(struct bnxt *bp, struct bnxt_rx_ring_info *rxr,
- 			u16 cons, u8 *data_ptr, unsigned int len,
- 			struct xdp_buff *xdp)
- {
--	u32 buflen = BNXT_RX_PAGE_SIZE;
-+	u32 buflen = rxr->rx_page_size;
- 	struct bnxt_sw_rx_bd *rx_buf;
- 	struct pci_dev *pdev;
- 	dma_addr_t mapping;
-@@ -460,7 +460,7 @@ int bnxt_xdp(struct net_device *dev, struct netdev_bpf *xdp)
- 
- struct sk_buff *
- bnxt_xdp_build_skb(struct bnxt *bp, struct sk_buff *skb, u8 num_frags,
--		   struct page_pool *pool, struct xdp_buff *xdp)
-+		   struct bnxt_rx_ring_info *rxr, struct xdp_buff *xdp)
- {
- 	struct skb_shared_info *sinfo = xdp_get_shared_info_from_buff(xdp);
- 
-@@ -468,7 +468,7 @@ bnxt_xdp_build_skb(struct bnxt *bp, struct sk_buff *skb, u8 num_frags,
- 		return NULL;
- 
- 	xdp_update_skb_frags_info(skb, num_frags, sinfo->xdp_frags_size,
--				  BNXT_RX_PAGE_SIZE * num_frags,
-+				  rxr->rx_page_size * num_frags,
- 				  xdp_buff_get_skb_flags(xdp));
- 	return skb;
- }
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h b/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h
-index 220285e190fc..8933a0dec09a 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.h
-@@ -32,6 +32,6 @@ void bnxt_xdp_buff_init(struct bnxt *bp, struct bnxt_rx_ring_info *rxr,
- void bnxt_xdp_buff_frags_free(struct bnxt_rx_ring_info *rxr,
- 			      struct xdp_buff *xdp);
- struct sk_buff *bnxt_xdp_build_skb(struct bnxt *bp, struct sk_buff *skb,
--				   u8 num_frags, struct page_pool *pool,
-+				   u8 num_frags, struct bnxt_rx_ring_info *rxr,
- 				   struct xdp_buff *xdp);
- #endif
+ 	prod = rxr->rx_agg_prod;
+-	for (i = 0; i < bp->rx_agg_ring_size; i++) {
++	for (i = 0; i < fill_level; i++) {
+ 		if (bnxt_alloc_rx_netmem(bp, rxr, prod, GFP_KERNEL)) {
+ 			netdev_warn(bp->dev, "init'ed rx ring %d with %d/%d pages only\n",
+ 				    ring_nr, i, bp->rx_agg_ring_size);
 -- 
 2.52.0
 

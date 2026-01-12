@@ -1,150 +1,114 @@
-Return-Path: <io-uring+bounces-11588-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11589-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205EAD13413
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:45:09 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FAFD13A69
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 16:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 60683300E148
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 14:36:29 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5279130158F7
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237B1AF0BB;
-	Mon, 12 Jan 2026 14:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC73C2E093F;
+	Mon, 12 Jan 2026 15:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WC9vtFFW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/hXNV+jS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WC9vtFFW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/hXNV+jS"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SIQ+hiyn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695FC215055
-	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 14:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057CE17B418
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 15:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768228588; cv=none; b=W1waC4d3QP/+a206UYlfdfjnW7bfXLKMRnl2lpj/CE7A9mlc+4hlkRw5oP5r6X+t1KfSayEHYxZ39oDlf9sZMR+lJMmCmN1mjOb9rV6BYfh0gV5T8DUCMGFBi3TBI/EyCrouR31SqZgu9ZmWghbwZnMexasGtO+frUliisfpJ8Y=
+	t=1768231152; cv=none; b=ICooE8iHqW9VS+pBqTys3IgToFp4Cu3ZTi6uoy/w0ot9fTeEY515tjPu1Xyu6OTMqwB9MWD9Epf5RqEZWkz8wwRwvmFE3yW4xmih79D9A1S/PXPQ2U2yyfTXeOfiziVBz9lyqBa464eRsQcot/Aze3XH7eyZJp0K8DSy4Qrhav4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768228588; c=relaxed/simple;
-	bh=Fud1HhGFuTSdRNSNC1gSuB/6JOFDLeWpnrZgB7/m51k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jzVv3qjrBonePjvsKJMgYsg03fiyxxh7igJ2jeIhHXldIYJB5eBUErIjl9TN3dWqy3f98aZL4daRRHvP1ZyDVsKvIJvgrjtZ4pfHbVqiCvItlzhkDwQGwDFBrYFWfJ4xq5nd82RuJ/qXE8vJIHppn14PUt64mw9z6IDRjq5EaZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WC9vtFFW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/hXNV+jS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WC9vtFFW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/hXNV+jS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A917233682;
-	Mon, 12 Jan 2026 14:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768228585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
-	b=WC9vtFFWAqCRia7vwj3lvbK86nVitE/1w9U6HQHeeK9sBecD5H0hna1W9bUys7BPKHw088
-	zvkkDODqdv/PJUegXTlaYEovOsKqvAuPODXurkrHJ2S4taD5FSKzJwA17MQXQSds88xYjC
-	ehsjEWj6Hy841S9aWJzsGgtlhruXItU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768228585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
-	b=/hXNV+jScEiMhJw+9aLiyjkXVJLyCQpFBAaJLyD/KpDOLfjXwoKpvQrGZzfRZlnC0yWijm
-	EXN4TvzDLvVfRqCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WC9vtFFW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/hXNV+jS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768228585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
-	b=WC9vtFFWAqCRia7vwj3lvbK86nVitE/1w9U6HQHeeK9sBecD5H0hna1W9bUys7BPKHw088
-	zvkkDODqdv/PJUegXTlaYEovOsKqvAuPODXurkrHJ2S4taD5FSKzJwA17MQXQSds88xYjC
-	ehsjEWj6Hy841S9aWJzsGgtlhruXItU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768228585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
-	b=/hXNV+jScEiMhJw+9aLiyjkXVJLyCQpFBAaJLyD/KpDOLfjXwoKpvQrGZzfRZlnC0yWijm
-	EXN4TvzDLvVfRqCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5935A3EA63;
-	Mon, 12 Jan 2026 14:36:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Em8CC+kGZWklbQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 12 Jan 2026 14:36:25 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: axboe@kernel.dk,  io-uring@vger.kernel.org
-Subject: Re: [PATCH] io_uring: Trim out unused includes
-In-Reply-To: <wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
-	(Breno Leitao's message of "Mon, 12 Jan 2026 04:11:06 -0800")
-Organization: SUSE
-References: <20260105230932.3805619-1-krisman@suse.de>
-	<wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
-Date: Mon, 12 Jan 2026 09:36:23 -0500
-Message-ID: <87ldi25254.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1768231152; c=relaxed/simple;
+	bh=5ihOPI2PLiCKWznxYzOqR/Ylkc6EjdZ06J//U+b80nQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=BaSTiRAFJy6N62z3tk7tHEjtIxh5X4bNkSzYuIZdvWAQSjPRDPNBtJyT4dsEykJ3j9bFdIZCU5C1vLkk5fhMiPp1czejy//lDOoG3QYixCV9Dh+2Rfh6rZ10b2uL/kLLMCqu2YPo0iQeoI9c8iHP54FzNop2tC3aLCWwIyqdZDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SIQ+hiyn; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-45a815c1cfdso1296300b6e.0
+        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 07:19:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768231148; x=1768835948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mF3iWx4UE5vPcF0pIQey1oB1AcQ0exyrzmIOAMBjoA=;
+        b=SIQ+hiynWXU2en+xgd4pgSZw2+iPe3+KN25W0F3qi2uVMQkHfER8AYn2bQSN09i2fD
+         gBKwihA0oaeiBkLExmSinEnGiQd4EOEFUqPidbJbQUBx3jDz/cW0Q4C7x0M7aT0ZWFFC
+         PBjyKdyDRREtSIOhwJNqhikov9ogVpDLGcnyK6pwQsvadNmRDTYRMOvpG5G/3DipdvGs
+         TlCDEQAx8+PpwYvCAEXRLpXL0pVetSR2gSTAw0P2SY/Y5aU+Vmp8HSXGwWzu2xpAAPbK
+         fQbivkrVvIHib9NNZErppycjmot0Wjbm/vUPGAWtudbXIPoc+A5iknai5ZcCQJtP1CIv
+         kmPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768231148; x=1768835948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7mF3iWx4UE5vPcF0pIQey1oB1AcQ0exyrzmIOAMBjoA=;
+        b=UeONHEgrwQUNx2zFMNlBQzH/s51Q4nZUIhUjAfaVutVZcKrDmgoFIuw0c/+LGWDAsq
+         Y4LMEf4Zcrvt8DcvXgCBmhj+nCH7OKRiHkGfTgen4VDZc95mhz78ZfDUjcu9zQhSeJ6F
+         d4wrVbQTfTY8Daq7D7GH+PBPrI7yhorfdDmX2iDLOrVNem7XvNK6DmmHGI5t2BjwyYhA
+         Ez5sBUPXwIn8hpgG85m8lzx9HPV8amN0Qo8P+2Jp/qCWF/OVkVm8movgrTbTdyUvjJQD
+         12e1SG6XpAd5sm5o32q1hHE4NxM6n0V5Y+R0DrtWkDAjjCL4sXy6XFheeNVxzUFeS6qL
+         VhYw==
+X-Gm-Message-State: AOJu0YxAFVjZlkO3nnKHgeif6s9/Jrdoosmyvkuc+1r5D0kQLywAOzGE
+	FrUKforXyMJMcSj//8aX34eSyqmSuayDv4ZaB9z5DMhc/RWQRWMz5wc5QAG9KxmA+M3ezUiHzeN
+	ESoPr
+X-Gm-Gg: AY/fxX6NURcfgCQyVZ6ce4e7zfDBU46MWy06Nf2Ejhqs/Lu5geVDhTtduScgUcBFVFd
+	Yo6IBJajRcmIU/nTPK2u4bb35fUCeEEA7HaStdGfi1nlRana3RAbwRSzevPdxDhORstt+oob3e5
+	bXJk2KePJm2vANzopLK1hcBb7s5NZLUiVWlfZu2CC2xHvpAqcBDBqYya7QpxgDnZRxs7mZ/Y9Jk
+	zAjuti5yeMAa7rT1HU5++ihfuitncesO3vDVab4JMdt8JnAo71SIUFyK2QaLx7f0S758ecqAjXn
+	0hIyxG7yL/n4a7PAcigiS38SzLogU82D7fFnvAj5gYf8X1dJ9Q/lP9jh7d5NwbYwJGY0Yi08LXC
+	+avRyz0pfXCAlaE5fl6MLPyoALS3jztIP++jinpwH3qzAoRJ74V/4exASgBVJcSofWtXwkQQ=
+X-Google-Smtp-Source: AGHT+IGgm3p4N/HsFeXx6811TeRgWOzyXKoVQaV0ua0axs7eApV9lBbsA5jdZwvlxX1rlMHZLm37xw==
+X-Received: by 2002:a05:6808:4fd1:b0:450:c7b5:23d0 with SMTP id 5614622812f47-45a6bf118efmr9411053b6e.49.1768231148324;
+        Mon, 12 Jan 2026 07:19:08 -0800 (PST)
+Received: from m2max ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a8c6b3fdfsm4210561b6e.17.2026.01.12.07.19.07
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 07:19:07 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/5] io_uring restrictions cleanups and improvements
+Date: Mon, 12 Jan 2026 08:14:40 -0700
+Message-ID: <20260112151905.200261-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.50
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-2.99)[99.97%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	HAS_ORG_HEADER(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A917233682
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Breno Leitao <leitao@debian.org> writes:
+Hi,
 
-> Do you have a tool to detect those unused header? I am curious how is
-> the process to discover unused headers in .c files.
+In doing the task based restriction sets, I found myself doing a few
+cleanups and improvements along the way. These really had nothing to
+do with the added feature, hence I'm splitting them out into a
+separate patchset.
 
-No.  I noticed one that was obviously wrong and that caused me to
-manually walk over the rest that looked suspicious.  I probably missed
-some in the process.
+This series is really 4 patches doing cleanup and preparation for
+making it easier to add the task based restrictions, and patch 5 is
+an improvement for how restrictions are checked. I ran some overhead
+numbers and it's honestly surprisingly low for microbenchmarks. For
+example, running a pure NOP workload at 13-15M op/sec, checking
+restrictions is only about 1.5% of the CPU time. Never the less, I
+suspect the most common restrictions applied is to limit the register
+operations that can be done. Hence it makes sense to track whether
+we have IORING_OP* or IORING_REGISTER* restrictions separately, so
+it can be avoided to check ones op based restrictions if only register
+based ones have been set.
 
-I suppose LLMs, if you can stomach those, would help :)
+ include/linux/io_uring_types.h |  8 ++++++--
+ io_uring/io_uring.c            |  6 ++++--
+ io_uring/register.c            | 35 ++++++++++++++++++++++------------
+ 3 files changed, 33 insertions(+), 16 deletions(-)
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
 

@@ -1,94 +1,116 @@
-Return-Path: <io-uring+bounces-11595-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11596-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADB3D13BB7
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 16:39:11 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E5BD13F1F
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 17:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 923123001631
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:39:10 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D2FB4300A6DC
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 16:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB1A34677D;
-	Mon, 12 Jan 2026 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4A623ED6A;
+	Mon, 12 Jan 2026 16:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="cmuEIUru"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B782C11D5
-	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 15:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370663644D4
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 16:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768232349; cv=none; b=SaWlyoJcO5Nl3ZT258hVt3siKMeXe8LHPujlQPakkAJiD6PuG2BKdvXmlhHXaqYlPO7wiAnNGhqwUjAHlwm3/jyA3ooJkD7ZcJnkT+ZETHx4i7cVM3eI9XrndqQy7/EPPZDOd7WFWzbfDddk1mVWx+eUfMgQMh50ZsDnfPhmsQQ=
+	t=1768234847; cv=none; b=bst199KsD9KZJbTR0z9AIUQuzfe0EsIBAkHz2nMbdRzQh8MTunkYfUgbnKV2C5MD6lXzE33VRUYRE+mWtydu0vuvCV8/IQ8xp5HWxkhjeWl3ayfMsVkiCB3NdA4mXIEOn3tNFFCxD7AzlDDmOt4UXOMGmp+6nUBeiD0txNxwyqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768232349; c=relaxed/simple;
-	bh=nhfZBz2uUzQw8bGz6vn7tkIOT0apBdE9OtHa5XlVKZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXwkp5aU+OFAfovQYpctvddVdd/LhCgZW4hZHMOUBtzTRLkk/j2+pC/PaSttgGe8p4b07IKBHVxAjuZ4mpsmRB50O2++ReeT/NpVH1ODXJZHNKbjV/nb8hSy2v6NoiGNBfHEmexmRfVIBsuU/iYCbyX2axv2O1uE77qwQtEFk34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7c7660192b0so4664397a34.0
-        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 07:39:08 -0800 (PST)
+	s=arc-20240116; t=1768234847; c=relaxed/simple;
+	bh=N7A9fzwKmchtEdIQM+UHFzjF/GSM5XqhOEUjlPPpO6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OKvqXx1FK5gdCKjD8yRkr2YpUMuyyrXCEAvd0QSqFujgWqCeyzJyGIZv2dfcTQ31pigzr63ceJfYS16NyFa6wkQQFOBl8Xg40pQMvusLk+HPKLl2TAArJf+G7S5o5zvoEGpUvrBb6mGOga8pf7C6de/UcB6QZHIX1TfGK4gH4kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=cmuEIUru; arc=none smtp.client-ip=74.125.82.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-11df44181c3so333168c88.3
+        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 08:20:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1768234845; x=1768839645; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RbjavQYGxVH0nESvIyPTBU08cNQ1UOrKGNnSjkyMra4=;
+        b=cmuEIUruU3duDNvK0iaC9G526hhkRk5s6OvB3xUAoV5r1Z98EbIfoaW/JGUuFzsNX5
+         tcefq2UxyaXTT1dB+3Br1INt9SjHRA9sNOFU3dctHM2evjKbC1n9rsY1wvfUHqj22wT4
+         kJ8RVvZJJNy1VMrF+PR0gwDGM3Fc7Ab/J0Wh396xqbiyP0QOPepl32CGcFFxXTob99L8
+         GySOXVd+u8K98lvZlPDCf5ZKwr5MXF7fF9FSN0rIkq2bGn6cpb+IdRbM9+jDugV7fFFM
+         ElL+iLYKzAHhDPVCeC2s++pdIFHJtbq0tmhCfA4GlZxE1nkLPcu41tA1CK+2DNxdAPSB
+         R7Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768232347; x=1768837147;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gigvZ2VrmSTNeJi/Fi4/IFMqUG9ritue2SpsEwq/4Ts=;
-        b=mJT0m+UvHXlHSp0R0pW6ysI25djK3UddurW1RY+q56Waob3vYF9cLYamR7AM/4glMM
-         jkk18O+1bBkkf2XFdJ8iGvG7uGB6RLd8JRhF5HY7pxdUShHf7siNzG1Q3A0auS46A2q7
-         YslOInKeCb3V9Wic1ss3Op0l85htKxAfE8bLA66zLbcRRqvA5//PONJ3D01imaNuFENR
-         G/0/U3/ZyvLI7kGjPaH90pRhno8O8cpdwfzoCUgBIQnqKS2jRYrV3jdya0MkaZwiVIT3
-         gdh1R0wCtwvE1ZgUugoIm9E4Km8FaH/Q6gncSS+T8Pxlu4erXZQl6BPRTSkDpLnoyP5u
-         z6Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWOQVrzMDnwKIoJsQH+jaCFIQA0ma8kYiO0J9V29ox8+0z2XnZwEOOh5vrn5mrRsdzbyhVhPhZSDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkHiennoTaNExROU6NWAw6CiO5PmZmps1QaWRAYjd0QXCijoem
-	RrD4Avf7hHUwUZygMZPuRqPm7XqrJY1mkDyFGGIK2fuZSgwSleuDZO2h
-X-Gm-Gg: AY/fxX7EE4qFIG95crA+C0u9wGG1LarSJtqOJD+I15VZJ+g5PSkHEmmaKz0CB7OA8d3
-	D1vR73X7TH275d4Tt3KlhC+vqoOJEbTWzfSI1RxFu/kvIxG7oCRY74i4WuGQ300acbBYOzWoroH
-	aR4eVCOUSgvQxksAumEKHtdRWi7qOh9GAUfAxLxpt3lVm/WpO+jRahkZxDsw+kemj7MCfE2GLPH
-	1jMvIFvAPInQ+VEd+rtLlp+b+tGOkCuCLSda5QX5rfQQNTCbdy8EnjSxF+oZ8+exVfb4xp8fT9y
-	gHAOwOlVa8TgtT6sFFLyOMHVFhBUOJI1vwpaMmZ0Y+Z2CzSgLDJUCQ4SfupW6wtLqSE8O3cxF6c
-	O3ZjCL1vD/J6AfPMzLQVgovcO9Jb4ffd2x9h0M5+FRcwS5edEWmi0rtu3KZVOkpvQqT2uemfC+B
-	nQVg==
-X-Google-Smtp-Source: AGHT+IFiaFVr+ZtjIqYaCtL5selHM8tYoPDzPTvwhg8z5eUMamiz8AVxaGa+wBGiRH/AluQXVNDXwg==
-X-Received: by 2002:a05:6830:349a:b0:7c7:dc9:40a1 with SMTP id 46e09a7af769-7ce508a651cmr9761816a34.4.1768232347280;
-        Mon, 12 Jan 2026 07:39:07 -0800 (PST)
-Received: from gmail.com ([2a03:2880:10ff:4d::])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce47820f06sm13243576a34.11.2026.01.12.07.39.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 07:39:06 -0800 (PST)
-Date: Mon, 12 Jan 2026 07:39:04 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org
-Subject: Re: [PATCH] io_uring: Trim out unused includes
-Message-ID: <peuwrn3dswaomm4aqglv2injqbvkmmzw7ost6js5pxvb3ahlu6@23z6cqmrvj5e>
-References: <20260105230932.3805619-1-krisman@suse.de>
- <wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
- <87ldi25254.fsf@mailhost.krisman.be>
+        d=1e100.net; s=20230601; t=1768234845; x=1768839645;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RbjavQYGxVH0nESvIyPTBU08cNQ1UOrKGNnSjkyMra4=;
+        b=V+bQ8tLcu6XI5poC77g2ycCDMtWAxZHICs/ddcXOaC7+kd4SaDiMkH0BHcV2hOu2U1
+         psOQUeUavhiakQB+3ut+9SjFVeJL2fcLBY/TlTCyY6zUkHzk95rdlx+ojteSYmt58QxK
+         3I20Igt1qHhPusqmbEcuLBzGhQSrc6e1+MmKfcdc4uYKTfQv0xQDJIfh5cGPtu9EA+02
+         dbOxwy8ZIDaFVeWbQwhtpRBfQ1zKwsEddTVa2gogrnvxPqPMhSIJH3T48bK9PKw1aLhv
+         yJ7kgKDBbRhoveoNOMBOu38kNqBrbVhv73fAeYZWPp3Y+Z2O057tXeh570Mpi0Oh2CkC
+         g2hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUevBFrUWhWTN6HrU9BSs6KZVGb3ySAyid5wQPZH9uwSrO8SbGwcD1KDAPc+Ws3n8c5MP3/6J+9xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrvR8R5vcDMuwIjUqNC2TwuJbx7gu/a63uSVix1LMkGmJ7jFbj
+	pZZwRZJ9S+MSZgBTYam0N1mLdjNt5rDBpjMb/VNydWA8dP5ZM4Z2Ei3yQEsey09EWvEX9sfGfL8
+	nbVb/fMsSPDb7zEFaslScL5zhvdH7/Gcp7EXp63qWAQ==
+X-Gm-Gg: AY/fxX7gM5vo9DJaaFTdAAWLRHCqP271fza2dAF4vrZ8PcwKAz9YfqjEyAXxnjRk71w
+	gE3yRNml/LUaFPcZqdwOLXjN/jYiZFLP8VBP4OIxuhBDp+mIzATEQZwF5ThdOu6uVdj1Y5oGL6o
+	tBFfN6+KXtVk05wQIOiRSQg3ycdOssc16o50k1A31X2UsjwdtzKABzEI3flAtGT/EVrpel1M2So
+	fbV2YofZLS4tL/5Skyeif2iHCC1xojwA/Zz28X+ra/P7hAAYFL7gKlXIe/CaIaTX455snuW7av4
+	2WxJzKErwTxwoIekJlgIYNKavOs0Ng==
+X-Google-Smtp-Source: AGHT+IEJ9O0RHrE5BMUtit3nPAkMo1VAmQBQTqifHW0v6jpKSA02/a3m/5PUJFyJSfqyceSyZpmFVrEFIvVC6PcYDuE=
+X-Received: by 2002:a05:7022:ea2c:b0:11b:65e:f33 with SMTP id
+ a92af1059eb24-121f8b00246mr8469576c88.1.1768234844318; Mon, 12 Jan 2026
+ 08:20:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ldi25254.fsf@mailhost.krisman.be>
+References: <20260105230932.3805619-1-krisman@suse.de> <wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
+ <87ldi25254.fsf@mailhost.krisman.be> <peuwrn3dswaomm4aqglv2injqbvkmmzw7ost6js5pxvb3ahlu6@23z6cqmrvj5e>
+In-Reply-To: <peuwrn3dswaomm4aqglv2injqbvkmmzw7ost6js5pxvb3ahlu6@23z6cqmrvj5e>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 12 Jan 2026 08:20:33 -0800
+X-Gm-Features: AZwV_QiFG9rfc3nAkACndV5HpkgfAbqqtyP5QbpHw6AHW_Om2zUXyoHH-iUQD5k
+Message-ID: <CADUfDZqe+2FB0mM7D5WH1nonrCnhS54C9iq3ofTw-45F6_njNg@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: Trim out unused includes
+To: Breno Leitao <leitao@debian.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, axboe@kernel.dk, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 12, 2026 at 09:36:23AM -0500, Gabriel Krisman Bertazi wrote:
-> Breno Leitao <leitao@debian.org> writes:
-> 
-> > Do you have a tool to detect those unused header? I am curious how is
-> > the process to discover unused headers in .c files.
-> 
-> No.  I noticed one that was obviously wrong and that caused me to
-> manually walk over the rest that looked suspicious.  I probably missed
-> some in the process.
+There is a tool "Include What You Use"
+(https://github.com/include-what-you-use/include-what-you-use) that
+can be used to automate removing unused includes, among other things.
+I've used it in other codebases, though never tried it on Linux.
 
-That is fair, I do the same for my code as well.
+Best,
+Caleb
 
-Thanks
---breno
+On Mon, Jan 12, 2026 at 7:46=E2=80=AFAM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> On Mon, Jan 12, 2026 at 09:36:23AM -0500, Gabriel Krisman Bertazi wrote:
+> > Breno Leitao <leitao@debian.org> writes:
+> >
+> > > Do you have a tool to detect those unused header? I am curious how is
+> > > the process to discover unused headers in .c files.
+> >
+> > No.  I noticed one that was obviously wrong and that caused me to
+> > manually walk over the rest that looked suspicious.  I probably missed
+> > some in the process.
+>
+> That is fair, I do the same for my code as well.
+>
+> Thanks
+> --breno
+>
 

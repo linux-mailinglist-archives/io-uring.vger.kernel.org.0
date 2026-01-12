@@ -1,95 +1,150 @@
-Return-Path: <io-uring+bounces-11587-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11588-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D62D12BC1
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 14:22:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205EAD13413
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1C1F730136E9
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 13:22:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 60683300E148
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 14:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52109357717;
-	Mon, 12 Jan 2026 13:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237B1AF0BB;
+	Mon, 12 Jan 2026 14:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNIEc6Wc"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WC9vtFFW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/hXNV+jS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WC9vtFFW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/hXNV+jS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5452222C4;
-	Mon, 12 Jan 2026 13:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695FC215055
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 14:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768224138; cv=none; b=t1Xg8YYG6z6x2lskhqKVauWy/jezXctUPXfOev0+TPTqN2WcxaXh3+GyBw2PTjiK4M32+ujdyuTaUB0M2VEqH0oJOD4/gpR+mt4vL0WxEbgluluqBG0cvIb/CycVkFyq/una4HhDKJ9kJqrF7rnnSOrLjKSV+5oDmnj/eb+QtPU=
+	t=1768228588; cv=none; b=W1waC4d3QP/+a206UYlfdfjnW7bfXLKMRnl2lpj/CE7A9mlc+4hlkRw5oP5r6X+t1KfSayEHYxZ39oDlf9sZMR+lJMmCmN1mjOb9rV6BYfh0gV5T8DUCMGFBi3TBI/EyCrouR31SqZgu9ZmWghbwZnMexasGtO+frUliisfpJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768224138; c=relaxed/simple;
-	bh=BDUIckWVUD1RagFJ5xtI1INGnjOo0Mtn45L5+aqLxUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxcgSYj0Psp8X01sLLTBGqY0ksQ1xEwHLmTrvsHZ5lgE6pbzyqc8YtyIH4RwBvuvfD4BEdd2HimhtT5Gepw6DKHoiXDgTNVTAqdEeywREDVQWM4hMhFy2L6k8x70NiDZGkeA4qO2SWHQYc+ebg+gtTD2rKm6J65eqJj9iMl1K60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNIEc6Wc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D36AC19422;
-	Mon, 12 Jan 2026 13:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768224137;
-	bh=BDUIckWVUD1RagFJ5xtI1INGnjOo0Mtn45L5+aqLxUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LNIEc6WcDx/szM8jktnG2voPpypdHDEA3wNwBsS5urMtvVE/RJR4Qx+GlS2vTfgdL
-	 z3g0WuJBsYVMpOlpti9ggZFdF2XlmmEqFtVAtthTSnvQDbiaSwRRshgiK5wt+Hv4Op
-	 gMgXisTKe9rQ2wpuEf56WS8TQjShDXGVrTVnkYWTpnkz2yPcB21TzwF7D+jAypeJde
-	 guQZ9tsxbFISMUtu+DdRRSEp33HOe+1UGmKeveLm1+VzC3l5QaOfFQRPNzRuHAJZ4p
-	 t7onerDFPgLsmiZZzPb2urdwXIucijdwljWTYh6SIa9RV9g8WRyD6sTf8WYWuDcdOt
-	 j4TC128wA5czQ==
-Date: Mon, 12 Jan 2026 14:22:11 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, 
-	Jan Kara <jack@suse.cz>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, io-uring@vger.kernel.org, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: re-enable IOCB_NOWAIT writes to files v4
-Message-ID: <20260112-canceln-skript-95f066b9fcc1@brauner>
-References: <20251223003756.409543-1-hch@lst.de>
- <20251224-zusah-emporsteigen-764a9185a0a1@brauner>
- <20260106062409.GA16998@lst.de>
- <20260106-bequem-albatros-3c747261974f@brauner>
- <20260107073247.GA17448@lst.de>
- <20260112-adelstitel-propaganda-ef80e3d2f8ca@brauner>
- <20260112100558.GA7670@lst.de>
+	s=arc-20240116; t=1768228588; c=relaxed/simple;
+	bh=Fud1HhGFuTSdRNSNC1gSuB/6JOFDLeWpnrZgB7/m51k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jzVv3qjrBonePjvsKJMgYsg03fiyxxh7igJ2jeIhHXldIYJB5eBUErIjl9TN3dWqy3f98aZL4daRRHvP1ZyDVsKvIJvgrjtZ4pfHbVqiCvItlzhkDwQGwDFBrYFWfJ4xq5nd82RuJ/qXE8vJIHppn14PUt64mw9z6IDRjq5EaZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WC9vtFFW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/hXNV+jS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WC9vtFFW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/hXNV+jS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A917233682;
+	Mon, 12 Jan 2026 14:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768228585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
+	b=WC9vtFFWAqCRia7vwj3lvbK86nVitE/1w9U6HQHeeK9sBecD5H0hna1W9bUys7BPKHw088
+	zvkkDODqdv/PJUegXTlaYEovOsKqvAuPODXurkrHJ2S4taD5FSKzJwA17MQXQSds88xYjC
+	ehsjEWj6Hy841S9aWJzsGgtlhruXItU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768228585;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
+	b=/hXNV+jScEiMhJw+9aLiyjkXVJLyCQpFBAaJLyD/KpDOLfjXwoKpvQrGZzfRZlnC0yWijm
+	EXN4TvzDLvVfRqCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WC9vtFFW;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/hXNV+jS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768228585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
+	b=WC9vtFFWAqCRia7vwj3lvbK86nVitE/1w9U6HQHeeK9sBecD5H0hna1W9bUys7BPKHw088
+	zvkkDODqdv/PJUegXTlaYEovOsKqvAuPODXurkrHJ2S4taD5FSKzJwA17MQXQSds88xYjC
+	ehsjEWj6Hy841S9aWJzsGgtlhruXItU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768228585;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z+Uw3NpYEH2+Sloru2OmJvlB/FnFTlvGQDRfi6nj0Jk=;
+	b=/hXNV+jScEiMhJw+9aLiyjkXVJLyCQpFBAaJLyD/KpDOLfjXwoKpvQrGZzfRZlnC0yWijm
+	EXN4TvzDLvVfRqCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5935A3EA63;
+	Mon, 12 Jan 2026 14:36:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Em8CC+kGZWklbQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 12 Jan 2026 14:36:25 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: axboe@kernel.dk,  io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring: Trim out unused includes
+In-Reply-To: <wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
+	(Breno Leitao's message of "Mon, 12 Jan 2026 04:11:06 -0800")
+Organization: SUSE
+References: <20260105230932.3805619-1-krisman@suse.de>
+	<wuha2oln3kdumecdsmpttykdq2p5bwp6db3cfoyqoy5ftnedmg@ftlotbrnrev7>
+Date: Mon, 12 Jan 2026 09:36:23 -0500
+Message-ID: <87ldi25254.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260112100558.GA7670@lst.de>
+Content-Type: text/plain
+X-Spam-Score: -4.50
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-2.99)[99.97%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	HAS_ORG_HEADER(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A917233682
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
 
-On Mon, Jan 12, 2026 at 11:05:58AM +0100, Christoph Hellwig wrote:
-> On Mon, Jan 12, 2026 at 11:04:17AM +0100, Christian Brauner wrote:
-> > On Wed, Jan 07, 2026 at 08:32:47AM +0100, Christoph Hellwig wrote:
-> > > On Tue, Jan 06, 2026 at 10:43:49PM +0100, Christian Brauner wrote:
-> > > > > Umm, as in my self reply just before heading out for vacation, Julia
-> > > > > found issues in it using static type checking tools.  I have a new
-> > > > > version that fixes that and sorts out the S_* mess.  So please drop
-> > > > > it again for now, I'll resend the fixed version ASAP.
-> > > > 
-> > > > It has never been pushed nor applied as I saw your mail right before all
-> > > > of that.
-> > > 
-> > > Thanks.  But maybe you can fix up the applied messages to be more
-> > > specific?  We had various issues in the past with them, where they
-> > > were sent, but things did not end up in the tree for various reasons.
-> > 
-> > What are you thinking of exactly?
-> 
-> Only send out the applied message when something is actually pushed
-> to the public tree?
+Breno Leitao <leitao@debian.org> writes:
 
-When that happens it usually means that it's still waiting on tests.
-I can pay more attention to this but don't expect it to be perfect in
-all cases.
+> Do you have a tool to detect those unused header? I am curious how is
+> the process to discover unused headers in .c files.
+
+No.  I noticed one that was obviously wrong and that caused me to
+manually walk over the rest that looked suspicious.  I probably missed
+some in the process.
+
+I suppose LLMs, if you can stomach those, would help :)
+
+-- 
+Gabriel Krisman Bertazi
 

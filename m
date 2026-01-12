@@ -1,123 +1,164 @@
-Return-Path: <io-uring+bounces-11599-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11600-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB6FD14C83
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 19:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E3BD15180
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 20:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BB0493005ABA
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 18:34:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 8A2FA302A79D
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 19:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404B364036;
-	Mon, 12 Jan 2026 18:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66443246F3;
+	Mon, 12 Jan 2026 19:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Abfj8vcT"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bZGwddgu"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8E92DCBF7
-	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 18:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEAA314A7F
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 19:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768242893; cv=none; b=LdW9KVWR5F06DR7c/o6ToAQEDzFntuUeAY5WJZo6aDubWWTKkuldZAQlEqCAwSyTcn79ZRVc1SS2GunoO23CFVpgenXIn2x3wQPfd+h0N/ulJLfCqSOLqskUYwag9Zw1bzeWrkVzuyIu1vvVdCItZUODhtcSEMPQS4P1pgDugpE=
+	t=1768246565; cv=none; b=cjIPQmLmOAc6+sNzAhgEvDGfjj0S9HtqkaV2YykNjr0HiXaurU3xMqUXzh8Y/Ouwg7fTRpWDexlHA84ZhzVidRcQg+aJdqOXZWI872jfDWkbLO9aORK5douuxZW7KassL5ZlP39cXuU9zjtJY+ScPB/aDu6qUTFtGy8Y/3Td7C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768242893; c=relaxed/simple;
-	bh=ZH1dX+pF+DdfP8/u9ZZrRufX4ga1/hIn+m56AgJXFXk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=J91dSrZ74RwAGe5I+iDl/GFMocU1yvb6XAMxT11b3Gd+7pGkio3Pg4JqBHkc2Vv3Ga2y8T+XBHXsKMdNjK1ut87IBECgvUVR4NRb0u3AwEKQBefMqfryF4yzDHCLoNSptkHDpzNAySatZ1q5YlBfTP5DXDRPa8cho2iJTu970x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Abfj8vcT; arc=none smtp.client-ip=209.85.210.50
+	s=arc-20240116; t=1768246565; c=relaxed/simple;
+	bh=/I+DXVnibGo2EWk4txELNBsPVqrVws2tTRD91nJXFEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cJOD7Du9O2hU9r30aNxabqSCDbnoLdBldjLUNLcqIv5W97Lr+ONNQ/MTmsokihzZn7B/RJiqSaZZaQQ9M+cpry3CbEmHLhDBPErr//DTZTgxe9LRLN/kw1eGwO1SfATJx0O2BxANXstdm8Laoj9OWviYiglzOvZ6JMUOBJviKr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bZGwddgu; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7c7545310b8so3841289a34.1
-        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 10:34:50 -0800 (PST)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3e80c483a13so4151574fac.2
+        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 11:36:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768242890; x=1768847690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+3iE1nriphS1IiiMKNKyYmW+UJaAPy6/CYl7zzGYWYc=;
-        b=Abfj8vcToOPSwsPCkBmS7LoqoJlAp4i6MWnvpWqdWz3yHp7MNj47hfz/4ofI1dUf3h
-         MBBu8Pw6PFPDwdJxLi3bvt+usg+mpeK4Z6TztDtLiLs35nFIPR6jbDaxKbcCGEEvN2iF
-         u3nyUcsodcKop1kZO1f79Rxq6FAMZ4b5XgA34yb7gM8ar6fdLWs86RONXOpPj+SyxAdx
-         6eCtt99nih4p+2gS2+FSJjw9HX6JbrR8NlqtARmeVkdOeHvNHPTdzP5man5wY19uwMe7
-         bvbVleTIl6I8TtZlzyEeJiXy3AXAxxwS0CqSCHNLY/kGLxsxVXgTlQGvqK+xcr/RJsTc
-         C2qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768242890; x=1768847690;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768246562; x=1768851362; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+3iE1nriphS1IiiMKNKyYmW+UJaAPy6/CYl7zzGYWYc=;
-        b=dKweG8IAo1MJL4yPTSP90dDA3uQivm239DAoZBeUcIp/Qo2c7rFb2woRfWgTwrBsfq
-         gpzG/28LvICUpUE8wvJaSV3ZXZytlz/rZNNR5gLeyh0HuieN3/TcROamXFsGeJG7eWWd
-         BuT7sbtFVz1D4gR+QoBgX42lJtNSJv+0B+rBDzpokbEnuN/FMic8ebYM0Y+tV2VIL6/H
-         FeX87I6uwtn024NSIUGr8fyNFHx01OeoD2Bg/4KHvJqRUf+P9YMSxh3mapojGyent3EI
-         Z2zk7mNsV7H3twjQ/9/iH5AEMaO01uEakOFzvaDGWZWSH539L1hmHldLEctQLFoB6BLB
-         lybg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzRp7JTriAaqs/6C+pSAaHGkn/gfUSESmBHgsztwDosioLBpkg3D8KjJakZDYjE1JjWIIIjiKyGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFi7R09b7xgJuiAJwvO/UlJBIcXXCz5tf6s2EPkWhcGk4EOJP2
-	rbWpF4Q+J6Kewd4QgHp3kpemPSuguV6EZX7lGWAa6yS6/vsnbMnS/q7CFlqpULBm3EG2xlvUvge
-	CZbx4
-X-Gm-Gg: AY/fxX5WCKmzj055Mw1zXnS6MtYP42pEMX0s8lPb8SW/zV34TdKG5IXPh+Dsw4poKrv
-	iCVesJRVbvtPBpf7Xz0feeyjVbd0XTzZMsi/XjW9NEM9dOf2acwWhdXct13AvmhiH0WHcJPU6Oj
-	kTdxF4zQGZ8Rxo6oOuv4aM6U5eZHtPGwOUBEnGDAVQlznuI/eKAf16HMgYSJ52dfXsWuomJl4XD
-	mGtkRoT+nUGMEkEOzbiRmadUCpcvlmMuqKDJQvflJSq+9MOz2GemNBsInFC1Q+RBHVUyAOvtEoS
-	Su1Q4zJOWvU8Sk11QL7yFQm45BceFwlg5vNumSt/hts1U1MT/1q9+7HgjnEK+KiHCisaUia6WDE
-	CRKi2BbPJ0/QDahkDng43jyFbiWEaDFe3JeTsO1ONQXIUmA6i9Qaet8o+444fGkNmbL28j/Nmuj
-	SrFQ==
-X-Google-Smtp-Source: AGHT+IGv/gWQ+VMEoo/waYfcmeeggseg7BHlxKdZScPoAkHa+beBxRMVCg4VfTKteOt0+SHqmO8P2w==
-X-Received: by 2002:a05:6808:229e:b0:451:4da2:47d1 with SMTP id 5614622812f47-45a6beb4254mr10809279b6e.45.1768242889982;
-        Mon, 12 Jan 2026 10:34:49 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e183ac3sm8250460b6e.4.2026.01.12.10.34.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 10:34:49 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, io-uring@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260105210543.3471082-1-csander@purestorage.com>
-References: <20260105210543.3471082-1-csander@purestorage.com>
-Subject: Re: [PATCH v7 0/3] io_uring: use release-acquire ordering for
- IORING_SETUP_R_DISABLED
-Message-Id: <176824288921.224398.7954184265686389953.b4-ty@kernel.dk>
-Date: Mon, 12 Jan 2026 11:34:49 -0700
+        bh=qU5qWkFGHT/LkCysy4zDcY3qSGPbGbM8aReytUCSEDM=;
+        b=bZGwddguQH5LsYE++IsAXdoTnX+4IgbfRTQ4RlVN3S7Ci523/d264rI3qGBQyTtWyL
+         w/54JCfP/4l+r4NseO8UV2yaowYJvz90K/sjshfdqEuMXdINe4C743ist9t2xXkuNAsX
+         y+XdZ4UlAGKJKA8DgKWoA+1WWIp12b5CuRgNLW6xaPpIkOYhPDYiYftw8Sus2DgP4uxI
+         EPErKZy/LplJ6+wBFC9+Q2INX9R9hk+b7u2vfU8ZyS6BBZe1tMtpz0HWCzt/O12xZ7vy
+         sjkGGp3rkW3gpErtzJ+xSKksgPVQcf2jVt7WbZlWdAhzIYzham1nuK/st4Z8ksz/3kzM
+         KhaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768246562; x=1768851362;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qU5qWkFGHT/LkCysy4zDcY3qSGPbGbM8aReytUCSEDM=;
+        b=k64PoQM2LyMlpnl3/t7G2DAYNfNpIqKbaOZLhx5Vu5NxQvB1BUDfdC1FzY0pzfvtFP
+         Hcw4m+9ufe5/5XhKDDqFzq+/6cihhChc+wEDLESz4r69S8WVH3qJ9UbPsGq4KcXwR8lb
+         aIz59frLUasK1p7DE92v/4IotIhF5jksijYdDwcQAmruErFJOHeHG16u++HqU4Dh6jhT
+         oVd93o0Ax6FX2nCGOuzllnP0WMIYHXWqSZ4ywFK33DJd2nba0JlMf74T1YcVL1StRYsE
+         lMkS40Xg2pWYfWNh2zdDG/fazp6OueNS6XWoP8B54AxJREdCKoGy94DwVzoL64Cztt4o
+         m0VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIl1ombIh7r5g3zWXcHoWs2JzZvrmC338HNBu8akh8w9wUUYigKY8FV9zNDBQ7AZU0hy1ioQqEDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO1H2RK90OByCVPHbNCOASrgmCHTKHsI4YNw6yp3aNeAYZ85Vu
+	0jxsJTyCb8uRQnS1gecmTgKJB5DA8M9SNjyPDnYtkwXahF5MBYPXVFiNrA4iFWp82qA=
+X-Gm-Gg: AY/fxX4zocQhGfpkqMT98Vkx8yZ5iAqxDRtxvQPIWxe51EtPq/fyyoLClBqzjVJuue/
+	PT7B+FNnHA1EglrzqMIrIQIdwIvvubWh/xMStJbQ4mVGu5KT/B/n34nnwgtCjYTuKkdH2b3w68W
+	PoVyX2mfS9cM6sowYIbYDm4N+wonV2FSGM2aaHo7FaG6UfkQm4IJCGHciEawg4HmdQov6jXEIhl
+	UkDreUx+2Cwh/iGNlmG7FdddU4ia2e9c6KgFISpseBPJQGA1sGRteoF1lGNar3Q1w27jmtrE0A7
+	6whvDhhh/ejtDF6b6CQtuqMEklAIam5FzS16B8Yu2GPnVq7G836J2YjZ8A5IcxhVL9xe9TxgE6A
+	3rTCTtz7U3/NyeyrXDkFWeZYXT3kL10qA1iCJGSxZ5Jy5w3eITU6qXfduUF0gufd8TQ1lO6Mm42
+	KefKNVojY=
+X-Google-Smtp-Source: AGHT+IGWPAsN8xd3qUtrWzs5Ia2qHgxSYfEP2B8vP4XKk2knF8QO4yft+EBiyHeBrm2YfDrO66kXaA==
+X-Received: by 2002:a05:6871:2eaa:b0:3e9:7744:1d4b with SMTP id 586e51a60fabf-3ffc08fe0afmr10323954fac.4.1768246561597;
+        Mon, 12 Jan 2026 11:36:01 -0800 (PST)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4e3a7bfsm12420279fac.8.2026.01.12.11.36.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jan 2026 11:36:01 -0800 (PST)
+Message-ID: <cda9eb1a-9902-4961-aed0-66b5e94dd3f6@kernel.dk>
+Date: Mon, 12 Jan 2026 12:36:00 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] memory leak in iovec_from_user (3)
+To: syzbot <syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <69653c1e.050a0220.eaf7.00c9.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <69653c1e.050a0220.eaf7.00c9.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
-
-On Mon, 05 Jan 2026 14:05:39 -0700, Caleb Sander Mateos wrote:
-> io_uring_enter(), __io_msg_ring_data(), and io_msg_send_fd() read
-> ctx->flags and ctx->submitter_task without holding the ctx's uring_lock.
-> This means they may race with the assignment to ctx->submitter_task and
-> the clearing of IORING_SETUP_R_DISABLED from ctx->flags in
-> io_register_enable_rings(). Ensure the correct ordering of the
-> ctx->flags and ctx->submitter_task memory accesses by storing to
-> ctx->flags using release ordering and loading it using acquire ordering.
+On 1/12/26 11:23 AM, syzbot wrote:
+> Hello,
 > 
-> [...]
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7143203341dc Merge tag 'libcrypto-for-linus' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=177fd9fc580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=87bc41cae23d2144
+> dashboard link: https://syzkaller.appspot.com/bug?extid=abecd272a5e56fcef099
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f4399a580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ab3c3a580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/1efe18c6d01c/disk-71432033.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a5a0b8a88b2b/vmlinux-71432033.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5bd4c64b0a42/bzImage-71432033.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com
 
-Applied, thanks!
+I can't reproduce this, and I have a sneaking suspicion that this is mostly
+just timing on kmemleak scanning. I've seen that a few times. Just running
+your reproducer and I see:
 
-[1/3] io_uring: use release-acquire ordering for IORING_SETUP_R_DISABLED
-      commit: 7a8737e1132ff07ca225aa7a4008f87319b5b1ca
-[2/3] io_uring/msg_ring: drop unnecessary submitter_task checks
-      commit: bcd4c95737d15fa1a85152b8862dec146b11c214
-[3/3] io_uring/register: drop io_register_enable_rings() submitter_task check
-      commit: 130a82760718997806a618490f5b7ab06932bd9c
+root@debian:~# cat /sys/kernel/debug/kmemleak 
+unreferenced object 0xff110000964a6200 (size 200):
+  comm "kworker/u32:7", pid 1149, jiffies 4294971353
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 c0 92 73 00 01 00 11 ff  ..........s.....
+    01 30 90 00 00 05 04 40 00 00 00 00 01 00 00 00  .0.....@........
+  backtrace (crc 38936ccb):
+    kmem_cache_alloc_noprof+0x3fe/0x580
+    mempool_alloc_noprof+0xb9/0x190
+    bio_alloc_bioset+0x561/0x760
+    submit_bh_wbc+0x130/0x250
+    __block_write_full_folio+0x3ad/0x720
+    block_write_full_folio+0x14c/0x180
+    blkdev_writepages+0x6c/0xd0
+    do_writepages+0xe9/0x1f0
+    __writeback_single_inode+0x5e/0x600
+    writeback_sb_inodes+0x2ea/0x850
+    __writeback_inodes_wb+0x5c/0x150
+    wb_writeback+0x382/0x4d0
+    wb_workfn+0x4d2/0x640
+    process_one_work+0x260/0x580
+    worker_thread+0x2b3/0x4e0
+    kthread+0x161/0x310
 
-Best regards,
+which are obviously temporal, and a whole bunch of the same reports, in
+fact there is:
+
+root@debian:~# cat /sys/kernel/debug/kmemleak | wc -l
+264
+
+lines in there. Then let's trigger a new scan:
+
+root@debian:~# echo scan > /sys/kernel/debug/kmemleak 
+root@debian:~# cat /sys/kernel/debug/kmemleak | wc -l
+0
+
+and they are all gone.
+
+#syz invalid
+
 -- 
 Jens Axboe
-
-
-
 

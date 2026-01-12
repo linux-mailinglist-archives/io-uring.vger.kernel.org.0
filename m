@@ -1,114 +1,306 @@
-Return-Path: <io-uring+bounces-11597-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11598-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C49ED1475B
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 18:45:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B36D14C35
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 19:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 104603024E72
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 17:45:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4927030F84F5
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 18:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966B37E2FD;
-	Mon, 12 Jan 2026 17:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Ei0BsuXx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A506387583;
+	Mon, 12 Jan 2026 18:23:29 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AEA29BDAB;
-	Mon, 12 Jan 2026 17:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E27738758F
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 18:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768239901; cv=none; b=kDPwjbvXgFfLFEc5B3fDqTaN923omhPFttZ7iAMQjT/QXc83cB+moSRxGBYMQPC+il/+fXE3s4lhBraNXdMkXb2NNH5x56tUe8KxMOK3y29YXs48C2Kjl5sYSdZHgpnvauhODSXVDfN64lTJycFcI1kzxepUiiKLKHZ5ZZbNmt4=
+	t=1768242209; cv=none; b=iM6Tho9lmF3fTRGY8vHtwo+CMMoE7JvGrddVfPJ0mBIarm9f00EBEt5bX953fbzlzZO6CaaycHFmDPIOznpMgmlRN1fujNHB398zmzUr9KgCBIP0Uyzqp9Hhlr7aVMSAXcqaJbbsnNpCqhfb6MwkCSDcP2eJA8EhpqpKSawr5+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768239901; c=relaxed/simple;
-	bh=Nw3Mdnjdd+FAXGE3L5NnfSAg8wWbXO9m6KgkYTWnhkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=en2+w36ONUYOVBGqS3LZ6PLl4g3sVfoC7Ulsz2iyFOGQwYtiQu5N1F1cGa9v0BEisHB2oz9xGTVgkjVpdSK2Rt3xtfd0I9Wu7tZPnI2gHmhLD3yLQQGjHphACtkXaYMsJtwsIogC3cpptLzJlKuXdBVwIdvHOVBJM2UVV53PfgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Ei0BsuXx; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4dqfsK4ZSpz1XZXnK;
-	Mon, 12 Jan 2026 17:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1768239891; x=1770831892; bh=VigNWxwHrVjj5pnwp6TCnMPE
-	cgTU7qwBHER/lf6RvEA=; b=Ei0BsuXxrUedzIRBmWURjtjVu4X9z7rC4WLGvX8Y
-	TFXBI1lJNxgPfLBnXJkGcWhkim0aMx9htVAyb3U5EEBk1CbXJmQ3C9QotWln33iN
-	FWDPbw8TqIzkCe6MnyPZGorrQPQDOk0cRXpZ18oBOPpQWE0BHzqUDYYlqgx/5G24
-	ThOCoCas3JvMKDSWfBm0p1RC410MvIytEwY16wBBKOhiWbiOLvrZfRNXd0s4h5/c
-	gzuchD4vScEYaXI/iIxSX7QE6/VMSJcSR+5YBN65wdGyrywZ3e6ovbPqhP2vHvua
-	1oG6cZfS/aKrlkrwD4/kCdMIUhYCIl5xe21YmIu7TMkd3A==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ey46c5ZYvPXZ; Mon, 12 Jan 2026 17:44:51 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4dqfsF6lh3z1XZZ07;
-	Mon, 12 Jan 2026 17:44:49 +0000 (UTC)
-Message-ID: <93b11693-3734-48ff-8039-29fc46a17cc6@acm.org>
-Date: Mon, 12 Jan 2026 09:44:48 -0800
+	s=arc-20240116; t=1768242209; c=relaxed/simple;
+	bh=NKc60VV6Y6KQXqKhe2dVn8AmFGpT3zNKXgcTtZqfLSM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ur/VaSlUPwUP52sb4r9H15aWTywTd0ZpBVXDWh4vPR89UdnUUP87g885m0cICLN5ZRSXZCXRPf+UhisI2Q3RLxoaljCPT6CAtw+/187R1sow5yssLCiaypKpLbM8yTjgRX0JDV2dVxSOidjWALXKFVCzjvaNL2zjtubHE5zESuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-65f66b8be64so10509887eaf.3
+        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 10:23:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768242206; x=1768847006;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uLkesU3YZLlsC+BrLqYDYZfJucrTl1D8m8F/idS9gUU=;
+        b=WeR1qS7jfe5KARxGrMFZ+zXvz8vHwET819+6m9cFNIwDQWa8XdOAcBsTYjDDaHQetT
+         W7ufN2z85ASlnqMw9dIuB8JMVr9SoqEbiU/vrrDI7+5q7hEADqRO9uirH1PYBeW3MeMI
+         phgfOe6WYeJaR2zYcCbcM+k+tNevy6FnXHq44IKnOgm6WuxWxuLnnTc6E9f2Elw95uAH
+         qlVokRCy5AlHfgs5qutjdf6a50bDziJHtotQd+rGEJrQjtN+BuZV0rhzM3/8SFeWdJ8T
+         WPTp2Lg3olWnlMGL0VV1FcRrHszCrze27UWdW8WJC5WLPon7nvNFLCUvtywthx3o4Gwa
+         Js3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXC5UnjwpgFRu5oNQEgehf7LpOAzMckUG0P9TlLgVf69yVNFx9mYPYy28MbfpcVZ2/IZXcjKO6PQg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBLqmt6wARsS0LsLOkNLwau/ZFkpilDP3r1OjB2ykbqxgzx8OD
+	HmBlus0JJDvW/TPjQEYoKDaxJ8OsZ86VfQfTlXnNQ+1OZP452jYJGtbmhlrpgFkLGVeBV6nNCIQ
+	MsjAYj9y26OLEiAfpBJA2PEh7gFPoFmlDIgSGo1NJ+6Fg8bWfUGIUevudl0g=
+X-Google-Smtp-Source: AGHT+IH7N5gZdQT0n3iJFEtwHN4Re40MJnyMFiqPwHA5ucUVNirjfaTHVe4hlEKafcxbVLNoyZcpQT2FDlUk29S8rZfsbPxf5yxY
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] bsg: add bsg_uring_cmd uapi structure
-To: Yang Xiuwei <yangxiuwei@kylinos.cn>, linux-scsi@vger.kernel.org,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Cc: fujita.tomonori@lab.ntt.co.jp, axboe@kernel.dk,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-References: <20260112084606.570887-1-yangxiuwei@kylinos.cn>
- <20260112084606.570887-2-yangxiuwei@kylinos.cn>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260112084606.570887-2-yangxiuwei@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6820:228f:b0:659:9a49:8f93 with SMTP id
+ 006d021491bc7-65f54eea37dmr9029240eaf.12.1768242206242; Mon, 12 Jan 2026
+ 10:23:26 -0800 (PST)
+Date: Mon, 12 Jan 2026 10:23:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69653c1e.050a0220.eaf7.00c9.GAE@google.com>
+Subject: [syzbot] [io-uring?] memory leak in iovec_from_user (3)
+From: syzbot <syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/12/26 1:46 AM, Yang Xiuwei wrote:
-> +struct bsg_uring_cmd {
-> +	__u64 cdb_addr;
-> +	__u8  cdb_len;
-> +	__u8  protocol;		/* [i] protocol type (BSG_PROTOCOL_*) */
-> +	__u8  subprotocol;	/* [i] subprotocol type (BSG_SUB_PROTOCOL_*) */
-> +	__u8  reserved1;
-> +	__u32 din_iovec_count;	/* [i] 0 -> flat din transfer else
-> +				 * din_xferp points to array of iovec
-> +				 */
-> +	__u32 din_xfer_len;	/* [i] bytes to be transferred from device */
-> +	__u64 din_xferp;	/* [i] data in buffer address or iovec array
-> +				 * address
-> +				 */
-> +	__u32 dout_iovec_count;	/* [i] 0 -> flat dout transfer else
-> +				 * dout_xferp points to array of iovec
-> +				 */
-> +	__u32 dout_xfer_len;	/* [i] bytes to be transferred to device */
-> +	__u64 dout_xferp;	/* [i] data out buffer address or iovec array address */
-> +	__u32 sense_len;
-> +	__u64 sense_addr;
-> +	__u32 timeout_ms;
-> +	__u32 flags;		/* [i] bit mask (BSG_FLAG_*) - reserved for future use */
-> +	__u8  reserved[16];	/* reserved for future extension */
+Hello,
 
-BSG supports much more than only SCSI. The above seems to support SCSI
-commands only.
+syzbot found the following issue on:
 
-> +} __packed;
+HEAD commit:    7143203341dc Merge tag 'libcrypto-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=177fd9fc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87bc41cae23d2144
+dashboard link: https://syzkaller.appspot.com/bug?extid=abecd272a5e56fcef099
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f4399a580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ab3c3a580000
 
-Applying __packed to a data structure in its entirety is wrong because
-it causes compilers to generate suboptimal code on architectures that do
-not support unaligned 16-/32-/64-bit accesses.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1efe18c6d01c/disk-71432033.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a5a0b8a88b2b/vmlinux-71432033.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5bd4c64b0a42/bzImage-71432033.xz
 
-Bart.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff88811213f000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888112158000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888112159000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff88811215a000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff88811215b000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff88811215c000 (size 4096):
+  comm "syz.0.17", pid 6076, jiffies 4294944113
+  hex dump (first 32 bytes):
+    40 02 00 00 00 20 00 00 03 00 00 00 00 00 00 00  @.... ..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5845df99):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4958 [inline]
+    slab_alloc_node mm/slub.c:5263 [inline]
+    __do_kmalloc_node mm/slub.c:5656 [inline]
+    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+    iovec_from_user lib/iov_iter.c:1321 [inline]
+    iovec_from_user+0x108/0x140 lib/iov_iter.c:1304
+    __import_iovec+0x71/0x350 lib/iov_iter.c:1375
+    io_import_vec io_uring/rw.c:99 [inline]
+    __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+    io_import_rw_buffer io_uring/rw.c:139 [inline]
+    io_rw_do_import io_uring/rw.c:313 [inline]
+    io_prep_rw+0xb5/0x120 io_uring/rw.c:325
+    io_prep_rwv io_uring/rw.c:343 [inline]
+    io_prep_writev+0x23/0x80 io_uring/rw.c:363
+    io_init_req io_uring/io_uring.c:2235 [inline]
+    io_submit_sqe io_uring/io_uring.c:2282 [inline]
+    io_submit_sqes+0x40d/0xf40 io_uring/io_uring.c:2435
+    __do_sys_io_uring_enter+0x841/0xcf0 io_uring/io_uring.c:3285
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

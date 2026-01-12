@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-11592-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11593-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A65AD13A70
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 16:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1265D13A75
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 16:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8D8D93057A64
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:21:36 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 4C6BC3057DA6
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 15:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057902EB856;
-	Mon, 12 Jan 2026 15:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208522DCF72;
+	Mon, 12 Jan 2026 15:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Td955bAl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wjGFSLFr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621E72E9EB5
-	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 15:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973F82DF130
+	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768231154; cv=none; b=h+n/U+rUKzaCwG0zLNKrxrsaHOtQZuoCVEJaAoiT/SplUYVogJX9NxNxvnNy7p21l4IZrSKdSRGueju/iB5oV+VNoXcQ3uOCGhwduRFZTv6JB5Jol1couRGwnyEpGOZPEDmJ5y8NJnhHZ0joKAFmWFy3ipAP0gTDhJjt4ESgmY0=
+	t=1768231156; cv=none; b=SBdthGR5ZB6uMd5HQZ+MdL2NKO0k/2YqY9DIyw58ePZ3usM3HqlASqMWxbKU4DHU1nafmMrOePoczrEEi6DA0d7+yVoQHopdgK6bhc4cCh/tFEH230zK0ySr8iZ0jIEBwIHCJ1gTyGkx7vEBM4eSEd/YHrYVRMAdo21JefoJxjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768231154; c=relaxed/simple;
-	bh=CHbFP2HctJ5wgVz6hnLqr0j713FQPStnFZTVjR2yOG4=;
+	s=arc-20240116; t=1768231156; c=relaxed/simple;
+	bh=Q1LgYG1HPukg2Le/wLk3kDh+2eCI8KWYlE0Q9tEzb8I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aTj+bOC+xHVZzjJhBdeN39hTaoaYv9dT4AtDH4+f/dQqO9QDSZfXa7wmZVNmjho7WyGBBCTHp6Sa8/zQChp5REjfuf9r2T4FIHLR/RMef3mnnNyEcw1ZdOuJ8NbBDwOi56u+NEBUfv00QSVWdtcxeRq6HxtTKlkr7R9TIVryPOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Td955bAl; arc=none smtp.client-ip=209.85.167.171
+	 MIME-Version; b=GQSwIrvXusDlsCvOKyYm6+9M5wFqKR8f3Zy22khukpPZy25anmNtb1ZEUThAWpp7Px++pZ1uFN1eLyq7JdxwUQ7IAB/ZSiOg4Jpt4jI9ZM7DYs0DMQykk6Kc3QELk5nKHbrpqGTcONuFjxmeTFSlNxReMPrJ9gEKx4tFlYeXmX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wjGFSLFr; arc=none smtp.client-ip=209.85.167.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-45a84c6746cso1287215b6e.1
-        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 07:19:13 -0800 (PST)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-45a815c1cfdso1296340b6e.0
+        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 07:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768231152; x=1768835952; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768231153; x=1768835953; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yvxrXc5Fo3oSmC+rNCeaqTIuxJvwrD+I0fTX9JEQTZg=;
-        b=Td955bAl7d5mjPL2yCGhDLt8XSuS8UOW+zVOVzvtGmsh3flyJjlw1Y43ZyG0fe69XL
-         a/AExX4d9E8kJywsFuyE8Hp8IqcuXdbWn7XfjrQPRn1zw9pPSeXb9XaC/mjr0w+QY/21
-         2andu23u7gecz05rj9HPr6MWECQsBMghPPZ+Km9m35TqNPDuAkb4iJ+oibQ/+fImutEG
-         PG26mlhXN62yz4HCS+9wxffbKEzADArRIxQaa5icjvlI61knCyhnUf5g0b8eUV0nbHNm
-         Lo7vH20Z2J+7DmwoZYG3fWpZPHsEINrok0lNX4L5DM336c2IlcVSpZTiQFUOUwLNasnY
-         fpWQ==
+        bh=WzcF3sVSzey+DUM+OZqniy2PpOrjBbYMNdpRTROXYac=;
+        b=wjGFSLFrggZrqbTZUQjiv5BxZVLLBb9j4+eQXpFf+cPrVsRJsX4K53KLRydOdYgQi/
+         iMhL6OzJNmZGAxEGyyEeko92t1V7SsD4cTkrRlV+C0FcxEWq29kAVjZagbUqD9Wq4ooX
+         nd/M7Ij/wFge5CGR5D4HN95ZqmyNuKo5WySaaf+WZZrU3ZujMIUBD3vxbYCyR96ChuBp
+         37dyn6AOuqb9ECSq2mQa19fEtiAOCSbtgbOqPP5TbVTJdee06wGWgAICqiugJ4LgbIhK
+         ZTZEbwGuQtADl96o6w7t6EuiAzyKRIYLytV/bQWMdQ0DbIYVwxXurUsUmDJ37xUBIkd4
+         HC5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768231152; x=1768835952;
+        d=1e100.net; s=20230601; t=1768231153; x=1768835953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yvxrXc5Fo3oSmC+rNCeaqTIuxJvwrD+I0fTX9JEQTZg=;
-        b=gnE4j22ZH0OBCGUIvKYHTXGJ5BwsYO6YS8aEyFhSNteuqytCz2lw9GrI4kIhSOKOhv
-         qPyT9n8lsSfT7MPcW6Q4qM62rCp8NjX+nk0FtVRUOmfCkYTOQ61JwpGx9VnieKY6b9u3
-         MH3oYF7KF+ePvSB7hP3TEKnikQxXwlzt2lzoSdJTPbzbYcunFPMB0DOi1xGXm/LK67ik
-         wKEa7moEeZTkDZpEPg1PJvi+zNN5YZaShtBMJpJrl9RMT08iCkKpk565l47q4U3cfyy9
-         GD/wXfDOZ4Z1iwy/eb2P/R8OrjE6mGAhhn2tpYQDaSq/eFwHazX8iH+CNVJ9X3VgFkpZ
-         DrKQ==
-X-Gm-Message-State: AOJu0Yy0kAnfj49t0rMlaTNNlpSS30ABFZl0CqjlumNTlHGoPM5BsPps
-	AgiebiC2bvjrlCE4+W8JQk95hH4GIqE+O5+IUJRkkmewEpdmOL3maMwyIsCUY6BcZWu+0YMG4r7
-	HUw7m
-X-Gm-Gg: AY/fxX702fA/OXEN0GcFaESxm569YlQwFVZ4Ep7p4Qxz6MZXYyHlqf0+ZT4lNeE/nyf
-	UoDiy5kNUKoDqbRecxKG8I/8rC1Fw6u0hw+leQ3LVpLq6Aj00QMAikudSt1aHWZE/qAAgHGfNUg
-	dGogrubxMPs68dkzVqvaw/ljJUyPVnXkN73k2QRTH0cDoBHyrpEILtnhLLw6IesFHqXER9fV08M
-	9wk7i+Uz+69FdsDva+7kOrLBHauaoknYq/bXmUhDwSIYO8s+WOn721Mf3rQAp9MksHnZP0vfhPh
-	JwYOGnevIcBXHVYlMBTmU1Sr+66Eho12RAwC99bTRBJouMGhAAlQv+O4kAUl45OkMILheRiw2/0
-	wpmlVYS/AUUTh/NKScGhMjzT+gG98WfLqehZctjHtkGLdajkYCY5mc+9cdIdVBKSkXIbvKkI=
-X-Google-Smtp-Source: AGHT+IG6sgfon3i7ym3yDAt7hX71X6PeQ8/5rxROFXeM/khMKXYFcOYDD3wV99iG2JUelFCiabqBMg==
-X-Received: by 2002:a05:6808:4fd1:b0:450:c7b5:23d0 with SMTP id 5614622812f47-45a6bf118efmr9411134b6e.49.1768231151670;
-        Mon, 12 Jan 2026 07:19:11 -0800 (PST)
+        bh=WzcF3sVSzey+DUM+OZqniy2PpOrjBbYMNdpRTROXYac=;
+        b=bend0159z2HSwbi7BZydmn79xLRVPl/impBykBvHi70LFoBx0EVTrl8wgz2SFCSY8Q
+         uzKJ/ptw4QY7mwXlwd0z7sS056N4rasVj3Djpu9Q5awt3jWq38PrfOshiCwTWvkV0VQn
+         b8Tfbhp552N8tpudQF9L0Sqt3rzSNBY6PpF8CUp3HPwsQJJSQdmmfcfe6zJnHn18yEBJ
+         L+pqzAwYysTrt2TUp32GVKCmdBvekYHDSG8A5zBSWqCg+elm2JbETQXbN3tW9gVwDoHW
+         z1+6bQNUQg8ckMzHivTeyWzTt+fsDq+fs00WNs05S0YPbUbsyVhTujRcZSOa4CHEfnnt
+         BzIw==
+X-Gm-Message-State: AOJu0Ywn3G7iflCGqDys9CySKjZfnDg6PO/Es5+pSvNdVhXiZAeuPblT
+	LNMHXHAnGve6g0zm/adG73apLK0ydPQumFRDXiZd7W2Mgv7A1DEPphBFy2xsY7y3MjP9bWfJ9fs
+	d9+ss
+X-Gm-Gg: AY/fxX6529RDW1SUm281bOdqfVS4NKfRRLPtgnZpRdthpiBlzTGHj1spdVNGD5C+Yhj
+	2/iqRU9rssuqxQ4HUEy1PflXMb9JR2dRIUs8mBBYuSM0u/jUU3sdAUBaG1buwy99sV6SVCVTT+h
+	LRrO2OvCOXZFk3NwsFepopeWReWCisEHzA+dSmAYoXZ4xF22klAan8x5Q2zFRD2zDDoJaKvZvPT
+	2uhkFDDH6mY6jmCbpGUGoFTGJTaFh7bISCsH83B8rDDnyGQQ7D7H+xT4XWk5x3kx2N8P+WCw306
+	fc/ZmX2lWFqsdgA2FKwsf9BXeuNmUFOA2s3MKHzwv1Sfd9C1y7gCACmgWroa6qjpojYyZu9n31E
+	xi65ocjzUD2NS6DXdhpGEYonav7DWMpNcOoehLLvoKf+e+1C/Z3ItlmAlSss+zmxQAtA1N74=
+X-Google-Smtp-Source: AGHT+IFMyJ3yunErcUWPE/j083TGoBBtV80KGHhsKCRq4mPcfIWMRRxWTkAwh5Wq+hVrYpg8OqA/aw==
+X-Received: by 2002:a05:6808:23c7:b0:450:b781:3731 with SMTP id 5614622812f47-45a6bdc1067mr8699404b6e.26.1768231152953;
+        Mon, 12 Jan 2026 07:19:12 -0800 (PST)
 Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a8c6b3fdfsm4210561b6e.17.2026.01.12.07.19.10
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a8c6b3fdfsm4210561b6e.17.2026.01.12.07.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 07:19:11 -0800 (PST)
+        Mon, 12 Jan 2026 07:19:12 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io_uring/register: set ctx->restricted when restrictions are parsed
-Date: Mon, 12 Jan 2026 08:14:43 -0700
-Message-ID: <20260112151905.200261-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] io_uring: move ctx->restricted check into io_check_restriction()
+Date: Mon, 12 Jan 2026 08:14:44 -0700
+Message-ID: <20260112151905.200261-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260112151905.200261-1-axboe@kernel.dk>
 References: <20260112151905.200261-1-axboe@kernel.dk>
@@ -88,47 +88,36 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than defer this until the rings are enabled, just set it
-upfront when the restrictions are parsed and enabled anyway. There's
-no reason to defer this setting until the rings are enabled.
+Just a cleanup, makes the code easier to read without too many dependent
+nested checks.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/register.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ io_uring/io_uring.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 4b711c3966a8..b3aac668a665 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -175,6 +175,8 @@ static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
- 		memset(&ctx->restrictions, 0, sizeof(ctx->restrictions));
- 		return ret;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1aebdba425e8..452d87057527 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2056,6 +2056,8 @@ static inline bool io_check_restriction(struct io_ring_ctx *ctx,
+ 					struct io_kiocb *req,
+ 					unsigned int sqe_flags)
+ {
++	if (!ctx->restricted)
++		return true;
+ 	if (!test_bit(req->opcode, ctx->restrictions.sqe_op))
+ 		return false;
+ 
+@@ -2158,7 +2160,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		}
  	}
-+	if (ctx->restrictions.registered)
-+		ctx->restricted = 1;
- 	return 0;
- }
- 
-@@ -193,9 +195,6 @@ static int io_register_enable_rings(struct io_ring_ctx *ctx)
- 			io_activate_pollwq(ctx);
- 	}
- 
--	if (ctx->restrictions.registered)
--		ctx->restricted = 1;
--
- 	ctx->flags &= ~IORING_SETUP_R_DISABLED;
- 	if (ctx->sq_data && wq_has_sleeper(&ctx->sq_data->wait))
- 		wake_up(&ctx->sq_data->wait);
-@@ -626,7 +625,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 	if (ctx->submitter_task && ctx->submitter_task != current)
- 		return -EEXIST;
- 
--	if (ctx->restricted) {
-+	if (ctx->restricted && !(ctx->flags & IORING_SETUP_R_DISABLED)) {
- 		opcode = array_index_nospec(opcode, IORING_REGISTER_LAST);
- 		if (!test_bit(opcode, ctx->restrictions.register_op))
- 			return -EACCES;
+ 	if (unlikely(ctx->restricted || ctx->drain_active || ctx->drain_next)) {
+-		if (ctx->restricted && !io_check_restriction(ctx, req, sqe_flags))
++		if (!io_check_restriction(ctx, req, sqe_flags))
+ 			return io_init_fail_req(req, -EACCES);
+ 		/* knock it to the slow queue path, will be drained there */
+ 		if (ctx->drain_active)
 -- 
 2.51.0
 

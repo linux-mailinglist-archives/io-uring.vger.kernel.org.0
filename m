@@ -1,164 +1,269 @@
-Return-Path: <io-uring+bounces-11600-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11601-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E3BD15180
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 20:38:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD5DD15F14
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 01:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8A2FA302A79D
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jan 2026 19:36:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D883B3018F44
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 00:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66443246F3;
-	Mon, 12 Jan 2026 19:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE2113AD05;
+	Tue, 13 Jan 2026 00:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bZGwddgu"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v0GF7cyn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k4RqpLzU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v0GF7cyn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k4RqpLzU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEAA314A7F
-	for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 19:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC39C4315A
+	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 00:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768246565; cv=none; b=cjIPQmLmOAc6+sNzAhgEvDGfjj0S9HtqkaV2YykNjr0HiXaurU3xMqUXzh8Y/Ouwg7fTRpWDexlHA84ZhzVidRcQg+aJdqOXZWI872jfDWkbLO9aORK5douuxZW7KassL5ZlP39cXuU9zjtJY+ScPB/aDu6qUTFtGy8Y/3Td7C0=
+	t=1768263026; cv=none; b=PFmXpKKs6T+fBnuTNLJ/mY/gV9Pu47FRrD1sQHmA7rHuWCVsYnf3EZZLX987E1mavXwcRAgCrlKpPT/xheX6VRjVJgrPFw5ebWO5KbdhKKtD6LtUHVWEu+VWULiCl277RsgKGsG5VJ1j0OO/r0F3Z1EGgaG3QEANkeIqob2Q0gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768246565; c=relaxed/simple;
-	bh=/I+DXVnibGo2EWk4txELNBsPVqrVws2tTRD91nJXFEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cJOD7Du9O2hU9r30aNxabqSCDbnoLdBldjLUNLcqIv5W97Lr+ONNQ/MTmsokihzZn7B/RJiqSaZZaQQ9M+cpry3CbEmHLhDBPErr//DTZTgxe9LRLN/kw1eGwO1SfATJx0O2BxANXstdm8Laoj9OWviYiglzOvZ6JMUOBJviKr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bZGwddgu; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3e80c483a13so4151574fac.2
-        for <io-uring@vger.kernel.org>; Mon, 12 Jan 2026 11:36:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768246562; x=1768851362; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qU5qWkFGHT/LkCysy4zDcY3qSGPbGbM8aReytUCSEDM=;
-        b=bZGwddguQH5LsYE++IsAXdoTnX+4IgbfRTQ4RlVN3S7Ci523/d264rI3qGBQyTtWyL
-         w/54JCfP/4l+r4NseO8UV2yaowYJvz90K/sjshfdqEuMXdINe4C743ist9t2xXkuNAsX
-         y+XdZ4UlAGKJKA8DgKWoA+1WWIp12b5CuRgNLW6xaPpIkOYhPDYiYftw8Sus2DgP4uxI
-         EPErKZy/LplJ6+wBFC9+Q2INX9R9hk+b7u2vfU8ZyS6BBZe1tMtpz0HWCzt/O12xZ7vy
-         sjkGGp3rkW3gpErtzJ+xSKksgPVQcf2jVt7WbZlWdAhzIYzham1nuK/st4Z8ksz/3kzM
-         KhaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768246562; x=1768851362;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qU5qWkFGHT/LkCysy4zDcY3qSGPbGbM8aReytUCSEDM=;
-        b=k64PoQM2LyMlpnl3/t7G2DAYNfNpIqKbaOZLhx5Vu5NxQvB1BUDfdC1FzY0pzfvtFP
-         Hcw4m+9ufe5/5XhKDDqFzq+/6cihhChc+wEDLESz4r69S8WVH3qJ9UbPsGq4KcXwR8lb
-         aIz59frLUasK1p7DE92v/4IotIhF5jksijYdDwcQAmruErFJOHeHG16u++HqU4Dh6jhT
-         oVd93o0Ax6FX2nCGOuzllnP0WMIYHXWqSZ4ywFK33DJd2nba0JlMf74T1YcVL1StRYsE
-         lMkS40Xg2pWYfWNh2zdDG/fazp6OueNS6XWoP8B54AxJREdCKoGy94DwVzoL64Cztt4o
-         m0VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIl1ombIh7r5g3zWXcHoWs2JzZvrmC338HNBu8akh8w9wUUYigKY8FV9zNDBQ7AZU0hy1ioQqEDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO1H2RK90OByCVPHbNCOASrgmCHTKHsI4YNw6yp3aNeAYZ85Vu
-	0jxsJTyCb8uRQnS1gecmTgKJB5DA8M9SNjyPDnYtkwXahF5MBYPXVFiNrA4iFWp82qA=
-X-Gm-Gg: AY/fxX4zocQhGfpkqMT98Vkx8yZ5iAqxDRtxvQPIWxe51EtPq/fyyoLClBqzjVJuue/
-	PT7B+FNnHA1EglrzqMIrIQIdwIvvubWh/xMStJbQ4mVGu5KT/B/n34nnwgtCjYTuKkdH2b3w68W
-	PoVyX2mfS9cM6sowYIbYDm4N+wonV2FSGM2aaHo7FaG6UfkQm4IJCGHciEawg4HmdQov6jXEIhl
-	UkDreUx+2Cwh/iGNlmG7FdddU4ia2e9c6KgFISpseBPJQGA1sGRteoF1lGNar3Q1w27jmtrE0A7
-	6whvDhhh/ejtDF6b6CQtuqMEklAIam5FzS16B8Yu2GPnVq7G836J2YjZ8A5IcxhVL9xe9TxgE6A
-	3rTCTtz7U3/NyeyrXDkFWeZYXT3kL10qA1iCJGSxZ5Jy5w3eITU6qXfduUF0gufd8TQ1lO6Mm42
-	KefKNVojY=
-X-Google-Smtp-Source: AGHT+IGWPAsN8xd3qUtrWzs5Ia2qHgxSYfEP2B8vP4XKk2knF8QO4yft+EBiyHeBrm2YfDrO66kXaA==
-X-Received: by 2002:a05:6871:2eaa:b0:3e9:7744:1d4b with SMTP id 586e51a60fabf-3ffc08fe0afmr10323954fac.4.1768246561597;
-        Mon, 12 Jan 2026 11:36:01 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4e3a7bfsm12420279fac.8.2026.01.12.11.36.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jan 2026 11:36:01 -0800 (PST)
-Message-ID: <cda9eb1a-9902-4961-aed0-66b5e94dd3f6@kernel.dk>
-Date: Mon, 12 Jan 2026 12:36:00 -0700
+	s=arc-20240116; t=1768263026; c=relaxed/simple;
+	bh=F58DGnPahcrVjqz6xzE8g3b5qSJxzlT2GWL5JWZnsCQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HXA2AHmUp5hCNo8aOn32Bt7vuTSZUeY+2qDdF9s8TsGd7fgcUGh0MJjOFvqTF+DhPLCAbk2y/yKyV9EDYfsV7t5FJ/DkI8M4FaaOveQIIhZaZahl/qLFxEC5m2IXmVFBUO4ospiVQiv4ggHz/nTn4pV+D7v6OfiUB6R8si49LrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v0GF7cyn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k4RqpLzU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v0GF7cyn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k4RqpLzU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 157A75BCC1;
+	Tue, 13 Jan 2026 00:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768263017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zsZoY0k6PKWboWxmr9Qp2oXe7qslGtjnhX/op7/DOA=;
+	b=v0GF7cynYmEcQ4TCG6Lpi9nZFSuawOh2oromDeFmDlNt2Y2fUUJ5zp0gT6KUn6FkKw5EoX
+	mTRwyOHwnWOhrDDyQZi24HccZHMPoNu++rQx6kH2YNINLaBZvuMoFA68zhlRh+Ibu6V38j
+	y+7HSZPQcq3jXXlftojycju9qyjlX00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768263017;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zsZoY0k6PKWboWxmr9Qp2oXe7qslGtjnhX/op7/DOA=;
+	b=k4RqpLzUeOOEr/3r/u/8DzcvosgWz1s4XWMDmWrWJMel5A1h1uTtGDOaU+aJQNrIyeOCUg
+	oA10UuHndBFGnhAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768263017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zsZoY0k6PKWboWxmr9Qp2oXe7qslGtjnhX/op7/DOA=;
+	b=v0GF7cynYmEcQ4TCG6Lpi9nZFSuawOh2oromDeFmDlNt2Y2fUUJ5zp0gT6KUn6FkKw5EoX
+	mTRwyOHwnWOhrDDyQZi24HccZHMPoNu++rQx6kH2YNINLaBZvuMoFA68zhlRh+Ibu6V38j
+	y+7HSZPQcq3jXXlftojycju9qyjlX00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768263017;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1zsZoY0k6PKWboWxmr9Qp2oXe7qslGtjnhX/op7/DOA=;
+	b=k4RqpLzUeOOEr/3r/u/8DzcvosgWz1s4XWMDmWrWJMel5A1h1uTtGDOaU+aJQNrIyeOCUg
+	oA10UuHndBFGnhAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CCA003EA63;
+	Tue, 13 Jan 2026 00:10:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ArgfK2iNZWn4FAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 13 Jan 2026 00:10:16 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH 3/3] io_uring/register: allow original task restrictions
+ owner to unregister
+In-Reply-To: <20260109185155.88150-4-axboe@kernel.dk> (Jens Axboe's message of
+	"Fri, 9 Jan 2026 11:48:27 -0700")
+Organization: SUSE
+References: <20260109185155.88150-1-axboe@kernel.dk>
+	<20260109185155.88150-4-axboe@kernel.dk>
+Date: Mon, 12 Jan 2026 19:10:15 -0500
+Message-ID: <877btm4bko.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] memory leak in iovec_from_user (3)
-To: syzbot <syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <69653c1e.050a0220.eaf7.00c9.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <69653c1e.050a0220.eaf7.00c9.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="=-=-="
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On 1/12/26 11:23 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    7143203341dc Merge tag 'libcrypto-for-linus' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=177fd9fc580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=87bc41cae23d2144
-> dashboard link: https://syzkaller.appspot.com/bug?extid=abecd272a5e56fcef099
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f4399a580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ab3c3a580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/1efe18c6d01c/disk-71432033.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a5a0b8a88b2b/vmlinux-71432033.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5bd4c64b0a42/bzImage-71432033.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+abecd272a5e56fcef099@syzkaller.appspotmail.com
+--=-=-=
+Content-Type: text/plain
 
-I can't reproduce this, and I have a sneaking suspicion that this is mostly
-just timing on kmemleak scanning. I've seen that a few times. Just running
-your reproducer and I see:
+Jens Axboe <axboe@kernel.dk> writes:
 
-root@debian:~# cat /sys/kernel/debug/kmemleak 
-unreferenced object 0xff110000964a6200 (size 200):
-  comm "kworker/u32:7", pid 1149, jiffies 4294971353
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 c0 92 73 00 01 00 11 ff  ..........s.....
-    01 30 90 00 00 05 04 40 00 00 00 00 01 00 00 00  .0.....@........
-  backtrace (crc 38936ccb):
-    kmem_cache_alloc_noprof+0x3fe/0x580
-    mempool_alloc_noprof+0xb9/0x190
-    bio_alloc_bioset+0x561/0x760
-    submit_bh_wbc+0x130/0x250
-    __block_write_full_folio+0x3ad/0x720
-    block_write_full_folio+0x14c/0x180
-    blkdev_writepages+0x6c/0xd0
-    do_writepages+0xe9/0x1f0
-    __writeback_single_inode+0x5e/0x600
-    writeback_sb_inodes+0x2ea/0x850
-    __writeback_inodes_wb+0x5c/0x150
-    wb_writeback+0x382/0x4d0
-    wb_workfn+0x4d2/0x640
-    process_one_work+0x260/0x580
-    worker_thread+0x2b3/0x4e0
-    kthread+0x161/0x310
+> Currently any attempt to register a set of task restrictions if an
+> existing set exists will fail with -EPERM. But it is feasible to let the
+> original creator/owner performance this operation. Either to remove
+> restrictions entirely, or to replace them with a new set.
+>
+> If an existing set exists and NULL is passed for the new set, the
+> current set is unregistered. If an existing set exists and a new set is
+> supplied, the old set is dropped and replaced with the new one.
 
-which are obviously temporal, and a whole bunch of the same reports, in
-fact there is:
+Feature-wise, I think this covers what I mentioned in the previous
+iteration.  Even though this is an RFC, I think I found two bugs that
+allow the child to escape the restrictions:
 
-root@debian:~# cat /sys/kernel/debug/kmemleak | wc -l
-264
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  include/linux/io_uring_types.h |  1 +
+>  io_uring/register.c            | 45 ++++++++++++++++++++++++++++------
+>  2 files changed, 38 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index 196f41ec6d60..1ff7817b3535 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -222,6 +222,7 @@ struct io_rings {
+>  struct io_restriction {
+>  	DECLARE_BITMAP(register_op, IORING_REGISTER_LAST);
+>  	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
+> +	pid_t pid;
+>  	refcount_t refs;
+>  	u8 sqe_flags_allowed;
+>  	u8 sqe_flags_required;
+> diff --git a/io_uring/register.c b/io_uring/register.c
+> index 552b22f6b2dc..c8b8a9edbc65 100644
+> --- a/io_uring/register.c
+> +++ b/io_uring/register.c
+> @@ -189,12 +189,19 @@ static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
+>  {
+>  	struct io_uring_task_restriction __user *ures = arg;
+>  	struct io_uring_task_restriction tres;
+> -	struct io_restriction *res;
+> +	struct io_restriction *old_res, *res;
+>  	int ret;
+>  
+>  	if (nr_args != 1)
+>  		return -EINVAL;
+>  
+> +	res = current->io_uring_restrict;
+> +	if (!ures) {
+> +		if (!res)
+> +			return -EFAULT;
+> +		goto drop_set;
+> +	}
+> +
+>  	if (copy_from_user(&tres, arg, sizeof(tres)))
+>  		return -EFAULT;
+>  
+> @@ -207,13 +214,27 @@ static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
+>  	 * Disallow if task already has registered restrictions, and we're
+>  	 * not passing in further restrictions to add to an existing set.
+>  	 */
+> -	if (current->io_uring_restrict &&
+> -	    !(tres.flags & IORING_REG_RESTRICTIONS_MASK))
+> -		return -EPERM;
+> +	old_res = NULL;
+> +	if (res && !(tres.flags & IORING_REG_RESTRICTIONS_MASK)) {
+> +		/* Not owner, may only append further restrictions */
+> +drop_set:
+> +		if (res->pid != current->pid)
+> +			return -EPERM;
 
-lines in there. Then let's trigger a new scan:
+This might be hard to exploit, but if the parent terminates, the pid can
+get reused.  Then, if the child forks until it gets the same pid, it can
+unregister the filter.  I suppose the fix would require holding a
+reference to the task, similar to what pidfd does. but perhaps just
+abandon the unregistering semantics?  I'm not sure it is that useful...
 
-root@debian:~# echo scan > /sys/kernel/debug/kmemleak 
-root@debian:~# cat /sys/kernel/debug/kmemleak | wc -l
-0
+> @@ -226,14 +247,22 @@ static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
+>  				    tres.flags & IORING_REG_RESTRICTIONS_MASK);
+>  	if (ret) {
+>  		kfree(res);
+> -		return ret;
+> +		goto out;
+>  	}
+>  	if (current->io_uring_restrict &&
+>  	    refcount_dec_and_test(&current->io_uring_restrict->refs))
+>  		kfree(current->io_uring_restrict);
+> +	res->pid = current->pid;
 
-and they are all gone.
+res->pid must always point to the first task that added a
+restriction. So:
 
-#syz invalid
+if (!current->io_uring_restrict)
+       res->pid = current->pid;
+
+Otherwise, the child will become the owner after adding another
+restriction, and can then break out with a further unregister.  Based on
+your testcase, this escapes the filter:
+
+
+--=-=-=
+Content-Type: text/x-patch
+Content-Disposition: inline; filename=poc.patch
+
+diff --git a/test/task-restrictions.c b/test/task-restrictions.c
+index 5a9170b4..4d4b457c 100644
+--- a/test/task-restrictions.c
++++ b/test/task-restrictions.c
+@@ -92,6 +92,12 @@ static int test_restrictions(int should_work)
+ static void *thread_fn(void *unused)
+ {
+ 	int ret;
++	struct io_uring_task_restriction  *res =
++		calloc(1, sizeof(*res) + 1 * sizeof(struct io_uring_restriction));
++	res->restrictions[1].opcode = IORING_RESTRICTION_SQE_OP;
++	res->restrictions[1].sqe_op = IORING_OP_FUTEX_WAIT;
++	res->nr_res = 1;
++	res->flags = IORING_REG_RESTRICTIONS_MASK;
+ 
+ 	ret = test_restrictions(0);
+ 	if (ret) {
+@@ -99,6 +105,7 @@ static void *thread_fn(void *unused)
+ 		return (void *) (uintptr_t) ret;
+ 	}
+ 
++	ret = io_uring_register_task_restrictions(res);
+ 	ret = io_uring_register_task_restrictions(NULL);
+ 	if (!ret) {
+ 		fprintf(stderr, "thread restrictions unregister worked?!\n");
+
+--=-=-=
+Content-Type: text/plain
+
 
 -- 
-Jens Axboe
+Gabriel Krisman Bertazi
+
+--=-=-=--
 

@@ -1,309 +1,111 @@
-Return-Path: <io-uring+bounces-11623-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11624-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D537D1B668
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 22:31:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC343D1B9BE
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 23:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2AECE3034188
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 21:31:45 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C59543047198
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 22:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBAE274B37;
-	Tue, 13 Jan 2026 21:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217AD3203A5;
+	Tue, 13 Jan 2026 22:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IKuARoap";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WBcMAv3v";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IKuARoap";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WBcMAv3v"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zTwVlFru"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088E51B6D1A
-	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 21:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7FF632
+	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 22:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768339903; cv=none; b=ColdVJv7gTWnvgRd2zHnuthP0yLV1cz8WhjTrMAfqsdTmuRgDhsNmesERinLtCP74gW1eEJOZ5KmVSCHiTb/P1fRCwFqSAR1WyQJ9Af7UwPMr37uDMTFVwqQ21i8m7YEUlmGsMUGf3CSFg4mLUMMqdrStJZf14SLqxrA1p9RW2w=
+	t=1768343838; cv=none; b=DhIAsPlpUM2YbZ8ERFZD8r3l5lOZ11OjQU7Py7GIddt7j2xtrcnp6/eMj8i34cje3VeGpx2+otqc1mSdZ1TuLzh9RdryDasBVsIlXuiE3kPcTtoAKXXKFmWS9Rvdqi/3t8NGqZF/YEa+xd6xLogIDb1K7Rw69CAS0WSjrMGxXww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768339903; c=relaxed/simple;
-	bh=/V7AlGNVHsQsMHKMR47Ssy89ZFLlXiYyH9cSLsKkh1k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cXKHF/k6TNv5R1we6b52KQElTGStHERzUZaAL6iSbydJRRgWUUJcKhF51fQjSDlw54avKTMpo5lUGw39c2646nRIQ42fdxBJBekc8/iN4qGMSM+neovgz2gNsEkENXlxm7dWWDHyhICAEBd0hbqWiPxhUprJbCkGwLPINUVBE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IKuARoap; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WBcMAv3v; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IKuARoap; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WBcMAv3v; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CBDB33713;
-	Tue, 13 Jan 2026 21:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768339900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zI3J7Hz5Nnn+IR3eSgs9/6yZpNwYjekecoXF4KJRTE8=;
-	b=IKuARoapWn7lLwwZFVslBjdfFu7H7hawGIDAv+YMNlnjkETXwRiHL7BryyZFMoHuq848Zl
-	zAsJZJTG0eDwCBNVksqpWbzJ9Wqvibjvy6KR/7EjpUC27yDCaz3+xkD09xgOvxlrsrnple
-	XQ0px3cR8O6SaZFNMaCr1Md2/p5703Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768339900;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zI3J7Hz5Nnn+IR3eSgs9/6yZpNwYjekecoXF4KJRTE8=;
-	b=WBcMAv3vCLtfs+N8XdXfx4X9CTFuADdYeSLSuR3NQB4OP5Yun5r6VRmEyC2tPn1nWwQjP2
-	THK8EL1GiPNNP5Dw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768339900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zI3J7Hz5Nnn+IR3eSgs9/6yZpNwYjekecoXF4KJRTE8=;
-	b=IKuARoapWn7lLwwZFVslBjdfFu7H7hawGIDAv+YMNlnjkETXwRiHL7BryyZFMoHuq848Zl
-	zAsJZJTG0eDwCBNVksqpWbzJ9Wqvibjvy6KR/7EjpUC27yDCaz3+xkD09xgOvxlrsrnple
-	XQ0px3cR8O6SaZFNMaCr1Md2/p5703Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768339900;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zI3J7Hz5Nnn+IR3eSgs9/6yZpNwYjekecoXF4KJRTE8=;
-	b=WBcMAv3vCLtfs+N8XdXfx4X9CTFuADdYeSLSuR3NQB4OP5Yun5r6VRmEyC2tPn1nWwQjP2
-	THK8EL1GiPNNP5Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA3DA3EA63;
-	Tue, 13 Jan 2026 21:31:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bU2SLru5Zmk9aQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 13 Jan 2026 21:31:39 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org,  axboe@kernel.dk
-Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
-In-Reply-To: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
-	(Pavel Begunkov's message of "Tue, 13 Jan 2026 20:05:05 +0000")
-References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
-Date: Tue, 13 Jan 2026 16:31:38 -0500
-Message-ID: <87ldi12o91.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1768343838; c=relaxed/simple;
+	bh=1gRHqxkgkMgsfY+XR7t13KGaTxXVlYq6I0TbOzmD+gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GPNuHzeerHnpumJdkIWoNfYE6HY4Ew3kq8UgXbu6FB4vRK7YKUVb3+m9MXqxTR57fMf4vzTo9l3XRmx2xGYxgpxcUxzZNwxokPQXuTnVpHqot1HZSWDFox8e4P72mEoyje+NqglsY7u9PwSYRNmT/ChGe3nlc8DXRtLfzMBAZig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zTwVlFru; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c7533dbd87so6302281a34.2
+        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 14:37:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768343834; x=1768948634; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c5e4ahrcoPGo/J/QT+BRTCZXxjRxmM4qxMK3sQDtB/8=;
+        b=zTwVlFruUBnPuyxI6kRFVYCNQoL3hoeDEL7sTmIWYLLD3qQgLcasclR4vzihYxrVP1
+         eUHB+/yIm0QQr3H9yBgx7RK1NagtIWH1LZQx2jLl4ilB45lPT8bn8jkxX0xz/P3C2iDa
+         dIFlDcJUPG3MrFKO84Gk2tgOOAJVTQp4fOEFQUHNzKDy0mzJkNvd87aqS1cBKuUdOgZz
+         jkMIAAoYb+tx4gz4OkFOkF9XWVWknCEsqxc2L9wH8xFbuwDXQSBI4nDuFNKicF/n/RTI
+         zdsEY75KikzsqW5k3KTNKzGkdTsuHY0ffJpCg+5PFuL4BrvrcUtwQjqi9tg4P1cRxloA
+         f6AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768343834; x=1768948634;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c5e4ahrcoPGo/J/QT+BRTCZXxjRxmM4qxMK3sQDtB/8=;
+        b=jj888GH5Dth7Kp6FS2BursoxfBoMhuUdADJd03MjXbFrxobMaYsJpDkOeiC5CBg+zb
+         P8SfrOJEjClJIHae57jkoq4sxd8URF1K3fnA7vLTfEp4xVDqoFFG/NNCFAe+RLG13rhm
+         l/a4OfDdsRcyYeJzKLDAzA3aqcqM7cyH4LGRPy/SmHSdiyuP/SNI7DghtZbCJ7OGWP3n
+         vSk2T7Cfj1XBQ9AFWFdB15OB3wlac9jnJp7057Mj90JSqeqy8Ta1nGivzWNE1D2vXv5v
+         q0TLvOojDQF5fHZvn+0rwl02+wfynBcW2Mu+FtycF7hq0H/E+J4H8vfWHf8Q0aGp1qM1
+         cdUA==
+X-Gm-Message-State: AOJu0Yz4GXmzKRRBRghQOsIl3SomF9rcKKEdW/0J7CMhPWTDpMZlTK8N
+	/utHamblaByLYuu6xFnRsNhcB4zSSGMk1G/gHwuz8iuwcgjR7kkls776AmiOJWzPnDE=
+X-Gm-Gg: AY/fxX7MoFji9VN9odUbk/SbxvVzClTz9MUcx5JzSezMHOOyY8jccXbcC7zEe9I3nxF
+	MsuVqiWjqLGDkzyZqX/MZTuDtzaZOq/05xeJg5+DWvnOVDBNpgLFxQaWtTAcLDPusobCAjDFNRF
+	30T4/ljMzyF9qgJo0JC+Z0VNfVnQu8VMSKYJ+iIzFj6Axy8RVN2TkkiIB/Z7UiluVt+W8SNpck3
+	/TIjvTsjqOC5QnFbxdZwZMBOrNNQAloddkrRPy3uQ3fkdD/2wcRUj+SMzsWpzY2GoA6ZoRPpVJY
+	clMqYWfopkmvdHz0Kn6S/QG4twjR2U2TCGBqR/xMC65boDaJRgp/pIew/8XJBhbSRGddNYUmCE9
+	sOHthRA6DbEavYABwcRoq8BrwyiYCjHJWaepKgGsq/q8SNTz6H+NM3qqY6NvhJJeltPNWr4hKEU
+	S5dQ3Wb610
+X-Received: by 2002:a05:6830:4ac5:b0:7c7:51e4:1360 with SMTP id 46e09a7af769-7cfc8a5bc7cmr467610a34.13.1768343834507;
+        Tue, 13 Jan 2026 14:37:14 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce478ede38sm16426630a34.26.2026.01.13.14.37.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jan 2026 14:37:14 -0800 (PST)
+Message-ID: <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
+Date: Tue, 13 Jan 2026 15:37:13 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
+To: Gabriel Krisman Bertazi <krisman@suse.de>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
+ <87ldi12o91.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87ldi12o91.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Pavel Begunkov <asml.silence@gmail.com> writes:
+On 1/13/26 2:31 PM, Gabriel Krisman Bertazi wrote:
+> Pavel Begunkov <asml.silence@gmail.com> writes:
+> 
+>> Describe the region API. As it was created for a bunch of ideas in mind,
+>> it doesn't go into details about wait argument passing, which I assume
+>> will be a separate page the region description can refer to.
+>>
+> 
+> Hey, Pavel.
 
-> Describe the region API. As it was created for a bunch of ideas in mind,
-> it doesn't go into details about wait argument passing, which I assume
-> will be a separate page the region description can refer to.
->
-
-Hey, Pavel.
-
-
-> diff --git a/man/io_uring_register_region.3 b/man/io_uring_register_region.3
-> new file mode 100644
-> index 00000000..06ebd466
-> --- /dev/null
-> +++ b/man/io_uring_register_region.3
-> @@ -0,0 +1,123 @@
-> +.\" Copyright (C) 2026 Pavel Begunkov <asml.silence@gmail.com>
-> +.\"
-> +.\" SPDX-License-Identifier: LGPL-2.0-or-later
-> +.\"
-> +.TH io_uring_register_region 3 "Jan 13, 2026" "liburing-2.14" "liburing Manual"
-> +.SH NAME
-> +io_uring_register_region \- register a memory region
-> +.SH SYNOPSIS
-> +.nf
-> +.B #include <liburing.h>
-> +.PP
-> +.BI "int io_uring_register_region(struct io_uring *" ring ",
-> +.BI "                             struct io_uring_mem_region_reg *" reg ");"
-> +.fi
-> +.SH DESCRIPTION
-> +.PP
-> +The
-> +.BR io_uring_register_region (3)
-> +function registers a memory region to io_uring. The memory region can after be
-> +used, for example, to pass waiting parameters to the
-> +.BR io_uring_enter (2)
-> +system call in an efficient manner. The
-> +.IR ring
-
-.I ring
-
-> +argument should point to the ring in question, and the
-> +.IR reg
-
-.I reg
-
-> +argument should be a pointer to a
-> +.B struct io_uring_mem_region_reg .
-
-.IR  struct io_uring_mem_region_reg .
-
-> +
-> +The
-> +.IR reg
-
-.I reg
-
-> +argument must be filled in with the appropriate information. It looks as
-> +follows:
-> +.PP
-> +.in +4n
-> +.EX
-> +struct io_uring_mem_region_reg {
-> +    __u64 region_uptr;
-> +    __u64 flags;
-> +    __u64 __resv[2];
-> +};
-> +.EE
-> +.in
-> +.PP
-> +The
-> +.I region_uptr
-> +field must contain a pointer to an appropriately filled
-> +.B struct io_uring_region_desc.
-
-.IR struct io_uring_region_desc .
-
-> +.PP
-> +The
-> +.I flags
-> +field must contain a bitmask of the following values:
-> +.TP
-> +.B IORING_MEM_REGION_REG_WAIT_ARG
-> +allows to use the region topass waiting parameters to the
-
-"to pass"
-
-> +.BR io_uring_enter (2)
-> +system call. If set, the registration is only allowed while the ring
-> +is in a disabled mode.
-
-While the ring is disabled.
-
-> + See
-> +.B IORING_SETUP_R_DISABLED.
-
-.BR IORING_SETUP_R_DISABLED .
-
-> +.PP
-> +The __resv fields must be filled with zeroes.
-> +
-> +.PP
-> +.B struct io_uring_region_desc
-
-.I struct io_uring_region_desc
-
-> +is defined as following:
-> +.PP
-> +.in +4n
-> +.EX
-> +struct io_uring_region_desc {
-> +    __u64 user_addr;
-> +    __u64 size;
-> +    __u32 flags;
-> +    __u32 id;
-> +    __u64 mmap_offset;
-> +    __u64 __resv[4];
-> +};
-> +.EE
-> +.in
-> +
-> +.PP
-> +The
-> +.I user_addr
-> +field must contain a pointer to the memory the user wants to register. It's
-> +only valid if
-> +.B IORING_MEM_REGION_TYPE_USER
-> +is set, and should be zero otherwise.
-
-must be set to zero otherwise.
-
-> +.PP
-> +The
-> +.I size
-> +field should contain the size of the region.
-
-must contain
-> +
-> +The
-> +.I flags
-> +field must contain a bitmask of the following values:
-> +.TP
-> +.B IORING_MEM_REGION_TYPE_USER
-> +tells the kernel to use memory specified by the
-> +.I user_addr
-> +field. If not set, the kernel will allocate memory for the region, which can
-> +then be mapped into the user space.
-> +
-> +.PP
-> +On a successful registration of a region with kernel provided memory, the
-
-"On success, the"
-
-> +.I mmap_offset
-> +field will contain an offset that can be passed to the
-> +.B mmap(2)
-
-.BR mmap (2)
-
-> +system call to map the region into the user space.
-> +
-> +The
-> +.I id
-> +field is reserved and must be set to zero.
-> +
-> +The
-> +.I __resv
-> +fields must be filled with zeroes.
-> +
-> +Available since kernel 6.13.
-> +
-> +.SH RETURN VALUE
-> +On success
-> +.BR io_uring_register_region (3)
-> +returns 0. On failure it returns
-> +.BR -errno .
-
-.I errno
+I did a bunch of spelling and phrasing fixups when applying, can you
+take a look at the repo and send a patch for the others? Thanks!
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
 

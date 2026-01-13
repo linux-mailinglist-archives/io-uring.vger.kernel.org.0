@@ -1,99 +1,99 @@
-Return-Path: <io-uring+bounces-11603-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11604-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E88FD17FA8
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 11:22:56 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AB7D18106
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 11:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E7DD3303075C
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 10:20:35 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E3024301D2EA
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 10:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620138B985;
-	Tue, 13 Jan 2026 10:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A99838B7A9;
+	Tue, 13 Jan 2026 10:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="egFMINjG";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ooiqeq4C"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NClj29oc";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EYSiAaws"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CE738A9B4
-	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 10:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA8F38B7BA
+	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768299609; cv=none; b=O0Dd6m98WiN0PSBnNzqgU+klTSnbIj6MUFwpZ99T22mDAUKB5v1JsuFu+8GFEVVlSxs7ydF7L5Y907/1BBAiRRHPt9SUNKvN+/Rs89Yyl33BQXxK0FJf7ca6wQTnsJoX9XV+jDK/Beg/eI3dwX1T4PZXwaoLqTA/+uFI6VXAT/Q=
+	t=1768300078; cv=none; b=jufK8fXo40rsE0jk9VI8QF/+89KFA5k5vK8Syv1O0tJhO9jCJYYSqUnYTgynLuiPm+rIfKHBpn4s+GGGoLYMlJD+NtVutHk/0xnP64XkFyShAEXl5QbGBikNsv9C8qekD7GdRt4ECLmF57ux4+uupYcQekPnEeLPeI0EpL2TEZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768299609; c=relaxed/simple;
-	bh=qrJawEyRk9QiRfi3F12wRwzElwNErv3g2l29eOs+r0k=;
+	s=arc-20240116; t=1768300078; c=relaxed/simple;
+	bh=Xs40V71NSFgBl8ux07wXA+nnPiuQ97Bp4CQVChxYDDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oy4VlqN66cou6F9Yo5wlmLd0law7LyjnmDKq1XQo6omsc+zMb2d8vXgAYZFi5nNyMtDTT59RbBfjH8ylqGe8XJXaGJOOCEU+Eo65AXLoAARrcEBGWNabPhoFcX38jB4oj2fp7Tjy5UTHA0sygH9H0SxcM1s87MjssLXAcsQ4AfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=egFMINjG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ooiqeq4C; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=L8NraDfbGkaP+d5iYu6yvDkn4GcDa2BKIoruRnGOk8NpdxS2KKP9TpQsRyvlSk3ha86mss/03BESMiEzJe+MOlJ88yrRxeal2S/nzV04AmLSxbtiEH2EP8s3t1FjIT0pl1PivwCDPyc2/BT7tUlQ4MDDgvBFlBjRzSsRBdnVzzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NClj29oc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EYSiAaws; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768299606;
+	s=mimecast20190719; t=1768300075;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Bv1RPjaO9ZdZred2Z39o/pHiVJywyFuAbsRMKmfexlM=;
-	b=egFMINjG9sVNBqb/bV2XZhNplBDral3aIcm6MjzJ8KkONL0HSYMqaA3QbUO65Z3VmjlDC2
-	avtolazSY5YtoSfHzUhX8IHXZImPjTKrSF0SpQI64PSxuQnsUBdIaTLYXLPKpPTo/rpFnH
-	rgclCKWeL9yRV6TXLr2qtEPxnARnTKo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=WZv6AyyuLVVLAZ1eQ6zjrtIwS0o/q5F3gCFQ/xz3D2k=;
+	b=NClj29ocrXBwpERDSs1D7BvqCTEwbxSgumH3xypeSfL4Ed1Ul5PKrpFSr0Zqi1kDKw0IOq
+	geC9aM/QNMyUGf+dBIEBdbl3VjYb128jEagbVYrjEoWCoIYCG3nxNymrrRWwA25LW/cSZX
+	CBGoFJFSfV109z2rwkiUrHPUq/Zt2ek=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-TLF6HU0ANFaAxxTDo6YE7A-1; Tue, 13 Jan 2026 05:20:04 -0500
-X-MC-Unique: TLF6HU0ANFaAxxTDo6YE7A-1
-X-Mimecast-MFC-AGG-ID: TLF6HU0ANFaAxxTDo6YE7A_1768299603
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4325cc15176so3782109f8f.1
-        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 02:20:04 -0800 (PST)
+ us-mta-677-XFsEwPhyMpuPYsonCRGJ8g-1; Tue, 13 Jan 2026 05:27:52 -0500
+X-MC-Unique: XFsEwPhyMpuPYsonCRGJ8g-1
+X-Mimecast-MFC-AGG-ID: XFsEwPhyMpuPYsonCRGJ8g_1768300072
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-430fcb6b2ebso4587680f8f.2
+        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 02:27:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768299603; x=1768904403; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1768300071; x=1768904871; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bv1RPjaO9ZdZred2Z39o/pHiVJywyFuAbsRMKmfexlM=;
-        b=Ooiqeq4CDJAdeztIVeP08RIjonIFbu0Ix1QSuGAGLnpXxoa1G3zjRACEzvO2cO3ng5
-         K2zLp5murkupoMQjsTkt9xyL+bugptxPbtuaxL0PmUm2MeHLsh6JpmYCJcD6ViHvQH8v
-         P3Xjf6FBz8ZsWfwg3RlydqvAFLgF734ZChGJX/Rxjup6E0lD0YazXep9YNEvw+gEXxhB
-         y0PYSiW7q1diBoV5bcyaw+WPI0/VuMzlg9av8Bske1sOljgBO+qV2wTVqNaE7l0+wop6
-         BIE3XlsWPy2wCq73FGqRfy/zu5PLxZ441tO03GqAILwUpvnuVJdr777gVgEP+SxqdJ3w
-         xkNA==
+        bh=WZv6AyyuLVVLAZ1eQ6zjrtIwS0o/q5F3gCFQ/xz3D2k=;
+        b=EYSiAawsYTNJ9xFyiruITJqpMqvq5MTxe55vxFB2RULPWx2bFC4i+M0XCRiRdxO1aI
+         NLuKPzHTYQmJjQE0JAf6tkdPeouonRRwd6/g2Ggd5zDFJJLBujqKqyGJgnFuv7i4sy5z
+         3appb2k9lkm1CXMlHE+ZX5igZYi7HI+Yq8TPoelOciqgUC3rSqoQE1vsc9nByeV5um2H
+         MV/3TyCysCSGDrl53vvNLxDvytR/UUa0i3XLonf8pakzayCZ0eJ3kUN2CyT3IR62UNuw
+         0pgl28vgzJAgCd7Sqtm3c8cNz7FFONybLD578SNU7J5RuvKOu+4+VJkKUsMyysN4UZp4
+         FIuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768299603; x=1768904403;
+        d=1e100.net; s=20230601; t=1768300071; x=1768904871;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Bv1RPjaO9ZdZred2Z39o/pHiVJywyFuAbsRMKmfexlM=;
-        b=qG222EBKU4jvP9VLfwKsRln+zja+4fqr138gGhbn20rAF7kIWfWZ97l7QGIASbTYA1
-         Ub0W6l14sqVyIWkjnnT8aSnJlYGxSQxD0aHRKQZeaCckk+hZhi8JFS2H96Q6Ekfj8Dnj
-         gDAZxrpDL2DdhIa2lAIW7V/GFe+g6fTV4VYAVwXR1ITDIKOGXrIwzhYzLlsBMfUodLsM
-         JH7fG05VL7L7F0UoE7XK3RX2MxLUMQvWX6a55d7EmvaqkHBnj9cR37jsXam1wLyrQXfK
-         aUH3rsUeHRHXWI2AuwB24NKJb/Hz6Lnf3bvxkTL7vmlRL+8GY77YDHcFrWdwGt8+4Br/
-         fKQw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5sMme0TWChy85D4NEqp6dM5kCt0WKiyqzWUEg7Kk36EiAmKeSz5+aBNavnJkaV3LToPnx649QaQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8N6IMotsF2ud/W+KCYL52gspbaZ86qlBFIHmYA8uK0iDR4/T4
-	EurfpkCh+xh07WKauvjGjbJe+VGh8BqTLoc5HGI98Fbm6gteiyN7vDN8bcJXNBZO+O4FQJq8Ax8
-	XBhuWQa55xOjS9GrgqspBrae+RNPPZpt1yIGbu4LqmcX5FWyiJJJp5/3KBkDX
-X-Gm-Gg: AY/fxX530BxHGk1vzStpvXSczD7qZ3cR7lgwawGbMVu8hky91UKw7J9KdI4pImZWqQ7
-	ALLRufHRJlyzBPkrBV8v2hJmlcVS3BazQb3Qlv/VPqkClXRHVjGfSHJjxkLJ0ZSW8pPDFasx4S/
-	h6TVvFpMJeOxY4C+zNRfMXRlcia9pZ8yryTgEc3Mu2q8NTc7SXT1qBpztxc03obUN/BdHg1aXNK
-	n084Kw+hi922LfOYyKk+URtux4HhFTk98MQLsSOEP9X8A1osc/ovv1FVQ7l4N5FJS1eJaJp8U67
-	IgxTNFKa1sj6Zb8gzQl4Ds5uj0CnkI6uxwcobWYHr5avxvVKUnaaSwZq8QWzqVLzGxAj0R2xuGE
-	szV/XED1Oyt0R
-X-Received: by 2002:a05:6000:184d:b0:431:35a:4a97 with SMTP id ffacd0b85a97d-432c37c3600mr21248041f8f.59.1768299603323;
-        Tue, 13 Jan 2026 02:20:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHrath3hRlhdo9WrSLU/1jbO11BPh+MoIv4sHPe4d/wYiA0ReRHh6C563cNyJeTG7EVpok72g==
-X-Received: by 2002:a05:6000:184d:b0:431:35a:4a97 with SMTP id ffacd0b85a97d-432c37c3600mr21247977f8f.59.1768299602857;
-        Tue, 13 Jan 2026 02:20:02 -0800 (PST)
+        bh=WZv6AyyuLVVLAZ1eQ6zjrtIwS0o/q5F3gCFQ/xz3D2k=;
+        b=NLeMxS/+mDYMk9eCKhDREwxMWwvQmR72hloT7skshyWkncNk/lVQIyjWesMUHsHLwm
+         abM3s6FRUJjqZ1dMXvshpR4tC9CUVY2bmQC5x88jJu9BhKsBNNjIYFZxvTjXhTLL/mAV
+         IT/NR4U2NL4KjTwRl3d/7vN2YS1r8wjHMbd/z34JknGHozI0+lgTdhuYIlB35nNHmmvD
+         0wNTVc5drg3aFTfi6rXJEAuCUlrLSoM2uGimJXWa8oKeZbgxZSTI2WwIwoPY1KA9ZU1D
+         Ko9OfuHa3Y/4Zl2uLd8dBzA3V0PDlIYL7TyiGhfhoyr1K0OJRsPkO65YLXpl1pbQUDnJ
+         KfLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZffJeM5CJWTVxW50Lpm9oJZAvd3JOUUESaJBufiRljuNW+EY4MKLNLLw5PL+MSNffRGOBIjoJ3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlppAjqIPMftlwTDT/Omz+1FeFL3g+140XljAlCRXRGkzizgvA
+	UBI2pekm0WHUrtCyv2KhHYEVkK64blSaU/qUSq2GAezKObxjSgYRpflcZ4Rqt51V+kJf1Rt0nQf
+	1K62Seas+u8XK6mQLjA+eSm6NgubAhbiVsFmK8EJIA16BqfjMqCwQ+bQ3KTC5
+X-Gm-Gg: AY/fxX7r355H4AYs7N/ulzQSdU/0AM/uqoDL9WWEiqXka7LnoYJBpDMRyZFtOam/Xd4
+	QmhAQ+JYgIqUOJ2X0ADfh4otB/qZ/5kkL79PkrAbnmr47mE9CfxdkG89bnNAShDKvHfu+dY0Dkc
+	g2edpVHzyrq6IhPtN/dGKxoCpaG+MbDaXlCPUbWkeerduI6y6PjVMvJ2Yevg6JDmBCte7EKrNps
+	XjaUc4y+IMjMSGhfZcEWRx5hY2uyP0hpFZX5fkn4BMnoglxx/xn/MkAoCl7Ai1n0N7oSGplifqc
+	Jd6ebQtiH1nZ5GWCfoKUC8t57r57eonCidy3Q4fZVx+ARN9NlfIWAjOgtGjQrckXi/lzeWQs609
+	DHcG7w/dXItBe
+X-Received: by 2002:a05:600c:c10f:b0:47e:d6ee:7dd1 with SMTP id 5b1f17b1804b1-47ed6ee7dfbmr30480825e9.2.1768300071593;
+        Tue, 13 Jan 2026 02:27:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBi8qAsCyoUj8yK3DWWfIteg/UVGEMMZ3DTwKr3HpHFkur4u7m4Xtrpa9L15tB9tU9SsSBiA==
+X-Received: by 2002:a05:600c:c10f:b0:47e:d6ee:7dd1 with SMTP id 5b1f17b1804b1-47ed6ee7dfbmr30480125e9.2.1768300071047;
+        Tue, 13 Jan 2026 02:27:51 -0800 (PST)
 Received: from [192.168.88.32] ([212.105.155.93])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5df96asm42541852f8f.28.2026.01.13.02.19.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f695956sm408197555e9.6.2026.01.13.02.27.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jan 2026 02:20:02 -0800 (PST)
-Message-ID: <017b07c8-ed86-4ed1-9793-c150ded68097@redhat.com>
-Date: Tue, 13 Jan 2026 11:19:59 +0100
+        Tue, 13 Jan 2026 02:27:50 -0800 (PST)
+Message-ID: <4db44c27-4654-46f9-be41-93bcf06302b2@redhat.com>
+Date: Tue, 13 Jan 2026 11:27:47 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -101,7 +101,8 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 5/9] eth: bnxt: store rx buffer size per queue
+Subject: Re: [PATCH net-next v8 6/9] eth: bnxt: adjust the fill level of agg
+ queues with larger buffers
 To: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org
 Cc: "David S . Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
@@ -136,36 +137,59 @@ Cc: "David S . Miller" <davem@davemloft.net>,
  linux-kselftest@vger.kernel.org, dtatulea@nvidia.com,
  io-uring@vger.kernel.org
 References: <cover.1767819709.git.asml.silence@gmail.com>
- <e01023029e10a8ff72b5d85cb15e7863b3613ff4.1767819709.git.asml.silence@gmail.com>
+ <8b6486d8a498875c4157f28171b5b0d26593c3d8.1767819709.git.asml.silence@gmail.com>
 Content-Language: en-US
 From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <e01023029e10a8ff72b5d85cb15e7863b3613ff4.1767819709.git.asml.silence@gmail.com>
+In-Reply-To: <8b6486d8a498875c4157f28171b5b0d26593c3d8.1767819709.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 1/9/26 12:28 PM, Pavel Begunkov wrote:
-> @@ -4478,7 +4485,7 @@ static void bnxt_init_one_rx_agg_ring_rxbd(struct bnxt *bp,
->  	ring = &rxr->rx_agg_ring_struct;
->  	ring->fw_ring_id = INVALID_HW_RING_ID;
->  	if ((bp->flags & BNXT_FLAG_AGG_RINGS)) {
-> -		type = ((u32)BNXT_RX_PAGE_SIZE << RX_BD_LEN_SHIFT) |
-> +		type = ((u32)(u32)rxr->rx_page_size << RX_BD_LEN_SHIFT) |
-
-Minor nit: duplicate cast above.
-
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> index f5f07a7e6b29..4c880a9fba92 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> @@ -1107,6 +1107,7 @@ struct bnxt_rx_ring_info {
+> From: Jakub Kicinski <kuba@kernel.org>
+> 
+> The driver tries to provision more agg buffers than header buffers
+> since multiple agg segments can reuse the same header. The calculation
+> / heuristic tries to provide enough pages for 65k of data for each header
+> (or 4 frags per header if the result is too big). This calculation is
+> currently global to the adapter. If we increase the buffer sizes 8x
+> we don't want 8x the amount of memory sitting on the rings.
+> Luckily we don't have to fill the rings completely, adjust
+> the fill level dynamically in case particular queue has buffers
+> larger than the global size.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [pavel: rebase on top of agg_size_fac, assert agg_size_fac]
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 28 +++++++++++++++++++----
+>  1 file changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> index 8f42885a7c86..137e348d2b9c 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -3816,16 +3816,34 @@ static void bnxt_free_rx_rings(struct bnxt *bp)
+>  	}
+>  }
 >  
->  	unsigned long		*rx_agg_bmap;
->  	u16			rx_agg_bmap_size;
-> +	u16			rx_page_size;
+> +static int bnxt_rx_agg_ring_fill_level(struct bnxt *bp,
+> +				       struct bnxt_rx_ring_info *rxr)
+> +{
+> +	/* User may have chosen larger than default rx_page_size,
+> +	 * we keep the ring sizes uniform and also want uniform amount
+> +	 * of bytes consumed per ring, so cap how much of the rings we fill.
+> +	 */
+> +	int fill_level = bp->rx_agg_ring_size;
+> +
+> +	if (rxr->rx_page_size > BNXT_RX_PAGE_SIZE)
+> +		fill_level /= rxr->rx_page_size / BNXT_RX_PAGE_SIZE;
 
-Any special reason for using u16 above? AFAICS using u32 will not change
-the struct size on 64 bit arches, and using u32 will likely yield better
-code.
+According to the check in bnxt_alloc_rx_page_pool() it's theoretically
+possible for `rxr->rx_page_size / BNXT_RX_PAGE_SIZE` being zero. If so
+the above would crash.
+
+Side note: this looks like something AI review could/should catch. The
+fact it didn't makes me think I'm missing something...
 
 /P
 

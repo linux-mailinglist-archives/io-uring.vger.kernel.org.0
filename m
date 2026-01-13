@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-11608-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11609-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E3AD18232
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 11:46:54 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEBFD18284
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 11:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4162E3009760
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 10:46:53 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 3EC8630031B6
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 10:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6A34164B;
-	Tue, 13 Jan 2026 10:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75D1369233;
+	Tue, 13 Jan 2026 10:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyXKhICb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRXR/S1S"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4801EB5FD
-	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100334402D
+	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 10:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768301210; cv=none; b=RSkkWlACucq6jl+D7gYDuODfheZZ3KRaXJC/HQYphoEiXYbXJf/BChhfcKtsT9jtM3cajAJzj4xuYYJoL+WGylq8HsMfHqr/PGw0XCNg7Z6IhdOqmF8vZMaKsawCz+TtcKcLvOsEwEDJhFev1BMuqf88Iac9wAwW+d5/etlLq5s=
+	t=1768301315; cv=none; b=gZ1nZAWowprNDrLn3cY7lCMyYY1SnV5GOI7K9/QdJIbDI6WcfL25mbkotVRSPxE5HuWZvgFv8Z6KsOPDiuGUrupczHHhMnPFh6wrtsvWN0T+VWlzPAfdqptw69CojGRjzEoz9G72QclfQTF+v+MWtxY04vH4IsB9hbh17imP2gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768301210; c=relaxed/simple;
-	bh=fYO5mAVLp/077UFBDfQhXzmX4QvLaBG8lItV9IMLT1o=;
+	s=arc-20240116; t=1768301315; c=relaxed/simple;
+	bh=HVWq/nMqCWEx4KqTDxex3BJqfz0Jbfe3bSlD+3srwzk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sF1ZOr43Cng0R5HJ3FATe7N/X9C1q2XUKSvTdAmxaqC7lS13+FKnqQb4KPzwE6hNgjmR1z9Z6rHATbmY5E7j0I086NoHPYKYClkKRgkaIPPDJTrAzU0Cfv/vwszeE6yvnqqb4awL7SpJJb/4xr4RR9Ev21YCs2ETjSx7IzB3SV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyXKhICb; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:Content-Type; b=hajiKlS7P1+Kn5dOPWnb50VZGKTkJsZHU114nMtEnCY3uUMYdqot0gamDDR80fj5jhNtCYiGTqRshD9yF8vjl/oFRILV/k2nkph4svdGbEgBA/RnQR8U9XqDYITOX1P9b8JTdckaZqQlTGYKvMH4xXLH6274d3r7Uj7AV4DEJ9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRXR/S1S; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47d5e021a53so54643275e9.3
-        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 02:46:49 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-432dc56951eso2448406f8f.0
+        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 02:48:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768301208; x=1768906008; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768301312; x=1768906112; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PKsf3wgw23/pKBp3MaibLO9IrAlpfXga+vfr5Wqb9rU=;
-        b=JyXKhICbCoxP4aQeGECr8h7juVZdqeUZtCsHAACCmLhkJ9aLM2y+NZoqn0eL6f2r3p
-         df1b+F6B3uSBXVjDOcz1Kfj214xWYIx6H86DQ8Hhw2Jsy0M9YtKzEPV4I38I2mepytQK
-         gJMn8zeE1OsZq/HVlUCIgeN7c+MfTZrNgS7tU31PtvArPKl1NHElPMD7DxmnpzaGsh2B
-         A3GWLEXLZBWrE6Cv4aHV+x/aJH10eZC5W0xW8otpiUj/05wiQmP/v2mvWfxcSv7+7XKO
-         ZoVHNExc1emjviKYf8v4WMXDIgCEzv5EJN2y16SK4KXQ8BX9sz05qYbghCzMzMoY4wmX
-         xI9Q==
+        bh=JIXnem9PesbM4LOcpc3aqv8ZBT0fEVIpmQqCM7UApXg=;
+        b=GRXR/S1S6o/2Ranq5ayXSyqhYVV8bg4+5JdPrIphjLLTHJFc1O2JOq2VCNapLtAJQC
+         N6ew3TpIyyO0Juxx46/LTt67OuI1/+NPG1PDDhXfr4KXRCWs5VHyDH0eFMJO14Q1EJ1K
+         nA/u5cGuLJJtr/IQRu4mxaqHAkiHxEMXyADjg1C0uBBWKI2C3KgQio/nU57qEgxlICp5
+         x1ME/NRHAPxue8p5TkkuxhWLz3oiK+AKebPlqbFYY6SUCxgHo24GC+iLEQJT67FNUJEm
+         ky1cwJd3rMdxvzzegaCRGwttKArdIByIKP9ze+XzGknlHB/zXf/+VCbUBBs7dw0PhnL5
+         qDtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768301208; x=1768906008;
+        d=1e100.net; s=20230601; t=1768301312; x=1768906112;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PKsf3wgw23/pKBp3MaibLO9IrAlpfXga+vfr5Wqb9rU=;
-        b=O7IdSySNAFXKawU+bKPkl+8EcrZL9Z3EMrQJDYnxuHd2mWXAj/YKw0uxpaW5mtH7RG
-         rwda+rVhyO2em9KsfnS/9gVmqRAFEyykVTQxCPu1Y+WGabr0XbnpCTlrG3KUnqOj/NHH
-         +pXHE/n8d7tq9jXTfVmaWrC683G3YmmqwisvxyLFJ6KWCNy/rOjaRi+mwMKbC1EL6enc
-         ZYlRZmAlmp5IOjrVXATn1coG3JzEplsnVhuv+3L3aruc7OqBrpFwUHK8I45rDVJdst5i
-         hrzDbLYUmYdCWFT+mY7BRM8qQadOtmWHJZc8CUIuE4KF1hp1k/BhBX3AvI1yojro03xa
-         R3eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzAGELhDtIcz1C8zijZx/o3nt+f1yZEPnM0DDsxd40Jvlwak7FRapGakKRtSrzyXUMLEwpeyBJ1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWRQe8jLbI4QDVrpTl8fwGmfMjgCFe9xmyHigmoB6vzOlt1Po+
-	LAq7NwdHqe4OaAqBmnzoUQ/6l6vheoK12v5Kwpq+nXHflbzNeu4kuTSA
-X-Gm-Gg: AY/fxX7PLtMoMRT2FD4eM8b9wd2RPz5NkHTzP/K+MhoYiB7FZqUW4/XqVro5Qfa6Afp
-	xoo2txz3w6NFfWSbBP2FEjd/Bqc8b/6jBnvASICFesmmjlaLIbaLm2Rl/ThM1wl4WMvZiTYl44N
-	CmuxBSE+BWjYVnubsuM/bZkEgifj1IOhf1qRusT0JpQcFg+soblNmhp0m4AYaykPttPfG4EtKNU
-	/bVzZ4Yfc2QWP/eHsVGf/6CxrYIkFcfDRz9mXYFsgVuXXjpwgDIZESiev4SaMOo6o5Kk0OahPP6
-	Vk5rQDZ8uNy63nf6JF7OBSK0Nbpj7mgbvlUSY8DoOvrq08w/b6YAs4ZZJwjToyOMEhR6GzxjMxg
-	w1ZXSe8jmzCfucMqsg31w7j1/s0nFceXNO1IqJ9iKExlqPuRB33Gb0q1ox9V4uG6g0bUU8aSC7/
-	eVcuJujAkkfh+2WUnyBVO3H3/r2SrDDPZZYY3zc3xcRc13L72fYZ2ZOU0fAiXHJ+Uso88FG7hd2
-	y5FfaOJPiF4D/Z69A/oHSRKhhZZNBceMuZzydCobtfDW8056VKNNJuiZ6g3X044LA==
-X-Google-Smtp-Source: AGHT+IEymhtJvsVvq7h/MiDqH9B3Tq4aNk4c91QeNppt4FR+JHUA9Tffj05tYCrsjh9jqUJvxHBGZw==
-X-Received: by 2002:a05:600c:3152:b0:47d:403c:e5a0 with SMTP id 5b1f17b1804b1-47d84b184abmr250841245e9.12.1768301207472;
-        Tue, 13 Jan 2026 02:46:47 -0800 (PST)
+        bh=JIXnem9PesbM4LOcpc3aqv8ZBT0fEVIpmQqCM7UApXg=;
+        b=aBpwaobKsmjOk+8pN1AXXVNjN4A8rdXP7l7ggWKyl4k7vnoPoJXxLjiVLId4Z65fbs
+         jStOEVnYgAEmusk+ZeRSrq6vjOaILQ1lbHu+j6fcbxqQ4n/04wC8+XniZ6jyUIjasX1+
+         rQDno6Yr7ef+jHzEf/6lKj3Rinxiuq06d4prB2wOFmfqpJ6zVxIzNadZ5iNySmGPpiF7
+         ALmuiwIS+oQGXC8FpTrCd6cRbKpiIXmH0Scm1a1MFrx7iXWgUjOyp5s3C/cKOAR1XxI3
+         y/n9rLcpiLulxQ1xTKCjvZ6EIlEEtBMJDzQYSA4d42wyXgO+Mk2g5HULd0cgj2XsNFxz
+         6IIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoO9NjVwyQuAU2JS+qKGjFERCsTWpUouDqVbzUqvVJgwHh/OVvKdCD9QVtriiz1WYySihehcdzWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwviTntxc6DBggsF/qRlbe7ejNUDALCJtTjFOPkLL/AO4LNhkLg
+	CZs83E03LkNJ3+k6zDl7dalIauOnsJW/ViB9Yw1slQY/CpozuCyRW7My
+X-Gm-Gg: AY/fxX6X1GyuFwbziYBSBXTGC3punRWSaZCX2Fh0/OL2BR+4gMLFmUGkvHtMKgI2k/S
+	JaERoYHjHkmSKZev3QiGfD/WxG7NW2gkB8iob3JNMzBWdXMW840/WNLLunLaeBOSHRmhfQx0tYj
+	m+i7EnL2gXNuXe8HEAkLoyqSyuxtmjX9UaHsCPrZHqkjM4ADskJOwDP/0iBJLJ+tqtwL6C1UGft
+	MmFSzsJKTo6mPoV+nrHeagbza/iI1xhJMx+sT2e3WdxbfxwbRF1Yvv/PNAuMz2hVool+u0l5q0h
+	T2BxH6I4qTQWvuiM4iY6V/l+3q4xbQ7oD09X202FQ5vAv5fmSF5B9T0Zz84UGZSiE46BJZxxbsJ
+	WbQ2l7aOYUSHEUnvluGK0QXG433i0tSbHl9GYpvrNgTRoGOHngYAwszQD7TBdfCYAbD9NVO5r2J
+	qOOxh0vyxD68QogsZwgCbSV8jHnkxswc55WUG4gnpqtKOEI2PGN1cbG2ZRwh3Az1P5kyuV+c2Vp
+	JSFSeLcAfIP8vm4qLC+KnI6IMQJ6TPHJAviVFANGBhHQQi3vr3vSgk/04pf8WKSag==
+X-Google-Smtp-Source: AGHT+IGJu2DfHIhwL2Wsz6KoyIUAUdvyVOnU75RxhvIHwpjQxcQz5RKKCJsMOQA4l3p4Bbb6eGcwyg==
+X-Received: by 2002:a5d:5d81:0:b0:430:fd9f:e6e2 with SMTP id ffacd0b85a97d-432c378a9b2mr22136397f8f.9.1768301311656;
+        Tue, 13 Jan 2026 02:48:31 -0800 (PST)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f65d9f0sm409975245e9.12.2026.01.13.02.46.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0dade5sm43860084f8f.9.2026.01.13.02.48.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jan 2026 02:46:46 -0800 (PST)
-Message-ID: <da02d2af-ba34-4646-b56b-bcb9631cb286@gmail.com>
-Date: Tue, 13 Jan 2026 10:46:41 +0000
+        Tue, 13 Jan 2026 02:48:30 -0800 (PST)
+Message-ID: <a3b10677-a159-48dd-b45c-b78aed94f354@gmail.com>
+Date: Tue, 13 Jan 2026 10:48:25 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,7 +83,8 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 5/9] eth: bnxt: store rx buffer size per queue
+Subject: Re: [PATCH net-next v8 8/9] selftests: iou-zcrx: test large chunk
+ sizes
 To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc: "David S . Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
@@ -118,44 +119,35 @@ Cc: "David S . Miller" <davem@davemloft.net>,
  linux-kselftest@vger.kernel.org, dtatulea@nvidia.com,
  io-uring@vger.kernel.org
 References: <cover.1767819709.git.asml.silence@gmail.com>
- <e01023029e10a8ff72b5d85cb15e7863b3613ff4.1767819709.git.asml.silence@gmail.com>
- <017b07c8-ed86-4ed1-9793-c150ded68097@redhat.com>
+ <bb51fe4e6f30b0bd2335bfc665dc3e30b8de7acb.1767819709.git.asml.silence@gmail.com>
+ <6d4941fd-9807-4288-a385-28b699972637@redhat.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <017b07c8-ed86-4ed1-9793-c150ded68097@redhat.com>
+In-Reply-To: <6d4941fd-9807-4288-a385-28b699972637@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/13/26 10:19, Paolo Abeni wrote:
+On 1/13/26 10:34, Paolo Abeni wrote:
 > On 1/9/26 12:28 PM, Pavel Begunkov wrote:
->> @@ -4478,7 +4485,7 @@ static void bnxt_init_one_rx_agg_ring_rxbd(struct bnxt *bp,
->>   	ring = &rxr->rx_agg_ring_struct;
->>   	ring->fw_ring_id = INVALID_HW_RING_ID;
->>   	if ((bp->flags & BNXT_FLAG_AGG_RINGS)) {
->> -		type = ((u32)BNXT_RX_PAGE_SIZE << RX_BD_LEN_SHIFT) |
->> +		type = ((u32)(u32)rxr->rx_page_size << RX_BD_LEN_SHIFT) |
+>> @@ -65,6 +83,8 @@ static bool cfg_oneshot;
+>>   static int cfg_oneshot_recvs;
+>>   static int cfg_send_size = SEND_SIZE;
+>>   static struct sockaddr_in6 cfg_addr;
+>> +static unsigned cfg_rx_buf_len;
 > 
-> Minor nit: duplicate cast above.
-
-oops, missed that, thanks
-
+> Checkpatch prefers 'unsigned int' above
 > 
->> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->> index f5f07a7e6b29..4c880a9fba92 100644
->> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->> @@ -1107,6 +1107,7 @@ struct bnxt_rx_ring_info {
+>> @@ -132,6 +133,42 @@ def test_zcrx_rss(cfg) -> None:
+>>           cmd(tx_cmd, host=cfg.remote)
 >>   
->>   	unsigned long		*rx_agg_bmap;
->>   	u16			rx_agg_bmap_size;
->> +	u16			rx_page_size;
+>>   
+>> +def test_zcrx_large_chunks(cfg) -> None:
 > 
-> Any special reason for using u16 above? AFAICS using u32 will not change
-> the struct size on 64 bit arches, and using u32 will likely yield better
-> code.
+> pylint laments the lack of docstring. Perhaps explicitly silencing the
+> warning?
 
-IIRC bnxt doesn't support more than 2^16-1, but it doesn't really
-matter, I can convert it to u32.
+fwiw, I left it be because all other functions in the file
+have exactly the same problem.
 
 -- 
 Pavel Begunkov

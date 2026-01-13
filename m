@@ -1,153 +1,108 @@
-Return-Path: <io-uring+bounces-11612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11613-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97461D1A9BE
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 18:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDD3D1ABD4
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 18:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9831D300A345
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 17:27:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BBB2F300E477
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 17:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8583502A5;
-	Tue, 13 Jan 2026 17:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBAC2F3608;
+	Tue, 13 Jan 2026 17:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lmx6LW+e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4aqn/czM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lmx6LW+e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4aqn/czM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9sssFk0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8921B2E764C
-	for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 17:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5C921C16E;
+	Tue, 13 Jan 2026 17:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768325241; cv=none; b=AhQAP/AX8vRAAhS4gzrE5m3XhBcox87KsKdzT1ArP9+giy2oQL2OizrxvsLXQ9jHLXWGONnRNYOA2pF6hUow0j5gAuin5aW9fnGtTFv1x2otZO2fc//A5oF9YxnuJCIOpy+u2lKx7+isIWRHHRblZU659zeLT/ape9+VT9dKah8=
+	t=1768326699; cv=none; b=NK674HYV9DwZzDakJBKhLo5v4fe5nrzgRKd4QkfrskduCnQUYHQipS/Fr0ma7rXf4HgCy5Eqka88D1yAZ+onqR/rKnEyD4VuHUgDHZFsred3PWmYc+/FG9LCQWEt5L+cmh9eYK+ds5Hk1bXbRVZpvyJm1N5+iUFAoQxgF+9ntSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768325241; c=relaxed/simple;
-	bh=T74WqNdhPsU8irP3LIyjbPXSGY6BREMdW6B7tI2JJlI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OpqedM/huwKz1hXykufDM5cQxW75eGhliyOEdRTjEAWmiDfzV5HPVeU8cb/GaFJOyzKTAEVyEA/Aj7yXM3izOwX9Pq+qcLqUkqR8lyzQ3Rif0HNqWX/nTtLdvno4iADZOTr6TjmNw93nYXdnzrsacKYDOIQtu3AAqO2EcleG8nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lmx6LW+e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4aqn/czM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lmx6LW+e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4aqn/czM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 904C75BCCA;
-	Tue, 13 Jan 2026 17:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768325236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2OcrpZYe9PiOS1Iu1Dog7Pn/+NymNnX6HuserR98sCw=;
-	b=Lmx6LW+ejIF3D7iHL4EnVOHkskx4jis5Q0PTedfDinaad0FhDnid+qH+2gUHuKnZJp2AZM
-	0cRPKrfQi+GPadnrjKPVJv/ZFf3twNlGWgkFObjnokqmTl6Y8b562xi1ebxR/7t/8PUzDD
-	tdovgAhN9AtkflZOFwohXizt6cYrxUM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768325236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2OcrpZYe9PiOS1Iu1Dog7Pn/+NymNnX6HuserR98sCw=;
-	b=4aqn/czM2MYy6op77006qe03KPSAPvdh3AggkfeSjO7b6n0KpitMHxbmkbysFd3G6kvcqR
-	7VHmcPryM7DXMQCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768325236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2OcrpZYe9PiOS1Iu1Dog7Pn/+NymNnX6HuserR98sCw=;
-	b=Lmx6LW+ejIF3D7iHL4EnVOHkskx4jis5Q0PTedfDinaad0FhDnid+qH+2gUHuKnZJp2AZM
-	0cRPKrfQi+GPadnrjKPVJv/ZFf3twNlGWgkFObjnokqmTl6Y8b562xi1ebxR/7t/8PUzDD
-	tdovgAhN9AtkflZOFwohXizt6cYrxUM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768325236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2OcrpZYe9PiOS1Iu1Dog7Pn/+NymNnX6HuserR98sCw=;
-	b=4aqn/czM2MYy6op77006qe03KPSAPvdh3AggkfeSjO7b6n0KpitMHxbmkbysFd3G6kvcqR
-	7VHmcPryM7DXMQCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 515ED3EA63;
-	Tue, 13 Jan 2026 17:27:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nvIMDXSAZmkrfwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 13 Jan 2026 17:27:16 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Subject: Re: [PATCHSET 0/5] io_uring restrictions cleanups and improvements
-In-Reply-To: <20260112151905.200261-1-axboe@kernel.dk> (Jens Axboe's message
-	of "Mon, 12 Jan 2026 08:14:40 -0700")
-References: <20260112151905.200261-1-axboe@kernel.dk>
-Date: Tue, 13 Jan 2026 12:27:06 -0500
-Message-ID: <87v7h52zkl.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1768326699; c=relaxed/simple;
+	bh=u5yB2Af5ZEp4v9jSy7Lyba9Srv6l7smSuqGnUS5JO50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BYyF82X3lokkZWNvLXlhGTyOaXnrkIowmfwcCOyiKAVxnfHLF+jO0B48ajAGDbbHrHC5y06iZXk143ao/KAbwX9WYSZt3LSDNt1ieHe0CoRtG/JGzJDt3chUqo51/dx8RsWDZCP9W0YBSJZFT3aiPdYuAu7QFj74wWVZfhJbVl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9sssFk0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34F3C116C6;
+	Tue, 13 Jan 2026 17:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768326699;
+	bh=u5yB2Af5ZEp4v9jSy7Lyba9Srv6l7smSuqGnUS5JO50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K9sssFk0DYfXoi5J+Z953WUH9om7NMddeT+PUnLqct2AsJ2O4dkUEY1SsUHmn2+OK
+	 dG+2yDWL4pRtqrdTBQ5TnEOocN6w26yny6yaYHltYgPbMz+7z+Un/k8I8quvKUQ2uh
+	 wG20rwrYv+XEIJ/9ztNFZSIaz93jC5nth/7nXcP8+T6qCkAJFgpFU6Yh7HdtpnFf5J
+	 95+JzIeOA571TQfF4lov+oIhNYYAl4s0Ogtvi5nuxTLEOAkqRN+YRh+2aSRrToLsyv
+	 xEOWz5ck0XLIJG0Rj4EgesM0yntEOGzSvZ+ZGB14eA77Cx6fDxJgAHZsQJhdYG7y4K
+	 X81yZ1U68jo0Q==
+Date: Tue, 13 Jan 2026 17:51:34 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
+	paul@paul-moore.com, axboe@kernel.dk, audit@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/59] struct filename: saner handling of long names
+Message-ID: <64f6bd19-7906-4138-ae1b-a5a443ed140d@sirena.org.uk>
+References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+ <20260108073803.425343-16-viro@zeniv.linux.org.uk>
+ <dc5b3808-6006-4eb1-baec-0b11c361db37@sirena.org.uk>
+ <20260113153953.GN3634291@ZenIV>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,mailhost.krisman.be:mid,kernel.dk:email,suse.de:email];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-
-Jens Axboe <axboe@kernel.dk> writes:
-
-> Hi,
->
-> In doing the task based restriction sets, I found myself doing a few
-> cleanups and improvements along the way. These really had nothing to
-> do with the added feature, hence I'm splitting them out into a
-> separate patchset.
->
-> This series is really 4 patches doing cleanup and preparation for
-> making it easier to add the task based restrictions, and patch 5 is
-> an improvement for how restrictions are checked. I ran some overhead
-> numbers and it's honestly surprisingly low for microbenchmarks. For
-> example, running a pure NOP workload at 13-15M op/sec, checking
-> restrictions is only about 1.5% of the CPU time. Never the less, I
-> suspect the most common restrictions applied is to limit the register
-> operations that can be done. Hence it makes sense to track whether
-> we have IORING_OP* or IORING_REGISTER* restrictions separately, so
-> it can be avoided to check ones op based restrictions if only register
-> based ones have been set.
-
-Looks good to me.
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Of4QYEo5dqgFFZip"
+Content-Disposition: inline
+In-Reply-To: <20260113153953.GN3634291@ZenIV>
+X-Cookie: All models over 18 years of age.
 
 
--- 
-Gabriel Krisman Bertazi
+--Of4QYEo5dqgFFZip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jan 13, 2026 at 03:39:53PM +0000, Al Viro wrote:
+> On Tue, Jan 13, 2026 at 03:31:14PM +0000, Mark Brown wrote:
+
+> > I'm seeing a regression in -next in the execveat kselftest which bisects
+> > to 2a0db5f7653b ("struct filename: saner handling of long names").  The
+> > test triggers two new failures with very long filenames for tests that
+> > previously succeeded:
+
+> Could you check if replacing (in include/linux/fs.h)
+
+> #define EMBEDDED_NAME_MAX       192 - sizeof(struct __filename_head)
+
+> with
+
+> #define EMBEDDED_NAME_MAX       (192 - sizeof(struct __filename_head))
+
+> is sufficient for fixing that reproducer?
+
+Yes, that fixes both testcases - thanks!
+
+--Of4QYEo5dqgFFZip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlmhiUACgkQJNaLcl1U
+h9D+Fgf+Kes/aSCAueu1qfrerl0JcUVsduMxtytvZhZRtYOZUzYgu6kid1P4zS5u
+cB5UgmPBUyPl5R/MxwWR4cNczlzXNFEaxsK98vJkDb8JLEE//EPjvqX4U3k1oKxz
+1E8gkC1QxX1a50iY6DlKm9fuyjoe1ipQf79X5WeLqJZH/LRuvq8APEPjMGtdtWwb
+uzTemUH1GvgZ79y2wzHogJtzt10qfdX6O8aUIhLcS1Sb3w5xTpV4vYHQ8w3bGFEy
+TKtKrT3nO7GmZVlV1rLAhKkpZ5YJvhyfkkpixNDY0ewFBmO3pv96cCAhRtwUOliu
+6xpuTk37TiRbf30DeGcEOrNhbnmYQA==
+=7zUr
+-----END PGP SIGNATURE-----
+
+--Of4QYEo5dqgFFZip--
 

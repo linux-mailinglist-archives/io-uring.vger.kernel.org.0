@@ -1,48 +1,48 @@
-Return-Path: <io-uring+bounces-11617-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11618-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF17D1AEFE
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 20:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C39D1B013
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 20:19:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2F36B3016DE4
-	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 19:05:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DCE7F30A0F68
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jan 2026 19:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79335771C;
-	Tue, 13 Jan 2026 19:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5423C364050;
+	Tue, 13 Jan 2026 19:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NkjJirpc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wVhY9iZL"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A053570D6;
-	Tue, 13 Jan 2026 19:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB933624AC;
+	Tue, 13 Jan 2026 19:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768331141; cv=none; b=E4EvYGDUQstWU5F6Whpc+2jsLWScqFNVg0vaIWklLVnxV5ubVNV3zYJcWnTiodhp0zanKPX2ON+PI/7PoJlEVDXoV9ybN3orSA7iqeIhWc3huT7ZE+5L6tEx1yzk6cSQDVX7rc6u8FYIbemxP1NBi21F2sswrcYwoBrIsI30XN4=
+	t=1768331740; cv=none; b=eJ58SGRr11jzNSW/K6vbD82jbJfW+GIhafiBmeDuIMRnL8TzyMPqKtnSmrsNRDHXLFmeZhAYhCEGBI3FqW80v4OPNKzdgsf1bli5Ag9ic3xg5JuGAYm/j0TUdB+uFGUD3Jl+ASDwrtFV9mokrWrcoTiyxwEI552q+FWLv93m9XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768331141; c=relaxed/simple;
-	bh=wu2ToQdgBhgHCk0SMRuUYKoigLiRakf77u0rPqPRCa8=;
+	s=arc-20240116; t=1768331740; c=relaxed/simple;
+	bh=I6UITsJP9IZGg0x9KUYtzcKMszxjLObOfiJ3tDF6NAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPX3jXo6Y1NODrZzORlCw+gKhKkaWGukZifSEklM9xviDnB6Fo3HDNRkTdfM3kZb/tzsL8xjW2gh/qoSHQOvHEmRA5KMvOc81jIxrRlBdIHOEo9fEmLijCXzvwHqiaY22D1euUNcUqfPpl0p+EAy9UgFWjhD80oo4W1qqnqlmUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NkjJirpc; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZncNi8YJEt5pXQ169o2eeIXvMWvIzmblt/YWc6qVHEn3TQYzA4VtNTeqjgW2JVzbweWru7PjXr1MMFnEOj4d3ZCEauwqMMhqmyDa191v8+E4nyX/reTYFV3kk3gvhOxEKVzIVZZWgKV6sPmhuGNquEHIoGEFUh7eA1xMywBLKmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wVhY9iZL; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lPg+mldV0tHpP5Arkhs5w91g4oKcpmQv2d6ztcobjyo=; b=NkjJirpcLC9kdmGT5sTwA+Ed6l
-	20LRtJAF/cvV26OMlMIfhCEwSPSyzydcgaqVScsqee8TF2tki/94j8TuJFLLQIXoYuISAB7mYQQdr
-	KsNxLoEEMqdox0dnSntl0BeazyM03C/D9sAdveMM01GNntrp2VDVkqfcn8Vq046Wd9Tu0ZuPlcOF7
-	D5kqyCaTxXJq/PKAaX/5J8aQR+/qmkKs/xt3HrJ32ti5timEzat9Cg9j6jXDYZyoAVg3Y3iNYbMUZ
-	NucH8xBTWFhodWvKUl2a+Y/lNk6MhshrdRwmfaahrT4DCqD70Ofg9kvBRBkZSFe0R9ZwukpigHh5W
-	R6Y+4RHw==;
+	bh=XgGrVDhdd2cjZ6Fq5+hoLI+F3LjOb87+IxBIMIOVNqM=; b=wVhY9iZLZqukol8KYcnVYSugOA
+	MmnaSOcyoX/M+xamn/giGAbPACFWWXrO/LR3ee+FiElnq9yOUZ/Ih0q5hPJoFEyJzoQur/V2bvSUh
+	VkjGMUdNU9WfdOJ6kbA3O7W+XtQg3isncUHGyOkjMBlf12Gkp0nG8W12phisXX0Zzp14R25Tp8cpd
+	wJp04JhZC8Qh9iJAh9aj8VR8Fz3WG+f/hW18UfvauSjwV2Gjt1i4Z69MPOQ07Zw4u058s0FoqW5Kt
+	jgVPjZQTJkDK7HEBoCtAgVFPT2wIeCVWT7cowHOM843E52KWJqntYihKnyvzuo30wed9l0Zg8pmHy
+	zMMhgG7A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfjjJ-0000000FTeo-2Kte;
-	Tue, 13 Jan 2026 19:07:01 +0000
-Date: Tue, 13 Jan 2026 19:07:01 +0000
+	id 1vfjt0-0000000FUet-3QCS;
+	Tue, 13 Jan 2026 19:17:03 +0000
+Date: Tue, 13 Jan 2026 19:17:02 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Mark Brown <broonie@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
@@ -50,11 +50,12 @@ Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
 	paul@paul-moore.com, axboe@kernel.dk, audit@vger.kernel.org,
 	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v4 15/59] struct filename: saner handling of long names
-Message-ID: <20260113190701.GO3634291@ZenIV>
+Message-ID: <20260113191702.GP3634291@ZenIV>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
  <20260108073803.425343-16-viro@zeniv.linux.org.uk>
  <dc5b3808-6006-4eb1-baec-0b11c361db37@sirena.org.uk>
  <20260113153953.GN3634291@ZenIV>
+ <20260113190701.GO3634291@ZenIV>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,46 +64,63 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260113153953.GN3634291@ZenIV>
+In-Reply-To: <20260113190701.GO3634291@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jan 13, 2026 at 03:39:53PM +0000, Al Viro wrote:
-> On Tue, Jan 13, 2026 at 03:31:14PM +0000, Mark Brown wrote:
-> 
-> > I'm seeing a regression in -next in the execveat kselftest which bisects
-> > to 2a0db5f7653b ("struct filename: saner handling of long names").  The
-> > test triggers two new failures with very long filenames for tests that
-> > previously succeeded:
-> > 
-> > # # Failed to open length 4094 filename, errno=36 (File name too long)
-> > # # Invoke exec via root_dfd and relative filename
-> > # # child execveat() failed, rc=-1 errno=36 (File name too long)
-> > # # child 9501 exited with 36 neither 99 nor 99
-> > # not ok 48 Check success of execveat(8, 'opt/kselftest/exec/x...yyyyyyyyyyyyyyyyyyyy', 0)... 
-> > # # Failed to open length 4094 filename, errno=36 (File name too long)
-> > # # Invoke script via root_dfd and relative filename
-> > # # child execveat() failed, rc=-1 errno=36 (File name too long)
-> > # # child 9502 exited with 36 neither 127 nor 126
-> > # not ok 49 Check success of execveat(8, 'opt/kselftest/exec/x...yyyyyyyyyyyyyyyyyyyy', 0)... 
-> 
-> Could you check if replacing (in include/linux/fs.h)
-> 
-> #define EMBEDDED_NAME_MAX       192 - sizeof(struct __filename_head)
-> 
-> with
-> 
-> #define EMBEDDED_NAME_MAX       (192 - sizeof(struct __filename_head))
-> 
-> is sufficient for fixing that reproducer?
+On Tue, Jan 13, 2026 at 07:07:01PM +0000, Al Viro wrote:
 
-FWIW, an unpleasant surprise is that LTP apparently doesn't test that
-case anywhere - the effect of that braino is to lower the cutoff for
-name length by 48 characters and there's not a single test in there
-that would test that ;-/
+> FWIW, an unpleasant surprise is that LTP apparently doesn't test that
+> case anywhere - the effect of that braino is to lower the cutoff for
+> name length by 48 characters and there's not a single test in there
+> that would test that ;-/
+> 
+> chdir04 does check that name component is not too long, but that's
+> a different codepath - it's individual filesystem's ->lookup() rejecting
+> a component.
+> 
+> Oh, well - not hard to add (to the same chdir04, for example)...
 
-chdir04 does check that name component is not too long, but that's
-a different codepath - it's individual filesystem's ->lookup() rejecting
-a component.
+Crude variant on top of https://github.com/linux-test-project/ltp #master:
 
-Oh, well - not hard to add (to the same chdir04, for example)...
+diff --git a/testcases/kernel/syscalls/chdir/chdir04.c b/testcases/kernel/syscalls/chdir/chdir04.c
+index 6e53b7fef..7e959e090 100644
+--- a/testcases/kernel/syscalls/chdir/chdir04.c
++++ b/testcases/kernel/syscalls/chdir/chdir04.c
+@@ -11,6 +11,8 @@
+ #include "tst_test.h"
+ 
+ static char long_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
++static char long_path_4096[4096+1];
++static char long_path_4094[4094+1];
+ static char noexist_dir[] = "noexistdir";
+ 
+ static struct tcase {
+@@ -20,16 +22,26 @@ static struct tcase {
+ 	{long_dir, ENAMETOOLONG},
+ 	{noexist_dir, ENOENT},
+ 	{0, EFAULT}, // bad_addr
++	{long_path_4096, ENAMETOOLONG},
++	{long_path_4094, 0},
+ };
+ 
+ static void verify_chdir(unsigned int i)
+ {
+-	TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
++	if (tcases[i].exp_errno)
++		TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
++	else
++		TST_EXP_PASS(chdir(tcases[i].dir), "chdir()");
+ }
+ 
+ static void setup(void)
+ {
+ 	tcases[2].dir = tst_get_bad_addr(NULL);
++	for (int i = 0; i < 4096; ) {
++		long_path_4096[i++] = '.';
++		long_path_4096[i++] = '/';
++	}
++	memcpy(long_path_4094, long_path_4096, 4094);
+ }
+ 
+ static struct tst_test test = {
 

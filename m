@@ -1,113 +1,96 @@
-Return-Path: <io-uring+bounces-11693-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11697-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AF7D1C611
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 05:36:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0FFD1CBE5
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 07:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B703C3016201
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 04:33:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 657D63051ADF
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 06:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402D3334C30;
-	Wed, 14 Jan 2026 04:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MFkzhdkw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5A537418F;
+	Wed, 14 Jan 2026 06:52:40 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F30328625;
-	Wed, 14 Jan 2026 04:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69D36BCE4
+	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 06:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768365122; cv=none; b=PyQF/uDoKYYWb5eatyy0v/hHs8VxXlhanQYZr+owxjo5pK8Hd7md5BfEXNrcCBvTj0uYl9d7QxRzOt6Ul/sXQxkEUKjbCAXMyZiFHZyVPApAp5AUCeGbmT6iowUdcNdtjx7xzKvuNwbBKTHZDaQAKRv70vGcaPdoQ/WYef6pDnk=
+	t=1768373559; cv=none; b=lOEnwNLQRKdUh3vN4VhTquZNz2QPXpwK6/dm/ZqQzAQo2cW45RvAcUoAVEscQpkb6wXlvSMme1lB9aR3Tx0cpaOXOSZK4IZx4mQvuvclje5QiorzeUUYkbw0P3uFkvBK/UDkNICdhi7HvOoRulJkoTaB9mITK1eEdDC8a5WBeoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768365122; c=relaxed/simple;
-	bh=ed4inkFbKg5gXwGxXVyNFfqCJTe0MbLbW/j1/GoDH1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fi3WP0Im95MEz2DU9tDe9A7TdC/CS2Li01ZGIhTM6MOecwgU0n7w1cLNSHrWbjK7IOQMyQL2IVZOKAbY6TXLD04JA2rWZmsrf9z6LmiDCQqezDA/8GVpiHr9vTACJN0PZ6lg8Pp4oVPMshepNZXflkaSt4KDAHn9xeWkC4H7jrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MFkzhdkw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=sz/9K14xSZCaQltDnYlKvdLrLATpRcUYc8VoMWgUXMw=; b=MFkzhdkwaKmEYF1jeGGMTVTEX1
-	Oy2i8mpA1WMCwhKnZlzywyn+K3s2JZ98UwozDL58g9UUzWYrFLNVdCCWxc/cCLjIuKbLgkWSkbVLD
-	sDj8t3ia9LNqwMPS55VLRo+MbIy6m2uwfnOUO7lnWHekBnbbH3CrYc0+3rVRWEETqLPoIvH/Uo2Jb
-	RRWcQfO9BZbHeGtPu7A+Qp1ZRflnOx9cgTwf0STYb/vYMpLMB6Yr/iBiADNrBG0WB+6QXE5aFZ8dU
-	2DKfThMl7opKsTekKLL/3LJKOPDfs34aP0c6ULqF4MY0fnDcYFzC5Sh1xbP7sWPBwGeScrw8gAQHb
-	1Gp+/Duw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfsZP-0000000GJ0y-3gFS;
-	Wed, 14 Jan 2026 04:33:23 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 68/68] sysfs(2): fs_index() argument is _not_ a pathname
-Date: Wed, 14 Jan 2026 04:33:10 +0000
-Message-ID: <20260114043310.3885463-69-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
-References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1768373559; c=relaxed/simple;
+	bh=m3NtS9/WYq4ogsd0xWIPveap7BGcq4XUB+AfQuRe7ew=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AH8WsprpXRTr7oq1rSH3y9rVLYZNkWN2qUcorYmlwXdt5csGiGmsui2b4K+5W3KMx2HuuEcfCVZ7vuIKNa065E+RKkimTTTGQIoSXDnWiOwO54nL9XEvSJVTiW0fHaMfZybjqW4f6YeDF1sC0G5oqlA4pQOx9gdfpO0bQtr+yFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-450be8a012cso16754317b6e.0
+        for <io-uring@vger.kernel.org>; Tue, 13 Jan 2026 22:52:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768373550; x=1768978350;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jB537Ogibf7YpoRVFLuuP4nwgbHZI+zx0PUtSdk9Flc=;
+        b=ZzOSJ1gQG7YBVvzWSnCHGkxFOS0hUABuHFhD1EREuWPJ+r1DdwoPxwSbG1YCTV+LNK
+         Drq9+yPhikzqqIS26QXNKd52hCB/yZ+798DiEor0GAZyWT6yunNDfRUTp78IlSCQIlZj
+         HdHXNMdHIYE3sCsw3uluyUC2BEp7lOaSfWW2Sy9A/3YmEbVBPnVo5I6vALRLQ7MNY5YE
+         9X7AsJ67vNhpAJzzeIfipDA3vE9lOLUIkoMpUXa3buLxcojFaBZg09uh1uBMiL7U/qHF
+         ue7VP+I2r09sqE0Zh1Z2JIkiEKffq7sauo4Y2ClSmyoFtmRZgitcgxJNlrCjFxRoZPzN
+         sYEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqs8NLcBtdPz0VNCfsh4O56l9Md+nb6ZI1Q7Fm8DPP9OpTNwfx/6+Gj9XLrd2WfMyu+zGP3umArQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1HLq9IH50w+bBs5nZjL8Z4jXDCLM4uALg7KUhiqtv7RiAv8qJ
+	j7B9C+Snh5ig1+PaDDERcE4dfA/SF62NDIO1pP0gXggtivygiK0XVAUe0XPl5TEmHBHID3ROhDo
+	VYR9OaK4eXZh1FthjnDZLLvAlgpIgQzv5sRAP5o01VxdHOUthYa8RVOG1FIg=
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6808:1785:b0:45a:a4b7:e5a9 with SMTP id
+ 5614622812f47-45c71553f80mr1016306b6e.61.1768373550062; Tue, 13 Jan 2026
+ 22:52:30 -0800 (PST)
+Date: Tue, 13 Jan 2026 22:52:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69673d2e.a70a0220.1aa68e.0001.GAE@google.com>
+Subject: [syzbot] Monthly io-uring report (Jan 2026)
+From: syzbot <syzbot+list2596a0e816b2ced1c8ca@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-... it's a filesystem type name.
+Hello io-uring maintainers/developers,
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+This is a 31-day syzbot report for the io-uring subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/io-uring
+
+During the period, 0 new issues were detected and 1 were fixed.
+In total, 3 issues are still open and 133 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 5002    No    WARNING in io_ring_exit_work (2)
+                  https://syzkaller.appspot.com/bug?extid=557a278955ff3a4d3938
+<2> 68      Yes   INFO: task hung in io_wq_put_and_exit (6)
+                  https://syzkaller.appspot.com/bug?extid=4eb282331cab6d5b6588
+<3> 30      No    INFO: rcu detected stall in io_ring_exit_work (3)
+                  https://syzkaller.appspot.com/bug?extid=33504742c13bcd6c9541
+
 ---
- fs/filesystems.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 95e5256821a5..0c7d2b7ac26c 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -132,24 +132,21 @@ EXPORT_SYMBOL(unregister_filesystem);
- static int fs_index(const char __user * __name)
- {
- 	struct file_system_type * tmp;
--	struct filename *name;
-+	char *name __free(kfree) = strndup_user(__name, PATH_MAX);
- 	int err, index;
- 
--	name = getname(__name);
--	err = PTR_ERR(name);
- 	if (IS_ERR(name))
--		return err;
-+		return PTR_ERR(name);
- 
- 	err = -EINVAL;
- 	read_lock(&file_systems_lock);
- 	for (tmp=file_systems, index=0 ; tmp ; tmp=tmp->next, index++) {
--		if (strcmp(tmp->name, name->name) == 0) {
-+		if (strcmp(tmp->name, name) == 0) {
- 			err = index;
- 			break;
- 		}
- 	}
- 	read_unlock(&file_systems_lock);
--	putname(name);
- 	return err;
- }
- 
--- 
-2.47.3
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 

@@ -1,79 +1,78 @@
-Return-Path: <io-uring+bounces-11704-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11705-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D223D1F859
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 15:42:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009ECD1F8E9
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 15:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 01DC6301A4AE
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 14:42:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 02AC7300E7C4
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 14:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DD02FDC5D;
-	Wed, 14 Jan 2026 14:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202B03101B1;
+	Wed, 14 Jan 2026 14:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxRxPkdo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtwL4rGj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DD8E555
-	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 14:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A8830EF7F
+	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 14:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768401740; cv=none; b=fzVkidmHY7AfUC3kLf9cggVy2KMqsPcVuVDDPllul95c9melWoVozRX6+9Hx41mtde4dfqk5gBO9571bjviiByzPD9mjp5l/2b9uGeYlHu53hAx08m5tWuIi3YCKpBthdnkpfy5K1Yky1fCsMRjn7YQhA3OSVyzQ6Dd8QBYpDhY=
+	t=1768402504; cv=none; b=NaCRWrwxlhmhFeRG770UQEm+exS4SMs1XCnP8PFaA367gtLlNItZ5A53yqZQWDJMcayrQhihfO1PE25D6txMB0UUMzYrsf1pRTkQsenFB1fd7lOaP+PqwNWFVZa1/m1KKHOv/RZcQ02ivMN6VjB4IRBEK0Y7AMrCKyk8vdG/raA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768401740; c=relaxed/simple;
-	bh=BVASAEECGqlGnShU7hLOg3/ClUMKE0TbQyv+NyxazAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TpKkDToG7fHQP1bs5N8MCMPPyQE0PdNHFIefKe0mtIEAZtkG+nzb5WiW9JXeOYfh5lkY2VlbuUO23x2+IgDy0YDVJGBOqP0yxH/m6NutSxmJukHJwTDKqW2j4QaGLejP6v6mnX9ZEu/TEN3ZGORbJpvi+lYd6tSXw5d7FqkRzgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxRxPkdo; arc=none smtp.client-ip=209.85.219.41
+	s=arc-20240116; t=1768402504; c=relaxed/simple;
+	bh=h4YJy/CneVD47T3xMYkmJdvIefdtyp1VIstRl/7e6Ac=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Rdz6nIqO7iFy4I+u/Nbrlu81QmxyVXNnR40vjFqcaaKM9XwFcLSbJeRE3elDBOlAEBGh2uAeHL48o8CEX5cWatO2ml2sgQ7xJsYZBZQAALzWJowg0zhmi+FU++rZrgYI0ifJnb/ePeC04MHN51TMJPw/87p1Q7077FMO+aTv2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtwL4rGj; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-88a367a1dbbso145413606d6.0
-        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 06:42:18 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4327778df7fso5502592f8f.3
+        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 06:55:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768401738; x=1769006538; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XllR2PHeIuAyaDsa1eEsmGujrUzEwrlwh2htikyR2EY=;
-        b=CxRxPkdo0eDd+w6ZOXBMTf93OelkRGCSsUjWDwBKAkbiEC+kEA1cV9fehwNYZY7W5K
-         XaEgFTg4hMNGFlpB2fE4YFLCawBn2J2cX4k1988CyOSQP0eBz3s4/IPUiKtw9Ul3n6Y7
-         MzEB7/1j9C7KxcQLZRkuR0wIU0xiUchYD0B1x6ajvUWNFVZXLKqiZNbyA4qAid0hId0L
-         CdgwGM37OYA3om/LJFU4dO2IhvoaURTAkWfrz/PDDKtb4KlUVkQDPqK+JSwXeqHIPElo
-         e0wlI848o2WAVqPF9ohFk/00v1puTmSUUvkvJZNRN4jZdpF2lpMXDZbbD6kK2tMjVBN/
-         Bjow==
+        d=gmail.com; s=20230601; t=1768402500; x=1769007300; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=agy1hHgHoFJQetG4XeQnGSN0SlS/aIGjqLfBNCzpeUw=;
+        b=JtwL4rGjif1xI2AxXpE1ycMFjCfVqlFweo89dy+wtjRS48XBEe96tecbe5AdoAz+gZ
+         fqeMrCbCMoSVtjORC2JkP6oWlQyxOpZa0CwENubNolsT6+BK7BSLSlamGRabEcsi0PuZ
+         Jc6g3MpxwNM9ih6K8refVPHIEROehOS2yC6SKuvceMpqFlU0EZpKKOD3wj7NJI2IZIBD
+         kOu56xRH2J2Sh/mqjmL3eBFeEjVfS4HtxGLbKQBaE33ljoZ2gNCn+rSLCgWcA7D09bNO
+         AFDchGPL/KLsLCTUOi+NQOqo+BVC8+Y/EGSknxKl11ogsYivZCs0xgJ35nYNyIaGkDAE
+         Vg8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768401738; x=1769006538;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XllR2PHeIuAyaDsa1eEsmGujrUzEwrlwh2htikyR2EY=;
-        b=EJRZeKjqikMZMDOk7+fYweig/aabQeal+uBbhgHunzQ7pbaE/V2t//xp62IdCxqCpQ
-         aLBNm56p3zHnBP0UubdmgsoXT8M2AKsyLyLqM+H6nI8Y8iAZHSiuxPJCkGjUWKuFkHq5
-         H/B1optFwEvihcTmZ85DaUvOqGeUlWcp/DZIsmcyfpBYA9sjHYHIEb+xLNjLUERqSiqK
-         AEgSAtCoPPFt/I4TCDt98kduliRGxHKRueYPKhcTEtYXEmckZVyR/GZmJfUso9UzeXfU
-         zmF21WX7DrRY11NgcbgkVtQJbzqFHakc4sURPQ8Av0AXIRk2VuF23xaUgnx1K8o2WF5t
-         xQng==
-X-Gm-Message-State: AOJu0YzwKNfGjboJr8eV7h1vxzK8leoa5uo24TR1Mis8ZtqHd/9nRjYK
-	s/Lh6fb0xKVYptnfvtxdkqBB51JDhmqsCaEUeQfCj8wHxLjSn7yc7dAE
-X-Gm-Gg: AY/fxX7DSOlvkfF/1z4laUyVZYikxxuMvo8dNN8zHqIRgozzwPjXoJCGDn/+Fm4OGuz
-	0ecrvnCpYvNw49C6cw7bdS0uTRUPtIwktG8PHLyTUS21WiVPg+VRxYUOwjZONzDFgeJUN73Fb0L
-	5NCMVt3G3ZWOAMTZbnE2KbxXh6sVT1xQLpSQUiD6uJSTMrUX7+ZTero/7/yXFw6jBLF7l2UOUS1
-	lUOip3MJyXkM5DN0uwhyjg5lhMa1YXbkSnveRRp4obNUEXuHTvGpmoGdi7me91XKBDwCemq0Anl
-	BDu9YYoMfuv2BS9Fc04/gaYbfctRJE+xv5zdT8KO0Z7LXppqQ72RfPaPsuAEkvsvnBDvkVFwWE/
-	dpA6h+9e9AHfWpcEcaABlfDFxo2zE8xxRmf0LQh4kIZzfSRWyxCP0Fg8TTdIhZeDgysH1AFYpQp
-	TYir6VEo7CyvshvJ+cz4mdg/qP53V0bXvtpNEbTQj4EZ9kjlYP4g52EZkw40GS9nN6NGYuYLrhL
-	Q7nmMOy4Xa9aHi8naYm/jREqxP2Uz5H2NUxpQhrUX0r45w=
-X-Received: by 2002:a05:6214:29ce:b0:888:8913:89af with SMTP id 6a1803df08f44-89274383f69mr31306996d6.15.1768401737697;
-        Wed, 14 Jan 2026 06:42:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768402500; x=1769007300;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=agy1hHgHoFJQetG4XeQnGSN0SlS/aIGjqLfBNCzpeUw=;
+        b=Us5Dy1nQxDkd/iTmTkfzRuvzxao/LkPeKOCZctxh27VCLOvmtgsXqTqtpNMXyrK/vd
+         rx4NEP8jsAzqfHggaq/ORSjNotTQeFecBDLzjvFUtw5it2dHpEhV/HmWNnVXPiTyXkHW
+         b7OTss1xCGTFrpt44R3bwUfrF3A+0AIyHwTG/5m17Fntf7ZcoqnZx9ohx+GdVD1qqKmN
+         9nW5Nd4o956TnN2OsyVqyJc8hhQ1wO8FiJ4x3dGVzC8xSjxjCsnyInk0P7eCYNDz5So1
+         yXO86rsXM2My1aeoSrAJbsLO3nC28JS+YOhI7dSIkEan6ZP+grWBfKFiiZ30dtJHlIJi
+         ICww==
+X-Gm-Message-State: AOJu0YyTG4ZJAi7860Tpld3d/XcM8LMTnjqMCYc73fCpGbN/EAIWZ6Ba
+	VHp5TNdmX4TFUv6JkRB+gQ3OHxgglZnLJXBpMp+nwn6oyyvAhFEAKeq4CmaCwA==
+X-Gm-Gg: AY/fxX6A273jw1spor5Y/YP5wuBeJMlIV2TSjmcAFEZgbvt/ddF6AckcI6vTrQkaDDx
+	Mu6SFgJXd69wXzOrwB/JSA4bWkaavgX0OMV/EaUSpEjQrYLT1sVkgv91afMuP83jv/QRTDF++h/
+	SNN773hIFASSGFrD2HmddqwPgdmUA8IywVfSeZIFeiKlB3LJU38hXk6xE028j1h87PTRnd3vKbt
+	i8SGflpThi8PjPqTYrJv5ge7xPiLpOyWD12593KNzXezTUpkbSwH7MhQYdExXAhStBGGmG3fvKq
+	6aymkFf1SJrZbBAwVvFHKYuhvfI0pWJupE8msUQyjehDDm7kBvRDisl/xrM0P6JH+guHGSQezu1
+	yzbt0dm7k7kkIgLp+iyMXqdpbeOV22vyeFi0UfEA+61W6Ub6eHjn3680l7Sblos3apxjoLkIW74
+	MiosGit9tjKHx8XhVUX6SKqTGfm85qYfjRmsJEerbkcjrfORw9EH88jXbxxHsaIY8WkOPfEwtrM
+	rsyxdZuY2Cph4AEb4buwp04EaoxNYJoag9g6vyt3X6Y60A=
+X-Received: by 2002:a05:600c:1e0d:b0:47a:7aa0:175a with SMTP id 5b1f17b1804b1-47ee33a1bc9mr35453865e9.26.1768402499638;
+        Wed, 14 Jan 2026 06:54:59 -0800 (PST)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:b3cc])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8927a07c731sm7999216d6.34.2026.01.14.06.42.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee563c8bbsm31346735e9.12.2026.01.14.06.54.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 06:42:17 -0800 (PST)
-Message-ID: <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
-Date: Wed, 14 Jan 2026 14:42:10 +0000
+        Wed, 14 Jan 2026 06:54:59 -0800 (PST)
+Message-ID: <5f026b78-870f-4cfd-b78b-a805ca48264b@gmail.com>
+Date: Wed, 14 Jan 2026 14:54:54 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,40 +81,45 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
+From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, Gabriel Krisman Bertazi <krisman@suse.de>
 Cc: io-uring@vger.kernel.org
 References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
  <87ldi12o91.fsf@mailhost.krisman.be>
  <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
+ <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
+In-Reply-To: <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/13/26 22:37, Jens Axboe wrote:
-> On 1/13/26 2:31 PM, Gabriel Krisman Bertazi wrote:
->> Pavel Begunkov <asml.silence@gmail.com> writes:
->>
->>> Describe the region API. As it was created for a bunch of ideas in mind,
->>> it doesn't go into details about wait argument passing, which I assume
->>> will be a separate page the region description can refer to.
+On 1/14/26 14:42, Pavel Begunkov wrote:
+> On 1/13/26 22:37, Jens Axboe wrote:
+>> On 1/13/26 2:31 PM, Gabriel Krisman Bertazi wrote:
+>>> Pavel Begunkov <asml.silence@gmail.com> writes:
 >>>
+>>>> Describe the region API. As it was created for a bunch of ideas in mind,
+>>>> it doesn't go into details about wait argument passing, which I assume
+>>>> will be a separate page the region description can refer to.
+>>>>
+>>>
+>>> Hey, Pavel.
 >>
->> Hey, Pavel.
+>> I did a bunch of spelling and phrasing fixups when applying, can you
+>> take a look at the repo and send a patch for the others? Thanks!
 > 
-> I did a bunch of spelling and phrasing fixups when applying, can you
-> take a look at the repo and send a patch for the others? Thanks!
+> "Upon successful completion, the memory region may then be used, for
+> example, to pass waiting parameters to the io_uring_enter(2) system
+> call in a more efficient manner as it avoids copying wait related data
+> for each wait event."
+> 
+> Doesn't matter much, but this change is somewhat misleading. Both copy
+> args same number of times (i.e. unsafe_get_user() instead of
+> copy_from_user()), which is why I was a bit vague with that
+> "in an efficient manner".
 
-"Upon successful completion, the memory region may then be used, for
-example, to pass waiting parameters to the io_uring_enter(2) system
-call in a more efficient manner as it avoids copying wait related data
-for each wait event."
-
-Doesn't matter much, but this change is somewhat misleading. Both copy
-args same number of times (i.e. unsafe_get_user() instead of
-copy_from_user()), which is why I was a bit vague with that
-"in an efficient manner".
+Hmm, actually the normal / non-registered way does make an extra
+copy, even though it doesn't have to.
 
 -- 
 Pavel Begunkov

@@ -1,78 +1,77 @@
-Return-Path: <io-uring+bounces-11705-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11706-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009ECD1F8E9
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 15:55:07 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E9FD1FAC4
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 16:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 02AC7300E7C4
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 14:55:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 11DCB301B499
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 15:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202B03101B1;
-	Wed, 14 Jan 2026 14:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A276278E63;
+	Wed, 14 Jan 2026 15:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtwL4rGj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ks7/lP0u"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-oi1-f196.google.com (mail-oi1-f196.google.com [209.85.167.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A8830EF7F
-	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 14:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3154F1EF09B
+	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 15:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768402504; cv=none; b=NaCRWrwxlhmhFeRG770UQEm+exS4SMs1XCnP8PFaA367gtLlNItZ5A53yqZQWDJMcayrQhihfO1PE25D6txMB0UUMzYrsf1pRTkQsenFB1fd7lOaP+PqwNWFVZa1/m1KKHOv/RZcQ02ivMN6VjB4IRBEK0Y7AMrCKyk8vdG/raA=
+	t=1768403540; cv=none; b=OhjkPE5QZO/bDQmNmouKXQEeeYIuDlbtmdvzo34gPQgRlb1O/V+B5ayh4nM4Z3Y0Ft6wunQfspMxLqEacescDN98DE/95bgPnlCJC0rdOI/81wCNQ3KJHQUMXrPuSt4bIai6ihDdstH+ZC8sHoj5cjrSq8l2Q9d/+g01PdcLA38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768402504; c=relaxed/simple;
-	bh=h4YJy/CneVD47T3xMYkmJdvIefdtyp1VIstRl/7e6Ac=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Rdz6nIqO7iFy4I+u/Nbrlu81QmxyVXNnR40vjFqcaaKM9XwFcLSbJeRE3elDBOlAEBGh2uAeHL48o8CEX5cWatO2ml2sgQ7xJsYZBZQAALzWJowg0zhmi+FU++rZrgYI0ifJnb/ePeC04MHN51TMJPw/87p1Q7077FMO+aTv2Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtwL4rGj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4327778df7fso5502592f8f.3
-        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 06:55:01 -0800 (PST)
+	s=arc-20240116; t=1768403540; c=relaxed/simple;
+	bh=YR6CMYE1KTUVpFnj+umG4Rr50/4sxmaCJzXKV8IgA7Y=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=C3KGq7Ci9QFKD+/VfAM/1JaXoiE7qOadEPnjOWj+IqUtUeG3Q2fGT83vgUDqmYXPyajUVnxyrZCurg1vBk+IlGn3GRzM2X3SkkG88EMdDAwMEtA820EmxdFPFSda7greMBtnMbL2A6iDebPHkzj1u5vrVl10Q1BnYYifM0An+0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ks7/lP0u; arc=none smtp.client-ip=209.85.167.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f196.google.com with SMTP id 5614622812f47-4511f736011so574590b6e.0
+        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 07:12:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768402500; x=1769007300; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=agy1hHgHoFJQetG4XeQnGSN0SlS/aIGjqLfBNCzpeUw=;
-        b=JtwL4rGjif1xI2AxXpE1ycMFjCfVqlFweo89dy+wtjRS48XBEe96tecbe5AdoAz+gZ
-         fqeMrCbCMoSVtjORC2JkP6oWlQyxOpZa0CwENubNolsT6+BK7BSLSlamGRabEcsi0PuZ
-         Jc6g3MpxwNM9ih6K8refVPHIEROehOS2yC6SKuvceMpqFlU0EZpKKOD3wj7NJI2IZIBD
-         kOu56xRH2J2Sh/mqjmL3eBFeEjVfS4HtxGLbKQBaE33ljoZ2gNCn+rSLCgWcA7D09bNO
-         AFDchGPL/KLsLCTUOi+NQOqo+BVC8+Y/EGSknxKl11ogsYivZCs0xgJ35nYNyIaGkDAE
-         Vg8A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768403536; x=1769008336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ttmlb+w50qhP8C1edOUlKlT3WXzbZ6Zta1DCmyJ1Y0=;
+        b=ks7/lP0uaJAbpPHTSBxJX9M2T1AmrnbF/UMKS7Nq7CTKbsvUVBR0RqQa9qmMkls4ub
+         neJAigvSbe9ZwZfU7FZ8QHwpXpynDZvEU92/OUQqkCrNKyv4yWVZXiez/JqR4ikDG9Rl
+         SXQm9LSx8nC8XMhgmGQ+z7tdiPe/AXHUGEuMp4KrM5dNr4KHP2bEfcm2l0SSn9pKLJst
+         ggnMLuinUSwCrA5Z9jb7im+zbQFGDcQUHDmQ8nkJ7NTOWGt8Gwi4oViw7Fmj3KbR/ufB
+         C6aoYoAL5WBiXGB8BokZFEpdET3JteSxoZbcIXUHpxK7D+AceBX0b40b4UGMbaR/96A8
+         8gjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768402500; x=1769007300;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=agy1hHgHoFJQetG4XeQnGSN0SlS/aIGjqLfBNCzpeUw=;
-        b=Us5Dy1nQxDkd/iTmTkfzRuvzxao/LkPeKOCZctxh27VCLOvmtgsXqTqtpNMXyrK/vd
-         rx4NEP8jsAzqfHggaq/ORSjNotTQeFecBDLzjvFUtw5it2dHpEhV/HmWNnVXPiTyXkHW
-         b7OTss1xCGTFrpt44R3bwUfrF3A+0AIyHwTG/5m17Fntf7ZcoqnZx9ohx+GdVD1qqKmN
-         9nW5Nd4o956TnN2OsyVqyJc8hhQ1wO8FiJ4x3dGVzC8xSjxjCsnyInk0P7eCYNDz5So1
-         yXO86rsXM2My1aeoSrAJbsLO3nC28JS+YOhI7dSIkEan6ZP+grWBfKFiiZ30dtJHlIJi
-         ICww==
-X-Gm-Message-State: AOJu0YyTG4ZJAi7860Tpld3d/XcM8LMTnjqMCYc73fCpGbN/EAIWZ6Ba
-	VHp5TNdmX4TFUv6JkRB+gQ3OHxgglZnLJXBpMp+nwn6oyyvAhFEAKeq4CmaCwA==
-X-Gm-Gg: AY/fxX6A273jw1spor5Y/YP5wuBeJMlIV2TSjmcAFEZgbvt/ddF6AckcI6vTrQkaDDx
-	Mu6SFgJXd69wXzOrwB/JSA4bWkaavgX0OMV/EaUSpEjQrYLT1sVkgv91afMuP83jv/QRTDF++h/
-	SNN773hIFASSGFrD2HmddqwPgdmUA8IywVfSeZIFeiKlB3LJU38hXk6xE028j1h87PTRnd3vKbt
-	i8SGflpThi8PjPqTYrJv5ge7xPiLpOyWD12593KNzXezTUpkbSwH7MhQYdExXAhStBGGmG3fvKq
-	6aymkFf1SJrZbBAwVvFHKYuhvfI0pWJupE8msUQyjehDDm7kBvRDisl/xrM0P6JH+guHGSQezu1
-	yzbt0dm7k7kkIgLp+iyMXqdpbeOV22vyeFi0UfEA+61W6Ub6eHjn3680l7Sblos3apxjoLkIW74
-	MiosGit9tjKHx8XhVUX6SKqTGfm85qYfjRmsJEerbkcjrfORw9EH88jXbxxHsaIY8WkOPfEwtrM
-	rsyxdZuY2Cph4AEb4buwp04EaoxNYJoag9g6vyt3X6Y60A=
-X-Received: by 2002:a05:600c:1e0d:b0:47a:7aa0:175a with SMTP id 5b1f17b1804b1-47ee33a1bc9mr35453865e9.26.1768402499638;
-        Wed, 14 Jan 2026 06:54:59 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:b3cc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee563c8bbsm31346735e9.12.2026.01.14.06.54.57
+        d=1e100.net; s=20230601; t=1768403536; x=1769008336;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ttmlb+w50qhP8C1edOUlKlT3WXzbZ6Zta1DCmyJ1Y0=;
+        b=H8HoVsriMESo/Qfggk66W1btYHvgxjWFIRXlZwaiKE3XEIGCrSnHIE2OiWrQOfRslq
+         mExDhidfcECOEMf6fCFZ2Gm6G/hWH5ALW590dr/QroHlbA4q4imbphNdaxR4xUMGd//9
+         HQG4UeVWlXgkZYAWDSaV6H9BBTmTa/07ktBH4qdH6tyjCDx/fBbcwr9Kentro7GZp6qT
+         1NV7XTur2ArJ0FsDfoNTCb19TKISypH11vyPy508O90aNKGVtSX4maO4zEjKvWiTEmW3
+         HsAhQBGt0tNmGosp9pqgTYVpOJfcZpL6RkYJys3+yanWHMhjXJDIelqiGFftnGo8162G
+         IhcQ==
+X-Gm-Message-State: AOJu0YzhC86O/8hPiVNftGpySYLNZvhETnGxYF2Y5MyiurPonZmYIYla
+	sHpFTnL3Mg6gETrzlcfhxOwwIbM934rOdhnmWB1op9R84Kv8MLUNBluNeFGaq6QmbZBNKAApa2c
+	bNlaF8uE=
+X-Gm-Gg: AY/fxX5a+4kIE2Bpd2uKzo39rD6E8rzt25DU5EECXbWG72BOLZxq5RYp9mn2s+SAnxq
+	MaBDeDlk2Skzi2tOL6M9gnKw98lnzIkhLnDeLu4D/5n/Xg5qhJ1nhE4+HcQDOmnnf3RjnY8EXqW
+	STyZNwm4y0Fv1spfYMR6LENaZxnC3sQrPWIzrvuhPioAw6pInt/W65a9Ww3lyUGSVmbFzYGb61d
+	YYuAunQjfxx5gfXjioqCx+WUzFJ4tE0SOxFccODRoVuRb4Sny4cclZzslV86F0lHxaDfHvUf7sl
+	16KJlau7SDUFiY6ldfDmAJQ07P8gKRVi48ZdaWSw0eYMriU1p2x+22q1wTnSC5+NJ9xCTczlp0u
+	C5aACRlDv8rC/WnJxCL7lsDT7uDyLJhb+1A1fMS8pgrGzmajuLS4lcvZWUDsqNxgQeW3pY++yM0
+	2ywbb7J21PNjWQR9Xxdg==
+X-Received: by 2002:a05:6808:c14b:b0:45a:58af:fee1 with SMTP id 5614622812f47-45c71417c09mr2271467b6e.16.1768403536319;
+        Wed, 14 Jan 2026 07:12:16 -0800 (PST)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e1b0779sm10838729b6e.7.2026.01.14.07.12.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 06:54:59 -0800 (PST)
-Message-ID: <5f026b78-870f-4cfd-b78b-a805ca48264b@gmail.com>
-Date: Wed, 14 Jan 2026 14:54:54 +0000
+        Wed, 14 Jan 2026 07:12:15 -0800 (PST)
+Message-ID: <b60cab06-92ad-467b-b512-1e76ec5e970e@kernel.dk>
+Date: Wed, 14 Jan 2026 08:12:15 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,48 +79,62 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
- <87ldi12o91.fsf@mailhost.krisman.be>
- <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
- <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
 Content-Language: en-US
-In-Reply-To: <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: fix IOPOLL with passthrough I/O
+Cc: Yi Zhang <yi.zhang@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/14/26 14:42, Pavel Begunkov wrote:
-> On 1/13/26 22:37, Jens Axboe wrote:
->> On 1/13/26 2:31 PM, Gabriel Krisman Bertazi wrote:
->>> Pavel Begunkov <asml.silence@gmail.com> writes:
->>>
->>>> Describe the region API. As it was created for a bunch of ideas in mind,
->>>> it doesn't go into details about wait argument passing, which I assume
->>>> will be a separate page the region description can refer to.
->>>>
->>>
->>> Hey, Pavel.
->>
->> I did a bunch of spelling and phrasing fixups when applying, can you
->> take a look at the repo and send a patch for the others? Thanks!
-> 
-> "Upon successful completion, the memory region may then be used, for
-> example, to pass waiting parameters to the io_uring_enter(2) system
-> call in a more efficient manner as it avoids copying wait related data
-> for each wait event."
-> 
-> Doesn't matter much, but this change is somewhat misleading. Both copy
-> args same number of times (i.e. unsafe_get_user() instead of
-> copy_from_user()), which is why I was a bit vague with that
-> "in an efficient manner".
+A previous commit improving IOPOLL made an incorrect assumption that
+task_work isn't used with IOPOLL. This can cause crashes when doing
+passthrough I/O on nvme, where queueing the completion task_work will
+trample on the same memory that holds the completed list of requests.
 
-Hmm, actually the normal / non-registered way does make an extra
-copy, even though it doesn't have to.
+Fix it up by shuffling the members around, so we're not sharing any
+parts that end up getting used in this path.
+
+Fixes: 3c7d76d6128a ("io_uring: IOPOLL polling improvements")
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Link: https://lore.kernel.org/linux-block/CAHj4cs_SLPj9v9w5MgfzHKy+983enPx3ZQY2kMuMJ1202DBefw@mail.gmail.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index e4c804f99c30..211686ad89fd 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -713,13 +713,10 @@ struct io_kiocb {
+ 	atomic_t			refs;
+ 	bool				cancel_seq_set;
+ 
+-	/*
+-	 * IOPOLL doesn't use task_work, so use the ->iopoll_node list
+-	 * entry to manage pending iopoll requests.
+-	 */
+ 	union {
+ 		struct io_task_work	io_task_work;
+-		struct list_head	iopoll_node;
++		/* For IOPOLL setup queues, with hybrid polling */
++		u64                     iopoll_start;
+ 	};
+ 
+ 	union {
+@@ -728,8 +725,8 @@ struct io_kiocb {
+ 		 * poll
+ 		 */
+ 		struct hlist_node	hash_node;
+-		/* For IOPOLL setup queues, with hybrid polling */
+-		u64                     iopoll_start;
++		/* IOPOLL completion handling */
++		struct list_head	iopoll_node;
+ 		/* for private io_kiocb freeing */
+ 		struct rcu_head		rcu_head;
+ 	};
 
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

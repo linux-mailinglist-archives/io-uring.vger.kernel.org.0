@@ -1,124 +1,153 @@
-Return-Path: <io-uring+bounces-11714-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11715-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9317D201F0
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 17:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AC5D20570
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 17:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 130C9305CE7E
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 16:10:01 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BD75A3049FC4
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 16:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5A3A1E60;
-	Wed, 14 Jan 2026 16:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF053A640B;
+	Wed, 14 Jan 2026 16:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ekoj3vYQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/tW/0ko"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60C3A1E6E
-	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 16:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2463A63F4
+	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 16:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768406994; cv=none; b=JwBC21l6ciHYAqNe1PEUPrUxLosZo1h+IpmSHcH6AcmTEquC2O1um2DzOZ3H9Q+FxwrE8nYhEac9tutjWPmHhzSnVMcCQfvgBHGqWoJaHiGtjb+ZFGlN66Vssu85XXM7zfXxjhg4tD5FvINtKY+xdtfyUBh5lfjXZku6lxozdvA=
+	t=1768409475; cv=none; b=J0E9o/VjGSaXGNwHp4F1JzdkaxR+tYjV2PCupW/kBZaj2ak3aKDTio0k+Ti416hcYTzRCRBdt44dlt9NKfk3rjS5Wx+9b8pAngS/EhLZJ2v61HYpy/kHu6xJ/cVEFKvc3ToYdYIp6c/igCq9d8k5qaZOulYQ1S54igqDHOFLe3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768406994; c=relaxed/simple;
-	bh=io/s/3iiTlGiCEs45YILiC51yUViVAjsVzx8sNaLg6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TFIOv5u61C7hqhMcYhJtrfv6OH54eRXRuMImH9CVoUdEgmUCs/PyvzYGC/qmvCscJqQ2gJZJ/T1khqCtU3OuOytrnyAOIlMqjIYH6P4Pf46kEDzoWdGAdaYv6/LHygV/0KLFVZ6O513b2kuFA0l2jPnAZRkFHvcvgPsDMVeS/Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ekoj3vYQ; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-3ec47e4c20eso5593347fac.1
-        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 08:09:50 -0800 (PST)
+	s=arc-20240116; t=1768409475; c=relaxed/simple;
+	bh=AfUFgO0b7GPKI9ov+xLUaJEaH3EYfZlGNCRjx7S3gbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rgygacmdxRKP3iUX9zboYFsojp6BzW3kvMrTE4xn9eeLmDmar9Fi2URIzvBrIk9LwWQvzUXzDFgZHnD627tO66f0LRi7Y+8O5sGdvmrCaMOoAQhDU+cDmC3ux4O8OHITRZ6oczfTrq8JSUcFXiHtmCME8WfncpOG1mNv6LucQiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/tW/0ko; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so694505e9.0
+        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 08:51:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768406990; x=1769011790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UoE1HR4tF88XtdOXlpm6mAruAKIaW+5i3etkCa48H6s=;
-        b=Ekoj3vYQLp5Wj1X0STS4d9Ee2mF00Uyl/99f2oFcWds6RA6YZ+WjjD79kBVic2Lwl9
-         tDOzykDOtULLa99T5w32k59SBOFtf1H8okRplf6sXMecLQJwBqK5WXh2dqkcflOVbE8U
-         AycC7yaCPk4r2PJZFKtUwpMh4+P/rknypMFyb9UTN+wOv9EXD7+FRfWQ0ChyXyqjG18q
-         RjdPBtP+h0Lp2G/NT33Amyasnua8ZR0XBPMT8F/2LiTzjh29szMwgllME+8jWb9lTeUv
-         dpNPph1PPEs8jwQTILMeHCSHMmh5OHzsnG/qBFhGHF1AKIunSZW7VTwXrps4a7un+E78
-         g5mg==
+        d=gmail.com; s=20230601; t=1768409472; x=1769014272; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LQ3QbmhqfJKikc8lqUdpaAQrOYzjv70oEJ76oRdKAR0=;
+        b=M/tW/0kocLeMlzqGk4TuQDsjtbM360FveKnPnHQzhzG5DafyKsh1BzFwabt9D1fkot
+         tmpIq/ZwO5y4fpyIzv2aoT5ho+3YyCTuHzBUDbCDzt0/UZePPIbN+ZTIvM+xUik6saIM
+         xmfXRcI9s6et5k7OAvs949u8dugPa81Zcb8f2Vahi0oRdOrxkoMdydk7gcIlLKPSLfhX
+         hdZep6M5nXDl10HFW58+6nDham0X9ovkDQ7S+FLWfETzI+vsthKYMVOchM5bfV/ewYvy
+         ECERRzPsX9d7etHEpp8baX1Al40o6DQPqjVDPyUWa6k+upR3XYpOsKFOWs/tl0Y1zKva
+         f1Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768406990; x=1769011790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UoE1HR4tF88XtdOXlpm6mAruAKIaW+5i3etkCa48H6s=;
-        b=d7UtrvnxbofQoBgMvFcv7i31RmnA+SlymE8XgNh/MfV3eEqND39Guv+1dcSdJ7gm9A
-         FUBUc+wOkiUjT5vgpmX9ybapF/5inbHWfa0GkXeibOnfCZHIiNFaZbRU+mrXNWaZcGJa
-         3IW+FaY/joyRbJ8UMUfwuN91dUTcfd2w9psaRPLUzvvhGpZNV4K4CG2juQrifNqs4R+q
-         d1xGSRV/80VoTuchyw0Lg1OiZcOj4ETakyCC0r0+o1J3hdfd2zH/55Lz99z8ncZKh+5R
-         xdqxKfZDTjt4khCDwPg4C9xu0rqSmbb9xUDDseR492pMszyTXu40RWxL0ctgS/OhFnhU
-         yPjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXzMFD6ef4tjG5sxRluUdSGI/kx+4y5Ek4IyuwE6tEl3SwvVI1WwF33TWxMXVZVf7j6pVDp041lw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuzOSQBGSZqkOaWxVEdv+J1TqAhzRgOdE+8GpDec+CFvgvnBCN
-	V5yocSEM47YI84NUpgSo8JTRvZFn2AsgTH0hO/9j+zI5z/vz8c0ymz3H2enXInkn71o=
-X-Gm-Gg: AY/fxX70fUoT8raVwB+Hua96hi65Y3zb5MaTCYgjy+bGCJ3+X92bgHbva+MSM6IiwBm
-	bL2JgLscl1SYkgZ6FmRi6+AM8KgA+p/mQuZvCU+t89zyJUbEUSXjI/tmv+ju5Fl+FCJHoDIzKT4
-	glNsHpWtumuvIB9q2YdiIz19f/cK6XnPx+IkQDahh81hk2vDEzYLZKGHIgJZTZb477FACMsBRo4
-	MBXuPXRLXjMFqG5BxDV1GMQGANDB3eKixaQLLlgp2u+G0TiWBQiCB5vrBAQH5hQn1ENap0P4f/q
-	JToyxTmbpgqPX9ykuy0E2i7cq9obwZB6fNuNRzlaqsOl/T/Jy3pq26EECycFyHJsY1IIDCi6h4F
-	Z+6BzY6Z0kPVrH72O9k6GMVMoBNuu+97Jx9nhhy5eJbNjx7Pc705awhDyb7plO9K2fSFJG5G/7e
-	4Am+Y3vVk=
-X-Received: by 2002:a05:6870:2115:b0:3d9:158e:d943 with SMTP id 586e51a60fabf-4040ba29da3mr1858233fac.9.1768406989847;
-        Wed, 14 Jan 2026 08:09:49 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-403fa2058f5sm3130208fac.13.2026.01.14.08.09.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 08:09:49 -0800 (PST)
-Message-ID: <9e600e62-499c-4f4f-a4fc-846bb0afb110@kernel.dk>
-Date: Wed, 14 Jan 2026 09:09:48 -0700
+        d=1e100.net; s=20230601; t=1768409472; x=1769014272;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LQ3QbmhqfJKikc8lqUdpaAQrOYzjv70oEJ76oRdKAR0=;
+        b=GMW0ugfOZhlr6F8hRIWa4Q0x4ZqygELcR3Xs/I5keN3tD0nkHMRgASa0Dc8Vp/BmiW
+         AszjHshi5MJ/bvtlvHLAEbilBC1qhgmPRG0Nl7O2R3hP68HP5K//89G9GI30mLfGEod2
+         MGvTxKynPf6sqdJw7lcuH5/rCaLKvI3O7Ao1WZ3zlGQJXbrL5YBHc2PfJXkhEUlv85py
+         4yclJDty/grdxbuPiP5JtndihoOw3tgHHpX4OZj7V3SvQ3mAqkNyGHLxIhw6tXSLEeSY
+         YCynwQSNuCumVB1nADaVJXu+YVpAXiP75WZnx1JL8tNAqOsgVpsM8HhwpFIRgRvQOsAi
+         +bLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu2WLGP2i2QSkoGEs/jpZpgaKq333sW37m4RtKL34b4Taffj/HwVN0JSZ7EW55NEGAiWM7VPgpGA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSza5BU9BtGIjmLtJPGBn21U/GfgPDYfCVD7zOXQ/3Ef6elLNg
+	dbKLQxHeXLXHKqn/qefZgfZJz/nepwWJ3c5hrnRf7WSWNcj4JqszUIdW
+X-Gm-Gg: AY/fxX6xGDueN5x0qoDIYhyOtAMId3EuBLqoZWl/Yqx9iR34k0fjHYmIE0aj3xToz5A
+	3OBdVxQQwOnz1jzWb/wEbd2d2zCK3FYu48D89+eB/Q0KCdC3nC6oymXn9E9Ka6xUnF5TVFdgyMN
+	n6xsysTC4H4PGhswfQNIur9qtLOu/lvBIzGipTI3Bqpi9Rp07AqgSzTw3dwGph37oVYYdj6gu1T
+	R28QIpdgSJzFovZDppnkqFU3iV02nZDcLJ/V8eDfbjn+xkJGMpM6SRQd7GVitPzozp07/QzaLLl
+	g5pQdeiYLzek8IoQjrx5I18BIHDV8BuMBTvtXDgDa+Gj2zjJu+FQ9xbul0E25cah0SGdq2BGR7n
+	XihMENFuCpiH4UsAqmid35/8kBEZH1CQEtiP57RD37USAj8FgAd+M56KnzdgYiBlNiIpqREPXrN
+	ZKPmGpRg31ePFHFdFG+GrFCm1nUO9zUEL+UKjxlAISVSG/YnaWhrzv
+X-Received: by 2002:a05:600c:a4c:b0:477:7975:30ea with SMTP id 5b1f17b1804b1-47ee338a820mr41712075e9.29.1768409471570;
+        Wed, 14 Jan 2026 08:51:11 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af653596sm314104f8f.14.2026.01.14.08.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 08:51:11 -0800 (PST)
+Date: Wed, 14 Jan 2026 16:51:09 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>, Paul Moore
+ <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>, audit@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 68/68] sysfs(2): fs_index() argument is _not_ a
+ pathname
+Message-ID: <20260114165109.60e46e14@pumpkin>
+In-Reply-To: <20260114143555.GV3634291@ZenIV>
+References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+	<20260114043310.3885463-69-viro@zeniv.linux.org.uk>
+	<20260114104155.708180fc@pumpkin>
+	<20260114143555.GV3634291@ZenIV>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] memory leak in iovec_from_user (4)
-To: syzbot <syzbot+df0b387708573ad096ce@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <6967554e.a70a0220.1aa68e.0004.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <6967554e.a70a0220.1aa68e.0004.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 1/14/26 1:35 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b54345928fa1 Merge tag 'gfs2-for-6.19-rc6' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15f82052580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=87bc41cae23d2144
-> dashboard link: https://syzkaller.appspot.com/bug?extid=df0b387708573ad096ce
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147ef99a580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=109655fa580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/23b084ff7602/disk-b5434592.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/3ecd3b0e8e34/vmlinux-b5434592.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b42ab3574030/bzImage-b5434592.xz
+On Wed, 14 Jan 2026 14:35:55 +0000
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-I still think these are false positives, and forcing another kmemleak scan
-would make them go away. Which the syzbot reproducers should arguably just
-do. As mentioned in the email from this week, I ran into various others
-of these, all of them invalid. A rescan sorts it out.
+> On Wed, Jan 14, 2026 at 10:41:55AM +0000, David Laight wrote:
+> > On Wed, 14 Jan 2026 04:33:10 +0000
+> > Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >   
+> > > ... it's a filesystem type name.
+> > > 
+> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > ---
+> > >  fs/filesystems.c | 9 +++------
+> > >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/fs/filesystems.c b/fs/filesystems.c
+> > > index 95e5256821a5..0c7d2b7ac26c 100644
+> > > --- a/fs/filesystems.c
+> > > +++ b/fs/filesystems.c
+> > > @@ -132,24 +132,21 @@ EXPORT_SYMBOL(unregister_filesystem);
+> > >  static int fs_index(const char __user * __name)
+> > >  {
+> > >  	struct file_system_type * tmp;
+> > > -	struct filename *name;
+> > > +	char *name __free(kfree) = strndup_user(__name, PATH_MAX);
+> > >  	int err, index;
+> > >  
+> > > -	name = getname(__name);
+> > > -	err = PTR_ERR(name);
+> > >  	if (IS_ERR(name))
+> > > -		return err;
+> > > +		return PTR_ERR(name);  
+> > 
+> > Doesn't that end up calling kfree(name) and the check in kfree() doesn't
+> > seem to exclude error values.  
+> 
+> include/linux/slab.h:523:DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
+> 
+> kfree() the function won't be even called in that case...
 
-#syz invalid
+I wasn't expecting the code to be optimised for the pointer being invalid.
 
--- 
-Jens Axboe
+I guess one of the defines does a 'dance' so that the pointer can be returned
+without kfree() being called - and that needs a check in the function itself.
+(I'm sure I remember something about the compiler optimising at all away.)
+
+Perhaps the test could be:
+	if (!statically_true(IS_ERR_OR_NULL(_T)) kfree(_T)
+adjusting the check in kfree() to ignore -4096..16 not just 0..16.
+That should reduce code size without slowing down the 'normal' paths
+and possibly speeding up the error paths.
+
+	David
 
 

@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-11670-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11677-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8601CD1C623
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 05:36:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E25FD1C680
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 05:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E451A3096783
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 04:32:46 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4AA1C30B24F5
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 04:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3529E32D0DA;
-	Wed, 14 Jan 2026 04:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC10330B34;
+	Wed, 14 Jan 2026 04:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Lug5MKm8"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="O+4URxOr"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4572ED873;
-	Wed, 14 Jan 2026 04:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9BC2D94A0;
+	Wed, 14 Jan 2026 04:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768365117; cv=none; b=EFTd85e4lWqdvUS0QcR7Lt4i1F8F6m+lhBmF56f5zatx7B5yKsYNLQXVX5A0N/aqsNWm7kF9KBLAo7skmLuHgsVLE41kbP1jcAYyQVnD1HSSSlPII7PfFk5430mbS7+ylt8TlZOzC7DabEeN4tBFAeq7jafuuCvyscAL3o5eKHY=
+	t=1768365118; cv=none; b=MRlorpbI1JHdwj3hW0K1ra3jRzT/RELrfh7eY9rXZgU4fWiMh9nCLA1QenlEYxKcWjtu5SxZt+glBWg3RkruN3IA9Iy5uAqjd9B7p91ACv+Mil/M4oen9/1d+0e0sPW81R6m0CtoO11extRkSrNfIvlOqtm3hs+vvEUPQoCW87U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768365117; c=relaxed/simple;
-	bh=k8qMpO5CBjunaBoVfZkpYaRH/ZHk0yIwJ236SLab6nk=;
+	s=arc-20240116; t=1768365118; c=relaxed/simple;
+	bh=2VlP+6+MBKxgN1IclcGfQgfePCUJ8rHRKFNxyM5IFBk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hPbPWMHhuKVd4K9PCgduo2efBJ3FTe04Bdcf5kGt0hb/e9e1aXsZ7xFLSoxHI2b7MVavzNr2eKWYqZ4uYjdYXG7E275Bopbc1vpzRGAsavCguVdklg+IkaFH7l6h9x/wXxCBULuWVvujof0Fh1Bc6WY39b2aagluAeeLzKOpdNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Lug5MKm8; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=ob7RO1zbh48hpp5rlqP0LHSk6412X6qkeFj4lGDCx9E61UL5flbWX8g9czCU8KMvrTWgFJ8z9WhNCEu0vmhdGK0Iar70SDVjK5g713DamwAVCzS6Vw2Ad5VskRnvWi4HXcrhhrcacPox962yae7yhxPNn3ngYjNp0lhZqfi7jcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=O+4URxOr; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=+qY/rYHSNRPM4PiFQtmH86x1dAtWdCTQbBoCTiBygyE=; b=Lug5MKm8T4Q2YD+LlSlEpq5+wK
-	ta1IrQv5MKhoHIPPRFpeKxE7pxcNXT0G34JKXkxdwzKXe+iq/mUY81nHHT9TgFYbuoDav0XBwvXml
-	Q+3njOjH2mtDZ6xN5xHcAXp47mAsPkGtD9AvuyQpZTUcggRiRkHhlsWdA4za75zlD7AqpEhopK1Bq
-	TAGYtX6Lnk/XEyY/Y9mBMND8iyUTawTZ5eZfy6fXGNzLwymbqkLJ8WcnOf0YO2ZpjDtFQL2h/Xvlm
-	VFuBAv7Aj5RufjUfSSqsYWqXVhNHQbh1k9btG5IeyXZNGS2sWj/Vesi0JXYrfQuST/dILg/j6djxc
-	8jNWbEXw==;
+	bh=kwEcrMngjLvIom2pOPUPNRKbOgmBlUmQNcYUZgCeoow=; b=O+4URxOr5Gw6nUvw0x/mlrFrWm
+	XbiZ+3MDYQm6/eQGPx/vhpySVjF93m4sQ2Pyc1qa8CwwOyCrUOVUWRcYZXnW2nLnCsfyh9sL8SS93
+	yQXpnF/izfEZzmTcP9vrvJHQR6xtUkh1EMoVXEk3N2ACeJymH60LQ6YERQUlkJwQ0JbYESO4i7M5A
+	Wpe8y9Z0OOvAUJtBWfEBs16/mEqq608r21PNfGIEuUXPal2PRcI5KfpKO5NyYczJ0hqAJkhz339YW
+	BL5lKmJEbuAblzeQfsdvZLdUE0RU6+Epf+Y0O618C/4qi12DUYWGFTTvoNDEbndiJ9zDN3IiOlm/d
+	H902vmww==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfsZE-0000000GInh-49qr;
+	id 1vfsZF-0000000GInl-0hi2;
 	Wed, 14 Jan 2026 04:33:13 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 20/68] struct filename: saner handling of long names
-Date: Wed, 14 Jan 2026 04:32:22 +0000
-Message-ID: <20260114043310.3885463-21-viro@zeniv.linux.org.uk>
+Subject: [PATCH v5 21/68] fs: hide names_cache behind runtime const machinery
+Date: Wed, 14 Jan 2026 04:32:23 +0000
+Message-ID: <20260114043310.3885463-22-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
 References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
@@ -68,211 +68,76 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Always allocate struct filename from names_cachep, long name or short;
-short names would be embedded into struct filename.  Longer ones do
-not cannibalize the original struct filename - put them into kmalloc'ed
-buffers (PATH_MAX-sized for import from userland, strlen() + 1 - for
-ones originating kernel-side, where we know the length beforehand).
+From: Mateusz Guzik <mjguzik@gmail.com>
 
-Cutoff length for short names is chosen so that struct filename would be
-192 bytes long - that's both a multiple of 64 and large enough to cover
-the majority of real-world uses.
+s/names_cachep/names_cache/ for consistency with dentry cache.
 
-Simplifies logics in getname()/putname() and friends.
-
-[fixed an embarrassing braino in EMBEDDED_NAME_MAX, first reported by
-Dan Carpenter]
-
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c         | 87 ++++++++++++++++++----------------------------
- include/linux/fs.h | 10 ++++--
- 2 files changed, 41 insertions(+), 56 deletions(-)
+ fs/namei.c                        | 16 ++++++++++------
+ include/asm-generic/vmlinux.lds.h |  3 ++-
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index f0be36e257a7..57043b81fe27 100644
+index 57043b81fe27..06d60808b0ff 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -123,15 +123,14 @@
-  * PATH_MAX includes the nul terminator --RR.
+@@ -41,6 +41,8 @@
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
+ 
++#include <asm/runtime-const.h>
++
+ #include "internal.h"
+ #include "mount.h"
+ 
+@@ -124,23 +126,25 @@
   */
  
--#define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
--
  /* SLAB cache for struct filename instances */
- static struct kmem_cache *names_cachep __ro_after_init;
+-static struct kmem_cache *names_cachep __ro_after_init;
++static struct kmem_cache *__names_cache __ro_after_init;
++#define names_cache	runtime_const_ptr(__names_cache)
  
  void __init filename_init(void)
  {
--	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
--			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	names_cachep = kmem_cache_create_usercopy("names_cache", sizeof(struct filename), 0,
-+			SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
-+						EMBEDDED_NAME_MAX, NULL);
+-	names_cachep = kmem_cache_create_usercopy("names_cache", sizeof(struct filename), 0,
+-			SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
+-						EMBEDDED_NAME_MAX, NULL);
++	__names_cache = kmem_cache_create_usercopy("names_cache", sizeof(struct filename), 0,
++			 SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
++			 EMBEDDED_NAME_MAX, NULL);
++	runtime_const_init(ptr, __names_cache);
  }
  
  static inline struct filename *alloc_filename(void)
-@@ -150,30 +149,23 @@ static inline void initname(struct filename *name)
- 	atomic_set(&name->refcnt, 1);
+ {
+-	return kmem_cache_alloc(names_cachep, GFP_KERNEL);
++	return kmem_cache_alloc(names_cache, GFP_KERNEL);
  }
  
--static struct filename *getname_long(struct filename *old,
--				     const char __user *filename)
-+static int getname_long(struct filename *name, const char __user *filename)
+ static inline void free_filename(struct filename *p)
  {
- 	int len;
--	/*
--	 * size is chosen that way we to guarantee that
--	 * p->iname[0] is within the same object and that
--	 * p->name can't be equal to p->iname, no matter what.
--	 */
--	const size_t size = offsetof(struct filename, iname[1]);
--	struct filename *p __free(kfree) = kzalloc(size, GFP_KERNEL);
-+	char *p __free(kfree) = kmalloc(PATH_MAX, GFP_KERNEL);
- 	if (unlikely(!p))
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 
--	memmove(old, &old->iname, EMBEDDED_NAME_MAX);
--	p->name = (char *)old;
--	len = strncpy_from_user((char *)old + EMBEDDED_NAME_MAX,
-+	memcpy(p, &name->iname, EMBEDDED_NAME_MAX);
-+	len = strncpy_from_user(p + EMBEDDED_NAME_MAX,
- 				filename + EMBEDDED_NAME_MAX,
- 				PATH_MAX - EMBEDDED_NAME_MAX);
- 	if (unlikely(len < 0))
--		return ERR_PTR(len);
-+		return len;
- 	if (unlikely(len == PATH_MAX - EMBEDDED_NAME_MAX))
--		return ERR_PTR(-ENAMETOOLONG);
--	return no_free_ptr(p);
-+		return -ENAMETOOLONG;
-+	name->name = no_free_ptr(p);
-+	return 0;
+-	kmem_cache_free(names_cachep, p);
++	kmem_cache_free(names_cache, p);
  }
  
- struct filename *
-@@ -199,16 +191,9 @@ getname_flags(const char __user *filename, int flags)
- 	 * Handle both empty path and copy failure in one go.
- 	 */
- 	if (unlikely(len <= 0)) {
--		if (unlikely(len < 0)) {
--			free_filename(result);
--			return ERR_PTR(len);
--		}
--
- 		/* The empty path is special. */
--		if (!(flags & LOOKUP_EMPTY)) {
--			free_filename(result);
--			return ERR_PTR(-ENOENT);
--		}
-+		if (!len && !(flags & LOOKUP_EMPTY))
-+			len = -ENOENT;
- 	}
+ static inline void initname(struct filename *name)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 8ca130af301f..eeb070f330bd 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -972,7 +972,8 @@
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+ 		RUNTIME_CONST(ptr, dentry_hashtable)			\
+-		RUNTIME_CONST(ptr, __dentry_cache)
++		RUNTIME_CONST(ptr, __dentry_cache)			\
++		RUNTIME_CONST(ptr, __names_cache)
  
- 	/*
-@@ -217,14 +202,13 @@ getname_flags(const char __user *filename, int flags)
- 	 * names_cache allocation for the pathname, and re-do the copy from
- 	 * userland.
- 	 */
--	if (unlikely(len == EMBEDDED_NAME_MAX)) {
--		struct filename *p = getname_long(result, filename);
--		if (IS_ERR(p)) {
--			free_filename(result);
--			return p;
--		}
--		result = p;
-+	if (unlikely(len == EMBEDDED_NAME_MAX))
-+		len = getname_long(result, filename);
-+	if (unlikely(len < 0)) {
-+		free_filename(result);
-+		return ERR_PTR(len);
- 	}
-+
- 	initname(result);
- 	audit_getname(result);
- 	return result;
-@@ -260,29 +244,26 @@ struct filename *getname_kernel(const char * filename)
- {
- 	struct filename *result;
- 	int len = strlen(filename) + 1;
-+	char *p;
-+
-+	if (unlikely(len > PATH_MAX))
-+		return ERR_PTR(-ENAMETOOLONG);
- 
- 	result = alloc_filename();
- 	if (unlikely(!result))
- 		return ERR_PTR(-ENOMEM);
- 
- 	if (len <= EMBEDDED_NAME_MAX) {
--		result->name = (char *)result->iname;
--	} else if (len <= PATH_MAX) {
--		const size_t size = offsetof(struct filename, iname[1]);
--		struct filename *tmp;
--
--		tmp = kmalloc(size, GFP_KERNEL);
--		if (unlikely(!tmp)) {
-+		p = (char *)result->iname;
-+		memcpy(p, filename, len);
-+	} else {
-+		p = kmemdup(filename, len, GFP_KERNEL);
-+		if (unlikely(!p)) {
- 			free_filename(result);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		tmp->name = (char *)result;
--		result = tmp;
--	} else {
--		free_filename(result);
--		return ERR_PTR(-ENAMETOOLONG);
- 	}
--	memcpy((char *)result->name, filename, len);
-+	result->name = p;
- 	initname(result);
- 	audit_getname(result);
- 	return result;
-@@ -305,11 +286,9 @@ void putname(struct filename *name)
- 			return;
- 	}
- 
--	if (unlikely(name->name != name->iname)) {
--		free_filename((struct filename *)name->name);
--		kfree(name);
--	} else
--		free_filename(name);
-+	if (unlikely(name->name != name->iname))
-+		kfree(name->name);
-+	free_filename(name);
- }
- EXPORT_SYMBOL(putname);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 997d515bab32..f0f1e8034539 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2409,13 +2409,19 @@ extern struct kobject *fs_kobj;
- 
- /* fs/open.c */
- struct audit_names;
--struct filename {
-+
-+struct __filename_head {
- 	const char		*name;	/* pointer to actual string */
- 	atomic_t		refcnt;
- 	struct audit_names	*aname;
--	const char		iname[];
-+};
-+#define EMBEDDED_NAME_MAX	(192 - sizeof(struct __filename_head))
-+struct filename {
-+	struct __filename_head;
-+	const char		iname[EMBEDDED_NAME_MAX];
- };
- static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
-+static_assert(sizeof(struct filename) % 64 == 0);
- 
- static inline struct mnt_idmap *file_mnt_idmap(const struct file *file)
- {
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
 -- 
 2.47.3
 

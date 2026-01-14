@@ -1,89 +1,103 @@
-Return-Path: <io-uring+bounces-11626-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11627-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B17D1C218
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 03:27:37 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED74D1C451
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 04:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A676630382AB
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 02:27:09 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 37BA33003FD7
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 03:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6F92E401;
-	Wed, 14 Jan 2026 02:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDF22D0C8B;
+	Wed, 14 Jan 2026 03:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bzoAywCi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtPxaBvF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA4B2FD7B1;
-	Wed, 14 Jan 2026 02:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88009296BB7;
+	Wed, 14 Jan 2026 03:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768357629; cv=none; b=Bm1UlAztk8s/pzm24Clq4J9bk0hQPwT/jRj+SDGq6a7oEJUs2rV61nIyFGa4wxOwVth1Oob/XyMJu1MDo/1BUWNs444QkeiDM7ReIf4ZtRKgrinsCD+boOwjvj9wAerjUllnIm6ztnkrrQrwyUppAtJct83wruzBgXI/ymC1XPE=
+	t=1768361775; cv=none; b=FocCfMZOiK294dnuWPjq/CUbiTPNpDSSLBEsEbTN3wsmJXo6x3G3bd9wCC/CoIIt9GEG61/DLiLHmFWVzrKJ33Qx/8QGxPT/LR0ivI0K1pxz5LnFk6HkBu7xA28E9ty7st8lsQB5NLCsJKiOLisrgSRhrQmwtTjY1rEmu0qJHic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768357629; c=relaxed/simple;
-	bh=KRw0sEW0sfE1PeiOADfC/SViXep7k2UXvxSF+N6fMFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzwMgvIiUplBPqrrdMDGbagub02iKtQ5HI4HJc6Q+32VOQIp2M5Eg+XSU4ihkWjgNS8Ml9T2fufoKwm7USlpyx7//Xs6uXqF+j285YtWU2KEkYchjn6gd9tmrmNXOSSGaAvtDrAXE+vscfRV+pT/AszMFDgTXLZLA5Nu3gtO2zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bzoAywCi; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zUeuKcPL8xR1Vd3/n2rJTuoUFpep1n7NReyWZY7SnbQ=; b=bzoAywCiajDLKB5VPBAbQwpnnR
-	DZ9CcgL2np9MCd9eQYOcBh7gq5tgarREAsi1lRMhgThW2C6NnM9nYkkXkkD+seXWaYTbQ3XxBuay1
-	UuuquzsvyV59EmLVdRTt0WQFkugoUz3+2wefBXQO1ZltL/xyGaLEOWOzuMB0kuO672Yr/ZXy4/0nN
-	VbDzJlMVBxWXzzyesuoTo+OEAeT4tCnUSId+gFRQkyxeMb2VxKdxBweBQSsO/muxSGRxTITRc8Y/X
-	G3MQdx5zkEN+CjKFoUt9mihXnvr3zErUM/wOg1HgtVG+HYl660VC54/lE8O/UKqIniRwI4z17Veb7
-	eA8WGudg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfqca-0000000G62s-03jQ;
-	Wed, 14 Jan 2026 02:28:32 +0000
-Date: Wed, 14 Jan 2026 02:28:31 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, mjguzik@gmail.com,
-	paul@paul-moore.com, axboe@kernel.dk, audit@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC PATCH 0/8] experimental struct filename followups
-Message-ID: <20260114022831.GS3634291@ZenIV>
-References: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
- <20260112-manifest-benimm-be85417d4f06@brauner>
- <20260114021547.GR3634291@ZenIV>
+	s=arc-20240116; t=1768361775; c=relaxed/simple;
+	bh=XdgwGXL6Xkf7KFiVxYJaa6oGaEzMG6qYj6DrtcALVZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TyRPnPB9CkYtPh7m+Ap0z1zVsPQ4PoqZVqvVXt3/+YgXDcVdhm8x+XDviL38sUV77PIjEWWTJJFqbD8zusirtRQlvDniDMLEQZw0pq5mrKA0BtvOOyfhfHos53GcKCvem5RKQtR3U0q/2Zm1cFoWktPksdA6gRuml2mE0lkiDik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtPxaBvF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5F8C4CEF7;
+	Wed, 14 Jan 2026 03:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768361775;
+	bh=XdgwGXL6Xkf7KFiVxYJaa6oGaEzMG6qYj6DrtcALVZw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KtPxaBvFjvBQXFgO6ttgm1CTd9pwSd7h+Lyh+D9BlZcO995/kseP/Wry1CiCN3v/n
+	 gBwIeg1brhKqIgABt6UECFua/Ct/X6gYsG38FVO8f6nWOf173R366ktySg2c/OI6jY
+	 vk2Ge2hCtjCrU3a9L6qa0l7mSw2vfPb0vGqD7MpfJV5pEDB/zBBeNPk3CdhrwD5Zu0
+	 eumNzZOYzfdZb4LKIHdXfESrFvoslPCoWdoC1b0JaoLC/mIXrjkvL3pAioVtBHM6eI
+	 WeCKp318EhcZFMv/64Kg8sLAhyMxzF4GhCzOaMZyc6/3d1xjwxIJU83EoMG09a8DJm
+	 WGF3Zo8ytomJg==
+Date: Tue, 13 Jan 2026 19:36:12 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>, Pavan
+ Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, Saeed
+ Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Alexander Duyck
+ <alexanderduyck@fb.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, Ankit
+ Garg <nktgrg@google.com>, Tim Hostetler <thostet@google.com>, Alok Tiwari
+ <alok.a.tiwari@oracle.com>, Ziwei Xiao <ziweixiao@google.com>, John Fraker
+ <jfraker@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, Mohsin
+ Bashir <mohsin.bashr@gmail.com>, Joe Damato <joe@dama.to>, Mina Almasry
+ <almasrymina@google.com>, Dimitri Daskalakis
+ <dimitri.daskalakis1@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Samiullah Khawaja
+ <skhawaja@google.com>, Ahmed Zaki <ahmed.zaki@intel.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, David Wei <dw@davidwei.uk>, Yue Haibing
+ <yuehaibing@huawei.com>, Haiyue Wang <haiyuewa@163.com>, Jens Axboe
+ <axboe@kernel.dk>, Simon Horman <horms@kernel.org>, Vishwanath Seshagiri
+ <vishs@fb.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, dtatulea@nvidia.com,
+ io-uring@vger.kernel.org
+Subject: Re: [PATCH net-next v8 7/9] eth: bnxt: support qcfg provided rx
+ page size
+Message-ID: <20260113193612.2abfcf10@kernel.org>
+In-Reply-To: <28028611f572ded416b8ab653f1b9515b0337fba.1767819709.git.asml.silence@gmail.com>
+References: <cover.1767819709.git.asml.silence@gmail.com>
+	<28028611f572ded416b8ab653f1b9515b0337fba.1767819709.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260114021547.GR3634291@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 14, 2026 at 02:15:47AM +0000, Al Viro wrote:
-> 	* Exports.  Currently we have getname_kernel() and putname()
-> exported, while the rest of importers is not.  There is exactly one
-> module using those - ksmbd, and both users in it are doing only one
-> thing to resulting filename: passing it to vfs_path_parent_lookup().
-> No other callers of vfs_path_parent_lookup() exist.
-> 
-> 	Options:
-> A) replace vfs_path_parent_lookup() with
-> int path_parent_root(const char *filename, unsigned int flags,
->                      struct path *parent, struct qstr *last, int *type,
-> 		     const struct path *root)
-> {
-> 	CLASS(filename_kernel, name)(filename);
-> 	return  __filename_parentat(AT_FDCWD, name, flags, parent, last,
-> 					    type, root);
-> }
-> have that exported and used in fs/smb/server/vfs.c instead of
-> vfs_path_parent_lookup(); unexport getname_kernel() and putname().
+On Fri,  9 Jan 2026 11:28:46 +0000 Pavel Begunkov wrote:
+> @@ -4342,7 +4343,8 @@ static void bnxt_init_ring_struct(struct bnxt *bp)
+>  		if (!rxr)
+>  			goto skip_rx;
+>  
+> -		rxr->rx_page_size = BNXT_RX_PAGE_SIZE;
+> +		rxq = __netif_get_rx_queue(bp->dev, i);
+> +		rxr->rx_page_size = rxq->qcfg.rx_page_size;
 
-Sorry, can't do - one of those is inside a retry loop.  Pity, that...
+Pretty sure I asked for the netdev_queue_config() helper to make 
+a return, instead of drivers poking directly into core state.
+Having the config live in rxq directly is also ugh.
+
+But at this stage we're probably better off if you just respin
+to fix the nits from Paolo and I try to de-lobotimize the driver
+facing API. This is close enough.
 

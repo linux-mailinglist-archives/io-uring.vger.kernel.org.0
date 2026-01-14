@@ -1,151 +1,185 @@
-Return-Path: <io-uring+bounces-11718-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11719-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC49D20E6C
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 19:51:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A227D2140B
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 22:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0614430591CA
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 18:50:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6F837304EF61
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jan 2026 21:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F362D5C7A;
-	Wed, 14 Jan 2026 18:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ACA34F24E;
+	Wed, 14 Jan 2026 21:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjlK3II5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXTPI7kW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1F32571F
-	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 18:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768416614; cv=none; b=BnX5cH0AWfPEkt5cBrREhCwKOmW3ItO/lmaMT04L6KJ0i37jlfDabywMBdhlqI/aPkmHiIbm/w3xT5B7CGjzPR6MZWYyP+WCAtG0TBWMlnuK+lB8WZMDSaxF5e6LTRMa0FvBC6HF/QzXfXvhzhnwK4+QkJ8+TU+HyaYEaH0rJWk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768416614; c=relaxed/simple;
-	bh=7rcU/oakf3K99yeGXelFE23vsa7yMvXHOYdTrQcyXWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMCtV49i9vGHMsq4sOFb1Skf+dBkzpxVgdjt6YDF+ChAW5gkZFckTXH7300mg7S0bDaXUdX5nXMeQ6Z7rAevel4TRSsEnor9UerhiJlzhfY4ptuB8HIkJcMenofSFl4gBE/2ezMNSFXWT+DoNaYdnVmYtbXs5m6KGhf4SI73eFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EjlK3II5; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699FB3587B4
+	for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 21:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768424408; cv=pass; b=XBzPCAW4BjNv1DMwSffxOx7sA2qywkBlkX0g5SSinbulf7irUrAjEv6TUh8d/999BF+AKGlIGKLYGt/t6TIkl0Ai/TLq4CMXHxPlXWDW91oYDgdTme69oxlmqcqQTN+iynZVk5r96CieCC03rktKWXOfXcRU9utn+//R9cceONM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768424408; c=relaxed/simple;
+	bh=roWdbXmH7FYe7K06oDGRBsbroLRllsBYVG2zPysP60k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JjSfks7fTjjvgEoKmClbyF9zzO/5RlB9M0dowg69VgJi+IrQcvc0lKdwJIxleiSbdl0nXRuT7Q1rt3v18L2ZUn8ABUv5VDEp/GVWOKVZEuxR+IVvbAncPiYCwfNy+dASoFQ2pkDwWvpadB5Z5yTsQ/hK/bl6mKAUEV9aHDR+9ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXTPI7kW; arc=pass smtp.client-ip=74.125.82.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso1716945e9.3
-        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 10:50:12 -0800 (PST)
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-1233702afd3so283919c88.0
+        for <io-uring@vger.kernel.org>; Wed, 14 Jan 2026 13:00:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768424406; cv=none;
+        d=google.com; s=arc-20240605;
+        b=k5njCr6S4HkQZzqJkDb7X3FGFRHJQSnrlFGvmA6rifjpaEgPWiORUgQIJiSSorhNpE
+         UV98s2ETEDGQ9G4qPoY1kdrwjjfOA1IfPqaMATlJXaJoKClKUvadY0LaRYumlAC5iDpm
+         TMuc3eBK3/hM/hTC3gAYKt/xpwkxxyDsYduvwsZWGzIl10cgBYRYboIipheQ4/4gRxgO
+         pBCnXG5OwnFNeC29+YLFI0J45QdTPGbTs78zWUpN3RFjqcUJ9HHtz3+kZ3ZmBeclwhE6
+         QvEqLxZYd8YrKXx4ZXTAv3gPEvVfPoZ0Du0S7atzLi17h9ExgyrOZMVwJG/XrGA+wyPb
+         7Cpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=MSWh5xUyjDvmLyvooG8auWxA1AMLYn3JJ96M9PT/SwU=;
+        fh=8txRMK4Rwc84VZ0pX49aSiVUqYaycUVfKiwEegkW3hg=;
+        b=SWV3Sy09HG+R5dj/pw2MaShn14Fecg3bAA5ct3LSgV4uQ8L8gwbU/CwDcGTvzVnzSF
+         Djq8p6oVVD5zOaB4m4lcDRPZHyc7ZWj3rY08uCp/2MyLQfybMzCh7gkIn8U2i3q+asiS
+         /YZpbBbVAYjDFuOpWNy7TjAJWMz4qpSBI3mJioU02kwjIOwuICvh1FfpZhtIBxgflkO9
+         cdzEQy5ZXLjvJyUdKK8UjEsK9eCON2AiAUvZgrgJHxxes36m45M4VJITXdtXjhct0ReK
+         tpPpJx9+liiJYr1yA8djkqxfooQ97qpJ9HDqeQcQuHUgvzoKtfFQcGLoJMVp44xqzBjz
+         xUQQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768416611; x=1769021411; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wFtqsmE5XZuEsb6b2DBhD16JeaZ/Z8weRvZd63oHxcI=;
-        b=EjlK3II5wPVC4P7wRwBpyEPxojHu1USvJ3x8lhZQGxVyIH2qsBY77M2AXPZwVviw22
-         VT2DjSK5tQHkmtUr0/rYcgfsx9YrIWQTEKt9oVPj8mLAjJ/SWzQHqWSFCXBmpuVyPRN9
-         VA2Uy5/4ImmijFQ4ZcVbYqEWIcZH+/6wT10hCCUPXGMn2ddhK9SMTSmNWbM2GVEBbEDz
-         P2VTqGDtPs7h54HlWJ/ysyuYb58Ld9tu8zFyEo9RMyPQuiwZ1EWo9NMl1KeHzOipqLUg
-         VDd4HAvQpMGj4Qxa9Zn+kKwgZkRpxIr6A9vyj7Dfdgeo9MY5YG+VtmNxX4uuxCd3w1lo
-         4mhg==
+        d=gmail.com; s=20230601; t=1768424406; x=1769029206; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MSWh5xUyjDvmLyvooG8auWxA1AMLYn3JJ96M9PT/SwU=;
+        b=LXTPI7kWIABRtR7YJifst9MtUEJyuZiQK3VniYQZyqtH0dQg8VxYw9L5I8OR6tXGTR
+         wYw5FHicXAGQqdB0zrwQi3WQDTClUOy3a0nX/5jbLyw6JNZVFgmoCRVAOXIWmglYi9/S
+         2/d2qPsfX6xSYCPYLMuN5/AUklFr4qnK6JGh/ipM8oQIaE4twAt1gEeXLVCsxmxPEpO6
+         M9BUvdnh7M1KOSP66tVOnJYr9EQesXRxupb0z44ev+QCRF6Zt817BgJD1T19POy2ohFg
+         w4LOR5V3Wpvvcob6uTH8xof7xQSepcPrU8j3wrBpf9I6j/mS12SJmhiyxQhtZdyO5lu4
+         Cv3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768416611; x=1769021411;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wFtqsmE5XZuEsb6b2DBhD16JeaZ/Z8weRvZd63oHxcI=;
-        b=fzYaMY9mk1O+7fZDy6JN2eUHjLH3pdWbMdRzkM7l2fm9L6GbhkQbXggys5bPsP/S8i
-         laYwLgjWyCeoGknJAFaaz1om6NcwuzlalGo8ZLIGtR3WW+3gP6/hygIbFd29I8Z9+ajI
-         PZKeL0nWSClViwh+4kLPmNCk+FP+AaH+4ZTw3EIRAG2GG8YJRREC1rMzjf77wlZvOwPL
-         YK2gMcAjCfG3+h2y6mpsM4O47NfRqYjMeqG/4W1jKGvRox1b9xedMVEry0PuS68TkrgI
-         p2kvlVfwACgL6GkEH2K8VFrV+clJ2Um/KGpWfbdZCaj4l4i+WMyoY0NyZXzfyXVWXYig
-         xVrw==
-X-Gm-Message-State: AOJu0YwfRs/MrvGZRqSjnQkzZo0HhLINIzPMx8OnluK8RB2Jgnvg2Fcb
-	8l537uZ7yU4/TGxX52K/hHsdFR0tJ42qah10xT1IFHrwQjMsDbIPSf/23R8tww==
-X-Gm-Gg: AY/fxX5HYOo9xeRGuWe18pz3BotjN+BXjyLIKW/hH2Z8/CTrP4CqLFLIpo5Oq0+r1He
-	DKRb0q4kfMB7xvgo6VwZay1ryk8NYUbGapB62dQSG+oDM25EEF2qkMQgCmsH86UTpLQ5aiKo57L
-	7SOfs3Xud39H65NlmRqcGRFjILNenQI8LmN6zSHkK4AIAjDS6u4MQ4/B6LIOtlEeMJvghu8rIma
-	9sZTqbzt7kxffRHE0YZn6XsmmtbUCktx3aUnQEBDwm9kywcBpfSrvbeL35zz3z3zqoFz4OtN5E+
-	V/RMRI7LeTvUVgZKgBsVOWCY+jfItUqUFV1m06djvz9xamRr6T+/McuH2iQCPzpzX5aNatXOYV8
-	iKqR7TZRJEVBDbrv8n2pL+RddLMA8n5G75I9rh5bTGTLwyTHLHxHPc3p2iCoMn8YwSxZWlTxxhF
-	PW+r98gSVpVnfH6JegFFP0cf6SQRfv8t9hvLZTZQWkyrL8M+qIdCCzuATtpjMDvFDZR5OBE64UR
-	uDOQW71ktAsAbEUqgRJetlB+mrqgy2eUH0+hDDgTS2Ad6Jui5wwnVlgE+/XG/OEJw==
-X-Received: by 2002:a05:600c:8707:b0:477:a219:cdb7 with SMTP id 5b1f17b1804b1-47ee30693a6mr50768145e9.0.1768416610796;
-        Wed, 14 Jan 2026 10:50:10 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f429071a2sm4727155e9.11.2026.01.14.10.50.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 10:50:10 -0800 (PST)
-Message-ID: <d8f24928-bcc8-4772-a9b2-d6d5d1bbca72@gmail.com>
-Date: Wed, 14 Jan 2026 18:50:05 +0000
+        d=1e100.net; s=20230601; t=1768424406; x=1769029206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MSWh5xUyjDvmLyvooG8auWxA1AMLYn3JJ96M9PT/SwU=;
+        b=QNeF+GhmP7ncGerqtk5BcKbWmd07vGpWkkGWfsnSN2+oG1z75O2OJY5k1Hz7MV6sLL
+         m4+6JQoc/tswa9Q7k2O6Bjm6Ths2cXQo314bW7wDqzHcV7NdlTZRD3aZ1BduY7TEdWJK
+         NPw0VJvSQJmGwYZxchR0QEyO/LdyaTtiY8V+0DiwFW0sAPiooneCckd0+zem8ljiLyvv
+         ct18T283IaGG2IRTe2bAxHa1wqCF+bLqEjcLR11bTdCUeoCFbNcX2MA9EHTa9cuQ6gLd
+         S8GAehL8brzisPAgawQqb4g9jGyPbt0rmfnpWfGwyBWaFe8n8CiTZMzgo1cf+v/vzx5x
+         GUdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIemNRiDin1Fkv/Ncc4IdE66wXQp3GMAo7NXNaxWPeLqLTqvtPfWS0S9+ojqJ4RfqrSti82bNmmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwksjbmrrnZivVgvOjWweqmc66T/2WQ/Qsw1uxUFGJjhhSStKW3
+	oCc9ykpUTCZOGiiLJPuTuDqNv24YaUBxrAEYftl13GQ2B9xUPBQFecGeEf25SxbalowkdbK4nJg
+	rvuKGlxIfQVd7l5W3Q/K2uK/c7gAXyT0=
+X-Gm-Gg: AY/fxX7SM49UuorWCukv7MkWErHkOj5BWL5459Gd6MYq8UF3XoTwfxQXzU8nTGEh9/Q
+	meslvqc6qGPuYeRwi44LjefbSQJWIBhjsXXCD5vl8EaaoEd9wA/Cre2hHerqQDdh5IHoBykutFQ
+	2iVJ9fSq43lsDZwCHWrpQ7itc2ZmayFEpxlseP4BlXoNb+a3hJSIuI0Uk2M378Rd66LAy0pldkE
+	Cq9K4r1hXNLZ4C7tkgdT48J81G5mGdtdbN47Scr6Byzqh8Jf1cqM89qbjE0BfHsoHn56QW91LKG
+	3kE0XA3A/MLil/DXwy6YuypljN4=
+X-Received: by 2002:a05:7022:e885:b0:119:e55a:9c04 with SMTP id
+ a92af1059eb24-12336a8a71dmr3806797c88.32.1768424406283; Wed, 14 Jan 2026
+ 13:00:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
-To: Jens Axboe <axboe@kernel.dk>, Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
- <87ldi12o91.fsf@mailhost.krisman.be>
- <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
- <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
- <5f026b78-870f-4cfd-b78b-a805ca48264b@gmail.com>
- <c805f085-2e13-40ee-a615-e002165996c6@gmail.com>
- <adda36d5-0fe0-466c-a339-7bd9ffec1e23@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <adda36d5-0fe0-466c-a339-7bd9ffec1e23@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251218025947.36115-1-danisjiang@gmail.com> <CAHYQsXQzAWhpwzqSTGxvWgNXq_=g4V_nsmRGnYeKPumGgAmyXw@mail.gmail.com>
+ <afe7d084-a254-46a3-889b-a136dc8f4fbd@gmail.com> <0adb508f-480d-4bfc-b861-3cf42e87bee1@gmail.com>
+In-Reply-To: <0adb508f-480d-4bfc-b861-3cf42e87bee1@gmail.com>
+From: Yuhao Jiang <danisjiang@gmail.com>
+Date: Wed, 14 Jan 2026 14:59:54 -0600
+X-Gm-Features: AZwV_QjqmVPvsgBUGTMluvi_ytZFdM2YDTFk_tl-xlx66lE24cqxrxT5S_F6E2s
+Message-ID: <CAHYQsXR996msVqgqMRznharf1v1Yrwpo7029Oen3cTHZgYEn3A@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: fix RLIMIT_MEMLOCK bypass via compound
+ page accounting
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/14/26 17:23, Jens Axboe wrote:
-> On 1/14/26 9:04 AM, Pavel Begunkov wrote:
->> On 1/14/26 14:54, Pavel Begunkov wrote:
->>> On 1/14/26 14:42, Pavel Begunkov wrote:
->>>> On 1/13/26 22:37, Jens Axboe wrote:
->>>>> On 1/13/26 2:31 PM, Gabriel Krisman Bertazi wrote:
->>>>>> Pavel Begunkov <asml.silence@gmail.com> writes:
->>>>>>
->>>>>>> Describe the region API. As it was created for a bunch of ideas in mind,
->>>>>>> it doesn't go into details about wait argument passing, which I assume
->>>>>>> will be a separate page the region description can refer to.
->>>>>>>
->>>>>>
->>>>>> Hey, Pavel.
->>>>>
->>>>> I did a bunch of spelling and phrasing fixups when applying, can you
->>>>> take a look at the repo and send a patch for the others? Thanks!
->>>>
->>>> "Upon successful completion, the memory region may then be used, for
->>>> example, to pass waiting parameters to the io_uring_enter(2) system
->>>> call in a more efficient manner as it avoids copying wait related data
->>>> for each wait event."
->>>>
->>>> Doesn't matter much, but this change is somewhat misleading. Both copy
->>>> args same number of times (i.e. unsafe_get_user() instead of
->>>> copy_from_user()), which is why I was a bit vague with that
->>>> "in an efficient manner".
->>>
->>> Hmm, actually the normal / non-registered way does make an extra
->>> copy, even though it doesn't have to.
->>
->> And the compiler is smart enough to optimise it out since
->> it's all on stack.
-> 
-> Not sure I follow these emails. For the normal case,
-> io_validate_ext_arg() copies in the args via a normal user copy, which
-> depending on options and the arch (or even sub-arch, amd more expensive)
-> is more or less expensive.
+On Wed, Jan 14, 2026 at 8:10=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 1/13/26 19:44, Pavel Begunkov wrote:
+> > On 1/9/26 03:02, Yuhao Jiang wrote:
+> >> Hi Jens, Pavel, and all,
+> >>
+> >> Just a gentle follow-up on this patch below.
+> >> Please let me know if there are any concerns or if changes are needed.
+> >
+> > I'm pretty this will break with buffer sharing / cloning. I'd
+> > be tempted to remove all this cross buffer accounting logic
+> > and overestimate it, the current accounting is not sane.
+> > Otherwise, it'll likely need some proxy object shared b/w
+> > buffers or some other overly overcomplicated solution
+>
+> Another way would be to double account cloned buffers and then
+> have your patch, which combines overaccounting with the ugliness
+> of full buffer table walks.
+>
+> >> On Wed, Dec 17, 2025 at 9:00=E2=80=AFPM Yuhao Jiang <danisjiang@gmail.=
+com> wrote:
+> >>>
+> >>> When multiple registered buffers share the same compound page, only t=
+he
+> >>> first buffer accounts for the memory via io_buffer_account_pin(). The
+> >>> subsequent buffers skip accounting since headpage_already_acct() retu=
+rns
+> >>> true.
+> >>>
+> >>> When the first buffer is unregistered, the accounting is decremented,
+> >>> but the compound page remains pinned by the remaining buffers. This
+> >>> creates a state where pinned memory is not properly accounted against
+> >>> RLIMIT_MEMLOCK.
+> >>>
+> >>> On systems with HugeTLB pages pre-allocated, an unprivileged user can
+> >>> exploit this to pin memory beyond RLIMIT_MEMLOCK by cycling buffer
+> >>> registrations. The bypass amount is proportional to the number of
+> >>> available huge pages, potentially allowing gigabytes of memory to be
+> >>> pinned while the kernel accounting shows near-zero.
+> >>>
+> >>> Fix this by recalculating the actual pages to unaccount when unmappin=
+g
+> >>> a buffer. For regular pages, always unaccount. For compound pages, on=
+ly
+> >>> unaccount if no other registered buffer references the same compound
+> >>> page. This ensures the accounting persists until the last buffer
+> >>> referencing the compound page is released.
+> >>>
+> >>> Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+> >>> Fixes: 57bebf807e2a ("io_uring/rsrc: optimise registered huge pages")
+> >
+> > That's not the right commit, the accounting is ancient, should
+> > get blamed somewhere around first commits that added registered
+> > buffers.
+>
+> Turns it came just a bit later:
+>
+> commit de2939388be564836b06f0f06b3787bdedaed822
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Thu Sep 17 16:19:16 2020 -0600
+>
+>      io_uring: improve registered buffer accounting for huge pages
+>
+> --
+> Pavel Begunkov
+>
 
-In the end, after prep that is still just a move instruction, e.g.
-for x86. And it loads into a register and stores it into ext_arg,
-just like with registration. User copy needs to prepare page fault
-handling / etc., which could be costly (e.g. I see stac + lfence
-in asm), but that's not exactly about avoiding copies.
+Thanks for the review. I see the issues with buffer sharing/cloning and
+the accounting concerns you pointed out. I'll rework this accordingly
+and send a v2, and also fix the Fixes tag.
 
-> For the registered case, it's a simple memory
-> dereference. Doesn't cover the signal parts as I believe those are way
-> less commonly used.
--- 
-Pavel Begunkov
-
+Best regards,
+Yuhao Jiang
 

@@ -1,352 +1,157 @@
-Return-Path: <io-uring+bounces-11734-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11735-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253A8D25E19
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 17:53:32 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B44DD263B2
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 18:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8DCE730464D9
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 16:53:00 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5CAA7303062C
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 17:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEC725228D;
-	Thu, 15 Jan 2026 16:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AC03BF30C;
+	Thu, 15 Jan 2026 17:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SBn80TKy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mt1r2nl5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8953ACEFF
-	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 16:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64653BF306
+	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768495980; cv=none; b=jdcwsGLFPWG6hSU0dgtXxXjnb3wUJZFf8IGs4JVmrwAgBW3UYza2W4RZolXDbYYP8HzQZc/Zc2dht9ENfx96cjkEtbjEZRrbifjY8ZRWMnKpS2CGN7H8AmnqlsOIxqQvSRNxmjoiXy7M6sDXIEChm6kCY1SrHwAc7Iy64pnABW8=
+	t=1768497068; cv=none; b=ZXpSFddCiwOr9WlB1CwiShlD79RF0yJNwt9b2mwU0dBqlDtDf+3v6oo6JqVB65nz+cWrth+O4mmeCtCnPk3Y4daFOrMM5wcWadJB2t0wJGmAF2di6pmQp/KJm7BL6ioumbm+tXaGjRdeP9QIYOc/pHYWMZOVU/+10hFjbTzHMIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768495980; c=relaxed/simple;
-	bh=z5ldzGXb1Mx+Ie+WWddwX3eNbMvwxRXOp9cBd4hqmiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I21mwSjKFPnxKhLh8seyX62eaeAq9sefZUlJ5h96y/cm972TOZDhcDwn3Hs8Hccy03ZCtzgA7kmslPKykqiRdBLlwNHgL8bUdPoZqrvJGq8r4qzEOeFjkQJWIzI5rZEIgsCgQ+/Im2qm12eK6dUSxvCrfWAHM5KzZsqpA8B+SAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SBn80TKy; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-45c819ca0f1so707084b6e.0
-        for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 08:52:58 -0800 (PST)
+	s=arc-20240116; t=1768497068; c=relaxed/simple;
+	bh=z5fuYqtywwL6KOIHKbWzEHmAdjuqly6oA3cwR7sT8v0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJvHGtjp/8mwF8IC51iD7j+bQ7mZ7AlKAENBgzl6DQ+2KR4FuP1WO46UP8Rmu6/VEB1nAxVx0I/juZSvwSq4S5URrPHrDC8d3tRehuAqGJ7Ujb/lYaT/KiAwG+w2EAlU8gRaqg+BpISozogfZGwduB+tAbIqSc0IAfIeElR4ieE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mt1r2nl5; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42fb0fc5aa4so921447f8f.1
+        for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 09:11:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768495977; x=1769100777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FBvB/YxTuJ9KPLmb6aSnlinjD5ta37gomPuCv2m7dIA=;
-        b=SBn80TKy84jkX41ikL3CnM6eBMzsVIGLs77lNNi2asFCEMPMSxG5Shq2j6Uzxj2zEG
-         UjrOaClrxDEIwno/ofo7X9ZaSRU0TUkdPDWdm4LnSQ4Xs5WG5zmfRA8GXKAHPb9QehiG
-         UkdiUUJTYpr8NJw5zBikAjKwKOyegRzzMZ54huqwBjDWbVgn0KSdoo3jbDG+gxFj0G6x
-         5+E4O7EkG4iUU5xhi+oGMhXEwTgv1SoK0RltbV9DS529kIS2w4R9vK0Uqx9xX+l7jkUs
-         kvq/Fp1bcmCHieNSGo0Pup8n9sjjLMU/itauNw6RB3+2n4j22+ceDJ7+jRzZwvo1OamR
-         vwoQ==
+        d=gmail.com; s=20230601; t=1768497063; x=1769101863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/9zIIkhhFGJW7c5euU+uczxwuqnCR/g7cOorqaRVjc8=;
+        b=mt1r2nl5+IcwV4rIclf6O+vfsoItttvYMAwELjX7wAw87RRtgoOW4yjf89VreUeVMN
+         DUvrtR/D70+SBDc9heH/xdBvKbODGU113itq08ukub4tw+xmUGwWcQhvsS/yavKIjx8y
+         PASkfYCvUsV604SnIoRkl5iKxMvUsKrbTugd7YH3ahhdIWQQnwHQ1c0NgQjcQgRbKuv2
+         7EhanVPn/TK/MhaAGM941iuLfLGdB+n9VQzBnIWd0wo7hXd3PVboAUZARPbzFlr0f3XW
+         mTrXKtW8TsgnMgSgjAIi7VeQPc9k6LrWVpOEBn+lZbb7YXfAaBO7VVSecu2OIE4EI6IW
+         MwjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768495977; x=1769100777;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FBvB/YxTuJ9KPLmb6aSnlinjD5ta37gomPuCv2m7dIA=;
-        b=AqfN+n4lBiuOHwu8VidAxTI8F98OhJF6ezksKwUDaC3507bjq/K9YK3pDgOeahStW/
-         AQDnN02/Y+ipUUTcs3/bntqBUoZW2QazT2CCaAfazf8hYHxz07mC7apxzoHD5lvoj5DK
-         9fhSfrBwSEa+gEK/82H/OZ0ADBth0ehJf9+Mjbzx28Y4O2/9fOVmYbjkZM1PxeMXjyUs
-         WTRwAOuDcscbu5COTINzEnGvevRa2zgBBQBn88nDSC0qGT/QGRaRcdrg4MEWVzrrspTC
-         HF56gEYUa86lMlv2z6UOxv4hQ1uDLKS5AKd+hcmqtBd7owi5TBE9RmjnjdT+fbLley8L
-         /mKw==
-X-Gm-Message-State: AOJu0YyFLNmAa0UDQ1y82RJZV/sn47xzuNhrw4g2X9+TMFKguAR0CRPo
-	6ceD4DutOO9GIuk/diic/oHcHMVzf8XwOHTFHZe3VwjFDCyrNLgJ0UF/l4IIeCe4A0yS1NkzlRJ
-	VDOIv
-X-Gm-Gg: AY/fxX4DmSY2THw1vH0Z/3expwwdidm8ukfX1Qim0gMBUUPcd8ErAl3arv9la7V2vm5
-	sOORhZWQwJrSCz8fP1WQt9H/D40a2wwu8Ae/OUZoVwNFKVl9swQqVn4SJqgOujAkoHD3B+wBCn2
-	lupi/AiAhVB4WhrIM6BKR70eIIq78cpFwsw6JTq7c8wY2NzetVH2Selgi0qO+1Wn0QKUiOCckJ3
-	uFseyYwNP6Kz/vrx8MbC/SN/QQlWJRCieD54Amip6YRCR1zW0k6A3YRVTI+tAWqqud5wbifR/nR
-	F73SccjRL8clWFJGvfiEBIW+OwjH/n2ByCs66mvrhIES5/QQbHYaeBQQVmfpE6hLroSja9Av994
-	qZGT5W2pqkOqLsU8UQItu2eydCfnkunvfcTiNAJ7f/mj8Ikom+/HLDUB/YT06wLTwNkJkhQ==
-X-Received: by 2002:a05:6808:1485:b0:45a:3d58:6475 with SMTP id 5614622812f47-45c87fd3922mr2125962b6e.13.1768495977039;
-        Thu, 15 Jan 2026 08:52:57 -0800 (PST)
-Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf0db2ddsm14369a34.3.2026.01.15.08.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 08:52:56 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: allow registration of per-task restrictions
-Date: Thu, 15 Jan 2026 09:36:34 -0700
-Message-ID: <20260115165244.1037465-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260115165244.1037465-1-axboe@kernel.dk>
-References: <20260115165244.1037465-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1768497063; x=1769101863;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/9zIIkhhFGJW7c5euU+uczxwuqnCR/g7cOorqaRVjc8=;
+        b=q6q4Hox0imLYfahB6vvJe0DKXWwzbLdFspr8ApHONr7nxDEj34FEhJPgNEBomrPzwr
+         Hfk4ojTlFU0SIrLBS8GjSI99AAgutxnyWf3gbts+NcIB8Ml9p4WHhIFdgnQyE/l/YJvv
+         4M+ia+zGl98t5O8TR3COPNsA5DgracMpa6k5ZGv+V48dyEcrScHIqqEFtVsCCRAjjvI2
+         JSh/AfbLAo9bU9tSi3DpC2og46BXC6oHkEYeoz/IUd8nQoVB+xmudVJEQ8qb+S/RATph
+         LJUOnc8B0p5LIY27UamsIajzsRFsvkkY6hCOX9FTet9rAvaGjGop/sBwOO5WxxjyIpxD
+         CK5A==
+X-Forwarded-Encrypted: i=1; AJvYcCW68sPuaAWIcST0/oxW2mM7orWyRiHKrlOLbXfb48P3jZhErI92Zi964ASa8nVk7tp5kUj3n15m1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCBdJMN0+o2xkU/9ogWH0JKj409J046+9eMV/6V1VfICwJYp5H
+	0tyH2iXeQZ3z4VdNWu7x9SL3bJhLH68PGLwc+7QyYNOryMNWv3qEGGWg
+X-Gm-Gg: AY/fxX6yyBDCiG5gqhruLB2Nm8mMr9wyNm6XPhidiMNqRdw78IbQ4BLCub8TN+mnpEN
+	hC1YlAlRsfJJKWWPxYM+hy4i5TlS1IEj2x3jKa6VYWMeiBZBu2elIzHQLExMOymbWhv5i1bknMA
+	73foTdGd8Q2UKTLZnI3400WdSWYXoIeh//UOEm2RrRDLWwCNdERVRGByFdfE7fC3M+EFLjPKuBX
+	xIf+ffynssiq2HTkoom4ebB21vCOdrwRRvvk0YSCymBSC6zK7DyzZTcrfUadMFX0WrrSK/T5nCC
+	8KXRZnWjgI7a+Oj4DVwv8hn4ZRxWyx+CJnr8fwKO+sf/5cm+mCGItyM2gM59e6nJfqX54uH40z0
+	bfOxgKUkJmVHMJx8mnomKCAxtl3vwJE41Isx2PecGWA7Cwxl3fjkIj0dnPujtdaBfh03f/T1ddz
+	rMOoRfDes7XCY+xBWw3XpypYgQqgmFpi+rLwcLFf5Pd8LgB81m721EHhz0JCgkw41CHmwvxdXY1
+	DJi5RLkAEH4dMvUOUixOErJwfvDzm6tvT+FzxJ7BJpI1r+zF19bgPYp5GNt+TXq9Q==
+X-Received: by 2002:a05:6000:1889:b0:431:9b2:61c4 with SMTP id ffacd0b85a97d-43569bc77b8mr74982f8f.45.1768497062676;
+        Thu, 15 Jan 2026 09:11:02 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996cf42sm104023f8f.20.2026.01.15.09.11.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jan 2026 09:11:01 -0800 (PST)
+Message-ID: <5c0f28de-41dd-47c6-9b0b-9ea40cbbeab2@gmail.com>
+Date: Thu, 15 Jan 2026 17:10:55 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 7/9] eth: bnxt: support qcfg provided rx page
+ size
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Joshua Washington <joshwash@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Alexander Duyck <alexanderduyck@fb.com>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan
+ <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>,
+ Ankit Garg <nktgrg@google.com>, Tim Hostetler <thostet@google.com>,
+ Alok Tiwari <alok.a.tiwari@oracle.com>, Ziwei Xiao <ziweixiao@google.com>,
+ John Fraker <jfraker@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Mohsin Bashir <mohsin.bashr@gmail.com>, Joe Damato <joe@dama.to>,
+ Mina Almasry <almasrymina@google.com>,
+ Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Samiullah Khawaja <skhawaja@google.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, David Wei
+ <dw@davidwei.uk>, Yue Haibing <yuehaibing@huawei.com>,
+ Haiyue Wang <haiyuewa@163.com>, Jens Axboe <axboe@kernel.dk>,
+ Simon Horman <horms@kernel.org>, Vishwanath Seshagiri <vishs@fb.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, dtatulea@nvidia.com,
+ io-uring@vger.kernel.org
+References: <cover.1767819709.git.asml.silence@gmail.com>
+ <28028611f572ded416b8ab653f1b9515b0337fba.1767819709.git.asml.silence@gmail.com>
+ <20260113193612.2abfcf10@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20260113193612.2abfcf10@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently io_uring supports restricting operations on a per-ring basis.
-To use those, the ring must be setup in a disabled state by setting
-IORING_SETUP_R_DISABLED. Then restrictions can be set for the ring, and
-the ring can then be enabled.
+On 1/14/26 03:36, Jakub Kicinski wrote:
+> On Fri,  9 Jan 2026 11:28:46 +0000 Pavel Begunkov wrote:
+>> @@ -4342,7 +4343,8 @@ static void bnxt_init_ring_struct(struct bnxt *bp)
+>>   		if (!rxr)
+>>   			goto skip_rx;
+>>   
+>> -		rxr->rx_page_size = BNXT_RX_PAGE_SIZE;
+>> +		rxq = __netif_get_rx_queue(bp->dev, i);
+>> +		rxr->rx_page_size = rxq->qcfg.rx_page_size;
+> 
+> Pretty sure I asked for the netdev_queue_config() helper to make
+> a return, instead of drivers poking directly into core state.
+> Having the config live in rxq directly is also ugh.
 
-This commit adds support for IORING_REGISTER_RESTRICTIONS_TASK, which
-allows to register the same kind of restrictions, but with the task
-itself rather than with a specific ring. Once done, any ring created
-will inherit these restrictions.
+Having a helper would be a good idea, but I went for stashing
+configs in the queue as it's simpler, while dynamic allocations
+were of no benefit for this series. Maybe there are some further
+plans for it, but as you mentioned, it'd be better to do on top.
 
-If a restriction filter is registered with a task, then it's
-inherited on fork for its children. Children may only further restrict
-operations, not extend them.
+> But at this stage we're probably better off if you just respin
+> to fix the nits from Paolo and I try to de-lobotimize the driver
+> facing API. This is close enough.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring.h      |  2 +-
- include/linux/sched.h         |  1 +
- include/uapi/linux/io_uring.h |  9 +++++
- io_uring/io_uring.c           | 14 ++++++++
- io_uring/register.c           | 65 +++++++++++++++++++++++++++++++++++
- io_uring/tctx.c               | 26 +++++++++-----
- kernel/fork.c                 |  4 +++
- 7 files changed, 111 insertions(+), 10 deletions(-)
+Ok
 
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 85fe4e6b275c..cfd2f4c667ee 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -25,7 +25,7 @@ static inline void io_uring_task_cancel(void)
- }
- static inline void io_uring_free(struct task_struct *tsk)
- {
--	if (tsk->io_uring)
-+	if (tsk->io_uring || tsk->io_uring_restrict)
- 		__io_uring_free(tsk);
- }
- #else
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d395f2810fac..9abbd11bb87c 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1190,6 +1190,7 @@ struct task_struct {
- 
- #ifdef CONFIG_IO_URING
- 	struct io_uring_task		*io_uring;
-+	struct io_restriction		*io_uring_restrict;
- #endif
- 
- 	/* Namespaces: */
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 0e1b0871fe5e..dcf70e064e45 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -703,6 +703,8 @@ enum io_uring_register_op {
- 	/* register bpf filtering programs */
- 	IORING_REGISTER_BPF_FILTER		= 37,
- 
-+	IORING_REGISTER_RESTRICTIONS_TASK	= 38,
-+
- 	/* this goes last */
- 	IORING_REGISTER_LAST,
- 
-@@ -808,6 +810,13 @@ struct io_uring_restriction {
- 	__u32 resv2[3];
- };
- 
-+struct io_uring_task_restriction {
-+	__u16 flags;
-+	__u16 nr_res;
-+	__u32 resv[3];
-+	__DECLARE_FLEX_ARRAY(struct io_uring_restriction, restrictions);
-+};
-+
- struct io_uring_clock_register {
- 	__u32	clockid;
- 	__u32	__resv[3];
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 80aeb498ec8a..f1625e4c6c7b 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3623,6 +3623,20 @@ static __cold int io_uring_create(struct io_ctx_config *config)
- 	else
- 		ctx->notify_method = TWA_SIGNAL;
- 
-+	/*
-+	 * If the current task has restrictions enabled, then copy them to
-+	 * our newly created ring and mark it as registered.
-+	 */
-+	if (current->io_uring_restrict) {
-+		struct io_restriction *res = current->io_uring_restrict;
-+
-+		refcount_inc(&res->refs);
-+		ctx->restrictions = res;
-+		ctx->op_restricted = res->op_registered;
-+		ctx->reg_restricted = res->reg_registered;
-+		ctx->bpf_restricted = res->bpf_registered;
-+	}
-+
- 	/*
- 	 * This is just grabbed for accounting purposes. When a process exits,
- 	 * the mm is exited and dropped before the files, hence we need to hang
-diff --git a/io_uring/register.c b/io_uring/register.c
-index cb006d53a146..00b9508b18f9 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -223,6 +223,67 @@ static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
- 	return 0;
- }
- 
-+static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
-+{
-+	struct io_uring_task_restriction __user *ures = arg;
-+	struct io_uring_task_restriction tres;
-+	struct io_restriction *res;
-+	int ret;
-+
-+	/* Disallow if task already has registered restrictions */
-+	if (current->io_uring_restrict)
-+		return -EPERM;
-+	if (nr_args != 1)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&tres, arg, sizeof(tres)))
-+		return -EFAULT;
-+
-+	if (tres.flags)
-+		return -EINVAL;
-+	if (!mem_is_zero(tres.resv, sizeof(tres.resv)))
-+		return -EINVAL;
-+
-+	res = io_alloc_restrictions();
-+	if (IS_ERR(res))
-+		return PTR_ERR(res);
-+
-+	ret = io_parse_restrictions(ures->restrictions, tres.nr_res, res);
-+	if (ret < 0) {
-+		kfree(res);
-+		return ret;
-+	}
-+	current->io_uring_restrict = res;
-+	return 0;
-+}
-+
-+static int io_register_bpf_filter_task(void __user *arg, unsigned int nr_args)
-+{
-+	struct io_restriction *res;
-+	int ret;
-+
-+	if (nr_args != 1)
-+		return -EINVAL;
-+
-+	/* If no task restrictions exist, setup a new set */
-+	res = current->io_uring_restrict;
-+	if (!res) {
-+		res = io_alloc_restrictions();
-+		if (IS_ERR(res))
-+			return PTR_ERR(res);
-+	}
-+
-+	ret = io_register_bpf_filter(res, arg);
-+	if (ret) {
-+		if (res != current->io_uring_restrict)
-+			io_put_restrictions(res);
-+		return ret;
-+	}
-+	if (!current->io_uring_restrict)
-+		current->io_uring_restrict = res;
-+	return 0;
-+}
-+
- static int io_register_enable_rings(struct io_ring_ctx *ctx)
- {
- 	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-@@ -955,6 +1016,10 @@ static int io_uring_register_blind(unsigned int opcode, void __user *arg,
- 		return io_uring_register_send_msg_ring(arg, nr_args);
- 	case IORING_REGISTER_QUERY:
- 		return io_query(arg, nr_args);
-+	case IORING_REGISTER_RESTRICTIONS_TASK:
-+		return io_register_restrictions_task(arg, nr_args);
-+	case IORING_REGISTER_BPF_FILTER:
-+		return io_register_bpf_filter_task(arg, nr_args);
- 	}
- 	return -EINVAL;
- }
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 5b66755579c0..d45785dcd2e3 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -11,6 +11,8 @@
- 
- #include "io_uring.h"
- #include "tctx.h"
-+#include "register.h"
-+#include "bpf_filter.h"
- 
- static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,
- 					struct task_struct *task)
-@@ -54,16 +56,22 @@ void __io_uring_free(struct task_struct *tsk)
- 	 * node is stored in the xarray. Until that gets sorted out, attempt
- 	 * an iteration here and warn if any entries are found.
- 	 */
--	xa_for_each(&tctx->xa, index, node) {
--		WARN_ON_ONCE(1);
--		break;
--	}
--	WARN_ON_ONCE(tctx->io_wq);
--	WARN_ON_ONCE(tctx->cached_refs);
-+	if (tctx) {
-+		xa_for_each(&tctx->xa, index, node) {
-+			WARN_ON_ONCE(1);
-+			break;
-+		}
-+		WARN_ON_ONCE(tctx->io_wq);
-+		WARN_ON_ONCE(tctx->cached_refs);
- 
--	percpu_counter_destroy(&tctx->inflight);
--	kfree(tctx);
--	tsk->io_uring = NULL;
-+		percpu_counter_destroy(&tctx->inflight);
-+		kfree(tctx);
-+		tsk->io_uring = NULL;
-+	}
-+	if (tsk->io_uring_restrict) {
-+		io_put_restrictions(tsk->io_uring_restrict);
-+		tsk->io_uring_restrict = NULL;
-+	}
- }
- 
- __cold int io_uring_alloc_task_context(struct task_struct *task,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index b1f3915d5f8e..da8fd6fd384c 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -97,6 +97,7 @@
- #include <linux/kasan.h>
- #include <linux/scs.h>
- #include <linux/io_uring.h>
-+#include <linux/io_uring_types.h>
- #include <linux/bpf.h>
- #include <linux/stackprotector.h>
- #include <linux/user_events.h>
-@@ -2129,6 +2130,8 @@ __latent_entropy struct task_struct *copy_process(
- 
- #ifdef CONFIG_IO_URING
- 	p->io_uring = NULL;
-+	if (p->io_uring_restrict)
-+		refcount_inc(&p->io_uring_restrict->refs);
- #endif
- 
- 	p->default_timer_slack_ns = current->timer_slack_ns;
-@@ -2525,6 +2528,7 @@ __latent_entropy struct task_struct *copy_process(
- 	mpol_put(p->mempolicy);
- #endif
- bad_fork_cleanup_delayacct:
-+	io_uring_free(p);
- 	delayacct_tsk_free(p);
- bad_fork_cleanup_count:
- 	dec_rlimit_ucounts(task_ucounts(p), UCOUNT_RLIMIT_NPROC, 1);
 -- 
-2.51.0
+Pavel Begunkov
 
 

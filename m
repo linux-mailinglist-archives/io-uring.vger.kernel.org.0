@@ -1,212 +1,131 @@
-Return-Path: <io-uring+bounces-11728-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11729-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D0BD23546
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 10:02:55 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0E3D24A9B
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 14:06:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EBBFE30AA6E4
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 09:00:12 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9EA23305F533
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 13:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3D433D6FA;
-	Thu, 15 Jan 2026 09:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C2139C65B;
+	Thu, 15 Jan 2026 13:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFzdADqd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/DLxB4d"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC932340A7D
-	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 09:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69AB274B2B
+	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 13:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768467612; cv=none; b=HCMx5OwqZYKwnnrvpvraczUeBdTOcCQqERBa2Be/dz28MpkR/pmLQLAfcG2gY3t+2Fu0syOagPZIZXk9UK02A7+n/mOxPuPC9mjtK/0XahznHWU1sUW/6fVg0L8+UH2djOP8IJ1r+PvB05ZOIJ+4ejhq5EU7jfl4th5UUW/Cnbg=
+	t=1768482377; cv=none; b=X89KgyChz0JGgmZYLfZNK8WUwl5yTDpTvO4kbMJVZrEL4GzXx/cZOyDC0PvwEAzx9DjJRq2pD+RdmYuZuYCj92Z4QsWbDo3RBMFPZI5VNgURF+83RaYIO0x5n71+7YmrcthyvDIJPaOzO8aeVI0EBUnDAC/N7pmB9310u/DlQrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768467612; c=relaxed/simple;
-	bh=Zdt/qisqFDX109KN9gzVhNrGYcWOFfwh4UgesJCoelc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cHUw7H3W3Aezl2TYe6QJZ/SWtprV2NPECiOZGHlwKPa0Rqnrxk6o7Y/+FGpbyPnQTpaW3I1zUCQS1MOvclMj/b4YKqdLROB+pAFFNBYHfoj4+RZcPul0thqjkuK9CFPG/hOfGS4POw9uRdHYUxCxdGTpDf48lSxR9x/JZxORem0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFzdADqd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768467610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=h/ZZKlHZurqbfW1B7W/nlx38PVNHuIvXpjWS+Iexpd0=;
-	b=QFzdADqdUYdKPECsL8DGK2ERBzfjqrLHPoLwAY17+w2Xxafzl947j1Ig3dzLxUu0JnLuG5
-	9Sm2Ihq2MOtu9M/vvz2NoB6EG0XtCzNPhyx8IautPm9iMvR5kdrQs7fiDhLkZxHuEAY543
-	7poG02rSCZIWuX4lntf+hIXg0YsoQlM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-Gfgta2fEMFivZQFd505cQA-1; Thu,
- 15 Jan 2026 04:00:01 -0500
-X-MC-Unique: Gfgta2fEMFivZQFd505cQA-1
-X-Mimecast-MFC-AGG-ID: Gfgta2fEMFivZQFd505cQA_1768467600
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9DFF2180045C;
-	Thu, 15 Jan 2026 08:59:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.198])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 275B818004D8;
-	Thu, 15 Jan 2026 08:59:57 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org
-Cc: linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH] nvme: optimize passthrough IOPOLL completion for local ring context
-Date: Thu, 15 Jan 2026 16:59:52 +0800
-Message-ID: <20260115085952.494077-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1768482377; c=relaxed/simple;
+	bh=GT0N3+XKesFnNC3tQwSGHX0Pg8v09gSm0vnded6Rtmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fFQ1mgcC1Et3Hlya6PJ3nftgaXBwQOHqv64wh9kAIlNNuMbk7ZgRLFtOUBRhaZnXx9aXXrs6tbEbwgY3f7+frPAIMqLMlF+CGAXKk+KOpPA4Tp+1NODtRvlf5nTvO78Kxdu9htcBcLpIqzAiFUaAId1NGZM/VFOqmh0T/DSDlMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/DLxB4d; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4327555464cso489556f8f.1
+        for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 05:06:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768482374; x=1769087174; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pFA7aiuD4IC/rmkIBmGbxgTyFB7POjZYLBxN0HNTYw8=;
+        b=c/DLxB4dx4GIjxsyehNE4Gj0lvQUvawzUdRjF7q3sOjnP1PqH0DxZLArmZCizO9HOO
+         nGozOtSQKBZU83bDlInQjFDXi52CsK048oa1fZ5P4DWKTfnLb2cjFDGEtugbjD8ir/1U
+         NgWRHVn5nMFmKucfi822plZzR1pturMcly9GoeQDCOtD8aMyQzKNNxS4RRowXQX72v4W
+         tRF/ThEQ4ITME6QUK/JJktf+nvxMR+iOTN77cL0WAk3rNT4C/RY4cpYyJCCeQYsSB5BG
+         6juh2WEw2rOJeCXl/DFBKn0u4/wNcvO2xs1fj8SgtJJRwkvR4jVdRwd7wHyr3cgfCqdx
+         Xncw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768482374; x=1769087174;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pFA7aiuD4IC/rmkIBmGbxgTyFB7POjZYLBxN0HNTYw8=;
+        b=D/nwV83XrsPkB/zTEBaJQuygsVdaIBDS6moNfTDmYVawNNveTdZMNBu3/gTOnBGRnO
+         E4krE6N/zWScn5B1BQNISSwThX9HZnijwQUzaXReKBJYvYp8ICDwROn1dqpOgUpbzlaz
+         ZnV3sS3BzR3HhfsHDpQ5bzysrPcQVNKoIby0JRcsfd3kNcJJHHuHz6iEIzM4Mvc3ELfA
+         UNovfsFaAezXUtTESzYBosqmyaFIySN9Lkl2UTX7GCnyoHMcKkSWSilnUH4Mj6LfQflJ
+         s3NSBAYcqmWAvx4JAzhJASK2cg0+k9tGJCJWILTLlTpmfculDThCZunbLHJ0qfI3H7ZR
+         XlyA==
+X-Gm-Message-State: AOJu0YycGRxY17511uNBYEaSenkdkNV/byFVKoii3ZdkW2D4K/meuKww
+	QHLL5rqSGohqSBgAAX14zZ3BPiqkujIF2uWa+roi/mzhKSt/i8cDH9r4nvE/BA==
+X-Gm-Gg: AY/fxX7IPahgqxNDN/ZBnfTRcPse0Znzoi54ibKvjC0nNuDxYxWoGZvSfT3Ku1dtRWg
+	7T2NmbtWu54Pd7s2dqi7/TMB3x/7EuG4ObUk/O0Ff7B8G+Sz0FgZhX37NgMfUMR4iMtXaHYMiJ3
+	JgouBf6bkZwGeq4pRuDIsPE0omybAmnHxA2BTk/juwHx793GfajFnzvAhmUQcf/voZPLwde/NIQ
+	RkIF/239d/ZgDaiXz69Yx9eSgNsDM2zk0yTt+PPJMaExlcNbMb93fUkImIBJf7rcoiO38/9kRY0
+	FE9YtkfC7oy2pj2Yh7X41gbJHIXQsF2dfoJfQfuvsuSiipEP4Yf3ETe+j5sjg0RaV50bD+5v+ch
+	UkXtsggnerSyihtVvcWItRthJ+BoZz5uBsFzfL2b2nCr+VhUuWyJgFNdENq39eK4RNZ/K8wi58S
+	Zk/RJwIc9o8u/gEMlpovgK1UK03mX5vPzDbIOw7iVdJdtWAOCDzak8tjWDAY/fr71wyCbDpi1PN
+	MYTcJS88HUrywDjSsW2IsEexiwigcrcoUsMTizESfY3g7lPemcwGukRFOvrrIuw0g==
+X-Received: by 2002:a05:6000:1a8a:b0:42b:2ac7:7942 with SMTP id ffacd0b85a97d-4342c3ed56cmr8652564f8f.5.1768482373672;
+        Thu, 15 Jan 2026 05:06:13 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af6fc833sm5717862f8f.38.2026.01.15.05.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jan 2026 05:06:13 -0800 (PST)
+Message-ID: <53767b80-846d-47ee-a69b-f037a9a2d4da@gmail.com>
+Date: Thu, 15 Jan 2026 13:06:08 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
+To: Jens Axboe <axboe@kernel.dk>, Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org
+References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
+ <87ldi12o91.fsf@mailhost.krisman.be>
+ <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
+ <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
+ <5f026b78-870f-4cfd-b78b-a805ca48264b@gmail.com>
+ <c805f085-2e13-40ee-a615-e002165996c6@gmail.com>
+ <adda36d5-0fe0-466c-a339-7bd9ffec1e23@kernel.dk>
+ <d8f24928-bcc8-4772-a9b2-d6d5d1bbca72@gmail.com>
+ <988a3d72-a58b-45a4-8d98-8928de4f3ecf@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <988a3d72-a58b-45a4-8d98-8928de4f3ecf@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When multiple io_uring rings poll on the same NVMe queue, one ring can
-find completions belonging to another ring. The current code always
-uses task_work to handle this, but this adds overhead for the common
-single-ring case.
+On 1/14/26 23:53, Jens Axboe wrote:
+...
+>>>> And the compiler is smart enough to optimise it out since
+>>>> it's all on stack.
+>>>
+>>> Not sure I follow these emails. For the normal case,
+>>> io_validate_ext_arg() copies in the args via a normal user copy, which
+>>> depending on options and the arch (or even sub-arch, amd more expensive)
+>>> is more or less expensive.
+>>
+>> In the end, after prep that is still just a move instruction, e.g.
+>> for x86. And it loads into a register and stores it into ext_arg,
+>> just like with registration. User copy needs to prepare page fault
+>> handling / etc., which could be costly (e.g. I see stac + lfence
+>> in asm), but that's not exactly about avoiding copies.
+> 
+> Those are implementation details. The user copy is stac/clac, and then
+> the loads. This is what makes it more expensive. I don't want to be
+> writing about stac/clac in the man page, that's irrelevant to the user.
 
-This patch passes the polling io_ring_ctx through the iopoll callback
-chain via io_comp_batch and stores it in the request. In the NVMe
-end_io handler, we compare the polling context with the request's
-owning context. If they match (local), we complete inline. If they
-differ (remote) or it's a non-IOPOLL path, we use task_work as before.
+Confused why would you be thinking about putting that into the
+man page. I'm saying that it claims copy avoidance, but there is
+no difference in the number of copies. It's also uncomfortable
+that it's in a commit with my name attached, while the change
+wouldn't fall under the "language edits" note.
 
-Changes:
-- Add poll_ctx field to struct io_comp_batch
-- Add poll_ctx to struct request's hash/ipi_list union
-- Set iob.poll_ctx in io_do_iopoll() before calling iopoll callbacks
-- Store poll_ctx in request in nvme_ns_chr_uring_cmd_iopoll()
-- Check local vs remote context in nvme_uring_cmd_end_io()
-
-~10% IOPS improvement is observed in the following benchmark:
-
-fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B[0|1] -O0 -P1 -u1 -n1 /dev/ng0n1
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/nvme/host/ioctl.c | 36 ++++++++++++++++++++++++++++--------
- include/linux/blk-mq.h    |  4 +++-
- include/linux/blkdev.h    |  1 +
- io_uring/rw.c             |  7 +++++++
- 4 files changed, 39 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index a9c097dacad6..0b85378f7fbb 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -425,14 +425,28 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
- 	pdu->result = le64_to_cpu(nvme_req(req)->result.u64);
- 
- 	/*
--	 * IOPOLL could potentially complete this request directly, but
--	 * if multiple rings are polling on the same queue, then it's possible
--	 * for one ring to find completions for another ring. Punting the
--	 * completion via task_work will always direct it to the right
--	 * location, rather than potentially complete requests for ringA
--	 * under iopoll invocations from ringB.
-+	 * For IOPOLL, check if this completion is happening in the context
-+	 * of the same io_ring that owns the request (local context). If so,
-+	 * we can complete inline without task_work overhead. Otherwise, we
-+	 * must punt to task_work to ensure completion happens in the correct
-+	 * ring's context.
- 	 */
--	io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
-+	if (blk_rq_is_poll(req) && req->poll_ctx == io_uring_cmd_ctx_handle(ioucmd)) {
-+		/*
-+		 * Local context: the polling ring owns this request.
-+		 * Complete inline for optimal performance.
-+		 */
-+		if (pdu->bio)
-+			blk_rq_unmap_user(pdu->bio);
-+		io_uring_cmd_done32(ioucmd, pdu->status, pdu->result, 0);
-+	} else {
-+		/*
-+		 * Remote or non-IOPOLL context: either a different ring found
-+		 * this completion, or this is IRQ/softirq completion. Use
-+		 * task_work to direct completion to the correct location.
-+		 */
-+		io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
-+	}
- 	return RQ_END_IO_FREE;
- }
- 
-@@ -677,8 +691,14 @@ int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
- 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
- 	struct request *req = pdu->req;
- 
--	if (req && blk_rq_is_poll(req))
-+	if (req && blk_rq_is_poll(req)) {
-+		/*
-+		 * Store the polling context in the request so end_io can
-+		 * detect if it's completing in the local ring's context.
-+		 */
-+		req->poll_ctx = iob ? iob->poll_ctx : NULL;
- 		return blk_rq_poll(req, iob, poll_flags);
-+	}
- 	return 0;
- }
- #ifdef CONFIG_NVME_MULTIPATH
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index cae9e857aea4..1975f5dd29f8 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -175,11 +175,13 @@ struct request {
- 	 * request reaches the dispatch list. The ipi_list is only used
- 	 * to queue the request for softirq completion, which is long
- 	 * after the request has been unhashed (and even removed from
--	 * the dispatch list).
-+	 * the dispatch list). poll_ctx is used during iopoll to track
-+	 * the io_ring_ctx that initiated the poll operation.
- 	 */
- 	union {
- 		struct hlist_node hash;	/* merge hash */
- 		struct llist_node ipi_list;
-+		void *poll_ctx;		/* iopoll context */
- 	};
- 
- 	/*
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 72e34acd439c..4ed708912127 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1820,6 +1820,7 @@ void bdev_fput(struct file *bdev_file);
- 
- struct io_comp_batch {
- 	struct rq_list req_list;
-+	void *poll_ctx;
- 	bool need_ts;
- 	void (*complete)(struct io_comp_batch *);
- };
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index c33c533a267e..27a49ce3de46 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -1321,6 +1321,13 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 	struct io_kiocb *req, *tmp;
- 	int nr_events = 0;
- 
-+	/*
-+	 * Store the polling ctx so drivers can detect if they're completing
-+	 * a request from the same ring that's polling (local) vs a different
-+	 * ring (remote). This enables optimizations for local completions.
-+	 */
-+	iob.poll_ctx = ctx;
-+
- 	/*
- 	 * Only spin for completions if we don't have multiple devices hanging
- 	 * off our complete list.
 -- 
-2.47.1
+Pavel Begunkov
 
 

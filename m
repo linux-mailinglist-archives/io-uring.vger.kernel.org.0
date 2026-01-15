@@ -1,140 +1,198 @@
-Return-Path: <io-uring+bounces-11730-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11731-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5542FD24E4A
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 15:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7306DD25E09
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 17:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DB8593004223
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 14:14:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D1EC23025FAE
+	for <lists+io-uring@lfdr.de>; Thu, 15 Jan 2026 16:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D490396D3C;
-	Thu, 15 Jan 2026 14:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9102396B75;
+	Thu, 15 Jan 2026 16:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Dmw+xCnz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3Owe1dNT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6230FC39
-	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 14:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097D042049
+	for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 16:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768486477; cv=none; b=adGo/egyhxKEWFr+XU82z9l2yj7wJZ4Ul2IjkwXPhdMdepGHm1dS6fzH2E4BRaXzwISvQdStaoAFPDCxggtq8tot9EQzYv2Vld3jKMw4uF8qbx10gTJfcSOoKrxp95KOo5c2BCvvPFmGMbF7uBFG4iMRfaiM1OOtug1PJG+E/tk=
+	t=1768495977; cv=none; b=DQ7NJ+L329FmNdOzGQCT/HBqzDS/aZjYpXHiN9OknMOxadi3rK2zS5PbDI3hwttp3BkGZIbhNff+LL/2vtEQfAnB3XjKvp1W5dbd7G2AUpND1gqRhXxVGL1Mx6wBJ8q0oua3uPIz9pmaULo/nIQ0ozVLlH4FdpHAMQ0TPphCuL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768486477; c=relaxed/simple;
-	bh=ByzgaxSAirkBj0i6U7A3Vm156SluqK5OLQeG32b7DxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BY0+1zHm+mhnJNhOsMbx8g0bhhfvtOuRWWbzACswgL0AfVfXn18gi4w/AerC1V7Vs7h9buyzRl9FDY2mOOjCjQVeydiGPQBd19tvv4SegbFeAyudxXIjj6PjE9rZf33m766GYKD8jE5eKcr2MhMtgRd0D1cIsvDNsna4mh4cDsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Dmw+xCnz; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1768495977; c=relaxed/simple;
+	bh=g3cma3+sLQgnbLA2UNKVXbfOpOW7Ura7QRTQ83SZ0Kg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Chmf2Osx3eD07NAqkbd4+K52TZwSzRuzVszCUfft4dNiaS5BHCaotnN4v4whh0o6M6sQcO4oVVvSZ+TOPvMCdTUGWG2z9j7FLgmdfpFbdNhwLdcIElBbHADELINWFM3dppr4P5xv86jVPZ/p5dglnTCSuM5ROdObNQgLOI/31NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3Owe1dNT; arc=none smtp.client-ip=209.85.210.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-4040996405eso565967fac.2
-        for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 06:14:34 -0800 (PST)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7cfd5d34817so693066a34.1
+        for <io-uring@vger.kernel.org>; Thu, 15 Jan 2026 08:52:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768486474; x=1769091274; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aBU8rBWowG9Rc6V+1jXT0t2HqV4ZzI+gBAv1ZFMKIuU=;
-        b=Dmw+xCnzLef9KgFNN0z8xSaMj54PMD7lXzgawOWOkVrAkPPxHt3gO5MBPfxGuot0+Z
-         O5N7uNuS/RUZil0ARYHxfYc9OybBFUk9c+UHGweAWjJXb1lQhbdE6vjveD9dNgSO0gL8
-         H6s/Aj5+n0ISqX1yRcPBTStldx3YGCcvgpo/DEG7Tms2slT16AHSPgtQW+EnCSt+yN8T
-         Im7WWdD201fl9UnL6Ingi1GzYfC6dBZAHis2wdztDHys5eVQqQloh2Plf0cnOlCkzQo8
-         0StWGM59GLXsytTlZznXhlcXawL4YccC8DyXue5d4PGvHYrOLG+QczdVWbfmoG3tXqjv
-         bpOw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768495973; x=1769100773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NnhoBaXoAHlu6xNi+MKPzGZPrelA6LdUEuPWOYiaqC4=;
+        b=3Owe1dNTxOduSFlQihE0UrytSwTehVGjCtjDgudX824YbN2e6f6FU3BK751gcplWSn
+         G6EpcBXw0ZRHukN4R7sLoVcerUVP3IF55l+Qd8xh00G1Ax9FKQ26iuJRFdbsGa7Jefwm
+         435/YgXeSb3BtRabm+YkMAuuyTnk9eYYKBJGJtMYZ0P0GgCIP7v38snOJw1FBHa0MAQQ
+         x/zvKKw47cBhMvob6T+1s0X/glUYuwQykgryYWMZMicy7zLjfTSg9/3ZVkRb7RLrXojU
+         vsRohRz6Ji0ydn1zJB1Qo6583ib0D+7z9QFDa61xi7tS5dDGdaMBi/rO9VJT6AaG70IQ
+         nhmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768486474; x=1769091274;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1768495973; x=1769100773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aBU8rBWowG9Rc6V+1jXT0t2HqV4ZzI+gBAv1ZFMKIuU=;
-        b=H8KxKCJxk0w2K9Y4K5Ikky/q2HqrxstgryhfvvOwbd6gNY/ci6gOq+c6fVM2ojNIeX
-         WIHYrPlfjLdwqXEN1coStirks1NprKGQKDWTLvz125UWwv5LSFTE2oTSMUWnL2JgdWQt
-         ndXokeVj5b881JrNGKz+DOiJXgNmjybK9vNhBU2J9N2Sa++DY9lIHaeu4wxb0IGfhXDc
-         4VWdfNSU545xHKYG7ix2V+JnqhOb3bTOuMnmWEEpkKZfEjigbMMSkL3Owl6OQnF34per
-         LwGSgIBlz729ttxdqioARZT5nMfFwpfVW82v00Iy/XHD+45UszWBU4p40fmlN3BRCas6
-         PGXA==
-X-Gm-Message-State: AOJu0Yz9qZTzrqHghShxsGA/lR6Rc60FlgkJj4xXyIMT/mzn8LfSgpoG
-	P/jv+C7SVvxtsmFL2bUWqrp4sqHFNeUwvqVNQWrz+dSW5korEA39A6Os0fnJfa2+lTT5rYGt7W0
-	88ZhT
-X-Gm-Gg: AY/fxX5JSzfVdIV70FxCk3juWYSIl0JvWxYP1/3hSCjEEgcOwiOIygmawXu1I7O/3Ul
-	2Y0EUFN6dg2ybJg9k0ekcqA/Vq8h5Lzya2D/pEMDiVATPbnXZEqiytQdE2O9hSIgYIQhR6doVs3
-	k5mXHKx2DYX5UVSpCovmg+VOZW3OPJGP8GsnoRqViIZX8ceZ/UMJ1dZuuWuGWm9AwKh1bo31E69
-	cRYLW3SzeT5AkZQgmwda38p6jLexMq/7ll+HKCx/vxFnzB4KsS9snfHc557HPYlW/4edf+xIY6f
-	xxHFFzP6mWbbpmDGjwUC1d3xEb3fySiWGnwsyzc0AT2MMdubgEUYWLjI43BR1EvI6LfhDBwnR/N
-	QZIAat3/i/Y3gHdcNQDOEc7CPC6JUikJboKKCmjbuviBPSNKtID0wEtE/en3O5CDjZ+yIHg4DvL
-	Tl0fn7fzZyO720YLfeVg==
-X-Received: by 2002:a05:6870:b3e7:b0:33f:b3dc:23cf with SMTP id 586e51a60fabf-40407184c94mr4359293fac.50.1768486473860;
-        Thu, 15 Jan 2026 06:14:33 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4e3a7bfsm18501792fac.8.2026.01.15.06.14.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 06:14:33 -0800 (PST)
-Message-ID: <1c9a7c71-fc6d-4630-bfd5-f0e567d96e85@kernel.dk>
-Date: Thu, 15 Jan 2026 07:14:32 -0700
+        bh=NnhoBaXoAHlu6xNi+MKPzGZPrelA6LdUEuPWOYiaqC4=;
+        b=bhe4MR8MeIxd7sOjOiafy67D5bqrPyltC5PvucLQVG9TrSGti3CDlKVo51YW4rQSDq
+         rbawHe75WSWYACtGWON/QuyL0wUkLwntBr5shcGS4Fo9HK2iVn7aVVk7aUxNEK5odWWT
+         aF+Gon5CRAy4MaKGbbDBaTWQSER0aEzyzlMY4WXYRJAvkJT2TYqjW6KJxn16whvZOs7f
+         dAR6ntXaqSYxcJXFJmBFZn5PzNhUg0qtRDQgSIy4O96PYroIGL73qOQGRkZoLGpHl3Xj
+         umja0Gy9wfUWEV1Lc7OlbTB3J2voqBmOczvc1zeiOyfyr3Mbfvd45VAGRhFWrmuhwpWd
+         Y+gg==
+X-Gm-Message-State: AOJu0YxHhlg9LLRxDhiVydama9ftjv33ZrzRmYY9MyCcmgf+iJZuNdCL
+	ApKgfmfvbBskGdCp//lPl6JLdOFDLc86dE0cTouRWAAsC6E7twSTnukE402tsROfjJs7CjvwGp7
+	nZnyR
+X-Gm-Gg: AY/fxX5G9YnSM6kPTEdiGFSo7UQvk7KS0C/ncAqFh4AJF5MsmGEsTBmN9sHIRBjZmxl
+	6R7zryuespqhHG4iWitJDl54L7d/OtrqMg1s4fxzo/1UiupVPELY+L4N8SGPNuW22wJKxHhTVRm
+	eE7k3u9tuKneoTjOoCRbif9XxmJxI2Mf+J2i3gdUw71XAgg1Xo4uWwip9ozp//mUjC4qjko9TkF
+	RiAU4Spb6C+ToFlhYaQRG29aQs1VIjv7melKH183Fl4y8UADH8t/NRYKSog3I1FXAe17llGzExh
+	4iDJhxf7rQ1erK/l6tArcYNxhd5hfoiaUF2Yu4mv+S5UR+sIZ6tJhMokZLeTRejyKNXH+qqjY+X
+	crIeU9bf1/6tnpsd+0CuHStLpQyBlZI0U5XOx2cNj0N2FQltEjW//VlRd+WoL4smmLZyGuA==
+X-Received: by 2002:a05:6830:498d:b0:7c7:7fc7:8b9d with SMTP id 46e09a7af769-7cfdee19b62mr63675a34.18.1768495973458;
+        Thu, 15 Jan 2026 08:52:53 -0800 (PST)
+Received: from m2max ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf0db2ddsm14369a34.3.2026.01.15.08.52.52
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 08:52:52 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET RFC v3] Inherited restrictions and BPF filtering
+Date: Thu, 15 Jan 2026 09:36:31 -0700
+Message-ID: <20260115165244.1037465-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 1/1] man: add io_uring_register_region.3
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <6ba5f1669bfe047ed790ee47c37ca63fd65b05de.1768334542.git.asml.silence@gmail.com>
- <87ldi12o91.fsf@mailhost.krisman.be>
- <d3a4a02e-0bcc-41fd-994e-1b109f99eeaa@kernel.dk>
- <9f032fbc-f461-4243-9561-2ce7407041f1@gmail.com>
- <5f026b78-870f-4cfd-b78b-a805ca48264b@gmail.com>
- <c805f085-2e13-40ee-a615-e002165996c6@gmail.com>
- <adda36d5-0fe0-466c-a339-7bd9ffec1e23@kernel.dk>
- <d8f24928-bcc8-4772-a9b2-d6d5d1bbca72@gmail.com>
- <988a3d72-a58b-45a4-8d98-8928de4f3ecf@kernel.dk>
- <53767b80-846d-47ee-a69b-f037a9a2d4da@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <53767b80-846d-47ee-a69b-f037a9a2d4da@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 1/15/26 6:06 AM, Pavel Begunkov wrote:
-> On 1/14/26 23:53, Jens Axboe wrote:
-> ...
->>>>> And the compiler is smart enough to optimise it out since
->>>>> it's all on stack.
->>>>
->>>> Not sure I follow these emails. For the normal case,
->>>> io_validate_ext_arg() copies in the args via a normal user copy, which
->>>> depending on options and the arch (or even sub-arch, amd more expensive)
->>>> is more or less expensive.
->>>
->>> In the end, after prep that is still just a move instruction, e.g.
->>> for x86. And it loads into a register and stores it into ext_arg,
->>> just like with registration. User copy needs to prepare page fault
->>> handling / etc., which could be costly (e.g. I see stac + lfence
->>> in asm), but that's not exactly about avoiding copies.
->>
->> Those are implementation details. The user copy is stac/clac, and then
->> the loads. This is what makes it more expensive. I don't want to be
->> writing about stac/clac in the man page, that's irrelevant to the user.
-> 
-> Confused why would you be thinking about putting that into the
-> man page. I'm saying that it claims copy avoidance, but there is
-> no difference in the number of copies. It's also uncomfortable
-> that it's in a commit with my name attached, while the change
-> wouldn't fall under the "language edits" note.
+Hi,
 
-Sheesh let's turn down the sensitivity. If you want it changed, send a
-patch. I'm trying to phrase it in such a way that it makes sense to
-people without getting into too much detail. It avoids copying from
-USERSPACE, which is the expensive part.
+Followup to v2 here:
 
-I think we've spent enough time on this detail at this point, no?
+https://lore.kernel.org/io-uring/20260109185155.88150-1-axboe@kernel.dk/
+
+While this is a followup, it takes a different approach to the problem.
+What remains is task inheritance - if a set of restrictions are
+registered with a task, any children will get it too.
+
+What's new is adding basic support for BPF filters, so that anything
+can be filtered. You can add filters for each opcode, and several of
+them as well. As the filtering is done after the prep phase, it's even
+possible to support filtering based on user structs that are copied in
+to the kernel. For now, only IORING_OP_SOCKET is done, and allows
+filtering on domain/type/protocol. This is done as an example. A sample
+filter for that could look like:
+
+SEC("io_uring_filter")
+int socket_filter(struct io_uring_bpf_ctx *ctx)
+{
+	/* Only allow AF_INET and AF_INET6 */
+	if (ctx->socket.family != AF_INET && ctx->socket.family != AF_INET6)
+		return 0;  /* Reject */
+
+	/* Only allow SOCK_STREAM (TCP) */
+	if (ctx->socket.type != SOCK_STREAM)
+		return 0;  /* Reject */
+
+	/* Only allow IPPROTO_TCP or default (0) */
+	if (ctx->socket.protocol != IPPROTO_TCP && ctx->socket.protocol != 0)
+		return 0;  /* Reject */
+
+	return 1; /* Accept */
+}
+
+to restrict certain families, types, or protocols.
+
+Just supports SQE opcodes for this kind of filtering, but easily
+extendable to cover REGISTER opcodes as well, including arguments.
+
+Sending this out as an RFC for comments. I think this provides most of
+the functionality needed to filter basically anything. There's still
+some rough edges here, notably the BPF support, as I really don't know
+what I'm doing there. But it works for testing, at least... I don't have
+a liburing branch for this just yet, let me know if you want some
+test/sample code and I'll be happy to toss it over the wall. I'll add a
+liburing branch over the weekend for easier experimentation.
+
+Sample based on the above filter:
+
+axboe@m2max-kvm ~> ./io_uring_bpf_loader io_uring_bpf_filter.c.bpf.o
+io_uring BPF Socket Filter Test (C-based)
+==========================================
+
+io_uring initialized
+BPF program loaded successfully from io_uring_bpf_filter.c.bpf.o, fd=4
+BPF filter registered for opcode 45
+
+Running tests...
+
+Testing AF_INET TCP (explicit): PASSED (fd=5)
+Testing AF_INET TCP (default): PASSED (fd=5)
+Testing AF_INET6 TCP (explicit): PASSED (fd=5)
+Testing AF_INET6 TCP (default): PASSED (fd=5)
+Testing AF_INET UDP: PASSED (correctly rejected)
+Testing AF_INET RAW: PASSED (correctly rejected)
+Testing AF_UNIX: PASSED (correctly rejected)
+Testing AF_INET TCP socket with UDP proto: PASSED (correctly rejected)
+
+or running t/io_uring with IORING_OP_NOP and a filter set. This filter
+just allows the opcode, but it's still run on each NOP issued:
+
+axboe@m2max-kvm ~/g/fio (master)> sudo taskset -c 0 t/io_uring -N1 -n1 -E ~/noop_filter.bpf.c.o -B0 -F0 trim.json
+submitter=0, tid=2287, file=trim.json, nfiles=1, node=-1
+BPF program loaded successfully from /home/axboe/noop_filter.bpf.c.o, fd=5
+BPF filter registered for opcode 0
+polled=1, fixedbufs=0, register_files=0, buffered=0, QD=128
+Engine=io_uring, sq_ring=128, cq_ring=128
+IOPS=13.89M, IOS/call=32/32
+IOPS=13.90M, IOS/call=32/32
+[...]
+
+Comments welcome! Kernel branch can be found here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=io_uring-bpf-restrictions
+
+and sits on top of for-7.0/io_uring
+
+ include/linux/bpf.h            |   1 +
+ include/linux/bpf_types.h      |   4 +
+ include/linux/io_uring.h       |   2 +-
+ include/linux/io_uring_types.h |  20 +++-
+ include/linux/sched.h          |   1 +
+ include/uapi/linux/bpf.h       |   1 +
+ include/uapi/linux/io_uring.h  |  46 +++++++
+ io_uring/Makefile              |   1 +
+ io_uring/bpf_filter.c          | 212 +++++++++++++++++++++++++++++++++
+ io_uring/bpf_filter.h          |  41 +++++++
+ io_uring/io_uring.c            |  33 ++++-
+ io_uring/net.c                 |   9 ++
+ io_uring/net.h                 |   5 +
+ io_uring/register.c            | 133 +++++++++++++++++++--
+ io_uring/register.h            |   2 +
+ io_uring/tctx.c                |  26 ++--
+ kernel/bpf/syscall.c           |   9 ++
+ kernel/fork.c                  |   4 +
+ 18 files changed, 527 insertions(+), 23 deletions(-)
 
 -- 
 Jens Axboe
+
 

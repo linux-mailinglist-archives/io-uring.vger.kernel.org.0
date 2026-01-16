@@ -1,85 +1,89 @@
-Return-Path: <io-uring+bounces-11767-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11768-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF527D3896D
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 23:44:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E286FD38A0A
+	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 00:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 02F463016CDF
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 22:44:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9C2DB30428D5
+	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 23:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCED270540;
-	Fri, 16 Jan 2026 22:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE08B1FE44A;
+	Fri, 16 Jan 2026 23:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xP/HW2ED"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4O2qSOq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78AF30EF7B
-	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 22:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E4317993
+	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 23:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768603446; cv=none; b=nSvJoO917CbuAhBQTHK15O4MkyD9ip1ArivTAXOREHVtEJm+fAHr4rOK6F8/ZG+G36dzi0zo+v9NZkwgy71OGnDY+412y2z9IwOexLKVQyfCZtoyFU63Xf3oArQbe9kreWZX5WZ+trirrx59Fe0UzQWNlyAEmZ1oTxbkxhhuSCs=
+	t=1768606264; cv=none; b=kv18Ne322xQPbQI8qy/Di5Lr5JC0nnP+M2W8kz5YpEES42YNbYWXIx7CIxEmsYgyT0guGr/Gizmh9AE9kYJpjyUmFLPJOmcEMB0c1VB6163a7N+YBes1S4Dv/a8EpUMdc06IVuuN+ZM5bGw4LLDLOEl2VZVtwQHpUs+6hoM07p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768603446; c=relaxed/simple;
-	bh=ud58tnDEWG+y1C80VzdbNt1eRNV7t3hI24hjEBbfkbs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HcdIhic1XfZG5tZz8U5TCzxHsLp4kUkN667VG1qmiAhQxr3KS5n84p/SfpSA8rbdEH7dBBtoXxavA5oaJXmqjeBhAndSBJxwDiM2n0Bl0XE6sf0xR6gJ/pCcPfdEGNqc6UPjqUQ6xy0cDrV/H+eVDbyMPQCWcgOTrnael8n1AjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xP/HW2ED; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-45c86087949so963394b6e.2
-        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 14:44:04 -0800 (PST)
+	s=arc-20240116; t=1768606264; c=relaxed/simple;
+	bh=K1wRh3492mMGZGUAJjjSNwOi2kzUyrx4DUiil4ld6iI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cJh4qsFu7rdyYIbbth7WZDSlvH5dj/4fx5iVkv9iZp57bjsuMGy0djJKrIRDbYWlAdT8vGBOO4kM/mamN+D78Tke7ZanKic1E/AWVE4lWxm6Ikj2BJrXqdbTZJOa7TYKuMQ62gzAv5hYsN/x5EPl9VDkEcg1NuzATwMQ0cv7Hvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4O2qSOq; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-81dab89f286so1215559b3a.2
+        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 15:31:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768603443; x=1769208243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0tL203V7A8Uu/WZU8RHMoV3QXvq0tN6yRVrJWl5NJz0=;
-        b=xP/HW2EDQda/krSsiUbEqMaeKPDZ4mR7qz36AISAqCAuhaJ4G2xfIZjL6mzTfqgHKS
-         BQyprpS3IHcSW08QXV45R4BOnqAqF8+6CKYIXJ86Bc2gEHvcFHmk6sV6pDbzpaF7z0u8
-         9WUXfloB2z0ubc7Z/ExKBMu7hO/70hOtkxFcZ6oYueE+lyfbnLLOA7ltc2rql3EklPNF
-         MAMCGhcqIT1uCEXmLZBqmLZu6BJhmwh9ahWirhMr72eMbB7/P/ZcK2hzr3u0hjK+UwZm
-         tioBDQC979lSKzb/gDvyVPW99jBQhIFgCp0oE+ZkLNYcFgOX7amRkQcFy4N416gq6JSx
-         Zctg==
+        d=gmail.com; s=20230601; t=1768606262; x=1769211062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rpq5WWSHKss0mptOYewsQ0k57/noiEkYB0tSl1wVDPc=;
+        b=f4O2qSOq5Af3YeluXwCh4K9L8En/SW3w7PqdSdnsGiZRRoG78V0J3Ugbyq/SjhbpQg
+         Jvmjmaw9JCl2lOljelLW4p6r1OI0piWowd+7zpNXtWoEyPDeQioKq/zM9EDcn4NnzYuL
+         l/jyLc1kZWPl2e7H9UP9gpBMLwUYI+2w9KXFvP4saFOZR7iCioh6bS92Vh2/y+Wvs1oo
+         U36wSNzFaFXGrggC3tD1xqjrtfl8duboo8MrFVKwOpyFBQBABlEm5qVOY8YY1xNbhAdG
+         SPmPCdrSy3ZiSCce3KGskruQ8x4qIwMt3qaXSNlJpMzWCN/e3PLRi7rrRuFLDLo4tAQ7
+         DQ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768603443; x=1769208243;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0tL203V7A8Uu/WZU8RHMoV3QXvq0tN6yRVrJWl5NJz0=;
-        b=FhSe2ygwM7lU8okA0UGOfN5vIUvGitxq9U4HELrbM209ma0NMqxnJsNp/VGxrjttqh
-         EPrPzBMXyiFBBlY1hYiYmojSzVFScKyojG2NNGMcxe1dTjByDl/KxeQSMm8u4i23tvu2
-         wH0zCz4Oy2PjCz/KFLUKfzbmdiGTAdNdyeIPuelfU5+cdst1GqEoefCEs/Ca0//a0N3C
-         Hthtt/LgGXQ6gvncQ65r9bp4pCn2MXmMNo4xeG5S08ZPX9YEjukaj+x2fXnusjeR4TDN
-         31zUGWR6UXglrzPvbJSG8r3U0Cvhr6qH4YQrsLY6zkg4xlVlIhqSMkqD8hW87I5Bnnxs
-         q2Zg==
-X-Gm-Message-State: AOJu0YyXFK1pgcwLJHaNctvqh16DizOO4iffMc0Gnh5xu6KKsdvBx2S7
-	dIGlPcro9hkaptnsnZurLkwjziM2OVvArDrPPtLKdh9YPVzgj0fT2RyWSWVdAjfryx/QZTZecUj
-	VA4un
-X-Gm-Gg: AY/fxX7XMu8yyY+zXbNzPJB8l5TpFabJ7KtcvyAORcIKaE+6jHBkTdCCDj4R195i1SI
-	/3qfjXnaBLcWfho2LBtkYEY8rFpjCJdjjE6QIjBTc5n3RX9Ojwwvt5yQncztkvcCV9J7j65xQr2
-	GydrSYsi4zlo/aYPWQHuPuaYMaDPnWvOpKgTyUkv9hDPFTNaxzXPayJ24i27KtobMGI3/1RU/vQ
-	q+JrFeRWYKrnHZbx5/4Wu3tWgH0wfyxYoN/oy7LekjQEB4DpTAfPpoP5dqI8aw7gQPYy5cImRct
-	AHJ41cZ+35TMr53qOe7Dp4J6xR9Nb0abTweBPRWVmSFlYQ4CFCJIGLFQrhj9uzGviHR/kazQgAY
-	OS+k8RhW1exxiZROnpePf8D99ySqkf+1XAVD7ADyA88eqJqNbpetOz3Qbo+nizOLM4Y+wrqSooP
-	f9X1OHDz9UznHeWx3R81+AVJ6BNbNxOzJxc5zNDOgOZGmwkuH5yQc/NjCJ
-X-Received: by 2002:a05:6808:15a9:b0:450:275b:d942 with SMTP id 5614622812f47-45c9d6fc240mr1621110b6e.10.1768603443608;
-        Fri, 16 Jan 2026 14:44:03 -0800 (PST)
-Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45c9dec9ebcsm1945098b6e.2.2026.01.16.14.44.02
+        d=1e100.net; s=20230601; t=1768606262; x=1769211062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rpq5WWSHKss0mptOYewsQ0k57/noiEkYB0tSl1wVDPc=;
+        b=v2qKUtoc1pZIu3PiPMNytDMbMS+6xyyktnzce6A1tCFpt/4DnRyK7Ru1dFNuOfDRdr
+         XXuks6HBSnZ0gnkCUuFgO5Q+YZQ28YhtNtg6+TlhMkvKmsAzmwTTONL6PQD70+Rt7ABd
+         cHA4w8DAvuqiTl1V2wOys2IMgwYyVIJ5JTJkOK2wlqzGth0UPmDoHJakA1ou4vAdUNwd
+         0QxmrOJOnRPh3R5D2ewuWXHptQhCEc2XwdcK+jLE9Eb3ngbsDPlxc9mxe8R5bxdI40qt
+         dkcE01DBg5I5vDHEPUXmO7aCtoQMsc5nZWw+wdQonIDil4Uz1ztsmYv2bnw9QS8WbVdD
+         kntw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDuVt09nzh/32FZgQrotNHsrDVurXeS41ZAEz32+R0Ne3407+CdU2GzA+rfgUSv9G/HNScvNadRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQWBCjpCu1/kEvQRsTfGXKFLek5fjWjeZI3SuuvYFvu8rWMbke
+	MupvFXeT1Lo7q3g/yAEasZxKowQfPKdG+RCT6qbG1IcO9YJtQAuYU4u+
+X-Gm-Gg: AY/fxX7GURok11Hewv9pDizyzXYFVVAG7XN4U0btAAfujMvmF/7Zd8bA+H+ecEwxugN
+	oABtKrg8YqtCSrAfzQbgoe4tOFoqSUEktxq2hVtfBWb5qYJVY1BMWAbQUqv0B2mXfWtys6zXG2Z
+	W0/Db66AImzpnela3BztxLeOnDL+T736bOXogBRMuW6KWtJN9qXIQKBjmqj/08V9mHlE7Y7+aMg
+	Swv6AF0U3TqGXC8QpRdjrv6neP5bUmkGcLnh223yAvbjCyCMqGJyDqodmSc2Qo9p6u7KoGRJiQf
+	fOpdBsUUImh602g9Dr0Vcn4c9TOTknfVNasdUrlDqnEo7rNjPia34IAYy/lNhp2H53tUD7F2BC8
+	lt2Ye8t8yd3KiAsEm8uariw2FFGyibmkwo4GW7FFSRqpLWGCQ7HwwUMpwEzz1rIdug+WhWt3usa
+	x/oBkFf5Zrb/spphUA
+X-Received: by 2002:a05:6a20:728d:b0:34e:cc0a:40b2 with SMTP id adf61e73a8af0-38dfe64be4emr4502943637.30.1768606262384;
+        Fri, 16 Jan 2026 15:31:02 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:52::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a7190ce6a9sm30997025ad.34.2026.01.16.15.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 14:44:02 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/5] io_uring: allow registration of per-task restrictions
-Date: Fri, 16 Jan 2026 15:38:42 -0700
-Message-ID: <20260116224356.399361-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260116224356.399361-1-axboe@kernel.dk>
-References: <20260116224356.399361-1-axboe@kernel.dk>
+        Fri, 16 Jan 2026 15:31:01 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: axboe@kernel.dk,
+	miklos@szeredi.hu
+Cc: bschubert@ddn.com,
+	csander@purestorage.com,
+	krisman@suse.de,
+	io-uring@vger.kernel.org,
+	asml.silence@gmail.com,
+	xiaobing.li@samsung.com,
+	safinaskar@gmail.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 00/25] fuse/io-uring: add kernel-managed buffer rings and zero-copy
+Date: Fri, 16 Jan 2026 15:30:19 -0800
+Message-ID: <20260116233044.1532965-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,374 +92,135 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently io_uring supports restricting operations on a per-ring basis.
-To use those, the ring must be setup in a disabled state by setting
-IORING_SETUP_R_DISABLED. Then restrictions can be set for the ring, and
-the ring can then be enabled.
+This series adds buffer ring and zero-copy capabilities to fuse over io-uring.
+This requires adding a new kernel-managed buf (kmbuf) ring type to io-uring
+where the buffers are provided and managed by the kernel instead of by
+userspace.
 
-This commit adds support for IORING_REGISTER_RESTRICTIONS with ring_fd
-== -1, like the other "blind" register opcodes which work on the task
-rather than a specific ring. This allows registration of the same kind
-of restrictions as can been done on a specific ring, but with the task
-itself. Once done, any ring created will inherit these restrictions.
+On the io-uring side, the kmbuf interface is basically identical to pbufs.
+They differ mostly in how the memory region is set up and whether it is
+userspace or kernel that recycles back the buffer. Internally, the
+IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-managed. 
 
-If a restriction filter is registered with a task, then it's inherited
-on fork for its children. Children may only further restrict operations,
-not extend them.
+The zero-copy work builds on top of the infrastructure added for
+kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
+io-uring kernel-managed buffer ring") and that informs some of the design
+choices for how fuse uses the kernel-managed buffer ring without zero-copy.
 
-Inheriting restrictions include both the classic
-IORING_REGISTER_RESTRICTIONS based restrictions, as well as the BPF
-filters that have been registered with the task via
-IORING_REGISTER_BPF_FILTER.
+There was a previous submission for supporting registered buffers in fuse [1]
+but that was abandoned in favor of using kernel-managed buffer rings, which,
+once incremental buffer consumption is added in a later patchset, gives
+significant memory usage advantages in allowing the full buffer capacity to be
+utilized across multiple requests, as well as offers more flexibility for
+future additions. As well, it also makes the userspace side setup simpler.
+The relevant refactoring fuse patches from the previous submission are carried
+over into this one.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |  2 +
- include/uapi/linux/io_uring.h  |  7 ++++
- io_uring/bpf_filter.c          | 70 ++++++++++++++++++++++++++++++++++
- io_uring/bpf_filter.h          |  6 +++
- io_uring/io_uring.c            | 19 +++++++++
- io_uring/io_uring.h            |  1 +
- io_uring/register.c            | 65 +++++++++++++++++++++++++++++++
- io_uring/tctx.c                | 35 ++++++++++++-----
- 8 files changed, 196 insertions(+), 9 deletions(-)
+Benchmarks for zero-copy (patch 24) show approximately the following
+differences in throughput for bs=1M:
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 1e91fa7ecbaf..f4a55c104825 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -236,6 +236,8 @@ struct io_restriction {
- 	DECLARE_BITMAP(register_op, IORING_REGISTER_LAST);
- 	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
- 	struct io_bpf_filters *bpf_filters;
-+	/* ->bpf_filters needs COW on modification */
-+	bool bpf_filters_cow;
- 	u8 sqe_flags_allowed;
- 	u8 sqe_flags_required;
- 	/* IORING_OP_* restrictions exist */
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 27839318c43e..419bdfb48b9c 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -808,6 +808,13 @@ struct io_uring_restriction {
- 	__u32 resv2[3];
- };
- 
-+struct io_uring_task_restriction {
-+	__u16 flags;
-+	__u16 nr_res;
-+	__u32 resv[3];
-+	__DECLARE_FLEX_ARRAY(struct io_uring_restriction, restrictions);
-+};
-+
- struct io_uring_clock_register {
- 	__u32	clockid;
- 	__u32	__resv[3];
-diff --git a/io_uring/bpf_filter.c b/io_uring/bpf_filter.c
-index 8ed5b913005a..30a9d7355cd7 100644
---- a/io_uring/bpf_filter.c
-+++ b/io_uring/bpf_filter.c
-@@ -215,6 +215,70 @@ static struct io_bpf_filters *io_new_bpf_filters(void)
- 	return filters;
- }
- 
-+void io_bpf_filter_clone(struct io_restriction *dst, struct io_restriction *src)
-+{
-+	if (!src->bpf_filters)
-+		return;
-+
-+	rcu_read_lock();
-+	/*
-+	 * If the src filter is going away, just ignore it.
-+	 */
-+	if (refcount_inc_not_zero(&src->bpf_filters->refs)) {
-+		dst->bpf_filters = src->bpf_filters;
-+		dst->bpf_filters_cow = true;
-+	}
-+	rcu_read_unlock();
-+}
-+
-+/*
-+ * Allocate a new struct io_bpf_filters. Used when a filter is cloned and
-+ * modifications need to be made.
-+ */
-+static struct io_bpf_filters *io_bpf_filter_cow(struct io_restriction *src)
-+{
-+	struct io_bpf_filters *filters;
-+	struct io_bpf_filter *srcf;
-+	int i;
-+
-+	filters = io_new_bpf_filters();
-+	if (IS_ERR(filters))
-+		return filters;
-+
-+	/*
-+	 * Iterate filters from src and assign in destination. Grabbing
-+	 * a reference is enough, we don't need to duplicate the memory.
-+	 * This is safe because filters are only ever appended to the
-+	 * front of the list, hence the only memory ever touched inside
-+	 * a filter is the refcount.
-+	 */
-+	rcu_read_lock();
-+	for (i = 0; i < IORING_OP_LAST; i++) {
-+		srcf = rcu_dereference(src->bpf_filters->filters[i]);
-+		if (!srcf) {
-+			continue;
-+		} else if (srcf == &dummy_filter) {
-+			rcu_assign_pointer(filters->filters[i], &dummy_filter);
-+			continue;
-+		}
-+
-+		/*
-+		 * Getting a ref on the first node is enough, putting the
-+		 * filter and iterating nodes to free will stop on the first
-+		 * one that doesn't hit zero when dropping.
-+		 */
-+		if (!refcount_inc_not_zero(&srcf->refs))
-+			goto err;
-+		rcu_assign_pointer(filters->filters[i], srcf);
-+	}
-+	rcu_read_unlock();
-+	return filters;
-+err:
-+	rcu_read_unlock();
-+	__io_put_bpf_filters(filters);
-+	return ERR_PTR(-EBUSY);
-+}
-+
- int io_register_bpf_filter(struct io_restriction *res,
- 			   struct io_uring_bpf __user *arg)
- {
-@@ -247,6 +311,12 @@ int io_register_bpf_filter(struct io_restriction *res,
- 		filters = io_new_bpf_filters();
- 		if (IS_ERR(filters))
- 			return PTR_ERR(filters);
-+	} else if (res->bpf_filters_cow) {
-+		filters = io_bpf_filter_cow(res);
-+		if (IS_ERR(filters))
-+			return PTR_ERR(filters);
-+		__io_put_bpf_filters(res->bpf_filters);
-+		res->bpf_filters_cow = false;
- 	}
- 
- 	prog = bpf_prog_get_type(reg.filter.prog_fd, BPF_PROG_TYPE_IO_URING);
-diff --git a/io_uring/bpf_filter.h b/io_uring/bpf_filter.h
-index a131953ce950..3f117a4c8752 100644
---- a/io_uring/bpf_filter.h
-+++ b/io_uring/bpf_filter.h
-@@ -11,6 +11,8 @@ int io_register_bpf_filter(struct io_restriction *res,
- 
- void io_put_bpf_filters(struct io_restriction *res);
- 
-+void io_bpf_filter_clone(struct io_restriction *dst, struct io_restriction *src);
-+
- static inline int io_uring_run_bpf_filters(struct io_restriction *res,
- 					   struct io_kiocb *req)
- {
-@@ -35,6 +37,10 @@ static inline int io_uring_run_bpf_filters(struct io_restriction *res,
- static inline void io_put_bpf_filters(struct io_restriction *res)
- {
- }
-+static inline void io_bpf_filter_clone(struct io_restriction *dst,
-+				       struct io_restriction *src)
-+{
-+}
- #endif /* CONFIG_IO_URING */
- 
- #endif
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 67533e494836..8e9d300b8604 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3562,6 +3562,18 @@ int io_prepare_config(struct io_ctx_config *config)
- 	return 0;
- }
- 
-+void io_restriction_clone(struct io_restriction *dst, struct io_restriction *src)
-+{
-+	memcpy(&dst->register_op, &src->register_op, sizeof(dst->register_op));
-+	memcpy(&dst->sqe_op, &src->sqe_op, sizeof(dst->sqe_op));
-+	dst->sqe_flags_allowed = src->sqe_flags_allowed;
-+	dst->sqe_flags_required = src->sqe_flags_required;
-+	dst->op_registered = src->op_registered;
-+	dst->reg_registered = src->reg_registered;
-+
-+	io_bpf_filter_clone(dst, src);
-+}
-+
- static __cold int io_uring_create(struct io_ctx_config *config)
- {
- 	struct io_uring_params *p = &config->p;
-@@ -3622,6 +3634,13 @@ static __cold int io_uring_create(struct io_ctx_config *config)
- 	else
- 		ctx->notify_method = TWA_SIGNAL;
- 
-+	/*
-+	 * If the current task has restrictions enabled, then copy them to
-+	 * our newly created ring and mark it as registered.
-+	 */
-+	if (current->io_uring_restrict)
-+		io_restriction_clone(&ctx->restrictions, current->io_uring_restrict);
-+
- 	/*
- 	 * This is just grabbed for accounting purposes. When a process exits,
- 	 * the mm is exited and dropped before the files, hence we need to hang
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index c5bbb43b5842..feb9f76761e9 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -195,6 +195,7 @@ void io_task_refs_refill(struct io_uring_task *tctx);
- bool __io_alloc_req_refill(struct io_ring_ctx *ctx);
- 
- void io_activate_pollwq(struct io_ring_ctx *ctx);
-+void io_restriction_clone(struct io_restriction *dst, struct io_restriction *src);
- 
- static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
- {
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 30957c2cb5eb..12164b4e03aa 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -190,6 +190,67 @@ static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
- 	return 0;
- }
- 
-+static int io_register_restrictions_task(void __user *arg, unsigned int nr_args)
-+{
-+	struct io_uring_task_restriction __user *ures = arg;
-+	struct io_uring_task_restriction tres;
-+	struct io_restriction *res;
-+	int ret;
-+
-+	/* Disallow if task already has registered restrictions */
-+	if (current->io_uring_restrict)
-+		return -EPERM;
-+	if (nr_args != 1)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&tres, arg, sizeof(tres)))
-+		return -EFAULT;
-+
-+	if (tres.flags)
-+		return -EINVAL;
-+	if (!mem_is_zero(tres.resv, sizeof(tres.resv)))
-+		return -EINVAL;
-+
-+	res = kzalloc(sizeof(*res), GFP_KERNEL_ACCOUNT);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	ret = io_parse_restrictions(ures->restrictions, tres.nr_res, res);
-+	if (ret < 0) {
-+		kfree(res);
-+		return ret;
-+	}
-+	current->io_uring_restrict = res;
-+	return 0;
-+}
-+
-+static int io_register_bpf_filter_task(void __user *arg, unsigned int nr_args)
-+{
-+	struct io_restriction *res;
-+	int ret;
-+
-+	if (nr_args != 1)
-+		return -EINVAL;
-+
-+	/* If no task restrictions exist, setup a new set */
-+	res = current->io_uring_restrict;
-+	if (!res) {
-+		res = kzalloc(sizeof(*res), GFP_KERNEL_ACCOUNT);
-+		if (!res)
-+			return -ENOMEM;
-+	}
-+
-+	ret = io_register_bpf_filter(res, arg);
-+	if (ret) {
-+		if (res != current->io_uring_restrict)
-+			kfree(res);
-+		return ret;
-+	}
-+	if (!current->io_uring_restrict)
-+		current->io_uring_restrict = res;
-+	return 0;
-+}
-+
- static int io_register_enable_rings(struct io_ring_ctx *ctx)
- {
- 	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-@@ -909,6 +970,10 @@ static int io_uring_register_blind(unsigned int opcode, void __user *arg,
- 		return io_uring_register_send_msg_ring(arg, nr_args);
- 	case IORING_REGISTER_QUERY:
- 		return io_query(arg, nr_args);
-+	case IORING_REGISTER_RESTRICTIONS:
-+		return io_register_restrictions_task(arg, nr_args);
-+	case IORING_REGISTER_BPF_FILTER:
-+		return io_register_bpf_filter_task(arg, nr_args);
- 	}
- 	return -EINVAL;
- }
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index cca13d291cfd..2c05e8f66172 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -11,6 +11,8 @@
- 
- #include "io_uring.h"
- #include "tctx.h"
-+#include "register.h"
-+#include "bpf_filter.h"
- 
- static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,
- 					struct task_struct *task)
-@@ -54,16 +56,23 @@ void __io_uring_free(struct task_struct *tsk)
- 	 * node is stored in the xarray. Until that gets sorted out, attempt
- 	 * an iteration here and warn if any entries are found.
- 	 */
--	xa_for_each(&tctx->xa, index, node) {
--		WARN_ON_ONCE(1);
--		break;
--	}
--	WARN_ON_ONCE(tctx->io_wq);
--	WARN_ON_ONCE(tctx->cached_refs);
-+	if (tctx) {
-+		xa_for_each(&tctx->xa, index, node) {
-+			WARN_ON_ONCE(1);
-+			break;
-+		}
-+		WARN_ON_ONCE(tctx->io_wq);
-+		WARN_ON_ONCE(tctx->cached_refs);
- 
--	percpu_counter_destroy(&tctx->inflight);
--	kfree(tctx);
--	tsk->io_uring = NULL;
-+		percpu_counter_destroy(&tctx->inflight);
-+		kfree(tctx);
-+		tsk->io_uring = NULL;
-+	}
-+	if (tsk->io_uring_restrict) {
-+		io_put_bpf_filters(tsk->io_uring_restrict);
-+		kfree(tsk->io_uring_restrict);
-+		tsk->io_uring_restrict = NULL;
-+	}
- }
- 
- __cold int io_uring_alloc_task_context(struct task_struct *task,
-@@ -354,5 +363,13 @@ int io_ringfd_unregister(struct io_ring_ctx *ctx, void __user *__arg,
- 
- int __io_uring_fork(struct task_struct *tsk)
- {
-+	struct io_restriction *res, *src = tsk->io_uring_restrict;
-+
-+	res = kzalloc(sizeof(*res), GFP_KERNEL_ACCOUNT);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	tsk->io_uring_restrict = res;
-+	io_restriction_clone(res, src);
- 	return 0;
- }
+direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+direct randwrites: no difference (~750 MB/s)
+buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
+
+The benchmark was run using fio on the passthrough_hp server:
+fio --name=test_run --ioengine=sync --rw=rand{read,write} --bs=1M
+--size=1G --numjobs=2 --ramp_time=30 --group_reporting=1
+
+This series is on top of commit b71e635feefc in the io-uring tree.
+
+The libfuse changes can be found in [2]. This has a dependency on the liburing
+changes in [3]. To test the server, you can run it with:
+sudo ~/libfuse/build/example/passthrough_hp ~/src ~/mounts/tmp
+--nopassthrough -o io_uring_zero_copy -o io_uring_q_depth=8
+
+Thanks,
+Joanne 
+
+[1] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-1-joannelkoong@gmail.com/
+[2] https://github.com/joannekoong/libfuse/tree/zero_copy
+[3] https://github.com/joannekoong/liburing/tree/kmbuf
+
+v3: https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-joannelkoong@gmail.com/
+v3 -> v4:
+* Get rid of likely()s and get rid of going through cmd interface layer (Gabriel)
+* Fix io_uring_cmd_fixed_index_get() to return back the node pointer (Caleb)
+* Add documentation for io_buffer_register_bvec (Caleb)
+* Remove WARN_ON_ONCE() for io_buffer_unregister() call (Caleb)
+
+v2: https://lore.kernel.org/linux-fsdevel/20251218083319.3485503-1-joannelkoong@gmail.com/
+v2 -> v3:
+* fix casting between void * and u64 for 32-bit architectures (kernel test robot)
+* add newline for documentation bullet points (kernel test robot)
+* fix unrecognized "boolean" (kernel test robot), switch it to a flag (me)
+
+v1: https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joannelkoong@gmail.com/
+v1 -> v2:
+* drop fuse buffer cleanup on ring death, which makes things a lot simpler (Jens)
+  - this drops a lot of things (eg needing ring_ctx tracking, needing callback
+    for ring death, etc)
+* drop fixed buffer pinning altogether and just do lookup every time (Jens)
+  (didn't significantly affect the benchmark results seen)
+* fix spelling mistake in docs (Askar)
+* use -EALREADY for pinning already pinned bufring, return PTR_ERR for
+   registration instead of err, move initializations to outside locks (Caleb)
+* drop fuse patches for zero-ed out headers (me)
+
+Joanne Koong (25):
+  io_uring/kbuf: refactor io_buf_pbuf_register() logic into generic
+    helpers
+  io_uring/kbuf: rename io_unregister_pbuf_ring() to
+    io_unregister_buf_ring()
+  io_uring/kbuf: add support for kernel-managed buffer rings
+  io_uring/kbuf: add mmap support for kernel-managed buffer rings
+  io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+  io_uring/kbuf: add buffer ring pinning/unpinning
+  io_uring/kbuf: add recycling for kernel managed buffer rings
+  io_uring: add io_uring_fixed_index_get() and
+    io_uring_fixed_index_put()
+  io_uring/kbuf: add io_uring_is_kmbuf_ring()
+  io_uring/kbuf: export io_ring_buffer_select()
+  io_uring/kbuf: return buffer id in buffer selection
+  io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+  fuse: refactor io-uring logic for getting next fuse request
+  fuse: refactor io-uring header copying to ring
+  fuse: refactor io-uring header copying from ring
+  fuse: use enum types for header copying
+  fuse: refactor setting up copy state for payload copying
+  fuse: support buffer copying for kernel addresses
+  fuse: add io-uring kernel-managed buffer ring
+  io_uring/rsrc: rename
+    io_buffer_register_bvec()/io_buffer_unregister_bvec()
+  io_uring/rsrc: split io_buffer_register_request() logic
+  io_uring/rsrc: Allow buffer release callback to be optional
+  io_uring/rsrc: add io_buffer_register_bvec()
+  fuse: add zero-copy over io-uring
+  docs: fuse: add io-uring bufring and zero-copy documentation
+
+ Documentation/block/ublk.rst                  |  14 +-
+ .../filesystems/fuse/fuse-io-uring.rst        |  59 +-
+ drivers/block/ublk_drv.c                      |  18 +-
+ fs/fuse/dev.c                                 |  30 +-
+ fs/fuse/dev_uring.c                           | 692 ++++++++++++++----
+ fs/fuse/dev_uring_i.h                         |  42 +-
+ fs/fuse/fuse_dev_i.h                          |   8 +-
+ include/linux/io_uring/buf.h                  |  25 +
+ include/linux/io_uring/cmd.h                  |  97 ++-
+ include/linux/io_uring_types.h                |  10 +-
+ include/uapi/linux/fuse.h                     |  17 +-
+ include/uapi/linux/io_uring.h                 |  17 +-
+ io_uring/kbuf.c                               | 355 +++++++--
+ io_uring/kbuf.h                               |  19 +-
+ io_uring/memmap.c                             | 117 ++-
+ io_uring/memmap.h                             |   4 +
+ io_uring/register.c                           |   9 +-
+ io_uring/rsrc.c                               | 183 ++++-
+ io_uring/uring_cmd.c                          |   6 +-
+ 19 files changed, 1447 insertions(+), 275 deletions(-)
+ create mode 100644 include/linux/io_uring/buf.h
+
 -- 
-2.51.0
+2.47.3
 
 

@@ -1,124 +1,117 @@
-Return-Path: <io-uring+bounces-11752-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11756-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50892D2A230
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 03:29:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04B5D2B61F
+	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 05:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9FC923039AE7
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 02:29:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 040053072F84
+	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 04:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BF3043B5;
-	Fri, 16 Jan 2026 02:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E4F346799;
+	Fri, 16 Jan 2026 04:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aj25M64C"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gAk7E7e3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C1026F28D
-	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 02:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C81346766;
+	Fri, 16 Jan 2026 04:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768530591; cv=none; b=RgWO7DDRLVkhJe2N0FXZCnCVcItPOP+o8H4wNCsbCwqxuqUAIrl8kOWxjaDcOxIpNre+7cXrPbayJOE8HmQ4Wjut6VvtQpPzs5H1lMUCqeOBPsv50YEOs5XGcLvEhzD+3Q2J+pCN7flBKmCUkVb+8v7ee3IBYzGwF/wJ57Q5lVo=
+	t=1768537583; cv=none; b=UkPzfFU0bn99ga004YSzi1X04Y+vQrIBw5ik5kIe5wToRtLNaqqoI5P8CHE2KAxFU8NZyQxLYDg8weJ6V0cRFmdlHV1WolHEMZFN6/rmtgMIJUYTiLQiFmvW1Cy/M0BE626rwFXeTCM8ry6TphB9/VdB66x4Ro5PjVcyNv1PNvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768530591; c=relaxed/simple;
-	bh=K8B8M7eyzBTpuEy2wcfy6rGDyriJ3NZzDf9tPl5rXw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rud16cWc5f4jVP0+tBSlQmuujqXNtrY/5ZuA8/PTb8h/9+q29pJa7ZK4gDWSTEFKOz7oRBg/PxAIt0lSfmY7JgfTHkaWynoB152zclfZQbjih8vX1h+nCi2BSzP1++rqDWfMNmSrP6ezHiO8Ngb5aSg0uUkouXnw/HclzTtQ6E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aj25M64C; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768530587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WS2SICUrwaPPpzRXOUocpqBLbS1kjBn3jEB2NsfxtKA=;
-	b=Aj25M64CRrL/HKx8WvGtMg3dwx/pu+BGIJAFlEdPJD7rYOEAtQ3vfQaJ0K76dJ2Vs6oaIR
-	MbLTA9iiOJeRO42XN8C+ZzHM7/khvGcZj075pm49INOdySbqTfuj5BU+KS54Azfg2523BU
-	PT8s+Iafaz74t0LV/+AQw/s3W3AVnqQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-knSiroeYO4e49MsBlmhXOg-1; Thu,
- 15 Jan 2026 21:29:44 -0500
-X-MC-Unique: knSiroeYO4e49MsBlmhXOg-1
-X-Mimecast-MFC-AGG-ID: knSiroeYO4e49MsBlmhXOg_1768530583
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA9031956048;
-	Fri, 16 Jan 2026 02:29:42 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.198])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 345DC1800240;
-	Fri, 16 Jan 2026 02:29:37 +0000 (UTC)
-Date: Fri, 16 Jan 2026 10:29:33 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] nvme: optimize passthrough IOPOLL completion for local
- ring context
-Message-ID: <aWmijezYIIWLKeM2@fedora>
-References: <20260115085952.494077-1-ming.lei@redhat.com>
- <aWkwNVgAyBbx732l@kbusch-mbp>
+	s=arc-20240116; t=1768537583; c=relaxed/simple;
+	bh=Km94l5dOzb9/BKwN9ws3sLMgxzatXl7DyHXFTSOVL1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TxasZ3dvDv8mhpJfP+LsLZuw+uHAy4QTNYVALGIvL6222x3ZMF8PevneBcKUk08qk2nVbewUaTPL07CHBJJq8RHv1vSDWKcl9f+jRA/8FsDlOKvXveOOUZzhN2W0+tGOoUNxcuxEpZK0rphtTfFavwJ8hVGn3V17wwRG45hTPBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gAk7E7e3; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ma
+	HH9s8Et9nU7Iy0cnZpKfH3AnGQ526YacPtNjoeqwM=; b=gAk7E7e3+YKxGs5ugK
+	/2jFxkzU+YCRuDoyN1dbQkRX+Tege9SQjEw9ASmCl+6ZHomB2V+C7pEs0Y6Fqv5R
+	U6zjSjtMFcGpc1iwx0/ZU2wVdHbAh5m09svzEiWSOUof7NZmYVBUdb1+TqXK8Dko
+	+4peZBp8bMeS4VzQw4IVZ/7UQ=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wAXCLKuvWlpM1mcFw--.2330S2;
+	Fri, 16 Jan 2026 12:25:20 +0800 (CST)
+From: Yang Xiuwei <yangxiuwei@kylinos.cn>
+To: linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org
+Cc: fujita.tomonori@lab.ntt.co.jp,
+	axboe@kernel.dk,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	bvanassche@acm.org,
+	Yang Xiuwei <yangxiuwei@kylinos.cn>
+Subject: [RFC PATCH v3 0/3] bsg: add io_uring command support for SCSI passthrough
+Date: Fri, 16 Jan 2026 12:25:13 +0800
+Message-Id: <cover.1768536312.git.yangxiuwei@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1768439194.git.yangxiuwei@kylinos.cn>
+References: <cover.1768439194.git.yangxiuwei@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aWkwNVgAyBbx732l@kbusch-mbp>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAXCLKuvWlpM1mcFw--.2330S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFy8GF4DKF4ftr4rCFyUWrg_yoW8CF4rpF
+	WakF43Cw4UCr1xCF4fJFWDA34rX395Ga4UG343Kwn2yFZ8uF10qr4YgF1FvrWkGryIqFyj
+	qw1qqr98uw1DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j1v38UUUUU=
+Sender: yangxiuwei2025@163.com
+X-CM-SenderInfo: p1dqw55lxzvxisqskqqrwthudrp/xtbC6RBQ4GlpvbC16QAA3Y
 
-On Thu, Jan 15, 2026 at 11:21:41AM -0700, Keith Busch wrote:
-> On Thu, Jan 15, 2026 at 04:59:52PM +0800, Ming Lei wrote:
-> > +	if (blk_rq_is_poll(req) && req->poll_ctx == io_uring_cmd_ctx_handle(ioucmd)) {
-> 
-> ...
-> 
-> > @@ -677,8 +691,14 @@ int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
-> >  	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
-> >  	struct request *req = pdu->req;
-> >  
-> > -	if (req && blk_rq_is_poll(req))
-> > +	if (req && blk_rq_is_poll(req)) {
-> > +		/*
-> > +		 * Store the polling context in the request so end_io can
-> > +		 * detect if it's completing in the local ring's context.
-> > +		 */
-> > +		req->poll_ctx = iob ? iob->poll_ctx : NULL;
-> 
-> I don't think this works. The io_uring polling always polls from a
-> single ctx's iopoll_list, so it's redundant to store the ctx in the iob
-> since it will always match the ctx of the ioucmd passed in.
+This RFC series adds io_uring command support to the BSG (Block layer
+SCSI Generic) driver, enabling asynchronous SCSI passthrough operations
+with zero-copy support via fixed buffers.
 
-Yeah, the patch looks totally wrong, what it should record is the
-io_ring_ctx for completing the request, instead of the context which owns
-the uring_cmd, which can be obtained always from the uring_cmd.
+The implementation follows the io_uring uring_cmd pattern used by other
+drivers (e.g., nvme). A new bsg_uring_cmd structure fits within the 80-byte
+cmd field of a 128-byte SQE, with 8 bytes reserved for future extensions.
+The structure uses protocol-agnostic field names and follows the sg_io_v4
+design with separate din_xferp/dout_xferp fields. SCSI status information
+is returned in the CQE res2 field using a compact 64-bit encoding.
 
-> 
-> Which then leads to the check at the top: if req->poll_ctx was ever set,
-> then it should always match its ioucmd ctx too, right? If it was set
-> once before, but the polling didn't find the completion, then another
-> ctx polling does find it, we won't complete it in the iouring task as
-> needed.
-> 
-> I think you want to save off ctx that called
-> 'nvme_ns_chr_uring_cmd_iopoll()', but there doesn't seem to be an
-> immediate way to refer back to that from 'nvme_uring_cmd_end_io'. Maybe
-> stash it in current->io_uring->last instead, then check if
-> io_uring_cmd_ctx_handle(ioucmd)) equals that.
+Currently only BSG_SUB_PROTOCOL_SCSI_CMD is implemented. Scatter/gather
+I/O and bidirectional transfers are not yet supported.
 
-One easy way is to add `iob` to rq_end_io_fn, then pass it via
-blk_mq_end_request_batch().
+The implementation has been tested with a user-space test program covering
+basic SCSI commands (INQUIRY, READ CAPACITY, READ, WRITE), zero-copy mode,
+and error handling.
 
+Changes since v1:
+-----------------
+- Protocol-agnostic field names (request/request_len instead of cdb_addr/cdb_len)
+- Removed __packed attribute for better code generation
+- Reduced reserved space from 16 bytes to 8 bytes to fit within 80-byte SQE
 
-Thanks,
-Ming
+Why v2 was superseded:
+----------------------
+v2 unified din_xferp/dout_xferp into a single xfer_addr field, which
+diverged from the established sg_io_v4 interface. v3 reverts to separate
+din_xferp/dout_xferp fields to maintain consistency with the existing
+BSG interface.
+
+Yang Xiuwei (3):
+  bsg: add bsg_uring_cmd uapi structure
+  bsg: add uring_cmd support to BSG generic layer
+  bsg: implement SCSI BSG uring_cmd handler
+
+ block/bsg.c              |  66 ++++++++++++++
+ drivers/scsi/scsi_bsg.c  | 192 +++++++++++++++++++++++++++++++++++++++
+ include/linux/bsg.h       |   4 +
+ include/uapi/linux/bsg.h  |  24 +++++
+ 4 files changed, 286 insertions(+)
+
+-- 
+2.25.1
 
 

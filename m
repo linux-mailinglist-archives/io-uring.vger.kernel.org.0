@@ -1,76 +1,76 @@
-Return-Path: <io-uring+bounces-11785-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11786-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9055DD38A30
-	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 00:33:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E642D38A32
+	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 00:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 444E53063475
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 23:31:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3AAF630AA160
+	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 23:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0C71C84B8;
-	Fri, 16 Jan 2026 23:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE5F322B90;
+	Fri, 16 Jan 2026 23:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDt1Zvrh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYM4mB74"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21B5322B74
-	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 23:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618EF19E968
+	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 23:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768606296; cv=none; b=mBE7VC4A4ud6DgPCARzOdJuNeLEIJmWcu0VkAwrZNoD6v+GFA7T8Fej1nBSNETwOd/k5SnEVYy4lNrqL0ntCQXc4mJcA2cSNLdADzxL0ui8GPEOBEhupfRFRK565I0iqw5LV2f8/xT2QBHegdVOLxBaalieU8jdPAP5apMwh4nk=
+	t=1768606297; cv=none; b=fccBfFW/Y6uFjq7NoJ0Y22dyJRYQceOi/UK4tbFNazwlFhg7pKyLltdi9M4DafCVwhGPxfGYWf6BZvXckYJ9rEoJjLcy3wNVoc2YHHdowVArXjicAH7lg90siR1lrdqCYCZlhASatpFaVVApvnEDY87jPvBTLSlQ3ZFtWSFKado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768606296; c=relaxed/simple;
-	bh=ZkMe4/6Dx+pmQX8ki8G7Upa84OZlBwKQ3m0/1EW95NQ=;
+	s=arc-20240116; t=1768606297; c=relaxed/simple;
+	bh=JXMvn1NMlj4tmOrWG0zkpmdnP/Xw/eEoEIkqSGKLsO4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A0foVLM1hArYkQ8KczsTjbccOZQzbbawinuQxdOac6/aBGv1ItDwnBgMgbjokwwnuRsqgPzAJ5DpApTJMT77ta5GDIOJt1Y5zMseCc3SrTL4/kraEiVIrxfnN7b7C1o8yoO7ckdMTynlVIz327qAgqPBzTPsJ4o/7NoiAiO+ZEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDt1Zvrh; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=arLCe27Krh4f32MnPB7GJJBjFdQwVF182etXpXiPUDtV+8INWDLd55G0DKv6WHN5LWjDoKJZI8dxb6brIynOWuvSQn5i8dSHZUlOTULobvGA3cpehKhk/Z0trvhW3rcx+Fe9IZds0QDujFKPBAIpYHFVTvuFYCVOlN5hgc50Cgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYM4mB74; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-34c708702dfso1333220a91.1
-        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 15:31:34 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2a081c163b0so14676675ad.0
+        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 15:31:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768606294; x=1769211094; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768606296; x=1769211096; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tw36/s5nwa0exNv0eee1S2uesxu6r6RLUjOdbIOB9QI=;
-        b=KDt1ZvrhPIDhE58PlzQ1lzp+H8RnPxYW8XywAOCU27DfdZzBNQccR+nSf7J/7lgu9z
-         Qx7LCsGRzGuvezPjpNN4opoot6YF/GLpjy7S4G+fIa0EVFlgxjx0B+4jOAPV3/SHbJEs
-         2cg3imY8No0c0ZiC5WzOMzy5C8v80QNw/cpns8ACtbY4gHUBJPdiJd08MRvT+tHEcUUJ
-         pX4tHv5YGCDMgZAgnU0P0s6oid7PRaY5TMyuB88vvAArKrA5QkOb3iEUzLYJCyinZVo3
-         HArmUoyNR6nSDEAc4XDIgDOmbIOvV+5hDoC61Vw+C8Uh77tnmNiRlstVmb/iaiM+1OM6
-         9DkQ==
+        bh=WO1WrE07m4/ps4EUGl0M4D/d+Qo8L6vNQWiuLZIYXDo=;
+        b=IYM4mB74hhsOe0y0F2hTxPavYo1kX3x20sSsQ6f4y+pAMTTchN6qMVjPenhhOsnYyl
+         e67zqtnYFU2eac5pu672/rRp5Cr0x9Dcp3EWvAjCqSGywu2nS9wZuaJ+PYJH+8PsgBA3
+         vQ+qfWm4r/uFs/6jZIEvxR008BT1OKZFCcbGVq3ZszNYXeYV4p5A8EOr24GVlBvmdjk2
+         bZP1h0tBgwqQF4zNAYmcXs9hntyvgnagO0Ozbr8eimrOoJMg/xBeZS39U99ciDlVmSIr
+         lQbUXl1qXnO3TggDQz2hCOTXbQmxq+Cc4+MKjVqBYi0j1oYQwh5VAXc5hMmcZ122z0NO
+         nyPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768606294; x=1769211094;
+        d=1e100.net; s=20230601; t=1768606296; x=1769211096;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tw36/s5nwa0exNv0eee1S2uesxu6r6RLUjOdbIOB9QI=;
-        b=T0Fa56SJ5XLKMvF5yzKOMVMvCt2LY39jYwtjwF5UzaD2ycKf9WY/zW8+Cotb9nIbeb
-         MJKBntmLilgC1fmlhxMLHcaYIhPsdh0iQFFnXCiHQuk2RBn/woND21rPnqRpZAmHVuHa
-         tswcFPiDdPo9JoeM1MCzYog+J9TrjY8q7h3jtGGXWSDdIsGfXudBM217Nlyb5JkNcvGe
-         RH0NAFspOSp83syfBgp2DEpJR2dFYn7WH1Sc5i8xcWOS9jF9SCPFaSMrXj5e+SAKK1A6
-         2z9bKfD5m3Z48ZaFcNGPiGwDL3Ue3sEyQDrZzHVWERFjoSQPcX2hgh5rKu4ulhelTa0B
-         dQWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ3OqhHIkf+NyUfUYGz5jvvXXTRUkK+bXeMtPF2/HyrRjQRZKyNUBYmhNtH/kH/CpIngg/sV8I5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc4OXqeEJJ1p3O873MUwU6DG10Sg/1ScDaAyH3cqxqKh6SGFr+
-	kk8Pgs4E9dFjKc2cXETpMsDqby5J933rOBh+hOGuY7pGlGDVu4bqYnkC
-X-Gm-Gg: AY/fxX5gaR1zeRvqnuhHTcKEQJla3CC3SNJy6oy63u0eEsc7+u4/gvDmRCm/F22Q/zF
-	2gBJYyhkCE/Dug7TEZZVXFsy9mN/SfhHCNKbJMmNG2uDgi/gXG2dcONvLMT7iLROsxk22EnVMdn
-	3JFDtL0biaKFG5ykhknJW/wz5L+F+RFOXnt9MJqVD7qnuS6/R15SLxOW67V7KZ7hNaGutUdyDCM
-	UiVBAlHMXQ80D7LZtDGDmzmV2sN998bBozu8hLhZDd5sOCfvGkmTgMwK02eccBfBLfFpKXFuyxx
-	kj0Q4NzmKnEMe7KCwFzEvVg+5m9mGW/AxkpefGUp3Gr0Mt2S8mOIWpfn9XdOJA5+mLDzPAXpxQD
-	eY82CHrqR47GP64uoZFzLs0pw/11lACOuKkYldFNFI6oj4mdgXhe2WKS5QrCfCEgRApinU2EVvd
-	urqOATog==
-X-Received: by 2002:a17:90b:3f4d:b0:34f:6312:f22c with SMTP id 98e67ed59e1d1-35272d9bf76mr3829862a91.0.1768606294261;
-        Fri, 16 Jan 2026 15:31:34 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:51::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3527313c2a9sm2955690a91.17.2026.01.16.15.31.33
+        bh=WO1WrE07m4/ps4EUGl0M4D/d+Qo8L6vNQWiuLZIYXDo=;
+        b=VbPyZhQJP2/5okRaT/eI8sd5oVeuJsJEqzDuR4uxW3mwVqs/CoKVN3ALzw3uuOz5cZ
+         CcyRGX2aC/BJWaWuWmeZ8Vuxevood4Ox4qHvvcKDXBsbLJYY0WBpy//3n+Ppxl1QLKzk
+         HOBouYIOzdf5HTJV86H8+KmnMhAjRCbvpjNrfTl+kx1/DSTD0EyUYTDVcAn+aRZJdCVz
+         5+3vdt/hGoJdoe8KAiLWWdxuJRrIA25g5gjk92wnRax+wJzlndulNMjvZITg7M+cP0X2
+         hX8zQlJf9yjv+ll4QZhHkPqRsJFvMP10JRWtQ0Rmso/wccfJBlwa/88Z31oMQrjFmtwP
+         ETxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWO6/oCli0XlBLQF60tNC0TGZbjcds/LcI0I+dW+ZBlQyZE5ThQfFisHBpvHVdcJlFD1ng5PskUTg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT0+G+KEIaVUQGSrYg9TsT8P2rsT4Zj6k0834UAiOGAOjCNyjK
+	r+MIoHNaoIc4mre7PL10M+XZJGn+jUOU12kQuxsSbkBKvA7/1jy3093dKJ+UjQ==
+X-Gm-Gg: AY/fxX781k6gnivDW1/iMMegC0IQcPXLAMpPBANKKa5IgjHzA99Pud9ySFsLV3pcQZN
+	CzX1nNoX0GSQtWkDhr9wRRGf2fBoMDqUi6Vt4OJv5mlX58af/6LmZstBTpfmukrUeDv1RD0UYNn
+	qN3w3EUxuU4bXAotUT8R65DxPfZ4ent4IIswUNU7TdAEfHWSVAXq8Gvb1d427BdVZdHUIjJooo0
+	Z6EV9LCt7vMBex1mhPLRe3M+87WNStVmSxvlBSr5U1nJwCsZd2s+5ctd1v5MtzorLKVDFnJcFk0
+	f1vC46vqJD79SNOn3sl32UpwM68zGIVGoh3n/wIm8AE+0LKyk7W754dKpEihbfuzLYaKnQJE5Af
+	1aa0hywPyAQzyKL1y3C+VEYa7tkejnOoPbIYycwvbo1byV6BMXjCg4YH9iJPr9jWrfv6b/SyZAc
+	DxaVt/hg==
+X-Received: by 2002:a17:903:2f8a:b0:2a2:f0cb:dfa2 with SMTP id d9443c01a7336-2a71754509fmr42826345ad.13.1768606295822;
+        Fri, 16 Jan 2026 15:31:35 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:73::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a7190ce4dfsm30060265ad.29.2026.01.16.15.31.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 15:31:33 -0800 (PST)
+        Fri, 16 Jan 2026 15:31:35 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: axboe@kernel.dk,
 	miklos@szeredi.hu
@@ -82,9 +82,9 @@ Cc: bschubert@ddn.com,
 	xiaobing.li@samsung.com,
 	safinaskar@gmail.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 17/25] fuse: refactor setting up copy state for payload copying
-Date: Fri, 16 Jan 2026 15:30:36 -0800
-Message-ID: <20260116233044.1532965-18-joannelkoong@gmail.com>
+Subject: [PATCH v4 18/25] fuse: support buffer copying for kernel addresses
+Date: Fri, 16 Jan 2026 15:30:37 -0800
+Message-ID: <20260116233044.1532965-19-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260116233044.1532965-1-joannelkoong@gmail.com>
 References: <20260116233044.1532965-1-joannelkoong@gmail.com>
@@ -96,82 +96,110 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new helper function setup_fuse_copy_state() to contain the logic
-for setting up the copy state for payload copying.
+This is a preparatory patch needed to support kernel-managed ring
+buffers in fuse-over-io-uring. For kernel-managed ring buffers, we get
+the vmapped address of the buffer which we can directly use.
+
+Currently, buffer copying in fuse only supports extracting underlying
+pages from an iov iter and kmapping them. This commit allows buffer
+copying to work directly on a kaddr.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/fuse/dev_uring.c | 38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+ fs/fuse/dev.c        | 23 +++++++++++++++++------
+ fs/fuse/fuse_dev_i.h |  7 ++++++-
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index d16f6b3489c1..b57871f92d08 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -636,6 +636,27 @@ static __always_inline int copy_header_from_ring(struct fuse_ring_ent *ent,
- 	return 0;
- }
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 6d59cbc877c6..ceb5d6a553c0 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -848,6 +848,9 @@ void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+ /* Unmap and put previous page of userspace buffer */
+ void fuse_copy_finish(struct fuse_copy_state *cs)
+ {
++	if (cs->is_kaddr)
++		return;
++
+ 	if (cs->currbuf) {
+ 		struct pipe_buffer *buf = cs->currbuf;
  
-+static int setup_fuse_copy_state(struct fuse_copy_state *cs,
-+				 struct fuse_ring *ring, struct fuse_req *req,
-+				 struct fuse_ring_ent *ent, int dir,
-+				 struct iov_iter *iter)
-+{
-+	int err;
+@@ -873,6 +876,9 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
+ 	struct page *page;
+ 	int err;
+ 
++	if (cs->is_kaddr)
++		return 0;
 +
-+	err = import_ubuf(dir, ent->payload, ring->max_payload_sz, iter);
-+	if (err) {
-+		pr_info_ratelimited("fuse: Import of user buffer failed\n");
-+		return err;
-+	}
-+
-+	fuse_copy_init(cs, dir == ITER_DEST, iter);
-+
-+	cs->is_uring = true;
-+	cs->req = req;
-+
-+	return 0;
-+}
-+
- static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 				     struct fuse_req *req,
- 				     struct fuse_ring_ent *ent)
-@@ -651,15 +672,10 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+ 	err = unlock_request(cs->req);
  	if (err)
  		return err;
+@@ -931,15 +937,20 @@ static int fuse_copy_do(struct fuse_copy_state *cs, void **val, unsigned *size)
+ {
+ 	unsigned ncpy = min(*size, cs->len);
+ 	if (val) {
+-		void *pgaddr = kmap_local_page(cs->pg);
+-		void *buf = pgaddr + cs->offset;
++		void *pgaddr, *buf;
++		if (!cs->is_kaddr) {
++			pgaddr = kmap_local_page(cs->pg);
++			buf = pgaddr + cs->offset;
++		} else {
++			buf = cs->kaddr + cs->offset;
++		}
  
--	err = import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
--			  &iter);
-+	err = setup_fuse_copy_state(&cs, ring, req, ent, ITER_SOURCE, &iter);
- 	if (err)
- 		return err;
- 
--	fuse_copy_init(&cs, false, &iter);
--	cs.is_uring = true;
--	cs.req = req;
+ 		if (cs->write)
+ 			memcpy(buf, *val, ncpy);
+ 		else
+ 			memcpy(*val, buf, ncpy);
 -
- 	err = fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
- 	fuse_copy_finish(&cs);
- 	return err;
-@@ -682,15 +698,9 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 		.commit_id = req->in.h.unique,
- 	};
+-		kunmap_local(pgaddr);
++		if (!cs->is_kaddr)
++			kunmap_local(pgaddr);
+ 		*val += ncpy;
+ 	}
+ 	*size -= ncpy;
+@@ -1127,7 +1138,7 @@ static int fuse_copy_folio(struct fuse_copy_state *cs, struct folio **foliop,
+ 	}
  
--	err = import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz, &iter);
--	if (err) {
--		pr_info_ratelimited("fuse: Import of user buffer failed\n");
-+	err = setup_fuse_copy_state(&cs, ring, req, ent, ITER_DEST, &iter);
-+	if (err)
- 		return err;
--	}
--
--	fuse_copy_init(&cs, true, &iter);
--	cs.is_uring = true;
--	cs.req = req;
- 
- 	if (num_args > 0) {
- 		/*
+ 	while (count) {
+-		if (cs->write && cs->pipebufs && folio) {
++		if (cs->write && cs->pipebufs && folio && !cs->is_kaddr) {
+ 			/*
+ 			 * Can't control lifetime of pipe buffers, so always
+ 			 * copy user pages.
+@@ -1139,7 +1150,7 @@ static int fuse_copy_folio(struct fuse_copy_state *cs, struct folio **foliop,
+ 			} else {
+ 				return fuse_ref_folio(cs, folio, offset, count);
+ 			}
+-		} else if (!cs->len) {
++		} else if (!cs->len && !cs->is_kaddr) {
+ 			if (cs->move_folios && folio &&
+ 			    offset == 0 && count == size) {
+ 				err = fuse_try_move_folio(cs, foliop);
+diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+index 134bf44aff0d..aa1d25421054 100644
+--- a/fs/fuse/fuse_dev_i.h
++++ b/fs/fuse/fuse_dev_i.h
+@@ -28,12 +28,17 @@ struct fuse_copy_state {
+ 	struct pipe_buffer *currbuf;
+ 	struct pipe_inode_info *pipe;
+ 	unsigned long nr_segs;
+-	struct page *pg;
++	union {
++		struct page *pg;
++		void *kaddr;
++	};
+ 	unsigned int len;
+ 	unsigned int offset;
+ 	bool write:1;
+ 	bool move_folios:1;
+ 	bool is_uring:1;
++	/* if set, use kaddr; otherwise use pg */
++	bool is_kaddr:1;
+ 	struct {
+ 		unsigned int copied_sz; /* copied size into the user buffer */
+ 	} ring;
 -- 
 2.47.3
 

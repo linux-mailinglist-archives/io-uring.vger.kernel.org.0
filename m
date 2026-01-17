@@ -1,178 +1,124 @@
-Return-Path: <io-uring+bounces-11793-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11794-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0866D38A42
-	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 00:34:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C446D38BF8
+	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 04:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 251BD30C1463
-	for <lists+io-uring@lfdr.de>; Fri, 16 Jan 2026 23:32:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 31F38302858D
+	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 03:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C891326D4F;
-	Fri, 16 Jan 2026 23:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA7428030E;
+	Sat, 17 Jan 2026 03:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4kpSA3o"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1te7Qgs2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7CF3271E0
-	for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 23:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9BE29D273
+	for <io-uring@vger.kernel.org>; Sat, 17 Jan 2026 03:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768606311; cv=none; b=gJ7AC+w6fRYmUH4DMXHTKFmgAOE66EJcVjiwsdCF+5xeGaIRUtw0cuaXVeqZ+cHxQcvrYGz6s4wsOpM4PFZcR14vJmNxc/Ah0uWWU0dRnZoIAihgr9Qtk6NbADWflb5iMDuZeCfRLfEfclZ9Wi4ZhhotPsgsVgaSvICbFnc7e2A=
+	t=1768621840; cv=none; b=cVnz7RKy3XxZiGNAn7XGaLIO0q4zvLwoCkjTAGzLt7a/0tBUZ9AfS6MRaqLdu+IlXCdVhUznfxiJthpzHDPPIVBHuEKyxjTNgKsbeJld5f5qqtVs89UBm5Ti9A9+0BXaOwhGQmLJDWDkdb7+HcZ2qdbpd/VXBmcx8DVxX33bVM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768606311; c=relaxed/simple;
-	bh=V9juZQv6dZ0gT/KwWlkT+L4ounPrVhIWYnGjGMKnfLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CztzAvNeTQhJ83Vy92a604EG/6azYFDg+jiiv48+Gn/HAekPwc/IZsxUWv78VLdU+jKfzU2lqw8H1baSj5fIxRqdPIFPm9uNrfipwQMsJ9UGlOvbTWvbnNGViDVHA4t2T26/9IpJ5b6u+MyO/iBXgHotH815iJ43feW+rkj5hUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4kpSA3o; arc=none smtp.client-ip=209.85.215.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-c06cb8004e8so876658a12.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 15:31:49 -0800 (PST)
+	s=arc-20240116; t=1768621840; c=relaxed/simple;
+	bh=+QKhiBXRe7qm87a7KZbu+s+PpzGMGtPzYucdel0CheA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YSWC0vEwBhQCUs9OPIE3uAr6TbbdxhcbRy7fDEczLySlD5HoG7X/CnuEiBtzVt7eDMZBuwqEno4pfDldgO3xivTxFWHdmjXahnM89stJEyqFD2jWgWyNp2ig38FZaV0NkmjCbcL8m4NLn+PIWacTNQ/Wx41af849faWVyB9dz1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1te7Qgs2; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-3ec47e4c20eso2360694fac.1
+        for <io-uring@vger.kernel.org>; Fri, 16 Jan 2026 19:50:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768606309; x=1769211109; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768621837; x=1769226637; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rCUvZ2hYYQ5gvK1i3te6jPtSCGz2KbW6xvKvu1HTms0=;
-        b=d4kpSA3o9Yrdo4ohji9aCTvxuT7CnPC95GctmXCAWUwdBbb43Bz74AIOkmG+fywXfj
-         FjnVKUm26tCfWvVZc9VOcJKHOuN9GcT3dKUiAxpnXnFb00EyHyGy52ucHYM1ru2c4tiE
-         80DOymDKATv1uSkZwQmjsPRETmGMx/ZQHdl9Y9K1M37Zf/X4mE8vLbthZGgvo1HzW/9d
-         B9TT4+oWeZpMa2DuA2Gb9LpbYlgIfSfUXGMPm/+NdszNplKVzzA6r2+4TeHH2sS3B/Jj
-         h2Ko3wefVREnPcM6slj/CX6TDf5ev6Z6YokkXYgObHmohFPFmG+kHzxRtVTHa0TQ8eoN
-         Ilyw==
+        bh=wSpST2Vurk/rI/BmErx6HNaHnzQJfGWr89dueeot/Lg=;
+        b=1te7Qgs2aMO23xmZ9487xV7yxyXG6mljXLIrbq7cQYl4SRNMXsjCeXQZzlmB/dXSOx
+         b6mhs0GaG/5Fp+wAvUurAoytgYJzRWugTurebhOIusubiGpjklxsJCnpKLMMI6jVbjC9
+         H5qjUgM++jLAlbnLg08UgZ8ZLbUxYRzubXJt1gvEnYB06T0hW5r8tDeGHRDrJ5vnlb8x
+         Jhd1N5U517MSWdZ9ifp48sC76fCWQkNy6wH5GIGlBylTEklnfXjQFudjPPFMSk/qAdxI
+         se582tcfe5QpBPLu4qOrWBtVCOt8OnflM1ONC5nTMRx57RTopBuvTjIWUlCe+3v22CQ8
+         BLVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768606309; x=1769211109;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rCUvZ2hYYQ5gvK1i3te6jPtSCGz2KbW6xvKvu1HTms0=;
-        b=ugM7wOsluu8PHzuMealg9LXhxSLFe1Xf88QSy2q+h3fiP1x5DYqm4Bdm394Z0xytlP
-         bohnVvc9qPAbSd8P8KnNhkjvydJ2/vOprB8kX6cwqtN+cA012HkYKIuXnvyIGQyRFOHj
-         MPDteLTttVyP4+DP15vz0gv30STj1zXiz16bJG0HZo00W4QjAL2yM3L92hM+cSPXwFYj
-         wdY6bmKco6PL3x9mWpoGcQnCJC6soEOERwStWz+xKz987ujuPDkGxevsIie7dbaBCVDo
-         dD4qanouzevh0r3o7No8Z6yTPcbVJ0WdNTWHUkAnje1LMt29rroIJTUunO2uslGp2DtO
-         le8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjrzv/5tE4eYEhS7dVBUqJHgdINNXHypa/DoSZIhxCpHl5bOnz+wrrDWDbc2MSpMKq+arFEiQKQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz0dqLJ70tm62EGYofYdm5k/drYeVuRxRpLev/8wBIu2/xzyX6
-	NQZYuswYRuicnLoqMaZXmBtvxL+RvZIsgMZCMKh/1Q6dMo7/rovIjUy9
-X-Gm-Gg: AY/fxX5XyYH8MYD4ySSxEYjs3xyj3LqwEZsWwYQB17u1c91L72Tkd0lPb9vm0atbyzt
-	06jqBMzHLZQmsqHLOmUSHAlLE1PWvGDcyX8zk8Gq0+cOWF+3H/0UM1/lXkfzraa/POp9HxiY0RS
-	AcQXtsrOr9Pv3XlOTCoZ9zl2UnYDwt39IsFDknqd2ITMXtgZ0Sbwh8lmv8DJgf820ffsbvXuOpC
-	kTTIekemJjNzEVCtyRBgwzM4qizSv9KoQiL94n6vHbWUAKXAC0RtO8cCAY2TX+s0LiAjyWqWIkF
-	dg3hT0qyA20R/bQZIkApe60voP3ao0T30ecpRIULNySum/my74sBSb/LlrnIl6fNgif50G0a71K
-	aNNM/5zy02HVQXBoXrSch6F7sDFbN5/JrLR02FHnQ5RObh56VNOawrz8SaEmN0Ogyi4YX7ubAcz
-	fghj2S8lVCnjVgUgbc
-X-Received: by 2002:a17:90b:5603:b0:340:2a16:94be with SMTP id 98e67ed59e1d1-35272ef6716mr3512884a91.4.1768606309107;
-        Fri, 16 Jan 2026 15:31:49 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:52::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35272f4a9a1sm2947963a91.0.2026.01.16.15.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 15:31:48 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: axboe@kernel.dk,
-	miklos@szeredi.hu
-Cc: bschubert@ddn.com,
-	csander@purestorage.com,
-	krisman@suse.de,
-	io-uring@vger.kernel.org,
-	asml.silence@gmail.com,
-	xiaobing.li@samsung.com,
-	safinaskar@gmail.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 25/25] docs: fuse: add io-uring bufring and zero-copy documentation
-Date: Fri, 16 Jan 2026 15:30:44 -0800
-Message-ID: <20260116233044.1532965-26-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260116233044.1532965-1-joannelkoong@gmail.com>
-References: <20260116233044.1532965-1-joannelkoong@gmail.com>
+        d=1e100.net; s=20230601; t=1768621837; x=1769226637;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wSpST2Vurk/rI/BmErx6HNaHnzQJfGWr89dueeot/Lg=;
+        b=OmhhyjBvCpSWbqvVS2JsNV5MFe3hfoLcPJ+dr4q1txEqyTmruJQbq+G6OLERvNwuez
+         Yd477WZ0APOL39ajgdY3IUsv96TlZVz0cLA/knGAVcgzAeH7KEPr6JFMT1NZbtMkbzlF
+         gyu08Fj7/phzrsPUsBK16ICns5R9euObx3+IrZw/EXyc9PsAP1QLzMdetmp82khsFy2h
+         FD92cgM1e6k9BGX64hCtuqgJJc+vg+N3PGYY120OAYLbofo7L+LNEcLw+TCP/IL+Toqb
+         A4evKXfsD5hfOM986UtnHJUK6NUranMNe8BIXm4Dj6GFNGCwQSZ4koL9TfuLlemfWK1t
+         n7iw==
+X-Gm-Message-State: AOJu0Yx+uO2th7xXvUyKP3fanz7sOwI4kbqZVqJR4aoYT0igCeNMooJv
+	VrPZWSF0qJz0u+0Ue7uc+UXcFPngci7587CkNZD5AOpyZRz7QY8OKzLw6OUYWJ0zQ+gtC+/4fjn
+	uOnHw
+X-Gm-Gg: AY/fxX76N2+9Sb9OFDbJTVa+BHJuVRmD1t5a5Jo4yoHmzeTCRZTGHzNuABkK619yti1
+	nTyls4U93q5E9wIHTEbW2vYDwzWWKAfz/6unSFcfd3qxwrNeE7nEPynG7gVYUb/jvpyC6LA3L3n
+	5dr0jiPpUQHk+Lg7KgHRADHviwMi+qZr5ldo17pHaieiuLVe3abr01pqmEkfmG1z70tqNvG/sMO
+	V0mdmRolj7mCwhlNoSF7VosXGmEw2bDmxbZTUi/MqJt2pTE6U/GDkZNZOBXGQ83cJRUDjfj18uM
+	zPoes7OQvJpkz7BVYuLSrdlu2BK7ftsuLrIMlssrr1b3NDvxGjoWz3Zs1GgepReAEZG4WDtus8/
+	UrSg7wqUhCKL84h5yiFskQBLppF5ZuwvS5qufGpG/JdoeCStRtICK5bkMUN5S33aLYyUi7Ax3xw
+	VjziXGuY3nmaogO3SWgIVA5hqnnX9F22TKKsMkdqtnkO5bqFi94CSZOMuCquMexZd+BDDbKQ==
+X-Received: by 2002:a05:6820:22aa:b0:659:9a49:8fdd with SMTP id 006d021491bc7-6611793dd6fmr2468081eaf.10.1768621836977;
+        Fri, 16 Jan 2026 19:50:36 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-661187820a5sm2049088eaf.10.2026.01.16.19.50.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Jan 2026 19:50:36 -0800 (PST)
+Message-ID: <ab5cffa7-4799-4e34-a340-be1a8ff7fd61@kernel.dk>
+Date: Fri, 16 Jan 2026 20:50:35 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 6.19-rc6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add documentation for fuse over io-uring usage of kernel-managed
-bufrings and zero-copy.
+Hi Linus,
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- .../filesystems/fuse/fuse-io-uring.rst        | 59 ++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
+Just a single fix moving local task_work inside the cancelation loop,
+rather than only before cancelations. If any cancelations generate
+task_work, we do need to re-run it.
 
-diff --git a/Documentation/filesystems/fuse/fuse-io-uring.rst b/Documentation/filesystems/fuse/fuse-io-uring.rst
-index d73dd0dbd238..11c244b63d25 100644
---- a/Documentation/filesystems/fuse/fuse-io-uring.rst
-+++ b/Documentation/filesystems/fuse/fuse-io-uring.rst
-@@ -95,5 +95,62 @@ Sending requests with CQEs
-  |    <fuse_unlink()                         |
-  |  <sys_unlink()                            |
- 
-+Kernel-managed buffer rings
-+===========================
- 
--
-+Kernel-managed buffer rings have two main advantages:
-+
-+* eliminates the overhead of pinning/unpinning user pages and translating
-+  virtual addresses for every server-kernel interaction
-+* reduces buffer memory allocation requirements
-+
-+In order to use buffer rings, the server must preregister the following:
-+
-+* a fixed buffer at index 0. This is where the headers will reside
-+* a kernel-managed buffer ring. This is where the payload will reside
-+
-+At a high-level, this is how fuse uses buffer rings:
-+
-+* The server registers a kernel-managed buffer ring. In the kernel this
-+  allocates the pages needed for the buffers and vmaps them. The server
-+  obtains the virtual address for the buffers through an mmap call on the ring
-+  fd.
-+* When there is a request from a client, fuse will select a buffer from the
-+  ring if there is any payload that needs to be copied, copy over the payload
-+  to the selected buffer, and copy over the headers to the fixed buffer at
-+  index 0, at the buffer id that corresponds to the server (which the server
-+  needs to specify through sqe->buf_index).
-+* The server obtains a cqe representing the request. The cqe flag will have
-+  IORING_CQE_F_BUFFER set if a selected buffer was used for the payload. The
-+  buffer id is stashed in cqe->flags (through IORING_CQE_BUFFER_SHIFT). The
-+  server can directly access the payload by using that buffer id to calculate
-+  the offset into the virtual address obtained for the buffers.
-+* The server processes the request and then sends a
-+  FUSE_URING_CMD_COMMIT_AND_FETCH sqe with the reply.
-+* When the kernel handles the sqe, it will process the reply and if there is a
-+  next request, it will reuse the same selected buffer for the request. If
-+  there is no next request, it will recycle the buffer back to the ring.
-+
-+Zero-copy
-+=========
-+
-+Fuse io-uring zero-copy allows the server to directly read from / write to the
-+client's pages and bypass any intermediary buffer copies. This is only allowed
-+on privileged servers.
-+
-+In order to use zero-copy, the server must pregister the following:
-+
-+* a sparse buffer for every entry in the queue. This is where the client's
-+  pages will reside
-+* a fixed buffer at index queue_depth (tailing the sparse buffer).
-+  This is where the headers will reside
-+* a kernel-managed buffer ring. This is where any non-zero-copied payload (eg
-+  out headers) will reside
-+
-+When the client issues a read/write, fuse stores the client's underlying pages
-+in the sparse buffer entry corresponding to the ent in the queue. The server
-+can then issue reads/writes on these pages through io_uring rw operations.
-+Please note that the server is not able to directly access these pages, it
-+must go through the io-uring interface to read/write to them. The pages are
-+unregistered once the server replies to the request. Non-zero-copyable
-+payload (if needed) is placed in a buffer from the kernel-managed buffer ring.
+Please pull!
+
+
+The following changes since commit e4fdbca2dc774366aca6532b57bfcdaae29aaf63:
+
+  io_uring/io-wq: remove io_wq_for_each_worker() return value (2026-01-05 15:39:20 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.19-20260116
+
+for you to fetch changes up to da579f05ef0faada3559e7faddf761c75cdf85e1:
+
+  io_uring: move local task_work in exit cancel loop (2026-01-14 10:18:19 -0700)
+
+----------------------------------------------------------------
+io_uring-6.19-20260116
+
+----------------------------------------------------------------
+Ming Lei (1):
+      io_uring: move local task_work in exit cancel loop
+
+ io_uring/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
 -- 
-2.47.3
+Jens Axboe
 
 

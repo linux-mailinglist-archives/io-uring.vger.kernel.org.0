@@ -1,156 +1,156 @@
-Return-Path: <io-uring+bounces-11796-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11797-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BF1D38C7A
-	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 06:28:50 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id D702ED39869
+	for <lists+io-uring@lfdr.de>; Sun, 18 Jan 2026 18:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B597F30318C4
-	for <lists+io-uring@lfdr.de>; Sat, 17 Jan 2026 05:28:48 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5A13B3001FE1
+	for <lists+io-uring@lfdr.de>; Sun, 18 Jan 2026 17:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA46E31A7E1;
-	Sat, 17 Jan 2026 05:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47814204C36;
+	Sun, 18 Jan 2026 17:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bf3Eq89W"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vv4VfC9E"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B7A272E6A;
-	Sat, 17 Jan 2026 05:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A686A33B
+	for <io-uring@vger.kernel.org>; Sun, 18 Jan 2026 17:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768627726; cv=none; b=OMZWjXjCLzPTEnzTgF9Q8440qvuWWODnLs5VtK14GSHUTaCMfgHF8ufF+EgsxtIcEWWtQE9QisfYK2c0EIDt1B96v04UJ38aGp/77XaHCUWhVIFISPjW1hz50/b36svzaSYWcCSPWvdvB6Om35t6SsRP4jAnRBGKs6TA9oqmnN0=
+	t=1768757015; cv=none; b=jhM97IrjuMjUqDK77mAN2tFWZozKf6HTolaa2znA1Dc0ieh12fzOklU1+VSirJ6JIWoIbetfvSuzD7Q6AwVRcc6MAorvl7JR1YN07M/efUD7quTYce6iERZqmtqxgH8LQRlYpNbj81vQfyZRtZDXA6+e66NL8TZcFzfumpgOhds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768627726; c=relaxed/simple;
-	bh=hvdvLGsBla31pDYbU2wB96fi0/hrIS2864cm2zyh9q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7JIiEIqLfTYqTQCTXWBU8hp77Pbxv+iy2tSgG61w/182nwuGmu0OJFzer+o063uJx+NKA1RLjmmVcZ/+kw73Kw5akK9B7UhXXwbOBuRQ6ymYO0W5n1DHi4Sm9QwlGdO2HeY0g0aw/Jdo+oljHdkvZKN83xucTdYWbRTrHJoOyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bf3Eq89W; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768627724; x=1800163724;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hvdvLGsBla31pDYbU2wB96fi0/hrIS2864cm2zyh9q8=;
-  b=Bf3Eq89WhC9BeqgKfdjDhV7dZWyufMbdQ1Qvb5jT6vjwQDDR5DQugA0r
-   2guJHSoLNLXdU2hKBpRCl1a7llQzJFr0DSIhM3pIdSun4dFDc2bIrfPKR
-   Bjws1YsARPxamT1fn/ncCkt5UErlMc4kzwjISOYHoaOiB/adjpjWGeOQx
-   48WikxESuZJcaR+MxoBWVQpPx2LU2ML6kBP70ViCZXIQcOTrGvhZ8My7f
-   Pj0OiU49t/oKNOvCNtw+DoB45UkqaCo4qnqlFReV7UrQfojxiVw9Rp2T4
-   EaCKjOzXGZ5QCQl13NQpfh0BM9HufsaGKyRNWWpBDrTo3HR6SC7a+6xy+
-   Q==;
-X-CSE-ConnectionGUID: DPTtReOjTYqIq3jz5VptIA==
-X-CSE-MsgGUID: z3+rI9SpQ2SgsUBIQfiBvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="80574076"
-X-IronPort-AV: E=Sophos;i="6.21,233,1763452800"; 
-   d="scan'208";a="80574076"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 21:28:44 -0800
-X-CSE-ConnectionGUID: XNrTH9sPSOeYG/flK91OTQ==
-X-CSE-MsgGUID: FiZ9XvyzT1qCxgV9iJ5Sag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,233,1763452800"; 
-   d="scan'208";a="209911125"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Jan 2026 21:28:41 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vgyrW-00000000Laa-2BJB;
-	Sat, 17 Jan 2026 05:28:38 +0000
-Date: Sat, 17 Jan 2026 13:28:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk,
-	miklos@szeredi.hu
-Cc: oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
-	csander@purestorage.com, krisman@suse.de, io-uring@vger.kernel.org,
-	asml.silence@gmail.com, xiaobing.li@samsung.com,
-	safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 19/25] fuse: add io-uring kernel-managed buffer ring
-Message-ID: <202601171304.uwDzXWzy-lkp@intel.com>
-References: <20260116233044.1532965-20-joannelkoong@gmail.com>
+	s=arc-20240116; t=1768757015; c=relaxed/simple;
+	bh=8OV3n9s0JLezleSqCwDGpiJZecRpNVluuTj5nSFqk/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O18Db/yifATu/quuxJe3rZ1t8/VNKKH1jNypEmI467DC+x8l6hzfQB7roSoQXZEO4gQPS9EgpflJjqhxpnxuPPdx2k2cJBcvtQTjCkQc9XZq05eP3/jbaK20ithikuBCoG1yzBhpUyTBJwIV2IVr6PVhzn3qU0SZuTMvn3YmCZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vv4VfC9E; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7cfd65ea639so2181840a34.0
+        for <io-uring@vger.kernel.org>; Sun, 18 Jan 2026 09:23:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768757011; x=1769361811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MvijkG0CamMU+qs3S88549BhZtfYWcSAyOrvThWUstU=;
+        b=Vv4VfC9E260Ou+F/HSNzssCd1Dz1RJQcKFICIXfYQFTuDlEo42xfRG9Sjt3puwtceS
+         eG5D7Llhu/a6P5PsZiWqWjfWcxterXUg1M8MCyrqR7iAHiqy1DQGLba07p5FUd2ZJOfE
+         Ta9US4EGVCtKHe1oTlm+Q4ljs3ViFMX8XHfGJhIY0HIguWgr4ih8fIKNpAMshn4LKpvD
+         3Ro/t6UYzSyJoxgU52saS8W6THvJ/ZnRkN7BVRJffZ9hhR9mK1ISBoC+ywcstm8Pf6JG
+         kWMdvs/1BGxN0vIISGm210Fq959S4TIxw/v/DpF6diyBCGCP3LIoz3xgTXvFMdFvC/rm
+         OK6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768757011; x=1769361811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MvijkG0CamMU+qs3S88549BhZtfYWcSAyOrvThWUstU=;
+        b=st8Mo6hwsX9M9JRx67WP+Xf7FJ3QOrsAG6SzEeP01uT+4JFWqXGeYfisa6zRylHUWy
+         Cmsq9RAKzfBFGPFBH6q5LpK26lGLuRHB+HzQifPp1z1i903ifklq1CjC4Yu59s9YJzIV
+         1Ku2fJy357f+GQFMwh5+pFox23OKceLT0IxKh0fxh8FNawUcrF6nmm86++Dt504mRHKR
+         V6wzkP9f7QPCYMGHhJscLQjvn1HoyeymzXRd5BbL5fLZ/XHI4UyaeCaL9V8iFvjgkl6R
+         kv1xN/DUxoeeyNvHLgYP1OH7d5l6MC0sQ0toOwG21zq1DFcDNfg4B6d39JytkOKF4XAF
+         8s0Q==
+X-Gm-Message-State: AOJu0YzkS2de+YwVNQeltysgme7+PZHfwN6kxfV27oRTa4o0SOaebrMM
+	jm7OJf3ItlIRqnodLIXw/iwpI7oUrdokOnBN+KVVJ/oZQ3avvhOqtenqL8d7A2nTDfuGJk+B8wI
+	+bopN
+X-Gm-Gg: AY/fxX4Hd972wJCmhXnASfQQvcQXuJGzezITTrbRcmXuYWmz5CaJbVuXwhfJs8pOvxi
+	aJgdZwYuLD0au0ig6f79DvgN6E41HnGY5C3B14TLCz/6gpU3oelkVBJYzaeMbgJQc1s3KSMYNWm
+	p+G3P9DXTsE1mq3FGQld7lhKTfzHmuQFKpRBSt/RrMyJARaqcxwJ9gd7etVURrl8cWIRlZpgN0d
+	43wNFtjdaQBgtqp4Om25ZMkNlPLFjwbcC1sXYwiCyU50FqpvjK3etCoZ8FidNfNYTYRMFmcSZOG
+	71ZKeju5T+IvL/+gHZ6u6DhF1CU4aAh2payhe4S2H0nKk/UAlTsB0TEr397PWEWoF1einGMU5h4
+	M+1f0q1Qcm0bAW9maqtzPBOWWJ1xdkNhmTPa+CWKJ/b6undQAuJHycatcfkpvyEBGFtA1Hvs9GG
+	98nWIx0unXbfNIyH9oiBgawRat9Pe2Yr0AyoE2OWoQfiMrOjcLEhqFvqkB
+X-Received: by 2002:a05:6830:7304:b0:7cf:d150:a245 with SMTP id 46e09a7af769-7cfded4e064mr3835312a34.5.1768757011283;
+        Sun, 18 Jan 2026 09:23:31 -0800 (PST)
+Received: from m2max ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf101198sm5489558a34.13.2026.01.18.09.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jan 2026 09:23:30 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: brauner@kernel.org
+Subject: [PATCHSET v5] Inherited restrictions and BPF filtering
+Date: Sun, 18 Jan 2026 10:16:50 -0700
+Message-ID: <20260118172328.1067592-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260116233044.1532965-20-joannelkoong@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Joanne,
+Hi,
 
-kernel test robot noticed the following build warnings:
+Followup to v4 here:
 
-[auto build test WARNING on axboe/for-next]
-[also build test WARNING on mszeredi-fuse/for-next linus/master v6.19-rc5 next-20260116]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+https://lore.kernel.org/io-uring/20260116224356.399361-1-axboe@kernel.dk/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20260117-073512
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
-patch link:    https://lore.kernel.org/r/20260116233044.1532965-20-joannelkoong%40gmail.com
-patch subject: [PATCH v4 19/25] fuse: add io-uring kernel-managed buffer ring
-config: sh-randconfig-001-20260117 (https://download.01.org/0day-ci/archive/20260117/202601171304.uwDzXWzy-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260117/202601171304.uwDzXWzy-lkp@intel.com/reproduce)
+Due to some feedback from Christian, ended up redoing the filter side of
+this to use cBPF rather than eBPF. This provides better support for the
+some of the intended use case of this, like containers, as eBPF cannot
+be used unprivileged there. This obviously comes with a bit of pain on
+the usability front, as you now need to write filters in cBPF bytecode.
+I did keep the API such that eBPF filters can be added as well, but that
+can be a separate patch. Since the BPF type is just a minor part of this
+change, most of the code is exactly the same as before.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601171304.uwDzXWzy-lkp@intel.com/
+As before, filters can be registered with directly with a ring, or with
+the calling task. Filters registered with a ring only affect that ring,
+while filters registered with a task will affect any ring subsequently
+created. Additionally, task filters are inherited across fork. For both
+the original task and any of its children, once registered, only further
+restrictions may be added. A forked child initially starts with a
+reference to its parent table. If the parent makes changes to that
+table, they will also affect the child. The exception being if the child
+registers further filters - in that case, the filters table is COW'ed
+and the reference is dropped to the parent table.
 
-All warnings (new ones prefixed by >>):
+Kernel branch can be found here:
 
-   In file included from arch/sh/include/asm/bug.h:112,
-                    from include/linux/bug.h:5,
-                    from include/linux/random.h:6,
-                    from include/linux/nodemask.h:94,
-                    from include/linux/list_lru.h:12,
-                    from include/linux/fs/super_types.h:7,
-                    from include/linux/fs/super.h:5,
-                    from include/linux/fs.h:5,
-                    from fs/fuse/fuse_i.h:17,
-                    from fs/fuse/dev_uring.c:7:
-   fs/fuse/dev_uring.c: In function 'fuse_uring_clean_up_buffer':
->> fs/fuse/dev_uring.c:926:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-     926 |          (u64)kvec->iov_base, kvec->iov_len,
-         |          ^
-   include/asm-generic/bug.h:205:25: note: in definition of macro 'WARN_ON'
-     205 |  int __ret_warn_on = !!(condition);    \
-         |                         ^~~~~~~~~
-   fs/fuse/dev_uring.c:925:2: note: in expansion of macro 'WARN_ON_ONCE'
-     925 |  WARN_ON_ONCE(io_uring_kmbuf_recycle(ent->cmd, FUSE_URING_RINGBUF_GROUP,
-         |  ^~~~~~~~~~~~
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=io_uring-bpf-restrictions.2
 
+and a liburing branch with support helpers and a fairly substantial test
+case can be found here:
 
-vim +926 fs/fuse/dev_uring.c
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/liburing.git/log/?h=bpf-restrictions
 
-   913	
-   914	static void fuse_uring_clean_up_buffer(struct fuse_ring_ent *ent,
-   915					       unsigned int issue_flags)
-   916		__must_hold(&queue->lock)
-   917	{
-   918		struct kvec *kvec = &ent->payload_kvec;
-   919	
-   920		lockdep_assert_held(&ent->queue->lock);
-   921	
-   922		if (!ent->queue->use_bufring || !kvec->iov_base)
-   923			return;
-   924	
-   925		WARN_ON_ONCE(io_uring_kmbuf_recycle(ent->cmd, FUSE_URING_RINGBUF_GROUP,
- > 926						    (u64)kvec->iov_base, kvec->iov_len,
-   927						    ent->ringbuf_buf_id, issue_flags));
-   928	
-   929		memset(kvec, 0, sizeof(*kvec));
-   930	}
-   931	
+ include/linux/io_uring.h                 |  14 +-
+ include/linux/io_uring_types.h           |  13 +
+ include/linux/sched.h                    |   1 +
+ include/uapi/linux/io_uring.h            |  10 +
+ include/uapi/linux/io_uring/bpf_filter.h |  54 +++
+ io_uring/Kconfig                         |   5 +
+ io_uring/Makefile                        |   1 +
+ io_uring/bpf_filter.c                    | 430 +++++++++++++++++++++++
+ io_uring/bpf_filter.h                    |  48 +++
+ io_uring/io_uring.c                      |  48 +++
+ io_uring/io_uring.h                      |   1 +
+ io_uring/net.c                           |   9 +
+ io_uring/net.h                           |   6 +
+ io_uring/register.c                      |  76 ++++
+ io_uring/tctx.c                          |  42 ++-
+ kernel/fork.c                            |   5 +
+ 16 files changed, 753 insertions(+), 10 deletions(-)
+
+Changes since v4
+- Drop eBPF and switch to cBPF instead. This is a bit of a pain on the
+  userspace side obviously, as you now have to write bytecode. But it's
+  necessary for supporting some of the use cases we care about, like
+  containers.
+- Add ctx->bpf_filters cache to reduce dereferences needed to get to
+  the filter table.
+- Do fast "no filter exists for this opcode" check.
+- Fix bug with dummy filter in iterating and running filters.
+- Fix bug with ring inheriting task filters for classic filters.
+- Move uapi headers to io_uring/bpf_filter.h
+- Add Kconfig CONFIG_IO_URING_BPF symbol
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
 

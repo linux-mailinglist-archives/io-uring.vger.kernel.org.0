@@ -1,137 +1,130 @@
-Return-Path: <io-uring+bounces-11821-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11822-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E51D3BBC9
-	for <lists+io-uring@lfdr.de>; Tue, 20 Jan 2026 00:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3717D3BBF4
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jan 2026 00:40:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E62CA302A392
-	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 23:34:57 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3DC0930275F8
+	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 23:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9C12DB7AF;
-	Mon, 19 Jan 2026 23:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BB52DF6F6;
+	Mon, 19 Jan 2026 23:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH6vWDt3"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mwDuvD8B"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429462D541B
-	for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 23:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768865696; cv=pass; b=J30gBwRT1ijfuQtMayCjURN2+tZD/UBIe5iu2lz/cmCvEqeVYhB/YvG05Qo6RnXJUfoCWi0M21dZRJWB76E1KOxA8+MqtebUgTIg/Z2dYsuwysQpdOju6yuCh5ZyHTufIFQAEDt+loWlJp0WLeYe1zG/W9zLJC87XWd8x1W9iT4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768865696; c=relaxed/simple;
-	bh=ZZ3bHuhkIR99WX0mMtcMVkbpFCn0Hj9dtyBxtjPmz8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0KUt38Zc64eautzZCZX/Ec81qNlYUDgBPLqc3HSMVElIuTvsXMbUyx+yIPqHvNPqL8cg2+KL+o5opoXXHonX2R2Uk+4SMcQKK66C3MVAZTzGVlkUhcCFmhKzf0TTs4XIdv1OMin9PPVg+94bcFsXUnSYUJK2Vm0AYAtASYEjlA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH6vWDt3; arc=pass smtp.client-ip=74.125.82.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-1233b172f02so5930636c88.0
-        for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 15:34:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768865694; cv=none;
-        d=google.com; s=arc-20240605;
-        b=hDbodUfIFDvI7qDftFR4FOGu+LpKCKBcuf/zq6LXJ5B72ou0m/SnlcExVCwQ4zqiqY
-         rkclPHMdmqFjgUIk5O+bWxYimTzfE+l57fkxMfaL0CI02W5NW7t9G9JmsdXbcb1IH8zK
-         KbV4I7A29pBQk+7NhbEhoMt1p6YViTfUDgDnZvB4+jT5D1f73wMLmPNMNJ/P4rueF4BW
-         ozAUI8+M9acem5tOFsYxgipyQ3m1TbRg6VQIK+NX6y+4E6gz/NkBnxuI0hUsB50JQvdC
-         62psDG7SxcNyHKY2QdM3dsxUEsG4soUOWqVUDJUMSiYYDXIsGGDji5sTsPHDR2fg5gEi
-         /kqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ZZ3bHuhkIR99WX0mMtcMVkbpFCn0Hj9dtyBxtjPmz8o=;
-        fh=Aov67FbCPoXVatdCrd41x1qHUIjikpMZUEhwhYBzpjU=;
-        b=gRFttSbn+/ymfvHPK1LfMhXbVHPjg2pw3Gy6z1742c4ztd+T5BIF1KXJJOzXqnbUII
-         2vhbsum2GLs8kBMJsyZ1uidaMnVKcf1T+fv2tLgXSEyBFgcQdR37U/MXtnOY2mraJMmj
-         QyHnENOlH/cSR90cG7xhUg/k+OXRSmxOKcibHDNH4D0MW62ll1JX42BXiFFIb4v0Hvwp
-         D1S/CfNmyTz6k3wkYOBI0+cAEwBYEKKOrA26y70zBMcuaqA90kij7+fKkwMEUsvbOY9g
-         KlyQ29pRZduo0lFhNbPNCM4ARavU7/77EuMgOMcMJPtIciZSojMuUChIMlOdXqaCM460
-         wyMA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A249D2DB7AF
+	for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 23:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768866018; cv=none; b=TWFCMT/+uMygjHMs7XkpM9aYQCmsnqWwEU1kOgWVukzv+h+WnOCpfm0kVumXrLUVJeQU9hywA0I0Y53w6FJ2bJrDSeKJNOyNZvGDyVNWJlx3QuyorkE/VdG6Zw7bHGgzewk1cB4hwPoNHta/wV6tBj2kRAWZHB+rqwT5dHeq1fY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768866018; c=relaxed/simple;
+	bh=xDk5I/bWBUtkAS07p0QFIcj4/yKHcCi5CfQsdmD194o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aRLhKMFlo+tCu9/vWxcH5cbZzHNrdokOpFeeGqZRgyHmNuweQDC358nBUKsbKVcVJ4MNwHh7mlogIAiVPN+k5nC9ypfEI9OEPQsvvLjna0vPXEpyCACkHCY4kalDKJh08s0tWLGGoWcFD5MTOZVdxwJUATEIjLZNzDlDiMSyCqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mwDuvD8B; arc=none smtp.client-ip=209.85.210.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-7cfd5d34817so3198650a34.1
+        for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 15:40:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768865694; x=1769470494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZZ3bHuhkIR99WX0mMtcMVkbpFCn0Hj9dtyBxtjPmz8o=;
-        b=mH6vWDt3ocQ+K9Y7ch5dtPt5ZunVJmaBiuvAdXA7Ouzp0l+Sd81SNh+KcJwYVw0CKH
-         ynWyoQVwKLmWqV4H3Xwq7cfsl86SrszM0KX8JbXPZwu/XikdsnHTANt7bV3meNyOjSy+
-         WsJdahH5tGdlHe2sgFlZVmEuPKBXc9/WPQjwS+MVoYicOK4xqyJ45xvLXkPDLiOavtWy
-         MwgM9J52RbzFqqDIfHAQFjsjjesg2IbmqZh1SKqJK5iRXyrGM6euUg0XzovN4izDsQur
-         SF3mAqZImOdP5BaJyyk6eQWWf6Cu2u/LoRQ2A/kcZ60HR8BtbmO4CkJnO8BxtzoraPBS
-         HJWQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768866015; x=1769470815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8auGIz9rpLAlTb9LV7N2WX+TwTyGKi6f9JrK1603mZg=;
+        b=mwDuvD8BBLYIwfK7aRd7cBtlp956dutLFsat4KVz4keZHNONOawIJI0MG04fRhkuwy
+         +2hV7oyCUmS/bYoICz3FyVhKQuj7RqQBTJfUzLVWZ6kVcRVlr2mkGMX2Hz5MoN/ExsSX
+         6ljApE8ZFhsYVxFGOexbrKSEzUxjcbWLojHpbyaPuqIt0ciqRieYY5WjPHmPvphIx6+3
+         E6ojyqE362rjJjROOhs4OmKnayzc/uf5bP12s2hDjJIwW9m3fjvQa/KAn6zs3cKgHQTZ
+         uWnQoaCtZ1NVcF0q7o6H1UIrptrYSs1B1zC+43UYGC2L1IMlrfjOzA7HVzawOL/EFp7F
+         d6aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768865694; x=1769470494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZZ3bHuhkIR99WX0mMtcMVkbpFCn0Hj9dtyBxtjPmz8o=;
-        b=R/UEyU+yV99YOZGBmc9dtCTJ1rmpQjQXN8XecsRuy3rADUQJJvTwACs0hs2MAFq1iv
-         eOn7qEz7Sy7ipzs3TqRUSBTCIf8gFlvmnDSQbXxlVOuL5RDbjHlV8YNlg2Kht9qrApr1
-         sObKqMqkVUtWtxfcx8Lsao1Q2eugvvWc96S79lj2ECKDKtOai0YuOb5i6pUQDB+nHfQK
-         e+gIdsg+S7uaub3F4YsD2IBjGz7Cax9ISpwNOPa46xDej3iLdQzgkDly1saBBSsUbJ9y
-         mkJOEhhOKKdAbnxABdj/6FefvslJZ7LJ4mbE9orxaqyyblyxdP0asMEUlHpYcSztf5y/
-         sNDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/q62LfvCa+LE0mUxbezEa7FOHrrV8O5PfNUbukMqjJ7auF9JV45y8MQiAA4Nm8at1WT2uWip3+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH2QVlSEoW7izfWw7sUcgIyLB/UBPzzRAqiAu8WVuRD4fjX044
-	suf5j1zMdl16XqZd1CcruHJIniG1KsCYSqXYCOsgY3QSm2QQbFV0YA/Fn84um33WPnJtGQrf5/E
-	1ooqJYgq4oEJpJ/TDqm2g0FeXqI9vItBAO0Qq0SY=
-X-Gm-Gg: AY/fxX5LkhddqruoJHnv85WUk0KQJlIp0fYW9uOeBxKt+LQ0dF6VSyvH/5Hy1ZMtB3N
-	pUfey29NK4S5R0kpQyHp2Ufx0u7hVXmZlNRQMK4Ao+0OdO63cHQB+NBemdM2UBOEKRJ1UpM+c53
-	0wl+td8NyQENFTpVg4XxBfsV5uFUEOO6RsOQTEGP+hEwdEEeR/7EyXb4LNIum66LYYybbazLJpI
-	5g9Oi1V4ZWQcYh6TqedCB3BZ/Dij8wQGDAXH3FZCfsy5xI1trB+z99RHngruvSjFzdgJQ0XLwr1
-	FhWEg71XCinpeu3w+Mk+Hud8KTs=
-X-Received: by 2002:a05:7022:eb46:20b0:11b:95fe:bedf with SMTP id
- a92af1059eb24-1246aab3428mr65745c88.27.1768865694289; Mon, 19 Jan 2026
- 15:34:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768866015; x=1769470815;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8auGIz9rpLAlTb9LV7N2WX+TwTyGKi6f9JrK1603mZg=;
+        b=KV1ogKpFJ7LNApY/Esxq2fMSrj336fJGsaS4ECC3MYk+5jml1qO7fcupQun6ELcg2L
+         ng3mlCcKpvwga8fLeqy39xpUrLa5X8sq5uOhi/SqgCFYd4JgIJpcyG+NruwrIN2cCejV
+         xqJdWqyFdyjVl6j6ZNQcYBfy+uXt6y62hA4rhjoDBb5TUmG45ENzjPLZyrMEyOs+3PbV
+         Df9k6eLXL2O2jigW8iimxufDB1xqRulEBLr+GQ506GuQdJzTn9tCSvGDUb1EyoZIVmC9
+         F0Jem3hieJLbSl0UC+q2GgtDpj+78q2nJvb2R5AQiPoqS5v489mZExGTwYYdcgcJjs6e
+         FsUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVOlKyMASA6bI8dORAQar6DzFCrrps2xlw11wieXy2SLkAE0JlGknv3ktiUWRJBwQaxOtCYmRiUg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZO6HaDdb/C+4R2ae/OewDiRBotgb8E278p6/vgnfppdxOr/wR
+	rVIUJlP8fk5rMb6WHUtZSwSMPF0iIPLdNjApZKfhjOJPEbLgVuCxFV7jK3O1SVN0+r1ao/impx8
+	D7SbT+jI=
+X-Gm-Gg: AY/fxX6L/0W5k1eLeyvHqYzoy39vs7ADXmpDdu2272oCrcmsONTBknApE1vSKu9WO06
+	5fai9F2IzMeuHtaOXwWwDiwr8maZY57x62Q0IwEF93aaKWPuYEfoZDY4IZTjwD58A7t+BhVJrmQ
+	v6Z+nT2OzTn8+UtWHsl11GKlsrp+Ns418/Ph8PbDX8usYz95221hvaJ49saQS2v+uhn1AT/xv4m
+	CBHVrjfTLzCZ0k1gpCsWnIRaMbFUXER/sWndsPNnfCYLC4WzU6dXn2aS6+kE1xGfMUbAVm5mHE2
+	oloIOVCE8Cr8gSqMRwnARm7uI8ffwF9MVEINEWtVQJuqeKD9W60nJL7jzldCLlxFkMZ7cr/KuJQ
+	+fvDBEGig6xkGgokMlwuGNOHaFrJgxoiWMcNOsvua3bSEcAyuQS540vxMw0ak0pd8Zq7GTPuakH
+	Y4BhPJMtWGCklGWKvngpU7TRARaNPnXW9O4KYJgn0C0qCXpzAxZqf6fyXu4boixA41JheDkQ==
+X-Received: by 2002:a05:6830:380e:b0:7c6:8bfe:f5e with SMTP id 46e09a7af769-7cfe01c652emr6188480a34.32.1768866015139;
+        Mon, 19 Jan 2026 15:40:15 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf28ef44sm7571251a34.18.2026.01.19.15.40.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jan 2026 15:40:14 -0800 (PST)
+Message-ID: <2919f3c5-2510-4e97-ab7f-c9eef1c76a69@kernel.dk>
+Date: Mon, 19 Jan 2026 16:40:13 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260119071039.2113739-1-danisjiang@gmail.com> <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
-In-Reply-To: <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
-From: Yuhao Jiang <danisjiang@gmail.com>
-Date: Mon, 19 Jan 2026 17:34:43 -0600
-X-Gm-Features: AZwV_QhrkvTrXYGNnwhF1DWukVwYJ8GmYYaxLKmVuQL8w42ClSQRPQ1oHjc-dFY
-Message-ID: <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] io_uring/rsrc: fix RLIMIT_MEMLOCK bypass by removing
  cross-buffer accounting
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Yuhao Jiang <danisjiang@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20260119071039.2113739-1-danisjiang@gmail.com>
+ <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
+ <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 19, 2026 at 11:03=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
-:
->
-> On 1/19/26 12:10 AM, Yuhao Jiang wrote:
-> > The trade-off is that memory accounting may be overestimated when
-> > multiple buffers share compound pages, but this is safe and prevents
-> > the security issue.
->
-> I'd be worried that this would break existing setups. We obviously need
-> to get the unmap accounting correct, but in terms of practicality, any
-> user of registered buffers will have had to bump distro limits manually
-> anyway, and in that case it's usually just set very high. Otherwise
-> there's very little you can do with it.
->
-> How about something else entirely - just track the accounted pages on
-> the side. If we ref those, then we can ensure that if a huge page is
-> accounted, it's only unaccounted when all existing "users" of it have
-> gone away. That means if you drop parts of it, it'll remain accounted.
->
-> Something totally untested like the below... Yes it's not a trivial
-> amount of code, but it is actually fairly trivial code.
+On 1/19/26 4:34 PM, Yuhao Jiang wrote:
+> On Mon, Jan 19, 2026 at 11:03 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 1/19/26 12:10 AM, Yuhao Jiang wrote:
+>>> The trade-off is that memory accounting may be overestimated when
+>>> multiple buffers share compound pages, but this is safe and prevents
+>>> the security issue.
+>>
+>> I'd be worried that this would break existing setups. We obviously need
+>> to get the unmap accounting correct, but in terms of practicality, any
+>> user of registered buffers will have had to bump distro limits manually
+>> anyway, and in that case it's usually just set very high. Otherwise
+>> there's very little you can do with it.
+>>
+>> How about something else entirely - just track the accounted pages on
+>> the side. If we ref those, then we can ensure that if a huge page is
+>> accounted, it's only unaccounted when all existing "users" of it have
+>> gone away. That means if you drop parts of it, it'll remain accounted.
+>>
+>> Something totally untested like the below... Yes it's not a trivial
+>> amount of code, but it is actually fairly trivial code.
+> 
+> Thanks, this approach makes sense. I'll send a v3 based on this.
 
-Thanks, this approach makes sense. I'll send a v3 based on this.
+Great, thanks! I think the key is tracking this on the side, and then
+a ref to tell when it's safe to unaccount it. The rest is just
+implementation details.
 
---
-Yuhao Jiang
+-- 
+Jens Axboe
+
 

@@ -1,118 +1,99 @@
-Return-Path: <io-uring+bounces-11813-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11814-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0B1D3AEEE
-	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 16:24:01 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6899D3B303
+	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 18:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B59E530124DF
-	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 15:22:13 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9E6393048231
+	for <lists+io-uring@lfdr.de>; Mon, 19 Jan 2026 16:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D68338A9A1;
-	Mon, 19 Jan 2026 15:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AF42EDD41;
+	Mon, 19 Jan 2026 16:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zDO36wkM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROxnCHVY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940F5235BE2
-	for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 15:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B512FE593;
+	Mon, 19 Jan 2026 16:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768836133; cv=none; b=mGew8edmhN3M+2EowTx2xfMspH6KbNmQYAakyYJwcd5NP57Niud81EpWT/9hzWMu4FJ/2RTX17ZgBAlixV4okpeiYyHUbNzW1jog3rtFtCQxBbB1bESfHupKpPsRs6W5xlbv+E5vGXzNbHI8JpvSL5FLg1ij57zcZ68Lf/wOTkA=
+	t=1768841862; cv=none; b=drk8OLHOCGj/dfSODZMCN7CpyEDvLnjVbB29CNpdE2vMntfJdFBf7fB8gSPt16M94V3/n+GUDXYlH3NOc9HuwacolH0n+j3tgvk8Mw9COFcfFAwQStHodk+9u8tuuF8PJwqA/iWnp9Bcjh5JtQvy0kWVDirg1ZuuubdGeYilJe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768836133; c=relaxed/simple;
-	bh=GxOZEYGA76bJHdvdmNh9m9B9ugmbf0yOGkt+P4vLre4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NonYFjC4wTxSbBm3x9wVlbKWoNxcgdbCgg0iCCjb1Ib8sxaDF8fYYBs6omjvWkSGnp/NWkVBMBeJF0v1XwmwBGC1VBm/xmavmKROfQgGnFmhoIkyqExSY/F7Cxw3PMLyzI9j2StYivFhXZxfFCRyxr2Enj0xAoBPMQ9vQbfS1V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zDO36wkM; arc=none smtp.client-ip=209.85.210.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-7cfd2be567bso2698234a34.2
-        for <io-uring@vger.kernel.org>; Mon, 19 Jan 2026 07:22:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768836130; x=1769440930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lUFD55+Kt87AlwhomERgXdEYs+eGxfqziPcFxLUpDFA=;
-        b=zDO36wkMLe1rUzO3vYySmO5amNIFYvy4VDP2gLXkBaynR0cZaLPBuzC0QV3vMY1KMU
-         C+khSJAVBZXuw1IFAAQ/GS9cpUAo6MbeyFxHv7EZBRftDQeT1bpotCiw56OFVtpPGSdR
-         Vwi49riCPkPyJsQDoG+18OKQQH5ImW/UMz4g5hkflMwEL7/du96dMh0Bwu/LIbSS3zQB
-         M78gO5vJgr+10SxgW/G5DW1wIyPFK8AEFN1VAFLcIdngYVlUH0M9JVoovnqEOL5TqBQp
-         Fc4fvg1lH08ThWv3ySwn5fTyTPPUx4Gk55+bcwOUHIZoxcMEQdvlEWM1uygFLZA0Si7u
-         ZLyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768836130; x=1769440930;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lUFD55+Kt87AlwhomERgXdEYs+eGxfqziPcFxLUpDFA=;
-        b=tjcKi70vg53b9Sy8KkaWybCRsP7/z0u0Htc6JDiH9T28h1rj6Z59oap5Myj5qfCs6L
-         S7mGfjvGzY5rP9ypzlb4qERGmbJOgIf45yFl9hfMFlGoxgNvKb+wQF/b/L7U2EqPVm/g
-         LoJX0H9hLoO32FP6IyQE5ZVFA5Zg3tiaMInxGC47I5liEGVRSGAosQloCsY8WW3L90fZ
-         XpVNb/e7dNK9KbgAanWgP+KZ+F+02Xatf8EFWEbpUBmaBygCR9IgsUK7t7lhX/8c2vG7
-         Xesx2PxOeEoBKAlUoDVc8mJ2/IYvTkXYmPOVu+9+jN6ZznZZZZQZTY9augB/Im6yank+
-         FiIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF0AtAHP6I6UKFM0BmVqmgSaTdHwDUq9ZeXyMGO9BodSODH26fzT6kEU/J+I9rL6uMyJtk3/mzhw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1jnwEyf88pRwkNQncGjgjcXvk52kShQBc227o+0ddFYbR5xkk
-	82meLMiwh7TWk81DdrlHVzBZ+q0AATwIBrUI0M5OQKoyEUBxQ5zmtBrSgRj9h/Z/HgFcTyOdOGH
-	13HGo8Mg=
-X-Gm-Gg: AY/fxX6FPslsitYC0DoHJp2V3n96jwI4iUPbqc9C77QdoUSQ1EJS4+928NZs52QQra+
-	OhwVxSF5e0S8iz8S1eY5oHhjj8/0AagiP0bIFUVko5LNrg81KOPY/HPKiy3msrmfgnepOA+Elpw
-	xWr++GEr3qHkH8Wobdf6x9/bX6kF5zjyf5u7Cp+bl4AHPqfvdCM8J97vIYTkPTu/Okw5qK2+hHr
-	ImMZu4LXb9PnYCqiKRuB7uukEvvVrDuVzoNXuN1U/sMXtKM8U1s43zAwkvtxLf6G53U2YHUbi/p
-	YLPcJ/eja/xNgIquUiZmClkye96dVb6FO29h0dmvu+67IrnyyjTLFFKjmgHGI4WBX/y0E22Qq55
-	ToahhpiHxIBFQuX9KcYMbxlCehd5IB5CZ1jS/2S86ufxNxDCFe86mDzgKBvNSPDucPeE1gj7OFL
-	AxK2p3Z6qFGdoKAxUHgGa+vB7+akhHfaUCWx+jEK/hiwCNwzRBIfGYifHoRUWMT2axcVbfKg==
-X-Received: by 2002:a05:6830:6d23:b0:7c7:2e9d:aee1 with SMTP id 46e09a7af769-7cfdee13230mr7336893a34.19.1768836130500;
-        Mon, 19 Jan 2026 07:22:10 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf000b80sm6856840a34.0.2026.01.19.07.22.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 07:22:09 -0800 (PST)
-Message-ID: <6f703719-ee33-4fd9-bcbf-afb15967a494@kernel.dk>
-Date: Mon, 19 Jan 2026 08:22:09 -0700
+	s=arc-20240116; t=1768841862; c=relaxed/simple;
+	bh=YW8Q9Lrp/bZQRu5rYELHUc9owzCj1x411m/oRmGY61A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a5S3LjSeguLSwCi8jBxo9cvBeo0YKhxmpOluPF6B4jo0O6aObabJ6o0Tcr7YvuOe2ag3VAdvZ98GFuIimUfPf0Go2LkSfO1ubRJnB7rfUm45DFkpVqWrAUt6MqZpvGKailyjMwXrGYXdUrFlM/8hETAQfOK7VJ5HkD9L0+qsttE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROxnCHVY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF98C116C6;
+	Mon, 19 Jan 2026 16:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768841861;
+	bh=YW8Q9Lrp/bZQRu5rYELHUc9owzCj1x411m/oRmGY61A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ROxnCHVYM82zYZN+jSegSYEzsqVDfjVYwXb3yhsN3Z1ZlaUF5gukdxz9XNEvFF/5t
+	 mtrRIJVcR/okwxcWj+TbqhpTVzdQYh5BGz9VsSKZFN4ta0MzQIbHcU8S1Bu/mRWg+p
+	 1g3ZbULO9jvF+SBlE4G0pJmfv84EU9n3j/TamvLgQvZBC5nkTz3wDiDXei/jxErWmh
+	 d5GlLI9OjptF8FXjUzykeCU9hjns/DKjat7mHwQvDrrgUoWcvayl1q007/A2V8b1mA
+	 8I5/KxrFJtRHJWgKIQr5NZWfsY8BZVQDOAk3fpPZmmspIDbKVBWXUOoH+4Dp+QjBTJ
+	 Y6eZMsr498kLA==
+Date: Mon, 19 Jan 2026 08:57:37 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>, Michael Chan <michael.chan@broadcom.com>, Pavan
+ Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, Saeed
+ Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Alexander Duyck
+ <alexanderduyck@fb.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, Ankit
+ Garg <nktgrg@google.com>, Tim Hostetler <thostet@google.com>, Alok Tiwari
+ <alok.a.tiwari@oracle.com>, Ziwei Xiao <ziweixiao@google.com>, John Fraker
+ <jfraker@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, Mohsin
+ Bashir <mohsin.bashr@gmail.com>, Joe Damato <joe@dama.to>, Mina Almasry
+ <almasrymina@google.com>, Dimitri Daskalakis
+ <dimitri.daskalakis1@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Samiullah Khawaja
+ <skhawaja@google.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ David Wei <dw@davidwei.uk>, Yue Haibing <yuehaibing@huawei.com>, Haiyue
+ Wang <haiyuewa@163.com>, Jens Axboe <axboe@kernel.dk>, Simon Horman
+ <horms@kernel.org>, Vishwanath Seshagiri <vishs@fb.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, dtatulea@nvidia.com, kernel-team@meta.com,
+ io-uring@vger.kernel.org
+Subject: Re: [PATCH net-next v9 0/9] Add support for providers with large rx
+ buffer
+Message-ID: <20260119085737.2161f9e6@kernel.org>
+In-Reply-To: <7ab5309d-8654-4fa8-9a1e-24b948bccba2@gmail.com>
+References: <cover.1768493907.git.asml.silence@gmail.com>
+	<7ab5309d-8654-4fa8-9a1e-24b948bccba2@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/2] nvme: optimize passthrough IOPOLL completion for
- local ring context
-From: Jens Axboe <axboe@kernel.dk>
-To: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <20260116074641.665422-1-ming.lei@redhat.com>
- <9859f637-d8f9-48e0-98ba-42cc6255c73b@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <9859f637-d8f9-48e0-98ba-42cc6255c73b@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 1/19/26 8:19 AM, Jens Axboe wrote:
-> On 1/16/26 12:46 AM, Ming Lei wrote:
->> Hello,
->>
->> The 1st patch passes `struct io_comp_batch *` to rq_end_io_fn callback.
->>
->> The 2nd patch completes IOPOLL uring_cmd inline in case of local ring
->> context, and improves IOPS by ~10%.
->>
->>
->> V2:
->> 	- pass `struct io_comp_batch *` to ->end_io() directly via
->> 	  blk_mq_end_request_batch().
+On Mon, 19 Jan 2026 13:54:37 +0000 Pavel Begunkov wrote:
+> On 1/15/26 17:11, Pavel Begunkov wrote:
+> > Note: it's net/ only bits and doesn't include changes, which shoulf be
+> > merged separately and are posted separately. The full branch for
+> > convenience is at [1], and the patch is here:  
 > 
-> This is a much better approach indeed. Looks good to me.
+> Looks like patchwork says the patches don't apply, but the branch
+> still merges well. Alternatively, I can rebase on top of net-next
+> and likely delay the final io_uring commit to one release after.
 
-Forgot to mention, Keith can you let me know if this looks good to you
-too?
-
--- 
-Jens Axboe
+Yes, David refactored the test in the meantime :/
+I'll pull the branch.
 

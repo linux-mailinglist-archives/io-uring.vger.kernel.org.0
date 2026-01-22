@@ -1,240 +1,300 @@
-Return-Path: <io-uring+bounces-11888-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11889-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wH85O+FicmnfjQAAu9opvQ
-	(envelope-from <io-uring+bounces-11888-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 18:48:17 +0100
+	id iKjwAXmQcmnSmAAAu9opvQ
+	(envelope-from <io-uring+bounces-11889-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 22:02:49 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546EB6BA49
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 18:48:17 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856EA6D99A
+	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 22:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D3BD53002B79
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 17:48:12 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DD9BE300B45B
+	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 21:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E36734404F;
-	Thu, 22 Jan 2026 17:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB1D3AA196;
+	Thu, 22 Jan 2026 21:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ekzaEtyL"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="M5dQvsEj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E13233ADB4
-	for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 17:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769104090; cv=none; b=UcUANNtYseV/BSQLId6juDbp7FaTTKTIVe4Pbqk13lXgypBV9ZNE5/xnSJHkmuZ2UfBoLT62DeqbE5OXLInB+6mHYgHPOuaR8rtY6fp5GOYmwnnytfOIPXKSLQr00SXaUMMmg05why5nPqxAefRzuhVp7pqTpk9KGRcjQPC5Gcc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769104090; c=relaxed/simple;
-	bh=49srhGImsId0QkHe5QH0OscT6JWTVDJqrGDDcteRD6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbAVRKqBkrqNveZMZKc/IdWSa5kLGn7IdfxvWX6PnXemU5giq5qDbSJbw+FTXXDGGkbs4cqNXkGCCzOscdmk/9MAMT0Bs/0N+k+w9OhBWQWrp6sPYDekitA1S2wzQ2sedeSmrkbuQF5Uwjd0DKvZ51DvPhJvQvtBl0NoLyBTU2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ekzaEtyL; arc=none smtp.client-ip=209.85.167.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-45ca0d06eddso440498b6e.2
-        for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 09:48:01 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B868338FEF3
+	for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 21:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769115766; cv=pass; b=NsK/K4pohees3xPgUcwjmV0ZGGSLiQJq9whLMq3lwhf1wCL18qt5Fw2DVYwUP3VJr9PlaMYvNMYIM7Pg0qStrxbSF4jwrlq4kAU5iGehnxOWSvIhczmO0v6ofPNG+oL9WPU+zGR6oJ84h4EYS4CNNDkLkPS3uAcYafolfL8FRFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769115766; c=relaxed/simple;
+	bh=e/QVsuEdSwNyET3wwB3q69H2wHyH0tAfoogUFj06q2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OQ/HhYFYOyPZKLrA5wTxK1U3hyRuryi+o0eZw1DO148prKoZv+zjC7cNEXV09wulvwRIjmoFqYs4UPYjOE/4wrVpI59l7xwC0YevTLajadyUF7lNl78GLIDB1H98tkTtDUoxegKedUAIbeQpKSLZJ1B4ufo3F28DwwyZbkVbq48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=M5dQvsEj; arc=pass smtp.client-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-1233be8d537so87276c88.2
+        for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 13:02:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769115757; cv=none;
+        d=google.com; s=arc-20240605;
+        b=BdYScccpakOO8lTzmsYDwY3nRNqdF9lnuqQIokX88ggPHo4XONc30BBYRoQokYb+nq
+         af5DFJoXjjT2x1gUQrUSNqOHAkmxnqASfTQC6vw+JiZgqCDlU1jbtfRpcWLhdUJd+Dto
+         881wXvc0hhlSvmK7cVqKTD8+OuqEzcxBqMdLNBZMXP7ruGybj8pNrHPQltXiFlJg34ak
+         zVm2k3049ux0HaAhIuRUh1ji7yDLicRypwrtMZ+eXQ2kHe7+bnsOS44gmqihPR4cpGK9
+         ctDzgWbp8gD53hZksbbtInWQnCnapyu1KZlrWhTAX9iFgElqrQnzhEAt1+oOxtLKO/kZ
+         3z1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=AqQnMCpGuh+PP41KooEigfpzr6TswhXwK3MFMdrApQo=;
+        fh=r9ecS3yUPTzXyReZhLnYJa+jcu6thzU9byYQVpuE/HU=;
+        b=Q+uI3QhZ9gBrYYLUBHAaISzkEWEXYV5HP8KuOBoJLRFH6B4hLlqSnzv4tC0+tGxNhH
+         hbNsLgQl308giVhz4mj+eSvjOlgUH4qRLUyn/A8XTD0QAucweRh/KjCwJAKwPBZ5l5yV
+         Opjmgm7CCbDu5h+3pomgGCy2YHizNoZygTkqMZVawMxCquuibAlVQH84UbPCurTqYcmG
+         B3f9yQJbR1bN0gq66itrkIbtci1jugizGm5j88IM+zFi98wEnRTn3uC/UedzxdzbjZbm
+         bD0Hb++PL1YivmrzsGcIfw0ex+X6/2GwtdMAyVdWEtF3DuzYhW5b07ia7eA9TKE/iFvj
+         SAGQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769104078; x=1769708878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tAqYu3xB4La4CDsCFBPKH7jgCHbWvIT5wooh5c1w7TA=;
-        b=ekzaEtyLptFcVPJZAjKX7EgwWmXjs3Z6bghpmwtqTaQFBQNjEP4pClwtVM7ivKOQf9
-         cshxFBn8t1VRJU3K59EO0uHoa3h4NZDdLHrWVgpYhzDHG9TSZCzIwZYh2je3QyODV1Yx
-         eQH9a+vRSxV7veydJuyfrmPac32UGUjWN06xLXl3Rb7XpLwXtU6HysIQNNzr+1g14tnu
-         kWRAMP5TuaQzY17XJWNygas/hISnT3NPSjt4a7y+gDvfoDnrxupAYCYdFHtm0+UHG+m9
-         80XZ2OdvhDt+jovYQHow9X9Ir5JB997scPDKmzGqCI4gviTBPTWqkmSvoqn6cmHhTAqd
-         S0Fg==
+        d=purestorage.com; s=google2022; t=1769115757; x=1769720557; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AqQnMCpGuh+PP41KooEigfpzr6TswhXwK3MFMdrApQo=;
+        b=M5dQvsEjaGNMCO9pXoWQBui1/Wlca9nJtEhg4QUUlIXaXFGBA+DTShJnE/TnYEllf1
+         zyr2GK9Cmqhy8l8S+/v8kA44Qy4TaWNo9HSrERVARcPSDmFCuayaA2wYEPG6NHnfpDYW
+         Lx5q3Moxn8L30lSdDvym2Hz8q+sj0inJeNsiZCqA8N0PeFcpbIBkdXPw6sZKGk5pWvS8
+         wyBZ3FkIHgQouHgk1gtC8t9DkGh7ShuxssUIC55qwbwUgccT3SbozPuTqaJKNkIAPSy/
+         vO6uIzjIbjss1XpKZgRheyXB5fdrATg//fC8CVItLdhJO6zsUaknX0dfIsdtMaJzrgaT
+         6aaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769104078; x=1769708878;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tAqYu3xB4La4CDsCFBPKH7jgCHbWvIT5wooh5c1w7TA=;
-        b=v4GxecLz/JvCWYul8h81KIm3mpQUDTr3fywjCXv9xVXz43yQxxbtRjySVbx0/QEWCw
-         rOSyjt3DMd37BJ9a+V+NbWhgg2+k6hurTZfkTWOI5fCRmObRiLTd9H+tuwtkKjX/EHUZ
-         XMlxrFNFX2VGNc+0lDoD2z3xct0BVjSJaaAUvORDOAn/HkUJjFyGCZVHb7HEw/7LR2MC
-         83evspIjvpP8NOkwpLMwnRk7P045K9DPI+LbzA6OBstY0Y6LFoYXV8ttn2mGfuqgYKfT
-         7xoP5JGpYE5brBPZzy0pxU3E84dvCNVJpc7wh5K8MNHVb31c2e/IB91YsrV2T8XJ15VT
-         6Iig==
-X-Gm-Message-State: AOJu0Yy3tpBH+R9Ze+oYqtwKCp/ASpsoCO2AFnXlHexSldE+JepuJhSB
-	w0I0/u/WIUcU8mCwbn3a8MH96oMKRoCy3SAVeAf2Z7EOT4wIWv77WdVrWa13lZjPJd8=
-X-Gm-Gg: AZuq6aKTFCAu6RGkMpeFt3WHmwhqBUi+bRWxve6YVyw0YMxXd441u1QjDbGzidsarn6
-	n/xGwQX1ECJprKES+OXLUqSTe7pU8r4qHEKbiJdmAJLLFe5Gj1A0IHbEtoR4XFGNrSCHrH6SKGP
-	v+e5jZLbq10pKGVmbq8Y2sGxP22oubSyIzPvbfH8KzDfi8ryxLp/82ZXjT8vwxWZwInjIjrATvT
-	riPkablJMSeIckpusB8Vv2/06uBMKFvwDtfS4Oo9KOx6oZLd+jUu/EEYWcRsLF61FF0l0WJl0SZ
-	BLM6UwSKVNJbiSHrQgARA8adL1Ifq9NdyHAEtMkAp7K01VwaM7EnXdSKNEWt1EN5AUkcV8wNxmx
-	ilgEU33QkHmERg3ULgG+3BTn3nelcKg1NiphvknxuomRPhaXt73OsNyV4iWwC385LhQy6aN6gdW
-	yRt0TxrwYrTGEsjaMVv/yUePdUDRDPWvJhag+4xqZ8wyDa9/F2Wl9YqSOPvDt2fa9x2/kr
-X-Received: by 2002:a05:6808:4482:b0:450:474b:2736 with SMTP id 5614622812f47-45eb1cf6dc0mr193617b6e.45.1769104078250;
-        Thu, 22 Jan 2026 09:47:58 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45c9e08943csm10644269b6e.20.2026.01.22.09.47.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Jan 2026 09:47:57 -0800 (PST)
-Message-ID: <3b7e6088-7d92-4d5c-96c7-f8c0e2cc7745@kernel.dk>
-Date: Thu, 22 Jan 2026 10:47:56 -0700
+        d=1e100.net; s=20230601; t=1769115757; x=1769720557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AqQnMCpGuh+PP41KooEigfpzr6TswhXwK3MFMdrApQo=;
+        b=qBhhSt3vxcaieqTUMyBD0gXY882tdfhbNNKHjN5/At0j+iZseWeYiYlioevWL7fl+4
+         0nvK2bENFHlHxVDYSMc9MV8fK+6nx8hLbFrybzY4r3+KY+YFzLfvFvyyk1OGg8A0Kf3C
+         vg7rld8bWLq1F2d9Hpf72wQjEUrTG+YpI/g065MpvlB0WcUQ5Aw/dEAtS5iASwMyemsB
+         zEZInPKbUGzjVQozD6lt2qNoY7IYkaeokJV1vHgJCwK8tD4nTlS/1F6Acj3RT9vaw9qM
+         8CGxekfPI9aq5VL9HabMBgzcu5V2zpTRiaqZJvAaiONtw4i3widRgG9yxqLNQweBQ1vF
+         OP0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXXQt4Fw3zjme7wcp21sm9jbkdFmi/u0x01I932Y8Rp0yeFUcMKxMtWvLJ05+DSEjxIMMpK5wyI6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5ytvIj8Rg8o+dmRn3Dv0X0KZHOBw3G3a6WNlBcWuG52Nousu7
+	08lMBd4DsqnpbH2Y957skYS2cgu3BV8JRnwiRdgs+i3/PcwqF4kLKRXJi2QtQoklGNcLLtJ9V9f
+	tD2B1F7JVWBxEOyVO4CC8yr81zqtW29pI5ddKWIzZ8A==
+X-Gm-Gg: AZuq6aJ4Ou4FjLNJHFLFfOoS0ZF1xaEXouDSdLGObTC+2jrXEjFgLUcKCoi7d2mDh2J
+	3QOvNiHOz8L87yDRWfl8ykY2BQeIKjt4cVnpG8dQpCxW2ET8b2JVj8oaX0aMems11SPJFBYeWqb
+	ESkJvfVptTwSqQ3uRmHAPqo7rWBfg7cEYjWnr0aU+FkJ9kIzp88Y95I4c/Vdv6WFJ9MLLHTR0pN
+	m7NQHsYVsgjz/xJRc5ECCk+hVTHH3EFtXDhJbqsPMXwLcxo+vVUKWOLFhTiWDOIKk3c/N++wVaZ
+	98BXUw==
+X-Received: by 2002:a05:7022:2385:b0:123:2d38:929b with SMTP id
+ a92af1059eb24-1247dc01168mr190633c88.6.1769115756669; Thu, 22 Jan 2026
+ 13:02:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring/rsrc: fix RLIMIT_MEMLOCK bypass by removing
- cross-buffer accounting
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Yuhao Jiang <danisjiang@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260119071039.2113739-1-danisjiang@gmail.com>
- <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
- <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
- <2919f3c5-2510-4e97-ab7f-c9eef1c76a69@kernel.dk>
- <CAHYQsXQK4nKu+fcni71__=V241RN=QxUHrvNQMQtPMzeL_z=BA@mail.gmail.com>
- <d8d28435-2a89-4b25-925e-14fdb346839b@gmail.com>
- <8c6a9114-82e9-416e-804b-ffaa7a679ab7@kernel.dk>
- <2be71481-ac35-4ff2-b6a9-a7568f81f728@gmail.com>
- <2fcf583a-f521-4e8d-9a89-0985681ca85b@kernel.dk>
- <d2fc2ff2-98d9-49f8-af95-968100174d55@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <d2fc2ff2-98d9-49f8-af95-968100174d55@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260116233044.1532965-1-joannelkoong@gmail.com> <20260116233044.1532965-9-joannelkoong@gmail.com>
+In-Reply-To: <20260116233044.1532965-9-joannelkoong@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 22 Jan 2026 13:02:25 -0800
+X-Gm-Features: AZwV_QglS7d7muhiOx01JyBnjM9VKzOJncuZ1lNjPAcn3AtNEhRnbxQyk88GRDo
+Message-ID: <CADUfDZruYbRfpftns3a17HHF=ZqayztP-t5uVzSRB3APhree+Q@mail.gmail.com>
+Subject: Re: [PATCH v4 08/25] io_uring: add io_uring_fixed_index_get() and io_uring_fixed_index_put()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: axboe@kernel.dk, miklos@szeredi.hu, bschubert@ddn.com, krisman@suse.de, 
+	io-uring@vger.kernel.org, asml.silence@gmail.com, xiaobing.li@samsung.com, 
+	safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-11888-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
+	TAGGED_FROM(0.00)[bounces-11889-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,szeredi.hu,ddn.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.993];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.998];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[purestorage.com:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 546EB6BA49
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid,purestorage.com:email,purestorage.com:dkim]
+X-Rspamd-Queue-Id: 856EA6D99A
 X-Rspamd-Action: no action
 
-On 1/22/26 4:43 AM, Pavel Begunkov wrote:
-> On 1/21/26 14:58, Jens Axboe wrote:
->> On 1/20/26 2:45 PM, Pavel Begunkov wrote:
->>> On 1/20/26 17:03, Jens Axboe wrote:
->>>> On 1/20/26 5:05 AM, Pavel Begunkov wrote:
->>>>> On 1/20/26 07:05, Yuhao Jiang wrote:
->>> ...
->>>>>>
->>>>>> I've been implementing the xarray-based ref tracking approach for v3.
->>>>>> While working on it, I discovered an issue with buffer cloning.
->>>>>>
->>>>>> If ctx1 has two buffers sharing a huge page, ctx1->hpage_acct[page] = 2.
->>>>>> Clone to ctx2, now both have a refcount of 2. On cleanup both hit zero
->>>>>> and unaccount, so we double-unaccount and user->locked_vm goes negative.
->>>>>>
->>>>>> The per-context xarray can't coordinate across clones - each context
->>>>>> tracks its own refcount independently. I think we either need a global
->>>>>> xarray (shared across all contexts), or just go back to v2. What do
->>>>>> you think?
->>>>>
->>>>> The Jens' diff is functionally equivalent to your v1 and has
->>>>> exactly same problems. Global tracking won't work well.
->>>>
->>>> Why not? My thinking was that we just use xa_lock() for this, with
->>>> a global xarray. It's not like register+unregister is a high frequency
->>>> thing. And if they are, then we've got much bigger problems than the
->>>> single lock as the runtime complexity isn't ideal.
->>>
->>> 1. There could be quite a lot of entries even for a single ring
->>> with realistic amount of memory. If lots of threads start up
->>> at the same time taking it in a loop, it might become a chocking
->>> point for large systems. Should be even more spectacular for
->>> some numa setups.
->>
->> I already briefly touched on that earlier, for sure not going to be of
->> any practical concern.
-> 
-> Modest 16 GB can give 1M entries. Assuming 50ns-100ns per entry for the
-> xarray business, that's 50-100ms. It's all serialised, so multiply by
-> the number of CPUs/threads, e.g. 10-100, that's 0.5-10s. Account sky
-> high spinlock contention, and it jumps again, and there can be more
-> memory / CPUs / numa nodes. Not saying that it's worse than the
-> current O(n^2), I have a test program that borderline hangs the
-> system.
+On Fri, Jan 16, 2026 at 3:31=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> Add two new helpers, io_uring_fixed_index_get() and
+> io_uring_fixed_index_put(). io_uring_fixed_index_get() constructs an
+> iter for a fixed buffer at a given index and acquires a refcount on
+> the underlying node. io_uring_fixed_index_put() decrements this
+> refcount. The caller is responsible for ensuring
+> io_uring_fixed_index_put() is properly called for releasing the refcount
+> after it is done using the iter it obtained through
+> io_uring_fixed_index_get().
+>
+> The struct io_rsrc_node pointer needs to be returned in
+> io_uring_fixed_index_get() because the buffer at the index may be
+> unregistered/replaced in the meantime between this and the
+> io_uring_fixed_index_put() call. io_uring_fixed_index_put() takes in the
+> struct io_rsrc_node pointer as an arg.
+>
+> This is a preparatory patch needed for fuse-over-io-uring support, as
+> the metadata for fuse requests will be stored at the last index, which
+> will be different from the buf index set on the sqe.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  include/linux/io_uring/cmd.h | 20 ++++++++++++
+>  io_uring/rsrc.c              | 59 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 79 insertions(+)
+>
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> index a488e945f883..de3f550598cf 100644
+> --- a/include/linux/io_uring/cmd.h
+> +++ b/include/linux/io_uring/cmd.h
+> @@ -44,6 +44,14 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd =
+*ioucmd,
+>                                   size_t uvec_segs,
+>                                   int ddir, struct iov_iter *iter,
+>                                   unsigned issue_flags);
+> +struct io_rsrc_node *io_uring_fixed_index_get(struct io_uring_cmd *cmd,
+> +                                             int buf_index, unsigned int=
+ off,
+> +                                             size_t len, int ddir,
+> +                                             struct iov_iter *iter,
+> +                                             unsigned int issue_flags);
+> +void io_uring_fixed_index_put(struct io_uring_cmd *cmd,
+> +                             struct io_rsrc_node *node,
+> +                             unsigned int issue_flags);
+>
+>  /*
+>   * Completes the request, i.e. posts an io_uring CQE and deallocates @io=
+ucmd
+> @@ -108,6 +116,18 @@ static inline int io_uring_cmd_import_fixed_vec(stru=
+ct io_uring_cmd *ioucmd,
+>  {
+>         return -EOPNOTSUPP;
+>  }
+> +static inline struct io_rsrc_node *
+> +io_uring_fixed_index_get(struct io_uring_cmd *cmd, int buf_index,
+> +                        unsigned int off, size_t len, int ddir,
+> +                        struct iov_iter *iter, unsigned int issue_flags)
+> +{
+> +       return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +static inline void io_uring_fixed_index_put(struct io_uring_cmd *cmd,
+> +                                           struct io_rsrc_node *node,
+> +                                           unsigned int issue_flags)
+> +{
+> +}
+>  static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret=
+,
+>                 u64 ret2, unsigned issue_flags, bool is_cqe32)
+>  {
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 41c89f5c616d..fa41cae5e922 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1152,6 +1152,65 @@ int io_import_reg_buf(struct io_kiocb *req, struct=
+ iov_iter *iter,
+>         return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
+>  }
+>
+> +struct io_rsrc_node *io_uring_fixed_index_get(struct io_uring_cmd *cmd,
+> +                                             int buf_index, unsigned int=
+ off,
+> +                                             size_t len, int ddir,
+> +                                             struct iov_iter *iter,
+> +                                             unsigned int issue_flags)
+> +{
+> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> +       struct io_rsrc_node *node;
+> +       struct io_mapped_ubuf *imu;
+> +       u64 addr;
+> +       int err;
+> +
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +
+> +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
+> +       if (!node) {
+> +               io_ring_submit_unlock(ctx, issue_flags);
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +
+> +       node->refs++;
+> +
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +
+> +       imu =3D node->buf;
+> +       if (!imu) {
 
-It's definitely not worse than the existing system, which is why I don't
-think it's a big deal. Nobody has ever complained about time to register
-buffers. It's inherently a slow path, and quite slow at that depending
-on the use case. Out of curiosity, I ran some stilly testing on
-registering 16GB of memory, with 1..32 threads. Each will do 16GB, so
-512GB registered in total for the 32 case. Before is the current kernel,
-after is with per-user xarray accounting:
+How is this possible?
 
-before
+Other than that,
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 
-nthreads 1:      646 msec
-nthreads 2:      888 msec
-nthreads 4:      864 msec
-nthreads 8:     1450 msec
-nthreads 16:    2890 msec
-nthreads 32:    4410 msec
-
-after
-
-nthreads 1:      650 msec
-nthreads 2:      888 msec
-nthreads 4:      892 msec
-nthreads 8:     1270 msec
-nthreads 16:    2430 msec
-nthreads 32:    4160 msec
-
-This includes both registering buffers, cloning all of them to another
-ring, and unregistering times, and nowhere is locking scalability an
-issue for the xarray manipulation. The box has 32 nodes and 512 CPUs. So
-no, I strongly believe this isn't an issue.
-
-IOW, accurate accounting is cheaper than the stuff we have now. None of
-them are super cheap. Does it matter? I really don't think so, or people
-would've complained already. The only complaint I got on these kinds of
-things was for cloning, which did get fixed up some releases ago.
-
-> Look, I don't care what it'd be, whether it stutters or blows up the
-> kernel, I only took a quick look since you pinged me and was asking
-> "why not". If you don't want to consider my reasoning, as the
-> maintainer you can merge whatever you like, and it'll be easier for
-> me as I won't be wasting more time.
-
-I do consider your reasoning, but you also need to consider mine rather
-than assuming there's only one answer here, or that yours is invariably
-the correct one and being stubborn about it. The above test obviously
-isn't the end-all be-all of testing, but it would show if we had issues
-with scaling to the extent that you assume.
-
-Also worth considering that for these kinds of parallel setups running,
-the (by far) common use case is threads. And hence you're going to be
-banging on the shared mm anyway for a lot of these memory related setup
-operations.
-
--- 
-Jens Axboe
+> +               err =3D -EFAULT;
+> +               goto error;
+> +       }
+> +
+> +       if (check_add_overflow(imu->ubuf, off, &addr)) {
+> +               err =3D -EINVAL;
+> +               goto error;
+> +       }
+> +
+> +       err =3D io_import_fixed(ddir, iter, imu, addr, len);
+> +       if (err)
+> +               goto error;
+> +
+> +       return node;
+> +
+> +error:
+> +       io_uring_fixed_index_put(cmd, node, issue_flags);
+> +       return ERR_PTR(err);
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_fixed_index_get);
+> +
+> +void io_uring_fixed_index_put(struct io_uring_cmd *cmd,
+> +                             struct io_rsrc_node *node,
+> +                             unsigned int issue_flags)
+> +{
+> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> +
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +       io_put_rsrc_node(ctx, node);
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_fixed_index_put);
+> +
+>  /* Lock two rings at once. The rings must be different! */
+>  static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx =
+*ctx2)
+>  {
+> --
+> 2.47.3
+>
 

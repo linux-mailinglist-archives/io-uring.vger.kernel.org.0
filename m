@@ -1,83 +1,82 @@
-Return-Path: <io-uring+bounces-11900-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11901-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yPiuHAKQc2l0xAAAu9opvQ
-	(envelope-from <io-uring+bounces-11900-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 16:13:06 +0100
+	id iK9tKFqnc2lnxwAAu9opvQ
+	(envelope-from <io-uring+bounces-11901-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 17:52:42 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DDE77925
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 16:13:06 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342AA78A5C
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 17:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E2ABA307DCA2
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 15:06:20 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 7653E300232E
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 16:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B912FF155;
-	Fri, 23 Jan 2026 15:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D2A2D9492;
+	Fri, 23 Jan 2026 16:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yyv7UixE"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dW2XC2Rx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f67.google.com (mail-oa1-f67.google.com [209.85.160.67])
+Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1D533BBC4
-	for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 15:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC59285CBA
+	for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 16:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769180694; cv=none; b=QEwHjhWn/ZQlEpk7Ul1GhxFNTUNDU+3Xl1g1rw55iw4V8MIV4l5Ld80XTtWjDAgV1Uw2BpMMfPgP6D+pFrWqbTu5Mg3hKNkRM8uEbEy5jAbXDR0QnfS3VyCJAGyXspZ1D8HiOJ31VkX7XvJU6JpH1odQgR5217nTIqGWX4FFnDE=
+	t=1769187160; cv=none; b=MCcxWtPtlcXVZGjM8VQAZUvcuPkcv+X1pRQIRj5FUn2wv60wqx77D4lZk7M3fflDrV2yIrsbDcPPCSMC5NYuzbIajmMGj5uZQ4+26IgVLDhmgd9MyqucurHXkMY9TNKaKZurjteJWUqvhbffco6T+XJCEK9nvxRKi/HkWDGBvKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769180694; c=relaxed/simple;
-	bh=GtoJMAV3JMEw5u0PkRh1Ohg8essRu+nn9weTSPQUFWI=;
+	s=arc-20240116; t=1769187160; c=relaxed/simple;
+	bh=esVP2ks5MLabb1EHTOBLm+guRAZfmT1anVSyAPL10r0=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=he0ojjKWBUhAjCbXvkbK3h6vzwcLajahw1zdJ7gCWR+PMQMPIgnv09vEqjZHnvOM2s+Bdl3gn7WgTVXpeH3t0GoAIbPQftkzXMop4V/eccb4Q7M5oYz6obREp8W/T7ru3gZd71bqyEbxqApGmAwsx7ospnLA9K2j9BZdA2PNVAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yyv7UixE; arc=none smtp.client-ip=209.85.160.67
+	 In-Reply-To:Content-Type; b=dmJZbsh6Qnd2xQmOIUOgKvRlrSP5WFqqT/97mwk86YpcJCrbHID3dy+bvnHX8WtqMQSSELHI1cSEiEgDFtrJXku/6nEZKpAreHymXpp72HMXlWEU6PZxZJY9nZrFrqYQGuV3R9n6nkBmj0DsJ4NO6GctLsZhWYm+VX9fXVD0UK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dW2XC2Rx; arc=none smtp.client-ip=209.85.167.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f67.google.com with SMTP id 586e51a60fabf-404263bd58fso2273573fac.1
-        for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 07:04:51 -0800 (PST)
+Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-45c9f47e1e8so733996b6e.0
+        for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 08:52:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769180691; x=1769785491; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769187157; x=1769791957; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=C0mzcb/MlZDJODBRwhXegE9ctUcOjJ+6el+uFNaQtwg=;
-        b=yyv7UixECEK1530EPpPZ6ZwUqCS5nMJyEKh8XLR/p0iyyUSEpkvRl+kkirnpsHCN2b
-         8aA1pja0aN5fMt5gYrUdKMDoa4B+rOyBSmzht8ir9qGygxRt9q0mN+mELzJVS6BmM8sU
-         6TucC2tJxq/TWhlOG4NdamkeDW9d1ZbFk+9SbIz06qe6BuIKyc00cyLUozJvYmJifQrJ
-         J/P3VknwE7TMtaBvWMg4262KhfwboJk/x7bgQ5DU6ew02mWti9MM/uRHa1v2o/xP4WqZ
-         C5APD2S3LLyBZ5SS3AvQT1fZVieun7zrJlbDuSFI8Er9S2LOGwlZH5z8jwa19jukIfGf
-         LE7g==
+        bh=HINUjvj70QFSduejzR0GqjYZg6AHoxHg1vc7HquTrMA=;
+        b=dW2XC2RxbbfWIersmaxczxRk9XuiMLmEK6sFDX7HVT5s+I91ooJ9YezML55wiVk7yk
+         QuvuUUVvkR846MsDyOg+/WU7w7Jzg7QF6O2j8+W2aOmLbMyFomnvniJMDIenj08SA2WU
+         7NI6R6ZrKal4CwOlBz9fdeip+09nby+0Yhngi3smu5CwXNdEciicVcqr17PGtnBLNYYE
+         5Dlq9VrKN+BTFR5Fq7SAXnJ8UuFBU9zrl+52VixdAbja534VARyiJ6bFOvJqbDucsfnt
+         RbmfqNcwpiGlhv4kh4DNqHOpzZfPd/2NukXwAgbCmGa4C8mvVcDPU+x4Zz5aYU7dfH6K
+         d2zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769180691; x=1769785491;
+        d=1e100.net; s=20230601; t=1769187157; x=1769791957;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0mzcb/MlZDJODBRwhXegE9ctUcOjJ+6el+uFNaQtwg=;
-        b=u4GoSHEFobEPkmKektf7pWvSaOjNcCMXPZc13dwgo0gxgw8WR5gIiH6WpUC/wZ5Bkw
-         V7ra3wwl17sTGHbnPC8ZmTyvadAEMFLFLTGdoRoU05789h/EyUspRkPjogVm+fEZxoK2
-         fYqcszpLbvjhYQE33CQx+zMPSRtLzOwADiAQjrxjGdzfur4BkE+FEpTrWvsboxqgpY0d
-         j//VLsvvRaolCbWilMQiLMaa1iagOZgBoLK5SVcO1W6HfJ+norOUvJonlM+ZwoqyNl1t
-         TLh3CGCdCXwrEKpj+R3iykkou9J7Nfxxyn886VzHlIIzDiQuNC/Dj/lTX8LxUKeT02g5
-         W24Q==
-X-Gm-Message-State: AOJu0YyQ1b4Oko9LW3JhwwQZDYDX3HFeF/mGUa4gE2KKmW7cN6Rpq7cQ
-	4+muaJnNZW9jI3tRy9YEWzNw0Vq5VmZ78Gl3aB779N0DwhU/+s4FVr2xfhafKJQ8DAM=
-X-Gm-Gg: AZuq6aK9Sk7zaF6epboKd/nyNtgcxcO9ciY028BflQVXYpJbetARwLIZjsx3hnrd0oc
-	/zziJ0rp2I8RhoGtkV/SrKRPgd0eo6RkBXCga6g0fbBnZl2LzavboK2edUVnSJFXSni7K4B5XSA
-	Tw8BkJcHtZ5JHet7JT6mPj8Fz5a4kg9CmMIjjeaw4qC7KpLiMtOXaR5AJWPUPV0Z4ElXy4mWdto
-	YDG9biBfniVBHyIyA6btxfVJVhLfXnx1+j1jw68+aAtkpClYDafUZcpa2Vaf1zsFHfhshqoYMf/
-	vlKJVRztx5J+E3Jh5gMgu6DBsph4VnyZXiTSOQoid5cdH2guCXTFY6PhqoiLIXAZVZI9/FW8I/Q
-	gQuf5m2ZI5vsANFjC4vJJYrGuWJvTBiqn5KErJc+nS60ZQUBQs76BVRWU3Ui7aZDiSlzC5U3KPg
-	8JAIgHwiYmBM+qWpDJnX6yZVbNwNIiYSjzfOzzQNoT0YAIIzwwaWuZiEVq1kEfxnDeftVhm49Oj
-	1W46qo=
-X-Received: by 2002:a05:6820:4d4c:20b0:661:1580:bf84 with SMTP id 006d021491bc7-662caf90a02mr1265746eaf.34.1769180690515;
-        Fri, 23 Jan 2026 07:04:50 -0800 (PST)
+        bh=HINUjvj70QFSduejzR0GqjYZg6AHoxHg1vc7HquTrMA=;
+        b=mt5+HayOh/5pCseEVz4r4YeBlfq8vVpVDBjqxJfebw4tU//7u9GALaVW5XTP63Dzc1
+         E7nNjugt1crPY7VssbZ/K513EPn6ms3X4rxZO8B3hUgUid0F+IC8kiLWUFqoD8jMFU32
+         KFnEookK18DVaqttx2I67PubDB2PZWkUPK2HL3s2Py6j2OcVtK+9ew2fQvHjCh187eWG
+         tJm4woCfAkoR6atF75z3z0hZ2mtOGyhwHwuLcJF+5aF7AoJcGXWirQ/UfMn3ZRXtytml
+         0zqvM8cIVfdgubUb1RcXA8X/2qR5MI3pqbOyN/p1D4vyzDeJJhfV3LGSQ36RTBXwyw/X
+         +Sxw==
+X-Gm-Message-State: AOJu0Yy3m4Kml8uUV3DO7Aj1QAzJxXnNhfExLTMCytghhuNxza/5jcIP
+	iq7/oQ4KQER58NDCGdDNHCIvAqXkgfXfQLsBm46gzDgrwOpSEufmfQ/qIUByzcAmkmo=
+X-Gm-Gg: AZuq6aK1J6exJEIEXiPti+hvWwWXX60yZXr7u7mw3N1Cxiu+FbHxBpeyyM95Zf+GHW7
+	Lkcbi4aDnSabCMbJhB1EoJm5NCAw0ASYP96SaWHr8uxojioiTdS8eVfpJZOvlayOWXxFwzqO4Fn
+	9D+1+tOhsdUc3PQ7g0+uEhqByIjm6cbMYl4AVmOZ/zWMGmm0VwJYMsgpgjSaKLL8v3qCc+Fwxxs
+	5odv4eP0FYeBp3kr3CiPu42GY0UrCKQtXTGbUALb50BiSLnd3aJVykPhB8ZaHl5qSBri8gA0r1B
+	7a2lPZERXEaWDKporYkT/chK888Ko5z3bCMTSc9xH8UHfu8SDSChIESekhrnxwf8ooVSHbVEpoy
+	rvmrdJhrq1MLjMCqRbtilDye8hx8mHDozgT7HWXoMtOCo8Yfqj9rqBaqKutYlQYkx2t/C/PpuMK
+	dVikns1TWoisoV+EaeHT50tlD4nGX8NR3JGWGdbPLTcgp+Aw2iAkGLLY4G7XGzvp5ZzZ4v
+X-Received: by 2002:a05:6830:43a1:b0:7cf:ddb7:8823 with SMTP id 46e09a7af769-7d15a5cc5f9mr2131944a34.11.1769187156828;
+        Fri, 23 Jan 2026 08:52:36 -0800 (PST)
 Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662cb651194sm1245674eaf.12.2026.01.23.07.04.49
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d15b346e2asm2143281a34.2.2026.01.23.08.52.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jan 2026 07:04:50 -0800 (PST)
-Message-ID: <654fe339-5a2b-4c38-9d2d-28cfc306b307@kernel.dk>
-Date: Fri, 23 Jan 2026 08:04:49 -0700
+        Fri, 23 Jan 2026 08:52:35 -0800 (PST)
+Message-ID: <eea0d7c3-9aed-4c1f-8146-23b82e611899@kernel.dk>
+Date: Fri, 23 Jan 2026 09:52:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -106,19 +105,20 @@ References: <20260119071039.2113739-1-danisjiang@gmail.com>
  <efe080c9-5176-4fa1-9f65-5be44074779e@gmail.com>
  <596bc7ac-3d24-43a7-9e7e-e59189525ebc@gmail.com>
  <fc8664bb-7769-48a2-b470-71fb81828e26@kernel.dk>
+ <654fe339-5a2b-4c38-9d2d-28cfc306b307@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <fc8664bb-7769-48a2-b470-71fb81828e26@kernel.dk>
+In-Reply-To: <654fe339-5a2b-4c38-9d2d-28cfc306b307@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-11900-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-11901-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
 	FREEMAIL_TO(0.00)[gmail.com];
@@ -132,105 +132,158 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.998];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[r7625:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 12DDE77925
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: 342AA78A5C
 X-Rspamd-Action: no action
 
-On 1/23/26 7:50 AM, Jens Axboe wrote:
-> On 1/23/26 7:26 AM, Pavel Begunkov wrote:
->> On 1/22/26 21:51, Pavel Begunkov wrote:
->> ...
->>>>>> I already briefly touched on that earlier, for sure not going to be of
->>>>>> any practical concern.
+On 1/23/26 8:04 AM, Jens Axboe wrote:
+> On 1/23/26 7:50 AM, Jens Axboe wrote:
+>> On 1/23/26 7:26 AM, Pavel Begunkov wrote:
+>>> On 1/22/26 21:51, Pavel Begunkov wrote:
+>>> ...
+>>>>>>> I already briefly touched on that earlier, for sure not going to be of
+>>>>>>> any practical concern.
+>>>>>>
+>>>>>> Modest 16 GB can give 1M entries. Assuming 50ns-100ns per entry for the
+>>>>>> xarray business, that's 50-100ms. It's all serialised, so multiply by
+>>>>>> the number of CPUs/threads, e.g. 10-100, that's 0.5-10s. Account sky
+>>>>>> high spinlock contention, and it jumps again, and there can be more
+>>>>>> memory / CPUs / numa nodes. Not saying that it's worse than the
+>>>>>> current O(n^2), I have a test program that borderline hangs the
+>>>>>> system.
 >>>>>
->>>>> Modest 16 GB can give 1M entries. Assuming 50ns-100ns per entry for the
->>>>> xarray business, that's 50-100ms. It's all serialised, so multiply by
->>>>> the number of CPUs/threads, e.g. 10-100, that's 0.5-10s. Account sky
->>>>> high spinlock contention, and it jumps again, and there can be more
->>>>> memory / CPUs / numa nodes. Not saying that it's worse than the
->>>>> current O(n^2), I have a test program that borderline hangs the
->>>>> system.
+>>>>> It's definitely not worse than the existing system, which is why I don't
+>>>>> think it's a big deal. Nobody has ever complained about time to register
+>>>>> buffers. It's inherently a slow path, and quite slow at that depending
+>>>>> on the use case. Out of curiosity, I ran some stilly testing on
+>>>>> registering 16GB of memory, with 1..32 threads. Each will do 16GB, so
+>>>>> 512GB registered in total for the 32 case. Before is the current kernel,
+>>>>> after is with per-user xarray accounting:
+>>>>>
+>>>>> before
+>>>>>
+>>>>> nthreads 1:      646 msec
+>>>>> nthreads 2:      888 msec
+>>>>> nthreads 4:      864 msec
+>>>>> nthreads 8:     1450 msec
+>>>>> nthreads 16:    2890 msec
+>>>>> nthreads 32:    4410 msec
+>>>>>
+>>>>> after
+>>>>>
+>>>>> nthreads 1:      650 msec
+>>>>> nthreads 2:      888 msec
+>>>>> nthreads 4:      892 msec
+>>>>> nthreads 8:     1270 msec
+>>>>> nthreads 16:    2430 msec
+>>>>> nthreads 32:    4160 msec
+>>>>>
+>>>>> This includes both registering buffers, cloning all of them to another
+>>>>> ring, and unregistering times, and nowhere is locking scalability an
+>>>>> issue for the xarray manipulation. The box has 32 nodes and 512 CPUs. So
+>>>>> no, I strongly believe this isn't an issue.
+>>>>>
+>>>>> IOW, accurate accounting is cheaper than the stuff we have now. None of
+>>>>> them are super cheap. Does it matter? I really don't think so, or people
+>>>>> would've complained already. The only complaint I got on these kinds of
+>>>>> things was for cloning, which did get fixed up some releases ago.
 >>>>
->>>> It's definitely not worse than the existing system, which is why I don't
->>>> think it's a big deal. Nobody has ever complained about time to register
->>>> buffers. It's inherently a slow path, and quite slow at that depending
->>>> on the use case. Out of curiosity, I ran some stilly testing on
->>>> registering 16GB of memory, with 1..32 threads. Each will do 16GB, so
->>>> 512GB registered in total for the 32 case. Before is the current kernel,
->>>> after is with per-user xarray accounting:
+>>>> You need compound pages
 >>>>
->>>> before
+>>>> always > /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
 >>>>
->>>> nthreads 1:      646 msec
->>>> nthreads 2:      888 msec
->>>> nthreads 4:      864 msec
->>>> nthreads 8:     1450 msec
->>>> nthreads 16:    2890 msec
->>>> nthreads 32:    4410 msec
+>>>> And use update() instead of register() as accounting dedup for
+>>>> registration is broken-disabled. For the current kernel:
 >>>>
->>>> after
+>>>> Single threaded:
+>>>> 1x1G: 7.5s
+>>>> 2x1G: 45s
+>>>> 4x1G: 190s
 >>>>
->>>> nthreads 1:      650 msec
->>>> nthreads 2:      888 msec
->>>> nthreads 4:      892 msec
->>>> nthreads 8:     1270 msec
->>>> nthreads 16:    2430 msec
->>>> nthreads 32:    4160 msec
->>>>
->>>> This includes both registering buffers, cloning all of them to another
->>>> ring, and unregistering times, and nowhere is locking scalability an
->>>> issue for the xarray manipulation. The box has 32 nodes and 512 CPUs. So
->>>> no, I strongly believe this isn't an issue.
->>>>
->>>> IOW, accurate accounting is cheaper than the stuff we have now. None of
->>>> them are super cheap. Does it matter? I really don't think so, or people
->>>> would've complained already. The only complaint I got on these kinds of
->>>> things was for cloning, which did get fixed up some releases ago.
->>>
->>> You need compound pages
->>>
->>> always > /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
->>>
->>> And use update() instead of register() as accounting dedup for
->>> registration is broken-disabled. For the current kernel:
->>>
->>> Single threaded:
->>> 1x1G: 7.5s
->>> 2x1G: 45s
->>> 4x1G: 190s
->>>
->>> 16x should be ~3000s, not going to run it. Uninterruptible and no
->>> cond_resched, so spawn NR_CPUS threads and the system is completely
->>> unresponsive (I guess it depends on the preemption mode).
->> The program is below for reference, but it's trivial. THP setting
->> is done inside for convenience. There are ways to make the runtime
->> even worse, but that should be enough.
+>>>> 16x should be ~3000s, not going to run it. Uninterruptible and no
+>>>> cond_resched, so spawn NR_CPUS threads and the system is completely
+>>>> unresponsive (I guess it depends on the preemption mode).
+>>> The program is below for reference, but it's trivial. THP setting
+>>> is done inside for convenience. There are ways to make the runtime
+>>> even worse, but that should be enough.
+>>
+>> Thanks for sending that. Ran it on the same box, on current -git and
+>> with user_struct xarray accounting. Modified it so that 2nd arg is
+>> number of threads, for easy running:
 > 
-> Thanks for sending that. Ran it on the same box, on current -git and
-> with user_struct xarray accounting. Modified it so that 2nd arg is
-> number of threads, for easy running:
+> Should've tried 32x32 as well, that ends up going deep into "this sucks"
+> territory:
+> 
+> git
+> 
+> good luck
+> 
+> git + user_struct
+> 
+> axboe@r7625 ~> time ./ppage 32 32
+> register 32 GB, num threads 32
+> 
+> ________________________________________________________
+> Executed in   16.34 secs    fish           external
+>    usr time    0.54 secs  497.00 micros    0.54 secs
+>    sys time  451.94 secs   55.00 micros  451.94 secs
 
-Should've tried 32x32 as well, that ends up going deep into "this sucks"
-territory:
+OK, if we use a per-ctx btree, otherwise the code is the same:
 
-git
+axboe@r7625 ~> for i in 1 2 4 8 16; time ./ppage $i $i; end
+register 1 GB, num threads 1
 
-good luck
+________________________________________________________
+Executed in   54.06 millis    fish           external
+   usr time   41.70 millis  382.00 micros   41.32 millis
+   sys time   10.64 millis  314.00 micros   10.33 millis
 
-git + user_struct
+register 2 GB, num threads 2
+
+________________________________________________________
+Executed in  105.56 millis    fish           external
+   usr time   60.65 millis  485.00 micros   60.16 millis
+   sys time   40.11 millis    0.00 micros   40.11 millis
+
+register 4 GB, num threads 4
+
+________________________________________________________
+Executed in  209.98 millis    fish           external
+   usr time   38.57 millis  447.00 micros   38.12 millis
+   sys time  190.61 millis    0.00 micros  190.61 millis
+
+register 8 GB, num threads 8
+
+________________________________________________________
+Executed in  423.37 millis    fish           external
+   usr time  130.50 millis  470.00 micros  130.03 millis
+   sys time  380.80 millis    0.00 micros  380.80 millis
+
+register 16 GB, num threads 16
+
+________________________________________________________
+Executed in  832.71 millis    fish           external
+   usr time    0.27 secs    470.00 micros    0.27 secs
+   sys time    1.04 secs      0.00 micros    1.04 secs
+
+and the crazier cases:
 
 axboe@r7625 ~> time ./ppage 32 32
 register 32 GB, num threads 32
 
 ________________________________________________________
-Executed in   16.34 secs    fish           external
-   usr time    0.54 secs  497.00 micros    0.54 secs
-   sys time  451.94 secs   55.00 micros  451.94 secs
+Executed in    2.81 secs    fish           external
+   usr time    0.71 secs  497.00 micros    0.71 secs
+   sys time   19.57 secs  183.00 micros   19.57 secs
+
+which isn't insane. Obviously also needs conditional rescheduling in the
+page loops, as those can take a loooong time for large amounts of
+memory.
 
 -- 
 Jens Axboe

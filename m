@@ -1,83 +1,82 @@
-Return-Path: <io-uring+bounces-11895-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11896-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4DNHNjatcmmAogAAu9opvQ
-	(envelope-from <io-uring+bounces-11895-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 00:05:26 +0100
+	id GPs2JJhgc2kCvQAAu9opvQ
+	(envelope-from <io-uring+bounces-11896-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 12:50:48 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC226E648
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 00:05:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17A475644
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 12:50:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 00FE6300E486
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jan 2026 23:05:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 49A0A303675E
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jan 2026 11:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A623A2ACD;
-	Thu, 22 Jan 2026 23:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC93320382;
+	Fri, 23 Jan 2026 11:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IhytD850"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LldfiBAw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A124C3904EB
-	for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 23:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BF231A7ED
+	for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 11:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769123121; cv=none; b=s5VL+SUv90kOCeMlXl8H+pnnT8VJZDfSqKEDUT7HEuVxm3zi0wUBG77MCHBShknWMUrt8hcxTF4dvmeMBLsYOo7XKlw8QAOilQ0+FST/OfFYhzYS1MOMJgYJVAONZmQ4m+umg3gYspCoH1t3lzM7eZiDVJQw7aWQnXPIBCtwXyg=
+	t=1769168916; cv=none; b=Y/iQpQK5FLMNpPs/4t3+nYugyKO3ElOFXIA2n4MolBvhx3f5IGhZVmEPFlzv1dDU7xZq736ZGiy7yV/2BttsLOddiKgORXbb0Ebw9pExV+07TEzgBbahSRaR6KmR5WbSIajhJrVHzVvTmJ4EqRv5clTg40fCEEJhlp5wYcO7rS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769123121; c=relaxed/simple;
-	bh=BRkNBM+nAK1fU2edOZNlgCTxosMVEVPliQgsZIi7+yI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=X6HCVcRSP4mtU1ZPH478/eCYGtB8ANAPNjwQEcG9Uz55/aaYpjMGb3tvusZJ8G/W6EAnPRrMXvWvhai0Wtzvzt8is8bHIYQo9NBLAOdRdYYo7XcWfM29Q5HKMe2oRZeANe26W//2DAg1/0f8nJ2eDl7LqSmSLyz+0t89X81ykEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IhytD850; arc=none smtp.client-ip=209.85.161.46
+	s=arc-20240116; t=1769168916; c=relaxed/simple;
+	bh=lJbmBDY4p0K2oHemvzGf+vMeVSB1xhFvc7HgcMSNAIU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=tHeQn7cGHqaNZLPlONDvYQ1rBNkV4thOMiyjd8nSl8A4MkMCbw5QpV/qdE1pGu1eapz1+rV173yo/BIMZgyt0f2AIORAyyP5wzyjCj6QwzYbZlb1k0tI6E3x1wKYIrsvw7EhL30ZWnfy/K8cGfi3fuRY0P+3Vx2h9MBy06z05ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LldfiBAw; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6610f045c1eso749744eaf.2
-        for <io-uring@vger.kernel.org>; Thu, 22 Jan 2026 15:05:15 -0800 (PST)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-459ac606f0bso1507515b6e.0
+        for <io-uring@vger.kernel.org>; Fri, 23 Jan 2026 03:48:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769123112; x=1769727912; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xTErY2NBoQwsTHfWwhDbmmqFuZqqlFPuJ/dmdx7ixo4=;
-        b=IhytD850BAchdi2lPktj+KfimWRGO8eLrzqTJ7+KqBM2HFl2TbRi08IeDxu39w4MRv
-         U027mQUt06k0MMkAVMYzOm/7lNgSldE6vqABBmOvF4o/cp4TCVYBrT7WI+i8Van2Og40
-         9MK0dZlqw6Zk5BSGTgHK20ttXlO5Wm8H3HsXsd/IdnnrYdlIHCWmvAVG5oq5cdLBLeyM
-         keECRmOpcKlI7xjZwzr3At3wPayThfyRsSlhQg7Q0hjduWYj3x0xWJTXmIziAzkBCtGe
-         tMhKFljFA31CRE9s8lwzIPlxeWKnTUlGf5uC3Yt7O6vhK5pAOh5wKhunJA97PpUSbYYr
-         8zog==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769168911; x=1769773711; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8j29u+WRc7+WHzvn6sB9Kynj7TGtOy2pPDGqssDmBU=;
+        b=LldfiBAwcUieoCy9bLAxoIuN/mKO8leHHQF9ZLhl0B2WIzCJw5m4Awrp/K+JE+YTQL
+         jMmU/539pfqHtakVn9yZkAnzczEF+TcBQeZBSnm+rqH3dzwZEBuFcaUeYqJlQWPvc6Wc
+         9msAzVvvtv5b1qXEQgEQ9BrJRyf3lmCmXl9YrbseCZURNPdVTD7TfUwi1sEvcQzWR9RI
+         t36+7aLIG2gwJX0Tza/R5Zgk+6qVR8Bui/tcCfjUr/f7lsuee7GhSwYElpLNgE73dCdi
+         1Ew+tsn9OFFKjg6iMpPr7WSTWpTjlcCDsk1kzu8npJrBEkR88eYAAn38Fb7w/tilVep9
+         C9NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769123112; x=1769727912;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTErY2NBoQwsTHfWwhDbmmqFuZqqlFPuJ/dmdx7ixo4=;
-        b=qWXttzeL5DlO/waw+y9Q6XrHeVGwx0wJLrHIx7GKqKwWMEzC1wfvsNz+id3mi16nax
-         PGrSIUpApRCB2LoeHBnPiQzoltohsWHJkWj5nVVC9DaoJWaslXXfHTNwaw3/UnRG06Dc
-         eIO7DRhCAEAviVl9Xs2RkPzyd58Cg37wN6nFlZwXa3F0JnChbgCKE3YaXIWZWUiW8Yp/
-         69r/t/Vgz9PjJ9rwOssBuOaY/Kg2dIljGTCtXnzyR59VGpGnckoxa0VIKGR0JowD57aX
-         baeiK0xJ3XrHId+64NmsHrpBvTiGuVWLxmIkK1kXUVzYteH70bY1nV5Z9DJ1u4KJj0ic
-         GLkQ==
-X-Gm-Message-State: AOJu0Yxl0F18SRMFlmQnL9eAQRva9NtpOnjIJjXk27Y5lnFActJ83lfD
-	aX94qN/OlgS+TQtzA86kR60QSeaDjZc/OBF2C+uVALE0eF3NRbqVBBXy1VfNPRA90+OzfSz7+90
-	VZOoK7FQ=
-X-Gm-Gg: AZuq6aIsNtwkDQKki5jfXSpcTq7w/zWdPRbO4Yx5PhXaNVnjPL86zlDz1WQPkG1Xsh0
-	H8gQeCRxIQUxUMT/G6uOHcPlIuRDtMK/uil1ieYUHJbKvEJr+kx4Usx69lj13hbUn8/efYUrIF9
-	zbinHFGI+C2+pAmyq/emEu/a33O19VJZQKjZK7zIRApeI6Rixvg+8fFNW/kHLAwI0Xy+bSQCCqC
-	wv2FtBR/Y/BO3iK4V5yxp02ymJ7+fv/p3PGrzVDNjaqjWlQxKR70aRRseMsRIMjNeJtv1GUix9m
-	4o94a0c8u5Kk9CVfwcRsELZymkEWBYvhUsHLu0XH0+0SnSq/XmMOhYhwEqmTt/G2bw6LU1+/dNs
-	G3Wcq847rS3Rk9d+Tjl1GFjiUXpI8khNvrshiAKrzrb2kwmVA3nW7bBt7eoNLrvnz419o/geCFA
-	Ek6MvgNMUAME8QyRrYawSl4fJLNvWGEep9Dj4ekaKFenup5ZjLsAd+2FwXwX6HNV+CHjtqYQ==
-X-Received: by 2002:a05:6820:f009:b0:65c:fc52:c338 with SMTP id 006d021491bc7-662cab42982mr625360eaf.50.1769123111879;
-        Thu, 22 Jan 2026 15:05:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769168911; x=1769773711;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s8j29u+WRc7+WHzvn6sB9Kynj7TGtOy2pPDGqssDmBU=;
+        b=aqoE8I/5JUOwM9a2s9TMZx1v5kGCi3dle0QO0AiJ9i0U72LOJre/4pWpTE5lDtdYOV
+         yiz8MVPp2ozNsk2mjnKfztKFnuzeqxawLMRRVPv+hYX7eEzBCWfux3excBVYwx6EhxWo
+         OLAmYjpcoHU+8bVHqp5A2XwukzLgxKGnAAfKFegHCwYQEuW0AXFq8Sgn4RP9Dbqb2LBG
+         AvMVTBsom9cU/1XCMJATt3eYj28c2OnuSL+6uZ5UQfa5GoR8EJCfkuuQbFzkReB4tR1z
+         J2QXE7qYNKeD4JrJAROildvH4URwppS6nxn7Jg9nuCKU8hhQ6aD3fZ21ZZUOHuiaAPxk
+         SA/w==
+X-Gm-Message-State: AOJu0Ywk00hReeyCcfDV/ky8Mewlcchz+aEN9y7TejqUuChF3otyTico
+	PXm3V4kmd2TPbiOWVO6nRR8Krr0LfNr4Qh05bu3BPM9zdnGgzYmUarBadKvmDHUi6h49PwKMDL6
+	P+9+27pk=
+X-Gm-Gg: AZuq6aK/4PKsDu4gDiXjnA0nqcTB3fClXTdVC+3J4IamEhs9IxGuOmelA08Ra4FBb6A
+	hqekc6y4NBQ85UE77xa3BDQaB8qnMFEt6ZDkvHHDdejRT9amnx/08UTAAPKQY5VYD7QBHcjqZQo
+	qNV9k/x12cTulkXGTShWtRZBTBN8t5POpv4UzaG1RkZj8MifhY7Y9t9XUedVg/laJd5EmHVOXPe
+	/gd6GUPKSplMIQfVnZi9/B2NcJOGpMNr7j6VeZI3HMU9zAQvdm1WX8GvfMa7OcDhrAv5+MBE7My
+	7A/RzPgTas5UyPVLeIXlIIHZLE9z034CNwKLpGruq76Rabowrt7Kn4r8ojxB91Zu0LZddEhS2Hr
+	Ei4V3m5ey97aQlXRmw4jl7GHrxdM+ovh79skgH1HD402OtxZ8YZqYN5cIkmORZsZJceKGRxQKID
+	wulcTxM199xLJL8dTk2hK2gTk1LveayPputvo4b360fPirSnTCaxB7g0ldFVIztTsiLlYVeQ==
+X-Received: by 2002:a05:6808:80b3:b0:45c:9973:c539 with SMTP id 5614622812f47-45eb1d49f19mr1343369b6e.26.1769168911019;
+        Fri, 23 Jan 2026 03:48:31 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662cb650fc1sm309217eaf.11.2026.01.22.15.05.11
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45eb4255785sm1133580b6e.19.2026.01.23.03.48.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Jan 2026 15:05:11 -0800 (PST)
-Message-ID: <517fc5f0-5e6d-46ef-800d-9ef4428278a1@kernel.dk>
-Date: Thu, 22 Jan 2026 16:05:10 -0700
+        Fri, 23 Jan 2026 03:48:30 -0800 (PST)
+Message-ID: <40479c6a-b214-47ea-a777-f600cfa03acc@kernel.dk>
+Date: Fri, 23 Jan 2026 04:48:29 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,111 +84,97 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 0/2] Add support for IORING_SETUP_SQ_REWIND
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-References: <cover.1769034107.git.asml.silence@gmail.com>
- <176912275112.522897.5400530813917730862.b4-ty@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <176912275112.522897.5400530813917730862.b4-ty@kernel.dk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.19-rc7
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-11895-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	DMARC_NA(0.00)[kernel.dk];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-11896-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.995];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.997];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel.dk:mid,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 8CC226E648
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D17A475644
 X-Rspamd-Action: no action
 
-On 1/22/26 3:59 PM, Jens Axboe wrote:
-> 
-> On Wed, 21 Jan 2026 22:23:20 +0000, Pavel Begunkov wrote:
->> Add liburing support and tests for IORING_SETUP_SQ_REWIND.
->>
->> Pavel Begunkov (2):
->>   src/queue: Add support for non circular SQ
->>   tests: add SETUP_SQ_REWIND tests
->>
->> src/include/liburing.h          |  5 ++++-
->>  src/include/liburing/io_uring.h | 12 ++++++++++++
->>  src/queue.c                     |  5 +++++
->>  test/test.h                     |  2 ++
->>  4 files changed, 23 insertions(+), 1 deletion(-)
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/2] src/queue: Add support for non circular SQ
->       commit: c22129cf0b8c936eb478d920ef84e53d89c6a5cc
-> [2/2] tests: add SETUP_SQ_REWIND tests
->       commit: 346c063d16bda52f02d00feb744aafe35b4002a9
+Hi Linus,
 
-Hmm I do think you're missing some spots though, no?
+A few fixes for io_uring that should go into this release. This pull
+request contains:
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 987b28aaf99e..016be1e80ef2 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -1702,8 +1702,13 @@ IOURINGINLINE unsigned io_uring_load_sq_head(const struct io_uring *ring)
- IOURINGINLINE unsigned io_uring_sq_ready(const struct io_uring *ring)
- 	LIBURING_NOEXCEPT
- {
-+	unsigned head = 0;
-+
-+	if (!(ring->flags & IORING_SETUP_SQ_REWIND))
-+		head = io_uring_load_sq_head(ring);
-+
- 	/* always use real head, to avoid losing sync for short submit */
--	return ring->sq.sqe_tail - io_uring_load_sq_head(ring);
-+	return ring->sq.sqe_tail - head;
- }
- 
- /*
-@@ -2063,7 +2068,7 @@ IOURINGINLINE struct io_uring_sqe *io_uring_get_sqe128(struct io_uring *ring)
- 	LIBURING_NOEXCEPT
- {
- 	struct io_uring_sq *sq = &ring->sq;
--	unsigned head = io_uring_load_sq_head(ring), tail = sq->sqe_tail;
-+	unsigned head = 0, tail = sq->sqe_tail;
- 	struct io_uring_sqe *sqe;
- 
- 	if (ring->flags & IORING_SETUP_SQE128)
-@@ -2071,6 +2076,9 @@ IOURINGINLINE struct io_uring_sqe *io_uring_get_sqe128(struct io_uring *ring)
- 	if (!(ring->flags & IORING_SETUP_SQE_MIXED))
- 		return NULL;
- 
-+	if (!(ring->flags & IORING_SETUP_SQ_REWIND))
-+		head = io_uring_load_sq_head(ring);
-+
- 	if (((tail + 1) & sq->ring_mask) == 0) {
- 		if ((tail + 2) - head >= sq->ring_entries)
- 			return NULL;
+- Fix for a potential leak of an iovec, if a specific cleanup path is
+  used and the rw_cache is full at the time of the call.
+
+- Fix for a regression added in this cycle, where waitid should be using
+  prober release/acquire semantics for updating the wait queue head.
+
+- Check for the cancelation bit being set for every work item processed
+  by io-wq, not just at the start of the loop. Has no real practical
+  implications other than to shut up syzbot doing crazy things that
+  grossly overload a system, hence slowing down ring exit.
+
+- A few selftest additions, updating the mini_liburing that selftests
+  use.
+
+Please pull!
+
+
+The following changes since commit da579f05ef0faada3559e7faddf761c75cdf85e1:
+
+  io_uring: move local task_work in exit cancel loop (2026-01-14 10:18:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-6.19-20260122
+
+for you to fetch changes up to 145e0074392587606aa5df353d0e761f0b8357d5:
+
+  selftests/io_uring: support NO_SQARRAY in miniliburing (2026-01-21 07:55:13 -0700)
+
+----------------------------------------------------------------
+io_uring-6.19-20260122
+
+----------------------------------------------------------------
+Jens Axboe (3):
+      io_uring/rw: free potentially allocated iovec on cache put failure
+      io_uring/waitid: fix KCSAN warning on io_waitid->head
+      io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
+
+Pavel Begunkov (2):
+      selftests/io_uring: add io_uring_queue_init_params
+      selftests/io_uring: support NO_SQARRAY in miniliburing
+
+ io_uring/io-wq.c                       |  2 +-
+ io_uring/rw.c                          | 15 ++++++---
+ io_uring/waitid.c                      |  6 ++--
+ tools/include/io_uring/mini_liburing.h | 59 +++++++++++++++++++++++++---------
+ 4 files changed, 59 insertions(+), 23 deletions(-)
 
 -- 
 Jens Axboe
+
 

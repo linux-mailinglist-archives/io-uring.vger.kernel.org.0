@@ -1,84 +1,83 @@
-Return-Path: <io-uring+bounces-11909-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11910-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OK15MnHhdGmv+gAAu9opvQ
-	(envelope-from <io-uring+bounces-11909-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 16:12:49 +0100
+	id VFtkC+bhdGnB+gAAu9opvQ
+	(envelope-from <io-uring+bounces-11910-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 16:14:46 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCF67E035
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 16:12:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743DB7E03E
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 16:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 259AB301A2A8
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 15:12:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A9A2B300C01E
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 15:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DE223F424;
-	Sat, 24 Jan 2026 15:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D972DC34E;
+	Sat, 24 Jan 2026 15:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mvzT/h/8"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="t7PBKbTS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from mail-oo1-f68.google.com (mail-oo1-f68.google.com [209.85.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCBCE55C
-	for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 15:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DCB18FDBD
+	for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769267565; cv=none; b=RudzcB68qLIk9mZHL2UqYgUAIU2+PuYJs6mk3dg+Ntq2Lp9ZZ1YiNMZwVinIodZ9WIDvb/aYKVrEMEUu2Z34NQgend3UPLn3SMj/ZDDBItqZSUxjUJR4E9IFbUWMKLIjGX9NuGxNVMKda4Y9g3F/YtnZdK/o3oKpt5jikz1cxAs=
+	t=1769267682; cv=none; b=qivjtVZH6Pdrrz4gmSm97htN1DoCt8khQdrYSXpT/Ww77PhokStl/iMrC15HPpTu+NyLnYXyVGo6bcaCwQGl89iqgLvMQ6NPWTBWXw/EGQiX0MOgCU+1jimH+PihbwXWhNIzIfxuCOMJnTnCaa2O4LA0YD9Zt5OExIauTpX/fgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769267565; c=relaxed/simple;
-	bh=SfLYbK4qwgzMLEps2m9yiBpRchxa/dLatZcSZyvvCSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lwHlsOzrnr4yjn8YOK3xHSte/361Cq5YxOopT3q3cKz4987YbhqICgP8Mztf3TihWq06ojkaklBpujz5WKo+cdaxrAYpyMkMQdUhz4jbh1AgNqvq+akShzWdgT5/L7hZEGiDoi26/d97dKH6XvxA39C+tVb5CFmLuUG8NEFtgeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mvzT/h/8; arc=none smtp.client-ip=209.85.160.49
+	s=arc-20240116; t=1769267682; c=relaxed/simple;
+	bh=mlxg/+Y14geNE63XB5dcfGiprcSJzXI8gCcwNwhvaI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lLBfwXdRgnUbKmOnpMXuFn0wHLIEh3dUh6svKRzUTyFsBlBRZXJTYp7X0dPpS/bojOKxE1ySwbHGn1eDzFKryyHhtR0SiPZgeyPqYSDYwLJVsSfb9izxhVp8mpTeSpTwu62NiPnWEbyX+Yiwe5rcOIRToRxPLbwS/KE5Q2e8xaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=t7PBKbTS; arc=none smtp.client-ip=209.85.161.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-40421de595fso2430476fac.3
-        for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 07:12:42 -0800 (PST)
+Received: by mail-oo1-f68.google.com with SMTP id 006d021491bc7-65d096dd0ceso571751eaf.3
+        for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 07:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769267562; x=1769872362; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769267680; x=1769872480; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YqcprYZO2UOYJSbopZn8EqEc3e6W/5vS7pHhEadrWvk=;
-        b=mvzT/h/8ACf9BSnaklP7CilL0Hzn5jf+vi0qflZa0Hm55B4goP92Xx0pPaWgd5N1V4
-         EllHOpDWuTCRtZn/7V66eL+p7ODzyEA/7MFQS23ivWPNiHFAxoaLMWKWXmYCKBhZup1x
-         0aT5oSME4M01RaEHn7DWhbiWxfSSd2D4IiWq93eT3j+isvWhbBAaZGiecGkNlB63Sdp3
-         T5qYnh+6O/0sMZ5d09qWqN8f9o3CVSKjcu78RDram5vEV545jEY5YGF0bd4243vjVUGV
-         Og7LNSfihrc/im2+bS7gpqHugJyHauTYDN8WU1099l1klQY3zws4ID8w5n05O5dDptzd
-         ll4w==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=twHLCrUFaWNPEY9IZbwbr71SXMraJnqj5vi/Tu8ErvI=;
+        b=t7PBKbTSmHOPGZmQZCox4D1TWi+hTLozNalpz3VDQB2bC6t/drMI1GPmzf+VFZII3a
+         12h7BwwmSPugrR9YWWEo0zQsXEJIbJwiV8H/arLFwQ8N8gijyd11hej9qd79yz7AF0lj
+         vnVWh3724bxAkj6PjW/qBNnu+ySPRE2RI02karRa281EgVvr6thZoFuBWPGSWhnE7ucg
+         7pclMzhQFCPWi9a3AqvxJnCc9aA7WcZ/hq/O3ZWa3vZfWx736ahJiNXPp7hmopCuW+UG
+         nMfsdo3IWXpfsZwSBB1Q6r12PPw5dY9gcP+CeA5Aq5dQO3/KJFtcfWmOn3/XPcpDAewO
+         7LpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769267562; x=1769872362;
+        d=1e100.net; s=20230601; t=1769267680; x=1769872480;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YqcprYZO2UOYJSbopZn8EqEc3e6W/5vS7pHhEadrWvk=;
-        b=wbpHokir0RwrmVXYjpA/M/qBhXsUl/dHyJSLvuR4hiu8mNoMvdCoalv8Zj7icM8q+l
-         qI/R2w41eCebXVNFAMb0tQ3utl9+LzFX1WHO75yV7YnES5kFg7vN5yEruRe6IRb42GIO
-         Jwke7Gwx5hhbvQIqrz768nM5rn7lqOyuxq0oSdm3/An22OMlfXzpSY8p7t1g4josuSKY
-         NqEwJNVdSOXD7xargOr7l7KIJEcPJ5jdYq9NEbc22ySF4+VQKFGOltYD8TlULjX0R3hV
-         sJP9Qid4spVy2C7xASvbvIm3aUPfar6MA57Nmv6i6lBKGo3/zSc5Fz5k9yp0IFE58Q1G
-         2siw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxhde/QpjxpkmfwXd3rXfZv2QElJTWzBOoGnmfQkKJWVLbpaP1JD7h92pTDvbU2IohEtUFKtanXQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCACrq/a/JD2EAiWfNiVQFwX/BO7WuyfzRNuB4zyABQb3gJCNX
-	IONcaQE1jKPJ1wAjPvG4nNA6tYecu2EG/EqEzTMCPydSAy3/hXX2brZUdmTW3WVXZC4=
-X-Gm-Gg: AZuq6aLwczuytYwRPtdmB/u82AW7Nnv9PcNUxv2fLTd/sgOiRta2c61FU96LhY5K+Lw
-	ZKuWDN+NvwZ8pMhNySqStqLErN2/yZTLoTa/XzA6G9BQgTrj3h1CPkuuZoyGQFOdWbUcLanOzcX
-	FCOxoggBNOd+cc13ilnx8B5QUCv/PCBmb5Idvoe7jYPZvulATzkKtLc0VESYDXYq0Uki+/b0+uu
-	MecCS/Yfhoi3k4/UzwzRUIFCDJjXO8NUhGhZH2LDJ23MRQPr3fPq6teAdX0VgvK2jEwTN9UC8v7
-	sUeMKXhZZ8tvdLkNLyqI2hk1Y2B26WEozs8Ag37C5w0CfYGLFylenQecMUGsQxQGbskA1BUKdRN
-	nhIHglK5E+45GzO9Xb3I7WlWP6Ij5CQAhu02WCiDOmTBSZ4TiOT+W/fJnMFVfUiw+0wkGywZaqp
-	hq4kyutQaPH7Wn7qjMOBCdkq6eausigTaNQYngvsWBzDoUU/XH4rDt5HHxIhNatoikBb4bnQ==
-X-Received: by 2002:a05:6820:f0a:b0:65f:1770:de44 with SMTP id 006d021491bc7-662cab7f53dmr3105800eaf.63.1769267561431;
-        Sat, 24 Jan 2026 07:12:41 -0800 (PST)
+        bh=twHLCrUFaWNPEY9IZbwbr71SXMraJnqj5vi/Tu8ErvI=;
+        b=R4EVh4dzzc+jwJsb62tlP2VfcquGYZ0DZ1dMy/Aic40DGTQJTqobq2ymCkpgJThUge
+         JdSrkv+JrpxBa/yUwEM14QOPcpmNR8MiTwszWIOBd7B686/iUV7FV0LDSkFEXSZuJrQ6
+         ZFSKnKhKMijz3+O9zobPAxmhzcyYUAJGvDm5J5rhoWO70UtE+/mAMwLhYr10j79QPLSy
+         2KUZPwWCsHnOJK4plXGGULN1gmG9on1qD8d18+mKy+4g8udhSqeCWgDj7OzKRyP8o1xN
+         aCNjURLfmRDDj8slL9roKeqkeGPVTk9l5K1iU0LzpuAx+vwOoKVgk4aWN6cIShl5UVPq
+         YIVA==
+X-Gm-Message-State: AOJu0Yy88PMqjnnny4LkM15JAT/jfrIjwwudQMT8A/jzGNUOlNtRTr0H
+	FoYWa78tLgaVScCfsA6Ck8hYLYImPV6bbA0r/fdAMC2slxa158s3PuiAh0NFc5WyJIs=
+X-Gm-Gg: AZuq6aIIvV/XVsqHpScV3bUbJ1bMW+cSehIMtdVbSNi5zMfd85xor9hvRN9N/Vrmuxu
+	vN4WvojuvGvP5S9C1X/TQKoVb+ZX1+xBRs0smdRA4EDkw27x1AZR80dqQeLIfr4KD+aJaH31MRJ
+	JlOPu8/TgsVQ8v2VlcPGjYHMwN4KplAgs1K5fotnZPsWawlY4FRROrCeJYxjDO889g4NQN7Liwt
+	Jvgns9dnIVXUXCSWje1TYri4fdr/6CQFQkTtgSiE9ur/gEUdyT4a2p3mRtQLZvQDjudlShSsOYs
+	z95BpII8/0NT9GcgJXu2CQHyk9ZNToMyvG8kxWsgH7gR8XxDE/c1/FGYcfyKQ2skSAx99ukYpOM
+	TT/l5x1oreGBY3TMq687Tf8q7cA92+q+tculeXkBrHt0I3BOzuGy8t/FFd2OXR2LaIWjQNdHiiA
+	osiGgZgz2aKhsq3TSiRRMx545SSPfmecgBEb/vJYZeRKA49aiB6/dbOVMRqKiTnEbA3QEmmg==
+X-Received: by 2002:a05:6820:16a5:b0:662:c5c5:4fa8 with SMTP id 006d021491bc7-662cab5253cmr2834549eaf.39.1769267678481;
+        Sat, 24 Jan 2026 07:14:38 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662cb4f24fdsm2648779eaf.5.2026.01.24.07.12.38
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662cb4e5b2fsm2507135eaf.1.2026.01.24.07.14.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jan 2026 07:12:39 -0800 (PST)
-Message-ID: <30ee2371-f82f-4b29-9276-71b8cc12b87d@kernel.dk>
-Date: Sat, 24 Jan 2026 08:12:38 -0700
+        Sat, 24 Jan 2026 07:14:37 -0800 (PST)
+Message-ID: <74f2ec89-ca40-44a0-8df7-de404063a1a3@kernel.dk>
+Date: Sat, 24 Jan 2026 08:14:35 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,125 +85,142 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 0/2] Add support for IORING_SETUP_SQ_REWIND
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1769034107.git.asml.silence@gmail.com>
- <176912275112.522897.5400530813917730862.b4-ty@kernel.dk>
- <517fc5f0-5e6d-46ef-800d-9ef4428278a1@kernel.dk>
- <d106a68d-e981-4239-b0db-21a311ec03a3@gmail.com>
- <2d2da3b2-74c6-4605-8d13-3f0cdc67191e@kernel.dk>
- <9c10b8e7-d64c-491a-96b3-fc26863e0dbf@gmail.com>
+Subject: Re: [PATCH v2] io_uring/rsrc: fix RLIMIT_MEMLOCK bypass by removing
+ cross-buffer accounting
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Yuhao Jiang <danisjiang@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20260119071039.2113739-1-danisjiang@gmail.com>
+ <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
+ <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
+ <2919f3c5-2510-4e97-ab7f-c9eef1c76a69@kernel.dk>
+ <CAHYQsXQK4nKu+fcni71__=V241RN=QxUHrvNQMQtPMzeL_z=BA@mail.gmail.com>
+ <d8d28435-2a89-4b25-925e-14fdb346839b@gmail.com>
+ <8c6a9114-82e9-416e-804b-ffaa7a679ab7@kernel.dk>
+ <2be71481-ac35-4ff2-b6a9-a7568f81f728@gmail.com>
+ <2fcf583a-f521-4e8d-9a89-0985681ca85b@kernel.dk>
+ <d2fc2ff2-98d9-49f8-af95-968100174d55@gmail.com>
+ <3b7e6088-7d92-4d5c-96c7-f8c0e2cc7745@kernel.dk>
+ <efe080c9-5176-4fa1-9f65-5be44074779e@gmail.com>
+ <596bc7ac-3d24-43a7-9e7e-e59189525ebc@gmail.com>
+ <fc8664bb-7769-48a2-b470-71fb81828e26@kernel.dk>
+ <654fe339-5a2b-4c38-9d2d-28cfc306b307@kernel.dk>
+ <eea0d7c3-9aed-4c1f-8146-23b82e611899@kernel.dk>
+ <9317bad6-aa89-4e93-b7d2-9e28f5d17cc8@gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <9c10b8e7-d64c-491a-96b3-fc26863e0dbf@gmail.com>
+In-Reply-To: <9317bad6-aa89-4e93-b7d2-9e28f5d17cc8@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-11909-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-11910-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:mid,kernel.dk:email]
-X-Rspamd-Queue-Id: 3CCF67E035
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel.dk:mid]
+X-Rspamd-Queue-Id: 743DB7E03E
 X-Rspamd-Action: no action
 
-On 1/24/26 3:44 AM, Pavel Begunkov wrote:
-> On 1/23/26 19:04, Jens Axboe wrote:
->> On 1/23/26 7:14 AM, Pavel Begunkov wrote:
->>> On 1/22/26 23:05, Jens Axboe wrote:
->>>> On 1/22/26 3:59 PM, Jens Axboe wrote:
->>>>>
->>>>> On Wed, 21 Jan 2026 22:23:20 +0000, Pavel Begunkov wrote:
->>>>>> Add liburing support and tests for IORING_SETUP_SQ_REWIND.
->>>>>>
->>>>>> Pavel Begunkov (2):
->>>>>>     src/queue: Add support for non circular SQ
->>>>>>     tests: add SETUP_SQ_REWIND tests
->>>>>>
->>>>>> src/include/liburing.h          |  5 ++++-
->>>>>>    src/include/liburing/io_uring.h | 12 ++++++++++++
->>>>>>    src/queue.c                     |  5 +++++
->>>>>>    test/test.h                     |  2 ++
->>>>>>    4 files changed, 23 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> [...]
->>>>>
->>>>> Applied, thanks!
->>>>>
->>>>> [1/2] src/queue: Add support for non circular SQ
->>>>>         commit: c22129cf0b8c936eb478d920ef84e53d89c6a5cc
->>>>> [2/2] tests: add SETUP_SQ_REWIND tests
->>>>>         commit: 346c063d16bda52f02d00feb744aafe35b4002a9
->>>>
->>>> Hmm I do think you're missing some spots though, no?
->>>>
->>>> diff --git a/src/include/liburing.h b/src/include/liburing.h
->>>> index 987b28aaf99e..016be1e80ef2 100644
->>>> --- a/src/include/liburing.h
->>>> +++ b/src/include/liburing.h
->>>> @@ -1702,8 +1702,13 @@ IOURINGINLINE unsigned io_uring_load_sq_head(const struct io_uring *ring)
->>>>    IOURINGINLINE unsigned io_uring_sq_ready(const struct io_uring *ring)
->>>>        LIBURING_NOEXCEPT
->>>>    {
->>>> +    unsigned head = 0;
->>>> +
->>>> +    if (!(ring->flags & IORING_SETUP_SQ_REWIND))
->>>> +        head = io_uring_load_sq_head(ring);
+On 1/24/26 4:04 AM, Pavel Begunkov wrote:
+> On 1/23/26 16:52, Jens Axboe wrote:
+>> On 1/23/26 8:04 AM, Jens Axboe wrote:
+>>> On 1/23/26 7:50 AM, Jens Axboe wrote:
+>>>> On 1/23/26 7:26 AM, Pavel Begunkov wrote:
+>>>>> On 1/22/26 21:51, Pavel Begunkov wrote:
+>>>>> ...
+>>>>>>>>> I already briefly touched on that earlier, for sure not going to be of
+>>>>>>>>> any practical concern.
+>>>>>>>>
+>>>>>>>> Modest 16 GB can give 1M entries. Assuming 50ns-100ns per entry for the
+>>>>>>>> xarray business, that's 50-100ms. It's all serialised, so multiply by
+>>>>>>>> the number of CPUs/threads, e.g. 10-100, that's 0.5-10s. Account sky
+>>>>>>>> high spinlock contention, and it jumps again, and there can be more
+>>>>>>>> memory / CPUs / numa nodes. Not saying that it's worse than the
+>>>>>>>> current O(n^2), I have a test program that borderline hangs the
+>>>>>>>> system.
+> ...
+>>> Should've tried 32x32 as well, that ends up going deep into "this sucks"
+>>> territory:
 >>>
->>> The head should already be zero. Actually, sounds like the get_sqe
->>> hunk from the patch is not needed either.
+>>> git
+>>>
+>>> good luck
+> 
+> FWIW, current scales perfectly with CPUs, so just 1 thread
+> should be enough for testing.
+> 
+>>> git + user_struct
+>>>
+>>> axboe@r7625 ~> time ./ppage 32 32
+>>> register 32 GB, num threads 32
+>>>
+>>> ________________________________________________________
+>>> Executed in   16.34 secs    fish           external
+> 
+> That's as precise to the calculations above as it could be, it
+> was 100x16GB but that should only be differ by the factor of ~1.5.
+> Without anchoring to this particular number, the problem is that
+> the wall clock runtime for the accounting will linearly depend on
+> the number of threads, so this 16 sec is what seemed concerning.
+> 
+>>>     usr time    0.54 secs  497.00 micros    0.54 secs
+>>>     sys time  451.94 secs   55.00 micros  451.94 secs
 >>
->> Yeah agree, I think they are both false alarms. Might warrant a comment
->> though. Or maybe we just fold it into io_uring_load_sq_head()?
+> ...
+>> and the crazier cases:
 > 
-> What I'm implying is that the
+> I don't think it's even crazy, thinking of databases with lots
+> of caches where it wants to read to / write from. 100GB+
+> shouldn't be surprising.
+
+I mean crazier in terms of runtime, not use case. 32G is peanuts in
+terms of memory these days.
+
+>> axboe@r7625 ~> time ./ppage 32 32
+>> register 32 GB, num threads 32
+>>
+>> ________________________________________________________
+>> Executed in    2.81 secs    fish           external
+>>     usr time    0.71 secs  497.00 micros    0.71 secs
+>>     sys time   19.57 secs  183.00 micros   19.57 secs
+>>
+>> which isn't insane. Obviously also needs conditional rescheduling in the
+>> page loops, as those can take a loooong time for large amounts of
+>> memory.
 > 
-> +    if (!(ring->flags & IORING_SETUP_SQ_REWIND))
-> +        head = io_uring_load_sq_head(ring);
-> +
-> 
-> change from the original patch for normal 64B _io_uring_get_sqe()
-> doesn't seem to be necessary. I need to take a look, but that's
-> a good thing since the function is somewhat frequently called and
-> inlined.
-> 
-> That would leave __io_uring_flush_sq() to be the only place
-> checking the flag, so maybe comments would better to be put
-> there.
+> 2.8 sec sounds like a lot as well, makes me wonder which part of
+> that is mm, but it mm should scale fine-ish. Surely there will be
+> contention on page refcounts but at least the table walk is
+> lockless in the best case scenario and otherwise seems to be read
+> protected by an rw lock.
 
-If you have time, would you mind checking the current repo and sending a
-patch? Looks like I messed up a bit and committed some of these bits
-with:
-
-commit 5d1c94f754f3bca156d84b4ebcaf2f211dcd09f2
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Thu Jan 22 17:11:53 2026 -0700
-
-    test/sqe-mixed-noop: add SQ_REWIND testing
-
-inadvertently as I was doing some testing.
+Well a lot of that is also just faulting in the memory on clear, test
+case should probably be modified to do its own timing. And iterating
+page arrays is a huge part of it too. There's no real contention in that
+2.8 seconds.
 
 -- 
 Jens Axboe

@@ -1,85 +1,84 @@
-Return-Path: <io-uring+bounces-11907-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11908-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id F7Q+EqiidGnz8AAAu9opvQ
-	(envelope-from <io-uring+bounces-11907-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 11:44:56 +0100
+	id 11EhNkendGmu8QAAu9opvQ
+	(envelope-from <io-uring+bounces-11908-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 12:04:39 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C727D458
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 11:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F5B7D572
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 12:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DB61030097E1
-	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 10:44:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BEF1E300A612
+	for <lists+io-uring@lfdr.de>; Sat, 24 Jan 2026 11:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A36F23BCE3;
-	Sat, 24 Jan 2026 10:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0DD24EA90;
+	Sat, 24 Jan 2026 11:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZys+2oD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2gksqst"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B981522579E
-	for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 10:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B78D1C5D57
+	for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 11:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769251493; cv=none; b=SSiOSzSM+HUViF8pMKFtagBxyu7aEyBW0vIrOCCHhRKwv9vCMHeco7EdUjA+fJ67h0wtGK1gHYVjSqOlWWflYWHILYa7+V8UIcpuDfkftw8wy5F6KHfAsk651o+gIdbyDx9g0l3EsuHIioV+ypXdxTLPVMkPHYzl/9o6pN6/Nbo=
+	t=1769252676; cv=none; b=npaDk7s0WGiCBCyDNjDtPmoJ7aDOFQe25e6KrIE74jw8C7/Yur3hZP3lWRshm+VUaZV5E3KNVuFRkuH0sM8Usp6G5rTme6A/oOVv8sRYLOM0kogTNOtqKuidnU3vSWIS9DpnAmPLO6mpoH99jUkAUXmuDikWqaGcbn+a7O6edO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769251493; c=relaxed/simple;
-	bh=E9yBKx0fefNGwsalNaIbzgdp9yQTVkHKNxhOX2f3T1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CBcJGQUJTBqs23fj6YSVXhCCo9KMzKmKpmYX4BvNAZicXRMIFX3HJYFNvHj9T1q0t/Nv7QsjUQvBuUnqGCB2TDOCkXrDnzNKLkXnAZDHtrmJCLGw5sqD1pkIH8fiU1CbN3mUmZQ/prD8GAzj9tsSj9SpnNvK02dQOFFIdhlg1fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZys+2oD; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1769252676; c=relaxed/simple;
+	bh=QvepxcoI9HsfH9a32eqNoIUE7TeRCrEjtB6GukarcdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T2Z7Rnv1zFDqOiJ7dtEPfUtOWc42vKzuZ+m+pPVGxQQ9clvDa30zqXBbPH0DBiephNEtl3JOALnJIbTQFz9IuQJgSgGnCcvHk1ZxbQ567lN7Sj/UFex0i4OyOl/SJJVsr/itCTrRQb4fmi3e7fjsX5rJ2G2eVQXW9n4oS+oDRLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2gksqst; arc=none smtp.client-ip=209.85.221.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-480142406b3so20499795e9.1
-        for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 02:44:51 -0800 (PST)
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-4359108fd24so1833589f8f.2
+        for <io-uring@vger.kernel.org>; Sat, 24 Jan 2026 03:04:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769251490; x=1769856290; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769252674; x=1769857474; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uEtW9qKL0sdhJsFbY6GgM6jCB1uD4PusmuRJWIXUWhY=;
-        b=DZys+2oDyyMLXmQYZ3R5yDmbJyz5VZbFLWdbYLoskT2MWn3OGwoQnIcDwIWpjsW4G8
-         641mY4S1FKMzqlGXNtbv0uW19O76RqLc1cfinuYeDxvoLslABxqmM6vmnbhu2055UIb5
-         H4d6aqJHSXU88tKetMUdqbT9NbNhFJAXpsaPGm8Mrqk4p9gQviLJAdcFtZBQgdiplXqB
-         y67b9/IeSWDVNp60zh7ku1bcVq6zvsSP5w4/F7ZbGm7/VS6uT/tFV7t9nOGhTHxTAU4n
-         CcdepPGECaqtVbIROJLtPYNHPoTvgeBAFACsaS6j8XnvO05bw+xx0TvJMFSjTzFxJggn
-         AAAQ==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oYJt6/0BCXAzZx2pq7NPVuk1wGb1eMVM+qNktItIKjs=;
+        b=V2gksqstJFJgiEb3ZL72YYVRWyceCx2xOv9axwAvMhDOAXn34el0peAQ+bVajnmzA3
+         0ndKXnF//Q81WblmmY42kWKJDJp07iVBtjSPg4xFVgfiTvRVzyIaieb3yvIm2tJblvW0
+         dmIQGEIwcyZwijzap8HXjOg9j/SYu+QAwWfNttvNN2pSzKqz4/cahh8nzV4FOIOWqX6y
+         b2lGdi0DLiHoczsQxu+CTFFm1EGJulAlBJ5rLhKQlwWJhs2VD6r7CMJ7clLItZ/XgdzJ
+         FTBuaI79gAs+KAJJGw0+SuFhKBkQzulbnFujMgU2ee1H2yl0rn1/EUpUxqbfwa2y1yD0
+         5jDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769251490; x=1769856290;
+        d=1e100.net; s=20230601; t=1769252674; x=1769857474;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uEtW9qKL0sdhJsFbY6GgM6jCB1uD4PusmuRJWIXUWhY=;
-        b=qcvQBhOxrlufwli9m0wNFI8J8XVMN1uEYEAMzdFXLxhGismBusRecf30vv96BI8zDu
-         1lIXV/5HEsrcVhrD1WuhCzv5HJc3CANi3zK2ENhBXYDa0JlI91I6psXZiZZjJSKy/4mj
-         T+/pqBw0jJlDUeGHAqA5F3dpY7b0HEljSdSNW5c+HaBUiQkVFjt4SbIgdo+ChTrPy6cO
-         +lQd90g8q2vJGnMMr9V/CcTJXEyIEXUxU3N2vBMSyKHiYOnmpd6ENck9uAYCGGkyhjU7
-         xiFpmjhYwkhQ5Q4ZDtrWhq6b0m2DxI43L77SVa3kNGJlIMrqycyUMlP8KP14qQYBdsh7
-         ev3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWFHgyv1EURgmCzxdRMmQWWoEky8sAdrj6wN5CNNs4qKwDjjF8jm3nonUqoGDm3LJkgZZNV8/s2jw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6rYSC7/wN7KdjdsPgzo+kon2WAGA0JpUJygwjySFVwVTwg424
-	695TJM70jFTxYuS/j84IuDXpc2NM+FBABxcn2UuUvoFdl+9NHFlwA4taphCuGg==
-X-Gm-Gg: AZuq6aK0i3J8AM0+Yd7anA3ZwICwbfdpH3sd7sP/deRY0k/YR7/keUoVExcY1vD3EF8
-	REQmWKz28GCgMbiJmXTP7zxneKi5hclRmW3BlmaOg1JSi4UzCHnmvg2MPAanjOrVOvZKy9onBXT
-	pUEoUerdnpJU3VnleUXRjJ7HHxWNqmUzZFB6dpqsHdn7F+RX3PvQQ1vEL3dJi8Z+LTttWrewMSf
-	p5Q30eVq5a6ugkacV/GnPFoTDafRce03QuxLgG24qFf57CDBhSP36ezVwTDM3K3mUe3feNnDawt
-	Ss0GLOGC1gbKuuecv9fSDagplflei8i8EAKOr0inQIyHMkCdXgliPGuz7mny8HbVimmjwGLZ0Ja
-	w+2LGaAcTwWOoxPuaZ1XUZCOGNv2QVbF7n96RWAmfuJ3iCgssGaIrTAKPW8w+5NF4W3fpUS0xQp
-	qkL6JiQC+iUrohTFkLkkYnxC5QxKTivslokEJOuhnkHb6l6mNpKglJppzWLrTe02rcb2fKWBNGj
-	8J+JvP9x0up8Kh8tSEzcCXRjpu6pN1UeRXrNAolUbPDMfyA0g92czLBEDB8ULAo8irClyAqkqZ3
-X-Received: by 2002:a05:600c:4fcb:b0:47e:e2b0:15b8 with SMTP id 5b1f17b1804b1-4804c944f2dmr92391185e9.4.1769251489919;
-        Sat, 24 Jan 2026 02:44:49 -0800 (PST)
+        bh=oYJt6/0BCXAzZx2pq7NPVuk1wGb1eMVM+qNktItIKjs=;
+        b=PlBKBflbkN9IHndALV5MIwScoXhPlRnhMmlJDRlHRE9GYCWqGbFWe3ZOUa+O23SZsc
+         Z1Uu4VBmnVIeHcL5HAnbBbjjFooB3MAGoNwkG7E02TdkJQhv6tLVQNMUcABcemv07bui
+         rlbr5OpZOB6nT2LSOs39+94DRTbGrmBrPxFX517fVQClrbCgQNQLWstN12GRPGQBPCLw
+         CpYBUx1/AHdzuUUeaxOdl0G43GTM+KbmnnLJtyfHQ1DDBHGvFLUMeUxedLPGdjJ9pp3B
+         +K4hLEJl0SDu7q9Xc9mRm1nLMWwvMi6ipqxR1mG4ozHVffANUndEKwIH+6OD3CIkGYA1
+         AifQ==
+X-Gm-Message-State: AOJu0YxxBZkIhsWm5dF2haNADiLqMyxDOYgzEjaiVGJMtKCjlnqD/EYc
+	qDN5Q+qzBWOr9RUfv5sJrxnZSx5jNqY+ZUm4rjEhTvvJAdhXfR0/arno
+X-Gm-Gg: AZuq6aKADopHNq+cWxJL9epZlVuS/03zGXf6qdDmaFOkM8UkMo+DTk8n4VxxPKn6VLN
+	zydZzKqG419gy3Acx6y0ZNGw+QSjk0oD6sRziHB7u6Y9G4dcO1EyEeCtBKODO4C3uB+5RQc+m0F
+	dgOLHXPAyJeQFve/g8VAaMWY9PpIzrJZd2ogZe/A1yPelO4WFJ3dMI3SFs+WjsLvyyjU/1uj5nW
+	W68W7cxiJAm9tNMCwPtXWIytdCDT/D6xlNYRDLIBirymCLi1h/GeA3Pnul3RoanY3YlUNJ1vDkV
+	OjGAPdMWNQrsq0vLhFCVqdSsh8oXTYYfIvVZkpt3AI+lja8o9Ougq6u3zizqbTpfmCh6FMtoeZq
+	MSp5B4lqgLNkZSlhJajgI1CH9cBDFiVkdXXHbRO/q1bVhVDs94BV+f87rXtIt810EBV7xkld+1N
+	PstyqiFD8mbYXc6pzJLtEkPg7F9vjqhSmHMpfHGBoKHKWaad/JOJ8ZhKTZLIv3c3eVP+PlfanDL
+	1dfIxAdECJK9+xlK6h9o6yLXtZE4nVkUEvl1xW7iUplxyfnmdI2i0Njz4r/KLlhgQ==
+X-Received: by 2002:a05:6000:420e:b0:432:aa61:a06e with SMTP id ffacd0b85a97d-435b9658ccemr7315702f8f.32.1769252673590;
+        Sat, 24 Jan 2026 03:04:33 -0800 (PST)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804dbe1fb8sm44160765e9.20.2026.01.24.02.44.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c02c91sm13843795f8f.9.2026.01.24.03.04.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jan 2026 02:44:49 -0800 (PST)
-Message-ID: <9c10b8e7-d64c-491a-96b3-fc26863e0dbf@gmail.com>
-Date: Sat, 24 Jan 2026 10:44:47 +0000
+        Sat, 24 Jan 2026 03:04:32 -0800 (PST)
+Message-ID: <9317bad6-aa89-4e93-b7d2-9e28f5d17cc8@gmail.com>
+Date: Sat, 24 Jan 2026 11:04:31 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,16 +86,30 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 0/2] Add support for IORING_SETUP_SQ_REWIND
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1769034107.git.asml.silence@gmail.com>
- <176912275112.522897.5400530813917730862.b4-ty@kernel.dk>
- <517fc5f0-5e6d-46ef-800d-9ef4428278a1@kernel.dk>
- <d106a68d-e981-4239-b0db-21a311ec03a3@gmail.com>
- <2d2da3b2-74c6-4605-8d13-3f0cdc67191e@kernel.dk>
+Subject: Re: [PATCH v2] io_uring/rsrc: fix RLIMIT_MEMLOCK bypass by removing
+ cross-buffer accounting
+To: Jens Axboe <axboe@kernel.dk>, Yuhao Jiang <danisjiang@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20260119071039.2113739-1-danisjiang@gmail.com>
+ <bc2e8ec1-8809-4603-9519-788cfff2ae12@kernel.dk>
+ <CAHYQsXTHfRKBuTDYWus9r5jDLO2WLBeopt4_bGH_vVm=0z7mWw@mail.gmail.com>
+ <2919f3c5-2510-4e97-ab7f-c9eef1c76a69@kernel.dk>
+ <CAHYQsXQK4nKu+fcni71__=V241RN=QxUHrvNQMQtPMzeL_z=BA@mail.gmail.com>
+ <d8d28435-2a89-4b25-925e-14fdb346839b@gmail.com>
+ <8c6a9114-82e9-416e-804b-ffaa7a679ab7@kernel.dk>
+ <2be71481-ac35-4ff2-b6a9-a7568f81f728@gmail.com>
+ <2fcf583a-f521-4e8d-9a89-0985681ca85b@kernel.dk>
+ <d2fc2ff2-98d9-49f8-af95-968100174d55@gmail.com>
+ <3b7e6088-7d92-4d5c-96c7-f8c0e2cc7745@kernel.dk>
+ <efe080c9-5176-4fa1-9f65-5be44074779e@gmail.com>
+ <596bc7ac-3d24-43a7-9e7e-e59189525ebc@gmail.com>
+ <fc8664bb-7769-48a2-b470-71fb81828e26@kernel.dk>
+ <654fe339-5a2b-4c38-9d2d-28cfc306b307@kernel.dk>
+ <eea0d7c3-9aed-4c1f-8146-23b82e611899@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <2d2da3b2-74c6-4605-8d13-3f0cdc67191e@kernel.dk>
+In-Reply-To: <eea0d7c3-9aed-4c1f-8146-23b82e611899@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
@@ -108,15 +121,16 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-11907-lists,io-uring=lfdr.de];
-	RCPT_COUNT_TWO(0.00)[2];
+	TAGGED_FROM(0.00)[bounces-11908-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
@@ -125,72 +139,78 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com]
-X-Rspamd-Queue-Id: 95C727D458
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Rspamd-Queue-Id: 27F5B7D572
 X-Rspamd-Action: no action
 
-On 1/23/26 19:04, Jens Axboe wrote:
-> On 1/23/26 7:14 AM, Pavel Begunkov wrote:
->> On 1/22/26 23:05, Jens Axboe wrote:
->>> On 1/22/26 3:59 PM, Jens Axboe wrote:
->>>>
->>>> On Wed, 21 Jan 2026 22:23:20 +0000, Pavel Begunkov wrote:
->>>>> Add liburing support and tests for IORING_SETUP_SQ_REWIND.
->>>>>
->>>>> Pavel Begunkov (2):
->>>>>     src/queue: Add support for non circular SQ
->>>>>     tests: add SETUP_SQ_REWIND tests
->>>>>
->>>>> src/include/liburing.h          |  5 ++++-
->>>>>    src/include/liburing/io_uring.h | 12 ++++++++++++
->>>>>    src/queue.c                     |  5 +++++
->>>>>    test/test.h                     |  2 ++
->>>>>    4 files changed, 23 insertions(+), 1 deletion(-)
->>>>>
->>>>> [...]
->>>>
->>>> Applied, thanks!
->>>>
->>>> [1/2] src/queue: Add support for non circular SQ
->>>>         commit: c22129cf0b8c936eb478d920ef84e53d89c6a5cc
->>>> [2/2] tests: add SETUP_SQ_REWIND tests
->>>>         commit: 346c063d16bda52f02d00feb744aafe35b4002a9
->>>
->>> Hmm I do think you're missing some spots though, no?
->>>
->>> diff --git a/src/include/liburing.h b/src/include/liburing.h
->>> index 987b28aaf99e..016be1e80ef2 100644
->>> --- a/src/include/liburing.h
->>> +++ b/src/include/liburing.h
->>> @@ -1702,8 +1702,13 @@ IOURINGINLINE unsigned io_uring_load_sq_head(const struct io_uring *ring)
->>>    IOURINGINLINE unsigned io_uring_sq_ready(const struct io_uring *ring)
->>>        LIBURING_NOEXCEPT
->>>    {
->>> +    unsigned head = 0;
->>> +
->>> +    if (!(ring->flags & IORING_SETUP_SQ_REWIND))
->>> +        head = io_uring_load_sq_head(ring);
+On 1/23/26 16:52, Jens Axboe wrote:
+> On 1/23/26 8:04 AM, Jens Axboe wrote:
+>> On 1/23/26 7:50 AM, Jens Axboe wrote:
+>>> On 1/23/26 7:26 AM, Pavel Begunkov wrote:
+>>>> On 1/22/26 21:51, Pavel Begunkov wrote:
+>>>> ...
+>>>>>>>> I already briefly touched on that earlier, for sure not going to be of
+>>>>>>>> any practical concern.
+>>>>>>>
+>>>>>>> Modest 16 GB can give 1M entries. Assuming 50ns-100ns per entry for the
+>>>>>>> xarray business, that's 50-100ms. It's all serialised, so multiply by
+>>>>>>> the number of CPUs/threads, e.g. 10-100, that's 0.5-10s. Account sky
+>>>>>>> high spinlock contention, and it jumps again, and there can be more
+>>>>>>> memory / CPUs / numa nodes. Not saying that it's worse than the
+>>>>>>> current O(n^2), I have a test program that borderline hangs the
+>>>>>>> system.
+...
+>> Should've tried 32x32 as well, that ends up going deep into "this sucks"
+>> territory:
 >>
->> The head should already be zero. Actually, sounds like the get_sqe
->> hunk from the patch is not needed either.
+>> git
+>>
+>> good luck
+
+FWIW, current scales perfectly with CPUs, so just 1 thread
+should be enough for testing.
+
+>> git + user_struct
+>>
+>> axboe@r7625 ~> time ./ppage 32 32
+>> register 32 GB, num threads 32
+>>
+>> ________________________________________________________
+>> Executed in   16.34 secs    fish           external
+
+That's as precise to the calculations above as it could be, it
+was 100x16GB but that should only be differ by the factor of ~1.5.
+Without anchoring to this particular number, the problem is that
+the wall clock runtime for the accounting will linearly depend on
+the number of threads, so this 16 sec is what seemed concerning.
+
+>>     usr time    0.54 secs  497.00 micros    0.54 secs
+>>     sys time  451.94 secs   55.00 micros  451.94 secs
 > 
-> Yeah agree, I think they are both false alarms. Might warrant a comment
-> though. Or maybe we just fold it into io_uring_load_sq_head()?
+...
+> and the crazier cases:
 
-What I'm implying is that the
+I don't think it's even crazy, thinking of databases with lots
+of caches where it wants to read to / write from. 100GB+
+shouldn't be surprising.
 
-+	if (!(ring->flags & IORING_SETUP_SQ_REWIND))
-+		head = io_uring_load_sq_head(ring);
-+
+> axboe@r7625 ~> time ./ppage 32 32
+> register 32 GB, num threads 32
+> 
+> ________________________________________________________
+> Executed in    2.81 secs    fish           external
+>     usr time    0.71 secs  497.00 micros    0.71 secs
+>     sys time   19.57 secs  183.00 micros   19.57 secs
+> 
+> which isn't insane. Obviously also needs conditional rescheduling in the
+> page loops, as those can take a loooong time for large amounts of
+> memory.
 
-change from the original patch for normal 64B _io_uring_get_sqe()
-doesn't seem to be necessary. I need to take a look, but that's
-a good thing since the function is somewhat frequently called and
-inlined.
-
-That would leave __io_uring_flush_sq() to be the only place
-checking the flag, so maybe comments would better to be put
-there.
+2.8 sec sounds like a lot as well, makes me wonder which part of
+that is mm, but it mm should scale fine-ish. Surely there will be
+contention on page refcounts but at least the table walk is
+lockless in the best case scenario and otherwise seems to be read
+protected by an rw lock.
 
 -- 
 Pavel Begunkov

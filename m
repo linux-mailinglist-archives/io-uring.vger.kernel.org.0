@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-11946-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11947-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kDFWATwFeWk3ugEAu9opvQ
-	(envelope-from <io-uring+bounces-11946-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 19:34:36 +0100
+	id GPCIKAAFeWk3ugEAu9opvQ
+	(envelope-from <io-uring+bounces-11947-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 19:33:36 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CC999253
-	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 19:34:35 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3532D991F5
+	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 19:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3F9C73074A6A
-	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 18:33:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A2EFC3031F39
+	for <lists+io-uring@lfdr.de>; Tue, 27 Jan 2026 18:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7253328246;
-	Tue, 27 Jan 2026 18:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BF2328246;
+	Tue, 27 Jan 2026 18:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PFypzoVM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="abhcqOeH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D19327BF4
-	for <io-uring@vger.kernel.org>; Tue, 27 Jan 2026 18:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7462D328253
+	for <io-uring@vger.kernel.org>; Tue, 27 Jan 2026 18:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769538800; cv=none; b=XlkZZCPSbmJXpjjH+evI1Ocq4BMkfz8a9CbQwcjWjaLTz/X06kgddRycXNCu7KbWJZwGx9qMsSXq+85UcRJ2ZUyOaRU6BsUOFHmZLeaFxmB7pzeW0oObi4J13r3UXfXTKTSZFavQAxaMphj8H1AfiafoJ7151SwS3dBrzc8APu8=
+	t=1769538802; cv=none; b=dYKXCDu86n0iqrIfRco2jNIC3AScuge9tgh4bmWduo57Qw24dc6qcRgNp4qze8eddYcvub961iIpvxeh8qUZIFMPSU666P0jhWTjkdmAJGnDKA1eNSDKIGUCjJH/Yw2/T+3d6Jc10jaXrSmJ0iId9vXj3xTHDLgjDhWNXvoQaWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769538800; c=relaxed/simple;
-	bh=2xgw0e4rGDrGC5UYd/H0Fu/bjp4HcjhxLYk3aWVibCE=;
+	s=arc-20240116; t=1769538802; c=relaxed/simple;
+	bh=Izuujja65li7M47y59O7hoaC2WNuHD1oDxrLjSFueqA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TCJSXofGlb/xcQbQ2/F7D4x4EyXkf5bKZqXu3tpi662/pI9RprG/kRFQlHdeLmmQ+VVcsnbxUCCFgTiEvXC++1nweGzpf9258RMofl40cK6yWq60s9Iny7RCw3gJC3O6fPL6ow15/fJULUnt0dFNw/g1aWNpf/TRLQob47FqJh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PFypzoVM; arc=none smtp.client-ip=74.125.82.45
+	 MIME-Version; b=QjemNrAsTgfRK/S3htHqQXkTzyg/IuU4ldbTNdjANFXblwWsZc72+PaKr+aMREJORqSYPejATGV4HviYL/XPRJPlsMv29e/yIEyVz5MAcIcC1oZ+gJPWueeRLoGeJ+qrVhiAg/0R48I0Q1ysbQl+EC26E15oezUTJ3USD+6VxlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=abhcqOeH; arc=none smtp.client-ip=74.125.82.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-1249acd6ad2so1604233c88.0
-        for <io-uring@vger.kernel.org>; Tue, 27 Jan 2026 10:33:18 -0800 (PST)
+Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-12336f33098so5207783c88.0
+        for <io-uring@vger.kernel.org>; Tue, 27 Jan 2026 10:33:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769538798; x=1770143598; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769538799; x=1770143599; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yHX7748gxORjaCJqCbdbPxtHhuUnXJdKJ2s3V+FA30o=;
-        b=PFypzoVM5en/innuD510oE2GnPOk+3AayVSvA/qaiCpuGVvhR1ojiuVxEgZx+lk1kd
-         lwET+IBL2s03uf6sd2SfnxrKzZb4CXqSdc1WbPv+avpn9B71UdgQWPj/H54mtvLYEG6Z
-         JJ3XJnWB0tzUBzeDL8GQeHS9p41Cbj35DezlYjqnj7YOlwaWN2UWl9DaKF+UBJdoB7Fj
-         5dt4ld8ybLR5uf24QmvsNg6Mc09j8nEXIXRLLpwafGGa8YZQNCRIAuAkv2z10f6FEtCP
-         y+gzaR92fDbsFtfDo/ADjPbj5BxxFdGHuNWxgzAs/kilw6bAP3f4nqfj8y0cej+bA4CL
-         05/g==
+        bh=JSomEv/U88XAttduCJZ2/ij9ZRPQjub2vgRQspMsE+M=;
+        b=abhcqOeHZ7asnSgWBDBELY9IFqIbyNvg5972fZ+tXCD3YuaYGz6iqYEThhBGDHaN2S
+         jcYXgaHwP1GDXtR33N956/VqpE+0AkoIcdDVr9wiqcCQAdixgDTX1Den+ChnqET2dRr0
+         VdAVhwyLKQSnn36S7Oum4wLpavLWdVsXyNsHt/zThwsbyblFs+nvstIp82uWeWzwCfPD
+         8tAotdEJONIOYhvlfVro19i8/hZ6RTDV0CjFJLsSwVn8dEJfKd43xvixy9NF4hvyqTBj
+         PIbeHjYKlD3ZWW4jW6y8RdKCtlSN+W1PZqNyLySxImSyCoyD5sE++MMvMEx2VaAgZarU
+         Zj+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769538798; x=1770143598;
+        d=1e100.net; s=20230601; t=1769538799; x=1770143599;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yHX7748gxORjaCJqCbdbPxtHhuUnXJdKJ2s3V+FA30o=;
-        b=wm2/yji10S3v4MzrIsto6K9kUTYxpuc2Fvz1p9zNN9iZGgzkAsUka38XVa98WH4QKc
-         o6KZIGvkrywHHiebi2Tpp4dqzpZpyJhOltWyHr4W+RQdLTqGAFGY64ZuSzsicaRU5N10
-         bJBD6Ae3S6k63ZRhV+xrJz58izKF0QP79/K79KvayR84j9j4RYoens6xqlNdKof0ZSJU
-         mqllzR/PGUHQHl2MmJlcLBwqG8RRuQ7CApLl8JRQK3yST8nUCZ+X1XAnCaLrPm88GpFH
-         Tl2sEnNrEpQWdPwKlzqrWQh1VfjWnc+vvZMybCFlYW12arwM2h5/wVL0I6eZsRhQ+dmp
-         4JrQ==
-X-Gm-Message-State: AOJu0YyvPOqQJ9TY+5PuFs3r0HcIGffNf6atns9vC9G3xhxQKBBDVOk/
-	3ad6MLBmQ6yvKyx4dOXsQrKEk8/w0d05XZNTdfvRQOfhnyJnV9WHZQYM5qenzMgkJXQY0WraD/9
-	eyW2J
-X-Gm-Gg: AZuq6aK4s0N89P5PBUPq5jIbBaX9Wa6o/PWgj3Yy7DNOIPg3M0t2Gkiw4jlqBySAYVB
-	IIwUZlIP3foancliofE3uXse5UxxZPXcCujWGb99nOnNRB13dTCEcpZD8ltOJtQUjiOX108usPf
-	Z0Ce8POuc+XM8fRHvf+d8GOVRDK34zKLxLza+oA+508+71z0VXL2rAG74AECRW9SeglQePlC0Cv
-	x335QhrJU6uSO/xDGqWMa+RRiSCV8mlfLe6olT1FJ9ZEK1bzcbxV5BWCXt35er37pZNjoiFHbiT
-	2TmM6mUYV3uRKDkA1XiwOOn6OpV7VKgWPc7p3g5XXxWt4FhpzLyKxU6uPrxT7U5LDJNOzsiNk5Y
-	w/Hhahbeg7cnTh/Ic2eIo55U0nFiKABPhGkPWYqk2aGMGJGF8jvSM01UAWhrl3/LBPydoXOhWnH
-	+MrlpDz2pJUNPMjq4jR0l5ZFhdVEIPguOAD9PqKg+9U6PABTaJk73FO1zajSlKgw==
-X-Received: by 2002:a05:7022:4399:b0:119:e56b:989b with SMTP id a92af1059eb24-124a005d351mr1119117c88.2.1769538797713;
-        Tue, 27 Jan 2026 10:33:17 -0800 (PST)
+        bh=JSomEv/U88XAttduCJZ2/ij9ZRPQjub2vgRQspMsE+M=;
+        b=WYFx6a7PwM5GdB/cO/5PmYYhHUjZj0vw38oUgBxwg21E3jRnMi6RZTttWXnZMhSNue
+         1GOyrar4QFN5N2kopKHzAtDu+iYtnsVcTUqbagqrb2FUjaD7eBYWtJTpZyPsPqvOmSbu
+         0f0XMhxMxWxd9+xuNBVis8CWNwLoWmWbzjEwrqwsgVgiRHLi2OHWGOQDiUodkexWywVf
+         BNh6AOPwIrXAKr5q7+sLdatKWiTDiKgoLPG9CywD1wU462A5TvSIDnY7Dox0/PjM0xHi
+         1MOgx+FfwMvkysMSW1MlrN3aAgc9ve33ZCbmQRuFMHlWC9XqLwfF+4U8NyvapUuuLNcs
+         03QA==
+X-Gm-Message-State: AOJu0YwKnb+CXtAfG72dx0m5sVUeZcVwgeH5Eiq8n2HdKxC6ELEppk9+
+	clYSGthypT2yALMCeYLiNpEvnLXYe0SwEREbKnn20tkyfXxXZSSuCSwNhob1quwqVYNk+3F/gjH
+	hslJw8ak=
+X-Gm-Gg: AZuq6aIvtG7Sv9nK7vj66bjsJXWkQzKYtBQDI+bEFVplkLPPMRCeYitn9h+ccS7jgE0
+	Sf6bmMJELfkmh+H0xyCeAUCKP++CL3Iydqw69jvB7RcJkeKxx1Oz7Z/RUm6wd+rDEdDonOwqJ0n
+	NuStV7BN6T7gzpiqhmaRR7Y3Ije9aROv8gQjfzeesYplcVPmby1s2UXwxlW5PQ//L+WRAjJkb2n
+	/eNaKkygJ6z/+FElVCmmLLf0voo9KF0LIDta0yRQKhtWUD/dT5BjICDzdJ4X+mVoA8WTSDHEre8
+	YnOcKY0Un+Xiave2D+M+A3k1CFzbWl809FAfrd8ml8cqTFAzGzxjtPlqK8z3SR9uE3Mo7zYHGtk
+	pv7CZo6EW3LnOLGBXmOlnctUdbkruQCb4o4ZSZlmXHD6UOhPw9C6rqKIEVle3ycxWxwhKg0YCRD
+	+Xh6HqGA6wxsoEl4fKGfOjPDHFi5S91nz2kFzMZPgb+rDSWWAOpBgWDmCwTjpp3kmHIuQtF+Rb
+X-Received: by 2002:a05:7300:8183:b0:2b7:1c58:dc8e with SMTP id 5a478bee46e88-2b78d93cfedmr1197716eec.17.1769538799003;
+        Tue, 27 Jan 2026 10:33:19 -0800 (PST)
 Received: from m2max.corp.tfbnw.net ([2620:10d:c090:600::cedf])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-124a7bd05b1sm670139c88.3.2026.01.27.10.33.16
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-124a7bd05b1sm670139c88.3.2026.01.27.10.33.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 10:33:16 -0800 (PST)
+        Tue, 27 Jan 2026 10:33:18 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: brauner@kernel.org,
@@ -84,9 +84,9 @@ Cc: brauner@kernel.org,
 	kees@kernel.org,
 	linux-kernel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/7] io_uring/net: allow filtering on IORING_OP_SOCKET data
-Date: Tue, 27 Jan 2026 11:29:57 -0700
-Message-ID: <20260127183311.86505-3-axboe@kernel.dk>
+Subject: [PATCH 3/7] io_uring/bpf_filter: allow filtering on contents of struct open_how
+Date: Tue, 27 Jan 2026 11:29:58 -0700
+Message-ID: <20260127183311.86505-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260127183311.86505-1-axboe@kernel.dk>
 References: <20260127183311.86505-1-axboe@kernel.dk>
@@ -102,7 +102,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -111,7 +111,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-11946-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-11947-lists,io-uring=lfdr.de];
 	DMARC_NA(0.00)[kernel.dk];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -119,117 +119,105 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel.dk:mid,kernel.dk:email,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 64CC999253
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,kernel.dk:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: 3532D991F5
 X-Rspamd-Action: no action
 
-Example population method for the BPF based opcode filtering. This
-exposes the socket family, type, and protocol to a registered BPF
-filter. This in turn enables the filter to make decisions based on
-what was passed in to the IORING_OP_SOCKET request type.
+This adds custom filtering for IORING_OP_OPENAT and IORING_OP_OPENAT2,
+where the open_how flags, mode, and resolve can be checked by filters.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/uapi/linux/io_uring/bpf_filter.h |  7 +++++++
- io_uring/bpf_filter.c                    | 11 +++++++++++
- io_uring/net.c                           |  9 +++++++++
- io_uring/net.h                           |  6 ++++++
- 4 files changed, 33 insertions(+)
+ include/uapi/linux/io_uring/bpf_filter.h | 5 +++++
+ io_uring/bpf_filter.c                    | 6 ++++++
+ io_uring/openclose.c                     | 9 +++++++++
+ io_uring/openclose.h                     | 3 +++
+ 4 files changed, 23 insertions(+)
 
 diff --git a/include/uapi/linux/io_uring/bpf_filter.h b/include/uapi/linux/io_uring/bpf_filter.h
-index 2d4d0e5743e4..4dbc89bbbf10 100644
+index 4dbc89bbbf10..220351b81bc0 100644
 --- a/include/uapi/linux/io_uring/bpf_filter.h
 +++ b/include/uapi/linux/io_uring/bpf_filter.h
-@@ -16,6 +16,13 @@ struct io_uring_bpf_ctx {
- 	__u8	sqe_flags;
- 	__u8	pdu_size;	/* size of aux data for filter */
- 	__u8	pad[5];
-+	union {
+@@ -22,6 +22,11 @@ struct io_uring_bpf_ctx {
+ 			__u32	type;
+ 			__u32	protocol;
+ 		} socket;
 +		struct {
-+			__u32	family;
-+			__u32	type;
-+			__u32	protocol;
-+		} socket;
-+	};
++			__u64	flags;
++			__u64	mode;
++			__u64	resolve;
++		} open;
+ 	};
  };
  
- enum {
 diff --git a/io_uring/bpf_filter.c b/io_uring/bpf_filter.c
-index 5207226d72ea..889fa915fa54 100644
+index 889fa915fa54..ff723ec44828 100644
 --- a/io_uring/bpf_filter.c
 +++ b/io_uring/bpf_filter.c
-@@ -30,6 +30,17 @@ static void io_uring_populate_bpf_ctx(struct io_uring_bpf_ctx *bctx,
- 	/* clear residual, anything from pdu_size and below */
- 	memset((void *) bctx + offsetof(struct io_uring_bpf_ctx, pdu_size), 0,
- 		sizeof(*bctx) - offsetof(struct io_uring_bpf_ctx, pdu_size));
-+
-+	/*
-+	 * Opcodes can provide a handler fo populating more data into bctx,
-+	 * for filters to use.
-+	 */
-+	switch (req->opcode) {
-+	case IORING_OP_SOCKET:
-+		bctx->pdu_size = sizeof(bctx->socket);
-+		io_socket_bpf_populate(bctx, req);
+@@ -12,6 +12,7 @@
+ #include "io_uring.h"
+ #include "bpf_filter.h"
+ #include "net.h"
++#include "openclose.h"
+ 
+ struct io_bpf_filter {
+ 	struct bpf_prog		*prog;
+@@ -40,6 +41,11 @@ static void io_uring_populate_bpf_ctx(struct io_uring_bpf_ctx *bctx,
+ 		bctx->pdu_size = sizeof(bctx->socket);
+ 		io_socket_bpf_populate(bctx, req);
+ 		break;
++	case IORING_OP_OPENAT:
++	case IORING_OP_OPENAT2:
++		bctx->pdu_size = sizeof(bctx->open);
++		io_openat_bpf_populate(bctx, req);
 +		break;
-+	}
+ 	}
  }
  
- /*
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 519ea055b761..4fcba36bd0bb 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -1699,6 +1699,15 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_COMPLETE;
+diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+index 15dde9bd6ff6..31c687adf873 100644
+--- a/io_uring/openclose.c
++++ b/io_uring/openclose.c
+@@ -85,6 +85,15 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	return 0;
  }
  
-+void io_socket_bpf_populate(struct io_uring_bpf_ctx *bctx, struct io_kiocb *req)
++void io_openat_bpf_populate(struct io_uring_bpf_ctx *bctx, struct io_kiocb *req)
 +{
-+	struct io_socket *sock = io_kiocb_to_cmd(req, struct io_socket);
++	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
 +
-+	bctx->socket.family = sock->domain;
-+	bctx->socket.type = sock->type;
-+	bctx->socket.protocol = sock->protocol;
++	bctx->open.flags = open->how.flags;
++	bctx->open.mode = open->how.mode;
++	bctx->open.resolve = open->how.resolve;
 +}
 +
- int io_socket_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
- 	struct io_socket *sock = io_kiocb_to_cmd(req, struct io_socket);
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 43e5ce5416b7..a862960a3bb9 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -3,6 +3,7 @@
- #include <linux/net.h>
- #include <linux/uio.h>
- #include <linux/io_uring_types.h>
-+#include <uapi/linux/io_uring/bpf_filter.h>
+ 	struct io_open *open = io_kiocb_to_cmd(req, struct io_open);
+diff --git a/io_uring/openclose.h b/io_uring/openclose.h
+index 4ca2a9935abc..566739920658 100644
+--- a/io_uring/openclose.h
++++ b/io_uring/openclose.h
+@@ -1,11 +1,14 @@
+ // SPDX-License-Identifier: GPL-2.0
  
- struct io_async_msghdr {
- #if defined(CONFIG_NET)
-@@ -44,6 +45,7 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags);
++#include "bpf_filter.h"
++
+ int __io_close_fixed(struct io_ring_ctx *ctx, unsigned int issue_flags,
+ 		     unsigned int offset);
  
- int io_socket_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_socket(struct io_kiocb *req, unsigned int issue_flags);
-+void io_socket_bpf_populate(struct io_uring_bpf_ctx *bctx, struct io_kiocb *req);
+ int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_openat(struct io_kiocb *req, unsigned int issue_flags);
+ void io_open_cleanup(struct io_kiocb *req);
++void io_openat_bpf_populate(struct io_uring_bpf_ctx *bctx, struct io_kiocb *req);
  
- int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_connect(struct io_kiocb *req, unsigned int issue_flags);
-@@ -64,4 +66,8 @@ void io_netmsg_cache_free(const void *entry);
- static inline void io_netmsg_cache_free(const void *entry)
- {
- }
-+static inline void io_socket_bpf_populate(struct io_uring_bpf_ctx *bctx,
-+					  struct io_kiocb *req)
-+{
-+}
- #endif
+ int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_openat2(struct io_kiocb *req, unsigned int issue_flags);
 -- 
 2.51.0
 

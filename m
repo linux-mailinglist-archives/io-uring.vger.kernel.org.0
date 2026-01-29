@@ -1,292 +1,214 @@
-Return-Path: <io-uring+bounces-11966-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11967-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2GPsCcKOeml+7wEAu9opvQ
-	(envelope-from <io-uring+bounces-11966-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 28 Jan 2026 23:33:38 +0100
+	id 6Od4OcK0emma9QEAu9opvQ
+	(envelope-from <io-uring+bounces-11967-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 02:15:46 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA224A994B
-	for <lists+io-uring@lfdr.de>; Wed, 28 Jan 2026 23:33:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEC6AA8C7
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 02:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 241C93008D46
-	for <lists+io-uring@lfdr.de>; Wed, 28 Jan 2026 22:33:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1A0463037164
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 01:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7374B3446D8;
-	Wed, 28 Jan 2026 22:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8437031B127;
+	Thu, 29 Jan 2026 01:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQaPFRaX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtzeAgKQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3DE29ACD1;
-	Wed, 28 Jan 2026 22:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769639616; cv=none; b=aZ/wVcrIbnrPmn5k8ZdYm207VobFSQ0baixet3LpYTU+oIBQikNczXDNLBoSP3fuS/6mlBT+wa0pMguX3OvcZFPuTeGynIiDWqF4RWEewXHZAoRoafutDaSSx98x6y7HIv/xSjQvJV/5h7zEzsPUIXVXyOYu5ayVyIy5vDsdXpA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769639616; c=relaxed/simple;
-	bh=+HZx4uVfXrlII0VOsAjGVpd2yKagMxMZty1h4LjQAPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RFBufD2OpOP9FsxZvqvYpEGEt6jdH3etoOOT1jHpSJwUFqz2G1noCsIWYlPBqNw1vAFza2JO2+trHP30hhz+Gy03+hg1RkM2nCigusZS0g9uTPldYIhidMlSnXg0044CUE348DHsn6O9UjrAblb3vNFkjeA4AtQY60GDoJyWfnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQaPFRaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C70EC116C6;
-	Wed, 28 Jan 2026 22:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769639616;
-	bh=+HZx4uVfXrlII0VOsAjGVpd2yKagMxMZty1h4LjQAPU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fQaPFRaXjQq7dP9IFKAl5wj85+lx9JCW4N7dctlXRhBTfRJ940Tq4yYh9H2K3yk1u
-	 r01Hn035pGx13fG6jhvPbkWLutGK1LOu1DsQdTNMNbKrxrfXoAlabJuRTi5H4oVDWy
-	 XqSo2qoex12KXUt0EhWu6YuC7Gk0XZylBh0ZjbgehpkfQEhN881Z6rTq0Bj6Eq69G9
-	 FT4ro+Gi1RQEjLSvQALho3/uveCdalJJb+43k8buFAtHEQkQ3tIWuysbZDcmcccNsT
-	 vPdej+NxgNNzxHE2ZnF8vnrg2KG9pR1aJZTxSkxfVpaAJZILoRbVeI7ACeNxGLxsAM
-	 Lgq9qNVdSfqRQ==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Nitesh Shetty <nj.shetty@samsung.com>,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18] io_uring/rw: free potentially allocated iovec on cache put failure
-Date: Wed, 28 Jan 2026 17:33:00 -0500
-Message-ID: <20260128223332.2806589-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260128223332.2806589-1-sashal@kernel.org>
-References: <20260128223332.2806589-1-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6444D31618C
+	for <io-uring@vger.kernel.org>; Thu, 29 Jan 2026 01:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769649332; cv=pass; b=IeaGxcPYq4vJIxmXcLOTGR6uLMlq2BE5aVd/iAEE5LpAHUE1DEw92Kwhr8JPvvfX9t1rnW14vuJl1Xe94vkWHjOjhqfv+aUDOXTdjSGfD3bXVY+LtzBR7wLdXQ2b0tZYmJnDJrg8BV/ygCEo7Bo7SNMrcyY7Ntx8b2bUXczIAZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769649332; c=relaxed/simple;
+	bh=LL7o4vy/NoO6zKG10NFswNY37j+yETGJ/86umDxUc18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LAJs2tlQbEYfTaHKG1dTu8KJp/nl6Hv2ZNYA7o97PhxpEMSLanuVZ0gTdLHoklJwL0pk8bX63G+kfg7bee0joJdYqe3PV7kNoDjlRQKXFqCmJE0BCLCYGsUAioC0bNWxjf7s1a685m9ov7rkPBkCHQvE2Hue3/pWWgnAGVSriP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtzeAgKQ; arc=pass smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-503347e8715so4775531cf.2
+        for <io-uring@vger.kernel.org>; Wed, 28 Jan 2026 17:15:30 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769649329; cv=none;
+        d=google.com; s=arc-20240605;
+        b=W4x44sUdkLIEubGhLJkGHCFpOsWZcL+aLpv/qLYu22bnq81Gu2aD5/S29Ixo5h/IA6
+         1EYqXXPQwAxRUnK/iYzub1bO3Jd1Jvq9zo25KWtnpY3jKUcDJTrV6EwtuNBBaG6Xjt+V
+         PZf9bx2IvBRetlk9UomXFXOxlU13dtjnmLu4ENF9oN0O93PShYjHEfh/o9gcfJfuFbWf
+         j22LAv2xC7gvdgMYHfpuS2vumcwn2B7x6frhlQeRpSR/oEQP6/ukG7D1VS+JKkBw+Rlb
+         j2+iVugWlD1BMXUa9QncUTsZuebiC6Od33ZxlPVn8YKMVnbBaLNR5watD4m+DGqJRnwr
+         zOrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wDykPZ8EL1Im5WBOSDWsyNHmCwU4viR22qWxLrqJr+g=;
+        fh=8dhEb8hjtmKz7dC5Uc8j6Tn1u582M/uABZJK9gXcXBU=;
+        b=Z06/+89TmzSYDgq+9F/J+eivTvj+Ujmw8R+9EsE0vVrXm2y1elIbUCjzmu0WgeJ27q
+         MSFnZktIuttc9RniZFGgzVta7m0nx3cKp1MbVZCiqYXCs8RJYPRJKVwTTmzy8nxHiKUw
+         gGx1ieKrZenGC0FyIxvQnoCcv2E0mt5VNrcpnGZCrbepRlVnSpb/+HLQk3zWfR0KKRty
+         oNiMLv4IpUjCabmKfXpTqVyWb6ofk76XaajOTZ1A6/H9s4Kes9tJ+cv1Qf0RSszZAjrd
+         rZ7FD/BWnMuo9ePsCiO04h0k3Vz8+5gx+ZD2LgR2Dmk/hZetWifPZO+HQEo1Yt2N5wbR
+         2RIw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769649329; x=1770254129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wDykPZ8EL1Im5WBOSDWsyNHmCwU4viR22qWxLrqJr+g=;
+        b=NtzeAgKQ9KXbw/jACgLooyHqipRvH7dEmmGiCyyEfetxrWSKpuxCIUJXA6mS9FvFRR
+         K2fnkoAB+630BLBgSfgGkuInZf4PXVn7YyuEAE2GbRbKFdrWInWfRwyvrMYAxc9cqFVK
+         ebOoi1kaiITXRc88Q4H8oYjduHtpK0rvjw6GW9OoFM1HiFeom4hJ8kWcAV70yiD41pBX
+         YUtusqR7GTlnlmrIiMRBWo/mVfpytl+m0zp0B6gHdrQg8hf2NzHjwUsmzOL9BUULoguE
+         b+Rj07DijREK3PQtKIB6a2LOokO97agydLT0WQMh3n8kTqNUPMeQooR1N1Tx+3yS3VgO
+         kRTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769649329; x=1770254129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wDykPZ8EL1Im5WBOSDWsyNHmCwU4viR22qWxLrqJr+g=;
+        b=tWjwZrZji9FtCQu5DoNA1Deeq9m7LKYCgH6bryA47K04iikCaXSgllbTWOoQUmNRu3
+         sZFgws4U4veUFF6yMXxB1eYoH33sHSfNsclRSYVl0FDMN3S/9cq1N2kfTB8perBaOf2o
+         vTZhfTrZbC4bbrbSzFwvfm0OezVJETpy9KSbIDdVU8TGh+yweJxAC/9fsomvGGU8cypm
+         G5wvgmGFM7C5UHw2OHeder8yANMAoo9fhBPxQ6kZ7dSKZJkvhvHKyGpNl8Q/ga82/NaE
+         jGRRNZMOQfCGxxWsFMAdJhQp94pEWUhD+JszPRjmIdCtUxf7jsJJHWw6rsVlie20aeDd
+         Gl9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXc6hhs/FGsqWoK1lQpr7WFsSopZe57TvqPOFwONFBWNsM7PqqTT5qXN2NT+LCsms1+M0t0yNcpKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkbiLgSYOS+WjKNpcXvLoODFzIXcem5gEwHWDQX0uD2k8ppE0o
+	mIB0aPtx49XKIgVU7XlfWbpMDyDbPLv4MdtSge6rZBdGyZhiFOTlSo3lqzqTE0v6dXUiRNsiL6C
+	dWaRKGzwRD33sE41At/AGrtwMeyEwEoQ=
+X-Gm-Gg: AZuq6aIVNrHgirQwpOnFRkK0r0ERUjSjmiSsijCT1biWJ8pm72qCL1LA1KZXAPdZ9mA
+	miFqn4j+Q274ywwaDVcbfKNdRgK5+SuBA6wxRT7d3YZI1FDdqrosGlVAwfB4MQJ6JlJEUX8J6SH
+	4f3NPsJvMUQD7QC1KNmKoff36dBD/+v872w0ayouTYjUnwOWfXq1HsGnudWLC2eD2Ek5cYM6abI
+	oL0wpCxAdM1cgUj6lTeKkHpkU8XuEKpYzLaGWlirYjrtcK4RxmHn6m1988+w1zI9xFEAA==
+X-Received: by 2002:a05:622a:1882:b0:4d2:4df8:4cb5 with SMTP id
+ d75a77b69052e-5032f76dde8mr98794071cf.4.1769649329274; Wed, 28 Jan 2026
+ 17:15:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18.7
-Content-Transfer-Encoding: 8bit
+References: <20260116233044.1532965-1-joannelkoong@gmail.com>
+ <20260116233044.1532965-20-joannelkoong@gmail.com> <2f14fb1a-0ee2-4d86-98be-ed6112ed706d@bsbernd.com>
+In-Reply-To: <2f14fb1a-0ee2-4d86-98be-ed6112ed706d@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 28 Jan 2026 17:15:18 -0800
+X-Gm-Features: AZwV_QihjUupbTeTFwTH7T-OHXs2qBZqfWRz2D4du-sr6Dv92w_b7RDQ6DzSz6U
+Message-ID: <CAJnrk1b6gpxyFJWe44ryvBfdJqf5h8pCQAf1vAShGqoSFw9-ng@mail.gmail.com>
+Subject: Re: [PATCH v4 19/25] fuse: add io-uring kernel-managed buffer ring
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: axboe@kernel.dk, miklos@szeredi.hu, csander@purestorage.com, 
+	krisman@suse.de, io-uring@vger.kernel.org, asml.silence@gmail.com, 
+	xiaobing.li@samsung.com, safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-11966-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-11967-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,szeredi.hu,purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: BA224A994B
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 4BEC6AA8C7
 X-Rspamd-Action: no action
 
-From: Jens Axboe <axboe@kernel.dk>
+On Wed, Jan 28, 2026 at 1:44=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
+>
+>
+>
+> On 1/17/26 00:30, Joanne Koong wrote:
+> > Add io-uring kernel-managed buffer ring capability for fuse daemons
+> > communicating through the io-uring interface.
+> >
+> > This has two benefits:
+> > a) eliminates the overhead of pinning/unpinning user pages and
+> > translating virtual addresses for every server-kernel interaction
+> >
+> > b) reduces the amount of memory needed for the buffers per queue and
+> > allows buffers to be reused across entries. Incremental buffer
+> > consumption, when added, will allow a buffer to be used across multiple
+> > requests.
+> >
+> > Buffer ring usage is set on a per-queue basis. In order to use this, th=
+e
+> > daemon needs to have preregistered a kernel-managed buffer ring and a
+> > fixed buffer at index 0 that will hold all the headers, and set the
+> > "use_bufring" field during registration. The kernel-managed buffer ring
+> > will be pinned for the lifetime of the connection.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev_uring.c       | 412 ++++++++++++++++++++++++++++++++------
+> >  fs/fuse/dev_uring_i.h     |  31 ++-
+> >  include/uapi/linux/fuse.h |  15 +-
+> >  3 files changed, 389 insertions(+), 69 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index b57871f92d08..40e8c2e6b77c 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
 
-[ Upstream commit 4b9748055457ac3a0710bf210c229d01ea1b01b9 ]
+> > @@ -1305,7 +1311,14 @@ struct fuse_uring_cmd_req {
+> >
+> >       /* queue the command is for (queue index) */
+> >       uint16_t qid;
+> > -     uint8_t padding[6];
+> > +
+> > +     union {
+> > +             struct {
+> > +                     uint16_t flags;
+> > +             } init;
+> > +     };
+> > +
+>
+> I won't manage to review everything of this patch today, but just
+> noticed this. There is already an unused flags, why don't you use that?
+> I had edded it exactly for such things.
 
-If a read/write request goes through io_req_rw_cleanup() and has an
-allocated iovec attached and fails to put to the rw_cache, then it may
-end up with an unaccounted iovec pointer. Have io_rw_recycle() return
-whether it recycled the request or not, and use that to gauge whether to
-free a potential iovec or not.
+Oh nice, I missed seeing that. I'll just use that flags variable then.
 
-Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Now let's understand the scope. This commit fix is for a memory leak bug
-in the io_uring rw (read/write) path. Let me summarize my analysis:
-
-## Analysis Summary
-
-### 1. COMMIT MESSAGE ANALYSIS
-- **Subject**: "io_uring/rw: free potentially allocated iovec on cache
-  put failure"
-- **Keywords**: "free", "allocated", "failure" - this is clearly a bug
-  fix for a resource leak
-- **Description**: When a read/write request goes through
-  io_req_rw_cleanup() with an allocated iovec and fails to put to the
-  rw_cache, the iovec pointer becomes unaccounted (leaked).
-- **Reviewed-by**: Nitesh Shetty (Samsung) - indicates review
-- **Author**: Jens Axboe (io_uring maintainer)
-
-### 2. CODE CHANGE ANALYSIS
-
-The bug is in `io_rw_recycle()` and `io_req_rw_cleanup()`:
-
-**Before the fix:**
-```c
-static void io_rw_recycle(struct io_kiocb *req, unsigned int
-issue_flags)
-{
-    struct io_async_rw *rw = req->async_data;
-
-    if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
-        return;  // Early return - iovec potentially leaked
-
-    io_alloc_cache_vec_kasan(&rw->vec);
-    if (rw->vec.nr > IO_VEC_CACHE_SOFT_CAP)
-        io_vec_free(&rw->vec);
-
-    if (io_alloc_cache_put(&req->ctx->rw_cache, rw))
-        io_req_async_data_clear(req, 0);
-    // PROBLEM: If io_alloc_cache_put fails (returns false when cache is
-full),
-    // the rw structure is NOT freed and NOT put back into the cache,
-    // but the iovec inside rw->vec is also not freed!
-}
-```
-
-**After the fix:**
-```c
-static bool io_rw_recycle(struct io_kiocb *req, unsigned int
-issue_flags)
-{
-    // Returns bool to indicate if recycling succeeded
-
-    if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
-        return false;  // Caller knows recycling failed
-
-    // ... same cleanup ...
-
-    if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
-        io_req_async_data_clear(req, 0);
-        return true;  // Successfully recycled
-    }
-    return false;  // Failed to recycle - caller will free
-}
-
-static void io_req_rw_cleanup(struct io_kiocb *req, unsigned int
-issue_flags)
-{
-    if (!(req->flags & (REQ_F_REISSUE | REQ_F_REFCOUNT))) {
-        req->flags &= ~REQ_F_NEED_CLEANUP;
-        if (!io_rw_recycle(req, issue_flags)) {
-            struct io_async_rw *rw = req->async_data;
-            io_vec_free(&rw->vec);  // FIX: Free the iovec if recycle
-failed
-        }
-    }
-}
-```
-
-### 3. CLASSIFICATION
-- **Type**: Bug fix - memory leak
-- **Category**: Resource leak in io_uring read/write path
-- **Severity**: Medium - leads to memory leak over time with repeated
-  I/O operations when cache is full
-
-### 4. SCOPE AND RISK ASSESSMENT
-- **Lines changed**: 11 insertions, 4 deletions (small)
-- **Files touched**: 1 (io_uring/rw.c)
-- **Complexity**: Low - simple return value change and conditional free
-- **Risk**: Very low - the fix is straightforward and localized
-
-### 5. USER IMPACT
-- **Who is affected**: All io_uring users doing read/write operations
-- **How severe**: Memory leak - can cause gradual memory exhaustion on
-  systems with heavy io_uring usage
-- **Trigger conditions**: When the rw_cache is full (reaches
-  IO_ALLOC_CACHE_MAX=128 entries) and a request cleanup occurs
-
-### 6. STABILITY INDICATORS
-- **Reviewed-by**: Yes (Nitesh Shetty)
-- **Maintainer authored**: Yes (Jens Axboe is the io_uring maintainer)
-- **Testing**: The fix is straightforward and has a Reviewed-by tag
-
-### 7. DEPENDENCY CHECK
-- The code being fixed was introduced in v6.14-rc1 (commit
-  9ac273ae3dc29)
-- The `io_vec_free` function exists in v6.15+
-- This fix applies cleanly to 6.14+ and 6.15+ stable branches
-
-### Conclusion
-
-This commit should be backported because:
-
-1. **Fixes a real bug**: Memory leak when io_alloc_cache_put fails
-2. **Small and surgical**: Only 15 lines changed in one file
-3. **Obviously correct**: The fix simply ensures proper cleanup when
-   cache insertion fails
-4. **No new features**: Just fixes the existing resource management
-5. **Low risk**: The change is well-contained and logical
-6. **Affects production code**: io_uring is widely used, and memory
-   leaks in this path affect real users
-
-The fix is simple: change `io_rw_recycle()` to return a boolean
-indicating success/failure, and have `io_req_rw_cleanup()` call
-`io_vec_free()` when recycling fails. This ensures the iovec is always
-properly freed.
-
-**YES**
-
- io_uring/rw.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index abe68ba9c9dc8..d7388a4a3ea5e 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -144,19 +144,22 @@ static inline int io_import_rw_buffer(int rw, struct io_kiocb *req,
- 	return 0;
- }
- 
--static void io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
-+static bool io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_async_rw *rw = req->async_data;
- 
- 	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
--		return;
-+		return false;
- 
- 	io_alloc_cache_vec_kasan(&rw->vec);
- 	if (rw->vec.nr > IO_VEC_CACHE_SOFT_CAP)
- 		io_vec_free(&rw->vec);
- 
--	if (io_alloc_cache_put(&req->ctx->rw_cache, rw))
-+	if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
- 		io_req_async_data_clear(req, 0);
-+		return true;
-+	}
-+	return false;
- }
- 
- static void io_req_rw_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-@@ -190,7 +193,11 @@ static void io_req_rw_cleanup(struct io_kiocb *req, unsigned int issue_flags)
- 	 */
- 	if (!(req->flags & (REQ_F_REISSUE | REQ_F_REFCOUNT))) {
- 		req->flags &= ~REQ_F_NEED_CLEANUP;
--		io_rw_recycle(req, issue_flags);
-+		if (!io_rw_recycle(req, issue_flags)) {
-+			struct io_async_rw *rw = req->async_data;
-+
-+			io_vec_free(&rw->vec);
-+		}
- 	}
- }
- 
--- 
-2.51.0
-
+Thanks,
+Joanne
+>
+> > +     uint8_t padding[4];
+> >  };
+> >
+> >  #endif /* _LINUX_FUSE_H */
+>
+> Thanks,
+> Bernd
 

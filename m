@@ -1,107 +1,91 @@
-Return-Path: <io-uring+bounces-11981-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11982-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oDyzFW7be2noIwIAu9opvQ
-	(envelope-from <io-uring+bounces-11981-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 23:13:02 +0100
+	id UKneNl/ze2lnJgIAu9opvQ
+	(envelope-from <io-uring+bounces-11982-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 00:55:11 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F46B5358
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 23:13:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C45AB5C7B
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 00:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BD4C9301586C
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 22:13:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 09F08300E38A
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jan 2026 23:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8711A326922;
-	Thu, 29 Jan 2026 22:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863811C5D5E;
+	Thu, 29 Jan 2026 23:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bz8E0Pn1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YZ+u8KFy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bz8E0Pn1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YZ+u8KFy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQsuiook"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799E7369210
-	for <io-uring@vger.kernel.org>; Thu, 29 Jan 2026 22:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141183446C0
+	for <io-uring@vger.kernel.org>; Thu, 29 Jan 2026 23:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769724780; cv=none; b=WKN2YHkzqUIPBHJA74cGxEI77G/UsxikWfElSbagrCnp3lsFdy0YaHRnn3M/QYafPD/vRtweghRF/g4FkWjjBc9SOxAzQal7i9HX9PyT9rOpJ5wGk9JIxt5s+1QjPNZ0tWycOCVtMvjEiADB/QyansslVWXs7F+aH+aOBz0uroc=
+	t=1769730898; cv=none; b=jnHQ28pf7DfY7fygkpXs2wLiE13BN/Nw+/R/RTNhPTILF+94bg5cnyNI4CMX+4rdTnpsP5pTs0UCLG/uu7HeBW9zqq1Wwsbx3ICVWa6wlo14fb/YVL5XRLjQX2oampco4KQSUaCjx9s9Z+lu9/HIVeBB35hxhbl7AlEbRXqznQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769724780; c=relaxed/simple;
-	bh=/NPc0gE0zP/7MRatCjBC9ImLmaXIXeprpjuEzfL4E6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UYvvrRdq8BfJE5bFEC0BVcPVvXJr0Exo2SUsOes/fpRgiqm6hGB4sj2Y3GdnCFpumezlD15ziYL8V3WZ5CcsIs+cI0XFsmPYTg2I0Qu/I8feKmXXIsVXthIvo4mS71ppjFfUIJxSlWhE13O5Rs1FH4XPV/H0Ycwtv0KYHvs7HGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bz8E0Pn1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YZ+u8KFy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bz8E0Pn1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YZ+u8KFy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3421F5BCF5;
-	Thu, 29 Jan 2026 22:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1769724765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ro+CBBjDBJ5aR9jkVcK+u31k/wjeaG9c4RSwlqSuvDk=;
-	b=Bz8E0Pn1tKC0anEaylC/ixBMonpjkM2Z3h3yrbyINueobCryn/e63ZJpCCEpR/uoMaeNzv
-	B6zaeQjykbAKQTArRE/hHJyqc4EXIGZR82ZGNMs4lmTZEu0H3LnK0uSIjV+i4FRej5/B/i
-	PAh6Zr73uioE+GVmGd7lPpZat14V9Xo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1769724765;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ro+CBBjDBJ5aR9jkVcK+u31k/wjeaG9c4RSwlqSuvDk=;
-	b=YZ+u8KFyJz8giaT0N7XwTSTqsiQ6j3ff6FIuNsUiQ6orn8kEUJ8Qt9W5jo2Z3YL3LD0iSl
-	UP7F9EbHVxuaj1Ag==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Bz8E0Pn1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YZ+u8KFy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1769724765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ro+CBBjDBJ5aR9jkVcK+u31k/wjeaG9c4RSwlqSuvDk=;
-	b=Bz8E0Pn1tKC0anEaylC/ixBMonpjkM2Z3h3yrbyINueobCryn/e63ZJpCCEpR/uoMaeNzv
-	B6zaeQjykbAKQTArRE/hHJyqc4EXIGZR82ZGNMs4lmTZEu0H3LnK0uSIjV+i4FRej5/B/i
-	PAh6Zr73uioE+GVmGd7lPpZat14V9Xo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1769724765;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ro+CBBjDBJ5aR9jkVcK+u31k/wjeaG9c4RSwlqSuvDk=;
-	b=YZ+u8KFyJz8giaT0N7XwTSTqsiQ6j3ff6FIuNsUiQ6orn8kEUJ8Qt9W5jo2Z3YL3LD0iSl
-	UP7F9EbHVxuaj1Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E18C23EA61;
-	Thu, 29 Jan 2026 22:12:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a4t/MFzbe2lUcAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Thu, 29 Jan 2026 22:12:44 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH liburing 2/2] mmap.t: Introduce IORING_OP_MMAP test case
-Date: Thu, 29 Jan 2026 17:12:36 -0500
-Message-ID: <20260129221236.898135-3-krisman@suse.de>
+	s=arc-20240116; t=1769730898; c=relaxed/simple;
+	bh=RB985I9Qh73pV3Wq6FZ5dL+LNBhdLOw2TaIL/OOLc3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1kawwbEXVWYNKhV4i1ahdWZCSj6gQAJ2DvULVuNbZoklJFbYk1/EqPJmY2knZzH+LHCAx2+J0Ozj8R+L9mSAydzqTNodj1c5yqBjaU75V3KoLVV7FefvxXzpa8ObRclbjYlag8+xOQP+qap63GMNpT0ZR0pmW/3H0zpY9yJlz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQsuiook; arc=none smtp.client-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-2b6fd5bec41so3274455eec.1
+        for <io-uring@vger.kernel.org>; Thu, 29 Jan 2026 15:54:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769730896; x=1770335696; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wd2raMo+ux6XXSgch8FCEw1i0/HtbrlenzfkkbkZi8Q=;
+        b=XQsuiookR9ngrrpL+vhTN8c79XRa4EOCCRzWPGojCFzQ7qL8dGFK/1KI8/22H0xxMx
+         r7vj2fuIZQnw7+tQT/3u3C5q9fpn76nOvh+/kFKFMVrVarzDLrcuGtqNd7Mw4fwFZb8P
+         E4jG46MdswVLyEJw3NGfYED/8y/GAMdfhoIrbcleI6i1BZzR1hHLbmdCXJJ9W+Pr8ngp
+         AawFKhPsVDzhdjvuwZAvA+wTTL9lAoVRs+dcHDQO3GmGydtXligawlDJ4RM42/Tc83XQ
+         n0NjP99btgv68PCmHNmBGfr/LvzRHVIQD0craTbtDM4B+3hL2Au5SM/jUazhW5P3otQ0
+         lE8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769730896; x=1770335696;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wd2raMo+ux6XXSgch8FCEw1i0/HtbrlenzfkkbkZi8Q=;
+        b=ntImDzvNR2CRNwQ+6LZC+jnHT6xDC78HtbDpAdccoL0bR/hwrWI/88TMIheQl/GePS
+         twMYberxxnephdp1OL0haQBXWho25IKIc2Aj3b8i5w7bEgcM2P0cqx9+kWd9z/DZarM8
+         2PJnpFIWKCPjC+XMoWePT6eJH2Pyru3cf9NEOmkJr17vym5nUqBZABxjNUg2TbGm8A4A
+         7XAr9mftez1hta/4bg4Oy9rrx0mH7JNeqkB5Ge8+qGvUuWWz/2rc5B4zDxqTzWQpUtcx
+         yt9weDPYx4kNrSA/XMmkKDcaM4aqWH9JsaO3/cXuB/xatliudiwJ/nry7Ue1C85xN6dB
+         ujaw==
+X-Gm-Message-State: AOJu0YxTbkFhCLpf1yadvqjT6SkGRZl2sNLx+FR04xY2M7Dt75+Q/MQu
+	Nc5K/OTmcEoj8FAo3Mp3HNN5bR0/UbYl8vAyDWW015LJvJjyYCuG/bHV7OAMUg==
+X-Gm-Gg: AZuq6aIqi+Vz3g4MPnX2J9pnft4L1bjTGgRNT9ibPX69xSxYAAlixugC1kBFdTJT9Dm
+	B5MrEwMwdnphj6H3dg/8xs5RL7MLKWs7ysQ5Pw1Qvnhmw2OL87eAdz6W4k/AT/KElpSqTLOsc/y
+	9KeTagnsshGIGYEG5wNlD7wqqhWm1TjRUMfg7JingUqxarmthYkBECD3q1beo5nPsIFgfbSdIG9
+	2aKpy4UUvJW0S+zPDwxALLva0UMsjIdeUGK0W7Hdc+d+ICGsFUBXTHRK8Ke7bo3SzzP3WilYvtu
+	RwEz/Q/OEopZIJNjqfOc5yqWDcCVCsPB9EgDQrTPXutqfe0jfSokaRJC0mNDEwnwZHaEbPfzDJu
+	uqoKxPLS5nMGQTTKeVDD1/8+57BaniiTEHlOfgukvLG1D+7PhRJ07GY/npmW/lkp0YJ7w6T9VQ/
+	dwJzMVeYS2taw/EA8=
+X-Received: by 2002:a05:7300:7493:b0:2b7:1320:f280 with SMTP id 5a478bee46e88-2b7c8663e38mr610033eec.15.1769730895748;
+        Thu, 29 Jan 2026 15:54:55 -0800 (PST)
+Received: from localhost ([2601:646:8100:f8:a787:ffd3:9020:3716])
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2b7a16d01c4sm8988063eec.2.2026.01.29.15.54.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Jan 2026 15:54:55 -0800 (PST)
+From: Govindarajulu Varadarajan <govind.varadar@gmail.com>
+To: io-uring@vger.kernel.org,
+	axboe@kernel.dk
+Cc: ming.lei@redhat.com,
+	kbusch@kernel.org,
+	hch@lst.de,
+	sagi@grimberg.me,
+	miklos@szeredi.hu,
+	Govindarajulu Varadarajan <govind.varadar@gmail.com>
+Subject: [PATCH v2] io_uring: Add size check for sqe->cmd
+Date: Thu, 29 Jan 2026 15:54:34 -0800
+Message-ID: <20260129235434.418973-1-govind.varadar@gmail.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260129221236.898135-1-krisman@suse.de>
-References: <20260129221236.898135-1-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -109,437 +93,186 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -3.01
-X-Spam-Level: 
-X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-11981-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	NEURAL_HAM(-0.00)[-0.999];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Queue-Id: C8F46B5358
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[redhat.com,kernel.org,lst.de,grimberg.me,szeredi.hu,gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-11982-lists,io-uring=lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[govindvaradar@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6C45AB5C7B
 X-Rspamd-Action: no action
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- test/Makefile |   1 +
- test/mmap.c   | 372 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 373 insertions(+)
- create mode 100644 test/mmap.c
+For SQE128, sqe->cmd provides 80 bytes for uring_cmd. Add macro to
+check if size of user struct does not exceed 80 bytes at compile time.
+User doesn't have to track this manually during development.
 
-diff --git a/test/Makefile b/test/Makefile
-index 64862f34..8fe56ae4 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -141,6 +141,7 @@ test_srcs := \
- 	link_drain.c \
- 	link-timeout.c \
- 	linked-defer-close.c \
-+	mmap.c \
- 	madvise.c \
- 	min-timeout.c \
- 	min-timeout-wait.c \
-diff --git a/test/mmap.c b/test/mmap.c
-new file mode 100644
-index 00000000..b0ec326b
---- /dev/null
-+++ b/test/mmap.c
-@@ -0,0 +1,372 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: test mmap operation
-+ *
-+ */
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <sys/mman.h>
-+#include <sys/param.h>
-+#include "liburing.h"
-+#include "helpers.h"
+Replace io_uring_sqe_cmd() inline func with macro and add
+io_uring_sqe128_cmd() which checks struct
+size for 16 bytes cmd and 80 bytes cmd respectively.
+
+Signed-off-by: Govindarajulu Varadarajan <govind.varadar@gmail.com>
+---
+v2:
+  - Replace all caps macro with lower case definition.
+  - Add const qualifier to return type.
+  - Rebase on top of series "[PATCH 0/4] ublk: fix struct
+    ublksrv_ctrl_cmd accesses"
+
+BRANCH: for-7.0/block
+
+Depends-on series: "[PATCH 0/4] ublk: fix struct ublksrv_ctrl_cmd
+accesses"
+  Needs "[PATCH 2/4] ublk: don't write to struct ublksrv_ctrl_cmd" to
+  avoid merge conflict.
+---
+ drivers/block/ublk_drv.c     | 14 +++++++++-----
+ drivers/nvme/host/ioctl.c    |  3 ++-
+ fs/fuse/dev_uring.c          |  6 ++++--
+ include/linux/io_uring/cmd.h | 15 +++++++++++----
+ 4 files changed, 26 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 0e25a59849ae..3f9d6dc3afef 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -3244,7 +3244,8 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+ {
+ 	/* May point to userspace-mapped memory */
+-	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe);
++	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe,
++							       struct ublksrv_io_cmd);
+ 	u16 buf_idx = UBLK_INVALID_BUF_IDX;
+ 	struct ublk_device *ub = cmd->file->private_data;
+ 	struct ublk_queue *ubq;
+@@ -3824,7 +3825,8 @@ static int ublk_validate_batch_fetch_cmd(struct ublk_batch_io_data *data)
+ static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
+ 				     unsigned int issue_flags)
+ {
+-	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe);
++	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe,
++							       struct ublksrv_io_cmd);
+ 	struct ublk_device *ub = cmd->file->private_data;
+ 	unsigned tag = READ_ONCE(ub_cmd->tag);
+ 	unsigned q_id = READ_ONCE(ub_cmd->q_id);
+@@ -3853,7 +3855,7 @@ static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
+ static int ublk_ch_batch_io_uring_cmd(struct io_uring_cmd *cmd,
+ 				       unsigned int issue_flags)
+ {
+-	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe);
++	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe, struct ublk_batch_io);
+ 	struct ublk_device *ub = cmd->file->private_data;
+ 	struct ublk_batch_io_data data = {
+ 		.ub  = ub,
+@@ -5106,7 +5108,8 @@ static int ublk_char_dev_permission(struct ublk_device *ub,
+ static int ublk_ctrl_uring_cmd_permission(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd, u64 *addr, u16 *len)
+ {
+-	const struct ublksrv_ctrl_cmd *header = io_uring_sqe_cmd(cmd->sqe);
++	const struct ublksrv_ctrl_cmd *header = io_uring_sqe128_cmd(cmd->sqe,
++								    struct ublksrv_ctrl_cmd);
+ 	bool unprivileged = ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV;
+ 	void __user *argp = (void __user *)*addr;
+ 	char *dev_path = NULL;
+@@ -5199,7 +5202,8 @@ static bool ublk_ctrl_uring_cmd_may_sleep(u32 cmd_op)
+ static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+ {
+-	const struct ublksrv_ctrl_cmd *header = io_uring_sqe_cmd(cmd->sqe);
++	const struct ublksrv_ctrl_cmd *header = io_uring_sqe128_cmd(cmd->sqe,
++								    struct ublksrv_ctrl_cmd);
+ 	struct ublk_device *ub = NULL;
+ 	u32 cmd_op = cmd->cmd_op;
+ 	int ret = -EINVAL;
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index fb62633ccbb0..8844bbd39515 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -447,7 +447,8 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
+ {
+ 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+-	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
++	const struct nvme_uring_cmd *cmd = io_uring_sqe128_cmd(ioucmd->sqe,
++							       struct nvme_uring_cmd);
+ 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
+ 	struct nvme_uring_data d;
+ 	struct nvme_command c;
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index 5ceb217ced1b..60f2058feb74 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -879,7 +879,8 @@ static int fuse_ring_ent_set_commit(struct fuse_ring_ent *ent)
+ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
+ 				   struct fuse_conn *fc)
+ {
+-	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
++	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
++								       struct fuse_uring_cmd_req);
+ 	struct fuse_ring_ent *ent;
+ 	int err;
+ 	struct fuse_ring *ring = fc->ring;
+@@ -1083,7 +1084,8 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+ static int fuse_uring_register(struct io_uring_cmd *cmd,
+ 			       unsigned int issue_flags, struct fuse_conn *fc)
+ {
+-	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
++	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
++								       struct fuse_uring_cmd_req);
+ 	struct fuse_ring *ring = smp_load_acquire(&fc->ring);
+ 	struct fuse_ring_queue *queue;
+ 	struct fuse_ring_ent *ent;
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 375fd048c4cb..7245b975c55d 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -20,10 +20,17 @@ struct io_uring_cmd {
+ 	u8		unused[8];
+ };
+ 
+-static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
+-{
+-	return sqe->cmd;
+-}
++#define io_uring_sqe128_cmd(sqe, type)	({					\
++	BUILD_BUG_ON(sizeof(type) > ((2 * sizeof(struct io_uring_sqe)) -	\
++				     offsetof(struct io_uring_sqe, cmd)));	\
++	(const type *)(sqe)->cmd;						\
++})
 +
-+static bool check_hugetlb()
-+{
-+	/* Cheap (to implement) check whether can mmap a 2MB hugetlb
-+	 * page.
-+	 */
-+	void *x = mmap(NULL, 2*1024*1024,
-+		       PROT_READ|PROT_WRITE,
-+		       MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB|MAP_HUGE_2MB,
-+		       -1, 0);
-+	if (x == (void*)-1) {
-+		munmap(x, 2*1024*1024);
-+		return false;
-+	}
-+	munmap(x, 2*1024*1024);
-+	return true;
-+}
-+
-+static unsigned char buf[BUFSIZ];
-+#define MAGIC_CHAR 0xf3
-+
-+const char *func;
-+int pos;
-+#define CATCH_FAULT(x) (func = __func__, pos=__LINE__, x)
-+
-+static void do_sigsev(int sig, siginfo_t *si, void *unused)
-+{
-+	printf("SIGSEGV on 0x%lx (%s:%d). OP_MMAP likely broken\n",
-+	       (long) si->si_addr, func, pos);
-+	exit(T_EXIT_FAIL);
-+}
-+
-+int create_memfd(int size, int flags)
-+{
-+	int fd;
-+	int remain = size;
-+	int ret;
-+	char path[10];
-+	static int i = 0;
-+
-+	/* just a unique name for each call */
-+	snprintf(path, 10, "t%d", i++);
-+
-+	if (size % sizeof(int)) {
-+		printf("memfd bad size %d\n", size);
-+		return -1;
-+	}
-+	fd = memfd_create(path, flags);
-+	if (!fd) {
-+		printf("memfd %d\n", fd);
-+		return -1;
-+	}
-+	if (ftruncate(fd, size)) {
-+		fprintf(stderr, "ftruncate");
-+		return -1;
-+	}
-+	while (remain > 0) {
-+		ret = write(fd, buf, MIN(size,BUFSIZ));
-+		if (ret < 0) {
-+			fprintf(stderr, "write");
-+			return -1;
-+		}
-+		remain -= ret;
-+	}
-+	return fd;
-+}
-+
-+int uring_mmap(struct io_uring *ring, int sqe_flags,
-+	       int fd, struct io_uring_mmap_desc *descs,
-+	       int nr_descs, int flags)
-+{
-+	struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
-+	struct io_uring_cqe *cqe;
-+	int ret;
-+
-+	io_uring_prep_mmap(sqe, fd, descs, nr_descs, flags);
-+	sqe->flags |= sqe_flags;
-+	io_uring_submit(ring);
-+	io_uring_wait_cqe(ring, &cqe);
-+
-+	ret = cqe->res;
-+	io_uring_cqe_seen(ring, cqe);
-+	return ret;
-+}
-+
-+int test_map_file(struct io_uring *ring, unsigned int ring_flags)
-+{
-+	int fd, ret;
-+	struct io_uring_mmap_desc desc = {
-+		.addr  = NULL,
-+		.len   = BUFSIZ,
-+		.pgoff = 0,
-+		.prot  = (PROT_READ|PROT_WRITE),
-+		.flags = MAP_PRIVATE
-+	};
-+
-+	fd = create_memfd(BUFSIZ, 0);
-+	if (fd < 0) {
-+		return T_EXIT_SKIP;
-+	}
-+
-+	ret = uring_mmap(ring, 0, fd, &desc, 1, 0);
-+	if (ret != 1) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d",
-+			func, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if ((long long) desc.addr <= 0) {
-+		fprintf(stderr, "bad desc.addr fail %lld\n",
-+			(long long)desc.addr);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if (CATCH_FAULT(memcmp(desc.addr, buf, BUFSIZ))) {
-+		fprintf(stderr, "check_buf fail\n");
-+		return T_EXIT_FAIL;
-+	}
-+	if (munmap(desc.addr, BUFSIZ)) {
-+		fprintf(stderr, "unmap fail\n");
-+		return T_EXIT_FAIL;
-+	}
-+	/* same, with a fixed file. */
-+	desc.addr = NULL;
-+	if (io_uring_register_files(ring, &fd, 1)) {
-+		fprintf(stderr, "register fail\n");
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret = uring_mmap(ring, IOSQE_FIXED_FILE, 0, &desc, 1, 0);
-+	if (ret != 1) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d",
-+			func, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if ((long long)(desc.addr) < 0) {
-+		fprintf(stderr, "bad desc.addr fail %lld\n",
-+			(long long)desc.addr);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if (CATCH_FAULT(memcmp(desc.addr, buf, BUFSIZ))) {
-+		fprintf(stderr, "check_buf fail\n");
-+		return T_EXIT_FAIL;
-+	}
-+	return 0;
-+}
-+
-+int test_map_anon(struct io_uring *ring, unsigned int ring_flags)
-+{
-+	struct io_uring_mmap_desc descs[4];
-+	void *addrs[4];
-+	int ret;
-+
-+	for (int i = 0 ; i < 4; i++) {
-+		descs[i].addr = NULL;
-+		descs[i].len = 1024;
-+		descs[i].pgoff = 0;
-+		descs[i].prot  = (PROT_READ|PROT_WRITE);
-+		descs[i].flags = MAP_PRIVATE;
-+	}
-+
-+	ret = uring_mmap(ring, 0, -1, descs, 4, MAP_ANONYMOUS);
-+	if (ret != 4) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d\n",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	for (int i = 0 ; i < 4; i++) {
-+
-+		if ((long long)(descs[i].addr) < 0) {
-+			fprintf(stderr, "bad desc.addr fail %lld\n",
-+				(long long)descs[i].addr);
-+			return T_EXIT_FAIL;
-+		}
-+
-+		/* Ensure it is mapped.  SIGSEV on error */
-+		CATCH_FAULT(*((char*)descs[i].addr) = MAGIC_CHAR);
-+		munmap((char*)descs[i].addr, 1024);
-+	}
-+
-+	/* reuse the addr from the first test to verify MAP_FIXED.  We
-+	 * know the region is free since we just unmapped it.
-+	 */
-+	for (int i = 0 ; i < 4; i++) {
-+		addrs[i] = descs[i].addr;
-+		descs[i].flags |= MAP_FIXED;
-+	}
-+
-+	ret = uring_mmap(ring, 0, -1, descs, 4, MAP_ANONYMOUS);
-+	if (ret != 4) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d\n",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	for (int i = 0 ; i < 4; i++) {
-+		/* Ensure it is mapped.  SIGSEV on error */
-+		CATCH_FAULT(*((char*)descs[i].addr) = MAGIC_CHAR);
-+
-+		if (descs[i].addr != addrs[i]) {
-+			fprintf(stderr, "MAP_FIXED failed");
-+			return T_EXIT_FAIL;
-+		}
-+	}
-+	return 0;
-+}
-+
-+int test_map_anon_hugetlb(struct io_uring *ring, unsigned int ring_flags)
-+{
-+	struct io_uring_mmap_desc desc = {
-+		.addr = NULL,
-+		.len = 1*1024*1024,
-+		.pgoff = 0,
-+		.prot  = (PROT_READ|PROT_WRITE),
-+		.flags = MAP_PRIVATE|MAP_HUGE_2MB,
-+	};
-+	int ret;
-+
-+	ret = uring_mmap(ring, 0, -1, &desc, 1,
-+			 MAP_ANONYMOUS|MAP_HUGETLB);
-+	if (ret != 1) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d\n",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if ((long long)(desc.addr) < 0) {
-+		fprintf(stderr, "bad desc.addr fail %lld\n",
-+			(long long)desc.addr);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Ensure it is mapped.  SIGSEV on error */
-+	CATCH_FAULT(*((char*)desc.addr) = MAGIC_CHAR);
-+	return 0;
-+}
-+
-+
-+int test_weird(struct io_uring *ring, unsigned int ring_flags)
-+{
-+	struct io_uring_mmap_desc desc;
-+	int ret, fd = create_memfd(BUFSIZ, 0);
-+	if (fd < 0) {
-+		return T_EXIT_SKIP;
-+	}
-+
-+	desc.addr = NULL;
-+	desc.len = 1024;
-+	desc.pgoff = 0;
-+	desc.prot  = (PROT_READ|PROT_WRITE);
-+	desc.flags = MAP_PRIVATE;
-+
-+	/* This is wrong because attempt MAP_ANONYMOUS with fd.  It
-+	 * fails early, because bad flag is on SQE.
-+	 */
-+	ret = uring_mmap(ring, 0, fd, &desc, 1, MAP_ANONYMOUS);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* This is wrong because attempt MAP_ANONYMOUS with fd.  It
-+	 * fails late, because bad flag is on desc.
-+	 */
-+	desc.flags = MAP_PRIVATE|MAP_ANONYMOUS;
-+	ret = uring_mmap(ring, 0, fd, &desc, 1, 0);
-+	if (ret != 1) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if ((long long) desc.addr != -EINVAL) {
-+		printf("mmap ANONYMOUS with fd should have failed %lx\n",
-+		       (uintptr_t)desc.addr);
-+	}
-+
-+	/* This is wrong because we can't have MAP_HUGETLB in the
-+	 * descriptor.  It fails late, because bad flag is on desc.
-+	 */
-+	desc.flags = MAP_PRIVATE|MAP_HUGETLB;
-+	ret = uring_mmap(ring, 0, fd, &desc, 1, 0);
-+	if (ret != 1) {
-+		fprintf(stderr, "mmap at %s:%d failed.  got %d",
-+			__func__, __LINE__, ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if ((long long) desc.addr != -EINVAL) {
-+		printf("mmap ANONYMOUS with fd should have failed %lx\n",
-+		       (uintptr_t)desc.addr);
-+	}
-+
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct io_uring_probe *probe;
-+	struct io_uring ring;
-+	int ret = 0;
-+	struct sigaction sa;
-+	bool has_hugetlb = check_hugetlb();
-+
-+	sa.sa_flags = SA_SIGINFO;
-+	sigemptyset(&sa.sa_mask);
-+	sa.sa_sigaction = do_sigsev;
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		fprintf(stderr,
-+			"failed to register signal handle. continuing.");
-+	}
-+	memset(buf, MAGIC_CHAR, BUFSIZ);
-+
-+	probe = io_uring_get_probe();
-+	if (!probe)
-+		return T_EXIT_SKIP;
-+	if (!io_uring_opcode_supported(probe, IORING_OP_MMAP))
-+		return T_EXIT_SKIP;
-+
-+	ret = t_create_ring(10, &ring, IORING_SETUP_SUBMIT_ALL);
-+	if (ret < 0) {
-+		fprintf(stderr, "queue_init: %s\n",
-+			strerror(-ret));
-+		return T_SETUP_SKIP;
-+	}
-+
-+	ret |= test_map_anon(&ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "test_map_anon failed\n");
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret |= test_map_file(&ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "test_map_file failed\n");
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if (has_hugetlb) {
-+		ret |= test_map_anon_hugetlb(&ring, 0);
-+		if (ret) {
-+			fprintf(stderr, "test_map_file failed\n");
-+			return T_EXIT_FAIL;
-+		}
-+	}
-+
-+	ret |= test_weird(&ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "test_map_weird failed\n");
-+	}
-+
-+	return ret;
-+}
++#define io_uring_sqe_cmd(sqe, type)	({					\
++	BUILD_BUG_ON(sizeof(type) > ((sizeof(struct io_uring_sqe)) -		\
++				     offsetof(struct io_uring_sqe, cmd)));	\
++	(const type *)(sqe)->cmd;						\
++})
+ 
+ static inline void io_uring_cmd_private_sz_check(size_t cmd_sz)
+ {
 -- 
 2.52.0
 

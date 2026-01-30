@@ -1,65 +1,65 @@
-Return-Path: <io-uring+bounces-11989-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11990-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uAbkKlArfGn1KwIAu9opvQ
-	(envelope-from <io-uring+bounces-11989-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:53:52 +0100
+	id EDw0FmwrfGn1KwIAu9opvQ
+	(envelope-from <io-uring+bounces-11990-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:54:20 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532BDB6ED3
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:53:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AC1B6EE1
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 596EC303C4C2
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 03:52:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E83CE304607B
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 03:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193DF366555;
-	Fri, 30 Jan 2026 03:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34C328850C;
+	Fri, 30 Jan 2026 03:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lICcBcOe"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JnAB038d"
 X-Original-To: io-uring@vger.kernel.org
 Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011041.outbound.protection.outlook.com [52.101.52.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7F236656B;
-	Fri, 30 Jan 2026 03:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9C434A767;
+	Fri, 30 Jan 2026 03:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769745136; cv=fail; b=cQVuallK3rGEVgIF0DRjUENkuQnapSQc72tjJ5TAF0l4PisRuIb0THt8xjS6dKoeuYPlIypE5UzWhPMlUKw9X0wwhQO/9jI1jauiUeXH00MDLbgdFHB0xUA90uedrzzOc0troqdQhzIMHcLeaBLCQ6aqcNHVhFsxtwxsWjse+sc=
+	t=1769745137; cv=fail; b=SA+u8zSHWzgGtqqglfd/0fo5XRRjesFG9njCh1/Tyw8zYTWQaqC87HIrNF3xLJNkAAncrZpE58sEGalnT26WkwCtd8v9bf5I9kjxlMvbqxpKLBk/sGm7z1XyBzHRUimr8HXqXspqg7y7Nuw5W/Tmsb1SAroox7TsEqDJ5sG2T5M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769745136; c=relaxed/simple;
-	bh=dj41B5sI/6F4jjyUQFJ8KfDepgIW3zGZPg95eqWcBtU=;
+	s=arc-20240116; t=1769745137; c=relaxed/simple;
+	bh=dfH0P/L0zwlHP3/uuHg0BloE3tjungRR0NYRrFKlkRI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P3mK73447RGZ1OqILJdvldQYCWuYVQvbgTy1U/5LIzLPiF5G7Tf+eWyLH3WMiUGizvkx8I4IXrep3xaD2b8kXmpEVuMKNQ2JJuq4cJGlx9OpLSP4U+6SZ5sorcOj3qJpHsZ26wATzPj8gs+Az/rlINDkbAi8MmJkH7UMJYoufVc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lICcBcOe; arc=fail smtp.client-ip=52.101.52.41
+	 Content-Type:MIME-Version; b=ZQ+CJibva6LP/ZqBn5kQikRxcgvCBME6rDBaM8/BPOvhpJZYfrwO1laOcnG12HE8jytCYrNdBbS737/EEXKh9tJPVJHuNBAM/KKh4T/pE2cg+ZDRwj8AHAVGUXh2XF29wXlIrcca+I2UiVVuvP565CMOMcU3wDmVjwagQGX3Rmk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JnAB038d; arc=fail smtp.client-ip=52.101.52.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eqJLu1Kc22TjYs/aMSuCOdAc1XPj377P/iV4sukd1th/dR9WsVQRbpu5CVrhe7tE0WBAIgDrFRVimvojLQpAQTBO9inmUq/1Oi/KxxGUB10fJRlRon3KF8FVEF+Y1aDVfpK5Fa6Uzui9955bz3kPFG+DsDS7PpcUV4j6PyXxaLF58LzvY1sGKiV1mAIzRaejXJIYr71w5R6a8jCjiLYzzNMF5jt3vVk/A5kkd/yo2RVzRHTxL1WLNK+9hNXbXFWg8Y/j4tD4ZQcI3qaXpa/T7AOnLuBSy/n1o1crCGasu45e0xkid9GvgQrFz+GxzOFlIoGApe/x1KqkadyMhJL82w==
+ b=uMnzlojQKsIpVxYyadQNEswJAD3WFY7NuTMODysJi3RSPgCYm92oAnyF3ZSVH4DWdoBtpFR4x0eGCvSKFclkyYrtuabXW+7zDNEoIurLPN1o/DgG+th+CiRrwCXeopuEJjKIyNdJZuoVCW38dAMYZELHn00TkfimkbR3FnCa49zL9Gzl4+mUdPKdVttYM9bhYa0znWZFzsRYHft2n4EBGxLRIK8aKTmOfYqz7cCHoWFAOrkE7Kx4AmOAfsWY0sVEIMiNY7m2bDXqg74g437aa2ujmFkLg9kg3rvMICv7wELL3z9oTFT+oTYVrgspu1n1gjW6+gP75hd66Ezt8kqEIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L4QaHhwuZyYRo1vThHw7667LfULyy3R1hHQFyr1poY4=;
- b=BGaEdL5ym9N/MzYoHk14BBCocqS2Je8V/+iFot3X//NdfOL7f52YzlPsrv8tlR0qs49tsmtVk+/WfEeq6H+/W5R1FKkLq9Z6anXuDY2PMqbCTggIJaHwNAjHu47wWo3xWudql8xcxgAD1GV+8We2gzzxbSoMhgswQwT2yaBYsdqj1Ep6VP5Rc/cT+7WK8H6BSkGiaq1SbxX4BNu1VJEcj5PVQmIpIo7Gk3KHd7x6rgIwDjMwl7fW0VAyILfrBY2rAhlZiVhdrBMi6t7itx5EHUsDJoRTYd40rSdAtSJ5OEcYk8G/bFTkhNS9YgDe5ovLngIC4X8sRJFCKSzObLyw8Q==
+ bh=8QkFb4RYKNfRLy0oKunZW6vYQkKk2GE+D9M9vROfh/k=;
+ b=DrDPOD+X7nDpd2aOi3Pkg4GM+Cy51O/sQjLAnh18lz6sJPwRXI3StGV2UPIsGc9Qnlv9pehyXKg/4AVM/GIRw4LgXq4nPCT/FhzxdcPcQbSMZcFJodu3csi8OEzz3Fmz7uxrYojlza9W00zzg2PmAVdG1LDMv7qGZemHzPIGVK+j6sUK+U9EMUB4g+ZpVILJwMaOY4X4f//aCIqzJ2JNTVsfo8uR2ZiUUP01fxFOgL3sA58qEHo9Bl6KKBl+pvhO5wMqAuYufnaiI/1OpMvFLTGkvWwvzhTUxL8ct8eWb6cVaGbWKRX6AB5/4i77eDwAXHhRGTnryL0wzBCm8MaqOg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L4QaHhwuZyYRo1vThHw7667LfULyy3R1hHQFyr1poY4=;
- b=lICcBcOemomcqLMmFEH/1BS81DHKwFNR9OwIcVYVEaqv5Cktnh1PVPZ3Wny8m60WybK/21Ef/KXcS7CKWb96W0vq2hpVIq4UW47ReP7hvcNG6Hpn2FvMzAxY6VYJhc7u1/lknMYHnhC7JEO90SmR09qiHr/QLyARzEV3R/DY7O+tom6YrFwIQCKQTVrcYLnJO7uHak3F+RTYp6Agk5gJZM95m4ArybPhfQ94jklfoVlo73PIJXZ74TPQNLlZjcftOAuWCXgAbUTcovT9ec7cwtMMlZeCh7UagYSKXHqZhpDy4QJnCYhB+X1C/H6tWIZH93VMycNfRhBucW8Z2r2guw==
+ bh=8QkFb4RYKNfRLy0oKunZW6vYQkKk2GE+D9M9vROfh/k=;
+ b=JnAB038dWXu8v+UBwQSNNh0uwo/NwwuPRxPlguFOUNExmAfNWeR6yMPZZ2c6aHu1JfH4eDBw9StejfC1++iNaBN50COWXd2oxXesrxLwnCOQxhgfXlXqO5H2O4HrUX6rAXdlYnxgqEU6NvHxx8pw6SOzWTpEhbgIyI1q9pnEhrG3CnxWqaCAaFAI/kQ79QeXIhDnZ3us7ZuoT6QylM7C5WsKceOIVaFUedHhjxxBbCXI+ERpfyYCXAqpcxHol3RLqhPuSH9bf6yB7jAroGGkOg3U4a+ocIPX2oeY7rikOa8jHeKLKvEapA2bIvcO+R6P3FjeGW+B33WudYK+a65SZw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
  IA1PR12MB8312.namprd12.prod.outlook.com (2603:10b6:208:3fc::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Fri, 30 Jan
- 2026 03:52:10 +0000
+ 2026 03:52:11 +0000
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::f01d:73d2:2dda:c7b2]) by DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::f01d:73d2:2dda:c7b2%4]) with mapi id 15.20.9564.006; Fri, 30 Jan 2026
- 03:52:10 +0000
+ 03:52:11 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: Jason Gunthorpe <jgg@nvidia.com>,
 	David Hildenbrand <david@kernel.org>,
@@ -88,16 +88,16 @@ Cc: Alistair Popple <apopple@nvidia.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	io-uring@vger.kernel.org
-Subject: [RFC PATCH 4/5] mm: only use struct page in compound_nr() and compound_order()
-Date: Thu, 29 Jan 2026 22:48:17 -0500
-Message-ID: <20260130034818.472804-5-ziy@nvidia.com>
+Subject: [RFC PATCH 5/5] mm: code separation for compound page and folio
+Date: Thu, 29 Jan 2026 22:48:18 -0500
+Message-ID: <20260130034818.472804-6-ziy@nvidia.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130034818.472804-1-ziy@nvidia.com>
 References: <20260130034818.472804-1-ziy@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: MN2PR03CA0025.namprd03.prod.outlook.com
- (2603:10b6:208:23a::30) To DS7PR12MB9473.namprd12.prod.outlook.com
+X-ClientProxiedBy: MN0P223CA0007.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:208:52b::27) To DS7PR12MB9473.namprd12.prod.outlook.com
  (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -107,81 +107,81 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB8312:EE_
-X-MS-Office365-Filtering-Correlation-Id: 350d25a9-9552-4671-971a-08de5fb2f1cb
+X-MS-Office365-Filtering-Correlation-Id: 7a47f5ae-a86f-459a-7ff3-08de5fb2f289
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7uuWkCaBnMw+jYhgVPLkT8jkd7fJOaNHXTSNXrcqDbcERIdqQ08Q/+FKEpwR?=
- =?us-ascii?Q?Id+e1bsFwdNg5mguOSRssXMWEgVRC8PutAE+C4sszkLu5pePU04CAHJ6jzZg?=
- =?us-ascii?Q?gymXFiL6XNxDeTx7NrthwVA0t3yncuSDgIxGlMmI/ycU0fUEAwtjOzUCcnmx?=
- =?us-ascii?Q?ttyIxTolYoD/uxs1La6KUhOvmi4NdnLNqvsjExwsgL3hEzC4cEflipi40aI7?=
- =?us-ascii?Q?Piymlt2vGCopme2GYZZfWB2EqJ7KYi3bVRof9Q7XyWd5hYoUkWHHXzj8e3Dn?=
- =?us-ascii?Q?B79bhj5Y+wR9l1HuMruLo7G4CceF7hRHNt8XICPecl96AtWNvtJdRBAX5N3/?=
- =?us-ascii?Q?NV4oU9Obh+kloDeICq2QtYy3557mzWC40C4RM6fsc+TWME+DYyP7xKH+3CVQ?=
- =?us-ascii?Q?ndryw9/Ls+AK0nNuDoVFNp5X7uMoKjbRcfHVyoTVcO3HrtlH8dwQcb3C5slj?=
- =?us-ascii?Q?5FE8TfASfxIu57NC3OwPTWowCvsaye2hODmbUEarMdQUVpBaMbQC06/O6frJ?=
- =?us-ascii?Q?kvqQgQ7xK2dcEy/gdr4rwGCruXQsNQnYNSHuPDZpcgvWr5N05YtPRO2T6U/M?=
- =?us-ascii?Q?6CZyf1MBgM8PoLH6dxDF2QudihhDIdQ0bKgzdZfaB8IsuZtRj5UbM9/QNn2b?=
- =?us-ascii?Q?4NbEDN3Xnj7Gj7oPlKW/1Wtvcb1ivRenXROL7KiIQMqTQwciwP6Ubn92coc5?=
- =?us-ascii?Q?A0d+3jeMbIBH0456BR+stIdgqNxYYxRqVALL1U7TAxhF2/kYMil0hPoJ3gXs?=
- =?us-ascii?Q?1cgMyU4WnqZmsv8tUG1SUrMSJEz6MCHNlk5+x73nUnxOZ0SpAMba+Xu5YCW+?=
- =?us-ascii?Q?5uysKrKzuBpmiuVaeQ9ykogpjwkDVO6bC8GynS7mVJGjIxbuwt/oOsJxzyo5?=
- =?us-ascii?Q?UTczziM7d86VcSJl7K8dJBxP/EZ7+sa8SfHjUsvmkrHCOz5XQ20emF5ah+tS?=
- =?us-ascii?Q?FjXNQ4pHuSd1DZK7rf6+XT6s8zmzHkyidJOuY4LyOUyrVFCPFop7hR4efs3B?=
- =?us-ascii?Q?V+h7ig2nSM90olGqef1nSxol1EALA598c+m5LOjtoe+rBr1iYqken7Nledb1?=
- =?us-ascii?Q?E6B4gKWNeOSsmX7ZwODuQNiiTfjjd/EYbetSnNjKjYDgjpB9GUOHbWzzbtXE?=
- =?us-ascii?Q?VPB6L00nmXC9FJZqKRqCuk1Vo0lyj5eQR9islnDg2wEEzBldQISv6rtes40e?=
- =?us-ascii?Q?1WQUCeoXQnFP76nTjrMHUzO27Xsp/pvWJIfOoqc8Hs/EpplSTdbaACEXc6CB?=
- =?us-ascii?Q?Sy+YA2JS3IH0L5q21UuHEqcORHu4iIdggPBCuiT7ogo88/xnX9FZ2A7SDl4m?=
- =?us-ascii?Q?Zbs4k4ctEM2U1Y7bEy1G27QgFTOstCo2P7oJKDzGFRdYZYFeV+LDhhLymQSj?=
- =?us-ascii?Q?Vho8/lAHtP36Vo4XKo4eBMAX+r/zrM8FW1ALjs+S0HPvPJujzKXbt29Dj5IG?=
- =?us-ascii?Q?KaNGoolsWtZjWN6AN9uXIJ804JYw4jboCB3r9p4E2PbS+MC5MeFS2IsGS7Ro?=
- =?us-ascii?Q?sw0cmIx412F9knKHyK/97WHmLcjQFtVIT7EUhrkcp8zGIUQkYcbmi13f7bwj?=
- =?us-ascii?Q?TeU4Z33ZwuCRryExxCk=3D?=
+	=?us-ascii?Q?J5oeXgKmORtEb4TrvfjfHkpopzxLqhKuqts3Bi+4Qe2Fso+vRMWbREFIoDic?=
+ =?us-ascii?Q?nxoZ3fOnOsJ9G4PWFgNez8LRLwxuTHUSSuVO0YQG3Ofda1jAYOwnIzTABWT7?=
+ =?us-ascii?Q?YBNZzb2wDmVBXHe1dHBfvbSjvNwbP+9P/Aegn1ps6ybxqzPYWj7Y/3NfkDyG?=
+ =?us-ascii?Q?rs6chINCTKbL7ODFVij3mJU1VEP5CAZlGuxJelAgqErqCcw3HQw5JCYwGIqG?=
+ =?us-ascii?Q?elPTgq48Lpj3MlLUuvpHUXTmonc6NTS0G7LeVqHg3PvPNs8sVG+W8hejI+QR?=
+ =?us-ascii?Q?fyJrNhdO0J55mXc8BLEV5skqsncVfgaSZT/+mHsnWUuxBd4chnccLAudaXML?=
+ =?us-ascii?Q?Dj6bQRZB86nxa/GmBNzEL3OWK8i47M6JeIv0BY6NxzKediCHsWoOPEPxs9Q2?=
+ =?us-ascii?Q?B12p3pz0edy2ZNi8iKVnNRWMVROKspq1g2weGRdAfbSGbEza1cRAPmiVYxSN?=
+ =?us-ascii?Q?tpk/G584xl6cavmpBa2ZALpz4GXphVf6GDGep1s8f+7KEGAqnuhWI72itxyC?=
+ =?us-ascii?Q?LZ+arMXrat+BbozV3WVHwONUPN22+fiaXVQqEo4uRrmIBqVmH95+KL/KzKu2?=
+ =?us-ascii?Q?Dqp34sB9xV4qk7scRKIWrzAjqw6ewagEvg+lI+FKawcMKqyRUTOlN8WNo77o?=
+ =?us-ascii?Q?kEWTAHNpUEZ6Ub9TLDYy89drJE6/nddjJHbxQZ57WuQWg9+aOVOUs/QVZJ5Q?=
+ =?us-ascii?Q?qHxkl3tQsz73UrX4GnCc0R/FoaCO/ru/k02jrAdrEy5IgxgsNRq0SbmCRxSp?=
+ =?us-ascii?Q?9ZB6mgjVHI9Fz4Zq5KowIpxkayK5UJvisi8ORuLhAMAIuWyz6DgJ+GoQzPsg?=
+ =?us-ascii?Q?marbXCqkBnfsL+WNLxNP3LzgVldyxRuo7vqLu8S+QUVwfP9UJl5hMFZBLlNQ?=
+ =?us-ascii?Q?L92HDfBiC34QwMC8ydNYgRhyy/JNK3KgeVxCjX7q6ycLuQOkWstQ13TJ2A35?=
+ =?us-ascii?Q?16La0vB4oD+0f+DGXJ/h7gdr5LtYjl2WltwBHvLnVP9TYxFUWlNz1iEGTXSG?=
+ =?us-ascii?Q?aP5aiDzDKOoLgln3V/FbqwZLAWxerLtsfI9xHp7+ElB8wxrwIKPnSSVyRj1x?=
+ =?us-ascii?Q?yBt2jFYQn/tXPRDO25WHYqNjrZZ2gBsdPSwFzm8SLBz6n828KgbyDUA8uWDq?=
+ =?us-ascii?Q?SRGOdmxZjyPL0kLE3LrJirZTM15ArNea7Rx5qbp/NalicXcnurnpL8Orrw6l?=
+ =?us-ascii?Q?dnLxHTU4t4TtXBVkqHuo2QBeLMF3ERzx/y5lmwe23KkR7W8s0cCcR4iVMEwx?=
+ =?us-ascii?Q?GuYWrN4QD1ZMGk68goDH0taljiDqtMtWAg0h4g9/svrT5yxXuWT6pvh5+NYs?=
+ =?us-ascii?Q?GvyhlFXq0ZbBGcY6OfR/6h6V8zA0Mpmuh3nJCQqYIBrwQ0pFxQiqyplJRAOE?=
+ =?us-ascii?Q?PotXn3dnUGq8ZMX/qLIiLedRNlY5YxZuP/f8YtcGsJ/A3seP5siXpFGB9sV6?=
+ =?us-ascii?Q?8syj7BUM/gsO8h2LO58rT5axdhHZKmFMWvCK0VseeMzh6ow5XQrrxkI+WEBJ?=
+ =?us-ascii?Q?a5UDE1xlNZCpH2iqfNZI9eceiN6g9zQRBL2AhKV+lVdYHciDzrwRGyIJcD/t?=
+ =?us-ascii?Q?Lcg2H5A2xmA30fRMy7M=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?auiubOjtTr/3pnRg02l/mFFzeqZkV03T41CApq9/USKBAsb8I5LFt/0kxQSD?=
- =?us-ascii?Q?a3mxq56EAW28p5ANP7xOKIpnf/MJS/AwIO5xzf7xY9EkWh+uPStfsbcuT+Xe?=
- =?us-ascii?Q?2w5wayIVFdiG79q7zWm5nZSPFovw0M1UJuLgHO8XmfnX84DbTwiv2qmxoHCL?=
- =?us-ascii?Q?kurzcRf3gM18kcTGsvD8MrwrMyfSNKZtMJz3WJJ37p05WKb1A1Yn8KC1NtsT?=
- =?us-ascii?Q?PaS5D6VSqvohBA38T2wLYvagUW7xIczS7H6TplhryRAvSh0hPYWs2C5UwIXd?=
- =?us-ascii?Q?ApOFGbKOK750g48L5A9ocaJIvl8dLzBUNdCtnyEJZchjFACQ4PgCO13FJT/b?=
- =?us-ascii?Q?Ev6o4e74J5oOC5C4OWPmEE0PHYlS5SAXMN+01SIPklZepkxulldxlOEbytr/?=
- =?us-ascii?Q?Zr20BDnYft3TUYE+44mLZfY5Q52yc2m9SAY9qIjKB7mPYkUJFOd251f+tmdr?=
- =?us-ascii?Q?lbIZz0Dqjbh+0N7LCOYEUk+W7le1IR/ow3o0Jng8t0OfElWFB/Nh7S3HN8Le?=
- =?us-ascii?Q?itzSacIlPL1eMwlMuyElTRB0FnMJ6eG30ARGfZWzFq9M72VRDTQjCqDF6zGP?=
- =?us-ascii?Q?l9Xq3F6uYEXut1Bj0ECpzptM82FWce+MlsSGkapwT7kiBSnc15pUbdTMwjIS?=
- =?us-ascii?Q?4xy4+VYNetoDIUsYfx/96E4WVSX5iQrrNi64RKkH4fEVyhPv7KG9IaZBrIt+?=
- =?us-ascii?Q?J+pl0KuPpkoiZtHDKGqf7AfSZukvs1d1Bcu3jQQqTJkZBoffqY/5bU1bSLfC?=
- =?us-ascii?Q?3e6nwUvGG36A0oTdTPvbnFSuDPLtShNBjCEM85pTe/SDLE5t3qqeYKvLQdK0?=
- =?us-ascii?Q?eauC990w3rXFu2RsG1ftuFt3TNthc3foaMvCJh0TOTsxArGZhd4e2pgpqBbi?=
- =?us-ascii?Q?MHASjI2akhqV4JrH8rbUJdxgQFJ8FhnR/GvDh869fmJYR7IEeD6ucdgR2VlO?=
- =?us-ascii?Q?dGkwQxMjVNdiknBx8xMu+mTrs12CDXChcZnbgYzU8rL/rSvyZvV7I+KYYd40?=
- =?us-ascii?Q?EjbDr+bawqhFiC3dsb8OHNFSLY/tux9fvLORakJJPmcuJ6ZlQMg3N0nTukFa?=
- =?us-ascii?Q?BL7hfP3xFdMHGNQeksarpzg+0ykLQKWa9R2z1C4kYhD1PvopN5J5pJ2iM4LS?=
- =?us-ascii?Q?5/qVVYvLIVRvhoBnpNOl/WdhYwNoAb4Pd5eJnYK6eSlOF118AURC72FUV8ig?=
- =?us-ascii?Q?f7kNiHkYkn8km4iGwROce3RhMQ+bqToPhHKjpXK1uNxx+30yFakIi0ijPRTd?=
- =?us-ascii?Q?sg6kJ7AgF3murqWxV1jDzXNTKSY9Edlbzl18g8u4bmWWrvZdMT6masLGM7RS?=
- =?us-ascii?Q?8aBKke8vIiXDesKrNiPTCFLPaaq4AUHuLQkZfK7lzf0i3cGcvMZpAsKHqAD0?=
- =?us-ascii?Q?nf3VTP/mLRSSg5+maHTDWDX2FH5gEcOixfd72H+XqSUK7PI3NusN5orhrqik?=
- =?us-ascii?Q?VZkl+kIWiFNoAJinEeGeRNOjBzYuvmNBAEuaJa1/AMGA0Xq4+lPnJqp/hbI9?=
- =?us-ascii?Q?6kAWPG76ck5ERM9Mm2cq3t9rAhBaJzRMXAczC+PnVFiV5XQJTQbNPKVGOJKh?=
- =?us-ascii?Q?Qug9vOavL7xbG8AHPPsAgPd61uH57/dAwTwcxZVtOxwQayTtA9HUc9gfCWxq?=
- =?us-ascii?Q?wTEE07Wengsesg8MR5WLh4dCIpk0gaLucISJ0XCMjbBI6DZrcY7u46Nmevgu?=
- =?us-ascii?Q?kRjiwoWXst2/v5+P/pCnLDQhfwwUtHfH64xZV4dS3GO/9cgy?=
+	=?us-ascii?Q?b1/0MliG55/5eLJGSecjf6emk9kfdfeCtmKGHzuO6DgFhnUaxbbyZqWsH7Sg?=
+ =?us-ascii?Q?eiVu1/Ic734p20919m7aTnp77t8LwnpMMbcO3FurhkkApOJCIRWPJDx83VqY?=
+ =?us-ascii?Q?K2MHc5jEM2Xmy7hjjlB8f5P1CJiLaLpKDXtVe907dpp7hUoqQJKGiZhHDgyC?=
+ =?us-ascii?Q?xOgkx7lqTUqg/7cSqHXhlDAdXn9mm9WXRLM9bKGYGgoH3AdISNLqV1NM2ChK?=
+ =?us-ascii?Q?v7PDeL15w4+SYt17tz+Eg1efLimgeq8cx6Nd4mciCpdt1Rr8UDmMLXaxCLlT?=
+ =?us-ascii?Q?mA6SFuXqSoTu493pjSygXnj8mxSaUNGjELOUHsHRsStXEcOdP+GQyu9xqxrC?=
+ =?us-ascii?Q?ACC5vgIy0DXVJf559nvRMGFhH+ENECCVqV4QiAxiPFfahqmBzdTRJI2plwb2?=
+ =?us-ascii?Q?NB8EO3Pml6yE8RJ3MZkh8TokkSB0NbnN/mkV+Wx7qALmAbd4kD33AkqyW2gO?=
+ =?us-ascii?Q?wAyoy/RTKn87A+qcf+nHEk1D74B37Zu435O5eDVI/hL4GT3pMMpt/iXhg36x?=
+ =?us-ascii?Q?jcWYFXTpR5FKkC30S/I5ugvOT1DzmGG0xAXWkqjSdDr6TaSHAZP6TIsXdoSW?=
+ =?us-ascii?Q?GkktUS0G+sI+GIRUZ8wdYjo7ispuxMApLqoH4ji93SOmmnkV5lGKdQ4bo+za?=
+ =?us-ascii?Q?7Zivt2S+vXscG1vHJCjKYuZ7kuAAuCBaiBRHTE1EmXKyt3yZ3zceWEwyi0Vu?=
+ =?us-ascii?Q?iVvCTVdnfP6rnpJEA/AwYEJlybegIwMHNbwwFsZu3lZ2EXtmRVoN4C5hA7jH?=
+ =?us-ascii?Q?NbYqR2tG6xupIbmBhnT5xZDxZvikDyqulVJYPf2djzy2ypJ7wqxqVMgF7BsX?=
+ =?us-ascii?Q?GUrljlIKER15Gm1I/nTOJo4NaUKuxielhSgqWEmkRB8b0oXY503elijpv9vB?=
+ =?us-ascii?Q?s79jH0JQWus/gxCUFc0L2bzD+XDqZVjBzlYKB6WjaiA+4duJ7J1ErLXMJhMu?=
+ =?us-ascii?Q?DWmgBnHrFvz94iaxQ0BlrsjsqjDsdqD+Ucdc5XieDsk1HmttMh5303B7T9pN?=
+ =?us-ascii?Q?+MCRNz64Icyj358OZa0LoKhzUycOK+TcFWOY9JMKXcVVfvQaWxcT2S3RuKrw?=
+ =?us-ascii?Q?OpHZicYe/EXLw9RPwGjcBjSc+ZiBeTmgT9rx27K+V9dh48IM+Vjf6L1WY1tp?=
+ =?us-ascii?Q?iTxn66bVlNL95KH9rbvXvEVg1ZWvCtqhBfwDCkUMccaeT71vOwG2x/PUOGtA?=
+ =?us-ascii?Q?CalbG5fPW4UAVuPUfxjlOOuA69TO/fvSVpmNJKN20r0dwKb8rGbVIREC87iN?=
+ =?us-ascii?Q?TCE3OUQ7mhq+Yhq/VfOBdPhH3dy2WzhJw76V/f446BAjk34REvWVMd+qc7H6?=
+ =?us-ascii?Q?vxW3RCwS2p+ZJqbKnngmEQ1/baclI7mJzOsnxropaloV2rr0DyXh2Y1GBkuJ?=
+ =?us-ascii?Q?bAqOh2Q+isd7UunZ6tvoet/c6BuElMRBRmi+3pCe7RSvXJAtABc4x1d92Vwg?=
+ =?us-ascii?Q?LSXmaVftQ2uYviEKOJBz2S9K3yoae8UwF/xMlpTmjDPT8HGYSGaFIv3K+yE3?=
+ =?us-ascii?Q?2Gghn8p+gUYQYDZbddsa1N4PAdlhG0FBF3X938XUHFY5j6CHL/ahmAUbKx3s?=
+ =?us-ascii?Q?j/b6DyzUnUCOTbMSxWpoA7nVMA+Iryil3RGq3RUDnxvcLfQqGJvR1Rhb8KdL?=
+ =?us-ascii?Q?K8bslG9Xau0s1ZUdOjwCpTQt0JFzeM3vm5AKab3G3Jbg7y+xn1vQ7swNctyS?=
+ =?us-ascii?Q?FSTX2fnsDEPXScXtSARPSM5SQfGqw1MF4Z+V2Tnm73lNNUV5?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 350d25a9-9552-4671-971a-08de5fb2f1cb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a47f5ae-a86f-459a-7ff3-08de5fb2f289
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 03:52:10.0046
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 03:52:11.2683
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rZBH98EMAkhUzQDRZp4LmKiv2MSTSYR0i+SeupccTzcOcBL5dd+SgUdJfPglkijW
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1OeSusg6e1g9+MqO+iJqtGigT6vdL0tVD4FVVwv2BX1LGm8Ghu7w2i4l7ma1guK5
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8312
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [1.34 / 15.00];
@@ -190,14 +190,14 @@ X-Spamd-Result: default: False [1.34 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
 	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCPT_COUNT_TWELVE(0.00)[27];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-11989-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-11990-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
@@ -208,53 +208,202 @@ X-Spamd-Result: default: False [1.34 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,nvidia.com:mid,nvidia.com:email,Nvidia.com:dkim]
-X-Rspamd-Queue-Id: 532BDB6ED3
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:mid,nvidia.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,Nvidia.com:dkim]
+X-Rspamd-Queue-Id: D3AC1B6EE1
 X-Rspamd-Action: no action
 
-A compound page is not a folio. Using struct folio in compound_nr() and
-compound_order() is misleading. Use struct page and refer to the right
-subpage of a compound page to set compound page order. compound_nr() is
-calculated using compound_order() instead of reading folio->_nr_pages.
+A compound page is not a folio. Using struct folio in prep_compound_head()
+causes confusion, since the input page is not a folio. The compound page to
+folio conversion happens in page_rmappable_folio(). So move folio code from
+prep_compound_head() to page_rmappable_folio().
+
+After the change, a compound page no longer has the following folio field
+set:
+1. folio->_nr_pages,
+2. folio->_large_mapcount,
+3. folio->_nr_pages_mapped,
+4. folio->_mm_ids,
+5. folio->_mm_id_mapcount,
+6. folio->_pincount,
+7. folio->_entire_mapcount,
+8. folio->_deferred_list.
+
+The page freeing path for compound pages does not need to check these
+fields and now just checks ->mapping == TAIL_MAPPING for all subpages.
+So free_tail_page_prepare() has a new large_rmappable input to distinguish
+between a compound page and a folio.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/mm.h | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ mm/hugetlb.c    |  2 +-
+ mm/internal.h   | 44 ++++++++++++++++++++++++++------------------
+ mm/mm_init.c    |  2 +-
+ mm/page_alloc.c | 23 ++++++++++++++++++-----
+ 4 files changed, 46 insertions(+), 25 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index f8a8fd47399c..f1c54d9f4620 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1428,11 +1428,9 @@ static inline unsigned long folio_large_nr_pages(const struct folio *folio)
-  */
- static inline unsigned int compound_order(const struct page *page)
- {
--	const struct folio *folio = (struct folio *)page;
--
--	if (!test_bit(PG_head, &folio->flags.f))
-+	if (!test_bit(PG_head, &page->flags.f))
- 		return 0;
--	return folio_large_order(folio);
-+	return page[1].flags.f & 0xffUL;
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 7466c7bf41a1..231c91c3d93b 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3204,7 +3204,7 @@ static void __init hugetlb_folio_init_vmemmap(struct folio *folio,
+ 	ret = folio_ref_freeze(folio, 1);
+ 	VM_BUG_ON(!ret);
+ 	hugetlb_folio_init_tail_vmemmap(folio, 1, nr_pages);
+-	prep_compound_head(&folio->page, huge_page_order(h));
++	set_compound_order(&folio->page, huge_page_order(h));
  }
  
- /**
-@@ -2514,11 +2512,9 @@ static inline unsigned long folio_nr_pages(const struct folio *folio)
-  */
- static inline unsigned long compound_nr(const struct page *page)
+ static bool __init hugetlb_bootmem_page_prehvo(struct huge_bootmem_page *m)
+diff --git a/mm/internal.h b/mm/internal.h
+index 8bb22fb9a0e1..4d72e915d623 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -854,30 +854,38 @@ static inline struct folio *page_rmappable_folio(struct page *page)
  {
--	const struct folio *folio = (struct folio *)page;
--
--	if (!test_bit(PG_head, &folio->flags.f))
-+	if (!test_bit(PG_head, &page->flags.f))
- 		return 1;
--	return folio_large_nr_pages(folio);
-+	return 1 << compound_order(page);
+ 	struct folio *folio = (struct folio *)page;
+ 
+-	if (folio && folio_test_large(folio))
++	if (folio && folio_test_large(folio)) {
++		unsigned int order = compound_order(page);
++
++#ifdef NR_PAGES_IN_LARGE_FOLIO
++		folio->_nr_pages = 1U << order;
++#endif
++		atomic_set(&folio->_large_mapcount, -1);
++		if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
++			atomic_set(&folio->_nr_pages_mapped, 0);
++		if (IS_ENABLED(CONFIG_MM_ID)) {
++			folio->_mm_ids = 0;
++			folio->_mm_id_mapcount[0] = -1;
++			folio->_mm_id_mapcount[1] = -1;
++		}
++		if (IS_ENABLED(CONFIG_64BIT) || order > 1) {
++			atomic_set(&folio->_pincount, 0);
++			atomic_set(&folio->_entire_mapcount, -1);
++		}
++		if (order > 1)
++			INIT_LIST_HEAD(&folio->_deferred_list);
+ 		folio_set_large_rmappable(folio);
++	}
+ 	return folio;
  }
  
- /**
+-static inline void prep_compound_head(struct page *page, unsigned int order)
++static inline void set_compound_order(struct page *page, unsigned int order)
+ {
+-	struct folio *folio = (struct folio *)page;
++	if (WARN_ON_ONCE(!order || !PageHead(page)))
++		return;
++	VM_WARN_ON_ONCE(order > MAX_FOLIO_ORDER);
+ 
+-	folio_set_order(folio, order);
+-	atomic_set(&folio->_large_mapcount, -1);
+-	if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
+-		atomic_set(&folio->_nr_pages_mapped, 0);
+-	if (IS_ENABLED(CONFIG_MM_ID)) {
+-		folio->_mm_ids = 0;
+-		folio->_mm_id_mapcount[0] = -1;
+-		folio->_mm_id_mapcount[1] = -1;
+-	}
+-	if (IS_ENABLED(CONFIG_64BIT) || order > 1) {
+-		atomic_set(&folio->_pincount, 0);
+-		atomic_set(&folio->_entire_mapcount, -1);
+-	}
+-	if (order > 1)
+-		INIT_LIST_HEAD(&folio->_deferred_list);
++	page[1].flags.f = (page[1].flags.f & ~0xffUL) | order;
+ }
+ 
+ static inline void prep_compound_tail(struct page *head, int tail_idx)
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 1a29a719af58..23a42a4af77b 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1102,7 +1102,7 @@ static void __ref memmap_init_compound(struct page *head,
+ 		prep_compound_tail(head, pfn - head_pfn);
+ 		set_page_count(page, 0);
+ 	}
+-	prep_compound_head(head, order);
++	set_compound_order(head, order);
+ }
+ 
+ void __ref memmap_init_zone_device(struct zone *zone,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e4104973e22f..2194a6b3a062 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -746,7 +746,7 @@ void prep_compound_page(struct page *page, unsigned int order)
+ 	for (i = 1; i < nr_pages; i++)
+ 		prep_compound_tail(page, i);
+ 
+-	prep_compound_head(page, order);
++	set_compound_order(page, order);
+ }
+ 
+ static inline void set_buddy_order(struct page *page, unsigned int order)
+@@ -1126,7 +1126,8 @@ static inline bool is_check_pages_enabled(void)
+ 	return static_branch_unlikely(&check_pages_enabled);
+ }
+ 
+-static int free_tail_page_prepare(struct page *head_page, struct page *page)
++static int free_tail_page_prepare(struct page *head_page, struct page *page,
++		bool large_rmappable)
+ {
+ 	struct folio *folio = (struct folio *)head_page;
+ 	int ret = 1;
+@@ -1141,6 +1142,13 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
+ 		ret = 0;
+ 		goto out;
+ 	}
++	if (!large_rmappable) {
++		if (page->mapping != TAIL_MAPPING) {
++			bad_page(page, "corrupted mapping in compound page's tail page");
++			goto out;
++		}
++		goto skip_rmappable_checks;
++	}
+ 	switch (page - head_page) {
+ 	case 1:
+ 		/* the first tail page: these may be in place of ->mapping */
+@@ -1198,11 +1206,12 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
+ 		fallthrough;
+ 	default:
+ 		if (page->mapping != TAIL_MAPPING) {
+-			bad_page(page, "corrupted mapping in tail page");
++			bad_page(page, "corrupted mapping in folio's tail page");
+ 			goto out;
+ 		}
+ 		break;
+ 	}
++skip_rmappable_checks:
+ 	if (unlikely(!PageTail(page))) {
+ 		bad_page(page, "PageTail not set");
+ 		goto out;
+@@ -1392,17 +1401,21 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 	 * avoid checking PageCompound for order-0 pages.
+ 	 */
+ 	if (unlikely(order)) {
++		bool large_rmappable = false;
+ 		int i;
+ 
+ 		if (compound) {
++			large_rmappable = folio_test_large_rmappable(folio);
++			/* clear compound order */
+ 			page[1].flags.f &= ~PAGE_FLAGS_SECOND;
+ #ifdef NR_PAGES_IN_LARGE_FOLIO
+-			folio->_nr_pages = 0;
++			if (large_rmappable)
++				folio->_nr_pages = 0;
+ #endif
+ 		}
+ 		for (i = 1; i < (1 << order); i++) {
+ 			if (compound)
+-				bad += free_tail_page_prepare(page, page + i);
++				bad += free_tail_page_prepare(page, page + i, large_rmappable);
+ 			if (is_check_pages_enabled()) {
+ 				if (free_page_is_bad(page + i)) {
+ 					bad++;
 -- 
 2.51.0
 

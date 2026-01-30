@@ -1,281 +1,288 @@
-Return-Path: <io-uring+bounces-11984-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-11985-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AHlvOioLfGkEKQIAu9opvQ
-	(envelope-from <io-uring+bounces-11984-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 02:36:42 +0100
+	id JpTtNuwqfGn1KwIAu9opvQ
+	(envelope-from <io-uring+bounces-11985-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:52:12 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55423B632D
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 02:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35855B6E80
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 04:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 88EF830086CA
-	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 01:36:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BE636300E396
+	for <lists+io-uring@lfdr.de>; Fri, 30 Jan 2026 03:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C790F314B8E;
-	Fri, 30 Jan 2026 01:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848720D4E9;
+	Fri, 30 Jan 2026 03:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwgD5fSA"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C17WvFnj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011041.outbound.protection.outlook.com [52.101.52.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA37330D34
-	for <io-uring@vger.kernel.org>; Fri, 30 Jan 2026 01:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769736969; cv=none; b=IweEh5ACmuG4QK9j9LK9kGkZ/ESS2ra1z7F3A5rE4V6coBtoY4NOF+jD8Xy2ISUG3OOgj8kmYdpK64pHbShD0oMyChNWC1OiJYmx+lzooBq+NQHCp1vl9CV43usLe73VPwibNUG78wNorYv3Ly/692Ouuu8g3At3BV8W/BGKLPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769736969; c=relaxed/simple;
-	bh=gxTY6iWb5W801To2X48bbstLVCMtpnhPfoxfZPwE8Sw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bgJk7h67LwuIKWw/aTkWQPutctBToBKtWigkv7VB7H2oUN4PiUQWo6v03vxnu3jv04KcvgUNDZMHO7OnuViGPWXonUNGPQ9sYbk8BsRaZaDkKQ2Cpvhx1DHEpxpI937C4ruPXFiTPwICP8AzAMDV6M3ksQuBt7YWnXGaZXYBV6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwgD5fSA; arc=none smtp.client-ip=74.125.82.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-2b72e49776eso3040239eec.1
-        for <io-uring@vger.kernel.org>; Thu, 29 Jan 2026 17:36:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769736966; x=1770341766; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRHjyDEZ8Hznoy7ok1X0g/zskcG9RtYz2AzGgjQ/5lM=;
-        b=RwgD5fSAsgBxi7oQSAeHMpyKI6lJjtvlT9gjT630P6QfxcqJmnw3NNk4COudX4pWQi
-         qLH2+7mDaH9LFMa9BjX/0+tbgLffaNhZxu866+bzWi1G/T+IcgWOU748sKhhdb6T5Ow2
-         bkeK5tKvG2fM00DzM7q1R596qRokJsvSQZAYz4qE1ZdAIG48q2kAsh0QGRrOnDofoC1l
-         E3zY75ZoZVR20ifrqRIRfTBUVVK2i8NmRO6bMkL5QSw2DyP19FI1TDgKxf8W0kZ0A+Jc
-         xG/0aVrBKmwFK55zl4NFsyWR+iI2Ag+ozMhQOihbww5UV9vdH3Otvrmz79LHtNO4BeIS
-         Jn8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769736966; x=1770341766;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xRHjyDEZ8Hznoy7ok1X0g/zskcG9RtYz2AzGgjQ/5lM=;
-        b=XSrMbtCbhRuBzC1+mAMwyFExTZBMKwdzXqKVGeZShs+8FvRk4SVomfYR/OglKTnqHk
-         C2iZiZcYTC69XOfUGJtoe7w0Rjg/gfcR4fqeYzQQdxKKCclhlbebUOWqmhxw3IKdsZos
-         1fJOXXyKyDKz56rNuinqhCz73hglYdR+MzLAtOXIMHmeteGwhGPlChvvDgos/S+YZgBu
-         Fqa+CAfDMnvhqK+JlsuYL96UY0EmcGcBWv3P1mRjHXfi50mOkHF+ziXZF7q7xV85agiq
-         dTOStNZz1gAbUnU2/+e90w6lWfFZju4uO3MIfMi6G7kvydlHbY/XR0bVUSCUjqyWajOY
-         AkJQ==
-X-Gm-Message-State: AOJu0YwatI2n36CmJvKzRaNrHuKaC5+w3xb1clJAdlOW3QXPL1ZOumaP
-	LYOo5rTEFawBFbvn50Db3F2Wbt0gLNBTUXR91gL0Ga/sTK0mnaOrSVrm3k/luQ==
-X-Gm-Gg: AZuq6aIX5ygIO9kf7n6BIlose0ZLyXziEZ1bLIAjAkUUqTjzJR7A6EfwrHmm922CwMX
-	u5fcqmWGmpmmWhTeceuqr6aRdkgvdKsCdSZAmUnlhEQiXZ6GOIbKmDOVQFC1XnmAqFNHDZfWuh7
-	eQxX5ygmJ1DFpEhClVZj/cA/mn1rwtBEFrihppaTiL8Wvf1LqsY8WKlN1gkeI/H+oRYy4x32cW4
-	i3pCW7PQ1OkANjVrlsaJKpVbFnVY+sevvbZXU41HuFqAZA6MMsJtuF3ArPkMol7Il4CQN+8e9et
-	wuxfqTErFQK+UGMMFPg0kFClC8V7hlbNsNkr/jmTx8feKSlVr0uBHdG7Sa0bdh9rESfgL5Lvluq
-	3yk3uzkM4TVRDt5XlRwVioejJ5tQ17WcCQfVzKIO0uZvR/6EgVfLjrwsK4LFecwAGykRxcEangQ
-	Ub8jVc6Y9LzgVz+ys=
-X-Received: by 2002:a05:7300:2303:b0:2b7:857:db6c with SMTP id 5a478bee46e88-2b7c88da439mr723344eec.28.1769736965825;
-        Thu, 29 Jan 2026 17:36:05 -0800 (PST)
-Received: from localhost ([2601:646:8100:f8:a787:ffd3:9020:3716])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2b7a1add66fsm9008674eec.28.2026.01.29.17.36.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jan 2026 17:36:05 -0800 (PST)
-From: Govindarajulu Varadarajan <govind.varadar@gmail.com>
-To: io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	csander@purestorage.com
-Cc: ming.lei@redhat.com,
-	kbusch@kernel.org,
-	hch@lst.de,
-	sagi@grimberg.me,
-	miklos@szeredi.hu,
-	Govindarajulu Varadarajan <govind.varadar@gmail.com>
-Subject: [PATCH v3] io_uring: Add size check for sqe->cmd
-Date: Thu, 29 Jan 2026 17:36:02 -0800
-Message-ID: <20260130013602.422682-1-govind.varadar@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551021F5437;
+	Fri, 30 Jan 2026 03:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769745129; cv=fail; b=RXZfFui4ITdQaKkNyqyT5tS93qJZQVRZRxC6/GRd05Z1ZZvjFeOqYUKKBNciFBAEO5eJtxZgD/WGu+ZyxQF/7L2fWwUw1dMx31R+QIht60X/CLDdMLXkIcCHcch4XBTpFkFZ81XzpP7xv7E51LNy7Q41zSet+ymOL174kP+s74k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769745129; c=relaxed/simple;
+	bh=dsxfmdmMR03yOibqk/vhF9VAkcMieZs843L3tx5wdHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OYpgAAR93VprFUknQvKKIRTyxGyc4HBeH3EcFikVTArjVqihoPa616VdrmFvpoOQQb1EhWliS9zElr1cm6xBZZaSmYPIn0vcLD5Y1pZ4UKLTLKm/zSCZWVue2NxmOc/NTMgYTNZMNyvt+F0tliHcWHda/W9zSJdgmBOSNwcPjZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C17WvFnj; arc=fail smtp.client-ip=52.101.52.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mg5o85panGrkA5OS8zute15i2zqZ8iv8GycpnSDXn79/VSitWCw/X2XUn0tlugzb2G0hlQIr6yzb08/UTK4TylGk3EOpvu9NT2G9Q0RJx5l9uDva41clC61FDxWH7r2RduIV4GFrOWC/4TzPwzfU6aYlvMh0P5JiAZxK305FEYk0Xchv/eufiKxwSW4qYB3hnsfPP/zitWPB1sWxbRwxKUK+2UdIQDliX0uQPXDNvr3RDBJ1s04PPZ0UejP7dyaHzPnrlUoxpfjB/IVzuk2xDP5wPMkwYoeLIFlaKthjp7FJE07SdA5c2RHU+d6sQOs1iD7uA1kM5afU8MSVNjunSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YNL9/Astls3whxLVdPXv45xRRjmYoYnaL8lRzk0um9A=;
+ b=V3F9PvX1NL0ls+6S3aGAGIoRfgC1nASDQbboP/US4NOhgLI58Z9Rxa0LRieye23aiaQfJFv/IOJATPtbYeFRXvgUIROn/ThErrm0rGufI363bP+xxlddNRxnAkCCUPQ/H77x1slbqwipNLzHcKUnEr7FoDXSVIXnIKNG+xq1o2ZSwb8PVyjOZGRq8N5DhC7QAuhhGw+dvVVqaZ845P5VtAEITrDEujGTbRV234n6wyGZ/aI/6P1XYUc86tXjK3JBBJjwbNOAm6GQTyKMPQLHY6SaYYEWVsi/ZLQtQZtGY4xIaVd/JX7Bvgt2Da8X14duPFuVJOCa1aotAqoc7YUY4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YNL9/Astls3whxLVdPXv45xRRjmYoYnaL8lRzk0um9A=;
+ b=C17WvFnjlYwybFODO6QyUUe5TjiCbGLZ2kgPqLk72KG0roTak+NrVUF8MmgboGPZFw5/jEHIZsF9k9Rerso2W4pSjs5su5oDglaawz3WWrw9PSsEBXPgF7FBB9DICyofyxB6zcNYG1obQ1J2FXvDCXq2ISLN5LlKsaoCMrNnRjHtZlJYw//ZbsqRDWFtH/H3tEoom/5ni0yBQBJWhDOv+/+pRWLxeFJKbADXKnXNSSBiKsmAk6Sm8Y9nzCvzrPXPAfmhWHXncCRGSbEr2yM7xYdj9kkyeu8bHMYfRwubXTHI+fnDpMjua/Bnsl6/CwvvsbDMq1tGlBPsLtjDVY4S9w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA1PR12MB8312.namprd12.prod.outlook.com (2603:10b6:208:3fc::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Fri, 30 Jan
+ 2026 03:52:04 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::f01d:73d2:2dda:c7b2]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::f01d:73d2:2dda:c7b2%4]) with mapi id 15.20.9564.006; Fri, 30 Jan 2026
+ 03:52:04 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>,
+	David Hildenbrand <david@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Balbir Singh <balbirs@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: [RFC PATCH 0/5] Separate compound page from folio
+Date: Thu, 29 Jan 2026 22:48:13 -0500
+Message-ID: <20260130034818.472804-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BLAPR05CA0001.namprd05.prod.outlook.com
+ (2603:10b6:208:36e::6) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB8312:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4039194-0c7e-47b9-8474-08de5fb2ee6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QX0LQDXA3hRbmDY0vItO+5z0h7OnAN3NdHlw7Kwi3OKyn32CNOYyj5lZ3XVM?=
+ =?us-ascii?Q?sSzMAHBbAsVPX7AB1+Q6kwJyaC8aAhAwpi0wu/mLB4Tpqb6pJfBWNTHVE4al?=
+ =?us-ascii?Q?YW9idQCTNSJbZT4mTQmVcZf/htSoLY9D+g5Y9gnQkqi4JcDoVBRakXb8e0kQ?=
+ =?us-ascii?Q?H7BsG3uCwqyztF/xqbzyI3PP2j/bVK+5jAhDI9iwsmGrfNCbfW4tuiiTB9Pb?=
+ =?us-ascii?Q?caFngHQ9+J5JqH2Bxta0EbGJ7CUezJ+AWhR7CzJQ+BkckSmyhqkVVn/G7K+0?=
+ =?us-ascii?Q?QwUuAeEwhIxiqkIP4TM4h24vMHMNvbQBHHqLqXjvlYJH4zzo24qDo0tYkkfU?=
+ =?us-ascii?Q?5/CLxm2Dx6IuvCbRilNl50gkQRaiMQR5hatoWjeA+OCPF8P/utvUZ6sbGioD?=
+ =?us-ascii?Q?1yEpTkZt3rsFb9EF4wMQYUnZ8ryRa5w4wmR+rqQQ0Y0+tew165CTtb/A9uq9?=
+ =?us-ascii?Q?n72SuKwmoo0v/SMZ/1ffYzhfwU3a+XrR05VWS2hIdV4Sd7co91n6gdi9AAvJ?=
+ =?us-ascii?Q?QM4oQRA16XxVoTUbYPld3bwJYqZ1yn8dLDbq8m9Y+3GgIwjchnBA2ZLJqiIj?=
+ =?us-ascii?Q?TSa7jjFCRWBKDLm+OXJ02o8tHcAXetses0PB0Ai8N6mIrGcPZW09Os02JRRA?=
+ =?us-ascii?Q?16Wldn2POIrp6uGLRDY4cw2LWgaepJ8gfY1ObCbn3aWQeaz88TKYziRtkFNA?=
+ =?us-ascii?Q?4nmZxPCLObCb27RqYmfbWq/9tBWqYo/paG9/KDu4EXuZAxfQbQBhN7GagCb4?=
+ =?us-ascii?Q?nG4QG1FiSlJUoLZeeCt1KkOLk/ObcLDdGqwzXCyaUdt4vH2/KNjz/qgB3nEH?=
+ =?us-ascii?Q?gCbt1g9+gQnhy5KHGPg+lPbLZiyWiwkysQOlV8aoQC6syju6lQsqdkiSpsOJ?=
+ =?us-ascii?Q?etERzYFzdUrjbl3WM9W3f9L+BL7x8FJuIkv/FJGGsFiHhKJyqFCadKX0osRl?=
+ =?us-ascii?Q?XBMWikOWBYIIQX2jT9WfeTqS2FMdL3IgNeG2afnJHW1tAL/Qpwn2y78KEHwa?=
+ =?us-ascii?Q?l2OUtFsrnMXK9S3oY7wiFZbEEdoCz/TqIaYXI4pZiwPFC19uYX0lREX56EQh?=
+ =?us-ascii?Q?AMH9xQ0wJKC266a2VDKLW7YoZLssRMYb5APhRmV+qVG6sM7T92ElOoF15jbw?=
+ =?us-ascii?Q?ClG8ejvZZiIBocyCDCYyB3VGKKk1+Uv9VDst4XHGQyfboclSzxhU5/EhxxS6?=
+ =?us-ascii?Q?IBWRJbOgE8KdCYeU1hc5ptxKx6Pe7mX0L+ke8CX0Wo4oA1Y6B8XRDJTOzUCb?=
+ =?us-ascii?Q?eV1U9huF8Y8FO+2i4DiaL1I0yt5VKs9P2qEJYmWJIbNsmdK2RAE88v0MW6rJ?=
+ =?us-ascii?Q?Ft04aNiGdS/pnQXoRk1sVaJL0Ho+N0pMqUhX/WRTSojmyk0YAWkJRvhdVRn9?=
+ =?us-ascii?Q?o/8bjB/lf62v8X4JcFcPGhYOZWMGxo3oPDZHbbQ6RvuuC3BXb4oH2Cj3I64y?=
+ =?us-ascii?Q?aqgal0vF5inJJT/vlh/znc/cKCCfvkpyWlCo8QZY4F5CZRPMRClRNyffgh0D?=
+ =?us-ascii?Q?9xDH6saAQnM3aytglT7qwVT39OejVVXCn2Hr/IQ5bgTJbavphcq/CX9i9C5Q?=
+ =?us-ascii?Q?WPFiI//zy4/6yOFyP8Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QQmQIbocdO9PeoS+Rt0uLxdgEmKYT7dLxRIVs7YpbYeE/eCxf0O4bWAkPzct?=
+ =?us-ascii?Q?6cau+9b1l5tGlQ+h2iKUhETt7KjS0P0YarniGMtCxS4qrDFHyidiT7tyUHtQ?=
+ =?us-ascii?Q?pMn/JP9BBcvcXisPuPX5CmjzH9ke2wUBUde93kz7/upTgN8kTbo7J1aX9b5x?=
+ =?us-ascii?Q?PXC6P34PIcGl7tSXOf1jLUjLkzMoSQy8mCfZ39J7wGW4v/FmPP6Ihe6l9HfG?=
+ =?us-ascii?Q?rjTijJt2rz7dySCXVIzbO+M97bUy0Ra36XpKHGTWoa9SBceh76PHlgqYUh02?=
+ =?us-ascii?Q?pBeTk3lHuoWXCMioPZFSXO+/G4otAahrctiyP8pwEmUJMrQqmwCy4GasYoTa?=
+ =?us-ascii?Q?8ovZjtABtX2Jg98q5HL0v4CtL/MfuLmX4MXLeA9qkxdPKNefffXPYNATDVnN?=
+ =?us-ascii?Q?jBswufhpkkXEB6hkRfW4pwwyHYVnAQ9BLl5id05WoqnJQkKULhIWOcbazZ+c?=
+ =?us-ascii?Q?tlELSGdW4ZtyeUgIhkvy8nVFE8Unj2ia4fz1ATnx+gPqtrL6kRPVceaIDAVg?=
+ =?us-ascii?Q?kwWOBBP4aemjO4yzdZ/DGhnvQejnN8agZoFTShCrsKtwBMOs8ZiPwNjpR8WE?=
+ =?us-ascii?Q?edqo6oAasHb/aN6UCCgFE4Ifyd5yuBYMgvUrzvRlNhSIUT6W625x1n3SLktV?=
+ =?us-ascii?Q?1gz8VRstP7LOfH105hBpRgT+nP1HvrHR0Pmbl1ZR2HilC3E4+CyP8bbAHxFy?=
+ =?us-ascii?Q?gLg0wilEqhiwMBYcqU+p5eU1Bck3pw/lHX2c9s39c4+khRvrMM2Vy3Uu35EB?=
+ =?us-ascii?Q?55JrIpIOOq1pKDh5a+hFJjy0XoT35FLGSIAWRe6NbeiBX8StTqyeJjXkzvKf?=
+ =?us-ascii?Q?7X2a63UgmkHUruZcTnP2VmMGkQk/oAGpwLj5GY+Ohay4+5dK8vJzR5AlicEE?=
+ =?us-ascii?Q?QFQAEpqPhXK3IGq3l7F58qdZVO7rCVmy65qyxVvNka3L7s8brmjqfuJg0wUL?=
+ =?us-ascii?Q?fqYWCd6WBYtIz8KOuP7OS+45DNy53fh3fScBDM9X8PCHjhVYybEjF4EJ2LvK?=
+ =?us-ascii?Q?TVDIZk47hodalJ2ARs4opBaTvEGCJuBLj2AQ0CYtmy/LM6p7GvwgTiIBN9n+?=
+ =?us-ascii?Q?GXRDUCpgYq8fZLu84pJ2a0jp1byX1kuvOJwtuPdTCeZVQKGQ/lfXD4mZF7Mi?=
+ =?us-ascii?Q?Ba2DYdax0PHIixsq+bnxy1hLaXpLrK3CNEV3nAHi/C6CWu+N+zEl+sZh3JDr?=
+ =?us-ascii?Q?jbWg0HNKtD92Mg6K3lb1qhguT33cpDLtcCCY94fUKGrDqa3H92h0no5pDODf?=
+ =?us-ascii?Q?9QXtkvLQ6kemUbXNyJPtvqVBfHolHMfWTT+Jt+61lrKdHh7GxpLsKLh2113E?=
+ =?us-ascii?Q?ZQ3Yrevv7TL1E8xJ/YttmetuejiOIF16rWAgSvwyUnf4ebPGEFaIAlUnycjT?=
+ =?us-ascii?Q?DJwX2CWtKRMICiaOXbgyQAdPL8BBwNu3mPuUGr4DYC7skKTZtiT0LTJCXHX5?=
+ =?us-ascii?Q?YeXiTK22I1rrH5LZgz9sD5ON88kqb9tN4fCiyQpquLTqkSBDEOaX4zBwJZEW?=
+ =?us-ascii?Q?hIQugEgft+jqcEONSaLmJbhUFht721rCndF0D7zerrbtqpjZJMMs+ScWb9bC?=
+ =?us-ascii?Q?IpEr9LWhug5d5Cocp96qjgZ8GOgFRp9z20ThS6uuvvrFQQ+L2i6yFtyMkV6F?=
+ =?us-ascii?Q?rWgE76KmV9X0wZC4eSHEzEE6FiMwH2IJdZ2iOaGcrFkEzOc+I1ahVMvC6SCk?=
+ =?us-ascii?Q?S/2NVm8MxWWAlAHt10vZIus2MhBfukViySjVroI2zJ9HiwIg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4039194-0c7e-47b9-8474-08de5fb2ee6b
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2026 03:52:04.3514
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6LfAYg4sGgD11vueTDpxN2N/S7tdYEiIBRoAp8vpTN8+tlxB6l/mf9tF8FZPsKSS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8312
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [1.34 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
+	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[redhat.com,kernel.org,lst.de,grimberg.me,szeredi.hu,gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-11985-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-11984-lists,io-uring=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[govindvaradar@gmail.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ziy@nvidia.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[Nvidia.com:+];
 	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 55423B632D
+X-Rspamd-Queue-Id: 35855B6E80
 X-Rspamd-Action: no action
 
-For SQE128, sqe->cmd provides 80 bytes for uring_cmd. Add macro to
-check if size of user struct does not exceed 80 bytes at compile time.
-User doesn't have to track this manually during development.
+Hi all,
 
-Replace io_uring_sqe_cmd() inline func with macro and add
-io_uring_sqe128_cmd() which checks struct
-size for 16 bytes cmd and 80 bytes cmd respectively.
+Based on my discussion with Jason about device private folio
+reinitialization[1], I realize that the concepts of compound page and folio
+are mixed together and confusing, as people think a compound page is equal
+to a folio. This is not true, since a compound page means a group of
+pages is managed as a whole and it can be something other than a folio,
+for example, a slab page. To avoid further confusing people, this
+patchset separates compound page from folio by moving any folio related
+code out of compound page functions.
 
-Signed-off-by: Govindarajulu Varadarajan <govind.varadar@gmail.com>
----
-v3: Remove extra parentheses.
-v2:
-  - Replace all caps macro with lower case definition.
-  - Add const qualifier to return type.
-  - Rebase on top of series "[PATCH 0/4] ublk: fix struct
-    ublksrv_ctrl_cmd accesses"
+The code is on top of mm-new (2026-01-28-20-27) and all mm selftests
+passed.
 
-BRANCH: for-7.0/block
+The key change is that a compound page no longer sets:
+1. folio->_nr_pages,
+2. folio->_large_mapcount,
+3. folio->_nr_pages_mapped,
+4. folio->_mm_ids,
+5. folio->_mm_id_mapcount,
+6. folio->_pincount,
+7. folio->_entire_mapcount,
+8. folio->_deferred_list.
 
-Depends-on series: "[PATCH 0/4] ublk: fix struct ublksrv_ctrl_cmd
-accesses"
-  Needs "[PATCH 2/4] ublk: don't write to struct ublksrv_ctrl_cmd" to
-  avoid merge conflict.
----
- drivers/block/ublk_drv.c     | 14 +++++++++-----
- drivers/nvme/host/ioctl.c    |  3 ++-
- fs/fuse/dev_uring.c          |  6 ++++--
- include/linux/io_uring/cmd.h | 15 +++++++++++----
- 4 files changed, 26 insertions(+), 12 deletions(-)
+Since these fields are only used by folios that are rmappable. The code
+setting these fields is moved to page_rmappable_folio(). To make the
+code move, this patchset also needs to changes several places, where
+folio and compound page are used interchangably or unusual folio use:
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 0e25a59849ae..3f9d6dc3afef 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -3244,7 +3244,8 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
- 	/* May point to userspace-mapped memory */
--	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe,
-+							       struct ublksrv_io_cmd);
- 	u16 buf_idx = UBLK_INVALID_BUF_IDX;
- 	struct ublk_device *ub = cmd->file->private_data;
- 	struct ublk_queue *ubq;
-@@ -3824,7 +3825,8 @@ static int ublk_validate_batch_fetch_cmd(struct ublk_batch_io_data *data)
- static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
- 				     unsigned int issue_flags)
- {
--	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe,
-+							       struct ublksrv_io_cmd);
- 	struct ublk_device *ub = cmd->file->private_data;
- 	unsigned tag = READ_ONCE(ub_cmd->tag);
- 	unsigned q_id = READ_ONCE(ub_cmd->q_id);
-@@ -3853,7 +3855,7 @@ static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
- static int ublk_ch_batch_io_uring_cmd(struct io_uring_cmd *cmd,
- 				       unsigned int issue_flags)
- {
--	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe, struct ublk_batch_io);
- 	struct ublk_device *ub = cmd->file->private_data;
- 	struct ublk_batch_io_data data = {
- 		.ub  = ub,
-@@ -5106,7 +5108,8 @@ static int ublk_char_dev_permission(struct ublk_device *ub,
- static int ublk_ctrl_uring_cmd_permission(struct ublk_device *ub,
- 		struct io_uring_cmd *cmd, u64 *addr, u16 *len)
- {
--	const struct ublksrv_ctrl_cmd *header = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_ctrl_cmd *header = io_uring_sqe128_cmd(cmd->sqe,
-+								    struct ublksrv_ctrl_cmd);
- 	bool unprivileged = ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV;
- 	void __user *argp = (void __user *)*addr;
- 	char *dev_path = NULL;
-@@ -5199,7 +5202,8 @@ static bool ublk_ctrl_uring_cmd_may_sleep(u32 cmd_op)
- static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
--	const struct ublksrv_ctrl_cmd *header = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_ctrl_cmd *header = io_uring_sqe128_cmd(cmd->sqe,
-+								    struct ublksrv_ctrl_cmd);
- 	struct ublk_device *ub = NULL;
- 	u32 cmd_op = cmd->cmd_op;
- 	int ret = -EINVAL;
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index fb62633ccbb0..8844bbd39515 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -447,7 +447,8 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
- {
- 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
--	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
-+	const struct nvme_uring_cmd *cmd = io_uring_sqe128_cmd(ioucmd->sqe,
-+							       struct nvme_uring_cmd);
- 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
- 	struct nvme_uring_data d;
- 	struct nvme_command c;
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 5ceb217ced1b..60f2058feb74 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -879,7 +879,8 @@ static int fuse_ring_ent_set_commit(struct fuse_ring_ent *ent)
- static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
- 				   struct fuse_conn *fc)
- {
--	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-+	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
-+								       struct fuse_uring_cmd_req);
- 	struct fuse_ring_ent *ent;
- 	int err;
- 	struct fuse_ring *ring = fc->ring;
-@@ -1083,7 +1084,8 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
- static int fuse_uring_register(struct io_uring_cmd *cmd,
- 			       unsigned int issue_flags, struct fuse_conn *fc)
- {
--	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-+	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
-+								       struct fuse_uring_cmd_req);
- 	struct fuse_ring *ring = smp_load_acquire(&fc->ring);
- 	struct fuse_ring_queue *queue;
- 	struct fuse_ring_ent *ent;
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 375fd048c4cb..331dcbefe72f 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -20,10 +20,17 @@ struct io_uring_cmd {
- 	u8		unused[8];
- };
- 
--static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
--{
--	return sqe->cmd;
--}
-+#define io_uring_sqe128_cmd(sqe, type)	({					\
-+	BUILD_BUG_ON(sizeof(type) > ((2 * sizeof(struct io_uring_sqe)) -	\
-+				     offsetof(struct io_uring_sqe, cmd)));	\
-+	(const type *)(sqe)->cmd;						\
-+})
-+
-+#define io_uring_sqe_cmd(sqe, type)	({					\
-+	BUILD_BUG_ON(sizeof(type) > (sizeof(struct io_uring_sqe) -		\
-+				     offsetof(struct io_uring_sqe, cmd)));	\
-+	(const type *)(sqe)->cmd;						\
-+})
- 
- static inline void io_uring_cmd_private_sz_check(size_t cmd_sz)
- {
+1. in io_mem_alloc_compound(), a compound page is allocated, but later
+   it is mapped via vm_insert_pages() like a rmappable folio;
+2. __split_folio_to_order() sets large_rmappable flag directly instead
+   of using page_rmappable_folio() for after-split folios;
+3. hugetlb unsets large_rmappable to escape deferred_list unqueue
+   operation.
+
+At last, the page freeing path is also changed to have different checks
+for compound page and folio.
+
+One thing to note is that for compound page, I do not store compound
+order in folio->_nr_pages, which overlaps with page[1].memcg_data and
+use 1 << compound_order() instead, since I do not want to add a new
+union to struct page and compound_nr() is not as widely used as
+folio_nr_pages(). But let me know if there is a performance concern for
+this.
+
+Comments and suggestions are welcome.
+
+
+
+Link: https://lore.kernel.org/all/F7E3DF24-A37B-40A0-A507-CEF4AB76C44D@nvidia.com/ [1]
+
+Zi Yan (5):
+  io_uring: allocate folio in io_mem_alloc_compound() and function
+    rename
+  mm/huge_memory: use page_rmappable_folio() to convert after-split
+    folios
+  mm/hugetlb: set large_rmappable on hugetlb and avoid deferred_list
+    handling
+  mm: only use struct page in compound_nr() and compound_order()
+  mm: code separation for compound page and folio
+
+ include/linux/mm.h | 12 ++++--------
+ io_uring/memmap.c  | 12 ++++++------
+ mm/huge_memory.c   |  5 ++---
+ mm/hugetlb.c       |  8 ++++----
+ mm/hugetlb_cma.c   |  2 +-
+ mm/internal.h      | 47 +++++++++++++++++++++++++++-------------------
+ mm/mm_init.c       |  2 +-
+ mm/page_alloc.c    | 23 ++++++++++++++++++-----
+ 8 files changed, 64 insertions(+), 47 deletions(-)
+
 -- 
-2.52.0
+2.51.0
 
 

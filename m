@@ -1,157 +1,155 @@
-Return-Path: <io-uring+bounces-12018-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12019-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +Mp0BJy3gGl3AgMAu9opvQ
-	(envelope-from <io-uring+bounces-12018-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:41:32 +0100
+	id 8Md1Eyu8gGl3AgMAu9opvQ
+	(envelope-from <io-uring+bounces-12019-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 16:00:59 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA9ACD7C7
-	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:41:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2952CDC76
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 16:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 344493058A9B
-	for <lists+io-uring@lfdr.de>; Mon,  2 Feb 2026 14:38:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7ED70300C261
+	for <lists+io-uring@lfdr.de>; Mon,  2 Feb 2026 14:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B9636CDE4;
-	Mon,  2 Feb 2026 14:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB019372B2F;
+	Mon,  2 Feb 2026 14:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="PyzmL/6b"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WR2u/SWf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F85636EA86;
-	Mon,  2 Feb 2026 14:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770043101; cv=pass; b=sBE1yF4+WeLSfz42FU94IeUw8B07fIWKN0YBGe7TWbX9JxSMdJ43gXNDFTcBtr/bMh+RqsADXTqIdI/JnQaOZKAcJTiZ9R+NqXSYBmXwWBq3y8qI+3LSKJf6olCfROeyExSQHUammdn4ZrQXCz4EWQwYUaYIE+zHbwn6aZB5UeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770043101; c=relaxed/simple;
-	bh=QHouRrP6FFresoZbKFhCOEhUe0MrJjpP1pSNtu2pD6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mol1/8AKkmKrFLgvtiveyMlHxRLcocZve1ngfQed3qPklfie7Qu65wx5jHqPkVcnFlPP1fCqtE/Ja3E5K5tz0N1qahQUEtGGJi2rMjft8asVkRHyDv+GNDbHGw3pstd58MDbNQaLmtZ4H12JF42zc3K/v9Q8XHEK/onrsheyYmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=PyzmL/6b; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1770043093; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BS2tFstNwO/AaciPwzaIzxMtQKqoTYEAiGUaPDqIFoLqdKNHzGU/swbKGHWmqANgzzTK7xGz6wV3oYrNP0gvtU5uaNfMcWmDIdFdm32FJyHB/nhwOG+zS/eYEH/CbmrVTFZ5CqYCCVIJLdjKmBz5GE7YZbaFJaLcCS66ngrYg0k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1770043093; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=r4QVaXC5LH/PfYlCEDiQK9HiWvYlklg3FPXPzc5XPcs=; 
-	b=G2l7dDSCJj28OSmZY90w3PcMzZKyZn4DPxBnWg/R3yijoss7ESgh4X/gz3J7FOY0KGueX8/HE8SbyjtLyDcM6nmkAVLbTZDvrbk4h1ogcXZSxtWyZW83g9zMJd6OgS4tZuYte2gzOzrs+EsDXAsmT5mmtZOSdvciX1GwVLhVySs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770043093;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=r4QVaXC5LH/PfYlCEDiQK9HiWvYlklg3FPXPzc5XPcs=;
-	b=PyzmL/6bx1ffk1pOazIrIykYvpinmv2b8BuRgGAb9UjHifQDLiJgNCs9lcWlubZN
-	fhsMN67+nUEfcTZ2CQwjkCyKSGkP2K/h4vO5y29u7xUm22r0DxRGiZazzLjonu+WNZo
-	VfER6dAaeSTPtgS/efty8YKhE8dAi9JuuCYb1uwU=
-Received: by mx.zohomail.com with SMTPS id 1770043091242433.6198300164226;
-	Mon, 2 Feb 2026 06:38:11 -0800 (PST)
-From: Li Chen <me@linux.beauty>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Li Chen <me@linux.beauty>
-Subject: [PATCH v1 2/2] io_uring: allow io-wq workers to exit when unused
-Date: Mon,  2 Feb 2026 22:37:54 +0800
-Message-ID: <20260202143755.789114-3-me@linux.beauty>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260202143755.789114-1-me@linux.beauty>
-References: <20260202143755.789114-1-me@linux.beauty>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE59364EAF
+	for <io-uring@vger.kernel.org>; Mon,  2 Feb 2026 14:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770043934; cv=none; b=Dz1hBpUhRBgyshoQz/ePk44GM12UgLfttfKHkiY+wsUrkQggd7MxNnO2dkM/WZvMoHI5C20TnXi0oPDTFkKWatMY/z3yce3BKoEbWnYTr/T506ASPEAExpAQWhG9tgZ3wtejIZ4/HCQg1oj7asKjII1YAL+QS9aQ068t+GFQlLM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770043934; c=relaxed/simple;
+	bh=E94seAHQMwNegLWsMmbnXYdh94jwQKEpI6XpSo5nqc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bUbugfSCRVCkauBtwqQ66eGBrLH87G5Lg9Vdwfp24vIFY5uFNXeSkjLGfjkSFshPQ7n8IKvduV3OLZ0aok2WOaV2Go+JDlwul8b/sli9WUweeacCS6B2scbeE7jk9SY9DNRQKMlHK6l2LQnKA/+6BcO6/KOzwvEXN/lNz4RqbUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=WR2u/SWf; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d193b01c10so1814554a34.3
+        for <io-uring@vger.kernel.org>; Mon, 02 Feb 2026 06:52:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770043931; x=1770648731; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V4gLuY5Y57cQq4+OOEVjgP9kkY9Jsj+QHFveQowBo1c=;
+        b=WR2u/SWfa8lXx0lABpF/dVrT00j5q7KxeuEJLcbKBnF+Gph2/SVXDQ0bxRrWOEg/dE
+         +jJ6/bB4TuZjFnko1hWYtx6iOibJriYRyMSdOMaphVhB1rzPTrKqdMxFce1CCPzm0o9d
+         Nq/Q4dG5M7BdOxWDdjD5fZs6CK5hBQPEjJ+Yq5ZsJrJRbCbZxlqKAgLPbfrafPJn7wug
+         uvto8c7B6jTj6lIoCyTXaVqSazB1NIveyKrT5Uh8+OQFU2i3cdSNdENvMAuCC/DuY1Lk
+         KwcZm9TEhZTkHiaa6AHqmeZuNNxGezo4lEJOnTF44/M9kK+4wYvWX031MRQskR0PZoAX
+         AEdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770043931; x=1770648731;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V4gLuY5Y57cQq4+OOEVjgP9kkY9Jsj+QHFveQowBo1c=;
+        b=bemD2d2yKV39JOUbYRf/hVfT+gfmlEgAvLASumVcmZ2JY3gECyUOxMsjj6wpaRMYnc
+         /tktiGBpRrsXOsucbwzn9u2TmLU8Qs6iedi7vDlZVWjKy6mH9fyFkxClkHvvQ8bjkuYy
+         eFOga6OybgwxUFyD7BIS8N2DsFmiJiki2vSX6OMSPL2Gog7JbXpsk8LtEkzYlw3MeKp6
+         zDhXhvYlORLQvdxKRwdDvuwod8WSSNQRGjrmXmGkDBJ7h8hs89CoCpjU59PiOYVn2hhq
+         1iDoFUvBMqEy8qo7OgN/EzW8MEHeGXaNRODQginE8odNuQwULhTZKSxpRQ0DkkvGb9gU
+         egDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeqV2H2VZ3K2UQY7JXyklC5VmJLciUSVKNuJXN9NPKQPRovJU78lER4AM4rRS8Vi8XWK+P6Iiidw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMUOqz1DJLH9Zrjn50i789abtQA1aDXpvlzcm0DIUaqzApCce5
+	F9b7RfO7TcLh2dCJ+gOwX4q85PEzPD+Mutr/mHRTflR2dgi+QHrMLgyL9mcrWHaiQ8w=
+X-Gm-Gg: AZuq6aJDkGNSuOm0PYYjvuQHhi/obi2EvlOWsK++EuirElhu5YMEBak0QGv9r1P+unU
+	YPcP7DvwW90dliWTZGgr8aBlP2gVNT8ZsqsPelMAaR0C/fy5z631Dfv3Sy307wupn/B+OLlize9
+	6NjJdjMIgzjLnlgq6vlR1miSfzFcYwA/Ma4ndt5dlHvJD/1inEwxXd3ePg3sG15r1IokqMKt1EH
+	lZXoC18POzD9L4GSy6ZyWQ6Q2niYaeF5ouSQqzFEBWaWtB40MoBSxrB8jhCrmKo5D/WL4U415S/
+	I2e2qWgxrfjY1Us3e5veL3+vpLiYFHK+lhdULw4KQAgDDLkrGaZbuczSFP2hTReohCpk4h1v+NU
+	T+O9/J7sjVVNaIX0tjXczL2KguRJWJl8PSJrXK2FyVGusEIeukbkyRFsZCsCqst0dZWGIkdt7de
+	MPfzxYnvVPJlnsK/1WIGDQ8ec0VgHwoRVa99Ogp50rv10liKkRXRUbm3zTHugWZAWGaFTxfA==
+X-Received: by 2002:a05:6830:2aac:b0:7d1:a051:9c9c with SMTP id 46e09a7af769-7d1a5140bcdmr6054138a34.0.1770043931498;
+        Mon, 02 Feb 2026 06:52:11 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d18c7cf4f0sm10473506a34.15.2026.02.02.06.52.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Feb 2026 06:52:10 -0800 (PST)
+Message-ID: <25ecadef-7556-490c-a85f-4a4494dd029d@kernel.dk>
+Date: Mon, 2 Feb 2026 07:52:10 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] io-wq: add exit-on-idle mode
+To: Li Chen <me@linux.beauty>, Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260202143755.789114-1-me@linux.beauty>
+ <20260202143755.789114-2-me@linux.beauty>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260202143755.789114-2-me@linux.beauty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[linux.beauty:s=zmail];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12019-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DMARC_NA(0.00)[linux.beauty];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.dk,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-12018-lists,io-uring=lfdr.de];
-	DKIM_TRACE(0.00)[linux.beauty:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[me@linux.beauty,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	FREEMAIL_TO(0.00)[linux.beauty,gmail.com,vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_NA(0.00)[kernel.dk];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RSPAMD_URIBL_FAIL(0.00)[kernel-dk.20230601.gappssmtp.com:query timed out];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.beauty:email,linux.beauty:dkim,linux.beauty:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7AA9ACD7C7
+	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:mid,kernel-dk.20230601.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: F2952CDC76
 X-Rspamd-Action: no action
 
-io_uring keeps a per-task io-wq around, even when the task no longer has
-any io_uring instances.
+On 2/2/26 7:37 AM, Li Chen wrote:
+> io-wq uses an idle timeout to shrink the pool, but keeps the last worker
+> around indefinitely to avoid churn.
+> 
+> For tasks that used io_uring for file I/O and then stop using io_uring,
+> this can leave an iou-wrk-* thread behind even after all io_uring instances
+> are gone. This is unnecessary overhead and also gets in the way of process
+> checkpoint/restore.
+> 
+> Add an exit-on-idle mode that makes all io-wq workers exit as soon as they
+> become idle, and provide io_wq_set_exit_on_idle() to toggle it.
 
-If the task previously used io_uring for file I/O, this can leave an
-unrelated iou-wrk-* worker thread behind after the last io_uring instance
-is gone.
+Was going to say, rather than add a mode for this, why not just have the
+idle single worker exit when the last ring is closed? But that is indeed
+exactly what these two patches do. So I think this is fine, I just don't
+think using the word "mode" for it is correct. "state" would be a lot
+better - if we have all rings exited, then that's a state change in
+terms of yeah let's just dump that idle worker.
 
-When the last io_uring ctx is removed from the task context, mark the io-wq
-exit-on-idle so workers can go away. Clear the flag on subsequent io_uring
-usage.
+With that in mind, I think these two patches look fine. I'll give them a
+closer look. Could you perhaps write a test case for this?
 
-Signed-off-by: Li Chen <me@linux.beauty>
----
- io_uring/tctx.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index adc6e42c14df..8c6a4c56f5ec 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -124,6 +124,14 @@ int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
- 				return ret;
- 		}
- 	}
-+
-+	/*
-+	 * Re-activate io-wq keepalive on any new io_uring usage. The wq may have
-+	 * been marked for idle-exit when the task temporarily had no active
-+	 * io_uring instances.
-+	 */
-+	if (tctx->io_wq)
-+		io_wq_set_exit_on_idle(tctx->io_wq, false);
- 	if (!xa_load(&tctx->xa, (unsigned long)ctx)) {
- 		node = kmalloc(sizeof(*node), GFP_KERNEL);
- 		if (!node)
-@@ -185,6 +193,9 @@ __cold void io_uring_del_tctx_node(unsigned long index)
- 	if (tctx->last == node->ctx)
- 		tctx->last = NULL;
- 	kfree(node);
-+
-+	if (xa_empty(&tctx->xa) && tctx->io_wq)
-+		io_wq_set_exit_on_idle(tctx->io_wq, true);
- }
- 
- __cold void io_uring_clean_tctx(struct io_uring_task *tctx)
 -- 
-2.52.0
-
+Jens Axboe
 

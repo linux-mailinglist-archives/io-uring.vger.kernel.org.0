@@ -1,165 +1,176 @@
-Return-Path: <io-uring+bounces-12011-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12012-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GGskK5PDf2lvxQIAu9opvQ
-	(envelope-from <io-uring+bounces-12011-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 01 Feb 2026 22:20:19 +0100
+	id rNc7GD4hgGnw3AIAu9opvQ
+	(envelope-from <io-uring+bounces-12012-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 04:59:58 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBD1C7451
-	for <lists+io-uring@lfdr.de>; Sun, 01 Feb 2026 22:20:19 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBE3C818D
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 04:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8B8F03007E29
-	for <lists+io-uring@lfdr.de>; Sun,  1 Feb 2026 21:20:12 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 087923001306
+	for <lists+io-uring@lfdr.de>; Mon,  2 Feb 2026 03:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072992DCF70;
-	Sun,  1 Feb 2026 21:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB804273D77;
+	Mon,  2 Feb 2026 03:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YatxhdhD"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qfNItAW0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D32520C038
-	for <io-uring@vger.kernel.org>; Sun,  1 Feb 2026 21:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2882248868;
+	Mon,  2 Feb 2026 03:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769980811; cv=none; b=tiixabUpV8hz7LlNYRDf5i4IWAz0y03yZsbNAUXcW3vtjma0c57ujHKpX64/ho5sVetU2D3gwqimBV+JVJ92IwE4Nq72LO7ZcpPi9MBrwozxQqI+gaI0n04/21O242abJcgSxyi1bdNu22Xag4egnTxtqcKKA0iieTzFlDtcL10=
+	t=1770004793; cv=none; b=hUPHBjX3SZ2d5fQfdsQydJRQNgZyusmsOF52k5RrKmFHAD66QAG5w8NhyWxQ/fG7ZAQ/CDuzm1Dvr2i6WDfwnLayCPrJz7gPjuS+AJRNjvAavFPPvgmu18dx1se//7xIk/5mKUfHai6/sO6x/Uj4LVdKysfNUkKvCV86gB0zYSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769980811; c=relaxed/simple;
-	bh=w9bXIFUK/voqwE/CbztC+pRGOkCHpgqMxVqTnijLUg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dBIVUZttuu1pFzE25CRI6b9zCsktVSEnWRcFLW3ILCqaPs4Vj9jmduuNCLAhfJgxC3nbAlYdwyppZMfOLWEsz8JT2UaWWX77+tS8s0cKqJq/KJ1VWrBk5EGNSTxmDHx+vlIk7wIiufX7wUJneYpJaXK6FQ5G2SwLAgGHmPh4t18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YatxhdhD; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48068ed1eccso34189335e9.2
-        for <io-uring@vger.kernel.org>; Sun, 01 Feb 2026 13:20:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769980808; x=1770585608; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQPeVhxyJvaj92kOf8274ETVzZ9axgBQSCCHTjUHOe0=;
-        b=YatxhdhDZSFAGi43OXxbPvz2BvmcMcjzM9G8T9ggtBkZlieTGWQOQk67FCkEgyQRL4
-         LHOV7/lnzhLGIz7e2gfMsorpvxqJU0P5T53ppeEJIbSuo2nrysQSWro/vT/hY1Q5wSjJ
-         nkO/8x2aw7JXWlZu/UE0XbD+i/zBgLl0v7U1BbWLbPKx02mOFEoVNhp+iTCzYL3kCPFS
-         MZmtKOfSPK1KhZz9rVvActJnYbUk3nKLZdsYBo+FloP/hWrlUs4PnC5Fr12+a+ona25T
-         Bi6Tc5NKHEtnyi2guwZ0QAPu8CDveCGRIHX+MTGCKJK+M+iszG7GbQYfdGo7g6CFdtNa
-         S06Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769980808; x=1770585608;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQPeVhxyJvaj92kOf8274ETVzZ9axgBQSCCHTjUHOe0=;
-        b=w3Aa+07GfwBhvqkAjwW+kMWZMHVNJ/pWYqey/xci7rRgsBtLKjebIR40EqvjeQywpf
-         CCmsPYOTnPfhCAbObFumy2YeWXawE99CkJuWkgDJQKAItE0A0ol4GvzQc5C5YbbxvqJr
-         +tV0dVwysNOCASP7/LHhGZEkieQLLk44p6UU6Ruq2Dt2stwjRh9vPV8wtjnsxK9s8ICE
-         YsTCRWZNAfJWoofu2tuUgl3H5MZrkQzZYjrf2gSVrCVpIy6GQVXSqEX8L2ZbtrJV+5lO
-         8D4/5ZsWvikF5CeO97VgNxjbEzhb9F+lfD0gI2suO3mMDubhKcBBkFs+psOMQgFMATFZ
-         awgQ==
-X-Gm-Message-State: AOJu0YzzRMGFtoeL6ubWCwIceaAck6nGqRqb7WsZhSf2xTPm4sJyrYaa
-	dRJxz8pWl827r+i8Qj5PnGBPYnf4KbliiUfQgqT880JrjT1D518qjJNWNK6twA==
-X-Gm-Gg: AZuq6aITMicNQifFrggIjxzDSNuyShJOS4GNgg1yARRAfZWf2WuIP9e3irPyYqEbye5
-	VqO3WIyUCp0/5QfBWD+tgZeOmBaOQHYdkhMYc4spw2b8WKubm+URS2LjBPFdwI5Dp59mbuFfDLW
-	Q5XcXKQC7srMnS6oEjevhYd/ThVfn0G2IOULMTGuBw/N2Yn6zeUxHoxlBSQQ3bLT+/FwdjtO9pn
-	djlNagVkcRjUJ2lNO44aeahSKV8MnAa0stQrs2r5WuQVjfSWbUtXRStx6rIJAB9h4eeqAXNLvc5
-	1glvYFOm7bnyQiGfC1mSwWJe1VVe3k2+cETxgolRv+VGAu+/xdcJLLIWBDyvnmyVsmBTk86mM/z
-	iu4NQufnqIwglZxBvQbUju1zvv/981IEPkZOQDwUBTITRn8BNcC52pMn/0w+o+fpHotfU3EnkI/
-	B5SotKl68XxlbMXWHPCRuuSQvugVu9Jmhf29ir4JOkcYQqjyxyGkjBDmhdsTNIggL3CM28CNFLb
-	BknmIT8WX5bAKeX2A==
-X-Received: by 2002:a05:600c:474a:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-482db48e828mr124303785e9.27.1769980808341;
-        Sun, 01 Feb 2026 13:20:08 -0800 (PST)
-Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4806ce4c3d1sm366369545e9.9.2026.02.01.13.20.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Feb 2026 13:20:07 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	axboe@kernel.dk,
-	netdev@vger.kernel.org
-Subject: [PATCH io_uring 1/1] io_uring/zcrx: fix rq flush locking
-Date: Sun,  1 Feb 2026 21:19:56 +0000
-Message-ID: <634b9ef89352140259494d6d08086aaa30a72e02.1769962683.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1770004793; c=relaxed/simple;
+	bh=mqmjkFGQMMX1X00bH6Sd/emDC8f4LPtH4YU5eY3FjQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSo7Co2EYydCIBSTMI7Yv67DL3lTD6PF/MKQDz3yNuJQrWkatF03pupGQgK3wd8PTvPRXmY0vYWyKLw7wo/YMdHZUhAsjqp4a6Y+cuvuo+rat0klGyL6Zv7ir0NdBqYSktHK959h2zHDzigdNNCaBGhKiHt6fGhJ7bDwr7OluHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qfNItAW0; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1770004782; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YLNM8XwLs6ZfkN2Ffdw20cH4cfsACOxpWucxMWKeiyY=;
+	b=qfNItAW07rHVoTvY11QvkHsTdURIsJf+ZPFKD5do8PpZhS5YMUovESvPHglnZTy/w8eqe9VKYtFt2ZmiokjP5YZO45lw3vGlgpmgQpatmEw2JzmO+BXgtnvbdjoNEV1uLEktRLnRAkkpfnoOg+C5najBP0yisS2TCXLKuFLicx8=
+Received: from 30.74.144.134(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WyJ0bcv_1770004779 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Feb 2026 11:59:40 +0800
+Message-ID: <5aefd2ea-8eba-49ed-bc21-f84dbab8cf3b@linux.alibaba.com>
+Date: Mon, 2 Feb 2026 11:59:39 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/5] mm/hugetlb: set large_rmappable on hugetlb and
+ avoid deferred_list handling
+To: Zi Yan <ziy@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ David Hildenbrand <david@kernel.org>, Matthew Wilcox <willy@infradead.org>
+Cc: Alistair Popple <apopple@nvidia.com>, Balbir Singh <balbirs@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jens Axboe <axboe@kernel.dk>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20260130034818.472804-1-ziy@nvidia.com>
+ <20260130034818.472804-4-ziy@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20260130034818.472804-4-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-9.16 / 15.00];
+	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[linux.alibaba.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-12011-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12012-lists,io-uring=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[baolin.wang@linux.alibaba.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.alibaba.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4FBD1C7451
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,linux.alibaba.com:mid,linux.alibaba.com:dkim]
+X-Rspamd-Queue-Id: DDBE3C818D
 X-Rspamd-Action: no action
 
-zcrx needs to keep the rq lock for uref manipulations, for now move all
-zcrx_return_buffers() under the lock.
 
-Fixes: 475eb39b00478 ("io_uring/zcrx: add sync refill queue flushing")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/zcrx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 0c4b339f712e..d8b6db456bd7 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -1097,8 +1097,6 @@ static unsigned zcrx_parse_rq(netmem_ref *netmem_array, unsigned nr,
- 	unsigned int mask = zcrx->rq_entries - 1;
- 	unsigned int i;
- 
--	guard(spinlock_bh)(&zcrx->rq_lock);
--
- 	nr = min(nr, io_zcrx_rqring_entries(zcrx));
- 	for (i = 0; i < nr; i++) {
- 		struct io_uring_zcrx_rqe *rqe = io_zcrx_get_rqe(zcrx, mask);
-@@ -1143,9 +1141,11 @@ static int zcrx_flush_rq(struct io_ring_ctx *ctx, struct io_zcrx_ifq *zcrx,
- 		return -EINVAL;
- 
- 	do {
--		nr = zcrx_parse_rq(netmems, ZCRX_FLUSH_BATCH, zcrx);
-+		scoped_guard(spinlock_bh, &zcrx->rq_lock) {
-+			nr = zcrx_parse_rq(netmems, ZCRX_FLUSH_BATCH, zcrx);
-+			zcrx_return_buffers(netmems, nr);
-+		}
- 
--		zcrx_return_buffers(netmems, nr);
- 		total += nr;
- 
- 		if (fatal_signal_pending(current))
--- 
-2.52.0
+On 1/30/26 11:48 AM, Zi Yan wrote:
+> Commit f708f6970cc9 ("mm/hugetlb: fix kernel NULL pointer dereference when
+> migrating hugetlb folio") fixed a NULL pointer dereference when
+> folio_undo_large_rmappable(), now folio_unqueue_deferred_list(), is used on
+> hugetlb to clear deferred_list. It cleared large_rmappable flag on hugetlb.
+> hugetlb is rmappable, thus clearing large_rmappable flag looks misleading.
+> Instead, reject hugetlb in folio_unqueue_deferred_list() to avoid the
+> issue.
+> 
+> This prepares for code separation of compound page and folio in a follow-up
+> commit.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   mm/hugetlb.c     | 6 +++---
+>   mm/hugetlb_cma.c | 2 +-
+>   mm/internal.h    | 3 ++-
+>   3 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 6e855a32de3d..7466c7bf41a1 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1422,8 +1422,8 @@ static struct folio *alloc_gigantic_frozen_folio(int order, gfp_t gfp_mask,
+>   	if (hugetlb_cma_exclusive_alloc())
+>   		return NULL;
+>   
+> -	folio = (struct folio *)alloc_contig_frozen_pages(1 << order, gfp_mask,
+> -							  nid, nodemask);
+> +	folio = page_rmappable_folio(alloc_contig_frozen_pages(1 << order, gfp_mask,
+> +							  nid, nodemask));
+>   	return folio;
+>   }
+>   #else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE || !CONFIG_CONTIG_ALLOC */
+> @@ -1859,7 +1859,7 @@ static struct folio *alloc_buddy_frozen_folio(int order, gfp_t gfp_mask,
+>   	if (alloc_try_hard)
+>   		gfp_mask |= __GFP_RETRY_MAYFAIL;
+>   
+> -	folio = (struct folio *)__alloc_frozen_pages(gfp_mask, order, nid, nmask);
+> +	folio = page_rmappable_folio(__alloc_frozen_pages(gfp_mask, order, nid, nmask));
+>   
+>   	/*
+>   	 * If we did not specify __GFP_RETRY_MAYFAIL, but still got a
+> diff --git a/mm/hugetlb_cma.c b/mm/hugetlb_cma.c
+> index f83ae4998990..4245b5dda4dc 100644
+> --- a/mm/hugetlb_cma.c
+> +++ b/mm/hugetlb_cma.c
+> @@ -51,7 +51,7 @@ struct folio *hugetlb_cma_alloc_frozen_folio(int order, gfp_t gfp_mask,
+>   	if (!page)
+>   		return NULL;
+>   
+> -	folio = page_folio(page);
+> +	folio = page_rmappable_folio(page);
+>   	folio_set_hugetlb_cma(folio);
+>   	return folio;
+>   }
 
+IIUC, this will break the semantics of the is_transparent_hugepage() and 
+might trigger a split of a hugetlb folio, right?
+
+static inline bool is_transparent_hugepage(const struct folio *folio)
+{
+	if (!folio_test_large(folio))
+		return false;
+
+	return is_huge_zero_folio(folio) ||
+		folio_test_large_rmappable(folio);
+}
 

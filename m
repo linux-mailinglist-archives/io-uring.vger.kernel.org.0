@@ -1,228 +1,163 @@
-Return-Path: <io-uring+bounces-12015-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12016-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +EoQNOy3gGl3AgMAu9opvQ
-	(envelope-from <io-uring+bounces-12015-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:42:52 +0100
+	id MPgDKX+4gGl3AgMAu9opvQ
+	(envelope-from <io-uring+bounces-12016-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:45:19 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331DFCD840
-	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05949CD8A0
+	for <lists+io-uring@lfdr.de>; Mon, 02 Feb 2026 15:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C0C7E300F9CB
-	for <lists+io-uring@lfdr.de>; Mon,  2 Feb 2026 14:34:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 378013053643
+	for <lists+io-uring@lfdr.de>; Mon,  2 Feb 2026 14:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B8F1F5825;
-	Mon,  2 Feb 2026 14:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E71828AB0B;
+	Mon,  2 Feb 2026 14:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="APRKdzu6"
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="eALF+VfP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C591EBA19
-	for <io-uring@vger.kernel.org>; Mon,  2 Feb 2026 14:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770042866; cv=none; b=nixe8w5rpuxbmfONyebbBcVtLhA2Q/G10PeKx+FWXcS9YuPMpzXrjsutfuZzwwLrGJ61UeC+rvDT4AihIBxd15eiNdyL8Eqoq4tKloaf3RWKgKK54ONew20ls2t3mNuqfVoZmD/P+V+M5NhXp39cn12/jfNUNhLD2IgINfxf6n0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770042866; c=relaxed/simple;
-	bh=U9f6lN3lEiNFo5dDkqpFaTJ4GWLvwQ9EJk9E6ZprYD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZvuig0vyLyYJ1DGcQlUjo3RAASr3YQwZBBR4b2t+nWUPQZPH01XErqfksVDpFnjTQRX2NCKFl9K7pFFph4UzHkawzOu6a0hetGrWyRNieh6QwU5hfJ4YpZLzeUCOoC/WUJw5bV9HaLetzDmoWAmK2ggN8jftgG36oXBsonxJXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=APRKdzu6; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-45c9fdf2a06so3086003b6e.2
-        for <io-uring@vger.kernel.org>; Mon, 02 Feb 2026 06:34:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770042862; x=1770647662; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rEpZFSBYqwbJS4DeyzeYZz+QE0lrvN7gNdYGjxP8Jmw=;
-        b=APRKdzu6pHCekLklK8sNRRhByR6WOEUBQkMlAX8JW6Gjh8MJb18U6lgjcae0S6AFjM
-         n80Ef1fYRsd3PFibgU8ogb40x1DbFnlxJ5V7/qqrAbmOUpk0zbcIY6cJHgcyJxT66p2X
-         6sxVtlCr89ampdB9skAnzgcrwEIEvTxNfwEV5UVw8CL7bHrxbNTaS0yDHjg3NujygmvK
-         k843wlXftEVnzCbIS7BRG1pzneQAaYpArYnlkuMk0NXvVI46rdVKi+tigsigmWvbsH95
-         xGmouhhgo9A80FWopV+H1um8C4gl0xRAqh6No6ZLfYsU2aXVSzvBFotan2sYE5ARDv9T
-         hQpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770042862; x=1770647662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rEpZFSBYqwbJS4DeyzeYZz+QE0lrvN7gNdYGjxP8Jmw=;
-        b=Ql0xFy2E72xzdDhA6yskJyMR3L4edqSJdXHsRBKzasqVA9BaiiGP4xjQhXRQ4HMivB
-         eAqbf9iZ7SZ3n/YimNFNadK7toy3cFfoJgZwHnOofQuRrU3hmD5etGcnezsyRPzQyPoC
-         S5+VO4u2ooWtbGsc72721fDvc+lTd/eW0xUBR3KKkUbSCg3UEufAxYVvwcRj8EbXZqVh
-         4xyG05mlL07MV19mVx8xTySOlTK3qXDtpO1CSju/mDcrRbuEVjU6iz2ZCaaVOwOLtLRx
-         2URww+bYnQXPM2K5fg17NI9qUsVYn61+Yf11/beUr8JgKMvzL957hqOwzpmawKd+7hIR
-         Ugzg==
-X-Gm-Message-State: AOJu0YyFcvQ67HyMnao/bN+XCX7JRl7MrBUDuMMpqaO4lAlQQaw9CxTQ
-	yHTJaI5zjkUO4bOzZJ89YJa88Xg4CGD1WBtnImqklEfnYgPWt+fgm+nDKS3G8uBgiog=
-X-Gm-Gg: AZuq6aKF1liWERRw7OueHJFCqBhkdrCDPg2BkbVo6IUt6WPnUzJ6mRdhnrR9JM013YR
-	dJVHzAaqjHUmN6JUDarB67aGRoxQwhkyVP6XuEOlnlalK+lSY7nKmSNyttJMwPJhTTTiEEvwRmN
-	6omkQUc1FpT1CGn+AnC/B0s4uejlZXapX2NCX0VbIX17QhrX6M0FZJlzZz3YCw/8Gx9O4jHVwjw
-	BvkJAZYLPQbc7IXLclNP2MEIWqCpBUuq7D3c6JPi8grHL+nrRDnmJYnZCttppqBnj3lW+If//jU
-	cbq+oRov/ecSScywwyrVdwh9U/1m/pgt7qPsrOmK92AzRK8oNeAsBK7EOlGs4/tGb4u31gbLegT
-	h9EUZ3Kc22hT0Z3Ibdc0CCd4vKOzPfuHlprBq7ZUKDT0MT3yAIlwKmy4MvX8y9DVmhQ9+BE2oWk
-	BiSuRB13OmfrwwwHCw2DSGWqWEAdXJaUGsrUi9eiE5J7u7T/whpyeTMlmERUR3zSBVgCQe89Nc9
-	ZPRoBns
-X-Received: by 2002:a05:6808:11c5:b0:450:7df:e90b with SMTP id 5614622812f47-45f34d19f40mr4776909b6e.52.1770042862407;
-        Mon, 02 Feb 2026 06:34:22 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4095751ea47sm11310436fac.15.2026.02.02.06.34.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Feb 2026 06:34:21 -0800 (PST)
-Message-ID: <01839e70-5a71-4969-ad5f-2495754250e1@kernel.dk>
-Date: Mon, 2 Feb 2026 07:34:20 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F211A76DE;
+	Mon,  2 Feb 2026 14:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770043093; cv=pass; b=fDxUgBtABJ2dbvarL3iHPSpaPM19k6d4qcw80oPmgGOZFEYUNwFdTC9n3doodAXs3lRsHQfVtzPXFoufrywhgklPBDpj9Kwy2/r5GVsqxEdVd5fOdEcwnuCQ3xTc3pwHkdAbIsPp5EwinUlpZHIP4fmkYLbkSt++S3VAO5fQSGU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770043093; c=relaxed/simple;
+	bh=okEXM9/shBShOr5ACg362CBiqe/WpUCIhhUbGaZhH0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pVzwkAZFKS2404JWeoXZ+3eexzUa46zJKqPJI0EhBDnP+23m5HsYmURLMwgTeNUqlU8LrWQj+7qG1U0eDvghc4GBncukxHE/289Z/CWVa2c3zD4u8Qogs3YcemWTsdMw3CNH+KUD/NgyMs5bRk9Nwd/O7eSbWSUQykBpbxR33sY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=eALF+VfP; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1770043085; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OdvGrwgHYtRvzlsC1TuaNyPBsZJWzmvScFFyUSXX+g8XxDcv1hoHESiwKjNPi6mL016Y8Qj/omKdi6gPjRQ+m9yNAGueTmaeUWHQGmdm8cBHncrot1iaafYe3drn+1vJXBeXQc/Db6GIM/cAYlgp87vxXXxaq+Z2LqYeU/r8Roo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1770043085; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7Rz7J3aH+YO5uJw0T7QKeUx2LLfB/laDQma/k4m+Nkk=; 
+	b=ZtmysD+fp2ys5gVGT9bxYIJdFqZNuJ4iFFzyR5NV2V+5jT/qWAxOTloxcBJeTrb08g/13nr+bWtzi9euB2rAnQCYwF3uxm2Wa8cIOSGVmnjdgDV/jS/fDfGpD1nGr0iz9GKWCvFoDP48/gRyjoGYc0/hFYmQUp+x2P+20vM4k5c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770043085;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=7Rz7J3aH+YO5uJw0T7QKeUx2LLfB/laDQma/k4m+Nkk=;
+	b=eALF+VfP2XnI2gVfxSyDAq/Vog/ER8uVlMpixT3y7tPoiqP6rtJ3oR5kpOa2LQNF
+	xQRbwDzFlzl/QKVHnsa7xv3OTb6jzk4LPxTAq18oOSdxEB5+KEuXUOKBvLeVjlEeZT/
+	S06SL0Fn1yapJV7bJx/2Zug9g4qTMZthB4J+AGxg=
+Received: by mx.zohomail.com with SMTPS id 1770043082947655.3596413706094;
+	Mon, 2 Feb 2026 06:38:02 -0800 (PST)
+From: Li Chen <me@linux.beauty>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] io_uring/io-wq: let workers exit when unused
+Date: Mon,  2 Feb 2026 22:37:52 +0800
+Message-ID: <20260202143755.789114-1-me@linux.beauty>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Introduce IORING_OP_MMAP
-To: "David Hildenbrand (arm)" <david@kernel.org>,
- Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-mm@kvack.org
-References: <20260129221138.897715-1-krisman@suse.de>
- <62d5954b-8ad5-4674-986b-c1168771429b@kernel.org>
- <f6098b6a-6283-486b-8167-b77c8d2e7880@kernel.dk>
- <6a351a3a-861a-4b93-8d8a-c0f5b87c258f@kernel.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <6a351a3a-861a-4b93-8d8a-c0f5b87c258f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[linux.beauty:s=zmail];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12016-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	TAGGED_FROM(0.00)[bounces-12015-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	DMARC_NA(0.00)[linux.beauty];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[me@linux.beauty,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[linux.beauty:+];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 331DFCD840
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.beauty:mid,linux.beauty:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 05949CD8A0
 X-Rspamd-Action: no action
 
-On 2/2/26 2:02 AM, David Hildenbrand (arm) wrote:
-> On 2/1/26 19:16, Jens Axboe wrote:
->> On 2/1/26 10:46 AM, David Hildenbrand (arm) wrote:
->>> On 1/29/26 23:11, Gabriel Krisman Bertazi wrote:
->>>> Hi,
->>>>
->>>> There's been a few requests over time for supporting mmap(2) over
->>>> io_uring. The reasoning are twofold: 1) serving as base for batching
->>>> multiple mappings in a single operation 2) supporting mmap of fixed
->>>> files.
->>>>
->>>> Since mmap can operate on either anonymous memory and file descriptors,
->>>> patch 1 adds support for optional fds in io_uring commands.  Patch 2
->>>> implements the mmap operation itself.
->>>>
->>>> Note this patchset doesn't do any kind of smarter batching in MM.  While
->>>> we can potentially do some interesting optimizations already, like
->>>> holding the MM write lock instead of reacquiring it for each mapping, I
->>>> wanted to focus on the API discussion first.  This is left as future
->>>> work.
->>>>
->>>> liburing support, including testcases, will be sent shortly to the list,
->>>> but can also be found at:
->>>
->>> Just a general question: why do we unlock each syscall individually,
->>> and not in some intelligent way, all syscalls at once? :)
->>
->> The hard part isn't enabling all syscalls at once, that could be
->> trivially done with an IORING_OP_SYSCALL and the SQE carries arg0..argN.
->> And for any nonblocking/simple syscall, that would Just Work. 
-> 
-> Right, that's what I had in mind.
-> 
->> The
->> challenge is for syscalls that block - the whole point of io_uring is
->> that you should be able to do nonblock issues with sane retries. The
->> futex series I did some time back is a good example of that - you modify
->> the existing syscall to expose the waitqueue mechanism, which you can
->> then use to wait in an async way, and get a callback when some action
->> needs to be taken.
->>
->> If you just allow blocking, then you're blocking the entire io_uring
->> issue pipeline. Which was exactly my main complaint on this patchset,
->> see the review reply to patch 2.
-> 
-> Makes sense. I was wondering whether that could be optimized
-> internally in the stream of IORING_OP_SYSCALL.
-> 
-> But likely that would make it more tricky to optimize.
+io_uring uses io-wq to offload regular file I/O. When that happens, the kernel
+creates per-task iou-wrk-<tgid> workers (PF_IO_WORKER) via create_io_thread(),
+so the worker is part of the process thread group and shows up under
+/proc/<pid>/task/.
 
-Are we talking generically, or mmap/munmap/mremap? You could trivially
-make IORING_OP_SYSCALL available and use it for everything, it'd just
-require a basically all of those to be offloaded to io-wq internally in
-io_uring. And that's not a great approach. The fast path for io_uring is
-running the opcode inline, which means that by the time the syscall
-returns, you have also posted the completion. If the operation can't
-complete inline, then the next best thing is to have it be triggered
-when it can complete, and then retry and post the completion. Think of
-reading from a pipe - if the data is there, the read is done inside
-io_uring_enter() when the read is attempted, and we're done. If no data
-is available, the operation is queued. When data becomes available, a
-retry is triggered, data is read, and a completion is posted.
+io-wq shrinks the pool on idle, but it intentionally keeps the last worker
+around indefinitely as a keepalive to avoid churn. Combined with io_uring's
+per-task context lifetime (tctx stays attached to the task until exit), a
+process may permanently retain an idle iou-wrk thread even after it has closed
+its last io_uring instance and has no active rings.
 
-For an old school kind of syscall "do this thing, and just block the
-task until it's done" doesn't work that way at all. Running those in
-io_uring would necessitate punting the operation to io-wq, which are
-helper userspace threads for io_uring. As there's no way of knowing
-whether syscallN will complete fast inline or block for 2 seconds,
-io_uring has no other option than to offload it to io-wq. If it's a 2
-second operation, that's fine, you won't see any difference in the
-application, other than it can now do syscallN async in an efficient
-way. If syscallN would've completed inline in 1 usec, then offloading to
-io-wq is suddenly a big performance problem.
+The keepalive behavior is a reasonable default(I guess): workloads may have
+bursty I/O patterns, and always tearing down the last worker would add thread
+churn and latency. Creating io-wq workers goes through create_io_thread()
+(copy_process), which is not cheap to do repeatedly.
 
-> The patch set says "serving as base for batching
-> multiple mappings in a single operation", and I was wondering, why one wouldn't just also batch with mremap/munmap/ etc. in the future.
-> 
-> (BUT I am also skeptical whether holding the mmap lock in write mode
-> longer instead of repeatedly grabbing it, allowing other operations
-> that need it in read mode etc to make progress, is actually
-> preferrable)
+However, CRIU currently doesn't cope well with such workers being part of the
+checkpointed thread group. The iou-wrk thread is a kernel-managed worker
+(PF_IO_WORKER) running io_wq_worker() on a kernel stack, rather than a normal
+userspace thread executing application code. In our setup, if the iou-wrk
+thread remains present after quiescing and closing the last io_uring instance,
+criu dump may hang while trying to stop and dump the thread group.
 
-That's always a trade off - if the frequency is high, then a certain
-level of batching makes sense. The good news is that you get to control
-that, you can just batch more or less.
+Besides the resource overhead and surprising userspace-visible threads, this is
+a problem for checkpoint/restore. CRIU needs to freeze and dump all threads in
+the thread group. With a lingering iou-wrk thread, we observed criu dump can
+hang even after the ring has been quiesced and the io_uring fd closed, e.g.:
 
-Outside of mmap locking frequencies, I suspect potentially nicer wins
-might be around TLB flush reductions for this family of operations.
+  criu dump -t $PID -D images -o dump.log -v4 --shell-job
+  ps -T -p $PID -o pid,tid,comm | grep iou-wrk
+
+This series is a kernel-side enabler for checkpoint/restore in the current
+reality where userspace needs to quiesce and close io_uring rings before dump.
+It is not trying to make io_uring rings checkpointable, nor does it change what
+CRIU can or cannot restore (e.g. in-flight SQEs/CQEs, SQPOLL, SQE128/CQE32,
+registered resources). Even with userspace gaining limited io_uring support,
+this series only targets the specific "no active io_uring contexts left, but an
+idle iou-wrk keepalive thread remains" case.
+
+This series adds an explicit exit-on-idle mode to io-wq, and toggles it from
+io_uring task context when the task has no active io_uring contexts
+(xa_empty(&tctx->xa)). The mode is cleared on subsequent io_uring usage, so the
+default behavior for active io_uring users is unchanged.
+
+Tested on x86_64 with CRIU 4.2.
+With this series applied, after closing the ring iou-wrk exited within ~200ms
+and criu dump completed.
+
+Li Chen (2):
+  io-wq: add exit-on-idle mode
+  io_uring: allow io-wq workers to exit when unused
+
+ io_uring/io-wq.c | 31 +++++++++++++++++++++++++++++++
+ io_uring/io-wq.h |  1 +
+ io_uring/tctx.c  | 11 +++++++++++
+ 3 files changed, 43 insertions(+)
 
 -- 
-Jens Axboe
+2.52.0
 

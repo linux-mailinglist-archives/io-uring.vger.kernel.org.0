@@ -1,230 +1,192 @@
-Return-Path: <io-uring+bounces-12030-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12031-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AO5HMymqgWn0IQMAu9opvQ
-	(envelope-from <io-uring+bounces-12030-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 08:56:25 +0100
+	id oKr1AGfCgWmFJgMAu9opvQ
+	(envelope-from <io-uring+bounces-12031-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 10:39:51 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F41D5E8C
-	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 08:56:25 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84CDD6E84
+	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 10:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 24CFE30602C9
-	for <lists+io-uring@lfdr.de>; Tue,  3 Feb 2026 07:47:28 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 4DA1C3026082
+	for <lists+io-uring@lfdr.de>; Tue,  3 Feb 2026 09:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8102B3921EB;
-	Tue,  3 Feb 2026 07:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA160396D30;
+	Tue,  3 Feb 2026 09:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="oOyr0gYm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQfoS9HS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B21F3B87;
-	Tue,  3 Feb 2026 07:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770104847; cv=pass; b=IMbtWm1VwVLsaZBpobiktxlDJ+MPhq0U1NfSe5KXDz2hpQjHIQ6gttRZIkaNqe18zZ67BOcb29XV4MWupaupK9kFiaotUmuLwsiMQru8nOLYCDJ3pJeEikIwbegKZHxvWqTx51J3K9AR/lY6oTfQz4wPxMxG2aqEfoSVHj7rkdk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770104847; c=relaxed/simple;
-	bh=SsdcOtBUBdo5CNsR091pUUkEjbiGNYYvM4mDi5Urj0k=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ZPSXhNn3V5cqQVOsyrR66B7FjRi2na0WXR8jnvObMvZc/+QJId3FM9vWMLrUAkhEGD7M/I5xivlYcoozCH4/GQCxBlf4XcD5LLb4GakARDC6OSvJ1Yjyikh8AADvOjIYq+nbKkd3RE5/4C4nYpbpp9L3Zv36uqI44CME/iQFd6Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=oOyr0gYm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1770104841; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PdWjYxXCDwnFA6qfmy7BWiVtZWP8SjMtcn/Jc5PkH9/rxq3mWmTXQ3VS/it4bgIKdiHJzb39MRz+ag69nkKa/JsBbEbeBwXVUQCerVbGFDSCOEAviiQ9TPr42I5ctX2eXsmSR6RXJu1U/v4CK5Z06bO+vXsO5FIWrkqYz3vzUkg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1770104841; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Hph0iT7rh0zp0cxOas67hYuj+Sk0dVLVyUBO04I33iw=; 
-	b=FrU7IZtzoajaiMiK6Y1Qb1naJUWjPiL5g+0nolfHb4qkMhdjgzprVpR3YXSinxg1tZtdxV1giTf0vJwawBnNvDeYUuwN8qcd02JnAObDKwC+FeXkjQnYaugHNRWPw2PUcwTLIEI1NNA/PJ0oCKxl/AMmPRVn+kfJUwKizgjYEkM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770104841;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Hph0iT7rh0zp0cxOas67hYuj+Sk0dVLVyUBO04I33iw=;
-	b=oOyr0gYmhIjUZ7L7TCf5p3XhlxSWdjuQ/c+H2+DE25hMVTe28OcH84OsQhoUYhn+
-	gD+KTDL7Hp6EchWzfLNoeHR2PkjY7g56sYUQg/SX52jxyXQEu2krlrPZspEF0o9kbmw
-	4+186i9qhHgVf2Qm+39XAqk0NnRbiWcBWEw+PzQI=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1770104839796296.587391034113; Mon, 2 Feb 2026 23:47:19 -0800 (PST)
-Date: Tue, 03 Feb 2026 15:47:19 +0800
-From: Li Chen <me@linux.beauty>
-To: "Jens Axboe" <axboe@kernel.dk>
-Cc: "Pavel Begunkov" <asml.silence@gmail.com>,
-	"io-uring" <io-uring@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <19c22785df1.288e39fb101919.2611884700541801815@linux.beauty>
-In-Reply-To: <147b6420-ad85-46b0-a8e6-3cb9265e4b15@kernel.dk>
-References: <20260202143755.789114-1-me@linux.beauty>
- <17d76cc4-b186-4290-9eb4-412899c32880@kernel.dk>
- <19c20ef1e4d.70da0b662392423.5502964729064267874@linux.beauty> <147b6420-ad85-46b0-a8e6-3cb9265e4b15@kernel.dk>
-Subject: Re: [PATCH v1 0/2] io_uring/io-wq: let workers exit when unused
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDD2396D1A
+	for <io-uring@vger.kernel.org>; Tue,  3 Feb 2026 09:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770111579; cv=none; b=rqg186rWrRuIQtXI3ZzCyyLTvT3Mk9xS8V5rip+qUlfng+tBH3XwKWlsRRdKJTL3RCHlJ6lMn8G/y2UEo5W45FgHGwKrOHX7joN+lFYpZ87JNBRf2+i6kJy8G0brnaMLSTN3wqACDyZi9CQHSdo5PCozjYuPPyFds68aTTZyliw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770111579; c=relaxed/simple;
+	bh=LpxeijDBG4t6PJTWf+A+CI6IG2cvGYrY4SR+epbpwSQ=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RKMxRwRu41HURQUgA6epFrq+QNt5RuGluK+x+HPbUh+/IBBRT8vTp5K3WG+retTNlXTZ8Ex93EebeWscQlA5T1rF+JazWZwhphFTLqVv2L6AFDOEg82dbtB2uiM/QZO7sV/pSp0W49uKFJi7+z8QGIMMAmhRPBQ8QcTe4/te4J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQfoS9HS; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-649488dc7bdso4861578d50.0
+        for <io-uring@vger.kernel.org>; Tue, 03 Feb 2026 01:39:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770111577; x=1770716377; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LpxeijDBG4t6PJTWf+A+CI6IG2cvGYrY4SR+epbpwSQ=;
+        b=AQfoS9HS/4A8lsJ664tmJMcUAmJhVeYlgQNA46wSRyW7bjBdyVA/oB0d6a5ARxZ9cf
+         e2NFk+2+nOObXHnAJymHKwUvVVP0LGVYS32oK34qDvYcwc/BPoXtyzYv3G47WhWrl91L
+         abMKDBlMT8rt3Z5WldDpLObNsSx+Ha1OVUedQI8luEz6/X22rMEGE0T2r6fbi2ff2KZi
+         URuEk0o/gIG84ybIeWnkB4DtYoMLMGKFlcsqgMWcRRZaVQQI+JtQVvaYj0ALfrfUVLg2
+         Rb3/tp492q5iAk2Aw1WpkKZrZBKKQENSHG8aJu+zTmuzGgK+IGDQn2nOJywikBSuI4Bh
+         NvTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770111577; x=1770716377;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LpxeijDBG4t6PJTWf+A+CI6IG2cvGYrY4SR+epbpwSQ=;
+        b=vjmJBAlfqrLtY+eQv2SPlJ0j7sQ2yQmZeMgGeL4IFrCEhj42YWhS74CP0kgyiZM9EV
+         c5A+MyJ/ypE6qhLn2t0p4hPCAHyC7l7jlRXeL8oizCkRyb9jk1apgdNdmKKTTgNb9Rk3
+         vQTN46iZ6hdjdidyBI0Y2n6Sr30AIS557ABW8IODOM0iltnR2n1JNeo0jBqu4yjynPq8
+         VPXHqvg8u5//9kWiHUHz+CZlQxM53tvXoiGY2E4i06x+j4Gvc3Q3ccuHTWm/b8kw7Rho
+         bNBSuJyontn5d7Nhkc/ek+4h+rmLlYhkj/I1r903aRbWeyJbkIFA9lufztzR557pV1i7
+         MSPQ==
+X-Gm-Message-State: AOJu0YyM9aC6ddZQNfDbgkZ19h4mf9arpONpDZvk45dUYq2627bvE0aH
+	U0Nid98Za+R0VMH5Cfliz2yUq+Wxs1E36nAC8HZZ4DPS7JxLgoM3a4ED8ySJkQxZ
+X-Gm-Gg: AZuq6aI3sTFTKHWS6jP2c3VnApiERYqyVJzrwuVC4Ba9FnebUZ05FwzHHzgTRyZEqeK
+	DYw3Y2v7JaK9k8ltRwXHdE1CKuhnuWnEUtnMIc3BkDxoJUaxVd7njX0bi1FxdslrfBolqvqJf+q
+	YUdNR1RMJn5GrmwChhi7Ni0i9UykNVUwAKSP7aGcw9MEpin0TPh4+FHeexq//uA4SVjhog/SUuQ
+	H9diKwc4Y0vqM98eM+HRtI6+mnbDT6AUswruFB/fEwEQCEnj0s1n3DTZ7EaT0eGIWhUJsnj9TRs
+	2GjBRMrLY25u7kl13ePJBlO00tZQ2b5lXNjY9WwJMwN/nc+TpWn1x4W9ZTo/vt7a8KctOqZR5RT
+	IonkyhaEUwou/l0LDdK1OhmcfVF/9CUD5lH2S0n7QG/sRmHTQHIf22GiJmUsNH4EPK4JII4kgER
+	WIFIHvwMdqJBJ9WKW64W3NbpULQ1fQty1Ok6tj0w==
+X-Received: by 2002:a05:690e:b4a:b0:649:b943:2cc3 with SMTP id 956f58d0204a3-649b9432f6emr7748248d50.15.1770111577168;
+        Tue, 03 Feb 2026 01:39:37 -0800 (PST)
+Received: from PS1PPF7E1D7501F.apcprd02.prod.outlook.com ([2603:1046:a00:12::b])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-649960efd95sm11418836d50.18.2026.02.03.01.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 01:39:36 -0800 (PST)
+From: =?gb2312?B?yseyzrLu?= <shicenci@gmail.com>
+To: io-uring <io-uring@vger.kernel.org>
+CC: "axboe@kernel.dk" <axboe@kernel.dk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: [BUG] soft lockup in seq_read while reading io_uring fdinfo
+Thread-Topic: [BUG] soft lockup in seq_read while reading io_uring fdinfo
+Thread-Index: AQHclPC0mHI7iiYkWESE6ihzUMhUtA==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Tue, 3 Feb 2026 09:39:32 +0000
+Message-ID:
+	<PS1PPF7E1D7501FE5631002D242DD89403FAB9BA@PS1PPF7E1D7501F.apcprd02.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [7.35 / 15.00];
-	URIBL_BLACK(7.50)[linux.beauty:mid,linux.beauty:dkim];
+X-Spamd-Result: default: False [-2.06 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	XM_UA_NO_VERSION(0.01)[];
+	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	R_DKIM_ALLOW(0.00)[linux.beauty:s=zmail];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12030-lists,io-uring=lfdr.de];
-	DMARC_NA(0.00)[linux.beauty];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	GREYLIST(0.00)[pass,body];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.beauty:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[me@linux.beauty,io-uring@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-12031-lists,io-uring=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	R_SPF_ALLOW(0.00)[+ip4:172.234.253.10:c];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_SPAM(0.00)[0.839];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux.beauty:mid,linux.beauty:dkim,kernel.dk:email]
-X-Rspamd-Queue-Id: 78F41D5E8C
-X-Rspamd-Action: add header
-X-Spam: Yes
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[shicenci@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pastebin.com:url,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,PS1PPF7E1D7501F.apcprd02.prod.outlook.com:mid]
+X-Rspamd-Queue-Id: B84CDD6E84
+X-Rspamd-Action: no action
 
-Hi Jens,
-
- ---- On Tue, 03 Feb 2026 10:29:50 +0800  Jens Axboe <axboe@kernel.dk> wrot=
-e ---=20
- > On 2/2/26 5:37 PM, Li Chen wrote:
- > > Hi Jens,
- > >=20
- > >  ---- On Mon, 02 Feb 2026 23:21:22 +0800  Jens Axboe <axboe@kernel.dk>=
- wrote ---=20
- > >  > On 2/2/26 7:37 AM, Li Chen wrote:
- > >  > > io_uring uses io-wq to offload regular file I/O. When that happen=
-s, the kernel
- > >  > > creates per-task iou-wrk-<tgid> workers (PF_IO_WORKER) via create=
-_io_thread(),
- > >  > > so the worker is part of the process thread group and shows up un=
-der
- > >  > > /proc/<pid>/task/.
- > >  > >=20
- > >  > > io-wq shrinks the pool on idle, but it intentionally keeps the la=
-st worker
- > >  > > around indefinitely as a keepalive to avoid churn. Combined with =
-io_uring's
- > >  > > per-task context lifetime (tctx stays attached to the task until =
-exit), a
- > >  > > process may permanently retain an idle iou-wrk thread even after =
-it has closed
- > >  > > its last io_uring instance and has no active rings.
- > >  > >=20
- > >  > > The keepalive behavior is a reasonable default(I guess): workload=
-s may have
- > >  > > bursty I/O patterns, and always tearing down the last worker woul=
-d add thread
- > >  > > churn and latency. Creating io-wq workers goes through create_io_=
-thread()
- > >  > > (copy_process), which is not cheap to do repeatedly.
- > >  > >=20
- > >  > > However, CRIU currently doesn't cope well with such workers being=
- part of the
- > >  > > checkpointed thread group. The iou-wrk thread is a kernel-managed=
- worker
- > >  > > (PF_IO_WORKER) running io_wq_worker() on a kernel stack, rather t=
-han a normal
- > >  > > userspace thread executing application code. In our setup, if the=
- iou-wrk
- > >  > > thread remains present after quiescing and closing the last io_ur=
-ing instance,
- > >  > > criu dump may hang while trying to stop and dump the thread group=
-.
- > >  > >=20
- > >  > > Besides the resource overhead and surprising userspace-visible th=
-reads, this is
- > >  > > a problem for checkpoint/restore. CRIU needs to freeze and dump a=
-ll threads in
- > >  > > the thread group. With a lingering iou-wrk thread, we observed cr=
-iu dump can
- > >  > > hang even after the ring has been quiesced and the io_uring fd cl=
-osed, e.g.:
- > >  > >=20
- > >  > >   criu dump -t $PID -D images -o dump.log -v4 --shell-job
- > >  > >   ps -T -p $PID -o pid,tid,comm | grep iou-wrk
- > >  > >=20
- > >  > > This series is a kernel-side enabler for checkpoint/restore in th=
-e current
- > >  > > reality where userspace needs to quiesce and close io_uring rings=
- before dump.
- > >  > > It is not trying to make io_uring rings checkpointable, nor does =
-it change what
- > >  > > CRIU can or cannot restore (e.g. in-flight SQEs/CQEs, SQPOLL, SQE=
-128/CQE32,
- > >  > > registered resources). Even with userspace gaining limited io_uri=
-ng support,
- > >  > > this series only targets the specific "no active io_uring context=
-s left, but an
- > >  > > idle iou-wrk keepalive thread remains" case.
- > >  > >=20
- > >  > > This series adds an explicit exit-on-idle mode to io-wq, and togg=
-les it from
- > >  > > io_uring task context when the task has no active io_uring contex=
-ts
- > >  > > (xa_empty(&tctx->xa)). The mode is cleared on subsequent io_uring=
- usage, so the
- > >  > > default behavior for active io_uring users is unchanged.
- > >  > >=20
- > >  > > Tested on x86_64 with CRIU 4.2.
- > >  > > With this series applied, after closing the ring iou-wrk exited w=
-ithin ~200ms
- > >  > > and criu dump completed.
- > >  >=20
- > >  > Applied with the mentioned commit message and IO_WQ_BIT_EXIT_ON_IDL=
-E test
- > >  > placement.
- > >=20
- > > Thanks a lot for your review!
- > >=20
- > > If you still want a test, I'm happy to write it. Since you've already
- > > tweaked/applied the v1 series, I can send the test as a standalone
- > > follow-up patch (no v2).
- > >=20
- > > If kselftest is preferred, I'll base it on the same CRIU-style workloa=
-d:
- > > spawn iou-wrk-* via io_uring, quiesce/close the last ring, and check t=
-he
- > > worker exits within a short timeout.
- >=20
- > That sounds like the right way to do the test. Preferably a liburing
- > test/ case would be better, we don't do a lot of in-kernel selftests so
- > far. But liburing has everything.
-
-Thanks for your suggestion. I just adapted my local test program to liburin=
-g and posted the liburing
- PR here: https://github.com/axboe/liburing/pull/1529
-
-Regards,
-Li=E2=80=8B
-
+SGksCgpJoa9tIHJlcG9ydGluZyBhIHJlcHJvZHVjaWJsZSBzb2Z0IGxvY2t1cCBvYnNlcnZlZCBp
+biB0aGUgc2VxX2ZpbGUgcmVhZCBwYXRoIHdoZW4gcmVhZGluZyBpb191cmluZyBmZGluZm8gdmlh
+IHByb2Nmcy4KClRoZSBsb2NrdXAgaXMgdHJpZ2dlcmVkIGJ5IGEgc3l6a2FsbGVyIEMgcmVwcm9k
+dWNlciB0aGF0OgoKY3JlYXRlcyBhbiBpb191cmluZyBpbnN0YW5jZSB3aXRoIGEgbGFyZ2UgbnVt
+YmVyIG9mIGVudHJpZXMsIGFuZCB0aGVuCgpyZWFkcyAvcHJvYy90aHJlYWQtc2VsZi9mZGluZm8v
+PHVyaW5nX2ZkPi4KClRoZSB3YXRjaGRvZyByZXBvcnRzIGEgc29mdCBsb2NrdXAgd2l0aCBDUFUg
+c3R1Y2sgaW4gX19zYW5pdGl6ZXJfY292X3RyYWNlX3BjKCkgd2hpbGUgdGhlIHRhc2sgaXMgZXhl
+Y3V0aW5nIHNlcV9yZWFkKCkgLT4gaW9fdXJpbmdfc2hvd19mZGluZm8oKS4KCkFub3RoZXIgQ1BV
+IGNvbmN1cnJlbnRseSBzaG93cyBhbiBOTUkgYmFja3RyYWNlIHN0dWNrIGluIEtGRU5DRaGvcyB0
+b2dnbGVfYWxsb2NhdGlvbl9nYXRlKCkgcGF0aCwgZ29pbmcgdGhyb3VnaCBqdW1wX2xhYmVsX3Vw
+ZGF0ZSgpIGFuZCBzbXBfdGV4dF9wb2tlX3N5bmNfZWFjaF9jcHUoKS4gVGhpcyBzdWdnZXN0cyBh
+IHBvdGVudGlhbCBpbnRlcmFjdGlvbiBiZXR3ZWVuIGhlYXZ5IGZkaW5mbyBzZXFfcHJpbnRmIG91
+dHB1dCB1bmRlciBLQ09WIGluc3RydW1lbnRhdGlvbiBhbmQgS0ZFTkNFoa9zIGp1bXBfbGFiZWwv
+dGV4dF9wb2tlIHN5bmNocm9uaXphdGlvbi4KClJlcHJvZHVjZXI6CgpDIHJlcHJvZHVjZXI6IGh0
+dHBzOi8vcGFzdGViaW4uY29tL3Jhdy9NeGtzaW1aaAoKY29uc29sZSBvdXRwdXQ6IGh0dHBzOi8v
+cGFzdGViaW4uY29tL3Jhdy9aZ3dSTmVUYwoKa2VybmVsIGNvbmZpZzogaHR0cHM6Ly9wYXN0ZWJp
+bi5jb20vcmF3L3FCWUd5VXpECgpLZXJuZWw6CgpIRUFEIGNvbW1pdDogNjM4MDRmZWQxNDlhNjc1
+MGZmZDI4NjEwYzVjMWM5OGNjZTZiZDM3NwoKIGdpdCB0cmVlOiB0b3J2YWxkcy9saW51eCAgCgpr
+ZXJuZWwgdmVyc2lvbjogNi4xOS4wLXJjNyAjMiBQUkVFTVBUKHZvbHVudGFyeSkgKFFFTVUgVWJ1
+bnR1IDI0LjEwKQoKCndhdGNoZG9nOiBCVUc6IHNvZnQgbG9ja3VwIC0gQ1BVIzEgc3R1Y2sgZm9y
+IDIycyEgW3N5ei4zLjE3OjEyMjZdCk1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDEgVUlEOiAwIFBJ
+RDogMTIyNiBDb21tOiBzeXouMy4xNyBOb3QgdGFpbnRlZCA2LjE5LjAtcmM3ICMyIFBSRUVNUFQo
+dm9sdW50YXJ5KQpIYXJkd2FyZSBuYW1lOiBRRU1VIFVidW50dSAyNC4xMCBQQyAoaTQ0MEZYICsg
+UElJWCwgMTk5NiksIEJJT1MgMS4xNi4zLWRlYmlhbi0xLjE2LjMtMiAwNC8wMS8yMDE0ClJJUDog
+MDAxMDpfX3Nhbml0aXplcl9jb3ZfdHJhY2VfY29uc3RfY21wMSsweDgvMHgyMCBrZXJuZWwva2Nv
+di5jOjMwMApDb2RlOiAwMCAwMCBmMyAwZiAxZSBmYSA0OCA4YiAwYyAyNCA0OCA4OSBmMiA0OCA4
+OSBmZSBiZiAwNiAwMCAwMCAwMCBlOSAxOCBmZiBmZiBmZiAwZiAxZiA4NCAwMCAwMCAwMCAwMCAw
+MCBmMyAwZiAxZSBmYSA0OCA4YiAwYyAyNCA8NDA+IDBmIGI2IGQ2IDQwIDBmIGI2IGY3IGJmIDAx
+IDAwIDAwIDAwIGU5IGY2IGZlIGZmIGZmIDY2IDBmIDFmIDQ0ClJTUDogMDAxODpmZmZmYzkwMDA0
+M2JmNzYwIEVGTEFHUzogMDAwMDAyNDYKUkFYOiAwMDAwMDAwMDNhNzM2NTAwIFJCWDogZmZmZmZm
+ZmY4NTBhZmUyMSBSQ1g6IGZmZmZmZmZmODRjZDY5YjAKUkRYOiBmZmZmODg4MDBjOWEzYmMwIFJT
+STogMDAwMDAwMDAwMDAwMDA3MyBSREk6IDAwMDAwMDAwMDAwMDAwMjUKUkJQOiBmZmZmYzkwMDA0
+M2JmODEwIFIwODogMDAwMDAwMDAzYTczNjUwMCBSMDk6IGZmZmZmZmZmODRjZDY5YTMKUjEwOiAw
+MDAwMDAwMDAwMDAwMDAxIFIxMTogZmZmZmM5MDA0OGM0ZDAzNyBSMTI6IGZmZmZjOTAwMDQzYmY4
+YTAKUjEzOiBmZmZmZmZmZjg1MGFmZTFiIFIxNDogZGZmZmZjMDAwMDAwMDAwMCBSMTU6IDAwMDAw
+MDAwMDAwMDAwNzMKRlM6IDAwMDA3ZjI0ZjkwZmU1MDAoMDAwMCkgR1M6ZmZmZjg4ODBlNWI1MjAw
+MCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAwMDEwIERTOiAwMDAwIEVTOiAwMDAw
+IENSMDogMDAwMDAwMDA4MDA1MDAzMwpDUjI6IDAwMDA1NTkzZTE3M2QxMzAgQ1IzOiAwMDAwMDAw
+MDBmNzE2MDAwIENSNDogMDAwMDAwMDAwMDM1MGVmMApDYWxsIFRyYWNlOgogPFRBU0s+CiBmb3Jt
+YXRfZGVjb2RlKzB4MTkwLzB4YzgwIGxpYi92c3ByaW50Zi5jOjI2OTIKIHZzbnByaW50ZisweDE4
+Ni8weDExNjAgbGliL3ZzcHJpbnRmLmM6Mjg4OQogc2VxX3ZwcmludGYrMHhlNi8weDFhMCBmcy9z
+ZXFfZmlsZS5jOjM5MQogc2VxX3ByaW50ZisweGJlLzB4ZjAgZnMvc2VxX2ZpbGUuYzo0MDYKIF9f
+aW9fdXJpbmdfc2hvd19mZGluZm8gaW9fdXJpbmcvZmRpbmZvLmM6MTU4IFtpbmxpbmVdCiBpb191
+cmluZ19zaG93X2ZkaW5mbysweDlhNy8weDE5MjAgaW9fdXJpbmcvZmRpbmZvLmM6MjYxCiBzZXFf
+c2hvdysweDQ2OS8weDczMCBmcy9wcm9jL2ZkLmM6NjgKIHNlcV9yZWFkX2l0ZXIrMHg0Y2MvMHgx
+MWQwIGZzL3NlcV9maWxlLmM6MjMwCiBzZXFfcmVhZCsweDM5MS8weDU3MCBmcy9zZXFfZmlsZS5j
+OjE2MgogdmZzX3JlYWQgZnMvcmVhZF93cml0ZS5jOjU3MCBbaW5saW5lXQogdmZzX3JlYWQrMHgx
+ZjkvMHhjOTAgZnMvcmVhZF93cml0ZS5jOjU1Mgoga3N5c19yZWFkKzB4MTIxLzB4MjQwIGZzL3Jl
+YWRfd3JpdGUuYzo3MTUKIGRvX3N5c2NhbGxfeDY0IGFyY2gveDg2L2VudHJ5L3N5c2NhbGxfNjQu
+Yzo2MyBbaW5saW5lXQogZG9fc3lzY2FsbF82NCsweGFjLzB4M2IwIGFyY2gveDg2L2VudHJ5L3N5
+c2NhbGxfNjQuYzo5NAogZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NGIvMHg1MwpS
+SVA6IDAwMzM6MHg3ZjI0ZjgzOGViZTkKQ29kZTogZmYgZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAg
+MDAgMDAgMDAgMDAgMGYgMWYgNDAgMDAgNDggODkgZjggNDggODkgZjcgNDggODkgZDYgNDggODkg
+Y2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBm
+ZiBmZiA3MyAwMSBjMyA0OCBjNyBjMSBhOCBmZiBmZiBmZiBmNyBkOCA2NCA4OSAwMSA0OA==
 

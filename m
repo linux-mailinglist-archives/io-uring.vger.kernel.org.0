@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-12041-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12042-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iNz5Bf9EgmlHRQMAu9opvQ
-	(envelope-from <io-uring+bounces-12041-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 19:57:03 +0100
+	id iAwbFEJFgmlHRQMAu9opvQ
+	(envelope-from <io-uring+bounces-12042-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 19:58:10 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707F6DDF7A
-	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 19:57:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C57DDFB2
+	for <lists+io-uring@lfdr.de>; Tue, 03 Feb 2026 19:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4E40830E6565
-	for <lists+io-uring@lfdr.de>; Tue,  3 Feb 2026 18:52:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BBFAC30160D8
+	for <lists+io-uring@lfdr.de>; Tue,  3 Feb 2026 18:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB792DE70C;
-	Tue,  3 Feb 2026 18:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2509831A542;
+	Tue,  3 Feb 2026 18:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="DK0E53PD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="durFDXvj"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="DNddKSWV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QYGBnmej"
 X-Original-To: io-uring@vger.kernel.org
 Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4116325F7A5;
-	Tue,  3 Feb 2026 18:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B289426ED3D;
+	Tue,  3 Feb 2026 18:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770144767; cv=none; b=fliANMaZ+tb3xv3uEqjZTu1ubNPDd7q0btyLewOaUb/c6rQ9nX2y8GWogKWMi9HjNIrTzB7ebXE5Wqr2oicHM6uybbhe44805El2SqwwKc1lm2WtQFHLGECQQ9b6PIviyn8JNg1LbJ0aNET8rWa3F+b6YK96SlHqSykKhGBsqT8=
+	t=1770144970; cv=none; b=prr6nIObV931hv5me+vyXUr70joAVZfCzjc1tPGKlcbNljnaY+M9Mbdv7sNQ00F1LwkypTeo90YaGtrTrZqmagFPP6B9BePdomNwTm5DdvYB54Vvlb9+6RMTP5phTINmx8unJqdD0ayMyidEf+0gVP9LWg+P9kc0uj/qJ36CIcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770144767; c=relaxed/simple;
-	bh=zVPiAP3T4UGtkVXMkDdmCpTW/YCWk/ixyuzXCi0/mYs=;
+	s=arc-20240116; t=1770144970; c=relaxed/simple;
+	bh=gdHRDhDYRqqbYHhtLoPSN0qxy9R4GbekIJs2bxp/m/0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CcSRRs+h0EQiYbcCM+BzAPmli4A0OPFFRJPm0ls2l+YF+zzsy71S10s1BAv7PPgtdj9nBfJXgfzv6B5WMzvBgdzShodXuO+U5jdoFTdbaeIwQxX3QdWhViPWFdhwGrwhyVC47a2pVXOKey/UF1ygWwNDn9uyaFeQBDQ/85K6iUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=DK0E53PD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=durFDXvj; arc=none smtp.client-ip=202.12.124.144
+	 In-Reply-To:Content-Type; b=B5/+QsZB3nmLpxLcztKSor936iTk33aC8hbO13Uf8Dn2EuQN8mTqVCvJ7S+6jZX+3qkQ9bznOFviLlepH/rthrQztfBKqKuh2I7XC5Xq5RqeUvEfRAsbd5aR9sdBX1ky/hPtpCjGdPKS+hmT3JdHEbQpPu7HFJ1gRaJGr/QwYpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=DNddKSWV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QYGBnmej; arc=none smtp.client-ip=202.12.124.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfout.stl.internal (Postfix) with ESMTP id 42C321D0010D;
-	Tue,  3 Feb 2026 13:52:45 -0500 (EST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id BA5D91D0010D;
+	Tue,  3 Feb 2026 13:56:07 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Tue, 03 Feb 2026 13:52:45 -0500
+  by phl-compute-03.internal (MEProxy); Tue, 03 Feb 2026 13:56:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1770144765;
-	 x=1770231165; bh=PuuqUzrOW0ejy4N/6rH49JuxAIizRsFiW6QWrTJ6jjA=; b=
-	DK0E53PDtjlF8yGTfIO1eZj0aTZuTi0aG/mu0JqwIJYCtvZC2/7DjdASgOQVPYUL
-	vPmcoM80Uxp4r34Wl9Ytd3bMHsb+x1LaaViaMt8qIYa8cIpMACQ4vgvZa5ViIl+F
-	qwD26FibxnVvdGcswP+mLvsUqQh6uHwUkjswjYo8yHL7q646O0FHAMjXzA/lBdet
-	VZCoR6v37PKU10vAtIHw8O3RuXmgjIjbo2KvxmJApu+GmfAdhofoZhJNPMOcfMPL
-	x/J2ciFv3wO5+GVublkC5/3/gFcRsRXijNsSMc3GVoM/bLKIpEQZId36v5FGZtoN
-	0vnXUsF3rV68dnzSEGsK6g==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1770144967;
+	 x=1770231367; bh=Ze+1oYV3o66rSkKlk/cFc6CC1VrAmL3qxvxVWwUI8rA=; b=
+	DNddKSWVTNuSzlHNPwUiQ7LW6sPAHdx7DzSIz5Lg+GEBuvriUSvj6Cd++oLlXRDa
+	tHe+R12LIzOA4I5mCFOVrkufhFxJTTuaPkO2eIGbycQL+/FIs1Tm6CzDvtvnw57N
+	CXRqvJIl9qkwFWcV4fkrEwAH3dDT9YX/eJEnwhfurgjyOTu1NKnN4wwz7Fvyxq3q
+	xATDQSza5jbnSdF+ZjglDWlz9fNR8Qi5NVr2T8Ny5EOUeSyKfbez323O/3wZt+2K
+	GR2TH/AoSKYV6GWtj1eMjB2/srrsSE27SoD/Y3fV8oDjAv09iPDlQ0xWYtRXKV4y
+	fMYZ4tJuD5ImfWXRAhq8AA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770144765; x=
-	1770231165; bh=PuuqUzrOW0ejy4N/6rH49JuxAIizRsFiW6QWrTJ6jjA=; b=d
-	urFDXvjhV49UPOdqm0a1WIV7veZxQ1vIgFgBazT5uX3z0nSCKsOuWQgEhtwPgNH2
-	dUn37od4WSywCINDtw8A03B22acYmp3NWrtH8rt5ydbNtXGeQ1/Ok55GCHzR3ItY
-	PSaEOiNff7NxpxFol9d1dx74UjcXNqdWAdxf7pCRskNgtTTSfiOOI/e/3hV06EO5
-	wACARrnoA/gxrhsoREHKiql8NTzj7aJKGMmh3960ngv2Kr6II5dGgzMJm1cLPQWM
-	0XG4rFh5h+dScaJI7R/nxQxvjYEzrrj1guPI5c672lvQWv64EJHUULo7l5xGGKvQ
-	PGPJfkxMQdw+ULIxC5vBA==
-X-ME-Sender: <xms:_EOCaQnouiuxxRzIiKtYjOE7bQSzjCnzKgfdluTdUzrBoZ1BUxLWUA>
-    <xme:_EOCaeFn0aM4VP0pWwn-Y8NaKHgJevh7ZA0Wnqz_RiGckuFoLG1ChmlpzcAnAO3-9
-    -P5JUZhryszuj4SG9unmWlM2VjYxMedoQwdZuNCL5rpoHRQ4PU>
-X-ME-Received: <xmr:_EOCaX-kN7y97zJ1VG3KZ742g4eABGNwdGC6x9QpQLDol8OIfQs2yKkv9gMKRppA_0nvW_JfMxFa769a7eLsiloR7J5zAtil43Z12WQkGnAApMpq2Q>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770144967; x=
+	1770231367; bh=Ze+1oYV3o66rSkKlk/cFc6CC1VrAmL3qxvxVWwUI8rA=; b=Q
+	YGBnmejXK2wPHsmQ23OlBTpS7XUXyAyjt2A9IPPWu+RfjODEgFq7wXT6Z9nPLFPM
+	ERDsBmABK4ibaYFht/TC5L0QOobNscKKlX/m+MWEXbMBwdqW9VeGZs66TovePA0d
+	JWKSYnHxCOmm+08+DCGPcFeAsTXxdq+llw1jbhJsNB3/a7PKqMq78Xhj5Jq8n3VT
+	RHy89bG0fyTZQrrzjry/EC3VDfMpTUCpHXDTLW6xu/ZeIgnnKUQ8PVBXhLeHyMgS
+	qDXXkijP1SGVVI3tjbtxPQGkm+JPC6yWS4a2bnfLoqjtTaHqohzm5fI3yWch63D8
+	+lwuBurYscKmZqcjHetrQ==
+X-ME-Sender: <xms:xkSCaWfsKZoXqH7rrOQcgY9XN-pVMnhwpFM3MbBDqu5w8tqrCZ5K3A>
+    <xme:xkSCaee3qvErcMcTugn0TNydeM8pUnAK1x5zuEian3pgCwRmbhqMvVXm6l8B6ul_5
+    oGBlcbBRByrQViv0rxV2E09SvuEMLGcDjwyJwPZQW8A7j4tdeYe>
+X-ME-Received: <xmr:xkSCaQ0bLBkQ-jKTK-6F97s-JRAivZ0ufhjb_5lL8gczJNrHfDLkVNx_o6xvbhU-tolLT-nWoep0HqEAdrJU4EA6bJJIxZQB8sNESqxk16EXMKEZ2w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedtkeduucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -84,16 +84,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedtkeduucetufdote
     dquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhmlhdr
     shhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopeigihgrohgsihhnghdrlh
     hisehsrghmshhunhhgrdgtohhm
-X-ME-Proxy: <xmx:_EOCafn2c9-h75q2VPE4TiYfSh5QDxYyG8UjzjemjcV3uLEjBgWwcA>
-    <xmx:_EOCaSD5mr-0ho7Oyx4zqzVIRKVb8jVcD_PoG9ZZMmKwx4kUwu9n9Q>
-    <xmx:_EOCaYU9gPcLH7_7vsmYNaRGAYnyGpAmxFn29--8n_R__noIGTWRMg>
-    <xmx:_EOCaQ_pzG2F2CBmsi3WA0TXGo_g57B5Fp7KQBcXtScE7wCiOTP7jw>
-    <xmx:_UOCaaBJjEB7k2aGIN-rl39X_pz8yGdQY5lQdKZl-58q5Htb8odbgYRe>
+X-ME-Proxy: <xmx:xkSCaW8F9oS39mlg9BL53H9hvCQEmT_IOgiFdf0r_cZp3ASshV-2XA>
+    <xmx:xkSCaV4lwbk1U2gGNNfUzgAGGves8sRKbUZORihKPgRUk5IiIBRG6w>
+    <xmx:xkSCaevHqFKtHJHxGlpVxEK-L4h0yuMJp6RANyUWnOlZQnx9khEItQ>
+    <xmx:xkSCaX16b7QzlHdOxhggDmKasuifa-SEHDMk1A14bOrK_UBLLz95NA>
+    <xmx:x0SCaXwjh4wHckM0JXWG6iGqLRbJwLFvRIs9ct14nqLriwp6LJkUjK1O>
 Feedback-ID: i5c2e48a5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Feb 2026 13:52:43 -0500 (EST)
-Message-ID: <9c32bd42-b935-48fa-80f8-d610f4085025@bsbernd.com>
-Date: Tue, 3 Feb 2026 19:52:42 +0100
+ 3 Feb 2026 13:56:05 -0500 (EST)
+Message-ID: <4b609081-89e9-41b7-bea2-b3fa4e8b9e3e@bsbernd.com>
+Date: Tue, 3 Feb 2026 19:56:04 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -101,16 +101,17 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
+Subject: Re: [PATCH v4 25/25] docs: fuse: add io-uring bufring and zero-copy
+ documentation
 To: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk, miklos@szeredi.hu
 Cc: bschubert@ddn.com, csander@purestorage.com, krisman@suse.de,
  io-uring@vger.kernel.org, asml.silence@gmail.com, xiaobing.li@samsung.com,
  safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
 References: <20260116233044.1532965-1-joannelkoong@gmail.com>
- <20260116233044.1532965-7-joannelkoong@gmail.com>
+ <20260116233044.1532965-26-joannelkoong@gmail.com>
 From: Bernd Schubert <bernd@bsbernd.com>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <20260116233044.1532965-7-joannelkoong@gmail.com>
+In-Reply-To: <20260116233044.1532965-26-joannelkoong@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
@@ -118,7 +119,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm3];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -128,7 +129,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FREEMAIL_TO(0.00)[gmail.com,kernel.dk,szeredi.hu];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12041-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12042-lists,io-uring=lfdr.de];
 	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
@@ -136,99 +137,98 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCPT_COUNT_SEVEN(0.00)[11];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[messagingengine.com:dkim,bsbernd.com:mid,bsbernd.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 707F6DDF7A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bsbernd.com:mid,bsbernd.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim]
+X-Rspamd-Queue-Id: A7C57DDFB2
 X-Rspamd-Action: no action
 
 
 
 On 1/17/26 00:30, Joanne Koong wrote:
-> Add kernel APIs to pin and unpin buffer rings, preventing userspace from
-> unregistering a buffer ring while it is pinned by the kernel.
-> 
-> This provides a mechanism for kernel subsystems to safely access buffer
-> ring contents while ensuring the buffer ring remains valid. A pinned
-> buffer ring cannot be unregistered until explicitly unpinned. On the
-> userspace side, trying to unregister a pinned buffer will return -EBUSY.
-> 
-> This is a preparatory change for upcoming fuse usage of kernel-managed
-> buffer rings. It is necessary for fuse to pin the buffer ring because
-> fuse may need to select a buffer in atomic contexts, which it can only
-> do so by using the underlying buffer list pointer.
+> Add documentation for fuse over io-uring usage of kernel-managed
+> bufrings and zero-copy.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  include/linux/io_uring/cmd.h | 17 +++++++++++++
->  io_uring/kbuf.c              | 48 ++++++++++++++++++++++++++++++++++++
->  io_uring/kbuf.h              |  5 ++++
->  3 files changed, 70 insertions(+)
+>  .../filesystems/fuse/fuse-io-uring.rst        | 59 ++++++++++++++++++-
+>  1 file changed, 58 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index 375fd048c4cb..702b1903e6ee 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -84,6 +84,10 @@ struct io_br_sel io_uring_cmd_buffer_select(struct io_uring_cmd *ioucmd,
->  bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
->  				 struct io_br_sel *sel, unsigned int issue_flags);
+> diff --git a/Documentation/filesystems/fuse/fuse-io-uring.rst b/Documentation/filesystems/fuse/fuse-io-uring.rst
+> index d73dd0dbd238..11c244b63d25 100644
+> --- a/Documentation/filesystems/fuse/fuse-io-uring.rst
+> +++ b/Documentation/filesystems/fuse/fuse-io-uring.rst
+> @@ -95,5 +95,62 @@ Sending requests with CQEs
+>   |    <fuse_unlink()                         |
+>   |  <sys_unlink()                            |
 >  
-> +int io_uring_buf_ring_pin(struct io_uring_cmd *cmd, unsigned buf_group,
-> +			  unsigned issue_flags, struct io_buffer_list **bl);
-> +int io_uring_buf_ring_unpin(struct io_uring_cmd *cmd, unsigned buf_group,
-> +			    unsigned issue_flags);
->  #else
->  static inline int
->  io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> @@ -126,6 +130,19 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
->  {
->  	return true;
->  }
-> +static inline int io_uring_buf_ring_pin(struct io_uring_cmd *cmd,
-> +					unsigned buf_group,
-> +					unsigned issue_flags,
-> +					struct io_buffer_list **bl)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int io_uring_buf_ring_unpin(struct io_uring_cmd *cmd,
-> +					  unsigned buf_group,
-> +					  unsigned issue_flags)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  #endif
+> +Kernel-managed buffer rings
+> +===========================
 >  
->  static inline struct io_uring_cmd *io_uring_cmd_from_tw(struct io_tw_req tw_req)
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index d9bdb2be5f13..94ab23400721 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -9,6 +9,7 @@
->  #include <linux/poll.h>
->  #include <linux/vmalloc.h>
->  #include <linux/io_uring.h>
-> +#include <linux/io_uring/cmd.h>
->  
->  #include <uapi/linux/io_uring.h>
->  
-> @@ -237,6 +238,51 @@ struct io_br_sel io_buffer_select(struct io_kiocb *req, size_t *len,
->  	return sel;
->  }
->  
-> +int io_uring_buf_ring_pin(struct io_uring_cmd *cmd, unsigned buf_group,
-> +			  unsigned issue_flags, struct io_buffer_list **bl)
+> -
+> +Kernel-managed buffer rings have two main advantages:
+> +
+> +* eliminates the overhead of pinning/unpinning user pages and translating
+> +  virtual addresses for every server-kernel interaction
+> +* reduces buffer memory allocation requirements
+> +
+> +In order to use buffer rings, the server must preregister the following:
+> +
+> +* a fixed buffer at index 0. This is where the headers will reside
+> +* a kernel-managed buffer ring. This is where the payload will reside
 
-I'm just looking at the fuse part and I'm actually not sure what the
-"buf_group" parameter is. I guess it is a the buffer group set up by
-userspace? Does io-uring have some documentation like fuse has under
-Documentation/filesystems/fuse/?
+Would you mind to add the actual liburing call for this? I think it
+would be helpful for anyone who wants to implement it.
 
+> +
+> +At a high-level, this is how fuse uses buffer rings:
+> +
+> +* The server registers a kernel-managed buffer ring. In the kernel this
+> +  allocates the pages needed for the buffers and vmaps them. The server
+> +  obtains the virtual address for the buffers through an mmap call on the ring
+> +  fd.
+> +* When there is a request from a client, fuse will select a buffer from the
+> +  ring if there is any payload that needs to be copied, copy over the payload
+> +  to the selected buffer, and copy over the headers to the fixed buffer at
+> +  index 0, at the buffer id that corresponds to the server (which the server
+> +  needs to specify through sqe->buf_index).
+> +* The server obtains a cqe representing the request. The cqe flag will have
+> +  IORING_CQE_F_BUFFER set if a selected buffer was used for the payload. The
+> +  buffer id is stashed in cqe->flags (through IORING_CQE_BUFFER_SHIFT). The
+> +  server can directly access the payload by using that buffer id to calculate
+> +  the offset into the virtual address obtained for the buffers.
+> +* The server processes the request and then sends a
+> +  FUSE_URING_CMD_COMMIT_AND_FETCH sqe with the reply.
+> +* When the kernel handles the sqe, it will process the reply and if there is a
+> +  next request, it will reuse the same selected buffer for the request. If
+> +  there is no next request, it will recycle the buffer back to the ring.
+> +
+> +Zero-copy
+> +=========
+> +
+> +Fuse io-uring zero-copy allows the server to directly read from / write to the
+> +client's pages and bypass any intermediary buffer copies. This is only allowed
+> +on privileged servers.
+> +
+> +In order to use zero-copy, the server must pregister the following:
+> +
+> +* a sparse buffer for every entry in the queue. This is where the client's
+> +  pages will reside
+> +* a fixed buffer at index queue_depth (tailing the sparse buffer).
+> +  This is where the headers will reside
+> +* a kernel-managed buffer ring. This is where any non-zero-copied payload (eg
+> +  out headers) will reside
+> +
+> +When the client issues a read/write, fuse stores the client's underlying pages
+> +in the sparse buffer entry corresponding to the ent in the queue. The server
+> +can then issue reads/writes on these pages through io_uring rw operations.
+> +Please note that the server is not able to directly access these pages, it
+> +must go through the io-uring interface to read/write to them. The pages are
+> +unregistered once the server replies to the request. Non-zero-copyable
+> +payload (if needed) is placed in a buffer from the kernel-managed buffer ring.
 
-Thanks,
-Bernd
 

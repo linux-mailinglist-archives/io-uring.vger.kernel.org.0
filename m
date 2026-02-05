@@ -1,159 +1,158 @@
-Return-Path: <io-uring+bounces-12053-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12054-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QOmyN6AKhGl5xQMAu9opvQ
-	(envelope-from <io-uring+bounces-12053-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 04:12:32 +0100
+	id 2MmlEqq6hGnG4wMAu9opvQ
+	(envelope-from <io-uring+bounces-12054-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 16:43:38 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF44EEE36B
-	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 04:12:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EF6F4B4F
+	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 16:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 62EBA3003BEA
-	for <lists+io-uring@lfdr.de>; Thu,  5 Feb 2026 03:12:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id AD28E3009017
+	for <lists+io-uring@lfdr.de>; Thu,  5 Feb 2026 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DAC2D23A4;
-	Thu,  5 Feb 2026 03:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB26F421F1B;
+	Thu,  5 Feb 2026 15:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iqE0JwnP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CNmLq8hf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3DF22301
-	for <io-uring@vger.kernel.org>; Thu,  5 Feb 2026 03:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EC33E958A
+	for <io-uring@vger.kernel.org>; Thu,  5 Feb 2026 15:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770261146; cv=none; b=jO60D9vnGKTsMk+18ifg5FGhqS3dE3s+UJEFGaxyYCsr7iU2bD5Ep4GaDddzXHKPKsaQVXitF1I+fa6n8ID3CNirKvfnlpE6B6Ajcyf7FMqk6+3iRBjP+DuXGFyJfT3YIhWkfpHyyyAayxP8A/F9pLqx5S+2Tjz7IJKFgMqcwyU=
+	t=1770306214; cv=none; b=s1+SC5Uyc2Tou3TmESoZ79/6hBIzOrrubYJKPXS2ctsP3F0LZnSgwl+9SkS1W6E4NCfpA06sm+oy/xjtIvpGw9LVFMQIiPAAuUkOuOKqrOEOexdpOZHpTchfIQb7E+0glcWUDZlc3DpYpiL0fmn9Jg3fZPX7BVWbtZm4ELcnRuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770261146; c=relaxed/simple;
-	bh=G6vfD4Yxb3fnPBBrZTuCljmSL1phCxflePu2ZT8fNYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTCTju4NyHsDEc5gJ7XS47mDZUBnC3Rijp0cpclGUx16hHhjTqAk/D5KTVWapo+BhyyiLwrzrVyXO0arp2S65mNlva+Qo6P/bH4eQnfuVs2/x3/RdG2eOUOVf/Ot4idALpDU8uozBNjBmq+7JlGrJmpj79WvnJtjeSOPcMPtqE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iqE0JwnP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770261145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PU4GlXydM1MAqgXjMDFq3vjCStUesvrTn2wdEAI/iFs=;
-	b=iqE0JwnPI7kuhoa9IJo4B9QD3UtMAcAIwYO2trxIpne+yDP2pvU/EkppZTr0g/pK9TXG9r
-	4T0bWTZl8yQ3ljE484nXeTSqKmik2KoHiXj006tILV1v/DG+7WyU9Xoj+ltesBKh184N3o
-	IBRKRIVn05gFmg82niY8KFYu7SiVlFk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-TVTha8Z0ON-75qSXyp4XFg-1; Wed,
- 04 Feb 2026 22:12:22 -0500
-X-MC-Unique: TVTha8Z0ON-75qSXyp4XFg-1
-X-Mimecast-MFC-AGG-ID: TVTha8Z0ON-75qSXyp4XFg_1770261140
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74E0C18003F6;
-	Thu,  5 Feb 2026 03:12:19 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.36])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B1171800465;
-	Thu,  5 Feb 2026 03:12:11 +0000 (UTC)
-Date: Thu, 5 Feb 2026 11:12:05 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"Gohad, Tushar" <tushar.gohad@intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Nitesh Shetty <nj.shetty@samsung.com>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM/BPF TOPIC] dmabuf backed read/write
-Message-ID: <aYQKhcnTJLimnbEn@fedora>
-References: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
+	s=arc-20240116; t=1770306214; c=relaxed/simple;
+	bh=oZWSq0Ayo4/1wzgGLMHmEtH9azBvu59UI8U57uQQSTU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=tT56G1XmBWs/8I60U6WSEInmvcatLvK6hvsBtvH3bPb7muO8M+Na4Rw6uLCkE7QNIHY2/ZYHg9Gd2jX/8e1L/h9ezzyTWN1r1MedSuicZrruECH3RmP+yi5CL02MIVI/BOz41lwZ8x8hWan6FO5KgU1z7kdcf4wNirD5V93HDOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CNmLq8hf; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7d196a2334fso872674a34.1
+        for <io-uring@vger.kernel.org>; Thu, 05 Feb 2026 07:43:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770306212; x=1770911012; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMXbApU5/TWRDmasnITz2fHk+gIP7eQ9o492rS0rXXw=;
+        b=CNmLq8hftbs6/91wHFetjyJ+o8Jv6gqy8nB/gEsl4bJN18/92dupGEf69FV/rlvblr
+         wKsvfnU8dDdt4E3L1wIgcjCwrPfu9RAF2DwA76UVERMCjNDCEkMm8u9R5SZbotSljDWr
+         FRJ2qIxyFLIuAEW2sCGXHpityFOI+NJabzm76J1nuSEp/GPPiiiaeix4xJjnd0vMYL9f
+         dQu03yBhOUoE/MJXpAWQ6QL19aCkhYR7uYKKq6GV7M/9NGf7c/uvxZZgr8umiLtCONm5
+         mu8yroVNJtuIHY0E5pTt1yUlyfy+q/THpJm1oWMxhx8FDs0KFOptBNeEHYtg3gNkJPCc
+         br9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770306212; x=1770911012;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nMXbApU5/TWRDmasnITz2fHk+gIP7eQ9o492rS0rXXw=;
+        b=gXnmG5NO+6Kblz2T29JLrdLwwUvJbJNOVm7TpP1rDvOXq/Z8Do5voLvA1Y45M4nj21
+         /pdPaAZy6od8U0er4AKTXauzv2h8s0pn9K2BvW792+9F2/lg80A4JupY87xEYc/S7SUI
+         fbCTBsL+Th5rKAPqwUZMpF8Q2NwI4BDpoRLDweVYWWMG0N3xqEvwsy/6yQP0IPP0YKi0
+         jbTMl4m52u5drQyod4rkfvYkiHfO7ih9eUshJ2aYjA2n1zZLkqjyUnyCRY5FN+NhujOF
+         g96tHPVavSm+T+K2eybyLJ3GDh0z9tun7i0C+cZ6w0U0D4g+37XitEeK+5u/8mAZsXX5
+         oxwg==
+X-Gm-Message-State: AOJu0YwR571Bmtm11CKKq9PYvlqJVTWnJ+JaSBcQ4GEWkQNIURC+mvhh
+	vXHVJcMQgx7hBxZN3Q98FU+RZbrtPAl0Jy0g/gZ2jXlMtRudaoy//bCADDgaqx8ioSt/5d97k/U
+	cXrJvxNE=
+X-Gm-Gg: AZuq6aJ5Ok2m2B1Yj9V2FbmHV3WpI/wwfKPa8oBdYaGEK26dO5tldYx94TlVcHRTcVb
+	IP1rCJeTwLvjlkag39vMz8c2ga86ukxydEjvbtkHPrj1pU0gToisyRG15kHPG7y5hI9E4x0KqIY
+	O8CQ2WQyJzAdINJo/JZoOz7rE7aizFnhbszkG2LEX3itspC4eDmPugsO8iM4fcYqECDO2CxKJ9a
+	0QKNIFeXFbuIzleDPlDzNjgfzjVmu7xd/oT2WehtQ1uXBNgybzaLYyOppZG0Aw1E4p6LcwX/7ZV
+	nd+op7dFxwKu0rOqAkgYxZRSGG1jdZ2sx7pypOHjFXs7tkJW+1AhOUGJSoeTMSfV4k1f7XLlzYf
+	isA8/pnbAoSlHvxf8hogpjvqkhb/IKm9SPtiV9rNa/3GY0Z3aB3qs4K5p8NMq/yYQzku/kFDXyN
+	wROMXyI72xWd9x6zvGh6dHnzkH+v+qN3yy5lq/Cn1w+2T14axrXyfdQg/jTi9SRLlCGjNAkA==
+X-Received: by 2002:a05:6830:2aa6:b0:7c7:1a6:6a09 with SMTP id 46e09a7af769-7d4570ce525mr1836213a34.17.1770306212408;
+        Thu, 05 Feb 2026 07:43:32 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4490f3c06sm3835875a34.2.2026.02.05.07.43.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Feb 2026 07:43:31 -0800 (PST)
+Message-ID: <9f658484-0a25-49a1-ae27-d2ffa0f3132f@kernel.dk>
+Date: Thu, 5 Feb 2026 08:43:31 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/kbuf: fix memory leak if io_buffer_add_list fails
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12053-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_CC(0.00)[gmail.com];
+	RCPT_COUNT_TWO(0.00)[2];
+	TAGGED_FROM(0.00)[bounces-12054-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EF44EEE36B
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B3EF6F4B4F
 X-Rspamd-Action: no action
 
-On Tue, Feb 03, 2026 at 02:29:55PM +0000, Pavel Begunkov wrote:
-> Good day everyone,
-> 
-> dma-buf is a powerful abstraction for managing buffers and DMA mappings,
-> and there is growing interest in extending it to the read/write path to
-> enable device-to-device transfers without bouncing data through system
-> memory. I was encouraged to submit it to LSF/MM/BPF as that might be
-> useful to mull over details and what capabilities and features people
-> may need.
-> 
-> The proposal consists of two parts. The first is a small in-kernel
-> framework that allows a dma-buf to be registered against a given file
-> and returns an object representing a DMA mapping. The actual mapping
-> creation is delegated to the target subsystem (e.g. NVMe). This
-> abstraction centralises request accounting, mapping management, dynamic
-> recreation, etc. The resulting mapping object is passed through the I/O
-> stack via a new iov_iter type.
-> 
-> As for the user API, a dma-buf is installed as an io_uring registered
-> buffer for a specific file. Once registered, the buffer can be used by
-> read / write io_uring requests as normal. io_uring will enforce that the
-> buffer is only used with "compatible files", which is for now restricted
-> to the target registration file, but will be expanded in the future.
-> Notably, io_uring is a consumer of the framework rather than a
-> dependency, and the infrastructure can be reused.
+io_register_pbuf_ring() ignores the return value of io_buffer_add_list(),
+which can fail if xa_store() returns an error (e.g., -ENOMEM). When this
+happens, the function returns 0 (success) to the caller, but the
+io_buffer_list structure is neither added to the xarray nor freed.
 
-I am interested in this topic.
+In practice this requires failure injection to hit, hence not a real
+issue. But it should get fixed up none the less.
 
-Given dma-buf is inherently designed for sharing, I hope the io-uring
-interface can be generic for covering:
+Fixes: ef62de3c4ad5 ("io_uring/kbuf: use region api for pbuf rings")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-- read/write with same dma-buf can be submitted to multiple devices
+---
 
-- read/write with dma-buf can cross stackable devices(device mapper, raid,
-  ...)
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 796d131107dd..67d4fe576473 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -669,8 +669,9 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 	bl->buf_ring = br;
+ 	if (reg.flags & IOU_PBUF_RING_INC)
+ 		bl->flags |= IOBL_INC;
+-	io_buffer_add_list(ctx, bl, reg.bgid);
+-	return 0;
++	ret = io_buffer_add_list(ctx, bl, reg.bgid);
++	if (!ret)
++		return 0;
+ fail:
+ 	io_free_region(ctx->user, &bl->region);
+ 	kfree(bl);
 
-
-Thanks,
-Ming
+-- 
+Jens Axboe
 
 

@@ -1,86 +1,85 @@
-Return-Path: <io-uring+bounces-12058-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12059-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aLhbM7vdhGkV6AMAu9opvQ
-	(envelope-from <io-uring+bounces-12058-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 19:13:15 +0100
+	id OEseNtXdhGkV6AMAu9opvQ
+	(envelope-from <io-uring+bounces-12059-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 19:13:41 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3878AF6643
-	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 19:13:15 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC45BF6651
+	for <lists+io-uring@lfdr.de>; Thu, 05 Feb 2026 19:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DBBEF300DD4F
-	for <lists+io-uring@lfdr.de>; Thu,  5 Feb 2026 18:13:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 11B0E3002D27
+	for <lists+io-uring@lfdr.de>; Thu,  5 Feb 2026 18:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E3830594E;
-	Thu,  5 Feb 2026 18:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA14B3081B8;
+	Thu,  5 Feb 2026 18:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m//2D3mv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMRJfTvg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3183016E2
-	for <io-uring@vger.kernel.org>; Thu,  5 Feb 2026 18:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B1B3016E2
+	for <io-uring@vger.kernel.org>; Thu,  5 Feb 2026 18:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770315189; cv=none; b=ePuttxLa5wrhyDiaQUCQ/dXKzzBYkxXx5NCmuH7W4LE68kQEh5lOKEyEgRQZkIp951zb6/py0UGaD5uQeB2/osGcS+Xut2U+gfDSk9nGIJudNh2Y1D7xTaafbB6HPl/W9uyJtOOmL9ticdVFMle+3JUJDBk8zUjJ6N18JVHu1x0=
+	t=1770315216; cv=none; b=S2WfyZ6GVwZNoSanc2o2PvE5zUowlRDHjEPDN6C1o4z8FAJceFgKbo3lOfE0Ya/zhI6qkiGxKkFWp8rY89iwXOwvS0BaSX+A7bHSJzRCNKCBb77R3BWs1rD8hb5pwAXR0MlvaqSaq9w2cRCVToHiPTOQSJC+m6BzXDGEngyKbjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770315189; c=relaxed/simple;
-	bh=0oJFOkRcV5lYzbo6009rO5nkha/VqrQxkC2sQjvLZKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=t58Kn6zDDUs7dqwF0fs8A00P/Wozod4hBMi6TEwQoJmMoOCQ6ZFr7c162R5sJQOuPFke7hqB3xOD3oOaZ0/57WIw70nFShNVqB1WPzX61ZuAvu3HSPKcX+yhpo6cr4eYsHQ9f5cafqI7V0dl1uEHoNqvjexVyo0s9Ctrr6XY62w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m//2D3mv; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-40a62601731so754797fac.0
-        for <io-uring@vger.kernel.org>; Thu, 05 Feb 2026 10:13:08 -0800 (PST)
+	s=arc-20240116; t=1770315216; c=relaxed/simple;
+	bh=o/o1F1p96xxSNwlR+KUbEXWGnJNwQJAGUizzA2xVzBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=onY3YxsHdX7uBAK4q0/cPd6bBfREIbK95TLFZMSotbJ0ocJbYdChk3vFEfvhgo2qBwDi6b17Up3F6OAgPw+fvU5sClSsXVB667exWyjK3+ze716BN86Ch3/0kqW30lyI1iD4for+w1w1hjDZPBD4M6KcoTBBVvIXuD6tXlNG8wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMRJfTvg; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-482f454be5bso19437975e9.0
+        for <io-uring@vger.kernel.org>; Thu, 05 Feb 2026 10:13:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770315187; x=1770919987; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770315215; x=1770920015; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PXHzqascsh6fzgoA4IXHTTmgg2xk9q72ZAVQ22cNdpY=;
-        b=m//2D3mvdzMFpbXLSYwNr9hGZnjf/f9HRdpADZ+DpzvfoedP4Vh66pzv7Tn0IXJOVd
-         97ItdZ+fY6wAnX7HB0mV1+v7yZ4wuq2mZv69FRnu9waq8No5TV8ZWUEOkv5lz7BPtlQZ
-         22fUgefkW+gyl6AE7pK/GgUDkd3LNpzU0ddatZTXZ/nb9KbM6fmTAOm9IP9GHhrJeR33
-         GQcQM1kLH9W71vKthqZMKnQuhM/RQ+wPLIJ59e0OizfY9ev8zRy464Ydo4wNug2A8G5H
-         jEcop8TwaQH0kH0rvxYlR79I0+t+bB9Uggjdi4nKvxxTYtYuKrHZGHpgIPQDY+tbsiDi
-         WPcA==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tOIgzh7F0/asMA4wYQkOAKt2bxR52YWhKTa5Hn1hbLY=;
+        b=JMRJfTvgHK4258VXuMgLxrXiRjiSJnQ/B/YJAF3SwPm/SzwDDwp0pUoJEVuHtWWJEK
+         u6TbYtFofMI40OTP52gBjcDuju4NTR8gmwulkoaNLWEHZp1HuB9Hi0i/vtkleMIk3Bog
+         TgTKwZnn5yOB4xreLHTsYJ+LEeFM2cPlv+7StToff0Y3ko5i/FWY/p+323tAbbVIdsZD
+         k5FNyyqrsevzJIxtCpYAcFFPxIbSLZEWSXvSttSfTDDoiTsoi+RuOeAiDySpOE1Tw81s
+         j5JbrnY1O7OXyNV537qD1jtyrhi149wEM8nDOv4V8OTmZN5pJe9KY214kxTf8YwJ5eLJ
+         S+DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770315187; x=1770919987;
+        d=1e100.net; s=20230601; t=1770315215; x=1770920015;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PXHzqascsh6fzgoA4IXHTTmgg2xk9q72ZAVQ22cNdpY=;
-        b=qXGfVK0Kogk2akwAqWPg7xec1yV1YESKNmsMkApiPHPMcchm0CmtWxijFSyHNQPvCN
-         fhnGICPzvLLwyyB0F7jvTS3t38MORNft268GxxvRNielKby+WoeEcKHmIDXGl2nq6EXw
-         ZkW6HoIfVkDID07nfBifOfR0AFHmc0PIBKguDGIPY9TM4cbIBIMd08HXhr2+1oefpsSa
-         vy2/WNjPwPU+uuHGcKzu+Wv3ebhAjsEiBtzTnDOXY55kc/3u3kpRAUojIBD3ynfMWe68
-         4qHB9A3wh08bZ5e2PBmUqzLcHPo53WkDZ9pDvTvCpsqOHj90/rMaOsiBpnryNZpvLHAV
-         N7kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL/DDoAye4yS+6c8E7S6VoDJt5SH8vIpZnYPhRIZwpWlsoGmCSI6nK3juhq+8Tz5qDp+WROYq2Fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5/HK0L6Sm+aaMNv47+1SEUMlCLqxFxTjdKjIaubaxZccVjpfw
-	cJQ5sdCKGAXOAzQunCiGJxKohq+nMekqz2x5B3bSwbhpUTnGCgV5yJtyBgh6lVHHqfUE4R7dCcZ
-	JebJtJlM=
-X-Gm-Gg: AZuq6aKsVBxsX0f3Xau/w4Z+B7Knd4xANvqVo3DczI+qrYRlVD0eV3wMBSzMs2NKHhW
-	YKfH3dy9bl7tgc0cDLqNsMJG28EuaI6bjSUS+xSurajItyrWgZtFux50b5icwjItbMy/OKstNu6
-	BDHP12ZJuLVvxjhF0zYe9VFev3JLoboIbwhT+gT/BYpsObzCxKKJ9wxQgxHw1GGS40RbmGIP6Y9
-	/oqMJikLupTxOWdLgf5J2Er4UpobPB5Cc9mhqE3LIMMWlwHu/NHhPnBXQ816Pt2iJwGY4nVZmnh
-	v5dZA4arjYcX4K0L2gg7e3VLI7eEcXB4rW95tXTJLweMeu+Gf6EYWkghn94+JujkB/szh4bGSfv
-	CtVCF5uMXvVJaHNDvmRdKFX64tHKgx6a8z3YN1Qtoh2QqWC4LWrAanoJ9Xkk6anou3eW6QxQMAt
-	0eQcv95OAzRy3Zh92uSPJhL8WJRFIldhCoEO9/ZnvVpGAz/EJ0dqFmudyXVdkCA1BQn4s+wNKRr
-	EjFoC+E
-X-Received: by 2002:a05:6871:20c7:b0:409:8bfb:c7c4 with SMTP id 586e51a60fabf-40a9777e095mr33528fac.31.1770315187670;
-        Thu, 05 Feb 2026 10:13:07 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40a54426935sm4210290fac.12.2026.02.05.10.13.06
+        bh=tOIgzh7F0/asMA4wYQkOAKt2bxR52YWhKTa5Hn1hbLY=;
+        b=CZbw8+9NbchM+IdPiWqI2cZZe0E3EUWXg16YqdEpGSPU6DytuLx37dz6Sn/iipemiV
+         a72zmhlj4JqnpkZMP0l4ZPrFa9gzXlZb6YKNbF2oAzrWqsTRabeuwTxlCmVZoMvFfCwT
+         BO/mwGuBI4DNrA75dbxJNE+Ods1CLCrlDz4bdnj89w8I7CyjxJ6TrADO1qOiecxYBISw
+         FsXS3zzF4vVKzfDOhyND0IAJSJgL5ZPLqoxhH/crSgHYXxRtor/eZE61E0eoj8aOQbkK
+         lnOwuzJtahHTzVQxjXaNK5LJqgPKm6Jy3njZJoclLDO+vV5nRCGGvRnTw0oV/xXAmmIY
+         rztA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtOU0GNcqFd+hUVNeOJeZdORlOSBLvrdcZdieztJzIOXSaQ/RbTAlF/35wTYSLGWTpFYJ8vY7Pog==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0YZW6v3JQx/3mXcjvdWlpD/t8YgNnqYYcfL00gEviDKzw13IJ
+	mVmA86LZN2MNrqKCJx4nPdgR/KnBvzn9KPDcdzcDiV8BXNxRGVEP6CVCsoe5Zg==
+X-Gm-Gg: AZuq6aJ9u/gp6MRqX2i7exuGXS9EUflrqUYJE3bCbFnxRy2FiN+Do0pQaozHWU0Mm+L
+	MQ9aS+8S+qp9kGe/b3dalK8Y82nte/FjDGaLhWADqAhX+wW7jO1tPshm+qXngJ/wrkaKvgvAFnw
+	1EGwBnGtDbYWxpRZ7stoXVRplzJh3+EP0Jz0VclvgfXSQZG7L5fJLtHcpAQHKJLcZ3YO4nEImoK
+	nmFebDjmCTf+tq8heWj0vqsr2wlcsAgKNSI5SxmiQpxBhUZr2yZsujav2W0rYCWOcLeV627Dx9t
+	1PW5KNb+VBB4fYOOfLEmEFm8/PraHprMkfN5+14qp7LBaMsFYUd23z0QpSJhpSoDq/zIbJldZxZ
+	x4iM3FpfYe/zZiydDpicf2njiBwTAysJON/NSPoyt4ulwYLSOqReCGKCPEGVeBmB9M8l0Vi93+D
+	C6O9cDwN214NnuXLNgxBzaPTF3yqyoVF+F3otOoAXB7gH9mlFYO1N8sC0R4+sk61FW+u47rOItg
+	PYULvVvcW5343uOjqGrGBeKHNMXoYE0SQqLTOVKxUeicJfNFgkG5LgsjHqVSJaIew==
+X-Received: by 2002:a05:600c:2eca:b0:477:991c:a17c with SMTP id 5b1f17b1804b1-483178ebb2emr36092105e9.6.1770315214446;
+        Thu, 05 Feb 2026 10:13:34 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48317d2085asm76942305e9.1.2026.02.05.10.13.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Feb 2026 10:13:07 -0800 (PST)
-Message-ID: <2dfc0458-444c-4812-ad44-b321d4174bc0@kernel.dk>
-Date: Thu, 5 Feb 2026 11:13:06 -0700
+        Thu, 05 Feb 2026 10:13:34 -0800 (PST)
+Message-ID: <2403ae2a-0e9e-4b7f-a507-232dc951155d@gmail.com>
+Date: Thu, 5 Feb 2026 18:13:30 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,67 +87,96 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/kbuf: fix memory leak if io_buffer_add_list
- fails
-To: Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-References: <9f658484-0a25-49a1-ae27-d2ffa0f3132f@kernel.dk>
- <1af36abc-4956-4461-9a06-50fd120c04d0@gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] dmabuf backed read/write
+To: Ming Lei <ming.lei@redhat.com>
+Cc: linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "Gohad, Tushar" <tushar.gohad@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
+ Anuj Gupta <anuj20.g@samsung.com>, Nitesh Shetty <nj.shetty@samsung.com>,
+ "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>
+References: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
+ <aYQKhcnTJLimnbEn@fedora>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <1af36abc-4956-4461-9a06-50fd120c04d0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aYQKhcnTJLimnbEn@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_NA(0.00)[kernel.dk];
-	TAGGED_FROM(0.00)[bounces-12058-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-12059-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+]
-X-Rspamd-Queue-Id: 3878AF6643
+	TAGGED_RCPT(0.00)[io-uring];
+	FORGED_SENDER_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: DC45BF6651
 X-Rspamd-Action: no action
 
-On 2/5/26 11:11 AM, Pavel Begunkov wrote:
-> On 2/5/26 15:43, Jens Axboe wrote:
->> io_register_pbuf_ring() ignores the return value of io_buffer_add_list(),
->> which can fail if xa_store() returns an error (e.g., -ENOMEM). When this
->> happens, the function returns 0 (success) to the caller, but the
->> io_buffer_list structure is neither added to the xarray nor freed.
+On 2/5/26 03:12, Ming Lei wrote:
+> On Tue, Feb 03, 2026 at 02:29:55PM +0000, Pavel Begunkov wrote:
+>> Good day everyone,
 >>
->> In practice this requires failure injection to hit, hence not a real
->> issue. But it should get fixed up none the less.
+>> dma-buf is a powerful abstraction for managing buffers and DMA mappings,
+>> and there is growing interest in extending it to the read/write path to
+>> enable device-to-device transfers without bouncing data through system
+>> memory. I was encouraged to submit it to LSF/MM/BPF as that might be
+>> useful to mull over details and what capabilities and features people
+>> may need.
 >>
->> Fixes: ef62de3c4ad5 ("io_uring/kbuf: use region api for pbuf rings")
+>> The proposal consists of two parts. The first is a small in-kernel
+>> framework that allows a dma-buf to be registered against a given file
+>> and returns an object representing a DMA mapping. The actual mapping
+>> creation is delegated to the target subsystem (e.g. NVMe). This
+>> abstraction centralises request accounting, mapping management, dynamic
+>> recreation, etc. The resulting mapping object is passed through the I/O
+>> stack via a new iov_iter type.
+>>
+>> As for the user API, a dma-buf is installed as an io_uring registered
+>> buffer for a specific file. Once registered, the buffer can be used by
+>> read / write io_uring requests as normal. io_uring will enforce that the
+>> buffer is only used with "compatible files", which is for now restricted
+>> to the target registration file, but will be expanded in the future.
+>> Notably, io_uring is a consumer of the framework rather than a
+>> dependency, and the infrastructure can be reused.
 > 
-> Looks like that patch just moved the call, and the tag should be
-> more like:
+> I am interested in this topic.
 > 
-> c7fb19428d67d ("io_uring: add support for ring mapped supplied buffers")
+> Given dma-buf is inherently designed for sharing, I hope the io-uring
+> interface can be generic for covering:
+> 
+> - read/write with same dma-buf can be submitted to multiple devices
+> 
+> - read/write with dma-buf can cross stackable devices(device mapper, raid,
+>    ...)
 
-Yep agree, I'll update the tag.
+Yes, those should be possible to do, IIRC Christoph mentioned it
+as well while asking to change the design of v1. The
+implementation will need to forward registration down and create
+a dma-buf attachment for each device.
 
 -- 
-Jens Axboe
+Pavel Begunkov
 
 

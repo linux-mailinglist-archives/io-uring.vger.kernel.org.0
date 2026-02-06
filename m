@@ -1,83 +1,82 @@
-Return-Path: <io-uring+bounces-12084-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12085-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OIrnMts5hmmcLAQAu9opvQ
-	(envelope-from <io-uring+bounces-12084-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 06 Feb 2026 19:58:35 +0100
+	id sCgCB/A5hmmcLAQAu9opvQ
+	(envelope-from <io-uring+bounces-12085-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 06 Feb 2026 19:58:56 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB2A102534
-	for <lists+io-uring@lfdr.de>; Fri, 06 Feb 2026 19:58:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800A710255B
+	for <lists+io-uring@lfdr.de>; Fri, 06 Feb 2026 19:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 59CEF3019937
-	for <lists+io-uring@lfdr.de>; Fri,  6 Feb 2026 18:58:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BC91D303A84A
+	for <lists+io-uring@lfdr.de>; Fri,  6 Feb 2026 18:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BE74279FD;
-	Fri,  6 Feb 2026 18:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666664279FD;
+	Fri,  6 Feb 2026 18:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mu/120Ma"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HTuvgBSb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9D6426D33
-	for <io-uring@vger.kernel.org>; Fri,  6 Feb 2026 18:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1984F42848E
+	for <io-uring@vger.kernel.org>; Fri,  6 Feb 2026 18:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770404283; cv=none; b=hzmLBDDxTSgwjgpQWHYbQfW51rbb70DzR1n1eovi7kWJ3aF20EjuiEa6yfsL7l+oN+qX9waAX69mDq+ge2FPvHWBOBLbEeC+jGY9W3gVDwGoocijA4ZM6EVYqFZJViSHqutDIuSlmxnlIPjCPz3XpwrxCAWCYMOQlaf5nxKqEVI=
+	t=1770404291; cv=none; b=IdL2w9cNhgmAnxFcFAIDtHcPDsZmF1D7bCk4qebM6KnkW5lggalrzTVJIvc2zVHzLS4T6DLFERHuqXfcGvcsBjhu4zxtzOjom1Y13dYeU34oWL2/A3Nsed0Er9wUjftqJGRY2s3oIfjh5//9BABqG08LF0YpDgSvC89QCtwXRU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770404283; c=relaxed/simple;
-	bh=vzZNh5U2yVPMpeaiu/a9NOpdOC3DSgGwk+zgnXudzUY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=YjYyYG0CfcjoBANjzd4Dddk2MwonUdJ24ZlKsstC7R51ldsmQQRINdV9iz0c1QAaLstbyOwwwkWLSR24H1cY0OdWLj2cx+SoyDhrvPgUHcN6CjgpYbOOnIdF7N4MgUuqm9orPCcixPzhsA07KlgVFO4MI6k+TF6IAKCQ4ceUEUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mu/120Ma; arc=none smtp.client-ip=209.85.167.176
+	s=arc-20240116; t=1770404291; c=relaxed/simple;
+	bh=Ov5+ShbkfbVH1cj72wn0K96kZfFVsGXrUgq7a4ISWlI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=MC2/9MrAI2nZfVDX70lmB49CVWPMvUcT6qJ7VZROv2MBXYW0ldw03p9wYPA1+119wNaTsmxC7g40zDsVMdIgN/1Ifrkd4n0za/UF1H/dnpJogb7rSH9EqoKRfwDNz3699zlZCv/1kJGWp67ZIGbEfszWdnSu9euK4+T4TwJ573Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HTuvgBSb; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-45c9fdf2a06so1586465b6e.2
-        for <io-uring@vger.kernel.org>; Fri, 06 Feb 2026 10:58:02 -0800 (PST)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-40423dbe98bso483828fac.2
+        for <io-uring@vger.kernel.org>; Fri, 06 Feb 2026 10:58:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770404281; x=1771009081; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770404290; x=1771009090; darn=vger.kernel.org;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=71ezICaRc4m/qHo8jJKCOEt7GyfkqYx02DLx3kVAkQ4=;
-        b=mu/120Ma5BJt6Gh1hf2H/VyVJISPEqTdhC9oOI85+TLunMjelY5k42DVmHwLfcvy31
-         MiaAL6E6plQ9L286/45uitaTKpByfBbUkVcRYaodVbU22jzKjwmafoPP3IfFk0wvm+p4
-         UGbts9k+TWRpDcOSxIyPQjJv4q4j+9TLR0OIr6ZM00GbF4USK/zSfxFHp+rmWbFsA2Q+
-         jtDo5BBCSs4Q4nt82ZlKdZxKzCNTqgHnQG3+XK9rEwK+3qGrwjMSGUwNn1/lDcXAYkt6
-         sUNQGEk/G6epdyW2UdAHkI0hJFO/XlrFI7+NQOTtKK6r/B2rIqeFQs39vTZLsfux0BIN
-         fHGw==
+        bh=NFayfXFCr8uTtagrI+irxnDsr7Q6K8DeRpjr+PMPA0A=;
+        b=HTuvgBSbr82UG3wGIbG7czDW2LIii11nrWrrvshU3YPaGv+dxrMrpQ5FYO25XHc/e6
+         nBcQYYIstZVaAq8FhG3gMOsyUWWZDxl7b2mwp+XmaFDQ970JYXMhBKOcJy1Pw7oIBzoL
+         Evquc/FT4FPbh6IbSN2uwqgfs7/hFxFHazbz5sfQ/DtxcNQj2pUfPAAUkazojt9glafn
+         iQ2s5q4C54+6AlCE+unI/O5YZoUXVkf3K635cAbWQR6nl2XyE4qIw1TfgWbiDfwuwSM+
+         Aew5+t58v1+IUh0ToQbWzArbRuv0Ng1FZD8DwnqWBk84ErU8TwMCgYY3tZWyuI9AADcG
+         lQmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770404281; x=1771009081;
+        d=1e100.net; s=20230601; t=1770404290; x=1771009090;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=71ezICaRc4m/qHo8jJKCOEt7GyfkqYx02DLx3kVAkQ4=;
-        b=GlsIcWPSKYezxzYaZ3q0TiNf0Ooq85J/OGwTh6xVUWytwJaQdUj5OYWungUswhykji
-         ctcct41YHGX6c9zSV03mlaAyqR1hgywP3CvFgpvIlDWgSlz+Y+i5Iwi0jxjU5Uxc4bV2
-         a3aOo7jPq+vyhmqbWKfOfckFB2wfTynq3+nn6N2r6F4QIPtZc/HWqkE/Cy27kk+wopMu
-         Z07GwC5TcC754O/J8zcC4C7n16RZOEBLiS5X9S4xqYQqRm+8tHw+rTDjgqY/4eJswJJV
-         kNqVvxSWlb1Gm4HFB30eIiL/5V6w+lO40Pvg8/mv5rYhfXh/3xXW9T2Ok74t4VHMMDf9
-         biYA==
-X-Gm-Message-State: AOJu0YzS3F8Q3FhzRDRMTK1X/qaMLC12gidNONMryIncTLw56TT+/nxq
-	0ZeB/vMkuXST0heUwGMEdSSI6dd7H9zfJ9SY0Zg1g5DdpRuudVT3eLP2Ijnymx1peZQeiDGnGRH
-	roW9ow6Q=
-X-Gm-Gg: AZuq6aL70yX4Pr1kx+cFEzPUjs9lf8IFefebRpHMOhxxIFh+nhiiqKJ7c2CUCOg2iry
-	cTPfwJT5S/UILWrVWXmUXp4Ch+BoL7m52V9lTnhbB9mRrRQlBK+yqgLxunl/AdBi37wGSeJEb60
-	EMzbI2GWH/kivW8PgKN+zwLvlsCXcDcC/awZL/Hlgbs2OR7qGxL2VQRDeBAm88axIb68PxAHQpU
-	8cn10LIISx3TFQqIxu0AYT02CALXb3smqT9BBf3wpIuLquh4CvKG0ntq4Op4WFLy7/SWiEuiRGl
-	nUW3aCVQBGxjipksL38JIYy7r0OiRBpAiJXe/ND8g+78tjlrjeFgoJVAC6XKxxJp6o0ehNzVgWm
-	kSqp/tl+jlwB1iAPBQugw3C/I5izywN0v+rvb+79WUUDFMyiCi7Yl+Mi/DtDVV1fCOMLGxqs67i
-	14bjbnVS/QpL+wqcW/fg8SiNGg+Ourranmp/2SzSLmAYbIWMs/5kr95Hm2oBcEAhFiXTSEO/vjj
-	qhLuxc=
-X-Received: by 2002:a05:6808:1a0d:b0:45e:e050:109e with SMTP id 5614622812f47-462fcf0466fmr1897726b6e.4.1770404281357;
-        Fri, 06 Feb 2026 10:58:01 -0800 (PST)
+        bh=NFayfXFCr8uTtagrI+irxnDsr7Q6K8DeRpjr+PMPA0A=;
+        b=Gvn7nK/BUwHptFMrFLEGWsqlCVTa9ndbbPMOaqkwLu2NbsFYgtbPovxWsOdxqPMq9l
+         WjvM9Ym2Abyy2Udy5Q7Zb8uxPoukDsOp8mOrq+Q5KYT4gadlKfXh6SN3dp4BKfVQAvna
+         eJOv6DNRsRUMGeTmu0jHfj6ZF6Popm5FOgoVQv3GI/UnXLG43I+JycktPZ7Bfu7CrFQ0
+         1emDjGghPaKFiCSwoLNA6JFgNBJlcsGenNAFkUiFoKVcs870AuClNcK7KKVbw4nYpmye
+         L+jtbbpM9nDgl03dn/au5wNKAxz8Co6dd+3rWNHY8gcFfljW1x0GZus9hSSHTf93YJb0
+         bfzg==
+X-Gm-Message-State: AOJu0YwOHgKh6UZ+qrBwrZPmYqnfJesOzoBy8CtU3LR+hl8bqXmHAMpF
+	lKLw2mhFWdMC1/CC55C7Fsl+0EMorJXy9g+CHq5KiMPJaijDZ6QtXuDrq+LEDwMDhHw3WRf2y7T
+	uClfnU7g=
+X-Gm-Gg: AZuq6aJG06bs7r3ulKP/HVrYKXFFCU+A65nfp6R2cxTdmptmM6M/MyNfa2g2GAKqIv1
+	e8rluOnrq5hXvBxGtmpxn3SAxo8HQogQkGIqI1NzmSJrYQIXUo65eebDsT4qpHq8R3gIsGTZxnN
+	w+i8erycfRwg8pqCruTc+egDGVPF5YcRctkqkiqEhW9cbcjEOhr8OChN6uTOab9I1QaYa6UMKsb
+	J3OZ1heNhcQl0a4k0mNdsnsDAu4wOhKl1qmvwA9cx23w4GToYphff38pp5eFDqSr6w48/zJd9Wx
+	WPo8ZdxijCh1AklBnQN7mvSjv8AfMguJx8UicTo+PbXCRq3EtoEI3cHqMJ9wivp2r4C0k634ayz
+	nDxQdE6hQSUoZpWTbXXEfaEP05BmGm6sXCfSmf5M1X0ecgXUucczDhKIl7AVrUwvBXI43xkG1jS
+	9y7rUTKmbOgxcjfpKY7+eDZVcBOLkcLJv5moiLQWe3JthW6BDujVVsPLRd7j3bMwGT23q2
+X-Received: by 2002:a05:6870:8dcd:b0:3ec:4f18:9c79 with SMTP id 586e51a60fabf-40a96ca7334mr2072534fac.13.1770404289918;
+        Fri, 06 Feb 2026 10:58:09 -0800 (PST)
 Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-462fe9ddd81sm1780980b6e.6.2026.02.06.10.58.00
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40a99787786sm2432762fac.19.2026.02.06.10.58.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Feb 2026 10:58:00 -0800 (PST)
-Message-ID: <8b44ed7f-267f-433d-a3d3-262feb13d657@kernel.dk>
-Date: Fri, 6 Feb 2026 11:57:59 -0700
+        Fri, 06 Feb 2026 10:58:09 -0800 (PST)
+Message-ID: <c168f48a-0cdc-4bb0-be00-a778aab27e04@kernel.dk>
+Date: Fri, 6 Feb 2026 11:58:08 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,183 +85,137 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] Core io_uring changes for 7.0-rc1
+Subject: [GIT PULL] io_uring cBPF filter support
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
+Cc: io-uring <io-uring@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12084-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	TAGGED_FROM(0.00)[bounces-12085-lists,io-uring=lfdr.de];
 	TO_DN_ALL(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	RCPT_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2FB2A102534
+X-Rspamd-Queue-Id: 800A710255B
 X-Rspamd-Action: no action
 
 Hi Linus,
 
-Doing a few separate branches for this release, and one depends on the
-networking tree so coming later, but here are the core io_uring changes
-queued up for the 7.0 kernel release. Nothing major in this series. This
-pull request contains:
+On top of the core io_uring changes, this adds support for both cBPF
+filters for io_uring, as well as task inherited restrictions and
+filters.
 
-- Series cleaning up the IORING_SETUP_R_DISABLED and submitter task
-  checking, mostly just in preparation for relaxing the locking for
-  SINGLE_ISSUER in the future.
+seccomp and io_uring don't play along nicely, as most of the interesting
+data to filter on resides somewhat out-of-band, in the submission queue
+ring. As a result, things like containers and systemd that apply seccomp
+filters, can't filter io_uring operations. That leaves them with just
+one choice if filtering is critical - filter the actual
+io_uring_setup(2) system call to simply disallow io_uring. That's rather
+unfortunate, and has limited us because of it.
 
-- Improve IOPOLL by using a doubly linked list to manage completions.
-  Previously it was singly listed, which meant that to complete request
-  N in the chain 0..N-1 had to have completed first. With a doubly
-  linked list we can complete whatever request completes in that order,
-  rather than need to wait for a consecutive range to be available. This
-  reduces latencies.
+io_uring already has some filtering support. It requires the ring to be
+setup in a disabled state, and then a filter set can be applied. This
+filter set is completely bi-modal - an opcode is either enabled or it's
+not. Once a filter set is registered, the ring can be enabled. This is
+very restrictive, and it's not useful at all to systemd or containers
+which really want both broader and more specific control.
 
-- Small series improving the restriction setup and checking. Mostly in
-  preparation for adding further features on top of that. Coming in a
-  separate pull request.
+This patchset first adds support for cBPF filters for opcodes, which
+enables tighter control over what exactly a specific opcode may do. As
+examples, specific support is added for IORING_OP_OPENAT/OPENAT2,
+allowing filtering on resolve flags. And another example is added for
+IORING_OP_SOCKET, allowing filtering on domain/type/protocol. These are
+both common use cases. cBPF was chosen rather than eBPF, because the
+latter is often restricted in containers as well.
 
-- Split out task_work and wait handling into separate files. These are
-  mostly nicely abstracted already, but still remained in the io_uring.c
-  file which is on the larger side.
+These filters are run post the init phase of the request, which allows
+filters to even dip into data that is being passed in struct in user
+memory, as the init side of requests make that data stable by bringing
+it into the kernel. This allows filtering without needing to copy this
+data twice, or have filters etc know about the exact layout of the user
+data. The filters get the already copied and sanitized data passed.
 
-- Use GFP_KERNEL_ACCOUNT in a few more spots, where appropriate.
-
-- Ensure even the idle io-wq worker exits if a task no longer has any
-  rings open.
-
-- Add support for a non-circular submission queue. By default, the SQ
-  ring keeps moving around, even if only a few entries are used for each
-  submission. This can be wasteful in terms of cachelines. If
-  IORING_SETUP_SQ_REWIND is set for the ring when created, each
-  submission will start at offset 0 instead of where we last left off
-  doing submissions.
-
-- Various little cleanups
+On top of that support is added for per-task filters, meaning that any
+ring created with a task that has a per-task filter will get those
+filters applied when it's created. These filters are inherited across
+fork as well. Once a filter has been registered, any further added
+filters may only further restrict what operations are permitted. Filters
+cannot change the return value of an operation, they can only permit or
+deny it based on the contents.
 
 Please pull!
 
 
-The following changes since commit f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da:
+The following changes since commit 0105b0562a5ed6374f06e5cd4246a3f1311a65a0:
 
-  Linux 6.19-rc3 (2025-12-28 13:24:26 -0800)
+  io_uring: split out CQ waiting code into wait.c (2026-01-22 09:21:16 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/for-7.0/io_uring-20260206
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-bpf-restrictions.4-20260206
 
-for you to fetch changes up to 442ae406603a94f1a263654494f425302ceb0445:
+for you to fetch changes up to ed82f35b926b2e505c14b7006473614b8f58b4f4:
 
-  io_uring/kbuf: fix memory leak if io_buffer_add_list fails (2026-02-05 11:13:16 -0700)
-
-----------------------------------------------------------------
-for-7.0/io_uring-20260206
+  io_uring: allow registration of per-task restrictions (2026-02-06 07:29:19 -0700)
 
 ----------------------------------------------------------------
-Caleb Sander Mateos (4):
-      io_uring: use release-acquire ordering for IORING_SETUP_R_DISABLED
-      io_uring/msg_ring: drop unnecessary submitter_task checks
-      io_uring/register: drop io_register_enable_rings() submitter_task check
-      io_uring/rsrc: take unsigned index in io_rsrc_node_lookup()
+io_uring-bpf-restrictions.4-20260206
 
-Gabriel Krisman Bertazi (1):
-      io_uring: Trim out unused includes
+----------------------------------------------------------------
+Jens Axboe (7):
+      io_uring: add support for BPF filtering for opcode restrictions
+      io_uring/net: allow filtering on IORING_OP_SOCKET data
+      io_uring/bpf_filter: allow filtering on contents of struct open_how
+      io_uring/bpf_filter: cache lookup table in ctx->bpf_filters
+      io_uring/bpf_filter: add ref counts to struct io_bpf_filter
+      io_uring: add task fork hook
+      io_uring: allow registration of per-task restrictions
 
-Jens Axboe (21):
-      io_uring: IOPOLL polling improvements
-      io_uring/register: have io_parse_restrictions() return number of ops
-      io_uring/register: have io_parse_restrictions() set restrictions enabled
-      io_uring/register: set ctx->restricted when restrictions are parsed
-      io_uring: move ctx->restricted check into io_check_restriction()
-      io_uring: track restrictions separately for IORING_OP and IORING_REGISTER
-      io_uring: fix IOPOLL with passthrough I/O
-      io_uring/uring_cmd: explicitly disallow cancelations for IOPOLL
-      io_uring/timeout: annotate data race in io_flush_timeouts()
-      io_uring/eventfd: remove unused ctx->evfd_last_cq_tail member
-      io_uring/sync: validate passed in offset
-      io_uring: add IO_URING_EXIT_WAIT_MAX definition
-      io_uring/io-wq: don't trigger hung task for syzbot craziness
-      io_uring: split out task work code into tw.c
-      io_uring: split out CQ waiting code into wait.c
-      io_uring: fix bad indentation for setup flags if statement
-      io_uring/io-wq: handle !sysctl_hung_task_timeout_secs
-      io_uring/futex: use GFP_KERNEL_ACCOUNT for futex data allocation
-      io_uring/rsrc: use GFP_KERNEL_ACCOUNT consistently
-      io_uring/net: don't continue send bundle if poll was required for retry
-      io_uring/kbuf: fix memory leak if io_buffer_add_list fails
-
-Li Chen (2):
-      io_uring/io-wq: add exit-on-idle state
-      io_uring: allow io-wq workers to exit when unused
-
-Pavel Begunkov (1):
-      io_uring: introduce non-circular SQ
-
-Tim Bird (1):
-      io_uring: Add SPDX id lines to remaining source files
-
- include/linux/io_uring_types.h |  29 +-
- include/uapi/linux/io_uring.h  |  12 +
- io_uring/Makefile              |  14 +-
- io_uring/alloc_cache.h         |   2 +
- io_uring/cancel.c              |   5 +-
- io_uring/cmd_net.c             |   1 +
- io_uring/eventfd.h             |   1 +
- io_uring/filetable.h           |   1 -
- io_uring/futex.c               |   2 +-
- io_uring/io-wq.c               |  51 ++-
- io_uring/io-wq.h               |   2 +
- io_uring/io_uring.c            | 782 +++--------------------------------------
- io_uring/io_uring.h            |  90 +----
- io_uring/kbuf.c                |   5 +-
- io_uring/memmap.c              |   2 +-
- io_uring/memmap.h              |   1 +
- io_uring/mock_file.c           |   1 +
- io_uring/msg_ring.c            |  28 +-
- io_uring/net.c                 |   6 +-
- io_uring/notif.c               |   1 +
- io_uring/refs.h                |   1 +
- io_uring/register.c            |  42 ++-
- io_uring/rsrc.c                |   2 +-
- io_uring/rsrc.h                |   2 +-
- io_uring/rw.c                  |  33 +-
- io_uring/slist.h               |  13 +-
- io_uring/sqpoll.c              |   8 +-
- io_uring/sync.c                |   2 +
- io_uring/tctx.c                |  11 +
- io_uring/timeout.c             |   2 +-
- io_uring/tw.c                  | 355 +++++++++++++++++++
- io_uring/tw.h                  | 116 ++++++
- io_uring/uring_cmd.c           |   9 +
- io_uring/wait.c                | 308 ++++++++++++++++
- io_uring/wait.h                |  49 +++
- 35 files changed, 1074 insertions(+), 915 deletions(-)
- create mode 100644 io_uring/tw.c
- create mode 100644 io_uring/tw.h
- create mode 100644 io_uring/wait.c
- create mode 100644 io_uring/wait.h
+ include/linux/io_uring.h                 |  14 +-
+ include/linux/io_uring_types.h           |  13 +
+ include/linux/sched.h                    |   1 +
+ include/uapi/linux/io_uring.h            |  10 +
+ include/uapi/linux/io_uring/bpf_filter.h |  62 +++++
+ io_uring/Kconfig                         |   5 +
+ io_uring/Makefile                        |   1 +
+ io_uring/bpf_filter.c                    | 430 +++++++++++++++++++++++++++++++
+ io_uring/bpf_filter.h                    |  48 ++++
+ io_uring/io_uring.c                      |  48 ++++
+ io_uring/io_uring.h                      |   1 +
+ io_uring/net.c                           |   9 +
+ io_uring/net.h                           |   6 +
+ io_uring/openclose.c                     |   9 +
+ io_uring/openclose.h                     |   3 +
+ io_uring/register.c                      |  91 +++++++
+ io_uring/tctx.c                          |  42 ++-
+ kernel/fork.c                            |   6 +
+ 18 files changed, 789 insertions(+), 10 deletions(-)
+ create mode 100644 include/uapi/linux/io_uring/bpf_filter.h
+ create mode 100644 io_uring/bpf_filter.c
+ create mode 100644 io_uring/bpf_filter.h
 
 -- 
 Jens Axboe

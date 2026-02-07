@@ -1,117 +1,116 @@
-Return-Path: <io-uring+bounces-12088-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12089-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sBOcIpyOhmlTOwQAu9opvQ
-	(envelope-from <io-uring+bounces-12088-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 07 Feb 2026 02:00:12 +0100
+	id iMPgN+iThmnuOwQAu9opvQ
+	(envelope-from <io-uring+bounces-12089-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 07 Feb 2026 02:22:48 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37F8104635
-	for <lists+io-uring@lfdr.de>; Sat, 07 Feb 2026 02:00:11 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B648104759
+	for <lists+io-uring@lfdr.de>; Sat, 07 Feb 2026 02:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7D6423018285
-	for <lists+io-uring@lfdr.de>; Sat,  7 Feb 2026 01:00:10 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DB2DE3004D1C
+	for <lists+io-uring@lfdr.de>; Sat,  7 Feb 2026 01:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E8623AB88;
-	Sat,  7 Feb 2026 01:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F64275B05;
+	Sat,  7 Feb 2026 01:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVfxEwv+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mk2UUZUe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991E319E97B
-	for <io-uring@vger.kernel.org>; Sat,  7 Feb 2026 01:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0AB274FE8
+	for <io-uring@vger.kernel.org>; Sat,  7 Feb 2026 01:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770426009; cv=pass; b=H9CoArwWmTy2cm0pCqhpUpJVwFcRefB9jVfPvt6qHpbm3v16eVLjg5aP2C/6z0GeLDzV248vM7r/S1gAbU4ZL866FslpjQbpvwtH3wbmmSfV+jS8qxXw4cbzGfXb5W1Na2a9r1/bbzpegrHo3ZcsURGppj+5ZLvOlA0QGyn5ekw=
+	t=1770427366; cv=pass; b=oXv1qHvoLr9IzdeKESpJSFnYi0rHu4jhf5BQtNhcLt0cpGXHiIeMF+eSnQ3ZJ4CH6xHZZLCVP5mNraAszdBQjjivLTgpUQlEr9MMix1MrTTsW33BuCifwjwsBpkSxw/SQ64FW/+YvuTc7/+Gp78HdW/Nd8zN9tWSQSNLpz9QdVw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770426009; c=relaxed/simple;
-	bh=GOl+yzQfvJ81Mb6nX6vbSK9P6JDhNobzBh6AGciU+3w=;
+	s=arc-20240116; t=1770427366; c=relaxed/simple;
+	bh=w6ehWV/UdsOefVPVO/LSKgkiGRVYbFAtJfDqBHGr9NA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d0itJW6yA1pCGZEQc2dhMMI6oVeUcXp/cPcqIY6o5KxmzrEcDB1QoSdR0cwPvV7VnJgAEZn9mHYT0THDuxfeHJipG5fn0JJZmlYwUBe5h8gruasN1N9U/l/A6rIq5Ml/Z0HwEhTrujQDZkJhStyuzwVk2UUGuMNCeWPybj/OUSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVfxEwv+; arc=pass smtp.client-ip=209.85.160.173
+	 To:Cc:Content-Type; b=tfgoN58Dv3JsusZuyVamy6NCY9pEWt+0dfJrFHEqs12regF9NlbVvvVQtwYHzaifgnOuC8TGdFqTufsFVnSyeWf+P7FOuG2ZLJkjWwLOl12hAzoQu/eBwlHm8q/1xmTTCRW+qiOakSwi5POxM4CTiSGAPdGBl3rklvt5ZDC/jyw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mk2UUZUe; arc=pass smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-5036d7d14easo15668781cf.1
-        for <io-uring@vger.kernel.org>; Fri, 06 Feb 2026 17:00:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770426008; cv=none;
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-50145d27b4cso30900071cf.2
+        for <io-uring@vger.kernel.org>; Fri, 06 Feb 2026 17:22:46 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770427365; cv=none;
         d=google.com; s=arc-20240605;
-        b=HfCumhFs51eIOmyfFwyOJJu+yR3cLvgu+QwLWRXesU6Lq4pWN/mKgP1fF9TGiiP6ws
-         JCFjlDIcHnSgrBmFNPSa+sIlJFOFXxaAjl5Duf+ZmiYgz3YohHr/oD/dOBLsUHd0Z9r9
-         JyzCtGiMVk3qD6KfPtAORwVp3Du+8OVGIGVWko1R6kHvkxGFMqcyzMKQHaXdJ0qtIhHl
-         Kfd3I+b1R2ikz/fCvQUCkdefBIBrirofsZi9eHQ0lElYPxddl0GG6Z55Eie+unNLz+R1
-         Kpat6qyfUdLaiDNd5xail1iiN+GTr9B8rwBXadh7XcqjxT/eayfQ9e0Uupr3SxO9xclB
-         idmg==
+        b=K3AtIfMRQ4HiAWFZfkiJE2GDk7yC8AqRRFd3/lbcpW/jo/BsYzyhOrWp0sPDdCtyZ9
+         HzbeiiNmY2lgDHT/rmWh0LfqOEnIqj325gMYHjOa6GS8Oy+nVMky8NgjcGmd1lSQ9QZZ
+         aK6lsCp5GVaatBVZHcY1dGGhwpMS87Xgfr8LelZEQk1GSfZufc3ErQCX5Zsi/wQtc7wY
+         nA91+IvEIN1IC55xJIeew9qeA+CgQ1xjD9TBqHDzozalWn/P3E9UsZlc/r9VucW5FNlW
+         ezaqK2iRAcCt+jhavKqzHSxkcF3Chm4OWp3gwxMjhbCT61EyEwBQfVv8eRuNfMx/HidR
+         wlTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=c1LvKaDQsF5i0nG7aNyREL0Jo4Gh027d3YlThpa0ie0=;
-        fh=lSbIekN/dmtbRZKIO8zGv/WExRTbvdtjC4hY5wp2SG8=;
-        b=ICI6GtO3iLLHAre6S60yUAOzL/gXZKX3OkM5D+Rf6FadH0ycdPRDVuCxsmxQ8V8AbW
-         553PVtt2F+YL29PYGWSvz6qywixOvufLzvEUeVTc/ZIGr4ZSgvVn0FHlGpBigcGHS3JN
-         uLWd+NrUsRA/K4MERJzJ5LounAN9hL/iU2GN6DLKro9h3cbzD5Wnep1SlfbGaMCW+zD9
-         eKwoR2eD4kbxnwlAUG60F3nssvXEf4La5qSa8umvUDvNJGWgwUT1BVaEIk77lsqJSvZb
-         xxTuuYj8jLz+msqlkW47859MsG6a8FJAKUTTYjWS4ZGU+cZkQIqv1OcRgOJTtNfxNRIj
-         z3BQ==;
+        bh=w6ehWV/UdsOefVPVO/LSKgkiGRVYbFAtJfDqBHGr9NA=;
+        fh=EB6DZX35AKbEdzku3dklha08RKNEzWV8LugbYj3z4NM=;
+        b=RuoIcZb0J7YLK+qtFbleZaz4gH4VEjTLGh/qK91am1GwXdyPq29vnayk8Gov3M/Nm2
+         rlqQPs7Y8UjPN1BijaqveGFkaxqpt5gc12PHBKE8IT4j0F+vy/yy06/wp+W0GoLFlkUH
+         zlpvB5AGALJXDJhsPoewyxvsfRUDUejk7lQ4Ildc0bVL6hZdSzI9vPb4V9NTaOQDjMtD
+         c5ylkbi1FefX85NQrt+z57PiuDw6z+v7sc9/Z5OEYlYON6REwqx4jWv2rItwAR3Cq6Ui
+         tJYjnZVBa7Pq8nkILxbyNrJLWhhIg5kSptdeymtg9AmuBocV6THHKSRHnYXN4/SS+MPW
+         2VBA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770426008; x=1771030808; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770427365; x=1771032165; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c1LvKaDQsF5i0nG7aNyREL0Jo4Gh027d3YlThpa0ie0=;
-        b=FVfxEwv+oLG5Q37djnIvLjV4T45XqNvD41n7lOmHmlgddF5EyUJMszYKDBJvpiFBni
-         s84CKsKciJpVCQ1qE8l5Ju9xXKpC5F8pQjeoG9YkEz3JxR5D9tr5C5AevNJxucP8e7ed
-         7dbCoQrmMuRkjkMUQGr9vVt6qt0y3EbhlUvKYOFmweuY/l4gXR9y2I7I4Nf7ivLTng1K
-         S7Bp4ZKkET+9G7rZ6tFAbbduGI2y98TVsREQDb9yFrCX6AQrAKS7fRjYJd6tz+b3gyeu
-         FpOQEUMVOWJQJ9Y49KgSYblUIm3RHw+eS0AI+T9wdVp6LxcaxqGsO3MK4FirqpZJ/N8S
-         5CMQ==
+        bh=w6ehWV/UdsOefVPVO/LSKgkiGRVYbFAtJfDqBHGr9NA=;
+        b=Mk2UUZUemwK+JSrIDO9rw/yFO0+WshfGBrNEBUZA70yX3/xylB+Jot4WrxzgM63eN2
+         fBkJf5LxTJXrofhFePRI7kLrZu/XZ8Znk/RucRlwz/zm31vEkJ7WFKC11Kx0pEEzBhex
+         E8NBlXZLkvPOUM+v+u/eHkHw+92yeJb3ggnyryMan5YAtAOaKGphAENZsrMfIFvXHOro
+         yx80V1lDAgVmFdRHOnibJy2/l8wpKb6Wocdgfh6v3lpLJFmggTWJ0vEFn2nwUDihrVxo
+         FS+m1FRiUV/3ZzHorPy1jV2JXH3kAYAYs8f7S4lhqtPaIK1XsHapsVvkntSyqpzhL/1+
+         5XKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770426008; x=1771030808;
+        d=1e100.net; s=20230601; t=1770427365; x=1771032165;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=c1LvKaDQsF5i0nG7aNyREL0Jo4Gh027d3YlThpa0ie0=;
-        b=pqvw986ZtfE99AzRerYR7rj6Ix2dgmPIPnkNousOeWHwzNZRXRe3JgU+ZAfQvBQcn3
-         KEF4zZLiegboEp0wC94Mj97qlK3TtzuxhO6GrZqWFvi9YWOdyyJsmQ5Zg/CK4WijUI5D
-         SedxJJcRwqcoFK2GgTr+7oqGXILmAIo0U/my954RT6os0nN/tKEYvO4D5F01A0A4h6eM
-         J1VNgqBDe+mB3dFPTtnFdxvt6W2NQoGkRYtiLL50IvixvidI1HQP6+Iia/vNEg33qroI
-         IcW3XAwG5lhNCwtIUR7h8Lr4pkhvLA4RposK9OTwPQzyak55aIRPCgY3ELRzQlrDHr3u
-         wKNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8cvF4G8M2ZePJMRhYz4q2h7xoD3u3NF3LTqOF+6k2alzmPwVnjFN4J3I6stZVoVfagxQ3+YKFHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGGB5jgejHjNsbiF9GeDh6yoY1P3TEbjOoAtFrlXX10GplesMU
-	NziUGfNiYdF88d1pWAxBMalws+8Yjw3BICQPIV9HS1euaBoa1n5rqkFC+5lNDCUoGSikS7W5nSd
-	Vh+wx9frDW1jb8xym5G082k11ZxwIu64=
-X-Gm-Gg: AZuq6aIgl8Ymc/Ub6yo1NIrbFvJthz/Xw05v975o7aarh8XMTxBHfcEplkfjRWHNmw3
-	poLBRlytsIkb75xRtlFXsc5xSV7IQvZqqw4pvoHNlebfUItIzUZ6s2SMdXU6DeZjFzNi91p8QPU
-	pf6RIMgcJDlQFOx0P/DFy0Pl00F885uvZXSS01CtC5KwBGEgm3KtD2nLZaEAVxTVEHwPQ88wGBL
-	358cZ3z7XESEyxdtaPXCaFKZ7p8w0XU+GqGdXsg7f1kB/GsxG5jui2r1LXn7ZkI6aIfyg==
-X-Received: by 2002:a05:622a:11c4:b0:506:1edb:2cdc with SMTP id
- d75a77b69052e-5063985d90cmr74178351cf.6.1770426008435; Fri, 06 Feb 2026
- 17:00:08 -0800 (PST)
+        bh=w6ehWV/UdsOefVPVO/LSKgkiGRVYbFAtJfDqBHGr9NA=;
+        b=BWlxfGPr6QnsJ0c0vhzDfIKi0yLi6644v35zJVcEgwMqlwPUCArTIirMXCp2RHm6MO
+         Pt1gx7XSqmZ5A/Q4rgzZpeDJp0M7GVn80MfsijtF9g/ldwU8JCjvZ6gZmH7QDWfLiFQO
+         z0wTGkB3iKAgYXXBLjlB8Fsn4yS4gX9Gz8vsBOkVvGhRO7vgdQsqAMVtlK+vR5JfDWRQ
+         lbyytNeKoQ3pEHs+c5aRCkhmiaHjkPegZ14W5e07jY1udrVfN86pSPy3cl63yqOlYJNy
+         OXHvLjfzKHJXs2nTn5j9UEnnNbsdvp4S1haIqPCkl9a+Y1ye9MJilJESrMzTzakLk2Qn
+         s4fA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Ml1/bXE+4MQHqAAUoj82ur7/TWqvADH3B0t5+/3+4wHf2JEYIe47OHTQFdwuYbFtI9BQS/lLZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdcb+t3Rd913Q/IBR2WDtdZlx6RNG0IZBX22YmhoAVx+s3nBK3
+	Q1/lPjawlL3rouzp+qyZlgYaW1wXtJIyURrk3HxQcNTx0f8RGT0rlPbJnKBQ5yMJ2AQKy5lZAyu
+	NoZwnvuKoHxWFJvte8jojJgGE2lcHdWk=
+X-Gm-Gg: AZuq6aIfCrvgBkNLRMMBM8xFOpTQ2Us1id/exi4ukSyXFxuhNziPiLEUjY3jfrSHtVG
+	SgyV49aTM+cMKJc6NbrDBmNBnibCAEZKwTKT3YZJttbNQtrCAPTcHVNvgjb35d89L1fSm/hqft7
+	S4hyNVm57xgexr0AmmLiPT0srRTLDOvE9bEMBBaN9IqVQ2PxRj9SvPrIkuMSNzMI5zEV27l4dms
+	q6QOkqjHIzpjwtfWBGTVp4A678Ob0tYu39dZJWNsbS8myVwT+cvaTWQvPYNtmFPIw/1BA==
+X-Received: by 2002:ac8:598e:0:b0:502:a1c7:4080 with SMTP id
+ d75a77b69052e-5063986ae2cmr59285181cf.11.1770427365486; Fri, 06 Feb 2026
+ 17:22:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116233044.1532965-1-joannelkoong@gmail.com>
- <20260116233044.1532965-4-joannelkoong@gmail.com> <aYWeErf9bgQJANRF@infradead.org>
-In-Reply-To: <aYWeErf9bgQJANRF@infradead.org>
+References: <20260116233044.1532965-4-joannelkoong@gmail.com> <20260206133950.3133771-1-safinaskar@gmail.com>
+In-Reply-To: <20260206133950.3133771-1-safinaskar@gmail.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 6 Feb 2026 16:59:57 -0800
-X-Gm-Features: AZwV_QjA22_fkxfGyhpbiz3lWbfC4zoePSjfcxG5s9BV6ISHh6yLvJ0zx7a8uAM
-Message-ID: <CAJnrk1Z7PDBEEOmwABCPisvX+-zFGvVvw118vBGUq3J4n0Kgag@mail.gmail.com>
+Date: Fri, 6 Feb 2026 17:22:34 -0800
+X-Gm-Features: AZwV_Qj06frHCkzPc9ihdEGHCYKBXNPzugFJmrQuHHZu6XHj5C4wvoGRD1e8Q28
+Message-ID: <CAJnrk1YEw2CJb5Vv__BX7DaZXmZMfTsH3WYtQ2s4RGDWNRW4_A@mail.gmail.com>
 Subject: Re: [PATCH v4 03/25] io_uring/kbuf: add support for kernel-managed
  buffer rings
-To: Christoph Hellwig <hch@infradead.org>
-Cc: axboe@kernel.dk, miklos@szeredi.hu, bschubert@ddn.com, 
-	csander@purestorage.com, krisman@suse.de, io-uring@vger.kernel.org, 
-	asml.silence@gmail.com, xiaobing.li@samsung.com, safinaskar@gmail.com, 
-	linux-fsdevel@vger.kernel.org
+To: Askar Safin <safinaskar@gmail.com>
+Cc: asml.silence@gmail.com, axboe@kernel.dk, bschubert@ddn.com, 
+	csander@purestorage.com, io-uring@vger.kernel.org, krisman@suse.de, 
+	linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, hch@infradead.org, 
+	xiaobing.li@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
@@ -119,126 +118,68 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12088-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12089-lists,io-uring=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,szeredi.hu,ddn.com,purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
+	FREEMAIL_TO(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,ddn.com,purestorage.com,vger.kernel.org,suse.de,szeredi.hu,infradead.org,samsung.com];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	NEURAL_HAM(-0.00)[-0.999];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,infradead.org:email]
-X-Rspamd-Queue-Id: E37F8104635
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 8B648104759
 X-Rspamd-Action: no action
 
-On Thu, Feb 5, 2026 at 11:53=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
+On Fri, Feb 6, 2026 at 5:40=E2=80=AFAM Askar Safin <safinaskar@gmail.com> w=
+rote:
 >
-> On Fri, Jan 16, 2026 at 03:30:22PM -0800, Joanne Koong wrote:
-> > The implementation follows the same pattern as pbuf ring registration,
-> > reusing the validation and buffer list allocation helpers introduced in
-> > earlier refactoring. The IOBL_KERNEL_MANAGED flag marks buffer lists as
-> > kernel-managed for appropriate handling in the I/O path.
+> Joanne Koong <joannelkoong@gmail.com>:
+> > Add support for kernel-managed buffer rings (kmbuf rings)
 >
-> Do you have a man page or other documentation for the uapi somewhere?
+> Is it true that these kbufs solve same problem splice originally meant fo=
+r?
+> I. e. is it true that kbuf is modern uring-based replacement for splice?
+>
+> Linus said in 2006 in https://lore.kernel.org/all/Pine.LNX.4.64.060330085=
+3190.27203@g5.osdl.org/ :
+>
+> > The pipe is just the standard in-kernel buffer between two arbitrary
+> > points. Think of it as a scatter-gather list with a wait-queue. That's
+> > what a pipe _is_. Trying to get rid of the pipe totally misses the
+> > whole point of splice().
+>
+> So, kbuf is modern version of exactly this?
 
-No, but I will tidy up the liburing side changes I have for this and
-add the documentation to liburing/man.
->
-> > +int io_register_kmbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
-> > +{
-> > +     struct io_uring_buf_reg reg;
-> > +     struct io_buffer_list *bl;
-> > +     int ret;
-> > +
-> > +     lockdep_assert_held(&ctx->uring_lock);
-> > +
-> > +     if (copy_from_user(&reg, arg, sizeof(reg)))
-> > +             return -EFAULT;
-> > +
-> > +     ret =3D io_validate_buf_reg(&reg, 0);
-> > +     if (ret)
-> > +             return ret;
->
-> Probably more a comment for patch 1, but wouldn't it make sense
-> to combine copy from user and vaidation into a single helper?
-
-I'll rename this function to io_copy_and_validate_buf_reg() and move
-the copying into that.
-
->
-> > +     ret =3D io_alloc_new_buffer_list(ctx, &reg, &bl);
-> > +     if (ret)
-> > +             return ret;
->
-> Return the buffer list from io_alloc_new_buffer_list or an ERR_PTR
-> to simplify this a bit?
-
-Sounds good, I'll make this change.
-
->
-> > +     ret =3D io_setup_kmbuf_ring(ctx, bl, &reg);
-> > +     if (ret) {
-> > +             kfree(bl);
-> > +             return ret;
-> > +     }
-> > +
-> > +     bl->flags |=3D IOBL_KERNEL_MANAGED;
->
-> Should io_setup_kmbuf_ring set IOBL_KERNEL_MANAGED as it is the one
-> creating the kernel managed buffers?
-
-That's a good point, I'll move this line into io_setup_kmbuf_ring()
-(and do the same for moving pbuf's IOBL_INC flag setting to
-io_setup_pbuf_ring()).
->
-> > +{
-> > +     gfp_t gfp =3D GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
->
-> Isn't this really a GFP_USER allocation and should account towardas the
-> callers memory cgroup limit?
-
-I think __GFP_ACCOUNT is what accounts the memory towards the caller's
-mem cgroup limit and GFP_KERNEL_ACCOUNT sets that whereas GFP_USER
-doesn't. GFP_USER sets __GFP_HARDWALL though which seems like it's
-also useful, but elsewhere in the io uring code, GFP_KERNEL_ACCOUNT is
-used for other userspace-facing allocations (eg pbufring's buffer
-metadata). But maybe this should be GFP_USER | __GFP_ACCOUNT.
-
->
-> > +     if (WARN_ON_ONCE(mr->pages || mr->ptr || mr->nr_pages))
-> > +             return -EFAULT;
-> > +
-> > +     if (WARN_ON_ONCE(!nr_bufs || !buf_size))
-> > +             return -EINVAL;
-> > +
-> > +     nr_pages =3D ((size_t)buf_size * nr_bufs) >> PAGE_SHIFT;
-> > +     if (nr_pages > UINT_MAX)
-> > +             return -E2BIG;
->
-> This looks overflow prone, and probably should use check_mul_overflow.
-
-Okay yeah I think you're right that the (size_t) casting only protects
-against overflow on 64-bit systems but could still overflow 32-bit
-systems. I'll change this to use check_mul_overflow.
+I don't think this is related to kmbufs. Zero-copying is done through
+registered buffers (eg userspace registers sparse buffers for the ring
+ahead of time and then on the kernel side, those sparse buffers can be
+filled out by the kernel to point to relevant folios), which is
+separate from kmbufs. In fuse, kmbufs are used for non-zero-copyable
+payloads, and leveraged primarily as a way to minimize the memory
+footprint (especially once incremental buffer consumption for kmbufs
+is added, which I'm planning to do next).
 
 Thanks,
 Joanne
+
 >
+> --
+> Askar Safin
 

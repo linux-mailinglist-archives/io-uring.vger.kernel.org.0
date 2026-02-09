@@ -1,85 +1,84 @@
-Return-Path: <io-uring+bounces-12110-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12111-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4GKGBIksimkjIAAAu9opvQ
-	(envelope-from <io-uring+bounces-12110-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 09 Feb 2026 19:50:49 +0100
+	id WFuJGDZBimmKIwAAu9opvQ
+	(envelope-from <io-uring+bounces-12111-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 09 Feb 2026 21:19:02 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52978113D85
-	for <lists+io-uring@lfdr.de>; Mon, 09 Feb 2026 19:50:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42791145ED
+	for <lists+io-uring@lfdr.de>; Mon, 09 Feb 2026 21:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D2053302769C
-	for <lists+io-uring@lfdr.de>; Mon,  9 Feb 2026 18:50:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8A70B301DB9C
+	for <lists+io-uring@lfdr.de>; Mon,  9 Feb 2026 20:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA983AEF5D;
-	Mon,  9 Feb 2026 18:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E02F333426;
+	Mon,  9 Feb 2026 20:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="t4/LgPMQ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="prR7mMd/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBC43AE6E0
-	for <io-uring@vger.kernel.org>; Mon,  9 Feb 2026 18:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9A4331A5F
+	for <io-uring@vger.kernel.org>; Mon,  9 Feb 2026 20:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770663005; cv=none; b=kMU52SwwEeX9l5/nD+L5GURml7OEkPbni0pUG26M9nbI2RpKCdl+W0RryhycjehkmOrvmeuQ+gBkKjfjE4au0YnSyq7JksoZe+KNfYZdlyS+Ex3/p+BJ7VCH2LYKqYFTpg5KNRA68HBimnVDQ1ep+j6LFvMfRDvSCIG80+ngbl4=
+	t=1770668287; cv=none; b=FPgnR1tlVajR+Y17HGmP8eNq/g/Xy5ico1q1QEqoxY095fPrKDVfGS/A9UsDYQeHH6b8Fn4OriCsCEVfOO2LlADO6t7kFEAGpESjKaMvcKQoBEtITc18G+8CWrNIZOJQWL/+uUwIf4CTyfC9aXUv+xk/B5u1Ll2SBtBoXJNS8oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770663005; c=relaxed/simple;
-	bh=undCIAWo6qWW+Z1HOg8qlP6+G1FkpCs7G0WeQTxNGE4=;
+	s=arc-20240116; t=1770668287; c=relaxed/simple;
+	bh=IJwdLydSXuOsSV/s2G7EBOzBXGvGnB7qCApA1SIsFak=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=s9ZzmfbXm5ZW/b4jwpKnliDwz8SEWTYrOwnp1IOoHHxG9IgFhUtI8PRmgEcrU+RYQoKswOhTIdKCY1Ap4GZz7dUhPsx3yu/l+1wSoJU9lAGd48ItdJp5fauR55mrbLN/Qkpwtj0np88IszJDiiQ1Dz+SCq/Af3j/TsoVD3C5Exc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=t4/LgPMQ; arc=none smtp.client-ip=209.85.210.53
+	 In-Reply-To:Content-Type; b=d/n85vfag0cu+9jZ3yA4x7/5fjKBO6uE11YevLiGaX7jESmw8ZZ1G/NLs/ybddGR1TfxFppSqTeuHSvISUa4VXEtCiAkWg2akWqoA0BDaniv0G6kJDBZrfRv3FQlUEVwQrPKYn1KXhdOcTbKnd+hP/rLegRq2PcApd5lPEIhWkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=prR7mMd/; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7cfd9b898cdso34797a34.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Feb 2026 10:50:04 -0800 (PST)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7d1890f7cefso128429a34.3
+        for <io-uring@vger.kernel.org>; Mon, 09 Feb 2026 12:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770663004; x=1771267804; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770668285; x=1771273085; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tYxV1ZZhF0FuP950hVsE38NKjm5LJ2udmADunvWNt+s=;
-        b=t4/LgPMQIOf+ZNB3uBDthKw6azftbW9Btm5KFt8VuvCRJlmSCyP7PJFnrf1XzCiHgQ
-         YzD7zsorl3YdHXqFGjDkQiUQSY53Mac1ESu9I/DOpfyFhd/1SPkzlD5XaLpzYydYgeZY
-         DtDVAQGA6Bq27AXMgZV5m6SC2kjYaCBlgHfIWQ+OPh7npVtRVN+OAtdpt4ApvXXroeql
-         Pc52RomB99ti17lhu5cka7t7DwpZM/ZWetwWLgBWE2tV+emF0orVSHfGaywibOAO+seU
-         ZSfR9x2MN1cBwslC9NfaHngbBhthvlcmpJEEvH9yhrfewRdGZbMIJBFaR17NolrmxuTW
-         Nxbg==
+        bh=C5oTgZ0FGRmcY3SY1Rn7CE8w7Ml/es9Z/zuKzPR+wHw=;
+        b=prR7mMd/XyAJ9D5qnvHzD3+TgXuutDAXgnvF1AfpMBcX1quo2/3t9ZKN64NhbnLozp
+         MSI3b+EEESyikEQNUqSP6jFHhmBWDogCmM+otXlVIuF5cyD5ZesD9IjAS3jEvpxwNEj9
+         1vr4PLNUpcxvzha2+EvGJWcHQIFVa1Pe1Vu9+CAnbixW/PyjAJczopjTkgdXRdA9YZ58
+         yOCjkabtE0KehvlFUDbYYL5w6N9CHFfCPTGI/CUCAqG2qSjSocUHxHNaUnoxn+b8W+wM
+         oI7/jWjfjfngU6AAJ6rikF8qedzjFdA0OEsGl5aIXQZ0Wbatn5qkNSUbgKKQLuJ0WVIs
+         R73A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770663004; x=1771267804;
+        d=1e100.net; s=20230601; t=1770668285; x=1771273085;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tYxV1ZZhF0FuP950hVsE38NKjm5LJ2udmADunvWNt+s=;
-        b=otw6LEvcDdEcFpsTDm1e7PMRKHXpLUz4JwPOgiWKvgknZmXBzcpxDPzRpgSHXllfLJ
-         2xYnWUmnGtk8moHhPRH5vVVVdjbyh0Jp2gBn7sgzBgbq+jffDNqhW0dYBz/tuDCoS6QP
-         s4ZFImkv7Mn94oUalxC/B7klUap6Qvhxq3jY27iJE3tO7BtxZSutwF0SlGptfRsSQ3d/
-         ZVNCcgWZ7KWMvb78U2Kasql4umdxHKEYx1lRxVwH1yAUTzVl/r8nJOegzMepi//FxU9G
-         LWUjCOu8NEYT4J8KisuKAa6a+/6hLZNruLVO8PtYl/0L7ARRzQ0dxc5Kk7X1RvIb/vsm
-         beEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZKAhcAxU6Q81k+vEZ+/8NXXFQ6SgrjNzpAkp5xHH3QDacKCAmGoJbM3vYxd2x63tp3+bjJK66Kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrc7FhbSjVnhr9/1pRyqRg78Orna7/iVTxSOR6sk+rtNFW5P1+
-	gwdQApMqV9lkL3B1FRc9Ph7CVhU3hOv5rM0DWyvYJIJ/y43Xhgo+4DWUndDkO8P4/UToEq9SADf
-	FK9jIaa4=
-X-Gm-Gg: AZuq6aK4v5nV4d40CVgdrH3roOcMZtjjl0P92Nju/vZhwubEr+mFx7lXXq7OdijMJYu
-	w2bQBcXVoyPbMjkqDd9YbdxIcIhPrIEPnFiMliocilH7a9YHbzDAJZ9BlzCQCFATFnRgzl8A0cI
-	8sbtU+R3/euehD+1vr5+VbRz/ccrinVDmkXJvDDGFMzZSe37tHdlefJuLN6gp6u+YhIclKvvb9m
-	0rVZqCs4ofwmZ8E3vHYruG3HoaO+98EUd1Z/0HVs2OU135hxYVALXdyOGCyBQ9/Alg6w11Yk+7o
-	Q+mMfcl0A7kv35+x7m9dWJfVIQ8LhP6X8GSF+dYagnpkavaZTRsBHshF60EMmX0CwRUKYE+ipKy
-	e/+0EarTjpVJUtNZTgJY8A8zkZQdXHSgpwd9rDJeJdu91Du7BS4znlBkObgX/E9UQiH/qYTC5pw
-	Tao+EgYIO8Y6QzFBP+h6dSygdHokCkaYWU/lG8Lnt8e9AaVB6D6nCb0fzIKXVDt26K16ME1Q==
-X-Received: by 2002:a05:6830:6994:b0:79c:f9ff:43e with SMTP id 46e09a7af769-7d46467e812mr6111729a34.28.1770663003431;
-        Mon, 09 Feb 2026 10:50:03 -0800 (PST)
+        bh=C5oTgZ0FGRmcY3SY1Rn7CE8w7Ml/es9Z/zuKzPR+wHw=;
+        b=h2MM+rCzDKIkJYo5Av28vViRSdN06JVwdi8bo/GPvzscCDmaEVbZt9TNK0XWoKDeAQ
+         trhE7KFuAtandnuBDUBO/tx4ONH5RmaoszQaCAzQQ2xW7K+bK2KGA8yAzv263QvOfod/
+         KikEY6xSYc5+5DbvdHR17MW2LebIc8i2gWPS8FcuPZWcOariti3i5LaDg7punBZxN/UT
+         OaCf119AonC0DPnKEedfIueCFVgwVh+wx3cPF+4xIxYbxE0n8MMxLFLSAcMqEXbKnMpm
+         RqzEwIWpmkPmIau3Ni1VIsioiXBT9uc2t/vv8UaPvvK9eJD9CIBkFPXfZaro7RhYqQwX
+         QNeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdlqoYsqloCh8mw4uvxdjU9cBXg5kYosnfziDrkic+esrbJEuzNgMNpjHgkWM9z+a1/PF7AKUBPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2iV8y2PMfW7dO1g6Q7//JPt7kC+UdNpqQZXu5oT2hqChFRmvz
+	Zz51WAD2CO3MUSu6XW2hQbWsL4tTm7v1SfT5+XkiAc6M8BXjKlcB5pvT6x+8r2pYYPw=
+X-Gm-Gg: AZuq6aKIxQdf5SuUEH8xhwSQetztjmLi4TOJkEIrYkq+HaA1JN9P2HnvQQJrxtPrCey
+	xyxPwz9E77bJ/MhFSjxZcnngUXvoaeyqP3JXXsoTR9ntNfJ/cHGM5eJEekkWPAhja2uh+bXF8Vk
+	bdGey0vPYRn/NoSMfV8vfjUwGOXf0zEvCVnW/w45yyeKv8C7PlBvEf1523ecT0ROuEHspC1hyIf
+	/GprF1WzR2lDtGv3etuO9d77aglP1tPq92hsn1Qmh48ve/d2xNRrHe/IF4KZZJcIxnde5RLfgZ3
+	9ueRNGSoWi+tVMsTleVTcASQHHgKGJaBbqRq3pjMQFopoHJVD98KwIeAMLuEc1qTv9/vsKAnLJd
+	5ARneKKje6OHu4ns6FzfxDQEjIrEkMaiiDvJUpVuD1ch5d+QME5eR8hvIGWupOv5juIEanHpK8+
+	UZnqmfjsQSGZYuk6xQHKQ7GXljutoY3NIbIcdaeiuPL1ddS3kByZkmwTmeSOl6K32r27ZIdw==
+X-Received: by 2002:a05:6830:6994:b0:79c:f9ff:43e with SMTP id 46e09a7af769-7d46467e812mr6258361a34.28.1770668285082;
+        Mon, 09 Feb 2026 12:18:05 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4647277a4sm7929198a34.13.2026.02.09.10.50.02
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d464785fcasm7885861a34.17.2026.02.09.12.18.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Feb 2026 10:50:02 -0800 (PST)
-Message-ID: <e6f8da96-6920-434d-9f15-6e283bf3c829@kernel.dk>
-Date: Mon, 9 Feb 2026 11:50:02 -0700
+        Mon, 09 Feb 2026 12:18:04 -0800 (PST)
+Message-ID: <23112bc4-a498-4089-a225-1440c2151ce2@kernel.dk>
+Date: Mon, 9 Feb 2026 13:18:03 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -104,20 +103,20 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f1fac0919970b671];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12110-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12111-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,storage.googleapis.com:url,appspotmail.com:email,syzkaller.appspot.com:url,kernel-dk.20230601.gappssmtp.com:dkim];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,kernel.dk:mid,syzkaller.appspot.com:url,kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,storage.googleapis.com:url];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
@@ -128,7 +127,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 52978113D85
+X-Rspamd-Queue-Id: B42791145ED
 X-Rspamd-Action: no action
 
 On 2/9/26 11:26 AM, syzbot wrote:
@@ -217,20 +216,24 @@ On 2/9/26 11:26 AM, syzbot wrote:
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
 > CR2: 00007f60e56708c0 CR3: 000000006b065000 CR4: 00000000003526f0
 
-This looks like a bug related to dvb polling, presumably in dvb_dvr_poll()
-or friends. I've seen that in drivers before, for example comedi, see:
+#syz test
 
-commit 35b6fc51c666fc96355be5cd633ed0fe4ccf68b2
-Author: Ian Abbott <abbotti@mev.co.uk>
-Date:   Tue Jul 22 16:53:16 2025 +0100
-
-    comedi: fix race between polling and detaching
-
-as a reference.
-
-#syz set subsystems: media
+diff --git a/drivers/media/dvb-core/dmxdev.c b/drivers/media/dvb-core/dmxdev.c
+index 8c6f5aafda1d..5cb46109d1ff 100644
+--- a/drivers/media/dvb-core/dmxdev.c
++++ b/drivers/media/dvb-core/dmxdev.c
+@@ -168,7 +168,9 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
+ 			mutex_unlock(&dmxdev->mutex);
+ 			return -ENOMEM;
+ 		}
+-		dvb_ringbuffer_init(&dmxdev->dvr_buffer, mem, DVR_BUFFER_SIZE);
++		dmxdev->dvr_buffer.data = mem;
++		dmxdev->dvr_buffer.size = DVR_BUFFER_SIZE;
++		dvb_ringbuffer_reset(&dmxdev->dvr_buffer);
+ 		if (dmxdev->may_do_mmap)
+ 			dvb_vb2_init(&dmxdev->dvr_vb2_ctx, "dvr",
+ 				     file->f_flags & O_NONBLOCK);
 
 -- 
 Jens Axboe
-
 

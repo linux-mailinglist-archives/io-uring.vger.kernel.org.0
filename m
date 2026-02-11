@@ -1,123 +1,161 @@
-Return-Path: <io-uring+bounces-12163-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12164-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id L9qzL1GkjGmgrwAAu9opvQ
-	(envelope-from <io-uring+bounces-12163-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:46:25 +0100
+	id 6A9RB2rRjGk1tgAAu9opvQ
+	(envelope-from <io-uring+bounces-12164-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 19:58:50 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3B5125D38
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:46:25 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C56126FAC
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 19:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DD300300CCAC
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 15:45:40 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 6DCEE3002933
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 18:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08293318BB6;
-	Wed, 11 Feb 2026 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C334FF47;
+	Wed, 11 Feb 2026 18:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ct67Suxf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATcBO3ZQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E61B317701;
-	Wed, 11 Feb 2026 15:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B2413D638
+	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 18:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770824739; cv=none; b=WlapOVzCQ7EnVIDVktiejuDCJjssGvp4x9y+rpZs5itxkwetbqYKLmqcNDdtxqtRtpa0WfQ0BNtwzg4ARqoFK0OWcpdP9/DRqHfdWk5A3Bm8/TbGWc+m5nXfD4DKT+6QwUTTwKViTUVSXuHUB0YeyHt+fmyCt1z386QKKym8SBs=
+	t=1770836325; cv=none; b=KvUbz0+WuGIWTXGvYZn6TscdIunPue3RKfrFvFFHdsvt/encAxeMbxmhBR6lChhj7/EYtW/MqNqkJyxDeaKljWcx9A47XIRD6wUynhybUO7BcsCLDpkIBLUgHD340lqgWLweZKpAzc7v6LYGCXvgYZZK8zI/w5zGMeFVZ07yABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770824739; c=relaxed/simple;
-	bh=Vi2rVLK9jD5gt4NZfmDrB+4OmvfQhlw6kIPIVrTmh3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mm5YQc2DNpEueM//Ti12oBS1AlWu3XdyYlEG92Qf/b54x6stsXqr78CA8zULdry2EEkKtcm1Kl1le1mlHuszShJ3q6805kyL/42HvxVeZuQ8VlFtsZOa6Nz0HJdjPHNQ7OmdAAPal76HzE39XYpV4QR9d+VdP719PEPEvoT2DLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ct67Suxf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=quchVHCEJxHoMugGym9DQDRQY2PW3QylUONV+ZucEdQ=; b=ct67SuxfQmejEHA6GQjo3xwOSk
-	0ozgeBLfcbYcWFkgGeDFl7Fot5XhEDNDmZ1GrR0k/ysBmNyaDr/u+6EBb8NotviOKEHNvbnazWFQA
-	yaEXCrt21ljw7KTPoLvissLDBJAiUPZAgiMFGASsbgbugnj31zxKOUSiG7GpU0IyxI9eGmhV3/m6N
-	YKMBKgq8eKw3x5ZJJXXxL9myM+yeAtPN7+5XAZKYoQiq+gvxhMBim14bnpCXmuafKSItQZu4vWOky
-	5IYuOxqBBK0EsflQThknHeT1UIZV8zeIk2BzotBRsEUfnL4B6OwVp1m1ekHkBKYuCT5FkNHM66xKS
-	hp91MjXw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vqCPI-00000000nzI-1v5g;
-	Wed, 11 Feb 2026 15:45:37 +0000
-Date: Wed, 11 Feb 2026 07:45:36 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk,
-	io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
-	bernd@bsbernd.com, hch@infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-Message-ID: <aYykILfX_u9-feH-@infradead.org>
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com>
- <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+	s=arc-20240116; t=1770836325; c=relaxed/simple;
+	bh=TYF0LNel9Dh1kqeyOAurV7Y9kXCPZcqgn85QIwoot8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BmG15f4BxBLx3C6rAFGgWkJWOoW4RXRE1hoR6pnK1XmdknIqvQDc8Grx8/kKmc0Q9m7KXSuCZGfII7mPtgMIL2M3gr0W9X+O+dPPltckaYmbm6Mpn3SHHCi52s4rJunSps+tC6w+EWB3VHfY+d3IxQgB4TtvgfZQ+LQ5IfPnFDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATcBO3ZQ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48329eb96a7so28276375e9.3
+        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 10:58:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770836322; x=1771441122; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rS7ExVQwY7zAOHUgSx6QZkP4tbXT72iphOSjIQmbqWw=;
+        b=ATcBO3ZQ6qFreRdDHWOaM8QqpmeM8aUmUWhQzPgv/BMB0GJupuewTQnHIQqAmm68kX
+         0y+12YDK1XKx1y0fSE9DiEtaXw3T3QpmtQ+zXhHGcwh7ctTcMuF8jZXR69ErIPNF3rrx
+         gCeVkEXbyx3l/IZicuk4hVMXByXDL2+PCHFgGphvqJewRB55vfMkHmppU5T51Fnwv8Iz
+         RPtGE8DSC9l2iuVBJbZWuoJrtXSMnalg6Bdd+93RzURj0iQoUhtaO7d9ZmqS1f4oEUZB
+         anIIkQrBF+/gvHqPIDp/mjt7OkZJ7LjV8FTyCmVs9YBTxEK9sgdlN5CaZ0Puu4mmpLQg
+         Ec0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770836322; x=1771441122;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rS7ExVQwY7zAOHUgSx6QZkP4tbXT72iphOSjIQmbqWw=;
+        b=vqbvH7IK/FfP7EGQ4qjYYdaCuFx/YxMRT1tiGElTcsWwlZXs1JEt02GEzieISX0JFZ
+         +OkbvB/o70M17QBCRx0oBini/LgVbIV4Jf5Q4xRKcnLmPiZqKho+ymoq1qOHoSY4ZQC/
+         rJhXyAm38vKW36F7gv4SToiIUdmLRWf6MgkFb3s+/IIQNNmkYB84vvBp7U95t6aRrtDv
+         zRHQjFqr8IpFJKQzIVFbQ81sYT7K7JTvEdcGrnHrwHanxcnpSeYVVLVSEGIgjRWdawKC
+         UBIyGyDX+0sLtulJy/+UVWTE6Xmb766qN3PaRpjSu4Dt3FEYlCY/Sz5QVduIMnDvWZuS
+         8O7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVavIwro079r4HbWNd/fix2quESHwbT+ttcHu/aggM5ifCJRbxrqkbv/zOOWYYTNhGpMAB00tvChg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7tEEY5WiN/bASB3xWFdaKEF2Xw0j8T6SDZqG2c67YvurYttcd
+	gxrspLugYicmDC+P9kSXtdKOE+eZytBwzKV1rTCemUmaIqXdSNENyIVS
+X-Gm-Gg: AZuq6aKVPk9meXozzX42Xe9kEmBYM+mrethrAjgDxJuHh8ki9d2i0x8ZArJEk58Pqr1
+	/XMgLsuQrWYJdKkV2Ie9sRNvcgaBW8x3c2E0jnl8WLlADfMko72bFJrIxUsTcDLI0hjwYG6WDSl
+	l6sTq3bhCbZYNGra1jOyqnBYWMKALvqntAsvEp+2wfs32dhz50BghCmb1H7N7HTndWxl3L4PE7R
+	/c4bgaE+XGzcHXuCTlzScxAvNz0ed6ZSXGLU9n1ze9X7dOGAkekpCIJzP3oGmrxU+Q1RyNYpNRn
+	VbklGGBNn4cUiR5QPtLPNTuA1A6kiOV85K+BNlPaWOtSU1SaWelDUnpav9D6Tmt93yHKNT1WGDT
+	YoXBouT8ma46AMrOOvThy8QkNMbSUXrDE+SwY9xJetbyJ5d5XXw71HUsNUJuTjKvqsD9RrfMX2l
+	QytVHvBlXuzLnL3KsPsr8VQWP2LGiZIlIsc4cYc8UWM5Mn1yQqKdOMs69GRP0r7ChFBMalV+NSF
+	VG98m56QdRv97n1I0gS8I53tFdyDcbUh4+fseSZZoqoo/H6YP9XDismmPp7hM/qeJvVS2pIV7Qw
+	q5KmvgKROQcK
+X-Received: by 2002:a05:600c:548f:b0:47d:264e:b435 with SMTP id 5b1f17b1804b1-4836571010fmr2027805e9.22.1770836322271;
+        Wed, 11 Feb 2026 10:58:42 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43783e0196bsm6653831f8f.23.2026.02.11.10.58.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Feb 2026 10:58:41 -0800 (PST)
+Message-ID: <1e797bda-a74b-4873-9bfe-f7a6a6263dd0@gmail.com>
+Date: Wed, 11 Feb 2026 18:58:42 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH io_uring-7.1 v5 0/5] BPF controlled io_uring
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: bpf@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>
+References: <cover.1770818588.git.asml.silence@gmail.com>
+ <90c1f09e-9334-4036-a6be-ad7d2f91bfc7@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <90c1f09e-9334-4036-a6be-ad7d2f91bfc7@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12163-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com,infradead.org];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12164-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3B3B5125D38
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 28C56126FAC
 X-Rspamd-Action: no action
 
-On Tue, Feb 10, 2026 at 04:34:47PM +0000, Pavel Begunkov wrote:
-> > +	union {
-> > +		/* used for pbuf rings */
-> > +		__u64	ring_addr;
-> > +		/* used for kmbuf rings */
-> > +		__u32   buf_size;
+On 2/11/26 15:24, Jens Axboe wrote:
+> On 2/11/26 7:32 AM, Pavel Begunkov wrote:
+...
+>> It might need more specialised kfuncs in the future, but the core
+>> functionality is implemented with just two simple functions. One
+>> returns region memory, which gives BPF access to CQ/SQ/etc. And
+>> the second is for submitting requests. It's also given a structure
+>> as an argument, which is used to pass waiting parameters.
+>>
+>> It showed good numbers in a test that sequentially executes N nop
+>> requests, where BPF was more than twice as fast than a 2-nop
+>> request link implementation.
+>>
+>> I've got ideas on how the user space part while writing toy programs,
+>> mostly about simplifying life to BPF writers, but I want to turn it
+>> into something more cohesive before posting.
 > 
-> If you're creating a region, there should be no reason why it
-> can't work with user passed memory. You're fencing yourself off
-> optimisations that are already there like huge pages.
+> This looks nifty. Do you have a repo on the liburing side with some
+> examples to play with?
 
-Any pages mapped to userspace can be allocated in the kernel as well.
+Nope, it's all in a pretty dirty state yet. The selftest is pretty
+good in that regard, it show cases a fixed QD workload. It's easy
+to convert it to reads, and that works well, but I guess I need to
+add something to show how to use the memory region to pass
+parameters, e.g. iovs to readv reqs.
 
-And I really do like this design, because it means we can have a
-buffer ring that is only mapped read-only into userspace.  That way
-we can still do zero-copy raids if the device requires stable pages
-for checksumming or raid.  I was going to implement this as soon
-as this series lands upstream.
+-- 
+Pavel Begunkov
 
 

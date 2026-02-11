@@ -1,761 +1,468 @@
-Return-Path: <io-uring+bounces-12170-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12171-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MLpUOezSjGm+tgAAu9opvQ
-	(envelope-from <io-uring+bounces-12170-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 20:05:16 +0100
+	id uNmDHG/9jGn4wgAAu9opvQ
+	(envelope-from <io-uring+bounces-12171-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 23:06:39 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9943312700D
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 20:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D237127F59
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 23:06:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B1E1E301DC16
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 19:05:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F34D5301FC92
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 22:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8EE34321A;
-	Wed, 11 Feb 2026 19:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088AA308F1A;
+	Wed, 11 Feb 2026 22:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvYazG8W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dwj1kfAR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2412B352953
-	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 19:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770836706; cv=none; b=N3STFsi8q6mBdjlvMI6fBeMeKGpa7/Xj5door1ZzXhjM0AiUUthP6A1ftq0+3HI9auVD8URKRnpZy0U+Z6IMXiE4h0WBKbMk/8t+ZrAcYiceImPv/UUwAPqL950mK38UfHsDnRC68E4GVUHhqgyP+jEXXZgb2xbAej/Z5D64Ono=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770836706; c=relaxed/simple;
-	bh=KJtKd1KGmJYYrWIqh/HfajENl6KXQvABlGfdviM0aWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cTbRtS0GTWJRC4rsx8d/AW5lSY2XCcxKP+f2k78hvSnWLUnn7dgqojNDIuRwL12QgGKbDBAqGQdlNpK9jIixQcCBdu3Vz2uF8ATFtKrCgbBRpDMSCo+esRnYP9jIlA0KboDtuLT1qkD72tObYV/q6MUPnxYWvPcvzXb1G8YPlSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvYazG8W; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B81630F924
+	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 22:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770847592; cv=pass; b=sk43c/6aPDrMFCA9GFDuP+KiT/tJO1EYMElaoAdd6D6nbeP70KqIWjaCn2RkvxDUD7DYeSa3HR0NT9/OlT7w8nHNWVsuau7mjKjK8kqYwwrdstPOwxlGW5fKA+PJE7ZcNBntFMDCS35mAW65PuUxt6PvPbw0+wJhWQ2HToPRsAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770847592; c=relaxed/simple;
+	bh=eFhbGXrgDS8QDy8Db4uVM4iMnLUYFWYh8SlI9xEdKjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KwiYSLFOQTvca6ZPmE2At6bEE0dxnWrRyRFceWXrtl++hBcc158VVddIuwhqH7tOv+VgyiFkUTPTeyUHitajMGahnyMZRICQzn53dS5okqVHRBl9f8d6Pv1/Kg07cLxr43OgeFFkLA2vZlXfzGmIYg+MNWlJr5fcRuw7ud+oxo4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dwj1kfAR; arc=pass smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4376c0bffc1so3055239f8f.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 11:05:03 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-502acd495feso64277681cf.2
+        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 14:06:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770847589; cv=none;
+        d=google.com; s=arc-20240605;
+        b=eR3OPc2cPw9wTdx+SyRCnj6icZ17eHdchjCHK6FAVyNytqxd8WKBo8nK8Rb3uWmq7l
+         +DzC2VBfzbRai3Hd6wg3UQfqMusok4Zrx1NCk7Fq1J7wDviQGxYDA118mkA2uiqPZupB
+         rwPcK2PYqdKs4UoItyZXQP8SxNvAy0TXms6/4jaXIxuMdg2KZr70T0MHNk7bsF/G8o9p
+         imW9vWlT26qRNitZTp/RdjhXaxkLrd4ZCU5IgvwWE6amXWcaRwhSEKG7ReEVU3cxQTiG
+         dwg8GRY/xOi2LKkGnNOpGRRutH1j9myKTwVjZbaPATBMnaRnxr07jhrFdh6BwpuJcrTs
+         i6og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
+        fh=wfBadegfTucbcc5Zu9KgjTFm64yRF/YgUHjsk0g6AyM=;
+        b=ABY3X5E15wjrJYJ7KiIEUgnGjZwtCOthVuR9vhRpuMij/YtoRsjmHcuPzjm+ievDJ+
+         B9/R25sC8gyUqCUgj7XaorOhNEyGnb7R1IaZwO08ruPXpuabxprLfaocqNHaFO427LlG
+         /6Th7iYamtk7x7Udsl2xYyVTqS4kila3VEEPeowtGjtiwwDlhz81F2ri4xa2TlDRe6PK
+         qNT614SCZhCgKHdDLdbjA6gVrJCaGrRqiMoAxmdcHQmJ266XM5jddQ4RHCT3ZF/xw4yL
+         c59zgkCmvPsKtPSXtoCpJnPS1QJMzxHyTEg7nB9l/rXZlY8TyFj1Awo1Rw53qFHdU8Vn
+         3UVg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770836702; x=1771441502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770847589; x=1771452389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wdBdwsVxWNNKNCyWp6pnznrp93RIrThkOlfNRSRS63U=;
-        b=HvYazG8WfglXuIbobIYHGzXVsLxsdeCAHi7y+3Ke6637NWxT2n23u6AkpfKsKM/S8X
-         uDVMSPv2MOKbTSYTShP+hQLb73ZCVAq2YKZBgQEcepAmociZvUl3sWXUWaQsvu563cFo
-         hxZ6cqik05cfhbS6XV1UjZnyaiz5H0TbUs0Jl5bJLS3SObImsLRA6Gm3jYRyb4+rRtRC
-         GoZsdp9ZMIUqzh77cTfpVwlThiK3m6KUD8UgRtcjX3kKr7gSQbG5If9Uvi9b56CfsySk
-         LFcozEGGsX0X9ozydEbuwJNhP5XsQYQoZiYVMr3aRW9Bv+Q79SoWobVRAR+mG4m+Oba7
-         68wQ==
+        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
+        b=Dwj1kfAROEbIsSYJTc0UapNzYvkqnXpTVCPBfxXrt3cRER6zV0MUKowKq2oJmQkqyX
+         lCQUuS2KaCgz5I28xjGHEiCA3ey6B/nGg9rJNHIzJ7k6JRZDp0EFAM+pjUDDTbanofTv
+         Zb74EN1Dk3PoDsOtJFaz8Bdr4FRwjtfSe1++lTWynImiqa2koR7AeFSgwVNvs/8s9yVL
+         VeRGGmlQCgP3DsR1N266/63XT7G2wIx0MwwXF1TvzK0K2YU0De8xmM9Aagc1Y5hjVcJy
+         M4uaUOQQ9PPbK0C8MSbBX7lNAINPGO3ERbJ93vf6xe3StJvUFOthA3NGyENc7003Gxzs
+         kWHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770836702; x=1771441502;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1770847589; x=1771452389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wdBdwsVxWNNKNCyWp6pnznrp93RIrThkOlfNRSRS63U=;
-        b=dWbqpjN+fAeuDufv5MTcltg1bOZm947NIIXCcaQRycfOjDpXM7B2YzCddM/Pg4hSK8
-         u+8v9iQFf4ZiA0y6rRFW6TYWgXNesZkqMVUMhAoZRkE8bGO9bk8VOx1nN9JrWJqS+r+O
-         B3uTdgyzPDceRpgAFBESKBdSv7hAa+k2/AKpCCbY0CTbkdeoVCONfHQfx8XqdHPCpN03
-         CDL3C29w+oIE2nfYGErvbaWlIerAUJCipYOkvaR+/6PM3MAHcFttgTyC8RtVNoGoUQ4X
-         2HLdqMXDy/F1Q0kCSb/3eQrPfTbA4i92p2hc+6/KRhXro6zIZgHsAC7PK7BAI4RG8tD3
-         0oCg==
-X-Gm-Message-State: AOJu0YySOmj4THY1tRyykUtGCMaRPbqgyC4nu2cOy7iOQTCTxjq2JhVD
-	mpXByL6anKlZzOutjq0UkZyuHzG0ILLPXLUQIvTSjj3PTZNsNfU+lCC8JG8s7plE
-X-Gm-Gg: AZuq6aL6YPRI49UDdc3+kkNcaiUy3R1IWrJr0o4h4+j9Dqm4yNkLYzSZ8FxH8mDACwU
-	rmtTU6Cw4zqXdDe0NJQ+gvJOUEvQetQFyvZo2F7u29NKBV1Ul4GtRh3H1kTqesJoktTDsetmiHi
-	Oe1fmA5h5RjpLgGe87Wf7OvrAm9sGBqWeJEOGQH+6TnFh9xBkdLhiAVkDjDxkhKTkLmAgLIZOsg
-	MxHrLdM3l64Y+cOndzeeKiGQQDtr4GusE9Vm3gWQ3HgsjxoRpXiSmwQ2PyiDb+gPypeXnWB7cqS
-	hO11Sz5K3R7hgvuXxTWc0kDmmjsObzbDQhYHLYdGgrGQzTSccCx7MyrilCTmm6qhBsvK0F6WrIE
-	w88HzW7H2ZXAAthgcS63T65d8bIWwJrAd0mUBsIa8zPX7dBtix/6NAxbjd/oRKdZVr+Zv34y2bA
-	sjIZWSuB6wslmouWikig/BC5/pqBt8I5jl69ypPLJaWIzoAgZsWa7W/5K7injdfqTAukGWH2UAN
-	ERu6DqAIKKN2BQ+J4Gtqm4fAbiWrw==
-X-Received: by 2002:a05:6000:240f:b0:430:fdc8:8be3 with SMTP id ffacd0b85a97d-4378ac716a1mr797733f8f.29.1770836701815;
-        Wed, 11 Feb 2026 11:05:01 -0800 (PST)
-Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43783dfc8b9sm6174169f8f.24.2026.02.11.11.05.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 11:05:00 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	bpf@vger.kernel.org,
-	axboe@kernel.dk,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH v6 5/5] selftests/io_uring: add a bpf io_uring selftest
-Date: Wed, 11 Feb 2026 19:04:56 +0000
-Message-ID: <82bd9cd01352c83db37a62d5564033d788ba0d78.1770836401.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1770836401.git.asml.silence@gmail.com>
-References: <cover.1770836401.git.asml.silence@gmail.com>
+        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
+        b=fiBgKWGR/fbIGjx4e4tuLIhekivE0s5+lYfw2edl7X15ZCiyt9Fm8XBuBjsaGYoU9l
+         N6+7K0GIx3PZiqBAr0JKaex+kjaH6T2GzIujLtfkjGYWFFEiyPkJgaYo85pdQBfQB0KO
+         B5lIoc/PcP15jnTssAKvroy0bIgTbJdAPr/EO6tvjKCtgLTBxM2N/CRDvYqjkJa23qBG
+         6kZNYNzQVSa53Z+hHMFt/fv8BcJP+UDz6fp1mSraXToGDJ8tepc+0p7HiXXKKR8jiZL0
+         j8cGsLQ53b/zRSRbviw8oOm5LC6NFzgjt0Se+JQcLrySz5SHsE31oUF33ndZUgy+35jx
+         uG7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPvTNLfOQICLTiPevQY9OE1ucRJcKxpXLHTPCjO7/8WLskmYWaa8unrQ0rRFBO23UgqSMg3yVPbQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFj8iyq9CUlJxIbvYQbCtr5m8HtQKETFUF4NNah0k+8rE6JXEO
+	jR3yKRBZ5HGHirQGPj2WCHpgkX6V/8lz13ClFiZ5oXL36PXWzBtK6D/z+++MWPWnNcdit+Ns6ul
+	KSCOnTTigQbN/Vynq5jSPJWvq7BmWYyg=
+X-Gm-Gg: AZuq6aIRZrIqryMV7ddV7zGlV27ymyXmKW4txqj5as3W91JE2TzGFahBdjBCUpubuS0
+	3/mW3C07PKDSjoWMLQHclZA6OCSogwk9Irj9Q29HgMGkBYRCisv43W9+m8xY0qITynIwyQ2Mhxa
+	n8vuoT5H2QSru6PofKdI2nngWUGevTKu0XrZKHiT7yHBa3r/CShMYYlge2XLaixkBtchjNeGP/R
+	eAItchVeFkHgS2YYQ2gsTTEFpGVhc/8pvoil527P51Fvx+zIUQpBrwg5GXo1rqRoZ2z6alDU7SA
+	R4I0eUtZM6pm6YlY
+X-Received: by 2002:a05:622a:1a89:b0:502:9f97:72c3 with SMTP id
+ d75a77b69052e-50691ef8ce4mr14375291cf.43.1770847588832; Wed, 11 Feb 2026
+ 14:06:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com> <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+In-Reply-To: <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 11 Feb 2026 14:06:18 -0800
+X-Gm-Features: AZwV_QjPgyCm0eAFeh7uwGSOqZkDBjFgaq7olGwzQXizo2TroZDfCBo5zqXJ1z4
+Message-ID: <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com, 
+	krisman@suse.de, bernd@bsbernd.com, hch@infradead.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12170-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.dk];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12171-lists,io-uring=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9943312700D
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 2D237127F59
 X-Rspamd-Action: no action
 
-Add a simple io_uring BPF selftest, where the BPF program implemented in
-basic.bpf.c executes a given number of NOP requests with QD=1, writes
-some stats and returns back. The makefile is borrowed from sched_ext
-tests.
+On Wed, Feb 11, 2026 at 4:01=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 2/10/26 19:39, Joanne Koong wrote:
+> > On Tue, Feb 10, 2026 at 8:34=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
+ail.com> wrote:
+> ...
+> >>> -/* argument for IORING_(UN)REGISTER_PBUF_RING */
+> >>> +/* argument for IORING_(UN)REGISTER_PBUF_RING and
+> >>> + * IORING_(UN)REGISTER_KMBUF_RING
+> >>> + */
+> >>>    struct io_uring_buf_reg {
+> >>> -     __u64   ring_addr;
+> >>> +     union {
+> >>> +             /* used for pbuf rings */
+> >>> +             __u64   ring_addr;
+> >>> +             /* used for kmbuf rings */
+> >>> +             __u32   buf_size;
+> >>
+> >> If you're creating a region, there should be no reason why it
+> >> can't work with user passed memory. You're fencing yourself off
+> >> optimisations that are already there like huge pages.
+> >
+> > Are there any optimizations with user-allocated buffers that wouldn't
+> > be possible with kernel-allocated buffers? For huge pages, can't the
+> > kernel do this as well (eg I see in io_mem_alloc_compound(), it calls
+> > into alloc_pages() with order > 0)?
+>
+> Yes, there is handful of differences. To name one, 1MB allocation won't
+> get you a PMD mappable huge page, while user space can allocate 2MB,
+> register the first 1MB and reuse the rest for other purposes.
+>
+> >>> +     };
+> >>>        __u32   ring_entries;
+> >>>        __u16   bgid;
+> >>>        __u16   flags;
+> >>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> >>> index aa9b70b72db4..9bc36451d083 100644
+> >>> --- a/io_uring/kbuf.c
+> >>> +++ b/io_uring/kbuf.c
+> >> ...
+> >>> +static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
+> >>> +                            struct io_buffer_list *bl,
+> >>> +                            struct io_uring_buf_reg *reg)
+> >>> +{
+> >>> +     struct io_uring_buf_ring *ring;
+> >>> +     unsigned long ring_size;
+> >>> +     void *buf_region;
+> >>> +     unsigned int i;
+> >>> +     int ret;
+> >>> +
+> >>> +     /* allocate pages for the ring structure */
+> >>> +     ring_size =3D flex_array_size(ring, bufs, bl->nr_entries);
+> >>> +     ring =3D kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
+> >>> +     if (!ring)
+> >>> +             return -ENOMEM;
+> >>> +
+> >>> +     ret =3D io_create_region_multi_buf(ctx, &bl->region, bl->nr_ent=
+ries,
+> >>> +                                      reg->buf_size);
+> >>
+> >> Please use io_create_region(), the new function does nothing new
+> >> and only violates abstractions.
+> >
+> > There's separate checks needed between io_create_region() and
+> > io_create_region_multi_buf() (eg IORING_MEM_REGION_TYPE_USER flag
+>
+> If io_create_region() is too strict, let's discuss that in
+> examples if there are any, but it's likely not a good idea changing
+> that. If it's too lax, filter arguments in the caller. IOW, don't
+> pass IORING_MEM_REGION_TYPE_USER if it's not used.
+>
+> > checking) and different allocation calls (eg
+> > io_region_allocate_pages() vs io_region_allocate_pages_multi_buf()).
+>
+> I saw that and saying that all memmap.c changes can get dropped.
+> You're using it as one big virtually contig kernel memory range then
+> chunked into buffers, and that's pretty much what you're getting with
+> normal io_create_region(). I get that you only need it to be
+> contiguous within a single buffer, but that's not what you're doing,
+> and it'll be only worse than default io_create_region() e.g.
+> effectively disabling any usefulness of io_mem_alloc_compound(),
+> and ultimately you don't need to care.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- tools/testing/selftests/Makefile              |   3 +-
- tools/testing/selftests/io_uring/Makefile     | 162 ++++++++++++++++++
- tools/testing/selftests/io_uring/common.h     |   7 +
- .../selftests/io_uring/nops_loop.bpf.c        | 131 ++++++++++++++
- tools/testing/selftests/io_uring/nops_loop.c  | 110 ++++++++++++
- tools/testing/selftests/io_uring/unreg.bpf.c  |  26 +++
- tools/testing/selftests/io_uring/unreg.c      | 113 ++++++++++++
- 7 files changed, 551 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/io_uring/Makefile
- create mode 100644 tools/testing/selftests/io_uring/common.h
- create mode 100644 tools/testing/selftests/io_uring/nops_loop.bpf.c
- create mode 100644 tools/testing/selftests/io_uring/nops_loop.c
- create mode 100644 tools/testing/selftests/io_uring/unreg.bpf.c
- create mode 100644 tools/testing/selftests/io_uring/unreg.c
+When I originally implemented it, I had it use
+io_region_allocate_pages() but this fails because it's allocating way
+too much memory at once. For fuse's use case, each buffer is usually
+at least 1 MB if not more. Allocating the memory one buffer a time in
+io_region_allocate_pages_multi_buf() bypasses the allocation errors I
+was seeing. That's the main reason I don't think this can just use
+io_create_region().
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 56e44a98d6a5..5e965ba3697c 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -130,6 +130,7 @@ TARGETS += vfio
- TARGETS += x86
- TARGETS += x86/bugs
- TARGETS += zram
-+TARGETS += io_uring
- #Please keep the TARGETS list alphabetically sorted
- # Run "make quicktest=1 run_tests" or
- # "make quicktest=1 kselftest" from top level Makefile
-@@ -147,7 +148,7 @@ endif
- # User can optionally provide a TARGETS skiplist. By default we skip
- # targets using BPF since it has cutting edge build time dependencies
- # which require more effort to install.
--SKIP_TARGETS ?= bpf sched_ext
-+SKIP_TARGETS ?= bpf sched_ext io_uring
- ifneq ($(SKIP_TARGETS),)
- 	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
- 	override TARGETS := $(TMP)
-diff --git a/tools/testing/selftests/io_uring/Makefile b/tools/testing/selftests/io_uring/Makefile
-new file mode 100644
-index 000000000000..2b4f8d5bc5bc
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/Makefile
-@@ -0,0 +1,162 @@
-+# SPDX-License-Identifier: GPL-2.0
-+include ../../../build/Build.include
-+include ../../../scripts/Makefile.arch
-+include ../../../scripts/Makefile.include
-+
-+TEST_GEN_PROGS := unreg nops_loop
-+
-+# override lib.mk's default rules
-+OVERRIDE_TARGETS := 1
-+include ../lib.mk
-+
-+CURDIR := $(abspath .)
-+REPOROOT := $(abspath ../../../..)
-+TOOLSDIR := $(REPOROOT)/tools
-+LIBDIR := $(TOOLSDIR)/lib
-+BPFDIR := $(LIBDIR)/bpf
-+TOOLSINCDIR := $(TOOLSDIR)/include
-+BPFTOOLDIR := $(TOOLSDIR)/bpf/bpftool
-+APIDIR := $(TOOLSINCDIR)/uapi
-+GENDIR := $(REPOROOT)/include/generated
-+GENHDR := $(GENDIR)/autoconf.h
-+
-+OUTPUT_DIR := $(OUTPUT)/build
-+OBJ_DIR := $(OUTPUT_DIR)/obj
-+INCLUDE_DIR := $(OUTPUT_DIR)/include
-+BPFOBJ_DIR := $(OBJ_DIR)/libbpf
-+IOUOBJ_DIR := $(OBJ_DIR)/io_uring
-+LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
-+BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
-+
-+DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
-+HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
-+HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
-+HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
-+HOST_DESTDIR := $(OUTPUT_DIR)/host/
-+
-+VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
-+		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
-+		     ../../../../vmlinux					\
-+		     /sys/kernel/btf/vmlinux					\
-+		     /boot/vmlinux-$(shell uname -r)
-+VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
-+ifeq ($(VMLINUX_BTF),)
-+$(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
-+endif
-+
-+BPFTOOL ?= $(DEFAULT_BPFTOOL)
-+
-+ifneq ($(wildcard $(GENHDR)),)
-+  GENFLAGS := -DHAVE_GENHDR
-+endif
-+
-+CFLAGS += -g -O2 -rdynamic -pthread -Wall -Werror $(GENFLAGS)			\
-+	  -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)				\
-+	  -I$(TOOLSINCDIR) -I$(APIDIR) -I$(CURDIR)/include
-+
-+# Silence some warnings when compiled with clang
-+ifneq ($(LLVM),)
-+CFLAGS += -Wno-unused-command-line-argument
-+endif
-+
-+LDFLAGS = -lelf -lz -lpthread -lzstd
-+
-+IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
-+			grep 'define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__')
-+
-+# Get Clang's default includes on this system, as opposed to those seen by
-+# '-target bpf'. This fixes "missing" files on some architectures/distros,
-+# such as asm/byteorder.h, asm/socket.h, asm/sockios.h, sys/cdefs.h etc.
-+#
-+# Use '-idirafter': Don't interfere with include mechanics except where the
-+# build would have failed anyways.
-+define get_sys_includes
-+$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
-+	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
-+$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
-+endef
-+
-+ifneq ($(CROSS_COMPILE),)
-+CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
-+endif
-+
-+CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
-+
-+BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
-+	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
-+	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
-+	     -I$(INCLUDE_DIR) -I$(APIDIR) 	\
-+	     -I$(REPOROOT)/include						\
-+	     $(CLANG_SYS_INCLUDES) 						\
-+	     -Wall -Wno-compare-distinct-pointer-types				\
-+	     -Wno-incompatible-function-pointer-types				\
-+	     -O2 -mcpu=v3
-+
-+# sort removes libbpf duplicates when not cross-building
-+MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
-+	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
-+	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(IOUOBJ_DIR))
-+
-+$(MAKE_DIRS):
-+	$(call msg,MKDIR,,$@)
-+	$(Q)mkdir -p $@
-+
-+$(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
-+	   $(APIDIR)/linux/bpf.h						\
-+	   | $(OBJ_DIR)/libbpf
-+	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/	\
-+		    ARCH=$(ARCH) CC="$(CC)" CROSS_COMPILE=$(CROSS_COMPILE)	\
-+		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
-+		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
-+
-+$(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
-+		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
-+	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
-+		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
-+		    EXTRA_CFLAGS='-g -O0'					\
-+		    OUTPUT=$(HOST_OBJ_DIR)/					\
-+		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
-+		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
-+		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
-+
-+$(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
-+ifeq ($(VMLINUX_H),)
-+	$(call msg,GEN,,$@)
-+	$(Q)$(BPFTOOL) btf dump file $(VMLINUX_BTF) format c > $@
-+else
-+	$(call msg,CP,,$@)
-+	$(Q)cp "$(VMLINUX_H)" $@
-+endif
-+
-+$(IOUOBJ_DIR)/%.bpf.o: %.bpf.c $(INCLUDE_DIR)/vmlinux.h | $(BPFOBJ) $(IOUOBJ_DIR)
-+	$(call msg,CLNG-BPF,,$(notdir $@))
-+	$(Q)$(CLANG) $(BPF_CFLAGS) -target bpf -c $< -o $@
-+
-+$(INCLUDE_DIR)/%.bpf.skel.h: $(IOUOBJ_DIR)/%.bpf.o $(INCLUDE_DIR)/vmlinux.h $(BPFTOOL) | $(INCLUDE_DIR)
-+	$(eval sched=$(notdir $@))
-+	$(call msg,GEN-SKEL,,$(sched))
-+	$(Q)$(BPFTOOL) gen object $(<:.o=.linked1.o) $<
-+	$(Q)$(BPFTOOL) gen object $(<:.o=.linked2.o) $(<:.o=.linked1.o)
-+	$(Q)$(BPFTOOL) gen object $(<:.o=.linked3.o) $(<:.o=.linked2.o)
-+	$(Q)diff $(<:.o=.linked2.o) $(<:.o=.linked3.o)
-+	$(Q)$(BPFTOOL) gen skeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $@
-+	$(Q)$(BPFTOOL) gen subskeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $(@:.skel.h=.subskel.h)
-+
-+override define CLEAN
-+	rm -rf $(OUTPUT_DIR)
-+	rm -f $(TEST_GEN_PROGS)
-+endef
-+
-+all_test_bpfprogs := $(foreach prog,$(wildcard *.bpf.c),$(INCLUDE_DIR)/$(patsubst %.c,%.skel.h,$(prog)))
-+
-+$(OUTPUT)/%: $(IOUOBJ_DIR)/%.o $(BPFOBJ)
-+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-+
-+$(IOUOBJ_DIR)/%.o: %.c $(all_test_bpfprogs) | $(IOUOBJ_DIR) $(BPFOBJ)
-+	$(CC) $(CFLAGS) -c $< -o $@
-+
-+.DEFAULT_GOAL := all
-+
-+.DELETE_ON_ERROR:
-+
-+.SECONDARY:
-diff --git a/tools/testing/selftests/io_uring/common.h b/tools/testing/selftests/io_uring/common.h
-new file mode 100644
-index 000000000000..9e726ca72d0c
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/common.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#define CQ_ENTRIES 8
-+#define SQ_ENTRIES 8
-+
-+#define SLOT_RES	0
-+#define SLOT_NR_CQES	1
-+#define SLOT_NR_SQES	2
-diff --git a/tools/testing/selftests/io_uring/nops_loop.bpf.c b/tools/testing/selftests/io_uring/nops_loop.bpf.c
-new file mode 100644
-index 000000000000..7bec9de54c7b
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/nops_loop.bpf.c
-@@ -0,0 +1,131 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/types.h>
-+#include <linux/stddef.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "vmlinux.h"
-+#include "common.h"
-+
-+char LICENSE[] SEC("license") = "Dual BSD/GPL";
-+
-+#define REQ_TOKEN 0xabba1741
-+
-+const unsigned max_inflight = 8;
-+const volatile unsigned cq_hdr_offset;
-+const volatile unsigned sq_hdr_offset;
-+const volatile unsigned cqes_offset;
-+
-+int reqs_to_run;
-+unsigned inflight;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 3);
-+	__type(key, u32);
-+	__type(value, s64);
-+} res_map SEC(".maps");
-+
-+#define t_min(a, b) ((a) < (b) ? (a) : (b))
-+
-+static inline void set_cq_wait(struct iou_loop_params *lp,
-+			       struct io_uring *cq_hdr, unsigned to_wait)
-+{
-+	lp->cq_wait_idx = cq_hdr->head + to_wait;
-+}
-+
-+static inline void write_result(int res)
-+{
-+	u32 key = SLOT_RES;
-+	u64 *val;
-+
-+	val = bpf_map_lookup_elem(&res_map, &key);
-+	if (val)
-+		*val = res;
-+}
-+
-+static inline void write_stats(int idx, unsigned int v)
-+{
-+	u32 key = idx;
-+	u64 *val;
-+
-+	val = bpf_map_lookup_elem(&res_map, &key);
-+	if (val)
-+		*val += v;
-+}
-+
-+SEC("struct_ops.s/link_loop")
-+int BPF_PROG(link_loop, struct io_ring_ctx *ring, struct iou_loop_params *ls)
-+{
-+	struct io_uring *sq_hdr, *cq_hdr;
-+	struct io_uring_sqe *sqes;
-+	struct io_uring_cqe *cqes;
-+	void *rings;
-+	int ret;
-+
-+	sqes = (void *)bpf_io_uring_get_region(ring, IOU_REGION_SQ,
-+				SQ_ENTRIES * sizeof(struct io_uring_sqe));
-+	rings = (void *)bpf_io_uring_get_region(ring, IOU_REGION_CQ,
-+				cqes_offset + CQ_ENTRIES * sizeof(struct io_uring_cqe));
-+	if (!rings || !sqes) {
-+		write_result(-1);
-+		return IOU_LOOP_STOP;
-+	}
-+
-+	sq_hdr = rings + (sq_hdr_offset & 63);
-+	cq_hdr = rings + (cq_hdr_offset & 63);
-+	cqes = rings + cqes_offset;
-+
-+	unsigned to_wait = cq_hdr->tail - cq_hdr->head;
-+	to_wait = t_min(to_wait, CQ_ENTRIES);
-+	for (int i = 0; i < to_wait; i++) {
-+		struct io_uring_cqe *cqe = &cqes[cq_hdr->head & (CQ_ENTRIES - 1)];
-+
-+		if (cqe->user_data != REQ_TOKEN) {
-+			write_result(-3);
-+			return IOU_LOOP_STOP;
-+		}
-+		cq_hdr->head++;
-+	}
-+
-+	reqs_to_run -= to_wait;
-+	inflight -= to_wait;
-+	write_stats(SLOT_NR_CQES, to_wait);
-+
-+	if (reqs_to_run <= 0) {
-+		write_result(1);
-+		return IOU_LOOP_STOP;
-+	}
-+
-+	if (inflight < max_inflight) {
-+		unsigned to_submit = max_inflight - inflight;
-+
-+		to_submit = t_min(to_submit, reqs_to_run);
-+
-+		for (int i = 0; i < to_submit; i++) {
-+			struct io_uring_sqe *sqe;
-+
-+			sqe = &sqes[sq_hdr->tail & (SQ_ENTRIES - 1)];
-+			*sqe = (struct io_uring_sqe){};
-+			sqe->opcode = IORING_OP_NOP;
-+			sqe->user_data = REQ_TOKEN;
-+			sq_hdr->tail++;
-+		}
-+
-+		ret = bpf_io_uring_submit_sqes(ring, to_submit);
-+		if (ret != to_submit) {
-+			write_result(-2);
-+			return IOU_LOOP_STOP;
-+		}
-+
-+		inflight += to_submit;
-+		write_stats(SLOT_NR_SQES, to_submit);
-+	}
-+
-+	set_cq_wait(ls, cq_hdr, 1);
-+	return IOU_LOOP_CONTINUE;
-+}
-+
-+SEC(".struct_ops.link")
-+struct io_uring_bpf_ops nops_loop_ops = {
-+	.loop_step = (void *)link_loop,
-+};
-diff --git a/tools/testing/selftests/io_uring/nops_loop.c b/tools/testing/selftests/io_uring/nops_loop.c
-new file mode 100644
-index 000000000000..cd93851c37db
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/nops_loop.c
-@@ -0,0 +1,110 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/stddef.h>
-+#include <errno.h>
-+#include <signal.h>
-+#include <stdlib.h>
-+
-+#include <bpf/libbpf.h>
-+#include <io_uring/mini_liburing.h>
-+
-+#include "nops_loop.bpf.skel.h"
-+#include "common.h"
-+
-+static struct io_uring_params params;
-+static struct nops_loop *skel;
-+static struct bpf_link *nops_loop_link;
-+
-+#define NR_ITERS 1000
-+
-+static void setup_ring(struct io_uring *ring)
-+{
-+	int ret;
-+
-+	memset(&params, 0, sizeof(params));
-+	params.cq_entries = CQ_ENTRIES;
-+	params.flags = IORING_SETUP_SINGLE_ISSUER |
-+			IORING_SETUP_DEFER_TASKRUN |
-+			IORING_SETUP_NO_SQARRAY |
-+			IORING_SETUP_CQSIZE;
-+
-+	ret = io_uring_queue_init_params(SQ_ENTRIES, ring, &params);
-+	if (ret) {
-+		fprintf(stderr, "ring init failed\n");
-+		exit(1);
-+	}
-+}
-+
-+static void setup_bpf_ops(struct io_uring *ring)
-+{
-+	int ret;
-+
-+	skel = nops_loop__open();
-+	if (!skel) {
-+		fprintf(stderr, "can't generate skeleton\n");
-+		exit(1);
-+	}
-+
-+	skel->struct_ops.nops_loop_ops->ring_fd = ring->ring_fd;
-+	skel->bss->reqs_to_run = NR_ITERS;
-+	skel->rodata->sq_hdr_offset = params.sq_off.head;
-+	skel->rodata->cq_hdr_offset = params.cq_off.head;
-+	skel->rodata->cqes_offset = params.cq_off.cqes;
-+
-+	ret = nops_loop__load(skel);
-+	if (ret) {
-+		fprintf(stderr, "failed to load skeleton\n");
-+		exit(1);
-+	}
-+
-+	nops_loop_link = bpf_map__attach_struct_ops(skel->maps.nops_loop_ops);
-+	if (!nops_loop_link) {
-+		fprintf(stderr, "failed to attach ops\n");
-+		exit(1);
-+	}
-+}
-+
-+static void run_ring(struct io_uring *ring)
-+{
-+	__s64 res[3] = {};
-+	int i, ret;
-+
-+	ret = io_uring_enter(ring->ring_fd, 0, 0, IORING_ENTER_GETEVENTS, NULL);
-+	if (ret) {
-+		fprintf(stderr, "run failed\n");
-+		exit(1);
-+	}
-+
-+	for (i = 0; i < 3; i++) {
-+		__u32 key = i;
-+
-+		ret = bpf_map__lookup_elem(skel->maps.res_map,
-+					&key, sizeof(key),
-+					&res[i], sizeof(res[i]), 0);
-+		if (ret)
-+			fprintf(stderr, "can't read map idx %i: %i\n", i, ret);
-+	}
-+
-+	if (res[SLOT_RES] != 1)
-+		fprintf(stderr, "run failed: %i\n", (int)res[SLOT_RES]);
-+	if (res[SLOT_NR_CQES] != NR_ITERS)
-+		fprintf(stderr, "unexpected number of CQEs: %i\n",
-+			(int)res[SLOT_NR_CQES]);
-+	if (res[SLOT_NR_SQES] != NR_ITERS)
-+		fprintf(stderr, "unexpected submitted number: %i\n",
-+			(int)res[SLOT_NR_SQES]);
-+}
-+
-+int main()
-+{
-+	struct io_uring ring;
-+
-+	setup_ring(&ring);
-+	setup_bpf_ops(&ring);
-+
-+	run_ring(&ring);
-+
-+	bpf_link__destroy(nops_loop_link);
-+	nops_loop__destroy(skel);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/io_uring/unreg.bpf.c b/tools/testing/selftests/io_uring/unreg.bpf.c
-new file mode 100644
-index 000000000000..01e836af506d
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/unreg.bpf.c
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/types.h>
-+#include <linux/stddef.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "vmlinux.h"
-+#include "common.h"
-+
-+char LICENSE[] SEC("license") = "Dual BSD/GPL";
-+
-+SEC("struct_ops.s/dummy")
-+int BPF_PROG(dummy, struct io_ring_ctx *ring, struct iou_loop_params *ls)
-+{
-+	struct io_uring_sqe *sqes;
-+
-+	sqes = (void *)bpf_io_uring_get_region(ring, IOU_REGION_SQ,
-+						sizeof(struct io_uring_sqe));
-+	if (sqes)
-+		sqes->user_data++;
-+	return IOU_LOOP_STOP;
-+}
-+
-+SEC(".struct_ops.link")
-+struct io_uring_bpf_ops unreg_ops = {
-+	.loop_step = (void *)dummy,
-+};
-diff --git a/tools/testing/selftests/io_uring/unreg.c b/tools/testing/selftests/io_uring/unreg.c
-new file mode 100644
-index 000000000000..b0e75e671a5c
---- /dev/null
-+++ b/tools/testing/selftests/io_uring/unreg.c
-@@ -0,0 +1,113 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/stddef.h>
-+#include <errno.h>
-+#include <signal.h>
-+#include <stdlib.h>
-+
-+#include <bpf/libbpf.h>
-+#include <io_uring/mini_liburing.h>
-+
-+#include "unreg.bpf.skel.h"
-+#include "common.h"
-+
-+static void setup_ring(struct io_uring *ring)
-+{
-+	struct io_uring_params params;
-+	int ret;
-+
-+	memset(&params, 0, sizeof(params));
-+	params.cq_entries = CQ_ENTRIES;
-+	params.flags = IORING_SETUP_SINGLE_ISSUER |
-+			IORING_SETUP_DEFER_TASKRUN |
-+			IORING_SETUP_NO_SQARRAY |
-+			IORING_SETUP_CQSIZE;
-+
-+	ret = io_uring_queue_init_params(SQ_ENTRIES, ring, &params);
-+	if (ret) {
-+		fprintf(stderr, "ring init failed\n");
-+		exit(1);
-+	}
-+}
-+
-+static struct unreg *load_unreg(struct io_uring *ring)
-+{
-+	struct unreg *skel;
-+	int ret;
-+
-+	skel = unreg__open();
-+	if (!skel) {
-+		fprintf(stderr, "can't generate skeleton\n");
-+		exit(1);
-+	}
-+
-+	skel->struct_ops.unreg_ops->ring_fd = ring->ring_fd;
-+
-+	ret = unreg__load(skel);
-+	if (ret) {
-+		fprintf(stderr, "failed to load skeleton\n");
-+		exit(1);
-+	}
-+
-+	return skel;
-+}
-+
-+static void run_ring(struct io_uring *ring)
-+{
-+	io_uring_enter(ring->ring_fd, 0, 0, IORING_ENTER_GETEVENTS, NULL);
-+}
-+
-+int main()
-+{
-+	struct bpf_link *link1, *link2;
-+	struct unreg *skel1, *skel2;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring ring;
-+
-+	setup_ring(&ring);
-+	sqe = &ring.sq.sqes[0];
-+	sqe->user_data = 0;
-+
-+	skel1 = load_unreg(&ring);
-+	skel2 = load_unreg(&ring);
-+
-+	link1 = bpf_map__attach_struct_ops(skel1->maps.unreg_ops);
-+	if (!link1) {
-+		fprintf(stderr, "failed to attach ops\n");
-+		return 1;
-+	}
-+
-+	run_ring(&ring);
-+	if (sqe->user_data != 1) {
-+		fprintf(stderr, "failed to run BPF\n");
-+		return 1;
-+	}
-+
-+	/* remove the program and give the kernel time to actually destroy it */
-+	bpf_link__destroy(link1);
-+	unreg__destroy(skel1);
-+	sleep(1);
-+
-+	run_ring(&ring);
-+	if (sqe->user_data != 1) {
-+		fprintf(stderr, "Executed removed BPF\n");
-+		return 1;
-+	}
-+
-+	/* try to attach another program */
-+	link2 = bpf_map__attach_struct_ops(skel2->maps.unreg_ops);
-+	if (!link2) {
-+		fprintf(stderr, "failed to reattach ops\n");
-+		return 1;
-+	}
-+
-+	run_ring(&ring);
-+	if (sqe->user_data != 2) {
-+		fprintf(stderr, "failed to run reattached BPF\n");
-+		return 1;
-+	}
-+
-+	bpf_link__destroy(link2);
-+	unreg__destroy(skel2);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
--- 
-2.52.0
+>
+> Regions shouldn't know anything about your buffers, how it's
+> subdivided after, etc.
+>
+> > Maybe I'm misinterpreting your comment (or the code), but I'm not
+> > seeing how this can just use io_create_region().
+>
+> struct io_uring_region_desc rd =3D {};
+> total_size =3D nr_bufs * buf_size;
+> rd.size =3D PAGE_ALIGN(total_size);
+> io_create_region(&region, &rd);
+>
+> Add something like this for user provided memory:
+>
+> if (use_user_memory) {
+>         rd.user_addr =3D uaddr;
+>         rd.flags |=3D IORING_MEM_REGION_TYPE_USER;
+> }
+>
+>
+> >> Provided buffer rings with kernel addresses could be an interesting
+> >> abstraction, but why is it also responsible for allocating buffers?
+> >
+> > Conceptually, I think it makes the interface and lifecycle management
+> > simpler/cleaner. With registering it from userspace, imo there's
+> > additional complications with no tangible benefits, eg it's not
+> > guaranteed that the memory regions registered for the buffers are the
+> > same size, with allocating it from the kernel-side we can guarantee
+> > that the pages are allocated physically contiguously, userspace setup
+> > with user-allocated buffers is less straightforward, etc. In general,
+> > I'm just not really seeing what advantages there are in allocating the
+> > buffers from userspace. Could you elaborate on that part more?
+>
+> I don't think I follow. I'm saying that it might be interesting
+> to separate rings from how and with what they're populated on the
+> kernel API level, but the fuse kernel module can do the population
 
+Oh okay, from your first message I (and I think christoph too) thought
+what you were saying is that the user should be responsible for
+allocating the buffers with complete ownership over them, and then
+just pass those allocated to the kernel to use. But what you're saying
+is that just use a different way for getting the kernel to allocate
+the buffers (eg through the IORING_REGISTER_MEM_REGION interface). Am
+I reading this correctly?
+
+> and get exactly same layout as you currently have:
+>
+> int fuse_create_ring(size_t region_offset /* user space argument */) {
+>         struct io_mapped_region *mr =3D get_mem_region(ctx);
+>         // that can take full control of the ring
+>         ring =3D grab_empty_ring(io_uring_ctx);
+>
+>         size =3D nr_bufs * buf_size;
+>         if (region_offset + size > get_size(mr)) // + other validation
+>                 return error;
+>
+>         buf =3D mr_get_ptr(mr) + offset;
+>         for (i =3D 0; i < nr_bufs; i++) {
+>                 ring_push_buffer(ring, buf, buf_size);
+>                 buf +=3D buf_size;
+>         }
+> }
+>
+> fuse might not care, but with empty rings other users will get a
+> channel they can use to do IO (e.g. read requests) using their
+> kernel addresses in the future.
+>
+> >> What I'd do:
+> >>
+> >> 1. Strip buffer allocation from IORING_REGISTER_KMBUF_RING.
+> >> 2. Replace *_REGISTER_KMBUF_RING with *_REGISTER_PBUF_RING + a new fla=
+g.
+> >>      Or maybe don't expose it to the user at all and create it from
+> >>      fuse via internal API.
+> >
+> > If kmbuf rings are squashed into pbuf rings, then pbuf rings will need
+> > to support pinning. In fuse, there are some contexts where you can't
+>
+> It'd change uapi but not internals, you already piggy back it
+> on pbuf implementation and differentiate with a flag.
+>
+> It could basically be:
+>
+> if (flags & IOU_PBUF_RING_KM)
+>         bl->flags |=3D IOBL_KERNEL_MANAGED;
+>
+> Pinning can be gated on that flag as well. Pretty likely uapi
+> and internals will be a bit cleaner, but that's not a huge deal,
+> just don't see why would you roll out a separate set of uapi
+> ([un]register, offsets, etc.) when essentially it can be treated
+> as the same thing.
+
+imo, it looked cleaner as a separate api because it has different
+expectations and behaviors and squashing kmbuf into the pbuf api makes
+the pbuf api needlessly more complex. Though I guess from the
+userspace pov, liburing could have a wrapper that takes care of
+setting up the pbuf details for kernel-managed pbufs. But in my head,
+having pbufs vs. kmbufs makes it clearer what each one does vs regular
+pbufs vs. pbufs that are kernel-managed.
+
+Especially with now having kmbufs go through the ioring mem region
+interface, it makes things more confusing imo if they're combined, eg
+pbufs that are kernel-managed are created empty and then populated
+from the kernel side by whatever subsystem is using them. Right now
+there's only one mem region supported per ring, but in the future if
+there's the possibility that multiple mem regions can be registered
+(eg if userspace doesn't know upfront what mem region length they'll
+need), then we should also probably add in a region id param for the
+registration arg, which if kmbuf rings go through the pbuf ring
+registration api, is not possible to do.
+
+But I'm happy to combine the interfaces and go with your suggestion.
+I'll make this change for v2 unless someone else objects.
+
+>
+> > grab the uring mutex because you're running in atomic context and this
+> > can be encountered while recycling the buffer. I originally had a
+> > patch adding pinning to pbuf rings (to mitigate the overhead of
+> > registered buffers lookups)
+>
+> IIRC, you was pinning the registered buffer table and not provided
+
+Yeah, you're right I misremembered and the objections / patch I
+dropped was pinning the registered buffer table, not the pbuf ring
+
+> buffer rings? Which would indeed be a bad idea. Thinking about it,
+> fwiw, instead of creating multiple registered buffers and trying to
+> lock the entire table, you could've kept all memory in one larger
+> registered buffer and pinned only it. It's already refcounted, so
+> shouldn't have been much of a problem.
+
+Hmm, I'm not sure this idea would work for sparse buffers populated by
+the kernel, unless those are automatically pinned too but then from
+the user POV for unregistration they'd need to unregister buffers
+individually instead of just calling IORING_UNREGISTER_BUFFERS but it
+might be annoying for them to now need to know which buffers are
+pinned vs not. When i benchmarked the fuse code with vs without pinned
+registered buffers, it didn't seem to make much of a difference
+performance-wise thankfully, so I just dropped it.
+
+>
+> > but dropped it when Jens and Caleb didn't
+> > like the idea. But for kmbuf rings, pinning will be necessary for
+> > fuse.
+> >
+> >> 3. Require the user to register a memory region of appropriate size,
+> >>      see IORING_REGISTER_MEM_REGION, ctx->param_region. Make fuse
+> >>      populating the buffer ring using the memory region.
+>
+> To explain why, I don't think that creating many small regions
+> is a good direction going forward. In case of kernel allocation,
+> it's extra mmap()s, extra user space management, and wasted space.
+
+To clarify, is this in reply to why the individual buffers shouldn't
+be allocated separately by the kernel?
+I added a comment about this above in the discussion about
+io_region_allocate_pages_multi_buf(), and if the memory allocation
+issue I was seeing is bypassable and the region can be allocated all
+at once, I'm happy to make that change. With having the allocation be
+separate buffers though, I'm not sure I agree that there are extra
+mmaps / userspace management. All the pages across the buffers are
+vmapped together and the userspace just needs to do 1 mmap call for
+them. On the userspace side, I don't think there's more management
+since the mmapped address represents the range across all the buffers.
+I'm not seeing how there's wasted space either since the only
+requirement is that the buffer size is page aligned. I think also
+there's a higher chance of the entire buffer region being physically
+contiguous if each buffer is allocated separately vs. all the buffers
+are allocated as 1 region. I don't feel strongly about this either way
+and I'm happy to allocate the entire region at once if that's
+possible.
+
+> For user provided memory it's over-accounting and extra memory
+> footprint. It'll also give you better lifecycle guarantees, i.e.
+
+Just out of curiosity, could you elaborate on the over-accounting and
+extra memory footprint? I was under the impression it would be the
+same since the accounting gets adjusted by the total bytes allocated?
+For the extra memory footprint, is the extra footprint from the
+metadata to describe each buffer region, or are you referring to
+something else?
+
+> you won't be able to free buffers while there are requests for the
+> context. I'm not so sure about ring bound memory, let's say I have
+> my suspicions, and you'd need to be extra careful about buffer
+> lifetimes even after a fuse instance dies.
+>
+> >> I wanted to make regions shareable anyway (need it for other purposes)=
+,
+> >> I can toss patches for that tomorrow.
+> >>
+> >> A separate question is whether extending buffer rings is the right
+> >> approach as it seems like you're only using it for fuse requests and
+> >> not for passing buffers to normal requests, but I don't see the
+> >
+> > What are 'normal requests'? For fuse's use case, there are only fuse re=
+quests.
+>
+> Any kind of read/recv/etc. that can use provided buffers. It's
+> where kernel memory filled rings would shine, as you'd be able
+> to use them together without changing any opcode specific code.
+> I.e. not changes in read request implementation, only kbuf.c
+>
+
+Thanks for your input on the series. To iterate / sum up, these are
+changes for v2 I'll be making:
+- api-wise from userspace/liburing: get rid of KMBUF_RING api
+interface and have users go through PBUF_RING api instead with a flag
+indicating the ring is kernel-managed
+- have kernel buffer allocation go through IORING_REGISTER_MEM_REGION
+instead, which means when the pbuf ring is created and the
+kernel-managed flag is set, the ring will be empty. The memory region
+will need to be registered before the mmap call to the ring fd.
+- add apis for subsystems to populate a kernel-managed buffer ring
+with addresses from the registered mem region
+
+Does this align with your understanding of the conversation as well or
+is there anything I'm missing?
+
+And Christoph, do these changes for v2 work for your use case as well?
+
+Thanks,
+Joanne
+> --
+> Pavel Begunkov
+>
 

@@ -1,344 +1,308 @@
-Return-Path: <io-uring+bounces-12148-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12149-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cPL0L8FvjGlmngAAu9opvQ
-	(envelope-from <io-uring+bounces-12148-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:02:09 +0100
+	id UK70DIp3jGktpAAAu9opvQ
+	(envelope-from <io-uring+bounces-12149-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:35:22 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2431240BA
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:02:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A88012458F
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 13D8930107F5
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 12:01:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C250E308E520
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FCA30C606;
-	Wed, 11 Feb 2026 12:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430261C84BD;
+	Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKPUqg4k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n57PjagU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2764318EDA
-	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 12:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7D7194AD7;
+	Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770811301; cv=none; b=ZA1N7Hb/8wvBCxnrhVtik0Spe7/qhik7/l9gIRFfPtw48ZLBpXM2iVAt62OmbO/yZudeA1vwz66d/Gptt2pZgwZ1Is0PbcU/1IyNYIR+NwhFojvK1ehxAJ0FPk5YIrsOKStaybm+od5K+SDZG9PgERzu3Ghzrym6AQgr66Ema/8=
+	t=1770813144; cv=none; b=Ly/8Jjww/yF6hgiTFAioP0VdlNt3Rz1yR5kNJ7XAmP6Zal6955v8m+7R7FQbL7eEQUuQDeGj57kluZNyMsTmnIFeWDB1+iPouKwchna3XEquB1kF0U31SQrZUTKwqUg70x8HGAKTCsIFFKjIh37isRxgwXLpfQ5sIigGTI0zHj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770811301; c=relaxed/simple;
-	bh=HUIjgRr8pyUlGBYxv3kHRQuhqqEiXYOKBDCFk6t3bh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EIJlHVYjz5wrJvWDrmvPyi/QLAGWp4ZEhVUwPZyr+sJg0FrlNIrjFNVHyGf8eFrL7rxgUjhcXosuHexTVQujfcYGXjiP/2Kmu67wgs/eKHr7s7sNMBSWDW2UsIofwkJbCGwdELspgDfGgaJnoh/OQJO7wNFdQjbQF0Ne8AXlz2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKPUqg4k; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4801bc32725so39357905e9.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 04:01:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770811298; x=1771416098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zkPWn0/4hwFjUwyAg6nWUt//DXDat9TtbbMZeyvNbgE=;
-        b=VKPUqg4kq1lVED+wvqMSZ9u7QDw0Y9INAivWPT7QdhJ72c0o3QmIAmadKwEnoT5XS4
-         2lVpPMjZJt9OyU3DM1AGb8dJkuomUll+KxcDxusxb9ZYbLpAlCS8FuP5ijvmT/s/tEhp
-         Rtq3f0qxm+GST+g/HopfWE51mX+sdEe2zwig30Yvb6Zx/vt9LuwmKKlb1KkcQds8gpqO
-         J3s9RPoY9Jqsw0EBsKsoPoDdCyCOuNWWP85s2VPRyNMPJLBrx4yVfdvZA4FNMS0dTLD1
-         sXdapdCI7hvXXRDTTK9OtM60kS107bZWXN503LeiUJpiOMfh5sOMbnJWl9ZuzzNfwqZg
-         traw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770811298; x=1771416098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zkPWn0/4hwFjUwyAg6nWUt//DXDat9TtbbMZeyvNbgE=;
-        b=iTBhCrHq14chV/E0izLyxf+RNcOMc02bjIZs7q2FUyFm35r3VbvI/byvLWnMTO0NFp
-         ju+Z+6X5f6Phbxf5ZwC4SIobaJVT8dxOSh0Ie6evYpHU0x7eU7Goq1OslqcDGdnkrkkr
-         hoQBCh+UEpmd2aBprHPG12IAoIfUpD5QP0JHsmseoapsl9S2gy++lgyT/MS+HEKvD0as
-         IJaUlH+5Y+XxYCeeE52sZeMaStcKEAv3LwJ2RepaLS8T1Gmdt31N2AQoAgujyTMk9gem
-         ycdGYKQJpDzZruBQ41z4OuAguD005HipmqFvooyolUgMTCaOy7Ok6eczIOqjNUnQ5D+O
-         ATrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa+4uXRcMgo0/d7OX5t9LjoF9nAuKEK2ZVunGsQzHnfDPwMg7XKydm4JFSvVVZ6wgI5sG6IU6c7Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL/pc6LkHh8oVck93IMal3X4Dt32T5w3Sx2mQpRfVp3lQQ3YrX
-	1RnpmsL4XAgjjoCB32BbIjzY+9KubRPd7JY1tCOLiFKIipFnJ6Ws+ZG+
-X-Gm-Gg: AZuq6aKap3VdU/FYDQWT5L3ilKOjIwcGtG0G4S92CPb73aPymord+cs0mVa0668xzqf
-	B8BlV4ch5neaxBGBbdPZXjnpXXGY+fNTZFIv4Q6zEhCAhNHWKLWxvt/UJVmY7OjDq7Ee6cxpWik
-	vY7MBnBE6IvHvrsXtY8OI3+4ZZ6NITB68qCPBtuTjQVKov/0zbcTz5NV82H2AC1H+gOb//jfYW3
-	orov0xOicS+BmXdU4DsC/C8blXw4yMTFXM1fPCJUHeM1TqtgCh7YIp81tQY01ud+IktFxycbZur
-	tpIty3gQcTX5eQHrsMRgouMAB/Np65iAC0TNZwDH/RX3+7ge8nGyfUppUVR1F6QyrcRFR7/W7Q1
-	3VGAcUb5aWoPeGGqPxGxDdQyWXYgsteGaXdjSnV3lMGeQ+0XMnJRVwW928Jvmuu25TlpjMsijZh
-	ZusfF6F/3gY8IzNLtrwvKJpFa4a3m772bxC+oTqTABrdthu3C1/6TqZE1KBPvjeDVHAT9bsZf5w
-	5sVtGu58JLxdNuHTRLGvUxjxiQGeTTrxxEEQ7/+9GDrXqL1IPgPmkKuEzk=
-X-Received: by 2002:a05:600c:444b:b0:477:7af8:c8ad with SMTP id 5b1f17b1804b1-4835b96ffa9mr32346815e9.31.1770811297778;
-        Wed, 11 Feb 2026 04:01:37 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:b997])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43783d48954sm3882529f8f.12.2026.02.11.04.01.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Feb 2026 04:01:37 -0800 (PST)
-Message-ID: <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
-Date: Wed, 11 Feb 2026 12:01:35 +0000
+	s=arc-20240116; t=1770813144; c=relaxed/simple;
+	bh=2pLNJ7tM2TgzQRNRP4gXAgPg3AnoeBzDt59KZShkz4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dfuq6KlZAjd61HruLca7bw01TlOr3ZV2Y2uYxh9Yz4WW8HovbPZXbCnXme690QwkwWVefHQ3qHH6GcVoeRSiLUowf0rCa5tWSPD+uG97588nBrmsjGPrt+Z5w8Gqc4ZN5+tqSIPWCJV8qOhiMIA8GhfkIVdBKV6XF2M2pqDJ/UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n57PjagU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53581C19421;
+	Wed, 11 Feb 2026 12:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770813144;
+	bh=2pLNJ7tM2TgzQRNRP4gXAgPg3AnoeBzDt59KZShkz4s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n57PjagUiR6YaovKaD4+uWxIUqeySoxHzCi5q09GrfKX/+1Rmx5HxWqIuVWz44Fsh
+	 bml6cUneqfF69tbQpZFyFq7lhu1t/F2JqNJDonLHdU30nP/pRY6YesdXybfJN1l9s7
+	 PI7TbpRnCp22mW7/e3T6xNadSUNvDelReSKYfZtocqRI1m7voZeTSdsmQrv/B/YPBW
+	 ixbVEjmWrc6wB5j+Tntt90n5fjuPafiC67iC+I0Z6axIGlyuufte9+AZbdBVLoW4VX
+	 +zHdXnNdM1eJMrddvcjfbSO8RaUvwBV4DWHSkbAYUHcSzHULYyun5RQVPw/NgnP/iz
+	 743DFBZWgE16Q==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	syzbot+6c48db7d94402407301e@syzkaller.appspotmail.com,
+	Sasha Levin <sashal@kernel.org>,
+	io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.19-6.18] io_uring/timeout: annotate data race in io_flush_timeouts()
+Date: Wed, 11 Feb 2026 07:30:45 -0500
+Message-ID: <20260211123112.1330287-35-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260211123112.1330287-1-sashal@kernel.org>
+References: <20260211123112.1330287-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com,
- krisman@suse.de, bernd@bsbernd.com, hch@infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com>
- <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.19
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12148-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
 	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12149-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	RSPAMD_EMAILBL_FAIL(0.00)[asmlsilence.gmail.com:query timed out];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[io-uring,6c48db7d94402407301e];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6E2431240BA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,appspotmail.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7A88012458F
 X-Rspamd-Action: no action
 
-On 2/10/26 19:39, Joanne Koong wrote:
-> On Tue, Feb 10, 2026 at 8:34 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...
->>> -/* argument for IORING_(UN)REGISTER_PBUF_RING */
->>> +/* argument for IORING_(UN)REGISTER_PBUF_RING and
->>> + * IORING_(UN)REGISTER_KMBUF_RING
->>> + */
->>>    struct io_uring_buf_reg {
->>> -     __u64   ring_addr;
->>> +     union {
->>> +             /* used for pbuf rings */
->>> +             __u64   ring_addr;
->>> +             /* used for kmbuf rings */
->>> +             __u32   buf_size;
->>
->> If you're creating a region, there should be no reason why it
->> can't work with user passed memory. You're fencing yourself off
->> optimisations that are already there like huge pages.
-> 
-> Are there any optimizations with user-allocated buffers that wouldn't
-> be possible with kernel-allocated buffers? For huge pages, can't the
-> kernel do this as well (eg I see in io_mem_alloc_compound(), it calls
-> into alloc_pages() with order > 0)?
+From: Jens Axboe <axboe@kernel.dk>
 
-Yes, there is handful of differences. To name one, 1MB allocation won't
-get you a PMD mappable huge page, while user space can allocate 2MB,
-register the first 1MB and reuse the rest for other purposes.
+[ Upstream commit 42b12cb5fd4554679bac06bbdd05dc8b643bcc42 ]
 
->>> +     };
->>>        __u32   ring_entries;
->>>        __u16   bgid;
->>>        __u16   flags;
->>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
->>> index aa9b70b72db4..9bc36451d083 100644
->>> --- a/io_uring/kbuf.c
->>> +++ b/io_uring/kbuf.c
->> ...
->>> +static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
->>> +                            struct io_buffer_list *bl,
->>> +                            struct io_uring_buf_reg *reg)
->>> +{
->>> +     struct io_uring_buf_ring *ring;
->>> +     unsigned long ring_size;
->>> +     void *buf_region;
->>> +     unsigned int i;
->>> +     int ret;
->>> +
->>> +     /* allocate pages for the ring structure */
->>> +     ring_size = flex_array_size(ring, bufs, bl->nr_entries);
->>> +     ring = kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
->>> +     if (!ring)
->>> +             return -ENOMEM;
->>> +
->>> +     ret = io_create_region_multi_buf(ctx, &bl->region, bl->nr_entries,
->>> +                                      reg->buf_size);
->>
->> Please use io_create_region(), the new function does nothing new
->> and only violates abstractions.
-> 
-> There's separate checks needed between io_create_region() and
-> io_create_region_multi_buf() (eg IORING_MEM_REGION_TYPE_USER flag
+syzbot correctly reports this as a KCSAN race, as ctx->cached_cq_tail
+should be read under ->uring_lock. This isn't immediately feasible in
+io_flush_timeouts(), but as long as we read a stable value, that should
+be good enough. If two io-wq threads compete on this value, then they
+will both end up calling io_flush_timeouts() and at least one of them
+will see the correct value.
 
-If io_create_region() is too strict, let's discuss that in
-examples if there are any, but it's likely not a good idea changing
-that. If it's too lax, filter arguments in the caller. IOW, don't
-pass IORING_MEM_REGION_TYPE_USER if it's not used.
+Reported-by: syzbot+6c48db7d94402407301e@syzkaller.appspotmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-> checking) and different allocation calls (eg
-> io_region_allocate_pages() vs io_region_allocate_pages_multi_buf()).
+LLM Generated explanations, may be completely bogus:
 
-I saw that and saying that all memmap.c changes can get dropped.
-You're using it as one big virtually contig kernel memory range then
-chunked into buffers, and that's pretty much what you're getting with
-normal io_create_region(). I get that you only need it to be
-contiguous within a single buffer, but that's not what you're doing,
-and it'll be only worse than default io_create_region() e.g.
-effectively disabling any usefulness of io_mem_alloc_compound(),
-and ultimately you don't need to care.
+Good - the commit `42b12cb5fd455` does contain the fix. The working tree
+shows the pre-fix state because HEAD (v6.19) doesn't contain this commit
+yet (it's likely in the io_uring for-next tree pending merge).
 
-Regions shouldn't know anything about your buffers, how it's
-subdivided after, etc.
+Now I have all the information needed for a comprehensive analysis.
 
-> Maybe I'm misinterpreting your comment (or the code), but I'm not
-> seeing how this can just use io_create_region().
+---
 
-struct io_uring_region_desc rd = {};
-total_size = nr_bufs * buf_size;
-rd.size = PAGE_ALIGN(total_size);
-io_create_region(&region, &rd);
+## Comprehensive Analysis
 
-Add something like this for user provided memory:
+### 1. COMMIT MESSAGE ANALYSIS
 
-if (use_user_memory) {
-	rd.user_addr = uaddr;
-	rd.flags |= IORING_MEM_REGION_TYPE_USER;
-}
+The commit subject explicitly says "**annotate** data race" — this is
+about addressing a KCSAN-reported data race on `ctx->cached_cq_tail` in
+`io_flush_timeouts()`. The author (Jens Axboe, io_uring maintainer)
+acknowledges:
 
+- syzbot correctly identifies this as a KCSAN race
+- `ctx->cached_cq_tail` should be read under `->uring_lock`, which isn't
+  feasible here
+- The fix uses `READ_ONCE()` to ensure a stable single load
+- The race is **benign**: if two io-wq threads compete, both will call
+  `io_flush_timeouts()` and at least one will see the correct value
 
->> Provided buffer rings with kernel addresses could be an interesting
->> abstraction, but why is it also responsible for allocating buffers?
-> 
-> Conceptually, I think it makes the interface and lifecycle management
-> simpler/cleaner. With registering it from userspace, imo there's
-> additional complications with no tangible benefits, eg it's not
-> guaranteed that the memory regions registered for the buffers are the
-> same size, with allocating it from the kernel-side we can guarantee
-> that the pages are allocated physically contiguously, userspace setup
-> with user-allocated buffers is less straightforward, etc. In general,
-> I'm just not really seeing what advantages there are in allocating the
-> buffers from userspace. Could you elaborate on that part more?
+Key tags: `Reported-by: syzbot` (automated fuzzer), authored by `Jens
+Axboe` (io_uring maintainer).
 
-I don't think I follow. I'm saying that it might be interesting
-to separate rings from how and with what they're populated on the
-kernel API level, but the fuse kernel module can do the population
-and get exactly same layout as you currently have:
+### 2. CODE CHANGE ANALYSIS
 
-int fuse_create_ring(size_t region_offset /* user space argument */) {
-	struct io_mapped_region *mr = get_mem_region(ctx);
-	// that can take full control of the ring
-	ring = grab_empty_ring(io_uring_ctx);
+The change is a single-line modification in `io_flush_timeouts()`:
 
-	size = nr_bufs * buf_size;
-	if (region_offset + size > get_size(mr)) // + other validation
-		return error;
+**Before:**
+```c
+seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+```
 
-	buf = mr_get_ptr(mr) + offset;
-	for (i = 0; i < nr_bufs; i++) {
-		ring_push_buffer(ring, buf, buf_size);
-		buf += buf_size;
-	}
-}
+**After:**
+```c
+seq = READ_ONCE(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
+```
 
-fuse might not care, but with empty rings other users will get a
-channel they can use to do IO (e.g. read requests) using their
-kernel addresses in the future. 	
+**The race mechanism:**
+- `cached_cq_tail` is an `unsigned int` in `struct io_ring_ctx`, in a
+  `____cacheline_aligned_in_smp` section
+- It is incremented in `io_get_cqe_overflow()` (io_uring.h:256,262) and
+  `io_skip_cqe()` (io_uring.c:756), normally under `->completion_lock`
+  or `->uring_lock`
+- `io_flush_timeouts()` is called from `__io_commit_cqring_flush()` →
+  `io_commit_cqring_flush()`, which runs from `__io_cq_unlock_post()`
+  and `io_cq_unlock_post()` — both call it **after** releasing
+  `completion_lock`
+- Without `READ_ONCE()`, the compiler could theoretically generate
+  multiple loads of `cached_cq_tail`, or cache a stale value, or
+  experience torn reads (though 32-bit aligned reads are atomic on most
+  architectures)
 
->> What I'd do:
->>
->> 1. Strip buffer allocation from IORING_REGISTER_KMBUF_RING.
->> 2. Replace *_REGISTER_KMBUF_RING with *_REGISTER_PBUF_RING + a new flag.
->>      Or maybe don't expose it to the user at all and create it from
->>      fuse via internal API.
-> 
-> If kmbuf rings are squashed into pbuf rings, then pbuf rings will need
-> to support pinning. In fuse, there are some contexts where you can't
+**What `READ_ONCE()` provides:**
+1. **Compiler barrier**: Prevents the compiler from optimizing away the
+   load, generating multiple loads, or reordering it
+2. **KCSAN annotation**: Tells KCSAN that this is an intentional racy
+   read, suppressing the warning
+3. **Single stable load guarantee**: Ensures exactly one load
+   instruction is generated
 
-It'd change uapi but not internals, you already piggy back it
-on pbuf implementation and differentiate with a flag.
+**Interesting precedent**: The same field is accessed in `io_timeout()`
+at line 615 using `data_race()` instead:
+```c
+tail = data_race(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
+```
+This was added in commit `5498bf28d8f2b` (May 2023) for the same reason.
+The choice of `READ_ONCE()` over `data_race()` is slightly stronger —
+`READ_ONCE()` guarantees a stable volatile load, while `data_race()`
+only suppresses the KCSAN warning without changing code generation.
 
-It could basically be:
+### 3. CLASSIFICATION
 
-if (flags & IOU_PBUF_RING_KM)
-	bl->flags |= IOBL_KERNEL_MANAGED;
+This is a **data race fix** (KCSAN-detected), category "race condition".
+While the commit message calls it an "annotation," it does address a
+real C-language-level data race:
+- Without `READ_ONCE()`, the code has undefined behavior per C11 memory
+  model (concurrent unsynchronized read/write of the same variable)
+- `READ_ONCE()` eliminates compiler-induced issues from this UB
 
-Pinning can be gated on that flag as well. Pretty likely uapi
-and internals will be a bit cleaner, but that's not a huge deal,
-just don't see why would you roll out a separate set of uapi
-([un]register, offsets, etc.) when essentially it can be treated
-as the same thing.
+However, the author is clear that the **observable impact is benign** —
+the worst case is one thread seeing a slightly stale `cached_cq_tail`,
+which just means some timeouts aren't flushed in this pass but will be
+flushed in the next.
 
-> grab the uring mutex because you're running in atomic context and this
-> can be encountered while recycling the buffer. I originally had a
-> patch adding pinning to pbuf rings (to mitigate the overhead of
-> registered buffers lookups) 
+### 4. SCOPE AND RISK ASSESSMENT
 
-IIRC, you was pinning the registered buffer table and not provided
-buffer rings? Which would indeed be a bad idea. Thinking about it,
-fwiw, instead of creating multiple registered buffers and trying to
-lock the entire table, you could've kept all memory in one larger
-registered buffer and pinned only it. It's already refcounted, so
-shouldn't have been much of a problem.
+- **Lines changed**: 1 (minimal)
+- **Files touched**: 1 (`io_uring/timeout.c`)
+- **Complexity**: Trivially low — just wrapping a read with
+  `READ_ONCE()`
+- **Risk of regression**: Essentially zero. `READ_ONCE()` only adds a
+  volatile qualifier to the load; it cannot change functional behavior
+- **Subsystem**: io_uring (widely used on modern systems)
 
-> but dropped it when Jens and Caleb didn't
-> like the idea. But for kmbuf rings, pinning will be necessary for
-> fuse.
-> 
->> 3. Require the user to register a memory region of appropriate size,
->>      see IORING_REGISTER_MEM_REGION, ctx->param_region. Make fuse
->>      populating the buffer ring using the memory region.
+### 5. USER IMPACT
 
-To explain why, I don't think that creating many small regions
-is a good direction going forward. In case of kernel allocation,
-it's extra mmap()s, extra user space management, and wasted space.
-For user provided memory it's over-accounting and extra memory
-footprint. It'll also give you better lifecycle guarantees, i.e.
-you won't be able to free buffers while there are requests for the
-context. I'm not so sure about ring bound memory, let's say I have
-my suspicions, and you'd need to be extra careful about buffer
-lifetimes even after a fuse instance dies.
+- **Who is affected**: Any io_uring user with timeout operations running
+  on multi-CPU systems
+- **Severity of the bug**: Very low. The race is acknowledged as benign.
+  No crash, no corruption, no security issue
+- **Observable symptoms**: KCSAN noise in kernel logs when running with
+  CONFIG_KCSAN. No user-visible functional issue
+- **Without the fix**: Users running KCSAN-enabled kernels see a data
+  race report. Theoretically, the compiler could generate suboptimal
+  code, though this is unlikely in practice for a single `unsigned int`
+  read
 
->> I wanted to make regions shareable anyway (need it for other purposes),
->> I can toss patches for that tomorrow.
->>
->> A separate question is whether extending buffer rings is the right
->> approach as it seems like you're only using it for fuse requests and
->> not for passing buffers to normal requests, but I don't see the
-> 
-> What are 'normal requests'? For fuse's use case, there are only fuse requests.
+### 6. STABILITY INDICATORS
 
-Any kind of read/recv/etc. that can use provided buffers. It's
-where kernel memory filled rings would shine, as you'd be able
-to use them together without changing any opcode specific code.
-I.e. not changes in read request implementation, only kbuf.c
+- Written by Jens Axboe (io_uring maintainer and subsystem creator)
+- The pattern is well-established — the same fix was done for
+  `io_timeout()` in 2023
+- The code path is cold (`__cold` attribute on `io_flush_timeouts`)
 
+### 7. DEPENDENCY CHECK
+
+The patch context shows `raw_spin_lock_irq(&ctx->timeout_lock)`, but
+stable trees (v6.12, v6.6, v6.1) use `spin_lock_irq(&ctx->timeout_lock)`
+because the `raw_spinlock` conversion (`020b40f356249`) hasn't been
+backported. The patch will need a trivial context adjustment (the
+surrounding `spin_lock_irq` vs `raw_spin_lock_irq` line), but the actual
+change (`READ_ONCE()` addition) has no dependencies.
+
+The affected code exists in v6.12, v6.6, and v6.1 stable trees with the
+same bug (bare `ctx->cached_cq_tail` read without annotation).
+
+### 8. VERDICT REASONING
+
+**Arguments FOR backporting:**
+- Syzbot-reported KCSAN data race — these are real bugs per the C memory
+  model
+- Fix is trivially small (one line) with zero regression risk
+- Fixes undefined behavior (concurrent unsynchronized access)
+- `READ_ONCE()` ensures compiler cannot generate problematic code
+- Precedent: The same annotation was done for `io_timeout()` in 2023
+- io_uring is widely used; this is a commonly exercised path for timeout
+  users
+- Written by subsystem maintainer
+
+**Arguments AGAINST backporting:**
+- The commit message explicitly says the race is benign ("as long as we
+  read a stable value, that should be good enough")
+- No crash, corruption, security issue, or user-visible problem
+- This is fundamentally a KCSAN annotation — it silences a sanitizer
+  warning
+- The `unsigned int` field is naturally atomic on all supported
+  architectures (no tearing)
+- The value is read once into a local variable, so compiler optimization
+  concerns are minimal
+
+**Assessment:**
+While this is a legitimate data race fix and KCSAN reports should be
+taken seriously, the commit author explicitly acknowledges this is a
+benign race with no user-visible consequences. The fix is purely about
+C-language correctness and KCSAN suppression. Stable kernels prioritize
+fixes for bugs that affect real users. This data race does not cause
+crashes, corruption, or any functional issue. The risk is zero, but the
+benefit is also minimal — mainly cleaner KCSAN output for kernel
+developers testing stable trees.
+
+This falls in the "nice to have but not necessary" category for stable.
+It's an annotation for correctness rather than a fix for a user-facing
+bug.
+
+**YES**
+
+ io_uring/timeout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index d8fbbaf31cf35..84dda24f3eb24 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -130,7 +130,7 @@ __cold void io_flush_timeouts(struct io_ring_ctx *ctx)
+ 	u32 seq;
+ 
+ 	raw_spin_lock_irq(&ctx->timeout_lock);
+-	seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
++	seq = READ_ONCE(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
+ 
+ 	list_for_each_entry_safe(timeout, tmp, &ctx->timeout_list, list) {
+ 		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
 -- 
-Pavel Begunkov
+2.51.0
 
 

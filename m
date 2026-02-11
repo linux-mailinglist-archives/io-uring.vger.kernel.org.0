@@ -1,308 +1,227 @@
-Return-Path: <io-uring+bounces-12149-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12150-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UK70DIp3jGktpAAAu9opvQ
-	(envelope-from <io-uring+bounces-12149-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:35:22 +0100
+	id oF0OOiyTjGlQrAAAu9opvQ
+	(envelope-from <io-uring+bounces-12150-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 15:33:16 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A88012458F
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 13:35:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802B512543D
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 15:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C250E308E520
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D5EC2300A8EF
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 14:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430261C84BD;
-	Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28F827F19F;
+	Wed, 11 Feb 2026 14:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n57PjagU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfJ1Z+lF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7D7194AD7;
-	Wed, 11 Feb 2026 12:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7940F279329
+	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 14:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770813144; cv=none; b=Ly/8Jjww/yF6hgiTFAioP0VdlNt3Rz1yR5kNJ7XAmP6Zal6955v8m+7R7FQbL7eEQUuQDeGj57kluZNyMsTmnIFeWDB1+iPouKwchna3XEquB1kF0U31SQrZUTKwqUg70x8HGAKTCsIFFKjIh37isRxgwXLpfQ5sIigGTI0zHj8=
+	t=1770820382; cv=none; b=fuW7CFfI38nK7HIT6P/I5ebLyB1fkM28DXJ7z9c/YbHipCQnx8O/jJWY4sAfR3pV8jaUfA0/IQrC30UvSxoFAa1f+7wzl7XpnTVYyKTV8YrnlwYqTRTqCXPlc7opwnzCNa4gy9GtnfMFNb7rZAwQQsi8WDFL3xLi36EX12id8zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770813144; c=relaxed/simple;
-	bh=2pLNJ7tM2TgzQRNRP4gXAgPg3AnoeBzDt59KZShkz4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dfuq6KlZAjd61HruLca7bw01TlOr3ZV2Y2uYxh9Yz4WW8HovbPZXbCnXme690QwkwWVefHQ3qHH6GcVoeRSiLUowf0rCa5tWSPD+uG97588nBrmsjGPrt+Z5w8Gqc4ZN5+tqSIPWCJV8qOhiMIA8GhfkIVdBKV6XF2M2pqDJ/UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n57PjagU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53581C19421;
-	Wed, 11 Feb 2026 12:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770813144;
-	bh=2pLNJ7tM2TgzQRNRP4gXAgPg3AnoeBzDt59KZShkz4s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n57PjagUiR6YaovKaD4+uWxIUqeySoxHzCi5q09GrfKX/+1Rmx5HxWqIuVWz44Fsh
-	 bml6cUneqfF69tbQpZFyFq7lhu1t/F2JqNJDonLHdU30nP/pRY6YesdXybfJN1l9s7
-	 PI7TbpRnCp22mW7/e3T6xNadSUNvDelReSKYfZtocqRI1m7voZeTSdsmQrv/B/YPBW
-	 ixbVEjmWrc6wB5j+Tntt90n5fjuPafiC67iC+I0Z6axIGlyuufte9+AZbdBVLoW4VX
-	 +zHdXnNdM1eJMrddvcjfbSO8RaUvwBV4DWHSkbAYUHcSzHULYyun5RQVPw/NgnP/iz
-	 743DFBZWgE16Q==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	syzbot+6c48db7d94402407301e@syzkaller.appspotmail.com,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-6.18] io_uring/timeout: annotate data race in io_flush_timeouts()
-Date: Wed, 11 Feb 2026 07:30:45 -0500
-Message-ID: <20260211123112.1330287-35-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260211123112.1330287-1-sashal@kernel.org>
-References: <20260211123112.1330287-1-sashal@kernel.org>
+	s=arc-20240116; t=1770820382; c=relaxed/simple;
+	bh=C/vFe3kP3KooC/TmOFBj2WXiog79aHaJOYYv/rT9B/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sRBRYsKZs9JUlR/FJzLcmQ3HIg2fCgCnDpIVBML+y+VoUiipFAlDxzhOsZiNpJ26+lIiXmdEM9uFEuaXigq3v5bm1IC/NVX0fEY8T2K+cNw6R8oW7BFCSBuzvV/iG1hK/TnC4MnPBIDXxg59d/32Csk/n5ZKy1eKFDoXtPUiZ3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfJ1Z+lF; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47ff94b46afso9676515e9.1
+        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 06:33:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770820379; x=1771425179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a+ACQbMRmW1Q78x2xp/swFKuW80lioyh00YybAUgjDI=;
+        b=MfJ1Z+lFxNU7FjGJ29H3zzZLFWu536Rfo+AfqA6HKT8Ni6D6EdREMLSJCkmi2GJ6wG
+         I8b9H6Rq56te982z3aElNG65tA5gNaNc1u0PYU0i6p1heMmNRoCwPi64vWAuu+04Kshb
+         GgP1huFHTJABmSAal2GcrJiXKJfUijCXfKGOueXYq1T7PuU3XM9fHjiSu/rqVESVVwgj
+         WpQkBx/V4jo8z4evA/yzNC7raXd7V0HAqeRMcD/6bIXuLXqGssGQaP56ZzwDWZ74whNL
+         OQrvNZ6Uia8+uyw872VdlEjZAGTq7vpEH/GoBD19NrH9l97wnVHgnT7iV1vyME1yKcK9
+         YBlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770820379; x=1771425179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a+ACQbMRmW1Q78x2xp/swFKuW80lioyh00YybAUgjDI=;
+        b=vdHcu8ktP+mJlLruT8tAOsUCsfMXErUMq7l/U8o6M4n1uiBoq1Y80Y+W1oS3V/993+
+         f6t1ByBu0l5+3VOOjHXof+bEnP8GVKEOvmevFXCowcNtoWjo44c7yYI9ytNrer9D/hY2
+         fxEhZ9sOgU7wMXJ6bOsNQgS0SK1bN65W9i+PL+tZko/D5PvED/EWxCZtxkBO+uGkdIge
+         IEhJwQXac/F5Cp/dqHennB0FSp8ffB2AZDEAmO6OEowRzX8p/7nJ12OmMxrrJHY8fLOA
+         SQPO9+3stagFBJa8a3VREr7b+IBhPoX5AjEorE+sEfqUjPkoUpM7khIuJWkY0wkViGtE
+         MgyQ==
+X-Gm-Message-State: AOJu0YwyL+gNexnKHXDhXLNGQ+McnyI1KQU23ejSpuc5zDey/azUklhA
+	ugzO0GQE3NZeoRn4GoihqVBybuqD4q3YPFWx3JpTih8fj+trtYd55aRTL6rhT8bE
+X-Gm-Gg: AZuq6aK1ZUa7V11krExiMVnWpSZuz6zalvZ8Z+qdGMbxWtFuxsSt0tY3o408A0TpfqV
+	5RbfeJJjrT/jTM92cNNXXxtAwk3wd0zOmY0ac6AFMMydVwCqvmcprPu08OonHZr7/HakZH6rbDH
+	dYdisqwDdEzJm2jbc//0tyUjcvKNjXZNEYXzNHB9UyItK1bkvRSrhYQeH7Vr8/lym0AoZHXeRek
+	bgW0LC1clwn0XTPqeUeeXASyd22S8qc/rJGESJRFyfgxd78L2O1YmPSfwjDBEPw5+ApdeErm7yD
+	n2aL5HdGuyTtzxm19BlI7/wo3o8SXHsr/KTbE4FsWt8UfXwPe5uDNlmCQI99zfldBg3ktP7omPr
+	lV5LiiQ3ZV32Jjn+rHEuDtFtiSST3K1mc6YLGsLn4zfPMLNk33CPD8tvudYTAAuVfAgZci2/9uo
+	IoZUWn8DwlfDMzuqpeq20bPVsFUDXEnrPLtn0olUwmYNpdgV3S7abmBREgrWR4dG4FFISxRG+AT
+	0v6KLHGeg==
+X-Received: by 2002:a05:600c:1548:b0:479:1348:c63e with SMTP id 5b1f17b1804b1-4835052d123mr80635675e9.9.1770820379204;
+        Wed, 11 Feb 2026 06:32:59 -0800 (PST)
+Received: from 127.com ([2620:10d:c092:600::1:b997])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43783e39c75sm4973747f8f.29.2026.02.11.06.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Feb 2026 06:32:58 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	bpf@vger.kernel.org,
+	axboe@kernel.dk,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: [PATCH io_uring-7.1 v5 0/5] BPF controlled io_uring
+Date: Wed, 11 Feb 2026 14:32:39 +0000
+Message-ID: <cover.1770818588.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.19
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12150-lists,io-uring=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.dk];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12149-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[io-uring,6c48db7d94402407301e];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,appspotmail.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7A88012458F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 802B512543D
 X-Rspamd-Action: no action
 
-From: Jens Axboe <axboe@kernel.dk>
+This series introduces a way to override the standard io_uring_enter
+syscall execution with an extendible event loop, which can be controlled
+by BPF via new io_uring struct_ops or from within the kernel.
 
-[ Upstream commit 42b12cb5fd4554679bac06bbdd05dc8b643bcc42 ]
+There are multiple use cases I want to cover with this:
 
-syzbot correctly reports this as a KCSAN race, as ctx->cached_cq_tail
-should be read under ->uring_lock. This isn't immediately feasible in
-io_flush_timeouts(), but as long as we read a stable value, that should
-be good enough. If two io-wq threads compete on this value, then they
-will both end up calling io_flush_timeouts() and at least one of them
-will see the correct value.
+- Syscall avoidance. Instead of returning to the userspace for
+  CQE processing, a part of the logic can be moved into BPF to
+  avoid excessive number of syscalls.
 
-Reported-by: syzbot+6c48db7d94402407301e@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+- Access to in-kernel io_uring resources. For example, there are
+  registered buffers that can't be directly accessed by the userspace,
+  however we can give BPF the ability to peek at them. It can be used
+  to take a look at in-buffer app level headers to decide what to do
+  with data next and issuing IO using it.
 
-LLM Generated explanations, may be completely bogus:
+- Smarter request ordering and linking. Request links are pretty
+  limited and inflexible as they can't pass information from one
+  request to another. With BPF we can peek at CQEs and memory and
+  compile a subsequent request.
 
-Good - the commit `42b12cb5fd455` does contain the fix. The working tree
-shows the pre-fix state because HEAD (v6.19) doesn't contain this commit
-yet (it's likely in the io_uring for-next tree pending merge).
+- Feature semi-deprecation. It can be used to simplify handling
+  of deprecated features by moving it into the callback out core
+  io_uring. For example, it should be trivial to simulate
+  IOSQE_IO_DRAIN. Another target could be request linking logic.
 
-Now I have all the information needed for a comprehensive analysis.
+- It can serve as a base for custom algorithms and fine tuning.
+  Often, it'd be impractical to introduce a generic feature because
+  it's either niche or requires a lot of configuration. For example,
+  there is support min-wait, however BPF can help to further fine tune
+  it by doing it in multiple steps with different number of CQEs /
+  timeouts. Another feature people were asking about is allowing
+  to over queue SQEs but make the kernel to maintain a given QD.
 
----
+- Smarter polling. Napi polling is performed only once per syscall
+  and then it switches to waiting. We can do smarter and intermix
+  polling with waiting using the hook.
 
-## Comprehensive Analysis
+It might need more specialised kfuncs in the future, but the core
+functionality is implemented with just two simple functions. One
+returns region memory, which gives BPF access to CQ/SQ/etc. And
+the second is for submitting requests. It's also given a structure
+as an argument, which is used to pass waiting parameters.
 
-### 1. COMMIT MESSAGE ANALYSIS
+It showed good numbers in a test that sequentially executes N nop
+requests, where BPF was more than twice as fast than a 2-nop
+request link implementation.
 
-The commit subject explicitly says "**annotate** data race" — this is
-about addressing a KCSAN-reported data race on `ctx->cached_cq_tail` in
-`io_flush_timeouts()`. The author (Jens Axboe, io_uring maintainer)
-acknowledges:
+I've got ideas on how the user space part while writing toy programs,
+mostly about simplifying life to BPF writers, but I want to turn it
+into something more cohesive before posting.
 
-- syzbot correctly identifies this as a KCSAN race
-- `ctx->cached_cq_tail` should be read under `->uring_lock`, which isn't
-  feasible here
-- The fix uses `READ_ONCE()` to ensure a stable single load
-- The race is **benign**: if two io-wq threads compete, both will call
-  `io_flush_timeouts()` and at least one will see the correct value
+v5: - Selftests are now using vmlinux.h
+    - Checking for unexpected loop return codes
+    - Remove KF_TRUSTED_ARGS (default)
+    - Squashed one of the patches, it's more sensible this way
 
-Key tags: `Reported-by: syzbot` (automated fuzzer), authored by `Jens
-Axboe` (io_uring maintainer).
+v4: - Separated the event loop from the normal waiting path.
+    - Improved the selftest.
 
-### 2. CODE CHANGE ANALYSIS
+v3: - Removed most of utility kfuncs and replaced it with a single
+      helper returning the ring memory.
+    - Added KF_TRUSTED_ARGS to kfuncs
+    - Fix ifdef guarding
+    - Added a selftest
+    - Adjusted the waiting loop
+    - Reused the bpf lock section for task_work execution
 
-The change is a single-line modification in `io_flush_timeouts()`:
+Pavel Begunkov (5):
+  io_uring: introduce callback driven main loop
+  io_uring/bpf-ops: implement loop_step with BPF struct_ops
+  io_uring/bpf-ops: add kfunc helpers
+  io_uring/bpf-ops: implement bpf ops registration
+  selftests/io_uring: add a bpf io_uring selftest
 
-**Before:**
-```c
-seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
-```
+ include/linux/io_uring_types.h               |  10 +
+ io_uring/Kconfig                             |   5 +
+ io_uring/Makefile                            |   3 +-
+ io_uring/bpf-ops.c                           | 271 +++++++++++++++++++
+ io_uring/bpf-ops.h                           |  28 ++
+ io_uring/io_uring.c                          |   8 +
+ io_uring/loop.c                              |  96 +++++++
+ io_uring/loop.h                              |  27 ++
+ tools/testing/selftests/Makefile             |   3 +-
+ tools/testing/selftests/io_uring/Makefile    | 162 +++++++++++
+ tools/testing/selftests/io_uring/basic.bpf.c | 131 +++++++++
+ tools/testing/selftests/io_uring/common.h    |   6 +
+ tools/testing/selftests/io_uring/runner.c    | 107 ++++++++
+ 13 files changed, 855 insertions(+), 2 deletions(-)
+ create mode 100644 io_uring/bpf-ops.c
+ create mode 100644 io_uring/bpf-ops.h
+ create mode 100644 io_uring/loop.c
+ create mode 100644 io_uring/loop.h
+ create mode 100644 tools/testing/selftests/io_uring/Makefile
+ create mode 100644 tools/testing/selftests/io_uring/basic.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/common.h
+ create mode 100644 tools/testing/selftests/io_uring/runner.c
 
-**After:**
-```c
-seq = READ_ONCE(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
-```
-
-**The race mechanism:**
-- `cached_cq_tail` is an `unsigned int` in `struct io_ring_ctx`, in a
-  `____cacheline_aligned_in_smp` section
-- It is incremented in `io_get_cqe_overflow()` (io_uring.h:256,262) and
-  `io_skip_cqe()` (io_uring.c:756), normally under `->completion_lock`
-  or `->uring_lock`
-- `io_flush_timeouts()` is called from `__io_commit_cqring_flush()` →
-  `io_commit_cqring_flush()`, which runs from `__io_cq_unlock_post()`
-  and `io_cq_unlock_post()` — both call it **after** releasing
-  `completion_lock`
-- Without `READ_ONCE()`, the compiler could theoretically generate
-  multiple loads of `cached_cq_tail`, or cache a stale value, or
-  experience torn reads (though 32-bit aligned reads are atomic on most
-  architectures)
-
-**What `READ_ONCE()` provides:**
-1. **Compiler barrier**: Prevents the compiler from optimizing away the
-   load, generating multiple loads, or reordering it
-2. **KCSAN annotation**: Tells KCSAN that this is an intentional racy
-   read, suppressing the warning
-3. **Single stable load guarantee**: Ensures exactly one load
-   instruction is generated
-
-**Interesting precedent**: The same field is accessed in `io_timeout()`
-at line 615 using `data_race()` instead:
-```c
-tail = data_race(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
-```
-This was added in commit `5498bf28d8f2b` (May 2023) for the same reason.
-The choice of `READ_ONCE()` over `data_race()` is slightly stronger —
-`READ_ONCE()` guarantees a stable volatile load, while `data_race()`
-only suppresses the KCSAN warning without changing code generation.
-
-### 3. CLASSIFICATION
-
-This is a **data race fix** (KCSAN-detected), category "race condition".
-While the commit message calls it an "annotation," it does address a
-real C-language-level data race:
-- Without `READ_ONCE()`, the code has undefined behavior per C11 memory
-  model (concurrent unsynchronized read/write of the same variable)
-- `READ_ONCE()` eliminates compiler-induced issues from this UB
-
-However, the author is clear that the **observable impact is benign** —
-the worst case is one thread seeing a slightly stale `cached_cq_tail`,
-which just means some timeouts aren't flushed in this pass but will be
-flushed in the next.
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-- **Lines changed**: 1 (minimal)
-- **Files touched**: 1 (`io_uring/timeout.c`)
-- **Complexity**: Trivially low — just wrapping a read with
-  `READ_ONCE()`
-- **Risk of regression**: Essentially zero. `READ_ONCE()` only adds a
-  volatile qualifier to the load; it cannot change functional behavior
-- **Subsystem**: io_uring (widely used on modern systems)
-
-### 5. USER IMPACT
-
-- **Who is affected**: Any io_uring user with timeout operations running
-  on multi-CPU systems
-- **Severity of the bug**: Very low. The race is acknowledged as benign.
-  No crash, no corruption, no security issue
-- **Observable symptoms**: KCSAN noise in kernel logs when running with
-  CONFIG_KCSAN. No user-visible functional issue
-- **Without the fix**: Users running KCSAN-enabled kernels see a data
-  race report. Theoretically, the compiler could generate suboptimal
-  code, though this is unlikely in practice for a single `unsigned int`
-  read
-
-### 6. STABILITY INDICATORS
-
-- Written by Jens Axboe (io_uring maintainer and subsystem creator)
-- The pattern is well-established — the same fix was done for
-  `io_timeout()` in 2023
-- The code path is cold (`__cold` attribute on `io_flush_timeouts`)
-
-### 7. DEPENDENCY CHECK
-
-The patch context shows `raw_spin_lock_irq(&ctx->timeout_lock)`, but
-stable trees (v6.12, v6.6, v6.1) use `spin_lock_irq(&ctx->timeout_lock)`
-because the `raw_spinlock` conversion (`020b40f356249`) hasn't been
-backported. The patch will need a trivial context adjustment (the
-surrounding `spin_lock_irq` vs `raw_spin_lock_irq` line), but the actual
-change (`READ_ONCE()` addition) has no dependencies.
-
-The affected code exists in v6.12, v6.6, and v6.1 stable trees with the
-same bug (bare `ctx->cached_cq_tail` read without annotation).
-
-### 8. VERDICT REASONING
-
-**Arguments FOR backporting:**
-- Syzbot-reported KCSAN data race — these are real bugs per the C memory
-  model
-- Fix is trivially small (one line) with zero regression risk
-- Fixes undefined behavior (concurrent unsynchronized access)
-- `READ_ONCE()` ensures compiler cannot generate problematic code
-- Precedent: The same annotation was done for `io_timeout()` in 2023
-- io_uring is widely used; this is a commonly exercised path for timeout
-  users
-- Written by subsystem maintainer
-
-**Arguments AGAINST backporting:**
-- The commit message explicitly says the race is benign ("as long as we
-  read a stable value, that should be good enough")
-- No crash, corruption, security issue, or user-visible problem
-- This is fundamentally a KCSAN annotation — it silences a sanitizer
-  warning
-- The `unsigned int` field is naturally atomic on all supported
-  architectures (no tearing)
-- The value is read once into a local variable, so compiler optimization
-  concerns are minimal
-
-**Assessment:**
-While this is a legitimate data race fix and KCSAN reports should be
-taken seriously, the commit author explicitly acknowledges this is a
-benign race with no user-visible consequences. The fix is purely about
-C-language correctness and KCSAN suppression. Stable kernels prioritize
-fixes for bugs that affect real users. This data race does not cause
-crashes, corruption, or any functional issue. The risk is zero, but the
-benefit is also minimal — mainly cleaner KCSAN output for kernel
-developers testing stable trees.
-
-This falls in the "nice to have but not necessary" category for stable.
-It's an annotation for correctness rather than a fix for a user-facing
-bug.
-
-**YES**
-
- io_uring/timeout.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index d8fbbaf31cf35..84dda24f3eb24 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -130,7 +130,7 @@ __cold void io_flush_timeouts(struct io_ring_ctx *ctx)
- 	u32 seq;
- 
- 	raw_spin_lock_irq(&ctx->timeout_lock);
--	seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
-+	seq = READ_ONCE(ctx->cached_cq_tail) - atomic_read(&ctx->cq_timeouts);
- 
- 	list_for_each_entry_safe(timeout, tmp, &ctx->timeout_list, list) {
- 		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
 -- 
-2.51.0
+2.52.0
 
 

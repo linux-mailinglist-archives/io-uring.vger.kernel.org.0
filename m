@@ -1,155 +1,123 @@
-Return-Path: <io-uring+bounces-12162-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12163-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oJXdDy2jjGlhrwAAu9opvQ
-	(envelope-from <io-uring+bounces-12162-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:41:33 +0100
+	id L9qzL1GkjGmgrwAAu9opvQ
+	(envelope-from <io-uring+bounces-12163-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:46:25 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABCA125C4F
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:41:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3B5125D38
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 16:46:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 44AB1301F328
-	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 15:40:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DD300300CCAC
+	for <lists+io-uring@lfdr.de>; Wed, 11 Feb 2026 15:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BBC30B519;
-	Wed, 11 Feb 2026 15:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08293318BB6;
+	Wed, 11 Feb 2026 15:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKS5w1iG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ct67Suxf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA2630B52F
-	for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 15:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E61B317701;
+	Wed, 11 Feb 2026 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770824456; cv=none; b=HvuplSAj7IYtU/FL6tP7zjjg1w9EzAtPoMkAXZZi5kpwNFuJzFJdNie0q92ZBLZTi8xkiHM1T+5BzOGGP9VI/tZKduEPGfDoxZk6v004Li92ii5j0701ky5jmC1wWWo3ChAByDLdYhKDiucsATMPeoHi/QJFkrGCCugEGK/gsc0=
+	t=1770824739; cv=none; b=WlapOVzCQ7EnVIDVktiejuDCJjssGvp4x9y+rpZs5itxkwetbqYKLmqcNDdtxqtRtpa0WfQ0BNtwzg4ARqoFK0OWcpdP9/DRqHfdWk5A3Bm8/TbGWc+m5nXfD4DKT+6QwUTTwKViTUVSXuHUB0YeyHt+fmyCt1z386QKKym8SBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770824456; c=relaxed/simple;
-	bh=gar//loSr4yv/50iCK+pDKH4gpzEImR6mB669ItJ9JY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jb5VcDwy0zZj3A7CcCjZjksiDJxR3bU8zXfQ5twIl7F6eBYriAsxfRFDMiVw5PE1IF55tVrhJ7/BjGlceEaeTm1rKk/Fn8bgzrr6xroEWHz5kdvxxESM7IheaZBDI3qmUvj9evpEekwtBUKI/OQ2fze1b03Lx7ngfJaNDwvUo64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKS5w1iG; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-48069a48629so62802655e9.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Feb 2026 07:40:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770824453; x=1771429253; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fdKarRN1NSXhH05CU/sjeG4t0zo/Q2fYiKAEmozL0tE=;
-        b=DKS5w1iG0tANc7OrknUKzYtZaEK+wslS3ZD34Jwi2JeOO3yLBmdBtV89yN/1mDSGan
-         SBI3fsi+wTotQQjIw7oDtW0I5x/v48YnRfnJ9a33m9sTV7cYAG9ZXtUcn7BIHbUVhnWL
-         XjRj7eO5k+eaLxmDTqpzJPiU9Z/sxCYssLi8TZAmicVZLkE2GO037Usl5RdmuipYakOm
-         fsITy+6oSADtPg9X+Nze6ZV4UfwAA053CPSmNsSdyS1OWsshO9UG7lcFGtvsMbeLSs5d
-         60YOVDF2VR6LPXsKVwwDIgcbx8iJJnB1ZDHl17bRyIR8XuECwcRCP7VFcBlsV1ip8SIV
-         CqJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770824453; x=1771429253;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fdKarRN1NSXhH05CU/sjeG4t0zo/Q2fYiKAEmozL0tE=;
-        b=E6Ba2+QFc5cE2XO3yP5OQewAKcsf+SnV+jwvxbqBAgeAj0nb/Qg5YIUUpD9moYGDhq
-         xHrf1J15hLYwQMpx4YXea+9jSLbdykvCuBgQCN2AscCwB/tUSPXWmNTdYJE3gaqx3Ndp
-         xXnEuM7Dy9caJfXrOO0vhZ4JWDFcNGdpX6pjZI34ABKW5YhiSMzB0gOMnz3bSBkEhNgJ
-         5CNRIBGeJN2C5KIhsAmFza5ru6q5DIDmwa/HhYfhEywaW52wzntVQ3NIFX5IQW8eoq1d
-         txE5QLH+Afh6LL+fba0OFHrpb/k30jzcZQRhZDlmaAAcLlfPXW/RRAAccaTmtu5fsdnJ
-         p5JA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Rh4Bj+rKRR2xVEjos180P0RAnFDptaOH/7q8VTKq72NDzihoqxaoJxMnhr7X4Skiwv5shKODww==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUDcBqwgmjNlaEtKFtvD97iZ0tU2luZGMnsAbavnO/6ogXHwyT
-	rOsPS4QaEY/0KBmlXcUvwe7YHLD3igN8GxsOl77efFs4MLwlkwmjRqYr
-X-Gm-Gg: AZuq6aIam1lxEn0lYNjrUnTfhu7NWKJjlQ/LP3qaIOyCOlwKUCsETRET5fliHUwLUf6
-	9VJNZqpt65P1RXr0VUvDX+YA8AGGS0Ek1eGBlvHmva9L6Q+x+3Ufi1CRVWS8cAiTwRAOZGeWHsj
-	9CBOggCVPzycL50GgBiZ0K2IdZJ4IQOdlIfYsYR4u63vBNDzOVo9yWetZXVfGQrlNtmQORqbseQ
-	HTnthEcVZsJBUFVcnuDD6CXVG5LffR6sdRyai1yOzLu0m2JVRrJJYMdKYqxR41v9U548p9GuQ4P
-	ddhbm95FmnTjLPxy2Z1JqEi4oxTthJ47NLJHgasCHMTYFaXRhsfgXYyM/P5LGANitNqc5+NE4pd
-	SshqZ1xvtm70YG6jWRkVYjwU0atwvMAlyfqJI5xDDmlRPmtyT0IZkOec7l21ixApZgoGA8Tiuje
-	PU5E+xe7PteFAJhK/pJuuc1R0rIlyHJNPjSEgPHqofuhGiyGcqIphekkTDvorsEjwnN5JL6Puc1
-	61iC7fbvgXICS1oXCRUBjgwR8YVJ+SWovj5dCxKvduEJCPWzK7aGgfWDF7sRuDeUCKHAIZ7QWKh
-	XQ==
-X-Received: by 2002:a05:600c:8587:b0:480:6941:d38c with SMTP id 5b1f17b1804b1-4835082d177mr90270985e9.29.1770824452529;
-        Wed, 11 Feb 2026 07:40:52 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835dd20519sm85013405e9.15.2026.02.11.07.40.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Feb 2026 07:40:52 -0800 (PST)
-Message-ID: <8bdb51d2-0935-41ba-bca6-c9d575c7ae99@gmail.com>
-Date: Wed, 11 Feb 2026 15:40:51 +0000
+	s=arc-20240116; t=1770824739; c=relaxed/simple;
+	bh=Vi2rVLK9jD5gt4NZfmDrB+4OmvfQhlw6kIPIVrTmh3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mm5YQc2DNpEueM//Ti12oBS1AlWu3XdyYlEG92Qf/b54x6stsXqr78CA8zULdry2EEkKtcm1Kl1le1mlHuszShJ3q6805kyL/42HvxVeZuQ8VlFtsZOa6Nz0HJdjPHNQ7OmdAAPal76HzE39XYpV4QR9d+VdP719PEPEvoT2DLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ct67Suxf; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=quchVHCEJxHoMugGym9DQDRQY2PW3QylUONV+ZucEdQ=; b=ct67SuxfQmejEHA6GQjo3xwOSk
+	0ozgeBLfcbYcWFkgGeDFl7Fot5XhEDNDmZ1GrR0k/ysBmNyaDr/u+6EBb8NotviOKEHNvbnazWFQA
+	yaEXCrt21ljw7KTPoLvissLDBJAiUPZAgiMFGASsbgbugnj31zxKOUSiG7GpU0IyxI9eGmhV3/m6N
+	YKMBKgq8eKw3x5ZJJXXxL9myM+yeAtPN7+5XAZKYoQiq+gvxhMBim14bnpCXmuafKSItQZu4vWOky
+	5IYuOxqBBK0EsflQThknHeT1UIZV8zeIk2BzotBRsEUfnL4B6OwVp1m1ekHkBKYuCT5FkNHM66xKS
+	hp91MjXw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vqCPI-00000000nzI-1v5g;
+	Wed, 11 Feb 2026 15:45:37 +0000
+Date: Wed, 11 Feb 2026 07:45:36 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk,
+	io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
+	bernd@bsbernd.com, hch@infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+Message-ID: <aYykILfX_u9-feH-@infradead.org>
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] io_uring/bpf-ops: implement bpf ops registration
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: bpf@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <cover.1770818588.git.asml.silence@gmail.com>
- <7ca5070830c022493eaf45948e146f418aceb747.1770818588.git.asml.silence@gmail.com>
- <55db7c09-5bc8-4dda-818d-53130400ee50@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <55db7c09-5bc8-4dda-818d-53130400ee50@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12163-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com,infradead.org];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12162-lists,io-uring=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8ABCA125C4F
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3B3B5125D38
 X-Rspamd-Action: no action
 
-On 2/11/26 15:21, Jens Axboe wrote:
-> On 2/11/26 7:32 AM, Pavel Begunkov wrote:
->> +static void io_eject_bpf(struct io_ring_ctx *ctx)
->> +{
->> +	struct io_uring_bpf_ops *ops = ctx->bpf_ops;
->> +
->> +	if (!WARN_ON_ONCE(!ops))
->> +		return;
+On Tue, Feb 10, 2026 at 04:34:47PM +0000, Pavel Begunkov wrote:
+> > +	union {
+> > +		/* used for pbuf rings */
+> > +		__u64	ring_addr;
+> > +		/* used for kmbuf rings */
+> > +		__u32   buf_size;
 > 
-> 	if (WARN_ON_ONCE(!ops))
-> 		return;
-> 
-> ?
+> If you're creating a region, there should be no reason why it
+> can't work with user passed memory. You're fencing yourself off
+> optimisations that are already there like huge pages.
 
-Good catch! I even lightly tested it before, but seems like
-there is a delay before the program is actually destroyed
-and you could still call the function without crashing.
-I'll add it to selftests.
+Any pages mapped to userspace can be allocated in the kernel as well.
 
--- 
-Pavel Begunkov
+And I really do like this design, because it means we can have a
+buffer ring that is only mapped read-only into userspace.  That way
+we can still do zero-copy raids if the device requires stable pages
+for checksumming or raid.  I was going to implement this as soon
+as this series lands upstream.
 
 

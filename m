@@ -1,153 +1,175 @@
-Return-Path: <io-uring+bounces-12202-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12203-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aJM7KIOSj2l/RgEAu9opvQ
-	(envelope-from <io-uring+bounces-12202-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 22:07:15 +0100
+	id UA+NLF6Tj2mTRgEAu9opvQ
+	(envelope-from <io-uring+bounces-12203-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 22:10:54 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050D41398E5
-	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 22:07:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050CD139900
+	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 22:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F19833025A43
-	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 21:07:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AFF163026C27
+	for <lists+io-uring@lfdr.de>; Fri, 13 Feb 2026 21:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8861FCF41;
-	Fri, 13 Feb 2026 21:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABA626E6FA;
+	Fri, 13 Feb 2026 21:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2FmE3DH1"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wAe7NIGH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DADB8C1F
-	for <io-uring@vger.kernel.org>; Fri, 13 Feb 2026 21:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B2B26A1B9
+	for <io-uring@vger.kernel.org>; Fri, 13 Feb 2026 21:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771016829; cv=none; b=TzdWvYkcBia+LiWThcDr448EYPcxxOLvHsK7ETIdLu+Pw47EPkWU5mUTyl8aDwektr5O6LY7TUaOLbIUOkXD5I5RJGZX0/W0xLFHJD45gL3YM6JOvCVQ6C2QLGDaf/UI/nyG+rOfsGeTM4gETziVdgluoJ/GsSRvoogeL6WS1UM=
+	t=1771017052; cv=none; b=gtbrCOtpAcwwhCK4k69WmZAc41zIsre9rlfsZDKE/WzAXIawhlAozGMNVs6Ste8aRb89txB6hVbB2Ovt8MWr2NmcD3KbN8eGN3Na/c7iTdFTvrhSdozpGBv/Hkw+9VAdSaNi3Vn6rCcTUigcaH/SyyXnrIv4KaBLkN7PiDzs08M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771016829; c=relaxed/simple;
-	bh=ABUx8eItb5lI1A0a14oq3MrpAztNFTa0yMIfcd7MAV4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VYvVW8RYHz6jd6whDBhBGFhZ3AQ9hauI0aPdRcv4zKdHWXmkzO/ox92f5xWQyzPXF7qpKiPTxSCtvSQVF7LSOtYTymWBPBGeYliw+0uJZHOkdYFK9KQT/vH0nq65r9UXzidwzy3U//LLduaDh/gUIXLqR9BXVZkYW94zYm3fCjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2FmE3DH1; arc=none smtp.client-ip=209.85.167.180
+	s=arc-20240116; t=1771017052; c=relaxed/simple;
+	bh=HmEfdsjzVIHETI47D+JEYRayYU5MK87avPS77ilaDGg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jPAE/GL+S2eYCwNk83JlLn/XzDyG/S4Fm32ZO1ujR6dUacr/dDOFglXv4/vkiT0+mcC9dikgxm3FchxyNofsQEIs+3GjPAxbnblIlLROdaFPtMgvDl1zGOP55rLxKrJplAVTMIEStMqWe0f82TguO16WzOHN4JzTY9/ysTrDbrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wAe7NIGH; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-463a94f8475so428609b6e.0
-        for <io-uring@vger.kernel.org>; Fri, 13 Feb 2026 13:07:05 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7d4c9537f90so418002a34.0
+        for <io-uring@vger.kernel.org>; Fri, 13 Feb 2026 13:10:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771016825; x=1771621625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ctdS21LqikeUVr0PmIq31b2awYDvbOQVQUnRFmB+hk=;
-        b=2FmE3DH1+EzQ0/qq+Y+CMoAnBcznjyQbvrlZ6fh4+VsTsnHol2cyr8pMjiOK82VR3C
-         M3prilMJfMeaD0OQJ6mJC9NH8pLgPS4X84dWHsFFcfT+v4QANo6WCesF/14YQa3QRWxx
-         Uqj9aeJNXPHJqaSAGMwbFU9bJOQ+YWIT6N7Lv4SamSGylgBcoa5MtLr6ZkCcz/JqWhii
-         MCZyyeuBH3Rf6ZU0QXL+K0hnuJgGiiilziHeyvixCqLRfQJYIDMQFg7FU39RJWqdbQQc
-         aEkj9exNDxsg6OgD6wIj7dIAubSLIPNvltylgl7alNdHiUlfc8nqMEBcU9BTG6I6QygY
-         TqwA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771017049; x=1771621849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pGkCwWWp/FPqK28ijtGke74sI3QcTgk3m1OKgHdqNm4=;
+        b=wAe7NIGHoclNkQnEcfAtl0r4e+vvKrapTqSL5TALMPlsDrhmL6mLGkjV9MgMwpcP+3
+         2laqVmuPmCyTbGs8W5cyml7i3u7YiafuryuC8t8JKbNyzRFPLJxTkEn7UE3/AwtHCX0m
+         bFJpROh2wmCoJfsOk6UMVGvMBxB5UtMn0EucFu3Sy/FTj0yuiZykSnuNcSq0j+jn93mG
+         iN+k1lLLJGrtSg7Bvx+/rJ+akiVOcnpijeBZQzjwwq5yBfoNnmYKxFw6NRCDcpLwLm0+
+         EoFTNvEn3au2og73/9OVrWXsMva0IvX9wKivFFkvA3h0YMIuvGZ12zrMVq2pr1dxAbV4
+         UyOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771016825; x=1771621625;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2ctdS21LqikeUVr0PmIq31b2awYDvbOQVQUnRFmB+hk=;
-        b=NRn2zbGsTxFgsjZ93kwBWcn/3zAqVpfAGfjmMd/QCicA2I5wEHv6BM2f1EcPuk4JvD
-         tSUAUmfanaYEpRFUKaa0dJjQ6hfnh5A57MhO7mTZd5gjvckWDVY6gWfV+Skk/zcWFWAC
-         MDewyc/JAxR1449uLE6/4dnH53E8OT0Wfa9IUmO4jZPtK7nJZtOTa/BZlGCsc1f7tBwj
-         cRXRI8p1xH1OuR1UJ8S3taf3RUHxdzT07SKiiHdpU1XKa6Q86pr626fXFDb90wLKBlVG
-         5Xvhm2YXTb4wNo5F1uiMuRWP0Db+ET9XvH+AOePmufc1MtdXW3vivTKKhlxjU9rHkiTg
-         fgRA==
-X-Gm-Message-State: AOJu0YzOwLommTg+KsQkgMcMnB3Ztw1UKztpQ+5g2Qp5DZEO6so7SDCM
-	Kv2ww/kdCe9acznEXebr2sXPXSYzCZd+j41nBFRNngDfoMLuvVO/DSWKMwHxXRfnA9SbZpVauI7
-	6mLo+xwE=
-X-Gm-Gg: AZuq6aJCQKImYHxpam+7RgmfrwZrZIQvEC86/SXAYU4JbDNJgq4XoO7ywVXsK8zSYp4
-	9o5SUf4d4yCFzXSNJ0x1Wl5zU2OMaYBe2G1VgKnctTAmeYFbVSJ6beOGnynL40teUvoRETdBqtA
-	0dRlwdOgsrt1PeEe+bPVCgP8M4PTvEOu0HNNSXgbpdE7KT3NaMQ9pCgsVywfWeE1gr4/YHhlXR1
-	vBGQb9VQQTlTcsbZ2tvHr3hxrw6/lsAJtWKQMbGxSnT57CoxJkAiVqq3MNytYKYoVWyDi32B5z2
-	9j++kIae48a/PziYPP1/uKJAjOK45IlCs7U9gtIjvMiB3UVqhtLMkmLRgPJvPuvg+zPndA5+08o
-	+yOxg1hwaD3L/hjul+KihoTlPzzTyaspksAyHVZeF0CYOtvRR15fz2Vl431me6auYN8M6vN4zCt
-	tj5UhcFz2L0hye7g7GibuZfHBBxaG3Vf1aZGUjFHjWjJDxdhNyytTJHpkg+4WkcRR2eg6t7nGo2
-	BXDPxeimGg7dA==
-X-Received: by 2002:a05:6808:2211:b0:45e:fff5:89b4 with SMTP id 5614622812f47-463b01973e7mr853267b6e.10.1771016825082;
-        Fri, 13 Feb 2026 13:07:05 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40eaf16c383sm7440174fac.14.2026.02.13.13.07.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Feb 2026 13:07:04 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: io-uring Mailing List <io-uring@vger.kernel.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-In-Reply-To: <20260213210548.851503-1-ammarfaizi2@gnuweeb.org>
-References: <20260213210548.851503-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing] src/Makefile: Fix missing bpf_filter.h
- installation
-Message-Id: <177101682427.298850.12069195780298295812.b4-ty@kernel.dk>
-Date: Fri, 13 Feb 2026 14:07:04 -0700
+        d=1e100.net; s=20230601; t=1771017049; x=1771621849;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGkCwWWp/FPqK28ijtGke74sI3QcTgk3m1OKgHdqNm4=;
+        b=HZcZOvjWNgfL4HEzELgV07N56EX1BQcGiFFPxf7YpPp9L6lhtfYxlZsV4X39yM1Jph
+         FnkAcOCQMEg0elyj+iChTpyLEu8pVJK7w4mWT5reXabWr15qmwJl0afsYskooEOtPx45
+         HL5J1tZB5IsZoJ+yTvrECQ3PRTvFfmCy8brvaHnm4a1hZZFfEP2mfX+2neZaNSDFGfw1
+         0JjXP9mT76yClxT9G/vEj81i5Ql98twqjpsRKycQEDWY8mej3U4Htj6wQq6XMr7BbZhl
+         M8TZVFP+yz9MvMuHIk5fTNtIWakKpbPzRjYdjdenDlYSBpG60dIYCWO3oBrNZc5DKyge
+         3V1w==
+X-Gm-Message-State: AOJu0YxFzDQlAjtcgvOl5CTZ3VnahrvWAj6RwVQ6T71A3fStMy6B0yf5
+	hDJUVWR0ceUncoIT3FDkeCOn8uLkLVcFf3MDaJXzUNbgq9gDpfFm+4eEs+j/MqMcHPf4rK3aDB4
+	Id+Q19B8=
+X-Gm-Gg: AZuq6aIW/b4NJeKPQovwdvBzuJqo+zTvslxdhHzBHk7orIoXCejkvAhwgrrsWcHrgNd
+	cwzk2k5mR06fEK+HUB+5T3HwyLEiz2zEHLJJXarP64DoZqUx22VDkuN5KtjzxXHnL/7i/NCKrjg
+	yi2/to1OrDUlJxATpU9Nc5O4JSq1ZbUzxKWoafbX0KOdsqKUOTxy5Ir4a+kZhq5QgMvSxjOSTiO
+	0nb0B00DnIO8HwAO9M2xF8937/RF3Yp0LtTcOr2f3O/yk3z0zRRsUqJYoBPNIgdSgHbx6ALLGMz
+	TVg3BsPwqIQCA/U7VjA9x5e1q1j0SyDhbMuFhwvNUNLosMjHl76gKZebxt8aMcpk5NDvBBu0J7D
+	bzE6viM7sXJyDS0omMjjEehqumaJ9u5IwCEqiZOn2mq2hXo8qpzT4+dU6Fvqj8KG44ZhUAFgtzo
+	aUTwLq8n0B0iKKSTaBUVX3SXLP1Zit6+VSZfTeWEF2y0OTmuC0KCA8ovR0I8BEAwWhELXweX3F2
+	NX6DvNq
+X-Received: by 2002:a05:6830:3152:b0:7d4:4d52:efcc with SMTP id 46e09a7af769-7d4c4a62bf8mr2142190a34.14.1771017048759;
+        Fri, 13 Feb 2026 13:10:48 -0800 (PST)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4a76f9483sm7346026a34.20.2026.02.13.13.10.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Feb 2026 13:10:48 -0800 (PST)
+Message-ID: <00bc96d8-c304-412c-b176-1b30ff0847af@kernel.dk>
+Date: Fri, 13 Feb 2026 14:10:47 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing] src/Makefile: Fix missing bpf_filter.h
+ installation
+From: Jens Axboe <axboe@kernel.dk>
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: io-uring Mailing List <io-uring@vger.kernel.org>,
+ GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+References: <20260213210548.851503-1-ammarfaizi2@gnuweeb.org>
+ <177101682427.298850.12069195780298295812.b4-ty@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <177101682427.298850.12069195780298295812.b4-ty@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12202-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
+	TAGGED_FROM(0.00)[bounces-12203-lists,io-uring=lfdr.de];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	RCPT_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 050D41398E5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim,m2max:email]
+X-Rspamd-Queue-Id: 050CD139900
 X-Rspamd-Action: no action
 
-
-On Sat, 14 Feb 2026 04:05:48 +0700, Ammar Faizi wrote:
-> After a "make install" command, liburing.h fails to compile because
-> bpf_filter.h is not copied to the destination include directory:
+On 2/13/26 2:07 PM, Jens Axboe wrote:
 > 
->     In file included from .github/workflows/test_build.c:1:
->     /usr/include/liburing.h:21:10: fatal error: liburing/io_uring/bpf_filter.h: No such file or directory
->     21 | #include "liburing/io_uring/bpf_filter.h"
->         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     compilation terminated.
+> On Sat, 14 Feb 2026 04:05:48 +0700, Ammar Faizi wrote:
+>> After a "make install" command, liburing.h fails to compile because
+>> bpf_filter.h is not copied to the destination include directory:
+>>
+>>     In file included from .github/workflows/test_build.c:1:
+>>     /usr/include/liburing.h:21:10: fatal error: liburing/io_uring/bpf_filter.h: No such file or directory
+>>     21 | #include "liburing/io_uring/bpf_filter.h"
+>>         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>     compilation terminated.
+>>
+>> [...]
 > 
-> [...]
+> Applied, thanks!
+> 
+> [1/1] src/Makefile: Fix missing bpf_filter.h installation
+>       commit: 364a7b561fa13cffdd7771978dc5509ec4d9d7f9
 
-Applied, thanks!
+Thanks, I missed that!
 
-[1/1] src/Makefile: Fix missing bpf_filter.h installation
-      commit: 364a7b561fa13cffdd7771978dc5509ec4d9d7f9
+BTW, for the future, for:
 
-Best regards,
+Fixes: 46b5c4d66232dcadd0f46c875e6fabce3b3dea85 ("src/include/liburing.h: add bpf_filter.h header")
+
+shorten the sha to 12 chars, we don't need the full sha.
+
+For your ~/.gitconfig:
+
+[core]
+	abbrev = 12
+[pretty]
+	fixes = Fixes: %h (\"%s\")
+[alias]
+	fixes = log -1 --format=fixes
+
+and then you can just do:
+
+axboe@m2max ~/gi/liburing (master)> git fixes 46b5c4d66232dcadd0f46c875e6fabce3b3dea85
+Fixes: 46b5c4d66232 ("src/include/liburing.h: add bpf_filter.h header")
+
+and it gives you the right format.
+
 -- 
 Jens Axboe
-
-
-
 

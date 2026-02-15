@@ -1,179 +1,171 @@
-Return-Path: <io-uring+bounces-12220-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12221-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6MWLG4lDkmlZsgEAu9opvQ
-	(envelope-from <io-uring+bounces-12220-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:07:05 +0100
+	id ekTgG4dEkml6sgEAu9opvQ
+	(envelope-from <io-uring+bounces-12221-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:11:19 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157B113FDBB
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:07:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12EA13FDD3
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 77D803003D11
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 22:07:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 51477302B3A1
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 22:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D55823C4FA;
-	Sun, 15 Feb 2026 22:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3779279DB3;
+	Sun, 15 Feb 2026 22:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahdrZmM7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLKblj91"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B6021FF2A
-	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 22:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A965A23C4FA
+	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 22:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771193223; cv=none; b=JNEx/uXYUDza9W8kQgXC/0Aw3J9UdMQqVPeCIFllhRZp2yhfKaJfx7pcRgeFrsMtAJMLjm17S9jfNygYpS+YlOmZBVO5EmRmuDXWZPr+ZOwB4cCsh6CMn1Pti57vC9yQAhQRGCVKLaV7CJqTYLPVstzJ1+Up4bPyS0lJx3UtAMM=
+	t=1771193476; cv=none; b=CccXRKYz0hamEQPJVfuqGYqfwlaTAme0wYilp46c/2esBPuruWOK2YwkrdhGA4Ri25YDiSvhbAKcsSnx2BSQY5osq1doIKmRFGblAr+lUNDMRnGml6MuHwD+kQLoR0xqC+tSn8vkZuk9Z9jBqZ52q3dtLKXWBGKg3rNd+x+GfcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771193223; c=relaxed/simple;
-	bh=xyBdzEbhaHRxRh8zqLJJszYsm41G3HC+5rupiMT90Eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q+yB7lYJmih9H7hrhYccUckS3ixK5tGlRSl7VWYsjuL1ErPoutMK6yPVtAqIVI1MZZZcHAPm8be5wyE8l8CeavSX4A56Y0LDroVvxj3PGNVzP6VV7N30vZPx0dIfBlnlXP2oAGgEnW/3CZJKHyzrKzkPKhEGdxDEXA+pz8uyA68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahdrZmM7; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1771193476; c=relaxed/simple;
+	bh=Cdq2GxXVu2b/hGRedLvxBBhZlQM+y3WBPyODiiej0Mw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D8Zv+umD3fFDoEFRisEINKCCv0ybwtMgkEdi5/Mu6JQglLw4dFNWiX+S6WXXQeD/3CeTa6Z/BUD8hvCGBgWtEN1CbU6h336VbbqeT47MtFNphFXkZWuKMO/8iPVzF02Lh1+f84qZluXRbtFMzTeMgblCHNeXuiYoLyAhkegztgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLKblj91; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48372efa020so17066055e9.2
-        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 14:07:01 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4359a316d89so2246273f8f.0
+        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 14:11:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771193220; x=1771798020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SdQp/r5hurC4TGAPZSeFhZHoVoN9o3wmtKpFivGSCww=;
-        b=ahdrZmM78bVyzn5moXf3BxPufpWA6EomMWLPmJKffGGOHFnxuR2rzNGp3XyZoXUDQI
-         eM5qoaTOtjnezNu6YZFiN/6+TLSQaY+3CUWjHNB+5sZVh9hk3APJCh5jG4W/yWd/g2L0
-         GGq4KDl2Xi5s8VSJgujMPk3wcupslaUQfD+l2XsQfidCnXwZaeIoGRyUp4g7HETH6N75
-         ZsBJ2EYEIJF2p1tGpi+ruZMMZ1RKIl4PbL6DY67ZHpGWs21kGT/Zdtct/UW3HvBcgHCs
-         W+sR2fdEC1/9NQMaUUW7zLVdsBG9ZsbO+7WMuxUY7AAqqYeIuxAs7dN/xrMCiszP2NDr
-         IP7A==
+        d=gmail.com; s=20230601; t=1771193474; x=1771798274; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bjgdv6+xVwcOY0VJHxGLDRP61lwXv1KxDnm7ljawwVw=;
+        b=lLKblj91cIOROyd26RkCboTjChlKIHBHK777gRdHuwK+TcSAJp2RA/L1R5p7Pqnnwu
+         Q79L4EyfK9GpUUAg7f1JjWnJ6VEVYy7u252+mYAKJtq+bT37JnhO8xfRf+6C7OBKb2Z0
+         alITYBkA81AfPK62U61HPAad7X0KMwfmUumDWeRq8aACAnBsFO0Szv9Xv9i/sAJEclSl
+         4Dnne32awSwqqJ1ND9JF7fDgzBzDlimPhOMDtwuTskpkooFBWHtTRR0Y4e1acbtFrHQp
+         nZtXxrMSoEBu5yrVmNUFItNrxwM4HEqKIMiMe4oGtLhjHklOa1BBaku3YvAHvdcbRiMp
+         C4tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771193220; x=1771798020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SdQp/r5hurC4TGAPZSeFhZHoVoN9o3wmtKpFivGSCww=;
-        b=iotJZFo19BrWCeOFaOCt2ez4C1qAqei9HMH/YE/BIcFKbnzoUqu+10/zIIHCslQRSf
-         QVgO8oDK3EcSKHb6BHjc0vYVnM5KJXB7loA5qdiVSoB3awrY8vF0VoWUgtiHbbT53E5e
-         dCkTvgn8DScuwWgIU/nrmw7xZTYQKxKTe53h3NYHspEMe5gcqmdYbAtg+0NcaI2179iX
-         +aPR1aOcbCp2owmyAFsQRm1NpFZRo1Dd2rrncaK7xXrmXn4Wd0QlVW+Z3qHEfGAxou8U
-         5SQVTPRUfshaPoc+NxuviCzi0pqq08TZ2GrWaXCrG2wvpwJCIVYtaWVFI5Cod5U+0XJR
-         lEFw==
-X-Gm-Message-State: AOJu0YwlLIquasvF1E/XF3KD0CeLD+vQin7fKQlALi9oTW3fG73VlTx2
-	kRze0L5ylqndLppWYbbogS1GsDUq6jIjpvwRZlH9PYVxFLf9PDwTOK0tm4tDRQ==
-X-Gm-Gg: AZuq6aKBOM8xRa+uov34oezkJLNQUgqTEuNfaTPfVH0FHS8wr95WdZ2e5edDlT7dCtj
-	pPs4L/5YJw7KFQ5jG6VBH3KCrtUdCIaWdJAShc0vaBBN1gRjFq5TLbGFUk3+0qNrNAyxJtYZwKU
-	cniSDgp8Y3zzIYnpjb0+mk41Fp+mzYHF+rGysI3vfxCR6kjEC/RLHKgRzOi3iA9Zo5pHdccrpYf
-	SFkGwkhaCjXmqcu5P5vsZnJ4rTjG8MR1AldR42mKusfsgRfm7ijauchQbC5l5Gyb+Mmo+djeAJX
-	mcX7wU5D1uoZS6R70QVyq0na7a6EE9Y5aZotK62V37JIGpy4v9ahnDq3QSmHx/F4RdqjKIOoDG/
-	/utQm04qTiXM70uqaxhKZY1lisEcx4LVmBJkx7nTSeDZBT+4rhgCp9gBjGFoINgR+e04vIGF15+
-	fL2Jmrt4DMFgA3dkJmdvjGmlP2sEn0EYVBxLqy7bUawnz8CO8+I/bSkdC3/4dD1YzL4tBa4h+O5
-	I2oXiPavU4fRxxmswsIZWuFL1RmVw==
-X-Received: by 2002:a05:600d:108:20b0:483:80b0:b245 with SMTP id 5b1f17b1804b1-48380b0b344mr51497525e9.9.1771193219695;
-        Sun, 15 Feb 2026 14:06:59 -0800 (PST)
-Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d82a4c4sm653457295e9.10.2026.02.15.14.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Feb 2026 14:06:59 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	axboe@kernel.dk
-Subject: [PATCH v2 1/1] io_uring: delay sqarray static branch disablement
-Date: Sun, 15 Feb 2026 22:06:52 +0000
-Message-ID: <0837f85d2d0beb1ab012812bd373cbdbc3d71551.1771193194.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.52.0
+        d=1e100.net; s=20230601; t=1771193474; x=1771798274;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bjgdv6+xVwcOY0VJHxGLDRP61lwXv1KxDnm7ljawwVw=;
+        b=mC5Wx06ZCiGgYNhcTV4QeIHMrj+maZkWr7habhsdtisrJuOhA7PnrLCQQddnJtfu+/
+         HLW8yyPv/FgLAQm75uZQv4ja2bq8686CKkU53a4Pt56ZFO+GZsALG8oDM/fkltlPtnid
+         RrAu9hiRiKVrGSa33SufBqPSFaqr7tuJM2Qx0mQ6lwoEnSgZwUWUwca4tjXA3/U8oRz3
+         4Ai4/aJ6pFvauVeoGYw4FsYs5h6SfHupCmFH8HJhVb7xFN9XuCpDvP8U8a2yXqKY/f66
+         Sjpcws8kF+aADzgqMndDIWUOyDoo22eQIqEZW47umkxkfyEkMRwBsUm6c0HUiJWiIcuj
+         jLMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ+xfUUyHKANu5JLRLEmZRSFMJoPRBB7IDciwFZFeAlzgg7bLfwzrLexoJs5cjzBCpfmFFezK/lg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnDKG94r4CQAn+w+8w0gX2QM69Sx6diLgkrOnjLsOfVEVdk9ua
+	o3GUrKE/jMQYDQ0pSBoe7UM6Y+3YXLVLDTgWJTMxK4LdXX0nkN2GlwnO
+X-Gm-Gg: AZuq6aKFIgBbCVPJX1Uz+i7BGnsviDibLuiaRxVuFYXPIkJZbOjs8aW5IFUmvs3I48S
+	rGWmBaN/wKneJK4Vw1DA269dX00mTNHircoBYGuTz3YRwNcc85Lk/X9h+/cPHj9dR4OL/HqO8cr
+	2la+6zkmbcHDQRjf5YtsdQNeFgPycAZJFkySyesxRURK2HMMuqE/rndM4h1gsn52tDFor/OjEd6
+	uwgvaXypdCWfOSwOyCVpn2GiSq2Xb4D6ox3dQ5wnYpzPuOFOnVbP5MAeVmrQE8kedn5WmMOABOj
+	WfLEuniGfri+nFDSxMkbREQxZ0+ckM/Yyev7483dfNObWN9OzrB6N3vTb7xZdQcFCGw6F7LrN9X
+	etnmaA0dfasrekkeWP1QMbMD7GrhNB0Aw7OyTsTXP8Ubx8z3DQUbmuIQkcIgbdrKSw/5b56NSHb
+	6sd8jBJpxre7CeS88yhEGc+2+NMA6WLMcn5cdjfxphu6jkObqTHnrG8mXXp0/fRXNKfl2aKuoWb
+	2huWBvOZgejoFaIEsA86pfJm27PGa3+FlnEZyj6fdpVo4QChr5o66hkNvu2QbZgrLBQ7EgghEKC
+	VQ==
+X-Received: by 2002:a05:6000:4285:b0:435:bbd7:18e4 with SMTP id ffacd0b85a97d-4379795efa9mr17511803f8f.63.1771193473971;
+        Sun, 15 Feb 2026 14:11:13 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796a5ac92sm22139366f8f.1.2026.02.15.14.11.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Feb 2026 14:11:13 -0800 (PST)
+Message-ID: <611435d8-0f3e-4c43-bd37-9e74d8512de3@gmail.com>
+Date: Sun, 15 Feb 2026 22:11:09 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH io_uring-7.0] io_uring/query: return support for custom rx
+ page size
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: netdev@vger.kernel.org
+References: <2e8280467c93ead0c61ed3d68c036d6a0474bb78.1771188227.git.asml.silence@gmail.com>
+ <b9c6eea4-cc66-43ae-bf87-907b35db9c8e@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b9c6eea4-cc66-43ae-bf87-907b35db9c8e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12220-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
+	TAGGED_FROM(0.00)[bounces-12221-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 157B113FDBB
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D12EA13FDD3
 X-Rspamd-Action: no action
 
-io_key_has_sqarray static branch can be easily switched on/off by the
-user every time patching the kernel. That can be very disruptive as it
-might require heavy synchronisation across all CPUs. Use deferred static
-keys, which can rate-limit it by deferring, batching and potentially
-effectively eliminating dec+inc pairs.
+On 2/15/26 22:06, Jens Axboe wrote:
+> On 2/15/26 2:34 PM, Pavel Begunkov wrote:
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index fc473af6feb4..6750c383a2ab 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -1090,6 +1090,14 @@ enum zcrx_reg_flags {
+>>   	ZCRX_REG_IMPORT	= 1,
+>>   };
+>>   
+>> +enum zcrx_features {
+>> +	/*
+>> +	 * The user can ask for the desired rx page size by passing the
+>> +	 * value in struct io_uring_zcrx_ifq_reg::rx_buf_len.
+>> +	 */
+>> +	ZCRX_FEATURE_RX_PAGE_SIZE	= 1 << 0,
+>> +};
+> 
+> Well I guess one comment - supposedly ->rx_buf_len is going to be added
+> in the future? Because right now it's not there.
 
-Fixes: 9b296c625ac1d ("io_uring: static_key for !IORING_SETUP_NO_SQARRAY")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/io_uring.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+# git blame include/uapi/linux/io_uring.h | grep rx_buf_len
+795663b4d160b (Pavel Begunkov          2026-01-24 10:36:17 +0000 1115)  __u32   rx_buf_len;
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3a2753f6b444..1e627b7a2f3a 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -119,7 +119,7 @@
- static void io_queue_sqe(struct io_kiocb *req, unsigned int extra_flags);
- static void __io_req_caches_free(struct io_ring_ctx *ctx);
- 
--static __read_mostly DEFINE_STATIC_KEY_FALSE(io_key_has_sqarray);
-+static __read_mostly DEFINE_STATIC_KEY_DEFERRED_FALSE(io_key_has_sqarray, HZ);
- 
- struct kmem_cache *req_cachep;
- static struct workqueue_struct *iou_wq __ro_after_init;
-@@ -1978,7 +1978,7 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- 	unsigned mask = ctx->sq_entries - 1;
- 	unsigned head = ctx->cached_sq_head++ & mask;
- 
--	if (static_branch_unlikely(&io_key_has_sqarray) &&
-+	if (static_branch_unlikely(&io_key_has_sqarray.key) &&
- 	    (!(ctx->flags & IORING_SETUP_NO_SQARRAY))) {
- 		head = READ_ONCE(ctx->sq_array[head]);
- 		if (unlikely(head >= ctx->sq_entries)) {
-@@ -2173,7 +2173,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	io_rings_free(ctx);
- 
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		static_branch_dec(&io_key_has_sqarray);
-+		static_branch_slow_dec_deferred(&io_key_has_sqarray);
- 
- 	percpu_ref_exit(&ctx->refs);
- 	free_uid(ctx->user);
-@@ -2951,7 +2951,7 @@ static __cold int io_uring_create(struct io_ctx_config *config)
- 	ctx->clock_offset = 0;
- 
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		static_branch_inc(&io_key_has_sqarray);
-+		static_branch_deferred_inc(&io_key_has_sqarray);
- 
- 	if ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
- 	    !(ctx->flags & IORING_SETUP_IOPOLL))
+commit 795663b4d160ba652959f1a46381c5e8b1342a53 (tag: for-7.0/io_uring-zcrx-large-buffers-20260206, axboe2/for-7.0/io_uring-zcrx-large-buffers)
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Sat Jan 24 10:36:17 2026 +0000
+
+     io_uring/zcrx: implement large rx buffer support
+
+
+You should've already forwarded it to Linus with
+"[GIT PULL] Large buffer support for zcrx".
+
+Different base?
+
 -- 
-2.52.0
+Pavel Begunkov
 
 

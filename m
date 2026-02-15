@@ -1,90 +1,88 @@
-Return-Path: <io-uring+bounces-12224-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12225-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OG0wORpFkmlysgEAu9opvQ
-	(envelope-from <io-uring+bounces-12224-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:13:46 +0100
+	id AHcRJyJFkmlysgEAu9opvQ
+	(envelope-from <io-uring+bounces-12225-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:13:54 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6F813FE10
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5325F13FE26
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 03A5930158B2
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 22:13:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 172713012BFF
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 22:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B32FBDFD;
-	Sun, 15 Feb 2026 22:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B0230B508;
+	Sun, 15 Feb 2026 22:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CkzHYDqI"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MwkuDUIa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A76305066
-	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 22:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E368309DCC
+	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 22:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771193612; cv=none; b=ffMqOvlITAHC+r5jNDnCqYM3wb/JnTU5pmfcNc5c5DuFEqM6N7+M676UQClCJ05Hl4gKJPyKyU39R9wiAe4XxCs8u54RUhO0Js5HPMBWkMv1gNMjADn2YIQIddqTtbli1T7Ecqa9I1WOklLFswWtKpl2KeiGmDm0z6GsuNN/21I=
+	t=1771193613; cv=none; b=bAjVqHxyhnOX50WnuA4HeAriSbBEcJ5FsGU8kY4bQ4kupGW0ARZVymelU+8UtvCxRfjigT5l4Axfzq4G+pEoGn5DGZlqySYmSyA7uzBD8wKSmjImUIPNi+QeJkzdbR3OZ53QOggkmQYEJ05xM+3XD28hsV9hF4w7bfWgqSGAKi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771193612; c=relaxed/simple;
-	bh=YnSHyuORvjP1DdDcwkSrXSvWFLgo0jHLdV/qdwBTdhU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EX2ETyCT8Q1/2aVPFNzeIeW1UR5yMWhasRnoDy8KIcRWvAzFRRgl3S6p8EnsCOIZSuzSxIZWw3PsGUDNiKpe/7yhENqOXdNYKHH7WJQSOSxq9ey8C0uMR7sCTaCT4+7tERV4BWzVOrQVFJjvAvFkbeb/yTu8iMu2s9qjpuL0fgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CkzHYDqI; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1771193613; c=relaxed/simple;
+	bh=ZM2sgqWVYHUBIk8TfuUwBYR/LweHt/YEHrhI/LkCasE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SY5B2J2QNyEXwyzGXpksl1wg5oI+ZW+gTCPK0ISh0FNDNmKYggkcyPGO/of1kNEU/kOeqcdc1eP+tl0Up5+k5ca0hX8bkMPhR+xtziW2h6QrG9O1Syv/sUOxorT215yQgIeWcrQPAbcRW9iHC1Me2INA3rZH2JPjH2ZYZdR5JAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MwkuDUIa; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-40ee486a76eso1659730fac.2
-        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 14:13:30 -0800 (PST)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-45f171cb842so1443482b6e.1
+        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 14:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771193610; x=1771798410; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771193611; x=1771798411; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Q5I5/fxr4SnEoRzTQ9BTMDNBCJMEhLFbjF/WzpJaZA=;
-        b=CkzHYDqIde0ulfBmhNwFpvczmixhEzapr18FjFEgmha4zEkAZLSbhpYNe1CBHjU5kG
-         PeoxPdfhDptct35FTGNrtiulQ63xaY6GWUdDd9JuPeXZFaeNRPmQqzu+ENTjMCUbHfSZ
-         G4Pmqr+Dafq8ENUm+UD9VuQRK5Y+22ZjBieG4cjQZqoSVvj+1m8QiFJsxk14zM1Yy5zX
-         b+IpxZnE49SofIxtPRfwK0OKa+vuly9FkXu4FuqGGearBJMRhtKkooEStfItuPIz533z
-         2RSKrdJacy67VJVVx3X71ajVkYUN/hsvfrDoS/o7zYaAQKOm/hUeFgXQqnF9OA3inMkp
-         k8Aw==
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K9BxlM9a0/95mC3yI7ZpKg4pISO7R5xtlXsaO0Q1tkw=;
+        b=MwkuDUIaS7ehy39KT3/11dAIhMLddfJkvTyUyb76uwSbiKi3hcDgW9ehIgg1OVEMe7
+         jFBr2LjQrC09NEi4j+fyCzBJbQQb9o7vV5IDAk9V56fXhoHjzwDsso/1Du8VtFQJLAlk
+         SjFEesiJyfQOrT9ui70D80Y4fCS7h4NKbCdA5va9nRQ6F0XAdeepGGciy1eWjBCPJv/A
+         aI7SwGS99QEjMWS6YO4rhXhOQKxUIwy5/nD3IYaLXk+5uxAH1UG0xWr76OeXPIeKDmB/
+         ufrWPUGzikGo3C0YzBjrmRq0l8P8KXOaHHz20ak3xzNXwctgjC8rcZ/UGB4QSigX6Rn+
+         do7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771193610; x=1771798410;
+        d=1e100.net; s=20230601; t=1771193611; x=1771798411;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0Q5I5/fxr4SnEoRzTQ9BTMDNBCJMEhLFbjF/WzpJaZA=;
-        b=h3ry6u2PwofdtoSBUAnkQPBbSwRVlLMgySN2IiQ5qnPOAHMnsB2Z4c+yer5q2+DuPH
-         7lt5dHDTFVh/081ewnvm70F9LQoHpA+rvGW3+kk4RYRZx5n5quxRWP/XYigSOpgMtxLd
-         iZz+qxGN4OjDsnG3c+RtQNF76tns33b2ncJITo/6O/OhPkfmNCLjkXMK3L5GFBzqHu9G
-         bP4y+54pchyLnlr5o0Ka20xN+YZGv3U9VOWEYmBSy6prdAA990XDspwdvFX79UxewFp9
-         mDwAxrqQG6BoEZkFtftgsP2B4X8Eo80WaGdH0anSN5MasZJM2QVRB3ZJIU8m/rXo+vhK
-         ZzqA==
-X-Gm-Message-State: AOJu0YwhO0NiI9zjja0a0Lc60GxHPZYDi9H9iAXSVj9cMTv2/otoWKn8
-	uuBF1jfgRvmhh9cmTHgJRnj0Hd6mR2hybzn0c2Sn0WQv9MvY+xmfopt1wWU7IDISdQ8=
-X-Gm-Gg: AZuq6aKXifCZTdODmjaDVmtpXUCK836PSKAYUXMNLcmjTIwa3fbFVTEzXNug+uFSrr1
-	AvOwsR3b9wjz+xiT4khdCNvTcqoHBRlL1KbZeGIEOMGuumKZqb0M5GS26UJ/l1mStic5YY+njFR
-	fhC/eX9JjsMzZsOItUHRAxmPzEM++qls2zpJwDy5BESeocdd9hN8HSJe/ZpyAwIks7O8w2H5buf
-	TLzLDUIcbbEKiC+r7htrSKTpHnY3cWss6oPSuZj9FA7+DOg1c0fYyTPCw1SnnsxvGn7UT5jH3FO
-	cNj9IzpjA7EhvYJmuQXSlzxr4RCixsgYoWVLAF34swxeQvYqKQtSQOm8AgT4ptLK26MD1dCZ9t/
-	Mes7LpaIgi4YtweQbsMzHsEA+5wOB9IvmHjwRi4HMULUVn9IM0I+FCIrw+IKiQlpxGU9BjBc5yE
-	MAwCycyiEVyrkIJWkmqYTr4P6j9ml6ozureSvBbALV0g/c7SJtVa7hY+4udpW7Rz6cb7WWxAcPW
-	Nsj
-X-Received: by 2002:a05:6871:230c:b0:3ec:2fa7:8180 with SMTP id 586e51a60fabf-40eee51d142mr5286854fac.0.1771193609962;
-        Sun, 15 Feb 2026 14:13:29 -0800 (PST)
+         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K9BxlM9a0/95mC3yI7ZpKg4pISO7R5xtlXsaO0Q1tkw=;
+        b=X6Q2nQ7vBWHy/te2pRKcCKi1/0+gKYFU7F2BYrP/Q4wshepyA/FG634jBw0Q/TKzpx
+         dhgiI9TZpH1KFUlJ5nKg0YzdKvI4UTYOasiZbhRt1Jks2wNzmQ5Pq1P3mY7IRjxT3+LJ
+         Cf9n3eVu8jfuJxgsQwKZrX5RgXhRaBRrQJihLr3XJzagfv5C1hQ7mRQpcrFcQKWre0QG
+         jTe0e0Ul4kCmNPzMS7SQMLK3GV2e6oLhGew2w6iYn8jVFZDzsO/irrzVXAK+uk7Z6CzS
+         059aVTmFVF+p59LJ64bDvvJ9rKPZ+NkQw7WGDJckSbFZX5T/ajGax1D1JmbwCfwzKgwm
+         5D/A==
+X-Gm-Message-State: AOJu0YwpRydnn3XbJtAaEhY4Y08YB2eCiiyoMSE1MgaKASeaH1cf+bBT
+	R0bIxTOEC0uJGBJq/VvSYhKnTVmnlq0/dl4yXaLGwo3z/cUqJC+DrOlvztlWq7bQ1d4=
+X-Gm-Gg: AZuq6aLeCgKxBeahJtGrslecNtEzD4zffvWiZR+F18ire5VWelEvuUGbel6uaYOQXBQ
+	XloTHW7dmS69iH5nC8vFm0sqrxMtgH6bRWkaCwkdDJ+4mVG9s81jfz9lPidUP2jqYakmI6Ypz4c
+	cF97Jg1Ogv3pvXpZ3lKNR3+7ykKsxy/FG6ve7Ja3DCDEdXTleMIxW2Khq1KzOgxG/l+S48LXbMi
+	zK5CH28rQ5yL2yRGYwZqdCtyGwPdTaWWyzCgAzKoDeXm/T2hmbA6QpSKGQAHoJYERbz4Vmhk0P2
+	RIA9imHTPohbiQ23A24wOFsi9WMxtHT5sHva+nDX3iLJN9k3F0ml2Z0mJJZ30TePZgL7eOXGO8r
+	9iv2xL+Qy0iSD3cK98WPaHhuMGYF+nvtP1AY/DNJBVyuCQbnnuL/LJQSbu6SoJ699aBfU1pv7Dx
+	ucQatUZlM7Yy3byu3kOBABM6DkvFNYF2Ccp5MyzscMVHJHDzkE02Iylf+cZ1I0H/D93ZV3ssC1w
+	4THar+IrsEYaDw=
+X-Received: by 2002:a05:6808:19a6:b0:45c:7885:d560 with SMTP id 5614622812f47-463b05ea68bmr4043286b6e.16.1771193611133;
+        Sun, 15 Feb 2026 14:13:31 -0800 (PST)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40eaf178c1fsm13191922fac.17.2026.02.15.14.13.28
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40eaf178c1fsm13191922fac.17.2026.02.15.14.13.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Feb 2026 14:13:29 -0800 (PST)
+        Sun, 15 Feb 2026 14:13:30 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org
-In-Reply-To: <2e8280467c93ead0c61ed3d68c036d6a0474bb78.1771188227.git.asml.silence@gmail.com>
-References: <2e8280467c93ead0c61ed3d68c036d6a0474bb78.1771188227.git.asml.silence@gmail.com>
-Subject: Re: [PATCH io_uring-7.0] io_uring/query: return support for custom
- rx page size
-Message-Id: <177119360871.79392.10892699946544286880.b4-ty@kernel.dk>
-Date: Sun, 15 Feb 2026 15:13:28 -0700
+In-Reply-To: <2c2341d55728a89c0dd99e296f57c55ae8e683b7.1771191481.git.asml.silence@gmail.com>
+References: <2c2341d55728a89c0dd99e296f57c55ae8e683b7.1771191481.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/query: add query.h copyright notice
+Message-Id: <177119361011.79392.9077316326382054274.b4-ty@kernel.dk>
+Date: Sun, 15 Feb 2026 15:13:30 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -103,16 +101,16 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
 	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-12224-lists,io-uring=lfdr.de];
+	DMARC_NA(0.00)[kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12225-lists,io-uring=lfdr.de];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCPT_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
@@ -122,24 +120,19 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 7B6F813FE10
+X-Rspamd-Queue-Id: 5325F13FE26
 X-Rspamd-Action: no action
 
 
-On Sun, 15 Feb 2026 21:34:28 +0000, Pavel Begunkov wrote:
-> Add an ability to query if the zcrx rx page size setting is available.
+On Sun, 15 Feb 2026 21:38:09 +0000, Pavel Begunkov wrote:
+> Add a copyright notice to io_uring's query uapi header.
 > 
-> Note, even when the API is supported by io_uring, the registration can
-> still get rejected for various reasons, e.g. when the NIC or the driver
-> doesn't support it, when the particular specified size is unsupported,
-> when the memory area doesn't satisfy all requirements, etc.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] io_uring/query: return support for custom rx page size
-      commit: c29214677a9fc1a3a4ee65e189afeb5fd10d676f
+[1/1] io_uring/query: add query.h copyright notice
+      commit: 6b34f8edf8b807b7f87901623aa52dfa1b29ef93
 
 Best regards,
 -- 

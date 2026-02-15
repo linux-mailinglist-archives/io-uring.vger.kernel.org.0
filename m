@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-12228-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12229-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ELL8IvhWkmmjtAEAu9opvQ
-	(envelope-from <io-uring+bounces-12228-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:30:00 +0100
+	id GAtMJ1hXkmmjtAEAu9opvQ
+	(envelope-from <io-uring+bounces-12229-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:31:36 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31737140144
-	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:30:00 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07D914015C
+	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E33263004904
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:29:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 2BE693002F69
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636972D7DE1;
-	Sun, 15 Feb 2026 23:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FEA23BD1F;
+	Sun, 15 Feb 2026 23:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFudlKws"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxgcbX2w"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2BA2D5926
-	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 23:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D411F181F
+	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 23:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771198191; cv=none; b=BrPRgl1ejt3ECv/6Os+5vK9mRa3QpZQh2mbV6nPkurBfV5tg1bxKdh9Wo13u6Pewb335sFYU3pU8i/zLgYYo69HtqJlRaQmTE3a3LTSAAKD5VPST1w8q1AE7BMlVkxLWIT7vdFGjDETlOW6JF4Y3FaWbZMUH2WRpGGUjtKA5plo=
+	t=1771198291; cv=none; b=d0CvGNHx042K7Mt3Z2t0AwkVy/RUJnTpd5mmvfRVlRxRWbsL9R4Cl8zxStEvgsbX5sTsh53bN4CB4+byKDCnnTZdOLzpwePZN944A2StuXNfdQvi9E4y4qsqq6tWYEXNeIIibQDOWMzOZ1L4lZbGMSw3XW9eGUH7KSzXYgyILE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771198191; c=relaxed/simple;
-	bh=i3UDGp7KLBf04ttQhlWkE6uwpc1xbbanHk4UuNzhxHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CHFVoh1iYX7hU4kZRN7ii9YpGaWXokoYBCmB79spgkJJXFHF2WXxmF54DvoTfZJHGLlp9QWLFU+Fh4horPjnZd5B8nwcxkUuJ6FqSMvGP1l4/fRMjVN84HvtE/cOQE893LUOHfQo2JVkMwvOFPariy5IiqukPkVQNUg6bZtHeF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFudlKws; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1771198291; c=relaxed/simple;
+	bh=/UTZ3+eESrAxvzZCIeUe9RqgzV+4GH08uO+QHKmgYvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YX7H3nebUgptyz/vN0LvJeouTlv9bNl+tyOoxuoZLJGIYcft4rhZqfy+uUhGCtb4L5kAF65AzU9eV0Rt/cgvcy3EAq5yb/UMGoGGxm/DNg9S90iSVTlNrnj+m38RWgDtU7LKz3/cJVLTwshPv0LoIvn/RQ2TDpWTPsLP9vHh2qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxgcbX2w; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43770c94dfaso3208161f8f.2
-        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 15:29:49 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4833115090dso23678455e9.3
+        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 15:31:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771198188; x=1771802988; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771198288; x=1771803088; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1g7mVgGvWTK8/EIC7VR9y/94JjU5VubItvDLMki6i5A=;
-        b=NFudlKwsOfaCd552NIQjvhRB98fIuYhnJkmThdvq21VzVpE2Eh66rpHtW+wicnoPwz
-         2o8gHdpAqVTlenmWnZ7afHdflpcMC3HFNI1UpqxEU1OW1fyDR44P58gwcHi6RS8JKGTr
-         UiS49sSaR11atc9nD00CFmwqhUFfuvKGLXZ6SLPx0DDaiUPNV2PL/A9A9XDVNKb/1I+g
-         ESn4+A1UyFKpTIgv5BaBQ/sw8PMmvNoK425q9VMDlYwrQVGYdaSbB/0brY4mJSmXCut3
-         j69qcmJlU5TdGAokmXe6Bz6jKzLwLzlZFqroUYFolg0ipkNzOa3pKOzrqTISM+GYMDrX
-         7lxQ==
+        bh=StVXhxzh9g9psFpbjyJgn5evB1o+q9oCzqQx6kpImaM=;
+        b=LxgcbX2wis8B9KUKx89WHjhR7rDv4RLlywBc79iI2Ef033eYbgO8b1B/mwBpC4UNPZ
+         tTeNliqHe0hb9K8TpqflQ/T7C8pETy/5X+VmEJq6nb/uOmahFOJtYHWOdYdDVqPaS4iG
+         9WJBYvW/T67Eq/L26wsQjAnuCXr0yVWjVtwNb6NYtw3bfA5C6WY5xspsvCI7XDE1D5hR
+         VVuEQMf1jqMdXLcL7Ibd2x38+SQG4SE4ZU5IHn0AupZ+zRWc6U7fEF5F5z4zdZaWL+rA
+         2qWJRyF6a4fLbYzn/K7UDsreWtDuyqzLX0aLGiyIjp2i5mmykdXp3baojL7djx5au/3T
+         swxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771198188; x=1771802988;
+        d=1e100.net; s=20230601; t=1771198288; x=1771803088;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1g7mVgGvWTK8/EIC7VR9y/94JjU5VubItvDLMki6i5A=;
-        b=BC7Z6oajEGGQgOZ3KpmDxDlAsqjVnJFTBUrxNsef6mh17I5psoPdVLaFOM1d4t3kl3
-         r4tH9xr3GQ5cD1l2+VUNNj5ykPi69XaPGFdHzo2uT65nRvAltbByBFKz962ApCJlYiBG
-         rYernLfKrPNGiRUofU364OHKugeBPknJv0Zu64/yH2n+QNV5YI5Lf/pjL+ZONWviYYDP
-         3v6MiwIY06VrEjIBVBwpZ6vOeejntAwXahw9UlgqEV21MWhSALLVEtusXZYpLCLUHt0w
-         nsqTyJtfK+WYqJLr3rI5A63dwYpuMrtnVUSkP5T50bCEWM6dB+ryCr1OrB77R2ispzUK
-         IpTQ==
-X-Gm-Message-State: AOJu0Yzm9hd3o90qzxH0+sv6swmoCSFZ9IirLi1Zjwf1THLk3hQKqpG/
-	ON3aeU+oW7Rbux/3ljBUoHyjUlvB+IIzXIe7i9WjoIM9p2cPQb2bGkDa4SVGlQ==
-X-Gm-Gg: AZuq6aL9sdYfak58ioz3lLKCnuwoGquxcA3uL8LWGt+f0ykeIMYeanKPRGaVAJ9pZxu
-	zAoQQsXnCzaNxMt4e1yWky/5NRONwmP5qRuQHXXaD0toBQelTDIkuHICONaHitkKIe5GzzXtKnK
-	nrESiBZR7soYtVZJA4X9VFMlGDMthHaeYp0nN1zkYPJH7ZMilmlErtQIiEelYF1zyLw+y8lxd/c
-	samKrsVgQi6r2+vIovX7G5ZcBlCrG1ZLKgGvhN4ykLCZDaqHjZY7pRdwn9+36drBX5B8OK13jk2
-	3khPwTUka3/tJwnQRaPNQ1kMjYiuHb8S0F3xHmuOQltHU3h+pjsLFa61kkJfHY7w2kE+99feB9t
-	pzR5ClRLYVbpmT0A6cOaEXsXVtmdbWkR3Rhc2W96HNmV63qydCgGlmmveCR+3JCp3Bt3kIrxWsI
-	P8H2NX9c8QwOpyiWOmAy6M0fcAFRRcD7cn4SFUpeWRyEOCteh+ljQ21AKgXT6IVhp9mPRqg4n+I
-	xjMVeZmBFxZ/+ggxygyxMInkUQgJ3OUo1uzr6X6
-X-Received: by 2002:a05:600c:83c6:b0:477:9eb8:97d2 with SMTP id 5b1f17b1804b1-48373a15fa3mr143130425e9.8.1771198187814;
-        Sun, 15 Feb 2026 15:29:47 -0800 (PST)
+        bh=StVXhxzh9g9psFpbjyJgn5evB1o+q9oCzqQx6kpImaM=;
+        b=RIT31wL+Eh8DL2hysgSno1+j/u1lh5eZ+Dmo7yU8UsLeMINi5fAppDaz2yAZ0wVZ5o
+         +JWLyTiiJbksnJUiUIZ2SWaX7Hp16vTYxAFuR2Q6fb+XAmIDcHLSfPYUnH1fHDOtD4ol
+         AHPmdZac0JlD8YHEkc0+ZbMvvXmQml/tCaCaO31VJs0yHLSgmvvlu8g+yTtriQWT1G+1
+         8ckZ13FEb5zsScpYvLR8TuAuxFDcvo4QxwJKPo6STa8uluh2ftDoM1DowfvV9RN8W9jX
+         MD2AkwKYOg86v8eUZzQqG4WSXAzEHzIlL5o37ODyz0J4N5DI4aI1Ot74/D7HsAglT73Q
+         A6nw==
+X-Gm-Message-State: AOJu0YyuV6xhJ2AB6sQBYgFUNcc53lac3jo1qA2b8hZ9+faycyoetXXr
+	T3hGA9plWj0LCdmPkmmx8R+u6H2rhqNwdNuRP6PooK+5tuhx9MvCZijNvk2XkA==
+X-Gm-Gg: AZuq6aLYBzMl383bZNLZ078mFtunEJGM55/CoDoU/hVtWGASnL/AgkRpvdl7bf9B2Hd
+	UKFHHRatfYgj2ILi3ACoeGKldW7knx7FZYmXAXNtsJaUNC40nqw3Cjy4cBPVXRflkPfHs/bsq+y
+	jlOWgfsqmWjiOFBWC4yr/hhzYDerhnUWXgcZl+EDvaLvmktW8MyM3jmd/9C36j8sLITrsSLsJZs
+	5tUXgZ+FcXyittWXS/BbKa1Y/ZRaUCijEMkKnK2hSSTATyV5Tf+UrjwUiQ7ppY5i5HSByZVl0iq
+	6TmEmNHpEMkR0MK+D0Fgtq7XY/F/SAFKz4MOxKFcSmD+Hy/LYSP/uGaHFlsrwg1OWhUfgsYiBZL
+	FN7iwbbDLh1sdBHWwIHdvATQCQ6ifFuEUoeshfGZNsXF8RMLEKQiZQK6K7ZEn5rYJyXZA2ZJtUN
+	aRw2LNBLSWdgvSDgcnVOgfSgUB3OH4ajTaGp5pcwturCgdjl0lZFJqRNd47bMqXGeErusK3Se85
+	oflslBbD2wiy4z7Bz/zcQ27eIyn2g==
+X-Received: by 2002:a05:600c:524d:b0:483:4807:210c with SMTP id 5b1f17b1804b1-48373a5d7a0mr179075505e9.24.1771198288454;
+        Sun, 15 Feb 2026 15:31:28 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48371a44d2asm70403195e9.30.2026.02.15.15.29.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796ad112bsm22924803f8f.36.2026.02.15.15.31.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Feb 2026 15:29:47 -0800 (PST)
+        Sun, 15 Feb 2026 15:31:27 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	axboe@kernel.dk,
 	netdev@vger.kernel.org
-Subject: [PATCH 1/1] io_uring/zcrx: declare some constants for query
-Date: Sun, 15 Feb 2026 23:29:39 +0000
-Message-ID: <b68ff77af39422191154413f262717a08dfc9e04.1771197486.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring/zcrx: move zcrx uapi into separate header
+Date: Sun, 15 Feb 2026 23:31:20 +0000
+Message-ID: <14826e580830261478a74ed89941694538209bab.1771198073.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -96,11 +96,11 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12228-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12229-lists,io-uring=lfdr.de];
 	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -109,7 +109,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
 	TO_DN_NONE(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
@@ -118,77 +118,254 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 31737140144
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: C07D914015C
 X-Rspamd-Action: no action
 
-Add constants for zcrx features and supported registration flags that
-can be reused by the query code. I was going to add another registration
-flag, and this patch helps to avoid duplication and keeps changes
-specific to zcrx files.
+Split out zcrx uapi into a separate file. It'll be easier to manage it
+this way, and that reduces the size of a not so small io_uring.h. Since
+there are users that expect that zcrx definitions come with io_uring.h,
+it includes the new file.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
 
-Depends on the patch that added zcrx features
+Depends on the patch that added querying zcrx features
 
- io_uring/query.c | 4 ++--
- io_uring/zcrx.c  | 4 +++-
- io_uring/zcrx.h  | 3 +++
- 3 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/query.c b/io_uring/query.c
-index 63cc30c9803d..c1704d088374 100644
---- a/io_uring/query.c
-+++ b/io_uring/query.c
-@@ -34,12 +34,12 @@ static ssize_t io_query_zcrx(union io_query_data *data)
- {
- 	struct io_uring_query_zcrx *e = &data->zcrx;
+ include/uapi/linux/io_uring.h      |  96 +------------------------
+ include/uapi/linux/io_uring/zcrx.h | 108 +++++++++++++++++++++++++++++
+ 2 files changed, 110 insertions(+), 94 deletions(-)
+ create mode 100644 include/uapi/linux/io_uring/zcrx.h
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 6750c383a2ab..7a70ec70ff04 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -10,6 +10,8 @@
  
--	e->register_flags = ZCRX_REG_IMPORT;
-+	e->register_flags = ZCRX_SUPPORTED_REG_FLAGS;
- 	e->area_flags = IORING_ZCRX_AREA_DMABUF;
- 	e->nr_ctrl_opcodes = __ZCRX_CTRL_LAST;
- 	e->rq_hdr_size = sizeof(struct io_uring);
- 	e->rq_hdr_alignment = L1_CACHE_BYTES;
--	e->features = ZCRX_FEATURE_RX_PAGE_SIZE;
-+	e->features = ZCRX_FEATURES;
- 	e->__resv2 = 0;
- 	return sizeof(*e);
- }
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 28150c6578e3..60e12eb5d4f3 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -774,11 +774,13 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 		return -EFAULT;
- 	if (!mem_is_zero(&reg.__resv, sizeof(reg.__resv)) || reg.zcrx_id)
- 		return -EINVAL;
-+	if (reg.flags & ~ZCRX_SUPPORTED_REG_FLAGS)
-+		return -EINVAL;
- 	if (reg.flags & ZCRX_REG_IMPORT)
- 		return import_zcrx(ctx, arg, &reg);
- 	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
- 		return -EFAULT;
--	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
-+	if (reg.if_rxq == -1 || !reg.rq_entries)
- 		return -EINVAL;
- 	if (reg.rq_entries > IO_RQ_MAX_ENTRIES) {
- 		if (!(ctx->flags & IORING_SETUP_CLAMP))
-diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
-index 32ab95b2cb81..0ddcf0ee8861 100644
---- a/io_uring/zcrx.h
-+++ b/io_uring/zcrx.h
-@@ -8,6 +8,9 @@
- #include <net/page_pool/types.h>
- #include <net/net_trackers.h>
- 
-+#define ZCRX_SUPPORTED_REG_FLAGS	(ZCRX_REG_IMPORT)
-+#define ZCRX_FEATURES			(ZCRX_FEATURE_RX_PAGE_SIZE)
+ #include <linux/fs.h>
+ #include <linux/types.h>
++#include <linux/io_uring/zcrx.h>
 +
- struct io_zcrx_mem {
- 	unsigned long			size;
- 	bool				is_dmabuf;
+ /*
+  * this file is shared with liburing and that has to autodetect
+  * if linux/time_types.h is available or not, it can
+@@ -1049,100 +1051,6 @@ struct io_timespec {
+ 	__u64		tv_nsec;
+ };
+ 
+-/* Zero copy receive refill queue entry */
+-struct io_uring_zcrx_rqe {
+-	__u64	off;
+-	__u32	len;
+-	__u32	__pad;
+-};
+-
+-struct io_uring_zcrx_cqe {
+-	__u64	off;
+-	__u64	__pad;
+-};
+-
+-/* The bit from which area id is encoded into offsets */
+-#define IORING_ZCRX_AREA_SHIFT	48
+-#define IORING_ZCRX_AREA_MASK	(~(((__u64)1 << IORING_ZCRX_AREA_SHIFT) - 1))
+-
+-struct io_uring_zcrx_offsets {
+-	__u32	head;
+-	__u32	tail;
+-	__u32	rqes;
+-	__u32	__resv2;
+-	__u64	__resv[2];
+-};
+-
+-enum io_uring_zcrx_area_flags {
+-	IORING_ZCRX_AREA_DMABUF		= 1,
+-};
+-
+-struct io_uring_zcrx_area_reg {
+-	__u64	addr;
+-	__u64	len;
+-	__u64	rq_area_token;
+-	__u32	flags;
+-	__u32	dmabuf_fd;
+-	__u64	__resv2[2];
+-};
+-
+-enum zcrx_reg_flags {
+-	ZCRX_REG_IMPORT	= 1,
+-};
+-
+-enum zcrx_features {
+-	/*
+-	 * The user can ask for the desired rx page size by passing the
+-	 * value in struct io_uring_zcrx_ifq_reg::rx_buf_len.
+-	 */
+-	ZCRX_FEATURE_RX_PAGE_SIZE	= 1 << 0,
+-};
+-
+-/*
+- * Argument for IORING_REGISTER_ZCRX_IFQ
+- */
+-struct io_uring_zcrx_ifq_reg {
+-	__u32	if_idx;
+-	__u32	if_rxq;
+-	__u32	rq_entries;
+-	__u32	flags;
+-
+-	__u64	area_ptr; /* pointer to struct io_uring_zcrx_area_reg */
+-	__u64	region_ptr; /* struct io_uring_region_desc * */
+-
+-	struct io_uring_zcrx_offsets offsets;
+-	__u32	zcrx_id;
+-	__u32	rx_buf_len;
+-	__u64	__resv[3];
+-};
+-
+-enum zcrx_ctrl_op {
+-	ZCRX_CTRL_FLUSH_RQ,
+-	ZCRX_CTRL_EXPORT,
+-
+-	__ZCRX_CTRL_LAST,
+-};
+-
+-struct zcrx_ctrl_flush_rq {
+-	__u64		__resv[6];
+-};
+-
+-struct zcrx_ctrl_export {
+-	__u32		zcrx_fd;
+-	__u32 		__resv1[11];
+-};
+-
+-struct zcrx_ctrl {
+-	__u32	zcrx_id;
+-	__u32	op; /* see enum zcrx_ctrl_op */
+-	__u64	__resv[2];
+-
+-	union {
+-		struct zcrx_ctrl_export		zc_export;
+-		struct zcrx_ctrl_flush_rq	zc_flush;
+-	};
+-};
+-
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/uapi/linux/io_uring/zcrx.h b/include/uapi/linux/io_uring/zcrx.h
+new file mode 100644
+index 000000000000..3163a4b8aeb0
+--- /dev/null
++++ b/include/uapi/linux/io_uring/zcrx.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT */
++/*
++ * Header file for the io_uring zerocopy receive (zcrx) interface.
++ *
++ * Copyright (C) 2026 Pavel Begunkov
++ * Copyright (C) 2026 David Wei
++ * Copyright (C) Meta Platforms, Inc.
++ */
++#ifndef LINUX_IO_ZCRX_H
++#define LINUX_IO_ZCRX_H
++
++#include <linux/types.h>
++
++/* Zero copy receive refill queue entry */
++struct io_uring_zcrx_rqe {
++	__u64	off;
++	__u32	len;
++	__u32	__pad;
++};
++
++struct io_uring_zcrx_cqe {
++	__u64	off;
++	__u64	__pad;
++};
++
++/* The bit from which area id is encoded into offsets */
++#define IORING_ZCRX_AREA_SHIFT	48
++#define IORING_ZCRX_AREA_MASK	(~(((__u64)1 << IORING_ZCRX_AREA_SHIFT) - 1))
++
++struct io_uring_zcrx_offsets {
++	__u32	head;
++	__u32	tail;
++	__u32	rqes;
++	__u32	__resv2;
++	__u64	__resv[2];
++};
++
++enum io_uring_zcrx_area_flags {
++	IORING_ZCRX_AREA_DMABUF		= 1,
++};
++
++struct io_uring_zcrx_area_reg {
++	__u64	addr;
++	__u64	len;
++	__u64	rq_area_token;
++	__u32	flags;
++	__u32	dmabuf_fd;
++	__u64	__resv2[2];
++};
++
++enum zcrx_reg_flags {
++	ZCRX_REG_IMPORT	= 1,
++};
++
++enum zcrx_features {
++	/*
++	 * The user can ask for the desired rx page size by passing the
++	 * value in struct io_uring_zcrx_ifq_reg::rx_buf_len.
++	 */
++	ZCRX_FEATURE_RX_PAGE_SIZE	= 1 << 0,
++};
++
++/*
++ * Argument for IORING_REGISTER_ZCRX_IFQ
++ */
++struct io_uring_zcrx_ifq_reg {
++	__u32	if_idx;
++	__u32	if_rxq;
++	__u32	rq_entries;
++	__u32	flags;
++
++	__u64	area_ptr; /* pointer to struct io_uring_zcrx_area_reg */
++	__u64	region_ptr; /* struct io_uring_region_desc * */
++
++	struct io_uring_zcrx_offsets offsets;
++	__u32	zcrx_id;
++	__u32	rx_buf_len;
++	__u64	__resv[3];
++};
++
++enum zcrx_ctrl_op {
++	ZCRX_CTRL_FLUSH_RQ,
++	ZCRX_CTRL_EXPORT,
++
++	__ZCRX_CTRL_LAST,
++};
++
++struct zcrx_ctrl_flush_rq {
++	__u64		__resv[6];
++};
++
++struct zcrx_ctrl_export {
++	__u32		zcrx_fd;
++	__u32 		__resv1[11];
++};
++
++struct zcrx_ctrl {
++	__u32	zcrx_id;
++	__u32	op; /* see enum zcrx_ctrl_op */
++	__u64	__resv[2];
++
++	union {
++		struct zcrx_ctrl_export		zc_export;
++		struct zcrx_ctrl_flush_rq	zc_flush;
++	};
++};
++
++#endif /* LINUX_IO_ZCRX_H */
 -- 
 2.52.0
 

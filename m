@@ -1,146 +1,143 @@
-Return-Path: <io-uring+bounces-12209-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12210-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oKkzDzUckWlRfQEAu9opvQ
-	(envelope-from <io-uring+bounces-12209-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 02:07:01 +0100
+	id FVK8NYENkmktqAEAu9opvQ
+	(envelope-from <io-uring+bounces-12210-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 19:16:33 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943A213DDA2
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 02:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 091B313F57E
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 19:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7E2EB301AA5E
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 01:06:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DFA35300D329
+	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 18:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEC41A23A4;
-	Sun, 15 Feb 2026 01:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324202E62B3;
+	Sun, 15 Feb 2026 18:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FLvavGkK"
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="mXKC4o44"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2EF16132A
-	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 01:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A9F17BED0
+	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 18:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771117599; cv=none; b=YZ71UpYk97iT9tbSWY5GTHwZ0T1ajAQ3fjDh5FUmfoFDDPVkB5iqkM2s65mhff4NSACIXqFPNr9ZImO3iiPB1+0QetGvbdIHlzyM8DkwoOagT9/edJYO23GYqY1ZSmTfVOtGOVgQalNKmz9UtnoC7HvpoZ/S42LdMt+Hy1oTE/A=
+	t=1771179390; cv=none; b=WBuV/4NmKedd9X307rUOcIpHPqILOuhFDamRS972c0fYpeeriNycacyaicvyMht3vAaC9u3UZN/8ZIt7DuMsmKFiBq+BT70Y/6zRXYH7Y6LFUxUVYSgBpJIet2VxBLcf1lsn7+u87eHAn5BCpk6P1NzRNKBtu50xeIoAgTD8ofU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771117599; c=relaxed/simple;
-	bh=zBOFt6D2OmOFM8AUA/bjMmFQFOO0ySymD/6dbPkFFb0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WCYhyA9RpRxOjh1O3CDsz5brhJhkgjmkuYkK+46gQZ7H6SmkIHnXsdZHvrq9i/QvkrYsZZbs2J/vbTaL9dLoiPYAaqU23Rwc1O7VMggmGYwnGwFwXrcy7NOKVPcqDaVpsbDHYycE928M8SPbOf0N7c/6lTMUT7oQbhEro6lruI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FLvavGkK; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-46391e91e16so1290715b6e.3
-        for <io-uring@vger.kernel.org>; Sat, 14 Feb 2026 17:06:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771117597; x=1771722397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BFPqG2MPH94wr47UdbEvgbtEhE7zbNXFowJ+m2ozxuI=;
-        b=FLvavGkKV5YSxW4oJaCz+lc8eLzjM+SewTqBNHE1JHaf5VifDuxuJ3wY2wRBK54HqG
-         ItDIDDX0M7D4EhttM9+/gD1dApFKK1uoCHvNr9HkSqWG8DxbWzl1+valWlurc4c90oRo
-         z2PCq48At0g9eghYsqut7jYasAty12SnAOvY2viVmBHyereXanhtOsa4TbR/0H6sdczg
-         2bOFKWh8fguUge5V5wpE0JlBbc/N8XtT9aeW8nPgp4TiY5lulmC507rdFF8a3Gw2o7yK
-         rzolaF7qqGPm6e4UqSOP8SBCfPHqo+pH+WBACEajD8wlCRW3pTX6yz6XWlH59FkX2jFc
-         Qi2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771117597; x=1771722397;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BFPqG2MPH94wr47UdbEvgbtEhE7zbNXFowJ+m2ozxuI=;
-        b=fEsYAsz+7T/osOqUPF+ilTyW0Sh9BkQQfHywKH9QurD9RL7jOEWEEtDqk75pT2bd98
-         NFAaDeGPcbbI9hE5ddV0Feu1/KvrpdoQerdvsIRAqSv080p09v3eHFcI6IUhOmTEj3UR
-         rrde4P9XLtIJrS01+80IBnxNtvjOUbaHfqZ59o8jrosdvUWZFegmFiHu7p2dqXEv+XZK
-         oXG7dd/2BMVCfBbWorzXQQC4aj2tLDxQvCjEKDMzKG2+zVYH84+CD//pX/4sK2LeYNjb
-         PkpjT0uHeEWPzwK6zK1hjaIAIVN/HksTgGbHeSQ4h1aM4KIvw145OrvA3Ie0vlgViUB4
-         g3RQ==
-X-Gm-Message-State: AOJu0YxvGEDpkVUHPNbcuEHiy31dn48agvYduiDtfnkZ2lsEwziBkSKk
-	aDi4Kkvj/lNyiQ9Sjx9GHpWOFyJUNZZTNlZp1m5FpEF6iggnBdXcBHN6D/LcUmz6+EcyaxpqVsd
-	jiC3BI2k=
-X-Gm-Gg: AZuq6aIAb6lkJVMi/kG+oQuCBy9E+KbZ0dgdqwdpxmDcFTUb0PkxNGqKEWH+m/79W+i
-	bcrK/YqBXLKWHjb1mOz3ENg73kYcoj0TDYpL5aEZwIytMKm3cZHOrTpz1ib/O9/M5E0dCkQbIpf
-	bR/svG+J2OX65Wdrr710Pdeqf1bqdrFHPp5aPw2l0wYAJMzCvajokgjHJGYI980UvbNrk/Wpw1F
-	USIuzjT/VjQAIiAGfcqmLOAZYDGR3KddTXStJVVcO8IbfMIgKxX5n5jExwlfi3qjzzCwh7/sAlS
-	wr6GxylQkH4klsrLDxUHSkWkrKOiWR/M8gMH9ePCOLGlZE3Hh65sT/14xFFKN+UdFmjN9hR1jEz
-	of14JbDIENSi8/4Z50PFQvtP+fyjk/42G1kUH2xOFn903tJW00fiL9O9YwopcdUToo8Gj9nAisG
-	0rhXBaLWky+uEXKGPD34d1K8g67Ree2v5r/E/H5jpNnNlqel8eY9i8PsdkQE3Ycwm6M3nq6CLt4
-	qAl
-X-Received: by 2002:a05:6808:1b13:b0:455:d5d1:8ac0 with SMTP id 5614622812f47-4639f25d294mr3251767b6e.53.1771117596724;
-        Sat, 14 Feb 2026 17:06:36 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40eaf1e858bsm10583097fac.19.2026.02.14.17.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Feb 2026 17:06:35 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org
-In-Reply-To: <9d9cdc9ae6c6d59154e68f65054d75893a749d14.1771091720.git.asml.silence@gmail.com>
-References: <9d9cdc9ae6c6d59154e68f65054d75893a749d14.1771091720.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/zcrx: fix post open error handling
-Message-Id: <177111759535.436334.17052455952625566060.b4-ty@kernel.dk>
-Date: Sat, 14 Feb 2026 18:06:35 -0700
+	s=arc-20240116; t=1771179390; c=relaxed/simple;
+	bh=9sAqF9vdzNzZyOBhiNOfPqw/5F4dkBDVFKTr0FIdvxc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FuxbV4DIIMSPjA5xPJcOuzKdNv5z3sa3Y2ztb12enb+/wjVFQIFdE+WtYgL0qPQY7lrtbfD7ca4ra9iGJbRgoKMlgRs8bvauItetzozcrcWF+dmnEzua4ocrYPJeOiOg1kg3p6conJHJ5XJ0ExGZgO9panZOpI4u70RrZJf41Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=mXKC4o44; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1771179381;
+	bh=9sAqF9vdzNzZyOBhiNOfPqw/5F4dkBDVFKTr0FIdvxc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=mXKC4o44nFjwz6ReYxtRV6s3TogJ0fI4Q48iV2zXcHIo8+m2CPi+bzwFmH6nDun0L
+	 7P7GaQCYKj5yTJsEtW/iPDSLpd94PmHODZ/0nrva44KZIJwVYDOUZZ0SSA1lqBG1/u
+	 AH8FblTf2THEID3l/XcrKyRQJqB8dFE8yjboJQmRnP52vNB1e/WIO8dlTHw7xsWTfh
+	 sL82hI9AGkXwmCAvg3bWlxZnzA5yFB1ZXcJSXHxeWLHMaP4dXbtEn/XKBUuJPLnTq6
+	 /5KLGqz/bbctIwKRowU2yt1R9tHAc40LpHQ6j77yVXvKLNiAQMZzPCC3/67DyWhYoM
+	 u2li2H5Y0G8uw==
+Received: from localhost.localdomain (unknown [36.50.142.76])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id EE8DD3204B4D;
+	Sun, 15 Feb 2026 18:16:19 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>,
+	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+	Christian Mazakas <christian.mazakas@gmail.com>
+Subject: [PATCH liburing] github: Upgrade clang version to 22
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Mon, 16 Feb 2026 01:16:12 +0700
+Message-Id: <20260215181612.1941963-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gnuweeb.org,reject];
+	R_DKIM_ALLOW(-0.20)[gnuweeb.org:s=new2025];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12209-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-12210-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[gnuweeb.org,vger.kernel.org,vger.gnuweeb.org,gmail.com];
+	DKIM_TRACE(0.00)[gnuweeb.org:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ammarfaizi2@gnuweeb.org,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: 943A213DDA2
+	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 091B313F57E
 X-Rspamd-Action: no action
 
+Commit 5cb44fe56b58 ("workflows/build.yml: install default ubuntu-24.04
+clang") downgraded the CI to the Ubuntu 24.04 default Clang (v18). As
+noted by @cmazakas, it was because it broke bindgen.
 
-On Sat, 14 Feb 2026 22:20:47 +0000, Pavel Begunkov wrote:
-> Closing a queue doesn't guarantee that all associated page pools are
-> terminated right away, let the refcounting do the work instead of
-> releasing the zcrx ctx directly.
-> 
-> 
+@cmazakas recently confirmed that Clang 22 does not suffer from this
+bindgen incompatibility. Therefore, upgrade the environment to Clang 22
+to gain access to the latest static analysis tooling.
 
-Applied, thanks!
+Acked-by: Christian Mazakas <christian.mazakas@gmail.com>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+ .github/workflows/ci.yml | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-[1/1] io_uring/zcrx: fix post open error handling
-      commit: 5d540e4508950c674d6feef1d95463d039bbf4f5
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 8f008b94eeaa..83669e131d2d 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -196,8 +196,15 @@ jobs:
+ 
+       - name: Install Compilers
+         run: |
+-          sudo apt-get update -y;
+-          sudo apt-get install -y ${{matrix.build_args.cc_pkg}} ${{matrix.build_args.cxx_pkg}};
++          if [[ "${{matrix.cc_pkg}}" == "clang" ]]; then \
++            wget https://apt.llvm.org/llvm.sh -O /tmp/llvm.sh; \
++            sudo bash /tmp/llvm.sh 22; \
++            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-22 400; \
++            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-22 400; \
++          else \
++            sudo apt-get update -y; \
++            sudo apt-get install -y ${{matrix.build_args.cc_pkg}} ${{matrix.build_args.cxx_pkg}}; \
++          fi;
+ 
+       - name: Display compiler versions
+         run: |
 
-Best regards,
+base-commit: 364a7b561fa13cffdd7771978dc5509ec4d9d7f9
 -- 
-Jens Axboe
-
-
+Ammar Faizi
 
 

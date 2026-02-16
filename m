@@ -1,153 +1,154 @@
-Return-Path: <io-uring+bounces-12232-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12234-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OBuHEfldkmmUtQEAu9opvQ
-	(envelope-from <io-uring+bounces-12232-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:59:53 +0100
+	id 6KDDK2jxkmlA0QEAu9opvQ
+	(envelope-from <io-uring+bounces-12234-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 11:28:56 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD43C140614
-	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 00:59:52 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460C9142599
+	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 11:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0B1F43007651
-	for <lists+io-uring@lfdr.de>; Sun, 15 Feb 2026 23:55:40 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E712530074AC
+	for <lists+io-uring@lfdr.de>; Mon, 16 Feb 2026 10:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5262C2459E7;
-	Sun, 15 Feb 2026 23:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FEE2FFF9D;
+	Mon, 16 Feb 2026 10:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ez32T83i"
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="bElWKRco"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09221B7F4
-	for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 23:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464412FF67A;
+	Mon, 16 Feb 2026 10:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771199738; cv=none; b=pDBU5ykcT7NyDs/wu0bzraORNDFvXv7fjN5OfNqEGgcPuwk0zUIpP4goiZ2iwToZhPyOL3R+lxE/kBWmb9QMTTSki97q7UMdupJzlc1rC7HRoFyF5QDxnePJBySc2uhyZ0tVdMSVyfiKOSAxtQtYmouitvEm0LPcvQc2aWaro5Y=
+	t=1771237728; cv=none; b=q5vdUZyuFp+viDGZZY+6Fy0J4FuVzzTFpxVHHMxcL88UedIPaIozeVwZuMkqyhhwrf07N8uNhvNs3OrkoLRdrFTyZE1Ml/WqqA6Jeh/ug/mbyWRHFSxIYgkFb2wbuhjbaH6bLEcnu+XsIlKGWCrjApgAeObuP5yqE8BtjkpsZWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771199738; c=relaxed/simple;
-	bh=V0x7wLJBYX0nfkloMBXf+o/1FfHEEmv2FiqrcH7dqCw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bAgoeygup6XcRURkNc9cY+/+C01MI9okf23m5nOcvF9YSDqU6tDtiZIRSVff/UJJ+IuUiJ3E5fCOVAzs+1FUtqDy5hktAdqicSibAaJXSJ959zYDfUgmS1zZ316THhctmRKeLUrbP1pz/MnWCHI60Ag1BEAmCFPSQ3Vdh3KAR8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ez32T83i; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7d196a2334fso2289576a34.1
-        for <io-uring@vger.kernel.org>; Sun, 15 Feb 2026 15:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771199736; x=1771804536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2uBqQkcSBi0YUCOpfN/PM+qfkZpXtOfWMA026z/TM64=;
-        b=ez32T83iYsrTIigvjssJGahiZqCDfnz3M+4sS9zSNqcq0TLRR8bs2etYAlr5bMDmxb
-         aGLVDrOWBPVFLosFF+JpNM+HsOEdXzvYuYsBgMxRmxLSzJLT/KqVJ6lnnH8v/TPhHRKt
-         ALfyEx8QJBuFUR3f8iWprJRmYYdz6hXH+8YgpOGYiWzMp45YYlUdmnc0uM5HhyZzk6/j
-         OzBegJY92xF8Vl9aM8QYM/6mdxChkS/FJohBG9w2vgaV6L8x3U6PRooMJ5W9wI1CAKEK
-         5T7PztFwMNjbKdqLhaFK31onORqoh2ABOSwImYmtXI1VTTEdcIMZ9fcPGCUP2BO9gH5a
-         a7WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771199736; x=1771804536;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2uBqQkcSBi0YUCOpfN/PM+qfkZpXtOfWMA026z/TM64=;
-        b=tAG6imN3cn8V01PCZpZK5duLubSrDJd+keG2iDutV5nXFFPpLKCp3ADXtcYKrUHVFZ
-         dzHK5p0hFngNbpmi5gT7YHtEgvim72r7vj6kjChes4D2vXvnTshTDGXwYIvQzux8VFwU
-         1WNzYMPD7ebEhGBsDYMWNRz48x/uDlEj3cliuh3Vi3YPfC5npiPf2FTs0SYtYJ5TFJsv
-         S6YCSMdPAiN/zXA7AOi4VrN72+/ApROK77FpY60vYtKN24niJINClupQb6i0ZCgfVU1q
-         taNGmghTm2RpuuhawCM2dbVbsw2yVNJXRXrgn5OBEfkLMFOpsh/dS+4WNfj33f+HUnpA
-         SVJA==
-X-Gm-Message-State: AOJu0YzZIMOjja/hDzb0mU2Zr6KLYfptYq5XBbm5cnGB6vdkFRdZ/WFy
-	3j61yPO7hes7/NvepBGd7rOeQmfsyvXtsTyPZMgYZHzIdirZ5/hmDund9QDdz2y6Byw=
-X-Gm-Gg: AZuq6aL1Rd2f9lR8aUzeKMKik9aZ6aW+ibCvSkL1BqYh3QbDI7uGLNWW3LGiip8rmvp
-	NG9URwwrRWJEvbsd/fNRm7R6PKqczyzesZF5Va62m6/gylklMCWJ0XF5Do4uXOdDcE7NEEuiogy
-	v1KUIT9K7dbAbCaBTdUIByP8LJCoStPm16elYAPrWdefb+NQnxZh8P/TQ1M/wk6vC25DFLW5mTZ
-	DiK/aU8OgbF+Mz4G9OEdw+xK6fQEVfYU7XUn3PeFjvTwXAT6z8q9UBXtaoDwY6SYXqxZ7Ug/XrO
-	OHaF6q3ydc83e6lANpD0OIbELQ33F79rVxBcrVjJRY6vP2smNtR5COmMXaOu5WI1hbyeB2uG+hm
-	H/+FHlwxKxNtEq6U0ux7GLB8C5fcr5jB7oEa9BKh0yzCBwc+r4Xyhsu7poFam0d6hL4ESMVZPLS
-	bl7KAKLVKakFlDpMMPq+3nGRl18N1eC3HwUQ13dvL9DrAYvdXqH7oX7EsrsjCMJKPXUTPP4EcyY
-	u0d
-X-Received: by 2002:a05:6830:811a:b0:7d1:5253:a0b6 with SMTP id 46e09a7af769-7d4cde099b3mr2414401a34.2.1771199735812;
-        Sun, 15 Feb 2026 15:55:35 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4d1e6ff70sm4768576a34.16.2026.02.15.15.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Feb 2026 15:55:35 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: io-uring Mailing List <io-uring@vger.kernel.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>, 
- Christian Mazakas <christian.mazakas@gmail.com>
-In-Reply-To: <20260215181612.1941963-1-ammarfaizi2@gnuweeb.org>
-References: <20260215181612.1941963-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing] github: Upgrade clang version to 22
-Message-Id: <177119973472.87571.2616828602372853475.b4-ty@kernel.dk>
-Date: Sun, 15 Feb 2026 16:55:34 -0700
+	s=arc-20240116; t=1771237728; c=relaxed/simple;
+	bh=zvTyan5qupPAd8ZhYvh6WTVKUc7a46aewxejGUk+eo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cP8z3VZrEyXcSvBhIup0nqNao2XLij+jTlPl9bM53oYPkDVuUVsEISak8Vxc+qxosPEKFebsEBa61fIqaAZcsf9exQWg/DCSUzRTi0rFJ0Ttu56xgFb8KRpUIuqtXP/bfvC+fk0tNAnB1Uv0iaUmW99cIVn/SFsnZiy/M3jWWDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=bElWKRco; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1771237724;
+	bh=zvTyan5qupPAd8ZhYvh6WTVKUc7a46aewxejGUk+eo0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bElWKRcoQ2OGY66Y65eHcyN6Go3vy0FJUiqEuBsK/ZcIT5KnKKsxYTaGm61pXjL3/
+	 et6gAxJYm1KQwKpiyPT1ArTAgEo/hDA5jj8oHw5OQp0AHG2A42yMztg7MLUD23QoJ6
+	 I3sQPNypgjTGK0P8XHPL7gcQ5jV8+2H9dOJW7pOXy3NqCl+RTmWp58z9p0wR1Yk+A6
+	 J4fUX8Vgu1rB5RUMBjIplfd2llWRnZVxcRZsGMXnTcOHn85+D3YoSJthUWAyDpE8WW
+	 el7Y9Gbdd4H6Xzp4bCdOKhcz6i0+I02TS0B3TZ5UwQS834SlPlYSRbk1Gxx8u0Uihc
+	 QYKfKlMeLA9Ag==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 3597F60103;
+	Mon, 16 Feb 2026 10:28:17 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 52E112003E2; Mon, 16 Feb 2026 10:27:49 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Breno Leitao <leitao@debian.org>,
+	Gabriel Krisman Bertazi <krisman@suse.de>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] io_uring/cmd_net: fix too strict requirement on ioctl
+Date: Mon, 16 Feb 2026 10:27:18 +0000
+Message-ID: <20260216-io-uring-fix@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.39 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_MIXED_CHARSET(0.77)[subject];
+	DMARC_POLICY_ALLOW(-0.50)[fiberby.net,reject];
+	R_DKIM_ALLOW(-0.20)[fiberby.net:s=202008];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	DKIM_TRACE(0.00)[fiberby.net:+];
+	TAGGED_FROM(0.00)[bounces-12234-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12232-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,vger.gnuweeb.org,gmail.com];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[ast@fiberby.net,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim,kernel.dk:mid]
-X-Rspamd-Queue-Id: BD43C140614
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 460C9142599
 X-Rspamd-Action: no action
 
+Attempting SOCKET_URING_OP_SETSOCKOPT on an AF_NETLINK socket resulted
+in an -EOPNOTSUPP, as AF_NETLINK doesn't have an ioctl in its struct
+proto, but only in struct proto_ops.
 
-On Mon, 16 Feb 2026 01:16:12 +0700, Ammar Faizi wrote:
-> Commit 5cb44fe56b58 ("workflows/build.yml: install default ubuntu-24.04
-> clang") downgraded the CI to the Ubuntu 24.04 default Clang (v18). As
-> noted by @cmazakas, it was because it broke bindgen.
-> 
-> @cmazakas recently confirmed that Clang 22 does not suffer from this
-> bindgen incompatibility. Therefore, upgrade the environment to Clang 22
-> to gain access to the latest static analysis tooling.
-> 
-> [...]
+Prior to the blamed commit, io_uring_cmd_sock() only had two cmd_op
+operations, both requiring ioctl, thus the check was warranted.
 
-Applied, thanks!
+Since then, 4 new cmd_op operations have been added, none of which
+depend on ioctl. This patch moves the ioctl check, so it only applies
+to the original operations.
 
-[1/1] github: Upgrade clang version to 22
-      commit: fa9896fa9371e661ff158328d8c5dd906fe8cdac
+AFAICT, the ioctl requirement was unintentional, and it wasn't
+visible in the blamed patch within 3 lines of context.
 
-Best regards,
+Cc: stable@vger.kernel.org
+Fixes: a5d2f99aff6b ("io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT")
+Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+---
+ io_uring/cmd_net.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/io_uring/cmd_net.c b/io_uring/cmd_net.c
+index cb2775936fb8..57ddaf874611 100644
+--- a/io_uring/cmd_net.c
++++ b/io_uring/cmd_net.c
+@@ -160,16 +160,19 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 	struct proto *prot = READ_ONCE(sk->sk_prot);
+ 	int ret, arg = 0;
+ 
+-	if (!prot || !prot->ioctl)
+-		return -EOPNOTSUPP;
+-
+ 	switch (cmd->cmd_op) {
+ 	case SOCKET_URING_OP_SIOCINQ:
++		if (!prot || !prot->ioctl)
++			return -EOPNOTSUPP;
++
+ 		ret = prot->ioctl(sk, SIOCINQ, &arg);
+ 		if (ret)
+ 			return ret;
+ 		return arg;
+ 	case SOCKET_URING_OP_SIOCOUTQ:
++		if (!prot || !prot->ioctl)
++			return -EOPNOTSUPP;
++
+ 		ret = prot->ioctl(sk, SIOCOUTQ, &arg);
+ 		if (ret)
+ 			return ret;
+
+base-commit: bb7a3fc2c976b5d0deb35a54ca237519816d7ba9
 -- 
-Jens Axboe
-
-
+2.51.0
 
 

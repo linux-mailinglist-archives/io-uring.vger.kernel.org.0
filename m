@@ -1,85 +1,86 @@
-Return-Path: <io-uring+bounces-12291-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12292-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oO4AIGBplGlFDgIAu9opvQ
-	(envelope-from <io-uring+bounces-12291-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:13:04 +0100
+	id OFMYG6NplGlFDgIAu9opvQ
+	(envelope-from <io-uring+bounces-12292-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:14:11 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEE414C70F
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DCF14C73D
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 47AE13014C59
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 13:12:15 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 50D403020ECE
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 13:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FA43346BD;
-	Tue, 17 Feb 2026 13:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCF635FF5B;
+	Tue, 17 Feb 2026 13:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eU+V4e0V"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ACfDFMUP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0171535FF5B
-	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 13:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF173612DC
+	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771333933; cv=none; b=fImHmfibkTD3tXONBvmiogux9wodVF+tC8rh4DmeeeEPDe9MYKNZy4+dXnhtiNvxSfNR7dwc4qZ9jCJFE6UUhCDzcBqNjpgh+90n8gQWVwune255YX/KFN0K43z7d27Fn77iVoQztlZb1w0zLRt02EV8NrxaIUJdH87ltI72UeQ=
+	t=1771334045; cv=none; b=uZ2zSQi3Z3a572Q2MNt2jCwHBb14RW+6ZG3g0sRbXS5PU7WzJoSh3mDQd7QyH2sVTwEQPvs4q3KKdZWuiPkOIDzOIP8Xk8Kkiwl9fcH1wngbbuPDLGtJ8053TGmQGxkXDipiVVzfS5Y563pREbF0s6DR3LDcHJYca8ZvPbRcYwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771333933; c=relaxed/simple;
-	bh=uPQgbNaRuZvxwElvEbZnqSKqr3yGl85I0rv35TTTFlI=;
+	s=arc-20240116; t=1771334045; c=relaxed/simple;
+	bh=KgdImVWaXCqHS7IFf+UtC6bOQ8fO+oFr0mCM3o/JL3w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pLWBZT59pdLXrqYa6VDndvGEMvwRKcvgG6D/wPBLASBNacfN2RC9E93pMCAtQfqHddgY6h43mq0gERKWiX7VljxgkFqSuocZp518ai4En/Z0Z30xuDFhI6xSpaikV0QwtOP3NkavE6y575fc7UJKzOYyWXy2ZPWQsioC9+Fwh9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eU+V4e0V; arc=none smtp.client-ip=209.85.210.43
+	 In-Reply-To:Content-Type; b=jQA8FPfRqRICHkQeRTIoM+L/L1WiwK5irdRI58dCKHDRW8cy+KTwufsx8VqaHOnRkSSDIzZSU2ZwCQUikj4diprHMRCUrWMcXifFST5EXB/23gpxoTsMn8KXkifb8eCZx2lXwCY3LOdYlPXpQVQBHNK9d6TTp+YJSz8TjrqneBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ACfDFMUP; arc=none smtp.client-ip=209.85.160.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7d15b8feca3so4907535a34.3
-        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 05:12:10 -0800 (PST)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-40974bf7781so3768381fac.0
+        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 05:14:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771333930; x=1771938730; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771334042; x=1771938842; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KtDB5uuETc94flMW44bdg4zOAnTdQgs/Wo9k9jb+DwI=;
-        b=eU+V4e0Vn8zsI/00Eeybz8GGsSH5xunQJnkRNT3RMBUyngBdRA6kcVJdkojlFK7qBY
-         BFgPBZXqEeiGWZONkAiCbGW8MB6VdphPiTGnsF1sm3yFTbTTG75aFtSfGOVoOzcnz2il
-         xrP15cX0XVN8zyYZTdxDwFbMm+eeMNNGyz4QPkv16eMqTTBoDRMtyaJYEfChfvwiAXae
-         CWtcsiVrH3+8hfiY3Gl2fextD5A29/yAaRCmOnq5M/UTILr6Tov5ZdRQBZrAM5arFOTZ
-         nZLXZ0fMqOYSnjCPSlBJH0mz7u7lm7XF05WUB0ivcE7mx8L7BKKW0CjFom4DXTueRbUs
-         xoGg==
+        bh=+hvRTCg0bG7pjf0n0vlP3LHvxQEYZFAerxPCqp6C9Yg=;
+        b=ACfDFMUPMD77feB/ZsadPSA0wGjNWW8fvFsI1wpraQeGV/OrnLZQ3Hx6QmnpTGDiyG
+         gnmC/nK3PipMfi5AlBXmbbgossQTnpiDz6I7vc9fGU3xAdeO4vfP2VdG0QXzknlqZDuN
+         a5L8ayh0Tfobpoczrywejn9StIX5ziSt9MohUKSMfXxAphOv6S9Ohw8bFbi92zMvZCzq
+         NN4hm1mL9+3RekbdMVHENocinQIIN+mt03sKBoXsWPR8CIxXSiK5JQ8uYAkWLyblD07p
+         8U2xYdoo9Krxmzeyn7uOMUiflhonBrumrTWhs7P0YDzKo01atd2VuBSFHzbVfVT2jQHy
+         hmDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771333930; x=1771938730;
+        d=1e100.net; s=20230601; t=1771334042; x=1771938842;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KtDB5uuETc94flMW44bdg4zOAnTdQgs/Wo9k9jb+DwI=;
-        b=BzykS96xH3dg0gMf9Sxh9hjKwTiO1Q4EOpw54lWBYFV4XTfijZmw6dj1dLax7hDbLk
-         yujOo1QPSfHm/ciTvMDVN6uTExME1fftNoAXdnMBGEpo3X1wI7z8sJpBN3zgJFbS8U1M
-         nL1nGaKty35dbNaZkBYgt3L9ulkjL90FPGUufW2qRW3Tzi6UmKr8bw+8yJickZnqL5C5
-         /NBUimScHeovD1URsSbrEpaUQH4LwkRWJ9v1w9qprA49N6i1vS0zvGut3NUkhzhVv6bt
-         YzX4rnG0hRhZ7RfODPRvv//CV6heFMd8X/mhW6xKf70VnXqq96CBzeevimRmtvRttnwx
-         WuhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+xOJ/4cMCtjLJaAjHdRSE6dSJIhX+YLHaaRRebQhQCJ/Z5Jo4tuMgiZ3tRO8rJBCKFobXoEiEpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOfxP6JajuLQzR81cez/K8v2BV+LDWihXQjDozrz6S0OzXuMeW
-	pGI6924BGOgQqlrR+fTE9tb1OQYO9kMEnoub6wzZsym2jvcOAw1fvRKi3WXEdXuRt3E=
-X-Gm-Gg: AZuq6aLR5Na83rQdDiJo2oOK5dYlYcw0fX7GsffgPMBUacn1u9zilLQQANF+FnX0jwT
-	1b7uoGFv1XQcr+YLKd1+hqSJT+3kzKoLF6OWPbu4bd6ZKfIs8JqhnR2Ko1153Tg8BfoGEoGsL72
-	2UACakKswkp79b9/foWz6GNpjd8zIzpp5h1UZkdt7SI52UfOr6AoiGHvCyGOrU5V2DwvtZFC/ox
-	U0GHM3QVj0nijtGdw+BPwhY3dkKeumsVeRoTZWkpA6lgBrigpyxzuMXOgVZPwGVgkADR88H/4HU
-	1eQkzg6nO2zIlul4mwJxOLRcTycrkEPZVOZUTOR8rbde9u3/sb9U2sLszhM9+2UoRQoJ7Yik4l5
-	484YDFiF1vjb8aFZEZ0ABfpWGvDvMf9LPMGdIczctdzXkrZ18PKvgbzW4aY7BBqeVs/8wuGpcUk
-	3o3H+ww6jOOnJBq9FqrDbaqd3ArcfntjTzz84bcfXMGXNA3Wssg21xTM/Z6svI8UjW4Z4m7OZGa
-	vj1PmcU2w==
-X-Received: by 2002:a05:6830:700e:b0:7c7:62d0:b462 with SMTP id 46e09a7af769-7d4c49fbff3mr10253467a34.6.1771333929843;
-        Tue, 17 Feb 2026 05:12:09 -0800 (PST)
+        bh=+hvRTCg0bG7pjf0n0vlP3LHvxQEYZFAerxPCqp6C9Yg=;
+        b=FhJnq57TxApnEiiGmEk/FVjzhyBK6OcpgiLSmS5mdhTR+ByOgxI5H5BjVAS41iU0u6
+         C8VrxPoDeBKl0n2JjfFIKLUdFDlwL0VJF3kwnEyvmPej6P2r0/1u+9ZqC1BQpczAgpBp
+         x+dnJUKM8NThx2bS0VSjEWppbdvdlVDpEmni/GAcvbkGi4whwVHWvBIFk/O2pNpjqOVz
+         VTXMVOAI/nH+OI20Gn9yMORtrxO1XhK5+hNkG9IIve0Izj6SAueTk1iaSFOyfzI+Akpn
+         GIYzq236ddNR3ZxOZmT1v+R5shDtEkXrRmh0jOwzBAOcuZC7Gtmd8lvphI/sidfvcYmh
+         Ejgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhiED84gpEj1BopifZ1v68ProyLqm5mQHzYiO35qHQTL/FyjvuViMAL2R2j/pNZzIc/hHDfpPREg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCj6ZxuYw0zRH/8cZZHcWEhMmzvPO0SL1jWmrCbVi/qMZFKzsi
+	5iwsEwT/GfRMooCqHxPWkEcMuINSULHMhKxmncFk/vI93F88b5W+Xi9rOx5AyECpOWd5H2tY1R9
+	Qfdpo
+X-Gm-Gg: AZuq6aKGDratWgylK5jZdbAhz/crQMWg1NvFkq8cmaY3IkmQ+8kP6VLLUXad9nlfxZ4
+	EXc26XCJbMrdPF/WjjJIoQ0L3Wy4SOIuJeV0G+WOfg+sk9a7CNZBFTs9so3xUTrfjLCwKqORmp8
+	JitSYsZ3Y8is7Y3CFN+RYkSLBdg8O+N088hkqU6EgSWO3oWACyLbz178Oqz77lIhFH6tWThEK/0
+	8Zux3gVp83powCgXOeN/qkPW+ruNbZo7wBnffq50QlTJSHgOANpzbIrEUiM5n9qQJL+j0/TjRYs
+	35/hXMmZyiLKfiyR7IWqA90pul0Z6j0/cXe+AlPSEESMz1qjGRswUqZLLP6cLCYCX7TkgBjekU8
+	ivuWP55bZw7pCC/OAx4pm1nxpz3YEtf/xuQL6jqoX6wj3VX3Qf0frggX60tTqgX3Tc7D9b6voKL
+	bB4dDJNUUBjqnTTREMeIXVJtsV0ydE0nXoFMAFkEju7zJMDyhBNiZZaLab4bS3ia3W4AXecsiRt
+	OQZo807EQ==
+X-Received: by 2002:a05:6870:a103:b0:409:5e6d:2716 with SMTP id 586e51a60fabf-40f0871a263mr6446066fac.5.1771334042340;
+        Tue, 17 Feb 2026 05:14:02 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4bb66a066sm11983097a34.19.2026.02.17.05.12.08
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40eaf103ac3sm17272166fac.11.2026.02.17.05.14.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 05:12:09 -0800 (PST)
-Message-ID: <fd6ac244-40ee-48e1-b41b-d4d78839fe72@kernel.dk>
-Date: Tue, 17 Feb 2026 06:12:08 -0700
+        Tue, 17 Feb 2026 05:14:01 -0800 (PST)
+Message-ID: <de0e155e-05c3-4e6e-9de4-067ac94c01cf@kernel.dk>
+Date: Tue, 17 Feb 2026 06:14:00 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,21 +88,16 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring/zctx: separate notification user_data
+Subject: Re: [PATCH io_uring-7.1 v6 0/5] BPF controlled io_uring
 To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Dylan Yudaken <dyudaken@gmail.com>
-References: <d099d8d0d7526e4eb59f5ffd0e890888a46b21f7.1771242479.git.asml.silence@gmail.com>
- <025de231-a6d2-4fa8-91e5-f4ab81d16e7f@kernel.dk>
- <5fa237b6-420d-413a-b7b5-9f85d9f1e8ba@gmail.com>
- <64ab6b3e-3746-4076-9c0b-b2edc2de92d1@kernel.dk>
- <69a2d3ce-5c77-44f9-99be-1b558cf4c4ca@gmail.com>
- <fc217246-2397-4ae4-8354-7ed0c498d23c@kernel.dk>
- <e59d8887-d908-463b-ad31-3bf10d977de4@gmail.com>
- <133c27e8-7b5f-4754-9f8a-17d96e736621@kernel.dk>
- <3888d916-259b-4d1f-96c2-157c289d867e@gmail.com>
+Cc: bpf@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>
+References: <cover.1770836401.git.asml.silence@gmail.com>
+ <d56b5f70-382e-4017-81f4-c9ae7a6c1b56@gmail.com>
+ <ab4c6ffd-d7d2-45fc-bbd5-b6663d5c41e2@kernel.dk>
+ <1985145e-7181-40c6-821d-239f62410618@gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <3888d916-259b-4d1f-96c2-157c289d867e@gmail.com>
+In-Reply-To: <1985145e-7181-40c6-821d-239f62410618@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
@@ -112,7 +108,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12291-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12292-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
@@ -120,9 +116,9 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCPT_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_THREE(0.00)[4];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
@@ -132,76 +128,35 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: EFEE414C70F
+X-Rspamd-Queue-Id: D7DCF14C73D
 X-Rspamd-Action: no action
 
-On 2/17/26 4:15 AM, Pavel Begunkov wrote:
-> On 2/16/26 17:27, Jens Axboe wrote:
-> ...
->>> There are already 6, it'll be 7th. I also have one or two more in mind,
->>> that's already over the half. The same was probably thought about
->>> sqe->flags, and even though it's twice as many bits for net, those
->>> are taken faster as potential cost of redesign is lower.
+On 2/17/26 4:29 AM, Pavel Begunkov wrote:
+> On 2/16/26 15:18, Jens Axboe wrote:
+>> On 2/16/26 7:23 AM, Pavel Begunkov wrote:
+>>> On 2/11/26 19:04, Pavel Begunkov wrote:
+>>>> This series introduces a way to override the standard io_uring_enter
+>>>> syscall execution with an extendible event loop, which can be controlled
+>>>> by BPF via new io_uring struct_ops or from within the kernel.
 >>>
->>> Fwiw, the code is nastier as well, more branchy and away from
->>> other notification init because of dependency on reading the
->>> flags.
->>>
->>> @@ -1331,7 +1333,7 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>         zc->done_io = 0;
->>>   -    if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
->>> +    if (unlikely(READ_ONCE(sqe->__pad2[0])))
->>>           return -EINVAL;
->>>       /* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
->>>       if (req->flags & REQ_F_CQE_SKIP)
->>> @@ -1358,6 +1360,13 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>           }
->>>       }
->>>   +    if (zc->flags & IORING_SEND_ZC_NOTIF_USER_DATA) {
->>> +        notif->cqe.user_data = READ_ONCE(sqe->addr3);
->>> +    } else {
->>> +        if (READ_ONCE(sqe->addr3))
->>> +            return -EINVAL;
->>> +    }
->>> +
+>>> Let me know if there are any concerns or comments. There are some
+>>> parts that I'll need to add like timeouts for waiting, but those
+>>> will be natural extensions, and this feels like a good base to
+>>> move forward in general.
 >>
->> I think just remove the else part here - addr3 is valid now that
->> IORING_SEND_ZC_NOTIF_USER_DATA is supported, and if you mess it up in
->> your applications, you'll find this via development anyway. Since addr3
->> == 0 is a valid value, it doesn't make much sense to check for it being
->> non-zero.
+>> I don't have any complaints on it, but would be good to hear from the
+>> BPF folks.
 > 
-> Gating it on a separate flag but not checking when not set makes
-> it only more confusing in terms of why would you do a flag in
-> the first place.
+> I assumed Alexei has nothing against it in general since he didn't
+> mention, and his last review was quite straightforward, I just applied
+> all changes. But I'm not sure if he wants to take a another look.
 > 
-> It's not like a flags field where any value set would be an
->> -EINVAL case. Doesn't even exclude having another flag for using addr3
->> for something else anyway.
-> 
-> You can override the behaviour with another flag in either case,
-> but realistically it's better to avoid as it's always messy,
-> unless the features are clearly exclusive.
-> 
-> I know there is no way to convince you, but v2 already degraded
-> the uapi as per requested, can we have that one? The "else" branch
-> doesn't make the api worse, on the opposite.
+> I'll send out v8 to silence smatch, and let's see if BPF folks have
+> time for it.
 
-The else ties into all of it though, as it perpetuates the "user_data is
-zero is not valid" part. The reason we have the addr3 check in the first
-place is to have a way of saying "this field isn't used for this opcode,
-may be used in the future". Now it is used/supported, and I don't think
-we should be checking it. If we end up with future flags that also need
-addr3 and 0 is valid, then it'll end up with more checking for that,
-based on which flags are set and which are not.
-
-The patch should just be removing that addr3 -EINVAL case, and adding
-the two lines that check IORING_SEND_ZC_NOTIF_USER_DATA, and if set, assign
-notif->cqe.user_data from addr3.
-
-But I object to saying this is a "degraded" uapi, to me it's very much a
-better one as it allows all values of user_data, rather than have some
-magic 0 value that's not valid for no other reason than force policy.
+Let's plan on queueing it up once the 7.1 branches are started. In the
+mean time, can we have some liburing side test / examples so people can
+play with it and understand how to use it?
 
 -- 
 Jens Axboe

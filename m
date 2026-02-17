@@ -1,88 +1,92 @@
-Return-Path: <io-uring+bounces-12277-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12278-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uJjTDf9JlGn0BwIAu9opvQ
-	(envelope-from <io-uring+bounces-12277-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:11 +0100
+	id KGz0Og1KlGn0BwIAu9opvQ
+	(envelope-from <io-uring+bounces-12278-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:25 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC8814B12A
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:10 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DA014B140
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 451913029A6A
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 10:59:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3E8F23031015
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 10:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54F832BF46;
-	Tue, 17 Feb 2026 10:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47CE32C33D;
+	Tue, 17 Feb 2026 10:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jV0W5xo5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqUj29ru"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D832B993
-	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 10:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4659B32BF23
+	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 10:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771325943; cv=none; b=Qu442E3SthyLPfiVw/mlhQ63IDzg4gBGaPR+eY2hALOikkSRW64HNSVW+PgEcB+gMhWNtxqXKrYni0bVPjy4LjsR/U1gK4zfAMh29e5xoM99OV+XnA3Ue9kzCSIjCNNV0+MJzFPDS0MfpWwAgvXvLELKJm1GlX73TJxifyU6Xyw=
+	t=1771325944; cv=none; b=Om3da1mIaKNQjl9hW5wGzGu/9GQ4ere2w3s0hxjxhJmuxzAUYjsvZtwr2LZlaGzetUWH5WcOVEQzAxIDp/KFk94ToAPAIo9viHOkBUM+15mA+6XNFdwuR+l1N2s6yeoE9LWe9W7xDjjEVKCLi58R3BfSjmJcmSlHOXtxvjikzAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771325943; c=relaxed/simple;
-	bh=dxkUEdW59WpbrdfCocb7yEpG8N+Jc3txoaD3rPLr/hA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a19OjO+lSo8e0Sesjpk5jHhYRax1oQFiq36mQmg0/dXFyetY8hiz+QNDAgYkTmvgI1gDOWDDYdL/UIyM8hARsNBZo/JvPwinUA4oVqAJb1sA2OcU73igFkWE0VQToWj2B+wgGP8A07CGGugLyUbConX7hmnRYziFvxnBuodJAZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jV0W5xo5; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1771325944; c=relaxed/simple;
+	bh=8O3zadhQFFrMOJlzFSuNCpmQxJ4lHLoxg1CzYpG41Bs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pnBfzzq4snvV8JAp2VvDyerl2IS1ep1iDYwBfGx1LXult5LY5M989unhfBe+Q5NPCHj9bh52HP+OmyyLiHbaYstqtgnESF8nbRzv8WZN+YDNI2DVdWXMn1mmQpiWRp+2Y2rJGAG9ISDFjiTsES0WaxJbqhR+Ye69vSytOEH0B/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqUj29ru; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48379a42f76so24928385e9.0
-        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 02:59:02 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4837907f535so27802665e9.3
+        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 02:59:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771325940; x=1771930740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pqd/qSNd5cJh+qVEsxJycYcGDG/6Gev0XJ7NgtBdi6w=;
-        b=jV0W5xo5TUjK0Tpfg3f6zkPpqAVfKjj4DwXEaw0xWZGZbjLbkmZcI8RGl7PJPwAZh8
-         6T/4JEOUoNUkaiVEFFW+78daVT20yJFwnBMdDOrbPGKPH/NBngHoVY+66phvQ4Yq7eFh
-         lasXHJYVssAtCEzB3ujqGQkMMFwABrg7PuToSELxE1MlZg2qrGj+ASgUyXk99Gmq1ano
-         p3QkB60yXAMvRiKn3itpjXYPs45Hzk4z6Bekfs+OR5qOlKvwjTt5d12XvJ+0xiEZvj5W
-         MNWtjSBFelLl76gVB+VooDlPwfvUm3H5ig44QgUu3/9x+zTAHYfUjJ6hnPISpGZ2Icnv
-         ZnGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771325940; x=1771930740;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771325941; x=1771930741; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pqd/qSNd5cJh+qVEsxJycYcGDG/6Gev0XJ7NgtBdi6w=;
-        b=gC3uqgh817eosKr1oPGnl44gU6AVvJ/zsT3Lg393+s8ypMxkROI3Gx4x15nuN/tiDJ
-         SuUUPzXx2VFKrRRNv+43cgl4OzEuMdy94714zzifw5QFYi3O5hgtC+ApDyJiuaXjzPH8
-         HnSkNDjLlhjnfHAhv1PkSISoOtxBcIHT2XSwXdw650r4kL/7mPznLwzujF4RRbz5uei7
-         MLHxXMuWkh630CJRukNuCjtMZ4f1Sd9hA/71nYowsaRkKhyx+KjkHHh4s5zDy6/Vuwc9
-         HXN+cuZw/5AjL07bPIMt8chclhNGv19Oj929gF0ItSClqbvgutmMlmmPS1mFUBB1aMWY
-         4ZHQ==
-X-Gm-Message-State: AOJu0YwyvwkNO91dD06CmRTxeJ0NiNKGWZKWFMllDKu14eGgySCwKhUN
-	C5j2QUSLZ2WcmfkZE7a1Zv5UiA19abSsMcme0IYc/i7rH7oDNfjoFVUCUIh8gg==
-X-Gm-Gg: AZuq6aKnCn8VPdEXE2ufTK0dUtVi/GApFZR9V9MThxoO28qb8OfZg7dPM8GruUfu5st
-	DjXtHPoJxU8sxNaWpeMA74b4IDAGvoOyECS2eW6u3IwPbyYa9/0PZKq1uPcOdg7mSg02uNJGAiH
-	1PwrLGUoDEfUKCHnheuhjhEfOR8gA+TBTziBUdEhR7lXM7LPMqQMWzItdW+ZpG3x4OylJof+5RV
-	2tPOnCGISnRJzbLwYWzF+jUkr9WCIeJhDnc9OEfzOWK55KssxPz2RqIiW6CVAoGP7Y3gV22kqHE
-	Q/5CFSKDvhB+BB1K8OcGEtWablZOncBLZlfPXSz0J5AUUMF2jnZ+13RciOfG/vya+onR5Kw864k
-	X85X8vrXWXOGdijiO19E/WSFglh+9J1uOU4qtdp7trbpZOkzd1Y0ekX8LaUF00+ObyqcGHCpzPj
-	/8DDU737nA2rG8wvBeYBkRIhFqs5a/ReXlU1ebGRQ8smE+Ap5Mdodc7c72im1anRgimsxSZ3I1L
-	TO0DQnlF7QFfPs32ZqRBGzdJjf3oJ3FXKdoNtHd
-X-Received: by 2002:a05:600c:609a:b0:483:7020:864 with SMTP id 5b1f17b1804b1-48379c178eamr193526775e9.25.1771325940268;
-        Tue, 17 Feb 2026 02:59:00 -0800 (PST)
+        bh=BSD69O1S2Kw6wDmNz4WpERJPeIizD8wuOPPkchpRNWY=;
+        b=VqUj29ru8MSY+nRewAevqOhU3CdMVfL1KW8EVASTzjt9WyxaLAWpiFbFUd9JIUmRWi
+         fMqCvNVhvge0a5gYYW3dbgdXimhGFU/acq8lS85ly82zoaG2ELdiqafcPNLlKggOo5Pa
+         5gUfIOXd2B8Ej5HbKLl6RekQ+Za2vzapRX5j79mCjzIh3mnes7Kuf2Q0V8JNbEOsaTRO
+         OD/JQmF9ULft9OWQ6po3NV0XZvAcicITYEPLGcvOaGC7okYsiKG+YK6UpC+wJ1fq6kNW
+         cOo4FUtyBDCUb5ZJy7mOEOwkrO8D4Rsi6pSS9YnWL9/quCuKY4vLP981xNYwzDBJrG+g
+         01gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771325941; x=1771930741;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BSD69O1S2Kw6wDmNz4WpERJPeIizD8wuOPPkchpRNWY=;
+        b=vtcKKplvDJFTbdbSFJ+VcMlxtbFXB840ePDi2yE6j+y/Ns1Wn35bWWyg37IWwRiPbJ
+         i63hY/L4PaJ3Id69kRDyb/hk8vY2E6Xr/NthV/6s5nMtgI5y0ua/bpxvS3dyNRob6GnB
+         QTKJ3yaUb1uG20QXZpP/i2JNwqG3S/tVvH0jcr+FK/RGdSiBHOdFuArbX7GnTIVsMIBP
+         RO3vR/MWsCUpsoCEfpJBU3wa/8TeI2cP3TDs/ekeXY2r+BmOymJDqrVtRmeNR5p+6nyN
+         SuJeIEVaUW/J5oY2Kw/OekPzHbQVNKWxi4MwQQlq7yrx7qg5gkP6NFINEHr8CF/5pRC5
+         mwEQ==
+X-Gm-Message-State: AOJu0YykN5R2u3pSTHNK/ZJ6suMPiRytuXDGDeTMGD44tucPbc5JMe7+
+	zj89tNu3bO9qRp8jFjqTsLe2AVqM3nKjzPi0bw8G6MzZx+aADqst7ycCOMVQbw==
+X-Gm-Gg: AZuq6aKbgjwCOGRaH9+4oriCfS8qdro1Kauif0bdiHSoaq6FSK2QF3orjS5EeAkc5N9
+	3AogS5qiex0wPvtkZc6vTRhuYxNI5SmBWWO94HuE9Wl+3KS9oCfmoXswUKoUDSFDPPsfgvQiWrg
+	I1ennkBb9xby7imx+Lw9a5vr+pH4ISVzpT/YbCa7DFQASXhwWlJRfUlxism176nvdV55V0r4aga
+	so3mvAjMsGv2YYS87za2uVF7z+o+VTEDIvn0Rwp+htLzIgJ7fedLSlIV9ma/y4enAbAK5w3oVck
+	+EeI3aMlvsq5lznY5yeHB/v7ifAFFUwuBMTCk3J1dNb86XAOPMVZ/dbdyUH18FhAjhuJEq/LoaX
+	SLBfmnlWBY9WYqY69YdX6OtX4tL65yDWSeeQMigoYPqMNmRe2pcAaPve35BobBk3U4ucTksAo4A
+	DP2uEMXUbFGVm8aLSfW3JXnM8O0b0Jd7eEHqqXjGiC26eT0pzQfwUvCsknpyfIGRvfdVnZmsTYE
+	nzXog7ASKRQ3NSLRVcZSCON3sSyBw==
+X-Received: by 2002:a05:600c:6814:b0:47e:e78a:c834 with SMTP id 5b1f17b1804b1-48379bf4788mr174371155e9.34.1771325941059;
+        Tue, 17 Feb 2026 02:59:01 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a78c89sm327759395e9.5.2026.02.17.02.58.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a78c89sm327759395e9.5.2026.02.17.02.59.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 02:58:59 -0800 (PST)
+        Tue, 17 Feb 2026 02:59:00 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	axboe@kernel.dk,
 	netdev@vger.kernel.org
-Subject: [RFC io_uring review-only 0/4] zcrx mapping cleanups and device-less instances
-Date: Tue, 17 Feb 2026 10:58:51 +0000
-Message-ID: <cover.1771325198.git.asml.silence@gmail.com>
+Subject: [PATCH review-only 1/4] io_uring/zcrx: fully clean area on error in io_import_umem()
+Date: Tue, 17 Feb 2026 10:58:52 +0000
+Message-ID: <5e051e3a62449d30264dd1000bbfc429727bfc7d.1771325198.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1771325198.git.asml.silence@gmail.com>
+References: <cover.1771325198.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -96,12 +100,12 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12277-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12278-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -116,30 +120,58 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: EAC8814B12A
+X-Rspamd-Queue-Id: 65DA014B140
 X-Rspamd-Action: no action
 
-First two patches move user memory DMA map creation to an earlier point,
-which makes it more uniform among different memory types and easier to
-manage. Patches 3 and 4 introduce device-less zcrx instances
-for testing purposes, which always copy data via the fallback path.
+When accounting fails, io_import_umem() sets the page array, etc. and
+returns an error expecting that the error handling code will take care
+of the rest. To make the next patch simpler, only return a fully
+initialised areas from the function.
 
-note, based on two other recently sent patches splitting out a uapi
-file and defining constants in zcrx.h
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/zcrx.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Pavel Begunkov (4):
-  io_uring/zcrx: fully clean area on error in io_import_umem()
-  io_uring/zcrx: always dma map in advance
-  io_uring/zcrx: extract netdev+area init into a helper
-  io_uring/zcrx: implement device-less mode for zcrx
-
- include/uapi/linux/io_uring/zcrx.h |   9 +-
- io_uring/zcrx.c                    | 145 ++++++++++++++++-------------
- io_uring/zcrx.h                    |   2 +-
- 3 files changed, 90 insertions(+), 66 deletions(-)
-
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 60e12eb5d4f3..117d578224f5 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -207,22 +207,26 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
+ 	ret = sg_alloc_table_from_pages(&mem->page_sg_table, pages, nr_pages,
+ 					0, (unsigned long)nr_pages << PAGE_SHIFT,
+ 					GFP_KERNEL_ACCOUNT);
+-	if (ret) {
+-		unpin_user_pages(pages, nr_pages);
+-		kvfree(pages);
+-		return ret;
+-	}
++	if (ret)
++		goto out_err;
+ 
+ 	mem->account_pages = io_count_account_pages(pages, nr_pages);
+ 	ret = io_account_mem(ifq->user, ifq->mm_account, mem->account_pages);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		mem->account_pages = 0;
++		goto out_err;
++	}
+ 
+ 	mem->sgt = &mem->page_sg_table;
+ 	mem->pages = pages;
+ 	mem->nr_folios = nr_pages;
+ 	mem->size = area_reg->len;
+ 	return ret;
++out_err:
++	sg_free_table(&mem->page_sg_table);
++	unpin_user_pages(pages, nr_pages);
++	kvfree(pages);
++	return ret;
+ }
+ 
+ static void io_release_area_mem(struct io_zcrx_mem *mem)
 -- 
 2.52.0
 

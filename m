@@ -1,89 +1,89 @@
-Return-Path: <io-uring+bounces-12278-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12279-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KGz0Og1KlGn0BwIAu9opvQ
-	(envelope-from <io-uring+bounces-12278-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:25 +0100
+	id WHk8JBhKlGn0BwIAu9opvQ
+	(envelope-from <io-uring+bounces-12279-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:36 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DA014B140
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E3F14B14F
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3E8F23031015
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 10:59:10 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9970A302AF37
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 10:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47CE32C33D;
-	Tue, 17 Feb 2026 10:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D50432D0DE;
+	Tue, 17 Feb 2026 10:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqUj29ru"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqggczfk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4659B32BF23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD6A32BF51
 	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771325944; cv=none; b=Om3da1mIaKNQjl9hW5wGzGu/9GQ4ere2w3s0hxjxhJmuxzAUYjsvZtwr2LZlaGzetUWH5WcOVEQzAxIDp/KFk94ToAPAIo9viHOkBUM+15mA+6XNFdwuR+l1N2s6yeoE9LWe9W7xDjjEVKCLi58R3BfSjmJcmSlHOXtxvjikzAs=
+	t=1771325945; cv=none; b=pJF/AO3IMONR9lg9FIIuW1UzzShxcTLsKaYkWnYiO3fLmg9kepMuLtLvbysq2PL/W8CmNPIpOikE4oy8Z15bbrqlgKR4evNcBpPbpoFr8pGSPDOAlqZgRwUN1zr3vxE0yTOJ+AU9Td9Zw/99FtSE4/U6+eHNfjLOu3CLb1fhtTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771325944; c=relaxed/simple;
-	bh=8O3zadhQFFrMOJlzFSuNCpmQxJ4lHLoxg1CzYpG41Bs=;
+	s=arc-20240116; t=1771325945; c=relaxed/simple;
+	bh=vKrjZiwP7d/2tsuWlOGmo5etWthFEDBquJaxbzRI8IA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pnBfzzq4snvV8JAp2VvDyerl2IS1ep1iDYwBfGx1LXult5LY5M989unhfBe+Q5NPCHj9bh52HP+OmyyLiHbaYstqtgnESF8nbRzv8WZN+YDNI2DVdWXMn1mmQpiWRp+2Y2rJGAG9ISDFjiTsES0WaxJbqhR+Ye69vSytOEH0B/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqUj29ru; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=s1TzOKv5Z10eYD7/UAu8/4/dGv5WLRV9ELUA0Gq9R3gpuNUw64T04YNdVC+MSVzmSg+Gu3r7f4FZymRTaVPLjQDZtHlEykgYc2dGwHoAc0PNZyWNq0qnJMqxmy1PrmgqMlxuy3iKUYL8WzRBwIPncf14BH9IyUphQspzcXNTTMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqggczfk; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4837907f535so27802665e9.3
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-480706554beso39681205e9.1
         for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 02:59:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771325941; x=1771930741; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771325942; x=1771930742; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BSD69O1S2Kw6wDmNz4WpERJPeIizD8wuOPPkchpRNWY=;
-        b=VqUj29ru8MSY+nRewAevqOhU3CdMVfL1KW8EVASTzjt9WyxaLAWpiFbFUd9JIUmRWi
-         fMqCvNVhvge0a5gYYW3dbgdXimhGFU/acq8lS85ly82zoaG2ELdiqafcPNLlKggOo5Pa
-         5gUfIOXd2B8Ej5HbKLl6RekQ+Za2vzapRX5j79mCjzIh3mnes7Kuf2Q0V8JNbEOsaTRO
-         OD/JQmF9ULft9OWQ6po3NV0XZvAcicITYEPLGcvOaGC7okYsiKG+YK6UpC+wJ1fq6kNW
-         cOo4FUtyBDCUb5ZJy7mOEOwkrO8D4Rsi6pSS9YnWL9/quCuKY4vLP981xNYwzDBJrG+g
-         01gw==
+        bh=UHpJTLX1FI9TF8Lz9wpjsap/XYPEHymSqSKaFnhhx70=;
+        b=nqggczfkySilVmb0iP+U5e5qf/TQNz2fOG+A61h3t9mDOXZsWb2w7BFQEL91G5IIV2
+         W0wuzaIaJ+ibOKSd9eNBRVt/ipp/r3Efq8X1uroK1zPEHllpwc8Rpm7omMnJg1alNHqu
+         +zegbNzVYzkfkQbT8t6hGWe2ky/rE3jwRCQB/NrdKSzGANEVB+vwHC2cdgCEJq9hIOn3
+         g9wzxJI5rCMRToRTuro/hq7etZAR4BN36t/fnIn8AaGeA8qljLkI+W0PUZvC9IYehaVC
+         d8USuCiFN87DjmCsHlPYLYgFPM+OCXa6+Vik9bN8pfRpff/8ZYLS9YqYQ+y3jXG07bD/
+         H5+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771325941; x=1771930741;
+        d=1e100.net; s=20230601; t=1771325942; x=1771930742;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=BSD69O1S2Kw6wDmNz4WpERJPeIizD8wuOPPkchpRNWY=;
-        b=vtcKKplvDJFTbdbSFJ+VcMlxtbFXB840ePDi2yE6j+y/Ns1Wn35bWWyg37IWwRiPbJ
-         i63hY/L4PaJ3Id69kRDyb/hk8vY2E6Xr/NthV/6s5nMtgI5y0ua/bpxvS3dyNRob6GnB
-         QTKJ3yaUb1uG20QXZpP/i2JNwqG3S/tVvH0jcr+FK/RGdSiBHOdFuArbX7GnTIVsMIBP
-         RO3vR/MWsCUpsoCEfpJBU3wa/8TeI2cP3TDs/ekeXY2r+BmOymJDqrVtRmeNR5p+6nyN
-         SuJeIEVaUW/J5oY2Kw/OekPzHbQVNKWxi4MwQQlq7yrx7qg5gkP6NFINEHr8CF/5pRC5
-         mwEQ==
-X-Gm-Message-State: AOJu0YykN5R2u3pSTHNK/ZJ6suMPiRytuXDGDeTMGD44tucPbc5JMe7+
-	zj89tNu3bO9qRp8jFjqTsLe2AVqM3nKjzPi0bw8G6MzZx+aADqst7ycCOMVQbw==
-X-Gm-Gg: AZuq6aKbgjwCOGRaH9+4oriCfS8qdro1Kauif0bdiHSoaq6FSK2QF3orjS5EeAkc5N9
-	3AogS5qiex0wPvtkZc6vTRhuYxNI5SmBWWO94HuE9Wl+3KS9oCfmoXswUKoUDSFDPPsfgvQiWrg
-	I1ennkBb9xby7imx+Lw9a5vr+pH4ISVzpT/YbCa7DFQASXhwWlJRfUlxism176nvdV55V0r4aga
-	so3mvAjMsGv2YYS87za2uVF7z+o+VTEDIvn0Rwp+htLzIgJ7fedLSlIV9ma/y4enAbAK5w3oVck
-	+EeI3aMlvsq5lznY5yeHB/v7ifAFFUwuBMTCk3J1dNb86XAOPMVZ/dbdyUH18FhAjhuJEq/LoaX
-	SLBfmnlWBY9WYqY69YdX6OtX4tL65yDWSeeQMigoYPqMNmRe2pcAaPve35BobBk3U4ucTksAo4A
-	DP2uEMXUbFGVm8aLSfW3JXnM8O0b0Jd7eEHqqXjGiC26eT0pzQfwUvCsknpyfIGRvfdVnZmsTYE
-	nzXog7ASKRQ3NSLRVcZSCON3sSyBw==
-X-Received: by 2002:a05:600c:6814:b0:47e:e78a:c834 with SMTP id 5b1f17b1804b1-48379bf4788mr174371155e9.34.1771325941059;
+        bh=UHpJTLX1FI9TF8Lz9wpjsap/XYPEHymSqSKaFnhhx70=;
+        b=koNIckeCKtjbkEjDRLFwrtZOsW5V3o3r48SvZC3oZ3EFQAdGzHIr7mVurhYtMMwQj9
+         l3Oyz8IUotcY5V0KhrSo1/rPj2cfgYowX5vpBGJMHV1jrCKNp1xlbDDeP6rr8Xn91DJu
+         z3J9RQIRAz2kv5QXHM59q8yoTdCfe4461Hz2jxqqGLIBcIlHORKkz7ZxCEZyMeYZ6Dc0
+         dSZqDQ7IoDlCCEiXjuVWIlXtAjyoj4OPEQMAqhbtxJYjltS9fIANVE356EKFvM0YjA0G
+         vhTysxifLd2OGXsmNMBol80Hj0+VG0otZqzsHa3vcUfzTuEHi4uM46nJZt9n9AwFrrev
+         Nazw==
+X-Gm-Message-State: AOJu0YyAQy+zx01IvtATWmHxyoWsUv4nhuZefg4CHCzSM16Kelrvzbsw
+	AlfF+neVyg6c6PV3grxuJY5fVCRQJHTXvjMWhEQYRfHSoWrZpviALDbl0LfUgA==
+X-Gm-Gg: AZuq6aLIwBZDSfuH8DXwD2BZID9t/3bwuNYhTaisH3yJIs8x4/S6MLs+I6/HcOCvA4Y
+	UCH8pCX6Q8fbZ2AxtVgWgvutrae/iAAYF/5UBINI8SMM2SuqO1kwFWjnDch/5bFnXWPGQlyVT5b
+	cnjOx0huMc4bl2/jCKQG8ERmu5dBnmkZIA5IeNtbZNUc+NeQHyAZsqPs3NJ852at/IoJm+xcdB9
+	okS+nyLiW1/4CdnxljsxXm4zROxY20i/VzDJC8f/Mn6djvHytTt7fniL0TtxNaj3wU3BZUNmLh7
+	BETztnCavjROsSXRZEAqBYqw/qBFoLeEhRfcNJaeMQtVpt9pYRrW3OcXr7XtHpPii0eruh9M5L6
+	uowgg/a2LdTO8/GhGjNPuK3GjZVS8N9NY5l/cSq0QHhwlDhDuP6hXU892tNJZveq5ph5Zgfq3LX
+	gg7chomJnKH/Y45QBh77wkHfRv6fC/VdGPXXYDrEWD5qSQQbPpUo3HtbOULYgOzR37qkAQih/xw
+	9dNFoDkaR6y0CNwnniyHbUr63WbPw==
+X-Received: by 2002:a05:600c:1c19:b0:483:5310:dc67 with SMTP id 5b1f17b1804b1-48379be817cmr203753345e9.20.1771325941861;
         Tue, 17 Feb 2026 02:59:01 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a78c89sm327759395e9.5.2026.02.17.02.59.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a78c89sm327759395e9.5.2026.02.17.02.59.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 02:59:00 -0800 (PST)
+        Tue, 17 Feb 2026 02:59:01 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	axboe@kernel.dk,
 	netdev@vger.kernel.org
-Subject: [PATCH review-only 1/4] io_uring/zcrx: fully clean area on error in io_import_umem()
-Date: Tue, 17 Feb 2026 10:58:52 +0000
-Message-ID: <5e051e3a62449d30264dd1000bbfc429727bfc7d.1771325198.git.asml.silence@gmail.com>
+Subject: [PATCH review-only 2/4] io_uring/zcrx: always dma map in advance
+Date: Tue, 17 Feb 2026 10:58:53 +0000
+Message-ID: <0afb4dfc31f93e5754110d3bafa0f11b6eab8b92.1771325198.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1771325198.git.asml.silence@gmail.com>
 References: <cover.1771325198.git.asml.silence@gmail.com>
@@ -105,7 +105,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12278-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12279-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -122,56 +122,125 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 65DA014B140
+X-Rspamd-Queue-Id: 42E3F14B14F
 X-Rspamd-Action: no action
 
-When accounting fails, io_import_umem() sets the page array, etc. and
-returns an error expecting that the error handling code will take care
-of the rest. To make the next patch simpler, only return a fully
-initialised areas from the function.
+zcrx was originally establisihing dma mappings at a late stage when it
+was being bound to a page pool. Dma-buf couldn't work this way, so it's
+initialised during area creation.
+
+It's messy having them do it at different spots, just move everything to
+the area creation time.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/zcrx.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ io_uring/zcrx.c | 44 +++++++++++++++-----------------------------
+ 1 file changed, 15 insertions(+), 29 deletions(-)
 
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 60e12eb5d4f3..117d578224f5 100644
+index 117d578224f5..290db098cfe7 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -207,22 +207,26 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
- 	ret = sg_alloc_table_from_pages(&mem->page_sg_table, pages, nr_pages,
- 					0, (unsigned long)nr_pages << PAGE_SHIFT,
- 					GFP_KERNEL_ACCOUNT);
--	if (ret) {
--		unpin_user_pages(pages, nr_pages);
--		kvfree(pages);
--		return ret;
--	}
-+	if (ret)
-+		goto out_err;
+@@ -194,6 +194,7 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
+ {
+ 	struct page **pages;
+ 	int nr_pages, ret;
++	bool mapped = false;
  
+ 	if (area_reg->dmabuf_fd)
+ 		return -EINVAL;
+@@ -210,6 +211,12 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
+ 	if (ret)
+ 		goto out_err;
+ 
++	ret = dma_map_sgtable(ifq->dev, &mem->page_sg_table,
++			      DMA_FROM_DEVICE, IO_DMA_ATTR);
++	if (ret < 0)
++		goto out_err;
++	mapped = true;
++
  	mem->account_pages = io_count_account_pages(pages, nr_pages);
  	ret = io_account_mem(ifq->user, ifq->mm_account, mem->account_pages);
--	if (ret < 0)
-+	if (ret < 0) {
- 		mem->account_pages = 0;
-+		goto out_err;
-+	}
- 
- 	mem->sgt = &mem->page_sg_table;
- 	mem->pages = pages;
- 	mem->nr_folios = nr_pages;
+ 	if (ret < 0) {
+@@ -223,6 +230,9 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
  	mem->size = area_reg->len;
  	return ret;
-+out_err:
-+	sg_free_table(&mem->page_sg_table);
-+	unpin_user_pages(pages, nr_pages);
-+	kvfree(pages);
-+	return ret;
+ out_err:
++	if (mapped)
++		dma_unmap_sgtable(ifq->dev, &mem->page_sg_table,
++				  DMA_FROM_DEVICE, IO_DMA_ATTR);
+ 	sg_free_table(&mem->page_sg_table);
+ 	unpin_user_pages(pages, nr_pages);
+ 	kvfree(pages);
+@@ -288,30 +298,6 @@ static void io_zcrx_unmap_area(struct io_zcrx_ifq *ifq,
+ 	}
  }
  
- static void io_release_area_mem(struct io_zcrx_mem *mem)
+-static int io_zcrx_map_area(struct io_zcrx_ifq *ifq, struct io_zcrx_area *area)
+-{
+-	int ret;
+-
+-	guard(mutex)(&ifq->pp_lock);
+-	if (area->is_mapped)
+-		return 0;
+-
+-	if (!area->mem.is_dmabuf) {
+-		ret = dma_map_sgtable(ifq->dev, &area->mem.page_sg_table,
+-				      DMA_FROM_DEVICE, IO_DMA_ATTR);
+-		if (ret < 0)
+-			return ret;
+-	}
+-
+-	ret = io_populate_area_dma(ifq, area);
+-	if (ret && !area->mem.is_dmabuf)
+-		dma_unmap_sgtable(ifq->dev, &area->mem.page_sg_table,
+-				  DMA_FROM_DEVICE, IO_DMA_ATTR);
+-	if (ret == 0)
+-		area->is_mapped = true;
+-	return ret;
+-}
+-
+ static void io_zcrx_sync_for_device(struct page_pool *pool,
+ 				    struct net_iov *niov)
+ {
+@@ -460,6 +446,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 	ret = io_import_area(ifq, &area->mem, area_reg);
+ 	if (ret)
+ 		goto err;
++	area->is_mapped = true;
+ 
+ 	if (buf_size_shift > io_area_max_shift(&area->mem)) {
+ 		ret = -ERANGE;
+@@ -495,6 +482,10 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 		niov->type = NET_IOV_IOURING;
+ 	}
+ 
++	ret = io_populate_area_dma(ifq, area);
++	if (ret)
++		goto err;
++
+ 	area->free_count = nr_iovs;
+ 	/* we're only supporting one area per ifq for now */
+ 	area->area_id = 0;
+@@ -1036,7 +1027,6 @@ static bool io_pp_zc_release_netmem(struct page_pool *pp, netmem_ref netmem)
+ static int io_pp_zc_init(struct page_pool *pp)
+ {
+ 	struct io_zcrx_ifq *ifq = io_pp_to_ifq(pp);
+-	int ret;
+ 
+ 	if (WARN_ON_ONCE(!ifq))
+ 		return -EINVAL;
+@@ -1049,10 +1039,6 @@ static int io_pp_zc_init(struct page_pool *pp)
+ 	if (pp->p.dma_dir != DMA_FROM_DEVICE)
+ 		return -EOPNOTSUPP;
+ 
+-	ret = io_zcrx_map_area(ifq, ifq->area);
+-	if (ret)
+-		return ret;
+-
+ 	refcount_inc(&ifq->refs);
+ 	return 0;
+ }
 -- 
 2.52.0
 

@@ -1,58 +1,56 @@
-Return-Path: <io-uring+bounces-12293-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12294-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OBkdADpvlGk0DwIAu9opvQ
-	(envelope-from <io-uring+bounces-12293-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:38:02 +0100
+	id qEUoCJ9vlGk0DwIAu9opvQ
+	(envelope-from <io-uring+bounces-12294-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:39:43 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D30514CAC4
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:38:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7466A14CB15
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 14:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 567123002D71
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 13:38:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C30F23055430
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 13:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D2733858F;
-	Tue, 17 Feb 2026 13:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B6832AAA2;
+	Tue, 17 Feb 2026 13:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIRXLJ8a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAu6dZre"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AC335893;
-	Tue, 17 Feb 2026 13:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77417355039;
+	Tue, 17 Feb 2026 13:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771335479; cv=none; b=AvJvPlkt9AT8ZH8LEXRQgBRKhxXGdC42Dqn+YTF0RoIIoHDNSDyxPXGknp/KYsnt9sk/hsAGmE0zq1y44q38loEkXHqqMuOZOSdcReoF1vdGUqDmeb9BdUhsFgzv/zROsoM/QUDFsndqwnNyF5U/aXHa/va7TgyEhM/G35F04kM=
+	t=1771335495; cv=none; b=SdjGMk+Pbc+4GtyB0k48wdl9Zahy7RfhqS24w+7LZsvXRo3fJ98DCdDXM0ArnNwhC+KhJFLkOdOxDpLCRLEsGCBekQnb/R0kF4mZSBE2/ygfoU48mdrnGYqZ0E7iuR+a9ZL5Fmq8xQthVNqK4oQFJk2JwDcUzJbnmSfw3t/8GOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771335479; c=relaxed/simple;
-	bh=wcR4qGrHwZOyvoCtwBO9htdeycxsmLc+iKmsIqP+p+g=;
+	s=arc-20240116; t=1771335495; c=relaxed/simple;
+	bh=sc0NXuhGZ7mkQ+/oVQ8PUAqZ4/sIJ8xicG1GJovMlyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwTqx6uC57+exb4veeXP3n0IQKa2ncl/ukgzFbPwsGgC3KjJEprIltwvuiSPKgMaqQyk0e4JPHU4bAGBOOVr8zY5bMYMus67rwvHTwU7DSCx/8xe3seegKdnuqEosUZHfI1V7PZT/3xLPskb2ntUdv0WYM7kx+dcc7qiMky2Ebg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIRXLJ8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC0BC4CEF7;
-	Tue, 17 Feb 2026 13:37:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TA9HjrsjAr21WBqegWq1QFZFydtTJMY7cIiMsOHflXrnP5peMuWJf17E9o5aiOwVpbqKapsk3aN6Lh0bM8Lp4Ag3niFDepMq7Wm2e7kLPotmtZElMcC5b8g3Tz3MKUiydjzZuEYJpyEbAeFzKEBW0XIlA6Tz3+lLP6bQNglYyzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAu6dZre; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165BFC19424;
+	Tue, 17 Feb 2026 13:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771335479;
-	bh=wcR4qGrHwZOyvoCtwBO9htdeycxsmLc+iKmsIqP+p+g=;
+	s=k20201202; t=1771335495;
+	bh=sc0NXuhGZ7mkQ+/oVQ8PUAqZ4/sIJ8xicG1GJovMlyA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YIRXLJ8a02qOy8qD4apy6w0fEQemk0beIqHM00xcUG8P+Um7fWeQiaLXIAXb9KWHk
-	 WGzaslygRh2tjCuoXb30H8MFhRIDkOhF08fIbNfxrJqp0OS8cNWxjK0ooxfLrhJzv2
-	 jCDR65X3DZGM6Jo1tl6k1vKdHiyw3waSWduHyQjMEhhRg8vVXG0/lokx9EhNxV9KGm
-	 4gsmPzLJOsMiWRwLQL1DcvlxsK6hlCf9bt8lyVhi464bjSS3UDEQLB/vEPl5+2t6eq
-	 5jI1EJfiE71T4zfH1QbOcn8GAYVMg2wD5tFliS/uhjvhtVGFhkrP/n1IXJ/x622gDD
-	 IfEvXUg1JoinA==
-Date: Tue, 17 Feb 2026 14:37:55 +0100
+	b=DAu6dZreRWLBMDujSmZOwtoZ1nw4HAUcZWfnAgqpAohS6pAlEFm65ukWYbYNqRrxp
+	 KxSv1XG8EBneEdl6A6/6bU1B7SuNpe5h6zoJX1B9F1XBfPd9haHmKHExemseU9T4ev
+	 Gv8v8ySWtq+1sDZ1MItmJ8s9m0EhUzpPfLdEXv/gaJFXDOUPZuhedKUBXYgUWEWK3q
+	 mguQNcV+qOl8H3W1el20s6ubk13IqBlWAjgYBYjuJzL7IqLblXmB3SBvMq3k5HNk1P
+	 1725NSO/wP6xH35ehmlHUkNVCVVNd/NUt9E15ajJgEFQ9m5GYU/ExyM5T627Mq359O
+	 WRQ0m/Goh+DMw==
+Date: Tue, 17 Feb 2026 14:38:11 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/bpf_filter: pass in expected filter payload
- size
-Message-ID: <20260217-gesandt-mitangeklagt-eba91f5667be@brauner>
+Subject: Re: [PATCHSET 0/2] cBPF filter API adjustment
+Message-ID: <20260217-botschaft-fugen-1c76dd0ff974@brauner>
 References: <20260211150626.136826-1-axboe@kernel.dk>
- <20260211150626.136826-3-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -61,20 +59,20 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260211150626.136826-3-axboe@kernel.dk>
+In-Reply-To: <20260211150626.136826-1-axboe@kernel.dk>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [2.34 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12293-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12294-lists,io-uring=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -86,173 +84,51 @@ X-Spamd-Result: default: False [2.34 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6D30514CAC4
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7466A14CB15
 X-Rspamd-Action: no action
 
-On Wed, Feb 11, 2026 at 08:01:18AM -0700, Jens Axboe wrote:
-> It's quite possible that opcodes that have payloads attached to them,
-> like IORING_OP_OPENAT/OPENAT2 or IORING_OP_SOCKET, that these paylods
-> can change over time. For example, on the openat/openat2 side, the
-> struct open_how argument is extensible, and could be extended in the
-> future to allow further arguments to be passed in.
+On Wed, Feb 11, 2026 at 08:01:16AM -0700, Jens Axboe wrote:
+> Hi,
 > 
-> Allow registration of a cBPF filter to give the size of the filter as
-> seen by userspace. If that filter is for an opcode that takes extra
-> payload data, allow it if the application payload expectation is the
-> same size than the kernels. If that is the case, the kernel supports
-> filtering on the payload that the application expects. If the size
-> differs, the behavior depends on the IO_URING_BPF_FILTER_SZ_STRICT flag:
+> Christian brought up a good point on the API - what if the task and
+> kernel differ on what the payload size is for an opcode? Currently
+> there are two defined payloads, inside struct io_uring_bpf_ctx:
 > 
-> 1) If IO_URING_BPF_FILTER_SZ_STRICT is set and the size expectation
->    differs, fail the attempt to load the filter.
+> 	struct {
+> 		__u32	family;
+> 		__u32	type;
+> 		__u32	protocol;
+> 	} socket;
 > 
-> 2) If IO_URING_BPF_FILTER_SZ_STRICT isn't set, allow the filter if
->    the userspace pdu size is smaller than what the kernel offers.
+> 	struct {
+> 		__u64	flags;
+> 		__u64	mode;
+> 		__u64	resolve;
+> 	} open;
 > 
-> 3) Regardless if IO_URING_BPF_FILTER_SZ_STRICT, fail loading the filter
->    if the userspace pdu size is bigger than what the kernel supports.
+> and it could be a requirement that a filter exactly matches the payload
+> that the kernel uses, if extensions have been made on the kernel side.
+> Hence this small series updates the API slightly:
 > 
-> An attempt to load a filter due to sizing will error with -EMSGSIZE.
-> For that error, the registration struct will have filter->pdu_size
-> populated with the pdu size that the kernel uses.
+> struct io_uring_bpf_filter adds a pdu_size field, which userspace can
+> set to the size if expects. For an OPENAT/OPENAT2 filter, that would
+> be sizeof(struct open) above. The kernel can validate that they match,
+> where the mismatch policy is controlled by userspace. See patch 2 for
+> details. In case of a mismatch that causes an error, the kernel side
+> pdu_size is copied back to userspace.
 > 
-> Reported-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  include/uapi/linux/io_uring/bpf_filter.h |  8 ++-
->  io_uring/bpf_filter.c                    | 65 ++++++++++++++++++------
->  2 files changed, 56 insertions(+), 17 deletions(-)
+> Patch 1 exposes the pdu_size by shoving the filtering and pdu_size
+> into the issue side definitions, and patch 2 implements the above
+> size checking.
 > 
-> diff --git a/include/uapi/linux/io_uring/bpf_filter.h b/include/uapi/linux/io_uring/bpf_filter.h
-> index 220351b81bc0..1b461d792a7b 100644
-> --- a/include/uapi/linux/io_uring/bpf_filter.h
-> +++ b/include/uapi/linux/io_uring/bpf_filter.h
-> @@ -35,13 +35,19 @@ enum {
->  	 * If set, any currently unset opcode will have a deny filter attached
->  	 */
->  	IO_URING_BPF_FILTER_DENY_REST	= 1,
-> +	/*
-> +	 * If set, if kernel and application don't agree on pdu_size for
-> +	 * the given opcode, fail the registration of the filter.
-> +	 */
-> +	IO_URING_BPF_FILTER_SZ_STRICT	= 2,
->  };
->  
->  struct io_uring_bpf_filter {
->  	__u32	opcode;		/* io_uring opcode to filter */
->  	__u32	flags;
->  	__u32	filter_len;	/* number of BPF instructions */
-> -	__u32	resv;
-> +	__u8	pdu_size;	/* expected pdu size for opcode */
-> +	__u8	resv[3];
->  	__u64	filter_ptr;	/* pointer to BPF filter */
->  	__u64	resv2[5];
->  };
+> The liburing master branch has been updated as well for this, as
+> copying back the pdu_size necessitates changing the API on that side.
+> Test cases and man pages are updated as well.
 
-You want this fixed-size?
-You could use copy_struct_from_user() and copy_struct_to_user() and then
-you can grow the struct on-demand without having to reserve space aka
-the struct clone_args and struct mount_attr etc. model.
-
-> diff --git a/io_uring/bpf_filter.c b/io_uring/bpf_filter.c
-> index 8ac7d06de122..4e1dd955c8c4 100644
-> --- a/io_uring/bpf_filter.c
-> +++ b/io_uring/bpf_filter.c
-> @@ -308,36 +308,69 @@ static struct io_bpf_filters *io_bpf_filter_cow(struct io_restriction *src)
->  	return ERR_PTR(-EBUSY);
->  }
->  
-> -#define IO_URING_BPF_FILTER_FLAGS	IO_URING_BPF_FILTER_DENY_REST
-> +#define IO_URING_BPF_FILTER_FLAGS	(IO_URING_BPF_FILTER_DENY_REST | \
-> +					 IO_URING_BPF_FILTER_SZ_STRICT)
->  
-> -int io_register_bpf_filter(struct io_restriction *res,
-> -			   struct io_uring_bpf __user *arg)
-> +static int io_bpf_filter_import(struct io_uring_bpf *reg,
-> +				struct io_uring_bpf __user *arg)
->  {
-> -	struct io_bpf_filters *filters, *old_filters = NULL;
-> -	struct io_bpf_filter *filter, *old_filter;
-> -	struct io_uring_bpf reg;
-> -	struct bpf_prog *prog;
-> -	struct sock_fprog fprog;
-> +	const struct io_issue_def *def;
->  	int ret;
->  
-> -	if (copy_from_user(&reg, arg, sizeof(reg)))
-> +	if (copy_from_user(reg, arg, sizeof(*reg)))
->  		return -EFAULT;
-> -	if (reg.cmd_type != IO_URING_BPF_CMD_FILTER)
-> +	if (reg->cmd_type != IO_URING_BPF_CMD_FILTER)
->  		return -EINVAL;
-> -	if (reg.cmd_flags || reg.resv)
-> +	if (reg->cmd_flags || reg->resv)
->  		return -EINVAL;
->  
-> -	if (reg.filter.opcode >= IORING_OP_LAST)
-> +	if (reg->filter.opcode >= IORING_OP_LAST)
->  		return -EINVAL;
-> -	if (reg.filter.flags & ~IO_URING_BPF_FILTER_FLAGS)
-> +	if (reg->filter.flags & ~IO_URING_BPF_FILTER_FLAGS)
->  		return -EINVAL;
-> -	if (reg.filter.resv)
-> +	if (!mem_is_zero(reg->filter.resv, sizeof(reg->filter.resv)))
->  		return -EINVAL;
-> -	if (!mem_is_zero(reg.filter.resv2, sizeof(reg.filter.resv2)))
-> +	if (!mem_is_zero(reg->filter.resv2, sizeof(reg->filter.resv2)))
->  		return -EINVAL;
-> -	if (!reg.filter.filter_len || reg.filter.filter_len > BPF_MAXINSNS)
-> +	if (!reg->filter.filter_len || reg->filter.filter_len > BPF_MAXINSNS)
->  		return -EINVAL;
->  
-> +	/* Verify filter size */
-> +	def = &io_issue_defs[reg->filter.opcode];
-> +
-> +	/* same size, always ok */
-> +	ret = 0;
-> +	if (reg->filter.pdu_size == def->filter_pdu_size)
-> +		;
-
-Odd way of writing this if-else ladder :)
-
-
-> +	/* size differs, fail in strict mode */
-> +	else if (reg->filter.flags & IO_URING_BPF_FILTER_SZ_STRICT)
-> +		ret = -EMSGSIZE;
-> +	/* userspace filter is bigger, always disallow */
-> +	else if (reg->filter.pdu_size > def->filter_pdu_size)
-> +		ret = -EMSGSIZE;
-> +
-> +	/* copy back kernel filter size */
-> +	reg->filter.pdu_size = def->filter_pdu_size;
-> +	if (copy_to_user(&arg->filter, &reg->filter, sizeof(reg->filter)))
-> +		return -EFAULT;
-> +
-> +	return ret;
-> +}
-> +
-> +int io_register_bpf_filter(struct io_restriction *res,
-> +			   struct io_uring_bpf __user *arg)
-> +{
-> +	struct io_bpf_filters *filters, *old_filters = NULL;
-> +	struct io_bpf_filter *filter, *old_filter;
-> +	struct io_uring_bpf reg;
-> +	struct bpf_prog *prog;
-> +	struct sock_fprog fprog;
-> +	int ret;
-> +
-> +	ret = io_bpf_filter_import(&reg, arg);
-> +	if (ret)
-> +		return ret;
-> +
->  	fprog.len = reg.filter.filter_len;
->  	fprog.filter = u64_to_user_ptr(reg.filter.filter_ptr);
->  
-> -- 
-> 2.51.0
-> 
+Seems fine by me,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 

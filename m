@@ -1,86 +1,86 @@
-Return-Path: <io-uring+bounces-12282-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12283-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MMrXAIBLlGm/CAIAu9opvQ
-	(envelope-from <io-uring+bounces-12282-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 12:05:36 +0100
+	id ePrvJPdNlGktCQIAu9opvQ
+	(envelope-from <io-uring+bounces-12283-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 12:16:07 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A287E14B266
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 12:05:35 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4635414B3C8
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 12:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E32A9303742B
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:05:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2F50F3014693
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679AB330313;
-	Tue, 17 Feb 2026 11:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398EF1624C5;
+	Tue, 17 Feb 2026 11:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6m0Iqfh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlU8ZTfx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEF932E6AC
-	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 11:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34D9405F7
+	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 11:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771326316; cv=none; b=jdR0hpJzOxiIOH8AqLfAMFEePuE80mHNT9FeYVKvRV2aOeHb/pcEWoTSzZTmfjUGxEkiN9W+iZPOX/YXqCNGrv4VmdB+9lPSn/fCFbuBSpUr6hLET0Teu8gsfWlC3GPVg3nJZRTuFkjQVaCI6pdOy/V5+QNILwKhaLfx36g9uC4=
+	t=1771326965; cv=none; b=HrF4nQrvD4239orzeszFfsjFJiDDjy0Ub3BE/u0QynuFoK7HMNCO2ljIfJ1OYv9Hc7V2zDyBzCy4t2iKj7FB1XuF15/u03Z4axlLBozqYuwegEXP3RVQgw7Z4ke1QDb+puHcpsL5/Ul6Awfl/My2Uwe+7ZJ4NOiIY5k4AEW0Fj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771326316; c=relaxed/simple;
-	bh=uDBiU2C7+3Rgh9Df39HuQ5kfSjmQotATp66mNAM7j+A=;
+	s=arc-20240116; t=1771326965; c=relaxed/simple;
+	bh=4fDl9Tx52tN8Vvz+cKLth/oj3oWDegy3VzS2lXLMkyE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AvjJoJHx9zcfnmKNoKsGu8Es0QC2FquevjtwR66oRT6fCR9eyJLyaXsW5bk+cZvj3x51LtEQspgrelMQdKUIpZK8TVS8TypiewKi1ww6/Vfc3IruOusu5gA3Ik+JN45qke/LYJSkUa1DFAzxHQGrI9KDWBKu0En5kPOCZWnTsxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6m0Iqfh; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=h8UAMEK5DBVPVK5hy2zBZ+PWMj1pbFGxvrsWMYdJRrhD5sQNAuwNXYYA02AL3Ddi6gazoTEB095yectASi42VV/cLmm4TVX6teU03UQ39CGil2O600BuhN0+uHKY8iltTtFSfKNKKuocTgU8Hqfe56CnbejIC2BZ37ErAFD5Zcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlU8ZTfx; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-482f454be5bso56789895e9.0
-        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 03:05:14 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48068127f00so43596525e9.3
+        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 03:16:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771326313; x=1771931113; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771326962; x=1771931762; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DdieY3TeFCCP2lBrqX6SK0NNMt0g0Rj48YaZz/Wekss=;
-        b=d6m0Iqfh7Q7FLdQvn7j4u9+mc8uypIKu7fdIjvm086jUWQ3X15wNwtJuvtEPjKEE46
-         hJkYZFnfDVCR8ZZPdB3hVsHOOgNoVUXsAh3cYW+ZhHBcyyUMGY6XalocGtDS5BputbD6
-         aIa5L81V6cN8A7fdzZ8dxP3ws9Z55zmTWrDtmqa5u2DRZNEh7dCj+0oFEajpibhhKwCc
-         hYlpjZSi3xGr6tnCQT1VXEtTFcyZQhXGb0ijnQ7uwxntrym4+fxGhEmVfnbdtX2u8SUj
-         SxcfUdHMiAmq4pBBGLy+9knivJE8CQgLlJTsnHYm6nXzCMeys2PScYJBM+BJIAYtH5lr
-         dOuQ==
+        bh=udd3c/j5y/czJyPaoZAr0Y1gQMOGk+/cJRnG9X5J5bw=;
+        b=JlU8ZTfx06MTRlO/YsM3NaNlBwPDbXM8v1/qUhPpOz0RkjIgTIFiMruhjDGN5tt5xP
+         2WWVAz/q/vkIdUC8zG1e6VCNZuzRZ+uIlWREsVaLb6kcIDvfeykeH1PHSbvc+HSaN9uO
+         gR7zE7RxXmW6BBu5oPJvatK1jk8HSXiCjEG/1Vmb287BmulfVURlr+kjgC9GqNSESfkv
+         ekM+Q4pH7Hxyhc2cUD9+6sWXc0rX+w2YwDt+8suPmmP3LKdl0mNd2UFO/g1jNT9l5fO1
+         sNLDC6mcpjW05/jYrsbbD4IK5S0s/Lf1jiT3Y/+tn02pXllONrRH+2lOnYqygstitr2L
+         +DMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771326313; x=1771931113;
+        d=1e100.net; s=20230601; t=1771326962; x=1771931762;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DdieY3TeFCCP2lBrqX6SK0NNMt0g0Rj48YaZz/Wekss=;
-        b=TNY9vp2b8sS2DKsNlLg21kzn0yf0DW8EhBDiyvcBL1MaKtKPrb7B9xmxwN4rUSnN9v
-         kC0ChnbGRoNwrOcTTxpS4soaTJQcefgz9Nl4WV7pO1ACGeOFFtAj2T7VulhMyVJQCRPI
-         //rsQ5cmuxn9gSDP6eaQksC9kHP0GZN+cYjxz0VKKaU8deAIt+snQ9p8yF59LDwAs4N7
-         PEmCYxR4RLwXPcyjeeQP1dKZaLuE9ImuHVL1mi88FovnUKWHMz74g/wcrv5/wyP89Gje
-         FiAAS/cwl5g3ELB+AaXMOtCTyecJyaYOMB8INtyyySN3dJUhhaPFTO46DPIAO8qfpCrq
-         rNlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVulhn3RJMjoCQm2kN7Rvugmnq3z464otc07Nm/yToGu214xs3nzvjNHTx4diqXZEua1wyrIKj7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVL+HceapWJ05AGllsz5mbQJ4BUcUr4HuSRUQsoqu0cS5hJP5c
-	ozOxzYY9R8juG6U2jwZbAuncS535jTHpFrcVuU8DZS54XLoCvqxu8OOc
-X-Gm-Gg: AZuq6aK1iY1D29MJAUSCmmF9KHo1ZiTmzJyD4jgu9rQ9coj/7OXXbmiUigUztwcGMxB
-	pgv/ga67tTkyolO8egSioahkszd59/1UX85LZ1JyANENTDjUu7D3lkSLWAgwMBqacM4s25js2g4
-	cWu19aXvkdwwJXPSzgexJSlxNHCSelNMOCtlzmnyrYkWt0s/kFKuRrOdjjk77RlokBr7c1mD9Lg
-	vncfNTLR2n2MS50sfmUsVjdt52N5KIoR5c1i6sVG/4G1j3I28oQWueljsXpFN9KjueSkURG8T/u
-	HuPQNap+9jC50YugX8Emg9PyXT/KwDl/JASV04XW4lfTP57S0To9xTKLeHAeUaZ3/eGsksXej2s
-	wKDBVdmMyL1T8tABfhVSb4xOXug2Ec+odPyRRWcqwCfDigRpGlICa/H4Z43IY/uIVGKAHaAviz0
-	gfhtU3bcRyyj87+eWT33+gsrifw1664gd4w27JkhS6RzJgKJbLYvd0vXoD11cyrPcBca9RZF0DI
-	AGeN6TGhiNtrnte/ZyS7fPGVjdo02OdjdyFx0kwwTPuQzFDdU0WFEGwczKy1aNIrWXYV7diMaPb
-	3A==
-X-Received: by 2002:a7b:c356:0:b0:47d:52ef:c572 with SMTP id 5b1f17b1804b1-48378d4f631mr137622535e9.1.1771326313228;
-        Tue, 17 Feb 2026 03:05:13 -0800 (PST)
+        bh=udd3c/j5y/czJyPaoZAr0Y1gQMOGk+/cJRnG9X5J5bw=;
+        b=do+4y5U+JUTwmjunBcaNwoUIj1bq9L7Mdvwv2kxFeG0PcXbBcU+UvAFEkMAxSY+YG1
+         MYgl77W13TaLyde3bKZFinpfNlxYOg5X68sG1KxMi7BEXMsqJgxwkoRP7hqU8muAe20k
+         j7a9WMimP7MRtFQnudMHHlsXT3iEXtcA9AWnXWeCwyVKkccHKyptPKRvrujwDAQz2D2F
+         W18Rz+CP2jIb3sT8QYLQjL6DrV1vxNbM5nSWgSo01kHsYv276FzBeiijFhgdz9U8Uq+e
+         TdCzOy85aalL/5CRpWIbWh71WHi85amFBfd+XKVDz8vFXqlCpFmK0RpD+yV1+s7ZFmAe
+         h5PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuuEpnL9uUibYSti3dHpuPHyvqIUwz1fd09medHG5yQgB4H8OgMJ6aatFkHaMIu480bf41Yip5Jw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSfM4f1xl/xGYMdBTClLk/XdyufBnLK7hFEDm0cwxyjSYb4DE/
+	SJuoOwFH65iGYkF98p/6ej6exmxfYWIzWazsTOP4ZtDyT33sm/lDxUhQ
+X-Gm-Gg: AZuq6aJLgTtvR9pNAa9G3xwL0Fycr/6yX0QZhhkretjnKw7B6U7ITn5p1YLoFJyqEni
+	3IdnqcAAhCdzFNc92Vd0LOsruVJ1YGHlpGA3MwFqW2NGY2MhlLWn0u7Y+ZQj/tLyr1QHxPcPONz
+	6tpkqpv8hUx6cNQ6NvN/mP9GRRtT4ScTuSUIJM+6+pPUIKTbLGZ2c1Nnwub9tayT1K3y8hIe7/Q
+	oNyn8lVqcP2pgwOowJ+heE5BeODAsP8s441h9j4zu7J1U00q9HjUTaEueQHzl47mp1ExqBBCpQv
+	vi4vxZNf2db2WAs1knC44kY/TmS8LEMeIz8Dh4lJETuDwLUDUkApJFjInrNsh749gAqZrdFACbK
+	3Bo7VpGFvLMO1vV3X+2mraKZVJ10aj4QtZekSzl+l4xm6kmoI7sjNXyZS5yMLnw6X32J8ZBxuVM
+	WnqLk1H4ZYUYl4h0jIQd59neKbSh00srhGOlTm8c+xkyVpUgYTUuyABp0QVzBsSDsnb8Jq8orF3
+	22cMrmV44pSCuK9YTNQ72+qdnjg+avADLg4BhUCP9Qx1iFl3AsE+RWK4XFpXHm3vz02JUpcZn3S
+	Fw==
+X-Received: by 2002:a05:600c:6206:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-48373a0842fmr193691605e9.2.1771326961606;
+        Tue, 17 Feb 2026 03:16:01 -0800 (PST)
 Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4837b68e5adsm310486565e9.9.2026.02.17.03.05.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835dfb4bd4sm457899105e9.7.2026.02.17.03.16.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 03:05:12 -0800 (PST)
-Message-ID: <47684e50-d7c6-4f20-9206-366c9c343eb3@gmail.com>
-Date: Tue, 17 Feb 2026 11:05:10 +0000
+        Tue, 17 Feb 2026 03:16:01 -0800 (PST)
+Message-ID: <3888d916-259b-4d1f-96c2-157c289d867e@gmail.com>
+Date: Tue, 17 Feb 2026 11:15:58 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,82 +88,105 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/5] io_uring/bpf-ops: implement loop_step with BPF
- struct_ops
-To: kernel test robot <lkp@intel.com>, io-uring@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org, axboe@kernel.dk,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <ec7d21e6e16c49165fa1e8af2aa09d01c111ea97.1771260487.git.asml.silence@gmail.com>
- <202602171315.iJKYSSFe-lkp@intel.com>
+Subject: Re: [PATCH 1/1] io_uring/zctx: separate notification user_data
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: Dylan Yudaken <dyudaken@gmail.com>
+References: <d099d8d0d7526e4eb59f5ffd0e890888a46b21f7.1771242479.git.asml.silence@gmail.com>
+ <025de231-a6d2-4fa8-91e5-f4ab81d16e7f@kernel.dk>
+ <5fa237b6-420d-413a-b7b5-9f85d9f1e8ba@gmail.com>
+ <64ab6b3e-3746-4076-9c0b-b2edc2de92d1@kernel.dk>
+ <69a2d3ce-5c77-44f9-99be-1b558cf4c4ca@gmail.com>
+ <fc217246-2397-4ae4-8354-7ed0c498d23c@kernel.dk>
+ <e59d8887-d908-463b-ad31-3bf10d977de4@gmail.com>
+ <133c27e8-7b5f-4754-9f8a-17d96e736621@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <202602171315.iJKYSSFe-lkp@intel.com>
+In-Reply-To: <133c27e8-7b5f-4754-9f8a-17d96e736621@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12282-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2600:3c0a:e001:db::12fc:5321:from];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,kernel.dk,gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12283-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[209.85.128.52:received,100.90.174.1:received,2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c:received];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A287E14B266
+	FREEMAIL_FROM(0.00)[gmail.com]
+X-Rspamd-Queue-Id: 4635414B3C8
 X-Rspamd-Action: no action
 
-On 2/17/26 05:24, kernel test robot wrote:
-> io_uring/bpf-ops.c:45 bpf_io_btf_struct_access() warn: always true condition '(off >= $expr_0x7fb415932650(30)) => (s32min-s32max >= 0)'
-
-Got me confused at first, but it's the first field => offsetof() == 0,
-and after type promotions it compares an unsigned type with 0.
-
-I think smatch is too strict, and it's better the current way,
-i.e. handling all fileds in the same way, but I'll respin to
-silence smatch.
-
+On 2/16/26 17:27, Jens Axboe wrote:
+...
+>> There are already 6, it'll be 7th. I also have one or two more in mind,
+>> that's already over the half. The same was probably thought about
+>> sqe->flags, and even though it's twice as many bits for net, those
+>> are taken faster as potential cost of redesign is lower.
+>>
+>> Fwiw, the code is nastier as well, more branchy and away from
+>> other notification init because of dependency on reading the
+>> flags.
+>>
+>> @@ -1331,7 +1333,7 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>   
+>>       zc->done_io = 0;
+>>   
+>> -    if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
+>> +    if (unlikely(READ_ONCE(sqe->__pad2[0])))
+>>           return -EINVAL;
+>>       /* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
+>>       if (req->flags & REQ_F_CQE_SKIP)
+>> @@ -1358,6 +1360,13 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>           }
+>>       }
+>>   
+>> +    if (zc->flags & IORING_SEND_ZC_NOTIF_USER_DATA) {
+>> +        notif->cqe.user_data = READ_ONCE(sqe->addr3);
+>> +    } else {
+>> +        if (READ_ONCE(sqe->addr3))
+>> +            return -EINVAL;
+>> +    }
+>> +
 > 
-> vim +45 io_uring/bpf-ops.c
-> 
->      37	
->      38	static int bpf_io_btf_struct_access(struct bpf_verifier_log *log,
->      39					    const struct bpf_reg_state *reg, int off,
->      40					    int size)
->      41	{
->      42		const struct btf_type *t = btf_type_by_id(reg->btf, reg->btf_id);
->      43	
->      44		if (t == loop_params_type) {
->    > 45			if (off >= offsetof(struct iou_loop_params, cq_wait_idx) &&
->      46			    off + size <= offsetofend(struct iou_loop_params, cq_wait_idx))
->      47				return SCALAR_VALUE;
->      48		}
->      49	
->      50		return -EACCES;
->      51	}
->      52	
-> 
+> I think just remove the else part here - addr3 is valid now that
+> IORING_SEND_ZC_NOTIF_USER_DATA is supported, and if you mess it up in
+> your applications, you'll find this via development anyway. Since addr3
+> == 0 is a valid value, it doesn't make much sense to check for it being
+> non-zero.
+
+Gating it on a separate flag but not checking when not set makes
+it only more confusing in terms of why would you do a flag in
+the first place.
+
+It's not like a flags field where any value set would be an
+> -EINVAL case. Doesn't even exclude having another flag for using addr3
+> for something else anyway.
+
+You can override the behaviour with another flag in either case,
+but realistically it's better to avoid as it's always messy,
+unless the features are clearly exclusive.
+
+I know there is no way to convince you, but v2 already degraded
+the uapi as per requested, can we have that one? The "else" branch
+doesn't make the api worse, on the opposite.
 
 -- 
 Pavel Begunkov

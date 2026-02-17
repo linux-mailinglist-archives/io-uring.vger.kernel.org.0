@@ -1,128 +1,146 @@
-Return-Path: <io-uring+bounces-12276-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12277-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MIUrKe3+k2mD+QEAu9opvQ
-	(envelope-from <io-uring+bounces-12276-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 06:38:53 +0100
+	id uJjTDf9JlGn0BwIAu9opvQ
+	(envelope-from <io-uring+bounces-12277-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:11 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09340148D72
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 06:38:52 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC8814B12A
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 11:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B00A43011C55
-	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 05:38:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 451913029A6A
+	for <lists+io-uring@lfdr.de>; Tue, 17 Feb 2026 10:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01D0285406;
-	Tue, 17 Feb 2026 05:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54F832BF46;
+	Tue, 17 Feb 2026 10:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1VJHA6r0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jV0W5xo5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BE6284B3B;
-	Tue, 17 Feb 2026 05:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D832B993
+	for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 10:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771306730; cv=none; b=TLlZI9aTo1hAcxb2FlOAEHoahdqpGmUBGTHRBrIXZ3Cuko+c1ISlNwL8iICdrcZCAlNvLYrFj6HZ9Zz+xlhzJ2lVMdeecNTllL3AZefJmbuiqLrmCUtiUm2Yw9N2BaMc2NxpSaSurwPBR3BXsqdxQ1xw2XraqDXtUWnKE4Gq4e0=
+	t=1771325943; cv=none; b=Qu442E3SthyLPfiVw/mlhQ63IDzg4gBGaPR+eY2hALOikkSRW64HNSVW+PgEcB+gMhWNtxqXKrYni0bVPjy4LjsR/U1gK4zfAMh29e5xoM99OV+XnA3Ue9kzCSIjCNNV0+MJzFPDS0MfpWwAgvXvLELKJm1GlX73TJxifyU6Xyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771306730; c=relaxed/simple;
-	bh=D99YK0/YHI3q9zZKMv4NHOEH2JpWbKKLB45g+f1ODEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BiqCuTnytsDL98jhm5WqMXTkZUajv+L7JW1/sPjf8nu6RnGVYPU4lseqqv8++uEujGk3ACcEHK2oCi8oxC7wF7Jg6mumpMxrF2PDZVKYTkLcDDbenkXfsoNXmqHJTAS53OeW4gFeD/nNlqLatd6C3tJIqeUjr6FH/UWWj827L94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1VJHA6r0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P6xMgA+2fRPjbwfQEvqYw488if8pmbv7/gTYpXeUB6s=; b=1VJHA6r0wjc6O4jtjuVtERM8yl
-	BHrVH5eijzbYQrXAVNYt1Y3aiCcZ09x0Tarp3TEaYiqvE3IjVhma4S0ZV0/Q10B2f8A/1pnAuoSMJ
-	sJ9uq1k3byU0MUypdiV/5DbP0Gr9V/e7LJbAoBi91uGHE6Ytfwc+jXazVXU/mUM7TX7cVAnciKY5M
-	QW13e5wiRH+QIJLxG7DMxvfDajzpKqKkWfqOnBB5lda2BYkKqMk/mV4wWU/2NNimy7MBRac6fntM/
-	UCv/Z4asWgr6TeFwqSUfUvge30dP553KACwhM4j6cuUXARvymtrWVHzCVZytDYpKYvL56Mw569Jif
-	F/zL/aIg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vsDnM-00000007eaA-0klD;
-	Tue, 17 Feb 2026 05:38:48 +0000
-Date: Mon, 16 Feb 2026 21:38:48 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
-	io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
-	bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-Message-ID: <aZP-6FbNU5oGjrLR@infradead.org>
-References: <20260210002852.1394504-4-joannelkoong@gmail.com>
- <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
- <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
- <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
- <aY2mdLkqPM0KfPMC@infradead.org>
- <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
- <CAJnrk1Y6YSw6Rkdh==RfL==n4qEYrrTcdbbS32sBn12jaCoeXg@mail.gmail.com>
- <aY7ScyJOp4zqKJO7@infradead.org>
- <CAJnrk1ZnfdY9j1V8ijWx29jaLcuRH46jpNqR1x5E-Zqfz7MXVg@mail.gmail.com>
+	s=arc-20240116; t=1771325943; c=relaxed/simple;
+	bh=dxkUEdW59WpbrdfCocb7yEpG8N+Jc3txoaD3rPLr/hA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a19OjO+lSo8e0Sesjpk5jHhYRax1oQFiq36mQmg0/dXFyetY8hiz+QNDAgYkTmvgI1gDOWDDYdL/UIyM8hARsNBZo/JvPwinUA4oVqAJb1sA2OcU73igFkWE0VQToWj2B+wgGP8A07CGGugLyUbConX7hmnRYziFvxnBuodJAZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jV0W5xo5; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48379a42f76so24928385e9.0
+        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 02:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771325940; x=1771930740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pqd/qSNd5cJh+qVEsxJycYcGDG/6Gev0XJ7NgtBdi6w=;
+        b=jV0W5xo5TUjK0Tpfg3f6zkPpqAVfKjj4DwXEaw0xWZGZbjLbkmZcI8RGl7PJPwAZh8
+         6T/4JEOUoNUkaiVEFFW+78daVT20yJFwnBMdDOrbPGKPH/NBngHoVY+66phvQ4Yq7eFh
+         lasXHJYVssAtCEzB3ujqGQkMMFwABrg7PuToSELxE1MlZg2qrGj+ASgUyXk99Gmq1ano
+         p3QkB60yXAMvRiKn3itpjXYPs45Hzk4z6Bekfs+OR5qOlKvwjTt5d12XvJ+0xiEZvj5W
+         MNWtjSBFelLl76gVB+VooDlPwfvUm3H5ig44QgUu3/9x+zTAHYfUjJ6hnPISpGZ2Icnv
+         ZnGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771325940; x=1771930740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pqd/qSNd5cJh+qVEsxJycYcGDG/6Gev0XJ7NgtBdi6w=;
+        b=gC3uqgh817eosKr1oPGnl44gU6AVvJ/zsT3Lg393+s8ypMxkROI3Gx4x15nuN/tiDJ
+         SuUUPzXx2VFKrRRNv+43cgl4OzEuMdy94714zzifw5QFYi3O5hgtC+ApDyJiuaXjzPH8
+         HnSkNDjLlhjnfHAhv1PkSISoOtxBcIHT2XSwXdw650r4kL/7mPznLwzujF4RRbz5uei7
+         MLHxXMuWkh630CJRukNuCjtMZ4f1Sd9hA/71nYowsaRkKhyx+KjkHHh4s5zDy6/Vuwc9
+         HXN+cuZw/5AjL07bPIMt8chclhNGv19Oj929gF0ItSClqbvgutmMlmmPS1mFUBB1aMWY
+         4ZHQ==
+X-Gm-Message-State: AOJu0YwyvwkNO91dD06CmRTxeJ0NiNKGWZKWFMllDKu14eGgySCwKhUN
+	C5j2QUSLZ2WcmfkZE7a1Zv5UiA19abSsMcme0IYc/i7rH7oDNfjoFVUCUIh8gg==
+X-Gm-Gg: AZuq6aKnCn8VPdEXE2ufTK0dUtVi/GApFZR9V9MThxoO28qb8OfZg7dPM8GruUfu5st
+	DjXtHPoJxU8sxNaWpeMA74b4IDAGvoOyECS2eW6u3IwPbyYa9/0PZKq1uPcOdg7mSg02uNJGAiH
+	1PwrLGUoDEfUKCHnheuhjhEfOR8gA+TBTziBUdEhR7lXM7LPMqQMWzItdW+ZpG3x4OylJof+5RV
+	2tPOnCGISnRJzbLwYWzF+jUkr9WCIeJhDnc9OEfzOWK55KssxPz2RqIiW6CVAoGP7Y3gV22kqHE
+	Q/5CFSKDvhB+BB1K8OcGEtWablZOncBLZlfPXSz0J5AUUMF2jnZ+13RciOfG/vya+onR5Kw864k
+	X85X8vrXWXOGdijiO19E/WSFglh+9J1uOU4qtdp7trbpZOkzd1Y0ekX8LaUF00+ObyqcGHCpzPj
+	/8DDU737nA2rG8wvBeYBkRIhFqs5a/ReXlU1ebGRQ8smE+Ap5Mdodc7c72im1anRgimsxSZ3I1L
+	TO0DQnlF7QFfPs32ZqRBGzdJjf3oJ3FXKdoNtHd
+X-Received: by 2002:a05:600c:609a:b0:483:7020:864 with SMTP id 5b1f17b1804b1-48379c178eamr193526775e9.25.1771325940268;
+        Tue, 17 Feb 2026 02:59:00 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a78c89sm327759395e9.5.2026.02.17.02.58.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Feb 2026 02:58:59 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk,
+	netdev@vger.kernel.org
+Subject: [RFC io_uring review-only 0/4] zcrx mapping cleanups and device-less instances
+Date: Tue, 17 Feb 2026 10:58:51 +0000
+Message-ID: <cover.1771325198.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJnrk1ZnfdY9j1V8ijWx29jaLcuRH46jpNqR1x5E-Zqfz7MXVg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12276-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12277-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 09340148D72
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: EAC8814B12A
 X-Rspamd-Action: no action
 
-On Fri, Feb 13, 2026 at 11:14:03AM -0800, Joanne Koong wrote:
-> I think we have the exact same use case, except your buffers need to
-> be read-only. I think your use case benefits from the same memory wins
-> we'll get with incremental buffer consumption, which is the primary
-> reason fuse is using a bufring instead of fixed buffers.
+First two patches move user memory DMA map creation to an earlier point,
+which makes it more uniform among different memory types and easier to
+manage. Patches 3 and 4 introduce device-less zcrx instances
+for testing purposes, which always copy data via the fallback path.
 
-Yeah.
+note, based on two other recently sent patches splitting out a uapi
+file and defining constants in zcrx.h
 
-> I think you can and it'll be very easy to do so. All that would be
-> needed is to pass in a read-only flag from the userspace side when it
-> registers the bufring, and then when userspace makes the mmap call to
-> the bufring, the kernel checks if that read-only flag is set on the
-> bufring and if so returns a read-only mapping. 
+Pavel Begunkov (4):
+  io_uring/zcrx: fully clean area on error in io_import_umem()
+  io_uring/zcrx: always dma map in advance
+  io_uring/zcrx: extract netdev+area init into a helper
+  io_uring/zcrx: implement device-less mode for zcrx
 
-Yes, tat's what I though.  But Pavel seems to disagree?
+ include/uapi/linux/io_uring/zcrx.h |   9 +-
+ io_uring/zcrx.c                    | 145 ++++++++++++++++-------------
+ io_uring/zcrx.h                    |   2 +-
+ 3 files changed, 90 insertions(+), 66 deletions(-)
+
+-- 
+2.52.0
 
 

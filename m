@@ -1,79 +1,81 @@
-Return-Path: <io-uring+bounces-12300-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12301-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OC31E2oqlWm2MQIAu9opvQ
-	(envelope-from <io-uring+bounces-12300-lists+io-uring=lfdr.de@vger.kernel.org>)
+	id EG5PHmoqlWm2MQIAu9opvQ
+	(envelope-from <io-uring+bounces-12301-lists+io-uring=lfdr.de@vger.kernel.org>)
 	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 03:56:42 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7612152BFF
-	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 03:56:41 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19242152C00
+	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 03:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1B1703037F09
-	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 02:56:40 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 722F330162A8
+	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 02:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737DB2874E0;
-	Wed, 18 Feb 2026 02:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490C2DC352;
+	Wed, 18 Feb 2026 02:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvNAmb6F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/Yi9PeC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493A6C2EA
-	for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 02:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1ACC2EA
+	for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 02:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771383397; cv=none; b=dnCENTISYVmPnsNg5AbX0fYz/oyfe/jfRbltPWbOEf1iUnUePkR2A7uXPeobgOvAYD9JYnS+7muW+EeLU2k3dpEK1iZbk06oE5m9XMYzzzBg/xaSUlU4W7IriwfrJDW52ifymj/4vKZI2HzH429o8ZrG7GaRPNOmUQQa6rYot8I=
+	t=1771383399; cv=none; b=LeJq3dy12PSWVcUKHI+1MhpquIFp4fvC2g2tWGy9rAwIfqM1uG5Kch6+Xf2PodfjbPra0gE6ESNT5ZpqhFQAF38Gx3V32tjG6/mCcBVdni1p2Df7eZyiwyx4uZv3t6Sv/q7mVvOOXlyppwn3Lw6rKIUZ2Cc0ok91iJhYG9gNL4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771383397; c=relaxed/simple;
-	bh=BGNRg966IsE8DlmABr3gmooRLOYbOWuX39W0STBpw2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kmBrt0bFnRnqaUXiLnecUVAFvYRbrQtUIMYaXzJDAWFovS1QqD1wc8LDU4qKTFLbUh+t+zHtWdefiB2Ro9ZVrR6BdJHCIG6h4a0ppYjLqbWIFYWWuaM+OzcPQly17IsrfWSw4k0pseF7UUT4gnxwFjGrHbJPHy1muADhiCANE34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvNAmb6F; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1771383399; c=relaxed/simple;
+	bh=UDQwNSbT3TM97tvN2WGXguulkBD9eGp/gS9TYQlpbmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=of275bO6ufpf7M6H52NEyJ3PdKEo9bvy5l5vGo5RaH8MNbJ3ZEC4v89pOxGmZctNtCjtB//KXbyBOyc5Qsul9B/aOxu5C1Simo7lu8yNqjZ1vw0rwsOZg5sKW63sa8ceIw0P6IRQbwMfAI0Jxqg5RLASWvQ5Wn/Z0Jozp58Jijw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/Yi9PeC; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-824c9da9928so2238331b3a.3
-        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 18:56:36 -0800 (PST)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3566af9900eso2437443a91.2
+        for <io-uring@vger.kernel.org>; Tue, 17 Feb 2026 18:56:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771383396; x=1771988196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghxwbUaIMu0rBLzAeqbmtMS1/HSpsZF5T2MvWzuBq9Y=;
-        b=HvNAmb6FYTsjlzXgegrSxGHOjW801wQAC0L3h7cKGjxd212cyMHxen2aXJrWlV5pla
-         asgN/3d0yAtL+B138KS8LLDHaburQK3oSh55J7EYGJPeaLgcSaU6PzLY9W1ZgcvtW+1i
-         IZwtiucKHNoZY5CYQD/8tAdu8rodSke+0aqXQ7Qpd8W/rYDC+UQp/4UCmBrd8YUCgEVz
-         y3szjghCrJ8S8XWZEJCxVgFDFo9L+XHQwXTogciYLU9TeDwUlDsGhHSQ5ZbtPsNN9AO/
-         4qOCxHLEx/5PNdUSsSIAVemlsqPW44yrg60Ph3tOKtVie6t34ZHoAOl2QQAjJ8N4C58P
-         KsmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771383396; x=1771988196;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771383397; x=1771988197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ghxwbUaIMu0rBLzAeqbmtMS1/HSpsZF5T2MvWzuBq9Y=;
-        b=Lgm89BKEzN/kSkYjAegIJzHepgAcV9njSemc/qYbgD//0+wE2NCLv9AhfifZvDKynQ
-         h3qB2hyxH6kouuJDxqIAXcVRTdzTfSpfSTLVNEC2UDIlPWD8ZnnM+7hq8LAI3D/1pPJZ
-         a6NWTc6+gMb4TpRGVbcuKnJU11esAV/5IsMvvQSuXqeQokiYXD/fPlz3cFcGwVrFjIkK
-         AB1U8WTJj9HJn7o2CKxEr2FeWwSIiB/SZZex3Ut1eswG2OsGsdq5XLUYPzJ326QvqK/y
-         OvS4DEhQCdyBR7t9jl3NnO2OSEOwKpDfKlSxXiXY5yd8ULytVatpgUCOCHnt/HYZvSGo
-         N9PA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6jTwYa2K42xBQlkncOHtv2Ue88ygBzzq1fa4HurIr+SJmc7ZFokHZ7tr3Zp4YjHN4EKk/n2dWPw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxCSe9TFwZX27bGKx7sg4RYCGKKFlrdnAAwN9EU39lDjNpBaNb
-	JdbM5rBt2q47wlAYogrFkHO/07/9A9/tsj2heT1qdApNX2doRkyUQu1q
-X-Gm-Gg: AZuq6aIfFnmY+GOvwU0YbuRuARBB4LfktIcWfMVO9mJgIO9QsC/7VcoUprHRzGBpSQP
-	a7mUog4YDoWsrpqPJg8I5OT7opLzshzT10jRVSdG7WTfu3ZCutrMjzZtKLeivFKrGtwbgmaDAOo
-	iRxYJmqSe6Hd2L9JUO3SAYRgtnCI16NWWZUIb5yQkWRMFfrrwQUJbTLm9ZSGoqa5yLtgrjbKBgz
-	qIwpgm86FuKTy3roNcHt/W40MgdFbgR5m+xV2SMaHCPyZzQRQHkVqNhxU8yrSHqyWxZiJcSY3Lo
-	b/i2mRwFoyPrl0I8pfLLFI2coTzBxSmEmE+JIovOvA+eovjvTHVp5pRlYaS3M+eUy2MHKMmZKnW
-	tTWOy1na8nM36bznXEGroa7P1MndNN8DHOMgJZ3iZLluZ+hUuRuTBwuqOGRs2/KhLh0Mz+tzZ9X
-	pnpxrfq3WCE7uVNG6tSQ==
-X-Received: by 2002:a05:6a00:813:b0:821:78ae:9dcd with SMTP id d2e1a72fcca58-8252746075dmr655672b3a.13.1771383395548;
-        Tue, 17 Feb 2026 18:56:35 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:41::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824c6a546edsm15314851b3a.25.2026.02.17.18.56.34
+        bh=Q8Bb6AOdKTMK64W0f/BS3OWmGtTX4ZsPXqaMKADTuDs=;
+        b=R/Yi9PeC+sgGEPu/jv1IWmgTIh+tJF26U0tf3q8SazWpAaaxcKz8B2a8SC86lSN3Ee
+         24Lgidg4ohVSTcYvbzkjjsM4/T6WFrtF95OxTX5jth6nRl8gcS5K3Pc71cyC0ffoJBOp
+         VW6NaBrXSDSyyoUVsHcdOTo9ja0PaNn8AmmatH/6lyZPMNup4dXYfGiVkP+3Wc9PAHqP
+         TNWTQaqDYXdsI3B4Rae8JPyz1AcSxwolQoYYu4Ph2H9hOUMP4nU/k7le7H2zj4WeBmTu
+         XLNg16/UiiqQMlZIFZaI0NU9K80zxhHAtx3Sk3yoj9U9e5nJi5PBvoqronNJscKKc9LG
+         tpVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771383397; x=1771988197;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Q8Bb6AOdKTMK64W0f/BS3OWmGtTX4ZsPXqaMKADTuDs=;
+        b=et+lSd8MPjVl64rBCbC+0hiExwgnHlKw2LjWyVrAr3VZFnr/Upar4vMc0wHZRAgQZN
+         H/o3Q0B/6nH+7i3YFpUETRQWu06PNwL8M3tTEp61TfLiYhlenLwzTxYMGZ5JH04xAVPo
+         +iUaduGRNkaU/9lS9abPUABoEhRYJs13NgoWNtS9RjMlFdFRcgWrAw0U45yeupfH64Ce
+         RlycsT3c5++rzzPMJF+zto0mgiN2jD+rCHEAXmLsY+Q3JsTDtHySZ+ugF9oviCUs1nfK
+         ZaAg9kIWMc/YhMyqB2ZxG6XdOtM8AwsoDJ9yBWdkj6812+IikBTHrqSnmfHMjpNiN/ek
+         VpSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDbYqktwl3HOiJ2MGBCyFM1ahwMfwlGVTT4C/LInESgE3YBtkJUd0CO2EF5Qs8SRSnZ106B4JiSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU/HFg1b4FIz0ulT72IsYlvkHQ9HSWkFPAv5NiHH08jHY2Naku
+	sXuvaeaTQPmOGYJptYDi7Xreupu8C/PDjDn7QHdd0mA/6XN55QAAQ7Yy
+X-Gm-Gg: AZuq6aKV8PXF+A802LVw212PUNTseRLcquO4zLMl2ZSxMDmk8Q9Zqf0PLuLYkoo9MMP
+	fA63r3U1N8qFvZRhltoE63WPfX9wEUmFWP+FiVvbABnYkoD0P4rD1GiscSohy4voOkAUV9ZErYX
+	ROHSXUNBc66De7XSQvadzqcGA3CdEaZqt3zQML8RdZGLDvAMnIgfWTl2qXuST5M8RrGhU5D6Zid
+	1v/qMQXxlqSvsuZ2MUXaIKv2cUPb365KOXeVOMdEwaqASgQ4GTAaBvS8gvjzA61WkOuFyZpeiTH
+	ZWsiXnA694Nio/KlyQTodIP3HSnisDyiuQ1JrNjBHQ1Nk4eoapxeok5fXY19VHpt4cWfg7CYSRr
+	DFn9C0adziOKA3ZUWj4fGlM3uNhDJBmszPrmcMTq5cNBeDK5dbWbqfI1RsBTuoCBGF4w5DIuJ/y
+	wLV2Ag63y6diL7/mbF4w==
+X-Received: by 2002:a17:90b:582f:b0:34c:c514:ee1f with SMTP id 98e67ed59e1d1-3588905b27fmr447973a91.11.1771383397344;
+        Tue, 17 Feb 2026 18:56:37 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:43::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35886c8e3d7sm309412a91.2.2026.02.17.18.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 18:56:35 -0800 (PST)
+        Tue, 17 Feb 2026 18:56:37 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: axboe@kernel.dk,
 	io-uring@vger.kernel.org
@@ -81,10 +83,12 @@ Cc: csander@purestorage.com,
 	bernd@bsbernd.com,
 	hch@infradead.org,
 	asml.silence@gmail.com
-Subject: [PATCH v2 0/9] io_uring: add kernel-managed buffer rings
-Date: Tue, 17 Feb 2026 18:51:58 -0800
-Message-ID: <20260218025207.1425553-1-joannelkoong@gmail.com>
+Subject: [PATCH v2 1/9] io_uring/memmap: chunk allocations in io_region_allocate_pages()
+Date: Tue, 17 Feb 2026 18:51:59 -0800
+Message-ID: <20260218025207.1425553-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260218025207.1425553-1-joannelkoong@gmail.com>
+References: <20260218025207.1425553-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -100,7 +104,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -110,7 +114,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12300-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12301-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
@@ -120,75 +124,164 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
 	TO_DN_NONE(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A7612152BFF
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 19242152C00
 X-Rspamd-Action: no action
 
-Currently, io_uring buffer rings require the application to allocate and
-manage the backing buffers. This series introduces buffer rings, where
-the kernel allocates and manages the buffers on behalf of the application.
+Currently, io_region_allocate_pages() tries a single compound allocation
+for the entire region, and falls back to alloc_pages_bulk_node() if that
+fails.
 
-This is split out from the fuse over io_uring series in [1], which needs the
-kernel to own and manage buffers shared between the fuse server and the
-kernel.
+When allocating a large region, trying to do a single compound
+allocation may be unrealistic while allocating page by page may be
+inefficient and cause worse TLB performance.
 
-This series is on top of commit 73cf88d775b1f55 in the for-next branch in
-Jens' io-uring tree. The corresponding liburing changes are in [2] and will
-be submitted after the changes in this patchset are accepted.
+Rework io_region_allocate_pages() to allocate memory in 2MB chunks,
+attempting a compound allocation for each chunk.
 
-There was a discussion on v1 about having kernel-managed buffer rings go
-through a user-provided registered memory region. This changes proposed in
-this patchset add a simple straightforward interface where the kernel
-allocates the buffers and the buffers are tied to the lifecycle of the ring,
-which suffices for the majority of use cases. If/when in the future it is
-useful for the buffers to be backed by a prior user registered mem region
-(eg for PMD optimization gains), the changes in this patchset do not preclude
-support for that from being added.
+Replace IO_REGION_F_SINGLE_REF with IO_REGION_F_COMPOUND_PAGES to
+reflect that the page array may contain tail pages from multiple
+compound allocations.
 
-The link to the fuse commits that use the changes in this series is in [3].
+Currently, alloc_pages_bulk_node() fails when the GFP_KERNEL_ACCOUNT gfp
+flag is set. This makes this commit a necessary change in order to use
+kernel-managed ring buffers (which will allocate regions of large
+sizes), at least until that issue is fixed.
 
-Thanks,
-Joanne
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ io_uring/memmap.c | 87 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 64 insertions(+), 23 deletions(-)
 
-[1] https://lore.kernel.org/linux-fsdevel/20260116233044.1532965-1-joannelkoong@gmail.com/
-[2] https://github.com/joannekoong/liburing/commits/pbuf_kernel_managed/
-[3] https://github.com/joannekoong/linux/commits/fuse_zero_copy/
-
-Changelog
----------
-v1: https://lore.kernel.org/linux-fsdevel/20260210002852.1394504-1-joannelkoong@gmail.com/T/#t
-* Incorporate Jens' feedback, including fixing wraparound int promotion bug
-* memmap: drop allocation per buf + have everything go through io_create_region (Pavel),
-  add 2MB chunking workaround for large allocations
-* uapi: merge kmbuf into pbuf interface/apis as IOU_PBUF_RING_KERNEL_MANAGED flag (Pavel)
-
-Changes since [1]:
-* add "if (bl)" check for recycling API (Bernd)
-* check mul overflow, use GFP_USER, use PTR as return type (Christoph)
-* fix bl->ring leak (me)
-
-Joanne Koong (9):
-  io_uring/memmap: chunk allocations in io_region_allocate_pages()
-  io_uring/kbuf: add support for kernel-managed buffer rings
-  io_uring/kbuf: support kernel-managed buffer rings in buffer selection
-  io_uring/kbuf: add buffer ring pinning/unpinning
-  io_uring/kbuf: return buffer id in buffer selection
-  io_uring/kbuf: add recycling for kernel managed buffer rings
-  io_uring/kbuf: add io_uring_is_kmbuf_ring()
-  io_uring/kbuf: export io_ring_buffer_select()
-  io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
-
- include/linux/io_uring/cmd.h   |  53 ++++++-
- include/linux/io_uring_types.h |  10 +-
- include/uapi/linux/io_uring.h  |  14 +-
- io_uring/kbuf.c                | 248 +++++++++++++++++++++++++++++----
- io_uring/kbuf.h                |  11 +-
- io_uring/memmap.c              |  87 +++++++++---
- io_uring/uring_cmd.c           |   6 +-
- 7 files changed, 373 insertions(+), 56 deletions(-)
-
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 89f56609e50a..6e91960aa8fc 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -15,6 +15,28 @@
+ #include "rsrc.h"
+ #include "zcrx.h"
+ 
++static void release_compound_pages(struct page **pages, unsigned long nr_pages)
++{
++	struct page *page;
++	unsigned int nr, i = 0;
++
++	while (nr_pages) {
++		page = pages[i];
++
++		if (!page || WARN_ON_ONCE(page != compound_head(page)))
++			return;
++
++		nr = compound_nr(page);
++		put_page(page);
++
++		if (nr >= nr_pages)
++			return;
++
++		i += nr;
++		nr_pages -= nr;
++	}
++}
++
+ static bool io_mem_alloc_compound(struct page **pages, int nr_pages,
+ 				  size_t size, gfp_t gfp)
+ {
+@@ -84,22 +106,19 @@ enum {
+ 	IO_REGION_F_VMAP			= 1,
+ 	/* memory is provided by user and pinned by the kernel */
+ 	IO_REGION_F_USER_PROVIDED		= 2,
+-	/* only the first page in the array is ref'ed */
+-	IO_REGION_F_SINGLE_REF			= 4,
++	/* memory may contain tail pages from compound allocations */
++	IO_REGION_F_COMPOUND_PAGES		= 4,
+ };
+ 
+ void io_free_region(struct user_struct *user, struct io_mapped_region *mr)
+ {
+ 	if (mr->pages) {
+-		long nr_refs = mr->nr_pages;
+-
+-		if (mr->flags & IO_REGION_F_SINGLE_REF)
+-			nr_refs = 1;
+-
+ 		if (mr->flags & IO_REGION_F_USER_PROVIDED)
+-			unpin_user_pages(mr->pages, nr_refs);
++			unpin_user_pages(mr->pages, mr->nr_pages);
++		else if (mr->flags & IO_REGION_F_COMPOUND_PAGES)
++			release_compound_pages(mr->pages, mr->nr_pages);
+ 		else
+-			release_pages(mr->pages, nr_refs);
++			release_pages(mr->pages, mr->nr_pages);
+ 
+ 		kvfree(mr->pages);
+ 	}
+@@ -154,28 +173,50 @@ static int io_region_allocate_pages(struct io_mapped_region *mr,
+ 				    unsigned long mmap_offset)
+ {
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
+-	size_t size = io_region_size(mr);
+ 	unsigned long nr_allocated;
+-	struct page **pages;
++	struct page **pages, **cur_pages;
++	unsigned chunk_size, chunk_nr_pages;
++	unsigned int pages_left;
+ 
+ 	pages = kvmalloc_array(mr->nr_pages, sizeof(*pages), gfp);
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+-	if (io_mem_alloc_compound(pages, mr->nr_pages, size, gfp)) {
+-		mr->flags |= IO_REGION_F_SINGLE_REF;
+-		goto done;
+-	}
++	chunk_size = SZ_2M;
++	chunk_nr_pages = chunk_size >> PAGE_SHIFT;
++	pages_left = mr->nr_pages;
++	cur_pages = pages;
++
++	while (pages_left) {
++		unsigned int nr_pages = min(pages_left,
++					    chunk_nr_pages);
++
++		if (io_mem_alloc_compound(cur_pages, nr_pages,
++					  nr_pages << PAGE_SHIFT, gfp)) {
++			mr->flags |= IO_REGION_F_COMPOUND_PAGES;
++			cur_pages += nr_pages;
++			pages_left -= nr_pages;
++			continue;
++		}
+ 
+-	nr_allocated = alloc_pages_bulk_node(gfp, NUMA_NO_NODE,
+-					     mr->nr_pages, pages);
+-	if (nr_allocated != mr->nr_pages) {
+-		if (nr_allocated)
+-			release_pages(pages, nr_allocated);
+-		kvfree(pages);
+-		return -ENOMEM;
++		nr_allocated = alloc_pages_bulk_node(gfp, NUMA_NO_NODE,
++						     nr_pages, cur_pages);
++		if (nr_allocated != nr_pages) {
++			unsigned int total =
++				(cur_pages - pages) + nr_allocated;
++
++			if (mr->flags & IO_REGION_F_COMPOUND_PAGES)
++				release_compound_pages(pages, total);
++			else
++				release_pages(pages, total);
++			kvfree(pages);
++			return -ENOMEM;
++		}
++
++		cur_pages += nr_pages;
++		pages_left -= nr_pages;
+ 	}
+-done:
++
+ 	reg->mmap_offset = mmap_offset;
+ 	mr->pages = pages;
+ 	return 0;
 -- 
 2.47.3
 

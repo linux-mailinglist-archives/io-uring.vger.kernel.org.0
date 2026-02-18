@@ -1,224 +1,183 @@
-Return-Path: <io-uring+bounces-12311-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12312-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id bYn4G4N9lWn+RwIAu9opvQ
-	(envelope-from <io-uring+bounces-12311-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 09:51:15 +0100
+	id mMLPNK2LlWlVSQIAu9opvQ
+	(envelope-from <io-uring+bounces-12312-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 10:51:41 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7741544F1
-	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 09:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4212D154E35
+	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 10:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 32B793031CC7
-	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 08:47:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9CA653011BC1
+	for <lists+io-uring@lfdr.de>; Wed, 18 Feb 2026 09:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEAC2F5A09;
-	Wed, 18 Feb 2026 08:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304D33D51F;
+	Wed, 18 Feb 2026 09:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EuBI3I2e"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1BE325488
-	for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 08:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923372ECD37
+	for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771404428; cv=none; b=Ai1GZwEA8pshlqumHkY/AqDZVCysVrHlILtnQmLl2MOZ5BAh/UYgVckTDsg6PNGMRXCKf7zaFNdaBxujFmPoKH41aNaw3FBvS8p7mFCCNEb5eQey1bs/mU/wXqq3uMVayd12ab4KeFcBhCrQU9RQ9VljMjUOzxSr1kGGoPmkpTY=
+	t=1771408271; cv=none; b=kM0Jjkm6oQMzz1QN6trW2ATqMxSLzZAJftxpzcUh3lq+OEl/+BP+V1bF6ShO54/KQ0OgySHXv3rVyiCB86yeheJu5NOdP7Imrm0/IMCUH75QWx4Ippf2Pp+F9bJgllkNIIU3pSyXLtv1+G3JjqDWmvaG/IkUeNU1QNwjQwK6oYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771404428; c=relaxed/simple;
-	bh=Esdzk9VSfB+lTanDTVJE2rQhGfxzfyI1dUMsdig+Em8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=CZ3fTSUuolpJxmXMbSSPjqgcxwkEPMJfwqLIO1SbXg0hSBifGPsMEgP/do1LW/rEMjK3uLG2ATiU9JeRi0UUHa7EYYmJ1dj88KIBo7CA+jlq8lVCaOqgI8WHRM8uEHCt9ibulTHxKxni6MLLJvGlJ4NK0pKZ/Q1FojSttmUSZ5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-662ca3cb667so17121927eaf.2
-        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 00:47:06 -0800 (PST)
+	s=arc-20240116; t=1771408271; c=relaxed/simple;
+	bh=g1w4U29qX516haKnTEyNMj9TGUIXllZWdQYWsWv3Feg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UF89GXVDhVcoTB7nLVcWp4h3zQCv8+N2p5YLDHpOJcvJ5qVy0s/xeOyRY50oudJevZZ3Bwx8cNfPG3A59NhtkVGsTWmzprR3/55YCGtSRb5X6gXaLVRXgcQqnKdqfB/KVrBvH24gGJfkgfIn7W9+gmS2m0MstvW/CTwpspZB1mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EuBI3I2e; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-437711e9195so3586871f8f.1
+        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 01:51:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771408269; x=1772013069; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=y8lR8H/ikLQCKvg0wb0yyJzqPf6aKANWd0UJElQxO3w=;
+        b=EuBI3I2eaYrI8MdSvBxUOgBhXoVW6maYywAylZFJZjpn0klV3onkQURwoG5ZEII0/V
+         xmfBzSdo+yBavsSxQFqOWkjSxUqvMeJZy3dRAxG1bWlmCxsk1ru3o2SY3eZt0mzBs9S4
+         CDMB+yu+XeaMB6qdOUiFmPLQdWxlrGxkHOj4nV1Mb7ly8Q2JycOCCzlX0IjbXzD4E0Qi
+         PuH2hJCNRaYHvXDmBRlruSarf9sBS7ybg0DcLQtHGgBB/TdU3rd2kJEcLXSnw6Ap9hiG
+         0f3RVOm7VjbZuJmVfwRtc8SZkVDTZ8mZKveLyZZKtr8rB48fC0yeZuXcnx+/Qw2YNzV0
+         W28A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771404426; x=1772009226;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1771408269; x=1772013069;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZU0dvQSdrNuSDHm9APNyMRdxU4fTzW2ZD/3ePa8/37w=;
-        b=tCgcSVXqHLfQwrG1eNZJ5uAkFIdESkzKFbJpG9L18Ps5hLuM7m5KeoPG0xM9BemY40
-         JlavoiVHKGde4uZLLuA1/uSwaNWdSgO0frVr456Muo8xWiwx80sRbQMy6K6NKoMJhSPG
-         HpACOcmv8YI+76/DmuJCPGbIvLGlaUcftQ2RFtA/af8N/+4oYp3WsKvwsmdNAlKKoZ8g
-         Rb3CAuk4GIdMv3mzsC6r3o6Mlv7/WjcQv02SnS3BXgsGJHaS3FZ2bK30bRD+Bo6nbM2h
-         JalUWBjkOg4heeISmkh2p9vbDs1mvN1Ca1Ei8GeupBOeE/datEcKJ5Rdcfi9wCHz86vQ
-         eHRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRKDpjebY2+x29G6f03DmXtDgYM+pL9Km8gszRAWByYw2ULl1PIvIb+ZX42LrHwHH4D15d8UbDTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXVHVwXYMNMY1YDPhbR+C3TUV+6Zy4/XXxcnXhsu/IBmADsE+E
-	Pb1QBLSmVixVKVxYa7SAZZhdehTvAHk4Og8V8rfF7GzLBHOTVfk2RsCl020gnLS5oWoW+h8ISri
-	gKS2BNFXvIcHasBK+ZvvEcudsW/V14LsC6qRcgVQ0Ix7V/KUxoeAmOLw63Ws=
+        bh=y8lR8H/ikLQCKvg0wb0yyJzqPf6aKANWd0UJElQxO3w=;
+        b=ZF7yXKOCFUOADjiXjgH86M3TBdcTqXSB64emJ6qfHCwt0Ks0cCOKx1vZMaGSJ49Ypo
+         T8WL6OVgkkWOO7vdcHs9HFAUg/U2ujNCmziHRmH9W7pPJwAMm2Hbu6DKgl5ByFm6ylMq
+         JYXkIhRgydjVA+rnSjUz4zK1Y2eTsx+MnF5PLyTfO9x7bMZ0IYFo+rrHbdtB5AGzP5lC
+         bkzSc3GEIUay4bUuZ8yUOS5Jlo0OpnW4ZgMU2KSLdHwm1i3uBFEiDLXU8RopaTA1xPi2
+         yKxR8aEpK5/TXcfs/MyO1o962JzQph8ETV6OBZJv00Kj8ArwllgpnK4wvxC19ix0CsIW
+         wFew==
+X-Forwarded-Encrypted: i=1; AJvYcCXpk13sYEwouE7nt+ycTKrN34bJ/SO80f5hm1LJ2iqjZz2yjAPTjCUZO2zNhjcgKbgfkKzsItTyEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj71hOztvzToAeAJzY38FHxXPO+iHXMrl+iZouYGu5LinLLy9w
+	c+d76QpzySXQNZLg6hll2dv3GRqdHyd75fZ+BpZQBt+2+/myZ/dCsaI3
+X-Gm-Gg: AZuq6aL0MIz7Orn0QYx9b7gMimugliGThIhPjsQ3Ibwe6/Z4+yiXdPEQnEjonni6bnB
+	lSCHOIh15H8Jyz/3Eb9N/cHZh9xKdqDF4JoqyTRzeR5s5BZc9YN9ZeFM8L2HzLN92At0ZCMO5fM
+	zGBZLuPUZuPwS8aWtELOYRB3+JQ+UQAOZLQhK8JwQZsJuRMH1mmAC8GbT7n/Xdk9nKTUQoAz/3m
+	hOrsa7NDImhVo6v0FD9ac3IVLKalgwRPYt2A5EUxUtW5f7s/LEs7fbCc6nfcc3BkcXhE8Ga7t81
+	LYjjGQTivbK5PPmNRmMTCH53W/hESspjIx16lz/swNXxGwY8/2c1AqhwcaoZhpVDujlFifAYUgh
+	B/gwbkw1FLhEMk2Jv0B94bMZ4y85LoL698mGeOxJk3QiLmLYcH32za4NnqCCeXBVY0l1mbJH+Jy
+	tJDca4nq9aF0piivEzorqF87++JhKei8EovIouvOGCEPfXjUxrXn4x/uXG4CnV9Oj4awO3m/HZc
+	4tFNd5D9UzBWg4L7R4DwRuq2bbBOQRmFiKFYyUPcQU7XtwU3djVSG7+ZEQ=
+X-Received: by 2002:a05:6000:1787:b0:435:a594:33dd with SMTP id ffacd0b85a97d-43796afa19fmr36332754f8f.46.1771408268717;
+        Wed, 18 Feb 2026 01:51:08 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:aef7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796ac8d46sm41550552f8f.32.2026.02.18.01.51.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Feb 2026 01:51:08 -0800 (PST)
+Message-ID: <b19e0496-6d3b-4e2b-8853-07848768a553@gmail.com>
+Date: Wed, 18 Feb 2026 09:51:07 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2907:b0:679:a650:cc20 with SMTP id
- 006d021491bc7-679a650d096mr1037503eaf.80.1771404426124; Wed, 18 Feb 2026
- 00:47:06 -0800 (PST)
-Date: Wed, 18 Feb 2026 00:47:06 -0800
-In-Reply-To: <20260218025207.1425553-1-joannelkoong@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69957c8a.a70a0220.2c38d7.011b.GAE@google.com>
-Subject: [syzbot ci] Re: io_uring: add kernel-managed buffer rings
-From: syzbot ci <syzbot+ci872ea55a8e111acc@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, bernd@bsbernd.com, 
-	csander@purestorage.com, hch@infradead.org, io-uring@vger.kernel.org, 
-	joannelkoong@gmail.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Christoph Hellwig <hch@infradead.org>,
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com,
+ krisman@suse.de, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
+References: <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+ <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+ <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+ <aY2mdLkqPM0KfPMC@infradead.org>
+ <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
+ <CAJnrk1Y6YSw6Rkdh==RfL==n4qEYrrTcdbbS32sBn12jaCoeXg@mail.gmail.com>
+ <aY7ScyJOp4zqKJO7@infradead.org>
+ <CAJnrk1ZnfdY9j1V8ijWx29jaLcuRH46jpNqR1x5E-Zqfz7MXVg@mail.gmail.com>
+ <aZP-6FbNU5oGjrLR@infradead.org>
+Content-Language: en-US
+In-Reply-To: <aZP-6FbNU5oGjrLR@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.14 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.dk,bsbernd.com,purestorage.com,infradead.org,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-12311-lists,io-uring=lfdr.de,ci872ea55a8e111acc];
+	TAGGED_FROM(0.00)[bounces-12312-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[infradead.org,gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_NONE(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	R_DKIM_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email,syzbot.org:url]
-X-Rspamd-Queue-Id: BC7741544F1
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 4212D154E35
 X-Rspamd-Action: no action
 
-syzbot ci has tested the following series
+On 2/17/26 05:38, Christoph Hellwig wrote:
+> On Fri, Feb 13, 2026 at 11:14:03AM -0800, Joanne Koong wrote:
+>> I think we have the exact same use case, except your buffers need to
+>> be read-only. I think your use case benefits from the same memory wins
+>> we'll get with incremental buffer consumption, which is the primary
+>> reason fuse is using a bufring instead of fixed buffers.
+> 
+> Yeah.
 
-[v2] io_uring: add kernel-managed buffer rings
-https://lore.kernel.org/all/20260218025207.1425553-1-joannelkoong@gmail.com
-* [PATCH v2 1/9] io_uring/memmap: chunk allocations in io_region_allocate_pages()
-* [PATCH v2 2/9] io_uring/kbuf: add support for kernel-managed buffer rings
-* [PATCH v2 3/9] io_uring/kbuf: support kernel-managed buffer rings in buffer selection
-* [PATCH v2 4/9] io_uring/kbuf: add buffer ring pinning/unpinning
-* [PATCH v2 5/9] io_uring/kbuf: return buffer id in buffer selection
-* [PATCH v2 6/9] io_uring/kbuf: add recycling for kernel managed buffer rings
-* [PATCH v2 7/9] io_uring/kbuf: add io_uring_is_kmbuf_ring()
-* [PATCH v2 8/9] io_uring/kbuf: export io_ring_buffer_select()
-* [PATCH v2 9/9] io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+Provided buffer rings are not useful for storage read/write requests
+because they bind to a buffer right away, that's in contrast to some
+recv request, where io_uring will first poll the socket to confirm
+the data is there, and only then take a buffer from the buffer ring
+and copy into it. With storage rw it makes more sense to specify
+the buffer directly gain control over where exactly data lands
+IOW, instead of the usual "read data into a given pointer" request
+semantics like what read(2) gives you, buffer rings are rather
+"read data somewhere and return a pointer to where you placed it".
 
-and found the following issue:
-general protection fault in io_remove_buffers_legacy
+Another problem is that someone needs to return buffers back into
+the buffer ring, and it's a kernel private ring. For this patchset
+it's assumed the fuse driver is going to be doing that, but there
+is no one for normal rw requests.
 
-Full report is available here:
-https://ci.syzbot.org/series/ddeaf464-c69b-4166-b0cf-53c9d51e4820
+>> I think you can and it'll be very easy to do so. All that would be
+>> needed is to pass in a read-only flag from the userspace side when it
+>> registers the bufring, and then when userspace makes the mmap call to
+>> the bufring, the kernel checks if that read-only flag is set on the
+>> bufring and if so returns a read-only mapping.
+> 
+> Yes, tat's what I though.  But Pavel seems to disagree?
 
-***
+Yes. You only need buffers, and it'll be better to base on sth that
+gives you buffers/memory without extra semantics, i.e.
+IORING_MEM_REGION. Or it can be a standalone registered buffer
+extension, likely reusing regions internally. That might even yield
+a finer API.
 
-general protection fault in io_remove_buffers_legacy
+-- 
+Pavel Begunkov
 
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      2961f841b025fb234860bac26dfb7fa7cb0fb122
-arch:      amd64
-compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-config:    https://ci.syzbot.org/builds/ab5ad5aa-2757-4d66-a2c5-391a8417535d/config
-C repro:   https://ci.syzbot.org/findings/061747e2-36f1-499b-ac34-38cefffbce63/c_repro
-syz repro: https://ci.syzbot.org/findings/061747e2-36f1-499b-ac34-38cefffbce63/syz_repro
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 UID: 0 PID: 5967 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__list_del_entry_valid_or_report+0x25/0x190 lib/list_debug.c:49
-Code: 90 90 90 90 90 f3 0f 1e fa 41 57 41 56 41 55 41 54 53 48 89 fb 49 bd 00 00 00 00 00 fc ff df 48 83 c7 08 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 05 e8 df 8c 77 fd 4c 8b 7b 08 48 89 d8 48 c1 e8
-RSP: 0018:ffffc900040a7b68 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffff11035ee2732
-RDX: 1ffff11035ee2730 RSI: 00000000ffffffff RDI: 0000000000000008
-RBP: dffffc0000000000 R08: ffff8881af7139b7 R09: 0000000000000000
-R10: ffff8881af7139a0 R11: ffffed1035ee2737 R12: ffff8881af713980
-R13: dffffc0000000000 R14: 00000000ffffffff R15: 0000000000000000
-FS:  0000555560587500(0000) GS:ffff8882a9466000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000001000 CR3: 0000000175cd2000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:132 [inline]
- __list_del_entry include/linux/list.h:223 [inline]
- list_del include/linux/list.h:237 [inline]
- io_remove_buffers_legacy+0x139/0x310 io_uring/kbuf.c:533
- io_put_bl+0x62/0x120 io_uring/kbuf.c:548
- io_register_pbuf_ring+0x6c0/0x7d0 io_uring/kbuf.c:855
- __io_uring_register io_uring/register.c:838 [inline]
- __do_sys_io_uring_register io_uring/register.c:1024 [inline]
- __se_sys_io_uring_register+0xc3e/0x19a0 io_uring/register.c:1001
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f056859bf79
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffd8dcfaf8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00007f0568815fa0 RCX: 00007f056859bf79
-RDX: 0000200000000040 RSI: 0000000000000016 RDI: 0000000000000004
-RBP: 00007f05686327e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f0568815fac R14: 00007f0568815fa0 R15: 00007f0568815fa0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x25/0x190 lib/list_debug.c:49
-Code: 90 90 90 90 90 f3 0f 1e fa 41 57 41 56 41 55 41 54 53 48 89 fb 49 bd 00 00 00 00 00 fc ff df 48 83 c7 08 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 05 e8 df 8c 77 fd 4c 8b 7b 08 48 89 d8 48 c1 e8
-RSP: 0018:ffffc900040a7b68 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffff11035ee2732
-RDX: 1ffff11035ee2730 RSI: 00000000ffffffff RDI: 0000000000000008
-RBP: dffffc0000000000 R08: ffff8881af7139b7 R09: 0000000000000000
-R10: ffff8881af7139a0 R11: ffffed1035ee2737 R12: ffff8881af713980
-R13: dffffc0000000000 R14: 00000000ffffffff R15: 0000000000000000
-FS:  0000555560587500(0000) GS:ffff8882a9466000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f25f1e17095 CR3: 0000000175cd2000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	f3 0f 1e fa          	endbr64
-   9:	41 57                	push   %r15
-   b:	41 56                	push   %r14
-   d:	41 55                	push   %r13
-   f:	41 54                	push   %r12
-  11:	53                   	push   %rbx
-  12:	48 89 fb             	mov    %rdi,%rbx
-  15:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
-  1c:	fc ff df
-  1f:	48 83 c7 08          	add    $0x8,%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 05                	je     0x36
-  31:	e8 df 8c 77 fd       	call   0xfd778d15
-  36:	4c 8b 7b 08          	mov    0x8(%rbx),%r15
-  3a:	48 89 d8             	mov    %rbx,%rax
-  3d:	48                   	rex.W
-  3e:	c1                   	.byte 0xc1
-  3f:	e8                   	.byte 0xe8
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 

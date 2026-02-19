@@ -1,86 +1,86 @@
-Return-Path: <io-uring+bounces-12325-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12322-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gOjXDw9rlmkqfAIAu9opvQ
-	(envelope-from <io-uring+bounces-12325-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:44:47 +0100
+	id qB/4F+ZqlmkqfAIAu9opvQ
+	(envelope-from <io-uring+bounces-12322-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:44:06 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5D615B6B1
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D119515B69B
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2DBDB3058B91
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 01:43:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 35A97303AAB0
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 01:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE85A274650;
-	Thu, 19 Feb 2026 01:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AF3266EE9;
+	Thu, 19 Feb 2026 01:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="K1QMBc0t"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YICb4H+S"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f98.google.com (mail-oo1-f98.google.com [209.85.161.98])
+Received: from mail-dy1-f228.google.com (mail-dy1-f228.google.com [74.125.82.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE54D2236EB
-	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 01:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BE823BD1D
+	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 01:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771465428; cv=none; b=F6/L50v3ABrndvTCYSOnKb5WQqlp3A67Dq0b+Pw+u3A0MT+6iqJtST2ierdrg9xj0fu+Fa03Ki07JStVbo+9PndNDoCJ8fMciL8ZSoBA8IN7fl1I4VJwrafHJ8pvOQJvLnI0Sv5zq9xtRm2oBPZRRv7dLqs1ALsaveE5DtLk05Y=
+	t=1771465427; cv=none; b=f6VJNZl/gscHs0QDuU1DXUrg6BaqNxNv+Rt5Sr0k8WmFdf4Yx20UB2PR80vzGug+FUOQkgz1BgNJPa/9qOEElijiKXK07fYnmcFrdVmzmgMzCJegkGENJdUmqQfcRc0uPK72JM8A47EBP9INruo8qnDuEzk3ZUHdpYY5IEwsUTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771465428; c=relaxed/simple;
-	bh=tV41JT4N82HtLiVT4LDve0d5RQZWyngFmDTN+LM2KSQ=;
+	s=arc-20240116; t=1771465427; c=relaxed/simple;
+	bh=Pk0eKb5jrGWG8Xmev1Uz7ZL4nkZ1Sxp5mFYfnx60VKA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U3qN7aBs6AE6Uaxy34ePhl1WdU6aXLmrnXYncie4zhb1qPaHCy8cnApxiXPBL/GaRZCGK4VNc9ioq62jeVp21T1pLdPVjGOKLJvW4gKlZmiQceSzp1aNj5J8J0p91aeESXyZO3/zjeiv9ar8jK38R5P6cIEFvscnEdkoltJ4qOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=K1QMBc0t; arc=none smtp.client-ip=209.85.161.98
+	 MIME-Version; b=BbOcRCQ3ZLZ3ccLZH9UZCc22xNG2caJ4IaUtGko6mONyLBtTQ9d2jJY8/hXh48HM3N03WIC/6C1Y2xjCoc+pgq6iG2lJhAPyup0imPPIPiXtI20u6da6B2qy8rQs2x83y8wBNxie4/aE91d8Ct0WMPHwzwA6gK7mxOIzrHNsGfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YICb4H+S; arc=none smtp.client-ip=74.125.82.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oo1-f98.google.com with SMTP id 006d021491bc7-66b0418ebe7so30182eaf.1
-        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 17:43:45 -0800 (PST)
+Received: by mail-dy1-f228.google.com with SMTP id 5a478bee46e88-2b866f98574so7528eec.0
+        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 17:43:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=purestorage.com; s=google2022; t=1771465425; x=1772070225; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cD5qcELz1szuWzdXkgd0fgG80WegTttIPZeozvdhos4=;
-        b=K1QMBc0tijEvOQMuBRX61IYuaNingv8UqIP75jzJdtB+oFOFSFJX9A22Wgt198UeVl
-         Gg/EqhboLZj4eUEifY/Lg2fqZGgsaxon60yMafnoAE074OSryzJXmtXCm3YTTvItucTm
-         Rnuz40FD2Q4SY7Ah6Y0EdadYgqjO7mzbFHyjc5baGrHRnin7kyE0/wE1zBazLNMq6VFi
-         60TzMK+4+q1OQt1dwNB53J1G8XKl3XaA/M5N4nYwsn0otrran7CuSSV7Sh2umOF8O1u5
-         Z4Dkj0h3ZXYRzQognhp7Y0kWtet0yqwjQ6WQegTL+QxD1Rtv1ESF0I39+GyTfB7RRQ8h
-         0O+w==
+        bh=AmRiY+gYv1Yx/1Ht580JCWnZXV60oDsI6NKnjtBd258=;
+        b=YICb4H+SfryGpAmH7wZAcU94IZ4zlL92VTqiOZoLdG1yGzBzARypMvRp8XP7K9vSpZ
+         Yf2PZ09G+ytr/JnEdzwaeGSn/+aJIhgpAsilNXIKTXhIq0fbyyAhmJOJwX7mUpPMaJ+3
+         jaE52bM2IvuvresRMc7XxS5xsrmI1jLkjosWYQU+8XopHm7iWDJuvCemgOtyQtivClSh
+         TIp2Ggu+JYr9fOT63mUz5RLeipQA89cVXxQpJZVvxTOw5lD7JhlQjnOjAdQ5cm2szANg
+         RM6KkR+u1gqczDRTilJGlv+eEK2S4I7OD468r6v0XClLS8ztoL5gg9ETx0yaPxqdUmsc
+         ArDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1771465425; x=1772070225;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cD5qcELz1szuWzdXkgd0fgG80WegTttIPZeozvdhos4=;
-        b=LaorUhi2xLmwEIPlLSqI83Z/NtNb1bv6Xwpx9ZLuatLQCNoUbVtDZkraLUO1l9ob5R
-         Gv2X/zqMddrQDHF/JdO8All+6C8b/jprt3EWk2H7WP/nGTso/bpTwQmp5tZ5yvQwnkbg
-         TSPb8cFLZMmS1ZUBW3/fA0YlRSx8ZsBBO/AC0GypxJ7XxTqkiEqQeTB3/g+FPFW4PAWf
-         RoxTaQ2LtynS2IWdIPbcNdxwLSLg9rsBMref2lQPlDuS9f3SNZFi+DTQUNX3p9t1I1cY
-         ShrrVKPl+tPe5XaenaKgDo9i1wrNGIqLaQjTUoeOqbIU6RZZPVj3gNt7qAdx+c9JpI6N
-         XtQA==
-X-Gm-Message-State: AOJu0YxX3c9aTH2wCBaUFWsH2G8rh+x4DYY8ya3xXg+hIeopjqv6vR/+
-	KEjG4ZOHfr8qZ2S6/pTs3bF9TIWyW1G7AvSlPebF12VJztE5sYZ9cuZGPqITWnXsA0LE5pqe8pJ
-	jSFYCfbTQ5rW65OrmyNTO5baQy7nsfgecFgyd
-X-Gm-Gg: AZuq6aJEBZ6v7AD+qIkKKx6vB6UWhdvqwOvtsac7dnkxZrzq04ZRqPh3e4YA5CyV55N
-	Dx3sB7B2gpeXspqEPXutCRePXUZycv5RXl4hvG6MEf+x86Etk//hFJLugSPQWJB1W/vef6Ug/40
-	wkq/uRYQrGPLYad3jv+umgL5Hb4/zDaWrZiQIcjLWlL3bm3+6iQ0bvbCeiNwc3HQeVX8zN5pOwV
-	7NrW1oTAQjDWiVYfYMzLzhQgJDgxWHmQGlJTug9kOfmBahIC0xmEmhc8BqcYHmv2Iksncq2CcEM
-	kwG4tyPzmyd4NalIAFXsokoC07p1AV5ja5y1F+MIFZhSIONQRTkOefgtcwswLuwJQpPSuMEEGhM
-	0w9fb3OzuXJDfLRyFKKZA2MoQo8w5b3hnXppaARhLP9Gv7kQRt9+wUg==
-X-Received: by 2002:a05:6820:498f:b0:679:ae61:ed85 with SMTP id 006d021491bc7-679ae61f23dmr566445eaf.1.1771465424693;
-        Wed, 18 Feb 2026 17:43:44 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id 006d021491bc7-67997aeee34sm737226eaf.5.2026.02.18.17.43.44
+        bh=AmRiY+gYv1Yx/1Ht580JCWnZXV60oDsI6NKnjtBd258=;
+        b=wdDjEPNuQe/5EENgj4+1rHSoFTXomdbl21vOhrF5J2Qk/FXRBFlR6+oO6uHmzoyoBN
+         xphaJyLqZ+FkSeF53reYFy3faYO/SW4BJ91RF4X3rnH33Z1Grzmfq5+JHFGigsnv1/8M
+         UXeg/dyoOGX2G5IgtPgT2wHY84Pwt3cOn975de4h5qjrH1biLlnGI69652G/8cCR8LDE
+         FjZgBpOFC+gPKFff4BYaLVX8MHm1HNZmZoLZuh6SNo8B+tpJBa4SFvP2LvMMv4iIZb7F
+         jNGT9bNr9CQ02l/dRRKpoK3pqAF/XTzRVZYmAAnFY0J//R7rcLlu8lAEY3N9nq3JXGuo
+         LL1g==
+X-Gm-Message-State: AOJu0Yzg3IKirKx68gKb4McMc0oSh0ahrwuG302dgGgvJOmPqnNGsyyS
+	RhURIg9jQF+lWGGPAlts3UvyC0wgbDwUXa0d+ibkEIqVLkf9Tf2/iczeRViBjy/QxFEdFhpKP+l
+	gioEfvA65beQ+4TgxwpTdAIxhhXTc+GVQDPap/gYexQCHebNp00/y
+X-Gm-Gg: AZuq6aLXniLjoEEGx9mXJqC5hpS02h9zFuuLKFITWQ/pWxiGMEbijl5kU17g0WoTHgG
+	U/rV36ktaBmKaEGuIB9wLsjdgAf6KQB+mFGoC4BrAhNlpkwNjNG/n5KxwApb8I6orooPpIyJ9zd
+	LpVRohaZEOkSbfu0LJQJ64J9WFa/X32sE3LRGF26n+UapoLp5Zm3pZZtikwPkVKZWv/i+PLt09r
+	4jZDMdNdIcmqLtiPTYqEdFgWg6DYSrAmUiW5PQ5DnRJdOjJA+1PbJA6//5XGwAlF3u3XEoi1+Ol
+	od21h7HN4UXgEfx+SflPTbu0fB6BTeH/R+Ca9qbqi5tAHY5lpEJk9MvkMJicKOhmEdXYWm5zChI
+	xqkzFH6xe4TMl2yI/RLqOAQ73foco7oJogV5e2TI=
+X-Received: by 2002:a05:7300:3b04:b0:2ba:673b:e328 with SMTP id 5a478bee46e88-2baba13781amr4428856eec.9.1771465425201;
+        Wed, 18 Feb 2026 17:43:45 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 5a478bee46e88-2bacb64f67esm1955371eec.11.2026.02.18.17.43.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 17:43:44 -0800 (PST)
+        Wed, 18 Feb 2026 17:43:45 -0800 (PST)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.112.29.101])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id D8A4A3422C7;
-	Wed, 18 Feb 2026 18:43:43 -0700 (MST)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 4019C3422C8;
+	Wed, 18 Feb 2026 18:43:44 -0700 (MST)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id D4182E41D2F; Wed, 18 Feb 2026 18:43:43 -0700 (MST)
+	id 3B4D1E41D2F; Wed, 18 Feb 2026 18:43:44 -0700 (MST)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christoph Hellwig <hch@lst.de>,
@@ -90,9 +90,9 @@ Cc: io-uring@vger.kernel.org,
 	linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v2 3/4] io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
-Date: Wed, 18 Feb 2026 18:43:34 -0700
-Message-ID: <20260219014335.9061-4-csander@purestorage.com>
+Subject: [PATCH v2 4/4] nvme: remove nvme_dev_uring_cmd() IO_URING_F_IOPOLL check
+Date: Wed, 18 Feb 2026 18:43:35 -0700
+Message-ID: <20260219014335.9061-5-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20260219014335.9061-1-csander@purestorage.com>
 References: <20260219014335.9061-1-csander@purestorage.com>
@@ -115,7 +115,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12325-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12322-lists,io-uring=lfdr.de];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[purestorage.com:mid,purestorage.com:dkim,purestorage.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -130,46 +130,38 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: AA5D615B6B1
+X-Rspamd-Queue-Id: D119515B69B
 X-Rspamd-Action: no action
 
-Currently, creating an io_uring with IORING_SETUP_IOPOLL requires all
-requests issued to it to support iopoll. This prevents, for example,
-using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
-zero-copy buffer registrations are performed using a uring_cmd. There's
-no technical reason why these non-iopoll uring_cmds can't be supported.
-They will either complete synchronously or via an external mechanism
-that calls io_uring_cmd_done(), so they don't need to be polled.
-
-Allow uring_cmd requests to be issued to IORING_SETUP_IOPOLL io_urings
-even if their files don't implement ->uring_cmd_iopoll(). For these
-uring_cmd requests, skip initializing struct io_kiocb's iopoll fields,
-don't set REQ_F_IOPOLL, and don't set IO_URING_F_IOPOLL in issue_flags.
+nvme_dev_uring_cmd() is part of struct file_operations nvme_dev_fops,
+which doesn't implement ->uring_cmd_iopoll(). So it won't be called with
+issue_flags that include IO_URING_F_IOPOLL. Drop the unnecessary
+IO_URING_F_IOPOLL check in nvme_dev_uring_cmd().
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- io_uring/uring_cmd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/nvme/host/ioctl.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index b651c63f6e20..7b25dcd9d05f 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -255,13 +255,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 		issue_flags |= IO_URING_F_SQE128;
- 	if (ctx->flags & (IORING_SETUP_CQE32 | IORING_SETUP_CQE_MIXED))
- 		issue_flags |= IO_URING_F_CQE32;
- 	if (io_is_compat(ctx))
- 		issue_flags |= IO_URING_F_COMPAT;
--	if (ctx->flags & IORING_SETUP_IOPOLL) {
--		if (!file->f_op->uring_cmd_iopoll)
--			return -EOPNOTSUPP;
-+	if (ctx->flags & IORING_SETUP_IOPOLL && file->f_op->uring_cmd_iopoll) {
- 		req->flags |= REQ_F_IOPOLL;
- 		issue_flags |= IO_URING_F_IOPOLL;
- 		req->iopoll_completed = 0;
- 		if (ctx->flags & IORING_SETUP_HYBRID_IOPOLL) {
- 			/* make sure every req only blocks once */
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index fb62633ccbb0..fa489c1979db 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -783,14 +783,10 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
+ int nvme_dev_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+ {
+ 	struct nvme_ctrl *ctrl = ioucmd->file->private_data;
+ 	int ret;
+ 
+-	/* IOPOLL not supported yet */
+-	if (issue_flags & IO_URING_F_IOPOLL)
+-		return -EOPNOTSUPP;
+-
+ 	ret = nvme_uring_cmd_checks(issue_flags);
+ 	if (ret)
+ 		return ret;
+ 
+ 	switch (ioucmd->cmd_op) {
 -- 
 2.45.2
 

@@ -1,93 +1,96 @@
-Return-Path: <io-uring+bounces-12320-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12321-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YVSiJAZplmnBewIAu9opvQ
-	(envelope-from <io-uring+bounces-12320-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:36:06 +0100
+	id wNhRONtqlmkqfAIAu9opvQ
+	(envelope-from <io-uring+bounces-12321-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:43:55 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057E515B611
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:36:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E14F15B686
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 02:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 46C4C301D4D1
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 01:36:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 388A3302DA37
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 01:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070FD1EEA49;
-	Thu, 19 Feb 2026 01:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B23724C676;
+	Thu, 19 Feb 2026 01:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Iwj0GP0H"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Dr+L1y1l"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com [209.85.215.225])
+Received: from mail-yw1-f226.google.com (mail-yw1-f226.google.com [209.85.128.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0761EEB3
-	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 01:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867A1C8603
+	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 01:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771464962; cv=none; b=oJwOXvvMWDn/ozvxu3MkEm1o0rR+NHqq6iFHorPkvlSzkXFjUSQblYFSHy2zex/Pdu/h7F8NaikRTHpq4HRu0OF5tjzOtXDJWoruhJYF3pkQ/ZHXOSxWEiY3giHDPRavRRlb/SX7XbzBZn7sDPuIN+wtTtNFXiowCtZCP1HgAEA=
+	t=1771465427; cv=none; b=GsaaoZumb1j25q4RB8iedV7qX6ktQq5URK38g7FHbKP+fkE3S6Byj6kUESNELqPGK0fu6cqE12Ke+unc3+PkZ9iAdj1PNhVvN91sLTdV7Q6N1z8k/eNBL1/lJqcPklYKacgFUnt9UqPlTD+V5yjWY+vo/whcC6L3gAkmNlOkUOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771464962; c=relaxed/simple;
-	bh=SK7lNVVt3R3qPwh5gNARbgazIAbuys8j5HASsZvezDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e/gUZw8UOg4UbqxatVHXF7TkExb1r8ADB0fsDgglOv2QFuaeT9w1C90EYUSQ5NseITVG6SyF4+mnBpEicupnDNW8EEXg790XUWIBEDQfBwklEjEwYTfh8B4MuctK8qkiXTkdEcanLb51AkX0RGEovd1X1GYiy+KHHuK12cpTE/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Iwj0GP0H; arc=none smtp.client-ip=209.85.215.225
+	s=arc-20240116; t=1771465427; c=relaxed/simple;
+	bh=DZg9VoqdP/QuKYD43YvT2sDv0fFZLN7Cs0lGYnQNZIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W39OLNVrc1ZP1nH+Ajna1G1yQCa/03i16YfIzIeoPD/M9tvEd4n0UzdxUb3YwSYzSPhQXmC4zaN6R+I2lU+hTiojDa2Pz6hCYQ3hOQvk8dYe+tcPpdMLY7h7ZQCt52s76KVtJ6KSuFsDUO9wjnxTZYB24r7mSN7SmZhv019XECY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Dr+L1y1l; arc=none smtp.client-ip=209.85.128.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f225.google.com with SMTP id 41be03b00d2f7-c6e18da0f82so41098a12.2
-        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 17:36:00 -0800 (PST)
+Received: by mail-yw1-f226.google.com with SMTP id 00721157ae682-794f7552dcaso123557b3.3
+        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 17:43:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1771464960; x=1772069760; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1771465425; x=1772070225; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrpUavd9Jn1m5PTul6V14FFmKgASSL32mDcwIWu9GWA=;
-        b=Iwj0GP0HElzidBP+a3etf5yOBEIlyQzzOqMlYEozmRz34lPo/hALyb/Hk0RU32fp0s
-         ozpb4KP8l812MA6aHSzmrST0/PR+2RTxpLmSFzx5P9ncsdwjlOofAwCfyy5tMzRiAnPD
-         Y/tyn/30agVjyeINtR8+TJOuk0gO57KwMPJWkST8FacDKvBt+gwvJ0f5oSgHXfjx0FpC
-         4P8MBBDZ/99cX1RCTP/8w7jpMJIyx++H8O1dRbZWROgpYDjA4m3baVxgnxTWO8ay+hXM
-         7thWTWLO9k81+/R/MoPVIfWp5Ih/7NxgtJDemXB/WCwnI40t2C8oHbA/FLqI25B4FfAp
-         W4qg==
+        bh=CUfTsb5rmJvqQzp2mqu3jDKb9VPW1X5fRtaazVNqCUA=;
+        b=Dr+L1y1ldZE5mKf6Y93t3MuA5oEDFTci9s98tz/kzrJjYEaRmkh99SXkpsk1xkS/pH
+         9uXo9a1nPeX4kxvVS+WRuM5HYDFCzIxE7C/D2ui6id2CFB8suxvjR0mttjJBEqu+w0G7
+         MhFzAJlpX+FEscTKK02TNthMmJn0iVNNRs4xq0dzkbmQiLRmooqrosWx8lTJQ5KsYnHa
+         wgkOL+m8Vk3WYZaEnxMWVEqZ0/47uRFW8IX9luA2/IaGr1WeUN1EPxwF3zyEsdUix2Rk
+         ymabfQ+9uuJt2nTsZi2qG2puTum8PHOHmufmnAZMDGwnlwLOA/i5qH1b4MI+barjSfZ4
+         0DKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771464960; x=1772069760;
+        d=1e100.net; s=20230601; t=1771465425; x=1772070225;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XrpUavd9Jn1m5PTul6V14FFmKgASSL32mDcwIWu9GWA=;
-        b=hVIZJEtBz1+EDHNwxsjKqK7plnA/ZpSQrmdKHpN9d+seC+GMnZ21ZwNZfOJTCMiAC/
-         qWzjLcI+LMkvWxS8iUnbohp742+BlPYLlSdpy9f8TgAMSxsfSae2S7S+i9ez8THWM3xt
-         GaCtl5BlYgrV4VWTuUM2nULN59rpxChlCROmF8YomTo5nxKOFyw0jYkqAQjP1g3480IL
-         orDIIxwNvCI+vjCj4skyuSqZgWdxMDxu08ZaICjpJXx3wgXdqfw662seuWPMewC9Ktq2
-         wDpD+KtFDPlh+gmsSfJUxqG2/Xla3ejy6s0rC1CzTSueOiWQ6AdyBH+Hvn3VA0pwPNQi
-         mTvg==
-X-Gm-Message-State: AOJu0YxNQN9pf7vsceI1auALGvkQcOVGU/+Ub5DbJchKbIsstsbf8IJQ
-	89ZGK8PJMijvSzWuA0/1GZXd7rPcgZf2LCdOjvmUHQq3U+S3+Ok0CZRT6+rbMQl3VuwTHmc3utr
-	l0WhSrv9vQU+jIe+5X351e+nuQznr9YkKrZNMqtGkpf9oVOJ2LYkq
-X-Gm-Gg: AZuq6aL48fzRz2aYxsnCGaWSmDMHzXEZMqzwMrRAk1NNAAYSOO8bi4qGx2wn9RLUUaX
-	GWXBVqd6q31cusX8uR35m2Q3yQAk5ioTR4QKrFCldie1/4aT9yaL2axT11V9JOXs37PSWNmgAqG
-	oNhCQXi8jFyirr9ZTk5Re91oXamUx0oIYoHhRt8ZDyhGCOB8aHEK9TTJGtxXiyIW5uIeOhDYASz
-	abZsK6zzRpfaeq+4QysWSF7MxP7UJWt2rZP+2MRAyDtXG6zUgUwZbW/4DOERwx/8zLlEtJchAaz
-	3/Nosvw9DAXTQJDJixpFmxHaMo4a+LN4YNwK7BK/VZsr+C5xzJGTPv2nNJtnawm3c9qt35VbGgJ
-	VBIWBL+1GT/6uOOrDfajc9xkqDO2q8yD+9GcH0Dw=
-X-Received: by 2002:a05:6a00:1142:b0:823:c646:28c8 with SMTP id d2e1a72fcca58-824c5ec6f49mr13730751b3a.1.1771464960045;
-        Wed, 18 Feb 2026 17:36:00 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-824c68f0dafsm2093732b3a.0.2026.02.18.17.35.59
+        bh=CUfTsb5rmJvqQzp2mqu3jDKb9VPW1X5fRtaazVNqCUA=;
+        b=QZxXLXkuMw2HBmiQBBzYJ65vjXqAh+FYMXknkSLxl1PTH1oCb8scpgc2XjPxDunRvI
+         QHdgoyLgVl2zFylRGlr0uWtSHj/kDC9kQwCL7G3cyjixzN5UliHZIxOcowZZ1MurgVyJ
+         ZcToMv/eI1UvxLNynsfodgIbSXfikdPSpQ+XDVRo8EmInJ14GUCc1rGPfuipahSXDFE6
+         m46yivHTf2qdqq68ju61GkPXCTqd5LHSfK5Xz/NLft2Z3+YJE5jwV0WQKaHpOGTtatf8
+         592sf8O1oCkWKOjGZRqoW7gyWra0dq2S7pw8rUGeQDPOEUgdI3arm8IVlxgnR5p3zKdp
+         mxVA==
+X-Gm-Message-State: AOJu0YynEC+aGsBGMdq4vFgNCitZTLbQSBJ5IpUGL3LzkmaiHCWyIeTC
+	vC2j0iptB/A7So6nI+z2fZ6AlLHJ7dsEome2Ml1PUm7ZC+vP8gTCW/VTQafQ23nGX70rwbRHcod
+	yqwLFnhw9t95gRutQUBCpGb1SUb0lApQnR2XN
+X-Gm-Gg: AZuq6aLO/28hKwdIzlyNDjr653YYPc2cdTn3nPq0X3eKjXcYp0pUsUEdkISr1+e+FYz
+	DEVF6I8m4XfzKln8tAi25gFYYviBDLkfEDHSBYosA59Cer/4Ur+SUl4n0wJ4IHd+BjnvH75VyxB
+	rapkfPHbSNG9kAwWbzuZLZQYGhbToDHvXUHLNHaRtc7Q/bkUc1wUgoMyfyEAkHxTEyEf6Bbx82c
+	YWCvrRH2q0EMYee5gC5dIcXZeZdR8oM2SSYDDCrjte21oqn8QZd2J/a0HYcHfxJMmZ5OH3IA2D7
+	u8BGCHM+udGj8aRDHRboAozuSg7B8vZC+bKw9H1qvVamARxm7B3+QvjUKZ+bPifHrhR9tmFUKmL
+	yEPiNTlP024UFiYj1nH00XH7XpbL6VWjMS9z3fQGPS5HXrqeEqhpKpA==
+X-Received: by 2002:a05:690c:c50c:b0:797:df7c:3de8 with SMTP id 00721157ae682-797df7c60e3mr73200517b3.1.1771465424811;
+        Wed, 18 Feb 2026 17:43:44 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-7980516ad33sm705197b3.2.2026.02.18.17.43.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 17:36:00 -0800 (PST)
+        Wed, 18 Feb 2026 17:43:44 -0800 (PST)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.112.29.101])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 2224F34014B;
-	Wed, 18 Feb 2026 18:35:59 -0700 (MST)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 4C28634027F;
+	Wed, 18 Feb 2026 18:43:43 -0700 (MST)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 1399DE41D2F; Wed, 18 Feb 2026 18:35:59 -0700 (MST)
+	id 39FFEE41D2F; Wed, 18 Feb 2026 18:43:43 -0700 (MST)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>
+	Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>
 Cc: io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH] io_uring: add IORING_OP_URING_CMD128 to opcode checks
-Date: Wed, 18 Feb 2026 18:35:34 -0700
-Message-ID: <20260219013534.4140776-1-csander@purestorage.com>
+Subject: [PATCH v2 0/4] io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+Date: Wed, 18 Feb 2026 18:43:31 -0700
+Message-ID: <20260219014335.9061-1-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -100,114 +103,69 @@ X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12320-lists,io-uring=lfdr.de];
-	DKIM_TRACE(0.00)[purestorage.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-12321-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[purestorage.com:mid,purestorage.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[purestorage.com:+];
 	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 057E515B611
+X-Rspamd-Queue-Id: 6E14F15B686
 X-Rspamd-Action: no action
 
-io_should_commit(), io_uring_classic_poll(), and io_do_iopoll() compare
-struct io_kiocb's opcode against IORING_OP_URING_CMD to implement
-special treatment for uring_cmds. The recently added opcode
-IORING_OP_URING_CMD128 is meant to be equivalent to IORING_OP_URING_CMD,
-so treat it the same way in these functions.
+Currently, creating an io_uring with IORING_SETUP_IOPOLL requires all
+requests issued to it to support iopoll. This prevents, for example,
+using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
+zero-copy buffer registrations are performed using a uring_cmd. There's
+no technical reason why these non-iopoll uring_cmds can't be supported.
+They will either complete synchronously or via an external mechanism
+that calls io_uring_cmd_done(), so they don't need to be polled.
 
-Fixes: 1cba30bf9fdd ("io_uring: add support for IORING_SETUP_SQE_MIXED")
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/io_uring.h | 6 ++++++
- io_uring/kbuf.c     | 2 +-
- io_uring/rw.c       | 4 ++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+Allow uring_cmd requests to be issued to IORING_SETUP_IOPOLL io_urings
+even if their files don't implement ->uring_cmd_iopoll().
 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 503663d6fd6d..0fa844faf287 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -528,10 +528,16 @@ static inline bool io_file_can_poll(struct io_kiocb *req)
- 		return true;
- 	}
- 	return false;
- }
- 
-+static inline bool io_is_uring_cmd(const struct io_kiocb *req)
-+{
-+	return req->opcode == IORING_OP_URING_CMD ||
-+	       req->opcode == IORING_OP_URING_CMD128;
-+}
-+
- static inline ktime_t io_get_time(struct io_ring_ctx *ctx)
- {
- 	if (ctx->clockid == CLOCK_MONOTONIC)
- 		return ktime_get();
- 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 67d4fe576473..dae5b4ab3819 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -169,11 +169,11 @@ static bool io_should_commit(struct io_kiocb *req, unsigned int issue_flags)
- 	*/
- 	if (issue_flags & IO_URING_F_UNLOCKED)
- 		return true;
- 
- 	/* uring_cmd commits kbuf upfront, no need to auto-commit */
--	if (!io_file_can_poll(req) && req->opcode != IORING_OP_URING_CMD)
-+	if (!io_file_can_poll(req) && !io_is_uring_cmd(req))
- 		return true;
- 	return false;
- }
- 
- static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index b3971171c342..1a5f262734e8 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -1252,11 +1252,11 @@ void io_rw_fail(struct io_kiocb *req)
- static int io_uring_classic_poll(struct io_kiocb *req, struct io_comp_batch *iob,
- 				unsigned int poll_flags)
- {
- 	struct file *file = req->file;
- 
--	if (req->opcode == IORING_OP_URING_CMD) {
-+	if (io_is_uring_cmd(req)) {
- 		struct io_uring_cmd *ioucmd;
- 
- 		ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 		return file->f_op->uring_cmd_iopoll(ioucmd, iob, poll_flags);
- 	} else {
-@@ -1378,11 +1378,11 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 			continue;
- 		list_del(&req->iopoll_node);
- 		wq_list_add_tail(&req->comp_list, &ctx->submit_state.compl_reqs);
- 		nr_events++;
- 		req->cqe.flags = io_put_kbuf(req, req->cqe.res, NULL);
--		if (req->opcode != IORING_OP_URING_CMD)
-+		if (!io_is_uring_cmd(req))
- 			io_req_rw_cleanup(req, 0);
- 	}
- 	if (nr_events)
- 		__io_submit_flush_completions(ctx);
- 	return nr_events;
+Use a new REQ_F_IOPOLL flag to track whether a request is using iopoll.
+This makes the iopoll_queue opcode definition flag unnecessary.
+
+The last commit removes an unnecessary IO_URING_F_IOPOLL check in
+nvme_dev_uring_cmd() as NVMe admin passthru commands can be issued to
+IORING_SETUP_IOPOLL io_urings now.
+
+v2:
+- Add REQ_F_IOPOLL request flag, remove redundant iopoll_queue
+- Split IORING_OP_URING_CMD128 fix to a separate commit
+
+Caleb Sander Mateos (4):
+  io_uring: add REQ_F_IOPOLL
+  io_uring: remove iopoll_queue from struct io_issue_def
+  io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+  nvme: remove nvme_dev_uring_cmd() IO_URING_F_IOPOLL check
+
+ drivers/nvme/host/ioctl.c      |  4 ----
+ include/linux/io_uring_types.h |  3 +++
+ io_uring/io_uring.c            | 10 ++++------
+ io_uring/opdef.c               | 10 ----------
+ io_uring/opdef.h               |  2 --
+ io_uring/rw.c                  | 11 ++++++-----
+ io_uring/uring_cmd.c           |  9 ++++-----
+ 7 files changed, 17 insertions(+), 32 deletions(-)
+
 -- 
 2.45.2
 

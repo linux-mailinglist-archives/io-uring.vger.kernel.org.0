@@ -1,171 +1,176 @@
-Return-Path: <io-uring+bounces-12339-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12343-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IDM9AZpHl2m2wQIAu9opvQ
-	(envelope-from <io-uring+bounces-12339-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 18:25:46 +0100
+	id ENrvKmdcl2lexQIAu9opvQ
+	(envelope-from <io-uring+bounces-12343-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 19:54:31 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0CE16128D
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 18:25:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF20161CE3
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 19:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA5EE305C2B3
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 17:23:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0C5703043D67
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5523834E770;
-	Thu, 19 Feb 2026 17:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0B52D24B7;
+	Thu, 19 Feb 2026 18:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JhqBpFnk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQf/gr63"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f97.google.com (mail-oa1-f97.google.com [209.85.160.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0681234D93C
-	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 17:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683602765D4;
+	Thu, 19 Feb 2026 18:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771521788; cv=none; b=t8JvDGstbSKBPRguG7PuALMYb2tudOR2rN9uTz5OPgyflVmIVaUgLkI2ycpW5rX+D4Y35d7CFzxMsZKbF+F5VrwQZysnoyfRFKSpzf9sLF4nJSS7wTWP5j+4AjhHylVK4O436CXHXGBub+UTn9b7e3aX4bcy1B8IY047kJqdrZo=
+	t=1771527238; cv=none; b=b8/M8IuI5+rVNFu9tr3VSy3qqiJCOSUOAv5PRrQrR6+2Gh7Rb1fO++U/JoVAe+KuoWVdG3dtCJVsEIB0D3emoSbQuizZXi3En3krvO9DbSnLBW7pWAer7uom8oTeBBVFV6sFZtsmwKtxyCLLdnCyxPHcQPgwfxNrvi4UrlQtCHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771521788; c=relaxed/simple;
-	bh=Bhj4aiASHpjApLPV5AkP0Nhd4Rfthu3VwAg+PhlnxMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jBOCLLYC3Ye0OJJW6NqGnnpxOzx9663Tcak82kGxzuKt72oduABoaonpm/IzUev6pqdyaxsv5YXbqGv1rsrLrHP2t/L0I2WxL3T4bQvrsXIn3VIHwujUcVK4oAqWLT/C/NmSiRNA51/u0j4eByL/5xNnkkgJjrBur4WApGW1Fk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JhqBpFnk; arc=none smtp.client-ip=209.85.160.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oa1-f97.google.com with SMTP id 586e51a60fabf-40947c81b31so53559fac.1
-        for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 09:23:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1771521786; x=1772126586; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obCm5pzMRQ/8I1Vfr0khOkZYqQ5KtFU6UC00Ngu3CF8=;
-        b=JhqBpFnktg0dwmw9rjeNR/DO8jQvMaAQu/2WrYsOYDY4BjtIWMZL2L6kP6IaQ/9XlK
-         qKv7aOqaTbh8dENF3QQ64OSsROiUsmxtUgA2coPLNR8iHqvPvKetMlQYl8sesrD0vWBB
-         6XaoUpVzoOSCUM5c1KjyASGIfV5Vncp2Ub0HhcucGhLNWMNdc1ERdbpI/Vlu2ABfyLGf
-         WUXrvl5pVDQDzqIQjWD2libgj3yOY/uXtBb+DtvL3tT1X9mTPLXZkLbWBsoCPo/UmG58
-         zcociB2q0LpGRXg3sRb03FBiKLmgQhq9qSu02XJM601wXxYnl6+aZe8HZgWJWu3T50w0
-         DagQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771521786; x=1772126586;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=obCm5pzMRQ/8I1Vfr0khOkZYqQ5KtFU6UC00Ngu3CF8=;
-        b=YSbRIa0H/tDpBhNZTMtj18YeU1AwPsAFC/T54yoVWgAgecmyrunJngJ7JcosYUx7Z9
-         5B0TucXUWBosngXUORp6jGiXQsFRuq7gYd1bGKRjjlORoAVLxXkIE8xcPNH4symH/JK0
-         nn8tmIHsr2EGhkibw358+XUmT2inh6TNYg77xOyzN51vt/o2OsBsE34arnoV+XnroBl8
-         +cBBE8OIX4+QnXRog9tdzy5D2b4kjhEoLB+T9qAUJC2Qxrry1C0Q1BAdjokp6Pq3UCe0
-         MSSvxdF+dqwVRNDbGtCXrzcq6KWDBdg7E8XkqWU/JVizpQz8anNlvPJ1Y3e2cio6SIJk
-         rC2w==
-X-Gm-Message-State: AOJu0YyEPZydEB2CtfnNKDI09T11Ls43+tOsRaluGrRe1jKL1cndEYtk
-	upXtbIu9UQopHWaQhZSMfVGx97/lAiSDwktg72AafBLu4owq+H4YfljlEeBl9R+EHLrUwoVwRCh
-	5N3ugUguBNS+dEiaudof9cr9joQLOLyuLeXACO1hpcRcPqPkubBXE
-X-Gm-Gg: AZuq6aIjwO2NeDvQW3ujYXDn63RT1IP32NgPSRkxmKFF/FLmrGWfxv1GKHGCPvIVplI
-	mL11LqWSLtDb0iQAmZNAPDrSdOG1kMRVCGkmn0teG8uTJWMIBu2FpOgHCwKKvj94HZDEyZ+jIuV
-	/Mq2f4h5pH4HJuWxry4yDaGt9sURXpnfkPNaGJmSTFplxa7xh6kegqn0Y/qeC5oIOHIjzHf5rwt
-	Qd0P9AspttmTAI9g4TfAvVcvnVx6UjE92GaDyF/E/L+ZWw7bE3O89DjEXyyHjF9ohuwpr4smbQF
-	hDvDIY9M73s6y9Nnt9m0sqtpF2uDyk3mFzUcRHSy3G8m0mSOGm9LS9vVvJPQYhsoeVyMY9jLiOG
-	2i89Bcq3l1zQ3ZPNxriLDaMUlSmPMCTGyr5BraUg=
-X-Received: by 2002:a05:6871:7387:b0:40e:a686:aab with SMTP id 586e51a60fabf-40eeec921cemr9445158fac.8.1771521785894;
-        Thu, 19 Feb 2026 09:23:05 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-40eaf0f0a97sm4297650fac.13.2026.02.19.09.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Feb 2026 09:23:05 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.112.29.101])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 63475342224;
-	Thu, 19 Feb 2026 10:23:05 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 5D2C1E41AE3; Thu, 19 Feb 2026 10:23:05 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anuj gupta <anuj1072538@gmail.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 4/4] nvme: remove nvme_dev_uring_cmd() IO_URING_F_IOPOLL check
-Date: Thu, 19 Feb 2026 10:22:27 -0700
-Message-ID: <20260219172228.429479-5-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20260219172228.429479-1-csander@purestorage.com>
-References: <20260219172228.429479-1-csander@purestorage.com>
+	s=arc-20240116; t=1771527238; c=relaxed/simple;
+	bh=q2p4YLQpc1deAky6X6orGiHXlQp6BVexlA8VrWYCULA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQXtb9Smof5WV/1EWrL6vQ8hWZhW04G6SApHBL92/0gFKmhxreikZ4/4rr7zbRNeH+/FPHMEAbHtAU3TWspUiSE0dqrcR+ZWTsmbqNkhOR2jBjTOwj08+/PI5oqOU6zEdGQf84kR9Q5x9LT6dJ8mlQ/aVueiowjuDCnwBOVi0VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQf/gr63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B34C4CEF7;
+	Thu, 19 Feb 2026 18:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771527238;
+	bh=q2p4YLQpc1deAky6X6orGiHXlQp6BVexlA8VrWYCULA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IQf/gr63yVvsVA9eEOpTZPWuFd3kTK1QBtqfPalnFO4TB9GxfwihGEOqTqVP82GvK
+	 tNnH4i/FC9Ispf/rPx0nf8pzip3JvOR6D+jTwkoR3qg7ABjseA+X04yLbwMu4w2ZPn
+	 wxxKVGm9jDSicpyvgyoeyH2xCfzTR3j1LGjG09PojFvam+CqBcyHcnuJL+1tyoAeui
+	 F+0rA8eh2IpNlLkFYz6tRb8umP3gF+bkwg33S5Y8264LtMQeyH9HPmaZ2S1dQ/FSOB
+	 qr/LPuy0XCXTBcZprBnVqsewxisG+k9YB5uwRrWF+dFNRKjA64s4lqI7svshCrt2rm
+	 Uu8D52VMnMG2w==
+Date: Thu, 19 Feb 2026 10:53:57 -0800
+From: Kees Cook <kees@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: syzbot <syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com>,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+	luto@amacapital.net, syzkaller-bugs@googlegroups.com,
+	wad@chromium.org
+Subject: Re: [syzbot] [io-uring?] WARNING in __secure_computing
+Message-ID: <202602191048.395EE1E@keescook>
+References: <69953966.a70a0220.2c38d7.0111.GAE@google.com>
+ <c71fc714-25b2-4c56-b48a-6d9da1d40d60@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c71fc714-25b2-4c56-b48a-6d9da1d40d60@kernel.dk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12343-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,syzkaller.appspot.com:url];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12339-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,gmail.com,samsung.com,purestorage.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[purestorage.com:mid,purestorage.com:dkim,purestorage.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_NEQ_ENVFROM(0.00)[kees@kernel.org,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[purestorage.com:+];
-	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TAGGED_RCPT(0.00)[io-uring,0a4c46806941297fecb9];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 9D0CE16128D
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 1EF20161CE3
 X-Rspamd-Action: no action
 
-nvme_dev_uring_cmd() is part of struct file_operations nvme_dev_fops,
-which doesn't implement ->uring_cmd_iopoll(). So it won't be called with
-issue_flags that include IO_URING_F_IOPOLL. Drop the unnecessary
-IO_URING_F_IOPOLL check in nvme_dev_uring_cmd().
+On Wed, Feb 18, 2026 at 09:27:07AM -0700, Jens Axboe wrote:
+> On 2/17/26 9:00 PM, syzbot wrote:
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13256722580000
+> > [...]
+> > WARNING: kernel/seccomp.c:1407 at __secure_computing+0x2ae/0x2e0 kernel/seccomp.c:1407, CPU#1: syz.0.17/6077
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/nvme/host/ioctl.c | 4 ----
- 1 file changed, 4 deletions(-)
+This is:
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 8844bbd39515..9597a87cf05d 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -784,14 +784,10 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
- int nvme_dev_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
- {
- 	struct nvme_ctrl *ctrl = ioucmd->file->private_data;
- 	int ret;
- 
--	/* IOPOLL not supported yet */
--	if (issue_flags & IO_URING_F_IOPOLL)
--		return -EOPNOTSUPP;
--
- 	ret = nvme_uring_cmd_checks(issue_flags);
- 	if (ret)
- 		return ret;
- 
- 	switch (ioucmd->cmd_op) {
+        /* Surviving SECCOMP_RET_KILL_* must be proactively impossible. */
+        case SECCOMP_MODE_DEAD:
+                WARN_ON_ONCE(1);
+                do_exit(SIGKILL);
+                return -1;
+
+It's nice to see we caught an impossible state! :) Now we just need to
+figure out what the repro is doing.
+
+> Not io_uring, no seccomp label that I can find...
+
+Why do you say this? The reproducer sets up io_uring and then calls
+seccomp:
+
+int main(void)
+{
+...
+  //  io_uring_enter arguments: [
+  //    fd: fd_io_uring (resource)
+  //    to_submit: int32 = 0x847ba (4 bytes)
+  //    min_complete: int32 = 0x0 (4 bytes)
+  //    flags: io_uring_enter_flags = 0xe (8 bytes)
+  //    sigmask: nil
+  //    size: len = 0x0 (8 bytes)
+  //  ]
+  syscall(
+      __NR_io_uring_enter, /*fd=*/r[1], /*to_submit=*/0x847ba,
+      /*min_complete=*/0,
+      /*flags=IORING_ENTER_EXT_ARG|IORING_ENTER_SQ_WAIT|IORING_ENTER_SQ_WAKEUP*/
+      0xeul, /*sigmask=*/0ul, /*size=*/0ul);
+  //  seccomp$SECCOMP_SET_MODE_FILTER_LISTENER arguments: [
+  //    op: const = 0x1 (8 bytes)
+  //    flags: seccomp_flags_listener = 0x0 (8 bytes)
+  //    arg: ptr[in, sock_fprog] {
+  //      sock_fprog {
+  //        len: len = 0x1 (2 bytes)
+  //        pad = 0x0 (6 bytes)
+  //        filter: ptr[in, array[sock_filter]] {
+  //          array[sock_filter] {
+  //            sock_filter {
+  //              code: int16 = 0x6 (2 bytes)
+  //              jt: int8 = 0xff (1 bytes)
+  //              jf: int8 = 0x1 (1 bytes)
+  //              k: int32 = 0x3fff0000 (4 bytes)
+  //            }
+  //          }
+  //        }
+  //      }
+  //    }
+  //  ]
+  //  returns fd_seccomp
+  NONFAILING(*(uint16_t*)0x200000000240 = 1);
+  NONFAILING(*(uint64_t*)0x200000000248 = 0x2000000003c0);
+  NONFAILING(*(uint16_t*)0x2000000003c0 = 6);
+  NONFAILING(*(uint8_t*)0x2000000003c2 = -1);
+  NONFAILING(*(uint8_t*)0x2000000003c3 = 1);
+  NONFAILING(*(uint32_t*)0x2000000003c4 = 0x3fff0000);
+  syscall(__NR_seccomp, /*op=*/1ul, /*flags=*/0ul, /*arg=*/0x200000000240ul);
+  return 0;
+}
+
+So something has gone weird here, I assume related to seccomp listener
+vs io_uring and process death.
+
+-Kees
+
 -- 
-2.45.2
-
+Kees Cook
 

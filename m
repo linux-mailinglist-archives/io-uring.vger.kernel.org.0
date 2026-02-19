@@ -1,92 +1,74 @@
-Return-Path: <io-uring+bounces-12326-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12327-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id rB/TJbyYlmmVhwIAu9opvQ
-	(envelope-from <io-uring+bounces-12326-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 05:59:40 +0100
+	id 2JkZAcUDl2mjtgIAu9opvQ
+	(envelope-from <io-uring+bounces-12327-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 13:36:21 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9DC15C0FD
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 05:59:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AFC15E9D5
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 13:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 98E3C30143D1
-	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 04:59:38 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 330BF3005152
+	for <lists+io-uring@lfdr.de>; Thu, 19 Feb 2026 12:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FED284B58;
-	Thu, 19 Feb 2026 04:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646F92F39B9;
+	Thu, 19 Feb 2026 12:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igCnTZJ5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O0bWMmx9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1221F1315
-	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 04:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C274927FB1E
+	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 12:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771477176; cv=none; b=hoZhB9Ma39AE2Eh8cidYqfn7YDeRfz60RIkbn4wfqOmiChTSNcsT4e3e/iCnp9fAdpyeBB2Mdg8HtgOZBHZoLrsRZsVXaL/QSgOTsSPdNfly2K9t9zElDSO2rO4mSiyYCeUEMHoZmxZkHDDOqrmr5GDrxWrTpJBqwkh/E2cSx7k=
+	t=1771504574; cv=none; b=ajUmFi+3kLRqpm6YQCeukQN+vWonQCqwR0RmAzYuLvYLdfKEhYlBIy9kOcsA/SItdwuUe/dMXgHnK1NzbwmL1H3pOXaC2dAZKOD/xsl5zOYY7Tfn4eDdiWKwpYW+vR2MKa8wjOSnduItL0nxnfhaVRdO6XFmOqWparaPG+uXduA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771477176; c=relaxed/simple;
-	bh=8toOouew2j+r2RYwsmBEbJ9n5vOF7vdtdZ8kwxzOAew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tG4KOm94sPNrQElh2rVbb+pqqplKTNr6KQdcFOSCbU+1GZ6c8glnDr0o3N98zVK04zGIw22t1bLuJP/G/4Hn+UqLoDiNDiloeb87KsJdU4G1lql49y8ZuIB0Ruz//bbRyJXN3FNYfQb29s6ldIuFq2JOkyFGfF2a5qzJXgjljfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igCnTZJ5; arc=none smtp.client-ip=74.125.82.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-2bd3b0bc201so1251538eec.1
-        for <io-uring@vger.kernel.org>; Wed, 18 Feb 2026 20:59:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771477173; x=1772081973; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=URVoEWWXIZWs8eLF0NtSZs2yK2ef/h2NoEcTm7ge7Lc=;
-        b=igCnTZJ5D8dR3+AYe0CeRKFEavj7nSiQmdrTRBcnV5IgdpUebHap7tSeDI9ngrTMhY
-         vZ1z+r0Bfc2CfsrOAe/sMSIWS72odZBT4n9vgiZFeq9d20TMTO1Ah2sgJwYe3wcMdJs2
-         GaSDSeHOcnE5wItryjIMApSiuO29OzyUVoy5ddcgjCCPKSfAOeWYiusc49HW/oAP+bGC
-         Gs9pjPEh5m3YEwYfdATkIr56sRbnk9pyEJ7xv+uma3Y97fcJXEoL7Bh5KqnJyeZscQDX
-         3vndZpdYmPZn4AJuhDQ/MdBrF222t3NJxbM/EDksYCtpP1QYlJY4O5k8WJLLnwncPQw3
-         Viqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771477173; x=1772081973;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=URVoEWWXIZWs8eLF0NtSZs2yK2ef/h2NoEcTm7ge7Lc=;
-        b=j3ItJU5PztBvCP6YOZLXOuLIeIO9ioUiuME19mdGr9Hq+wU2kLBDWjcarwfUJFEmOq
-         RhEqbIK7mp63jGV+R871iaTGXOmN2dfgM+xeDH5MiR8K78O8sH4iBsJz8rW/X4+qL5Tu
-         VK2BMT45BJlFySgNRdW8e0HIaq3Qb4m/j0RlKeXNjSeyDZWfuxdsqo94quk/HLVvic0/
-         WSpgBq0mgBjBf6zUG6SQm/8P/w/BK1hNqKC5iIdf7scDG/8zL1oiskjFCicw2WuKF0Pm
-         fz7AHfK1RAS/cwEOilFRUEQUC6NcosVXSpg8Ul7N0TzOjGBmrm0Wnui4XiSLwfBCSS6C
-         jCkQ==
-X-Gm-Message-State: AOJu0Yyhwi4DWTwvi8P9XQO1Pvsr+CBH+gMdJy6XJAssSrAI4jTRMmI2
-	aPlNX0WjyirufdUJeVLnAj/9/AHCh1lx1UAHEaSF0klps/OsekfIqgc3jaDwXXlg
-X-Gm-Gg: AZuq6aKtOjUvO7AY+gQ+zchWGzupVVrIeFR992C7lFzG32Ev0Jb4t9BzcUlY/xlP5gO
-	tdG8iWGotnrWyqSkOAmogrOAhR11NiQSk3rXgIUSUnMjDCy3yI0uzakaJTTwFrxKVdiCjglp3EY
-	ZNRS2+LlAf2kDOvfc2yTfTogznldkR3XpGCX3Zbxy5JJhuGJBWGeIoQlUZoDMMccyDdgYzg2ht/
-	6QQ8JrumWJN3vEyNPL6tvC8vUvMvxuqdck8ll+5eRnE17M6ORBaxiyYczw/Xmh+bWy2LI/wsEpT
-	hV2dmBHOQPhv878II9Kxpb+DwHjfYrp3hKii7f0YqixLWtLcdzouxlxl8qwpWQVVFblKb4wwZvH
-	QoLyO3R4K3GuK01LNYw1jsOsQeoQXdzcvwye0GMNvwTmtz6RFj3LQAgTnbGlfc3oE76FMWnAqj/
-	+LmNpmECAdjiB9V/HFsHuzTQbczrejaUELxBM8+Q==
-X-Received: by 2002:a05:693c:374c:b0:2b0:52ac:92fe with SMTP id 5a478bee46e88-2bd5b3c7078mr913025eec.21.1771477173288;
-        Wed, 18 Feb 2026 20:59:33 -0800 (PST)
-Received: from localhost ([2601:646:8100:f8:a787:ffd3:9020:3716])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2bacb67b638sm20564693eec.31.2026.02.18.20.59.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Feb 2026 20:59:32 -0800 (PST)
-From: Govindarajulu Varadarajan <govind.varadar@gmail.com>
-To: io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	csander@purestorage.com
-Cc: ming.lei@redhat.com,
-	kbusch@kernel.org,
-	hch@lst.de,
-	sagi@grimberg.me,
-	miklos@szeredi.hu,
-	Govindarajulu Varadarajan <govind.varadar@gmail.com>
-Subject: [LINUX PATCH v4] io_uring: Add size check for sqe->cmd
-Date: Wed, 18 Feb 2026 20:59:30 -0800
-Message-ID: <20260219045930.935755-1-govind.varadar@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1771504574; c=relaxed/simple;
+	bh=BY/RK1tXzEvXXCGYdwhKNtu97iVzifuQJ7T6bTG1gmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QhUNk39PDGEBpusEC/eIIvakFGA93PKa+OtDIa7XJVbZ9y+W5JS1olqUYeN6ZtWvw1G3kF1177eZZVRdjLne3fRIVOGZxlbZtCdJ/ofRF8yDe+YnHj6ENKcmmaHQdQHGsLPcT+FAiDUSCVlPZpIgsMV4JFyZOsn9n5cv1MgFPcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O0bWMmx9; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260219123603epoutp03509c4bfb5ac1b4d37a61312355153fac~VpgPR2LwD1992919929epoutp03z
+	for <io-uring@vger.kernel.org>; Thu, 19 Feb 2026 12:36:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260219123603epoutp03509c4bfb5ac1b4d37a61312355153fac~VpgPR2LwD1992919929epoutp03z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1771504563;
+	bh=q0LmMvcEPAKNKFTmhqhPJ18Lkr2w8F5SogDpXQyf4Mk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=O0bWMmx9gaS4bzkIwjbJCHs3p4ZjIpO6vtRhzXfV8clD6ypeSRSnYuQzKgmKdQ/A/
+	 oB4b0BN8ZvnFWOYhs4G5dz7uQ0+3lCsRoAOGn3WxSnjM8o6ATxjaIjRMWlcVZVYPZc
+	 ++lBaQJ30LuqcqLRLfsSr+Im3Rdvp68mEziK2wO4=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20260219123602epcas5p48f3d917270e7fc3f40e9658dfebfbeda~VpgOinHqX1907219072epcas5p45;
+	Thu, 19 Feb 2026 12:36:02 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4fGtCQ23MPz6B9m4; Thu, 19 Feb
+	2026 12:36:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260219123601epcas5p3102acea27f92bc92a8e482c18e74103f~VpgNU04sI0254402544epcas5p3E;
+	Thu, 19 Feb 2026 12:36:01 +0000 (GMT)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260219123600epsmtip1fa7e2c37495716700e4e6752e969d99d~VpgMgp4LB0038900389epsmtip1E;
+	Thu, 19 Feb 2026 12:36:00 +0000 (GMT)
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: axboe@kernel.dk, kbusch@kernel.org
+Cc: io-uring@vger.kernel.org, joshi.k@samsung.com, Anuj Gupta
+	<anuj20.g@samsung.com>
+Subject: [PATCH] io_uring/rw: handle IORING_OP_URING_CMD128 in iopoll
+ dispatch
+Date: Thu, 19 Feb 2026 18:01:36 +0530
+Message-Id: <20260219123136.155590-1-anuj20.g@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -94,176 +76,72 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260219123601epcas5p3102acea27f92bc92a8e482c18e74103f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260219123601epcas5p3102acea27f92bc92a8e482c18e74103f
+References: <CGME20260219123601epcas5p3102acea27f92bc92a8e482c18e74103f@epcas5p3.samsung.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
+	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[redhat.com,kernel.org,lst.de,grimberg.me,szeredi.hu,gmail.com];
+	TAGGED_FROM(0.00)[bounces-12327-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,samsung.com:mid,samsung.com:dkim,samsung.com:email];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12326-lists,io-uring=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[govindvaradar@gmail.com,io-uring@vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[samsung.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[anuj20.g@samsung.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EF9DC15C0FD
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[8]
+X-Rspamd-Queue-Id: E3AFC15E9D5
 X-Rspamd-Action: no action
 
-For SQE128, sqe->cmd provides 80 bytes for uring_cmd. Add macro to
-check if size of user struct does not exceed 80 bytes at compile time.
-User doesn't have to track this manually during development.
+io_uring_classic_poll() special-cases only IORING_OP_URING_CMD for
+uring-cmd iopoll dispatch. IORING_OP_URING_CMD128 falls into the generic
+rw branch, which calls file->f_op->iopoll() after casting to struct io_rw.
 
-Replace io_uring_sqe_cmd() inline func with macro and add
-io_uring_sqe128_cmd() which checks struct
-size for 16 bytes cmd and 80 bytes cmd respectively.
+That is the wrong callback path for uring_cmd requests, which should go
+through ->uring_cmd_iopoll(). Treat IORING_OP_URING_CMD128 the same as
+IORING_OP_URING_CMD in io_uring_classic_poll().
 
-Signed-off-by: Govindarajulu Varadarajan <govind.varadar@gmail.com>
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+Fixes: 1cba30bf9fdd ("io_uring: add support for IORING_SETUP_SQE_MIXED")
+Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
-v4: Rebase on top of for-next
-v3: Remove extra parentheses.
-v2:
-  - Replace all caps macro with lower case definition.
-  - Add const qualifier to return type.
-  - Rebase on top of series "[PATCH 0/4] ublk: fix struct
-    ublksrv_ctrl_cmd accesses"
+ io_uring/rw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BRANCH: for-next
----
- drivers/block/ublk_drv.c     | 12 ++++++++----
- drivers/nvme/host/ioctl.c    |  3 ++-
- fs/fuse/dev_uring.c          |  6 ++++--
- include/linux/io_uring/cmd.h | 15 +++++++++++----
- 4 files changed, 25 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index c13cda58a7c6..46a785ce078d 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -3255,7 +3255,8 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index b3971171c342..0eede0c09eaf 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -1254,7 +1254,7 @@ static int io_uring_classic_poll(struct io_kiocb *req, struct io_comp_batch *iob
  {
- 	/* May point to userspace-mapped memory */
--	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_io_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe,
-+							       struct ublksrv_io_cmd);
- 	u16 buf_idx = UBLK_INVALID_BUF_IDX;
- 	struct ublk_device *ub = cmd->file->private_data;
- 	struct ublk_queue *ubq;
-@@ -3833,7 +3834,8 @@ static int ublk_validate_batch_fetch_cmd(struct ublk_batch_io_data *data)
- static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
- 				     unsigned int issue_flags)
- {
--	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_io_cmd *ub_cmd = io_uring_sqe_cmd(cmd->sqe,
-+							       struct ublksrv_io_cmd);
- 	struct ublk_device *ub = cmd->file->private_data;
- 	unsigned tag = READ_ONCE(ub_cmd->tag);
- 	unsigned q_id = READ_ONCE(ub_cmd->q_id);
-@@ -3862,7 +3864,8 @@ static int ublk_handle_non_batch_cmd(struct io_uring_cmd *cmd,
- static int ublk_ch_batch_io_uring_cmd(struct io_uring_cmd *cmd,
- 				       unsigned int issue_flags)
- {
--	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublk_batch_io *uc = io_uring_sqe_cmd(cmd->sqe,
-+							  struct ublk_batch_io);
- 	struct ublk_device *ub = cmd->file->private_data;
- 	struct ublk_batch_io_data data = {
- 		.ub  = ub,
-@@ -5253,7 +5256,8 @@ static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
- 	/* May point to userspace-mapped memory */
--	const struct ublksrv_ctrl_cmd *ub_src = io_uring_sqe_cmd(cmd->sqe);
-+	const struct ublksrv_ctrl_cmd *ub_src = io_uring_sqe128_cmd(cmd->sqe,
-+								    struct ublksrv_ctrl_cmd);
- 	struct ublksrv_ctrl_cmd header;
- 	struct ublk_device *ub = NULL;
- 	u32 cmd_op = cmd->cmd_op;
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index fb62633ccbb0..8844bbd39515 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -447,7 +447,8 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
- {
- 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
--	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
-+	const struct nvme_uring_cmd *cmd = io_uring_sqe128_cmd(ioucmd->sqe,
-+							       struct nvme_uring_cmd);
- 	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
- 	struct nvme_uring_data d;
- 	struct nvme_command c;
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 5ceb217ced1b..60f2058feb74 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -879,7 +879,8 @@ static int fuse_ring_ent_set_commit(struct fuse_ring_ent *ent)
- static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
- 				   struct fuse_conn *fc)
- {
--	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-+	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
-+								       struct fuse_uring_cmd_req);
- 	struct fuse_ring_ent *ent;
- 	int err;
- 	struct fuse_ring *ring = fc->ring;
-@@ -1083,7 +1084,8 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
- static int fuse_uring_register(struct io_uring_cmd *cmd,
- 			       unsigned int issue_flags, struct fuse_conn *fc)
- {
--	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-+	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe128_cmd(cmd->sqe,
-+								       struct fuse_uring_cmd_req);
- 	struct fuse_ring *ring = smp_load_acquire(&fc->ring);
- 	struct fuse_ring_queue *queue;
- 	struct fuse_ring_ent *ent;
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 375fd048c4cb..331dcbefe72f 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -20,10 +20,17 @@ struct io_uring_cmd {
- 	u8		unused[8];
- };
+ 	struct file *file = req->file;
  
--static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
--{
--	return sqe->cmd;
--}
-+#define io_uring_sqe128_cmd(sqe, type)	({					\
-+	BUILD_BUG_ON(sizeof(type) > ((2 * sizeof(struct io_uring_sqe)) -	\
-+				     offsetof(struct io_uring_sqe, cmd)));	\
-+	(const type *)(sqe)->cmd;						\
-+})
-+
-+#define io_uring_sqe_cmd(sqe, type)	({					\
-+	BUILD_BUG_ON(sizeof(type) > (sizeof(struct io_uring_sqe) -		\
-+				     offsetof(struct io_uring_sqe, cmd)));	\
-+	(const type *)(sqe)->cmd;						\
-+})
+-	if (req->opcode == IORING_OP_URING_CMD) {
++	if (req->opcode == IORING_OP_URING_CMD || req->opcode == IORING_OP_URING_CMD128) {
+ 		struct io_uring_cmd *ioucmd;
  
- static inline void io_uring_cmd_private_sz_check(size_t cmd_sz)
- {
+ 		ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
 -- 
-2.53.0
+2.25.1
 
 

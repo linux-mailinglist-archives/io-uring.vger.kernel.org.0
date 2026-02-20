@@ -1,166 +1,221 @@
-Return-Path: <io-uring+bounces-12355-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12356-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WCFMCNydmGmWKAMAu9opvQ
-	(envelope-from <io-uring+bounces-12355-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 18:46:04 +0100
+	id EAUXC0+emGmWKAMAu9opvQ
+	(envelope-from <io-uring+bounces-12356-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 18:47:59 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E6E169D22
-	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 18:46:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A9C169D51
+	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 18:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1DD4D30868E3
-	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 17:45:29 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id EC807300407F
+	for <lists+io-uring@lfdr.de>; Fri, 20 Feb 2026 17:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AB935EDBA;
-	Fri, 20 Feb 2026 17:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20C42FD69F;
+	Fri, 20 Feb 2026 17:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6nvK8fu"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NEKHxRpc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5095E223702
-	for <io-uring@vger.kernel.org>; Fri, 20 Feb 2026 17:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC8035957
+	for <io-uring@vger.kernel.org>; Fri, 20 Feb 2026 17:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771609527; cv=pass; b=AlD6af9yyYptFBJwqdOAHyvBq96PuYeTcihO4niXuEXQifTj5A5Z6StNDMCzhNQ13WVdP5t/ch1RoilLMm385yyqNpAqkWbku8x6mw6AcSS3rfWrBSOwGzP2t8ffWAqt0gVy+JIviEmK8M3XknugAXII0umIF7eK0pXrE1dygkc=
+	t=1771609672; cv=pass; b=DX3KyGRtVF9GD1R4KQEfaODKzFaQOd/EVIOVMx5ZGEoPinBH3vZILNXC5QNNZJSotvKtIdt97NjMkoM9zdwwr33iuMQ9zMyTmAJCmlvAx8+zPxu59DyHYzoUnnegp1HxJnTe9qxRWaX/Ja4p5kjsc17xUkq5EN8W5wYfzrTL5TU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771609527; c=relaxed/simple;
-	bh=17osSV2Ybp3FZazgMVnr6OXGlcJHiy1r4+ZefyUIG3Q=;
+	s=arc-20240116; t=1771609672; c=relaxed/simple;
+	bh=Y9eb+2i/y/0rmFF/uI6d9CeWg5pAv5OelEQTpGFPeJM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EGc0w6fhPdm2G1MRgPPrMILy+z92wpzdfo70nN/nNqJXLC7Ue8qMX3CbANkciw4PJ5vR0JBopqJ7zFeCsjj047yShMIEDTROVp4LM8siXZkngU74Q9OiILVw62Jnp55FOYr7FEbe1D0TVQoz3NEIKpGUlZUKtf3kCLLPpI6JoE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6nvK8fu; arc=pass smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-482f454be5bso31964825e9.0
-        for <io-uring@vger.kernel.org>; Fri, 20 Feb 2026 09:45:24 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771609522; cv=none;
+	 To:Cc:Content-Type; b=KWksgcaqOwMKGm7YhLsV8j75a7dGdDvADSiQf3RmDxmXyhShB1jtQWN6SPkWA7SXpQWja+IdAvKvde+qpfbXgOeju1xz+7RcbbSSj0lEl2DEi05luKWTSLLVX0HMKlz4l/L3cTzr/RsB+jU3MU+CVAY6HSWzQkxcdsJSCjke9+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NEKHxRpc; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-65a18bc4b1dso353457a12.3
+        for <io-uring@vger.kernel.org>; Fri, 20 Feb 2026 09:47:50 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771609669; cv=none;
         d=google.com; s=arc-20240605;
-        b=LXdyO9slFK650JFWaoz280k+n84LLFyXU9J3RC0n3j/UNOfAi8ZjFiLgonRCv/ZQa6
-         zhw2jDV+l3i0BKNgg/09RSPi63XSpeJDkorGNhHQokXtwh0Ncy+WZsgumNc6ZQXOfCs7
-         1/SRez5WVJzYwglqyORz4rxvYNJGIOZ7WqxMsqfFXU4U+A0VOFonsGxu9aThE1EM9dS0
-         9ccgAxbm8Z7lqef2Xmip9WVrgNaO5/a/suAO1bghUSrxEFHvU/JqO+FFJZlwE6EwxmKh
-         L8YLVSbkkgytylAOkZtOPwNz4Ns66Lddow55Ij++GUNm7tE4stKWmMnvZiULeXG6hLTR
-         kQjg==
+        b=Y9ctDcZt0VutnvY3xAVEvDQ3TR5pAI+r1acYGBcED0MuKz95F+7o2bpC/nZsOzvg9F
+         XcXFScNIFH1YUtv6v+5uK3+IW1VLK8HysPnY6Fk+7zAMFsHObWCtNk7TP1FeCdNEPjuR
+         qpAkWH0ctHqugM7x/7wUNgOWAm2yahAPbAdVJuvHiruUzYU5ascoSflrdDC93xb35uAt
+         jGkoZ0jeL1pcEnbWcbwJt3DDEvP1DQZOLDtuYX4922BNpGOuNG7glXXGE7oruigXK1Nm
+         IGZxaYXta4uz7Q5r3R8/FkAPwmsVztPvPt6xYmojKCZ7cl6OxsS7yCAewiMI+cf0wu2p
+         5Gbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=17osSV2Ybp3FZazgMVnr6OXGlcJHiy1r4+ZefyUIG3Q=;
-        fh=/CN9mfTqvVu2uNAJ0wMLUcZBlSeaKHjQ1yN0L6YpXc0=;
-        b=USoPP+WOW01WK26Ry/31rC8xGDG+bY5EfeVGN1AfcYbaTnTVieSn3i37Z+qELiBAVR
-         VlikBjzheC3Wx0EZeazqmp+od8rV2M/YH8apfSmclyq6NgJq55d4p0v7eCWJ7enKItr3
-         pLcc8phF8W4HXc0hKEOLNxh1nHlPMaSrR9RR45GQt9ApQwFijA6TqYIzgZO3or1ysBsZ
-         /whgEeaahV9GUJ8uwGVXMD4mPQWmpf8h3fE6/Jq2/0pMDO6EHP50SOBHTOd8vSUSK3zB
-         Ce5R53I9lclk41XcxVwU+f5GLCRwgtyO4R/6Cs7TFF//u7/Lo/GZIPWHlqIcRboCD/Wi
-         RaAw==;
+        bh=Y9eb+2i/y/0rmFF/uI6d9CeWg5pAv5OelEQTpGFPeJM=;
+        fh=2KLrhX83hifvDkGXDHtD266+iOEzkW84A8aDYKv7rYk=;
+        b=XunZABTN5jCNC+0EBBHzoxieJZxAFlypANBlqjZOEMbtuc3wsugNZPP0fMk2LDn3J2
+         C3UIS2y8O6XimbaX+0hA++6EMrXN+UcwjFxZTp6sQ5vmVZxgSlfdbpOTZmr6XRCfPyhc
+         xdiym61eYGOPE9hP7+EpU2K4SCql/8kfywMvILW416gtQtrM2NeeYkh8B0HHZhYTKoc4
+         3vvhg6+TjrO/Z4TElZd6hDRhCIeehLWuVcqpYLb9qRf4r7ym369LlMRHXr3ewxtgqerS
+         zGjVQQoHP/15YYEzQk8oSCcpI3PBt3pAOwgRwY1RchL6WBx6IvcEI6nNFnbj/006LE6l
+         B57Q==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771609522; x=1772214322; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1771609669; x=1772214469; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=17osSV2Ybp3FZazgMVnr6OXGlcJHiy1r4+ZefyUIG3Q=;
-        b=U6nvK8fuOXr+e4cG1Xbi8KhfCZ3M7j2xPDmC3U5S8p7bY/cwmWwKjxBk+OMDzU2G0j
-         zGQ8/hIVjhCLqdXTY/Vs9cPTc5F0OfM1Rh6tRBVN4T3d7J1dx9KjASXMPGoKiTapZsyz
-         Ygrx2UNpL6TG5nrV+wmaLzHn6y4fUHcaKzPuTetXE29UrMAZ4KTtk4Li0Yekvibog/Ty
-         rWwggbdZPyGXmLpcp1yvg1kMF36NszQb3VidzYx92qVg7h2RXPu1jrV0YFBPSsoDcSXi
-         Jv18kQt9mJ+fJFHXT0qhl718d2r3Z90wXZmfpqzwqeM6n1l+Bg2bWfhWw3dwrrQUh5QY
-         HtOw==
+        bh=Y9eb+2i/y/0rmFF/uI6d9CeWg5pAv5OelEQTpGFPeJM=;
+        b=NEKHxRpczgU+UDLJmX0ntPHBwYzm0siD/hI6t/J7X6JtEqRvkKNYAAqpwn5v8KZ7pd
+         o3nX29cz8o4ANlf3krvPhEFv8XMfl72WXpRyl09MDyavzJ9lFPm4pYsLDLT/0e6IZiuw
+         +1bxnFi/nyhexA+2wu2eWBlE8f9wPIjK+HS+raQFIOi+3W5uBNxqT7D1W9Je9/wc2iOf
+         AiDEU1g+TcmPJnpJrOKbjhvgWSFUu4duR/qoL3GotfQqSp9mTn/hks+wU5Cb/l6PCcu9
+         u/wAIqcSmcxNt1uVtg8MHhrM/SzILZJFdOIzoBOJHfqtgyiyqSKBBx8/FLrRYKTH//md
+         pYkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771609522; x=1772214322;
+        d=1e100.net; s=20230601; t=1771609669; x=1772214469;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=17osSV2Ybp3FZazgMVnr6OXGlcJHiy1r4+ZefyUIG3Q=;
-        b=aVZAcDlDa6oaiglDDMqgs0YLq1gD1lCyUz9zMJ5Sl6AQwcdvAeW4Mh6ugrrqEyC0Nr
-         3KxsUR76iYc3c88xriSwvZ74bKWtR3S9M5967jboePc6x8nxrWyy9bYqR0h50a3a0H63
-         6cYh05HYNHGJyJXMuls+hpxN7nw+8OGQ1Qo/cyE9EWDRP9sgAjg6XiV6wBBxXK5qcJ7Y
-         5p1eKs97sly63IgkZXaL0E+qpcTh1oeidrs+ay9Ru0RHH2Xzp6GjzHg6m7MG5+T5QO8o
-         SAk5KgIchRr0osh5zJ6x5imt6cM6WjS3euckkE3eJDw5j7LeDjfISdL6JokqNVWsFtlX
-         iOxA==
-X-Gm-Message-State: AOJu0YyVf4KLXOUpqZLQthwX8e6jXx/oI+Z0jZMfRmrboTqzEzgav0EU
-	CSI860r2Njek3QFbEq3qsXgkHPr8a5VYaurWqHI0fBqKNFj8f+SLirGQYnxq9kZNoLvj68Du2FV
-	8epVLqU09wmOkzWbZLpR5IU5ftEJ6mCU=
-X-Gm-Gg: AZuq6aI/eWVtAuTNYVdZjwur8vhtH3Hs/vRs5q/6ruIyGbuRFpwhsNwgdoCc0eJlrpB
-	ejDpoNAnHZAFANVdnKiftS96VXdjcn0Okc23Zj9cItyE0qm7glZ73bwkp1JHgXqbzcNrvtJtD6i
-	PocoKLbZTyCBxxHbvfQtnh7ySbhQDOFC4HJR4unfCH2qfRLe/sUasnYyJ6UtyPuOh3rkErF7ifJ
-	jJmSvLZBqYYpGHudJsrQKWu8hHlJEqNydHwrf2O6brwdiJR2/kyQJ84KwsJG937Y00PfUOElMGz
-	tvmRXgMl4DIIJHj7KeYdzF/sSLZhGPy3fHEyacewaijRh/tcQJguTxc9oYr1cgGkA5WD/kByweR
-	N6PscyGUqe6CSUdcZJJvDBNpClg==
-X-Received: by 2002:a05:600c:3b22:b0:477:9a61:fd06 with SMTP id
- 5b1f17b1804b1-4839fe97501mr102528005e9.8.1771609522273; Fri, 20 Feb 2026
- 09:45:22 -0800 (PST)
+        bh=Y9eb+2i/y/0rmFF/uI6d9CeWg5pAv5OelEQTpGFPeJM=;
+        b=JDgrm8WeK9JiKAMUOl4+KG/gjEqyh7GFaQs2Hcwsrcw+wFYxl+uHsBAYHBBvSBGfRR
+         G2hQYmRnTWp8KEP7jbkPrDZSOsKbioV32gYJAFM4fSQZvXGmYHGpJmwl0TLCM4n1KgM+
+         6rAX+dwWRwtSmBi5Ovs0bnmE0oM62lV9ZDpZX+/Q20OEXuK9YtNy0TlfiGcyj1N3ZfAB
+         nIKWjy8eelki288AoJdz3ozX6tLOCKcXwfBb3fYELZJd15QsW+KTA9SV5cdqvTj5Z/Cn
+         c+QXTu/9b7i4/iPfw0Vjgn9w4NVfNzjC+PmhHLDg4nBNEtLH0HMa0Jt5Be7mV/iC6Xfu
+         3BbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT186cy87bc0a0reBxCPGKOHP35lJTazPA36Mwfvcn9HQYMC0LqjomAY/k/JT5vRGZar3KvT4dhw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLiAu4r0689IB+3Iw9c3t2Pvm9RGJU14bW5G58qOO/If6O2AXa
+	iwsHxQt5ukYnD6qqyJJ+x3ZI+kDAGEM3dQNgOf6CGMVoSkzwrLg2jYLAH91gdPPG9Ik4WK23rwI
+	IgRL8+LzTivgEuA+BR8q5WCSdjC63Uo7lSa/oLT+mCQ==
+X-Gm-Gg: AZuq6aLky/n3Hqd7iTpgYle7qqmnQIn36B6HncUGMGBT60RhOkYtQdXWNaboyF4JOj/
+	rLCftUYuUL2tQnPiv6xXxzdqdGSB+PiNxvqyIkgjNZ0YuKsMgR7YhbAsi5muPEOpPfeGMZ8vXpr
+	jM/2wnYWVi/xTIhBphKi/nwt/jvvRmYRvKDDNgnlpHkvrAcQOAYBZOza6kWUl1jEMr4TpJjHdG/
+	g1ZNXd49C33gjb437hVQ0MshNXk0I1LO+HulnK5DVqgpZcSoiqDEgg8gKinD6J0EdHVtxf57TnV
+	+1//G3b2rXPNQjgRQR0=
+X-Received: by 2002:a05:6402:518b:b0:659:7edb:17b4 with SMTP id
+ 4fb4d7f45d1cf-65ea4f288eamr132202a12.5.1771609669372; Fri, 20 Feb 2026
+ 09:47:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1771327059.git.asml.silence@gmail.com> <7cc147a959ac068c55dae4f540e38e9e4ab121e0.1771327059.git.asml.silence@gmail.com>
- <CAADnVQK0RaOA9ZYZdYyQxOzLde9MR8HpMM0SexcW59A9u7X2Jw@mail.gmail.com> <84e2f3ad-28f0-4e9a-804f-2647cba9b30f@gmail.com>
-In-Reply-To: <84e2f3ad-28f0-4e9a-804f-2647cba9b30f@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 20 Feb 2026 09:45:11 -0800
-X-Gm-Features: AaiRm52OfKCQJR5H9mRJjJZx21uNukzF7RXIa2wgJFPVKsoGW-XQ7s--_qWO_YI
-Message-ID: <CAADnVQLSEoZ0V1m5j3ggX0o0gzVKyiDHL=J6F0wRXB8qk-MCGA@mail.gmail.com>
-Subject: Re: [PATCH v8 5/5] selftests/io_uring: add a bpf io_uring selftest
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring <io-uring@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>
+References: <20260219172228.429479-1-csander@purestorage.com>
+ <aZhuwOku9lFe33UM@fedora> <CADUfDZr3ksmd=ZZOhU4RJsqEzbxBHnDPCtOQXJ5ft=X7irWvPQ@mail.gmail.com>
+ <aZiHlp8nOPgQFGMq@fedora> <CADUfDZoxW0m4nptfNYqmqFCdTj6zSaYOk1vYSKU5JztkjEjD=g@mail.gmail.com>
+ <aZiMS9EZrOqEBhQL@fedora>
+In-Reply-To: <aZiMS9EZrOqEBhQL@fedora>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 20 Feb 2026 09:47:38 -0800
+X-Gm-Features: AaiRm53s86E4gHXC0k34rdUE13VMMBnLURvZ1nvvNYQnBupQcBAWT-zzyK13aNY
+Message-ID: <CADUfDZoRFRzXd4c=qu+7i5nTqFi1BfC4DvaDXA1neov591ps3w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, 
+	Sagi Grimberg <sagi@grimberg.me>, io-uring@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Anuj gupta <anuj1072538@gmail.com>, 
+	Kanchan Joshi <joshi.k@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12355-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,lst.de,kernel.org,grimberg.me,vger.kernel.org,lists.infradead.org,gmail.com,samsung.com];
+	TAGGED_FROM(0.00)[bounces-12356-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[alexeistarovoitov@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TAGGED_RCPT(0.00)[io-uring];
+	DKIM_TRACE(0.00)[purestorage.com:+];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 78E6E169D22
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid,purestorage.com:dkim]
+X-Rspamd-Queue-Id: D3A9C169D51
 X-Rspamd-Action: no action
 
-On Fri, Feb 20, 2026 at 3:41=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+On Fri, Feb 20, 2026 at 8:31=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
+e:
 >
-> I had such examples, but selftests is not the best place for that.
-> It can use abstractions, and I want to make them reusable instead
-> of people copy-pasting from selftests.
+> On Fri, Feb 20, 2026 at 08:22:29AM -0800, Caleb Sander Mateos wrote:
+> > On Fri, Feb 20, 2026 at 8:11=E2=80=AFAM Ming Lei <ming.lei@redhat.com> =
+wrote:
+> > >
+> > > On Fri, Feb 20, 2026 at 07:55:33AM -0800, Caleb Sander Mateos wrote:
+> > > > On Fri, Feb 20, 2026 at 6:25=E2=80=AFAM Ming Lei <ming.lei@redhat.c=
+om> wrote:
+> > > > >
+> > > > > On Thu, Feb 19, 2026 at 10:22:23AM -0700, Caleb Sander Mateos wro=
+te:
+> > > > > > Currently, creating an io_uring with IORING_SETUP_IOPOLL requir=
+es all
+> > > > > > requests issued to it to support iopoll. This prevents, for exa=
+mple,
+> > > > > > using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
+> > > > > > zero-copy buffer registrations are performed using a uring_cmd.=
+ There's
+> > > > > > no technical reason why these non-iopoll uring_cmds can't be su=
+pported.
+> > > > > > They will either complete synchronously or via an external mech=
+anism
+> > > > > > that calls io_uring_cmd_done(), so they don't need to be polled=
+.
+> > > > >
+> > > > > For sync uring command, it is fine to support for IOPOLL.
+> > > > >
+> > > > > However, there are async uring command, which may be completed in=
+ irq
+> > > > > context, or in multishot way, at least the later isn't supported =
+in
+> > > > > io_do_iopoll() yet.
+> > > >
+> > > > Can you describe the issues you envision in more detail?
+> > >
+> > > Basically IOPOLL doesn't support multishot request yet.
+> > >
+> > > For example, when io_uring_mshot_cmd_post_cqe() is called and new cqe=
+ is
+> > > queued, it can't be found from io_iopoll_check()<-io_uring_enter(IORI=
+NG_ENTER_GETEVENTS).
+> >
+> > I don't think that's a new issue, though. You're right that
+> > io_uring_mshot_cmd_post_cqe() assumes a non-REQ_F_IOPOLL request, so
+> > it's up to the ->uring_cmd() implementation to ensure that (which ublk
+> > already does). Since ublk's struct file_operations don't provide
+> > ->uring_cmd_iopoll(), any ublk uring_cmds issued to an
+> > IORING_SETUP_IOPOLL io_uring won't have REQ_F_IOPOLL set, so
+> > io_uring_mshot_cmd_post_cqe() should work just fine.
+>
+> Please look in the following way:
+>
+> 1) without patch of `io_uring/uring_cmd: allow non-iopoll cmds with IORIN=
+G_SETUP_IOPOLL`,
+> multishot command submission can't succeed
+>
+> 2) with patch of "io_uring/uring_cmd: allow non-iopoll cmds with IORING_S=
+ETUP_IOPOLL", people
+> may see hang forever in io_uring_enter() if multishot command is submitte=
+d
+> in context IORING_SETUP_IOPOLL.
 
-Sure, but please still post them as extra patches so it's easier
-to see what's the end result.
+Okay, I see what you mean. If ctx->iopoll_list is nonempty and a
+non-REQ_F_IOPOLL request posts a completion without going through task
+work, io_iopoll_check() won't check for CQEs already posted outside of
+iopoll. I think it should be simple enough to check for CQEs
+unconditionally in the io_iopoll_check() loop.
 
-Also please reply to that thread:
-https://lore.kernel.org/bpf/CALTww28QMg=3DYXqKWpWLZrLO+xiqOe3LGyput8dx68-dn=
-Qsxg=3Dg@mail.gmail.com/
-
-It's not clear to me whether your io_uring+bpf setup will work
-for Xiao's use case.
-I don't think we need 2 ways of doing it.
-In networking bpf is hooked at xdp, tc, socket levels,
-but those are different abstractions.
+Thanks,
+Caleb
 

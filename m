@@ -1,83 +1,84 @@
-Return-Path: <io-uring+bounces-12360-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12361-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iBygLnC0mWkgWQMAu9opvQ
-	(envelope-from <io-uring+bounces-12360-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:34:40 +0100
+	id 4D3tIYi1mWk8WQMAu9opvQ
+	(envelope-from <io-uring+bounces-12361-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:39:20 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B8416CEB5
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0454D16CEE5
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1FA28300E25A
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 13:34:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6DECC3014439
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 13:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A08C137750;
-	Sat, 21 Feb 2026 13:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6611B6CE9;
+	Sat, 21 Feb 2026 13:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LDh7rJ5R"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sXmnKBpo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E890A1C28E
-	for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 13:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1EC7082F
+	for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 13:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771680878; cv=none; b=RXowcaAgjbKTWZk94BCLUwxysKpHU5sepkU+2AbP7DRK9iSti/mIGJwO452o3lTX+yF3z7bGQJ51meWMQOOvsyKs+EH9zjiJLSTLxSsj59xXfFEjGB6Hx3YO6ZaFPImCtptU4oTONBJR5jI/owzuRm3KiTtp+BF4T9QpTcWZCiI=
+	t=1771681148; cv=none; b=kEyWzIxFypCtXlD2NKHgSx5OrzvPGpuMmd5Zg9+qMbEkFC6fsoLX1iTQBtbpnRLEe9xRPoVWXeM2Dw/dwOof5xz5OXlLqKCjA/v0YARjszZxOTZKkqtk1me4rKs6CIz1kA6ZVPSS8Jm8LCsxMADlBYRmKLIjVes/MhjTTIOLNDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771680878; c=relaxed/simple;
-	bh=JVyj9pdjJLc45Q4WWx93kamdjb9RRROa/orUtGHKpmc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UEsGlx2kZhGxNxwVJFjoiYWgnACiEIOmotoe3qsMti5l47A287+cxeulZGNyJjSvliuHShD1Z5qP8Oav/79T576HncRboAT6uh1gNd+Klo0qz3Com/9ZXEKncPzeo/rglT4ad7CT7WGSrI09YMuoyYtc1dWNMP4709MLPz/9s2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LDh7rJ5R; arc=none smtp.client-ip=209.85.210.50
+	s=arc-20240116; t=1771681148; c=relaxed/simple;
+	bh=Ip3ZjBDSE/Zy86Y+LTe9T2puFdEjlBEqxZaFXE079aA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=MwQcEkza1lyEa6SvJPm3gPfSBl/njUy5UNZ8hGkch5YjiSz1uIla3ieOxxn6cHHbV82JhO2zapRP6mjEZbJw9DFQLXxQ/+XG59Dysbt6zaM7tBDk1I5YwEJqybHP1ufJXs45h554SHCRS5JHhlc70uiGowO9ZatGkumLUyO6q9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sXmnKBpo; arc=none smtp.client-ip=209.85.167.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d4ba9abbecso2870004a34.1
-        for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 05:34:35 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-463a0e14b4cso1104096b6e.1
+        for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 05:39:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771680874; x=1772285674; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oDnxLukRBRkPWfr+fgwJP9t3zemK//XLRS9Qpx+rqFY=;
-        b=LDh7rJ5RWZ99CEUVOZXjVk8PF7pUORsq8VhFqYT9nzSjh/o5dPMp8pH73x0CEPmzD+
-         Z+7FZLfa13NTydvKUuubLC6RCEsjLyYrfWDJ0vXfHcxEjup0qHRyYQJm8HuXrNtMNmjF
-         Cg/SbC/WMNtcvghcf8uC49KsTsEYM+EY1bIIH0Ha2dxqk6169ass/zDnMNrzj6rn3kx0
-         rq4IZpmzdlzqFVedF8tP8/gY2fSAlcx0VnkjKir1nJNYDg76L348N9c4qlIaLePiBGU7
-         A3a8JDkz3bzF8ElOEekrVCQ2joCeoWvNJ8i3Vz7yCNnNSJNossFIeOMEujfvYdSKpTlB
-         oW4Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771681144; x=1772285944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9qF2506Q3uzmD43lhIhgvzg5157toy2azs/t1x6da2k=;
+        b=sXmnKBpofg5Kv12ga0YRImp3fbQ/neAk9ffiwle+AxMIxcHFK8WsDTiotkjhx2WV+o
+         7s15tCYS3iSa9YNK1N6YCtfGDctGQ5IAP6ZzsPrDlkLwMQl0p3AVkuVNSsJTm+UGHdZi
+         RkHzRgMDWP33bvRuMqbjDdT07LOxlYe9MKx13ImiWqOoEVQeHAeuIyQJswuZAyQ32cer
+         egdFKWDe2V0YptfycZc4BBiLk5wAoleun5CYzr3LhrKPLk5PSs+wOdzaveSO4yIYXLpn
+         2GnZZA8F9Ic8Oyt1t8rHl6PHkWinTFRmT+fU8jsmv03ZZFIkE7HSjTBdDRFxV4wqgxZU
+         Yg8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771680874; x=1772285674;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oDnxLukRBRkPWfr+fgwJP9t3zemK//XLRS9Qpx+rqFY=;
-        b=GMGj1angUndR6gDq+3Sjj9VrE6WjtA7B0Xtp7KXh96zVdMa9Pp/HSkkXhgwwcgajmv
-         vlcCdMRiRdJsX1EKIlfe9FQtcc3nqh+Ol7hvEw5hJtekn7+yLZDFAwFBq60AMgnYOO9s
-         dmngHK0nasSUSMv3DitxVZwVUferZGPXAUa36HjTPvNfWHzJyGDzKsKglbm7ewxkbOUp
-         3b9Clq3WpYEf2p/HI9+/BcFRm38Hhxg60OsI14drGui39l1+hKbw1WWrj+ciMfj7svKr
-         e4RdvXBRD4Qg5qbWB1vcZX3Ja0+limgf8LIY6k9CKv47FkszmBaSzbAwwIOQY3rtJSPZ
-         L+gQ==
-X-Gm-Message-State: AOJu0YxT0AR3byWnTQoprFkHwSZdZ01Bf05vLsslhq7ADy39Xw5iPdjj
-	ftqsXrxvSoTlzt2Hn0PlJJDdJgQWFbJQuziZGV83rx3sNmvH7oNPfEqY7UmQJLRpi7xJmMAMpwM
-	dmlWNKDNWVg==
-X-Gm-Gg: AZuq6aI5n8O6JV8gSYGp93ADAfPPmu+M5dZ5CUvwAWU6vE29V2XMC+m6z0RhQqN1C2f
-	3sfUwOPd9BjP66hSlB6lVTUrcOobFLzigg7YxvZJ4hm0k+7x0UcQe2rIOpCC2qJ3k5SqWJJ9OG2
-	b6WUOfohD/GkT4K/1avEQb3P9vihOPzQrMRtxZUHoRUxIlAecilYrhgSB2Dd0LKjvtDQSMt6RZV
-	F8DxFyiV6zpQjP+Dks/lv/iTRlEe5FukPbSGssdNe0/xzACL7JnuvOn4ZXlGGanL7BQaYB4eJeu
-	xHBAO3TK2jUVUFgihlxtE2skhN3J1LFkIpzbGntQgSVSQpHZ713FeqZDW65mrNuU+rAWxA/01JW
-	Ql+SV+UaiU4L2CTRWbtbURqus0D3W3IsdULULxR3j6uAZzywZPlWtv3HJOdg6Mz2bFgj8ejdZou
-	AR9REWCiQEFwtpFq65gbrAnFYWw3SjYweg3Tq7XzrfYPh83HuVx2VJjlD1YPhi94c/uMngVKyTe
-	NcrhVgJBTwOTw==
-X-Received: by 2002:a05:6830:6adf:b0:7cf:d6d3:df0b with SMTP id 46e09a7af769-7d52bf19b05mr1778349a34.21.1771680874512;
-        Sat, 21 Feb 2026 05:34:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771681144; x=1772285944;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9qF2506Q3uzmD43lhIhgvzg5157toy2azs/t1x6da2k=;
+        b=kpwjJmKmNvN7MlrlYgJTfEdy19kVF3fCxg2KMWzet+GKRMlHC8HCqSpspg8vlzxhIP
+         IC09n1Fo9j/9lOTMhl6ZNi08BavFbVUsHi9LcdaLBVVcnyIYareCEs/OGYzPfMRJ08Vq
+         0QMHHJ6VF8YZNf8aYY8Lfax6tGEYHSCxrSBaCwbTzZ5jrfPiYMJXEDCSXHhZM70zNEAu
+         Q1ZK1bSoFsSb3Bs4LTRVZSn1QuL6wyJrkB+QcpMUx24lFSRIdX6L7m/QGyywRwFjZ85B
+         V8g3SbsqZYb9A8a1hvCGLjwB2gDBgplZMJcb7G7mxniBOuwHOFEFYWKCAlUuWJwypclo
+         QX0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW4gqoeNwUPlsyEVweux/PRV8szYReh0z0aRIRgOmZodfGrjvwfiBfvyt5wJ6wOlLLgEkddsSTbPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGTAZWumfIUdzjYq5k8iuXRaIcOgeCx0KKyqnFb46OO9ODFGMu
+	aNjNcm2TE0ANcHaXTBKM4ElxIsQT4hUQBcHgYV6HdElyq/dVRDWt+3h6oh4frwpBjk8=
+X-Gm-Gg: AZuq6aIxIwdpK/eBG6mNsHNx0kBnrJFrf8uqDxoeTR7Y1E+YtoyMYAKKkIbJuAJYQQQ
+	zT1l+s6RayRSeMIb01rGp4Lpud3rp9sGLcBq5GNu3imfM93hYHjI02AKbSXdUxsllQAWeAiCjIJ
+	ZhDXlxNmBpWVQh1t+POzYlvlv1orNTqH0tpCTPRqc9TCUd4zTKG5c+S2qAcQq5bjspRkVVK7AQt
+	K1MYqae9lK54U6/KJhA366x9qREHrXZLJ9Chkxd6VRV3VSjMUz9VaPLBP3tlpdhk/TC0Q+nLQB7
+	rOEt9DEQwd6alz0TtzL/jN+RTZKDfRucJanHsphpNI3NyBlObOZDKCygCGxu3yl7AXVGz0Dt9WW
+	wuBf9z1hNtShEQWJqCnuHQg71hoESm+h4bapZOXtcn8eXgtWBgA5R5pDPRcqGCbv0a6AhS6paje
+	39BgGoX7hYkf3iA3ErSJRU4Z6JR9Ojx3O9bGLGitZ2JMy6DjddcLhEa50Py8AcCpAdkFYlw+AcF
+	mxoVVJdlOSejg==
+X-Received: by 2002:a05:6808:eca:b0:45e:63e0:4c9a with SMTP id 5614622812f47-4644616cba7mr1983904b6e.1.1771681144251;
+        Sat, 21 Feb 2026 05:39:04 -0800 (PST)
 Received: from [172.25.209.35] ([187.223.170.195])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d52d038752sm2688429a34.17.2026.02.21.05.34.33
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4644a1b2570sm1502190b6e.17.2026.02.21.05.39.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Feb 2026 05:34:33 -0800 (PST)
-Message-ID: <2b80b81c-42dd-49d1-9f89-f2cc78e9d3fa@kernel.dk>
-Date: Sat, 21 Feb 2026 06:34:32 -0700
+        Sat, 21 Feb 2026 05:39:03 -0800 (PST)
+Message-ID: <709538df-3f3e-4306-af11-206809e1f742@kernel.dk>
+Date: Sat, 21 Feb 2026 06:39:01 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,97 +86,182 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
+Subject: Re: [syzbot] [io-uring?] BUG: corrupted list in
+ io_poll_remove_entries
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 7.0-rc1
+To: syzbot <syzbot+ab12f0c08dd7ab8d057c@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ linux-media@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+References: <698a26d3.050a0220.3b3015.007d.GAE@google.com>
+ <23112bc4-a498-4089-a225-1440c2151ce2@kernel.dk>
+ <cae1de3b-1f76-4595-acfb-70c311d6c1aa@kernel.dk>
+ <3d6c84df-853a-4e28-8ee6-b1239bc985f0@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <3d6c84df-853a-4e28-8ee6-b1239bc985f0@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f1fac0919970b671];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12360-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12361-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,storage.googleapis.com:url,syzkaller.appspot.com:url];
+	DMARC_NA(0.00)[kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[io-uring];
+	RCVD_COUNT_FIVE(0.00)[5];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:mid]
-X-Rspamd-Queue-Id: 33B8416CEB5
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring,ab12f0c08dd7ab8d057c];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 0454D16CEE5
 X-Rspamd-Action: no action
 
-Hi Linus,
+On 2/11/26 5:14 PM, Jens Axboe wrote:
+> On 2/10/26 3:16 PM, Jens Axboe wrote:
+>> On 2/9/26 1:18 PM, Jens Axboe wrote:
+>>> On 2/9/26 11:26 AM, syzbot wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following issue on:
+>>>>
+>>>> HEAD commit:    e7aa57247700 Merge tag 'spi-fix-v6.19-rc8' of git://git.ke..
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14d3b65a580000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f1fac0919970b671
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=ab12f0c08dd7ab8d057c
+>>>> compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1222965a580000
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140e833a580000
+>>>>
+>>>> Downloadable assets:
+>>>> disk image: https://storage.googleapis.com/syzbot-assets/c46beb4ff3a5/disk-e7aa5724.raw.xz
+>>>> vmlinux: https://storage.googleapis.com/syzbot-assets/d162bcaaf9b9/vmlinux-e7aa5724.xz
+>>>> kernel image: https://storage.googleapis.com/syzbot-assets/54b0844b8ea7/bzImage-e7aa5724.xz
+>>>>
+>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>> Reported-by: syzbot+ab12f0c08dd7ab8d057c@syzkaller.appspotmail.com
+>>>>
+>>>> list_del corruption. prev->next should be ffff88807dc6c3f0, but was ffff888146b205c8. (prev=ffff888146b205c8)
+>>>> ------------[ cut here ]------------
+>>>> kernel BUG at lib/list_debug.c:62!
+>>>> Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+>>>> CPU: 0 UID: 0 PID: 5969 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/24/2026
+>>>> RIP: 0010:__list_del_entry_valid_or_report+0x14a/0x1d0 lib/list_debug.c:62
+>>>> Code: 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 8d 00 00 00 48 8b 55 00 48 89 e9 48 89 de 48 c7 c7 40 3d fa 8b e8 37 b0 32 fc 90 <0f> 0b 4c 89 e7 e8 3c 24 5d fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
+>>>> RSP: 0018:ffffc90003bffaa8 EFLAGS: 00010082
+>>>> RAX: 000000000000006d RBX: ffff88807dc6c3f0 RCX: 0000000000000000
+>>>> RDX: 000000000000006d RSI: ffffffff81e5d6c9 RDI: fffff5200077ff46
+>>>> RBP: ffff888146b205c8 R08: 0000000000000005 R09: 0000000000000000
+>>>> R10: 0000000080000001 R11: 0000000000000000 R12: ffff88807dc6c2b0
+>>>> R13: ffff88807dc6c408 R14: ffff88807dc6c3f0 R15: ffff88807dc6c3c8
+>>>> FS:  0000000000000000(0000) GS:ffff8881245d9000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00007f60e56708c0 CR3: 000000006b065000 CR4: 00000000003526f0
+>>>> Call Trace:
+>>>>  <TASK>
+>>>>  __list_del_entry_valid include/linux/list.h:132 [inline]
+>>>>  __list_del_entry include/linux/list.h:223 [inline]
+>>>>  list_del_init include/linux/list.h:295 [inline]
+>>>>  io_poll_remove_waitq io_uring/poll.c:149 [inline]
+>>>>  io_poll_remove_entry io_uring/poll.c:166 [inline]
+>>>>  io_poll_remove_entries.part.0+0x156/0x7e0 io_uring/poll.c:197
+>>>>  io_poll_remove_entries io_uring/poll.c:177 [inline]
+>>>>  io_poll_task_func+0x39e/0xe30 io_uring/poll.c:343
+>>>>  io_handle_tw_list+0x194/0x580 io_uring/io_uring.c:1122
+>>>>  tctx_task_work_run+0x57/0x2b0 io_uring/io_uring.c:1182
+>>>>  tctx_task_work+0x7a/0xd0 io_uring/io_uring.c:1200
+>>>>  task_work_run+0x150/0x240 kernel/task_work.c:233
+>>>>  exit_task_work include/linux/task_work.h:40 [inline]
+>>>>  do_exit+0x829/0x2a30 kernel/exit.c:971
+>>>>  do_group_exit+0xd5/0x2a0 kernel/exit.c:1112
+>>>>  __do_sys_exit_group kernel/exit.c:1123 [inline]
+>>>>  __se_sys_exit_group kernel/exit.c:1121 [inline]
+>>>>  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1121
+>>>>  x64_sys_call+0x14fd/0x1510 arch/x86/include/generated/asm/syscalls_64.h:232
+>>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>>  do_syscall_64+0xc9/0xf80 arch/x86/entry/syscall_64.c:94
+>>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>> RIP: 0033:0x7f60e579aeb9
+>>>> Code: Unable to access opcode bytes at 0x7f60e579ae8f.
+>>>> RSP: 002b:00007ffc2d47ddf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+>>>> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f60e579aeb9
+>>>> RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
+>>>> RBP: 0000000000000003 R08: 0000000000000000 R09: 00007f60e59e1280
+>>>> R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+>>>> R13: 00007f60e59e1280 R14: 0000000000000003 R15: 00007ffc2d47deb0
+>>>>  </TASK>
+>>>> Modules linked in:
+>>>> ---[ end trace 0000000000000000 ]---
+>>>> RIP: 0010:__list_del_entry_valid_or_report+0x14a/0x1d0 lib/list_debug.c:62
+>>>> Code: 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 8d 00 00 00 48 8b 55 00 48 89 e9 48 89 de 48 c7 c7 40 3d fa 8b e8 37 b0 32 fc 90 <0f> 0b 4c 89 e7 e8 3c 24 5d fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
+>>>> RSP: 0018:ffffc90003bffaa8 EFLAGS: 00010082
+>>>> RAX: 000000000000006d RBX: ffff88807dc6c3f0 RCX: 0000000000000000
+>>>> RDX: 000000000000006d RSI: ffffffff81e5d6c9 RDI: fffff5200077ff46
+>>>> RBP: ffff888146b205c8 R08: 0000000000000005 R09: 0000000000000000
+>>>> R10: 0000000080000001 R11: 0000000000000000 R12: ffff88807dc6c2b0
+>>>> R13: ffff88807dc6c408 R14: ffff88807dc6c3f0 R15: ffff88807dc6c3c8
+>>>> FS:  0000000000000000(0000) GS:ffff8881245d9000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00007f60e56708c0 CR3: 000000006b065000 CR4: 00000000003526f0
+>>>
+>>> #syz test
+>>>
+>>> diff --git a/drivers/media/dvb-core/dmxdev.c b/drivers/media/dvb-core/dmxdev.c
+>>> index 8c6f5aafda1d..5cb46109d1ff 100644
+>>> --- a/drivers/media/dvb-core/dmxdev.c
+>>> +++ b/drivers/media/dvb-core/dmxdev.c
+>>> @@ -168,7 +168,9 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
+>>>  			mutex_unlock(&dmxdev->mutex);
+>>>  			return -ENOMEM;
+>>>  		}
+>>> -		dvb_ringbuffer_init(&dmxdev->dvr_buffer, mem, DVR_BUFFER_SIZE);
+>>> +		dmxdev->dvr_buffer.data = mem;
+>>> +		dmxdev->dvr_buffer.size = DVR_BUFFER_SIZE;
+>>> +		dvb_ringbuffer_reset(&dmxdev->dvr_buffer);
+>>>  		if (dmxdev->may_do_mmap)
+>>>  			dvb_vb2_init(&dmxdev->dvr_vb2_ctx, "dvr",
+>>>  				     file->f_flags & O_NONBLOCK);
+>>>
+>>
+>> Mauro and other maintainers, this is literally the same issue as one reported
+>> last year:
+>>
+>> https://lore.kernel.org/linux-media/20250407091619.11250-1-superman.xpt@gmail.com/
+>>
+>> and I'm honestly a bit surprised that nobody has dealt with this, it's 10 months ago.
+>> And syzbot is still hitting it, literally crashing the box.
+>>
+>> Hmm?
+> 
+> Nobody cares about any user that is able to open a dvr device, which at
+> least on debian is EVERY standard user, can crash the kernel?
+> 
+> I see replies on other messages, yet this issue has seemingly been
+> ignored for a year.
 
-A few fixes did pop up for io_uring since I sent the pull request
-earlier in the week, so let's flush those out for the -rc1 release. This
-pull request contains:
-
-- A fix for a missing URING_CMD128 opcode check, fixing an issue with
-  the SQE mixed mode support introduced in 6.19. Merged late due to
-  having multiple dependencies.
-
-- Add sqe->cmd size checking for big SQEs, similar to what we have for
-  normal sized SQEs.
-
-- Fix a race condition in zcrx, that leads to a double free.
-
-Please pull!
-
-
-The following changes since commit 2961f841b025fb234860bac26dfb7fa7cb0fb122:
-
-  Merge tag 'turbostat-2026.02.14' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux (2026-02-17 15:51:14 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-20260221
-
-for you to fetch changes up to ea129e55c9e06a51a93c3f5ef3e32a6cfa3f8ec7:
-
-  io_uring: Add size check for sqe->cmd (2026-02-19 07:26:26 -0700)
-
-----------------------------------------------------------------
-io_uring-20260221
-
-----------------------------------------------------------------
-Caleb Sander Mateos (1):
-      io_uring: add IORING_OP_URING_CMD128 to opcode checks
-
-Govindarajulu Varadarajan (1):
-      io_uring: Add size check for sqe->cmd
-
-Kai Aizen (1):
-      io_uring/zcrx: fix user_ref race between scrub and refill paths
-
- drivers/block/ublk_drv.c     | 12 ++++++++----
- drivers/nvme/host/ioctl.c    |  3 ++-
- fs/fuse/dev_uring.c          |  6 ++++--
- include/linux/io_uring/cmd.h | 15 +++++++++++----
- io_uring/io_uring.h          |  6 ++++++
- io_uring/kbuf.c              |  2 +-
- io_uring/rw.c                |  4 ++--
- io_uring/zcrx.c              | 10 +++++++---
- 8 files changed, 41 insertions(+), 17 deletions(-)
+Another ping on this one. For some reason you (Mauro) are ignoring this
+issue, both the original report and my report. Not quite sure what to do
+about it, but I'm tempted to just send the patch to Linus at this point.
 
 -- 
 Jens Axboe
-
 

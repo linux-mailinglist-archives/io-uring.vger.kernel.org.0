@@ -1,182 +1,181 @@
-Return-Path: <io-uring+bounces-12359-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12360-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UL0BANIVmWl5QQMAu9opvQ
-	(envelope-from <io-uring+bounces-12359-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 03:17:54 +0100
+	id iBygLnC0mWkgWQMAu9opvQ
+	(envelope-from <io-uring+bounces-12360-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:34:40 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2183B16BEB2
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 03:17:52 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B8416CEB5
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 14:34:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A4622303A87A
-	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 02:17:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1FA28300E25A
+	for <lists+io-uring@lfdr.de>; Sat, 21 Feb 2026 13:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9795F257825;
-	Sat, 21 Feb 2026 02:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A08C137750;
+	Sat, 21 Feb 2026 13:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YCk5mlBi"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LDh7rJ5R"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B8E2D5957
-	for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 02:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E890A1C28E
+	for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 13:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771640270; cv=none; b=OL7NJKcYIWOiK9Q7Vt1yhPagtLjyp1fJLAR30GMPs0FIcDf1OCPrcuIp9AErUbnnpd94rChzc8Cig7ODrOpqIZ8amEa6V9BLhiPFaxysJeQjGwE5vjOgJSHXNyQ+Jg4ttx9fLODFZ00mPdOlVWhtl1LWTPskaf2rlNm/jfMcnIk=
+	t=1771680878; cv=none; b=RXowcaAgjbKTWZk94BCLUwxysKpHU5sepkU+2AbP7DRK9iSti/mIGJwO452o3lTX+yF3z7bGQJ51meWMQOOvsyKs+EH9zjiJLSTLxSsj59xXfFEjGB6Hx3YO6ZaFPImCtptU4oTONBJR5jI/owzuRm3KiTtp+BF4T9QpTcWZCiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771640270; c=relaxed/simple;
-	bh=vK3Fkv92JKiQBiR+4ebF+Zo0ZjdiSrig6m5HRKXKHqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDxz54hK3hhUsXpuZy+x4cuvF0bXCjqk1ukHPV7vxvWsTTZn9ER08WenNpxkMo3iGcocFtxWngwHDNy+bPdqe8u18GloTlKqsWqHOnghP0AbdupZp67l2vJPT6jGV2k1P9+dEQSfkx49kTHt8fM+2xyHf8WuNdvo+Y7d647Pi3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YCk5mlBi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771640267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=28qhnRDYbIMza8wCtEF45tLfB5UezN0tXVglAwww3+A=;
-	b=YCk5mlBiw7PnFtTwzUFZ3bmLE728FK7LY9tF/nqbz8VzJVoByxXuLBKjlUP5vxfqlUsArB
-	2+OwVupn0cbmkjVo4tzvr/IXmkC6V/pzYafOMTCQCPyHHsmkT/gg0vWTERhZ2rWMGc7KUg
-	/hZEsZny839ocYzJxxI9SDTJVfnLJb8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-3w5VkhJyNSKzFIOPSprUfQ-1; Fri,
- 20 Feb 2026 21:17:44 -0500
-X-MC-Unique: 3w5VkhJyNSKzFIOPSprUfQ-1
-X-Mimecast-MFC-AGG-ID: 3w5VkhJyNSKzFIOPSprUfQ_1771640262
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13965180049D;
-	Sat, 21 Feb 2026 02:17:42 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D676B19560A7;
-	Sat, 21 Feb 2026 02:17:34 +0000 (UTC)
-Date: Sat, 21 Feb 2026 10:17:29 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Anuj gupta <anuj1072538@gmail.com>,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v3 0/4] io_uring/uring_cmd: allow non-iopoll cmds with
- IORING_SETUP_IOPOLL
-Message-ID: <aZkVuX2OmQr8Ca3D@fedora>
-References: <20260219172228.429479-1-csander@purestorage.com>
- <aZhuwOku9lFe33UM@fedora>
- <CADUfDZr3ksmd=ZZOhU4RJsqEzbxBHnDPCtOQXJ5ft=X7irWvPQ@mail.gmail.com>
- <aZiHlp8nOPgQFGMq@fedora>
- <CADUfDZoxW0m4nptfNYqmqFCdTj6zSaYOk1vYSKU5JztkjEjD=g@mail.gmail.com>
- <aZiMS9EZrOqEBhQL@fedora>
- <CADUfDZoRFRzXd4c=qu+7i5nTqFi1BfC4DvaDXA1neov591ps3w@mail.gmail.com>
+	s=arc-20240116; t=1771680878; c=relaxed/simple;
+	bh=JVyj9pdjJLc45Q4WWx93kamdjb9RRROa/orUtGHKpmc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UEsGlx2kZhGxNxwVJFjoiYWgnACiEIOmotoe3qsMti5l47A287+cxeulZGNyJjSvliuHShD1Z5qP8Oav/79T576HncRboAT6uh1gNd+Klo0qz3Com/9ZXEKncPzeo/rglT4ad7CT7WGSrI09YMuoyYtc1dWNMP4709MLPz/9s2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LDh7rJ5R; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d4ba9abbecso2870004a34.1
+        for <io-uring@vger.kernel.org>; Sat, 21 Feb 2026 05:34:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771680874; x=1772285674; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oDnxLukRBRkPWfr+fgwJP9t3zemK//XLRS9Qpx+rqFY=;
+        b=LDh7rJ5RWZ99CEUVOZXjVk8PF7pUORsq8VhFqYT9nzSjh/o5dPMp8pH73x0CEPmzD+
+         Z+7FZLfa13NTydvKUuubLC6RCEsjLyYrfWDJ0vXfHcxEjup0qHRyYQJm8HuXrNtMNmjF
+         Cg/SbC/WMNtcvghcf8uC49KsTsEYM+EY1bIIH0Ha2dxqk6169ass/zDnMNrzj6rn3kx0
+         rq4IZpmzdlzqFVedF8tP8/gY2fSAlcx0VnkjKir1nJNYDg76L348N9c4qlIaLePiBGU7
+         A3a8JDkz3bzF8ElOEekrVCQ2joCeoWvNJ8i3Vz7yCNnNSJNossFIeOMEujfvYdSKpTlB
+         oW4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771680874; x=1772285674;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oDnxLukRBRkPWfr+fgwJP9t3zemK//XLRS9Qpx+rqFY=;
+        b=GMGj1angUndR6gDq+3Sjj9VrE6WjtA7B0Xtp7KXh96zVdMa9Pp/HSkkXhgwwcgajmv
+         vlcCdMRiRdJsX1EKIlfe9FQtcc3nqh+Ol7hvEw5hJtekn7+yLZDFAwFBq60AMgnYOO9s
+         dmngHK0nasSUSMv3DitxVZwVUferZGPXAUa36HjTPvNfWHzJyGDzKsKglbm7ewxkbOUp
+         3b9Clq3WpYEf2p/HI9+/BcFRm38Hhxg60OsI14drGui39l1+hKbw1WWrj+ciMfj7svKr
+         e4RdvXBRD4Qg5qbWB1vcZX3Ja0+limgf8LIY6k9CKv47FkszmBaSzbAwwIOQY3rtJSPZ
+         L+gQ==
+X-Gm-Message-State: AOJu0YxT0AR3byWnTQoprFkHwSZdZ01Bf05vLsslhq7ADy39Xw5iPdjj
+	ftqsXrxvSoTlzt2Hn0PlJJDdJgQWFbJQuziZGV83rx3sNmvH7oNPfEqY7UmQJLRpi7xJmMAMpwM
+	dmlWNKDNWVg==
+X-Gm-Gg: AZuq6aI5n8O6JV8gSYGp93ADAfPPmu+M5dZ5CUvwAWU6vE29V2XMC+m6z0RhQqN1C2f
+	3sfUwOPd9BjP66hSlB6lVTUrcOobFLzigg7YxvZJ4hm0k+7x0UcQe2rIOpCC2qJ3k5SqWJJ9OG2
+	b6WUOfohD/GkT4K/1avEQb3P9vihOPzQrMRtxZUHoRUxIlAecilYrhgSB2Dd0LKjvtDQSMt6RZV
+	F8DxFyiV6zpQjP+Dks/lv/iTRlEe5FukPbSGssdNe0/xzACL7JnuvOn4ZXlGGanL7BQaYB4eJeu
+	xHBAO3TK2jUVUFgihlxtE2skhN3J1LFkIpzbGntQgSVSQpHZ713FeqZDW65mrNuU+rAWxA/01JW
+	Ql+SV+UaiU4L2CTRWbtbURqus0D3W3IsdULULxR3j6uAZzywZPlWtv3HJOdg6Mz2bFgj8ejdZou
+	AR9REWCiQEFwtpFq65gbrAnFYWw3SjYweg3Tq7XzrfYPh83HuVx2VJjlD1YPhi94c/uMngVKyTe
+	NcrhVgJBTwOTw==
+X-Received: by 2002:a05:6830:6adf:b0:7cf:d6d3:df0b with SMTP id 46e09a7af769-7d52bf19b05mr1778349a34.21.1771680874512;
+        Sat, 21 Feb 2026 05:34:34 -0800 (PST)
+Received: from [172.25.209.35] ([187.223.170.195])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d52d038752sm2688429a34.17.2026.02.21.05.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Feb 2026 05:34:33 -0800 (PST)
+Message-ID: <2b80b81c-42dd-49d1-9f89-f2cc78e9d3fa@kernel.dk>
+Date: Sat, 21 Feb 2026 06:34:32 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZoRFRzXd4c=qu+7i5nTqFi1BfC4DvaDXA1neov591ps3w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 7.0-rc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.dk,lst.de,kernel.org,grimberg.me,vger.kernel.org,lists.infradead.org,gmail.com,samsung.com];
-	TAGGED_FROM(0.00)[bounces-12359-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12360-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
+	DMARC_NA(0.00)[kernel.dk];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2183B16BEB2
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:mid]
+X-Rspamd-Queue-Id: 33B8416CEB5
 X-Rspamd-Action: no action
 
-On Fri, Feb 20, 2026 at 09:47:38AM -0800, Caleb Sander Mateos wrote:
-> On Fri, Feb 20, 2026 at 8:31 AM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Fri, Feb 20, 2026 at 08:22:29AM -0800, Caleb Sander Mateos wrote:
-> > > On Fri, Feb 20, 2026 at 8:11 AM Ming Lei <ming.lei@redhat.com> wrote:
-> > > >
-> > > > On Fri, Feb 20, 2026 at 07:55:33AM -0800, Caleb Sander Mateos wrote:
-> > > > > On Fri, Feb 20, 2026 at 6:25 AM Ming Lei <ming.lei@redhat.com> wrote:
-> > > > > >
-> > > > > > On Thu, Feb 19, 2026 at 10:22:23AM -0700, Caleb Sander Mateos wrote:
-> > > > > > > Currently, creating an io_uring with IORING_SETUP_IOPOLL requires all
-> > > > > > > requests issued to it to support iopoll. This prevents, for example,
-> > > > > > > using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
-> > > > > > > zero-copy buffer registrations are performed using a uring_cmd. There's
-> > > > > > > no technical reason why these non-iopoll uring_cmds can't be supported.
-> > > > > > > They will either complete synchronously or via an external mechanism
-> > > > > > > that calls io_uring_cmd_done(), so they don't need to be polled.
-> > > > > >
-> > > > > > For sync uring command, it is fine to support for IOPOLL.
-> > > > > >
-> > > > > > However, there are async uring command, which may be completed in irq
-> > > > > > context, or in multishot way, at least the later isn't supported in
-> > > > > > io_do_iopoll() yet.
-> > > > >
-> > > > > Can you describe the issues you envision in more detail?
-> > > >
-> > > > Basically IOPOLL doesn't support multishot request yet.
-> > > >
-> > > > For example, when io_uring_mshot_cmd_post_cqe() is called and new cqe is
-> > > > queued, it can't be found from io_iopoll_check()<-io_uring_enter(IORING_ENTER_GETEVENTS).
-> > >
-> > > I don't think that's a new issue, though. You're right that
-> > > io_uring_mshot_cmd_post_cqe() assumes a non-REQ_F_IOPOLL request, so
-> > > it's up to the ->uring_cmd() implementation to ensure that (which ublk
-> > > already does). Since ublk's struct file_operations don't provide
-> > > ->uring_cmd_iopoll(), any ublk uring_cmds issued to an
-> > > IORING_SETUP_IOPOLL io_uring won't have REQ_F_IOPOLL set, so
-> > > io_uring_mshot_cmd_post_cqe() should work just fine.
-> >
-> > Please look in the following way:
-> >
-> > 1) without patch of `io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL`,
-> > multishot command submission can't succeed
-> >
-> > 2) with patch of "io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL", people
-> > may see hang forever in io_uring_enter() if multishot command is submitted
-> > in context IORING_SETUP_IOPOLL.
-> 
-> Okay, I see what you mean. If ctx->iopoll_list is nonempty and a
-> non-REQ_F_IOPOLL request posts a completion without going through task
-> work, io_iopoll_check() won't check for CQEs already posted outside of
-> iopoll. I think it should be simple enough to check for CQEs
-> unconditionally in the io_iopoll_check() loop.
+Hi Linus,
 
-Yeah, it shouldn't be hard to deal with.
+A few fixes did pop up for io_uring since I sent the pull request
+earlier in the week, so let's flush those out for the -rc1 release. This
+pull request contains:
 
-Thanks,
-Ming
+- A fix for a missing URING_CMD128 opcode check, fixing an issue with
+  the SQE mixed mode support introduced in 6.19. Merged late due to
+  having multiple dependencies.
+
+- Add sqe->cmd size checking for big SQEs, similar to what we have for
+  normal sized SQEs.
+
+- Fix a race condition in zcrx, that leads to a double free.
+
+Please pull!
+
+
+The following changes since commit 2961f841b025fb234860bac26dfb7fa7cb0fb122:
+
+  Merge tag 'turbostat-2026.02.14' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux (2026-02-17 15:51:14 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-20260221
+
+for you to fetch changes up to ea129e55c9e06a51a93c3f5ef3e32a6cfa3f8ec7:
+
+  io_uring: Add size check for sqe->cmd (2026-02-19 07:26:26 -0700)
+
+----------------------------------------------------------------
+io_uring-20260221
+
+----------------------------------------------------------------
+Caleb Sander Mateos (1):
+      io_uring: add IORING_OP_URING_CMD128 to opcode checks
+
+Govindarajulu Varadarajan (1):
+      io_uring: Add size check for sqe->cmd
+
+Kai Aizen (1):
+      io_uring/zcrx: fix user_ref race between scrub and refill paths
+
+ drivers/block/ublk_drv.c     | 12 ++++++++----
+ drivers/nvme/host/ioctl.c    |  3 ++-
+ fs/fuse/dev_uring.c          |  6 ++++--
+ include/linux/io_uring/cmd.h | 15 +++++++++++----
+ io_uring/io_uring.h          |  6 ++++++
+ io_uring/kbuf.c              |  2 +-
+ io_uring/rw.c                |  4 ++--
+ io_uring/zcrx.c              | 10 +++++++---
+ 8 files changed, 41 insertions(+), 17 deletions(-)
+
+-- 
+Jens Axboe
 
 

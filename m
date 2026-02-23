@@ -1,86 +1,85 @@
-Return-Path: <io-uring+bounces-12388-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12389-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4L4oH1+AnGmLIgQAu9opvQ
-	(envelope-from <io-uring+bounces-12388-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 17:29:19 +0100
+	id eKDJGI2qnGklJwQAu9opvQ
+	(envelope-from <io-uring+bounces-12389-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 20:29:17 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6429179C97
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 17:29:18 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB28C17C60E
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 20:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 18CC030200E8
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 16:26:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A6E993105581
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 19:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C18E30FC1D;
-	Mon, 23 Feb 2026 16:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023CC36A011;
+	Mon, 23 Feb 2026 19:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljno1fDh"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Jq1QgJ27"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB95930E0FB
-	for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 16:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAE5369979
+	for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 19:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771863989; cv=none; b=GLEEyEmCBKF628bHnrRnV06Nxz8Gbe4otuG5IMx1vGc8u9YF3XpwJSY7XKqoPQGb1KbF9vUqId3s5n9ZCpbswmiBm8wsWdGeOagH3w2DhVFyuQQ1VMuYZrWZLqh0HCUaXOK/nL2GaBGH9BQbNZK1Mj3IbnEUonbfNyovdu6zJ3k=
+	t=1771874121; cv=none; b=Rhgk9GqmfYroBkOB1id2U74fvG8Bf96N9HNko/In81H8ju6WGzGskqRub5E2An14CvBeRjLLXIxTFOL6MHFAbQljf3e4hM9y0rHA7TupSV8hncw/UynFT8IA682xdXnT6q7d8PeSU0og5pXGCqaSGrMaLYMv8PWdmtvDvGoi1jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771863989; c=relaxed/simple;
-	bh=lIGmXa8myVtUxsOqfYxqVtmc4Q2dqXBBcBxArxi9V7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRlwqWZP/5aleNrAeGuLUvtb48I5SCjlOp1RUW046AF6dKUpThBLICktND3Gb8NFLbCjO/wvTRPe0cVyBmBxhXs5Jb0WnENVHW34WHxUdk5i0inAknOwMtIx9K6OAVm9WbCaB45tt96MDsNJI8oQTJBeffByqqwjDXbrgovIrM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljno1fDh; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4834826e5a0so56585795e9.2
-        for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 08:26:27 -0800 (PST)
+	s=arc-20240116; t=1771874121; c=relaxed/simple;
+	bh=KHMRzLrzx0bFuoieu34Lu7CAeOR3r3aI+ogPHZCFAs0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t/AGw+cpiNIT30ABSbFgss+QOGdmSqzCQRYtG8gb4f8Y6YhufRNtASIjyeDUMl6HxQ5wnsCRb4MmVOxNQ0XyEMnLBwEuisutAT3821Ual3ZjO8env2/PV93Ctq+5YZMD6EMXh1fk56cEEa0T3bqcOZGr6aablblg84A0HlkZULQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Jq1QgJ27; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7d4b9c839b1so1851238a34.1
+        for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 11:15:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771863986; x=1772468786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rqe7eP2/t2WLWow5bcQFLzacPy8f6F76CKBflwV7ZMs=;
-        b=ljno1fDht8S0v6YCBP+ONKsEb1s/7D0fUKv1irj4DxfiYaph8zuw2tkkq9z+pd9AL3
-         +4a880wWeWsOq4m2fvxx5rMOrR71jG8G/+ZKo2nt3pyGe+OMqW1e4qTq5w0cJ2JcL59e
-         fI73Uvdj/Z65/G8z/uxOayUGHtmhdMxeVOQmAL9DX/v3YI9d9LFgTzX/mX//nRSzn/vW
-         7hhDHi0x+jq1LsTPZdrCFU7jV1nCeMtj9+mIYPk/aoefDPkBtGwjsxA5dS2F0j0nhUar
-         KOYlcR1QguspTHCsKUUclp8eRGyD+leQ7bhNeoo55S5QbHhc6xc5YiDLqNuy++VSR1Tu
-         xtSQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771874119; x=1772478919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ODHsUdsD13+eUwuSoGESpsAEqwz3zb6k+pxL615Ry+8=;
+        b=Jq1QgJ27fHjhKk+LCmDF6vQwCSQ3ohzl+VXiUnkVaJfULUN0uQgCAtu2wl4rP8zS4T
+         CtG2w+5qLgcwyvxTeswNb5lPJ5I5VWs4ad22VJnoyokDPCmODVUyvQREWOD/FsvbuTvO
+         0nf5pHWZhc26acVzH2gqE2thBZYAHM9pOvKsmVrMCmb4DptX5oTuouM+Vu11qTvgX7uK
+         m9xhphlAV7c8NueXDDVdQ8T1t6rFyxXAh5P8R8lJJlQEcNxLmpsX7UJYifJLoLeh/vsv
+         uXqcaqPypkVDT4nSgQRJmOhP6gIvfTZDmBomNvc7pnC3XhuuPGqYezoAMT8jFktEoW5z
+         +gHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771863986; x=1772468786;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rqe7eP2/t2WLWow5bcQFLzacPy8f6F76CKBflwV7ZMs=;
-        b=MnrXxJzCnYGUUDpUmyBf8R/ntjfwfFd9p6cFEqFM1SYKRa0RjgsJr0fva6FbMayRwn
-         5j66GubU8NMdcjkAdRVJv7JZ2dcbTt2Q6aA4DPLCi5Tms1AqKIkU4cLdaU1khr75/rzA
-         E4y6Fh/DM9JoIbCJCLBm3GMFZO4nNYQQy1Z0RsSmViWAY76VV6RF6I1VHt6Ko31/Ta9H
-         m7JxSEs8+CAoQOdkgL6BzMGvu5kEq9mtXpNYtg94cuESYbc9pZdCigGYzHPPja6saiaB
-         tT41tJqU+xfARdlPaEa7tTHpduYFV8mJ0alQOyR3YXGHI1uVYDL7NM70ak9brgyy2da5
-         dVJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbNAVxXzLr2Bn9bThuWSJZmCTZwhQXSL7vVEbyW0B1KXU1n+S0/x0uY0eOKQB9Et7PKqayedoqaQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNaMC9ScARofpNUKtwNKncGzi8EUwNKSFWHLSRZuYkI2IJ2QZK
-	X7FOYPo965bA/7rGXviexvXhqALT80jKDWB4qJ30ESEvjcBfmItyrf2e
-X-Gm-Gg: AZuq6aKKZCl6YYdZ3SZ8BRo6dq9z7diKBmHtj4rY2HE26bAzz5Ti0fHpeseJowI4glb
-	8L6pFpj7dHa/no0QqVQraWbQ1TUMrGUY1O71TVsXVzmaOEEQLrlvnzDYe5g5LJzHBfOr4z/Xh2H
-	9clK/mIrvEzgQlpmVZPl/F8P58S+mzzGjLnJPwIObsvcjg52lVMpi8fgxVRZ2tA6AQQCPAhNPZZ
-	7v/TTc9RN6wxaxJUwndw6lT3mcMNMZYXBXEo7n/RvQd/YYj38qFnoqZW7S3ReXUoPFdjsYRfIPQ
-	rMn3VwmQqFQjg4yUoIQFdVRlcRHYtA2fjOSeboLDmgykYrQupCMUC/Ur+o9FBCQGJ6KctZ8HdQF
-	T+z7HOG2eUP6dT6dtFVtjRCsSWH5QGDCqgASynPz/aJZ85CeKDqpdv6fVoiHe9TmEkOg8hOTb0h
-	4uliEKFapgv7n+DgbhOpi+ZluT5XhVLrNIFK7hsfyDHHq8GA+natIQtAMERGmHVmo6NK4EAD8C1
-	d+Hv7yepCrx9W2vlqi/lgWyTsw8rtj4PSkzMPJTk8Mkdr1yDROTXhjjZiKeudlbo0UpkbGAzF6V
-	cw==
-X-Received: by 2002:a05:600c:4e45:b0:477:76bf:e1fb with SMTP id 5b1f17b1804b1-483a95e957bmr187456755e9.16.1771863986095;
-        Mon, 23 Feb 2026 08:26:26 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a429e49csm142919405e9.4.2026.02.23.08.26.23
+        d=1e100.net; s=20230601; t=1771874119; x=1772478919;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODHsUdsD13+eUwuSoGESpsAEqwz3zb6k+pxL615Ry+8=;
+        b=L+CZfXwLESMGeIVVB/fIMMkKNIJ86lOXNAUugISIXkxdCV+1vBBwAu7sE5s4b22AI6
+         K/Rjz41bqFhurYTp9h+G8rGc8vsDeUUexqwqL1951iX4mq6H4cD44eIuj1okT3x/NbsK
+         1H4qZQNtGflC3QIWJpe8nKv/9e55D/eRtFvplx/3ieaS1bM1//32IivaBsHXoiQ1dnnN
+         pfD7qETqKU1DE/5JENnYETvZXozNmk2tz+Vfct4X2uoOyOJfgZiJr+3o7QeJllzLlweF
+         bAEMxEGekZHfvgOgnhF/NuDLht7lRysE3oubHj3QFCiNs/koR6cWUe9WJssROdsnEaoR
+         PrqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4CFfSJsjlXkzsKLoBxSVSiFmJAqfppGOG7K4x2jqemXetCVTGqk+ivNPc+rCjXBzbjP4r5HA/Ww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdwHM+0drrylQIKu7efx+L66ZoZggV5Dk6JWMtKnNFXFNyiQbw
+	W8xQC6ICvQXDD8A9Q/wIPPWbJdflCDgwyD0BmFTECyLzEr/mJFqU0JTm13Md9qeS2vtcNlxMWkk
+	zU60tqKM4CQ==
+X-Gm-Gg: AZuq6aI5lsjP4cWBr1C8MCav8fP+u7+79TL2v8p5ONl34YEJi6XsxyzmXNzCz0cs6RM
+	HsHbfSDYom9xIR6ts+TuC/ddvuYJhXqfR9l4qEN5Tr0xY/hKuYJJymuNZFGf5oAAi47mdQhZb4U
+	zsFSQlPeL3s6YXzKblmu7E9iFAwjxFhI9mHd64CMoT4ULuutLfL5+EPl6W58ceheeUqLVb8iXUw
+	KI9OIcrtfReQ1zcp2AnXY2o2SwWpX1ZrJUKuTS4sYCf9lYdABej/CpDOkFNzNeCE7aBXlTmETyx
+	5XIl4IxCuBZ6SjBvC7O0iGzx+65Eg5njhSbOZsheTZDyU9E88Od2SPt2FtwlnYVvZDYy+LSpCod
+	qFH9hOeMkZUvf8ka3zuvGYMtgUT0kxzQYyM9kHAvezQnZrqJ/6My9+gpjPEhruOeo2qBwIq603s
+	4B2fATKObd3vU7QZvq9wIFXC2TD4Vf/772O6TE0Dwp1qOsMv9FlBW80wKEJ7BNonP70vSlilSw7
+	83nqqsE
+X-Received: by 2002:a05:6830:67ea:b0:7ce:2b34:deca with SMTP id 46e09a7af769-7d52c2cadc7mr8225612a34.28.1771874118880;
+        Mon, 23 Feb 2026 11:15:18 -0800 (PST)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d52cf78503sm7944055a34.3.2026.02.23.11.15.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Feb 2026 08:26:25 -0800 (PST)
-Message-ID: <ed7b85d0-38d0-413c-a28a-f3b0d1a72a13@gmail.com>
-Date: Mon, 23 Feb 2026 16:26:20 +0000
+        Mon, 23 Feb 2026 11:15:18 -0800 (PST)
+Message-ID: <e5b8042c-09b6-4d9a-bab9-c9693fbffa52@kernel.dk>
+Date: Mon, 23 Feb 2026 12:15:17 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,112 +87,157 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] selftests/io_uring: add a bpf io_uring selftest
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- io-uring <io-uring@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- Jens Axboe <axboe@kernel.dk>
-References: <cover.1771327059.git.asml.silence@gmail.com>
- <7cc147a959ac068c55dae4f540e38e9e4ab121e0.1771327059.git.asml.silence@gmail.com>
- <CAADnVQK0RaOA9ZYZdYyQxOzLde9MR8HpMM0SexcW59A9u7X2Jw@mail.gmail.com>
- <84e2f3ad-28f0-4e9a-804f-2647cba9b30f@gmail.com>
- <CAADnVQLSEoZ0V1m5j3ggX0o0gzVKyiDHL=J6F0wRXB8qk-MCGA@mail.gmail.com>
- <591a7f0e-7b78-42f1-9486-163249f5e306@gmail.com>
- <CACVXFVPx5AcC9y9xVPCaahDeumNGm4TSkkfhsJ8w+wmW52JQ4w@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] WARNING in __secure_computing
+From: Jens Axboe <axboe@kernel.dk>
+To: Kees Cook <kees@kernel.org>
+Cc: syzbot <syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, luto@amacapital.net,
+ syzkaller-bugs@googlegroups.com, wad@chromium.org
+References: <69953966.a70a0220.2c38d7.0111.GAE@google.com>
+ <c71fc714-25b2-4c56-b48a-6d9da1d40d60@kernel.dk>
+ <202602191048.395EE1E@keescook>
+ <7d955b00-8cbf-4b09-9733-2c0d65e84e6e@kernel.dk>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CACVXFVPx5AcC9y9xVPCaahDeumNGm4TSkkfhsJ8w+wmW52JQ4w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d955b00-8cbf-4b09-9733-2c0d65e84e6e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12388-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.dk];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	TAGGED_FROM(0.00)[bounces-12389-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url];
+	DMARC_NA(0.00)[kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A6429179C97
+	TAGGED_RCPT(0.00)[io-uring,0a4c46806941297fecb9];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: BB28C17C60E
 X-Rspamd-Action: no action
 
-On 2/23/26 15:23, Ming Lei wrote:
-> On Sat, Feb 21, 2026 at 6:35 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+On 2/20/26 6:44 AM, Jens Axboe wrote:
+> On 2/19/26 11:53 AM, Kees Cook wrote:
+>> On Wed, Feb 18, 2026 at 09:27:07AM -0700, Jens Axboe wrote:
+>>> On 2/17/26 9:00 PM, syzbot wrote:
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13256722580000
+>>>> [...]
+>>>> WARNING: kernel/seccomp.c:1407 at __secure_computing+0x2ae/0x2e0 kernel/seccomp.c:1407, CPU#1: syz.0.17/6077
 >>
->> On 2/20/26 17:45, Alexei Starovoitov wrote:
->>> On Fri, Feb 20, 2026 at 3:41 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>
->>>> I had such examples, but selftests is not the best place for that.
->>>> It can use abstractions, and I want to make them reusable instead
->>>> of people copy-pasting from selftests.
->>>
->>> Sure, but please still post them as extra patches so it's easier
->>> to see what's the end result.
->>>
->>> Also please reply to that thread:
->>> https://lore.kernel.org/bpf/CALTww28QMg=YXqKWpWLZrLO+xiqOe3LGyput8dx68-dnQsxg=g@mail.gmail.com/
->>>
->>> It's not clear to me whether your io_uring+bpf setup will work
->>> for Xiao's use case.
->>> I don't think we need 2 ways of doing it.
+>> This is:
 >>
->> We discussed this with Ming on the list before, that's one of the use
->> cases I target as well, there is no reason why it shouldn't work. The
->> difference is that this approach gives a flexible framework for
->> extensibility and covers a good bunch of other needs, which is exactly
->> the reason I moved from a BPF opcode approach, while Ming's proposal is
->> more specific but argued to be a way easier to plug into ublk servers.
->> If you ask me, we need a solution that covers a broader spectrum of
->> use cases, but I guess it all can be argued in either way.
+>>         /* Surviving SECCOMP_RET_KILL_* must be proactively impossible. */
+>>         case SECCOMP_MODE_DEAD:
+>>                 WARN_ON_ONCE(1);
+>>                 do_exit(SIGKILL);
+>>                 return -1;
+>>
+>> It's nice to see we caught an impossible state! :) Now we just need to
+>> figure out what the repro is doing.
+>>
+>>> Not io_uring, no seccomp label that I can find...
+>>
+>> Why do you say this? The reproducer sets up io_uring and then calls
+>> seccomp:
 > 
-> One big drawback of  Pavel's approach is that it needs a totally
-> different userspace
-> implementation for using BPF, which is just hard to use in existing
-> io_uring applications.
+> Because I don't see any related interaction there at all. As per usual,
+> the syz repro ends up doing some odd SQ tweaking, which results in a
+> bunch of readv and NOPs being issued. The former against signalfd. I
+> don't see anything odd on the io_uring side outside of that. Well
+> there's the usual nonsensical fuzzing io_uring_enter flag setting, like
+> SQ_* which don't make sense for the ring setup, but these are just
+> ignored.
+> 
+> It is possible that because of the tons of readv being queued that some
+> io-wq activity will be occuring, and that could slow down certain paths
+> like the signal handling. But seem orthogonal to me, as you could most
+> likely accomplish the same with userside threads too.
+> 
+> I could be wrong of course! Note that I'm gone until next week, so not
+> going to spend any time looking at this before then. Please do dive in
+> if you have time, though...
+> 
+>> int main(void)
+>> {
+>> ...
+>>   //  io_uring_enter arguments: [
+>>   //    fd: fd_io_uring (resource)
+>>   //    to_submit: int32 = 0x847ba (4 bytes)
+>>   //    min_complete: int32 = 0x0 (4 bytes)
+>>   //    flags: io_uring_enter_flags = 0xe (8 bytes)
+>>   //    sigmask: nil
+>>   //    size: len = 0x0 (8 bytes)
+>>   //  ]
+>>   syscall(
+>>       __NR_io_uring_enter, /*fd=*/r[1], /*to_submit=*/0x847ba,
+>>       /*min_complete=*/0,
+>>       /*flags=IORING_ENTER_EXT_ARG|IORING_ENTER_SQ_WAIT|IORING_ENTER_SQ_WAKEUP*/
+>>       0xeul, /*sigmask=*/0ul, /*size=*/0ul);
+>>   //  seccomp$SECCOMP_SET_MODE_FILTER_LISTENER arguments: [
+>>   //    op: const = 0x1 (8 bytes)
+>>   //    flags: seccomp_flags_listener = 0x0 (8 bytes)
+>>   //    arg: ptr[in, sock_fprog] {
+>>   //      sock_fprog {
+>>   //        len: len = 0x1 (2 bytes)
+>>   //        pad = 0x0 (6 bytes)
+>>   //        filter: ptr[in, array[sock_filter]] {
+>>   //          array[sock_filter] {
+>>   //            sock_filter {
+>>   //              code: int16 = 0x6 (2 bytes)
+>>   //              jt: int8 = 0xff (1 bytes)
+>>   //              jf: int8 = 0x1 (1 bytes)
+>>   //              k: int32 = 0x3fff0000 (4 bytes)
+>>   //            }
+>>   //          }
+>>   //        }
+>>   //      }
+>>   //    }
+>>   //  ]
+>>   //  returns fd_seccomp
+>>   NONFAILING(*(uint16_t*)0x200000000240 = 1);
+>>   NONFAILING(*(uint64_t*)0x200000000248 = 0x2000000003c0);
+>>   NONFAILING(*(uint16_t*)0x2000000003c0 = 6);
+>>   NONFAILING(*(uint8_t*)0x2000000003c2 = -1);
+>>   NONFAILING(*(uint8_t*)0x2000000003c3 = 1);
+>>   NONFAILING(*(uint32_t*)0x2000000003c4 = 0x3fff0000);
+>>   syscall(__NR_seccomp, /*op=*/1ul, /*flags=*/0ul, /*arg=*/0x200000000240ul);
+>>   return 0;
+>> }
+>>
+>> So something has gone weird here, I assume related to seccomp listener
+>> vs io_uring and process death.
+> 
+> See above on potentially lots of threads being kicked off. But probably
+> reproducing this first would be a good step towards fixing it.
 
-Not really, it depends on how you write it. If you need to rewrite CQ
-handling in BPF, e.g. parsing CQEs and stopping at interesting completions
-to calculate checksums / etc. with BPF, then I get it, it's more involved.
-It could be useful for other reasons as well, but that's beside the point.
-But you can do that without ever touching CQ/SQ in BPF, for example,
-execute all your BPF work at the beginning of a syscall and indicate
-about this work via user-BPF shared memory.
+No threads are being kicked off - from strace, this seems to be the key:
 
-The downside is breaking links in two if you use those, but perhaps
-you remember my opinion on io_uring links, with the amount of uAPI
-side effects and locking complexity it adds to io_uring while not
-being too flexible, I'd rather replace them with something more
-generic, like this BPF struct_ops.
+seccomp(SECCOMP_SET_MODE_FILTER, 0, {len=1, filter=0x2000000003c0}) = 0
+exit_group(0)                           = 231
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SI_KERNEL, si_addr=NULL} ---
+exit_group(11)    
 
-In either case, I need it for a broader set of issues. It should
-work for things like checksumming / other manipulations of
-internally installed registered buffers, but even without it,
-there are enough use cases to justify that.
+as that WARN_ON_ONCE() in the report is indeed triggered off the
+2nd exit_group() syscall.
 
-> But BPF opcode approach is seamless with existing io_uring applications, because
-> it simply uses existing io_uring interface.
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

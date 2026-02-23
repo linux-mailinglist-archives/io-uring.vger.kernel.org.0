@@ -1,148 +1,259 @@
-Return-Path: <io-uring+bounces-12366-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12367-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0JxHMsRanGmzEgQAu9opvQ
-	(envelope-from <io-uring+bounces-12366-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 14:48:52 +0100
+	id EdYLGupfnGntFQQAu9opvQ
+	(envelope-from <io-uring+bounces-12367-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 15:10:50 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC2417740D
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 14:48:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF202177C76
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 15:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id CA519303DDFB
-	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 13:47:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D0BF5303B7F7
+	for <lists+io-uring@lfdr.de>; Mon, 23 Feb 2026 14:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA92259C84;
-	Mon, 23 Feb 2026 13:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4996527FB18;
+	Mon, 23 Feb 2026 14:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HRswkPtn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0veLx0k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DE026B77D
-	for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 13:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22111E49F
+	for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 14:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771854443; cv=none; b=eRqW7f9Suj415LnPAHyWZoJHeTmNcdXv2B5XJZobc89iRe1ZR4DjmDGv3WRZRF2JCJcMh7vW4bYX/sjMkUMe+1xxuya/ymYxLrXBhuTs06BiiTuyHDFOjb2NbCJdr2xlmPnglHG6YVi9xwD9RVY58ZDQAK0paVFAmAdMVzGeTCM=
+	t=1771855844; cv=none; b=NgTg6hssfusXVTTaRh/Kfffmo6aC+3KPQ7zBQ4hjxTbD1KD+0mSJ3Nbl+Q0A6LuOxtKTXvaqyEOENLJ4FrrIE+267igOmwMicQyJ+iEcOIbLa5YFLEk3GIjbzguI9+5zl/wOwQj1O+ZohE0f7dVAA7KBECNgpZr5H1sTu46Towg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771854443; c=relaxed/simple;
-	bh=pEK34LjZoTyAlPG6yprImgqtYWdPVrGi8mwVGjLAUHo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=clRqJvzosuqHkuYEKPEiUHlO+LgCXaz5w7WVi/lUrzMm8wTAUHlonqXt/rIRogMNYrmG0/dt3CBD1Xqoui5wEpTt8MZKBTCYtZ01QbM/F+NgwX6O2Reuc/5cXdE50rnJ4l51Idxa2se2Kp3f6ExhCKhbgG8IJdBq1SXaZsQbL4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HRswkPtn; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7d556c1a79eso662938a34.3
-        for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 05:47:21 -0800 (PST)
+	s=arc-20240116; t=1771855844; c=relaxed/simple;
+	bh=GEHv6UTPDs7U6JZWh2slAu4F/RIDHo2FMG4BtNv8VD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rAhKLIU+c/CKWMcU1ysrcscd+OK/MATUpRRmDGTeC47YY4Hl/FyzAmRYKYR+mRMPfe21QHKQfg6ioIkIIHFLXoddai6ccM2tcrAO3oeMRir7lvFQZbr0SngNqt1m0WWRwl0FrHX3taDfx2jtGBbtA8Ux+DaXBSJyNKZj527g8yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0veLx0k; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4837907f535so39364545e9.3
+        for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 06:10:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1771854441; x=1772459241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i8Pq+rLSKS6o9o2SEHiwXByvZL8hMyXiox1GLx1oFUg=;
-        b=HRswkPtn3eYAWpl9swc4tookL9RbFwUd7gIMVwtLnD6ieSPoDbyz4p1b/+iF1ntozL
-         IB0lur1vTZZjIy3lUpqVj8UUUWZf9xfHSUIb6kBLx+RL4eYkqVl+7YXLVyGsyqDIawAY
-         wgFN+4Qt5qwN/fKEW4nAqYJgYMy6Ol/zxeRcuw8W40igQt6qxvlhFYmsiGHhDLR0k6ZG
-         TgtbSOAgZL6lMn1W39XOJsKFfNBzLYwuoZLZCAM73E25Gms1HJx+5/+sZzW0rAkaRx1V
-         MXoJ8lvZE7M2D0LMDUYnXyCRKAaXgu03DNYIBrQD16TGsTDmFMw5klXVVKd+q/6x/4Ms
-         uWzw==
+        d=gmail.com; s=20230601; t=1771855841; x=1772460641; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+p7vc6g7z5/JbLqUE9J2fE+Vu0p8qksvLODFtbrmmng=;
+        b=Y0veLx0kvuEmFmi/1RBDnVPL8FUGwf3rneRXGmRP9LdiHaLIHPo29ncumoJ/893Quc
+         hp5GBeAgzsBfnL6BZ0ncqs9bwJY9h18qRd0XEggEJ4ykPmilHEWg+ON/WtiOZZT8S6tW
+         rc1yS9mg32Pf57AGJHRKZFtjkhy644TFzXWCRp2GN4KScRxnL/1msXlb4sR0VpmW5b8F
+         N3ykWds4I4U0VeeGPfLUvxyk+2R/PCQeJPbEgsLV26mq9peMgj6MLrl2sBOH6OeVWQhc
+         fWKGAVEnjHi/sReiEjE4HMJwpUpmepBdLBdANv5bAfiNemOQNX17VAFaPLNjVbPDCtba
+         cVjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771854441; x=1772459241;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i8Pq+rLSKS6o9o2SEHiwXByvZL8hMyXiox1GLx1oFUg=;
-        b=DB+IMgsvjERWXmQFQBXtT6YVLQVB8+Y4oLD3/EBDu8chq3SML7kfr00oBK2u3H1S7j
-         AHC5MZuCB9eXqagfeUi+9ivgGJiL5L9KDlQOaOFD3rC/wYyRfjveu2/wDMU+R29FPkFN
-         qSw8a+ctu067tMwTYqRft6VqaxpR4jL6GNbXKGSNfw9BoRwdX/0qDDFNRaWEF2XfWyrv
-         999cBFLDkN03n+7uldu8cnslYm8G0dLRTbRA5inzxrJthkggWErBywErBjk4SSUVUCAK
-         0WuPv5ASY48qk1X893GBeXENLcrr/i7DGmPOU4wpwpvheLiD6wFunlxo6WThWX567L8o
-         pN6Q==
-X-Gm-Message-State: AOJu0YxmxfacliveT/ADBj50YlYuuYc79ylg7UDRw8KBceDPG65HgIg3
-	nhKI4JtNn54qVSx8c18yB+9eJZ3lcK/RED76KSMRIi1B/oboFCk58wD2QHmnpJXTOH4=
-X-Gm-Gg: AZuq6aKSgySwiBHpTCqQ20hTzixlz8gPVIed6I7R3oawrCT3Sazf4k35reAV3QFLhXN
-	fDb4lI81yR44Ig6v7wD9QwE+L71+P6GdHnxOSwLBC+aClwwfgWtnP+S1XYONOlR5c61IdXBPBcq
-	8L5xyZ4+wsriN7BMrPxFqOB+6BGwn97qrs5rjxYDE22bbJUajK5r4z7A8VN7SYbIYPmMqKy8QqN
-	S/CsBiPoR1I829Uy+6hwlsUAedY5dhabDg3RrH7rbkx+Hd15P712G9dgA8eOvCkzoE5i+B9GVjN
-	130hGSuA9KxMapiW4x7CtqCQ9sN6C+Q+FJSwa5iNaLwv0kxgW8ii6cER/UzFUL2VJmosNzc1gX7
-	Qva6kBV2Nwu/wWjQ+NTSyH7WVlkI9Ya1OBnc3oS9ZrN+WT1tI4pdcF3Sfcu47H7UAdlGjhlcAus
-	dzAr0i6HYmaBkMM8EEZC2ouapmmzhTOTfJhvDwXpGXZRYN382EecysipmAd6LV7LSq1U+0EG1V3
-	4i3
-X-Received: by 2002:a05:6830:dc6:b0:7d1:49a9:6b53 with SMTP id 46e09a7af769-7d52bf54550mr6357384a34.33.1771854440859;
-        Mon, 23 Feb 2026 05:47:20 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d52d04dadesm7246370a34.23.2026.02.23.05.47.19
+        d=1e100.net; s=20230601; t=1771855841; x=1772460641;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+p7vc6g7z5/JbLqUE9J2fE+Vu0p8qksvLODFtbrmmng=;
+        b=Nbv53JRgluwNRyEvZN48dy5JxUOrm60urH3fzgFHWOy0/oN+F/B9Yo+iXfedguS0rK
+         dDtTFcyFOOFo8jUIT5PIVl4yI8GLd+ssuMr1B1wXQmcuHVjImgqn3COrNYSgv2rCK1gi
+         vyNpoz6tiASkuAnyQXhHBqD/rLOVabp8BYLdL8vIE3S6wNqqksC7MHgKtR27N0I1+qJ+
+         ZY5QjyZczUY5f4KsRK5i0IDwawWsGQK/aQk6uFUKHqtPwhvf6J1SptQqxGNmuMyc4piT
+         8vlLv7YWzgOyMn4UnVubQkmkKKgDGz+hStx+EKgUMFKx9SPkngukeXM7QL2I2AKzJBqv
+         0Zew==
+X-Gm-Message-State: AOJu0YzOOPJbuHT85m9J0uzkSHmsURqLQvsliqOQRJk5jk+bbp/R9z10
+	h6Gu9C3IqC+b5xqzs7FV/UQzQTF4/JsqTsPrJkiAZLoQOlpcZ4wFzm8uK6j/XQ==
+X-Gm-Gg: AZuq6aKXREc6iI/Lf1kJWlfj2970/2r3yd0WkLGYvFEUzXQCwRZe6HLRmEPPZKiqCOU
+	VGAYodKfeHZR+1CbW6xHqAduWuDaLH1EVDFbtH47oqxZzryK1r1ZIwXW1ce2qa6FPe5ACwgyK/H
+	TNPTH1xIZ39D4qP4cSesVs9VHVTt9tLpyQJq9DXfG/fwQV2XD+Zk7e5MHfnsijRX40zRpFUbnHM
+	lG69Q7fcK84JxVH0vP26ZOzORzF5KVSlHhomUb9hUshRbYj7A+7QCGapMNMFIEZg7/9cmtxkcpT
+	zV5K3oT75rmajDdlEIsBJNg4FHCWbQ0lmw+o2nXKLm8cPLG0bmLgrsHF5z7SCT8QTywLHYFpqq3
+	v9dj21bNvlPcp77zzSajpXTYuy7NwffkMtM3HilmDKJimeyQuNo4Kpy5HHY9xSk5zC1ixWQciYr
+	EDAkyu9oj2fk76smUqogSqMbqU6uTLZJ0n8+n87JqpFNmGAROH5BVppgO6/vMuI3UJoFw50EhFC
+	IJawn+lxQ==
+X-Received: by 2002:a05:600c:4f94:b0:480:6bef:63a0 with SMTP id 5b1f17b1804b1-483a95eb370mr141042675e9.21.1771855840267;
+        Mon, 23 Feb 2026 06:10:40 -0800 (PST)
+Received: from 127.com ([2620:10d:c092:600::1:36ea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970bf9feasm19464640f8f.6.2026.02.23.06.10.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Feb 2026 05:47:20 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org
-In-Reply-To: <14826e580830261478a74ed89941694538209bab.1771198073.git.asml.silence@gmail.com>
-References: <14826e580830261478a74ed89941694538209bab.1771198073.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/zcrx: move zcrx uapi into separate header
-Message-Id: <177185443986.636584.5330462186795176078.b4-ty@kernel.dk>
-Date: Mon, 23 Feb 2026 06:47:19 -0700
+        Mon, 23 Feb 2026 06:10:39 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	bpf@vger.kernel.org,
+	axboe@kernel.dk,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: [PATCH v9 00/10] BPF controlled io_uring
+Date: Mon, 23 Feb 2026 14:10:11 +0000
+Message-ID: <cover.1771855760.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12366-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12367-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-0.997];
-	TAGGED_RCPT(0.00)[io-uring];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.dk];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
 	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_FIVE(0.00)[5];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel.dk:mid,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 9EC2417740D
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BF202177C76
 X-Rspamd-Action: no action
 
+This series introduces a way to override the standard io_uring_enter
+syscall execution with an extendible event loop, which can be controlled
+by BPF via new io_uring struct_ops or from within the kernel.
 
-On Sun, 15 Feb 2026 23:31:20 +0000, Pavel Begunkov wrote:
-> Split out zcrx uapi into a separate file. It'll be easier to manage it
-> this way, and that reduces the size of a not so small io_uring.h. Since
-> there are users that expect that zcrx definitions come with io_uring.h,
-> it includes the new file.
-> 
-> 
+There are multiple use cases I want to cover with this:
 
-Applied, thanks!
+- Syscall avoidance. Instead of returning to the userspace for
+  CQE processing, a part of the logic can be moved into BPF to
+  avoid excessive number of syscalls.
 
-[1/1] io_uring/zcrx: move zcrx uapi into separate header
-      commit: 0217a2afba9cd21b3833eb93e217f55cad78828a
+- Access to in-kernel io_uring resources. For example, there are
+  registered buffers that can't be directly accessed by the userspace,
+  however we can give BPF the ability to peek at them. It can be used
+  to take a look at in-buffer app level headers to decide what to do
+  with data next and issuing IO using it.
 
-Best regards,
+- Smarter request ordering and linking. Request links are pretty
+  limited and inflexible as they can't pass information from one
+  request to another. With BPF we can peek at CQEs and memory and
+  compile a subsequent request.
+
+- Feature semi-deprecation. It can be used to simplify handling
+  of deprecated features by moving it into the callback out core
+  io_uring. For example, it should be trivial to simulate
+  IOSQE_IO_DRAIN. Another target could be request linking logic.
+
+- It can serve as a base for custom algorithms and fine tuning.
+  Often, it'd be impractical to introduce a generic feature because
+  it's either niche or requires a lot of configuration. For example,
+  there is support min-wait, however BPF can help to further fine tune
+  it by doing it in multiple steps with different number of CQEs /
+  timeouts. Another feature people were asking about is allowing
+  to over queue SQEs but make the kernel to maintain a given QD.
+
+- Smarter polling. Napi polling is performed only once per syscall
+  and then it switches to waiting. We can do smarter and intermix
+  polling with waiting using the hook.
+
+It might need more specialised kfuncs in the future, but the core
+functionality is implemented with just two simple functions. One
+returns region memory, which gives BPF access to CQ/SQ/etc. And
+the second is for submitting requests. It's also given a structure
+as an argument, which is used to pass waiting parameters.
+
+It showed good numbers in a test that sequentially executes N nop
+requests, where BPF was more than twice as fast than a 2-nop
+request link implementation.
+
+v9: - Update mini_liburing
+    - Clean up the nop test, bound the CQ processing by a separate
+      constant and not CQ_ENTRIES.
+    - Add helpers for sharing code b/w examples
+    - Enable IORING_SETUP_SQ_REWIND
+    - Use io_uring regions for parameter passing.
+
+v8: - Remove an check that is "always true" to silence smatch
+    - Kill unused variables from selftests
+
+v7: - Fix CQ overflow flushing deadlock and add a selftest
+
+v6: - Fix inversed check on ejection leaving function pointer and
+      add a selftest checking that.
+    - Add spdx headers
+    - Remove sqe reassignment in selftests
+
+v5: - Selftests are now using vmlinux.h
+    - Checking for unexpected loop return codes
+    - Remove KF_TRUSTED_ARGS (default)
+    - Squashed one of the patches, it's more sensible this way
+
+v4: - Separated the event loop from the normal waiting path.
+    - Improved the selftest.
+
+v3: - Removed most of utility kfuncs and replaced it with a single
+      helper returning the ring memory.
+    - Added KF_TRUSTED_ARGS to kfuncs
+    - Fix ifdef guarding
+    - Added a selftest
+    - Adjusted the waiting loop
+    - Reused the bpf lock section for task_work execution
+
+Pavel Begunkov (10):
+  io_uring: introduce callback driven main loop
+  io_uring/bpf-ops: implement loop_step with BPF struct_ops
+  io_uring/bpf-ops: add kfunc helpers
+  io_uring/bpf-ops: implement bpf ops registration
+  io_uring: update tools uapi headers
+  io_uring/mini_liburing: add include guards
+  io_uring/mini_liburing: add io_uring_register()
+  selftests/io_uring: add BPF event loop example
+  io_uring/selftests: check loop CQ overflow handling
+  io_uring/selftests: test BPF [un]registration
+
+ include/linux/io_uring_types.h                |  10 +
+ io_uring/Kconfig                              |   5 +
+ io_uring/Makefile                             |   3 +-
+ io_uring/bpf-ops.c                            | 271 ++++++++++++++++++
+ io_uring/bpf-ops.h                            |  28 ++
+ io_uring/io_uring.c                           |  13 +
+ io_uring/loop.c                               |  97 +++++++
+ io_uring/loop.h                               |  27 ++
+ io_uring/wait.h                               |   1 +
+ tools/include/io_uring/mini_liburing.h        |  21 +-
+ tools/include/uapi/linux/io_uring.h           |  96 ++++++-
+ tools/testing/selftests/Makefile              |   3 +-
+ tools/testing/selftests/io_uring/Makefile     | 162 +++++++++++
+ .../testing/selftests/io_uring/common-defs.h  |  31 ++
+ tools/testing/selftests/io_uring/helpers.h    |  95 ++++++
+ .../selftests/io_uring/nops_loop.bpf.c        | 108 +++++++
+ tools/testing/selftests/io_uring/nops_loop.c  |  89 ++++++
+ .../testing/selftests/io_uring/overflow.bpf.c |  51 ++++
+ tools/testing/selftests/io_uring/overflow.c   |  50 ++++
+ tools/testing/selftests/io_uring/unreg.bpf.c  |  25 ++
+ tools/testing/selftests/io_uring/unreg.c      |  92 ++++++
+ 21 files changed, 1270 insertions(+), 8 deletions(-)
+ create mode 100644 io_uring/bpf-ops.c
+ create mode 100644 io_uring/bpf-ops.h
+ create mode 100644 io_uring/loop.c
+ create mode 100644 io_uring/loop.h
+ create mode 100644 tools/testing/selftests/io_uring/Makefile
+ create mode 100644 tools/testing/selftests/io_uring/common-defs.h
+ create mode 100644 tools/testing/selftests/io_uring/helpers.h
+ create mode 100644 tools/testing/selftests/io_uring/nops_loop.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/nops_loop.c
+ create mode 100644 tools/testing/selftests/io_uring/overflow.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/overflow.c
+ create mode 100644 tools/testing/selftests/io_uring/unreg.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/unreg.c
+
 -- 
-Jens Axboe
-
-
+2.53.0
 
 

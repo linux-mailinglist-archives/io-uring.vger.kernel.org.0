@@ -1,208 +1,217 @@
-Return-Path: <io-uring+bounces-12392-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12393-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EJMVOCHtnGnqMAQAu9opvQ
-	(envelope-from <io-uring+bounces-12392-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 01:13:21 +0100
+	id AIc9O9dBnWkMOAQAu9opvQ
+	(envelope-from <io-uring+bounces-12393-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 07:14:47 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE1918027F
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 01:13:21 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAFF18254A
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 07:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C60A53053DC1
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 00:13:19 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 294C33006D53
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 06:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7840F12B143;
-	Tue, 24 Feb 2026 00:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9p5Hu4A"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AA02D1F40;
+	Tue, 24 Feb 2026 06:14:42 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B31C23741
-	for <io-uring@vger.kernel.org>; Tue, 24 Feb 2026 00:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771891998; cv=pass; b=I7a8oJcxrm9H/vivT5yPIrG7jwAT0pXWuDjGfZteGqMsrJc9OKzKwGlS48vwjIDqpddaBrNdHvHzQRcpBirD7ZLQxzxkmBI5hvBPxlku7GGbIFGgujYtkMAC24fkLlqccx4AShDyYg4kJtyIFBo/9NYeCd8Huu8vRWZhrCWD9g8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771891998; c=relaxed/simple;
-	bh=bweRSyy13JW5iYuGfSQw8Rmf+z1/DCVAjagAYtz2NFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HozHr6MI9aq8fSjh2bdTFAdqAjvMtly8bp1yZTpNo9jtdoKbUGAuQim0sYTQDAS8evH0OKvFxT30FzEpGa8h6zM5yQkPcNzGBeRlpq/mmWjsAi871Oa1qLw+Pq7erZCEEKyr2c6nlhWfGQrMOaq8assEBK070OORONo4Zvms/so=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9p5Hu4A; arc=pass smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48318d08ec2so12475e9.1
-        for <io-uring@vger.kernel.org>; Mon, 23 Feb 2026 16:13:16 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771891995; cv=none;
-        d=google.com; s=arc-20240605;
-        b=j2KQUX8zSlqH/xQnBBliA4Cm68FLbXEhEonGo3c8+RiTmBLI8GvdevjzLeJgPSiN0L
-         G45DAFOXiAvFEmdGoZQHKDsSRWZJ0h3ppYAZAPZ1RkcjiYnSVsYhni9NTtz/c9ctfKcR
-         etyvML9sGd7IoFxqFBYuAjFHPKzI8Lq5L2JKzRTdmMPkA/3ujB9+J17BxSgl4yQOCK1z
-         RdZvE5doG0PgbmSGTJpdwGgA+Bbc/C5QlkBV9+F32f/Y/OW3Pa4w/rN1SzxiCodg7Jln
-         Fx7/ZFhKnWEebsEh85SlEvhYF2sdBvKNf8iwyDPfMEKoMLX6N/z02lHIiS5N2oWSNJOj
-         WnTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bweRSyy13JW5iYuGfSQw8Rmf+z1/DCVAjagAYtz2NFs=;
-        fh=Tds3coVqW9ZlXL3SQtQlhnF2n49sf9G1h0FIyOxIoic=;
-        b=gfaio3AJwGGOUCCUvq4Ld7Dd+5kbOfRc8e2RFxu1FLHWMiZh8T5e+xQxyueS399fs/
-         fQCFDIeFjHCyUOqAT05IjUjmLAf6fw8+ZkPGtsosDlpT247m+LZTbyeXFFuSNB0Sr5sb
-         NXeyr30/bvKcIPVatZ5mcxAn9Bb1U59zzYtiG1RPcO57jSKFNNMCj9dXFhmks9YRCtbw
-         srSh58sRz69zIJ7S1b/1B+kV6P1qdnCLx2Y0TgODaePUrObKhZqy2iLjlqx2hkmLNkOQ
-         aGOuVC5CkGuzrX1Moraop3gLqECC7M7AsX2VaX7P4lwITNYvowRkwrXhQ6/JKG53bI6X
-         xHzQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771891995; x=1772496795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bweRSyy13JW5iYuGfSQw8Rmf+z1/DCVAjagAYtz2NFs=;
-        b=h9p5Hu4AebmpuXWbGnMMcptNbZmMfVpVrr9UFRCQUpHyy63x1nEdboaPIC8dcOZIaV
-         79reG78+XTH/eCsHYoIM+vaPGVNH5TPdudnGKqAUShaVfzHMy9kLFncutZ3jpgOCD2/7
-         6cBk8+rv9FPHTsXCFiNkp4xnaYHG4TGA7CzGu9HBsmq/IW7f2gNHi4iK5z0qsSxwN+XE
-         kJWGCnHbjXfBbm03lPzQdiZHM1l7dLvye6mwuVDGs6iZF/D5t3sQuFaiCyugsnaYE2b5
-         ini5rLcGKYyJE5GR7oTi8t04rYPdoBTp++f5n+fSAe2SccIjnv6s5fYPqd4VhXVYz3zB
-         xhXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771891995; x=1772496795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bweRSyy13JW5iYuGfSQw8Rmf+z1/DCVAjagAYtz2NFs=;
-        b=HDDf3AEbV+hOHqIEqYUJdXJWCa27xdyQOTXWTIjVR4UGlTk+p0iVnkLMezg0GEIoFA
-         jDjZ5rVS2FeHjK4KpkpFdLxoUQoWuQxXbrD2z4tVNYlgOERyhgNVZX/Mb/yc0wmB6QCx
-         85oYO0HRsWYJNmdWjFRLW9Dt/7BhVBEOI0exderff6Jfc/KYZLBIna137boyXMN7wBhj
-         X/dq7LAOYOMKPYlRYMJCeeAcO9t6DzIeKq2bMXok2V8uCw3SE2SGJxb1avr0AEd9gqV7
-         cy1/xNlvhH4d4uhbt5Ve49LejxWcQDAB1OIBD2DU76102cGukg764FZ3e96Cqjw3gd0q
-         K5Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsXJrtsjzkTWzuRRBuMLPKUYIMA1RFWG51STcsMMP8XE1sMO4j22Ka/7QKH9NScE+61AoPjhn0mg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvqCEuE8YIZ1wnS0mzbkojfV7c8HVbpNy8PsGWVLMsJi4e3OZ5
-	4WA+nwN5H+9G3dnbiwLNVTiwEOHjONxfUPkSAT0n0BVdn0yQmTi1SGqZ0DReybZhNqlQ57UTZgG
-	jwiVgSVK4opT5rVuUxaCgY00m9XTnWW/8xaRjbUoY
-X-Gm-Gg: AZuq6aIhE+xQTLHS5SCQYrZI40LO6Ycl1MCrmo0tELsVDYyqiVSxBUb5lgqz+axv2KU
-	LtFh2gFBwVqV9j8c+JEuvk8Y7wvPd51cVnQk5DZRsmOyqfG2mb4r8hq7uwSdmIWaTt/8lxDdUfy
-	wUqX54GD4JJo7NZbMeBVyiJLdCAb7htvHBevgeVHbt7yNS1/6/pO1gByDHWqHCufRIOkArK6Ufq
-	3iW5i2Q2ixqwEQrwhTxiWqZ/CtSutZIRfkPcaE/rJ2mX+DJsBH0qDhWK4850DfjUA5FGWdsKWDF
-	wpcT+Ksroeot8KVn5n+T+TD/aAOpnFKQCCSTgA==
-X-Received: by 2002:a05:600c:3011:b0:47e:de1d:ce99 with SMTP id
- 5b1f17b1804b1-483b876e3ccmr255025e9.12.1771891995111; Mon, 23 Feb 2026
- 16:13:15 -0800 (PST)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529B527587D;
+	Tue, 24 Feb 2026 06:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771913682; cv=none; b=Vrz15TlQOvJxW2J+AfuEBjtTn+/P8DUsIqw5PtUAFSBPLFSK+/6DZ1jJkaXos/2aYcT9m7783sImKCZ52+e4v1Fh8dGZoucI+yAnQUsje6wKO0zCFxNi1mm3XETTsNWCZ6rdsO40xNghO0OREXLsKumM2jclrO2y1AQw0xtn38Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771913682; c=relaxed/simple;
+	bh=iRBQGoavdPO7NfzUVF9tnbhKVfLLFFRV2iUnQhqci/w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=U+Q6XoKxw3YyJQB7zzXWkKnkSEQItyQr4noBBUffp36msV4USubMjzfAqBquRoCEkHjVMl9ixvIxGcKFCx4Kzw2UC3iy8H8YBsJdDehX2UbFaMlIatJYHp+sesDUyClXWUlYgX5+5TM1LghpU83cvPaVc7U4Oi9zBLe6KyEqHaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-f2-699d41ca80b2
+From: Byungchul Park <byungchul@sk.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	andrew+netdev@lunn.ch,
+	david@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	ziy@nvidia.com,
+	willy@infradead.org,
+	toke@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	asml.silence@gmail.com,
+	axboe@kernel.dk,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	dsahern@kernel.org,
+	almasrymina@google.com,
+	sdf@fomichev.me,
+	dw@davidwei.uk,
+	ap420073@gmail.com,
+	dtatulea@nvidia.com,
+	shivajikant@google.com,
+	io-uring@vger.kernel.org
+Subject: [RESEND PATCH net-next] netmem: remove the pp fields from net_iov
+Date: Tue, 24 Feb 2026 15:14:24 +0900
+Message-Id: <20260224061424.11219-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRX0hTYRyG/bazc47T5WlqO1kYLMIUUotZHxGhN3WoiKAu+oPpaKd2aE7d
+	nGkZWCbmIjUvZG1LZg3TTSVW6Vw6l6akLTPF0Jz/mYIsl5qmTiiXdPfwPu/7u/nhbH4FEoEz
+	8ixaIRfLhCgX4f4Ifn6gJ+kZE+9wJkDzag58OWHlwLW6WRbUmxoBNI+WolD/5QECZ9+uA9hg
+	K2TBZtssgHOaehS6u6YwOF49g8CWoiY2nCr9iML5wl4E9jWWcGBvRy0Km/InMDhg06NwrO4P
+	B3ZraxH40NWKwC7DDrjyyQPg4FMbC1a5UmB/xxQCdfdKAPStbvZ1nWNYYiT1pnaYRX3TPEGo
+	IXsPi2rWjmKUwaKiXtfEUAOfVZTFVIxSlsVyjGq2LrGoxwXzKLXg/o5QXvsgSjkNHzBqyRJ5
+	LuQy95iEljHZtCLueCpXqmmtxjIs4TlzHiYfmLarQSBOEiLS2efiqAH+j4e1e/0xSkSRQ0Nr
+	bD+HERHkgrUJUwMuzibqOKS904v4RShxipwbeYH6GSH2kU57JfAzj0gga0Z+srfu7yHNrxxs
+	/5gkujDSpJlBtsRO8n3NEFIGggwgwAT4jDw7TczIRLHSXDmTE3stPc0CNr9VfXfjihUs9p1v
+	BwQOhMG81GQ9w+eIs5W5ae2AxNnCMJ7Pp2X4PIk49zatSE9RqGS0sh3swhGhgHdo5ZaET9wQ
+	Z9E3aTqDVvy3LDwwIh+Yy41nk5N1ifHhLe5J6f6Rk6K4LOPheMEjvFera7QPo+7Kd1UpX83T
+	sUpMVN8NJZmOvP6N07+jnetXJ7ddXFYNCipOBJk9y6Oa6CP3XWUBDQXLYyHjxrJf0z3qpKJC
+	752jemPx9Usy4xk0Tl7kaRNcCPWl2vK807uj+tscmUJEKRUfjGErlOK/BedXSqkCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAwGQAm/9CAMS/QMaCGludGVybmFsIgYKBApOO4MtykGdaTCQtyc4q/h4OKfg
+	uAU4+aznAjicqrYBOKvdjwY4nM+EBDjntfoBOK66hQI4ubrnATjqmK0GOOXG4gc436bmBDi8
+	h7cDOOKPyAY47oXOBDjDnckFONC2jgU4zsOpBji3gOAHONO6nAY43qz/BTjJmqkEOIjcvQQ4
+	xqAWOPbL7AE41Zm6Ajih3F840sPiBDibgY4BOPv4nAY4m8XeB0AfSLSp2QJI1piRBEjYvsoC
+	SLma3QdIoLJ1SLOoKkjTzXVIsqqJBkiy8pIHSLm48wJIjYPuBkjx5doESO++1QZIo+jwAkjM
+	oMQHSPOyHlAQWgo8ZGVsaXZlci8+YApomL2mB3CyFXjq7GmAAaoRigEICBgQNBjZmiOKAQkI
+	BhAnGNjY+QOKAQkIFBAaGPG4tweKAQoIAxCsBRi+xe8EigEJCBMQShjq26MGigEJCAQQJRjM
+	vp4BigEJCA0QNRio2/ADigEJCBgQHxirsMADkAEIoAEAqgEUaW52bWFpbDUuc2toeW5peC5j
+	b22yAQYKBKZ9/JG4AfTTR8IBEAgBIgwNYF2caRIFYXZzeW3CARgIAyIUDfv7mmkSDWRheXpl
+	cm9fcnVsZXPCARsIBCIXDUpXZWASEGdhdGVrZWVwZXJfcnVsZXPCAQIICRqAAbwOFT//J0vr
+	vprO+hwacpsB34bHxpDz38gSQjamvYcNuYWeT5BXN+0pZFKqQ7AYoLQ9DCr57x/IpXo52Sho
+	raOYhVFqaSxUxx2n89T/g5q0kLL6YyObh8Jn084Fwp9MRGI/ufxuUiBZoZe5ZfU7nMXk3sUV
+	WO5z8Sb+kJsWN6GZIgRzaGExKgNyc2E2fR+3kAIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
-In-Reply-To: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Mon, 23 Feb 2026 16:13:03 -0800
-X-Gm-Features: AaiRm53fe0m1UF9UR81dGOPUcovFTRZhHstytiajG9W0XdK3GHymEz_MxNhuT1c
-Message-ID: <CABdmKX2+OiqobQKf5G0ABiTeW5oqXS0p1dH7wRe2H7Gwdroi0g@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] dmabuf backed read/write
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>, 
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>, "Gohad, Tushar" <tushar.gohad@intel.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Nitesh Shetty <nj.shetty@samsung.com>, 
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [1.54 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12392-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12393-lists,io-uring=lfdr.de];
+	DMARC_NA(0.00)[sk.com];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.997];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,skhynix.com,oracle.com,kernel.org,lunn.ch,suse.cz,nvidia.com,infradead.org,redhat.com,davemloft.net,google.com,gmail.com,kernel.dk,fomichev.me,davidwei.uk];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tjmercier@google.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 3EE1918027F
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.970];
+	FROM_NEQ_ENVFROM(0.00)[byungchul@sk.com,io-uring@vger.kernel.org];
+	TAGGED_RCPT(0.00)[io-uring,netdev];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCPT_COUNT_TWELVE(0.00)[31];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6CAFF18254A
 X-Rspamd-Action: no action
 
-On Tue, Feb 3, 2026 at 6:29=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
->
-> Good day everyone,
->
-> dma-buf is a powerful abstraction for managing buffers and DMA mappings,
-> and there is growing interest in extending it to the read/write path to
-> enable device-to-device transfers without bouncing data through system
-> memory. I was encouraged to submit it to LSF/MM/BPF as that might be
-> useful to mull over details and what capabilities and features people
-> may need.
->
-> The proposal consists of two parts. The first is a small in-kernel
-> framework that allows a dma-buf to be registered against a given file
-> and returns an object representing a DMA mapping. The actual mapping
-> creation is delegated to the target subsystem (e.g. NVMe). This
-> abstraction centralises request accounting, mapping management, dynamic
-> recreation, etc. The resulting mapping object is passed through the I/O
-> stack via a new iov_iter type.
->
-> As for the user API, a dma-buf is installed as an io_uring registered
-> buffer for a specific file. Once registered, the buffer can be used by
-> read / write io_uring requests as normal. io_uring will enforce that the
-> buffer is only used with "compatible files", which is for now restricted
-> to the target registration file, but will be expanded in the future.
-> Notably, io_uring is a consumer of the framework rather than a
-> dependency, and the infrastructure can be reused.
->
-> It took a couple of iterations on the list to get it to the current
-> design, v2 of the series can be looked up at [1], which implements the
-> infrastructure and initial wiring for NVMe. It slightly diverges from
-> the description above, as some of the framework bits are block specific,
-> and I'll be working on refining that and simplifying some of the
-> interfaces for v3. A good chunk of block handling is based on prior work
-> from Keith that was pre DMA mapping buffers [2].
->
-> Tushar was helping and mention he got good numbers for P2P transfers
-> compared to bouncing it via RAM. Anuj, Kanchan and Nitesh also
-> previously reported encouraging results for system memory backed
-> dma-buf for optimising IOMMU overhead, quoting Anuj:
->
-> - STRICT: before =3D 570 KIOPS, after =3D 5.01 MIOPS
-> - LAZY: before =3D 1.93 MIOPS, after =3D 5.01 MIOPS
-> - PASSTHROUGH: before =3D 5.01 MIOPS, after =3D 5.01 MIOPS
->
-> [1] https://lore.kernel.org/io-uring/cover.1763725387.git.asml.silence@gm=
-ail.com/
-> [2] https://lore.kernel.org/io-uring/20220805162444.3985535-1-kbusch@fb.c=
-om/
-> --
-> Pavel Begunkov
->
+Now that the pp fields in net_iov have no users, remove them from
+net_iov and clean up.
 
-Hi, I'm interested in this topic. I'm guessing this will be in the FS track=
-?
+Signed-off-by: Byungchul Park <byungchul@sk.com>
+---
+The original post was:
 
-Thanks,
-T.J.
+  https://lore.kernel.org/all/20251121040047.71921-1-byungchul@sk.com/
+
+1/3 was covered by Pavel's patch:
+
+  commit f0243d2b86b97 ("io_uring/zcrx: convert to use netmem_desc").
+
+2/3 was taken by Jakub and merged:
+
+  commit df59bb5b9af3f ("netmem, devmem, tcp: access pp fields through
+  @desc in net_iov")
+
+Now that io-uring and net core changes converge in one tree, I'm
+resending the 3/3, which is what Jakub asked:
+
+  https://lore.kernel.org/all/20251124184729.7e365941@kernel.org/
+---
+ include/net/netmem.h | 38 +-------------------------------------
+ 1 file changed, 1 insertion(+), 37 deletions(-)
+
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index a96b3e5e5574..a6d65ced5231 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -93,23 +93,7 @@ enum net_iov_type {
+  *		supported.
+  */
+ struct net_iov {
+-	union {
+-		struct netmem_desc desc;
+-
+-		/* XXX: The following part should be removed once all
+-		 * the references to them are converted so as to be
+-		 * accessed via netmem_desc e.g. niov->desc.pp instead
+-		 * of niov->pp.
+-		 */
+-		struct {
+-			unsigned long _flags;
+-			unsigned long pp_magic;
+-			struct page_pool *pp;
+-			unsigned long _pp_mapping_pad;
+-			unsigned long dma_addr;
+-			atomic_long_t pp_ref_count;
+-		};
+-	};
++	struct netmem_desc desc;
+ 	struct net_iov_area *owner;
+ 	enum net_iov_type type;
+ };
+@@ -123,26 +107,6 @@ struct net_iov_area {
+ 	unsigned long base_virtual;
+ };
+ 
+-/* net_iov is union'ed with struct netmem_desc mirroring struct page, so
+- * the page_pool can access these fields without worrying whether the
+- * underlying fields are accessed via netmem_desc or directly via
+- * net_iov, until all the references to them are converted so as to be
+- * accessed via netmem_desc e.g. niov->desc.pp instead of niov->pp.
+- *
+- * The non-net stack fields of struct page are private to the mm stack
+- * and must never be mirrored to net_iov.
+- */
+-#define NET_IOV_ASSERT_OFFSET(desc, iov)                    \
+-	static_assert(offsetof(struct netmem_desc, desc) == \
+-		      offsetof(struct net_iov, iov))
+-NET_IOV_ASSERT_OFFSET(_flags, _flags);
+-NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
+-NET_IOV_ASSERT_OFFSET(pp, pp);
+-NET_IOV_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+-NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
+-NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
+-#undef NET_IOV_ASSERT_OFFSET
+-
+ static inline struct net_iov_area *net_iov_owner(const struct net_iov *niov)
+ {
+ 	return niov->owner;
+-- 
+2.17.1
+
 

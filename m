@@ -1,214 +1,338 @@
-Return-Path: <io-uring+bounces-12405-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12406-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6P7ZAj70nWk2SwQAu9opvQ
-	(envelope-from <io-uring+bounces-12405-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 19:55:58 +0100
+	id cOnVKh0knmn5TgQAu9opvQ
+	(envelope-from <io-uring+bounces-12406-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 23:20:13 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F818B9A6
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 19:55:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1819D18D16B
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 23:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8F7CB30C3658
-	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 18:54:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9324A305A415
+	for <lists+io-uring@lfdr.de>; Tue, 24 Feb 2026 22:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D42DA75A;
-	Tue, 24 Feb 2026 18:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6402330641;
+	Tue, 24 Feb 2026 22:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqEtMT1U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbyR0iMF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE0527E054
-	for <io-uring@vger.kernel.org>; Tue, 24 Feb 2026 18:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360B73191BB
+	for <io-uring@vger.kernel.org>; Tue, 24 Feb 2026 22:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.181
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771959278; cv=pass; b=VKQFHR7z6CEWV1Dom9nTBuBJOsiZWN8yh3Ogy1zzPGb8wVuSXURrkfDYpFVPKqzCqANZb05nFWLXPTFpRTF/MWldN6xfYe4MfbvtGpaoqvu7M9CXdsa+NOJuCKERnDWueiqRMz3PTsKSsC+bFnkc1b6BkhhSv3iXRAKxv4IzNsw=
+	t=1771971610; cv=pass; b=m+bQWZ38c8Xjrl/8ZpFE0vGxtcv3LM1F2frr4m99MI0mOnYEBmVmCp3GNtQFGibletKfZEcAHszEfqCc58DTWWY7YOwHplQpjNzB/dmuBUvDvPvAO1hSW1XWgecvvq1U0CjwenweP0GrjQ4T/ZyVQOlaqeXq+/5zL8QNnAvMs+g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771959278; c=relaxed/simple;
-	bh=7kYf38Y4iDvXs4qp/u1OTPuMQjxxHFTdTFxvoFrFL6M=;
+	s=arc-20240116; t=1771971610; c=relaxed/simple;
+	bh=TMIFMqdBl4eMMy+jCyFV21h7j8GU0gDuLzYzqhVKvVY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahoPp+kZFIz6M0fEqJ+DGalymQm8KX0m8ZOPhPp3ToG/fESjIcBNUl5eWQiaQvmdHobEHZSAXkzCz7AGzAolk0+Xtph6OeAhcA+xXcW67oQ1ENTOVprtn89JkFowv/hEyUWo4vNFVkkoo+sxIR8l8UgSwwV1Emn8uThmiEXc5+E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqEtMT1U; arc=pass smtp.client-ip=209.85.128.45
+	 To:Cc:Content-Type; b=NzZqllWMkUnfZ/lWwPxc0ZEznXV2QTswGhkalAhThvB49Idj4i+4j08Pdgk3W0N7fkN4pcrjq9dgXajov75ICIXdK5sSLPp8CnJxC5+wRyTWikyaDVZ1Wjz0u1R6aMgprku0fsJVbV+IGZ8Ej/sfVnOtPox9NQqTyPvK1mJD8Kg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbyR0iMF; arc=pass smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48372efa020so47209325e9.2
-        for <io-uring@vger.kernel.org>; Tue, 24 Feb 2026 10:54:36 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771959275; cv=none;
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50334dd44d2so71661811cf.1
+        for <io-uring@vger.kernel.org>; Tue, 24 Feb 2026 14:20:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771971608; cv=none;
         d=google.com; s=arc-20240605;
-        b=B5pbiWZd6QZPXOdabbiTIbM18JRSYuham4pXulkB+3z0EaVIRwzTlCysGxxthRrw8X
-         e/kR6d6PqvaZcje6YrKpHibct2FysdQ9EuVI8yKH0G8vrt4hIAtYTtxwcmhMpoh56Ka9
-         w3dFc9I7ZbDhmwVkRcLFbJ0x77HuvLkD/zWrxCiWztLEmXLSiWtn9zLxGpeknO49y8+q
-         Di5FcYw5vVuFPNpDvRtsSWA9XZcYI9tClS6E6LYYwqNLu0WnzyqOEcG8XRPzPaiy/GMS
-         FGS0nWDHMvbYB7gnf1p/EraN0K2ssigQjiIb+2fiuRWw8ZBPhigFe2Kees55h2HPuG76
-         JssA==
+        b=dqqZXA0J/zg/WALYyDfIy9919VVfVTaenTjsrx/7HZzsjBZ6NZlHU80Pv9AIye/hc/
+         HrU+gGI5zmUEQD186EePwu0YiuSfI0TQ7rkZ9838oId/nYGSS7IJravI+9EaPtYNjQxJ
+         5wt7VQ/5U8lAA2n1GbwZrlUEGFv7hXH89W1MFlof+AHwn+2Jef+eUEjP8TS28WSKFGDW
+         sv+ex+ZnKzzYzbcaMUTSe4QucpGxUkuOIo7TPYg7fAeB501+vQV89nrqWegAqFtdSJiC
+         lOw+PSTwwtkGhsOKA8bDAyMyO3bmvmwrf+pBST7P1p3AnvKShCaDl99pFGxlBG173ege
+         DJ4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=Awv8DIrGI3H+149gY23xflspKap2W3xjFpbUA2/4mB8=;
-        fh=aFeoUrsDWAgbeqymguiAZi9MlpQPCUhPf96aci+YuDo=;
-        b=Xq3I7lXXUq/z49/iqlEwxE7H1ALrP8sXGuGQYIh+R1M9rXtOOyps3/2T6LNEMEuEu4
-         nx79Hc4Sc8CqmbydcIgCpC6TKMIMIi171Hl4nuxN+ZCRaccwcWFIbI5bkTXPa/GFrAxF
-         ZhmkL8Ypo6qPnAj5KL8tVNa9gFWi58WcyDcyId98C6sjbUw4blojCtxLGwEKx6e7Ikkc
-         xhTeXZguFubv0VK1YqETE4HTuB2QobAKDJEPtLv4bIpFX8mYVNFpOnL+PjqklnwZyLsZ
-         D6ffAwW3i3qOZ49jsKfuWo4iBdRIr8zO/oBuJNB6Wf6thi7k9h8FRbBQw5mkrDFKN+ua
-         0DHw==;
+        bh=TMIFMqdBl4eMMy+jCyFV21h7j8GU0gDuLzYzqhVKvVY=;
+        fh=AjzjNMQeZX8PtgiM+c3S/nMrOT3RiCtI1y7EntEjq7E=;
+        b=VtHHZ7+PjLO3PH4rVi+dKIZBOQVI9x3acXRCjEyJuTpR8ZsXj8izLWbW7xOf2y7nN1
+         1VTQOCn1mutF/xV1EuQ/y0XkWJjAtBw6S9XL4KoBy64Z+qkO51Q3psRtJMljvGVCq45d
+         eQyCGeTjyXKKtw9H+AIapSP1cSUC+JVr8K93h1iFplsvs7G0D41CzbjYuv31czVZtihA
+         4P7QMN4rUQ/9IBBr6jLZtZi+EnsLYwZwEJSNGQKsJdmdQ9qzDlHo3csrq7bYBMAfIKzC
+         ysdUJ6f+UJUGpkGRMS3IdRErk55HnQMyqefbtLqPwlDJXrLWtV+q5B5P8ZBMfqJHWzR2
+         +ifA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771959275; x=1772564075; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771971608; x=1772576408; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Awv8DIrGI3H+149gY23xflspKap2W3xjFpbUA2/4mB8=;
-        b=XqEtMT1UZogTul118yxGK82rSH+IerVaL7U3kCILbA1RhWmBhFFqG7cMyJjSb7SMSQ
-         p00tl2CLmOxDqHshEmNEWFJm+CtIe8X2nTVdypIB59pw0+mNysZeoqcbHzlOAtwNOT4B
-         7na4+1NXLRsiIkCCizzaWDnnB19hrI6RPe2PP+ABoFNIzVXivFWg1dz8l8F/QzgqmGPq
-         cgr6JL3Ngl0YJ1d6m0ocnuv6vqNayzUOiZjXHTrNP7nIHRCF2FvZGutXtbnr7cvlOiya
-         ZFiQn8snY09EBf7Z8ZaQIROcI57N+r+eJlGszk8n55tsoqRi50/Eq+jgPX16+F6f8IK9
-         H6gw==
+        bh=TMIFMqdBl4eMMy+jCyFV21h7j8GU0gDuLzYzqhVKvVY=;
+        b=mbyR0iMFQ7EHSGPAylOzgv1CR3Op0UHLIZUuHZhwX1sgmmONJFq75imbCT1EYUJ1ws
+         bnoK8F2KabWF2w+JNK3hkPXR6IVAbuB1nZL7Fe+Y0C9DGhMpjwRAOQgwVdXp4L3ldtCh
+         dRBwj+zr7UiaD+plyfbsbwmeESeJkEZStxW5/EwnPjsR74WPt55uimQDWRHs3/pRqsJ2
+         wPEjyzykH8Ku+/1z3DdcjvWpn8NPZWjyYDIbpG3LRR9Js4TuSfvEkRYuVOfIYMbz4EYl
+         KDMZ3OdyMIXor9ABhSf9oOo/QctglDZHBj3cprUWxMxgIItdyR4WXKQg9JV7uxT1W2Mz
+         uQOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771959275; x=1772564075;
+        d=1e100.net; s=20230601; t=1771971608; x=1772576408;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Awv8DIrGI3H+149gY23xflspKap2W3xjFpbUA2/4mB8=;
-        b=K0pZjjZcHhdb+mb5G3aGtXzxvH8hfaosKKQ4J7t9N4V4tTei2LmnEbAsqHhi4vEnJA
-         Q3jep0JHCKjJQrPuwA1Fs61Xrd4RBDMfkiIPLb2zgDNmEVJsL29k/gBTnLHc1T5RchuU
-         BHATUhYi9sEEYIk5enbG3M3KN15DASu4GS/EbyVvvFkkbt//bM5rVGmZdS/fIFr/3mXc
-         Wf4QgalJNrXEzFdKRM0pq04+m31Xm0rVEARfWPme/8oApBACGNma/xaqseTdY5/DBAHh
-         jBIdToQkcBjkxUBMlJ7VroKhzYMIozmLvFV6pYyMndgD6nf0ESVInyH9zTQK+k9wS5gs
-         Dq/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUTUawB/14LqyRrq4qXA3r48lrScvuTs+dPJ7EFlKA6CnzoBOVKX7RZC0zmKkLKSej5XcAywXjCoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfYqYgGyzF1QQFTB3HujHvnJXQCqvIX2OmEI5kvlpboY3P351g
-	ZEOFofrAlWCFng2YCtk2lRufmpdWRJ1OZ+NL+rmwCuQwXOw+zgdwXlrDkotB0KxkrrcnliLVPYI
-	vhtPcTlh5kffrbIjyp3fIil57jokUDLo=
-X-Gm-Gg: AZuq6aLFfG8XdC5QgTelFILbZquw84QqNni/Rj8cAtW9hQGeeJHqgNGsiDpjNK37cjo
-	Mn6IK0qE5/jMPMSNOA/2TURUOhnoQoXw6yB2QmivnbZOyfEny7+S/XYfu08Gi9tjHQHC3J0C5IX
-	eEi+HVNhTctWPoxO4BWIdYVDIPuKNPSyPefZyRRyXGiLZzhVqd8ROjtkaEmkmzsGwfE2S0w+Fcv
-	AuVVR/tYFPoP6THv+3Z8pu6N/4vVUSB6C6oGez4EYMxOqIm1rfFh1ZHzl75t9QfY4UTJvb1HkZY
-	W9hcOfvOQ3gheQbzSc0Bxt2tCk+3bTyDM/9ENWbgNG11zfgyIoDFfTlmIqYQkAIsoiXi5RuyaAO
-	y6Mm9MjF4
-X-Received: by 2002:a05:600c:3516:b0:483:7783:5373 with SMTP id
- 5b1f17b1804b1-483a963588bmr202767075e9.23.1771959274710; Tue, 24 Feb 2026
- 10:54:34 -0800 (PST)
+        bh=TMIFMqdBl4eMMy+jCyFV21h7j8GU0gDuLzYzqhVKvVY=;
+        b=UJWIy/GpBRJiheAyX6drS6+4gz0+eWcpur0l8njVBuSqToW4MsNiObcw8B/pi/WLij
+         YQy8srmpesHtAP1z8XnYKn6wtzBUhFZLRx7HveiE86PhwdcPgw8eTW6zw0F/CuyiKGJ2
+         PH+5Wk7HQTvRaj+nUeo7oNMOttn5NmDL3a9cWuu+92/jSKKR7nNLZzl+0b3Ij9VLP3Sf
+         xRpzDi8lWrvpTQhBxnmzj4ZP8QYq5hk4jqU5CaOrXGlMkJdsBscefggOfIckwQZMzqt+
+         epwctEgFBC6LNh4xpwldOQVbAluuvq47OaDZq7I0JPY5jlJgoPYunwHkubrVZVSd7XgG
+         AD0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJoZK75TemRQOirEMco2mOBhzSFW0Rgq9aCiwHlH7ib4FR6/0lVZAjz9Zlh7gBzSB7jjXBvq1rQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjzK9zWnABFpecFvKrwe84C6MBdJH/UwGqdI3UJItonXmofZhf
+	vwRcB8QP8oJn+/vI1x6d+qRm76aBsx80iWuab4Q9guLnONk+E6C7eOB7zO2iAKbQhNXyQmbEfTw
+	6YzjNBbLxlWcvO1MSj5YuSG+WbTYi2QeDcvu7
+X-Gm-Gg: ATEYQzxgVA60YE3lz2PGmLzNXXU0ECiH8OEb/ljWWvz4xY6wUex7cNVvbbytz/859Ty
+	UiXTcBEm4GlGwXhiL2wowsqnJYRUUS9ZOwzZyC7/oOml3iM49+yAe5ibSUKSiqIzZuLM3gZ77SG
+	6ixF5lNkZil/yFjhOFs/3LUMnfj+AkOKUEg335XvGCYaPyIix9mDwcV/iG9DWT6kMTUNcZhbF5o
+	z6yB/ZLiDsTBf1S1fCil84/4XmBVw3XmU/fQfmllkl8qA1m05JcfLBL81Wte9gQQBmqfWAoWSxD
+	aiFdkA==
+X-Received: by 2002:ac8:570e:0:b0:4ed:2ff9:b325 with SMTP id
+ d75a77b69052e-5073a329538mr3977721cf.59.1771971607910; Tue, 24 Feb 2026
+ 14:20:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1771850496.git.asml.silence@gmail.com> <9c8d6af7-8546-4409-91fe-85f92a08f503@kernel.dk>
- <d808f483-3c0f-4323-8faa-0b7d49c539e3@gmail.com> <a7e1f667-04ba-4fe5-b21e-8c47e68213d3@kernel.dk>
- <b22117fa-84ba-4f9d-982a-bbaaae35eebd@gmail.com>
-In-Reply-To: <b22117fa-84ba-4f9d-982a-bbaaae35eebd@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 24 Feb 2026 10:54:23 -0800
-X-Gm-Features: AaiRm52xt7HwXOCplnwma6vUI16c-1jXs8eUh34rEsu8lfdznaOE6C0yI8ppUzM
-Message-ID: <CAADnVQ+8VM8-G3X1UT8_t1tt5=62fxqknHPND40JNsQ51P_XVw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] extra io_uring BPF examples
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <aYykILfX_u9-feH-@infradead.org> <bd488a4e-a856-4fa5-b2bb-427280e6a053@gmail.com>
+ <aY7QX-BIW-SMJ3h_@infradead.org> <34cf24a3-f7f3-46ed-96be-bf716b2db060@gmail.com>
+ <CAJnrk1a+YuPpoLghA01uJhEKrhmrLhQ+5bw2OeeuLG3tG8p6Ew@mail.gmail.com>
+ <7a62c5a9-1ac2-4cc2-a22f-e5b0c52dabea@gmail.com> <CAJnrk1Y5iTOhj4_RbnR7RJPkr7fFcCdh1gY=3Hm72M91D-SnyQ@mail.gmail.com>
+ <11869d3d-1c40-4d49-a6c2-607fd621bf91@gmail.com> <CAJnrk1Zr=9RMGpNXpe6=fSDkG2uVijB9qa1vENHpQozB3iPQtg@mail.gmail.com>
+ <94ae832e-209a-4427-925c-d4e2f8217f5a@gmail.com>
+In-Reply-To: <94ae832e-209a-4427-925c-d4e2f8217f5a@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 24 Feb 2026 14:19:56 -0800
+X-Gm-Features: AaiRm52fYZKXpBWIpBV_6pmVZ_13_zNMt5QmejWfADpJGVdq1QSE2sEdRzWOlJ4
+Message-ID: <CAJnrk1a1FAARebZ0Aqw18zxtOy8WTMb2UfcAK6jQaigXiZbTfQ@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
 To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	csander@purestorage.com, krisman@suse.de, bernd@bsbernd.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12405-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-12406-lists,io-uring=lfdr.de];
 	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[alexeistarovoitov@gmail.com,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 6D9F818B9A6
+X-Rspamd-Queue-Id: 1819D18D16B
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 7:06=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+On Mon, Feb 23, 2026 at 12:00=E2=80=AFPM Pavel Begunkov <asml.silence@gmail=
+.com> wrote:
 >
-> On 2/23/26 14:39, Jens Axboe wrote:
-> > On 2/23/26 7:32 AM, Pavel Begunkov wrote:
-> >> On 2/23/26 14:14, Jens Axboe wrote:
-> >>> On 2/23/26 7:11 AM, Pavel Begunkov wrote:
-> >>>> NOT FOR INCLUSION
-> >>>>
-> >>>> Alexei asked for extra more realistic examples. This this series is
-> >>>> based on top of v9 of the io_uring BPF series and implemented as
-> >>>> selftests. There could be more, but I stopped with 3 that should
-> >>>> give an idea how it'll be used:
-> >>>>
-> >>>> 1. A QD=3D1 file copy program that show cases state machine handling=
-.
-> >>>>
-> >>>> 2. A BPF program rate-limiting the number of inflight io_uring reque=
-st.
-> >>>>      That's a good example of what users asked for before but seemed=
- to
-> >>>>      be too niche to be plumbed into the main io_uring path.
-> >>>>
-> >>>> 3. A toy example of how BPF can interact with registered buffers.
-> >>>
-> >>> Let's please keep examples in the liburing side, where they can be
-> >>> with the documentation too.
-> >>
-> >> I got you a liburing example
-> >>
-> >> https://github.com/isilence/liburing/tree/bpf-ops-example
+> On 2/21/26 02:14, Joanne Koong wrote:
+> > On Fri, Feb 20, 2026 at 4:53=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
+ail.com> wrote:
+> ...
+> >> So I'm asking whether you expect that a server or other user space
+> >> program should be able to issue a READ_OP_RECV, READ_OP_READ or any
+> >> other similar request, which would consume buffers/entries from the
+> >> km ring without any fuse kernel code involved? Do you have some
+> >> use case for that in mind?
 > >
-> > Right, but that's just the nop thing, which isn't really interesting
-> > outside of doing basic verification of yes indeed the kernel side works=
-.
-> >
-> >> but need to sync with the selftest. I think I'll rather keep the rest
-> >> into a separate repository instead of adding all helpers to liburing,
-> >> which will inevitably do similar things but deviating in API and
-> >> internal details. And it's simpler on dependency management instead
-> >> of requiring libbpf / etc. for liburing. I wanted a space for
-> >> misc io_uring bits that doesn't make sense to keep as core liburing
-> >> anyway.
-> >
-> > liburing should have support and documentation. It's not that hard to
-> > check for libbpf in configure and either build the support or not. Once
-> > various feature support ends up being fragmented in the ecosystem THAT
-> > is a mess for users, I'd much rather have it consolidated and deal with
-> > it on the liburing side.
+> > Thanks for clarifying your question. Yes, this would be a useful
+> > optimization in the future for fuse servers with certain workload
+> > characteristics (eg network-backed servers with high concurrency and
+> > unpredictable latencies). I don't think the concept of kmbufrings is
+> > exclusively fuse-specific though (for example, Christoph's use case
+> > being a recent instance);
 >
-> What kind of support do you mean? Installation, removal, other BPF
-> management is all on the libbpf side, e.g. skeleton open/load/etc.,
-> and with it generating new structures for each of them, I'm not sure
-> how to make it into some generic API whether it's liburing or not
-> instead of making users to fill in the gaps, nor I think we should.
-> As for figuring out right helpers and abstractions for BPF program
-> writing, it'll be a gradual process, and I'd rather have it
-> separately, it's not like I can reuse liburing for that.
+> Sorry, I don't see relevance b/w km rings and what Christoph wants.
+> I explained why in some sub-thread, but maybe someone can tell
+> what I'm missing.
+>
+> > I think other subsystems/users that'll use
+> > kmbuf rings would also generically find it useful to have the option
+> > of READ_OP_RECV/READ_OP_READ operating directly on the ring.
+>
+> Yep, it could be, potentially, it's just the patchset doesn't plumb
+> it to other requests and uses it within fuse. It's just cases like
 
-The cp and ratelimiter examples make sense to me.
-The 3rd one with xor kfunc is a conversation starter.
+This patchset just represents the most basic foundation. The
+optimization patches (eg incremental buffer consumption, plumbing it
+to other io-uring requests, etc) were to be follow-up patchsets that
+would be on top of this.
 
-Since liburing already has "cp" in examples/
-I have to agree with Jens that "cp" as bpf prog should be there as well.
-Spreading the examples across github and kernel tree won't work well.
-We learned this lesson with samples/bpf/ long ago.
+> that always make me wonder, here it was why what is basically an
+> internal kernel fuse API is exposed as an io_uring uapi. Maybe there
+
+It's not really an internal kernel fuse API. There's nothing
+fuse-specific about it - the infrastructure that's added is the
+infrastructure for a generic buffer ring.
+
+The memory that backs the buffers for the buf ring needs to be
+io-uring specific. io-uring already has all the infrastructure for
+buffer rings. So I'm not really fully understanding why it's better in
+this case to just have the fuse kernel code re-implement all the logic
+for a buffer ring and go through these layers of indirection to use
+registered buffers, instead of just leveraging what's already in
+io-uring.
+
+> was a discussion about it I missed?
+>
+> >> So you already can do all that using the mmap()'ed region user
+> >> pointer, and you just want it to be more efficient, right?
+> >> For that let's just reuse registered buffers, we don't need a
+> >> new mechanism that needs to be propagated to all request types.
+> >> And registered buffer are already optimised for I/O in a bunch
+> >> of ways. And as a bonus, it'll be similar to the zero-copy
+> >> internally registered buffers if you still plan to add them.
+> >>
+> >> The simplest way to do that is to create a registered buffer out
+> >> of the mmap'ed region pointer. Pseudo code:
+> >>
+> >> // mmap'ed if it's kernel allocated.
+> >> {region_ptr, region_size} =3D create_region();
+> >>
+> >> struct iovec iov;
+> >> iov.iov_base =3D region_ptr;
+> >> iov.iov_len =3D region_size;
+> >> io_uring_register_buffers(ring, &iov, 1);
+> >>
+> >> // later instead of this:
+> >> ptr =3D region_ptr + off;
+> >> io_uring_prep_read(sqe, fd, ptr, ...);
+> >>
+> >> // you use registered buffers as usual:
+> >> io_uring_prep_read_fixed(sqe, fd, off, regbuf_idx, ...);
+> >>
+> >
+> > I feel like this design makes the interface more convoluted and now
+> > muddies different concepts together by adding new complexity /
+> > relationships between them whereas they were otherwise cleanly
+> > isolated. Maybe I'm just not seeing/understanding the overarching
+> > vision for why conceptually it makes sense for them to be tied
+> > together besides as a mechanism to tell io-uring requests where to
+> > copy from by reusing what exists for fixed buffer ids. There's more
+> > complexity now on the kernel side (eg having to detect if the buffer
+> > passed in is kernel-allocated to know whether to pin the pages /
+> > charge it against the user's RLIMIT_MEMLOCK limit) but I'm not
+> > understanding what we gain from it.
+>
+> That would avoid doing a large revamp of uapi and plumbing it
+> to each every request type when there is already a uapi that does
+> what you want, does it well and have lots of things figured out.
+> Keeping the I/O path sane is important, io_uring already has 3
+> different ways of passing buffers, let's not add a 4th one
+> unless it achieves something meaningful.
+>
+> > I got the sense from your previous
+> > comments that memory regions are the de facto way to go and should be
+>
+> Sorry, maybe I wasn't clear. With what I see you're trying to do,
+> i.e. copying client's data into user space (server), I think
+> registered buffers would be a better abstraction. However, I just
+> went with your design on top of regions, since it's not the first
+> iteration of the series and I wasn't following previous ones, and
+> IIRC you was already using registered buffers in previous revisions
+> but moved from that for some reason. IOW, I was taking you main I/O
+> path and was trying to make the setup path a bit more flexible and
+> reusable.
+>
+> > decoupled from other structures, so if that's the case, why doesn't it
+> > make sense for io-uring to add native support for using memory regions
+> > for io-uring requests? I feel like from the userspace side it makes
+> > things more confusing with this extra layer of indirection that now
+> > has to go through a fixed buffer.
+>
+> There is a high bar for adding a new interface for passing buffers
+> that needs to be propagated to a good number of request handlers,
+> and there is already one that gives you all you need to write
+> efficient user space.
+>
+> >> IIRC the registration would fail because it doesn't allow file
+> >> backed pages, but it should be fine if we know it's io_uring
+> >> region memory, so that would need to be patched.
+> >>
+> >> There might be a bunch of other ways you can do that like
+> >> create a kernel allocated registered buffer like what Cristoph
+> >> wants, and then register it as a region. Or allow creating
+> >> registered buffers out of a region. etc.
+> >>
+> >> I wanted to unify registered buffers and regions internally
+> >> at some point, but then drifted away from active io_uring core
+> >> infrastructure development, so I guess that could've been useful.
+> >>
+> >>> Right now there's only a uapi to register a memory region and none to
+> >>> unregister one. Is it guaranteed that io-uring will never add
+> >>> something in the future that will let userspace unregister the memory
+> >>> region or at least unregister it while it's being used (eg if we add
+> >>> future refcounting to it to track active uses of it)?
+> >>
+> >> Let's talk about it when it's needed or something changes, but if
+> >> you do registered buffers instead as per above, they'll be holding
+> >> page references and or have to pin the region in some other way.
+> >
+> > I don't think we can guarantee that the caller will register the
+> > memory region as a fixed buffer (eg if it doesn't need/want to use the
+> > buffer for normal io-uring requests). On the kernel side, the internal
+>
+> It's up to the user (i.e. fuse server) to either use OP_READ/etc. using
+> user addresses that you have in your design from mmap()ing regions, or
+> registering it and using OP_READ_FIXED.
+
+Yes but I don't think this solves the concern of userspace being able
+to unregister the memory region at any time (eg while not doing
+io-uring requests) while the kernel still points to those addresses
+for the backing buffers of the bufring, since there's no callback that
+gets triggered in the subsystem when a memory region is unregistered,
+which means there will need to be extra per I/O overhead for having to
+ensure the memory region is still valid. Though since there's no uapi
+for unregistering a memory region this is not a concern, unless this
+is planned to be added in the future.
+
+Thanks,
+Joanne
+
+>
+> > buffer entry uses the kaddr of the registered memory region buffer for
+> > any memcpys. If it's not guaranteed that registered memory regions
+> > persist for the lifetime of the ring, there'll have to be extra
+> > overhead for every I/O (eg grab the io-uring lock, checking if the mem
+> > region is still registered, grab a refcount to that mem region, unlock
+> > the ring, do the memcpy to the kaddr, then grab the io-uring lock
+> > again, decrement the refcount, and unlock). Or I guess we could add
+> > pinning to a registered memory region.
+>
+>
+>
+> --
+> Pavel Begunkov
+>
 

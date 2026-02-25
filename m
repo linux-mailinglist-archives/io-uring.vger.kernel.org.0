@@ -1,258 +1,248 @@
-Return-Path: <io-uring+bounces-12414-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12415-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WC8UCmrRnmnwXQQAu9opvQ
-	(envelope-from <io-uring+bounces-12414-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 11:39:38 +0100
+	id GFGsHMnvnmk/XwQAu9opvQ
+	(envelope-from <io-uring+bounces-12415-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 13:49:13 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98103195DFA
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 11:39:37 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FAA19797B
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 13:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1069430F05E8
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 10:36:13 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 95954300C6D0
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 12:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704DE392C5D;
-	Wed, 25 Feb 2026 10:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2B13ACF0B;
+	Wed, 25 Feb 2026 12:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YH1Buoku"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQfKwk+C"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FB392C50
-	for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 10:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AA73AEF59
+	for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 12:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772015771; cv=none; b=FueLNXMZe8x+BSWL8axld1ydkcw3ryGiGVQz2CiApkc/IrtwZ93gwKS69WIOWJmZnpNzpUj/Xgo6TWYQSBVYxw2ZQ1Zc//yfKfiI+EBPHxuHQ6btYQQd6k5wfCBcbDmRR3z8FXYb1bTq0Yg5KZ5dYqtXwqceaflBbrSSl0oji18=
+	t=1772023741; cv=none; b=p0SjbWjC8PKA/P8u38H4S+ypNdQqSEACmmSl2G/sty3PprmsY1HRHdRX0WyRxV3Z1LRv3K7/OBKj8NBj45plvX1yUEytziDOnboYDlBUpJelFH6Qcja9E6iXHcrjNkJRNHLx+bU542Wu7ljey0X41vuPlaS7AZN/VF3cRrMzz2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772015771; c=relaxed/simple;
-	bh=KI01rWDLyrwMUs9sRMyxAtnKvx7s3uBQtFYSohBHsq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QgmcnD0pqJbjIsyRm07AHfmb0DsZMFOipWDJKUjuVlBG9iRDXYDt6PuyX6Tt7eSDjyIDXujPLR43WSOTkwnfx1sPS4/RtImiiwLMQPNswxaf4j0O5lWDfGV9EwlDxkR7V0T5nh6B+WBNhbxJu0NJKwu7e9uy3Fm68nJ89YbHDQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YH1Buoku; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1772023741; c=relaxed/simple;
+	bh=TPtQecFLt3bKgAlUJv6uA3jD+8ENnPfJf8K8C1mKZj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sfT9ZmVdkPUOuLWzGaacH4F70JQz63yQnz+CStdLl8PLFU2WvaygYW/3uhSQqrANl1EVa1DCcsR7NVdk6canfSxUfInH9OK5V8uFsilgp25vL+TZdBxe12sA4Y3Q9oNOfdolV2ErtbOa18Td51RHSrZOaNbBLRbJsfllGDoeEMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQfKwk+C; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-65c01595082so9769911a12.3
-        for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 02:36:09 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-389e71756d8so5450871fa.2
+        for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 04:48:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772015768; x=1772620568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+f9OUhtk1Jt/f2+uHK+M/WGDZ/ktGjugV2mUmuZLtkE=;
-        b=YH1BuokudBwL18hHlzb6CfgStzhzo2n+uUDboDhUIEf58VM8F2yrX2uzDQ2TCTLSMQ
-         T8UFHxH05Y+AAfwcSydGcR/0IpZ5kHE1mFTBLVCjR6veg3Mm90YGmGi4JvCP7nlTq0PL
-         MQdJw0hYsB41WMQtG2gx2yY3njBT/OFg9u06yKd4xSWICTmjX9qrK223f50ea/Qod5eR
-         7M6v7BX4uEHv2CSmnNafi3heO4Fa/5TgHdGdDQqL7UzA/EBu/DK0RHf3CWCwx/uVMd8Z
-         wsXE6mDWeKJpteLYoWIz3yx8I244qzoKe67aUuphF6POIZXfHeWcK6P7onhJflGkWn6v
-         GTYA==
+        d=gmail.com; s=20230601; t=1772023738; x=1772628538; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tXh8nJgWerBQSiJBvjtEBHO2Vkt5cQS3cW38XI+++O8=;
+        b=kQfKwk+CIjrrP8Zlj7mjGkTHHzn8CJKfxhsomIpcO7h7H0M+xBZm0RrD4AWEd9M92K
+         C8dmrYe0uNdxLYhsSJtLTuVWI2Ou0lJtbxLIvO9zCoEBALiMl6EIo4Q6ThDkegrV6hq1
+         k2dq0gehN3ugJsNwFKX0sWj2QtVHgoeTMMWoN8q4hgKAde8Dh8X5Kn2PYrZVjBoqAPTv
+         LN1yha5LQ867eq4T3bfRixryA952jFJ4vZ0jtswfUA6Gy6TD50NSw34Zq9u3dWLr3Wr/
+         uk4LiPXWNBAacXcKAhebFdTgBOwBewRUW/vkPQQEKSB9gV7HBqH2ABY+/KcK79Zo3PiZ
+         SjuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772015768; x=1772620568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+f9OUhtk1Jt/f2+uHK+M/WGDZ/ktGjugV2mUmuZLtkE=;
-        b=B0DqKDg4IzL8QojIyaWBMdUsGl6SFBLT8zoYUmE7L/IFxFXMT/RgDi0PZjCJyDn/8l
-         sP85TzOBRkJGmasSVnWe4/4rYj9juFNRlvGS6MMOK9mIwd/MWZZfSPkUYf4txGjrpDwg
-         u91KKlcibnZTFVWUQI1HgdRIHCHEzsR8OBB762nDKRYmgdHrIfdoytkBDm58Go85NE4T
-         4l+VHJjpFtdUZ+CEyOWlQqs8SCIWsGLwvDJnbBRaFXUPl1heg4pX7MyFHWXH01nsCjl5
-         SPH4xw38vF7H9bR1IExc/+BQoY8g9Ln5mHrTAXxMJfL9APxFyYSlyApZx25O3yXXWwLo
-         W3Ag==
-X-Gm-Message-State: AOJu0YztKPQ5CdWixh4Rm2rnN46U3cqNtE4WePSJ9SIickgczhKFWmqX
-	J3cIKGhJG9QrojtTLk6NIIPvTS0KUejm9PphVZ5iO9083CXh4fG0y011R6NWyQ==
-X-Gm-Gg: ATEYQzw42nP3sjyaffqkn0Vs53fNnWvJmOS6lGCl2HxhNNGnr/lQit1PegItDuzMYnw
-	VDriNH6ViD9+Ci4ly1Kwz55Z1MWIDIWUuYIUrBJUGl4hlNpcSh3pbQm47EbV3icp/jqZVnbuJsE
-	eG5uUOD4Mt49Ob4y8GHZlkIlkHGrG44LUU0L/0jNIdRBSkrFo5QtQLE/w9nUGRIZIWJMHZEN3lm
-	VOjYwIekhVn2ipVTn8uEHVJvIJwEiH10FQcAtrYetSMA3FpcQQ+L3aLDwZ9Vu2gWl4SbT5617Nt
-	17+nRZX03RxR7y5MhEHp3zwBDyZzoSfywVmVANhCuEA7wfKJsp8MsxR/cOA+ylugnRSl9s9Jzc1
-	E5wzvv5OZMETqoMxgIfBfVy4DxF3PLBGNzdPR8lNV073KpdNtW6E2xLirwJOH5fbmPqn9UIgSOp
-	mbzaavKoJKUNvS2SZ0Vk9zsx6sHXRpHQnA6HXyBcbI7kAWgrP2uMfSXTNkZqqHMjDqDgRZvKE70
-	towGCNXVVXLlq4jcLi8ZPI0/QoiEd27vTL7tHNFoV7S9sbmJP/2eRcWhH2I
-X-Received: by 2002:a17:906:209c:b0:b87:1590:d528 with SMTP id a640c23a62f3a-b9081b6d72cmr594311866b.40.1772015767307;
-        Wed, 25 Feb 2026 02:36:07 -0800 (PST)
-Received: from 127.0.0.1localhost (82-132-214-161.dab.02.net. [82.132.214.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9084c82495sm500530666b.20.2026.02.25.02.36.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 02:36:06 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	axboe@kernel.dk,
-	Keith Busch <kbusch@kernel.org>
-Subject: [PATCH v2 2/2] io_uring/timeout: immediate timeout arg
-Date: Wed, 25 Feb 2026 10:35:58 +0000
-Message-ID: <6151302f1dc01d1c4e3176da50ab4224947b709f.1772015321.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <cover.1772015321.git.asml.silence@gmail.com>
-References: <cover.1772015321.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1772023738; x=1772628538;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tXh8nJgWerBQSiJBvjtEBHO2Vkt5cQS3cW38XI+++O8=;
+        b=GMwOXo3DitxIkRebo51y0VVTxDU4zchVBx79n9we+sLK8AM1L7//Dj7qqfgDVm1Dcm
+         mtHoaBI9OpCOOKtcRJ9RBrFY0Jqs0EoobdALi2Q6Kaoys4rxMl2JYF5RH4EE245aGz42
+         gYSCgyq7xWj4jOS4Kh5J5fVFlZa5YfaEpq6SCogysk47+hc81ZWidOZd4N8ohfQpPFPj
+         dKo1iSZuOHbz/D+9NwJAEJ/Pz98ZdTgrNmdJpv0jSFc42fCupsAl2+6IS4O4TFwG/8O/
+         J1Xf3wW64fujE0PeibQA7cH+JcFg37kFD5LWGp6I3ok2ymbTl+yukhq2v+mKQShFPydZ
+         kPJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJMJ1tbIx7RhEJVINrsssw5Qo7uvWEDBW+zbNRUwqN0Q+DEIE+J/FdVnN2Asu9SV79Z0zovvpdjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnhSQ1dxL3+w0X6/zC93sYu6duDjWKUyX2v7HENbIIjZpkFxCy
+	QZmQQxtun63Ll/Zt2B8eEZ3Q17MEBQvsF9bmG71njjp+3NgUTIYaPSwUnUWRuw==
+X-Gm-Gg: ATEYQzxaFBqaauY8Jyg2KfJ5o+fpVyusXFaP9Qbim2YWy/sYCw9TNNysM4wrQKSqRqt
+	jPL4pdTxVwvG9UqxQ+0t/+NTcifmm5dB52mBY6Wk2nIgGekaLEofOrQOxNLzAEQtC90Y6XmNWEv
+	ZYfscaoPm4o8lmv5dgUlPtyd7b7MHpgLjifJofsyu+sNjFLcuh7hXMaodk905NQtsYC9yV6mAiG
+	bIfBGYdMcaH7VpOCjvRMk4TQtI1XIRiFjyaCisqc1AV1kJN/KG/2cM6Vz/vxADqeq2CD+8dicIE
+	9gGotiFOYLXCx9f+DpExBWVTCnxlTrxIBgCzwcJII7B+IvjPBWyjJeu/6WfRS7cKh0wNm55ZCnf
+	FFMjVFd6/lnbQIzkhI7JxSBbCrPY8JlXbbpOMGvwvFVMbTz1cJBiOqDOcQQd99aLqc2Re/But8Q
+	Yp35/znc0O16hkyBm/s0PRyQosC1UDNf/3VTHrrSEzgiP6RqUvgkPmPAEneJqecMLEakydieN0t
+	6Z82j2Os2MDji6/Upi9Tq0JGSrPDeuWeNS/Gs8gGz6vHpSfTSX/hBUbpw==
+X-Received: by 2002:a17:906:f59a:b0:b8e:d04e:e4fc with SMTP id a640c23a62f3a-b9081a0cbefmr898192366b.22.1772017948488;
+        Wed, 25 Feb 2026 03:12:28 -0800 (PST)
+Received: from [10.112.148.141] (82-132-214-161.dab.02.net. [82.132.214.161])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9084ee4d63sm508858366b.62.2026.02.25.03.12.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Feb 2026 03:12:27 -0800 (PST)
+Message-ID: <22073d2a-31ea-46c2-bb4a-b771b2fcf8ee@gmail.com>
+Date: Wed, 25 Feb 2026 11:12:24 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] selftests/io_uring: add a bpf io_uring selftest
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Ming Lei <tom.leiming@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ io-uring <io-uring@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Xiao Ni <xni@redhat.com>,
+ Caleb Sander Mateos <csander@purestorage.com>
+References: <cover.1771327059.git.asml.silence@gmail.com>
+ <7cc147a959ac068c55dae4f540e38e9e4ab121e0.1771327059.git.asml.silence@gmail.com>
+ <CAADnVQK0RaOA9ZYZdYyQxOzLde9MR8HpMM0SexcW59A9u7X2Jw@mail.gmail.com>
+ <84e2f3ad-28f0-4e9a-804f-2647cba9b30f@gmail.com>
+ <CAADnVQLSEoZ0V1m5j3ggX0o0gzVKyiDHL=J6F0wRXB8qk-MCGA@mail.gmail.com>
+ <591a7f0e-7b78-42f1-9486-163249f5e306@gmail.com>
+ <CACVXFVPx5AcC9y9xVPCaahDeumNGm4TSkkfhsJ8w+wmW52JQ4w@mail.gmail.com>
+ <ed7b85d0-38d0-413c-a28a-f3b0d1a72a13@gmail.com>
+ <CAFj5m9L_WPH_du4GMVYGBdYA_NX1kbGtJpAP0hbfuEjuk5faZw@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAFj5m9L_WPH_du4GMVYGBdYA_NX1kbGtJpAP0hbfuEjuk5faZw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,kernel.org];
-	TAGGED_FROM(0.00)[bounces-12414-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.dk,redhat.com,purestorage.com];
+	TAGGED_FROM(0.00)[bounces-12415-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.994];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 98103195DFA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 97FAA19797B
 X-Rspamd-Action: no action
 
-One the things the user has always keep in mind is that any user
-pointers they put into an SQE is not going to be read by the kernel
-until submission happens, and the user has to ensure the pointee
-stays alive until then. For example, this snippet:
+On 2/25/26 08:41, Ming Lei wrote:
+> On Tue, Feb 24, 2026 at 12:30 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 2/23/26 15:23, Ming Lei wrote:
+>>> On Sat, Feb 21, 2026 at 6:35 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>
+>>>> On 2/20/26 17:45, Alexei Starovoitov wrote:
+>>>>> On Fri, Feb 20, 2026 at 3:41 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>>
+>>>>>> I had such examples, but selftests is not the best place for that.
+>>>>>> It can use abstractions, and I want to make them reusable instead
+>>>>>> of people copy-pasting from selftests.
+>>>>>
+>>>>> Sure, but please still post them as extra patches so it's easier
+>>>>> to see what's the end result.
+>>>>>
+>>>>> Also please reply to that thread:
+>>>>> https://lore.kernel.org/bpf/CALTww28QMg=YXqKWpWLZrLO+xiqOe3LGyput8dx68-dnQsxg=g@mail.gmail.com/
+>>>>>
+>>>>> It's not clear to me whether your io_uring+bpf setup will work
+>>>>> for Xiao's use case.
+>>>>> I don't think we need 2 ways of doing it.
+>>>>
+>>>> We discussed this with Ming on the list before, that's one of the use
+>>>> cases I target as well, there is no reason why it shouldn't work. The
+>>>> difference is that this approach gives a flexible framework for
+>>>> extensibility and covers a good bunch of other needs, which is exactly
+>>>> the reason I moved from a BPF opcode approach, while Ming's proposal is
+>>>> more specific but argued to be a way easier to plug into ublk servers.
+>>>> If you ask me, we need a solution that covers a broader spectrum of
+>>>> use cases, but I guess it all can be argued in either way.
+>>>
+>>> One big drawback of  Pavel's approach is that it needs a totally
+>>> different userspace
+>>> implementation for using BPF, which is just hard to use in existing
+>>> io_uring applications.
+>>
+>> Not really, it depends on how you write it. If you need to rewrite CQ
+> 
+> I meant SQE has to be allocated & built in bpf prog, then it is inevitable
+> to move application logic into bpf prog.
 
-void prep_timeout(struct io_uring_sqe *sqe) {
-	struct __kernel_timespec ts = {...};
-	prep_timeout(sqe, &ts);
+But that's what I'm saying, you don't need building sqes in bpf
+to augment it with BPF checksumming / etc. I can elaborate when I
+get some time, but to give a short example:
+
+# bpf-prog.c:
+
+unsigned csum_jobs;
+unsigned regbuf_idx_to_csum;
+
+loop() {
+	if (csum_jobs) {
+		kfunc_regbuf_do_csum(regbuf_idx_to_csum);
+		csum_jobs = 0;
+		...
+	}
+
+	// proceed to the default submit / lopp implementation
+	// you'd expect from normal io_uring_submit_and_wait()
 }
 
-void submit() {
-	sqe = get_sqe();
-	prep_timeout(sqe);
-	io_uring_submit();
+# user-prog.c
+
+ring = create_ring();
+load_my_bpf();
+
+sqe = get_and_prep_sqe();
+// normal submit+wait
+io_uring_submit_and_wait();
+
+cqe = get_cqes();
+if (cqe->type == ...) {
+	skel->bss->csum_jobs++;
+	skel->bss->regbuf_idx_to_csum = idx_from_cqe(cqe);
+	// use bpf arenas, io_uring regions for the real tning
 }
 
-would lead to UAF for the on stack variable 'ts'. Instead of passing
-the timeout value as a pointer allow to store it immediately in the SQE.
-The user has to set a new flag called IORING_TIMEOUT_IMMEDIATE_ARG,
-in which case sqe->addr will be interpreted as the timeout value in ns.
-It only works with relative timeouts and rejected if set together with
-IORING_TIMEOUT_ABS out of concerns of not having enough range in u64 to
-represent a good long term API.
+// queue more sqes if needed
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/uapi/linux/io_uring.h |  5 +++++
- io_uring/timeout.c            | 28 +++++++++++++++++++++++-----
- 2 files changed, 28 insertions(+), 5 deletions(-)
+// this will do csum'ing and followed by submit+wait
+io_uring_submit_and_wait();
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 6750c383a2ab..8f4de786e6e9 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -340,6 +340,10 @@ enum io_uring_op {
- 
- /*
-  * sqe->timeout_flags
-+ *
-+ * IORING_TIMEOUT_IMMEDIATE_ARG:	If set, sqe->addr stores the timeout
-+ *					value in nanoseconds instead of
-+ *					pointing to a timespec.
-  */
- #define IORING_TIMEOUT_ABS		(1U << 0)
- #define IORING_TIMEOUT_UPDATE		(1U << 1)
-@@ -348,6 +352,7 @@ enum io_uring_op {
- #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
- #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
- #define IORING_TIMEOUT_MULTISHOT	(1U << 6)
-+#define IORING_TIMEOUT_IMMEDIATE_ARG	(1U << 7)
- #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIMEOUT_REALTIME)
- #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_TIMEOUT_UPDATE)
- /*
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index cb61d4862fc6..a0d1db98d1fc 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -446,6 +446,7 @@ static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
- int io_timeout_remove_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_timeout_rem *tr = io_kiocb_to_cmd(req, struct io_timeout_rem);
-+	__u64 arg;
- 
- 	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
- 		return -EINVAL;
-@@ -460,10 +461,20 @@ int io_timeout_remove_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 			return -EINVAL;
- 		if (tr->flags & IORING_LINK_TIMEOUT_UPDATE)
- 			tr->ltimeout = true;
--		if (tr->flags & ~(IORING_TIMEOUT_UPDATE_MASK|IORING_TIMEOUT_ABS))
-+		if (tr->flags & ~(IORING_TIMEOUT_UPDATE_MASK |
-+				  IORING_TIMEOUT_ABS |
-+				  IORING_TIMEOUT_IMMEDIATE_ARG))
- 			return -EINVAL;
--		if (get_timespec64(&tr->ts, u64_to_user_ptr(READ_ONCE(sqe->addr2))))
-+
-+		arg = READ_ONCE(sqe->addr2);
-+		if (tr->flags & IORING_TIMEOUT_IMMEDIATE_ARG) {
-+			if (tr->flags & IORING_TIMEOUT_ABS)
-+				return -EINVAL;
-+			tr->ts = ns_to_timespec64(arg);
-+		} else if (get_timespec64(&tr->ts, u64_to_user_ptr(arg))) {
- 			return -EFAULT;
-+		}
-+
- 		if (tr->ts.tv_sec < 0 || tr->ts.tv_nsec < 0)
- 			return -EINVAL;
- 	} else if (tr->flags) {
-@@ -518,8 +529,8 @@ static int __io_timeout_prep(struct io_kiocb *req,
- {
- 	struct io_timeout *timeout = io_kiocb_to_cmd(req, struct io_timeout);
- 	struct io_timeout_data *data;
--	unsigned flags;
- 	u32 off = READ_ONCE(sqe->off);
-+	unsigned flags;
- 
- 	if (sqe->buf_index || sqe->len != 1 || sqe->splice_fd_in)
- 		return -EINVAL;
-@@ -528,7 +539,8 @@ static int __io_timeout_prep(struct io_kiocb *req,
- 	flags = READ_ONCE(sqe->timeout_flags);
- 	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_CLOCK_MASK |
- 		      IORING_TIMEOUT_ETIME_SUCCESS |
--		      IORING_TIMEOUT_MULTISHOT))
-+		      IORING_TIMEOUT_MULTISHOT |
-+		      IORING_TIMEOUT_IMMEDIATE_ARG))
- 		return -EINVAL;
- 	/* more than one clock specified is invalid, obviously */
- 	if (hweight32(flags & IORING_TIMEOUT_CLOCK_MASK) > 1)
-@@ -557,8 +569,14 @@ static int __io_timeout_prep(struct io_kiocb *req,
- 	data->req = req;
- 	data->flags = flags;
- 
--	if (get_timespec64(&data->ts, u64_to_user_ptr(READ_ONCE(sqe->addr))))
-+	if (flags & IORING_TIMEOUT_IMMEDIATE_ARG) {
-+		if (flags & IORING_TIMEOUT_ABS)
-+			return -EINVAL;
-+		data->ts = ns_to_timespec64(READ_ONCE(sqe->addr));
-+	} else if (get_timespec64(&data->ts,
-+				  u64_to_user_ptr(READ_ONCE(sqe->addr)))) {
- 		return -EFAULT;
-+	}
- 
- 	if (data->ts.tv_sec < 0 || data->ts.tv_nsec < 0)
- 		return -EINVAL;
+> If the logic is complicated, it is one big thing.
+
+The implementation above would be simple enough. And on top,
+someone could try to do BPF submissions to cover cases like
+you had with group request ordering (forgot the actual name).
+
+> raid5 is a great example with complicated fast io code path, I'd suggest someone
+> or Xiao or Caleb, try it. Compare your approach to the bpf opcode and draw
+> some useful conclusions.  Code should be more convincing.
+> 
+> For bpf opcode approach I believe Xiao has already built an example.
+
+It might be entertaining, but I wanted to stress that it's not
+a blocker for my work. It can handle the use case with registered
+buffers, but I aim at a more wider range of applications, which
+wouldn't be covered by the opcode approach. And that's the reason
+why I moved away from opcodes, it wasn't flexible enough.
+
 -- 
-2.53.0
+Pavel Begunkov
 
 

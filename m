@@ -1,215 +1,283 @@
-Return-Path: <io-uring+bounces-12419-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12420-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KGPjCTYxn2lXZQQAu9opvQ
-	(envelope-from <io-uring+bounces-12419-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 18:28:22 +0100
+	id ABb8Bj4xn2lXZQQAu9opvQ
+	(envelope-from <io-uring+bounces-12420-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 18:28:30 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941D619B8C9
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 18:28:21 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E8B19B8D9
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 18:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 44C1A301CCCC
-	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 17:25:01 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1E8413035483
+	for <lists+io-uring@lfdr.de>; Wed, 25 Feb 2026 17:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945D53E95A8;
-	Wed, 25 Feb 2026 17:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0933E9F7D;
+	Wed, 25 Feb 2026 17:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VePKlV0+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bw9CGybL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311AA2C17B3
-	for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 17:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B883E9F9A
+	for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 17:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772040299; cv=none; b=jwDT0/OIdO2TO6nYfxqo0PXSdAkt3OMnA6D7erarUh7gQ4vkqFJ7Xkbk22JPs/RQdxoJV7YjIthoEy9Kz0yDg3jM6dV3ZcI2S/uBJLkhOdeextk+qQlE4kPXx4uTtVwT7CSf5lFQIJcgruLUUC49Ln8QyucP+25L2BkPQlRJ9Zw=
+	t=1772040495; cv=none; b=ikIHWRSVUr3SX97shfKq7Z2LD2xtREXIFFPbIPnNJPzbJXqWB3Wo3hSVckSXLhLqzpV/Se1PD7p3KzMafzj7g2NYunsMmcSFpR/a87na2OrZ0uNcR4hnXAQG+6/WD9LqApVxDgTNhK/rIp/j1iGr3T44nH0vAsGkQaYODbp/KoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772040299; c=relaxed/simple;
-	bh=g694C3z1mR/MPBvKZfa01B9hP5VXTQlzidWBQncEwtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiUOeMKXv5f621duHRojpgyd0KQpscBreCQ9eJSoKfIOxQZZ0tOcfBG+SxTFNyB7WWWIHZcab3VQ94Rgpv5GUScqRAMRSnprgizPBN+5a9LpWFlJdGYHHJRNFwsIgJokRw8bSp958JhW7OuAzpqslYrO/OQbekgzmuIRHHaaufU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VePKlV0+; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1772040495; c=relaxed/simple;
+	bh=xdhqC4I0YQ70IxrcnfpjFAvjjBmua1K62BAgzEErPfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vB/RalU6ad6ONKfNEdAH4Mr1p2tihl+6mRrXxIH525upeoWwi/O87i9t678JAAPmZ+OcDoZTcGPkU6zg/eGaVKvA21EFcCO0BqwivPUAIUwC22M/EHEqRGBooD3e6iCU97aQ2L25C+cZoRQSXVAgkAKmPuDHNjzcCJr/aDmaez0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bw9CGybL; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48375f10628so100385e9.1
-        for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 09:24:58 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-482f454be5bso11049445e9.0
+        for <io-uring@vger.kernel.org>; Wed, 25 Feb 2026 09:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772040296; x=1772645096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7U/idi/iRX4NdL63SBTaFSWz/IhDdcMvBGwU/EP3OcA=;
-        b=VePKlV0+zgqjg6yPhFwoLomhZnimvPNMYc1Gh+MFT/TebIVnyOHM0Js7QxbUl5JpiX
-         wUscQ77gvB3/bk3gm/4AVMnZrFDZsztsvR67ca6gfXU9QiXwBg9hgIemb4jWYWebdofq
-         WC7H/ysGOW31Sc3rk0CKjfmcv3rasQnWdIp0tlprU+h2aRL1oFm0Zm89cOgMSOBCtOgc
-         ErOfDZVuhbXIwkNSJ6BlcUyyoC+BNSsQcOWSrO8nU6MerY1obp/TiSaLGMSlkfYf7uvG
-         Pb0DRBm7qPPndoahrPQNUepHeGqErZjCQ0ed1vtTJLxxpLuC9E4oqLTs+B/vKxYLqB9B
-         cUbg==
+        d=gmail.com; s=20230601; t=1772040488; x=1772645288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMQmOyGAqQj2qy00h0OMBwI+I5DQvE6dofnEajKCgh4=;
+        b=Bw9CGybLpuPPfLoZtLIvUAvF6QSOLJ4NU1WwzEwcbw5aRtU5F+JKo0wM0A+U6n8HRu
+         2s5KAhhngmyxRf3pABPID46RXGFvCdzVwO9zhR6XMMnOmGgwqIm05rWLFWYbuoam19R8
+         9/k98mBvmurJKSFFML+Gpzoocn1rIwB/63SjOO9GDF+qRAnZ33ygvKVZDDyVZ9JZtMPU
+         Iorf0eFrOQCQdUbOmtB0JZq469NZqVpdQkjOBYoiV1c6mHtX0pTd0AUs245nanT494uH
+         PPn4I5xlzi+QUVMiIY4poxSMMtLDHyJUUqu4EkQR98LXKG7UXc/yYT/E9OFOhFsaxSwp
+         81Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772040296; x=1772645096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7U/idi/iRX4NdL63SBTaFSWz/IhDdcMvBGwU/EP3OcA=;
-        b=FQhxnAFi7TfEQxmlk8OleYRdUHyAZ7Pn2DxrUf13BdEOkRym5oSAJbuCqfLRwoEvSl
-         pWKJNQP+vAXOteyc8XysvF0D0wq7WA81iShjBFppXro4g8034NVpJH83BQgnC/x1fmB3
-         qLdYFdvw4uUYtCn5afAt5RxzChRMdU1kGdhAA1ZrrhfbhVJo0dfBredUsOU44uUUxvEb
-         DOjnNz6r19SN6Ymw7Wlqu2DjrDWUiYJYpQKVyr6aYQ/zlD7iM3W40zr6cR4vQouC6xee
-         c/kVZWDr3FTtwzrRzv/ViLn+6D91yKD/41zudpKPTBCCJ2kzZg16zAjz9jlleDjWa1O9
-         kCdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG5eJV3lvEOa62xI++i+Neg+D4zjXl6OjQyUOhN/L+kQk18NECXgda9ZUpYvDt+RAg/E0Vrj/EMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+3lDLepK5SiXOxLYRSNZBFVkIrRPTUDj4ZGeK4p612jlKczPk
-	yCcbnuuWQhY2mCECd6M5thUc+A74mFojmu3eBZgNxdCWnnEAIISGhz5D
-X-Gm-Gg: ATEYQzwq2YYfo32SC7GvT7US8gmUD6h7KytXP2JTJ1oEeKuhopIhogACn1fAtqPfH6o
-	Dq5ezHNqEGw6Eq2Ynrm1dlQpfxTuM14qSoeKr+pzqp/W2x2xO2FKszOjuy/hEd0xrSzcnGeGpkM
-	tKxesVQwzL219J4LRzVfNNAlbyRD/j2x9ussNOq0G8/FjAXcJzuB+5+vgKdKpna9boPnzkDe8F8
-	UWDMW2BR2X4Ycw3geMT9pOULerGcSbJKvw3BOrlRA27fRE7vAmnOJoyu5cDqoxoS1iwB/XlJSbR
-	iQSO0lVMy3c2XnAw+e8CoVtqdvdMkkO/jVIFOp+fM2xmHL6JEZElgrB8ZycydoonhA/Gr+WNfXh
-	LgHLif6jUWqR6ucSDel3TZ2bOTdbHgFb+41oqw24WofnTMKlris7H/2HUeRibI1cwEhhRe8za/t
-	M5xy1QYjOKLwK9fCZXTwfZVy7Ad6r4OYTcbo9M82WgowAVXnGjGjoC8C7lC5wFUZu+nUew9vEvk
-	IxTKIVfCnY1ObmsnrRAhhd8DrRbpUrtbikwujAlz2q208uj7VL7EM+TphNJuaByiYas2aVEaU2e
-	Ug==
-X-Received: by 2002:a05:600c:c3c1:10b0:477:73e9:dbe7 with SMTP id 5b1f17b1804b1-483a9605cd5mr260176515e9.35.1772040296314;
-        Wed, 25 Feb 2026 09:24:56 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfb776dfsm28613875e9.1.2026.02.25.09.24.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Feb 2026 09:24:55 -0800 (PST)
-Message-ID: <74553709-23f6-4e7d-a7af-b2a9e509cf70@gmail.com>
-Date: Wed, 25 Feb 2026 17:24:54 +0000
+        d=1e100.net; s=20230601; t=1772040488; x=1772645288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TMQmOyGAqQj2qy00h0OMBwI+I5DQvE6dofnEajKCgh4=;
+        b=DnGKqAQ7WH8aXLRTzEhm09ci4JiLeS+T64OpSNY5gDiEnV61QhSjiZwn7xvFi8hXvN
+         2FJtIUgweyiGdUppRu85SiDfjz2sypEqcp6m3wFHHcKsJ8h8VuksY2QJ4FPvIA5o58fC
+         j6QaxNNrwkG1mqQPivvPgolo4AbnDc9YyjqSoKI7d2f0P1ixPOGPOI3XeZTMySAGjgS7
+         YqI50iTCMEuJz53wWk0vBMoF/prDjXDHid/cs+R5PNtgGvi8sYwYrN2DeRlZA2VPI4ms
+         JXS/U1DI4HLsXKxmikv/PXBOWNHKe8M0UQAl1yNnHLwRUtaL7nZkpAzp4pVX6rMdPmlk
+         8hbQ==
+X-Gm-Message-State: AOJu0YynsYx/wR60nuT74z403AxQTwV3LWK8vpSeoaf+UrNfxdmAkJAr
+	FWT+oML2sppcktiTqgoiAEheGkBS2Anm9L2bAJs3hhGK1XN4JNbyipejj3OpTA==
+X-Gm-Gg: ATEYQzyH/gLaGpcq7IoVrqO0rYy6NXTT4b8EJW/hCSk4k4CwEvCCPs0LaowHEJ7W7R3
+	TfiiZ8pJO2X39ouSprJh/WzRMFITXW5oweOb5JXnZv2V0OAOmYoWRY6RjaxXGAcdFHPAFXa+gh+
+	aD+GO1D/OagrBFt9TZKUzEvrxslAAoEibpn1Q2uizLzln1Qq5hI7hyLrG4jiX4IyHYslBuP+HA8
+	cUplxoElzJgvKX9WrQJYiJk7Lv9TZwn/xwfVJyuhEUBjdisn3mwlXeFmAEEod07jPhvIdpywWIH
+	UwwMH/HGxhSKF1027qmnXu0cJBwc59FiKMjCcSouJyH3Z10TwVEnYl7gVJoUDAuCb5aNd6lmTqU
+	rOqAYSMK9JGR2JQVAyjvs47nU2H3XhRYnt/0f7b12YhSHjhmno8pmGAe75bOFApd+lJxISSFKyv
+	6io6dGu88FksaprFRWd0ixJ2dryYBenBXiGG0cFuda6R2BC3QzCph12FiIZRcbIhJBSpNzCTp1J
+	WMmX2wXF83GS7KzNlzyXObi8McZLA==
+X-Received: by 2002:a05:600c:548a:b0:483:a352:b4e4 with SMTP id 5b1f17b1804b1-483bd73638emr79639195e9.6.1772040488015;
+        Wed, 25 Feb 2026 09:28:08 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd6f26d7sm92121945e9.3.2026.02.25.09.28.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Feb 2026 09:28:07 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH liburing v2 1/1] tests: test timeout with immediate arguments
+Date: Wed, 25 Feb 2026 17:28:03 +0000
+Message-ID: <86e674b0742b1931ce197b022d228cc9217bc737.1772040411.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] extra io_uring BPF examples
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
- bpf <bpf@vger.kernel.org>
-References: <cover.1771850496.git.asml.silence@gmail.com>
- <9c8d6af7-8546-4409-91fe-85f92a08f503@kernel.dk>
- <d808f483-3c0f-4323-8faa-0b7d49c539e3@gmail.com>
- <a7e1f667-04ba-4fe5-b21e-8c47e68213d3@kernel.dk>
- <b22117fa-84ba-4f9d-982a-bbaaae35eebd@gmail.com>
- <CAADnVQ+8VM8-G3X1UT8_t1tt5=62fxqknHPND40JNsQ51P_XVw@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAADnVQ+8VM8-G3X1UT8_t1tt5=62fxqknHPND40JNsQ51P_XVw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12419-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_FROM(0.00)[bounces-12420-lists,io-uring=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
 	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 941D619B8C9
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B5E8B19B8D9
 X-Rspamd-Action: no action
 
-On 2/24/26 18:54, Alexei Starovoitov wrote:
-> On Mon, Feb 23, 2026 at 7:06 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 2/23/26 14:39, Jens Axboe wrote:
->>> On 2/23/26 7:32 AM, Pavel Begunkov wrote:
->>>> On 2/23/26 14:14, Jens Axboe wrote:
->>>>> On 2/23/26 7:11 AM, Pavel Begunkov wrote:
->>>>>> NOT FOR INCLUSION
->>>>>>
->>>>>> Alexei asked for extra more realistic examples. This this series is
->>>>>> based on top of v9 of the io_uring BPF series and implemented as
->>>>>> selftests. There could be more, but I stopped with 3 that should
->>>>>> give an idea how it'll be used:
->>>>>>
->>>>>> 1. A QD=1 file copy program that show cases state machine handling.
->>>>>>
->>>>>> 2. A BPF program rate-limiting the number of inflight io_uring request.
->>>>>>       That's a good example of what users asked for before but seemed to
->>>>>>       be too niche to be plumbed into the main io_uring path.
->>>>>>
->>>>>> 3. A toy example of how BPF can interact with registered buffers.
->>>>>
->>>>> Let's please keep examples in the liburing side, where they can be
->>>>> with the documentation too.
->>>>
->>>> I got you a liburing example
->>>>
->>>> https://github.com/isilence/liburing/tree/bpf-ops-example
->>>
->>> Right, but that's just the nop thing, which isn't really interesting
->>> outside of doing basic verification of yes indeed the kernel side works.
->>>
->>>> but need to sync with the selftest. I think I'll rather keep the rest
->>>> into a separate repository instead of adding all helpers to liburing,
->>>> which will inevitably do similar things but deviating in API and
->>>> internal details. And it's simpler on dependency management instead
->>>> of requiring libbpf / etc. for liburing. I wanted a space for
->>>> misc io_uring bits that doesn't make sense to keep as core liburing
->>>> anyway.
->>>
->>> liburing should have support and documentation. It's not that hard to
->>> check for libbpf in configure and either build the support or not. Once
->>> various feature support ends up being fragmented in the ecosystem THAT
->>> is a mess for users, I'd much rather have it consolidated and deal with
->>> it on the liburing side.
->>
->> What kind of support do you mean? Installation, removal, other BPF
->> management is all on the libbpf side, e.g. skeleton open/load/etc.,
->> and with it generating new structures for each of them, I'm not sure
->> how to make it into some generic API whether it's liburing or not
->> instead of making users to fill in the gaps, nor I think we should.
->> As for figuring out right helpers and abstractions for BPF program
->> writing, it'll be a gradual process, and I'd rather have it
->> separately, it's not like I can reuse liburing for that.
-> 
-> The cp and ratelimiter examples make sense to me.
-> The 3rd one with xor kfunc is a conversation starter.
-> 
-> Since liburing already has "cp" in examples/
-> I have to agree with Jens that "cp" as bpf prog should be there as well.
-> Spreading the examples across github and kernel tree won't work well.
-> We learned this lesson with samples/bpf/ long ago.
-Urgh, that's the reason why I don't want these 3 to be merged. Neither
-I was excited about wiring any examples as selftests, but you asked for
-something that can be posted together a while back, and I obliged. Maybe
-there is some misunderstanding? and if nobody needs these selftests, I'd
-rather drop them entirely.
+IORING_TIMEOUT_IMMEDIATE_ARG allows the user to store the timeout in the
+SQE without indirection to a user timespec. Update io_uring.h and extend
+tests to cover the feature.
 
-Ok, I'll copy paste the cp example to liburing. And there is no BPF
-support I can add to liburing as it's all mandated by libbpf. But I
-hope nobody says that I can't use io_uring outside of liburing and
-anything and everything should be shackled to liburing, there are
-enough examples showing the opposite.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ src/include/liburing/io_uring.h |  5 ++++
+ test/timeout.c                  | 46 ++++++++++++++++++++++++++++-----
+ 2 files changed, 45 insertions(+), 6 deletions(-)
 
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index ab1450ec..74b3f86d 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -332,6 +332,10 @@ enum io_uring_op {
+ 
+ /*
+  * sqe->timeout_flags
++ *
++ * IORING_TIMEOUT_IMMEDIATE_ARG:	If set, sqe->addr stores the timeout
++ *					value in nanoseconds instead of
++ *					pointing to a timespec.
+  */
+ #define IORING_TIMEOUT_ABS		(1U << 0)
+ #define IORING_TIMEOUT_UPDATE		(1U << 1)
+@@ -340,6 +344,7 @@ enum io_uring_op {
+ #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
+ #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
+ #define IORING_TIMEOUT_MULTISHOT	(1U << 6)
++#define IORING_TIMEOUT_IMMEDIATE_ARG	(1U << 7)
+ #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIMEOUT_REALTIME)
+ #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_TIMEOUT_UPDATE)
+ /*
+diff --git a/test/timeout.c b/test/timeout.c
+index 003ba743..6bef0a7e 100644
+--- a/test/timeout.c
++++ b/test/timeout.c
+@@ -23,6 +23,7 @@
+ static int not_supported;
+ static int no_modify;
+ static int no_multishot;
++static int no_immediate;
+ 
+ static void msec_to_ts(struct __kernel_timespec *ts, unsigned int msec)
+ {
+@@ -30,11 +31,25 @@ static void msec_to_ts(struct __kernel_timespec *ts, unsigned int msec)
+ 	ts->tv_nsec = (msec % 1000) * 1000000;
+ }
+ 
++static void t_prep_timeout_rel(struct io_uring_sqe *sqe,
++				const struct __kernel_timespec *ts,
++				bool immediate)
++{
++	if (!immediate) {
++		io_uring_prep_timeout(sqe, ts, 0, 0);
++		return;
++	}
++
++	io_uring_prep_timeout(sqe, NULL, 0, 0);
++	sqe->addr = ts->tv_sec * 1000000000 + ts->tv_nsec;
++	sqe->timeout_flags = IORING_TIMEOUT_IMMEDIATE_ARG;
++}
++
+ /*
+  * Test that we return to userspace if a timeout triggers, even if we
+  * don't satisfy the number of events asked for.
+  */
+-static int test_single_timeout_many(struct io_uring *ring)
++static int test_single_timeout_many(struct io_uring *ring, bool immediate)
+ {
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring_sqe *sqe;
+@@ -50,7 +65,7 @@ static int test_single_timeout_many(struct io_uring *ring)
+ 	}
+ 
+ 	msec_to_ts(&ts, TIMEOUT_MSEC);
+-	io_uring_prep_timeout(sqe, &ts, 0, 0);
++	t_prep_timeout_rel(sqe, &ts, immediate);
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -219,7 +234,7 @@ err:
+ /*
+  * Test single timeout waking us up
+  */
+-static int test_single_timeout(struct io_uring *ring)
++static int test_single_timeout(struct io_uring *ring, bool immediate)
+ {
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring_sqe *sqe;
+@@ -235,7 +250,7 @@ static int test_single_timeout(struct io_uring *ring)
+ 	}
+ 
+ 	msec_to_ts(&ts, TIMEOUT_MSEC);
+-	io_uring_prep_timeout(sqe, &ts, 0, 0);
++	t_prep_timeout_rel(sqe, &ts, immediate);
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -252,6 +267,11 @@ static int test_single_timeout(struct io_uring *ring)
+ 	ret = cqe->res;
+ 	io_uring_cqe_seen(ring, cqe);
+ 	if (ret == -EINVAL) {
++		if (immediate) {
++			no_immediate = true;
++			fprintf(stdout, "%s: Timeout (imm) not supported, ignored\n", __FUNCTION__);
++			return 0;
++		}
+ 		fprintf(stdout, "%s: Timeout not supported, ignored\n", __FUNCTION__);
+ 		not_supported = 1;
+ 		return 0;
+@@ -1765,7 +1785,7 @@ int main(int argc, char *argv[])
+ 	ret = io_uring_queue_init(8, &sqpoll_ring, IORING_SETUP_SQPOLL);
+ 	sqpoll = !ret;
+ 
+-	ret = test_single_timeout(&ring);
++	ret = test_single_timeout(&ring, false);
+ 	if (ret) {
+ 		fprintf(stderr, "test_single_timeout failed\n");
+ 		return ret;
+@@ -1773,6 +1793,12 @@ int main(int argc, char *argv[])
+ 	if (not_supported)
+ 		return 0;
+ 
++	ret = test_single_timeout(&ring, true);
++	if (ret) {
++		fprintf(stderr, "test_single_timeout (imm) failed\n");
++		return ret;
++	}
++
+ 	ret = test_multi_timeout(&ring);
+ 	if (ret) {
+ 		fprintf(stderr, "test_multi_timeout failed\n");
+@@ -1797,12 +1823,20 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
+-	ret = test_single_timeout_many(&ring);
++	ret = test_single_timeout_many(&ring, false);
+ 	if (ret) {
+ 		fprintf(stderr, "test_single_timeout_many failed\n");
+ 		return ret;
+ 	}
+ 
++	if (!no_immediate) {
++		ret = test_single_timeout_many(&ring, true);
++		if (ret) {
++			fprintf(stderr, "test_single_timeout_many (imm) failed\n");
++			return ret;
++		}
++	}
++
+ 	ret = test_single_timeout_nr(&ring, 1);
+ 	if (ret) {
+ 		fprintf(stderr, "test_single_timeout_nr(1) failed\n");
 -- 
-Pavel Begunkov
+2.53.0
 
 

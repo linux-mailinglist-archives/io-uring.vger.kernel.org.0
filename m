@@ -1,241 +1,191 @@
-Return-Path: <io-uring+bounces-12444-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12445-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gH7VNUXDoGmEmQQAu9opvQ
-	(envelope-from <io-uring+bounces-12444-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 23:03:49 +0100
+	id 8EyYG3zZoGkDngQAu9opvQ
+	(envelope-from <io-uring+bounces-12445-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 00:38:36 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEB21B0271
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 23:03:49 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0781B1B0F40
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 00:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id ABFDC303E4B8
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 22:03:47 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5856D300AB21
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 23:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C753AE6F4;
-	Thu, 26 Feb 2026 22:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E79331238;
+	Thu, 26 Feb 2026 23:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=p2p.industries header.i=@p2p.industries header.b="G8YU9yg+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DPESGMYc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3152530F93C
-	for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 22:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06188331217
+	for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 23:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772143427; cv=none; b=TeRaFEuEJwTIFcZDTuWi9dqhEgAh2jWz5LRUHzAVls3kJVDSGwOpIXEhdgiwhyH14nfQxv9Z8Q98leQ6Ej3eQsz6PsEDp5mGyqJRyDBjqPYqpWqNgcmt4jme/BbdcRIVSGBf2FuoSmyGJ+haGGZOVPrwfyktGBc/TNS1oQx6WWk=
+	t=1772149114; cv=none; b=UwWUPXQttFDbq4aW6eYl1Zd+iQyKarQKmW49IUPvUFtV9UiIsmnLnGXuGx+O5/x1BS/U2lLgc+SUAkxGT7uviOF/Rcga7s0bianU8T85nM/uXt0gvu+2s/yLRe2dtMWxnj37V2Ze4hVK3TzVmslJTb8MNcZxYCvAeWtiGPdZ0vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772143427; c=relaxed/simple;
-	bh=CZRe1iUMVr9qEn5m2f/i37y/YNNPSFYQrbyg6aoEQlk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZC0U19z2jHmpsM4JnBKYSUgsyycohZ3vX/KHSnrxQ87LViqztxkRWwlboS+ol6sdM5/UQElTz2UaYJ9+SGsySlRoLE/EcKb9NrHbETldfMuV4Q6cqncbQqu4FUytzfpAtOIejTwz4wUaZM9qfYib9LO+eTdkJzK9+Qm4ZJCMSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=p2p.industries; spf=pass smtp.mailfrom=p2p.industries; dkim=pass (2048-bit key) header.d=p2p.industries header.i=@p2p.industries header.b=G8YU9yg+; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=p2p.industries
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=p2p.industries
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48379a42f76so10654055e9.0
-        for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 14:03:44 -0800 (PST)
+	s=arc-20240116; t=1772149114; c=relaxed/simple;
+	bh=uC7aiyhuUJUmZaGZ1u66NknKDlFxu+Nn2BkTPOoqtQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huefNKOwW1ha5CjcPwx6h4qb2OSkASRIMGPnDExCeCEPqz7x614oSnXJIFl0ZXxceFUWrC/SQXHBMiqRKOeLXzSbIMQPayM/zjXkl0Ap9i4uMWkrDY715hYis0+cLVwUtfEEANDh5IOJGk4CtP0I1IJTuo3Y50h9a8mzuil7u3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DPESGMYc; arc=none smtp.client-ip=74.125.82.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-126ea4e9697so1630c88.1
+        for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 15:38:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=p2p.industries; s=google; t=1772143423; x=1772748223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0wS4lSteamMcGZXwonWy8V0zK3HIHohZFVD96e3qpm0=;
-        b=G8YU9yg+iENfTlWHXChHtzGtpmiHiNfRjFfo/5xk+vnAx5sLfmY+b9vyPiJpKVHcI9
-         gZ9rxlQtk6+pNteREvwz510PpPFvG5IcJxzlfb17/7kDhnrqy/F2rcQ6AktERid1mb10
-         HrpQj61dDdR20DUX4r0COsaz/qCD5weahUg345N6Vf1jaCNXVAQfb3/Iek9ZfC1rPpff
-         dtr/haLGqxqEYoj1pa0RpSlR6v68KJLanMnnJEfpgzYFAZkSiizA0D3RAqBiF0bCH/2T
-         2/IRj7wg4e40PZiV3zNLl2gMScFrIhiFp9E8oGaF+9DhRQSOcVX6fhxIQQBn+3NJRSEx
-         0ilw==
+        d=google.com; s=20230601; t=1772149112; x=1772753912; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6aVatOQZhnn3/l3DG/K29SIadSoM5JJykVYfBXclQE=;
+        b=DPESGMYcqw7kqD31vMzSdAkOIV5l+tlRHGE4vbTrNKTPRVfUDpNn5bxNk6Q/VtogW+
+         b66wK33FtjHxY9g7MLThM6/FsZI5xQNcXElTIqupYFIt3Hb78olS9AGpRRkz2ZDXKWU8
+         J6kOF32riDkjHn7hBdvM3T+eQ9X/jUJ2hLrgN5Ox8Iuvx9B5ub+BX6h5ufaH2RCnMwqS
+         yt2z6+IzLmul/d96bcVPYtSfbr8GI+xCrAZp5wWZhLWNHnpQHuJZcUiorznaBAHt9j9m
+         M8IdzqRJnJnDpie8QNvz25ySYymWkILXYYwYG+9k3NQsGUvVjG/34iejDMkxnb14tgDk
+         rmzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772143423; x=1772748223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wS4lSteamMcGZXwonWy8V0zK3HIHohZFVD96e3qpm0=;
-        b=aKkEw0GSlSBOYwnn0H5geQWw4NR/4IhaVfSd3HVU6olYOi0r9l8SnyEfaWW2+QgfAu
-         ZbCEht1AsU8xI/cziBTc3YfdG/3NwHHmuOJr8VAle+FGremFa9tx3ZwBJJyirMGFn6pS
-         H7akRUPS9+XKEt+xe8fSuuiH8Qg7B7dqZ7awp8wMstHgL7AxQPBq8dH3nZNzxBpWggHQ
-         1tJhDG4WJhWkqf38OgfkmLu2Q5w1qTT32VIZooqGkaHYu9504pD3HS1nBdoGPZnXZE/f
-         +Tmsqzah5598hVfswT4x1sdZ3Abckr6ZL+96QgksFn1Iq+yGK7zGSmMDohPaNzFD/4qQ
-         4jcg==
-X-Gm-Message-State: AOJu0YwzqITMX5QB8o53fe7A73teI7aLN9K6Pum7TKQ0CEKbUpMms8PF
-	wIbIAkdqCU+jAgstgSflgQCWYeqiWxcKHolXp2vl6n9zM0vMfcDMRmm6mRBMdelXveQ=
-X-Gm-Gg: ATEYQzwTPE8ouhPfX/Q2V4ZSDZqvMkugBaGuB6Zss6NUgKkMcDiCYKNV+bLUiPZKArf
-	x3b7DsV6VIJieIJGN/mNHSi8+bxT/9FH89A9OpLt3TBb6w7kgxRFka0QARkT6fUdvKOsdR6RNjt
-	UAuWLvEPbJZQKsisOKiDXpS2Hgqp6VE2pkTkrlIh+Shh1Ffq4/kOoOvjfpK/8PAhAtzqHY6W4Lo
-	lZ2ISdZ6jqYP6MXbsXm8FDScx/xBU7MJCyyog4s/JIaXqHZbHtNMTtT19L+ZPKeU/vrweATAmKH
-	v7czTs17UlMeHOx6016A31aASCNB0IuVxWi46TK+L7M3xBpiOsl4ImQSw5za1nhVmuBISoA+xC3
-	twUOmQOxjyhtf083DVLS7G8Wkn3sUE9VUU6kXFq7ucv8JvWF9bQG1SP3D2NdNhRBp001HdAYuV6
-	vpFv3LMYk8CFs3
-X-Received: by 2002:a05:600c:828c:b0:482:dbd7:a1c1 with SMTP id 5b1f17b1804b1-483c9c23c72mr5227085e9.34.1772143423478;
-        Thu, 26 Feb 2026 14:03:43 -0800 (PST)
-Received: from nixos ([2a02:168:646f:0:cfbc:1fa2:92d:8540])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd750607sm171813145e9.10.2026.02.26.14.03.43
+        d=1e100.net; s=20230601; t=1772149112; x=1772753912;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h6aVatOQZhnn3/l3DG/K29SIadSoM5JJykVYfBXclQE=;
+        b=jSH5yNOy/6FDmK8pWdL/LahX2xWXdy6b3mwlbj6sHezmqEUrL+ZeN6F/F8WptbB9yd
+         aJqWbUD4UhCHZU+ORgHhmY5mS30OXKa4wpugGb5LV9xyD66yDaMjFNG+/IiX+NZ5MCBo
+         l7AzkI95KAy8B/697HH60bYvrOaMjvy36UD8FCYqHqWBwAGZEV52oRwO5WxRKqDAs9DJ
+         xWtd5q0ql50RMhL4y9NAY3yMIXLT6C7XXHqtxCS3K8hjQzKT/kzF91wJk3ho0zGSuBq+
+         ev1ZAnD40UT0BJVBOKW+Zl8iNYStjvuGhxRuSPVfsItpjP/KwnI3RXKWGqEJ0mVeyFAw
+         hi6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXaML0kk5FBeRKWLEu4i4nyEtfkDCmcu2Dzx5TyrTfXeWdQTd6/Z1hqkz4mMtGQkIQuL0L5Tpf7ZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrCg99Ga5tg7GuPcGX61kBoCKF5hdCeMX3In+akoF8mEPX2K07
+	s6a9DyK0ht63uAI8dCSI0VCAoG5eaW8lFlvnA0FWwQrXv84IcaR+kYXz3NSDfiluEA==
+X-Gm-Gg: ATEYQzwnVb5PtvBUDR50kkJVn+zOvOKT5KtSAtmReZac7CQ/BOdJTnwsRERo0VIxobf
+	izyjSGpGEttTO49T+MehLoOuPJ/99XuxShPVrc1jeaTamv6hbP4lRPKuRTZCnwcpiB8mEWDspi4
+	Mbbp/Em06Y9s7Q8fMVHwZcVyoJg4vNidD3bQVgMCdvNNayFBGYiyRUPjWFoRTfb7UbBX+wFUyny
+	E+v0wduTHhBe6TO+uoVWhOyLF8pkMAIAoih3lsLBX/Ev+tCDPymUp2tlROj6ih1XNUy0At/YSqL
+	y17rz4XUpSOzBiZ/U6bHUuEkUXM26OxWuoocYmfSPDV3WrK92qygANVhb5ZZE/jEkvAXFV3Dmlk
+	c7OGz0OW6jenUOAR0tHNyfYa+pQM/jQJ6hheHFQxAYtf62OIX1LX5gCwtBa0CprinN11hsZurzu
+	awemrEd+eXaP/FLPzvjSxwhWDrTDKmVHZbg5bm9FWKTwCURmTQfIkGyoCUSNsu/EVl
+X-Received: by 2002:a05:7022:f10b:b0:119:e55a:8091 with SMTP id a92af1059eb24-12788fe0b17mr248037c88.14.1772149111311;
+        Thu, 26 Feb 2026 15:38:31 -0800 (PST)
+Received: from google.com ([2a00:79e0:2e51:8:d9de:6ece:634a:85ca])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bdd1f23c3csm3225980eec.17.2026.02.26.15.38.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 14:03:43 -0800 (PST)
-From: Hannes Furmans <hannes@p2p.industries>
-X-Google-Original-From: Hannes Furmans <hannes@stillwind.ai>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Hannes Furmans <hannes@stillwind.ai>
-Subject: [PATCH] io_uring/net: don't fail linked ops when done_io > 0
-Date: Thu, 26 Feb 2026 23:03:10 +0100
-Message-ID: <20260226220310.758404-1-hannes@stillwind.ai>
-X-Mailer: git-send-email 2.53.0
+        Thu, 26 Feb 2026 15:38:30 -0800 (PST)
+Date: Thu, 26 Feb 2026 15:38:25 -0800
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"Gohad, Tushar" <tushar.gohad@intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [LSF/MM/BPF TOPIC] dmabuf backed read/write
+Message-ID: <aaDZcZCwIqTrE7Z1@google.com>
+References: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4796d2f7-5300-4884-bd2e-3fcc7fdd7cea@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[p2p.industries,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[p2p.industries:s=google];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12444-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12445-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[p2p.industries:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	FROM_NEQ_ENVFROM(0.00)[hannes@p2p.industries,io-uring@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[google.com:+];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[isaacmanjarres@google.com,io-uring@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,p2p.industries:dkim]
-X-Rspamd-Queue-Id: 9AEB21B0271
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0781B1B0F40
 X-Rspamd-Action: no action
 
-When io_uring recv/send with MSG_WAITALL accumulates partial data
-through done_io and then encounters an error or EOF, req_set_fail()
-sets REQ_F_FAIL despite the CQE result being positive (done_io bytes).
-io_disarm_next() then sees REQ_F_FAIL and cancels all linked operations
-with -ECANCELED, even though the user-visible result indicates success.
+On Tue, Feb 03, 2026 at 02:29:55PM +0000, Pavel Begunkov wrote:
+> Good day everyone,
+> 
+> dma-buf is a powerful abstraction for managing buffers and DMA mappings,
+> and there is growing interest in extending it to the read/write path to
+> enable device-to-device transfers without bouncing data through system
+> memory. I was encouraged to submit it to LSF/MM/BPF as that might be
+> useful to mull over details and what capabilities and features people
+> may need.
+> 
+> The proposal consists of two parts. The first is a small in-kernel
+> framework that allows a dma-buf to be registered against a given file
+> and returns an object representing a DMA mapping. The actual mapping
+> creation is delegated to the target subsystem (e.g. NVMe). This
+> abstraction centralises request accounting, mapping management, dynamic
+> recreation, etc. The resulting mapping object is passed through the I/O
+> stack via a new iov_iter type.
+> 
+> As for the user API, a dma-buf is installed as an io_uring registered
+> buffer for a specific file. Once registered, the buffer can be used by
+> read / write io_uring requests as normal. io_uring will enforce that the
+> buffer is only used with "compatible files", which is for now restricted
+> to the target registration file, but will be expanded in the future.
+> Notably, io_uring is a consumer of the framework rather than a
+> dependency, and the infrastructure can be reused.
+> 
+> It took a couple of iterations on the list to get it to the current
+> design, v2 of the series can be looked up at [1], which implements the
+> infrastructure and initial wiring for NVMe. It slightly diverges from
+> the description above, as some of the framework bits are block specific,
+> and I'll be working on refining that and simplifying some of the
+> interfaces for v3. A good chunk of block handling is based on prior work
+> from Keith that was pre DMA mapping buffers [2].
+> 
+> Tushar was helping and mention he got good numbers for P2P transfers
+> compared to bouncing it via RAM. Anuj, Kanchan and Nitesh also
+> previously reported encouraging results for system memory backed
+> dma-buf for optimising IOMMU overhead, quoting Anuj:
+> 
+> - STRICT: before = 570 KIOPS, after = 5.01 MIOPS
+> - LAZY: before = 1.93 MIOPS, after = 5.01 MIOPS
+> - PASSTHROUGH: before = 5.01 MIOPS, after = 5.01 MIOPS
+> 
+> [1] https://lore.kernel.org/io-uring/cover.1763725387.git.asml.silence@gmail.com/
+> [2] https://lore.kernel.org/io-uring/20220805162444.3985535-1-kbusch@fb.com/
+> -- 
+> Pavel Begunkov
 
-This manifests in two code paths:
+Hello,
 
-1) Direct completion: io_recv/io_send fall through to req_set_fail()
-   when ret < min_ret, even if done_io > 0. The CQE shows done_io
-   (positive) but REQ_F_FAIL severs the link chain.
+Thanks for sharing this, I am interested in this topic. The io_uring
+bit specifically, as it might be helpful for a usecase in Android
+for loading a file into a dmabuf.
 
-2) io-wq fallback: after APOLL_MAX_RETRY (128) poll retries, the
-   request moves to io-wq. io_recv returns IOU_RETRY from the
-   MSG_WAITALL retry path, io-wq fails the request with -EAGAIN, and
-   io_req_defer_failed -> io_sendrecv_fail overwrites cqe.res with
-   done_io but leaves REQ_F_FAIL set.
-
-Fix this by:
-- Not calling req_set_fail() when done_io > 0 in io_recv, io_recvmsg,
-  io_send, io_sendmsg, io_send_zc, io_sendmsg_zc
-- Clearing REQ_F_FAIL in io_sendrecv_fail() when done_io > 0
-
-This makes MSG_WAITALL partial completions consistent with
-non-MSG_WAITALL behavior, where positive results never sever the
-IO_LINK chain.
-
-Reproducer: MSG_WAITALL recv via IO_LINK -> write on a UNIX socketpair
-where the sender closes after partial data. The recv CQE shows positive
-bytes but the linked write gets -ECANCELED.
-
-Fixes: 0031275d119e ("io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL")
-Cc: stable@vger.kernel.org
-Signed-off-by: Hannes Furmans <hannes@stillwind.ai>
----
- io_uring/net.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 8576c6cb2236..ebe51db34af8 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -576,7 +576,8 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!sr->done_io)
-+			req_set_fail(req);
- 	}
- 	io_req_msg_cleanup(req, issue_flags);
- 	if (ret >= 0)
-@@ -688,7 +689,8 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!sr->done_io)
-+			req_set_fail(req);
- 	}
- 	if (ret >= 0)
- 		ret += sr->done_io;
-@@ -1074,7 +1076,8 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!sr->done_io)
-+			req_set_fail(req);
- 	} else if ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
- 		req_set_fail(req);
- 	}
-@@ -1220,7 +1223,8 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!sr->done_io)
-+			req_set_fail(req);
- 	} else if ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
- out_free:
- 		req_set_fail(req);
-@@ -1498,7 +1502,8 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!zc->done_io)
-+			req_set_fail(req);
- 	}
- 
- 	if (ret >= 0)
-@@ -1570,7 +1575,8 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
--		req_set_fail(req);
-+		if (!sr->done_io)
-+			req_set_fail(req);
- 	}
- 
- 	if (ret >= 0)
-@@ -1595,8 +1601,10 @@ void io_sendrecv_fail(struct io_kiocb *req)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 
--	if (sr->done_io)
-+	if (sr->done_io) {
- 		req->cqe.res = sr->done_io;
-+		req->flags &= ~REQ_F_FAIL;
-+	}
- 
- 	if ((req->flags & REQ_F_NEED_CLEANUP) &&
- 	    (req->opcode == IORING_OP_SEND_ZC || req->opcode == IORING_OP_SENDMSG_ZC))
--- 
-2.53.0
-
+Thanks,
+Isaac
 

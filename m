@@ -1,56 +1,56 @@
-Return-Path: <io-uring+bounces-12427-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12428-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 9I3JArHnn2lLewQAu9opvQ
-	(envelope-from <io-uring+bounces-12427-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:26:57 +0100
+	id 8Du8Etbnn2lLewQAu9opvQ
+	(envelope-from <io-uring+bounces-12428-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:27:34 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5121A14E5
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:26:55 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7B21A14F3
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 697EE303FFEB
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 06:26:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BE578301492B
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 06:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D377D26056D;
-	Thu, 26 Feb 2026 06:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23FC38B7BD;
+	Thu, 26 Feb 2026 06:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="McU1b3Dn"
+	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="q8YWIllZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B5738A73C
-	for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 06:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDF838B7A8
+	for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 06:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772087212; cv=none; b=AePbJH6+glIcecJHJpDdrgRM6DX4YmhdXlwFeSOy+fXSG7JfuuT9fYr6S5E7ZLxWuZREVnJCXk3udpwtNcWjQkx6u2RQY5XeOd0wdcrVG0NeGPobAd5F2zW8omoNa7qPbHgKaSi3vhD5gBdA/4gBmD7axZt+tE+4oLei+xxPwvU=
+	t=1772087246; cv=none; b=ngg18pcQQ8vJsTALT+v7UIuHEt3vTNbC5M4NJBCbczG+VAIbFFh3/p/We4m2mKA5GNVS8QffxfoztOrJuG6Mx4fZl54nijH33t4PRk1qRmKV6JSHstZM2dBGNVx8MVTX0sGCvsEQXrBJ7wSzZO1m9iINXEs6XNDXMZX31uEJ86I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772087212; c=relaxed/simple;
-	bh=YWJx2iwectzVDSFFlBXYzcYdQaa7y7sUiwn4RbmmyEg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pSFHr1hrlt6GSD5sEvKrrFbKq56QDPoegGSOG7+KjqzAT/OOgfkyM6e2KJ3zDfKw64UkFbNX/AUr1CTzXlst2JQb7lXRRceMCqHPN/3v9tEg04RZ35063ator+vhi1f8BrsKfAM/RpfKbEwVakh7MB2Ty8iNOTKX7B0adOncFLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=McU1b3Dn; arc=none smtp.client-ip=218.30.115.24
+	s=arc-20240116; t=1772087246; c=relaxed/simple;
+	bh=yoBeoacMbK1NAn82kU0drfaAQYOiincR4WZfeQfH/ZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YYnNQUKfn4Vc+l3fumGxpJ9zrd870hcVzmAgpeYJIH6sKHDpUnJJ2TE+cwrG6rofiVkOeTCr6IsD90oO/lwDH0NBiTUHC/1AlRCzXj13UTdWOFw4zHl1w/kPyJStH0wmzs3bbJHxZ6xZ2hUeMEqOm7XugRPdt8cTb7dTLrU9STg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=q8YWIllZ; arc=none smtp.client-ip=218.30.115.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1772087208;
-	bh=MqeqQg/vs2MGaUssukynotamsBqbwPSc/1lh8gDzQnQ=;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1772087244;
+	bh=+ll0j7P6gB1YHU/QPLWIwnmbPeyItOm5mPcLbuIqgOg=;
 	h=From:Subject:Date:Message-Id;
-	b=McU1b3DndENKzv7m5cWl/bmt9oiEtFQbeOkREbv1HpYVt9vOSbJKQa+CpFeowIItp
-	 bp7LbNtWLNM/FskBT8cG4qHy9JaaiJ2xmPRGbbkqvBlvb3cW5g01+uojQUuWlqjmhN
-	 DNe+k38pR34PizbgZm0I4n/hKFMb+wjh0aD60KUc=
+	b=q8YWIllZwKhvfX8MDR87Fblnq7RqSFOTUxscAow1vpnDlt6GKhpo4A8HowlIqsbqe
+	 B743+PNRHzvc6mxbcxKINlA7GbMK7T0ZJNMe/K+z2u+SgZBCV/YPyQT980jYWrVPsn
+	 jCl653qLgBB4JfYg7GnEYLmuBJooKfU/ji3ln/Jk=
 X-SMAIL-HELO: NTT-kernel-dev
 Received: from unknown (HELO NTT-kernel-dev)([60.247.85.88])
 	by sina.cn (10.185.250.22) with ESMTP
-	id 699FE77E00003D67; Thu, 26 Feb 2026 14:26:08 +0800 (CST)
+	id 699FE7C00000554F; Thu, 26 Feb 2026 14:27:20 +0800 (CST)
 X-Sender: jianqkang@sina.cn
 X-Auth-ID: jianqkang@sina.cn
 Authentication-Results: sina.cn;
 	 spf=none smtp.mailfrom=jianqkang@sina.cn;
 	 dkim=none header.i=none;
 	 dmarc=none action=none header.from=jianqkang@sina.cn
-X-SMAIL-MID: 8123827602223
-X-SMAIL-UIID: 67AC7A49CAFB47ABBF0506D125387A64-20260226-142608-1
+X-SMAIL-MID: 5292787602219
+X-SMAIL-UIID: 3D228B6872754FE994F61C7BCD9CC217-20260226-142720-1
 From: Jianqiang kang <jianqkang@sina.cn>
 To: gregkh@linuxfoundation.org,
 	stable@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: patches@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH 6.1.y] io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
-Date: Thu, 26 Feb 2026 14:26:06 +0800
-Message-Id: <20260226062606.357657-1-jianqkang@sina.cn>
+Subject: [PATCH 5.15.y] io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
+Date: Thu, 26 Feb 2026 14:27:11 +0800
+Message-Id: <20260226062711.426301-1-jianqkang@sina.cn>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -78,17 +78,17 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[sina.cn,none];
 	R_DKIM_ALLOW(-0.20)[sina.cn:s=201208];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-12427-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12428-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jianqkang@sina.cn,io-uring@vger.kernel.org];
@@ -96,11 +96,11 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DKIM_TRACE(0.00)[sina.cn:+];
 	TO_DN_NONE(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[7];
-	NEURAL_HAM(-0.00)[-0.991];
+	NEURAL_HAM(-0.00)[-0.992];
 	FREEMAIL_FROM(0.00)[sina.cn];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,sina.cn:mid,sina.cn:dkim,sina.cn:email]
-X-Rspamd-Queue-Id: EC5121A14E5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,sina.cn:mid,sina.cn:dkim,sina.cn:email,appspotmail.com:email]
+X-Rspamd-Queue-Id: 5D7B21A14F3
 X-Rspamd-Action: no action
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -176,7 +176,7 @@ Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 04265bf8d319..958e619776f0 100644
+index c5d249f5d214..926890f5086e 100644
 --- a/io_uring/io-wq.c
 +++ b/io_uring/io-wq.c
 @@ -554,9 +554,9 @@ static void io_worker_handle_work(struct io_worker *worker)
@@ -188,7 +188,7 @@ index 04265bf8d319..958e619776f0 100644
  	do {
 +		bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
  		struct io_wq_work *work;
- 
+ get_next:
  		/*
 -- 
 2.34.1

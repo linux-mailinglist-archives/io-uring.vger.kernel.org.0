@@ -1,222 +1,196 @@
-Return-Path: <io-uring+bounces-12426-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12427-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8EOhOSCSn2kicwQAu9opvQ
-	(envelope-from <io-uring+bounces-12426-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 01:21:52 +0100
+	id 9I3JArHnn2lLewQAu9opvQ
+	(envelope-from <io-uring+bounces-12427-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:26:57 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4740019F5BA
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 01:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5121A14E5
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 07:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E42F130180BB
-	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 00:21:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 697EE303FFEB
+	for <lists+io-uring@lfdr.de>; Thu, 26 Feb 2026 06:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561D51F0E2E;
-	Thu, 26 Feb 2026 00:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D377D26056D;
+	Thu, 26 Feb 2026 06:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="McU1b3Dn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48481EB5B;
-	Thu, 26 Feb 2026 00:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B5738A73C
+	for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 06:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772065308; cv=none; b=dQigESuuREywjWwGnz3qsfDuHcVhBwK7Rbdi4y/SikaA/LYLBbGBEHQhJO9QEdkM6xKNz8jPOIKOxN8sYH3+4RyYilpgolyHbbTqN174x/tHh/zUb0l3lqIzk4zLkr9N5TXemSgScTJ3uZEh+lb5mmFYd55b5VJdxZdaghUkq5U=
+	t=1772087212; cv=none; b=AePbJH6+glIcecJHJpDdrgRM6DX4YmhdXlwFeSOy+fXSG7JfuuT9fYr6S5E7ZLxWuZREVnJCXk3udpwtNcWjQkx6u2RQY5XeOd0wdcrVG0NeGPobAd5F2zW8omoNa7qPbHgKaSi3vhD5gBdA/4gBmD7axZt+tE+4oLei+xxPwvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772065308; c=relaxed/simple;
-	bh=/dH8VeKMwTRMZhEfieZTD729VyTa6c9cAscbGCcKeis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jp43nMykro2EvRmr9I0PYbqzTT5XnvQ/FYUJcSGjpy/5t4V8R5lfMId5wd8ziUI9Mqqf+obWioKZvcY+qa2qy5OVDbImcEWTBB1Myexl4L5bOj21wYxsF5mXpLtLKefvAsNrD04Fz/TTmos2xEEIDtoXxV+8PI3tC6x+xm10K2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-5a-699f920d0ae2
-Date: Thu, 26 Feb 2026 09:21:27 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, harry.yoo@oracle.com,
-	hawk@kernel.org, andrew+netdev@lunn.ch, david@kernel.org,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	ziy@nvidia.com, willy@infradead.org, toke@redhat.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, asml.silence@gmail.com,
-	axboe@kernel.dk, ncardwell@google.com, kuniyu@google.com,
-	dsahern@kernel.org, sdf@fomichev.me, dw@davidwei.uk,
-	ap420073@gmail.com, dtatulea@nvidia.com, shivajikant@google.com,
+	s=arc-20240116; t=1772087212; c=relaxed/simple;
+	bh=YWJx2iwectzVDSFFlBXYzcYdQaa7y7sUiwn4RbmmyEg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pSFHr1hrlt6GSD5sEvKrrFbKq56QDPoegGSOG7+KjqzAT/OOgfkyM6e2KJ3zDfKw64UkFbNX/AUr1CTzXlst2JQb7lXRRceMCqHPN/3v9tEg04RZ35063ator+vhi1f8BrsKfAM/RpfKbEwVakh7MB2Ty8iNOTKX7B0adOncFLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=McU1b3Dn; arc=none smtp.client-ip=218.30.115.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1772087208;
+	bh=MqeqQg/vs2MGaUssukynotamsBqbwPSc/1lh8gDzQnQ=;
+	h=From:Subject:Date:Message-Id;
+	b=McU1b3DndENKzv7m5cWl/bmt9oiEtFQbeOkREbv1HpYVt9vOSbJKQa+CpFeowIItp
+	 bp7LbNtWLNM/FskBT8cG4qHy9JaaiJ2xmPRGbbkqvBlvb3cW5g01+uojQUuWlqjmhN
+	 DNe+k38pR34PizbgZm0I4n/hKFMb+wjh0aD60KUc=
+X-SMAIL-HELO: NTT-kernel-dev
+Received: from unknown (HELO NTT-kernel-dev)([60.247.85.88])
+	by sina.cn (10.185.250.22) with ESMTP
+	id 699FE77E00003D67; Thu, 26 Feb 2026 14:26:08 +0800 (CST)
+X-Sender: jianqkang@sina.cn
+X-Auth-ID: jianqkang@sina.cn
+Authentication-Results: sina.cn;
+	 spf=none smtp.mailfrom=jianqkang@sina.cn;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=jianqkang@sina.cn
+X-SMAIL-MID: 8123827602223
+X-SMAIL-UIID: 67AC7A49CAFB47ABBF0506D125387A64-20260226-142608-1
+From: Jianqiang kang <jianqkang@sina.cn>
+To: gregkh@linuxfoundation.org,
+	stable@vger.kernel.org,
+	axboe@kernel.dk
+Cc: patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: Re: [RESEND PATCH net-next] netmem: remove the pp fields from net_iov
-Message-ID: <20260226002127.GA71611@system.software.com>
-References: <20260224061424.11219-1-byungchul@sk.com>
- <CAHS8izPjfrKFNtvkyODY7HXSsAuQuPhzy3+fMyYTFuWKQJZ0Fg@mail.gmail.com>
+Subject: [PATCH 6.1.y] io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
+Date: Thu, 26 Feb 2026 14:26:06 +0800
+Message-Id: <20260226062606.357657-1-jianqkang@sina.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izPjfrKFNtvkyODY7HXSsAuQuPhzy3+fMyYTFuWKQJZ0Fg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGeXfOzs6Gw9NSe9WwXERoaBZ+eJFuBsEhQiz9EBrYykOOtmmb
-	Lo0Cw7xmToXQTbNV3jYv2cwrpnnXTDPHzGrqkkyItLzmrcumSH57eJ6H5/f/8CcxQTrbhRTL
-	ohm5TCQREjycN233xIuf/UjsY/wNUdlyLCqx1LPRSvkUC+XrawEqG1URKP/tXRxN1awCVNmY
-	yEINjVMAfcutINBk1wQHjRd/xVFTch2GJlQ9BJpJHMDRYG0GGw206whUF2/hIGNjPoHGyv+y
-	Ua9Gh6MU80scdWmd0FLfd4BM6kYWemwOQ0PtEzjKu5MB0NqytZ/XOcY56Ua/0H1g0cO5WTg9
-	0vyaRTdoRjm01hBDV5d60sb+GNqgTyVow1w2h26on2fR9xNmCHp28iNO/2g2EfQbbQeHnje4
-	BdqH8I6GMxKxkpEfOn6JF1Fd0gmi+txi10wmIh5kOqUBLgkpX1ij6WFv6RWVGU8DJIlT+6G6
-	wt9mE9QBODKygtm0A+UBC5uzrHUeiVFJbPi+Z4mwBTupAFjV0L2xw6cQNFYVbuwIqFswp1q6
-	ae+AveovuE1j1s31giHMVsEoV1jyh9y098CEmrwNFJc6BysX1cCmHal98FVtN8uGhVQRCRfS
-	VZzNk51ha+kIngl2aLYhNNsQmv8IzTaEFuB6IBDLlFKRWOLrHREnE8d6X4mUGoD1R4pvr4fW
-	g7nBoDZAkUBox7+wUiAWsEVKRZy0DUASEzrwzT+tFj9cFHeTkUeGyWMkjKINuJK4cBf/yNKN
-	cAF1VRTNXGOYKEa+lbJIrks8cB9WEmSqhftUl8K72F8l8+vNdR0P7pC9a/mc4O64YEzzeOYU
-	fDpGWejX4m8p5znDvathQ3Xc6wETXpz1pFSPxYP6VkWCTnNs9GGylLg32xQWUoudGF66HDTd
-	UW0+e+p5T9EDaU5WauBa0PzuX/OG4E/noTaHDpUQ9k4KnzOxQlwRITrsickVon84w9RmHwMA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsXC5WfdrMs7aX6mQd9/VovVPyoslj/YwWrx
-	c81zJos5q7YxWqy+289mMed8C4vF862/GC3W7Wplsti56zmjxasZa9ksnh57xG5xf9kzFos9
-	7duZLR71n2CzeNd6jsXi8NyTrBYXtvWxWpw7vJLNYnvDA3aLy7vmsFncWwO05+SslSwWHXf2
-	slgcWyBm8e30G0aLqzN3MVksvBNvcenwIxaL2Y19jBa/fwDVzz56j91B3mPLyptMHtdmTGTx
-	uLHvFJPHzll32T0WbCr12LxCy+Py2VKPTas62Tw2fZrE7rFzx2cmj97md2weH5/eYvF4v+8q
-	m8fiFx+YPM4sOMLu8XmTXIBAFJdNSmpOZllqkb5dAlfG5uVHGQtOy1X8vnqVrYFxglgXIyeH
-	hICJxM/+OyxdjBwcLAKqEjPXOoKE2QTUJW7c+MkMYosIaEos2TeRtYuRi4NZoI1V4vqJb2wg
-	CWEBP4kNO4+zgti8AhYSlzcsAZsjJFAjMX1zLkRYUOLkzCcsIDYz0Mw/8y4xg5QwC0hLLP/H
-	ARGWl2jeOhtsFadAoMS6rzMZQWxRAWWJA9uOM01g5JuFZNIsJJNmIUyahWTSAkaWVYwimXll
-	uYmZOaZ6xdkZlXmZFXrJ+bmbGIFJYVntn4k7GL9cdj/EKMDBqMTDG/FzXqYQa2JZcWXuIUYJ
-	DmYlEd47H4BCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb3CUxOEBNITS1KzU1MLUotgskwcnFIN
-	jHKvJ99ZKOqarjrn96e3Hn0nzjb5FM9rXrx3ymM1F4Y/xp2/0i7sagsuuBgU2KVv1Lud6x1L
-	BPfBV89ij/c9OaZQHPhpvXzKQaXzKkn2PZvnCv+dGcsrs3Rzm0lQt6a1RFLKhHVr2DxaG86V
-	a13g5vqS42y39mf1npAnoev1eOuP3i8rmpZarcRSnJFoqMVcVJwIAB3HkTgGAwAA
-X-CFilter-Loop: Reflected
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.04 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[sina.cn,none];
+	R_DKIM_ALLOW(-0.20)[sina.cn:s=201208];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[sk.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12426-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[31];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,gmail.com];
+	TAGGED_FROM(0.00)[bounces-12427-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[byungchul@sk.com,io-uring@vger.kernel.org];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,skhynix.com,oracle.com,kernel.org,lunn.ch,suse.cz,nvidia.com,infradead.org,redhat.com,davemloft.net,google.com,gmail.com,kernel.dk,fomichev.me,davidwei.uk];
-	NEURAL_HAM(-0.00)[-0.853];
-	TAGGED_RCPT(0.00)[io-uring,netdev];
-	R_DKIM_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[system.software.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4740019F5BA
+	FROM_NEQ_ENVFROM(0.00)[jianqkang@sina.cn,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[sina.cn:+];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	NEURAL_HAM(-0.00)[-0.991];
+	FREEMAIL_FROM(0.00)[sina.cn];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,sina.cn:mid,sina.cn:dkim,sina.cn:email]
+X-Rspamd-Queue-Id: EC5121A14E5
 X-Rspamd-Action: no action
 
-On Wed, Feb 25, 2026 at 09:57:17AM -0800, Mina Almasry wrote:
-> On Mon, Feb 23, 2026 at 10:14 PM Byungchul Park <byungchul@sk.com> wrote:
-> >
-> > Now that the pp fields in net_iov have no users, remove them from
-> > net_iov and clean up.
-> >
-> > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> > ---
-> > The original post was:
-> >
-> >   https://lore.kernel.org/all/20251121040047.71921-1-byungchul@sk.com/
-> >
-> > 1/3 was covered by Pavel's patch:
-> >
-> >   commit f0243d2b86b97 ("io_uring/zcrx: convert to use netmem_desc").
-> >
-> > 2/3 was taken by Jakub and merged:
-> >
-> >   commit df59bb5b9af3f ("netmem, devmem, tcp: access pp fields through
-> >   @desc in net_iov")
-> >
-> > Now that io-uring and net core changes converge in one tree, I'm
-> > resending the 3/3, which is what Jakub asked:
-> >
-> >   https://lore.kernel.org/all/20251124184729.7e365941@kernel.org/
-> > ---
-> >  include/net/netmem.h | 38 +-------------------------------------
-> >  1 file changed, 1 insertion(+), 37 deletions(-)
-> >
-> > diff --git a/include/net/netmem.h b/include/net/netmem.h
-> > index a96b3e5e5574..a6d65ced5231 100644
-> > --- a/include/net/netmem.h
-> > +++ b/include/net/netmem.h
-> > @@ -93,23 +93,7 @@ enum net_iov_type {
-> >   *             supported.
-> >   */
-> >  struct net_iov {
-> > -       union {
-> > -               struct netmem_desc desc;
-> > -
-> > -               /* XXX: The following part should be removed once all
-> > -                * the references to them are converted so as to be
-> > -                * accessed via netmem_desc e.g. niov->desc.pp instead
-> > -                * of niov->pp.
-> > -                */
-> > -               struct {
-> > -                       unsigned long _flags;
-> > -                       unsigned long pp_magic;
-> > -                       struct page_pool *pp;
-> > -                       unsigned long _pp_mapping_pad;
-> > -                       unsigned long dma_addr;
-> > -                       atomic_long_t pp_ref_count;
-> > -               };
-> > -       };
-> > +       struct netmem_desc desc;
-> >         struct net_iov_area *owner;
-> >         enum net_iov_type type;
-> >  };
-> > @@ -123,26 +107,6 @@ struct net_iov_area {
-> >         unsigned long base_virtual;
-> >  };
-> >
-> > -/* net_iov is union'ed with struct netmem_desc mirroring struct page, so
-> > - * the page_pool can access these fields without worrying whether the
-> > - * underlying fields are accessed via netmem_desc or directly via
-> > - * net_iov, until all the references to them are converted so as to be
-> > - * accessed via netmem_desc e.g. niov->desc.pp instead of niov->pp.
-> > - *
-> > - * The non-net stack fields of struct page are private to the mm stack
-> > - * and must never be mirrored to net_iov.
-> > - */
-> > -#define NET_IOV_ASSERT_OFFSET(desc, iov)                    \
-> > -       static_assert(offsetof(struct netmem_desc, desc) == \
-> > -                     offsetof(struct net_iov, iov))
-> > -NET_IOV_ASSERT_OFFSET(_flags, _flags);
-> > -NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
-> > -NET_IOV_ASSERT_OFFSET(pp, pp);
-> > -NET_IOV_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
-> > -NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
-> > -NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-> > -#undef NET_IOV_ASSERT_OFFSET
-> > -
-> 
-> Probably better to retain an assert that netmem_desc is the first
-> field in struct net_iov, no?
+From: Jens Axboe <axboe@kernel.dk>
 
-What is the assert for?  Can you give an example that might lead wrong
-without the assert?
+[ Upstream commit 10dc959398175736e495f71c771f8641e1ca1907 ]
 
-	Byungchul
+Currently this is checked before running the pending work. Normally this
+is quite fine, as work items either end up blocking (which will create a
+new worker for other items), or they complete fairly quickly. But syzbot
+reports an issue where io-wq takes seemingly forever to exit, and with a
+bit of debugging, this turns out to be because it queues a bunch of big
+(2GB - 4096b) reads with a /dev/msr* file. Since this file type doesn't
+support ->read_iter(), loop_rw_iter() ends up handling them. Each read
+returns 16MB of data read, which takes 20 (!!) seconds. With a bunch of
+these pending, processing the whole chain can take a long time. Easily
+longer than the syzbot uninterruptible sleep timeout of 140 seconds.
+This then triggers a complaint off the io-wq exit path:
 
-> There technically is no assert that netmem_desc is the first field of
-> struct page, but it's generally well understood that the memory
-> descriptor types should be the first field of struct page. It's not
-> well understand that the netmem_desc type should be the first field in
-> struct net_iov though.
-> 
-> --
-> Thanks,
-> Mina
+INFO: task syz.4.135:6326 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+      Blocked by coredump.
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.4.135       state:D stack:26824 pid:6326  tgid:6324  ppid:5957   task_flags:0x400548 flags:0x00080000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5256 [inline]
+ __schedule+0x1139/0x6150 kernel/sched/core.c:6863
+ __schedule_loop kernel/sched/core.c:6945 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:6960
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
+ io_wq_exit_workers io_uring/io-wq.c:1328 [inline]
+ io_wq_put_and_exit+0x271/0x8a0 io_uring/io-wq.c:1356
+ io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
+ io_uring_cancel_generic+0x69c/0x9a0 io_uring/cancel.c:651
+ io_uring_files_cancel include/linux/io_uring.h:19 [inline]
+ do_exit+0x2ce/0x2bd0 kernel/exit.c:911
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1112
+ get_signal+0x2671/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7e0 arch/x86/kernel/signal.c:337
+ __exit_to_user_mode_loop kernel/entry/common.c:41 [inline]
+ exit_to_user_mode_loop+0x8c/0x540 kernel/entry/common.c:75
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:159 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:194 [inline]
+ do_syscall_64+0x4ee/0xf80 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa02738f749
+RSP: 002b:00007fa0281ae0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fa0275e6098 RCX: 00007fa02738f749
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fa0275e6098
+RBP: 00007fa0275e6090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fa0275e6128 R14: 00007fff14e4fcb0 R15: 00007fff14e4fd98
+
+There's really nothing wrong here, outside of processing these reads
+will take a LONG time. However, we can speed up the exit by checking the
+IO_WQ_BIT_EXIT inside the io_worker_handle_work() loop, as syzbot will
+exit the ring after queueing up all of these reads. Then once the first
+item is processed, io-wq will simply cancel the rest. That should avoid
+syzbot running into this complaint again.
+
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/68a2decc.050a0220.e29e5.0099.GAE@google.com/
+Reported-by: syzbot+4eb282331cab6d5b6588@syzkaller.appspotmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[ Minor conflict resolved. ]
+Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
+---
+ io_uring/io-wq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 04265bf8d319..958e619776f0 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -554,9 +554,9 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
+ 	struct io_wqe *wqe = worker->wqe;
+ 	struct io_wq *wq = wqe->wq;
+-	bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 
+ 	do {
++		bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 		struct io_wq_work *work;
+ 
+ 		/*
+-- 
+2.34.1
+
 

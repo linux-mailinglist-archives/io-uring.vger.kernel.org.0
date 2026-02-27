@@ -1,260 +1,181 @@
-Return-Path: <io-uring+bounces-12475-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12476-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2H3iA4wYomnFzAQAu9opvQ
-	(envelope-from <io-uring+bounces-12475-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 23:19:56 +0100
+	id /80zOiAcomnqzQQAu9opvQ
+	(envelope-from <io-uring+bounces-12476-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 23:35:12 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F27E1BE9FA
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 23:19:55 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474571BEB6A
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 23:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id BFFD6302BBD4
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 22:19:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8FB023068EF1
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 22:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E4C2BD033;
-	Fri, 27 Feb 2026 22:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0871747AF40;
+	Fri, 27 Feb 2026 22:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dAWaqybK"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SZyPbJFS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-qv1-f98.google.com (mail-qv1-f98.google.com [209.85.219.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C2425B1D2
-	for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 22:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9926B3603EC
+	for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 22:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772230793; cv=none; b=HUO2AImRirIOUm7tTYMsIE1U5BWjlx+ycWlEnZp+V3Ewrg2N9AUNLASaWhJZqJUMRt0nBtL5r6B/aJVPvn8lbAo91DPehNgvbSZfj+V9JFTEMcdFjrKvjk4q70gzuy0qmdcpb6bfWgg78V+6jmgmfLVEdMq5tlaa/3QhBu0Wq5c=
+	t=1772231709; cv=none; b=AxBayrcELrDoGmAVKOp97KPJeO0mHJSoRYI2qoGZzec/1nsC85WSqOto4NN+qhYGd1RHCU7+/FJ/VgjGYvG2B9OiVzELbWCk9XxYFZFmwU5rz9x5YqqvDUyB01U8/ozhPG03Zyu3SI93kd8KzJwKZHPr7mj2fckTbRBOejBcPUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772230793; c=relaxed/simple;
-	bh=1RH/a0DIRBIeCU/QEcemQhtCL97EhKi7WvoWjYL/IfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzr46k6zw0DboXpsg4L/7Z6rvfa0n/3aPnUNS7bqiFnpGZrkb2n3Vj9ZWJr9xijzJJSkxiS2BJZnUY9brv/I2Ifjf6EsGz3wpb7tiMwG3jnvhiJCG3ND3bGDgsZ9QmaAZ16rAGmcFXIFIYuqwoqdvjCNVFUzkiFvlp6wFqClByM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dAWaqybK; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7d4c68f0e47so1587930a34.1
-        for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 14:19:50 -0800 (PST)
+	s=arc-20240116; t=1772231709; c=relaxed/simple;
+	bh=4mY3cJ9odN+C0yuy3lnfg6eSnPBftceED+7+u938yws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Io6WG7bj2qlZJxT3ZxJoIiYXOzsG8ZoWEst3GTjdJ5/rIrTxYlDJ1D8qrefuOlkCI2XDqjrKwNxwloenGI4reDO6BqV01bJKwk2QOdJekYxlG4/x/a/hl3d2pA/X1LeuVa4chx4DaDQSxHWRth3nDngmtZUg/hZc2N7JEwOIn5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SZyPbJFS; arc=none smtp.client-ip=209.85.219.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qv1-f98.google.com with SMTP id 6a1803df08f44-899ae5bb086so3430946d6.1
+        for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 14:35:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772230789; x=1772835589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5gJtMDFjAgvxZGs57XjY7x6lRNuo04z6xXJD76j2pKw=;
-        b=dAWaqybKsNDXs/tG9lc4osJRrfixtaHbByqTOh0OyNmzsZgo9wXo750sjPNZTVmNfa
-         QUFjfgS/aMf5G+nNhN7e5E0C6kNk9QszENpBrl5GpUrUDiVAaRf1YxQsqCSjWEhbAI4i
-         8vYPKTZP7iVjuWxdfp6RpdvTQYRUZyq9c4I1fNjc9kfg/FufFrm3502T9TFfFYvp2Y3j
-         ACigGwgDre5TKAfLxWHDqDwMWzwW79AyXp7SUfmjh72wIkyxctMLzFwj72qA/cXJ6Olk
-         J0zYni1Jx4vDN7EPFTGLn8X6I4pnsN11iL9rhl5STYv7WY4a/DfCLEpxpKOOKQGTnxjD
-         gfyA==
+        d=purestorage.com; s=google2022; t=1772231707; x=1772836507; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RUIpiL+ETinhgcxbF3zsLQKsMyyJnBp6MmzUqHPBa/s=;
+        b=SZyPbJFSpvxYp3BFPtnNaaah/Rd7JXzHV9WisoqBVR9yh9Nn7v9rlklPiytfLc4HFU
+         J6hw+7YgMtwDi+Dy062hhNB1T5yn1QnGgCSJcUBzdC8sWYX2LXF7Er0kjEcnAVNwy/6R
+         VyncUT36KZLAe+vaCYdRNceIYV/H1mHXGhqzpD2YmNWfOhRZ+mtKqgfkEqeG6Gb1b2bD
+         brk0CzvqS7VZax0y+BxEOndqsCmQEWFgPi/C1+0zgCFm05s52z9QHNkW4R/1zRkETxGk
+         mDgVw7zUOwekFt0ZzNRRqw2n+iofEVuIhyq0I+BvhtQOlufXPrFl/NyCMJMZl60+yA+g
+         3zEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772230789; x=1772835589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5gJtMDFjAgvxZGs57XjY7x6lRNuo04z6xXJD76j2pKw=;
-        b=RtOIswWV62w5CJvctqSgu6ooi1/N9Z7YeVarOs5tpDJyD2u256DBRuM7JOmR00jd4B
-         vZOiyjTM5rwB5z+WKnE1odOrk/zXo5+MbAFYm9+AmT4H7EhLODCX0Ua7d9i7jZc8KXzn
-         HY+e7gtrDlwmAApl3garODxl8gkDkptfHKULXwxGfP7uhq+9WuZHfwQ1yoJBMAzgERUJ
-         H7vTYX2SvmMzpNxW+1jm8IGH+kJMVkwVQMZQfHEB8iJyP2Uy6xq9WzLidGEXX9jGtheG
-         5HcqzasZOE8ZhkdRz/iVr90vDFUWslkmbPkdmVMpWYgg3ycTYuGYIldwwLvXFdNt6LnZ
-         iIrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXrUkuzpRRGEZeu63QmUgZ7z8SiEcb5IxlREQqptq+JKkx8HYz9ZV+/zWIm+N8AEPnvb7MYbjo8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2bA+K4trByJiWFwKW/0IcU/Mjfdb45GC9SPHuT5kdVdLABNlU
-	y6e1MBgqxf0ZAvdZuSREGnPjQVr1ZT+YKBcWoh/KiZYlhBWXCwjr8j4NHKzysolZem/cBvrDLzM
-	17QP2ev8=
-X-Gm-Gg: ATEYQzxr6XU0cpY4o3apZRy1hrii0MlsDGquvQK1q1whOInsf6UIrevO4h2B4mRKOhS
-	uiOGE+rt0lqya+oSGPCT+2jmnM+0PT8yVv8TenA+mjzNCq5KzRHn9PGZQACmlO4wilQ7tCNFXen
-	5zz6dn0+4ReXxYjApziPZjOT8NtJ7WiNKGBJO/JO8v7YpmvBTVYDZwi1V6yyJtyW4lVwoykIjfm
-	PHn8qOUWVEvWHt68IX9GDOdPaanax3NTNy41P75CNsWAmLxYobY8HYVkqFSbvDJ4ifnYnVApXGX
-	3svEgLZdeYZqnXocS9YrcgFjuMGB5Tr37sbrtXgxcX8J1gz4t0ehrXJQ0iuRttEwaf0oqo26R+j
-	UyYG8n5g9E07kiHUr5vRvHoP3fs2V4X99mxmJByVNNsmLasMKl/ypXui7oKzzLoosRDnt1Oehb7
-	/P2G31FM9qHeLuSTTVswJoiemBbDZBfbw2bD3kHRJrNWbd9WvzWYonnv31tpIkIaocGAhpajp2Q
-	ZtAJdCOxA==
-X-Received: by 2002:a05:6830:67ef:b0:7cf:e41d:f0b0 with SMTP id 46e09a7af769-7d591bd0edamr3076884a34.18.1772230789421;
-        Fri, 27 Feb 2026 14:19:49 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d5866541fcsm5147834a34.21.2026.02.27.14.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Feb 2026 14:19:48 -0800 (PST)
-Message-ID: <3a8e5738-b417-440a-9851-b8ecc2a82b82@kernel.dk>
-Date: Fri, 27 Feb 2026 15:19:48 -0700
+        d=1e100.net; s=20230601; t=1772231707; x=1772836507;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RUIpiL+ETinhgcxbF3zsLQKsMyyJnBp6MmzUqHPBa/s=;
+        b=KH3jy7gwO+60g6+vhDXmjNGkMBcsAb86U5yAKXuGMOG8KlFnNtAyQlrkENlsnyseV/
+         rM/NynZRUtEP9ubrzGBAt7T1TpbsjM+f6phx+6wpEFDno6V+9Zxp2xYoXlof0IjN3WlR
+         3KcAGKKl6uz5lIyVUvvULEaCbiT0oSsvMiQLSkuHdNjAIiflG/VZsIlQe/NUAxhyH3sW
+         MibA7B1LysVVwMvt8jWJhOUv/U2N466Tae5l5HhTEPl+gEEgY5Zqt201ti2Xpa1JzEF0
+         K9J2JGx5kEpu+S9yYCIgXYhsqjJ3Fks+5WqO8lJ3uGyqvr+U/V4Ja40fFPBnENSbFhTq
+         jd2w==
+X-Gm-Message-State: AOJu0Yzo87u+rA7JHWeEZ09Vfn+8o7l8K8B6YPK5Jw0V0AG24xRcm+/8
+	Q19/auAiHg8X/Br9p6PveqHC+Eyq45pd52OGfpyeolwmz1e3NvtXUmDxEt1MTWESWrCTfSzxP2S
+	V2DkJPehdrecfRHiuq3i6oowEMdSeTt3YG4TC
+X-Gm-Gg: ATEYQzzoOOGApFALcSbm/4cGQeuXhsPgjthl5Z5+6UsoUBZyOX87QcuWUTnIREfQJG0
+	exKewhtI7U8SNOFwppt2EBej8GytNh0j4Uri2iLjUrArTNoq1UZOKlfWd8YV1+LgeVe5Kv2G2eO
+	MTta2M6YeJhyjSScsenW9hu7wT0sTWymnyOILfvf1p1T7+hmnd1x5IS0Jqm9RU8OUgBlpAD/7Kt
+	OTwVT/WIVdJgz49q4A8cO/M7qu6AiEkEOcb0ljKQ4ZFohTP9lvtgYgs8jbD2fqsPwjnMrlzvlT/
+	/JcVSPKS1IwxFhctJwD7Q4zN3S1TeEPcMqzo3ktitXK9xaQ93+j096Q/+YG7lK7zAy0SbybxntC
+	/JKsWSm2u009Hrl0QxY6Vyd7p6piX5gc2L2ZUT1+LHJ/dNHeZsQ+xfA==
+X-Received: by 2002:a05:6214:800a:b0:897:ac:13f0 with SMTP id 6a1803df08f44-899d1d861aemr47334816d6.1.1772231707333;
+        Fri, 27 Feb 2026 14:35:07 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-899c7154514sm5901616d6.7.2026.02.27.14.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Feb 2026 14:35:07 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.112.29.101])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 9592634076F;
+	Fri, 27 Feb 2026 15:35:06 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 8937FE420D8; Fri, 27 Feb 2026 15:35:06 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH v4 0/5] io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+Date: Fri, 27 Feb 2026 15:34:58 -0700
+Message-ID: <20260227223504.1162421-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] io_uring/timeout: immediate timeout arg
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>
-References: <cover.1772015321.git.asml.silence@gmail.com>
- <6151302f1dc01d1c4e3176da50ab4224947b709f.1772015321.git.asml.silence@gmail.com>
- <3ae98749-590e-4f8b-a835-c9a15d7866c2@samba.org>
- <a6cbceb5-2065-42ff-bcca-bdb1c2443b96@gmail.com>
- <1cd9a071-dc93-48d1-81c9-24b65e65e8bf@kernel.dk>
- <dcb21382-36a6-4d5b-8e79-66290e522f2c@gmail.com>
- <2daa9b01-d989-4922-b892-e7f3f06297ac@kernel.dk>
- <cc9ba4b8-88f1-48c9-8aae-fe30a6b5c282@gmail.com>
- <e834eb01-6cde-4249-a797-ed1fd9f8c713@kernel.dk>
- <2ab205f2-fd87-4fcc-9c0a-0bdebbadeb58@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <2ab205f2-fd87-4fcc-9c0a-0bdebbadeb58@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12475-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,samba.org,vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-12476-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[purestorage.com:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel.dk:mid]
-X-Rspamd-Queue-Id: 8F27E1BE9FA
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 474571BEB6A
 X-Rspamd-Action: no action
 
-On 2/27/26 3:10 PM, Pavel Begunkov wrote:
-> On 2/27/26 21:17, Jens Axboe wrote:
->> On 2/27/26 2:09 PM, Pavel Begunkov wrote:
->>> On 2/27/26 20:19, Jens Axboe wrote:
->>>> On 2/27/26 1:03 PM, Pavel Begunkov wrote:
->>>>> On 2/27/26 19:39, Jens Axboe wrote:
->>> ...
->>>>>> I don't think it's about length of it - if you can avoid the div by
->>>>>> doing ns_to_timespec64(), that might be very useful? Would make
->>>>>
->>>>> hrtimer_start(&data->timer, timespec64_to_ktime(data->ts), mode);
->>>>>                                      ^^^
->>>>>
->>>>> io_uring just needs to flip it and use ktime, but I left it for later.
->>>>
->>>> I think we should go all the way with this if we're doing the immediate
->>>> mode. And I do think that is a good idea. Doing a half-way thing doesn't
->>>> make much sense to me.
->>>
->>> One time people will tell you don't do premature optimisations,
->>> merge the main thing first, another time it's the other way around,
->>> you can never guess.
->>
->> IMHO this isn't premature optimization, it's more about just doing it
->> right in the first place.
->>
->>> In either case, it's useful by itself. Div is not that expensive
->>> to be a break dealer, and div by constant will usually get
->>> replaced with a mul by modern compilers.
->>
->> Agree, and that's likely what it does here. It's just why not avoid it
->> in the first place if possible. That's not premature optimization.
-> 
-> I think uapi should come first before we waste time on making
-> internals one way or another.
+Currently, creating an io_uring with IORING_SETUP_IOPOLL requires all
+requests issued to it to support iopoll. This prevents, for example,
+using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
+zero-copy buffer registrations are performed using a uring_cmd. There's
+no technical reason why these non-iopoll uring_cmds can't be supported.
+They will either complete synchronously or via an external mechanism
+that calls io_uring_cmd_done(), io_uring_cmd_post_mshot_cqe32(), or
+io_uring_mshot_cmd_post_cqe(), so they don't need to be polled.
 
-Yep agree, which is really what this reply thread is mostly about - the
-user API.
+Allow uring_cmd requests to be issued to IORING_SETUP_IOPOLL io_urings
+even if their files don't implement ->uring_cmd_iopoll().
 
->>>>>> userspace simpler too potentially, and basically make the immediate mode
->>>>>> _exactly_ the same as the non-immediate mode, it just delivers the
->>>>>> __kernel_timespec in a different way.
->>>>>
->>>>> I very much want to believe that everything about kernel_timespec has
->>>>> some deep meaning, but I fail to see why they split it as sec/ns and
->>>>> left invalid ranges for ns, why ns is signed, and why even after a
->>>>> large revamp one of the fields doesn't use a fixed width type.
->>>>> I'm not sure exactly like it is actually a good idea.
->>>>
->>>> But that's the API for anything timing related, whether it be timeval,
->>>> timespec, or __kernel_timespec the latter obviously only existing
->>>> because everybody else could not be bothered to do a proper 32 vs 64-bit
->>>> agnostic type before. Hence that's the API that people know and use,
->>>> there's no deeper meaning other than that. And I agree, it's kind of
->>>> crap in how you can have an invalid range and it gets masked.
->>>>
->>>> It's like like I'm a huge __kernel_timespec fan, but for consistency's
->>>> sake, I do like it. With a clock source, then it does start to make
->>>> sense.
->>>
->>> What's about clock source? I'm curious
->>
->> Just that timespec/timeval/whatever usually go with a clocksource, vs
->> some isolated nsec value.
-> 
-> They're orthogonal though, timeout requests also support clock
-> sources.
+Use a new REQ_F_IOPOLL flag to track whether a request is using iopoll.
+This makes the iopoll_queue opcode definition flag unnecessary.
 
-Sure, it's just less natural that way. At least imho.
+The last commit removes an unnecessary IO_URING_F_IOPOLL check in
+nvme_dev_uring_cmd() as NVMe admin passthru commands can be issued to
+IORING_SETUP_IOPOLL io_urings now.
 
->>>> Not that I think there's a lot of ABS use cases, I'd expect
->>>> relative to be what people generally use here. But at least then the
->>>
->>> It's probably common enough. Not the "wake me on Monday at 5am" kind,
->>> but rather get the current time and then recalculating intervals
->>> from it. Would be nice to return the wake up time as well in a CQE,
->>> if only it was free.
->>
->> Yeah could be, it's always hard to know. Which is why it's nice to error
->> on the side of "let's just support both upfront" if it's feasible.
->>
->>>> IMMED API addition will just work regardless of what you do in the app.
->>>> That's better than someone a few revisions later than saying "hey that's
->>>> cool, can we do ABS too which I use because of X and Y" and then having
->>>> to hack that on top.
->>>
->>> Hack it up in the user program? I didn't get it.
->>
->> No, I mean needing to retrofit ABS support on the kernel side for IMMED
->> up front.
-> 
-> They should be enabled in the same release, but we've been rather
-> discussing the way to do that. I was saying that u64 is enough to
-> pass the abs timeout value, and we can extend it to another u64 if
-> needed in several centuries from now. And it's not a bad option
-> because plain u64 ns makes much much more sense for the relative
-> mode. And even for the abs scenario above, I'd prefer that rather
-> than doing second adjustments every single time.
+v4: check non-iopoll CQEs against min_events in io_iopoll_check() (Ming)
 
-ABS makes very little sense as nanoseconds, that's pretty confusing on
-the userspace side. That's the main issue.
+v3: fix REW -> REQ typo (Anuj)
 
-I'm not sure why it's such a big deal to just encode the sec/nsec so
-that userspace can use it directly from a timespec or timeval which is
-most likely what they are querying time from anyway? If you do absolute,
-surely you'd do
+v2:
+- Add REQ_F_IOPOLL request flag, remove redundant iopoll_queue
+- Split IORING_OP_URING_CMD128 fix to a separate commit
 
-get_time(&t);
-t.tv_sec += 1;
+Caleb Sander Mateos (5):
+  io_uring: add REQ_F_IOPOLL
+  io_uring: remove iopoll_queue from struct io_issue_def
+  io_uring: count CQEs in io_iopoll_check()
+  io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+  nvme: remove nvme_dev_uring_cmd() IO_URING_F_IOPOLL check
 
-now issue timeout for that. That's a hell of a lot more natural to use
-than converting to and from nsecs.
-
-For relative it's obviously not a huge deal, but it'd be nice to keep
-them consistent.
+ drivers/nvme/host/ioctl.c      |  4 ----
+ include/linux/io_uring_types.h |  3 +++
+ io_uring/io_uring.c            | 28 +++++++---------------------
+ io_uring/opdef.c               | 10 ----------
+ io_uring/opdef.h               |  2 --
+ io_uring/rw.c                  | 11 ++++++-----
+ io_uring/uring_cmd.c           |  9 ++++-----
+ 7 files changed, 20 insertions(+), 47 deletions(-)
 
 -- 
-Jens Axboe
+2.45.2
+
 

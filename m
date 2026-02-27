@@ -1,49 +1,49 @@
-Return-Path: <io-uring+bounces-12461-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12462-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KJazGuXQoWkfwgQAu9opvQ
-	(envelope-from <io-uring+bounces-12461-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 18:14:13 +0100
+	id 2FMeEPvQoWkfwgQAu9opvQ
+	(envelope-from <io-uring+bounces-12462-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 18:14:35 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21DE1BB482
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 18:14:12 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E031BB499
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 18:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D9F83300D61D
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 17:13:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7AFD33039301
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 17:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1622361DD6;
-	Fri, 27 Feb 2026 17:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B8D36D4EC;
+	Fri, 27 Feb 2026 17:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUWgMCUp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgaayLEn"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC81361DBE;
-	Fri, 27 Feb 2026 17:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA135BDAF;
+	Fri, 27 Feb 2026 17:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772212427; cv=none; b=Mn/F6byJvNSZZ7M4GBcrQRpsv5QQ9CVg9aYTisM+o4ER2g3yPGaSS6jrF1fvM1qRvSXwDFEKIhsXzNpAxzvkPQauGYj3jDU1l66OOotfQ5wLJtCgnUxPe5SHU79LYcVC5h08+F+P/yCZKQru5kB7CxTqCKFZyIbOPrBXWIFU//M=
+	t=1772212428; cv=none; b=tBvOQrkr+tIlSHjCCGxvOYNRnNNREpU4RqJlGFsiFL13qe2herc8MCD3eKh/3/GZUkHGfPheilnDSmIfpKT/9AHRBgXo3YSycAiV7Dtqo1YgWpeNrFNunQQO9xpy1nWGWZTDKnaL9C3l/XwLW+Jbmt3ZVwhS6XSCr95daZS1ubg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772212427; c=relaxed/simple;
-	bh=ZJu7dxMaIgjiwMcOUFBFe0tnB3LrvdIbeuwcOXxKVwA=;
+	s=arc-20240116; t=1772212428; c=relaxed/simple;
+	bh=N45sXiuxe+FZCdGi0FyZZPJ65pd2QE3MQ8t83TuxlfI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P+w2whF3Ov2EGTmOUjLX64bY30rpoHfRmaLRRBiJRm/Fdk/R/pdnYGakEWrocjCAPbO40lTvL4vHoP0OwJgZvsspStesvt1kYTO6JO5n10rebU3IaY06+umR2m8eU8ejmMJkEWYXR2jI8Pmnbc6euOMBHTruKqWx4Y/+zkHmxTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUWgMCUp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C6EC2BC87;
+	 MIME-Version; b=FAuYXEl+yPWyEaT+s+e+wNb4N82yfgiOHPwL19kgOX3DtV5A35QRJ2dsA/AcBxI095sU2ppXjx0VxSnDiTwqXhCDmCTAKb29W0+zrbsYtNyPopTNPRQOpVrj26k6WC1v8f9K/tVUlBLpHvIwD57LQXKknh9BnChD1LmWxOwahG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgaayLEn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDE4C2BCAF;
 	Fri, 27 Feb 2026 17:13:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772212427;
-	bh=ZJu7dxMaIgjiwMcOUFBFe0tnB3LrvdIbeuwcOXxKVwA=;
+	s=k20201202; t=1772212428;
+	bh=N45sXiuxe+FZCdGi0FyZZPJ65pd2QE3MQ8t83TuxlfI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eUWgMCUpismwHXdyzPE/RI0KotmmOJiuf/zohB34NtkryXTAUo5iI/NJ4ykRhhpI2
-	 c+7EyiMTKoYW4z+wCehRY0dJh+O/DXkLAuT2auTzAsPhhSYc4zbpMq7ajbDmOxMCdx
-	 kpWN9sKRZc5yyuuv6CZzTPRi/dY/PMxMy3CB5ZIMgWMbgXwNS4LO06vZmsHhffkfMC
-	 wDZx8oZo3FRgC0smDWMSQrNaLBSEgaM9eLO8w/43aI+ID83SCkkNeS7iyx2QJNnSs/
-	 mze7Sz15twUS1o+pemSsl69YhT697GvVHfdlVVJ1m9NRURbeXn/lxuiCylkrjTAjNv
-	 XJM1UL6ED0YDg==
+	b=FgaayLEn83G7zx/Kxl9Tp6DCtjruzFV5qZjMM8s6IBx8Ck60pPzGjAaYgadyagSaT
+	 05Opgrqgk45s5B/0l5h1FEyllZqe/Efb5WGeC+FcTTk2hLYLZBapQoh4ag3X9fInOV
+	 cYUviq18dLk90O7dkCAycHKgq4Ij273WsxcHVyEuSFF557VDiPX7YWBlbOmg9q9GsY
+	 R7qESQCkfG0+96XaJsX1zmXgRsTcwuQS0OgkgpAhIHqQaEZahoWBa4wD2XI8m0NMH9
+	 mRkA5+LeLoJVJZJopnGOT/p0Bi0WPOWiHi3qk6e/mZPBUV3QB6CwSWsLFCb6g0+DFU
+	 6d/H2ABRI6fyQ==
 From: Jakub Kicinski <kuba@kernel.org>
 To: davem@davemloft.net
 Cc: netdev@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc: netdev@vger.kernel.org,
 	Jakub Kicinski <kuba@kernel.org>,
 	shuah@kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH net-next 2/3] selftests: drv-net: iou-zcrx: rework large chunks test to use common setup
-Date: Fri, 27 Feb 2026 09:13:04 -0800
-Message-ID: <20260227171305.2848240-3-kuba@kernel.org>
+Subject: [PATCH net-next 3/3] selftests: drv-net: iou-zcrx: allocate hugepages for large chunks test
+Date: Fri, 27 Feb 2026 09:13:05 -0800
+Message-ID: <20260227171305.2848240-4-kuba@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260227171305.2848240-1-kuba@kernel.org>
 References: <20260227171305.2848240-1-kuba@kernel.org>
@@ -79,14 +79,14 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,google.com,redhat.com,lunn.ch,kernel.org,davidwei.uk,fastly.com,gmail.com];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[13];
-	TAGGED_FROM(0.00)[bounces-12461-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12462-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
@@ -96,24 +96,23 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[kuba@kernel.org,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring,netdev];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,davidwei.uk:email,iou-zcrx.py:url,fastly.com:email,cfg.target:url]
-X-Rspamd-Queue-Id: B21DE1BB482
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[cfg.target:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,fastly.com:email,davidwei.uk:email]
+X-Rspamd-Queue-Id: A3E031BB499
 X-Rspamd-Action: no action
 
-Commit a32bb32d0193 ("selftests: iou-zcrx: test large chunk sizes")
-and commit de7c600e2d5b ("selftests/net: parametrise iou-zcrx.py with
-ksft_variants") landed at similar time. The large chunks test was
-actually not included in the list of tests, so it never run.
-We haven't noticed that it uses the old-style helpers
-(_get_combined_channels, _get_current_settings, _set_flow_rule)
-that were removed by the other commit.
+The large chunks test needs 2MB hugepages for its mmap allocation,
+but the test system may not have any pre-allocated. Ensure at least
+64 hugepages are available before running the test, and restore the
+original value on cleanup.
 
-Rework test_zcrx_large_chunks to reuse the single() setup function
-and add it to the ksft_run cases list so it actually gets executed.
+While at it strip the stdout, it has a trailing new line.
+
+Before:
+  ok 5 iou-zcrx.test_zcrx_large_chunks # SKIP Can't allocate huge pages
 
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 ---
@@ -122,64 +121,36 @@ CC: dw@davidwei.uk
 CC: jdamato@fastly.com
 CC: linux-kselftest@vger.kernel.org
 ---
- .../selftests/drivers/net/hw/iou-zcrx.py      | 31 ++++---------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
+ tools/testing/selftests/drivers/net/hw/iou-zcrx.py | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/drivers/net/hw/iou-zcrx.py b/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
-index c27c2064701d..1649c23e05e2 100755
+index 1649c23e05e2..66dd496ec5cf 100755
 --- a/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
 +++ b/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
-@@ -135,36 +135,16 @@ SKIP_CODE = 42
+@@ -135,13 +135,21 @@ SKIP_CODE = 42
  
      cfg.require_ipver('6')
  
--    combined_chans = _get_combined_channels(cfg)
--    if combined_chans < 2:
--        raise KsftSkipEx('at least 2 combined channels required')
--    (rx_ring, hds_thresh) = _get_current_settings(cfg)
--    port = rand_port()
--
--    ethtool(f"-G {cfg.ifname} tcp-data-split on")
--    defer(ethtool, f"-G {cfg.ifname} tcp-data-split auto")
--
--    ethtool(f"-G {cfg.ifname} hds-thresh 0")
--    defer(ethtool, f"-G {cfg.ifname} hds-thresh {hds_thresh}")
--
--    ethtool(f"-G {cfg.ifname} rx 64")
--    defer(ethtool, f"-G {cfg.ifname} rx {rx_ring}")
--
--    ethtool(f"-X {cfg.ifname} equal {combined_chans - 1}")
--    defer(ethtool, f"-X {cfg.ifname} default")
--
--    flow_rule_id = _set_flow_rule(cfg, port, combined_chans - 1)
--    defer(ethtool, f"-N {cfg.ifname} delete {flow_rule_id}")
--
--    rx_cmd = f"{cfg.bin_local} -s -p {port} -i {cfg.ifname} -q {combined_chans - 1} -x 2"
--    tx_cmd = f"{cfg.bin_remote} -c -h {cfg.addr_v['6']} -p {port} -l 12840"
-+    single(cfg)
-+    rx_cmd = f"{cfg.bin_local} -s -p {cfg.port} -i {cfg.ifname} -q {cfg.target} -x 2"
-+    tx_cmd = f"{cfg.bin_remote} -c -h {cfg.addr_v['6']} -p {cfg.port} -l 12840"
++    hp_file = "/proc/sys/vm/nr_hugepages"
++    with open(hp_file, 'r+', encoding='utf-8') as f:
++        nr_hugepages = int(f.read().strip())
++        if nr_hugepages < 64:
++            f.seek(0)
++            f.write("64")
++            defer(lambda: open(hp_file, 'w', encoding='utf-8').write(str(nr_hugepages)))
++
+     single(cfg)
+     rx_cmd = f"{cfg.bin_local} -s -p {cfg.port} -i {cfg.ifname} -q {cfg.target} -x 2"
+     tx_cmd = f"{cfg.bin_remote} -c -h {cfg.addr_v['6']} -p {cfg.port} -l 12840"
  
      probe = cmd(rx_cmd + " -d", fail=False)
      if probe.ret == SKIP_CODE:
-         raise KsftSkipEx(probe.stdout)
+-        raise KsftSkipEx(probe.stdout)
++        raise KsftSkipEx(probe.stdout.strip())
  
      with bkg(rx_cmd, exit_wait=True):
--        wait_port_listen(port, proto="tcp")
-+        wait_port_listen(cfg.port, proto="tcp")
-         cmd(tx_cmd, host=cfg.remote)
- 
- 
-@@ -176,7 +156,8 @@ SKIP_CODE = 42
-         cfg.ethnl = EthtoolFamily()
-         cfg.netnl = NetdevFamily()
-         cfg.port = rand_port()
--        ksft_run(globs=globals(), cases=[test_zcrx, test_zcrx_oneshot], args=(cfg, ))
-+        ksft_run(globs=globals(), cases=[test_zcrx, test_zcrx_oneshot,
-+                                        test_zcrx_large_chunks], args=(cfg, ))
-     ksft_exit()
- 
- 
+         wait_port_listen(cfg.port, proto="tcp")
 -- 
 2.53.0
 

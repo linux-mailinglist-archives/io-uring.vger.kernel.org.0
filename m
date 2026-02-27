@@ -1,254 +1,195 @@
-Return-Path: <io-uring+bounces-12446-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12447-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eLsEBKjvoGmOoAQAu9opvQ
-	(envelope-from <io-uring+bounces-12446-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 02:13:12 +0100
+	id gDl/JhX/oGmqowQAu9opvQ
+	(envelope-from <io-uring+bounces-12447-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 03:19:01 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E4A1B16D6
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 02:13:11 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4EB1B1F97
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 03:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6C98F30A4552
-	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 01:12:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0181C302514B
+	for <lists+io-uring@lfdr.de>; Fri, 27 Feb 2026 02:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F626D4DF;
-	Fri, 27 Feb 2026 01:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A720C2EACF2;
+	Fri, 27 Feb 2026 02:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UurKEzms"
+	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="kAD/csUa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4778D29E101
-	for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 01:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772154736; cv=pass; b=WzKatF17KZMmxxzJoE4ksAMcdsddRYt2vKf87PztIkCZzqJ7YMfP4TWfpu3/LQcJboeeQ/lJ6pP+z0faR4l//3iIPUnkomOjb6Ox/l+lm/zO+C2OhovuAuIYsSjB5GF5HNeyXdZnO0wzTjR3lyTmp3lvO0zmG5UeADK7umFUdgg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772154736; c=relaxed/simple;
-	bh=6CYr7T8MzEUaXZzV6MRHPlZaEtYnuPxqMiOyyADI6dM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RS0i2XBqZRz3KzNYTdkn6J4HAdL2izUyFwwZNIl9O4nkSAzLSsgzDb0DJTxXZu8auL4QPJ6wifPRA57z37LXmg5BEHDq1uNWcFtcy2jV98DYBWq60cOmXmtq2MyTP3+Qa1kAABTpzDA0U9I12THYNh3TDwDF50p/A0LdIhL/J+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UurKEzms; arc=pass smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-506aa685d62so9075251cf.0
-        for <io-uring@vger.kernel.org>; Thu, 26 Feb 2026 17:12:14 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772154733; cv=none;
-        d=google.com; s=arc-20240605;
-        b=EycJU8aMjLc3kaKpxSq/yaC8Wv+arPBvxBNh0SmZtT5YqnSUi7aBpNd421VYwLBEe7
-         nujVp6rBr1RfCO5r1yPFcZD1qofaU/KiO9tRfDtPz2LRlZ5qwDnm1OsG98M/dzCiS85X
-         VD23AIJEJekDyzKqBdntqoy0ZnLAZXxp9Hhn9tNFG9yF9f/gHtsGiV+rvM2zDbHSkxfj
-         p8HO/9Y35TDhbaFzJSB5W1rNfaIYjkM5vgI8FZNNUX8kTlkPAtWQhJ0f2m1XAWLCbVJN
-         U0E9Lpcbur6xuN2RiG61mdFu3IOlD8LU6+i46qlU6fLcr+akO5jQeh6Af7/dbWzzhAO+
-         s8WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=WOstYkB9Q2AgMJRvNGEc6lIdl5QiR5DuIxP/4gEsFp0=;
-        fh=j7PK6wgmt/60gCOfkxO/l+gfuRxXGZdaz1ndaakp0qo=;
-        b=az1EqgN2OW4c9yx/niIkGM2cLWc9UlmnpEHrVmqC9KhtxHoIEGLypWjpCewwnELteX
-         umYzRhx5TtPfPT2uSm8Uiwds6cgJdJQPiSRUWjXvib2xr43VxS97D04N2yvzX1E+AgLR
-         ek6BHxUflq+wSZqMvrnvXBgoqGAxght0EsjnuIfeFaLv8tHhs7TVp+pIAHnj1VBzACeh
-         sihhMGPi7KIJzoyABeB2wrI/k4KHjl1PYSY1pLs0hLiL/xlgZhVOugHvJ/X59l4lYILu
-         ag6zbdhwe1sNLXjMdyXC1B5IZISa8ow/FM310JyWHUPVveNtmbw//O2AC4e2BR5Eww9E
-         Vveg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772154733; x=1772759533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WOstYkB9Q2AgMJRvNGEc6lIdl5QiR5DuIxP/4gEsFp0=;
-        b=UurKEzmsgJeRXMlucn40YNFFMyP39nvr2Ofa2EIitZzd4boxPsPPLG93zKI1O+rgi/
-         yjb/V8uJsOs2b4+gq+tVexyyXdGA82ZFkFfvX1jdbJ8h1C9LTYpbhXqQh6537nemDLoc
-         s+uKWMyNSeNVzJBA3/MtE7ZH7EFjC7Wd0+pCYuK4bUHhBp+C7PVcZkVZGXGsAaSX5h1c
-         +WobxnYxDIBgl9ytO4ItalZvtvGgP2kk8QIp03JVnrB8Wh45ugfLTr1Hrd/+9K3y4nmM
-         L8ghPdFWE1RqwWNviLlXx+vLt3/OXiDZaYbCYqMXzmwu1+cHZpGSHCGDbk/XiuvfYDXY
-         Yv2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772154733; x=1772759533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WOstYkB9Q2AgMJRvNGEc6lIdl5QiR5DuIxP/4gEsFp0=;
-        b=RncTxJqwSY3j2C+SO8/8UFGbALpro0R9iIV4i8mGC05Aia+awGGwWFnw9PtaiekeYe
-         d3TZ4jpbX06COrxPEKgGLivTejDiaQOkq+XIhXiS9lMgtaCR/3TkdpOsXVL57kbVE24u
-         fcsHSFHQAEBaTGXw0nE7pFYFwflN6IfT/CyUXeP2A32wqblYvitwg/SjHjJDha2UPlrX
-         Tw8OVd6+CRX1iTF38barRG7+bEMpvjnRMnyTctzYY8Yz6S3HBha8c6Z8O2O9K2CGreyf
-         +cWsohRIqqMHlQYtk+W1z+4RKJr+TZ59GYQpHIDtpdOtbvaRfDo1YIrg9gHwLrcIMQOn
-         vcgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyyCpVCC0Kl/nq8OzuWIJoh+oNBnGF96abAwll6wmyOmxjBfPv2OcSBBGJmU+G5Vd3kW0Y8MG76Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ4wWCMbNjFBBPET3OftEurGR4D7ElnvOIDThjAB/GeYAplhiV
-	8JCvDGPit2xM83lYn16Te0awyEDHuVDeerj1SyVodMcZG/fsFtYF/opF34UUd7bqgcZ/2n0DifV
-	m2+R7Y+NBuOEOgvyx43cbmS8/gOp/v+k=
-X-Gm-Gg: ATEYQzy3xYODzjASks3PCPYSdsQ41uitcr6hMxtQVfHbEuuaxoWkKOas5zjls8gqUfq
-	d4leJBm3u1ERYS/MZ1dLzfjTuR2i6VzmpPrTxWxIOXs5NIEcUfPMEOQrBPKU4Z6U/jZ/Rid+t15
-	9CQYii1eVJZRPQikVjnPhJGXkaPuHaF1LAvRJgoMd9T3EG3Qrm7DjZ2+7ugNljqk/9q2HomSaDH
-	J+D4jv9TFIGfrM3wXeZmE3QWcaucXrztQnKYl2DoGv+6/Iy5sMuWxUwaOJmNDupgSE4p9YD1Qhr
-	ik7oyQ==
-X-Received: by 2002:ac8:5a81:0:b0:4ed:6dde:4573 with SMTP id
- d75a77b69052e-507529a8606mr12840511cf.52.1772154733110; Thu, 26 Feb 2026
- 17:12:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403E22EAB71
+	for <io-uring@vger.kernel.org>; Fri, 27 Feb 2026 02:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772158738; cv=none; b=bsh+aVIgMZ+lpGWppmsmwCVDyowKPhnTxRca0lZd3HpMfuLnOJbu5teelVUSfGRZvvFbJ8mK+u6qO7Y41xqSAhKkqUsiFQBZvLGu2/HOC55kkiSWQkIG7ZSNccXKL6+i/Bc8A9Ax0ym1OqFq0puvInTY9IZC3DrIDYE3DclSASw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772158738; c=relaxed/simple;
+	bh=yoBeoacMbK1NAn82kU0drfaAQYOiincR4WZfeQfH/ZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lvYCUG2OsWtNp/jSQwDpDG049HCHDQ9cPq9CnyIv1iBlHq8D7s3ey4/ZkRz8O2biV+keV5MzHc9Yg341I430Jfbw54AeGQnD0CDTJDXBAf0LVELh2qaBMfVMNG82SZBidDezDtirX3TuBR9cWsMLFjU/+PzyLchA9/Y+rSfSFw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=kAD/csUa; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1772158734;
+	bh=+ll0j7P6gB1YHU/QPLWIwnmbPeyItOm5mPcLbuIqgOg=;
+	h=From:Subject:Date:Message-Id;
+	b=kAD/csUa70XJSbgSuc1Wk3iqb1/gW+9NEqLvGY1El63d4L8vao75gPGNjv6nCWkas
+	 5qcI+hnVzeUuyQwSndCPRiRIeeOxnLFUydVGHh64d0CZjVEgfi1GoM2mKWK5eTvD8s
+	 rtIteWLVP/bKJT39hidlGJj3GNr/qDoNbsRUO8Tk=
+X-SMAIL-HELO: NTT-kernel-dev
+Received: from unknown (HELO NTT-kernel-dev)([60.247.85.88])
+	by sina.cn (10.185.250.22) with ESMTP
+	id 69A0FF0700000E95; Fri, 27 Feb 2026 10:18:50 +0800 (CST)
+X-Sender: jianqkang@sina.cn
+X-Auth-ID: jianqkang@sina.cn
+Authentication-Results: sina.cn;
+	 spf=none smtp.mailfrom=jianqkang@sina.cn;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=jianqkang@sina.cn
+X-SMAIL-MID: 5772687602230
+X-SMAIL-UIID: BCC5C971CE1645018EB779524CAFFB85-20260227-101850-1
+From: Jianqiang kang <jianqkang@sina.cn>
+To: gregkh@linuxfoundation.org,
+	stable@vger.kernel.org,
+	axboe@kernel.dk
+Cc: patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com,
+	io-uring@vger.kernel.org
+Subject: [PATCH 5.10.y] io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
+Date: Fri, 27 Feb 2026 10:18:47 +0800
+Message-Id: <20260227021847.1242260-1-jianqkang@sina.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
- <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com> <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
-In-Reply-To: <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 26 Feb 2026 17:12:01 -0800
-X-Gm-Features: AaiRm51DUGU78O75qpvj-Q89bRyh_-LRasIvedVgKFuTGIZjmW0a7g5kcb4_4eY
-Message-ID: <CAJnrk1YoaHnCmuwQra0XwOxf0aC_PQGby-DT1y_p=YRzotiE-w@mail.gmail.com>
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com, 
-	krisman@suse.de, bernd@bsbernd.com, hch@infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[sina.cn,none];
+	R_DKIM_ALLOW(-0.20)[sina.cn:s=201208];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12446-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,gmail.com];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12447-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FREEMAIL_FROM(0.00)[sina.cn];
+	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jianqkang@sina.cn,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[sina.cn:+];
+	NEURAL_HAM(-0.00)[-0.992];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 95E4A1B16D6
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 6E4EB1B1F97
 X-Rspamd-Action: no action
 
-On Wed, Feb 11, 2026 at 2:06=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Wed, Feb 11, 2026 at 4:01=E2=80=AFAM Pavel Begunkov <asml.silence@gmai=
-l.com> wrote:
-> >
-> > On 2/10/26 19:39, Joanne Koong wrote:
-> > > On Tue, Feb 10, 2026 at 8:34=E2=80=AFAM Pavel Begunkov <asml.silence@=
-gmail.com> wrote:
-> > >
-> > >>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> > >>> index aa9b70b72db4..9bc36451d083 100644
-> > >>> --- a/io_uring/kbuf.c
-> > >>> +++ b/io_uring/kbuf.c
-> > >> ...
-> > >>> +static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
-> > >>> +                            struct io_buffer_list *bl,
-> > >>> +                            struct io_uring_buf_reg *reg)
-> > >>> +{
-> > >>> +     struct io_uring_buf_ring *ring;
-> > >>> +     unsigned long ring_size;
-> > >>> +     void *buf_region;
-> > >>> +     unsigned int i;
-> > >>> +     int ret;
-> > >>> +
-> > >>> +     /* allocate pages for the ring structure */
-> > >>> +     ring_size =3D flex_array_size(ring, bufs, bl->nr_entries);
-> > >>> +     ring =3D kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
-> > >>> +     if (!ring)
-> > >>> +             return -ENOMEM;
-> > >>> +
-> > >>> +     ret =3D io_create_region_multi_buf(ctx, &bl->region, bl->nr_e=
-ntries,
-> > >>> +                                      reg->buf_size);
-> > >>
-> > >> Please use io_create_region(), the new function does nothing new
-> > >> and only violates abstractions.
-> > >
-> > > There's separate checks needed between io_create_region() and
-> > > io_create_region_multi_buf() (eg IORING_MEM_REGION_TYPE_USER flag
-> >
-> > If io_create_region() is too strict, let's discuss that in
-> > examples if there are any, but it's likely not a good idea changing
-> > that. If it's too lax, filter arguments in the caller. IOW, don't
-> > pass IORING_MEM_REGION_TYPE_USER if it's not used.
-> >
-> > > checking) and different allocation calls (eg
-> > > io_region_allocate_pages() vs io_region_allocate_pages_multi_buf()).
-> >
-> > I saw that and saying that all memmap.c changes can get dropped.
-> > You're using it as one big virtually contig kernel memory range then
-> > chunked into buffers, and that's pretty much what you're getting with
-> > normal io_create_region(). I get that you only need it to be
-> > contiguous within a single buffer, but that's not what you're doing,
-> > and it'll be only worse than default io_create_region() e.g.
-> > effectively disabling any usefulness of io_mem_alloc_compound(),
-> > and ultimately you don't need to care.
->
-> When I originally implemented it, I had it use
-> io_region_allocate_pages() but this fails because it's allocating way
-> too much memory at once. For fuse's use case, each buffer is usually
-> at least 1 MB if not more. Allocating the memory one buffer a time in
-> io_region_allocate_pages_multi_buf() bypasses the allocation errors I
-> was seeing. That's the main reason I don't think this can just use
-> io_create_region().
->
-> >
-> > Regions shouldn't know anything about your buffers, how it's
-> > subdivided after, etc.
-> >
+From: Jens Axboe <axboe@kernel.dk>
 
-I still think the memory for the buffers should be tied to the ring
-itself and allocated physically contiguously per buffer. Per-buffer
-contiguity will enable the most efficient DMA path for servers to send
-read/write data to local storage or the network. If the buffers for
-the bufring have to be allocated as one single memory region, the
-io_mem_alloc_compound() call will fail for this large allocation size.
-Even if io_mem_alloc_compound() did succeed, this is a waste as the
-buffer pool as an entity doesn't need to be physically contiguous,
-just the individual buffers themselves. For fuse, the server
-configures what buffer pool size it wants to use, depending on what
-queue depth and max request size it needs. So for most use cases, at
-least for high-performance servers, allocation will have to fall back
-to alloc_pages_bulk_node(), which doesn't allocate contiguously. You
-mentioned in an earlier comment that this "only violates abstractions"
-- which abstractions does this break? The pre-existing behavior
-already defaults to allocating pages non-contiguously if the mem
-region can't be allocated fully contiguously.
+[ Upstream commit 10dc959398175736e495f71c771f8641e1ca1907 ]
 
-Going through registered buffers doesn't help either. Fuse servers can
-be unprivileged and it's not guaranteed that there are enough huge
-pages reserved or that another process hasn't taken them or that the
-server has privileges to pre-reserve pages for the allocation. Also
-the 2 MB granularity is inflexible while 1 GB is too much.
+Currently this is checked before running the pending work. Normally this
+is quite fine, as work items either end up blocking (which will create a
+new worker for other items), or they complete fairly quickly. But syzbot
+reports an issue where io-wq takes seemingly forever to exit, and with a
+bit of debugging, this turns out to be because it queues a bunch of big
+(2GB - 4096b) reads with a /dev/msr* file. Since this file type doesn't
+support ->read_iter(), loop_rw_iter() ends up handling them. Each read
+returns 16MB of data read, which takes 20 (!!) seconds. With a bunch of
+these pending, processing the whole chain can take a long time. Easily
+longer than the syzbot uninterruptible sleep timeout of 140 seconds.
+This then triggers a complaint off the io-wq exit path:
 
-I'm not really seeing a way where we can honor the physical contiguity
-requirements for the buffers without going through kernel-managed
-bufrings with the allocation done on a per-buffer basis. Or am I
-missing something here?
+INFO: task syz.4.135:6326 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+      Blocked by coredump.
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.4.135       state:D stack:26824 pid:6326  tgid:6324  ppid:5957   task_flags:0x400548 flags:0x00080000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5256 [inline]
+ __schedule+0x1139/0x6150 kernel/sched/core.c:6863
+ __schedule_loop kernel/sched/core.c:6945 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:6960
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
+ io_wq_exit_workers io_uring/io-wq.c:1328 [inline]
+ io_wq_put_and_exit+0x271/0x8a0 io_uring/io-wq.c:1356
+ io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
+ io_uring_cancel_generic+0x69c/0x9a0 io_uring/cancel.c:651
+ io_uring_files_cancel include/linux/io_uring.h:19 [inline]
+ do_exit+0x2ce/0x2bd0 kernel/exit.c:911
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1112
+ get_signal+0x2671/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7e0 arch/x86/kernel/signal.c:337
+ __exit_to_user_mode_loop kernel/entry/common.c:41 [inline]
+ exit_to_user_mode_loop+0x8c/0x540 kernel/entry/common.c:75
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:159 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:194 [inline]
+ do_syscall_64+0x4ee/0xf80 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa02738f749
+RSP: 002b:00007fa0281ae0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fa0275e6098 RCX: 00007fa02738f749
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fa0275e6098
+RBP: 00007fa0275e6090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fa0275e6128 R14: 00007fff14e4fcb0 R15: 00007fff14e4fd98
 
-Thanks,
-Joanne
+There's really nothing wrong here, outside of processing these reads
+will take a LONG time. However, we can speed up the exit by checking the
+IO_WQ_BIT_EXIT inside the io_worker_handle_work() loop, as syzbot will
+exit the ring after queueing up all of these reads. Then once the first
+item is processed, io-wq will simply cancel the rest. That should avoid
+syzbot running into this complaint again.
+
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/68a2decc.050a0220.e29e5.0099.GAE@google.com/
+Reported-by: syzbot+4eb282331cab6d5b6588@syzkaller.appspotmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[ Minor conflict resolved. ]
+Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
+---
+ io_uring/io-wq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index c5d249f5d214..926890f5086e 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -554,9 +554,9 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
+ 	struct io_wqe *wqe = worker->wqe;
+ 	struct io_wq *wq = wqe->wq;
+-	bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 
+ 	do {
++		bool do_kill = test_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 		struct io_wq_work *work;
+ get_next:
+ 		/*
+-- 
+2.34.1
+
 

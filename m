@@ -1,153 +1,160 @@
-Return-Path: <io-uring+bounces-12485-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12486-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uO8hCbzzomlD8QQAu9opvQ
-	(envelope-from <io-uring+bounces-12485-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 14:55:08 +0100
+	id IO17MOxOo2nW/AQAu9opvQ
+	(envelope-from <io-uring+bounces-12486-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 21:24:12 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3ED1C3603
-	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 14:55:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB371C84FA
+	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 21:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3B98F302A063
-	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 13:55:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id AA1CE34CE4B3
+	for <lists+io-uring@lfdr.de>; Sat, 28 Feb 2026 19:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEF61C1F02;
-	Sat, 28 Feb 2026 13:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55E5347FFB;
+	Sat, 28 Feb 2026 18:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jGtCHag8"
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="mZcgwfP9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD731DF73C
-	for <io-uring@vger.kernel.org>; Sat, 28 Feb 2026 13:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05D35AC02;
+	Sat, 28 Feb 2026 18:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772286905; cv=none; b=K6ox7+qiLUmZd+9iDHvvI6K5gmh8+7ZPBO4oPaf8Evl+6NgYVckQOc/2VHu391N/13ue3S9Zby7q4U0GsVVzSNexs0YMU+rsrYCX7vqGQs+UdjSmLo300HNI3xQmHDfxGOpcZNIwBdHmA/i067Enou44FPY/AKJ/9hIW9yrVoEI=
+	t=1772302696; cv=none; b=iE0IVEkTFmcIn8IQGWIulcshqB4iJgtvNIc5mG/FI5LBADyjMRzXLfJ0uaMpsKGVjop7P6MdRpHqhwktX0cP49hrukYouKLDUjWm+E8PPWGTCA5l/VLHPWcDZvWCRH8b+FkgylTHM0+H1/l9bcaEbRmS1KBNMzG5DFFPJuNu6bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772286905; c=relaxed/simple;
-	bh=3ngLFV2XdZQVeJLfaDfBZZsOtfvdfyGUjbFhKXjrGOU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MsWb4wDVR8UVSzBDEoEfZtTosnZy86OS8UjYUIAbQYtckiw39JGSSlleq6Vqaev7XToGvmfb+wWNfXfo68BZtoTTVA25lrtmFiIpJ8Qr2MEIjepBmduZxEVjWqfo4KXftHjOHIzYofCtY6w90i70kejSCfS30ka0GzwRhDfx7X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jGtCHag8; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-464bba3a9easo1678555b6e.0
-        for <io-uring@vger.kernel.org>; Sat, 28 Feb 2026 05:55:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772286902; x=1772891702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nhIkJr1AyoV/0G7v0QShPUS6diUOOxa1x5FQubP/XPU=;
-        b=jGtCHag8kYfAvI9sV0JqAwlpnUFOkxxiYxeQOem3GmGI7nOPRQmIDyl3LXoOJbftof
-         eJCfR+qTw/d1wLFNKl5tym/ToPeT6kXN7Ur6ez0oI4iyQbNH5bCOeO7kDoadAyNocn/j
-         c5Vt1P5NQD9fzY2wg6n0aHdIWAO1r+AoTEM/rff2Bz+tCuRjsmun8baxclU2UbUiK6aT
-         wtOcU+0vuDelJ5yPQkVRF4PtCgx4V2qMwIDxFCylYhU0b/mHfsg26WpNKdsCWgnClvY+
-         zeyZE4zmVGfr9QU76nnyk1ZkLftCUphbylKxnFs9GpC4fScpLLwdTozXjfpc0EVmTzsL
-         8U+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772286902; x=1772891702;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nhIkJr1AyoV/0G7v0QShPUS6diUOOxa1x5FQubP/XPU=;
-        b=a8hST02REnOI/v5NoOPu+JRB6jGLf7t3DLoqfNRsWaiPH8RIqEBZXajFjhUwXJifdF
-         KsHXHZpI14AX56CsiOuv4qAqWT7mt2Bt8ZSQbzGabjyzhgZHPJZyH49OL7vWT/tZiGgB
-         e7LYRH8EWaSOC68HedHyAT8zWeFWErVFzL+0qijRTX2oFWcsS6Ui4jzfuKPMKaOwixop
-         T+Mk08KLH+utRwjtIt7KvtovtY493p5IGR6vnz7VVb1Y++XW6kU5cgNMO+Qjcmt2tXFj
-         2dfqRE+U/7eNf8N0BmsYuOxLujNW+fK9roxh0pN6cnO72XBQ6oFQ1NXRWUa9le4KizrC
-         fRaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxU9w1vqxownZt3FSQjYd9beY46qn+sUdERNK+IOT7LKxXs6S/2LFqhhPftgUVW+4Ltao0bWJtfg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJQ6C+iTLmSgt5M2ZaYvyGZjgeu8LEEg7fBW9K5F7vB9uem96E
-	J1oI719rhKtFWbfhhisILhyZmA4mkY2httRR72gq1KmQ+K6nRaPL7tronleQr1JUxq4=
-X-Gm-Gg: ATEYQzwNkTkq2HsW62CgbYAlkwZx6O0OL9Rz5hWeKJk49cij3z+n7kZZQBmwvWiZaeh
-	WHrE042d5LysofEMIYuTvlswMSy1re0A4Dpt7eEO3kMuH49VSSZWyXKF6kdb8JsEBFS7sSo8bVh
-	QmFKaUK7vGByjtgdptKRAkticIobK98ara17YbxbD/9Kx5dm7ytoJRx6c2usV1swxN/US4873vC
-	4vPtgjIPF27S+IxVouEgpQL0dAJBQL6x8HCS9oXdjj/vgrKr2FXgzX7H7xUGEVhkGN+riUtIyAa
-	l5VUxB9M5E0ayB1h6uSfsRmw4XVACwIbVgeO/xBIPopiPowPUEUwmUW3aEKF4EAdEoHkuW42wOi
-	5sRt+Ny5TSIYsNAo5wbbnnDa5UGSqx824zR1+u1rPxSEUyhd9olh4cS6Efd/zFR/4jt5T2naHfC
-	xwgr5H+WXfUb6crW6zvRZAdL5MC8v+XFkuA/kDjI1e410ZToU/BKbQzSX1rqPXqfZQleQmylq3K
-	Ez1khxwFwn3oXzfnqn3
-X-Received: by 2002:a05:6808:c40b:b0:43f:2a62:8b79 with SMTP id 5614622812f47-464beb451d1mr3770476b6e.29.1772286902565;
-        Sat, 28 Feb 2026 05:55:02 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-464bb3ab302sm4024879b6e.7.2026.02.28.05.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Feb 2026 05:55:01 -0800 (PST)
-Message-ID: <3f22b095-cb5b-461d-810c-2c602d3abc39@kernel.dk>
-Date: Sat, 28 Feb 2026 06:55:00 -0700
+	s=arc-20240116; t=1772302696; c=relaxed/simple;
+	bh=Myv1uT6pgCKChE0Cthw3fmvc8MAoOj0B17opGgEWW1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZV3phi8N1jFlV3/AmVnCqRbMMfsZBQNmGXb3QNNCnI9MK0revTub45BVDvl0l7IEYPM9qYZ2e06wRG2BIRYLEasG/MS7Bog7JndNZ2MK6+QJ26yQtdEap4Wec94GPUQEqlcHVj/DZkVlXnDPo8cRjKgYt0GLMRGBj3Z+3YFGV+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=mZcgwfP9; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1772302218;
+	bh=Myv1uT6pgCKChE0Cthw3fmvc8MAoOj0B17opGgEWW1Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mZcgwfP9adD+pi0NUfxneqVnEoz1sYa6FR5axyr6kaHCioKpy0A5DC/jNZhyRJLuB
+	 ulhvutcv9ZFsfFBhb9fCvG+WayRvkBaGmfgjTWXpda3vKmhDxD7/OAmLA+RaHkuTn9
+	 VuMwNfbsRkO9wfhBJGuFoI4NorGpeq6YP5ev1c3zZwYqGIQycLkT4lVV6ODtib0nF0
+	 DCLYQzSQ150pBxuqQxoEfzLxZvPvVumf0I6PXrazXlMBBrK1uNWYMhoVV74Li2LHrc
+	 UOqf+HMSODUW25RrqzO6PY1UgXlZ+SdHF2hImGe2BYbafZlkef7ATeKhyAE+F/3NEg
+	 UYoY5WfqKsHCw==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id F2609600BF;
+	Sat, 28 Feb 2026 18:10:17 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 7C80C201903; Sat, 28 Feb 2026 18:09:54 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: stable@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH 6.12.y] io_uring/uring_cmd: fix too strict requirement on ioctl
+Date: Sat, 28 Feb 2026 18:08:53 +0000
+Message-ID: <20260228180858.66938-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] io_uring/timeout: immediate timeout arg
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>
-References: <cover.1772015321.git.asml.silence@gmail.com>
- <6151302f1dc01d1c4e3176da50ab4224947b709f.1772015321.git.asml.silence@gmail.com>
- <3ae98749-590e-4f8b-a835-c9a15d7866c2@samba.org>
- <a6cbceb5-2065-42ff-bcca-bdb1c2443b96@gmail.com>
- <1cd9a071-dc93-48d1-81c9-24b65e65e8bf@kernel.dk>
- <dcb21382-36a6-4d5b-8e79-66290e522f2c@gmail.com>
- <2daa9b01-d989-4922-b892-e7f3f06297ac@kernel.dk>
- <cc9ba4b8-88f1-48c9-8aae-fe30a6b5c282@gmail.com>
- <e834eb01-6cde-4249-a797-ed1fd9f8c713@kernel.dk>
- <2ab205f2-fd87-4fcc-9c0a-0bdebbadeb58@gmail.com>
- <3a8e5738-b417-440a-9851-b8ecc2a82b82@kernel.dk>
- <11058b2c-55b2-4a4f-8d80-7533211b16bf@gmail.com>
- <b4c878d6-dcca-421c-a722-84a1fc77a1ee@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <b4c878d6-dcca-421c-a722-84a1fc77a1ee@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.49 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MIXED_CHARSET(0.67)[subject];
+	DMARC_POLICY_ALLOW(-0.50)[fiberby.net,reject];
+	R_DKIM_ALLOW(-0.20)[fiberby.net:s=202008];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12485-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,samba.org,vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_FROM(0.00)[bounces-12486-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[fiberby.net:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[ast@fiberby.net,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel.dk:mid]
-X-Rspamd-Queue-Id: 7B3ED1C3603
+	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,fiberby.net:mid,fiberby.net:dkim,fiberby.net:email,kernel.dk:email]
+X-Rspamd-Queue-Id: 3AB371C84FA
 X-Rspamd-Action: no action
 
-On 2/28/26 6:44 AM, Jens Axboe wrote:
-> In the spirit of not pointlessly arguing this to death, how about a v3
-> that includes the ktime_t conversion?
+[ Upstream commit 600b665b903733bd60334e86031b157cc823ee55 ]
 
-For the nsec vs timespec side, if we just add liburing helpers for the
-conversions where appropriate, then I don't think that's a showstopper
-for just sticking with the nsecs.
+Attempting SOCKET_URING_OP_SETSOCKOPT on an AF_NETLINK socket resulted
+in an -EOPNOTSUPP, as AF_NETLINK doesn't have an ioctl in its struct
+proto, but only in struct proto_ops.
 
+Prior to the blamed commit, io_uring_cmd_sock() only had two cmd_op
+operations, both requiring ioctl, thus the check was warranted.
+
+Since then, 4 new cmd_op operations have been added, none of which
+depend on ioctl. This patch moves the ioctl check, so it only applies
+to the original operations.
+
+AFAICT, the ioctl requirement was unintentional, and it wasn't
+visible in the blamed patch within 3 lines of context.
+
+Cc: stable@vger.kernel.org
+Fixes: a5d2f99aff6b ("io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT")
+Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[Asbjørn: function moved in commit 91db6edc573b; updated subject prefix]
+Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+---
+ io_uring/uring_cmd.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index f927844c8ada7..e5d0cc8a8a562 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -338,16 +338,19 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 	struct proto *prot = READ_ONCE(sk->sk_prot);
+ 	int ret, arg = 0;
+ 
+-	if (!prot || !prot->ioctl)
+-		return -EOPNOTSUPP;
+-
+ 	switch (cmd->cmd_op) {
+ 	case SOCKET_URING_OP_SIOCINQ:
++		if (!prot || !prot->ioctl)
++			return -EOPNOTSUPP;
++
+ 		ret = prot->ioctl(sk, SIOCINQ, &arg);
+ 		if (ret)
+ 			return ret;
+ 		return arg;
+ 	case SOCKET_URING_OP_SIOCOUTQ:
++		if (!prot || !prot->ioctl)
++			return -EOPNOTSUPP;
++
+ 		ret = prot->ioctl(sk, SIOCOUTQ, &arg);
+ 		if (ret)
+ 			return ret;
+
+base-commit: 444b39ef6108313e8452010b22aaba588e8fb92b
 -- 
-Jens Axboe
+2.51.0
+
 

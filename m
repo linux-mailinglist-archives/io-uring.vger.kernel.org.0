@@ -1,157 +1,187 @@
-Return-Path: <io-uring+bounces-12513-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12515-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WHWVOEi8pWn8FQAAu9opvQ
-	(envelope-from <io-uring+bounces-12513-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:35:20 +0100
+	id ABjpF8C9pWn8FQAAu9opvQ
+	(envelope-from <io-uring+bounces-12515-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:41:36 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3C61DCF57
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:35:20 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060EF1DD123
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 53D88303B4C9
-	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 16:28:51 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DDB9630330E1
+	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 16:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8859F2F3C13;
-	Mon,  2 Mar 2026 16:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3C421EFE;
+	Mon,  2 Mar 2026 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YsGA+TLm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoyN9Yd5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DFC364038
-	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 16:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6245F421A15
+	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 16:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772468929; cv=none; b=DgUluxk4aiAeqVNdhSNIyQCw0WfNhOBTVnJKrdoCjqTT/Huq18ASd0DrI9y/68qJp4RqW44D2sOl8df9HKpKy14VhuIKao8wrZ3pQFImMQJo04r/mW6Dlz36f1yEu3a05sx1g1uOjUCQJHtNNNT4TBtEGYlr11TahKNhVQjm97I=
+	t=1772469554; cv=none; b=XxgvrQkqlc07lZyOEGIzoUUkVhQDfnBaNahxnUZvM4rUGbdYVqH5xVg/VQbnBQzOnQhyDNtfM29At/lwbKsNRFuIvrMNMcMhlUKu4JA6r5V8L2WzV2/1VCCVB92vS7u+0e9g1jGE0Yif5ebcLOo/hCmFaC0Aclo4dr8wF6LVn7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772468929; c=relaxed/simple;
-	bh=H/3h5AXOS5WQAuvECHje4+hBpxw2lroEnJ9rk6aavqw=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LQFTRdpzYDnBSTy7Z5WVPcXdZSSnyShmTgLtjhVJP1REnQDHgh089s7LcFYpV1yM0ERuTf4FRgAgNvsWmgPHtEAI7EgFSLERKqYQg6Q+XyLEhCvV+yJ7N0yudqwT5U1t3jkD+kO2CPVkDclGab6NSVSu7sSjaPPmOrQghiyQONs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YsGA+TLm; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-899aede64e8so43953566d6.1
-        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 08:28:48 -0800 (PST)
+	s=arc-20240116; t=1772469554; c=relaxed/simple;
+	bh=bfIMw4s5E6WEpd7VcgBYJkug+2LIkZB4O3crmBDTPb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GcppJg4L5DmEgS17A/QqaarGL1jQTR5bDh1pNVIOy4cd5p7/zlJ+rRpNC0Ip0Pj5zyOzzGvm4c0QdeiM14Gb4PwW/HVWqZmsGmG95yInWbI6o+71QqFidxOTJIxTfWdYiWPsvb4ObAZSLOi+pEdH1B7s9CaLQNy+fQ4bz5vJaP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoyN9Yd5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48373a4bca3so28318285e9.0
+        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 08:39:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772468927; x=1773073727; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lof3znx9pC1SeCY3Z1eFlMRuYmH1KqQXA50mK4U9hCQ=;
-        b=YsGA+TLmrjCyL4guZ0HKN1QXepRuo+PH10ieExd9aXqcleioW236ylFdD19v3fuHjc
-         x7TRWdnm90vN7za/KlT6O7NZ8IhpEm4pnAjPgtpBR4R9ALsp6tRcHcV+oF0VcGxtuNCA
-         bs3iP7gNegwqmwO0TTbddEOFdpg6dZ771JkzAx3UQs5p2RvLL5+Tu0XE+ogMx5k864sK
-         7TioWh8i9q0oSe1X1ry1JpSwS5p0EXFmAdzOCFYyeeXiC+0/w2Q3VjK13F/ZhEtYJWRs
-         B+HVmP7GxLyKJUYWbRfFPH0ELOXkJ0hRTdKtoBJ3oXa1s6WV2mlhVyfB9IoSkrCiJOYH
-         mkQQ==
+        d=gmail.com; s=20230601; t=1772469551; x=1773074351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RLH2Zsf/+9XcBU3PUX60P5GwjddHlM2s685LeP+DF/U=;
+        b=JoyN9Yd5vmzsdu/egtES2pZlR+W7DOGBNe08Y1LemG+CGPJlv5E8o0lGRhPiWPMu2V
+         SpN/hIHvjryuw3/MSMhCQfPAIVmRSQcp78ndrulT1mGTZvvfQ472YSCVVtB8R8qEPfsL
+         GKQyMtc8lgQrN69QFP3M4Bb/YXL2DVXEwrWfgpJz40Cd3QHmqHSkilK6fywlFo0L4+fG
+         mEGFKyHP8GBMhyV6t9UOrtZpcXms2K3gA5kXtFXqAJbQmqRB9B4ihOCVfsPMR6AD8QUC
+         /nRi1gE5OWeeXntrqgBh3OUlXuLmbrt3kYZ4I0JcycvQVvtM3Ld1sJa9u28ctKmT1IUP
+         maDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772468927; x=1773073727;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Lof3znx9pC1SeCY3Z1eFlMRuYmH1KqQXA50mK4U9hCQ=;
-        b=TnxpzzyTzl65pSIoT0OzjDVZGof+O9cd/u+jatFf+VVVUA+F8RY114XH6Q8Q3glHeg
-         RF15dZpSPj4k38dOtiNO28MtUhUMV5zObxUxP8qSiOgkKlz8zV7GQJqST29/e6e6IY5d
-         kDzGcERWkc01ypalRqpQKfJcOaVqRtkMguaGouXohgLzKdzPa0D3wrJx6BE+gOjmwbEM
-         OiYSDrS1iPfyuc530SqOxqraJKTdQ2z4A9AUzkRHbLzQ/3HA8Y8EYuxRw0cwYunaqz9n
-         yknyMVU9o8HQ8VaG4aU08kiSdq9T4daXf+uOQ4OsQNbswynulEWz66WzY6T4IHB1psvj
-         seXA==
-X-Gm-Message-State: AOJu0YxOCrOnWyJaWELnFxtMGkFrmSE8mdH0oZlVXZ4MSRBllNjjFusJ
-	rmgCehZjyiEBpLnNlWrko38bU1iUBS7LChbQpzgELPNjQ/I3q6XpeSW2e6Nd8S+mV9dnZHQRiTg
-	GXAEcVVk=
-X-Gm-Gg: ATEYQzwGytxVN+pgp/LKjtspsEF/9LuGzqo7rwoautA7eer9VA8FYziKaz/uKen0le2
-	5gNpJyczsspETxOTYeukYd0O7aZp5Nmh7KfDuVMQRgD5YvV1qGW20xtwaXm2t/Vpy+Znv5ju8uc
-	/s8le8G6lqams2VWm5jCWwHNrs21Y3Fjp+GirpJbqNg9B4TJsEZhkVHg3VKGvwWKGpbSpne393i
-	FsASTy7ws52ktYVLN5G98XMpZO1NU2obAOBqnoOVmfUTemHsd7SS2cingYGYP+Dhzry+97elATP
-	hbpYnTniU3Ovc8nK7yUntOV2c1v6F3w5RgC07AvNNHwsBH6w6G6ff90U1M9CqA4tJtAnnRGlQsP
-	U7O3qaI7y3TL7VgBbnF1eybKTD9Hn0QVu9wPvtZm91aaNXk0+c+inyJ3WmbStv61l71RThhEHNC
-	f1ICv22lZU8KZVJj0MSgMjTOmlpMEaRG4guCxeqaqTe2sPlnvF4Fme7f8dPqmzaqhFNYni/ek6Q
-	jo=
-X-Received: by 2002:a05:6214:cc1:b0:899:ac8c:dacd with SMTP id 6a1803df08f44-899d2023ac1mr153642376d6.26.1772468927245;
-        Mon, 02 Mar 2026 08:28:47 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a04849cb3sm9035126d6.6.2026.03.02.08.28.46
+        d=1e100.net; s=20230601; t=1772469551; x=1773074351;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLH2Zsf/+9XcBU3PUX60P5GwjddHlM2s685LeP+DF/U=;
+        b=XBsO/T/IBj13Tdb5ru4TXE1XM/rl71CQ8nH6a64hNg1MiCXdOfRKIeElWttBwom6Ry
+         9W6UeL2c0AHXTR2Siijbf96L8S/iOfAYsl34ChJt6mEPm3pBNr9YK/ICfAx2vuKhCQg8
+         r/gLYX1hV0zLoVQxvPwurFc+fW5xn/xudsAlQZ3xZt/shmhK6vp17fnCRHyn8UdqS7/3
+         4+Tk4O6y0esvwBpjgnpa4NpCyHGL+y4Kuc38KNPmmspybNMCx/nEx6hQ4xZaZ/z0ZEVk
+         I+paqTQDW6N+d2+bkgnUNZ6qNVpQDF4KtEozvKjRPbq7OcDH9TPizQ7c7OKJ4Bnu4/Gk
+         wh4A==
+X-Gm-Message-State: AOJu0YwoLpyWi7XA/vmYdxsnSB7os6KBoSiRxxaj8VOCODBhFUXmJrub
+	DDvQbZZivMjj+ZBUnz5hPjALCWz88aZ+0ij7JkyL16Deju9XVLVyuQKjJSNi6g==
+X-Gm-Gg: ATEYQzyyycBObTlAyTouraRa+QLkT0ohP1hrm0pEIggkJi0arQJ5tbjdIW3NfUrjOF7
+	CrzDvH3E2WzIBUBrWXfwJyKb/dvagIyPp+wNMYHC+F2cqo6D0xnDa0T0WU/hfkTvQmqn7qehEaj
+	w6QD5NSXoDJlDpZK4Ww2UHeIU8DRf0kEEhv1a/g4X5Zhe7QaYuBVXarpcjUqaDauQbcmP+uuCDg
+	jQw7vtmlnEauu0MrlK50Y8XUidqS9baRI6tZYgsS+GKPJBed4IaehSDUVLrjqGfig145fj8j/ug
+	dlwLewaSoaNyh1wMoZ4Ok9j6cFDT+DwUF8myPcIugK+kHmjT96bR8TZoTrG1/M0frrKp+cL4aym
+	UrjPo2zTdQUkltMWz/Zn0+5SSQwtN+70bw71gjU4Dw7i9dWdvxljqJhxql8L3SvJGKYoOXY5Zrf
+	a/TTKLh2dUHP9ylPxuBHVqdISFNkhiuLfJo/aXNFhMDnOJJiW6hEPEB3Z4Rp5LMFuIj1sRtZlot
+	wfwT65znwWFRCwbncewc6DTSRDf8w==
+X-Received: by 2002:a05:600c:6488:b0:480:1c69:9d36 with SMTP id 5b1f17b1804b1-483c9bbc297mr242254815e9.17.1772469550955;
+        Mon, 02 Mar 2026 08:39:10 -0800 (PST)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd765604sm364368595e9.15.2026.03.02.08.39.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2026 08:28:46 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1772456786.git.asml.silence@gmail.com>
-References: <cover.1772456786.git.asml.silence@gmail.com>
-Subject: Re: [PATCH v3 0/4] timeout immediate arg
-Message-Id: <177246892619.112159.9148726991074312317.b4-ty@kernel.dk>
-Date: Mon, 02 Mar 2026 09:28:46 -0700
+        Mon, 02 Mar 2026 08:39:10 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH liburing 1/1] man: document that immediate abs timeouts are allowed
+Date: Mon,  2 Mar 2026 16:39:02 +0000
+Message-ID: <89b2497fff2bb02b9f08d693ee1ebd86dc538a8b.1772469512.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Rspamd-Queue-Id: 6C3C61DCF57
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 060EF1DD123
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12513-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
+	TAGGED_FROM(0.00)[bounces-12515-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
 	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[io-uring];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+	TAGGED_RCPT(0.00)[io-uring];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FROM_HAS_DN(0.00)[]
 X-Rspamd-Action: no action
 
+Add a couple mentions that absolute mode timeout requests don't work
+with IORING_TIMEOUT_IMMEDIATE_ARG, now they do.
 
-On Mon, 02 Mar 2026 13:10:33 +0000, Pavel Begunkov wrote:
-> Allow the user to pass the timeout value inside the SQE instead of
-> pointing to a timespec, people asked for it as it makes user space
-> simpler. More details description is in Patch 4.
-> 
-> v3: Enable the feature for the abs timeout mode
->     Convert internal request handling to ktime
->     Validate unused SQE fields for timeout reqs
-> v2: ditto for timeout updates
-> 
-> [...]
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ man/io_uring_enter.2        | 8 +-------
+ man/io_uring_prep_timeout.3 | 9 ++-------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
-Applied, thanks!
-
-[1/4] io_uring/timeout: check unused sqe fields
-      commit: db74fcdb2659790cca5a2be7317c703f18289cc8
-[2/4] io_uring/timeout: add helper for parsing user time
-      commit: e23b896d6b3aa9167206f60abba2d17a188ef010
-[3/4] io_uring/timeout: migrate reqs from ts64 to ktime
-      commit: e4f28b04894d2d2ced34b1fbc89238881c3a9fdd
-[4/4] io_uring/timeout: immediate timeout arg
-      commit: ee1d7dc3399054247e6146d8ce35bcd5ab8f2bd1
-
-Best regards,
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index b5b60b2b..bd4f0613 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -677,9 +677,7 @@ field to be interpreted as a timeout value in nanoseconds rather than a
+ pointer to a
+ .B struct __kernel_timespec.
+ This avoids the need to keep a timespec structure valid in user memory until
+-the request is submitted. Only relative timeouts are supported with this flag;
+-it must not be used with
+-.BR IORING_TIMEOUT_ABS .
++the request is submitted.
+ .in
+ .PP
+ 
+@@ -2214,8 +2212,4 @@ was specified, but
+ specified more than one clock source or
+ .B IORING_TIMEOUT_MULTISHOT
+ was set alongside
+-.BR IORING_TIMEOUT_ABS ,
+-or
+-.B IORING_TIMEOUT_IMMEDIATE_ARG
+-was set alongside
+ .BR IORING_TIMEOUT_ABS .
+diff --git a/man/io_uring_prep_timeout.3 b/man/io_uring_prep_timeout.3
+index 04316f8d..0c4a44e7 100644
+--- a/man/io_uring_prep_timeout.3
++++ b/man/io_uring_prep_timeout.3
+@@ -71,9 +71,7 @@ argument to
+ is reinterpreted as a nanosecond value (cast to a
+ .BR __u64 )
+ rather than a pointer. This avoids the need to keep a timespec structure valid
+-in user memory until the request is submitted. Only relative timeouts are
+-supported; this flag must not be used with
+-.BR IORING_TIMEOUT_ABS .
++in user memory until the request is submitted.
+ Available since the 7.1 kernel.
+ .PP
+ If no alternate clock source is given in the above flags, then
+@@ -98,10 +96,7 @@ The specified timeout occurred and triggered the completion event.
+ .TP
+ .B -EINVAL
+ One of the fields set in the SQE was invalid. For example, two clocksources
+-were given, the specified timeout seconds or nanoseconds were < 0, or
+-.B IORING_TIMEOUT_IMMEDIATE_ARG
+-was used with
+-.BR IORING_TIMEOUT_ABS .
++were given, the specified timeout seconds or nanoseconds were < 0.
+ .TP
+ .B -EFAULT
+ io_uring was unable to access the data specified by
 -- 
-Jens Axboe
-
-
+2.53.0
 
 

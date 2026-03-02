@@ -1,158 +1,183 @@
-Return-Path: <io-uring+bounces-12519-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12520-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OFr1McbIpWnEFgAAu9opvQ
-	(envelope-from <io-uring+bounces-12519-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 18:28:38 +0100
+	id wHw9MPjIpWnEFgAAu9opvQ
+	(envelope-from <io-uring+bounces-12520-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 18:29:28 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2621DDCBE
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 18:28:38 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330021DDCD6
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 18:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 263FD301053D
-	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 17:28:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B8C383025C52
+	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 17:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F15D283FE5;
-	Mon,  2 Mar 2026 17:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6386F42DFEA;
+	Mon,  2 Mar 2026 17:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FJtcbwY7"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="GBnhs3gE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-ot1-f98.google.com (mail-ot1-f98.google.com [209.85.210.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2D1410D3B
-	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 17:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980A41B37F
+	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 17:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772472481; cv=none; b=nUL0y8t/8vWb935b6llGhapPk8ABVJk16zj+BK7kZRlxCsuMmbdxoFa8kGRhKsDoRwxYSO03LTomeqMEc/fsQPaTdwzQ+NEx7qWc2DuF9n45zWKlHpMPQRug50NDDLlU7OgUpI1YEm72fNGDzUtqc60+ZbNYCr/TmoL7t/NdzI8=
+	t=1772472564; cv=none; b=B6IhWy4ARErnIECHo45UF4uZI21RfiY424DCBLOn2U5oJ+1miOqtSDipnags8h+UcPbOJ/2uUrbwuKQtV6C9oEzsCsUpxJX45WJWExysdY7HbkntnpSY4rWYQSZ+N8hsLtO+XeMBlG2EpGq9yFQEcEuuX5VKA3SyDdq50Dtd0fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772472481; c=relaxed/simple;
-	bh=T0x134goV8WQ2DtQCgAvc8s6JF2xNTUe3NSOgLXKr10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rfamzHjvRSDCrINaL3M65Y+hOxhwxyz2Gu3ecXsEsiccpm1Hqgc//RUbn35UD3HaBiNxLjNi0DNfsKcLY6Ksmw0/UTypBFuOGXbaaMqcrKHsjg5G1AI4evjt3t/duuA8YR9Df3DrDCfn3KTAuPSCZBpNyiIXhD2piM2m5t2sLnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FJtcbwY7; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-899fbf92bdbso16010926d6.0
-        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 09:28:00 -0800 (PST)
+	s=arc-20240116; t=1772472564; c=relaxed/simple;
+	bh=tNf7vH82DXpbm+18bIBSTYtImsiPs9CXTfqOFBdoftQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SObqp7jq4Xt2A8zZCPNasJs/ycm/tEe9Pyf0C2GI1jV/6JE2DHPWelRf1WBXBlF0O9e2/I6IWs3TS6M5+i+e+04NWLUv1bsTvb2dA81c0octI7CuFxgspWaT99Xjd34e553fcjgYmb40K0sifT7Av6jAVOLrk0xdbqaYcqZCLcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=GBnhs3gE; arc=none smtp.client-ip=209.85.210.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ot1-f98.google.com with SMTP id 46e09a7af769-7d2ebc06f66so806457a34.0
+        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 09:29:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772472479; x=1773077279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3MhoPaUqG9JgKSvFCYNz3zMTwzdLO4nZWUPMhCrKY1E=;
-        b=FJtcbwY7fAVy9zCcO5sMCUZhOSIhnfTWHiYHaBsWd3+zbLAFXGUXCHpo+UWzcYeuI7
-         AbD2nYto+onlPwjsYGM8dumpp25l545TakUNuKY+Upmw7hDCnZLqxmDzMmCLVQ0GMqjw
-         8DMBK80pR8pQvitBLb8SRFVeI96uMEKIlQbDeZCOeZ7tkarUu0UoBJ1aTsNZMJaiqduq
-         Df8tBFjek58tIV6XNr6TsHUTckk2MI8xUD00fHEetR4XnOXEvnP7KnCJu/WSeqnJykyP
-         AZfFpDx9rehHezOWlr5Tms5JPc+3uQDgCJ69AMMp1yIqu0QpQNacWlhfT1Ww6jL0BuTG
-         rtIQ==
+        d=purestorage.com; s=google2022; t=1772472562; x=1773077362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tuZ5NgGmMK+fSDZK0DCtbPhVzRqmyqfPDxUv7waUs3k=;
+        b=GBnhs3gEv2XJ9e/TqDIGG6W2GX1y+S8h3LdvpIrP9lkeU8qUl7gHZdVmCyIiVwy7BZ
+         bAnkk+42Rkc1c5xEgi8nhd7uVTfqCRJwQb/Mln+RuUynnO9l1oySpyFyG0vjvpF3Av5b
+         Iyy9Z76C+YgyId5vjEHV1sTPWaW2DXix2jkduMjGh6K08+rdb+0N9B3IvkTKlenDvwjR
+         AlXuX7ft1LOCfKPonXgb1z5FXDwdhcaOfGRf4bKgkQ0bput7qUJMsC0XOXWLz7w5TYzi
+         cb/jZTPTvrY37MAtfxcemvuv1QlmLBIC+9ee0U3iES7Ry43k+VzNalJWsVM6u3f/w5Gg
+         1g0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772472479; x=1773077279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3MhoPaUqG9JgKSvFCYNz3zMTwzdLO4nZWUPMhCrKY1E=;
-        b=LpoeqnkNxJ4C9Cz8E6eKqxFQn+esPEAHwA2hzvpFw3xC8JHPnxH2mZHc79pUDk5LdE
-         tCQhzqcKn6eKwENfJbIpH1B3AXqSFMmPcKWj8Mwu9gditRkMiTxkODiC3BLUUSfomY0C
-         nZ6w7l6FnUa+snKLLBRfWxGouE26ersa7ymH6K4QF3krbDNjwQrPeyWCxPzwR0Kdf7kx
-         GBJvy0qr8cKNcPvF02LqJaaNUjr+AnJ+htZexuw0ygQKbT8G0fwuD3uzqZLY/XDfqRm+
-         7IaCHbMgIqHK3D1/mwKyJQDaxKeXrXacu74Dl+igcFsOyv8xhi/f9ks91QKPOuddBgYd
-         baAw==
-X-Gm-Message-State: AOJu0YxAVhtTYUYxaEKC0FYE1fKRcuxlQmJOYSRsTwY4xJA0OfLm2rzk
-	Nqd738wKx4GygzQr3bKiXVaFHIJgM9osdI/gC+xCr3gRCfyYMPopxWwyec85pESvBvMk5Qy7+CV
-	r37ipWgg=
-X-Gm-Gg: ATEYQzzkNIj7VoR81VjTeMCRCRBQVCJFLNh6rIBGgychhZdQzyTOd8fhaDIL0DWK0Ky
-	aj4AW3rydHsPZxuV5GmSP9UgHRa+iDS7kjtJJCpyW4q7vCI60t9RH4Fxo1XEi3EbRnYKV9JhJDu
-	M/qu2I+/g6+cUo0sh0Uqvv3D7wfjf34r8hSoGgIY4AWLGR25ld/LECvLhBby/hW+/S+Dm46fJDD
-	hFHHXeXaddQq5w1Mm/DAdPygOLwGDa4+qda9VuZEL4Em5Uyood17cqVGx3GRcUIaYPavVJx709R
-	1ibSZwWUzEwXoaWgbteYQmk+H6he6CSWy4WgMSxRsOys3olZ9mL3YLUQn9/DTgQgs6V4Vwl8Ur+
-	o9bohq7sW6PHsPywypnpYsBKLRUsk4LcFZJAVqcvomjFNIy8PzoCPqiCRSAvGxFBg+DClMu1RPM
-	hjCZJzaPltD/izgaZaWFXocvsmYTSUvqBKHGxx36H438IlVITRmgw0qm87kbXAJW7aq/akBgkgP
-	Upo+A2o
-X-Received: by 2002:a05:6214:2a4a:b0:899:c5ba:d5ce with SMTP id 6a1803df08f44-899d1e3293amr194502336d6.22.1772472479148;
-        Mon, 02 Mar 2026 09:27:59 -0800 (PST)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf717301sm1185035785a.36.2026.03.02.09.27.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 09:27:58 -0800 (PST)
-Message-ID: <68bec573-eceb-4d87-bf93-6c76ec578c7a@kernel.dk>
-Date: Mon, 2 Mar 2026 10:27:57 -0700
+        d=1e100.net; s=20230601; t=1772472562; x=1773077362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tuZ5NgGmMK+fSDZK0DCtbPhVzRqmyqfPDxUv7waUs3k=;
+        b=Hgk2z7RduoJjNibTk+XYB613QlfmTovFTJ7EueOuNJSVqnq/8EkFFG2nkIqNtYK+81
+         cJSPjVlWgMGyHTByB5+uhXtlxJPxIxxK/vPb5v7PPA9DWRUfFFhG3lXBEEtUmw7Te7Mb
+         UXLj28GNEc23IAcnX+6XyNPmm1SI8jRAjnbVVAw+uYFT5mzosT2UMBfb0wB/gLY2QAGD
+         DkTp+npJ5VQeLKwLKJz8QDbNhMO8i+an/LNL35G/CJdfLauxDJ+1KYUC+nFjafiTawiF
+         PKjdZLsagxzqnJsDwSS0JFnXCal/7KG+SYxHEdHHAi0+6MiFwSq69vc8t7IyJMJCcV+a
+         0XPw==
+X-Gm-Message-State: AOJu0YxmL4CKxTjNiKurYQ26nqLHcJn/hSIrFGqRCyjEE6wVFzwXMKrT
+	3zwmEXJE3cyCxSijHuMe8t89kvO7ODVgEmUIm9gv+31OdDcYLFokIveLlD9D5Ir2s4VBGggiUOv
+	Wt8XHHuTd+SeOuweb+ttQrbJiBNcf45J8SOdW
+X-Gm-Gg: ATEYQzzbt1kV8tlWkbCI9HXhCacdeO4OGZiRDnUtD3Sv8Y/6W+ONV7ROHnN5n3gn8Vd
+	H9rRfTjLEywQZZMAgNFcLk3u5BWDWFM2namZg4lOSzYDfv/QJUtwDMyHBoqLoDysLEoFfnFvvmP
+	3U/OEYFutGOy5NDvYAewdgIpEb4nIBizHY1uEDVa1bF1Jxs8c2oDi4By+1ZvVW3VaQ4rxx5pTzN
+	ZKxbVgFkkMm+jtFDm/QcCiHZR+JLoMMDG3iW4XltxazdYnsGg4Keti+X6R9AM8UC/979GH8LbSC
+	knVmn7tpf3fouboPRsh6PQfxfI+PoOFVgRyJfvM0Pbhc2lH6UTUJ+NrMlSnSdBtMKuxllghfFYs
+	UspRJTlyylnIhouEZFn6t1OEjGnlUBdD5NqocesMTS4SZljQKWzcYGw==
+X-Received: by 2002:a05:6830:718b:b0:7d1:474a:191f with SMTP id 46e09a7af769-7d591a02761mr7098900a34.0.1772472561822;
+        Mon, 02 Mar 2026 09:29:21 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 46e09a7af769-7d5865024ffsm1764607a34.4.2026.03.02.09.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 09:29:21 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.112.29.101])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 09317340199;
+	Mon,  2 Mar 2026 10:29:21 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 00D5AE41FBD; Mon,  2 Mar 2026 10:29:20 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH v5 0/5] io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+Date: Mon,  2 Mar 2026 10:29:09 -0700
+Message-ID: <20260302172914.2488599-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FAILED: Patch "io_uring/zcrx: fix post open error handling"
- failed to apply to 6.18-stable tree
-To: Pavel Begunkov <asml.silence@gmail.com>, Sasha Levin <sashal@kernel.org>,
- stable@vger.kernel.org
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org
-References: <20260301011746.1671806-1-sashal@kernel.org>
- <002c2bb8-3304-40e0-b8c6-8eee7dcb7710@kernel.dk>
- <53896290-9a0a-4822-854f-945595a19fe0@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <53896290-9a0a-4822-854f-945595a19fe0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2F2621DDCBE
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 330021DDCD6
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12519-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-12520-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,purestorage.com:dkim,purestorage.com:mid];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.997];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[purestorage.com:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-On 3/2/26 3:02 AM, Pavel Begunkov wrote:
-> On 3/1/26 13:22, Jens Axboe wrote:
->> On 2/28/26 6:17 PM, Sasha Levin wrote:
->>> The patch below does not apply to the 6.18-stable tree.
->>> If someone wants it applied there, or to any other stable or longterm
->>> tree, then please email the backport, including the original git commit
->>> id to <stable@vger.kernel.org>.
->>
->> Looks like this has dependencies on parts of this:
->>
->> https://lore.kernel.org/io-uring/cover.1763029704.git.asml.silence@gmail.com/
->>
->> series. But seems easier to just do a variant for the 6.18 base,
->> I'll leave that to Pavel.
-> 
-> I was thinking to remove post open error handling. xarray is preallocated
-> and shouldn't fail. And copy_to_user can be moved earlier. Should be safer
-> than taking all deps.
+Currently, creating an io_uring with IORING_SETUP_IOPOLL requires all
+requests issued to it to support iopoll. This prevents, for example,
+using ublk zero-copy together with IORING_SETUP_IOPOLL, as ublk
+zero-copy buffer registrations are performed using a uring_cmd. There's
+no technical reason why these non-iopoll uring_cmds can't be supported.
+They will either complete synchronously or via an external mechanism
+that calls io_uring_cmd_done(), io_uring_cmd_post_mshot_cqe32(), or
+io_uring_mshot_cmd_post_cqe(), so they don't need to be polled.
 
-Agree, that looks good to me.
+Allow uring_cmd requests to be issued to IORING_SETUP_IOPOLL io_urings
+even if their files don't implement ->uring_cmd_iopoll().
+
+Use a new REQ_F_IOPOLL flag to track whether a request is using iopoll.
+This makes the iopoll_queue opcode definition flag unnecessary.
+
+The last commit removes an unnecessary IO_URING_F_IOPOLL check in
+nvme_dev_uring_cmd() as NVMe admin passthru commands can be issued to
+IORING_SETUP_IOPOLL io_urings now.
+
+v5: perform one iteration of iopoll when min_events == 0 (Claude)
+
+v4: check non-iopoll CQEs against min_events in io_iopoll_check() (Ming)
+
+v3: fix REW -> REQ typo (Anuj)
+
+v2:
+- Add REQ_F_IOPOLL request flag, remove redundant iopoll_queue
+- Split IORING_OP_URING_CMD128 fix to a separate commit
+
+Caleb Sander Mateos (5):
+  io_uring: add REQ_F_IOPOLL
+  io_uring: remove iopoll_queue from struct io_issue_def
+  io_uring: count CQEs in io_iopoll_check()
+  io_uring/uring_cmd: allow non-iopoll cmds with IORING_SETUP_IOPOLL
+  nvme: remove nvme_dev_uring_cmd() IO_URING_F_IOPOLL check
+
+ drivers/nvme/host/ioctl.c      |  4 ----
+ include/linux/io_uring_types.h |  3 +++
+ io_uring/io_uring.c            | 19 ++++++-------------
+ io_uring/opdef.c               | 10 ----------
+ io_uring/opdef.h               |  2 --
+ io_uring/rw.c                  | 11 ++++++-----
+ io_uring/uring_cmd.c           |  9 ++++-----
+ 7 files changed, 19 insertions(+), 39 deletions(-)
 
 -- 
-Jens Axboe
+2.45.2
 
 

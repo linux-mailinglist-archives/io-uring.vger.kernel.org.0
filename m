@@ -1,145 +1,119 @@
-Return-Path: <io-uring+bounces-12527-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12528-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8KvTEpf9pWkOIwAAu9opvQ
-	(envelope-from <io-uring+bounces-12527-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 22:13:59 +0100
+	id IJY/MigMpmlkJgAAu9opvQ
+	(envelope-from <io-uring+bounces-12528-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 23:16:08 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36361E2198
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 22:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFC1E51C5
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 23:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D672331BD0F9
-	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 21:03:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 676FC319D281
+	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 21:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80431A6821;
-	Mon,  2 Mar 2026 20:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5941A3C2795;
+	Mon,  2 Mar 2026 20:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NQq5OgWx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhhfr3dP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118731A681F
-	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 20:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3674C3C2793;
+	Mon,  2 Mar 2026 20:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483928; cv=none; b=QlfvRbPBw0V3/A2aM/m2mu9/eQVhOrw1V4z81BWWMSVKf9oABf4w5i3EmyZScdwuyJzQpE2d0w9+3QEAGMzrzEcAcSVSQa/5cVIl3OJw+NnMdWvrdJurqC143q7sTz9giDgaACrR8scz6PhK2zIXCIcFZJezsb7jG2Puk2mMV2w=
+	t=1772484121; cv=none; b=oOt6VzADjv4akMcmEW/2WUiKiazrE5qQrNWWLZj0D7lsM64x9mELTIA0sX4bcfGZmJJsjFkoQbrllUcHZu+VYJRvdCQwE+STmbWgK0TytsQPS5g3kCy7XgJk3khefB0BK6IaIlOeERvOouUyxQ1q5McN2JbNM5btAZF5/90beQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483928; c=relaxed/simple;
-	bh=LXcLtM/kx7LU+eZlrjtF73nwVPSE1zWdexmOQkeMCho=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=n/OmR7sA3kpONNjY2v2ZvldVfS9WHKGFbsmS3EM0NEXkSFYpb5pVZnJpU+gocHF7gi83tksb46dYauLYArUTEWZq7Vq+2ooq4FUM2MUa0p9CANVf8yThFvZFwt6EusG6/Vx0DLCI5TQxo/tkAkaV3Si/4CLNL3J2F0HbgEb1uWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NQq5OgWx; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-679f23befd6so2355905eaf.1
-        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 12:38:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772483926; x=1773088726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4cKiqpuNfqgg10fw7W0nzEjdq3eU52N2TAy+H6AH4n8=;
-        b=NQq5OgWxEM7hGOsbZzwJG0wmEinJUC40nP1NvDddqc+HpPuKP/x1oBBR88lvAFTLcQ
-         aFZ0ycwKjJLkr582aFXTBAds/KugiOQ8EAT4XZtc+jmxdKetBK7IlHODpOZrC9ke+gKm
-         deKRK/Eh/NihzOrm5lSz4JIkc+mNE7ogXsSV2bJ0JJopKP/j6ewtQZdTRwsfJGsK1YNs
-         VcYN8zHekdfRphcYZyAo4SBkDQuIIm5QqhzKjlrsJLA+FhosHUrFr4gkiEFnxdxfP/y9
-         Nqqm2atB/bbwuQesRaB2kdDsi4CV+mU6IyrgJiUnHjqXxZmpAxnZe0vh7GhekVLcOgf6
-         BOpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772483926; x=1773088726;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4cKiqpuNfqgg10fw7W0nzEjdq3eU52N2TAy+H6AH4n8=;
-        b=AQOtW/7dkR81jLXAG6aJ04/qwD798+3ELxHqcNZ3gJt8yFk7d42DD9CtSaE8naZ04A
-         17cD4MpqsSo91iJIHLmu3iK5B9IqN8rRdRPrpmA1IVM+EwhoZj5D48OaJ/n6ifvaww1a
-         EGjqF2K1nzhoZibp4z37EvnA3XBMw8QWovThhVDIizTgEtMryIhxHYVsuIkQdYPdWt35
-         E0BvMKurZIeudb4Bzuyg2DqILp9CHwkzUcHUxXPIygYPP5iCY3o4hn6txsSrqGhMUkef
-         0JkCiMM1DRh9pl9YBqU9EzXelcVMMouyeaoCYmcrSJPO0UEo4CPqQ1JtpR9Yo0SOfcOQ
-         l/dA==
-X-Gm-Message-State: AOJu0YzoSHrsu+vH4HwPvCAgsLrHnnWexyK09yWFeWKnIGeek0LEVHAD
-	w7vMlr656CProS2ZKEouKBtJc4vcCWDcKnmLAqbINUKqtC5JZzXJaoQ6larPDPQQfCY=
-X-Gm-Gg: ATEYQzwjwMyJ9Xwsj+cPnmNNBpAXhYq3wyIeYxJO60VcwyIf6Db0axXVxkhlQw3QmHu
-	TfrW9PLwCZlnSvailynDbCSFZSVm6umkWJPDvMW2sPcaOz7tT93ceXcA0GOVKqcB2kyt4GwHlwb
-	UuujPjQakFroWBFZBd6gjakzaTWu3WA5hZq7C1SSX/0fzag5j+xNWyUW+WFgaMepnkEcvIN2T9t
-	TUBK/lWBko81/iOXVUGW9h6Sd9fGC5zwS6Z5lOFcwqnrvYKmJqYI7g0Js2D9+NeYQ+AuQbRQfQl
-	9wB//rIvHSTb87glEzTfVTHIbyr4h1TOC3Y2yrhxTBMNWzqlMeEQheC2v/5lygph3CxNYjdCSLT
-	wc/pxMBQ787efXo4W3hM+rbCZiPVTZlqAa6pOkmeFm6movGYE7dX+bgby5deYZoijA7ki6shrKt
-	1DgOcpRrUnQim2G3UZNB4RrTyYOsdSMrOyVGkbJCsq3sDsV01eeVnHmo6dtpefsHNILvCITw5gR
-	xlnUOJRGQ==
-X-Received: by 2002:a05:6820:1794:b0:679:a650:cc0b with SMTP id 006d021491bc7-679faf3393amr7841867eaf.51.1772483925842;
-        Mon, 02 Mar 2026 12:38:45 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-679f2be9b8bsm9798153eaf.5.2026.03.02.12.38.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 12:38:44 -0800 (PST)
-Message-ID: <8e84b6c3-e62d-4aef-90b7-a7a0e63d8a17@kernel.dk>
-Date: Mon, 2 Mar 2026 13:38:37 -0700
+	s=arc-20240116; t=1772484121; c=relaxed/simple;
+	bh=+gWOD8yqeGsJ0eX1W/xc36dz/JG4OnOtFx1cvmAT0uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLUI4WS5Wjp81mEUxYhryhANj/IxZruuK7iC1xy6fXHqW+nfDM6P74fKNStS+5UcCuyOWLjIhOZocgcp9WuCE3SBuHysQuWX8n6hhC/Lh+Peq6Pzfqcn72v8f1PDMb2VaO4te8GtGeHSTZbvI/6CXsBjzgOVVyqd/aemMuaHh6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhhfr3dP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A1DC19423;
+	Mon,  2 Mar 2026 20:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772484121;
+	bh=+gWOD8yqeGsJ0eX1W/xc36dz/JG4OnOtFx1cvmAT0uE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhhfr3dPuea9l2dh0lsqH+96h320+98IEwoRlnL2P+QYMU8121LJGdiVNSIylfIXm
+	 HTWU6c0JLP9laKZvcI2+dV90Y6uPOEqUkecBSlvJQAFfn4cp2kh/WkIgkvQ/gahvz3
+	 zNfAZmJjez0CVDAWHUZ4fKIwLZlEjBPEOoKAk8X/5hUUQ+w3EO2RIyZeIzu/QlKQLW
+	 qEckb7d3bZqWNrGVLKtIn2noioDs2wtYVl3peTPUGpzkQZmmSDLSgvDIuNzJUObgDV
+	 BLy+4GcNr8glQdCU8ObfOYM9m9VbhZZ/qeIbymW/4L5YoeF9F+bzmBSkoYTOXk1VNZ
+	 k8oJGF92J+/Tw==
+Date: Mon, 2 Mar 2026 15:41:59 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: FAILED: Patch "io_uring/filetable: clamp alloc_hint to the
+ configured alloc range" failed to apply to 6.1-stable tree
+Message-ID: <aaX2F5LGPcqaDXum@laps>
+References: <20260301014717.1711200-1-sashal@kernel.org>
+ <eb41b6f9-08f4-4972-99d4-3340571830bc@kernel.dk>
+ <8e84b6c3-e62d-4aef-90b7-a7a0e63d8a17@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FAILED: Patch "io_uring/filetable: clamp alloc_hint to the
- configured alloc range" failed to apply to 6.1-stable tree
-From: Jens Axboe <axboe@kernel.dk>
-To: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org
-Cc: io-uring@vger.kernel.org
-References: <20260301014717.1711200-1-sashal@kernel.org>
- <eb41b6f9-08f4-4972-99d4-3340571830bc@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <eb41b6f9-08f4-4972-99d4-3340571830bc@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A36361E2198
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <8e84b6c3-e62d-4aef-90b7-a7a0e63d8a17@kernel.dk>
+X-Rspamd-Queue-Id: 32DFC1E51C5
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	TAGGED_FROM(0.00)[bounces-12527-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12528-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-0.998];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
+	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel-dk.20230601.gappssmtp.com:dkim]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 3/1/26 6:15 AM, Jens Axboe wrote:
-> On 2/28/26 6:47 PM, Sasha Levin wrote:
->> The patch below does not apply to the 6.1-stable tree.
->> If someone wants it applied there, or to any other stable or longterm
->> tree, then please email the backport, including the original git commit
->> id to <stable@vger.kernel.org>.
-> 
-> And this one also picks cleanly into 6.1-stable. Not sure what is
-> going on at your end?
+On Mon, Mar 02, 2026 at 01:38:37PM -0700, Jens Axboe wrote:
+>On 3/1/26 6:15 AM, Jens Axboe wrote:
+>> On 2/28/26 6:47 PM, Sasha Levin wrote:
+>>> The patch below does not apply to the 6.1-stable tree.
+>>> If someone wants it applied there, or to any other stable or longterm
+>>> tree, then please email the backport, including the original git commit
+>>> id to <stable@vger.kernel.org>.
+>>
+>> And this one also picks cleanly into 6.1-stable. Not sure what is
+>> going on at your end?
+>
+>Are these and the other "FAILED" false positives getting applied or
+>not? I didn't hear anything back on any of them.
 
-Are these and the other "FAILED" false positives getting applied or
-not? I didn't hear anything back on any of them.
+Appologies for all of this. There's an explanation of what happened here:
+https://lore.kernel.org/all/aaWWE5uQqz_eG69i@laps/
+
+These should be part of the -rc2 I did earlier today.
 
 -- 
-Jens Axboe
-
+Thanks,
+Sasha
 

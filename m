@@ -1,86 +1,86 @@
-Return-Path: <io-uring+bounces-12515-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12516-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ABjpF8C9pWn8FQAAu9opvQ
-	(envelope-from <io-uring+bounces-12515-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:41:36 +0100
+	id gGnYAfy+pWknFgAAu9opvQ
+	(envelope-from <io-uring+bounces-12516-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:46:52 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060EF1DD123
-	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:41:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509881DD2C0
+	for <lists+io-uring@lfdr.de>; Mon, 02 Mar 2026 17:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id DDB9630330E1
-	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 16:39:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6A45D3047523
+	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2026 16:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3C421EFE;
-	Mon,  2 Mar 2026 16:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C0A218ADD;
+	Mon,  2 Mar 2026 16:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoyN9Yd5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPJ3k3Eh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6245F421A15
-	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 16:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DF42FE071
+	for <io-uring@vger.kernel.org>; Mon,  2 Mar 2026 16:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772469554; cv=none; b=XxgvrQkqlc07lZyOEGIzoUUkVhQDfnBaNahxnUZvM4rUGbdYVqH5xVg/VQbnBQzOnQhyDNtfM29At/lwbKsNRFuIvrMNMcMhlUKu4JA6r5V8L2WzV2/1VCCVB92vS7u+0e9g1jGE0Yif5ebcLOo/hCmFaC0Aclo4dr8wF6LVn7g=
+	t=1772469612; cv=none; b=T9a9LI1hhw0L24Dg+1E6q65oSH+bGs4DE4sOsW4Eww3L8RSmqCx4Y3Ntc17B/Ewteh1TYhtb1wK+7Wapu4tJsI6pBHqM3S6MKym8uzpWbCuia+k1CwaqIWaCk3zzZ2V8qUam5vi3drucqT/QS30BX2n9XcI4yzS1wWzK9pUfw0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772469554; c=relaxed/simple;
-	bh=bfIMw4s5E6WEpd7VcgBYJkug+2LIkZB4O3crmBDTPb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GcppJg4L5DmEgS17A/QqaarGL1jQTR5bDh1pNVIOy4cd5p7/zlJ+rRpNC0Ip0Pj5zyOzzGvm4c0QdeiM14Gb4PwW/HVWqZmsGmG95yInWbI6o+71QqFidxOTJIxTfWdYiWPsvb4ObAZSLOi+pEdH1B7s9CaLQNy+fQ4bz5vJaP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoyN9Yd5; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1772469612; c=relaxed/simple;
+	bh=4GmQb2/zi/7DP7MI78Pr8TiGh8s7D2aMSXEi/6ZS9E0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iFC78vwJWNTc8IBKj4Epq+jE85+/BQv+oxZOTHILh3igKZqvzyLxS3FrdP7C/d1dxeLyTsg82iY7bqoOoAHJX25gAC5H1GrMkVeFsGly75MsLBTnK471Ss5eJG6gvmq8+w/q+fW27foxfUdDScaWh/2uE+wa3sRW5PjFYeFJKno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPJ3k3Eh; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48373a4bca3so28318285e9.0
-        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 08:39:13 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4837634de51so19519995e9.1
+        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2026 08:40:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772469551; x=1773074351; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772469609; x=1773074409; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RLH2Zsf/+9XcBU3PUX60P5GwjddHlM2s685LeP+DF/U=;
-        b=JoyN9Yd5vmzsdu/egtES2pZlR+W7DOGBNe08Y1LemG+CGPJlv5E8o0lGRhPiWPMu2V
-         SpN/hIHvjryuw3/MSMhCQfPAIVmRSQcp78ndrulT1mGTZvvfQ472YSCVVtB8R8qEPfsL
-         GKQyMtc8lgQrN69QFP3M4Bb/YXL2DVXEwrWfgpJz40Cd3QHmqHSkilK6fywlFo0L4+fG
-         mEGFKyHP8GBMhyV6t9UOrtZpcXms2K3gA5kXtFXqAJbQmqRB9B4ihOCVfsPMR6AD8QUC
-         /nRi1gE5OWeeXntrqgBh3OUlXuLmbrt3kYZ4I0JcycvQVvtM3Ld1sJa9u28ctKmT1IUP
-         maDg==
+        bh=4unpQDkdz2bn6rSM6atE8hGTT8L4zWzevtcPYXp+MDo=;
+        b=BPJ3k3EhZwVUmmY2o6+BgqPPNqfYOJptnsSqKQLq1byOGdTHq6/WY4eOEnfF3BKvy2
+         5LAT0rCy0gIZJohSfFSSIyrRgTv78e+Tcglqphfvl0geZGoTOeau/I53qTSl+AGVRmlg
+         +7Z+kJrqcjIBO9UzftDEWgw7FDf0I5sgh8+j0mwy9sNQj7XMIFbld9ZpD7x9rwlJ8gWW
+         TNg6As+3htxjfXeTXGTIkje0IozoTOrR628SvDAyJQ1ty727AT7mHtSr4zRbO+xKmc5f
+         k7ADZtbqiHjuzAAP/6kRC6suFVRKDtXG9Nnm/ZTLP/LH38jdFJeJnZVsYi+46SMPFIwL
+         H2Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772469551; x=1773074351;
+        d=1e100.net; s=20230601; t=1772469609; x=1773074409;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RLH2Zsf/+9XcBU3PUX60P5GwjddHlM2s685LeP+DF/U=;
-        b=XBsO/T/IBj13Tdb5ru4TXE1XM/rl71CQ8nH6a64hNg1MiCXdOfRKIeElWttBwom6Ry
-         9W6UeL2c0AHXTR2Siijbf96L8S/iOfAYsl34ChJt6mEPm3pBNr9YK/ICfAx2vuKhCQg8
-         r/gLYX1hV0zLoVQxvPwurFc+fW5xn/xudsAlQZ3xZt/shmhK6vp17fnCRHyn8UdqS7/3
-         4+Tk4O6y0esvwBpjgnpa4NpCyHGL+y4Kuc38KNPmmspybNMCx/nEx6hQ4xZaZ/z0ZEVk
-         I+paqTQDW6N+d2+bkgnUNZ6qNVpQDF4KtEozvKjRPbq7OcDH9TPizQ7c7OKJ4Bnu4/Gk
-         wh4A==
-X-Gm-Message-State: AOJu0YwoLpyWi7XA/vmYdxsnSB7os6KBoSiRxxaj8VOCODBhFUXmJrub
-	DDvQbZZivMjj+ZBUnz5hPjALCWz88aZ+0ij7JkyL16Deju9XVLVyuQKjJSNi6g==
-X-Gm-Gg: ATEYQzyyycBObTlAyTouraRa+QLkT0ohP1hrm0pEIggkJi0arQJ5tbjdIW3NfUrjOF7
-	CrzDvH3E2WzIBUBrWXfwJyKb/dvagIyPp+wNMYHC+F2cqo6D0xnDa0T0WU/hfkTvQmqn7qehEaj
-	w6QD5NSXoDJlDpZK4Ww2UHeIU8DRf0kEEhv1a/g4X5Zhe7QaYuBVXarpcjUqaDauQbcmP+uuCDg
-	jQw7vtmlnEauu0MrlK50Y8XUidqS9baRI6tZYgsS+GKPJBed4IaehSDUVLrjqGfig145fj8j/ug
-	dlwLewaSoaNyh1wMoZ4Ok9j6cFDT+DwUF8myPcIugK+kHmjT96bR8TZoTrG1/M0frrKp+cL4aym
-	UrjPo2zTdQUkltMWz/Zn0+5SSQwtN+70bw71gjU4Dw7i9dWdvxljqJhxql8L3SvJGKYoOXY5Zrf
-	a/TTKLh2dUHP9ylPxuBHVqdISFNkhiuLfJo/aXNFhMDnOJJiW6hEPEB3Z4Rp5LMFuIj1sRtZlot
-	wfwT65znwWFRCwbncewc6DTSRDf8w==
-X-Received: by 2002:a05:600c:6488:b0:480:1c69:9d36 with SMTP id 5b1f17b1804b1-483c9bbc297mr242254815e9.17.1772469550955;
-        Mon, 02 Mar 2026 08:39:10 -0800 (PST)
+        bh=4unpQDkdz2bn6rSM6atE8hGTT8L4zWzevtcPYXp+MDo=;
+        b=sTRItywSmMMdquQxYdmagK+CukalGNKcBX1ZpztcKFJiHg5RQ1cDxcsFpwJrpbxRPC
+         /Q7XXfTTF0/nCRKvyqQp3z3Q+OzwlRZFcJaGa/juMj5jf8UR4kK4sSrwDXEU7QEVimao
+         FjNK9acPmgfBeCip8QCOD8/c4vHB+1fwZy7Rdw8xwT7N93HZ+MPkCGZVXpMRFN8qEpcz
+         QK2pxYo9Pc5SjINkuitZTLWZMnEQNjJw8TAP2vwTyQuBhvrxgNQ212TPolk143p0koWx
+         xVAOqcXMjTTVCO/jx3NGyf1FL79LZaCkslheSD+pcSz3dJM+qhmIq/1EjoEtTJJPJdk0
+         /Ung==
+X-Gm-Message-State: AOJu0Yzam7/d1lR1Td/VhqZwJcTamjdilNKK2K1vnV3WH+AFGlw+asx+
+	eTMbZlMRbkRcnmKzRUo+BNL2NHpPV4ue5mFuGi4XzXTxonOCgYTH8QGQMsIKtw==
+X-Gm-Gg: ATEYQzwO4P5RkkIEwvv24XVglY1Vr/Sv3izFuFm6NU6wSaTRwlSKUhkKb1lNMnBFjlQ
+	AxJ+0Dp0zTeoVeeje0SDpBk/gqLi/oNX71v6dhdNS0XJCOT1emIruHBKIr0VmCBwuw8YR1GK7az
+	5Lq7oB0Ed2+U1t+I4wdLnnhAxct9Y3b2ebk87ArHHBwv2MdmaxhR2/NE40SYxSs9QgPRDvA9UtW
+	SqL3s7XleeyZf8886kSJ9/iVCDIZfLUTDDSbQAi2f5MP9u6xNqEc7aJ/5rgxsMBBKnrPoK/nBj4
+	fNvQWw7zNdOu4XqFXN63NBuCVOi41cGUCwzPHSKJN3nOmDHm1Xp2HrvK4R2kHeHDzGTfqoTcAr3
+	wcKHehFONQUuJdhtZ0s14LtNm1/rfue3oXkw6uQWO+7FC7rXpBG6Irvj6my8UCGMm7lTCA16khD
+	5Xr8ag9NpITG8CzgdqU8Y4DpfmErXfYPhuoLRIyoiw//HYX79ZigIjtCuW1HiTK52Ig2P3t03Ga
+	wgYzP7bnbS8PktROi2BmSuiyivwcQ==
+X-Received: by 2002:a05:600c:1d0e:b0:483:acd9:bd18 with SMTP id 5b1f17b1804b1-483c9bc55ecmr227236675e9.1.1772469609046;
+        Mon, 02 Mar 2026 08:40:09 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd765604sm364368595e9.15.2026.03.02.08.39.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439ae0e7abasm14565482f8f.23.2026.03.02.08.40.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2026 08:39:10 -0800 (PST)
+        Mon, 02 Mar 2026 08:40:08 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	axboe@kernel.dk
-Subject: [PATCH liburing 1/1] man: document that immediate abs timeouts are allowed
-Date: Mon,  2 Mar 2026 16:39:02 +0000
-Message-ID: <89b2497fff2bb02b9f08d693ee1ebd86dc538a8b.1772469512.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 1/1] tests/timeout: add abs imm timeout test
+Date: Mon,  2 Mar 2026 16:40:00 +0000
+Message-ID: <652575b9e2b08c08a32537f27b398504236e8be5.1772469585.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -89,18 +89,18 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 060EF1DD123
+X-Rspamd-Queue-Id: 509881DD2C0
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12515-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12516-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
 	RCVD_COUNT_FIVE(0.00)[5];
@@ -109,7 +109,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	PRECEDENCE_BULK(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_NONE(0.00)[];
@@ -121,66 +121,103 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	FROM_HAS_DN(0.00)[]
 X-Rspamd-Action: no action
 
-Add a couple mentions that absolute mode timeout requests don't work
-with IORING_TIMEOUT_IMMEDIATE_ARG, now they do.
+Add a simple test for absolute immediate argument timeout.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- man/io_uring_enter.2        | 8 +-------
- man/io_uring_prep_timeout.3 | 9 ++-------
- 2 files changed, 3 insertions(+), 14 deletions(-)
+ test/timeout.c | 35 ++++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-index b5b60b2b..bd4f0613 100644
---- a/man/io_uring_enter.2
-+++ b/man/io_uring_enter.2
-@@ -677,9 +677,7 @@ field to be interpreted as a timeout value in nanoseconds rather than a
- pointer to a
- .B struct __kernel_timespec.
- This avoids the need to keep a timespec structure valid in user memory until
--the request is submitted. Only relative timeouts are supported with this flag;
--it must not be used with
--.BR IORING_TIMEOUT_ABS .
-+the request is submitted.
- .in
- .PP
+diff --git a/test/timeout.c b/test/timeout.c
+index 6bef0a7e..0ca387ba 100644
+--- a/test/timeout.c
++++ b/test/timeout.c
+@@ -31,18 +31,19 @@ static void msec_to_ts(struct __kernel_timespec *ts, unsigned int msec)
+ 	ts->tv_nsec = (msec % 1000) * 1000000;
+ }
  
-@@ -2214,8 +2212,4 @@ was specified, but
- specified more than one clock source or
- .B IORING_TIMEOUT_MULTISHOT
- was set alongside
--.BR IORING_TIMEOUT_ABS ,
--or
--.B IORING_TIMEOUT_IMMEDIATE_ARG
--was set alongside
- .BR IORING_TIMEOUT_ABS .
-diff --git a/man/io_uring_prep_timeout.3 b/man/io_uring_prep_timeout.3
-index 04316f8d..0c4a44e7 100644
---- a/man/io_uring_prep_timeout.3
-+++ b/man/io_uring_prep_timeout.3
-@@ -71,9 +71,7 @@ argument to
- is reinterpreted as a nanosecond value (cast to a
- .BR __u64 )
- rather than a pointer. This avoids the need to keep a timespec structure valid
--in user memory until the request is submitted. Only relative timeouts are
--supported; this flag must not be used with
--.BR IORING_TIMEOUT_ABS .
-+in user memory until the request is submitted.
- Available since the 7.1 kernel.
- .PP
- If no alternate clock source is given in the above flags, then
-@@ -98,10 +96,7 @@ The specified timeout occurred and triggered the completion event.
- .TP
- .B -EINVAL
- One of the fields set in the SQE was invalid. For example, two clocksources
--were given, the specified timeout seconds or nanoseconds were < 0, or
--.B IORING_TIMEOUT_IMMEDIATE_ARG
--was used with
--.BR IORING_TIMEOUT_ABS .
-+were given, the specified timeout seconds or nanoseconds were < 0.
- .TP
- .B -EFAULT
- io_uring was unable to access the data specified by
+-static void t_prep_timeout_rel(struct io_uring_sqe *sqe,
+-				const struct __kernel_timespec *ts,
+-				bool immediate)
++static void t_prep_timeout(struct io_uring_sqe *sqe,
++			   const struct __kernel_timespec *ts,
++			   unsigned flags,
++			   bool immediate)
+ {
+ 	if (!immediate) {
+ 		io_uring_prep_timeout(sqe, ts, 0, 0);
+-		return;
++	} else {
++		io_uring_prep_timeout(sqe, NULL, 0, 0);
++		sqe->addr = ts->tv_sec * 1000000000 + ts->tv_nsec;
++		sqe->timeout_flags = IORING_TIMEOUT_IMMEDIATE_ARG;
+ 	}
+-
+-	io_uring_prep_timeout(sqe, NULL, 0, 0);
+-	sqe->addr = ts->tv_sec * 1000000000 + ts->tv_nsec;
+-	sqe->timeout_flags = IORING_TIMEOUT_IMMEDIATE_ARG;
++	sqe->timeout_flags |= flags;
+ }
+ 
+ /*
+@@ -65,7 +66,7 @@ static int test_single_timeout_many(struct io_uring *ring, bool immediate)
+ 	}
+ 
+ 	msec_to_ts(&ts, TIMEOUT_MSEC);
+-	t_prep_timeout_rel(sqe, &ts, immediate);
++	t_prep_timeout(sqe, &ts, 0, immediate);
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -250,7 +251,7 @@ static int test_single_timeout(struct io_uring *ring, bool immediate)
+ 	}
+ 
+ 	msec_to_ts(&ts, TIMEOUT_MSEC);
+-	t_prep_timeout_rel(sqe, &ts, immediate);
++	t_prep_timeout(sqe, &ts, 0, immediate);
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -436,7 +437,7 @@ err:
+ /*
+  * Test single absolute timeout waking us up
+  */
+-static int test_single_timeout_abs(struct io_uring *ring)
++static int test_single_timeout_abs(struct io_uring *ring, bool immediate)
+ {
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring_sqe *sqe;
+@@ -455,7 +456,7 @@ static int test_single_timeout_abs(struct io_uring *ring)
+ 	clock_gettime(CLOCK_MONOTONIC, &abs_ts);
+ 	ts.tv_sec = abs_ts.tv_sec + 1;
+ 	ts.tv_nsec = abs_ts.tv_nsec;
+-	io_uring_prep_timeout(sqe, &ts, 0, IORING_TIMEOUT_ABS);
++	t_prep_timeout(sqe, &ts, IORING_TIMEOUT_ABS, immediate);
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -1805,12 +1806,20 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
+-	ret = test_single_timeout_abs(&ring);
++	ret = test_single_timeout_abs(&ring, false);
+ 	if (ret) {
+ 		fprintf(stderr, "test_single_timeout_abs failed\n");
+ 		return ret;
+ 	}
+ 
++	if (!no_immediate) {
++		ret = test_single_timeout_abs(&ring, true);
++		if (ret) {
++			fprintf(stderr, "test_single_timeout_abs (imm) failed\n");
++			return ret;
++		}
++	}
++
+ 	ret = test_single_timeout_remove(&ring);
+ 	if (ret) {
+ 		fprintf(stderr, "test_single_timeout_remove failed\n");
 -- 
 2.53.0
 

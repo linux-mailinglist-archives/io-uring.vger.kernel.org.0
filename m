@@ -1,176 +1,145 @@
-Return-Path: <io-uring+bounces-12588-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12589-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yBL9Me7KrmnEIwIAu9opvQ
-	(envelope-from <io-uring+bounces-12588-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:28:14 +0100
+	id QE3kM/fKrmnEIwIAu9opvQ
+	(envelope-from <io-uring+bounces-12589-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:28:23 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C529239BB8
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:28:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37449239BBF
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CF52730E0DCE
-	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 13:24:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8096F302BBAC
+	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 13:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AEB3B8D50;
-	Mon,  9 Mar 2026 13:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ACA35A38F;
+	Mon,  9 Mar 2026 13:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYe7FFZM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="10Oh+eqG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56053A8FF0
-	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 13:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542A3A4F50
+	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 13:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773062693; cv=none; b=nEgCViyR2d5ens2kH0vYODjjHFLMqHtLhEsvNFL1ilqM2qApT59YzWOQBFiovODzvCvVGOjaZeNNeKlbO5CVZPxishnD1WGvhmaMj1voZM2wG9hHIK1XX5n+dqHjNrhayKKoPJcvmIPyaAujyscrCps2xhuWfqihNwzQr7bUpcA=
+	t=1773062698; cv=none; b=Vi5fbLDpUHUE1rGOIyUc5mdyA6gTVoTUDwAFz/WN6BQPYmc9ahehiUG3HdHSzvgj4CyKwr5s+7EUPYlGN4q4lGltrBkWFZpOt2Q8r7Z9rW9GNV6k01bfIWDgxiZnkb3q+ULma06aCZgmuyh5Sq2yblcd10XnnFvhOatl0I93Ntg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773062693; c=relaxed/simple;
-	bh=H1ooMesOsCfbxy1JEoKTVjQr5MpOiYSVF2li1xsXq0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qzGHYg0EDDMmu65z52QIBcqbYvrI3/bAKvEB57M4IapXtB5VyevtY9she8KwaMqHIaSYaxs/gDaTgfLbT5P2aM6UyCXXJv8xnyC942k5ZY67ibrdl3mG27FwADR5oHpB+gm3XcPfOR7JwF9c0qxNFDjiYxnorhaGWC6m2p1DE7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYe7FFZM; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48540d21f7dso2254305e9.0
-        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 06:24:50 -0700 (PDT)
+	s=arc-20240116; t=1773062698; c=relaxed/simple;
+	bh=VATwanWPzGb2xlk10x85rXCszFdZN3xHOnd3dRzes0E=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KZgauuqceyrGcbe4hu1BV9AaUN4V22wyGNSMb7cZ50OuyTlVjD0+E+AeAp0ifGzfzP7yl4/GnHKrmL9qhzwjNbGql/5TGLgqxqfgf7HgE6fKuilNs1wYf9US9X8XmtygGHp2cswSPjanUlcUW4OJRGYUgJV09m4iLbgNBw8ahk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=10Oh+eqG; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8cd73c4a827so269922885a.3
+        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 06:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773062689; x=1773667489; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NopvELTUWATJredMr0Zqp2HDVCba8weCOzzaoYoC+s0=;
-        b=RYe7FFZMsfqpceSR9TNk99ORJHEryUyqXZTM3hDZXg5yuqDf3hyrwHKqada9m9jvD1
-         73Pd2NFyAnaGtSPsmCcwOGr5emkhuyo+sGlG3wk22qoejULBtf0Lw/Y53ELMN6Hm5S0u
-         +kXs3tZglTRbaPhl11x06tV6hH3iruZQVeT+nILQH5rOwbvM6NSfEyjW/PUiUxcCgr2C
-         K70HDP0wvdUm/dTmniGzGRL+TCKou13Q6nlB8nplB9SQQf/iu843joJb+yIgDXr1EEVM
-         hpc1RezO9z6Zh6fYC/28LgUZkjO9PjF5Abjmd2+1uz93l4rymMJ/WuBOvKkGOBe6QazN
-         jr2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773062689; x=1773667489;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773062696; x=1773667496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NopvELTUWATJredMr0Zqp2HDVCba8weCOzzaoYoC+s0=;
-        b=dQduRyuIyR888NJK+pKn5xPey8uGjWENsvMA4SvVzpsHZazDFWdD+KMU1cD4WcgxDj
-         I5+daE/143fnNPBE0/K39dqTHMnwxk7H1P0WJebU7Nx6LPnbMNGIWmP8+B3jOvAIEsMp
-         pOsvrgtp7gTvL2RZF58AS3vDCNVKVRp7JLLKztMRYNtnJ076ZBuneWd7d3DiUj+k0SHI
-         fGAaslD0VZCl93Wl4hvgmRqok1S8lxXL/Vn+Fg7PIXXPI52ZDL95042orRfJzyZmdjE4
-         /Xeo7KwQzCFuGxakKGspuwxVZrVjmPaA5mzlvdLckWyK/u3xFvx7MpqNk1t8l+vU7l6E
-         uS9A==
-X-Gm-Message-State: AOJu0YwhB/fuIOLdeTYMz+Fcm/rSOkpmWTKmffFdjqoQIF8VHyC0bPeR
-	lZ6MIopdyrbfUOLcgXrEj8QOu16pBhSj2tsEDgJWydjzYCoBCdA9mhi5QQSXFA==
-X-Gm-Gg: ATEYQzwgXC7HZ5e1JGgrwehsr2Z5ZDCGcmXQ1skbxBCqv7QbtshqpcXBZInJ8v6dxUE
-	sFUOKnr8MI8Ec+bu+mjSNkDm9TnhlLCUN1Qr61ICFXSGxbH9HsaNd15TWEbybYGcQr7yLnWqioJ
-	icNTyxkzZEAVCi6F8KzqVuS6B+iarV4iSLQ/L0wOUWu1aCe76q0e3nTvKCi4FVraWn8G5AgRj0z
-	srJWBUc+meqc6Le6tuATNryFBJ+cYCUjRcJmgdk5mOYrv/qz/CbCmv7rCugt+C+7EQC9IIDNy3z
-	/QIKGnd4gfhuZpNILShFBoCx+L4X1nx2BW7lc9l57LHqNwxFRDGTh1MT7ySNkmUWSR+c5zdXMSt
-	fVaHMWlSH7ykxloWL649Ewq3xU4DlXp2Tvm2xylDjEanK2uIAQsxG2bQRpg9cQMNNJoxW1C9PGy
-	I9t8eFlonrEuqtcZ3fvPZneTt7AgrPCEi6S3RlyxqER1UdOl/pUJCDP4HFQmWQaxhs837sqeFPB
-	2oZK8kvtjReP88gm9yzb0YO86XeQY17eALYHMnXY2WJFb59CAPmUd4sggyGWG3c5KkaVjyvk+GZ
-	GQ==
-X-Received: by 2002:a05:600c:820c:b0:485:383b:d5bb with SMTP id 5b1f17b1804b1-485383bd752mr74888935e9.27.1773062688489;
-        Mon, 09 Mar 2026 06:24:48 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485358cd26bsm78402855e9.8.2026.03.09.06.24.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2026 06:24:47 -0700 (PDT)
-Message-ID: <d8c8748a-4b13-4097-bdeb-495e6410a0df@gmail.com>
-Date: Mon, 9 Mar 2026 13:24:47 +0000
+        bh=0mP3uA8DXTLN6df0id7ImJuN9svPh00AabwIN3mvJQ0=;
+        b=10Oh+eqGUy2I+AkI+LZVCNj0q3OJElqLQe8MAG9/U0FDF6pRk1jvGnYfflmSRPiBbA
+         mpSsv3ACz+dTHx8E22C5t55LNC/R7JXjfhFEhkFN4h99hLCmTtQsLq2FzdXWZJz+rg+k
+         xpim7g94Ye1zKSxEuIaJ/zP8DqA0Og4zUNZYLuw/o+o3KjgXYeJEMUc8QsfUcSk/gV2L
+         IlklfyJ9WycsSHM7gnP84k3nN1h50K2J38jafPnVVQDf6KOU4ykvK1udziTVwjbZsZtf
+         obGuQXDM5etnQIOGMNQX40ttIP/54c8ZS+XwOqMGITZagE3sv/kkf7h/bcx5Wv6sJFi7
+         izAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773062696; x=1773667496;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0mP3uA8DXTLN6df0id7ImJuN9svPh00AabwIN3mvJQ0=;
+        b=cwqr/vqHu4/3QcxHlT0viCpeWHMavjNR5mFRZeweXCrqGhc092tU058Q+qEoFCy1iJ
+         VOWNEIcc1GePMc74vEcvjlttpWTQrQNLhuNuEHzoL469NQo2Isxx8qhPiZVdZsi/kL/7
+         jezmRVOxh4DtrdFR69ZN/WjG4t8QVNgq3T7UW7PKF2iQ89wF0pFgg5HmfPlKfruXlVxf
+         qejkpt0DBOautDSvQGebLJ6QhXzPXmXJoMzPbgc9ExR/MdVLCgHKYv2LBmAWinsn8N+6
+         8VKvzRqKNsda1z4xbvoi0PtIOnnaTyXK2dBgDuoHMjzYWexhU4rm/ysKqq9XNMG0bfPw
+         egCQ==
+X-Gm-Message-State: AOJu0YyootmMrr7WjzYoV2TGFaoFBw7LcEMQ0jZ3zyZuy09Z1r67nEjY
+	eEZlj0Jz2dJapKV/vccEelc5THEsFy5t7BGWABtHMDkHCAdGdy0VU5GAT/Rk5nj5XUs=
+X-Gm-Gg: ATEYQzyxu3/sJu68MIc+Ek0KObV52+gh+iuCzvu0yn0KQaexaw4G54Rqf6PqkK7B28V
+	zbTC74zwAKWd7UN9FkGswhy7EWGmG9s5lasaNX1NajiuirLAGosbARsU42nbomqqmUIlI5AQSH1
+	qYHbf0EH6hvtv+Fv4VTQUqLqsGs8xByIQurQbyH4cet256lrYb0CvykWNznIzEcSOZUPebDSOGg
+	gUNP28WhjeOd5dHNLNhiCcLAiTSsUNuiEkcvqS6PuEA1c3t1Diw0YMlrukCRzxSdpKp3pKEp2Sk
+	BaTlpAU6OMOii+BRRm6NB39K/gA05NSA46rxl76pMSt9rfCWQp1GR6vgP1TZwEVoKbuWImWYV+Z
+	e0Ekk3A8IAKtB50lWIG9QHsGWLyiIK+tGhPSewaoiFPvKgBQe7WOTeXQZ3sSU4vbQ6xLBcDZN93
+	p+FNOW7UjRB8DnyPEaE63THguqKZcf4vCz6GRsks+899rLAGc=
+X-Received: by 2002:a05:620a:290a:b0:8cd:8f18:d1c0 with SMTP id af79cd13be357-8cd8f18d44dmr165894685a.27.1773062696219;
+        Mon, 09 Mar 2026 06:24:56 -0700 (PDT)
+Received: from [127.0.0.1] ([99.196.133.212])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cd6f4840b1sm680245985a.1.2026.03.09.06.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2026 06:24:55 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <c151f006cbac6eb51863881d338b101186740cc1.1772493339.git.asml.silence@gmail.com>
+References: <c151f006cbac6eb51863881d338b101186740cc1.1772493339.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/net: allow vectorised regbuf send zc
+Message-Id: <177306269257.10980.9320078608011135738.b4-ty@kernel.dk>
+Date: Mon, 09 Mar 2026 07:24:52 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/4] BPF controlled io_uring
-To: io-uring@vger.kernel.org
-Cc: bpf@vger.kernel.org, axboe@kernel.dk,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <cover.1772109579.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1772109579.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0C529239BB8
+X-Mailer: b4 0.14.3
+X-Rspamd-Queue-Id: 37449239BBF
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.dk,gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12588-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
+	TAGGED_FROM(0.00)[bounces-12589-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-0.958];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.996];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 2/26/26 12:48, Pavel Begunkov wrote:
-> Introduces a way to override the standard io_uring_enter syscall
-> execution with an extendible event loop, which can be controlled
-> by BPF via new io_uring struct_ops or from within the kernel.
-> 
-> There are multiple use cases I want to cover with this:
-> 
-> - Syscall avoidance. Instead of returning to the userspace for
->    CQE processing, a part of the logic can be moved into BPF to
->    avoid excessive number of syscalls.
-> 
-> - Access to in-kernel io_uring resources. For example, there are
->    registered buffers that can't be directly accessed by the userspace,
->    however we can give BPF the ability to peek at them. It can be used
->    to take a look at in-buffer app level headers to decide what to do
->    with data next and issuing IO using it.
-> 
-> - Smarter request ordering and linking. Request links are pretty
->    limited and inflexible as they can't pass information from one
->    request to another. With BPF we can peek at CQEs and memory and
->    compile a subsequent request.
-> 
-> - Feature semi-deprecation. It can be used to simplify handling
->    of deprecated features by moving it into the callback out core
->    io_uring. For example, it should be trivial to simulate
->    IOSQE_IO_DRAIN. Another target could be request linking logic.
-> 
-> - It can serve as a base for custom algorithms and fine tuning.
->    Often, it'd be impractical to introduce a generic feature because
->    it's either niche or requires a lot of configuration. For example,
->    there is support min-wait, however BPF can help to further fine tune
->    it by doing it in multiple steps with different number of CQEs /
->    timeouts. Another feature people were asking about is allowing
->    to over queue SQEs but make the kernel to maintain a given QD.
-> 
-> - Smarter polling. Napi polling is performed only once per syscall
->    and then it switches to waiting. We can do smarter and intermix
->    polling with waiting using the hook.
 
-Any comments for the patch set?
+On Tue, 03 Mar 2026 12:32:19 +0000, Pavel Begunkov wrote:
+> Enable IORING_SEND_VECTORIZED with registered buffers for
+> IORING_OP_SEND_ZC. Set IORING_SEND_VECTORIZED for all msg send requests
+> to differentiate if the vectorised version is expected.
+> 
+> 
 
+Applied, thanks!
+
+[1/1] io_uring/net: allow vectorised regbuf send zc
+      commit: dce00c83035b880deebf7b2f0a204f740cb90d64
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

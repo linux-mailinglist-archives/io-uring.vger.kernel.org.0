@@ -1,207 +1,204 @@
-Return-Path: <io-uring+bounces-12596-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12597-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 5G1xJcThrmlPJwIAu9opvQ
-	(envelope-from <io-uring+bounces-12596-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 16:05:40 +0100
+	id kJEuBcbtrmkWKQIAu9opvQ
+	(envelope-from <io-uring+bounces-12597-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 16:56:54 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14E823B3A9
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 16:05:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AD523C3A4
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 16:56:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1283130131D3
-	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 15:02:46 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 094B13118293
+	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 15:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8879D3D6485;
-	Mon,  9 Mar 2026 15:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8953DBD6F;
+	Mon,  9 Mar 2026 15:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="H2IXjsgS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ok2+lwoQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60B53AE6E1
-	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 15:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773068564; cv=pass; b=P5Sz9m/i0bi3gbswzaU0XPDcEW+vwzWEzwr47tOFe+SIYqYPOBkAOl9cdv9ZURrIkr58+BXtib0VjW0Gvam3lj312jLAx3WD/ijYRvqA+Wepq55L8XMs/JKqeuUNgHfM4MuL8/vo04+BlgcR8fW+ifjLnE3qXBtBL8gaI75cztc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773068564; c=relaxed/simple;
-	bh=eqfU6ul3moKHFv5Rt6DgTPzcTZjyCjZpdBnBV8hZ5So=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g4DOChqDm2pDA9+aiSzTDY+eOe9qNAc9ebOF9RW/1r75gcfn496AF7lSwZZkUPumV/U+mqZ0LIu6nwQA8lYtQB5pPlC0UQ/0mUQuIyXfAbdNfjr4z2PRIU2peFyVjgtPP0Lk75COF+RS+YMlCMa4SE0NQIG18tvZOii8nbjGiZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=H2IXjsgS; arc=pass smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-40efb4bceb6so615918fac.2
-        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 08:02:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773068562; cv=none;
-        d=google.com; s=arc-20240605;
-        b=X39pu3hGX6hKuWxtj1hRW+A4uSsQG2cfgvjqYSUhNefc/H6eCN/Jzr3iP7LE6xAxgZ
-         GJHuDGj2otnh3rDkA7sdPVLXmGVurAsOiP1QD7DtwakTR9mDfcxiMuFlrc5s/EHisbg9
-         xyNY4tJXeNGuccCMiiVBSvwsoeifukxtw/p70Kj6simjfee8NsK64N+iiX8tusLbjlsa
-         t+mtn2qoqfJwZpsv5mQLRDHkrwjxI8Qrz27Fok5vAopcqtIKvScwvtT2OhpwUBDbl+39
-         1fAo9P6K2yBN/XfMVjV04XpSyI8Pj/eUuFlBonRvgmUs9ZTbc4w+5ZP/7JIMUXE6GSwi
-         7ahg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=NmkngJbnrPZ0QH13s7fieqKyIWpdpnQZouXymIBu37M=;
-        fh=mNnhPPHdgjGRiE9n5A7uV0Ysxqoiyx/s7cH2X5Hwcz4=;
-        b=Po8QoItTlIuBh0s91CwNeO6eeL+hMmAcl7obJtZXVmUStAEjyw08JpsSiCK5IT+jxd
-         YcOXwHX8kB0bkzkFXg7v7aIE3vTrpdRCX3pgbLeYEazoaHe4QQ1ALedzvmzvCUW0S5B5
-         lbMjmjW7p97YHY1CDWqnDe7bIR3HEmNZF+URPfwB1kYiBBSeWPvC2n1cjz2t9ZfZVP3Z
-         0iigu4Jlkv5HGaSWwBDbi2bbcYLQBOusPrVe/9zVw1m2EfYsJPdRoNHY86937/icxo3k
-         iypDUblTyz9bt/KXFX3nFbRSIgJqKljyVAvNuaMTrGDdA5RF+Yk/j7wNZ+bhPtJkIcvu
-         Hb0A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C83D6660
+	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 15:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773071190; cv=none; b=cqHKeUvqiwZA/iBAhI1B5KNiOqHIElFcRrHbfTUVeGoPlopNFMYc4aGZydRdU2gjQk+RGkZYAcGWm5TndmCKd5k7aQwI+xA8jVR8xEHz4IXA1MS0jCw6oYN62NtbX3UuLpP0bSmbSYlGjNXCK+WU6GA0nxRgj8sXuhDn5YB920A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773071190; c=relaxed/simple;
+	bh=xldjzhJFCzzxVyt+4OynXPA50FgEvwM+E0rHMTc2UIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZT23BgDIkvIXnCmOyhpslAgAE/9ZVymO77w46ss3h1evPJGPWv8VvhxrE/cAVYS4XVMwoiZMoAJyJm1eM0WXVafU9LCZjL8/plL2/EcCkFeDzBe+Z2ruRNqUtku3wFZpQ/xt4hlchOcY1kLH3wOvlBz9F83PrGtriK5IYyNK0DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ok2+lwoQ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2ae41544dcfso97627485ad.1
+        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 08:46:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1773068562; x=1773673362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NmkngJbnrPZ0QH13s7fieqKyIWpdpnQZouXymIBu37M=;
-        b=H2IXjsgSanMBd+1aiZY6Xoph0fhDVHKw1qoU8Wtsa4iZOIowOi+WUQRMhId756vPXM
-         9UZofN6WUs/I+F3ZiPNqbXNAzz/MylVDCvtTuVt0aFJSBW+HGhmlDRNmO2jZUdReoJFC
-         dwQ1OY4Mov+GV9Qur4xkdMECT5TbKaFIxCl1nqgCuud1FCHhHG1e7sFXGZrBJP9sCFnN
-         dK9XhUQORpE+dXECS2ACBoqYFyNL30UPyP9gSBVthvuYdU29ipKYGN60+xiU5yPnr3bx
-         gDxEXiOh7yKM+91Gzjcx2/LTmybRyFjYf2ujo1H39o9K5pQAZ4bwCjXChfu2MaTiJIbG
-         DNlw==
+        d=gmail.com; s=20230601; t=1773071189; x=1773675989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7uMpO77lspwa+WHWBcoopjvWx4xr8G4N2UzbA4hFLw4=;
+        b=Ok2+lwoQhlhgi1ipmwTXsw3E42S5xZd6xH3Q4UyUPHB+WS5xBF+ON96Nmbw+Omwiyu
+         d4I317/nLIkhXJSSb71KpnIg+jh+kIzSnX7/IQDOzbGwp4SIW+d3nNgLBzFnwC3fGKdi
+         cm+esxrjcDW53EdWLwP4t33wHoqfwinLBpBp6gFQvwIKPf0yJj5uAtqsH/IewqqAf2oL
+         Z0sQ0iJi6a9qxHtta0OW4xMNd+EcmPfgqGH+6LjRiX+04OlO6roKVsZe6CGZGYntyYub
+         QOQpoeL1tQD8PVzEjbNQ1misRbLkcdWjsg5DPeYE2pEQLdDsOfWaf+bDwippliAC6ooo
+         uhMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773068562; x=1773673362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=NmkngJbnrPZ0QH13s7fieqKyIWpdpnQZouXymIBu37M=;
-        b=UKXYJ6zZXh5GhN3ELl5tBXdRaPgx+38sVggA4rSzhzgwFxkeIrZArRbN7LDBD+iPVk
-         3CIQ/armTaFZC/cQxWbxjvkMjJGUsQj3+L2JRfVWj0VnedyKWWQDAWqcSMS2cWmhAmgv
-         UVXd9BB2YjjRlWaBUlVTrLc2kfID0LfHW8uQcFdaX8owqx/4AqXlHAMW+4Yk+N+P4SUi
-         C57NH3EbrMudZ+wNa3N9ZnabQyhG4LLgl4eoyQ4/q0XLEUYdX5FJZvEiL/WchGeHtRJC
-         BPB5XQcBGVaIjCA1EZLypMZGDB0iyOTYzw6gEOdnKRAqQS3lBSn3nbKvn1V8Rrjl4jYt
-         kVnw==
-X-Gm-Message-State: AOJu0YwkrT6Wm6zixTfuNmHmisG7l3JAEnn71hdJCLTqDNfhWiZiJyHA
-	PkbeQIpHPIx1Qoag8hZRhHl15YoTq8fUzOFb4z8eIDXDGDn4Kgpyg3czCAjKU0n2X4QYli2VWuk
-	qbIiKGSdrU0CHMMtG0aKOzuKo6bhRBWQqFRzsioOduA==
-X-Gm-Gg: ATEYQzwJKojMKnW4UgMT5gfSnT2VtBFd518oq28bz5FJMDGvmkqlborY3bxNP5h14Z/
-	AjpIa5XkDBVJVpOV3uXoSzMi/t0aeVKgxrImokryzDkF3OLpnsOYR8mIfS3Whj5vVqj8rMSPOfw
-	j4Xh+kdX+GEhhq65/nvqdD/U6LmM/9U53DbLiGvjafDxqVJlaU8KvWn0Kt6Ni5WkMWaYVWbwyAP
-	XsYli7yQlJYNwA4IuC8kUXopSBSV3phiTCpD8Yl1DYx7IfJHfH9OxJ3WXdUlmxQni34WL7Qan71
-	F/a6uxs=
-X-Received: by 2002:a05:6870:d6a3:b0:417:43d7:bb8a with SMTP id
- 586e51a60fabf-41743e71e1amr1002002fac.4.1773068560198; Mon, 09 Mar 2026
- 08:02:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773071189; x=1773675989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7uMpO77lspwa+WHWBcoopjvWx4xr8G4N2UzbA4hFLw4=;
+        b=ZM0p/Tc3+vrYp+T6Lb8WX+PfL9rG68RqFOXJZMiTOiLmtKOX12nAE1sfiFvZUCMnVX
+         +5CJk0Y49cjuvXFGazhtswjlawsL1UQYYUfNzJxtWgk+J/adgTAxP2FAsZ31VYZxShWm
+         0yyAxe20Ui6jRQ9gvRIoD1tzdvaj6NTfYihMEqrAxw4O3MaRqIOcDp9skCtyeD//jcAh
+         /YpxNomBJEYO6zhYZ9n+BiYIF0HVh0JlW29deVTcSuZ0BcFaewQ7T2GxYclQKGmH99lj
+         s/WUumj7LISayUa/P5Qf+C5GLidUhFu3h1YaXZiuMdBu51R35tQuGTDZCh+SQIF1yHb0
+         Yaqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPIWjhDYmUTthQeIyuV52YOrwrd/xbI15Ra0ad7E/bB6SyMENVlPerjLgrtLXMj0lQjxiHwk8zgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLRNxvUk/LTitXVHbSuCQ0xrunwwUzeP2Oxf8eBBsmA7FhSdMF
+	pA4SWF0xOqwRkcJwb4TWHQ8bm68zHL0C5NSmLOSHNnhw/bEDKWi4TGWcbHyoGx76
+X-Gm-Gg: ATEYQzx0pjmb+1PeC5lKKb1f0h8+i2B+EzwUBNDxAIGIrEnZPqsdJh1/MkZ7DO9TUjf
+	rO33JCYNCwWimbsdNx3R47ycblDOKIWeHZASQ9itNEEX3ocGxo1b6tCW+2kQAP1kVaC8TwNIrrD
+	IAeW0u9gjMqlWBB3pPngl7O/zEwE76Beoge8AHTvRljCFFnpcKhn5UAKFoHq7A476eSTkGCbNEk
+	VXniuemeK8HJUZ8VaNAHvvOJ98Dc7LJRk52EXczB2itnGsT7btI4hA1JOsUf3TgBtvTcTKGZUQG
+	vx6o4rmxTsBnrvu3mK2DF7+NerGC9EXidmXtSTY3IS9tFHS2BotH1WWWbZp02Z0cxrcX16ZB/JZ
+	MPu0vxwfLVcnzv13T0VeJi9Iyn/ODneYk32/OVjz4QHyhomKz7fNbXK2JzO8quniJ3Kydjx4sdJ
+	I24A5plXFa9KyfWJqQQ70OF29kJzZ1aWT5VGqo7Jppa+XpepymxhM1h7PGsTrtRlDi
+X-Received: by 2002:a17:903:388f:b0:2ae:593c:48fc with SMTP id d9443c01a7336-2ae82488649mr121853435ad.53.1773071188851;
+        Mon, 09 Mar 2026 08:46:28 -0700 (PDT)
+Received: from naup-virtual-machine.localdomain ([140.113.92.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae83f77350sm134496675ad.51.2026.03.09.08.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2026 08:46:28 -0700 (PDT)
+From: Hao-Yu Yang <naup96721@gmail.com>
+To: security@kernel.org
+Cc: axboe@kernel.dk,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hao-Yu Yang <naup96721@gmail.com>
+Subject: [PATCH v2] io_uring/register.c: fix NULL pointer dereference in io_register_resize_rings
+Date: Mon,  9 Mar 2026 23:44:38 +0800
+Message-Id: <20260309154438.28376-1-naup96721@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1772109579.git.asml.silence@gmail.com> <d8c8748a-4b13-4097-bdeb-495e6410a0df@gmail.com>
-In-Reply-To: <d8c8748a-4b13-4097-bdeb-495e6410a0df@gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 9 Mar 2026 08:02:28 -0700
-X-Gm-Features: AaiRm52-inccUBaxMPpcEWgeJN28TwhjPTVhGI2-_ae4ZFa1Q4Gj4m52EswA1NQ
-Message-ID: <CADUfDZoBTwnCo-f_st9-jdgNhHLWUCjZQFpGdowGUA5BoJ836w@mail.gmail.com>
-Subject: Re: [PATCH v10 0/4] BPF controlled io_uring
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, bpf@vger.kernel.org, axboe@kernel.dk, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: E14E823B3A9
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 82AD523C3A4
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com];
+	TAGGED_FROM(0.00)[bounces-12597-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12596-lists,io-uring=lfdr.de];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.dk,gmail.com];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_DNSFAIL(0.00)[purestorage.com : server fail];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[purestorage.com:+];
-	NEURAL_HAM(-0.00)[-0.982];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[naup96721@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
+	NEURAL_HAM(-0.00)[-0.984];
 	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Mon, Mar 9, 2026 at 6:24=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
->
-> On 2/26/26 12:48, Pavel Begunkov wrote:
-> > Introduces a way to override the standard io_uring_enter syscall
-> > execution with an extendible event loop, which can be controlled
-> > by BPF via new io_uring struct_ops or from within the kernel.
-> >
-> > There are multiple use cases I want to cover with this:
-> >
-> > - Syscall avoidance. Instead of returning to the userspace for
-> >    CQE processing, a part of the logic can be moved into BPF to
-> >    avoid excessive number of syscalls.
-> >
-> > - Access to in-kernel io_uring resources. For example, there are
-> >    registered buffers that can't be directly accessed by the userspace,
-> >    however we can give BPF the ability to peek at them. It can be used
-> >    to take a look at in-buffer app level headers to decide what to do
-> >    with data next and issuing IO using it.
-> >
-> > - Smarter request ordering and linking. Request links are pretty
-> >    limited and inflexible as they can't pass information from one
-> >    request to another. With BPF we can peek at CQEs and memory and
-> >    compile a subsequent request.
-> >
-> > - Feature semi-deprecation. It can be used to simplify handling
-> >    of deprecated features by moving it into the callback out core
-> >    io_uring. For example, it should be trivial to simulate
-> >    IOSQE_IO_DRAIN. Another target could be request linking logic.
-> >
-> > - It can serve as a base for custom algorithms and fine tuning.
-> >    Often, it'd be impractical to introduce a generic feature because
-> >    it's either niche or requires a lot of configuration. For example,
-> >    there is support min-wait, however BPF can help to further fine tune
-> >    it by doing it in multiple steps with different number of CQEs /
-> >    timeouts. Another feature people were asking about is allowing
-> >    to over queue SQEs but make the kernel to maintain a given QD.
-> >
-> > - Smarter polling. Napi polling is performed only once per syscall
-> >    and then it switches to waiting. We can do smarter and intermix
-> >    polling with waiting using the hook.
->
-> Any comments for the patch set?
+During io_register_resize_rings execution, ctx->rings is temporarily
+set to NULL before new ring memory is allocated. If a timer interrupt
+fires during this window, the interrupt handler (via timerfd_tmrproc
+-> io_poll_wake -> __io_req_task_work_add -> io_req_local_work_add)
+attempts to access ctx->rings->sq_flags, causing race condition and
+a NULL pointer dereference.
 
-I'm not opposed to this feature, but I agree with Ming that it seems
-largely orthogonal to his patchset allowing BPF programs to access
-io_uring registered buffers[1]. This patchset doesn't provide any
-kfuncs for interacting with registered buffers, so we would still need
-something like the kfuncs implemented by Ming's patchset to allow BPF
-programs to access registered buffers directly. Although either the
-->loop_step() or ->prep()/->issue() interface could allow userspace to
-run a BPF program in the context of the io_uring, I wouldn't be keen
-on reimplementing the entire io_uring_enter() loop logic just to
-intercept a few requests to run BPF programs. The ->prep()/->issue()
-abstraction seems more straightforward to me, though I understand that
-it's not as general as the ability to modify the behavior of the
-entire io_uring_enter() syscall.
+BUG: kernel NULL pointer dereference, address: 0000000000000024
+PF: supervisor read access in kernel mode
+PF: error_code(0x0000) - not-present page
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <IRQ>
+ __io_poll_execute (io_uring/poll.c:223)
+ io_poll_wake (io_uring/poll.c:426)
+ __wake_up_common (kernel/sched/wait.c:109)
+ __wake_up_locked_key (kernel/sched/wait.c:167)
+ timerfd_tmrproc (./include/linux/spinlock.h:407 fs/timerfd.c:71 fs/timerfd.c:78)
+ ? __pfx_timerfd_tmrproc (fs/timerfd.c:75)
+ __hrtimer_run_queues (kernel/time/hrtimer.c:1785 kernel/time/hrtimer.c:1849)
+ hrtimer_interrupt (kernel/time/hrtimer.c:1914)
+ __sysvec_apic_timer_interrupt (./arch/x86/include/asm/jump_label.h:37 ./arch/x86/include/asm/trace/irq_vectors.h:40 arch/x86/kernel/apic/apic.c:1063)
+ sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1056 arch/x86/kernel/apic/apic.c:1056)
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:697)
+ RIP: 0010:io_register_resize_rings (io_uring/register.c:593)
+ ? io_register_resize_rings (io_uring/register.c:580)
+ __io_uring_register (io_uring/register.c:898)
+ ? fget (fs/file.c:1114)
+ __x64_sys_io_uring_register (io_uring/register.c:1026 io_uring/register.c:1001 io_uring/register.c:1001)
+ x64_sys_call (arch/x86/entry/syscall_64.c:41)
+ do_syscall_64 (arch/x86/entry/syscall_64.c:63 arch/x86/entry/syscall)
+ entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+ </TASK>
 
-Best,
-Caleb
+Fix by disabling IRQs while ctx->rings is set to NULL. Disable IRQs to
+prevent any IRQ/bottom half from triggering task work additions that attempt
+to access ctx->rings to set the IORING_SQ_TASKRUN flag.
 
-[1]: https://lore.kernel.org/io-uring/20260106101126.4064990-1-ming.lei@red=
-hat.com/T/#u
+Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
+Reported-by: Hao-Yu Yang <naup96721@gmail.com>
+Signed-off-by: Hao-Yu Yang <naup96721@gmail.com>
+---
+ io_uring/register.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 6015a3e9ce692..9898598dd46b1 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -577,6 +577,14 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	 */
+ 	mutex_lock(&ctx->mmap_lock);
+ 	spin_lock(&ctx->completion_lock);
++	/*
++	 * Disable IRQs to prevent any IRQ/bottom half execution from triggering
++	 * task work additions that attempt to access ctx->rings to set the
++	 * IORING_SQ_TASKRUN flag. This prevents NULL pointer dereference when
++	 * ctx->rings is temporarily NULL during the ring resize.
++	 */
++	local_irq_disable();
++
+ 	o.rings = ctx->rings;
+ 	ctx->rings = NULL;
+ 	o.sq_sqes = ctx->sq_sqes;
+@@ -640,6 +648,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	to_free = &o;
+ 	ret = 0;
+ out:
++	local_irq_enable();
+ 	spin_unlock(&ctx->completion_lock);
+ 	mutex_unlock(&ctx->mmap_lock);
+ 	io_register_free_rings(ctx, to_free);
+-- 
+2.34.1
+
 

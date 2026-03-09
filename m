@@ -1,83 +1,85 @@
-Return-Path: <io-uring+bounces-12583-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12584-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MNSHFKrHrmlwIwIAu9opvQ
-	(envelope-from <io-uring+bounces-12583-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:14:18 +0100
+	id uEl+DDvJrmlwIwIAu9opvQ
+	(envelope-from <io-uring+bounces-12584-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:20:59 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DDF23985D
-	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:14:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB102399EC
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 14:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A82DB301C172
-	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 13:11:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F413A3074F16
+	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40D3B8959;
-	Mon,  9 Mar 2026 13:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C583BD63D;
+	Mon,  9 Mar 2026 13:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uxxyQxWp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFwF94Vj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFED3BA24D
-	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4586E3A4F4F
+	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 13:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773061898; cv=none; b=FTUh4XluBsu0novShLom6RV9SdFk2zDX9dCSLmvTEbpJWPv+i6ICHYcXfRXA1e1zDrnvdTbWPRAC0Oaro8EmS0JbVM2E4x5Et24/+uhTMgqkmHa9Q14TRPvG4fdKk/Su2WTyLgb+CH9QPEvvxMldHxpvOKYnT7DZqOUpGlCsNgo=
+	t=1773062284; cv=none; b=R0I2c5yu+9ZtD0fdpfeU+GIdrw7Xt8SGB5YtQt+bsH9sirg6Ng2lCJnZZDgIcR7pggqmle4fkudmmkFSBf2oOufX8efBb6lJGnA9YBm0GoH+zfKqtjGujwkpRyZIQZxiQQNM2SC2PwtHk8SlX4inQt2MNBH5Z8KJos9xYkD4AxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773061898; c=relaxed/simple;
-	bh=oeob2fuLyQlPnO6SuJrLZeO3C4L6X4wU9QdohmlwS7A=;
+	s=arc-20240116; t=1773062284; c=relaxed/simple;
+	bh=jO6U2dGUAuVA6pCERH5JKoZiL7gIaJOZTvzuqXbbk8U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hcvj7hHBd25MEPz7wtOj5UX8Esbge4pCEDbGm04f55feiqVrbUI7MRUlqEJmT2tev98I9+WNjwZbKLGvoOY9WSS+EUlduXB3BMMDAF+YRrPk5jtjNghS57tFAOPp3sUYLSwXnVOJwZHLNzJjhdYKSxEuYqb5Cz8CeeGWDU4N4uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uxxyQxWp; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8cd80f56b27so145244785a.1
-        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 06:11:34 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ZYBs5qTzOlKU5Oj9GSLvJSKichEVF9YpVfZataeXu+8SFLmd+bHCnnxXYi6GfuNrAU6ka6Iox/9BGJpdMtEX8qioLOISWws1iCJfulUonNXz6CxUpvB756+CvPnnc39P5XkyGMiv+pd2+Ck6pwO/XCMWxANOOB0f+wwU8NzcvHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFwF94Vj; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4853510b4f3so20003685e9.0
+        for <io-uring@vger.kernel.org>; Mon, 09 Mar 2026 06:18:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773061893; x=1773666693; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773062281; x=1773667081; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+j399pLZ+uCFFZegnh7B/GLRkXzNzBj7hwY8ivxyDs4=;
-        b=uxxyQxWpvW0ywA+OjJAvo9klrZb9rc3wJCjGcpGQf5aCL7gMGnzzrrfc+Hy7llCnna
-         Cj9VhcijXOvcoW5CByFrHEpCucN7A5zbpR+6cWtdc7dzGzel2GAhR4jgZ2U09VUjk5mq
-         yRSNFHqCK5+FVlUFmBOZJpRTRzVz5N1Rw5//gCF/zT8jXPuEkYVAKk7K6u8emCDwmmG8
-         Yo+N4hD3QnDPoe+i4EEnHSz7+Hyq2KDMCUCLlEk4JHVn1reTD7KAUqQBsDeYM3sq3d02
-         aa1dqoaOWj2eJGON4u13/Oz7MkEjE5yAq6DOphjDg/EBvc9sJbljLzFiTcZyvB96CIyL
-         M3Lw==
+        bh=F/M8koHQQcqN1D50ayC+74APGxi6p7SHExtM1JxyxXs=;
+        b=VFwF94Vjd8/0o7nkQXxCbYLzrP7LfI9CzuxBCvKPt2iaI+0LZGpEVGaZshftx8zGYS
+         mHv9SrmN6mAvTBNN37uv1StvTiN8JXjftIbN3BKQF7iGvfzDV8yDe7VO/wpEPV+gc/zQ
+         UQQKzZhobr6uUuBp2PJFUEhUrXwRWVrdw+UFhMww1LhNTtp/QaNGxLo4XDXRzn1Kswmr
+         Zz73ChMHNySe5e9Eed09AdjaS9GSNxAUNi3wm/c+NrFX43PGcY1pKdaMQF/Xcwp81UQR
+         kJwWHwU1oakGydj613wcUy7Jk5NhvtJo2h9N4C/AMBA4VC08i7UL8i1FtvA/HzVL05Os
+         GpaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773061893; x=1773666693;
+        d=1e100.net; s=20230601; t=1773062281; x=1773667081;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+j399pLZ+uCFFZegnh7B/GLRkXzNzBj7hwY8ivxyDs4=;
-        b=SK/1C6G3jj6SX/2uCGWSoKuyPvdazhRWT3nnr8S8LK6ZyXOAQJ4gRTEs7y55W+Cd/7
-         8uXAx6JCLWF7bXbLnJBtrQ+RjxaJbq3GfL/dFdgmvPnzl09yGc7x0RBsaWaYbB1r6Bsx
-         LxtNhaKzNBaf/p3SOjV8Rmk53o6Nu7AOg//3W+J+VN5FpQZhEZo5rOhfFGvBW/+ELhEJ
-         h1rf0vqYp6WOsHdYOca0dwft0B/0Ay+afwE5J7ltwy0SVa4nJI0SwMLao47h1CfG3m0a
-         IvqGTFqLAfbFWS4h7DZgDQ3zyqL860bDdP3wBqf2oi3H04QI6/YXWQgg3g7+6V7d3/W/
-         COgw==
-X-Gm-Message-State: AOJu0Yx1IOLKW2eqU4vmwj4LAd1Lud1VanCLtdcZNy8ACLb7/nFPR/wt
-	fKBNXJwvBYt0tQm4WF7MlcCvWTD7sOuqBgwg3ux5dTe/w8jFMJ8DUia+QjSqjnThua0=
-X-Gm-Gg: ATEYQzyYtzcIVhxhe+LACrTNafucV2OWJAcWwQ1w9iN41vJc6dJkDLOKLCQkZpzH3iV
-	oXs4gZNApZNOa/CxqY6hvycSHlCVUFHWZLf406TCgdeh0SgPtBgyCdieBSf/ezrC6nbEZJD52z3
-	RUA4qI8CDHPTpWT6pNUlN5QGcA+uywoz5DAeY15oO+IpEeEuoaXDc/IrOtzcn+kiLPyOr8P/2fZ
-	1pbbTszrSV4c13M9Wa13pqVUIHAwli25aux3RpZkPb1j1J1tbcBFLm2xvEgkPu9xOcVRn/efvU8
-	XfvxsZi+fsMvLs3FIsTkDy1F0/DYLS3lxiE/NmR3/M2PAkph9Djk1HOmKNZeDZjYNduAhlPcpjK
-	psTAfdxtIECw68iEjuCdT/rCJD3RuyX9LG0ijcjwpjbpXwa+gme/KsR8iMPf8vwWNda7XLDfIlh
-	HqNgr9ig+I9knZBo1NFCce+VmKjze8udllEoTr+5NqRg+Qt5IYQA==
-X-Received: by 2002:a05:620a:4146:b0:8cd:827a:2abb with SMTP id af79cd13be357-8cd827a371dmr585176385a.31.1773061893070;
-        Mon, 09 Mar 2026 06:11:33 -0700 (PDT)
-Received: from [172.19.0.48] ([99.196.133.212])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cd8d4cac0esm136699885a.36.2026.03.09.06.11.27
+        bh=F/M8koHQQcqN1D50ayC+74APGxi6p7SHExtM1JxyxXs=;
+        b=PT98B0eejBbTW5LKW/lBoMawrnRYu5Kepmz8hcO0MHXPKeVkOjkVFIvImNk+ZPvYgV
+         WFClSQ2CIcsVlM7J/b5il6qCgAuOxqUrIXEBh14lIoOkMbXiqKYJuBPPJhfie3dfoP8X
+         RWF3IcJBNbfytKnepTLvIz56rSkRp9n4CP7+Nn09NiIzyG3k1YODVPfewZ844lr9CxEA
+         1XA7Tnc4O2R3M24Dhsvdg9uRKAv0B9ZDp53/nD/N9ec1os7QqFhsESbj/m8kJ41Av6pm
+         Rg7n3S+v1Q/SvcSwTjVI5LdjbYrrLpCSqbiTpb0qTc8qXRpJ2UGnArVGglbtUOy9IEJA
+         qhZA==
+X-Gm-Message-State: AOJu0YxqF3IQ3lVQj+gqmRIiOfI717WV/0XJbdkehURBjNT0GabTK0Bn
+	XduFgoI6naYo53EgGeLTVSNG2LqWcns51WqjxtjLJxpPcCMXb72aVNGu/wccpA==
+X-Gm-Gg: ATEYQzzrNpVht2gViUX4JRnkEKT3hEcyd9MmjCIEDmgJLtNQ/lG3TkwOhFSZmt1Mj4/
+	DgXzmQ7OrmP6/d6PCaUOsHxd0Pj7XtCOhv3MjDxaboeSE0Y9iPup062iWM4ntsNrej9g2q5CMik
+	XlyPnz5iuA6YmubTJUHrE1D3FtRv595DIi1D2ewfMrCjU6SItqMM5nIX6yW2RUjRA1p8l6iaiJN
+	LV6UZJt40r34ygZ73rxFpIfjkyao2UGWcNTT9WP+7zwiO1xj/92oJo8zQEhA/rsKFH5ds/1pzes
+	1oqbG/v6DzlIi9Wh5s365M+uyUR2JiWCTCVFxAC/5R7lCVkWA3pgwGnCLIXJiA8b0aRykDJGpjo
+	goDE3BUSZQPpX5BJDi+2vLsduAhoY68NVCRFDFnV39Q4gpLj0Eh/xQbwP8NBU61VcY41HfbQTnS
+	EA6hdVWqzGakbCS6pFR/hc1zcpdzLaT4MoqMAYVMicZ8GDS2wurZP8SLfUvYKnDNOkKzzD2siNS
+	LLz6E/r1+Qk/GKk02cIyWSF0jwJ35cz19wpgvg3bwwwhvQMRKOH/h5jQzmMBwmpar3ZS86W9hsM
+	VG7fMbwxxEqC
+X-Received: by 2002:a05:600c:c4a3:b0:483:9139:4c1d with SMTP id 5b1f17b1804b1-4852692c943mr193509075e9.14.1773062280888;
+        Mon, 09 Mar 2026 06:18:00 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485237e8095sm159915535e9.2.2026.03.09.06.18.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2026 06:11:31 -0700 (PDT)
-Message-ID: <959a75c9-4de5-42d1-8f43-636f4aab5df8@kernel.dk>
-Date: Mon, 9 Mar 2026 07:11:21 -0600
+        Mon, 09 Mar 2026 06:18:00 -0700 (PDT)
+Message-ID: <14f88099-6c27-4dd9-8868-f7e61ce68474@gmail.com>
+Date: Mon, 9 Mar 2026 13:17:59 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,115 +87,54 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] io_uring/register.c: fix NULL pointer dereference in
- io_register_resize_rings
-To: Hao-Yu Yang <naup96721@gmail.com>, security@kernel.org
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260309062759.482210-1-naup96721@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/net: allow vectorised regbuf send zc
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk
+References: <c151f006cbac6eb51863881d338b101186740cc1.1772493339.git.asml.silence@gmail.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260309062759.482210-1-naup96721@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <c151f006cbac6eb51863881d338b101186740cc1.1772493339.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A2DDF23985D
+X-Rspamd-Queue-Id: CEB102399EC
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-12584-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12583-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.941];
-	TAGGED_RCPT(0.00)[io-uring];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_NONE(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel-dk.20230601.gappssmtp.com:dkim]
+	NEURAL_HAM(-0.00)[-0.934];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 3/9/26 12:27 AM, Hao-Yu Yang wrote:
-> During io_register_resize_rings execution, ctx->rings is temporarily
-> set to NULL before new ring memory is allocated. If a timer interrupt
-> fires during this window, the interrupt handler (via timerfd_tmrproc
-> -> io_poll_wake -> __io_req_task_work_add -> io_req_local_work_add)
-> attempts to access ctx->rings->sq_flags, causing race condition and
-> a NULL pointer dereference.
-> 
-> BUG: kernel NULL pointer dereference, address: 0000000000000024
-> PF: supervisor read access in kernel mode
-> PF: error_code(0x0000) - not-present page
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> Call Trace:
->  <IRQ>
->  __io_poll_execute (io_uring/poll.c:223)
->  io_poll_wake (io_uring/poll.c:426)
->  __wake_up_common (kernel/sched/wait.c:109)
->  __wake_up_locked_key (kernel/sched/wait.c:167)
->  timerfd_tmrproc (./include/linux/spinlock.h:407 fs/timerfd.c:71 fs/timerfd.c:78)
->  ? __pfx_timerfd_tmrproc (fs/timerfd.c:75)
->  __hrtimer_run_queues (kernel/time/hrtimer.c:1785 kernel/time/hrtimer.c:1849)
->  hrtimer_interrupt (kernel/time/hrtimer.c:1914)
->  __sysvec_apic_timer_interrupt (./arch/x86/include/asm/jump_label.h:37 ./arch/x86/include/asm/trace/irq_vectors.h:40 arch/x86/kernel/apic/apic.c:1063)
->  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1056 arch/x86/kernel/apic/apic.c:1056)
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:697)
->  RIP: 0010:io_register_resize_rings (io_uring/register.c:593)
->  ? io_register_resize_rings (io_uring/register.c:580)
->  __io_uring_register (io_uring/register.c:898)
->  ? fget (fs/file.c:1114)
->  __x64_sys_io_uring_register (io_uring/register.c:1026 io_uring/register.c:1001 io_uring/register.c:1001)
->  x64_sys_call (arch/x86/entry/syscall_64.c:41)
->  do_syscall_64 (arch/x86/entry/syscall_64.c:63 arch/x86/entry/syscall)
->  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
->  </TASK>
-> 
-> Fix by using spin_lock_irq/spin_unlock_irq instead of spin_lock/spin_unlock
-> in io_register_resize_rings. This disables IRQs while ctx->rings is set to
-> NULL, preventing interrupt handlers from executing during the window when
-> ctx->rings is NULL.
+On 3/3/26 12:32, Pavel Begunkov wrote:
+> Enable IORING_SEND_VECTORIZED with registered buffers for
+> IORING_OP_SEND_ZC. Set IORING_SEND_VECTORIZED for all msg send requests
+> to differentiate if the vectorised version is expected.
 
-I see the your crash, but this isn't the right fix - you can't just have
-that one spot turn the completion lock into an IRQ disabling one,
-that'll mess up the rest of the use cases in terms of lockdep. This lock
-is never grabbed from IRQ context, hence it'd be misleading too.
-
-You probably want something ala:
-
-mutex_lock(&ctx->mmap_lock);
-spin_lock(&ctx->completion_lock();
-+ local_irq_disable();
-
-...
-
-+ local_irq_enable();
-spin_unlock(&ctx->completion_lock);
-mutex_unlock(&ctx->mmap_lock);
-
-which I think should make lockdep happy with it too.
-
-And then I think it wants a comment on top of that local_irq_disable(),
-explaining how this is meant to prevent any irq/bh from triggering
-task_work additions that touch ctx->rings to set the IORING_SQ_TASKRUN
-flag.
-
-Does that makes sense? If so, please do send a v2!
+Any comments for this patch?
 
 -- 
-Jens Axboe
+Pavel Begunkov
+
 

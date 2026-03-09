@@ -1,241 +1,200 @@
-Return-Path: <io-uring+bounces-12581-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12582-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YFs9IA2Pq2kaeQEAu9opvQ
-	(envelope-from <io-uring+bounces-12581-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 07 Mar 2026 03:35:57 +0100
+	id gAWlL+hormmEDwIAu9opvQ
+	(envelope-from <io-uring+bounces-12582-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 07:30:00 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD971229A18
-	for <lists+io-uring@lfdr.de>; Sat, 07 Mar 2026 03:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E09234309
+	for <lists+io-uring@lfdr.de>; Mon, 09 Mar 2026 07:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DF88F30743E3
-	for <lists+io-uring@lfdr.de>; Sat,  7 Mar 2026 02:35:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1D898301F9FC
+	for <lists+io-uring@lfdr.de>; Mon,  9 Mar 2026 06:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B5C2882B4;
-	Sat,  7 Mar 2026 02:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE427359705;
+	Mon,  9 Mar 2026 06:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MvEW6kLz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CP/8EtOB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3311F0E2E
-	for <io-uring@vger.kernel.org>; Sat,  7 Mar 2026 02:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618803D6F
+	for <io-uring@vger.kernel.org>; Mon,  9 Mar 2026 06:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772850948; cv=none; b=DdSyCid59O535BbG3naFraTmxbcAglFpbjCm8pIUdr05KGAQVmrAUNqDiE5RBXl/OAgkYLBXF5zz2x/C3njjtZWjYHVUvf0lQ32ybXB+iB7/BuM47qGJBbmkE8Pg4n8HZU0s1wr809DtCjr23WZdSwNW6saDsQjuiM74Hhyil/4=
+	t=1773037790; cv=none; b=o8PbytYqiOBK6e96mv1nZQYqU0g6Xuzdji0BU5mxKPXveRPlU1FmyEX3Xl3BLSyESQz7wcCSEXNFwSEDT8fGpcYUxuFcroLBk1jWpL97AoPnN3iI+wRTuQHKcpfgCbJVyYOa5HdzIUlcXRtR52rypbQWz/LubprJ6TsNfrOzEMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772850948; c=relaxed/simple;
-	bh=XybkX46QohutpeBTmQYjhuqEFIakmZ+1B5ANm17Xkno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfoB0Zw76FfFEZ59wsr3x6kV+NovDFNw1KOmzWPpWqqFnLWpRfP5r7T/xqx/r0sbdgtLzqWP3uWptdoH/dDmPMEitfnffXzDaw3NYtZkMyKnbzthgeXx2mrRff2U8K6AW62HPCCFtp9F0NG/x0EDxuJMUKfOgYJnuMZf5Arkxyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MvEW6kLz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772850945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rqxlIwfDGS1E+lmb9grWkDLKbEw2kPFez03sw9KGHo4=;
-	b=MvEW6kLzy68sjQJo3I8UEyGu+e4uVdQ9IhVmhn//HHg2X3REsOrhZYYraUzw+cvOsuBjsZ
-	XfqWbk1i8j9fKATbFniSEgYegI3Mx4twybrpliARrDwjM4TX4bhHq6B3RT6Q70hUZm3pag
-	qbJBKU62Didsfv7UNiHvW3V74r1nLdQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-m3m9-pxIM1CwYtLu4knl2w-1; Fri,
- 06 Mar 2026 21:35:42 -0500
-X-MC-Unique: m3m9-pxIM1CwYtLu4knl2w-1
-X-Mimecast-MFC-AGG-ID: m3m9-pxIM1CwYtLu4knl2w_1772850940
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9515819560B5;
-	Sat,  7 Mar 2026 02:35:39 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.24])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C555E1955D71;
-	Sat,  7 Mar 2026 02:35:32 +0000 (UTC)
-Date: Sat, 7 Mar 2026 10:35:27 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v5 3/5] io_uring: count CQEs in io_iopoll_check()
-Message-ID: <aauO72ocnZRhJkiA@fedora>
-References: <20260302172914.2488599-1-csander@purestorage.com>
- <20260302172914.2488599-4-csander@purestorage.com>
- <aagKTanM5Az9UDsJ@fedora>
- <CADUfDZozycFBPX0kH=22Gda7njM3xVmL=Cy=zCq6cfXY8JH_dw@mail.gmail.com>
- <a6591d03-3707-4f1c-b1fa-49f010f98d53@kernel.dk>
- <CADUfDZp0shyZ5FqfEcwbi0tHXOFqwqZKRvwQW=heR-yvaOaw0Q@mail.gmail.com>
+	s=arc-20240116; t=1773037790; c=relaxed/simple;
+	bh=YmSaYkXI/krJqYJU24FmR6U2p3xKP7WLxMGtQn2Edkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k+DZzsp1zJq84oEOaX+apjn5kINQftl3PJRmZjefBtfgO8XWpPulH/lB6Jb/M0vf5f0ys1pYtf9dR/QUjWZB2n71sOn1JjgkKJX+m6aUT13GOZa06pbdn8gWt0O+vb1ztvcN2LJcbZOzteSc/ndZ8+n9f63mWar/CJNQcPmcRGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CP/8EtOB; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-82990763921so3508113b3a.1
+        for <io-uring@vger.kernel.org>; Sun, 08 Mar 2026 23:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773037788; x=1773642588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjNCRGDdNSAhVIPSG6qBbdiy5yBmSFwtP/A60KKXtlY=;
+        b=CP/8EtOB17TWaQIgU117IjxyScUI6zCM5+bA2w7IQbKiQDGAM8Q/DP3asSJ1bnT3Pg
+         4aOL25feurO0W38ONsqnMTOCqAK/dRiP+axFW9lgvbVC9S+XWU5XKDvB0CZqdA2OJXaQ
+         vNj1n645mHcDoFWHA7nbo5w7XTbglQxt5pqusz4zrwqEc1r3kBKiVaMcEd9z2skd4EEi
+         Jtooaiz5S8V5PzGEIBJP6SyxiyCnpQbubGsbkZvpwrBTn3qyI9/DRpEo/4MZqg5+/ww+
+         AK75/I1qoOEm3jLzdqr2Xt4UE3tJ9sJAxhqfvKOR+Os+7LnstLFmAUNuPAS+/4aNOLk3
+         At5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773037788; x=1773642588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bjNCRGDdNSAhVIPSG6qBbdiy5yBmSFwtP/A60KKXtlY=;
+        b=l9LOctdMU2mZYyxypSWQDwQ5uXOdoRXa66blXJMYigOhSkyNb1PSLV1xXv2J0rb+CC
+         yT+vgA3N8TqggJO7UO/N0jkCbhXKLoWXrabODCYkX4u8IJVDr8CnXU5+QpWJpibD8u8t
+         yXSvQqyR7JUWlJUbabM5rTULgSviXsidQt/aqTb+RxCRmlcP7XQlrrYML2V59YM/kTHG
+         jI0Ey1EmjxNIkuihKMDWA0Yd+PtyyzWepk+nw0p2JH4cWEOOHGfbwfqOuX0Bd91NvjLb
+         3agRhsXe+KZrgcNBX+cJJr8AUTM7y8IUaFrjA8/4+ubbVZ7BNgDUVP3QfGvSXM2WD9ni
+         754g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9oZFw7j++pg5mkjHPBFpH2vXo7+M3E1jk6nJR4NOmK8Y8lDidekq1C3kve0fhHDcTUWMMe0/sQQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs25p0BKiFzRLN43vlOyK8vXBWeB9PYPozrarXEqk4QlabfNHu
+	ZDG9jJ50ep3NaD+PVrdYA9kBx+xfO7yU5TE0ga88TisC9TVLXbUqm3wB
+X-Gm-Gg: ATEYQzxVJ4SSTYgSPCcfxVzCmBD1QUT+rR40hMS1q1tcEZi7fEVhCamVLFUlAtSI+cv
+	QQUFPCQqmnmEfznLOXlOpXAugjZLKOI/zsiijN8uICEkBWAv3RFQ4nof6wVj954gVv4K/h9oAZx
+	pGrmfLBmGnC9FDm/7x4ZThcCV+Ohwkg+bIcms9i/ZBIbbRV64Da/9qjtwqwLyveDMAW//b3QOW4
+	TDrNDZuM7bfkxkv8flQ9oIjnOLrW3gdY3ZGiOKhWCVdNMoW0uCnNJMnvLjmMCwtjuYgmXP5Xi9+
+	zRIqMcdxayc/4RkLjhOv5EIHkIAgAcROGGsep/6+e467ZhuWgb8hPJVSvirDUx7Pw3yICNfIU+X
+	Oaue+/CgLFIycQuOXkFR1wC1LGuDGqtoYK7jItzCcG3qjO7lfmwwiYJ91pp7Nm61gApR/Y0C8zi
+	Jt3pzIwt55zv6SQ5H0yHWGFrUV68mtVMEx24z7RraJHQnRE7wqotNSZS/alUlRyVHSLA==
+X-Received: by 2002:a05:6a00:4650:b0:829:7a2d:71b2 with SMTP id d2e1a72fcca58-829a30dfad6mr9754835b3a.57.1773037787550;
+        Sun, 08 Mar 2026 23:29:47 -0700 (PDT)
+Received: from naup-virtual-machine.localdomain ([140.113.136.219])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-829a48a20c0sm10878180b3a.43.2026.03.08.23.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Mar 2026 23:29:47 -0700 (PDT)
+From: Hao-Yu Yang <naup96721@gmail.com>
+To: security@kernel.org
+Cc: naxboe@kernel.dk,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hao-Yu Yang <naup96721@gmail.com>
+Subject: [PATCH v1] io_uring/register.c: fix NULL pointer dereference in io_register_resize_rings
+Date: Mon,  9 Mar 2026 14:27:59 +0800
+Message-Id: <20260309062759.482210-1-naup96721@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZp0shyZ5FqfEcwbi0tHXOFqwqZKRvwQW=heR-yvaOaw0Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Rspamd-Queue-Id: DD971229A18
+X-Rspamd-Queue-Id: 66E09234309
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12581-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com];
+	TAGGED_FROM(0.00)[bounces-12582-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	NEURAL_HAM(-0.00)[-0.951];
+	FROM_NEQ_ENVFROM(0.00)[naup96721@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,purestorage.com:email,kernel.dk:email]
+	NEURAL_HAM(-0.00)[-0.984];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Fri, Mar 06, 2026 at 05:38:15PM -0800, Caleb Sander Mateos wrote:
-> On Wed, Mar 4, 2026 at 8:29 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 3/4/26 8:46 AM, Caleb Sander Mateos wrote:
-> > > On Wed, Mar 4, 2026 at 2:33?AM Ming Lei <ming.lei@redhat.com> wrote:
-> > >>
-> > >> On Mon, Mar 02, 2026 at 10:29:12AM -0700, Caleb Sander Mateos wrote:
-> > >>> A subsequent commit will allow uring_cmds that don't use iopoll on
-> > >>> IORING_SETUP_IOPOLL io_urings. As a result, CQEs can be posted without
-> > >>> setting the iopoll_completed flag for a request in iopoll_list or going
-> > >>> through task work. For example, a UBLK_U_IO_FETCH_IO_CMDS command could
-> > >>> call io_uring_mshot_cmd_post_cqe() to directly post a CQE. The
-> > >>> io_iopoll_check() loop currently only counts completions posted in
-> > >>> io_do_iopoll() when determining whether the min_events threshold has
-> > >>> been met. It also exits early if there are any existing CQEs before
-> > >>> polling, or if any CQEs are posted while running task work. CQEs posted
-> > >>> via io_uring_mshot_cmd_post_cqe() or other mechanisms won't be counted
-> > >>> against min_events.
-> > >>>
-> > >>> Explicitly check the available CQEs in each io_iopoll_check() loop
-> > >>> iteration to account for CQEs posted in any fashion.
-> > >>>
-> > >>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > >>> ---
-> > >>>  io_uring/io_uring.c | 9 ++-------
-> > >>>  1 file changed, 2 insertions(+), 7 deletions(-)
-> > >>>
-> > >>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > >>> index 46f39831d27c..b4625695bb3a 100644
-> > >>> --- a/io_uring/io_uring.c
-> > >>> +++ b/io_uring/io_uring.c
-> > >>> @@ -1184,11 +1184,10 @@ __cold void io_iopoll_try_reap_events(struct io_ring_ctx *ctx)
-> > >>>               io_move_task_work_from_local(ctx);
-> > >>>  }
-> > >>>
-> > >>>  static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned int min_events)
-> > >>>  {
-> > >>> -     unsigned int nr_events = 0;
-> > >>>       unsigned long check_cq;
-> > >>>
-> > >>>       min_events = min(min_events, ctx->cq_entries);
-> > >>>
-> > >>>       lockdep_assert_held(&ctx->uring_lock);
-> > >>> @@ -1227,34 +1226,30 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned int min_events)
-> > >>>                * the poll to the issued list. Otherwise we can spin here
-> > >>>                * forever, while the workqueue is stuck trying to acquire the
-> > >>>                * very same mutex.
-> > >>>                */
-> > >>>               if (list_empty(&ctx->iopoll_list) || io_task_work_pending(ctx)) {
-> > >>> -                     u32 tail = ctx->cached_cq_tail;
-> > >>> -
-> > >>>                       (void) io_run_local_work_locked(ctx, min_events);
-> > >>>
-> > >>>                       if (task_work_pending(current) || list_empty(&ctx->iopoll_list)) {
-> > >>>                               mutex_unlock(&ctx->uring_lock);
-> > >>>                               io_run_task_work();
-> > >>>                               mutex_lock(&ctx->uring_lock);
-> > >>>                       }
-> > >>>                       /* some requests don't go through iopoll_list */
-> > >>> -                     if (tail != ctx->cached_cq_tail || list_empty(&ctx->iopoll_list))
-> > >>> +                     if (list_empty(&ctx->iopoll_list))
-> > >>>                               break;
-> > >>>               }
-> > >>>               ret = io_do_iopoll(ctx, !min_events);
-> > >>>               if (unlikely(ret < 0))
-> > >>>                       return ret;
-> > >>>
-> > >>>               if (task_sigpending(current))
-> > >>>                       return -EINTR;
-> > >>>               if (need_resched())
-> > >>>                       break;
-> > >>> -
-> > >>> -             nr_events += ret;
-> > >>> -     } while (nr_events < min_events);
-> > >>> +     } while (io_cqring_events(ctx) < min_events);
-> > >>
-> > >> Before entering the loop, if io_cqring_events() finds any queued CQE,
-> > >> io_iopoll_check() returns immediately without polling.
-> > >>
-> > >> If the queued CQE is originated from non-iopoll uring_cmd, iopoll request
-> > >> will not be polled, may this be one issue?
-> > >
-> > > I also noticed that logic and thought it seemed odd. I would think
-> > > we'd always want to wait for min_events CQEs (and iopoll once even if
-> > > min_events is 0). Looks like Jens added the early return in commit
-> > > a3a0e43fd770 ("io_uring: don't enter poll loop if we have CQEs
-> > > pending"), perhaps he can shed some light on it?
-> >
-> > I don't  recall the bug in question, it's been a while... But it always
-> > makes sense to return events that are ready, and skip polling. It should
-> > only be done if there are no ready events to reap.
-> 
-> Ming, are you okay with preserving that behavior in this patch then? I
-> guess there's a potential fairness concern where REQ_F_IOPOLL requests
-> may not be polled for some time if non-REQ_F_IOPOLL requests continue
-> to frequently post CQEs.
+During io_register_resize_rings execution, ctx->rings is temporarily
+set to NULL before new ring memory is allocated. If a timer interrupt
+fires during this window, the interrupt handler (via timerfd_tmrproc
+-> io_poll_wake -> __io_req_task_work_add -> io_req_local_work_add)
+attempts to access ctx->rings->sq_flags, causing race condition and
+a NULL pointer dereference.
 
-IMO, the fairness may not a big deal given userspace should keep polling
-if the iopoll IO isn't done.
+BUG: kernel NULL pointer dereference, address: 0000000000000024
+PF: supervisor read access in kernel mode
+PF: error_code(0x0000) - not-present page
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <IRQ>
+ __io_poll_execute (io_uring/poll.c:223)
+ io_poll_wake (io_uring/poll.c:426)
+ __wake_up_common (kernel/sched/wait.c:109)
+ __wake_up_locked_key (kernel/sched/wait.c:167)
+ timerfd_tmrproc (./include/linux/spinlock.h:407 fs/timerfd.c:71 fs/timerfd.c:78)
+ ? __pfx_timerfd_tmrproc (fs/timerfd.c:75)
+ __hrtimer_run_queues (kernel/time/hrtimer.c:1785 kernel/time/hrtimer.c:1849)
+ hrtimer_interrupt (kernel/time/hrtimer.c:1914)
+ __sysvec_apic_timer_interrupt (./arch/x86/include/asm/jump_label.h:37 ./arch/x86/include/asm/trace/irq_vectors.h:40 arch/x86/kernel/apic/apic.c:1063)
+ sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1056 arch/x86/kernel/apic/apic.c:1056)
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:697)
+ RIP: 0010:io_register_resize_rings (io_uring/register.c:593)
+ ? io_register_resize_rings (io_uring/register.c:580)
+ __io_uring_register (io_uring/register.c:898)
+ ? fget (fs/file.c:1114)
+ __x64_sys_io_uring_register (io_uring/register.c:1026 io_uring/register.c:1001 io_uring/register.c:1001)
+ x64_sys_call (arch/x86/entry/syscall_64.c:41)
+ do_syscall_64 (arch/x86/entry/syscall_64.c:63 arch/x86/entry/syscall)
+ entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+ </TASK>
 
-But forget to mention, if non-iopoll CQE is posted and ->cq_flush becomes
-true, io_submit_flush_completions() may not get chance to run in case of
-the early return. 
+Fix by using spin_lock_irq/spin_unlock_irq instead of spin_lock/spin_unlock
+in io_register_resize_rings. This disables IRQs while ctx->rings is set to
+NULL, preventing interrupt handlers from executing during the window when
+ctx->rings is NULL.
 
-Maybe something like below is needed:
+Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
+Reported-by: Hao-Yu Yang <naup96721@gmail.com>
+Signed-off-by: Hao-Yu Yang <naup96721@gmail.com>
+---
+ io_uring/register.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-@@ -1556,8 +1556,10 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned int min_events)
-         * If we do, we can potentially be spinning for commands that
-         * already triggered a CQE (eg in error).
-         */
--       if (io_cqring_events(ctx))
-+       if (io_cqring_events(ctx)) {
-+               io_submit_flush_completions(ctx);
-                return 0;
-+       }
-
-
-
-Thanks,
-Ming
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 6015a3e9ce69..0526301f7a25 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -576,7 +576,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	 * duration of the actual swap.
+ 	 */
+ 	mutex_lock(&ctx->mmap_lock);
+-	spin_lock(&ctx->completion_lock);
++	spin_lock_irq(&ctx->completion_lock);
+ 	o.rings = ctx->rings;
+ 	ctx->rings = NULL;
+ 	o.sq_sqes = ctx->sq_sqes;
+@@ -640,7 +640,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	to_free = &o;
+ 	ret = 0;
+ out:
+-	spin_unlock(&ctx->completion_lock);
++	spin_unlock_irq(&ctx->completion_lock);
+ 	mutex_unlock(&ctx->mmap_lock);
+ 	io_register_free_rings(ctx, to_free);
+ 
+-- 
+2.34.1
 
 

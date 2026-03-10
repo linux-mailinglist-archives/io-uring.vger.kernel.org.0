@@ -1,166 +1,166 @@
-Return-Path: <io-uring+bounces-12618-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12619-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WF2xNJ84sGlbhQIAu9opvQ
-	(envelope-from <io-uring+bounces-12618-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:28:31 +0100
+	id SK4tHag8sGmohQIAu9opvQ
+	(envelope-from <io-uring+bounces-12619-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:45:44 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA9E253830
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:28:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27230253DDB
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C2E033498EB0
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 14:55:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DEF603192AF9
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 14:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914793009CC;
-	Tue, 10 Mar 2026 14:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA597301704;
+	Tue, 10 Mar 2026 14:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ui5Fef64"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmYJxjF5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E7C2F49F1
-	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 14:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1852FCC0E;
+	Tue, 10 Mar 2026 14:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773154530; cv=none; b=WC3OAeEufmfvtgSV36k0uyy2OIFRndd0rcZ3P+iaGEisQyWh+om63RizuDVBccBIIHu5V9okalb8mfUjDMgjZRT+aMO+pBVFqm+QV45TG/6XVM6hLSueGsLxyJv8dgZ+euo8m+HS9+1vAq1Y2wFuHSdZgLvDC65HK7WXilHCG18=
+	t=1773154587; cv=none; b=AHStr4HmYSQqIVIQqfFgKU2InmU1O47noC0MaLLyp6PJ2rgvmQXzFizsat1vUpy8R74C6WpDPm+qdBrNEhFvuHZJuasi0z4YEM/2o2WD57euZ7hDrMeJ81AE8S51dngwRNhfC6C24gyfhPDf1u2dG8leq44mh+iKaf5I4BzVW8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773154530; c=relaxed/simple;
-	bh=YIo57N2vcHVypstNB2cXBU3r9AT7FE4ZbnUQ6vqutMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AwIdBGFJpea01RmIQd082dEiY7XCIgPQOvN/+X3rzzCBcj1OsRw6h2fwH81aKR34qXeMSNCNjzAmmCqqLF2mGrDnP9XuI71cfcJ+IBoGy3be1b99uH8KiBPbn9baGtfJuwGXSVXmahspGO1iBuhOMEG6Xjd7lQFUgQiVAU7+8Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ui5Fef64; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4648447e29bso4829490b6e.0
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 07:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773154528; x=1773759328; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UT/m7GaBXVbUKRMg37ABmfjMs9kKM0kDkv8WvMSyIRg=;
-        b=Ui5Fef64Y7cc1vXZ2PqSKmIZVxSdRCWkS0Lg6mwe1iUfsq9KANbRNCnZ/FMQJMxATj
-         QHFymeG9Tl/r1HOMgPXJreePTXYCip9Stf7oS0jZev52t1jnsEHab6Wq6n3yLTdHpSj8
-         633geDe8muKV9jVjl6m0Cql/On6hwZW3qRdQArM/jkkWUzUcccHCHAnA+E4shE75h+dS
-         P78+eRjU0w5pQWLWUb8FR7q3XFs7xsbOM5GVVVIWofXYPDJZXxIxhfdAu2HHZh2Hx6PQ
-         ypVIG5HXJPclqZCLo1PTNMH/IXXLkPEde8Nqppi+xd69t9jvfudtTa04goMf2xgYSryh
-         kZ3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773154528; x=1773759328;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UT/m7GaBXVbUKRMg37ABmfjMs9kKM0kDkv8WvMSyIRg=;
-        b=unGki3LisiMi4bbVeCPaWVIDZYQaCLj/wrwcx1ZgxzT5Yr3loOkzGxqJ/YzodFIErX
-         yB3OgHCMLKvNwM+RY9r80B5on7Rb7RM2CSAeqiSvOrReaTgy6Ha0sZ8N51fnw+lyKB01
-         6ZXo2VWnUfc/Q7IWmxXH/FPK31ZDHmCilk0/sKT2Q3mhFJQK7I9Ho1ooKVWO5Qsbm77g
-         N1aQhZvkUOPMc/FQiQ0GYHlFZMv89J9ZG+76y25tcHUjBDto/XWVVpOiGeWHHHll1Ir0
-         ocHUCcNd7J+fDhtuZIwLNWLY8sxSZaN7aMbt8xbh15wPp8vkDVbfdA1IwgNue0OLqZfp
-         wWWA==
-X-Gm-Message-State: AOJu0YxnfC5vff7SpQF7qkmqCgFUqgNJHnAU2W6UY9HpRT/xSg7yVNe1
-	59hk3yk5KwL8hWDvSwL4ThK8WUuryzG5awaHW1YW5QcvodDxuKtcGLSKEqthw30VkBODMb3oLMO
-	DHmYV3xc=
-X-Gm-Gg: ATEYQzyOy6QW9jsPSr4ERd7Dpwk7AcKEGxmdenyZj5myVNwshz0EYFFJDQtZmwVXZFs
-	MxdvwRi+4OClL3vIZTajQusJqrCr5DP0wMUhBWZzqQW/+U2wgjAvI+O5CIF+LlMKoQoh+nsMa91
-	e7iShyL7BWHf6rLEyPFrzPvG7v5zVrYATocd0mI9/rPPZvRCpMUwveAEzC6iT6Gin7lCSM89aoX
-	oKfnkaffGbEP0Jt3zrSdfAS4bwSRmqj3VYKAFHLm55i0utbovtCcKWWVUeW0obvudW9aYK9W/MG
-	giz9ZYnw86F5vyFQ3PKplypQiUNqoZPFt/w40G2G2+LRCoNrPwlTS2g36L5NgJkIB7YtqJJpIfD
-	4xkioTCeghldBwnVZ/C6p3dLaVXA8OSwg03WZcqg2rfP13dGQVdYlHRSUD78qg3kXfs1Ka8xrrB
-	l/9yv2ZszXogoPzIeUWnKWNU/atq2GlCzs8T/JkqSugKkyTHtpp3XM+h+8n+OZx18DaTqo
-X-Received: by 2002:a05:6808:c145:b0:467:b0f:997 with SMTP id 5614622812f47-4670b0f13a5mr4283225b6e.34.1773154527823;
-        Tue, 10 Mar 2026 07:55:27 -0700 (PDT)
-Received: from m2max ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-466f429c7fcsm5786865b6e.9.2026.03.10.07.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 07:55:27 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	naup96721@gmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] io_uring/eventfd: use ctx->rings_rcu for flags checking
-Date: Tue, 10 Mar 2026 08:45:49 -0600
-Message-ID: <20260310145521.68268-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260310145521.68268-1-axboe@kernel.dk>
-References: <20260310145521.68268-1-axboe@kernel.dk>
+	s=arc-20240116; t=1773154587; c=relaxed/simple;
+	bh=fE0Z/ubIZkvllDHDQoyXm3PyilLIY5Tu3AO0WZjDsTc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EZZD1Jg5ddu5gn8ISD3MpuPwymKvwjPw23tu2Uu3ksmRlPEoTYFdBpw6XW1Gfj/6+wSOYGzWSWQGLVDnoU4WC40kw0HcLvctezMmcSCi4/9BoSqExh1PjoMuhuZhqFq78lRWaRVh/riYXNsmn0W7DwZeWyVW+MAG6+BltNWrvms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmYJxjF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9FAC19423;
+	Tue, 10 Mar 2026 14:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773154587;
+	bh=fE0Z/ubIZkvllDHDQoyXm3PyilLIY5Tu3AO0WZjDsTc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BmYJxjF5a9dvOp3Ha8UOY28eN9Ls8Tj2k9Ht30d/cMSVQDuueoydi7eHYyhEKug0P
+	 7Nlx16fAGAVjuUcYJ2TifdA8RZUEW1WVE9bwxzk6xsX+LpY8pVoI4vRK7LSwKi5txn
+	 TXEzAkjKCCygTWwTUJXDiJ1W7J4iNz/l+AwgclQGa3Y15wLxiZd+BOIdUxRV70lpku
+	 Yb+xcr51PtPS54Gt5fizFsM4bBka1qsrUKeauVLz/PqrHs9sj2wVpJAkDrkRlREcW4
+	 KDGuvIRo5jnylDD0rRfqsWWjU9OfzKITpIrGYVmZLMxWkcDeykF04Ooym+xGP7OcEp
+	 HXaeEl2lsisxg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/2] kthread, exit: clean up kernel thread exit paths
+Date: Tue, 10 Mar 2026 15:56:08 +0100
+Message-Id: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 7FA9E253830
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAgxsGkC/yWMWw6CMBQFt0Lut5fUkuBjK8aPthykosXcViQh7
+ N1WP+fkzKwUIR6RztVKgtlHP4UMeleRG0y4gX2XmbTSrWpUy59JRh4hAQ/G4hNrHPvuBO202VP
+ WXoLeL7/k5frn+LZ3uFQ65WFNBFsxwQ1lepqYIPV8qBWLa2jbvtE5QPyWAAAA
+X-Change-ID: 20260306-work-kernel-exit-2e8fd9e2c2a1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, bpf@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-doc@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ netfs@lists.linux.dev, io-uring@vger.kernel.org, audit@vger.kernel.org, 
+ rcu@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+ netdev@vger.kernel.org, linux-mm@kvack.org, 
+ linux-security-module@vger.kernel.org, 
+ Christian Loehle <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-9fd7c
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3309; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=fE0Z/ubIZkvllDHDQoyXm3PyilLIY5Tu3AO0WZjDsTc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRuMBTr7bhhNqNZgWf+LzYHk0VPGot/7yk3qp6qVMf86
+ r3sWbafHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZtoyRof32OmMzK1MvFp3i
+ RLOjK2rOFX5Z+v3AGxeDj8ltGz5br2Fk2COsfshHNk+cZf2uoIUP/xl9bjn/zH4H6x9zpi1CQW+
+ KGQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Rspamd-Queue-Id: 27230253DDB
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12618-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-12619-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[kernel.dk];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.998];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Similarly to what commit e78f7b70e837 did for local task work additions,
-use ->rings_rcu under RCU rather than dereference ->rings directly. See
-that commit for more details.
+In 28aaa9c39945 ("kthread: consolidate kthread exit paths to prevent
+use-after-free") we folded kthread_exit() into do_exit() to fix a UAF
+bug but left kthread_exit() around as an alias. Remove it.
 
-Cc: stable@vger.kernel.org
-Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+While at it, rename do_exit() to task_exit() to communicate that is not
+just a private api.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- io_uring/eventfd.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Christian Brauner (2):
+      kthread: remove kthread_exit()
+      tree-wide: rename do_exit() to task_exit()
 
-diff --git a/io_uring/eventfd.c b/io_uring/eventfd.c
-index 78f8ab7db104..ab789e1ebe91 100644
---- a/io_uring/eventfd.c
-+++ b/io_uring/eventfd.c
-@@ -76,11 +76,15 @@ void io_eventfd_signal(struct io_ring_ctx *ctx, bool cqe_event)
- {
- 	bool skip = false;
- 	struct io_ev_fd *ev_fd;
--
--	if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
--		return;
-+	struct io_rings *rings;
- 
- 	guard(rcu)();
-+
-+	rings = rcu_dereference(ctx->rings_rcu);
-+	if (!rings)
-+		return;
-+	if (READ_ONCE(rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
-+		return;
- 	ev_fd = rcu_dereference(ctx->io_ev_fd);
- 	/*
- 	 * Check again if ev_fd exists in case an io_eventfd_unregister call
--- 
-2.53.0
+ Documentation/accounting/taskstats-struct.rst                |  2 +-
+ Documentation/locking/robust-futexes.rst                     |  8 ++++----
+ Documentation/trace/kprobes.rst                              |  2 +-
+ fs/cachefiles/namei.c                                        |  2 +-
+ include/linux/kernel.h                                       |  2 +-
+ include/linux/kthread.h                                      |  1 -
+ include/linux/module.h                                       |  2 +-
+ include/linux/sunrpc/svc.h                                   |  2 +-
+ io_uring/io-wq.c                                             |  2 +-
+ io_uring/sqpoll.c                                            |  2 +-
+ kernel/acct.c                                                |  2 +-
+ kernel/auditsc.c                                             |  4 ++--
+ kernel/bpf/verifier.c                                        |  2 +-
+ kernel/exit.c                                                | 10 +++++-----
+ kernel/futex/futex.h                                         |  2 +-
+ kernel/futex/pi.c                                            |  2 +-
+ kernel/futex/syscalls.c                                      |  2 +-
+ kernel/kthread.c                                             |  8 ++++----
+ kernel/locking/rwsem.c                                       |  2 +-
+ kernel/module/main.c                                         |  2 +-
+ kernel/pid_namespace.c                                       |  2 +-
+ kernel/rcu/tasks.h                                           | 12 ++++++------
+ kernel/reboot.c                                              |  6 +++---
+ kernel/seccomp.c                                             |  8 ++++----
+ kernel/signal.c                                              |  4 ++--
+ kernel/time/posix-timers.c                                   |  2 +-
+ kernel/umh.c                                                 |  2 +-
+ kernel/vhost_task.c                                          |  2 +-
+ lib/kunit/try-catch.c                                        |  2 +-
+ mm/hugetlb.c                                                 |  2 +-
+ security/tomoyo/gc.c                                         |  2 +-
+ tools/objtool/noreturns.h                                    |  3 +--
+ tools/testing/selftests/bpf/prog_tests/tracing_failure.c     |  2 +-
+ tools/testing/selftests/bpf/progs/tracing_failure.c          |  2 +-
+ .../selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc |  2 +-
+ .../selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc      |  2 +-
+ .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc   |  2 +-
+ 37 files changed, 58 insertions(+), 60 deletions(-)
+---
+base-commit: 1f318b96cc84d7c2ab792fcc0bfd42a7ca890681
+change-id: 20260306-work-kernel-exit-2e8fd9e2c2a1
 
 

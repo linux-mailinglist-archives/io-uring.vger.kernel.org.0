@@ -1,207 +1,186 @@
-Return-Path: <io-uring+bounces-12612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12613-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uIjCM5Tbr2kzdAIAu9opvQ
-	(envelope-from <io-uring+bounces-12612-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 09:51:32 +0100
+	id COg6BwonsGnYgQIAu9opvQ
+	(envelope-from <io-uring+bounces-12613-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 15:13:30 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A00247A4C
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 09:51:32 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6766E251872
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 15:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4A0333032076
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 08:51:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 40EEB32D1FE9
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 13:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072793E8C64;
-	Tue, 10 Mar 2026 08:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8A6355F5C;
+	Tue, 10 Mar 2026 13:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLJ5rUbB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1s7Ng7aH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93F83F23AF
-	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 08:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45920399371
+	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 13:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773132680; cv=none; b=L3qun9BVsS6mD3ni6r6sqVckvxJKkeVDkptVCW484YZeOOfTxHiJoVMOuNeGL3u9fJA8c02x6GFv4Iv74wO/fqr2v/ne+s15rQEIqRAp1mZ+/ecG+2bRhvKJJcVAkuHz75ZnvS9vBftKgllgawwB+lbka5Rj+P3c919+BOANFeE=
+	t=1773147681; cv=none; b=ay6+2mmP9oRkbvTAtaeZDV0LYjtTRGbMpE0w/pM1xyVBvx1XMO5xGFDWblBZtPDazOgNwXv47aUK2nTHGDe8o2vVFu+HE/f/88n2ztH+QBBZy/ZU1e8x7xEHN2MovUdQmFa1lxYdQuzhq4qYyTXvJZRsp9kthrSLuFNYm2L63sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773132680; c=relaxed/simple;
-	bh=Junyxo/AxC0i9kN4JSIPlzik1XZ2+ndba50wnqgyp2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYa6dQJhL7OVb7iH4ZYRUS1xwuqvB6oojjHoz1bzX8Si91C7u8wT573y6L7jtYYlgrgW7jYfxrm4jHnqdanwAask7gdm0pjaqGH1CN8QesSuBjr48pTek5HaHhTjLZEnhRwP6HHO5LAai6GYnCTc0yZi9qB5WdEuWP8SqDV5L1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLJ5rUbB; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-829928e512aso2728380b3a.2
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 01:51:19 -0700 (PDT)
+	s=arc-20240116; t=1773147681; c=relaxed/simple;
+	bh=DRM3o/0MkVngiUT1StR06KkinWD6NhgWCnmFQoRum+c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gdQXsMLThP44VcEFSF9xfllF+DrSmQO+R3dw7H1XYEp6yya4KSiEKFjV72leNdTtPeJXwT/rHBrNnMzLNi1AEUtvFxpyMpJ8JxoQ56PTFUOo+DHiYKfv2hZOSwzQQJFoSMVEOqW2YzJf57nI6x4OpWhxF6yhrA1osy1L9dau0sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1s7Ng7aH; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-4671cbce2feso396380b6e.3
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 06:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773132679; x=1773737479; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FEIJMcCOSlK/2cej+ULe0a9NbkGx/J/3ZpxAws4xPTk=;
-        b=BLJ5rUbBKem18ev3AQCyA8h3kcjGDxTY5bp3h6Akf3fPfbZXkE5HE8H1/8x1qvMzRh
-         tQOmlEI82Zl3xV2hN91WOKWehDP3RoMdbUg3dpPcYiZ2MTqonHHMwuI8qOttIsbIPHBz
-         t7rGoBUkw5OfVggEVUO8zBQCWRUD2RpO9RBZEyt/1OSKm4PbVvNUcLD1wFDPM1jta0mt
-         Jm6j85BQcgtSOjK3ILlbnECADt3MGuYh14nYdiw9jKQTLZ/dQ9/VEYHao2B4efjK2TKh
-         Mu0o1Gfdvtb9XXjZKHq0dLzieJ/JwB1p9d22jnOjgxqxlt5jqXiGIyNAjLPnpHN3T5yp
-         YIqQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773147678; x=1773752478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+FUL8dOnaJUDjdgi7N142b6T8rJdjLK1j6EWyHgFwQ0=;
+        b=1s7Ng7aHTXcxnib1/QZSTber0K1mrJHHs0mlMMmMy+g+PIrauHISf45XlILJp9es3j
+         pfhv5OpbaS3e8/J37CXj6vvjCPoCrq+24YMWKd4+tIECiNcj1TZVwJ43F7douLBVSTF/
+         59OWCAXqgoTftUmJItOEfnso0QrWVjx/KJv8ivBrq8GdJRI8jVtJG4s4Zudubz7c90LF
+         ZnobiHQgI8+QqOumqxfMZlR4UO7gyWOtjXEeiqqAhPw2atL0YuqeRtPRB2gBU1nkbgJk
+         7DSPEV/wDFgPWNtxlnrmtoDUG+S/m6il2AMB2PMRwrn3IfqSF9Xe8/qtGeaMapjpLL5k
+         ALHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773132679; x=1773737479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FEIJMcCOSlK/2cej+ULe0a9NbkGx/J/3ZpxAws4xPTk=;
-        b=jG8UHsN3mmKQ3zFeQ7gwNKGQ1zf9y0gFwzAInAqDdCPOlzeT/B+hWPWPJFzL1Ps9Ef
-         AEcubjA5Ls/A6oW4X29K+bDLvp2HaX8+qVS8hZu96mY/e1M3BMPcCVVllF8/wYn5hvus
-         rPulUCRtEoif9Lb10ykDpHL9aIvNVXG7mDbVGBMmuNCbdOIJZ/wk1AEb7j21Ro7plhxw
-         bcRtu0m/3m2EtkpubcbSOBGtMbIpgj0naq66eQlyzG4TIs0+FNB53vIVW3z/6/FUEs81
-         zJU5rYEBxl5A5wg0jUWb0LsKYfdo1OUg5+ac7spw8DHIEYt531V0HRys1yCT2RxD7XEA
-         UG6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFbMFcnvRInRf2bF+NN2xoDrlpjGKhNf772MspxvtoLSjAhhxlQMK4Kazp2ljZyFHtwQgXjtK3Aw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEzA3fY0B0oXZnQA6Vt1B5TaxSHPG7QK8YJ/h6mTMvdG9WNQ7G
-	W2TFSOadbpp+MMA+lzWgYn+d4MOP3NE8145UJcZL995Xf9GK9gogyhMyg5JFc7xt
-X-Gm-Gg: ATEYQzwl4SNpUn9L46op7J9KwCc1nUyPuYDIxlWOxavozJwx2umKTse27teGqA3KXHJ
-	4bieLYv4pE3H9YKLcUKSVUfaTgmsDXscylsMsRFPTM5t77EjDNJLPFqZ/QSCr/MySJpl9DiaccB
-	wm9tCKGGR9A5IlIVRd2r/Bup0s1Jlj5FWGva5dWE4AA3HlxsU6xQ7/scb+uOlVq4RyjjQhsgFvG
-	VobfeUNZdeVyHZTe6QKXrmi/kx4GepsUclfy+jA5KB4SOBEIzhfCek2ws7TLzgmJBPz3Vx/jZ/S
-	oLmg1SJeVtqb1T2W015lr7CoPXxJ7OnKnWlsiHJcYsiz7m5TmIM+ox7D/yEK4pLO5LhPo6P+ziH
-	MuZHUklXb637g0zUxx0lvPUMSUp8M9widTDwG+r7ZCdv5ae/s5VxzABWglabl5SSb6sHobi6zDJ
-	jMLxNnh33QIcXQW4hZmLaKbCm/Mw9J13g4D0gHDOcveP07Zkc4
-X-Received: by 2002:a05:6a21:700a:b0:398:a1ca:7a05 with SMTP id adf61e73a8af0-398a1ca8fd3mr4024883637.51.1773132679179;
-        Tue, 10 Mar 2026 01:51:19 -0700 (PDT)
-Received: from naup-virtual-machine ([140.113.92.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c739e16cefcsm11171854a12.19.2026.03.10.01.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 01:51:18 -0700 (PDT)
-Date: Tue, 10 Mar 2026 16:51:15 +0800
-From: Hao-Yu Yang <naup96721@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, security@kernel.org,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] io_uring/register.c: fix NULL pointer dereference in
- io_register_resize_rings
-Message-ID: <aa/bgyqaRk3W4kIq@naup-virtual-machine>
-References: <CAHk-=wi-24g2yzRTHwJ-kD1RqK0TvuPBr0VzvuQVVzR83ddgsw@mail.gmail.com>
- <42AD516A-B078-40A5-94EE-80739B9883E7@kernel.dk>
- <453563bb-8dda-471a-901a-30ba9ff3f9c8@kernel.dk>
- <e9a7152d-3be9-44c2-8626-75ca9da7d408@kernel.dk>
- <CAHk-=wgqyb7M3LZK=+mZOmrS2YDfvh-WKeMeTDCXsoMMkLXfPw@mail.gmail.com>
- <aabe81fa-299e-4b86-be57-933b1f7ce32a@kernel.dk>
+        d=1e100.net; s=20230601; t=1773147678; x=1773752478;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FUL8dOnaJUDjdgi7N142b6T8rJdjLK1j6EWyHgFwQ0=;
+        b=j5qGQIDlEeb6qSavw+DhWB4++ZzFjvHYtb9MYOAR0du/SE8RK6+B4UH6u9aU1EuH1z
+         TJxtJ3lXiyi8B+MjuQ5CXZfy3AJc0ldK3dudfpjK968I4aovgJp1NvirC9b2L/mndHyh
+         cPrMy3xBGOOjV/MsMtGRu53THM54jmGHI+JBqB3T23LagirQmbFAXKLdqxnejTjtMh26
+         qHUHdpnCXB7mHKIJ5Z1HWEN6kCkm8ac1s6xY1YacmmEWqeOnBChlIJgGoCWN+8oRWFR8
+         nmdwZu0EhqC79f2bhv/SwC41l6XR4CCmMfL5I69gIls32ckm00WSGVBMSBZJExWj1CD1
+         1zgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcIRXZz/Al0/IlLllUJsJB22mshw/XUmLRnVndb0k6kkoyRnZvCpOJk9S0xQrfxYjZIbnVfTReWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlUCVF27LXQ0pdBucxui6rqYfNMDVrrjqDjf+5yOcW3ucRJ4aj
+	evOIt2+wJNn0nCBtKHrO8xKX0XRIUEw7yB/6j0hBbcrghcC75pVuOGYWKRlBToWtZeI=
+X-Gm-Gg: ATEYQzzzdQpq3+Q3dK7RQqXIjJn46y5ybpDy44Of9KMcdikYHNPcsqhriLCxdCwsGNP
+	cv01zypGuG+27zy+4CD2HYBE2TbjCnS72RPsgrcHza3DaKk49dJ0e408YLPd4NBY32oXYM+6L/5
+	H4pA8jvxgEMrXMHDsM2JAkbS7rViWbz1TY7Bo1geLVhcULTGzYJaSyJZMV0t7dtCwKzfEpu5Z+D
+	YAub/f9ubJK31GpH9y6OH8RzGdvpQHBwdeTCjjSgTxSyU6ZX8gm5SxKjIZBSks7YVNpC9o3Jfi7
+	BhIanbcjYLAwhWiBVgsztMt9NEDCmqBBCo2x4haTFSxvM2OCbAfRwveJ6JvAmmwNC4Luv7vHvko
+	jyKTpEsp9MTZRSj2XSv7q+AmzFCjb+JIfaEztDGzv3ROGbqyDzQ/BJ5tWX40yYD7HZPUy5Tor5d
+	izsnrQ3f1grtWrNw91GNpoAALmX/1pTpitY19KOFB28QNDFsd7UyQe8cn/7Q0GNHQj0MSFe5XME
+	W6/y7RP3A==
+X-Received: by 2002:a05:6808:1b0c:b0:467:1633:a1a6 with SMTP id 5614622812f47-4671634346fmr2599909b6e.13.1773147677860;
+        Tue, 10 Mar 2026 06:01:17 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-466df93e85fsm7477923b6e.2.2026.03.10.06.01.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2026 06:01:16 -0700 (PDT)
+Message-ID: <adc62a4e-6d68-4678-be0a-331d910405d5@kernel.dk>
+Date: Tue, 10 Mar 2026 07:01:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aabe81fa-299e-4b86-be57-933b1f7ce32a@kernel.dk>
-X-Rspamd-Queue-Id: 76A00247A4C
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH liburing] test/sqe-mixed-boundary: validate physical SQE
+ index for 128-byte ops
+To: Tom Ryan <ryan36005@gmail.com>, io-uring@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, kbusch@kernel.org, csander@purestorage.com
+References: <aa9Bjbplx3b_Uvmj@kbusch-mbp>
+ <20260310052003.72871-1-ryan36005@gmail.com>
+ <20260310052003.72871-2-ryan36005@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260310052003.72871-2-ryan36005@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 6766E251872
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12613-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12612-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[5];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[naup96721@gmail.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel.dk:mid]
 X-Rspamd-Action: no action
 
-On Mon, Mar 09, 2026 at 01:22:10PM -0600, Jens Axboe wrote:
-> On 3/9/26 1:03 PM, Linus Torvalds wrote:
-> > On Mon, 9 Mar 2026 at 11:35, Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> --- a/io_uring/register.c
-> >> +++ b/io_uring/register.c
-> >> @@ -575,6 +575,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
-> >>          * ctx->mmap_lock as well. Likewise, hold the completion lock over the
-> >>          * duration of the actual swap.
-> >>          */
-> >> +       smp_store_release(&ctx->in_resize, 1);
-> >>         mutex_lock(&ctx->mmap_lock);
-> >>         spin_lock(&ctx->completion_lock);
-> > 
-> > The store-release doesn't actually make sense here. It just says "this
-> > store is visible after all previous stores".
-> > 
-> > It can still be delayed arbitraritly, and migrate down into the locked
-> > regions, and be visible to other cpus much later.
-> > 
-> > On x86, getting a lock will be a full memory barrier, but that's not
-> > true everywhere else: locks keep things *inside* the locked region
-> > inside the lock, but don't stop things *outside* the locked region
-> > from moving into it.
-> > 
-> > End result: the smp_store_release does nothing. You should use a write
-> > barrier (or a smp_store_mb(), but that's expensive).
-> > 
-> > But even *that* won't work - because the irq can already be running on
-> > another CPU, and maybe it already tested 'in_resize', and saw a zero,
-> > and then did that
-> > 
-> >      atomic_or(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
-> > 
-> > afterwards.
-> > 
-> >> @@ -647,6 +648,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
-> >>         if (ctx->sq_data)
-> >>                 io_sq_thread_unpark(ctx->sq_data);
-> >>
-> >> +       smp_store_release(&ctx->in_resize, 0);
-> > 
-> > On the release side, the store_release would make sense - the store is
-> > visible to others after all the other stores are done (including,
-> > obviously, the new 'rings' calue)
-> > 
-> > But see above. This just doesn't *work*, because the irq - running on
-> > another cpu - will do the flag test and the cts->rings access as two
-> > separate operations.
-> > 
-> > All these semantics means that 'in_resize' needs to basically be a lock.
-> > 
-> > You can then use 'trylock()' in irq context *around* the whole
-> > sequence of using ctx->rings, to avoid disabling interrupts.
-> 
-> Agree - I think Pavel's suggestion to use an rcu protected pointer and
-> have the resize sync rcu is probably better though. As mentioned, resize
-> can be expensive, it's not a hot path operation. the local_work_add()
-> path is extremely hot, however.
-> 
-> I'll take a look with fresh eyes tomorrow.
-> 
-> -- 
-> Jens Axboe
+On 3/9/26 11:20 PM, Tom Ryan wrote:
+> +/*
+> + * Negative test: NOP128 at the last physical SQE slot via sq_array remap
+> + * must be rejected. Without the kernel fix, this triggers a 64-byte OOB
+> + * read in io_uring_cmd_sqe_copy().
+> + */
+> +static int test_oob_boundary(void)
+> +{
+> +	struct io_uring ring;
+> +	struct io_uring_cqe *cqe;
+> +	struct io_uring_sqe *sqe;
+> +	unsigned mask;
+> +	int ret, i, found;
+> +
+> +	ret = io_uring_queue_init(NENTRIES, &ring, IORING_SETUP_SQE_MIXED);
+> +	if (ret) {
+> +		if (ret == -EINVAL)
+> +			return T_EXIT_SKIP;
+> +		fprintf(stderr, "ring init: %d\n", ret);
+> +		return T_EXIT_FAIL;
+> +	}
 
-Hello
-Yes, crash point is at 
+I don't think this will work, because this function requires the sqe
+redirection array and liburing will wrap the above in SETUP_NO_SQARRAY.
+Is this some llm written test case, or conversion of a raw use case? Did
+you actually try and run the test case?
 
-	if (!head) {
-		if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
-			atomic_or(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
+You can certainly make it work, you'd have to use
+__io_uring_queue_init_params() to accomplish the setting up of the ring
+without IORING_SETUP_NO_SQARRAY.
 
-When access &ctx->rings->sq_flags. I removed it accidentally, yesterday.
+> +	found = 0;
+> +	for (i = 0; i < 3; i++) {
+> +		ret = io_uring_wait_cqe(&ring, &cqe);
+> +		if (ret)
+> +			break;
+> +		if (cqe->user_data == 2) {
+> +			if (cqe->res != -EINVAL) {
+> +				fprintf(stderr,
+> +					"NOP128 at last slot: expected -EINVAL, got %d\n",
+> +					cqe->res);
+> +				io_uring_cqe_seen(&ring, cqe);
+> +				goto fail;
+> +			}
+> +			found = 1;
+> +		}
+> +		io_uring_cqe_seen(&ring, cqe);
+> +	}
 
+This one puzzles me too - you submit 2 SQEs, yet you wait for 3. This
+will just sit forever until killed by the test suite timeout.
+
+-- 
+Jens Axboe
 

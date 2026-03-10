@@ -1,98 +1,189 @@
-Return-Path: <io-uring+bounces-12624-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12625-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GD09NitEsGlLhgIAu9opvQ
-	(envelope-from <io-uring+bounces-12624-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:17:47 +0100
+	id uHL7OA5JsGnFhgIAu9opvQ
+	(envelope-from <io-uring+bounces-12625-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:38:38 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A332825488C
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:17:47 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A74254F44
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3234030AB8E1
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:14:47 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3884630FF9A9
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CC1351C16;
-	Tue, 10 Mar 2026 16:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0197D3BF690;
+	Tue, 10 Mar 2026 16:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUO/YtsI"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="k91FL7Ac"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205A3A6B94
-	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 16:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A561434EEF9
+	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 16:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773159286; cv=none; b=QrH4HQbyNRWTmOuPDSYzJpA50RfS6oPqmqbSd8an+PXFZbzPtq5pWWUGnEHWBB/cJO5MpyzfOd1yJ5qgHgf23T3BvMYEkJ/bWbsSqk75zKhoLGc6jyaTvRY0ccQFKfhgtTZnVQ4GaU47ryv22FdLy96Mvdgxkimul/HvZFNZ31U=
+	t=1773159889; cv=none; b=G2cxqYEFo09PrI3+ACeR5MayLDAXm6Yrcc4VLLEXrdngxshehEptakLKLj/QrwcSbgb8V+2CsIlOkBoPcNHuf2bmablr9Qz0m0gRhkZEIhzDO48Eh8H9UHEpiPTYtrGSj/f0PoewVl8YecKVbxytKIAfYKaWVLXM7DuMgfKg5yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773159286; c=relaxed/simple;
-	bh=S5LiJXLL/D+yYCHwucKeFkX5yWnQ7QyfpDt2GZKWoU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoQ8OvOPQtc+n7s7ZFHDFtPGUKq0KweQAYsxV7HkyK0eV7V04h57sqUIDidj5bZlTgTx3zoJwHg08sO6UXG3PrHVxLqGUGQfLc84G6Hc7TrmlsOSv1pTpSigRg0kdqrftTwyJ+HtTCxBNg/YKpG6A/s6jk4x8PrJZPtWZHHY+Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUO/YtsI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC9B3C19425;
-	Tue, 10 Mar 2026 16:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773159285;
-	bh=S5LiJXLL/D+yYCHwucKeFkX5yWnQ7QyfpDt2GZKWoU8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qUO/YtsIeoKIDc0myZDYVVOdwQQsae/Gvd3XHaR47g+VIhEis5qK+q94v7UxmHdi8
-	 715Ttc8MMFVZvkeAthA+PT6H2Qcav+J6WfzMpeljmhJFufSAPn2UInCRIHubHh8qMA
-	 aZmWEkUSR4xljX3yGKxVWoIy2TnemTOLfk2kqwkjamHBkVGvm3fTU7RsG99dB+FUli
-	 qptHW6tnu2FDWCQ1sauifXRus0U+PgWaLO78TMERiMrMRWqxAQM8aqg635muDvl3ZU
-	 Qr1DZDJJ8r54KRZ++6w9ggAM19vr9kV6ROIfuI+VBcbp9CQL6nJmH2kQfsbQs8jmHp
-	 ixY7Hwwkj70uw==
-Date: Tue, 10 Mar 2026 10:14:43 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Daniele Di Proietto <daniele.di.proietto@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] io_uring: Add IORING_OP_DUP
-Message-ID: <abBDc589oZdfR_aD@kbusch-mbp>
-References: <20260310154933.2500971-1-daniele.di.proietto@gmail.com>
+	s=arc-20240116; t=1773159889; c=relaxed/simple;
+	bh=0j569HX7eBjARrEZdsaQkI5bhoiiEUyfWNqGYVyxY6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N7qoZ2d4uQSanrXh08Fao+Ziv+o03KCu+6PbVm7T/AmqoYgeqw1RQ0CJM8Js/jIEuqSwWl5b9ghvpYpx6svMtHb/NRb4QtJWQ5Mz32TDzKWC3YG8L/HfotxpSB61Iedkj+k/xdJXRai647sXCXdFkqAPYtmGpJroxIsMKsRTg64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=k91FL7Ac; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-50335b926c2so115667671cf.2
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 09:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773159886; x=1773764686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nxg4BN35uYts0MnZI088ckNmGLQAe9LkT0Ot2TrMe0g=;
+        b=k91FL7Ac/9ZgthRrMBm2xhXCyXoAvsYmyilLE0V7UcdLkJNEVcGVfYz2Z45oYdHC4A
+         QEWkYp7MA1eamsPFdGsS6JsnstZ0KdcZKs69/op07dGW9JFQQJI+SK4D8ptlEgFfUPGP
+         DY7cMUneFQWxzORX8PsSKVZWTEZX8NCgOlOqWXQFm0gwBchmd4ZSgLMkLzJNHkdLNhRq
+         kc8NJRrf+Pl1CeciSkY86Fm/5wy5utBCnDYs3zQJlSgOFBN9paaAqawPwBbeVhrb6CLe
+         sSsNh67hg2M+ZzuR0XMeN+qI8eamY5gC0LVbWai/RDnqXf1DxfRL1ZMKMSHjX+o1h1mY
+         9T9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773159886; x=1773764686;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nxg4BN35uYts0MnZI088ckNmGLQAe9LkT0Ot2TrMe0g=;
+        b=quMYktbTu0YF+UJPdRFrumb+L6E5/QB25YlDwWjW0BTgdhZk095kz3P83tfvLe+UbQ
+         XWq8mOPweo5xU6EWAlEXGDUMIN5QKsUeKDHz/cN2xwJW9WQjXFNp44CyBs0e22zaeenP
+         weHBRDsY/vIXcaZel4VKpXAozF10CiAJF5CUiOO6SZOlGb5UUQBbGKQHaBkN/2pE5j8E
+         zJN5WXowPKdEu9cqtPqBvv7lFCvUqMp6+RVhvuBjEUOxooE/CocmhQTlvO5Pn2X8AnRN
+         j8yngg04klngFC9RFVFAtYF+GBOhk5tvRJtvZrkPxEUVfr9xFkYKmkidaYl+5FNqIdcx
+         Z0FA==
+X-Forwarded-Encrypted: i=1; AJvYcCW83HTaX/7jP+wY8LSdAmEl2gJ26r+fHXinnKdHXAJkR9c1xCZwJgQHZm+17HrM9kvAkUUTZy8b2Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/YbPIVxia+KHoi61BXLXDR6KAd13G4UIN1UQU2CdsGWaH8jKY
+	Dfbd3oSgLmX2eioTslM44F3p/4RGPhEiDfmn48ZdnbdWxVxzkGUqjbvlIdcEFIy/lq4=
+X-Gm-Gg: ATEYQzzz2Xg7znpuBQBjJte65eEzPpb/3z83cjL+qJ68zTDdbDNGwlhhffllTUF8Vq7
+	ty6v6GNAVJqgwaKN4auj9N8lCtCzaXrf8DVbuQqWp45IGcOCjPc8V8InepZto0FlQSLOeB04Nks
+	+zQWcJK3yvPMoF+hM9ouXtE3ruq2SVZczjRC3o3jsiXhKiVEVWyqqcooQjbkfjJcpo120B13gH+
+	24fH4ZHaZz7OP0GK5ttV7QF0J9r97olSmccQC2XyrfCX3n5pMROUXxo42g6XvPI3aJonMHVtEDW
+	3GQKgFKnXeFlBgDIqYZEcFGdxurx6JWv/4bmZn6E4Q14m96/qrb3OukhcxgFOgeAyVSSzt13b5B
+	yfkXO5oiZ10MpJyNvGNRYlsYzcAT6BUHu0OSd8BirC3zV0AhqQGaLX1j0Y5J2+ZctgarKn958KZ
+	XF9YcOrshH/3qOdxiQyvqc20a9HX/Hu3qsUBvNHS74g692+2NCcxznJ2K2YvqFzglsN1OZfn7R+
+	boorxeTemoIrF18O8k=
+X-Received: by 2002:a05:622a:1209:b0:509:2faf:490 with SMTP id d75a77b69052e-5092faf0b85mr24305301cf.11.1773159886549;
+        Tue, 10 Mar 2026 09:24:46 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-508f6695614sm94992321cf.22.2026.03.10.09.24.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2026 09:24:45 -0700 (PDT)
+Message-ID: <c29a339d-67c5-4e8a-a1c9-2388aa9f28d5@kernel.dk>
+Date: Tue, 10 Mar 2026 10:24:40 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: Add IORING_OP_DUP
+To: Daniele Di Proietto <daniele.di.proietto@gmail.com>,
+ io-uring@vger.kernel.org
+References: <20260310154933.2500971-1-daniele.di.proietto@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <20260310154933.2500971-1-daniele.di.proietto@gmail.com>
-X-Rspamd-Queue-Id: A332825488C
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 60A74254F44
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12625-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12624-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kbusch@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,kernel-dk.20230601.gappssmtp.com:dkim,kernel.dk:mid]
 X-Rspamd-Action: no action
 
-On Tue, Mar 10, 2026 at 03:49:33PM +0000, Daniele Di Proietto wrote:
+On 3/10/26 9:49 AM, Daniele Di Proietto wrote:
+> The new operation is like dup3(). The source file can be a regular file
+> descriptor or a direct descriptor. The destination is a regular file
+> descriptor.
+> 
+> The direct descriptor variant is useful to move a descriptor to an fd
+> and close the existing fd with a single acquisition of the `struct
+> files_struct` `file_lock`. Combined with IORING_OP_ACCEPT or
+> IORING_OP_OPENAT2 with direct descriptors, it can reduce lock contention
+> for multithreaded applications.
+
+Overall comment - how does this interact with direct descriptors? Feels
+like this should support both, rather than just normal file descriptors.
+
+> @@ -446,3 +452,46 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags)
+>  		fput(files[1]);
+>  	return ret;
+>  }
+> +
+> +int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> +{
+> +	unsigned int flags;
+> +	struct io_dup *id;
+> +	int new_fd;
+> +
+> +	if (sqe->off || sqe->addr || sqe->len || sqe->buf_index || sqe->addr3)
+> +		return -EINVAL;
+> +
+> +	flags = READ_ONCE(sqe->dup_flags);
+> +	if (flags & ~IORING_DUP_NO_CLOEXEC)
+> +		return -EINVAL;
+> +
+> +	new_fd = READ_ONCE(sqe->dup_new_fd);
+> +	if (new_fd < 0)
+> +		return -EBADF;
+
+Is this necessary? Yes it'll help fail early, but do we care about that?
+
+> +	/* ensure the task's creds are used when installing/receiving fds */
+> +	if (req->flags & REQ_F_CREDS)
+> +		return -EPERM;
+
+Not sure that's sane. Let's say you mark this request as IOSQE_ASYNC,
+then it'd fail even if REQ_F_CREDS would then be set, and creds would
+match the original task.
+
+
+> +
+> +	id = io_kiocb_to_cmd(req, struct io_dup);
+> +	id->o_flags = O_CLOEXEC;
+> +	if (flags & IORING_DUP_NO_CLOEXEC)
+> +		id->o_flags = 0;
+> +	id->new_fd = new_fd;
+> +
+> +	return 0;
+> +}
+> +
 > +int io_dup(struct io_kiocb *req, unsigned int issue_flags)
 > +{
 > +	struct io_dup *id;
@@ -100,8 +191,14 @@ On Tue, Mar 10, 2026 at 03:49:33PM +0000, Daniele Di Proietto wrote:
 > +
 > +	id = io_kiocb_to_cmd(req, struct io_dup);
 > +	ret = replace_fd(id->new_fd, id->file, id->o_flags);
+> +	if (ret < 0)
+> +		req_set_fail(req);
+> +	io_req_set_res(req, ret, 0);
+> +	return IOU_COMPLETE;
 
-It looks like there are a few conditions where replace_fd may block,
-so it may be a problem to call it from the uring enter context since it
-will block progress through the sq ring for subsequent commands.
+And like Keith said here, we might need to punt it to io-wq if the file
+has a ->flush() method.
+
+-- 
+Jens Axboe
 

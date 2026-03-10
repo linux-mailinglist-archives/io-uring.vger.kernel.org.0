@@ -1,85 +1,85 @@
-Return-Path: <io-uring+bounces-12622-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12623-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wIvgCqw/sGkehgIAu9opvQ
-	(envelope-from <io-uring+bounces-12622-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:58:36 +0100
+	id mHq/D6NFsGnFhgIAu9opvQ
+	(envelope-from <io-uring+bounces-12623-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:24:03 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0D5254261
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 16:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA370254A8B
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 17:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4516E32F62BA
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 15:51:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7FE9532F106F
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 15:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528C63A9620;
-	Tue, 10 Mar 2026 15:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B0538B7B2;
+	Tue, 10 Mar 2026 15:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGC1na4u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebSHG/Tf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886623AB26C
-	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 15:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585D43B6C01
+	for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 15:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773157798; cv=none; b=Cssp/kgHsFsDWt4bslOVXZZrY7DM16mZ2ziN0fOmsNNP1dIQ7NvRJ0l24SGJj2yIv7mdoDdY3qsf+UFWeil9B5gSgdClOJM+Pl4EpBc9mm/Yi6+XHBpzD6eTxVV1BCF6yCiFqVDlH2fgAs+x4gxjQpUwwBFjblVA6M3Pnh5aN8Y=
+	t=1773157887; cv=none; b=gIDfgaKMbgOvhdPmCpPeK1yLZoEYrJmd/25/cLnGdXaMzyg3faaMX0FnLtMvaplau+UBdBuR674+rbqlf+tH+RkNqVvt9jCq+stLTdU+PUGczcyuf1wDB4W0tI8So8rNxDa7agcCNb4uV2+dcl/ksOJDMN0tpJlZXJPxu+MPd+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773157798; c=relaxed/simple;
-	bh=pa9LJ0pr5lucMOeQ501Q9Nc8bA1N5kBQmGw4H6ApFuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LtU6Texa8jWgl96WNC3x0mcQhsDs3ahlY6mL0c+8tQFBHanYzk6pMbeMkB67Cry37CzFSBejlvasYp7ReUoE7NaGI3aWVhrfyLhavWutxl/mkmfg62iO+uWvSRV/CTptN6MexIi1YIcHzLOiWCJECs0UDlnk75w/HN86sDpNpLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGC1na4u; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1773157887; c=relaxed/simple;
+	bh=omuPlw94HqC/C0+bhhKdlyKKmrdjUUML64pXH/0Ertk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PGN9/rBJa5EHgBXZw6+l0xyjohhrrQTFi+yyHIRh7qcBJV7g9Nv6Mg9GBJr+iKSv78FxCKDVN6tnsdUPzFswDbLfn27eMMBnpx7dNE0o+/81/kXkD9L88rwo4MXl8coCI4d8UftLpGls0RGEwre3cv2+BfZ8pf6VRv05zF8aYyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebSHG/Tf; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4852a8482fcso36580155e9.3
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 08:49:55 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4852e09e23dso29441475e9.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2026 08:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773157793; x=1773762593; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773157881; x=1773762681; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFGIcPCn0jLzCB0nuP8rkEVjzYjjNEyY+O+yewiFaGc=;
-        b=dGC1na4u/PdQOzEVEQp6H/BiS+jxLKOgA1BuZjui+Yri/D2ktoDhO258NCiphS+UNK
-         Nv/Fk2ChqyOw7LUkpPsIzjIjqeJIip69rJIIkGPA7T1zajA3h9urK5SDz0SA0teXr19w
-         Za0WOoqZJZ02O8ACsxFYJ6yGaidN1+yc50aumgnRJgVDDUlZtzzLDOfXM6pFy0IGj6L3
-         a211/RGC2kAClMPxPEDQReTaceKgJm785mfz7CSKlta484KPsjhYedCQvnUPIE6u8lFE
-         BoSvO/b2YV4F6cj8hntflx5rn6obKzM5rAsfLLx/7FaBsd5nm5U+xJZak93l7RByid7Y
-         SxQw==
+        bh=iFJAWIqQ0mbqgguHwVzxsSroqxLrk96F88avy9tabBs=;
+        b=ebSHG/Tf39dy4ydT17iFKfde2ZR5vKjsYFuSC3yMX7WuiGOYEDyIOO4L3UGkK6sZIz
+         davk+egAjjhZSSbZQAB/9777ubFTwz4ea1duzTJ9XHkp3XA9P2XUNZ/8gm1/ybvBOZAI
+         lSq60wY2WA1uy/LC2z2agP9xyv9ewHV48Mc069lTGqdW+Qqbwe6/DuFbR3YD+e3q4gPZ
+         Pj6eP4qPUhfSIKMC+wmqZe1RPKij+SCnR+CyFLN/XBr6UB93tKBC/r4UTtWFmUiSKJxC
+         Q0x8zdq1VHDsUf9ITvqnM6nXDXo4jzxwtehoiwFnGdR6OCnbxc/p9UObLi4WMQNiPJ4R
+         I1cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773157793; x=1773762593;
+        d=1e100.net; s=20230601; t=1773157881; x=1773762681;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qFGIcPCn0jLzCB0nuP8rkEVjzYjjNEyY+O+yewiFaGc=;
-        b=WYSZC0Wn0cv8ogmzzFFnNDfvHg4CqqWE5TjgfjQGXI8N1xfc9Cp0iF1980EFnvYpXA
-         VlyKUZbKqgDGcoZegc0IbGdijfkp2qDUlZ3yFhovtAC+dsZDg77Mzhfaq+xE08m6jNkU
-         oTFDl7mi4u380nc4K4xc44OU5OFq1pCdlFfaNwHCYOC2c1MeifpLJdaD7FK7tVzOCrpn
-         /hCYShMPxTihxzA8R7O4t6OJFDI3xG9N0/ZWYCcT9zcmoDdWDtERBKbfxWjm+4k2E1xH
-         Xc1+hAhdzLu2DQVKPaYCOrD2Yd24Lth2f7SpqGn1dICOyDM73RDIknvkFJGY3EAWFx4s
-         h6wQ==
-X-Gm-Message-State: AOJu0Yxiy943bD3dIbFWwLq458f2qwF6a2efhJYUdopl23XHdpGuolKS
-	iF4jz7Le03fq7CcPxJRX0bmNvFtWnz6/5dQNXgo+mfUrlGrWP9ZkCL4hWo4m35a2Nvw=
-X-Gm-Gg: ATEYQzwOBcL2I3ifyj2TmtIU3Mh9FL5cll4Rh4YaDKgjjydRrXTOg9KUFVMUrSVQZQq
-	zabp1aXeiPHe2oNLLFnIJWDB2AoYhjnOQvJqlNv4pRWtQggIbl75CGr0E6SNhFzTPq90nad5LNf
-	tPZ5zth8S8Qg2cLluXsXdvE/xXXdv+FxX+cJoGxeuE+r961ZyiCrhyzaJ3eiV1g5lYpktnpWY0S
-	odary6c9VhWKOpcsLo+apzLFb/wjdnMl0CDO1nxUdKaaL4j5TFEEonhtBmFIW31iR59bxJDp0OI
-	HtNRgMq4x/c+8XgiWVmE5nfhAX6m4Q+A+1jyapXC1LdBxAI01JRL12TQDXfRKWPN7OU69NP7kcz
-	lS7QE8J41fmbWLGG7NznU3KrPx/kcOPp1vjMcN/KoSsVlVRhROsxvLoiasXVZpdh6IH2T9+hHDM
-	LZpq+KpvCeUEdo1YX9S0Cu+K394EqLv4OsR2b9Jyq41/rew824p2NKMAcc
-X-Received: by 2002:a05:600c:348c:b0:480:1c69:9d36 with SMTP id 5b1f17b1804b1-4852695941dmr255039845e9.17.1773157793324;
-        Tue, 10 Mar 2026 08:49:53 -0700 (PDT)
+        bh=iFJAWIqQ0mbqgguHwVzxsSroqxLrk96F88avy9tabBs=;
+        b=uBmYiNJpDw5A6CovyUb9j0fkAmYzLi6VnOWWfL3W2krbzH7loGnuGcvTn/PH0EaUnX
+         2hhxnZ/6qkX+2U2gUwDPEwsbsL8XrJC/o2f3K7DwKAC+8AfJqeP+p4jtiT009pz0A6Ub
+         Gj6yvwJTBJssqUwJbuft/MK/T+dCSrrWyMpteJfIEDJ0gbniUwmvZpwSGrrMqHIhE9e8
+         jw0nKt46raXpkZk7vxw4dNQ8VywsEW0cKC6Pt4PHtRXKgo1wcU5KWHSlPk26ruvy4WLF
+         POMcrfiGFJhPijpkf/3jwRvediR/XZZRBT60+3rdLW7uf1hMwSU6TvTGZpvZkmC/WD5A
+         EvKg==
+X-Gm-Message-State: AOJu0YyrBNzF186/peSFa9YPRkYgmxphCyQi/sb0tCmIKpJMBFRhmR5t
+	erOHbp0UbGiL/MSr9bXdA9xwIJ1zJ4CuuCNfqLsZL6KnrR3MGmpFJ9HRRKKtmCD1rhM=
+X-Gm-Gg: ATEYQzwvh8nQnBimZo4AtHfLfDvH4T3qh+JmjMsbBj0kTOE/1YXgSiXPcytiEBTRHhT
+	FEDU2+0iyIACMGkYAmkCGDNbISCGjsoq+9AxM+2H9iJcoaVt42rI2IQbrTBozOLMm/j/V3Q1y4k
+	c/jtvQg4fllEaRBazao2Tr057PepKD1srCTcUB/0n1rJFikjOsGdHQ33MWlPbDUHsRQSfIS2jGr
+	UCFQuuzYmsm5OJK+gzo84lqbXwVWz5KNxj/QeZChpESjzDZFdx8MQle210IFBG2y2tDaEX7g14B
+	JLgRE85y7+b9h8Hud97Sh4AN9U8bLco+DPBO4hscOgN4eprLXigfp2yTaJUgbCP+4qNAOOW6v75
+	kgEIlcfZx7k50D6n+Y5Pfzt48Bw+PiKHEGpEJcoHk3qxCVU2RrGBprcMlSpwzH6Fy14MSFwTYUd
+	wHMYDnYOSuVQKV4gnrCJmJa6lvuLlZHIhTgFOZx+15uVQCtc5DDY98GFCS
+X-Received: by 2002:a05:600c:a115:b0:485:3b5b:eb8 with SMTP id 5b1f17b1804b1-4853b5b108emr107092155e9.26.1773157880698;
+        Tue, 10 Mar 2026 08:51:20 -0700 (PDT)
 Received: from ddp-thinkpad.tail20b0d.ts.net ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541a9e549sm84805865e9.12.2026.03.10.08.49.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8dbb3sm33637589f8f.4.2026.03.10.08.51.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 08:49:52 -0700 (PDT)
+        Tue, 10 Mar 2026 08:51:20 -0700 (PDT)
 From: Daniele Di Proietto <daniele.di.proietto@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	Daniele Di Proietto <daniele.di.proietto@gmail.com>
-Subject: [PATCH] io_uring: Add IORING_OP_DUP
-Date: Tue, 10 Mar 2026 15:49:33 +0000
-Message-ID: <20260310154933.2500971-1-daniele.di.proietto@gmail.com>
+Subject: [PATCH liburing] Add support for IORING_OP_DUP
+Date: Tue, 10 Mar 2026 15:51:11 +0000
+Message-ID: <20260310155111.2501074-1-daniele.di.proietto@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -88,7 +88,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: DB0D5254261
+X-Rspamd-Queue-Id: AA370254A8B
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -100,7 +100,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12622-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12623-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -121,28 +121,177 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-The new operation is like dup3(). The source file can be a regular file
-descriptor or a direct descriptor. The destination is a regular file
+The new operation duplicates an existing file (regular fd or direct
+descriptor) into a specific file descriptor.
+
+With the IOSQE_FIXED_FILE sqe flag, it's like
+IORING_OP_FIXED_FD_INSTALL, but with a specific destination file
 descriptor.
 
-The direct descriptor variant is useful to move a descriptor to an fd
-and close the existing fd with a single acquisition of the `struct
-files_struct` `file_lock`. Combined with IORING_OP_ACCEPT or
-IORING_OP_OPENAT2 with direct descriptors, it can reduce lock contention
-for multithreaded applications.
+Without the IOSQE_FIXED_FILE sqe flag, it's like dup3().
 
 Signed-off-by: Daniele Di Proietto <daniele.di.proietto@gmail.com>
 ---
- include/uapi/linux/io_uring.h | 10 +++++++
- io_uring/opdef.c              |  8 ++++++
- io_uring/openclose.c          | 49 +++++++++++++++++++++++++++++++++++
- io_uring/openclose.h          |  3 +++
- 4 files changed, 70 insertions(+)
+ man/io_uring_enter.2            |  24 ++++
+ man/io_uring_prep_dup.3         |  71 ++++++++++
+ src/include/liburing.h          |   8 ++
+ src/include/liburing/io_uring.h |  10 ++
+ test/Makefile                   |   1 +
+ test/dup.c                      | 240 ++++++++++++++++++++++++++++++++
+ 6 files changed, 354 insertions(+)
+ create mode 100644 man/io_uring_prep_dup.3
+ create mode 100644 test/dup.c
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 1ff16141c8a5..472bebeb569d 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index bd4f0613..105f78c4 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -272,6 +272,8 @@ struct io_uring_sqe {
+ 		__u32		futex_flags;
+ 		__u32		install_fd_flags;
+ 		__u32		nop_flags;
++		__u32		pipe_flags;
++		__u32		dup_flags;
+ 	};
+ 	__u64	user_data;	/* data to be passed back at completion time */
+ 	/* pack this to avoid bogus arm OABI complaints */
+@@ -286,7 +288,9 @@ struct io_uring_sqe {
+ 	union {
+ 		__s32	splice_fd_in;
+ 		__u32	file_index;
++		__u32	zcrx_ifq_idx;
+ 		__u32	optlen;
++		__s32	dup_new_fd;
+ 		struct {
+ 			__u16	addr_len;
+ 			__u16	__pad3[1];
+@@ -1729,6 +1733,26 @@ for general usage details.
+ 
+ Available since 6.19.
+ 
++.TP
++.B IORING_OP_DUP
++Used to duplicate a file into a specifc fd of the regular process file table.
++If
++.B IOSQE_FIXED_FILE
++is set,
++.I fd
++must contain the file index, otherwise it must contain a regular fd, similar to
++.BR dup (2) .
++The duplicated file is placed into
++.IR dup_new_fd .
++Additional flags may be passed in via
++.IR dup_flags .
++Currently supported flags are
++.BR IORING_DUP_NO_CLOEXEC ,
++which is the opposite of
++.BR O_CLOEXEC .
++
++Available since 7.1.
++
+ .PP
+ The
+ .I flags
+diff --git a/man/io_uring_prep_dup.3 b/man/io_uring_prep_dup.3
+new file mode 100644
+index 00000000..6e334eaa
+--- /dev/null
++++ b/man/io_uring_prep_dup.3
+@@ -0,0 +1,71 @@
++.TH io_uring_prep_dup 3 "February 24, 2026" "liburing-2.15" "liburing Manual"
++.SH NAME
++io_uring_prep_dup \- prepare file duplication request
++.SH SYNOPSIS
++.nf
++.B #include <liburing.h>
++.PP
++.BI "void io_uring_prep_dup(struct io_uring_sqe *" sqe ","
++.BI "                       int " oldfd ","
++.BI "                       int " newfd ","
++.BI "                       unsigned int " dup_flags ");"
++.fi
++.SH DESCRIPTION
++.PP
++The
++.BR io_uring_prep_dup (3)
++helper prepares a file duplication request. The submission queue entry
++.I sqe
++is setup to duplicate the duplicate the file
++.I oldfd
++with the specified
++.I dup_flags
++into the regular file descriptor
++.IR newfd .
++
++When the SQE flag
++.B IOSQE_FIXED_FILE
++is set,
++.I oldfd
++must be a fixed file descriptor index.
++.BR io_uring_prep_dup (3)
++behaves similarly to
++.BR io_uring_prep_fixed_fd_install (3),
++but allows specifying a specific destination fd.
++
++.I newfd
++must always be a regular file descriptor.
++
++When the SQE flag
++.B IOSQE_FIXED_FILE
++is not set, this is similar to
++.BR dup3 (2).
++
++.I dup_flags
++may be either zero, or set to
++.B IORING_DUP_NO_CLOEXEC
++to indicate that the new regular file descriptor should not be closed during
++exec. By default,
++.B O_CLOEXEC
++will be set on
++.I newfd
++otherwise. Setting this field to anything but
++those two values will result in the request being failed with
++.B -EINVAL
++in the CQE
++.I res
++field.
++
++.SH RETURN VALUE
++None
++.SH ERRORS
++The CQE
++.I res
++field will contain the result of the operation, which in this case will be the
++value of the new regular file descriptor. In case of failure, a negative value
++is returned.
++.SH SEE ALSO
++.BR io_uring_get_sqe (3),
++.BR io_uring_submit (3),
++.BR io_uring_prep_fixed_fd_install (3),
++.BR dup3 (2),
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index c056e71c..debf9e34 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -1688,6 +1688,14 @@ IOURINGINLINE void io_uring_prep_pipe_direct(struct io_uring_sqe *sqe, int *fds,
+ 	__io_uring_set_target_fixed_file(sqe, file_index);
+ }
+ 
++IOURINGINLINE void io_uring_prep_dup(struct io_uring_sqe *sqe, int oldfd,
++				     int newfd, unsigned int flags)
++{
++	io_uring_prep_rw(IORING_OP_DUP, sqe, oldfd, 0, 0, 0);
++	sqe->dup_new_fd = newfd;
++	sqe->dup_flags = flags;
++}
++
+ /* Read the kernel's SQ head index with appropriate memory ordering */
+ IOURINGINLINE unsigned io_uring_load_sq_head(const struct io_uring *ring)
+ 	LIBURING_NOEXCEPT
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index 7a0b517b..73d616ac 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
 @@ -74,6 +74,7 @@ struct io_uring_sqe {
  		__u32		install_fd_flags;
  		__u32		nop_flags;
@@ -159,7 +308,7 @@ index 1ff16141c8a5..472bebeb569d 100644
  		struct {
  			__u16	addr_len;
  			__u16	__pad3[1];
-@@ -316,6 +318,7 @@ enum io_uring_op {
+@@ -312,6 +314,7 @@ enum io_uring_op {
  	IORING_OP_PIPE,
  	IORING_OP_NOP128,
  	IORING_OP_URING_CMD128,
@@ -167,12 +316,12 @@ index 1ff16141c8a5..472bebeb569d 100644
  
  	/* this goes last, obviously */
  	IORING_OP_LAST,
-@@ -475,6 +478,13 @@ enum io_uring_msg_ring_flags {
+@@ -472,6 +475,13 @@ enum io_uring_msg_ring_flags {
   */
  #define IORING_FIXED_FD_NO_CLOEXEC	(1U << 0)
  
 +/*
-+ * IORING_OP_DUP flags (sqe->dup_flags)
++ * IORING_OP_DUP flags (sqe->install_fd_flags)
 + *
 + * IORING_DUP_NO_CLOEXEC	Don't mark the fd as O_CLOEXEC
 + */
@@ -181,107 +330,264 @@ index 1ff16141c8a5..472bebeb569d 100644
  /*
   * IORING_OP_NOP flags (sqe->nop_flags)
   *
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 91a23baf415e..34103b9108f6 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -599,6 +599,11 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_uring_cmd_prep,
- 		.issue			= io_uring_cmd,
- 	},
-+	[IORING_OP_DUP] = {
-+		.needs_file		= 1,
-+		.prep			= io_dup_prep,
-+		.issue			= io_dup,
-+	},
- };
- 
- const struct io_cold_def io_cold_defs[] = {
-@@ -857,6 +862,9 @@ const struct io_cold_def io_cold_defs[] = {
- 		.sqe_copy		= io_uring_cmd_sqe_copy,
- 		.cleanup		= io_uring_cmd_cleanup,
- 	},
-+	[IORING_OP_DUP] = {
-+		.name			= "DUP",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index c71242915dad..f7a6d45cba17 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -39,6 +39,12 @@ struct io_fixed_install {
- 	unsigned int			o_flags;
- };
- 
-+struct io_dup {
-+	struct file *file;
-+	int new_fd;
-+	unsigned int o_flags;
+diff --git a/test/Makefile b/test/Makefile
+index 7b94a1f4..2960139b 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -89,6 +89,7 @@ test_srcs := \
+ 	defer-tw-timeout.c \
+ 	double-poll-crash.c \
+ 	drop-submit.c \
++	dup.c \
+ 	eeed8b54e0df.c \
+ 	empty-eownerdead.c \
+ 	eploop.c \
+diff --git a/test/dup.c b/test/dup.c
+new file mode 100644
+index 00000000..08d11444
+--- /dev/null
++++ b/test/dup.c
+@@ -0,0 +1,240 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: test io_uring_prep_dup
++ *
++ */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <fcntl.h>
++
++#include "liburing.h"
++#include "helpers.h"
++
++struct fixture {
++	/* file descriptor of a pipe connected to fd_pipe_w */
++	int fd_pipe_r;
++	/* direct descriptor of a pipe connected to fd_pipe_w */
++	int fixed_pipe_r;
++
++	/* file descriptor of a pipe connected to fd_pipe_r and fixed_pipe_r */
++	int fd_pipe_w;
++
++	/* closed file descriptor */
++	int fd_invalid;
++	/* closed file descriptor */
++	int fd_invalid_2;
 +};
 +
- static bool io_openat_force_async(struct io_open *open)
- {
- 	/*
-@@ -446,3 +452,46 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags)
- 		fput(files[1]);
- 	return ret;
- }
-+
-+int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++static int setup(struct io_uring *ring, struct fixture *fixture)
 +{
-+	unsigned int flags;
-+	struct io_dup *id;
-+	int new_fd;
++	int ret, fds[2];
 +
-+	if (sqe->off || sqe->addr || sqe->len || sqe->buf_index || sqe->addr3)
-+		return -EINVAL;
++	if (pipe(fds) < 0) {
++		perror("pipe");
++		return T_EXIT_FAIL;
++	}
++	fixture->fd_pipe_r = fds[0];
++	fixture->fd_pipe_w = fds[1];
++	ret = io_uring_register_files(ring, &fixture->fd_pipe_r, 1);
++	if (ret) {
++		fprintf(stderr, "failed register files %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++	fixture->fixed_pipe_r = 0;
 +
-+	flags = READ_ONCE(sqe->dup_flags);
-+	if (flags & ~IORING_DUP_NO_CLOEXEC)
-+		return -EINVAL;
++	if (pipe(fds) < 0) {
++		perror("pipe");
++		return T_EXIT_FAIL;
++	}
++	close(fds[0]);
++	close(fds[1]);
 +
-+	new_fd = READ_ONCE(sqe->dup_new_fd);
-+	if (new_fd < 0)
-+		return -EBADF;
++	fixture->fd_invalid = fds[0];
++	fixture->fd_invalid_2 = fds[1];
 +
-+	/* ensure the task's creds are used when installing/receiving fds */
-+	if (req->flags & REQ_F_CREDS)
-+		return -EPERM;
-+
-+	id = io_kiocb_to_cmd(req, struct io_dup);
-+	id->o_flags = O_CLOEXEC;
-+	if (flags & IORING_DUP_NO_CLOEXEC)
-+		id->o_flags = 0;
-+	id->new_fd = new_fd;
-+
-+	return 0;
++	return T_EXIT_PASS;
 +}
 +
-+int io_dup(struct io_kiocb *req, unsigned int issue_flags)
++static int are_pipes_connected(int fd_r, int fd_w)
 +{
-+	struct io_dup *id;
++	char buf[32];
++	int err;
++
++	err = write(fd_w, "Hello", 5);
++	if (err < 0) {
++		perror("write");
++		return T_EXIT_FAIL;
++	} else if (err != 5) {
++		fprintf(stderr, "short write %d\n", err);
++		return T_EXIT_FAIL;
++	}
++
++	err = read(fd_r, buf, sizeof(buf));
++	if (err != 5) {
++		fprintf(stderr, "unexpected read ret %d\n", err);
++		return T_EXIT_FAIL;
++	}
++
++	return T_EXIT_PASS;
++}
++
++static int cloexec_check(int fd, int nocloexec)
++{
++	int flags;
++	flags = fcntl(fd, F_GETFD, 0);
++	if (flags < 0) {
++		perror("fcntl");
++		return T_EXIT_FAIL;
++	}
++
++	if (nocloexec) {
++		return (flags & FD_CLOEXEC) ? T_EXIT_FAIL : T_EXIT_PASS;
++	} else {
++		return (flags & FD_CLOEXEC) ? T_EXIT_PASS : T_EXIT_FAIL;
++	}
++}
++
++static int test_working(struct io_uring *ring, struct fixture *fixture,
++			int fixed, int nocloexec)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int ret, oldfd, newfd;
++
++	if (fixed) {
++		oldfd = fixture->fixed_pipe_r;
++	} else {
++		oldfd = fixture->fd_pipe_r;
++	}
++	newfd = fixture->fd_invalid;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_dup(sqe, oldfd, newfd,
++			  nocloexec ? IORING_DUP_NO_CLOEXEC : 0);
++	if (fixed) {
++		sqe->flags |= IOSQE_FIXED_FILE;
++	}
++	io_uring_submit(ring);
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait cqe %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++	if (cqe->res < 0) {
++		fprintf(stderr, "failed dup: %d\n", cqe->res);
++		return T_EXIT_FAIL;
++	}
++	io_uring_cqe_seen(ring, cqe);
++
++	ret = are_pipes_connected(newfd, fixture->fd_pipe_w);
++	if (ret != T_EXIT_PASS) {
++		fprintf(stderr, "dup pipes not connected\n");
++		return ret;
++	}
++	ret = cloexec_check(newfd, nocloexec);
++	if (ret != T_EXIT_PASS) {
++		fprintf(stderr, "cloexec mismatch\n");
++		return ret;
++	}
++
++	close(newfd);
++	return T_EXIT_PASS;
++}
++
++static int test_invalid_flags(struct io_uring *ring, struct fixture *fixture)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int ret, oldfd, newfd;
++
++	oldfd = fixture->fd_pipe_r;
++	newfd = fixture->fd_invalid;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_dup(sqe, oldfd, newfd, 1 << 7);
++	io_uring_submit(ring);
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait cqe %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++	if (cqe->res != -EINVAL) {
++		return T_EXIT_FAIL;
++	}
++	io_uring_cqe_seen(ring, cqe);
++
++	return T_EXIT_PASS;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring_probe *probe;
++	struct fixture fixture;
++	struct io_uring ring;
 +	int ret;
 +
-+	id = io_kiocb_to_cmd(req, struct io_dup);
-+	ret = replace_fd(id->new_fd, id->file, id->o_flags);
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_set_res(req, ret, 0);
-+	return IOU_COMPLETE;
-+}
-diff --git a/io_uring/openclose.h b/io_uring/openclose.h
-index 566739920658..86c91ad33714 100644
---- a/io_uring/openclose.h
-+++ b/io_uring/openclose.h
-@@ -21,3 +21,6 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags);
- 
- int io_install_fixed_fd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_install_fixed_fd(struct io_kiocb *req, unsigned int issue_flags);
++	if (argc > 1)
++		return T_EXIT_SKIP;
 +
-+int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_dup(struct io_kiocb *req, unsigned int issue_flags);
++	probe = io_uring_get_probe();
++	if (!probe) {
++		return T_EXIT_SKIP;
++	}
++	if (!io_uring_opcode_supported(probe, IORING_OP_DUP)) {
++		return T_EXIT_SKIP;
++	}
++	io_uring_free_probe(probe);
++
++	ret = io_uring_queue_init(4, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	ret = setup(&ring, &fixture);
++	if (ret != T_EXIT_PASS) {
++		fprintf(stderr, "fixture setup failed\n");
++		return T_EXIT_FAIL;
++	}
++
++	ret = test_working(&ring, &fixture, 0, 0);
++	if (ret != T_EXIT_PASS) {
++		if (ret == T_EXIT_FAIL)
++			fprintf(stderr,
++				"test_working regular cloexec failed\n");
++		return ret;
++	}
++
++	ret = test_working(&ring, &fixture, 1, 0);
++	if (ret != T_EXIT_PASS) {
++		if (ret == T_EXIT_FAIL)
++			fprintf(stderr, "test_working fixed cloexec failed\n");
++		return ret;
++	}
++
++	ret = test_working(&ring, &fixture, 0, 1);
++	if (ret != T_EXIT_PASS) {
++		if (ret == T_EXIT_FAIL)
++			fprintf(stderr,
++				"test_working regular nocloexec failed\n");
++		return ret;
++	}
++
++	ret = test_working(&ring, &fixture, 1, 1);
++	if (ret != T_EXIT_PASS) {
++		if (ret == T_EXIT_FAIL)
++			fprintf(stderr,
++				"test_working fixed nocloexec failed\n");
++		return ret;
++	}
++
++	ret = test_invalid_flags(&ring, &fixture);
++	if (ret != T_EXIT_PASS) {
++		if (ret == T_EXIT_FAIL)
++			fprintf(stderr, "test_invalid_flags failed\n");
++		return ret;
++	}
++
++	return T_EXIT_PASS;
++}
 -- 
 2.43.0
 

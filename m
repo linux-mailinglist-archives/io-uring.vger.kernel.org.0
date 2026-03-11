@@ -1,116 +1,164 @@
-Return-Path: <io-uring+bounces-12630-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12631-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oObSGY6bsGnwlAIAu9opvQ
-	(envelope-from <io-uring+bounces-12630-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 23:30:38 +0100
+	id cLG0OA+xsGnGmAIAu9opvQ
+	(envelope-from <io-uring+bounces-12631-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 01:02:23 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0822C258EAB
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 23:30:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556F6259758
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 01:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 9557B30185C7
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2026 22:30:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0FB8931258A5
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 00:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3039E3A6B84;
-	Tue, 10 Mar 2026 22:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubALhYsp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C52A1BF;
+	Wed, 11 Mar 2026 00:02:21 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B031C5F11;
-	Tue, 10 Mar 2026 22:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E628F5;
+	Wed, 11 Mar 2026 00:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773181835; cv=none; b=tIB5JnfWdTyYJmXAC+NFTFnwt3gcuZHntp50Ykxi4yGoLjMM+vPFbDRegGRtWJEMV7H2JTRPyOIIrJdTARKtrd7BiUifHeTJSz491o6W5IXnkEyu1mjzGRVFdfgurVsVcIP1ifh76hhSsP2AUJVePBHDWOCzN42wbkxqkUoOC+Y=
+	t=1773187341; cv=none; b=VMb0drDCQYkjprcAwMqr63QT9mgJ5cRWE+QZEIXn8JpSfDvax7sNctFDjuKiIA70EUn1na7b10jFb2niXieMoQy1n24IBcP/1dZtIPxV1+58d1brDu0MSlLlgZCGDMGJj1yWGK3GHEnFZWGPBvgDV6OsZ1bHFkBWq1044gihUXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773181835; c=relaxed/simple;
-	bh=tb58vpxzJlIZRd9WgyWRFH3D756RDtt0dYG80U6plL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FfDDoW8eZT8XO3D+Mq/X8Hx6CDli4etqdgjhc/Y4HhdigwrCci2QIVeJqt1R83vlCk7y0Yd6UizeyPtgXbXkWW9fY3cxr4ZcFf+JCZXwoQBiTPn4KBZwnfxayizvXcvfouxh7SWtu/o11B6Q1zSGPKXzQXTzFAntlqW2V+28W+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubALhYsp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104CDC19423;
-	Tue, 10 Mar 2026 22:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773181834;
-	bh=tb58vpxzJlIZRd9WgyWRFH3D756RDtt0dYG80U6plL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ubALhYspnJZgUCO0Bhpsqd1pTOSqEgS3NbTnp+e62N5Axz7vas+mSfFlyXZfcYTN0
-	 D750XcLbp1f6kvpuQgDU+vQmbTSXf/0IJ//PVbS38UjAGUrPc4kAVAEBl5UUyXZ0u9
-	 nk9+pZ+b5TrOvE126c+biBQOIUTWFUm35DIdImiJnhVmx0cXlKNS/EFWsesc02yk4w
-	 GKSW7cNlMpWXXZr3+2fqn7Zm/RMga1wvnD+9EKdStnsT7XyECrCOOftlNmr7g6xgXY
-	 MqLajhKkU0OkZaJiRFNGQiIX8xP23rtkeWlkdumTSAbsPOjJl2RuFWpfpFPW0Zn1RG
-	 SHEgPuXtmi9JA==
-Date: Tue, 10 Mar 2026 23:30:31 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
+	s=arc-20240116; t=1773187341; c=relaxed/simple;
+	bh=smzvbB4nmsoWyjvlw6IqwQZpGTU4rmIBF86uCfM5iSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mZ7SZw8AML/61LYZF+cYH3QVClpOnHegGEKkHaYUPO71sjzYDiM5Q+n4lFaME/6BEsW2e1BZyMolXCAJSu5lYFDt+iIzDok/b+Wt2L0EsMSmi2OBcG9piL8W4T14/fiz+ZcJEAo8snm/H1rLrULkiXmcSICjsos5XMZOMusthos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 7BCB113A961;
+	Wed, 11 Mar 2026 00:02:10 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 85BFC20027;
+	Wed, 11 Mar 2026 00:02:06 +0000 (UTC)
+Date: Tue, 10 Mar 2026 20:02:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-nfs@vger.kernel.org, bpf@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	io-uring@vger.kernel.org, audit@vger.kernel.org,
-	rcu@vger.kernel.org, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-fsdevel@vger.kernel.org
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-nfs@vger.kernel.org, bpf@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, io-uring@vger.kernel.org, audit@vger.kernel.org,
+ rcu@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, Christian Loehle
+ <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2 2/2] tree-wide: rename do_exit() to task_exit()
-Message-ID: <abCbhzZT2We5tJA3@pavilion.home>
+Message-ID: <20260310200217.451cf37e@gandalf.local.home>
+In-Reply-To: <20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
 References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
- <20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
+	<20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
-X-Rspamd-Queue-Id: 0822C258EAB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 5bg3rrg18jbru7uwkfxn1hbh397psca6
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18LHCHZ+vV3JFPf+Z89JvS/nvAKMsv+FAI=
+X-HE-Tag: 1773187326-98008
+X-HE-Meta: U2FsdGVkX1/3tMWPLwyG4JCc4wkqvh9SiSPSlhJp6Tv4W/fwSwUFhWXG3UBrBxSzLq3p72eu37Xu4WWh77aTVVkk97xFw9hCg2Tn+gfwvdW114asIqtfy8xHhNrVuERS2G/65ce3/BsvZjC5d8Vnvs35vga+tnTJklfjQ+UttgL5bwbjp5oOgQNdAzx3oibQ4Mzt0N8V0YHeM+nhQRgwSGhlB1291Y2eHefZmXFBYTpQLIIP1XDBd9pac8iHtBZirKQZfE9I0NK+xzIHdGI0aui4vMm56FkppnHJDf/mUfgi8cC8UEAJB61JKAsSDfwj7R599Re8N4CNbTJgYcDwKo1gfVDZt4y9
+X-Rspamd-Queue-Id: 556F6259758
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[goodmis.org : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12630-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[frederic@kernel.org,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.649];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[rostedt@goodmis.org,io-uring@vger.kernel.org];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pavilion.home:mid,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12631-lists,io-uring=lfdr.de];
+	R_DKIM_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,gandalf.local.home:mid]
 X-Rspamd-Action: no action
 
-Le Tue, Mar 10, 2026 at 03:56:10PM +0100, Christian Brauner a écrit :
-> Rename do_exit() to task_exit() so it's clear that this is an api and
-> not a hidden internal helper.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Tue, 10 Mar 2026 15:56:10 +0100
+Christian Brauner <brauner@kernel.org> wrote:
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> diff --git a/tools/testing/selftests/bpf/progs/tracing_failure.c b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> index 65e485c4468c..5144f4cc5787 100644
+> --- a/tools/testing/selftests/bpf/progs/tracing_failure.c
+> +++ b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> @@ -25,7 +25,7 @@ int BPF_PROG(tracing_deny)
+>  	return 0;
+>  }
+>  
+> -SEC("?fexit/do_exit")
+> +SEC("?fexit/task_exit")
+>  int BPF_PROG(fexit_noreturns)
+>  {
+>  	return 0;
+> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> index fee479295e2f..7e00d8ecd110 100644
+> --- a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> @@ -82,7 +82,7 @@ check_error 'f vfs_read arg1=^'			# NO_ARG_BODY
+>  # multiprobe errors
+>  if grep -q "Create/append/" README && grep -q "imm-value" README; then
+>  echo "f:fprobes/testevent $FUNCTION_FORK" > dynamic_events
+> -check_error '^f:fprobes/testevent do_exit%return'	# DIFF_PROBE_TYPE
+> +check_error '^f:fprobes/testevent task_exit%return'	# DIFF_PROBE_TYPE
+>  
+>  # Explicitly use printf "%s" to not interpret \1
+>  printf "%s" "f:fprobes/testevent $FUNCTION_FORK abcd=\\1" > dynamic_events
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> index f0d5b7777ed7..a95e3824690a 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> @@ -5,7 +5,7 @@
+>  
+>  # Choose 2 symbols for target
+>  SYM1=$FUNCTION_FORK
+> -SYM2=do_exit
+> +SYM2=task_exit
+>  EVENT_NAME=kprobes/testevent
+>  
+>  DEF1="p:$EVENT_NAME $SYM1"
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> index 8f1c58f0c239..b55ea3c05cfa 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> @@ -87,7 +87,7 @@ esac
+>  # multiprobe errors
+>  if grep -q "Create/append/" README && grep -q "imm-value" README; then
+>  echo "p:kprobes/testevent $FUNCTION_FORK" > kprobe_events
+> -check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
+> +check_error '^r:kprobes/testevent task_exit'	# DIFF_PROBE_TYPE
+>  
+>  # Explicitly use printf "%s" to not interpret \1
+>  printf "%s" "p:kprobes/testevent $FUNCTION_FORK abcd=\\1" > kprobe_events
 
--- 
-Frederic Weisbecker
-SUSE Labs
+These tests need to pass on old kernels too. So we can't just do a
+"s/do_exit/task_exit/" conversion. It needs to test for task_exit first,
+and if not found, fallback to do_exit.
+
+See how we handled the _do_fork() > kernel_clone() rename:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/ftrace/test.d/functions#n182
+
+-- Steve
 

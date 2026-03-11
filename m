@@ -1,85 +1,84 @@
-Return-Path: <io-uring+bounces-12633-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12634-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4AP8LmxOsWlCtAIAu9opvQ
-	(envelope-from <io-uring+bounces-12633-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 12:13:48 +0100
+	id +GIUCWRSsWn8tgIAu9opvQ
+	(envelope-from <io-uring+bounces-12634-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 12:30:44 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E613262CB4
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 12:13:48 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0500262E85
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 12:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8B06730439F9
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 11:13:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9D894302307B
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 11:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D643D891F;
-	Wed, 11 Mar 2026 11:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221453DBD5E;
+	Wed, 11 Mar 2026 11:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjJ1hyo8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7RRIPTp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB073D8919
-	for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 11:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977753C9ECA
+	for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 11:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773227611; cv=none; b=X53lXqr+ND+D3Bo/hWxbZr5We3pdFE8wMC3mqSPk1/X4FP9Yes4EcuDigyoFqy58NSUwQDNl3zrfTG9WVmSIIFU/Oh6wMQF3XHpGWWP+ACo8/pJRT+YSCwpsTS3etE8caofL5b+jedwB5pe9oseaPMoNZtn7Oc0OZqQlsZXrk0E=
+	t=1773228641; cv=none; b=ldtSsIsSez65i57FGeyMtvzBj23g7CxJsfuL/ToNT0DTidHfKo2XQoYGvxysXlbmGj3CRPyki05I0MtbH821bknM3goo21zFGFMd1b4iWggiS5qdQYpfJ6Mq5oH1uxqIU3kI8seqgosTRmkGrlXGoO6TMw4iarZyqENEXOIFlVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773227611; c=relaxed/simple;
-	bh=4lX+kBPGqJ3QkimSYJuNi93y7EH2IixXEvvpadxc03o=;
+	s=arc-20240116; t=1773228641; c=relaxed/simple;
+	bh=7oCS2HEYNPyQYhGX+Y4M/wdQSgV1C0yaTdCo4y1cQ/Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WGi1umf8QUC8gXrKm30iLZzh/2KPgFQC8a0v9nT3oKcOnU0g9sFO8t/3jezKcVbU2hESjDLd88xcXeD62UG4TgpZhnraF5yBC73+U2GmEA88M8UCkXpOU8GpDsbl4KxjXfGYxZM/wM+UOGq0HGId26I6xJ7MtTOPjJeoiGoSR90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjJ1hyo8; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=tNev1lXzAsFb3sh7O2LDH8fgAX0VnWgdrbnLjStW8TG4GIcPoOi02Gm3KkH9TDxURooiuss3Dv8zmK0B44Gi2fWtp/C+tsA5HPVBhe1EACS87G2dweKnLC4rdO1Z0rbQIHPoyJmuBQjpSpJGAWHVw9p9hRNL0tpyNnSUod2Owts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7RRIPTp; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4852e9ca034so43433335e9.2
-        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 04:13:24 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-661d20c9787so6356203a12.0
+        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 04:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773227603; x=1773832403; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773228636; x=1773833436; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qnfnqQA087ph9rwVER4jOdXVQrVQv1Zi9ON3TBE4BwA=;
-        b=OjJ1hyo8Y5G/h08jF6fcpkZ/oUtq73oQ2VePvyE0nB61vPEBr/OxPycmCrWe8Qf8M/
-         RpJvLNph+gVHFZ72lnvHFj5wQiJMudZkGFiuvXe9It7U6H6+czYawu4BalY8qOsRFHPG
-         POeWRyvDR8uaqK7MpsFeZNFWLPFzqcdqaKYKMn5unOcp1RLdz9jeCqHjxo7aGcZzY018
-         wtLsIOaL4CZX/P14wspHteJV3ZEmBVpstKsl7W+O50RefN0dvwRtlk/RHvKh/ihpQeaI
-         oYH2pyW36OKypvh+SWOemCmLzyEPj6qhN29+q0P1Uo3R9SS4FbvPylZjMWE9eVuNPW1h
-         ASfA==
+        bh=uAJfHwJl0gPO1RoYcdyFqqL0Pcnk/8Jq8qQE4hL861o=;
+        b=M7RRIPTpueeICRXzBSPyJ/qa6DOQVXpOCqJd8hLL4v+vE0QdGyhAan/cxHl+6FtHL+
+         WribBhDNI9Em/SO9TsDC8jJOHPOuvJp8aLln+7BXPp2KTOeITkTkcintUj/QyqEJXBAC
+         wscEyks9a2pvWaLlUtXnudq3EMIqr95aymOU8h3pHbPDS9gcPytxRHkfPuAu1fLwSK8T
+         HhLJQomPXrIEti0R89hJuIUM5/AO7woRiRog2oC4GjXXSb9JV22GoLF20irt03T59CVC
+         M6K06I+gwdCBHuCMLu6IFMdDPRMor4kms4jSyT+sfhaGKMRqje48QobnWOpUyAidYR7+
+         JHsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227603; x=1773832403;
+        d=1e100.net; s=20230601; t=1773228636; x=1773833436;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qnfnqQA087ph9rwVER4jOdXVQrVQv1Zi9ON3TBE4BwA=;
-        b=DDSni7WHgXwCQaGKRrnl9zphnXVwpDBJy4/+lCo8rxn41zeBH5IvwX/bzwxeOQZNFe
-         JciSXsK4/tlvO5lF6pvBUVPqKjvWVJfQuaHEoWsaUuPrwTitZUXGFQPdLVT0WXp3vnkI
-         ++VgLe1AGb/z8X8ZeUjI9xv22NllpK9tEg1TnYbiFmdAPplFWcoY96vttYB+DvUvBktP
-         pBS87s9TOKPViCPpnFkutY6WhuEYuGg0IpqaJo1c6nFQDZDIYfVrPUQYRbLny2K39/Lb
-         2jfXX1kjD0cteSsjG+bPQf7ErMJLAcniKXUyN92GGICJIG1BYlbQQMqoLO9DreYHtP1B
-         BTWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUK2zjBBWPDCuJRquCtqH9lzOMaiZFvQTzSq5euLdRHNERf/fYMnn8Cp4RxRDHpLJF3ZrQFO+dWEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxruXbaXoz58OjhCQ/a3pgazedIiGZIROPk9dyUPrXrIjuEFQ7
-	mVl2tW6KdTIBI789QwxtGbHEndZOPrahuQ56w0JpYgdwCcEmFbJl4igzKfhW4A==
-X-Gm-Gg: ATEYQzw4sJn5Qg6uZ9PmIGbF+q/2ePF1SfIVNMQgae8IrOnYXrK5upcLEh3e+7XymES
-	z1NxlXqHBaEbs6tHmAMWMC6Kyccbqd74xzLa5xP/3X6ZU9FgHggacwP21S1b5kXcp/IVUvcssDn
-	5PQeh1ss0yZaqCTt/g+Y41m90/Be3I3htVME9tvPwsExGq95NCwHQ3sUe0xSSKxEKm89PYdsL1X
-	FXHWg3IHFUVYN+ylfS0soCPO80q7JnFTB3WLubD46n11fiFaXmaFNby5mIda9RLJxWma99dxAYi
-	LiMtaI1K3j5pyLmmTdHxto7wmqEhwqyTrvbiYrzJiDMQCYkKJSiTbK6mksaoMNcz9t6bGKMFAcb
-	Br8dHp5JLGgkwxYCZZVyTxZ9yCU6hVXG4fIOUEsv7dPt33EShAPXtIWnTiN+awt7A+kJ6B+ZkMk
-	zh1dCPpep//UV5AL6YNPyYKNYLzsTo4rP132+Dc0D/HWoBfkessNWuJ9qyu/UGaMQgflnO/1blY
-	n++2xvNXxDbZA1tml1yFkv+skNeWGEoOf++2j64CKC2uza2ItAGSWEiew==
-X-Received: by 2002:a05:600c:154d:b0:485:3983:aba2 with SMTP id 5b1f17b1804b1-4854b109d15mr35244795e9.23.1773227603058;
-        Wed, 11 Mar 2026 04:13:23 -0700 (PDT)
+        bh=uAJfHwJl0gPO1RoYcdyFqqL0Pcnk/8Jq8qQE4hL861o=;
+        b=rnSWkupIVwdv5DN2DSOZWKgtsiwnqh30268ga7m8ScIKY0/3hDZNV4LqbTWlm8bY+e
+         uOLKNh1B8ZE71jG3bDwdktbxzbKwMMyBukkDbXNpGNm6IoSMYBRedu4p5Gzhgjk9sLGn
+         2B5qGPNzdDWMVF1C9g1HG/bGsw2pXhYKvDAt/lTMwaKhqSZ/AWKM+hft5CWFpQFU4NiI
+         ssVNkKx+xUpnrc4Ro3TBy1fWTFQl9nQAR4XV8jvd41OSNdxCos0xt0Ms7Ogx+dFaN/XK
+         GmF7lZiL/l7ZgfzlwbCjIf95XqAHk0CCI1+4Tb9jJiIEA4pf8n2RBpQI9UTSJh26ym0j
+         zk6Q==
+X-Gm-Message-State: AOJu0Yyii1jdiqndceUSehenvzOZR+og+tT7TQJeaZ0b+R/GwL5B/sPA
+	7vhfuM/SjH6jDiCWfjY1Z4eEr9DXuW3OpEvCIpKGWExswzK4Ys1qUfP18odhmg==
+X-Gm-Gg: ATEYQzwX9ntZrB3wHQAZex6DvNvg7CSQa7FFcjY2/Ab3VJkUz0ff/Z7ig3swIKrNGX9
+	3F6HW5VJBWd7ukyhncFpMtoGOUBKgrDutUVH3lwB5tXTuvY2NaSVZJ0/VYmMpSkci0/iYHXr2Im
+	PkJS6I7x3uH74JBpCXFuscbdT+XLAcV/E8LPX9XKB/YAY78Js+UmX1PXfUR3xKAoS4zqS2b0eFD
+	yd/vF5UiE0nxxfxX/Vm5D+BEZdGbsiA/ZgmTBugv8Sj9p57ve4YOKmQywhmvRcfuprddJkHqpMY
+	IaiEhsETuys3RwBBoa1cuLILkbm19kbhR37cOcWmIzX3H7I2+xWv26Wqpxik4l2SJxyWazUJtXH
+	FB5xoRGlRyhf/439n07zL0WsmFdXrFySF90WxNL+Bb6LAoH4XXGWhgOTYgvGlFxmTp6Wl3erdNW
+	pc3pEZYPT9U/Y7E6Z8we8j6Q2nZm4h7KcdjFvrBO6I4BOv1ho5gXjDVkjDNNXIilUjUHaKm7rxJ
+	6sONJbecCvsZLt3lVeSxngLp3kVicara8UQtTc7rGAAT6zqtSjH8npxEQ==
+X-Received: by 2002:a05:6402:13c9:b0:662:e723:9849 with SMTP id 4fb4d7f45d1cf-663192c6ca5mr1083048a12.1.1773228636425;
+        Wed, 11 Mar 2026 04:30:36 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:bf9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854e67e8d6sm2339475e9.1.2026.03.11.04.13.22
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6631448605fsm476072a12.12.2026.03.11.04.30.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 04:13:22 -0700 (PDT)
-Message-ID: <39d1678f-7a7e-43d5-a92d-0b26b9bfd44e@gmail.com>
-Date: Wed, 11 Mar 2026 11:13:20 +0000
+        Wed, 11 Mar 2026 04:30:35 -0700 (PDT)
+Message-ID: <086190ca-1c34-448f-a565-aa41f671971f@gmail.com>
+Date: Wed, 11 Mar 2026 11:30:33 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,145 +86,91 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] io_uring: ensure ctx->rings is stable for task work
- flags manipulation
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: naup96721@gmail.com, stable@vger.kernel.org
-References: <20260310145521.68268-1-axboe@kernel.dk>
- <20260310145521.68268-2-axboe@kernel.dk>
+Subject: Re: [PATCH] io_uring: Add IORING_OP_DUP
+To: Daniele Di Proietto <daniele.di.proietto@gmail.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org
+References: <20260310154933.2500971-1-daniele.di.proietto@gmail.com>
+ <c29a339d-67c5-4e8a-a1c9-2388aa9f28d5@kernel.dk>
+ <CAExiqTKBFeyxE4nwSxd3muOuZkP5YDSoweYwns4wb64w8efPVQ@mail.gmail.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20260310145521.68268-2-axboe@kernel.dk>
+In-Reply-To: <CAExiqTKBFeyxE4nwSxd3muOuZkP5YDSoweYwns4wb64w8efPVQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0E613262CB4
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B0500262E85
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12633-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12634-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.dk];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-0.998];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,kernel.dk:email]
 X-Rspamd-Action: no action
 
-On 3/10/26 14:45, Jens Axboe wrote:
-> If DEFER_TASKRUN | SETUP_TASKRUN is used and task work is added while
-> the ring is being resized, it's possible for the OR'ing of
-> IORING_SQ_TASKRUN to happen in the small window of swapping into the
-> new rings and the old rings being freed.
+On 3/10/26 18:42, Daniele Di Proietto wrote:
+> On Tue, Mar 10, 2026 at 4:24 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 3/10/26 9:49 AM, Daniele Di Proietto wrote:
+>>> The new operation is like dup3(). The source file can be a regular file
+>>> descriptor or a direct descriptor. The destination is a regular file
+>>> descriptor.
+>>>
+>>> The direct descriptor variant is useful to move a descriptor to an fd
+>>> and close the existing fd with a single acquisition of the `struct
+>>> files_struct` `file_lock`. Combined with IORING_OP_ACCEPT or
+>>> IORING_OP_OPENAT2 with direct descriptors, it can reduce lock contention
+>>> for multithreaded applications.
+>>
+>> Overall comment - how does this interact with direct descriptors? Feels
+>> like this should support both, rather than just normal file descriptors.
 > 
-> Prevent this by adding a 2nd ->rings pointer, ->rings_rcu, which is
-> protected by RCU. The task work flags manipulation is inside RCU
-> already, and if the resize ring freeing is done post an RCU synchronize,
-> then there's no need to add locking to the fast path of task work
-> additions.
+> As implemented, the operation supports:
+> 1. src: direct, dst: normal (this is the use case I mostly care about)
+> 2. src: normal, dst: normal ()
 > 
-> Note: this is only done for DEFER_TASKRUN, as that's the only setup mode
-> that supports ring resizing. If this ever changes, then they too need to
-> use the io_ctx_mark_taskrun() helper.
+> I can extend it to also support
+> 3. src: direct, dst: direct
+> 4, src: normal, dst: direct
 > 
-> Link: https://lore.kernel.org/io-uring/20260309062759.482210-1-naup96721@gmail.com/
-> Cc: stable@vger.kernel.org
-> Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
-> Reported-by: Hao-Yu Yang <naup96721@gmail.com>
-> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   include/linux/io_uring_types.h |  1 +
->   io_uring/io_uring.c            |  2 ++
->   io_uring/register.c            | 20 ++++++++++++++++++--
->   io_uring/tw.c                  | 24 ++++++++++++++++++++++--
->   4 files changed, 43 insertions(+), 4 deletions(-)
+> I can use IOSQE_FIXED_FILE to pick the source and I guess I can use a
+> bit in dup_flags (something like IORING_DUP_DIRECT) to decide whether
+> the destination is a direct descriptor or normal.
 > 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index 3e4a82a6f817..dd1420bfcb73 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -388,6 +388,7 @@ struct io_ring_ctx {
->   	 * regularly bounce b/w CPUs.
->   	 */
->   	struct {
-> +		struct io_rings	__rcu	*rings_rcu;
->   		struct llist_head	work_llist;
->   		struct llist_head	retry_llist;
->   		unsigned long		check_cq;
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index ccab8562d273..20fdc442e014 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -2066,6 +2066,7 @@ static void io_rings_free(struct io_ring_ctx *ctx)
->   	io_free_region(ctx->user, &ctx->sq_region);
->   	io_free_region(ctx->user, &ctx->ring_region);
->   	ctx->rings = NULL;
-> +	RCU_INIT_POINTER(ctx->rings_rcu, NULL);
->   	ctx->sq_sqes = NULL;
->   }
->   
-> @@ -2703,6 +2704,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
->   	if (ret)
->   		return ret;
->   	ctx->rings = rings = io_region_get_ptr(&ctx->ring_region);
-> +	rcu_assign_pointer(ctx->rings_rcu, rings);
->   	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
->   		ctx->sq_array = (u32 *)((char *)rings + rl->sq_array_offset);
->   
-> diff --git a/io_uring/register.c b/io_uring/register.c
-> index a839b22fd392..5f2985ba0879 100644
-> --- a/io_uring/register.c
-> +++ b/io_uring/register.c
-> @@ -487,6 +487,18 @@ static void io_register_free_rings(struct io_ring_ctx *ctx,
->   			 IORING_SETUP_CQE32 | IORING_SETUP_NO_MMAP | \
->   			 IORING_SETUP_CQE_MIXED | IORING_SETUP_SQE_MIXED)
->   
-> +static void io_resize_assign_rings(struct io_ring_ctx *ctx, struct io_rings *rings)
-> +{
-> +	/*
-> +	 * Just mark any flag we may have missed and that the application
-> +	 * should act on unconditionally. Worst case it'll be an extra
-> +	 * syscall.
-> +	 */
-> +	atomic_or(IORING_SQ_TASKRUN | IORING_SQ_NEED_WAKEUP, &rings->sq_flags);
-> +	ctx->rings = rings;
-> +	rcu_assign_pointer(ctx->rings_rcu, rings);
-> +}
-> +
->   static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
->   {
->   	struct io_ctx_config config;
-> @@ -579,6 +591,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
->   	spin_lock(&ctx->completion_lock);
->   	o.rings = ctx->rings;
->   	ctx->rings = NULL;
-> +	RCU_INIT_POINTER(ctx->rings_rcu, NULL);
->   	o.sq_sqes = ctx->sq_sqes;
->   	ctx->sq_sqes = NULL;
+> Does that make sense?
 
-Should be better to not have a transient null, and then there
-is no need to check for that in task_work. I.e. don't zero it
-and only assign the new value if you successfully created a
-new set of rings.
+Let's not try to reuse IOSQE_FIXED_FILE for that. We may want to
+operate with io_uring's filetable entries and not just files you get
+from there. Two separate IORING_DUP_* flags should be better. And
+you can extract a helper function out of
+
+io_uring/splice.c::io_splice_get_file()
+
+It might also be better to make it a part of IORING_OP_FILES_UPDATE
+instead of wasting another opcode, and liburing can provide a
+prep_dup helper for convenience.
 
 -- 
 Pavel Begunkov

@@ -1,101 +1,104 @@
-Return-Path: <io-uring+bounces-12635-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12636-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IL7bCQlosWnsugIAu9opvQ
-	(envelope-from <io-uring+bounces-12635-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 14:03:05 +0100
+	id YNPoFRZqsWnsugIAu9opvQ
+	(envelope-from <io-uring+bounces-12636-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 14:11:50 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0A3264132
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 14:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B072326433C
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 14:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2446D305DAA2
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 13:00:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7E1BD31E92D1
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 13:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA72F19C553;
-	Wed, 11 Mar 2026 13:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E0D2F4A14;
+	Wed, 11 Mar 2026 13:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CnOFNMxp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="g2wm+sPO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619F58F48
-	for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 13:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E4F285CA2
+	for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 13:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773234040; cv=none; b=pZ3KBc+KXU/iWqaizGKwjOxqa9DtBKZLmsX74MEdPlGAWGvQMlWnMqd0twlN0mj2neHtg7jR1SZXce4m9hIjfLuG/hVzrXLHBahZ/vGOkyic5L08bBEsj2VwyCIsqF6g0rw/g4yMv6Yz80QcAFeCKuAy+1LMUrh/VqsRRq4tdAw=
+	t=1773234356; cv=none; b=b29TTcnUhLSMYN82WvYswMNlB0OMjL2rRQGKwFXI3jEyjhe6ZjBMnaLbiRbr7NUUQb+rvVQ6cEAbQs+Hh/rUdrYKGStdNqMFfNx5+RkuvRmveZIC9FjzboWkjSYmeLAhnMFCNsTlXT+hwNLRGPkk9zVt1iJQTwbngYUCMvvDX0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773234040; c=relaxed/simple;
-	bh=LXS4b0kDAKA4g7NUC9YDIR4zo8NIZUl0tQDlT4SvKys=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=s6n953tW1R03ODwLLWHcMrMb/LhEFo6h09CE/YvRJGBRC0y61Bilzk3csqJzU2QDV4WFaUhYLvuWzqCKwJcXlHpeG4aMpudymJLME/P5T9r/yS6BX5ZvgRubNxFshfUwRlkccP/1QLAuuhjnG+ToXx80P3/KArwBAacTZS21tbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CnOFNMxp; arc=none smtp.client-ip=209.85.210.42
+	s=arc-20240116; t=1773234356; c=relaxed/simple;
+	bh=bJi3SD4Mwyy2yZWRzO1pVERGmTmxO5jP67fzbHbAobU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HeeIt98ylU3DCR6WtAC+6cNHosC4HZ5isMgXMeMG5Ht7bqC65sXQuv65+JRVlA8FTpYir0VviNbLJZxs43wAZQCz2zt4zMika/mGFafTRGJaO+3FzGXPVwAuCb0qRei14GMkeAV1gNuBJUBS4TDkUrZkEWHYiAmK2BtfgIx6w4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=g2wm+sPO; arc=none smtp.client-ip=209.85.210.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7d773a4af0aso25342a34.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 06:00:38 -0700 (PDT)
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7d773a4af0aso29489a34.0
+        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 06:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773234037; x=1773838837; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tgCrp9Vn7i6Zkgjd+jhK7Z7pEmf7HJG5+zYuD5Vo9I8=;
-        b=CnOFNMxptGjd/D6+uXf7754Vu87hRejbCSdt++i8VH0s44kBjYqvFGcYn2u2+GZSV3
-         lduA3j8UzwkaLmXz+6au7HW/HIaCghEskcpypnQE6HppXuA/yuAvBwkulJBQOADcDG48
-         1RD1LFCHCZER5EWI2T1USOpKucBN45fkxd4ru9cr76lwwGjSzda7cw9kSxpRRc3EYPcO
-         GlpoPkcNg08dR/34EjO87+puDpheyItUnCoEV8sv7ewlqx7LwV9mZsYRsRahjyY0tdyr
-         hMcTy50j7QM7eStjTFCHF/zYZUfZvJ6ZGanMlCjGoyV/AtfGNPA3os9mZ/I8RTwr/vir
-         YyHA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773234354; x=1773839154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bjVugnZuCfuGXRjgoZH8YMIj4TwEFnE+7fLVanx/ETY=;
+        b=g2wm+sPOvKFGdkPnLKMywnODadlKb9+8NKCiJcqvu1E88tUGU24+WECdDKAj/9V9GT
+         tYQ+VqT8qjsNRVCzAHH84WeH2BOkwugyZE3emfrSLig7TViMx6q0MyiIFd27CJea5GuD
+         YkRMaCqsvAIGN8pYol/gkhHTYkVpllz9bnMAp/GF5QavLE9YQgzPVG4sqwg7SWdEzyf2
+         FGqkWIAqIJoIOfduwFh46fO19wv4ZVfCLWpZaad/IDatgvboRlo3aOSaoWYf5UMJ3e/R
+         LRCeqdzpjNteWDs4GvVQ/1JyLD1jfUzkySYrPmzSIUBNXTKLWK84xt0gTGEGIaYt1EYV
+         J0Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773234037; x=1773838837;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tgCrp9Vn7i6Zkgjd+jhK7Z7pEmf7HJG5+zYuD5Vo9I8=;
-        b=bD4p8LDXVNW5YrDXe8G5LnFXdI72cw+XoDtj2ZHJeveMrkaDPBiH0teP/OH4lQW0Qn
-         NJxbhtpocBzoWBufnPgR7b5ze0Evd6QHYqsrQfg0C+ponH82vvUsI0kiWGNYPnv1x6VL
-         rytnydx/DIkcyRScgHXCOFiC/PdJe00trLzTEUMujsFVvKatiOwd8mXqZr2Nx/wSUSGz
-         YuD6KRXp51IlycXCFufrG/D+IoNEnRA9JcA/bJSTbw8LgfsiU2E33t1ETqg+MMcdya+x
-         9DqIZRwzQ+jrMQxQa5UNA3C1dEPNZokd1qDYMNaf+4ATlKfmXDjOvzYKYhWfHqmZoSM4
-         N0AA==
-X-Gm-Message-State: AOJu0Yz6oVliMisan2PtfazuOpZat6j1CsoW4DNVgzwKpi8t5f6qD/x4
-	bATL1rbpL5uR3gTJVoIiQbdwB81RoeN2agDomTjzKkn/TJLzuicRKt6vpqYZ/XHEnVSrvzGmLYi
-	Mzz4ljJI=
-X-Gm-Gg: ATEYQzxK0ISf1wFT/nKDyPXYLg391aZgusg3Aq5qGCpjo3jDbas1sYypjFVj0cXNxBV
-	8xnPoclowlTGEnS2fARR9mo0k8Q1ImyeaHDc1qoTaZX4kMbQY/41K0Ej8VlDz78VKoOACNkkRoZ
-	toTmrZGDuiqOkxeBiWod0nqD6Ve36UXM/vzXssFsoNFqmetXs5gUOvPBWJ2tLV4gsO8wSsOJH4j
-	nBqVz89my2wbjLp9reTx/OqVWTHqjhyqkRCn0PlvY76KR0fTE7wNCHLy5vPmJW18f5j40061T2c
-	pAFmN6fqw8nkHbacLWczGiyF6u5bU6Y7dok0nCR6OT4B4GLBMX/jqoZ8GzviHKCLFKWO7IX0UKk
-	mfUmBaGy02j2Bsezb9tE6svbVUGRNB/l483HWFgwIKd8bBo3n2cKWVTcg8qsSa3hW1cuf63OVeF
-	L5kI/3KOO08qEvTJOm+kslSuJ2qv88U2ZItT4KdH/DArggInB70gwfW40YjrbBs/eTyRTPu88Zh
-	oEw
-X-Received: by 2002:a05:6830:dc9:b0:7d7:5604:72a0 with SMTP id 46e09a7af769-7d76a697debmr1610845a34.13.1773234035584;
-        Wed, 11 Mar 2026 06:00:35 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d7749f20a3sm9171a34.2.2026.03.11.06.00.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 06:00:34 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Tom Ryan <ryan36005@gmail.com>
-Cc: gregkh@linuxfoundation.org, kbusch@meta.com, csander@purestorage.com
-In-Reply-To: <20260310194449.79258-1-ryan36005@gmail.com>
-References: <20260310194449.79258-1-ryan36005@gmail.com>
-Subject: Re: [PATCH v2 liburing] test/sqe-mixed-boundary: validate physical
- SQE index for 128-byte ops
-Message-Id: <177323403444.190825.17840012691916534088.b4-ty@kernel.dk>
-Date: Wed, 11 Mar 2026 07:00:34 -0600
+        d=1e100.net; s=20230601; t=1773234354; x=1773839154;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjVugnZuCfuGXRjgoZH8YMIj4TwEFnE+7fLVanx/ETY=;
+        b=ELByE3mx6zZzXyfncZO8Pgu2PLalq0541BWDf4kqqoUrdl3YhW/WQXEYgAI/F1h2MA
+         tpf8UIo34mM+VbngpRK9l2kcF9LrSvzOD3sJaRtVQcJEnres42raAnrVBkRaNt6mEwDo
+         TdS4i8cbkHmldqESsTxJ0Z2JemOBG5oycKzG4MCRboJi4ITxaxEdWPNvSJMW/uDqCaGv
+         ZwqVZFl/RlDEhbMdRgBTrlmTzu3aPlyCQIBJzK3ZRAvbre/t3mRbzCS6gXhpf3ile2Pg
+         O78vVxhCxjXyWI2ny5z8iafHe5jq7M/fjNTuHo3zTcQL6C9TGsQAMaNdX6KTKZYXQJeN
+         xJSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFZvqPBDgtAVG6P+WWgDGocG09rE/eBWPoEBWk7ksxBk8/vURLBDjhFMpSt2uldRz4LfBwuaLyEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFADaDb1Oz7ZELN1tqCnavUVqMIu+cRPpbu+FpDRZpkLTVx2ZT
+	OeOM1E0KluL1ahfPnB1vI0DOo2UeBJunMJ9Xm5dIllvoUbZ4hFl1zYXzccB9SWYgEoA=
+X-Gm-Gg: ATEYQzx9Abrr1kBpVcL8LLAUnoXH0zS86TdmDfq6UaZUhnmVWQPDd6JomePWpeq6/LR
+	uNwwAOjh2//DiuOuMpJOFfz7h/mUUellpCnDoGzJ6o9tnQCGQuVPxBaQlTx9Q7F0HnFAAjJ29hf
+	0Aiz9PwWKuqcwjycfFgHQy7eZfFCNPpa9wQa7Pkb+HwmkzQODjGIkkcS+0AiKKaPb8xxp52IcYQ
+	axKWsyu2fryhPMhOMX+kIeUMxI737SN9f4AHivLFPFpKUp+4g95AxzdT6uMYJHFF3ggMCRdSRV8
+	qq7DPqsZJa63s3WV2oJcpuc1n+7XKIHhr4aEgAqOWYsgKF+t9R8jUlk62vf/fuQBOj0ciGs6QM9
+	7eeJyJ8oO3r5YHh6wnhcov5whUCw+AXh3fvIGDMUkkk0oWu0sNS2Z63wzMTMBZbOQmc2DtHg+Fr
+	cfaNZoPZin34l6Dvp3b8HMpk/ybvxr0Y0L+DNjkh54u50b8bqPqFf4SSEFv6uFmDtRD7L54/vun
+	tS64Z2+WA==
+X-Received: by 2002:a05:6830:4c08:b0:7d5:13eb:6010 with SMTP id 46e09a7af769-7d76a84cb2emr1579534a34.33.1773234353694;
+        Wed, 11 Mar 2026 06:05:53 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d76ae68a4bsm1812449a34.19.2026.03.11.06.05.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2026 06:05:52 -0700 (PDT)
+Message-ID: <b50163ce-bb1c-48e4-9a32-037b26c50161@kernel.dk>
+Date: Wed, 11 Mar 2026 07:05:52 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Rspamd-Queue-Id: 6B0A3264132
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 1/2] io_uring: ensure ctx->rings is stable for task work
+ flags manipulation
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc: naup96721@gmail.com, stable@vger.kernel.org
+References: <20260310145521.68268-1-axboe@kernel.dk>
+ <20260310145521.68268-2-axboe@kernel.dk>
+ <39d1678f-7a7e-43d5-a92d-0b26b9bfd44e@gmail.com>
+Content-Language: en-US
+In-Reply-To: <39d1678f-7a7e-43d5-a92d-0b26b9bfd44e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B072326433C
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -104,49 +107,127 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12636-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
-	TAGGED_FROM(0.00)[bounces-12635-lists,io-uring=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_THREE(0.00)[4];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel.dk:mid]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,kernel.dk:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-
-On Tue, 10 Mar 2026 12:44:49 -0700, Tom Ryan wrote:
-> Add a test for the kernel fix that replaces the cached_sq_head alignment
-> check with physical SQE index validation in io_init_req() for SQE_MIXED
-> 128-byte operations.
+On 3/11/26 5:13 AM, Pavel Begunkov wrote:
+> On 3/10/26 14:45, Jens Axboe wrote:
+>> If DEFER_TASKRUN | SETUP_TASKRUN is used and task work is added while
+>> the ring is being resized, it's possible for the OR'ing of
+>> IORING_SQ_TASKRUN to happen in the small window of swapping into the
+>> new rings and the old rings being freed.
+>>
+>> Prevent this by adding a 2nd ->rings pointer, ->rings_rcu, which is
+>> protected by RCU. The task work flags manipulation is inside RCU
+>> already, and if the resize ring freeing is done post an RCU synchronize,
+>> then there's no need to add locking to the fast path of task work
+>> additions.
+>>
+>> Note: this is only done for DEFER_TASKRUN, as that's the only setup mode
+>> that supports ring resizing. If this ever changes, then they too need to
+>> use the io_ctx_mark_taskrun() helper.
+>>
+>> Link: https://lore.kernel.org/io-uring/20260309062759.482210-1-naup96721@gmail.com/
+>> Cc: stable@vger.kernel.org
+>> Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
+>> Reported-by: Hao-Yu Yang <naup96721@gmail.com>
+>> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>   include/linux/io_uring_types.h |  1 +
+>>   io_uring/io_uring.c            |  2 ++
+>>   io_uring/register.c            | 20 ++++++++++++++++++--
+>>   io_uring/tw.c                  | 24 ++++++++++++++++++++++--
+>>   4 files changed, 43 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+>> index 3e4a82a6f817..dd1420bfcb73 100644
+>> --- a/include/linux/io_uring_types.h
+>> +++ b/include/linux/io_uring_types.h
+>> @@ -388,6 +388,7 @@ struct io_ring_ctx {
+>>        * regularly bounce b/w CPUs.
+>>        */
+>>       struct {
+>> +        struct io_rings    __rcu    *rings_rcu;
+>>           struct llist_head    work_llist;
+>>           struct llist_head    retry_llist;
+>>           unsigned long        check_cq;
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index ccab8562d273..20fdc442e014 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -2066,6 +2066,7 @@ static void io_rings_free(struct io_ring_ctx *ctx)
+>>       io_free_region(ctx->user, &ctx->sq_region);
+>>       io_free_region(ctx->user, &ctx->ring_region);
+>>       ctx->rings = NULL;
+>> +    RCU_INIT_POINTER(ctx->rings_rcu, NULL);
+>>       ctx->sq_sqes = NULL;
+>>   }
+>>   @@ -2703,6 +2704,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+>>       if (ret)
+>>           return ret;
+>>       ctx->rings = rings = io_region_get_ptr(&ctx->ring_region);
+>> +    rcu_assign_pointer(ctx->rings_rcu, rings);
+>>       if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
+>>           ctx->sq_array = (u32 *)((char *)rings + rl->sq_array_offset);
+>>   diff --git a/io_uring/register.c b/io_uring/register.c
+>> index a839b22fd392..5f2985ba0879 100644
+>> --- a/io_uring/register.c
+>> +++ b/io_uring/register.c
+>> @@ -487,6 +487,18 @@ static void io_register_free_rings(struct io_ring_ctx *ctx,
+>>                IORING_SETUP_CQE32 | IORING_SETUP_NO_MMAP | \
+>>                IORING_SETUP_CQE_MIXED | IORING_SETUP_SQE_MIXED)
+>>   +static void io_resize_assign_rings(struct io_ring_ctx *ctx, struct io_rings *rings)
+>> +{
+>> +    /*
+>> +     * Just mark any flag we may have missed and that the application
+>> +     * should act on unconditionally. Worst case it'll be an extra
+>> +     * syscall.
+>> +     */
+>> +    atomic_or(IORING_SQ_TASKRUN | IORING_SQ_NEED_WAKEUP, &rings->sq_flags);
+>> +    ctx->rings = rings;
+>> +    rcu_assign_pointer(ctx->rings_rcu, rings);
+>> +}
+>> +
+>>   static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+>>   {
+>>       struct io_ctx_config config;
+>> @@ -579,6 +591,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+>>       spin_lock(&ctx->completion_lock);
+>>       o.rings = ctx->rings;
+>>       ctx->rings = NULL;
+>> +    RCU_INIT_POINTER(ctx->rings_rcu, NULL);
+>>       o.sq_sqes = ctx->sq_sqes;
+>>       ctx->sq_sqes = NULL;
 > 
-> test_valid_position: verifies that a NOP128 at a valid physical slot
-> (identity-mapped via sq_array) succeeds.
-> 
-> [...]
+> Should be better to not have a transient null, and then there
+> is no need to check for that in task_work. I.e. don't zero it
+> and only assign the new value if you successfully created a
+> new set of rings.
 
-Applied, thanks!
+That's a good idea, I like that. I'll make the change.
 
-[1/1] test/sqe-mixed-boundary: validate physical SQE index for 128-byte ops
-      commit: a35e4943ec95af0aba795a58fd9d680a54406dc5
-
-Best regards,
 -- 
 Jens Axboe
-
-
 
 

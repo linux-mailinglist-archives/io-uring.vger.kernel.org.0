@@ -1,44 +1,84 @@
-Return-Path: <io-uring+bounces-12631-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12632-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cLG0OA+xsGnGmAIAu9opvQ
-	(envelope-from <io-uring+bounces-12631-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 01:02:23 +0100
+	id uJOnERVKsWlCtAIAu9opvQ
+	(envelope-from <io-uring+bounces-12632-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 11:55:17 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556F6259758
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 01:02:23 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477CE2629F7
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 11:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0FB8931258A5
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 00:02:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 8220D3077C65
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2026 10:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C52A1BF;
-	Wed, 11 Mar 2026 00:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB43D3CF8;
+	Wed, 11 Mar 2026 10:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+NfnaGG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E628F5;
-	Wed, 11 Mar 2026 00:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897CA3D333D
+	for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 10:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773187341; cv=none; b=VMb0drDCQYkjprcAwMqr63QT9mgJ5cRWE+QZEIXn8JpSfDvax7sNctFDjuKiIA70EUn1na7b10jFb2niXieMoQy1n24IBcP/1dZtIPxV1+58d1brDu0MSlLlgZCGDMGJj1yWGK3GHEnFZWGPBvgDV6OsZ1bHFkBWq1044gihUXs=
+	t=1773226062; cv=none; b=XVnzZmeLsaB5GGv/62shRiYunWX78JzADZIbm9XvGmWJje68BI8f+XBgxsHMhPR/F/cNyFmCSLgUq5ISeo8Qm19g5UwMfcRhEchQVPR8Lp9bzmxB/l1Abfh5i4eM3Rc6GxvHlxWyCcu9QXkCfVdG77WtY8d2u3CwMMWjheBiBoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773187341; c=relaxed/simple;
-	bh=smzvbB4nmsoWyjvlw6IqwQZpGTU4rmIBF86uCfM5iSI=;
+	s=arc-20240116; t=1773226062; c=relaxed/simple;
+	bh=zRCIOZXGAulewyBbqGE0TlQlTPqeFeIDTbPGyy24MV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mZ7SZw8AML/61LYZF+cYH3QVClpOnHegGEKkHaYUPO71sjzYDiM5Q+n4lFaME/6BEsW2e1BZyMolXCAJSu5lYFDt+iIzDok/b+Wt2L0EsMSmi2OBcG9piL8W4T14/fiz+ZcJEAo8snm/H1rLrULkiXmcSICjsos5XMZOMusthos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 7BCB113A961;
-	Wed, 11 Mar 2026 00:02:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 85BFC20027;
-	Wed, 11 Mar 2026 00:02:06 +0000 (UTC)
-Date: Tue, 10 Mar 2026 20:02:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
+	 MIME-Version:Content-Type; b=M/Kvey38hxllltljXfUMcc0Q0tWF+/5PyKrN9phktKQxGWnHkG3ATtbdm6KS0CpsAme7GrSDTLiT9fBCVdIL57ALELxUEsO1pj0IgxmWrCUGRlRMNdO7Et2C3DSFDYEl0Y2ARDIs2wdfyOtsmkSOaIdm1vxK5oWecDvWPZ648R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+NfnaGG; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-485409ab264so6052245e9.1
+        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2026 03:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773226059; x=1773830859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=us9WYwCiTBLLsk5cVeG22xmuXfkRkjPu0Kbcd1njBZs=;
+        b=l+NfnaGGhGE/Qag8NAZKtowOcVY2wLQCbEgf8MnpvieTQKfxTgLXG7gVpu41GQE3Cp
+         lhcuSJ3ojhuoA+XvMW4ZK8DqWwguSBIQJdzHM+m0gGn1i58Im+PG8aw4GSSmMwNkHayu
+         W9J2Et5BO3MOuAYEpSQbP4o8f9J9gsDj/OANzpqDRda1qkC6GXeo6tLR1/FbLVhhy7Cf
+         MUxhHc5jx0lvSaHnxQ6WahuluHX1XzGqARVN8PyVe1PrQbU+agAKtUfEmOiyxhtTA+gY
+         BR6kn5ugraDiB91Rov4L/mant481Z758KVbs1s66hkgz+KSI4U1uv3Da1yI4gGWMgZ4d
+         Uvjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773226059; x=1773830859;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=us9WYwCiTBLLsk5cVeG22xmuXfkRkjPu0Kbcd1njBZs=;
+        b=ScwftVNV4x8G5zdPgYPRJ9dVLXentQMhd/luRHqVYpH5z4B8BpipSNSw+ye7mnhPn6
+         PuQtUzdos2xuc1F/W5MXG0Nbw1RYdfUg29JPA+X+DT/a+g88VC91Xo9npiSrZwJQe0+C
+         avVUqrgI5WcGd8f4XL26g0IOi2KqlA+GLNsh33xY3SY0znELEbiFBvI9fSfvMOa5XOrU
+         CPmV+hmKkO3mUMkbwxIGmm1h/HarQVsdiFN5KzqZRUXt7zzG0KChL6rDKyxFqcTxC+lH
+         W8oG2TmCCXsNN7us//eZSyB06Y+p2Av20GvCIOnBAIGMuVRAkUGPZwECDVFy/euy5gkp
+         DFbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7PKBbN4oWVOTDN/m5LK9ryrMHdAaY2SX40Hko+Sh0sh/l9C0ZY5AL9Z9g1gRU/eff0a+jinjnRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn6Enk6HaI/dtRDkoRIF1S1rE+ysDlUP+P/Yt5RjDM6V7+cQIZ
+	kZw97HZwMAshaR5OaghMobKYVwhdifZeDLkQB2Iwtb3bvTYktPmPn9z7
+X-Gm-Gg: ATEYQzx9qjBpLflOS75MtVMRqbtaAiNp/NyvPG7CTWFcNQV9zwR7Aa/kN10Svjanb0f
+	sF/5mdu+uMHwrSgvXTyCQYRN4Jtt3Dp+85rpc9ek5zrFujNs6MG3u3hSfoVKLZYNlwQ5C4ab5lF
+	4yVFW2Ovurnv4k6pEVR04V/C6tkwBnBkT2ictTfhqTtpPHjCycwR7vtZFwR/yiG3Nt/v7hrJ135
+	KB15STXgHx3MTllxmhEcbXvmt/opO2PS/YO8LX7CI22phLrh3RausZHUWgT4xWenG+T83Hpypj4
+	pw4uHztkdAOZUAuWefCgN4wIA6vREW6M3qtCyssSOSe1jmzzfY/QSLAqReBxcjZBam/ZUa337Rs
+	V+SPIwJBCALEbLYkdPYlK82p1R0ju08VcX80Z6+TOalVVMrHfnj/pz+AcLAVKNUWdRUUjjUKhOP
+	KNouYefKvXwbQQ9lXu/mkNbrgZPtcEegu4s6Lk0ZD35cnN+5dG2BEtiMIhNLXzi54Fujem/UK+b
+	+Y=
+X-Received: by 2002:a05:600c:5298:b0:479:13e9:3d64 with SMTP id 5b1f17b1804b1-4854b291dc2mr30148705e9.15.1773226058755;
+        Wed, 11 Mar 2026 03:47:38 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f820a2f1sm5725154f8f.30.2026.03.11.03.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2026 03:47:38 -0700 (PDT)
+Date: Wed, 11 Mar 2026 10:47:36 +0000
+From: David Laight <david.laight.linux@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
@@ -49,12 +89,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  netdev@vger.kernel.org, linux-mm@kvack.org,
  linux-security-module@vger.kernel.org, Christian Loehle
  <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] tree-wide: rename do_exit() to task_exit()
-Message-ID: <20260310200217.451cf37e@gandalf.local.home>
-In-Reply-To: <20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
+Subject: Re: [PATCH v2 1/2] kthread: remove kthread_exit()
+Message-ID: <20260311104736.51b53405@pumpkin>
+In-Reply-To: <20260310-work-kernel-exit-v2-1-30711759d87b@kernel.org>
 References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
-	<20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	<20260310-work-kernel-exit-v2-1-30711759d87b@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,102 +103,66 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 5bg3rrg18jbru7uwkfxn1hbh397psca6
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18LHCHZ+vV3JFPf+Z89JvS/nvAKMsv+FAI=
-X-HE-Tag: 1773187326-98008
-X-HE-Meta: U2FsdGVkX1/3tMWPLwyG4JCc4wkqvh9SiSPSlhJp6Tv4W/fwSwUFhWXG3UBrBxSzLq3p72eu37Xu4WWh77aTVVkk97xFw9hCg2Tn+gfwvdW114asIqtfy8xHhNrVuERS2G/65ce3/BsvZjC5d8Vnvs35vga+tnTJklfjQ+UttgL5bwbjp5oOgQNdAzx3oibQ4Mzt0N8V0YHeM+nhQRgwSGhlB1291Y2eHefZmXFBYTpQLIIP1XDBd9pac8iHtBZirKQZfE9I0NK+xzIHdGI0aui4vMm56FkppnHJDf/mUfgi8cC8UEAJB61JKAsSDfwj7R599Re8N4CNbTJgYcDwKo1gfVDZt4y9
-X-Rspamd-Queue-Id: 556F6259758
+X-Rspamd-Queue-Id: 477CE2629F7
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[goodmis.org : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.649];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rostedt@goodmis.org,io-uring@vger.kernel.org];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCVD_COUNT_FIVE(0.00)[5];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12631-lists,io-uring=lfdr.de];
-	R_DKIM_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,gandalf.local.home:mid]
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-12632-lists,io-uring=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[davidlaightlinux@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Tue, 10 Mar 2026 15:56:10 +0100
+On Tue, 10 Mar 2026 15:56:09 +0100
 Christian Brauner <brauner@kernel.org> wrote:
 
-> diff --git a/tools/testing/selftests/bpf/progs/tracing_failure.c b/tools/testing/selftests/bpf/progs/tracing_failure.c
-> index 65e485c4468c..5144f4cc5787 100644
-> --- a/tools/testing/selftests/bpf/progs/tracing_failure.c
-> +++ b/tools/testing/selftests/bpf/progs/tracing_failure.c
-> @@ -25,7 +25,7 @@ int BPF_PROG(tracing_deny)
->  	return 0;
->  }
->  
-> -SEC("?fexit/do_exit")
-> +SEC("?fexit/task_exit")
->  int BPF_PROG(fexit_noreturns)
->  {
->  	return 0;
-> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-> index fee479295e2f..7e00d8ecd110 100644
-> --- a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
-> @@ -82,7 +82,7 @@ check_error 'f vfs_read arg1=^'			# NO_ARG_BODY
->  # multiprobe errors
->  if grep -q "Create/append/" README && grep -q "imm-value" README; then
->  echo "f:fprobes/testevent $FUNCTION_FORK" > dynamic_events
-> -check_error '^f:fprobes/testevent do_exit%return'	# DIFF_PROBE_TYPE
-> +check_error '^f:fprobes/testevent task_exit%return'	# DIFF_PROBE_TYPE
->  
->  # Explicitly use printf "%s" to not interpret \1
->  printf "%s" "f:fprobes/testevent $FUNCTION_FORK abcd=\\1" > dynamic_events
-> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
-> index f0d5b7777ed7..a95e3824690a 100644
-> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
-> @@ -5,7 +5,7 @@
->  
->  # Choose 2 symbols for target
->  SYM1=$FUNCTION_FORK
-> -SYM2=do_exit
-> +SYM2=task_exit
->  EVENT_NAME=kprobes/testevent
->  
->  DEF1="p:$EVENT_NAME $SYM1"
-> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-> index 8f1c58f0c239..b55ea3c05cfa 100644
-> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-> @@ -87,7 +87,7 @@ esac
->  # multiprobe errors
->  if grep -q "Create/append/" README && grep -q "imm-value" README; then
->  echo "p:kprobes/testevent $FUNCTION_FORK" > kprobe_events
-> -check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
-> +check_error '^r:kprobes/testevent task_exit'	# DIFF_PROBE_TYPE
->  
->  # Explicitly use printf "%s" to not interpret \1
->  printf "%s" "p:kprobes/testevent $FUNCTION_FORK abcd=\\1" > kprobe_events
+> In 28aaa9c39945 ("kthread: consolidate kthread exit paths to prevent use-after-free")
+> we folded kthread_exit() into do_exit() when we fixed a nasty UAF bug.
+> We left kthread_exit() around as an alias to do_exit(). Remove it
+> completely.
+...
+> -#define module_put_and_kthread_exit(code) kthread_exit(code)
+> +#define module_put_and_kthread_exit(code) do_exit(code)
 
-These tests need to pass on old kernels too. So we can't just do a
-"s/do_exit/task_exit/" conversion. It needs to test for task_exit first,
-and if not found, fallback to do_exit.
+I'm intrigued...
+How does that actually know to do the module_put()?
+(I know it does one - otherwise my driver wouldn't unload.)
 
-See how we handled the _do_fork() > kernel_clone() rename:
+The corresponding try_module_get(THIS_MODULE) is done before the
+kthread_run() (and has to be 'put' if that fails).
+So there is an explicit 'get' but an implicit 'put'.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/ftrace/test.d/functions#n182
+While a loadable module that creates a kthread usually needs to give
+the kthread a reference to its module and then have that reference
+released as the kthread exits, I can imagine cases where that isn't true.
+(Or broken code that just hopes the module won't be unloaded just
+as the kthread exits.)
 
--- Steve
+It actually makes me think that module_put_and_exit() ought to have
+a 'module' parameter.
+Or, perhaps, kthread_create() should have the module parameter and
+hold a reference to that module until it exits.
+
+	David
 

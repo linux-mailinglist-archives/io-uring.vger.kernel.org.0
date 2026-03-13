@@ -1,188 +1,201 @@
-Return-Path: <io-uring+bounces-12662-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12663-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WNWAJE35s2nWeQAAu9opvQ
-	(envelope-from <io-uring+bounces-12662-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 12:47:25 +0100
+	id UMleBeoMtGlvfwAAu9opvQ
+	(envelope-from <io-uring+bounces-12663-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 14:11:06 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8C32826EE
-	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 12:47:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C1E2837D8
+	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 14:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3473A30D2D6A
-	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 11:47:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C6E233080C2E
+	for <lists+io-uring@lfdr.de>; Fri, 13 Mar 2026 13:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B87E37D130;
-	Fri, 13 Mar 2026 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D410C315785;
+	Fri, 13 Mar 2026 13:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wwi2ecG/"
+	dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="SNxnVjfd";
+	dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="BvDhNvhv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from devnull.danielhodges.dev (vps-2f6e086e.vps.ovh.us [135.148.138.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5796A2E06E4
-	for <io-uring@vger.kernel.org>; Fri, 13 Mar 2026 11:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5749327B4F7;
+	Fri, 13 Mar 2026 13:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.148.138.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773402437; cv=none; b=RvXZ+Mtg+yN7xAYevZt1F1FWC39uK1zHs+YDWE00coAKkxhiHthC/MKpYnkwooOSBap7qKpnK9EkslbmEW5xmFZMQuRaRxHXfQtDxkUA/CGGq4s2E6M7IIBEryc8+23XFsGwdtBHQpxmANcrGlmiqcyAfBHYQTN50C5+y0382AM=
+	t=1773407393; cv=none; b=EzsRiA/W1Kcv3DZ/LFuKyehe3lGmztiljD0Czzr2Obd1nXe4wgi35k4spgUsFbq8AaXYU3RFbKhL0AXMIA+mnE4Kd2o0EyJhyf925iJgStI6/P8pp725tysDen+zAneCznCA83UC71ez+mZ1MpYJy9ZdoNHJbCH3isSeQBCtX00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773402437; c=relaxed/simple;
-	bh=dC/uLwqqQ5tGsyI01VwIJly3I3etT8qhy8wM/ZsUsjs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=u5vv9SDwcvaKWI+cwUii8il4vVN573NAcVNb6vfj+gBQ5Y3FnN5xgBNTAv/JFhbMGxDH4ab5Af00r95moENerBaHToUGhswPSfrehiz3xdZe8LWXtpIg4VosXPycn2elgHyWd4RS2YYeIWfRGWWkt6JAaaQVeGhqkWWXBn4skBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wwi2ecG/; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-46704fbf62dso1374823b6e.1
-        for <io-uring@vger.kernel.org>; Fri, 13 Mar 2026 04:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773402434; x=1774007234; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cOGuFOl2uPxgV3D3PuvOfgu6T6mAqkjLmtI2ktXoBsk=;
-        b=wwi2ecG/whuI78ufXJVSZ6PF/qQ0qWdEEqxrwpNXT/EWVjegcM3qph60PJbEvVIlGo
-         R3rkUN+POiwhUv0Isa8IT0eMSWlbue+MptN7KGsHhfFQjlX1LJiA5wozg/14vRvNdZfH
-         1cNchIaP34erxgonAYOfptBBMIWPsfPcW9e6S/G0BF7wNCG0oLkyD8FMAGlzlnLC1KKZ
-         A0trzAGpfwhg8F98lP5kLvhvePKfPfQyHB7N8ZC6QTrj8OHMGySXLzwnPF/3dnetHdv3
-         lcHr3gCfG1eIoqAQF1eQHokRo72vI91z2d/jM1JCID3iwjPE/KVKNew5r9P3XcbR/dJF
-         2WaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773402434; x=1774007234;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cOGuFOl2uPxgV3D3PuvOfgu6T6mAqkjLmtI2ktXoBsk=;
-        b=iyQOr9F7cdgzfXiYttlKncwPQB4Adb49ayxHYUQ7LjT8kB1YjufSL5TsqJiRfg/4Ag
-         oycY+JBdIZV5mIofh1pj737vSWH/L5nt9QFWbmDbupC3XfiQDMZrf4gGOGwJm8S/4kp6
-         IrktuTq/feDtSDvR9Q8piRBjD6VJ7ooBt9f+u8+fYroWv3v3ZqVLhwrUBKJ8c0fzhK4Z
-         5lY+UVkAQ788A3v91pTfeWXWED1czg4DRuWMj9nirUYkMvOL1TJLzZAElCjTiwLaaakV
-         Z3x3oEd90zU61OVgqCbK1SZ523oT0o6ALwe/T76NwAfl3LaK7bKh3mipErfnMwAtv7bI
-         sP1g==
-X-Gm-Message-State: AOJu0YxXlEsrSvTuG8o+Rbg8zbzoFeT+8lp2fghbQo1gMUHoV3EHFiqn
-	83mlz5Bg6y9iz4PPT2yjhOu+5cVAT57ObgvSt3sKeRNgpN22WOykEzBKzsiMOXHVQmE67FpXOty
-	ZDTukhp8=
-X-Gm-Gg: ATEYQzw7I1dnMOrT7D7hz8EjCzjfOwq/XHEHFTFxCIRiTIVv8jVPdqMB/P8q1s2utVn
-	inwbxao4Rlu99ywUbPvGhBAjWQXYu/D/gNnwgyBanUlKe6D2LIaUhy2BPWjV8X50GKkhQCFd07B
-	G4eSlxyxtiK6u8OacKzp1T6DiH9SKWE4dKaAU8saF70afWlJ85AwGjp7mxh+bzRXPACH52wGAuo
-	DbQ2hqQyOo84yP3V5WhF+jX71m5QAiF25RLHiKDlx7RE8hslKTjbm/G4AyOQz+KNrEgqBhXm8sj
-	AMqXamGPt9fmhoDT5pJ6N3M7FjEIGouYlX1NYeuNJBN83sImF0JtYNxyBQnyaR80qCFZy72irrO
-	zuqvfarzjFEdUuS9MrM41LQN7WygDpLJp5GbT0c85GHgGIqGLZGYsw6Nc6pNRPr+odmHWlWw+oG
-	9w1ESgvSw0j/PzjRDEbrCFQ/GBcybNugizO48AcftJqSpGeahUcDi9IaCkXxaOLxX0sbCv+i80m
-	8eWheTCGg==
-X-Received: by 2002:a05:6808:3095:b0:463:ab56:9ed2 with SMTP id 5614622812f47-467570ef6bfmr1397964b6e.17.1773402433953;
-        Fri, 13 Mar 2026 04:47:13 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4674de9eee9sm2244345b6e.13.2026.03.13.04.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2026 04:47:12 -0700 (PDT)
-Message-ID: <0ee80082-40b4-462d-9661-142cfb67a56c@kernel.dk>
-Date: Fri, 13 Mar 2026 05:47:11 -0600
+	s=arc-20240116; t=1773407393; c=relaxed/simple;
+	bh=wGZJU8v1o3wJsUvfOkK73w+fSpnkq+M5KPbGjAGjodc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vz9zsfHMGd8Zw2jEqnzEkwjXWRjp78nqU7N3H/Dsgp/JzI2AacnvXcM5jNk7edmEwsOGJGCtJThfDDXFhC8mO0UFQAdkQ1Xj4ERO0c/qcXiu3Gbk/Iq73LPjnDY7s9O0ebms/s8GkK9sa+jf8kQZbNHMfokgJ+pM9vdgkQi9WIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev; spf=pass smtp.mailfrom=danielhodges.dev; dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=SNxnVjfd; dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=BvDhNvhv; arc=none smtp.client-ip=135.148.138.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=danielhodges.dev
+DKIM-Signature: v=1; a=rsa-sha256; s=202510r; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1773407260; bh=LjzcCLrzGOIYXAecJBE7WEn
+	SORmrXrbpjYe2iSWzT1Q=; b=SNxnVjfduRvwGqq1KS8bwjzaM+Ln+Wjbrzl3xQqBrHRMA6Jw3O
+	iGY3exJYU9E5l6TnbZx9ordO+B1wcpKuZab6Qtr9nX8qmv1BZB/LxMPasMyUidnNZgLKF1vldtJ
+	4Jw+oxE9t5S/Lm06NU47aJx0nWxDgLX8gvCyMeajh4X/vKH9meD6BKHG2PTI4JXoWIgXJcnGRem
+	IY9XA1mBDVCgvgZCVc0k3gP6JhoCuc+ZhD+MUtsL8dbYZl1rzs46PrMqRbUyK6wqLNCULif2SYN
+	N9n16N3aRe2xFNP0Tbl8P0vuP4c/mXu25Rgbuf0IHLSv8Ovkgmqb3QdxdyD6KjJ6WPw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202510e; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1773407260; bh=LjzcCLrzGOIYXAecJBE7WEn
+	SORmrXrbpjYe2iSWzT1Q=; b=BvDhNvhvOfwIvkgBIrxEF2gOsb5HhWzX2ytOfv6VCJVWKBV9ul
+	TEHMqkSkqhNStw0hfJrTosfmSU8EbMEvnmCA==;
+From: Daniel Hodges <git@danielhodges.dev>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Daniel Hodges <git@danielhodges.dev>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] io_uring: add IPC channel infrastructure
+Date: Fri, 13 Mar 2026 09:07:37 -0400
+Message-ID: <20260313130739.23265-1-git@danielhodges.dev>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 7.0-rc4
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-1.66 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[danielhodges.dev,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[danielhodges.dev:s=202510r,danielhodges.dev:s=202510e];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12662-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12663-lists,io-uring=lfdr.de];
+	FREEMAIL_CC(0.00)[danielhodges.dev,gmail.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[danielhodges.dev:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[git@danielhodges.dev,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel.dk:mid,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: EB8C32826EE
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[danielhodges.dev:dkim,danielhodges.dev:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 99C1E2837D8
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hi Linus,
+io_uring currently lacks a dedicated mechanism for efficient inter-process
+communication. Applications needing low-latency IPC must use pipes, Unix
+domain sockets, or hand-roll shared memory with manual synchronization --
+none of which integrate with the io_uring completion model or offer
+built-in fan-out semantics.
 
-Set of fixes for io_uring that should go into the 7.0 kernel release.
-This pull request contains:
+This series adds an IPC channel primitive to io_uring that provides:
 
-- Fix an inverted true/false comment on task_no_new_privs, from the BPF
-  filtering changes merged in this release.
+  - Shared memory ring buffer for zero-copy-style message passing
+  - Lock-free CAS-based producer (no mutex on the send hot path)
+  - RCU-based subscriber lookup on send/recv paths
+  - Three delivery modes:
+      * Unicast: single consumer, shared consumer.head via cmpxchg
+      * Broadcast: all subscribers receive every message via
+        per-subscriber local_head tracking
+      * Multicast: round-robin distribution across receivers with
+        cached recv_count for O(1) target selection
+  - Lazy broadcast consumer.head advancement (amortized O(N) scan
+    every 16 messages instead of per-recv)
+  - Channel-based design supporting multiple subscribers across
+    processes via anonymous file + mmap
+  - Permission model based on Unix file permissions (mode bits)
+  - Four registration commands: CREATE, ATTACH, DETACH, DESTROY
+  - Two new opcodes: IORING_OP_IPC_SEND and IORING_OP_IPC_RECV
+  - Targeted unicast send via sqe->file_index for subscriber ID
 
-- Use the migration disabling way of running the BPF filters, as the
-  io_uring side doesn't do that already.
+Benchmark results (VM, 32 vCPUs, 32 GB RAM):
 
-- Fix an issue with ->rings stability under resize, both for local
-  task_work additions and for eventfd signaling.
+Point-to-point latency (1 sender, 1 receiver, ns/msg):
 
-- Fix an issue with SQE mixed mode, where a bounds check wasn't correct
-  for having a 128b SQE.
+  Msg Size   pipe    unix sock  shm+eventfd  io_uring unicast
+  --------   ----    ---------  -----------  ---------------
+  64 B        212      436        222           632
+  256 B       240      845        216           597
+  1 KB        424      613        550           640
+  4 KB        673    1,326        350           848
+  16 KB     1,982    1,477      2,169         1,893
+  32 KB     4,777    3,667      2,443         3,185
 
-- Fix an issue where a legacy provided buffer group is changed to to
-  ring mapped one while legacy buffers from that group are in flight.
+For point-to-point, io_uring IPC is within 1.5-2.5x of pipe/shm for
+small messages due to the io_uring submission overhead. At 16-32 KB the
+copy cost dominates and all mechanisms converge.
 
-Please pull!
+Broadcast to 16 receivers (ns/msg, sender-side):
 
+  Msg Size    pipe     unix sock  shm+eventfd  io_uring bcast
+  --------   ------   ---------  -----------  --------------
+  64 B       28,550    32,504      5,970         5,674
+  256 B      27,588    34,777      5,429         6,600
+  1 KB       28,072    34,845      6,542         6,095
+  4 KB       37,277    46,154     11,520         6,367
+  16 KB      57,998    58,348     34,969         7,592
+  32 KB      89,404    83,496     93,082         8,202
 
-The following changes since commit 531bb98a030cc1073bd7ed9a502c0a3a781e92ee:
+The shared-ring broadcast architecture is the key differentiator: at
+16 receivers with 32 KB messages, io_uring broadcast is 10.9x faster
+than pipe and 11.3x faster than shm+eventfd because data is written
+once to the shared ring rather than copied N times.
 
-  io_uring/zcrx: use READ_ONCE with user shared RQEs (2026-03-04 06:30:39 -0700)
+Scaling from 1 to 16 receivers (64 B messages):
 
-are available in the Git repository at:
+  Mechanism        1 recv   16 recv   Degradation
+  ---------        ------   -------   -----------
+  pipe               212    28,550       135x
+  unix sock          436    32,504        75x
+  shm+eventfd        222     5,970        27x
+  io_uring bcast     651     5,674       8.7x
+  io_uring mcast     569     1,406       2.5x
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.0-20260312
+Multicast sender throughput (ns/msg):
 
-for you to fetch changes up to c2c185be5c85d37215397c8e8781abf0a69bec1f:
+  Msg Size   1 recv  2 recv  4 recv  8 recv  16 recv
+  --------   ------  ------  ------  ------  -------
+  64 B         569     557     726     916    1,406
+  4 KB         825     763     829   1,395    1,630
+  32 KB      3,067   3,107   3,218   3,576    4,415
 
-  io_uring/kbuf: check if target buffer list is still legacy on recycle (2026-03-12 08:59:25 -0600)
+Multicast scales nearly flat because the CAS producer only contends
+with the shared consumer.head, not with individual receivers.
 
-----------------------------------------------------------------
-io_uring-7.0-20260312
+Daniel Hodges (2):
+  io_uring: add high-performance IPC channel infrastructure
+  selftests/ipc: Add io_uring IPC selftest
 
-----------------------------------------------------------------
-Jann Horn (1):
-      io_uring/register: fix comment about task_no_new_privs
+ MAINTAINERS                                |    1 +
+ include/linux/io_uring_types.h             |    7 +
+ include/uapi/linux/io_uring.h              |   74 ++
+ io_uring/Kconfig                           |   14 +
+ io_uring/Makefile                          |    1 +
+ io_uring/io_uring.c                        |    6 +
+ io_uring/ipc.c                             | 1002 ++++++++++++++++
+ io_uring/ipc.h                             |  161 +++
+ io_uring/opdef.c                           |   19 +
+ io_uring/register.c                        |   25 +
+ tools/testing/selftests/ipc/Makefile       |    2 +-
+ tools/testing/selftests/ipc/io_uring_ipc.c | 1265 ++++++++++++++++++++
+ 12 files changed, 2576 insertions(+), 1 deletion(-)
+ create mode 100644 io_uring/ipc.c
+ create mode 100644 io_uring/ipc.h
+ create mode 100644 tools/testing/selftests/ipc/io_uring_ipc.c
 
-Jens Axboe (4):
-      io_uring/bpf_filter: use bpf_prog_run_pin_on_cpu() to prevent migration
-      io_uring: ensure ctx->rings is stable for task work flags manipulation
-      io_uring/eventfd: use ctx->rings_rcu for flags checking
-      io_uring/kbuf: check if target buffer list is still legacy on recycle
-
-Tom Ryan (1):
-      io_uring: fix physical SQE bounds check for SQE_MIXED 128-byte ops
-
- include/linux/io_uring_types.h |  1 +
- io_uring/bpf_filter.c          |  2 +-
- io_uring/eventfd.c             | 10 +++++++---
- io_uring/io_uring.c            |  4 +++-
- io_uring/kbuf.c                | 13 +++++++++++--
- io_uring/register.c            | 15 +++++++++++++--
- io_uring/tw.c                  | 22 ++++++++++++++++++++--
- 7 files changed, 56 insertions(+), 11 deletions(-)
-
--- 
-Jens Axboe
+--
+2.52.0
 
 

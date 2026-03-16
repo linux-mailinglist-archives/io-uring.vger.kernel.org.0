@@ -1,85 +1,83 @@
-Return-Path: <io-uring+bounces-12699-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12700-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uGKxKb9OuGlHbwEAu9opvQ
-	(envelope-from <io-uring+bounces-12699-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 19:41:03 +0100
+	id 2NqMLvVauGk7cgEAu9opvQ
+	(envelope-from <io-uring+bounces-12700-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 20:33:09 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096EF29F255
-	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 19:41:02 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C88729FD0F
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 20:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C227C3025A48
-	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 18:40:57 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 70D493018F34
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 19:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F389B3E0231;
-	Mon, 16 Mar 2026 18:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3688234C124;
+	Mon, 16 Mar 2026 19:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PHPjCXTG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IhsiTs/b"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1409A3DFC7A
-	for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 18:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC35C33A9D3
+	for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 19:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773686447; cv=none; b=l1xnudPUBAE0WOjmSRil+hgJOYTnzTuhcZWW3vBH7QE0gL0hdzSppI0V3ZmWKcj1zAOKs5smrvKzWoyPg9ifPLPt3bomHeWY2EcAWch+64dejtkU/wbKgdNZjyLuKFi3xkSfWDBzlqLS7QvolhYh4UkoWdwczgmCLm0G4dEWtrk=
+	t=1773689586; cv=none; b=Qlr97yc5YceJ+dTDySmjDEx1DO6EEJsm83xFklrF3ypb6hSXA+/WaTFn8hSuDagd47B+lrIdKl6Z5ASBYNSFUeFQ/UrPZn9k2gx96BYK/06SIUObKMBtFwGcAoNlaAqmkiiVwL8WOPRo8OP9Vjy9b71XVFnx8Ybl8G0caY+VdzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773686447; c=relaxed/simple;
-	bh=KjcLFVHtSt6G0DLVXbwWJgFK/HJvabRpb+1HkhP0nlA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GtAPo1kK+2PSxLIMAX7vKdyl7hgnh97yM0/0lR16MGtQipKypwtX26GpWnKMp8uN0Hlh++lQ93sU9K3bNsWHc1yr4wuSQyiXz+WukcyfxO7yEDd/OLXEIXs7xm93/etWISv5zwXjZhlG/7ZwLIqUrlJkd6w2JUrBsAi0/8famXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PHPjCXTG; arc=none smtp.client-ip=209.85.160.41
+	s=arc-20240116; t=1773689586; c=relaxed/simple;
+	bh=oTEoGlmvparb3VSFCxYYdyGA8mnHgx0FTtdD/r0KQak=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=GRe1bPuUX5yZLIHGTJYYLFXtKMydSFfFTkrqhm/mAV4y8rK90tXQ8GfcyV1qxvDdQM/LdCpAfh94+5BTnDGG16x7cllM0ACgz5bX+vjb2bT7GiTHYUcZWd5lwQ8YSfSD1+q/68C+HNhOglTTfGfjr1Fj7TL7QVgl8m6aKyvksG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IhsiTs/b; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-41576c5c01cso3051551fac.3
-        for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 11:40:42 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-40427db1300so2971193fac.0
+        for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 12:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773686442; x=1774291242; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sQNPklb+pjPxNR3JRE18HCGZzSZKnk3uiQQhKadqP3E=;
-        b=PHPjCXTGt+RqlmNzHzDC3jRgX/U5YsLK+zN0CopXlhN7ED/r1FfetcK+SL6lYAIoif
-         lM+RYB55DYspeFM3KIU+ayhN6KLUoB41fJghMA6Wmv9DaBEZbQTI1LulR63xEWQimMsx
-         lur4xZjZQaOhot9HT8rz7KoHodNRjv/Rr+2AYcM3b1SqipBVMtKYZq/7gbnTMiqAun5p
-         MmODWzcaQwE4/5VoucUEumbRC7OSahYfPIwFWm/fBkgUDLBf3qbGTVHsV6KNmW/WllcH
-         mOMo9j7lhYSJ2x/sNtoaqGuh9qa95eekYSS/djPulVUjJJ7c4eZ3iIP6pYF5FMk/43w4
-         OaBQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773689582; x=1774294382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H/ZLw2GEL74wXFi4mnBCdIGmeDLoogf2VctRT7EQunc=;
+        b=IhsiTs/bqJV/kIYRaCqk73Vu5/Bl/zT6qRjbGRj7eZw1eUwrRIPu5gp2JK95XekO9a
+         th9qW4q7HcDiUdzpLbMRG7MPmza4LkO44rNeUiCrrokhoF9ejic/UyKTER0uHxz79s+m
+         wLsSyCGaidhzsf8nx1YjTxxl3SswnYdnU97HQNQJNBnXeNidsJT4wrWv4RP4N2B9Uhly
+         b3lB6ZBz6cN1nvVHRmm1UV5QewGZ2eGg56kQv3iafr9kKYaEFcCJoFoj2A6ReRCINGAG
+         RWPXxlZ/LSm2JH8JovfRFsasfj6OT0lSpV24cHQPnzJg3/DeY2wcJ3f2ejRTMlYvr3rq
+         vhUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773686442; x=1774291242;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQNPklb+pjPxNR3JRE18HCGZzSZKnk3uiQQhKadqP3E=;
-        b=pJqAGXNxj8SRIRUM/H38bwR/WLM430eD3/qtGGfmzZ4tZNmqjXFBhbwWnohX32tRy9
-         2HngBY2hMtrEyLW3NcYat24K/hsfXiMP5eo+VHqGlNxvaNbwE6YuYm1Fmr/hAj0+4Sth
-         DrE1/rlyIqK95rEnU+F5l/f5hoo/h1v9TsbqSr6g3rq91eqBlKqOtPGoy/oB2OCQ/7cD
-         QAkz/LLTPHYnC3YHekKVDVzRzX4BQsgc1DlyFirzIp0IPPJLVg0yu34PLdTyYgtf33yC
-         1cOid5VhMDUjhIRTx7GJnN9usgx68tTUPBcZqBx2i/nt+/NCQMH3RaSVKlIep8J0jnV/
-         HuuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV1pUVr2hanYNmv070zVWe1vpJJpvMafT6yKEzZV/oXuhiJFwPIrxAwyHezT5JEpkMV6Fliscjuw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwNcWKYQEYWnaXueI6pwTmJswxhdB/Zw/p/5R3A5UBH15OSQA+
-	wXbyDTxg3+PGxUpexvPacP+VAaEiows75ji8TdGOPRmWlyqsNvB5olmrMmxWFjnqmY7IRMCw4lA
-	0zf0IPTQ=
-X-Gm-Gg: ATEYQzzKbzZ7+l8y8NfddjM7J5Wxlmz33btlYRF972Fpyr30kNXRY1OxS0oEK6+mhXd
-	Ic6z+W1FveyiXDEMjDxv5eWRJtLa1mvAFfarEzfHeHeMrbpg7S7gjA+Bos6gffSW6n8ZqMSNZFF
-	XyWFoF2xzOV/CnkUF5VMlWfSQ+rebH4HCkU7o2USQi2NnlFUvo9o7A0LQZa+elI8TYH9QTaSEha
-	mk4oQ7EBWKjlRiwcEJP9TWItJcxPbZLME1q80IWMzo4XS41JmRCkSmhrK5J+BZYvrNP/DbnlX9S
-	Z6E1icwe99dkHvKVqzRqs67gkrRUq3FTQkWHbKedVw3nkoqr5jpAK5/fpDrwq/l+SgsFSVov26g
-	K1xRL8zIrBGFqweXuKapUAOibI/TjyV46Yg8NbEopKfq/75MRpvhGVhnh31+uTcKQl6I7EMN3ov
-	T3+4lQ/TG23rKYmyDUKbVmbrn4yBmqtUZIT35Kxy9Ik8f9En1rhgQ1boihuD8Tht9eVziaBe6LB
-	aFvgYn3NQ==
-X-Received: by 2002:a05:6870:826a:b0:409:68f6:569b with SMTP id 586e51a60fabf-417b91c5d44mr9004790fac.12.1773686441741;
-        Mon, 16 Mar 2026 11:40:41 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773689582; x=1774294382;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/ZLw2GEL74wXFi4mnBCdIGmeDLoogf2VctRT7EQunc=;
+        b=pIrqJKmTO88HQqlGgju7oK8Wgcrkt/cevhYgZeAlRV0PlyI905ZXNO0N0s+tzR13k1
+         6cnkt+n05WNs53Y6rfDUNZ0i8XErYIu/Q/3x2iurfYM94m841DDNws+Ex3Bb9lV1v8x9
+         32he/1KUmF89Egtibc/mWJhrRIJ0fvhInhc7gcfajWf/yXcHBTgIVNZdlQTZsOyGodRB
+         Y6k9jIDMx+Q7rP1C26sT4f7bmlRH2KQCZBCAyRxVn8dkp5J5PiVkbaRoMuwnBpB4Fr6i
+         r3tafhk38AeTXsACCbaaRD5Jway7v8QldjZ0dC0VUvObT58KwciyoBxo7hDQ3XSlHdvY
+         u/gQ==
+X-Gm-Message-State: AOJu0YzFvEY3+5bgW6jTt/L+TGM9bb5x61J/eVyo9TcvpVyjvPk1JDGe
+	h5npWKFSgVnRwY72oTBlUdDw+LBI3zBoy4JyaRNcSZBVT+JwPGFkxd5AVBXN0XoNLVYziOdpt6B
+	Z8lmy7yg=
+X-Gm-Gg: ATEYQzzv+2sp83udcg0hPIAORvJ8WcNUhdaWOWctDilQZ8j+a4pcUlyZ2zeFrySi62P
+	5Q0nOpNnY/rpQ/sX+1uL2xb4iTasTjyoh3iIFrzx6m6R8/4N6ki4hYmxnoSwMcefOgS7M9IItTq
+	UQrZ6CrEw8Ohr8hzyZpzChJlLFv502Zl3fmo4CmVyUNWS/vlHKKhS8nKaqSUawqfwpdW/UpAu8S
+	m+Wj/UU8VP0lhEfVvb0uvWD0uUAnCwhOSIQKndn6FWj6i82fScmVcqYuWJNGNb+vfhwMOzSuqll
+	4X8qM59yLlojIK34cQjW+eL02oBeBszPZCfmAZg0kkw4pJVg005CEOuVdXwx3ODiGsFZnm3FGA9
+	tt3rUjYEmqnQIuYXCcTY81CF7axwLlgbgWZB6mGFOV9xjmVrRkWa9QWcbP7a7j/QP+XFWJZZnsT
+	SCTgWSiQNEH91BacCqR+e329EB5X7jxkmHOFemjFWnMlK5XAYEqf7aEKKmtSwQbP20tkM49TKkc
+	sv3Cih+Qg==
+X-Received: by 2002:a05:6820:f004:b0:672:7c0d:5607 with SMTP id 006d021491bc7-67bda9bd105mr9977721eaf.26.1773689582373;
+        Mon, 16 Mar 2026 12:33:02 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4177e6c7885sm16094525fac.17.2026.03.16.11.40.40
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-67bdd612b6esm6026026eaf.10.2026.03.16.12.33.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2026 11:40:41 -0700 (PDT)
-Message-ID: <0fce925b-9148-4f83-92cb-19d164a7ea32@kernel.dk>
-Date: Mon, 16 Mar 2026 12:40:40 -0600
+        Mon, 16 Mar 2026 12:33:01 -0700 (PDT)
+Message-ID: <e5a5e36b-d091-48d5-b961-f89f2d352fb6@kernel.dk>
+Date: Mon, 16 Mar 2026 13:33:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,115 +85,70 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/poll: fix multishot recv missing EOF on wakeup
- race
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-Cc: francis <francis@brosseau.dev>
-References: <8688cc4e-8619-4392-8d5c-93c554d70c34@kernel.dk>
- <2e2d6e81-bf95-47bf-9c70-1b2f8b63cfbc@gmail.com>
- <876c9e94-0782-4561-8ae3-0cfed18ee375@kernel.dk>
- <3b6769f8-4b44-47ee-a308-6f7e23304c8a@gmail.com>
- <c1499122-9444-4ef9-908a-84e290d450d2@gmail.com>
- <6c0f631e-5015-4578-954a-07a1ca726b34@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <6c0f631e-5015-4578-954a-07a1ca726b34@kernel.dk>
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v2] io_uring/poll: fix multishot recv missing EOF on wakeup
+ race
+Cc: Francis Brosseau <francis@malagauche.com>,
+ Pavel Begunkov <asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[malagauche.com,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	TAGGED_FROM(0.00)[bounces-12699-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12700-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	TO_DN_ALL(0.00)[];
 	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	TO_DN_ALL(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
 	RCPT_COUNT_THREE(0.00)[3];
 	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 096EF29F255
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel.dk:email,kernel.dk:mid,malagauche.com:email]
+X-Rspamd-Queue-Id: 5C88729FD0F
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 3/16/26 9:16 AM, Jens Axboe wrote:
-> On 3/16/26 8:44 AM, Pavel Begunkov wrote:
->> On 3/16/26 14:40, Pavel Begunkov wrote:
->>> On 3/16/26 14:28, Jens Axboe wrote:
->>>> On 3/16/26 8:17 AM, Pavel Begunkov wrote:
->>>>> On 3/15/26 16:19, Jens Axboe wrote:
->>>>>> When a socket send and shutdown() happen back-to-back, both fire
->>>>>> wake-ups before the receiver's task_work has a chance to run. The first
->>>>>> wake gets poll ownership (poll_refs=1), and the second bumps it to 2.
->>>>>> When io_poll_check_events() runs, it calls io_poll_issue() which does a
->>>>>> recv that reads the data and returns IOU_RETRY. The loop then drains all
->>>>>> accumulated refs (atomic_sub_return(2) -> 0) and exits, even though only
->>>>>> the first event was consumed. Since the shutdown is a persistent state
->>>>>> change, no further wakeups will happen, and the multishot recv can hang
->>>>>> forever.
->>>>>>
->>>>>> Fix this by only draining a single poll ref after io_poll_issue()
->>>>>> returns IOU_RETRY for the APOLL_MULTISHOT path. If additional wakes
->>>>>> raced in (poll_refs was > 1), the loop iterates again, vfs_poll()
->>>>>> discovers the remaining state.
->>>>>
->>>>> How often will iterate with no effect for normal execution (i.e.
->>>>> no shutdown)? And how costly it'll be? Why not handle HUP instead?
->>>>
->>>> That is my worry too. I spent a bit of time on it this morning to figure
->>>> out why this is a new issue, and traced it down to 6.16..6.17, and this
->>>> commit in particular:
->>>>
->>>> commit df30285b3670bf52e1e5512e4d4482bec5e93c16
->>>> Author: Kuniyuki Iwashima <kuniyu@google.com>
->>>> Date:   Wed Jul 2 22:35:18 2025 +0000
->>>>
->>>>      af_unix: Introduce SO_INQ.
->>>>
->>>> which is then not the first time I've had to fix fallout from that
->>>> commit. Need to dig a bit deeper. That said, I do also worry a bit about
->>>> missing events. Yes if both poll triggers are of the same type, eg
->>>> POLLIN, then we don't need to iterate again. IN + HUP is problematic, as
->>>> would anything else where you'd need separate handling for the trigger.
->>>
->>> Thinking more, I don't think the patch is correct either. Seems you
->>> expect the last recv to return 0, but let's say you have 2 refs and
->>> 8K in the rx queue. The first recv call gets 4K b/c some allocation
->>> fails. The 2nd recv call returns another 4K, and now you're in the
->>> same situation as before.
->>>
->>> You're trying to rely on a too specific behaviour. HUP handling should
->>> be better.
->>
->> Some variation on, if HUP'ed, it spins until the opcode give up.
-> 
-> Took a quick look, and we don't even get a HUP, the hangup side
-> ends up with a 0 mask. Which is less than useful... I'll keep
-> digging.
+When a socket send and shutdown() happen back-to-back, both fire
+wake-ups before the receiver's task_work has a chance to run. The first
+wake gets poll ownership (poll_refs=1), and the second bumps it to 2.
+When io_poll_check_events() runs, it calls io_poll_issue() which does a
+recv that reads the data and returns IOU_RETRY. The loop then drains all
+accumulated refs (atomic_sub_return(2) -> 0) and exits, even though only
+the first event was consumed. Since the shutdown is a persistent state
+change, no further wakeups will happen, and the multishot recv can hang
+forever.
 
-How about something like this? Will only retry if hup was seen, and
-there are multiple refs. Avoids re-iterating for eg multiple POLLIN
-wakes, which should be the common hot path if v & IO_POLL_REF_MASK != 1.
-Keeps it local too.
+Check specifically for HUP in the poll loop, and ensure that another
+loop is done to check for status if more than a single poll activation
+is pending. This ensures we don't lose the shutdown event.
+
+Cc: stable@vger.kernel.org
+Fixes: dbc2564cfe0f ("io_uring: let fast poll support multishot")
+Reported-by: Francis Brosseau <francis@malagauche.com>
+Link: https://github.com/axboe/liburing/issues/1549
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
 
 diff --git a/io_uring/poll.c b/io_uring/poll.c
-index b671b84657d9..bd79a04a2c59 100644
+index aac4b3b881fb..d14f21a409a4 100644
 --- a/io_uring/poll.c
 +++ b/io_uring/poll.c
 @@ -228,6 +228,16 @@ static inline void io_poll_execute(struct io_kiocb *req, int res)
@@ -265,4 +218,5 @@ index b671b84657d9..bd79a04a2c59 100644
 
 -- 
 Jens Axboe
+
 

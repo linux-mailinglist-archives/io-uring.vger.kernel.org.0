@@ -1,154 +1,162 @@
-Return-Path: <io-uring+bounces-12712-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12713-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oOICIA6RuGkUgAEAu9opvQ
-	(envelope-from <io-uring+bounces-12712-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 17 Mar 2026 00:23:58 +0100
+	id yP8zGJGRuGkUgAEAu9opvQ
+	(envelope-from <io-uring+bounces-12713-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 17 Mar 2026 00:26:09 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096A82A1ED3
-	for <lists+io-uring@lfdr.de>; Tue, 17 Mar 2026 00:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3882A1F04
+	for <lists+io-uring@lfdr.de>; Tue, 17 Mar 2026 00:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8472B303AB43
-	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 23:22:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5D2BD303C2AA
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2026 23:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF9D379986;
-	Mon, 16 Mar 2026 23:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD68378D79;
+	Mon, 16 Mar 2026 23:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CczJ7RB7"
+	dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="NLkhsBBn";
+	dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b="HZRz9AVp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from devnull.danielhodges.dev (vps-2f6e086e.vps.ovh.us [135.148.138.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D26737269D
-	for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 23:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72E32B989;
+	Mon, 16 Mar 2026 23:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.148.138.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773703377; cv=none; b=LifQXnH2r29fik29yILJC1dff7GO3PYfXtJb1Ch4LwBEEZOupCyDFVV6gMtqOSM5fAlD5hiz6uANT9/XfkCB9YG9jq1bdPrtt093O+JznS2syi/M82oMMxKZuqk+X0Sq+WcYtqF+VcQcZe2WsjErxK9H/mLoJU9GUHsp1T+zLCg=
+	t=1773703566; cv=none; b=rfxZV0DdId+8Hpio99L2RMTVMXumWVcCxzItKdWKEVnE2wYtveaTil8q3CJSVcGU+nqksCSABQW207PHGDV2DUy6F+yLJyWzqdLTDRmEOs8TB/nJ+TAGoq9bsPu07K9dxH9aKfnQp/bt0MibpaURfKnELOArQ/zCyofEAN2Y/Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773703377; c=relaxed/simple;
-	bh=LAKl72ZmaO6iexowzgNQBKY1zqj80RT76u4H4EhUFWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkB0b/ZEmyDAeRq4E8HKiWCbRXr6sp3P2vPDD74rmFgMUUuH1PS4RREx2KUfIZ0XVmJRJXGTU42PMShCeJop0G+exX4+nJZ6yDhSw8O8D7VVW16s+qO3+IS2g4BeILENKPol38jtirpSeNjrX4aSjFNnyFHvNMQtLvST1LLXcUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CczJ7RB7; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4852fdb36a8so60002745e9.2
-        for <io-uring@vger.kernel.org>; Mon, 16 Mar 2026 16:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773703375; x=1774308175; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0P6yT4kuIK+aAZf2vpQSGaWL6i0OapbU7Os6PrAW52I=;
-        b=CczJ7RB7n4GrAR/cGCzPhtInyovLGg96XaFLUYPqlb7I8E08Li72Kx79mm5IUpuQAi
-         fZC1EprbiAhDzYywJ8T/HVkWKyZn/8887viMAR7z2HnGoqtdLpDzATSZYWJPXJG1MqRG
-         qPEZAgn7GGhr29n8yz1mnDSlHwfp6+vI62TMXG9SVb40unsxPzUpnYFa+oVJXq07jcSW
-         DzkTmxhRapqTvAdLCEo+eZAIqB+SQTUXxirjd2J/ujjzSdGf3R3BpzGvsf07LhdlL4Mh
-         2V+1g0R5bveXa/Qnx+U4wrikjgDjdD+L13u7E1vf2q8s3YsKW1Mu5W+RxLNo73cTGGG1
-         2uXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773703375; x=1774308175;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0P6yT4kuIK+aAZf2vpQSGaWL6i0OapbU7Os6PrAW52I=;
-        b=ik6eUbq9hOqIwP8gbKAlHN1IIM1BrdBD9q3zupQSYh325gW8YEQh0sw0bciPApARDj
-         xjwcG5G3xei9+AZMrQiGUspTTBeVodkAR8dIpvR73ssEoaPQ8qeDAHud+S8NKDBv86d/
-         k9fS5NRh4+xWdhtzU7UB2M13Lg9lE3b0fcm+U4MlSQSOByRrxk1MZx+eoMxYY1xMeR6D
-         65TLjCax3FZ6D184cr4EnQYmqmtYChabH559oQliu/YIKVgO6wBBxRrtkFUdRdKvrp1l
-         bSCXsddf8r0zOlU4F4qWxSQ7Uc16UguOVP6UNhA9tfwLLxE7qRYGEmkVjMo1W1xlGm63
-         Mzpw==
-X-Gm-Message-State: AOJu0YxJXYUtjNbODXI3pmOoVGbDk/FP/B1B6vIfOWO7/ZOhKIpKoOT6
-	XMSn1nURwlffOx/5/Mv3KOzBONhGjs7iNJ1lkDxajFxaVPqfUzBE/PLy
-X-Gm-Gg: ATEYQzzntBf+PGkbFFiuxYVBqGWGt8Nd957ZU87mpbwzIAjV0aMCj7RJ1NqU/MvsL/K
-	+zkNQYVHhG1IHDmsQKTT5Ycb/rLzNZEiV1ZNKkYHXcNwWvg8cfjTCw1+VihmBmo7Di5xQLs/ugl
-	8eallW5TiaHmr7G1aA0xWxOIt/V8gmlMSU7iw5Sdm8pv8odI3nwuPWKHviND5X4dx6bbyUPivyL
-	LoURZmQ4qWuMDaXJ/GfCpbiOVzzhEkDY7fd8oIMC3JXCvKwnKW8qdiw2f+FiXWC2dmoUnMRK4Kq
-	ap+DUiMjO4AEo88pNZiuP3Qt6VitTg3UxaNuyf/LarLEV0e5itoUcVkLq/PKEfc6oy257fa/X/l
-	8C72TYEGhrYQZPhBcja77i+h8VouFbOX6WUATQlcP2llSKOzrVUxK+58bDangc48B6yke3I2c95
-	qdG4oVgjo8F+DsViGn9zyKA8vxF8e10jPwm+4UUh5Y7jCcqKxg1nXGhoE/P5mz5TcgcCYhkhe9n
-	9grwWZoaz643pFEruxDU2a9ieS9Q35bPeUtEvF1vui9bgLXNOYfxkU9Lk1uwgWFjtux/JBhhU5/
-X-Received: by 2002:a05:600c:6289:b0:485:3cf3:1010 with SMTP id 5b1f17b1804b1-485566cfa26mr239762865e9.2.1773703374478;
-        Mon, 16 Mar 2026 16:22:54 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856eaa4fb0sm26849855e9.12.2026.03.16.16.22.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2026 16:22:53 -0700 (PDT)
-Message-ID: <231361d3-dfaa-422d-a246-03f9a51b89f2@gmail.com>
-Date: Mon, 16 Mar 2026 23:22:46 +0000
+	s=arc-20240116; t=1773703566; c=relaxed/simple;
+	bh=cwjJxd1OJN6VutawSi56t8IVWV+t5z4EJtL0ogGOuXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rI2UB3irbZYlXWpHyxLNqQn6ldy/LvdScC4ZE/50oq+UK3qyzj1txKLVSR8ztputueFQwdqzIU0eez5iBETbrprQ7hm0TYGkUHxzSH3/UMNvaCnBtcuRjxGYjQ/L9b8fBRrYvTmEALHoCyoOnj47M8tdnPBoYvuDSffc1kfZwfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev; spf=pass smtp.mailfrom=danielhodges.dev; dkim=pass (2048-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=NLkhsBBn; dkim=permerror (0-bit key) header.d=danielhodges.dev header.i=@danielhodges.dev header.b=HZRz9AVp; arc=none smtp.client-ip=135.148.138.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=danielhodges.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=danielhodges.dev
+DKIM-Signature: v=1; a=rsa-sha256; s=202510r; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1773703563; bh=OznILQI+EMK8Z+JKnLPTLMn
+	NXWDRT6m8eGoULkwbM+4=; b=NLkhsBBn61BW5fluNpFsChS5PTqRKRF31ojbOz0qAWSpd5HOn/
+	W+5XqTZkNWKp4ICJ1jcWs0fF1M3LZyYleqojkQOh911+fSCqXy87nu0Yj658VNkzJwjio1qw3ks
+	JaXglvDC9ilHuWY9JZnxlXi4ly8h0Rlgi0wfLk6kTPO+i1o8ZZIIRqPPqM4QLpDPrPFCCqZ4qtb
+	vyf4GbievKb6A06tV+5Y4ZK9k5FqwZgET1otxezlSk0qm4Kdw9Q1z0Y3jbeSQd6l0ovUfRg9aLx
+	MT8hBdtV5wdcvoxVHcU/o98gnCmFMBnk7egCndw5YwE1Xt08wdCVdNTmyb5YW+wiDdw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202510e; d=danielhodges.dev; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1773703563; bh=OznILQI+EMK8Z+JKnLPTLMn
+	NXWDRT6m8eGoULkwbM+4=; b=HZRz9AVpHD86NmEvsU4f8vAQ4BIH9K+EYV7aZXIroVq3Phndwp
+	ImJcguk1A6oaYwqUl2fzBhOeV66TuFffOsAg==;
+Date: Mon, 16 Mar 2026 19:26:03 -0400
+From: Daniel Hodges <daniel@danielhodges.dev>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Daniel Hodges <git@danielhodges.dev>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] io_uring: add IPC channel infrastructure
+Message-ID: <2n43l6nu4qz5siju4ze42wqnbdqwbogeh2jfztlzi6a2grnqsi@z2n5qvvsazs6>
+References: <20260313130739.23265-1-git@danielhodges.dev>
+ <20260314135053.3334-1-git@danielhodges.dev>
+ <873d56d8-6c1c-447f-ae70-870417c6de5a@kernel.dk>
+ <wmy46klrmmxuspo4xttbz2kqzbtopavlsvxutjqxioqsihp7x2@n3uiq6hr6gjr>
+ <d6e64251-2025-438c-92d6-71b44927b437@kernel.dk>
+ <hzb3i37w6isn7gx7jqc223fmznxxjmqvlxke2rdb3lb43htifq@j45xx427nppc>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: cast id to u64 before shifting in
- io_allocate_rbuf_ring()
-To: Jens Axboe <axboe@kernel.dk>, Anas Iqbal <mohd.abd.6602@gmail.com>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260316150636.2123-1-mohd.abd.6602@gmail.com>
- <1f79957a-5b23-4bbd-af8d-9d1c86791645@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <1f79957a-5b23-4bbd-af8d-9d1c86791645@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.16 / 15.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hzb3i37w6isn7gx7jqc223fmznxxjmqvlxke2rdb3lb43htifq@j45xx427nppc>
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	DMARC_POLICY_ALLOW(-0.50)[danielhodges.dev,reject];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[danielhodges.dev:s=202510r,danielhodges.dev:s=202510e];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12712-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12713-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[danielhodges.dev:+];
+	RCVD_COUNT_THREE(0.00)[3];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[daniel@danielhodges.dev,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
 	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Rspamd-Queue-Id: 096A82A1ED3
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: AC3882A1F04
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 3/16/26 19:37, Jens Axboe wrote:
-> On 3/16/26 9:06 AM, Anas Iqbal wrote:
->> Smatch warns:
->> io_uring/zcrx.c:393 io_allocate_rbuf_ring() warn: should 'id << 16' be a 64 bit type?
->>
->> The expression 'id << IORING_OFF_PBUF_SHIFT' is evaluated using 32-bit
->> arithmetic because id is a u32. This may overflow before being promoted
->> to the 64-bit mmap_offset.
->>
->> Cast id to u64 before shifting to ensure the shift is performed in
->> 64-bit arithmetic.
+On Mon, Mar 16, 2026 at 07:13:42PM -0400, Daniel Hodges wrote:
+> On Mon, Mar 16, 2026 at 04:17:05PM -0600, Jens Axboe wrote:
+> > On 3/16/26 6:49 AM, Daniel Hodges wrote:
+> > > On Sat, Mar 14, 2026 at 10:54:15AM -0600, Jens Axboe wrote:
+> > >> On 3/14/26 7:50 AM, Daniel Hodges wrote:
+> > >>> On Thu, Mar 13, 2026 at 01:07:37PM +0000, Daniel Hodges wrote:
+> > >>>> Performance (virtme-ng VM, single-socket, msg_size sweep 64B-32KB):
+> > >>>>
+> > >>>>   Point-to-point latency (64B-32KB messages):
+> > >>>>     io_uring unicast: 597-3,185 ns/msg (within 1.5-2.5x of pipe for small msgs)
+> > >>>
+> > >>> Benchmark sources used to generate the numbers in the cover letter:
+> > >>>
+> > >>>   io_uring IPC modes (broadcast, multicast, unicast):
+> > >>>     https://gist.github.com/hodgesds/fbcd8bb8497bc0ec2bf1f95244a984fe#file-io_uring_ipc_bench-c
+> > >>>
+> > >>>   IPC comparison (pipes, unix sockets, shm+eventfd):
+> > >>>     https://gist.github.com/hodgesds/fbcd8bb8497bc0ec2bf1f95244a984fe#file-ipc_comparison_bench-c
+> > >>
+> > >> Thanks for sending these, was going to ask you about them. I'll take a
+> > >> look at your patches Monday.
+> > >>
+> > >> -- 
+> > >> Jens Axboe
+> > > 
+> > > No rush, thanks for taking the time!
+> > 
+> > I took a look - and I think it's quite apparent that it's a AI vibe
+> > coded patch. Hence my first question is, do you have a specific use case
+> > in mind? Or phrased differently, was this done for a specific use case
+> > you have and want to pursue, or was it more of a "let's see if we can do
+> > this and what it'd look like" kind of thing?
+> > 
+> > I have a lot of comments on the patch itself, but let's establish the
+> > motivation here first.
+> > 
+> > -- 
+> > Jens Axboe
 > 
-> I'd be impressed if 'id' could be large enough to cause this to
-> overflow. AFAICT, you'd need more than 64K interface queues registered
-> to hit this. So I think this should be reframed as a cleanup, to appease
-> smatch.
+> I've been helping Alexandre prototype a D-Bus broker replacement that
+> scales better on large machines. Here's some docs/benchmarks:
+> https://github.com/fiorix/sbus/blob/main/sbus-broker/docs/analysis.md
+> 
+> The idea for this RFC by trying to come up with a design if D-Bus was to
+> be built from the ground so that it could scale on large machines. D-Bus
+> was built because the kernel never really had a broadcast/multicast
+> solution for IPC and kdbus demonstrated that moving dbus into the kernel
+> wasn't viable either. So that's where I sort of landed on the idea of
+> what if io_uring could be used for this type of IPC.
+> 
+> There isn't a working io_uring backed D-Bus implementation yet as
+> it would require features that aren't in this patch such a handling
+> credentials etc. I fully acknowledge I had AI help in working on this,
+> but if this idea make sense I would appreciate some human direction. If
+> it seems like it could be feasible from your pespective I would like to
+> try to give it a proper attempt. Thanks!
+> 
+> -Daniel
 
-Pretty much so. I'll queue up the patch targeting 7.1, thanks
-
--- 
-Pavel Begunkov
-
+I just realized the link I sent is private, here's a link to the D-Bus broker
+docs/benchmarks from my fork:
+https://github.com/hodgesds/dbus-rust/blob/main/sbus-broker/docs/analysis.md
 

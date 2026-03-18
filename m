@@ -1,84 +1,86 @@
-Return-Path: <io-uring+bounces-12744-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12745-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qDyoJ5bruml0dAIAu9opvQ
-	(envelope-from <io-uring+bounces-12744-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:14:46 +0100
+	id 4MNJCALwumkBdQIAu9opvQ
+	(envelope-from <io-uring+bounces-12745-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:33:38 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB3F2C114F
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 799572C156F
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DFD7B33B128E
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 17:43:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0615231141CE
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 18:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E28031B839;
-	Wed, 18 Mar 2026 17:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C291C3CE496;
+	Wed, 18 Mar 2026 18:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOSC1xTs"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2SC4lHg+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0153451B3
-	for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 17:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105823BFE33
+	for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 18:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773855797; cv=none; b=JnREmwyne8/S4Y30/vuciYJz2J+foRJjBJWvokgQggr40GpfZ32cc7UICabN92vfotRQbAiC0Q6U2z4YdMhqGD6fTm/mA+yIs3ETspB1tZBi8SffAnYzwmwVuQ6zHV/1mDmvra3RxoMAD8B6IhoEHZMZVkVk6OrbCzhNUF7EmUk=
+	t=1773858292; cv=none; b=QHhDvvadzQh1gC5+07CgEQ/CPlRBYysm3UGEihqH56ywRhkq056VMkAV+TN6vYt8dJSNFzxnSgf3jIC2i1q3v+3NATobZUG0bLuO15FDUyqk07ywHt/UegfD0AnmzYPGm6m1YMLWGJpro4oCuPHFv0wnMKTRhO97gRQW2sFPREU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773855797; c=relaxed/simple;
-	bh=gCUWMgCmISucznEKZgqGmDScW9+Q3HPH9ggae12wBNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDWQhFlHNmlOnwvw1QMLz/WDh/hS/NeuCwdvrjogEXMcpkXOxEbj3wOo0+m4hqn0xq7TxQZhbSN/RGhrwdPu4LfDtQiYATqPU+rE0DCUsMk2iZ/vMr4kp/aNesVE3SMqy74wBAJrZtfXxYd+8SCJSfnGcyjb/cjTy01bV5C45Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOSC1xTs; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4853c3c2fe7so714105e9.0
-        for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 10:43:15 -0700 (PDT)
+	s=arc-20240116; t=1773858292; c=relaxed/simple;
+	bh=uX2+R6cftX7GRCorq5EGsoG0aBsDO95Zasz4mgK2q44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hO3CuFE4a9b2XwYSeplqOip9Swi/E/8/R46Xhta+/SBjwU7oMZGeQ+lveHofovCYvuRmiO4UjbzFqoaWUkgPlgGltHUJ6HtLtYiflc0KPsYR1LD+HyUvVZ6pR1h/pXKCnTYyNx7GukHqCqb5shAKDFYzXiP+9QJtCp1FQoHqxa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2SC4lHg+; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-404254ffe8aso98770fac.0
+        for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 11:24:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773855793; x=1774460593; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773858289; x=1774463089; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RtLQ0iiUPVfJBg3XUkfxfZWub6Bp+WL1236Cgy4rp1c=;
-        b=iOSC1xTs3eBQuwLosAlNV53SiXhIpFqIPhjYpcteVF+r1sva9V6xCHqjiV5Vu29Mm0
-         57j8f5/gCK3/OdJmJyMUVXikFl4Fv0Ip32GCUbFXSPcnnAQSMeQ2VqTmIZj0jpqZs/jx
-         qyzqCaxAo8tpUMQ59XOja+jj7BmMQ1bSC09cDLI8/rI9UKlyJk/Y4zHhRLeQI3lfkL/T
-         TxIvV9KAGn0ua9WEjeGiOgUGbFgtC3AV15KOQHzoCMQNiGmhjySRNknH9N1BgcaUyDyD
-         y5oxmc9+AERzn3MiA0ctZW7wZbXVVbLPsOAOzUa92xW+hD0b+LaNju9Ru79OCbc90cdr
-         BZww==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oHGE+uiqFRCDiVWk9jNydTGLejIjVemOigDXqv7ZqQI=;
+        b=2SC4lHg+B03Y6nRh721fFXU2q564fEgiMHUPuffFDchgyw83n+0/WPao/G4wC0g9L8
+         Maoe0M+q4eVG62mO/c195fIp8sCDWVkIRr+GOk4IAitN0nSsxPo9bwUCkHMroYmrJQv9
+         Zbf8dK7vc9FauaQWLre8u7Ok6ZfAatT+9TrPJyQYXom5dQf/97Arne7B5SmA6pbwLJ52
+         KC5MvXFcja48D37YOYWzeaPTpvlJM5vNHG/kOZ5RV/Dh562qqqv7H/VbSkBBFzsUFWpl
+         pYBr8XUUCVWRWRRv6Kvuov5sbjaXADvy0yjmCnR32YpNU4PSsnKGQH1OrPI1UtvBl6up
+         fkkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773855793; x=1774460593;
+        d=1e100.net; s=20251104; t=1773858289; x=1774463089;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RtLQ0iiUPVfJBg3XUkfxfZWub6Bp+WL1236Cgy4rp1c=;
-        b=KYxy465vSozGkZNIoRh04GLQBklIzWFiRuvnMLaXr29ps6x83NcEhBbyB0bYGuvA9g
-         tZ8VGenHMeRbtezV0kk+j+sI7iJLL5FHvhH+ltYzLAdqi7rFRYNOaJTbJHCMho03jE3O
-         o+rgzGns8LA5NfB5rKyaKPsXuYRfhfQefaXFlPmgJWqSXPbEGIksFtfgLRv8RoodR2fF
-         4rYAL4+WlfHfQbItqT1lqdppS4BE51ahRGeg81tp5OqrV/VZmR4pxc8vwF78PNc6Name
-         2wO70KN2fSlHet/yQVCcml/5cJ8d/l5En+zJaFBkrVBkRUKYZ+1GEriBUP0p/9/V6vwn
-         riOg==
-X-Gm-Message-State: AOJu0YzO01sDI8MNC93x0L47JoWOQJhxxKWUQyE35XQ3qiif5kqcHpTb
-	0F57S+6WCN8xHwTkefNNWOkr9BKF2/jUdcx2lYc7RN0yuQrQnmDd00jie1UZSw==
-X-Gm-Gg: ATEYQzwryX+h730XdWOrhv1aWBn8M1qu58TY9EWslBRyD9HRPiglCOocrFp2rtZfJOq
-	fXbn4/Nf1f1bSLZ7eFQcRKBDydpNnY5Mh2hRGtNVWdafq1DI8xxAa6/HWQmYKfWDfiWrwMJ6Ri1
-	1cTE8yRWXkSYYVBcTwIwcjHPzXEWcHCETTfqpLX/tH4rV+hbmRHpkruAPxtTd3SS6Rr7OPsCooS
-	CPjnRxauO3yLiCciotXiaPufVuIUsGtSmIc8PvEaDskGfLfP1A9WG8ltUJ9nbVr0GagfN6Ts1R4
-	pM04ExiJtvT44bXVT6lwyoS0xfqs/oP1tuYUwGIA5hv/sbhMQu18sqD8Zd0lwANL+J3gKqkp+Am
-	AzG2/3GWNj4GGrE7CDjLxEBpibfPVh8A8jFc8eDhCTQob/sPHkXJU9P7jEWBgSdiTDA68H/V4sz
-	VubFIVc+BvLfmviHl26HSN9+vp8DTwxdr2CI6QkLo6Z6/SWMAazuh+R6FFXtihLh+8YIvr2pCLb
-	8mDpofnmr71lo8CTIYPhrpzIG/Di4epT09ViMM=
-X-Received: by 2002:a05:600c:3f14:b0:486:f8d6:5dea with SMTP id 5b1f17b1804b1-486f8d65df5mr3517745e9.19.1773855793360;
-        Wed, 18 Mar 2026 10:43:13 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::18e? ([2620:10d:c092:600::1:ef29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b518a3d78sm10312719f8f.34.2026.03.18.10.43.12
+        bh=oHGE+uiqFRCDiVWk9jNydTGLejIjVemOigDXqv7ZqQI=;
+        b=VJzno4b+9MQND7cNvvxTUzwEMvD23DWAMdoWrQlHzIF8ho/GO3P1MObuLLfiJCH1ct
+         zxpHB0D/vFXwkzt0f3IXnAfmLu7tnEf/9U7yYujXwJE37UVUjPNaovPjKjFOBsHCtu0r
+         KSN6mbvlbM+dVEwhf9x0JDGLUf64vxkZ1rI28SZFjhXgRk18LlttypGUAqLbCsDIh5vo
+         zupBYBqD9xwFPYGJBotSLD9uE3ZtPS0IozjMMPx5L2vAhezNrL4wid3mIFkIMD2UzBsg
+         MSsXsLfQh6gZp9Ze2VMH9EN/hFCoOETopdrVMexE/a1fvuA8OznCP7SIF7N6jixOJT47
+         dVcw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9TREMSAPVrccOEtu4lSCbSJiRX96+exJ37BFA1pUAFHPNYmV29EJdiybf/XTYKFMG003yMs87bg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysUh0XOAzn5ZVfR8zJUbF32BMiiY/mKEGOb3KvQqMiwNFNdJ8i
+	iLo9PiGeYaX6ZeDsq44Gbt/o4bBjjf2BsEJM6mjQO1qLa8esq0APfZgwMn82u2d1xCif29LUlK5
+	PgBAJ
+X-Gm-Gg: ATEYQzyMBA5DXg4lixl9fPtN4gRyomyEMTOp4mk0OaU6C+q50j7t6GiC6JvUVaxkqQz
+	9mv1SMhXEu0LQAapqtMG/lNRwhgcjHRudUUopweDLFChJgz1x/2/oWDezePoi9WIVF6pA7juXLg
+	iAMVS2KOYbXNy2df6onXLdNtMfsZEXGPOAFvwMvuHfe+wsq4PAzK1OlOjgB8cQDPBDDL+5ba0Rm
+	7ZkOWlJeishF5GVxjGYW7UnbOUPmdIVUrZgeruoq2T971J2DsI7HmsY0feKFrh9lP0GlZF9IDrX
+	PSiX+CMEewiC0XzQCYdw2Jx7MhhNjTpvQ1EbxklCJbmFZIXjSy5rWGwROLXJhn4BznOxDrcpsqI
+	RALtHZIlmPqXw2Io02hvyFUmwC15aD+anTerBLqX3vaTVdy9RgwtmwhIKXNOtGl7dEGtE+93vT9
+	6/8wSgAlccrLxzqm8/YYOn/hQlWvg2SmukGYPjSlrwk0tPzsappmLEUye32U9yKoEh7Hwd2RTbq
+	hZ5DPsD
+X-Received: by 2002:a05:6871:2b04:b0:409:628c:ca6e with SMTP id 586e51a60fabf-41befc3aca0mr407016fac.2.1773858288746;
+        Wed, 18 Mar 2026 11:24:48 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-41bd2828aa7sm3660052fac.1.2026.03.18.11.24.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Mar 2026 10:43:12 -0700 (PDT)
-Message-ID: <6b9ef71d-118c-46c1-8f33-56145ddd8664@gmail.com>
-Date: Wed, 18 Mar 2026 17:43:20 +0000
+        Wed, 18 Mar 2026 11:24:46 -0700 (PDT)
+Message-ID: <3c00370f-81b0-41d1-8deb-beb1781a75bd@kernel.dk>
+Date: Wed, 18 Mar 2026 12:24:45 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,56 +89,107 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH liburing v3 1/1] tests: test io_uring bpf ops
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <8c9cb9cf824e09271df9c6d6d4398e514d9c5733.1773855222.git.asml.silence@gmail.com>
+ <6b9ef71d-118c-46c1-8f33-56145ddd8664@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <8c9cb9cf824e09271df9c6d6d4398e514d9c5733.1773855222.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <6b9ef71d-118c-46c1-8f33-56145ddd8664@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-12744-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
+	TAGGED_FROM(0.00)[bounces-12745-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_NONE(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.997];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0FB3F2C114F
+X-Rspamd-Queue-Id: 799572C156F
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 3/18/26 17:36, Pavel Begunkov wrote:
-> Add some BPF struct ops io_uring tests/examples, one is issuing nops in
-> a loop, the other copies a file.
+On 3/18/26 11:43 AM, Pavel Begunkov wrote:
+> On 3/18/26 17:36, Pavel Begunkov wrote:
+>> Add some BPF struct ops io_uring tests/examples, one is issuing nops in
+>> a loop, the other copies a file.
+> 
+> I needed to conditionally compile based on whether vmlinux.h contains
+> io_uring BPF definitions, so now configure probes it by generating a
+> temp vmlinux.h. And since I want to be able to pass a path to the
+> target vmlinux, it also became a configure parameter. Not sure if there
+> is a better way to handle that.
 
-I needed to conditionally compile based on whether vmlinux.h contains
-io_uring BPF definitions, so now configure probes it by generating a
-temp vmlinux.h. And since I want to be able to pass a path to the
-target vmlinux, it also became a configure parameter. Not sure if there
-is a better way to handle that.
+Looks good to me. The configure changes are a bit broken though, you'd
+need something like this on top to not have it fail:
+
+diff --git a/configure b/configure
+index 3a08e0f12448..7aea26fa7681 100755
+--- a/configure
++++ b/configure
+@@ -500,15 +500,15 @@ print_config "has_bpftool" "$has_bpftool"
+ print_config "has_bpf_clang" "$has_bpf_clang"
+ print_config "has_libbpf" "$has_libbpf"
+ 
+-if test $vmlinux == ""; then
++if test -z "$vmlinux"; then
+   vmlinux="/sys/kernel/btf/vmlinux"
+ else
+-  vmlinux=$(realpath $vmlinux)
++  vmlinux=$(realpath "$vmlinux")
+ fi
+ print_and_output_mak bpf_vmlinux_path $vmlinux
+ 
+ has_bpf_loop_ops="no"
+-if test "$has_bpftool" == "yes" && test "$has_bpf_clang" == yes && test "$has_libbpf" == yes; then
++if test "$has_bpftool" = "yes" && test "$has_bpf_clang" = "yes" && test "$has_libbpf" = "yes"; then
+   if bpftool btf dump file $vmlinux format c 2>&1 | grep -qF bpf_io_uring_submit_sqes; then
+       has_bpf_loop_ops="yes"
+       output_sym "CONFIG_HAVE_BPF_LOOP_OPS"
+
+With that, it does detect it fine here. However, it ends in misery with:
+
+axboe@m2max ~/gi/liburing (master)> make                                        6.490s
+make[1]: Entering directory '/home/axboe/git/liburing/src'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/axboe/git/liburing/src'
+make[1]: Entering directory '/home/axboe/git/liburing/test'
+mkdir -p output/bpf
+     CC output/bpf/nops.bpf.o
+In file included from bpf-progs/nops.bpf.c:3:
+/usr/include/bpf/bpf_helpers.h:318:12: error: conflicting types
+      for 'bpf_stream_vprintk'
+  318 | extern int bpf_stream_vprintk(int stream_id, const char *fmt__str, const void *args,
+      |            ^
+output/bpf/vmlinux.h:170697:12: note: previous declaration is
+      here
+ 170697 | extern int bpf_stream_vprintk(int stream_id, const char *fmt__str, const void ...
+        |            ^
+1 error generated.
+make[1]: *** [Makefile:379: output/bpf/nops.bpf.o] Error 1
+make[1]: Leaving directory '/home/axboe/git/liburing/test'
+make: *** [Makefile:11: all] Error 2
+
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

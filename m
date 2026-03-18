@@ -1,192 +1,800 @@
-Return-Path: <io-uring+bounces-12742-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12743-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wA9mBinCumkGbgIAu9opvQ
-	(envelope-from <io-uring+bounces-12742-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 16:18:01 +0100
+	id 2MJgNpHpuml0dAIAu9opvQ
+	(envelope-from <io-uring+bounces-12743-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:06:09 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F65A2BE07B
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 16:18:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4362C0F1C
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 19:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A5B7230F4D7C
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 14:52:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AE8CF31AAB04
+	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 17:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8723D9044;
-	Wed, 18 Mar 2026 14:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF072D7804;
+	Wed, 18 Mar 2026 17:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="XpJ1DAOP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FS+KtsEm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87EB2D97AA
-	for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 14:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773845508; cv=pass; b=Xf4UdcS4KDdtKbumu4khH8SI6ReTcLPxchXDf8RRbUa9Y+xjhpVqRuCE4uEC8BaeGr36Pzs+s7sQqPIYgoAdKxDu++g1gGaGoiMiBXL2To8qPaVxiy+SnvcdizJ3m3WfHrD2HUv0mF44Ln6BmgASJ9qZ4bq9XRooFsP8f2bS+nY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773845508; c=relaxed/simple;
-	bh=1FISFWtjLoHF5EnuYPOgvH0ljgC076KLVSofovMd6Qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T675kEVQH1dup4BM3hY5y1fikWRMWhzlCe/+DuDD9w/EzPEL/XNJoHwsBIOeG/QtZS8SG6gx5yJYL3MVTHkQp+xT0T7TTJJU2LdXPjU59DKzX4x2gNHsCPStItoeMQroq54TUaxsIxoPUaRfEktbthDApPbfVxi5s1JRpoVWYd8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=XpJ1DAOP; arc=pass smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-64aedd812baso4288d50.3
-        for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 07:51:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773845506; cv=none;
-        d=google.com; s=arc-20240605;
-        b=HEDn47SAdFqV+5X29RwVKUGOiVUfblS/CktIe2wkIx2j3mf9AVCmTqVu1Tk59RVTzC
-         u+mAFnPmQf1IawXBI0mtidZporDR9Z1xiA65h/CtMkPhWWmZalV2IN2oEZ+9VnS6lWge
-         pVsq7egFvKCpKPzqP9IeyO5ZCxigrGel1dlJMRxpUpwW1hXtNzkYUxXwCqblrIDemE5U
-         QmDN33+n6znPfVHjEYDfvoMKGWwjYEYSXkm2tRzcA5b0r7q+5hyfAONQ6vGv7ALrV4bw
-         qDNSnblS4oIbZfmiA6R5TcCl1CNphb+jdr4ZhkKrB0/yNqwOuuSDil66RSBYaZeE3xo6
-         ePtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=p+amKP2hSQ8rLALonagLiBWsS/hjEbvlJDIAKI1rnTk=;
-        fh=uYrC5pLpAHzAacbvLfGNP80I/2/Zozq5MaeFXHFooBM=;
-        b=NWblli6t/edxoR7lSJsn4uzOAEIdGTLMsd36SKsYM25dgEkKmDFwLL4jAtnjYkIgFT
-         HBKRc29Bf0NmfBZyKjs91SfWrS3jTQqRdIe2FXGTIy7+LGukifG/my/BlRMB4EOi0Dhx
-         Ne8K6lPsCZhznpbYdqQJF6uiLL0VBw8j/wDiX8Nqm51ppoNdvWKnCxUzsBYMWdsE0B9X
-         bv5PnQY+yvqUrJGMnC+od3pA2Tq5lVjJ1IeuXJdjogq+R/jqoCkb+8QiUT2p/Imst9+G
-         7dxy9+jWFde66osmhfhk0CVh/JXiZnQ5nvu/+4NgCFzji2siJZj5gCpN9/3LVRBjLD0u
-         L30Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ADB285072
+	for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 17:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773855421; cv=none; b=l9jBUMCmtCgsTF5ebOkdO9GI0vJN+iW6LlSjV3+11f/G5mxN3YXYbWNlpZ5X63h/mLCmvQbeQcwNYEf7wYXrqcNWow91qhsx9TW84Z3B2qZU3Bs4qYQ9x7amxCQR8pbbXzq4fkGjKdAuWsK5TjIPgc3TczSpphwW/juK2lBc+Dk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773855421; c=relaxed/simple;
+	bh=paUhkZcBLYo5tC8pvx7odhuyITHtziyDRg5+Xdy4P3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rrB+dUMzIwko4R7sP7mp9MfJjGBkiLcq86aaE+c7ipfoFT6X8J9owXxmoimmEmIxft3ZJUD6rUoTQRuPO/prr+Z9qvPMtrOOeX/v5OV+6Z85/7pHFN07OO+UhiMCbxGLR/3sijcU32bZ420gmjKTS4VfB0NgsUfiYGFU0/TtVFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FS+KtsEm; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439cd6b0aedso39097f8f.1
+        for <io-uring@vger.kernel.org>; Wed, 18 Mar 2026 10:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitbyteword.org; s=google; t=1773845506; x=1774450306; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p+amKP2hSQ8rLALonagLiBWsS/hjEbvlJDIAKI1rnTk=;
-        b=XpJ1DAOP/4nAdBA8pNInAjErrB1WwzEJFuO8HmuDUIYaj2cg/1BDSwWXXh5Ed05U3Q
-         bEzFS7R7c7xsBrws3lVzQJLQQJFgLEij7/0GOiRjugLMEXl29wR670phhRL3ueHVm8QE
-         3mz3euiuEHCK6YyC5OW3x2Sf/xMXOUyaKql0t8Ag/4IlnklPQeUzQu9MtNvM7KgvNSj9
-         hU5W4AYkFS4Lly5PDu0SI8uDIrK3wmnvFYsRdI0BqlvFNxTf3dNc6SxGRMVenPGgKuF6
-         VF6oqB961lMxoSCe2NtuaTM3bIoXQwAJBwR4oBLXTWquf4IytutPq6FXV/dGE2/rvbWz
-         Kn5w==
+        d=gmail.com; s=20230601; t=1773855417; x=1774460217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oB3NI2bJUiviBy39z6FRZhNP5U5rbCQWXh3aUIO5S3E=;
+        b=FS+KtsEmLz0myUCdD7nQ+XqO4SCJvbrvM5q7oXL+awW2Kshef5OgEl8Sq74Of+9hnm
+         OXyG1gjP0HCzu+BZndH4ov+sSwkf/oIX8COY9N5xxqPDHzBv/CRjmPAsxCzdSPNhxkPF
+         t79xD5NmEex1W3hSavoQiYNBFpvgLCZuUG9qyHWaeqJiDGzZWABGdU6AX8qDsLljhIHg
+         StngPx1R1q3IgqDvfEU419ulhcmGBm2vCZJCp9XYDzm2N6aUYMhEb6LuX1+8DCeuSz6w
+         8bq69mh+vy9U6AXo3ui33KuIz6tVU5yvDhahT661Wz87YOHoPXlM8R7dk8EPCED3Asoo
+         pdVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773845506; x=1774450306;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=p+amKP2hSQ8rLALonagLiBWsS/hjEbvlJDIAKI1rnTk=;
-        b=ZddcRhyzclByjt8TDH5Uy3Ds5ca2oSbaDEbhf/nnwCGDuT2AQVIeW4hkOqvT/OFg96
-         C3Fr7ZkH6waoA+hqWsKecXMPhiYLkq5ffoImicQJLha1pAol10qNatUyfafioJiU0LHo
-         WjDvKO9vZHEfUYw5QdzNtleHMadTS+689VqRsTzxy3EBX+yjFDwtVnTd7D6ft7MCpntq
-         bo5IwJcZzGV2kT1mWPUvHBprB7ZZCDoMR7EZdwaOanNsZVc6Ab43VZSufwCZwCc9lAE6
-         7pRFl51s17XenxBWNfMyO4A6b6UTqCOI1OQcmIbJdAjVCM3aLRBqhZUO59jH9/H/APSI
-         NjzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvU/AY397+6TBkIDEVMq/G6/VqragLhzyZSFry31hGuQp4jKcNFg1/tUVvRop9ubYUbg7Sbfk7Uw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkhrvPfeM5lPAQ6PlW883iXY0M6p9mlfTYeM8rasriZKyCX+sJ
-	xYeqU/96FcMpF429+K4BFy1YoqpT3DbLBPRU5d6KG/Kyr6AaS4NceQRhJSGCPpW5M530t59LvQg
-	seiLMOrNgwLxgLugmFlCOfuju+iFMnU+R7EliNzmCaw==
-X-Gm-Gg: ATEYQzxHfp5Lz4Y1jE/zhrrWzZttztVdeWMM0DyG64ZGZWfl9cjEwqYMXST8iVArtiB
-	c3FO9RlZgR5q53F3H2A+/jjTIUz78Pux3FQezC5mI7FBTOBM7oN+UGvx8UeEWoYkg21qE8q1fK1
-	7i5+j9tPmoR2+wVTWfSuqGfznSwLXg9Z7sC8pHtqW0yiiMTbH4ZDgjAckgBn+B1yQk0ItJFGjCe
-	JtwofqdzqwTV/Ti9tTlxLwEvM6VUseJWk92v48FXeD+yxmf/y9b57KcKZiTdQHyQi6EOSsl5ieh
-	AwdsHCI=
-X-Received: by 2002:a53:b74b:0:b0:64c:f001:f6b with SMTP id
- 956f58d0204a3-64e912fb730mr2882157d50.9.1773845505787; Wed, 18 Mar 2026
- 07:51:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773855417; x=1774460217;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oB3NI2bJUiviBy39z6FRZhNP5U5rbCQWXh3aUIO5S3E=;
+        b=M3xIYPNXaM4fqbM8vXtmuXEEnDdGLr5rekWwgzTLcG3SELxLwu1teFHKZo8CVVz2nZ
+         H19GcsTvpwbvlm8l/CniwbvxxMH6G6RxvwYoqzwusvsYKK6fHMK5E0a5kuii6epPkpxM
+         //VTJy42/R2p+kdJomahzY/tsTsdxOVYh0cWB1L4CfJOG5InwMTGC8iIH6oMs31IpVbj
+         OeOXp5XnT31vyuYLGjieswlhtg0/slpcco1BrvWM0BFFmaBlsbC7U9z6HuVke5SOIf3C
+         OVqTq3el1ZnoMt9Vty6xnXAvVeVNgrT6N2h1JUlRIM7EbckuG/I47w4I5n9zsuBo6qLu
+         nA7g==
+X-Gm-Message-State: AOJu0Yw4YzNcs8ZzrwmG5wdt1wRdg8PSOSB/0X0fJtf6R8F5kbMuMqTW
+	QLTKBVq0+xk7SNBcA5xMQlwpCRv/yQfBy5dQIs2nDYPX0KfrZ1/l0z+IcgCUgQ==
+X-Gm-Gg: ATEYQzwiM5mc7t4kfo7NreqhZXzNzTCfRFj6Ykduav4v7fE0YlBCRg704vO7eh1hX3W
+	6DpXPtWyIQyG2wDsINtBejSCI1nUUnX4oPoVKnWQA8JKvxho46y57y78f+n7YNLSyKdGboD1LDk
+	JSPB4meaEmp2/15ije1Z84rwnGEI05NkMpcz5OJdMjAXZ6vp/VDYaEIccFiAcAOajysxiKRCzRs
+	1AcjPWkfXJRfzzHIX2687GExiVY/ixjpYgUFUjzP0WHP2CqyuXRKTQzigzumxKR/+9gu+rltq4X
+	EVKGqV+JAzj9N1/mIIzwKSV7MF5A5Ru3UG0QEs4SWsEDAANNEHKFpv4VG1geVPzzU5wi77n+b9d
+	aMrHmsovEl/SPF3gh9ilesr/jHPOTDe0H7x2DfbRds3/6Bbxs9I0lMrku9vDZa6yMq3afzFdNbX
+	9l0AndvMN343PMw/Fby8zsIV+EICndebOJANPdSUdADhjM+nw7fHLUlZ21z7Fawv7WuTDxRnK1M
+	tLyPg+YvRgqqbTNZ255
+X-Received: by 2002:a5d:584b:0:b0:43b:4077:c187 with SMTP id ffacd0b85a97d-43b527c567emr7226901f8f.38.1773855416685;
+        Wed, 18 Mar 2026 10:36:56 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:ef29])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b518495aasm9327803f8f.3.2026.03.18.10.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 10:36:56 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH liburing v3 1/1] tests: test io_uring bpf ops
+Date: Wed, 18 Mar 2026 17:36:54 +0000
+Message-ID: <8c9cb9cf824e09271df9c6d6d4398e514d9c5733.1773855222.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260312150523.2054552-1-vineeth@bitbyteword.org>
- <20260312150523.2054552-4-vineeth@bitbyteword.org> <abLapcC7YGYDyJ3L@kbusch-mbp>
- <20260312113816.01de2b53@gandalf.local.home>
-In-Reply-To: <20260312113816.01de2b53@gandalf.local.home>
-From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Date: Wed, 18 Mar 2026 10:51:34 -0400
-X-Gm-Features: AaiRm514xL8rsuaoYk7l-YfTLHyaymoFYPgJ2hsw1mDadffK5Tx7pElRtPxoCsU
-Message-ID: <CAO7JXPhV=08g6AFKGmeaP8T9Uuck12Ky3ZmT8yXTJzZkJ5Gq9w@mail.gmail.com>
-Subject: Re: [PATCH 03/15] io_uring: Use trace_invoke_##name() at guarded
- tracepoint call sites
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Keith Busch <kbusch@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[bitbyteword.org:s=google];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[bitbyteword.org];
-	TAGGED_FROM(0.00)[bounces-12742-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-12743-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[bitbyteword.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[vineeth@bitbyteword.org,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.995];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	NEURAL_HAM(-0.00)[-0.923];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid,bitbyteword.org:dkim,goodmis.org:email]
-X-Rspamd-Queue-Id: 0F65A2BE07B
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,runtests-loop.sh:url,runtests.sh:url]
+X-Rspamd-Queue-Id: 5C4362C0F1C
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Thu, Mar 12, 2026 at 11:38=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Thu, 12 Mar 2026 09:24:21 -0600
-> Keith Busch <kbusch@kernel.org> wrote:
->
-> > On Thu, Mar 12, 2026 at 11:04:58AM -0400, Vineeth Pillai (Google) wrote=
-:
-> > >     if (trace_io_uring_complete_enabled())
-> > > -           trace_io_uring_complete(req->ctx, req, cqe);
-> > > +           trace_invoke_io_uring_complete(req->ctx, req, cqe);
-> >
-> > Curious, this one doesn't follow that pattern of "if (enabed && cond)"
-> > that this cover letter said it was addressing, so why doesn't this call
-> > just drop the 'if' check and go straight to trace_io_uring_complete()? =
-I
-> > followed this usage to commit a0730c738309a06, which says that the
->
-> You mean 'a0727c738309a06'? As I could not find the above 'a0730c738309a0=
-6'
->
-> > compiler was generating code to move args before checking if the trace
-> > was enabled. That commit was a while ago though, and suggests to remove
->
-> It was only 2023.
->
-> > the check if that problem is solved. Is it still a problem?
->
-> We should check.
+Add some BPF struct ops io_uring tests/examples, one is issuing nops in
+a loop, the other copies a file.
 
-I shall leave this patch as is for now.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
-> Which reminds me. There's other places that have that tracepoint_enabled(=
-)
-> in header files that do the above. The C wrapper functions should also
-> convert the callback to the trace_invoke_<event>() call.
->
+v3: Fix Makefile choosing a wrong rule
+    Fix naming issues
+    Probe toolchain support
+v2: reworked Makefile, added bpf_cp
 
-Thanks for pointing this out. I just had a look and its not too much.
-But I feel it would be better to take it up as a new series. What do
-you think?
+ configure                 |  49 +++++++++++++
+ test/Makefile             |  36 +++++++++-
+ test/bpf-progs/cp.bpf.c   | 142 ++++++++++++++++++++++++++++++++++++++
+ test/bpf-progs/nops.bpf.c |  99 ++++++++++++++++++++++++++
+ test/bpf_cp.c             | 138 ++++++++++++++++++++++++++++++++++++
+ test/bpf_nops.c           |  99 ++++++++++++++++++++++++++
+ 6 files changed, 562 insertions(+), 1 deletion(-)
+ create mode 100644 test/bpf-progs/cp.bpf.c
+ create mode 100644 test/bpf-progs/nops.bpf.c
+ create mode 100644 test/bpf_cp.c
+ create mode 100644 test/bpf_nops.c
 
-Thanks,
-Vineeth
-> -- Steve
+diff --git a/configure b/configure
+index af0e10ab..3a08e0f1 100755
+--- a/configure
++++ b/configure
+@@ -22,6 +22,8 @@ for opt do
+   ;;
+   --datadir=*) datadir="$optarg"
+   ;;
++  --vmlinux=*) vmlinux="$optarg"
++  ;;
+   --cc=*) cc="$optarg"
+   ;;
+   --cxx=*) cxx="$optarg"
+@@ -468,6 +470,53 @@ if compile_prog "" "" "idtype_t"; then
+ fi
+ print_config "has_idtype_t" "$has_idtype_t"
+ 
++##########################################
++# Check for BPF toolchain
++
++has_bpftool="no"
++if command -v bpftool >/dev/null 2>&1; then
++  has_bpftool="yes"
++fi
++
++tmp_bpf_c=$(mktemp /tmp/test_bpfXXXX.c)
++tmp_bpf_o=$(mktemp /tmp/test_bpfXXXX.o)
++
++cat > "$tmp_bpf_c" << EOF
++int tmp = 0;
++EOF
++
++has_bpf_clang="no"
++if clang -target bpf -mcpu=v4 -c "$tmp_bpf_c" -o "$tmp_bpf_o"; then
++  has_bpf_clang="yes"
++fi
++rm "$tmp_bpf_c" "$tmp_bpf_o"
++
++has_libbpf="no"
++if pkg-config --exists libbpf; then
++  has_libbpf="yes"
++fi
++
++print_config "has_bpftool" "$has_bpftool"
++print_config "has_bpf_clang" "$has_bpf_clang"
++print_config "has_libbpf" "$has_libbpf"
++
++if test $vmlinux == ""; then
++  vmlinux="/sys/kernel/btf/vmlinux"
++else
++  vmlinux=$(realpath $vmlinux)
++fi
++print_and_output_mak bpf_vmlinux_path $vmlinux
++
++has_bpf_loop_ops="no"
++if test "$has_bpftool" == "yes" && test "$has_bpf_clang" == yes && test "$has_libbpf" == yes; then
++  if bpftool btf dump file $vmlinux format c 2>&1 | grep -qF bpf_io_uring_submit_sqes; then
++      has_bpf_loop_ops="yes"
++      output_sym "CONFIG_HAVE_BPF_LOOP_OPS"
++  fi
++fi
++
++print_config "has_bpf_loop_ops" "$has_bpf_loop_ops"
++
+ #############################################################################
+ liburing_nolibc="no"
+ if test "$use_libc" != "yes"; then
+diff --git a/test/Makefile b/test/Makefile
+index 10c3bcfa..377d06cf 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -1,6 +1,11 @@
+ prefix ?= /usr
+ datadir ?= $(prefix)/share
+ 
++CLANG ?= clang
++BPFTOOL ?= bpftool
++BPF_PROGS_DIR = bpf-progs
++BPF_OUTPUT = output/bpf
++
+ INSTALL=install
+ 
+ ifneq ($(MAKECMDGOALS),clean)
+@@ -312,11 +317,19 @@ ifdef CONFIG_HAVE_CXX
+ endif
+ all_targets += sq-full-cpp.t
+ 
++bpf_test_srcs := bpf_nops.c bpf_cp.c
++bpf_progs := $(patsubst bpf_%.c, %.bpf.c, $(bpf_test_srcs))
++bpf_test_targets :=
++
++ifeq ($(CONFIG_HAVE_BPF_LOOP_OPS),y)
++	bpf_test_targets := $(patsubst %.c,%.tt,$(bpf_test_srcs))
++endif
+ 
+ test_targets := $(patsubst %.c,%,$(test_srcs))
+ test_targets := $(patsubst %.cc,%,$(test_targets))
+ run_test_targets := $(patsubst %,%.run_test,$(test_targets))
+ test_targets := $(patsubst %,%.t,$(test_targets))
++test_targets += $(bpf_test_targets)
+ all_targets += $(test_targets)
+ helpers = helpers.o
+ 
+@@ -338,6 +351,9 @@ LIBURING := $(shell if [ -e ../src/liburing.a ]; then echo ../src/liburing.a; fi
+ %.t: %.c $(helpers) helpers.h $(LIBURING)
+ 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
+ 
++bpf_%.tt: bpf_%.c $(helpers) helpers.h $(LIBURING) $(BPF_OUTPUT)/%.bpf.o $(BPF_OUTPUT)/%.skel.h
++	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -I$(BPF_OUTPUT) -o $@ $< $(helpers) $(LDFLAGS) -lbpf
++
+ #
+ # Clang++ is not happy with -Wmissing-prototypes:
+ #
+@@ -350,6 +366,24 @@ LIBURING := $(shell if [ -e ../src/liburing.a ]; then echo ../src/liburing.a; fi
+ 	$(patsubst -Wmissing-prototypes,,$(CXXFLAGS)) \
+ 	-o $@ $< $(helpers) $(LDFLAGS)
+ 
++CLANG_BPF_SYS_INCLUDES ?= $(shell $(CLANG) -v -E - </dev/null 2>&1 \
++	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }')
++
++$(BPF_OUTPUT)/vmlinux.h:
++	mkdir -p $(BPF_OUTPUT)
++	$(BPFTOOL) btf dump file $(bpf_vmlinux_path) format c > $@
++
++# Build BPF code
++$(BPF_OUTPUT)/%.bpf.o: $(BPF_PROGS_DIR)/%.bpf.c $(wildcard %.h) $(BPF_OUTPUT)/vmlinux.h
++	mkdir -p ${BPF_OUTPUT}
++	$(QUIET_CC)$(CLANG) -g -O2 -target bpf \
++		     -I$(BPF_OUTPUT) $(CLANG_BPF_SYS_INCLUDES) \
++		     -Wno-missing-declarations \
++		     -c $(filter %.c,$^) -o $(patsubst %.bpf.o,%.tmp.bpf.o,$@) -mcpu=v4
++	$(BPFTOOL) gen object $@ $(patsubst %.bpf.o,%.tmp.bpf.o,$@)
++
++$(BPF_OUTPUT)/%.skel.h: $(BPF_OUTPUT)/%.bpf.o $(BPF_OUTPUT)/vmlinux.h
++	$(BPFTOOL) gen skeleton $< > $@
+ 
+ install: $(test_targets) runtests.sh runtests-loop.sh
+ 	$(INSTALL) -D -d -m 755 $(datadir)/liburing-test/
+@@ -361,7 +395,7 @@ uninstall:
+ 	@rm -rf $(datadir)/liburing-test/
+ 
+ clean:
+-	@rm -f $(all_targets) helpers.o output/*
++	@rm -rf $(all_targets) helpers.o output/*
+ 	@rm -rf output/
+ 
+ runtests: all
+diff --git a/test/bpf-progs/cp.bpf.c b/test/bpf-progs/cp.bpf.c
+new file mode 100644
+index 00000000..42aee2cd
+--- /dev/null
++++ b/test/bpf-progs/cp.bpf.c
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include "vmlinux.h"
++#include <linux/errno.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++char LICENSE[] SEC("license") = "Dual BSD/GPL";
++
++enum {
++	REQ_TOKEN_READ = 1,
++	REQ_TOKEN_WRITE
++};
++
++const volatile unsigned cq_hdr_offset;
++const volatile unsigned sq_hdr_offset;
++const volatile unsigned cqes_offset;
++const volatile unsigned sq_entries;
++const volatile unsigned cq_entries;
++
++int input_fd;
++int output_fd;
++void *buffer_uptr;
++unsigned nr_infligt;
++unsigned cur_offset;
++size_t buffer_size;
++int cp_result;
++
++#define t_min(a, b) ((a) < (b) ? (a) : (b))
++
++static inline void sqe_prep_rw(struct io_uring_sqe *sqe, unsigned opcode,
++				   int fd, void *addr,
++				   __u32 len, __u64 offset)
++{
++	*sqe = (struct io_uring_sqe){};
++	sqe->opcode = opcode;
++	sqe->fd = fd;
++	sqe->off = offset;
++	sqe->addr = (__u64)(unsigned long)addr;
++	sqe->len = len;
++}
++
++static int issue_next_req(struct io_ring_ctx *ring, struct io_uring_sqe *sqes,
++			  int type, size_t size)
++{
++	struct io_uring_sqe *sqe = sqes;
++	__u8 req_type;
++	int fd, ret;
++
++	if (type == REQ_TOKEN_READ) {
++		req_type = IORING_OP_READ;
++		fd = input_fd;
++	} else {
++		req_type = IORING_OP_WRITE;
++		fd = output_fd;
++	}
++
++	sqe_prep_rw(sqes, req_type, fd, buffer_uptr, size, cur_offset);
++	sqe->user_data = type;
++
++	ret = bpf_io_uring_submit_sqes(ring, 1);
++	if (ret != 1) {
++		cp_result = ret;
++		return ret < 0 ? ret : -EFAULT;
++	}
++	return 0;
++}
++
++SEC("struct_ops.s/cp_loop_step")
++int BPF_PROG(cp_loop_step, struct io_ring_ctx *ring, struct iou_loop_params *ls)
++{
++	struct io_uring_sqe *sqes;
++	struct io_uring_cqe *cqes;
++	struct io_uring *cq_hdr;
++	void *rings;
++	int ret;
++
++	sqes = (void *)bpf_io_uring_get_region(ring, IOU_REGION_SQ,
++				sq_entries * sizeof(struct io_uring_sqe));
++	rings = (void *)bpf_io_uring_get_region(ring, IOU_REGION_CQ,
++				cqes_offset + cq_entries * sizeof(struct io_uring_cqe));
++	if (!rings || !sqes)
++		return IOU_LOOP_STOP;
++	cq_hdr = rings + cq_hdr_offset;
++	cqes = rings + cqes_offset;
++
++	if (!nr_infligt) {
++		nr_infligt++;
++		ret = issue_next_req(ring, sqes, REQ_TOKEN_READ,
++				     buffer_size);
++		if (ret)
++			return IOU_LOOP_STOP;
++	}
++
++	if (cq_hdr->tail != cq_hdr->head) {
++		struct io_uring_cqe *cqe;
++
++		if (cq_hdr->tail - cq_hdr->head != 1) {
++			cp_result = -ERANGE;
++			return IOU_LOOP_STOP;
++		}
++
++		cqe = &cqes[cq_hdr->head & (cq_entries - 1)];
++		if (cqe->res < 0) {
++			cp_result = cqe->res;
++			return IOU_LOOP_STOP;
++		}
++
++		switch (cqe->user_data) {
++		case REQ_TOKEN_READ:
++			if (cqe->res == 0) {
++				cp_result = 0;
++				return IOU_LOOP_STOP;
++			}
++			ret = issue_next_req(ring, sqes, REQ_TOKEN_WRITE,
++					     cqe->res);
++			if (ret)
++				return IOU_LOOP_STOP;
++			break;
++		case REQ_TOKEN_WRITE:
++			cur_offset += cqe->res;
++			ret = issue_next_req(ring, sqes, REQ_TOKEN_READ,
++					     buffer_size);
++			if (ret)
++				return IOU_LOOP_STOP;
++			break;
++		default:
++			bpf_printk("invalid token\n");
++			cp_result = -EINVAL;
++			return IOU_LOOP_STOP;
++		};
++
++		cq_hdr->head++;
++	}
++
++	ls->cq_wait_idx = cq_hdr->head + 1;
++	return IOU_LOOP_CONTINUE;
++}
++
++SEC(".struct_ops.link")
++struct io_uring_bpf_ops cp_ops = {
++	.loop_step = (void *)cp_loop_step,
++};
+diff --git a/test/bpf-progs/nops.bpf.c b/test/bpf-progs/nops.bpf.c
+new file mode 100644
+index 00000000..00075bb6
+--- /dev/null
++++ b/test/bpf-progs/nops.bpf.c
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include <linux/errno.h>
++
++char LICENSE[] SEC("license") = "Dual BSD/GPL";
++
++#define REQ_TOKEN 0xabba1741
++
++const unsigned max_inflight = 8;
++const volatile unsigned cq_hdr_offset;
++const volatile unsigned sq_hdr_offset;
++const volatile unsigned cqes_offset;
++const volatile unsigned cq_entries;
++const volatile unsigned sq_entries;
++
++unsigned reqs_inflight = 0;
++int reqs_to_run;
++
++#define t_min(a, b) ((a) < (b) ? (a) : (b))
++
++static unsigned nr_to_submit(void)
++{
++	unsigned to_submit = 0;
++	unsigned inflight = reqs_inflight;
++
++	if (inflight < max_inflight) {
++		to_submit = max_inflight - inflight;
++		to_submit = t_min(to_submit, reqs_to_run - inflight);
++	}
++	return to_submit;
++}
++
++SEC("struct_ops.s/nops_loop_step")
++int BPF_PROG(nops_loop_step, struct io_ring_ctx *ring, struct iou_loop_params *ls)
++{
++	struct io_uring_sqe *sqes;
++	struct io_uring_cqe *cqes;
++	struct io_uring *cq_hdr;
++	unsigned to_submit;
++	unsigned to_wait;
++	unsigned nr_cqes;
++	void *rings;
++	int ret, i;
++
++	sqes = (void *)bpf_io_uring_get_region(ring, IOU_REGION_SQ,
++				sq_entries * sizeof(struct io_uring_sqe));
++	rings = (void *)bpf_io_uring_get_region(ring, IOU_REGION_CQ,
++				cqes_offset + cq_entries * sizeof(struct io_uring_cqe));
++	if (!rings || !sqes)
++		return IOU_LOOP_STOP;
++	cq_hdr = rings + cq_hdr_offset;
++	cqes = rings + cqes_offset;
++
++	to_submit = nr_to_submit();
++	if (to_submit) {
++		for (i = 0; i < to_submit; i++) {
++			struct io_uring_sqe *sqe = &sqes[i];
++
++			*sqe = (struct io_uring_sqe){};
++			sqe->opcode = IORING_OP_NOP;
++			sqe->user_data = REQ_TOKEN;
++		}
++
++		ret = bpf_io_uring_submit_sqes(ring, to_submit);
++		if (ret != to_submit)
++			return IOU_LOOP_STOP;
++		reqs_inflight += to_submit;
++	}
++
++	nr_cqes = cq_hdr->tail - cq_hdr->head;
++	nr_cqes = t_min(nr_cqes, max_inflight);
++	for (i = 0; i < nr_cqes; i++) {
++		struct io_uring_cqe *cqe = &cqes[cq_hdr->head & (cq_entries - 1)];
++
++		if (cqe->user_data != REQ_TOKEN)
++			return IOU_LOOP_STOP;
++		cq_hdr->head++;
++	}
++
++	reqs_inflight -= nr_cqes;
++	reqs_to_run -= nr_cqes;
++
++	if (reqs_to_run <= 0 && !reqs_inflight)
++		return IOU_LOOP_STOP;
++
++	to_wait = reqs_inflight;
++	/* Don't sleep if there are still CQEs left */
++	if (cq_hdr->tail != cq_hdr->head)
++		to_wait = 0;
++	ls->cq_wait_idx = cq_hdr->head + to_wait;
++	return IOU_LOOP_CONTINUE;
++}
++
++SEC(".struct_ops.link")
++struct io_uring_bpf_ops nops_ops = {
++	.loop_step = (void *)nops_loop_step,
++};
+diff --git a/test/bpf_cp.c b/test/bpf_cp.c
+new file mode 100644
+index 00000000..d04fdcb6
+--- /dev/null
++++ b/test/bpf_cp.c
+@@ -0,0 +1,138 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <linux/stddef.h>
++#include <errno.h>
++#include <signal.h>
++#include <stdlib.h>
++#include <bpf/libbpf.h>
++
++#include "liburing.h"
++#include "cp.skel.h"
++#include "helpers.h"
++
++static struct cp_bpf *skel;
++static struct bpf_link *cp_bpf_link;
++
++static char *in_fname;
++static char *out_fname;
++
++static size_t buffer_size = 4096;
++static int input_fd;
++static int output_fd;
++static void *buffer;
++
++#define CQ_ENTRIES 8
++#define SQ_ENTRIES 8
++
++static int setup_ring_ops(struct io_uring *ring)
++{
++	struct io_uring_params params;
++	int ret;
++
++	memset(&params, 0, sizeof(params));
++	params.cq_entries = CQ_ENTRIES;
++	params.flags = IORING_SETUP_SINGLE_ISSUER |
++			IORING_SETUP_DEFER_TASKRUN |
++			IORING_SETUP_NO_SQARRAY |
++			IORING_SETUP_CQSIZE |
++			IORING_SETUP_SQ_REWIND;
++
++	ret = t_create_ring_params(SQ_ENTRIES, ring, &params);
++	if (ret == T_SETUP_SKIP) {
++		printf("Can't setup a ring, skip\n");
++		return T_EXIT_SKIP;
++	}
++	if (ret != T_SETUP_OK)
++		return T_EXIT_FAIL;
++
++	skel = cp_bpf__open();
++	if (!skel) {
++		fprintf(stderr, "can't generate skeleton\n");
++		return T_EXIT_FAIL;
++	}
++
++	skel->struct_ops.cp_ops->ring_fd = ring->ring_fd;
++	skel->rodata->sq_hdr_offset = params.sq_off.head;
++	skel->rodata->cq_hdr_offset = params.cq_off.head;
++	skel->rodata->cqes_offset = params.cq_off.cqes;
++	skel->rodata->cq_entries = CQ_ENTRIES;
++	skel->rodata->sq_entries = SQ_ENTRIES;
++	skel->bss->input_fd = input_fd;
++	skel->bss->output_fd = output_fd;
++	skel->bss->buffer_uptr = buffer;
++	skel->bss->buffer_size = buffer_size;
++	skel->bss->cp_result = -EBUSY;
++
++	ret = cp_bpf__load(skel);
++	if (ret) {
++		if (ret == -ESRCH) {
++			printf("io_uring BPF ops are not supported\n");
++			return T_EXIT_SKIP;
++		}
++		fprintf(stderr, "failed to load skeleton\n");
++		return T_EXIT_FAIL;
++	}
++
++	cp_bpf_link = bpf_map__attach_struct_ops(skel->maps.cp_ops);
++	if (!cp_bpf_link) {
++		fprintf(stderr, "failed to attach ops\n");
++		return T_EXIT_FAIL;
++	}
++	return T_EXIT_PASS;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	size_t file_size;
++	struct stat st;
++	int ret;
++
++	if (argc != 3)
++		return 0;
++
++	in_fname = argv[1];
++	out_fname = argv[2];
++
++	input_fd = open(in_fname, O_RDONLY | O_DIRECT);
++	output_fd = open(out_fname, O_WRONLY | O_DIRECT | O_CREAT, 0644);
++	if (input_fd < 0 || output_fd < 0) {
++		fprintf(stderr, "can't open files");
++		return T_EXIT_FAIL;
++	}
++	if (fstat(input_fd, &st) == -1) {
++		fprintf(stderr, "stat failed\n");
++		return T_EXIT_FAIL;
++	}
++	file_size = st.st_size;
++
++	buffer = aligned_alloc(4096, buffer_size);
++	if (!buffer) {
++		fprintf(stderr, "can't allocate buffer\n");
++		return T_EXIT_FAIL;
++	}
++
++	ret = setup_ring_ops(&ring);
++	if (ret != T_EXIT_PASS)
++		return ret;
++
++	if (ftruncate(output_fd, file_size) == -1) {
++		fprintf(stderr, "ftruncate failed\n");
++		return T_EXIT_FAIL;
++	}
++
++	ret = io_uring_enter(ring.ring_fd, 0, 0, IORING_ENTER_GETEVENTS, NULL);
++	if (ret) {
++		fprintf(stderr, "run failed\n");
++		return T_EXIT_FAIL;
++	}
++
++	ret = skel->bss->cp_result;
++	if (ret) {
++		fprintf(stderr, "cp failed %i\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	bpf_link__destroy(cp_bpf_link);
++	cp_bpf__destroy(skel);
++	return 0;
++}
+diff --git a/test/bpf_nops.c b/test/bpf_nops.c
+new file mode 100644
+index 00000000..bdd4df47
+--- /dev/null
++++ b/test/bpf_nops.c
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <linux/stddef.h>
++#include <errno.h>
++#include <signal.h>
++#include <stdlib.h>
++#include <bpf/libbpf.h>
++
++#include "liburing.h"
++#include "nops.skel.h"
++#include "helpers.h"
++
++static struct nops_bpf *skel;
++static struct bpf_link *nops_bpf_link;
++
++#define CQ_ENTRIES 8
++#define SQ_ENTRIES 8
++#define NR_ITERS 1000
++
++static int setup_ring_ops(struct io_uring *ring)
++{
++	struct io_uring_params params;
++	int ret;
++
++	memset(&params, 0, sizeof(params));
++	params.cq_entries = CQ_ENTRIES;
++	params.flags = IORING_SETUP_SINGLE_ISSUER |
++			IORING_SETUP_DEFER_TASKRUN |
++			IORING_SETUP_NO_SQARRAY |
++			IORING_SETUP_CQSIZE |
++			IORING_SETUP_SQ_REWIND;
++
++	ret = t_create_ring_params(SQ_ENTRIES, ring, &params);
++	if (ret == T_SETUP_SKIP) {
++		printf("Can't setup a ring, skip\n");
++		return T_EXIT_SKIP;
++	}
++	if (ret != T_SETUP_OK)
++		return T_EXIT_FAIL;
++
++	skel = nops_bpf__open();
++	if (!skel) {
++		fprintf(stderr, "can't generate skeleton\n");
++		return T_EXIT_FAIL;
++	}
++
++	skel->struct_ops.nops_ops->ring_fd = ring->ring_fd;
++	skel->bss->reqs_to_run = NR_ITERS;
++	skel->rodata->sq_hdr_offset = params.sq_off.head;
++	skel->rodata->cq_hdr_offset = params.cq_off.head;
++	skel->rodata->cqes_offset = params.cq_off.cqes;
++	skel->rodata->cq_entries = CQ_ENTRIES;
++	skel->rodata->sq_entries = SQ_ENTRIES;
++
++	ret = nops_bpf__load(skel);
++	if (ret) {
++		if (ret == -ESRCH) {
++			printf("io_uring BPF ops are not supported\n");
++			return T_EXIT_SKIP;
++		}
++		fprintf(stderr, "failed to load skeleton\n");
++		return T_EXIT_FAIL;
++	}
++
++	nops_bpf_link = bpf_map__attach_struct_ops(skel->maps.nops_ops);
++	if (!nops_bpf_link) {
++		fprintf(stderr, "failed to attach ops\n");
++		return T_EXIT_FAIL;
++	}
++	return T_EXIT_PASS;
++}
++
++int main()
++{
++	struct io_uring ring;
++	unsigned left;
++	int ret;
++
++	ret = setup_ring_ops(&ring);
++	if (ret != T_EXIT_PASS)
++		return ret;
++
++	ret = io_uring_enter(ring.ring_fd, 0, 0, IORING_ENTER_GETEVENTS, NULL);
++	if (ret) {
++		fprintf(stderr, "run failed\n");
++		return T_EXIT_FAIL;
++	}
++
++	left = skel->bss->reqs_to_run;
++	if (left) {
++		fprintf(stderr, "Run failed, couldn't submit all nops %i / %i\n",
++			NR_ITERS - left, NR_ITERS);
++		return T_EXIT_FAIL;
++	}
++
++	bpf_link__destroy(nops_bpf_link);
++	nops_bpf__destroy(skel);
++	io_uring_queue_exit(&ring);
++	return T_EXIT_PASS;
++}
+-- 
+2.53.0
+
 

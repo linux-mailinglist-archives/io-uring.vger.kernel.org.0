@@ -1,117 +1,151 @@
-Return-Path: <io-uring+bounces-12753-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12754-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cFxIO3Mxu2kEggIAu9opvQ
-	(envelope-from <io-uring+bounces-12753-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 00:12:51 +0100
+	id aBmwCj/Ru2k4owIAu9opvQ
+	(envelope-from <io-uring+bounces-12754-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 11:34:39 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3DC2C3C1F
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 00:12:51 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8AB2C9895
+	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 11:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3A1633076B49
-	for <lists+io-uring@lfdr.de>; Wed, 18 Mar 2026 23:12:32 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 2D4873013C8F
+	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 10:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C7135D5F2;
-	Wed, 18 Mar 2026 23:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B84E374197;
+	Thu, 19 Mar 2026 10:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9Pp3aOU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCB2345753;
-	Wed, 18 Mar 2026 23:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393DD34D383
+	for <io-uring@vger.kernel.org>; Thu, 19 Mar 2026 10:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773875551; cv=none; b=rIkKLv+mglAiFYArbeOUvZfJ0j2595Ek/r4y8fNJakjJCrYVMHWU3uk17pyuD3XjfpZ7A3tBrjhccGFmdlRBqYqi+qkEhPS6J5p2x+nhNgKGClp9a5Eqepza2d6MrcoA5v7hl8cJO6uBQyA/rGlAEGKm9863AOQTzEFbFijsm3A=
+	t=1773916076; cv=none; b=rK8vTWRAkmJVMOqeZ5PhGMXO8fGhOBhC43CoYSbrVGiyRUxVR4ELKKizxGa4z0DKEDLoz6aVtXJAXQPHr0oFAQghUq54cDCR7XvS7Rs6Nk9L2hTIj4o2rBCKkAR8fOgEoLFhti+qi1SlHptItervBXZrOsI9hAnz8YQmEa8EkXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773875551; c=relaxed/simple;
-	bh=JCh4IeE/Cn60D/pNAmjztbTuiNBWjjTZpNihj1Tve9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JCOffRpAytYhlGLwfkI40vvEG4iUXtUnpHJgkQoL5pmEPwghKbGvMoknLhkTGI5s6Ta3ZpugBMjZZJAeIbbujlmudptXkkjeQfyNcJN4rYms+bjHeOvV01LnL8trD2+hTutLEILizZQ+gAVE6rz2RF4y98sJs7vlbB3BPcLOzGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 9F2241A01AB;
-	Wed, 18 Mar 2026 23:12:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 729DB2D;
-	Wed, 18 Mar 2026 23:12:17 +0000 (UTC)
-Date: Wed, 18 Mar 2026 19:12:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-nfs@vger.kernel.org,
- bpf@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netfs@lists.linux.dev,
- io-uring@vger.kernel.org, audit@vger.kernel.org, rcu@vger.kernel.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, Christian Loehle
- <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] kthread: remove kthread_exit()
-Message-ID: <20260318191246.21f5cae8@gandalf.local.home>
-In-Reply-To: <20260311104736.51b53405@pumpkin>
-References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
-	<20260310-work-kernel-exit-v2-1-30711759d87b@kernel.org>
-	<20260311104736.51b53405@pumpkin>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1773916076; c=relaxed/simple;
+	bh=yKl8SsopM1Hbtl5K1FEnr9+JSgnLq4kN/Wq7Pa16OLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJdXEJb0MuBumcpjC/lluNTyieEiIGCLf12P1l1N5RF9Wu4xOh7/vIy1c3MfkaXAeG7j5vgI7ueOG7CRQuba9OV6gRcEtrrmXBN2gtzGXLeTdTqkCuKidXsniyH4pXsRv6omcPtp72yITIDKMAR+xLrWqCFAgRFZ7DWNU/ui+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9Pp3aOU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773916074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2ME/flKx2UnJnQsyPnjoLGiWj59TPfb1uAAWvAJapZk=;
+	b=H9Pp3aOU951iWZ8zg/nU9EqhHJm9v7YYQGDifq3tJgJXCYY9pQPTTjjc22Wi8+73CjRv/8
+	LBxtRLPIKpPaRmzPqlbpgzkXdLXqJbDmGIi/U4INtyjMwQ8VEG8j4Me+hPpYrv6Xwx6sdF
+	ZTbOUrM+DQA6W8FuE5ibZtTeD2e9eP4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-48-LLTKNhq_P5i3Alu7hkHb0A-1; Thu,
+ 19 Mar 2026 06:27:52 -0400
+X-MC-Unique: LLTKNhq_P5i3Alu7hkHb0A-1
+X-Mimecast-MFC-AGG-ID: LLTKNhq_P5i3Alu7hkHb0A_1773916071
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F5B619560A6;
+	Thu, 19 Mar 2026 10:27:51 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.152])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3002D1955F21;
+	Thu, 19 Mar 2026 10:27:46 +0000 (UTC)
+Date: Thu, 19 Mar 2026 18:27:41 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH v2 0/13] io_uring: add IORING_OP_BPF for extending
+ io_uring
+Message-ID: <abvPnUeugDc5ndpL@fedora>
+References: <20260106101126.4064990-1-ming.lei@redhat.com>
+ <8dc16ad6-f329-40de-b7f8-6bf051df3d35@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: k3okmar3gqwa3bym6uatb3yctgtgf59r
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18ZAlHD7zRdqyhWTgVQ561leKpKdrlCUw4=
-X-HE-Tag: 1773875537-654795
-X-HE-Meta: U2FsdGVkX1+7MRZYfjkh8tY3o0PNQxfTCp9CNyhqYR5NFfoxVPCM5iPNukWLzQIvK353tkgDvhZEdUedgHQ5QAkLbovGV5fvwkWyav20iib+DYA0dDHoYUnOxRBuEyIUuWk0DzuG1lL8+oddkej4s1MPcpQDwUN5GqInEA4qcRZLkJpWWxd7t1PfzHXZfqpOcF7WAx+PlcQksO8TPjRtlBOpPJasveRV7LExQmrExj38ijzYTXM4IkABls4ZOZgZxz6jQwh3Jnl0QSJRHa6iPYc7cT5zoaTdKKIxa3A6zx0cZRoh9me2qihdhYWm4g9GrHKVoLJDzQiYMqh11BNCWgZQJ5CMSezB
-X-Spamd-Result: default: False [0.14 / 15.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8dc16ad6-f329-40de-b7f8-6bf051df3d35@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[goodmis.org : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TAGGED_FROM(0.00)[bounces-12753-lists,io-uring=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12754-lists,io-uring=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,purestorage.com,samba.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rostedt@goodmis.org,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.758];
+	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	NEURAL_HAM(-0.00)[-0.978];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	R_DKIM_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[gandalf.local.home:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5F3DC2C3C1F
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2B8AB2C9895
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, 11 Mar 2026 10:47:36 +0000
-David Laight <david.laight.linux@gmail.com> wrote:
-
-> > -#define module_put_and_kthread_exit(code) kthread_exit(code)
-> > +#define module_put_and_kthread_exit(code) do_exit(code)  
+On Wed, Mar 18, 2026 at 01:04:23PM -0600, Jens Axboe wrote:
+> On 1/6/26 3:11 AM, Ming Lei wrote:
+> > Hello,
+> > 
+> > Add IORING_OP_BPF for extending io_uring operations, follows typical cases:
+> > 
+> > - buffer registered zero copy [1]
+> > 
+> > Also there are some RAID like ublk servers which needs to generate data
+> > parity in case of ublk zero copy
+> > 
+> > - extend io_uring operations from application
+> > 
+> > Easy to add one new syscall with IORING_OP_BPF
+> > 
+> > - extend 64 byte SQE
+> > 
+> > bpf map can store IO data conveniently
+> > 
+> > - communicate in IO chain
+> > 
+> > IORING_OP_BPF can be used for communicate among IOs seamlessly without requiring
+> > extra syscall
+> > 
+> > - pretty handy to inject error for test purpose
+> > 
+> > Any comments & feedback are welcome!
 > 
-> I'm intrigued...
-> How does that actually know to do the module_put()?
-> (I know it does one - otherwise my driver wouldn't unload.)
+> Ming, can you respin your series against the current tree?
 
-It's in the !CONFIG_MODULES section. No module_put() necessary. Only the
-kthread_exit (do_exit) is needed.
+OK, I will post V3 for review.
 
--- Steve
+
+Thanks,
+Ming
+
 

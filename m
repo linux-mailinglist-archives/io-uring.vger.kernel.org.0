@@ -1,85 +1,100 @@
-Return-Path: <io-uring+bounces-12770-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12771-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eALoM/GjvWkM/wIAu9opvQ
-	(envelope-from <io-uring+bounces-12770-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 20:45:53 +0100
+	id uFR+JMejvWkM/wIAu9opvQ
+	(envelope-from <io-uring+bounces-12771-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 20:45:11 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9662E0540
-	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 20:45:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11E62E04D3
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 20:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A7ED53039EED
-	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 19:36:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5164A303D721
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 19:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF2F3ECBE7;
-	Fri, 20 Mar 2026 19:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D7F2F83AE;
+	Fri, 20 Mar 2026 19:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QkwhXXiD"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="f6oZcx+2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wqAMW/3M"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A16A3E8C71
-	for <io-uring@vger.kernel.org>; Fri, 20 Mar 2026 19:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A48A34EF16;
+	Fri, 20 Mar 2026 19:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774035275; cv=none; b=m49bkkTnHB+BnSasohg1sxmLQ7Ap9Tnofi6lbZbfvqGmrcuVQWmjvUsY6yBEIEBpB57TomukcXV8/5q18L0xRTbpWHVToAuUPDxjgP1JnOPvt/KAy8fOYuLs9bsbMQdxQhsr5zaTJtnN30AKeyyiGpQ3Ww/uPQ0hNm25ZYohssM=
+	t=1774035908; cv=none; b=Dq1wfSvmyJ64elzwLtd2VvVowv68j5t5mSOecjTUujIZyHGDsrPyPFsg1gzljLfGjK4h8FmBvh1JAm9xr2A9c83ecH6B+OzwZJBR+ia6pBQuQ5NwJDbTgUdLxr3u+nc8QViBcx0RxEGibagQtcP8rLy8V+Ap7s67sTLb2eSkwxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774035275; c=relaxed/simple;
-	bh=FwBUNOvZQNrsC0bLTeOJsE6bKAUoEdxGbW7JNzOFIR0=;
+	s=arc-20240116; t=1774035908; c=relaxed/simple;
+	bh=AqBaFIOnfFTMagDMOdbcuH0qnhUjHr0dUHWu4IYd2T0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p9Ojergnc1hwDsVaehbHQ3LX2H/A7OvmnBvnscd6NsQWMIOnDaWJrvwDXMrtgljIx37vbO2v2hDAGLwRGclMTl9VjMC1T3LO1xCwHoR4xHP64lLs6ZLemARTAOjPB1XxyQMxEeTEbLizfjzU7fAyC/gWvEG4/f9V9U1UcboKOPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QkwhXXiD; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-417400afaeeso2469170fac.1
-        for <io-uring@vger.kernel.org>; Fri, 20 Mar 2026 12:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1774035271; x=1774640071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PBCKl5XV2fZEJHRFI8QwapsaCQ6SSZzaVn8iplu1N8g=;
-        b=QkwhXXiDQEwePu/D2drsahfEzp+uwtNbwCnaeC9I0G1Vbf9ccizqn/3DVtRUjn52J7
-         GoJj6yG4TtEdX4lfgUvfh3jEH6LynXON/4NiuQxv00hMvKBgUfejh+FGta7p0k311Dul
-         3tPgrTuXrx0RMb+naMTXvlQdv1i+8I5rZ2A27b/HQny5otGBJ2SbyDju1UNi7bWlTILZ
-         zAaQR6GFsMhUVklj+4ssxJKUg0+khDfUNFAnQ0kLYMk5Ht/sB8RyYsCw4rVGSaA7cQQs
-         aIlIsRlcj++qUqB13ofe4MmcU/6O8KQYc1H+nqBSqFh/mJ0oyIPsbBiP/13MNjslVHlL
-         Jj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774035271; x=1774640071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PBCKl5XV2fZEJHRFI8QwapsaCQ6SSZzaVn8iplu1N8g=;
-        b=aqi0OI2fVdIR3eVtkfgl+hvAojeVgx47Ew0jS0AYJhRdZy54pkree3Q/Mez2FLhXTq
-         7zIT3IdMyhl6RDDiufKvbXGLwfFXpxv3y0weGa51la/HC7R1w+PiHfaoEGmwzpBBpu5c
-         XaWujpuyj9VzljPNv/q6xf+X8ciyDdW96xtJ9Z+BtMBLE2+5Ap1NZWA65yxjBbS/nVuX
-         yxmmXS2rxonAOGGd5u93gqwQVEB7WBdz/5N9FUadgWhwlex3SwYG25dpdLJ/wFTCF91K
-         81+xJ6zOPp5/nZTzd6tD1jnGzoVxQLmJ8j3c7b7BHg63xC4xEuKmIwoqRyt886cOimQq
-         XmPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQvYBcFlmcG03niB3Vluu+8gjoTCwOeUC+iv2p6PelKo6+GrJ6qbujIaPQE4Cuy2W4SBcfCKeQfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Pjeg55H6ovVCG9T+TxcXU89FDpWN6hnB564ECOgtdUko+Yx3
-	rMzGb3FcI48Jhibz4GFzp6uE6S6R7krtUsD3m3vNV4PKUQn2Aj9P5Qh1vuRdSfiVsZQ=
-X-Gm-Gg: ATEYQzxfdnKOlnbp4slxwoKD3UPAusmkGli3MDIMyUhGNN1Um5fZeVWPbkG1GrX6TBh
-	O33/Uh5NX3tEKNy42lWaiUTKGifQQnn67cX4sK6rpwd3AMXIBenr40r0NBJHuBEbVNXBgskTKv7
-	UAAiU1HQiVM4ZEwYUkmJjr/qHFDX8y1PjUqu428AsVxVSjOWF3KgPaOsnCh351Am9gVsGKm+Dmw
-	PrBcqT9Wjx+WkVPhsRefZddMKh/5TUdoTwJeuVsvhVPGXF/3J8LtumNC85cY13NpPjlYCow9b6c
-	THUwqgrZzMeFemzyvZ1jJ7jmYKiTUyLdBKMG2AMbqRLTt+5SnfB97osA2B+t7LLYvyIzw0Mbh7+
-	0XLL17jgtI7mt0nMM1zghwdc9jYx/0ag1u9Hlf0wSbcGTEsmw3vULghMjAFqc3ZdImEFA+i/19W
-	d7Xj9cKJeSnRkmORT479POzXU8uAzm3Bbo2/D20J6sijh9sFaiT6cyb1giBmxIuvB9YI5uuD0ef
-	9zvTyd5
-X-Received: by 2002:a05:6820:609:b0:67c:1cdf:f046 with SMTP id 006d021491bc7-67c2353c5b9mr2459578eaf.7.1774035271200;
-        Fri, 20 Mar 2026 12:34:31 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-67c253fceddsm1763289eaf.15.2026.03.20.12.34.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Mar 2026 12:34:30 -0700 (PDT)
-Message-ID: <ff60b19b-ecd8-44cd-b7d3-f7755fe49934@kernel.dk>
-Date: Fri, 20 Mar 2026 13:34:29 -0600
+	 In-Reply-To:Content-Type; b=bIePidQSwu0nxfXhCrEzgY8FL1ZNpSI1ckTfkSEOyx+wcu8aHhhs0QMkee6JF5Cm4pL8C+6p1RCrgH4fAEvqTH2CSgmKOzFmDIoO69AItewDz7eVGlxXvBC+HQWJ+xrcNusxmRop1eIPZSRq4ZLzq2TSfxGhcnSTYdbSIDLotZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=f6oZcx+2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wqAMW/3M; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 9887A140013E;
+	Fri, 20 Mar 2026 15:45:05 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 20 Mar 2026 15:45:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1774035905;
+	 x=1774122305; bh=+sJ1Ok2AjKWO161JBMWf8rF55g3lV1mXUWLG8hILYMo=; b=
+	f6oZcx+2YOrfk/3LR4J69w175jT0k1guXsNvagfFL1D8hIiyrojQkl4SXAImuTa8
+	uQF8tnWsKFYvToJlR606Gy+LX/HAAkkMdTDsyqYk/JsTvADfTgKdFWSgeLtmjVdy
+	QzZ9YeCdkXM3xQaLViGQJ1tKP5mJcQ8m1dbS13AKrth5g4IOaMzqro7IXVe2u5/U
+	NpYQ9OZjXpwNsIV4Smocm3nYadQ/wjVTpj2EfgjBOm5SHTBw7dCIpGnQwHVXMEzu
+	GdZvThh9sZhtrN+890dvzLkf6v6/7REDAxMcIKhvtrnEiftdFr1FOIf+Utwtd4LS
+	RqSQlGE03Ad2qTOR6Uz+Tg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774035905; x=
+	1774122305; bh=+sJ1Ok2AjKWO161JBMWf8rF55g3lV1mXUWLG8hILYMo=; b=w
+	qAMW/3M17N1eh/haCeD8Zp2VH+YxA+Z5wOOsQJwxFmOHmHGTxzhF2Yp9+GF2nq98
+	z2J5BWaSsH9K/pOaxqr/VXxZaXnnl8/wqMKMJFrzD7eRJkktJ19OtZwaGboOzChy
+	1NFnAF4ubFtzDUoZi1eh6qzYUwHX1ZBZF/0+tQLl/AxXhM4eawyuXLoiHXcmEAkO
+	ceXWrpU4YLsH8Vgk0w06CaxeguLcWbJ3ngySRTe63DZenGb16Ha12SIypgWmjRAX
+	mSQ5Nb3jV+aoKjsY5GOnLdqEqfhi7h7Jn2E/+R51Wou3bS8rQeyRr81QrRw2xuRJ
+	cPVbZ5vH+DB1aj+9fSBDg==
+X-ME-Sender: <xms:waO9acgC5IvdDU_wFosIrw2Dt31R3QjrF0AX-EJ1NH43fPV9Iz9ULg>
+    <xme:waO9aZ-UgXhs8CABBjqbPyQKGGRl2ZbY3kRCRGm9j_ZN2GU4iaj5MzaFxGUOuBEIO
+    uSHCliYBb1NtCxzrnLtW1j1rrqD2cQBZIcqNvIp1fadF3XDCzQ>
+X-ME-Received: <xmr:waO9aYVRxyC11O6OlEBZ2-QiRHM83hk0rw5i09rwk-5jLe6qNluHw2YO8jjXEI5LGhO4hEiAPTkvOCcpvTZN85jhxuXtGG1Clgx4MBbx-NhNFQT5QA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefuddtjeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeetiefgkefgteegledvjeeiueehfffhjeekjefgheejjeejgeeuudehgfel
+    geevtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    segsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohephhgthhesihhnfh
+    hrrgguvggrugdrohhrghdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghi
+    lhdrtghomhdprhgtphhtthhopegtshgrnhguvghrsehpuhhrvghsthhorhgrghgvrdgtoh
+    hmpdhrtghpthhtohepkhhrihhsmhgrnhesshhushgvrdguvgdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepih
+    hoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgsihhr
+    thhhvghlmhgvrhesuggunhdrtghomh
+X-ME-Proxy: <xmx:waO9adDpWJaGT6U6ubfypcghHmVtExdNzmgp5HxQ-MwSgZ3ClD2G9Q>
+    <xmx:waO9adFps5qiarLbzW4KYR9LsvLYyKf5jJHx9ZM85nsp5ZbTt58WVw>
+    <xmx:waO9ae667VFtyecYf-w1FWjTmSivCwzxYVTTmRCgTcAdeySMoDXsjw>
+    <xmx:waO9aTmkOKMmsi-E2EvT-jpSYpZKiK0Z85stShU-Ku24hQNccZE7eA>
+    <xmx:waO9aeyGHvAQ5K0yR4Ik_VsteCPpHZX2OU2dVonv4jFyT49-emJyfDC0>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 20 Mar 2026 15:45:03 -0400 (EDT)
+Message-ID: <d9aae2bf-b81d-42c8-b919-5e64292323e8@bsbernd.com>
+Date: Fri, 20 Mar 2026 20:45:01 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,345 +102,189 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] io_uring: Add IORING_OP_DUP
-To: Daniele Di Proietto <daniele.di.proietto@gmail.com>,
- io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20260320182341.780295-1-daniele.di.proietto@gmail.com>
- <20260320182341.780295-3-daniele.di.proietto@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260320182341.780295-3-daniele.di.proietto@gmail.com>
+Subject: Re: [PATCH v3 0/8] io_uring: add kernel-managed buffer rings
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: axboe@kernel.dk, hch@infradead.org, asml.silence@gmail.com,
+ csander@purestorage.com, krisman@suse.de, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+References: <20260306003224.3620942-1-joannelkoong@gmail.com>
+ <59dcb27f-875c-4a2a-82dc-63b832f8eb1e@bsbernd.com>
+ <CAJnrk1YLtQF=SF-GoG4irKYzzePNewNgyTeU7VLvUN6Ub_NFVw@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1YLtQF=SF-GoG4irKYzzePNewNgyTeU7VLvUN6Ub_NFVw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-0.16 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm3,messagingengine.com:s=fm1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12770-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,zeniv.linux.org.uk,suse.cz];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[kernel.dk,infradead.org,gmail.com,purestorage.com,suse.de,vger.kernel.org,ddn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12771-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: DC9662E0540
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim,bsbernd.com:dkim,bsbernd.com:email,bsbernd.com:mid]
+X-Rspamd-Queue-Id: B11E62E04D3
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 3/20/26 12:23 PM, Daniele Di Proietto wrote:
-> diff --git a/fs/file.c b/fs/file.c
-> index 384c83ce768d..64d712ef89b5 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -285,9 +285,8 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
->   * Return <0 error code on error; 0 on success.
->   * The files->file_lock should be held on entry, and will be held on exit.
->   */
-> -static int expand_files(struct files_struct *files, unsigned int nr)
-> -	__releases(files->file_lock)
-> -	__acquires(files->file_lock)
-> +int expand_files(struct files_struct *files, unsigned int nr)
-> +	__releases(files->file_lock) __acquires(files->file_lock)
->  {
->  	struct fdtable *fdt;
->  	int error;
-> @@ -1291,13 +1290,33 @@ bool get_close_on_exec(unsigned int fd)
->  	return res;
->  }
->  
-> -static int do_dup2(struct files_struct *files,
-> -	struct file *file, unsigned fd, unsigned flags)
-> -__releases(&files->file_lock)
-> +/**
-> + * do_replace_fd_locked() - Installs a file on a specific fd number.
-> + * @files: struct files_struct to install the file on.
-> + * @file: struct file to be installed.
-> + * @fd: number in the files table to replace
-> + * @flags: the O_* flags to apply to the new fd entry
-> + *
-> + * Installs a @file on the specific @fd number on the @files table.
-> + *
-> + * The caller must makes sure that @fd fits inside the @files table, likely via
-> + * expand_files().
-> + *
-> + * Requires holding @files->file_lock.
-> + *
-> + * This helper handles its own reference counting of the incoming
-> + * struct file.
-> + *
-> + * Returns a preexisting file in @fd, if any, NULL, if none or an error.
-> + */
-> +struct file *do_replace_fd_locked(struct files_struct *files, struct file *file,
-> +				  unsigned int fd, unsigned int flags)
->  {
->  	struct file *tofree;
->  	struct fdtable *fdt;
->  
-> +	lockdep_assert_held(&files->file_lock);
-> +
->  	/*
->  	 * dup2() is expected to close the file installed in the target fd slot
->  	 * (if any). However, userspace hand-picking a fd may be racing against
-> @@ -1328,26 +1347,19 @@ __releases(&files->file_lock)
->  	fd = array_index_nospec(fd, fdt->max_fds);
->  	tofree = rcu_dereference_raw(fdt->fd[fd]);
->  	if (!tofree && fd_is_open(fd, fdt))
-> -		goto Ebusy;
-> +		return ERR_PTR(-EBUSY);
->  	get_file(file);
->  	rcu_assign_pointer(fdt->fd[fd], file);
->  	__set_open_fd(fd, fdt, flags & O_CLOEXEC);
-> -	spin_unlock(&files->file_lock);
-> -
-> -	if (tofree)
-> -		filp_close(tofree, files);
-> -
-> -	return fd;
->  
-> -Ebusy:
-> -	spin_unlock(&files->file_lock);
-> -	return -EBUSY;
-> +	return tofree;
->  }
->  
->  int replace_fd(unsigned fd, struct file *file, unsigned flags)
->  {
-> -	int err;
->  	struct files_struct *files = current->files;
-> +	struct file *tofree;
-> +	int err;
->  
->  	if (!file)
->  		return close_fd(fd);
-> @@ -1359,9 +1371,14 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
->  	err = expand_files(files, fd);
->  	if (unlikely(err < 0))
->  		goto out_unlock;
-> -	err = do_dup2(files, file, fd, flags);
-> -	if (err < 0)
-> -		return err;
-> +	tofree = do_replace_fd_locked(files, file, fd, flags);
-> +	spin_unlock(&files->file_lock);
-> +
-> +	if (IS_ERR(tofree))
-> +		return PTR_ERR(tofree);
-> +
-> +	if (tofree)
-> +		filp_close(tofree, files);
->  	return 0;
->  
->  out_unlock:
-> @@ -1422,11 +1439,29 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
->  	return new_fd;
->  }
->  
-> -static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
-> +static struct file *do_dup3(struct files_struct *files, unsigned int oldfd,
-> +			    unsigned int newfd, int flags)
-> +	__releases(files->file_lock) __acquires(files->file_lock)
->  {
-> -	int err = -EBADF;
->  	struct file *file;
-> +	int err = 0;
-> +
-> +	err = expand_files(files, newfd);
-> +	file = files_lookup_fd_locked(files, oldfd);
-> +	if (unlikely(!file))
-> +		return ERR_PTR(-EBADF);
-> +	if (err < 0) {
-> +		if (err == -EMFILE)
-> +			err = -EBADF;
-> +		return ERR_PTR(err);
-> +	}
-> +	return do_replace_fd_locked(files, file, newfd, flags);
-> +}
-> +
-> +static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
-> +{
->  	struct files_struct *files = current->files;
-> +	struct file *to_free;
->  
->  	if ((flags & ~O_CLOEXEC) != 0)
->  		return -EINVAL;
-> @@ -1438,22 +1473,15 @@ static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
->  		return -EBADF;
->  
->  	spin_lock(&files->file_lock);
-> -	err = expand_files(files, newfd);
-> -	file = files_lookup_fd_locked(files, oldfd);
-> -	if (unlikely(!file))
-> -		goto Ebadf;
-> -	if (unlikely(err < 0)) {
-> -		if (err == -EMFILE)
-> -			goto Ebadf;
-> -		goto out_unlock;
-> -	}
-> -	return do_dup2(files, file, newfd, flags);
-> -
-> -Ebadf:
-> -	err = -EBADF;
-> -out_unlock:
-> +	to_free = do_dup3(files, oldfd, newfd, flags);
->  	spin_unlock(&files->file_lock);
-> -	return err;
-> +
-> +	if (IS_ERR(to_free))
-> +		return PTR_ERR(to_free);
-> +	if (to_free)
-> +		filp_close(to_free, files);
-> +
-> +	return newfd;
->  }
->  
->  SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
-> diff --git a/fs/internal.h b/fs/internal.h
-> index cbc384a1aa09..c3d1eaf65328 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -197,6 +197,11 @@ extern struct file *do_file_open_root(const struct path *,
->  extern struct open_how build_open_how(int flags, umode_t mode);
->  extern int build_open_flags(const struct open_how *how, struct open_flags *op);
->  struct file *file_close_fd_locked(struct files_struct *files, unsigned fd);
-> +struct file *do_replace_fd_locked(struct files_struct *files, struct file *file,
-> +				  unsigned int fd, unsigned int flags)
-> +	__must_hold(files->file_lock);
-> +int expand_files(struct files_struct *files, unsigned int nr)
-> +	__releases(files->file_lock) __acquires(files->file_lock);
->  
->  int do_ftruncate(struct file *file, loff_t length, int small);
->  int do_sys_ftruncate(unsigned int fd, loff_t length, int small);
-
-All of the above should be a separate prep patch, not part of the
-io_uring patch adding IORING_OP_DUP.
-
-> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> index c71242915dad..2658adbfd17a 100644
-> --- a/io_uring/openclose.c
-> +++ b/io_uring/openclose.c
-> @@ -446,3 +454,175 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags)
->  		fput(files[1]);
->  	return ret;
->  }
-> +
-> +void io_dup_cleanup(struct io_kiocb *req)
-> +{
-> +	struct io_dup *id = io_kiocb_to_cmd(req, struct io_dup);
-> +
-> +	if (id->rsrc_node)
-> +		io_put_rsrc_node(req->ctx, id->rsrc_node);
-> +}
-
-Probably doesn't hurt to be defensive and clear ->rsrc_node when put.
-
-> +int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_dup *id;
-> +
-> +	if (sqe->off || sqe->addr || sqe->len || sqe->buf_index || sqe->addr3)
-> +		return -EINVAL;
-> +
-> +	id = io_kiocb_to_cmd(req, struct io_dup);
-> +	id->flags = READ_ONCE(sqe->dup_flags);
-> +	if (id->flags & ~(IORING_DUP_NO_CLOEXEC | IORING_DUP_OLD_FIXED |
-> +			  IORING_DUP_NEW_FIXED))
-> +		return -EINVAL;
-
-Would be cleaner with an IORING_DUP_FLAGS mask above io_dup_prep().
-
-> +static struct file *io_dup_get_old_file_fixed(struct io_kiocb *req,
-> +					      unsigned int issue_flags,
-> +					      unsigned int file_slot)
-> +{
-> +	struct io_dup *id = io_kiocb_to_cmd(req, struct io_dup);
-> +	struct file *file = NULL;
-> +
-> +	if (!id->rsrc_node)
-> +		id->rsrc_node =
-> +			io_file_get_fixed_node(req, file_slot, issue_flags);
-
-Just use the full line length, io_uring isn't a stickler on 80 chars and
-it'd read better as:
-
-	if (!id->rsrc_node)
-		id->rsrc_node = io_file_get_fixed_node(req, file_slot, issue_flags);
-
-Need to check further, but I'm assuming the difference here is for retry
-where the node could already be assigned?
 
 
-> +static int io_dup_to_fd(struct io_kiocb *req, unsigned int issue_flags,
-> +			bool old_fixed, int old_fd, int new_fd, int o_flags)
-> +{
-> +	struct file *old_file, *to_replace, *to_close = NULL;
-> +	bool non_block = issue_flags & IO_URING_F_NONBLOCK;
-> +	struct files_struct *files = current->files;
-> +	int ret;
-> +
-> +	if (new_fd >= rlimit(RLIMIT_NOFILE))
-> +		return -EBADF;
-> +
-> +	if (old_fixed)
-> +		old_file = io_dup_get_old_file_fixed(req, issue_flags, old_fd);
-> +
-> +	spin_lock(&files->file_lock);
+On 3/20/26 20:20, Joanne Koong wrote:
+> On Fri, Mar 20, 2026 at 10:16 AM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>
+>> On 3/6/26 01:32, Joanne Koong wrote:
+>>> Currently, io_uring buffer rings require the application to allocate and
+>>> manage the backing buffers. This series introduces buffer rings where the
+>>> kernel allocates and manages the buffers on behalf of the application. From
+>>> the uapi side, this goes through the pbuf ring interface, through the
+>>> IOU_PBUF_RING_KERNEL_MANAGED flag.
+>>>
+>>> There was a long discussion with Pavel on v1 [1] regarding the design. The
+>>> alternatives were to have the buffers allocated and registered through a
+>>> memory region or through the registered buffers interface and have fuse
+>>> implement ring buffer logic internally outside of io-uring. However, because
+>>> the buffers need to be contiguous for DMA and some high-performance fuse
+>>> servers may need non-fuse io-uring requests to use the buffer ring directly,
+>>> v3 keeps the design.
+>>>
+>>> This is split out from the fuse-over-io_uring series in [2], which needs the
+>>> kernel to own and manage buffers shared between the fuse server and the
+>>> kernel. The link to the fuse tree that uses the commits in this series is in
+>>> [3].
+>>>
+>>> This series is on top of the for-7.1/io_uring branch in Jens' io-uring
+>>> tree (commit ee1d7dc33990). The corresponding liburing changes are in [4] and
+>>> will be submitted after the changes in this patchset have landed.
+>>>
+>>> Thanks,
+>>> Joanne
+>>>
+>>> [1] https://lore.kernel.org/linux-fsdevel/20260210002852.1394504-1-joannelkoong@gmail.com/T/#t
+>>> [2] https://lore.kernel.org/linux-fsdevel/20260116233044.1532965-1-joannelkoong@gmail.com/
+>>> [3] https://github.com/joannekoong/linux/commits/fuse_zero_copy_for_v3/
+>>> [4] https://github.com/joannekoong/liburing/commits/pbuf_kernel_managed/
+>>
+> 
+> Hi Bernd,
+> 
+>> Hi Joanne,
+>>
+>> I'm a bit late, but could we have a design discussion about fuse here?
+>> From my point of view it would be good if we could have different
+>> request sizes for the ring buffers. Without kbuf I thought we would just
+> 
+> Is your motivation for wanting different request sizes for the ring
+> buffers so that it can optimize the memory costs of the buffers? I
+> agree that trying to reduce the memory footprint of the buffers is
+> very important. The main reason I ended up going with the buffer ring
+> design was for that purpose. When kbuf incremental buffer consumption
+> is added in the future (I plan to submit it separately once all the
+> io-uring pieces of the fuse-zero-copy patchset land), this will allow
+> non-overlapping regions of the individual buffer to be used across
+> multiple different-sized requests concurrently.
 
-If you use:
+That is also fine.
 
-	guard(spinlock)(&files->file_lock);
+> 
+> From my point of view, this is better than allocating variable-sized
+> buffers upfront because:
+> a) entries are fully maximized. With variable-sized buffers, the big
+> buffers would be reserved specifically for payload requests while the
+> small buffers would be reserved specifically for metadata requests. We
+> could allocate '# entries' amount of small buffers, but for big
+> buffers there would be less than '# entries'. If the server needs to
+> service a lot of concurrent I/O requests, then the ring gets throttled
+> on the limited number of big buffers available.
 
-and move:
+I would like to see something like 8K, 16K, 32K, 128K.
 
-> +
-> +	/* Do we need to expand? If so, be safe and punt to async */
-> +	if (new_fd >= files_fdtable(files)->max_fds && non_block)
-> +		goto out_again;
-> +	ret = expand_files(files, new_fd);
-> +	if (ret < 0)
-> +		goto out_unlock;
-> +
-> +	if (!old_fixed)
-> +		old_file = files_lookup_fd_locked(files, old_fd);
-> +
-> +	ret = -EBADF;
-> +	if (!old_file)
-> +		goto out_unlock;
-> +
-> +	to_replace = files_lookup_fd_locked(files, new_fd);
-> +	if (to_replace) {
-> +		if (io_is_uring_fops(to_replace))
-> +			goto out_unlock;
-> +
-> +		/* if the file has a flush method, be safe and punt to async */
-> +		if (to_replace->f_op->flush && non_block)
-> +			goto out_again;
-> +	}
-> +	to_close = do_replace_fd_locked(files, old_file, new_fd, o_flags);
-> +	ret = new_fd;
+> 
+> b) it best maximizes buffer memory. A request could need a buffer of
+> any size so with variable-sized buffers, there's extra space in the
+> buffer that is still being wasted. For example, for large payload
+> requests, the big buffers would need to be the size of the max payload
+> size (eg default 1 MB) but a lot of requests will fall under that.
+> With incremental buffer consumption, only however many bytes used by
+> the request are reserved in the buffer.
 
-into a helper, all of this somewhat messy goto error_handling stuff can
-go away.
+Doesn't that cause fragmentation?
 
--- 
-Jens Axboe
+> 
+> c) there's no overhead with having to (as you pointed out) keep the
+> buffers tracked and sorted into per-sized lists. If we wanted to use
+> variable-sized buffers with kbufs instead of using incremental buffer
+> consumption, the best way to do that would be to allocate a separate
+> kbufring to support payload requests vs metadata requests.
+
+Yeah, I had thought of multiple kbuf rings, with different sizes.
+
+> 
+>> register entries with different sizes, which would then get sorted into
+>> per size lists. Now with kbuf that will not work anymore and we need
+>> different kbuf sizes. But then kbuf is not suitable for non-privileged
+>> users. So in order to support different request sizes one basically has
+> 
+> Non-privileged fuse servers use kbufs as well. It's only zero-copying
+> that is not possible for non-privileged servers.
+
+Non-privileged cannot pin, at least by default mlock size is 8MB. I was
+under the impression that kbuf would be always pinned, but I need to
+read over it again.
+
+> 
+>> to implement things two times - not ideal. Couldn't we have pbuf for
+>> non-privileged users and basically depcrecate the existing fuse io-uring
+> 
+> I don't think this is necessary because kbufs works for both
+> non-privileged and privileged servers. For how the buffer gets used by
+> the server/kernel, pbufs are not an option here because the kernel has
+> to be the one to recycle back the buffer (since it needs to read /
+> copy data the server returns back in the buffer).
+
+I was thinking to set a flag or take ref count and to disallow pbuf
+destruction.
+
+> 
+>> buffer API? In the sense that it needs to be further supported for some
+>> time, but won't get any new feature. Different buffer sizes would then
+>> only be supported through kbuf/pbuf?
+> 
+> I hope I understood your questions correctly, but if I misread
+> anything, please let me know. I am going to be updating and submitting
+> the fuse patches next week - the main update will be changing the
+> headers to go through a registered memory region (which I only
+> realized existed after the discussion with Pavel in v1) instead of as
+> a registered buffer, as that will allow us to avoid the per I/O lookup
+> overhead and drop the patch for the
+> "io_uring_fixed_index_get()/io_uring_fixed_index_put()" refcount dance
+> altogether.
+
+I will try to review ASAP when you submit.
+
+
+Thanks,
+Bernd
+
+
 

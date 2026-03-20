@@ -1,213 +1,223 @@
-Return-Path: <io-uring+bounces-12758-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12759-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +OJFIE9qvGlQyQIAu9opvQ
-	(envelope-from <io-uring+bounces-12758-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 22:27:43 +0100
+	id iEwQG7QfvWnG6QIAu9opvQ
+	(envelope-from <io-uring+bounces-12759-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 11:21:40 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7812D2AA0
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 22:27:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9A72D8A1F
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 11:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5039E3212B3B
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2026 21:23:25 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6FC5C300C323
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2026 10:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB343F0777;
-	Thu, 19 Mar 2026 21:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B19371071;
+	Fri, 20 Mar 2026 10:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nVtJwNCM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhYBAgDC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A8F3B774B
-	for <io-uring@vger.kernel.org>; Thu, 19 Mar 2026 21:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169F532573F;
+	Fri, 20 Mar 2026 10:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773955404; cv=none; b=RLLRdmZDdTNJj13YDqk4sIefQJekaWM4UZVDJ//TnZf4I4Mm43PJC0hb8Y34zn4zHlv5CE8vQC46aSgVWHSYgWESCp98iu/Wqqz9qTePx4+kBd4TY6Mj2uN1HR0yyZWEpcgBZqDqTDXBLGo17+Ul7c+udFWlul+gTEO8ndyn26o=
+	t=1774002092; cv=none; b=G8AndQORxpmEUaiGbckoOuqtebq8rjneIYFHQMUX7X/KwzvKM5ZqnIORBeee3qqBKzZv13u5UQoYtBiYQXNEagIy/N8M8MGRG0DdmQJ1z5wzmXllm0lFnZqOfqHUouYE9ac8BYw81iyJMUvDKkmGOs+ZdGxH7TLxhKQJHXysWzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773955404; c=relaxed/simple;
-	bh=StJfLB9hF/4Lxg7xG9mSwfOFdap+/YtChcudW6Umfj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lZGkgh1XzaDvcWslRc1HOa19XbmgecdymJ12fUzXQ7lYcZSL6/A+jctsYJcrGYv1elzlxkYo1w/Zr1ufiDS9PO5X1yj1KTmPojSfLse466AxOC8U5rczoCBV1y9AXW/3kwJdrxcYQdVORqUVWqWMJVj+TZyTRUE8fmf2FPWsgnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nVtJwNCM; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-40429b1d8baso459655fac.0
-        for <io-uring@vger.kernel.org>; Thu, 19 Mar 2026 14:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1773955400; x=1774560200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKxWJXPBsb1pqKefO6RKKySVkGscxQ9SCqJ8fzyBdCM=;
-        b=nVtJwNCMpUGTmkohFubcH5NYt3Oz6DVQ3e/kIKNsC8ce/2SgmUafp+VeTTwmwacHZ1
-         4NQnzDEoKH/OUzK4KwWdljshaMyvirJQWgBVvuRYKSczA7r0Muzg80kfwdWvkVkZguxd
-         T/gRMv0YcHPUk1v7Lt05BZ1AOUMKJAKp9M2AQZAwzYeS9u4nNRoA9d9KvSiGgVVlH1oy
-         E7P8OLQ+bkDhqKQbz4OuDuL3eklX0TZjtmsSa9BbPQOwr+MbPKsH5LoSgXzRtxTN+sEt
-         0XDHgYeWOGTtgH4V/t5kCtDW3OF0zmX6WB2UdqQaIPbLVLgpnj6Mmq2+68bxLuGFwOcZ
-         mB2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773955400; x=1774560200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IKxWJXPBsb1pqKefO6RKKySVkGscxQ9SCqJ8fzyBdCM=;
-        b=ZjHlWoHdsHCh09UIeKQ7V2KsS/TSJpPrBNIemZGdTVHLGeONulqaJdP4NSJF7dhH1d
-         lBq+dF8MdqND/SX8f3qbVrTvoSDM+fQGPamtb8RLnHGJs1olXcZ8d8FJpm3SRLJkzh21
-         WComDmOdFICG7qatmSWc1noh9vjCRHhLA9k8hR4d3eR12x+Q19xwUW6IsG9vesezrQkf
-         crSJXCO3ZrGv3pt8FLPzZgC8EmVugY5H1OJZzlYSiP74ubK7GJ6CcPiwNsmFvRg0iSjA
-         ta9QQr2QV8+VYh5AiFtQoJC7Zg5+gAY2rmmWx4IawNESid9VSnXY2d8zUqcLG5HAXmO8
-         TBeg==
-X-Gm-Message-State: AOJu0Yxhdujrhb5LJEyZ697E/gaSnYWQ105R17ZZ6JJ0teWK5U3TIZAD
-	jRxbxR0KaMHjjqNfpNjGD11/hK8LITZUVJGRE2z0iflZc8p8RKfwQwYRS61eCiVu2HBAN+LsDkU
-	5IHfBmG8=
-X-Gm-Gg: ATEYQzziwpY5N9ib02A3HMvr1MKNeH1hdrx7bozaDb18CIMwtpiNwRttuywySLIH+Q1
-	pfbtP+7I9tzYQhlnJhTvvx/hURLi6fo/tOE4Ak6bkTJekwyhtO4NT2y9wzv/3iXL3m3UDzAmFyK
-	AZZ9bZtO2oaM5WolrR4fo2dPGa3x5rUro6XQwfwyexsMXCMsJCg43PaFNF9AQe1jK7PqF5U2W5f
-	ujEfHS4+3WmutX689s6aANfHPGJudA93lWfvpkwyXfOmmmi8G2kVwgzbp0q79fQVvFXtJxFhI8S
-	eRd8uy38CDyLmLaRHWgtZVAjGMeARTeNZ6Z9yXZiKwXAx1L/rEpv8um13zabBWNPzRW+iFyhktc
-	pysrhlldTTN9bhAjsAN9X/uIIRp9mT77VtKeH1OHsk/JsdyhTL2jLtdFo3jcRSITLH8I0wayLnZ
-	jmmDjgCEnS9+wzV12dR0y8Jty3BhmTkNLjPYG2ktZB+s6PYCtylzx0/b94Xfjn+Xrg4Ek=
-X-Received: by 2002:a05:6870:911e:b0:41b:e9c4:9778 with SMTP id 586e51a60fabf-41c11179184mr505000fac.32.1773955400265;
-        Thu, 19 Mar 2026 14:23:20 -0700 (PDT)
-Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-41c148a5ca4sm186363fac.3.2026.03.19.14.23.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 14:23:17 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: code@mgjm.de,
-	Jens Axboe <axboe@kernel.dk>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] io_uring/kbuf: propagate BUF_MORE through early buffer commit path
-Date: Thu, 19 Mar 2026 15:21:36 -0600
-Message-ID: <20260319212309.284152-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260319212309.284152-1-axboe@kernel.dk>
-References: <20260319212309.284152-1-axboe@kernel.dk>
+	s=arc-20240116; t=1774002092; c=relaxed/simple;
+	bh=QhiRRqpCEk8EKFOsRJ2iHKNYV8P+TxzDlDjkmaSZZxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VnJ9ZPsA2cE9IIjVzePTqyfPiJttE/IMRDKV/yBzrlmnb0lfvvWTScItu+ytf2DU4kd827zXCcymj91hAYs9iUjAg6mUNKZcHr6Zo577qD8Hs9WUxUTu4/TyJCTgA3TipuYmsZKglr/7OEFE3xQqZ8KDoOkaEjUelm4ZsT71yAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhYBAgDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54262C4CEF7;
+	Fri, 20 Mar 2026 10:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774002091;
+	bh=QhiRRqpCEk8EKFOsRJ2iHKNYV8P+TxzDlDjkmaSZZxs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BhYBAgDCWYS29GsN0hlzlbqgsR24TNfgW2Ohn7CwJxe2V85a/cfM3o7jq/GKKYoNB
+	 +ARqyu68UZi+97zmVK1cfjDwJJJqReG14/9AJ+cirHzftkLRQrSTYDTCWr31YBv3rA
+	 XqiJsD9DX223NHnEZRkHR40kpoxXkOOSVK01zsNAKhgh4eoQXjHAmXzHmEcobDKFSO
+	 a079qFOtHbsMT22NFt0bDd8Cx7rl63q3sz6y6dap7qfVR4x7FU3hV1rR3LU0QdLWhE
+	 e0+eFqu42BBLb8Wo7uELoa0ZzJUZ0UcWGTbX4PQgOk100ayqUTWvIp8T7da1oq+dIj
+	 m5kdfqlT+2aLQ==
+Message-ID: <c1a2a49b-8141-418f-b239-167ef031451b@kernel.org>
+Date: Fri, 20 Mar 2026 11:21:23 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.16 / 15.00];
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] Separate compound page from folio
+To: Zi Yan <ziy@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Alistair Popple <apopple@nvidia.com>, Balbir Singh <balbirs@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jens Axboe <axboe@kernel.dk>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Brendan Jackman <jackmanb@google.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20260130034818.472804-1-ziy@nvidia.com>
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzS5EYXZpZCBIaWxk
+ ZW5icmFuZCAoQ3VycmVudCkgPGRhdmlkQGtlcm5lbC5vcmc+wsGQBBMBCAA6AhsDBQkmWAik
+ AgsJBBUKCQgCFgICHgUCF4AWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaYJt/AIZAQAKCRBN
+ 3hD3AP+DWriiD/9BLGEKG+N8L2AXhikJg6YmXom9ytRwPqDgpHpVg2xdhopoWdMRXjzOrIKD
+ g4LSnFaKneQD0hZhoArEeamG5tyo32xoRsPwkbpIzL0OKSZ8G6mVbFGpjmyDLQCAxteXCLXz
+ ZI0VbsuJKelYnKcXWOIndOrNRvE5eoOfTt2XfBnAapxMYY2IsV+qaUXlO63GgfIOg8RBaj7x
+ 3NxkI3rV0SHhI4GU9K6jCvGghxeS1QX6L/XI9mfAYaIwGy5B68kF26piAVYv/QZDEVIpo3t7
+ /fjSpxKT8plJH6rhhR0epy8dWRHk3qT5tk2P85twasdloWtkMZ7FsCJRKWscm1BLpsDn6EQ4
+ jeMHECiY9kGKKi8dQpv3FRyo2QApZ49NNDbwcR0ZndK0XFo15iH708H5Qja/8TuXCwnPWAcJ
+ DQoNIDFyaxe26Rx3ZwUkRALa3iPcVjE0//TrQ4KnFf+lMBSrS33xDDBfevW9+Dk6IISmDH1R
+ HFq2jpkN+FX/PE8eVhV68B2DsAPZ5rUwyCKUXPTJ/irrCCmAAb5Jpv11S7hUSpqtM/6oVESC
+ 3z/7CzrVtRODzLtNgV4r5EI+wAv/3PgJLlMwgJM90Fb3CB2IgbxhjvmB1WNdvXACVydx55V7
+ LPPKodSTF29rlnQAf9HLgCphuuSrrPn5VQDaYZl4N/7zc2wcWM7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <20260130034818.472804-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12758-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-12759-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-0.990];
-	RCVD_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	TAGGED_RCPT(0.00)[io-uring];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,kernel.dk:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mgjm.de:email]
-X-Rspamd-Queue-Id: EC7812D2AA0
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0B9A72D8A1F
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-When io_should_commit() returns true (eg for non-pollable files), buffer
-commit happens at buffer selection time and sel->buf_list is set to
-NULL. When __io_put_kbufs() generates CQE flags at completion time, it
-calls __io_put_kbuf_ring() which finds a NULL buffer_list and hence
-cannot determine whether the buffer was consumed or not. This means that
-IORING_CQE_F_BUF_MORE is never set for non-pollable input with
-incrementally consumed buffers.
+On 1/30/26 04:48, Zi Yan wrote:
+> Hi all,
 
-Likewise for io_buffers_select(), which always commits upfront and
-discards the return value of io_kbuf_commit().
+Hi,
 
-Add REQ_F_BUF_MORE to store the result of io_kbuf_commit() during early
-commit. Then __io_put_kbuf_ring() can check this flag and set
-IORING_F_BUF_MORE accordingy.
+sorry for only going over that now.
 
-Reported-by: Martin Michaelis <code@mgjm.de>
-Cc: stable@vger.kernel.org
-Fixes: ae98dbf43d75 ("io_uring/kbuf: add support for incremental buffer consumption")
-Link: https://github.com/axboe/liburing/issues/1553
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |  3 +++
- io_uring/kbuf.c                | 10 +++++++---
- 2 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> Based on my discussion with Jason about device private folio
+> reinitialization[1], I realize that the concepts of compound page and folio
+> are mixed together and confusing, as people think a compound page is equal
+> to a folio. This is not true, since a compound page means a group of
+> pages is managed as a whole and it can be something other than a folio,
+> for example, a slab page. To avoid further confusing people, this
+> patchset separates compound page from folio by moving any folio related
+> code out of compound page functions.
+> 
+> The code is on top of mm-new (2026-01-28-20-27) and all mm selftests
+> passed.
+> 
+> The key change is that a compound page no longer sets:
+> 1. folio->_nr_pages,
+> 2. folio->_large_mapcount,
+> 3. folio->_nr_pages_mapped,
+> 4. folio->_mm_ids,
+> 5. folio->_mm_id_mapcount,
+> 6. folio->_pincount,
+> 7. folio->_entire_mapcount,
+> 8. folio->_deferred_list.
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index dd1420bfcb73..214fdbd49052 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -541,6 +541,7 @@ enum {
- 	REQ_F_BL_NO_RECYCLE_BIT,
- 	REQ_F_BUFFERS_COMMIT_BIT,
- 	REQ_F_BUF_NODE_BIT,
-+	REQ_F_BUF_MORE_BIT,
- 	REQ_F_HAS_METADATA_BIT,
- 	REQ_F_IMPORT_BUFFER_BIT,
- 	REQ_F_SQE_COPIED_BIT,
-@@ -626,6 +627,8 @@ enum {
- 	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
- 	/* buf node is valid */
- 	REQ_F_BUF_NODE		= IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
-+	/* incremental buffer consumption, more space available */
-+	REQ_F_BUF_MORE		= IO_REQ_FLAG(REQ_F_BUF_MORE_BIT),
- 	/* request has read/write metadata assigned */
- 	REQ_F_HAS_METADATA	= IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
- 	/*
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index a4cb6752b7aa..f72f38d22d2b 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -216,7 +216,8 @@ static struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
- 	sel.addr = u64_to_user_ptr(READ_ONCE(buf->addr));
- 
- 	if (io_should_commit(req, issue_flags)) {
--		io_kbuf_commit(req, sel.buf_list, *len, 1);
-+		if (!io_kbuf_commit(req, sel.buf_list, *len, 1))
-+			req->flags |= REQ_F_BUF_MORE;
- 		sel.buf_list = NULL;
- 	}
- 	return sel;
-@@ -349,7 +350,8 @@ int io_buffers_select(struct io_kiocb *req, struct buf_sel_arg *arg,
- 		 */
- 		if (ret > 0) {
- 			req->flags |= REQ_F_BUFFERS_COMMIT | REQ_F_BL_NO_RECYCLE;
--			io_kbuf_commit(req, sel->buf_list, arg->out_len, ret);
-+			if (!io_kbuf_commit(req, sel->buf_list, arg->out_len, ret))
-+				req->flags |= REQ_F_BUF_MORE;
- 		}
- 	} else {
- 		ret = io_provided_buffers_select(req, &arg->out_len, sel->buf_list, arg->iovs);
-@@ -395,8 +397,10 @@ static inline bool __io_put_kbuf_ring(struct io_kiocb *req,
- 
- 	if (bl)
- 		ret = io_kbuf_commit(req, bl, len, nr);
-+	if (ret && (req->flags & REQ_F_BUF_MORE))
-+		ret = false;
- 
--	req->flags &= ~REQ_F_BUFFER_RING;
-+	req->flags &= ~(REQ_F_BUFFER_RING | REQ_F_BUF_MORE);
- 	return ret;
- }
- 
+Noble goal! :)
+
+As discussed, the issue is still that interpret non-folio page
+allocations as folios, which can also be compound pages.
+
+Now, there are PFN walkers that do that, but also page table handling code.
+
+Most prominently, when mapping such pages through vm_insert_pages(), we
+will call into folio_add_file_rmap_pte() and essentially touch mapcount
+related stuff.
+
+Once in the page tables, users can GUP them and modify the pincount.
+Other page table walkers can just similarly find them and look them up.
+
+To stop messing with mapcounts is easy once we can reliably identify
+such pages when mapping/unmapping them.
+
+GUP and other page table walkers are more problematic and need more
+thought (and work :( ).
+
+Essentially, vm_normal_folio() would have to fail on these pages. But
+what to do about vm_normal_page() users? The page_folio() would have to
+fail. But then we must keep some page table walkers working.
+
+And we have to figure out what to do with GUP.
+
+So compound pages are just the tip of the iceberg :)
+
+
+We could maybe forbid mapping them through vm_insert_pages() in the
+first place, requiring all callers to do order-0 page allocations. Hm.
+
+Then at least they would not end up in user page tables.
+
+But there is other code where compound pages are interpreted as folios
+and the other way around that must be sorted out.
+
 -- 
-2.53.0
+Cheers,
 
+David
 

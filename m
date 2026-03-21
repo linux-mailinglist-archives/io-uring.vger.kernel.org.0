@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-12777-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12778-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AHlBGFUov2mDxAMAu9opvQ
-	(envelope-from <io-uring+bounces-12777-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:23:01 +0100
+	id wK/ODGMov2mDxAMAu9opvQ
+	(envelope-from <io-uring+bounces-12778-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:23:15 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DA52E7A27
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:23:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B16BA2E7A35
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 73EE0301C8B2
-	for <lists+io-uring@lfdr.de>; Sat, 21 Mar 2026 23:22:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 845E53028816
+	for <lists+io-uring@lfdr.de>; Sat, 21 Mar 2026 23:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40C92E9730;
-	Sat, 21 Mar 2026 23:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1082B305047;
+	Sat, 21 Mar 2026 23:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR8yaP1s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYy1VqNI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21752D979C
-	for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 23:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B3230C34A
+	for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 23:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774135355; cv=none; b=O+TIAv81S8/JBqodTlYUvNwQ+8lvII7sILOLwMhMdiYO1/vyCJVwl9RdC394y+RFOzew7fGOCqRY5Gq5/tFSc0wOmdKYXroqI5gp67Q06k0QUgthWNfrpWlz4hKWRpqGjh9M+9ba9jZ0Q/UH2T9CGCQbFZY3ira5tmfLFXdtv8Y=
+	t=1774135357; cv=none; b=Xh/0IKyWX0ic1dGU+z3nJXN62q+SzUQPTPY3jmET1+Q4B9hx6YWsyYQ1AC0Ss2EBf6ER7JxUslJcSL/lL+i7vdvZm+/rSmX3Y0MDuoLBXaSlY2iq1mTEFjNfSg6kR5D23DOkW9SweR3R+oAwwm+w1694NczTFz/wt5vDFiPm67Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774135355; c=relaxed/simple;
-	bh=ROMfGYd1LZZDpizt5KvMI5Hvlep5QW6GFQbuJzEUyh0=;
+	s=arc-20240116; t=1774135357; c=relaxed/simple;
+	bh=2A7HAwFCyO84F13+VNf41l4t3XJGRxOx8ZgxsW5FLNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wru401iXs4MsmKZ+aXIXcEslaHjIUaaMmUKgEAGEpDq21Zk3wpbo59Q5NEs8VnO5f1ZpAhPZCgU7STF7zMkLm1toctbvpbEzu6q2+VVjKCZI9ZmNxs8TmyzgSdkeQEFyCt9U+6F3/bNBzMUEUXjZ5q6qGbB8lvfb7DfoHlc8WyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bR8yaP1s; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=idtRPTekZeJZr1q8GokQgR6osdz1UQFYwsTBlrGZNmw9xzZnFsax5lUyCJiqfp+j/5hbDD9AOTlMQPSEGlBMJmN6xbcFTXEcVZEMxVXB3XXxzMg6qUfRzPd+tynd8wwbEk9VeVEol3NlxLn7vxLC2807Ps1WbrSstsuB6DWoAr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYy1VqNI; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43b48ac2727so2344790f8f.3
-        for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 16:22:34 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-439c6fc2910so2172114f8f.0
+        for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 16:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774135353; x=1774740153; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1774135355; x=1774740155; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DdQSJEHFZ7rSPNbXPhY3/Q7gh3hfhmNkmSd9kla/fNA=;
-        b=bR8yaP1s+30hVqzDknmHx/kh56jaPd84wibErsEx96LwlnZPi1juWosuGXrdt0xa6i
-         Qw1zv0Uyioxh7wzz25KwFbU4b6c16K3ak6dQC1LyEDnC1SZk+XmRe4OxWwEqXrIpQ4QW
-         UO+PDYmDaXRw4+ZE50BuTgmlpoqyFEPCEKz4bCDRDWlFveAE1TSYQfta3ZCDrsZJ8yUJ
-         fqPEON+Lm7VVIJmbJyL6XIiM8tnBd/NlmTXO8bKmeI7QP+Tu8LnXyj8FWlaP4/DcTVpo
-         /ScZRPv6eDh74J0Jwjyd7FIv52L08MiL4xLSR01k2VERuPLQCLV/4aMl759pmgYK63u5
-         uE9g==
+        bh=Fk94Sdj/ITRyjAWZq3WAiEMd1s7mDg5eakazuQCLZCI=;
+        b=EYy1VqNILsvBCqXqq/jw4w8ZFsZtMR/JwPMzcj0SkjUATtmaDVfJskoprXuxQn9wJ7
+         l/YGB3i3+ilhUwFOnmDX/2RmhvxGD6GvyhNbXR6eMIrajdXSXZ23lRn8x0qd0ICA68f9
+         jLZnYjpZ+zqJ4107UVasZi40VVEehekbQkJCwIw4QmovBSFVGV8BjvMV8K0sCs1NKzaX
+         8zKjZMgqRH+5g0bRuERgXTzg7C1c3PIreuf0tA7cvqS1fDj8A0vHgy6UpsOa60zrrJ/S
+         A4B5Z6lmfvVlOgsZWh/8l9D8+tSgR8n7yShCXrXjIU//eLP3OOuhtiuR9If7Wyk7OQRt
+         m3NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774135353; x=1774740153;
+        d=1e100.net; s=20251104; t=1774135355; x=1774740155;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=DdQSJEHFZ7rSPNbXPhY3/Q7gh3hfhmNkmSd9kla/fNA=;
-        b=rTiCgAvQNFmjeAHZNpFi715AxYdjsp+dDUW14mN5tfv1XvzVIHElOqMegUOQ67zMVk
-         QAY09vh91vKt8N3/QzRo4UwsKLcaCsuONSgT8kSmGnLJLybAigErHGdSJq4JyZtdZB68
-         z2Wi2A2Sf54pgJHkF1vwp/UM1Ii9oQZZs7dtqJkxSr1iolcq2PFljTcSbYmiVMchW3QC
-         is8r3oeRCTWgtpRBnBEB377qBmAXrG99caLTHUZ8lx3Izp9xmjkKS6H/sjBcCVt3DV+W
-         wFKCKuXF2EVd6C+5+Wb1CyqJse2svJuHHRPjOHE/UXXN00kx9rK3eXj9rrVynmL6K9v3
-         jI6A==
-X-Gm-Message-State: AOJu0YxvSsxcaexTonqHtdXnDFSnMcftlF+pY4GXxreYJxaLoc4m47SE
-	+YFWvMdGamOEEcIj0d2mx8bIbNZ5IqGQA2f7SQ8cglK4tI3iOXYY1XhAsqPi4elxej4=
-X-Gm-Gg: ATEYQzynatm64plXkls8UfdXrIDoNLNw/kmXIUq6klAtACjwnsEA5xEugw/DalJe573
-	lTsyIF2K31NbFv8g6t/MBjl/yqGf49lbPximm/q+e4jd80+z/GqmClreipdZe6MExshEik4ephy
-	ztGDVaqjcBKZaPPL7pbCBG8R+yah+dkGXQ8QHcyhf5vG2FjB4xqWffaUhzIx12z/3vR2NAvxOK5
-	Rud22YcVgVu7up0wrJBSDxgzQQamQFjugA+R8qtVfSrxaqid85Su5CYp+MPWONUJOiQQpPNHDBt
-	0ABTn9Osg8a6RcdTTPZ2WOxwvofW9phMn79ryZhIXQT9hniRt+4fMtwgkkLO1e4Pf/LSOlBbdsD
-	giKXhg3XndGgXlI/B9n+Xmgd0aahBq/lsOa5q7WBE6DG1oP4bagVCApJhiHUuRwaNQB/CiiRu1q
-	Jh+IOIQDUJzUyFC7wHP7wPvjr4qBEWp+uCywb2iUGEh8eZt7+RR+QD5S+WNw8=
-X-Received: by 2002:a05:6000:2f84:b0:43b:4d2e:a004 with SMTP id ffacd0b85a97d-43b64242f00mr11258972f8f.10.1774135352711;
-        Sat, 21 Mar 2026 16:22:32 -0700 (PDT)
+        bh=Fk94Sdj/ITRyjAWZq3WAiEMd1s7mDg5eakazuQCLZCI=;
+        b=C5Fc15kwZ5TtunP/93MlgCGJz5QhdfO0C1ZyBxAjTERrWl5IltTgZ6M1KvXkWzqGa+
+         RT0ZtXwvoeUHIcbkXXidOauZVhFvmORnqhg1bCgcipL8T3sbW8kVBtzkeEYoXsc1KpfG
+         ettfu0YgrRwwolNb8fMnC7ltRC5Fa9M+oc1VBZX2EzH+PxOfijH8zsuyXsxseXNejg/b
+         PxtRv7ho3b/JwXdB56XzhO2dD76oDnV4id7/if6mHiUKxWCuRBul7bXW/vJE11m6qwGb
+         ptDSLOBFssJ0DPkr+bOL8dfvlYz45Gy3AAQyRIUilVGNXzMN9fFQh6Ex7B2LaILN3R9q
+         2p1g==
+X-Gm-Message-State: AOJu0Yz4GJOLlHS79rvmxF+7KkdpZiR+3/ZfyX4jiI230y+TJT50Xbw2
+	v/GpAUwg0iq4FDvqd3PWIpUtxrJRaWws59gKV2OU2HqzPN9v22+kBbwe+xsG2kyRzog=
+X-Gm-Gg: ATEYQzx5gEKOhoIIvBDfsOIMO0EfxhPmEwun91hDOEA76OkFGGNgrAFbjqd4a7GVx9G
+	Y/I556l33hPoJ3HYrP75wMDm2kZgtIDH3Gy8FAhVa/p0JW/PFhA8EK7Y/8RgdmhETZamL1Y/tcs
+	fIDcoF0NFtCvLpVOhsYl4TNHrJ0vW9bkpM0bdRdB8bnjjyvt4LrNm9OxDlxx5lb+pF2q80S9KWn
+	Ne8vFkwOQnod6tBrvZlyKpLPgMuIrU04izwVVCPZW3/09K7+cJwdEjg81z/9yQk6Ljs1B2ZFQNl
+	miJNP7GfqVt5HQQobBrdQiZ6L0vd2mtvuuyP5TWXtcG6yqF6t9/FaD1KtX28ZdlhXn1KFoBWDQ8
+	BYTItMD/2088bF5ZGWvmFmwdRNkrWcklT0oRxSF8BGP139XISiav8v1Xp7uoLHxOWhjpXxg8y1K
+	1LB8WPVQS7a3xrHo40g4rbDtLtSzwQemcbtsAeUsqN6GYTHDl5qichgUi+PZJSuJPvtGcUbQ==
+X-Received: by 2002:a05:6000:2383:b0:43b:445f:3177 with SMTP id ffacd0b85a97d-43b6427db29mr12416953f8f.31.1774135354500;
+        Sat, 21 Mar 2026 16:22:34 -0700 (PDT)
 Received: from ddp-thinkpad.tail20b0d.ts.net ([95.141.20.197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6425eeb4sm15609897f8f.0.2026.03.21.16.22.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6425eeb4sm15609897f8f.0.2026.03.21.16.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2026 16:22:32 -0700 (PDT)
+        Sat, 21 Mar 2026 16:22:33 -0700 (PDT)
 From: Daniele Di Proietto <daniele.di.proietto@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -85,9 +85,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>,
 	Daniele Di Proietto <daniele.di.proietto@gmail.com>
-Subject: [PATCH v3 1/4] io_uring: Extract io_file_get_fixed_node() helper
-Date: Sat, 21 Mar 2026 23:21:39 +0000
-Message-ID: <20260321232142.911280-2-daniele.di.proietto@gmail.com>
+Subject: [PATCH v3 2/4] fs: Export expand_files()
+Date: Sat, 21 Mar 2026 23:21:40 +0000
+Message-ID: <20260321232142.911280-3-daniele.di.proietto@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260321232142.911280-1-daniele.di.proietto@gmail.com>
 References: <20260321232142.911280-1-daniele.di.proietto@gmail.com>
@@ -110,7 +110,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12777-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12778-lists,io-uring=lfdr.de];
 	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -128,107 +128,47 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D7DA52E7A27
+X-Rspamd-Queue-Id: B16BA2E7A35
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-This has two users and it's about to have a third in a future commit.
-
-Reading io_slot_flags() and io_slot_file() outside of
-io_ring_submit_lock() should be fine after a reference has been
-acquired, as those are immutable.
+It's going to be used in a future commit.
 
 Signed-off-by: Daniele Di Proietto <daniele.di.proietto@gmail.com>
 ---
- io_uring/io_uring.c | 20 ++++++++++++++++----
- io_uring/io_uring.h |  2 ++
- io_uring/splice.c   |  6 +-----
- 3 files changed, 19 insertions(+), 9 deletions(-)
+ fs/file.c     | 5 ++---
+ fs/internal.h | 2 ++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9a37035e76c0..726245a28b87 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1553,22 +1553,34 @@ void io_wq_submit_work(struct io_wq_work *work)
- 		io_req_task_queue_fail(req, ret);
- }
- 
--inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
--				      unsigned int issue_flags)
-+inline struct io_rsrc_node *io_file_get_fixed_node(struct io_kiocb *req, int fd,
-+						   unsigned int issue_flags)
+diff --git a/fs/file.c b/fs/file.c
+index 384c83ce768d..573ab3b5191e 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -285,9 +285,8 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
+  * Return <0 error code on error; 0 on success.
+  * The files->file_lock should be held on entry, and will be held on exit.
+  */
+-static int expand_files(struct files_struct *files, unsigned int nr)
+-	__releases(files->file_lock)
+-	__acquires(files->file_lock)
++int expand_files(struct files_struct *files, unsigned int nr)
++	__releases(files->file_lock) __acquires(files->file_lock)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_rsrc_node *node;
--	struct file *file = NULL;
+ 	struct fdtable *fdt;
+ 	int error;
+diff --git a/fs/internal.h b/fs/internal.h
+index cbc384a1aa09..3a26252dcdae 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -197,6 +197,8 @@ extern struct file *do_file_open_root(const struct path *,
+ extern struct open_how build_open_how(int flags, umode_t mode);
+ extern int build_open_flags(const struct open_how *how, struct open_flags *op);
+ struct file *file_close_fd_locked(struct files_struct *files, unsigned fd);
++int expand_files(struct files_struct *files, unsigned int nr)
++	__releases(files->file_lock) __acquires(files->file_lock);
  
- 	io_ring_submit_lock(ctx, issue_flags);
- 	node = io_rsrc_node_lookup(&ctx->file_table.data, fd);
- 	if (node) {
- 		node->refs++;
-+	}
-+	io_ring_submit_unlock(ctx, issue_flags);
-+
-+	return node;
-+}
-+
-+inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
-+				      unsigned int issue_flags)
-+{
-+	struct io_rsrc_node *node;
-+	struct file *file = NULL;
-+
-+	node = io_file_get_fixed_node(req, fd, issue_flags);
-+	if (node) {
- 		req->file_node = node;
- 		req->flags |= io_slot_flags(node);
- 		file = io_slot_file(node);
- 	}
--	io_ring_submit_unlock(ctx, issue_flags);
- 	return file;
- }
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 0fa844faf287..1ed44201fa77 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -170,6 +170,8 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
- 
- unsigned io_linked_nr(struct io_kiocb *req);
- void io_req_track_inflight(struct io_kiocb *req);
-+struct io_rsrc_node *io_file_get_fixed_node(struct io_kiocb *req, int fd,
-+					    unsigned int issue_flags);
- struct file *io_file_get_normal(struct io_kiocb *req, int fd);
- struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- 			       unsigned issue_flags);
-diff --git a/io_uring/splice.c b/io_uring/splice.c
-index e81ebbb91925..3c5021a46e79 100644
---- a/io_uring/splice.c
-+++ b/io_uring/splice.c
-@@ -60,22 +60,18 @@ static struct file *io_splice_get_file(struct io_kiocb *req,
- 				       unsigned int issue_flags)
- {
- 	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_rsrc_node *node;
- 	struct file *file = NULL;
- 
- 	if (!(sp->flags & SPLICE_F_FD_IN_FIXED))
- 		return io_file_get_normal(req, sp->splice_fd_in);
- 
--	io_ring_submit_lock(ctx, issue_flags);
--	node = io_rsrc_node_lookup(&ctx->file_table.data, sp->splice_fd_in);
-+	node = io_file_get_fixed_node(req, sp->splice_fd_in, issue_flags);
- 	if (node) {
--		node->refs++;
- 		sp->rsrc_node = node;
- 		file = io_slot_file(node);
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	}
--	io_ring_submit_unlock(ctx, issue_flags);
- 	return file;
- }
- 
+ int do_ftruncate(struct file *file, loff_t length, int small);
+ int do_sys_ftruncate(unsigned int fd, loff_t length, int small);
 -- 
 2.43.0
 

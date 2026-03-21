@@ -1,438 +1,501 @@
-Return-Path: <io-uring+bounces-12780-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12781-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IO30B0kov2mDxAMAu9opvQ
-	(envelope-from <io-uring+bounces-12780-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:22:49 +0100
+	id uGkxEWkpv2k6xAMAu9opvQ
+	(envelope-from <io-uring+bounces-12781-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:27:37 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7E72E7A1F
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:22:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88E82E7A72
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2026 00:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 08CB33010B9A
-	for <lists+io-uring@lfdr.de>; Sat, 21 Mar 2026 23:22:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 997A63014BD2
+	for <lists+io-uring@lfdr.de>; Sat, 21 Mar 2026 23:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6381C2EC0A1;
-	Sat, 21 Mar 2026 23:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9731197C;
+	Sat, 21 Mar 2026 23:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDVuVrgb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lhnl9yn7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B320D2D979C
-	for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 23:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774135361; cv=none; b=CwWEsfYqlmeae8wo9L8xw1wytTz/QSFq0+S/dTswegQX4+HcCAOmU10mJVQPY7BMijf5/jl/IQwk6cq0bH1x1txvmn8zthzBBjMVEFskPtCFNd5ZJ+9o/BsvaAcysJIrmt0OgRy63mVDIFQYxSQv15kRioJV44/d4rJBZhR0kXU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774135361; c=relaxed/simple;
-	bh=+RkS1R4yg/o24fmGmdAL8yVoMJtCpik+cMew9HRv3Dc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Endqv4HKtHDIvP/ZMGXdTbE8Vw6Vyf/NWE7jmdHSJx25dR/FXgl2rG9boZPa5WQmS7NKV93+7rJSF18e+VorMruDGVWGkj9tuBDNsoIm08npnMfmJGVJKQn9tULQFZQcXUVlXNbid1T4JQNZS2dxRx3x8P4TTLyalvPGsCDMDzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDVuVrgb; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912BD30C360
+	for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 23:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774135632; cv=pass; b=lTIdfyhlmlOeSiIxdDqZlMLXd2FHZnCZ0b8df8ARQooHowifpz/81rPpO/XO6epTMyakAT+Osp0Vv1zT3Xd7ZU+UWyHiuRk78D5RDZirJ7v0aZWiV7/AbmwJtuUUtV4rknXmGAFmC7RDCI/a8mmseC5fgg+Xrx+P7RtdPr7er08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774135632; c=relaxed/simple;
+	bh=G8BytNw02W6vsycYkdOnMmOBMqHAcRd1M/AlrJVLpnM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ns4VBN1AjsQtd/PDgvB9nMLSnlk1//jCjgJwQIE/fMihsW6ctlcn+gyCFBzFpStwq0qnwoV0WLnnnZjtytbvCY9dnsbf3HWuf/wB4cNW7tpAWdvNk21A7JpiDoJl6tAfEk3b0AaHYfcuLZXbb+qohhDhLFA+cGUHgLyJ6rmb9W0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lhnl9yn7; arc=pass smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43b4d734678so3120046f8f.1
-        for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 16:22:39 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-668abc98923so2964690a12.3
+        for <io-uring@vger.kernel.org>; Sat, 21 Mar 2026 16:27:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774135629; cv=none;
+        d=google.com; s=arc-20240605;
+        b=YxmTBA2DI2gMxGoM8b+zoCagrt7OjqkIULAEbNqF3l4Vk0144CpQMhnYuRuiSUPhkc
+         iZW/sJK+AnBUTn/DoTAep2q0HOdfdFQQj0aVFqYtsn7PWepzfJQuMLeKHi5Rpi50LeUf
+         W0/5tPvkqK4HXV/B/wstoWn74Tl2k/LsCbf8Qyx5uG8ixWNGLdDZCVaP+THWQj/UZb/j
+         6A4StocuyhjpaOac/Hsoe+ykbjWMWNhjSb9uF6SqsXTgQ+5Ti1xBY9lZ5+++jDqTKhki
+         VqyOlh+XQ4D7FDLOVvrHQReY1YIIN2mNAawKJddwNWSDLVbIirfUqBJ82CEUZ6RkZAPs
+         bj7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=B3FrJdxRaBhBSTbUb3RLQ76YVu/ckuzSV9/oUaWJ78A=;
+        fh=kxoLnxMJ06NPGl1FGw6SFecbTm3dkko16UHuQF8ejaw=;
+        b=Dz+MN1aJF0shcCJoWeabXyX+iZOSlCHRsAKK4KxMmiVWqD77Wi9MoXAV16Mn/ZpY53
+         haVdU3ynyCMp3rhJi0WskxIIUOWtD7NxW/V5gdrpXmsC3bA350ZpnNNLdUoURjiRBadW
+         QMIfneutBrt+cnKtPs5lgXaxa5wGeCO43TeM6r2N2s6QgPus4h0aul037cuRK9gUwzuC
+         qmwTL0NQ3uKMZxQstK7+z43iA7o2XgllOiYYtzK6WIJcmnACPNOmhv7X5GA2Y/I0uYwl
+         puGS2ktQh+mtNfzakgnyfOaK44gPwwBpLFbQhgwS7e1MdYAfdIP4nDs2nYP9TQMGOhMy
+         PuHA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774135358; x=1774740158; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1774135629; x=1774740429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AwKZT9Z25S6E5hv2QONWp1kCppLkFiKumHns+JrmTEY=;
-        b=iDVuVrgbimMxz4YOiDXLt0yWhGnwxUNrWUqZhWBggGTMMSkUWP830e7xORqxV5xmwW
-         /2w/zgI3I1PaKowzOdpdaSGMwacESRaV68HI7MnJDk1b4oNwEO78qkxD+CZNvzCqc5Wc
-         3dds21gLsJtXT9jwF/o+c+w01hHn0QzZQ+f/zdooGrH8X/KgvipYo5BGDhbax5n6syPK
-         wgc5MdfzsAnp++EbNaTGa+SFq0XTzQgpqXUqY4ACadGeXfGiM21jyeTjmIi3B7IRdHZ9
-         dkPDTqRbOWsxb050CIWwsyC5TQAboO8SA4rbE8uKpiG4HyRPVNO35n132nx0TzDJ/1F1
-         22Iw==
+        bh=B3FrJdxRaBhBSTbUb3RLQ76YVu/ckuzSV9/oUaWJ78A=;
+        b=Lhnl9yn7RFiBaB92oY/yQtnVpTNuBjT7dq73zhdZp+KcEVVs735zKFM5hRMI4fSZwP
+         /iPIJyeAsVMp4tuD7CDIYr+jsSyxE/0z9wF9NjjYfd7QS7LgDZUAP5WEL2ZCH+vJzNG0
+         kHWTwt9z7uPBDTy0QsuP+lp5cz2/d53x7TSkSn5B8IkUZsJSEA0aUg/gTzk1hIjdxQWI
+         d7J7+juQ9lUurGx3OalVd9reH/luQa+A6T7PoO2ipIPL2IBNi691UHXMZdwioPNKaLTP
+         wWAIDo4FHuEbp2xsCtrK5//xhviV1SXSMgHgsiOJuujDNbqkeELvWL5hNmyy/CTGXPcC
+         W2Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774135358; x=1774740158;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1774135629; x=1774740429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AwKZT9Z25S6E5hv2QONWp1kCppLkFiKumHns+JrmTEY=;
-        b=sRTvU4cvvSQHKHa7jo5PVaQonLTa7eTca1F2T2lqXNXdaOd94KB9vwZ/X23e8i/86e
-         PJm7Qf3Hd7b6G0+/+gdc8fyxHjT/htu5mBSj3ipUZoVR3ooChqCKc8NRL4/gfBc73HXR
-         uqCmO3vujjBLlZOCXrS9oTT/yMn75V/Zn3rqkrcJUDtud+BEET//79Abg6T1bpE36NbT
-         q4z2lD5V+BrBjiL9x4CfnC+NLPQyJGhf6kjTAjmrRpvd78jFUiBFw1NdDCChZFrtEruG
-         aL4Df+cIctYsNA+g3U3HUisfzdzwiZ3QjyN9pHs7wHOnC9PRdwa9tAkOg/Gi0uKBNPpn
-         /Msw==
-X-Gm-Message-State: AOJu0YzW+CRc3psmZEKOI+n3brvp3CdfCI4ca0ObGTbfjHLURcsnowmw
-	Ks87ntiASDaWMiDXqwWYdxsggZepqx11syhQ3UcIrZobHfZuyKK4oxm5dwkfR4pF+UA=
-X-Gm-Gg: ATEYQzzxALoLqr4mze5ZVxkfF4L2lVnLzdTK5i3vFu25lGPB4f4ehok3lr7gNsBRa9Y
-	+xaiZi4VbS08y1SSacz+Ajynd4tx6I8mXzZydl3N6QxuIZr8whSWzdiv0SwL9RoGIyqt2Md49Rs
-	tiP59MTdVXktZqVYb7RAmdJpHaSjatVDaQOZIRDMpRbUb7TQnn5VH4ZPGMH94mG0QcnMMPJraoA
-	02s5WVDeFmeVICKt0jbIpxdyjAagTviU2SHsUqE/xpgHYqXAxeT5y0vqqAWwQvdbjWygSmw2NPf
-	xcbtGjntIVfH1f47B6W4/ge7vLDJeo9u8rbd27QI3HYtq4/VWu95WWXumOoibkWf1FfJ0N0v0D8
-	K98pu6rLQBLBGNBHmf2LiVw0svh2D/k3uaw2PnAGftEOOYkc1yV4DRp2+BN6NXS3qUMCBNFfnQb
-	WUZhR0qHxTkMZCRSQS5m9Vx6vfh1PlFZY8mpzR2r7hwwQxa8IdMls4KSdDYmQ=
-X-Received: by 2002:a05:6000:22c7:b0:43b:4d25:959b with SMTP id ffacd0b85a97d-43b6423bc16mr12570651f8f.17.1774135357731;
-        Sat, 21 Mar 2026 16:22:37 -0700 (PDT)
-Received: from ddp-thinkpad.tail20b0d.ts.net ([95.141.20.197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6425eeb4sm15609897f8f.0.2026.03.21.16.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2026 16:22:37 -0700 (PDT)
-From: Daniele Di Proietto <daniele.di.proietto@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Daniele Di Proietto <daniele.di.proietto@gmail.com>
-Subject: [PATCH v3 4/4] io_uring: Add IORING_OP_DUP
-Date: Sat, 21 Mar 2026 23:21:42 +0000
-Message-ID: <20260321232142.911280-5-daniele.di.proietto@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260321232142.911280-1-daniele.di.proietto@gmail.com>
-References: <20260321232142.911280-1-daniele.di.proietto@gmail.com>
+        bh=B3FrJdxRaBhBSTbUb3RLQ76YVu/ckuzSV9/oUaWJ78A=;
+        b=EyBLMJbLzoxbFgmEwutITNXwO9lvWsqKCYgRMlB1y0XXYcBXoFTwPmX0qTlJSUks9J
+         h4JAKw3H2gnHmpU9L6+OO6ilHmmeg2+PSABeGqu/HyQpTcVgk/85AZyLKBVQeNrEgyXI
+         wJD+110mlpYkwepd7JAy0mQq21tEtTp5sCokzyNkH8s4yuuWEc8r8+zyczth3sA+PLK8
+         xwOPbYfKkY53g+zjItseCWYdLU/RqpJnudc4Rm3eaeB2tq6cmSol/rnXU2b9c/5jExR3
+         TJTt9zRMPwI7oQpTQEwBRJEyi+ssv85FOMYi6aqyrIjtbBt2pPIo0TKNBYwhqKxDSaBC
+         fvxA==
+X-Gm-Message-State: AOJu0YwI69iGec42Jg1/s0OkRfLlwRYueZnfAf1Z6XDwfTFBrRsMBC7x
+	qOFeIUEjW8wmhCehuDQEVD4AT2ARM+rCDrDeQoms+/dX4FY2dEk53oKubL/og71WbgiNp36sP3e
+	Ym2aqdh4Etdu5sevUUa1Il0oYOFmc/dtJ1jv5CDU=
+X-Gm-Gg: ATEYQzxjN2aHJLt4GVCiwSS5oWzXWP/VcQXCOAY5AxfEL2kMoR6uvuTVVEuh9P0wpSS
+	mp4YdJVTZhCPDWmkcaiziyaGfoW4GteK/3fLS1Jg6aracupMrCbyFKjx5G87DpNeoRBGKek0CAV
+	w3Ld7/GCDn87bm56QHwwSMwiRbEwPMiltUz0gBNsL+BGqvtrbh658IcnZk3ePnjHxTOMrpgr3Kg
+	s1R441B9wuNm/DkiDTiyqO1e8hlotl07NTzTfOgLGwAQj65uMZF53JGKQmxpUej7P8HvjcnmgPB
+	LfbPPV4=
+X-Received: by 2002:a05:6402:2695:b0:668:2375:e359 with SMTP id
+ 4fb4d7f45d1cf-668c99307a7mr5325875a12.21.1774135628799; Sat, 21 Mar 2026
+ 16:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.16 / 15.00];
+References: <20260320182341.780295-1-daniele.di.proietto@gmail.com>
+ <20260320182341.780295-3-daniele.di.proietto@gmail.com> <ff60b19b-ecd8-44cd-b7d3-f7755fe49934@kernel.dk>
+In-Reply-To: <ff60b19b-ecd8-44cd-b7d3-f7755fe49934@kernel.dk>
+From: Daniele Di Proietto <daniele.di.proietto@gmail.com>
+Date: Sat, 21 Mar 2026 23:26:57 +0000
+X-Gm-Features: AaiRm51KiLQ5T1eFtmof4LzJCpvNt5gAu0JZkvsFm88l3tgew6rQn8VgZ79c2-U
+Message-ID: <CAExiqTJ5JKOeb-9rKy15i4hQw341EvpSc0aQNt1iMxxurHbZVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] io_uring: Add IORING_OP_DUP
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, Keith Busch <kbusch@kernel.org>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-12781-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12780-lists,io-uring=lfdr.de];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,gmail.com,vger.kernel.org,zeniv.linux.org.uk,suse.cz];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,gmail.com,zeniv.linux.org.uk,suse.cz];
 	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[danielediproietto@gmail.com,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[danielediproietto@gmail.com,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BA7E72E7A1F
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,kernel.dk:email]
+X-Rspamd-Queue-Id: D88E82E7A72
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-The new operation is like dup3(). The source file can be a regular file
-descriptor or a direct descriptor. The destination is a regular file
-descriptor.
+On Fri, Mar 20, 2026 at 7:34=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 3/20/26 12:23 PM, Daniele Di Proietto wrote:
+> > diff --git a/fs/file.c b/fs/file.c
+> > index 384c83ce768d..64d712ef89b5 100644
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -285,9 +285,8 @@ static int expand_fdtable(struct files_struct *file=
+s, unsigned int nr)
+> >   * Return <0 error code on error; 0 on success.
+> >   * The files->file_lock should be held on entry, and will be held on e=
+xit.
+> >   */
+> > -static int expand_files(struct files_struct *files, unsigned int nr)
+> > -     __releases(files->file_lock)
+> > -     __acquires(files->file_lock)
+> > +int expand_files(struct files_struct *files, unsigned int nr)
+> > +     __releases(files->file_lock) __acquires(files->file_lock)
+> >  {
+> >       struct fdtable *fdt;
+> >       int error;
+> > @@ -1291,13 +1290,33 @@ bool get_close_on_exec(unsigned int fd)
+> >       return res;
+> >  }
+> >
+> > -static int do_dup2(struct files_struct *files,
+> > -     struct file *file, unsigned fd, unsigned flags)
+> > -__releases(&files->file_lock)
+> > +/**
+> > + * do_replace_fd_locked() - Installs a file on a specific fd number.
+> > + * @files: struct files_struct to install the file on.
+> > + * @file: struct file to be installed.
+> > + * @fd: number in the files table to replace
+> > + * @flags: the O_* flags to apply to the new fd entry
+> > + *
+> > + * Installs a @file on the specific @fd number on the @files table.
+> > + *
+> > + * The caller must makes sure that @fd fits inside the @files table, l=
+ikely via
+> > + * expand_files().
+> > + *
+> > + * Requires holding @files->file_lock.
+> > + *
+> > + * This helper handles its own reference counting of the incoming
+> > + * struct file.
+> > + *
+> > + * Returns a preexisting file in @fd, if any, NULL, if none or an erro=
+r.
+> > + */
+> > +struct file *do_replace_fd_locked(struct files_struct *files, struct f=
+ile *file,
+> > +                               unsigned int fd, unsigned int flags)
+> >  {
+> >       struct file *tofree;
+> >       struct fdtable *fdt;
+> >
+> > +     lockdep_assert_held(&files->file_lock);
+> > +
+> >       /*
+> >        * dup2() is expected to close the file installed in the target f=
+d slot
+> >        * (if any). However, userspace hand-picking a fd may be racing a=
+gainst
+> > @@ -1328,26 +1347,19 @@ __releases(&files->file_lock)
+> >       fd =3D array_index_nospec(fd, fdt->max_fds);
+> >       tofree =3D rcu_dereference_raw(fdt->fd[fd]);
+> >       if (!tofree && fd_is_open(fd, fdt))
+> > -             goto Ebusy;
+> > +             return ERR_PTR(-EBUSY);
+> >       get_file(file);
+> >       rcu_assign_pointer(fdt->fd[fd], file);
+> >       __set_open_fd(fd, fdt, flags & O_CLOEXEC);
+> > -     spin_unlock(&files->file_lock);
+> > -
+> > -     if (tofree)
+> > -             filp_close(tofree, files);
+> > -
+> > -     return fd;
+> >
+> > -Ebusy:
+> > -     spin_unlock(&files->file_lock);
+> > -     return -EBUSY;
+> > +     return tofree;
+> >  }
+> >
+> >  int replace_fd(unsigned fd, struct file *file, unsigned flags)
+> >  {
+> > -     int err;
+> >       struct files_struct *files =3D current->files;
+> > +     struct file *tofree;
+> > +     int err;
+> >
+> >       if (!file)
+> >               return close_fd(fd);
+> > @@ -1359,9 +1371,14 @@ int replace_fd(unsigned fd, struct file *file, u=
+nsigned flags)
+> >       err =3D expand_files(files, fd);
+> >       if (unlikely(err < 0))
+> >               goto out_unlock;
+> > -     err =3D do_dup2(files, file, fd, flags);
+> > -     if (err < 0)
+> > -             return err;
+> > +     tofree =3D do_replace_fd_locked(files, file, fd, flags);
+> > +     spin_unlock(&files->file_lock);
+> > +
+> > +     if (IS_ERR(tofree))
+> > +             return PTR_ERR(tofree);
+> > +
+> > +     if (tofree)
+> > +             filp_close(tofree, files);
+> >       return 0;
+> >
+> >  out_unlock:
+> > @@ -1422,11 +1439,29 @@ int receive_fd_replace(int new_fd, struct file =
+*file, unsigned int o_flags)
+> >       return new_fd;
+> >  }
+> >
+> > -static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags=
+)
+> > +static struct file *do_dup3(struct files_struct *files, unsigned int o=
+ldfd,
+> > +                         unsigned int newfd, int flags)
+> > +     __releases(files->file_lock) __acquires(files->file_lock)
+> >  {
+> > -     int err =3D -EBADF;
+> >       struct file *file;
+> > +     int err =3D 0;
+> > +
+> > +     err =3D expand_files(files, newfd);
+> > +     file =3D files_lookup_fd_locked(files, oldfd);
+> > +     if (unlikely(!file))
+> > +             return ERR_PTR(-EBADF);
+> > +     if (err < 0) {
+> > +             if (err =3D=3D -EMFILE)
+> > +                     err =3D -EBADF;
+> > +             return ERR_PTR(err);
+> > +     }
+> > +     return do_replace_fd_locked(files, file, newfd, flags);
+> > +}
+> > +
+> > +static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags=
+)
+> > +{
+> >       struct files_struct *files =3D current->files;
+> > +     struct file *to_free;
+> >
+> >       if ((flags & ~O_CLOEXEC) !=3D 0)
+> >               return -EINVAL;
+> > @@ -1438,22 +1473,15 @@ static int ksys_dup3(unsigned int oldfd, unsign=
+ed int newfd, int flags)
+> >               return -EBADF;
+> >
+> >       spin_lock(&files->file_lock);
+> > -     err =3D expand_files(files, newfd);
+> > -     file =3D files_lookup_fd_locked(files, oldfd);
+> > -     if (unlikely(!file))
+> > -             goto Ebadf;
+> > -     if (unlikely(err < 0)) {
+> > -             if (err =3D=3D -EMFILE)
+> > -                     goto Ebadf;
+> > -             goto out_unlock;
+> > -     }
+> > -     return do_dup2(files, file, newfd, flags);
+> > -
+> > -Ebadf:
+> > -     err =3D -EBADF;
+> > -out_unlock:
+> > +     to_free =3D do_dup3(files, oldfd, newfd, flags);
+> >       spin_unlock(&files->file_lock);
+> > -     return err;
+> > +
+> > +     if (IS_ERR(to_free))
+> > +             return PTR_ERR(to_free);
+> > +     if (to_free)
+> > +             filp_close(to_free, files);
+> > +
+> > +     return newfd;
+> >  }
+> >
+> >  SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, f=
+lags)
+> > diff --git a/fs/internal.h b/fs/internal.h
+> > index cbc384a1aa09..c3d1eaf65328 100644
+> > --- a/fs/internal.h
+> > +++ b/fs/internal.h
+> > @@ -197,6 +197,11 @@ extern struct file *do_file_open_root(const struct=
+ path *,
+> >  extern struct open_how build_open_how(int flags, umode_t mode);
+> >  extern int build_open_flags(const struct open_how *how, struct open_fl=
+ags *op);
+> >  struct file *file_close_fd_locked(struct files_struct *files, unsigned=
+ fd);
+> > +struct file *do_replace_fd_locked(struct files_struct *files, struct f=
+ile *file,
+> > +                               unsigned int fd, unsigned int flags)
+> > +     __must_hold(files->file_lock);
+> > +int expand_files(struct files_struct *files, unsigned int nr)
+> > +     __releases(files->file_lock) __acquires(files->file_lock);
+> >
+> >  int do_ftruncate(struct file *file, loff_t length, int small);
+> >  int do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+>
+> All of the above should be a separate prep patch, not part of the
+> io_uring patch adding IORING_OP_DUP.
 
-The direct descriptor variant is useful to move a descriptor to an fd
-and close the existing fd with a single acquisition of the `struct
-files_struct` `file_lock`. Combined with IORING_OP_ACCEPT or
-IORING_OP_OPENAT2 with direct descriptors, it can reduce lock contention
-for multithreaded applications.
+Done, thanks!
 
-Signed-off-by: Daniele Di Proietto <daniele.di.proietto@gmail.com>
----
- include/uapi/linux/io_uring.h |  17 ++++
- io_uring/opdef.c              |   8 ++
- io_uring/openclose.c          | 180 ++++++++++++++++++++++++++++++++++
- io_uring/openclose.h          |   4 +
- 4 files changed, 209 insertions(+)
+>
+> > diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+> > index c71242915dad..2658adbfd17a 100644
+> > --- a/io_uring/openclose.c
+> > +++ b/io_uring/openclose.c
+> > @@ -446,3 +454,175 @@ int io_pipe(struct io_kiocb *req, unsigned int is=
+sue_flags)
+> >               fput(files[1]);
+> >       return ret;
+> >  }
+> > +
+> > +void io_dup_cleanup(struct io_kiocb *req)
+> > +{
+> > +     struct io_dup *id =3D io_kiocb_to_cmd(req, struct io_dup);
+> > +
+> > +     if (id->rsrc_node)
+> > +             io_put_rsrc_node(req->ctx, id->rsrc_node);
+> > +}
+>
+> Probably doesn't hurt to be defensive and clear ->rsrc_node when put.
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 1ff16141c8a5..1612aa2db846 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -74,6 +74,7 @@ struct io_uring_sqe {
- 		__u32		install_fd_flags;
- 		__u32		nop_flags;
- 		__u32		pipe_flags;
-+		__u32		dup_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -90,6 +91,7 @@ struct io_uring_sqe {
- 		__u32	file_index;
- 		__u32	zcrx_ifq_idx;
- 		__u32	optlen;
-+		__s32	dup_new_fd;
- 		struct {
- 			__u16	addr_len;
- 			__u16	__pad3[1];
-@@ -316,6 +318,7 @@ enum io_uring_op {
- 	IORING_OP_PIPE,
- 	IORING_OP_NOP128,
- 	IORING_OP_URING_CMD128,
-+	IORING_OP_DUP,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -475,6 +478,20 @@ enum io_uring_msg_ring_flags {
-  */
- #define IORING_FIXED_FD_NO_CLOEXEC	(1U << 0)
- 
-+/*
-+ * IORING_OP_DUP flags (sqe->dup_flags)
-+ *
-+ * IORING_DUP_NO_CLOEXEC	Don't mark the new fd as O_CLOEXEC. Only valid
-+ *				if IORING_DUP_NEW_FIXED is not set.
-+ * IORING_DUP_OLD_FIXED		sqe->fd (the source) is a fixed descriptor.
-+ *				Otherwise it's a regular fd.
-+ * IORING_DUP_NEW_FIXED		sqe->dup_new_fd (the destination) is a fixed
-+ *				descriptor. Otherwise is a regular fd.
-+ */
-+#define IORING_DUP_NO_CLOEXEC	(1U << 0)
-+#define IORING_DUP_OLD_FIXED	(1U << 1)
-+#define IORING_DUP_NEW_FIXED	(1U << 2)
-+
- /*
-  * IORING_OP_NOP flags (sqe->nop_flags)
-  *
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 91a23baf415e..62fe566d2cad 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -599,6 +599,10 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_uring_cmd_prep,
- 		.issue			= io_uring_cmd,
- 	},
-+	[IORING_OP_DUP] = {
-+		.prep			= io_dup_prep,
-+		.issue			= io_dup,
-+	},
- };
- 
- const struct io_cold_def io_cold_defs[] = {
-@@ -857,6 +861,10 @@ const struct io_cold_def io_cold_defs[] = {
- 		.sqe_copy		= io_uring_cmd_sqe_copy,
- 		.cleanup		= io_uring_cmd_cleanup,
- 	},
-+	[IORING_OP_DUP] = {
-+		.name			= "DUP",
-+		.cleanup		= io_dup_cleanup,
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index c71242915dad..b3e5ce9e827c 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -39,6 +39,14 @@ struct io_fixed_install {
- 	unsigned int			o_flags;
- };
- 
-+struct io_dup {
-+	struct file *file;
-+	int old_fd;
-+	int new_fd;
-+	unsigned int flags;
-+	struct io_rsrc_node *rsrc_node;
-+};
-+
- static bool io_openat_force_async(struct io_open *open)
- {
- 	/*
-@@ -446,3 +454,175 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags)
- 		fput(files[1]);
- 	return ret;
- }
-+
-+void io_dup_cleanup(struct io_kiocb *req)
-+{
-+	struct io_dup *id = io_kiocb_to_cmd(req, struct io_dup);
-+
-+	if (id->rsrc_node)
-+		io_put_rsrc_node(req->ctx, id->rsrc_node);
-+	id->rsrc_node = NULL;
-+}
-+
-+#define IORING_DUP_FLAGS \
-+	(IORING_DUP_NO_CLOEXEC | IORING_DUP_OLD_FIXED | IORING_DUP_NEW_FIXED)
-+
-+int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_dup *id;
-+
-+	if (sqe->off || sqe->addr || sqe->len || sqe->buf_index || sqe->addr3)
-+		return -EINVAL;
-+
-+	id = io_kiocb_to_cmd(req, struct io_dup);
-+	id->flags = READ_ONCE(sqe->dup_flags);
-+	if (id->flags & ~IORING_DUP_FLAGS)
-+		return -EINVAL;
-+
-+	if ((id->flags & IORING_DUP_NO_CLOEXEC) &&
-+	    (id->flags & IORING_DUP_NEW_FIXED))
-+		return -EINVAL;
-+
-+	id->old_fd = READ_ONCE(sqe->fd);
-+	id->new_fd = READ_ONCE(sqe->dup_new_fd);
-+
-+	if (((id->flags & IORING_DUP_NEW_FIXED) == 0) ==
-+		    ((id->flags & IORING_DUP_OLD_FIXED) == 0) &&
-+	    id->old_fd == id->new_fd)
-+		return -EINVAL;
-+
-+	id->rsrc_node = NULL;
-+
-+	/* ensure the task's creds are used when installing/receiving fds */
-+	if (req->flags & REQ_F_CREDS)
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+static struct file *io_dup_get_old_file_fixed(struct io_kiocb *req,
-+					      unsigned int issue_flags,
-+					      unsigned int file_slot)
-+{
-+	struct io_dup *id = io_kiocb_to_cmd(req, struct io_dup);
-+	struct file *file = NULL;
-+
-+	if (!id->rsrc_node)
-+		id->rsrc_node = io_file_get_fixed_node(req, file_slot, issue_flags);
-+
-+	if (id->rsrc_node) {
-+		file = io_slot_file(id->rsrc_node);
-+		req->flags |= REQ_F_NEED_CLEANUP;
-+	}
-+	return file;
-+}
-+
-+static int io_dup_to_fixed(struct io_kiocb *req, unsigned int issue_flags,
-+			   bool old_fixed, int old_fd, unsigned int file_slot)
-+{
-+	struct file *old_file = NULL;
-+	int ret;
-+
-+	if (!old_fixed) {
-+		old_file = io_file_get_normal(req, old_fd);
-+		if (old_file && io_is_uring_fops(old_file)) {
-+			fput(old_file);
-+			old_file = NULL;
-+		}
-+	} else {
-+		old_file = io_dup_get_old_file_fixed(req, issue_flags, old_fd);
-+		if (old_file)
-+			get_file(old_file);
-+	}
-+	if (!old_file)
-+		return -EBADF;
-+
-+	if (file_slot != IORING_FILE_INDEX_ALLOC)
-+		file_slot++;
-+
-+	ret = io_fixed_fd_install(req, issue_flags, old_file, file_slot);
-+	if (file_slot == IORING_FILE_INDEX_ALLOC || ret < 0)
-+		return ret;
-+	return file_slot - 1;
-+}
-+
-+static int io_dup_complete(struct io_kiocb *req, int ret)
-+{
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_set_res(req, ret, 0);
-+	return IOU_COMPLETE;
-+}
-+
-+static int io_dup_to_fd(struct io_kiocb *req, unsigned int issue_flags,
-+			bool old_fixed, int old_fd, int new_fd, int o_flags)
-+{
-+	bool non_block = issue_flags & IO_URING_F_NONBLOCK;
-+	struct files_struct *files = current->files;
-+	struct file *old_file, *to_close = NULL;
-+	int err;
-+
-+	if (new_fd >= rlimit(RLIMIT_NOFILE))
-+		return -EBADF;
-+
-+	if (old_fixed)
-+		old_file = io_dup_get_old_file_fixed(req, issue_flags, old_fd);
-+
-+	{
-+		guard(spinlock)(&files->file_lock);
-+
-+		/* Do we need to expand? If so, be safe and punt to async */
-+		if (new_fd >= files_fdtable(files)->max_fds && non_block)
-+			return -EAGAIN;
-+		err = expand_files(files, new_fd);
-+		if (err < 0)
-+			return io_dup_complete(req, err);
-+
-+		if (!old_fixed)
-+			old_file = files_lookup_fd_locked(files, old_fd);
-+
-+		if (!old_file)
-+			return io_dup_complete(req, -EBADF);
-+
-+		to_close = files_lookup_fd_locked(files, new_fd);
-+		if (to_close) {
-+			if (io_is_uring_fops(to_close))
-+				return io_dup_complete(req, -EBADF);
-+
-+			/* if the file has a flush method, be safe and punt to async */
-+			if (to_close->f_op->flush && non_block)
-+				return -EAGAIN;
-+		}
-+		to_close = do_replace_fd_locked(files, old_file, new_fd, o_flags);
-+		if (IS_ERR(to_close))
-+			return io_dup_complete(req, PTR_ERR(to_close));
-+	}
-+
-+	if (to_close)
-+		filp_close(to_close, files);
-+
-+	return io_dup_complete(req, new_fd);
-+}
-+
-+int io_dup(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_dup *id = io_kiocb_to_cmd(req, struct io_dup);
-+	bool old_fixed = id->flags & IORING_DUP_OLD_FIXED;
-+	bool new_fixed = id->flags & IORING_DUP_NEW_FIXED;
-+	int ret, o_flags;
-+
-+	if (new_fixed) {
-+		ret = io_dup_to_fixed(req, issue_flags, old_fixed, id->old_fd,
-+				      id->new_fd);
-+		if (ret < 0)
-+			req_set_fail(req);
-+		io_req_set_res(req, ret, 0);
-+		return IOU_COMPLETE;
-+	}
-+
-+	o_flags = O_CLOEXEC;
-+	if (id->flags & IORING_DUP_NO_CLOEXEC)
-+		o_flags = 0;
-+	return io_dup_to_fd(req, issue_flags, old_fixed, id->old_fd, id->new_fd,
-+			    o_flags);
-+}
-diff --git a/io_uring/openclose.h b/io_uring/openclose.h
-index 566739920658..95d6a338ac66 100644
---- a/io_uring/openclose.h
-+++ b/io_uring/openclose.h
-@@ -21,3 +21,7 @@ int io_pipe(struct io_kiocb *req, unsigned int issue_flags);
- 
- int io_install_fixed_fd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_install_fixed_fd(struct io_kiocb *req, unsigned int issue_flags);
-+
-+void io_dup_cleanup(struct io_kiocb *req);
-+int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_dup(struct io_kiocb *req, unsigned int issue_flags);
--- 
-2.43.0
+Done, thanks!
 
+>
+> > +int io_dup_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> > +{
+> > +     struct io_dup *id;
+> > +
+> > +     if (sqe->off || sqe->addr || sqe->len || sqe->buf_index || sqe->a=
+ddr3)
+> > +             return -EINVAL;
+> > +
+> > +     id =3D io_kiocb_to_cmd(req, struct io_dup);
+> > +     id->flags =3D READ_ONCE(sqe->dup_flags);
+> > +     if (id->flags & ~(IORING_DUP_NO_CLOEXEC | IORING_DUP_OLD_FIXED |
+> > +                       IORING_DUP_NEW_FIXED))
+> > +             return -EINVAL;
+>
+> Would be cleaner with an IORING_DUP_FLAGS mask above io_dup_prep().
+
+Done, thanks!
+
+>
+> > +static struct file *io_dup_get_old_file_fixed(struct io_kiocb *req,
+> > +                                           unsigned int issue_flags,
+> > +                                           unsigned int file_slot)
+> > +{
+> > +     struct io_dup *id =3D io_kiocb_to_cmd(req, struct io_dup);
+> > +     struct file *file =3D NULL;
+> > +
+> > +     if (!id->rsrc_node)
+> > +             id->rsrc_node =3D
+> > +                     io_file_get_fixed_node(req, file_slot, issue_flag=
+s);
+>
+> Just use the full line length, io_uring isn't a stickler on 80 chars and
+> it'd read better as:
+
+Done, thanks!
+
+>
+>         if (!id->rsrc_node)
+>                 id->rsrc_node =3D io_file_get_fixed_node(req, file_slot, =
+issue_flags);
+>
+> Need to check further, but I'm assuming the difference here is for retry
+> where the node could already be assigned?
+
+That's right
+
+>
+>
+> > +static int io_dup_to_fd(struct io_kiocb *req, unsigned int issue_flags=
+,
+> > +                     bool old_fixed, int old_fd, int new_fd, int o_fla=
+gs)
+> > +{
+> > +     struct file *old_file, *to_replace, *to_close =3D NULL;
+> > +     bool non_block =3D issue_flags & IO_URING_F_NONBLOCK;
+> > +     struct files_struct *files =3D current->files;
+> > +     int ret;
+> > +
+> > +     if (new_fd >=3D rlimit(RLIMIT_NOFILE))
+> > +             return -EBADF;
+> > +
+> > +     if (old_fixed)
+> > +             old_file =3D io_dup_get_old_file_fixed(req, issue_flags, =
+old_fd);
+> > +
+> > +     spin_lock(&files->file_lock);
+>
+> If you use:
+>
+>         guard(spinlock)(&files->file_lock);
+>
+> and move:
+>
+> > +
+> > +     /* Do we need to expand? If so, be safe and punt to async */
+> > +     if (new_fd >=3D files_fdtable(files)->max_fds && non_block)
+> > +             goto out_again;
+> > +     ret =3D expand_files(files, new_fd);
+> > +     if (ret < 0)
+> > +             goto out_unlock;
+> > +
+> > +     if (!old_fixed)
+> > +             old_file =3D files_lookup_fd_locked(files, old_fd);
+> > +
+> > +     ret =3D -EBADF;
+> > +     if (!old_file)
+> > +             goto out_unlock;
+> > +
+> > +     to_replace =3D files_lookup_fd_locked(files, new_fd);
+> > +     if (to_replace) {
+> > +             if (io_is_uring_fops(to_replace))
+> > +                     goto out_unlock;
+> > +
+> > +             /* if the file has a flush method, be safe and punt to as=
+ync */
+> > +             if (to_replace->f_op->flush && non_block)
+> > +                     goto out_again;
+> > +     }
+> > +     to_close =3D do_replace_fd_locked(files, old_file, new_fd, o_flag=
+s);
+> > +     ret =3D new_fd;
+>
+> into a helper, all of this somewhat messy goto error_handling stuff can
+> go away.
+
+Neat!
+
+I didn't move it into a separate helper, because it has to return three thi=
+ngs:
+* The completeness of the operation (IOU_COMPLETE or -EAGAIN)
+* An eventual error
+* The file to close
+
+Using a guard in a block and another small helper I managed to avoid
+the gotos, as suggested.
+
+Thanks!
+
+>
+> --
+> Jens Axboe
 

@@ -1,65 +1,65 @@
-Return-Path: <io-uring+bounces-12830-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12831-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KPoGOzDAwmmjlQQAu9opvQ
-	(envelope-from <io-uring+bounces-12830-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:47:44 +0100
+	id YDjOL3rBwmmjlQQAu9opvQ
+	(envelope-from <io-uring+bounces-12831-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:53:14 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540B7319527
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:47:44 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61FC3196E4
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 58C7B30DB44A
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 16:39:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9A0FE307CF61
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 16:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16183FE34E;
-	Tue, 24 Mar 2026 16:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15193FB059;
+	Tue, 24 Mar 2026 16:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="irSo/l3b"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBNCkLr3"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798953DDDCD
-	for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 16:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DEF3DDDCD
+	for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 16:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774370332; cv=none; b=mg4lW0Ljmyk0/2gxusUGcoAWEwhxwNthbnnWc09F8SH69gVPzncUx006INv2fBTEiyWJ+Qdd9QoATrls5otpWxA/fxyDlKnqitGKOpitYCkapvc2ouygNwUWuZ3xOml4XfkYFZVD3U2mfduBDrYRDUZkjJbjG4UagBL7VJPw6A0=
+	t=1774370337; cv=none; b=NYtnCT/RGN9Ggaow6YODSF6IBYjLvL14LYYR9wqrblZvwadKKJ21J7o+f23ByDc4O1EF0kcjqXDtHtbsbtp7gRllHBcUWNQTgfN/sofyKc8Ld8ZXXfpRsthUrWihi5LZQv+OAyLJmGcnMTX7+3z5+9u93owlNwUj3ChzcPswgso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774370332; c=relaxed/simple;
-	bh=cncIqUSfvysDO7PSc/IByimFiUn2+USMFyKGt+tqdzI=;
+	s=arc-20240116; t=1774370337; c=relaxed/simple;
+	bh=sW8Nf9/X65OG5H/fQfLvt71gXgAe6uNvhJyStPcEkag=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jw1849vJhG3MWaTurSnpp+DK3/EWa6px9hT8FwhClgAVBQ9GcTHuBOOxDejzSp4MegnWYneE/HpK8bmlMiB+j5YW+jmoGa6NDhqfpUN1Ft5kulyR+t2u2+bDo+XXMVLg6MR60z4ohSjWGbUeTDPk7rpiG2iqs9CIlj7NviY4W4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=irSo/l3b; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=X/3dxRkTznmT9ZxslPa+oVgFqOgm4vQx63l8W5HhVF8TURyxIeFO89Gv1ew9t0lh8YxkoDXEdEp7DmToV3pVe9xgygNvNbuuKmtrJ0Jeu5mPWlmDc9kSnWi3DMjie1Wnnrfm7RLIwCCX1EOzXxGm7Hy9Lpf9MBZ6iHqWSj3qIjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBNCkLr3; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774370330;
+	s=mimecast20190719; t=1774370334;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xr0nNqOTEoDj3cLYSR2qyb0IFCzRzlPzF6LCm0TFjh4=;
-	b=irSo/l3bUCRjEn+gr/w7T5mQhn9+azw+yZ75yxIlBnGfHqH7ZjGsDc4kWDWDRviz+Vt8iw
-	IZWdHEdMK0pGYEKTaP1nfMxGvCyjdRIFSkp4Y+7AlzX92KeGAdQY2qdtWftbO2lJQpGA2u
-	6oBvkE6gfVXIX7VO6AZHRfB17rCG+hs=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	bh=mRa3cjqBFdnDC+9lQYjPzdvjwJogZLrygBbOniicHps=;
+	b=CBNCkLr3Ic9PE93WbcriAGKlMbK7U6C4w0hg6BK39H4rHEcBvS0rQH7oYWIsBZ5TMhX2je
+	AOVvbHKwVqC8BBoFBbZbgN03hmvlqZOeHCMksywFX9I66N84as7itLYpqjP3IcrPKRTI5O
+	aCXt9um8LbvYgWNbMqz+SW4DoGIWNrc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-s6TV0vERN7O6NOYDHLqjdA-1; Tue,
- 24 Mar 2026 12:38:47 -0400
-X-MC-Unique: s6TV0vERN7O6NOYDHLqjdA-1
-X-Mimecast-MFC-AGG-ID: s6TV0vERN7O6NOYDHLqjdA_1774370325
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-445-_BZtJq4LPPKB7rOQpR0LNg-1; Tue,
+ 24 Mar 2026 12:38:50 -0400
+X-MC-Unique: _BZtJq4LPPKB7rOQpR0LNg-1
+X-Mimecast-MFC-AGG-ID: _BZtJq4LPPKB7rOQpR0LNg_1774370329
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1608180034F;
-	Tue, 24 Mar 2026 16:38:45 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76F7A18005BE;
+	Tue, 24 Mar 2026 16:38:49 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.133])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0F2BC180035F;
-	Tue, 24 Mar 2026 16:38:44 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7CA041955D71;
+	Tue, 24 Mar 2026 16:38:48 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org
@@ -69,9 +69,9 @@ Cc: Caleb Sander Mateos <csander@purestorage.com>,
 	Xiao Ni <xni@redhat.com>,
 	Alexei Starovoitov <ast@kernel.org>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V3 10/12] selftests/io_uring: add io_uring_unregister_buffers()
-Date: Wed, 25 Mar 2026 00:37:31 +0800
-Message-ID: <20260324163753.1900977-11-ming.lei@redhat.com>
+Subject: [PATCH V3 11/12] selftests/io_uring: add BPF struct_ops and kfunc tests
+Date: Wed, 25 Mar 2026 00:37:32 +0800
+Message-ID: <20260324163753.1900977-12-ming.lei@redhat.com>
 In-Reply-To: <20260324163753.1900977-1-ming.lei@redhat.com>
 References: <20260324163753.1900977-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -81,13 +81,13 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -97,9 +97,9 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DKIM_TRACE(0.00)[redhat.com:+];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12830-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12831-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
@@ -109,47 +109,861 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 540B7319527
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lib.mk:url]
+X-Rspamd-Queue-Id: C61FC3196E4
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Add io_uring_unregister_buffers(), so that kernel selftest can call it
-explicitly.
+Add selftests for io_uring BPF struct_ops and kfunc functionality:
+
+- bpf_ext_basic: Tests IORING_OP_BPF struct_ops registration and execution
+  with multiple struct_ops support
+
+The test framework includes:
+- runner.c: Main test runner with auto-discovery
+- iou_test.h: Common test infrastructure
+- Makefile: Build system with BPF skeleton generation
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- tools/include/io_uring/mini_liburing.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ tools/testing/selftests/io_uring/.gitignore   |   2 +
+ tools/testing/selftests/io_uring/Makefile     | 173 ++++++++++++++
+ .../selftests/io_uring/bpf_ext_basic.bpf.c    |  94 ++++++++
+ .../selftests/io_uring/bpf_ext_basic.c        | 215 ++++++++++++++++++
+ .../selftests/io_uring/include/iou_test.h     |  98 ++++++++
+ tools/testing/selftests/io_uring/runner.c     | 206 +++++++++++++++++
+ 6 files changed, 788 insertions(+)
+ create mode 100644 tools/testing/selftests/io_uring/.gitignore
+ create mode 100644 tools/testing/selftests/io_uring/Makefile
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_basic.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_basic.c
+ create mode 100644 tools/testing/selftests/io_uring/include/iou_test.h
+ create mode 100644 tools/testing/selftests/io_uring/runner.c
 
-diff --git a/tools/include/io_uring/mini_liburing.h b/tools/include/io_uring/mini_liburing.h
-index 44be4446feda..b9163a41024f 100644
---- a/tools/include/io_uring/mini_liburing.h
-+++ b/tools/include/io_uring/mini_liburing.h
-@@ -1,6 +1,7 @@
- /* SPDX-License-Identifier: MIT */
- 
- #include <linux/io_uring.h>
-+#include <signal.h>
- #include <sys/mman.h>
- #include <sys/syscall.h>
- #include <stdio.h>
-@@ -284,6 +285,15 @@ static inline int io_uring_register_buffers(struct io_uring *ring,
- 	return (ret < 0) ? -errno : ret;
- }
- 
-+static inline int io_uring_unregister_buffers(struct io_uring *ring)
+diff --git a/tools/testing/selftests/io_uring/.gitignore b/tools/testing/selftests/io_uring/.gitignore
+new file mode 100644
+index 000000000000..c0e488dc0622
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/.gitignore
+@@ -0,0 +1,2 @@
++/build/
++/runner
+diff --git a/tools/testing/selftests/io_uring/Makefile b/tools/testing/selftests/io_uring/Makefile
+new file mode 100644
+index 000000000000..ad659e6f5361
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/Makefile
+@@ -0,0 +1,173 @@
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2025 Red Hat, Inc.
++include ../../../build/Build.include
++include ../../../scripts/Makefile.arch
++include ../../../scripts/Makefile.include
++
++TEST_GEN_PROGS := runner
++
++# override lib.mk's default rules
++OVERRIDE_TARGETS := 1
++include ../lib.mk
++
++CURDIR := $(abspath .)
++REPOROOT := $(abspath ../../../..)
++TOOLSDIR := $(REPOROOT)/tools
++LIBDIR := $(TOOLSDIR)/lib
++BPFDIR := $(LIBDIR)/bpf
++TOOLSINCDIR := $(TOOLSDIR)/include
++BPFTOOLDIR := $(TOOLSDIR)/bpf/bpftool
++APIDIR := $(TOOLSINCDIR)/uapi
++GENDIR := $(REPOROOT)/include/generated
++GENHDR := $(GENDIR)/autoconf.h
++
++OUTPUT_DIR := $(OUTPUT)/build
++OBJ_DIR := $(OUTPUT_DIR)/obj
++INCLUDE_DIR := $(OUTPUT_DIR)/include
++BPFOBJ_DIR := $(OBJ_DIR)/libbpf
++IOUOBJ_DIR := $(OBJ_DIR)/io_uring
++BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
++LIBBPF_OUTPUT := $(OBJ_DIR)/libbpf/libbpf.a
++
++DEFAULT_BPFTOOL := $(OUTPUT_DIR)/host/sbin/bpftool
++HOST_OBJ_DIR := $(OBJ_DIR)/host/bpftool
++HOST_LIBBPF_OUTPUT := $(OBJ_DIR)/host/libbpf/
++HOST_LIBBPF_DESTDIR := $(OUTPUT_DIR)/host/
++HOST_DESTDIR := $(OUTPUT_DIR)/host/
++
++VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
++		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)		\
++		     ../../../../vmlinux					\
++		     /sys/kernel/btf/vmlinux					\
++		     /boot/vmlinux-$(shell uname -r)
++VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
++ifeq ($(VMLINUX_BTF),)
++$(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
++endif
++
++BPFTOOL ?= $(DEFAULT_BPFTOOL)
++
++ifneq ($(wildcard $(GENHDR)),)
++  GENFLAGS := -DHAVE_GENHDR
++endif
++
++CFLAGS += -g -O2 -rdynamic -pthread -Wall -Werror $(GENFLAGS)			\
++	  -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)				\
++	  -I$(REPOROOT)/usr/include						\
++	  -I$(TOOLSINCDIR) -I$(APIDIR) -I$(CURDIR)/include
++
++# Silence some warnings when compiled with clang
++ifneq ($(LLVM),)
++CFLAGS += -Wno-unused-command-line-argument
++endif
++
++LDFLAGS = -lelf -lz -lpthread -lzstd
++
++IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
++			grep 'define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__')
++
++# Get Clang's default includes on this system
++define get_sys_includes
++$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
++	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
++$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}')
++endef
++
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
++endif
++
++CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
++
++BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH)					\
++	     $(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)		\
++	     -I$(CURDIR)/include -I$(CURDIR)/include/bpf-compat			\
++	     -I$(INCLUDE_DIR) -I$(APIDIR)					\
++	     -I$(REPOROOT)/include						\
++	     $(CLANG_SYS_INCLUDES)						\
++	     -Wall -Wno-compare-distinct-pointer-types				\
++	     -Wno-incompatible-function-pointer-types				\
++	     -Wno-missing-declarations						\
++	     -O2 -mcpu=v3
++
++# sort removes libbpf duplicates when not cross-building
++MAKE_DIRS := $(sort $(OBJ_DIR)/libbpf $(OBJ_DIR)/libbpf				\
++	       $(OBJ_DIR)/bpftool $(OBJ_DIR)/resolve_btfids			\
++	       $(HOST_OBJ_DIR) $(INCLUDE_DIR) $(IOUOBJ_DIR))
++
++$(MAKE_DIRS):
++	$(call msg,MKDIR,,$@)
++	$(Q)mkdir -p $@
++
++$(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
++	   $(APIDIR)/linux/bpf.h						\
++	   | $(OBJ_DIR)/libbpf
++	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/	\
++		    ARCH=$(ARCH) CC="$(CC)" CROSS_COMPILE=$(CROSS_COMPILE)	\
++		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
++		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
++
++$(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
++		    $(LIBBPF_OUTPUT) | $(HOST_OBJ_DIR)
++	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
++		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
++		    EXTRA_CFLAGS='-g -O0'					\
++		    OUTPUT=$(HOST_OBJ_DIR)/					\
++		    LIBBPF_OUTPUT=$(HOST_LIBBPF_OUTPUT)				\
++		    LIBBPF_DESTDIR=$(HOST_LIBBPF_DESTDIR)			\
++		    prefix= DESTDIR=$(HOST_DESTDIR) install-bin
++
++$(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
++ifeq ($(VMLINUX_H),)
++	$(call msg,GEN,,$@)
++	$(Q)$(BPFTOOL) btf dump file $(VMLINUX_BTF) format c > $@
++else
++	$(call msg,CP,,$@)
++	$(Q)cp "$(VMLINUX_H)" $@
++endif
++
++$(IOUOBJ_DIR)/%.bpf.o: %.bpf.c $(INCLUDE_DIR)/vmlinux.h	| $(BPFOBJ) $(IOUOBJ_DIR)
++	$(call msg,CLNG-BPF,,$(notdir $@))
++	$(Q)$(CLANG) $(BPF_CFLAGS) -target bpf -c $< -o $@
++
++$(INCLUDE_DIR)/%.bpf.skel.h: $(IOUOBJ_DIR)/%.bpf.o $(INCLUDE_DIR)/vmlinux.h $(BPFTOOL) | $(INCLUDE_DIR)
++	$(eval sched=$(notdir $@))
++	$(call msg,GEN-SKEL,,$(sched))
++	$(Q)$(BPFTOOL) gen object $(<:.o=.linked1.o) $<
++	$(Q)$(BPFTOOL) gen object $(<:.o=.linked2.o) $(<:.o=.linked1.o)
++	$(Q)$(BPFTOOL) gen object $(<:.o=.linked3.o) $(<:.o=.linked2.o)
++	$(Q)diff $(<:.o=.linked2.o) $(<:.o=.linked3.o)
++	$(Q)$(BPFTOOL) gen skeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $@
++	$(Q)$(BPFTOOL) gen subskeleton $(<:.o=.linked3.o) name $(subst .bpf.skel.h,,$(sched)) > $(@:.skel.h=.subskel.h)
++
++override define CLEAN
++	rm -rf $(OUTPUT_DIR)
++	rm -f $(TEST_GEN_PROGS)
++endef
++
++# Every testcase takes all of the BPF progs as dependencies by default.
++all_test_bpfprogs := $(foreach prog,$(wildcard *.bpf.c),$(INCLUDE_DIR)/$(patsubst %.c,%.skel.h,$(prog)))
++
++auto-test-targets :=			\
++	bpf_ext_basic			\
++	bpf_ext_memcpy			\
++
++testcase-targets := $(addsuffix .o,$(addprefix $(IOUOBJ_DIR)/,$(auto-test-targets)))
++
++$(IOUOBJ_DIR)/runner.o: runner.c | $(IOUOBJ_DIR) $(BPFOBJ)
++	$(call msg,CC,,$@)
++	$(Q)$(CC) $(CFLAGS) -c $< -o $@
++
++$(testcase-targets): $(IOUOBJ_DIR)/%.o: %.c $(IOUOBJ_DIR)/runner.o $(all_test_bpfprogs) | $(IOUOBJ_DIR)
++	$(call msg,CC,,$@)
++	$(Q)$(CC) $(CFLAGS) -c $< -o $@
++
++$(OUTPUT)/runner: $(IOUOBJ_DIR)/runner.o $(BPFOBJ) $(testcase-targets)
++	$(call msg,LINK,,$@)
++	$(Q)$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
++
++.DEFAULT_GOAL := all
++
++.DELETE_ON_ERROR:
++
++.SECONDARY:
+diff --git a/tools/testing/selftests/io_uring/bpf_ext_basic.bpf.c b/tools/testing/selftests/io_uring/bpf_ext_basic.bpf.c
+new file mode 100644
+index 000000000000..1fec378c8c62
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/bpf_ext_basic.bpf.c
+@@ -0,0 +1,94 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2025 Red Hat, Inc.
++ * Basic io_uring BPF struct_ops test.
++ *
++ * This tests registering a minimal uring_bpf_ops struct_ops
++ * with prep/issue/cleanup callbacks.
++ */
++
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++char LICENSE[] SEC("license") = "GPL";
++
++/* Counters to verify callbacks are invoked */
++int prep_count = 0;
++int issue_count = 0;
++int cleanup_count = 0;
++
++/* Test result stored in pdu */
++#define PDU_MAGIC 0xdeadbeef
++
++SEC("struct_ops/basic_prep")
++int BPF_PROG(basic_prep, struct uring_bpf_data *data,
++	     const struct io_uring_sqe *sqe)
++{
++	__u32 *magic;
++
++	prep_count++;
++
++	/* Store magic value in pdu to verify data flow */
++	magic = (__u32 *)data->pdu;
++	*magic = PDU_MAGIC;
++
++	bpf_printk("basic_prep: count=%d", prep_count);
++	return 0;
++}
++
++extern void uring_bpf_set_result(struct uring_bpf_data *data, int res) __ksym;
++
++SEC("struct_ops/basic_issue")
++int BPF_PROG(basic_issue, struct uring_bpf_data *data)
++{
++	__u32 *magic;
++
++	issue_count++;
++
++	/* Verify pdu contains the magic value from prep */
++	magic = (__u32 *)data->pdu;
++	if (*magic != PDU_MAGIC) {
++		bpf_printk("basic_issue: pdu magic mismatch!");
++		uring_bpf_set_result(data, -22); /* -EINVAL */
++		return 0;
++	}
++
++	bpf_printk("basic_issue: count=%d, pdu_magic=0x%x", issue_count, *magic);
++
++	/* Set successful result */
++	uring_bpf_set_result(data, 42);
++	return 0;
++}
++
++SEC("struct_ops/basic_fail")
++void BPF_PROG(basic_fail, struct uring_bpf_data *data)
++{
++	bpf_printk("basic_fail: invoked");
++}
++
++SEC("struct_ops/basic_cleanup")
++void BPF_PROG(basic_cleanup, struct uring_bpf_data *data)
++{
++	cleanup_count++;
++	bpf_printk("basic_cleanup: count=%d", cleanup_count);
++}
++
++SEC(".struct_ops.link")
++struct uring_bpf_ops bpf_ext_basic = {
++	.id		= 0,
++	.prep_fn	= (void *)basic_prep,
++	.issue_fn	= (void *)basic_issue,
++	.fail_fn	= (void *)basic_fail,
++	.cleanup_fn	= (void *)basic_cleanup,
++};
++
++/* Second struct_ops to verify multiple registrations work */
++SEC(".struct_ops.link")
++struct uring_bpf_ops bpf_ext_basic_2 = {
++	.id		= 1,
++	.prep_fn	= (void *)basic_prep,
++	.issue_fn	= (void *)basic_issue,
++	.fail_fn	= (void *)basic_fail,
++	.cleanup_fn	= (void *)basic_cleanup,
++};
+diff --git a/tools/testing/selftests/io_uring/bpf_ext_basic.c b/tools/testing/selftests/io_uring/bpf_ext_basic.c
+new file mode 100644
+index 000000000000..0591204a2c1e
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/bpf_ext_basic.c
+@@ -0,0 +1,215 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2025 Red Hat, Inc.
++ * Basic io_uring BPF struct_ops test - userspace part.
++ */
++#include <bpf/bpf.h>
++#include <bpf/libbpf.h>
++#include <errno.h>
++#include <linux/io_uring.h>
++#include <io_uring/mini_liburing.h>
++
++#include "iou_test.h"
++#include "bpf_ext_basic.bpf.skel.h"
++
++struct test_ctx {
++	struct bpf_ext_basic *skel;
++	struct bpf_link *link;
++	struct bpf_link *link_2;
++	struct io_uring ring;
++	int nr_ops;
++};
++
++static enum iou_test_status bpf_setup(struct test_ctx *ctx)
 +{
 +	int ret;
 +
-+	ret = syscall(__NR_io_uring_register, ring->ring_fd,
-+		      IORING_UNREGISTER_BUFFERS, NULL, 0);
-+	return (ret < 0) ? -errno : ret;
++	/* Load BPF skeleton */
++	ctx->skel = bpf_ext_basic__open();
++	if (!ctx->skel) {
++		IOU_ERR("Failed to open BPF skeleton");
++		return IOU_TEST_FAIL;
++	}
++
++	/* Set ring_fd in struct_ops before loading (id is hardcoded in BPF) */
++	ctx->skel->struct_ops.bpf_ext_basic->ring_fd = ctx->ring.ring_fd;
++	ctx->skel->struct_ops.bpf_ext_basic_2->ring_fd = ctx->ring.ring_fd;
++
++	ret = bpf_ext_basic__load(ctx->skel);
++	if (ret) {
++		IOU_ERR("Failed to load BPF skeleton: %d", ret);
++		bpf_ext_basic__destroy(ctx->skel);
++		ctx->skel = NULL;
++		return IOU_TEST_FAIL;
++	}
++
++	/* Attach first struct_ops */
++	ctx->link = bpf_map__attach_struct_ops(ctx->skel->maps.bpf_ext_basic);
++	if (!ctx->link) {
++		IOU_ERR("Failed to attach struct_ops");
++		bpf_ext_basic__destroy(ctx->skel);
++		ctx->skel = NULL;
++		return IOU_TEST_FAIL;
++	}
++	ctx->nr_ops++;
++
++	/* Attach second struct_ops */
++	ctx->link_2 = bpf_map__attach_struct_ops(ctx->skel->maps.bpf_ext_basic_2);
++	if (!ctx->link_2) {
++		IOU_ERR("Failed to attach struct_ops_2");
++		bpf_link__destroy(ctx->link);
++		ctx->link = NULL;
++		bpf_ext_basic__destroy(ctx->skel);
++		ctx->skel = NULL;
++		return IOU_TEST_FAIL;
++	}
++	ctx->nr_ops++;
++
++	return IOU_TEST_PASS;
 +}
 +
- static inline void io_uring_prep_send(struct io_uring_sqe *sqe, int sockfd,
- 				      const void *buf, size_t len, int flags)
- {
++static enum iou_test_status setup(void **ctx_out)
++{
++	struct io_uring_params p;
++	struct test_ctx *ctx;
++	enum iou_test_status status;
++	int ret;
++
++	ctx = calloc(1, sizeof(*ctx));
++	if (!ctx) {
++		IOU_ERR("Failed to allocate context");
++		return IOU_TEST_FAIL;
++	}
++
++	/* Setup io_uring ring with BPF_OP flag */
++	memset(&p, 0, sizeof(p));
++	p.flags = IORING_SETUP_BPF_EXT | IORING_SETUP_NO_SQARRAY;
++
++	ret = io_uring_queue_init_params(8, &ctx->ring, &p);
++	if (ret < 0) {
++		IOU_ERR("io_uring_queue_init_params failed: %s (flags=0x%x)",
++			strerror(-ret), p.flags);
++		free(ctx);
++		return IOU_TEST_SKIP;
++	}
++
++	status = bpf_setup(ctx);
++	if (status != IOU_TEST_PASS) {
++		io_uring_queue_exit(&ctx->ring);
++		free(ctx);
++		return status;
++	}
++
++	*ctx_out = ctx;
++	return IOU_TEST_PASS;
++}
++
++static enum iou_test_status test_bpf_op(struct test_ctx *ctx, int op_id)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	__u64 user_data = 0x12345678 + op_id;
++	int ret;
++
++	sqe = io_uring_get_sqe(&ctx->ring);
++	if (!sqe) {
++		IOU_ERR("Failed to get SQE for op %d", op_id);
++		return IOU_TEST_FAIL;
++	}
++
++	memset(sqe, 0, sizeof(*sqe));
++	sqe->opcode = IORING_OP_BPF;
++	sqe->fd = -1;
++	sqe->bpf_op_flags = (op_id << IORING_BPF_OP_SHIFT);
++	sqe->user_data = user_data;
++
++	ret = io_uring_submit(&ctx->ring);
++	if (ret < 0) {
++		IOU_ERR("io_uring_submit for op %d failed: %d", op_id, ret);
++		return IOU_TEST_FAIL;
++	}
++
++	ret = io_uring_wait_cqe(&ctx->ring, &cqe);
++	if (ret < 0) {
++		IOU_ERR("io_uring_wait_cqe for op %d failed: %d", op_id, ret);
++		return IOU_TEST_FAIL;
++	}
++
++	if (cqe->user_data != user_data) {
++		IOU_ERR("CQE user_data mismatch for op %d: 0x%llx", op_id, cqe->user_data);
++		return IOU_TEST_FAIL;
++	}
++
++	if (cqe->res != 42) {
++		IOU_ERR("CQE result mismatch for op %d: %d (expected 42)", op_id, cqe->res);
++		return IOU_TEST_FAIL;
++	}
++
++	io_uring_cqe_seen(&ctx->ring);
++	return IOU_TEST_PASS;
++}
++
++static enum iou_test_status verify_counters(struct test_ctx *ctx, int expected)
++{
++	if (ctx->skel->bss->prep_count != expected) {
++		IOU_ERR("prep_count mismatch: %d (expected %d)",
++			ctx->skel->bss->prep_count, expected);
++		return IOU_TEST_FAIL;
++	}
++	if (ctx->skel->bss->issue_count != expected) {
++		IOU_ERR("issue_count mismatch: %d (expected %d)",
++			ctx->skel->bss->issue_count, expected);
++		return IOU_TEST_FAIL;
++	}
++	if (ctx->skel->bss->cleanup_count != expected) {
++		IOU_ERR("cleanup_count mismatch: %d (expected %d)",
++			ctx->skel->bss->cleanup_count, expected);
++		return IOU_TEST_FAIL;
++	}
++	return IOU_TEST_PASS;
++}
++
++static enum iou_test_status run(void *ctx_ptr)
++{
++	struct test_ctx *ctx = ctx_ptr;
++	enum iou_test_status status;
++	int i;
++
++	/* Test all registered struct_ops */
++	for (i = 0; i < ctx->nr_ops; i++) {
++		status = test_bpf_op(ctx, i);
++		if (status != IOU_TEST_PASS)
++			return status;
++
++		/* Verify counters after each op */
++		status = verify_counters(ctx, i + 1);
++		if (status != IOU_TEST_PASS)
++			return status;
++	}
++
++	IOU_INFO("IORING_OP_BPF multiple struct_ops test passed");
++	return IOU_TEST_PASS;
++}
++
++static void cleanup(void *ctx_ptr)
++{
++	struct test_ctx *ctx = ctx_ptr;
++
++	if (ctx->link_2)
++		bpf_link__destroy(ctx->link_2);
++	if (ctx->link)
++		bpf_link__destroy(ctx->link);
++	if (ctx->skel)
++		bpf_ext_basic__destroy(ctx->skel);
++	io_uring_queue_exit(&ctx->ring);
++	free(ctx);
++}
++
++struct iou_test bpf_ext_basic_test = {
++	.name = "bpf_ext_basic",
++	.description = "Test IORING_OP_BPF struct_ops registration and execution",
++	.setup = setup,
++	.run = run,
++	.cleanup = cleanup,
++};
++REGISTER_IOU_TEST(bpf_ext_basic_test)
+diff --git a/tools/testing/selftests/io_uring/include/iou_test.h b/tools/testing/selftests/io_uring/include/iou_test.h
+new file mode 100644
+index 000000000000..8e7880e81314
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/include/iou_test.h
+@@ -0,0 +1,98 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2025 Red Hat, Inc.
++ */
++
++#ifndef __IOU_TEST_H__
++#define __IOU_TEST_H__
++
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++enum iou_test_status {
++	IOU_TEST_PASS = 0,
++	IOU_TEST_SKIP,
++	IOU_TEST_FAIL,
++};
++
++struct iou_test {
++	/**
++	 * name - The name of the testcase.
++	 */
++	const char *name;
++
++	/**
++	 * description - A description of the testcase.
++	 */
++	const char *description;
++
++	/**
++	 * setup - Setup callback to initialize the test.
++	 * @ctx: A pointer to a context object that will be passed to run
++	 *       and cleanup.
++	 *
++	 * Return: IOU_TEST_PASS if setup was successful, IOU_TEST_SKIP
++	 *         if the test should be skipped, or IOU_TEST_FAIL if the
++	 *         test should be marked as failed.
++	 */
++	enum iou_test_status (*setup)(void **ctx);
++
++	/**
++	 * run - The main test function.
++	 * @ctx: Context object returned from setup().
++	 *
++	 * Return: IOU_TEST_PASS if the test passed, or IOU_TEST_FAIL
++	 *         if it failed.
++	 */
++	enum iou_test_status (*run)(void *ctx);
++
++	/**
++	 * cleanup - Cleanup callback.
++	 * @ctx: Context object returned from setup().
++	 */
++	void (*cleanup)(void *ctx);
++};
++
++void iou_test_register(struct iou_test *test);
++
++#define REGISTER_IOU_TEST(__test)					\
++	__attribute__((constructor))					\
++	static void __test##_register(void)				\
++	{								\
++		iou_test_register(&(__test));				\
++	}
++
++#define IOU_BUG(__cond, __fmt, ...)					\
++	do {								\
++		if (__cond) {						\
++			fprintf(stderr, "FATAL (%s:%d): " __fmt "\n",	\
++				__FILE__, __LINE__,			\
++				##__VA_ARGS__);				\
++			exit(1);					\
++		}							\
++	} while (0)
++
++#define IOU_BUG_ON(__cond) IOU_BUG(__cond, "BUG: %s", #__cond)
++
++#define IOU_FAIL(__fmt, ...)						\
++	do {								\
++		fprintf(stderr, "FAIL (%s:%d): " __fmt "\n",		\
++			__FILE__, __LINE__, ##__VA_ARGS__);		\
++		return IOU_TEST_FAIL;					\
++	} while (0)
++
++#define IOU_FAIL_IF(__cond, __fmt, ...)					\
++	do {								\
++		if (__cond)						\
++			IOU_FAIL(__fmt, ##__VA_ARGS__);			\
++	} while (0)
++
++#define IOU_ERR(__fmt, ...)						\
++	fprintf(stderr, "ERR: " __fmt "\n", ##__VA_ARGS__)
++
++#define IOU_INFO(__fmt, ...)						\
++	fprintf(stdout, "INFO: " __fmt "\n", ##__VA_ARGS__)
++
++#endif /* __IOU_TEST_H__ */
+diff --git a/tools/testing/selftests/io_uring/runner.c b/tools/testing/selftests/io_uring/runner.c
+new file mode 100644
+index 000000000000..09ac1ac2d633
+--- /dev/null
++++ b/tools/testing/selftests/io_uring/runner.c
+@@ -0,0 +1,206 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2025 Red Hat, Inc.
++ * Test runner for io_uring BPF selftests.
++ */
++#include <stdio.h>
++#include <unistd.h>
++#include <signal.h>
++#include <libgen.h>
++#include <bpf/bpf.h>
++#include "iou_test.h"
++
++const char help_fmt[] =
++"The runner for io_uring BPF tests.\n"
++"\n"
++"The runner is statically linked against all testcases, and runs them all serially.\n"
++"\n"
++"Usage: %s [-t TEST] [-h]\n"
++"\n"
++"  -t TEST       Only run tests whose name includes this string\n"
++"  -s            Include print output for skipped tests\n"
++"  -l            List all available tests\n"
++"  -q            Don't print the test descriptions during run\n"
++"  -h            Display this help and exit\n";
++
++static volatile int exit_req;
++static bool quiet, print_skipped, list;
++
++#define MAX_IOU_TESTS 2048
++
++static struct iou_test __iou_tests[MAX_IOU_TESTS];
++static unsigned __iou_num_tests = 0;
++
++static void sigint_handler(int simple)
++{
++	exit_req = 1;
++}
++
++static void print_test_preamble(const struct iou_test *test, bool quiet)
++{
++	printf("===== START =====\n");
++	printf("TEST: %s\n", test->name);
++	if (!quiet)
++		printf("DESCRIPTION: %s\n", test->description);
++	printf("OUTPUT:\n");
++
++	fflush(stdout);
++	fflush(stderr);
++}
++
++static const char *status_to_result(enum iou_test_status status)
++{
++	switch (status) {
++	case IOU_TEST_PASS:
++	case IOU_TEST_SKIP:
++		return "ok";
++	case IOU_TEST_FAIL:
++		return "not ok";
++	default:
++		return "<UNKNOWN>";
++	}
++}
++
++static void print_test_result(const struct iou_test *test,
++			      enum iou_test_status status,
++			      unsigned int testnum)
++{
++	const char *result = status_to_result(status);
++	const char *directive = status == IOU_TEST_SKIP ? "SKIP " : "";
++
++	printf("%s %u %s # %s\n", result, testnum, test->name, directive);
++	printf("=====  END  =====\n");
++}
++
++static bool should_skip_test(const struct iou_test *test, const char *filter)
++{
++	return !strstr(test->name, filter);
++}
++
++static enum iou_test_status run_test(const struct iou_test *test)
++{
++	enum iou_test_status status;
++	void *context = NULL;
++
++	if (test->setup) {
++		status = test->setup(&context);
++		if (status != IOU_TEST_PASS)
++			return status;
++	}
++
++	status = test->run(context);
++
++	if (test->cleanup)
++		test->cleanup(context);
++
++	return status;
++}
++
++static bool test_valid(const struct iou_test *test)
++{
++	if (!test) {
++		fprintf(stderr, "NULL test detected\n");
++		return false;
++	}
++
++	if (!test->name) {
++		fprintf(stderr,
++			"Test with no name found. Must specify test name.\n");
++		return false;
++	}
++
++	if (!test->description) {
++		fprintf(stderr, "Test %s requires description.\n", test->name);
++		return false;
++	}
++
++	if (!test->run) {
++		fprintf(stderr, "Test %s has no run() callback\n", test->name);
++		return false;
++	}
++
++	return true;
++}
++
++int main(int argc, char **argv)
++{
++	const char *filter = NULL;
++	unsigned testnum = 0, i;
++	unsigned passed = 0, skipped = 0, failed = 0;
++	int opt;
++
++	signal(SIGINT, sigint_handler);
++	signal(SIGTERM, sigint_handler);
++
++	libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
++
++	while ((opt = getopt(argc, argv, "qslt:h")) != -1) {
++		switch (opt) {
++		case 'q':
++			quiet = true;
++			break;
++		case 's':
++			print_skipped = true;
++			break;
++		case 'l':
++			list = true;
++			break;
++		case 't':
++			filter = optarg;
++			break;
++		default:
++			fprintf(stderr, help_fmt, basename(argv[0]));
++			return opt != 'h';
++		}
++	}
++
++	for (i = 0; i < __iou_num_tests; i++) {
++		enum iou_test_status status;
++		struct iou_test *test = &__iou_tests[i];
++
++		if (list) {
++			printf("%s\n", test->name);
++			if (i == (__iou_num_tests - 1))
++				return 0;
++			continue;
++		}
++
++		if (filter && should_skip_test(test, filter)) {
++			if (print_skipped) {
++				print_test_preamble(test, quiet);
++				print_test_result(test, IOU_TEST_SKIP, ++testnum);
++			}
++			continue;
++		}
++
++		print_test_preamble(test, quiet);
++		status = run_test(test);
++		print_test_result(test, status, ++testnum);
++		switch (status) {
++		case IOU_TEST_PASS:
++			passed++;
++			break;
++		case IOU_TEST_SKIP:
++			skipped++;
++			break;
++		case IOU_TEST_FAIL:
++			failed++;
++			break;
++		}
++	}
++	printf("\n\n=============================\n\n");
++	printf("RESULTS:\n\n");
++	printf("PASSED:  %u\n", passed);
++	printf("SKIPPED: %u\n", skipped);
++	printf("FAILED:  %u\n", failed);
++
++	return failed ? 1 : 0;
++}
++
++void iou_test_register(struct iou_test *test)
++{
++	IOU_BUG_ON(!test_valid(test));
++	IOU_BUG_ON(__iou_num_tests >= MAX_IOU_TESTS);
++
++	__iou_tests[__iou_num_tests++] = *test;
++}
 -- 
 2.53.0
 

@@ -1,153 +1,221 @@
-Return-Path: <io-uring+bounces-12819-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12820-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UOP+Nnigwmm3fQQAu9opvQ
-	(envelope-from <io-uring+bounces-12819-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 15:32:24 +0100
+	id ODSkCD7AwmmjlQQAu9opvQ
+	(envelope-from <io-uring+bounces-12820-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:47:58 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4598530A324
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 15:32:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B547319546
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 17:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3BFEA3047525
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 14:28:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 361793030D39
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 16:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5193FEB3D;
-	Tue, 24 Mar 2026 14:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D5E36C9C8;
+	Tue, 24 Mar 2026 16:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TsO4F/EV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC053624BC;
-	Tue, 24 Mar 2026 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6533E2746
+	for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 16:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774362484; cv=none; b=h3iPYxXvfn0HYV7ftl81qTGxxKBG2lf/F0Qg3hhLshSQL1MV+BSDizgUyiJkbdJF8qy9SuWMkK5899VCqoQB1EaX96zgWHQF6KepC4Gx91RDol7GHEAcNut1k0//iKz8e5Ii9c2aB5p5PFtDfVWYCeU/kwz/EuZgs3WGn8PkyAk=
+	t=1774370296; cv=none; b=AzARqUo8WfP/M4NtBunDiqOtlmL5vSeRpvQ7Kb7rhxGYVxzFCdSZsjAYG2Cmk8PNPFHyfgztaUapsHRvIQvhEtdFB8G3lu/X4dgrvoYfBr/JLOFsW1UXtW2nwQXs8slUC7KyGJGGTgaB+j9Omm1Mr0B//wXMNUxNvqZ9acxIHsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774362484; c=relaxed/simple;
-	bh=Tli2X3y0LVZah9JzvHCs3qERanTby0V0BrV4nXSA3Js=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EDiC7YBWVSVjd1xuN7MVDRcf1lwlemnAX/FkCSHp/Ezdt1+m+mPid5mVMNdulCjbxsxh4eT78D7rBs8HwjJ/iKvV8gjj9zg0VDoo27Fby5ccARnIYHDa1LrGYzOUjtE/gLloBphqYFyF+ujqub7B3s3H2caxCrixTxF3dwC49Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 1F17D9396F;
-	Tue, 24 Mar 2026 14:27:53 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id DC83180011;
-	Tue, 24 Mar 2026 14:27:20 +0000 (UTC)
-Date: Tue, 24 Mar 2026 10:28:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Dmitry Ilvokhin <d@ilvokhin.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, Jens
- Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Marcelo Ricardo
- Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, Jon
- Maloy <jmaloy@redhat.com>, Aaron Conole <aconole@redhat.com>, Eelco
- Chaudron <echaudro@redhat.com>, Ilya Maximets <i.maximets@ovn.org>,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-sctp@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, dev@openvswitch.org, Jiri Pirko
- <jiri@resnulli.us>, Oded Gabbay <ogabbay@kernel.org>, Koby Elbaz
- <koby.elbaz@intel.com>, dri-devel@lists.freedesktop.org, "Rafael J.
- Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Huang Rui
- <ray.huang@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, Len
- Brown <lenb@kernel.org>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, linux-pm@vger.kernel.org, MyungJoo
- Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- linaro-mm-sig@lists.linaro.org, Eddie James <eajames@linux.ibm.com>, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- linux-fsi@lists.ozlabs.org, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Danilo
- Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>,
- Philipp Stanner <phasta@kernel.org>, Harry Wentland
- <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- amd-gfx@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, Benjamin
- Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, linux-spi@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Chris
- Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Andrew
- Morton <akpm@linux-foundation.org>, SeongJae Park <sj@kernel.org>,
- linux-mm@kvack.org, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] tracepoint: Avoid double static_branch
- evaluation at guarded call sites
-Message-ID: <20260324102802.4f8af148@gandalf.local.home>
-In-Reply-To: <20260323160052.17528-1-vineeth@bitbyteword.org>
-References: <20260323160052.17528-1-vineeth@bitbyteword.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1774370296; c=relaxed/simple;
+	bh=2Bb/RF/VPpC8KCvfK4vddY8KZNiu6ASUhczZuHKAKck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SqduVIK8qrnUWbNMQeI40QALdPLJzds0Mg600dPK1tXt58QKyuJm3m5weYqTRHul9F9uynFsOZ+z6ljJfry53Sh9pmkPRFWC770OI/oMDi3YdS2Lhd2lJKnBvjgwFz8emSy1cRyDEocdmFwJcN4ZCT6PK5flMNHVvICkXKtODwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TsO4F/EV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1774370294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nDHgnn5BQJFF66frkgHQM1vC4reIunM/ZdGzCKK26S0=;
+	b=TsO4F/EVU3l2C4aX1+/c3u1qsu7bhLM2JdvgZ98LVqfj9B/EF/wUWdva3P6TguZn5WjszW
+	gKj8XCl83F+Vo12rAK0+uE38rEMHDNKqQkJS3asDln4YccBl7ldLn67h32ir0n2fL7Wy2N
+	Y5mmEYdwZrB2YJbeY68EhFr7d5mCd7Q=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-L4qH02sYNCypsYR_SvyxZA-1; Tue,
+ 24 Mar 2026 12:38:10 -0400
+X-MC-Unique: L4qH02sYNCypsYR_SvyxZA-1
+X-Mimecast-MFC-AGG-ID: L4qH02sYNCypsYR_SvyxZA_1774370289
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBEB61800371;
+	Tue, 24 Mar 2026 16:38:08 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.133])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0052F1800765;
+	Tue, 24 Mar 2026 16:38:07 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>,
+	bpf@vger.kernel.org,
+	Xiao Ni <xni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH v3 0/12] io_uring: add IORING_OP_BPF for extending io_uring
+Date: Wed, 25 Mar 2026 00:37:21 +0800
+Message-ID: <20260324163753.1900977-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: rgnt1g9q8d9rzsk6azwgoui85joqhwik
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19u4yDoihzmlvbQbp4GBKk4Sx0FsrK0H8g=
-X-HE-Tag: 1774362440-296898
-X-HE-Meta: U2FsdGVkX18Kg3NfvHLPV0rnp3UrERb/HeySVgjR0PuCDys+LVJ4s2L8fsy1rJHv82yu9UO4h+xU9iEx3z3YFKVS1OFx2Vvti4rEmq0enV2xaTwbpZ+YWf60TFzb8QMlheid4NsXOVqOYcFPHCn+ZrWqPDCdrmq0l+tkyLSeYhbpJixFuANIjXhtSBZInyEBtAAqHPqUuWZ3PdZupXAY7JMTASH2KNw+CMFxYOXnDTbb38gpzJzBKiUcyoxK6GlO0db0aEPLlOAMHWKzcQEu5msgaweBGFFWtD9G0uWRbe+OcS9gBl+SI1CDJFvGCt0Z8gh5xinNWW7KF0gSIEh3ZlA0AO0+B5wCRjivVxgdquYH5bWbk7CtReb5es0u0tOp
-X-Spamd-Result: default: False [0.14 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[goodmis.org : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[infradead.org,ilvokhin.com,kernel.org,efficios.com,redhat.com,kernel.dk,vger.kernel.org,davemloft.net,google.com,iogearbox.net,gmail.com,ovn.org,lists.sourceforge.net,openvswitch.org,resnulli.us,intel.com,lists.freedesktop.org,linaro.org,amd.com,linux.intel.com,samsung.com,lists.linaro.org,linux.ibm.com,codeconstruct.com.au,jms.id.au,lists.ozlabs.org,ffwll.ch,sang-engineering.com,analog.com,HansenPartnership.com,oracle.com,fb.com,suse.com,linutronix.de,linux-foundation.org,kvack.org,alien8.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12819-lists,io-uring=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring,renesas];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rostedt@goodmis.org,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12820-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ming.lei@redhat.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_GT_50(0.00)[80];
-	R_DKIM_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bitbyteword.org:email,gandalf.local.home:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4598530A324
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 8B547319546
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Mon, 23 Mar 2026 12:00:19 -0400
-"Vineeth Pillai (Google)" <vineeth@bitbyteword.org> wrote:
+Hello,
 
-> When a caller already guards a tracepoint with an explicit enabled check:
-> 
->   if (trace_foo_enabled() && cond)
->       trace_foo(args);
+Add IORING_OP_BPF for extending io_uring operations, follows typical cases:
 
-Thanks Vineeth!
+- buffer registered zero copy [1]
 
-I'm going to start pulling in this series. I'll take the first patch, and
-then any patch that has an Acked-by or Reviewed-by from the maintainer.
+Also there are some RAID like ublk servers which needs to generate data
+parity in case of ublk zero copy
 
-For patches without acks, I'll leave alone and then after the first patch
-gets merged into mainline, the maintainers could pull in their own patches
-at their own convenience. Unless of course they speak up now if they want
-me to take them ;-)
+- extend io_uring operations from application
 
--- Steve
+Easy to add one new syscall with IORING_OP_BPF
+
+- extend 64 byte SQE
+
+bpf map can store IO data conveniently
+
+- communicate in IO chain
+
+IORING_OP_BPF can be used for communicate among IOs seamlessly without requiring
+extra syscall
+
+- pretty handy to inject error for test purpose
+
+Any comments & feedback are welcome!
+
+
+[1] lpc2024: ublk based zero copy I/O - use case in Android
+
+https://lpc.events/event/18/contributions/1710/attachments/1440/3070/LPC2024_ublk_zero_copy.pdf
+
+V3:
+	- add per-buffer iterator kfuncs for addressing Caleb's concern about
+	  complicated kfunc interface, kernel mapped buffer produced by the
+	  iterator can be read/written from bpf prog in zero copy style
+
+	- rename to bpf_ext
+
+	- change tests to copy between uring_buf and arena, which may match
+	  with raid's use case
+
+	- misc cleanup
+
+
+V2:
+	- per-ring struct ops (Stefan Metzmacher, Caleb Sander Mateos)
+	- refactor io_import_fixed()/io_prep_reg_iovec()/io_import_reg_vec()
+	  for allowing to handle multiple buffers for single request
+	- kernel selftests
+	- all kinds of comments from Caleb Sander Mateos
+	- support vectored and registered vector buffer
+
+
+
+Ming Lei (12):
+  io_uring: make io_import_fixed() global
+  io_uring: refactor io_prep_reg_iovec() for BPF kfunc use
+  io_uring: refactor io_import_reg_vec() for BPF kfunc use
+  io_uring: prepare for extending io_uring with bpf
+  io_uring: bpf: extend io_uring with bpf struct_ops
+  io_uring: bpf: implement struct_ops registration
+  io_uring: bpf: add BPF buffer descriptor for IORING_OP_BPF
+  io_uring: bpf: add per-buffer iterator kfuncs
+  bpf: add bpf_uring_buf_dynptr to special_kfunc_list
+  selftests/io_uring: add io_uring_unregister_buffers()
+  selftests/io_uring: add BPF struct_ops and kfunc tests
+  selftests/io_uring: add buffer iterator selftest with BPF arena
+
+ include/linux/io_uring_types.h                |  14 +-
+ include/uapi/linux/io_uring.h                 |  40 +
+ init/Kconfig                                  |   7 +
+ io_uring/Makefile                             |   1 +
+ io_uring/bpf-ops.c                            |   7 +-
+ io_uring/bpf_ext.c                            | 755 ++++++++++++++++++
+ io_uring/bpf_ext.h                            |  71 ++
+ io_uring/io_uring.c                           |   9 +-
+ io_uring/io_uring.h                           |   6 +-
+ io_uring/opdef.c                              |  16 +
+ io_uring/rsrc.c                               |  46 +-
+ io_uring/rsrc.h                               |  68 +-
+ kernel/bpf/verifier.c                         |  12 +
+ tools/include/io_uring/mini_liburing.h        |  10 +
+ tools/testing/selftests/Makefile              |   3 +-
+ tools/testing/selftests/io_uring/.gitignore   |   2 +
+ tools/testing/selftests/io_uring/Makefile     | 173 ++++
+ .../selftests/io_uring/bpf_ext_basic.bpf.c    |  94 +++
+ .../selftests/io_uring/bpf_ext_basic.c        | 215 +++++
+ .../selftests/io_uring/bpf_ext_memcpy.bpf.c   | 305 +++++++
+ .../selftests/io_uring/bpf_ext_memcpy.c       | 517 ++++++++++++
+ .../io_uring/include/bpf_ext_memcpy_defs.h    |  18 +
+ .../selftests/io_uring/include/iou_test.h     |  98 +++
+ tools/testing/selftests/io_uring/runner.c     | 206 +++++
+ 24 files changed, 2646 insertions(+), 47 deletions(-)
+ create mode 100644 io_uring/bpf_ext.c
+ create mode 100644 io_uring/bpf_ext.h
+ create mode 100644 tools/testing/selftests/io_uring/.gitignore
+ create mode 100644 tools/testing/selftests/io_uring/Makefile
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_basic.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_basic.c
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_memcpy.bpf.c
+ create mode 100644 tools/testing/selftests/io_uring/bpf_ext_memcpy.c
+ create mode 100644 tools/testing/selftests/io_uring/include/bpf_ext_memcpy_defs.h
+ create mode 100644 tools/testing/selftests/io_uring/include/iou_test.h
+ create mode 100644 tools/testing/selftests/io_uring/runner.c
+
+-- 
+2.53.0
+
 

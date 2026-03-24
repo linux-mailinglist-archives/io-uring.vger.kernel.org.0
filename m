@@ -1,89 +1,89 @@
-Return-Path: <io-uring+bounces-12837-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12838-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yARbAInXwmllmgQAu9opvQ
-	(envelope-from <io-uring+bounces-12837-lists+io-uring=lfdr.de@vger.kernel.org>)
+	id gJmrHInXwmllmgQAu9opvQ
+	(envelope-from <io-uring+bounces-12838-lists+io-uring=lfdr.de@vger.kernel.org>)
 	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 19:27:21 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D47D31ACF7
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 19:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3544E31ACFE
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 19:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AA9A73065F43
-	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 18:22:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B01393065F48
+	for <lists+io-uring@lfdr.de>; Tue, 24 Mar 2026 18:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC2339657B;
-	Tue, 24 Mar 2026 18:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1540F3A0E80;
+	Tue, 24 Mar 2026 18:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7UPnntr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyHT9wob"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42573A3808
-	for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 18:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10C7399036
+	for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 18:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774376544; cv=none; b=Mpm2KMTrhtqUk0TrCAOh/j/Sa8/V2S97bincQyQSFIEzOc/eRPgA4Y/2YoFXSr9XI+OW2mUOudvoibM7ELm3V31+45MImA9TEwMnMrK9BctTPjqc1mhF1beVfcaxJW1Ncpz/eIqXq8rV0QC+ZVMOUI7iddIPeHGZA7kr3NoWyq4=
+	t=1774376547; cv=none; b=SUZIKmYkMqH8y+gMzPKhnWozeZntkUbSfJ0dgbL2MFd8QHGzL4ZzqpOUnKLvbQpxUfvVhK8X44JWvhf4u4jEjo4rnJskQts9BlMEOqNqRSyLqNF0TIcMJICAJs38dIA5cbjecPnhjc6trm6TnGNAVgrUp/nOzhjxUDszVt1EbxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774376544; c=relaxed/simple;
-	bh=TV+F0Vmu4aucF2TjbdbBnNT6guv3JixSxcykzZJgmzs=;
+	s=arc-20240116; t=1774376547; c=relaxed/simple;
+	bh=CtJyLxHrOX30Kyi8BsUS7jFwRq4BTORUiIDs7P3/XuI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e3r2yYLpHI6Xk/FnD9rzFTGeS5sDO5yTQ60D1VYZ37YHL9drQgcHd/StT223/JPYEEySDOhx8YJQYr1+vB2p6UTJTm5lA5rf0ZoP9JhtEDwk2OtokhLEoE4Y2Z1fdTBpcAnNk59xwPmgXIBf/t1lt9AGu+5rOo9DpRI96UwSn7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7UPnntr; arc=none smtp.client-ip=209.85.215.173
+	 MIME-Version; b=iVo01cvOiJ5xoG9oL7RyevmTRLXa2Xg/wYqsAnOIlGknaEwcfbtcBrZKvy29KgEKYd1j+p5bR89Y+MzNezO6ZETF/t6dQ7sq2SgYLQWITFY8fluxf05lJ4HS4Hysl4ABP/h9B2GU/Okdv1+eHBpVqc+yD6xRjjwD0w+p+P+WC0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyHT9wob; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-c2af7d09533so3620738a12.1
-        for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 11:22:23 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ad617d5b80so38510805ad.1
+        for <io-uring@vger.kernel.org>; Tue, 24 Mar 2026 11:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774376543; x=1774981343; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774376545; x=1774981345; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AA5SRQ15WYXOghQfJ9ddPjPi0IIDAvudWjjHvBxa7xM=;
-        b=d7UPnntr8TTstXamWvICjRomHHvr0INGhqj+uCAXqULPdPMCFC20M1WLTq1OdDPxzN
-         cDRwrD3Rjb3/MD8uVLj0rniaAsghL/gXHBBuBn/6GlwSHl949Y1gePA561KF7dGxd6ZR
-         I6GnFRrB4U56qRiNZcb1qM8yPWHxMHeoUTF9lpXQvMncL6DxRlyn/8qMrkDcNNoSY5Qh
-         qg6zKqpYpkZHZF8+Q+V/21aSiU/2JEi99W5/rTRxcbh+211alHVO5laQgoQKv63zVJez
-         5Mhl3xBGF+NdC7q6o4WEma8f+RCBsgJCviMBQpvEB1RrEzmerjE9dCoh4wf7g27uUSq6
-         OvCg==
+        bh=rRx5aLIGSgbFJc9IlKhWetIFRhSAX3F1Al3AWYZ5XUw=;
+        b=gyHT9wobs6LpU8SSt8EZasKQ5jvV+hhWcU67oGH6pVR9LqPCRP2Ge2/x43R4nt6N5E
+         1FNNjZsuJtRbW+auS0giSg3CfToPWSQ2Cjt/1n58hUx48Q5D43psr5GuFp6x/yZ2W1Yu
+         uOlhxfWQ949KupifmvO7lhYuBUuuCJ5TO88dZBWBU8zTFlf+gBULiuvo1QLI+3dRP9wP
+         kCB97n3mG+2kFyNhE2PtMQczfQkZgLTDA5bVyC1BGvbGFnwowA4R0CPQfJyeaCgAGl+N
+         zomXQTieFXhtyJJPmGQkr1m4tvQjGsrIpZpcYwnrYCfIvCfhCh2W3lY1BhNNw0NwVLKk
+         uR8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774376543; x=1774981343;
+        d=1e100.net; s=20251104; t=1774376545; x=1774981345;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AA5SRQ15WYXOghQfJ9ddPjPi0IIDAvudWjjHvBxa7xM=;
-        b=GjK4eAou5L0Ffr28P6c/A6AymUqS0lcmsBNmWsn/4E5OG8iDXBgRI1p3sqkjG39lP+
-         LNddQRNovgSfZgZce8loDRVbS0XULx2r3VtATB/JDmTConna1nfZIWzW4tIgCiycfGpm
-         EJ05wKyC/B025YKidLSF3HuM2HYgEPL+ezDIbPhZ9vy8ZMlTU5AHnCBcukM5j4D80wIu
-         KdrUwXzK42dcjYkbuvWeemw1cKMeYupal+PETYhjiZQe/EhT54Wp69o5at1wqdMtIyxQ
-         gQ8quX+wcJ1amYOOxgrfKN/jandC4UG9EIJNXdfj6P+QuDyc3178YB8LjjD+xHNr/0M/
-         OBDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUI1dqoHSUw6ZmN531RRBbdZaaf6xACiTdmTm63Tus5cGWTRE5GdhpfuTUDLHIsFPmrRA9Fb82DQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuNCXZgY4dnLaGq+bzx1WR4BNVUTV0HrOnGQYEnxwEUOASjXVR
-	86AaSqTTHah7PErM1vESCOSfQ0EAlUzcX1zJbWc8i5oQvalHueCz1cee
-X-Gm-Gg: ATEYQzwemsN6dgT/nqhWuF4CAz+P6dLhZkH5V1FuvSGV7vH+JgnoZGingzX3YKQNHd/
-	AWxpReP3H0C8JcLbPG/QJ2RxE+GJmbjSXVQVwgfsAKUASYwaUSYF4kTaGcNSg5pdl7lqIL2lwUj
-	gpwtczermWG2hX3S3LEDBIQ9ammqt6u9uSYy3PMgTFi3ivXQi1Mu4mCQida5VCzlHFvS4IgHTEt
-	cS4n0jd/FSopE95A3mAd8x/qF9H15hpD1D128p/FHGHhBKRxcRdSTeAFiAR7stPVZYXaFU8pbJv
-	8G2Sb/ohdDGJbTeGtgDTo5VRfcWOAyGLA03m/OvU1L113aSRdSndxhi2fxXrkf2cyu5LgoBZJ6W
-	SUMBZO6RGfoiGH7juqdNIDA/rpJvFZnH9JEZMKLYmqz+d4uZv+3ciVnpYAK8LSlLPTLAtVEVJiW
-	6is8XgpEydyIdJdpQd
-X-Received: by 2002:a05:6a20:2589:b0:39b:9644:6ea5 with SMTP id adf61e73a8af0-39c4ac6ee13mr770972637.15.1774376543177;
-        Tue, 24 Mar 2026 11:22:23 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:8::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c74443cc2a8sm10849205a12.27.2026.03.24.11.22.22
+        bh=rRx5aLIGSgbFJc9IlKhWetIFRhSAX3F1Al3AWYZ5XUw=;
+        b=H9CRBZMIPx6z0XxA0xyq62SV8Ds4Bz9UQB/JjqIZ/EG9VgJEezB+l+dTs+12iVITZm
+         rVOuvQ6MxbkwA2DNl5Qj1iEfAct/eBizqdpU2Ojz+uUmJRBg7MW9Bm6ewuNp6Py6D2GP
+         qdbaPuWW8poaD+YT6blqXjUcK2506P5RPo+HThXaMuBiV4Y4RLZlJFsieyNfkejm1CNf
+         gEhGSfAfjn3wmqL3Oz7MJWD55bc283N3eaJ1M5JKVWQgcQv/exOlVbXhPXa9+D8Tjqkl
+         S92YEUixQYe2c7AJ68Fw2zqTskgHkIWJcRqbowu0GBV6JlXZNOI9QbTdgsIgba4Xs+BC
+         Gbiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVW3Nckodb8rF2qy3NmWqgy7o3zB9amxzaTTIQLylchCGeTu3nEmqbjktZjtIQ6C2/VJVYyhc5Ltg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXVFmkLPlSHi162Mdps25eZ8PPX3jRyNd4QqbOjilZ5rY+OvtW
+	c33VaKxZIOk4xUJe4O8/mLdGbW9XJM9kDwM2vnLv5acWrd28yvnzb8uyQWr3Ug==
+X-Gm-Gg: ATEYQzzPH/TCO7x+VQVcZSazqAkI0uZPbe8l8KwOw7J0B7QrIIkK2SbRFkSP4LTlHgN
+	+lJeGhiF8koo/hWhFtsSyxnlwBgmdDYEGnm0XK5QJ1JotacCWpbi7rOhaAXSPEFNoK7pDH5/crw
+	lI2FrHnsRXGti+972EutRR2v5IQJcoclCyuY6A3Mn383xaxeJFzuR1SbmCsbUTYSHQWyi5GhCxR
+	UzKtYZ6XKLRQYcC2SNuojrBciX6KSOs0753Kuz+JtEwUpz1zVVReYSKq3VXKat2GopzauQZwbEe
+	XK7tExRU4h5aIkFyeo/NnoUTA1iEK+zv6zhs1iqZ7shDMqFmlfqEVStmEb1GMD43M3CFpLMPxwI
+	i9KQAk7LU1LrW8Mr+KmjWrvXMb6y+MXoiwY1JTU9rfEPBFEvHkPUGoS0tM9CcOscA2QQgC9UXgz
+	9aU3mwUGeLNNaIZ4CLRw==
+X-Received: by 2002:a17:903:388e:b0:2ae:fc60:2650 with SMTP id d9443c01a7336-2b0b0ad0da3mr5581345ad.39.1774376544886;
+        Tue, 24 Mar 2026 11:22:24 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:50::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b083655b68sm197491285ad.43.2026.03.24.11.22.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 11:22:22 -0700 (PDT)
+        Tue, 24 Mar 2026 11:22:24 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: axboe@kernel.dk
 Cc: csander@purestorage.com,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH v2 3/5] io_uring/rsrc: allow buffer release callback to be optional
-Date: Tue, 24 Mar 2026 11:21:55 -0700
-Message-ID: <20260324182157.990864-4-joannelkoong@gmail.com>
+Subject: [PATCH v2 4/5] io_uring/rsrc: add io_buffer_register_bvec()
+Date: Tue, 24 Mar 2026 11:21:56 -0700
+Message-ID: <20260324182157.990864-5-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260324182157.990864-1-joannelkoong@gmail.com>
 References: <20260324182157.990864-1-joannelkoong@gmail.com>
@@ -108,7 +108,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FREEMAIL_CC(0.00)[purestorage.com,gmail.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12837-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12838-lists,io-uring=lfdr.de];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -125,33 +125,94 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,purestorage.com:email]
-X-Rspamd-Queue-Id: 6D47D31ACF7
+X-Rspamd-Queue-Id: 3544E31ACFE
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-This is a preparatory patch for supporting kernel-populated buffers in
-fuse io-uring, which does not need a release callback.
+Add io_buffer_register_bvec() for registering a bvec array.
+
+This is a preparatory patch for fuse-over-io-uring zero-copy.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- io_uring/rsrc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/io_uring/cmd.h | 12 ++++++++++++
+ io_uring/rsrc.c              | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 165d436073a4..f054ec1c8912 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -110,6 +110,9 @@ struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ int io_buffer_register_request(struct io_uring_cmd *cmd, struct request *rq,
+ 			       void (*release)(void *), unsigned int index,
+ 			       unsigned int issue_flags);
++int io_buffer_register_bvec(struct io_uring_cmd *cmd, const struct bio_vec *bvs,
++			    unsigned int nr_bvecs, unsigned int total_bytes,
++			    u8 dir, unsigned int index, unsigned int issue_flags);
+ int io_buffer_unregister(struct io_uring_cmd *cmd, unsigned int index,
+ 			 unsigned int issue_flags);
+ #else
+@@ -198,6 +201,15 @@ static inline int io_buffer_register_request(struct io_uring_cmd *cmd,
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int io_buffer_register_bvec(struct io_uring_cmd *cmd,
++					  const struct bio_vec *bvs,
++					  unsigned int nr_bvecs,
++					  unsigned int total_bytes, u8 dir,
++					  unsigned int index,
++					  unsigned int issue_flags)
++{
++	return -EOPNOTSUPP;
++}
+ static inline int io_buffer_unregister(struct io_uring_cmd *cmd,
+ 				       unsigned int index,
+ 				       unsigned int issue_flags)
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 01c3619e5f07..73ee03f85509 100644
+index 73ee03f85509..d3079fff2d62 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -133,7 +133,8 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
- 
- 	if (imu->acct_pages)
- 		io_unaccount_mem(ctx->user, ctx->mm_account, imu->acct_pages);
--	imu->release(imu->priv);
-+	if (imu->release)
-+		imu->release(imu->priv);
- 	io_free_imu(ctx, imu);
+@@ -1007,6 +1007,38 @@ int io_buffer_register_request(struct io_uring_cmd *cmd, struct request *rq,
  }
+ EXPORT_SYMBOL_GPL(io_buffer_register_request);
  
++/*
++ * bvs is copied internally. caller may free it on return.
++ */
++int io_buffer_register_bvec(struct io_uring_cmd *cmd, const struct bio_vec *bvs,
++			    unsigned int nr_bvecs, unsigned int total_bytes,
++			    u8 dir, unsigned int index,
++			    unsigned int issue_flags)
++{
++	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
++	struct io_mapped_ubuf *imu;
++	struct bio_vec *bvec;
++	unsigned int i;
++	int ret = 0;
++
++	io_ring_submit_lock(ctx, issue_flags);
++	imu = io_kernel_buffer_init(ctx, nr_bvecs, total_bytes, dir, NULL,
++				    NULL, index);
++	if (IS_ERR(imu)) {
++		ret = PTR_ERR(imu);
++		goto unlock;
++	}
++
++	bvec = imu->bvec;
++	for (i = 0; i < nr_bvecs; i++)
++		bvec[i] = bvs[i];
++
++unlock:
++	io_ring_submit_unlock(ctx, issue_flags);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
++
+ int io_buffer_unregister(struct io_uring_cmd *cmd, unsigned int index,
+ 			 unsigned int issue_flags)
+ {
 -- 
 2.52.0
 

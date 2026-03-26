@@ -1,153 +1,228 @@
-Return-Path: <io-uring+bounces-12864-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12865-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kEtLEG5CxGlHxwQAu9opvQ
-	(envelope-from <io-uring+bounces-12864-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 25 Mar 2026 21:15:42 +0100
+	id UKS/IwKNxGlr0QQAu9opvQ
+	(envelope-from <io-uring+bounces-12865-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 02:33:54 +0100
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D746A32BB6A
-	for <lists+io-uring@lfdr.de>; Wed, 25 Mar 2026 21:15:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0830632DF06
+	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 02:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 17DDA3001463
-	for <lists+io-uring@lfdr.de>; Wed, 25 Mar 2026 20:15:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 94355302800C
+	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 01:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1556346AD6;
-	Wed, 25 Mar 2026 20:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD82370D79;
+	Thu, 26 Mar 2026 01:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YinCHXhz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLfhqhkz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55C63559C4
-	for <io-uring@vger.kernel.org>; Wed, 25 Mar 2026 20:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FBAF4F1;
+	Thu, 26 Mar 2026 01:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774469738; cv=none; b=mR7dLly9f0vYLwanMPcOfW79m80Wf8YUnpe/h1W7aqZP/f2TwUjCG7uq71y+kMxdKFs3m7XYWo5M+lWcql3N/2hRckjU//hcOSpPpOx3fCIm+bUbmZuupRx0GtXMuse91xtx9TpRTK99buZEXStvsLwj4RiWPmvg/4txDzITseY=
+	t=1774488531; cv=none; b=PfZcJtRbXoGVAEVhBuPV/c8amRd0+d9nPDDbcTRhcSRkSlozRgxI4LJvZx1N/VrC80RHM3LZ/ocKuQPJV2arhQoYk01jYtCCA0qkqOho9eL/k0wiHSDMoc/DEqUrWTYJt3YsffIBxctROBTU7nowukEM4Y3mghA7t7ve9zuE9P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774469738; c=relaxed/simple;
-	bh=FX87JvNP2urAP/Msg++UjIWQZUA8IY8rePOuuoioyWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AfgD1VZXLblx2bvzoiGCtmOwE0IDQelnn5XJYX/73ihNZZIu4O9TlLbWoBQ3krpioqYgDK1wY+DTOrIzQr+x6VGWrznw1om6VjJLNX2nRscEHfKg7ZPu1rcIr9bpRCgqshpdX0cNQbnmRNcD1RmzQnQdNCJ2UHSypPf/Cwmxvnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YinCHXhz; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-41c420d1460so131128fac.3
-        for <io-uring@vger.kernel.org>; Wed, 25 Mar 2026 13:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1774469735; x=1775074535; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3438vBASjikmNd+Fl6xoWCMSRHEKDZTbjpGFwBCpG8w=;
-        b=YinCHXhzRr03Yxvcql8q5spZ1rpSb0UUzxlYtBF+ECBW0zk1GEc7oFzXl29MjWT3ta
-         QsUfvk/CEr1WtrtdoZptgNVih2SDcaxNpjk1VdTaLpxHi9bL/ctDJE7CInpOYJW8u4iP
-         7HE9AvpKmA7zWT5pgEe1kP5Ga9iwWZm8Rc4cdztErcwzgVFKWhE+2MprMyPdb0lFcCHO
-         p2M8FevCo/ekO9p2PkvMrIGqJxyhCkEI+/PasqnWFkQ6Hxz8VVZkpLbCnUXQi0Qv8TKv
-         CP37BWidteeb1QFbATxhm0Qz3n1619HkvbJYi1OmxuMc5gSzQ0x1MV+Md5bw0pXPQRb5
-         kaqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774469735; x=1775074535;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3438vBASjikmNd+Fl6xoWCMSRHEKDZTbjpGFwBCpG8w=;
-        b=mMbvK70GXEgbLol2YSSZ4Nhia+Kzf4+npECkJFk56TY0SYy/uovghX5f41f2srTVmZ
-         3m1Y9997U/nUVfdJD6KmZ8SM4Rrm66z8oPC15FSP8iR369tZNngXvBgyfYo8EPo2aQEi
-         5ZixjLmJz428pudO5txzRBbRQ+wBT4WmCie/eaIoah2NHPfIoFsoxnrRV8ab/f4svdNy
-         LUhTL2npIOn5MHHkHaphXAHHnM3byp6gkwZO+Wk7pXCZ6GPYvbCMx9LpIFo3/dPT3mZQ
-         Vcb7l94tmKIyfKABcBgEclNcU4Qs4e3N3W7wcXND28G/ETJ5ncnCQi8Anx9S/oEBqDv8
-         trTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqtVPM+s9/yTl8rgNfnRGgIEbNnLd2qVdKRWnoqojZJRDMoNGVRtCiO2eEhtYvy0stXCnj2hbNHg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOWg1E28KaKM+Uo8NkCmE4J3c9PI0F0y2HwI+ONGJqKZ/xWOsE
-	SXk0L2qZC/cn3tIBcidp/s5llYMjrkUkYaBsB3JO3kX0MHxSXzqh5O+ZswVYhEpAaGqTCqqeuOL
-	f/Jy8
-X-Gm-Gg: ATEYQzzJ3NIP1fEpab+rgC371cayfyqdiD2LWYEuD7UE0J5rIio6XS2Qb+6+vzJRVrx
-	7gAGUdbpVRqOCV/m7XI+PjvjT/1/86nWUNAVMSAdvrTTOQK6wJZJHHYSyNGlzCynosoy05BcAC5
-	aEjzatmwy+mSE4lr6vYRl6+KmR3sRTDMuY6Edhj9kvrpQJKnRzHJzlPVr0DAyLoI8WRf/xhhA5R
-	o6vbbKUVKUXTwt7qv9tuTdUXye3PfbMbd5hCM9xECpnm0545vIpwZg1DvEYtVV32Fcfy5j0E+aR
-	g3al/6/HrhgsJ51mxNMDR4/DBweiVYkeYysN61E2K1BjpCDh+H1XT94X1Fw9eqPdmHJ4n6RE3i+
-	JClSOBkuqul/EDQsb7FbvpDWXDh9V2nv7KgYPOWWd2eY2wdFfGAKdyDUpuNJeEziTtfn885jPyf
-	Pf5LLfsbPDpvS2TmDGsxGj0B36FHhj4yr8DzhANE3CjN1Unu67EJHu5VWx5U4CuQ7loSjqo6MkY
-	qR0iJONKe/LNqa4R0I=
-X-Received: by 2002:a05:6870:f602:b0:41c:63f2:bfb8 with SMTP id 586e51a60fabf-41ca6ddbb48mr2449341fac.13.1774469735482;
-        Wed, 25 Mar 2026 13:15:35 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-41cc7ad3444sm478762fac.12.2026.03.25.13.15.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 13:15:35 -0700 (PDT)
-Message-ID: <796fd39b-af84-4e91-9fc2-2599c8eed46a@kernel.dk>
-Date: Wed, 25 Mar 2026 14:15:34 -0600
+	s=arc-20240116; t=1774488531; c=relaxed/simple;
+	bh=0Cq7OMqDyz29Hy/YQIvOOTgh39yp/jjxAwDycnlq/O0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WUy6Adt/wTSA2KclWJzTRK3DBM6NvXfdRYO9O51OS3uJiN2S7VmuEBVqfV8fJKFB2cSIbxPioovUs2hkuyPWfq91a2RmVbTK4c8EEq1oxtWUObO/STRlK9n4A+qNfMA5NFkC4CyQ1uy1srPr8fUy2zIJnxggaM3wMmZZPJef4YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLfhqhkz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3592AC4CEF7;
+	Thu, 26 Mar 2026 01:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774488531;
+	bh=0Cq7OMqDyz29Hy/YQIvOOTgh39yp/jjxAwDycnlq/O0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MLfhqhkzsxa7tc0jHzhytzV6qchl81dHU9KAPgpYRYmOHYLzk4wblKHPtqEHyv28p
+	 Q/b1ZGVBAKVMA2DtsWIH4xs0i1VJ2p7crVWlc/njQGIq3j2rxJcz4zZlqQtGtXSKGY
+	 qE7kmn3skAAmdHpynUh6G1IcDYzRBpRJQJ2v9dHtuEYl1SHM9u79m3ODxDTtFbRHwF
+	 TrXVRIXikjQcC748T/h8YzRRuj5Is74hno4IqadGPqhCATzpJM+vXtHmT1645lImlw
+	 xbcKSEnaeY6vjDCFgor9rDZ7RPAf5TB+nN0PUncVs3G3ToCrGTMxxDR5q52eHlIdvK
+	 yL93d9yknBOTA==
+Date: Thu, 26 Mar 2026 10:28:40 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
+ <peterz@infradead.org>, Dmitry Ilvokhin <d@ilvokhin.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Marcelo Ricardo Leitner
+ <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, Jon Maloy
+ <jmaloy@redhat.com>, Aaron Conole <aconole@redhat.com>, Eelco Chaudron
+ <echaudro@redhat.com>, Ilya Maximets <i.maximets@ovn.org>,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-sctp@vger.kernel.org,
+ tipc-discussion@lists.sourceforge.net, dev@openvswitch.org, Jiri Pirko
+ <jiri@resnulli.us>, Oded Gabbay <ogabbay@kernel.org>, Koby Elbaz
+ <koby.elbaz@intel.com>, dri-devel@lists.freedesktop.org,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Huang Rui <ray.huang@amd.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Len Brown <lenb@kernel.org>, Srinivas
+ Pandruvada <srinivas.pandruvada@linux.intel.com>, linux-pm@vger.kernel.org,
+ MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park
+ <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, linaro-mm-sig@lists.linaro.org, Eddie James
+ <eajames@linux.ibm.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, Joel
+ Stanley <joel@jms.id.au>, linux-fsi@lists.ozlabs.org, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alex Deucher
+ <alexander.deucher@amd.com>, Danilo Krummrich <dakr@kernel.org>, Matthew
+ Brost <matthew.brost@intel.com>, Philipp Stanner <phasta@kernel.org>, Harry
+ Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ amd-gfx@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, Benjamin
+ Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, linux-spi@vger.kernel.org,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba
+ <dsterba@suse.com>, linux-btrfs@vger.kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, SeongJae
+ Park <sj@kernel.org>, linux-mm@kvack.org, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/19] tracepoint: Add trace_call__##name() API
+Message-Id: <20260326102840.80a270ec818fea7e000aeef4@kernel.org>
+In-Reply-To: <20260323160052.17528-2-vineeth@bitbyteword.org>
+References: <20260323160052.17528-1-vineeth@bitbyteword.org>
+	<20260323160052.17528-2-vineeth@bitbyteword.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] io_uring/rsrc: add
- io_uring_registered_mem_region_get()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: csander@purestorage.com, asml.silence@gmail.com, io-uring@vger.kernel.org
-References: <20260324221426.3436334-1-joannelkoong@gmail.com>
- <20260324221426.3436334-6-joannelkoong@gmail.com>
- <78925323-89b4-4def-aa5a-6138b4aa5d1c@kernel.dk>
- <CAJnrk1Z1n2xTem3xoP9oGDsJ3o9wPO_CfQ1GQy+d3ggLXP-9yg@mail.gmail.com>
- <147aa05f-2e03-4d0d-a86e-b145913d8584@kernel.dk>
- <CAJnrk1YWh=bVNZkHYgtG4QSePTC2LGi-x=-AuecS=HG5wCTpKw@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAJnrk1YWh=bVNZkHYgtG4QSePTC2LGi-x=-AuecS=HG5wCTpKw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MV_CASE(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12864-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[goodmis.org,infradead.org,ilvokhin.com,kernel.org,efficios.com,redhat.com,kernel.dk,vger.kernel.org,davemloft.net,google.com,iogearbox.net,gmail.com,ovn.org,lists.sourceforge.net,openvswitch.org,resnulli.us,intel.com,lists.freedesktop.org,linaro.org,amd.com,linux.intel.com,samsung.com,lists.linaro.org,linux.ibm.com,codeconstruct.com.au,jms.id.au,lists.ozlabs.org,ffwll.ch,sang-engineering.com,analog.com,HansenPartnership.com,oracle.com,fb.com,suse.com,linutronix.de,linux-foundation.org,kvack.org,alien8.de];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[purestorage.com,gmail.com,vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_FROM(0.00)[bounces-12865-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_GT_50(0.00)[81];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
+	FROM_NEQ_ENVFROM(0.00)[mhiramat@kernel.org,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring,renesas];
+	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: D746A32BB6A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:email,bitbyteword.org:email,goodmis.org:email]
+X-Rspamd-Queue-Id: 0830632DF06
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 3/25/26 1:56 PM, Joanne Koong wrote:
-> Good idea, I will add a comment about this to make this more clear,
-> something like:
-> /*
->  * The submit lock ensures we don't see partially initialized state
->  * if another thread is currently registering the region. Once registered,
->  * the region is stable for the ring's lifetime (no unregister API exists),
->  * so it's safe to access the returned pointer outside the lock.
->  */
+On Mon, 23 Mar 2026 12:00:20 -0400
+"Vineeth Pillai (Google)" <vineeth@bitbyteword.org> wrote:
 
-Perfect, thanks!
+> Add trace_call__##name() as a companion to trace_##name().  When a
+> caller already guards a tracepoint with an explicit enabled check:
+> 
+>   if (trace_foo_enabled() && cond)
+>       trace_foo(args);
+> 
+> trace_foo() internally repeats the static_branch_unlikely() test, which
+> the compiler cannot fold since static branches are patched binary
+> instructions.  This results in two static-branch evaluations for every
+> guarded call site.
+> 
+> trace_call__##name() calls __do_trace_##name() directly, skipping the
+> redundant static-branch re-check.  This avoids leaking the internal
+> __do_trace_##name() symbol into call sites while still eliminating the
+> double evaluation:
+> 
+>   if (trace_foo_enabled() && cond)
+>       trace_invoke_foo(args);   /* calls __do_trace_foo() directly */
+
+nit: trace_call_foo() instead of trace_invoke_foo()?
+
+Anyway looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+
+> 
+> Three locations are updated:
+> - __DECLARE_TRACE: invoke form omits static_branch_unlikely, retains
+>   the LOCKDEP RCU-watching assertion.
+> - __DECLARE_TRACE_SYSCALL: same, plus retains might_fault().
+> - !TRACEPOINTS_ENABLED stub: empty no-op so callers compile cleanly
+>   when tracepoints are compiled out.
+> 
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Vineeth Pillai (Google) <vineeth@bitbyteword.org>
+> Assisted-by: Claude:claude-sonnet-4-6
+> ---
+>  include/linux/tracepoint.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 22ca1c8b54f32..ed969705341f1 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -294,6 +294,10 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  			WARN_ONCE(!rcu_is_watching(),			\
+>  				  "RCU not watching for tracepoint");	\
+>  		}							\
+> +	}								\
+> +	static inline void trace_call__##name(proto)			\
+> +	{								\
+> +		__do_trace_##name(args);				\
+>  	}
+>  
+>  #define __DECLARE_TRACE_SYSCALL(name, proto, args, data_proto)		\
+> @@ -313,6 +317,11 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  			WARN_ONCE(!rcu_is_watching(),			\
+>  				  "RCU not watching for tracepoint");	\
+>  		}							\
+> +	}								\
+> +	static inline void trace_call__##name(proto)			\
+> +	{								\
+> +		might_fault();						\
+> +		__do_trace_##name(args);				\
+>  	}
+>  
+>  /*
+> @@ -398,6 +407,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  #define __DECLARE_TRACE_COMMON(name, proto, args, data_proto)		\
+>  	static inline void trace_##name(proto)				\
+>  	{ }								\
+> +	static inline void trace_call__##name(proto)			\
+> +	{ }								\
+>  	static inline int						\
+>  	register_trace_##name(void (*probe)(data_proto),		\
+>  			      void *data)				\
+> -- 
+> 2.53.0
+> 
+
 
 -- 
-Jens Axboe
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 

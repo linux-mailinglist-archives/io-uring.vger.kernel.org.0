@@ -1,185 +1,174 @@
-Return-Path: <io-uring+bounces-12874-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12875-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0OmFKRyUxWmq/gQAu9opvQ
-	(envelope-from <io-uring+bounces-12874-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 21:16:28 +0100
+	id 0HuXMJbtxWlTDQUAu9opvQ
+	(envelope-from <io-uring+bounces-12875-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 27 Mar 2026 03:38:14 +0100
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3141033B528
-	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 21:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E85CD33E6C1
+	for <lists+io-uring@lfdr.de>; Fri, 27 Mar 2026 03:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2E9B3300C586
-	for <lists+io-uring@lfdr.de>; Thu, 26 Mar 2026 20:12:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 66D9D30E1FA6
+	for <lists+io-uring@lfdr.de>; Fri, 27 Mar 2026 02:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3F23988FE;
-	Thu, 26 Mar 2026 20:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B38346E5E;
+	Fri, 27 Mar 2026 02:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOpa/SrV"
+	dkim=pass (2048-bit key) header.d=carlini.com header.i=@carlini.com header.b="tWgVCkSY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b/fnW9Zf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198D23976BB
-	for <io-uring@vger.kernel.org>; Thu, 26 Mar 2026 20:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774555925; cv=pass; b=KQDT8NSHTZpibbFvBgioiNIxXpjnv9hH85Wpp7DF2VI8p/mGTXZq+PYIXLUEzDkKSRnKaV2ZarhIF8UgOMuNjKkENVcltTTXD1VkzhRon8sXvjizqfGSoEDoKxquXuoJ8I+ZVpVFltEol6uI4+vAlt5hp1w5X5i0+5jE1w7k+gg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774555925; c=relaxed/simple;
-	bh=aQ6Aq/POQfqqEmXu9zuXl6Xin5wscy4aVe2hMd0YT8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D0NJidZCNwihctJahuWqjO23G580bNPwKU9rXSs/Rmk+3sXtmp5aVF+ZWtOtV9ySMJEJSRaDja4AS3I/yuGNtx1gmgfxxazBhbmUpNpkKwVtIEPapNnHQU/IYkz7RrMG6uRBYSVwHMINqCORevmvVqSA4KLUMqwsjLCQS5UznJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOpa/SrV; arc=pass smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43b4f48c47cso1034311f8f.0
-        for <io-uring@vger.kernel.org>; Thu, 26 Mar 2026 13:12:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774555922; cv=none;
-        d=google.com; s=arc-20240605;
-        b=POsg6aWzR3CKS4xM2iMOT/H3ruEx7gExnfSgL22/XjnXATaErqAbbBg9d/zZkV/R2R
-         28NK+x/idefBG2Bk8tuduMEwHtwlmtUGoUcyOb2toMmY2jLKJbZWwOIVVi0KosNdl44I
-         omR4lU9JF0eEvka/NxUJT3eFm8h/r7Wkw9WgtkMPSNhO/rNxynGqoSPPyhuAb9Y+yoF/
-         8W76Ou9zZpmLqXZ4k2tHxVTNteVZyyBNhAZCcVcqhzIQvKyzlQ1D8H/J//3gv8veEDVw
-         Idh1bchGK0fXyWguGAGGgIxsjSjyXpp4JBV+6cnS3mzi1nuDytwWOI8J2aZkGhJ5D7P8
-         bB4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=aQ6Aq/POQfqqEmXu9zuXl6Xin5wscy4aVe2hMd0YT8I=;
-        fh=mkJBnx3CL4mQB55eO8Dd9izGfcMjVmV/rcThJ51tnIA=;
-        b=hBkBrtQoAiBNzTqIQ11hOZthNBV1uFVAzfVpmbl6JQd9j5IuTCREBzvG/th7dtv8DV
-         QZ8Vp4LM3jvIW92FfDfrQJdpHNiQptJN13zxjMtty6ZebT1p4h2zJv0AlFsUlTQKG+gb
-         xrohCjb6oSE1rU6qo3VXh717X+c86dxkOJzpBKYej25S1WBlAf11HWljcscvXJX/nYnb
-         w09n9NOJe2w5oDD7tIrwJUJAiP0hL8Too/9L6Y2sR4c/DbmF7jVykEVom339ky7xBR2E
-         ve929WOnzSGPxcY1lixqkZauMPr0hC+yE3D9CJ6OccX0C517XvdI7gywjf7scXsX8bvp
-         wWQA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774555922; x=1775160722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aQ6Aq/POQfqqEmXu9zuXl6Xin5wscy4aVe2hMd0YT8I=;
-        b=IOpa/SrVSzfjkxzWDu6zax++eMmuHtlcf5jwKPZvzWYm59o/2ehRorit7rMi/4C51B
-         JlXRfMPc4MrtaT7NsbZc1q1EPEYwEbQrtmKrpoAFqVZ9Vbwb+lQS1vFzALeXV64yLd+P
-         aQtVMtufOXNI0qykQMdIHJtoBhJtIbRNP0COzJfS5dyLp5B9o041vu7Av2tC3rb+OHXL
-         859wyXVlbb7oxr+BIbJGq88jiu9lKYnH8Xj0bzkurYg2/MZIYF30eZtfX4QfSie9wUL6
-         fe6/v4FnEhOiSpQo3ktrJWHI6e0MQ2qV4yDP9F6onYExbHuG3LCQGwGAaGLDNXSIjJ12
-         DlGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774555922; x=1775160722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aQ6Aq/POQfqqEmXu9zuXl6Xin5wscy4aVe2hMd0YT8I=;
-        b=Ndbgtv4JU4ySGIVSQEj7165+EMmsg5kDPNsacObtGAfzbH445ODRyqCu9a8wYSPBMa
-         +WAQ099yQE6+QziH9apbcc1DxnWhMUdXYqAnrVo92+JdqWS6cqaRXmK2XjoIGNyd0lul
-         7dF9RgNsNcCT0cn6zXI310bHr2QDqlEyIh24kQCo0xfln9yUvxQGDltbbaMyBaUo/kff
-         KHcV6zprT9m41yzyHn8bx54zvI/00D5OyzvbqiG1xrS2qouLj0boTjOJLmuFNzZeyw6O
-         XOFsCUpw8sKh4rAOu+2LL4BTJ6GJrtGUie4S2JcxpNOeRHvlI4F7IGWrmyJAyByfw6Si
-         LsEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUKlXnEJNcUjepWBXT5YFgpd/waFk1a7LxSJ0Cjag+W7N3eZUDM7HGdsKS06vQEXAoRzSsqwWPUg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPZMgom1L55ZipeJanlRhD3Fan3VaWNhwUvtPW28aG+BePvA6Y
-	4UEKZcoaeLjgexCINy6H5nluxu4efnG9+X33SUmM5a/IaQeXxiwsmX8+CrBwwHMtjLQwG+TpEVD
-	fgqOdCjR8XA1XwrVHNLftzbAAn0F2ZGs=
-X-Gm-Gg: ATEYQzxAJXSItR0jFL6+ImsQ1Rl1+ImoSX2ERKuhWDMeseguMbh4Eu61yOkrTTzvZRz
-	ka54zW5iX98MCmwZuU4uboTnZqGK0832qZFMzPZCfk68tscGpzdi5UEgjPCdaBJuWqu40+g+F+5
-	/jHfQd8jPc9v5Yhywpk+gX7/CLdAdMiiWA/DteexOzayjQaL3oVmhMacoyWkFOEb/9L50xO13gy
-	MGqvYHG9+Y0xjHYfV8VoGoIzEMxY+QMwrw87Jtkw3J6pSLl00ieMQaG3xv3/JaiYNN0RhVVL9bX
-	HBVSBw==
-X-Received: by 2002:a5d:5d01:0:b0:43b:9986:2fbe with SMTP id
- ffacd0b85a97d-43b99864385mr3860955f8f.49.1774555922211; Thu, 26 Mar 2026
- 13:12:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C1F346AC6
+	for <io-uring@vger.kernel.org>; Fri, 27 Mar 2026 02:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774577908; cv=none; b=Gw6B9vhYiDfGsEYuVquZn09GADnJMGtFiZyVG5Xdod5MIHbur9R70f5YXSpwYzm+0bx+LF5YKGLwjggC15NuRYd9PrCEpsX6nRnG3gzDWdCoyuk3qTsx0jsnNZMMCKM9Xvg2Na/tgsgYwqmkHZ1JEO3ssyO7pwKFK3j3vxp0N3M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774577908; c=relaxed/simple;
+	bh=V2paLFxzlaRJBVM4Gv5VCShG8jC+vTGiEONfo2xBj7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r4E6YuXY70uBGjer0VemgUZfN5whYQCRyBmZuogrBxKLykAXgFQdEIJmcFKvI9xIldKVGHp7jcWxaTRokaV7JJMKFHgA4j2FPGN7hAsrlbIJXOAn4toVx/m99jX85NhTB1d3em+XowBJPbaOstfeNsg4rL9Wmx1hiqNycwnm3vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=carlini.com; spf=pass smtp.mailfrom=carlini.com; dkim=pass (2048-bit key) header.d=carlini.com header.i=@carlini.com header.b=tWgVCkSY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b/fnW9Zf; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=carlini.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlini.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8B0001400280;
+	Thu, 26 Mar 2026 22:18:25 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 26 Mar 2026 22:18:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=carlini.com; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1774577905; x=1774664305; bh=iOFN5K3RVjBjQS53+oJpb
+	WyBOcTQQsip2+L54ScJ9C4=; b=tWgVCkSY40E60kJPbI6B0tR24si1RrEC/LKAV
+	f9REDRM4iDQ+dTAnW3qH6VVIJXGXqLvBaF4tRolp44N75GMQe7xuwvpeJ35OuZ2I
+	tSqMnwQCiQc5sEbcjy979P/est2j5wh1gO59xwUi16mSjUyOtto2SASpXrvs6p/C
+	sXGGmXFFvxGHUoWxAB9UEAipD5jvlBT1VaO0Tcf/3FxJgO4RRq7aODSkty6hA3r5
+	pyseYF3DHoCDBmUWWIUXddJpjiBoFu6g22jWoRL8sUF3RipfLuO96nmiDkeXJdo0
+	Crt1i5uwb5ajcVVEHmmOAPrCDxHF82t4voZY+OzGxVRXThHLQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1774577905; x=1774664305; bh=iOFN5K3RVjBjQS53+oJpbWyBOcTQQsip2+L
+	54ScJ9C4=; b=b/fnW9ZfhXzlh41sLirxtv22rSTS6g27w9X3n33XtV3m7qxNt2H
+	wzsklCN40lrNf0noVIXNlpnirPjkGnuTiVaLpThb5NtnlUjvPHnGeR6ccMLrcB8V
+	jiiJv2pEkADqER8lnGxRv0SM/jUDxvBO0zatsdztZL6VwK8jtfVqnnihcUKWikth
+	MUBq6wXc+I34u0IKhBJTMJrlmW1MSOIltjZ/YKw509PY6DN+27ivWYJzbLh9M6R+
+	a9ep+Bj5gU1f25vSkrSpsi7kHBCK9Qbf897uzfpx8SHURuFvDAPU2lgkQPjiE3Hw
+	T5ANzFn7TA41gdkm043/l8lKYpD7jjYSWPA==
+X-ME-Sender: <xms:8OjFaQPm9HCvikb1eOCBAWSAL8mkKygGwtWxmNbGSKshIFVLu34guw>
+    <xme:8OjFad9h3ybKh0lXtT2EVqQiTFkg6loWU7Z_B7lVk68zdud3y2FXkuWSfsAHV5hdR
+    fq4FzBVjcIkA-_quCyX4e2HbNCIV7nQ9ZjJototKzKWR3bp4icSYg>
+X-ME-Received: <xmr:8OjFacQTiUgO0fpWOvEK0GIxlPuGerPnhxge1FOvu4kqu9SrxC0goFbHJ284NLRpMy19AZ06GfIIJI76uz4mE4KrWCj3bwlxxNLodzYILrgjUjAaFkDJHi2lBWmd480HO1rc2pZG8u5fWcTh5IY68Nw99hfa3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdeltdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepnhhitghhohhlrghs
+    segtrghrlhhinhhirdgtohhmnecuggftrfgrthhtvghrnhepjeelfeeuieduheehheefje
+    ffvdetvdefuedttedvheefteffvdefveelheffgfejnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepnhhitghhohhlrghssegtrghrlhhinhhird
+    gtohhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrgi
+    gsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohepkhgsuhhstghhsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehnihgthhholhgrshestggrrhhlihhnihdrtghomh
+X-ME-Proxy: <xmx:8OjFaXmQ7xOpX5wa8cVulqLz6SqPyz8xBLIjQgE_wSfujzracjOI6w>
+    <xmx:8OjFaURvmoOwe4F1wHXeKgu_v79TzMxWkEU1g4Tjf35sHK7Ge0rmfw>
+    <xmx:8OjFadPF_qHqXSnz5VpsXnS8Q4e1e5TqmoliOHmT1sRfsrrE2kCyqg>
+    <xmx:8OjFaVXgpL_18i4TNIfp8b0YV1SrS3x1c_FK9FVC3IfVf_0-BNnRKw>
+    <xmx:8ejFacaDjJyyZTmLBFJqumD-14jCIUthgzE4rPOf7lyD7KEkqeptU7-P>
+Feedback-ID: i78b949e2:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Mar 2026 22:18:24 -0400 (EDT)
+From: nicholas@carlini.com
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>,
+	Nicholas Carlini <nicholas@carlini.com>
+Subject: [PATCH] io_uring/fdinfo: fix OOB read in SQE_MIXED wrap check
+Date: Fri, 27 Mar 2026 02:18:23 +0000
+Message-ID: <20260327021823.3138396-1-nicholas@carlini.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306003224.3620942-1-joannelkoong@gmail.com>
- <CAG48ez0H_Z-NQvfOeczECz_sO=MzVDvu+8m+msB55rcAPfQOgQ@mail.gmail.com>
- <CAJnrk1aTnoDwDVdgYrcN3tHm-_j79GKYY=8q_Lu=xi8=Cxi4bg@mail.gmail.com> <CAG48ez2o=OzSjuPYm44gCDrG_tqzXC3=PCJHXCBVJyYmemtzsw@mail.gmail.com>
-In-Reply-To: <CAG48ez2o=OzSjuPYm44gCDrG_tqzXC3=PCJHXCBVJyYmemtzsw@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 26 Mar 2026 13:11:49 -0700
-X-Gm-Features: AQROBzCKIqfx2y0xdE_s3cDvS-5ttLByg-r-ogTcKv2e1J_I2Ot6s_Y1MeHI0DI
-Message-ID: <CAJnrk1a3xz4fcA+rB7Y3Cvp=D24-4TOF7bE5O9KTTZPjqOwfoA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] io_uring: add kernel-managed buffer rings
-To: Jann Horn <jannh@google.com>
-Cc: axboe@kernel.dk, hch@infradead.org, asml.silence@gmail.com, 
-	bernd@bsbernd.com, csander@purestorage.com, krisman@suse.de, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[carlini.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_DKIM_ALLOW(-0.20)[carlini.com:s=fm3,messagingengine.com:s=fm1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12874-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,infradead.org,gmail.com,bsbernd.com,purestorage.com,suse.de,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12875-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[carlini.com:+,messagingengine.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3141033B528
+	FROM_NO_DN(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[nicholas@carlini.com,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim,carlini.com:dkim,carlini.com:email,carlini.com:mid]
+X-Rspamd-Queue-Id: E85CD33E6C1
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Thu, Mar 26, 2026 at 1:00=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> Hi!
->
-> On Thu, Mar 26, 2026 at 8:55=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> > On Thu, Mar 26, 2026 at 12:33=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > Am I missing something that prevents normal io_uring operations from
-> > > grabbing IOBL_KERNEL_MANAGED buffers and accessing the wrong union
-> > > member?
-> >
-> > Hi Jann,
-> >
-> > I am going to be submitting the changes for kernel-managed pbufring
-> > compatibility with normal (non-fuse) io-uring requests as part of a
-> > separate patchset. You're right that there is a functional gap right
-> > now where trying to use kernel-managed pbuf rings fails with errors.
-> > In those patches, an iter_kvec will be constructed for
-> > IOBL_KERNEL_MANAGED rings instead of an iter_ubuf. I'm intending to
-> > submit that patchset upstream in time for the 7.1 merge window before
-> > it closes in mid-April.
->
-> Ah, thanks for the explanation. Please CC me on that patchset, I'd be
-> interested in taking a look at how that will be implemented.
+From: Nicholas Carlini <nicholas@carlini.com>
 
-I will make sure to CC you on the patchset.
+__io_uring_show_fdinfo() iterates over pending SQEs and, for 128-byte
+SQEs on an IORING_SETUP_SQE_MIXED ring, needs to detect when the second
+half of the SQE would be past the end of the sq_sqes array. The current
+check tests (++sq_head & sq_mask) == 0, but sq_head is only incremented
+when a 128-byte SQE is encountered, not on every iteration. The actual
+array index is sq_idx = (i + sq_head) & sq_mask, which can be sq_mask
+(the last slot) while the wrap check passes.
 
-Thanks for taking a look at this.
+Fix by checking sq_idx directly. Keep the sq_head increment so the loop
+still skips the second half of the 128-byte SQE on the next iteration.
 
-Thanks,
-Joanne
->
-> Thanks,
-> Jann
+Fixes: 1cba30bf9fdd ("io_uring: add support for IORING_SETUP_SQE_MIXED")
+Signed-off-by: Nicholas Carlini <nicholas@carlini.com>
+---
+ io_uring/fdinfo.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index 80178b69e05a..6b5609f1db60 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -119,12 +119,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+                     sq_idx);
+                 break;
+             }
+-            if ((++sq_head & sq_mask) == 0) {
++            if (sq_idx == sq_mask) {
+                 seq_printf(m,
+                     "%5u: corrupted sqe, wrapping 128B entry\n",
+                     sq_idx);
+                 break;
+             }
++            sq_head++;
+             sqe128 = true;
+         }
+         seq_printf(m, "%5u: opcode:%s, fd:%d, flags:%x, off:%llu, "
+--
+2.39.5
 

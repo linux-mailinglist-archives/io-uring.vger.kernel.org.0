@@ -1,176 +1,159 @@
-Return-Path: <io-uring+bounces-12886-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12887-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aDxCCmlYyWkuxgUAu9opvQ
-	(envelope-from <io-uring+bounces-12886-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 18:50:49 +0200
+	id WPqiBfCFyWndygUAu9opvQ
+	(envelope-from <io-uring+bounces-12887-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 22:05:04 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773AB353243
-	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 18:50:48 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB75353EC3
+	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 22:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D490F3005759
-	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 16:49:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BFCCF3003310
+	for <lists+io-uring@lfdr.de>; Sun, 29 Mar 2026 20:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65265377039;
-	Sun, 29 Mar 2026 16:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E7937F019;
+	Sun, 29 Mar 2026 20:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jk9RcH3b"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jJdGb52b"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341002E6CC0
-	for <io-uring@vger.kernel.org>; Sun, 29 Mar 2026 16:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8155918EB0
+	for <io-uring@vger.kernel.org>; Sun, 29 Mar 2026 20:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774802985; cv=none; b=F4tum53S/xLgBmsw7GE8tKr1INfkdAVoFvF6lmV5ZWghdNamXyMfi3Qdc9LZGChICqpxAzM6FCpl17OapMSK9lFDpuSk5klpZaeOVWEjZ8e7f7pwVJ9fWLipd+RNAbWDRdsuT2wrQtRpmB5nLIbuRNYd20lvTYDepp7XJfY+gjo=
+	t=1774814663; cv=none; b=euaf0RYLpossntE4ts+cWpXCGNYZI5fBL4LBix1AWu+Wt/tI5Cs8S/r5d3OytyeVLSLYv4wZHuASJtgG5HvL1qq5Wdu5oYanRDaMRP7KH0bFVVY18QWxLJNAcILPTjwStLvSo8zxwCm5fcrlPxk/w1u8q9QPPxPM5PiU445TLGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774802985; c=relaxed/simple;
-	bh=FegCePrRgmlQ4BFtsYObKp5mK24ZIcDy6Qpqk9+d6wg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ha2FQiyAq95TZzLG9eS2cC6zaTpOApXV3NMHdiu8GH9SF3LXQ9UjKyPw0XFhDQXtFAWE5Reyl70xj0+68aGQFDt7l2Rdp1UQje7RVomfd8GQbtRvW3P7BekGdMYjrxRjEWOSxpYc4taq9AJiegiuDPIG6V8qtONvUGuDauUNfDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jk9RcH3b; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-35c124d2613so2428567a91.2
-        for <io-uring@vger.kernel.org>; Sun, 29 Mar 2026 09:49:44 -0700 (PDT)
+	s=arc-20240116; t=1774814663; c=relaxed/simple;
+	bh=CmwSchGsQZX2RfJuqAQGtcnNGsikvMvEbXJsEzEhtH0=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JWsc/9kupQ3/bRJTQMr+ixTV/D0RLOz65YnSLkGKwXy4mepECJgJli7ImG3RoyKtn5ryPIEqU79A8nnR74mZc+qvjDvmBvFa7imO4ZrIcmRRxQz4rcVV0fMxgNNTcr7Ktjy9x/ziE0OdaAYXO5VEEpO4/zAtcDajW6nV2AJAMag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jJdGb52b; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-467161c4b7aso1388447b6e.1
+        for <io-uring@vger.kernel.org>; Sun, 29 Mar 2026 13:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774802983; x=1775407783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cD2gxKgayIiCaDoFwClB5W0CmSi8WMV/LcL4kFdAEFU=;
-        b=Jk9RcH3boaiC5lLNW+lpnd3hs9mmZ2PFaYhXeymxIW+gKmqe634LQswpT+erR6TW3o
-         uIw6iC3u+HbjtcCV2hK4d/IcR7SzpQ4aT93/WjyKgTcFnzFwv7Cdn7SVqW7AVpORwl8H
-         wzTX/NeyWE9kOrHmtTCjEK9gLjE3dfyx2dZA4qmuwyEWjRfnDIZfF8+4LdJAErCHvbci
-         7Yb/KQlh1NbIoSRVEMoZyPmGlSoGPJwRcJ3bSdF2jvJQB1wbWbNt6k4dPIKlP20LqHS9
-         jGjez1Jsr3JnAflKy9YK/sScxZyr18U60PMkU701NmXBUrTWxliNE1RfT3dadTAScGbk
-         OGKA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1774814659; x=1775419459; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iX8ZNv3CdYCnsBtieJRninBtoFTcalSs17bW1TTH18I=;
+        b=jJdGb52bHW5glW+/jIdQKAdqR8FvVofdVtgEkeaNVH/yUYt9vMmuI04nw7tv1xGoVG
+         PY4bws0u0FauRu9FICsSbwvxiaR5mrXP8mXfOceTTPsmOc1s1pnAj2iSRSLfyORDYshf
+         tZLInfpvXbwhh4+KlcTN7g17bxdIGw20kKJLSOoQvMyc2O/X3LHYYMfyOLqyRMhd12Aq
+         LZWkE1l0RgllwjC6Grxu78Sc5n1nF6RrAeBWL6tdyL2sWUX3N0Pb8o/Vm9jAU8Gn9MOQ
+         BgLtf45hL0hNljByprVAOYM7D7Bl0d0tnpufZI4ZSmfSc2lvJVYkzN2BJDLQie07uLLZ
+         /9Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774802983; x=1775407783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cD2gxKgayIiCaDoFwClB5W0CmSi8WMV/LcL4kFdAEFU=;
-        b=EbVor3SdhlGZeOGMy9n2umzfH65yOFM/TmaMmJ2bNkNVxZDzAL8FnblYXwaFByuq2P
-         vNo5YMt7L3evX2fY0vBmSDpjchDdtd5CUXROJlmppSYLdFv7dg3Ql7K0RDXVH/Xzy0kO
-         q+LAstmzOpIq32a2zwZfSUwn+Qxoo5feXvg+sK+y3qAxXbrjOcu25YmYMXC0HlRKUWuZ
-         ZfWxXMs2u5XFQfgAzjjpCBzZboJJXcSeF2o+QST6YBUPvRGmLf52UM3mls4pkyZpR95X
-         GgUt/ZnNH6ef1wZESRilkT4PByqwBVdT/ROWkp+dm+FYUN1zOC4q9Y6NIqqvPeSzkLQ4
-         bOfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpDfzuPL66cVwpkJQBu8R9PHLlBlrHFVZZPJWhEqszFkqGN5cDvE6AwKaqcdB/CkSKoDIy/+k+EQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2f77wDbOKf9c70r6bXRf2lYFbjm7I28Z4P1WAUIFYtCLVVRfx
-	5/1SJmVB1qL4MWcqLuUd6IZbigYTBcgkJjzUj46RxHkfoGAk/UBwVkATRKXlF5I9
-X-Gm-Gg: ATEYQzwLT/r19qHRB/46sFLxtmmzhmWsTugOADJeFnUwPAMQt7cjePw5vMCt2wr4APC
-	N1/e6s0yi4J0+d60j/lEfSeuuRayHbi3VNcfYgA31sf35EN3RzK6ILklP7A1ifV0LXGD/mVQ60/
-	9W2xk7Wuq6CPQG7fjh0YNPbItr7Gg4iXNf6b8DF5zPgtbnPh3/b1Lrr3zPdFKJYuHlVWwvHoCst
-	7MPB07cPN2tlnRn77UDFVGBcEeRB2sgpe0fpLhDEnkKI6LwBDk2C5nAeqaF/NyNOExPtEswFYU1
-	yH1H07IHg8p0ufloyBR+AUgEmC5ISegH3TmTaW5if8pMdhsrVY+ypxW5PeJZ1It2M1OyOAr+GPx
-	AkpA///7XEpaNfVZncxZgCITfB+Ly0JwimKhgDKLW2DgEUbGI4luYSXPQyyBJQadkwn5QWQruxQ
-	yiMqzj/KG8ASc0H2+Zf6QnITk6kU+u37xz62U=
-X-Received: by 2002:a17:90b:3fcb:b0:359:f6f8:57b8 with SMTP id 98e67ed59e1d1-35c2ffafed9mr9455628a91.1.1774802983393;
-        Sun, 29 Mar 2026 09:49:43 -0700 (PDT)
-Received: from localhost.localdomain ([47.236.127.140])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c2f398df9sm4023623a91.1.2026.03.29.09.49.40
+        d=1e100.net; s=20251104; t=1774814659; x=1775419459;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iX8ZNv3CdYCnsBtieJRninBtoFTcalSs17bW1TTH18I=;
+        b=DrpPVgFm5erAFOyI+udHZjKPRRSjavWZ5g/y+qnMuS4UMpQXlBdo6/7cEjl/YbdycZ
+         GwFA4GnfN6ojVgeUWsIs0PuCnP0SROqPZ8ZtkQEuz2rw+4lbczg/mnYySW6EYM9ywwJK
+         94iQD2i1d4PhiV7KVb3sbbPbsr+w0xqsefsxqWMJwcYeWlguyczPhW5u45g41lh/v+GM
+         R3iRuA/JLECh1FaD44xfe8TvTUGTzK759CrlAANDUdfKHkabDSE9NJYgZBtLJ8xc2deh
+         41yU7oSDwBLgQFPeSLZpbqFedYH5peKgvMUQMLq8F+cEOTm6JwggACxL6Gn/Ob8M3wjY
+         P2CA==
+X-Gm-Message-State: AOJu0YzQiYSCqAuyYNs9ODNK/AB98JeOTXLhLpED81a9uXoKdkunG2Lp
+	wpDA1ZALdHf8QVxZsSEpqW+ywW4UX9k+el4jQPAVSmLduLB2y+/8XlE8kvj2AFlv/2fWmi7BQ0N
+	cFbwg
+X-Gm-Gg: ATEYQzyOpwkQN5nvdB7DpFSvfsljn3uXVP7SOoEVQD/6YsPTjZ4m8hYqMIxG6mZ1CYf
+	6QlrcQHhMYpE2KTk0V4ApqKCkR34VFjFlOb4e4gtntQmHSDMCyr6uLPUXdYz60kCVON8pYncgns
+	8Vz4cZ/C/XB5MsOAAbpgwpjoGxWokmE2vN2YXBgxmMOsbrYXb9J7cB8HtRThPDs2MOU4ze9TACo
+	CyDxBqyRGrfoqNGkmaoVAilTKvRppSU0tQ/eegka2iwNqAaW8ukUzJthpw/5YIjwto5l+KTG7ob
+	dOfINo0wvIgaRsZngeFZTKjn+XQRXhixNAojbA4Vx9QoR2X9GChVJTnQa0G/x78QyfW5xK6zxlu
+	SSHQ60wl4irRRAi7rCCRjJrpmiGPf9VqEqBW94aPsy1ta1r33PTP+8Flalj0Y976CVEjoDrotBT
+	mwPvuFMAJZo99KC4RKH3lZE6HbM+BmkPitaTnIejSiswWHdW5FWfHjEv+5yOtePAfdV6Ws0DrJu
+	eLl
+X-Received: by 2002:a05:6808:6ec6:b0:467:fd2:69e with SMTP id 5614622812f47-46a8a5d36bbmr4858956b6e.35.1774814659612;
+        Sun, 29 Mar 2026 13:04:19 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-46aa03a9179sm3076174b6e.14.2026.03.29.13.04.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2026 09:49:42 -0700 (PDT)
-From: Qi Tang <tpluszz77@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qi Tang <tpluszz77@gmail.com>
-Subject: [PATCH] io_uring/rsrc: reject zero-length fixed buffer import
-Date: Mon, 30 Mar 2026 00:49:36 +0800
-Message-ID: <20260329164936.240871-1-tpluszz77@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sun, 29 Mar 2026 13:04:18 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Junxi Qian <qjx1298677004@gmail.com>
+In-Reply-To: <20260329153909.279046-1-qjx1298677004@gmail.com>
+References: <20260329153909.279046-1-qjx1298677004@gmail.com>
+Subject: Re: [PATCH] io_uring/net: fix slab-out-of-bounds read in
+ io_bundle_nbufs()
+Message-Id: <177481465815.564893.8584983065808740907.b4-ty@b4>
+Date: Sun, 29 Mar 2026 14:04:18 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.1
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[redhat.com,purestorage.com,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-12886-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tpluszz77@gmail.com,io-uring@vger.kernel.org];
+	RCPT_COUNT_TWO(0.00)[2];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	TAGGED_FROM(0.00)[bounces-12887-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[io-uring];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_FIVE(0.00)[6];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 773AB353243
+	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6DB75353EC3
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-validate_fixed_range() admits buf_addr at the exact end of the
-registered region when len is zero, because the check uses strict
-greater-than (buf_end > imu->ubuf + imu->len).  io_import_fixed()
-then computes offset == imu->len, which causes the bvec skip logic
-to advance past the last bio_vec entry and read bv_offset from
-out-of-bounds slab memory.
 
-Return early from io_import_fixed() when len is zero.  A zero-length
-import has no data to transfer and should not walk the bvec array
-at all.
+On Sun, 29 Mar 2026 23:39:09 +0800, Junxi Qian wrote:
+> sqe->len is __u32 but gets stored into sr->len which is int. When
+> userspace passes sqe->len values exceeding INT_MAX (e.g. 0xFFFFFFFF),
+> sr->len overflows to a negative value. This negative value propagates
+> through the bundle recv/send path:
+> 
+>   1. io_recv(): sel.val = sr->len (ssize_t gets -1)
+>   2. io_recv_buf_select(): arg.max_len = sel->val (size_t gets
+>      0xFFFFFFFFFFFFFFFF)
+>   3. io_ring_buffers_peek(): buf->len is not clamped because max_len
+>      is astronomically large
+>   4. iov[].iov_len = 0xFFFFFFFF flows into io_bundle_nbufs()
+>   5. io_bundle_nbufs(): min_t(int, 0xFFFFFFFF, ret) yields -1,
+>      causing ret to increase instead of decrease, creating an
+>      infinite loop that reads past the allocated iov[] array
+> 
+> [...]
 
-  BUG: KASAN: slab-out-of-bounds in io_import_reg_buf+0x697/0x7f0
-  Read of size 4 at addr ffff888002bcc254 by task poc/103
-  Call Trace:
-   io_import_reg_buf+0x697/0x7f0
-   io_write_fixed+0xd9/0x250
-   __io_issue_sqe+0xad/0x710
-   io_issue_sqe+0x7d/0x1100
-   io_submit_sqes+0x86a/0x23c0
-   __do_sys_io_uring_enter+0xa98/0x1590
-  Allocated by task 103:
-  The buggy address is located 12 bytes to the right of
-   allocated 584-byte region [ffff888002bcc000, ffff888002bcc248)
+Applied, thanks!
 
-Fixes: 8622b20f23ed ("io_uring: add validate_fixed_range() for validate fixed buffer")
-Signed-off-by: Qi Tang <tpluszz77@gmail.com>
----
- io_uring/rsrc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+[1/1] io_uring/net: fix slab-out-of-bounds read in io_bundle_nbufs()
+      commit: b948f9d5d3057b01188e36664e7c7604d1c8ecb5
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 4fa59bf89bba..1b96ab5e98c9 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1061,6 +1061,10 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
- 		return ret;
- 	if (!(imu->dir & (1 << ddir)))
- 		return -EFAULT;
-+	if (unlikely(!len)) {
-+		iov_iter_bvec(iter, ddir, NULL, 0, 0);
-+		return 0;
-+	}
- 
- 	offset = buf_addr - imu->ubuf;
- 
+Best regards,
 -- 
-2.43.0
+Jens Axboe
+
+
 
 

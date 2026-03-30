@@ -1,229 +1,322 @@
-Return-Path: <io-uring+bounces-12889-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12890-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OKlRHV+nymmx+gUAu9opvQ
-	(envelope-from <io-uring+bounces-12889-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 18:39:59 +0200
+	id oEqrDwiyymkX/QUAu9opvQ
+	(envelope-from <io-uring+bounces-12890-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 19:25:28 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DDD35EED8
-	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 18:39:58 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71A035F46E
+	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 19:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 92FA2300F798
-	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 16:36:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E9732300C262
+	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2026 17:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814A1385520;
-	Mon, 30 Mar 2026 16:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181983DC4AA;
+	Mon, 30 Mar 2026 17:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuClYAyk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXT4iWcN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F227F22156C
-	for <io-uring@vger.kernel.org>; Mon, 30 Mar 2026 16:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774888592; cv=pass; b=QopeDs3V5/refXHatIqh346Al62D+5JZUIICULI/mhcihsGZ5A0RBuWk7PPtrsVZmBm6ve+dGQ8RmzWHHyagW5+d5QQVb1vqc7oxRBWBiMxPXzLtpLF8aiUsD6Y+YfDYaAF6HHrJ6l/L9z6dVPzO4gKLIbDANJcOacxBnc52tDY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774888592; c=relaxed/simple;
-	bh=lRpmBzbJ2y3v5I1vQVYUfVMZX2Rhzu2Tqeud3CF/U1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5JXHrDRF7Vn+evhB+4tPGh9ku6yRdsj6O9fGkupevQ9ExZ0cJCcbuXrDUeSsWy9KEXJynOhXzS8xb0CdouKNs+AFItAIP4s7RbvtUQ4SAV+GtQ4mgWzpvWHxGQW/ZeryeNd9gUxy0XRPwF++nq1XL9luKVnLYGR6jHSwDoopYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuClYAyk; arc=pass smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854653A3E66
+	for <io-uring@vger.kernel.org>; Mon, 30 Mar 2026 17:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774891505; cv=none; b=RREDGczm4FDRHnrUwQx4NcJlIAqjo4itm/PzGquUdJoDendRcxRJC4MyShz7pDlxqDIwJ6JCTOnD8uV7hUz250MXLdoDo8/ri82K25djbWjW3aa5IYznsSpZD4q1eiFhyQULqWys2Z8lLIorSj913SfUybdg8Rtgf6wI0IsizxY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774891505; c=relaxed/simple;
+	bh=ozaZCzcVDbSTnRcnD3mn1RdT6Yp90jK0gApqaNoWI5Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q73eA4EK2Ufg5Yo55bqQnA8FSz/zuq29giJvYne1nntpqcPmEAWone+pWu5bhpsSO2UJvnfNk4aSnSfjFsdSuvLSim6N9+qcD0tNbOu5VcnfZADyJ0/LPbZWZ/0IXY+OqrIctUEIbvxhX7NnQFNkUl1Tm9vNpzAtHKIy8iXtbD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXT4iWcN; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43d04fc3bf2so496484f8f.3
-        for <io-uring@vger.kernel.org>; Mon, 30 Mar 2026 09:36:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774888589; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Ot6nQ/OYsV0LlRxpv+RcABaqIRY0hq3qoETqHz1RffwNXdMxUGKcG3nGvVQOzEiNqI
-         5hjWMYlD/ppwpJ1VVBxCwOWYL6ucM7USKyQFO/0LHJyFlcV2au3nn+gh99zq6ekLSLxQ
-         mFkSQWIJq35UxEAKNkBv+b3ygOaK6bsPaw7OWQmVkG4k8KYKJ9tJQ4Ab1kHNvbL43gFL
-         xFbwXUpBWmod1qWcBKpD487D+nABojPkW2tf0BQ88hoRoMSPW7pm3Q3aJnZiZ6ygiCOM
-         YRlLAGdqQaZEruXzJFKkMboIXzPqqnbrcZ9Tlt6C+O0JnhC5EipXuU+txm3RmqH57MCm
-         OqBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=VKLr+L2TmUFppPid5N5ASUyuTHqufpEapHu+AszqT34=;
-        fh=JXR/kStZc194Ev7V446rqsX5a+IhQVpwu5/22e2wX08=;
-        b=DZq2fmZxsT6oSXpj/VkfYBQAiJM0US1eXU5jd4sm1vp1akODt/fHBuaQXyzTOR3hjp
-         PwrCzxr78LtG1K+KH9xWReZ0ncABUHcleWm/GDvjUCruaubWfjS7qXpKfmOeeLXVaecO
-         EPwk6YvRxiN7QyefPsb0WBMAZzSues9Ywn/vr6/emWiRhX5Epxqo1GUEH288IzK+KvDB
-         9RAwPF69cZ+P6HviYxHEpXOE0hfjGHCtPsUEBG3+if2K80p8XjMCd36hSRijtpRdr075
-         pK/k6521Rb5snToNoi432sVa4jtb0jTotwwvt9Vt2mPHqUHz+HJHm5IAHXInmXxJYkJv
-         MVfA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-35d965648a2so1463506a91.0
+        for <io-uring@vger.kernel.org>; Mon, 30 Mar 2026 10:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774888589; x=1775493389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKLr+L2TmUFppPid5N5ASUyuTHqufpEapHu+AszqT34=;
-        b=XuClYAykKsdrzS7J7FbyL8QaamVpgb/rLcwenXfGPzqpA7PdGjj/z5JkKkoiYrxePh
-         JmoolBuwTpVWJGgaF1uql8ZIRXbW7BTeCSNXSCyAfCrFwUnH5PhlIWNKHWLczwP88agB
-         v7OYhfOqRomsY8E6lbt6vEPeJWqWRqglRC7b+oRFvei5TSXiKF6viphJGz/RO8Rkes7R
-         IXULMbJlGa2vpf+3FosP5MFnEz57zh/+MeNJkhDOcKYUclbj6QvUwC1dhvm2gVN6+EYL
-         hyBg5AS+HzhcXxuXdfqDTISFiihWR8qu/rKLLg4SmY1xQu7ZCvL/Xzhqr5DQq1g6C5+7
-         vPTg==
+        d=gmail.com; s=20251104; t=1774891503; x=1775496303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIkmVEYtUFF3zaelCFShZDvfsnrhTr2rGWhB4Po6xdk=;
+        b=KXT4iWcNlxqaMwcUCzgBOGeTScYxoJHNgpFxX4Ax6mdTwL9KRyWnkGGSychm8IoAy4
+         pk3luOV6hqGNXsUmOenupC+H0Z2/WsqROkikhOsYqhLg7B3au2yDpMt/TQihVc5fpljQ
+         hpI6i/kej+jQ/ij3BuP841aWemWXMcYZT4uKWx5hShXKbkWp9dKWz2s8e4bDAjGQ1l/w
+         u13ltlAQVOjrV67e4Zfdr6raytN9Bm3TUyfdPAeKc0qDLrdBvmWlNPXXpsdKXc9tML2X
+         JM93pW3+ekAgDhaH7xSdRwRqYf0FJKWptnAjRvMUrg4vhSIKj8LkboicJWDZilYlHQbM
+         qQ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774888589; x=1775493389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VKLr+L2TmUFppPid5N5ASUyuTHqufpEapHu+AszqT34=;
-        b=BBIXTLfbZ8rbiNhvQ54JLZ5frG53gbOABPpQb7lO9p0Y01S0aOKr9QSCRjI5M92rkF
-         y5v6uLzKbNV9nyNCcUTerJErOz8w1dsGK2eF5BYGXuRU455YLW8G3SVCXfQhKnCUtTtY
-         cDV/ka7oxC+P07H/T6AxjXS2f/8Chp2hLwgHfH4GpwCJd4IFY8kKvipBwB9fxMEeeeN5
-         HVEzwuwrSpNrSNW7OqM0J62xa6GuPd0O8kaMYEKG5vL04ErpPknl/u8MxJXmClmdRlAg
-         1Lzy+nqp1bMnwV/1SCtwfOIBD8qRXkB11D+I7xivEubRO4IoBXTppyFpUI8GKDmX+SYJ
-         aw0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrHbYtUzs1DBLLaX6n+t8dUcis8Up7vI9uD2Brn9eZyEnCLoMMe3Sw4WEDvbTudwAs6BgUQlNLYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQb8ArnKWO+2kCoo0SCw1noBvSDv9dap7j1IsWYr9gT0X16C16
-	QGEo7bSs4mGU53dLTA4sUpDDmi8KAOLo3/SIgMf1Ocai3KKjYiUtVKx4m2BZtJBHegi86C36c/A
-	LP0ze3GziMiEsVkwAjrTDCHG+tFJky/c=
-X-Gm-Gg: ATEYQzysGLmB3+hkT0Pd3+bKhr3h1J9N07RoU3vpCoQsavbsujZBW++OArqyIGOPw74
-	SS2dOjQrvCZTuX9lFS4kwFPIanwfIKw6KGFc1p//xoA3JJCk151ioNFDmjeaTEueRMKee7AfdlV
-	iG+LKr2VlGd/8chQu6E32wQ8XUzcqjNQQ1Cd6xKOzKR1stQE/XGPA+G7ro780GA6fCX5m+FRqOa
-	d4xACpctOXbNbpwtl4fZk6Sa60hKUbYcr1hEsqux7QaUeBhI/8sjIJNg+UNAm0BiP15tzJcxh08
-	Ph1zVA==
-X-Received: by 2002:a05:6000:2903:b0:43c:ff58:35c7 with SMTP id
- ffacd0b85a97d-43cff583754mr7712708f8f.14.1774888589231; Mon, 30 Mar 2026
- 09:36:29 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1774891503; x=1775496303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gIkmVEYtUFF3zaelCFShZDvfsnrhTr2rGWhB4Po6xdk=;
+        b=Z8eGG5JbzRmofHqFPERGj62vkBDXa4OgNSugrbM+Hss43MLqQ5mz6tBUBV6aYaKkGO
+         xmHOTCZV6iZw+cjgdaknOsP9KBKLZiwoyElbk8/6nossp3yQ30NPYmq5DvGAaRusg5rU
+         8vQS9VJOkd9sjaqKDkTsztDqarol1Wn4PdMRcxNkaLOO2lGwqVZiqQDVlUAEAaIIJt0Y
+         Y2XyUVnx1yhJtA4NeDeFl2QQyrPB3qNxo+CEt04G9P6qAVFcAno0CiQGaCwvRThMJkH8
+         jiPh+YVUFrGLfxTa1MO2Wl0qvIIyBy5PtXSRH0uOTemwE6Za4S353IxaeG+q5SrpZEco
+         LMIg==
+X-Gm-Message-State: AOJu0YxngvRhRfxnrqBaF162cYnFaSC8+3giVcpuoGzR2bmxjnx6dSIk
+	O/fc2lgVjTfSY1RWxB9DFTPRDuT0CGKk/p3MHXPV1WqgpZkLwEGLywSrMyKAkqHP
+X-Gm-Gg: ATEYQzz2iv4cKZZcbANbSXfeTNnuYBr0UqTW47QvEkoM+pj5M3n7z5cW8vGtKdSE6go
+	+9rTmWzGTWpLWE5ARoWd06WTAIQU7ANFs6KhJAnH/FexaFCfderT0JfCYjzG0wlVRSJP6m8XYdg
+	7aOu/junCikVdaTYW9sOJPVoe+R2ybZU1EwEIyRCMRHeVOn2G0XvVm63Vfe8jZlhkKdymghSWZH
+	90Yoye0rfvwZdFQHqI0ITALK7YE9Rt5IWcOtHc6jn1Rjz8fFy9+uUDjWD2NC9ztjVv0H3XSuSbH
+	sjoPdd4GnIAxbf4ahJwXYRqQPyYiUaGDKcR3viJNKI0oQ/kXjby/FCQGa++fVAtPaP/ACxf85ae
+	2XL4UEntPLx3QxabegH8bqAFic2rkCm26PSOKno9cQ0q5GAqOngV0fcPDma4Z3u8mMob04Vw3s2
+	E2hC0Rt+VPbE2MhpfRo4kOmHsIcmUrYuGOPZKCjZk=
+X-Received: by 2002:a17:90a:e705:b0:353:5595:3247 with SMTP id 98e67ed59e1d1-35c2ff618edmr12399990a91.12.1774891502331;
+        Mon, 30 Mar 2026 10:25:02 -0700 (PDT)
+Received: from localhost.localdomain ([183.63.97.217])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c2db0a951sm4203324a91.5.2026.03.30.10.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 10:25:02 -0700 (PDT)
+From: Junxi Qian <qjx1298677004@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk
+Subject: [PATCH] io_uring: protect remaining lockless ctx->rings accesses with RCU
+Date: Tue, 31 Mar 2026 01:23:48 +0800
+Message-Id: <20260330172348.89416-1-qjx1298677004@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306003224.3620942-1-joannelkoong@gmail.com> <177402515458.59192.3003058602103165983.b4-ty@kernel.dk>
-In-Reply-To: <177402515458.59192.3003058602103165983.b4-ty@kernel.dk>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 30 Mar 2026 09:36:17 -0700
-X-Gm-Features: AQROBzAE47q9ygVHrHM_MasNQdhzhlJXWzZn7kJw7EmcefVJHDk_T2k-X-IbTZQ
-Message-ID: <CAJnrk1ZMmRpLc3uPMuD2jcb8J14gZryb7jno5vN4cNE4OXEBXw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] io_uring: add kernel-managed buffer rings
-To: Jens Axboe <axboe@kernel.dk>
-Cc: hch@infradead.org, asml.silence@gmail.com, bernd@bsbernd.com, 
-	csander@purestorage.com, krisman@suse.de, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12889-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12890-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_TWO(0.00)[2];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,bsbernd.com,purestorage.com,suse.de,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[qjx1298677004@gmail.com,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[8];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 76DDD35EED8
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A71A035F46E
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Fri, Mar 20, 2026 at 9:45=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
->
-> On Thu, 05 Mar 2026 16:32:16 -0800, Joanne Koong wrote:
-> > Currently, io_uring buffer rings require the application to allocate an=
-d
-> > manage the backing buffers. This series introduces buffer rings where t=
-he
-> > kernel allocates and manages the buffers on behalf of the application. =
-From
-> > the uapi side, this goes through the pbuf ring interface, through the
-> > IOU_PBUF_RING_KERNEL_MANAGED flag.
-> >
-> > There was a long discussion with Pavel on v1 [1] regarding the design. =
-The
-> > alternatives were to have the buffers allocated and registered through =
-a
-> > memory region or through the registered buffers interface and have fuse
-> > implement ring buffer logic internally outside of io-uring. However, be=
-cause
-> > the buffers need to be contiguous for DMA and some high-performance fus=
-e
-> > servers may need non-fuse io-uring requests to use the buffer ring dire=
-ctly,
-> > v3 keeps the design.
-> >
-> > [...]
->
-> Applied, thanks!
->
-> [1/8] io_uring/kbuf: add support for kernel-managed buffer rings
->       commit: ff168843d80cd1855b646c5e8be2c6aa5bfb8adb
-> [2/8] io_uring/kbuf: support kernel-managed buffer rings in buffer select=
-ion
->       commit: bf4a6eb27f8135f36a5286bd5ba87bf6468c1283
-> [3/8] io_uring/kbuf: add buffer ring pinning/unpinning
->       commit: b6ffe5399bc04abab4da9afb2ba092e6269d7077
-> [4/8] io_uring/kbuf: return buffer id in buffer selection
->       commit: 9aa9e55e8bad1b65c9bcc2892101b06ae00c96d9
-> [5/8] io_uring/kbuf: add recycling for kernel managed buffer rings
->       commit: de48bc0efc58d1ebf7e35c36dde6eb0e6b246b8c
-> [6/8] io_uring/kbuf: add io_uring_is_kmbuf_ring()
->       commit: 08b57b67602a98abf4b454a363263cba9fcfc91f
-> [7/8] io_uring/kbuf: export io_ring_buffer_select()
->       commit: 4706d1f235ff94f19b5c818bc0a3abd735903695
-> [8/8] io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
->       commit: 3515a2aedcdf459fc851df40a3712fc4a9a060f7
+io_register_resize_rings() briefly sets ctx->rings to NULL under
+completion_lock before assigning the new rings and publishing them
+via rcu_assign_pointer(ctx->rings_rcu, ...).  Several code paths
+read ctx->rings without holding any of those locks, leading to a
+NULL pointer dereference if they race with a resize:
 
+  - io_uring_poll()              (VFS poll callback)
+  - io_should_wake()             (waitqueue wake callback)
+  - io_cqring_min_timer_wakeup() (hrtimer callback)
+  - io_cqring_wait()             (called from io_uring_enter)
 
-After reading the io_uring/net.c code and considering how it'll work
-for selected kernel buffers, I don't see a non-hacky way for fuse to
-take advantage of selected buffers for socket receives. I'm realizing
-that it requires too much special casing to make it compatible with
-fuse (eg relying on the bufring being permanently pinned, different
-locking requirements for the bufring for fuse vs. traditional io-uring
-paths since fuse shouldn't contend for the io_uring mutex in the
-request dispatching path). Kernel-managed buffers doesn't tie in as
-nicely as I'd thought with other io-uring requests either. For
-IORING_OP_READ / IORING_OP_WRITE requests, the kernel buffer would
-still need to be placed in a fixed buffer since the sqe unions both
-buf_index and buf_group and I don't see a clean way to route both of
-those fields through without making the uapi worse. One of the
-principal reasons for having kernel-managed ring buffers be part of
-the io-uring infrastructure was so it could be easily integrated with
-other io-uring requests, but I'm realizing this doesn't hold weight. I
-think Pavel was right that it'd be cleaner for io-uring if this logic
-lived inside fuse instead of being part of the io-uring uapi.
+Commit 96189080265e only addressed io_ctx_mark_taskrun() in tw.c.
+Protect the remaining sites by reading ctx->rings_rcu under
+rcu_read_lock() (via guard(rcu)/scoped_guard(rcu)) and treating a
+NULL rings as "no data available / force re-evaluation".
 
-Jens, could you drop this patchset from the for-7.1 tree? I'm going to
-move this logic into fuse instead.
+Fixes: 79cfe9e59c2a ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
+Cc: stable@vger.kernel.org
+Signed-off-by: Junxi Qian <qjx1298677004@gmail.com>
+---
+I'm not entirely sure this is the best approach for all the affected
+call sites -- I'd appreciate any feedback or suggestions on whether
+this looks reasonable.
+---
+ io_uring/io_uring.c | 17 +++++++++---
+ io_uring/io_uring.h |  9 ++++++-
+ io_uring/wait.c     | 63 +++++++++++++++++++++++++++++++++------------
+ 3 files changed, 69 insertions(+), 20 deletions(-)
 
-Thanks,
-Joanne
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 9a37035e7..98029b039 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2240,6 +2240,7 @@ __cold void io_activate_pollwq(struct io_ring_ctx *ctx)
+ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+ {
+ 	struct io_ring_ctx *ctx = file->private_data;
++	struct io_rings *rings;
+ 	__poll_t mask = 0;
+ 
+ 	if (unlikely(!ctx->poll_activated))
+@@ -2250,7 +2251,17 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+ 	 */
+ 	poll_wait(file, &ctx->poll_wq, wait);
+ 
+-	if (!io_sqring_full(ctx))
++	/*
++	 * Use the RCU-protected rings pointer to be safe against
++	 * concurrent ring resizing, which briefly NULLs ctx->rings.
++	 */
++	guard(rcu)();
++	rings = rcu_dereference(ctx->rings_rcu);
++	if (unlikely(!rings))
++		return 0;
++
++	if (READ_ONCE(rings->sq.tail) - READ_ONCE(rings->sq.head) !=
++							ctx->sq_entries)
+ 		mask |= EPOLLOUT | EPOLLWRNORM;
+ 
+ 	/*
+@@ -2266,8 +2277,8 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+ 	 * Users may get EPOLLIN meanwhile seeing nothing in cqring, this
+ 	 * pushes them to do the flush.
+ 	 */
+-
+-	if (__io_cqring_events_user(ctx) || io_has_work(ctx))
++	if (READ_ONCE(rings->cq.tail) != READ_ONCE(rings->cq.head) ||
++	    io_has_work(ctx))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 
+ 	return mask;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 0fa844faf..ea953f2c7 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -145,7 +145,14 @@ struct io_wait_queue {
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
+ {
+ 	struct io_ring_ctx *ctx = iowq->ctx;
+-	int dist = READ_ONCE(ctx->rings->cq.tail) - (int) iowq->cq_tail;
++	struct io_rings *rings;
++	int dist;
++
++	guard(rcu)();
++	rings = rcu_dereference(ctx->rings_rcu);
++	if (unlikely(!rings))
++		return true;
++	dist = READ_ONCE(rings->cq.tail) - (int) iowq->cq_tail;
+ 
+ 	/*
+ 	 * Wake up if we have enough events, or if a timeout occurred since we
+diff --git a/io_uring/wait.c b/io_uring/wait.c
+index 0581cadf2..af25f8f16 100644
+--- a/io_uring/wait.c
++++ b/io_uring/wait.c
+@@ -78,12 +78,20 @@ static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+ 	/* work we may need to run, wake function will see if we need to wake */
+ 	if (io_has_work(ctx))
+ 		goto out_wake;
+-	/* got events since we started waiting, min timeout is done */
+-	if (iowq->cq_min_tail != READ_ONCE(ctx->rings->cq.tail))
+-		goto out_wake;
+-	/* if we have any events and min timeout expired, we're done */
+-	if (io_cqring_events(ctx))
+-		goto out_wake;
++
++	scoped_guard(rcu) {
++		struct io_rings *rings = rcu_dereference(ctx->rings_rcu);
++
++		if (!rings)
++			goto out_wake;
++		/* got events since we started waiting, min timeout is done */
++		if (iowq->cq_min_tail != READ_ONCE(rings->cq.tail))
++			goto out_wake;
++		/* if we have any events and min timeout expired, we're done */
++		smp_rmb();
++		if (ctx->cached_cq_tail != READ_ONCE(rings->cq.head))
++			goto out_wake;
++	}
+ 
+ 	/*
+ 	 * If using deferred task_work running and application is waiting on
+@@ -186,7 +194,7 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 		   struct ext_arg *ext_arg)
+ {
+ 	struct io_wait_queue iowq;
+-	struct io_rings *rings = ctx->rings;
++	struct io_rings *rings;
+ 	ktime_t start_time;
+ 	int ret;
+ 
+@@ -201,15 +209,27 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 
+ 	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq)))
+ 		io_cqring_do_overflow_flush(ctx);
+-	if (__io_cqring_events_user(ctx) >= min_events)
+-		return 0;
+ 
+ 	init_waitqueue_func_entry(&iowq.wq, io_wake_function);
+ 	iowq.wq.private = current;
+ 	INIT_LIST_HEAD(&iowq.wq.entry);
+ 	iowq.ctx = ctx;
+-	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
+-	iowq.cq_min_tail = READ_ONCE(ctx->rings->cq.tail);
++
++	scoped_guard(rcu) {
++		rings = rcu_dereference(ctx->rings_rcu);
++		if (rings) {
++			if (READ_ONCE(rings->cq.tail) -
++			    READ_ONCE(rings->cq.head) >=
++					(unsigned int)min_events)
++				return 0;
++			iowq.cq_tail = READ_ONCE(rings->cq.head) +
++							min_events;
++			iowq.cq_min_tail = READ_ONCE(rings->cq.tail);
++		} else {
++			iowq.cq_tail = min_events;
++			iowq.cq_min_tail = 0;
++		}
++	}
+ 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
+ 	iowq.hit_timeout = 0;
+ 	iowq.min_timeout = ext_arg->min_time;
+@@ -243,11 +263,16 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 		int nr_wait;
+ 
+ 		/* if min timeout has been hit, don't reset wait count */
+-		if (!iowq.hit_timeout)
+-			nr_wait = (int) iowq.cq_tail -
+-					READ_ONCE(ctx->rings->cq.tail);
+-		else
++		if (!iowq.hit_timeout) {
++			scoped_guard(rcu) {
++				rings = rcu_dereference(ctx->rings_rcu);
++				nr_wait = rings ?
++					(int) iowq.cq_tail -
++					  READ_ONCE(rings->cq.tail) : 1;
++			}
++		} else {
+ 			nr_wait = 1;
++		}
+ 
+ 		if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+ 			atomic_set(&ctx->cq_wait_nr, nr_wait);
+@@ -304,5 +329,11 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 		finish_wait(&ctx->cq_wait, &iowq.wq);
+ 	restore_saved_sigmask_unless(ret == -EINTR);
+ 
+-	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
++	scoped_guard(rcu) {
++		rings = rcu_dereference(ctx->rings_rcu);
++		if (rings &&
++		    READ_ONCE(rings->cq.head) != READ_ONCE(rings->cq.tail))
++			ret = 0;
++	}
++	return ret;
+ }
+-- 
+2.34.1
 
->
-> Best regards,
-> --
-> Jens Axboe
->
->
->
 

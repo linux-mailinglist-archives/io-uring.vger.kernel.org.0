@@ -1,88 +1,92 @@
-Return-Path: <io-uring+bounces-12901-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12902-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4LJZLCI4zGn7RQYAu9opvQ
-	(envelope-from <io-uring+bounces-12901-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 23:09:54 +0200
+	id WCpGKC84zGn7RQYAu9opvQ
+	(envelope-from <io-uring+bounces-12902-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 23:10:07 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B4D371648
-	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 23:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E40A371667
+	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 23:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id DE9AE3026D38
-	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 21:07:44 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 8C5043029673
+	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2026 21:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003D4401A0A;
-	Tue, 31 Mar 2026 21:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FA243C07E;
+	Tue, 31 Mar 2026 21:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7jTPJeV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUNxUdgr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31703F788C
-	for <io-uring@vger.kernel.org>; Tue, 31 Mar 2026 21:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C83F787B
+	for <io-uring@vger.kernel.org>; Tue, 31 Mar 2026 21:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774991257; cv=none; b=BJd6nJPwFp24Gi5jIYhWLoqUACSLf4twm6vVbEuKhX7zNZu7nk+MVAL0V2idADcKmMGbuO+nBZROSWcSUQWyWFFzyqSRo2fq7s6yfI1OexphDYo+CzWd98Xnv//PsqwIZjizaGHKKqLFOaAj3Ua207uAPOxfxR/pZE2kEdLdH/I=
+	t=1774991259; cv=none; b=FIXRpqsoi1RblrMYoJyQ+h6avOy6jNi2C792o+MKpRCxbi8mlqtGOzDEnrR0uq6JNvKbBY9dvrqKHU+AKltzs/qNFNViKBH7GR4OEmhCAT/E3Qojq0n2p+YdjJCAzMgnALB3YP+j4AIzbln+aJ47UjhDCjnWI04dQmr26UQlMlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774991257; c=relaxed/simple;
-	bh=CeGlRCs7IM01/a/Kg5gDCFAH29SjhOjsTar/dGLyF3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=crNe/AmexWGt5akSH4Dmm6/TAmOeNYm0K03z72eGgqZSvpGp9PW8icBftEIgMWNlzCNJiEYQAE81PMaamzx23u3Ca3PhFtuovcdkJ7D5FrtNvkFwSn41xfnXuKW2XINABhf1iHny3qUmOXThAFtrj4T1IrpsBImtyg+fe/yFPdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7jTPJeV; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1774991259; c=relaxed/simple;
+	bh=4x8RsRYHSVJ6BDghnxivghnDNMxFRg7y5DdK7gpMJIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TTnYb1iwKlTyFzXIVenDhVrzqoYSKN+TYn7CxOMOQ6tLhxsKZl4TMAMvP6Xn4u3wXUeTXP5jCD454HEFSPDazRSHl743aYt4wNLmXhJkwB1iSwdbR9vb+jCWqfxBIXsKNFDuJyQdWMx16byURR1P4XIXLJGh+UtV/AjOTtakCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUNxUdgr; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43cfbd17589so2777020f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 31 Mar 2026 14:07:36 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso52696565e9.3
+        for <io-uring@vger.kernel.org>; Tue, 31 Mar 2026 14:07:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1774991255; x=1775596055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6xiV/Md8AP840O0O8l5DFejlK6PlJBQPDkc7TZ0VxM=;
-        b=b7jTPJeVb4duFHiEvw3WdOj1tO9hTskE0pGZ8ZRzS8hokoPHmIZAYfnsMTHxOoHa4i
-         dN9BAoWNJW2+vcJOd40exDKsbSW4/K3KavDLUxDYX9wRLM4mq3/3XxhhmC90G8MOccKq
-         iGU0oBGyfaJouqaSFlTbUgaP6Ech2bkBF4yOGxT/1vF+K3ta6QXnwsRJFiJ6jHPh1p4o
-         xJblxVprpjuqTfYEE4TuKfy+QvSnNwUdFnQy1YLVm5sBrLMKJn7Ir+KLWrYe6MabqBl9
-         Zl92TtSymgjphTwnLm7b8vwdm6G1Ubtl/RmNkG5nzNBvuyE2LJxOBUN6CF9/lkZEcv3A
-         IFgg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZY44Vz+RRtLvJFlfTuASn8GA5yb2+/RMxxe6l4LE5sw=;
+        b=dUNxUdgrS5+lK9Txe5EQtd34gvR7ys8FpMt38ovIQtYF76StCu96os33BJnq2Kdu5r
+         hZ2AqpZWcUPEUaQ2cGAGB75oiClVjzFo8o/AfI3HKi9F+CfaRHtsiAwzq+nZFG45Ch0X
+         ik1sqHYW0jIuVTybMfO8ERHdk/GNIjEYpU9Xi1U2HmROicxJczk8PXkIqjVintia8YCG
+         MSCRaI3W+/yy15FI3KZK3Nze5eCDYYRz2CF1M8m9T8SijOwClhjAVgnG7x30xV9ylffH
+         OJlVcAXyZSlLM6cvv7pwHmj/dkyAa2AGb1bWW+Cs7NBHcuUfmHjZExu0FZP8KiEsrFXc
+         HuMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1774991255; x=1775596055;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6xiV/Md8AP840O0O8l5DFejlK6PlJBQPDkc7TZ0VxM=;
-        b=fXamRAL/k4vdj7eUzBjP2/B/JyU/Stv+/BmPe8h9WOqTQrUGMf4IH+aoInBUZkPRKC
-         dqav1EMk/4lYw4jfcHXlDXY9KIIq/A7kiKc6+MdXoahVOIommRyvETQZVm85mGuUO1tJ
-         gMoWFsqb82J4E+yypMCL3k7SB5+8W37+nToA6/fTRjXIIvRfSV1qMfsefOr65q+C6IQo
-         Tar97/VW8D+9HGO5GB9xg35FLLnQ9zmdmTWb1+2OdSJNc4X0WN2P6RpXcaeyAxui5uj+
-         lpSZc9Y2yC3WUc2uK8RwKBq7gGGBsWJnP0jv351WzK3gPyjYEgjFsxDafs1xsccO+grp
-         LDiw==
-X-Gm-Message-State: AOJu0YwXUMVfXYs7KRejrDi+BMWhsUPw5l3LVXCXrcyqAw2geliOpIJR
-	Ygj75bMxWooJULDry4QEKKGb6/Uc5kGBX5mW0n1i50KFAAqV2FuDV1ULy+ilRw==
-X-Gm-Gg: ATEYQzyPfxmUaOrrhPzULbgc5LpA4ZzTKF7qIDfiHTRY6qrXFcyFXpdjUmS6Z3fsE4N
-	YcyuyBc6vi3NA/dgz5CWCzuckPgDrCCpnBYG4/H6a66vQu1WzyN2wTB3SCjz4OJo/YXyrpKS8rU
-	q+qmZnP8gvN69gI4r0pgYsb4kfQMevzcsV/E7Oeeg5mxliKfU0QRExuKYnt0MZlw1E2vLbYql8v
-	43ArgSArxXnlZD4hg/UyR/xVTblXf4knDU60PM4HGqdFynGvtmaTG4m40vaVKu512ZOatgnFylB
-	kUZkdkJX9ONLgheFk4n35q69BD52s5G+caYmbjTQ7W45wKbQ+8eQ15NfPIC1vugHovIUnrpJ5FG
-	rNblpHDyHCrOGWEJFJApEIAi9PyQ2ep+MrQGlEsPy+xOByLFLAMBDN/daH0avj/OGJNqSC2lhjr
-	8g6uc57dEwM6OtHlfQGfdZFxMuJ3+rSjdMyAlKSqCqcr4OEl7sWjLv05O3ecdMbEXbzRfoptKzL
-	AbDtkgJSwUMvg3bd3ArDTRtQIBumg==
-X-Received: by 2002:a5d:5d0f:0:b0:439:d8cc:3626 with SMTP id ffacd0b85a97d-43d15105668mr1988984f8f.48.1774991254538;
-        Tue, 31 Mar 2026 14:07:34 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZY44Vz+RRtLvJFlfTuASn8GA5yb2+/RMxxe6l4LE5sw=;
+        b=lUwl23LCM/FIh1+/jOxOkW2rcGyj9Twis03+r+5vBTHHOHJjf4RI6ZL1af6HogZSGA
+         03AzX5WQvrxKqfGsGatLTPYzrJwk2ru/F5LDZf+mrJbuqY4cY7YUBGkNj5s1aNY8tUPN
+         Or2q2dV+61ldAPHcvcrGp5r/nKiU0CAxwm9y89LU6n/S7WH2ZOBeRioPxVW0OtbaHdV4
+         mxY6AX3uFHLHjWaA/DXUoMxH03XEFSLGRcezRyQBOXGa9aDsWvy0phm+RmFZxNy2MyFo
+         vfdBTqgaIdQqOQITYmEsBGPugDQuqj/u4bvro0wyDAGqkhWC7T5dugnEUH4Y3UqoLYfT
+         vToQ==
+X-Gm-Message-State: AOJu0Yzu8ynhIKqUJ/eH3WoGFokm1Ilfgym7uo1/5yi2Meg8AjnzzeWE
+	ONL4gr7i5AtUpA+/Dq848aIxmMmIVorNGfduS/Z75spK8WEkHkOkJ7iVzkPMJQ==
+X-Gm-Gg: ATEYQzwXTMCL5XhSLugOBLu9kTe34sS5wk4j43cxFZd1+ImRkrVYJpnv87FoMnHUbrv
+	jaoKWiYcdyO+iY7iU02QDLXX3MZbQUHk1FtTEWGVbhqgbph4pOTSolUKLQjRQY7o9ZTewL6mzGL
+	7VtdgQucXK92laGdv/cF+1UzzYdS2/N1I8FRTniPHSF/ar747Xu2rwFpOhv0Yx8q976bEBvrOoV
+	OUQIZSx6ggWx8u108y07JeDY/5Xt0urCAmhQsORg8in4la7XgAWwv200NJGwVlC8QYSgHXuDQ6q
+	Xq/FI+g8rHBP+GUTo4x+wMTBwC0WCzYGM16uisVV+LJR2ck3IzGCbv0ySzyodHozU6bkSXzgv45
+	+2G4Mhxoc4vvm6wXs1i+Q/gTDuR8hkddWA0Kb77mGdkdSBmJx+/MRubhEi+H2zPTKiSSX+Frdzx
+	934oRRK+HbAUFu6Asghn9spK8KLhyzGsoGagASXYARr6RXCrJBPAnmcUON5ikAxUYFzTIsXqOtA
+	CktS5ULJzFB/qICyKh241cX+0VIrA==
+X-Received: by 2002:a05:600c:354a:b0:485:3dfc:569 with SMTP id 5b1f17b1804b1-48883591d7amr14749635e9.16.1774991255327;
+        Tue, 31 Mar 2026 14:07:35 -0700 (PDT)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf2570b18sm32431393f8f.31.2026.03.31.14.07.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf2570b18sm32431393f8f.31.2026.03.31.14.07.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2026 14:07:33 -0700 (PDT)
+        Tue, 31 Mar 2026 14:07:34 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	axboe@kernel.dk,
 	netdev@vger.kernel.org
-Subject: [PATCH io_uring-7.1 v3 0/6] follow up zcrx fixes
-Date: Tue, 31 Mar 2026 22:07:37 +0100
-Message-ID: <cover.1774780198.git.asml.silence@gmail.com>
+Subject: [PATCH io_uring-7.1 v3 1/6] io_uring/zcrx: reject REG_NODEV with large rx_buf_size
+Date: Tue, 31 Mar 2026 22:07:38 +0100
+Message-ID: <3e7652d9c27f8ac5d2b141e3af47971f2771fb05.1774780198.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <cover.1774780198.git.asml.silence@gmail.com>
+References: <cover.1774780198.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -101,7 +105,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-12901-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-12902-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org];
@@ -119,28 +123,44 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 83B4D371648
+X-Rspamd-Queue-Id: 8E40A371667
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Follow up fixes for the recent update flagged by review.
+The copy fallback path doesn't care about the actual niov size and only
+uses first PAGE_SIZE bytes, and any additional space will be wasted.
+Since ZCRX_REG_NODEV solely relies on the copy path, it doesn't make
+sense to support non-standard rx_buf_len. Reject it for now, and
+re-enable once improved.
 
-v3: include the mmap_offset cast patch from Anas
-v2: reject REG_NODEV + ->rx_buf_size
+Fixes: c11728021d5cd ("io_uring/zcrx: implement device-less mode for zcrx")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/zcrx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Anas Iqbal (1):
-  io_uring: cast id to u64 before shifting in io_allocate_rbuf_ring()
-
-Pavel Begunkov (5):
-  io_uring/zcrx: reject REG_NODEV with large rx_buf_size
-  io_uring/zcrx: don't use mark0 for allocating xarray
-  io_uring/zcrx: don't clear not allocated niovs
-  io_uring/zcrx: use dma_len for chunk size calculation
-  io_uring/zcrx: use correct mmap off constants
-
- io_uring/zcrx.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index f94f74d0f566..1ce867c68446 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -449,6 +449,8 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 			return -EINVAL;
+ 		buf_size_shift = ilog2(reg->rx_buf_len);
+ 	}
++	if (!ifq->dev && buf_size_shift != PAGE_SHIFT)
++		return -EOPNOTSUPP;
+ 
+ 	ret = -ENOMEM;
+ 	area = kzalloc_obj(*area);
+@@ -462,7 +464,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 	if (ifq->dev)
+ 		area->is_mapped = true;
+ 
+-	if (buf_size_shift > io_area_max_shift(&area->mem)) {
++	if (ifq->dev && buf_size_shift > io_area_max_shift(&area->mem)) {
+ 		ret = -ERANGE;
+ 		goto err;
+ 	}
 -- 
 2.53.0
 

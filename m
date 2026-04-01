@@ -1,178 +1,147 @@
-Return-Path: <io-uring+bounces-12925-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12926-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cHBMHiRYzWk5cAYAu9opvQ
-	(envelope-from <io-uring+bounces-12925-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 01 Apr 2026 19:38:44 +0200
+	id +FbqOW9dzWkRcQYAu9opvQ
+	(envelope-from <io-uring+bounces-12926-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 01 Apr 2026 20:01:19 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAED37EBA2
-	for <lists+io-uring@lfdr.de>; Wed, 01 Apr 2026 19:38:43 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1826A37EF57
+	for <lists+io-uring@lfdr.de>; Wed, 01 Apr 2026 20:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CC6FB300340B
-	for <lists+io-uring@lfdr.de>; Wed,  1 Apr 2026 17:36:07 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0698530CE721
+	for <lists+io-uring@lfdr.de>; Wed,  1 Apr 2026 17:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900347DD46;
-	Wed,  1 Apr 2026 17:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6415A478E2C;
+	Wed,  1 Apr 2026 17:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHVSJWgj"
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="oDuLf1ZQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D352F9984
-	for <io-uring@vger.kernel.org>; Wed,  1 Apr 2026 17:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0F71D7E41;
+	Wed,  1 Apr 2026 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775064965; cv=none; b=k88hrskOLEzkyCGiY+nSCwMavGW1tULocyrfFOZoHMNPl3lpVBHpPblgfUhi1ELqbU6+eIU96G2zndan6o34twRm8nDdNZdnmuMBMQITG9e+arJRBWbfOVFo1ckhx+UVkMNN5kqtspTvs1CiURXIzC6sVZHgRfSweQ++cLAmV+w=
+	t=1775065426; cv=none; b=bPT4FZvrtarqmbPGi0zVbZ6cOE+PKrxhX97Jf9/wtMLy7EQTDn8iFXkw0rWO0K2OdoqktndvKrKYkuLpibguNkuKVvTVovS0Ut+9tuNXYVCXDYS0qrTdd9Cw7XF0Y1AAnJbDfm3etD9gV9YMhIzs3knQ8pWF/0us9blAnq/YAF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775064965; c=relaxed/simple;
-	bh=eLSBqH1oYyfQDf8diiLGJZcIZg5SpaWLPTXV+wGFx9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BvxhYyBGkaTrd5MxfVes+Itnsf8e/3rXgL6Qe7v8vA7G2fbTLy5leao2bLiaokQ+ici05sXEH4x20hPTn8hh4KkaehzoLwUFQOkzSnnLwGPg49j/WrAhg3fLIPECILUTda76kbLB03SNQI07QduYwyJw0JyllAjJzGsPOKZ2S8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHVSJWgj; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c736261ee8dso2605873a12.1
-        for <io-uring@vger.kernel.org>; Wed, 01 Apr 2026 10:36:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775064963; x=1775669763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IF6/5nQ4kVW9vaC6CpwG50My/JJfeN+FrBUv9tEDJUc=;
-        b=RHVSJWgjVRrMj95mKZ8tkjug4Myfj0USRVg2L41e+ju3gr13+l9MJ5sr4D6F3F/nQL
-         1p8uzllo3xaXjIJs5fbFB5eB12njrZxN72IwUbHQqs9cnqQ2vxnaY5OG70lRFqgNMLAD
-         kBSO5KBKINKrv2NGFeiXfjfhkZ4LNkXdVwFijU2xXb7w8/V9FHH0ni61OUjUEmpHTZBB
-         864n7AlAZrRnjKMgulWqAQ9TOVXJojdpKLsudGQUj7rudoKbpiBb1iAPMwf3B24GVZgQ
-         ecflzx4piebqiB4Pn9+18GrRcpsA8Zt0HbkkloM1nvGhvMBOk+NKHeoKPemvDrQoCNtG
-         NQUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775064963; x=1775669763;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IF6/5nQ4kVW9vaC6CpwG50My/JJfeN+FrBUv9tEDJUc=;
-        b=PYpnFSn+QKYd4ntOGfSpRMrD3nTEP6OSBMhHNVbggFtDvVgznrpU219U1IGgU1ijSU
-         wDQST/IaA6UxpBFjw3vKczgBKJE52rIbjBGEK7EwyZaCdgu50rZArW3/diL6cC7iISd5
-         Ua7fjkue9+Mm18Y7yKn+sR3V2kM/hEtuj4EQd5StenBaf7TIpXdh2Yb+LOYbo3OSeh9Y
-         CflKVBkSAhACfLNf89u+MfVJOivEIQ1mh2znCm20m9YPdeJbxlHTzxj0eNQ3BaM+iRAX
-         hlonqgyfQlUcgH0pfm6wf/9g1mbBMpIdJmyTDEI/mCllgsEEwxt6BzpoD+zhiU4vvdie
-         SQaA==
-X-Gm-Message-State: AOJu0YxZGgHHteHraXX9mMtSQ9BobO5GoPaUxsXCt7DynvzdAVXqZ5Fe
-	U0DGVLxSwH0m6JcxKtnT4uogqAQTtGL53E7cwM8TRI75DNywhX3EosC+uVsdlw==
-X-Gm-Gg: ATEYQzwp8x1WiCI28HcMo3pDrHJ0JLStHoh7nlMWPYRGQ/pivIDsCm9SgJP4b21YTUP
-	qLu5njQzL36J8lbIEbecg1De7f5vb9xx3c77yCUSWe7YGGpt7yoaNtsrHew3kDftos/n3Lt9CUR
-	ruWCenErY8hqtrZMYJiIFZQ04k2dvFfM4zvlC8b5uIJ6JPRe2pgxDNV4kHVIcvEtXtBGGcW6AMA
-	PZz0OsJmbeMjhFkziM/oXHdM4+kEJNNbOAZFT8zQqTXR/QjxuvvpuAeer9mcFBFOhOci6CWmBEe
-	wU4rn/m5MhrYih4+koFVIhTJlskusBy1xK84PEyptYZdjbJqtJvaUPAw46aC3z6t90XoQbd+Scz
-	tn4W6sz6FTnxfcUm4lgVVCbxthjzotmGEWhAqTCCGL3CmyYLxre2r+KnMY7htktxXXku1OZpTHh
-	VXkSN64f2l0Wm29yoKOA==
-X-Received: by 2002:a05:6a20:11a7:b0:39e:f994:f681 with SMTP id adf61e73a8af0-39ef99502c9mr3058337637.0.1775064963119;
-        Wed, 01 Apr 2026 10:36:03 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:46::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c76c6372078sm501410a12.0.2026.04.01.10.36.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 10:36:02 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org
-Subject: [PATCH v1] io_uring/rw: clean up __io_read() obsolete comment and early returns
-Date: Wed,  1 Apr 2026 10:35:11 -0700
-Message-ID: <20260401173511.4052303-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1775065426; c=relaxed/simple;
+	bh=jf/+fqzmXNiUBaLm7xRsAlJNstHg9Cqyf+RSomUr0h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upvwUjEod+fieV078i0fRro9qspm0UxwGS9fAKVqifOrTwXYTlXFA1UMEXccWM/968XvifbPp01zq78PFW0FbSRgGbv4lkI5+q5gfO89NijF2ninezLhAHfw88mK+Xvc06Z2fIx5deUhpZAGSlDqUeOF++UEVqc+SkE7ksg/7o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=oDuLf1ZQ; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gDvOqA3KegP64c2/sDFkov6sRayaEdrePMAGlwCEHm8=; b=oDuLf1ZQtZDyyybFJbzqYety9Z
+	9/ya58lJZKD2xLRf9HfIz5Y6bRXU2tEmPrBaGgZBnq/CKfP6VjEXokgKwQqA16MPZvRXZC6V9D69x
+	vIOhE2PvvF2+FGKMOJA3Iv4oZdnenA6Op8CuyPj5vHiC6VdO+Uz1690aDjC1q3tIBdakZRztojkwP
+	70vMqbI498ud0HOvzJlzR4WOqO4iCasWfRr0QSP+NcKla81pYffBSqrY+UrwMfJ06LHHkYzYsJ1dA
+	7te7o3LaeaTdrH++RxN0c6pCVf/MXWHi/ggnDS1p8ca7kYK2i9oXCuC0hlUHuI/6iFuMzN9jVmy6X
+	eTrYm98w==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1w7zbI-0039mm-2z;
+	Wed, 01 Apr 2026 17:43:31 +0000
+Date: Wed, 1 Apr 2026 10:43:26 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, metze@samba.org, 
+	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>, io-uring@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 2/4] net: call getsockopt_iter if available
+Message-ID: <ac1Pzt4tpt73SkC6@gmail.com>
+References: <20260401-getsockopt-v2-0-611df6771aff@debian.org>
+ <20260401-getsockopt-v2-2-611df6771aff@debian.org>
+ <ac1I_CMr43XTpvHj@mini-arch>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac1I_CMr43XTpvHj@mini-arch>
+X-Debian-User: leitao
 X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_RHS_MATCH_TO(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_FROM(0.00)[bounces-12925-lists,io-uring=lfdr.de];
-	RCPT_COUNT_TWO(0.00)[2];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_NA(0.00)[debian.org];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-12926-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[debian.org:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EBAED37EBA2
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1826A37EF57
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-After commit a9165b83c193 ("io_uring/rw: always setup io_async_rw for
-read/write requests") which moved the iovec allocation into the prep
-path and stores it in req->async_data where it now gets freed as part of
-the request lifecycle, this comment is now outdated.
+On Wed, Apr 01, 2026 at 09:34:04AM -0700, Stanislav Fomichev wrote:
+> > +static int do_sock_getsockopt_iter(struct socket *sock,
+> > +				   const struct proto_ops *ops, int level,
+> > +				   int optname, sockptr_t optval,
+> > +				   sockptr_t optlen)
+>
+> If we want to eventually remove sockptr_t, why not make this new handler
+> work with iov_iters from the beginning? The callers can have some new temporary
+> sockptr_to_iter() or something?
 
-Remove it and clean up the goto as well.
+The goal is to eliminate __user memory from the callbacks entirely, which
+would make sockptr_t unnecessary. This series removes the callbacks that
+originally necessitated sockptr_t's existence.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- io_uring/rw.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Therefore, working from the callbacks back to userspace seem to be a more
+logical approach than replacing the middle layers of the implementation,
+and then touching the callbacks.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 046f76a71b9c..20654deff84d 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -962,13 +962,13 @@ static int __io_read(struct io_kiocb *req, struct io_br_sel *sel,
- 	if (ret == -EAGAIN) {
- 		/* If we can poll, just do that. */
- 		if (io_file_can_poll(req))
--			return -EAGAIN;
-+			return ret;
- 		/* IOPOLL retry should happen for io-wq threads */
- 		if (!force_nonblock && !(req->flags & REQ_F_IOPOLL))
--			goto done;
-+			return ret;
- 		/* no retry on NONBLOCK nor RWF_NOWAIT */
- 		if (req->flags & REQ_F_NOWAIT)
--			goto done;
-+			return ret;
- 		ret = 0;
- 	} else if (ret == -EIOCBQUEUED) {
- 		return IOU_ISSUE_SKIP_COMPLETE;
-@@ -976,7 +976,7 @@ static int __io_read(struct io_kiocb *req, struct io_br_sel *sel,
- 		   (req->flags & REQ_F_NOWAIT) || !need_complete_io(req) ||
- 		   (issue_flags & IO_URING_F_MULTISHOT)) {
- 		/* read all, failed, already did sync or don't want to retry */
--		goto done;
-+		return ret;
- 	}
- 
- 	/*
-@@ -1019,8 +1019,7 @@ static int __io_read(struct io_kiocb *req, struct io_br_sel *sel,
- 		kiocb->ki_flags &= ~IOCB_WAITQ;
- 		iov_iter_restore(&io->iter, &io->iter_state);
- 	} while (ret > 0);
--done:
--	/* it's faster to check here than delegate to kfree */
-+
- 	return ret;
- }
- 
--- 
-2.52.0
+So, yes, the sockptr_t() is used here as temporary glue to be able to
+get rid of the elephant in the room.
 
+> > +	/* iter is initialized as ITER_DEST. Callbacks that need to read
+> > +	 * from optval (e.g. PACKET_HDRLEN) must flip data_source to
+> > +	 * ITER_SOURCE, then restore ITER_DEST before writing back.
+> > +	 */
+>
+> Have you considered creating two iters? opt.iter_in and opt.iter_out.
+> That way you don't have to flip the source back and forth in the
+> handlers.
+
+That's a good suggestion I hadn't considered. My initial thought was to
+create a helper like sockopt_read_val() to handle the flip-read-flip
+dance.
+
+Would opt.iter_in and opt.iter_out be clearer than the helper approach?
+
+Thanks for the review,
+--breno
 

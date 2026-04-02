@@ -1,245 +1,226 @@
-Return-Path: <io-uring+bounces-12933-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12934-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mMDQJmqOzmkbogYAu9opvQ
-	(envelope-from <io-uring+bounces-12933-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 17:42:34 +0200
+	id OI7EFR+RzmkbogYAu9opvQ
+	(envelope-from <io-uring+bounces-12934-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 17:54:07 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE28A38B5F2
-	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 17:42:33 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8C638B818
+	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 17:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D891E3049242
-	for <lists+io-uring@lfdr.de>; Thu,  2 Apr 2026 15:39:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DD133300D71A
+	for <lists+io-uring@lfdr.de>; Thu,  2 Apr 2026 15:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDF43E1CE7;
-	Thu,  2 Apr 2026 15:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8222F2D5432;
+	Thu,  2 Apr 2026 15:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="Pee1gnhO"
+	dkim=pass (2048-bit key) header.d=p2p.industries header.i=@p2p.industries header.b="ldnRa4Fz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5963C3E51C4;
-	Thu,  2 Apr 2026 15:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC5030F816
+	for <io-uring@vger.kernel.org>; Thu,  2 Apr 2026 15:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775144391; cv=none; b=Ez5EHdMG1Aso9f2YeFAOiAlP3CQL/ZmOOOnLuyXHFSf+yMGhseAWQTpWSoCy98KQBcUmnsYi044ksOolNgnBnuE25fPOdxk+q+Ls4YNrJ9GIXEZXKVN/t2zy41dIwEwHVyjbRb4TxX2AtIKQtHACXaAmSShLVTmUBrsaea9I3+Y=
+	t=1775145224; cv=none; b=c1KgyIVltwrs4XQK76ZGIldNW0OUzp+TBR4qIaTzv3z2quLqpOAygNd6FmmI/hCwaI+7+nkeo7xSpCCAR3nbKWG+oD3jRgdNDZ0AJFjNxJMIuXNRuOBc0+OZCjwozRIbYIH8JyTSrgVu7fZhQfTJxjyuNz2A96rG6QxwXGLisvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775144391; c=relaxed/simple;
-	bh=VDon9Q6DSE3+7qnaS/hyrzZkF8Rx+JEWqlgHs4bivEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REx4V8fGaIulHX9+axz0EW7HjAyj+VhsLzrdwLBEveLcwyqScS7kDYFU1iWVHExQcuV8YeT3bUNkRWbSABF7l54EmaHC7/py5zEbUj/DVsNuJ9ooaBycIWt1a49PeUoAvPlMMfjanIJqd1ZxdAjNpurHdOTZSjxsE/kHxag6At0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=Pee1gnhO; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KaX2Za9i1qMHE3vSTTBXqMAjRIFb68sQ8EbB8U/9fT8=; b=Pee1gnhO/lQUDnJWBmG0zdJ1xB
-	INT9E880vn1xsappBNZ1xowEEDE6PNd7OYRhMo5RMVXotd/T8pkYfIoqW24p9RpRtEKB7ZFDfc3Bj
-	CzZMka9U9nhvlcYGiKb3UBW2L6oh+L6inYjLaM/EPElPxpiCz6nwi80nPmsIyBknO7tgisboRqnKk
-	wWnCRC98QsXph3jsOb1Sz4XWd9BQgMPBqIXoo2b3PwrBRj05vXMjGv7ROWiD8gxXeP6V0GefmKNPN
-	+kgIXeVkuL0odXDlrWkraG3vxD2pkQIekCdz8BnKvZdaSvyiorNIQSRm2P/i2vExZ8mqsjXVEeH+y
-	DjHh0vfQ==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1w8K8r-003rew-2N;
-	Thu, 02 Apr 2026 15:39:32 +0000
-Date: Thu, 2 Apr 2026 08:39:26 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, metze@samba.org, 
-	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>, io-uring@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next v2 2/4] net: call getsockopt_iter if available
-Message-ID: <ac6MAdYyuPGsB4am@gmail.com>
-References: <20260401-getsockopt-v2-0-611df6771aff@debian.org>
- <20260401-getsockopt-v2-2-611df6771aff@debian.org>
- <ac1I_CMr43XTpvHj@mini-arch>
- <ac1Pzt4tpt73SkC6@gmail.com>
- <ac1fjvVDfatpXwPY@mini-arch>
+	s=arc-20240116; t=1775145224; c=relaxed/simple;
+	bh=KYoX6gKN6gt3nY8hNo/FfNtKjn/EfpgeJwnbJ6NulPE=;
+	h=From:Content-Type:Mime-Version:Subject:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=M/KvVvjYckHPCn18lS89O3Ue3CZmtWGu59CN4KFhqdHc+DsDjv7TcJ97uLnPi/JenmoTFB0Tl/+i4iZWaD45Sz3ixRB1Y4gsltDa3rDnQwSsIBSaAtI4ebLGhV5DDwxLbhcibb7xMtWc8/0baqLmQDi+GglcMPHuYsuBh+8WZg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=p2p.industries; spf=pass smtp.mailfrom=p2p.industries; dkim=pass (2048-bit key) header.d=p2p.industries header.i=@p2p.industries header.b=ldnRa4Fz; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=p2p.industries
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=p2p.industries
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-486fb14227cso13997955e9.3
+        for <io-uring@vger.kernel.org>; Thu, 02 Apr 2026 08:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=p2p.industries; s=google; t=1775145221; x=1775750021; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:subject:mime-version:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e5SEopH7qoOVm2O4AeVWA5YO/SyHxUnzqAKH92QpDAU=;
+        b=ldnRa4FzLKlCGCtxlZzrL4XkXisDYJzYd04thKOZLnRb78SaTFsialiV0v4tBZjdvP
+         qlZBz8uAb1EPsil0UYunEw6WLQDFB3ORwma629u9dJntrCllkRcKaaxqnGzhSRFXmzZa
+         xp10hYYXto9kHrkbubiEwdHAwVnuvKnFth+CsckWEkJ9fSxinn0P4K1UFcHL3RQbeUtQ
+         INbaLq3k5ZgEQ+8hXkt5Z534eO8L8IMocB+zDCOW5ll1aiJj3Y6qq46hmfSrIe7geTns
+         DUUWK7LX3OchCSLya27PCig5n3C8e4hA8M9z7OFe6id3sifj/gAvg7iBXUvguzNyhkEs
+         X4Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775145221; x=1775750021;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:subject:mime-version:from:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e5SEopH7qoOVm2O4AeVWA5YO/SyHxUnzqAKH92QpDAU=;
+        b=Q+HZKQxnhYeh/nVKDNExqLwHUNB1tsNgyyaG+UGIwWCx1PowaoTt0bPYFB2ne34AZo
+         5zG9a/HLdoBuOIFQnSjy95oNU52C0h/2oGeDZ2ASazvM8pPX/OPd09/f/n/pkDKO7VhN
+         AWvfnotTNusvXgigazOR6PghcX177PhD/wzDRMaD+OW4plLv2kw45umAVLUmVtJdfCCV
+         guOQFH9fzpf0JyO6gMAN7IvW+C7ggFN5ZGODYnLoXhmTJA88xeism1sPI+25fbXI6+Fq
+         emEPId575Fssdg64XMzJHrOhHbXOB9IIhIBqu3Qx/m4yHB+ywsi1zlVjguD++lg1a4dS
+         +YPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXc62+KPVmaZgw7NmcAY03vd2i9lWv2sj3V9BJLN4YNBj/0DypzIfkJR6JGcG3f2JM/km8AUR80g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAj0mBq2aO9Cvt+Hqto/qHOwugRrWrYC9kOWp3GjcaQKGLoP3D
+	5qSTtL4JFGmCQLpWU4Rlkwb6L/fHXVE/BIVrtDzZEBmjhGfUXlQr1LPqBCQeZVxC6X0=
+X-Gm-Gg: ATEYQzx1jThwF7m472WlqnbVtrC61yNOSdYa9KbI4L9dif/G/vhYtbAQpCuWAQRkbjv
+	LBpGXDmF1ZZT1+DLk5hFsTXYVjd3FHpeGQc9lwtSCQ92518yb1jVoiNr0s9TL70+AixE6Zn28WF
+	ii5vhRZ2NQLvCK1WIZ0xSFla+uJEbJH0gcjbq0biCKeDfYl2cPXgQRKP6TygKEfZozsBSWvFLUu
+	4DxOowvoatMFaQie99q+iBiVY6dZ5Zcpv4DB3Q1qa0m2GblI47MRki2/aTp7pBJWUXzzFB4opjd
+	wcApxzrVSTe9DhdLFeCPK+Ah4QONcBmqjbvqsaYqE7g31nNLAR6S/XeE5ddQL7ewI5yV9TtCCko
+	hQkrWFI+sj/UH1zaK4k//lVcwPqiEe/CcvLwOX5801GQHEihhHB6o7kxjVFvx6Y4W4bmYf3BKPb
+	ReMVjc5zNC2wqfA6ziZN+ojYAfy7XXUaMtJRqYOf8WmkMHJAAwOGVOyU9OCXjKR80inAy4XAMFz
+	n20vvmPqbRTLTp7Mi3jcVKQ
+X-Received: by 2002:a05:600c:3e87:b0:486:fba7:b150 with SMTP id 5b1f17b1804b1-4888359cfc8mr148410665e9.15.1775145221141;
+        Thu, 02 Apr 2026 08:53:41 -0700 (PDT)
+Received: from smtpclient.apple (mob-194-230-144-149.cgn.sunrise.net. [194.230.144.149])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887eb5aff3sm285397555e9.15.2026.04.02.08.53.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Apr 2026 08:53:40 -0700 (PDT)
+From: Hannes Furmans <hannes@p2p.industries>
+X-Google-Original-From: Hannes Furmans <hannes@stillwind.ai>
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac1fjvVDfatpXwPY@mini-arch>
-X-Debian-User: leitao
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_RHS_MATCH_TO(1.00)[];
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.500.181\))
+Subject: Re: [PATCH v2] io_uring/net: don't check MSG_CTRUNC for
+ IORING_OP_RECV
+In-Reply-To: <20260227162730.79355-1-hannes@stillwind.ai>
+Date: Thu, 2 Apr 2026 17:53:27 +0200
+Cc: Stefan Metzmacher <metze@samba.org>,
+ io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9651A09E-97B6-4EF2-806C-4EAAF96C9C93@stillwind.ai>
+References: <20260226220310.758404-1-hannes@stillwind.ai>
+ <20260227162730.79355-1-hannes@stillwind.ai>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3864.500.181)
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
+	DMARC_POLICY_ALLOW(-0.50)[p2p.industries,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[p2p.industries:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DMARC_NA(0.00)[debian.org];
-	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12934-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-12933-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[p2p.industries:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.986];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[debian.org:+];
+	FROM_NEQ_ENVFROM(0.00)[hannes@p2p.industries,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EE28A38B5F2
+	APPLE_MAILER_COMMON(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,stillwind.ai:email,stillwind.ai:mid,p2p.industries:dkim]
+X-Rspamd-Queue-Id: BD8C638B818
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hello Stanislav,
+Gentle ping on this. This is a one-line fix for a real bug where =
+IORING_OP_RECV on kTLS sockets spuriously fails linked ops due to =
+MSG_CTRUNC being sent by put_cmsg() when no cmsg buffer is provided.
+Stefan indicated the approach looks correct. Would be great to get this =
+into 7.0 if possible, as we=E2=80=99re in the RC window and this is a =
+straightforward bug fix.
 
-On Wed, Apr 01, 2026 at 11:10:22AM -0700, Stanislav Fomichev wrote:
-> So maybe something like this is better to communicate your long term intent?
-> 
-> 	} else if (ops->getsockopt_iter) {
-> 		optval = sockptr_to_iter(optval)
-> 		optlen = sockptr_to_iter(optlen)
-> 		do_sock_getsockopt_iter(...) /* does not know what sockpt_t is */
-> 	}
-> 
-> ?
-> 
-> Then your new do_sock_getsockopt_iter is sockptr-free from the beginning
-> and at some point we'll just drop/move those sockptr_to_iter calls?
+> On 27. Feb 2026, at 17:27, Hannes Furmans <hannes@stillwind.ai> wrote:
+>=20
+> IORING_OP_RECV sets up the msghdr with msg_control=3DNULL and
+> msg_controllen=3D0, as it has no cmsg support. Any socket layer that
+> calls put_cmsg() will find no buffer space and set MSG_CTRUNC in
+> msg_flags. This is expected =E2=80=94 the caller didn't ask for =
+control data.
+>=20
+> However, io_recv checks:
+>=20
+>    if ((flags & MSG_WAITALL) && (msg_flags & (MSG_TRUNC | =
+MSG_CTRUNC)))
+>        req_set_fail(req);
+>=20
+> This sets REQ_F_FAIL on a fully successful recv (ret >=3D min_ret) =
+when
+> MSG_CTRUNC is set, which causes io_disarm_next() to cancel all linked
+> operations with -ECANCELED. The recv CQE shows the full requested byte
+> count, yet linked operations are cancelled.
+>=20
+> This is triggered by kTLS, which calls put_cmsg(SOL_TLS,
+> TLS_GET_RECORD_TYPE) for every record in tls_record_content_type()
+> (tls_sw.c), but it affects any protocol that delivers cmsg data on
+> the kernel side.
+>=20
+> The MSG_CTRUNC check was introduced by commit 0031275d119e ("io_uring:
+> call req_set_fail_links() on short send[msg]()/recv[msg]() with
+> MSG_WAITALL") whose commit message states "For IORING_OP_RECVMSG we
+> also check for the MSG_TRUNC and MSG_CTRUNC flags", but the code
+> applied the check to IORING_OP_RECV as well. MSG_CTRUNC is meaningful
+> for IORING_OP_RECVMSG where the user provides a cmsg buffer =E2=80=94
+> truncation there means lost metadata. It is meaningless for
+> IORING_OP_RECV which never provides a cmsg buffer.
+>=20
+> Remove MSG_CTRUNC from the io_recv check. The io_recvmsg check is
+> left unchanged as MSG_CTRUNC is meaningful there.
+>=20
+> Fixes: 0031275d119e ("io_uring: call req_set_fail_links() on short =
+send[msg]()/recv[msg]() with MSG_WAITALL")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Hannes Furmans <hannes@stillwind.ai>
+> ---
+> v2: v1 incorrectly guarded req_set_fail() for all done_io > 0 cases.
+>    Stefan Metzmacher correctly pointed out that short MSG_WAITALL
+>    reads should still sever the link chain.
+>=20
+>    Root-caused via ftrace + msg_flags inspection on a real kTLS
+>    connection (TLS 1.3, AES-128-GCM, S3 download):
+>=20
+>    ftrace shows io_uring_fail_link firing immediately after
+>    io_uring_complete with result=3D67108864 (full 64MB), from io-wq:
+>=20
+>      iou-wrk-52242 io_uring_complete: req ..., result 67108864
+>      iou-wrk-52242 io_uring_fail_link: opcode RECV, link ...
+>=20
+>    A debug recvmsg on the same kTLS socket shows:
+>=20
+>      recvmsg: ret=3D67108864 msg_flags=3D0x88 (MSG_EOR | MSG_CTRUNC)
+>=20
+>    MSG_CTRUNC is always set because kTLS calls put_cmsg() but
+>    IORING_OP_RECV provides no cmsg buffer.
+>=20
+> io_uring/net.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/io_uring/net.c b/io_uring/net.c
+> index 8576c6cb2236..8baaf74e8f8d 100644
+> --- a/io_uring/net.c
+> +++ b/io_uring/net.c
+> @@ -1221,7 +1221,7 @@ int io_recv(struct io_kiocb *req, unsigned int =
+issue_flags)
+> if (ret =3D=3D -ERESTARTSYS)
+> ret =3D -EINTR;
+> req_set_fail(req);
+> - } else if ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & =
+(MSG_TRUNC | MSG_CTRUNC))) {
+> + } else if ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & =
+MSG_TRUNC)) {
+> out_free:
+> req_set_fail(req);
+> }
+> --=20
+> 2.53.0
+>=20
 
-Sure, that would work as well. It would look like the following, from my
-current implemention:
-
-+static int sockptr_to_sockopt(sockopt_t *opt, sockptr_t optval,
-+                             sockptr_t optlen, struct kvec *kvec)
-+{
-+       int koptlen;
-+
-+       if (copy_from_sockptr(&koptlen, optlen, sizeof(int)))
-+               return -EFAULT;
-+
-+       if (optval.is_kernel) {
-+               kvec->iov_base = optval.kernel;
-+               kvec->iov_len = koptlen;
-+               iov_iter_kvec(&opt->iter_out, ITER_DEST, kvec, 1, koptlen);
-+               iov_iter_kvec(&opt->iter_in, ITER_SOURCE, kvec, 1, koptlen);
-+       } else {
-+               iov_iter_ubuf(&opt->iter_out, ITER_DEST, optval.user, koptlen);
-+               iov_iter_ubuf(&opt->iter_in, ITER_SOURCE, optval.user,
-+                             koptlen);
-+       }
-+       opt->optlen = koptlen;
-+
-+       return 0;
-+}
-+
- int do_sock_getsockopt(struct socket *sock, bool compat, int level,
-                       int optname, sockptr_t optval, sockptr_t optlen)
- {
-@@ -2366,15 +2390,31 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
-
-+       } else if (ops->getsockopt_iter) {
-+               struct kvec kvec;
-+               sockopt_t opt;
-+
-+               err = sockptr_to_sockopt(&opt, optval, optlen, &kvec);
-+               if (err)
-+                       return err;
-+
-+               err = ops->getsockopt_iter(sock, level, optname, &opt);
-+
-+               /* Always write back optlen, even on failure. Some protocols
-+                * (e.g. CAN raw) return -ERANGE and set optlen to the
-+                * required buffer size so userspace can discover it.
-+                */
-+               if (copy_to_sockptr(optlen, &opt.optlen, sizeof(int)))
-+                       return -EFAULT;
-+       } else if (ops->getsockopt) {
-....
-
-> I hope this way it will be easier to review protocol handler changes.
-> 
-> For example, looking at your AF_PACKET patch, you won't have to care
-> about flipping the source and doing the revert. Most/all of the changes will
-> be simple:
-> - s/get_user(len, optlen)/len = opt->optlen/
-> - s/put_user(len, optlen)/opt->optlen = len/
-> - s/copy_from_user(xxx, optval, len)/copy_from_iter(xxx, len, &opt->iter_in)/
-> - s/copy_to_user(optval, xxx, len)/copy_to_iter(xxx, len, &opt->iter_out)/
-
-That is, in fact, a great proposal. It will make the protocol changes review
-way easier.
-
-This is what I have right now.
-
-	typedef struct sockopt {
-		struct iov_iter iter_out;
-		struct iov_iter iter_in;
-		int optlen;
-	} sockopt_t;
-
-
-And then, the drivers change would be as simple as:
-
- static int packet_getsockopt(struct socket *sock, int level, int optname,
--                            char __user *optval, int __user *optlen)
-+                            sockopt_t *opt)
- {
-        int len;
-        int val, lv = sizeof(val);
-@@ -4065,8 +4066,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
-        if (level != SOL_PACKET)
-                return -ENOPROTOOPT;
-
--       if (get_user(len, optlen))
--               return -EFAULT;
-+       len = opt->optlen;
-
-        if (len < 0)
-                return -EINVAL;
-@@ -4115,7 +4115,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
-                        len = sizeof(int);
-                if (len < sizeof(int))
-                        return -EINVAL;
--               if (copy_from_user(&val, optval, len))
-+               if (copy_from_iter(&val, len, &opt->iter_in) != len)
-                        return -EFAULT;
-                switch (val) {
-                case TPACKET_V1:
-@@ -4171,9 +4171,8 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
-
-        if (len > lv)
-                len = lv;
--       if (put_user(len, optlen))
--               return -EFAULT;
--       if (copy_to_user(optval, data, len))
-+       opt->optlen = len;
-+       if (copy_to_iter(data, len, &opt->iter_out) != len)
-                return -EFAULT;
-        return 0;
-
-This is not fully tested yet, but, in case you want to see how this looks like
-so far, I have it in https://github.com/leitao/linux/tree/b4/getsockopt_v3.
-
-I will submit a newer version after I am done with the testing.
-
-Thanks for the insights,
---breno
 

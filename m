@@ -1,204 +1,280 @@
-Return-Path: <io-uring+bounces-12938-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12940-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gGD4MEuWzmkBowYAu9opvQ
-	(envelope-from <io-uring+bounces-12938-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 18:16:11 +0200
+	id /wl7FWf1zmnTsAYAu9opvQ
+	(envelope-from <io-uring+bounces-12940-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 03 Apr 2026 01:01:59 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8812838BB85
-	for <lists+io-uring@lfdr.de>; Thu, 02 Apr 2026 18:16:11 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529DD38EF3C
+	for <lists+io-uring@lfdr.de>; Fri, 03 Apr 2026 01:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 97B63300B3C1
-	for <lists+io-uring@lfdr.de>; Thu,  2 Apr 2026 16:09:48 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 06E91300EC5B
+	for <lists+io-uring@lfdr.de>; Thu,  2 Apr 2026 23:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634F32D5432;
-	Thu,  2 Apr 2026 16:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969103EF0C7;
+	Thu,  2 Apr 2026 23:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X59l/otL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnMDDQpl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA2023EAB2
-	for <io-uring@vger.kernel.org>; Thu,  2 Apr 2026 16:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E21E3EE1DD
+	for <io-uring@vger.kernel.org>; Thu,  2 Apr 2026 23:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775146188; cv=none; b=YRdnB/ac+pjrEGxxO/FOCzMdJ7vv+BwgZ63l9MTjtfHpy+7vVFdMihxynjBiuKOsDcztTwrXr8VBLVZ2arcJLCEYKuWEg8mcCgXCFaViaSzrZkSk4dS3Cqnekhx9u/zKtsl0tO5160f5+50kLqHVitFahYrXqUZMXBROR72au7Q=
+	t=1775170832; cv=none; b=l+INhj00DK9ui1qUDhUQH/jF4ieqBmspb6qZ4Pz0aw4l2nucFniCM8oiCVVUhwWhHQzQbgy/qCJHItWb3k2iea90Y2lbDvuPe1cjnhQKtc+cDOHewNucfbRzJ7ZYY8uNWbjfqNSfBffPU+TGoonPIFJHnlmpj4Km1ah/MUOJ7y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775146188; c=relaxed/simple;
-	bh=Q0cSaZd9rfHKEXH5w8OVnhpGCeXzPC0u8VkgOU6dq5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=idtFcZ8ErDJIWvLzB0WNVTHrZkJzmTGvk4MpCNTHE+xzLgeL4Bgw1WD/nEzXmFmXgmVyVghYs+Zy7YzdtTAGgvfbA3s7AZNGikOJFYGAKdi50atH9HPBa9wk1sw0wWGDjKFkNU/eOnfQ6BTP65HfPbjx3fTZK8+BJRphm6KzOf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X59l/otL; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1775170832; c=relaxed/simple;
+	bh=UNP/i09LPDrr5ofwIWjeoZzvRploUuqwNY48RB4hwgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFmXHINwecF8p2CoBh/dxiTwd++3VFFYSBCgVRMstn43YdSMQHghPB+jdAdvNIUTyqPBCSsmPDqBgsOZo4YAAI4JZM5ARJXbqukKFTYdHVjm9ZSykidfYSElBmln19UZGpy+AKNlTPjVwcM/drlbB8UASEwO95arHdxoWoxcPeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnMDDQpl; arc=none smtp.client-ip=74.125.82.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-35d9c7bf9a1so835951a91.3
-        for <io-uring@vger.kernel.org>; Thu, 02 Apr 2026 09:09:46 -0700 (PDT)
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-2c5b3d8eab1so441883eec.1
+        for <io-uring@vger.kernel.org>; Thu, 02 Apr 2026 16:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775146186; x=1775750986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Krj6CQiBkwJSjfO7pe8ZPs+eZ/Zubyv/l8EPrAisp5Y=;
-        b=X59l/otLS5GuQJIOYS95FgPmL+oj0xlnnkJ528vmypZIkkEIPKVgHz6dQvKJ7r+8mr
-         jXckbpd27suE9z7AsnEvL6ZYwmmhXh5I90MlFgnCpghZVmEZ82ED654L5GUkYCc05EjQ
-         E0a0U9wige6p9sEg2GeH5DTZeKQ5BgNNVi9ff1m2G6H9USG2GvT6kMQySu8NEYWDGUlj
-         QY1DaizyNC0i5cR2H3mKKvnag/EkXolUTd+5CXJN21EBuO9zfxenhKg655be155zPKDl
-         8pnHicujL1/wVae7JxyoT0UJ45A2m5jr1EYvW85E6+4x3NrZeGwLhY9UJcbvvkkAF8yY
-         +BAw==
+        d=gmail.com; s=20251104; t=1775170829; x=1775775629; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yd3zShC3yJuODpByZ8XJoFDD8uo8tECYjo5Z5kbc02I=;
+        b=RnMDDQplJFelTDLkVqWYULFg4HJqfJYxcSmeq76s0gdV/9iJn6pjKLpNyL7MW+tYlN
+         39vLpNRUGW8/2WVX7xuxh0NBrulzo9XlK5bYAH3GdqaHRm/+q1rzcRq/5IFoID5tDw+W
+         plbuSbJCfdaqHiKl4HTMx17jIypgGSusMKnRzlqWedgW1KucD6frpZ+EAOpd+PYv/l72
+         N6H+lYDVwRF3CKeWv4yOutGQjCz4KRNqERvba2LBSscQaC2QXvRBp8To+A+SKLCm+ALx
+         6/iCJMvYP34UMMp23ZInHsZyjs8dZPBaH6zIlokcx/JXl2uwfOWlSYdd2HKY/DGKiEx/
+         ut2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775146186; x=1775750986;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Krj6CQiBkwJSjfO7pe8ZPs+eZ/Zubyv/l8EPrAisp5Y=;
-        b=N+ZZXzsEie1EbO6Nj5AgKkJlu9yJJ+QGGihn45LhKj3hBO1Gcj4pqLWquQ7OKhVpPE
-         tEbgIUk9zTMqEkjzIwV/eiPa3Cq4oBCjuESeA4G7BiwEBslTRwxeeP5RJvgVE/5q6BBz
-         6JxtjnDYCDfo9XOQ8m+1VTD55sJ5JQaVTgU65CZphkbPT3MBxBM0S1/ak6CRE7dBZov2
-         cOkTsJrd3ZRWGxxpdn1IL4MhmemcifvBdPOM9J7VthahbC1CIcNKylorhX4k38Z4VQGh
-         l6Dd6z0gcVaHTh7b9kPG3MRthY2IO2i8RKzrLdRnC3BW5abGtJJPrIpMi1os1Ifdzdp6
-         DBJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhbXIVMavFlQPwLGSHQLU2uI8f5sLsON/uziVQDF1koHPjiQscmxOLG5nX6o5azfRGo44cd5UnxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwamvUJFCFiNKN02I25Tx/kHFu/Au8dIDHFkGdCptjBdhPQVrJs
-	Er9/Bre2dlGZesF3Z87SOSLYaSHzC3wPqlUWb9S3vDQDJyJmMzXFNgzV
-X-Gm-Gg: AeBDieui4fObpO0h2dPQ8P9UDTBP0F7TBaHrSOK08u26wxUGlTFmoqpNj5AFP2AU/eB
-	VYLM7FpOPDUF2DalRknRCoMmOqlg8849Q4p94iy5dSSFOrwfwSSoGsqrJ4t7asmJzno7RcSRm80
-	govDwS1w1Pj6uJhdqeOLXK1pLPuUnp8ZPkJ/vRvp9btEvmJozH7i7qhqBC2srKzMdRBD9tnfmVF
-	/dMwOTXP+MrMpu4MEXLvHyXHt+h/64v8Uhcwk351xPiTukaT7pEArubXZ9Wg410ImQpzwWY0lAV
-	PXrxTQSEKcxrBv3S6fsSmTaUnknSUmjpaUOE1TJXyGd+IWhvr6V4HMM9z+00eqk5DJg7Jx5UrYh
-	x3bvjdXMLAiNeZumBG1fKu7/wzea2XK27gB35pWi5cvcsdXFJDyoQU+4SIJgr1DJ0gKbE6tbbjG
-	AvuaIZqHUwHjpHQ6sn
-X-Received: by 2002:a17:90b:3f8f:b0:359:fe72:3559 with SMTP id 98e67ed59e1d1-35dc6f7feacmr7788634a91.21.1775146186409;
-        Thu, 02 Apr 2026 09:09:46 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:9::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35dbe937925sm11524657a91.12.2026.04.02.09.09.45
+        d=1e100.net; s=20251104; t=1775170829; x=1775775629;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yd3zShC3yJuODpByZ8XJoFDD8uo8tECYjo5Z5kbc02I=;
+        b=MWX7v/oH6bKAaWLOECIBp7iUYK1AmDjDYO6sg2GrAar+oPjkNcN8Zmv6XDpz2FpfHl
+         ULlUwQaLv4pUVIMkgZG8bhnfKJAPSWLzh3l8GzUY4IGVYks0Kg4jEgFUL47BvPc/9jfR
+         IxLtvisKWTqYN67hz3UBqAtzxiIQqdEIcSuzH1rPHO3/FGkeISmnl43ZRWXFU2Hg6isz
+         143qqv+4OaQp7e1udjpT8tag1bZOETDd2FT0P2bQukTvfclTJY4APCyyHuxWBGoSAeuv
+         qsNtMW/UPkMgaDZVjFROZnikc57w7aKyv85Ns2/s0d3AUHzyYBzLf25xHZpueYfha066
+         k8eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTCHD7wzJCkXmnI4v6L6vtdRQpayU7wnT0XI8ZTuxH5iMURU2tND1oTb7zuqqBgVtM5pYXWdhceA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDigs0RWWo5pusLCicHIpU4+Eeadvi8I/IFcZIRnhEQNCxyoBR
+	s7wQGbwwP8+K7qyxRZTdjhZQgXDst5kTtRoYskY5QRe4SIUiqzAmYD8=
+X-Gm-Gg: AeBDietePeUtD1OJlWqg/lE01kfWH1/3ODlMdqVqaJPN6NoESjYNYOfA01mpEq0M/DW
+	0IRLafsV2gGDB0TTHic+XlS/TNnkfjPC5TXHMkn4K1GdbT0KVlY8BpP5z8fayP5J/zDPLw/sYQc
+	8e8Wwwczl7+sGAZl2RsEzshQP6tpxhQgVY4YkeJNVfEpOl+BS72FSd56VZOUFIegDZdJDTSQwXZ
+	9XavV3Tfl5p9XBl0EOGc8VrzIeBnFMDAh7EfMN+ksXIfwh/gRwuVE+/Hle7I8Yr5XbAJeHzqOho
+	pzVJHMd87jogIGcdPz8sFjt34vM0V2sqdJT6nFOa+6h+MgOkNH3uxpBWMOsTrXwASbhhC1kx9Qo
+	VZQswzSprXjN8PYEY9f8YHn+YFR5M2+QaqPZFU2aKNlCbhgQLg7+1rtsquUjHmCKqQhnYEGRqSE
+	VVT2B58G7PToQrukCLtulfY9OGYYrRdgUFbkHdZzTDstGEhFsQwG3CuQeWp3j7HzKEEviYuY/Zr
+	yWG3cmBkj2Io0ZGPUd2JVbElS0b
+X-Received: by 2002:a05:7301:2b07:b0:2ca:f181:9b17 with SMTP id 5a478bee46e88-2cbfca5c3dfmr519556eec.33.1775170828604;
+        Thu, 02 Apr 2026 16:00:28 -0700 (PDT)
+Received: from localhost (c-76-102-12-149.hsd1.ca.comcast.net. [76.102.12.149])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ca7cae9e9esm3403523eec.23.2026.04.02.16.00.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2026 09:09:46 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: axboe@kernel.dk
-Cc: csander@purestorage.com,
-	io-uring@vger.kernel.org
-Subject: [PATCH v5 4/4] io_uring/rsrc: rename and export IO_IMU_DEST / IO_IMU_SOURCE
-Date: Thu,  2 Apr 2026 09:09:29 -0700
-Message-ID: <20260402160929.2749744-5-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260402160929.2749744-1-joannelkoong@gmail.com>
-References: <20260402160929.2749744-1-joannelkoong@gmail.com>
+        Thu, 02 Apr 2026 16:00:28 -0700 (PDT)
+Date: Thu, 2 Apr 2026 16:00:27 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>, metze@samba.org,
+	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>,
+	io-uring@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 2/4] net: call getsockopt_iter if available
+Message-ID: <ac71Czwqzsyw0Lyd@mini-arch>
+References: <20260401-getsockopt-v2-0-611df6771aff@debian.org>
+ <20260401-getsockopt-v2-2-611df6771aff@debian.org>
+ <ac1I_CMr43XTpvHj@mini-arch>
+ <ac1Pzt4tpt73SkC6@gmail.com>
+ <ac1fjvVDfatpXwPY@mini-arch>
+ <ac6MAdYyuPGsB4am@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.66 / 15.00];
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ac6MAdYyuPGsB4am@gmail.com>
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-12938-lists,io-uring=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12940-lists,io-uring=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[stfomichev@gmail.com,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_RCPT(0.00)[io-uring];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8812838BB85
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 529DD38EF3C
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Rename IO_IMU_DEST and IO_IMU_SOURCE to IO_BUF_DEST and IO_BUF_SOURCE
-and export it so subsystems may use it.
+On 04/02, Breno Leitao wrote:
+> Hello Stanislav,
+> 
+> On Wed, Apr 01, 2026 at 11:10:22AM -0700, Stanislav Fomichev wrote:
+> > So maybe something like this is better to communicate your long term intent?
+> > 
+> > 	} else if (ops->getsockopt_iter) {
+> > 		optval = sockptr_to_iter(optval)
+> > 		optlen = sockptr_to_iter(optlen)
+> > 		do_sock_getsockopt_iter(...) /* does not know what sockpt_t is */
+> > 	}
+> > 
+> > ?
+> > 
+> > Then your new do_sock_getsockopt_iter is sockptr-free from the beginning
+> > and at some point we'll just drop/move those sockptr_to_iter calls?
+> 
+> Sure, that would work as well. It would look like the following, from my
+> current implemention:
+> 
+> +static int sockptr_to_sockopt(sockopt_t *opt, sockptr_t optval,
+> +                             sockptr_t optlen, struct kvec *kvec)
+> +{
+> +       int koptlen;
+> +
+> +       if (copy_from_sockptr(&koptlen, optlen, sizeof(int)))
+> +               return -EFAULT;
+> +
+> +       if (optval.is_kernel) {
+> +               kvec->iov_base = optval.kernel;
+> +               kvec->iov_len = koptlen;
+> +               iov_iter_kvec(&opt->iter_out, ITER_DEST, kvec, 1, koptlen);
+> +               iov_iter_kvec(&opt->iter_in, ITER_SOURCE, kvec, 1, koptlen);
+> +       } else {
+> +               iov_iter_ubuf(&opt->iter_out, ITER_DEST, optval.user, koptlen);
+> +               iov_iter_ubuf(&opt->iter_in, ITER_SOURCE, optval.user,
+> +                             koptlen);
+> +       }
+> +       opt->optlen = koptlen;
+> +
+> +       return 0;
+> +}
+> +
+>  int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+>                        int optname, sockptr_t optval, sockptr_t optlen)
+>  {
+> @@ -2366,15 +2390,31 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+> 
+> +       } else if (ops->getsockopt_iter) {
+> +               struct kvec kvec;
+> +               sockopt_t opt;
+> +
+> +               err = sockptr_to_sockopt(&opt, optval, optlen, &kvec);
+> +               if (err)
+> +                       return err;
+> +
+> +               err = ops->getsockopt_iter(sock, level, optname, &opt);
+> +
+> +               /* Always write back optlen, even on failure. Some protocols
+> +                * (e.g. CAN raw) return -ERANGE and set optlen to the
+> +                * required buffer size so userspace can discover it.
+> +                */
+> +               if (copy_to_sockptr(optlen, &opt.optlen, sizeof(int)))
+> +                       return -EFAULT;
+> +       } else if (ops->getsockopt) {
+> ....
+> 
+> > I hope this way it will be easier to review protocol handler changes.
+> > 
+> > For example, looking at your AF_PACKET patch, you won't have to care
+> > about flipping the source and doing the revert. Most/all of the changes will
+> > be simple:
+> > - s/get_user(len, optlen)/len = opt->optlen/
+> > - s/put_user(len, optlen)/opt->optlen = len/
+> > - s/copy_from_user(xxx, optval, len)/copy_from_iter(xxx, len, &opt->iter_in)/
+> > - s/copy_to_user(optval, xxx, len)/copy_to_iter(xxx, len, &opt->iter_out)/
+> 
+> That is, in fact, a great proposal. It will make the protocol changes review
+> way easier.
+> 
+> This is what I have right now.
+> 
+> 	typedef struct sockopt {
+> 		struct iov_iter iter_out;
+> 		struct iov_iter iter_in;
+> 		int optlen;
+> 	} sockopt_t;
+> 
+> 
+> And then, the drivers change would be as simple as:
+> 
+>  static int packet_getsockopt(struct socket *sock, int level, int optname,
+> -                            char __user *optval, int __user *optlen)
+> +                            sockopt_t *opt)
+>  {
+>         int len;
+>         int val, lv = sizeof(val);
+> @@ -4065,8 +4066,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
+>         if (level != SOL_PACKET)
+>                 return -ENOPROTOOPT;
+> 
+> -       if (get_user(len, optlen))
+> -               return -EFAULT;
+> +       len = opt->optlen;
+> 
+>         if (len < 0)
+>                 return -EINVAL;
+> @@ -4115,7 +4115,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
+>                         len = sizeof(int);
+>                 if (len < sizeof(int))
+>                         return -EINVAL;
+> -               if (copy_from_user(&val, optval, len))
+> +               if (copy_from_iter(&val, len, &opt->iter_in) != len)
+>                         return -EFAULT;
+>                 switch (val) {
+>                 case TPACKET_V1:
+> @@ -4171,9 +4171,8 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
+> 
+>         if (len > lv)
+>                 len = lv;
+> -       if (put_user(len, optlen))
+> -               return -EFAULT;
+> -       if (copy_to_user(optval, data, len))
+> +       opt->optlen = len;
+> +       if (copy_to_iter(data, len, &opt->iter_out) != len)
+>                 return -EFAULT;
+>         return 0;
+> 
+> This is not fully tested yet, but, in case you want to see how this looks like
+> so far, I have it in https://github.com/leitao/linux/tree/b4/getsockopt_v3.
+> 
+> I will submit a newer version after I am done with the testing.
+> 
+> Thanks for the insights,
+> --breno
 
-This is needed by the io_buffer_register_bvec() path for callers who may
-need the buffer to be both readable and writable.
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- include/linux/io_uring_types.h | 5 +++++
- io_uring/io_uring.c            | 2 +-
- io_uring/rsrc.c                | 2 +-
- io_uring/rsrc.h                | 5 -----
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 28e5dbdac55b..b4f0e69633ab 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -44,6 +44,11 @@ enum io_uring_cmd_flags {
- 	IO_URING_F_COMPAT		= (1 << 12),
- };
- 
-+enum {
-+	IO_BUF_DEST	= 1 << ITER_DEST,
-+	IO_BUF_SOURCE	= 1 << ITER_SOURCE,
-+};
-+
- struct iou_loop_params;
- 
- struct io_wq_work_node {
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 16122f877aed..b5debc615657 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3215,7 +3215,7 @@ static int __init io_uring_init(void)
- 	io_uring_optable_init();
- 
- 	/* imu->dir is u8 */
--	BUILD_BUG_ON((IO_IMU_DEST | IO_IMU_SOURCE) > U8_MAX);
-+	BUILD_BUG_ON((IO_BUF_DEST | IO_BUF_SOURCE) > U8_MAX);
- 
- 	/*
- 	 * Allow user copy in the per-command field, which starts after the
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 4aada6548ac5..7d9d155a85b1 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -820,7 +820,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
- 	imu->release = io_release_ubuf;
- 	imu->priv = imu;
- 	imu->flags = 0;
--	imu->dir = IO_IMU_DEST | IO_IMU_SOURCE;
-+	imu->dir = IO_BUF_DEST | IO_BUF_SOURCE;
- 	if (coalesced)
- 		imu->folio_shift = data.folio_shift;
- 	refcount_set(&imu->refs, 1);
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index cff0f8834c35..8d48195faf9d 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -23,11 +23,6 @@ struct io_rsrc_node {
- 	};
- };
- 
--enum {
--	IO_IMU_DEST	= 1 << ITER_DEST,
--	IO_IMU_SOURCE	= 1 << ITER_SOURCE,
--};
--
- enum {
- 	IO_REGBUF_F_KBUF		= 1,
- };
--- 
-2.52.0
-
+LGTM, thanks!
 

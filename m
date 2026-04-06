@@ -1,161 +1,193 @@
-Return-Path: <io-uring+bounces-12969-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12970-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GIsHKELd02kingcAu9opvQ
-	(envelope-from <io-uring+bounces-12969-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 06 Apr 2026 18:20:18 +0200
+	id gG1sBU7m02n/ngcAu9opvQ
+	(envelope-from <io-uring+bounces-12970-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 06 Apr 2026 18:58:54 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96563A53B6
-	for <lists+io-uring@lfdr.de>; Mon, 06 Apr 2026 18:20:17 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFCE3A580A
+	for <lists+io-uring@lfdr.de>; Mon, 06 Apr 2026 18:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A8B79300729B
-	for <lists+io-uring@lfdr.de>; Mon,  6 Apr 2026 16:20:14 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9D020300825F
+	for <lists+io-uring@lfdr.de>; Mon,  6 Apr 2026 16:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D72A31D72E;
-	Mon,  6 Apr 2026 16:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8753838B7D7;
+	Mon,  6 Apr 2026 16:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="No8CcfUx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYyOPM9u"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCF28751B
-	for <io-uring@vger.kernel.org>; Mon,  6 Apr 2026 16:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74F73876BD
+	for <io-uring@vger.kernel.org>; Mon,  6 Apr 2026 16:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775492412; cv=none; b=rxK4SapgKZGPpNTOgHh/Wc/b2JaPC/jdA0mqVu5SEunh377I6MxiyTo8Mo/FCEzINyphhxGzR8aznkTfJbfieEeuWp0MjWwjOJELhTsrdNjHO1kCUIRXJLLLmy/evKVviMacMCEyr5RbLJincJ7jFv2nrZNTA0rMEHmWUsI5w18=
+	t=1775494731; cv=none; b=oyq8E6MzKZIo6HXzHTm7fCTDWpAHjR04e0FjOdX632jZBFy4Pr0s5Bb2sZESzRxULgehbZJLtsVfpwkJd5NpSsECd0R6y4Z+YdWGy6M4t5dQo5N9L6ijbKeAcu5BlfqGTwrwnzeZHQN6rbP8UHzS3Da/uExjmzKLVZPuf0Gww8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775492412; c=relaxed/simple;
-	bh=/EtcsayWkHRiFJMCwkYZf0b+UlZON2ptxTMDBSiYLVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRHI9Lt45HeZTKmxrfJOmu14D7XNOOPFxVxUS5IHCXKXUxu2zAgYDzwZsgqKGPKe9TVh18BEPq6La+H68bjRypwosYmADCVoDyS4JW6X4KdP4JjGuXuLosS21O8HE4rjKEbH8ax6z0FP14l6zfNWt0ayMw7Q/dTskBA6+CttQIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=No8CcfUx; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7dbca22dbfeso1183538a34.1
-        for <io-uring@vger.kernel.org>; Mon, 06 Apr 2026 09:20:10 -0700 (PDT)
+	s=arc-20240116; t=1775494731; c=relaxed/simple;
+	bh=26psbkjSyDX7x9vT6U/2KCAGMBmxua3SiQxW4R9sbRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gNmuu+2obG608wyWap7dqES6+jNfSRG1ZO2fbYW1UHUQZLTZW6Z8bCtou1Uz33ZyXW+2ZVCP7KP2Wo5Je+Pg4eNNrPzdgxk4CFHZf4DGcBmNDIXX68yKo60WRGH1DBH6PzuilMqIVUis3Tz+iPkcaaVzhtonBuN0UQnjnlsrlNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYyOPM9u; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-488aa77a06eso23195165e9.0
+        for <io-uring@vger.kernel.org>; Mon, 06 Apr 2026 09:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1775492409; x=1776097209; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NrGSZmb7W2DBdOyYltmbgehsoiq6uPy8+Vqtb5nWZjA=;
-        b=No8CcfUxX8rjdLez/rEAIgC1IlHbjyFrlylf9EsndXGm1A0NnNjYyNNwdHA2r4dj35
-         Wqr1zlbExbkHpYyuvOBYGElviSJ+tYvAcFbxFUri8YJSGs5EJmWdarGgic+TO2MjiOgi
-         zeXrvQ35qciTusCRpKckQJ4bZ7tW1u+GxaxH/GP7HHHW39USnwFALeTedb1c8H5ilp7E
-         BJIwXosBNKNr4Fy81XNalrzzqeH5bVwXbWCZ8b2g3EoRAYvJ89rKlRKbuvoeKKs4dLF6
-         22Evc5icRzGRLCEb+l2yPEt4PbZ64C7+u53CQdEKg70gzjzlZ4M+7stBCmJoX6qNAkyc
-         UGnA==
+        d=gmail.com; s=20251104; t=1775494728; x=1776099528; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGkjJxTK2yrZpo0kjeCsz8SUN93R3CIQmF73mn+CUGQ=;
+        b=LYyOPM9uxrWCbSG9KgdXWjc2qvCoGezQc+yAxBM6+FkeK6RoEdWhjeB7ozk7jJSQCb
+         Rbt9qmNlzLRykArf/GnbzgnEvWSOcirhHFL6TFyh98C2xl3HsXd2sz2FbxGkby0zDGLp
+         4eWOWZNG0cvNWK4tE8SA6Ht8RPfhVaJn7pPh6xv7KLPrAf3AfKgUqIW7CpXL7BYlakqe
+         Fd6NW2SXiLj0TGAvBriLzEo9BiX5TTKTujUlupD+YpFREPtiLg7w3j5N5zI9O5yMLlvD
+         5VdXbhOQrQEAm52EP+a26g5OuuCt10QyRvZ40kmkCfAv5ussCVAZm9/0lcygJLt6op3j
+         WPlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775492409; x=1776097209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NrGSZmb7W2DBdOyYltmbgehsoiq6uPy8+Vqtb5nWZjA=;
-        b=jr/L+eLEyaUFpI5TEcaQo3zGY/i68Tfah0eQQg26MLssUwzTkFIxAk0r5JgZrnZ8oZ
-         4DftwYmwny9+SJBv5PfMpylweL0KAGaU8kyLoHmWr/CI6wlgiq8FqRXdHemzbvJz+VxU
-         LXijFrzxNnBBlLbi32QU35vgcX8ndkGWBbc57jchDDGlVRA0lE3BXRVo6UzJaM6WxxaE
-         ZbBRrBHgjTN/VraVFjdyp9GgS+WibrvOsIsZSsH+KKhgk/kXWuzsjeLs6YFUC/8h52j3
-         +3ik6ZMY3e+KLfpGn85utCxfqFjVRTkVoa0fh6Mhc/kisuubDG64nBI5m7omUSWw96Lc
-         UuxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWW/jg/P0+vmJsSeRJ3jb9vHw2cCqXsPHqlJ6qd+7ZM5+Td8FH2TtclN1Iil4Wx/YOGGoWnFSjchA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMkT5415ehPfvIxAvym6QZdRl0SFOG5my4MAtqnR1lm0JwzA7a
-	JQ5xdKRYy/GDDKIgWuom2ykjk4h62Ao1NpPW/y79sXdINd41LAu7/+UI+CJ7esqSbuU=
-X-Gm-Gg: AeBDievOCKR+uDfXXE1lDY05WdbHVavwUHT1kQDbhMXkTJ+WPf+GzXbUg5EWe1FXRZw
-	1txNHpvlx+isx5x5+vxxD6hBoO+HVgdO0Tp4BncOYr5/Z4IB3bTmH5ioO1d2229Nu8VTT0n0htG
-	5YEwDgrjJ0Pi2+viH/R7W2Gf0VUnbtBHpNqN/f2AC+r5QWziaqHmQ4ibvlZyFoo+Gd7w7LPgaXl
-	Y4N6jx0noJ1QUy7mfaHHTQmqxXCDBoNB6zYeP/cHvpdq+2Q2GdQ0qJ2UX5mgsjXvh4gYK0PJIrq
-	6eFHALek/ZZW8Rzo2ZqzFFwihGA+KlHfGc2Hn+reDRuW+KJrsGk7J2wcfFdLQkN6rPJzSMjspN3
-	comCSXi1PeMkkXDKSPqHf815Vo6XLYaYm3DkQycdYkPRwVc5kyujJDOzyQFOkG55PVrKAcw2CHY
-	f2p8H75Hu9vL56P1UA9y0cpWXrDAYEIGUfVJppbFBo+PvTcxqcP0gnTVRD3Vz8ACr+7Ya9hn13V
-	Tq7ySTT
-X-Received: by 2002:a05:6830:91f:b0:7d7:4e1f:b1b4 with SMTP id 46e09a7af769-7dbb754ef87mr7947775a34.26.1775492409117;
-        Mon, 06 Apr 2026 09:20:09 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7dbed6c3512sm947829a34.4.2026.04.06.09.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Apr 2026 09:20:08 -0700 (PDT)
-Message-ID: <7e4d8e97-850a-40e7-94e8-e82dd56c0386@kernel.dk>
-Date: Mon, 6 Apr 2026 10:20:07 -0600
+        d=1e100.net; s=20251104; t=1775494728; x=1776099528;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sGkjJxTK2yrZpo0kjeCsz8SUN93R3CIQmF73mn+CUGQ=;
+        b=DD9PKsVKFBywZJC61mvnVG4yRYKua/A0CgQGJg4IQetf8y79E5/fruCUpQQRZ5oX75
+         /Cd6njAM/yVYhaXv5pfRJSBcQkpUoK28d2i+roOj3vBFxJR9Km0mddzY0zPZ+y+A9qro
+         H2BVUvdr+AuWxNucu9tB97TMxIPBvQc+TpfZ6Jw38g+UA3gwveIxZ2betZMKc9y++rsw
+         VNnk/wK0Dcwsb+4QcaqMpDuS5uztNnHSIO/TaasXJjc7Mne/QZ0KY4aPat6iloicRcZD
+         vtxCV2P5Um4tTs59PYOvfMGsxKb7oqofw9a/WLukiEaaXgICIARo0hKvWPCNugz+2FYf
+         npKg==
+X-Gm-Message-State: AOJu0Ywnr01tdPdrXpPBlduG/XeW+vfLV3b0v5bEYgMEGvdoVZO0CmiC
+	VyYgpZbis1yuUTSibdlPS7XGjLIR9qHxsEk4Q0i1oMvp8HkPa9XFHGpQP9cOeEIsGws=
+X-Gm-Gg: AeBDieuwyptDfJ/jrgtOdKnBp53WvZA+CaInXytAVJFClF8UIv9SJFJWZTcEOMv+Lxc
+	B+4LifBzlTIiruNpfcrYKqJbTbjy/0EgXILIn4vgpOoz+4/J99E80xpNqUzddK0eG0n+PRFdg2p
+	N8coOTcyPaM0cbb7QucqCQs0xwt61W0R1BdLZ3m+2FEU8hgSDBM5/Ajut+Or4qOZ7o9aEFgU8hm
+	SxBu1/jNSkopn6m7VF1aXbWfocp9OkC+m9D3eAVsU3PggOK4NozDnHsRqYHORMSQIu9YijgLOgs
+	M4fkWX2dn8HBZbTNvHi9h4rOidUKPwHb3csjAAY9S92dFrvHFkiozPWd1raBuZR/LkXoYt3smXf
+	KazzR1x0/ZvY5ELtFmfns2nDB2NbqrY7GGmZ8U3qJwEGKLRL1YYEEMmFNCqgv8iRS5KBbcyRnne
+	pcA7PySGz9fShwEnzcjX4tM/P6ucS7v8HKYCjURJ+YX0rX0+52CH+nKwhGLhk+y79mplRWXNYsO
+	9r8E3umLY2OmbodmPZf+mjUPAdNKmB1Pg29Ox2m
+X-Received: by 2002:a5d:5d05:0:b0:43c:fbcd:4b4f with SMTP id ffacd0b85a97d-43d292e800dmr20475728f8f.47.1775494727766;
+        Mon, 06 Apr 2026 09:58:47 -0700 (PDT)
+Received: from localhost.localdomain (host86-175-208-130.range86-175.btcentralplus.com. [86.175.208.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d28a5sm38323919f8f.20.2026.04.06.09.58.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2026 09:58:47 -0700 (PDT)
+From: Bertie Tryner <bertietryner@gmail.com>
+X-Google-Original-From: Bertie Tryner <Bertie.Tryner@warwick.ac.uk>
+To: io-uring@vger.kernel.org
+Cc: axboe@kernel.dk,
+	asml.silence@gmail.com,
+	Bertie Tryner <Bertie.Tryner@warwick.ac.uk>
+Subject: [PATCH v2] io_uring/zcrx: reorder fd allocation in zcrx_export()
+Date: Mon,  6 Apr 2026 17:58:46 +0100
+Message-Id: <20260406165846.94517-1-Bertie.Tryner@warwick.ac.uk>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/zcrx: reorder fd allocation and disclosure in
- zcrx_export()
-To: Bertie Tryner <bertietryner@gmail.com>, io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com, Bertie Tryner <Bertie.Tryner@warwick.ac.uk>
-References: <20260405235330.49287-1-Bertie.Tryner@warwick.ac.uk>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260405235330.49287-1-Bertie.Tryner@warwick.ac.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-12969-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,warwick.ac.uk];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12970-lists,io-uring=lfdr.de];
+	FREEMAIL_CC(0.00)[kernel.dk,gmail.com,warwick.ac.uk];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
 	RCPT_COUNT_THREE(0.00)[4];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FROM_NEQ_ENVFROM(0.00)[bertietryner@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,kernel-dk.20251104.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: A96563A53B6
+	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 8FFCE3A580A
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 4/5/26 5:53 PM, Bertie Tryner wrote:
-> Currently, zcrx_export() allocates and discloses a file descriptor to
-> userspace before the backing file is successfully created. If file
-> creation fails, the fd is released back to the pool, but the number
-> has already been written to the user-provided control structure.
-> 
-> While this requires a misbehaving or racing userspace to trigger,
-> it is better practice to ensure the file descriptor is only
-> disclosed once the operation is guaranteed to succeed. This aligns
-> the ZCRX export logic with the standard patterns used in the VFS
-> layer and other fd-publishing paths.
+Currently, zcrx_export() allocates a file descriptor and copies the
+control structure to userspace before the backing file is created.
 
-Like I explained earlier, there's no "race" here at all. The file is
-never visible until fd_install() has been done. Any attempt to use the
-fd before that happens will get a NULL file in the kernel, and the IO
-operation failed.
+While the operation returns an error on failure, it is cleaner to
+follow the standard kernel pattern of performing the copy_to_user()
+and fd_install() only after all resource allocations (like the
+anon_inode) have succeeded. This aligns the code with other
+fd-publishing paths in the VFS.
 
-The operation clearly fails, and the error is returned to the
-application. If the application is so buggy that it ignores that and
-wants to use the 'fd' value, then it's just buggy. Simple as that, do
-stupid things and win stupid prizes.
+Signed-off-by: Bertie Tryner <Bertie.Tryner@warwick.ac.uk>
+---
+ io_uring/zcrx.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-As a cleanup, this is fine. But the commit message is horribly
-(deliberately?) misleading and that should get fixed. I'll let Pavel
-decide what to do with this change.
-
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 262ac73..700eff9 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -637,19 +637,10 @@ static int zcrx_export(struct io_ring_ctx *ctx, struct io_zcrx_ifq *ifq,
+ {
+ 	struct zcrx_ctrl_export *ce = &ctrl->zc_export;
+ 	struct file *file;
+-	int fd = -1;
++	int fd;
+ 
+ 	if (!mem_is_zero(ce, sizeof(*ce)))
+ 		return -EINVAL;
+-	fd = get_unused_fd_flags(O_CLOEXEC);
+-	if (fd < 0)
+-		return fd;
+-
+-	ce->zcrx_fd = fd;
+-	if (copy_to_user(arg, ctrl, sizeof(*ctrl))) {
+-		put_unused_fd(fd);
+-		return -EFAULT;
+-	}
+ 
+ 	refcount_inc(&ifq->refs);
+ 	refcount_inc(&ifq->user_refs);
+@@ -657,11 +648,23 @@ static int zcrx_export(struct io_ring_ctx *ctx, struct io_zcrx_ifq *ifq,
+ 	file = anon_inode_create_getfile("[zcrx]", &zcrx_box_fops,
+ 					 ifq, O_CLOEXEC, NULL);
+ 	if (IS_ERR(file)) {
+-		put_unused_fd(fd);
+ 		zcrx_unregister(ifq);
+ 		return PTR_ERR(file);
+ 	}
+ 
++	fd = get_unused_fd_flags(O_CLOEXEC);
++	if (fd < 0) {
++		fput(file);
++		return fd;
++	}
++
++	ce->zcrx_fd = fd;
++	if (copy_to_user(arg, ctrl, sizeof(*ctrl))) {
++		fput(file);
++		put_unused_fd(fd);
++		return -EFAULT;
++	}
++
+ 	fd_install(fd, file);
+ 	return 0;
+ }
 -- 
-Jens Axboe
+2.39.5 (Apple Git-154)
+
 

@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-13003-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13004-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QEGBLxqs1mmZHAgAu9opvQ
-	(envelope-from <io-uring+bounces-13003-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 21:27:22 +0200
+	id UHAcDx2s1mmZHAgAu9opvQ
+	(envelope-from <io-uring+bounces-13004-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 21:27:25 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDB23C301E
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 21:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F11683C3027
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 21:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B5FBB301CFFC
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 19:27:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 65CA43020EF8
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 19:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE312652B0;
-	Wed,  8 Apr 2026 19:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E71632B981;
+	Wed,  8 Apr 2026 19:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="urjQ7lwF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="DQmkLQpA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CE32B981
-	for <io-uring@vger.kernel.org>; Wed,  8 Apr 2026 19:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E9E3446CA
+	for <io-uring@vger.kernel.org>; Wed,  8 Apr 2026 19:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775676437; cv=none; b=LDbDbexerrzF9hvxHebNaRTjyC5MXTg5U1SKSi0oQKoLLctBdSOkQLoO5u5aYqJY7h5n6+KdSTKogSel3J4OCKSg3UyJ3ppGKFp0DzfbTIJIWoV5W+xshng5i/u6UsPkbeaVrlajGLl1RFQ79YrU/UyxCbQPm1JaKSvIKi72KYA=
+	t=1775676438; cv=none; b=Lj68wNfi+bjjmWooskmE+8SMIWSqxEtPEjpBr3lU1UFo6XhpQ8GiWULYSg/RAYZq8OC49fHuVu/8m8VH9zz/gp+lkNOJvW8YakW6V6/UeSI4HHY8g98WfQ8Gfi5xq3+Gg7iX+kO053TNnzz+y+3pzZlVNG2UB3C+CSeWEeO0U+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775676437; c=relaxed/simple;
-	bh=hNyUfT4yB3oo30ZYg1WCe+kgly/TTehAjbzjHtGFxwE=;
+	s=arc-20240116; t=1775676438; c=relaxed/simple;
+	bh=XdfmhQSr8naWWGZQGOuPSIgi32BcnleCWovWQ0XnTwM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S+0E7Ak42bG5PPjOXhRwUcwSDQZ1ux4WHVRVvcBVuLvEvDg/PIrHcdPcRCuKRtvqv4HfaOevAGSLXjENtV2pYSmElIDsIhPLQ+B9CBl8H9YOvBYQNvmJy2xUZtxpJcDPY7O7CvgkOjU+Bn/kr+j/WggGFtu/GS7SzC7cAsEMg2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=urjQ7lwF; arc=none smtp.client-ip=209.85.210.41
+	 MIME-Version; b=HZnm2EVk3PHf9FAw/zNEVi/UZ2SToz2yxHsBJLojLGcB91TAXI3QE7Bm8SUJ4ijGkqCHRSoqA7OA6y7rvxhFxT7wnhlLFx6bLgXh5CChERxHO1cFMQ2rBqulmrtQAYufwDvcvN1RFfl2p8HcW4B/cVP+mVrfHnJeyjQcXcj7f7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=DQmkLQpA; arc=none smtp.client-ip=209.85.210.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7dbdcb85067so86903a34.1
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2026 12:27:15 -0700 (PDT)
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7d4be94eeacso128654a34.2
+        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2026 12:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1775676434; x=1776281234; darn=vger.kernel.org;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1775676435; x=1776281235; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IhrudRYYudIPEKNi9zX8pTiElDrwhwnXrXpdF7r5gh0=;
-        b=urjQ7lwFDqHgy1I82nV8J3KkVasR1M6kd3CRiPF+Z+nmN1VN/Am9YamVX/Yc540re6
-         MB3qgiowEz4CiZXvCxWj6bUOJ656I8zKiDJkF+JgTNmxLZiwOsJij2OS93zm4/tkZSru
-         2E+QiMcjQOeXNq1MSj75vfICQcPAwh5nS0mQEio6JFgASyGpjgF+/Q+VCG06a6kceXIw
-         wighobxMuxreO61iExQ6yJxBc1kyVoumRUSXNkY1HVNFAM/WF5xu5WElJq12I6auBlgh
-         mFAOiy+6r59p+zxP4Yo4S5L8XauVHI7tiUq/3EJkwSNRzQu+b9Tm31AzGWomToaC8hTO
-         OMqg==
+        bh=/eU0gjjKAwk5ktI4A91I3AIH73gGrQd4cTD+S5+2jCc=;
+        b=DQmkLQpA8aljKXlBhTnqjvusr0wjyzgePMVBEHAF6/pzZRqX+p5M/aGqJHPJybmnON
+         g284gv1Q3BzaPPu8wdpeF2FbcurcnLVJTqzc6niZx9abNrqLf7cR82ILZBE1t9ALS/jR
+         vbIZ+Kb/F+Emj3h7ue4iw23+OpwU7/DnkBbF38WscMNv5054lzcEWkY8WezpWoN1f0+8
+         4EEHVRxd1itbxUHWG2l+aKYEa53zo3rRsoV0i30I/cDJp/vZiqACixFmnCo8nBbwko3z
+         SxKa4QtvFea2k+Bvtc5/ylU8QEcbTToOFDbVl1XpKgxYmiTm47dn3OiJTHMTgM2sjzXB
+         tjzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775676434; x=1776281234;
+        d=1e100.net; s=20251104; t=1775676435; x=1776281235;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=IhrudRYYudIPEKNi9zX8pTiElDrwhwnXrXpdF7r5gh0=;
-        b=GPqIydEEKUqx234jIPReao3NyDEwrrxuCXvvspHQK4VYKQ8P36TvkoGXC8L0Rqru/4
-         XysHB7yI+iUiNIFvc6mRoN18f6UZizxVLIkODbHGQM9TYixrYOxbYtbeNrYTJau8Cjgn
-         /M6820gfPfdxE3JRLHHYMf0olMHNLXROBwC0tH5a+Yd0Qwt68y8ONoa+SMlMwF9nL3zG
-         EyxjqyMTrRC5kJN2bKrDoNOZGKSkhzcMWYCTaf9sy2tPy8ytr7DVse2xb4O57fAueNAF
-         X4C1K7+0irFX1Rp697Kmg29xCdm7RqA0/gn3sc91vdw3fbxlF89+2bD1V3EvSQVhXmuC
-         ri7w==
-X-Gm-Message-State: AOJu0Yz4qrOGFBOMJg9ZBhz1+d/Q1BdaDeejRfuCyAeGctnhsYAEEPW4
-	zdVjGgoBcwqAjlJPcqZU93nB7e5A26s4ufHO1VZFhSdClk63Yq4K625F0QZI657zJsBMuejhkAZ
-	SID+S
-X-Gm-Gg: AeBDies9xVwSulnLWwhI1+p8arLNLDBaKu13+pX8QrbbOFiUQ1+4yVAS9XmGhUns8Yq
-	plWHEoL9bvc0T2prf1H/Q4f+WBFuRXM+2MGxzIB+ba0Nv3DZIIwQjCnG+qnVqO7BNA84npk7TGJ
-	N6uyhwUwRyT1o+xCT+Oo7BejazGACvac7LP9vhEFN+xiZoRnEYVPz1fNN2z4FrIIb+2x4Wq5a3q
-	QVPu/PRmTr8iRjZZjYf5nXh6Op3S7qvQpxdyiOrrRjneKJ8m7GlnWHJeEGFfj0OPh1/Q9YYS9h8
-	rPU4bZom9pRHi7Vq/HsiUezigPoVCLzYOVUGDa1T3+4WCmC45ILJz4Sm/cT62jOrK6UykqVpiSf
-	f4pDUi3AcI2Yslf9uBT7z3PFICbvv35vFCyor0I9EO/iz0j7iJJKfhDfU41YKSlXMCvIx8111wk
-	9M4Lrqy4a6GsPHt7wh7xJmwRgc9YxRAbORqJyJT2HGUCNNzQBSRFH/V/No1Pvlvj0XE/s=
-X-Received: by 2002:a05:6830:8281:b0:7d7:4aa5:5210 with SMTP id 46e09a7af769-7dc16f2dfa2mr528103a34.19.1775676434519;
-        Wed, 08 Apr 2026 12:27:14 -0700 (PDT)
+        bh=/eU0gjjKAwk5ktI4A91I3AIH73gGrQd4cTD+S5+2jCc=;
+        b=tZMIWblN50MV1GwyeyC5ku1O6MGp1YK3VYtKzvPRxoFJuXKxLQBna1nWH1vX5z3e2Z
+         O9QWKf61AnBaMoB8omT5aV/CGon/vyWPlw8kO0be7CjstWYtgw5oTo/ejONkqc7BxTQS
+         K8pVUGaISFAOpV1ePjJPnNEVCih2DYytxLRozrsJxRq5roLfVYj6gxMbXAjJnicFvBXo
+         v1LSTDXJk/s4zDM9d2rqK4l6Nhx4zCKb2SgUJrz6Kx+hvOt0OCajZpNKXkccccD9Slx6
+         GHGwbh2Wiaaew4W0tHFYM2TF1ifYs4oqXp2JpETR9rtwjXPV3BiOdX2hbz5pSiI8O7yZ
+         AAYw==
+X-Gm-Message-State: AOJu0Yw+UornFViX3upGLaB2Ft8jk3Ne/CXD0GXkYsrXfQVGNfO7TFVQ
+	FN2mwyhnsF0/Eztr78nFQ/lcgpsE88ixNQH5oBjc/ibuiGWKvOWqk5jZV823xnVV70SCXOp72l3
+	1q39o
+X-Gm-Gg: AeBDietcx05F7xOw+LvLzZbHAeGBYIcGizvIFnXacU3es9wm21UsXHsO6eYVcWJbAmz
+	HDku5a9J3jLmONm4sTr01XEpXOP/x9P+oBzmaq8t3gPhYYYfVpIVbXVkP0TaHVtGv7Guyjsi/j6
+	2ah8t4NdNJiW8y3U3k88TslzMisnu9EoJSmfeTxacSgaGuwjtwYJsgcp/daRO3HyxhVIvrJC8dj
+	r2EsITlndVL4YKYvukhFw1Nw6xHkvyOOwM/fj8b0xpeeGMfskqH7I0/KUD37FyUV8zeLj2QyuI7
+	+pZUEkpLjXtfQwbQwVlMjQKqwjrFkuVduin9a+rHcvxXGM6Npn5605f7XGJnA90ofWyGDibaqW2
+	4ARsKypq8D+b2PJ4Fl8qJ5Mv3PRyMptWwWW27ks+B87RSH0xqlSePE7MX1bovh3OBiRtkKaFrh9
+	/zKx1wWQ8JUNdbwX0HUXWRequ++ldfk5uDt6Q7SQZMvQqd5rZ+tuJBL9E/UqonVdabHak=
+X-Received: by 2002:a05:6830:6014:b0:7d9:b314:1452 with SMTP id 46e09a7af769-7dbb730994dmr15742965a34.7.1775676435577;
+        Wed, 08 Apr 2026 12:27:15 -0700 (PDT)
 Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7dbfc1cb79esm3359699a34.15.2026.04.08.12.27.13
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7dbfc1cb79esm3359699a34.15.2026.04.08.12.27.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 12:27:13 -0700 (PDT)
+        Wed, 08 Apr 2026 12:27:14 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/2] io_uring/tctx: have io_uring_alloc_task_context() return tctx
-Date: Wed,  8 Apr 2026 13:24:07 -0600
-Message-ID: <20260408192711.396827-2-axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring/tctx: clean up __io_uring_add_tctx_node() error handling
+Date: Wed,  8 Apr 2026 13:24:08 -0600
+Message-ID: <20260408192711.396827-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260408192711.396827-1-axboe@kernel.dk>
 References: <20260408192711.396827-1-axboe@kernel.dk>
@@ -106,7 +106,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13003-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13004-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -119,130 +119,119 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,kernel.dk:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2CDB23C301E
+X-Rspamd-Queue-Id: F11683C3027
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Instead of having io_uring_alloc_task_context() return an int and
-assign tsk->io_uring, just have it return the task context directly.
-This enables cleaner error handling in callers, which may have
-failure points post calling io_uring_alloc_task_context().
+Refactor __io_uring_add_tctx_node() so that on error it never leaves
+current->io_uring pointing at a half-setup tctx. This moves the
+assignment of current->io_uring to the end of the function post any
+failure points.
+
+Separate out the node installation into io_tctx_install_node() to
+further clean this up.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/sqpoll.c |  8 +++++++-
- io_uring/tctx.c   | 21 ++++++++++-----------
- io_uring/tctx.h   |  4 ++--
- 3 files changed, 19 insertions(+), 14 deletions(-)
+ io_uring/tctx.c | 60 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 40 insertions(+), 20 deletions(-)
 
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index c6bb938ec5ea..46c12afec73e 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -458,6 +458,7 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			return -EINVAL;
- 	}
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
-+		struct io_uring_task *tctx;
- 		struct task_struct *tsk;
- 		struct io_sq_data *sqd;
- 		bool attached;
-@@ -524,8 +525,13 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		rcu_assign_pointer(sqd->thread, tsk);
- 		mutex_unlock(&sqd->lock);
- 
-+		ret = 0;
- 		get_task_struct(tsk);
--		ret = io_uring_alloc_task_context(tsk, ctx);
-+		tctx = io_uring_alloc_task_context(tsk, ctx);
-+		if (!IS_ERR(tctx))
-+			tsk->io_uring = tctx;
-+		else
-+			ret = PTR_ERR(tctx);
- 		wake_up_new_task(tsk);
- 		if (ret)
- 			goto err;
 diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 143de8e990eb..e5cef6a8dde0 100644
+index e5cef6a8dde0..61533f30494f 100644
 --- a/io_uring/tctx.c
 +++ b/io_uring/tctx.c
-@@ -74,20 +74,20 @@ void __io_uring_free(struct task_struct *tsk)
- 	}
+@@ -108,10 +108,37 @@ __cold struct io_uring_task *io_uring_alloc_task_context(struct task_struct *tas
+ 	return tctx;
  }
  
--__cold int io_uring_alloc_task_context(struct task_struct *task,
--				       struct io_ring_ctx *ctx)
-+__cold struct io_uring_task *io_uring_alloc_task_context(struct task_struct *task,
-+							struct io_ring_ctx *ctx)
- {
- 	struct io_uring_task *tctx;
- 	int ret;
- 
- 	tctx = kzalloc_obj(*tctx);
- 	if (unlikely(!tctx))
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ret = percpu_counter_init(&tctx->inflight, 0, GFP_KERNEL);
- 	if (unlikely(ret)) {
- 		kfree(tctx);
--		return ret;
-+		return ERR_PTR(ret);
- 	}
- 
- 	tctx->io_wq = io_init_wq_offload(ctx, task);
-@@ -95,7 +95,7 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
- 		ret = PTR_ERR(tctx->io_wq);
- 		percpu_counter_destroy(&tctx->inflight);
- 		kfree(tctx);
--		return ret;
-+		return ERR_PTR(ret);
- 	}
- 
- 	tctx->task = task;
-@@ -103,10 +103,9 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
- 	init_waitqueue_head(&tctx->wait);
- 	atomic_set(&tctx->in_cancel, 0);
- 	atomic_set(&tctx->inflight_tracked, 0);
--	task->io_uring = tctx;
- 	init_llist_head(&tctx->task_list);
- 	init_task_work(&tctx->task_work, tctx_task_work);
--	return 0;
-+	return tctx;
- }
- 
++static int io_tctx_install_node(struct io_ring_ctx *ctx,
++				struct io_uring_task *tctx)
++{
++	struct io_tctx_node *node;
++	int ret;
++
++	if (xa_load(&tctx->xa, (unsigned long)ctx))
++		return 0;
++
++	node = kmalloc_obj(*node);
++	if (!node)
++		return -ENOMEM;
++	node->ctx = ctx;
++	node->task = current;
++
++	ret = xa_err(xa_store(&tctx->xa, (unsigned long)ctx,
++				node, GFP_KERNEL));
++	if (ret) {
++		kfree(node);
++		return ret;
++	}
++
++	mutex_lock(&ctx->tctx_lock);
++	list_add(&node->ctx_node, &ctx->tctx_list);
++	mutex_unlock(&ctx->tctx_lock);
++	return 0;
++}
++
  int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
-@@ -116,11 +115,11 @@ int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
+-	struct io_tctx_node *node;
  	int ret;
  
  	if (unlikely(!tctx)) {
--		ret = io_uring_alloc_task_context(current, ctx);
--		if (unlikely(ret))
--			return ret;
-+		tctx = io_uring_alloc_task_context(current, ctx);
-+		if (IS_ERR(tctx))
-+			return PTR_ERR(tctx);
+@@ -119,14 +146,13 @@ int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
+ 		if (IS_ERR(tctx))
+ 			return PTR_ERR(tctx);
  
--		tctx = current->io_uring;
-+		current->io_uring = tctx;
+-		current->io_uring = tctx;
  		if (ctx->int_flags & IO_RING_F_IOWQ_LIMITS_SET) {
  			unsigned int limits[2] = { ctx->iowq_limits[0],
  						   ctx->iowq_limits[1], };
-diff --git a/io_uring/tctx.h b/io_uring/tctx.h
-index 608e96de70a2..2310d2a0c46d 100644
---- a/io_uring/tctx.h
-+++ b/io_uring/tctx.h
-@@ -6,8 +6,8 @@ struct io_tctx_node {
- 	struct io_ring_ctx	*ctx;
- };
  
--int io_uring_alloc_task_context(struct task_struct *task,
--				struct io_ring_ctx *ctx);
-+struct io_uring_task *io_uring_alloc_task_context(struct task_struct *task,
-+						  struct io_ring_ctx *ctx);
- void io_uring_del_tctx_node(unsigned long index);
- int __io_uring_add_tctx_node(struct io_ring_ctx *ctx);
- int __io_uring_add_tctx_node_from_submit(struct io_ring_ctx *ctx);
+ 			ret = io_wq_max_workers(tctx->io_wq, limits);
+ 			if (ret)
+-				return ret;
++				goto err_free;
+ 		}
+ 	}
+ 
+@@ -137,25 +163,19 @@ int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
+ 	 */
+ 	if (tctx->io_wq)
+ 		io_wq_set_exit_on_idle(tctx->io_wq, false);
+-	if (!xa_load(&tctx->xa, (unsigned long)ctx)) {
+-		node = kmalloc_obj(*node);
+-		if (!node)
+-			return -ENOMEM;
+-		node->ctx = ctx;
+-		node->task = current;
+-
+-		ret = xa_err(xa_store(&tctx->xa, (unsigned long)ctx,
+-					node, GFP_KERNEL));
+-		if (ret) {
+-			kfree(node);
+-			return ret;
+-		}
+ 
+-		mutex_lock(&ctx->tctx_lock);
+-		list_add(&node->ctx_node, &ctx->tctx_list);
+-		mutex_unlock(&ctx->tctx_lock);
++	ret = io_tctx_install_node(ctx, tctx);
++	if (!ret) {
++		current->io_uring = tctx;
++		return 0;
+ 	}
+-	return 0;
++	if (!current->io_uring) {
++err_free:
++		io_wq_put_and_exit(tctx->io_wq);
++		percpu_counter_destroy(&tctx->inflight);
++		kfree(tctx);
++	}
++	return ret;
+ }
+ 
+ int __io_uring_add_tctx_node_from_submit(struct io_ring_ctx *ctx)
 -- 
 2.53.0
 

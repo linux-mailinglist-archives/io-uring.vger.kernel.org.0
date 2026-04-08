@@ -1,250 +1,178 @@
-Return-Path: <io-uring+bounces-12977-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12978-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WKxnES781Wn4/gcAu9opvQ
-	(envelope-from <io-uring+bounces-12977-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 08:56:46 +0200
+	id CHw5HzgT1mngAwgAu9opvQ
+	(envelope-from <io-uring+bounces-12978-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 10:35:04 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C093B7CB4
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 08:56:45 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221093B91E9
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 10:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 784173059FFC
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 06:54:35 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 083883009881
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 08:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502C9366064;
-	Wed,  8 Apr 2026 06:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440F73A6B9B;
+	Wed,  8 Apr 2026 08:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oX6YTCsC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFm4+muh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013031.outbound.protection.outlook.com [40.93.196.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054CE366062;
-	Wed,  8 Apr 2026 06:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775631275; cv=fail; b=cTLHF80m+k7QCzXpvrLJ3c5J3+6W36P6LBsgFp1VhQawF0ODtbQLtwqXefdgto++goYRBtttArqUFnXVT7GqD8ay4dHEnlGZL1RtGvSaYVQoc+tiH1LbSD34rYH/GxsqLEx6TaLqbswnHrfH9RPuKcwa8XI/qqW4teoKAEztMKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775631275; c=relaxed/simple;
-	bh=UsxKP573jh2Vy+Tg2uSBSBszQtOVKvmmVqtYavvyp1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=udAMOCFdzl82ixLYxxCj+A+Mqt9wRYkWBjq5XX6WfaoSR3Nr71iBQbNPWofPbDbmoA6dzwdXQH8IXm4G1QNaSJ09Dj24IOEXseEOzZDvgZPfQKdalpCRxBG8Lme5Qw1O8jtjKboUHs/w9jscwbEPZv30Nn5guHRArXg+ebltHVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oX6YTCsC; arc=fail smtp.client-ip=40.93.196.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ggWRQZMnl9Ih8ZCV6V+Gpztbt9CpaSeZSKWIRzQxUQdll6UTO+uNNQS1ay7b3oGRGrVrHTYRzZk+03RTq2uHnTC/exc333T5asU9dl3EBXTHFcmf3J0UMUSTxyLEsNQxRTKMv73Xd7HtIsJo5tk+xcQPIS9fOpIafp57AEyH55owLlnxCQ+JyF9qcXkyqrZX+JVHdkU4mCzJ0OmUtPK2R9XGZgdbBrx5P7D+052pyay/uixEuK+uAy9XMUmjIuSDOMgyiVT5zzHB+B/go5wh2xR65wycV7LK2MDOdwndccgKFQW1z6EkfPnCp+ZnU6MaqhycI8Jhbh9rtRjGCQ2skQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4cfIpFDPbsM47dnFIlGRurpF0kuARXygaGIVwAwQsK0=;
- b=KKufNZMNifr9pezTfDyhndtcY8nh8DPCn0/wI+yYhPj+uruQftTbQAL5uFRp74UOXedV15sGlIIfaVpBi89oHbxoATAUJcDdWKj02ZRYcFBbc9g99eB2JJIxKLpYDWg0fz6IvncYewx1uCpAMMBOIPr2Igd5RIogLnIaLTvbEhn4G37O2AqXlUZwh6gFieoJz/XhmMZ411J5CR55znGMlgdOF8zhYhsUfmLocBaF9r679wNW5QYf7JEc2SBuMUrRjgzYahCtpE/Q9WlhvM7JI6eGwse3ZpnCF10Pekl9P/Usbcp8r4Mn8JCzcGcVvwtzvdQA6xbLM5whh0x1gbXFPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4cfIpFDPbsM47dnFIlGRurpF0kuARXygaGIVwAwQsK0=;
- b=oX6YTCsCICr1mbsstUSqG4NquSj4XlIHTy9r3Ru+qFIFPjzdy5ppBhNCU3rFQsNm/VfIuraz1Fv9TR1ytAwFIAoE9OzI3ROx0xPwSqPyrvaRXjA2EWe8QmPMLfTB0WWYTxFpXNNBWGcvjht6HRbA0GgmaHwvRWQ2KJjEQEmKsdkU+QXhGyKnww2VXc4LYxQolWENhxX/yuBnv6ioyAKUTiX+cz3FW2oogzgik9UrbDy+vDReyEbOj/LGahvgdR5/3F81dSRuJScoLsGMTMfNp2QFBc9Z3FEUVD3w5ad2v55/yElg7Yt+W3tC3zS6eMRZ4UjpYTtjqF1fUgf1HC2cng==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CHXPR12MB999244.namprd12.prod.outlook.com
- (2603:10b6:610:2fc::17) by LV3PR12MB9412.namprd12.prod.outlook.com
- (2603:10b6:408:211::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 8 Apr
- 2026 06:54:29 +0000
-Received: from CHXPR12MB999244.namprd12.prod.outlook.com
- ([fe80::168f:599c:f74d:7688]) by CHXPR12MB999244.namprd12.prod.outlook.com
- ([fe80::168f:599c:f74d:7688%5]) with mapi id 15.20.9769.018; Wed, 8 Apr 2026
- 06:54:29 +0000
-From: KobaK <kobak@nvidia.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Keith Busch <kbusch@kernel.org>,
-	Ming Lei <ming.lei@redhat.com>,
-	io-uring@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Koba Ko <kobak@nvidia.com>
-Subject: [PATCH 3/3] io_uring/zcrx: fix resource leak and double-free hazard in io_import_umem
-Date: Wed,  8 Apr 2026 14:54:08 +0800
-Message-ID: <20260408065408.2017967-4-kobak@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260408065408.2017967-1-kobak@nvidia.com>
-References: <20260408065408.2017967-1-kobak@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4PR01CA0023.jpnprd01.prod.outlook.com
- (2603:1096:405:2bf::16) To CHXPR12MB999244.namprd12.prod.outlook.com
- (2603:10b6:610:2fc::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4363A6B6A
+	for <io-uring@vger.kernel.org>; Wed,  8 Apr 2026 08:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775637301; cv=none; b=MFVn/7s7M8Uk0vWThoCcJuv477Kk/HBAkNn6aqha9UZnDoi7iQXOflvxbkQ0Oncr1YCJDzlBDfcsFRnN4Ik/cLHIpOnHP0HBZeuGVi2AXLxbChKI/SRR3hjGVAj6mTh9jKfui5tOcRxvFb+WInnLmM18Qntoi20s+FTR19TZgOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775637301; c=relaxed/simple;
+	bh=Yv9rp1wgQY/Ainn0b6NPeknaayPrGIJ+iW91Cs0GLmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I6LW+hu2Mp9Msf/rSnhfqAWY639QF4GJ4VK5+DWERTPziJGcn5a56jkVHTt23hJLvkpkLZjqCQSnXDdKyoYYYITdT7P9HD8iBqWxSKH1Pe0AWABrbETNqTh1hdO8VUEHml+LEJj5Q8O9lmAbWGFR7O9xL/Uzac7upOABU730mXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFm4+muh; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4887eca00c4so40053415e9.2
+        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2026 01:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775637298; x=1776242098; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CQaeOFXbxNsQ6d5NOWsIIq7eCw+qyUnj2mDKEGGArjM=;
+        b=dFm4+muhY1VOt4KhNS/fpE6DxxIAiZmKWKsbfOUKFcQu+QN5tpQVIx/knA6AVLNlka
+         9eHJ1XcKmaI2HLjwsWjSCydCdv6I/cX2Nu/gq/Zqa1P8NXmZYcB4JHAO8lEjoLd20K7F
+         +pGQ3BNA8QLQzXQ/FKWCWwGljV6JBrIaQ7A2UmXb57sLD8PO1h1Dqf0hlrOEie/im4As
+         7gQTNafumAD6d+bGeBBdsx1TAsmfdYwIzJGJWgmhEM2x0rRsc9g5lElgbVfOOVkt8qIX
+         xACWKhAg7msuQUDUNWDhEKyzCs6gUppyeD+OJfUI602Qw46LmTb7BlwJgHI45S5AIAXs
+         iwlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775637298; x=1776242098;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CQaeOFXbxNsQ6d5NOWsIIq7eCw+qyUnj2mDKEGGArjM=;
+        b=crUCn5lpGcLmzizqQ4mZSoof+oJdmOQgkSoD/fvXC/GKM20wnBAHcb+hi1fZKYuru1
+         xKSsmhRwb5kMR/KA2F7lYJNjPXtWV8q0qSzecLAL44vYwg8CSBHorAXjUqP6jTSCgFHb
+         v4IPQXKbkTQ8MWe30aZGTRzCJ0pfChOeJ6gHmzW8T6kZBPBHYGFMZxhstks/ubDE+hJw
+         pS2O+mR9S9KW+orME35y2Pt2y00ehep06cNCKxANmRRF56NCP5l0ljwQQQzNBkqcYWio
+         DqcsHiSM06tiQg6RAaiQRsLHZ8F+nOHKHem+kDh+snGOQDNiW1i6jTgtG5SASN9YLPGl
+         PFlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM2/jVb1U6jUVZ9Vtzfi+8f3Q6oqnHOEKC6BtBkvB9nMxW1lZ9z41UnGfgo5sGg5X0hWZXX5DV+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6hvBJlUr6HXxMGO3mE4K9Qt4PHDz9SpFqZet8yiDev/XAr90S
+	4KfKP/74SR91EYbwTumRew4o+hOZZNlXrGN0aAFI+JbSSxWtm0tTDhhV
+X-Gm-Gg: AeBDieul78GhhlUutQRgBJCYoDXGPFahzmza/hN0zC5NfMFNedjhFCwfuBlVHb9Y8xt
+	mhSVrKC6LTauNdpLhN2wbwuQxo2YIF/zzIxfEDQ+IpQpKXW+twV0lYtJOh3pxmlkxJwSLCiX6R1
+	FVH51zVbUnYtk7/iiRREKRl3a1xJMh5tqhgIqsILRGTCG8AV7MGKrueS0IAE/CjSrfmUTYb/J7F
+	POZtgCG2kfhp/vBLdYrnTarVAOS2TyNJmIYrRAPhrRre6Z/4OqDDsD9GvaTwTs42Jh/R+lCh5PA
+	COD3b65VdwdnDGvtaeiZkNozMUpij0gqK2Yz+i1s+wqR9iilYEpa6MHip66ga3rHMY+Wv4iv/0/
+	2T5mMgwQNQSIjCOFjjpzB28ZdDuwQ2QAt+mFoxaaA53K6WEqc9OBO49wgsCEmplFoa+9i7S7GXZ
+	bfOwi4lLNb/5TFo9E6x8FYM+bvviWqQ/myi/GWopMYXeAECfitPRjW6oAPqTImZTcGLcfjC5V42
+	9mTIWaN+CLo3255uRz8zp04EAV9xDr2wYsLlgGMHQmJhbTLmWrIqfXlSaw=
+X-Received: by 2002:a05:600c:1f96:b0:487:4eb:d125 with SMTP id 5b1f17b1804b1-48899753e5fmr279347815e9.9.1775637297978;
+        Wed, 08 Apr 2026 01:34:57 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eaba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488c1c5291esm150797065e9.15.2026.04.08.01.34.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Apr 2026 01:34:56 -0700 (PDT)
+Message-ID: <336062ec-5fcd-46ad-a839-6ddbff7f9fb9@gmail.com>
+Date: Wed, 8 Apr 2026 09:34:59 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CHXPR12MB999244:EE_|LV3PR12MB9412:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6b508f6-7bd6-4cd1-54fc-08de953bae23
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	2eQ1cHlXS8E065luHIUpr7i0Pz3oVl6ZWvfk/T/jYJjxbF6AoCnasXd95y2TQnPhlEn9IhybB47WhMB3qJSXCLBhgkTc6VVbf4OB37jF0uTt0MZntFFyfGHS7LsFb0M2u51BCTYrDW3q1mrXwRxuUy8DxZ3JtxuYVbBaVAZHyxLIs5RLrlGjds9jVa/s9F4BT4tnmDykmiwFIKgPa51J5HaT+wAYXGeecY7pEa8c86cBr3QzmFM8w7clNt32z+nMLQyp0n+kouNfIzcy3s9q8xrZ1DMHEJmYjcm8ZQpV2y5LPjc50NIWBO2wsClX2NL8XjesWev+nTPZwvwywsYQ5zn9w7RJkjooVF4Q+WitDN/39HamvXQ8T4UTnIZTndOI+w3V3Dm2LJeuR5fBTV47Tqldmi0w/YVaspQT9O4COMjkepSJET91lvGbrSx5NaR80wTvFbGpL395Q3Sw7hUfFkmBKSkIcZEjmdtcJmwYdMky2UBL28fh04oNxhKS3jKmeXdMiNxvypKy8oOOP9uqdSKC0A39WW3Iv5m+14TvGSiAtTBNZCiT+SZpWWxug43etUBwj5WFCLisxhSL0uj9rh09U/ZrLSZ5Ae/X+h8DzhwCTw6Vyc4fSgwK+7O9ovsAXhRPOzf7ioTPu0nXWD/8qfmSch3XlRudBlCwu6TMMVWx7CyBF9ONmHuUBRRupFQuOLOmxCOcqUePX8BtVmAn0f7XVJfsKzQdlXgFaoQftZ8=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHXPR12MB999244.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Sxiuaj+TakAc5R1xHr1qkrzM763Evt1Q6qv/I725evSKPiVMKSfJrEWOgFHR?=
- =?us-ascii?Q?E0Z71Z8aTmoOz3I2j6850M+kRK1D0JPQEEkSwkcoq4oMoxX+RrDtJN8mPULP?=
- =?us-ascii?Q?naI+0zgzumXV7qtsw1qV+T3gENN8wT5LttWEUV/WBuvdqKM6cCoxvssUioWd?=
- =?us-ascii?Q?8lCKtxZ/aECbFCYyGKtbk8e5ydWAIPLlYu1dBOEhyy0hGiIv/CahRMX6fGlz?=
- =?us-ascii?Q?iKCa3V2oiJGHifcCC8p9dAC8AIrwbdt4nUeu8YemdqVINRVcq529HvDwEVTv?=
- =?us-ascii?Q?rcyVw3W9x8RMj3Jg59GDPmjLT0Aya1F1bssRnX4p0Tyn/Q5CN375zgrUahSk?=
- =?us-ascii?Q?7N/JpyxZp1GNiGgBwX5iqrTxw7/iTOqZoSkt8ILC8Z1Wn+vXTucKCFHpGd+Z?=
- =?us-ascii?Q?WM2lt//vXTCtidN/U5znSc1ZhhvmjZJ7rbEDBB2TErG+OUo9KIJ1zn34iex5?=
- =?us-ascii?Q?WTjUd4Ubj9SCZ5KDVHs84hhuywKB1/ZiSHdt9yjUfdpr6YYGAcK5dmjzaw+P?=
- =?us-ascii?Q?EPIpX/zb4/QlkPF9elHhTeja6EHEEfP5LJSDxKWIws/LcZOazhsl+5JPFBwO?=
- =?us-ascii?Q?HRoy5a1VscOU9ZqFHKQq4QOuUymElwDJggZ9NaArLngIAJ3E8ttPrODChPaR?=
- =?us-ascii?Q?Cl1iZ0rcuLz7MD5lTKwxYDPZNRR2+zMj08jsX440Mph0d/uYdSneEX42FZTQ?=
- =?us-ascii?Q?Yzu8Y+uprwwXOOYz0KSPF4RBPvnXHseDAWhdY1v3Vu0eO9V9xNkShhucYucM?=
- =?us-ascii?Q?X7CyQhhr0vHdwGUPvHeu3PzZnvHRPBDBgL+L1V/cA5JEqh5MvXE4mIN7eyhD?=
- =?us-ascii?Q?s/EUA1gpKXp6jDVMQNWA9kbjWTh/MDmxcNJIRiJFV1UJcg67YLhmsPriocPk?=
- =?us-ascii?Q?dMRELI/dp7NbhamGwJ+w0sU62x4mtYYSZGG6hAppTuDceRNnNAEtpB+Hc05X?=
- =?us-ascii?Q?Whiu4fEMuf5O5a+wFymqJcyfTyBUbeeavFZNmDJKBkI/Xz/sgQpCEiytIn77?=
- =?us-ascii?Q?AuUVgP/eEl4mWs4FSEROSXp7imWuZILpk81Htodk1tpiZyrzXjN3YE4M5Ri8?=
- =?us-ascii?Q?N7OICpmJM0hDjHMuBsEnCl8YqKN1A+lu+/oRtdg8c+fniuxJsPfkFAOqpG/9?=
- =?us-ascii?Q?Zd5ApBY+KcGNIzxbHxL1fEU3qNnLZIJS4sDS3LNgw5okEBaBVFTyYIc1D+yA?=
- =?us-ascii?Q?y5/ydvyPySE3ZF6p03DQ4uXsrw0SQ5nocvYXa189xTPr199+C7C2CrCxCJsY?=
- =?us-ascii?Q?YRchQ1ZXDyS/I8fNYCLelC+9xD6XQQBY+AaCIVdVmajPNIxHPNHSDPKVyn8k?=
- =?us-ascii?Q?EzwwQKlEyblr51h84yyUfYNtXSUdmCCAL6eVDU5cF/0e5DYykPjranmcrO3M?=
- =?us-ascii?Q?cqWgqGM3bIvP9SKU78SbOKGek/4KGRSUx+eoJbCEXDdzRkFeuf40gO7DM5Nl?=
- =?us-ascii?Q?wZ5wMQrJAPH8rlo52lE8DOAFlEA0KGKbrlkqBrccyHtQgouA7vdCF8AfZwM3?=
- =?us-ascii?Q?8dCrw1oIoSfcAbL9jejfBzbdKw9+vzDeh2rNHBslWWl7AlhAcWzo6Pl/KoWP?=
- =?us-ascii?Q?TRp5H5XvF2kgQPRdGK56VZPpUoma3JD8Dki9Pt6q7Vq+aFtMJwMUjDsJNyKd?=
- =?us-ascii?Q?GwsXA6cev8d/hbzyuDjSXdEuE6fDhC1CQFjTmLtk1LiVl6IRWs/bAT3f5NCJ?=
- =?us-ascii?Q?CBksTtM4eJ9ZBn9h1CFaE2LM2IuT3LPPZ5PhxH/183vlWnNuDXHw3UORIrY+?=
- =?us-ascii?Q?yIiB7OUdmw=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6b508f6-7bd6-4cd1-54fc-08de953bae23
-X-MS-Exchange-CrossTenant-AuthSource: CHXPR12MB999244.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 06:54:29.0898
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6Lnl1tZWuaf5+vneId0EXpkaf8L1BZ9bKMCs25eMTEQV330assy4iurL10goqj8WZkDADCi+3DuJfigdJq3VEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9412
-X-Spamd-Result: default: False [2.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
-	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring: fix pinned pages and pages array leak in
+ io_region_pin_pages()
+To: KobaK <kobak@nvidia.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260408065408.2017967-1-kobak@nvidia.com>
+ <20260408065408.2017967-2-kobak@nvidia.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20260408065408.2017967-2-kobak@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-12978-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
-	TAGGED_FROM(0.00)[bounces-12977-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kobak@nvidia.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[Nvidia.com:+];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[Nvidia.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,nvidia.com:email,nvidia.com:mid]
-X-Rspamd-Queue-Id: D2C093B7CB4
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,nvidia.com:email]
+X-Rspamd-Queue-Id: 221093B91E9
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Koba Ko <kobak@nvidia.com>
+On 4/8/26 07:54, KobaK wrote:
+> From: Koba Ko <kobak@nvidia.com>
+> 
+> When io_pin_pages() succeeds but the subsequent nr_pages sanity check
+> fires (WARN_ON_ONCE), the function returns -EFAULT without unpinning the
+> user pages or freeing the kvmalloc'd pages array. The caller's cleanup
+> via io_free_region() won't help either, because mr->pages was never
+> assigned — so the entire cleanup block is skipped.
+> 
+> Add unpin_user_pages() and kvfree() before the error return to prevent
+> the leak.
+> 
+> Fixes: a90558b36ccee ("io_uring/memmap: helper for pinning region pages")
+> Signed-off-by: Koba Ko <kobak@nvidia.com>
 
-io_import_umem() has two problems:
+It's a WARN path, it should never happen, but if it does, that means
+io_pin_pages() is buggy, and it's better to leak rather than risk
+something nastier.
 
-1. When io_account_mem() fails, the function returns an error but leaves
-   live pinned pages and sg_table in the mem struct without cleaning them
-   up. The caller happens to handle this today via io_zcrx_free_area() ->
-   io_release_area_mem(), but the contract is fragile.
+> ---
+>   io_uring/memmap.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+> index e6958968975a8..9f0d3750ce3bc 100644
+> --- a/io_uring/memmap.c
+> +++ b/io_uring/memmap.c
+> @@ -141,8 +141,11 @@ static int io_region_pin_pages(struct io_mapped_region *mr,
+>   	pages = io_pin_pages(reg->user_addr, size, &nr_pages);
+>   	if (IS_ERR(pages))
+>   		return PTR_ERR(pages);
+> -	if (WARN_ON_ONCE(nr_pages != mr->nr_pages))
+> +	if (WARN_ON_ONCE(nr_pages != mr->nr_pages)) {
+> +		unpin_user_pages(pages, nr_pages);
+> +		kvfree(pages);
+>   		return -EFAULT;
+> +	}
+>   
+>   	mr->pages = pages;
+>   	mr->flags |= IO_REGION_F_USER_PROVIDED;
 
-2. io_release_area_mem() doesn't NULL out mem->pages after kvfree(),
-   making it unsafe to call twice. Since io_zcrx_free_area() always
-   calls it during teardown, any earlier cleanup call would cause a
-   double-free.
-
-Fix both: populate mem fields before io_account_mem() so
-io_release_area_mem() can do a proper cleanup on failure, and add
-mem->pages = NULL in io_release_area_mem() to make it idempotent.
-
-Fixes: 262ab205180d2 ("io_uring/zcrx: account area memory")
-Signed-off-by: Koba Ko <kobak@nvidia.com>
----
- io_uring/zcrx.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 62d693287457f..c9ed1139c7bcd 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -188,6 +188,8 @@ static unsigned long io_count_account_pages(struct page **pages, unsigned nr_pag
- 	return res;
- }
- 
-+static void io_release_area_mem(struct io_zcrx_mem *mem);
-+
- static int io_import_umem(struct io_zcrx_ifq *ifq,
- 			  struct io_zcrx_mem *mem,
- 			  struct io_uring_zcrx_area_reg *area_reg)
-@@ -213,16 +215,20 @@ static int io_import_umem(struct io_zcrx_ifq *ifq,
- 		return ret;
- 	}
- 
--	mem->account_pages = io_count_account_pages(pages, nr_pages);
--	ret = io_account_mem(ifq->user, ifq->mm_account, mem->account_pages);
--	if (ret < 0)
--		mem->account_pages = 0;
--
- 	mem->sgt = &mem->page_sg_table;
- 	mem->pages = pages;
- 	mem->nr_folios = nr_pages;
- 	mem->size = area_reg->len;
--	return ret;
-+
-+	mem->account_pages = io_count_account_pages(pages, nr_pages);
-+	ret = io_account_mem(ifq->user, ifq->mm_account, mem->account_pages);
-+	if (ret < 0) {
-+		mem->account_pages = 0;
-+		io_release_area_mem(mem);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
- static void io_release_area_mem(struct io_zcrx_mem *mem)
-@@ -236,6 +242,7 @@ static void io_release_area_mem(struct io_zcrx_mem *mem)
- 		sg_free_table(mem->sgt);
- 		mem->sgt = NULL;
- 		kvfree(mem->pages);
-+		mem->pages = NULL;
- 	}
- }
- 
 -- 
-2.43.0
+Pavel Begunkov
 
 

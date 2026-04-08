@@ -1,151 +1,163 @@
-Return-Path: <io-uring+bounces-12991-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12992-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8G+cCBFe1mkPEwgAu9opvQ
-	(envelope-from <io-uring+bounces-12991-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 15:54:25 +0200
+	id ANHwKZxe1mkfEwgAu9opvQ
+	(envelope-from <io-uring+bounces-12992-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 15:56:44 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630F03BD3C1
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 15:54:24 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AD03BD425
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 15:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 361B3300A107
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 13:53:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 601483029C35
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 13:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD45D3ACA64;
-	Wed,  8 Apr 2026 13:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334CE3CFF71;
+	Wed,  8 Apr 2026 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="BsbwxuWZ"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="WCx6dZDm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F234335063;
-	Wed,  8 Apr 2026 13:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E5B2F3C3E;
+	Wed,  8 Apr 2026 13:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775656396; cv=none; b=A/O26ApV+zNbVCPnVDs6xzrIwpFLYZB0ILoAH/xukPjBusfCE/uxih3XNJ+3RapTdljidjE7mUCUel/hCawv71MBZkUwGtqJ8A17FI5TS15K+IM5GAuivB8dsT8ytSNDODKB+RZuho0fSBnHmz39f5DtDdcb/MyhHv6NXR6ZORE=
+	t=1775656582; cv=none; b=IhKacHyYInnATcz5uxai+Y1OU5sut428WUfoSiW+hZXXpFBTgVU8oVv08oZWm8ocOR1bZUdeL8rXp3XvGjgl3vrdUgeDC1yyTXYZSfr5G7cI8UW/kPSUcD8MkCvf4NdG8zr3nEklj6a4TbG40XPMnnJ33N7qswNk2qarvwHVsgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775656396; c=relaxed/simple;
-	bh=DTnM4htd2Jjkwqs+F8r4cTsjWbrzp3I5U6vPySVzAWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtmvQFtUnbWiJi05E3+vcweYC6XgnH3G0S+7XOPTceraYuVFctFDYdi8gPKYClAidhqFvhzrm8uoDj5LPIBpnz/AYFy61TM9sWoR8kbUewJysuxQb7ufcxyGj4ifKAnJzWbLF1Flq/oiScgS0tZkBrfP6kDrMng7ocJ364rGZoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=BsbwxuWZ; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CesSAmwyidYzb8uUCTfS3iRACJpDJ6KIJkWaYpu5Tfc=; b=BsbwxuWZuch7f8xqe+sewtPCT/
-	CuQnsrKJfqcfjZvNScSy8ZOW1W+2u5zHkiNfZTX5UVZtOkfJ4beAJ+vFqK7zpkbpSXJBNhn5pTwV0
-	WWxXG3WV7msGudWrXp5hemS5xTmvnPoQmgYGit4fnw2J46zlacf+jAWTnuJl13ba+PxrabN8JOZ7p
-	tssiDQ/Nj2wlTGV8Hh707kZBJwSzxRPb/FlZPeUMIDBIaQ+6WG6UiPGMeBdRjzZBNe0fYGykyW6/T
-	DC5Thk2SJkxqr2aQnQ8v5TLSGe7PCwXk0TJwOsfwkQSuxqYJFMp/JDZGf2OFyc4rr53G4l8UpECYe
-	okYO2v9w==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1wATL1-008T07-2N;
-	Wed, 08 Apr 2026 13:52:59 +0000
-Date: Wed, 8 Apr 2026 06:52:54 -0700
-From: Breno Leitao <leitao@debian.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, metze@samba.org, 
-	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>, io-uring@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
- buffers
-Message-ID: <adZcnNgxhsUjAgZW@gmail.com>
-References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
- <20260408122653.295953dd@pumpkin>
+	s=arc-20240116; t=1775656582; c=relaxed/simple;
+	bh=46qFwFzC/ebZUZRyVIFb+CkAl3duNE/HoG95kggfUe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kHGX+m+WIjH7LDa9G3HE2QAP7uO8nBKilmF16bJSxz/6VCuz5HJN54G+oCDeBdzAX00dL4PIYKv/wD7OIO8h+1B6SZunDp+NKM10SKtskfcJgM5JCq65z+U/DC6iflj+MYZ13nWPxKD/8E/6/4UiFZLQHDC+0jyui8/89cs7EeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=WCx6dZDm; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=CViLcGuCpU+atHks/PGTdtF+G2BOuCOPXIMz2qetKH0=; b=WCx6dZDmsXGl/lrlE7Rsv+5i9Z
+	BXIvX/mkWz7VTersVPNGJrUlfNVsnrFh0XFosOlVRmTdJbS7Wj7xlJxDlOOfuR20jVw0FPN7SluxP
+	D0HUN9+trElKMxgKmxVjgYNxcgv9kJ4O/oIOTMH1SVpW0mYwyDlRHd7r/ijhe9/gC0G7cxj52jfqj
+	kAvapSdb7KQg8iyAXItZ7RuCgt15dzAvZ/7EBS+lj+ryt5PO01OLmjIvc9TVTni9nvTkG/t/B86zj
+	o5ugHT7n3uVkPdUwmwq6Ypu5lVvqscvsP7DfOMN5vBwox7EeoKr+1sgA2p0lQDmPi3h/trG+I99l+
+	3Qhsx0GpUkzBj0oX+vNMAgeqC1jHPGYtyISmWgygzqW369SL3vwzVA71Yi6oVCHsxQpq66pWC++a6
+	VCg/FXUwGErrRdZP/ljdoxS4+cexRXtrbpPu5ijF+aERJG/Npphm1ca7mCiIywOpIh1duGFQmkHl0
+	5DeSrJINA0S+E6rlTfsy4JDV;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1wATO9-00000007sKk-3uEK;
+	Wed, 08 Apr 2026 13:56:14 +0000
+Message-ID: <3fd4bf27-344f-45fc-bca3-9e9676522972@samba.org>
+Date: Wed, 8 Apr 2026 15:56:13 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
+ buffers
+To: David Laight <david.laight.linux@gmail.com>,
+ Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn
+ <willemb@google.com>, axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>,
+ io-uring@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
+ <20260408122653.295953dd@pumpkin>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
 In-Reply-To: <20260408122653.295953dd@pumpkin>
-X-Debian-User: leitao
-X-Spamd-Result: default: False [0.84 / 15.00];
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_MATCH_TO(1.00)[];
-	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[samba.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[samba.org:s=42];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DMARC_NA(0.00)[debian.org];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-12992-lists,io-uring=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com,debian.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-12991-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[debian.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[metze@samba.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[samba.org:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 630F03BD3C1
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,samba.org:dkim,samba.org:mid]
+X-Rspamd-Queue-Id: 39AD03BD425
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hello David,
-
-On Wed, Apr 08, 2026 at 12:26:53PM +0100, David Laight wrote:
+Am 08.04.26 um 13:26 schrieb David Laight:
 > On Wed, 08 Apr 2026 03:30:28 -0700
 > Breno Leitao <leitao@debian.org> wrote:
->
-> > Currently, the .getsockopt callback requires __user pointers:
-> >
-> >   int (*getsockopt)(struct socket *sock, int level,
-> >                     int optname, char __user *optval, int __user *optlen);
-> >
-> > This prevents kernel callers (io_uring, BPF) from using getsockopt on
-> > levels other than SOL_SOCKET, since they pass kernel pointers.
-> >
-> > Following Linus' suggestion [0], this series introduces sockopt_t, a
-> > type-safe wrapper around iov_iter, and a getsockopt_iter callback that
-> > works with both user and kernel buffers. AF_PACKET and CAN raw are
-> > converted as initial users, with selftests covering the trickiest
-> > conversion patterns.
->
+> 
+>> Currently, the .getsockopt callback requires __user pointers:
+>>
+>>    int (*getsockopt)(struct socket *sock, int level,
+>>                      int optname, char __user *optval, int __user *optlen);
+>>
+>> This prevents kernel callers (io_uring, BPF) from using getsockopt on
+>> levels other than SOL_SOCKET, since they pass kernel pointers.
+>>
+>> Following Linus' suggestion [0], this series introduces sockopt_t, a
+>> type-safe wrapper around iov_iter, and a getsockopt_iter callback that
+>> works with both user and kernel buffers. AF_PACKET and CAN raw are
+>> converted as initial users, with selftests covering the trickiest
+>> conversion patterns.
+> 
 > What are you doing about the cases where 'optlen' is a complete lie?
-
-Is this incorrect optlen originating from userspace, and getting into
-the .getsockopt callbacks?
-
 > IIRC there is one related to some form of async io where it is just
 > the length of the header, the actual buffer length depends on
 > data in the header.
-
-Could you point me to the relevant code so I can examine this case?
-
 > This doesn't matter with the existing code for applications, when they
 > get it wrong they just crash.
+> But kernel users will need to pass the actual buffer length separately
+> from optlen.
+> It also affects any code that tries to cache the actual data and copy
+> it back to userspace in the syscall wrapper - which makes sense for
+> most short getsockopt.
+> 
+> (This is different from historic code where the length might be
+> assumed to be 4 regardless of what was passed.)
 
-Is this crash being triggered by the protocol callbacks?
+As the insane legacy cases can only happen for keeping
+compatibility with existing userspace applications,
+we could get the original optval and optlen __user pointers
+out of sockopt_t again via something like:
 
-I tried searching for this but couldn't find it. I'd appreciate any
-hints you could provide about this case.
+char __user * __must_check sockopt_get_insame_legacy_optval(sockopt_t *sopt);
+int __user * __must_check sockopt_get_insame_legacy_optlen(sockopt_t *sopt);
 
-Thanks
---breno
+And for kernel callers they return NULL and the code should
+turn that into -EINVAL or something similar.
+
+Then legacy stuff can do what they need, but most things are
+sane and able to be called via io_uring and in kernel users.
+
+Unrelated to legacy stuff I think it should be an opt-in
+(or at least opt-out) for the writeback of optlen.
+
+metze
 

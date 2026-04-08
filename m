@@ -1,176 +1,192 @@
-Return-Path: <io-uring+bounces-12981-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-12984-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mPYPG6Yb1mluBAgAu9opvQ
-	(envelope-from <io-uring+bounces-12981-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 11:11:02 +0200
+	id 2FjkHIMu1mkUBggAu9opvQ
+	(envelope-from <io-uring+bounces-12984-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 12:31:31 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0702C3B9A74
-	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 11:11:01 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1633BA8C5
+	for <lists+io-uring@lfdr.de>; Wed, 08 Apr 2026 12:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BFF1E301724A
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 09:06:26 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B9D993006D71
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2026 10:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD57C3AF65D;
-	Wed,  8 Apr 2026 09:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAE537F731;
+	Wed,  8 Apr 2026 10:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="feoWZSg5"
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="al6WyMBb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7593AE6F5
-	for <io-uring@vger.kernel.org>; Wed,  8 Apr 2026 09:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA4037F8C1;
+	Wed,  8 Apr 2026 10:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775639184; cv=none; b=kmLIpFe4Zanf+0YN2+q/kWSSwebKmEmJ6fOZJtQDn2//CU22b5T7ake7Hw68C3mFCXXv/6YqWOk2TEauqofMDEI+J8xsNJhxuz4Psxb8mHmfEd5RXG/ggyUNLjiwLUE8mmsTUuvvgKoXsxNSk2/nvUIbvrigvBAZBzOR04ydvfA=
+	t=1775644264; cv=none; b=BTC0SJn4lwEefuvJhDO00IrxzDvawL3mET+u1d52r+zuuUO6YmEeCtLYwr3mU2DGVZEuzp3/vOUd6pLA+lfeX7lnGMRFnLWtAXsNA6twsDNGdCaQfwkPLki0JIft7dyTkcRLhLc5ibjwkvKd+SWOgywe6aDaOjPCUvUfPvXHr5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775639184; c=relaxed/simple;
-	bh=mdm06uitMSIygZ2FFukfM08Ps+ox3D4Zv39fmrbxrNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i+opw3/l7geoMwlYVUCwE4qNlwsvV0b7Q4axX8ER1f6+ncdkUMSMx2Hy6M4hKqbmXNB/WlvexbMxE+fp9j5c/tNUEhZWosEja3+L8McVHuHX3GxNtDtmg8DEDY63yFPrnpw1zRl6ucU5wauKVsY5WnxvTr9TahNPJMxhkf2oeqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=feoWZSg5; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43cfd96354aso3682080f8f.1
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2026 02:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775639178; x=1776243978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NIhuu56MjNTiGSChY1cvm3H2MZijRdRaDUQH6s036E4=;
-        b=feoWZSg5P7kF6fv47qFKXPWQBO0DaaIXa0DCjqrqzw9KVM27JVjM7cHPTMTcFWpuUU
-         iNGwJFRxRMOUV3gyZhNyV8qBzXB61duaqBegKxlsdh+LeUSfMaKik0HyxiPCx3CEus8s
-         swh1/M0Q3BkAtyVp/4wH4knQe0sNB5qv4SZRqy2X9h64GHipaypAVd/YZn5oVjDoW6BN
-         LzG6BEoI0oWsGqzIR3AbM7SYC5QqVNLkbmVR4TdXA3S2QJfcxunwUH6lQZ0s2nDf8x0d
-         BrbpaD2svigGW7vHnpJkII3F4tz2ytDE13z1RU9Zo52suMdWNB3lsUwgeNLdSOuLCPoF
-         Ih0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775639178; x=1776243978;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NIhuu56MjNTiGSChY1cvm3H2MZijRdRaDUQH6s036E4=;
-        b=WmGw/d+nsxUCw5Ok4eYdiCI1O1MOYHjQ4aFdJmpnW1q/sTuBFntQUAyb/w1Jbin4WL
-         O15+52h2OoDDNgUMgJiocTtXs428NJX/JNyNW7ohamcljU9Hr3Hpw5pT3C7Y7nv+Tf3q
-         KspL6moU12kh2GBnZHw3YTQ8unIXRBTi+eLLyk7rQWLysKaO3+TSMyPS4QuBUnJqFCWg
-         vu9qKAO3y/mhvZS5W8N69kwWKYiMnX1LQbF0hL5LMx3VLdoYou9KF4xg/FqQI3UvBAyZ
-         4rUA8YS0ZhKATtICBnuc8DIUyF5zcpVP37gJdijFsxtcVPLh4OPGiEeG7cDhHbIdtpgZ
-         EOww==
-X-Forwarded-Encrypted: i=1; AJvYcCXLrIUrrqqCFm1cNPPZbAENix4aLyLqKNeBvxXyT+DPpEBYstXzGgDHmEihlIG09aCDgqRFnv1ZMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+orckPd7T0k32LYIlZ09K4B1+8xrghtk4Gm+wJ8MsFfZdSJjb
-	r7DvuGRA+vw+TzaqazvVaL9rT99+EpvmVC8vLBRkMG2Hds9eKc9Qw+ZR9ZJJJg==
-X-Gm-Gg: AeBDiesnurLWBOQhWDVEdBNwtpSMEFfcfvBEPMu2UnsIsDs0+CC/rglTEXqyr4E0xms
-	uW6iIViyFCKM48SicagHLfyoC2Gp8d5PpNOqqjL0+tyBJIX524z1s7plU2xFiX4kDcWie0JSJ1j
-	7ORQqHRFBvCA5vBZoKeiYGZ/YYK0wnEEk4YRWWzDT+XkrZfNPzV0wf7Wu26jpzEys1Mh7hLQH9S
-	kNuTrdNDJ4CHwQebaI4SnS6VsCD6GSd5AzwYIWF7iohbtFnzfGtkxoUVDAQryzntsPEZ6zqLVG3
-	XU8mMxc6M4J5zH64oNH4OZ3SILHlc6tzsq1V3S3VSOEMOmVV8Uqi4X/uanRzFFx1J5iyIa0P5Yp
-	Xm3W8pCt2Qo1srOrR7Zg8qpK/tPI5F1CbTKy2G2GzwyekiNDjL6zermM01bAJfmE+MutHD0qPjf
-	ViHtKxmPSJqDqaZurGJCvNPjpLYsnMaH+0r7SWf7YqLpGtACzrt8tMGuDT5iWZI2z9wlbn9VSPd
-	2Stb1wAy4CFE1HZ1O7qovSxghVhf0Rfa80OGTy+fKP9aucM8qSuLKOrN9s=
-X-Received: by 2002:a05:600c:4f4e:b0:488:a98b:b891 with SMTP id 5b1f17b1804b1-488a98bbd04mr227789945e9.3.1775639178483;
-        Wed, 08 Apr 2026 02:06:18 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eaba])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488a952a03asm293928175e9.0.2026.04.08.02.06.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2026 02:06:17 -0700 (PDT)
-Message-ID: <b340d088-a221-43db-b524-1f181152db3d@gmail.com>
-Date: Wed, 8 Apr 2026 10:06:23 +0100
+	s=arc-20240116; t=1775644264; c=relaxed/simple;
+	bh=M6Z/Tdn7c7BqgfjwYfWVJYYwcQOst/cUM26rwVzEQLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KMWDKAWewNhiRdKnSXbkbvgjF46FfVAkPO1RldwPyssjHUr4nj/o+a81smfbxfzRx/y+LywwyrdaG3/Unc+2cSymligQrqQ3HkjPYIK4Xyb7k6H2sRF42N41UZc1TRtx2oUfdlMEUx0bid7u6rzIkRA/rhTBGfY2a1v2xOUZ1Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=al6WyMBb; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-Id:Date:Subject:From:Reply-To:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=2MF/al0VTf9Ca3kEu1gxRwO+cPEDevyh3csaP1pb6Q8=; b=al6WyMBbDmeCd4XwTRGacm29yD
+	mBVjM2DbKZREB6PnxRcTD6Cv7NupnzhFdAx8ZNF+4SuBtmGIeQHsku+7+FshzIFQ1gOoYQ4p0pSZ9
+	RBZwggtl+ooPM+IxBaw/sRxFfMm+GSV2EaBO2VQqkpPcprjF9TgsiqPpU8WaYT4YIZ9Mo8xIiyNNs
+	Ze0Q2um90kXD3IO2SAimeLM6WgK2HXPsai+bIl7pkkkiPjWs5gtpxb8tsmruuJCn4rloxEIiADeVs
+	1qboJQhSBoniHc5bQC+4LFEs2S/y1zNunvlUegAJJGbzFFYXWK7uYRwGIn0amLJM5HBIeYWHeSAYV
+	muAfxaUg==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1wAQBH-008MD8-0b;
+	Wed, 08 Apr 2026 10:30:44 +0000
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
+ buffers
+Date: Wed, 08 Apr 2026 03:30:28 -0700
+Message-Id: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] io_uring/zcrx: fix resource leak and double-free
- hazard in io_import_umem
-To: KobaK <kobak@nvidia.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260408065408.2017967-1-kobak@nvidia.com>
- <20260408065408.2017967-4-kobak@nvidia.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20260408065408.2017967-4-kobak@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-B4-Tracking: v=1; b=H4sIAEQu1mkC/22NwQqDMBAFfyXs2ZQkakRP/Y/Sg8ZdTQuJJKlYx
+ H8v2kMRen5vZlaIGCxGaNgKAWcbrXfQsDxjYMbWDchtDw0DJZQWMhd8wBS9efop8ZpyrVWJ2Js
+ OMgZTQLLLIbuBw8QdLgnu3yW+ugeatLv272hj8uF9dGd5EP8Ss+SC17IsyBBpqstrj51t3cWH4
+ TDP6scWQp5YxQXXUvakq0q2RCd227YP8znjUv0AAAA=
+X-Change-ID: 20260130-getsockopt-9f36625eedcb
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Kuniyuki Iwashima <kuniyu@google.com>, 
+ Willem de Bruijn <willemb@google.com>, metze@samba.org, axboe@kernel.dk, 
+ Stanislav Fomichev <sdf@fomichev.me>
+Cc: io-uring@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.16-dev-453a6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2592; i=leitao@debian.org;
+ h=from:subject:message-id; bh=M6Z/Tdn7c7BqgfjwYfWVJYYwcQOst/cUM26rwVzEQLY=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBp1i5NB4KxGFOCospvSlH1oOL4casp2Cq1n2ERt
+ zqcV7+ImDCJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCadYuTQAKCRA1o5Of/Hh3
+ bfnREACMaTWL2KWmbRV8tUAqgEqg+U6UCZGINrli5yngBc0+ellIauUpYvegPq0cfPpPYVTBYp0
+ bf4QDbSYXfuv9cJFWEAEMg9PR4QJ1ItTt8y+xbuVQdd9o7YpvCXd/MWMwnQC1ibaSHyfO50pbGM
+ FpbZBJTEhVIm+I4bnRqR3HhHP7Rb1xecQqMkh9xVAI4RlRb9Km42nDeHeAjz1Pt1tANKH53CCat
+ 7KlYs2FGo+ynwze2rfue4m1agtkKf+Nmbr37I/elMiNgYnFTDp9AKwTtXPFVJuF1xYPiqNsoVuY
+ m66iKnSDQMZ458ZtmT5zcGStuwJx3Gz0uVt3K0+6V6pjk4lRmmA5r8DV1DUhFhCiIY8x+9N8ZYX
+ dwq1P9vMFtAA402121JI115gOVrQAezWwX24YxoSbWo4k8SmFxBSBRY6KbsIFTFEUKIlQ4AW7mQ
+ Oa4Fisz84Ydxe68db0NPSC6C2GsP5rsOQYtAL8298Zb6ovZZAKJLdzLNvI0q/vhV0muUHxIk7VM
+ sfjQMf2PigYiwoUc9BhiFh7OqlUxoaKcuXxQkdlmctq3ZioYijnF4t/QW+vDwNOF/N2bGok9Aud
+ tmHoYLWVbNHNcmakgl3A6AD9juho0AlpfEAlOrcrj0pSRlHDxGCXG8aEGSD/UmtX/siU6gn5wDh
+ S50PTlS6+NbUKaA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Debian-User: leitao
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-12981-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	DMARC_NA(0.00)[debian.org];
+	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-12984-lists,io-uring=lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[debian.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0702C3B9A74
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 8D1633BA8C5
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 4/8/26 07:54, KobaK wrote:
-> From: Koba Ko <kobak@nvidia.com>
-> 
-> io_import_umem() has two problems:
-> 
-> 1. When io_account_mem() fails, the function returns an error but leaves
->     live pinned pages and sg_table in the mem struct without cleaning them
->     up. The caller happens to handle this today via io_zcrx_free_area() ->
->     io_release_area_mem(), but the contract is fragile.
+Currently, the .getsockopt callback requires __user pointers:
 
-That was the intention for the caller to clean it up, but in either
-case the function has already been rewritten. In general, it seems
-you based your patches on top of an outdated tree.
+  int (*getsockopt)(struct socket *sock, int level,
+                    int optname, char __user *optval, int __user *optlen);
 
-> 2. io_release_area_mem() doesn't NULL out mem->pages after kvfree(),
->     making it unsafe to call twice. Since io_zcrx_free_area() always
->     calls it during teardown, any earlier cleanup call would cause a
->     double-free.
-> 
-> Fix both: populate mem fields before io_account_mem() so
-> io_release_area_mem() can do a proper cleanup on failure, and add
-> mem->pages = NULL in io_release_area_mem() to make it idempotent.
-> 
-> Fixes: 262ab205180d2 ("io_uring/zcrx: account area memory")
-> Signed-off-by: Koba Ko <kobak@nvidia.com>
-> ---
-...
->   
->   static void io_release_area_mem(struct io_zcrx_mem *mem)
-> @@ -236,6 +242,7 @@ static void io_release_area_mem(struct io_zcrx_mem *mem)
->   		sg_free_table(mem->sgt);
->   		mem->sgt = NULL;
->   		kvfree(mem->pages);
-> +		mem->pages = NULL;
+This prevents kernel callers (io_uring, BPF) from using getsockopt on
+levels other than SOL_SOCKET, since they pass kernel pointers.
 
-The entire struct io_zcrx_mem / area is freed right after,
-calling io_zcrx_free_area() multiple times for the same area
-is not allowed.
+Following Linus' suggestion [0], this series introduces sockopt_t, a
+type-safe wrapper around iov_iter, and a getsockopt_iter callback that
+works with both user and kernel buffers. AF_PACKET and CAN raw are
+converted as initial users, with selftests covering the trickiest
+conversion patterns.
 
--- 
-Pavel Begunkov
+[0] https://lore.kernel.org/all/CAHk-=whmzrO-BMU=uSVXbuoLi-3tJsO=0kHj1BCPBE3F2kVhTA@mail.gmail.com/
+
+Updates from v2 to v3:
+
+* Use two iov in sockopt_t instead of a single one:
+  a) .iter_in that is populated by the caller and will be read-only in
+  the protocols callback.
+
+  b) .iter_out will be populated by the protocol and it will be sent
+  back to the caller.
+
+  - This will avoid changing the protocol reset and changing the data
+    source at the callback, making the driver callback implementation
+    and converstion saner.
+
+* created sockptr_to_sockopt() to convert sockptr to sockopt, making the
+  call to getsockopt_iter straight-forward
+
+Link: https://lore.kernel.org/all/CAHk-=whmzrO-BMU=uSVXbuoLi-3tJsO=0kHj1BCPBE3F2kVhTA@mail.gmail.com/ [0]
+---
+Changes in v3:
+- Create Two iov in sockopt_t instead of a single one (Stanislav Fomichev)
+- Implement the sockptr_to_sockopt() helper (Stanislav Fomichev)
+- Link to v2: https://patch.msgid.link/20260401-getsockopt-v2-0-611df6771aff@debian.org
+
+Changes in v2:
+- Restore optlen even on error path (getsockopt_iter fails)
+- Move af_packet.c and can instead of netlink (given these are the most
+  complicate ones).
+- Link to v1: https://patch.msgid.link/20260130-getsockopt-v1-0-9154fcff6f95@debian.org
+
+---
+Breno Leitao (4):
+      net: add getsockopt_iter callback to proto_ops
+      net: call getsockopt_iter if available
+      af_packet: convert to getsockopt_iter
+      can: raw: convert to getsockopt_iter
+
+ include/linux/net.h    | 23 +++++++++++++++++++++
+ net/can/raw.c          | 28 ++++++++++++--------------
+ net/packet/af_packet.c | 15 +++++++-------
+ net/socket.c           | 54 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 4 files changed, 94 insertions(+), 26 deletions(-)
+---
+base-commit: 9c14d60a50c4b726a3613a02e8b74778e9964891
+change-id: 20260130-getsockopt-9f36625eedcb
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 

@@ -1,177 +1,204 @@
-Return-Path: <io-uring+bounces-13011-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13012-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OKmYJtll12myNggAu9opvQ
-	(envelope-from <io-uring+bounces-13011-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 10:39:53 +0200
+	id IDsQK+1w12mDOAgAu9opvQ
+	(envelope-from <io-uring+bounces-13012-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 11:27:09 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C9C3C7D89
-	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 10:39:52 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9F63C86F5
+	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 11:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BF6C83014973
-	for <lists+io-uring@lfdr.de>; Thu,  9 Apr 2026 08:39:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 886733101D12
+	for <lists+io-uring@lfdr.de>; Thu,  9 Apr 2026 09:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4553A63E4;
-	Thu,  9 Apr 2026 08:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2947F3AB290;
+	Thu,  9 Apr 2026 09:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="QboQ/g4f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqve4XlV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E81389469;
-	Thu,  9 Apr 2026 08:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775723955; cv=none; b=DIDsS6higKriHqbVUbWr4Ra7sSevbJxKVrnwzXPJ2kabwbCDR84ZuYy/scpSGQOS53BgaYPpjY5vkHa8BeIWC2CXScGxNlaJOA+Qu7kuzF5yueG4adng9Rq6km3YaMzaDjdhuC/z5oVMYHxhY0UPSLPe1cn5tfCdMED5C4wtoDY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775723955; c=relaxed/simple;
-	bh=0t9GmcyonzRJZf/bXkI6+pYIeVWgLTtw4V3r+KD7b3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sP8epCO+YlhaTG3A2X6h1+Bpf9bHxiQupYjdLXytKU6BPOzZwsv6k17hqYo3AQ1njksLMc5kO3oocIINMqL4FHcvAriXhZdVPjoaztbIUYYZKKuvihdnfHb6N1zesmN5WBiiMf6ol2ociyPCvgctxts3oa2Vuqi4rtWwFq1oCc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=QboQ/g4f; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=Cc:To:From:Date:Message-ID;
-	bh=V3satatu24/OV36rdGRBdBIyxrI0A4QOnJU8uiF2h9o=; b=QboQ/g4flDH0z4kuyalyqfbNAZ
-	ybWk00FTGAujWJXw5yawz3N8ywXaRYI5Zoi3pStmUqPgHC45wRhT/qJNzuD3y4WpDWt897moNYj1I
-	RPZZQ8fwlYtrBw9gBQlwxj9UU26/tb+aYl9fcZGydqcCd8wyEEYyf7SxaT/eTpdWtbXnZZ6liUpDm
-	1dmLmtBOhc3SArnb4wU2ApgxQrii9UqFgMLmbN+aI4hCsZQ1hnJYrOVPTlj7co/6wHTDICZVIrePR
-	9cf4qOzYKRzIQ/731ikq6C+32d2jxhEF0mz/5ebvZ8RiD9qUXKrU4TjOzdbQqN7mP//4axfVJrExt
-	PqNFqmcEuEWn/jlUeQoDozzq9kJslqxQBk31FkS+ij8Fi94Cd4jOyGJKU5jOxWbbTuMyxWTVLLF/h
-	AavGdgmGFE5WIOXdfQMDVa9K88/vCWXZxPZaBS9kgt76Ia9vKktvlFLGTrpmxfr4Mws+2u+okVa57
-	v3fMCvxUBZpckB57OQQuic7S;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1wAkup-000000087hC-3RTh;
-	Thu, 09 Apr 2026 08:39:07 +0000
-Message-ID: <9691238e-bcdd-4d0d-99e1-f77b191845f4@samba.org>
-Date: Thu, 9 Apr 2026 10:39:06 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968A83AA51F
+	for <io-uring@vger.kernel.org>; Thu,  9 Apr 2026 09:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775726095; cv=pass; b=Kw6af5tBJ9JSZEnNghNtz0ap6ReoeCw6aQOO3rmpmzEmA0GbrtM8wrpP8xKTJTQhZu0m8gQSmdQq7wfNvPmYDkgTKgAQaDz2K+P5lDICbBHEzYeYFwnTbrCr5sRiW4AXjRa9XUv3bHq8G4kF/OTK9qBiieFCiP+r9isBvudW9lY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775726095; c=relaxed/simple;
+	bh=Appj18t8IFvoF6NtnGZA4Bfdh46ik48csmz3ymT9oiQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pobajD7bc1KoRYfv8bgO+MXi181o0UdEJGEN5TsxLIJHHMb6H5GubHdY1lBphD/oXebq/hsynzdXigo9LJC6+GS5KlyeUFtQila+8bjnYZCF1a+I9nv+Ye+fWUsRIOZJ7x67HwOAR6LulXSnQ7uYJ++3LP2jHwV7kl5gcOdoNVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iqve4XlV; arc=pass smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-4230a00de40so490393fac.1
+        for <io-uring@vger.kernel.org>; Thu, 09 Apr 2026 02:14:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775726089; cv=none;
+        d=google.com; s=arc-20240605;
+        b=H6l/86pUuojo9viqqoF1UQjpR0zt8Lc6WxhL4Bh/BkqcvpNAxcR3286wbVuQg7muQq
+         ZH6KOTLY6XN5OAJOhtZVFxtmLEKwHOEIeeTh8f31qVALNQjLPrGeCRi6B7y1AGY84orA
+         BBgqZDTCssZWkIcsp50Y888dzSOga4Ny44ORiFXDh/sGoGvVHJJbDzGTFraXEdUBed2g
+         zIQVj0wkvZ4yxNkkiuuhUvsx3gHGc1Xkb0fQQoKCr4gLMh9AvImS1m0SPF2fiCA/qNDp
+         c3IxrowAaFpHLycpR9Y2+WKUOp+x9UGL6KVYermlKIBszFjPjvMV3fwVWbR6VL/ZPFqr
+         jTFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:dkim-signature;
+        bh=Z23ilhc8j2F7lQt5beHnbCcqZcnAy88B/Dq2hRr0wcA=;
+        fh=+KWbfl82b05iT62NkgNX6qaeI6n9O50ymC+TZtTEQmg=;
+        b=YPosBkf3kk0u39dZiI3k7C7fq9hV1XDYrOPIH3j8QZXInABs65OINdTPDXuSXGsusn
+         0ZVXqNd0V1UsTHvQKyKu9L7yWEcjJgzLHWK3tntlnypiYFM7Ew19TnKnr2K6uWDCNPoq
+         EJzko5fTi28Xajc3GoqwSUOtPbj3XlLMvFsQRgX5eoO00xsjdP53h3or0LmAQV0oJiXQ
+         8D2VLYz4GrQcYeQQDPeouTZ0Jpr2+5nUGOF6henYt2GV2i6yOsVyXeoo78Yf6lZYA8lq
+         QdtwYTwg3+0llqaLRNZDNP/lMoyQK33jqpgzY36vX/qwgcl9fGvMxsYXqKlgy28kS2hP
+         JBfw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775726089; x=1776330889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z23ilhc8j2F7lQt5beHnbCcqZcnAy88B/Dq2hRr0wcA=;
+        b=Iqve4XlVUbjGZ0aeNQFpUfoCvvi938bSrCFrIMEe84qYb7Qe+XtaAtzMvOmUKDHNuB
+         /NAHd5s1wnUOiAe0Yyvqmg3TsV+ca4263UgS1DSLWReMjDrIZ3odtrTRsngLHku5NxrS
+         bEyp/XMX/V4gnKdbbIFPQBYAdo/qdC/LPELCw6GkkeA/UgU0HW5hgfOoZfbpdx/O8/yR
+         xJiu7TX0cVSLnB6fO7s9Wt5AogEjP5vfIUZF7SpTWZ8cDbwu192MOGWJZJb63kaZOtOc
+         wgT6HjIbj2NEQqYtO8THhcm8QLZd9plzX2nSH5drcdtcukm8UabYyS/mcGCnijCIy7Zs
+         SI8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775726089; x=1776330889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z23ilhc8j2F7lQt5beHnbCcqZcnAy88B/Dq2hRr0wcA=;
+        b=YdvkQEWAO+P2Qdg+RfTQXuLzz+v2ZmOJ+nbAdx3CXUef2/gtEld8/qvcMtNV+hNdKn
+         +LXvxWzd4O3v7i4j3471i8dvztJSB4qTsfST9/G1eNG/TT0u5cP3iHmNkuLQkXwXdOUu
+         Wm31Ur0t6gTbi94hY7XQS/SJrdqHZ6E3fJfyQCuckrjtFA5evwiO4uVcSoD8utikT3+n
+         Dd4bnmtAS5kbF0f8II0If+lk1zyj1kx46q2QAOnFxrXmnuOdRsYJG+rqsgVigPhrgK0x
+         Vu6nOwkVY893tcEGG83USfFT0E144X1BAnJ09GSygU0ijzqzS2WzuFk3ZzNJvLdNFn2D
+         4gnQ==
+X-Gm-Message-State: AOJu0YwKQKwXEESNd4GyUQ0VjfSI1Kew8pEKtayl/i37yJLktauIlnAu
+	5iFnxxZW88jH4Avwm+FqqpKkeW9pxuybBOpYDYFVVWPzzNNqD0RwbXxOrO6ZTxuvf7o94JAiEZo
+	jLxfIa5SmaOFC0RbDgger1zJ8Y7C9HWoN790m
+X-Gm-Gg: AeBDievbxuBWLgMTX96xMdlvGauM9FNDUonPa+Szv+KIPWHphgrDwrAD3MoRT8D2odN
+	n5o5Ta3+FqvPSMowUbzrpDU0LfDpdTbpwKEMCxzozTXMQMj3PtVAKwRDqoQ5QHRW0BRwU61mDfc
+	nP/Fi2f5SXxFpboFrrx5VCi5D5NABX3UJ1kX1mt6gi0Gc9gl+vO6Ugv297vZUv4eKEEM/OKS0/p
+	LrNKtHla102bgpkvaVyzULNOOLvSzZ2xhABvPtmZR2bI8NmapzYfmeO5wSpF83a8I5mu6VyAEwA
+	EC69YHO+VoKZxFqxO3MlRoa3QBX8+CsPQIz5Ckcf24MyOGsoyl5V3I4Hc06lGidSFYfNSTrR9J0
+	Dik7wva3hDp5lcVUsH576
+X-Received: by 2002:a05:6820:6081:b0:688:96d4:61e2 with SMTP id
+ 006d021491bc7-68a6a5b9d4amr930113eaf.23.1775726089293; Thu, 09 Apr 2026
+ 02:14:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
- buffers
-From: Stefan Metzmacher <metze@samba.org>
-To: David Laight <david.laight.linux@gmail.com>,
- Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn
- <willemb@google.com>, axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>,
- io-uring@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
- <20260408122653.295953dd@pumpkin>
- <3fd4bf27-344f-45fc-bca3-9e9676522972@samba.org>
-Content-Language: en-US
-In-Reply-To: <3fd4bf27-344f-45fc-bca3-9e9676522972@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[samba.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[samba.org:s=42];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+From: asaf meizner <asafmeizner@gmail.com>
+Date: Thu, 9 Apr 2026 12:14:37 +0300
+X-Gm-Features: AQROBzCsxq-_8cKQ88ZNHhdkHdvFij7oQ7GSHNeEUbzDKe9Qi5RlMNRhL06jJk4
+Message-ID: <CAEshK0=S+19B1LbamBaNOKTQyw+98QFBjHs04sByu_JL2QOBAw@mail.gmail.com>
+Subject: [BUG] io_uring: 13 remaining unprotected ctx->rings accesses after 61a11cf481272
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13011-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com,debian.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_FROM(0.00)[bounces-13012-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[metze@samba.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[samba.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asafmeizner@gmail.com,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samba.org:dkim,samba.org:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E9C9C3C7D89
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 0A9F63C86F5
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Am 08.04.26 um 15:56 schrieb Stefan Metzmacher:
-> Am 08.04.26 um 13:26 schrieb David Laight:
->> On Wed, 08 Apr 2026 03:30:28 -0700
->> Breno Leitao <leitao@debian.org> wrote:
->>
->>> Currently, the .getsockopt callback requires __user pointers:
->>>
->>>    int (*getsockopt)(struct socket *sock, int level,
->>>                      int optname, char __user *optval, int __user *optlen);
->>>
->>> This prevents kernel callers (io_uring, BPF) from using getsockopt on
->>> levels other than SOL_SOCKET, since they pass kernel pointers.
->>>
->>> Following Linus' suggestion [0], this series introduces sockopt_t, a
->>> type-safe wrapper around iov_iter, and a getsockopt_iter callback that
->>> works with both user and kernel buffers. AF_PACKET and CAN raw are
->>> converted as initial users, with selftests covering the trickiest
->>> conversion patterns.
->>
->> What are you doing about the cases where 'optlen' is a complete lie?
->> IIRC there is one related to some form of async io where it is just
->> the length of the header, the actual buffer length depends on
->> data in the header.
->> This doesn't matter with the existing code for applications, when they
->> get it wrong they just crash.
->> But kernel users will need to pass the actual buffer length separately
->> from optlen.
->> It also affects any code that tries to cache the actual data and copy
->> it back to userspace in the syscall wrapper - which makes sense for
->> most short getsockopt.
->>
->> (This is different from historic code where the length might be
->> assumed to be 4 regardless of what was passed.)
-> 
-> As the insane legacy cases can only happen for keeping
-> compatibility with existing userspace applications,
-> we could get the original optval and optlen __user pointers
-> out of sockopt_t again via something like:
-> 
-> char __user * __must_check sockopt_get_insame_legacy_optval(sockopt_t *sopt);
-> int __user * __must_check sockopt_get_insame_legacy_optlen(sockopt_t *sopt);
-> 
-> And for kernel callers they return NULL and the code should
-> turn that into -EINVAL or something similar.
+Hi Jens,
 
-Or better helper macros/inline functions to call the legacy implementations.
-something like this:
+Commit 61a11cf481272 ("io_uring: protect remaining lockless ctx->rings
+accesses with RCU") introduced RCU protection for ctx->rings during
+ring resize, but at least 13 dereferences were not converted. The
+most concerning is fdinfo.c:63 which reads ctx->rings with no lock
+and no RCU protection at all.
 
-int sockopt_call_legacy_sock_fn(struct socket *sock, int level, int optname, sockopt_t *sopt,
-                                 int kernel_errno,
-                                 int (*legacy_fn)(struct socket *sock, int level,
-                                                  int optname, char __user *optval, int __user *optlen))
-{
-      if (!sopt->legacy.optlen)
-           return kernel_errno;
+Unprotected accesses found:
 
-      return legacy_fn(sock, level, optname, sopt->legacy.optval, sopt->legacy.optlen);
-}
+  io_uring/fdinfo.c:63
+    struct io_rings *r =3D ctx->rings;
+    (no lock, no RCU =E2=80=94 TOCTOU with concurrent resize)
 
-And a similar sockopt_call_legacy_sk_fn() that takes struct sock instead of struct socket.
+  io_uring/tw.c:41, 253, 291, 326
+    atomic_andnot/atomic_or on ctx->rings->sq_flags
+    (lines 249-253 have a comment justifying no RCU for
+    !DEFER_TASKRUN, but lines 41 and 291 have no such comment
+    and appear to be in contexts where resize could race)
 
-That way it would be relatively easy to move the calls of sockopt_call_legacy_{sock,sk}_fn
-down the stack to the places where it's really needed in incremental steps.
+  io_uring/sqpoll.c:380, 407, 421
+    atomic_or/atomic_andnot on ctx->rings->sq_flags
+    (under sqd->lock, but resize takes uring_lock =E2=80=94 different locks=
+)
 
+  io_uring/io_uring.c:574, 647, 690, 1985, 1986
+    CQ overflow flags and sq_dropped counter
+
+The fdinfo case is the clearest bug: a read of
+/proc/<pid>/fdinfo/<fd> concurrent with
+IORING_REGISTER_RESIZE_RINGS can dereference a stale ctx->rings
+pointer after the old rings are freed via RCU. This is a UAF read
+that could leak kernel heap data.
+
+The sqpoll case is also concerning because sqd->lock and uring_lock
+are different locks, so the SQPOLL thread can see a stale pointer
+during resize.
+
+Minimal fix for fdinfo:
+
+  void io_uring_show_fdinfo(struct io_ring_ctx *ctx)
+  {
+  -    struct io_rings *r =3D ctx->rings;
+  +    struct io_rings *r;
+  +    rcu_read_lock();
+  +    r =3D rcu_dereference(ctx->rings);
+       /* ... use r ... */
+  +    rcu_read_unlock();
+  }
+
+I haven't written a full patch for all 13 sites because the right
+fix depends on whether io_get_rings() or raw rcu_read_lock() is
+preferred for each site, and some of the tw.c accesses may be
+intentionally unprotected for !DEFER_TASKRUN. Happy to write the
+full patch if you can clarify which sites actually need fixing.
+
+Reproducer:
+  Thread A: cat /proc/$(pidof target)/fdinfo/$(target_uring_fd)
+  Thread B: io_uring_register(fd, IORING_REGISTER_RESIZE_RINGS, ...)
+
+Tested against: current HEAD (7.0-rc series)
+
+Thanks,
+Asaf Meizner
 

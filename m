@@ -1,160 +1,130 @@
-Return-Path: <io-uring+bounces-13008-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13009-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sIdCEgf/1mlKKggAu9opvQ
-	(envelope-from <io-uring+bounces-13008-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 03:21:11 +0200
+	id Mep/KWk412nwLggAu9opvQ
+	(envelope-from <io-uring+bounces-13009-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 07:26:01 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A753C533C
-	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 03:21:10 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1F23C649E
+	for <lists+io-uring@lfdr.de>; Thu, 09 Apr 2026 07:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 185613010DA7
-	for <lists+io-uring@lfdr.de>; Thu,  9 Apr 2026 01:20:56 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 59B593006811
+	for <lists+io-uring@lfdr.de>; Thu,  9 Apr 2026 05:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A732D5C7A;
-	Thu,  9 Apr 2026 01:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EE02EA749;
+	Thu,  9 Apr 2026 05:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="U5nMtlSd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tHvwpOMH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2041A255F2D
-	for <io-uring@vger.kernel.org>; Thu,  9 Apr 2026 01:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439732E6116;
+	Thu,  9 Apr 2026 05:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775697655; cv=none; b=BaVyrBAp7IZuvVaEhR9WhDmYOABPNiovNKfcoSLjMIBgqnt66WJL5xq6p3ubQ4T8+gKo5gjJOcl3COONqMYtzRSYIa78lANHAJqz6u2cxz9Z53j+XnX2O8v7t/eys/D+LmmaUq0dZWR1veeqkrA3f1Dtvk5IYblCtX2KkABRh5E=
+	t=1775712353; cv=none; b=cUBVwhvAJr7ytJEKffv+ssPllvR++gfa40spidx5YU5Iic+EYlth6tUseNagO7H71v3ZUASegHjSwyrPXiQAUnJ1+4WAyiorySRk0IB29yA+uanhu440gIhRMfFWGY9//4wRpbhy+3bgzy5f5IMmF6sMx0WZ/wKTltIifDzr25A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775697655; c=relaxed/simple;
-	bh=5XxA5fTwBC6NayOV3TCplxsKPZ+1ZMgEgvtwEae0KhA=;
+	s=arc-20240116; t=1775712353; c=relaxed/simple;
+	bh=61jn/T6HMExD0N1OR8QEuhK/jJNdnZLEiElDMKxafwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5Jlp+Vl7pjSGcm3mjbN0KvFQujptq9Z1s/rORllfzzd2LdG1p7rqXVL1f82k/IGoH8vK/wqL4oOV1vfCec+/APXCu+tdEIXRe+RrZbKl1O96GKz59TeCyjt0EhaMz8DJm7YOFvj7kd8HVj6Iv6Bp32UKGfkLSXRaDIlEHPKqlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=U5nMtlSd; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2ab46931cf1so1668175ad.0
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2026 18:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1775697653; x=1776302453; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IwEecnT2k/SYnlacLAvjP0TbOckn4OHxgNLcKdVMuVc=;
-        b=U5nMtlSdKFy0CL6t1xuoVvaRsIsrZ4OSYHlsLiPBuj0ux4J5mMD5d9S6c271bON9iT
-         I/ERDWnqiu8oWVNF/p0WjvAx1WD8YuEYkB2engRWNm73O2O2Tj+46nkwpnExszsprI1X
-         S48wWWRCvrsZtvhU2IFBC/Yyd7IUhr4/fkqpA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775697653; x=1776302453;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IwEecnT2k/SYnlacLAvjP0TbOckn4OHxgNLcKdVMuVc=;
-        b=rL9tWuiJ2dkm8p7gUIU9DG/tqCxMRP49DWhfU/Zi0Xfgn6VRehS9gHhfG5UbqJhfdJ
-         kxIWLNMikyO82X12mx0QE+SQj0B5+lAUIRMojpedi3kcTpxI8WXsBUp80gortEa+nrtS
-         WyIj12CGU1hk3kc9FEADjg053taWPWRusyQtyP23UUSEo5hp8nDs8t7N+s1xUu9vKcZR
-         DxQvk8lLPGotlZ2xWATTYKaUn4e/QWckHi+zxJJgmAK2fhiXbIexiZCl+YqZMThsYA6o
-         /254mNKhzp8d92i03cqYBsxpCGp07Ywg3oSunCKcDFHEJDYJpBY6UG9CAAt9UEMGFGJS
-         O0Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJlPFxnOEXREq71p9uCHcIUe2fBiy/n2KwRHuP1/ogojmILUbOVfch6dHOxjJ5tEsoo2ppcmtLtA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU52jj4B8gcvm6fIjYKu51Q2fKcVHwuYiJZi9i3Gk6jPhvKDT7
-	CwFRQJBIUKzDqBDMOuN9J8c99B5hdXC1RhPeX+K4XqWdMv1utsQK0IqumtK2yFbzwHg=
-X-Gm-Gg: AeBDietx2unJA5k9wMW9KGkRMBRv4lXlcgTrzOddzhSoHucsASc0e1v7TaBptxUh3So
-	yXWlZHl18LT7c3Fg8zxZLgShuRU4IxErz71aIg5b6+l+9cY1Z2uZJTw6nQlP/pIXnuZWwstCAAl
-	z4gc0VOwEa2bGQ/gf/gUka0fRHS9NZBEv3k1X2yQdV7+72bBORMCk8295vAQS7hTScWVum7cpec
-	D+nGrTEupLiyXQlDIVUKHEu6letHHZFfSypsqi2L5BLMMr5lkOiCziMKGem4V3SBfJj00QuZxBc
-	m7jEmRn5HBJ4qNQ3OjrsUYMOMpGpscWpviN1v+ssq9NwOcA/7q7/rKpDYEESe9w7AgmugAdc1Xx
-	D2k0MZksmuLcfd+MbMNECtyVUavy6MidTfjNPn+O6RCf96oOrxsFxXBhfsVk8+ndirGRI3DQxlx
-	ucR69H0PSFRlWcZcs3jYNXF+LBacYe
-X-Received: by 2002:a17:902:f70e:b0:2b0:c2d9:2714 with SMTP id d9443c01a7336-2b2c722e6eamr17379185ad.4.1775697653432;
-        Wed, 08 Apr 2026 18:20:53 -0700 (PDT)
-Received: from sidong ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b274756621sm212879775ad.20.2026.04.08.18.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 18:20:53 -0700 (PDT)
-Date: Thu, 9 Apr 2026 01:20:37 +0000
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LV0JM3GPSSNaMXW1Qzo55wMpQkw4kojK9YcCnI/tzWen2tz1h5rt0o8xIlCrxnd5k7tR3v2fzEfd8ReK3bphs03rkD4Xe0apXBmC3Y4NxC6GR+SEA5GBJFefeub8UIjkLywPYO4cGExhMVrwz9oowggtlC0Lcbbf30NuIkQFskE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tHvwpOMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A21C4CEF7;
+	Thu,  9 Apr 2026 05:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1775712352;
+	bh=61jn/T6HMExD0N1OR8QEuhK/jJNdnZLEiElDMKxafwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tHvwpOMHJU39pnS3CKS4GYTFcBQs5TwL9CDFbEpz7L+bk0yPt/GGhxcXjon2PJQtj
+	 /L83kLAtsXNhlCmBx1rrnyWaXSpyZDHeumaTGFJR9pdEvnDf/5yej2B+RJID3GQP7u
+	 zVrH2SlxYqAhCZfVVwCQ1+mBfzl2kOWtxLnT8/mg=
+Date: Thu, 9 Apr 2026 07:25:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sidong Yang <sidong.yang@furiosa.ai>
 Cc: Jens Axboe <axboe@kernel.dk>,
 	Daniel Almeida <daniel.almeida@collabora.com>,
 	Caleb Sander Mateos <csander@purestorage.com>,
 	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] rust: bindings: add io_uring headers in
- bindings_helper.h
-Message-ID: <adb-5cz-PS8VFcfq@sidong>
+	Arnd Bergmann <arnd@arndb.de>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Rust io_uring command abstraction for miscdevice
+Message-ID: <2026040925-taunt-exit-0cb9@gregkh>
 References: <20260408140007.8401-1-sidong.yang@furiosa.ai>
- <20260408140007.8401-2-sidong.yang@furiosa.ai>
- <CANiq72n2h5Vj4-_wfPWXf9HO9UouaKtVKmoTGQeE-g+N-MYUPA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72n2h5Vj4-_wfPWXf9HO9UouaKtVKmoTGQeE-g+N-MYUPA@mail.gmail.com>
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+In-Reply-To: <20260408140007.8401-1-sidong.yang@furiosa.ai>
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[furiosa.ai,none];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[furiosa.ai:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[linuxfoundation.org,none];
+	R_DKIM_ALLOW(-0.20)[linuxfoundation.org:s=korg];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13008-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-13009-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[furiosa.ai:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DKIM_TRACE(0.00)[linuxfoundation.org:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sidong.yang@furiosa.ai,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gregkh@linuxfoundation.org,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[furiosa.ai:dkim,furiosa.ai:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A2A753C533C
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 9B1F23C649E
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, Apr 08, 2026 at 04:31:35PM +0200, Miguel Ojeda wrote:
-> On Wed, Apr 8, 2026 at 4:00 PM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > This patch adds two headers io_uring.h io_uring/cmd.h in bindings_helper
-> > for implementing rust io_uring abstraction.
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+On Wed, Apr 08, 2026 at 01:59:57PM +0000, Sidong Yang wrote:
+> This series introduces Rust abstractions for io_uring commands
+> (`IORING_OP_URING_CMD`) and wires them up to the miscdevice framework,
+> allowing Rust drivers to handle io_uring passthrough commands.
 > 
-> If there is a reason for putting it at the bottom, then please note it
-> in the commit message.
-
-Hi Miguel,
-
-There is no reason for putting it at the bottom, They should be placed
-in the proper order. This will be fixed in next version.
-
-Thanks,
-Sidong
-
+> The series is structured as follows:
 > 
-> Thanks!
+> 1. Add io_uring C headers to Rust bindings.
+> 2. Zero-init pdu in io_uring_cmd_prep() to avoid UB from stale data.
+> 3. Core io_uring Rust abstractions (IoUringCmd, QueuedIoUringCmd,
+>    IoUringSqe, UringCmdAction type-state pattern).
+> 4. MiscDevice trait extension with uring_cmd callback.
+> 5. Sample demonstrating async uring_cmd handling via workqueue.
 > 
-> Cheers,
-> Miguel
+> The sample completes asynchronously using a workqueue rather than
+> `io_uring_cmd_complete_in_task()`.  The latter is primarily needed
+> when completion originates from IRQ/softirq context (e.g. NVMe),
+> whereas workqueue workers already run in process context and can
+> safely call `io_uring_cmd_done()` directly.  A Rust binding for
+> `complete_in_task` can be added in a follow-up series.
+> 
+> Copy-based `read_pdu()`/`write_pdu()` are kept instead of returning
+> `&T`/`&mut T` references because the PDU is a `[u8; 32]` byte array
+> whose alignment may not satisfy `T`'s requirements.
+
+Samples are great and all, but I would really like to see a real user of
+this before adding any more miscdev apis to the kernel.  Can you submit
+this as a series that also adds the driver that needs this at the same
+time?
+
+thanks,
+
+greg k-h
 

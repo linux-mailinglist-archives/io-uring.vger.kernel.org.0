@@ -1,195 +1,174 @@
-Return-Path: <io-uring+bounces-13022-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13023-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YAuHCAUU2Wm7lwgAu9opvQ
-	(envelope-from <io-uring+bounces-13022-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2026 17:15:17 +0200
+	id kFkTEjo72mn0zAgAu9opvQ
+	(envelope-from <io-uring+bounces-13023-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 11 Apr 2026 14:14:50 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E333D90C7
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2026 17:15:16 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB433DFC6F
+	for <lists+io-uring@lfdr.de>; Sat, 11 Apr 2026 14:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D9133304DCA6
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2026 15:11:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E0BB43053AA4
+	for <lists+io-uring@lfdr.de>; Sat, 11 Apr 2026 12:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EB03D9DBF;
-	Fri, 10 Apr 2026 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A04A355F52;
+	Sat, 11 Apr 2026 12:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPdqteGM"
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="GhHhkdZp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f68.google.com (mail-ot1-f68.google.com [209.85.210.68])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04533D903A
-	for <io-uring@vger.kernel.org>; Fri, 10 Apr 2026 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EFA3537F2
+	for <io-uring@vger.kernel.org>; Sat, 11 Apr 2026 12:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775833894; cv=none; b=d9FZbXSYaMlNxPFW5LXyUPam7mT89UPAS3HvXhVcCVcq+84dJOsCSaAjht/upkLxBaawTTJ9QTfP80dQSL1oDl+A5c+Vk/dOjb5UTS6Fz2RinPhCoN0LvX3me453kCkhXkn9Rb6AjCUxif6YYpKH2nUs0h0GJwh+vFksYhYpV3g=
+	t=1775909523; cv=none; b=NaZWyiVxtAKoRqEM9XbwvzFi8pCJMmqf5DPGR9LAlK3mKOn8KqFUuCOYZ1TY//rb0KyBIYGjimTTjdYCJq2FhoOfx3UtdoEdQUupBtIefJ4d7XyjABypqaS3DCisnYuJuesSoksLESuhZb5f8PH4E4Ak/P8KemPWB/soW/2QNzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775833894; c=relaxed/simple;
-	bh=xjJORM7tfy7vWxsh2geZIlFRt9OGr4V1D2nhCg5EtZo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Awdrl1GT3bXcOXwwcR4M92zz3we+9ymGTpm/qzG3L8IaTa4xCeGF5IOYMEhcFC5GGYPUAiixzveLueXOxdsI3wrnJCS5DhaMukZmSs+FEdPlDRbtqdm263orM/5mut2+sFnYJi8ni5IYm3Th2gxRZlVooSmP86p3Z/pgRTVQ0SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPdqteGM; arc=none smtp.client-ip=209.85.210.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f68.google.com with SMTP id 46e09a7af769-7dbccb6ae20so1024256a34.3
-        for <io-uring@vger.kernel.org>; Fri, 10 Apr 2026 08:11:31 -0700 (PDT)
+	s=arc-20240116; t=1775909523; c=relaxed/simple;
+	bh=zsYs4OLXoGqDPcSmx3jK/qfu7bvAUeaA/qPH6qC3Rpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4aROy+ez93wh0blYzpbIUUC5KHWKqXYprk30hbpEWFnKLFbfn+J6QmOYdYHy7m/Mu5fhROOa2Q2NS8NLlSh+3N8Zgt6nuNEnQUyWfO+0rjRK/saIzIhCVde3KFotV47bfbMvniTnBnyMeVZiqs4uSXhCXftaBiQwQyxLtn5VAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=GhHhkdZp; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-82f0fc82c76so579959b3a.0
+        for <io-uring@vger.kernel.org>; Sat, 11 Apr 2026 05:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775833891; x=1776438691; darn=vger.kernel.org;
+        d=furiosa.ai; s=google; t=1775909521; x=1776514321; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zvG0lUmWvJDVV9hH9ZMs4QcX1z2+NpKGjl8rKX6kmfA=;
-        b=dPdqteGMXfG9ncp72tu6tdueyp/AzdW32IBzu6cumBfqWtkJtTdQqEgnjTAVuex0S+
-         QuFNDU9ssuG/62+F8yM3RQ6kkXWfGRSMwVysrJ0LxqxOyOFCwvoCt86l9f+e86cSe8JY
-         050LQYdBO5WkXT3AGlpY3DwrBz9vayRg70SAFUcg4cO0nIHwTXWpGsa0K3oX0eGEILnK
-         L3qIRGC23ocvMPhxcT2kWbjSRwoDKlbL31bwVVZRVCfjQgN3PgKvK9i5RTbgV4sw0C4E
-         q7tHilimkIdtE1jgeb8CqgoEpUkD2xXF5rPGFaF5PMQI6BJ0VIRZXAQ6PuEu4rvFH7j8
-         JUiw==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1SyhuRgernCsatZuwdE9rDQ3zbipJuCy6jd3/mR088=;
+        b=GhHhkdZpXhM74OnGkCRGDyH9B+Y/4SM9f1ixBpL9QEypLH4kq9kOADV5/gMuJfW4KV
+         dGNOFJs+B9GHQpgBg1qEbnYBb/E9CkKh5ky3FqdunGWWDeVxHyfpJBD6im2HmDKms0W1
+         lYr6aLRFmlqExWYOpcT3H8THNG0vBdbk0WzSw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775833891; x=1776438691;
+        d=1e100.net; s=20251104; t=1775909521; x=1776514321;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zvG0lUmWvJDVV9hH9ZMs4QcX1z2+NpKGjl8rKX6kmfA=;
-        b=C/ODUpOb9UhPreqynxsqRIr7LmYj65hL94Se+0C1NySPfCkb2OsPFcli9DT0hF1Z9L
-         jTwkpwv75vPDviuBkEfjyJdlBjjzpIeHUrvptXBA+lIOJA7tZcS5TsuyC1egEZl+/zMw
-         BD32f4imci/7+6cQjiPY2bf8sn+xcWtRj4Z2R6clSzHsG3cawYhjHhb3j4SIGVn+r6Ob
-         bgfMAjOQMp3NcAsPbnXe7MpkEADfzUt0FqrO42mVSnfrmD8NpRjVQi770QVascIKpAgc
-         gEqmwQCEsI5gSFvmcXs53viZPWJv3ZBwtt7YhtTLNexTaoEAHk20i8cPWaKS7N6W25tp
-         nxRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBiYbUxxGp2GekYgG9Q1GJhzZA3p0FAm3J5/2lGuC2XM0vP5ccVqnxEWRJ+0UU5jGIcjC5uFhhCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYIa+hTY/d8UuODp8McB9Ues30UX3ZfmhniengiKZH+v/pqqh+
-	3ZXkaSqkPJSLAFMC+q/n5t7aPU/qGZPll+zXwhPgaH3QmGGBsVowo1YF
-X-Gm-Gg: AeBDiespzL0oXlV3vRSdc7tzgR7SkisaVC95k9pfrJrQzhLYRslu6o+nXS07k/dpAmT
-	7WmUgqfAWZDsdL1pUqPWZXH0TmpkK6WQBaDUE2R8OOO8BwwQEFOE+8b8zTF1YDNrBX/2lK6S44m
-	050J/VT0aekwr1w1yZkgXHxuSiAOofnSTchHK900xVZ5CTNJesaZueGnryYOuHiDQyuvBQkiVgK
-	2clJ8HFICa9gi0Brn0tC4vclKPQwsrO7LIgYoppyPuhPKjl16yn7014vwjhrff0QJ04FMC7lBs4
-	2otWK45kZR/kvikjS6Q8+n4VBbopBGR147l73jY99y9O6WwkfABOI19LAfv/YHE0dqyvkLYL8tz
-	fFiv4VnsSAwwcwvZnSURS5UaPEc+0brM29R0WTGnu6neJuafXOFeVW/BZGUfx3gGQFDcWd49E/E
-	0RclaZa768YmUyDaQy
-X-Received: by 2002:a05:6830:488e:b0:7d7:fb0f:3e56 with SMTP id 46e09a7af769-7dc27f74436mr1889260a34.26.1775833890725;
-        Fri, 10 Apr 2026 08:11:30 -0700 (PDT)
-Received: from localhost ([2a03:2880:12ff:4::])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7dc323b3366sm472507a34.9.2026.04.10.08.11.30
+        bh=q1SyhuRgernCsatZuwdE9rDQ3zbipJuCy6jd3/mR088=;
+        b=oBk9ag2QFXDX7jdo3VIf142mTBCiBiFcmgYc2o6mPMz019tzn/I7CdOeZZpqejlBzF
+         QjN9/TZ5UhuP2BDGTQo+wh5LZNXPjl9kM/lGAAPLHs9iO1Zu/Xc9umtsvHp0rIkn+kvv
+         HAPqooyJr+lHCzK+/GNFvUY5h4ckp9uZejsflvLBKtzgwBlJqTz5sRL1KRXGkM+i8A4E
+         IDtjZdaqt9FlF1rf6ISMwswb71VEDx9/+aI/NZy9SPFxodN/qkFuk+NcQZgEUUK5YMzP
+         CwImGwLRgkxehqi5v42eSlpKcJeUNGWu4N2nmimNBXxhaHWI4UJHH/IZiKvTdob38o+S
+         lsMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXVzT657BTVfg9yH7h7P+t7NQs90URGGyi0yzsAsSA9DmpzyrAYWHkZQ6Bena7ZzcnBq0meXF9Gw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytG4aNq7PFWbxNMgKaYcmVKkMBNdyxOmZpFPTJrqdAf3BfZR1A
+	dgYF5UNTMrFFBLxETa29ZxurOgp1IAbwAyP4rrZ6Eu3g4DQYiMfl1VlyV8xlTeWcxa0=
+X-Gm-Gg: AeBDietIkL1Hi9gAHGtHnyFAl8nGj/cm8vc3VfDH06uOQXj3aXaX5yH5nCLI7cRg76D
+	zzrxOJfvOJjmxAH5u+EkBiCaxPE6oRONy9OfnqCr+DTp/+1iOjjSzhFouSGSlJlZtXEY5+i8ier
+	lska1QfF8HVQWW6q45tIgetA0W/afEpVOn8vVj4FmK/upIbOgdSA3F1ohunTFkipnVoX3z4p+tC
+	siaLvopWhp5z1NI3d24uRdOZgEKft4cpuZOxsHXqZCURi0ihO0Mm/j0shTTxwToktXHPEzBG28A
+	PvB0ufuvANUFKW7DBywWA0RaQb6dJEbrehxVNxJ+pYu1MMotgVLiv7ndUBGUCWFe/+Aib+PPGo5
+	jaQ/TtOXCiBMh+pGvj9FDjPV1jPpW0HtjDFh4dnkaODr0N4clpnWT/MshL5bfFC4n9GPEm05lDn
+	7JY+b5zEsywkB624b10w==
+X-Received: by 2002:a05:6a00:138c:b0:82c:21af:a7bf with SMTP id d2e1a72fcca58-82f0c15db51mr7233864b3a.13.1775909521285;
+        Sat, 11 Apr 2026 05:12:01 -0700 (PDT)
+Received: from sidong ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82f0c4b6d43sm4993403b3a.31.2026.04.11.05.11.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2026 08:11:30 -0700 (PDT)
-From: Stanislav Fomichev <sdf.kernel@gmail.com>
-X-Google-Original-From: Stanislav Fomichev <stfomichev@gmail.com>
-Date: Fri, 10 Apr 2026 08:11:29 -0700
-To: Breno Leitao <leitao@debian.org>
-Cc: Stanislav Fomichev <sdf.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, metze@samba.org, 
-	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>, io-uring@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
- buffers
-Message-ID: <adkSnyihmD1Atfcf@devvm17672.vll0.facebook.com>
-References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
- <adaJqy6Q4L7c-eTs@devvm17672.vll0.facebook.com>
- <adjvoD9f7QaQMu5K@gmail.com>
+        Sat, 11 Apr 2026 05:12:00 -0700 (PDT)
+Date: Sat, 11 Apr 2026 12:11:56 +0000
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] io_uring/cmd: zero-init pdu in
+ io_uring_cmd_prep() to avoid UB
+Message-ID: <ado6jBVkfs8JNmO-@sidong>
+References: <20260408140007.8401-1-sidong.yang@furiosa.ai>
+ <20260408140007.8401-3-sidong.yang@furiosa.ai>
+ <2026040908-certainly-dealmaker-5530@gregkh>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <adjvoD9f7QaQMu5K@gmail.com>
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+In-Reply-To: <2026040908-certainly-dealmaker-5530@gregkh>
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	DMARC_POLICY_ALLOW(-0.50)[furiosa.ai,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[furiosa.ai:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13022-lists,io-uring=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,davemloft.net,google.com,kernel.org,redhat.com,samba.org,kernel.dk,fomichev.me,vger.kernel.org,linux-foundation.org,meta.com];
-	RCPT_COUNT_TWELVE(0.00)[18];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[furiosa.ai:+];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13023-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sdfkernel@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_NEQ_ENVFROM(0.00)[sidong.yang@furiosa.ai,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[devvm17672.vll0.facebook.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,fomichev.me:email]
-X-Rspamd-Queue-Id: 88E333D90C7
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,furiosa.ai:dkim]
+X-Rspamd-Queue-Id: DEB433DFC6F
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 04/10, Breno Leitao wrote:
-> Hello Stanislav,
+On Thu, Apr 09, 2026 at 07:27:18AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Apr 08, 2026 at 01:59:59PM +0000, Sidong Yang wrote:
+> > The pdu field in io_uring_cmd may contain stale data when a request
+> > object is recycled from the slab cache. Accessing uninitialized or
+> > garbage memory can lead to undefined behavior in users of the pdu.
 > 
-> On Wed, Apr 08, 2026 at 10:02:36AM -0700, Stanislav Fomichev wrote:
-> > On 04/08, Breno Leitao wrote:
-> >
-> > LGTM! Not sure what's your plan for the selftest? You wanna keep it
-> > outside or maybe repost v4 with it?
-> 
-> I'd be glad to include a selftest. I've already developed one covering both
-> protocols in this series and can respin with it if you'd like.
-> 
-> Test available at:
-> https://github.com/leitao/linux/commit/2d9311947061f1baa43858f597dd6c54d7ccc5d2
-> 
-> > Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-> 
-> Thanks for the review and guidance.
+> Who accesses this?  If that happens, then yes this is a problem, but if
+> not, then there's no need for this change, right (i.e. either this is a
+> bug to be fixed now or not.)
 
-Yes, yes, I did see the test, so let's add it? I'm thinking that we should
-already have a lot of coverage from packetdrill tests, but things like
-you convert (packet/can) are probably less covered.
- 
-> > I'm also not sure your unconditional 'copy-optlen-back' will work for every
-> > proto, but I think we can put something into sockopt_t to make it avoid
-> > the copy if needed in the future.
-> 
-> Good point. I'd prefer not to over-engineer this now, but keep it
-> straightforward to add later if needed. This could be easily achieved with
-> something like:
-> 
->   typedef struct sockopt {
->         struct iov_iter iter_in;
->         struct iov_iter iter_out;
->         int optlen;
-> +       bool optlen_dirty;      /* set by callback when optlen should be written back */
->   } sockopt_t;
-> 
-> Wrapper becomes:
-> 
->   if (opt.optlen_dirty &&
->       copy_to_sockptr(optlen, &opt.optlen, sizeof(int)))
->         return -EFAULT;
-> 
-> and the protocol callback would need to set
-> 
->    opt->optlen_dirty = true;
-> 
-> I don't think this is needed yet, and if we do need it, it would be better
-> to review and commit them together, making the rationale clearer for
-> future developers/LLM agents.
-> 
-> What do you think?
+Hi Greg,
 
-Agreed, I was thinking along the same lines. We can add it when/if
-needed. Since you wrap everything in sockopt_t it should be really
-easy to extend later.
+Thank you for the review.
+
+You are right, this patch is not fixing an existing bug.  I added it
+because the Rust abstraction provides read_pdu() which reads from the
+PDU, and without zero-initialization a Rust caller could observe stale
+data from a recycled slab object.  While "stale but valid" might be
+harmless in C, in Rust we want to guarantee a clean initial state.
+
+That said, I realize this is a C-side change that is only motivated by
+the Rust side.  I will drop this patch from the series and handle
+zero-initialization within the Rust miscdevice vtable wrapper instead
+(which the current code already does).
+
+Thanks,
+Sidong
+
+> 
+> > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
+> > each command starts from a well-defined state. This avoids exposing
+> > uninitialized memory and prevents potential misinterpretation of data
+> > from previous requests.
+> 
+> Where is the memory exposed and who misinterprets it?
+> 
+> > No functional change is intended other than guaranteeing that pdu is
+> > always zero-initialized before use.
+> 
+> This strongly implies that this is not needed at all.
+> 
+> thanks,
+> 
+> greg k-h
 

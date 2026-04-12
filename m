@@ -1,55 +1,87 @@
-Return-Path: <io-uring+bounces-13027-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13028-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IIW8Lyxa22nPAgkAu9opvQ
-	(envelope-from <io-uring+bounces-13027-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 10:39:08 +0200
+	id GD4XJG6p22lsEwkAu9opvQ
+	(envelope-from <io-uring+bounces-13028-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 16:17:18 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F903E31B1
-	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 10:39:07 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295C73E4302
+	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 16:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6F1B33014956
-	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 08:38:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 8F1473003365
+	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2026 14:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBE430C34A;
-	Sun, 12 Apr 2026 08:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E67244667;
+	Sun, 12 Apr 2026 14:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htHYTfX6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.78.106])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44754212548
-	for <io-uring@vger.kernel.org>; Sun, 12 Apr 2026 08:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.78.106
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD876175A92
+	for <io-uring@vger.kernel.org>; Sun, 12 Apr 2026 14:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775983116; cv=none; b=L5x5f5nKeXVktgOwWTEI6QtNTrgmPx7wcLnGv43JHx3ejAxse6zgJGaQTLFzdHJtx8BtBo/vwStjYMlTKbveaPxcdSPBMgXhM3oyZ5ZUmV6fDjJI+Rf3eXN0OJpkvVWNqeNkX9XQk+uwhGPkcG9eoogj+QuvsG31zy6OCaR2Irk=
+	t=1776003435; cv=none; b=DQocpD2aD/C2fQ3KKmkHflPH0fusaddnhJMwJyny3R7T2REKekUFygHufTQHCdBzAK9skij1c3q7LVog/tMw8k8ze10anQK3ZVJsrOTG5HaG8gGv59QvvKI6TBvt9394oaeCO5g9FEWHTr/D08fzKsgc/K1WmRhCyvyzYrqw8RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775983116; c=relaxed/simple;
-	bh=DKN6YU0SimhT3DhkpgcXh5IvJYUmKGjwwJMGwXY0E+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uif6hmphp73KoShnlwN43lJ3DYq5XNtrvfpz3e6+0+DR044aP1ZmkzAUg+NsEy+wJ0SJPHu9O2t+iQVcD+nzms8TGS5JqLiEDHbosTY7GvMxRRexmdrP9nkkg7y25S5LMUmyhblwDpvEgatt4L+yPaBtjXL1UP3UMcNcrfJw8EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lzu.edu.cn; spf=pass smtp.mailfrom=lzu.edu.cn; arc=none smtp.client-ip=13.76.78.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lzu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lzu.edu.cn
-Received: from enjou-Legion-Y7000P-2019.coin-barley.ts.net (unknown [172.23.56.36])
-	by app1 (Coremail) with SMTP id ygmowADHOPn9WdtpBq69AA--.9034S3;
-	Sun, 12 Apr 2026 16:38:23 +0800 (CST)
-From: Ren Wei <n05ec@lzu.edu.cn>
+	s=arc-20240116; t=1776003435; c=relaxed/simple;
+	bh=i7zYI4mOvV8+JAqQ8YEuOkLQCztosHwAzfRLS9bCzPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ac/OiSPmhxKMXS1HkPLY7IEcbQSFtchsYx8hoMH2pCGIqQPYChzlp9Ajljiez2ioGOj4MpeULSx22byI/SAqEeyYiIHpZtuh7hxq/nMyenPk+GEU2gikxfLHgFMcPljBE8Dx8B4Ibdsn7lWkG1XRIXjwQlg8CKM1ufPaHOdvr9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htHYTfX6; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48374014a77so49907775e9.3
+        for <io-uring@vger.kernel.org>; Sun, 12 Apr 2026 07:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776003431; x=1776608231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f97EwlV1Rzn116FIyNtcfv48dAPQdN/79grIHhpg3Tk=;
+        b=htHYTfX6iGuVzd48XO3DlnqP34utN8jk6v7shtnQA2kpcyo/Hq+GgfEKMsB61/ffRt
+         6aG4NzhyX5W7PtPfC6EiPc+FUzztD9fRVV1FCVIIswB0q5laKlD9Nj/yWUaASzRN/g0D
+         NiqUOs23xf0ksPiERYVBe8XRzAufzTpI2AIYCfIDvZ7DiV1XPtQrZ7JnRglsVZiWNdXP
+         omH7cEaYwnT0CayBAy2qpSoqdHOoAz+D+4Nf14v5YHyM1GuBmJMVz1Q2dgEgRTcWiOdU
+         QNlWgeoFZ7V1JNHOqv4qXA4cnc97T8rHS9Baxci8cNcrBwW4nS2R54Xun2D/cmT63ypd
+         tGBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776003431; x=1776608231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f97EwlV1Rzn116FIyNtcfv48dAPQdN/79grIHhpg3Tk=;
+        b=A0eDqQwG8di5xz3ku1OzlL+OyvlZyEEj4TOFAjE0VMyNzVo21wLgyMXjm9JN6w6j/i
+         903GdFFwhNpMAiujdcOYJsbCeDqnKghjZrpsqe+VFZecHFS7Qabhp4h5+JKKLNhQ6moX
+         11scaMISzcgrHBMN5/Bw/JQGCj4YNIpGGrJCrKlrOC+DiXjZ62bC0zgfjz45LJSQ//rD
+         bDfLs8CoboU7CM5vujElEZya9yzu/ZblXC1RH1kyMpKZ49IA5GtPxewfLxTrKREDXkBr
+         6BqcegoEqJ+wJadSWV9LoKlTbh7TiIMblOC+wm+t8A9fx7hbKjhoSPSGj+ayfyitP/vs
+         /HlQ==
+X-Gm-Message-State: AOJu0Yz9FvmAJ1G46ednx1so7E4ERC56d/UttsNi6wAwa8fTMbWA2qNf
+	7KQI75A6f0qJAEHDOfQ+SGe0RdVi/Gs5RJQlxNQdonKILBTc6iFTHWQ8DpW13A==
+X-Gm-Gg: AeBDiesnwARpkmQuGX0c/4/H9txABX6UeDtrL2CCxICmGygFK21eL6JhlDHr05KzfXJ
+	7K2drMK9tT4hOp09lCzQiLphozjkWTeqgFApZlMjGh18NPhTbFFu0OLkTMOR2YrVoleHWAKtWet
+	yOGNt4eHKFYNsPRoKBh4UNpUiPswz/54j2kgTXLxZozJfvvfMbzpPOXbPDORZWJ7QYTI1pVjwJX
+	aPLbM8OncyfHA6Q2inISV44AE+V9oq4pvok2q9GlIuWIw7GkRh5WeP1Rmm68X2fCCWFw85a7WdU
+	SOQ+opWXLv6BKiGf7OaC5k2fjJuGFjqH/p0MlmUJU+vKKbgaoIZ1hphyFcXMuCQrYUTTnet7Ru5
+	7m5WSO1WJgURsGboSE1JTpQEZSkI/xSxAqXMmpdP7AZkmWOIUFMmF09js3a4NSBwmK8rMkgHoUj
+	Iy6lHC/t9tboYgwi2dr4OPy5R5whL9+GiertO41W6As2HcmCGIJYS9uwE6om4h0TviGBY4p2kDN
+	sHEBNcPd1LMnYqxjE4ut0+SRfeylQ==
+X-Received: by 2002:a05:600c:1391:b0:486:fe23:1707 with SMTP id 5b1f17b1804b1-488d687116amr149052855e9.20.1776003431381;
+        Sun, 12 Apr 2026 07:17:11 -0700 (PDT)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d58a414bsm224368975e9.4.2026.04.12.07.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Apr 2026 07:17:10 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
-	asml.silence@gmail.com,
-	yifanwucs@gmail.com,
-	tomapufckgml@gmail.com,
-	yuantan098@gmail.com,
-	bird@lzu.edu.cn,
-	zcliangcn@gmail.com,
-	ylong030@ucr.edu,
-	n05ec@lzu.edu.cn
-Subject: [PATCH 1/1] io_uring/poll: fix signed comparison in io_poll_get_ownership()
-Date: Sun, 12 Apr 2026 16:38:20 +0800
-Message-ID: <3a3508b08bcd7f1bc3beff848ae6e1d73d355043.1775965597.git.ylong030@ucr.edu>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1775965597.git.ylong030@ucr.edu>
-References: <cover.1775965597.git.ylong030@ucr.edu>
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH liburing 1/1] examples/zcrx: fix just allocated sock struct checks
+Date: Sun, 12 Apr 2026 15:17:14 +0100
+Message-ID: <b689b7956262aa53d37c0608c80a007dfa4cd06e.1776002658.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -57,98 +89,63 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:ygmowADHOPn9WdtpBq69AA--.9034S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1furWfCrW8JFyDKr1fCrg_yoW8Aw43pr
-	4YyryDKFZ8tF17J390yF1rZFWrAr1kAa4xJr93G3y3u3ZrWF45J340gFy3Wry0yry0kayY
-	vFsF9asxWws8Ca7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
-	w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
-	IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2
-	jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-	8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-	Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY2
-	0_Gr4l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: zqqvvuo6o23hxhgxhubq/1tbiAQEPCWnaCt8K4QAAsL
-X-Spamd-Result: default: False [0.54 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_NONE(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13027-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[kernel.dk,gmail.com,lzu.edu.cn,ucr.edu];
-	DMARC_NA(0.00)[lzu.edu.cn];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-13028-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FROM_NEQ_ENVFROM(0.00)[n05ec@lzu.edu.cn,io-uring@vger.kernel.org];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 05F903E31B1
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 295C73E4302
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Longxuan Yu <ylong030@ucr.edu>
+The line in process_accept() checking sockfd is a leftover from times
+there was just one static socket. Now it's allocated, and we shouldn't
+be checking an uninitialised value, which fails the benchmark from time
+to time.
 
-io_poll_get_ownership() uses a signed comparison to check whether
-poll_refs has reached the threshold for the slowpath:
-
-    if (unlikely(atomic_read(&req->poll_refs) >= IO_POLL_REF_BIAS))
-
-atomic_read() returns int (signed). When IO_POLL_CANCEL_FLAG
-(BIT(31)) is set in poll_refs, the value becomes negative in
-signed arithmetic, so the >= 128 comparison always evaluates to
-false and the slowpath is never taken.
-
-Fix this by casting the atomic_read() result to unsigned int
-before the comparison, so that the cancel flag is treated as a
-large positive value and correctly triggers the slowpath.
-
-Fixes: aa43477b0402 ("io_uring: poll rework")
-Cc: stable@vger.kernel.org
-Reported-by: Yifan Wu <yifanwucs@gmail.com>
-Reported-by: Juefei Pu <tomapufckgml@gmail.com>
-Co-developed-by: Yuan Tan <yuantan098@gmail.com>
-Signed-off-by: Yuan Tan <yuantan098@gmail.com>
-Suggested-by: Xin Liu <bird@lzu.edu.cn>
-Tested-by: Zhengchuan Liang <zcliangcn@gmail.com>
-Signed-off-by: Longxuan Yu <ylong030@ucr.edu>
-Signed-off-by: Ren Wei <n05ec@lzu.edu.cn>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/poll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ examples/zcrx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 2e9ee47d7..b98439107 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -93,7 +93,7 @@ static bool io_poll_get_ownership_slowpath(struct io_kiocb *req)
-  */
- static inline bool io_poll_get_ownership(struct io_kiocb *req)
- {
--	if (unlikely(atomic_read(&req->poll_refs) >= IO_POLL_REF_BIAS))
-+	if (unlikely((unsigned int)atomic_read(&req->poll_refs) >= IO_POLL_REF_BIAS))
- 		return io_poll_get_ownership_slowpath(req);
- 	return !(atomic_fetch_inc(&req->poll_refs) & IO_POLL_REF_MASK);
- }
+diff --git a/examples/zcrx.c b/examples/zcrx.c
+index 4b9f078e..b55b07ce 100644
+--- a/examples/zcrx.c
++++ b/examples/zcrx.c
+@@ -356,8 +356,6 @@ static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
+ 	conn = aligned_alloc(64, sizeof(*conn));
+ 	if (!conn)
+ 		t_error(1, 0, "can't allocate conn structure");
+-	if (conn->sockfd)
+-		t_error(1, 0, "Unexpected second connection");
+ 
+ 	memset(conn, 0, sizeof(*conn));
+ 	conn->sockfd = cqe->res;
 -- 
-2.43.0
+2.53.0
 
 

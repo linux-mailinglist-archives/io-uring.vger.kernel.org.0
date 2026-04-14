@@ -1,168 +1,196 @@
-Return-Path: <io-uring+bounces-13038-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13039-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yIcjHntK3mkzqAkAu9opvQ
-	(envelope-from <io-uring+bounces-13038-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 16:08:59 +0200
+	id 2ME8Afte3mn+CQAAu9opvQ
+	(envelope-from <io-uring+bounces-13039-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 17:36:27 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC2B3FAE14
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 16:08:58 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D07B3FBF55
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 17:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 273823068F44
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 14:06:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B954130078AC
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 15:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4113E7161;
-	Tue, 14 Apr 2026 14:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB163EBF33;
+	Tue, 14 Apr 2026 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="KD5cfuVN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4E022FE0E
-	for <io-uring@vger.kernel.org>; Tue, 14 Apr 2026 14:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B53EAC90
+	for <io-uring@vger.kernel.org>; Tue, 14 Apr 2026 15:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776175595; cv=none; b=UCFezmKhQ6V8QkOM6Q8MTcG0CjxXcbICYiEChHDNoTzaUKhN8MW1OEqMM/NKl1OgJirUTgzYexr+emhisJmSQ0ZpAIkElvOd7UjSi2lNY9qd5ibrPXOQbBA74UndGtvcmTFXzR1rYaQ6UcHA5NqJHzh1BsG57WvoAY+MX566cjk=
+	t=1776180982; cv=none; b=iukI3EW3J5bXd3DOO9poNPlS2UUxiDnRTPeO3C5ixnkCmjM4KGeLVDXEJ0GxFTc3wXBhIjw+k+BKNT06kOE7LcidgstGzljmNOvont22z9cr76XZgC4HpvQ8qvnl7gZ7S/JjEy/t0/Lm29j6XOktcG2jfSlsk6xHFlmLcom2u0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776175595; c=relaxed/simple;
-	bh=DgAENB3WHzVYcORyKqdwCIVZZSNSeG0iX8OtRJYQmFU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=g3DgQ6CwmuFo08mB5vLT1PAJhp1g4UyRaeHnE1ClXIziMvmGyshb/scg6uS/6wi+PUQ/8KhOtOySKHgh8+YO56uLjuhR6q2768YK4DnA6Dgqsth/qLVwAzRNYbGwluwInkNg332P1Hvtb+TYBwO2DQHHulVXi7Tkd3ptK1O8eRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-6850890ec96so5823232eaf.1
-        for <io-uring@vger.kernel.org>; Tue, 14 Apr 2026 07:06:34 -0700 (PDT)
+	s=arc-20240116; t=1776180982; c=relaxed/simple;
+	bh=P7azTpi+MN/jyrZ5BBlCVFneGWvJ6Ty3e+joKzhgGGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQuqHeAbudTm3KhwiVUDDGqiRLmJgzPgObw15L+6bst0c4g2rF621wLdIO5UfUJD7r/QEpCmmk1eCsCXu4aSYllicI41Mlp4kQ5+7iYS/s629+4d2PMYpevLD+TM/8VZuZfTPHevTuEtQk7bBO5VJlDdo0YgzafkPuRTQHOEH0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=KD5cfuVN; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2b25cf1b5f0so38265855ad.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Apr 2026 08:36:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1776180981; x=1776785781; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPzXW8AqKhqoLGflDV8nOPkwdCJG/GLfLI3Z+E/2MF0=;
+        b=KD5cfuVNkVGv5g8XafkH5Iht1dtvjoCbx7yC4I86qT8tYfM/jzpPIytR872GIkJMya
+         VZ72uBIdd4oxTAEC9GYJyBk2MWvmpOTLktY7sNmG1t0snJZIt50eVZ9K7s9NDSPehMze
+         K35t3da6t4FTdFkQlfn+d3Sb0FM1LMlFuLafU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776175593; x=1776780393;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9GiiDo/hLVX+hYvJ/BkRA1XftnQJvUX7CXL65wgHAqU=;
-        b=QaASeg7+OM7mfnOt/JAN81jDnykWG5a0FsipqPmrHIqqLUIYJNNM8XwfYTNipGOXg4
-         TGnU5MPGIqPj2G9FRyUdQlnatk+q+rpvgw1ouIPDdPV7hp0ZtOlxwPsmlWnMypsEsAeD
-         RpLr9yKu4DFMWFtzauLo4acvp26OEH/rfJHTHtXPvzBBIOSQcv6vP1krUvViTWqRwbmM
-         zZn6Y31WdlS7JMleb/cHPI8ZAECAHuHjNSDIQtRqpJ1XH1uRttRPElJ0+I8ZrMwWj18d
-         29N73BbLmGGLMQRWj7WREc/Q9SzYoQz1KbOn4j9D4dBj07wyLJmpTeRFP7pRAEvuQLhp
-         22WA==
-X-Forwarded-Encrypted: i=1; AFNElJ+zdcPfVDwYe7pF9/I11v2e+ymTqGbzGZK2rk1pQKPONFuZAqXWIHKnwcUVC+sg2HNytoMQJI8QIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4jPqML4U2srzDjGWQKo3YwxwoQ0BJbsAtbZz+kvPnwE0Eista
-	PilfMUnEJ/643JbIocwxkd0b+oSfZCWxx/3pwYbFGnrA0D94MCKXVW+mdfAF8LSzE9saFJ99Q0+
-	As17TeGvu29R3yBcaJDrxd/0vaEHtlwEQUmkLcAi1P37oaWYo33tW/WS/UdQ=
+        d=1e100.net; s=20251104; t=1776180981; x=1776785781;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FPzXW8AqKhqoLGflDV8nOPkwdCJG/GLfLI3Z+E/2MF0=;
+        b=oUMS9DlV40xcAvQNKgV5Eal7a+40QAn86YlmHzLpvmSvL/mDpiXxf6SzHLa6FuKhkK
+         IaJ3YrVYhBILY2FSTVAHUfL14zUy6RRmbqPvsHfN8ujZZUhR9nD7JfUxj9/v+BWgLzs2
+         HXtgYvg4ST3KfW5jUH7Tuy0mL0UGeFJtaavpxXEfFk3NwvDHSn2mbuqLQneGcGeKEVwk
+         MMRrBWcZX7D7LRWMqu12eTXtZtYgCSQAN4bs0F5dbeHsweVvXpxTXVPXGZPRtMD6O1pU
+         zL6hEtkCy1kBZNIk7E3fZovYLBPnslfXkHytEBckDoNfomaHczUNd4Ltat3qqHaZuN3t
+         F/Ag==
+X-Forwarded-Encrypted: i=1; AFNElJ/Jpy+dh13a1Bk315P/LEfppJEhjuYCRH+rE/Ok2lHYQ1Ou1LuQJpBSRk2EkF+Q9G6PQS/MoDncqg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf5q0jwOWHLT78SctDSooGNTfQE1ckDVvSnBSQCMrtsiOdU83Q
+	1nYdfPEnA94RzBBBAuxCgBEveqp7u699BNs6d5Em09sB6nnuncNLpididLVmFIPFwBY=
+X-Gm-Gg: AeBDiescKJsPwZF5MwvJvb5IuNYUSqfT6u3FyeR9klX3cRzJkAdMI+YTbtbJ7Ik7tde
+	mRXB3psnrUvZIkzu7wCQgEm6UyG6JrSTFF8eEDdpX7esA0B3JBZFt33818uAZtHBplNFq7Q+iug
+	FXecXTsoUH0n9ASw/F5lI6dqUQ8zLjYDSHX1nLWcxcU4jHlBTeVLHPAag/wXRMjN+lOBQArVJH8
+	FztkfJvuZTJxsKV+TycTb/A2HZi2nH7sqScruf0fVlo4eNBf4VX51bQ3cXaqiXYXtXNsEbFjSW2
+	Y56bC3+O4Q2WQzrIrxNW2NOHrg9goUhO1wNj5NsNSKO7kG9WTnofPkeIl3l2dKg41JTm/tM66Co
+	CGsdpjOXuNrZVyADwUgvpymEcn/nH3go6TsTMCIthSBgNTZvkw69aRNQ0ZcABmBjlyt4i+yY3ec
+	rHVU6yAvq3jOkDNAQWHhI+NKq++P3DzeWS5eD2rE4Jp+085gIHmIoWQahKRKk=
+X-Received: by 2002:a17:902:cf11:b0:2b0:beb4:3bb with SMTP id d9443c01a7336-2b2d593bd65mr186882965ad.10.1776180980645;
+        Tue, 14 Apr 2026 08:36:20 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b45e949464sm89557465ad.24.2026.04.14.08.36.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2026 08:36:20 -0700 (PDT)
+Date: Wed, 15 Apr 2026 00:36:05 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Rust io_uring command abstraction for miscdevice
+Message-ID: <ad5e5cAmtL8GRo-s@sidongui-MacBookPro.local>
+References: <20260408140007.8401-1-sidong.yang@furiosa.ai>
+ <2026040925-taunt-exit-0cb9@gregkh>
+ <ado7p6jV6aapelBU@sidong>
+ <2026041153-scope-five-fd24@gregkh>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1903:b0:687:6290:6333 with SMTP id
- 006d021491bc7-68be8fcba9amr8716062eaf.58.1776175593341; Tue, 14 Apr 2026
- 07:06:33 -0700 (PDT)
-Date: Tue, 14 Apr 2026 07:06:33 -0700
-In-Reply-To: <69a41fc9.050a0220.3a55be.005a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69de49e9.a00a0220.468cb.0061.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in io_wq_put_and_exit
-From: syzbot <syzbot+79a4cc863a8db58cd92b@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spamd-Result: default: False [-0.36 / 15.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2026041153-scope-five-fd24@gregkh>
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=36e12cb4499e2de4];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[furiosa.ai,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[furiosa.ai:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[furiosa.ai:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-13039-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13038-lists,io-uring=lfdr.de,79a4cc863a8db58cd92b];
 	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[sidong.yang@furiosa.ai,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,appspotmail.com:email,storage.googleapis.com:url]
-X-Rspamd-Queue-Id: DBC2B3FAE14
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,furiosa.ai:dkim,sidongui-MacBookPro.local:mid]
+X-Rspamd-Queue-Id: 9D07B3FBF55
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-syzbot has found a reproducer for the following issue on:
+On Sat, Apr 11, 2026 at 02:27:14PM +0200, Greg Kroah-Hartman wrote:
+> On Sat, Apr 11, 2026 at 12:16:39PM +0000, Sidong Yang wrote:
+> > On Thu, Apr 09, 2026 at 07:25:23AM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Apr 08, 2026 at 01:59:57PM +0000, Sidong Yang wrote:
+> > > > This series introduces Rust abstractions for io_uring commands
+> > > > (`IORING_OP_URING_CMD`) and wires them up to the miscdevice framework,
+> > > > allowing Rust drivers to handle io_uring passthrough commands.
+> > > > 
+> > > > The series is structured as follows:
+> > > > 
+> > > > 1. Add io_uring C headers to Rust bindings.
+> > > > 2. Zero-init pdu in io_uring_cmd_prep() to avoid UB from stale data.
+> > > > 3. Core io_uring Rust abstractions (IoUringCmd, QueuedIoUringCmd,
+> > > >    IoUringSqe, UringCmdAction type-state pattern).
+> > > > 4. MiscDevice trait extension with uring_cmd callback.
+> > > > 5. Sample demonstrating async uring_cmd handling via workqueue.
+> > > > 
+> > > > The sample completes asynchronously using a workqueue rather than
+> > > > `io_uring_cmd_complete_in_task()`.  The latter is primarily needed
+> > > > when completion originates from IRQ/softirq context (e.g. NVMe),
+> > > > whereas workqueue workers already run in process context and can
+> > > > safely call `io_uring_cmd_done()` directly.  A Rust binding for
+> > > > `complete_in_task` can be added in a follow-up series.
+> > > > 
+> > > > Copy-based `read_pdu()`/`write_pdu()` are kept instead of returning
+> > > > `&T`/`&mut T` references because the PDU is a `[u8; 32]` byte array
+> > > > whose alignment may not satisfy `T`'s requirements.
+> > > 
+> > > Samples are great and all, but I would really like to see a real user of
+> > > this before adding any more miscdev apis to the kernel.  Can you submit
+> > > this as a series that also adds the driver that needs this at the same
+> > > time?
+> > 
+> > Hi Greg,
+> > 
+> > Thank you for the review.
+> > 
+> > We have an out-of-tree C driver at Furiosa AI for our AI inference
+> > accelerator that uses uring_cmd.  This is our primary motivation for
+> > these abstractions.
+> > 
+> > We are considering upstreaming the driver and porting parts of it to
+> > Rust using these abstractions.  If we were to upstream the driver,
+> > would it need to be based on the accel subsystem (DRM)?  Or would a
+> > standalone PCI driver approach also be acceptable?
+> 
+> Yes, it must use the accel subsystem as that is the correct api for it.
 
-HEAD commit:    d60bc1401583 Merge tag 'pwrseq-updates-for-v7.1-rc1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=168b7b02580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=36e12cb4499e2de4
-dashboard link: https://syzkaller.appspot.com/bug?extid=79a4cc863a8db58cd92b
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123f04ce580000
+Thanks for the clarification.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e3bb6cfdd5a9/disk-d60bc140.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7d84405a4b00/vmlinux-d60bc140.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/de74b233e91c/bzImage-d60bc140.xz
+I will proceed with this uring_cmd Rust abstraction patch as is. Moving 
+forward with our AI accelerator driver, I will look into implementing it 
+using the accel subsystem and work on creating the necessary Rust 
+abstractions for it.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+79a4cc863a8db58cd92b@syzkaller.appspotmail.com
+Since I am planning to adopt the accel subsystem, could you share some 
+insights on the main benefits it provides for AI accelerators, or point me 
+to any future roadmap/plans for the subsystem? This would be very helpful 
+for my design and implementation.
 
-RAX: ffffffffffffffda RBX: 00007f8d42c15fa0 RCX: 00007f8d4299c819
-RDX: 0000000000000000 RSI: 0000200000000080 RDI: 0000000000000084
-RBP: 00007f8d42a32c91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f8d42c15fac R14: 00007f8d42c15fa0 R15: 00007f8d42c15fa0
- </TASK>
-------------[ cut here ]------------
-!test_bit(IO_WQ_BIT_EXIT, &wq->state)
-WARNING: io_uring/io-wq.c:1396 at io_wq_put_and_exit+0x8a7/0x9d0 io_uring/io-wq.c:1396, CPU#0: syz.0.19/5987
-Modules linked in:
-CPU: 0 UID: 0 PID: 5987 Comm: syz.0.19 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
-RIP: 0010:io_wq_put_and_exit+0x8a7/0x9d0 io_uring/io-wq.c:1396
-Code: ff e8 7d bf 17 fd 44 0f b6 74 24 78 31 ff 44 89 f6 e8 bd b9 17 fd 45 84 f6 0f 85 1a fd ff ff e9 67 fd ff ff e8 5a bf 17 fd 90 <0f> 0b 90 e9 00 f8 ff ff e8 8c 5e 83 fd e9 72 f8 ff ff 48 8b 3c 24
-RSP: 0018:ffffc900036d7b50 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88807a8fa000 RCX: ffffffff84f04326
-RDX: ffff88801e390000 RSI: ffffffff84f04b26 RDI: ffff88801e390000
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 1ffff920006daf8c
-R13: 0000000000000000 R14: ffff88801e390970 R15: ffff888032be0c18
-FS:  00005555898aa500(0000) GS:ffff888124332000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00002000000000c0 CR3: 0000000077c62000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __io_uring_add_tctx_node+0x3e8/0x4c0 io_uring/tctx.c:174
- io_uring_create io_uring/io_uring.c:3063 [inline]
- io_uring_setup.cold+0x1993/0x1c7e io_uring/io_uring.c:3108
- __do_sys_io_uring_setup io_uring/io_uring.c:3142 [inline]
- __se_sys_io_uring_setup io_uring/io_uring.c:3133 [inline]
- __x64_sys_io_uring_setup+0xc2/0x170 io_uring/io_uring.c:3133
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x10b/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8d4299c819
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe9e8909a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 00007f8d42c15fa0 RCX: 00007f8d4299c819
-RDX: 0000000000000000 RSI: 0000200000000080 RDI: 0000000000000084
-RBP: 00007f8d42a32c91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f8d42c15fac R14: 00007f8d42c15fa0 R15: 00007f8d42c15fa0
- </TASK>
+Thanks,
+Sidong
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> thanks,
+> 
+> greg k-h
 

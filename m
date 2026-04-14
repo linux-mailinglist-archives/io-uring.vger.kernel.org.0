@@ -1,135 +1,114 @@
-Return-Path: <io-uring+bounces-13033-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13034-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ABkCOktv3WnweAkAu9opvQ
-	(envelope-from <io-uring+bounces-13033-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 00:33:47 +0200
+	id APimFR+L3Wm4fQkAu9opvQ
+	(envelope-from <io-uring+bounces-13034-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 02:32:31 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D0D3F3E7E
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 00:33:47 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF7F3F488E
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 02:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6F65E3071C5F
-	for <lists+io-uring@lfdr.de>; Mon, 13 Apr 2026 22:30:49 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BDAE3301C30A
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2026 00:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1092347520;
-	Mon, 13 Apr 2026 22:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BE01F3BA4;
+	Tue, 14 Apr 2026 00:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc9KVN6Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0gF3wyr"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB5C3101B4;
-	Mon, 13 Apr 2026 22:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D581AA7A6
+	for <io-uring@vger.kernel.org>; Tue, 14 Apr 2026 00:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776119448; cv=none; b=rRSJ1+d4c77UDbQ/gO2/V1C+4Z9pLNAXZns3qJTMmEPrRPNjEz0A88URA89daMw3uW6r2VT7YvpYAcNSADvKe4OwFuEBgnwPWK/xvBcbAGgW+xzMgI41NzlmjlX9yMohq8RSv+HQlL68WZa/5tisyrdZGe/jha/2/xD6Z+5jfEU=
+	t=1776126657; cv=none; b=QI4FfLXwoLJ9ZB4ScDlpeODZV8sbgRrzWM1eLUq535P+1Ax7ODXPiK0Oc/I9NjG+ArSdPmn93EjuCr65UMQl3y111mAf5eWOtGhcH23jva+UM3PqqgsR65nV/dJz6hklt7hymFt0ErMYuRPHritVqhpIi218i34sBQ6BzGubzRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776119448; c=relaxed/simple;
-	bh=fAigQ1D/FVo+PjqGeZBeMetY9HLBMWz14oCAZ2q4UKY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u/8ApJEA5/Xa7BqEn0xVWvE6zlZaVhvSdPJ+DYcid1lQDspMsmOAQRAWCZdzYWQOFLREixlX5g5eHT/iLftVYQN0IVBrq+4SRBSGbPpaFUKK4/OU82bOvDyO8epNu6MmC9qFoejtZ+edhb6C7Zrx6RU3QuHAePgZu+L73zKqHFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc9KVN6Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87BCC2BCAF;
-	Mon, 13 Apr 2026 22:30:47 +0000 (UTC)
+	s=arc-20240116; t=1776126657; c=relaxed/simple;
+	bh=V1Gby0TKoOGNoFchvpXN9rzVFs9is09An+Aqge+AMRs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=V/pQu3GR/G2F9s+oFGPCRVZ470tlwsqWcttzX4W7sqnJpl8vlSywlLCNtnFlzobvzx/NFo9zUxKZiKAqYIi04Mzv5VvJGjC01rLrQMcmgtiVulddvVKnEQ/6VdTRknw+j6sxr08OJUTI9AM0Hx2dERiNsci7sJef36fMSfkxXGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0gF3wyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D159CC2BCAF;
+	Tue, 14 Apr 2026 00:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776119447;
-	bh=fAigQ1D/FVo+PjqGeZBeMetY9HLBMWz14oCAZ2q4UKY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jc9KVN6Z42lJDIZlmAlf2YDtzHi1vYCPOj/8MQsjz6KN19yJWfVx6/ttb3pg7ZlKI
-	 Bm7JMgxziCJ5tP2hyLiu24MY6eR1/h/R7ojHIK2OOv+XNGsU6zldqE0S9E/WR7Yp5j
-	 uX3gaFes3nFq7+BNtGCp+KF+7RMOFXr4VR6iGxpZOSIP4bzvXKR3Uor1RjtbXslmni
-	 w/7nggwFueOkXBs9UBHvW7eeGbQg4ktf2bLQKe55YDQ1Sl+FjRm8ZQK1jVTzUR7Seu
-	 lAWlueD/bHbijpO6Un1XvcdHINf3thqyc0d4tTeVz8daIYbqocDa/ZPEcWjd5dNWtH
-	 96f4QYnLUJbTQ==
+	s=k20201202; t=1776126656;
+	bh=V1Gby0TKoOGNoFchvpXN9rzVFs9is09An+Aqge+AMRs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=r0gF3wyruDOnFoj7GVRxZNoDAv143R+tSJAsn7iPp2lqFfnWX//Ka2f9otYnR61Zf
+	 9zZETCX69mszPQBHZO4QZeyLJt/OXuEpj6+GSM5Vz3ruadJ0mBzxxmEO9k4Csxa4Ld
+	 bIHNKsFSr2wodaHADUFRfUwoJy0SNsSFI7Etb/HrXcMAeT1f8LeCkhaqjOzrbOIExV
+	 6nItC9z684C2qwTyGaKLfq0N2xYXQ/QHzJT81CnhLqeTZfHlTyyL7j75rU1b39o4TD
+	 cPlhSss3F4cbNuJY5j9bTqFW2Xp5rw9iq7gzo9mf+KtokdwlyLU2ypmWe7gQmj5zzn
+	 rBea8nWntWlvg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3FDEF3809A0C;
-	Mon, 13 Apr 2026 22:30:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 413843809A0D;
+	Tue, 14 Apr 2026 00:30:29 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring changes for the 7.1 merge window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <759b8298-18e1-4bb2-a5f9-eeb9341b0c6c@kernel.dk>
+References: <759b8298-18e1-4bb2-a5f9-eeb9341b0c6c@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <759b8298-18e1-4bb2-a5f9-eeb9341b0c6c@kernel.dk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/for-7.1/io_uring-20260411
+X-PR-Tracked-Commit-Id: c5e9f6a96bf7379da87df1b852b90527e242b56f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 23acda7c221a76ff711d65f4ca90029d43b249a0
+Message-Id: <177612662811.618768.4940912902712753602.pr-tracker-bot@kernel.org>
+Date: Tue, 14 Apr 2026 00:30:28 +0000
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
- buffers
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <177611941889.575225.5185845042470136876.git-patchwork-notify@kernel.org>
-Date: Mon, 13 Apr 2026 22:30:18 +0000
-References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
-In-Reply-To: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, kuniyu@google.com, willemb@google.com,
- metze@samba.org, axboe@kernel.dk, sdf@fomichev.me, io-uring@vger.kernel.org,
- bpf@vger.kernel.org, netdev@vger.kernel.org, torvalds@linux-foundation.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13033-lists,io-uring=lfdr.de,netdevbpf];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13034-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[patchwork-bot@kernel.org,io-uring@vger.kernel.org];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_ALL(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FROM_NO_DN(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-0.996];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 54D0D3F3E7E
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 5FF7F3F488E
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hello:
+The pull request you sent on Sat, 11 Apr 2026 17:30:28 -0600:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/for-7.1/io_uring-20260411
 
-On Wed, 08 Apr 2026 03:30:28 -0700 you wrote:
-> Currently, the .getsockopt callback requires __user pointers:
-> 
->   int (*getsockopt)(struct socket *sock, int level,
->                     int optname, char __user *optval, int __user *optlen);
-> 
-> This prevents kernel callers (io_uring, BPF) from using getsockopt on
-> levels other than SOL_SOCKET, since they pass kernel pointers.
-> 
-> [...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/23acda7c221a76ff711d65f4ca90029d43b249a0
 
-Here is the summary with links:
-  - [net-next,v3,1/4] net: add getsockopt_iter callback to proto_ops
-    https://git.kernel.org/netdev/net-next/c/67fab22a7adc
-  - [net-next,v3,2/4] net: call getsockopt_iter if available
-    https://git.kernel.org/netdev/net-next/c/5bd0dec150f5
-  - [net-next,v3,3/4] af_packet: convert to getsockopt_iter
-    https://git.kernel.org/netdev/net-next/c/9c99d6270569
-  - [net-next,v3,4/4] can: raw: convert to getsockopt_iter
-    https://git.kernel.org/netdev/net-next/c/5b75e7d67695
+Thank you!
 
-You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+https://korg.docs.kernel.org/prtracker.html
 

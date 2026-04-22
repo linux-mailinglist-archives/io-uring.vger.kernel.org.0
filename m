@@ -1,60 +1,60 @@
-Return-Path: <io-uring+bounces-13117-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13118-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +B1cM+Sx6GmIOwIAu9opvQ
-	(envelope-from <io-uring+bounces-13117-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 13:32:52 +0200
+	id yPD9Fiey6GmIOwIAu9opvQ
+	(envelope-from <io-uring+bounces-13118-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 13:33:59 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539DE4456A8
-	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 13:32:52 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA26B4456ED
+	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 13:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4DFD1304D5D5
-	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 11:30:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 770CE3069FFC
+	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2026 11:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5585E3D0927;
-	Wed, 22 Apr 2026 11:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC003D170B;
+	Wed, 22 Apr 2026 11:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Y3FHiGy5"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="sIXq/2qF"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEA53D090B;
-	Wed, 22 Apr 2026 11:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDF53D093B;
+	Wed, 22 Apr 2026 11:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776857400; cv=none; b=gLMc7l09/Vi9oalpoH2sPW9Fsa6uqiyCywETuYznxF5PZXQAlb+TBWrTZVMics9biHBQ7s3F17NnJxnxPnjgRBIFeTWMWTiqUVUgY0TM1OaI3NKscdCt+X/8Ox0MDjmgusBIHZDS1njxa+9A+ipnLjZXegJEh6qDEM73VMtIL6Y=
+	t=1776857402; cv=none; b=Y/qaVMrERzOEyIFYA1DJxTCmEMjABiFbJGihLFo+rEW2aMdPdzlK+2wzGdQDCmYTWkTHqECwzK/uyEHP/m9nXKD9/TD8vXXrbXx8WaINXo8amh68QU8xAk7utgEkTYs7iLCnvVnoVjJxLKmJaHorx9x0S3ohuKPgUJC1sPWY1Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776857400; c=relaxed/simple;
-	bh=GimcXQ5Vr7CVHkQ95G4KcAipFyJMm6dpkfIxF3FoFeo=;
+	s=arc-20240116; t=1776857402; c=relaxed/simple;
+	bh=83JslrFf9334MEp6KqDh4ZOAascOu9xrBr4UIjBgfEw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pcclBv/HAVmHMVUYMYdurZFJLXwEEGH/9Kj9WSX/c4dSjeUXPUjFIsfRkpLksaPpFgKS0Ntw9Kl/wubo1t0esG5Vy1xwRE35YGKg+EBdmztvSJg/wDmhAIlYB3PnTL9/1C6DvBRtF7Q/HKPXiQaSy/z9s8Z6hCfBfK0ChRuDkq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Y3FHiGy5; arc=none smtp.client-ip=67.231.145.42
+	 MIME-Version:Content-Type; b=nYI+cnEED0MWP5OfcCAByxWlrFoDDZCb22fLBUa2La6l7lc4jKo6eqO9FTlgqjLDmn/zox4vHRlFNTv6eeWdqOTpExgAQS3AFwr5NYqcB5pNt0eHocUU+xsHY0L8v00Z9Itdult1TX1gAhzjO3iDW3rJnMNn5zlzruTMupNP/Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=sIXq/2qF; arc=none smtp.client-ip=67.231.145.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63MAsJdR2107212;
-	Wed, 22 Apr 2026 04:29:50 -0700
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63MAsJdU2107212;
+	Wed, 22 Apr 2026 04:29:53 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=+1dg+cv4+2vyQ5Kuqxeb+I3OzBBIDzcSrfPOrCeqLDU=; b=Y3FHiGy5Sd9v
-	/iOTQC0BFMT2bAtMyxMXaexQGEhKcM2oO/hQkq4zXL2LQsB+IYUdNJftJgFLErM0
-	S3N9fVi6FSAgdBp7NJg8y2LCUzqz0M3sfKpryG2+y2eH+c9v8d0aGMEZfWQK8eW2
-	wOU+Okk7FuOlHAsemHpYcZzxI1cCGp12iMhjbBXpqq79fsbT+Y8KXDaTuYk3lITv
-	chOp2Eak70xNKe8OtLFY1khngdIPZo/Ir6AeGXz1Ec0F78GHAu3cguhzAArQ456O
-	QG/EWwuUtdaFnxdAJSIVm92rlAfMXHL/JstqnW4RYd5NaDMo5ChgtRTPCjqFP/xe
-	ovfrcGwWEg==
+	 bh=092DUjtk9S7riuWAenbtkpfmunugAPl99EMBelOHirw=; b=sIXq/2qFp0v7
+	pGM6pew3fMAhHRNrag/T5eHY9YSO51vmTuM4Qzz2CTz3/+C7ooGSb5wXHUihwjTz
+	QDnGQPEo0HV5ZNQJAIg6B31p2XyUa2cy8Utf84sOuJVsLJhTpFfsvHtfeYazxTOF
+	OtjLDEjbNMDi7nAD72X60U9OvI9PhJCZSwKfK11vZtc5Igrp1tWJqxnIlBHAdt1M
+	nGL+kp1lHVCp3nqI/s9/Kfowf+rZ2nCLnHnvanY7AQFgDoCU5ZU/t+gLf3P/ohFz
+	Ejh7k3kF3LYr2GSzyw2g5Q+yh/JR8UHwHTapS15ve80+Yj4+gu7624nukjohhAUT
+	F+S6BFkFlQ==
 Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4dpepgvmmf-2
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4dpepgvmmf-5
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 22 Apr 2026 04:29:50 -0700 (PDT)
-Received: from localhost (2620:10d:c0a8:1b::2d) by mail.thefacebook.com
+	Wed, 22 Apr 2026 04:29:51 -0700 (PDT)
+Received: from localhost (2620:10d:c0a8:1b::30) by mail.thefacebook.com
  (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.37; Wed, 22 Apr
- 2026 11:29:35 +0000
+ 2026 11:29:44 +0000
 From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>
 To: <io-uring@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
         "Jens
@@ -72,9 +72,9 @@ CC: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>,
         Shuah Khan
 	<skhan@linuxfoundation.org>,
         Vishwanath Seshagiri <vishs@fb.com>
-Subject: [PATCH 3/5] io_uring/zcrx: add shared-memory notification statistics
-Date: Wed, 22 Apr 2026 04:25:14 -0700
-Message-ID: <20260422112522.3316660-4-cleger@meta.com>
+Subject: [PATCH 4/5] Documentation: networking: document zcrx notifications and statistics
+Date: Wed, 22 Apr 2026 04:25:15 -0700
+Message-ID: <20260422112522.3316660-5-cleger@meta.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260422112522.3316660-1-cleger@meta.com>
 References: <20260422112522.3316660-1-cleger@meta.com>
@@ -86,21 +86,21 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIyMDExMCBTYWx0ZWRfXx6qk8u92gex7
- iVrQBfaC1TY62gDMMFA7kgOubJmwrzcQxbjWz+nQPpiVGf7/hBgInTr158z1WLjquvfVfNYNpQ+
- AHl7t9lRSnglmiUaRhAkBWaeW0T5Igf/2WZqTJepFxnFKSCdQEzD0QkY23ki1mTA/iNogvMhQZW
- GZKDbmnbl63jl652XGeLk2jsHr8+LSHUaeA6OlpGuWXh47jhpaniPhBaQmfSXOK6O9Li71Lv/bn
- Sy3xszo9yrvYPVjYO28dGXqhai3enD29K+uGAKHtDoYVZW5Dg29eZ/rffEHUXWxQyAvvt+5I3Up
- qe05QnjKbP3bN61S1UrbD/nNOZ0wozglbPoy0hO5KAs5KpBNAPde4uj6S0j4bxFgcrgXzbFb7jf
- iH6yAiaLrf/TN9NLlN9VtvirjhHzxAqUPvyeihbWxS9R9BByTscwHhCndE0VMYqSRj3Xm44CSK8
- HrBCogqw3t7siWw8jpA==
-X-Proofpoint-GUID: 9m11s-4Q0WIabXoPclC7bbh7V70kZMkH
-X-Proofpoint-ORIG-GUID: 9m11s-4Q0WIabXoPclC7bbh7V70kZMkH
-X-Authority-Analysis: v=2.4 cv=B8SJFutM c=1 sm=1 tr=0 ts=69e8b12e cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIyMDExMCBTYWx0ZWRfX+FWo+bobXiwM
+ aRbPa1gF05euoviqe6WbFWGell+TWnqk29jHK3NsRsUtBTKQT/EfufsDzcMce+xVmXOJb5k7lhd
+ jGgF1MH3Wz+kK/dT0jvGyWYpAHy+Xl8mdxpf9lC2zTMaoQOyorOuwvybcnHbucizDPzwBzV+lXz
+ 6db9IGWkNApoMAStvSvZph3IhJWJZjDBCl0UgcqF5QFxTQqLUFaNH+M2eqMcMteJ/uuWUwOSmTf
+ /l9EmQ9IGQ8XhrWFuc8rRo62gtgHKDD8VVbIE4tO7kbdg3jwNX3UpL2cZ7GzCAJseIsFcrsQsvm
+ ADXYwZx02wdUu1Tc6BidZQxsAKzmrZSP6+7QPZR+iNYi44Uy6Nvwyv39T+rXQTf9rd3DutT8yPv
+ v2uekyS5HfnuenXKbkaTP9StzaA7lrjB5vm2G6S1y8XuALvdz11brdWVJ/ZBIsQBomH0JPUw0+1
+ sNi7STYCCp+o+SBQBxg==
+X-Proofpoint-GUID: l_mqzUbBP5GDCXF3nSkDXAkA4t64ClT-
+X-Proofpoint-ORIG-GUID: l_mqzUbBP5GDCXF3nSkDXAkA4t64ClT-
+X-Authority-Analysis: v=2.4 cv=B8SJFutM c=1 sm=1 tr=0 ts=69e8b12f cx=c_pps
  a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
  a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=M51BFTxLslgA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22 a=8elwO82fXORLTBIkMd32:22
- a=VabnemYjAAAA:8 a=tUABAHM7GXuONXiLVFsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=VabnemYjAAAA:8 a=8Z81dfnnkPiAomAV-AkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
  a=gKebqoRLp9LExxC7YDUY:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
@@ -111,12 +111,12 @@ X-Spamd-Result: default: False [1.11 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MIXED_CHARSET(0.77)[subject];
 	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13117-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13118-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com,kernel.dk];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -132,240 +132,144 @@ X-Spamd-Result: default: False [1.11 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[meta.com:email,meta.com:dkim,meta.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 539DE4456A8
+X-Rspamd-Queue-Id: CA26B4456ED
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Add support for an optional stats struct embedded in the refill queue
-region, allowing userspace to monitor copy-fallback and no-buffers events
-in real-time.
-
-Userspace queries the stats struct size and alignment via
-IO_URING_QUERY_ZCRX (notif_stats_size / notif_stats_alignment), then
-provides a stats_offset in zcrx_notification_desc pointing to a location
-within the refill queue region.
-
-The kernel updates the stats counters in-place using atomic ops on every
-copy-fallback and no-buffers event.
+Document the zcrx notification system and shared-memory statistics
+that were introduced to let userspace monitor zero-copy receive health.
+The notification section covers the two notification types
+(ZCRX_NOTIF_NO_BUFFERS, ZCRX_NOTIF_COPY), registration via
+zcrx_notification_desc, and the fire-once / re-arm mechanism via
+ZCRX_CTRL_ARM_NOTIFICATION. The statistics section covers the optional
+shared-memory io_uring_zcrx_notif_stats structure placed in the refill
+ring region, including how to query its layout via
+IO_URING_QUERY_ZCRX_NOTIF.
 
 Signed-off-by: Clément Léger <cleger@meta.com>
 ---
- include/uapi/linux/io_uring/query.h | 12 +++++++
- include/uapi/linux/io_uring/zcrx.h  | 15 +++++++--
- io_uring/query.c                    | 14 ++++++++
- io_uring/zcrx.c                     | 50 +++++++++++++++++++++++++++--
- io_uring/zcrx.h                     |  1 +
- 5 files changed, 88 insertions(+), 4 deletions(-)
+ Documentation/networking/iou-zcrx.rst | 106 ++++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
-diff --git a/include/uapi/linux/io_uring/query.h b/include/uapi/linux/io_uring/query.h
-index 95500759cc13..738c35c7d05c 100644
---- a/include/uapi/linux/io_uring/query.h
-+++ b/include/uapi/linux/io_uring/query.h
-@@ -23,6 +23,7 @@ enum {
- 	IO_URING_QUERY_OPCODES			= 0,
- 	IO_URING_QUERY_ZCRX			= 1,
- 	IO_URING_QUERY_SCQ			= 2,
-+	IO_URING_QUERY_ZCRX_NOTIF		= 3,
+diff --git a/Documentation/networking/iou-zcrx.rst b/Documentation/networking/iou-zcrx.rst
+index 7f3f4b2e6cf2..b17205fe55aa 100644
+--- a/Documentation/networking/iou-zcrx.rst
++++ b/Documentation/networking/iou-zcrx.rst
+@@ -196,6 +196,112 @@ Return buffers back to the kernel to be used again::
+   rqe->len = cqe->res;
+   IO_URING_WRITE_ONCE(*refill_ring.ktail, ++refill_ring.rq_tail);
  
- 	__IO_URING_QUERY_MAX,
- };
-@@ -62,6 +63,17 @@ struct io_uring_query_zcrx {
- 	__u64 __resv2;
- };
- 
-+struct io_uring_query_zcrx_notif {
-+	/* Bitmask of supported ZCRX_NOTIF_* flags*/
-+	__u32 notif_flags;
-+	/* Size of io_uring_zcrx_notif_stats */
-+	__u32 notif_stats_size;
-+	/* Required alignment for the stats struct within the region (ie stats_offset) */
-+	__u32 notif_stats_off_alignment;
-+	__u32 resv1;
-+	__u64 __resv2[10];
-+};
++Notifications
++-------------
 +
- struct io_uring_query_scq {
- 	/* The SQ/CQ rings header size */
- 	__u64 hdr_size;
-diff --git a/include/uapi/linux/io_uring/zcrx.h b/include/uapi/linux/io_uring/zcrx.h
-index e0c0079626c8..ae9bbca3004c 100644
---- a/include/uapi/linux/io_uring/zcrx.h
-+++ b/include/uapi/linux/io_uring/zcrx.h
-@@ -73,11 +73,22 @@ enum zcrx_notification_type {
- 	ZCRX_NOTIF_COPY = 1 << 1
- };
- 
-+enum zcrx_notification_desc_flags {
-+	/* If set, stats_offset holds a valid offset to a notif_stats struct */
-+	ZCRX_NOTIF_DESC_FLAG_STATS = 1 << 0,
-+};
++When zero-copy receive encounters conditions that affect performance or
++functionality, the kernel can notify userspace via dedicated CQE notifications.
++The application must register a notification descriptor during
++``IORING_REGISTER_ZCRX_IFQ`` to receive them.
 +
-+struct io_uring_zcrx_notif_stats {
-+	__u64	copy_count;	/* cumulative copy-fallback CQEs */
-+	__u64	copy_bytes;	/* cumulative bytes copied */
-+};
++Supported features can be detected by checking for ``ZCRX_FEATURE_NOTIFICATION``
++in the features bitmask returned by ``IO_URING_QUERY_ZCRX``.
 +
- struct zcrx_notification_desc {
- 	__u64	user_data;
- 	__u32	type_mask;
--	__u32	__resv1;
--	__u64	__resv2[10];
-+	__u32	flags; /* see enum zcrx_notification_desc_flags */
-+	__u64	stats_offset; /* offset from the beginning of refill ring region for stats */
-+	__u64	__resv2[9];
- };
- 
- /*
-diff --git a/io_uring/query.c b/io_uring/query.c
-index c1704d088374..3591106e139d 100644
---- a/io_uring/query.c
-+++ b/io_uring/query.c
-@@ -9,6 +9,7 @@
- union io_query_data {
- 	struct io_uring_query_opcode opcodes;
- 	struct io_uring_query_zcrx zcrx;
-+	struct io_uring_query_zcrx_notif zcrx_notif;
- 	struct io_uring_query_scq scq;
- };
- 
-@@ -44,6 +45,16 @@ static ssize_t io_query_zcrx(union io_query_data *data)
- 	return sizeof(*e);
- }
- 
-+static ssize_t io_query_zcrx_notif(union io_query_data *data)
-+{
-+	struct io_uring_query_zcrx_notif *e = &data->zcrx_notif;
++**Notification types**
 +
-+	e->notif_flags = ZCRX_NOTIF_TYPE_MASK;
-+	e->notif_stats_size = sizeof(struct io_uring_zcrx_notif_stats);
-+	e->notif_stats_off_alignment = __alignof__(struct io_uring_zcrx_notif_stats);
-+	return sizeof(*e);
-+}
++``ZCRX_NOTIF_NO_BUFFERS``
++  Fired when the page pool fails to allocate because the zcrx buffer area is
++  exhausted.
 +
- static ssize_t io_query_scq(union io_query_data *data)
- {
- 	struct io_uring_query_scq *e = &data->scq;
-@@ -83,6 +94,9 @@ static int io_handle_query_entry(union io_query_data *data, void __user *uhdr,
- 	case IO_URING_QUERY_ZCRX:
- 		ret = io_query_zcrx(data);
- 		break;
-+	case IO_URING_QUERY_ZCRX_NOTIF:
-+		ret = io_query_zcrx_notif(data);
-+		break;
- 	case IO_URING_QUERY_SCQ:
- 		ret = io_query_scq(data);
- 		break;
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 732e585aa13a..c61f94fb14c3 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -414,6 +414,7 @@ static void io_free_rbuf_ring(struct io_zcrx_ifq *ifq)
- 	io_free_region(ifq->user, &ifq->rq_region);
- 	ifq->rq.ring = NULL;
- 	ifq->rq.rqes = NULL;
-+	ifq->notif_stats = NULL;
- }
- 
- static void io_zcrx_free_area(struct io_zcrx_ifq *ifq,
-@@ -841,6 +842,33 @@ static int zcrx_register_netdev(struct io_zcrx_ifq *ifq,
- 	return ret;
- }
- 
-+static int zcrx_validate_notif_stats(struct io_zcrx_ifq *ifq,
-+				     const struct io_uring_zcrx_ifq_reg *reg,
-+				     const struct zcrx_notification_desc *notif)
-+{
-+	size_t stats_off = notif->stats_offset;
-+	size_t used, end;
++``ZCRX_NOTIF_COPY``
++  Fired when a received fragment could not be delivered zero-copy and was
++  instead copied into a buffer.
 +
-+	used = reg->offsets.rqes +
-+	       sizeof(struct io_uring_zcrx_rqe) * reg->rq_entries;
++**Registering notifications**
 +
-+	if (!IS_ALIGNED(stats_off, __alignof__(struct io_uring_zcrx_notif_stats)))
-+		return -EINVAL;
-+	if (stats_off < used)
-+		return -ERANGE;
-+	if (check_add_overflow(stats_off,
-+			       sizeof(struct io_uring_zcrx_notif_stats),
-+			       &end))
-+		return -ERANGE;
-+	if (end > io_region_size(&ifq->rq_region))
-+		return -ERANGE;
++Allocate and fill a ``struct zcrx_notification_desc``::
 +
-+	ifq->notif_stats = io_region_get_ptr(&ifq->rq_region) + stats_off;
-+	memset(ifq->notif_stats, 0, sizeof(*ifq->notif_stats));
++  struct zcrx_notification_desc notif = {
++    .user_data = MY_NOTIF_USER_DATA,
++    .type_mask = ZCRX_NOTIF_NO_BUFFERS | ZCRX_NOTIF_COPY,
++  };
 +
-+	return 0;
-+}
++  reg.notif_desc = (__u64)(unsigned long)&notif;
 +
- int io_register_zcrx(struct io_ring_ctx *ctx,
- 		     struct io_uring_zcrx_ifq_reg __user *arg)
- {
-@@ -894,7 +922,9 @@ int io_register_zcrx(struct io_ring_ctx *ctx,
- 		return -EFAULT;
- 	if (notif.type_mask & ~ZCRX_NOTIF_TYPE_MASK)
- 		return -EINVAL;
--	if (notif.__resv1 || !mem_is_zero(&notif.__resv2, sizeof(notif.__resv2)))
-+	if (notif.flags & ~ZCRX_NOTIF_DESC_FLAG_STATS)
-+		return -EINVAL;
-+	if (!mem_is_zero(&notif.__resv2, sizeof(notif.__resv2)))
- 		return -EINVAL;
- 
- 	ifq = io_zcrx_ifq_alloc(ctx);
-@@ -925,6 +955,12 @@ int io_register_zcrx(struct io_ring_ctx *ctx,
- 	if (ret)
- 		goto err;
- 
-+	if (notif.flags & ZCRX_NOTIF_DESC_FLAG_STATS) {
-+		ret = zcrx_validate_notif_stats(ifq, &reg, &notif);
-+		if (ret)
-+			goto err;
-+	}
++``user_data`` is the value that will appear in the notification CQE's
++``user_data`` field. ``type_mask`` selects which notification types the
++application wants to receive.
 +
- 	ifq->kern_readable = !(area.flags & IORING_ZCRX_AREA_DMABUF);
- 
- 	if (!(reg.flags & ZCRX_REG_NODEV)) {
-@@ -1133,6 +1169,11 @@ static void zcrx_notif_tw(struct io_tw_req tw_req, io_tw_token_t tw)
- 	kfree_rcu(req, rcu_head);
- }
- 
-+static void zcrx_stat_add(__u64 *p, s64 v)
-+{
-+	WRITE_ONCE(*p, READ_ONCE(*p) + v);
-+}
++When a registered event occurs, the kernel posts a CQE with the specified
++``user_data`` and ``cqe->res`` set to a bitmask of the triggered notification
++types.
 +
- static void zcrx_send_notif(struct io_zcrx_ifq *ifq, u32 type_mask)
- {
- 	gfp_t gfp = GFP_ATOMIC | __GFP_NOWARN | __GFP_ZERO;
-@@ -1513,8 +1554,13 @@ static int io_zcrx_copy_frag(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 	int ret;
++**Rate limiting**
++
++Each notification type fires once until the application explicitly re-arms it.
++To re-arm, issue ``IORING_REGISTER_ZCRX_CTRL`` with
++``ZCRX_CTRL_ARM_NOTIFICATION``::
++
++  struct zcrx_ctrl ctrl = {
++    .zcrx_id = zcrx_id,
++    .op = ZCRX_CTRL_ARM_NOTIFICATION,
++    .zc_arm_notif = {
++      .type_mask = ZCRX_NOTIF_NO_BUFFERS | ZCRX_NOTIF_COPY,
++    },
++  };
++
++  io_uring_register(ring_fd, IORING_REGISTER_ZCRX_CTRL, &ctrl, 0);
++
++Only notification types that have previously fired can be re-armed.
++
++Notification statistics
++-----------------------
++
++In addition to CQE-based notifications, the kernel can maintain a shared-memory
++statistics structure that is updated on every relevant event. All stats are
++updated regardless of which notification flags were registered.
++
++The statistics structure layout and alignment requirements can be queried via
++``IO_URING_QUERY_ZCRX_NOTIF``. The application must query the structure size
++and alignment requirements so that it allocates enough memory for the region
++to fit both the refill ring and the stats structure.
++
++To enable statistics, place the stats structure after the refill ring entries
++within the same mapped region, and set the ``ZCRX_NOTIF_DESC_FLAG_STATS`` flag
++in the notification descriptor::
++
++  /* Compute offset for the stats struct (after refill ring entries) */
++  size_t stats_offset = ring_size;
++  ring_size += ALIGN_UP(sizeof(struct io_uring_zcrx_notif_stats), PAGE_SIZE);
++
++  /* Map the region with the extra space */
++  ring_ptr = mmap(NULL, ring_size, PROT_READ | PROT_WRITE,
++                  MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
++
++  struct zcrx_notification_desc notif = {
++    .user_data = MY_NOTIF_USER_DATA,
++    .type_mask = ZCRX_NOTIF_COPY,
++    .flags = ZCRX_NOTIF_DESC_FLAG_STATS,
++    .stats_offset = stats_offset,
++  };
++
++The ``stats_offset`` must satisfy the alignment reported by
++``notif_stats_off_alignment`` and must point to a location within the mapped
++region that does not overlap with the refill ring header or entries.
++
++Application can read stat counters them at any time::
++
++  volatile struct io_uring_zcrx_notif_stats *stats =
++    (void *)((char *)ring_ptr + stats_offset);
++
++  printf("copy fallbacks: %llu (%llu bytes)\n",
++         IO_URING_READ_ONCE(stats->copy_count),
++	 IO_URING_READ_ONCE(stats->copy_bytes));
++
++``copy_count`` is incremented each time a fragment is copied instead of being
++delivered via zero-copy. ``copy_bytes`` accumulates the total number of bytes
++copied.
++
+ Area chunking
+ -------------
  
- 	ret = io_zcrx_copy_chunk(req, ifq, page, off + skb_frag_off(frag), len);
--	if (ret > 0)
-+	if (ret > 0) {
-+		if (ifq->notif_stats) {
-+			zcrx_stat_add(&ifq->notif_stats->copy_count, 1);
-+			zcrx_stat_add(&ifq->notif_stats->copy_bytes, ret);
-+		}
- 		zcrx_send_notif(ifq, ZCRX_NOTIF_COPY);
-+	}
- 
- 	return ret;
- }
-diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
-index 1bd63adaa711..0dcf486ff530 100644
---- a/io_uring/zcrx.h
-+++ b/io_uring/zcrx.h
-@@ -82,6 +82,7 @@ struct io_zcrx_ifq {
- 	u32				allowed_notif_mask;
- 	u32				fired_notifs;
- 	u64				notif_data;
-+	struct io_uring_zcrx_notif_stats *notif_stats;
- };
- 
- #if defined(CONFIG_IO_URING_ZCRX)
 -- 
 2.52.0
 

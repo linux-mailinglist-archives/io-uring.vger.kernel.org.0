@@ -1,193 +1,264 @@
-Return-Path: <io-uring+bounces-13131-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13132-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GIRyBVnb6WmNlwIAu9opvQ
-	(envelope-from <io-uring+bounces-13131-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 10:42:01 +0200
+	id cIoMIQqT6mmr0wIAu9opvQ
+	(envelope-from <io-uring+bounces-13132-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 23:45:46 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF12244EA95
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 10:42:00 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2FB457F3A
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 23:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4A46D3002337
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 08:41:16 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 4A44D3003733
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2026 21:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A403C6A27;
-	Thu, 23 Apr 2026 08:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007A93C3BE0;
+	Thu, 23 Apr 2026 21:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnB6+TYo"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="WMx90Ksd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dMcnE/2t"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07013DDDBD
-	for <io-uring@vger.kernel.org>; Thu, 23 Apr 2026 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0D529C35A;
+	Thu, 23 Apr 2026 21:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776933665; cv=none; b=QLTIQoG0kXHx3oNxk5q8zt6kW5EegWsblJpGY1/yhi6jikaiHmlntVbRwRyIsKFS7RpqYPjx6c6FKoKxYHIaTuWuefDvmEvO2rKhdtDEXYMj60cEKvfTZRfhEnjczhnbePsTC2/A+YSFE/ivAPM34ryLnGM+zQb03fVHWBU0N6M=
+	t=1776980740; cv=none; b=f1Ja7SKMLt7Rjf3AyyLGv7pa+5UJoMYA1NnnPOGiRgQJPYivzz4tpwz1Txl4QcLV1C1n9Y1G4MDD42/MTnmPHZbDlquS8O/3NpskK3vrbhW11W/tZ3WZYpLevH68AtQHPPGqNoDanWSmXf0hl95j4RZ6A4rynC9iEPjVoHcNhaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776933665; c=relaxed/simple;
-	bh=7Alr+b84YmA8dwYrW+JWo6hpo1G/eRkPw5O8+Py+Dow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i7ZbBNkmqdBhxt0C+SW5y9Y9ON3+o2UcErljGKFrvcITWgt/5N7Lytl11GkAc6iY+r5iEIacfNaL96Q6ZNMY97zwyQL/7v8Jwuq5/oWX2J7jsmVQBemmPq4ZwDc4EjiPGsYdwkZYVvd5erymlSPBhjPSrXGQ8poD/ItmvlghPU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnB6+TYo; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-82f0647ce27so451854b3a.1
-        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2026 01:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776933664; x=1777538464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JqLSOmOPVGWKUoYc265cigMlJk7MPx52K3EKiqiJqxM=;
-        b=NnB6+TYoU+6XsM/zcx65Nilly7e4MxMWm9tZ6fuobT9PJoMJF7G2y4W9Q3TGF8xDoy
-         uEeGM4GvlANMr7hjSMJky/ASp1wmJjSgQU0IZXAvFfNLAmkMENcXq/ro9mWKn35AxBQz
-         PvRwHK3dA6uaq5tWqWC6fYQ/+TLe9ZbOLNSCwpAmBzSbyXvbHAmT7HCAnddXAkD3YXJj
-         oiynw7ye/L23ofBsD8vg87o1ub0DnbEX1WUzaIB9CtezgXedF/XAwoKYrgmuE8jXZO89
-         eK43yhA4oLDsn88r3Fcl5xP4qAPZBDBFN79MrBTVTFxlDl8KOlD7+ZzHZGYXLExp8g2R
-         3ZhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776933664; x=1777538464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JqLSOmOPVGWKUoYc265cigMlJk7MPx52K3EKiqiJqxM=;
-        b=kST+RCfBikerWKqoHP7VVgN/bssLPKWvm7hn/4vAk2pykNrJwWrFBW8GTDNKKefN4l
-         3THaVZRkLz4PO/OrdEW1cpLZFIStwayy0nrlo3/yORssUUozF5oXWrElYeAEwRBNkr+C
-         vySIASkkRO4tGSnKAXhj7M7L4tLD6qOc4MGD/6Td3SQvqdT7rLgvzfXSrIZ36S9/yPvT
-         h7Xtl48yg3FCy/zMY8zCKZ7IYtyWErhpa8pbk/htbhB9NGzxYeNi2eQInAN6xu/bnnVy
-         ao4vqS+K1XX1frlAtk/y69kIg3Eyr04cSyGmPK59HnLJG4nD9zsh/XIsXeIFy34YL8pS
-         KZKA==
-X-Forwarded-Encrypted: i=1; AFNElJ8H1vpwrLwmwf90HPFR13D6RH24KjyagGrptxO015pJ88F+UKRLWhKd6lUXRa/Eer1CXcnLDoSDeQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZz89eOLastakdsPvplWqe7oGk/UqnxAnD72G565Lt2B1HLJ+e
-	nBF7ZBQwG1fVRwggMGz82jDgtld/R6kKweV61ukJArYJdutlzGxBwI2D
-X-Gm-Gg: AeBDievyqLTMb5Is87P7qDta9INJfH72s/aXGxOurXFZAAWnUYxTw0C7uoCOj72/WY7
-	pGju9u0tJ8px8KvUjvzRKef/L/RTcWIb3RS8ZUYKL1G22X3/SzpXpD4QS2YG/6R91Jw2CpFZZf9
-	BhE+r3NhnqJLlYR2zUvPK2sBv73Ar3R5PBYJs0/uzWh2JhZRV8Q14JblhreRCugeMgLZ/alw9a3
-	/kSQjWINUGMA46H2d/zCDbj39czF3b6JVT+pm3enxswVOcKEhns8iev0pq3RyZWL9by94ZAdAnX
-	A6YmC1+z87oqcP+D9sPMSTe0L+jw4T6yvNhWQ9UByrM5cAAPKqQ0PhRBb4rgaZXxLIFxX/6PkFX
-	Ip+HXZqrdjMR3XlUVLpiHqanszaWImgZYP02pCbjN2kvDxNHAnAMDCNFPjFYybSs4UEpevmyjAL
-	93rNc297q4Y+w7ltjn0KUUnLSCvG78E2IhGHLYwg==
-X-Received: by 2002:a05:6a20:72a3:b0:39f:6343:c6e6 with SMTP id adf61e73a8af0-3a08d8fb92fmr16074773637.7.1776933663905;
-        Thu, 23 Apr 2026 01:41:03 -0700 (PDT)
-Received: from LAP-0337.. ([182.176.170.188])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c797701b1a3sm14714948a12.19.2026.04.23.01.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2026 01:41:03 -0700 (PDT)
-From: Ali Raza <elirazamumtaz@gmail.com>
-To: asml.silence@gmail.com
-Cc: axboe@kernel.dk,
-	bpf@vger.kernel.org,
-	elirazamumtaz@gmail.com,
-	io-uring@vger.kernel.org,
-	krisman@suse.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] io_uring: fix missing submitter_task ownership check in bpf_io_reg()
-Date: Thu, 23 Apr 2026 13:40:24 +0500
-Message-ID: <20260423084024.31721-1-elirazamumtaz@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <e49d1391-b06f-4d60-98ff-0f034f2ed9e9@gmail.com>
-References: <e49d1391-b06f-4d60-98ff-0f034f2ed9e9@gmail.com>
+	s=arc-20240116; t=1776980740; c=relaxed/simple;
+	bh=F8SK0hu0teMVugq09YB/IXwN4R6GXmcgWB7+J4Ihvuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YdT7evIHCAq3jPyFJIy/MWIAHLlAuss/xaJzgPcOHbq6ozQgMpm70VtfMHT5JHkvS5+6JtYLXvkqnJKufNt4QgzoHL6NQY09oSm5dz1fbdnAMTrZGYi5L/jiGl/wsxbfsU41MDC2F394HHd4NHt5yTfZzvJs3skuJvup96qt1Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=WMx90Ksd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dMcnE/2t; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id EE4C2EC0549;
+	Thu, 23 Apr 2026 17:45:37 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Thu, 23 Apr 2026 17:45:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1776980737;
+	 x=1777067137; bh=F6zwa6TcgHHPn2tKnc1yo4B14tLcDyV9vssvgzHsxkM=; b=
+	WMx90KsdDLaSZULZWyKcPeG1xo1qJ78t92eBrz7MxqG06scQqgcTk3hz5rX3JYL4
+	+Bu/GpWtvic0HiAbSH6Nd7Ws2JaKlO0CmWE4o7PFCWfIr3Mjvw6Ek7mmOyou7r/r
+	ku58YCvx9dVN0WfUvdZCqAmRvRXywc9NqVW4C5AFRy/g0q1lAUXQkRisGXOLcHYd
+	RqWbQxrSQRRJiEJ2zvWV0m7U4mMTcNoRsnwZe+jxKHIP9lp4CpmToOPXiaGxg+tO
+	HarlEJuoPUz//5a3ko5L07JAOc4eIeF2JnLrIM+TGNzghFa1s2eMvdodLYJUBqZx
+	SFLVEnO+0/KIuqL1D6Fxvg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1776980737; x=
+	1777067137; bh=F6zwa6TcgHHPn2tKnc1yo4B14tLcDyV9vssvgzHsxkM=; b=d
+	McnE/2tis1xIQSyOMQ3ixOVUdcMaF3iY/mRYEdzd5KX5tffGpcyD8JV4YkXVLJn+
+	5t67z1ZDNmeF4dRlnfYTk2wfLSH7NIyvyvD4/5LgPjeFZaYjKlDBsnxlrY5U4/Ds
+	g/Kux1aQXHqShNpRrdrRuXNAtj2VVlPoBrdEms3J8uInJGMo975/9o/57v5faG1V
+	TQJUqQt5cFLq2f6MhBPOpwkBov2mGMHm4xUf+jqLHa/6JZvVCEEJU6UkWPTlCQeq
+	no1m2XA/8R/eNgwM1U4gEyobXA8FHn40RFgPAXoxb3MqBa6ubjOlda6JU+LKvev8
+	89YZqUC8NjfhO3+W+qG+A==
+X-ME-Sender: <xms:AZPqabqzRxaXBGrOrYEIzjUUva13IXPmrhE5CiU-7kQuymz3UtGtCQ>
+    <xme:AZPqaXLMGWnxBWPyMbvdKy3zAka2CTAhiKxcyZ8X6PRJRNRj2HOsrUNlYbMDwh8f5
+    SDHLxiDvy7NMsGG5XBFFYhghkRgN7g7VyOeYA5JA8MF--BvonA>
+X-ME-Received: <xmr:AZPqaYQ12HchPH-ufR3ms676QJActdIfIpD2aUtPVrNyl_iNoFgbuiB-NrFzx88coguFqWuSkBtPGgMhEvI_-arE5CfZ3EkvDqxh9NP19zNEe77C8A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdeikedviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefhheegudefvdfhheeuvedu
+    ueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohephedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtth
+    hopehtohhmrdhlvghimhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhoqdhu
+    rhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqsg
+    hlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihgrmhdrhhho
+    fihlvghtthesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:AZPqaeu6zxhby6zBGj2ELLO0DYDhVVr5RsIijHnluVDBYY7NHTRPyQ>
+    <xmx:AZPqaRYAP6Oj22SUrlauFnA5jgPIvz8JlyVnw1za_oklQm9OKYb_4Q>
+    <xmx:AZPqacEOoDue6dsaaCNrZrKz6qYlA7raRvsEeUMM9zrdvEO4Ry4KiQ>
+    <xmx:AZPqadwIF3HUfe7XuTWJdjZa4kHhLiPSwfr-Hx5mq29IDNi5me5fRw>
+    <xmx:AZPqafj9GZ1abFbSo-49u4VCexnvhZh4VowJ6ksEI00rtgg_lStA6Ign>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Apr 2026 17:45:36 -0400 (EDT)
+Message-ID: <053fa6e7-43f7-4c80-9996-7fe6d8c28e45@bsbernd.com>
+Date: Thu, 23 Apr 2026 23:45:34 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [0.84 / 15.00];
+User-Agent: Mozilla Thunderbird
+Subject: Re: RCU warning off ublk_buf_cleanup() -> mas_for_each()
+To: Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>
+Cc: io-uring <io-uring@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "Liam R. Howlett" <liam.howlett@oracle.com>
+References: <0349d72d-dff8-4f9f-b448-919fa5ae96da@kernel.dk>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: fr
+In-Reply-To: <0349d72d-dff8-4f9f-b448-919fa5ae96da@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13131-lists,io-uring=lfdr.de];
-	TO_DN_NONE(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com,suse.de];
+	TAGGED_FROM(0.00)[bounces-13132-lists,io-uring=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[elirazamumtaz@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AF12244EA95
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,messagingengine.com:dkim]
+X-Rspamd-Queue-Id: 3E2FB457F3A
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 4/22/26 10:20 PM, Gabriel Krisman Bertazi wrote:
-> How is this a protection?  I thought ctx->submitter_task is about
-> IORING_SETUP_SINGLE_ISSUER. there is no permission or capability over
-> it against other processes.
 
-You are correct.  submitter_task is a SINGLE_ISSUER mechanism, not a
-cross-process security boundary.  The "parallel path" framing in the
-commit message was inaccurate.
 
-The code confirms it - submitter_task is only assigned under
-IORING_SETUP_SINGLE_ISSUER, either at ring creation [1]:
+On 4/21/26 19:47, Jens Axboe wrote:
+> Hi Ming,
+> 
+> Ran into the below running tests on the current tree:
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 7.0.0+ #16 Tainted: G                 N 
+> -----------------------------
+> lib/maple_tree.c:759 suspicious rcu_dereference_check() usage!
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> 1 lock held by iou-wrk-55535/55536:
+>  #0: ffff800085a451a0 (ublk_ctl_mutex){+.+.}-{4:4}, at: ublk_ctrl_del_dev+0xdc/0x2f8
+> 
+> stack backtrace:
+> CPU: 4 UID: 0 PID: 55536 Comm: iou-wrk-55535 Tainted: G                 N  7.0.0+ #16 PREEMPT 
+> Tainted: [N]=TEST
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  show_stack+0x1c/0x30 (C)
+>  dump_stack_lvl+0x68/0x90
+>  dump_stack+0x18/0x20
+>  lockdep_rcu_suspicious+0x170/0x200
+>  mas_walk+0x3f0/0x6a0
+>  mas_find+0x1b4/0x6b0
+>  ublk_buf_cleanup+0xe0/0x240
+>  ublk_cdev_rel+0x34/0x1b0
+>  device_release+0xa4/0x350
+>  kobject_put+0x138/0x250
+>  put_device+0x18/0x30
+>  ublk_put_device+0x18/0x28
+>  ublk_ctrl_del_dev+0x120/0x2f8
+>  ublk_ctrl_uring_cmd+0x598/0x29b8
+>  io_uring_cmd+0x1e0/0x468
+>  __io_issue_sqe+0xa4/0x748
+>  io_issue_sqe+0x80/0xf68
+>  io_wq_submit_work+0x26c/0xdc8
+>  io_worker_handle_work+0x334/0xf20
+>  io_wq_worker+0x278/0x9e8
+>  ret_from_fork+0x10/0x20
+> Buffer I/O error on dev ublkb0, logical block 0, async page read
+> Buffer I/O error on dev ublkb0, logical block 0, async page read
+>  ublkb0: unable to read partition table
+> Buffer I/O error on dev ublkb0, logical block 0, async page read
+> Buffer I/O error on dev ublkb0, logical block 0, async page read
+> Buffer I/O error on dev ublkb0, logical block 512, async page read
+> Buffer I/O error on dev ublkb0, logical block 512, async page read
+> Buffer I/O error on dev ublkb0, logical block 0, async page read
+> Buffer I/O error on dev ublkb0, logical block 512, async page read
+> 
+> and I briefly looked at it, but then just gave up as a) the maple tree
+> documentation is not that detailed, and b) other in-tree users also just
+> call mas_for_each() without either a lock held or RCU read side locked.
+> 
+> Adding Liam for shedding some light on this...
+> 
 
-    if (ctx->flags & IORING_SETUP_SINGLE_ISSUER
-        && !(ctx->flags & IORING_SETUP_R_DISABLED))
-        ctx->submitter_task = get_task_struct(current);
+Hmm, that is another one, I run into
 
-or deferred to IORING_REGISTER_ENABLE_RINGS [2]:
+Date:   Thu Apr 16 15:16:04 2026 +0200
 
-    if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
-        ctx->submitter_task = get_task_struct(current);
+    ublk: Add rcu_read_lock/unlock in ublk_buf_cleanup
+    
+    [  399.994025] =============================
+    [  399.994694] WARNING: suspicious RCU usage
+    [  399.995464] 7.0.0+ #52 Not tainted
+    [  399.996034] -----------------------------
+    [  399.996697] lib/maple_tree.c:780 suspicious rcu_dereference_check() usage!
+    [  399.997748]
+                   other info that might help us debug this:
+    
+    [  399.998961]
+                   rcu_scheduler_active = 2, debug_locks = 1
+    [  399.999957] 1 lock held by iou-wrk-1495/1509:
+    [  400.000596]  #0: ffffffffa05e4590 (ublk_ctl_mutex){+.+.}-{4:4}, at: ublk_ctrl_del_dev+0x3d/0x190 [ublk_drv]
+    [  400.001796]
+                   stack backtrace:
+    [  400.002492] CPU: 40 UID: 0 PID: 1509 Comm: iou-wrk-1495 Not tainted 7.0.0+ #52 PREEMPT
+    [  400.002496] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.17.0-debian-1.17.0-1ubuntu1 04/01/2014
+    [  400.002498] Call Trace:
+    [  400.002500]  <TASK>
+    [  400.002503]  dump_stack_lvl+0x54/0x70
+    [  400.002511]  lockdep_rcu_suspicious+0x119/0x160
+    [  400.002521]  mas_start+0xed/0x140
+    [  400.002531]  mas_find+0x1a6/0x270
+    [  400.002538]  ublk_cdev_rel+0xb8/0x320 [ublk_drv]
 
-The check at [3] I cited returns -EEXIST to prevent a second process from
-registering on a SINGLE_ISSUER ring - it has the effect of blocking
-cross-process access but that is not its purpose.
 
-The commit message's Requires: line was also incomplete:
-IORING_SETUP_R_DISABLED is a prerequisite but was omitted.  Without
-R_DISABLED, submitter_task is assigned to the ring creator immediately
-at [1], so the attacker who creates the ring already satisfies
-submitter_task == current - no timing window exists and the attack is
-impossible regardless of whether the check is present.
+And have in my pbuf branch
 
-> I'd argue this is a non-issue.  If you have CAP_PERFMON, you are able to
-> mess with the process in many ways beyond this.  Otherwise, how a
-> process would be able to get the fd in the first place?
+index eb9b5dd8122c..208f6b5ad892 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -5478,6 +5478,7 @@ static void ublk_buf_cleanup(struct ublk_device *ub)
+        struct ublk_buf_range *range;
+        struct page *pages[32];
+ 
++       rcu_read_lock();
+        mas_for_each(&mas, range, ULONG_MAX) {
+                unsigned long base = mas.index;
+                unsigned long nr = mas.last - base + 1;
+@@ -5495,6 +5496,7 @@ static void ublk_buf_cleanup(struct ublk_device *ub)
+                }
+                kfree(range);
+        }
++       rcu_read_unlock();
+        mtree_destroy(&ub->buf_tree);
+        ida_destroy(&ub->buf_ida);
+ }
 
-On CAP_PERFMON I'd push back slightly: it is narrow (BPF program loading,
-perf monitoring) and does not grant ptrace, arbitrary file write, or
-process control.  The BPF struct_ops path is specifically what
-CAP_PERFMON enables here, not a general process manipulation capability.
 
-But the fd acquisition question is the real barrier, and on that point
-you, Jens, and Pavel are all correct.  As Pavel noted, any application
-that accepts a ring fd from an untrusted source and calls ENABLE_RINGS on
-it is already catastrophically broken - the BPF vector is just one of
-many things an attacker could do in that scenario.  There is no realistic
-path to get a privileged process into that state without it already being
-compromised by other means.
-
-The fix itself closes a genuine asymmetry - bpf_io_reg() is the only
-registration path without this guard. I can resubmit with an elaborated 
-commit message, if Pavel thinks it's worth applying.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/io_uring/io_uring.c?id=bea8d77e45a8b77f2beca1affc9aa7ed28f39b17#n3053
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/io_uring/register.c?id=bea8d77e45a8b77f2beca1affc9aa7ed28f39b17#n282
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/io_uring/register.c?id=bea8d77e45a8b77f2beca1affc9aa7ed28f39b17#n733
-
-Ali Raza
+Thanks,
+Bernd
 

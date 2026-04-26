@@ -1,113 +1,145 @@
-Return-Path: <io-uring+bounces-13140-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13142-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OH1kIsPs62lHTAAAu9opvQ
-	(envelope-from <io-uring+bounces-13140-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 25 Apr 2026 00:20:51 +0200
+	id 0L/gG7727WmjpQAAu9opvQ
+	(envelope-from <io-uring+bounces-13142-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 13:27:58 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C34463C6A
-	for <lists+io-uring@lfdr.de>; Sat, 25 Apr 2026 00:20:50 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CC1469976
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 13:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id C64CA3009835
-	for <lists+io-uring@lfdr.de>; Fri, 24 Apr 2026 22:20:47 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B8FAC300335D
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 11:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB5426059D;
-	Fri, 24 Apr 2026 22:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30DA35A39D;
+	Sun, 26 Apr 2026 11:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPGa605a"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NlSRP0DE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A820EEC0
-	for <io-uring@vger.kernel.org>; Fri, 24 Apr 2026 22:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959151E0DE8
+	for <io-uring@vger.kernel.org>; Sun, 26 Apr 2026 11:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777069244; cv=none; b=ZTtbxbVW0vvrd1QrJGmGNUi6ytECkIsF/BfGPlGdnt/RXjB4+dQR9CiIW0c1wFOhO1wG1lkXC9kI/BBAU9m6SUXA+4AwEhoUf/cenzoz6D/bHQutoL9IBaK5XZY1+UIa5TtZrAWyw6gR+L7chJj8S17rv4PPBEkQzzEVFe19ioM=
+	t=1777202874; cv=none; b=A3+Kycwvamb+KzOc6o8+of74nIcxlDeeHdgPfv9uw4E3Wy6glVDDE7yw/B8e6FODoODKBjOXfJrom1RoyDnTPCNYJ5q9tXSKYsb2sT/gQGOfT/oOm1Fe0RvWl9OlFj3NnIOUe9qrfYUtuu7MHgxfgTytecg+ul/sAdndnXeLEm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777069244; c=relaxed/simple;
-	bh=Nga4X+PbH/W3WVVjbqyShFdUNjF3iwlHlDf2h1TZym8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ginYe5Wxf1w/qgsf9ZoNUEA0kAucwKZcL71RxzFNmXpn2CfKMzxYEVnLM6R6+7CQRLi6UfQrr3bwGwyP36n6PFlRyxt9ExLsy8LsZ6cqy3i6aS7Ptyo8WbVZRFJMALqcWm5xtQKEE9Ev4W1mWlj3uL4x+SGF9hto7UIz32O3tCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPGa605a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A805C19425;
-	Fri, 24 Apr 2026 22:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777069244;
-	bh=Nga4X+PbH/W3WVVjbqyShFdUNjF3iwlHlDf2h1TZym8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=hPGa605a/dGOC+c9XD5AUyH3jq1lzhIkSa4DvYL6bpHdQ9Y0igmAv2eGnnFnCejAw
-	 h0ogaDKJAzroxYlZBVltz0Xlu/au++Y4FtkNPg5JvJrp6AI6cqHN0Btnm9teyML/x6
-	 AG2k0lahnp78UAlb4wHyIQdTTL0I/H+nHbiaQB2k9BmX0BbXy5RWHTrmAoaqxU7qpK
-	 JmEqg/BUV0Y6E8sKbkM03M4uOIL58K/AG2CfSDep+MayyR2RbSupqs+iyqrirWsgKm
-	 SNTfjtyO46Ay/qmNxeAIxlGy6SJNO+9R+8nNQ5EOcDCcYY6tPkk0qAp+2ApFcwzOZa
-	 6186i625JisRQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B9F7938119C3;
-	Fri, 24 Apr 2026 22:20:05 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 7.1-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <9897da58-1661-4bd8-80d3-0e6708b8c0d7@kernel.dk>
-References: <9897da58-1661-4bd8-80d3-0e6708b8c0d7@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9897da58-1661-4bd8-80d3-0e6708b8c0d7@kernel.dk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260424
-X-PR-Tracked-Commit-Id: d0be8884f56b0b800cd8966e37ce23417cd5044e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fa58e6e9000c1cc76a7a0c06ea3e68d728cc4247
-Message-Id: <177706920478.1737979.14108965520437617374.pr-tracker-bot@kernel.org>
-Date: Fri, 24 Apr 2026 22:20:04 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1777202874; c=relaxed/simple;
+	bh=XwX4X4KFeq9barroBiPxBDLOlXCuwSHtVn6u5AeMLmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D2WsHTDrW9alJqSZ0rxJOK21YrUk+PHkX8SYp8KarknApTMMJ0iT5ObkkfB347DVH7KcBI5kiPfa2J4wn+fqcw97QII4e4zwxEgtsSho+Zkt4J3pXfAIuJ0l4FkA0oPLBiweh4x9NMDAcRrrir3GglWeGcvwGWZD6HIERFcsT3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NlSRP0DE; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=MI
+	xUqq93JVNNwTe8Cawpq6riu4a6pich3cqObY9Msog=; b=NlSRP0DEO2EDknC9gZ
+	QESd/PozTDfMN87vDZ7pEZctExi4SyZXND7ODt2AWWXCTfJquILi6Uj8fH4wHGwg
+	0Qf02hyT0nBUmJyQtDHDzUa4yvOV9pD40dklmkfuEVC4OZ7Q1FP8QcyvzEPpBKvd
+	PPevfno6udkxTa9OjIAtJqFWc=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgCX1OSq9u1ptpJ3Bw--.6916S2;
+	Sun, 26 Apr 2026 19:27:39 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: io-uring@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>
+Subject: [PATCH liburing v1 1/2] tests: fix bpf ops build error
+Date: Sun, 26 Apr 2026 19:27:30 +0800
+Message-ID: <20260426112732.300165-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-X-Rspamd-Queue-Id: 87C34463C6A
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgCX1OSq9u1ptpJ3Bw--.6916S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF1fAr15Kry7JFyxZF1UKFg_yoW8CrWfpr
+	Z0vw43t3yjy3yxWF1kWFWSkFy7tF40k3WjyFWUWr1jyFyxXasFqr4jkryv9r1fXrWYvrWY
+	vasF9FZrurWDXwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pR_HUhUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/xtbC8Au9KWnt9qvceQAA3T
+X-Rspamd-Queue-Id: 50CC1469976
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[163.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[163.com:s=s110527];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_FROM(0.00)[bounces-13140-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13142-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_NO_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FREEMAIL_CC(0.00)[163.com];
+	DKIM_TRACE(0.00)[163.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[haiyuewa@163.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[163.com];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
 
-The pull request you sent on Fri, 24 Apr 2026 09:19:14 -0600:
+If removed the previous install by 'rm -rf /usr/include/liburing', the
+test build will fail:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260424
+make[1]: Entering directory '/root/linux/liburing/test'
+     CC helpers.o
+mkdir -p output/bpf
+     CC output/bpf/nops.bpf.o
+mkdir -p output/bpf
+     CC output/bpf/cp.bpf.o
+In file included from /root/linux/liburing/test/bpf-progs/nops.bpf.c:2:
+/root/linux/liburing/test/bpf-progs/../bpf_defs.h:9:10: fatal error: 'liburing/io_uring.h' file not found
+    9 | #include "liburing/io_uring.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+make[1]: *** [Makefile:387: output/bpf/nops.bpf.o] Error 1
+make[1]: *** Waiting for unfinished jobs....
+In file included from /root/linux/liburing/test/bpf-progs/cp.bpf.c:2:
+/root/linux/liburing/test/bpf-progs/../bpf_defs.h:9:10: fatal error: 'liburing/io_uring.h' file not found
+    9 | #include "liburing/io_uring.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+make[1]: *** [Makefile:387: output/bpf/cp.bpf.o] Error 1
+make[1]: Leaving directory '/root/linux/liburing/test'
+make: *** [Makefile:14: all] Error 2
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fa58e6e9000c1cc76a7a0c06ea3e68d728cc4247
+Add the include option in 'CPPFLAGS' for bpf build.
 
-Thank you!
+Fixes: fd8a6e66c739 ("tests: test io_uring bpf ops")
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ test/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/test/Makefile b/test/Makefile
+index bcb97da1..05e1f9e9 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -385,6 +385,7 @@ CLANG_BPF_SYS_INCLUDES ?= $(shell $(CLANG) -v -E - </dev/null 2>&1 \
+ $(BPF_OUTPUT)/%.bpf.o: $(BPF_PROGS_DIR)/%.bpf.c $(wildcard %.h)
+ 	mkdir -p ${BPF_OUTPUT}
+ 	$(QUIET_CC)$(CLANG) -g -O2 -target bpf \
++		     -I../src/include/ \
+ 		     -I$(BPF_OUTPUT) $(CLANG_BPF_SYS_INCLUDES) \
+ 		     -Wno-missing-declarations \
+ 		     -c $(filter %.c,$^) -o $(patsubst %.bpf.o,%.tmp.bpf.o,$@) -mcpu=v4
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.54.0
+
 

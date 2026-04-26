@@ -1,170 +1,227 @@
-Return-Path: <io-uring+bounces-13143-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13144-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SLxgIvBL7mmusAAAu9opvQ
-	(envelope-from <io-uring+bounces-13143-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 19:31:28 +0200
+	id PAfYAux/7mnqugAAu9opvQ
+	(envelope-from <io-uring+bounces-13144-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 23:13:16 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECA946AAC3
-	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 19:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FDC46B345
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 23:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3D7163011849
-	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 17:31:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B68CE300F9D8
+	for <lists+io-uring@lfdr.de>; Sun, 26 Apr 2026 21:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC16023370F;
-	Sun, 26 Apr 2026 17:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB902ED866;
+	Sun, 26 Apr 2026 21:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="QofQipdk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="PH1bxdkj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540B2264A7
-	for <io-uring@vger.kernel.org>; Sun, 26 Apr 2026 17:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC57D279903
+	for <io-uring@vger.kernel.org>; Sun, 26 Apr 2026 21:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777224684; cv=none; b=MQZCK5NmSZQB/L9L9fNvX6lR1TQPy/F6p/t0bjv5kHF5q/4gWMHeAUQry4Tls2KEKk2ICPLgPldxoIl/2FVTJ7J3z3c5KBf4nzUEmSFc/iefvnIP7dzG0Y2eJiWZNUVquZ9jM8/iYvSXzipFsRVmyCL4fV3ehWeXuqKQu3MqMG0=
+	t=1777237993; cv=none; b=nCCihIgShsel1p7KWCZwMg3knx1HNiYqGTg1wGHXqLDvmvT+2tDPrXgc2Cru5YWKyLTqck8C4q1n8YeKwGG1KI/DAOGhYZhtS7v8uAHiYLf6JatKu2w6HnW5ugBqPb6aS/X1ZTQujG9YCRLQ7YEqUF9C9UAKX0ZZYXv3H/RmM78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777224684; c=relaxed/simple;
-	bh=BpzEgM2/+wh+El5gqvjBzJq1Q2Ul3PcmCQt82Dkj+IQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pdTRiM6cfAchT8tVMVLUm+cRZjN9ZYalA3huO/GXd+t05YiNeNW8dyJtqXcCaWwjQYzMu85XMlJ7Gcvhf9raGQ00dB0E5REOGQYtIjdBHYTgSHu0RKi8tWB46WiLNc0WczaHiQAmNFTRjEBIxflebC6Z3q+F8pXH1JDaOJUzGWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=QofQipdk; arc=none smtp.client-ip=209.85.210.52
+	s=arc-20240116; t=1777237993; c=relaxed/simple;
+	bh=wsdfNcrZy93MbBDuIbxBX6cgUxvT0ZtMQSc98Ez9Xcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eRafjQdHcufhVLkmDBjuS9QWPwg9vbZTAn0mCEvw0VOuqrAlgQBk3WdAVi6tJmQ1FZF788nPTBcpF+ett951FBWX8ecdPrxA1PKFTT46TpCj5Dg8qzpRdcaGSC4/tcpi57LzVXBTfeLGoUhzOiKB8Ebu4oXPlkvw6UHAGVWQt2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=PH1bxdkj; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7de4a9cb8eeso3450766a34.0
-        for <io-uring@vger.kernel.org>; Sun, 26 Apr 2026 10:31:23 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7de5badb627so1397131a34.0
+        for <io-uring@vger.kernel.org>; Sun, 26 Apr 2026 14:13:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777224682; x=1777829482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GZO64qVsC9xCB+2W6fybYLXw/QxsW4FITHO19+99+fQ=;
-        b=QofQipdkZJnqWMXIZcl+5NfCUAw2TyWm41gts2Hu4404HIYgnlPubo9yviyCRIBk+B
-         btRntqnmXCJmj6ESpACPvYREr7tQL9q92/22UwsHYn9I5S3QbTg4f57iICxIJzwlwDDs
-         esSPxgFBx/wZzyWMPqoi9mFP+7We+FTH3DeTe8hkiEDrbj8ZNIVuvWbt5snbPUROKlSs
-         J9Nw4IBgtsbaXD8s+IN+SqVG3zFOhOOwm7r2AU2ComK4h335sfVPIeHMciWlvoQePE5d
-         VbXstSPS7fLUmygOcHvsHHUXy8EPhdeK7DRmSDGjx3wB2eSyEBriK+Kvwmgq2f4Pd3Zt
-         9uTQ==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777237990; x=1777842790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FhjcvqjgkBH6Sxsal52sLzukZrbOB6Eq8B3GEhu1qbk=;
+        b=PH1bxdkjDZWeYS6oxZbePF0jqABRZMowbFi80Igf9YfEFP9C4z4sJ4xkD/jLajtDxT
+         AyWKXZv9bAnm1MWGF1DQojm0h3O1EBLIX23yTACroTE0nOsVALNRNv/V1tjWbceuRF2/
+         F0e334bRYCHeAn1lR06MA7nyrVgBcgw+p/VbFPO1rWf5IgYWjqzmV+N6c9YJdt5u9gzP
+         Q9Z2iH+W0IOnv3LDmbh8ktvk1wwkOKSedOAI9jOtbW76i4tT0IwQFQuwjDmjiRP1sdyx
+         MuATeqMLLTRDBUVBveNO2mjUSmnADKBUpX7eFkKQfcLNg7Ii728BfEXab+Dp4OzcHuNT
+         z5CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777224682; x=1777829482;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GZO64qVsC9xCB+2W6fybYLXw/QxsW4FITHO19+99+fQ=;
-        b=g5+IpWrJh959H4offCCIcoWfgmVevD1BRhuIaRiCpGYkN42GZEN/gYx/5nVuOgi1O0
-         m4J6VDwFVzWjhKmOl1t5arnbG7UdobT/Bm4Dm0WQS7UjJDnjUOnKboS7FNSE4leagnGd
-         6q12Df+TmOGcV8bxlybSF22vWgzSiPhEWP/FEixM5NDCLEwro2gh5zbXzIS2/l7jqGnS
-         iwL8obClE7u5hFyiUCzPzBsZEud2xcYy3W8YeEp+Sb3OUo3+Q/Qw1XScraJ5b8ocRgC+
-         ltbGYhZYqATC0inUrZTUHJ5pTJDFDExGZ0/aTM5ZqBzna/hNV2pDhcsyLF/aw2yHYiTi
-         2brA==
-X-Gm-Message-State: AOJu0YwD8x9kUlnL3OAiv0WAct22XaTBbK18sq5UbCqnw+eJlKVYvsuP
-	iWWI0zoC0JPJlgEp606JWBp6QBvgzNytn+FywxkNlNg25QTDjgtoQiJ9uJSWyGNS7jeJm0GeW9g
-	HM2R0DkU=
-X-Gm-Gg: AeBDieuc93CdDCCEDExbrUI6F7V4G9ZrNKE6DoaPR1vt1Kk11j2ObH84Bq/2khnPxYw
-	xfObUwwdpX3bEdC/ZOPuRppdwpaTQxNhKXNwejDS9YLdBX5860CLVVbNgg80F2dDv9z9ei+5Mr3
-	ySTwILEggNzMgRDXW6faM9z6GTrM3eT8XmWU54EEmHplHjg2vZ0KuF9jBEEmodK6IfIaR/KsyqR
-	TmIunDMxzNHuTE5km6r/bFIuPMOKYMy+JhkyQPb4qXuwJh6gkZlJgxB42hijlZIyHcyJ3HMylOH
-	FNCBA1I5MDViUgGfMXcLrSwHw0AT1V/SZWI+9m3L1RE+bpVMyuBshlVFyCP53ksr2CC+mEsMHmv
-	e2Ps9Zm2nPJo4a+EU25GNb/zJ3Lfxzf8NM/Lh5UBJHiv71IdKyOmgS/z8vquaFtdaxP7ZiG0zDt
-	p4N58/FpGgUpu0NGnUppyDEm+YAXAJAIOch3gFMjoGsv/dKHfHHq7c8DB9vUoc+AGUB1OmpKqL9
-	w/wBQruKyBtrYg=
-X-Received: by 2002:a05:6820:4b8f:b0:684:2b28:f9a6 with SMTP id 006d021491bc7-69462f451a4mr21835313eaf.58.1777224681947;
-        Sun, 26 Apr 2026 10:31:21 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-694994277a4sm10845980eaf.4.2026.04.26.10.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Apr 2026 10:31:21 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Haiyue Wang <haiyuewa@163.com>
-In-Reply-To: <20260426112732.300165-1-haiyuewa@163.com>
-References: <20260426112732.300165-1-haiyuewa@163.com>
-Subject: Re: [PATCH liburing v1 1/2] tests: fix bpf ops build error
-Message-Id: <177722468044.1676227.12840209959534437092.b4-ty@b4>
-Date: Sun, 26 Apr 2026 11:31:20 -0600
+        d=1e100.net; s=20251104; t=1777237990; x=1777842790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FhjcvqjgkBH6Sxsal52sLzukZrbOB6Eq8B3GEhu1qbk=;
+        b=oEpBP+6HtxLz/Yf2G2HzHDxf0VS0fdL1qAUqQi1J+B7iQI3j3/WsS8P4wKEyxPTbIQ
+         z8MAl28pat5fsrtwV9ZnL2FlDhdbbEwb9jJY/eZ0LTwdzySLXN/6sw3wIvdIocYq7GQj
+         BadJ6ULuauMBP5pn0c9prPvm8JdSiE01kKU4q05KoJ0v4UbyO3JCks4FYmgELVYexp4X
+         RbAOthUMbYtj/5rJ2vW3yFlXIyCqBVrWcbLIl7oXQm84QrNkffVOk0/tO8vxixpgA/BH
+         6O5MOx+YTFNOVaoKRM/idYlTvUmNpWCCak6bkGm4xyPOS7BCPCJoBoEJsMdmyYkk4F54
+         w/AQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9Xz9z5q+nLHe3qs+IP4nP+pbTfHlPs8Fdv5Ux2A6Y9M6CtIoXiLg/Ht1pMiOnUAFfeVJvH4BiwLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYxlpd04PJTp1cD3ZGGI/OrKg/QPHDqaqqf3ddRWeF1YWdwOFD
+	X0BhajPbE+/yhsjS4zG2Okr+C3f+eiMJzgLqVrTvYiTXyV6qa8s//gj1YdavKQHhswkeSu+8DVT
+	GHpN37nY=
+X-Gm-Gg: AeBDietpSbEo+0khPCP2mPzxfrtMsATF+L+HIje4qoZJg0Y6sDejAnJ06+rQGwPA/y4
+	ZUhFJ3Yyue+6vOF9CSWkfLSpWDJKaM037vA0UOnAqCkS2hABuY+rKdGsWsVJ7uP0Bc5BQV+wtgd
+	qz8E40hbNE3tjS/o/z2O7Wt3Ql2/vMMJr6rUA+IWogpqGDrXqOwUoj0VuAzNhnUl1949df5aAPO
+	Oh9KjYEfcIrpI+xKway3t6UTFAtp8AVpoh6yxuZ8Gyi5WoJFtih2/MBMKxNI4Bm5ZbJC8j+4fWK
+	6CqnkU1g9D8kLz2UT6VnB7UjkrvNDwE9c/m0DPLSIWBctSZ08c/WTW5YeccKk2LgDjgUMJc9IPC
+	pKpxV6fJygGn2aq8poAbU43mUHzzmWZlYs98NU93UYP4ghOlZfkEUtNIPSw0l5174yaqrlF3FXk
+	yYJ11nH4WQL6tsu5Bla/fuA6yOMGCYpA23mCgEbDGid2RaTP51FCy9cE1u8BskXf/HKmvAj/+vF
+	lnIyrPksoAgV45Iu67f
+X-Received: by 2002:a05:6830:67ec:b0:7dd:e032:3cec with SMTP id 46e09a7af769-7dde03240ffmr12010923a34.21.1777237989848;
+        Sun, 26 Apr 2026 14:13:09 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7dcdbef352bsm14859617a34.10.2026.04.26.14.13.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Apr 2026 14:13:09 -0700 (PDT)
+Message-ID: <a47f672c-d204-433f-9815-9e6606fdec1f@kernel.dk>
+Date: Sun, 26 Apr 2026 15:13:08 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: io_uring_prep_timeout() leading to an IO pressure close to 100
+To: Fiona Ebner <f.ebner@proxmox.com>, linux-kernel@vger.kernel.org
+Cc: hannes@cmpxchg.org, surenb@google.com, peterz@infradead.org,
+ io-uring@vger.kernel.org, Thomas Lamprecht <t.lamprecht@proxmox.com>
+References: <14bc6266-5bc9-4454-9518-d1016bfe417b@proxmox.com>
+ <49a977f3-45da-41dd-9fd6-75fd6760a591@kernel.dk>
+ <bec202bd-cf01-4423-b3f6-f551bf269c8f@proxmox.com>
+ <563f9b5f-9649-4a98-9025-671af55f29d7@proxmox.com>
+ <db7e6abb-677b-4b63-a028-d8fe0bec0277@proxmox.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <db7e6abb-677b-4b63-a028-d8fe0bec0277@proxmox.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
-X-Rspamd-Queue-Id: CECA946AAC3
+X-Rspamd-Queue-Id: 45FDC46B345
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWO(0.00)[2];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	TAGGED_FROM(0.00)[bounces-13144-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,163.com];
+	DMARC_NA(0.00)[kernel.dk];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	TAGGED_FROM(0.00)[bounces-13143-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel-dk.20251104.gappssmtp.com:dkim]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel.dk:mid]
 
-
-On Sun, 26 Apr 2026 19:27:30 +0800, Haiyue Wang wrote:
-> If removed the previous install by 'rm -rf /usr/include/liburing', the
-> test build will fail:
+On 4/24/26 9:42 AM, Fiona Ebner wrote:
+> Hi Jens,
 > 
-> make[1]: Entering directory '/root/linux/liburing/test'
->      CC helpers.o
-> mkdir -p output/bpf
->      CC output/bpf/nops.bpf.o
-> mkdir -p output/bpf
->      CC output/bpf/cp.bpf.o
-> In file included from /root/linux/liburing/test/bpf-progs/nops.bpf.c:2:
-> /root/linux/liburing/test/bpf-progs/../bpf_defs.h:9:10: fatal error: 'liburing/io_uring.h' file not found
->     9 | #include "liburing/io_uring.h"
->       |          ^~~~~~~~~~~~~~~~~~~~~
-> 1 error generated.
-> make[1]: *** [Makefile:387: output/bpf/nops.bpf.o] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> In file included from /root/linux/liburing/test/bpf-progs/cp.bpf.c:2:
-> /root/linux/liburing/test/bpf-progs/../bpf_defs.h:9:10: fatal error: 'liburing/io_uring.h' file not found
->     9 | #include "liburing/io_uring.h"
->       |          ^~~~~~~~~~~~~~~~~~~~~
-> 1 error generated.
-> make[1]: *** [Makefile:387: output/bpf/cp.bpf.o] Error 1
-> make[1]: Leaving directory '/root/linux/liburing/test'
-> make: *** [Makefile:14: all] Error 2
+> Am 02.04.26 um 2:30 PM schrieb Fiona Ebner:
+>> Am 02.04.26 um 11:12 AM schrieb Fiona Ebner:
+>>> Am 01.04.26 um 5:02 PM schrieb Jens Axboe:
+>>>> On 4/1/26 8:59 AM, Fiona Ebner wrote:
+>>>>> I'm currently investigating an issue with QEMU causing an IO pressure
+>>>>> value of nearly 100 when io_uring is used for the event loop of a QEMU
+>>>>> iothread (which is the case since QEMU 10.2 if io_uring is enabled
+>>>>> during configuration and available).
+>>>>
+>>>> It's not "IO pressure", it's the useless iowait metric...
+>>>
+>>> But it is reported as IO pressure by the kernel, i.e. /proc/pressure/io
+>>> (and for a cgroup, /sys/fs/cgroup/foo.slice/bar.scope/io.pressure).
+>>>
+>>>>> The cause seems to be the io_uring_prep_timeout() call that is used for
+>>>>> blocking wait. I attached a minimal reproducer below, which exposes the
+>>>>> issue [0].
+>>>>>
+>>>>> This was observed on a kernel based on 7.0-rc6 as well as 6.17.13. I
+>>>>> haven't investigated what happens inside the kernel yet, so I don't know
+>>>>> if it is an accounting issue or within io_uring.
+>>>>>
+>>>>> Let me know if you need more information or if I should test something
+>>>>> specific.
+>>>>
+>>>> If you won't want it, just turn it off with io_uring_set_iowait().
+>>>
+>>> QEMU does submit actual IO request on the same ring and I suppose iowait
+>>> should still be used for those?
+>>>
+>>> Maybe setting the IORING_ENTER_NO_IOWAIT flag if only the timeout
+>>> request is being submitted and no actual IO requests is an option? But
+>>> even then, if a request is submitted later via another thread, iowait
+>>> for that new request won't be accounted for, right?
+>>>
+>>> Is there a way to say "I don't want IO wait for timeout submissions"?
+>>> Wouldn't that even make sense by default?
+>>
+>> Turns out, that in my QEMU instances, the branch doing the
+>> io_uring_prep_timeout() call is not actually taken, so while the issue
+>> could arise like that too, it's different in this practical case.
+>>
+>> What I'm actually seeing is io_uring_submit_and_wait() being called with
+>> wait_nr=1 while there is nothing else going on. So a more accurate
+>> reproducer for the scenario is attached below [0]. Note that it does not
+>> happen without sumbitting+completing a single request first. 
 > 
-> [...]
+> I started digging in the kernel now and am wondering whether the number
+> of inflight requests is correctly tracked? Does current_pending_io()
+> need to consider tctx->cached_refs?
+> 
+> In __io_cqring_wait_schedule(), there is
+> 
+>> 	if (ext_arg->iowait && current_pending_io())
+>> 		current->in_iowait = 1;
+> 
+> and current_pending_io() is
+> 
+>> static bool current_pending_io(void)
+>> {
+>> 	struct io_uring_task *tctx = current->io_uring;
+>>
+>> 	if (!tctx)
+>> 		return false;
+>> 	return percpu_counter_read_positive(&tctx->inflight);
+>> }
+> 
+> so okay, we get iowait when tctx->inflight is positive. Looking at where
+> that variable is modified, I found
+> 
+>> void io_task_refs_refill(struct io_uring_task *tctx)
+>> {
+>> 	unsigned int refill = -tctx->cached_refs + IO_TCTX_REFS_CACHE_NR;
+>>
+>> 	percpu_counter_add(&tctx->inflight, refill);
+>> 	refcount_add(refill, &current->usage);
+>> 	tctx->cached_refs += refill;
+>> }
 
-Applied, thanks!
+> as well as io_put_task() and io_uring_drop_tctx_refs().
 
-[1/2] tests: fix bpf ops build error
-      commit: 49f1a2ab7833a3563329fd9a86f58f84875d57e4
-[2/2] .gitignore: add new test build output
-      commit: 4330d09391470154ba4e453d01b1cf2f1f5ef32d
+Indeed! Care to send a patch for this? That's definitely a bug. The
+existing test case didn't hit this as it only tests with an actual
+request pending, and never after refs have been cached.
 
-Best regards,
+Thanks for looking into this.
+
 -- 
 Jens Axboe
-
-
-
 

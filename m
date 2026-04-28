@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-13164-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13165-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cG8mE7f78GmqbgEAu9opvQ
-	(envelope-from <io-uring+bounces-13164-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 20:25:59 +0200
+	id kHEaJV308GnUbQEAu9opvQ
+	(envelope-from <io-uring+bounces-13165-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 19:54:37 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B1148A9BC
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 20:25:54 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3184748A3D7
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 19:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E020630B3554
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 17:51:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 65B093033AAA
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 17:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E7A45BD5A;
-	Tue, 28 Apr 2026 17:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C72451060;
+	Tue, 28 Apr 2026 17:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="XbBxUKv0"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="guVqxSzh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.167])
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A9244E02A
-	for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 17:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF08B450902
+	for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 17:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777398704; cv=none; b=jxBpWtzSeTFQQPFEyuqhUIQmDPaUYxUO3rvWdivQxkn3v3SBFCfU1YkUqqo/Bj9ofEchGE1wurYXpoUTp4ssZCuj5BKBEbtwxF8NTlVzy4wy40UTK9erzgzAZCet+UEb5KVglOUUd6HFmy6XJyozbVhdW640qmfbI3H1Tm46qCE=
+	t=1777398713; cv=none; b=b/MWth/AbJfCahLUSf+CZ3+SNnSXgG+0LOni3Fv8JKK7bZlWTW3QkINSr/YFj/OsAKodfhml3d+Mac4+o1TachhzADhCl1rYg+OLY1Y4UlZLXtYNxqNNVtcnTwB+htnN+7UzruyfIfkgHnlL4FLum1Xs/3EWoxZxSjlA8Gk0ois=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777398704; c=relaxed/simple;
-	bh=1UmJMm9HRJeSnlQaY2zWjpm3Ui9VzYhP8m4prCL+PvA=;
+	s=arc-20240116; t=1777398713; c=relaxed/simple;
+	bh=eDqNHvMjMCCfhHrRctWkRRY8LOuOq1ldKu8zEZ0Bf+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l5wDQrMLakBm6ktm09DfhdpcyPbrLWzNdfW/QydmnywLym3XZt6Q0OaIe6c/ZqPSMaWODXLjqU1zgaBUJL01DJxfhY/Nx2nqOQSrrxpL2uaKRCgHHHyFja89bd8ZJQkMSAxQQx5ioUKvyMeCwgIZkGeTMskeV6++o1cQyTqOH0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=XbBxUKv0; arc=none smtp.client-ip=195.121.94.167
+	 MIME-Version; b=aDO70zPkn9rb60xhlztAn3u1GPYhG13MKZClOxwW4SuDsfvtSIV33TCta41oaJVUFq7fuyD74muUispCOrkn+PXJr1quJ2s97R8sBUIZBy4eXIUUPJcZxHvYO+MhYL/ii9UcKkt1KLjwrZInoV0wtvX94eakBZ/+8nDjxztonfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=guVqxSzh; arc=none smtp.client-ip=195.121.94.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: e8c39887-432a-11f1-969c-005056abbe64
+X-KPN-MessageId: ea401a27-432a-11f1-8a9e-005056ab378f
 Received: from smtp.kpnmail.nl (unknown [10.31.155.40])
 	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id e8c39887-432a-11f1-969c-005056abbe64;
-	Tue, 28 Apr 2026 19:51:39 +0200 (CEST)
+	id ea401a27-432a-11f1-8a9e-005056ab378f;
+	Tue, 28 Apr 2026 19:51:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=xs4all.nl; s=xs4all01;
 	h=mime-version:message-id:date:subject:to:from;
-	bh=Hri1BJ45KAE6FjU8p+59YL6JiRnX+I7ffuR09+bwJzo=;
-	b=XbBxUKv0R+R/+kdoYXwmEP6PhKdWEJon6AXuxEMImO0IpjDDXZULohqT9C9+SNNmjYYQ2aJaddE9s
-	 2ZJwussEs30Cjn56v1BNFp586vV3GoPLGb1KRvjm0H9cquVObDBpwDTLQzVM6pyf8/K2zwr+kryt9/
-	 VSJ4nLIocjRR8YIXunEWjAaF9eTcOdV9oVc+/PNyBhAxEFtoQmXeiwP0sInfjZnm4dO2+kNelHrHXA
-	 hkOyIUW5EMNHnK5ksYUgs1cZUulcNlTUbCng8gH5M5X5GxiWgRw2U8/fHN0/zGM6yqizhzcMWGmrGL
-	 LD22j/Gi3J4VLUkBGYlQF2MOtDhGSOA==
-X-KPN-MID: 33|uU90Q5grKwi4IjgGrOdGshf+Clec16IlOKKUhI54Hpy6ftY/1gqFoYHHhNGdeVB
- OP8vwiEpSboa7GUaYNWDrzq04nRg4W+z8JXGiHdBqGDk=
+	bh=rlU/JIk+hJwSw/A8PF9iW2EbbrCOIQ1gz040uJI6hHI=;
+	b=guVqxSzhkzNN9TUUIMAopWmLuToTADj9qrpI7XwN8CiiU8iJ4F7kOBMgptwMQ8tdZKAmF+oqgbmeI
+	 QAUzWp8Y+bkjs/IJUbGeMObda5aysl9Fpis9mCD6BUI2qrv8PdSB4TnQURpLf5syRH46dxtp6f0qQq
+	 lonQdTzI0HsUnfQI6FKkbC5KUJ+otVwAKBr75I8UnVle5dJw3fRD/pU8EypbqLIw8mIkXL3KDNmpEx
+	 mgwHhGHvF/4ZnE4g9yRCvw0PBazB3VHtP1LrCB39xldo2aCnL6x/zM8T783pkGh7frhCC43Kbluy1i
+	 IkOVU7ND0UPH0xtNHZ3TicsY+FuMlyg==
+X-KPN-MID: 33|XYALgN2CzSLAKwGuvXzQt5/gMsMFjRJ7JC/m4LtV9I1033UcFLulCyFgGW/+8tT
+ gQF4OFHY4JvGTBtXG+RDG7XlatdfHj/x+JgkClJxqD8g=
 X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|lYyLqNP5FA+hQdKBZ+APWpwwf/NktYR8S8hfN0D74eoUlPcDj4McY8QUbFsXtb4
- fqbuob7s4wiGezkcxsmSS9A==
+X-CMASSUN: 33|3HpaWLzlAfQmJH7mU1utHDRG2EW3gK78wcUoydhqAznoBGwB/xPPmr2d8OEAwrs
+ xCPhxytR5W8XeOn0ZE16TXQ==
 Received: from daedalus.home (unknown [178.227.109.38])
 	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id e81759cd-432a-11f1-b8eb-005056ab7584;
-	Tue, 28 Apr 2026 19:51:39 +0200 (CEST)
+	id e9795b76-432a-11f1-b8eb-005056ab7584;
+	Tue, 28 Apr 2026 19:51:42 +0200 (CEST)
 From: Jori Koolstra <jkoolstra@xs4all.nl>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -85,9 +85,9 @@ Cc: Simon Horman <horms@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	io-uring@vger.kernel.org
-Subject: [RFC PATCH 1/2] net: af_unix: Useful handling of LSM denials on SCM_RIGHTS
-Date: Tue, 28 Apr 2026 19:51:24 +0200
-Message-ID: <20260428175125.2705296-2-jkoolstra@xs4all.nl>
+Subject: [RFC PATCH 2/2] selftest: Add tests for useful handling of LSM denials on SCM_RIGHTS
+Date: Tue, 28 Apr 2026 19:51:25 +0200
+Message-ID: <20260428175125.2705296-3-jkoolstra@xs4all.nl>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260428175125.2705296-1-jkoolstra@xs4all.nl>
 References: <20260428175125.2705296-1-jkoolstra@xs4all.nl>
@@ -98,7 +98,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 88B1148A9BC
+X-Rspamd-Queue-Id: 3184748A3D7
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
@@ -106,20 +106,21 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_FROM(0.00)[xs4all.nl];
+	TAGGED_FROM(0.00)[bounces-13165-lists,io-uring=lfdr.de];
 	FREEMAIL_CC(0.00)[kernel.org,amacapital.net,chromium.org,xs4all.nl,redhat.com,gmail.com,virtuozzo.com,cyphar.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13164-lists,io-uring=lfdr.de];
+	FREEMAIL_FROM(0.00)[xs4all.nl];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[27];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -127,265 +128,571 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[io-uring];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[xs4all.nl:email,xs4all.nl:dkim,xs4all.nl:mid]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,xs4all.nl:email,xs4all.nl:dkim,xs4all.nl:mid,test_scm_rights_smack.sh:url]
 
-Right now if some LSM such as Smack denies an AF_UNIX socket peer to
-receive an SCM_RIGHTS fd the SCM_RIGHTS fd array will be cut short at
-that point, and MSG_CTRUNC is set on return of recvmsg(). This is
-highly problematic behaviour, because it leaves the receiver
-wondering what happened. As per man page MSG_CTRUNC is supposed to
-indicate that the control buffer was sized too short, but suddenly
-a permission error might result in the exact same flag being set.
-Moreover, the receiver has no chance to determine how many fds got
-originally sent and how many were suppressed.[1]
-
-Add two MSG_* flags:
- - MSG_RIGHTS_DENIAL is set whenever any file is rejected by the LSM
-   during recvmsg() of SCM_RIGHTS fds.
- - If MSG_RIGHTS_FILTER is passed as a flag to recvmsg(), the SCM_RIGHTS
-   fd array is always passed in its full original size. However, any
-   files rejected by the LSM are replaced in this array with -EPERM
-   instead of an assigned fd, while keeping the original order. If the
-   flag is not set, the original truncate behavior is used.
-
-[1]: https://github.com/uapi-group/kernel-features#useful-handling-of-lsm-denials-on-scm_rights
+Tests SCM_RIGHTS fd passing using Smack LSM blocking in combination with
+the MSG_RIGHTS_FILTER flag.
 
 Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
 ---
- fs/file.c              | 21 ++++++++++++++++++---
- include/linux/file.h   |  4 +++-
- include/linux/socket.h |  3 +++
- include/net/scm.h      |  8 ++++----
- io_uring/openclose.c   |  2 +-
- kernel/pid.c           |  2 +-
- kernel/seccomp.c       |  2 +-
- net/compat.c           |  7 ++++---
- net/core/scm.c         | 11 ++++++-----
- 9 files changed, 41 insertions(+), 19 deletions(-)
+ .../net/af_unix/lsm_blocking/helper.h         |  37 ++++
+ .../net/af_unix/lsm_blocking/receiver.c       | 187 ++++++++++++++++++
+ .../net/af_unix/lsm_blocking/sender.c         | 126 ++++++++++++
+ .../lsm_blocking/test_scm_rights_smack.sh     | 172 ++++++++++++++++
+ 4 files changed, 522 insertions(+)
+ create mode 100644 tools/testing/selftests/net/af_unix/lsm_blocking/helper.h
+ create mode 100644 tools/testing/selftests/net/af_unix/lsm_blocking/receiver.c
+ create mode 100644 tools/testing/selftests/net/af_unix/lsm_blocking/sender.c
+ create mode 100644 tools/testing/selftests/net/af_unix/lsm_blocking/test_scm_rights_smack.sh
 
-diff --git a/fs/file.c b/fs/file.c
-index 2c81c0b162d0..cc33a1e77049 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1370,10 +1370,11 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
- }
- 
- /**
-- * receive_fd() - Install received file into file descriptor table
-+ * receive_fd_msg() - Install received file into file descriptor table
-  * @file: struct file that was received from another process
-  * @ufd: __user pointer to write new fd number to
-  * @o_flags: the O_* flags to apply to the new fd entry
-+ * @msg_flags: the MSG_* flags to set for recvmsg(2)
-  *
-  * Installs a received file into the file descriptor table, with appropriate
-  * checks and count updates. Optionally writes the fd number to userspace, if
-@@ -1384,13 +1385,21 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-  *
-  * Returns newly install fd or -ve on error.
-  */
--int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
-+int receive_fd_msg(struct file *file, int __user *ufd, unsigned int o_flags,
-+	       unsigned int *msg_flags)
- {
- 	int error;
- 
- 	error = security_file_receive(file);
--	if (error)
-+	if (error) {
-+		if (msg_flags)
-+			*msg_flags |= MSG_RIGHTS_DENIAL;
+diff --git a/tools/testing/selftests/net/af_unix/lsm_blocking/helper.h b/tools/testing/selftests/net/af_unix/lsm_blocking/helper.h
+new file mode 100644
+index 000000000000..e827560ee78d
+--- /dev/null
++++ b/tools/testing/selftests/net/af_unix/lsm_blocking/helper.h
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <unistd.h>
++#include <fcntl.h>
 +
-+		if (ufd)
-+			put_user(-EPERM, ufd);
-+
- 		return error;
-+	}
- 
- 	FD_PREPARE(fdf, o_flags, file);
- 	if (fdf.err)
-@@ -1406,6 +1415,12 @@ int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
- 	__receive_sock(fd_prepare_file(fdf));
- 	return fd_publish(fdf);
- }
-+EXPORT_SYMBOL_GPL(receive_fd_msg);
-+
-+int receive_fd(struct file *file, unsigned int o_flags)
-+{
-+	return receive_fd_msg(file, NULL, o_flags, NULL);
-+}
- EXPORT_SYMBOL_GPL(receive_fd);
- 
- int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 27484b444d31..38f022d997a6 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -118,7 +118,9 @@ DEFINE_FREE(fput, struct file *, if (!IS_ERR_OR_NULL(_T)) fput(_T))
- 
- extern void fd_install(unsigned int fd, struct file *file);
- 
--int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags);
-+int receive_fd_msg(struct file *file, int __user *ufd, unsigned int o_flags,
-+		   unsigned int *msg_flags);
-+int receive_fd(struct file *file, unsigned int o_flags);
- 
- int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
- 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index ec4a0a025793..3809a8add2fc 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -342,6 +342,9 @@ struct ucred {
- 					  * plain text and require encryption
- 					  */
- 
 +#define MSG_RIGHTS_DENIAL 0x200000
 +#define MSG_RIGHTS_FILTER 0x400000
 +
- #define MSG_SOCK_DEVMEM 0x2000000	/* Receive devmem skbs as cmsg */
- #define MSG_ZEROCOPY	0x4000000	/* Use user data in kernel path */
- #define MSG_SPLICE_PAGES 0x8000000	/* Splice the pages from the iterator in sendmsg() */
-diff --git a/include/net/scm.h b/include/net/scm.h
-index c52519669349..983efa952c8e 100644
---- a/include/net/scm.h
-+++ b/include/net/scm.h
-@@ -50,8 +50,8 @@ struct scm_cookie {
- #endif
- };
- 
--void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
--void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm);
-+void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm, int recv_flags);
-+void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm, int recv_flags);
- int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *scm);
- void __scm_destroy(struct scm_cookie *scm);
- struct scm_fp_list *scm_fp_dup(struct scm_fp_list *fpl);
-@@ -108,11 +108,11 @@ void scm_recv_unix(struct socket *sock, struct msghdr *msg,
- 		   struct scm_cookie *scm, int flags);
- 
- static inline int scm_recv_one_fd(struct file *f, int __user *ufd,
--				  unsigned int flags)
-+				  unsigned int o_flags, unsigned int *msg_flags)
- {
- 	if (!ufd)
- 		return -EFAULT;
--	return receive_fd(f, ufd, flags);
-+	return receive_fd_msg(f, ufd, o_flags, msg_flags);
- }
- 
- #endif /* __LINUX_NET_SCM_H */
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index c71242915dad..1b6cb05b0e3d 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -308,7 +308,7 @@ int io_install_fixed_fd(struct io_kiocb *req, unsigned int issue_flags)
- 	int ret;
- 
- 	ifi = io_kiocb_to_cmd(req, struct io_fixed_install);
--	ret = receive_fd(req->file, NULL, ifi->o_flags);
-+	ret = receive_fd(req->file, ifi->o_flags);
- 	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_set_res(req, ret, 0);
-diff --git a/kernel/pid.c b/kernel/pid.c
-index fd5c2d4aa349..62af6874192d 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -929,7 +929,7 @@ static int pidfd_getfd(struct pid *pid, int fd)
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = receive_fd(file, NULL, O_CLOEXEC);
-+	ret = receive_fd(file, O_CLOEXEC);
- 	fput(file);
- 
- 	return ret;
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 066909393c38..ad5ab16fe2b1 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1130,7 +1130,7 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 	 */
- 	list_del_init(&addfd->list);
- 	if (!addfd->setfd)
--		fd = receive_fd(addfd->file, NULL, addfd->flags);
-+		fd = receive_fd(addfd->file, addfd->flags);
- 	else
- 		fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
- 	addfd->ret = fd;
-diff --git a/net/compat.c b/net/compat.c
-index 2c9bd0edac99..056bce0927c4 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -287,18 +287,19 @@ static int scm_max_fds_compat(struct msghdr *msg)
- 	return (msg->msg_controllen - sizeof(struct compat_cmsghdr)) / sizeof(int);
- }
- 
--void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
-+void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm, int recv_flags)
- {
- 	struct compat_cmsghdr __user *cm =
- 		(struct compat_cmsghdr __user *)msg->msg_control_user;
- 	unsigned int o_flags = (msg->msg_flags & MSG_CMSG_CLOEXEC) ? O_CLOEXEC : 0;
-+	bool filter_rights = recv_flags & MSG_RIGHTS_FILTER;
- 	int fdmax = min_t(int, scm_max_fds_compat(msg), scm->fp->count);
- 	int __user *cmsg_data = CMSG_COMPAT_DATA(cm);
- 	int err = 0, i;
- 
- 	for (i = 0; i < fdmax; i++) {
--		err = scm_recv_one_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
--		if (err < 0)
-+		err = scm_recv_one_fd(scm->fp->fp[i], cmsg_data + i, o_flags, &msg->msg_flags);
-+		if (err < 0 && !filter_rights)
- 			break;
- 	}
- 
-diff --git a/net/core/scm.c b/net/core/scm.c
-index eec13f50ecaf..035329645d8f 100644
---- a/net/core/scm.c
-+++ b/net/core/scm.c
-@@ -351,10 +351,11 @@ static int scm_max_fds(struct msghdr *msg)
- 	return (msg->msg_controllen - sizeof(struct cmsghdr)) / sizeof(int);
- }
- 
--void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
-+void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm, int recv_flags)
- {
- 	struct cmsghdr __user *cm =
- 		(__force struct cmsghdr __user *)msg->msg_control_user;
-+	bool filter_rights = recv_flags & MSG_RIGHTS_FILTER;
- 	unsigned int o_flags = (msg->msg_flags & MSG_CMSG_CLOEXEC) ? O_CLOEXEC : 0;
- 	int fdmax = min_t(int, scm_max_fds(msg), scm->fp->count);
- 	int __user *cmsg_data = CMSG_USER_DATA(cm);
-@@ -365,13 +366,13 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
- 		return;
- 
- 	if (msg->msg_flags & MSG_CMSG_COMPAT) {
--		scm_detach_fds_compat(msg, scm);
-+		scm_detach_fds_compat(msg, scm, recv_flags);
- 		return;
- 	}
- 
- 	for (i = 0; i < fdmax; i++) {
--		err = scm_recv_one_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
--		if (err < 0)
-+		err = scm_recv_one_fd(scm->fp->fp[i], cmsg_data + i, o_flags, &msg->msg_flags);
-+		if (err < 0 && !filter_rights)
- 			break;
- 	}
- 
-@@ -524,7 +525,7 @@ static bool __scm_recv_common(struct sock *sk, struct msghdr *msg,
- 	scm_passec(sk, msg, scm);
- 
- 	if (scm->fp)
--		scm_detach_fds(msg, scm);
-+		scm_detach_fds(msg, scm, flags);
- 
- 	return true;
- }
++#define CMSG_IS_SCM_RIGHTS(cmsg) ({		\
++	typeof(cmsg) _cmsg = (cmsg);		\
++	_cmsg &&				\
++	_cmsg->cmsg_level == SOL_SOCKET &&	\
++	_cmsg->cmsg_type == SCM_RIGHTS;		\
++})
++
++#define MIN(a, b) ({ \
++	typeof(a) _a = (a); \
++	typeof(b) _b = (b); \
++	_a < _b ? _a : _b; \
++})
++
++#define MAX_FDS 10
++
++static inline int read_current_label(char *label, size_t size)
++{
++	int fd = open("/proc/self/attr/current", O_RDONLY);
++	if (fd < 0)
++		return fd;
++
++	ssize_t r = read(fd, label, size - 1);
++	close(fd);
++	if (r <= 0)
++		return r;
++
++	label[r] = '\0';
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/net/af_unix/lsm_blocking/receiver.c b/tools/testing/selftests/net/af_unix/lsm_blocking/receiver.c
+new file mode 100644
+index 000000000000..f5af9dcddc22
+--- /dev/null
++++ b/tools/testing/selftests/net/af_unix/lsm_blocking/receiver.c
+@@ -0,0 +1,187 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * receiver.c - Receive a file descriptor over a Unix domain socket via SCM_RIGHTS
++ *
++ * Usage: ./receiver <socket_path>
++ *
++ * Listens on the given Unix socket path, accepts a connection, and
++ * attempts to receive file descriptors via SCM_RIGHTS. Reports
++ * whether the fds were delivered or blocked.
++ *
++ * Used for testing LSM (Smack) blocking of fd passing.
++ */
++
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <sys/xattr.h>
++#include <unistd.h>
++#include <string.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <fcntl.h>
++
++#include "helper.h"
++
++#define RECV_LOG(fmt, ...) printf("receiver: " fmt, ##__VA_ARGS__)
++#define RECV_ERR(fmt, ...) fprintf(stderr, "receiver: " fmt, ##__VA_ARGS__)
++
++static int recv_fds(int sock, int *fds)
++{
++	char buf[1];
++	char ctrl[CMSG_SPACE(MAX_FDS * sizeof(int))];
++
++	struct iovec iov = {
++		.iov_base = buf,
++		.iov_len  = sizeof(buf),
++	};
++	struct msghdr msg = {
++		.msg_iov        = &iov,
++		.msg_iovlen     = 1,
++		.msg_control    = ctrl,
++		.msg_controllen = sizeof(ctrl),
++	};
++
++	ssize_t bytes_read = recvmsg(sock, &msg, MSG_RIGHTS_FILTER);
++	if (bytes_read < 0) {
++		perror("receiver: recvmsg");
++		return -1;
++	}
++	if (bytes_read == 0) {
++		RECV_ERR("connection closed, no data received\n");
++		return -1;
++	}
++
++	if (msg.msg_flags & MSG_RIGHTS_DENIAL)
++		RECV_LOG("MSG_RIGHTS_DENIAL set - some fds were blocked by the LSM!\n");
++
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++	if (!CMSG_IS_SCM_RIGHTS(cmsg)) {
++		RECV_ERR("no SCM_RIGHTS in control message\n");
++		return -1;
++	}
++
++	int num_fd_slots = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
++	memcpy(fds, CMSG_DATA(cmsg), num_fd_slots  * sizeof(int));
++
++	RECV_LOG("got %d fd slots:", num_fd_slots);
++	for (int i = 0; i < num_fd_slots ; i++)
++		printf(" %d", fds[i]);
++	putchar('\n');
++
++	return num_fd_slots;
++}
++
++static inline int print_current_label(void)
++{
++	char label[256];
++	if (!read_current_label(label, sizeof(label))) {
++		RECV_LOG("running with Smack label '%s'\n", label);
++		return 0;
++	}
++	return -1;
++}
++
++int main(int argc, char *argv[])
++{
++	if (argc != 2) {
++		fprintf(stderr, "Usage: %s <socket_path>\n", argv[0]);
++		return -1;
++	}
++
++	if (print_current_label()) {
++		RECV_ERR("cannot read process Smack label");
++		return -1;
++	}
++
++	int listen_sock = socket(AF_UNIX, SOCK_STREAM, 0);
++	if (listen_sock < 0) {
++		perror("receiver: socket");
++		return -1;
++	}
++
++	struct sockaddr_un addr = {};
++	addr.sun_family = AF_UNIX;
++	strncpy(addr.sun_path, argv[1], sizeof(addr.sun_path) - 1);
++
++	/* Remove any stale socket file */
++	unlink(argv[1]);
++
++	if (bind(listen_sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
++		perror("receiver: bind");
++		return -1;
++	}
++
++	if (listen(listen_sock, 1) < 0) {
++		perror("receiver: listen");
++		return -1;
++	}
++
++	RECV_LOG("listening on '%s'\n", argv[1]);
++
++	int conn_sock = accept(listen_sock, NULL, NULL);
++	if (conn_sock < 0) {
++		perror("receiver: accept");
++		return -1;
++	}
++
++	RECV_LOG("connection accepted\n");
++
++	/* Try to receive the fds */
++	int fds[MAX_FDS];
++	int num_fds = recv_fds(conn_sock, fds);
++	if (num_fds < 0)
++		goto out_sock;
++
++	/* Try to use the received fds -- read and print their contents */
++	RECV_LOG("attempting to read from received fds...\n");
++	int i;
++	for (i = 0; i < num_fds; ++i) {
++		char readbuf[256];
++
++		if (fds[i] < 0) {
++			RECV_LOG("fd in position %i blocked\n", i);
++			continue;
++		} else if (fds[i] == 0) {
++			RECV_LOG("bad fd in position %i\n", i);
++			goto out_recv;
++		}
++
++		ssize_t n = read(fds[i], readbuf, sizeof(readbuf) - 1);
++		if (n < 0) {
++			perror("receiver: read from received fd");
++			goto out_recv;
++		}
++
++		readbuf[n] = '\0';
++		RECV_LOG("read %zd bytes from fd at position %i: '%s'\n", n, i, readbuf);
++	}
++
++	RECV_LOG("final result:\n");
++	for (int j = 0; j < num_fds; ++j) {
++		if (fds[j] < 0) {
++			printf("BLOCKED");
++		} else {
++			printf("PASSED");
++			close(fds[j]);
++		}
++		putchar(' ');
++	}
++
++	close(conn_sock);
++	close(listen_sock);
++	unlink(argv[1]);
++	return 0;
++
++out_recv:
++	for (int j = 0; j < num_fds; ++j) {
++		if (fds[j] > 0)
++			close(fds[j]);
++	}
++
++out_sock:
++	close(conn_sock);
++	close(listen_sock);
++	unlink(argv[1]);
++	return -1;
++}
+diff --git a/tools/testing/selftests/net/af_unix/lsm_blocking/sender.c b/tools/testing/selftests/net/af_unix/lsm_blocking/sender.c
+new file mode 100644
+index 000000000000..b1c76d23b8bd
+--- /dev/null
++++ b/tools/testing/selftests/net/af_unix/lsm_blocking/sender.c
+@@ -0,0 +1,126 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++/*
++ * sender.c - Send file descriptors over a Unix domain socket via SCM_RIGHTS
++ *
++ * Usage: ./sender <socket_path> <file_to_send> [<file_to_send>...]
++ *
++ * Opens the specified files and sends their fds to a receiver connected
++ * on the given Unix socket path. Used for testing LSM blocking of fd
++ * passing.
++ */
++
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <unistd.h>
++#include <string.h>
++#include <stdio.h>
++#include <fcntl.h>
++
++#include "helper.h"
++
++#define SEND_LOG(fmt, ...) fprintf(stdout, "sender: " fmt, ##__VA_ARGS__)
++#define SEND_ERR(fmt, ...) fprintf(stderr, "sender: " fmt, ##__VA_ARGS__)
++
++static int send_fds(int sock, int *fds, int num_fds)
++{
++	if (num_fds > MAX_FDS)
++		return -1;
++
++	char buf[1] = { 'X' };
++	char ctrl[CMSG_SPACE(MAX_FDS * sizeof(int))] = { 0 };
++
++	struct iovec iov = {
++		.iov_base = buf,
++		.iov_len  = sizeof(buf),
++	};
++	struct msghdr msg = {
++		.msg_iov        = &iov,
++		.msg_iovlen     = 1,
++		.msg_control    = ctrl,
++		.msg_controllen = CMSG_SPACE(num_fds * sizeof(int)),
++	};
++
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++	cmsg->cmsg_level = SOL_SOCKET;
++	cmsg->cmsg_type  = SCM_RIGHTS;
++	cmsg->cmsg_len   = CMSG_LEN(num_fds * sizeof(int));
++	memcpy(CMSG_DATA(cmsg), fds, num_fds * sizeof(int));
++
++	ssize_t bytes_send = sendmsg(sock, &msg, 0);
++	if (bytes_send < 0) {
++		perror("sender: sendmsg");
++		return -1;
++	}
++
++	return 0;
++}
++
++static inline int print_current_label(void)
++{
++	char label[256];
++	if (!read_current_label(label, sizeof(label))) {
++		SEND_LOG("running with Smack label '%s'\n", label);
++		return 0;
++	}
++	return -1;
++}
++
++int main(int argc, char *argv[])
++{
++	if (argc < 3 || argc > 2 + MAX_FDS) {
++		fprintf(stderr, "Usage: %s <socket_path> <file_to_send> [<file_to_send>...]\\n",
++			argv[0]);
++		fprintf(stderr, "Up to a maximum of %d files", MAX_FDS);
++		return -1;
++	}
++
++	if (print_current_label()) {
++		SEND_ERR("cannot read process Smack label");
++		return -1;
++	}
++
++	int sock = socket(AF_UNIX, SOCK_STREAM, 0);
++	if (sock < 0) {
++		perror("sender: socket");
++		return -1;
++	}
++
++	struct sockaddr_un addr = {};
++	addr.sun_family = AF_UNIX;
++	strncpy(addr.sun_path, argv[1], sizeof(addr.sun_path) - 1);
++
++	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
++		perror("sender: connect");
++		goto out_sock;
++	}
++
++	SEND_LOG("connected to '%s'\n", argv[1]);
++
++	int num_files = argc - 2;
++	int fds[MAX_FDS];
++	int i;
++	for (i = 0; i < num_files; i++) {
++		fds[i] = open(argv[2 + i], O_RDONLY);
++		if (fds[i] < 0) {
++			perror("sender: open file");
++			goto out_opened;
++		}
++		SEND_LOG("opened '%s' as fd %d\n", argv[2 + i], fds[i]);
++	}
++
++	if (send_fds(sock, fds, num_files) < 0)
++		goto out_opened;
++
++	SEND_LOG("fds successfully sent:");
++	for (int j = 0; j < num_files; j++)
++		printf(" %d", fds[j]);
++	putchar('\n');
++
++out_opened:
++	for (int j = 0; j < i; j++)
++		close(fds[j]);
++out_sock:
++	close(sock);
++	return -1;
++}
+diff --git a/tools/testing/selftests/net/af_unix/lsm_blocking/test_scm_rights_smack.sh b/tools/testing/selftests/net/af_unix/lsm_blocking/test_scm_rights_smack.sh
+new file mode 100644
+index 000000000000..76fcfdd2cd4a
+--- /dev/null
++++ b/tools/testing/selftests/net/af_unix/lsm_blocking/test_scm_rights_smack.sh
+@@ -0,0 +1,172 @@
++# SPDX-License-Identifier: GPL-2.0
++
++#
++# test_scm_rights_smack.sh - Test SCM_RIGHTS fd passing using Smack LSM blocking
++#
++# Must be run as root on a kernel with Smack enabled (security=smack).
++# Requires: capsh (libcap), setfattr/getfattr (attr)
++#
++# We use the following Smack labels:
++#   "Sender"   - label for the sending process
++#   "Receiver" - label for the receiving process
++#   "SecretX"   - labels for the files being passed
++#
++# Socket communication (Sender <-> Receiver) is always allowed.
++# The test controls whether Receiver can access "SecretX"-labeled fds.
++#
++
++
++readonly SOCK="/tmp/scm_test.sock"
++readonly TESTFILE1="/tmp/scm_test_secret_1"
++readonly TESTFILE2="/tmp/scm_test_secret_2"
++readonly SENDER="./sender"
++readonly RECEIVER="./receiver"
++
++set -e
++
++run_tests() {
++
++	preflight
++	setup
++
++	run_test "TEST 1" \
++		"Receiver should NOT have access to Secret1." \
++		"Receiver Secret1 ---
++Receiver Secret2 ---" \
++		"$TESTFILE1" \
++		"BLOCKED"
++
++	run_test "TEST 2" \
++		"Receiver should have access to Secret1." \
++		"Receiver Secret1 r--
++Receiver Secret2 ---" \
++		"$TESTFILE1" \
++		"PASSED"
++
++	run_test "TEST 3" \
++		"Receiver should have access to Secret2, but NOT Secret1." \
++		"Receiver Secret1 ---
++Receiver Secret2 r--" \
++		"$TESTFILE1 $TESTFILE2" \
++		"BLOCKED PASSED"
++}
++
++run_test() {
++	local name="$1"
++	local description="$2"
++	local rules="$3"
++	local files="$4"
++	local expected="$5"
++
++	echo ""
++	echo "$name: $description"
++	echo "Rules:"
++	echo "$rules"
++	echo "Expected: $expected"
++	echo ""
++
++	while IFS= read -r rule; do
++		[ -n "$rule" ] && echo "$rule" > /sys/fs/smackfs/load2
++	done <<< "$rules"
++
++	local output status last_line
++	output=$(send_fds "$SOCK" $files)
++	status=$?
++	echo "$output"
++	last_line=$(echo "$output" | tail -n 1 | xargs)
++
++	if [ "$status" -ne 0 ]; then
++		echo "TEST FAILED: receiver returned $status"
++		return 1
++	fi
++
++	if [[ "$last_line" == "$expected" ]]; then
++		echo "TEST PASSED: outcome was $expected as expected"
++		return 0
++	else
++		echo "TEST FAILED: expected $expected, got '$last_line'"
++		return 1
++	fi
++}
++
++setup() {
++
++	printf "Secret 1" > "$TESTFILE1"
++	printf "Secret 2" > "$TESTFILE2"
++
++	setfattr -n security.SMACK64 -v "Secret1" "$TESTFILE1"
++	setfattr -n security.SMACK64 -v "Secret2" "$TESTFILE2"
++	setfattr -n security.SMACK64 -v "Tmp" /tmp
++
++	echo "Sender	Receiver	-w-" > /sys/fs/smackfs/load2
++	echo "Receiver	Sender		-w-" > /sys/fs/smackfs/load2
++	echo "Sender	Tmp 		rwx" > /sys/fs/smackfs/load2
++	echo "Receiver	Tmp		rwx" > /sys/fs/smackfs/load2
++	echo "Sender	Secret1		r--" > /sys/fs/smackfs/load2
++	echo "Sender	Secret2		r--" > /sys/fs/smackfs/load2
++}
++
++send_fds() {
++
++	local sk="$1"
++	shift
++	local files="$*"
++
++	(
++	    echo "Receiver" > /proc/self/attr/current
++	    exec capsh --drop=cap_mac_override,cap_mac_admin -- -c "$RECEIVER $sk"
++	) &
++	local recv_pid=$!
++	sleep 1
++
++	(
++	    echo "Sender" > /proc/self/attr/current
++	    exec capsh --drop=cap_mac_override,cap_mac_admin -- -c "$SENDER $sk $files"
++	) || true
++
++	local recv_status=0
++	wait "$recv_pid" || recv_status=$?
++
++	if [ "$recv_status" -ne 0 ]; then
++	    echo "receiver exited with $recv_status"
++	fi
++	return "$recv_status"
++}
++
++preflight() {
++
++	if [ "$(id -u)" -ne 0 ]; then
++	    echo "ERROR: must be run as root"
++	    exit 1
++	fi
++
++	if ! grep -q smack /sys/kernel/security/lsm 2>/dev/null; then
++	    echo "ERROR: Smack is not active"
++	    echo "  Check: cat /sys/kernel/security/lsm"
++	    echo "  Boot with: security=smack"
++	    exit 1
++	fi
++
++	if ! mountpoint -q /sys/fs/smackfs 2>/dev/null; then
++	    echo "Mounting smackfs..."
++	    mount -t smackfs smackfs /sys/fs/smackfs
++	fi
++
++	if ! command -v capsh &>/dev/null; then
++	    echo "ERROR: capsh not found (install libcap)"
++	    exit 1
++	fi
++
++	# Build the test programs if needed
++	if [ ! -x "$SENDER" ]; then
++	    echo "Building sender..."
++	    gcc -Wall -o sender sender.c
++	fi
++	if [ ! -x "$RECEIVER" ]; then
++	    echo "Building receiver..."
++	    gcc -Wall -o receiver receiver.c
++	fi
++
++}
++
++run_tests
 -- 
 2.54.0
 

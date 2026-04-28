@@ -1,225 +1,156 @@
-Return-Path: <io-uring+bounces-13161-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13162-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +PuqC23W8GkSZQEAu9opvQ
-	(envelope-from <io-uring+bounces-13161-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 17:46:53 +0200
+	id GNMGO7Hm8GmoagEAu9opvQ
+	(envelope-from <io-uring+bounces-13162-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 18:56:17 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A0F4882B1
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 17:46:52 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924C1489707
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 18:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 11FDA3060ADF
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 15:46:05 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 56703309B3D7
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 15:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D4E3A9638;
-	Tue, 28 Apr 2026 15:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224673BBA18;
+	Tue, 28 Apr 2026 15:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="UPpl9Rrl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="nUGBZLsa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077D13BF684
-	for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 15:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F092C3C197C
+	for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 15:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777391164; cv=none; b=Vd5dWlgQXSbI9UZSP6RyWo+9ZZVkDnUp4svjT7cYTrYf3G3Qx50yeQDqrPGpXjiwyD692yZTCPkFBxrdtSoF/Kh40XC0rKTqauG5LcA2ylaUgzmpxG6/S6Ox/UQqUDzlGgqmbYM0tRml/IpUg0ZP8NdlJ5T8xbVY60pVs8aJVQE=
+	t=1777391200; cv=none; b=X7t8AsQxTPZiYUD2cbTiG6lquw6X77jBYGY/0CnbmZINKonmrm6bRQSVmgJfxYUXUvFeknDzn1JrtEBhJxib+GrjtWfMR8Qc61wuUGqSBtVdhRJVJxKcK4xXegUstc+zMyKKFv6gsMDDIiGjOYfv632/XX+xwMzhutclu5zIopA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777391164; c=relaxed/simple;
-	bh=lZ8GVIQeyx6FhafZAJBBqfDuAvMKXOY+e5J3qcPq8kw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FbQv+SdVS1Bk6BC28x0Pc8T5lMC4SxwqYHFVV1nKydtpvtE9pAf8dUl2/u/cH0fY7a1y3yvhk+xYesXl3NfIvn0kZzO7fG2AAKcxmICqJ6YOROoEqg2MXQhnRtsEGMKdPHFkELM74XJPdprgOoYXF/0RhcoRLz35vOGzHhfjQKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=UPpl9Rrl; arc=none smtp.client-ip=209.85.160.53
+	s=arc-20240116; t=1777391200; c=relaxed/simple;
+	bh=ax1up2jNHblRYSRVv5kYKeYXkNcEPxQhD5YiWdUa6n4=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=DQsl8bmj0UXArLpG+duOqt8ObsREJlBHJVevWVYRshwi41yQO7NMAGJ0sqQZbuu/7xeyjItdGoNVQEzJujTYsaTH6Edb9XCOpDGiYTvPZ2+QrmxNM1COm2Q+mdt8aajyeuhyBu4o6lTbX7FYnlLHQQyhN0tOnAwggg7CGgG7g5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=nUGBZLsa; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-42c08cbae4cso6534381fac.2
-        for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 08:46:02 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6949192b843so3233782eaf.1
+        for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 08:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777391162; x=1777995962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777391196; x=1777995996; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pwoQUuKpX/ekRA8Qo1PHn8+ae1HpgVzRgnT0CoXolUA=;
-        b=UPpl9RrlsrxtUgRHCoIZxAcNrjEL2kTjCZxj72+qp2smvSXkytx2P+UcZcQb/l9p6x
-         qdAXVR+vrVwZKB042aJP7erNlh1SYW3rzcQDybbOKDxiz9Se2zL9DFnyx8y+rnSfnB8u
-         SBm0DO2LCVauy2i3gFTlNPJIlL7+0loBLo1b4wZFhi11VLVxgKJABd1aKFCtubQN+ucf
-         w/CGd6zCMKuh6YOUojm6a762tPvqXuAjI8wj/i6yRolwItKrvKf7g1SzYshQpH1nYTyS
-         5VN6DGhuyamtkCkFT7nY6PnI7RKJhSsIqZ9vpDb99YT4UPSYJT/29Gr9Y+Cp/j7gvni6
-         agXQ==
+        bh=wo7ihDu36qMHN1MWTJpk+nZzOmgMfNjhkF/rJkMCHQM=;
+        b=nUGBZLsajgT9foGAxQDhYvnRdWRlOPpoPDTyQejcYcHHYQpuZ4U+3HdxGt6aYyUbEe
+         WUIUaDgo198yM8jQBMPExFxHgfCuohHuLvg1Qx+dusedF3VVkFD+HgH/KJutdnCiJ26d
+         gKpZ+Xzau0ioL3uS12NmNyIqk3x9kSSwM6WWZn4Y7aGryrBij5HUeg75eYd2wRZbgy0i
+         Devf2nMJ20A/icGNkZyoi3IT3Z5rWnr6CZ6soxK0xvu2u0WUUBZ7tDLqTb7/zpB2NerV
+         ueY4+tzP7wmVqdF4QKsXgUVSmSFFidnYSQwwU7QhE2tHe7wQGA2X4OzMa/jce9VRmcpD
+         BkWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777391162; x=1777995962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pwoQUuKpX/ekRA8Qo1PHn8+ae1HpgVzRgnT0CoXolUA=;
-        b=eXPYz3T8MBy7OHeKjZzE2g6lyEca5I/3E4TUvRmg20tFiPmybhFMp2pAxrA7ErUEE3
-         icwHFZRgJsWazSc2CsBhEpIZQkT/9g/rItYRgIQsqiWbblfeHrIJqix53+LaBN8Q7ghZ
-         xR0MrJLqCj2QuVOd/8HqAw24RmGp47BI+Cpgo00ZwE3crm/l9nbctOOcVngWgBZlJbic
-         1QpZmcWINPMuSRPRJ4GSRy9qTopW1TsLTWj1rrJ2bctyVaiXGHox7FoJ2BYruzqTax6u
-         qh0I+rqp7FWW2Pk4a1/yxVDHgwpCjsNekJwbLt+2vUYhV1XKJrnMFABuqWDj89omD4p4
-         v3mw==
-X-Gm-Message-State: AOJu0YxVQIRCNjOCnOGBkHOu+NNf/fBU7W9zGUvFTaBr5Lkaarble36P
-	qEUWIv+ehRulxPybWi9pV58KGhHtCbAqzhBx/VSzc+xN1sBCQYKOoJ9zN3HISRdEVeqPWpKrPR5
-	b/qYnJZA=
-X-Gm-Gg: AeBDies6IgJNklvAW0fHFiissclE4sDd4tGWjvmABhgkXE0aK8jZEDO5R+fXL5AIkAn
-	rBHZb3pCyNdYdKEov2XlqgSv2v79F9SqQkbZirhsX/TWO97dDUlvW2PHUw9CiuWUR/qOUiSZBHr
-	i2IDj/494EEfhs7zrng/REsVQG56LIy4btYLbBnTVMwXoIfoKz8sSrx0cqGkmDtHVSLvKDiihsU
-	asDhOvG45gMG5rYc6GyEUU7juYiU4MdfI0LzDc9SptIrZbKjKQnBjuxodhH+IMwL9VU0h6N2w5t
-	DouSTh8yQqTEunu8f+iLmtmrsHd6tfNJPWAn5nHH+4dMgbUc6cmcj8ZWOhGzIoBXz+cyRw9AKj5
-	Eke/Ah1aGTrfST5zrfpX0N3V0E3qs938p8pQo96BTRKmfTZ0gK7HqfQLDpkt5xIlKYAg00vm1fC
-	lDZX9A1uzb9Vpp3Rw0F6czqgDULPq4KDDHqVApsGX4vUpplbERCKOhNqTGc1BTxZfg8Yn4k5xMk
-	IE/Ug==
-X-Received: by 2002:a05:6870:2e88:b0:42f:c1ea:f19d with SMTP id 586e51a60fabf-4340a89d62bmr22904fac.10.1777391161589;
-        Tue, 28 Apr 2026 08:46:01 -0700 (PDT)
-Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-433effdc79bsm2109567fac.18.2026.04.28.08.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2026 08:46:00 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Martin Michaelis <code@mgjm.de>,
-	stable@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring/kbuf: support min length left for incremental buffers
-Date: Tue, 28 Apr 2026 09:44:50 -0600
-Message-ID: <20260428154557.2150818-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260428154557.2150818-1-axboe@kernel.dk>
-References: <20260428154557.2150818-1-axboe@kernel.dk>
+        d=1e100.net; s=20251104; t=1777391196; x=1777995996;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wo7ihDu36qMHN1MWTJpk+nZzOmgMfNjhkF/rJkMCHQM=;
+        b=L+u8BP9KbyAbAXHCq3AcSZNiiRZm/Qkct2JdsNeAN8nJzir2OGrzHqwU8pVLnY/BoM
+         q+qhQW7FqXTgC6kldyREQqjVeeToVKOAvpqYz3d9kPIu5VWu5Q5uHZVtvk9B+XIOa0c+
+         1SVZpM2svbDyczFQ2vEVFsg/voj4vDM4NAboDmOwH2GwjXN2HbU+BLUArVGkxx28fFoc
+         3EQqI8tLwWcHpNkIqkjtsaLurmuScuvzYWc4iln2R1650iAyql+3S6MdymAGu+dp+Lx2
+         wzC2wXBlIRLUKfYOFlp659od3h756jbZ4oacIWfjNMvHceTn3Gg3LcoKz65Gtm2/xiEO
+         mVzA==
+X-Gm-Message-State: AOJu0YwS5YQSq9dny5gfGsXNqN+acN9wpuigW45S0WcSwcxzFQ/bjyNK
+	eH5Gmcvf29MCnRRTj+IIWcK6NI7ESY1lGvEGvhSTN1+QrtQz0h7MWs4yZZe3VzBBWSn580WW7x0
+	9mVCuQ1c=
+X-Gm-Gg: AeBDieuZztLpHOuqp3oG/qUpFjD7B1UHNDqK6T81n+L+OQ5w2HZ914KSoZHgeaEcJ6T
+	uKK2Wpjf5iuHHbYdvQXZbtVsu34FQBG4ZKiW8V8X5AGe3JMfupNdQucDChBMwq21XsZrAC/XDJJ
+	vXyglCWyVjsawbEMTKX9qfjFUDHe7hSSHOnNZLKQUTul/CaKswB7JHyeCZlk5xbNy9ZmnXNY2pt
+	97RPfI7lWYbMjjmvGGJv2zNedo8zpkEL18typnx0c6zWvr2+9+Oa+wtj+1/1067ZSlgLDm4/qNN
+	hfwcm9QrW34/auncEaSxaomTP4khXSNnVve5bpkmCLnfb0IhpIHKQWp+XiTraGp+hXDtzBL8YUu
+	StyrKlZFpsrls2XUuuKku9vK+eh8zsjiiSPtnt8pK1cucZ92zAyQ0ZkXdnOGO2dH4r/aoKChDLa
+	gVLJ5zrWtI/3A+3jSys3d08LUGYCFIbdCG8ds9KVOXT0UyLXpZD1AfUQNfEzS9uRozZj5lgtNx5
+	3IlhR/I6YP0FZ86Hs8=
+X-Received: by 2002:a05:6820:200b:b0:694:90ff:c769 with SMTP id 006d021491bc7-6965ca5288bmr2042398eaf.3.1777391196199;
+        Tue, 28 Apr 2026 08:46:36 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6965ba73c73sm1681239eaf.15.2026.04.28.08.46.35
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2026 08:46:35 -0700 (PDT)
+Message-ID: <ae34680f-4890-40a5-9d20-d99e719e9008@kernel.dk>
+Date: Tue, 28 Apr 2026 09:46:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C4A0F4882B1
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/napi: cap busy_poll_to 10 msec
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 924C1489707
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13161-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_FROM(0.00)[bounces-13162-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_ONE(0.00)[1];
+	DMARC_NA(0.00)[kernel.dk];
 	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mgjm.de:email,kernel-dk.20251104.gappssmtp.com:dkim,kernel.dk:mid,kernel.dk:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
 
-From: Martin Michaelis <code@mgjm.de>
+Currently there's no cap on the maximum amount of time that napi is
+allowed to poll if no events are found, which can lead to kernel
+complaints on a task being stuck as there's no conditional rescheduling
+done within that loop.
 
-Incrementally consumed buffer rings are generally fully consumed, but
-it's quite possible that the application has a minimum size it needs to
-meet to avoid truncation. Currently that minimum limit is 1 byte, but
-this should be a setting that is the hands of the application. For
-recvmsg multishot, a prime use case for incrementally consumed buffers,
-the application may get spurious -EFAULT returned at the end of an
-incrementally consumed buffer, as less space is available than the
-headers need.
+Just cap it to 10 msec in total, that's already way above any kind of
+sane value that will reap any benefits, yet low enough that it's
+nowhere near being able to trigger preemption complaints.
 
-Grab a u32 field in struct io_uring_buf_reg, which the application can
-use to inform the kernel of the minimum size that should be available
-in an incrementally consumed buffer. If less than that is available,
-the current buffer is fully processed and the next one will be picked.
-
-Cc: stable@vger.kernel.org
-Fixes: ae98dbf43d75 ("io_uring/kbuf: add support for incremental buffer consumption")
-Link: https://github.com/axboe/liburing/issues/1433
-Signed-off-by: Martin Michaelis <code@mgjm.de>
-[axboe: write commit message, change io_buffer_list member name]
+Fixes: 8d0c12a80cde ("io-uring: add napi busy poll support")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/uapi/linux/io_uring.h | 3 ++-
- io_uring/kbuf.c               | 8 +++++++-
- io_uring/kbuf.h               | 7 +++++++
- 3 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 17ac1b785440..909fb7aea638 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -905,7 +905,8 @@ struct io_uring_buf_reg {
- 	__u32	ring_entries;
- 	__u16	bgid;
- 	__u16	flags;
--	__u64	resv[3];
-+	__u32	min_left;
-+	__u32	resv[5];
- };
- 
- /* argument for IORING_REGISTER_PBUF_STATUS */
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 43e4f8615fe8..63061aa1cab9 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -47,7 +47,7 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
- 		this_len = min_t(u32, len, buf_len);
- 		buf_len -= this_len;
- 		/* Stop looping for invalid buffer length of 0 */
--		if (buf_len || !this_len) {
-+		if (buf_len > bl->min_left_sub_one || !this_len) {
- 			WRITE_ONCE(buf->addr, READ_ONCE(buf->addr) + this_len);
- 			WRITE_ONCE(buf->len, buf_len);
- 			return false;
-@@ -637,6 +637,10 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	if (reg.ring_entries >= 65536)
- 		return -EINVAL;
- 
-+	/* minimum left byte count is a property of incremental buffers */
-+	if (!(reg.flags & IOU_PBUF_RING_INC) && reg.min_left)
-+		return -EINVAL;
-+
- 	bl = io_buffer_get_list(ctx, reg.bgid);
- 	if (bl) {
- 		/* if mapped buffer ring OR classic exists, don't allow */
-@@ -683,6 +687,8 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	bl->mask = reg.ring_entries - 1;
- 	bl->flags |= IOBL_BUF_RING;
- 	bl->buf_ring = br;
-+	if (reg.min_left)
-+		bl->min_left_sub_one = reg.min_left - 1;
- 	if (reg.flags & IOU_PBUF_RING_INC)
- 		bl->flags |= IOBL_INC;
- 	ret = io_buffer_add_list(ctx, bl, reg.bgid);
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index abf7052b556e..401773e1ef80 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -32,6 +32,13 @@ struct io_buffer_list {
- 
- 	__u16 flags;
- 
-+	/*
-+	 * minimum required amount to be left to reuse an incrementally
-+	 * consumed buffer. If less than this is left at consumption time,
-+	 * buffer is done and head is incremented to the next buffer.
-+	 */
-+	__u32 min_left_sub_one;
-+
- 	struct io_mapped_region region;
- };
- 
+---
+
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 4a10de03e426..8d68366a4b90 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -276,6 +276,8 @@ static int io_napi_register_napi(struct io_ring_ctx *ctx,
+ 	/* clean the napi list for new settings */
+ 	io_napi_free(ctx);
+ 	WRITE_ONCE(ctx->napi_track_mode, napi->op_param);
++	/* cap NAPI at 10 msec of spin time */
++	napi->busy_poll_to = min(10000, napi->busy_poll_to);
+ 	WRITE_ONCE(ctx->napi_busy_poll_dt, napi->busy_poll_to * NSEC_PER_USEC);
+ 	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi->prefer_busy_poll);
+ 	return 0;
+
 -- 
-2.53.0
+Jens Axboe
 
 

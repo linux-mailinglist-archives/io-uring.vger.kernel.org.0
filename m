@@ -1,199 +1,228 @@
-Return-Path: <io-uring+bounces-13150-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13151-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UNj/CWnZ72maGwEAu9opvQ
-	(envelope-from <io-uring+bounces-13150-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2026 23:47:21 +0200
+	id 8H/bBCch8GkyOwEAu9opvQ
+	(envelope-from <io-uring+bounces-13151-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 04:53:27 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05FF47AE05
-	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2026 23:47:20 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A2B47CF02
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 04:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id D6101300D367
-	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2026 21:47:19 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 14101300B189
+	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 02:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894213537FF;
-	Mon, 27 Apr 2026 21:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7097D8287E;
+	Tue, 28 Apr 2026 02:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xKTVgdi7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sRMrKS2y";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fF1e51W+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XIrPHR2b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIQzj/NW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA3D37F009
-	for <io-uring@vger.kernel.org>; Mon, 27 Apr 2026 21:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1FF38DD3;
+	Tue, 28 Apr 2026 02:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777326437; cv=none; b=fSqw/lCRP/QYqQBTKqwI3NlB3liBPX0frTyNgKuC4r5haAL2om5EHLUVBkqRF5VTRjW/9aI15R459SXK0/tDXZSxy/RZkbwq1ASQeZ63CFuiepXgHIBzVqA/v8TfMeSf40p3Ki9pZ4vx4iJAQ+UnSQIxYXg2+XxB2Gjcrbm7xdI=
+	t=1777344804; cv=none; b=N5RtPxy1cQzwX+Hw0c+ght8GaOn7KkRh1df7NC0wC5Ov+2FRF91CYI/I5LcXse7nIDhDYbdkkzdEwQCVjRMYNi/fb+esE6LKl7pEPWc6Du4+s6UB0gCUj0q9I9yscZzIy8SICKkN5BE+p1JWY0cQNuJvPHzR7qRo6T/3vHDKT2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777326437; c=relaxed/simple;
-	bh=BMi5v12Fat8Cmj7ZfbqJfTUijQJmxQ/c6FalSVHExQg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Oj8Ak056XLY3bshIP/ZhwWinWZaEittLrqt735d1+qvW6JyOKV75V9lBtWLrqWcdpPAyJjD0kmL3BO5KMTlm6MFTZ97TSm3adi8Hd4gk+ruVveha7Oq82sx+fJJ1s83SEtQFQwpaDkqGtuEod10Rqa2ftuiasmlVraUGucK+B5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xKTVgdi7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sRMrKS2y; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fF1e51W+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XIrPHR2b; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1D926A826;
-	Mon, 27 Apr 2026 21:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777326433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PD5CBPI36xg8XgD5In1OelpqiBEYUy2drfzjh+OvPXU=;
-	b=xKTVgdi7ACrz3Kao4hwjYyqdog3bKa8XcGO31HRIy2gRSFfquqR9LOyn6LDMjyU6DOykFF
-	6ej/VazHt1ihIAHo7jJlLotnYWHDAgcTXJw/VKgJXCf1sKKjvTI6QzwNTTXEwEF/JQmc97
-	gRu9P1/RBHctN1ppEWTVZmjni6ZlGt8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777326433;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PD5CBPI36xg8XgD5In1OelpqiBEYUy2drfzjh+OvPXU=;
-	b=sRMrKS2yvC1/4QvF2T9gh8nV6/sz10ToQqCCn04rSA0byKtTSdDl6EnI/1zJ0QonT6GFWy
-	a01rc5QaY5TV+wAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777326432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PD5CBPI36xg8XgD5In1OelpqiBEYUy2drfzjh+OvPXU=;
-	b=fF1e51W+dWcE5Wp4W14cjSsrwwxMhgdGeJ+94bVvQdXQ7DTewmrUxBZtfR9akf1/AVZ0mG
-	HeLiG+QldAhnxvSt8GNy4eYrSh3RY5OpMUeFXMmHJVZsvTgRaHVXXDEVrDCNLntaE4X50i
-	dT9WExUJSuz0FIw9NS+mi2LTKtOcXvo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777326432;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PD5CBPI36xg8XgD5In1OelpqiBEYUy2drfzjh+OvPXU=;
-	b=XIrPHR2bdA4Dn25ztlSlCcVqCdyO+wcD4TCr99x6VPy8Js4V3p73HNKnvKI1634eVw2td9
-	4vUqVlfTXLCrDHAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CE3F593B0;
-	Mon, 27 Apr 2026 21:47:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oGNoCmDZ72m5RgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 27 Apr 2026 21:47:12 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Ali Raza <elirazamumtaz@gmail.com>
-Cc: io-uring@vger.kernel.org,  Jens Axboe <axboe@kernel.dk>,  Pavel Begunkov
- <asml.silence@gmail.com>
-Subject: Re: [PATCH v2] io_uring: add submitter_task consistency check to
- io_install_bpf()
-In-Reply-To: <20260427192400.416133-1-elirazamumtaz@gmail.com> (Ali Raza's
-	message of "Tue, 28 Apr 2026 00:24:00 +0500")
-References: <12c2bec8-ffb9-4b01-8bea-819c6ec77c5e@gmail.com>
-	<20260427192400.416133-1-elirazamumtaz@gmail.com>
-Date: Mon, 27 Apr 2026 17:47:10 -0400
-Message-ID: <87mryom5y9.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1777344804; c=relaxed/simple;
+	bh=XxeZvfWg63iD7YIibfXP+BGqB0qh5WZ8TzsJ/TVXD/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mp7iFG2sPp79zfiWxJ/n7pztoKYCsnGkJ7fxxv0M7tNe/cvvJrKaXrNF6yc2GajnLAe8gllLCdvlt1bx34UP45TqhT4AuND10rILIW4vX+3OWWtSMlxtY+MmohRwlAl4qn9XQ+gFr8H2IyncjNqpSXzdF2ZlTFLIOEcYta2OIX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIQzj/NW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEE6C19425;
+	Tue, 28 Apr 2026 02:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777344804;
+	bh=XxeZvfWg63iD7YIibfXP+BGqB0qh5WZ8TzsJ/TVXD/4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tIQzj/NWnciW0yX821w/c1Y53z5pDwmQTmSPruVOaPXa2bGaIc0vEdy5Nf07s/PSA
+	 aWBrS7scfXD9CnZECDQMFE+hlrj9FXBc/sOv3RIGRIE1GaW/5J+6sjmfi730nqpmTy
+	 nwbEfV2kvZ6yraInR5pLdoGcdVYVZNsdXUBNLXsbUywjNXxBaKLWpdiW5uewMyv1rn
+	 nXSRyXsAWm0xiUAl6HejMcioGUP5OXbtI1iOhL5CArB3Rt9EEqqVNYxH1JlyLe9tt5
+	 DL1zTdHjCDaxOV7peSm4fAMQbNFe2Bs06BlandZ0VQjwNC640zHXN0iRKGSzyh6AtH
+	 qqptcT7/KJ61g==
+From: Jakub Kicinski <kuba@kernel.org>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	asml.silence@gmail.com,
+	axboe@kernel.dk,
+	almasrymina@google.com,
+	sdf@fomichev.me,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org,
+	vbabka@kernel.org,
+	io-uring@vger.kernel.org
+Subject: [PATCH net] net: add net_iov_init() and use it to initialize ->page_type
+Date: Mon, 27 Apr 2026 19:53:20 -0700
+Message-ID: <20260428025320.853452-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: C05FF47AE05
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: A9A2B47CF02
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13150-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,google.com,redhat.com,lunn.ch,kernel.org,gmail.com,kernel.dk,fomichev.me,linux-foundation.org];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	TAGGED_FROM(0.00)[bounces-13151-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.dk,gmail.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[kuba@kernel.org,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[io-uring];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,suse.de:dkim]
+	TAGGED_RCPT(0.00)[io-uring,netdev];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,fomichev.me:email]
 
-Ali Raza <elirazamumtaz@gmail.com> writes:
+Commit db359fccf212 ("mm: introduce a new page type for page pool in
+page type") added a page_type field to struct net_iov at the same
+offset as struct page::page_type, so that page_pool_set_pp_info() can
+call __SetPageNetpp() uniformly on both pages and net_iovs.
 
-> io_uring_register() already guards against a different task touching
-> a SINGLE_ISSUER ring (register.c:733):
->
->     if (ctx->submitter_task && ctx->submitter_task != current)
->         return -EEXIST;
->
-> bpf_io_reg() calls io_install_bpf() without an equivalent guard.  Add
-> the same check for consistency.  The check is gated on
-> IORING_SETUP_SINGLE_ISSUER since submitter_task is only assigned for
-> that flag combination (io_uring.c:3053 and register.c:282).
->
-> Note: io_install_bpf() is called directly from the BPF syscall path,
-> so `current` is the task invoking BPF_LINK_CREATE.  If BPF link
-> registration were ever deferred to a worker thread, this check would
-> need revisiting.
->
-> Signed-off-by: Ali Raza <elirazamumtaz@gmail.com>
-> ---
-> v2: Added IORING_SETUP_SINGLE_ISSUER gate; changed -EPERM to -EEXIST to
->     match register.c:733; removed security/exploit framing from commit
->     message; acknowledged that `current` may not be valid if BPF link
->     creation is ever deferred to a worker thread.
->
->  io_uring/bpf-ops.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/io_uring/bpf-ops.c b/io_uring/bpf-ops.c
-> index 937e48bef40b..84578614cc0b 100644
-> --- a/io_uring/bpf-ops.c
-> +++ b/io_uring/bpf-ops.c
-> @@ -162,6 +162,9 @@ static int io_install_bpf(struct io_ring_ctx *ctx, struct io_uring_bpf_ops *ops)
->  		return -EOPNOTSUPP;
->  	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
->  		return -EOPNOTSUPP;
-> +	if ((ctx->flags & IORING_SETUP_SINGLE_ISSUER) &&
-> +	    ctx->submitter_task && ctx->submitter_task != current)
+The page-type API requires the field to hold the UINT_MAX "no type"
+sentinel before a type can be set; for real struct page that invariant
+is established by the page allocator on free. struct net_iov is not
+allocated through the page allocator, so the field is left as zero
+(io_uring zcrx, which uses __GFP_ZERO) or as slab garbage (devmem,
+which uses kvmalloc_objs() without zeroing). When the page pool then
+calls page_pool_set_pp_info() on a freshly-bound niov,
+__SetPageNetpp()'s VM_BUG_ON_PAGE(page->page_type != UINT_MAX) fires
+and the kernel BUGs. Triggered in selftests by io_uring zcrx setup
+through the fbnic queue restart path:
 
-The ctx->flags & IORING_SETUP_SINGLE_ISSUER check is redundant. IIUC,
-->submitter_task can only be set if the ring is set with
-IORING_SETUP_SINGLE_ISSUER.
+ kernel BUG at ./include/linux/page-flags.h:1062!
+ RIP: 0010:page_pool_set_pp_info (./include/linux/page-flags.h:1062
+                                  net/core/page_pool.c:716)
+ Call Trace:
+  <TASK>
+  net_mp_niov_set_page_pool (net/core/page_pool.c:1360)
+  io_pp_zc_alloc_netmems (io_uring/zcrx.c:1089 io_uring/zcrx.c:1110)
+  fbnic_fill_bdq (./include/net/page_pool/helpers.h:160
+                  drivers/net/ethernet/meta/fbnic/fbnic_txrx.c:906)
+  __fbnic_nv_restart (drivers/net/ethernet/meta/fbnic/fbnic_txrx.c:2470
+                      drivers/net/ethernet/meta/fbnic/fbnic_txrx.c:2874)
+  fbnic_queue_start (drivers/net/ethernet/meta/fbnic/fbnic_txrx.c:2903)
+  netdev_rx_queue_reconfig (net/core/netdev_rx_queue.c:137)
+  __netif_mp_open_rxq (net/core/netdev_rx_queue.c:234)
+  io_register_zcrx (io_uring/zcrx.c:818 io_uring/zcrx.c:903)
+  __io_uring_register (io_uring/register.c:931)
+  __do_sys_io_uring_register (io_uring/register.c:1029)
+  do_syscall_64 (arch/x86/entry/syscall_64.c:63
+                 arch/x86/entry/syscall_64.c:94)
+  </TASK>
 
-> +		return -EEXIST;
->
->  	if (ctx->bpf_ops)
->  		return -EBUSY;
-> --
-> 2.43.0
+The same path is reachable through devmem dmabuf binding via
+netdev_nl_bind_rx_doit() -> net_devmem_bind_dmabuf_to_queue().
 
+Add a net_iov_init() helper that stamps ->owner, ->type and the
+->page_type sentinel, and use it from both the devmem and io_uring
+zcrx niov init loops.
+
+Fixes: db359fccf212 ("mm: introduce a new page type for page pool in page type")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+CC: asml.silence@gmail.com
+CC: axboe@kernel.dk
+CC: almasrymina@google.com
+CC: sdf@fomichev.me
+CC: hawk@kernel.org
+CC: akpm@linux-foundation.org
+CC: rppt@kernel.org
+CC: vbabka@kernel.org
+CC: io-uring@vger.kernel.org
+---
+ include/net/netmem.h | 15 +++++++++++++++
+ io_uring/zcrx.c      |  3 +--
+ net/core/devmem.c    |  3 +--
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index 507b74c9f52d..78fe51e5756b 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -127,6 +127,21 @@ static inline unsigned int net_iov_idx(const struct net_iov *niov)
+ 	return niov - net_iov_owner(niov)->niovs;
+ }
+ 
++/* Initialize a niov: stamp the owning area, the memory provider type,
++ * and the page_type "no type" sentinel expected by the page-type API
++ * (see PAGE_TYPE_OPS in <linux/page-flags.h>) so that
++ * page_pool_set_pp_info() can later call __SetPageNetpp() on a niov
++ * cast to struct page.
++ */
++static inline void net_iov_init(struct net_iov *niov,
++				struct net_iov_area *owner,
++				enum net_iov_type type)
++{
++	niov->owner = owner;
++	niov->type = type;
++	niov->page_type = UINT_MAX;
++}
++
+ /* netmem */
+ 
+ /**
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 7b93c87b8371..19837e0b5e91 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -495,10 +495,9 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 	for (i = 0; i < nr_iovs; i++) {
+ 		struct net_iov *niov = &area->nia.niovs[i];
+ 
+-		niov->owner = &area->nia;
++		net_iov_init(niov, &area->nia, NET_IOV_IOURING);
+ 		area->freelist[i] = i;
+ 		atomic_set(&area->user_refs[i], 0);
+-		niov->type = NET_IOV_IOURING;
+ 	}
+ 
+ 	if (ifq->dev) {
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index cde4c89bc146..468344739db2 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -297,8 +297,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+ 
+ 		for (i = 0; i < owner->area.num_niovs; i++) {
+ 			niov = &owner->area.niovs[i];
+-			niov->type = NET_IOV_DMABUF;
+-			niov->owner = &owner->area;
++			net_iov_init(niov, &owner->area, NET_IOV_DMABUF);
+ 			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
+ 						      net_devmem_get_dma_addr(niov));
+ 			if (direction == DMA_TO_DEVICE)
 -- 
-Gabriel Krisman Bertazi
+2.53.0
+
 

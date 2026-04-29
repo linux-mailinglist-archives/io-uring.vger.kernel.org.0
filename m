@@ -1,182 +1,286 @@
-Return-Path: <io-uring+bounces-13169-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13170-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +FBkEZ8F8WnhbwEAu9opvQ
-	(envelope-from <io-uring+bounces-13169-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 21:08:15 +0200
+	id MMvHFOPY8Wm3kgEAu9opvQ
+	(envelope-from <io-uring+bounces-13170-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2026 12:09:39 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B1B48B062
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 21:08:15 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A04929AE
+	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2026 12:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 676B0301DD6E
-	for <lists+io-uring@lfdr.de>; Tue, 28 Apr 2026 19:08:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 825E8301BEE7
+	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2026 10:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278BA24501D;
-	Tue, 28 Apr 2026 19:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7E33C3433;
+	Wed, 29 Apr 2026 10:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bz8Ohetp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRrYb6BQ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bz8Ohetp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRrYb6BQ"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="DFc2X5kN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eJLTeSR5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDA7254AFF
-	for <io-uring@vger.kernel.org>; Tue, 28 Apr 2026 19:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A24C2EA498
+	for <io-uring@vger.kernel.org>; Wed, 29 Apr 2026 10:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777403292; cv=none; b=JOFdZYBUa4Ij1Ia4m+qGZEyLt0kzJkhRuW3Si5jPIGkkc+Xtm+sdKnGMKAdnUebR8qPsLEVW1mcT0355DTFFtIvanhjhDahQKVbxcCgzc89FI801lDPkXreGW/ngEMPkc4VIvbq3V3nf1+YEBPTT/v9+b1Di0BiH03dpmgaWp50=
+	t=1777457360; cv=none; b=a/r0Jk1myPMDL+pBdr7J1HCaOv0vQsntm1Yg4W2S8afIYA4MhZKh/8Q1igPW59S8sjKeQ8kZjaeQ6OkclOGgwCAemWMRP2MrFWS+DEiD6xiK3q3AjeC+aWgQXrFEdHX7zE5O8mLhIExwNiBzzQpWX8kvQ6t0mG+Y99OQS8cMeAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777403292; c=relaxed/simple;
-	bh=vDYbisShlZu3xsHr9SJL/eEMPFxKthreJm7dw8zCnvE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GX25kkPn1ZCVxUBjNv57jhPn3/VPmgMUYqmMwoODHgOZNamO4W/Fg2vMQs/OUFHPyeJPBueaoBgCnazD46GOFJ4mcsAFDSuIdaZ9YZhizI1ckGhtNl3bMKGmCXhl2UOdG8WtuK6Tr42Pq+wRDfq1EhfZxyHLFOqY2kFM7r6YHyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bz8Ohetp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRrYb6BQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bz8Ohetp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRrYb6BQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 630EF6A852;
-	Tue, 28 Apr 2026 19:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777403283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kmdWqRhdkfCXWo+kNwp1GaHefjzoG8oGsnr/hJcXbA=;
-	b=bz8OhetpRpDIMdi/8tD1OdVp7mhKn1jtfx+jQNyqLDRhJFxqduVOxGuZfpMt4lmSD6jO8B
-	1yjFBR73YDgQgKNG/q65gg933ph1dPKooLGgdNmiNKiHq0t0Lt4s5QXpRU510ECVMK4ZtQ
-	iXbfm6D59HyjoIlHmERTRQZGK6Zlp1Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777403283;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kmdWqRhdkfCXWo+kNwp1GaHefjzoG8oGsnr/hJcXbA=;
-	b=dRrYb6BQuYqH75RJLnfstG/H9O3INPP1psiEuV59qU2Fqbky0CKpZ3lSVaXu2ATJTb2k1J
-	kfrvailCKCFlKBDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bz8Ohetp;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dRrYb6BQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777403283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kmdWqRhdkfCXWo+kNwp1GaHefjzoG8oGsnr/hJcXbA=;
-	b=bz8OhetpRpDIMdi/8tD1OdVp7mhKn1jtfx+jQNyqLDRhJFxqduVOxGuZfpMt4lmSD6jO8B
-	1yjFBR73YDgQgKNG/q65gg933ph1dPKooLGgdNmiNKiHq0t0Lt4s5QXpRU510ECVMK4ZtQ
-	iXbfm6D59HyjoIlHmERTRQZGK6Zlp1Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777403283;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kmdWqRhdkfCXWo+kNwp1GaHefjzoG8oGsnr/hJcXbA=;
-	b=dRrYb6BQuYqH75RJLnfstG/H9O3INPP1psiEuV59qU2Fqbky0CKpZ3lSVaXu2ATJTb2k1J
-	kfrvailCKCFlKBDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E39C593B0;
-	Tue, 28 Apr 2026 19:08:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wNbRMZIF8WkGQAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 28 Apr 2026 19:08:02 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,  Martin Michaelis <code@mgjm.de>,
-  stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/kbuf: support min length left for
- incremental buffers
-In-Reply-To: <7645db80-8a8a-4ed6-9a3a-f2406cf93322@kernel.dk> (Jens Axboe's
-	message of "Tue, 28 Apr 2026 12:02:34 -0600")
-References: <20260428154557.2150818-1-axboe@kernel.dk>
-	<20260428154557.2150818-3-axboe@kernel.dk>
-	<87ik9bj7jt.fsf@mailhost.krisman.be>
-	<7645db80-8a8a-4ed6-9a3a-f2406cf93322@kernel.dk>
-Date: Tue, 28 Apr 2026 15:08:01 -0400
-Message-ID: <877bpqkini.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1777457360; c=relaxed/simple;
+	bh=Wr0Icnd+V80tVJWCWV2TvuszEf+GVgfpQ5K6c7Sys7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=noNAgx0jW6NRzE/jYgsACUDfWxYl0mxSSP/b5AalMRJihDdc93bIvFrQjfP9ta/vGXAbbbD6f7J1hjrBr8Cva+CnZkgFXYnN7zM/v/Cn/BXZJ8OdZPO35c2KjjXZ8cN85e/gYWQSaTG7TPmpke7D7SZUqxTkjQDcxnEasPfW5EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=DFc2X5kN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eJLTeSR5; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6529BEC0187;
+	Wed, 29 Apr 2026 06:09:15 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 29 Apr 2026 06:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1777457355;
+	 x=1777543755; bh=jChTQ1WFfHi+FUb6QlfSmPhLflXWkXU6xxr/jnnNJjk=; b=
+	DFc2X5kNuzluWtpgz2TyV9ydLdIS9EJozwxxQdCysxjEQuoE5f5OxVjVw24/4r5U
+	DNAnNz8K+sZm/hH+y4vjnsSD+QT4XHTx5+4YY0qnuAPSFurdGEyb44PFFDLQqdZI
+	z5kIVEo1EKQMUPkjeuk/lJ2tZlaCpxUw3k3A1KY0Sd9WHpxuIgIf2J2A5hLQiBnC
+	cihkhbsn2MAV7AWvFkWbZ8Ez59gniiAFAO7L4jBNQbHSAYdOwaaw73Mqce7Z/KEN
+	4xkpNKVp25+SCoV2DcLEIXAWwW0ah/viw/KYuMIDwpK/sbR/AVHny+fksQIqTPzs
+	g+j2BJGIDnH/F4Xb/GYOFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1777457355; x=
+	1777543755; bh=jChTQ1WFfHi+FUb6QlfSmPhLflXWkXU6xxr/jnnNJjk=; b=e
+	JLTeSR5VBEnsz4QXNUqMljDrb8G9HMxEM7Aluhc8sYVLcJeUSSgMT4EGmf2dTGs5
+	qL2AdsLcZENGresiVaYxdJv9QRtFC3P5xpbMtXMBgG/VNDgZpKzxkQVjZwh4YNSk
+	7qkYljfmy4onWKdvjzmolkt0iWYRHIrm9zkJ7x4QMUD7go/4JMKMqckMBfj/WWO/
+	BIRi/EQ68WcsTOKT8/u1U4FYkwGCXHcxCzEz+/xpMJHe2TlYMuTJMe/gl3dglR/5
+	gRPaAKTN0ySXqMs5ixkHYpGWrM5+bqZLtKbqMG2WNwd2pGx0sW3T46lXikudwj/C
+	Rv1P4e536ameBtitlcUCA==
+X-ME-Sender: <xms:ytjxaQElCR260lWCYS47xyUh3MBIbcDSQYSjY00p3RBDpQ6Yi-ufow>
+    <xme:ytjxaTXF-AMIho-2m48VaLBVSWSdApBN4oVXl47HQsyh59EQn3tC-VFReOC56BaPZ
+    MtTrTT5J589v6-LGTcAiG-yZth_NnMaK_Z1Dq2WhjQ4ciPGk3nj>
+X-ME-Received: <xmr:ytjxaQwkNB2B_htoLPLJlLzIza5RTnoJH5PvGMThWNW4Op1sNMb1-_6jWpRM-8zHOSofMzE-jNG6qOyVBVWuoyO-WM8DJQuQXpvfkYTmZCZakM4Zig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdekgeduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnheptdeuvdeuudeltddukefhueeludduieejvdevveevteduvdefuedvkeffjeel
+    ueeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhm
+    pdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjoh
+    grnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhnghdrlhgv
+    ihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfhhushgvqdguvghvvghlsehlihhsth
+    hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtph
+    htthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehm
+    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepthhomhdrlhgvihhmihhngh
+    esghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:ytjxaQQfXsuTm3bI7ERGbR-UVoypP_9Kor59YDmWyhasP12BRYSYnQ>
+    <xmx:ytjxaUgdZLmoB8JS1RytEtJYxB_EkHIQuotbXTsa6gfbSkbufEsMmA>
+    <xmx:ytjxafkHA4Mrk7KckYjyN1-Wt9bqaGH3es2szVaA1qbRtf4VnrU0tA>
+    <xmx:ytjxafvvHVA_pmKCHvsF4jMg2RUmeM8z1vp7okRXM-SvETuo5IMSug>
+    <xmx:y9jxaZK4Ux1eqknzbt9EAXD2W8l0Ya0YzU0PNAHPqjbFOclnBxzFQMIW>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Apr 2026 06:09:13 -0400 (EDT)
+Message-ID: <b2037b8f-466c-47d4-b74b-fe5b8f38fbc4@bsbernd.com>
+Date: Wed, 29 Apr 2026 12:09:12 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 29B1B48B062
+User-Agent: Mozilla Thunderbird
+Subject: Re: fuse/io-uring: Proposal to support pBuf in additon to kBuf
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Ming Lei <ming.lei@redhat.com>, fuse-devel@lists.linux.dev,
+ io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ "Lei, Ming" <tom.leiming@gmail.com>
+References: <18936160-308a-4817-a295-54eef43707a3@niova.io>
+ <CAFj5m9LeM4S82QEsRQ0uQiXj1eWCFAW3v2fLTxUj1YM7UO-V9g@mail.gmail.com>
+ <fcad39e2-37b5-46a9-a280-2315e0397985@niova.io>
+ <CAJnrk1Yw3=z7W_my4pLG6avBeDZkUp3j1LZk-RVpGv2vAsw-ZA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: fr
+In-Reply-To: <CAJnrk1Yw3=z7W_my4pLG6avBeDZkUp3j1LZk-RVpGv2vAsw-ZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 5F5A04929AE
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13169-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[redhat.com,lists.linux.dev,vger.kernel.org,kernel.dk,gmail.com,szeredi.hu];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13170-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[6];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TAGGED_RCPT(0.00)[io-uring];
 	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,suse.de:dkim,suse.de:email]
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,bsbernd.com:dkim,bsbernd.com:mid]
 
-Jens Axboe <axboe@kernel.dk> writes:
+Hi Joanne,
 
->> Honest question, isn't this a property of the specific operation and/or
->> fd being operated, instead of the buffer_reg?
->
-> It kind of is, in that some users may not care. But it's not currently
-> possible to pass this in on a per-op basis, and while I did hack that
-> up initially, it's almost impossible as you end up with layering
-> violations. In practice, this is really mostly a recvmsg multishot
-> issue, because we need to store the headers. Hence the solution to
-> stuff it in the io_uring_buf_reg instead, and make it a fixed property
-> of the buffer group. In practice, you may even want a larger min_left
-> than what the recvmsg requires, as you don't want a tiny truncated
-> transfer at the end, regardless of what type of recv or read operation
-> this is. Hence it works generically as well.
->
-> Also see the linked GH issue, that's where most of the discussion
-> around this have happened already.
->
->>> -		if (buf_len || !this_len) {
->>> +		if (buf_len > bl->min_left_sub_one || !this_len) {
->> 
->> Cosmetic, but perhaps store min_left_sub_one instead of min_left itself? the
->> buf_len must be >= min_left, and that is easier to read.  (buf_len &&
->> buf_len >= min_left || !this_len)
->
-> Also see GH issue.
+sorry my terribly late reply, takes about 30 min to reply for these
+complex discussions and finding that time is currently a bit hard.
 
-Ack. Thanks.  Feel free to add:
+On 4/17/26 23:02, Joanne Koong wrote:
+> On Thu, Apr 16, 2026 at 7:46 AM Bernd Schubert <bernd@niova.io> wrote:
+>>
+>> Hi Ming,
+>>
+>> On 4/16/26 15:49, Ming Lei wrote:
+>>> Hi Bernd,
+>>>
+>>> On Tue, Apr 14, 2026 at 5:33 AM Bernd Schubert <bernd@niova.io> wrote:
+>>>>
+>>>> And my current primary goal is to let ublk to support multiple buffer
+>>>> sizes - ublk would also need to get support for kBuf/pBuf and I'm
+>>>
+>>> Ublk server is just one liburing application, and it supports all generic
+>>> io_uring buffer types, so kbuf/pbuf should be fine for your ublk server
+>>> in theory.
+>>>
+>>> It really depends on how your ublk server is implemented.
+>>>
+>>> Maybe you can share your motivation first before discussing kbuf/pbuf support.
+>>> If it is for DMA,  there are other candidates too, such as hugepage,
+>>> recent added
+>>> UBLK_U_CMD_REG_BUF, ...
+>> Joanne had actually removed kBuf and switched to pBuf alone and that
+>> simiplifies things a bit.
+> 
+> Hi Bernd,
+> 
+>>
+>> Motivation is to reduce memory usage. Let's say you need 4 IOs of 1MB to
+>> saturate streaming bandwidth, but still want to get smaller IOs through,
+>> for these smaller IOs you don't want to assign the 1MB buffer for each
+>> queue entry / tag.
+> 
+> Have you considered having separate rings take separate payload sizes
+> instead of having each ring support multiple different payload sizes?
+> I think this gives a few non-trivial benefits over per-ring
+> multi-buffer-size support:
+> 
+> * less head-of-line blocking - with a single ring, the large io
+> requests can block smaller metadata requests until the io completes,
+> since fuse processes cqes sequentially from a single ring. Separate
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+I think blocking is a pure libfuse implementation issue. All
+example/passthrough* file sytems take the buffers and write it out in
+blocking mode. However, they could use non-blocking IO like io-uring
+themselves and act on completion. Processing what fuse-client/kernel
+provides would then be rather fast. Same applies to network IO, which is
+implementation wise probably already async, except that we do not have
+an example yet. I'm currently creating a small benchtool for my main
+work to test different io-uring options (mostly network related) - I can
+use that as template later on a libfuse example.
 
+I.e. my argument here is that we should not make the kernel more
+complex, just because libfuse is not ready yet.
 
--- 
-Gabriel Krisman Bertazi
+As soon as the sync FUSE_INIT series is merged into libfuse (and
+obviosuly also need to take care of Darrick series) I will start to work
+on a reactor/coroutine libfuse interface - the daemon is then the ring
+owner - daemon can set up the ring as it wants, use or for backend IO, etc.
+
+> rings would allow smaller requests to proceed independently of io
+> * makes kernel-side request dispatching more efficient + simpler  - if
+> for example there's 10 different rings and each of them supports 4
+> categories of buffer sizes, imo it gets non-trivially complicated to
+> find an available ring that supports the payload size that needs to be
+> sent, if there's lots of parallel requests going on. In the worst
+> case, we would have to check each of the 10 rings' various categories
+> of buffer sizes to see if there's a slot that's big enough.
+
+I don't get that - let's say we have several pBuf rings - it could
+always check the next (rouned up) size? One could have an option to
+search for available slots in larger pBufs, but I'm not sure if that
+would be wanted. Let's say we would have two pBuf rings, 4K and 1M. The
+4k pBufs then could be use 1MB memory - place for 128 small requests -
+why should small requests then switch to the next larger buffer pool, if
+their own pool is exhausted? In my opinion large pools should be
+reserved for large requests.
+
+> * simpler kernel-side buffer management - keeping track of the payload
+> buffers in the ring becomes a lot simpler, since there's just one
+> buffer size the ring supports
+
+Personally I don't think it makes a difference. Instead of having
+multiple pBuf rings you now have to deal with multiple IO size io-uring
+rings. Maybe I mis-understand your itend, though.
+
+> * more dynamic / deterministic scalability - I think you mentioned on
+> another thread you were interested in dynamically adding ents to
+> rings. Having separate rings for separate payload sizes would make
+> independently scaling queues based on workload characteristics a lot
+> easier. for example if there were 10 rings that each support 4
+> different buffer sizes, one question I would have is which ring would
+> the extra entry be added to? It kind of seems like at request dispatch
+> time, it would have to do that non-trivial ent searching logic across
+> all rings mentioned earlier to find that extra ent?
+
+And entry would always go into its own fuse-io-uring queue. Without pBuf
+I would have added these entries to a size sorted ent_avail_queue[]
+array, with pBuf the entry doesn't have a payload itself anymore, but
+only the pBuf rings have.
+
+Here I had suggested to convert the arg size to an order and then to do
+an O(1) lookup for the right buf ring
+
+https://lore.kernel.org/r/ff596299-38c1-4c5a-8f1d-14931dd84ef0@bsbernd.com
+
+    struct fuse_bufring {
+...
+        /* lookup: order (req size) pool */
+        struct fuse_bufring_pool *order_map[FUSE_URING_NR_ORDERS];
+}
+
+struct fuse_bufring_pool *pool = order_map[get_order(fuse_len_args())];
+
+Without pBuf it would be the same, except that ring entries would have
+their payload size and would be sorted by payload order size into their
+ent_avail_queue[].
+
+> 
+> These are just my 2 cents, but it kind of seems t o me that having
+> separate rings take separate payload sizes could be more scalable for
+> your use case?
+
+I don't think so - more rings just create more syscall overhead from my
+point of view. And more rings are harder to handle with coroutines.
+
+Thanks,
+Bernd
 

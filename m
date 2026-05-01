@@ -1,179 +1,141 @@
-Return-Path: <io-uring+bounces-13199-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13200-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yCsJF90u9WknJQIAu9opvQ
-	(envelope-from <io-uring+bounces-13199-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:53:17 +0200
+	id adgoMIMv9WlaJQIAu9opvQ
+	(envelope-from <io-uring+bounces-13200-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:56:03 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66144B01CA
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:53:16 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB914B01D6
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 966A1301BA4D
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 22:53:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0AEF8300F1B7
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 22:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FA436E483;
-	Fri,  1 May 2026 22:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C72837C924;
+	Fri,  1 May 2026 22:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s4HB6Avd"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="NBBKfG0O"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DD837CD2B
-	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 22:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870F837C0F3
+	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 22:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777675980; cv=none; b=hrypAhmMY+hd9U1kKFbfh+JCiS1UGTkqRYC2zSpw5U40ayNJHrmI6XYKdqpg0PY4Er74w5ItcOqD9U78n5dTRksxiQXXTjJDW66IucOX1JFQbEzF8Y1lKEuWDaNp+el/y7S+3FrCWKy4cLJe5XBzQzeDkDTwFXm7GPlbTE2W0y4=
+	t=1777676158; cv=none; b=TqaITRMC8k8kxDGN0+RK0UH9YcnR3KQP11cdf1gcEP3sDO+zud550ngKsbKuys4tUNkvTCvgDB9gpV0ZFDYCS0A4PIM929AUvb1BmKGH7NY5vg75JBtu/phQhOubw79eYnDQKyzRUPl+KYlCNGjN8s+tDbRSJpF3nP3nF3uaKZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777675980; c=relaxed/simple;
-	bh=3izMdYi0Oj1T72GfhQd7zAMqTtdcIaItfGc3eM1Tt0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ik/4++LMFP/Srqzf9sz9gLvGI5OlhWpIblavPPvF65udR4WRVke23zzJy4I3CNbk/CdiLahmlU4kcbsNJsv/eq3qoV0LMGKx5Ax/phw3aqaxcLHeKkYmBN16vEWu1bwV/CUKrHMXkl/yXO+mJoc9KosECP67OdqvTu9A76tBtwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s4HB6Avd; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488ab2db91aso27133715e9.3
-        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 15:52:57 -0700 (PDT)
+	s=arc-20240116; t=1777676158; c=relaxed/simple;
+	bh=Y5VZ8P13n27vfxj4mzevVdNouWSoeA4ah4EGtop6iVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N27ROLJTQFfnRilo2n2t7NJze9QmoLsb1GqDUpLYSb50X/W7XwVJ2RVXbP01cdALtlwl8TZY6xB/gmtUGBTEdVUTIi4V2TDlNIBWvGVhpLNVf1UkvwpLyaW2YgKzdM7xJfzrznFnGuabKEs1tqrjZuXkQO26F5r8Kl+KLeGFrz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=NBBKfG0O; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-479ef2b78f3so1759452b6e.2
+        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 15:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777675976; x=1778280776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxJdrCJuTrOiQKeCXfwytRR+Gy/EZWJBx9r5t8TJi68=;
-        b=s4HB6AvdtsIEZrWYAx8KZuGFYSqaiTHI4+vYSo6kHESCIuIOhAG8fj0jKA2lcd5AYS
-         gZkHbfvCb0fAa+AAR7AENx762y3YdIFapCCwbUu8/76EI1cSvKNMto6lYgWKZWxTjai+
-         jTar6zie2vYT54VFOwDIZSOdbxg/8aF1Bj0DoP6362lGT24fvgeX7pcxAjx3esi2jv/O
-         1g+c7sD797tZY3kV3G3JGRpnpv5O88oDUt7ITuCEtbVzHuFQbW2ro/wqA9fUEwe1fqq1
-         2cPcdXI/qbXpuxF1dZyG6IHGGq2+Qv+r8DKfeHQROmSHxcUCWleED3yRVPClGT4xmT6m
-         y5oQ==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777676155; x=1778280955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oXPqeAPzzXvPq2f4I9I5gjHJ+abRxZrFUtm0T7puCUE=;
+        b=NBBKfG0ONJ6fAVx5csFbMiybL89UZ1XxyplZpDCFnLKtczIG2f4c0NiwtzE0lKInmo
+         cvz09flN8cFKe/CthBN/LHII6JxopHgzZ3tPdUhffF90+VGX8/RiZa6ewb3JGE87fVz/
+         Beuaz+tLHxRFNNTHikrPngiVMYfQzmcYLVWG9MGE2zuA7BncmWw35tiF28f22MHQjqTJ
+         HZHBP9VxwUtnM4fNvS8LbOeDK40KUhOtbgjaNTCS/fmEaxHaqYD0x46qMPJONVgaOJc9
+         T4mdQfvAMzoF5xX4v4JUet8O4Ucb5pEzs8JS7wvgIwRUIzFgHI40ZeDmXRkKAVM7cWpX
+         1QwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777675976; x=1778280776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xxJdrCJuTrOiQKeCXfwytRR+Gy/EZWJBx9r5t8TJi68=;
-        b=XCEM4xXJxJuWbSj31CPwE/+n3qO8giSr49+zG068wyugBAsiYs9eywbCXunxlD+Y7+
-         l/QZuD1/qXFI0BU63wn4fK/P5/LsEewRwWkdX+8kkNWmAKN+RjsHCU4K6ElvWGHY5PID
-         8z8aHh4CJ3C6N4uwXw8Va29VmqvuH49H9LAkZxkalCQZrcNthYQ8dwXMYw9mRqky3QsH
-         6xTvkJLY694wbt+1DB52nRsZuAYtxZ9316nZTWCEwJNIQlZ5ct7W9qhJ0GlIJI55akeY
-         3JZQcZwbsCkPoubv2+qgOTpHV3y4I1/BqS54KcmzABlTkxRRZraStQgCGudTvUvSC1q/
-         Q1LA==
-X-Forwarded-Encrypted: i=1; AFNElJ8nlHtmVh8xPURpoc+cLtqSneFMEjodujvcMEDzIzsaow3PQumDzFBdcB2DDasBIc08qUqwwtSRIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFmxfW2meOzNqdHihWXxqC2aDfL3STyF0s7gpxVDmtrIvYHsZz
-	x2b0JYcReBJlhzHTwS4UBwjKJ7udk6n1Q5YQ+X7vqqklGEgXZ2/DSqQkMQhOymqW
-X-Gm-Gg: AeBDietKSlI3CHdmmvMftH8UJVTxZBud87zLyUlVqIBvpJPPNP6JyJMptXqTexMPK7y
-	FKcgeBmwk7KfiKQgzj7oAtyIXJGrN1hy8VDz5DBSD7SZnDPZs1AP8OJ+fcwN5OcYZDygpoX3Zr1
-	+kA87rAGTNLDoh0UliIHdnmuCw6C0oYDy77sh98Xe0B+w7lmX7R96JJOLNeOEaHLEN4e2sm9ga+
-	ZpXOcf5BxeuMlBbKijsaS8NcMxZTRRALDOxDVgxUyXqm10sql/hDdvtSdHwX1xF0gfGfUqWsg5p
-	rTjfMLFUWJZM84sh9fzKpyThWEAaemdAxSATqjQsQlW9UMGoSDtGAiixIqeT0yXgiLB3JrV/qzs
-	EiLGP2QXab3hU5qWxYgPAHJFLEUkvR5kvFZkFHEfZiKbSKbAEeyvID6loFgXnZyC/Sh3L2lEgZc
-	gifY39eOZ2INqXN6q5Z1YKOAA1GZeSpEYZJLrVUZAn4neNYr9RHmlpIZB+T2ccvBPVXMigYQ27Y
-	waTCZ/VzxaCXIpa8Z5m0pS19/dpnUDtR39x
-X-Received: by 2002:a05:600c:a402:b0:486:fba7:b150 with SMTP id 5b1f17b1804b1-48a9865f7c3mr10441055e9.15.1777675976196;
-        Fri, 01 May 2026 15:52:56 -0700 (PDT)
-Received: from localhost.localdomain ([77.124.36.154])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8fe93266sm23857045e9.3.2026.05.01.15.52.55
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 01 May 2026 15:52:55 -0700 (PDT)
-From: Kai Aizen <kai.aizen.dev@gmail.com>
-To: stable@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	axboe@kernel.dk,
-	io-uring@vger.kernel.org
-Subject: [PATCH stable] io_uring/poll: ensure EPOLL_ONESHOT is propagated for EPOLL_URING_WAKE
-Date: Sat,  2 May 2026 01:51:57 +0300
-Message-ID: <20260501225250.90152-4-kai.aizen.dev@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
-References: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
+        d=1e100.net; s=20251104; t=1777676155; x=1778280955;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oXPqeAPzzXvPq2f4I9I5gjHJ+abRxZrFUtm0T7puCUE=;
+        b=P3RFR8Fki5ZWUqvYyyanAv0ENNnlUwcIAB6tlMU/kpLnJ9A7eTzaKvLFrwcgYYNJVm
+         Azm3aaTZ3e3+vMeEaD2oOxZHbQ71xKhxdHRGWLXmUYr72sFZ78bpEmKZb5yIqFXkK5Ja
+         48WT/aztCgRx32WChjcc8r6gUbM1HF13BmgE61rvPpt5pVTK0xLY8uZ/Z3GAUPz9/gCE
+         uo6xAJgrv1AOSwqxg5XvbUDyv2RoNOdcqFrJJud4rVL/iQ1xL1Dnitmls9UnqjwWDGi2
+         8o/gcwouR2ZgnS08V+7HQOvzaxfv0avgH5Yv5k5dUnss5aSCknThqrYw2C8rdZQu1Gmq
+         /p3A==
+X-Forwarded-Encrypted: i=1; AFNElJ+3p7hNDFfbynVi0fRW28Xy65dQdWcXMX5TispTlXgMYY7F+yN+7kc7G/qz+vmJjdLUZ5QGcJu5ow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymgAEsrat4n9LlXkEsBqv7nn/ylsnUaVdi2Zto5fHKueXX4CHj
+	UGde4wyPhrmjoayObXO7p72WQpime5hehf8bTlYsFzTS+wbvY8ro18cIVRhszpRZosE=
+X-Gm-Gg: AeBDietjc5iEuV4sLBDyRVhBQELPDG/I6XtAgzLCKmsr30ZmKh9AToz+BTWG1ixYN1y
+	xS+uooaSWXiCB4uNJT/wP8JKt88njbFWe1YsDxf07lYeTrYnVkqhvfulb+iGiR515kdWCuhlhx3
+	YfIwrwF2obmxIzBh4wW6m0UpR2+OZCKJe9RhJIdL/0P7wl+n3T4gxGn5tphzo5G7WIzQIZjwLwQ
+	AGQSM+0hYIDoogy9yyfiXfaVDt6B/qYgIsDq84SPH1AuSHC0LO2ypntjsJLhY9DMLun1YsFL9QY
+	SS3lPoWyHqFhnnJDINcgzHbqTguHfJdJ1MdmxjkcZk5ozWGNEclQf5qogD2SRt1fxx/7rKmQV5g
+	gFAz3rspn6nviOpapbWBfd540cPfqKTvh1UdHfnfhr3bYqsqYWTpq9ssin5R9z+tU72zobiBpee
+	t9u18KqiQyzKg3nY7tzX9xgMaFsmnIHNXSz4RCxVjV2HlMP5i4nS5AD0YUnvd2K1rSbhhOrTlBX
+	boUubnzLnFujznIYRc0
+X-Received: by 2002:a05:6808:2217:b0:479:fa21:adfe with SMTP id 5614622812f47-47c88fcc194mr879368b6e.6.1777676155577;
+        Fri, 01 May 2026 15:55:55 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7deca7a5e75sm2900431a34.2.2026.05.01.15.55.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 May 2026 15:55:55 -0700 (PDT)
+Message-ID: <3fcf1bf1-23fb-4e01-ac3d-6ec6fb86da08@kernel.dk>
+Date: Fri, 1 May 2026 16:55:54 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12.y] io_uring/poll: fix multishot recv missing EOF on
+ wakeup race
+To: Kai Aizen <kai.aizen.dev@gmail.com>, stable@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, io-uring@vger.kernel.org
+References: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B66144B01CA
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 2DB914B01D6
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13199-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13200-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kaiaizendev@gmail.com,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_NONE(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mileniumsec.com:email]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20251104.gappssmtp.com:dkim]
 
-From: Jens Axboe <axboe@kernel.dk>
+First of all, I'm fine backporting these. But:
 
-[ Upstream commit 1967f0b1cafdde37aa9e08e6021c14bcc484b7a5 ]
+> CVE: CVE-2026-23473
 
-Commit aacf2f9f382c ("io_uring: fix req->apoll_events") addressed
-synchronization issues between poll->events and req->apoll_events.
-However, a subsequent commit failed to maintain this consistency in the
-EPOLL_URING_WAKE code path.
+How on earth is this a CVE?! That's bogus. Yes it violates application
+expectations, it'll wait on a CQE it won't get, potentially. But this is
+the only side effect. That is NOT a CVE. Greg, please retract that.
 
-The patch ensures that when EPOLLONESHOT is set during regular
-EPOLL_URING_WAKE handling, it's applied to both poll->events and
-req->apoll_events. This prevents a condition where "IORING_CQE_F_MORE
-is set in the previous CQE, while no more CQEs will be generated for
-this request."
-
-Backport notes:
-  This patch applies cleanly and identically to linux-6.18.y,
-  linux-6.12.y, linux-6.6.y, and linux-6.1.y.  The io_poll_wake()
-  EPOLL_URING_WAKE branch is byte-identical to the upstream pre-patch
-  state across all four trees.
-
-Cc: stable@vger.kernel.org # 6.1+
-Link: https://lore.kernel.org/io-uring/CAM0zi7yQzF3eKncgHo4iVM5yFLAjsiob_ucqyWKs=hyd_GqiMg@mail.gmail.com/
-Reported-by: Azizcan Daştan <azizcan.d@mileniumsec.com>
-Fixes: 4464853277d0 ("io_uring: pass in EPOLL_URING_WAKE for eventfd signaling and wakeups")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[backport for linux-6.18.y / 6.12.y / 6.6.y / 6.1.y, verified 2026-05-01]
----
- io_uring/poll.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/io_uring/poll.c b/io_uring/poll.c
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -417,8 +417,10 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 		 * disable multishot as there is a circular dependency between
- 		 * CQ posting and triggering the event.
- 		 */
--		if (mask & EPOLL_URING_WAKE)
-+		if (mask & EPOLL_URING_WAKE) {
- 			poll->events |= EPOLLONESHOT;
-+			req->apoll_events |= EPOLLONESHOT;
-+		}
-
- 		/* optional, saves extra locking for removal in tw handler */
- 		if (mask && poll->events & EPOLLONESHOT) {
---
-2.43.0
-
+-- 
+Jens Axboe
 

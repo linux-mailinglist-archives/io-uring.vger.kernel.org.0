@@ -1,89 +1,93 @@
-Return-Path: <io-uring+bounces-13196-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13197-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EMz+Gsou9WknJQIAu9opvQ
-	(envelope-from <io-uring+bounces-13196-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:52:58 +0200
+	id WIvCIs4u9WknJQIAu9opvQ
+	(envelope-from <io-uring+bounces-13197-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:53:02 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17924B0197
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D464B01A5
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7078130136A1
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 22:52:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6CCD9301C171
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 22:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D1637C917;
-	Fri,  1 May 2026 22:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492CF37CD5F;
+	Fri,  1 May 2026 22:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYH5EwSY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEahbwYm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889B836D9F1
-	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 22:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F25E378839
+	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 22:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777675975; cv=none; b=n0NGCwaud6dURAANxyGlUOfmTJ7jLhFtQXa7Hq19PmREwoFdVyEtBgP+fmu4KzPw4/B6rp+uGLyWnb86WAC7MZsk20CriS/fUijpxxq9/NGKahBA5OJ1zFHSmFXeveZPsFq+FhaSROJEgXd9B9/VBhexllaWeMUIrsksQwKJgVA=
+	t=1777675977; cv=none; b=cneKe2a+exp+hBEcoERKb3t2xX3BBrGzvp5jnNb7/LHml13S5cVfdUOMPl96BNlAql+imuF4CB3wqzd7AverePvDhnscXG5alSLGmk5SvF/CAY8rZKiInaYPa9uPsXEsVQDhpm35zbFGZG4hJciI7L17ssflaidQcW3q/Vk59dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777675975; c=relaxed/simple;
-	bh=AtjoS2qKI19MPpcUWlsrCorY2Y+IWvNMfP7d5WRBn4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XPa8BSE2sWgwkYjs7Tg4+t0yTU5WEqDNlzKu7ZdYtfP/n6iy7VNbHteDu3cdjNVzaba+1JRObHtjCJ9JudyvIn9ynbxaiSRxQ+DQVvfiMj+Vcz1psv9ueIu//5ewiXDDrkuCHMNyxJ93bf55vz3FGQ833tKhQOo7AdLo/wV8izo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYH5EwSY; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1777675977; c=relaxed/simple;
+	bh=KbPF2RtAp5GA4ixDDuFKfIoCxIwrgo/0CFOYS2TseVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OuNa5zG+wXzWTbgPHs/t9yyX5TczREk+vv0ai83/mUT8xdSLL9WJilzL8UphX55/J3ptheARrVm689MJTFMhWyqyPz94h4RLbDyVaxFrIv7BiWPN34sWvIMVmV7w3dkQhuywF8CZlxS8PgAHGJ/ou2gGevca7b/Lk/2CQz+PZ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEahbwYm; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4852a9c6309so18858305e9.0
-        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 15:52:54 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488ba840146so18943725e9.1
+        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 15:52:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777675973; x=1778280773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MlfeI53MSknvI/fVUnhA0O+LrnOrRDS6h0z2W5o3BAg=;
-        b=WYH5EwSYAlaJaDYnjaQDU8nmzYuKUH05D98toVyKIA4DfWi0FWH/X+1rUNly2Vw4Z/
-         i2K4lFK+rZ5/NbT03k4SSakJqoJEfs2cyfIKiYvKrkId/cgQfqM4eYgQNwP5pcro2S5S
-         vZFjtAFdSzkqcPIPgKB7zHq8zTztEuUby4ayGQvzTIOXKfkyManJV9wYAl5NnaC5ZITg
-         gnOw0iQfRBVUkSQiNL3FSrnEbLri+7ksc9VfqWTYsuGmNkIbnRCG5w3W67Kg9roJB/G/
-         iun6Dif88fHZXAw6Fz4ajJD+KfHDqkOU4Bozz8MpoPrpLofpT7zD6E2ohSbw7n5eGK6F
-         Q4Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777675973; x=1778280773;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1777675974; x=1778280774; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MlfeI53MSknvI/fVUnhA0O+LrnOrRDS6h0z2W5o3BAg=;
-        b=Ta2pzoQR1XnKwpKqS4x+GaFSRdV1g98nhbp/RXSL99OUp9PCUOw2iqUTUvqod8DjI9
-         aHxyCUTnMaQuSvYVGPYbF3kvvwzwVx9F3kwcCTpl9sQE93UFI9nTOcskHFq/BNzOhomQ
-         EjvsopsGZUMf/6Hmn5EmiOTcxPa90cIlccDFeX/IZiOb6i7qc2Zj934kG1K9SMBm/bTD
-         Rf4Y/9xsxJSCn3MnrdQxxK+PpCpk+xViVmx+X2GuaMMYxCvPjPGyr8p4cNfHqvhUfl95
-         Ol7AqQxNEbXp/BpidRAGDTFhsFeH1HtAEYUTNt5k6Hc/CZUCZ3un/nXGBVE+qgxfPVKs
-         2DZg==
-X-Forwarded-Encrypted: i=1; AFNElJ9Oc2UhuDPXmu4LIb+vWqlGEsbdrktKY/FW58CJWS1CEzK6Mx18x8mMP6MQpTHdlueFaJXKu3wflQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqHAnE2c++1YXjo1MuwZlbOr1zFRIoJxaraktVW/IGqyb/9PAt
-	FZit/VLhCE4CddqpRk5fz8NgEr9Dn93/qBPpO2+xg7wR9lVQL1vU4WM2
-X-Gm-Gg: AeBDies6j17/3b0rfzq8DZG6VS39fdQKkjTtKA99RSCrMhxTziPl9oImadBgR9EE0Mj
-	i4Mv8cAJ7ukWFRrXFqjM+bZOMNzmCnSOsPDvFPKNCKn5uvwcx7jIX1d0mtMARKqAkcWF6HgKAYE
-	H6FxB7YDkn9PGVRL/7oer5WI21uFHfg4wB+jiSrnQdJAG22vKTTe8JOFC+4YlS0iSqfpqfpucbB
-	+TxeHdYDBSUMuvn9D2DgjomGffVf6AUkOADhWBB9W9RAYF6lc2sRRQuR6iM3XPXT00iCYlLd84T
-	Ou8g7njROAb09n2O1K34zg7iD/yzcKlpoA7jtYlr/M6G+EhY0dxRPVnOJEYdsyo9mOHbMgiZB2I
-	NwHb4WlTh+V86/Wk/kKTFCHB01Ypy5VWeWSrHCszvzOSIZDvz5ycHBIfrbO1aKQt0Z26JRz6FZJ
-	co5fow8XCerd35JJX/hsnqeLDS2qj4KyymOGI1y2Pp+msO47HEf0UI+HKB6un8M9eWKENmWycKK
-	UXfJsckw9kkRU6pl4in+rNE7A==
-X-Received: by 2002:a05:600c:4e4d:b0:488:af7f:7707 with SMTP id 5b1f17b1804b1-48a98663189mr15919775e9.18.1777675972957;
-        Fri, 01 May 2026 15:52:52 -0700 (PDT)
+        bh=u1w8ThLqZd25cwWjWBnDyIz33tp+IZal5hIPijMDDLM=;
+        b=NEahbwYmHJxrj7a3G42T0LonHxglkL3Ifu6aShWdcOd+5uHT05oajQk154FGs9GHA6
+         cH0Rkivwaz+wnenuuCCYti3rpBeEYy6MphelDSR3UNt7GQZaIofmxZzCaSXmOIPkS5bU
+         18H2mPWsen1GZGGfUAsFGzUwL+xn/bSctd3PQWfanw0nVZF95XwTQNICG94YTj5o+QoB
+         UR1BQRwn9coAbIgneYQ2xUs0qaIpn1OaGabj3Qt8LMfLIoayrtRSoPhRJqWW1veiimrO
+         /ejTMFKpD0B/tA22+uF3kpmjp+7oDH4zuNI3dXMsxtjr95s/PCnbzoqg++uYslwSIdMP
+         eJbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777675974; x=1778280774;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=u1w8ThLqZd25cwWjWBnDyIz33tp+IZal5hIPijMDDLM=;
+        b=UrXe+vA0sUgqOkyE0tqTwKEg4gtIMqJ+uO3VPTLgDgQNPVC1/6u6ABAH34vmzVj9/q
+         FoyDtNHG2ZScjfbse886FvUEM5CcoUBC9O9LzVRL8R8gCECtS/NmIBaGBb3njqnPx26l
+         9R6IR4K7dP72CnvjpafN5zG4oPM8gL3sUwTDXu9SgZocWhx2lTq2Y56ErkpPnrp351D8
+         phGNrEH5R5fKbgYu/irvsNQlmETji8rfVKY/KOvBrIffYSNWjdUNm/EnCr8bpAd/CsJh
+         DojT+eWOlgg0lde6st96+Iy1G+HKk3Fjw13gfFg4443uGeFsvVeC9oUPh/qQ2tuRHY74
+         uweQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8Qy6r/W6zqmxsmrX74wj6bSfFYnEuWK8Wb2rcHKR9+l+fZlvbNymyaPCAguwKZ5euaf8pLZe8xEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjHRVWjnDRJmdU4isLAgPg1BEz2MVVoikzYVoIkTe8lEHWUvRN
+	MQ5Ml5aOMmx9w5T3NVXVZBszbTbEhSSH/K9vDOtzBjDUEkn7g/I3uMeq
+X-Gm-Gg: AeBDievXAj7Zbwk/bOToDVx7mJsgENbOTzsV78Q45SACVpQ5Qq/HlyaAI8YGutFhZvV
+	oVLyo80QW7vs6ido31qdD8rheM64rG+zLn/SlLdGVcULJygUHx76PAFGvBrUMgxw6zzQnMOJyFe
+	etQDSIPluVIV1xaib1+y6wCdJFXvsAk3Tk802DePR7ZggSLqrZzdMrY00vGAyRyGIPGh7/drjtQ
+	k4ja9tIeygzvaGhWOeZ46RwMsAA5TeyGQidVzTQOEqeWeHLoSr+S2r8aZTgiZ0r49LrQSiQLFya
+	g2Ge6ClKqkWeFtFo9iPEVBMtXAzEx9exz/+z2W51CDqAYIfbmliZs5k3V/LnbxFJwYywcNRXsE2
+	S7W/oieyLKdHHGZ0/C1TNJfYWQsjdxBso1cXjvOy3AgBZ1aRZWRN3HUI0aaM7s/ac68kQ7PYUKF
+	I86jjBPRvzKNBf+sc+qVaer0GuiqajZ/1PYSKWrVFqSI3Y355oiuhd9cZ3AQs2Qb7qqYcfXGs72
+	Rpv+eo0pvsbiMU6dnFvxc3MeA==
+X-Received: by 2002:a05:600c:621a:b0:488:bfc3:efc with SMTP id 5b1f17b1804b1-48a980fb94dmr14665835e9.0.1777675974024;
+        Fri, 01 May 2026 15:52:54 -0700 (PDT)
 Received: from localhost.localdomain ([77.124.36.154])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8fe93266sm23857045e9.3.2026.05.01.15.52.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8fe93266sm23857045e9.3.2026.05.01.15.52.53
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 01 May 2026 15:52:52 -0700 (PDT)
+        Fri, 01 May 2026 15:52:53 -0700 (PDT)
 From: Kai Aizen <kai.aizen.dev@gmail.com>
 To: stable@vger.kernel.org
 Cc: gregkh@linuxfoundation.org,
 	axboe@kernel.dk,
 	io-uring@vger.kernel.org
-Subject: [PATCH 6.12.y] io_uring/poll: fix multishot recv missing EOF on wakeup race
-Date: Sat,  2 May 2026 01:51:54 +0300
-Message-ID: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
+Subject: [PATCH 6.6.y] io_uring/poll: fix multishot recv missing EOF on wakeup race
+Date: Sat,  2 May 2026 01:51:55 +0300
+Message-ID: <20260501225250.90152-2-kai.aizen.dev@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
+References: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -91,7 +95,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C17924B0197
+X-Rspamd-Queue-Id: 35D464B01A5
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
@@ -105,7 +109,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
 	RCPT_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-13196-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13197-lists,io-uring=lfdr.de];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -141,36 +145,30 @@ Check specifically for HUP in the poll loop, and ensure that another
 loop is done to check for status if more than a single poll activation
 is pending. This ensures we don't lose the shutdown event.
 
-Backport notes for linux-6.12.y:
-  - The do-while body in 6.12.y already places `v &= IO_POLL_REF_MASK;`
-    just before the while-condition; the upstream patch moves it
-    earlier so that `v != 1` in the HUP check refers to the ref-count
-    only.  The backport does the same.
+Backport notes for linux-6.6.y:
+  - In 6.6.y the do-while masks v in the while-condition itself
+    (`atomic_sub_return(v & IO_POLL_REF_MASK, ...) & IO_POLL_REF_MASK`),
+    so v can carry IO_POLL_RETRY_FLAG / IO_POLL_CANCEL_FLAG bits when
+    we reach the multishot branch.  The HUP check therefore compares
+    `(v & IO_POLL_REF_MASK) != 1` rather than the upstream
+    `v != 1`, to avoid reacting to flag bits.
   - io_poll_issue takes `ts` (struct io_tw_state *) here.
 
 CVE: CVE-2026-23473
-Cc: stable@vger.kernel.org # 6.12.y
+Cc: stable@vger.kernel.org # 6.6.y
 Fixes: dbc2564cfe0f ("io_uring: let fast poll support multishot")
 Reported-by: Francis Brosseau <francis@malagauche.com>
 Link: https://github.com/axboe/liburing/issues/1549
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[backport for linux-6.12.y, verified 2026-05-01]
+[backport for linux-6.6.y, verified 2026-05-01]
 ---
- io_uring/poll.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ io_uring/poll.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/io_uring/poll.c b/io_uring/poll.c
 --- a/io_uring/poll.c
 +++ b/io_uring/poll.c
-@@ -297,6 +297,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
- 				atomic_andnot(IO_POLL_RETRY_FLAG, &req->poll_refs);
- 				v &= ~IO_POLL_RETRY_FLAG;
- 			}
-+			v &= IO_POLL_REF_MASK;
- 		}
-
- 		/* the mask was stashed in __io_poll_execute */
-@@ -327,7 +328,12 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+@@ -321,7 +321,13 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
  				return IOU_POLL_REMOVE_POLL_USE_RES;
  			}
  		} else {
@@ -178,20 +176,13 @@ diff --git a/io_uring/poll.c b/io_uring/poll.c
 +			int ret;
 +
 +			/* multiple refs and HUP, ensure we loop once more */
-+			if ((req->cqe.res & (POLLHUP | POLLRDHUP)) && v != 1)
++			if ((req->cqe.res & (POLLHUP | POLLRDHUP)) &&
++			    (v & IO_POLL_REF_MASK) != 1)
 +				v--;
 +			ret = io_poll_issue(req, ts);
  			if (ret == IOU_STOP_MULTISHOT)
  				return IOU_POLL_REMOVE_POLL_USE_RES;
  			else if (ret == IOU_REQUEUE)
-@@ -343,7 +349,6 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
- 		 * Release all references, retry if someone tried to restart
- 		 * task_work while we were executing it.
- 		 */
--		v &= IO_POLL_REF_MASK;
- 	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
-
- 	io_napi_add(req);
 --
 2.43.0
 

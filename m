@@ -1,184 +1,226 @@
-Return-Path: <io-uring+bounces-13193-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13194-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yZzxDLkG9Gmr9wEAu9opvQ
-	(envelope-from <io-uring+bounces-13193-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 01 May 2026 03:49:45 +0200
+	id qPukEV3I9GmPEgIAu9opvQ
+	(envelope-from <io-uring+bounces-13194-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 01 May 2026 17:35:57 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705BA4A9B25
-	for <lists+io-uring@lfdr.de>; Fri, 01 May 2026 03:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B1C4AD9EF
+	for <lists+io-uring@lfdr.de>; Fri, 01 May 2026 17:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0A85C3011F06
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 01:49:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BEF4B3026772
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56D52248A0;
-	Fri,  1 May 2026 01:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35243CE4A2;
+	Fri,  1 May 2026 15:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="iEk/KK7g"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="jnTpLX1R"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5735740DFC5
-	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 01:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770F22E5B2A
+	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 15:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777600181; cv=none; b=E61huRQ7d2JUXI2GyB6JsT0w39ZX8GdqCYMYMlLlVQwJnb7NSTmxnY71gYkjd5SjExKKv0Htl/7gjUoDkazbu8i0uzcNHbhENgip04ZGlwjxfCIVQI9Yl9/iS+FhtSBWFCX95Y0vvc+CWXMkF5vbLfMxAow7UEACbhSSxmTN5e0=
+	t=1777649752; cv=none; b=YZf3eWU99r0N/A0FqwP+4C/Hr8VzKfO2dvMvTGDs4NQnuaLcxytlD2EadV9S37QAESRhTkWU+sz+OrvueVZd0znhJ/sAs9+PMqSFFIRxuXSJgaYolkJmf0KwpZQwNUsKX4AVbYG4MENC6MbipRSUxQ+dNS35LOk57uJwyJBhHfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777600181; c=relaxed/simple;
-	bh=IQt5lleTUlwvroO9La3/8yEAEzk74ZoQQUKcZKDzx/U=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=fwypeEiBKT6Z3LD7hmuTU9jkYYtybQvOiYqwdDACek02PxL6aS98E0lOTaO/t2+bVM9pT1aJGqF616dbw5UQvxjHlVIIYcEo/etgBj1+zZM3I8xjo2II/DeV9RZDJPh32UZXgGudH5CkcVl4f10IfBgWiGbUZ8o7iU3q6zVG6wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=iEk/KK7g; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7dd73b7c757so802208a34.0
-        for <io-uring@vger.kernel.org>; Thu, 30 Apr 2026 18:49:38 -0700 (PDT)
+	s=arc-20240116; t=1777649752; c=relaxed/simple;
+	bh=27HBlAxg0ZM6N2nrQoLYUcVV7TnAlR8/aIP3GxzSa9s=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=LZ+DelxzA09fFAgVG/8lEW3EN/P0I0+Zkn60tJmHaM1mv4aXeYBA1+m45iQ3XX/CDgTCUbP1nNQsTeexaM419ydQFwuEwJeSuEsmLJ+44xlDovLeKnGhBeQFBCvVyYXismBaq/+CZfoRRNT2uZvCuhmnUY6emuWo262WY0NSX+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=jnTpLX1R; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 451195f7-4573-11f1-afe2-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.189])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 451195f7-4573-11f1-afe2-005056994fde;
+	Fri, 01 May 2026 17:34:40 +0200 (CEST)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.189])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 45107614-4573-11f1-b5d1-0050569981f5;
+	Fri, 01 May 2026 17:34:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777600178; x=1778204978; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+BbghG3Czft79x+9kbRnZ08K62lMKtzjM1hOl999Us=;
-        b=iEk/KK7gQJ8jLAcBDxHVoSu5u7u3f3vVs6gEZWF2cHnTlYHbEFRhjPUDmRtnVxRPT+
-         MOll/DztjojRVTXE23WZi3WuB2d7xSljCd92KQXKYblM/2jEFU2OpSkqyPBrYgYgEH6/
-         jEd3lFzIvqBXXYoFpJ6uy3uGm03uV05B4CO34Tis0grgJMeKvk6o8XNlc3AXv5IdYx4C
-         EZoNtX8L9JaRVO/gQ0R9he1ybT9s2HmxKfBi4dCDTVpGRUPBxEkrAftoTuCEe1apGVWg
-         /0D99hgRadSBhYBGLea6D8edjWGsG0NdbKuYUDzdY/DpKnJc7uBo8Mv1sgpeZr6NeZ/L
-         7UAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777600178; x=1778204978;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J+BbghG3Czft79x+9kbRnZ08K62lMKtzjM1hOl999Us=;
-        b=L8KyUdtr+Spp6GPmqFRebM5t4tFNEUFan7Omrfa+S1vnWc4TalpUsJ8MYlu1V4m0jk
-         /CtbMgiNRLouawFdojYtcWKn+5LHvTp690pIu9T2CXK845GY2EOR1nG6KCao9jaU54jm
-         Zo+lYvXdC6nZLKPfJ/9bvWNsNbRDMYceI+yXySenLIJBBZaoxcC8aOKdfGDVB0zpSHnL
-         /Ioo7PkPnaeY54r6G3SdzL7SrQu8kVxxdZd1Yuti+GOqqj46k1ZOfc54LElx5fvmntZ7
-         qMRBnHGkFX1Uw60650BdoWCSihwLsBiRTEikkZXm9IpbFGwhwAjFIXuCMiyhwML60RVr
-         Krrg==
-X-Gm-Message-State: AOJu0YwMcG7zqL1KKhoc0FDhNjxMx2p3bTb/NkVbSfmnH2Sy3xjg4yDn
-	v4D5NDOZBbn+4lEP60sL4MvuW1etT98R5u3qeZOLBVzMyWwRecW3L5RFwRxiUT2k4o2axoyJCHP
-	ZPKlb
-X-Gm-Gg: AeBDieuixm06vo5dfYCLF0MyB09I8LX+uw5R4NHR9SggCODiCbNvjl4ic/yZSba2UAK
-	LqW020rC1nQC7GObO0u07gYcVRM7rSV/adwZCGvvniJJgYswYRVfRKkvZb6XbdyC4+n9Tzd+dhM
-	DyIRuCkgcgEj6XYL3c7/NyLehHxuQQgAUy6Ir/6QtrmlVXVdusru8OpK3zc/xx4RWFFaI50w6/o
-	AI7Vqs+AIMpON1HAJfbFW71JqA9Cy9loX2GInKKbL/MsuLfF+x0+K9YyjdgMZR3w+lPNKBY2N4i
-	L+C/ulgzn0rs6NFkP+B3EnTs/uiL5wAoFmxJhLtaJKDomF8DOA3fBXPDucgtzlOcnzcmN7HBeH/
-	YWGEROa2SLH6SgyVNmInhoZx7jlmaxp23bCmnF70TAlfe8gGdtMQdRy5J1WRh1eaCYxKK8LwhW8
-	ctihGTFBFDVqoa0Xh6h88J9kpNwjjmRp9A4Gcg7N/OYE5bX3+X7JOIaLFy0awg0TKG/5RgWe3d1
-	pUoffLUiWv51vY6PNSp
-X-Received: by 2002:a05:6830:3881:b0:7d9:f50f:9693 with SMTP id 46e09a7af769-7ded0b55abbmr603537a34.23.1777600177956;
-        Thu, 30 Apr 2026 18:49:37 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7deca7a9149sm1120036a34.1.2026.04.30.18.49.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2026 18:49:36 -0700 (PDT)
-Message-ID: <8f3dd419-e06b-4b83-aaa4-7f7bafc098b4@kernel.dk>
-Date: Thu, 30 Apr 2026 19:49:35 -0600
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=yWlYvHDKJLboPw9xhm3CMUezHzmqhjNa6HKZQkEvPVQ=;
+	b=jnTpLX1Ri3JA4mDO10E7pg44QFiChMj5lRgY4JAZEiVY2yZCGnTQc8cRaBhaVjpt7ZltUgK2RMZ3E
+	 M78CQ86x2rRoZxcMJdnbES5oddauFOdW2vX3n1GQfnsXzQ+mGrYuh5mCGjVHMdnmc5zzpmxU4t5KrO
+	 9QJ/0D5hdkS6X1sHYi+yZnJNitTfhvUK1i+0YwJN/qp39Kri9r51h+5x7+FDFKWJmmnw3nuKisftzZ
+	 UblDWpvZqwkotbs3kYhIIfmqIgl5iCzkD+Sh6losmwQFndSax7Cqo+Fwe3Upj8en/AUcIetXgdHg19
+	 Eq31JTRYRp73sO//MsNbYLe10mApeFw==
+X-KPN-MID: 33|+wst0lK91gmxlExsuJLOoikJCsA0QLTVmXpcK9nSTwrmv8tILalQp4kUKabb/fl
+ 23gsYBj7cofRS+4WVOGphlVqzjqy98YIhFTStYjYCvDY=
+X-CMASSUN: 33|pyE9OPP/7F9Ad8pTvxO8IbpJEd1c575BI62ZUn6pjmt4BfrO94fDDv6nxUOe1PV
+ AfWwg25InOqgBieh3R8hXPg==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh01 (cpxoxapps-mh01.personalcloud.so.kpn.org [10.128.135.207])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 4503de11-4573-11f1-94b1-00505699eff2;
+	Fri, 01 May 2026 17:34:40 +0200 (CEST)
+Date: Fri, 1 May 2026 17:34:40 +0200 (CEST)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Kees Cook <kees@kernel.org>, Simon Horman <horms@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Jeff Layton <jlayton@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>, Andrei Vagin <avagin@gmail.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Charlie Mirabile <cmirabil@redhat.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	io-uring@vger.kernel.org
+Message-ID: <89346381.2074764.1777649680664@kpc.webmail.kpnmail.nl>
+In-Reply-To: <CAAVpQUBKeN2KtRkRAFr8sYJM1_-rbkdjsujau5fAyaiP_dO6FA@mail.gmail.com>
+References: <20260428175125.2705296-1-jkoolstra@xs4all.nl>
+ <20260428175125.2705296-2-jkoolstra@xs4all.nl>
+ <CAAVpQUBKeN2KtRkRAFr8sYJM1_-rbkdjsujau5fAyaiP_dO6FA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] net: af_unix: Useful handling of LSM denials on
+ SCM_RIGHTS
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 7.1-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 705BA4A9B25
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Normal
+X-Rspamd-Queue-Id: 91B1C4AD9EF
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
+	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13193-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13194-lists,io-uring=lfdr.de];
+	HAS_X_PRIO_THREE(0.00)[3];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,google.com,redhat.com,davemloft.net,kernel.dk,amacapital.net,chromium.org,gmail.com,virtuozzo.com,cyphar.com,vger.kernel.org];
+	FREEMAIL_FROM(0.00)[xs4all.nl];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[xs4all.nl:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kernel-dk.20251104.gappssmtp.com:dkim]
-
-Hi Linus,
-
-Small batch of fixes for io_uring for the 7.1-rc2 kernel release. This
-pull request contains:
-
-- Remove dead struct io_buffer_list member.
-
-- Fix for incrementally consumed buffers with recvmsg multishot, which
-  requires a minimum value left in a buffer for any receive for the
-  headers. If there's still a bit of buffer left but it's smaller than
-  that value, then userspace will see a spurious -EFAULT returned in the
-  CQE.
-
-- Locking fix for the DEFER_TASKRUN retry list, which otherwise could
-  race with fallback cancelations. If the task is exiting with task_work
-  left in both the normal and retry list AND the exit cleanup races with
-  the task running task work, then entries could either be doubly
-  completed or lost.
-
-- Cap NAPI busy poll timeout to something sane, to avoid syzbot running
-  into excessive polling and triggering warnings around that.
-
-Please pull!
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
 
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+> Op 30-04-2026 04:04 CEST schreef Kuniyuki Iwashima <kuniyu@google.com>:
+>=20
+> =20
+> On Tue, Apr 28, 2026 at 10:51=E2=80=AFAM Jori Koolstra <jkoolstra@xs4all.=
+nl> wrote:
+> >
+> > Right now if some LSM such as Smack denies an AF_UNIX socket peer to
+> > receive an SCM_RIGHTS fd the SCM_RIGHTS fd array will be cut short at
+> > that point, and MSG_CTRUNC is set on return of recvmsg(). This is
+> > highly problematic behaviour, because it leaves the receiver
+> > wondering what happened. As per man page MSG_CTRUNC is supposed to
+> > indicate that the control buffer was sized too short, but suddenly
+> > a permission error might result in the exact same flag being set.
+> > Moreover, the receiver has no chance to determine how many fds got
+> > originally sent and how many were suppressed.[1]
+> >
+> > Add two MSG_* flags:
+>=20
+> Since we only have 5 bits remaining for future extension,
+> we need to consider the use case a bit more carefully.
+>=20
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+Right. Since it wasn't a lot of work I implemented it exactly as the reques=
+t
+was made from userspace, and then discuss it from there. By the way, I supp=
+ose
+nothing can be done about that small flag space?
 
-are available in the Git repository at:
+>=20
+> >  - MSG_RIGHTS_DENIAL is set whenever any file is rejected by the LSM
+> >    during recvmsg() of SCM_RIGHTS fds.
+>=20
+> Is this really needed ?
+>=20
+> Even if the fd array is truncated, the application will traverse
+> the array anyway since it has some fds already installed (to
+> clean up in case of MSG_CTRUNC ?).
+>=20
+> Then, it will find the -EPERM entry.
+>=20
+> I assume no one uses MSG_RIGHTS_DENIAL without
+> MSG_RIGHTS_FILTER.
+>=20
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260430
+I guess that is a fair assumption to make. We can certainly do without
+MSG_RIGHTS_DENIAL if saving flags is important. I also suggested that
+we may see whether we can make MSG_RIGHTS_FILTER the default behavior.
+In the mean time I've found grep.app, and it turns out the answer is no.
+Apparently almost no one checks even for the truncation flag (mostly 1 fd
+is passed and then it is check the cmsg lenght). But cpython has this for
+instance:
 
-for you to fetch changes up to 17666e2d7592c3e85260cafd3950121524acc2c5:
+    /* Close all descriptors coming from SCM_RIGHTS, so they don't leak. */
+    for (cmsgh =3D ((msg.msg_controllen > 0) ? CMSG_FIRSTHDR(&msg) : NULL);
+         cmsgh !=3D NULL; cmsgh =3D CMSG_NXTHDR(&msg, cmsgh)) {
+        cmsg_status =3D get_cmsg_data_len(&msg, cmsgh, &cmsgdatalen);
+        if (cmsg_status < 0)
+            break;
+        if (cmsgh->cmsg_level =3D=3D SOL_SOCKET &&
+            cmsgh->cmsg_type =3D=3D SCM_RIGHTS) {
+            size_t numfds;
+            int *fdp;
+            numfds =3D cmsgdatalen / sizeof(int);
+            fdp =3D (int *)CMSG_DATA(cmsgh);
+            while (numfds-- > 0)
+                close(*fdp++);
+        }
+        if (cmsg_status !=3D 0)
+            break;
+    }
 
-  io_uring/tw: serialize ctx->retry_llist with ->uring_lock (2026-04-30 06:57:20 -0600)
+>=20
+> >  - If MSG_RIGHTS_FILTER is passed as a flag to recvmsg(), the SCM_RIGHT=
+S
+>=20
+> Does this flag need per-recvmsg() granularity ?
+>=20
 
-----------------------------------------------------------------
-io_uring-7.1-20260430
+Perhaps not. What would be the alternative? A fcntl option for the socket f=
+d?
 
-----------------------------------------------------------------
-Jens Axboe (3):
-      io_uring/kbuf: kill dead struct io_buffer_list 'nr_entries' member
-      io_uring/napi: cap busy_poll_to 10 msec
-      io_uring/tw: serialize ctx->retry_llist with ->uring_lock
+> If the application does not welcome the truncated fd array,
+> it would have passed MSG_RIGHTS_FILTER to every
+> recvmsg(), no ?
+>=20
 
-Martin Michaelis (1):
-      io_uring/kbuf: support min length left for incremental buffers
+Correct.
 
- include/uapi/linux/io_uring.h |  3 ++-
- io_uring/kbuf.c               |  9 +++++++--
- io_uring/kbuf.h               |  8 +++++++-
- io_uring/napi.c               |  2 ++
- io_uring/tw.c                 | 12 +++++++++++-
- 5 files changed, 29 insertions(+), 5 deletions(-)
 
--- 
-Jens Axboe
-
+Thanks,
+Jori.
 

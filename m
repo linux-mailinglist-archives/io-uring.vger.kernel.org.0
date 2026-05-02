@@ -1,85 +1,86 @@
-Return-Path: <io-uring+bounces-13206-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13207-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id TcH5IlTR9WmcPQIAu9opvQ
-	(envelope-from <io-uring+bounces-13206-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 12:26:28 +0200
+	id wLR3CbcD9mlPRgIAu9opvQ
+	(envelope-from <io-uring+bounces-13207-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 16:01:27 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE644B1AC9
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 12:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 196CE4B23D4
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 16:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 45167300442E
-	for <lists+io-uring@lfdr.de>; Sat,  2 May 2026 10:26:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C94AC3003488
+	for <lists+io-uring@lfdr.de>; Sat,  2 May 2026 14:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97843290AF;
-	Sat,  2 May 2026 10:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8AD2264D9;
+	Sat,  2 May 2026 14:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r2qBovBV"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="DXJRBGH/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B9D327C08
-	for <io-uring@vger.kernel.org>; Sat,  2 May 2026 10:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B9A40DFB4
+	for <io-uring@vger.kernel.org>; Sat,  2 May 2026 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777717582; cv=none; b=i0glU4ZOY2wDzI4tUrgON/vr7LBjXSzplMZyYRk1C4d+WD1A07qOk97gTc2al9iPtykg6+TTHSLP7d1UgWaZBR1oDCm/KAnDT8oe/vbHrePyGlp0K37vOyUx7UrBdHpM2b7bOZvCT/ZSJ5+Xg6eslO/Q3fepU5sLkps1QXe3tCM=
+	t=1777730479; cv=none; b=FrhW9fn1c5UwU7jOkFBalNKRHY6sc85PHwhIVvxO1L4g0fEXIXWokBu1I0krHkO1XKtpjH3GitzyD1VR56cIvsf+AdjQGvpQikcVSj1n7VtYh3+erB7ramZ06WrqfVaQmMY4aWyoK3iVKiSp5mLrkhesCRd5k5L7xwIPJjJ4LNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777717582; c=relaxed/simple;
-	bh=5VDOAmL20Fz9qlrG8G7ceYj64eJKUyoGVE8PuemoHF4=;
+	s=arc-20240116; t=1777730479; c=relaxed/simple;
+	bh=ZWPAe5Q8mb3ayTG7zSObGrwzImhG6FNff0xTMir42UU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RL7fVgzGzn4sL7PCyT+M6Oh83vJLDKiwZr+AYVT/7Gp8TPgB8/rBD8T00gasFIIQ112+cYzM141l0U3fWIQmudO/ZvonkrMNTP4j1pKzt4IbdncfseT3UGa+xwG7VmBi4OSMJtANSaK3L4FwmLjplMz6aZAK90wGUc7Eq+QcMgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r2qBovBV; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4890d945eb4so20245455e9.0
-        for <io-uring@vger.kernel.org>; Sat, 02 May 2026 03:26:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=rZfJoTmICF0AHMcBWUn9ZkKlNflPFW+Foqgx3VdvRqCR5nfAm1DMlXCb5q7kad7R8BZO67QBlj/rMNjAKy+ZPvSHgEbZYEEWctLT6yUEOV1PjUHnYBvnEn/+u41R2pGh+fSkFP/BU2XJUKCciNJ0kix9plotYl7EI2KxVKcMkto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=DXJRBGH/; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7dca00c1591so832242a34.3
+        for <io-uring@vger.kernel.org>; Sat, 02 May 2026 07:01:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777717579; x=1778322379; darn=vger.kernel.org;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777730476; x=1778335276; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=r3aqw4pxo6mHF7QSikvhQnxY0ABm84nxT4/Oyu1pc9E=;
-        b=r2qBovBVMzcKJIMkzCKJdTQNFnqw52hTNYYa3G6vKjQc2dhShm3b5c2kQ4cp5exHxR
-         XzQiX134/9zO8EUZddyI8Pzlye+USEFFiyA79LX3Uk7ql1nmPdZhac3X98WAJyGiMfBR
-         wXtAG659uOIZF9xobW0gJQmr7eeDIfe8y2zAkVaCjFmP8QtJllBct9uP0iwlcxw4bSFX
-         NELdJB+PSM0UBit1huIWX2wEd0kdGTSwsSEoGvksi0rECl+ivV1vBiPb5qOZBiSx7Qfk
-         4sFM8lDbdfh9BxYip0s7GiM2Jckjp/jlqGyLoVKvodFAYnYCoNyj+NpU+pfF+l4AMnSd
-         jDIw==
+        bh=mvAa9MPN2K1pmz+3zxmz0oGcOkUukZ7tkrP7phZgyzQ=;
+        b=DXJRBGH/cMNzicR/0S6foKRJPkmh7FAf9vF7MXJFEJXOUMRhxsaCpYZ5hugzigwq2p
+         K3WdpkXxnp9Vvxe5k/cx+EZ//AQqhEpjicV0+ZBnbrLPzPkyAkhQmyYRdx0OO8HIhERg
+         47UjIZiHbSKeyXp/DeLh5Fqhw8Gg/76LxuFGFIwFdWonM6PYifgMAd0vHzoG6bkm7xTh
+         93lp6Uf1U2c7qVwQwZ7/wY5cpfRAmG69RthCcn41HZtOfJZBBKH8xXhip5Gm3JqXbilI
+         HyYeWiqzJ8ux/JRAy8i0swjbb1S06F7EhW4ljSB1ldBnaZQ5fF8zer3ytwMbRaeYwCev
+         T33A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777717579; x=1778322379;
+        d=1e100.net; s=20251104; t=1777730476; x=1778335276;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=r3aqw4pxo6mHF7QSikvhQnxY0ABm84nxT4/Oyu1pc9E=;
-        b=GnNZCF40RQEkNhbel/UyotITGs3JQ+yukKiPSC4x72bbIbkvfEIo5mbDRN/jh+pUGE
-         m+AnGL4MV6r10xGEumJpqtq+GjSJd1g1ntsTWq3wH9VXNs7VGp/ADzvhJkf00ESIafvW
-         a11HelHfITOadi0z6Qc/KPgeVa47JTLVzQK3McZvxy/qMFl3j6lSwg/CjGwvTR2NhrUT
-         Zw6C9SeQTQzDQURQ8eIxfWjI6FUGekUZaPyyjoo0BGHQhFN1TqFnvMDKFKIfNp27lUfH
-         K8dTRgqRAjzzqWEMx9m2CftEtELV8XJAGFvu9gSFmGuQCC9gCvUti3I1MSn+jU+QPRjE
-         2yWg==
-X-Forwarded-Encrypted: i=1; AFNElJ8g+0EQGpzshYrxMeaql9cq3IOta5oTNWX1iDmYGmECtpxP+OUEn/Awxb+ieqNjdTz6NlkctjhwUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEa9n0rSTXpVfaRdF5mxpWfZW8Muh3xwmQpVsUZXCt39RTbB74
-	WqKicS05/uG8HYblrOPpZNs9zsQrbAKudP7Wkuk9UoSu0T99mJi/gE8b
-X-Gm-Gg: AeBDietlK5I6A0AqDIlMWdoTewJk7DPqO2naoCNuDqW+qGlCJhQF+NFRbJuQHacvoXP
-	8ZFY+n6H5hzldQK/5erXOAnIvZr+e13SXyWQLizUmzZY6GXu08GJXQrVE6PgmtvfkS/ul+iVyBu
-	Xs3RsOvN6OYmyQH5kJM+6/QGLnIiHioykc7eO5GguYlaQW5oaoFywyakw5bwwDsItFE8gv9wKfR
-	Ru4hgOzL1+I7A4Vu2ySgoZc42QfX/4NarqAI6J019VmaQIkB8Cad4WciCglW8QqOvoDgMvrs7ys
-	SFSxhzC1tBzazrum/MRg3p9KmXdxzquwvk1TT5eXIDjUy0V2gg+Vnbiey7+b/xQikKVtQ/NJBRW
-	OAh1nvHtn+rflC1sfIohnUCRIotMzZCkfCUfmFDVs083QrpiHbdd1F9AYkELXTyl5k1IG34ssXd
-	Vkpkdi3lcDCK/431KJ8/Of+24O+Xvvb3Ajb0SmnGPKzkuiCXgeI7k3fPCSYCO+is7/uEHvfgddl
-	Ou4PKiz5HVLyV4IdwzpLpF7Hc5qCoJIsXeCLzknr22SU655vRRgk/rEdJs4bph+
-X-Received: by 2002:a05:600c:8b11:b0:48a:5339:a46 with SMTP id 5b1f17b1804b1-48a970eafbemr38000475e9.9.1777717579260;
-        Sat, 02 May 2026 03:26:19 -0700 (PDT)
-Received: from [10.109.92.8] (82-132-229-207.dab.02.net. [82.132.229.207])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8ebc4201sm192896505e9.15.2026.05.02.03.26.17
+        bh=mvAa9MPN2K1pmz+3zxmz0oGcOkUukZ7tkrP7phZgyzQ=;
+        b=Bn01sQTYviuiT8XoIgIW6Bol52e+8nf2k76VGdQftXxIvV3sHSwP7dbHGeMr4aeEVL
+         lNarKUZSn4kSgzuIN5mVs2Cg2HZXQAbyogInd+QiOLuUx4aEM8uuYiCycQ5p9SWfS2gx
+         SiDBdYpv2a6gri32V82yTJYdvFiLaoemnqYbPTI1utXP75sPwFUD6UmTHUABkV//6F3p
+         q8Dd2M/By2JGGWnmV1ZMVtyb7Igexa9TxkuI262Bcse5F6a6Pgi0CkASnhVr8RE9Y4Sa
+         mZKC+Jzl1AOCEVci3VqlNyD/t4qC2RK8NFQYKL1hFXAZtb8vRC1Dca5w2UYPDEK9+yYc
+         7NDw==
+X-Forwarded-Encrypted: i=1; AFNElJ8KXQJXBeMYHBdzFN7yPtPAmFeyQeXaU2MRC0NRqMgUoHM3mS6HseaITxevK5Frf9NJtx6KiUvN/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnNvsMAjQJf2PuW1EVVgFAhLp0XCh4qGYIjXrSVwSRrewElYgV
+	0oAgprXy0zdIL9twgfgIja2v9HIBQaAxiehQHQbOUWDHWcDuK6Uh49xPe8KtZqw5P+gm/2YiSvu
+	JVqbf
+X-Gm-Gg: AeBDiesxlyMRa0ThqCIjIiEKIQ5ecpRtQVqCWFwZUP4gwYszRpnFgHN/nX9GxqPpwAk
+	xQzcBc1TvRsy1ukz4ZlkdM7WF0S4Be1RwUoCZ9MVZDsDC5cxkwRE3X4CLQXBujQFImGjq6sG+Oq
+	R5zGv3EEeTp9VlK4kxqPeVnxiv4U9MoJ/zjC9SyG1iIVH1b67ngM8kL8I31/HnFtI3qfdBVObo6
+	mEZCyP5PucYw47+7cgLGtabdiFNv/7rvrB7Sl6+qB6ttsnvlWCvYZtXeie5TyTacFgM6xiJWY1d
+	t9HQtUxzLbxfJnoUk/9X20/cdEExs/TPKsE5jZQs3jTgBJcJFdigY3NQGQ4SVkdW74Tigw+FY8v
+	IfEOX/T1gP1uFnX+c7+pL5jmnKxWXcigZgKUGmJG2Jch5c4iQ40TIsLI1wS7cd0pJccQeZny1E4
+	jsUIg6aKLFG9w24DK29vLjTYBU6dvu657LryjNjdFcNz9Uikn+F/4a6PEggUlowk1GPeclc7aDQ
+	mSoDT15FjepMXNPo7nN
+X-Received: by 2002:a05:6830:2785:b0:7dc:d0e3:5bdd with SMTP id 46e09a7af769-7dee143b7f2mr1811088a34.19.1777730476573;
+        Sat, 02 May 2026 07:01:16 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7decadc2906sm4076812a34.23.2026.05.02.07.01.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 May 2026 03:26:18 -0700 (PDT)
-Message-ID: <85b63dbc-1fb3-4913-9419-90908c5b6358@gmail.com>
-Date: Sat, 2 May 2026 11:26:16 +0100
+        Sat, 02 May 2026 07:01:15 -0700 (PDT)
+Message-ID: <219bc2a8-cf81-4900-8d72-96646a87c7d7@kernel.dk>
+Date: Sat, 2 May 2026 08:01:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,146 +88,65 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: io_uring: should IORING_TIMEOUT_ABS honour the submitter's time
- namespace?
-To: Xie Maoyi <maoyi.xie@ntu.edu.sg>, Jens Axboe <axboe@kernel.dk>
-Cc: Andrei Vagin <avagin@gmail.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <TYZPR01MB67582BE6855BE725AA5174CBDC332@TYZPR01MB6758.apcprd01.prod.exchangelabs.com>
+Subject: Re: [PATCH 6.12.y] io_uring/poll: fix multishot recv missing EOF on
+ wakeup race
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Kai Aizen <kai.aizen.dev@gmail.com>, stable@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
+ <3fcf1bf1-23fb-4e01-ac3d-6ec6fb86da08@kernel.dk>
+ <2026050246-estimator-hurry-3df6@gregkh>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <TYZPR01MB67582BE6855BE725AA5174CBDC332@TYZPR01MB6758.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <2026050246-estimator-hurry-3df6@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6DE644B1AC9
+X-Rspamd-Queue-Id: 196CE4B23D4
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	SUBJECT_ENDS_QUESTION(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13206-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DMARC_NA(0.00)[kernel.dk];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13207-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,kernel-dk.20251104.gappssmtp.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
 
-On 5/2/26 10:21, Xie Maoyi wrote:
-> Hi all,
+On 5/2/26 12:29 AM, Greg KH wrote:
+> On Fri, May 01, 2026 at 04:55:54PM -0600, Jens Axboe wrote:
+>> First of all, I'm fine backporting these. But:
+>>
+>>> CVE: CVE-2026-23473
+>>
+>> How on earth is this a CVE?! That's bogus. Yes it violates application
+>> expectations, it'll wait on a CQE it won't get, potentially. But this is
+>> the only side effect. That is NOT a CVE. Greg, please retract that.
 > 
-> I think I have found what might be a bug in io_uring's absolute-deadline path on v7.0 mainline, and I would appreciate your confirmation on whether it is actually a bug and whether it is worth fixing.
+> The CVE is now rejected.
 
-timerfd seems to adjust it with timens_ktime_to_host(), maybe something
-like below should do it, _not_ tested. FWIW, IORING_TIMEOUT_ABS is
-much older than 7.0.
-
-
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 4cfdfc519770..184d81a1d594 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -3,6 +3,7 @@
-  #include <linux/errno.h>
-  #include <linux/file.h>
-  #include <linux/io_uring.h>
-+#include <linux/time_namespace.h>
-  
-  #include <trace/events/io_uring.h>
-  
-@@ -35,6 +36,27 @@ struct io_timeout_rem {
-  	bool				ltimeout;
-  };
-  
-+static clockid_t io_flags_to_clock(unsigned flags)
-+{
-+	switch (flags & IORING_TIMEOUT_CLOCK_MASK) {
-+	case IORING_TIMEOUT_BOOTTIME:
-+		return CLOCK_BOOTTIME;
-+	case IORING_TIMEOUT_REALTIME:
-+		return CLOCK_REALTIME;
-+	default:
-+		/* can't happen, vetted at prep time */
-+		WARN_ON_ONCE(1);
-+		fallthrough;
-+	case 0:
-+		return CLOCK_MONOTONIC;
-+	}
-+}
-+
-+static clockid_t io_timeout_get_clock(struct io_timeout_data *data)
-+{
-+	return io_flags_to_clock(data->flags);
-+}
-+
-  static int io_parse_user_time(ktime_t *time, u64 arg, unsigned flags)
-  {
-  	struct timespec64 ts;
-@@ -43,7 +65,7 @@ static int io_parse_user_time(ktime_t *time, u64 arg, unsigned flags)
-  		*time = ns_to_ktime(arg);
-  		if (*time < 0)
-  			return -EINVAL;
--		return 0;
-+		goto out;
-  	}
-  
-  	if (get_timespec64(&ts, u64_to_user_ptr(arg)))
-@@ -51,6 +73,9 @@ static int io_parse_user_time(ktime_t *time, u64 arg, unsigned flags)
-  	if (ts.tv_sec < 0 || ts.tv_nsec < 0)
-  		return -EINVAL;
-  	*time = timespec64_to_ktime(ts);
-+out:
-+	if (flags & IORING_TIMEOUT_ABS)
-+		*time = timens_ktime_to_host(io_flags_to_clock(flags), *time);
-  	return 0;
-  }
-  
-@@ -397,22 +422,6 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
-  	return HRTIMER_NORESTART;
-  }
-  
--static clockid_t io_timeout_get_clock(struct io_timeout_data *data)
--{
--	switch (data->flags & IORING_TIMEOUT_CLOCK_MASK) {
--	case IORING_TIMEOUT_BOOTTIME:
--		return CLOCK_BOOTTIME;
--	case IORING_TIMEOUT_REALTIME:
--		return CLOCK_REALTIME;
--	default:
--		/* can't happen, vetted at prep time */
--		WARN_ON_ONCE(1);
--		fallthrough;
--	case 0:
--		return CLOCK_MONOTONIC;
--	}
--}
--
-  static int io_linked_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
-  				    ktime_t ts, enum hrtimer_mode mode)
-  	__must_hold(&ctx->timeout_lock)
+Thanks.
 
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

@@ -1,159 +1,268 @@
-Return-Path: <io-uring+bounces-13201-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13202-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eGbNEqAv9WlaJQIAu9opvQ
-	(envelope-from <io-uring+bounces-13201-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:56:32 +0200
+	id qX7gD19S9WmDKQIAu9opvQ
+	(envelope-from <io-uring+bounces-13202-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 03:24:47 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D104B01FD
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 00:56:31 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B78B4B0912
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 03:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F2C4A300F18C
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2026 22:56:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E83063001FB5
+	for <lists+io-uring@lfdr.de>; Sat,  2 May 2026 01:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5908A37C112;
-	Fri,  1 May 2026 22:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AF9273816;
+	Sat,  2 May 2026 01:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="bNiUm6zU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tglJjcaN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC5737B02E
-	for <io-uring@vger.kernel.org>; Fri,  1 May 2026 22:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777676182; cv=none; b=r7QKTttIH3/18onw2G8f3Nq+6jwi1ZSjoR24+YKONy09SN8bPnKDezMnJKlqbo3pHWifbMG5IT7TKRL8Jxy5YNRIJJEm0GF9RRbzP7aG1WPgwDdNxPM7vqK4GXEu1rm84NrXK736M6Iqtcmu5xGX2z7b8li2Hg6F27VD9ZwUjkE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777676182; c=relaxed/simple;
-	bh=Owr5h3gzlY/Xiqy7mXJ2kR/F19ZgaYQwIpoq3SHk7jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F16a03n3fM3kfdiBhFuOxsMEEH5BFPjIbDnkx46cLd8Aaxc1RYTHvi4+xNg5wjhvX5gTTfeWrrZd/4RfAYahyr9pVTfdjaveHt5QduhaWEYOFSIt74iPH02S64y6F/C5aAKUaxWPBz9fc7dRdBti/vffSSUAXzTdFAkzmQN0jis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=bNiUm6zU; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-479dc6d26e3so1404897b6e.0
-        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 15:56:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1775133EF
+	for <io-uring@vger.kernel.org>; Sat,  2 May 2026 01:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777685080; cv=pass; b=HrDHIEdX7rf1zymySw8qpJnM6jkEHXnk4TUzmUcaoZ4zskOgYPMg00Hfr+Ww2dZXO4oTOV0MG0Chsc5aKvKD1gBi9HL5mFQF3K8FP99S2Irr66jsKXpesYdWbNdOeMgTPHqQLBUvZ1k0YgXrS+NFy29NLXFr/8bMe5odAdViquE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777685080; c=relaxed/simple;
+	bh=tlWzm/LweUKhSpUnvp6PcsofBh7GX2GlpWV4iQcCDA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EKmluMFY8oU1516bLOuVAln0uz4cfGC0vXtM/pnXlCkTooUBu7Fnh3jg3EGfgx7jXDmgFd0/4GWis85UgLQn9aUnebK0h9KTcgSE9NmKhntT+8e3T/jRVXpEzVbFf2YelM9FYIzu9HVIjgzyA//ygLUnvvdc97hxmmctrbW17Ok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tglJjcaN; arc=pass smtp.client-ip=74.125.82.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12c8f9846c8so3257965c88.0
+        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 18:24:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777685078; cv=none;
+        d=google.com; s=arc-20240605;
+        b=OTtY3p6fxK27WK9zp3L+RXa/GoN9bvPAnMTIkP2HCmzSRUrwCYxvGeDhGiW1BOvW/e
+         AexkjBaIUELtbouSfhr2qyeppBKtGZT86C5M9ppToOmFWJrSalBstF0N6AorknvsP0tq
+         9up59E34hGrq2RJbnZF54Z8OGFjHxfZl5hGvL+jmQHr1bTkQ+NVkxUIkgDdL5yNY9TNu
+         UrVVkAScf0Ty1FTJB7B1ONrXbt74F0cbi5f2qmAHqx5vDGSmcA7OHUmo0qUJjVXVqax+
+         kGJD8AAkZpJeTgU6fmbFhtPEqVyYKF5244hYkbu+MWF71VJLpKMvXRENC6O08/bwrSxb
+         hoZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
+        fh=gCDGH669WkeCCEllPXyN6Sb6NDX2ZNZXB/aewTkDJlU=;
+        b=HidMC52vjNXpsIvlkIgNamNbnr2ThsNmU6Wq+bSUh4bSmbBKLcKDIDN7692CstXd/p
+         WBWqqGlLNxntlacEMLkgXOYD9XbN6AkhPUqzXgwumqcfXd3zyyXc2jaXPrE+9N01pyAW
+         HCQMPV+xjJmMp2Zah1CalAmehTa++VW7a5uhnhZ8TTYuC1ToQs2MbTOzYU4SvO/A0oMw
+         JwCMWM9nXlwW4LUKrqJnf8L4i5M6q6OBRow6OTxvt/82a/eoZme003uu41kY6AnfW4kt
+         SwH6zhtZpg5B7blODuxs4b4AE0lwG+x35vdsOI4U1aILr/iB9JE7ZAYiXFF4Jdz6yadt
+         z5dQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777676180; x=1778280980; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Me/g3PMG3J7omC4T2W3PlajfSg9iKUkl73mok83FKA4=;
-        b=bNiUm6zUENQ9yA0NmV31fpqNXsFLqkdVPUlaSq5EUZ7KsWLD+4+OFoaQr3F3Hlo/fu
-         9HCFlHDhaNuKfFKtyFv2izAvmx2SlZV09MBY1mTTyMK8upLCET++PNiUTt5eUZihsK2Y
-         KOIxfrETzrZhRlw48ziAQbdIsgMT9OP0pV2CY1qv4ALnGh2DORm/h7ujuNMBvjH4bQpv
-         Gm0vUH6VpZIHNYVU0quOiAO80+m4Jn71JunTC1cvM7QTG9D0O6Y2JQQOKTk/6kpBVYO5
-         j2AUwrOBAMcdEQAXfQem1zLkwf2U/Fo7QRHlXzR3Xk9CyaoH3RBaap/4jWPZ24hugsNL
-         G62g==
+        d=google.com; s=20251104; t=1777685078; x=1778289878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
+        b=tglJjcaNWzt4y7utHMv+h2WL5OY5tf5X5qF5TicSwYXh7uIlMSi3KGJkcoVmkjYyk7
+         NRPdtihqKCqv0HTBx8FcZrVYkTJOT0IhjprmkHL88ahl8tGnbEw9q3Bk95tIRC4vPjC5
+         huKTLA6roSivAdw/1nwE/w+FaU0jaHvMhFPS+NGeD9YXIsDfXL9ZBp6UTL8rnABdmcGo
+         K8PrvuslN0Hr8RQeiJhswis2WE5mgekajTIad+8M9TuDZ+BpNsyx0/qpGfUzlTwY6McZ
+         ey407Z2nBmi+QqZU9C01XJBn+Jc9oWjE5MqdVr7mzP5cDy3FuvEdDLJvElRZHKhvSbHQ
+         m7Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777676180; x=1778280980;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Me/g3PMG3J7omC4T2W3PlajfSg9iKUkl73mok83FKA4=;
-        b=SuFT8UC0xM0JVj8ZKZ8AGaIaPzh6/n6am5hwqcM2oFJz9nL5lmVq0P4QnHbY5VP5ic
-         zemCAWixsX1ECYqiiYcP7tY2IJbTDbOq2q7xfLMirSDtyZbdciS9jJCbc6RzDol/Bfql
-         8SlasmDghszJrxyvZt9byOQPo9uxvtT0BBo3s+CwrMX5psm8/XxTRZGZkjncus5Dyz+5
-         gsOgDa1AvQZ7hKXM5F6MkHciNLMjLQClAT5yYF1uQCHBIf5+t4mx9GzDk7CuqiSy8ePO
-         18xHtkzqBNRFnRnpi3U9O0Mw0S7r2a4GgPkgG47lV4fx9sp643/j1Y2HrxG+V2dEsSCQ
-         BOiA==
-X-Forwarded-Encrypted: i=1; AFNElJ8EQU44WfiAboulR0s7HuQbe+mq+nqCmdFPjjBTCHGdGTQMMBCvelFqMcJ/hErQbQL/+QJ6bBFv9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2A8tfcnW+ul4qB3HJ0gC7+tONKexzccg7GEL7bG3Tqgt2ooH2
-	2cEtSWudGzywBUXEnlbmMSUGG30YtYEyepVUyaGye350bVtno9tshAVGUsNkErR1dTM=
-X-Gm-Gg: AeBDiesYIO7MkMxPFKsizANsNNarkGVODkcjPo7tOujLMOoRzgakFuxiGrsJqi1UuNd
-	B6H2ChdZibB+SHAgH2BvoZ9yHfE5Q7j3C5k0AeHDIdQdaUZdIuaOwk/b3pSe5gOmoRKQUGH0GrB
-	bGB9bjZGGCU67kmKy0Z65sn7dswtB/q0G1wFQKFSYVEUaFmuTNu+pAJ2wLeF3FcpHpcJmTQl39z
-	XktzewoLYiS6+pucfys/fIJhs3wHEASbNNdUQkavfjn2xSEcXk5zQ+kXByA3AJ+DSjCrMu1So8h
-	u5cUmeZSEtvQzL8329JfDk9D09Ej4DGAZ6lNJKdtrNQDT3GT5YaK29o8ETlMN9JL3LUoMsfS/s1
-	uX8YPnAM28N3vvI5whJ8oGQhl9hXtOVE/Y30Yx3ihQE93x5jKpQYYNaR5sW7oVjbwJhlSXzm9aH
-	i1/UXAZ4Mu1c+hoNaTOt5O/hvS4JwErKV9hgFl3XA15+N8cItuStyICAntFGfqFNNJ6L0itS0Gd
-	pJm17j0cnjU8OZzgdIvc3J8u7xaY24=
-X-Received: by 2002:a05:6808:1787:b0:467:2a6e:adb3 with SMTP id 5614622812f47-47c892314ddmr754162b6e.23.1777676179890;
-        Fri, 01 May 2026 15:56:19 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-47c763b2ef3sm2178246b6e.2.2026.05.01.15.56.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2026 15:56:19 -0700 (PDT)
-Message-ID: <3f1b30e7-d6a4-4e77-a05c-6d041f93824e@kernel.dk>
-Date: Fri, 1 May 2026 16:56:18 -0600
+        d=1e100.net; s=20251104; t=1777685078; x=1778289878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
+        b=iGxvYKCHFxzsLAN/iF0+Brsqt2DhYVxjzpjOecl2Am9nG2/mXatSXhMwoXhlDyhWLO
+         LDAGum2l4tRbmNEdR2cFbCGTz4+Uhc06C4sWI/mumAqazvZ4a5Bm1kBLAsygFtdKW5ak
+         pFLCc7V58VsKVi7Bv8hd+KlJ5A19zx3HfhTdlC3A6CeNjeIIhWfM98pGF+baDue+SmBp
+         5F/zNdYxL+cBTvlbu4qMCpd2k5yA4nH7Xi/clF2U28mZBjGjzhoQSAua/3UQS6HOL1KF
+         DG9gJJY96016ooY9HL1ZT6ueSNPGfbpkhoH4hiE2RN+ArdOJEDN89UNIOXmquvDB+Eyp
+         wXEw==
+X-Forwarded-Encrypted: i=1; AFNElJ9OMV3bewpB6eMF3xelips+BlwLUQMlHPzga9fcFW3aAt7Nk1TaJfjO8LV4cuntyiBCXUFbtkuSVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUWnzsF/vJfFfICu4quBnn5zbkUZD+3nt+5vTzbXZQxITXjvHz
+	u4HSPY0kVNX58pqtsykKisQ5qvNMBaOkAYWvY7eJCZvZnkyls78ueX8XtX374+o7hom0i5As2qG
+	SpEw6zXeII3eG4MmBT01QixY7ue6AxbgozA1cM29g
+X-Gm-Gg: AeBDiev9kPQVY1CEdDI/pqKqoLu+Tz33DEI5zeLLcXdvoXAGASTSbBqrj9wy7FcNDEc
+	QmA2KJ5sed6hUy4e5rwPbuvVZ9+QEKrrsoxY5n9BQX9I3YVFhechwYNh9fo1mpyY7obiqL4h4II
+	Ae06V60iImMZa6YcPUi9pzLWjAH6AM+twJPIx57P4p5dQBrpD24LpdfUxS632Mw6MY4jVTu+EKa
+	8D1vLXWepA18NNtw7zMSFQWyIaADob5MadDF2mH0y8DCu5q2eg0lTfS8LW1KAiRfUXV3gc704Eo
+	DjbmOOWBhnlBXBd/ripiXM09NhcEO/Jumad9SwY8rmCN+duzvzhszOqYoZiagQUFe9QZk+RFUsa
+	355gTyIrUEC8ahg+mFEY3Bc1xRX3NcJb4DH06BcSveCORys6AtlDApXBFyg4Z8B/Xme4SCcyrhw
+	==
+X-Received: by 2002:a05:7022:2514:b0:12d:de3f:f3d9 with SMTP id
+ a92af1059eb24-12dfd8459ffmr501080c88.35.1777685077641; Fri, 01 May 2026
+ 18:24:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH stable] io_uring/poll: ensure EPOLL_ONESHOT is propagated
- for EPOLL_URING_WAKE
-To: Kai Aizen <kai.aizen.dev@gmail.com>, stable@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, io-uring@vger.kernel.org
-References: <20260501225250.90152-1-kai.aizen.dev@gmail.com>
- <20260501225250.90152-4-kai.aizen.dev@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260501225250.90152-4-kai.aizen.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B4D104B01FD
+References: <20260428175125.2705296-1-jkoolstra@xs4all.nl> <20260428175125.2705296-2-jkoolstra@xs4all.nl>
+ <CAAVpQUBKeN2KtRkRAFr8sYJM1_-rbkdjsujau5fAyaiP_dO6FA@mail.gmail.com> <89346381.2074764.1777649680664@kpc.webmail.kpnmail.nl>
+In-Reply-To: <89346381.2074764.1777649680664@kpc.webmail.kpnmail.nl>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Fri, 1 May 2026 18:24:26 -0700
+X-Gm-Features: AVHnY4Ivy4FFEa5elE6XvX0acVHEeFy5f9-HW7mgZQCbQK3BFpKAMdSRMm9bNLQ
+Message-ID: <CAAVpQUDKgWdgPjPmJKhNxofssasS8-RdaLAcbFXHMWH8ztMJXA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] net: af_unix: Useful handling of LSM denials on SCM_RIGHTS
+To: Jori Koolstra <jkoolstra@xs4all.nl>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kees Cook <kees@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Jeff Layton <jlayton@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Andrei Vagin <avagin@gmail.com>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Joel Granados <joel.granados@kernel.org>, Charlie Mirabile <cmirabil@redhat.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 2B78B4B0912
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13202-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13201-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[xs4all.nl];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,google.com,redhat.com,davemloft.net,kernel.dk,amacapital.net,chromium.org,gmail.com,virtuozzo.com,cyphar.com,vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[kuniyu@google.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[google.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,kernel.dk:mid,kernel.dk:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid]
 
-On 5/1/26 4:51 PM, Kai Aizen wrote:
-> From: Jens Axboe <axboe@kernel.dk>
-> 
-> [ Upstream commit 1967f0b1cafdde37aa9e08e6021c14bcc484b7a5 ]
-> 
-> Commit aacf2f9f382c ("io_uring: fix req->apoll_events") addressed
-> synchronization issues between poll->events and req->apoll_events.
-> However, a subsequent commit failed to maintain this consistency in the
-> EPOLL_URING_WAKE code path.
-> 
-> The patch ensures that when EPOLLONESHOT is set during regular
-> EPOLL_URING_WAKE handling, it's applied to both poll->events and
-> req->apoll_events. This prevents a condition where "IORING_CQE_F_MORE
-> is set in the previous CQE, while no more CQEs will be generated for
-> this request."
-> 
-> Backport notes:
->   This patch applies cleanly and identically to linux-6.18.y,
->   linux-6.12.y, linux-6.6.y, and linux-6.1.y.  The io_poll_wake()
->   EPOLL_URING_WAKE branch is byte-identical to the upstream pre-patch
->   state across all four trees.
+On Fri, May 1, 2026 at 8:34=E2=80=AFAM Jori Koolstra <jkoolstra@xs4all.nl> =
+wrote:
+>
+>
+> > Op 30-04-2026 04:04 CEST schreef Kuniyuki Iwashima <kuniyu@google.com>:
+> >
+> >
+> > On Tue, Apr 28, 2026 at 10:51=E2=80=AFAM Jori Koolstra <jkoolstra@xs4al=
+l.nl> wrote:
+> > >
+> > > Right now if some LSM such as Smack denies an AF_UNIX socket peer to
+> > > receive an SCM_RIGHTS fd the SCM_RIGHTS fd array will be cut short at
+> > > that point, and MSG_CTRUNC is set on return of recvmsg(). This is
+> > > highly problematic behaviour, because it leaves the receiver
+> > > wondering what happened. As per man page MSG_CTRUNC is supposed to
+> > > indicate that the control buffer was sized too short, but suddenly
+> > > a permission error might result in the exact same flag being set.
+> > > Moreover, the receiver has no chance to determine how many fds got
+> > > originally sent and how many were suppressed.[1]
+> > >
+> > > Add two MSG_* flags:
+> >
+> > Since we only have 5 bits remaining for future extension,
+> > we need to consider the use case a bit more carefully.
+> >
+>
+> Right. Since it wasn't a lot of work I implemented it exactly as the requ=
+est
+> was made from userspace, and then discuss it from there. By the way, I su=
+ppose
+> nothing can be done about that small flag space?
 
-OK with me, thanks.
+We could reuse an existing flag (e.g. MSG_FIN, MSG_RST)
+if we were confident enough that the userspace does not use
+the flag for a specific socket type.
 
--- 
-Jens Axboe
+Another option is to add another syscall, recvmsg2.
 
+
+>
+> >
+> > >  - MSG_RIGHTS_DENIAL is set whenever any file is rejected by the LSM
+> > >    during recvmsg() of SCM_RIGHTS fds.
+> >
+> > Is this really needed ?
+> >
+> > Even if the fd array is truncated, the application will traverse
+> > the array anyway since it has some fds already installed (to
+> > clean up in case of MSG_CTRUNC ?).
+> >
+> > Then, it will find the -EPERM entry.
+> >
+> > I assume no one uses MSG_RIGHTS_DENIAL without
+> > MSG_RIGHTS_FILTER.
+> >
+>
+> I guess that is a fair assumption to make. We can certainly do without
+> MSG_RIGHTS_DENIAL if saving flags is important. I also suggested that
+> we may see whether we can make MSG_RIGHTS_FILTER the default behavior.
+> In the mean time I've found grep.app, and it turns out the answer is no.
+> Apparently almost no one checks even for the truncation flag (mostly 1 fd
+> is passed and then it is check the cmsg lenght). But cpython has this for
+> instance:
+>
+>     /* Close all descriptors coming from SCM_RIGHTS, so they don't leak. =
+*/
+>     for (cmsgh =3D ((msg.msg_controllen > 0) ? CMSG_FIRSTHDR(&msg) : NULL=
+);
+>          cmsgh !=3D NULL; cmsgh =3D CMSG_NXTHDR(&msg, cmsgh)) {
+>         cmsg_status =3D get_cmsg_data_len(&msg, cmsgh, &cmsgdatalen);
+>         if (cmsg_status < 0)
+>             break;
+>         if (cmsgh->cmsg_level =3D=3D SOL_SOCKET &&
+>             cmsgh->cmsg_type =3D=3D SCM_RIGHTS) {
+>             size_t numfds;
+>             int *fdp;
+>             numfds =3D cmsgdatalen / sizeof(int);
+>             fdp =3D (int *)CMSG_DATA(cmsgh);
+>             while (numfds-- > 0)
+>                 close(*fdp++);
+>         }
+>         if (cmsg_status !=3D 0)
+>             break;
+>     }
+>
+> >
+> > >  - If MSG_RIGHTS_FILTER is passed as a flag to recvmsg(), the SCM_RIG=
+HTS
+> >
+> > Does this flag need per-recvmsg() granularity ?
+> >
+>
+> Perhaps not. What would be the alternative? A fcntl option for the socket=
+ fd?
+
+I'd add a new socket option like
+
+setsockopt(SOL_SOCKET, SO_RIGHTS_TRUNC, &(int){0}, sizeof(int));
+
+
+>
+> > If the application does not welcome the truncated fd array,
+> > it would have passed MSG_RIGHTS_FILTER to every
+> > recvmsg(), no ?
+> >
+>
+> Correct.
+>
+>
+> Thanks,
+> Jori.
 

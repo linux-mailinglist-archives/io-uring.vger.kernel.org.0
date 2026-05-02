@@ -1,268 +1,594 @@
-Return-Path: <io-uring+bounces-13202-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13203-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qX7gD19S9WmDKQIAu9opvQ
-	(envelope-from <io-uring+bounces-13202-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 03:24:47 +0200
+	id 2Y70DgNi9WkeKwIAu9opvQ
+	(envelope-from <io-uring+bounces-13203-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 04:31:31 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B78B4B0912
-	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 03:24:46 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EBB4B0B02
+	for <lists+io-uring@lfdr.de>; Sat, 02 May 2026 04:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E83063001FB5
-	for <lists+io-uring@lfdr.de>; Sat,  2 May 2026 01:24:42 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5EBA43008CAB
+	for <lists+io-uring@lfdr.de>; Sat,  2 May 2026 02:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AF9273816;
-	Sat,  2 May 2026 01:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE0440DFC5;
+	Sat,  2 May 2026 02:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tglJjcaN"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="AodqPRfy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1775133EF
-	for <io-uring@vger.kernel.org>; Sat,  2 May 2026 01:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777685080; cv=pass; b=HrDHIEdX7rf1zymySw8qpJnM6jkEHXnk4TUzmUcaoZ4zskOgYPMg00Hfr+Ww2dZXO4oTOV0MG0Chsc5aKvKD1gBi9HL5mFQF3K8FP99S2Irr66jsKXpesYdWbNdOeMgTPHqQLBUvZ1k0YgXrS+NFy29NLXFr/8bMe5odAdViquE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777685080; c=relaxed/simple;
-	bh=tlWzm/LweUKhSpUnvp6PcsofBh7GX2GlpWV4iQcCDA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKmluMFY8oU1516bLOuVAln0uz4cfGC0vXtM/pnXlCkTooUBu7Fnh3jg3EGfgx7jXDmgFd0/4GWis85UgLQn9aUnebK0h9KTcgSE9NmKhntT+8e3T/jRVXpEzVbFf2YelM9FYIzu9HVIjgzyA//ygLUnvvdc97hxmmctrbW17Ok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tglJjcaN; arc=pass smtp.client-ip=74.125.82.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12c8f9846c8so3257965c88.0
-        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 18:24:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777685078; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OTtY3p6fxK27WK9zp3L+RXa/GoN9bvPAnMTIkP2HCmzSRUrwCYxvGeDhGiW1BOvW/e
-         AexkjBaIUELtbouSfhr2qyeppBKtGZT86C5M9ppToOmFWJrSalBstF0N6AorknvsP0tq
-         9up59E34hGrq2RJbnZF54Z8OGFjHxfZl5hGvL+jmQHr1bTkQ+NVkxUIkgDdL5yNY9TNu
-         UrVVkAScf0Ty1FTJB7B1ONrXbt74F0cbi5f2qmAHqx5vDGSmcA7OHUmo0qUJjVXVqax+
-         kGJD8AAkZpJeTgU6fmbFhtPEqVyYKF5244hYkbu+MWF71VJLpKMvXRENC6O08/bwrSxb
-         hoZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
-        fh=gCDGH669WkeCCEllPXyN6Sb6NDX2ZNZXB/aewTkDJlU=;
-        b=HidMC52vjNXpsIvlkIgNamNbnr2ThsNmU6Wq+bSUh4bSmbBKLcKDIDN7692CstXd/p
-         WBWqqGlLNxntlacEMLkgXOYD9XbN6AkhPUqzXgwumqcfXd3zyyXc2jaXPrE+9N01pyAW
-         HCQMPV+xjJmMp2Zah1CalAmehTa++VW7a5uhnhZ8TTYuC1ToQs2MbTOzYU4SvO/A0oMw
-         JwCMWM9nXlwW4LUKrqJnf8L4i5M6q6OBRow6OTxvt/82a/eoZme003uu41kY6AnfW4kt
-         SwH6zhtZpg5B7blODuxs4b4AE0lwG+x35vdsOI4U1aILr/iB9JE7ZAYiXFF4Jdz6yadt
-         z5dQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9702B40DFBE
+	for <io-uring@vger.kernel.org>; Sat,  2 May 2026 02:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777689085; cv=none; b=rMaLf0PmXZPPVUwnSjdoNnxL/sl5/qVIquKU5j14Hi/ob1E8yelHnbdevB1ybLbgWGtuZOoVHX0UkP3kpdBfIkW3JQ2VN8uCKMyHOSwWBETeXkcHzX6U6TRDQ2wCsIkXfl4dT+mNi/tONEJ21t/9F1D3cThUb4VNTtwB9D6+LKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777689085; c=relaxed/simple;
+	bh=ttrGHbUsGm1z7kiw0g/3Aj+Yv3QG6AtSVS7bV1TyzXo=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=NesM8mSRvQoeudSIxOy5Kc7+4UkqRUwVPg4ySvAWaJmGgatn+vsSAkjQDn0qum/BsdocThsPtBlVhgQ1RtV3sys8fntCg1tYTtimrwfeahoVk34uhYDZQzpTuA3lndhJkwmbe6ARnZciQbtamBg3oIUVVL5/FgtQHcDYnYuaJ7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=AodqPRfy; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-463f00cda04so1260724b6e.2
+        for <io-uring@vger.kernel.org>; Fri, 01 May 2026 19:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1777685078; x=1778289878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777689081; x=1778293881; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
-        b=tglJjcaNWzt4y7utHMv+h2WL5OY5tf5X5qF5TicSwYXh7uIlMSi3KGJkcoVmkjYyk7
-         NRPdtihqKCqv0HTBx8FcZrVYkTJOT0IhjprmkHL88ahl8tGnbEw9q3Bk95tIRC4vPjC5
-         huKTLA6roSivAdw/1nwE/w+FaU0jaHvMhFPS+NGeD9YXIsDfXL9ZBp6UTL8rnABdmcGo
-         K8PrvuslN0Hr8RQeiJhswis2WE5mgekajTIad+8M9TuDZ+BpNsyx0/qpGfUzlTwY6McZ
-         ey407Z2nBmi+QqZU9C01XJBn+Jc9oWjE5MqdVr7mzP5cDy3FuvEdDLJvElRZHKhvSbHQ
-         m7Tw==
+        bh=erUJKVwCjqkVbWP9mBREswJmsr8l3gmW+6BsSEipSY0=;
+        b=AodqPRfyNLAWn/m7ZnEqcXMq/oND+T5I3U/o750kkXsjAG2z2RiGB5E34/HkxPmHkt
+         hnkYUUOp82h0vUKbK1QWoZPrRsM5RRL3RLRsR3f/3lUdmP5veE91SXgunHUeeZ8h99Fx
+         NmwhADB+6IBRzlldyHqWW5ulV9p/Y2hy2RWkR54j/tPTxGjiBjktDR1BxhwAb0T6kgre
+         FsPbNeIXrilduDYJUWLewtP3/54ZgJ0Fbl2BmHgaB4JGHTrndF7xtn15cxqHrFHEnLo0
+         ZVQua25jh3CG6AgPr/+QKNeA7HniYNMy/MNPS+WqZXa5WJv9cFw4vsvrmYdY8I0jtKFv
+         inbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777685078; x=1778289878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UTYEXtZbnOW94bihUSWzw/uzxtoul8H4TwtkWQ/OOcs=;
-        b=iGxvYKCHFxzsLAN/iF0+Brsqt2DhYVxjzpjOecl2Am9nG2/mXatSXhMwoXhlDyhWLO
-         LDAGum2l4tRbmNEdR2cFbCGTz4+Uhc06C4sWI/mumAqazvZ4a5Bm1kBLAsygFtdKW5ak
-         pFLCc7V58VsKVi7Bv8hd+KlJ5A19zx3HfhTdlC3A6CeNjeIIhWfM98pGF+baDue+SmBp
-         5F/zNdYxL+cBTvlbu4qMCpd2k5yA4nH7Xi/clF2U28mZBjGjzhoQSAua/3UQS6HOL1KF
-         DG9gJJY96016ooY9HL1ZT6ueSNPGfbpkhoH4hiE2RN+ArdOJEDN89UNIOXmquvDB+Eyp
-         wXEw==
-X-Forwarded-Encrypted: i=1; AFNElJ9OMV3bewpB6eMF3xelips+BlwLUQMlHPzga9fcFW3aAt7Nk1TaJfjO8LV4cuntyiBCXUFbtkuSVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUWnzsF/vJfFfICu4quBnn5zbkUZD+3nt+5vTzbXZQxITXjvHz
-	u4HSPY0kVNX58pqtsykKisQ5qvNMBaOkAYWvY7eJCZvZnkyls78ueX8XtX374+o7hom0i5As2qG
-	SpEw6zXeII3eG4MmBT01QixY7ue6AxbgozA1cM29g
-X-Gm-Gg: AeBDiev9kPQVY1CEdDI/pqKqoLu+Tz33DEI5zeLLcXdvoXAGASTSbBqrj9wy7FcNDEc
-	QmA2KJ5sed6hUy4e5rwPbuvVZ9+QEKrrsoxY5n9BQX9I3YVFhechwYNh9fo1mpyY7obiqL4h4II
-	Ae06V60iImMZa6YcPUi9pzLWjAH6AM+twJPIx57P4p5dQBrpD24LpdfUxS632Mw6MY4jVTu+EKa
-	8D1vLXWepA18NNtw7zMSFQWyIaADob5MadDF2mH0y8DCu5q2eg0lTfS8LW1KAiRfUXV3gc704Eo
-	DjbmOOWBhnlBXBd/ripiXM09NhcEO/Jumad9SwY8rmCN+duzvzhszOqYoZiagQUFe9QZk+RFUsa
-	355gTyIrUEC8ahg+mFEY3Bc1xRX3NcJb4DH06BcSveCORys6AtlDApXBFyg4Z8B/Xme4SCcyrhw
-	==
-X-Received: by 2002:a05:7022:2514:b0:12d:de3f:f3d9 with SMTP id
- a92af1059eb24-12dfd8459ffmr501080c88.35.1777685077641; Fri, 01 May 2026
- 18:24:37 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777689081; x=1778293881;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=erUJKVwCjqkVbWP9mBREswJmsr8l3gmW+6BsSEipSY0=;
+        b=NGvg9zaiI5vDzHiSwRyDc95+m6u3TPNch4XzUdCa7dbDPWW7izmZXLQisn0kaiVByy
+         MKWF/ntYEALsElM5co9qtkKQNODTjkvBL9+m/hZQMe4b4lcuXnY2faEaplc8dnjWu7uc
+         5BeaQUJWq8KQnAKiwLQMn8h9fukfFkdaygFZeIqRL4s6miM62PgG36Pd5k3Cpj+bIUz/
+         Gy34Twj3kkFZ9fEFTbHI6yTHxk1p7x/aCV6AjEuTcesSawN7Zp1bKFlzNIvnyC0/4CdH
+         kHLu87+3NqLC/S8dbFMPHtwQ87PnMExmGjPlsFQuh1ROHxmtYFtR0QZOnTWgnykOE+wa
+         TEvA==
+X-Gm-Message-State: AOJu0YxS0AGhXnI9z5Jz1AiM0Dw7uBwV9gu2QUJXVfX93vBiL98/L9aM
+	0+uBACj+6aKqfAuNNIJ+7nlNsDp8Ybj6yUDeuII+okaPrRTwcA0iz0SxwAZ32u2KFjkOUpJzD4f
+	GnYty
+X-Gm-Gg: AeBDieuL65S/mDFpekp4aDd9mvw/Bk4ku/rjmXhL1/eoCzyhPP7SIMf1UMqxH1gqOYu
+	kPEQkjeoYbjV8E7vVc587yldiWS77VG9+Iz7HgMrTfWIGK15XTa9jy8RvqgOtmejXrdxEMvJ7wS
+	k9yPC1NgdY3w/PzhJppXqiXyMGtuhNJsSyOQMDdjB6uQzG+HcGonhQwD+93l2/YXPsmdcdxP7Om
+	Tn6zqsnX5Xwk6sRx36l4Br4lnFnOgSpenk7Wh3gSLTwKrEc024QnmW6dU5rancoG7XN/ZRIbg+D
+	jLt3IGlmSS7QR7+o2XlkiSuDyK/Vnaay9EH8fB8ssIViUtN3CtmcWnjfYeh74IR2gyq4fWlKux+
+	0jURf+zU7FyGgQuw8IvlRZGKWH+flRxYYWxude+f4BKCaJKwlDGZ1dfJha3YKEraZVoqRy3cRq1
+	oEiQCsR7tWS0/FPPEPEtynIBobfTDZ+3Prx4fqrc7PSyt4N6XWR+5/Or3j2+JMA70+4TfsDyV2X
+	L6mVaTilddiFl935dnr
+X-Received: by 2002:a05:6808:11c6:b0:47c:3640:c5c1 with SMTP id 5614622812f47-47c88fdb3d3mr943775b6e.14.1777689080858;
+        Fri, 01 May 2026 19:31:20 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-47c76986404sm2345755b6e.15.2026.05.01.19.31.19
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 May 2026 19:31:19 -0700 (PDT)
+Message-ID: <d377141e-064e-48a2-9a76-8477a90e8655@kernel.dk>
+Date: Fri, 1 May 2026 20:31:18 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260428175125.2705296-1-jkoolstra@xs4all.nl> <20260428175125.2705296-2-jkoolstra@xs4all.nl>
- <CAAVpQUBKeN2KtRkRAFr8sYJM1_-rbkdjsujau5fAyaiP_dO6FA@mail.gmail.com> <89346381.2074764.1777649680664@kpc.webmail.kpnmail.nl>
-In-Reply-To: <89346381.2074764.1777649680664@kpc.webmail.kpnmail.nl>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Fri, 1 May 2026 18:24:26 -0700
-X-Gm-Features: AVHnY4Ivy4FFEa5elE6XvX0acVHEeFy5f9-HW7mgZQCbQK3BFpKAMdSRMm9bNLQ
-Message-ID: <CAAVpQUDKgWdgPjPmJKhNxofssasS8-RdaLAcbFXHMWH8ztMJXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] net: af_unix: Useful handling of LSM denials on SCM_RIGHTS
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kees Cook <kees@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Jeff Layton <jlayton@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Andrei Vagin <avagin@gmail.com>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Joel Granados <joel.granados@kernel.org>, Charlie Mirabile <cmirabil@redhat.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 2B78B4B0912
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v3] io_uring/rsrc: add huge page accounting for registered
+ buffers
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 17EBB4B0B02
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20251104];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13202-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[xs4all.nl];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,google.com,redhat.com,davemloft.net,kernel.dk,amacapital.net,chromium.org,gmail.com,virtuozzo.com,cyphar.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-13203-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_ONE(0.00)[1];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kuniyu@google.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:mid,kernel.dk:email]
 
-On Fri, May 1, 2026 at 8:34=E2=80=AFAM Jori Koolstra <jkoolstra@xs4all.nl> =
-wrote:
->
->
-> > Op 30-04-2026 04:04 CEST schreef Kuniyuki Iwashima <kuniyu@google.com>:
-> >
-> >
-> > On Tue, Apr 28, 2026 at 10:51=E2=80=AFAM Jori Koolstra <jkoolstra@xs4al=
-l.nl> wrote:
-> > >
-> > > Right now if some LSM such as Smack denies an AF_UNIX socket peer to
-> > > receive an SCM_RIGHTS fd the SCM_RIGHTS fd array will be cut short at
-> > > that point, and MSG_CTRUNC is set on return of recvmsg(). This is
-> > > highly problematic behaviour, because it leaves the receiver
-> > > wondering what happened. As per man page MSG_CTRUNC is supposed to
-> > > indicate that the control buffer was sized too short, but suddenly
-> > > a permission error might result in the exact same flag being set.
-> > > Moreover, the receiver has no chance to determine how many fds got
-> > > originally sent and how many were suppressed.[1]
-> > >
-> > > Add two MSG_* flags:
-> >
-> > Since we only have 5 bits remaining for future extension,
-> > we need to consider the use case a bit more carefully.
-> >
->
-> Right. Since it wasn't a lot of work I implemented it exactly as the requ=
-est
-> was made from userspace, and then discuss it from there. By the way, I su=
-ppose
-> nothing can be done about that small flag space?
+Track huge page references in a per-ring xarray to prevent double
+accounting when the same huge page is used by multiple registered
+buffers, either within the same ring or across cloned rings.
 
-We could reuse an existing flag (e.g. MSG_FIN, MSG_RST)
-if we were confident enough that the userspace does not use
-the flag for a specific socket type.
+When registering buffers backed by huge pages, we need to account for
+RLIMIT_MEMLOCK. But if multiple buffers share the same huge page (common
+with cloned buffers), we must not account for the same page multiple
+times. Similarly, we must only unaccount when the last reference to a
+huge page is released.
 
-Another option is to add another syscall, recvmsg2.
+Maintain a per-ring xarray (hpage_acct) that tracks reference counts for
+each huge page. When registering a buffer, for each unique huge page,
+increment its accounting reference count, and only account pages that
+are newly added.
 
+When unregistering a buffer, for each unique huge page, decrement its
+refcount. Once the refcount hits zero, the page is unaccounted.
 
->
-> >
-> > >  - MSG_RIGHTS_DENIAL is set whenever any file is rejected by the LSM
-> > >    during recvmsg() of SCM_RIGHTS fds.
-> >
-> > Is this really needed ?
-> >
-> > Even if the fd array is truncated, the application will traverse
-> > the array anyway since it has some fds already installed (to
-> > clean up in case of MSG_CTRUNC ?).
-> >
-> > Then, it will find the -EPERM entry.
-> >
-> > I assume no one uses MSG_RIGHTS_DENIAL without
-> > MSG_RIGHTS_FILTER.
-> >
->
-> I guess that is a fair assumption to make. We can certainly do without
-> MSG_RIGHTS_DENIAL if saving flags is important. I also suggested that
-> we may see whether we can make MSG_RIGHTS_FILTER the default behavior.
-> In the mean time I've found grep.app, and it turns out the answer is no.
-> Apparently almost no one checks even for the truncation flag (mostly 1 fd
-> is passed and then it is check the cmsg lenght). But cpython has this for
-> instance:
->
->     /* Close all descriptors coming from SCM_RIGHTS, so they don't leak. =
-*/
->     for (cmsgh =3D ((msg.msg_controllen > 0) ? CMSG_FIRSTHDR(&msg) : NULL=
-);
->          cmsgh !=3D NULL; cmsgh =3D CMSG_NXTHDR(&msg, cmsgh)) {
->         cmsg_status =3D get_cmsg_data_len(&msg, cmsgh, &cmsgdatalen);
->         if (cmsg_status < 0)
->             break;
->         if (cmsgh->cmsg_level =3D=3D SOL_SOCKET &&
->             cmsgh->cmsg_type =3D=3D SCM_RIGHTS) {
->             size_t numfds;
->             int *fdp;
->             numfds =3D cmsgdatalen / sizeof(int);
->             fdp =3D (int *)CMSG_DATA(cmsgh);
->             while (numfds-- > 0)
->                 close(*fdp++);
->         }
->         if (cmsg_status !=3D 0)
->             break;
->     }
->
-> >
-> > >  - If MSG_RIGHTS_FILTER is passed as a flag to recvmsg(), the SCM_RIG=
-HTS
-> >
-> > Does this flag need per-recvmsg() granularity ?
-> >
->
-> Perhaps not. What would be the alternative? A fcntl option for the socket=
- fd?
+Note: any account is done against the ctx->user that was assigned when
+the ring was setup. As before, if root is running the operation, no
+accounting is done.
 
-I'd add a new socket option like
+With these changes, any use of imu->acct_pages is also dead, hence kill
+it from struct io_mapped_ubuf. This shrinks it from 56b to 48b on a
+64-bit arch. Additionally, hpage_already_acct() is gone, which was an
+O(M*M) scan over current + previous registrations.
 
-setsockopt(SOL_SOCKET, SO_RIGHTS_TRUNC, &(int){0}, sizeof(int));
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
+---
 
->
-> > If the application does not welcome the truncated fd array,
-> > it would have passed MSG_RIGHTS_FILTER to every
-> > recvmsg(), no ?
-> >
->
-> Correct.
->
->
-> Thanks,
-> Jori.
+See previous discussions here:
+
+https://lore.kernel.org/io-uring/20260119071039.2113739-1-danisjiang@gmail.com/
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 244392026c6d..23b8891d5704 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -446,6 +446,9 @@ struct io_ring_ctx {
+ 	/* Stores zcrx object pointers of type struct io_zcrx_ifq */
+ 	struct xarray			zcrx_ctxs;
+ 
++	/* Used for accounting references on pages in registered buffers */
++	struct xarray		hpage_acct;
++
+ 	u32			pers_next;
+ 	struct xarray		personalities;
+ 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 4ed998d60c09..fb6ed52bae61 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -233,6 +233,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		return NULL;
+ 
+ 	xa_init(&ctx->io_bl_xa);
++	xa_init(&ctx->hpage_acct);
+ 
+ 	/*
+ 	 * Use 5 bits less than the max cq entries, that should give us around
+@@ -302,6 +303,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	io_free_alloc_caches(ctx);
+ 	kvfree(ctx->cancel_table.hbs);
+ 	xa_destroy(&ctx->io_bl_xa);
++	xa_destroy(&ctx->hpage_acct);
+ 	kfree(ctx);
+ 	return NULL;
+ }
+@@ -2198,6 +2200,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_napi_free(ctx);
+ 	kvfree(ctx->cancel_table.hbs);
+ 	xa_destroy(&ctx->io_bl_xa);
++	xa_destroy(&ctx->hpage_acct);
+ 	kfree(ctx);
+ }
+ 
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 650303626be6..ca22e07245c4 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -28,7 +28,51 @@ struct io_rsrc_update {
+ };
+ 
+ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+-			struct iovec *iov, struct page **last_hpage);
++						   struct iovec *iov);
++
++static int hpage_acct_ref(struct io_ring_ctx *ctx, struct page *hpage,
++			  bool *acct_new)
++{
++	unsigned long key = (unsigned long) hpage;
++	unsigned long count;
++	void *entry;
++	int ret;
++
++	lockdep_assert_held(&ctx->uring_lock);
++
++	entry = xa_load(&ctx->hpage_acct, key);
++	if (!entry) {
++		ret = xa_reserve(&ctx->hpage_acct, key, GFP_KERNEL_ACCOUNT);
++		if (ret)
++			return ret;
++	}
++
++	count = 1;
++	if (entry)
++		count = xa_to_value(entry) + 1;
++	xa_store(&ctx->hpage_acct, key, xa_mk_value(count), GFP_KERNEL_ACCOUNT);
++	*acct_new = (count == 1);
++	return 0;
++}
++
++static bool hpage_acct_unref(struct io_ring_ctx *ctx, struct page *hpage)
++{
++	unsigned long key = (unsigned long) hpage;
++	unsigned long count;
++	void *entry;
++
++	lockdep_assert_held(&ctx->uring_lock);
++
++	entry = xa_load(&ctx->hpage_acct, key);
++	if (WARN_ON_ONCE(!entry))
++		return false;
++	count = xa_to_value(entry);
++	if (count == 1)
++		xa_erase(&ctx->hpage_acct, key);
++	else
++		xa_store(&ctx->hpage_acct, key, xa_mk_value(count - 1), GFP_KERNEL_ACCOUNT);
++	return count == 1;
++}
+ 
+ /* only define max */
+ #define IORING_MAX_FIXED_FILES	(1U << 20)
+@@ -124,15 +168,53 @@ static void io_free_imu(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
+ 		kvfree(imu);
+ }
+ 
++static unsigned long io_buffer_unaccount_pages(struct io_ring_ctx *ctx,
++					       struct io_mapped_ubuf *imu)
++{
++	struct page *seen = NULL;
++	unsigned long acct = 0;
++	int i;
++
++	if (imu->flags & IO_REGBUF_F_KBUF || !ctx->user)
++		return 0;
++
++	for (i = 0; i < imu->nr_bvecs; i++) {
++		struct page *page = imu->bvec[i].bv_page;
++		struct page *hpage;
++
++		if (!PageCompound(page)) {
++			acct++;
++			continue;
++		}
++
++		hpage = compound_head(page);
++		if (hpage == seen)
++			continue;
++		seen = hpage;
++
++		/* Unaccount on last reference */
++		if (hpage_acct_unref(ctx, hpage))
++			acct += page_size(hpage) >> PAGE_SHIFT;
++		cond_resched();
++	}
++
++	return acct;
++}
++
+ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
+ {
++	unsigned long acct_pages = 0;
++
++	/* Always decrement, so it works for cloned buffers too */
++	acct_pages = io_buffer_unaccount_pages(ctx, imu);
++
+ 	if (unlikely(refcount_read(&imu->refs) > 1)) {
+ 		if (!refcount_dec_and_test(&imu->refs))
+ 			return;
+ 	}
+ 
+-	if (imu->acct_pages)
+-		io_unaccount_mem(ctx->user, ctx->mm_account, imu->acct_pages);
++	if (acct_pages)
++		io_unaccount_mem(ctx->user, ctx->mm_account, acct_pages);
+ 	imu->release(imu->priv);
+ 	io_free_imu(ctx, imu);
+ }
+@@ -282,7 +364,6 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+ {
+ 	u64 __user *tags = u64_to_user_ptr(up->tags);
+ 	struct iovec fast_iov, *iov;
+-	struct page *last_hpage = NULL;
+ 	struct iovec __user *uvec;
+ 	u64 user_data = up->data;
+ 	__u32 done;
+@@ -307,7 +388,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+ 			err = -EFAULT;
+ 			break;
+ 		}
+-		node = io_sqe_buffer_register(ctx, iov, &last_hpage);
++		node = io_sqe_buffer_register(ctx, iov);
+ 		if (IS_ERR(node)) {
+ 			err = PTR_ERR(node);
+ 			break;
+@@ -605,76 +686,79 @@ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+ }
+ 
+ /*
+- * Not super efficient, but this is just a registration time. And we do cache
+- * the last compound head, so generally we'll only do a full search if we don't
+- * match that one.
+- *
+- * We check if the given compound head page has already been accounted, to
+- * avoid double accounting it. This allows us to account the full size of the
+- * page, not just the constituent pages of a huge page.
++ * Undo hpage_acct_ref() calls made during io_buffer_account_pin() on failure.
++ * This operates on the pages array since imu->bvec isn't populated yet.
+  */
+-static bool headpage_already_acct(struct io_ring_ctx *ctx, struct page **pages,
+-				  int nr_pages, struct page *hpage)
++static void io_buffer_unaccount_hpages(struct io_ring_ctx *ctx,
++				       struct page **pages, int nr_pages)
+ {
+-	int i, j;
++	struct page *seen = NULL;
++	int i;
++
++	if (!ctx->user)
++		return;
+ 
+-	/* check current page array */
+ 	for (i = 0; i < nr_pages; i++) {
++		struct page *hpage;
++
+ 		if (!PageCompound(pages[i]))
+ 			continue;
+-		if (compound_head(pages[i]) == hpage)
+-			return true;
+-	}
+-
+-	/* check previously registered pages */
+-	for (i = 0; i < ctx->buf_table.nr; i++) {
+-		struct io_rsrc_node *node = ctx->buf_table.nodes[i];
+-		struct io_mapped_ubuf *imu;
+ 
+-		if (!node)
++		hpage = compound_head(pages[i]);
++		if (hpage == seen)
+ 			continue;
+-		imu = node->buf;
+-		for (j = 0; j < imu->nr_bvecs; j++) {
+-			if (!PageCompound(imu->bvec[j].bv_page))
+-				continue;
+-			if (compound_head(imu->bvec[j].bv_page) == hpage)
+-				return true;
+-		}
+-	}
++		seen = hpage;
+ 
+-	return false;
++		hpage_acct_unref(ctx, hpage);
++		cond_resched();
++	}
+ }
+ 
+ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+-				 int nr_pages, struct io_mapped_ubuf *imu,
+-				 struct page **last_hpage)
++				 int nr_pages)
+ {
++	unsigned long acct_pages = 0;
++	struct page *seen = NULL;
+ 	int i, ret;
+ 
+-	imu->acct_pages = 0;
++	if (!ctx->user)
++		return 0;
++
+ 	for (i = 0; i < nr_pages; i++) {
++		struct page *hpage;
++		bool acct_new;
++
+ 		if (!PageCompound(pages[i])) {
+-			imu->acct_pages++;
+-		} else {
+-			struct page *hpage;
+-
+-			hpage = compound_head(pages[i]);
+-			if (hpage == *last_hpage)
+-				continue;
+-			*last_hpage = hpage;
+-			if (headpage_already_acct(ctx, pages, i, hpage))
+-				continue;
+-			imu->acct_pages += page_size(hpage) >> PAGE_SHIFT;
++			acct_pages++;
++			continue;
+ 		}
++
++		hpage = compound_head(pages[i]);
++		if (hpage == seen)
++			continue;
++		seen = hpage;
++
++		ret = hpage_acct_ref(ctx, hpage, &acct_new);
++		if (ret) {
++			io_buffer_unaccount_hpages(ctx, pages, i);
++			return ret;
++		}
++		if (acct_new)
++			acct_pages += page_size(hpage) >> PAGE_SHIFT;
++		cond_resched();
+ 	}
+ 
+-	if (!imu->acct_pages)
+-		return 0;
++	/* Try to account the memory */
++	if (acct_pages) {
++		ret = io_account_mem(ctx->user, ctx->mm_account, acct_pages);
++		if (ret) {
++			/* Undo the refs we just added */
++			io_buffer_unaccount_hpages(ctx, pages, nr_pages);
++			return ret;
++		}
++	}
+ 
+-	ret = io_account_mem(ctx->user, ctx->mm_account, imu->acct_pages);
+-	if (ret)
+-		imu->acct_pages = 0;
+-	return ret;
++	return 0;
+ }
+ 
+ static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
+@@ -763,8 +847,7 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+ }
+ 
+ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+-						   struct iovec *iov,
+-						   struct page **last_hpage)
++						   struct iovec *iov)
+ {
+ 	struct io_mapped_ubuf *imu = NULL;
+ 	struct page **pages = NULL;
+@@ -811,7 +894,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 		goto done;
+ 
+ 	imu->nr_bvecs = nr_pages;
+-	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
++	ret = io_buffer_account_pin(ctx, pages, nr_pages);
+ 	if (ret)
+ 		goto done;
+ 
+@@ -861,7 +944,6 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			    unsigned int nr_args, u64 __user *tags)
+ {
+-	struct page *last_hpage = NULL;
+ 	struct io_rsrc_data data;
+ 	struct iovec fast_iov, *iov = &fast_iov;
+ 	const struct iovec __user *uvec;
+@@ -904,7 +986,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			}
+ 		}
+ 
+-		node = io_sqe_buffer_register(ctx, iov, &last_hpage);
++		node = io_sqe_buffer_register(ctx, iov);
+ 		if (IS_ERR(node)) {
+ 			ret = PTR_ERR(node);
+ 			break;
+@@ -971,7 +1053,6 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+ 
+ 	imu->ubuf = 0;
+ 	imu->len = blk_rq_bytes(rq);
+-	imu->acct_pages = 0;
+ 	imu->folio_shift = PAGE_SHIFT;
+ 	refcount_set(&imu->refs, 1);
+ 	imu->release = release;
+@@ -1137,6 +1218,56 @@ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ }
+ 
+ /* Lock two rings at once. The rings must be different! */
++static int io_buffer_acct_cloned_hpages(struct io_ring_ctx *ctx,
++					struct io_mapped_ubuf *imu)
++{
++	struct page *seen = NULL;
++	int i, ret = 0;
++
++	if (imu->flags & IO_REGBUF_F_KBUF || !ctx->user)
++		return 0;
++
++	for (i = 0; i < imu->nr_bvecs; i++) {
++		struct page *page = imu->bvec[i].bv_page;
++		struct page *hpage;
++		bool acct_new;
++
++		if (!PageCompound(page))
++			continue;
++
++		hpage = compound_head(page);
++		if (hpage == seen)
++			continue;
++		seen = hpage;
++
++		/* Atomically add reference for cloned buffer */
++		ret = hpage_acct_ref(ctx, hpage, &acct_new);
++		if (ret)
++			break;
++
++		cond_resched();
++	}
++
++	if (!ret)
++		return 0;
++
++	/* Undo refs we added for bvecs [0..i) */
++	seen = NULL;
++	for (int j = 0; j < i; j++) {
++		struct page *p = imu->bvec[j].bv_page;
++		struct page *hp;
++
++		if (!PageCompound(p))
++			continue;
++		hp = compound_head(p);
++		if (hp == seen)
++			continue;
++		seen = hp;
++		hpage_acct_unref(ctx, hp);
++	}
++	return ret;
++}
++
+ static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2)
+ {
+ 	if (ctx1 > ctx2)
+@@ -1218,6 +1349,14 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
+ 
+ 			refcount_inc(&src_node->buf->refs);
+ 			dst_node->buf = src_node->buf;
++			/* track compound references to clones */
++			ret = io_buffer_acct_cloned_hpages(ctx, src_node->buf);
++			if (ret) {
++				refcount_dec(&src_node->buf->refs);
++				io_cache_free(&ctx->node_cache, dst_node);
++				io_rsrc_data_free(ctx, &data);
++				return ret;
++			}
+ 		}
+ 		data.nodes[off++] = dst_node;
+ 		i++;
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 44e3386f7c1c..c0f8a18ec767 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -38,7 +38,6 @@ struct io_mapped_ubuf {
+ 	unsigned int	nr_bvecs;
+ 	unsigned int    folio_shift;
+ 	refcount_t	refs;
+-	unsigned long	acct_pages;
+ 	void		(*release)(void *);
+ 	void		*priv;
+ 	u8		flags;
+
+-- 
+Jens Axboe
+
 
